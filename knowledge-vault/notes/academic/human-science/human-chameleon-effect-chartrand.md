@@ -31,6 +31,11 @@ aliases:
 - [Dalton, A. N., Chartrand, T. L. & Finkel, E. J. (2009) The Schema-Driven Chameleon — Journal of Personality and Social Psychology](https://pubmed.ncbi.nlm.nih.gov/19656783/) `学術`
 - [Wikipedia: Chameleon effect — definition, social lubrication function, and mirror neuron debate](https://en.wikipedia.org/wiki/Chameleon_effect) `リファレンス`
 
+## 関連概念
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同じ思想家
+- [[human-humanistic-psychology-rogers-person-centered|ロジャーズの人間中心アプローチ——無条件の積極的関心・共感・自己一致による人格成長]] — 同分野の近傍
+- [[human-self-expansion-aron|自己拡張モデル（アーロン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

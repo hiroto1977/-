@@ -32,6 +32,18 @@ aliases:
 - [Van Alstyne & Brynjolfsson (1996) "Electronic Communities: Global Village or Cyberbalkans?" (MIT)](https://web.mit.edu/marshall/www/papers/CyberBalkans.pdf) `学術`
 - [Van Alstyne & Brynjolfsson (2005), Management Science 51(6):851-868 (INFORMS)](https://pubsonline.informs.org/doi/10.1287/mnsc.1050.0363) `学術`
 
+## 関連概念
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
+- [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
+- [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
+- [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

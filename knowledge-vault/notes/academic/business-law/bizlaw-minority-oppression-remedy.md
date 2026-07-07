@@ -30,6 +30,13 @@ F・ホジ・オニール ／ ロバート・トンプソン ／ ダグラス・
 - [Wikipedia: Oppression Remedy — minority shareholder protection in close corporations](https://en.wikipedia.org/wiki/Oppression_remedy) `リファレンス`
 - [O'Neal, F.H. & Thompson, R.B. (1985) O'Neal and Thompson's Close Corporations and LLCs — West Academic](https://doi.org/10.1017/CBO9780511495069) `学術`
 
+## 関連概念
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 語彙が近い
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
+- [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

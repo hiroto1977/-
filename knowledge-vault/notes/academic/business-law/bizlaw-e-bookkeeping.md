@@ -30,6 +30,11 @@ aliases:
 - [国税庁「電子帳簿保存法の概要」(3区分・電子取引保存義務)](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/02.htm) `公的`
 - [国税庁「電子帳簿等保存制度特設サイト」](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/index.htm) `公的`
 
+## 関連概念
+- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 語彙が近い
+- [[bizlaw-design-right|意匠権（意匠法）]] — 同分野の近傍
+- [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ Richard F. Kahn／John Maynard Keynes／Olivier Blanchard／Daniel Leigh
 - [Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers, IMF WP/13/1](https://www.imf.org/external/pubs/ft/wp/2013/wp1301.pdf) `公的`
 - [Wikipedia 日本語版 — 乗数効果](https://ja.wikipedia.org/wiki/%E4%B9%97%E6%95%B0%E5%8A%B9%E6%9E%9C) `リファレンス`
 
+## 関連概念
+- [[econ-fiscal-multiplier|乗数効果（財政乗数）]] — 語彙が近い
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 語彙が近い
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 同じ思想家
+- [[econ-hysteresis-unemployment-theory|ヒステリシス失業理論]] — 同じ思想家
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同分野の近傍
+- [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

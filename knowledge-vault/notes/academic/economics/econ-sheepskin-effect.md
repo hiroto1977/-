@@ -30,6 +30,10 @@ aliases:
 - [Jaeger, David A. & Page, Marianne E. (1996) "Degrees Matter: New Evidence on Sheepskin Effects in the Returns to Education," The Review of Economics and Statistics 78(4): 733-740](https://doi.org/10.2307/2109960) `学術`
 - [Wikipedia — Sheepskin effect（学位取得時の非連続的賃金プレミアム／シグナリング対人的資本の論点）](https://en.wikipedia.org/wiki/Sheepskin_effect) `リファレンス`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

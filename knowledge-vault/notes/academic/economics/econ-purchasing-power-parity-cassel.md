@@ -31,6 +31,18 @@ aliases:
 - [Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal — Journal of Political Economy, 72(6), 584–596（バラッサ＝サミュエルソン効果）](https://doi.org/10.2307/1925975) `学術`
 - [Wikipedia: Purchasing power parity — Cassel, law of one price, Balassa-Samuelson, Penn effect, ICP](https://en.wikipedia.org/wiki/Purchasing_power_parity) `リファレンス`
 
+## 関連概念
+- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同じ思想家
+- [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+- [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]] — 同じ思想家
+- [[econ-siegel-paradox-exchange|シーゲルのパラドックス——為替の期待は両通貨で同時に不偏たりえない]] — 同じ思想家
+- [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同じ思想家
+- [[econ-sovereign-debt-crisis-reinhart-rogoff|国家債務危機——ラインハートとロゴフの「今回は違う」と財政持続可能性の実証分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

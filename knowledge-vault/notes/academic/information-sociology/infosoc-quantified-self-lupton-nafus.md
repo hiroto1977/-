@@ -30,6 +30,14 @@ aliases:
 - [Sharon & Zandbergen (2017) From Data Fetishism to Quantifying Selves — New Media & Society](https://doi.org/10.1177/0162243916670029) `学術`
 - [Wikipedia: Quantified self — 自己の数量化運動の歴史と社会的意義の概説](https://en.wikipedia.org/wiki/Quantified_self) `リファレンス`
 
+## 関連概念
+- [[infosoc-quantified-self-lifelogging|数値化される自己（クワンティファイド・セルフ）と自己追跡の社会学]] — 語彙が近い
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 語彙が近い
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 同分野の近傍
+- [[infosoc-dark-patterns-ui-deceptive|ダーク・パターンと欺瞞的UXデザインの規制論]] — 同分野の近傍
+- [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

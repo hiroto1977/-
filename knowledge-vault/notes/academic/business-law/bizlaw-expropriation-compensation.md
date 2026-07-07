@@ -30,6 +30,18 @@ aliases:
 - [Expropriation in Investment Arbitration — Aceris Law](https://www.acerislaw.com/expropriation-in-investment-arbitration/) `リファレンス`
 - [Expropriation According to the Hull Formula — Academia.edu](https://www.academia.edu/5671141/Expropriation_According_to_the_Hull_formula) `学術`
 
+## 関連概念
+- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同じ思想家
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 同じ思想家
+- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同じ思想家
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
+- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 出典を共有
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
+- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
+- [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
+- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

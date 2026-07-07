@@ -29,6 +29,10 @@ aliases:
 - [Stilgoe, J. et al. (2013). Developing a framework for responsible innovation — Research Policy](https://doi.org/10.1093/acprof:oso/9780199608546.001.0001) `学術`
 - [Wikipedia: Responsible Research and Innovation — EU science policy](https://en.wikipedia.org/wiki/Responsible_Research_and_Innovation) `リファレンス`
 
+## 関連概念
+- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同分野の近傍
+- [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

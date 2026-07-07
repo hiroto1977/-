@@ -31,6 +31,12 @@ Maiken Nedergaard ／ Jeffrey Iliff ／ Lulu Xie
 - [Nedergaard & Goldman (2021) The Glymphatic System: A Novel Component of Fundamental Neurobiology — Journal of Neuroscience](https://www.jneurosci.org/content/41/37/7698) `学術`
 - [Glymphatic system — Wikipedia](https://en.wikipedia.org/wiki/Glymphatic_system) `リファレンス`
 
+## 関連概念
+- [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同分野の近傍
+- [[human-operant-conditioning|オペラント条件づけ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

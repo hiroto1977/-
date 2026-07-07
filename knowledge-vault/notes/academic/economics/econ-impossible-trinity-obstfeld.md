@@ -30,6 +30,18 @@ aliases:
 - [Rey (2015) Dilemma not Trilemma: The Global Financial Cycle and Monetary Policy Independence — NBER Working Paper 21162](https://doi.org/10.3386/w21162) `学術`
 - [Wikipedia: Impossible trinity — 国際金融のトリレンマの理論と歴史的展開](https://en.wikipedia.org/wiki/Impossible_trinity) `リファレンス`
 
+## 関連概念
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 語彙が近い
+- [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — 語彙が近い
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ]] — 語彙が近い
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
+- [[econ-currency-crisis-speculative-attack-krugman|通貨危機の世代別モデル——クルーグマン・第二世代・第三世代の投機的攻撃理論]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 同じ思想家
+- [[econ-global-imbalances-bernanke|グローバル・インバランスと貯蓄過剰仮説——経常収支不均衡のマクロ経済学]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ Banks, James （1998 Is There a Retirement-Savings Puzzle?）／Blundell, Richar
 - [Aguiar, M. & Hurst, E. (2013) "Deconstructing Life Cycle Expenditure", Journal of Political Economy 121(3), 437-492](https://doi.org/10.1086/670740) `学術`
 - [CEPR VoxEU — "The retirement-consumption puzzle: New evidence from personal finances"](https://cepr.org/voxeu/columns/retirement-consumption-puzzle-new-evidence-personal-finances) `リファレンス`
 
+## 関連概念
+- [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 出典を共有
+- [[econ-mechanism-design|メカニズムデザイン]] — 出典を共有
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
+- [[econ-helicopter-money|ヘリコプターマネー]] — 出典を共有
+- [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同分野の近傍
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

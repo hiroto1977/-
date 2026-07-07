@@ -29,6 +29,15 @@ ICC国際仲裁裁判所 ／ ゲイリー・ボーン ／ エマニュエル・�
 - [ICC — International Court of Arbitration: Rules and Services](https://iccwbo.org/dispute-resolution/dispute-resolution-services/arbitration/) `公的`
 - [Wikipedia: ICC International Court of Arbitration — commercial arbitration, scrutiny, seat](https://en.wikipedia.org/wiki/International_Chamber_of_Commerce#International_Court_of_Arbitration) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 語彙が近い
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 語彙が近い
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同じ思想家
+- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 同じ思想家
+- [[bizlaw-incoterms|インコタームズ——国際売買における売主と買主の責任を定める定型取引条件]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

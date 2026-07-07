@@ -29,6 +29,10 @@ aliases:
 - [Dyck, A., Morse, A. & Zingales, L. (2010) Who Blows the Whistle on Corporate Fraud? — Journal of Finance 65(6), 2213–2253（内部告発の実証研究）](https://doi.org/10.1111/j.1540-6261.2010.01615.x) `学術`
 - [Wikipedia: Whistleblower protection in the United States — 米国内部告発者保護の概説](https://en.wikipedia.org/wiki/Whistleblower_protection_in_the_United_States) `リファレンス`
 
+## 関連概念
+- [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

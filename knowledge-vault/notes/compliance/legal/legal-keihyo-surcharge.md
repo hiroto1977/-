@@ -30,6 +30,11 @@ aliases:
 - [消費者庁 課徴金制度の概要](https://www.caa.go.jp/policies/policy/representation/fair_labeling/amendment/pdf/141127premiums_1.pdf) `公的`
 - [景品表示法の課徴金 解説](https://www.89ji.com/keihyou-guide/administrative_monetary_penalty.html) `メディア`
 
+## 関連概念
+- [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]] — 語彙が近い
+- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 出典を共有
+- [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

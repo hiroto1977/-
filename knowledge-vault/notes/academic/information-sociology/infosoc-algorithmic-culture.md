@@ -30,6 +30,15 @@ Ted Striphas ／ Tarleton Gillespie ／ Alexander R. Galloway
 - [Gillespie (2014) The Relevance of Algorithms — in Media Technologies, MIT Press](https://doi.org/10.7551/mitpress/9780262525374.003.0009) `学術`
 - [Wikipedia — Algorithmic culture](https://en.wikipedia.org/wiki/Algorithmic_culture) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
+- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同じ思想家
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[infosoc-moores-law|ムーアの法則]] — 同分野の近傍
+- [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同分野の近傍
+- [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

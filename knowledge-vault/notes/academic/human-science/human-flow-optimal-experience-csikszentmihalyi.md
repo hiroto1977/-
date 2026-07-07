@@ -29,6 +29,18 @@ aliases:
 - [Nakamura & Csikszentmihalyi (2014) The Concept of Flow — Handbook of Positive Psychology](https://doi.org/10.1177/0963721414535685) `学術`
 - [Wikipedia: Flow (psychology) — Csikszentmihalyi, optimal experience, challenge-skill balance, ESM](https://en.wikipedia.org/wiki/Flow_(psychology)) `リファレンス`
 
+## 関連概念
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 語彙が近い
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 語彙が近い
+- [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-positive-psychology|ポジティブ心理学]] — 同じ思想家
+- [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

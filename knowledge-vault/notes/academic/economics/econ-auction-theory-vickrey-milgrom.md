@@ -30,6 +30,18 @@ aliases:
 - [Milgrom & Weber (1982) A Theory of Auctions and Competitive Bidding — Econometrica](https://doi.org/10.2307/1911865) `学術`
 - [Wikipedia: Auction theory — オークション理論の主要結果とメカニズム設計の概説](https://en.wikipedia.org/wiki/Auction_theory) `リファレンス`
 
+## 関連概念
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 同じ思想家
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

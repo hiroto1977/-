@@ -29,6 +29,17 @@ aliases:
 - [James, W. (1884) What is an Emotion? — Mind 9(34)](https://doi.org/10.1093/mind/os-IX.34.188) `学術`
 - [Wikipedia: James–Lange theory — James, Lange, bodily reaction precedes emotion, Cannon-Bard critique](https://en.wikipedia.org/wiki/James%E2%80%93Lange_theory) `リファレンス`
 
+## 関連概念
+- [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 同じ思想家
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同じ思想家
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同じ思想家
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[human-body-schema|身体図式（ボディスキーマ）]] — 同分野の近傍
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

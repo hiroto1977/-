@@ -30,6 +30,11 @@ aliases:
 - [Davidson, E. (2002) Technology Frames and Framing — Information Systems Research](https://doi.org/10.1287/isre.11.4.404.11876) `学術`
 - [Wikipedia: Technological frame — 技術フレームの概要](https://en.wikipedia.org/wiki/Technological_frame) `リファレンス`
 
+## 関連概念
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 語彙が近い
+- [[infosoc-social-construction-technology-bijker|技術の社会的構成（SCOT）——技術は社会集団の解釈を通じて形づくられる]] — 同じ思想家
+- [[infosoc-phenomenological-technology|技術の現象学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

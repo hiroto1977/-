@@ -147,14 +147,23 @@ describe('computeGraph — 合成コーパス', () => {
     expect(overlap.length).toBe(1);
   });
 
-  it('shares-thinker: 同姓（テイラー）でも「姓のみ」正規化で経済学↔経営学がつながる', () => {
+  it('shares-thinker: 同一人物（ジョン・B・テイラー）のルール↔原理はつながる', () => {
+    const e = g.edges.find(
+      (x: { a: string; b: string; type: string }) =>
+        x.a === 'a-monetary-rule' && x.b === 'b-monetary-principle' && x.type === 'shares-thinker',
+    );
+    expect(e).toBeTruthy();
+  });
+
+  it('shares-thinker: 同姓別人（金融政策のテイラー vs 科学的管理法のテイラー）は結ばれない', () => {
+    // 複合キー（姓+名イニシャル）による同姓別人の分離 — 実データで発見した偽相関の回帰テスト。
     const e = g.edges.find(
       (x: { a: string; b: string; type: string }) =>
         ((x.a === 'a-monetary-rule' && x.b === 'd-mgmt-taylorism') ||
           (x.a === 'b-monetary-principle' && x.b === 'd-mgmt-taylorism')) &&
         x.type === 'shares-thinker',
     );
-    expect(e).toBeTruthy();
+    expect(e).toBeUndefined();
   });
 
   it('discipline-bridge: コレクション横断（compliance インボイス↔academic VAT）が架かる', () => {
@@ -179,22 +188,36 @@ describe('computeGraph — 合成コーパス', () => {
   });
 });
 
-describe('extractAuthorSurnames — 姓の正規化', () => {
-  it('カタカナ氏名は中黒区切りの最後のトークンを姓とする', () => {
-    const s = kg.extractAuthorSurnames('ジョン・メイナード・ケインズ（1936）');
-    expect([...s]).toContain('ケインズ');
-    expect([...s]).not.toContain('ジョン');
-    expect([...s]).not.toContain('メイナード');
+describe('extractAuthorSurnames — 人物キーの正規化（姓+名イニシャル複合）', () => {
+  it('同一表記の氏名は同じキーになる（中黒氏名）', () => {
+    const a = kg.extractAuthorSurnames('ジョン・メイナード・ケインズ（1936）');
+    const b = kg.extractAuthorSurnames('ジョン・メイナード・ケインズ');
+    expect(a.size).toBe(1);
+    expect([...a]).toEqual([...b]);
+    const key = [...a][0];
+    expect(key).toContain('ケインズ');
+    expect(key).not.toContain('メイナード');
   });
-  it('ラテン "Surname, First" はカンマ前を姓とする', () => {
-    const s = kg.extractAuthorSurnames('Kahan, Dan M. （2012 Nature Climate Change）／Slovic, Paul');
-    expect([...s]).toContain('kahan');
-    expect([...s]).toContain('slovic');
-    expect([...s]).not.toContain('dan');
+  it('同姓別人は異なるキーになる（テイラー分離の回帰テスト）', () => {
+    const shelley = [...kg.extractAuthorSurnames('シェリー・テイラー（2000）')][0];
+    const frederick = [...kg.extractAuthorSurnames('フレデリック・ウィンズロー・テイラー（1911）')][0];
+    const john = [...kg.extractAuthorSurnames('ジョン・ブライアン・テイラー（1993）')][0];
+    expect(new Set([shelley, frederick, john]).size).toBe(3);
   });
-  it('機関語・一般語（ノーベル/university 等）は姓にしない', () => {
-    const s = kg.extractAuthorSurnames('ノーベル賞／Harvard University Press');
-    expect(s.size).toBe(0);
+  it('ラテン "Surname, First" とカタカナ "姓, 名" の両形式を解釈する', () => {
+    const s = kg.extractAuthorSurnames('Kahan, Dan M. （2012）／Slovic, Paul／ルーカス, ロバート（1972）');
+    const keys = [...s];
+    expect(keys.some((k) => k.startsWith('kahan|d'))).toBe(true);
+    expect(keys.some((k) => k.startsWith('slovic|p'))).toBe(true);
+    expect(keys.some((k) => k.startsWith('ルーカス|ロ'))).toBe(true);
+  });
+  it('散文調の一般語（ルール等）や機関語は人名にしない', () => {
+    expect(kg.extractAuthorSurnames('政策金利をインフレ率に反応させるルール').size).toBe(0);
+    expect(kg.extractAuthorSurnames('ノーベル賞／Harvard University Press').size).toBe(0);
+  });
+  it('裸のカタカナ 1 トークンは「（西暦」が続くときだけ人名と認める', () => {
+    expect(kg.extractAuthorSurnames('クルーガー（1974）').size).toBe(1);
+    expect(kg.extractAuthorSurnames('労働契約の民事的ルールを定める法').size).toBe(0);
   });
 });
 

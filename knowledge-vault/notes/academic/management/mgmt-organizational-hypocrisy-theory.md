@@ -30,6 +30,12 @@ Nils Brunsson ／ John W. Meyer ／ Brian Rowan ／ Kerstin Sahlin-Andersson ／
 - [Carter (1992) Book Review: The Organization of Hypocrisy — Organization Studies, SAGE](https://doi.org/10.1177/017084069201300211) `学術`
 - [Brunsson — Organized Hypocrisy, in The Consequences of Decision-Making — Oxford University Press](https://doi.org/10.1093/oso/9780199206285.003.0007) `学術`
 
+## 関連概念
+- [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同分野の近傍
+- [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 同分野の近傍
+- [[mgmt-swot-analysis|SWOT分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

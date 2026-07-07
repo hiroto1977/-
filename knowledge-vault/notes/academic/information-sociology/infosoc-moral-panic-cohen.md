@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia: Moral Panic — Cohen societal reaction to perceived threats](https://en.wikipedia.org/wiki/Moral_panic) `リファレンス`
 - [Goode, E. & Ben-Yehuda, N. (2009) Moral Panics: The Social Construction of Deviance — Wiley-Blackwell 2nd ed.](https://doi.org/10.1093/bjc/azq032) `学術`
 
+## 関連概念
+- [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同じ思想家
+- [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]] — 同じ思想家
+- [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同じ思想家
+- [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
+- [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
+- [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

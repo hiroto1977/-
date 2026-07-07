@@ -29,6 +29,18 @@ aliases:
 - [Greenberg, J. (1987) A Taxonomy of Organizational Justice Theories — Academy of Management Review 12(1)](https://doi.org/10.5465/amr.1987.4306437) `学術`
 - [Wikipedia: Organizational justice — Greenberg, distributive/procedural/interactional justice, Leventhal](https://en.wikipedia.org/wiki/Organizational_justice) `リファレンス`
 
+## 関連概念
+- [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]] — 語彙が近い
+- [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同じ思想家
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同じ思想家
+- [[human-terror-management-greenberg|恐怖管理理論（グリーンバーグ＆ピジシンスキー）]] — 同じ思想家
+- [[human-terror-management-theory-becker|テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験]] — 同じ思想家
+- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
+- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同分野の近傍
+- [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

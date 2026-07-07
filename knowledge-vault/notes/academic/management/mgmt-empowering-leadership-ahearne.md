@@ -29,6 +29,14 @@ aliases:
 - [Ahearne, M., Mathieu, J. & Rapp, A. (2005) To empower or not to empower your sales force? — Journal of Applied Psychology](https://doi.org/10.1037/0021-9010.90.5.945) `学術`
 - [Wikipedia: Empowerment — empowering leadership, psychological empowerment, autonomy](https://en.wikipedia.org/wiki/Empowerment) `リファレンス`
 
+## 関連概念
+- [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同じ思想家
+- [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同じ思想家
+- [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同じ思想家
+- [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同じ思想家
+- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同分野の近傍
+- [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

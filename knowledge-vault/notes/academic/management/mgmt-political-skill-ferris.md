@@ -29,6 +29,18 @@ aliases:
 - [Ferris, G. R. et al. (2005) Development and validation of the political skill inventory — Journal of Management](https://doi.org/10.1177/0149206304271386) `学術`
 - [Wikipedia: Organizational politics — political skill, social astuteness, interpersonal influence](https://en.wikipedia.org/wiki/Organizational_politics) `リファレンス`
 
+## 関連概念
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-emotional-intelligence|感情知性（EQ）]] — 同じ思想家
+- [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
+- [[human-emotional-intelligence|情動知能（EQ）]] — 同じ思想家
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

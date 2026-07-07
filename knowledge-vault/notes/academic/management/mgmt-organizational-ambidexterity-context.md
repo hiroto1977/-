@@ -30,6 +30,18 @@ Cristina B. Gibson／Julian Birkinshaw／Michael L. Tushman／Charles A. O'Reill
 - [Raisch & Birkinshaw (2008) Organizational ambidexterity review, Organization Science 19(3):375-392](https://doi.org/10.1287/orsc.1070.0357) `学術`
 - [Tushman & O'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29](https://doi.org/10.2307/41165987) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 語彙が近い
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 語彙が近い
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
+- [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

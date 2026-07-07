@@ -30,6 +30,13 @@ aliases:
 - [Phillips, D.J., Turco, C.J. & Zuckerman, E.W. (2013) Betrayal as Market Barrier — ASR 78(3)](https://doi.org/10.1177/0003122413480666) `学術`
 - [Wikipedia: Idiosyncrasy Credit — Hollander status and deviation tolerance theory](https://en.wikipedia.org/wiki/Idiosyncrasy_credit) `リファレンス`
 
+## 関連概念
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同じ思想家
+- [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同じ思想家
+- [[mgmt-stockdale-paradox|ストックデールの逆説]] — 同分野の近傍
+- [[mgmt-marketing-myopia|マーケティング近視眼]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

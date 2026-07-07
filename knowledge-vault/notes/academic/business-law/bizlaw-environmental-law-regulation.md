@@ -29,6 +29,12 @@ aliases:
 - [UNFCCC — Paris Agreement: text, NDCs, implementation, 1.5°C target, CBDR](https://unfccc.int/process-and-meetings/the-paris-agreement) `公的`
 - [Wikipedia: Environmental law — NEPA, CBDR, CSRD, climate litigation, Urgenda, ESG disclosure](https://en.wikipedia.org/wiki/Environmental_law) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 出典を共有
+- [[bizlaw-corporate-social-responsibility-law|CSRの法的規制——企業の社会的責任の自主規制から強制開示・デューデリジェンス義務への展開]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

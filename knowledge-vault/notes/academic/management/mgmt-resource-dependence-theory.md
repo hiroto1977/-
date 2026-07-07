@@ -30,6 +30,11 @@ aliases:
 - [Pfeffer & Salancik (1995) External Dependence and Organizational Response — Academy of Management Review](https://journals.sagepub.com/doi/10.1177/017084069501100406) `学術`
 - [Davis, Schoorman & Donaldson — Toward a Stewardship Theory — Academy of Management Review (1997)](https://www.jstor.org/stable/2951606) `学術`
 
+## 関連概念
+- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
+- [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
+- [[mgmt-discovery-driven-planning|発見志向計画法（ディスカバリー・ドリブン・プランニング）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

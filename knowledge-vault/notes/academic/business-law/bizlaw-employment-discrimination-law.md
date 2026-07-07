@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省 男女雇用機会均等法の概要 — 厚生労働省](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/) `公的`
 - [Wikipedia: 雇用差別 — 均等待遇と合理的配慮の法的解説](https://ja.wikipedia.org/wiki/%E9%9B%87%E7%94%A8%E5%B7%AE%E5%88%A5) `リファレンス`
 
+## 関連概念
+- [[bizlaw-preemption-doctrine-federal|連邦優先権原則（プリエンプション・ドクトリン）]] — 同じ思想家
+- [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 出典を共有
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同分野の近傍
+- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 同分野の近傍
+- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

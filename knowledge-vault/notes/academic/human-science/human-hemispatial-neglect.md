@@ -29,6 +29,10 @@ Heinrich M. Heilman & Edward Valenstein（Annals of Neurology 5(2), 1979, メカ
 - [Heilman & Valenstein (1979) Mechanisms Underlying Hemispatial Neglect — Annals of Neurology 5(2), pp.166-170](https://doi.org/10.1002/ana.410050210) `学術`
 - [Mesulam (1981) A Cortical Network for Directed Attention and Unilateral Neglect — Annals of Neurology 10(4), pp.309-325](https://doi.org/10.1002/ana.410100402) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

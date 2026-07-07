@@ -29,6 +29,11 @@ aliases:
 - [Goldstein & Gigerenzer (2002) Models of ecological rationality: the recognition heuristic, Psychological Review 109(1):75-90 — PubMed](https://pubmed.ncbi.nlm.nih.gov/11863042/) `学術`
 - [Recognition heuristic — Wikipedia（定義・都市の大きさの例・less-is-more効果）](https://en.wikipedia.org/wiki/Recognition_heuristic) `リファレンス`
 
+## 関連概念
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 同分野の近傍
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

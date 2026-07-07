@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Axel Leijonhufvud — corridor hypothesis and Keynesian economics reinterpretation](https://en.wikipedia.org/wiki/Axel_Leijonhufvud) `リファレンス`
 - [Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes — Oxford UP](https://doi.org/10.1017/CBO9780511559747) `学術`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

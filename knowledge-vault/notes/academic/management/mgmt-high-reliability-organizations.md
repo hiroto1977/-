@@ -30,6 +30,10 @@ aliases:
 - [Berkeley CCRM — 40th Anniversary of HRO Research](https://ccrm.berkeley.edu/40th-anniversary-high-reliability-organizations-research) `学術`
 - [Wikipedia — High Reliability Organization](https://en.wikipedia.org/wiki/High_reliability_organization) `リファレンス`
 
+## 関連概念
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 語彙が近い
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

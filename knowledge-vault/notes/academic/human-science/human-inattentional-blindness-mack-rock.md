@@ -29,6 +29,12 @@ aliases:
 - [Mack, A. & Rock, I. (1998) Inattentional Blindness — MIT Press (WorldCat)](https://www.worldcat.org/oclc/38966531) `学術`
 - [Wikipedia: Inattentional blindness — Mack & Rock, invisible gorilla, Simons & Chabris, attention and perception](https://en.wikipedia.org/wiki/Inattentional_blindness) `リファレンス`
 
+## 関連概念
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同分野の近傍
+- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同分野の近傍
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

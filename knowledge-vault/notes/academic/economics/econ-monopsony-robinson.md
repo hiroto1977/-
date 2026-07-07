@@ -29,6 +29,18 @@ aliases:
 - [Robinson, J. (1933) The Economics of Imperfect Competition — Macmillan; coins monopsony (WorldCat)](https://www.worldcat.org/oclc/152442) `学術`
 - [Wikipedia: Monopsony — single buyer, marginal factor cost, labor markets, minimum wage](https://en.wikipedia.org/wiki/Monopsony) `リファレンス`
 
+## 関連概念
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
+- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

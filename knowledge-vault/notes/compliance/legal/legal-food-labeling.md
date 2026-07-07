@@ -30,6 +30,12 @@ aliases:
 - [消費者庁 食品表示基準Q&A 加工食品の義務表示](https://www.caa.go.jp/policies/policy/food_labeling/food_labeling_act/assets/food_labeling_cms201_230309_13.pdf) `公的`
 - [東京都 食品衛生の窓 アレルゲン表示](https://www.hokeniryo1.metro.tokyo.lg.jp/shokuhin/hyouji/shokuhyouhou_kakou_allegy.html) `自治体`
 
+## 関連概念
+- [[bizlaw-food-labeling|食品表示法]] — 語彙が近い
+- [[legal-food-sanitation|食品衛生法の営業許可・届出とHACCPに沿った衛生管理]] — 出典を共有
+- [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 同分野の近傍
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

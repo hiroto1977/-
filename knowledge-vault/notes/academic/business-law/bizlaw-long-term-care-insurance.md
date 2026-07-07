@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 介護サービス情報公表システム「介護保険とは」](https://www.kaigokensaku.mhlw.go.jp/commentary/about.html) `公的`
 - [コトバンク 介護保険法](https://kotobank.jp/word/%E4%BB%8B%E8%AD%B7%E4%BF%9D%E9%99%BA%E6%B3%95-224690) `リファレンス`
 
+## 関連概念
+- [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 出典を共有
+- [[bizlaw-national-health-insurance|国民健康保険法]] — 同分野の近傍
+- [[bizlaw-employees-pension|厚生年金保険法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [UNCITRAL — New York Convention 1958: text, signatory states, travaux préparatoires](https://uncitral.un.org/en/texts/arbitration/conventions/foreign_arbitral_awards) `公的`
 - [Wikipedia: International commercial arbitration — NY Convention, UNCITRAL, ICC, LCIA, ISDS](https://en.wikipedia.org/wiki/International_commercial_arbitration) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 語彙が近い
+- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 語彙が近い
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 語彙が近い
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 同じ思想家
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同じ思想家
+- [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 出典を共有
+- [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

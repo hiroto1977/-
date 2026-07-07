@@ -29,6 +29,16 @@ aliases:
 - [White, D.M. (1950) The Gate Keeper: A Case Study in the Selection of News — Journalism Quarterly 27(4)](https://doi.org/10.1177/107769905002700403) `学術`
 - [Wikipedia: Gatekeeping (communication) — Lewin, White, Mr. Gates, Shoemaker multilevel theory](https://en.wikipedia.org/wiki/Gatekeeping_(communication)) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 同じ思想家
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 同じ思想家
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 同じ思想家
+- [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[infosoc-media-literacy|メディア・リテラシー]] — 同分野の近傍
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

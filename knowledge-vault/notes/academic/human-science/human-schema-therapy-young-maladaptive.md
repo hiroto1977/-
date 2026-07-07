@@ -30,6 +30,10 @@ aliases:
 - [Arntz & van Genderen (2009) Schema Therapy for Borderline Personality Disorder — Wiley](https://doi.org/10.1159/000019408) `学術`
 - [Wikipedia: Schema therapy — スキーマ療法の概念と臨床応用](https://en.wikipedia.org/wiki/Schema_therapy) `リファレンス`
 
+## 関連概念
+- [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 語彙が近い
+- [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

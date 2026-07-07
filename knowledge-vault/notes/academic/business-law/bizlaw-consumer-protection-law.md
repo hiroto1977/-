@@ -31,6 +31,12 @@ aliases:
 - [特定商取引に関する法律（昭和51年法律第57号）e-Gov法令検索](https://laws.e-gov.go.jp/law/351AC0000000057) `公的`
 - [消費者庁 — 消費者政策の概要](https://www.caa.go.jp/policies/policy/consumer_policy/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同分野の近傍
+- [[bizlaw-worker-cooperative|労働者協同組合法]] — 同分野の近傍
+- [[bizlaw-patent-system|特許制度（特許法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209–226（文脈的両利きの実証）](https://doi.org/10.5465/amj.2004.14586060) `学術`
 - [Wikipedia: Organizational ambidexterity — Tushman, exploration/exploitation, structural vs contextual, DX](https://en.wikipedia.org/wiki/Organizational_ambidexterity) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 語彙が近い
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 語彙が近い
+- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同じ思想家
+- [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
+- [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [経済産業省 容器包装リサイクル法 説明資料](https://www.meti.go.jp/policy/recycle/main/data/pamphlet/yoriho/15setsumei/all.pdf) `公的`
 - [日本容器包装リサイクル協会 特定事業者について](https://www.jcpra.or.jp/law/duty/specified/) `運営団体`
 
+## 関連概念
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
+- [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]] — 出典を共有
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 出典を共有
+- [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 出典を共有
+- [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
+- [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
+- [[subsidy-zeh|ZEH支援事業]] — 出典を共有
+- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Campbell, J. Y. & Shiller, R. J. (1988) The dividend-price ratio and expectations of future dividends and discount factors — Review of Financial Studies](https://doi.org/10.1093/rfs/1.3.195) `学術`
 - [Wikipedia: Dividend discount model — Campbell–Shiller decomposition, return predictability, discount rates](https://en.wikipedia.org/wiki/Dividend_discount_model) `リファレンス`
 
+## 関連概念
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
+- [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同じ思想家
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
+- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

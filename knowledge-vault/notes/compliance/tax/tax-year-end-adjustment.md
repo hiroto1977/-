@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.2675 年末調整の対象となる給与](https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2675.htm) `公的`
 - [年末調整 解説](https://biz.moneyforward.com/payroll/basic/53611/) `メディア`
 
+## 関連概念
+- [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 同分野の近傍
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

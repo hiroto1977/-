@@ -30,6 +30,18 @@ aliases:
 - [消費者庁 ダークパターン実態調査（2023年） — 消費者庁](https://www.caa.go.jp/policies/policy/consumer_policy/meeting_materials/review_meeting_007/) `公的`
 - [Wikipedia: ダークパターン — UX欺瞞設計と規制の解説](https://ja.wikipedia.org/wiki/%E3%83%80%E3%83%BC%E3%82%AF%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3) `リファレンス`
 
+## 関連概念
+- [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 語彙が近い
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 出典を共有
+- [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
+- [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — 出典を共有
+- [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
+- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 出典を共有
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

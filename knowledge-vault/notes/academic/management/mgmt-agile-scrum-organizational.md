@@ -29,6 +29,11 @@ aliases:
 - [Beck et al. (2001) Manifesto for Agile Software Development — agilemanifesto.org](https://agilemanifesto.org/) `リファレンス`
 - [Wikipedia: Agile software development — Scrum, XP, Kanban, organizational agility, SAFe](https://en.wikipedia.org/wiki/Agile_software_development) `リファレンス`
 
+## 関連概念
+- [[agile-development|アジャイルソフトウェア開発]] — 語彙が近い
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 語彙が近い
+- [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

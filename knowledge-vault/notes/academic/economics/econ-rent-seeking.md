@@ -33,6 +33,18 @@ aliases:
 - [Krueger, A.O. (1974) The Political Economy of the Rent-Seeking Society — AER](https://doi.org/10.1086/467455) `学術`
 - [Wikipedia: Rent-seeking — political economy](https://en.wikipedia.org/wiki/Rent-seeking) `リファレンス`
 
+## 関連概念
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+- [[econ-conflict-economics-hirshleifer|紛争の経済学——「力の暗黒面」と奪取の合理的選択]] — 同じ思想家
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+- [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
+- [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

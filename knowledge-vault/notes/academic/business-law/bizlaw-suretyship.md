@@ -30,6 +30,10 @@ aliases:
 - [法務省「2020年４月１日から 保証に関する民法のルールが大きく変わります」](https://www.moj.go.jp/content/001399956.pdf) `公的`
 - [Wikibooks 民法第446条（条文・コンメンタール）](https://ja.wikibooks.org/wiki/民法第446条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 語彙が近い
+- [[bizlaw-electronic-consumer-contract|電子消費者契約法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

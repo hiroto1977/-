@@ -31,6 +31,18 @@ Douglas G. Baird ／ Thomas H. Jackson ／ Stephen J. Lubben
 - [Lubben (2016) — The Overstated Absolute Priority Rule, Fordham J. Corp. & Fin. L.](https://ir.lawnet.fordham.edu/jcfl/vol21/iss4/1/) `学術`
 - [EU Directive 2019/1023 on Preventive Restructuring Frameworks (EUR-Lex)](https://eur-lex.europa.eu/eli/dir/2019/1023/oj/eng) `公的`
 
+## 関連概念
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同じ思想家
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同じ思想家
+- [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 同じ思想家
+- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同じ思想家
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 出典を共有
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

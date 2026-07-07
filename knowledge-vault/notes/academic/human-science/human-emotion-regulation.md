@@ -29,6 +29,18 @@ aliases:
 - [APA Psychological Review — Gross (1998) "The Emerging Field of Emotion Regulation" 掲載誌（査読誌、感情調整プロセスモデルの原典誌）](https://www.apa.org/pubs/journals/rev/) `学術`
 - [Encyclopaedia Britannica — Emotion regulation（定義・グロスのプロセスモデル・認知的再評価と表現抑制）](https://www.britannica.com/topic/emotion-regulation) `リファレンス`
 
+## 関連概念
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 語彙が近い
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 語彙が近い
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 語彙が近い
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

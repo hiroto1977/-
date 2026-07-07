@@ -29,6 +29,18 @@ aliases:
 - [Diamond, D.W. & Dybvig, P.H. (1983) Bank Runs, Deposit Insurance, and Liquidity — Journal of Political Economy 91(3), 401–419（銀行取付モデルの原論文）](https://doi.org/10.1086/261155) `学術`
 - [Wikipedia: Diamond–Dybvig model — 銀行取付モデルの概説](https://en.wikipedia.org/wiki/Diamond%E2%80%93Dybvig_model) `リファレンス`
 
+## 関連概念
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 語彙が近い
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-bagehot-lender-last-resort|最後の貸し手とバジョットの原則——金融危機における中央銀行の役割]] — 同じ思想家
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同じ思想家
+- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Broken windows theory（原典 Wilson & Kelling 1982, The Atlantic）](https://en.wikipedia.org/wiki/Broken_windows_theory) `リファレンス`
 - [Broken Windows, Informal Social Control, and Crime: Assessing Causality in Empirical Studies (PMC, 査読論文)](https://pmc.ncbi.nlm.nih.gov/articles/PMC8059646/) `学術`
 
+## 関連概念
+- [[human-stanford-prison-experiment|スタンフォード監獄実験]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

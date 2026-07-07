@@ -29,6 +29,15 @@ aliases:
 - [Tuchman, G. (1978) The Symbolic Annihilation of Women by the Mass Media — in Hearth and Home: Images of Women in the Mass Media](https://link.springer.com/chapter/10.1007/978-1-349-62397-6_9) `学術`
 - [Wikipedia: Symbolic annihilation — Gerbner (coined), Tuchman (1978), absence/condemnation/trivialization, women and minorities in media](https://en.wikipedia.org/wiki/Symbolic_annihilation) `リファレンス`
 
+## 関連概念
+- [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同じ思想家
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同じ思想家
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同じ思想家
+- [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同じ思想家
+- [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
+- [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

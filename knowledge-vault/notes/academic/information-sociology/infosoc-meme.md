@@ -30,6 +30,11 @@ aliases:
 - [Susan Blackmore 公式サイト「About Memes」— ミーム＝人から人へコピーされるもの・memetics](https://www.susanblackmore.uk/memetics/about-memes/) `学術`
 - [Wikipedia「Meme」— 定義・語源・Dawkins/Blackmore・memetics批判](https://en.wikipedia.org/wiki/Meme) `リファレンス`
 
+## 関連概念
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

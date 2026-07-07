@@ -29,6 +29,18 @@ aliases:
 - [Christensen, C.M. et al. (2016) Know Your Customers Jobs to Be Done — Harvard Business Review 94(9)](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `学術`
 - [Wikipedia: Jobs to be done — Christensen, hiring products, milkshake example, Levitt, innovation](https://en.wikipedia.org/wiki/Jobs_to_be_done) `リファレンス`
 
+## 関連概念
+- [[mgmt-marketing-myopia|マーケティング近視眼]] — 同じ思想家
+- [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
+- [[mgmt-value-proposition|バリュープロポジション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

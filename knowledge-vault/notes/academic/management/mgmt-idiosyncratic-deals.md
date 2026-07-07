@@ -29,6 +29,10 @@ Denise M. Rousseau（M.E. Sharpe, 2005, 体系化）／Rousseau, Ho & Greenberg�
 - [Rousseau, Ho & Greenberg (2006) I-Deals: Idiosyncratic Terms in Employment Relationships — Academy of Management Review 31(4), pp.977-994](https://doi.org/10.5465/amr.2006.22527470) `学術`
 - [Liao, Wayne & Rousseau (2016) Idiosyncratic deals in contemporary organizations — Journal of Organizational Behavior 37(S1), pp.S9-S29](https://doi.org/10.1002/job.1959) `学術`
 
+## 関連概念
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

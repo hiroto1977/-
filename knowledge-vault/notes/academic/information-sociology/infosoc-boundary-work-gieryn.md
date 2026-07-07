@@ -29,6 +29,18 @@ aliases:
 - [Gieryn, T. F. (1983) Boundary-work and the demarcation of science from non-science — American Sociological Review](https://doi.org/10.2307/2095325) `学術`
 - [Wikipedia: Boundary-work — demarcation, scientific authority, credibility, STS](https://en.wikipedia.org/wiki/Boundary-work) `リファレンス`
 
+## 関連概念
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

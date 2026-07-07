@@ -29,6 +29,11 @@ aliases:
 - [Loomes, G. & Sugden, R. (1982) Regret theory: An alternative theory of rational choice under uncertainty — Economic Journal](https://doi.org/10.2307/2232669) `学術`
 - [Wikipedia: Regret (decision theory) — regret theory, counterfactual, intransitivity, Allais](https://en.wikipedia.org/wiki/Regret_(decision_theory)) `リファレンス`
 
+## 関連概念
+- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 語彙が近い
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

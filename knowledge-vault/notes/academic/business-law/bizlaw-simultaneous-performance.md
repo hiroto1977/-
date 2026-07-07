@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia「同時履行の抗弁権」（要件・効果・留置権との異同）](https://ja.wikipedia.org/wiki/同時履行の抗弁権) `リファレンス`
 - [Wikibooks 民法第533条（条文・2017年改正の趣旨）](https://ja.wikibooks.org/wiki/民法第533条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-retention-lien|留置権（民法295条）]] — 同分野の近傍
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

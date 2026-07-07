@@ -32,6 +32,13 @@ Magda Blondiau Arnold ／ Richard S. Lazarus ／ Klaus R. Scherer
 - [Reflection on Lazarus — Emotion and Adaptation (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/reflection-on-richard-lazarus-emotion-and-adaptation/F665277BCE36BE80C6760A60E6543C71) `学術`
 - [Scherer, Schorr & Johnstone — Appraisal Processes in Emotion (Oxford Academic)](https://academic.oup.com/book/53557) `学術`
 
+## 関連概念
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 語彙が近い
+- [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]] — 出典を共有
+- [[mgmt-organizational-death-theory|組織死亡理論]] — 出典を共有
+- [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]] — 出典を共有
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

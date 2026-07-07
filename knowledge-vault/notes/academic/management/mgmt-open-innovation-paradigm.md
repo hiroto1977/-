@@ -30,6 +30,14 @@ Henry W. Chesbrough／Wim Vanhaverbeke／Joel West
 - [Oxford Research Encyclopedia — Open Innovation](https://doi.org/10.1093/acrefore/9780190224851.013.38) `リファレンス`
 - [Wikipedia — Open innovation](https://en.wikipedia.org/wiki/Open_innovation) `リファレンス`
 
+## 関連概念
+- [[mgmt-open-innovation|オープン・イノベーション]] — 語彙が近い
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 出典を共有
+- [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
+- [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
+- [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
+- [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Respondeat superior（「上位者が応答せよ」）は、使用者が被用�
 - [Wikipedia: Respondeat Superior — scope of employment and vicarious liability](https://en.wikipedia.org/wiki/Respondeat_superior) `リファレンス`
 - [Sykes, A.O. (1988) The Boundaries of Vicarious Liability — Journal of Legal Studies 17(2)](https://doi.org/10.2307/1340769) `学術`
 
+## 関連概念
+- [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 語彙が近い
+- [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
+- [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同じ思想家
+- [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 同じ思想家
+- [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ Joseph Story（ジョセフ・ストーリー連邦最高裁判事、巡回裁�
 - [James R. Ellis & Charles L. Sayre, "Trust-Fund Doctrine Revisited [Part I]," Washington Law Review, Vol. 24, No. 1 (1949), p. 44](https://digitalcommons.law.uw.edu/wlr/vol24/iss1/4/) `学術`
 - [Wood v. Dummer, 30 F. Cas. 435 (C.C.D. Me. 1824) (No. 17,944) (Story, J.) — capital stock held a trust fund for creditors (Federal Cases reporter)](https://law.resource.org/pub/us/case/reporter/F.Cas/0030.f.cas/0030.f.cas.0435.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-comity-of-nations|国際礼譲（Comity of Nations）]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 出典を共有
+- [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
+- [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 同分野の近傍
+- [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

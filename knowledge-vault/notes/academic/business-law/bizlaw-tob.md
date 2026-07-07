@@ -30,6 +30,12 @@ aliases:
 - [金融庁 公開買付制度・大量保有報告制度WG事務局説明資料（公開買付制度の概要・3分の1ルール）](https://www.fsa.go.jp/singi/singi_kinyu/tob_wg/shiryou/20230731/01.pdf) `公的`
 - [財務省関東財務局「株券等の公開買付け」（公開買付届出書・意見表明報告書等の開示）](https://lfb.mof.go.jp/kantou/disclo/pagekthp00400042.html) `公的`
 
+## 関連概念
+- [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 出典を共有
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[bizlaw-misrepresentation|不実表示（misrepresentation、英米契約法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

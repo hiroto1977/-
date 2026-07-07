@@ -29,6 +29,18 @@ aliases:
 - [Pfeffer & Sutton (2006) "Evidence-Based Management," California Management Review 48(3)（査読学術誌・分野確立論文）](https://cmr.berkeley.edu/2006/01/48-3-evidence-based-management/) `学術`
 - [Briner, Denyer & Rousseau (2009) "Evidence-Based Management: Concept Cleanup Time?", Academy of Management Perspectives（定義精緻化・査読誌）](https://journals.aom.org/doi/10.5465/amr.2009.35713336) `学術`
 
+## 関連概念
+- [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 語彙が近い
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 語彙が近い
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+- [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
+- [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]] — 同じ思想家
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
+- [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同じ思想家
+- [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
+- [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

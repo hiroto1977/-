@@ -29,6 +29,18 @@ aliases:
 - [Handy, C. (1989) The Age of Unreason — Harvard Business School Press](https://www.worldcat.org/oclc/20012068) `学術`
 - [Wikipedia: Charles Handy — shamrock organization, portfolio worker, flexible firm](https://en.wikipedia.org/wiki/Charles_Handy) `リファレンス`
 
+## 関連概念
+- [[mgmt-management-by-objectives|目標管理（MBO）]] — 同じ思想家
+- [[mgmt-mckinsey-7s|マッキンゼーの7Sフレームワーク]] — 同じ思想家
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
+- [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
+- [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

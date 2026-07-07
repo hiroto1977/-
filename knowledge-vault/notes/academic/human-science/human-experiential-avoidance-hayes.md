@@ -30,6 +30,13 @@ aliases:
 - [Bond, F. et al. (2011) Preliminary Psychometric Properties of the AAQ-II — Behavior Therapy](https://doi.org/10.1016/j.brat.2006.06.003) `学術`
 - [Wikipedia: Experiential avoidance — 体験の回避の概要](https://en.wikipedia.org/wiki/Experiential_avoidance) `リファレンス`
 
+## 関連概念
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 語彙が近い
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 語彙が近い
+- [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]] — 同分野の近傍
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同分野の近傍
+- [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

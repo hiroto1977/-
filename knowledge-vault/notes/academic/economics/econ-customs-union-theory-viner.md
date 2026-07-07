@@ -30,6 +30,18 @@ aliases:
 - [Lipsey, R. G. (1957) The Theory of Customs Unions: Trade Diversion and Welfare — Economica](https://doi.org/10.1111/1467-937X.00174) `学術`
 - [Wikipedia: Customs union — trade creation and trade diversion analysis overview](https://en.wikipedia.org/wiki/Customs_union) `リファレンス`
 
+## 関連概念
+- [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — 語彙が近い
+- [[econ-lancaster-characteristics|ランカスターの特性アプローチ]] — 同じ思想家
+- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
+- [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

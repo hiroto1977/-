@@ -29,6 +29,15 @@ aliases:
 - [Blake, R.R. & Mouton, J.S. (1964) The Managerial Grid — Gulf Publishing (WorldCat)](https://www.worldcat.org/oclc/345922) `学術`
 - [Wikipedia: Managerial grid model — Blake & Mouton, concern for production/people, team management 9,9](https://en.wikipedia.org/wiki/Managerial_grid_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-likert-systems|リッカートのシステム4]] — 同じ思想家
+- [[mgmt-thomas-kilmann-conflict-modes|トーマス＝キルマンのコンフリクト対処モード（TKI）——対立行動を自己主張性と協調性の二軸で五類型に分ける枠組み]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — 同じ思想家
+- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
+- [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — 同分野の近傍
+- [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Wellman, B. (2001) Physical Place and Cyberplace: The Rise of Personalized Networking — IJURR 25(2)](https://doi.org/10.1111/1468-2427.00309) `学術`
 - [Wikipedia: Networked individualism — Wellman, Rainie, triple revolution, switchboard, personal networks](https://en.wikipedia.org/wiki/Networked_individualism) `リファレンス`
 
+## 関連概念
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同じ思想家
+- [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
+- [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同じ思想家
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同じ思想家
+- [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]] — 同じ思想家
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同じ思想家
+- [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

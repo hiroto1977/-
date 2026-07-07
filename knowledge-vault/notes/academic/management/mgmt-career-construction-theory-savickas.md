@@ -31,6 +31,18 @@ Mark L. Savickas ／ Donald E. Super ／ Jean Guichard
 - [ERIC (US Dept. of Education) EJ863573 — Savickas et al. (2009)](https://eric.ed.gov/?id=EJ863573) `公的`
 - [ResearchGate — Savickas (2013) Career construction theory and practice](https://www.researchgate.net/publication/238352276_Career_construction_theory_and_practice) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
+- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

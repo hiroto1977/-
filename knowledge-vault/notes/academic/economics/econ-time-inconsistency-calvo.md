@@ -29,6 +29,16 @@ aliases:
 - [Calvo, G. (1983) Staggered Prices in a Utility-Maximizing Framework — Journal of Monetary Economics](https://doi.org/10.1016/0304-3932(83)90060-0) `学術`
 - [Wikipedia: Calvo contracts — staggered pricing, NKPC, sticky prices, DSGE](https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts) `リファレンス`
 
+## 関連概念
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 語彙が近い
+- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 語彙が近い
+- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 語彙が近い
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-sticky-information|粘着情報モデル]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

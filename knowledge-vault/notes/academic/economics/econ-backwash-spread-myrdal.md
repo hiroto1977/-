@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Circular Cumulative Causation — overview of Myrdal backwash/spread framework](https://en.wikipedia.org/wiki/Circular_cumulative_causation) `リファレンス`
 - [Fujita, M. & Thisse, J.-F. (2002) Economics of Agglomeration — Cambridge UP ch.12](https://doi.org/10.1016/S1574-0684(05)01058-7) `学術`
 
+## 関連概念
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-trade-adjustment-assistance-kaldor-hicks|カルドア＝ヒックス基準と貿易調整支援——自由貿易の恩恵と損失者への再分配政策]] — 同じ思想家
+- [[econ-unbalanced-growth-hirschman|不均衡成長論——戦略的部門への投資が連関を通じて発展を牽引する]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

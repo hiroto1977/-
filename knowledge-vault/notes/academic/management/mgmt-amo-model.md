@@ -30,6 +30,12 @@ AMOモデル（AMOフレームワーク）は人的資源管理における業�
 - [Marin-Garcia & Tomas, Deconstructing AMO framework: a systematic review, Intangible Capital](https://www.intangiblecapital.org/index.php/ic/article/view/838/574) `学術`
 - [Appelbaum, Bailey, Berg & Kalleberg (2000) Manufacturing Advantage (Cornell University Press) record](https://www.researchgate.net/publication/265380870_Manufacturing_Advantage_Why_High-Performance_Work_Systems_Pay_Off) `リファレンス`
 
+## 関連概念
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 語彙が近い
+- [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 語彙が近い
+- [[mgmt-high-performance-work-systems|高業績ワークシステム]] — 同分野の近傍
+- [[mgmt-value-co-creation|価値共創]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

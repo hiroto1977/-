@@ -31,6 +31,10 @@ David F. Dinges ／ John W. Powell ／ Roger R. Rosa
 - [PMC — PVT demonstrates impaired vigilance in excessive daytime sleepiness](https://pmc.ncbi.nlm.nih.gov/articles/PMC4153121/) `学術`
 - [PMC — PVT use in air medical transport fatigue risk management (2023)](https://pmc.ncbi.nlm.nih.gov/articles/PMC10108634/) `学術`
 
+## 関連概念
+- [[human-blindsight-weiskrantz|盲視（ブラインドサイト）]] — 同分野の近傍
+- [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

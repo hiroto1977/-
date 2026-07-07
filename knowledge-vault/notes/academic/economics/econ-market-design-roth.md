@@ -29,6 +29,18 @@ aliases:
 - [Roth, A.E. & Sotomayor, M. (1990). Two-sided matching — Econometrica](https://doi.org/10.1257/jep.2.3.99) `学術`
 - [Wikipedia: Market design — matching theory economics](https://en.wikipedia.org/wiki/Market_design) `リファレンス`
 
+## 関連概念
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-shapley-value|シャープレー値]] — 同じ思想家
+- [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

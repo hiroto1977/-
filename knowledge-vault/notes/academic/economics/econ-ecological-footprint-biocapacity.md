@@ -33,6 +33,11 @@ aliases:
 - [Rees & Wackernagel - Urban Ecological Footprints (Environmental Impact Assessment Review 1996)](https://www.sciencedirect.com/science/article/abs/pii/S0195925596000224) `学術`
 - [Our Ecological Footprint: Reducing Human Impact on the Earth (Wackernagel & Rees 1996)](https://newsociety.com/book/our-ecological-footprint/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 同じ思想家
+- [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 同分野の近傍
+- [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

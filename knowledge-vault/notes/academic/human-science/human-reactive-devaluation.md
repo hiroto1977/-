@@ -30,6 +30,15 @@ Lee Ross（リー・ロス, 社会心理学者, スタンフォード大学） �
 - [Maoz, I., Ward, A., Katz, M. & Ross, L. (2002) "Reactive Devaluation of an 'Israeli' vs. 'Palestinian' Peace Proposal," Journal of Conflict Resolution, 46(4): 515–546. DOI:10.1177/0022002702046004003](https://journals.sagepub.com/doi/10.1177/0022002702046004003) `学術`
 - [Wikipedia: "Reactive devaluation" — Ross & Stillinger (1991); Stillinger, Epelbaum, Keltner & Ross arms-reduction survey (Reagan 90% / analysts 80% / Gorbachev 44%)](https://en.wikipedia.org/wiki/Reactive_devaluation) `リファレンス`
 
+## 関連概念
+- [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

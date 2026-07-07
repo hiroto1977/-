@@ -29,6 +29,18 @@ aliases:
 - [von Neumann, J. (1945) A model of general economic equilibrium — Review of Economic Studies](https://doi.org/10.2307/2296111) `学術`
 - [Wikipedia: Von Neumann–Gale model — balanced growth, duality, turnpike](https://en.wikipedia.org/wiki/Von_Neumann%E2%80%93Gale_model) `リファレンス`
 
+## 関連概念
+- [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — 同じ思想家
+- [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — 同じ思想家
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [CiNii Research（国立情報学研究所）原論文書誌レコード](https://cir.nii.ac.jp/crid/1390001204501872256?lang=en) `学術`
 - [狩野モデル — ウィキペディア日本語版](https://ja.wikipedia.org/wiki/%E7%8B%A9%E9%87%8E%E3%83%A2%E3%83%87%E3%83%AB) `リファレンス`
 
+## 関連概念
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
+- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 出典を共有
+- [[econ-rostow-stages|ロストウの経済成長段階説]] — 出典を共有
+- [[econ-time-preference|時間選好]] — 出典を共有
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
+- [[mgmt-psychological-ownership|心理的所有感]] — 出典を共有
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[mgmt-market-orientation|市場志向]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

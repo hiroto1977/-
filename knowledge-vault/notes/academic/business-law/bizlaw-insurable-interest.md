@@ -29,6 +29,11 @@ aliases:
 - [Wikipedia: Insurable interest — financial/legal stake required, anti-wagering, Life Assurance Act 1774, Marine Insurance Act 1906, indemnity principle](https://en.wikipedia.org/wiki/Insurable_interest) `リファレンス`
 - [IRMI Glossary: Insurable interest — an interest such that loss would cause financial harm; required for a valid policy; timing differs in life vs. property insurance](https://www.irmi.com/term/insurance-definitions/insurable-interest) `リファレンス`
 
+## 関連概念
+- [[bizlaw-insurance-act|保険法]] — 同分野の近傍
+- [[bizlaw-consumer-protection-unfair-trade|消費者保護法制と不公正取引慣行規制の法体系]] — 同分野の近傍
+- [[bizlaw-marine-insurance-utmost-good-faith|最大善意の原則——保険契約における重要事実の開示義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

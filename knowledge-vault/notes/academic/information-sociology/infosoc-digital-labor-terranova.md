@@ -29,6 +29,14 @@ aliases:
 - [Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（デジタル労働論の原論文）](https://doi.org/10.1080/01972240050133545) `学術`
 - [Wikipedia: Digital labor — デジタル労働論の概説](https://en.wikipedia.org/wiki/Digital_labor) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同じ思想家
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 同分野の近傍
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

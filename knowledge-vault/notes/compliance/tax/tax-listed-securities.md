@@ -30,6 +30,14 @@ aliases:
 - [国税庁 No.1330 配当金を受け取ったとき](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm) `公的`
 - [上場株式の譲渡・配当課税 20.315% 解説](https://faq.monex.co.jp/faq/show/900) `メディア`
 
+## 関連概念
+- [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 語彙が近い
+- [[tax-securities-account|上場株式等の特定口座制度]] — 語彙が近い
+- [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
+- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 語彙が近い
+- [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 語彙が近い
+- [[tax-nisa|NISA（少額投資非課税制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

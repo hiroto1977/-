@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Broaden-and-Build — Fredrickson positive emotions theory overview](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
 - [Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)](https://doi.org/10.1080/17439760.2011.558684) `学術`
 
+## 関連概念
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 語彙が近い
+- [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — 分野横断
+- [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
+- [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

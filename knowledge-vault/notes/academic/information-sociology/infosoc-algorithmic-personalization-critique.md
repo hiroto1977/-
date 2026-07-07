@@ -29,6 +29,18 @@ aliases:
 - [Bruns, A. (2019). Filter bubble — critique of the concept — First Monday](https://doi.org/10.5210/fm.v21i9.6887) `学術`
 - [Wikipedia: Filter bubble — algorithmic curation](https://en.wikipedia.org/wiki/Filter_bubble) `リファレンス`
 
+## 関連概念
+- [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 語彙が近い
+- [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 語彙が近い
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
+- [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
+- [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

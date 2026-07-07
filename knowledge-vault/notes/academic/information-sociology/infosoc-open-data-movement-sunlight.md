@@ -30,6 +30,15 @@ aliases:
 - [US Government (2009) Data.gov — Open Government Data Portal](https://www.data.gov/) `公的`
 - [Wikipedia: Open data — オープンデータ運動の歴史と実践](https://en.wikipedia.org/wiki/Open_data) `リファレンス`
 
+## 関連概念
+- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 語彙が近い
+- [[infosoc-open-data-government-transparency|オープンデータと政府透明性の情報社会論]] — 語彙が近い
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 語彙が近い
+- [[infosoc-open-data|オープンデータ]] — 同じ思想家
+- [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
+- [[infosoc-technical-debt|技術的負債]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

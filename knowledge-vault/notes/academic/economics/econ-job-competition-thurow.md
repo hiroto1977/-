@@ -29,6 +29,18 @@ aliases:
 - [Thurow, L. C. (1975) Generating Inequality (Basic Books) — job competition model & labour queue; 50-year retrospective in Contributions to Political Economy 44(1)](https://academic.oup.com/cpe/article/44/1/75/8196892) `学術`
 - [Wikipedia: Lester Thurow — Generating Inequality (1975), job competition model, labour queue, trainability](https://en.wikipedia.org/wiki/Lester_Thurow) `リファレンス`
 
+## 関連概念
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同じ思想家
+- [[econ-signaling|シグナリング]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]] — 同じ思想家
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
+- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
+- [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 同分野の近傍
+- [[econ-human-capital|人的資本論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

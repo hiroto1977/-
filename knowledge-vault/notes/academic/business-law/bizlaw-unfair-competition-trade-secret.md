@@ -29,6 +29,13 @@ aliases:
 - [Almeling, D.S. (2012). Trade Secret Law — Comparative Perspectives — Edward Elgar](https://doi.org/10.4337/9781848445376) `学術`
 - [Wikipedia: Trade secret — unfair competition law](https://en.wikipedia.org/wiki/Trade_secret) `リファレンス`
 
+## 関連概念
+- [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 語彙が近い
+- [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同分野の近傍
+- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
+- [[bizlaw-data-governance-data-act|データガバナンス法制——EU Data Act・データ利活用促進法とデータ共有の権利・義務]] — 同分野の近傍
+- [[bizlaw-electronically-recorded-claims|電子記録債権（電子記録債権法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

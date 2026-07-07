@@ -30,6 +30,17 @@ Srilata Zaheer (ザヒール, 1995) ／ Stephen Hymer (ハイマー, 1960/1976) 
 - ['Liability of Foreignness', in The Palgrave Encyclopedia of Strategic Management (Springer/Palgrave Macmillan). DOI: 10.1057/978-1-349-94848-2_752-1](https://link.springer.com/rwe/10.1057/978-1-349-94848-2_752-1) `リファレンス`
 - ['Liability of Foreignness', Oxford Research Encyclopedia of Business and Management (Oxford University Press). DOI: 10.1093/acrefore/9780190224851.013.402](https://oxfordre.com/business/display/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-402) `リファレンス`
 
+## 関連概念
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
+- [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
+- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
+- [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

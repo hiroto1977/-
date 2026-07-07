@@ -29,6 +29,15 @@ aliases:
 - [Paivio, A. (1986) Mental Representations: A Dual Coding Approach — Oxford University Press (WorldCat)](https://www.worldcat.org/oclc/12235651) `学術`
 - [Wikipedia: Dual-coding theory — Paivio, verbal/imagery systems, logogens/imagens, picture superiority, concreteness](https://en.wikipedia.org/wiki/Dual-coding_theory) `リファレンス`
 
+## 関連概念
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同じ思想家
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
+- [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同じ思想家
+- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 同じ思想家
+- [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

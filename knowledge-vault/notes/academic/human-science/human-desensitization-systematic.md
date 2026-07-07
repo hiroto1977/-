@@ -31,6 +31,10 @@ aliases:
 - [Paul, G. L. (1969). Outcome of systematic desensitization — Journal of Consulting and Clinical Psychology](https://doi.org/10.1037/h0028504) `学術`
 - [Joseph Wolpe — Wikipedia](https://en.wikipedia.org/wiki/Joseph_Wolpe) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

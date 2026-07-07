@@ -31,6 +31,18 @@ CEOサクセッション・プランニング（CEO succession planning）は、
 - [Shen, W. & Cannella, A. A. (2002) Power Dynamics Within Top Management and Their Impacts on CEO Dismissal Followed by Inside Succession — Academy of Management Journal, 45(6), 1195–1206](https://doi.org/10.5465/amr.1994.9410210752) `学術`
 - [Wikipedia: Succession planning — CEO succession types, board oversight, and empirical evidence on performance](https://en.wikipedia.org/wiki/Succession_planning) `リファレンス`
 
+## 関連概念
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 語彙が近い
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
+- [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 同じ思想家
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Oxford Reference — "hegemonic reading" / Hall の解読位置](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095928288) `リファレンス`
 - [Media-Studies.com — Stuart Hall's Reception Theory: Encoding and Decoding the Media](https://media-studies.com/reception-theory/) `学術`
 
+## 関連概念
+- [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同じ思想家
+- [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同じ思想家
+- [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同分野の近傍
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

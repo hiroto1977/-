@@ -30,6 +30,18 @@ aliases:
 - [Kull (1991) Mistake, Frustration, and the Windfall Principle of Contract Remedies — Hastings Law Journal](https://doi.org/10.2307/1096649) `学術`
 - [Wikipedia: Frustration of purpose — 契約目的の挫折法理の歴史と適用範囲の概説](https://en.wikipedia.org/wiki/Frustration_of_purpose) `リファレンス`
 
+## 関連概念
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 語彙が近い
+- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 語彙が近い
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家
+- [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同じ思想家
+- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
+- [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
+- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

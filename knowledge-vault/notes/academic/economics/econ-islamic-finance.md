@@ -30,6 +30,13 @@ Iqbal, Zamir （2011 An Introduction to Islamic Finance, Wiley）／Mirakhor, Ab
 - [IFSB (2025) Islamic Financial Services Industry Stability Report 2025（2024 年総資産約 3.88 兆ドル・前年比 14.9% 増）](https://www.ifsb.org/press-releases/islamic-financial-services-industry-stability-report-2025-need-for-coordinated-action-to-deepen-markets-and-sustain-growth-momentum/) `公的`
 - [LSEG & ICD (2025) Islamic Finance Development Indicator Report（2029 年 9.7 兆ドル到達予測）](https://icd-ps.org/en/news/lseg-and-icd-announce-findings-of-the-2025-islamic-finance-development-indicator-report-global-islamic-finance-assets-projected-to-reach-us97-trillion-by-2029) `メディア`
 
+## 関連概念
+- [[human-appraisal-theory-of-emotion|感情の評価理論]] — 出典を共有
+- [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]] — 出典を共有
+- [[mgmt-organizational-death-theory|組織死亡理論]] — 出典を共有
+- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

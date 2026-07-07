@@ -33,6 +33,18 @@ Michael C. Jensen / William H. Meckling / Eugene F. Fama / Andrei Shleifer / Rob
 - [OECD (2023). G20/OECD Principles of Corporate Governance 2023. OECD Publishing. DOI: 10.1787/ed750b30-en](https://www.oecd.org/en/publications/2023/09/g20-oecd-principles-of-corporate-governance-2023_60836fcb.html) `リファレンス`
 - [Japan Exchange Group (2021). Japan's Corporate Governance Code (2021 Revision). FSA/TSE.](https://www.jpx.co.jp/english/news/1020/20210611-01.html) `リファレンス`
 
+## 関連概念
+- [[econ-fama-french-factor-model|ファーマ＝フレンチ・ファクターモデル]] — 同じ思想家
+- [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同じ思想家
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

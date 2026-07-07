@@ -29,6 +29,12 @@ W・ランス・ベネット／アレクサンドラ・セガーバーグ（2012
 - [Bennett & Segerberg, The Logic of Connective Action (Cambridge University Press, 2013)](https://www.cambridge.org/core/books/logic-of-connective-action/6B54DBBEAD1625C2778F8D80A17D58E1) `学術`
 - [Bennett & Segerberg (2012), Information, Communication & Society 15(5)](https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661) `学術`
 
+## 関連概念
+- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — 語彙が近い
+- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 語彙が近い
+- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
+- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

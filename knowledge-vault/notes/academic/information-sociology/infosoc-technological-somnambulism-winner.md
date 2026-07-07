@@ -30,6 +30,15 @@ aliases:
 - [Wikipedia: Langdon Winner — technological somnambulism and politics of artifacts](https://en.wikipedia.org/wiki/Langdon_Winner) `リファレンス`
 - [Winner, L. (1980) Do Artifacts Have Politics? — Daedalus 109(1)](https://doi.org/10.1162/DAED_a_00142) `学術`
 
+## 関連概念
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+- [[infosoc-technical-code|技術的コード——技術設計に埋め込まれ中立を装う支配的社会利害]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+- [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 同分野の近傍
+- [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

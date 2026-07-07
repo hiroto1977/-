@@ -29,6 +29,10 @@ aliases:
 - [Camp, R.C. (1989) Benchmarking: The Search for Industry Best Practices That Lead to Superior Performance — ASQC Quality Press (WorldCat)](https://www.worldcat.org/oclc/19222137) `学術`
 - [Wikipedia: Benchmarking — Camp, Xerox, best practices, internal/competitive/functional/generic, continuous improvement](https://en.wikipedia.org/wiki/Benchmarking) `リファレンス`
 
+## 関連概念
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

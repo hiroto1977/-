@@ -31,6 +31,18 @@ J・リチャード・ハックマン ／ ルース・ワゲマン ／ ダニエ
 - [Ilgen, D. R. et al. (2005) Teams in Organizations: From IPO to IMOI Models, Annual Review of Psychology 56: 517-543](https://www.annualreviews.org/content/journals/10.1146/annurev.psych.56.091103.070250) `学術`
 - [Wikipedia — Team effectiveness](https://en.wikipedia.org/wiki/Team_effectiveness) `リファレンス`
 
+## 関連概念
+- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 語彙が近い
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 語彙が近い
+- [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
+- [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同じ思想家
+- [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — 同じ思想家
+- [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同じ思想家
+- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同じ思想家
+- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 出典を共有
+- [[human-hyperbolic-discounting|双曲割引]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

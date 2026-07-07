@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Mere-Exposure Effect — Zajonc repeated exposure and liking](https://en.wikipedia.org/wiki/Mere-exposure_effect) `リファレンス`
 - [Bornstein, R.F. (1989) Exposure and Affect: Overview and Meta-Analysis — Psychological Bulletin 106(2)](https://doi.org/10.1037/0033-2909.106.2.265) `学術`
 
+## 関連概念
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
+- [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — 同じ思想家
+- [[human-processing-fluency|処理流暢性]] — 同じ思想家
+- [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

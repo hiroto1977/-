@@ -30,6 +30,11 @@ aliases:
 - [Trefler, D. (1995) The Case of the Missing Trade and Other Mysteries — American Economic Review](https://doi.org/10.1257/aer.85.5.1029) `学術`
 - [Wikipedia: Heckscher-Ohlin model — factor endowment trade theory empirical tests overview](https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_model) `リファレンス`
 
+## 関連概念
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

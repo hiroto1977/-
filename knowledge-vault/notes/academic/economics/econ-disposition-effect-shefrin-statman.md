@@ -29,6 +29,12 @@ aliases:
 - [Shefrin, H. & Statman, M. (1985) The Disposition to Sell Winners Too Early and Ride Losers Too Long — Journal of Finance 40(3)](https://doi.org/10.1111/j.1540-6261.1985.tb05002.x) `学術`
 - [Wikipedia: Disposition effect — Shefrin & Statman, prospect theory, sell winners/hold losers, Odean](https://en.wikipedia.org/wiki/Disposition_effect) `リファレンス`
 
+## 関連概念
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
+- [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

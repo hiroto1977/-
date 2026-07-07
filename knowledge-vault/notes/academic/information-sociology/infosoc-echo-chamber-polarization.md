@@ -31,6 +31,10 @@ aliases:
 - [Bail 2021 — Breaking the Social Media Prism: How to Make Our Platforms Less Polarizing, Princeton University Press](https://doi.org/10.1515/9780691216508) `リファレンス`
 - [Iyengar & Westwood 2015 — Fear and Loathing Across Party Lines: New Evidence on Group Polarization, American Journal of Political Science 59(3):690-707](https://doi.org/10.1111/ajps.12152) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同分野の近傍
+- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

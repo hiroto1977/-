@@ -29,6 +29,12 @@ aliases:
 - [Grant, R.M. (1996) Toward a Knowledge-Based Theory of the Firm — Strategic Management Journal 17(S2)](https://doi.org/10.1002/smj.4250171110) `学術`
 - [Wikipedia: Knowledge-based theory of the firm — Grant, knowledge integration, tacit knowledge, RBV](https://en.wikipedia.org/wiki/Knowledge-based_theory_of_the_firm) `リファレンス`
 
+## 関連概念
+- [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 語彙が近い
+- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
+- [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

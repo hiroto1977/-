@@ -31,6 +31,18 @@ aliases:
 - [公益社団法人全日本不動産協会「賃貸建物における事故とオーナー責任」](https://www.zennichi.or.jp/law_faq/賃貸建物における事故とオーナー責任/) `メディア`
 - [Wikibooks 民法第717条（条文・解説）](https://ja.wikibooks.org/wiki/民法第717条) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
+- [[bizlaw-offsetting-benefits|損益相殺]] — 出典を共有
+- [[bizlaw-real-subrogation|物上代位（民法304条）]] — 出典を共有
+- [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

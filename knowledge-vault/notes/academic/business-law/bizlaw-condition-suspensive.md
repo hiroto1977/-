@@ -29,6 +29,12 @@ aliases:
 - [e-Gov法令検索 — 民法（明治29年法律第89号）第127条〜133条（条件及び期限）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 - [法務省 — 民法（債権関係）改正に関する説明（条件・期限を含む民法総則の規律）](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 
+## 関連概念
+- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 語彙が近い
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 同分野の近傍
+- [[bizlaw-commercial-code|商法]] — 同分野の近傍
+- [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

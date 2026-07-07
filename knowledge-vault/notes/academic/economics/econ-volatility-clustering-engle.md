@@ -29,6 +29,11 @@ aliases:
 - [Engle, R.F. (1982) Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of UK Inflation — Econometrica 50(4)](https://doi.org/10.2307/1912773) `学術`
 - [Wikipedia: Volatility clustering / ARCH — Engle, GARCH (Bollerslev), time-varying volatility, risk management](https://en.wikipedia.org/wiki/Volatility_clustering) `リファレンス`
 
+## 関連概念
+- [[econ-granger-causality|グレンジャー因果性]] — 同じ思想家
+- [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

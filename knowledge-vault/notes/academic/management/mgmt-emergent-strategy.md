@@ -30,6 +30,18 @@ aliases:
 - [Oregon State University — Strategic Management (OER): Intended and Realized Strategies](https://open.oregonstate.education/strategicmanagement/chapter/1-intended-and-realized-strategies/) `リファレンス`
 - [Virginia Tech — Strategic Management (OER): Intended, Emergent, and Realized Strategies](https://pressbooks.lib.vt.edu/strategicmanagement/chapter/1-3-intended-emergent-and-realized-strategies/) `リファレンス`
 
+## 関連概念
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]] — 同じ思想家
+- [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
+- [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

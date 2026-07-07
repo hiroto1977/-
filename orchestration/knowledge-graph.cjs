@@ -79,39 +79,68 @@ const AUTHOR_STOPWORDS = new Set([
 ]);
 
 /**
- * 「提唱者・初出」等の文字列から正規化済みの姓集合を作る。
- *   - ラテン姓: "Kahan, Dan M." → "kahan"（カンマ前 or 単語列の末尾語）
- *   - カタカナ姓: 「ジョン・メイナード・ケインズ」→「ケインズ」
- *     （氏名は中黒区切りの**最後**のカタカナトークン。3 文字以上のみ採用）
- *   - 年号・イニシャル・機関語（stopword）は除去
+ * 「提唱者・初出」等の文字列から正規化済みの**人物キー**集合を作る。
+ *
+ * 精度優先の設計（実データで発見した 2 つの偽相関への対策）:
+ *   1. 同姓別人の混同 — 金融政策のジョン・テイラー／心理学のシェリー・テイラー／
+ *      科学的管理法のフレデリック・テイラーが「テイラー」で結ばれていた
+ *      → 姓 + 名イニシャルの**複合キー**にする。
+ *   2. 散文調 keyFigures の一般語 — 「…反応させるルール」の「ルール」が
+ *      人名扱いされ労働契約法と金融政策が結ばれていた
+ *      → **氏名パターンに一致したものだけ**をキー化（1 パート 1 キー）。
+ *      裸のカタカナ 1 トークンは「パート全体が名前」か「直後に（西暦」の
+ *      場合のみ受理する。
  */
 function extractAuthorSurnames(text) {
   const out = new Set();
   const s = String(text || '').normalize('NFKC');
   if (!s) return out;
-  // 氏名リストの区切り（／ ; ＆）。カンマは "Surname, First" 形式の内部区切り、
-  // 中黒 ・ はカタカナ氏名の内部区切りなので、ここでは割らない。
+  // 氏名リストの区切り（／ ; ＆）。カンマ・中黒は氏名内部の区切りなので割らない。
   for (const part of s.split(/[／/;；]|(?:\s*[＆&]\s*)/)) {
     const p = part.trim();
     if (!p) continue;
     const beforeParen = p.split(/[（(]/)[0].trim();
-    // ラテン: "Surname, First" はカンマ前を姓とする。カンマ無しは末尾語（"Milton Friedman"→friedman）。
-    const commaMatch = beforeParen.match(/^([A-Za-z'’-]{3,})\s*,/);
-    if (commaMatch) {
-      const surname = commaMatch[1].toLowerCase();
-      if (!AUTHOR_STOPWORDS.has(surname)) out.add(surname);
-    } else {
-      const words = beforeParen.match(/[A-Za-z'’-]{3,}/g) || [];
-      if (words.length > 0) {
-        const surname = words[words.length - 1].toLowerCase();
-        if (!AUTHOR_STOPWORDS.has(surname) && !/^\d+$/.test(surname)) out.add(surname);
-      }
+    const okSur = (sur) => sur && !AUTHOR_STOPWORDS.has(sur) && !/^\d+$/.test(sur);
+
+    // a) ラテン "Surname, First" → 姓+名イニシャル
+    let m = beforeParen.match(/^([A-Za-z'’-]{3,})\s*,\s*([A-Za-z]?)/);
+    if (m) {
+      const sur = m[1].toLowerCase();
+      if (okSur(sur)) out.add(`${sur}|${(m[2] || '').toLowerCase()}`);
+      continue;
     }
-    // カタカナ氏名: 中黒で区切られた連なりの最後のトークンが姓
-    for (const nameRun of beforeParen.matchAll(/[ァ-ヴー]{2,}(?:[・][ァ-ヴー]{1,})*/g)) {
-      const toks = nameRun[0].split('・').filter(Boolean);
-      const last = toks[toks.length - 1];
-      if (last && last.length >= 3 && !AUTHOR_STOPWORDS.has(last)) out.add(last);
+    // b) カタカナ "姓, 名" → 姓+名イニシャル
+    m = beforeParen.match(/^([ァ-ヴー]{2,})\s*[,，]\s*([ァ-ヴー]?)/);
+    if (m) {
+      const sur = m[1];
+      if (sur.length >= 3 && okSur(sur)) out.add(`${sur}|${m[2] || ''}`);
+      continue;
+    }
+    // c) カタカナ中黒氏名「ジョン・メイナード・ケインズ」→ ケインズ+ジ
+    m = beforeParen.match(/([ァ-ヴー]{1,}(?:・[ァ-ヴー]{1,})+)/);
+    if (m) {
+      const toks = m[1].split('・');
+      const sur = toks[toks.length - 1];
+      if (sur.length >= 2 && okSur(sur)) out.add(`${sur}|${toks[0][0] || ''}`);
+      continue;
+    }
+    // d) ラテン語列 "Milton Friedman" → 末尾語+先頭イニシャル（1 語なら裸）
+    const words = beforeParen.match(/[A-Za-z'’-]{3,}/g) || [];
+    if (words.length >= 2) {
+      const sur = words[words.length - 1].toLowerCase();
+      if (okSur(sur)) out.add(`${sur}|${words[0][0].toLowerCase()}`);
+      continue;
+    }
+    if (words.length === 1) {
+      const sur = words[0].toLowerCase();
+      if (sur.length >= 4 && okSur(sur)) out.add(`${sur}|`);
+      continue;
+    }
+    // e) 裸のカタカナ 1 トークン: パート全体が名前 or 直後に（西暦 のときだけ人名と認める
+    m = p.match(/^([ァ-ヴー]{3,})$/) || p.match(/^([ァ-ヴー]{3,})\s*[（(]\s*(?:1[5-9]|20)\d\d/);
+    if (m) {
+      const sur = m[1];
+      if (okSur(sur)) out.add(`${sur}|`);
     }
   }
   return out;

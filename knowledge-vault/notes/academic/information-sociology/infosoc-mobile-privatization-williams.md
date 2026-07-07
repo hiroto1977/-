@@ -29,6 +29,18 @@ aliases:
 - [Williams, R. (1974) Television: Technology and Cultural Form — Fontana (WorldCat)](https://www.worldcat.org/oclc/1085898) `学術`
 - [Wikipedia: Mobile privatization — Williams, mobility and privatization, broadcasting, critique of technological determinism](https://en.wikipedia.org/wiki/Mobile_privatization) `リファレンス`
 
+## 関連概念
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
+- [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]] — 同じ思想家
+- [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 同じ思想家
+- [[infosoc-domestication-technology-silverstone|技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

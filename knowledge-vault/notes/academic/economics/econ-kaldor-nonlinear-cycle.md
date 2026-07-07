@@ -29,6 +29,18 @@ aliases:
 - [Kaldor, N. (1940) A model of the trade cycle — The Economic Journal](https://doi.org/10.2307/2225740) `学術`
 - [Wikipedia: Business cycle — Kaldor nonlinear model, endogenous cycles, limit cycle](https://en.wikipedia.org/wiki/Business_cycle) `リファレンス`
 
+## 関連概念
+- [[econ-kalecki-profit|カレツキの利潤理論]] — 同じ思想家
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Weick, K.E. (1979) The Social Psychology of Organizing — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/4135117) `学術`
 - [Wikipedia: Enactment / sensemaking — Weick, enacted environment, enactment-selection-retention](https://en.wikipedia.org/wiki/Enactment_(psychology)) `リファレンス`
 
+## 関連概念
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 語彙が近い
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同じ思想家
+- [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — 同じ思想家
+- [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 同じ思想家
+- [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

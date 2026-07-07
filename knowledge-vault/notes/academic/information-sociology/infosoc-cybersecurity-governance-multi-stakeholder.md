@@ -29,6 +29,13 @@ aliases:
 - [Nye, J.S. (2017). Deterrence and Dissuasion in Cyberspace — International Security](https://doi.org/10.1093/oxfordhb/9780198719960.013.46) `学術`
 - [Wikipedia: Cybersecurity governance — multi-stakeholder model](https://en.wikipedia.org/wiki/Cybersecurity_governance) `リファレンス`
 
+## 関連概念
+- [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]] — 同じ思想家
+- [[infosoc-noopolitik-arquilla-ronfeldt|ヌーポリティーク——理念とソフトパワーにもとづく情報時代の外交]] — 同じ思想家
+- [[infosoc-techno-nationalism-digital-sovereignty|テクノナショナリズムとデジタル主権戦略の比較政治経済学]] — 同じ思想家
+- [[infosoc-internet-governance|インターネット・ガバナンス]] — 同分野の近傍
+- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [APA Dictionary of Psychology — Effort Justification](https://dictionary.apa.org/effort-justification) `リファレンス`
 - [Effort justification — overview, IKEA effect and hazing links](https://en.wikipedia.org/wiki/Effort_justification) `リファレンス`
 
+## 関連概念
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同じ思想家
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-endowment-effect|保有効果（授かり効果）]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

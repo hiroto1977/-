@@ -29,6 +29,13 @@ aliases:
 - [Luthar (2006) Resilience in Development: A Synthesis of Research across Five Decades — Developmental Psychopathology](https://doi.org/10.1111/j.1469-7610.2006.01682.x) `学術`
 - [Wikipedia: Psychological resilience — adversity, protective factors, ordinary magic, Masten, trauma-informed](https://en.wikipedia.org/wiki/Psychological_resilience) `リファレンス`
 
+## 関連概念
+- [[human-developmental-psychopathology-cicchetti|発達精神病理学——正常と異常の発達的連続性と多重決定性]] — 同じ思想家
+- [[human-resilience|レジリエンス（心理的回復力）]] — 同じ思想家
+- [[human-resilience-theory-masten|レジリエンス理論——逆境からの回復力と「普通の魔法」]] — 同じ思想家
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 同分野の近傍
+- [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

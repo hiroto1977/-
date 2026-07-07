@@ -29,6 +29,16 @@ aliases:
 - [Cannon, W.B. (1927) The James-Lange Theory of Emotions: A Critical Examination — American Journal of Psychology 39](https://doi.org/10.2307/1415404) `学術`
 - [Wikipedia: Cannon–Bard theory — Cannon, Bard, thalamic theory, parallel emotion and arousal, James-Lange critique](https://en.wikipedia.org/wiki/Cannon%E2%80%93Bard_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-heinrich-law|ハインリッヒの法則（1:29:300）]] — 同じ思想家
+- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
+- [[human-two-factor-emotion|情動二要因理論]] — 同じ思想家
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同じ思想家
+- [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同分野の近傍
+- [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

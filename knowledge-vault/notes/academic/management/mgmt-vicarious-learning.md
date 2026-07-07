@@ -29,6 +29,18 @@ Ji-Yub (Jay) Kim & Anne S. Miner（AMJ 50(3), 2007 — 他組織の失敗・ニ�
 - [Kim & Miner (2007) Vicarious Learning from the Failures and Near-Failures of Others — AMJ 50(3), pp.687-714](https://journals.aom.org/doi/10.5465/AMJ.2007.25529755) `学術`
 - [Madsen & Desai (2010) Failing to Learn? — AMJ 53(3), pp.451-476](https://journals.aom.org/doi/10.5465/amj.2010.51467631) `学術`
 
+## 関連概念
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

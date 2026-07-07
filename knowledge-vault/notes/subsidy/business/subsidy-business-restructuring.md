@@ -36,6 +36,14 @@ national
 - [ミラサポplus 中小企業新事業進出補助金（後継）](https://mirasapo-plus.go.jp/subsidy/shinjigyou/) `公的`
 - [中小機構 中小企業新事業進出補助金 公式](https://shinjigyou-shinshutsu.smrj.go.jp/) `公的`
 
+## 関連概念
+- [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 語彙が近い
+- [[subsidy-gotech|Go-Tech事業（成長型中小企業等研究開発支援事業）]] — 出典を共有
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 出典を共有
+- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 出典を共有
+- [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 出典を共有
+- [[subsidy-sagamihara|相模原市ベンチャー・スタートアップ企業進出補助金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,12 @@ aliases:
 - [Fortin, N., Lemieux, T. & Firpo, S. (2011) Decomposition Methods in Economics — Handbook of Labor Economics Vol. 4A, Ch. 1, 1-102 (Elsevier)](https://ideas.repec.org/h/eee/labchp/4-01.html) `学術`
 - [Wikipedia: Kitagawa-Oaxaca-Blinder decomposition — explained/unexplained components, Kitagawa (1955) precursor, discrimination measurement](https://en.wikipedia.org/wiki/Kitagawa%E2%80%93Oaxaca%E2%80%93Blinder_decomposition) `リファレンス`
 
+## 関連概念
+- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Kogut, B. & Kulatilaka, N. (1994) Options Thinking and Platform Investments — SMJ](https://doi.org/10.1287/mnsc.37.1.37) `学術`
 - [Wikipedia: Real options valuation — リアル・オプション評価の概要](https://en.wikipedia.org/wiki/Real_options_valuation) `リファレンス`
 
+## 関連概念
+- [[mgmt-discovery-driven-planning|発見志向計画法（ディスカバリー・ドリブン・プランニング）]] — 語彙が近い
+- [[mgmt-real-options-theory|リアル・オプション理論]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ Foss v Harbottle (1843) 2 Hare 461は、会社への不正行為を訴追でき�
 - [K.W. Wedderburn, Shareholders' Rights and the Rule in Foss v. Harbottle, Cambridge Law Journal 15(2), 1957, pp. 194-215](https://www.cambridge.org/core/journals/cambridge-law-journal/article/shareholders-rights-and-the-rule-in-foss-v-harbottle/0C5C2B6CA25A77E88E3CE59C64A0B721) `学術`
 - [e-Gov法令検索 会社法（平成十七年法律第八十六号）第847条 責任追及等の訴え](https://laws.e-gov.go.jp/law/417AC0000000086) `公的`
 
+## 関連概念
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 語彙が近い
+- [[bizlaw-apparent-agency|表見代理]] — 同分野の近傍
+- [[bizlaw-proper-purpose-howard-smith|取締役の権限濫用と適正目的の法理——ハワード・スミス対アンポル事件（Howard Smith v Ampol 1974）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

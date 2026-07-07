@@ -29,6 +29,18 @@ aliases:
 - [Frenkel, J.A. & Johnson, H.G. (eds.) (1976) The Monetary Approach to the Balance of Payments — Allen & Unwin (WorldCat)](https://www.worldcat.org/oclc/2331668) `学術`
 - [Wikipedia: Monetary approach to the balance of payments — Mundell, Johnson, money demand/supply, Hume specie-flow](https://en.wikipedia.org/wiki/Monetary_approach_to_the_balance_of_payments) `リファレンス`
 
+## 関連概念
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
+- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+- [[econ-optimal-tariff|最適関税論]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

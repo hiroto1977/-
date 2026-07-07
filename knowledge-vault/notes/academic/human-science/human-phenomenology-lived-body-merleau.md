@@ -30,6 +30,18 @@ aliases:
 - [Stanford Encyclopedia of Philosophy: Maurice Merleau-Ponty — Lived Body and Perception](https://plato.stanford.edu/entries/merleau-ponty/) `リファレンス`
 - [Wikipedia: メルロ＝ポンティ — 知覚の現象学と身体論の解説](https://ja.wikipedia.org/wiki/%E3%83%A1%E3%83%AB%E3%83%AD%EF%BC%9D%E3%83%9D%E3%83%B3%E3%83%86%E3%82%A3) `リファレンス`
 
+## 関連概念
+- [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — 同じ思想家
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
+- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
+- [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

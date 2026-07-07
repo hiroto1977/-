@@ -30,6 +30,18 @@ aliases:
 - [Fuchs, C. (2014) Digital Labour and Karl Marx — Routledge](https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716154) `学術`
 - [Digital Labor — ScienceDirect Topics（Elsevier概説）](https://www.sciencedirect.com/topics/social-sciences/digital-labor) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 語彙が近い
+- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同じ思想家
+- [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — 同じ思想家
+- [[infosoc-playbour-kucklich|プレイバー——遊びと労働の境界が溶解しゲーム文化で価値を生む無償活動]] — 同じ思想家
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

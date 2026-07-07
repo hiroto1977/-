@@ -29,6 +29,18 @@ aliases:
 - [Rothschild, M. & Stiglitz, J. (1976) Equilibrium in Competitive Insurance Markets — QJE 90(4)](https://doi.org/10.2307/1885326) `学術`
 - [Wikipedia: Screening (economics) — Rothschild-Stiglitz, self-selection, separating/pooling equilibria](https://en.wikipedia.org/wiki/Screening_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 語彙が近い
+- [[econ-screening|スクリーニング（選別理論）]] — 語彙が近い
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
+- [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+- [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [静岡労働局 年少者にも労働基準法が適用されます](https://jsite.mhlw.go.jp/shizuoka-roudoukyoku/content/contents/001307499.pdf) `公的`
 - [福井県労働委員会 年少者のアルバイト Q&A](https://www.pref.fukui.lg.jp/doc/roudouiinkaijimukyoku/qa/qa53.html) `自治体`
 
+## 関連概念
+- [[subsidy-fukui|企業における省エネ設備等導入支援事業補助金（福井県）]] — 出典を共有
+- [[labor-variable-working-hours|変形労働時間制]] — 同分野の近傍
+- [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 同分野の近傍
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
+- [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

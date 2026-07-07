@@ -30,6 +30,13 @@ In re Cady, Roberts & Co. (1961) ／ SEC v. Texas Gulf Sulphur Co. (1968) ／ Ch
 - [Chiarella v. United States, 445 U.S. 222 (1980) — U.S. Supreme Court rejecting the equal-access theory and requiring a fiduciary duty for the duty to disclose or abstain under Rule 10b-5 (Justia)](https://supreme.justia.com/cases/federal/us/445/222/) `公的`
 - [Congressional Research Service, Legal Sidebar LSB11119 — the "disclose or abstain" rule from In re Cady, Roberts & Co. and SEC v. Texas Gulf Sulphur, and its narrowing by classical fiduciary-duty and misappropriation theories](https://www.congress.gov/crs-product/LSB11119) `公的`
 
+## 関連概念
+- [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]] — 同じ思想家
+- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 出典を共有
+- [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

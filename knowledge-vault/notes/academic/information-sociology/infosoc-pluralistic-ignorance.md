@@ -30,6 +30,13 @@ Floyd H. Allport ／ Daniel Katz ／ Hubert J. O'Gorman ／ Deborah A. Prentice 
 - [O'Gorman, H. J. (1975) Pluralistic Ignorance and White Estimates of White Support for Racial Segregation — Public Opinion Quarterly, 39(3), 313–330](https://academic.oup.com/poq/article-abstract/39/3/313/1850175) `学術`
 - [Wikipedia: Pluralistic ignorance — origin (Floyd H. Allport & Daniel Katz, Students Attitudes, 1931), O'Gorman 1975, Prentice & Miller 1993, link to the spiral of silence](https://en.wikipedia.org/wiki/Pluralistic_ignorance) `リファレンス`
 
+## 関連概念
+- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [国税庁 No.1135 小規模企業共済等掛金控除](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1135.htm) `公的`
 - [中小機構 小規模企業共済とは](https://www.smrj.go.jp/kyosai/skyosai/) `運営団体`
 
+## 関連概念
+- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 語彙が近い
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
+- [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
+- [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
+- [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

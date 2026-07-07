@@ -30,6 +30,18 @@ aliases:
 - [Strategic Entrepreneurship: Entrepreneurial Strategies for Wealth Creation — JSTOR](https://www.jstor.org/stable/3094317) `学術`
 - [Hitt et al. (2001) — ResearchGate](https://www.researchgate.net/publication/227722738_Strategic_Entrepreneurship_Entrepreneurial_Strategies_for_Wealth_Creation) `学術`
 
+## 関連概念
+- [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 語彙が近い
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
+- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
+- [[mgmt-hypercompetition|ハイパーコンペティション]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

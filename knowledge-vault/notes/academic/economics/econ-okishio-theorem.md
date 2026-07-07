@@ -29,6 +29,14 @@ aliases:
 - [Okishio, N. (1961) Technical changes and the rate of profit — Kobe University Economic Review](https://www.jstor.org/stable/2552547) `学術`
 - [Wikipedia: Okishio's theorem — tendency of the rate of profit to fall, Marxian economics](https://en.wikipedia.org/wiki/Okishio%27s_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-fundamental-marxian-theorem-morishima|マルクスの基本定理——利潤の正は労働搾取の正と同値である]] — 同じ思想家
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 同じ思想家
+- [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

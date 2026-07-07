@@ -29,6 +29,12 @@ Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブ�
 - [Baker & Nelson (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — ASQ 50(3), pp.329-366](https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329) `学術`
 - [JSTOR: Baker & Nelson (2005) — stable URL](https://www.jstor.org/stable/30037207) `学術`
 
+## 関連概念
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

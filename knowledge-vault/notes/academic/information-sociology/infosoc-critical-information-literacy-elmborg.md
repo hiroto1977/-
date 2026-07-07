@@ -30,6 +30,12 @@ aliases:
 - [Tewell, E. (2015) A Decade of Critical Information Literacy — Communications in Information Literacy](https://doi.org/10.7710/2162-3309.1073) `学術`
 - [Wikipedia: Information literacy — 情報リテラシーの概要](https://en.wikipedia.org/wiki/Information_literacy) `リファレンス`
 
+## 関連概念
+- [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 同じ思想家
+- [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。]] — 同分野の近傍
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

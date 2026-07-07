@@ -32,6 +32,14 @@ Ron Sanchez ／ Henk W. Volberda ／ Katsuhiko Shimizu ／ Michael A. Hitt ／ R
 - [Sanchez (1993) Strategic flexibility, firm organization, and managerial work in dynamic markets — Advances in Strategic Management](https://doi.org/10.1002/smj.4250141010) `学術`
 - [Volberda (1998) Building the Flexible Firm — Oxford University Press](https://doi.org/10.1111/j.1467-6486.1998.00078.x) `学術`
 
+## 関連概念
+- [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同じ思想家
+- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
+- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 同じ思想家
+- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
+- [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

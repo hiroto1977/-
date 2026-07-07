@@ -29,6 +29,18 @@ aliases:
 - [McLuhan, M. (1964) Understanding Media: The Extensions of Man — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/45198868) `学術`
 - [Wikipedia: Technological determinism — McLuhan, Innis, medium is the message, global village, social construction critique](https://en.wikipedia.org/wiki/Technological_determinism) `リファレンス`
 
+## 関連概念
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
+- [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

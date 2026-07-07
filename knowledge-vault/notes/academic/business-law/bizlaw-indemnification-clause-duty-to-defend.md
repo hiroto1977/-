@@ -30,6 +30,10 @@ Queen Villas Homeowners Assn v. TCB Prop. Mgmt.（2007・カリフォルニア�
 - [Wikipedia — Indemnity（補償契約の法理・保険法との関係・コモンロー上の位置づけ）](https://en.wikipedia.org/wiki/Indemnity) `リファレンス`
 - [Saxe Doernberger & Vita, P.C. — Construction Anti-Indemnity Statutes（50州調査・建設契約における反補償法の概観）](https://www.sdvlaw.com/surveys/construction-anti-indemnity-statutes/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]] — 同分野の近傍
+- [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

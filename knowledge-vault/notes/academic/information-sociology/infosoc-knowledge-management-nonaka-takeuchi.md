@@ -30,6 +30,15 @@ aliases:
 - [Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science](https://doi.org/10.1287/orsc.5.1.14) `学術`
 - [Wikipedia: SECI model — SECIモデルの概要](https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions) `リファレンス`
 
+## 関連概念
+- [[infosoc-seci|SECIモデル（知識創造理論）]] — 語彙が近い
+- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 語彙が近い
+- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 語彙が近い
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 分野横断
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 分野横断
+- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

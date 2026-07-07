@@ -30,6 +30,17 @@ aliases:
 - [Hambrick & Mason (1984) Upper Echelons — Academy of Management Review, 9(2), 193-206](https://journals.aom.org/doi/10.5465/amr.1984.4277628) `学術`
 - [Shen & Cannella (2002) Revisiting the Performance Consequences of CEO Succession — AMJ, 45(4), 717-733](https://www.jstor.org/stable/3069306) `学術`
 
+## 関連概念
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 語彙が近い
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同分野の近傍
+- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

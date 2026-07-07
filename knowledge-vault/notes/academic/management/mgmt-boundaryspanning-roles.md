@@ -31,6 +31,14 @@ aliases:
 - [Leifer & Delbecq 1978 — Organizational/Environmental Interchange: A Model of Boundary Spanning Activity, Academy of Management Review 3(1):40-50](https://doi.org/10.5465/amr.1978.4294671) `学術`
 - [Adams 1976 — The Structure and Dynamics of Behavior in Organizational Boundary Roles, in Handbook of Industrial and Organizational Psychology (Dunnette ed.), Rand McNally](https://www.worldcat.org/isbn/9780528630279) `リファレンス`
 
+## 関連概念
+- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]] — 同じ思想家
+- [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-resource-munificence-aldrich|資源余剰性と組織生態学（アルドリッチ）]] — 同じ思想家
+- [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

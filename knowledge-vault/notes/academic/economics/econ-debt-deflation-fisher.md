@@ -30,6 +30,18 @@ aliases:
 - [Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics](https://doi.org/10.1257/aer.89.5.1322) `学術`
 - [Wikipedia: Debt deflation — 負債デフレーション理論の歴史と現代的展開](https://en.wikipedia.org/wiki/Debt_deflation) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation-theory|債務デフレ理論]] — 語彙が近い
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 語彙が近い
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

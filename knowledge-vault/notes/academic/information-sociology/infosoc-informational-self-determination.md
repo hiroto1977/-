@@ -31,6 +31,10 @@ aliases:
 - [Hornung & Schnabel, “Data protection in Germany I: The population census decision and the right to informational self-determination” (Computer Law & Security Review, 査読誌)](https://www.sciencedirect.com/science/article/abs/pii/S0267364908001660) `学術`
 - [総務省『情報通信政策研究』（自己情報コントロール権論を扱う論文）](https://www.soumu.go.jp/main_content/000656383.pdf) `公的`
 
+## 関連概念
+- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同分野の近傍
+- [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

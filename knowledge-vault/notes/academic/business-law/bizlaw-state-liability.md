@@ -30,6 +30,10 @@ aliases:
 - [Wikibooks「国家賠償法第1条」（条文・公務員個人責任・求償の解説）](https://ja.wikibooks.org/wiki/国家賠償法第1条) `リファレンス`
 - [Wikipedia「日本国憲法第17条」（国家賠償請求権と国家賠償法の制定根拠）](https://ja.wikipedia.org/wiki/日本国憲法第17条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

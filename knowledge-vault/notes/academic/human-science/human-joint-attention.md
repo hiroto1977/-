@@ -30,6 +30,11 @@ aliases:
 - [What We Do and Don't Know About Joint Attention — Topoi (Springer)](https://link.springer.com/article/10.1007/s11245-023-09961-y) `学術`
 - [Mundy et al. (2007) Individual Differences and the Development of Joint Attention — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2654237/) `学術`
 
+## 関連概念
+- [[human-joint-action|共同行為（Joint Action）]] — 同分野の近傍
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同分野の近傍
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [University of Toronto, Department of Economics — Ricardo: Economic Rent and Opportunity Cost](https://www.economics.utoronto.ca/munro5/ECONRENT.pdf) `学術`
 - [コトバンク「差額地代論」（百科事典項目）](https://kotobank.jp/word/%E5%B7%AE%E9%A1%8D%E5%9C%B0%E4%BB%A3%E8%AB%96-1323503) `リファレンス`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同じ思想家
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
+- [[econ-international-trade-gains-ricardo|比較優位と貿易利益（リカード）]] — 同じ思想家
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

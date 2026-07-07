@@ -29,6 +29,18 @@ aliases:
 - [Adair, J. (1973) Action-Centred Leadership — McGraw-Hill](https://www.worldcat.org/oclc/16276) `学術`
 - [Wikipedia: John Adair — action-centred leadership, task/team/individual, functional leadership](https://en.wikipedia.org/wiki/John_Adair_(author)) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 同じ思想家
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 同じ思想家
+- [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
+- [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同じ思想家
+- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
+- [[mgmt-thomas-kilmann-conflict-modes|トーマス＝キルマンのコンフリクト対処モード（TKI）——対立行動を自己主張性と協調性の二軸で五類型に分ける枠組み]] — 同じ思想家
+- [[mgmt-team-cohesion-carron|チーム凝集性（キャロン）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [Redelmeier & Kahneman (1996) Patients Memories of Painful Medical Treatments — Pain](https://doi.org/10.1136/bmj.319.7219.1306) `学術`
 - [Wikipedia: Peak-end rule — ピーク・エンドの法則と持続時間無視の概説](https://en.wikipedia.org/wiki/Peak%E2%80%93end_rule) `リファレンス`
 
+## 関連概念
+- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
+- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
+- [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

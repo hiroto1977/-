@@ -29,6 +29,11 @@ aliases:
 - [Wanous, J.P. (1973) Effects of a Realistic Job Preview on Job Acceptance, Job Attitudes, and Job Survival — JAP 58(3)](https://doi.org/10.1037/h0034974) `学術`
 - [Wikipedia: Realistic job preview — Wanous, expectation calibration, self-selection, vaccination, retention](https://en.wikipedia.org/wiki/Realistic_job_preview) `リファレンス`
 
+## 関連概念
+- [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 同じ思想家
+- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Thomas M. Humphrey, "The Early History of the Box Diagram," Federal Reserve Bank of Richmond Economic Quarterly (1996)](https://www.richmondfed.org/~/media/richmondfedorg/publications/research/economic_quarterly/1996/winter/pdf/history.pdf) `学術`
 - [Saylor Academy, Introduction to Economic Analysis — Edgeworth Box](https://saylordotorg.github.io/text_introduction-to-economic-analysis/s15-01-edgeworth-box.html) `学術`
 
+## 関連概念
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 語彙が近い
+- [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同じ思想家
+- [[econ-expectations-hypothesis|金利の期間構造の期待仮説]] — 出典を共有
+- [[econ-financial-repression|金融抑圧]] — 出典を共有
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 出典を共有
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

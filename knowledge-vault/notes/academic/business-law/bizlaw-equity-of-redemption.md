@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Equity of redemption — mortgagors right to redeem, once a mortgage always a mortgage, foreclosure](https://www.law.cornell.edu/wex/equity_of_redemption) `リファレンス`
 - [Wikipedia: Equity of redemption — equity mitigating common law, clogs and fetters, foreclosure](https://en.wikipedia.org/wiki/Equity_of_redemption) `リファレンス`
 
+## 関連概念
+- [[bizlaw-clog-on-equity-redemption|受戻権の阻害禁止——抵当権者は借り手の受戻しを妨げてはならない]] — 語彙が近い
+- [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同じ思想家
+- [[bizlaw-injunction-equity|差止命令——金銭賠償では不十分な場合に行為を命じ又は禁じる衡平法上の救済]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
+- [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同じ思想家
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
+- [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同じ思想家
+- [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

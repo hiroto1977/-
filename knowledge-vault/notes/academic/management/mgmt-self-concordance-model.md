@@ -33,6 +33,18 @@ aliases:
 - [Bono & Judge (2003) Self-Concordance at Work: Toward Understanding the Motivational Effects of Transformational Leaders — Academy of Management Journal 46(5), 554-571（APA PsycNet）](https://psycnet.apa.org/record/2003-10805-002) `学術`
 - [Establishing self-concordant goals: a longitudinal study on the influence of ego identity on goal self-concordance — Frontiers in Psychology (2024)](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2024.1382345/full) `学術`
 
+## 関連概念
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
+- [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
+- [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 出典を共有
+- [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 出典を共有
+- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 出典を共有
+- [[human-boreout|ボアアウト（退屈燃え尽き症候群）]] — 出典を共有
+- [[human-fading-affect-bias|感情消失バイアス]] — 出典を共有
+- [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

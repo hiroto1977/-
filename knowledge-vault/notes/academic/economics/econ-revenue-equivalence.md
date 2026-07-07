@@ -30,6 +30,11 @@ William Vickrey（1961, 先駆）／Roger Myerson（1981「Optimal Auction Desig
 - [Mechanism Design Theory — Nobel委員会 科学的背景文書（Myersonらのメカニズムデザイン）](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `学術`
 - [The Revenue Equivalence Theorem for Basic Auctions — Washington University in St. Louis 講義資料](https://cpb-us-w2.wpmucdn.com/sites.wustl.edu/dist/3/2139/files/2019/11/BasicAuctionRevEq.pdf) `学術`
 
+## 関連概念
+- [[econ-auction-theory|オークション理論]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同分野の近傍
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

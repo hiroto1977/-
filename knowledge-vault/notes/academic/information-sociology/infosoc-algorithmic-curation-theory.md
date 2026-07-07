@@ -32,6 +32,18 @@ Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O'Neil ／ Frank P
 - [Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.](https://doi.org/10.1093/oso/9780190905491.001.0001) `学術`
 - [Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.](https://doi.org/10.1145/2702123.2702556) `学術`
 
+## 関連概念
+- [[infosoc-filter-bubble-theory|フィルターバブル理論]] — 語彙が近い
+- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 語彙が近い
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
+- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
+- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[infosoc-epistemic-bubbles-echo-chambers|認識論的バブルとエコーチェンバー]] — 同じ思想家
+- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ Tony L. Simons ／ Edward C. Tomlinson ／ Quinetta M. Roberson
 - [Revisiting Behavioral Integrity: Progress and New Directions After 20 Years — Annual Review of Organizational Psychology](https://www.annualreviews.org/doi/abs/10.1146/annurev-orgpsych-012420-062016) `学術`
 - [Tony Simons — Cornell SC Johnson College of Business faculty page](https://business.cornell.edu/faculty-research/faculty/tls11/) `リファレンス`
 
+## 関連概念
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,16 @@ aliases:
 - [Leacock, S. 2006. The Rise and Fall of the Ultra Vires Doctrine. DePaul Business & Commercial Law Journal, 5(1).](https://via.library.depaul.edu/bclj/vol5/iss1/4/) `学術`
 - [Nyombi, C. 2014. The Gradual Erosion of the Ultra Vires Doctrine. International Journal of Law and Management, 56(5).](https://www.emerald.com/insight/content/doi/10.1108/ijlma-08-2012-0027/full/html) `学術`
 
+## 関連概念
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 語彙が近い
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
+- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
+- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
+- [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [青森県 ふるさと納税の総務大臣指定](https://www.pref.aomori.lg.jp/soshiki/zaimu/zeimu/025_shitei20190601.html) `自治体`
 - [総務省 ふるさと納税ポータル](https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/policy/) `公的`
 
+## 関連概念
+- [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 語彙が近い
+- [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 出典を共有
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

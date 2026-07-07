@@ -29,6 +29,18 @@ aliases:
 - [Shleifer, A. (1985) A Theory of Yardstick Competition — RAND Journal of Economics 16(3)](https://doi.org/10.2307/2555560) `学術`
 - [Wikipedia: Yardstick competition — Shleifer, benchmark on peers costs, incentive to cut costs, DRG](https://en.wikipedia.org/wiki/Yardstick_competition) `リファレンス`
 
+## 関連概念
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同じ思想家
+- [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同じ思想家
+- [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — 同じ思想家
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同じ思想家
+- [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同じ思想家
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

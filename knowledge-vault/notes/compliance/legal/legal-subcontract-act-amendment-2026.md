@@ -30,6 +30,10 @@ aliases:
 - [公正取引委員会 取適法・振興法 特設ページ](https://www.jftc.go.jp/toriteki_2025/) `公的`
 - [経済産業省・公正取引委員会 中小受託取引適正化法（下請法改正法）](https://www.meti.go.jp/policy/kyoso_seisaku/20250625_shitaukekaisei.pdf) `公的`
 
+## 関連概念
+- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 同分野の近傍
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

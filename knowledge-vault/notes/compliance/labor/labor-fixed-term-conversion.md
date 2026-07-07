@@ -30,6 +30,18 @@ aliases:
 - [厚生労働省 無期転換ポータルサイト](https://muki.mhlw.go.jp/) `公的`
 - [連合 無期転換ルール 解説](https://www.jtuc-rengo.or.jp/) `メディア`
 
+## 関連概念
+- [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 語彙が近い
+- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 語彙が近い
+- [[bizlaw-labor-contract-act|労働契約法]] — 語彙が近い
+- [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 分野横断
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
+- [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

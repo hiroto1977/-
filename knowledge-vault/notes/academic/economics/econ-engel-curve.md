@@ -30,6 +30,15 @@ aliases:
 - [Engel's Law — Investopedia](https://www.investopedia.com/terms/e/engelslawofconsumption.asp) `リファレンス`
 - [Engel Curve — Wikipedia](https://en.wikipedia.org/wiki/Engel_curve) `リファレンス`
 
+## 関連概念
+- [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 語彙が近い
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 出典を共有
+- [[econ-elasticity-of-substitution|代替の弾力性]] — 出典を共有
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 出典を共有
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
+- [[econ-engels-law|エンゲルの法則]] — 同分野の近傍
+- [[econ-wage-led-growth-bhaduri|賃金主導型成長——労働分配率の上昇が総需要を牽引する成長レジーム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

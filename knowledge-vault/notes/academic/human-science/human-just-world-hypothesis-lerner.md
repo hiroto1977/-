@@ -30,6 +30,11 @@ aliases:
 - [Hafer & Begue (2005) Experimental Research on Just-World Theory — Psychological Bulletin](https://doi.org/10.1016/S0065-2601(01)80007-1) `学術`
 - [Wikipedia: Just-world hypothesis — 公正世界仮説の理論と社会的含意の概説](https://en.wikipedia.org/wiki/Just-world_hypothesis) `リファレンス`
 
+## 関連概念
+- [[human-attribution-theory|帰属理論]] — 同分野の近傍
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同分野の近傍
+- [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

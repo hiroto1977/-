@@ -29,6 +29,18 @@ aliases:
 - [Demsetz, H. (1967) Toward a Theory of Property Rights — American Economic Review 57(2)](https://www.jstor.org/stable/1821637) `学術`
 - [Wikipedia: Harold Demsetz — theory of property rights, internalizing externalities, Montagnais beaver example](https://en.wikipedia.org/wiki/Harold_Demsetz) `リファレンス`
 
+## 関連概念
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
+- [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia「Decoy effect」（定義・非対称的支配・正則性/IIA違反・エコノミスト例）](https://en.wikipedia.org/wiki/Decoy_effect) `リファレンス`
 - [BehavioralEconomics.com Mini-Encyclopedia of BE「Decoy effect」](https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/decoy-effect/) `リファレンス`
 
+## 関連概念
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 語彙が近い
+- [[bizlaw-consumer-protection-unfair-trade|消費者保護法制と不公正取引慣行規制の法体系]] — 同じ思想家
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同じ思想家
+- [[human-ikea-effect|イケア効果]] — 同じ思想家
+- [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同じ思想家
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 出典を共有
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 出典を共有
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+- [[human-status-quo-bias|現状維持バイアス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

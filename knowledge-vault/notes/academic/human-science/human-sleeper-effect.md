@@ -31,6 +31,13 @@ aliases:
 - [Pratkanis, Greenwald, Leippe & Baumgardner (1988) JPSP 54(2):203-218 (再現条件・割引手がかり理論)](https://faculty.washington.edu/agg/pdf/Pratkanis&GLB.JPSP.1988.pdf) `学術`
 - [Kumkale & Albarracín (2004) Psychological Bulletin 130(1):143-172 メタ分析 (効果の境界条件)](https://socialactionlab.org/wp-content/uploads/2024/01/Kumkale_The-Sleeper-Effect-in-Persuasion-A-Meta-Analytic-Review_2004.pdf) `学術`
 
+## 関連概念
+- [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 同じ思想家
+- [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同じ思想家
+- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 出典を共有
+- [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同分野の近傍
+- [[human-golem-effect|ゴーレム効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Weitzel & Jonsson (1989) — Semantic Scholar](https://www.semanticscholar.org/paper/Decline-in-Organizations%3A-A-Literature-Integration-Weitzel-Jonsson/9cfb40cf00d98b0ea9ec3c8e7b2e4ae87c1faabc) `学術`
 - [Organizational Life Cycle — Wikipedia](https://en.wikipedia.org/wiki/Organizational_life_cycle) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 同じ思想家
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同分野の近傍
+- [[mgmt-shared-value|共有価値の創造（CSV）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

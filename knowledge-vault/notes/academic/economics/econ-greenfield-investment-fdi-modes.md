@@ -29,6 +29,15 @@ aliases:
 - [UNCTAD — World Investment Report: FDI trends, greenfield vs M&A](https://unctad.org/topic/investment/world-investment-report) `公的`
 - [Wikipedia: Foreign direct investment — greenfield, brownfield, OLI paradigm](https://en.wikipedia.org/wiki/Foreign_direct_investment) `リファレンス`
 
+## 関連概念
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 語彙が近い
+- [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 語彙が近い
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同じ思想家
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同じ思想家
+- [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
+- [[econ-flying-geese|雁行形態論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

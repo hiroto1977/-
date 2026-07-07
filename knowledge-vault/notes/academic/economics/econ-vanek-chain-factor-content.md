@@ -30,6 +30,16 @@ aliases:
 - [Deardorff, A. V. (1984) Testing Trade Theories and Predicting Trade Flows — Handbook of International Economics](https://doi.org/10.1016/S1573-4404(84)01006-4) `学術`
 - [Wikipedia: Heckscher-Ohlin-Vanek theorem — factor content of trade overview](https://en.wikipedia.org/wiki/Vanek%27s_factor_proportions_theory) `リファレンス`
 
+## 関連概念
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
+- [[econ-bowen-leamer-sveikauskas-hov|HOV定理の実証検証——要素含有量貿易理論の計量的テスト]] — 同じ思想家
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同分野の近傍
+- [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 同分野の近傍
+- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

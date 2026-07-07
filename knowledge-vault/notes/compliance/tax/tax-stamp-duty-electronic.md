@@ -30,6 +30,13 @@ aliases:
 - [参議院 内閣答弁書 文書課税である印紙税は電磁的記録に課税されない](https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm) `公的`
 - [国税庁 文書回答事例 電磁的記録に関する印紙税の取扱い](https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm) `公的`
 
+## 関連概念
+- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 語彙が近い
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 分野横断
+- [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有
+- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
+- [[tax-registration-license-tax|登録免許税の概要]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

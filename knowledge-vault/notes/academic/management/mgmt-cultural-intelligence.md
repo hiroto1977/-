@@ -30,6 +30,15 @@ P. Christopher Earley ／ Soon Ang ／ Linn Van Dyne ／ Cultural Intelligence S
 - [Ang et al. (2007), 'Cultural Intelligence: Its Measurement and Effects...', Management and Organization Review 3(3):335–371 — IDEAS/RePEc bibliographic record (handle bla/mgorev/v3y2007i3p335-371).](https://ideas.repec.org/a/bla/mgorev/v3y2007i3p335-371.html) `学術`
 - [Earley, P. Christopher & Ang, Soon (2003). Cultural Intelligence: Individual Interactions Across Cultures. Stanford, CA: Stanford University Press (ISBN 9780804743129) — publisher page.](https://www.sup.org/books/business/cultural-intelligence) `リファレンス`
 
+## 関連概念
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
+- [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
+- [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
+- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
+- [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Domestication of Technology — iResearchNet (Communication research reference)](https://communication.iresearchnet.com/technology-and-communication/domestication-of-technology/) `リファレンス`
 - [Domestication theory — Wikipedia](https://en.wikipedia.org/wiki/Domestication_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]] — 語彙が近い
+- [[infosoc-domestication-technology-silverstone|技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 出典を共有
+- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 出典を共有
+- [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
+- [[infosoc-media-logic|メディア・ロジック]] — 出典を共有
+- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 出典を共有
+- [[infosoc-media-events|メディア・イベント]] — 出典を共有
+- [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

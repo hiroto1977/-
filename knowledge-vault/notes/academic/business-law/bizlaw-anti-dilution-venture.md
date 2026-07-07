@@ -31,6 +31,11 @@ aliases:
 - [経済産業省 (2023) スタートアップ育成政策（J-KISS・J-KISSモデル契約条件）](https://www.meti.go.jp/policy/newbusiness/startup_support/) `公的`
 - [Wikipedia: Anti-dilution protection — full ratchet, weighted average, NVCA, down round, venture capital](https://en.wikipedia.org/wiki/Anti-dilution_protection) `リファレンス`
 
+## 関連概念
+- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 出典を共有
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,15 @@ aliases:
 - [Gillespie, T. (2018) Custodians of the Internet — MIT Press](https://doi.org/10.7551/mitpress/9780262036542.001.0001) `学術`
 - [Wikipedia: Content moderation — platform governance](https://en.wikipedia.org/wiki/Content_moderation) `リファレンス`
 
+## 関連概念
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 語彙が近い
+- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同じ思想家
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
+- [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [McGowan, P. O. et al. (2009) "Epigenetic Regulation of the Glucocorticoid Receptor" — Nature Neuroscience](https://doi.org/10.1038/nn.2270) `学術`
 - [Wikipedia: Behavioural epigenetics — 養育・ストレスとエピジェネティック修飾](https://en.wikipedia.org/wiki/Behavioural_epigenetics) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

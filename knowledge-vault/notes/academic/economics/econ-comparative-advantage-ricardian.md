@@ -29,6 +29,18 @@ aliases:
 - [Ricardo (1817) On the Principles of Political Economy and Taxation — EconLib](https://www.econlib.org/library/Ricardo/ricP.html) `リファレンス`
 - [Wikipedia: Comparative advantage — Ricardo, H-O model, new trade theory, Krugman, intra-industry trade](https://en.wikipedia.org/wiki/Comparative_advantage) `リファレンス`
 
+## 関連概念
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 語彙が近い
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 語彙が近い
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同じ思想家
+- [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

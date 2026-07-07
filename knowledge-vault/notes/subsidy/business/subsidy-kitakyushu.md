@@ -36,6 +36,18 @@ municipality
 - [北九州市 スタートアップ支援](https://www.city.kitakyushu.lg.jp/contents/k9901001.html) `自治体`
 - [特定創業支援事業（北九州市）解説](https://shikin.yayoi-kk.co.jp/search/y24284) `メディア`
 
+## 関連概念
+- [[subsidy-sakai|堺市の創業支援（特定創業支援等事業・S-Cube）]] — 語彙が近い
+- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]] — 語彙が近い
+- [[subsidy-sapporo|さっぽろ新規創業促進補助金（札幌市）]] — 語彙が近い
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
+- [[subsidy-child-allowance|児童手当]] — 同じ思想家
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家
+- [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 同じ思想家
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 同じ思想家
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

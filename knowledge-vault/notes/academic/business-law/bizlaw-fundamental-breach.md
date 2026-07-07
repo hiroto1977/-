@@ -29,6 +29,12 @@ aliases:
 - [Cornell LII Wex: Breach of contract — material/fundamental breach, termination, damages](https://www.law.cornell.edu/wex/breach_of_contract) `リファレンス`
 - [Wikipedia: Fundamental breach — Photo Production v Securicor, construction not rule of law, exemption clauses](https://en.wikipedia.org/wiki/Fundamental_breach) `リファレンス`
 
+## 関連概念
+- [[bizlaw-warranty-condition-distinction|条件と担保条項の区別——契約条項の重要性に応じた救済の差異]] — 語彙が近い
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同じ思想家
+- [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

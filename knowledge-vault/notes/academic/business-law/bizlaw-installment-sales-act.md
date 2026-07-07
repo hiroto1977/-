@@ -30,6 +30,13 @@ aliases:
 - [経済産業省「割賦販売法（後払分野）に基づく監督の基本方針」（支払可能見込額調査・信用購入あっせん）](https://www.meti.go.jp/policy/economy/consumer/credit/2509atobaraikantokunokihonhousin.pdf) `公的`
 - [国立国会図書館 日本法令索引「割賦販売法 昭和36年法律第159号」](https://hourei.ndl.go.jp/simple/detail?lawId=0000053053&current=-1) `公的`
 
+## 関連概念
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 分野横断
+- [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]] — 分野横断
+- [[bizlaw-money-lending-act|貸金業法]] — 同分野の近傍
+- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同分野の近傍
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

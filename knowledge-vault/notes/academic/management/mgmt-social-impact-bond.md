@@ -29,6 +29,18 @@ aliases:
 - [UK Government — Social Impact Bonds（定義・仕組み・ピーターバラ事例・政府ガイダンス）](https://www.gov.uk/guidance/social-impact-bonds) `公的`
 - [内閣府 — 成果連動型民間委託契約方式（PFS）・社会的インパクト・ボンド（SIB）の推進](https://www5.cao.go.jp/keizai2/wvs/sib/index.html) `公的`
 
+## 関連概念
+- [[econ-auerbach-kotlikoff-generational|世代会計（Generational Accounting）]] — 出典を共有
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 出典を共有
+- [[econ-wage-price-spiral|賃金・物価スパイラル]] — 出典を共有
+- [[econ-output-gap|GDPギャップ（需給ギャップ）]] — 出典を共有
+- [[eh-1956|1956年（昭和31年）]] — 出典を共有
+- [[eh-1966|1966年（昭和41年）]] — 出典を共有
+- [[eh-1976|1976年（昭和51年）]] — 出典を共有
+- [[eh-1988|1988年（昭和63年）]] — 出典を共有
+- [[eh-2002|2002年（平成14年）]] — 出典を共有
+- [[eh-2011|2011年（平成23年）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Jenkins (2006) Convergence Culture: Where Old and New Media Collide — NYU Press](https://doi.org/10.18574/nyu/9780814743096.001.0001) `学術`
 - [Wikipedia: Remix culture — リミックス文化の歴史と著作権問題の概説](https://en.wikipedia.org/wiki/Remix_culture) `リファレンス`
 
+## 関連概念
+- [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 語彙が近い
+- [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
+- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
+- [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同じ思想家
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

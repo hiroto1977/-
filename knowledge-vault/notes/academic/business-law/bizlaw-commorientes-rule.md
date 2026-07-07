@@ -33,6 +33,18 @@ aliases:
 - [UK Legislation — Law of Property Act 1925, Section 184（年長者先死・年少者生存推定の原典）](https://www.legislation.gov.uk/ukpga/Geo5/15-16/20/section/184) `公的`
 - [Cornell Law School LII — Uniform Simultaneous Death Act (Wex legal encyclopedia)（120時間ルールの解説）](https://www.law.cornell.edu/wex/uniform_simultaneous_death_act) `リファレンス`
 
+## 関連概念
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
+- [[bizlaw-civil-execution|民事執行法]] — 出典を共有
+- [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — 出典を共有
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 出典を共有
+- [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 出典を共有
+- [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 出典を共有
+- [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
+- [[labor-collective-agreement|労働協約（労働組合法）]] — 出典を共有
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

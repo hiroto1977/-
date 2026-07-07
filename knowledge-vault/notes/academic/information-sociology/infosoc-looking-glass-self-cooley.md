@@ -29,6 +29,18 @@ aliases:
 - [Cooley, C.H. (1902) Human Nature and the Social Order — Scribner; looking-glass self (WorldCat)](https://www.worldcat.org/oclc/1150090) `学術`
 - [Wikipedia: Looking-glass self — Cooley, imagined judgment, symbolic interactionism](https://en.wikipedia.org/wiki/Looking-glass_self) `リファレンス`
 
+## 関連概念
+- [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 同じ思想家
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Savolainen, R. (1995) Everyday life information seeking: Approaching information seeking in the context of "way of life" — LISR](https://doi.org/10.1016/0740-8188(95)90048-9) `学術`
 - [Wikipedia: Information behavior — everyday life information seeking, way of life, mastery of life](https://en.wikipedia.org/wiki/Information_behavior) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-poverty-chatman|情報貧困論（チャトマン理論）]] — 同じ思想家
+- [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同じ思想家
+- [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
+- [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同じ思想家
+- [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
+- [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
+- [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同分野の近傍
+- [[infosoc-gemeinschaft-gesellschaft|ゲマインシャフトとゲゼルシャフト]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [Nohria & Gulati (1996) Is Slack Good or Bad for Innovation? — Academy of Management Journal](https://doi.org/10.1002/(SICI)1097-0266(199611)17:9<693::AID-SMJ854>3.0.CO;2-C) `学術`
 - [Wikipedia: Organizational slack — 組織スラックの概念と戦略的含意の概説](https://en.wikipedia.org/wiki/Organizational_slack) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 語彙が近い
+- [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

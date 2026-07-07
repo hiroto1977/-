@@ -29,6 +29,14 @@ aliases:
 - [Farrell, H. & Newman, A. (2019). Weaponized interdependence — International Security](https://doi.org/10.1093/isr/viab048) `学術`
 - [Wikipedia: Splinternet — digital sovereignty and techno-nationalism](https://en.wikipedia.org/wiki/Splinternet) `リファレンス`
 
+## 関連概念
+- [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — 同じ思想家
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
+- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同じ思想家
+- [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同分野の近傍
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Markus, H. R. & Kitayama, S. (2010) Cultures and Selves — Perspectives on Psychological Science](https://doi.org/10.1146/annurev-psych-010213-115123) `学術`
 - [Wikipedia: Self-construal — independent and interdependent self overview](https://en.wikipedia.org/wiki/Self-construal) `リファレンス`
 
+## 関連概念
+- [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]] — 語彙が近い
+- [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
+- [[human-cultural-dimensions-hofstede|ホフステッドの文化次元理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

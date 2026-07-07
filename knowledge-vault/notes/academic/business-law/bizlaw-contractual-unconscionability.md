@@ -31,6 +31,18 @@ Arthur Allen Leff ／ J. Skelly Wright ／ Karl Llewellyn
 - [Leff (1967) Unconscionability and the Code — U. Penn. Law Review 115(4)](https://doi.org/10.2307/794991) `学術`
 - [Encyclopaedia Britannica — Unconscionability](https://www.britannica.com/topic/unconscionability) `リファレンス`
 
+## 関連概念
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 語彙が近い
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 語彙が近い
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

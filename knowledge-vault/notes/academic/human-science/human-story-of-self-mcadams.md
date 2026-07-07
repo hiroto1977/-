@@ -31,6 +31,12 @@ aliases:
 - [McAdams, D. P. & Guo, J. (2015) Narrating the Generative Life — Psychological Science, 26(4), 475–483（ライフ・ストーリーと世代的ケアの関係）](https://doi.org/10.1037/a0038469) `学術`
 - [Wikipedia: Dan P. McAdams — narrative identity, redemption sequences, contamination sequences, life story model](https://en.wikipedia.org/wiki/Dan_P._McAdams) `リファレンス`
 
+## 関連概念
+- [[human-narrative-identity-ricoeur|物語的アイデンティティ（リクール）]] — 同じ思想家
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
+- [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

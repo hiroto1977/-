@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia: Bowling Alone — The Collapse and Revival of American Community (Putnam 2000)](https://en.wikipedia.org/wiki/Bowling_Alone) `リファレンス`
 - [Claridge, T. (2020) Putnam on Social Capital — Institute for Social Capital](https://www.socialcapitalresearch.com/putnam-on-social-capital-democratic-or-civic-perspective/) `リファレンス`
 
+## 関連概念
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 分野横断
+- [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
+- [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+- [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

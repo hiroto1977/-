@@ -29,6 +29,13 @@ aliases:
 - [Taylor, S.E. et al. (2000) Biobehavioral Responses to Stress in Females: Tend-and-Befriend — Psychological Review 107(3)](https://doi.org/10.1037/0033-295X.107.3.411) `学術`
 - [Wikipedia: Tend and befriend — Taylor, stress response, oxytocin, parental investment](https://en.wikipedia.org/wiki/Tend_and_befriend) `リファレンス`
 
+## 関連概念
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 同じ思想家
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
+- [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

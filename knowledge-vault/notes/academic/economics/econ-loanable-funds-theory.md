@@ -31,6 +31,13 @@ Knut Wicksell ／ Dennis Robertson ／ Bertil Ohlin
 - [ResearchGate — Wicksell on classical theories of money, credit, and interest](https://www.researchgate.net/publication/229793117_Wicksell_on_the_Classical_Theories_of_Money_Credit_Interest_and_the_Price_Level) `学術`
 - [INET Economics — Natural interest rate and loanable funds macro models](https://www.ineteconomics.org/research/research-papers/the-natural-interest-rate-and-secular-stagnation-loanable-funds-macro-models-dont-fit-the-data) `学術`
 
+## 関連概念
+- [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 出典を共有
+- [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 出典を共有
+- [[is-lm-model|IS-LM分析]] — 同分野の近傍
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同分野の近傍
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

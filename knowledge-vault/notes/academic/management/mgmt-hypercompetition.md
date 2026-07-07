@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia「Hypercompetition」（D'Aveni 1994・四つの競争領域・一時的優位の連鎖）](https://en.wikipedia.org/wiki/Hypercompetition) `リファレンス`
 - [GLOBIS学び放題×知見録「一時的競争優位」（ダベニ1994・ハイパーコンペティション解説）](https://globis.jp/article/5551/) `リファレンス`
 
+## 関連概念
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 語彙が近い
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
+- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [厚生労働省 労働基準法施行規則の一部を改正する省令の公布について](https://www.mhlw.go.jp/web/t_doc?dataId=00tc7167&dataType=1&pageNo=1) `公的`
 - [JILPT 給与のデジタル振り込みを2023年4月から解禁](https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html) `公的`
 
+## 関連概念
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 語彙が近い
+- [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
+- [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
+- [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
+- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[labor-childcare-short-time|育児のための短時間勤務制度（育児・介護休業法23条）]] — 同分野の近傍
+- [[labor-collective-bargaining|団体交渉拒否の禁止（労働組合法7条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

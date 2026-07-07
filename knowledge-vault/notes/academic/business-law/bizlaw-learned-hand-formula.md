@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Calculus of negligence (Hand formula) — B < P·L, United States v. Carroll Towing Co. (1947), economic analysis of tort](https://en.wikipedia.org/wiki/Calculus_of_negligence) `リファレンス`
 - [Cornell LII (Wex): Negligence — reasonable care / breach standard and the Learned Hand cost-benefit formulation of duty](https://www.law.cornell.edu/wex/negligence) `リファレンス`
 
+## 関連概念
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同じ思想家
+- [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 同じ思想家
+- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

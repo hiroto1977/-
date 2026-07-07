@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Epistemic Injustice — Fricker hermeneutical injustice and testimonial injustice](https://en.wikipedia.org/wiki/Epistemic_injustice) `リファレンス`
 - [Crerar, C. (2016) Taboo, Hermeneutical Injustice, and Expressively Free Environments — Episteme 13(2)](https://doi.org/10.1111/hypa.12228) `学術`
 
+## 関連概念
+- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 同分野の近傍
+- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同分野の近傍
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同分野の近傍
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

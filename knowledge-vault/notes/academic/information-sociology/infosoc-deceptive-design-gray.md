@@ -31,6 +31,18 @@ aliases:
 - [US FTC (2022) Bringing Dark Patterns to Light — FTC Report（ダーク・パターン規制の政策指針）](https://www.ftc.gov/system/files/ftc_gov/pdf/P214800LootBoxesReport.pdf) `公的`
 - [Wikipedia: Dark pattern — Brignull, Gray typology, DSA Art.25, FTC, roach motel, confirm shaming](https://en.wikipedia.org/wiki/Dark_pattern) `リファレンス`
 
+## 関連概念
+- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 語彙が近い
+- [[infosoc-dark-patterns-ui-deceptive|ダーク・パターンと欺瞞的UXデザインの規制論]] — 同じ思想家
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 出典を共有
+- [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
+- [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — 出典を共有
+- [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
+- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

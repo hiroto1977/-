@@ -30,6 +30,10 @@ aliases:
 - [UN Global Compact Ten Principles — Universal Ethical Standards for Business](https://www.unglobalcompact.org/what-is-gc/mission/principles) `公的`
 - [Wikipedia: ビジネス倫理 — 社会契約理論と企業倫理の解説](https://ja.wikipedia.org/wiki/%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E5%80%AB%E7%90%86) `リファレンス`
 
+## 関連概念
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

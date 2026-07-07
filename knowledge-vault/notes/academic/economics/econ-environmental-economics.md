@@ -31,6 +31,18 @@ aliases:
 - [Nordhaus 2017 Revisiting the Social Cost of Carbon, PNAS](https://www.pnas.org/doi/10.1073/pnas.1609244114) `学術`
 - [Nobel Prize 2018 — William Nordhaus](https://www.nobelprize.org/prizes/economic-sciences/2018/nordhaus/facts/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同じ思想家
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — 同じ思想家
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同じ思想家
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

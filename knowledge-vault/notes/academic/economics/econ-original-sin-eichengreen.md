@@ -30,6 +30,18 @@ aliases:
 - [Eichengreen, B. & Hausmann, R. (1999) Exchange Rates and Financial Fragility — NBER](https://doi.org/10.1257/jel.41.3.599) `学術`
 - [Wikipedia: Original sin — emerging market foreign currency borrowing constraint overview](https://en.wikipedia.org/wiki/Original_sin_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 語彙が近い
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 同じ思想家
+- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 同じ思想家
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
+- [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

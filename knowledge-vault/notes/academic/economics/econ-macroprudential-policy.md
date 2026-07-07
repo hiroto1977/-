@@ -29,6 +29,18 @@ BIS（国際決済銀行）・IMF・FSB（金融安定理事会）が2010年代�
 - [IMF Finance & Development — "Macroprudential Policy: Protecting the Whole"（定義・システミックリスク・ツール）](https://www.imf.org/external/pubs/ft/fandd/basics/macropru.htm) `公的`
 - [BIS 第80次年次報告書（2010）第VII章 "Macroprudential policy and addressing procyclicality"](https://www.bis.org/publ/arpdf/ar2010e7.pdf) `公的`
 
+## 関連概念
+- [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 出典を共有
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 出典を共有
+- [[econ-regulatory-arbitrage|規制裁定：企業による規制差異の利用と市場効率性]] — 出典を共有
+- [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]] — 出典を共有
+- [[econ-target-zone|ターゲット・ゾーン（為替レート目標帯モデル）]] — 出典を共有
+- [[bizlaw-regulatory-sandbox|規制サンドボックス（フィンテック・イノベーション実証制度）]] — 出典を共有
+- [[econ-credit-cycle-theory|信用循環理論]] — 出典を共有
+- [[econ-forward-guidance|フォワードガイダンス（時間軸政策）]] — 出典を共有
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

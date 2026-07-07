@@ -30,6 +30,18 @@ aliases:
 - [Nelson, R.R., The Sources of Economic Growth, Harvard University Press (1996)](https://doi.org/10.1093/0199248540.001.0001) `学術`
 - [Evolutionary Economics — Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/evolutionary-economics/) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
+- [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
+- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

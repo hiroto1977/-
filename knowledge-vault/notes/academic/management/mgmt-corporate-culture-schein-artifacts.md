@@ -29,6 +29,14 @@ aliases:
 - [Schein, E.H. (1985/2010) Organizational Culture and Leadership — Jossey-Bass](https://doi.org/10.1002/9781119534556) `学術`
 - [Wikipedia: Organizational culture — Schein model](https://en.wikipedia.org/wiki/Organizational_culture) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-culture-theory|組織文化理論]] — 語彙が近い
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

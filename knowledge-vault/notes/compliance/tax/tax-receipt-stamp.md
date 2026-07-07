@@ -30,6 +30,11 @@ aliases:
 - [国税庁 クレジット販売の領収書](https://www.nta.go.jp/law/shitsugi/inshi/19/37.htm) `公的`
 - [領収書と収入印紙 解説](https://www.keihi.com/column/22359/) `メディア`
 
+## 関連概念
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 語彙が近い
+- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 語彙が近い
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 分野横断
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

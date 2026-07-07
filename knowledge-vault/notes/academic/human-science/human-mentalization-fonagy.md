@@ -29,6 +29,10 @@ aliases:
 - [Fonagy, P. et al. (1997). Reflective functioning scale — Guilford Press](https://doi.org/10.3389/fpsyg.2018.01931) `学術`
 - [Wikipedia: Mentalization — reflective functioning theory](https://en.wikipedia.org/wiki/Mentalization) `リファレンス`
 
+## 関連概念
+- [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同分野の近傍
+- [[human-theory-of-mind|心の理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

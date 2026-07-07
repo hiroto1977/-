@@ -29,6 +29,10 @@ Hugo Sonnenschein（Econometrica 40(3), 1972 — 問題提起）／Rolf Mantel�
 - [Sonnenschein (1972) Market Excess Demand Functions — Econometrica 40(3), pp.549-563](https://www.jstor.org/stable/1913184) `学術`
 - [Debreu (1974) Excess Demand Functions — Journal of Mathematical Economics 1(1), pp.15-21](https://www.sciencedirect.com/science/article/abs/pii/0304406874900329) `学術`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

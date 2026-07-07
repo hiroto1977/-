@@ -30,6 +30,18 @@ aliases:
 - [Ireland, Hitt & Sirmon (2003) A Model of Strategic Entrepreneurship — Journal of Management](https://doi.org/10.1002/smj.557) `学術`
 - [Wikipedia: Strategic entrepreneurship — 戦略的アントレプレナーシップの概説](https://en.wikipedia.org/wiki/Strategic_entrepreneurship) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 語彙が近い
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同じ思想家
+- [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同じ思想家
+- [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
+- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

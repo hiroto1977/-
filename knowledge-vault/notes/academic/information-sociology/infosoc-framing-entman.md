@@ -29,6 +29,18 @@ aliases:
 - [Entman, R.M. (1993) Framing: Toward Clarification of a Fractured Paradigm — Journal of Communication 43(4)](https://doi.org/10.1111/j.1460-2466.1993.tb01304.x) `学術`
 - [Wikipedia: Framing (social sciences) — Entman, selection and salience, Goffman, vs agenda-setting](https://en.wikipedia.org/wiki/Framing_(social_sciences)) `リファレンス`
 
+## 関連概念
+- [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 同じ思想家
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
+- [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
+- [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

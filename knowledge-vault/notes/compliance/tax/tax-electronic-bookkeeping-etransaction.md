@@ -30,6 +30,11 @@ aliases:
 - [国税庁 電子帳簿保存法一問一答（電子取引関係）](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/03-6.pdf) `公的`
 - [マネーフォワード 電子帳簿保存法 2024年改正点・保存要件の解説](https://biz.moneyforward.com/accounting/basic/44331/) `メディア`
 
+## 関連概念
+- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 語彙が近い
+- [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]] — 同分野の近傍
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

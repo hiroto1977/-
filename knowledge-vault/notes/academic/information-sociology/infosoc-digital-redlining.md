@@ -29,6 +29,13 @@ Chris Gilliard & Hugh Culik（Common Sense Education, 2016 — デジタル・�
 - [Gilliard & Culik (2016) Digital Redlining, Access, and Privacy — Common Sense Education](https://www.commonsense.org/education/articles/digital-redlining-access-and-privacy) `メディア`
 - [Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism — NYU Press](https://nyupress.org/9781479837243/algorithms-of-oppression/) `学術`
 
+## 関連概念
+- [[infosoc-information-justice|情報正義]] — 同じ思想家
+- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同じ思想家
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

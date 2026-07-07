@@ -30,6 +30,18 @@ Barley, Stephen R.（1986 Technology as an Occasion for Structuring, Administrat
 - [Barley, S.R. (1986) Technology as an Occasion for Structuring: Evidence from Observations of CT Scanners and the Social Order of Radiology Departments, Administrative Science Quarterly 31(1), 78-108 (DOI: 10.2307/2392767)](https://www.jstor.org/stable/2392767) `学術`
 - [Barley, S.R. & Tolbert, P.S. (1997) Institutionalization and Structuration: Studying the Links between Action and Institution, Organization Studies 18(1), 93-117](https://journals.sagepub.com/doi/10.1177/017084069701800106) `学術`
 
+## 関連概念
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

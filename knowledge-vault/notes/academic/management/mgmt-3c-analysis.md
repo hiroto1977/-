@@ -30,6 +30,16 @@ aliases:
 - [MindTools — Ohmae's 3Cs Model](https://www.mindtools.com/avi3qka/ohmaes-3cs-model/) `リファレンス`
 - [一般社団法人日本経営心理士協会 — 3C分析](https://keiei-shinri.or.jp/word/3c/) `リファレンス`
 
+## 関連概念
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 語彙が近い
+- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 出典を共有
+- [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有
+- [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
+- [[mgmt-aida|AIDAモデル（購買行動モデル）]] — 同分野の近傍
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 同分野の近傍
+- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

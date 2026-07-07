@@ -29,6 +29,10 @@ A.D. (Bud) Craig（Nature Reviews Neuroscience 3(8), 2002 / 10(1), 2009 — イ�
 - [Craig (2002) How do you feel? Interoception — Nature Reviews Neuroscience 3(8), pp.655-666](https://www.nature.com/articles/nrn894) `学術`
 - [Craig (2009) How do you feel — now? The anterior insula and human awareness — Nat Rev Neurosci 10(1), pp.59-70](https://www.nature.com/articles/nrn2555) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

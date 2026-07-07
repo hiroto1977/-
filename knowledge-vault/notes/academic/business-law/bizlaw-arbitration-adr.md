@@ -31,6 +31,17 @@ aliases:
 - [UN1958 — Convention on the Recognition and Enforcement of Foreign Arbitral Awards (New York Convention), United Nations Treaty Series](https://www.newyorkconvention.org/) `リファレンス`
 - [Sander1976 — Varieties of Dispute Processing, Federal Rules Decisions 70:111-134 (Pound Conference)](https://heinonline.org/HOL/LandingPage?handle=hein.journals/frdrl70&div=11) `学術`
 
+## 関連概念
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 同じ思想家
+- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 同じ思想家
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-ordre-public|国際公序（Ordre Public / Public Policy Exception）]] — 出典を共有
+- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

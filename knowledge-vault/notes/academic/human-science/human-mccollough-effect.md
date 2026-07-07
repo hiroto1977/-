@@ -29,6 +29,18 @@ aliases:
 - [McCollough, C. (1965) Color adaptation of edge-detectors in the human visual system — Science](https://doi.org/10.1126/science.149.3688.1115) `学術`
 - [Wikipedia: McCollough effect — contingent aftereffect, orientation, persistence](https://en.wikipedia.org/wiki/McCollough_effect) `リファレンス`
 
+## 関連概念
+- [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-hermann-grid|ヘルマン格子錯視——白い交差点に現れる灰色の幻]] — 同じ思想家
+- [[human-ponzo-illusion|ポンゾ錯視——奥行き手がかりが生む大きさの錯覚]] — 同じ思想家
+- [[human-purkinje-effect|プルキニェ現象——明るさが変わると色の見え方の明暗が逆転する]] — 同じ思想家
+- [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]] — 同じ思想家
+- [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

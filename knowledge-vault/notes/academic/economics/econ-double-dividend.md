@@ -30,6 +30,10 @@ aliases:
 - [Environmental taxation and the double dividend hypothesis in CGE modelling literature: A critical review (Energy Economics)](https://www.sciencedirect.com/science/article/pii/S0161893817301205) `学術`
 - [Schöb, "The Double Dividend Hypothesis of Environmental Taxes: A Survey" (Freie Universität Berlin)](https://www.wiwiss.fu-berlin.de/fachbereich/vwl/schoeb/forschung/forschung_dateien/taxation02.pdf) `リファレンス`
 
+## 関連概念
+- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 同分野の近傍
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

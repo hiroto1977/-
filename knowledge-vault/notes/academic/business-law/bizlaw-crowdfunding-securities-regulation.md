@@ -29,6 +29,17 @@ aliases:
 - [Coffee, J.C. (2012). The Political Economy of Dodd-Frank — Cornell Law Review](https://doi.org/10.2307/j.ctvjsf4mp) `学術`
 - [Wikipedia: Jumpstart Our Business Startups Act — securities regulation](https://en.wikipedia.org/wiki/Jumpstart_Our_Business_Startups_Act) `リファレンス`
 
+## 関連概念
+- [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同じ思想家
+- [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 同じ思想家
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同じ思想家
+- [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同分野の近傍
+- [[bizlaw-trust-act|信託法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

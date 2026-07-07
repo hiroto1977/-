@@ -30,6 +30,18 @@ aliases:
 - [Glosten & Milgrom (1985) Bid, Ask, and Transaction Prices in a Specialist Market — Journal of Financial Economics](https://doi.org/10.1016/0304-405X(85)90044-3) `学術`
 - [Wikipedia: Market microstructure — 市場マイクロストラクチャーの概説](https://en.wikipedia.org/wiki/Market_microstructure) `リファレンス`
 
+## 関連概念
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
+- [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
+- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-predatory-pricing-mcgee|略奪的価格設定——競争相手の排除を狙う原価割れ価格とその合理性論争]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

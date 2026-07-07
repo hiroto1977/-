@@ -30,6 +30,16 @@ aliases:
 - [Springer (Palgrave Macmillan) — Entrepreneurship and the Human Capital of Organizational Innovation: The Intrapreneur](https://link.springer.com/chapter/10.1057/9781137373809_6) `学術`
 - [Wikipedia — Intrapreneurship](https://en.wikipedia.org/wiki/Intrapreneurship) `リファレンス`
 
+## 関連概念
+- [[infosoc-deepfake|ディープフェイク]] — 出典を共有
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 出典を共有
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
+- [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
+- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
+- [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — 同分野の近傍
+- [[mgmt-skunkworks|スカンクワークス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

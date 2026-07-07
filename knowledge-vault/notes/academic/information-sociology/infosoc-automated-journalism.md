@@ -29,6 +29,11 @@ aliases:
 - [Graefe, A. (2016) "Guide to Automated Journalism" Columbia Journalism Review / Tow Center](https://www.cjr.org/tow_center_reports/guide_to_automated_journalism.php) `学術`
 - [Clerwall, C. (2014) "Enter the Robot Journalist" Journalism Practice 8(5)](https://www.tandfonline.com/doi/abs/10.1080/17512786.2014.883116) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 出典を共有
+- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同分野の近傍
+- [[infosoc-cyber-cascade|サイバーカスケード]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

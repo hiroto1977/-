@@ -31,6 +31,12 @@ aliases:
 - [Wikipedia — Beck’s cognitive triad（認知の三徴：自己・世界・将来）](https://en.wikipedia.org/wiki/Beck%27s_cognitive_triad) `リファレンス`
 - [EBSCO Research Starters — Beck’s cognitive triad](https://www.ebsco.com/research-starters/social-sciences-and-humanities/becks-cognitive-triad) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 同じ思想家
+- [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 同じ思想家
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Krackhardt, David （1998 「Simmelian Ties: Super Strong and Sticky」・1999 �
 - [Tortoriello, M. & Krackhardt, D. (2010) "Activating Cross-Boundary Knowledge: The Role of Simmelian Ties in the Generation of Innovations" — Academy of Management Journal 53(1), 167–181](https://journals.aom.org/doi/10.5465/amj.2010.48037420) `学術`
 - [Wikipedia: Simmelian tie — 定義・三者関係への埋め込み・強度と安定性と拘束の性質](https://en.wikipedia.org/wiki/Simmelian_tie) `リファレンス`
 
+## 関連概念
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
+- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

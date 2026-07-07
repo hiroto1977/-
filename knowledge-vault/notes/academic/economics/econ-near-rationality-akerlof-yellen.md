@@ -29,6 +29,18 @@ aliases:
 - [Akerlof, G.A. & Yellen, J.L. (1985) A Near-Rational Model of the Business Cycle — QJE 100(Supplement)](https://doi.org/10.2307/1885666) `学術`
 - [Wikipedia: Menu cost — near-rationality, second-order loss, nominal rigidity, New Keynesian](https://en.wikipedia.org/wiki/Menu_cost) `リファレンス`
 
+## 関連概念
+- [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同じ思想家
+- [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同じ思想家
+- [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+- [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
+- [[econ-adverse-selection|逆選択（レモン市場）]] — 同じ思想家
+- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
+- [[econ-sticky-information|粘着情報モデル]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Abramson, L.Y., Seligman, M.E.P. & Teasdale, J.D. (1978) Learned Helplessness in Humans: Critique and Reformulation — J. Abnormal Psychology 87(1)](https://doi.org/10.1037/0021-843X.87.1.49) `学術`
 - [Wikipedia: Explanatory style — Seligman, permanence/pervasiveness/personalization, learned optimism](https://en.wikipedia.org/wiki/Explanatory_style) `リファレンス`
 
+## 関連概念
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 語彙が近い
+- [[human-learned-optimism|学習性楽観主義]] — 語彙が近い
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-positive-psychology|ポジティブ心理学]] — 同じ思想家
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
+- [[human-garcia-taste-aversion|ガルシア効果（味覚嫌悪学習）——学習の生物学的制約]] — 同じ思想家
+- [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

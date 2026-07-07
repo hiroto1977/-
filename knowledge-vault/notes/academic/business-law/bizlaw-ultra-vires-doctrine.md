@@ -30,6 +30,14 @@ Ashbury Railway Carriage & Iron Co Ltd v Riche [1875] LR 7 HL 653（権限踰越
 - [Ultra Vires — Cornell Law School Legal Information Institute](https://www.law.cornell.edu/wex/ultra_vires) `学術`
 - [Wikipedia — Ashbury Railway Carriage and Iron Co Ltd v Riche](https://en.wikipedia.org/wiki/Ashbury_Railway_Carriage_and_Iron_Co_Ltd_v_Riche) `リファレンス`
 
+## 関連概念
+- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 語彙が近い
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 語彙が近い
+- [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 同じ思想家
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — 同じ思想家
+- [[bizlaw-cy-pres|サイプレ原則（近接原則／Cy-près doctrine）]] — 同じ思想家
+- [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

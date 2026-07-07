@@ -30,6 +30,18 @@ aliases:
 - [国税庁 防衛特別法人税に関する納付手続等について](https://www.nta.go.jp/taxes/nozei/bouei_noufu/index.htm) `公的`
 - [freee 防衛特別法人税とは 2026年から適用される新税制の概要](https://www.freee.co.jp/kb/kb-healthcare/corporate-tax2026/) `メディア`
 
+## 関連概念
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 語彙が近い
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,17 @@ Robert Metcalfe ／ George Gilder ／ Nicholas Economides
 - [Economides, N. (1996). The Economics of Networks. International Journal of Industrial Organization, 14(6), 673–699.](https://neconomides.com/uploads/Economides_Economics_of_Networks.pdf) `学術`
 - [Wikipedia: Metcalfe's law — overview of the law, mathematical formulation, and key academic debates](https://en.wikipedia.org/wiki/Metcalfe%27s_law) `リファレンス`
 
+## 関連概念
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 語彙が近い
+- [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 出典を共有
+- [[infosoc-technological-momentum|技術的モメンタム]] — 出典を共有
+- [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 出典を共有
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
+- [[infosoc-technical-debt|技術的負債]] — 出典を共有
+- [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同分野の近傍
+- [[infosoc-computational-journalism|計算論的ジャーナリズムとデータ・ドリブン報道の社会学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

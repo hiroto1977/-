@@ -29,6 +29,15 @@ aliases:
 - [Erikson, E. H. (1950) Childhood and Society — W. W. Norton](https://wwnorton.com/books/9780393310689) `学術`
 - [Wikipedia: Erikson's stages of psychosocial development — identity crisis, eight stages](https://en.wikipedia.org/wiki/Erikson%27s_stages_of_psychosocial_development) `リファレンス`
 
+## 関連概念
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 語彙が近い
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 出典を共有
+- [[human-narrative-therapy|ナラティブ・セラピー]] — 出典を共有
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
+- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 出典を共有
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ Jカーブ効果（J-curve effect）は、自国通貨の減価（切り下げ�
 - [Bussière, M. et al. (2013) Estimating Trade Elasticities: Demand Composition and the Trade Collapse of 2008–09 — IMF Economic Review, 61(3), 425–457（GVC拡大とJカーブ弱体化）](https://doi.org/10.1057/imfer.2014.12) `学術`
 - [Wikipedia: J curve (economics) — Marshall-Lerner condition, Plaza Accord, price elasticity, trade adjustment](https://en.wikipedia.org/wiki/J_curve_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

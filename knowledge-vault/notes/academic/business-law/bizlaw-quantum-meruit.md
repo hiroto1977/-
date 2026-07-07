@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Quantum meruit — unjust enrichment, implied-in-law contract, reasonable value](https://www.law.cornell.edu/wex/quantum_meruit) `リファレンス`
 - [Wikipedia: Quantum meruit — quasi-contract, restitution, Moses v Macferlan](https://en.wikipedia.org/wiki/Quantum_meruit) `リファレンス`
 
+## 関連概念
+- [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 語彙が近い
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
+- [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家
+- [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家
+- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
+- [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
+- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
+- [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

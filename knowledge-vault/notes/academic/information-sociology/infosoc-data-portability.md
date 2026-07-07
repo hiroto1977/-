@@ -31,6 +31,15 @@ aliases:
 - [European Commission — Data protection: Information for individuals](https://commission.europa.eu/law/law-topic/data-protection/information-individuals_en) `公的`
 - [GDPR-Info — Art. 20 GDPR Right to data portability（条文参照リファレンス）](https://gdpr-info.eu/art-20-gdpr/) `リファレンス`
 
+## 関連概念
+- [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 同じ思想家
+- [[infosoc-profiling|プロファイリングと自動意思決定]] — 同じ思想家
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 出典を共有
+- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 出典を共有
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
+- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

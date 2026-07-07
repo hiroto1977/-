@@ -29,6 +29,12 @@ aliases:
 - [Lansberg (1988) The Succession Conspiracy — Family Business Review 1(2)](https://doi.org/10.1111/j.1741-6248.1997.00081.x) `学術`
 - [Wikipedia: Family business — three-circle model, socioemotional wealth, succession, stewardship](https://en.wikipedia.org/wiki/Family_business) `リファレンス`
 
+## 関連概念
+- [[econ-financialization-lazonick-shareholder|金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換]] — 同じ思想家
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 同じ思想家
+- [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同じ思想家
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

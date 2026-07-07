@@ -29,6 +29,11 @@ aliases:
 - [Ericsson, K.A., Krampe, R.T. & Tesch-Römer, C. (1993) The Role of Deliberate Practice in the Acquisition of Expert Performance — Psychological Review 100(3), 363–406（意図的練習理論の原論文）](https://doi.org/10.1037/0033-295X.100.3.363) `学術`
 - [Wikipedia: Deliberate practice — 意図的練習の概説](https://en.wikipedia.org/wiki/Deliberate_practice) `リファレンス`
 
+## 関連概念
+- [[mgmt-emergent-strategy|創発戦略]] — 同分野の近傍
+- [[mgmt-organizational-forgetting|組織的忘却]] — 同分野の近傍
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Stanford Law School — Property Rules, Liability Rules and Inalienability: One View of the Cathedral（Calabresi & Melamed 1972）](https://law.stanford.edu/publications/property-rules-liability-rules-and-inalienability-one-view-of-the-cathedral/) `学術`
 - [International Center for Law & Economics — Property Rules, Liability Rules, and Inalienability（解説）](https://laweconcenter.org/resources/property-rules-liability-rules-and-inalienability-one-view-of-the-cathedral-by-guido-calabresi-a-douglas-melamed/) `学術`
 
+## 関連概念
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
+- [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

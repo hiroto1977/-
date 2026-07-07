@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省 確かめよう労働条件 副業・兼業と労働時間通算](https://www.check-roudou.mhlw.go.jp/study/roudousya_fukugyoutokengyou.html) `公的`
 - [基発0901第3号 労働時間通算の解釈 通達](https://joshrc.net/archives/6441) `メディア`
 
+## 関連概念
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 語彙が近い
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
+- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
+- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

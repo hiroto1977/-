@@ -29,6 +29,14 @@ aliases:
 - [Heller, M.A. (1998) The Tragedy of the Anticommons — Harvard Law Review 111(3)](https://www.jstor.org/stable/1342111) `学術`
 - [Wikipedia: Tragedy of the anticommons — Heller, fragmented exclusion rights, underuse, patent thicket](https://en.wikipedia.org/wiki/Tragedy_of_the_anticommons) `リファレンス`
 
+## 関連概念
+- [[econ-anticommons|アンチコモンズの悲劇]] — 同じ思想家
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
+- [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 同じ思想家
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
+- [[econ-gibrat-law|ジブラの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

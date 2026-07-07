@@ -30,6 +30,10 @@ Forsythe・Horowitz・Savin・Sefton（1994・標準実験）／Hoffman ら（19
 - [Dictator Game — Encyclopedia of Law and Economics (Springer Nature)](https://link.springer.com/rwe/10.1007/978-3-319-28099-8_652-1) `リファレンス`
 - [Social preferences across different populations: Meta-analyses on the ultimatum game and dictator game（査読論文）](https://www.sciencedirect.com/science/article/abs/pii/S2214804320302895) `学術`
 
+## 関連概念
+- [[econ-ultimatum-game|最後通牒ゲーム]] — 同分野の近傍
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

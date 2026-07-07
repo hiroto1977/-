@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Context Collapse — audience flattening on social media platforms](https://en.wikipedia.org/wiki/Context_collapse) `リファレンス`
 - [Davis, J.L. & Jurgenson, N. (2014) Context Collapse: Theorizing Context Collusions — Information, Communication & Society 17(4)](https://doi.org/10.1080/1369118X.2013.862563) `学術`
 
+## 関連概念
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
+- [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 同じ思想家
+- [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+- [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

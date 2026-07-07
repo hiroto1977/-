@@ -30,6 +30,16 @@ David G. Sirmon／Michael A. Hitt／R. Duane Ireland／Brett A. Gilbert
 - [Sirmon, Hitt & Ireland (2007) Managing Firm Resources in Dynamic Environments, Academy of Management Review 32(1):273-292](https://journals.aom.org/doi/10.5465/amr.2007.23466005) `学術`
 - [Helfat et al. (2007) Dynamic Capabilities: Understanding Strategic Change in Organizations, Blackwell](https://www.wiley.com/en-us/Dynamic+Capabilities:+Understanding+Strategic+Change+in+Organizations-p-9781405135757) `学術`
 
+## 関連概念
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同じ思想家
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
+- [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
+- [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
+- [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

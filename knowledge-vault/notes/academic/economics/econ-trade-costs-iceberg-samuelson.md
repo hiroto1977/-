@@ -30,6 +30,12 @@ aliases:
 - [Anderson, J. E. & van Wincoop, E. (2004) "Trade Costs" — Journal of Economic Literature](https://doi.org/10.1257/jel.42.3.691) `学術`
 - [Wikipedia: Iceberg transport costs — サミュエルソンの貿易費用モデル](https://en.wikipedia.org/wiki/Iceberg_transport_costs) `リファレンス`
 
+## 関連概念
+- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 語彙が近い
+- [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
+- [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
+- [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

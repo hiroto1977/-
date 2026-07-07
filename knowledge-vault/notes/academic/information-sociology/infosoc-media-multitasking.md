@@ -30,6 +30,18 @@ Eyal Ophir／Clifford Nass／Anthony D. Wagner（2009 PNAS）／HMM（ヘビー�
 - [Wikipedia「Media multitasking」（定義・HMM/LMM・タスクスイッチング・因果未確立）](https://en.wikipedia.org/wiki/Media_multitasking) `リファレンス`
 - [Wiradhany & Nieuwenstein (2017) 追試＋メタ分析, Attention, Perception, & Psychophysics（再現性議論）](https://link.springer.com/article/10.3758/s13414-017-1408-4) `学術`
 
+## 関連概念
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 同じ思想家
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[human-flynn-effect|フリン効果]] — 出典を共有
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 出典を共有
+- [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 出典を共有
+- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 出典を共有
+- [[human-emotional-contagion|情動感染]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

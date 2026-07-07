@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Vandervell v IRC [1967] 2 AC 291 — resulting trust, LPA 1925 s.53(1)(c), option to repurchase](https://en.wikipedia.org/wiki/Vandervell_v_IRC) `リファレンス`
 - [Wikipedia: Resulting trust — automatic vs. presumed (Megarry J, Re Vandervell No 2), failure to exhaust the equitable interest](https://en.wikipedia.org/wiki/Resulting_trust) `リファレンス`
 
+## 関連概念
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同じ思想家
+- [[bizlaw-donatio-mortis-causa|死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与]] — 同じ思想家
+- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同じ思想家
+- [[bizlaw-beneficiary-principle|受益者原則——信託には執行できる受益者が必要である]] — 同じ思想家
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
+- [[bizlaw-clog-on-equity-redemption|受戻権の阻害禁止——抵当権者は借り手の受戻しを妨げてはならない]] — 同じ思想家
+- [[bizlaw-ebrahimi-westbourne|エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散]] — 同じ思想家
+- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
+- [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
+- [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

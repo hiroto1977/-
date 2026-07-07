@@ -32,6 +32,13 @@ aliases:
 - [Daft & Lengel (1986) "Organizational Information Requirements, Media Richness and Structural Design", Management Science 32:554–571（原典PDF, Northwestern University ホスト）](https://collablab.northwestern.edu/CollabolabDistro/nucmc/DaftAndLengel-OrgInfoReq-MediaRichnessAndStructuralDesign-MngmtSci-1986.pdf) `学術`
 - [IS Theories Wiki（情報システム理論コミュニティ）— Media richness theory](https://is.theorizeit.org/wiki/Media_richness_theory) `学術`
 
+## 関連概念
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[infosoc-warranting-walther|ワランティング理論（ウォルサー）——オンラインの印象形成と「操作されにくい情報」]] — 同じ思想家
+- [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]] — 出典を共有
+- [[infosoc-media-synchronicity-theory|メディア同期性理論（Media Synchronicity Theory／Dennis, Fuller & Valacich 2008）——伝達と収束という二過程からメディア適合を捉え直す]] — 出典を共有
+- [[infosoc-web2|Web 2.0]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [McDonald & Siegel (1986) The Value of Waiting to Invest — QJE](https://doi.org/10.2307/1884175) `学術`
 - [Wikipedia: Real options valuation — リアル・オプションの理論と応用の概説](https://en.wikipedia.org/wiki/Real_options_valuation) `リファレンス`
 
+## 関連概念
+- [[econ-irreversible-investment|不可逆投資と待機のオプション価値——不確実性下で投資を遅らせる合理性]] — 同じ思想家
+- [[econ-real-options-dixit-pindyck|実物オプション——ディキシット＆ピンダイクの不可逆投資と「待機価値」]] — 同じ思想家
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
+- [[econ-ben-porath-human-capital-lifecycle|ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）]] — 同分野の近傍
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同分野の近傍
+- [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

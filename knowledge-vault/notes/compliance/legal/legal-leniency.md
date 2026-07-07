@@ -30,6 +30,13 @@ aliases:
 - [公正取引委員会 調査協力減算制度の運用方針](https://www.jftc.go.jp/dk/guideline/unyoukijun/tyousakyouryoku.html) `公的`
 - [独禁法改正 課徴金減免の新制度 解説](https://www.keidanren.or.jp/journal/times/2020/1022_06.html) `メディア`
 
+## 関連概念
+- [[bizlaw-leniency|課徴金減免制度（リニエンシー）]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 語彙が近い
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 分野横断
+- [[legal-antimonopoly|独占禁止法]] — 同分野の近傍
+- [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

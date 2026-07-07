@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Nominal Rigidity — wage stickiness and labor market adjustment](https://en.wikipedia.org/wiki/Nominal_rigidity) `リファレンス`
 - [Bewley, T.F. (2002) Fairness, Reciprocity, and Wage Rigidity — IZA Discussion Paper 495](https://doi.org/10.1257/jep.16.2.101) `学術`
 
+## 関連概念
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 語彙が近い
+- [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+- [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
+- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

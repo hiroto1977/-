@@ -29,6 +29,11 @@ BEPS（税源侵食と利益移転、Base Erosion and Profit Shifting）とは�
 - [OECD — BEPS Action Plan: 15 actions, inclusive framework, Two-Pillar solution, GloBE rules](https://www.oecd.org/tax/beps/) `公的`
 - [Wikipedia: BEPS — OECD actions, Two-Pillar, global minimum tax, transfer pricing, CbCR](https://en.wikipedia.org/wiki/Base_erosion_and_profit_shifting) `リファレンス`
 
+## 関連概念
+- [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 同じ思想家
+- [[bizlaw-installment-sales-act|割賦販売法]] — 同分野の近傍
+- [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

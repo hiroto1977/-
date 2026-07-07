@@ -29,6 +29,12 @@ aliases:
 - [Encyclopaedia Britannica Money — Demonstration effect（デューゼンベリーの相対所得仮説・ヌルクセの発展途上国論）](https://www.britannica.com/money/demonstration-effect) `リファレンス`
 - [Library of Economics and Liberty (Econlib) — Relative Income Hypothesis（相対所得・デモンストレーション効果の理論的背景）](https://www.econlib.org/library/Enc/RelativeIncome.html) `リファレンス`
 
+## 関連概念
+- [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — 語彙が近い
+- [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同分野の近傍
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

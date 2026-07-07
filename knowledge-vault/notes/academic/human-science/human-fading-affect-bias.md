@@ -30,6 +30,18 @@ W・リチャード・ウォーカー／ジョン・J・スコウロンスキー
 - [Frontiers in Psychology (2025), Evidence for a fading affect bias in subjectively assessed affect changes in autobiographical memory](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1608751/full) `学術`
 - [Walker et al. (2003), Dysphoria disrupts the fading affect bias, Cognition and Emotion](https://www.tandfonline.com/doi/abs/10.1080/02699930302287) `学術`
 
+## 関連概念
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
+- [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
+- [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 出典を共有
+- [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 出典を共有
+- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 出典を共有
+- [[human-boreout|ボアアウト（退屈燃え尽き症候群）]] — 出典を共有
+- [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 出典を共有
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [経済産業省 不正競争防止法の概要](https://www.meti.go.jp/policy/economy/chizai/chiteki/unfaircompetition_new.html) `公的`
 - [経済産業省 逐条解説 不正競争防止法](https://www.meti.go.jp/policy/economy/chizai/chiteki/pdf/Chikujo.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
+- [[bizlaw-trademark|商標法]] — 出典を共有
+- [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[bizlaw-utility-model|実用新案法]] — 出典を共有
+- [[legal-employee-invention|職務発明（特許法35条）]] — 出典を共有
+- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 出典を共有
+- [[bizlaw-patent-system|特許制度（特許法）]] — 出典を共有
+- [[legal-design-right|意匠権（意匠法）]] — 出典を共有
+- [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 出典を共有
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

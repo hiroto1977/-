@@ -30,6 +30,18 @@ aliases:
 - [厚生労働省 社会保険適用拡大特設サイト](https://www.mhlw.go.jp/tekiyoukakudai/) `公的`
 - [政府広報オンライン 社会保険の適用が拡大 従業員51人以上](https://www.gov-online.go.jp/article/202209/entry-10068.html) `公的`
 
+## 関連概念
+- [[labor-disability-employment-rate|障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）]] — 語彙が近い
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-employees-pension|厚生年金保険法]] — 出典を共有
+- [[bizlaw-national-pension|国民年金法]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

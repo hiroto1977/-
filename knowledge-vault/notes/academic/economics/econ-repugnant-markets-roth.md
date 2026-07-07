@@ -29,6 +29,14 @@ aliases:
 - [Roth, A. E. (2007) Repugnance as a constraint on markets — Journal of Economic Perspectives](https://doi.org/10.1257/jep.21.3.37) `学術`
 - [Wikipedia: Repugnancy costs — repugnant markets, moral limits, market design, organ sales](https://en.wikipedia.org/wiki/Repugnancy_costs) `リファレンス`
 
+## 関連概念
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

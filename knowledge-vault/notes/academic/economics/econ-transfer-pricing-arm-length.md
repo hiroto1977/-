@@ -30,6 +30,12 @@ aliases:
 - [OECD Transfer Pricing Guidelines — 独立企業間価格原則の公式ガイドライン](https://www.oecd.org/tax/transfer-pricing/) `公的`
 - [Wikipedia: Transfer pricing — 移転価格制度の概要と国際動向](https://en.wikipedia.org/wiki/Transfer_pricing) `リファレンス`
 
+## 関連概念
+- [[econ-transfer-pricing|移転価格税制]] — 語彙が近い
+- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — 語彙が近い
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

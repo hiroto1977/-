@@ -29,6 +29,11 @@ aliases:
 - [Yalom, I. D. (1980) Existential Psychotherapy — Basic Books](https://www.basicbooks.com/titles/irvin-d-yalom/existential-psychotherapy/9780465021475/) `学術`
 - [Wikipedia: Existential therapy — Yalom, ultimate concerns, death, freedom, meaninglessness](https://en.wikipedia.org/wiki/Existential_therapy) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 出典を共有
+- [[human-logotherapy|ロゴセラピー（意味中心療法）：実存的空虚と意味への意志に基づく心理療法]] — 同分野の近傍
+- [[human-narrative-therapy|ナラティブ・セラピー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

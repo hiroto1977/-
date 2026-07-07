@@ -30,6 +30,10 @@ Haas, Peter M. （1992 International Organization）／Dunlop, Claire A. ／Rada
 - [Dunlop, C. A., & Radaelli, C. M. (2013) Systematising Policy Learning: From Monolith to Dimensions, Political Studies 61(3): 599–619](https://journals.sagepub.com/doi/10.1111/j.1467-9248.2012.00982.x) `学術`
 - [Cross, M. K. D. (2013) Rethinking Epistemic Communities Twenty Years Later, Review of International Studies 39(1): 137–160](https://www.cambridge.org/core/journals/review-of-international-studies/article/abs/rethinking-epistemic-communities-twenty-years-later/C7057E942EAFAED773470752746F8454) `学術`
 
+## 関連概念
+- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同分野の近傍
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

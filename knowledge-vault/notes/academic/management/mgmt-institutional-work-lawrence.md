@@ -30,6 +30,13 @@ aliases:
 - [Lawrence, Suddaby & Leca (2009) Institutional Work: Actors and Agency in Institutional Studies of Organizations — Cambridge University Press](https://doi.org/10.1017/CBO9780511596605) `学術`
 - [Wikipedia: Institutional work — 制度的ワーク論の理論と応用の概説](https://en.wikipedia.org/wiki/Institutional_work) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-work|制度的ワーク]] — 語彙が近い
+- [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
+- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同じ思想家
+- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

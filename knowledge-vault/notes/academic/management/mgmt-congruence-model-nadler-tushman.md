@@ -29,6 +29,18 @@ David A. Nadler・Michael L. Tushman（1980年論文・モデルの提唱者） 
 - [Nadler, D. A., & Tushman, M. L. (1980). A model for diagnosing organizational behavior. Organizational Dynamics, 9(2), 35-51.（Harvard Business School Faculty 収録の論文記録）](https://www.hbs.edu/faculty/Pages/item.aspx?num=2974) `学術`
 - [Semantic Scholar 収録の書誌（Nadler & Tushman [1980]・課業/人材/公式の組織編成/非公式の組織の四要素間の適合＝コングルエンスによる組織診断）](https://www.semanticscholar.org/paper/A-model-for-diagnosing-organizational-behavior-Nadler-Tushman/fd4388d8837558941e01396487ee0965360b012a) `リファレンス`
 
+## 関連概念
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
+- [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
+- [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
+- [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

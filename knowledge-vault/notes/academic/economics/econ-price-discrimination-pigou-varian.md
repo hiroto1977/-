@@ -29,6 +29,18 @@ aliases:
 - [Varian, H. R. (1989) Price Discrimination — Handbook of Industrial Organization](https://doi.org/10.1016/S1573-448X(89)01013-7) `学術`
 - [Wikipedia: Price discrimination — Pigou, first/second/third degree, personalized pricing](https://en.wikipedia.org/wiki/Price_discrimination) `リファレンス`
 
+## 関連概念
+- [[econ-price-discrimination|価格差別（price discrimination）]] — 語彙が近い
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同じ思想家
+- [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 同じ思想家
+- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
+- [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — 同じ思想家
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Kahn (1990) Psychological Conditions of Personal Engagement and Disengagement at Work — AMJ 33(4)](https://doi.org/10.2307/256287) `学術`
 - [Wikipedia: Employee engagement — Kahn, psychological safety, Gallup Q12, UWES, Edmondson](https://en.wikipedia.org/wiki/Employee_engagement) `リファレンス`
 
+## 関連概念
+- [[mgmt-work-engagement|ワーク・エンゲージメント]] — 語彙が近い
+- [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
+- [[human-moral-licensing|モラル・ライセンシング（道徳的自己許可）]] — 同じ思想家
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]] — 同じ思想家
+- [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

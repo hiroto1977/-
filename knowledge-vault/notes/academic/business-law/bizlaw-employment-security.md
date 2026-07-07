@@ -30,6 +30,12 @@ aliases:
 - [コトバンク「職業安定法」](https://kotobank.jp/word/%E8%81%B7%E6%A5%AD%E5%AE%89%E5%AE%9A%E6%B3%95-80103) `リファレンス`
 - [コトバンク「労働者供給事業」](https://kotobank.jp/word/%E5%8A%B4%E5%83%8D%E8%80%85%E4%BE%9B%E7%B5%A6%E4%BA%8B%E6%A5%AD-662794) `リファレンス`
 
+## 関連概念
+- [[bizlaw-employment-insurance|雇用保険法]] — 語彙が近い
+- [[bizlaw-worker-dispatch|労働者派遣法]] — 語彙が近い
+- [[bizlaw-e-signature|電子署名法]] — 同分野の近傍
+- [[bizlaw-national-pension|国民年金法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

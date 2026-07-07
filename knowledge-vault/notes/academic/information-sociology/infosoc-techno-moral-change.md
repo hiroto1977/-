@@ -33,6 +33,18 @@ Tsjalling Swierstra（2009 テクノモラル・チェンジの先駆的定式�
 - [Swierstra, Stemerding & Boenink (2009) Exploring Techno-Moral Change: The Case of the ObesityPill — Springer](https://link.springer.com/chapter/10.1007/978-90-481-2229-5_9) `学術`
 - [Hopster, Rueda & Hillenbrink (2025) Conceptual Mediation in Technomoral Change: Reply to Danaher and Sætra — Ethical Theory and Moral Practice](https://link.springer.com/article/10.1007/s10677-025-10481-4) `学術`
 
+## 関連概念
+- [[infosoc-technological-mediation-theory|技術的媒介理論（ポスト現象学）]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
+- [[mgmt-role-exit-theory|役割退出理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

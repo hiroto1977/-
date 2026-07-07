@@ -30,6 +30,11 @@ aliases:
 - [Financial Reporting Council (2020) UK Stewardship Code 2020 — FRC](https://www.frc.org.uk/investors/uk-stewardship-code) `公的`
 - [Wikipedia: スチュワードシップ・コード — 機関投資家の責任と議決権行使の解説](https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%81%E3%83%A5%E3%83%AF%E3%83%BC%E3%83%89%E3%82%B7%E3%83%83%E3%83%97%E3%83%BB%E3%82%B3%E3%83%BC%E3%83%89) `リファレンス`
 
+## 関連概念
+- [[econ-esg-investing|ESG投資（環境・社会・ガバナンス投資）]] — 語彙が近い
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-stewardship-code|日本版スチュワードシップ・コード]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

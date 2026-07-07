@@ -29,6 +29,18 @@ aliases:
 - [Bank of England (2014) Money Creation in the Modern Economy — QBulletin](https://www.bankofengland.co.uk/quarterly-bulletin/2014/q1/money-creation-in-the-modern-economy) `公的`
 - [Wikipedia: Endogenous money — post-Keynesian monetary theory](https://en.wikipedia.org/wiki/Endogenous_money) `リファレンス`
 
+## 関連概念
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 語彙が近い
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-chartalism-modern-money|シャルタリズムと現代貨幣理論（MMT）]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

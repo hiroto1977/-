@@ -33,6 +33,18 @@ aliases:
 - [Code, L. (1991) What Can She Know? Feminist Theory and the Construction of Knowledge — Cornell University Press](https://doi.org/10.1017/S0034670500058045) `学術`
 - [Macquarie University Department of Philosophy: Catriona Mackenzie (research profile)](https://www.macquarie.edu.au/people/catriona-mackenzie) `リファレンス`
 
+## 関連概念
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

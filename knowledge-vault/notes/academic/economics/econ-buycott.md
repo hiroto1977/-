@@ -29,6 +29,10 @@ Michele Micheletti（Palgrave Macmillan, 2003, 政治的消費主義の体系化
 - [Neilson (2010) Boycotting and Buycotting: Consumer Power, Political Influence and Creative Destruction — Annals of the AAPSS 629(1), pp.67-76](https://doi.org/10.1177/0002716209357445) `学術`
 - [Stolle, Hooghe & Micheletti (2005) Politics in the Supermarket: Political Consumerism as a Form of Political Participation — IPSR 26(3), pp.245-269](https://doi.org/10.1177/0192512105053784) `学術`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

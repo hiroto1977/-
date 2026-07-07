@@ -29,6 +29,14 @@ aliases:
 - [Brown, T. (2008) Design Thinking — Harvard Business Review](https://hbr.org/2008/06/design-thinking) `メディア`
 - [Wikipedia: Design thinking — human-centered innovation](https://en.wikipedia.org/wiki/Design_thinking) `リファレンス`
 
+## 関連概念
+- [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 語彙が近い
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同じ思想家
+- [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同じ思想家
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 同分野の近傍
+- [[mgmt-six-sigma|シックス・シグマ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

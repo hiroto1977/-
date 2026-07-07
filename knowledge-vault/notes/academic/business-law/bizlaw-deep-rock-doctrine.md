@@ -30,6 +30,18 @@ Owen Roberts ／ Asa S. Herzog ／ Joel B. Zweibel ／ Rafael I. Pardo ／ Steve
 - [Herzog & Zweibel, "The Equitable Subordination of Claims in Bankruptcy," 15 Vand. L. Rev. 83 (1961)](https://scholarship.law.vanderbilt.edu/vlr/vol15/iss1/4/) `学術`
 - [Schwarcz, "The Inequities of Equitable Subordination," 96 Am. Bankr. L.J. 1 (2022) — SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3899472) `学術`
 
+## 関連概念
+- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
+- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

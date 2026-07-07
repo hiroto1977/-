@@ -30,6 +30,17 @@ Restatement (Second) of Conflict of Laws §302（内部事項の選択規則） 
 - [CTS Corp. v. Dynamics Corp. of America, 481 U.S. 69 (1987)（合衆国最高裁判決一次資料、Legal Information Institute, Cornell Law School 提供。内部事項の法理を「one state shall govern the internal affairs of a corporation」と定式化）](https://www.law.cornell.edu/supremecourt/text/481/69) `公的`
 - [William L. Cary, "Federalism and Corporate Law: Reflections Upon Delaware," 83 Yale Law Journal 663 (1974)（規制間競争「底辺への競争」論を提示した古典的論文）](https://openyls.law.yale.edu/bitstream/handle/20.500.13051/15589/33_83YaleLJ663_1973_1974_.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同じ思想家
+- [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
+- [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

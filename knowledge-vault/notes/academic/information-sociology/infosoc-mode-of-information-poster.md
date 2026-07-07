@@ -29,6 +29,18 @@ aliases:
 - [Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)](https://www.worldcat.org/oclc/21227851) `学術`
 - [Wikipedia: Mark Poster — mode of information, second media age, decentered subject, poststructuralism](https://en.wikipedia.org/wiki/Mark_Poster) `リファレンス`
 
+## 関連概念
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同じ思想家
+- [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
+- [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
+- [[infosoc-synopticon|シノプティコン]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
+- [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

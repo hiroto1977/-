@@ -29,6 +29,11 @@ aliases:
 - [Finucane, M.L. et al. (2000) The Affect Heuristic in Judgments of Risks and Benefits — Journal of Behavioral Decision Making 13(1)](https://doi.org/10.1002/(SICI)1099-0771(200001/03)13:1%3C1::AID-BDM333%3E3.0.CO;2-S) `学術`
 - [Wikipedia: Affect heuristic — Slovic, affective tag, risk-benefit inverse correlation, System 1](https://en.wikipedia.org/wiki/Affect_heuristic) `リファレンス`
 
+## 関連概念
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同分野の近傍
+- [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

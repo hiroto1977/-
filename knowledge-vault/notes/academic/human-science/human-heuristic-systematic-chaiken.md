@@ -29,6 +29,11 @@ aliases:
 - [Chaiken, S. (1980) Heuristic versus Systematic Information Processing — JPSP 39(5)](https://doi.org/10.1037/0022-3514.39.5.752) `学術`
 - [Wikipedia: Heuristic-systematic model — Chaiken, dual-process, sufficiency principle, cues](https://en.wikipedia.org/wiki/Heuristic-systematic_model_of_information_processing) `リファレンス`
 
+## 関連概念
+- [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 語彙が近い
+- [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]] — 同じ思想家
+- [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

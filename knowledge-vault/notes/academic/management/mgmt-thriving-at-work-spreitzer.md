@@ -31,6 +31,18 @@ Gretchen Spreitzer ／ Kathleen Sutcliffe ／ Christine Porath
 - [Center for Positive Organizations — Thriving at Work (University of Michigan)](https://positiveorgs.bus.umich.edu/articles/a-socially-embedded-model-of-thriving-at-work/) `リファレンス`
 - [ResearchGate — A Socially Embedded Model of Thriving at Work](https://www.researchgate.net/publication/241899887_A_Socially_Embedded_Model_of_Thriving_at_Work) `リファレンス`
 
+## 関連概念
+- [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 同じ思想家
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
+- [[human-fresh-start-effect|フレッシュスタート効果]] — 出典を共有
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

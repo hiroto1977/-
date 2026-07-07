@@ -31,6 +31,18 @@ aliases:
 - [Sachs 2005 — The End of Poverty: Economic Possibilities for Our Time, Penguin Press](https://www.penguinrandomhouse.com/books/292403/the-end-of-poverty-by-jeffrey-d-sachs/) `リファレンス`
 - [Banerjee & Duflo 2011 — Poor Economics: A Radical Rethinking of the Way to Fight Global Poverty, PublicAffairs](https://www.publicaffairsbooks.com/titles/abhijit-v-banerjee/poor-economics/9781586487980/) `リファレンス`
 
+## 関連概念
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
+- [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]] — 同じ思想家
+- [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]] — 同じ思想家
+- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
+- [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同じ思想家
+- [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

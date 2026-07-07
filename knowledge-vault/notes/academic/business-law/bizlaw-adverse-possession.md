@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Adverse possession — actual/open/exclusive/hostile/continuous, statutory period, title](https://www.law.cornell.edu/wex/adverse_possession) `リファレンス`
 - [Wikipedia: Adverse possession — requirements, squatters rights, sleeping on rights, quieting title](https://en.wikipedia.org/wiki/Adverse_possession) `リファレンス`
 
+## 関連概念
+- [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 同じ思想家
+- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
+- [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家
+- [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-fixtures-property|定着物（フィクスチャー）——土地に付着して不動産の一部となった動産]] — 同じ思想家
+- [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
+- [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同じ思想家
+- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
+- [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

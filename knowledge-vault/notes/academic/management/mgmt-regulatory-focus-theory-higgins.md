@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Regulatory Focus Theory — promotion and prevention self-regulation systems](https://en.wikipedia.org/wiki/Regulatory_focus_theory) `リファレンス`
 - [Higgins, E.T. (1998) Promotion and Prevention — Advances in Experimental Social Psychology 30](https://doi.org/10.1016/S0065-2601(06)38002-1) `学術`
 
+## 関連概念
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 同じ思想家
+- [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
+- [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同じ思想家
+- [[mgmt-regulatory-focus-theory-work|制御焦点理論（職場応用）]] — 同分野の近傍
+- [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

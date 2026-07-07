@@ -30,6 +30,18 @@ aliases:
 - [ERIC（米国教育省）— Locke & Latham (2002) 書誌](https://eric.ed.gov/?id=EJ654871) `学術`
 - [Ordóñez et al. (2009) Goals Gone Wild, Academy of Management Perspectives 23(1):6-16（批判）](https://journals.aom.org/doi/10.5465/amp.2009.37007999) `学術`
 
+## 関連概念
+- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
+- [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

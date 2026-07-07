@@ -31,6 +31,18 @@ Grant Gilmore ／ Steven L. Harris ／ Lynn M. LoPucki
 - [U.S. DOJ Civil Resource Manual § 95 — Priority of Liens](https://www.justice.gov/jm/civil-resource-manual-95-priority-liens) `公的`
 - [Harris & Mooney, Security Interests in Personal Property (6th ed., West Academic 2015)](https://faculty.westacademic.com/Book/Detail?id=14431) `学術`
 
+## 関連概念
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 出典を共有
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 出典を共有
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 出典を共有
+- [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 出典を共有
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
+- [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

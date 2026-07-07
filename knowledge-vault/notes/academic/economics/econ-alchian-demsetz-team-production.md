@@ -29,6 +29,18 @@ aliases:
 - [Alchian, A.A. & Demsetz, H. (1972) Production, Information Costs, and Economic Organization — American Economic Review 62(5), 777–795（チーム生産理論の原論文）](https://doi.org/10.2307/3003320) `学術`
 - [Wikipedia: Alchian–Demsetz production — チーム生産と残余請求権の概説](https://en.wikipedia.org/wiki/Alchian%E2%80%93Demsetz_production) `リファレンス`
 
+## 関連概念
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
+- [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
+- [[econ-nirvana-fallacy|ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）]] — 同じ思想家
+- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
+- [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同じ思想家
+- [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

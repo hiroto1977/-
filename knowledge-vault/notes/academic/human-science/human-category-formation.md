@@ -30,6 +30,14 @@ aliases:
 - [Categorization in Infancy — Trends in Cognitive Sciences](https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613(00)01752-6) `学術`
 - [Quinn et al. (2000) Understanding Early Categorization — CMU](https://www.cmu.edu/dietrich/psychology/infant-cognition-lab/publications/Quinn%20et%20al.%20(2000).pdf) `学術`
 
+## 関連概念
+- [[human-synesthesia-neuroscience|共感覚の神経科学]] — 出典を共有
+- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 出典を共有
+- [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 出典を共有
+- [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
+- [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — 同分野の近傍
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,17 @@ aliases:
 - [Hall, R. E. (1988) The Relation Between Price and Marginal Cost in U.S. Industry — Journal of Political Economy, 96(5), 921–947（マークアップ推定法）](https://doi.org/10.2307/3440307) `学術`
 - [Wikipedia: Lerner index — formula, perfect competition, monopoly, empirical estimation, banking applications](https://en.wikipedia.org/wiki/Lerner_index) `リファレンス`
 
+## 関連概念
+- [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 語彙が近い
+- [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
+- [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同じ思想家
+- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
+- [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

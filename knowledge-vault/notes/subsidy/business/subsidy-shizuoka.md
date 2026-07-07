@@ -36,6 +36,13 @@ prefecture
 - [静岡県産業振興財団 収益力向上（賃上げ環境整備）補助金](https://www.ric-shizuoka.or.jp/keiei/shuekiryoku-chinage.html) `運営団体`
 - [静岡県 収益力向上（賃上げ環境整備）補助金](https://www.pref.shizuoka.jp/sangyoshigoto/kigyoshien/1047031/1081779.html) `自治体`
 
+## 関連概念
+- [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 同じ思想家
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 同じ思想家
+- [[subsidy-miyagi|ものづくり中小企業生産性向上設備導入補助金（宮城県）]] — 同分野の近傍
+- [[subsidy-yamagata|山形県中小企業まるっとサポート補助金（山形県）]] — 同分野の近傍
+- [[subsidy-yamaguchi|山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

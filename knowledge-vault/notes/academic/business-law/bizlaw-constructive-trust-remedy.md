@@ -30,6 +30,17 @@ aliases:
 - [Wikipedia: Constructive Trust — remedial trust imposed by operation of law](https://en.wikipedia.org/wiki/Constructive_trust) `リファレンス`
 - [Scott, A.W. (1955) Constructive Trusts — Law Quarterly Review 71](https://doi.org/10.2307/1331820) `学術`
 
+## 関連概念
+- [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 語彙が近い
+- [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
+- [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同じ思想家
+- [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 同じ思想家
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
+- [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — 同じ思想家
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

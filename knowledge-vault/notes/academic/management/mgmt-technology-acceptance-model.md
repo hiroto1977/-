@@ -30,6 +30,12 @@ aliases:
 - [Venkatesh, Morris, Davis & Davis (2003) User Acceptance of Information Technology: Toward a Unified View — MIS Quarterly](https://doi.org/10.2307/30036540) `学術`
 - [Wikipedia: Technology acceptance model — 技術受容モデルの理論と拡張の概説](https://en.wikipedia.org/wiki/Technology_acceptance_model) `リファレンス`
 
+## 関連概念
+- [[infosoc-tam-healthcare|医療情報技術の受容モデル：TAM・UTAUTのヘルスケア領域への適用と拡張]] — 分野横断
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
+- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

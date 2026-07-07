@@ -30,6 +30,11 @@ aliases:
 - [Autobiographical Memory — Wikipedia](https://en.wikipedia.org/wiki/Autobiographical_memory) `リファレンス`
 - [Conway & Pleydell-Pearce (2000) — Semantic Scholar](https://www.semanticscholar.org/paper/The-construction-of-autobiographical-memories-in-Conway-Pleydell-Pearce/13241a844c714549c173e239714ae020386172e3) `学術`
 
+## 関連概念
+- [[human-autobiographical-memory-conway|コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル]] — 語彙が近い
+- [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

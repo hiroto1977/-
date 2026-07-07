@@ -30,6 +30,12 @@ aliases:
 - [Dencik (2018) Surveillance Realism and the Politics of Imagination — Krisis](https://eprints-gro.gold.ac.uk/id/eprint/37295/7/Krisis-2018-1-Dencik.pdf) `学術`
 - [The Advent of Surveillance Realism — Cardiff University ORCA](https://orca.cardiff.ac.uk/id/eprint/97855/) `学術`
 
+## 関連概念
+- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
+- [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 出典を共有
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
+- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

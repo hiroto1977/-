@@ -150,7 +150,26 @@ function audit(entries, today) {
   reverify.sort((a, b) => b.monthsOld - a.monthsOld || (a.id < b.id ? -1 : 1));
   dedupe.sort((a, b) => (a.a < b.a ? -1 : a.a > b.a ? 1 : a.b < b.b ? -1 : 1));
 
-  return { enrich, reverify, missingAsOf, sourceHygiene, dedupe };
+  return { enrich, reverify, missingAsOf, sourceHygiene, dedupe, distinct };
+}
+
+/**
+ * 知識グラフ由来の重複疑い: term-overlap スコアが閾値以上のペアは
+ * 「語彙がほぼ同一」であり、副題違いで titleCore 照合をすり抜けた残存重複の
+ * 有力候補（例: リーンスタートアップの第 3 変種を実際に発見）。裁定済みペアは除外。
+ */
+const GRAPH_DUP_SCORE = 3000;
+function graphDedupeSuspects(entries, distinct) {
+  const kg = require('../orchestration/knowledge-graph.cjs');
+  const { edges } = kg.computeGraph(entries);
+  const out = [];
+  for (const e of edges) {
+    if (e.type !== 'term-overlap' || e.score < GRAPH_DUP_SCORE) continue;
+    if (distinct.has(`${e.a}|${e.b}`)) continue;
+    out.push({ a: e.a, b: e.b, score: e.score });
+  }
+  out.sort((x, y) => y.score - x.score || (x.a < y.a ? -1 : 1));
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -225,6 +244,7 @@ function run(label, file, args = []) {
 
   // 1. AUDIT
   const q = audit(entries, today);
+  const dedupeGraph = graphDedupeSuspects(entries, q.distinct);
   let links = { checked: 0, totalUrls: 0, dead: [], suspect: [] };
   if (args.links) {
     const n = Number(args.links) || 100;
@@ -255,6 +275,7 @@ function run(label, file, args = []) {
       reverify: q.reverify,
       missingAsOf: q.missingAsOf,
       dedupe: q.dedupe,
+      dedupeGraph,
       sourceHygiene: q.sourceHygiene,
       deadLinks: links.dead,
       suspectLinks: links.suspect,
@@ -264,6 +285,7 @@ function run(label, file, args = []) {
       reverify: q.reverify.length,
       missingAsOf: q.missingAsOf.reduce((n, m) => n + m.count, 0),
       dedupe: q.dedupe.length,
+      dedupeGraph: dedupeGraph.length,
       sourceHygiene: q.sourceHygiene.length,
       deadLinks: links.dead.length,
       suspectLinks: links.suspect.length,
@@ -277,7 +299,8 @@ function run(label, file, args = []) {
     `増強待ち（コレクション別閾値未満）: ${s.enrich}`,
     `再検証待ち（鮮度切れ）: ${s.reverify}`,
     `asOf 欠落: ${s.missingAsOf}（${q.missingAsOf.map((m) => `${m.collection} ${m.count}`).join(' / ') || 'なし'}）`,
-    `重複疑い（同一コレクション内・裁定済み ${loadDistinctPairs().size} ペア除外後）: ${s.dedupe}`,
+    `重複疑い（タイトルコア一致・裁定済み除外後）: ${s.dedupe}`,
+    `重複疑い（グラフ term-overlap ≥ ${GRAPH_DUP_SCORE}・裁定済み除外後）: ${s.dedupeGraph}`,
     `出典衛生（<2件 or 権威なし）: ${s.sourceHygiene}`,
     `リンク切れ: ${s.deadLinks}（要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}）`,
   ];
@@ -296,7 +319,8 @@ function run(label, file, args = []) {
       `| 増強待ち (コレクション別閾値) | ${s.enrich} |`,
       `| 再検証待ち (鮮度切れ) | ${s.reverify} |`,
       `| asOf 欠落 | ${s.missingAsOf} |`,
-      `| 重複疑い | ${s.dedupe} |`,
+      `| 重複疑い（タイトルコア） | ${s.dedupe} |`,
+      `| 重複疑い（グラフ語彙） | ${s.dedupeGraph} |`,
       `| 出典衛生 | ${s.sourceHygiene} |`,
       `| リンク切れ | ${s.deadLinks} (要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}) |`,
       '',
@@ -305,7 +329,7 @@ function run(label, file, args = []) {
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n');
   }
 
-  const actionable = s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.sourceHygiene + s.deadLinks;
+  const actionable = s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.sourceHygiene + s.deadLinks;
   console.log(actionable > 0 ? `\n⏳ LLM 作業 ${actionable} 件が待機中` : '\n✅ 全て最新 — LLM 作業なし');
 })().catch((err) => {
   console.error('\n❌ 知識オートパイロット失敗:', err.message || err);

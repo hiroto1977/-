@@ -30,6 +30,13 @@ Reves v. Ernst & Young, 494 U.S. 56 (1990) ／ Thurgood Marshall (majority opini
 - [Wikipedia: Reves v. Ernst & Young, 494 U.S. 56 (1990) — family resemblance test, four factors, and enumerated non-security notes](https://en.wikipedia.org/wiki/Reves_v._Ernst_%26_Young) `リファレンス`
 - ["To Be or Note to Be a Security: Reves v. Ernst & Young" — Catholic University Law Review (case note on the 1990 family resemblance test)](https://scholarship.law.edu/cgi/viewcontent.cgi?article=1782&context=lawreview) `学術`
 
+## 関連概念
+- [[bizlaw-nemo-dat-quod-non-habet|ネモ・ダット原則（Nemo Dat Quod Non Habet）]] — 同じ思想家
+- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 同じ思想家
+- [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,10 @@ Martin Conwayが提唱した自己記憶システム（Self-Memory System: SMS�
 - [Wikipedia — Autobiographical memory](https://en.wikipedia.org/wiki/Autobiographical_memory) `リファレンス`
 - [Semantic Scholar — Conway & Pleydell-Pearce 2000](https://www.semanticscholar.org/paper/The-construction-of-autobiographical-memories-in-Conway-Pleydell-Pearce/13241a844c714549c173e239714ae020386172e3) `学術`
 
+## 関連概念
+- [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — 語彙が近い
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

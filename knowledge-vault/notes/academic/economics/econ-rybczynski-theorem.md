@@ -30,6 +30,18 @@ aliases:
 - [Encyclopedia.com — Rybczynski Theorem（学術百科事典による解説）](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/rybczynski-theorem) `リファレンス`
 - [Saylor Academy, International Trade Theory and Policy Ch.5.4 — The Rybczynski Theorem](https://saylordotorg.github.io/text_international-trade-theory-and-policy/s08-04-the-rybczynski-theorem.html) `学術`
 
+## 関連概念
+- [[econ-rybczynski|リブチンスキー定理]] — 語彙が近い
+- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
+- [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 出典を共有
+- [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 出典を共有
+- [[econ-monopolistic-competition|独占的競争]] — 出典を共有
+- [[econ-dual-labor-market|二重労働市場論]] — 同分野の近傍
+- [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
+- [[econ-double-marginalization|二重マージン（二重限界化）]] — 同分野の近傍
+- [[econ-rostow-stages|ロストウの経済成長段階説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

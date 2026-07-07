@@ -29,6 +29,18 @@ MUM効果（MUM effect）は、社会心理学者シドニー・ローゼンと�
 - [Rosen, S. & Tesser, A. (1970) On reluctance to communicate undesirable information: The MUM effect — Sociometry](https://doi.org/10.2307/2786148) `学術`
 - [Wikipedia: MUM effect — reluctance to transmit bad news, organizational silence](https://en.wikipedia.org/wiki/MUM_effect) `リファレンス`
 
+## 関連概念
+- [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 同じ思想家
+- [[econ-superstar-economics|スーパースターの経済学]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
+- [[econ-spatial-equilibrium-rosen-roback|空間均衡モデル——ローゼン＝ロバックの都市間均衡と補償的賃金格差]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]] — 同じ思想家
+- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
+- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同じ思想家
+- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

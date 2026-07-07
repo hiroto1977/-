@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Change Blindness — failure to detect visual changes during interruption](https://en.wikipedia.org/wiki/Change_blindness) `リファレンス`
 - [Rensink, R.A., O'Regan, J.K. & Clark, J.J. (1997) To See or Not to See — Psychological Science 8(5)](https://doi.org/10.1068/p2952) `学術`
 
+## 関連概念
+- [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同じ思想家
+- [[human-synesthesia|共感覚（シナスタジア）]] — 同分野の近傍
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同分野の近傍
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
+- [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

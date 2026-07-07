@@ -29,6 +29,18 @@ aliases:
 - [Crawford, V. P. & Sobel, J. (1982) Strategic information transmission — Econometrica](https://doi.org/10.2307/1913390) `学術`
 - [Wikipedia: Cheap talk — strategic information transmission, conflict of interest, babbling](https://en.wikipedia.org/wiki/Cheap_talk) `リファレンス`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同じ思想家
+- [[econ-schelling-segregation|シェリングの分居モデル]] — 同じ思想家
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同分野の近傍
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

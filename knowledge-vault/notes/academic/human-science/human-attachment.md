@@ -31,6 +31,10 @@ aliases:
 - [SimplyPsychology — Mary Ainsworth Strange Situation（安定/回避/両価・抵抗、Main & Solomon 1990の無秩序型）](https://www.simplypsychology.org/mary-ainsworth.html) `リファレンス`
 - [SimplyPsychology — John Bowlby’s Attachment Theory（生得的・進化的基盤、安全基地、内的作業モデル）](https://www.simplypsychology.org/bowlby.html) `リファレンス`
 
+## 関連概念
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同分野の近傍
+- [[human-attachment-style-theory|愛着スタイル理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [The Open University (OpenLearn): Innovation and the S-curve](https://www.open.edu/openlearn/nature-environment/organisations-environmental-management-and-innovation/content-section-1.7) `学術`
 - [IT用語辞典 e-Words「技術のSカーブ」](https://e-words.jp/w/%E6%8A%80%E8%A1%93%E3%81%AES%E3%82%AB%E3%83%BC%E3%83%96.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
+- [[econ-dual-labor-market|二重労働市場論]] — 出典を共有
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
+- [[human-endowment-effect|保有効果（授かり効果）]] — 出典を共有
+- [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
+- [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 出典を共有
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
+- [[econ-liquidity-trap|流動性のわな]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

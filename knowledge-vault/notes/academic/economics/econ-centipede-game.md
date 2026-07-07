@@ -29,6 +29,18 @@ aliases:
 - [Rosenthal, R. W. (1981) Games of perfect information, predatory pricing and the chain-store paradox — Journal of Economic Theory](https://doi.org/10.1016/0022-0531(81)90039-1) `学術`
 - [Wikipedia: Centipede game — backward induction, cooperation, rationality paradox](https://en.wikipedia.org/wiki/Centipede_game) `リファレンス`
 
+## 関連概念
+- [[human-self-fulfilling-prophecy|自己成就的予言（マートン）]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家
+- [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同じ思想家
+- [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

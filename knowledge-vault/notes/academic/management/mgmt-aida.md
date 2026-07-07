@@ -30,6 +30,12 @@ E・セント・エルモ・ルイス（E. St. Elmo Lewis, 1898頃）／AIDMA・
 - [Iwamoto (2023) "The Origin of AIDA" — Carleton University library journal](https://ojs.library.carleton.ca/index.php/pcharm/article/view/4340/3310) `学術`
 - [カオナビ人事用語集 — AIDMA（記憶段階を含む）とAISASとの違い](https://www.kaonavi.jp/dictionary/aidma/) `リファレンス`
 
+## 関連概念
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 出典を共有
+- [[mgmt-3c-analysis|3C分析]] — 同分野の近傍
+- [[mgmt-adkar|ADKARモデル]] — 同分野の近傍
+- [[mgmt-customer-journey|カスタマージャーニー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

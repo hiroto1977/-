@@ -29,6 +29,15 @@ aliases:
 - [Herman, E.S. & Chomsky, N. (1988) Manufacturing Consent: The Political Economy of the Mass Media — Pantheon (WorldCat)](https://www.worldcat.org/oclc/17441737) `学術`
 - [Wikipedia: Propaganda model — Herman & Chomsky, five filters, ownership/advertising/sourcing/flak/ideology](https://en.wikipedia.org/wiki/Propaganda_model) `リファレンス`
 
+## 関連概念
+- [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]] — 同じ思想家
+- [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]] — 同じ思想家
+- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
+- [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同分野の近傍
+- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

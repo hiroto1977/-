@@ -29,6 +29,18 @@ aliases:
 - [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（大きさの恒常性の誤適用）](https://www.worldcat.org/oclc/35780015) `学術`
 - [Wikipedia: Ponzo illusion — linear perspective, size constancy, depth cues](https://en.wikipedia.org/wiki/Ponzo_illusion) `リファレンス`
 
+## 関連概念
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-cafe-wall-illusion|カフェウォール錯視——平行な線が傾いて見える幾何学的錯視]] — 同じ思想家
+- [[human-mccollough-effect|マッカロー効果——方位に依存する持続的な色残効]] — 同じ思想家
+- [[human-purkinje-effect|プルキニェ現象——明るさが変わると色の見え方の明暗が逆転する]] — 同じ思想家
+- [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]] — 同じ思想家
+- [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
+- [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同じ思想家
+- [[human-mcgurk-effect|マガーク効果]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,17 @@ aliases:
 - [Kücklich, J. (2005) Precarious Playbour: Modders and the Digital Games Industry — Fibreculture Journal 5](https://doi.org/10.7264/N3DN436S) `学術`
 - [Wikipedia: Playbour — Kücklich, modding, blurring play and labour, free labour, digital capitalism](https://en.wikipedia.org/wiki/Playbour) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同じ思想家
+- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同じ思想家
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同じ思想家
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
+- [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
+- [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

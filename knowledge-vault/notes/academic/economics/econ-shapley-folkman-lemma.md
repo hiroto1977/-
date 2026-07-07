@@ -29,6 +29,18 @@ aliases:
 - [Starr, R. M. (1969) Quasi-equilibria in markets with non-convex preferences — Econometrica](https://doi.org/10.2307/1909201) `学術`
 - [Wikipedia: Shapley–Folkman lemma — Minkowski sum, convexity, general equilibrium](https://en.wikipedia.org/wiki/Shapley%E2%80%93Folkman_lemma) `リファレンス`
 
+## 関連概念
+- [[econ-shapley-value|シャープレー値]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同じ思想家
+- [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 同じ思想家
+- [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
+- [[econ-precautionary-saving|予備的貯蓄]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

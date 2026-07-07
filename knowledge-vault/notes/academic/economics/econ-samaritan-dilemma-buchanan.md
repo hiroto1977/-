@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Samaritan's dilemma — James M. Buchanan (1975), moral hazard, time-inconsistency, strategic courage](https://en.wikipedia.org/wiki/Samaritan%27s_dilemma) `リファレンス`
 - [Coyne, C. J. & Marciano, A. (2025) The Samaritan's Dilemma Fifty Years Later — The Independent Review (on Buchanan 1975, in Phelps ed., Altruism, Morality and Economic Theory)](https://www.independent.org/tir/2025-fall/the-samaritans-dilemma-fifty-years-later/) `学術`
 
+## 関連概念
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
+- [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
+- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同じ思想家
+- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-soft-budget-constraint|ソフトな予算制約（コルナイ）]] — 同じ思想家
+- [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

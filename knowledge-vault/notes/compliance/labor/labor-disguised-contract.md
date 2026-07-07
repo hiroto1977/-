@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 37号告示 疑義応答集](https://www.mhlw.go.jp/content/000834503.pdf) `公的`
 - [総務省 労働者派遣と請負の区分基準（37号告示）](https://www.soumu.go.jp/main_content/000543074.pdf) `公的`
 
+## 関連概念
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

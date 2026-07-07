@@ -29,6 +29,15 @@ aliases:
 - [Putnam, R. (2000). Bowling Alone — Simon & Schuster](https://doi.org/10.1017/CBO9780511800993) `学術`
 - [Wikipedia: Social capital — digital civic engagement](https://en.wikipedia.org/wiki/Social_capital) `リファレンス`
 
+## 関連概念
+- [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
+- [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — 同分野の近傍
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 同分野の近傍
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

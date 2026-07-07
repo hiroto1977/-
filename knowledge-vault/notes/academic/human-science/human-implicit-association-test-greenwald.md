@@ -32,6 +32,12 @@ aliases:
 - [Greenwald, Banaji & Nosek (2015) Statistically Small Effects of the IAT Can Have Societally Large Effects — JPSP, 108(4), 553–561](https://pubmed.ncbi.nlm.nih.gov/25402677/) `学術`
 - [日本心理学会 心理学ミュージアム (n.d.) 見えない気持ちを炙り出す — IATの仕組みと実施例](https://psychmuseum.jp/show_room/iat/) `リファレンス`
 
+## 関連概念
+- [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 語彙が近い
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同じ思想家
+- [[human-spontaneous-trait-inference|自発的特性推論]] — 同分野の近傍
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

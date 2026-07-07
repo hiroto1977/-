@@ -31,6 +31,18 @@ William L. Prosser ／ Guido Calabresi ／ Robert L. Rabin
 - [Bishop, "Economic Loss in Tort," Oxford Journal of Legal Studies (1982)](https://www.jstor.org/stable/1228823) `学術`
 - [Restatement (Third) of Torts: Liability for Economic Harm, Section 1](https://www.ali.org/publications/show/contracts/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — 同じ思想家
+- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
+- [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 出典を共有
+- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
+- [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]] — 出典を共有
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 出典を共有
+- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 出典を共有
+- [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

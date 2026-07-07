@@ -30,6 +30,14 @@ aliases:
 - [Stalk, G. Jr. "Time — The Next Source of Competitive Advantage" — SpringerLink（原論文の書籍再録・書誌）](https://link.springer.com/chapter/10.1007/978-3-642-27922-5_16) `学術`
 - [Reference for Business — "Time-Based Competition"（付加価値時間比率・事例・派生概念の概説）](https://www.referenceforbusiness.com/management/Str-Ti/Time-Based-Competition.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同じ思想家
+- [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 同じ思想家
+- [[mgmt-focused-factory-skinner|集中工場（スキナー）——「絞り込み」が競争力を生む製造戦略]] — 出典を共有
+- [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 同分野の近傍
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同分野の近傍
+- [[mgmt-littles-law|リトルの法則——待ち行列を貫くシンプルな等式]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Promissory Estoppel — High Trees and Restatement §90](https://en.wikipedia.org/wiki/Promissory_estoppel) `リファレンス`
 - [Fuller, L.L. & Perdue, W.R. (1936) The Reliance Interest in Contract Damages — Yale Law Journal 46(1)](https://doi.org/10.2307/1340404) `学術`
 
+## 関連概念
+- [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 語彙が近い
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
+- [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 同じ思想家
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同じ思想家
+- [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
+- [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 同じ思想家
+- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

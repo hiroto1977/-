@@ -29,6 +29,11 @@ aliases:
 - [Sifneos (1972) Short-Term Psychotherapy and Emotional Crisis — Harvard University Press](https://doi.org/10.1097/00005053-197203000-00004) `学術`
 - [Wikipedia: Alexithymia — Sifneos, TAS-20, interoception, insula, somatic disorders, ASD](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`
 
+## 関連概念
+- [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]] — 語彙が近い
+- [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]] — 同じ思想家
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

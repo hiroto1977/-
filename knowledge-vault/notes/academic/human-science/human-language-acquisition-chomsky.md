@@ -29,6 +29,14 @@ aliases:
 - [Chomsky, N. (1965) Aspects of the Theory of Syntax — MIT Press (WorldCat)](https://www.worldcat.org/oclc/309976) `学術`
 - [Wikipedia: Universal grammar — Chomsky, language acquisition device, poverty of the stimulus, nativism](https://en.wikipedia.org/wiki/Universal_grammar) `リファレンス`
 
+## 関連概念
+- [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]] — 同じ思想家
+- [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同じ思想家
+- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
+- [[human-change-blindness-simons|変化盲——視覚環境の大規模変化に気づかない知覚的失敗]] — 同分野の近傍
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

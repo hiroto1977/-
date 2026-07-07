@@ -29,6 +29,12 @@ aliases:
 - [Steele, C.M. & Aronson, J. (1995) Stereotype Threat and the Intellectual Test Performance of African Americans — JPSP 69(5)](https://doi.org/10.1037/0022-3514.69.5.797) `学術`
 - [Wikipedia: Stereotype threat — Steele, Aronson, performance, working memory, interventions](https://en.wikipedia.org/wiki/Stereotype_threat) `リファレンス`
 
+## 関連概念
+- [[human-stereotype-threat|ステレオタイプ脅威]] — 語彙が近い
+- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同じ思想家
+- [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同じ思想家
+- [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

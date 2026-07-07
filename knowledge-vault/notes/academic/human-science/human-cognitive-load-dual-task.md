@@ -31,6 +31,18 @@ John Sweller ／ Harold Pashler ／ Daniel Kahneman
 - [Wikipedia — Cognitive load](https://en.wikipedia.org/wiki/Cognitive_load) `リファレンス`
 - [Kahneman, Attention and Effort (Prentice-Hall, 1973)](https://archive.org/details/attentioneffort00kahn) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-finance-kahneman|行動ファイナンス理論（認知バイアスと意思決定）]] — 同じ思想家
+- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

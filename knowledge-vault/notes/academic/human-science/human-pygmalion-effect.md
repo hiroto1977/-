@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Pygmalion in the Classroom（1968研究と方法論批判）](https://en.wikipedia.org/wiki/Pygmalion_in_the_Classroom) `リファレンス`
 - [Educational Research and Evaluation (2018) — Expectation effects: Pygmalion（査読・効果と限界）](https://www.tandfonline.com/doi/abs/10.1080/13803611.2018.1548817) `学術`
 
+## 関連概念
+- [[human-self-fulfilling-prophecy|自己成就的予言（マートン）]] — 同じ思想家
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同分野の近傍
+- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

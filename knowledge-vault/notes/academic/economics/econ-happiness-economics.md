@@ -31,6 +31,13 @@ aliases:
 - [Kahneman & Deaton 2010 — High Income Improves Evaluation of Life but Not Emotional Well-Being, PNAS 107(38):16489-16493](https://doi.org/10.1073/pnas.1011492107) `学術`
 - [Layard 2005 — Happiness: Lessons from a New Science, Penguin Press](https://www.worldcat.org/isbn/9781594200267) `リファレンス`
 
+## 関連概念
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同じ思想家
+- [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 同じ思想家
+- [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同分野の近傍
+- [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

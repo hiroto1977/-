@@ -30,6 +30,15 @@ M&Aの競争法審査で問題が見込まれる場合、審査当局（欧州�
 - [公正取引委員会 (2023) 企業結合ガイドライン改定のポイント](https://www.jftc.go.jp/houdou/pressrelease/2023/apr/230428.html) `公的`
 - [Wikipedia: Merger remedy — 競争法上のM&A救済措置の国際比較](https://en.wikipedia.org/wiki/Merger_remedy) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 出典を共有
+- [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 出典を共有
+- [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 出典を共有
+- [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

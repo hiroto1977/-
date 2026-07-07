@@ -29,6 +29,18 @@ aliases:
 - [Bhattacharya, S. (1979) Imperfect Information, Dividend Policy, and the Bird in the Hand Fallacy — Bell Journal of Economics 10(1)](https://www.jstor.org/stable/3003330) `学術`
 - [Wikipedia: Dividend signaling — Bhattacharya, asymmetric information, costly signal, information content of dividends](https://en.wikipedia.org/wiki/Signalling_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
+- [[econ-greenspan-put|グリーンスパン・プット]] — 同じ思想家
+- [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]] — 同じ思想家
+- [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同じ思想家
+- [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]] — 同じ思想家
+- [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

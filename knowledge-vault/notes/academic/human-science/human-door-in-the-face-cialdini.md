@@ -29,6 +29,17 @@ aliases:
 - [Cialdini, R.B. et al. (1975) Reciprocal Concessions Procedure for Inducing Compliance: The Door-in-the-Face — JPSP 31(2)](https://doi.org/10.1037/h0076284) `学術`
 - [Wikipedia: Door-in-the-face technique — Cialdini, reciprocal concessions, perceptual contrast](https://en.wikipedia.org/wiki/Door-in-the-face_technique) `リファレンス`
 
+## 関連概念
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同じ思想家
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
+- [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
+- [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同じ思想家
+- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 同じ思想家
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

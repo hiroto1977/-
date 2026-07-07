@@ -29,6 +29,10 @@ aliases:
 - [Allen, C. (2016) The Path to Self-Sovereign Identity — Life with Alacrity](https://doi.org/10.1145/3133956.3134009) `学術`
 - [Wikipedia: Self-sovereign identity — decentralized digital identity](https://en.wikipedia.org/wiki/Self-sovereign_identity) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-identity|デジタルアイデンティティ]] — 語彙が近い
+- [[infosoc-privacy-by-design-cavoukian|プライバシー・バイ・デザインと個人情報保護の設計原則（カブキアン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

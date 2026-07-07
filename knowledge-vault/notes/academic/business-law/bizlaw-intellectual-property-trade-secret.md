@@ -30,6 +30,11 @@ aliases:
 - [DTSA (2016) Defend Trade Secrets Act — US Department of Labor](https://www.dol.gov/agencies/whd/flsa/2016-defend-trade-secrets-act) `公的`
 - [Wikipedia: 営業秘密 — 不正競争防止法と情報保護の解説](https://ja.wikipedia.org/wiki/%E5%96%B6%E6%A5%AD%E7%A7%98%E5%AF%86) `リファレンス`
 
+## 関連概念
+- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同じ思想家
+- [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 同じ思想家
+- [[bizlaw-antimonopoly|独占禁止法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

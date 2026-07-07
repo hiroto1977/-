@@ -29,6 +29,18 @@ aliases:
 - [Giddens, A. (1984) The Constitution of Society — Polity Press; time-space distanciation (WorldCat)](https://www.worldcat.org/oclc/11444856) `学術`
 - [Wikipedia: Time–space distanciation — Giddens, disembedding, symbolic tokens, expert systems, modernity](https://en.wikipedia.org/wiki/Time%E2%80%93space_distanciation) `リファレンス`
 
+## 関連概念
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同じ思想家
+- [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
+- [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+- [[infosoc-warm-expert-bakardjieva|ウォーム・エキスパート——身近な技術支援者が生活世界とシステム世界を橋渡しする]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

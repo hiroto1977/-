@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Convergence (economics) — conditional convergence and convergence clubs](https://en.wikipedia.org/wiki/Convergence_(economics)) `リファレンス`
 - [Durlauf, S.N., Johnson, P.A. & Temple, J.R.W. (2005) Growth Econometrics — Handbook of Economic Growth vol.1A](https://doi.org/10.1257/jel.40.3.869) `学術`
 
+## 関連概念
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
+- [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
+- [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 同じ思想家
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
+- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+- [[econ-disequilibrium-economics-clower|不均衡経済学（クラウワー）]] — 同じ思想家
+- [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
+- [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

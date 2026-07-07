@@ -29,6 +29,18 @@ aliases:
 - [Weiser, M. (1991) The Computer for the 21st Century — Scientific American](https://dl.acm.org/doi/10.1145/329124.329126) `学術`
 - [Wikipedia: Internet of things — ubiquitous computing](https://en.wikipedia.org/wiki/Internet_of_things) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同じ思想家
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
+- [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
+- [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
+- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
+- [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ W・ランス・ベネット ／ アレクサンドラ・セガバーグ ／ マ
 - [Bennett & Segerberg (2013) The Logic of Connective Action: Digital Media and the Personalization of Contentious Politics — Cambridge University Press](https://doi.org/10.1017/CBO9781139198752) `学術`
 - [Wikipedia: Connective action — 接続的行動と集合行動の理論的区別の概説](https://en.wikipedia.org/wiki/Connective_action) `リファレンス`
 
+## 関連概念
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 語彙が近い
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 語彙が近い
+- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 語彙が近い
+- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
+- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
+- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[infosoc-connectivism|コネクティビズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

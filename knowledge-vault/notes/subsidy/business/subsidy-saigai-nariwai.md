@@ -36,6 +36,10 @@ national
 - [中小企業庁 中小企業支援](https://www.chusho.meti.go.jp/keiei/shokibo/index.html) `公的`
 - [経済産業省 報道発表（なりわい再建支援補助金の公募）](https://www.meti.go.jp/press/index.html) `公的`
 
+## 関連概念
+- [[subsidy-osaka-startup|大阪起業家グローイングアップ補助金（大阪府）]] — 同分野の近傍
+- [[subsidy-ishikawa|小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

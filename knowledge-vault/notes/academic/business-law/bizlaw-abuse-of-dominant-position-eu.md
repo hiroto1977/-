@@ -31,6 +31,18 @@ EU競争法の第102条（旧EC条約82条）は「域内市場または相当�
 - [Whish, R. & Bailey, D. (2021) Competition Law, 10th ed. — Oxford University Press（EU競争法の体系書）](https://doi.org/10.1093/acprof:oso/9780198712121.001.0001) `学術`
 - [Wikipedia: Article 102 TFEU — dominant position, exclusionary/exploitative abuse, Google cases, DMA](https://en.wikipedia.org/wiki/Article_102_TFEU) `リファレンス`
 
+## 関連概念
+- [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 語彙が近い
+- [[bizlaw-competition-law-abuse-dominance|競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制]] — 同じ思想家
+- [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
+- [[bizlaw-margin-squeeze-abuse|マージン・スクイーズ（鋏状圧縮）の競争法上の位置づけ]] — 同分野の近傍
+- [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同分野の近傍
+- [[bizlaw-eu-digital-services-act-dsa|EUデジタルサービス法（DSA）——オンライン仲介サービスの責任と透明性]] — 同分野の近傍
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同分野の近傍
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 同分野の近傍
+- [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 同分野の近傍
+- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

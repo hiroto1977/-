@@ -29,6 +29,18 @@ aliases:
 - [Haraway, D. (1985/1991) A Cyborg Manifesto — in Simians, Cyborgs and Women (WorldCat)](https://www.worldcat.org/oclc/23656278) `学術`
 - [Wikipedia: A Cyborg Manifesto — Haraway, cyberfeminism, dualisms, informatics of domination, posthumanism](https://en.wikipedia.org/wiki/A_Cyborg_Manifesto) `リファレンス`
 
+## 関連概念
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家
+- [[infosoc-obligatory-passage-point-callon|義務的通過点——ネットワークに不可欠な存在になること]] — 同じ思想家
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

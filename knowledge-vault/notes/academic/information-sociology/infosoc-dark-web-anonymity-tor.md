@@ -29,6 +29,10 @@ aliases:
 - [Dingledine et al. (2004) Tor: The Second-Generation Onion Router — USENIX Security](https://www.usenix.org/legacy/events/sec04/tech/dingledine.html) `学術`
 - [Wikipedia: Dark web — Tor, I2P, Silk Road, anonymity, whistleblowing, law enforcement](https://en.wikipedia.org/wiki/Dark_web) `リファレンス`
 
+## 関連概念
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

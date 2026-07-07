@@ -29,6 +29,18 @@ aliases:
 - [Shleifer, A. & Vishny, R.W. (1997) The Limits of Arbitrage — Journal of Finance 52(1)](https://doi.org/10.1111/j.1540-6261.1997.tb03807.x) `学術`
 - [Wikipedia: Limits to arbitrage — Shleifer & Vishny, noise-trader risk, capital constraints, persistent mispricing](https://en.wikipedia.org/wiki/Limits_to_arbitrage) `リファレンス`
 
+## 関連概念
+- [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同じ思想家
+- [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
+- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同じ思想家
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同じ思想家
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

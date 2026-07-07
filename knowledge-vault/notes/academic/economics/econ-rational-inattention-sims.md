@@ -30,6 +30,14 @@ aliases:
 - [Matějka & McKay (2015) Rational Inattention to Discrete Choices — AER](https://doi.org/10.1093/restud/rdu044) `学術`
 - [Wikipedia: Rational inattention — 合理的不注意理論の概説](https://en.wikipedia.org/wiki/Rational_inattention) `リファレンス`
 
+## 関連概念
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-price-puzzle|プライス・パズル（Price Puzzle）]] — 同じ思想家
+- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
+- [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]] — 同分野の近傍
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同分野の近傍
+- [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

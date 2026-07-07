@@ -30,6 +30,13 @@ aliases:
 - [Mills, E. S. (1967) An Aggregative Model of Resource Allocation in a Metropolitan Area. American Economic Review 57(2), Papers and Proceedings, 197–210](https://www.jstor.org/stable/1821621) `学術`
 - [Reserve Bank of Australia, RDP 2011-03, 'The Alonso–Muth–Mills Model' — describes commuting-cost vs land-price tradeoff and the bid-rent / density gradient (citing Alonso 1964, Muth 1969 Cities and Housing, Mills 1967)](https://www.rba.gov.au/publications/rdp/2011/2011-03/alonso-muth-mills-model.html) `公的`
 
+## 関連概念
+- [[econ-von-thunen-location|チューネンの孤立国——農業立地と土地利用の同心円]] — 同じ思想家
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 出典を共有
+- [[econ-inflation-targeting|インフレ・ターゲティング]] — 出典を共有
+- [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

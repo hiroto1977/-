@@ -29,6 +29,14 @@ aliases:
 - [Posner, M. I. (1980) Orienting of attention — Quarterly Journal of Experimental Psychology](https://doi.org/10.1080/00335558008248231) `学術`
 - [Wikipedia: Posner cueing task — covert attention, validity effect, inhibition of return](https://en.wikipedia.org/wiki/Posner_cueing_task) `リファレンス`
 
+## 関連概念
+- [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
+- [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同じ思想家
+- [[human-feature-integration-treisman|特徴統合理論——注意が分離した特徴を統合し対象を知覚する]] — 同じ思想家
+- [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同じ思想家
+- [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

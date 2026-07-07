@@ -31,6 +31,12 @@ aliases:
 - [Zahra, S. A. (1996) Technology Strategy and New Venture Performance: A Study of Corporate-Sponsored and Independent Biotechnology Ventures — Journal of Business Venturing, 11(4), 289–321（CE測定と業績）](https://doi.org/10.5465/amj.1996.9602161567) `学術`
 - [Wikipedia: Corporate venture capital — Burgelman ICV model, external venturing, CVC, accelerators](https://en.wikipedia.org/wiki/Corporate_venture_capital) `リファレンス`
 
+## 関連概念
+- [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 語彙が近い
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
+- [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

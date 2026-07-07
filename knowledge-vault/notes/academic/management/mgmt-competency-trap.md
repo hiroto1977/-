@@ -29,6 +29,16 @@ aliases:
 - [March (1991) "Exploration and Exploitation in Organizational Learning," Organization Science 2(1), 71–87 — 探索と活用の理論的枠組み](https://doi.org/10.1287/orsc.2.1.71) `学術`
 - [Levitt & March (1988) "Organizational Learning," Annual Review of Sociology 14, 319–340 — コンピテンシー・トラップの原典](https://doi.org/10.1146/annurev.so.14.080188.001535) `学術`
 
+## 関連概念
+- [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — 語彙が近い
+- [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同分野の近傍
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同分野の近傍
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同分野の近傍
+- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
+- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
+- [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

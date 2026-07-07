@@ -30,6 +30,14 @@ aliases:
 - [厚生労働省 育児・介護休業法 改正内容の解説](https://www.mhlw.go.jp/content/11900000/001407488.pdf) `公的`
 - [日本大百科全書（ニッポニカ）育児・介護休業法 — 1991年制定・1995年介護追加の沿革](https://japanknowledge.com/contents/nipponica/sample_koumoku.html?entryid=2239) `リファレンス`
 
+## 関連概念
+- [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
+- [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 語彙が近い
+- [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 分野横断
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 分野横断
+- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
+- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ B・ジョセフ・パインⅡ（B. Joseph Pine II）／ジェームズ・H・�
 - [Oh, Fiore & Jeong, “Pine and Gilmore's Concept of Experience Economy and Its Dimensions”（査読論文・4領域と2軸の実証）](https://www.researchgate.net/publication/233101787_Pine_and_Gilmore%27s_Concept_of_Experience_Economy_and_Its_Dimensions_An_Empirical_Examination_in_Tourism) `学術`
 - [Wikipedia: B. Joseph Pine II（提唱者・著書1999）](https://en.wikipedia.org/wiki/B._Joseph_Pine_II) `リファレンス`
 
+## 関連概念
+- [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同じ思想家
+- [[mgmt-likert-systems|リッカートのシステム4]] — 同分野の近傍
+- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

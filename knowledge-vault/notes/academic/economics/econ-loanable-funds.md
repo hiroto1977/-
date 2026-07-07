@@ -30,6 +30,18 @@ aliases:
 - [Principles of Macroeconomics (eCampusOntario/Pressbooks) — 貯蓄供給・投資需要と均衡実質金利](https://ecampusontario.pressbooks.pub/principlesofmacroeconomicscdn/chapter/7-5-shifts-in-demand-and-supply-for-loanable-funds/) `学術`
 - [European Journal of the History of Economic Thought — 流動性選好説 対 貸付資金説（1936–1956）論争](https://www.tandfonline.com/doi/full/10.1080/09672567.2021.1893778) `学術`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
+- [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

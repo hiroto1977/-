@@ -29,6 +29,18 @@ aliases:
 - [Lazear, E. P. (1979) Why Is There Mandatory Retirement? — Journal of Political Economy, 87(6), 1261–1284](https://doi.org/10.1086/260835) `学術`
 - [Wikipedia: Edward Lazear — deferred compensation, agency theory of wage profiles, mandatory retirement, personnel economics](https://en.wikipedia.org/wiki/Edward_Lazear) `リファレンス`
 
+## 関連概念
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
+- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
+- [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

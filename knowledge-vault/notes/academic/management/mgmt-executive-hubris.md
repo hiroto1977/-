@@ -30,6 +30,11 @@ aliases:
 - [Malmendier, U. & Tate, G. (2005). CEO Overconfidence and Corporate Investment. Journal of Finance, 60(6), 2661-2700.](https://doi.org/10.1111/j.1540-6261.2005.00813.x) `学術`
 - [Hayward, M. L. A. & Hambrick, D. C. (1997). Explaining the Premiums Paid for Large Acquisitions: Evidence of CEO Hubris. Administrative Science Quarterly, 42(1), 103-127.](https://doi.org/10.2307/2393810) `学術`
 
+## 関連概念
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同分野の近傍
+- [[mgmt-strategic-human-capital-coff-kryscynski|戦略的人的資本——知識労働者の獲得・保持と持続的競争優位]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Sampsell v. Imperial Paper & Color Corp. (1941) ／ In re Augie/Restivo Baking C
 - [J. Stephen Gilbert, "Substantive Consolidation in Bankruptcy: A Primer," 43 Vanderbilt Law Review 207 (1990)](https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=2504&context=vlr) `学術`
 - [Douglas G. Baird, "Substantive Consolidation Today," 47 Boston College Law Review 5 (2005)](https://chicagounbound.uchicago.edu/cgi/viewcontent.cgi?article=2020&context=journal_articles) `学術`
 
+## 関連概念
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
+- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

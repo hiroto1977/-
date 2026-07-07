@@ -29,6 +29,18 @@ aliases:
 - [Bigo, D. (2008) Globalized (in)security: the field and the ban-opticon — in Terror, Insecurity and Liberty (Routledge)](https://www.worldcat.org/oclc/123091532) `学術`
 - [Wikipedia: Mass surveillance — panopticon, profiling, security and exclusion](https://en.wikipedia.org/wiki/Mass_surveillance) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
+- [[infosoc-protocol-galloway|プロトコル——脱中心化したネットワークに内在する新たな統制の様式]] — 同じ思想家
+- [[infosoc-synopticon|シノプティコン]] — 同じ思想家
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
+- [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同じ思想家
+- [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
+- [[infosoc-surveillance-society|監視社会]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

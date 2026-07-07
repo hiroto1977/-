@@ -30,6 +30,14 @@ aliases:
 - [Almeling, D. (2012) Seven Reasons Why Trade Secrets Are Increasingly Important — Berkeley Technology Law Journal](https://doi.org/10.2139/ssrn.2850553) `学術`
 - [Wikipedia: Defend Trade Secrets Act — DTSAの概要](https://en.wikipedia.org/wiki/Defend_Trade_Secrets_Act) `リファレンス`
 
+## 関連概念
+- [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — 同じ思想家
+- [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 同じ思想家
+- [[bizlaw-disclose-or-abstain-rule|開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる]] — 出典を共有
+- [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 同分野の近傍
+- [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

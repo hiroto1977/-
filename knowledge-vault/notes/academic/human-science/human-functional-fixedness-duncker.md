@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia: Functional Fixedness — cognitive bias limiting creative problem solving](https://en.wikipedia.org/wiki/Functional_fixedness) `リファレンス`
 - [Glucksberg, S. & Weisberg, R.W. (1966) Verbal Behavior and Problem Solving — JPSP 3(1)](https://doi.org/10.1037/0022-3514.3.1.36) `学術`
 
+## 関連概念
+- [[human-hindsight-bias|後知恵バイアス]] — 同分野の近傍
+- [[human-ikea-effect|イケア効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

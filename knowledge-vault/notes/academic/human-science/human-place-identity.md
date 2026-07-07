@@ -30,6 +30,12 @@ aliases:
 - [Proshansky et al. (1983) Place-identity — Semantic Scholar](https://www.semanticscholar.org/paper/Place-identity:-Physical-world-socialization-of-the-Proshansky-Fabian/d37286bdeefeb9e1968a968530a3c50c020887c2) `学術`
 - [Place Identity — Wikipedia](https://en.wikipedia.org/wiki/Place_identity) `リファレンス`
 
+## 関連概念
+- [[human-place-attachment-theory|場所愛着理論]] — 語彙が近い
+- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同じ思想家
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同分野の近傍
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

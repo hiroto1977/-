@@ -29,6 +29,11 @@ aliases:
 - [Meindl, J. R., Ehrlich, S. B. & Dukerich, J. M. (1985) The romance of leadership — Administrative Science Quarterly](https://doi.org/10.2307/2392813) `学術`
 - [Wikipedia: Romance of leadership — attribution, follower-centric, social construction](https://en.wikipedia.org/wiki/Romance_of_leadership) `リファレンス`
 
+## 関連概念
+- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同分野の近傍
+- [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

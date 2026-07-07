@@ -30,6 +30,18 @@ aliases:
 - [特許庁 職務発明制度の概要（PDF）](https://www.jpo.go.jp/support/startup/document/index/shokumuhatsumeiseido.pdf) `公的`
 - [名古屋国税局 職務発明の相当の利益の税務上の取扱い](https://www.nta.go.jp/about/organization/nagoya/bunshokaito/shotoku/170206/besshi.htm) `公的`
 
+## 関連概念
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 語彙が近い
+- [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
+- [[bizlaw-trademark|商標法]] — 出典を共有
+- [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[bizlaw-utility-model|実用新案法]] — 出典を共有
+- [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 出典を共有
+- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 出典を共有
+- [[bizlaw-patent-system|特許制度（特許法）]] — 出典を共有
+- [[legal-design-right|意匠権（意匠法）]] — 出典を共有
+- [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

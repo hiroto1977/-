@@ -30,6 +30,14 @@ aliases:
 - [Journal of Service Research (SAGE) — The Service-Profit Chain: Reflections, Revisions, and Reimaginations (2022)](https://journals.sagepub.com/doi/full/10.1177/10946705211052410) `学術`
 - [Wikipedia — Service–profit chain](https://en.wikipedia.org/wiki/Service%E2%80%93profit_chain) `リファレンス`
 
+## 関連概念
+- [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 出典を共有
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同分野の近傍
+- [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

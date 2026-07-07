@@ -31,6 +31,12 @@ aliases:
 - [Parker, S. K. & Collins, C. G. (2010) Taking Stock: Integrating and Differentiating Multiple Proactive Behaviors — Journal of Management, 36(3), 633–662](https://www.semanticscholar.org/paper/Extending-the-Concept-of-Adaptive-Performance%3A-Parker-Collins/cb66b7e91e2df9c0e4e17e7b09e89e52cd1b6a61) `学術`
 - [Charbonnier-Voirin, A. & Roussel, P. (2012) Adaptive Performance: A New Scale to Measure Individual Performance in Organizations — Canadian Journal of Administrative Sciences, 29(3)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1744-6570.2012.01240.x) `学術`
 
+## 関連概念
+- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
+- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
+- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
+- [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

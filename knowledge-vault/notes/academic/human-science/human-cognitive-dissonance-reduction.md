@@ -30,6 +30,11 @@ Leon Festinger ／ James M. Carlsmith ／ Elliot Aronson ／ Joel Cooper ／ Rus
 - [Cooper & Fazio (1984) A New Look at Dissonance Theory. Advances in Experimental Social Psychology 17:229-266.](https://www.sciencedirect.com/science/article/abs/pii/S0065260108601215) `学術`
 - [Wikipedia — Cognitive dissonance](https://en.wikipedia.org/wiki/Cognitive_dissonance) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 語彙が近い
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 語彙が近い
+- [[human-effort-justification|努力の正当化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Baddeley, A. & Hitch, G.J. (1974) Working Memory — Psychology of Learning and Motivation](https://www.cambridge.org/core/journals/quarterly-journal-of-experimental-psychology) `学術`
 - [Wikipedia: 実行機能 — 作動記憶と認知制御の解説](https://ja.wikipedia.org/wiki/%E5%AE%9F%E8%A1%8C%E6%A9%9F%E8%83%BD) `リファレンス`
 
+## 関連概念
+- [[human-executive-function-development|実行機能の発達と前頭前野の神経科学的基盤]] — 同じ思想家
+- [[human-executive-function|実行機能（遂行機能）]] — 同じ思想家
+- [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同じ思想家
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
+- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
+- [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

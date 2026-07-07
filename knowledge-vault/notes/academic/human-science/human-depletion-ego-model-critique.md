@@ -30,6 +30,18 @@ aliases:
 - [Hagger, M. S. et al. (2016) A Multilab Preregistered Replication of the Ego-Depletion Effect — Perspectives on Psychological Science](https://doi.org/10.1177/1745691616652873) `学術`
 - [Wikipedia: Ego depletion — willpower resource model and replication debate overview](https://en.wikipedia.org/wiki/Ego_depletion) `リファレンス`
 
+## 関連概念
+- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同じ思想家
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同じ思想家
+- [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 同じ思想家
+- [[human-ego-depletion-baumeister|自我消耗理論（バウマイスター）]] — 同じ思想家
+- [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]] — 同じ思想家
+- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同じ思想家
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
+- [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

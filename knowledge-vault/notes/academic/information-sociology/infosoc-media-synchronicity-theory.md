@@ -29,6 +29,12 @@ Alan R. Dennis・Robert M. Fuller・Joseph S. Valacich（2008年論文・MSTの�
 - [Dennis, A. R., Fuller, R. M., & Valacich, J. S. (2008). Media, Tasks, and Communication Processes: A Theory of Media Synchronicity. MIS Quarterly, 32(3), 575-600.](https://aisel.aisnet.org/misq/vol32/iss3/8/) `学術`
 - [Information Systems Theories Wiki, “Media synchronicity theory”（同期性・伝達/収束の二過程・メディアの5能力・メディアリッチネス理論との対比の概説）](https://is.theorizeit.org/wiki/Media_synchronicity_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]] — 出典を共有
+- [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

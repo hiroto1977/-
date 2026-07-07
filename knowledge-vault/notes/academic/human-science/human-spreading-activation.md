@@ -29,6 +29,18 @@ aliases:
 - [Collins & Loftus (1975), "A Spreading-Activation Theory of Semantic Processing," Psychological Review, 82, 407–428](https://psycnet.apa.org/record/1976-07276-001) `学術`
 - [APA Dictionary of Psychology — "spreading activation"](https://dictionary.apa.org/spreading-activation) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同じ思想家
+- [[human-false-memory|虚記憶（フォールス・メモリ）]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-weapon-focus-effect|凶器注目効果——武器の存在が目撃者の顔識別を低下させる注意バイアス]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Mohring, H. (1972) Optimization and scale economies in urban bus transportation — American Economic Review](https://www.jstor.org/stable/1806103) `学術`
 - [Wikipedia: Mohring effect — public transport, economies of scale, frequency, subsidy](https://en.wikipedia.org/wiki/Mohring_effect) `リファレンス`
 
+## 関連概念
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同じ思想家
+- [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — 同じ思想家
+- [[econ-median-voter|中位投票者定理]] — 同じ思想家
+- [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

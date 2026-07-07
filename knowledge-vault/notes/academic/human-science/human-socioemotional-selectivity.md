@@ -30,6 +30,18 @@ aliases:
 - [Carstensen, L. L., Isaacowitz, D. M., & Charles, S. T. (1999) Taking Time Seriously: A Theory of Socioemotional Selectivity, American Psychologist, 54(3), 165-181](https://psycnet.apa.org/record/1999-10334-001) `学術`
 - [The Theory Behind the Age-Related Positivity Effect — Reed & Carstensen, Frontiers in Psychology (PMC)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3459016/) `学術`
 
+## 関連概念
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-defense-mechanisms|防衛機制]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+- [[human-group-polarization|集団極性化]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
+- [[human-mcgurk-effect|マガーク効果]] — 出典を共有
+- [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
+- [[human-neuroplasticity-theory|神経可塑性理論]] — 出典を共有
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

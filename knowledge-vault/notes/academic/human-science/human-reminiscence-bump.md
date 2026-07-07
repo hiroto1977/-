@@ -30,6 +30,14 @@ aliases:
 - [Koppel & Berntsen (2019) "What characterizes the reminiscence bump...", Memory & Cognition](https://link.springer.com/article/10.3758/s13421-019-00994-6) `学術`
 - [Koppel & Berntsen (2011) "The reminiscence bump for salient personal memories...", Memory & Cognition](https://link.springer.com/article/10.3758/s13421-011-0082-3) `学術`
 
+## 関連概念
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 出典を共有
+- [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — 出典を共有
+- [[human-priming|プライミング効果]] — 出典を共有
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
+- [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ Pat K. Chew／Victor Brudney／Robert C. Clark／Eric Talley／Gabriel Rauterber
 - [Cornell LII — Corporate Opportunity Doctrine](https://www.law.cornell.edu/wex/corporate_opportunity_doctrine) `リファレンス`
 - [Delaware Courts — Guth v. Loft, Inc., 5 A.2d 503 (Del. 1939)](https://courts.delaware.gov/opinions/download.aspx?ID=4540) `リファレンス`
 
+## 関連概念
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同じ思想家
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍
+- [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -33,6 +33,18 @@ Charles M. Super（1986 発達的ニッチの定式化）／Sara Harkness（1986
 - [Worthman, C. M. (2010) The Ecology of Human Development: Evolving Models for Cultural Psychology — Journal of Cross-Cultural Psychology](https://journals.sagepub.com/doi/abs/10.1177/0022022110362627) `学術`
 - [ERIC record — Harkness & Super (eds., 1996) Parents' Cultural Belief Systems: Their Origins, Expressions, and Consequences (Guilford Press)](https://eric.ed.gov/?id=ED391845) `学術`
 
+## 関連概念
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
+- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,14 @@ aliases:
 - [Wikipedia: Ebrahimi v Westbourne Galleries Ltd [1973] AC 360 — quasi-partnership, just and equitable winding up, legitimate expectation](https://en.wikipedia.org/wiki/Ebrahimi_v_Westbourne_Galleries_Ltd) `リファレンス`
 - [Wikipedia: Unfair prejudice (UK company law) — Ebrahimi, legitimate expectation, quasi-partnership, minority shareholder remedies](https://en.wikipedia.org/wiki/Unfair_prejudice_in_United_Kingdom_company_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同じ思想家
+- [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

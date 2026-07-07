@@ -30,6 +30,10 @@ aliases:
 - [法務省 保証意思宣明公正証書の公証事務](https://www.moj.go.jp/MINJI/minji03_00058.html) `公的`
 - [改正民法の保証 解説（第二東京弁護士会）](https://niben.jp/niben/books/frontier/backnumber/201812/post-49.html) `メディア`
 
+## 関連概念
+- [[legal-personal-guarantee-reform|改正民法による個人保証の保護強化（根保証の極度額・保証意思宣明公正証書／2020年4月施行）]] — 語彙が近い
+- [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

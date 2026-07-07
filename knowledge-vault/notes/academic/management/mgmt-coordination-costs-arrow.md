@@ -29,6 +29,18 @@ aliases:
 - [Arrow, K.J. (1969) The Organization of Economic Activity: Issues Pertinent to the Choice of Market vs. Non-Market Allocation — Joint Economic Committee（調整コスト論の源泉論文）](https://doi.org/10.2307/2232763) `学術`
 - [Wikipedia: Kenneth Arrow — アローの学術的業績の概説](https://en.wikipedia.org/wiki/Kenneth_Arrow) `リファレンス`
 
+## 関連概念
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-nirvana-fallacy|ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]] — 同じ思想家
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

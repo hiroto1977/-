@@ -31,6 +31,10 @@ aliases:
 - [Nonaka, I. (1991) The Knowledge-Creating Company — Harvard Business Review, November–December（英語での広範な普及）](https://hbr.org/1991/11/the-knowledge-creating-company) `学術`
 - [Wikipedia: Middle-up-down management — Nonaka model, comparison with top-down and bottom-up](https://en.wikipedia.org/wiki/Middle-up-down_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同分野の近傍
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

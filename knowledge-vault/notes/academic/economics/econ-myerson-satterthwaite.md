@@ -29,6 +29,18 @@ aliases:
 - [Myerson, R. B. & Satterthwaite, M. A. (1983) Efficient mechanisms for bilateral trading — Journal of Economic Theory](https://doi.org/10.1016/0022-0531(83)90048-0) `学術`
 - [Wikipedia: Myerson–Satterthwaite theorem — mechanism design, bilateral trade, Coase theorem](https://en.wikipedia.org/wiki/Myerson%E2%80%93Satterthwaite_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
+- [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 同じ思想家
+- [[econ-mechanism-design|メカニズムデザイン]] — 同じ思想家
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

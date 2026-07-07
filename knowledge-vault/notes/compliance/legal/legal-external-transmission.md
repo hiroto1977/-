@@ -30,6 +30,11 @@ aliases:
 - [総務省 外部送信規律パンフレット](https://www.soumu.go.jp/main_content/000862755.pdf) `公的`
 - [外部送信規律 解説](https://privtech.co.jp/blog/law/revised-telecommunications-business-law-cookie.html) `メディア`
 
+## 関連概念
+- [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]] — 語彙が近い
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 同分野の近傍
+- [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

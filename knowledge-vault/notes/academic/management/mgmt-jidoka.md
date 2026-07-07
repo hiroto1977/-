@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Autonomation (Jidoka)](https://en.wikipedia.org/wiki/Autonomation) `リファレンス`
 - [Lean Enterprise Institute: Jidoka (Lean Lexicon)](https://www.lean.org/lexicon-terms/jidoka/) `学術`
 
+## 関連概念
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
+- [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
+- [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Goode, R. et al. (2007) Transnational Commercial Law — Oxford University Press](https://doi.org/10.1093/law/9780199243396.001.0001) `学術`
 - [Wikipedia: Secured transaction — 担保取引の概要](https://en.wikipedia.org/wiki/Secured_transaction) `リファレンス`
 
+## 関連概念
+- [[bizlaw-arbitration-act|仲裁法]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同じ思想家
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同じ思想家
+- [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
+- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
+- [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

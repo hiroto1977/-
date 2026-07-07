@@ -30,6 +30,10 @@ aliases:
 - [経済産業省 (2023) デジタルツイン活用促進に向けた政策](https://www.dti.go.jp/meti_policy/mono_info_service/digital_twin/) `公的`
 - [Wikipedia: Digital twin — デジタルツインの概念と産業応用](https://en.wikipedia.org/wiki/Digital_twin) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同じ思想家
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,15 @@ Elinor Ostrom ／ Charlotte Hess ／ Yochai Benkler ／ Lawrence Lessig
 - [Ostrom, Governing the Commons (1990)](https://doi.org/10.1017/CBO9781107415324.004) `学術`
 - [Hess, Mapping the New Commons (2008)](https://doi.org/10.1093/oxfordhb/9780195305760.013.0009) `学術`
 
+## 関連概念
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 語彙が近い
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — 同じ思想家
+- [[econ-new-institutional-economics|新制度派経済学]] — 同じ思想家
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
+- [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Radtke et al. (2022) “Digital detox: ... A systematic literature review”, Mobile Media & Communication 10(2):190-215](https://journals.sagepub.com/doi/10.1177/20501579211028647) `学術`
 - [Impacts of digital social media detox for mental health: A systematic review and meta-analysis (2024, PubMed)](https://pubmed.ncbi.nlm.nih.gov/39280291/) `学術`
 
+## 関連概念
+- [[infosoc-digital-detox-syvertsen|デジタルデトックス論——テクノロジーからの意図的離脱の社会学]] — 同分野の近傍
+- [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

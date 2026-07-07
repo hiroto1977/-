@@ -29,6 +29,14 @@ aliases:
 - [Gul, F. & Pesendorfer, W. (2001) Temptation and self-control — Econometrica](https://doi.org/10.1111/1468-0262.00252) `学術`
 - [Wikipedia: Temptation and self-control — menu preferences, commitment, Gul–Pesendorfer](https://en.wikipedia.org/wiki/Choice_set) `リファレンス`
 
+## 関連概念
+- [[infosoc-privacy-calculus|プライバシー計算——開示はリスクと便益の天秤]] — 語彙が近い
+- [[econ-present-bias|現在バイアス：先延ばし行動と自己制御の行動経済学的分析]] — 同じ思想家
+- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同じ思想家
+- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同分野の近傍
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

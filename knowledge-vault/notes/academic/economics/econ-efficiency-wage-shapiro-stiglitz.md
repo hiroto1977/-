@@ -29,6 +29,18 @@ aliases:
 - [Shapiro, C. & Stiglitz, J.E. (1984) Equilibrium Unemployment as a Worker Discipline Device — AER 74(3)](https://www.jstor.org/stable/1804018) `学術`
 - [Wikipedia: Efficiency wage — shirking model, involuntary unemployment, wage rigidity](https://en.wikipedia.org/wiki/Efficiency_wage) `リファレンス`
 
+## 関連概念
+- [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 語彙が近い
+- [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — 語彙が近い
+- [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同じ思想家
+- [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同じ思想家
+- [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
+- [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

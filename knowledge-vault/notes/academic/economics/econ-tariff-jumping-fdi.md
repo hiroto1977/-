@@ -30,6 +30,10 @@ aliases:
 - [Brainard (1997) An Empirical Assessment of the Proximity-Concentration Trade-Off Between Multinational Sales and Trade — American Economic Review](https://doi.org/10.1257/aer.87.4.520) `学術`
 - [Wikipedia: Tariff-jumping hypothesis — 関税回避型FDIの理論と実証の概説](https://en.wikipedia.org/wiki/Tariff-jumping_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同分野の近傍
+- [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

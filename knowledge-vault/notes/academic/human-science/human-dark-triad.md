@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia, "Dark triad" — Paulhus & Williams (2002) による概念の導入、マキャヴェリアニズム・準臨床的ナルシシズム・準臨床的サイコパシーの定義、概念的区別と経験的重複、共通核（冷淡な操作性）](https://en.wikipedia.org/wiki/Dark_triad) `リファレンス`
 - [Encyclopaedia Britannica, "Dark triad: Definition, Traits, Personality, & Causes" — 三特性の共有特徴（情緒的冷淡さ・二面性・攻撃性）と非病理的位置づけ](https://www.britannica.com/science/dark-triad) `リファレンス`
 
+## 関連概念
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 同分野の近傍
+- [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

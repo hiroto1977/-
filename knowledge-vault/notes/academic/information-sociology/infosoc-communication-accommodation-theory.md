@@ -30,6 +30,10 @@ aliases:
 - [EBSCO Research Starters — Communication accommodation theory (CAT)](https://www.ebsco.com/research-starters/communication-and-mass-media/communication-accommodation-theory-cat) `学術`
 - [Giles, H. (1973) "Accent Mobility: A Model and Some Data", Anthropological Linguistics 15(2), 87–105（原著論文が収録された巻号・JSTOR）](https://www.jstor.org/stable/i30029505) `学術`
 
+## 関連概念
+- [[infosoc-cognitive-capitalism|認知資本主義]] — 同分野の近傍
+- [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

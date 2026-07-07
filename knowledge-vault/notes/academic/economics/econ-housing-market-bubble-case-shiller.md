@@ -30,6 +30,18 @@ aliases:
 - [国土交通省 地価公示・不動産市場動向調査 — 国土交通省](https://www.mlit.go.jp/totikensangyo/content/001387741.pdf) `公的`
 - [Wikipedia: ケース＝シラー指数 — 住宅市場バブルと行動経済学の解説](https://ja.wikipedia.org/wiki/%E3%82%B1%E3%83%BC%E3%82%B9%EF%BC%9D%E3%82%B7%E3%83%A9%E3%83%BC%E6%8C%87%E6%95%B0) `リファレンス`
 
+## 関連概念
+- [[eh-1996|1996年（平成8年）]] — 語彙が近い
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
+- [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
+- [[econ-speculative-bubbles-kindleberger|投機的バブルの解剖——キンドルバーガーのマニア＝パニック＝崩壊モデル]] — 同じ思想家
+- [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — 出典を共有
+- [[bizlaw-building-standards|建築基準法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

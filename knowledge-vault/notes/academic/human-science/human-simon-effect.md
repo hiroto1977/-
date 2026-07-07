@@ -29,6 +29,16 @@ J・リチャード・サイモン ／ ポール・フィッツ ／ マイケル
 - [Simon, J. R. & Rudell, A. P. (1967) Auditory S-R compatibility: the effect of an irrelevant cue on information processing — Journal of Applied Psychology](https://doi.org/10.1037/h0020586) `学術`
 - [Wikipedia: Simon effect — stimulus-response compatibility, spatial code, response conflict](https://en.wikipedia.org/wiki/Simon_effect) `リファレンス`
 
+## 関連概念
+- [[human-stroop-effect|ストループ効果]] — 同じ思想家
+- [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]] — 同じ思想家
+- [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
+- [[human-hick-law|ヒックの法則——選択肢が増えるほど決定に時間がかかる]] — 同じ思想家
+- [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同じ思想家
+- [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
+- [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
+- [[human-operant-conditioning|オペラント条件づけ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

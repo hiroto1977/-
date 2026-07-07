@@ -30,6 +30,18 @@ OECD環境委員会 ／ 環境省（日本） ／ 欧州委員会（EU-ETS） �
 - [欧州委員会 (2023) EU Emissions Trading System](https://ec.europa.eu/clima/eu-action/eu-emissions-trading-system-eu-ets_en) `公的`
 - [Wikipedia: Polluter pays principle — 汚染者負担原則の法的枠組み](https://en.wikipedia.org/wiki/Polluter_pays_principle) `リファレンス`
 
+## 関連概念
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — 同じ思想家
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 同じ思想家
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
+- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
+- [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

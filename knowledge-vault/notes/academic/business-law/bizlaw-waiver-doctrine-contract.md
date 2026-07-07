@@ -30,6 +30,18 @@ aliases:
 - [Cartwright, J. (2016) Contract Law: An Introduction — 3rd ed., Hart Publishing](https://doi.org/10.1093/law/9780198755166.001.0001) `学術`
 - [Wikipedia: Waiver — voluntary relinquishment of contractual rights overview](https://en.wikipedia.org/wiki/Waiver) `リファレンス`
 
+## 関連概念
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 語彙が近い
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同じ思想家
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 同じ思想家
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 同じ思想家
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
+- [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
+- [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
+- [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

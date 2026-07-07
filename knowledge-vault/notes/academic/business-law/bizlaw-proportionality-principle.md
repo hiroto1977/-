@@ -29,6 +29,17 @@ aliases:
 - [European Parliament Factsheets — The Principle of Proportionality（EU条約5条4項・適合性・必要性・相当性の3段階）](https://www.europarl.europa.eu/factsheets/en/sheet/7/the-principle-of-proportionality) `公的`
 - [総務省行政管理研修所 — 行政法の基礎テキスト（比例原則を含む行政法の一般原則）](https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/pdf/sakusei_62.pdf) `公的`
 
+## 関連概念
+- [[eh-1958|1958年（昭和33年）]] — 出典を共有
+- [[eh-2012|2012年（平成24年）]] — 出典を共有
+- [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 出典を共有
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
+- [[eh-2015|2015年（平成27年）]] — 出典を共有
+- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同分野の近傍
+- [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — 同分野の近傍
+- [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

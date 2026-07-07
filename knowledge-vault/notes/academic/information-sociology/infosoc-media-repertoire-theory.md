@@ -33,6 +33,16 @@ aliases:
 - [van Rees & van Eijck (2003) Media repertoires of selective audiences — Poetics 31(5-6), 465-490](https://doi.org/10.1016/j.poetic.2003.09.005) `学術`
 - [Taneja, Webster, Malthouse & Ksiazek (2012) Media consumption across platforms: Identifying user-defined repertoires — New Media & Society 14(6), 951-968](https://doi.org/10.1177/1461444811436146) `学術`
 
+## 関連概念
+- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同じ思想家
+- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
+- [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
+- [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

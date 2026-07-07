@@ -29,6 +29,16 @@ aliases:
 - [Bass, B. M. & Avolio, B. J. (1994) Improving Organizational Effectiveness Through Transformational Leadership — Sage](https://www.worldcat.org/oclc/30736792) `学術`
 - [Wikipedia: Full range leadership model — transformational, transactional, laissez-faire, MLQ](https://en.wikipedia.org/wiki/Full_range_leadership_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-transformational-leadership|変革型リーダーシップ]] — 語彙が近い
+- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]] — 同じ思想家
+- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同じ思想家
+- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
+- [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同じ思想家
+- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同じ思想家
+- [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同じ思想家
+- [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

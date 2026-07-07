@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Global Saving Glut — Bernanke hypothesis on capital flows and low interest rates](https://en.wikipedia.org/wiki/Global_saving_glut) `リファレンス`
 - [Caballero, R.J., Farhi, E. & Gourinchas, P.-O. (2008) An Equilibrium Model of Global Imbalances — AER 98(1)](https://doi.org/10.1257/aer.98.1.358) `学術`
 
+## 関連概念
+- [[econ-global-imbalances-bernanke|グローバル・インバランスと貯蓄過剰仮説——経常収支不均衡のマクロ経済学]] — 語彙が近い
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 同じ思想家
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-bagehot-lender-last-resort|最後の貸し手とバジョットの原則——金融危機における中央銀行の役割]] — 同じ思想家
+- [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

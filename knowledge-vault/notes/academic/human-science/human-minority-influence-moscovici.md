@@ -29,6 +29,14 @@ aliases:
 - [Moscovici, S. (1980) Toward a Theory of Conversion Behavior — Advances in Experimental Social Psychology 13](https://doi.org/10.1016/S0065-2601(08)60133-1) `学術`
 - [Wikipedia: Minority influence — Moscovici, consistency, conversion, validation, blue-green study](https://en.wikipedia.org/wiki/Minority_influence) `リファレンス`
 
+## 関連概念
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 同じ思想家
+- [[human-group-polarization|集団極性化]] — 同じ思想家
+- [[human-group-polarization-myers|集団極化——討議が集団の立場を当初の傾きの方向へ先鋭化させる]] — 同じ思想家
+- [[mgmt-middle-status-conformity-phillips|中位地位同調性——組織階層における地位と逸脱の非線形的関係]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

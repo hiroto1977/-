@@ -31,6 +31,14 @@ Martha S. Feldman ／ Brian T. Pentland ／ Henry H. Rueter
 - [Pentland & Rueter (1994) Organizational Routines as Grammars of Action — ASQ 39(3)](https://www.jstor.org/stable/2393595) `学術`
 - [Feldman & Pentland (2022) Routine Dynamics — Strategic Organization 20](https://journals.sagepub.com/doi/10.1177/14761270221130876) `学術`
 
+## 関連概念
+- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — 語彙が近い
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 語彙が近い
+- [[mgmt-organizational-routines|組織ルーチン]] — 語彙が近い
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 語彙が近い
+- [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 同分野の近傍
+- [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

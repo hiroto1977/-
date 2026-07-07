@@ -29,6 +29,11 @@ aliases:
 - [Young, J.E. et al. (2003). Schema Therapy — Guilford Press](https://doi.org/10.1521/jscp.2004.23.2.173) `学術`
 - [Wikipedia: Schema therapy — early maladaptive schemas](https://en.wikipedia.org/wiki/Schema_therapy) `リファレンス`
 
+## 関連概念
+- [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]] — 語彙が近い
+- [[human-resilience|レジリエンス（心理的回復力）]] — 同分野の近傍
+- [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

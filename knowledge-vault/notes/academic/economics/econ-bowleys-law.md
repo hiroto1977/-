@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Bowley's law — long-run near-constancy of labour's share of national income (Arthur Bowley), Kaldor stylized facts, recent decline](https://en.wikipedia.org/wiki/Bowley%27s_law) `リファレンス`
 - [Karabarbounis, L. & Neiman, B. (2014) The Global Decline of the Labor Share — Quarterly Journal of Economics, 129(1), 61–103 (the recent fall of the labour share)](https://ideas.repec.org/a/oup/qjecon/v129y2014i1p61-103.html) `学術`
 
+## 関連概念
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-bilateral-monopoly|双方独占]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
+- [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

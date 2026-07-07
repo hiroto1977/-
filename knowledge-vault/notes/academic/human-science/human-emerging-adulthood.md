@@ -29,6 +29,10 @@ aliases:
 - [APA PsycNet — Arnett (2000) "Emerging Adulthood: A Theory of Development from the Late Teens Through the Twenties," American Psychologist 55(5)（原典）](https://psycnet.apa.org/record/2000-13925-006) `学術`
 - [Encyclopaedia Britannica — Emerging Adulthood（発達段階の定義・5特性・文化的検討の概説）](https://www.britannica.com/science/emerging-adulthood) `リファレンス`
 
+## 関連概念
+- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同分野の近傍
+- [[human-stanford-prison-experiment|スタンフォード監獄実験]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

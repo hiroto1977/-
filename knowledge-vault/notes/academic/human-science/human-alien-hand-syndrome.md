@@ -29,6 +29,11 @@ aliases:
 - [Della Sala, S. et al. (1998) The anarchic hand — Brain（無秩序な手・エイリアンハンドの分析）](https://doi.org/10.1093/brain/121.4.659) `学術`
 - [Wikipedia: Alien hand syndrome — agency, corpus callosum, supplementary motor area, volition](https://en.wikipedia.org/wiki/Alien_hand_syndrome) `リファレンス`
 
+## 関連概念
+- [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

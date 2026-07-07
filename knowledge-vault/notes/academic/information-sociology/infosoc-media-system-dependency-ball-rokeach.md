@@ -29,6 +29,15 @@ aliases:
 - [Ball-Rokeach, S. J. & DeFleur, M. L. (1976) A dependency model of mass-media effects — Communication Research](https://doi.org/10.1177/009365027600300101) `学術`
 - [Wikipedia: Media system dependency theory — dependency, social change, media effects](https://en.wikipedia.org/wiki/Media_system_dependency_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 同じ思想家
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同じ思想家
+- [[infosoc-pseudo-event-boorstin|疑似イベント（ブーアスティン）——報道されるために作られる出来事]] — 同じ思想家
+- [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同じ思想家
+- [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同じ思想家
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 同分野の近傍
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

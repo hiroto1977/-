@@ -29,6 +29,10 @@ Teppo Felin & Nicolai J. Foss（Strategic Organization 3(4), 2005, ミクロ基�
 - [Felin & Foss (2005) Strategic organization: A field in search of micro-foundations — Strategic Organization 3(4), pp.441-455](https://doi.org/10.1177/1476127005055796) `学術`
 - [Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals 9(1), pp.575-632](https://doi.org/10.5465/19416520.2015.1007651) `学術`
 
+## 関連概念
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同分野の近傍
+- [[mgmt-strategic-human-capital-theory|戦略的人的資本理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

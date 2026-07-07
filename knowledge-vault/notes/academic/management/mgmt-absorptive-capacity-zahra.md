@@ -31,6 +31,17 @@ Cohen & Levinthal（1990）が提唱した吸収能力（absorptive capacity）�
 - [Lane, Koka & Pathak (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review](https://doi.org/10.5465/amr.2006.21318802) `学術`
 - [Todorova & Durisin (2007) Absorptive Capacity: Valuing a Reconceptualization — Academy of Management Review](https://doi.org/10.5465/amr.2007.25275513) `学術`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 語彙が近い
+- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 語彙が近い
+- [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]] — 語彙が近い
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 語彙が近い
+- [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同じ思想家
+- [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
+- [[mgmt-nk-fitness-landscape|NK適応度地形モデル——戦略の「険しい山」と局所最適]] — 同じ思想家
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
+- [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

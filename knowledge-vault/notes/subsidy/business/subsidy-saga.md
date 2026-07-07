@@ -36,6 +36,10 @@ prefecture
 - [佐賀県 産業政策課](https://www.pref.saga.lg.jp/list00056.html) `自治体`
 - [佐賀県よろず支援拠点 中小企業生産性向上支援補助金の案内](https://yorozu-saga.go.jp/archives/28662) `公的`
 
+## 関連概念
+- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]] — 語彙が近い
+- [[subsidy-okayama|岡山市創業者支援事業補助金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Benedetti, F. (1985) Processing of tactile spatial information with crossed fingers — Journal of Experimental Psychology: HPP](https://doi.org/10.1037/0096-1523.11.4.517) `学術`
 - [Wikipedia: Aristotle's illusion — crossed fingers, tactile illusion, body representation](https://en.wikipedia.org/wiki/Aristotle%27s_illusion) `リファレンス`
 
+## 関連概念
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同じ思想家
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
+- [[human-charles-bonnet-syndrome|シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視]] — 同じ思想家
+- [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
+- [[human-fregoli-delusion|フレゴリの錯覚——「変装した同一人物」という妄想的誤認]] — 同じ思想家
+- [[human-mccollough-effect|マッカロー効果——方位に依存する持続的な色残効]] — 同じ思想家
+- [[human-motion-aftereffect-waterfall|運動残効（滝の錯視）——一方向の運動を見続けた後に逆向きの運動が見える]] — 同じ思想家
+- [[human-ponzo-illusion|ポンゾ錯視——奥行き手がかりが生む大きさの錯覚]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: Caparo Industries plc v Dickman [1990] 2 AC 605 — three-stage test for duty of care: foreseeability, proximity, fair just and reasonable](https://en.wikipedia.org/wiki/Caparo_Industries_plc_v_Dickman) `リファレンス`
 - [Wikipedia: Duty of care in English law — Caparo three-stage test, Donoghue v Stevenson neighbour principle, incremental approach](https://en.wikipedia.org/wiki/Duty_of_care_in_English_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 語彙が近い
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

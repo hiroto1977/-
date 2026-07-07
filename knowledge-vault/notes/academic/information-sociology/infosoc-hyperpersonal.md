@@ -30,6 +30,18 @@ aliases:
 - [ERIC (U.S. Department of Education / IES) 原論文の書誌レコード EJ521347](https://eric.ed.gov/?id=EJ521347) `公的`
 - [Wikipedia「Hyperpersonal model」— 4要素と cues-filtered-out 対比の概説](https://en.wikipedia.org/wiki/Hyperpersonal_model) `リファレンス`
 
+## 関連概念
+- [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

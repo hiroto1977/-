@@ -30,6 +30,18 @@ aliases:
 - [EBSCO Research Starters: Political polarization（イデオロギー的/感情的分極化の区別）](https://www.ebsco.com/research-starters/political-science/political-polarization) `リファレンス`
 - [Wikipedia: Political polarization（概念全体・二類型・原因と帰結）](https://en.wikipedia.org/wiki/Political_polarization) `リファレンス`
 
+## 関連概念
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
+- [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

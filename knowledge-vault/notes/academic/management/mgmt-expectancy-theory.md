@@ -30,6 +30,15 @@ aliases:
 - [Wikipedia: Expectancy theory（Vroom 1964、Force=E×I×V、過程理論）](https://en.wikipedia.org/wiki/Expectancy_theory) `リファレンス`
 - [University of Cambridge, Institute for Manufacturing: Vroom's expectancy theory](https://www.ifm.eng.cam.ac.uk/research/dstools/vrooms-expectancy-theory/) `学術`
 
+## 関連概念
+- [[mgmt-realistic-job-preview-wanous|現実的職務予告——入社前の率直な情報提供が定着と満足を高める]] — 同じ思想家
+- [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 出典を共有
+- [[mgmt-swot-analysis|SWOT分析]] — 出典を共有
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 同分野の近傍
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

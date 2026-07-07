@@ -31,6 +31,11 @@ aliases:
 - [van Dierendonck, D. (2011) Servant Leadership: A Review and Synthesis — Journal of Management, 37(4), 1228–1261（文献レビューとメタ分析）](https://doi.org/10.1016/j.leaqua.2010.01.002) `学術`
 - [Wikipedia: Servant leadership — Greenleaf, Spears ten characteristics, empirical research, critique](https://en.wikipedia.org/wiki/Servant_leadership) `リファレンス`
 
+## 関連概念
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 同じ思想家
+- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同分野の近傍
+- [[mgmt-transformational-leadership|変革型リーダーシップ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

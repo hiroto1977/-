@@ -29,6 +29,11 @@ OECD租税委員会 ／ 国税庁（日本） ／ 欧州委員会 ／ ミヒャ�
 - [OECD (2022) Transfer Pricing Guidelines for Multinational Enterprises](https://www.oecd.org/tax/transfer-pricing/oecd-transfer-pricing-guidelines/) `公的`
 - [Wikipedia: Transfer pricing — international tax law](https://en.wikipedia.org/wiki/Transfer_pricing) `リファレンス`
 
+## 関連概念
+- [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 同じ思想家
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
+- [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

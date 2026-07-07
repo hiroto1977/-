@@ -32,6 +32,18 @@ William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ My
 - [Hambrick & D'Aveni (1988) "Large Corporate Failures as Downward Spirals" — Administrative Science Quarterly](https://doi.org/10.2307/256445) `学術`
 - [Schendel, Patton & Riggs (1976) "Corporate Turnaround Strategies" — Strategic Management Journal](https://doi.org/10.1002/smj.4250050104) `学術`
 
+## 関連概念
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 語彙が近い
+- [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
+- [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
+- [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
+- [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同じ思想家
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
+- [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 同じ思想家
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同じ思想家
+- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

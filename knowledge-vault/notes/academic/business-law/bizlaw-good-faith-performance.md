@@ -31,6 +31,18 @@ Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth
 - [UCC § 1-304 Obligation of Good Faith — Cornell LII](https://www.law.cornell.edu/ucc/1/1-304) `公的`
 - [Kirke La Shelle Co. v. Paul Armstrong Co., 188 N.E. 163 (N.Y. 1933) — CourtListener](https://www.courtlistener.com/opinion/3612877/kirke-la-shelle-co-v-armstrong-co/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 語彙が近い
+- [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 語彙が近い
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
+- [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 出典を共有
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

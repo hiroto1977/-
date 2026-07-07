@@ -29,6 +29,12 @@ aliases:
 - [Hazan & Shaver (1987) Romantic Love Conceptualized as an Attachment Process — JPSP 52(3)](https://doi.org/10.1037/0022-3514.52.3.511) `学術`
 - [Wikipedia: Attachment in adults — Hazan, Shaver, ECR, four types, anxious, avoidant, secure](https://en.wikipedia.org/wiki/Attachment_in_adults) `リファレンス`
 
+## 関連概念
+- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 語彙が近い
+- [[human-attachment-theory-adult|成人愛着理論]] — 語彙が近い
+- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同分野の近傍
+- [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

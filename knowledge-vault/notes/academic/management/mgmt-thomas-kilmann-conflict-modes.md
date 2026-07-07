@@ -30,6 +30,18 @@ aliases:
 - [Thomas, K. W. (1976) Conflict and Conflict Management. In M. D. Dunnette (Ed.), Handbook of Industrial and Organizational Psychology, Rand McNally, Chicago, pp. 889–935](https://www.scirp.org/reference/referencespapers?referenceid=2935727) `学術`
 - [The Myers-Briggs Company — History and Validity of the Thomas-Kilmann Conflict Mode Instrument (TKI): two dimensions (assertiveness, cooperativeness), five conflict-handling modes, situational/contingency view that no single mode is universally best](https://ap.themyersbriggs.com/themyersbriggs-history-validity-tki.aspx) `リファレンス`
 
+## 関連概念
+- [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

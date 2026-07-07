@@ -29,6 +29,15 @@ aliases:
 - [Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour](https://www.worldcat.org/oclc/471863509) `学術`
 - [Wikipedia: Information behavior — information horizons, contexts, situations, social networks](https://en.wikipedia.org/wiki/Information_behavior) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-poverty-chatman|情報貧困論（チャトマン理論）]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+- [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同じ思想家
+- [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[infosoc-connective-action-theory|接続的行為理論]] — 同分野の近傍
+- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

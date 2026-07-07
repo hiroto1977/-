@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省 労働時間・休日](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html) `公的`
 - [労働基準法上の休日とは 解説](https://www.komon-lawyer.jp/qa/holiday/) `メディア`
 
+## 関連概念
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
+- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 語彙が近い
+- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 出典を共有
+- [[labor-trial-period|試用期間の労働法上の取扱い]] — 出典を共有
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
+- [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 同分野の近傍
+- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
+- [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

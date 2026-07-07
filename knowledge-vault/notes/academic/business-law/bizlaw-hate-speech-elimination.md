@@ -29,6 +29,10 @@ aliases:
 - [e-Gov法令検索 — 本邦外出身者に対する不当な差別的言動の解消に向けた取組の推進に関する法律（平成28年法律第68号）](https://laws.e-gov.go.jp/law/428AC1000000068) `公的`
 - [法務省人権擁護局 — ヘイトスピーチ、許さない。（法律の概要・相談窓口・啓発）](https://www.moj.go.jp/JINKEN/jinken04_00108.html) `公的`
 
+## 関連概念
+- [[bizlaw-equal-employment-opportunity|男女雇用機会均等法]] — 同分野の近傍
+- [[bizlaw-commercial-impracticability-ucc|商事上の履行困難性——UCC第2-615条と予見不能なリスクの配分]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

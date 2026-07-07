@@ -29,6 +29,18 @@ aliases:
 - [Samuelson, P.A. (1954) The Pure Theory of Public Expenditure — RES](https://doi.org/10.2307/1925895) `学術`
 - [Wikipedia: Public good (economics) — non-rivalry and non-excludability](https://en.wikipedia.org/wiki/Public_good_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-free-rider|フリーライダー問題]] — 語彙が近い
+- [[econ-public-goods|公共財（非競合性・非排除性）]] — 語彙が近い
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同じ思想家
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

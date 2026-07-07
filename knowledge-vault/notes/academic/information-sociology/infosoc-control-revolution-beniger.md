@@ -29,6 +29,18 @@ aliases:
 - [Beniger, J. R. (1986) The Control Revolution: Technological and Economic Origins of the Information Society — Harvard University Press (review, Journal of Economic History)](https://www.cambridge.org/core/journals/journal-of-economic-history/article/abs/control-revolution-technological-and-economic-origins-of-the-information-society-by-james-r-beniger-cambridge-harvard-university-press-1986-pp-xi-493-2500/8BED19F85693CAF1BB2F34D26823E5E2) `学術`
 - [Wikipedia: Information society — Beniger Control Revolution, crisis of control, information-processing technologies](https://en.wikipedia.org/wiki/Information_society) `リファレンス`
 
+## 関連概念
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同じ思想家
+- [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[infosoc-cybernetics|サイバネティクス]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
+- [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

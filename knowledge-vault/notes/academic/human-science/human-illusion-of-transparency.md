@@ -30,6 +30,11 @@ aliases:
 - [Gilovich & Savitsky (1999). The Spotlight Effect and the Illusion of Transparency. Current Directions in Psychological Science, 8(6), 165-168.](https://journals.sagepub.com/doi/abs/10.1111/1467-8721.00039) `学術`
 - [Wikipedia — Illusion of transparency](https://en.wikipedia.org/wiki/Illusion_of_transparency) `リファレンス`
 
+## 関連概念
+- [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
+- [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Rogers (1961) On Becoming a Person — Houghton Mifflin](https://doi.org/10.1037/h0096164) `学術`
 - [Wikipedia: Person-centered therapy — 人間中心療法の概念と影響](https://en.wikipedia.org/wiki/Person-centered_therapy) `リファレンス`
 
+## 関連概念
+- [[human-transpersonal-psychology-maslow|トランスパーソナル心理学と至高体験——マズローの欲求段階論を超えた存在レベルの探求]] — 同じ思想家
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同分野の近傍
+- [[human-chameleon-effect-chartrand|カメレオン効果（シャートランド＆バーク）]] — 同分野の近傍
+- [[human-logotherapy|ロゴセラピー（意味中心療法）：実存的空虚と意味への意志に基づく心理療法]] — 同分野の近傍
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

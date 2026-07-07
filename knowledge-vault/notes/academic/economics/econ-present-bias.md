@@ -30,6 +30,14 @@ aliases:
 - [Laibson 1997 Golden Eggs and Hyperbolic Discounting. Quarterly Journal of Economics 112(2) 443-478](https://doi.org/10.1162/003355397555253) `学術`
 - [O'Donoghue & Rabin 2001 Choice and Procrastination. Quarterly Journal of Economics 116(1) 121-160](https://doi.org/10.1257/0002828053828482) `学術`
 
+## 関連概念
+- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同じ思想家
+- [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — 同じ思想家
+- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同分野の近傍
+- [[econ-time-preference|時間選好]] — 同分野の近傍
+- [[econ-logrolling|ログローリング（票の取引）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

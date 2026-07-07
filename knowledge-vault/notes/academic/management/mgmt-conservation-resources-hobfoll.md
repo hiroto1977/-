@@ -29,6 +29,16 @@ aliases:
 - [Hobfoll, S.E. (1989) Conservation of Resources: A New Attempt at Conceptualizing Stress — American Psychologist 44(3)](https://doi.org/10.1037/0003-066X.44.3.513) `学術`
 - [Wikipedia: Conservation of resources theory — Hobfoll, resource loss, loss/gain spirals, burnout](https://en.wikipedia.org/wiki/Conservation_of_resources_theory) `リファレンス`
 
+## 関連概念
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同じ思想家
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
+- [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

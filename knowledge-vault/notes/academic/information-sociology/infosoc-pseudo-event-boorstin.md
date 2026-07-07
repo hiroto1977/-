@@ -29,6 +29,16 @@ aliases:
 - [Wikipedia: The Image: A Guide to Pseudo-Events in America (Boorstin, 1962) — pseudo-events, manufactured news, celebrity as well-knownness](https://en.wikipedia.org/wiki/The_Image:_A_Guide_to_Pseudo-events_in_America) `リファレンス`
 - [Wikipedia: Pseudo-event — Boorstin, staged for media coverage, press conferences, self-fulfilling, image culture](https://en.wikipedia.org/wiki/Pseudo-event) `リファレンス`
 
+## 関連概念
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
+- [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同じ思想家
+- [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

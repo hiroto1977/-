@@ -29,6 +29,18 @@ aliases:
 - [Bandura (1977) Self-Efficacy: Toward a Unifying Theory of Behavioral Change — Psychological Review 84(2)](https://doi.org/10.1037/0033-295X.84.2.191) `学術`
 - [Wikipedia: Self-efficacy — Bandura, four sources, goal-setting, performance, positive psychology](https://en.wikipedia.org/wiki/Self-efficacy) `リファレンス`
 
+## 関連概念
+- [[human-self-efficacy-theory|自己効力感理論]] — 語彙が近い
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同じ思想家
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家
+- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — 同じ思想家
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
+- [[human-mindset|マインドセット（成長/固定）]] — 同分野の近傍
+- [[human-social-loafing-latane|社会的手抜き——集団作業で個人の努力が低下する現象]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

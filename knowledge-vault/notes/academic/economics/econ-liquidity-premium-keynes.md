@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Liquidity Premium — compensation for holding illiquid assets](https://en.wikipedia.org/wiki/Liquidity_premium) `リファレンス`
 - [Pástor, Ľ. & Stambaugh, R.F. (2003) Liquidity Risk and Expected Stock Returns — Journal of Political Economy 111(3)](https://doi.org/10.1086/374184) `学術`
 
+## 関連概念
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
+- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [IDEAS/RePEc — Grossman, G. M. & Helpman, E. (1994) "Protection for Sale," American Economic Review 84(4): 833-850](https://ideas.repec.org/a/aea/aecrev/v84y1994i4p833-50.html) `学術`
 - [Goldberg, P. K. & Maggi, G. (1999) "Protection for Sale: An Empirical Investigation," American Economic Review 89(5): 1135-1155](https://www.aeaweb.org/articles?id=10.1257/aer.89.5.1135) `学術`
 
+## 関連概念
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同じ思想家
+- [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
+- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル——企業の異質性と貿易による選別効果]] — 同じ思想家
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
+- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
+- [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同分野の近傍
+- [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同分野の近傍
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

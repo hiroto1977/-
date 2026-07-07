@@ -30,6 +30,18 @@ aliases:
 - [国税庁 A1-8 青色申告承認申請手続](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/09.htm) `公的`
 - [青色申告承認申請書 提出期限 解説](https://www.freee.co.jp/kb/kb-kaigyou/blue-return-approval-application/) `メディア`
 
+## 関連概念
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 語彙が近い
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 語彙が近い
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
+- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 語彙が近い
+- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
+- [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
+- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

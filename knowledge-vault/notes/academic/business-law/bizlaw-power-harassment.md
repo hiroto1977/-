@@ -30,6 +30,15 @@ aliases:
 - [e-Gov法令検索 労働施策総合推進法 第30条の2（雇用管理上の措置等）](https://elaws.e-gov.go.jp/document?lawid=341AC0000000132) `公的`
 - [厚生労働省「パワハラ 6類型」](https://www.mhlw.go.jp/file/06-Seisakujouhou-11900000-Koyoukintoujidoukateikyoku/0000189292.pdf) `公的`
 
+## 関連概念
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
+- [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 語彙が近い
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 語彙が近い
+- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 分野横断
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 分野横断
+- [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 同分野の近傍
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

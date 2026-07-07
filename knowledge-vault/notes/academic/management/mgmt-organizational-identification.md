@@ -31,6 +31,14 @@ Blake Ashforth ／ Fred Mael ／ Michael Pratt
 - [Wikipedia — Organizational identification](https://en.wikipedia.org/wiki/Organizational_identification) `リファレンス`
 - [Ashforth & Mael (1989) AMR — JSTOR](https://www.jstor.org/stable/256406) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同じ思想家
+- [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
+- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同じ思想家
+- [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
+- [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

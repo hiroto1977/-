@@ -36,6 +36,12 @@ prefecture
 - [岐阜県産業経済振興センター 地域活性化ファンド助成金](https://www.gpc-gifu.or.jp/fund/chiiki/index.asp) `運営団体`
 - [岐阜県地域活性化ファンド助成金 案内](https://www.gifushoko.or.jp/grant20251128/) `メディア`
 
+## 関連概念
+- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 同分野の近傍
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 同分野の近傍
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 同分野の近傍
+- [[subsidy-yamaguchi|山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

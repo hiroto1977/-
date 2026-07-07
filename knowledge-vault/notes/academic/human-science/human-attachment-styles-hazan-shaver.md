@@ -29,6 +29,14 @@ aliases:
 - [Hazan, C. & Shaver, P. (1987) Romantic Love Conceptualized as an Attachment Process — JPSP 52(3)](https://doi.org/10.1037/0022-3514.52.3.511) `学術`
 - [Wikipedia: Attachment in adults — Hazan & Shaver, secure/anxious/avoidant, working models, two dimensions](https://en.wikipedia.org/wiki/Attachment_in_adults) `リファレンス`
 
+## 関連概念
+- [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]] — 同じ思想家
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
+- [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同じ思想家
+- [[human-still-face-tronick|スティルフェイス実験（トロニック）——無表情の母親と乳児の情動調整]] — 同じ思想家
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — 同分野の近傍
+- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

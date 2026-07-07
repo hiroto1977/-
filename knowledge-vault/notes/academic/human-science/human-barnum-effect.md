@@ -31,6 +31,10 @@ aliases:
 - [EBSCO Research Starters: Psychology — Barnum effect](https://www.ebsco.com/research-starters/psychology/barnum-effect) `リファレンス`
 - [All About Psychology — Forer Effect Explained](https://www.all-about-psychology.com/forer-effect-psychology.html) `リファレンス`
 
+## 関連概念
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

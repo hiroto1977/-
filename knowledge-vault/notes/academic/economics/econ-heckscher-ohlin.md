@@ -31,6 +31,18 @@ aliases:
 - [Econlib（The Concise Encyclopedia of Economics）— Bertil Ohlin 略伝と理論](https://www.econlib.org/library/Enc/bios/Ohlin.html) `リファレンス`
 - [Wikipedia — Heckscher–Ohlin model（モデル概要・関連定理）](https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_model) `リファレンス`
 
+## 関連概念
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
+- [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
+- [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 同じ思想家
+- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [MIT Program in Science, Technology & Society — Sherry Turkle (faculty profile, bibliography)](https://sts-program.mit.edu/people/sts-faculty/sherry-turkle) `リファレンス`
 - [Wikipedia — Sherry Turkle (works, 2011 attribution)](https://en.wikipedia.org/wiki/Sherry_Turkle) `リファレンス`
 
+## 関連概念
+- [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — 語彙が近い
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 出典を共有
+- [[econ-rotten-kid-theorem|腐った子定理]] — 出典を共有
+- [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [法務省 商業登記規則等の改正（電子提供措置 令和4年9月1日施行）](https://www.moj.go.jp/MINJI/minji06_00166.html) `公的`
 - [日本証券業協会 株主総会資料の電子提供制度](https://www.jsda.or.jp/shijyo/minasama/soukaishiryou.html) `運営団体`
 
+## 関連概念
+- [[tax-nisa|NISA（少額投資非課税制度）]] — 出典を共有
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍
+- [[legal-premium-regulation|景品表示法の景品規制]] — 同分野の近傍
+- [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

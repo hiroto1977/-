@@ -29,6 +29,18 @@ aliases:
 - [Cagan, P. (1956) The Monetary Dynamics of Hyperinflation — in Friedman (ed.) Studies in the Quantity Theory of Money (WorldCat)](https://www.worldcat.org/oclc/123825) `学術`
 - [Wikipedia: Hyperinflation — Cagan model, money demand, seigniorage, adaptive expectations](https://en.wikipedia.org/wiki/Hyperinflation) `リファレンス`
 
+## 関連概念
+- [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同じ思想家
+- [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — 同じ思想家
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

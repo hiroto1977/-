@@ -30,6 +30,15 @@ aliases:
 - [総務省「マイナンバー制度」（個人番号・通知開始）](https://www.soumu.go.jp/kojinbango_card/01.html) `公的`
 - [内閣府「マイナンバー（社会保障・税番号制度）」（番号法・制度概要）](https://www.cao.go.jp/bangouseido/index.html) `公的`
 
+## 関連概念
+- [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 語彙が近い
+- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 出典を共有
+- [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 出典を共有
+- [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

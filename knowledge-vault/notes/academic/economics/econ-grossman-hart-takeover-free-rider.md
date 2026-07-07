@@ -29,6 +29,18 @@ aliases:
 - [Grossman, S. J. & Hart, O. D. (1980) Takeover bids, the free-rider problem, and the theory of the corporation — Bell Journal of Economics](https://doi.org/10.2307/3003400) `学術`
 - [Wikipedia: Free-rider problem — takeovers, Grossman–Hart, corporate control, dilution](https://en.wikipedia.org/wiki/Free-rider_problem) `リファレンス`
 
+## 関連概念
+- [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同じ思想家
+- [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

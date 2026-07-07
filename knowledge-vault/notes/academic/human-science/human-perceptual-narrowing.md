@@ -30,6 +30,18 @@ aliases:
 - [Maurer & Werker (2013) Perceptual Narrowing During Infancy: Language and Faces — UBC](https://infantstudies-psych.sites.olt.ubc.ca/files/2015/07/Maurer-Werker-2013-Perceptual-Narrowing.pdf) `学術`
 - [Pons et al. (2009) Narrowing of Intersensory Speech Perception in Infancy — PNAS](https://www.pnas.org/doi/10.1073/pnas.0904134106) `学術`
 
+## 関連概念
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[human-flynn-effect|フリン効果]] — 出典を共有
+- [[infosoc-media-multitasking|メディア・マルチタスキング]] — 出典を共有
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 出典を共有
+- [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 出典を共有
+- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 出典を共有
+- [[human-emotional-contagion|情動感染]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

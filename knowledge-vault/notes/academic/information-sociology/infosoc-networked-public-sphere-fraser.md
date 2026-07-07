@@ -29,6 +29,18 @@ aliases:
 - [Benkler, Y. (2006). The Networked Public Sphere — Yale UP](https://doi.org/10.4159/9780674044029) `学術`
 - [Wikipedia: Public sphere — networked democracy](https://en.wikipedia.org/wiki/Public_sphere) `リファレンス`
 
+## 関連概念
+- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同じ思想家
+- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同じ思想家
+- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
+- [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

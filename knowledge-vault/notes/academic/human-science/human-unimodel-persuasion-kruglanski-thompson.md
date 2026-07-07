@@ -30,6 +30,14 @@ aliases:
 - [Kruglanski, A.W., Pierro, A., Manetti, L., Erb, H.P. & Spiegel, S. (2006) Persuasion According to the Unimodel: Implications for Cancer Communication — Journal of Communication, 56(4)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1460-2466.2006.00285.x) `学術`
 - [National Science Foundation Award #9905212 — Collaborative Research: Persuasion by a Single Route: The Unimodel (PI: Arie Kruglanski, University of Maryland)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=9905212) `公的`
 
+## 関連概念
+- [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
+- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
+- [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
+- [[human-health-belief-model|ヘルス・ビリーフ・モデル：予防的健康行動の心理的予測理論]] — 同分野の近傍
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

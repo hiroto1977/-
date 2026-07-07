@@ -33,6 +33,15 @@ aliases:
 - [ハローワーク渋谷（東京労働局）出生後休業支援給付金の創設（令和7年4月1日）](https://jsite.mhlw.go.jp/tokyo-hellowork/list/shibuya/important_topics/070116_00001.html) `公的`
 - [キヤノンMJ 2025年4月新設の出生後休業支援給付・育児時短就業給付の解説](https://canon.jp/biz/solution/smb/tips/trend/202411-romu1) `運営団体`
 
+## 関連概念
+- [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 語彙が近い
+- [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
+- [[bizlaw-childcare-leave|育児・介護休業法]] — 分野横断
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 出典を共有
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 出典を共有
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 出典を共有
+- [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

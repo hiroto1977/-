@@ -30,6 +30,13 @@ Petrus Johannes Verdoorn／Nicholas Kaldor／John McCombie／Anthony P. Thirlwal
 - [Chandra & Sandilands (2021) Nicholas Kaldor, increasing returns and Verdoorn's Law, Journal of Post Keynesian Economics 44(2):315-339](https://www.tandfonline.com/doi/abs/10.1080/01603477.2021.1872030) `学術`
 - [McCombie, Pugno & Soro (eds.) (2002) Productivity Growth and Economic Performance: Essays on Verdoorn's Law, Palgrave Macmillan](https://search.worldcat.org/title/248897411) `リファレンス`
 
+## 関連概念
+- [[econ-kaldor-verdoorn|ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）]] — 語彙が近い
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 同じ思想家
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 出典を共有
+- [[econ-financialization|金融化——経済の金融部門支配]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

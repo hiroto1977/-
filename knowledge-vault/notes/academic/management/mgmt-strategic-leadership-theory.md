@@ -30,6 +30,17 @@ Donald C. Hambrick／Sydney Finkelstein／Albert A. Cannella Jr.／Mason A. Carp
 - [Finkelstein, Hambrick & Cannella (2009) Strategic Leadership: Theory and Research on Executives, Oxford UP](https://doi.org/10.1093/acprof:oso/9780195162073.001.0001) `学術`
 - [Carpenter, Geletkanycz & Sanders (2004) Upper Echelons Research Revisited, Journal of Management 30(6):749-778](https://doi.org/10.5465/amr.2007.24345254) `学術`
 
+## 関連概念
+- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 語彙が近い
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 語彙が近い
+- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同じ思想家
+- [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

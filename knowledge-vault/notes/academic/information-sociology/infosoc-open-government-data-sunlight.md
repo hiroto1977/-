@@ -29,6 +29,16 @@ aliases:
 - [Sunlight Foundation (2010) Ten Principles for Opening Up Government Information](https://sunlightfoundation.com/policy/documents/ten-open-data-principles/) `公的`
 - [Wikipedia: Open government data — transparency and civic tech](https://en.wikipedia.org/wiki/Open_government_data) `リファレンス`
 
+## 関連概念
+- [[infosoc-open-data-government-transparency|オープンデータと政府透明性の情報社会論]] — 語彙が近い
+- [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — 語彙が近い
+- [[infosoc-open-data|オープンデータ]] — 語彙が近い
+- [[infosoc-web2|Web 2.0]] — 同じ思想家
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同じ思想家
+- [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

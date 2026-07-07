@@ -32,6 +32,18 @@ aliases:
 - [公正取引委員会 独禁法FAQ](https://www.jftc.go.jp/dk/dk_qa.html) `公的`
 - [優越的地位の濫用 概説](https://ja.wikipedia.org/wiki/%E5%84%AA%E8%B6%8A%E7%9A%84%E5%9C%B0%E4%BD%8D%E3%81%AE%E6%BF%AB%E7%94%A8) `メディア`
 
+## 関連概念
+- [[legal-antimonopoly|独占禁止法]] — 語彙が近い
+- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 語彙が近い
+- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 同分野の近傍
+- [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍
+- [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍
+- [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 同分野の近傍
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 同分野の近傍
+- [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]] — 同分野の近傍
+- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 同分野の近傍
+- [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

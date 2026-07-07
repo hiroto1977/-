@@ -30,6 +30,12 @@ aliases:
 - [Beer & Nohria (2000) Cracking the Code of Change — Harvard Business Review](https://doi.org/10.1108/09534810910949437) `学術`
 - [Wikipedia: Change management — 変革管理の理論と実践](https://en.wikipedia.org/wiki/Change_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 語彙が近い
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
+- [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

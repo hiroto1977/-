@@ -32,6 +32,18 @@ aliases:
 - [Saylor Academy open textbook — "Clustering: Porter's National Diamond"](https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html) `学術`
 - [EBSCO Research Starters (Economics) — "Diamond Model"](https://www.ebsco.com/research-starters/economics/diamond-model) `リファレンス`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

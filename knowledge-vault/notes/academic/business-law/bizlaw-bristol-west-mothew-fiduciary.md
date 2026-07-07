@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Bristol and West Building Society v Mothew — fiduciary duties, duty of loyalty, Millett](https://en.wikipedia.org/wiki/Bristol_and_West_Building_Society_v_Mothew) `リファレンス`
 - [Wikipedia: Fiduciary — classification of duties, loyalty vs care, no-conflict/no-profit](https://en.wikipedia.org/wiki/Fiduciary) `リファレンス`
 
+## 関連概念
+- [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
+- [[bizlaw-donatio-mortis-causa|死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与]] — 同じ思想家
+- [[bizlaw-beneficiary-principle|受益者原則——信託には執行できる受益者が必要である]] — 同じ思想家
+- [[bizlaw-mutual-wills|相互遺言——撤回しない合意が擬制信託を生む]] — 同じ思想家
+- [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同じ思想家
+- [[bizlaw-presumption-advancement|前渡しの推定——一定の関係では無償移転を贈与と推定する]] — 同じ思想家
+- [[bizlaw-saunders-v-vautier|サンダース対ボーティアの準則——受益者全員の合意で信託を終わらせる]] — 同じ思想家
+- [[bizlaw-secret-trust|秘密信託——遺言の表面に現れない受託の合意]] — 同じ思想家
+- [[bizlaw-strong-v-bird|ストロング対バードの準則——不完全な贈与が遺言執行者就任で完成する]] — 同じ思想家
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

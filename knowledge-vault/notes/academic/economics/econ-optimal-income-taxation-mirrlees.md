@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia: Optimal tax — Ramsey rule, Mirrlees model, and Diamond-Saez extension](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 - [Nobel Prize 1996: James Mirrlees — prize motivation and scientific background on optimal taxation](https://www.nobelprize.org/prizes/economic-sciences/1996/mirrlees/facts/) `リファレンス`
 
+## 関連概念
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 語彙が近い
+- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 語彙が近い
+- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
+- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
+- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Siegel, J. J. (1972) Risk, interest rates and the forward exchange — Quarterly Journal of Economics](https://doi.org/10.2307/1880945) `学術`
 - [Wikipedia: Siegel's paradox — Jensen's inequality, forward exchange rate, numeraire](https://en.wikipedia.org/wiki/Siegel%27s_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

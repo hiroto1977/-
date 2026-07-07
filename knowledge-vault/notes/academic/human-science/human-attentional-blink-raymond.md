@@ -29,6 +29,10 @@ aliases:
 - [Raymond, J.E., Shapiro, K.L. & Arnell, K.M. (1992) Temporary Suppression of Visual Processing in an RSVP Task: An Attentional Blink? — JEP:HPP 18(3)](https://doi.org/10.1037/0096-1523.18.3.849) `学術`
 - [Wikipedia: Attentional blink — Raymond/Shapiro/Arnell, RSVP, T1/T2, 200-500ms deficit, temporal attention bottleneck](https://en.wikipedia.org/wiki/Attentional_blink) `リファレンス`
 
+## 関連概念
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同分野の近傍
+- [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

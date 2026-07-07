@@ -29,6 +29,10 @@ aliases:
 - [Bergstrand, "The Heckscher-Ohlin-Samuelson Model, The Linder Hypothesis and the Determinants of Bilateral Intra-Industry Trade" (University of Notre Dame)](https://sites.nd.edu/jeffrey-bergstrand/files/2020/04/The-Heckscher-Ohlin-Samuelson-Model-the-Linder-Hypothesis-and-the-Determinants-of-Bilateral-Intra-Industry-Trade.pdf) `学術`
 - [Wikipedia: Linder hypothesis](https://en.wikipedia.org/wiki/Linder_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-multitasking-principal-agent|マルチタスク・プリンシパル＝エージェント・モデル（Holmström-Milgrom 1991）——測れる仕事ばかりに報酬を結びつけると測れない仕事が犠牲になる]] — 同分野の近傍
+- [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

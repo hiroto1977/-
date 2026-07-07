@@ -29,6 +29,18 @@ aliases:
 - [Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon](https://www.worldcat.org/oclc/20826933) `学術`
 - [Wikipedia: Chris Argyris — defensive routines, single/double-loop learning, theory-in-use](https://en.wikipedia.org/wiki/Chris_Argyris) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+- [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
+- [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
+- [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同じ思想家
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
+- [[mgmt-organizational-culture-theory|組織文化理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

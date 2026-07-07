@@ -30,6 +30,18 @@ aliases:
 - [Frontiers in Psychology (2020) — 文脈効果としての妥協効果の定義](https://www.frontiersin.org/articles/10.3389/fpsyg.2020.01352/full) `学術`
 - [Judgment and Decision Making (Cambridge) — おとり効果と妥協効果の構造的区別](https://www.cambridge.org/core/journals/judgment-and-decision-making/article/attraction-comes-from-many-sources-attentional-and-comparative-processes-in-decoy-effects/982A45C46061621F39D26800D32AF997) `学術`
 
+## 関連概念
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 語彙が近い
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

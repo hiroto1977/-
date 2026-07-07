@@ -29,6 +29,16 @@ aliases:
 - [Juran, J. M. (1986) The quality trilogy — Quality Progress（品質トリロジーの原典）](https://www.worldcat.org/oclc/19514461) `学術`
 - [Wikipedia: Joseph M. Juran — quality trilogy, fitness for use, Pareto principle](https://en.wikipedia.org/wiki/Joseph_M._Juran) `リファレンス`
 
+## 関連概念
+- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同じ思想家
+- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同じ思想家
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
+- [[mgmt-total-quality-management-deming-juran|総合的品質管理——デミングとジュランの継続的改善と全社的品質経営]] — 同じ思想家
+- [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

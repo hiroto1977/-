@@ -29,6 +29,16 @@ aliases:
 - [Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company — Oxford University Press](https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691) `学術`
 - [Wikipedia: SECI model — Nonaka, knowledge conversion, tacit–explicit spiral](https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions) `リファレンス`
 
+## 関連概念
+- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 語彙が近い
+- [[infosoc-seci|SECIモデル（知識創造理論）]] — 分野横断
+- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
+- [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
+- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同じ思想家
+- [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同じ思想家
+- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同じ思想家
+- [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

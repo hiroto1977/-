@@ -29,6 +29,13 @@ aliases:
 - [Treisman, A.M. & Gelade, G. (1980) A Feature-Integration Theory of Attention — Cognitive Psychology 12(1)](https://doi.org/10.1016/0010-0285(80)90005-5) `学術`
 - [Wikipedia: Feature integration theory — Treisman & Gelade, preattentive/focused attention, illusory conjunctions, visual search](https://en.wikipedia.org/wiki/Feature_integration_theory) `リファレンス`
 
+## 関連概念
+- [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同じ思想家
+- [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
+- [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

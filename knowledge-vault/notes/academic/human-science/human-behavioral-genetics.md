@@ -31,6 +31,18 @@ aliases:
 - [PNAS — Heritability within groups is uninformative about differences among groups（遺伝率の誤解：集団間差を説明しない）](https://www.pnas.org/doi/10.1073/pnas.2319496121) `学術`
 - [PMC/NIH — What Twin Studies Tell Us About Heritability（双生児研究の方法論レビュー）](https://pmc.ncbi.nlm.nih.gov/articles/PMC4412550/) `学術`
 
+## 関連概念
+- [[human-synesthesia|共感覚（シナスタジア）]] — 同じ思想家
+- [[infosoc-wisdom-of-crowds|群衆の叡智]] — 同じ思想家
+- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同じ思想家
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[human-flynn-effect|フリン効果]] — 出典を共有
+- [[infosoc-media-multitasking|メディア・マルチタスキング]] — 出典を共有
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 出典を共有
+- [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

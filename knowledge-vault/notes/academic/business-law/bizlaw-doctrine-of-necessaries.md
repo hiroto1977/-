@@ -32,6 +32,18 @@ William Blackstone ／ Herbert Hardy Cozens-Hardy ／ John Fletcher Moulton ／ 
 - [The Unnecessary Doctrine of Necessaries — Michigan Law Review](https://repository.law.umich.edu/cgi/viewcontent.cgi?article=3465&context=mlr) `学術`
 - [The New Doctrine of Necessaries in Virginia — University of Richmond Law Review](https://scholarship.richmond.edu/cgi/viewcontent.cgi?article=1692&context=lawreview) `学術`
 
+## 関連概念
+- [[bizlaw-parens-patriae|パレンス・パトリエ法理（Parens Patriae Doctrine）]] — 同じ思想家
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
+- [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 出典を共有
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
+- [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
+- [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
+- [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

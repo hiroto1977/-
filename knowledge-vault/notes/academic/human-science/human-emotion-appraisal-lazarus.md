@@ -29,6 +29,15 @@ aliases:
 - [Lazarus et al. (1970) Emotions: Their Parameters and Measurement — Raven Press](https://doi.org/10.1037/h0033158) `学術`
 - [Wikipedia: Appraisal theory — Lazarus, primary/secondary, Scherer, CBT, reappraisal, emotion regulation](https://en.wikipedia.org/wiki/Appraisal_theory) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同じ思想家
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
+- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

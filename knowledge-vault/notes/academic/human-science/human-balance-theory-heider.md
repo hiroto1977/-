@@ -29,6 +29,18 @@ aliases:
 - [Heider, F. (1946) Attitudes and Cognitive Organization — The Journal of Psychology, 21(1), 107–112](https://doi.org/10.1080/00223980.1946.9917275) `学術`
 - [Wikipedia: Balance theory — Heider, P-O-X triad, cognitive consistency, Cartwright & Harary graph formalization](https://en.wikipedia.org/wiki/Balance_theory) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
+- [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
+- [[human-attribution-theory|帰属理論]] — 同じ思想家
+- [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

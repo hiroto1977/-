@@ -29,6 +29,10 @@ Howard Smith Ltd v Ampol Petroleum Ltd（[1974] AC 821・枢密院・適正目�
 - [Wikipedia, “Howard Smith Ltd v Ampol Petroleum Ltd”（[1974] AC 821・Lord Wilberforce・proper purpose・新株発行による買収防衛の無効・Companies Act 2006 s.171 への成文化の概説）](https://en.wikipedia.org/wiki/Howard_Smith_Ltd_v_Ampol_Petroleum_Ltd) `リファレンス`
 - [LawProf — Howard Smith Ltd v Ampol Petroleum [1974] AC 821（事実関係・判旨・取締役の適正目的義務の解説）](https://lawprof.co/company/director-duties-cases/howard-smith-ltd-v-ampol-petroleum-1974-ac-821/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同分野の近傍
+- [[bizlaw-derivative-action-foss-harbottle|株主代表訴訟とフォス対ハーボトル原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

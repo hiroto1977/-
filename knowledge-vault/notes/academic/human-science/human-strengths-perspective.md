@@ -30,6 +30,10 @@ aliases:
 - [Rapp, C.A. & Goscha, R.J. 2012. The Strengths Model: A Recovery-Oriented Approach to Mental Health Services (3rd ed.). Oxford University Press.](https://global.oup.com/academic/product/the-strengths-model-9780199764082) `学術`
 - [Weick, A. et al. 1989. A Strengths Perspective for Social Work Practice. Social Work, 34(4), 350-354.](https://doi.org/10.1093/sw/34.4.350) `学術`
 
+## 関連概念
+- [[human-community-psychology-rappaport-empowerment|コミュニティ心理学——ラパポートのエンパワーメント理論と社会変革]] — 同分野の近傍
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

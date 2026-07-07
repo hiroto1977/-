@@ -30,6 +30,10 @@ aliases:
 - [コトバンク「労働関係調整法」（百科事典）](https://kotobank.jp/word/%E5%8A%B4%E5%83%8D%E9%96%A2%E4%BF%82%E8%AA%BF%E6%95%B4%E6%B3%95-152444) `リファレンス`
 - [Wikipedia「労働関係調整法」](https://ja.wikipedia.org/wiki/%E5%8A%B4%E5%83%8D%E9%96%A2%E4%BF%82%E8%AA%BF%E6%95%B4%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-labor-union-act|労働組合法]] — 同分野の近傍
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

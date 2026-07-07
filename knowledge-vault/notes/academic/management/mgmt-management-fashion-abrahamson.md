@@ -29,6 +29,13 @@ aliases:
 - [Abrahamson, E. (1996) Management Fashion — Academy of Management Review 21(1)](https://doi.org/10.5465/amr.1996.9602161572) `学術`
 - [Wikipedia: Management fashion/fad — Abrahamson, fashion setters, bell-shaped life cycle, legitimacy vs efficiency](https://en.wikipedia.org/wiki/Management_fad) `リファレンス`
 
+## 関連概念
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
+- [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 同じ思想家
+- [[mgmt-mckinsey-7s|マッキンゼーの7Sフレームワーク]] — 同分野の近傍
+- [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — 同分野の近傍
+- [[mgmt-bpr|ビジネスプロセス・リエンジニアリング（BPR）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,16 @@ aliases:
 - [UNCTAD World Investment Report series](https://unctad.org/topic/investment/world-investment-report) `公的`
 - [Dunning (1988) The Eclectic Paradigm of International Production — Journal of International Business Studies](https://doi.org/10.1057/palgrave.jibs.8490024) `学術`
 
+## 関連概念
+- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 語彙が近い
+- [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 語彙が近い
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
+- [[econ-flying-geese|雁行形態論]] — 出典を共有
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
+- [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 出典を共有
+- [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

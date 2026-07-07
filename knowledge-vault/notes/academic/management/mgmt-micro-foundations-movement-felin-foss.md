@@ -30,6 +30,18 @@ aliases:
 - [Barney & Felin (2013) What Are Microfoundations? — Academy of Management Perspectives](https://doi.org/10.1002/smj.2148) `学術`
 - [Wikipedia: Microfoundations — ミクロ的基礎の経済学・経営学における議論の概説](https://en.wikipedia.org/wiki/Microfoundations) `リファレンス`
 
+## 関連概念
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 語彙が近い
+- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
+- [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 同じ思想家
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

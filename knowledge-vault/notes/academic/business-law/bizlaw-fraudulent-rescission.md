@@ -30,6 +30,13 @@ aliases:
 - [北秀昭「詐害行為取消権の民法改正案の特質」筑波ロー・ジャーナル（筑波大学法科大学院）](https://www.lawschool.tsukuba.ac.jp/wp/wp-content/uploads/2016/06/tlj-20-kiji01.pdf) `学術`
 - [BUSINESS LAWYERS 詐害行為と逸出財産の返還・取消権の消滅時効・偏頗行為の要件](https://www.businesslawyers.jp/practices/1183) `メディア`
 
+## 関連概念
+- [[bizlaw-creditor-subrogation|債権者代位権（民法423条）]] — 語彙が近い
+- [[bizlaw-pledge|質権（民法342条）]] — 出典を共有
+- [[bizlaw-set-off|相殺（民法505条）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同分野の近傍
+- [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

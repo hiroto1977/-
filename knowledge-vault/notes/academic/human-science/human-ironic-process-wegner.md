@@ -29,6 +29,13 @@ aliases:
 - [Wegner, D.M. (1994) Ironic Processes of Mental Control — Psychological Review 101(1)](https://doi.org/10.1037/0033-295X.101.1.34) `学術`
 - [Wikipedia: Ironic process theory — white bear, operating and monitoring processes, rebound](https://en.wikipedia.org/wiki/Ironic_process_theory) `リファレンス`
 
+## 関連概念
+- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 同じ思想家
+- [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
+- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同じ思想家
+- [[human-mind-wandering|マインドワンダリング]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

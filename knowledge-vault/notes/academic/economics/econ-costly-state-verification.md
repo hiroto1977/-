@@ -29,6 +29,10 @@ Robert M. Townsend（ロバート・タウンゼント・1979年論文・理論�
 - [Townsend, R. M. (1979). Optimal Contracts and Competitive Markets with Costly State Verification. Journal of Economic Theory, 21(2), 265-293.](https://www.sciencedirect.com/science/article/abs/pii/0022053179900310) `学術`
 - [Wikipedia, “Costly state verification”（Townsend [1979]・検証費用下での最適契約＝標準的負債契約・デフォルト時のみ検証の概説）](https://en.wikipedia.org/wiki/Costly_state_verification) `リファレンス`
 
+## 関連概念
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同分野の近傍
+- [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

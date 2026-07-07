@@ -29,6 +29,18 @@ aliases:
 - [Smith, A. (1776) The Wealth of Nations — Oxford University Press（国富論の標準版）](https://doi.org/10.1093/actrade/9780199535927.book.1) `学術`
 - [Wikipedia: Absolute advantage — 絶対優位論の概説](https://en.wikipedia.org/wiki/Absolute_advantage) `リファレンス`
 
+## 関連概念
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 同じ思想家
+- [[econ-division-of-labour|分業]] — 同じ思想家
+- [[econ-invisible-hand|見えざる手]] — 同じ思想家
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

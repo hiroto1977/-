@@ -30,6 +30,18 @@ Giacomo Rizzolatti ／ Vittorio Gallese ／ Leonardo Fogassi ／ Marco Iacoboni 
 - [Gallese, Fadiga, Fogassi & Rizzolatti (1996) — Action recognition in the premotor cortex, Brain 119: 593–609](https://academic.oup.com/brain/article/119/2/593/284429) `学術`
 - [Ramachandran & Oberman (2007) — Broken Mirrors: A Theory of Autism, Scientific American](https://www.scientificamerican.com/article/broken-mirrors-a-theory-of-autism-2007-06/) `メディア`
 
+## 関連概念
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同じ思想家
+- [[human-synesthesia-neuroscience|共感覚の神経科学]] — 同じ思想家
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [OECD (2023) Employment Protection Indicators — OECD雇用保護指標](https://www.oecd.org/employment/emp/oecdindicatorsofemploymentprotection.htm) `公的`
 - [Wikipedia: At-will employment — US and comparative law](https://en.wikipedia.org/wiki/At-will_employment) `リファレンス`
 
+## 関連概念
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
+- [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
+- [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

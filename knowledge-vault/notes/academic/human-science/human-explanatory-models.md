@@ -30,6 +30,17 @@ aliases:
 - [Kleinman, A. 1980 Patients and Healers in the Context of Culture. University of California Press](https://www.ucpress.edu/books/patients-and-healers-in-the-context-of-culture/paper) `リファレンス`
 - [Good, B.J. 1994 Medicine, Rationality and Experience: An Anthropological Perspective. Cambridge University Press](https://www.cambridge.org/core/books/medicine-rationality-and-experience/BB68EAA442BE83BEE13CF606FBDA2AA0) `学術`
 
+## 関連概念
+- [[econ-anticommons|アンチコモンズの悲劇]] — 同じ思想家
+- [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — 同じ思想家
+- [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]] — 同じ思想家
+- [[human-emotional-labor|感情労働（ホックシールド）]] — 出典を共有
+- [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同分野の近傍
+- [[human-stroop-effect|ストループ効果]] — 同分野の近傍
+- [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

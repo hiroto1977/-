@@ -32,6 +32,12 @@ Henri Tajfel ／ John C. Turner ／ Michael Billig ／ Claude Flament
 - [Otten — Minimal Group Paradigm (Wiley Encyclopedia of Personality & Individual Differences)](https://onlinelibrary.wiley.com/doi/abs/10.1002/9780470672532.wbepp160) `リファレンス`
 - [PMC — Investigating the Evolution of Ingroup Favoritism Using a Minimal Group Interaction Paradigm (2016)](https://pmc.ncbi.nlm.nih.gov/articles/PMC5113042/) `学術`
 
+## 関連概念
+- [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 語彙が近い
+- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同じ思想家
+- [[human-self-categorization-theory|自己カテゴリー化理論]] — 同じ思想家
+- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

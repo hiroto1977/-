@@ -29,6 +29,16 @@ aliases:
 - [Raymond (1999) The Cathedral and the Bazaar — Knowledge, Technology & Policy 12(3)](https://doi.org/10.1007/BF02512351) `学術`
 - [Wikipedia: Open-source movement — Stallman, FSF, Linux, commons-based peer production, governance](https://en.wikipedia.org/wiki/Open-source_movement) `リファレンス`
 
+## 関連概念
+- [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 語彙が近い
+- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同じ思想家
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
+- [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [Chouldechova, A. & Roth, A. (2020) A Snapshot of the Frontiers of Fairness in Machine Learning — CACM](https://doi.org/10.1145/3287560.3287598) `学術`
 - [Wikipedia: Algorithmic bias — fairness in AI systems](https://en.wikipedia.org/wiki/Algorithmic_bias) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
+- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同じ思想家
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

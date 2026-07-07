@@ -30,6 +30,15 @@ aliases:
 - [Wilson, T.D. (2000) Human Information Behavior — Informing Science](https://doi.org/10.1016/j.lisr.2006.06.005) `学術`
 - [Wikipedia: Information behavior — 情報行動の概要](https://en.wikipedia.org/wiki/Information_behavior) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+- [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同分野の近傍
+- [[infosoc-imagined-communities-anderson-digital|想像の共同体とデジタル・ナショナリズム——アンダーソンのメディア論の情報社会への拡張]] — 同分野の近傍
+- [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
+- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同分野の近傍
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

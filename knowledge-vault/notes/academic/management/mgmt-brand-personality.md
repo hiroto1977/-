@@ -29,6 +29,10 @@ aliases:
 - [American Marketing Association — Aaker (1997) "Dimensions of Brand Personality," Journal of Marketing Research 34(3):347–356（原典査読論文）](https://journals.ama.org/doi/10.1509/jmkr.34.3.347) `学術`
 - [Encyclopaedia Britannica Money — Brand Identity（ブランドパーソナリティを含むブランド・アイデンティティの参照記事）](https://www.britannica.com/money/brand-identity) `リファレンス`
 
+## 関連概念
+- [[mgmt-brand-equity|ブランド・エクイティ]] — 同分野の近傍
+- [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

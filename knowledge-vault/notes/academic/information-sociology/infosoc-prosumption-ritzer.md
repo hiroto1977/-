@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Prosumer — Toffler production-consumption convergence theory](https://en.wikipedia.org/wiki/Prosumer) `リファレンス`
 - [Ritzer, G. (2014) Prosumption: Evolution, Revolution, or Eternal Return? — Journal of Consumer Culture 14(3)](https://doi.org/10.1177/0038038514543299) `学術`
 
+## 関連概念
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,10 @@ prefecture
 - [大分県 先端技術挑戦課 省力化・生産性向上支援補助金](https://www.pref.oita.jp/soshiki/14270/dxhojyo.html) `自治体`
 - [別府市 大分県省力化・生産性向上支援補助金の案内](https://www.city.beppu.oita.jp/sangyou/sangyousinkou/sonota2/seisansei.html) `自治体`
 
+## 関連概念
+- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
+- [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 語彙が近い
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

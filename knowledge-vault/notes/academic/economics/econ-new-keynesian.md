@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia: Nominal rigidity（名目硬直性・メニューコストの整理）](https://en.wikipedia.org/wiki/Nominal_rigidity) `リファレンス`
 - [NBER Working Paper: Understanding the New-Keynesian Model（IS曲線・NKフィリップス曲線・政策ルール）](https://www.nber.org/system/files/working_papers/w12965/w12965.pdf) `学術`
 
+## 関連概念
+- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 同じ思想家
+- [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
+- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
+- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
+- [[econ-sticky-information|粘着情報モデル]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

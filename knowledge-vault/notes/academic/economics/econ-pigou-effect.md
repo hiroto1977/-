@@ -31,6 +31,18 @@ aliases:
 - [The Concise Encyclopedia of Economics (Econlib) — Arthur Cecil Pigou 略伝（実質残高効果＝Pigou効果の提唱者）](https://www.econlib.org/library/Enc/bios/Pigou.html) `リファレンス`
 - [Encyclopaedia Britannica Money — Arthur Cecil Pigou（厚生経済学・Pigou effect の名祖）](https://www.britannica.com/money/Arthur-Cecil-Pigou) `リファレンス`
 
+## 関連概念
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 語彙が近い
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — 同じ思想家
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
+- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

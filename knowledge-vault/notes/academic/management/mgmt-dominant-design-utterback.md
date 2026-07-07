@@ -30,6 +30,10 @@ aliases:
 - [Abernathy, W.J. & Utterback, J.M. (1978). Patterns of Industrial Innovation. Technology Review, 80(7), 40-47.](https://www.jstor.org/stable/44425655) `学術`
 - [Abernathy, W.J. (1978). The Productivity Dilemma: Roadblock to Innovation in the Automobile Industry. Johns Hopkins University Press.](https://jhupbooks.press.jhu.edu/title/productivity-dilemma) `リファレンス`
 
+## 関連概念
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
+- [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

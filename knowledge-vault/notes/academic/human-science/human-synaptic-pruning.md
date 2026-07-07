@@ -30,6 +30,10 @@ Peter Huttenlocher（ヒト皮質シナプス密度の定量研究, 1979/1997）
 - [Huttenlocher, P. R. & Dabholkar, A. S. (1997) Regional differences in synaptogenesis in human cerebral cortex. Journal of Comparative Neurology 387(2):167–178（聴覚野はピーク生後約3か月、前頭前野は青年期中盤まで除去が継続）](https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1096-9861(19971020)387:2%3C167::AID-CNE1%3E3.0.CO;2-Z) `学術`
 - [Sekar, A. et al. (2016) Schizophrenia risk from complex variation of complement component 4. Nature 530(7589):177–183（補体C4とシナプス刈り込み・統合失調症リスクの関連）](https://doi.org/10.1038/nature16549) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

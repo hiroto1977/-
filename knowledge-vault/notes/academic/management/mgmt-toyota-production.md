@@ -31,6 +31,13 @@ aliases:
 - [Lean Enterprise Institute — Lean Production（MIT IMVPによる命名・1990年の体系化）](https://www.lean.org/lexicon-terms/lean-production/) `リファレンス`
 - [Wikipedia — Toyota Production System（7つのムダ・かんばん・歴史）](https://en.wikipedia.org/wiki/Toyota_Production_System) `リファレンス`
 
+## 関連概念
+- [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
+- [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
+- [[mgmt-kanban|かんばん方式]] — 同分野の近傍
+- [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

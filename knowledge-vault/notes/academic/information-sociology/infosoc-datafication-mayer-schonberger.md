@@ -30,6 +30,18 @@ aliases:
 - [van Dijck (2014) Datafication, Dataism and Dataveillance — Surveillance & Society](https://doi.org/10.1177/2053951714528481) `学術`
 - [Wikipedia: Datafication — データフィケーションと情報社会の変容](https://en.wikipedia.org/wiki/Datafication) `リファレンス`
 
+## 関連概念
+- [[infosoc-datafication|データ化（データ化現象）]] — 語彙が近い
+- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 語彙が近い
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
+- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同じ思想家
+- [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 同じ思想家
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
+- [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

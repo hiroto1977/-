@@ -30,6 +30,11 @@ Ben-Porath, Yoram （1967 The Production of Human Capital and the Life Cycle of 
 - [Ben-Porath, Y. (1967) The Production of Human Capital and the Life Cycle of Earnings, Journal of Political Economy 75(4), pp.352-365](https://www.journals.uchicago.edu/doi/10.1086/259291) `学術`
 - [Wikipedia — Yoram Ben-Porat (biography, Harvard PhD under Simon Kuznets, summary of the 1967 model)](https://en.wikipedia.org/wiki/Yoram_Ben-Porat) `リファレンス`
 
+## 関連概念
+- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 同分野の近傍
+- [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 同分野の近傍
+- [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

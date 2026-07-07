@@ -29,6 +29,18 @@ aliases:
 - [Fullerton, D. (1982) On the Possibility of an Inverse Relationship between Tax Rates and Government Revenues — Journal of Public Economics](https://doi.org/10.1257/jep.5.1.211) `学術`
 - [Wikipedia: Laffer curve — supply-side economics, optimal tax rate, Reagan tax cuts](https://en.wikipedia.org/wiki/Laffer_curve) `リファレンス`
 
+## 関連概念
+- [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同じ思想家
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
+- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
+- [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]] — 同じ思想家
+- [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
+- [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
+- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ AI（人工知能）ガバナンスとは、AIシステムの開発・展開・�
 - [Marchetti, J. (2022). AI Governance and Human Rights — Oxford UP](https://doi.org/10.1093/oso/9780197559536.001.0001) `学術`
 - [Wikipedia: AI governance — human rights based approach](https://en.wikipedia.org/wiki/AI_governance) `リファレンス`
 
+## 関連概念
+- [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 同分野の近傍
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
+- [[infosoc-critical-discourse-analysis|批判的談話分析（CDA）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

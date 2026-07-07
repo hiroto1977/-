@@ -30,6 +30,17 @@ Helen Nissenbaum（ヘレン・ニッセンバウム, 理論提唱者） ／ Pri
 - [Nissenbaum, H. (2004). Privacy as Contextual Integrity. Washington Law Review, 79(1), 119-157](https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/) `学術`
 - [Nissenbaum, H. (2010). Privacy in Context: Technology, Policy, and the Integrity of Social Life. Stanford University Press (ISBN 9780804752374)](https://www.sup.org/books/law/privacy-context) `学術`
 
+## 関連概念
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 出典を共有
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
+- [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 出典を共有
+- [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — 出典を共有
+- [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
+- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
+- [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

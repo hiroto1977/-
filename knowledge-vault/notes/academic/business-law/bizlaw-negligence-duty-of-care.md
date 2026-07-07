@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Negligence — duty, breach, causation, damages, reasonable person standard](https://www.law.cornell.edu/wex/negligence) `リファレンス`
 - [Wikipedia: Duty of care — Donoghue v Stevenson, neighbour principle, Caparo three-stage test](https://en.wikipedia.org/wiki/Duty_of_care_in_English_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-caparo-v-dickman|カパロ対ディックマン——過失責任における「注意義務」の三段階テスト]] — 語彙が近い
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
+- [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同じ思想家
+- [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 同じ思想家
+- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
+- [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

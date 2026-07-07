@@ -30,6 +30,10 @@ aliases:
 - [Jordan & Taylor (2004) Hacktivism and Cyberwars — Routledge](https://doi.org/10.1080/14616700802416543) `学術`
 - [Wikipedia: Hacktivism — ハクティビズムの歴史と倫理的議論](https://en.wikipedia.org/wiki/Hacktivism) `リファレンス`
 
+## 関連概念
+- [[infosoc-hacktivism|ハクティビズム]] — 同分野の近傍
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

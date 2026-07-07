@@ -31,6 +31,10 @@ aliases:
 - [「京セラのアメーバ経営」福井県立大学 地域経済研究所 紀要](https://www.fpu.ac.jp/rire/publication/regular/001363_d/fil/file_7.pdf) `学術`
 - [Amoeba Management — Official Site of Kazuo Inamori / Kyocera（一次・公式解説）](https://global.kyocera.com/inamori/about/manager/amoeba/) `リファレンス`
 
+## 関連概念
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,11 @@ aliases:
 - [Van Deursen & Van Dijk 2011 — Internet Skills and the Digital Divide](https://doi.org/10.1177/1461444810386774) `学術`
 - [European Commission JRC 2022 — DigComp 2.2: Digital Competence Framework](https://publications.jrc.ec.europa.eu/repository/handle/JRC128415) `公的`
 
+## 関連概念
+- [[infosoc-media-literacy|メディア・リテラシー]] — 同じ思想家
+- [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同分野の近傍
+- [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,17 @@ national
 - [農林水産省 新規就農者育成総合対策のポイント](https://www.maff.go.jp/j/new_farmer/n_syunou/attach/pdf/roudou-144.pdf) `公的`
 - [浜松市 経営開始資金（旧 農業次世代人材投資事業）](https://www.city.hamamatsu.shizuoka.jp/noushin/portal/nougyou/syunokyuhu/index.html) `自治体`
 
+## 関連概念
+- [[bizlaw-geographical-indication|地理的表示法（GI法）]] — 出典を共有
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 出典を共有
+- [[bizlaw-plant-variety|種苗法]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 出典を共有
+- [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
+- [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
+- [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

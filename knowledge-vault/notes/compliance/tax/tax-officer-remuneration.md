@@ -30,6 +30,10 @@ aliases:
 - [国税庁 質疑応答事例 定期同額給与](https://www.nta.go.jp/law/shitsugi/hojin/11/03.htm) `公的`
 - [マネーフォワード 事前確定届出給与](https://biz.moneyforward.com/payroll/basic/73615/) `メディア`
 
+## 関連概念
+- [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
+- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

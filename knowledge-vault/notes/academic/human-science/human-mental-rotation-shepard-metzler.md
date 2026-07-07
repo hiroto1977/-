@@ -29,6 +29,12 @@ aliases:
 - [Shepard, R.N. & Metzler, J. (1971) Mental Rotation of Three-Dimensional Objects — Science 171(3972)](https://doi.org/10.1126/science.171.3972.701) `学術`
 - [Wikipedia: Mental rotation — Shepard & Metzler, reaction time linear with angle, analog imagery, imagery debate](https://en.wikipedia.org/wiki/Mental_rotation) `リファレンス`
 
+## 関連概念
+- [[human-mental-rotation-shepard|メンタル・ローテーション（シェパード＆メッツラー）]] — 同じ思想家
+- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
+- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同じ思想家
+- [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [INFORMS / Management Science 公式書誌 (doi:10.1287/mnsc.32.7.791)](https://pubsonline.informs.org/doi/10.1287/mnsc.32.7.791) `学術`
 - [Wikipedia「Lead user」— 定義とリードユーザー法](https://en.wikipedia.org/wiki/Lead_user) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
+- [[human-endowment-effect|保有効果（授かり効果）]] — 出典を共有
+- [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

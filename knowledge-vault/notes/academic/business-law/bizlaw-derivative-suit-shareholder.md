@@ -30,6 +30,18 @@ John C. Coffee Jr.／Robert B. Thompson／Jessica Erickson／Roberta Romano／Ar
 - [Thompson & Thomas (2004) The New Look of Shareholder Litigation, Vanderbilt Law Review 57(1):133-209](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=431480) `学術`
 - [Aronson v. Lewis, 473 A.2d 805 (Del. 1984) — landmark demand futility standard for derivative suits](https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-1.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同じ思想家
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
+- [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]] — 同じ思想家
+- [[human-habituation|馴化（habituation）——単一刺激の反復による反応減弱と非連合学習]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
+- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

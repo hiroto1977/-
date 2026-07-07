@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Sudden Stop — Calvo capital flow reversal and emerging market crises](https://en.wikipedia.org/wiki/Sudden_stop_(economics)) `リファレンス`
 - [Calvo, G.A., Izquierdo, A. & Mejía, L.-F. (2004) On the Empirics of Sudden Stops — JIE 64(1)](https://doi.org/10.1016/j.jinteco.2004.05.012) `学術`
 
+## 関連概念
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 語彙が近い
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 語彙が近い
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 同じ思想家
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 同じ思想家
+- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 同じ思想家
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

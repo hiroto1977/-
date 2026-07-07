@@ -29,6 +29,18 @@ Pelle Ehn（1988, Work-Oriented Design of Computer Artifacts — ツール視点
 - [Muller & Kuhn (1993) Participatory Design — Communications of the ACM 36(6), pp.24-28](https://dl.acm.org/doi/10.1145/153571.255960) `学術`
 - [Schuler & Namioka (1993) Participatory Design: Principles and Practices — Routledge (orig. Lawrence Erlbaum)](https://www.routledge.com/Participatory-Design-Principles-and-Practices/Schuler-Namioka/p/book/9780805809510) `学術`
 
+## 関連概念
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 同じ思想家
+- [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

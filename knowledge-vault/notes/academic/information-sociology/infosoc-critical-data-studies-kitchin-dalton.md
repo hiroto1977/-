@@ -30,6 +30,18 @@ aliases:
 - [boyd & Crawford (2012) Critical Questions for Big Data — Information, Communication & Society](https://doi.org/10.1080/1369118X.2012.678878) `学術`
 - [Wikipedia: Critical data studies — 批判的データ研究の概説](https://en.wikipedia.org/wiki/Critical_data_studies) `リファレンス`
 
+## 関連概念
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 同じ思想家
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
+- [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
+- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

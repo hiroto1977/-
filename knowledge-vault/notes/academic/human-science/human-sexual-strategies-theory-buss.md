@@ -31,6 +31,10 @@ aliases:
 - [Eagly, A. H. & Wood, W. (1999) The Origins of Sex Differences in Human Behavior — American Psychologist, 54(6), 408–423（SST批判：社会構造モデル）](https://doi.org/10.1017/S0140525X01003939) `学術`
 - [Wikipedia: Sexual strategies theory — Buss & Schmitt, short/long-term mating, cross-cultural evidence, critique](https://en.wikipedia.org/wiki/Sexual_strategies_theory) `リファレンス`
 
+## 関連概念
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
+- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

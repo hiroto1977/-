@@ -29,6 +29,12 @@ aliases:
 - [Dartmouth College Tuck School of Business — Vijay Govindarajan Faculty Page（大学公式）](https://tuck.dartmouth.edu/faculty/faculty-directory/vijay-govindarajan) `学術`
 - [Knowledge at Wharton — "How Reverse Innovation Can Change the World"（ウォートン校）](https://knowledge.wharton.upenn.edu/article/vijay-govindarajan-how-reverse-innovation-can-change-the-world/) `学術`
 
+## 関連概念
+- [[mgmt-strategic-silence|組織における戦略的沈黙]] — 出典を共有
+- [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 出典を共有
+- [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 同分野の近傍
+- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

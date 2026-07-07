@@ -30,6 +30,17 @@ aliases:
 - [Lucas, Robert E., Jr. (1978) "Asset Prices in an Exchange Economy," Econometrica 46(6): 1429–1445 — RePEc/Econometric Society record](https://ideas.repec.org/a/ecm/emetrp/v46y1978i6p1429-45.html) `学術`
 - [Wikipedia: Consumption-based capital asset pricing model（消費ベータ・確率的割引ファクター＝異時点間限界代替率・Rubinstein 1976 / Lucas 1978 / Breeden 1979・標準CAPMとの関係・実証的限界）](https://en.wikipedia.org/wiki/Consumption-based_capital_asset_pricing_model) `リファレンス`
 
+## 関連概念
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同じ思想家
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

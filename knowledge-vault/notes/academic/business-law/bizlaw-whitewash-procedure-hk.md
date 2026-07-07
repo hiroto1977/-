@@ -31,6 +31,18 @@ aliases:
 - [Davies, P. L. & Worthington, S. (2012) Gower & Davies' Principles of Modern Company Law — Sweet & Maxwell, 9th ed.（財務支援と会社法原理の解説）](https://doi.org/10.1093/ojls/gqi037) `学術`
 - [Wikipedia: Financial assistance (company law) — whitewash procedure, MBO/LBO, Companies Act 2006, Hong Kong](https://en.wikipedia.org/wiki/Financial_assistance_(company_law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,17 @@ aliases:
 - [Flanagan, J. R. & Beltzner, M. A. (2000) Independence of perceptual and sensorimotor predictions in the size-weight illusion — Nature Neuroscience](https://doi.org/10.1038/35784) `学術`
 - [Wikipedia: Size–weight illusion — Charpentier, expectation, sensorimotor prediction](https://en.wikipedia.org/wiki/Size%E2%80%93weight_illusion) `リファレンス`
 
+## 関連概念
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-mccollough-effect|マッカロー効果——方位に依存する持続的な色残効]] — 同じ思想家
+- [[human-ponzo-illusion|ポンゾ錯視——奥行き手がかりが生む大きさの錯覚]] — 同じ思想家
+- [[human-purkinje-effect|プルキニェ現象——明るさが変わると色の見え方の明暗が逆転する]] — 同じ思想家
+- [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
+- [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同じ思想家
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同分野の近傍
+- [[human-fresh-start-effect|フレッシュスタート効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

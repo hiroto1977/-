@@ -29,6 +29,16 @@ aliases:
 - [Sargent & Wallace, "Rational Expectations, the Optimal Monetary Instrument, and the Optimal Money Supply Rule," Journal of Political Economy 83(2), 1975](https://www.journals.uchicago.edu/doi/abs/10.1086/260321) `学術`
 - [The Concise Encyclopedia of Economics (Econlib) — New Classical Macroeconomics](https://www.econlib.org/library/Enc/NewClassicalMacroeconomics.html) `リファレンス`
 
+## 関連概念
+- [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 語彙が近い
+- [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 同じ思想家
+- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同じ思想家
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
+- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
+- [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同じ思想家
+- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

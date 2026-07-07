@@ -30,6 +30,11 @@ aliases:
 - [Tal-Or, N., Cohen, J., Tsfati, Y., & Gunther, A. C. (2010) Testing Causal Direction in the Influence of Presumed Media Influence. Communication Research 37(6):801-824（拡張・因果検証）](https://doi.org/10.1177/0093650210362684) `学術`
 - [Tal-Or, N. Influence of Presumed Media Influence. The International Encyclopedia of Media Psychology, Wiley（DOI:10.1002/9781119011071.iemp0129, リファレンス）](https://onlinelibrary.wiley.com/doi/abs/10.1002/9781119011071.iemp0129) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-phenotyping-theory|デジタル表現型理論]] — 同分野の近傍
+- [[infosoc-third-person-effect-davison|第三者効果——メディアの影響を他者により強く帰属する知覚的偏向]] — 同分野の近傍
+- [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

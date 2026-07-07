@@ -31,6 +31,11 @@ aliases:
 - [Beal, D. J., Cohen, R. R., Burke, M. J. & McLendon, C. L. (2003) Cohesion and Performance in Groups: A Meta-Analytic Clarification of Construct Relations — Journal of Applied Psychology, 88(6), 989–1004](https://doi.org/10.1037/0021-9010.88.6.989) `学術`
 - [Wikipedia: Group cohesiveness — definitions, measurement (GEQ), performance links, and groupthink risks](https://en.wikipedia.org/wiki/Group_cohesiveness) `リファレンス`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同分野の近傍
+- [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

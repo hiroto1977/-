@@ -29,6 +29,18 @@ aliases:
 - [Seligman, M.E.P. & Csikszentmihalyi, M. (2000). Positive psychology — American Psychologist](https://doi.org/10.1037/0003-066X.55.1.5) `学術`
 - [Wikipedia: Positive psychology — PERMA model flourishing](https://en.wikipedia.org/wiki/Positive_psychology) `リファレンス`
 
+## 関連概念
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 語彙が近い
+- [[human-positive-psychology|ポジティブ心理学]] — 語彙が近い
+- [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

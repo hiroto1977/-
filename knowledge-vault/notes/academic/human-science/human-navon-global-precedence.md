@@ -29,6 +29,11 @@ aliases:
 - [Navon, D. (1977) Forest Before Trees: The Precedence of Global Features in Visual Perception — Cognitive Psychology, 9(3), 353–383](https://doi.org/10.1016/0010-0285(77)90012-3) `学術`
 - [Wikipedia: Global precedence — Navon (1977), Navon figures, forest before trees, interference asymmetry, global-to-local processing](https://en.wikipedia.org/wiki/Global_precedence) `リファレンス`
 
+## 関連概念
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

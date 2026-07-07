@@ -31,6 +31,12 @@ aliases:
 - [Encyclopaedia Britannica — The Gig Economy（定義・「ギグ」の由来・柔軟性）](https://www.britannica.com/money/gig-economy-side-hustle) `リファレンス`
 - [Library of Congress — Gig Economy Research Guide: Overview](https://guides.loc.gov/gig-economy/overview) `公的`
 
+## 関連概念
+- [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 語彙が近い
+- [[eh-1944|1944年（昭和19年）]] — 出典を共有
+- [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同分野の近傍
+- [[infosoc-sharing-economy|シェアリングエコノミー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

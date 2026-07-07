@@ -29,6 +29,17 @@ aliases:
 - [Card, D. & Krueger, A.B. (1994) Minimum Wages and Employment: New Jersey and Pennsylvania — AER 84(4)](https://www.jstor.org/stable/2118030) `学術`
 - [Wikipedia: Natural experiment — Card-Krueger minimum wage, difference-in-differences, credibility revolution](https://en.wikipedia.org/wiki/Natural_experiment) `リファレンス`
 
+## 関連概念
+- [[econ-difference-in-differences|差の差分析（DID）]] — 語彙が近い
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
+- [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

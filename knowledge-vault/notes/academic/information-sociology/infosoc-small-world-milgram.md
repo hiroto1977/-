@@ -29,6 +29,13 @@ aliases:
 - [Milgram, S. (1967) The Small-World Problem — Psychology Today 1(1)](https://doi.org/10.1037/e400002009-005) `学術`
 - [Wikipedia: Small-world experiment — Milgram, six degrees of separation, social network path length, Watts-Strogatz](https://en.wikipedia.org/wiki/Small-world_experiment) `リファレンス`
 
+## 関連概念
+- [[infosoc-small-world|スモールワールド現象（六次の隔たり）]] — 語彙が近い
+- [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 同じ思想家
+- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — 同じ思想家
+- [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
+- [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

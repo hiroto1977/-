@@ -29,6 +29,15 @@ aliases:
 - [EconLib — Léon Walras（タトヌマン・一般均衡・超過需要関数）](https://www.econlib.org/library/Enc/bios/Walras.html) `リファレンス`
 - [Stanford Encyclopedia of Philosophy — Philosophy of Economics（ワルラス的均衡調整・タトヌマン過程の位置づけ）](https://plato.stanford.edu/entries/economics/) `リファレンス`
 
+## 関連概念
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 語彙が近い
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
+- [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
+- [[econ-walras-law|ワルラスの法則]] — 同じ思想家
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同分野の近傍
+- [[econ-pigouvian-tax|ピグー税]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

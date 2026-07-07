@@ -29,6 +29,11 @@ aliases:
 - [公正取引委員会「フランチャイズ・システムに関する独占禁止法上の考え方について」（2021年改訂版、優越的地位の濫用の規律）](https://www.jftc.go.jp/dk/guideline/unyoukijun/franchise.html) `公的`
 - [中小企業庁「フランチャイズ関連情報」（中小小売商業振興法に基づく法定開示の概要）](https://www.chusho.meti.go.jp/shogyo/fc/index.html) `公的`
 
+## 関連概念
+- [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 語彙が近い
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 同分野の近傍
+- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

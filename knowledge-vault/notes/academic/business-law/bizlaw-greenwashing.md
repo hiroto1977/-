@@ -29,6 +29,11 @@ aliases:
 - [ESMA（欧州証券市場監督機構）— Final Report on Greenwashing（定義・監督・防止措置の国際基準文書）](https://www.esma.europa.eu/press-news/esma-news/esma-publishes-final-report-greenwashing) `公的`
 - [消費者庁 — 景品表示法（優良誤認表示規制・環境訴求広告への適用）](https://www.caa.go.jp/policies/policy/representation/fair_labeling/) `公的`
 
+## 関連概念
+- [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]] — 同分野の近傍
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同分野の近傍
+- [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

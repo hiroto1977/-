@@ -30,6 +30,17 @@ aliases:
 - [Dore, R. (2000) Stock Market Capitalism: Welfare Capitalism — Oxford University Press](https://doi.org/10.1093/acprof:oso/9780199251742.001.0001) `学術`
 - [Wikipedia: コーポレートガバナンス・コード — 日本のCGコード概要](https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%BC%E3%83%9D%E3%83%AC%E3%83%BC%E3%83%88%E3%82%AC%E3%83%90%E3%83%8A%E3%83%B3%E3%82%B9%E3%83%BB%E3%82%B3%E3%83%BC%E3%83%89) `リファレンス`
 
+## 関連概念
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
+- [[bizlaw-stewardship-code|日本版スチュワードシップ・コード]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

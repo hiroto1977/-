@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Eurosclerosis — European economic rigidity and structural unemployment](https://en.wikipedia.org/wiki/Eurosclerosis) `リファレンス`
 - [Blanchard, O. (2004) The Economic Future of Europe — Journal of Economic Perspectives 18(4)](https://doi.org/10.1257/jep.18.4.3) `学術`
 
+## 関連概念
+- [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
+- [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
+- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同じ思想家
+- [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同じ思想家
+- [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
+- [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
+- [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

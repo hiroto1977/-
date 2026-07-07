@@ -29,6 +29,10 @@ Andrew S. C. Ehrenberg（エーレンバーグ・1990年論文・法則の実証
 - [Ehrenberg, A. S. C., Goodhardt, G. J., & Barwise, T. P. (1990). Double Jeopardy Revisited. Journal of Marketing, 54(3), 82-91.](https://journals.sagepub.com/doi/abs/10.1177/002224299005400307) `学術`
 - [Semantic Scholar 収録の書誌（Ehrenberg, Goodhardt & Barwise [1990]・小シェアのブランドは買い手も忠誠度も低い・浸透率主導の成長）](https://www.semanticscholar.org/paper/Double-Jeopardy-Revisited-Ehrenberg-Goodhardt/9e69715fedf9f67a9873ec83f9f2483ecb59fee0) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

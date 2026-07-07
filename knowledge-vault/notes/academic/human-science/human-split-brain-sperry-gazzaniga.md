@@ -31,6 +31,13 @@ Roger W. Sperry ／ Michael S. Gazzaniga ／ Joseph E. Bogen
 - [Sperry (1961) Cerebral Organization & Behavior — Science](https://doi.org/10.1126/science.133.3466.1749) `学術`
 - [Psychology Today — Split Brain Overview](https://www.psychologytoday.com/us/basics/split-brain) `リファレンス`
 
+## 関連概念
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 出典を共有
+- [[human-frequency-illusion|頻度錯覚（バーダー・マインホフ現象）]] — 出典を共有
+- [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 同分野の近傍
+- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

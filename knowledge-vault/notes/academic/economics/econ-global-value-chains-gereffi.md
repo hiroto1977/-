@@ -31,6 +31,11 @@ aliases:
 - [Antràs, P. & Chor, D. (2013) Organizing the Global Value Chain — Econometrica, 81(6), 2127–2204（GVCと国際貿易理論の統合）](https://doi.org/10.1257/jep.33.2.163) `学術`
 - [Wikipedia: Global value chain — Gereffi, buyer/producer-driven, upgrading, COVID reshoring](https://en.wikipedia.org/wiki/Global_value_chain) `リファレンス`
 
+## 関連概念
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 語彙が近い
+- [[econ-global-value-chain|グローバル・バリューチェーン（GVC）]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

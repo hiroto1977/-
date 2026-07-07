@@ -29,6 +29,18 @@ aliases:
 - [Hamel & Prahalad, "Strategic Intent," Harvard Business Review, May–June 1989, pp. 63–76（学術引用索引）](https://www.scirp.org/reference/referencespapers?referenceid=218066) `学術`
 - [DIAMOND ハーバード・ビジネス・レビュー「ストラテジック・インテント【1989年度マッキンゼー賞受賞論文】」](https://dhbr.diamond.jp/articles/-/485) `リファレンス`
 
+## 関連概念
+- [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 同じ思想家
+- [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 同じ思想家
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同じ思想家
+- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同じ思想家
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

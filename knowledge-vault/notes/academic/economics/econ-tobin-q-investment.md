@@ -29,6 +29,18 @@ aliases:
 - [Tobin, J. (1969) A General Equilibrium Approach to Monetary Theory — Journal of Money, Credit and Banking 1(1)](https://doi.org/10.2307/1991374) `学術`
 - [Wikipedia: Tobins q — market value vs replacement cost, marginal/average q, Hayashi](https://en.wikipedia.org/wiki/Tobin%27s_q) `リファレンス`
 
+## 関連概念
+- [[econ-tobins-q|トービンのq]] — 語彙が近い
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

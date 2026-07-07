@@ -30,6 +30,18 @@ E・アラン・ファーンズワース ／ ヒュー・ビール ／ ユーア
 - [Inntrepreneur Pub Co v East Crown Ltd [2000] 2 Lloyd's Rep 611. Practical Law (Thomson Reuters).](https://uk.practicallaw.thomsonreuters.com/D-009-7867) `リファレンス`
 - [McKendrick, E. Contract Law: Text, Cases, and Materials. Oxford University Press.](https://global.oup.com/academic/product/contract-law-9780198829003) `学術`
 
+## 関連概念
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同じ思想家
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 同じ思想家
+- [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同じ思想家
+- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
+- [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — 同じ思想家
+- [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同じ思想家
+- [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

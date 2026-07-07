@@ -30,6 +30,18 @@ aliases:
 - [Rogoff (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature](https://doi.org/10.2307/2951839) `学術`
 - [Wikipedia: Purchasing power parity — 購買力平価と為替レート決定理論](https://en.wikipedia.org/wiki/Purchasing_power_parity) `リファレンス`
 
+## 関連概念
+- [[econ-ppp|購買力平価（PPP）]] — 語彙が近い
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -34,6 +34,18 @@ aliases:
 - [Raichle (2015) Annual Review Neuroscience — DMN review](https://www.annualreviews.org/content/journals/10.1146/annurev-neuro-071013-014030) `学術`
 - [Buckner et al. (2013) PMC — DMN and internal mentation](https://pmc.ncbi.nlm.nih.gov/articles/PMC3553600/) `学術`
 
+## 関連概念
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 出典を共有
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-flynn-effect|フリン効果]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Marquis & Tilcsik (2013) Imprinting: Toward a Multilevel Theory — Harvard Business School WP](https://www.hbs.edu/ris/Publication%20Files/13-061_fa850975-750a-49b2-a6b6-f1008ce21502.pdf) `学術`
 - [Johnson (2007) What Is Organizational Imprinting? — American Journal of Sociology (UChicago)](https://www.journals.uchicago.edu/doi/abs/10.1086/517899) `学術`
 
+## 関連概念
+- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 語彙が近い
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
+- [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
+- [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

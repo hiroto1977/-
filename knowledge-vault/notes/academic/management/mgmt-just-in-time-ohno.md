@@ -29,6 +29,10 @@ aliases:
 - [Ohno, T. (1988) Toyota Production System: Beyond Large-Scale Production — Productivity Press (WorldCat)](https://www.worldcat.org/oclc/19589142) `学術`
 - [Wikipedia: Just-in-time manufacturing — Ohno, Toyota Production System, pull/kanban, waste elimination, lean](https://en.wikipedia.org/wiki/Just-in-time_manufacturing) `リファレンス`
 
+## 関連概念
+- [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

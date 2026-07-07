@@ -29,6 +29,10 @@ Diana Baumrind（ダイアナ・バウムリンド・1966年論文・養育ス�
 - [Baumrind, D. (1966). Effects of Authoritative Parental Control on Child Behavior. Child Development, 37(4), 887-907.](https://doi.org/10.2307/1126611) `学術`
 - [Wikipedia, “Parenting styles”（Baumrind の権威的/権威主義的/許容的・Maccoby & Martin [1983] の要求性×応答性の四類型の概説）](https://en.wikipedia.org/wiki/Parenting_styles) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

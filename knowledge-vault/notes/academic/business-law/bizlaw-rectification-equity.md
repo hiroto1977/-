@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Rectification (law) — common/unilateral mistake, equitable remedy, document correction](https://en.wikipedia.org/wiki/Rectification_(law)) `リファレンス`
 - [Wikipedia: Mistake in English contract law — rectification, convincing proof, sharp practice](https://en.wikipedia.org/wiki/Mistake_in_English_contract_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
+- [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同じ思想家
+- [[bizlaw-donatio-mortis-causa|死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与]] — 同じ思想家
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
+- [[bizlaw-beneficiary-principle|受益者原則——信託には執行できる受益者が必要である]] — 同じ思想家
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
+- [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同じ思想家
+- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
+- [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

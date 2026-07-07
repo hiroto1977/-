@@ -29,6 +29,16 @@ aliases:
 - [Lawrence, P.R. & Lorsch, J.W. (1967) Organization and Environment — HBS Press](https://doi.org/10.1007/978-1-349-00354-9) `学術`
 - [Wikipedia: Contingency theory — organizational design](https://en.wikipedia.org/wiki/Contingency_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同じ思想家
+- [[mgmt-woodward-technology|ウッドワードの技術類型]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
+- [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
+- [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
+- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同分野の近傍
+- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

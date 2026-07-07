@@ -31,6 +31,18 @@ aliases:
 - [Fisher, M., Goddu, M. K. & Keil, F. C. (2015) Searching for Explanations: How the Internet Inflates Estimates of Internal Knowledge — Journal of Experimental Psychology: General, 144(3), 674–687](https://doi.org/10.1037/xge0000070) `学術`
 - [Wikipedia: Google effect — Sparrow et al. experiment, cognitive offloading, and debate on digital memory](https://en.wikipedia.org/wiki/Google_effect) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [信託協会 — 法改正と現在の信託（大正11年法の全面改正・2007年施行・新類型）](https://www.shintaku-kyokai.or.jp/trust/history/trusts_modern.html) `リファレンス`
 - [金融庁 — 信託法改正に伴う信託業法の改正の概要について](https://www.fsa.go.jp/access/19/200708b.html) `公的`
 
+## 関連概念
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+- [[bizlaw-broadcast-act|放送法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

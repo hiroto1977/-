@@ -30,6 +30,12 @@ aliases:
 - [国立国会図書館サーチ 書誌『情報産業論』（1963）](https://iss.ndl.go.jp/books/R000000004-I728841-00) `公的`
 - [Wikipedia「情報産業」（内胚葉=農業／中胚葉=工業／外胚葉=情報の発展段階説）](https://ja.wikipedia.org/wiki/%E6%83%85%E5%A0%B1%E7%94%A3%E6%A5%AD) `リファレンス`
 
+## 関連概念
+- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 出典を共有
+- [[mgmt-value-co-creation|価値共創]] — 出典を共有
+- [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [List, Christian, "Social Choice Theory", Stanford Encyclopedia of Philosophy — メイの定理（1952）が普遍的定義域・匿名性・中立性・正の反応性を満たす集計ルールを多数決と一意に特徴づけることを解説。](https://plato.stanford.edu/entries/social-choice/) `リファレンス`
 - ["May's theorem", Wikipedia — Kenneth O. May (1952, Econometrica 20:680–684) による単純多数決の公理的特徴づけと、アロウの不可能性定理（3選択肢以上）との関係を要約。](https://en.wikipedia.org/wiki/May's_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同分野の近傍
+- [[econ-mechanism-design|メカニズムデザイン]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

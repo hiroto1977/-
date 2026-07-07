@@ -30,6 +30,18 @@ aliases:
 - [Auerbach & Gorodnichenko (2012) Fiscal Multipliers in Recession and Expansion — AER P&P](https://doi.org/10.1257/aer.102.2.1021) `学術`
 - [Wikipedia: Fiscal multiplier — 政府支出・減税の所得乗数効果に関する概説](https://en.wikipedia.org/wiki/Fiscal_multiplier) `リファレンス`
 
+## 関連概念
+- [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 語彙が近い
+- [[econ-fiscal-multiplier|乗数効果（財政乗数）]] — 語彙が近い
+- [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]] — 語彙が近い
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
+- [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — 同じ思想家
+- [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

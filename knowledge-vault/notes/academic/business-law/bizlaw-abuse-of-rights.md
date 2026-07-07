@@ -30,6 +30,11 @@ aliases:
 - [Wikibooks 民法第1条（条文と各項の趣旨）](https://ja.wikibooks.org/wiki/民法第1条) `リファレンス`
 - [Wikipedia 宇奈月温泉事件（大判昭10.10.5 民集14巻1965頁・事案・判旨）](https://ja.wikipedia.org/wiki/宇奈月温泉事件) `リファレンス`
 
+## 関連概念
+- [[bizlaw-disability-employment|障害者雇用促進法]] — 同分野の近傍
+- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
+- [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

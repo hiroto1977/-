@@ -30,6 +30,18 @@ aliases:
 - [Federal Reserve Bank of Minneapolis — Perfectly Competitive Superstars](https://www.minneapolisfed.org/article/2002/perfectly-competitive-superstars) `公的`
 - [IDEAS/RePEc — The Economics of Superstars 書誌情報](https://ideas.repec.org/a/aea/aecrev/v71y1981i5p845-58.html) `リファレンス`
 
+## 関連概念
+- [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
+- [[econ-spatial-equilibrium-rosen-roback|空間均衡モデル——ローゼン＝ロバックの都市間均衡と補償的賃金格差]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
+- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
+- [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 出典を共有
+- [[econ-moral-hazard|モラルハザード（道徳的危険）]] — 出典を共有
+- [[econ-rbc|実物的景気循環論（RBC）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

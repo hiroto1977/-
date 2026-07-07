@@ -29,6 +29,18 @@ aliases:
 - [Andreoni, J. (1990) Impure Altruism and Donations to Public Goods: A Theory of Warm-Glow Giving — The Economic Journal, 100(401), 464–477](https://academic.oup.com/ej/article-abstract/100/401/464/5190270) `学術`
 - [Wikipedia: Warm-glow giving — Andreoni, impure altruism, donations to public goods, incomplete crowding-out](https://en.wikipedia.org/wiki/Warm-glow_giving) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
+- [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 同じ思想家
+- [[econ-damaged-goods-deneckere-mcafee|損傷財——あえて劣化させて価格差別する]] — 同じ思想家
+- [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同じ思想家
+- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 同じ思想家
+- [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
+- [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — 同じ思想家
+- [[econ-interest-rate-parity|金利平価説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

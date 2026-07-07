@@ -30,6 +30,14 @@ aliases:
 - [Sraffa's Revolution in Economic Theory — Institute for New Economic Thinking](https://www.ineteconomics.org/perspectives/blog/sraffas-revolution-in-economic-theory) `リファレンス`
 - [Sraffa and the Labour Theory of Value — Revista de Economia Política (SciELO)](https://www.scielo.br/j/rep/a/6dZtWSHy3J36Ngn8T5fWFYv/?lang=en) `学術`
 
+## 関連概念
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
+- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — 出典を共有
+- [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

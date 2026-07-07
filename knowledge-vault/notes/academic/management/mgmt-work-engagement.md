@@ -31,6 +31,18 @@ aliases:
 - [Bakker & Demerouti, Job Demands–Resources Theory: Ten Years Later, Annual Review of Organizational Psychology（査読総説）](https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-120920-053933) `学術`
 - [Work engagement — Wikipedia](https://en.wikipedia.org/wiki/Work_engagement) `リファレンス`
 
+## 関連概念
+- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 語彙が近い
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[mgmt-organizational-energy-bruch|組織エネルギー理論——集団的活力の質と強度による組織診断]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

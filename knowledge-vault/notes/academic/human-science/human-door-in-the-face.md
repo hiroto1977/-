@@ -30,6 +30,18 @@ aliases:
 - [EBSCO Research Starters: Psychology — Door-in-the-face technique（説明原理・FITDとの区別）](https://www.ebsco.com/research-starters/psychology/door-face-technique) `リファレンス`
 - [Wikipedia — Door-in-the-face technique（実験数値）](https://en.wikipedia.org/wiki/Door-in-the-face_technique) `リファレンス`
 
+## 関連概念
+- [[human-endowment-effect|保有効果（授かり効果）]] — 出典を共有
+- [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
+- [[econ-liquidity-trap|流動性のわな]] — 出典を共有
+- [[human-effort-justification|努力の正当化]] — 出典を共有
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 出典を共有
+- [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
+- [[mgmt-lead-user|リードユーザー法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

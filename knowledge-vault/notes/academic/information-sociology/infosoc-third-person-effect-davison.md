@@ -29,6 +29,12 @@ W・フィリップス・デイヴィソン ／ リチャード・パーロフ �
 - [Davison, W.P. (1983) The Third-Person Effect in Communication — Public Opinion Quarterly 47(1)](https://doi.org/10.1086/268763) `学術`
 - [Wikipedia: Third-person effect — Davison, perceptual bias, censorship support, first-person effect](https://en.wikipedia.org/wiki/Third-person_effect) `リファレンス`
 
+## 関連概念
+- [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 同分野の近傍
+- [[infosoc-internet-governance|インターネット・ガバナンス]] — 同分野の近傍
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 同分野の近傍
+- [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

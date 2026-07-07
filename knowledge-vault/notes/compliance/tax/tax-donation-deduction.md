@@ -30,6 +30,17 @@ aliases:
 - [文部科学省 法人寄附の税制優遇](https://www.mext.go.jp/donation_portal-site/corporate-preferential.html) `公的`
 - [寄附金の損金算入 解説](https://www.ht-tax.or.jp/topics/kifukin-keihi/) `メディア`
 
+## 関連概念
+- [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 語彙が近い
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 出典を共有
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 出典を共有
+- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 出典を共有
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
+- [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]] — 同分野の近傍
+- [[tax-furusato-designation|ふるさと納税の指定制度（返礼品の基準）]] — 同分野の近傍
+- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

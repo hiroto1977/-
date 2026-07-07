@@ -30,6 +30,14 @@ aliases:
 - [Staw, B.M. (1976) Knee-Deep in the Big Muddy: A Study of Escalating Commitment to a Chosen Course of Action — Organizational Behavior and Human Performance](https://doi.org/10.1016/0030-5073(76)90005-2) `学術`
 - [Teger, A.I. (1980) Too Much Invested to Quit — Pergamon Press](https://doi.org/10.1007/978-1-4612-5988-9) `学術`
 
+## 関連概念
+- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 同じ思想家
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
+- [[econ-auction-theory|オークション理論]] — 同分野の近傍
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

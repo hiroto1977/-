@@ -31,6 +31,11 @@ aliases:
 - [Wikipedia — Self-monitoring（尺度・因子構造・改訂版の議論）](https://en.wikipedia.org/wiki/Self-monitoring) `リファレンス`
 - [Snyder, M. (1974) Self-Monitoring of Expressive Behavior — Journal of Personality and Social Psychology 30(4)](https://doi.org/10.1037/h0037039) `学術`
 
+## 関連概念
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 出典を共有
+- [[human-stroop-effect|ストループ効果]] — 同分野の近傍
+- [[human-false-belief-task|誤信念課題（False Belief Task）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

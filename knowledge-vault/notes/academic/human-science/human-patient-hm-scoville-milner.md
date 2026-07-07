@@ -29,6 +29,10 @@ aliases:
 - [Scoville, W. B. & Milner, B. (1957) Loss of recent memory after bilateral hippocampal lesions — Journal of Neurology, Neurosurgery & Psychiatry, 20(1), 11–21](https://pubmed.ncbi.nlm.nih.gov/13406589/) `学術`
 - [Wikipedia: Henry Molaison (patient H.M.) — bilateral medial temporal lobectomy, anterograde amnesia, hippocampus, declarative vs. procedural memory](https://en.wikipedia.org/wiki/Henry_Molaison) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,15 @@ aliases:
 - [Encyclopaedia Britannica — Self-regulated learning（定義・3フェーズモデル・認知・メタ認知・動機づけの統合）](https://www.britannica.com/topic/self-regulated-learning) `リファレンス`
 - [Zimmerman (1990) "Self-Regulated Learning and Academic Achievement: An Overview," Educational Psychologist 25(1):3–17（APA PsycNet）](https://psycnet.apa.org/record/1990-97278-004) `学術`
 
+## 関連概念
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — 同じ思想家
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
+- [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

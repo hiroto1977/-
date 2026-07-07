@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Equity of redemption — clogs and fetters, once a mortgage always a mortgage](https://en.wikipedia.org/wiki/Equity_of_redemption) `リファレンス`
 - [Wikipedia: Mortgage law — redemption, collateral advantage, Samuel v Jarrah, Kreglinger](https://en.wikipedia.org/wiki/Mortgage_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 語彙が近い
+- [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同じ思想家
+- [[bizlaw-proprietary-estoppel|財産的禁反言——約束への信頼が財産上の権利を生む]] — 同じ思想家
+- [[bizlaw-donatio-mortis-causa|死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与]] — 同じ思想家
+- [[bizlaw-beneficiary-principle|受益者原則——信託には執行できる受益者が必要である]] — 同じ思想家
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
+- [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
+- [[bizlaw-mutual-wills|相互遺言——撤回しない合意が擬制信託を生む]] — 同じ思想家
+- [[bizlaw-presumption-advancement|前渡しの推定——一定の関係では無償移転を贈与と推定する]] — 同じ思想家
+- [[bizlaw-saunders-v-vautier|サンダース対ボーティアの準則——受益者全員の合意で信託を終わらせる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

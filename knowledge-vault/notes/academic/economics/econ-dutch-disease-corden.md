@@ -31,6 +31,17 @@ aliases:
 - [Frankel, J. A. (2012) The Natural Resource Curse: A Survey of Diagnoses and Some Prescriptions — HKS Faculty Research Working Papers（政策的処方箋の概観）](https://doi.org/10.1093/oxrep/grm030) `学術`
 - [Wikipedia: Dutch disease — Corden & Neary model, spending effect, resource movement effect, case studies](https://en.wikipedia.org/wiki/Dutch_disease) `リファレンス`
 
+## 関連概念
+- [[econ-resource-curse-sachs-warner|資源の呪い——天然資源の豊富さが経済発展を阻害する逆説]] — 同じ思想家
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
+- [[econ-optimal-tariff|最適関税論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

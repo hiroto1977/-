@@ -29,6 +29,11 @@ aliases:
 - [Diakopoulos, N. (2015). Algorithmic accountability — Digital Journalism](https://doi.org/10.1080/21670811.2014.976412) `学術`
 - [Wikipedia: Computational journalism — data-driven reporting](https://en.wikipedia.org/wiki/Computational_journalism) `リファレンス`
 
+## 関連概念
+- [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — 同分野の近傍
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 同分野の近傍
+- [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

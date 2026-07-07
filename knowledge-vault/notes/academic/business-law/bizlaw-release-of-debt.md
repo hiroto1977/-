@@ -30,6 +30,17 @@ aliases:
 - [Wikibooks 民法第519条（条文・解説）](https://ja.wikibooks.org/wiki/民法第519条) `リファレンス`
 - [BUSINESS LAWYERS 連帯債務と免除の相対的効力（民法441条／2017年改正）](https://www.businesslawyers.jp/practices/1196) `リファレンス`
 
+## 関連概念
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 語彙が近い
+- [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — 語彙が近い
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

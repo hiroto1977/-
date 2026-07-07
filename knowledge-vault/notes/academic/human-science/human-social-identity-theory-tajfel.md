@@ -29,6 +29,15 @@ aliases:
 - [Brewer, M. B. (1999) The Psychology of Prejudice: Ingroup Love and Outgroup Hate? — Annual Review of Psychology](https://doi.org/10.1146/annurev.psych.49.1.65) `学術`
 - [Wikipedia: Social identity theory — Tajfel, Turner, minimal group, in-group favoritism](https://en.wikipedia.org/wiki/Social_identity_theory) `リファレンス`
 
+## 関連概念
+- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 語彙が近い
+- [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 語彙が近い
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
+- [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同じ思想家
+- [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
+- [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同分野の近傍
+- [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

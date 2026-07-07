@@ -30,6 +30,12 @@ M.フラッド&M.ドレッシャー（1950 RAND考案）／A.W.タッカー（�
 - [Encyclopaedia Britannica — Game theory: The prisoners’ dilemma](https://www.britannica.com/science/game-theory/The-prisoners-dilemma) `リファレンス`
 - [Econlib, Concise Encyclopedia of Economics — Prisoners’ Dilemma](https://www.econlib.org/library/Enc/PrisonersDilemma.html) `リファレンス`
 
+## 関連概念
+- [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]] — 同分野の近傍
+- [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同分野の近傍
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

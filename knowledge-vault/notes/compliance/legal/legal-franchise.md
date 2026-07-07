@@ -30,6 +30,12 @@ aliases:
 - [公正取引委員会 フランチャイズ・ガイドライン](https://www.jftc.go.jp/dk/guideline/unyoukijun/franchise.html) `公的`
 - [中小企業庁 中小小売商業振興法 法令](https://www.chusho.meti.go.jp/shogyo/shogyo/laws.html) `公的`
 
+## 関連概念
+- [[bizlaw-franchise-contract|フランチャイズ契約]] — 語彙が近い
+- [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]] — 語彙が近い
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 同分野の近傍
+- [[legal-share-types|会社法における種類株式]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Cole, M.S., Bruch, H. & Vogel, B. (2012) Energy at Work: A Measurement Validation — Journal of Management 38(4)](https://doi.org/10.1177/0149206311426188) `学術`
 - [Bruch, H. & Ghoshal, S. (2003) Beware the Busy Manager — Harvard Business Review](https://hbr.org/2003/03/beware-the-busy-manager) `メディア`
 
+## 関連概念
+- [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同分野の近傍
+- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

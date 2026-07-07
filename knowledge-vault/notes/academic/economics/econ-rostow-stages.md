@@ -30,6 +30,14 @@ aliases:
 - [コトバンク — ロストウ（五段階説・テイクオフの特徴・1960年著書）](https://kotobank.jp/word/%E3%82%8D%E3%81%99%E3%81%A8%E3%81%86-3176313) `リファレンス`
 - [CiNii Research — ロストウ『経済成長の諸段階』](https://cir.nii.ac.jp/crid/1051130853490142208) `学術`
 
+## 関連概念
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
+- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 出典を共有
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

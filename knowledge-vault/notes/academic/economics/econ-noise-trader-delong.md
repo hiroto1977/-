@@ -29,6 +29,18 @@ J・ブラッドフォード・デロング ／ アンドレイ・シュライ�
 - [De Long, J.B. et al. (1990) Noise Trader Risk in Financial Markets — Journal of Political Economy 98(4)](https://doi.org/10.1086/261703) `学術`
 - [Wikipedia: Noise trader risk — DeLong/Shleifer/Summers/Waldmann, limits to arbitrage, excess volatility, survival](https://en.wikipedia.org/wiki/Noise_trader) `リファレンス`
 
+## 関連概念
+- [[econ-noise-trader|ノイズトレーダー]] — 語彙が近い
+- [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
+- [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
+- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

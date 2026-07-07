@@ -30,6 +30,18 @@ Charlotte Hess／Elinor Ostrom／Yochai Benkler／Brett M. Frischmann
 - [Internet Policy Review — Digital commons (peer-reviewed concept article)](https://policyreview.info/concepts/digital-commons) `学術`
 - [Wikipedia — Digital commons (economics)](https://en.wikipedia.org/wiki/Digital_commons_(economics)) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 語彙が近い
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 語彙が近い
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同じ思想家
+- [[econ-new-institutional-economics|新制度派経済学]] — 同じ思想家
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
+- [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

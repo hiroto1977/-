@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Frequency illusion（定義・ズウィッキー命名・1994年バーダー・マインホフ投稿由来）](https://en.wikipedia.org/wiki/Frequency_illusion) `リファレンス`
 - [Language Log — "Frequency illusion" in the OED（命名と2過程の説明）](https://languagelog.ldc.upenn.edu/nll/?p=42180) `リファレンス`
 
+## 関連概念
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 出典を共有
+- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
+- [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

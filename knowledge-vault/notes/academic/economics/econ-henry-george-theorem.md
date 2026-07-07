@@ -29,6 +29,18 @@ Richard J. Arnott & Joseph E. Stiglitz（QJE 93(4), 1979 — HGT の定式化）
 - [Arnott & Stiglitz (1979) Aggregate Land Rents, Expenditure on Public Goods, and Optimal City Size — QJE 93(4), pp.471-500](https://academic.oup.com/qje/article-abstract/93/4/471/1932537) `学術`
 - [Arnott (2004) Does the Henry George Theorem Provide a Practical Guide to Optimal City Size? — AJES 63(5), pp.1057-1090](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1536-7150.2004.00334.x) `学術`
 
+## 関連概念
+- [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
+- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
+- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
+- [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
+- [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

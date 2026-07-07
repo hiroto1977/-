@@ -29,6 +29,18 @@ aliases:
 - [Miller, M.H. & Modigliani, F. (1961) Dividend Policy, Growth, and the Valuation of Shares — Journal of Business 34(4)](https://www.jstor.org/stable/2351143) `学術`
 - [Wikipedia: Dividend irrelevance — Miller & Modigliani, perfect market, homemade dividends, dividend puzzle](https://en.wikipedia.org/wiki/Modigliani%E2%80%93Miller_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
+- [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
+- [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同じ思想家
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — 同じ思想家
+- [[econ-greenspan-put|グリーンスパン・プット]] — 同じ思想家
+- [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

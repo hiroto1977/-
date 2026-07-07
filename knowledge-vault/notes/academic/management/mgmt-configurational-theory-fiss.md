@@ -30,6 +30,18 @@ aliases:
 - [Fiss, P.C. (2011) Building Better Causal Theories — AMJ 54(2)](https://doi.org/10.5465/amj.2011.60263120) `学術`
 - [Wikipedia: Qualitative Comparative Analysis — Ragin set-theoretic methods in social science](https://en.wikipedia.org/wiki/Qualitative_comparative_analysis) `リファレンス`
 
+## 関連概念
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
+- [[mgmt-strategic-types-miles-snow|マイルズ＆スノーの戦略類型——環境適応の様式による四つの組織類型]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

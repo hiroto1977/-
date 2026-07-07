@@ -29,6 +29,11 @@ aliases:
 - [UN DESA (2024) UN E-Government Survey 2024 — rankings, indices, trends in digital services](https://publicadministration.un.org/egovkb/en-us/Reports/UN-E-Government-Survey-2024) `公的`
 - [Wikipedia: E-government — Estonia, digital public services, participation, surveillance, UN survey](https://en.wikipedia.org/wiki/E-government) `リファレンス`
 
+## 関連概念
+- [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 語彙が近い
+- [[infosoc-technological-determinism|技術決定論]] — 同分野の近傍
+- [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

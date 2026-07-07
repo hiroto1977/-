@@ -30,6 +30,18 @@ aliases:
 - [The New Palgrave (Springer) “Lindahl Equilibrium” — 個別価格と限界効用に等しい税率・公共経済学の標準定義](https://link.springer.com/chapter/10.1007/978-1-349-19802-3_21) `学術`
 - [Journal of Public Economics「The Samuelson condition and the Lindahl scheme in networks」（査読論文）](https://www.sciencedirect.com/science/article/abs/pii/S004727271730169X) `学術`
 
+## 関連概念
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同じ思想家
+- [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]] — 同じ思想家
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
+- [[econ-austrian-business-cycle-theory|オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）]] — 同じ思想家
+- [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同じ思想家
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
+- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同じ思想家
+- [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
+- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

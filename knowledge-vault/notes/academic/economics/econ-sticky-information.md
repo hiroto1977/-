@@ -30,6 +30,18 @@ aliases:
 - [NBER Working Paper No. 8290 — Mankiw & Reis, "Sticky Information Versus Sticky Prices"](https://www.nber.org/papers/w8290) `学術`
 - [European Central Bank Working Paper, "Sticky information Phillips curves"](https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp930.pdf) `学術`
 
+## 関連概念
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
+- [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
+- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 同じ思想家
+- [[econ-hysteresis|ヒステリシス（履歴効果）]] — 出典を共有
+- [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
+- [[eh-2002|2002年（平成14年）]] — 出典を共有
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 出典を共有
+- [[econ-quantitative-easing|量的緩和（QE）]] — 出典を共有
+- [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

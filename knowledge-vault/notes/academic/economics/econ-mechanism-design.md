@@ -31,6 +31,18 @@ aliases:
 - [CEPR / VoxEU — What is mechanism design and why does it matter for policy-making?](https://cepr.org/voxeu/columns/nobel-prize-what-mechanism-design-and-why-does-it-matter-policy-making) `学術`
 - [ノーベル賞委員会 学術背景文書「Mechanism Design Theory」（専門解説PDF）](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `公的`
 
+## 関連概念
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 語彙が近い
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 語彙が近い
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
+- [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]] — 出典を共有
+- [[econ-may-theorem|メイの定理（May's Theorem）——二択では単純多数決を匿名性・中立性・正の反応性で一意に特徴づける定理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ aliases:
 - [Diamond (2013) Executive Functions — Annual Review of Psychology 64](https://doi.org/10.1146/annurev-psych-113011-143750) `学術`
 - [Wikipedia: Executive functions — PFC, working memory, cognitive flexibility, inhibitory control, development](https://en.wikipedia.org/wiki/Executive_functions) `リファレンス`
 
+## 関連概念
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同じ思想家
+- [[human-executive-function|実行機能（遂行機能）]] — 同じ思想家
+- [[human-self-efficacy-theory|自己効力感理論]] — 同分野の近傍
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

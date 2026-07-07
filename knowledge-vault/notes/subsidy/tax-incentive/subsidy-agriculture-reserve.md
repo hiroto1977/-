@@ -36,6 +36,17 @@ national
 - [国税庁 法令解釈通達 農業経営基盤強化準備金関係](https://www.nta.go.jp/law/joho-zeikaishaku/hojin/080104/03.htm) `公的`
 - [農林水産省 農業経営基盤強化準備金（特例措置の内容）](https://www.maff.go.jp/j/new_farmer/pdf/9_junbikin.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-geographical-indication|地理的表示法（GI法）]] — 出典を共有
+- [[bizlaw-plant-variety|種苗法]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
+- [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
+- [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
+- [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+- [[subsidy-bcp-disaster-tax|事業継続力強化計画（認定制度）・中小企業防災・減災投資促進税制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

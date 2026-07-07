@@ -31,6 +31,18 @@ Ronald Gilson ／ Brian Broughman ／ Jesse Fried ／ D. Gordon Smith ／ Albert
 - [Smith, "The Exit Structure of Venture Capital," 53 UCLA Law Review 315 (2005)](https://ssrn.com/abstract=629544) `学術`
 - [Cornell Law School Legal Information Institute, "Drag-Along Rights" (LII Wex)](https://www.law.cornell.edu/wex/drag-along_rights) `リファレンス`
 
+## 関連概念
+- [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 同じ思想家
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 出典を共有
+- [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 出典を共有
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同分野の近傍
+- [[bizlaw-joint-venture-law|合弁事業の法的構造——ジョイント・ベンチャーの契約設計と独禁法上の問題]] — 同分野の近傍
+- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

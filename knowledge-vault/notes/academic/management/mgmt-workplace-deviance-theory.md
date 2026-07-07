@@ -31,6 +31,10 @@ Sandra Robinson ／ Rebecca Bennett
 - [Robinson & Bennett 2024 revisionist history](https://journals.sagepub.com/doi/10.1177/10564926241261927) `学術`
 - [18-year review of workplace deviance research](https://www.tandfonline.com/doi/abs/10.1080/08959285.2021.1948548) `学術`
 
+## 関連概念
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同分野の近傍
+- [[mgmt-attention-based-view-ocasio|企業のアテンション・ベースト・ビュー（注意基盤理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

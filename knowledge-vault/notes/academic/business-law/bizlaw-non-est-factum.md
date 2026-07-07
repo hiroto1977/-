@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Non est factum — fundamental mistake, Saunders v Anglia BS, void document](https://en.wikipedia.org/wiki/Non_est_factum) `リファレンス`
 - [Wikipedia: Mistake in English contract law — non est factum, signature, carelessness](https://en.wikipedia.org/wiki/Mistake_in_English_contract_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
+- [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同じ思想家
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同じ思想家
+- [[bizlaw-ebrahimi-westbourne|エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散]] — 同じ思想家
+- [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
+- [[bizlaw-subordination-agreement|劣後契約——債権の弁済順位を合意で後順位に置く]] — 同じ思想家
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

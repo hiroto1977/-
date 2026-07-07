@@ -29,6 +29,12 @@ aliases:
 - [Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)](https://www.worldcat.org/oclc/16755938) `学術`
 - [Wikipedia: Organizational citizenship behavior — Organ, extra-role, altruism/conscientiousness/civic virtue](https://en.wikipedia.org/wiki/Organizational_citizenship_behavior) `リファレンス`
 
+## 関連概念
+- [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
+- [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同じ思想家
+- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

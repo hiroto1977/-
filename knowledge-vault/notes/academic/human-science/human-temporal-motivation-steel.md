@@ -29,6 +29,18 @@ aliases:
 - [Steel, P. & König, C.J. (2006) Integrating Theories of Motivation — Psychological Bulletin 132(6), 889–913（時間的動機付け理論の原論文）](https://doi.org/10.1037/0033-2909.132.6.889) `学術`
 - [Wikipedia: Temporal motivation theory — 時間的動機付け理論の概説](https://en.wikipedia.org/wiki/Temporal_motivation_theory) `リファレンス`
 
+## 関連概念
+- [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 同じ思想家
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同じ思想家
+- [[human-ikea-effect|イケア効果]] — 同じ思想家
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 同じ思想家
+- [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]] — 同じ思想家
+- [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同じ思想家
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
+- [[human-phantom-limb|幻肢（ファントムリム）]] — 同分野の近傍
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

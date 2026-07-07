@@ -29,6 +29,14 @@ aliases:
 - [Wikipedia: Freezing order (Mareva injunction) — asset preservation, in personam, worldwide order](https://en.wikipedia.org/wiki/Freezing_order) `リファレンス`
 - [Wikipedia: Injunction — interlocutory relief, equitable remedies, cross-undertaking](https://en.wikipedia.org/wiki/Injunction) `リファレンス`
 
+## 関連概念
+- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同じ思想家
+- [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]] — 同じ思想家
+- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
+- [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — 同じ思想家
+- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同分野の近傍
+- [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

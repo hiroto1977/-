@@ -29,6 +29,18 @@ aliases:
 - [McGee, J.S. (1958) Predatory Price Cutting: The Standard Oil (N.J.) Case — Journal of Law and Economics 1](https://doi.org/10.1086/466549) `学術`
 - [Wikipedia: Predatory pricing — McGee, recoupment, Areeda-Turner test, Brooke Group, reputation models](https://en.wikipedia.org/wiki/Predatory_pricing) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同じ思想家
+- [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同じ思想家
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
+- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
+- [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
+- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

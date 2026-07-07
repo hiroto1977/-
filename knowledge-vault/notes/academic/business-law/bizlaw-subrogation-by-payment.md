@@ -30,6 +30,11 @@ aliases:
 - [法務省 民法（債権関係）部会資料 任意代位・法定代位（499条・500条関係）](https://www.moj.go.jp/content/000052602.pdf) `公的`
 - [Wikibooks 民法第501条（弁済による代位の効果・代位割合）](https://ja.wikibooks.org/wiki/民法第501条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 語彙が近い
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 同分野の近傍
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,14 @@ aliases:
 - [Born, G. (2021). International Commercial Arbitration — Kluwer Law International](https://doi.org/10.1017/9781108659055) `学術`
 - [Wikipedia: UNCITRAL Model Law — international arbitration](https://en.wikipedia.org/wiki/UNCITRAL_Model_Law_on_International_Commercial_Arbitration) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 語彙が近い
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 語彙が近い
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同じ思想家
+- [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

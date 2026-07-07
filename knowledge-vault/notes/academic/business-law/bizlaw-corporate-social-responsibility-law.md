@@ -29,6 +29,12 @@ EU欧州委員会 ／ 国連グローバル・コンパクト ／ ジョン・�
 - [EU Commission (2022) Corporate Sustainability Due Diligence Directive — CSDDD](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52022PC0071) `公的`
 - [Wikipedia: Corporate social responsibility — law and regulation](https://en.wikipedia.org/wiki/Corporate_social_responsibility) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-human-rights-due-diligence|国際人権デューデリジェンス（UNGPs）の法的義務化と企業責任]] — 語彙が近い
+- [[bizlaw-corporate-social-responsibility-directive|企業持続可能性デューディリジェンス指令——サプライチェーンにおける人権・環境配慮義務]] — 語彙が近い
+- [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 同じ思想家
+- [[bizlaw-environmental-law-regulation|環境法と持続可能性規制の法律体系——ESG義務化と企業責任]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

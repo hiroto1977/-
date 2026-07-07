@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 定期健康診断](https://www.mhlw.go.jp/file/05-Shingikai-11201000-Roudoukijunkyoku-Soumuka/0000136750.pdf) `公的`
 - [定期健康診断の解説](https://mediment.jp/blog/regular-health-checkup) `メディア`
 
+## 関連概念
+- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 語彙が近い
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 語彙が近い
+- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

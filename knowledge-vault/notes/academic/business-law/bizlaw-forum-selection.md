@@ -30,6 +30,18 @@ M/S Bremen v. Zapata Off-Shore Co.（407 U.S. 1, 1972）／Carnival Cruise Lines
 - [The Bremen v. Zapata Off-Shore Co. — FindLaw](https://caselaw.findlaw.com/court/us-supreme-court/407/1.html) `リファレンス`
 - [The Bremen and the Model Choice of Forum Act — Vanderbilt Journal of Transnational Law](https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=2617&context=vjtl) `学術`
 
+## 関連概念
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

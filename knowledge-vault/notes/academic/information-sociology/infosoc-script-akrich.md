@@ -29,6 +29,18 @@ aliases:
 - [Akrich, M. (1992) The De-Scription of Technical Objects — in W. Bijker & J. Law (eds.) Shaping Technology/Building Society, MIT Press, 205–224](https://www.semanticscholar.org/paper/9f2b215279aca343aa6473dcdede3708a684e0e3) `学術`
 - [Wikipedia: Madeleine Akrich — script, inscription/de-scription, projected vs. real user, STS, actor-network theory](https://en.wikipedia.org/wiki/Madeleine_Akrich) `リファレンス`
 
+## 関連概念
+- [[infosoc-obligatory-passage-point-callon|義務的通過点——ネットワークに不可欠な存在になること]] — 同じ思想家
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

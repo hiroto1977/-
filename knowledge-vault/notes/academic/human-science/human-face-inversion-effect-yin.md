@@ -31,6 +31,10 @@ aliases:
 - [Tanaka, J. W. & Farah, M. J. (1993) Parts and Wholes in Face Recognition — Quarterly Journal of Experimental Psychology 46A(2), 225-245](https://doi.org/10.1080/14640749308401045) `学術`
 - [Diamond, R. & Carey, S. (1986) Why Faces Are and Are Not Special: An Effect of Expertise — Journal of Experimental Psychology: General 115(2), 107-117](https://doi.org/10.1037/0096-3445.115.2.107) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

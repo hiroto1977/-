@@ -30,6 +30,13 @@ William J. Baumol（1922-2017、1971年論文の共著者・標準・価格ア�
 - [Baumol, W. J. & Oates, W. E. (1988) The Theory of Environmental Policy, 2nd ed., Cambridge University Press（標準・価格アプローチと最小費用定理の体系化）](https://doi.org/10.1017/CBO9781139173513) `学術`
 - [U.S. EPA "Economic Incentives" — pollution taxes/fees・emissions charges を費用効率的な環境規制手段として解説](https://www.epa.gov/environmental-economics/economic-incentives) `公的`
 
+## 関連概念
+- [[econ-contestable-markets|コンテスタブル市場]] — 同じ思想家
+- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 出典を共有
+- [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同分野の近傍
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

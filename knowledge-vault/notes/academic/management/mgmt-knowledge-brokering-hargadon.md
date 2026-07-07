@@ -29,6 +29,16 @@ aliases:
 - [Hargadon, A.B. & Sutton, R.I. (1997) Technology Brokering and Innovation in a Product Development Firm — Administrative Science Quarterly 42(4), 716–749（知識ブローカリングの原論文）](https://doi.org/10.2307/2393655) `学術`
 - [Wikipedia: IDEO — 知識ブローカリングの典型企業の概説](https://en.wikipedia.org/wiki/IDEO) `リファレンス`
 
+## 関連概念
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
+- [[mgmt-strategic-alliances|戦略的提携・アライアンス：企業間協力による競争優位・知識学習・社会ネットワークの組織間関係論]] — 同じ思想家
+- [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同じ思想家
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
+- [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 同じ思想家
+- [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
+- [[mgmt-target-costing|原価企画（目標原価計算）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

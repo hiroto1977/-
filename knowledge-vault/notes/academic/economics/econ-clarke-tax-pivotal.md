@@ -29,6 +29,18 @@ aliases:
 - [Clarke, E. H. (1971) Multipart Pricing of Public Goods — Public Choice, 11(1), 17–33](https://ideas.repec.org/a/kap/pubcho/v11y1971i1p17-33.html) `学術`
 - [Wikipedia: Vickrey–Clarke–Groves mechanism — Clarke tax, pivotal mechanism, demand-revealing, dominant-strategy incentive compatibility](https://en.wikipedia.org/wiki/Vickrey%E2%80%93Clarke%E2%80%93Groves_mechanism) `リファレンス`
 
+## 関連概念
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
+- [[econ-mechanism-design|メカニズムデザイン]] — 同じ思想家
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

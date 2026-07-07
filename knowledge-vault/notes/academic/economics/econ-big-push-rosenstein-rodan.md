@@ -29,6 +29,18 @@ aliases:
 - [Rosenstein-Rodan, P.N. (1943) Problems of Industrialisation of Eastern and South-Eastern Europe — Economic Journal 53](https://doi.org/10.2307/2226317) `学術`
 - [Wikipedia: Big push model — Rosenstein-Rodan, complementarities, coordination, Murphy-Shleifer-Vishny](https://en.wikipedia.org/wiki/Big_push_model) `リファレンス`
 
+## 関連概念
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同じ思想家
+- [[econ-rational-addiction|合理的依存]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同じ思想家
+- [[econ-grossman-health-demand|グロスマンの健康需要モデル（Grossman demand-for-health model／健康資本論）——健康を減価する耐久資本ストックととらえ、医療需要をその派生需要として説明する枠組み]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同じ思想家
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同じ思想家
+- [[econ-yardstick-competition-shleifer|ヤードスティック競争——他社の費用を基準とする規制が費用削減を誘発する]] — 同じ思想家
+- [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ aliases:
 - [Grossman & Rossi-Hansberg (2008) "Trading Tasks: A Simple Theory of Offshoring," NBER WP 14299（フラグメンテーション理論の系譜を整理）](https://www.nber.org/papers/w14299) `学術`
 - [Arndt & Kierzkowski eds. (2001) "Fragmentation: New Production Patterns in the World Economy," Oxford University Press](https://academic.oup.com/book/6523) `学術`
 
+## 関連概念
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同分野の近傍
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同分野の近傍
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同分野の近傍
+- [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

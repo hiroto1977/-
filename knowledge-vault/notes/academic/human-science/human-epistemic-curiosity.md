@@ -30,6 +30,18 @@ aliases:
 - [Loewenstein 1994 The Psychology of Curiosity: A Review and Reinterpretation, Psychological Bulletin 116(1), 75-98](https://www.researchgate.net/publication/232440476_The_Psychology_of_Curiosity_A_Review_and_Reinterpretation) `学術`
 - [Litman 2005 Curiosity and the Pleasures of Learning: Wanting and Liking New Information, Cognition and Emotion 19(6), 793-814](https://www.tandfonline.com/doi/abs/10.1080/02699930541000101) `学術`
 
+## 関連概念
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同じ思想家
+- [[human-cognitive-load|認知負荷理論]] — 出典を共有
+- [[human-yerkes-dodson-law|ヤーキーズ＝ドッドソンの法則——覚醒水準とパフォーマンスの逆U字関係]] — 同分野の近傍
+- [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
+- [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

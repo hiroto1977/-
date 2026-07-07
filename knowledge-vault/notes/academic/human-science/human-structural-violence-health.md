@@ -30,6 +30,12 @@ aliases:
 - [Farmer, P.E. et al. 2006 Structural Violence and Clinical Medicine. PLoS Medicine 3(10) e449](https://doi.org/10.1371/journal.pmed.0030449) `学術`
 - [Galtung, J. 1969 Violence, Peace, and Peace Research. Journal of Peace Research 6(3) 167-191](https://doi.org/10.1177/002234336900600301) `学術`
 
+## 関連概念
+- [[human-health-belief-model|ヘルス・ビリーフ・モデル：予防的健康行動の心理的予測理論]] — 語彙が近い
+- [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]] — 同じ思想家
+- [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同じ思想家
+- [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

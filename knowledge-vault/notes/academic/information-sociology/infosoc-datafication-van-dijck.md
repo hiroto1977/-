@@ -31,6 +31,18 @@ aliases:
 - [Taylor, L. (2017) What Is Data Justice? The Case for Connecting Digital Rights and Freedoms Globally — Big Data & Society, 4(2)（データ正義の概念化）](https://doi.org/10.1080/1369118X.2019.1611830) `学術`
 - [Wikipedia: Datafication — van Dijck, Mayer-Schönberger, social media quantification, data justice, smart city](https://en.wikipedia.org/wiki/Datafication) `リファレンス`
 
+## 関連概念
+- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
+- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+- [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同じ思想家
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
+- [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同分野の近傍
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

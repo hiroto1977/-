@@ -29,6 +29,18 @@ aliases:
 - [Reijseger, G. et al. (2019) "Boredom at work: Proximal and distal consequences of affective work-related boredom," Frontiers in Psychology 10:2681](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02681/full) `学術`
 - [APA Dictionary of Psychology — boredom（米国心理学会による退屈・関連概念の公式定義）](https://dictionary.apa.org/boredom) `リファレンス`
 
+## 関連概念
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 語彙が近い
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

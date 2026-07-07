@@ -30,6 +30,18 @@ aliases:
 - [日本マス・コミュニケーション学会（J-STAGE 査読論文）メディア化に関する論考](https://www.jstage.jst.go.jp/article/jamsmedia/101/0/101_23/_pdf/-char/ja) `学術`
 - [Wikipedia: Mediatization (media)](https://en.wikipedia.org/wiki/Mediatization_(media)) `リファレンス`
 
+## 関連概念
+- [[infosoc-media-logic|メディア・ロジック]] — 語彙が近い
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同じ思想家
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同じ思想家
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同じ思想家
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 出典を共有
+- [[mgmt-psychological-ownership|心理的所有感]] — 出典を共有
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

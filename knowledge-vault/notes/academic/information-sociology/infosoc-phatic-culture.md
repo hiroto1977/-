@@ -29,6 +29,11 @@ Vincent Miller（ヴィンセント・ミラー・2008年論文・概念の提�
 - [Miller, V. (2008). New Media, Networking and Phatic Culture. Convergence, 14(4), 387-400.](https://journals.sagepub.com/doi/10.1177/1354856508094659) `学術`
 - [Kent Academic Repository — Miller, V. (2008) New Media, Networking and Phatic Culture（オープンアクセス全文・phatic communion・SNSにおける接続維持型コミュニケーション）](https://kar.kent.ac.uk/13028/) `リファレンス`
 
+## 関連概念
+- [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同分野の近傍
+- [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]] — 同分野の近傍
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

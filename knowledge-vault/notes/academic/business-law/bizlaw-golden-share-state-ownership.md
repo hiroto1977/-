@@ -29,6 +29,18 @@ aliases:
 - [Davies, P. & Worthington, S. (2016). Gower's Principles of Modern Company Law — Sweet & Maxwell](https://doi.org/10.1093/acprof:oso/9780198743682.001.0001) `学術`
 - [Wikipedia: Golden share — privatisation and company law](https://en.wikipedia.org/wiki/Golden_share) `リファレンス`
 
+## 関連概念
+- [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
+- [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同分野の近傍
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

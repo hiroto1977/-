@@ -30,6 +30,18 @@ aliases:
 - [Aronson v. Lewis, 473 A.2d 805 (Del. 1984). デラウェア州最高裁によるBJR現代的定式化。](https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-4.html) `公的`
 - [会社法（平成17年法律第86号）330条・355条。善管注意義務・忠実義務規定。](https://laws.e-gov.go.jp/law/417AC0000000086) `公的`
 
+## 関連概念
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 語彙が近い
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同じ思想家
+- [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
+- [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同じ思想家
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

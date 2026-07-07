@@ -31,6 +31,17 @@ aliases:
 - [BehavioralEconomics.com — Mini-Encyclopedia of BE: “Status quo bias”](https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/status-quo-bias/) `リファレンス`
 - [Wikipedia — “Status quo bias”（定義・関連概念との区別・臓器提供応用）](https://en.wikipedia.org/wiki/Status_quo_bias) `リファレンス`
 
+## 関連概念
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 出典を共有
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 出典を共有
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 出典を共有
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同分野の近傍
+- [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 同分野の近傍
+- [[human-self-efficacy-theory|自己効力感理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

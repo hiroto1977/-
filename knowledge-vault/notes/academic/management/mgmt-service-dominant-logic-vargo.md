@@ -31,6 +31,12 @@ aliases:
 - [Lusch, R. F. & Nambisan, S. (2015) Service Innovation: A Service-Dominant Logic Perspective — MIS Quarterly, 39(1), 155–175（デジタルイノベーションへの応用）](https://doi.org/10.1016/j.jretai.2016.03.004) `学術`
 - [Wikipedia: Service-dominant logic — Vargo & Lusch, operant resources, value-in-use, co-creation](https://en.wikipedia.org/wiki/Service-dominant_logic) `リファレンス`
 
+## 関連概念
+- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
+- [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
+- [[mgmt-conways-law|コンウェイの法則（組織構造とシステム設計の同型性）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

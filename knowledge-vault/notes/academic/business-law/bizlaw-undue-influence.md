@@ -29,6 +29,15 @@ aliases:
 - [Cornell LII Wex: Undue influence — relationship of trust, presumed/actual, independent advice](https://www.law.cornell.edu/wex/undue_influence) `リファレンス`
 - [Wikipedia: Undue influence — Allcard v Skinner, Etridge, presumed undue influence, rebuttal](https://en.wikipedia.org/wiki/Undue_influence_in_English_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-economic-duress|経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消]] — 同じ思想家
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
+- [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
+- [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同じ思想家
+- [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同分野の近傍
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

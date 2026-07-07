@@ -30,6 +30,12 @@ aliases:
 - [Miyazaki et al. (2019) Shinrin-Yoku and Forest Medicine — Environmental Health and Preventive Medicine](https://doi.org/10.1016/j.envhea.2019.100010) `学術`
 - [Wikipedia: Ecopsychology — エコサイコロジーの理論と自然体験研究](https://en.wikipedia.org/wiki/Ecopsychology) `リファレンス`
 
+## 関連概念
+- [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同じ思想家
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 同分野の近傍
+- [[human-sensory-deprivation|感覚遮断（感覚剥奪）]] — 同分野の近傍
+- [[human-psychoneuroimmunology-ader-cohen|精神神経免疫学——心理・神経・免疫系の双方向的相互作用]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

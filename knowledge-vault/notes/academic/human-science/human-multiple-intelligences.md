@@ -30,6 +30,10 @@ aliases:
 - [Harvard Project Zero「The Theory of Multiple Intelligences」（ガードナー所属の研究機関）](https://pz.harvard.edu/resources/the-theory-of-multiple-intelligences-as-psychology-as-education-as-social-science) `学術`
 - [Wikipedia「Theory of multiple intelligences」（初版7知能・後の追加、g因子との相関・批判）](https://en.wikipedia.org/wiki/Theory_of_multiple_intelligences) `リファレンス`
 
+## 関連概念
+- [[human-triarchic-intelligence-sternberg|知能の鼎立理論——分析的・創造的・実践的知能の三側面]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

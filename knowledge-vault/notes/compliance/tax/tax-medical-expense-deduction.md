@@ -30,6 +30,14 @@ aliases:
 - [国税庁 No.1119 医療費控除に関する手続](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1119.htm) `公的`
 - [医療費控除 計算方法 解説](https://www.bk.mufg.jp/column/others/b0063.html) `メディア`
 
+## 関連概念
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 語彙が近い
+- [[tax-disability-deduction|所得税の障害者控除]] — 語彙が近い
+- [[tax-dependent-deduction|扶養控除]] — 出典を共有
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
+- [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

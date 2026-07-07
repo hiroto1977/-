@@ -29,6 +29,18 @@ aliases:
 - [Baumol, W.J. (1977) On the Proper Cost Tests for Natural Monopoly in a Multiproduct Industry — American Economic Review 67(5), 809–822（自然独占の費用基準の原論文）](https://doi.org/10.2307/1808471) `学術`
 - [Wikipedia: Natural monopoly — 自然独占の概説](https://en.wikipedia.org/wiki/Natural_monopoly) `リファレンス`
 
+## 関連概念
+- [[econ-contestable-markets|コンテスタブル市場]] — 語彙が近い
+- [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
+- [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家
+- [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家
+- [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同じ思想家
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+- [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
+- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

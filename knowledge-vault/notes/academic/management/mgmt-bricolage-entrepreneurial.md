@@ -30,6 +30,18 @@ aliases:
 - [Levi-Strauss, C. (1962) La Pensee Sauvage (The Savage Mind) — Plon / University of Chicago Press](https://archive.org/details/savagemindsavoir00levi) `学術`
 - [Garud, R. & Karnoe, P. (2003) Bricolage versus Breakthrough: Distributed and Embedded Agency in Technology Entrepreneurship — Research Policy](https://doi.org/10.1016/S0048-7333(02)00062-8) `学術`
 
+## 関連概念
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 語彙が近い
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 語彙が近い
+- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同じ思想家
+- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

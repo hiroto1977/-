@@ -30,6 +30,14 @@ aliases:
 - [Maturana, H.R., & Varela, F.J. (1980). Autopoiesis and Cognition: The Realization of the Living. D. Reidel.](https://link.springer.com/book/10.1007/978-94-009-8947-4) `学術`
 - [Ward, D., Silverman, D., & Villalobos, M. (2017). Introduction: The Varieties of Enactivism. Topoi, 36(3), 365-375.](https://plato.stanford.edu/entries/enactivism/) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 語彙が近い
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
+- [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
+- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
+- [[human-embodied-cognition-theory|身体化された認知]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

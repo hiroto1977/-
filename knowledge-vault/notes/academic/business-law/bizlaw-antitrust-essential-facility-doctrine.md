@@ -29,6 +29,18 @@ aliases:
 - [US DOJ Antitrust Division — Essential Facility Doctrine overview](https://www.justice.gov/atr/about-antitrust-laws) `公的`
 - [Wikipedia: Essential facilities doctrine — antitrust law](https://en.wikipedia.org/wiki/Essential_facilities_doctrine) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同じ思想家
+- [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
+- [[econ-predatory-pricing-mcgee|略奪的価格設定——競争相手の排除を狙う原価割れ価格とその合理性論争]] — 同じ思想家
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 出典を共有
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 出典を共有
+- [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 出典を共有
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
+- [[bizlaw-competition-law-merger-control-eu|EU競争法における企業結合規制——欧州委員会の合併審査とSIECテスト]] — 同分野の近傍
+- [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

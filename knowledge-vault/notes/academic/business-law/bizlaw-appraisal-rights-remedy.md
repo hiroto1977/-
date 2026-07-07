@@ -30,6 +30,15 @@ Bayless Manning／Lawrence A. Hamermesh／Michael Wachter
 - [Wikipedia — Appraisal rights](https://en.wikipedia.org/wiki/Appraisal_rights) `リファレンス`
 - [Hamermesh & Wachter, The Short and Puzzling Life of the "Implicit Minority Discount", U. Pa. L. Rev. (2007)](https://scholarship.law.upenn.edu/cgi/viewcontent.cgi?article=1050&context=faculty_scholarship) `学術`
 
+## 関連概念
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 語彙が近い
+- [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 語彙が近い
+- [[econ-tying|抱き合わせ販売（tying）]] — 出典を共有
+- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
+- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ aliases:
 - [総務省 サイバーセキュリティサイト](https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/09/) `公的`
 - [不正アクセス禁止法 解説](https://www.fortinet.com/jp/resources/cyberglossary/unauthorized-computer-access-law) `メディア`
 
+## 関連概念
+- [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 分野横断
+- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 出典を共有
+- [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
+- [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 出典を共有
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
+- [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Eden, D. & Leviatan, U. (1975) Implicit Leadership Theory as a Determinant of the Factor Structure Underlying Supervisory Behavior Scales — Journal of Applied Psychology, 60(6), 736-741](https://doi.org/10.1037/h0077731) `学術`
 - [Epitropaki, O. & Martin, R. (2004) Implicit Leadership Theories in Applied Settings — Journal of Applied Psychology, 89(2), 293-310](https://doi.org/10.1037/0021-9010.89.2.293) `学術`
 
+## 関連概念
+- [[human-golem-effect|ゴーレム効果]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同じ思想家
+- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
+- [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

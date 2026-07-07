@@ -30,6 +30,15 @@ aliases:
 - [Hesselink (2011) Commercial Agency and Distribution Agreements — Oxford Handbook of European Private Law](https://doi.org/10.1093/oxfordhb/9780199572953.013.0024) `学術`
 - [Wikipedia: Commercial Agents Directive — EU代理商保護指令の概説](https://en.wikipedia.org/wiki/Commercial_Agents_Directive) `リファレンス`
 
+## 関連概念
+- [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 語彙が近い
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
+- [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
+- [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同じ思想家
+- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

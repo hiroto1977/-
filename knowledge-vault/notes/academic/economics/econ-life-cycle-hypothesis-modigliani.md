@@ -29,6 +29,18 @@ aliases:
 - [Modigliani, F. & Brumberg, R. (1954) Utility Analysis and the Consumption Function — Post-Keynesian Economics (WorldCat)](https://www.worldcat.org/oclc/651838929) `学術`
 - [Wikipedia: Life-cycle hypothesis — Modigliani, consumption smoothing, saving and demographics](https://en.wikipedia.org/wiki/Life-cycle_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 語彙が近い
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

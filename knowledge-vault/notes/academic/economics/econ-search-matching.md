@@ -31,6 +31,15 @@ aliases:
 - [MIT 14.661 Labor Economics — Lectures 11–13: Search, Matching and Unemployment](https://economics.mit.edu/sites/default/files/inline-files/Lectures%2011-13%20-%20Search,%20Matching%20and%20Unemployment_2.pdf) `学術`
 - [Wikipedia — Search-and-matching theory](https://en.wikipedia.org/wiki/Search-and-matching_theory) `リファレンス`
 
+## 関連概念
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 語彙が近い
+- [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]] — 語彙が近い
+- [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 出典を共有
+- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 出典を共有
+- [[econ-hosios-condition|ホシオス条件——サーチ市場が効率的になる分配のルール]] — 同分野の近傍
+- [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 同分野の近傍
+- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

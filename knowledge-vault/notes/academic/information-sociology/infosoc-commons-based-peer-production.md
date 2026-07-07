@@ -30,6 +30,17 @@ Yochai Benkler／Aaron Shaw／Benjamin Mako Hill／Clay Shirky／Siobhan O'Mahon
 - [Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom, Yale UP](https://cyber.harvard.edu/wealth_of_networks/Main_Page) `リファレンス`
 - [Shaw & Hill (2014) Laboratories of Oligarchy? How Wikipedia Bureaucratizes, Journal of Communication 64(2):215-238](https://doi.org/10.1287/mnsc.1120.1541) `学術`
 
+## 関連概念
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 出典を共有
+- [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 出典を共有
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同分野の近傍
+- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同分野の近傍
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

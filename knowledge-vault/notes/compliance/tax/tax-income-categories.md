@@ -30,6 +30,12 @@ aliases:
 - [国税庁 確定申告の手引き 所得の種類](https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2025/01/1_03.htm) `公的`
 - [10種類の所得と計算方法 解説](https://zeimo.jp/article/13508) `メディア`
 
+## 関連概念
+- [[tax-loss-offsetting|所得税の損益通算]] — 語彙が近い
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 語彙が近い
+- [[bizlaw-income-tax-act|所得税法]] — 語彙が近い
+- [[tax-reduced-rate|消費税の軽減税率制度]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

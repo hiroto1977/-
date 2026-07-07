@@ -30,6 +30,13 @@ aliases:
 - [Deaton, A. & Muellbauer, J. (1980) An Almost Ideal Demand System — American Economic Review](https://doi.org/10.1257/aer.70.3.312) `学術`
 - [Wikipedia: Engel curve — income-consumption relationship overview](https://en.wikipedia.org/wiki/Engel_curve) `リファレンス`
 
+## 関連概念
+- [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 語彙が近い
+- [[econ-engels-law|エンゲルの法則]] — 語彙が近い
+- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同じ思想家
+- [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

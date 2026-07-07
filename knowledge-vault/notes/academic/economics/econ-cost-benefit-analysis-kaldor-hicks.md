@@ -29,6 +29,18 @@ aliases:
 - [Kaldor, N. (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal 49(195)](https://doi.org/10.2307/2224835) `学術`
 - [Wikipedia: Kaldor–Hicks efficiency — potential Pareto improvement, compensation, cost-benefit analysis, Scitovsky](https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency) `リファレンス`
 
+## 関連概念
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-trade-adjustment-assistance-kaldor-hicks|カルドア＝ヒックス基準と貿易調整支援——自由貿易の恩恵と損失者への再分配政策]] — 同じ思想家
+- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 同じ思想家
+- [[is-lm-model|IS-LM分析]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

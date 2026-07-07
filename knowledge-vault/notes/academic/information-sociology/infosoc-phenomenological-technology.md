@@ -33,6 +33,16 @@ aliases:
 - [How Don Ihde's Human-Technology Relations Contribute to User Experience Design](https://medium.com/@JunyuLiu/how-don-ihdes-human-technology-relations-contribute-to-user-experience-design-1cacdef3c042) `学術`
 - [PhilPapers: Hubert L. Dreyfus - A phenomenology of skill acquisition as the basis for Merleau-Pontian cognitive science](https://philpapers.org/rec/DREAPO) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
+- [[infosoc-technological-drama|テクノロジカル・ドラマ（技術の政治的闘争論）]] — 出典を共有
+- [[mgmt-organizational-aesthetics|組織美学]] — 出典を共有
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 出典を共有
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同分野の近傍
+- [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

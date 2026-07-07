@@ -30,6 +30,13 @@ aliases:
 - [Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon](https://doi.org/10.1016/B978-0-08-009228-6.50014-0) `学術`
 - [Cherns 1976 The Principles of Sociotechnical Design, Human Relations 29(8)](https://doi.org/10.1177/001872677602900806) `学術`
 
+## 関連概念
+- [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — 語彙が近い
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 語彙が近い
+- [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同じ思想家
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

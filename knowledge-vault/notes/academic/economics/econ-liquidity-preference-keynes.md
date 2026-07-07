@@ -29,6 +29,18 @@ aliases:
 - [Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Macmillan (WorldCat)](https://www.worldcat.org/oclc/180851) `学術`
 - [Wikipedia: Liquidity preference — Keynes, transactions/precautionary/speculative motives, interest rate](https://en.wikipedia.org/wiki/Liquidity_preference) `リファレンス`
 
+## 関連概念
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 同じ思想家
+- [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

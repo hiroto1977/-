@@ -29,6 +29,13 @@ aliases:
 - [Wikipedia: Search order (Anton Piller order) — ex parte, evidence preservation, supervising solicitor](https://en.wikipedia.org/wiki/Search_order) `リファレンス`
 - [Wikipedia: Anton Piller KG v Manufacturing Processes Ltd — origin and conditions of the order](https://en.wikipedia.org/wiki/Anton_Piller_KG_v_Manufacturing_Processes_Ltd) `リファレンス`
 
+## 関連概念
+- [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同じ思想家
+- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
+- [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

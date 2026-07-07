@@ -30,6 +30,13 @@ A・パラスラマン／ヴァラリー・ツァイタムル／レナード・�
 - [Parasuraman, Zeithaml & Berry (1988) "SERVQUAL: A Multiple-Item Scale...", Journal of Retailing 64: 12-40 (Semantic Scholar)](https://www.semanticscholar.org/paper/SERVQUAL:-A-multiple-item-scale-for-measuring-of-Parasuraman-Zeithaml/d26a2423f00ca372b424a029ae22521299f00ede) `学術`
 - [Newcastle University — SERVQUAL academic theory reference](https://open.ncl.ac.uk/academic-theories/24/servqual/) `リファレンス`
 
+## 関連概念
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 出典を共有
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 出典を共有
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 出典を共有
+- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

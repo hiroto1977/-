@@ -30,6 +30,16 @@ aliases:
 - [青森労働局 パワハラ対策義務化](https://jsite.mhlw.go.jp/aomori-roudoukyoku/newpage_00306.html) `公的`
 - [パワハラ防止法 義務化 解説](https://sogyotecho.jp/power-harassment-low/) `メディア`
 
+## 関連概念
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 語彙が近い
+- [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 語彙が近い
+- [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
+- [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
+- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 分野横断
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

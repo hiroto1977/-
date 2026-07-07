@@ -30,6 +30,18 @@ aliases:
 - [Scheufele & Tewksbury (2007) "Framing, Agenda Setting, and Priming", Journal of Communication（アジェンダ設定の帰結・アクセシビリティモデル）](https://fbaum.unc.edu/teaching/articles/J-Communication-2007-1.pdf) `学術`
 - [Wikipedia "Priming (media)"（Iyengar & Kinder 1987 の定義引用・評価基準・記憶アクセシビリティ）](https://en.wikipedia.org/wiki/Priming_(media)) `リファレンス`
 
+## 関連概念
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
+- [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

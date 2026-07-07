@@ -30,6 +30,14 @@ aliases:
 - [Langmuir, J. et al. (2012) Sensorimotor Psychotherapy Group Therapy — Psychotherapy Research](https://doi.org/10.1080/10503307.2015.1051160) `学術`
 - [Wikipedia: Sensorimotor psychotherapy — センサリモーター心理療法の概要](https://en.wikipedia.org/wiki/Sensorimotor_psychotherapy) `リファレンス`
 
+## 関連概念
+- [[human-somatic-experiencing-levine-trauma|ソマティック・エクスペリエンシング——レヴィンの身体的トラウマ解放と神経系の自己調整]] — 同じ思想家
+- [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同じ思想家
+- [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同じ思想家
+- [[human-predictive-processing-theory|予測処理理論]] — 同分野の近傍
+- [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 同分野の近傍
+- [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

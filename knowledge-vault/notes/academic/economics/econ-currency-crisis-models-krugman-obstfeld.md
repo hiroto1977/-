@@ -30,6 +30,18 @@ aliases:
 - [Obstfeld (1996) Models of Currency Crises with Self-fulfilling Features — European Economic Review](https://doi.org/10.1016/S0022-1996(96)01440-1) `学術`
 - [Wikipedia: Currency crisis — 通貨危機の世代モデルと歴史的事例の概説](https://en.wikipedia.org/wiki/Currency_crisis) `リファレンス`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-currency-crisis-speculative-attack-krugman|通貨危機の世代別モデル——クルーグマン・第二世代・第三世代の投機的攻撃理論]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

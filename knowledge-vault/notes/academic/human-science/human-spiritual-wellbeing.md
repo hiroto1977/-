@@ -30,6 +30,10 @@ aliases:
 - [Bufford, Paloutzian & Ellison 1991 Norms for the Spiritual Well-Being Scale. Journal of Psychology and Theology 19(1) 56-70](https://journals.sagepub.com/doi/10.1177/009164719101900106) `学術`
 - [Paloutzian & Bufford — Spiritual Well-Being Scale (SWBS): Measuring Spiritual Well-being in International Contexts. Springer Encyclopedia](https://link.springer.com/rwe/10.1007/978-3-030-89738-3_36-1) `リファレンス`
 
+## 関連概念
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同分野の近傍
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

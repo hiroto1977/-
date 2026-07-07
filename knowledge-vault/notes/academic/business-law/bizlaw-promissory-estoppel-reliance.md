@@ -31,6 +31,11 @@ Lon L. Fuller ／ William R. Perdue ／ Charles Fried
 - [Ricketts v. Scothorn, 57 Neb. 51, 77 N.W. 365 (1898)](https://case-law.vlex.com/vid/ricketts-v-scothorn-895635769) `リファレンス`
 - [CALI Contracts OER: Promissory Estoppel — Restatement §90 overview](https://verkerkecontractsone.lawbooks.cali.org/chapter/promissory-estoppel/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 同分野の近傍
+- [[bizlaw-culpa-in-contrahendo|契約締結上の過失]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,17 @@ EU TERREG（テロリストコンテンツ規則 Regulation 2021/784, 2022年施
 - [European Commission — Terrorism and radicalisation（EUのオンライン過激化対策・TERREG規則の公式解説）](https://home-affairs.ec.europa.eu/policies/internal-security/terrorism-and-radicalisation_en) `公的`
 - [RAND Corporation — "Online Extremism and the Communities That Help It Grow"（メカニズム・プラットフォームの役割）](https://www.rand.org/pubs/research_reports/RRA1071-1.html) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 語彙が近い
+- [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 語彙が近い
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 出典を共有
+- [[econ-rand-health-insurance-experiment|RAND医療保険実験（The RAND Health Insurance Experiment, HIE）——自己負担率を無作為に変え、医療需要の費用分担効果（モラルハザード）を実証した大規模社会実験]] — 出典を共有
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 出典を共有
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 出典を共有
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 出典を共有
+- [[mgmt-delphi-method|デルファイ法]] — 出典を共有
+- [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

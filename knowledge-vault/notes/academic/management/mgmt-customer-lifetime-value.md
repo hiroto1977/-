@@ -30,6 +30,15 @@ aliases:
 - [Wharton faculty, "Moving from Customer Lifetime Value to Customer Equity"](https://faculty.wharton.upenn.edu/wp-content/uploads/2008/09/Customer-Equity.1.3.pdf) `学術`
 - [グロービス経営大学院 MBA用語集「顧客生涯価値」](https://mba.globis.ac.jp/about_mba/glossary/detail-12187.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-customer-journey|カスタマージャーニー]] — 同じ思想家
+- [[human-fresh-start-effect|フレッシュスタート効果]] — 出典を共有
+- [[mgmt-first-mover-advantage|先発者優位]] — 出典を共有
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 同分野の近傍
+- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
+- [[mgmt-rfm-analysis|RFM分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

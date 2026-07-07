@@ -29,6 +29,18 @@ aliases:
 - [Rodrik, D. (2011) The Globalization Paradox — Norton](https://doi.org/10.3386/w17006) `学術`
 - [Wikipedia: Dani Rodrik — globalization trilemma](https://en.wikipedia.org/wiki/Dani_Rodrik) `リファレンス`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
+- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
+- [[econ-trade-adjustment-assistance-kaldor-hicks|カルドア＝ヒックス基準と貿易調整支援——自由貿易の恩恵と損失者への再分配政策]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
+- [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

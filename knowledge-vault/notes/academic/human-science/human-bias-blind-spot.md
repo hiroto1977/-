@@ -30,6 +30,18 @@ aliases:
 - [Pronin & Kugler (2007) Introspection illusion as a source of the bias blind spot, J. Experimental Social Psychology](https://www.sciencedirect.com/science/article/abs/pii/S0022103106000916) `学術`
 - [Scopelliti et al. (2015) Bias Blind Spot: Structure, Measurement, and Consequences, Management Science](https://pubsonline.informs.org/doi/10.1287/mnsc.2014.2096) `学術`
 
+## 関連概念
+- [[human-naive-realism|素朴実在論（ナイーブ・リアリズム）]] — 語彙が近い
+- [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同じ思想家
+- [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

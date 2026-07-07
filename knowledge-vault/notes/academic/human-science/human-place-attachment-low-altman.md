@@ -30,6 +30,14 @@ aliases:
 - [Lewicka (2011) Place Attachment: How Far Have We Come in the Last 40 Years? — Journal of Environmental Psychology](https://doi.org/10.1016/j.jenvp.2010.02.001) `学術`
 - [Wikipedia: Place attachment — 場所愛着の理論的枠組みと研究動向の概説](https://en.wikipedia.org/wiki/Place_attachment) `リファレンス`
 
+## 関連概念
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同じ思想家
+- [[human-illusory-correlation|錯誤相関]] — 同じ思想家
+- [[infosoc-social-penetration-altman-taylor|社会的浸透理論（アルトマン＝テイラー）——自己開示と関係の深化]] — 同じ思想家
+- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同じ思想家
+- [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
+- [[human-nostalgia-psychology-sedikides|ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

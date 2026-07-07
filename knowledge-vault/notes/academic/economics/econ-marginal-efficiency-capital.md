@@ -29,6 +29,18 @@ aliases:
 - [Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Ch. 11, Marginal Efficiency of Capital (WorldCat)](https://www.worldcat.org/oclc/180851) `学術`
 - [Wikipedia: Marginal efficiency of capital — Keynes, expected yield vs interest rate, animal spirits, investment](https://en.wikipedia.org/wiki/Marginal_efficiency_of_capital) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 同じ思想家
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

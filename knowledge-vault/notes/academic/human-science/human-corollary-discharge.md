@@ -29,6 +29,18 @@ Erich von Holst & Horst Mittelstaedt（Naturwissenschaften 37, 1950 — 再求�
 - [von Holst & Mittelstaedt (1950) Das Reafferenzprinzip — Naturwissenschaften 37, pp.464-476](https://link.springer.com/article/10.1007/BF00622503) `学術`
 - [Sommer & Wurtz (2008) Brain Circuits for the Internal Monitoring of Movements — Annu Rev Neurosci 31, pp.317-338](https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.31.060407.125627) `学術`
 
+## 関連概念
+- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 同じ思想家
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

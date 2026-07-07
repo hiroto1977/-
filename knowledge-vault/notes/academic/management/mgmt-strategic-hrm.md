@@ -31,6 +31,13 @@ aliases:
 - [Wikipedia「Mark A. Huselid」— 1995 AMJ論文（38(3):635–672）でHR慣行と業績の関係を実証](https://en.wikipedia.org/wiki/Mark_A._Huselid) `リファレンス`
 - [Wikipedia「Strategic fit」— 適合（fit）と資源ベース理論・競争優位の関係](https://en.wikipedia.org/wiki/Strategic_fit) `リファレンス`
 
+## 関連概念
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 語彙が近い
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 語彙が近い
+- [[mgmt-job-enrichment|職務拡大と職務充実]] — 同分野の近傍
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同分野の近傍
+- [[mgmt-reverse-innovation|リバース・イノベーション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

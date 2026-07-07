@@ -29,6 +29,16 @@ aliases:
 - [Mann, Nolan & Wellman, "Sousveillance," Surveillance & Society 1(3): 331–355 (2003)](https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/3344) `学術`
 - [Wikipedia: Sousveillance（語源 sur/sous・下からの監視・市民が警察を撮影）](https://en.wikipedia.org/wiki/Sousveillance) `リファレンス`
 
+## 関連概念
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同じ思想家
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-panopticon|パノプティコンと規律権力]] — 出典を共有
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同分野の近傍
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

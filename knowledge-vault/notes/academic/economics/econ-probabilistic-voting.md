@@ -30,6 +30,11 @@ Assar Lindbeck（アサール・リンドベック） ／ Jörgen W. Weibull（�
 - [Coughlin, Peter J. (1992) Probabilistic Voting Theory. Cambridge University Press, 268 pp., ISBN 978-0521360524](https://www.cambridge.org/core/books/probabilistic-voting-theory/55F925041EB5AE202ADE3A63E0A6210C) `学術`
 - [Coughlin, Peter & Nitzan, Shmuel (1981) "Electoral outcomes with probabilistic voting and Nash social welfare maxima," Journal of Public Economics 15(1): 113–121](https://ideas.repec.org/a/eee/pubeco/v15y1981i1p113-121.html) `学術`
 
+## 関連概念
+- [[econ-hysteresis-unemployment-theory|ヒステリシス失業理論]] — 同じ思想家
+- [[econ-double-auction|連続ダブルオークション]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

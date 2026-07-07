@@ -33,6 +33,18 @@ aliases:
 - [Hollander (1960) Competence and conformity in the acceptance of influence — Journal of Abnormal and Social Psychology 61 (PubMed)](https://pubmed.ncbi.nlm.nih.gov/13715301/) `学術`
 - [Lortie-Lussier (1987) Minority influence and idiosyncrasy credit: A new comparison of the Moscovici and Hollander theories of innovation — European Journal of Social Psychology 17(4)](https://doi.org/10.1002/ejsp.2420170404) `学術`
 
+## 関連概念
+- [[human-group-polarization|集団極性化]] — 同じ思想家
+- [[human-group-polarization-myers|集団極化——討議が集団の立場を当初の傾きの方向へ先鋭化させる]] — 同じ思想家
+- [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同じ思想家
+- [[mgmt-middle-status-conformity-phillips|中位地位同調性——組織階層における地位と逸脱の非線形的関係]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

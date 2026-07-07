@@ -29,6 +29,14 @@ aliases:
 - [Hutchby, I. (2001) Technologies, Texts and Affordances — Sociology 35(2)](https://doi.org/10.1177/S0038038501000219) `学術`
 - [Wikipedia: Affordance — Gibson, Norman, ecological perception, technology affordances](https://en.wikipedia.org/wiki/Affordance) `リファレンス`
 
+## 関連概念
+- [[human-affordance-theory|アフォーダンス理論]] — 語彙が近い
+- [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 語彙が近い
+- [[human-late-selection-deutsch-norman|後期選択理論——すべての刺激が意味処理された後で注意が選択する]] — 同じ思想家
+- [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
+- [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

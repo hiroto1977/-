@@ -30,6 +30,12 @@ aliases:
 - [コトバンク「小切手法」](https://kotobank.jp/word/%E5%B0%8F%E5%88%87%E6%89%8B%E6%B3%95-834862) `リファレンス`
 - [全国銀行協会 紙の手形・小切手利用廃止へ](https://www.zenginkyo.or.jp/tegata-kogitte-haishi/) `公的`
 
+## 関連概念
+- [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — 出典を共有
+- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 出典を共有
+- [[bizlaw-bills-act|手形法]] — 同分野の近傍
+- [[bizlaw-insurance-act|保険法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

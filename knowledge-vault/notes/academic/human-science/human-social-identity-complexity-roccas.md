@@ -29,6 +29,12 @@ aliases:
 - [Roccas, S. & Brewer, M.B. (2002). Social identity complexity — Psychological Review](https://doi.org/10.1037/0033-295X.109.3.533) `学術`
 - [Wikipedia: Social identity complexity — intergroup relations](https://en.wikipedia.org/wiki/Social_identity_complexity) `リファレンス`
 
+## 関連概念
+- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 語彙が近い
+- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同じ思想家
+- [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
+- [[human-dialogical-self-theory|対話的自己理論（ハーマンス）と内的ポリフォニー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Schmeidler, D. (1969) The nucleolus of a characteristic function game — SIAM Journal on Applied Mathematics](https://doi.org/10.1137/0117107) `学術`
 - [Wikipedia: Nucleolus (game theory) — excess, lexicographic minimization, core, bankruptcy](https://en.wikipedia.org/wiki/Nucleolus_(game_theory)) `リファレンス`
 
+## 関連概念
+- [[econ-shapley-value|シャープレー値]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

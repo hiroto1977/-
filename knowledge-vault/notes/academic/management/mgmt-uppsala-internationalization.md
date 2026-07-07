@@ -29,6 +29,10 @@ aliases:
 - [Johanson, J. & Vahlne, J.-E. (1977) The Internationalization Process of the Firm — Journal of International Business Studies, 8(1), 23–32](https://doi.org/10.1057/palgrave.jibs.8490676) `学術`
 - [Wikipedia: Uppsala model — Johanson & Vahlne, incremental internationalization, psychic distance, establishment chain](https://en.wikipedia.org/wiki/Uppsala_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

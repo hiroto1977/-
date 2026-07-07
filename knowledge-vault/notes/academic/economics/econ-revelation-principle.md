@@ -30,6 +30,18 @@ aliases:
 - [MIT 6.972 講義ノート — Mechanism Design and the Revelation Principle](https://dspace.mit.edu/bitstream/handle/1721.1/73647/6-972-spring-2005/contents/lecture-notes/lec20.pdf) `学術`
 - [Sādhanā（インド科学アカデミー）— Foundations of mechanism design: A tutorial Part 1](https://www.ias.ac.in/article/fulltext/sadh/033/02/0083-0130) `学術`
 
+## 関連概念
+- [[econ-mechanism-design|メカニズムデザイン]] — 語彙が近い
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 語彙が近い
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-externality-market-failure|外部性と市場の失敗]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

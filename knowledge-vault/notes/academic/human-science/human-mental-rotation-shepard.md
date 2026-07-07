@@ -31,6 +31,12 @@ aliases:
 - [Shepard, R. N. & Cooper, L. A. (1982) Mental Images and Their Transformations — MIT Press](https://pubmed.ncbi.nlm.nih.gov/6745226/) `学術`
 - [Wikipedia: Mental rotation — paradigm, findings, sex differences, and neural basis](https://en.wikipedia.org/wiki/Mental_rotation) `リファレンス`
 
+## 関連概念
+- [[human-mental-rotation-shepard-metzler|心的回転——心的イメージのアナログ的変換を示す実験]] — 同じ思想家
+- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同じ思想家
+- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
+- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

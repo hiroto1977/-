@@ -29,6 +29,18 @@ aliases:
 - [Machlup, F. (1962) The Production and Distribution of Knowledge in the United States — Princeton UP (WorldCat)](https://www.worldcat.org/oclc/491747) `学術`
 - [Wikipedia: Fritz Machlup — knowledge industry, knowledge economy, information society measurement](https://en.wikipedia.org/wiki/Fritz_Machlup) `リファレンス`
 
+## 関連概念
+- [[mgmt-management-by-objectives|目標管理（MBO）]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
+- [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

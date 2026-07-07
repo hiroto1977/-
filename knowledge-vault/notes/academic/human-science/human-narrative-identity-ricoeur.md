@@ -31,6 +31,12 @@ aliases:
 - [MacIntyre, A. (1981) After Virtue — University of Notre Dame Press（物語・徳倫理・アイデンティティの哲学的基礎）](https://doi.org/10.4324/9781315869926) `学術`
 - [Wikipedia: Narrative identity — Ricœur, McAdams, idem/ipse, life story, temporal selfhood](https://en.wikipedia.org/wiki/Narrative_identity) `リファレンス`
 
+## 関連概念
+- [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同じ思想家
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
+- [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同分野の近傍
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Bachmann & De Stefano (2022) Whistleblower Protection in the EU — Springer](https://doi.org/10.1007/978-3-030-78706-8) `学術`
 - [Wikipedia: Whistleblower protection by country — 各国の内部通報者保護制度の概説](https://en.wikipedia.org/wiki/Whistleblower_protection_by_country) `リファレンス`
 
+## 関連概念
+- [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 語彙が近い
+- [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 同分野の近傍
+- [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

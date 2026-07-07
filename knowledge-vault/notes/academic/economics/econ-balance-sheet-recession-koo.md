@@ -30,6 +30,18 @@ aliases:
 - [Mian, A. & Sufi, A. (2014) House of Debt — Univ. of Chicago Press](https://doi.org/10.7208/chicago/9780226271651.001.0001) `学術`
 - [Wikipedia: Balance sheet recession — 概念と日本経済への適用](https://en.wikipedia.org/wiki/Balance_sheet_recession) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

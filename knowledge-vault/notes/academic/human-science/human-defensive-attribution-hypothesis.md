@@ -30,6 +30,10 @@ Kelvin G. Shaver (1970, defensive attribution) ／ Elaine Walster/Hatfield (1966
 - [Walster, E. (1966). Assignment of responsibility for an accident. Journal of Personality and Social Psychology, 3(1), 73–79.](https://doi.org/10.1037/h0022733) `学術`
 - [Wikipedia — Defensive attribution hypothesis（severity effect / similarity effect の概説と、Burger, J. M. (1981) Motivational biases in the attribution of responsibility for an accident: A meta-analysis of the defensive-attribution hypothesis, Psychological Bulletin, 90(3), 496–512 への言及）](https://en.wikipedia.org/wiki/Defensive_attribution_hypothesis) `リファレンス`
 
+## 関連概念
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
+- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

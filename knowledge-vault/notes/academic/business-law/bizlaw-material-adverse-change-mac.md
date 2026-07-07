@@ -31,6 +31,16 @@ aliases:
 - [Delaware Court of Chancery (2018) Akorn v. Fresenius Kabi — No. 2018-0300-JTL（MAC発動が認められた先例的判決）](https://courts.delaware.gov/) `公的`
 - [Wikipedia: Material adverse change — MAC/MAE, IBP v. Tyson, Akorn v. Fresenius, LVMH-Tiffany, carve-outs](https://en.wikipedia.org/wiki/Material_adverse_change) `リファレンス`
 
+## 関連概念
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 語彙が近い
+- [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 語彙が近い
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

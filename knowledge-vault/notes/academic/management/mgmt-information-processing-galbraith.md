@@ -29,6 +29,17 @@ aliases:
 - [Galbraith, J.R. (1973) Designing Complex Organizations — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/615372) `学術`
 - [Wikipedia: Organizational information processing — Galbraith, uncertainty, slack, lateral relations, fit](https://en.wikipedia.org/wiki/Organizational_information_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同じ思想家
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同じ思想家
+- [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同じ思想家
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
+- [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

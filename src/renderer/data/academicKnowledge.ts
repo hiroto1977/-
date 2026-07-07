@@ -44701,6 +44701,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://hbr.org/2013/05/why-the-lean-start-up-changes-everything', type: 'media', label: 'Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）' },
       { url: 'https://www.lean.org/lexicon-terms/lean-startup/', type: 'academic', label: 'Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）' },
       { url: 'https://theleanstartup.com/principles', type: 'media', label: 'Eric Ries, The Lean Startup — Methodology / Principles（提唱者本人による一次情報源）' },
+      { url: 'https://doi.org/10.15358/9783800645756', type: 'academic', label: 'Ries, E. (2011). The Lean Startup — Crown Business' },
     ],
   },
   {
@@ -48083,18 +48084,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.4337/9781782540298', type: 'academic', label: 'Faure, M.G. (2016). Environmental Liability and Ecological Damage — Edward Elgar' },
       { url: 'https://en.wikipedia.org/wiki/Polluter_pays_principle', type: 'reference', label: 'Wikipedia: Polluter pays principle — environmental liability law' },
-    ],
-  },
-  {
-    id: 'mgmt-lean-startup-ries',
-    discipline: 'management',
-    title: 'リーン・スタートアップ（リース）とビルド・計測・学習サイクル',
-    statement: 'リーン・スタートアップ（lean startup）は、エリック・リースが2011年の著書で体系化したスタートアップ・マネジメント手法であり、トヨタ生産システムのリーン思想・スティーブ・ブランクの顧客開発手法・アジャイル開発を統合する。中核的サイクルは「ビルド（最小限の製品：MVP）→計測（検証可能な指標）→学習（仮説の確認または棄却）」であり、実験的プロセスを通じて「検証による学習（validated learning）」を最大化する。伝統的ウォーターフォール型開発や精緻な事業計画に対し、不確実性下での意思決定速度と顧客ニーズとの整合性を優先する。「ピボット」（方向転換）vs.「パーシスト」（継続）の判断フレームワークは多くのVC・アクセラレーターに採用された。法人企業（Googl X・Amazon等）の「コーポレート・イノベーション」文脈でも適用が拡大し、公共政策・社会起業家領域への応用研究も進む。',
-    keyFigures: 'エリック・リース ／ スティーブ・ブランク ／ アッシュ・モーリア ／ デビッド・ブランク',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.15358/9783800645756', type: 'academic', label: 'Ries, E. (2011). The Lean Startup — Crown Business' },
-      { url: 'https://en.wikipedia.org/wiki/Lean_startup', type: 'reference', label: 'Wikipedia: Lean startup — validated learning methodology' },
     ],
   },
   {

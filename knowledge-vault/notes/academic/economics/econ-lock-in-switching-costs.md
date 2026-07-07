@@ -29,6 +29,18 @@ aliases:
 - [Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — HBS Press (WorldCat)](https://www.worldcat.org/oclc/39733830) `学術`
 - [Wikipedia: Switching costs / lock-in — Shapiro & Varian, installed base, market power, network effects](https://en.wikipedia.org/wiki/Switching_barriers) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 同じ思想家
+- [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — 同じ思想家
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 同じ思想家
+- [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-cheap-talk-crawford-sobel|チープトーク——費用のかからない発言はどこまで信用できるか]] — 同じ思想家
+- [[econ-damaged-goods-deneckere-mcafee|損傷財——あえて劣化させて価格差別する]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

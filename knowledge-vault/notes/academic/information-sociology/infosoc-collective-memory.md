@@ -30,6 +30,18 @@ aliases:
 - [Collective Memory — EBSCO Research Starters](https://www.ebsco.com/research-starters/psychology/collective-memory) `リファレンス`
 - [Collective memory — Wikipedia (Halbwachs, Nora, Assmann)](https://en.wikipedia.org/wiki/Collective_memory) `リファレンス`
 
+## 関連概念
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 同じ思想家
+- [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 同じ思想家
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+- [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

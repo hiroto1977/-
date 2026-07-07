@@ -29,6 +29,11 @@ aliases:
 - [Wikipedia「Ambient awareness」— クライブ・トンプソンによる2008年NYT記事での普及と周辺的・断片的な定義](https://en.wikipedia.org/wiki/Ambient_awareness) `リファレンス`
 - [Levordashka & Utz, "Ambient awareness: From random noise to digital closeness in online social networks", Computers in Human Behavior (2016)](https://www.sciencedirect.com/science/article/pii/S0747563216300899) `学術`
 
+## 関連概念
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同分野の近傍
+- [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

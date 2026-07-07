@@ -30,6 +30,11 @@ aliases:
 - [会社法第309条（株主総会の決議）Wikibooks — 組織再編は同条2項の特別決議事項](https://ja.wikibooks.org/wiki/会社法第309条) `リファレンス`
 - [BUSINESS LAWYERS「組織再編に伴う株主保護手続の概要」— 株式買取請求権・債権者保護手続](https://www.businesslawyers.jp/practices/371) `メディア`
 
+## 関連概念
+- [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 分野横断
+- [[bizlaw-companies-act|会社法]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

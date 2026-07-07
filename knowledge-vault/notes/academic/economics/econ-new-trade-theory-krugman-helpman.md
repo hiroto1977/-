@@ -30,6 +30,18 @@ aliases:
 - [Helpman (2011) Understanding Global Trade — Harvard University Press](https://doi.org/10.1111/j.1467-9396.2009.00871.x) `学術`
 - [Wikipedia: New trade theory — 新貿易理論の概説](https://en.wikipedia.org/wiki/New_trade_theory) `リファレンス`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
+- [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
+- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
+- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル——企業の異質性と貿易による選別効果]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
+- [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

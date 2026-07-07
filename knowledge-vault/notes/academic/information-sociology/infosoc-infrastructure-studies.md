@@ -30,6 +30,13 @@ aliases:
 - [Star & Ruhleder (1996) — Semantic Scholar](https://www.semanticscholar.org/paper/Steps-Toward-an-Ecology-of-Infrastructure:-Design-Star-Ruhleder/9cfcd2dfe7927451f2c39617e6ac0aa499fd2edb) `学術`
 - [Star & Ruhleder (1996) — ResearchGate](https://www.researchgate.net/publication/220079826_Steps_Toward_an_Ecology_of_Infrastructure_Design_and_Access_for_Large_Information_Spaces) `学術`
 
+## 関連概念
+- [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
+- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家
+- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
+- [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同分野の近傍
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

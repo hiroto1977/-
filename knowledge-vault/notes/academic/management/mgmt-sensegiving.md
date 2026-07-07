@@ -29,6 +29,13 @@ Dennis A. Gioia & Kumar Chittipeddi（SMJ 12(6), 1991, 概念提唱）／Sally M
 - [Gioia & Chittipeddi (1991) Sensemaking and Sensegiving in Strategic Change Initiation — SMJ 12(6), pp.433-448](https://doi.org/10.1002/smj.4250120604) `学術`
 - [Maitlis & Lawrence (2007) Triggers and Enablers of Sensegiving in Organizations — AMJ 50(1), pp.57-84](https://doi.org/10.5465/amj.2007.24160971) `学術`
 
+## 関連概念
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
+- [[mgmt-institutional-work|制度的ワーク]] — 同じ思想家
+- [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
+- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

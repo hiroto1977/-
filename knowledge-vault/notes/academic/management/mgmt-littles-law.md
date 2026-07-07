@@ -29,6 +29,10 @@ aliases:
 - [Little, J. D. C. (1961) A Proof for the Queuing Formula: L = λW — Operations Research, 9(3), 383–387](https://doi.org/10.1287/opre.9.3.383) `学術`
 - [Wikipedia: Little's law — L = λW, distribution-free queueing identity, WIP = throughput × cycle time](https://en.wikipedia.org/wiki/Little%27s_law) `リファレンス`
 
+## 関連概念
+- [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

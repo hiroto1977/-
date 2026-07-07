@@ -30,6 +30,13 @@ EU企業結合規則（EC Merger Regulation、Regulation 139/2004）は、EU域�
 - [Whish, R. & Bailey, D. (2021) Competition Law — Oxford University Press](https://doi.org/10.1093/law/9780198836322.001.0001) `学術`
 - [Wikipedia: EU merger regulation — EU企業結合規制の概要](https://en.wikipedia.org/wiki/European_Union_merger_regulation) `リファレンス`
 
+## 関連概念
+- [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同じ思想家
+- [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同分野の近傍
+- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 同分野の近傍
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

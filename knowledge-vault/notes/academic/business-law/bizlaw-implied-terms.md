@@ -29,6 +29,11 @@ aliases:
 - [Cornell LII Wex: Implied term — implied in fact/law, business efficacy, statutory implied terms](https://www.law.cornell.edu/wex/implied_term) `リファレンス`
 - [Wikipedia: Implied terms — The Moorcock, officious bystander, terms implied in law/custom/statute](https://en.wikipedia.org/wiki/Implied_terms_in_English_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同分野の近傍
+- [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 同分野の近傍
+- [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

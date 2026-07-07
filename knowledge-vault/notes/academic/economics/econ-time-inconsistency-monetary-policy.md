@@ -30,6 +30,14 @@ Finn E. Kydland／Edward C. Prescott／Robert J. Barro／David B. Gordon／Kenne
 - [Barro & Gordon (1983) Rules, Discretion and Reputation in a Model of Monetary Policy, Journal of Monetary Economics 12(1):101-121](https://www.jstor.org/stable/1831069) `学術`
 - [Rogoff (1985) The Optimal Degree of Commitment to an Intermediate Monetary Target, QJE 100(4):1169-1189](https://www.jstor.org/stable/1885506) `学術`
 
+## 関連概念
+- [[econ-real-business-cycle-theory|実物景気循環理論]] — 同じ思想家
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同分野の近傍
+- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同分野の近傍
+- [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同分野の近傍
+- [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — 同分野の近傍
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

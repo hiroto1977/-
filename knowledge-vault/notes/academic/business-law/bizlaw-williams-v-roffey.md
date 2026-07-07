@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: Williams v Roffey Bros & Nicholls (Contractors) Ltd [1991] 1 QB 1 — practical benefit, consideration, refining Stilk v Myrick](https://en.wikipedia.org/wiki/Williams_v_Roffey_Bros_%26_Nicholls_(Contractors)_Ltd) `リファレンス`
 - [Wikipedia: Consideration in English law — practical benefit (Williams v Roffey), pre-existing duty rule, Stilk v Myrick](https://en.wikipedia.org/wiki/Consideration_in_English_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 語彙が近い
+- [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

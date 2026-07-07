@@ -30,6 +30,13 @@ aliases:
 - [List, F. (1841) The National System of Political Economy — 国民的体系](https://doi.org/10.1017/CBO9781107585676) `学術`
 - [Wikipedia: Infant industry argument — 幼稚産業保護の理論史](https://en.wikipedia.org/wiki/Infant_industry_argument) `リファレンス`
 
+## 関連概念
+- [[econ-optimal-tariff|最適関税論]] — 語彙が近い
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家
+- [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

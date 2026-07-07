@@ -29,6 +29,18 @@ aliases:
 - [Sage Reference — Encyclopedia of Leadership: Decision Making: The Vroom-Yetton-Jago Models](https://sk.sagepub.com/ency/edvol/leadership/chpt/decision-making-vroomyettonjago-models) `リファレンス`
 - [Wikipedia — Vroom–Yetton decision model](https://en.wikipedia.org/wiki/Vroom%E2%80%93Yetton_decision_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-vroom-yetton-decision|ブルーム＝イェットンの意思決定モデル——状況に応じた部下参加の規範的処方]] — 語彙が近い
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

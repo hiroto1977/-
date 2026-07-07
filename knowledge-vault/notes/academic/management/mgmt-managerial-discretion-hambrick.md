@@ -31,6 +31,17 @@ aliases:
 - [Finkelstein, S. & Peteraf, M.A. 2007. Managerial Activities: A Missing Link in Managerial Discretion Theory. Strategic Organization, 5(3), 237-248.](https://journals.sagepub.com/doi/10.1177/1476127007079975) `学術`
 - [Wangrow, D.B., Schepker, D.J. & Barker, V.L. 2015. Managerial Discretion: An Empirical Review. Journal of Management, 41(1).](https://journals.sagepub.com/doi/10.1177/0149206314554214) `学術`
 
+## 関連概念
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 語彙が近い
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
+- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Encyclopedia of International Strategic Management, ch.82 "The Penrose effect" (Edward Elgar)](https://www.elgaronline.com/display/book/9781800884045/ch82.xml) `リファレンス`
 - [参議院『経済のプリズム』No.119 — エディス・ペンローズ『企業成長の理論』](https://www.sangiin.go.jp/japanese/annai/chousa/keizai_prism/backnumber/h25pdf/201311902.pdf) `公的`
 
+## 関連概念
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
+- [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有
+- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 出典を共有
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
+- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 出典を共有
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 出典を共有
+- [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

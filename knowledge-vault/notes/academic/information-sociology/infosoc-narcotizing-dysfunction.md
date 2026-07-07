@@ -29,6 +29,16 @@ aliases:
 - [Lazarsfeld & Merton (1948) "Mass Communication, Popular Taste and Organized Social Action" (Semantic Scholar)](https://www.semanticscholar.org/paper/Mass-communication-popular-taste-and-organized-Lazarsfeld-Merton/50c6e01e5e345853eab8bebec12b5d95b398f16a) `学術`
 - [Oxford Reference: narcotization / narcotizing dysfunction](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100222905) `リファレンス`
 
+## 関連概念
+- [[infosoc-status-conferral|地位付与機能]] — 語彙が近い
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同じ思想家
+- [[infosoc-limited-effects|限定効果論]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

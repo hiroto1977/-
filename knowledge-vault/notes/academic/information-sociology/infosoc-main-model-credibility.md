@@ -30,6 +30,18 @@ MAINモデル（MAIN model）は、S・シャイアム・スンダル（S. Shyam
 - [Social Science Research Council, MediaWell — citation & research review of Sundar's MAIN Model](https://mediawell.ssrc.org/citations/the-main-model-a-heuristic-approach-to-understanding-technology-effects-on-credibility/) `学術`
 - [MIT Press — Digital Media, Youth, and Credibility (Metzger & Flanagin eds., MacArthur Foundation Series)](https://mitpress.mit.edu/9780262562324/digital-media-youth-and-credibility/) `リファレンス`
 
+## 関連概念
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
+- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
+- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 出典を共有
+- [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]] — 出典を共有
+- [[infosoc-cybernetics|サイバネティクス]] — 出典を共有
+- [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]] — 出典を共有
+- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

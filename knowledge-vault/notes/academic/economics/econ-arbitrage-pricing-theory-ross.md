@@ -29,6 +29,18 @@ aliases:
 - [Ross, S.A. (1976) The Arbitrage Theory of Capital Asset Pricing — Journal of Economic Theory 13(3)](https://doi.org/10.1016/0022-0531(76)90046-6) `学術`
 - [Wikipedia: Arbitrage pricing theory — Ross, multi-factor, no-arbitrage, vs CAPM, factor loadings](https://en.wikipedia.org/wiki/Arbitrage_pricing_theory) `リファレンス`
 
+## 関連概念
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
+- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — 同じ思想家
+- [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

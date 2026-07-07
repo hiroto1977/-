@@ -30,6 +30,11 @@ aliases:
 - [金融庁 前払式支払手段の各種様式](https://www.fsa.go.jp/common/shinsei/maebaraishiki.html) `公的`
 - [日本資金決済業協会 発行保証金](https://www.s-kessai.jp/businesses/issue_deposit.html) `メディア`
 
+## 関連概念
+- [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 語彙が近い
+- [[bizlaw-payment-services-act|資金決済法]] — 分野横断
+- [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

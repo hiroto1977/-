@@ -31,6 +31,18 @@ aliases:
 - [Davies, P. L. & Worthington, S. (2012) Gower & Davies' Principles of Modern Company Law — Sweet & Maxwell（EU会社法越境合併解説）](https://doi.org/10.1093/ojls/gqi037) `学術`
 - [Wikipedia: Cross-border mergers in the EU — CBMD, SEVIC, co-determination, 2017/1132/EU](https://en.wikipedia.org/wiki/Cross-border_mergers_in_the_European_Union) `リファレンス`
 
+## 関連概念
+- [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
+- [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

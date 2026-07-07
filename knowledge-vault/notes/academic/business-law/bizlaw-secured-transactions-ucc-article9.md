@@ -30,6 +30,18 @@ aliases:
 - [McCormack et al. (2018) Secured Transactions Law Reform: Principles, Policies and Practice — Hart Publishing](https://doi.org/10.1093/law/9780198826491.001.0001) `学術`
 - [Wikipedia: UCC Article 9 — 米国統一商事法典第9編の概説](https://en.wikipedia.org/wiki/UCC_Article_9) `リファレンス`
 
+## 関連概念
+- [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 語彙が近い
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同じ思想家
+- [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 出典を共有
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 出典を共有
+- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

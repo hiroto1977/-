@@ -29,6 +29,17 @@ aliases:
 - [Treitel, G.H. (2015). The Law of Contract — Sweet & Maxwell](https://doi.org/10.1093/law/9780198747109.001.0001) `学術`
 - [Wikipedia: Penalty clause — contract law comparison](https://en.wikipedia.org/wiki/Penalty_clause) `リファレンス`
 
+## 関連概念
+- [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 語彙が近い
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 語彙が近い
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
+- [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[bizlaw-williams-v-roffey|ウィリアムズ対ロフィー・ブラザーズ——「実際的利益」と約因の修正]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [McAdams — Life Stories: A Thematic Analysis of 50 Lives — Journal of Personality and Social Psychology (2001)](https://www.jstor.org/stable/1131381) `学術`
 - [Hammack — Identity as a Burden or Benefit? — Journal of Cross-Cultural Psychology (2005)](https://journals.sagepub.com/doi/abs/10.1177/0022022105282260) `学術`
 
+## 関連概念
+- [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — 同分野の近傍
+- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
+- [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

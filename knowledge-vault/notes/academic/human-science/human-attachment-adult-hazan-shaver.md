@@ -29,6 +29,13 @@ aliases:
 - [Hazan, C. & Shaver, P. (1987). Romantic love conceptualized as an attachment process — JPSP](https://doi.org/10.1037/0022-3514.52.3.511) `学術`
 - [Wikipedia: Attachment in adults — Hazan and Shaver](https://en.wikipedia.org/wiki/Attachment_in_adults) `リファレンス`
 
+## 関連概念
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — 語彙が近い
+- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 同分野の近傍
+- [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同分野の近傍
+- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同分野の近傍
+- [[human-transactional-analysis-berne|交流分析——バーンの自我状態モデルとゲーム理論的対人関係分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,17 @@ aliases:
 - [Teece, D.J. et al. (2016). Dynamic managerial capabilities — Strategic Management Journal](https://doi.org/10.1002/smj.2509) `学術`
 - [Wikipedia: Dynamic capabilities — managerial cognition](https://en.wikipedia.org/wiki/Dynamic_capabilities) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 語彙が近い
+- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 語彙が近い
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

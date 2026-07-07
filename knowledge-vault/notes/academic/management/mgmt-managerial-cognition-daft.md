@@ -31,6 +31,18 @@ aliases:
 - [Prahalad, C. K. & Bettis, R. A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — Strategic Management Journal, 7(6), 485–501（ドミナント・ロジック）](https://doi.org/10.2307/259373) `学術`
 - [Wikipedia: Managerial cognition — schemas, enactment, sensemaking, cognitive biases, TMT diversity](https://en.wikipedia.org/wiki/Managerial_cognition) `リファレンス`
 
+## 関連概念
+- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 語彙が近い
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
+- [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 同じ思想家
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

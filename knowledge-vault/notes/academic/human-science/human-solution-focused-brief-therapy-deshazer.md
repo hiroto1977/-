@@ -30,6 +30,10 @@ aliases:
 - [Franklin, C. et al. (2012) Solution-Focused Brief Therapy — Oxford University Press](https://doi.org/10.1093/acprof:oso/9780195385724.001.0001) `学術`
 - [Wikipedia: Solution-focused brief therapy — 解決志向ブリーフセラピーの概要](https://en.wikipedia.org/wiki/Solution-focused_brief_therapy) `リファレンス`
 
+## 関連概念
+- [[human-community-psychology-rappaport-empowerment|コミュニティ心理学——ラパポートのエンパワーメント理論と社会変革]] — 同分野の近傍
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

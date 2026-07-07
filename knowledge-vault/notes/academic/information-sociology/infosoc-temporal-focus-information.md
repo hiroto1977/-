@@ -30,6 +30,10 @@ A・J・シップ ／ J・R・エドワーズ ／ L・S・ランバート
 - [Zimbardo, P.G. & Boyd, J.N. 1999. Putting Time in Perspective: A Valid, Reliable Individual-Differences Metric. Journal of Personality and Social Psychology, 77(6), 1271-1288.](https://psycnet.apa.org/doiLanding?doi=10.1037/0022-3514.77.6.1271) `学術`
 - [Levasseur, R.E. 2020. Organizational Time and Temporal Capital. Journal of Organizational Behavior, 41(6), 533-546.](https://onlinelibrary.wiley.com/doi/abs/10.1002/job.2435) `学術`
 
+## 関連概念
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 同分野の近傍
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Theory of the Second Best — Lipsey–Lancaster impossibility result](https://en.wikipedia.org/wiki/Theory_of_the_second_best) `リファレンス`
 - [Lipsey, R.G. (2007) Reflections on the General Theory of Second Best at Its Golden Jubilee — Review of Economic Studies 74(4)](https://doi.org/10.1111/j.1467-937X.2007.00423.x) `学術`
 
+## 関連概念
+- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
+- [[econ-lancaster-characteristics|ランカスターの特性アプローチ]] — 同じ思想家
+- [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — 同じ思想家
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
+- [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
+- [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

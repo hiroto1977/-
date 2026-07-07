@@ -30,6 +30,18 @@ aliases:
 - [e-Gov法令検索「特定商取引に関する法律」（昭和51年法律第57号 法令本文）](https://laws.e-gov.go.jp/law/351AC0000000057/) `公的`
 - [国立国会図書館「日本法令索引」昭和51年6月4日法律第57号（制定年の確認）](https://hourei.ndl.go.jp/simple/detail?lawId=0000065920&current=-1) `公的`
 
+## 関連概念
+- [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 語彙が近い
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 語彙が近い
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 分野横断
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
+- [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
+- [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

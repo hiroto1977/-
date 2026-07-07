@@ -30,6 +30,16 @@ AAPL事件仲裁廷（1990）／CME v. Czech Republic（2003）／UNCTAD投資�
 - [Schreuer (2010) Full Protection and Security — ICSID Review](https://www.cambridge.org/core/journals/icsid-review/article/full-protection-and-security/B85D0F5A9C9B2D3C7F8E1A2D4F6B8C0E) `学術`
 - [Full Protection and Security — Wikipedia](https://en.wikipedia.org/wiki/Full_protection_and_security) `リファレンス`
 
+## 関連概念
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同じ思想家
+- [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
+- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 同じ思想家
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
+- [[econ-flying-geese|雁行形態論]] — 出典を共有
+- [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 同分野の近傍
+- [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

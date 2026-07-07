@@ -29,6 +29,13 @@ aliases:
 - [CISA (2024) Cyber Threats and Advisories — Cybersecurity & Infrastructure Security Agency](https://www.cisa.gov/topics/cyber-threats-and-advisories) `公的`
 - [Wikipedia: Cybersecurity — threats and governance](https://en.wikipedia.org/wiki/Cybersecurity) `リファレンス`
 
+## 関連概念
+- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同じ思想家
+- [[infosoc-noopolitik-arquilla-ronfeldt|ヌーポリティーク——理念とソフトパワーにもとづく情報時代の外交]] — 同じ思想家
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

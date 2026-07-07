@@ -30,6 +30,18 @@ aliases:
 - [Encyclopædia Britannica Money — What Is a Value Chain?](https://www.britannica.com/money/value-chain-analysis-overview) `リファレンス`
 - [University of Cambridge, Institute for Manufacturing — Porter’s Value Chain](https://www.ifm.eng.cam.ac.uk/research/dstools/value-chain-/) `学術`
 
+## 関連概念
+- [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 出典を共有
+- [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 出典を共有
+- [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 出典を共有
+- [[mgmt-swot-analysis|SWOT分析]] — 出典を共有
+- [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 出典を共有
+- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
+- [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

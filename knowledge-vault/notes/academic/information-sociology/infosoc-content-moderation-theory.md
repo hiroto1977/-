@@ -30,6 +30,18 @@ aliases:
 - [Roberts, S.T. 2019. Behind the Screen: Content Moderation in the Shadows of Social Media. Yale University Press.](https://yalebooks.yale.edu/book/9780300235883/behind-the-screen/) `学術`
 - [Grimmelmann, J. 2015. The Virtues of Moderation. 17 Yale Journal of Law & Technology 42.](https://scholarship.law.cornell.edu/facpub/1486/) `学術`
 
+## 関連概念
+- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同じ思想家
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同じ思想家
+- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
+- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

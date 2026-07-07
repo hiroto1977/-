@@ -29,6 +29,15 @@ aliases:
 - [UN Reports of International Arbitral Awards (UNRIAA), Vol. III, pp. 1905–1982 — Trail Smelter Case Official Record](https://legal.un.org/riaa/cases/vol_iii/1905-1982.pdf) `公的`
 - [Miller & Bratspies (2006) Transboundary Harm in International Law — Cambridge University Press](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1990519) `学術`
 
+## 関連概念
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 出典を共有
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 出典を共有
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 出典を共有
+- [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

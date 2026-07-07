@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia: Emotional Stroop Test — attentional bias measurement in clinical psychology](https://en.wikipedia.org/wiki/Emotional_Stroop_test) `リファレンス`
 - [Phaf, R.H. & Kan, K.-J. (2007) The Automaticity of Emotional Stroop — Cognition and Emotion 21(8)](https://doi.org/10.1037/0096-3445.135.1.1) `学術`
 
+## 関連概念
+- [[human-stroop-effect|ストループ効果]] — 同じ思想家
+- [[human-mindfulness-based-stress-reduction|マインドフルネスに基づくストレス低減法（MBSR）とその臨床的展開]] — 同じ思想家
+- [[human-mindfulness-based-stress-reduction-kabat-zinn|マインドフルネスストレス低減法——カバットジンのMBSRと世俗的瞑想の医療・心理応用]] — 同じ思想家
+- [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

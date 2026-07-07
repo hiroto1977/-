@@ -29,6 +29,18 @@ aliases:
 - [Handy, C. (1994) The Empty Raincoat: Making Sense of the Future — Hutchinson](https://www.worldcat.org/oclc/30894155) `学術`
 - [Wikipedia: Charles Handy — sigmoid curve, second curve, organizational renewal](https://en.wikipedia.org/wiki/Charles_Handy) `リファレンス`
 
+## 関連概念
+- [[mgmt-technology-s-curve|技術のSカーブ]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同じ思想家
+- [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]] — 同じ思想家
+- [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同じ思想家
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
+- [[mgmt-marketing-myopia|マーケティング近視眼]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

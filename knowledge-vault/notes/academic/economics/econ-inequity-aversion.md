@@ -30,6 +30,11 @@ aliases:
 - [Bolton & Ockenfels 2000 ERC: A Theory of Equity, Reciprocity, and Competition. American Economic Review 90(1) 166-193](https://doi.org/10.1257/aer.90.1.166) `学術`
 - [Fehr & Fischbacher 2003 The Nature of Human Altruism. Nature 425(6960) 785-791](https://doi.org/10.1126/science.1070564) `学術`
 
+## 関連概念
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 語彙が近い
+- [[econ-ultimatum-game|最後通牒ゲーム]] — 同分野の近傍
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

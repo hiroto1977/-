@@ -36,6 +36,16 @@ national
 - [事業承継・M&A補助金 公式事務局](https://jsh.go.jp/) `公的`
 - [中小機構 事業承継・M&A補助金のご案内](https://seisansei.smrj.go.jp/subsidy_guide/subsidy_info/succession_subsidy.html) `公的`
 
+## 関連概念
+- [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 語彙が近い
+- [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]] — 語彙が近い
+- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 同じ思想家
+- [[subsidy-shizuoka|中小企業等収益力向上事業費補助金（静岡県）]] — 同じ思想家
+- [[subsidy-productivity-revolution|中小企業生産性革命推進事業]] — 出典を共有
+- [[subsidy-miyazaki|事業承継・引継ぎ応援事業補助金（宮崎県）]] — 同分野の近傍
+- [[subsidy-revitalization-council|中小企業活性化協議会]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [e-Gov法令検索 — 司法書士法（昭和25年法律第197号）](https://laws.e-gov.go.jp/law/325AC0000000197) `公的`
 - [法務省 — 司法書士の業務](https://www.moj.go.jp/MINJI/minji68.html) `公的`
 
+## 関連概念
+- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 同分野の近傍
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

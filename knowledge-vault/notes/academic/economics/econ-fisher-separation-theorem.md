@@ -29,6 +29,18 @@ aliases:
 - [Fisher, I. (1930) The Theory of Interest — Macmillan (WorldCat)](https://www.worldcat.org/oclc/977657) `学術`
 - [Wikipedia: Fisher separation theorem — investment vs consumption decision, present value maximization, capital market](https://en.wikipedia.org/wiki/Fisher_separation_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-modigliani-cohn-inflation-illusion|モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

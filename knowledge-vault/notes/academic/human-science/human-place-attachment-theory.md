@@ -32,6 +32,12 @@ Irwin Altman ／ Setha M. Low ／ Harold M. Proshansky ／ Maria Lewicka ／ Dan
 - [Proshansky, Fabian & Kaminoff — Place Identity (1983)](https://doi.org/10.1016/0272-4944(83)90020-6) `学術`
 - [Scannell & Gifford — Defining Place Attachment: A Tripartite Organizing Framework (2010)](https://doi.org/10.1016/j.jenvp.2008.10.004) `学術`
 
+## 関連概念
+- [[human-place-identity|場所アイデンティティ（Place Identity）]] — 語彙が近い
+- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 語彙が近い
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同じ思想家
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Nick Srnicek ／ Trebor Scholz ／ Valerio De Stefano ／ Alex Rosenblat ／ Jam
 - [Taming Proteus: Challenges for Risk Regulation of Powerful Digital Labor Platforms — PMC (2022)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9141816/) `学術`
 - [Platform economy — Wikipedia](https://en.wikipedia.org/wiki/Platform_economy) `リファレンス`
 
+## 関連概念
+- [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 同じ思想家
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 同じ思想家
+- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-defense-mechanisms|防衛機制]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+- [[human-group-polarization|集団極性化]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
+- [[human-mcgurk-effect|マガーク効果]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

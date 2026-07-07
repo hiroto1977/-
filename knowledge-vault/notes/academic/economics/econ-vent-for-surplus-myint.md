@@ -29,6 +29,18 @@ aliases:
 - [Myint, H. (1958) The "Classical Theory" of International Trade and the Underdeveloped Countries — The Economic Journal, 68(270), 317–337](https://academic.oup.com/ej/article-abstract/68/270/317/5248718) `学術`
 - [Wikipedia: Hla Myint — vent-for-surplus theory, trade and development, Adam Smith, idle land and labour](https://en.wikipedia.org/wiki/Hla_Myint) `リファレンス`
 
+## 関連概念
+- [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 同じ思想家
+- [[econ-division-of-labour|分業]] — 同じ思想家
+- [[econ-invisible-hand|見えざる手]] — 同じ思想家
+- [[econ-lewis-turning-point|ルイスの二重経済モデル（転換点）]] — 同じ思想家
+- [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-demonstration-effect|デモンストレーション効果]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

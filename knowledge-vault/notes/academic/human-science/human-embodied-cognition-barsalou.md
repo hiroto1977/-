@@ -30,6 +30,15 @@ aliases:
 - [Glenberg, A. M. & Kaschak, M. P. (2002) "Grounding Language in Action" — Psychonomic Bulletin & Review](https://doi.org/10.3758/BF03196322) `学術`
 - [Wikipedia: Embodied cognition — 身体化認知の理論的系譜と実証](https://en.wikipedia.org/wiki/Embodied_cognition) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
+- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
+- [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
+- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
+- [[human-embodied-cognition-theory|身体化された認知]] — 同分野の近傍
+- [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同分野の近傍
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

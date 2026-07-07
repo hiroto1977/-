@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Spreadable Media — Jenkins participatory culture and content circulation](https://en.wikipedia.org/wiki/Spreadable_media) `リファレンス`
 - [Jenkins, H. (2009) If It Doesn't Spread, It's Dead — Convergence 15(4)](https://doi.org/10.1177/1354856510394539) `学術`
 
+## 関連概念
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+- [[human-trolley-problem|トロッコ問題]] — 同じ思想家
+- [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
+- [[infosoc-citizen-journalism-participatory-media|市民ジャーナリズムと参加型メディア——ウェブ2.0が変えた報道の担い手と情報権力の分散]] — 同じ思想家
+- [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同じ思想家
+- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

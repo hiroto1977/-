@@ -30,6 +30,18 @@ aliases:
 - [Williams, J. (2018). Stand Out of Our Light — Cambridge UP](https://doi.org/10.1017/9781316677438) `学術`
 - [Wikipedia: Attention economy — digital media economics](https://en.wikipedia.org/wiki/Attention_economy) `リファレンス`
 
+## 関連概念
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 同じ思想家
+- [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同じ思想家
+- [[infosoc-attention-economy-goldhaber-citton|アテンション・エコノミー——注意の希少性と経済的価値]] — 同じ思想家
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
+- [[bizlaw-antitrust-digital-platforms|デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制]] — 同じ思想家
+- [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
+- [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

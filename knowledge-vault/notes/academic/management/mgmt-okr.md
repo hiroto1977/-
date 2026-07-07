@@ -31,6 +31,11 @@ Objective(定性・野心的)＋Key Results(定量2〜5個)／A.グローブ(イ
 - [IBM — What are objectives and key results (OKRs)?（構造・MBOとの関係）](https://www.ibm.com/think/topics/okrs) `リファレンス`
 - [What Matters（John Doerr）— OKR Meaning, Definition & Examples](https://www.whatmatters.com/faqs/okr-meaning-definition-example) `リファレンス`
 
+## 関連概念
+- [[mgmt-bpr|ビジネスプロセス・リエンジニアリング（BPR）]] — 出典を共有
+- [[mgmt-management-by-objectives|目標管理（MBO）]] — 同分野の近傍
+- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Adams, W.J. & Yellen, J.L. (1976) Commodity Bundling and the Burden of Monopoly — QJE 90(3)](https://doi.org/10.2307/1880177) `学術`
 - [Wikipedia: Product bundling — Stigler, tying, price discrimination, block booking, leverage, antitrust](https://en.wikipedia.org/wiki/Product_bundling) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[econ-peltzman-effect-risk-compensation|ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺]] — 同じ思想家
+- [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同じ思想家
+- [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+- [[econ-experience-goods-nelson|探索財・経験財・信用財——品質評価の時点による財の三分類]] — 同じ思想家
+- [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同じ思想家
+- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
+- [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

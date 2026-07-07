@@ -29,6 +29,18 @@ aliases:
 - [Piazzesi, M. (2010) Affine term structure models — Handbook of Financial Economics](https://doi.org/10.1016/S1574-0102(03)01011-2) `学術`
 - [Wikipedia: Yield curve — term structure, expectations hypothesis, term premium](https://en.wikipedia.org/wiki/Yield_curve) `リファレンス`
 
+## 関連概念
+- [[econ-expectations-hypothesis|金利の期間構造の期待仮説]] — 語彙が近い
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[is-lm-model|IS-LM分析]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

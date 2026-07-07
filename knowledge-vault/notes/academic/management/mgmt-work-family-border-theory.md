@@ -31,6 +31,14 @@ Sue Campbell Clark ／ Blake E. Ashforth ／ Ellen Ernst Kossek
 - [WFRN Encyclopedia — Boundary/Border Theory and Work-Family Integration](https://wfrn.org/encyclopedia/boundary-border-theory-and-work-family-integration/) `リファレンス`
 - [ResearchGate — Clark (2000) Work/Family Border Theory](https://www.researchgate.net/publication/247717462_WorkFamily_Border_Theory_A_New_Theory_of_WorkFamily_Balance) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同じ思想家
+- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同じ思想家
+- [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 同分野の近傍
+- [[mgmt-institutional-isomorphism|制度的同型化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

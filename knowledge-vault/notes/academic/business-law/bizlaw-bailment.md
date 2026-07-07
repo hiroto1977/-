@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Bailment — possession not ownership, bailor/bailee, duty of care, return](https://www.law.cornell.edu/wex/bailment) `リファレンス`
 - [Wikipedia: Bailment — Coggs v Bernard, chattel, standard of care, types of bailment](https://en.wikipedia.org/wiki/Bailment) `リファレンス`
 
+## 関連概念
+- [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 同じ思想家
+- [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
+- [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同じ思想家
+- [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同じ思想家
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
+- [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [日本法令索引（国立国会図書館）実用新案法 昭和34年法律第123号](https://hourei.ndl.go.jp/simple/detail?lawId=0000051233&current=-1) `公的`
 - [Wikipedia「実用新案法」（小発明・無審査登録制度・沿革）](https://ja.wikipedia.org/wiki/%E5%AE%9F%E7%94%A8%E6%96%B0%E6%A1%88%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-patent-system|特許制度（特許法）]] — 語彙が近い
+- [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 分野横断
+- [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
+- [[bizlaw-trademark|商標法]] — 出典を共有
+- [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[legal-employee-invention|職務発明（特許法35条）]] — 出典を共有
+- [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 出典を共有
+- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 出典を共有
+- [[legal-design-right|意匠権（意匠法）]] — 出典を共有
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

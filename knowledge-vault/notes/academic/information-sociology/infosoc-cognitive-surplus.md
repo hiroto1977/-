@@ -31,6 +31,18 @@ Clay Shirky（2010『Cognitive Surplus』Penguin Press；2008『Here Comes Every
 - [Wikipedia — Cognitive surplus](https://en.wikipedia.org/wiki/Cognitive_surplus) `リファレンス`
 - [European Journal of Communication — Review: Cognitive Surplus (Shirky 2010) and digital optimism critique](https://journals.sagepub.com/doi/10.1177/0267323111434452) `学術`
 
+## 関連概念
+- [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
+- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 同じ思想家
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
+- [[infosoc-slacktivism|スラックティビズム]] — 同じ思想家
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同じ思想家
+- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

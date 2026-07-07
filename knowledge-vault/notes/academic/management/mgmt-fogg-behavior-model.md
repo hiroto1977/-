@@ -29,6 +29,10 @@ B・J・フォッグ（B. J. Fogg, Brian Jeffrey Fogg）／スタンフォード
 - [B. J. Fogg — BehaviorModel.org（フォッグ行動モデルの公式解説サイト、提唱者本人による）](https://behaviormodel.org/) `リファレンス`
 - [Stanford University Persuasive Technology Lab（Captology）— フォッグが創設した説得技術研究機関の公式サイト](https://captology.stanford.edu/) `学術`
 
+## 関連概念
+- [[mgmt-adkar|ADKARモデル]] — 同分野の近傍
+- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

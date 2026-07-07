@@ -31,6 +31,10 @@ aliases:
 - [Plan S (2018) — Science Europe（欧州OA義務化政策）](https://www.scienceeurope.org/our-priorities/open-science/open-access/plan-s/) `リファレンス`
 - [Wikipedia: Open access — BOAI, green/gold OA, APC model, Plan S, and critique of academic publishing oligopoly](https://en.wikipedia.org/wiki/Open_access) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

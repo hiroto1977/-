@@ -30,6 +30,10 @@ aliases:
 - [Ekeland, A.G., Bowes, A. & Flottorp, S. 2010 Effectiveness of telemedicine: A systematic review of reviews. International Journal of Medical Informatics 79(11) 736-771](https://doi.org/10.1016/j.ijmedinf.2010.08.006) `学術`
 - [Wootton, R. 2012 Twenty years of telemedicine in chronic disease management. Journal of Telemedicine and Telecare 18(4) 211-220](https://doi.org/10.1258/jtt.2012.120219) `学術`
 
+## 関連概念
+- [[infosoc-imagined-communities-anderson-digital|想像の共同体とデジタル・ナショナリズム——アンダーソンのメディア論の情報社会への拡張]] — 同分野の近傍
+- [[infosoc-tam-healthcare|医療情報技術の受容モデル：TAM・UTAUTのヘルスケア領域への適用と拡張]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

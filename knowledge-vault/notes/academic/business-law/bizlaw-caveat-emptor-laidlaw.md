@@ -30,6 +30,18 @@ aliases:
 - [Kronman (1978) Mistake, Disclosure, Information, and the Law of Contracts — Journal of Legal Studies](https://doi.org/10.2307/1072832) `学術`
 - [Wikipedia: Caveat emptor — 買主注意の原則の歴史と現代的変容の概説](https://en.wikipedia.org/wiki/Caveat_emptor) `リファレンス`
 
+## 関連概念
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 語彙が近い
+- [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 同じ思想家
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同じ思想家
+- [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 同じ思想家
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同じ思想家
+- [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

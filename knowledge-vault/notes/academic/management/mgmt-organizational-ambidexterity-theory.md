@@ -32,6 +32,18 @@ James G. March ／ Michael L. Tushman ／ Charles A. O'Reilly III ／ Cristina B
 - [Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.](https://doi.org/10.5465/amr.2008.31193540) `学術`
 - [O'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.](https://doi.org/10.1111/j.1467-8551.2009.00665.x) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 語彙が近い
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
+- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

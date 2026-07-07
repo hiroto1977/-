@@ -31,6 +31,15 @@ aliases:
 - [JVCA（一般社団法人日本ベンチャーキャピタル協会）(2022) スタートアップ投資契約モデル（タグアロング・ドラッグアロング条項の国内標準化）](https://www.jvca.jp/) `公的`
 - [Wikipedia: Tag-along right — drag-along, co-sale, VC shareholder agreement, Delaware enforcement](https://en.wikipedia.org/wiki/Tag-along_right) `リファレンス`
 
+## 関連概念
+- [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
+- [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同じ思想家
+- [[bizlaw-anti-dilution-venture|アンチダイリューション条項（ベンチャー投資）]] — 出典を共有
+- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 出典を共有
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
+- [[bizlaw-squeeze-out|スクイーズアウト（特別支配株主の株式等売渡請求）]] — 同分野の近傍
+- [[bizlaw-joint-venture-law|合弁事業の法的構造——ジョイント・ベンチャーの契約設計と独禁法上の問題]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

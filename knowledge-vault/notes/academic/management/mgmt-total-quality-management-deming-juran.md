@@ -30,6 +30,12 @@ W・エドワーズ・デミング ／ ジョセフ・ジュラン ／ フィリ
 - [Nair (2006) A Meta-analysis of the Relationship Between Quality Management Practices and Firm Performance — Journal of Operations Management](https://doi.org/10.1016/j.jom.2010.11.006) `学術`
 - [Wikipedia: Total quality management — TQMの歴史と原則の概説](https://en.wikipedia.org/wiki/Total_quality_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 語彙が近い
+- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 語彙が近い
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
+- [[mgmt-juran-trilogy|ジュランの品質トリロジー——計画・管理・改善からなる品質マネジメント]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

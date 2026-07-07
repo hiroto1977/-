@@ -29,6 +29,13 @@ aliases:
 - [Ritzer, G. (2004) The Globalization of Nothing — Pine Forge Press](https://www.worldcat.org/oclc/54503871) `学術`
 - [Wikipedia: George Ritzer — grobalization, glocalization, something/nothing, McDonaldization](https://en.wikipedia.org/wiki/George_Ritzer) `リファレンス`
 
+## 関連概念
+- [[infosoc-mcdonaldization|マクドナルド化]] — 同じ思想家
+- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
+- [[infosoc-glocalization-robertson|グローカリゼーション——グローバルとローカルの相互浸透と普遍／特殊の弁証法]] — 同じ思想家
+- [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
+- [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -33,6 +33,10 @@ aliases:
 - [Lambert & Jakobovits (1960) Verbal satiation and changes in the intensity of meaning — Journal of Experimental Psychology 60, 376-383（PubMed）](https://pubmed.ncbi.nlm.nih.gov/13758466/) `学術`
 - [Smith & Klein (1990) Evidence for semantic satiation: Repeating a category slows subsequent semantic processing — JEP: Learning, Memory, and Cognition 16(5), 852-861（APA PsycNet）](https://psycnet.apa.org/record/1991-06459-001) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

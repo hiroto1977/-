@@ -31,6 +31,18 @@ aliases:
 - [Michigan Law Review — The Unnecessary Doctrine of Necessaries (1984)](https://repository.law.umich.edu/mlr/vol82/iss7/5/) `学術`
 - [Justia — Jersey Shore Medical Center v Estate of Baum, 84 N.J. 137 (1980)](https://law.justia.com/cases/new-jersey/supreme-court/1980/84-n-j-137-0.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同じ思想家
+- [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同じ思想家
+- [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]] — 同じ思想家
+- [[bizlaw-fixtures-property|定着物（フィクスチャー）——土地に付着して不動産の一部となった動産]] — 同じ思想家
+- [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
+- [[bizlaw-preemption-doctrine-federal|連邦優先権原則（プリエンプション・ドクトリン）]] — 同じ思想家
+- [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

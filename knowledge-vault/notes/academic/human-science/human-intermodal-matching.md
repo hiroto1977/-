@@ -30,6 +30,12 @@ aliases:
 - [Ray & Heyes (2011) Explaining Facial Imitation: A Theoretical Model — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3953219/) `学術`
 - [Meltzoff & Moore (1993) Why Faces Are Special — UW I-LABS](https://ilabs.uw.edu/sites/default/files/93Meltzoff_Moore_%20Why%20Faces%20Special.pdf) `学術`
 
+## 関連概念
+- [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — 語彙が近い
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 語彙が近い
+- [[human-emotional-contagion|情動感染]] — 同分野の近傍
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

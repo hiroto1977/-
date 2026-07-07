@@ -30,6 +30,17 @@ aliases:
 - [WHO Commission on Social Determinants of Health 2008 Closing the gap in a generation: health equity through action on the social determinants of health. Final Report](https://www.who.int/publications/i/item/WHO-IER-CSDH-08.1) `リファレンス`
 - [Wilkinson, R.G. & Pickett, K.E. 2009 Income inequality and social dysfunction. BMJ 339 b4471](https://doi.org/10.1136/bmj.b4471) `学術`
 
+## 関連概念
+- [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — 同じ思想家
+- [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 出典を共有
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 出典を共有
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 出典を共有
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
+- [[infosoc-infodemic|インフォデミック]] — 出典を共有
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
+- [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]] — 同分野の近傍
+- [[human-loss-aversion|損失回避]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

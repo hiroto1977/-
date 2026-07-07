@@ -30,6 +30,18 @@ aliases:
 - [Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — Harvard Business Review Press](https://hbr.org/1999/11/information-rules) `学術`
 - [Wikipedia: ネットワーク外部性 — 標準化競争と互換性の解説](https://ja.wikipedia.org/wiki/%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E5%A4%96%E9%83%A8%E6%80%A7) `リファレンス`
 
+## 関連概念
+- [[infosoc-network-externality|ネットワーク外部性]] — 語彙が近い
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
+- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
+- [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — 同じ思想家
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 同じ思想家
+- [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
+- [[econ-cheap-talk-crawford-sobel|チープトーク——費用のかからない発言はどこまで信用できるか]] — 同じ思想家
+- [[econ-damaged-goods-deneckere-mcafee|損傷財——あえて劣化させて価格差別する]] — 同じ思想家
+- [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

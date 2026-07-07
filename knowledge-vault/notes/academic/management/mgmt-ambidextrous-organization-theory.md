@@ -32,6 +32,18 @@ James Gardner March ／ Robert B. Duncan ／ Michael L. Tushman ／ Charles A. O
 - [O'Reilly & Tushman (2004) "The Ambidextrous Organization" — Harvard Business Review](https://www.hbs.edu/faculty/Pages/item.aspx?num=9913) `リファレンス`
 - [O'Reilly & Tushman (2021) "Organizational Ambidexterity: Past, Present and Future" — Annual Review of Organizational Psychology](https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-012420-062543) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
+- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 語彙が近い
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

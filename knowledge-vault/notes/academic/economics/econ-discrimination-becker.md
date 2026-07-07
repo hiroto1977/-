@@ -29,6 +29,18 @@ aliases:
 - [Becker, G.S. (1957) The Economics of Discrimination — University of Chicago Press (WorldCat)](https://www.worldcat.org/oclc/658553) `学術`
 - [Wikipedia: The Economics of Discrimination — Becker, taste for discrimination, competition erodes discrimination](https://en.wikipedia.org/wiki/The_Economics_of_Discrimination) `リファレンス`
 
+## 関連概念
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-occupational-crowding-bergmann|職業の過密仮説（バーグマン）——差別がもたらす職業隔離と賃金格差]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-statistical-discrimination-arrow-phelps|統計的差別——不完全情報下で集団属性を代理指標とする合理的差別]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

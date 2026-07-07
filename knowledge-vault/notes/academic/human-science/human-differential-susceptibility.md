@@ -30,6 +30,10 @@ Jay Belsky ／ Bruce J. Ellis ／ W. Thomas Boyce
 - [Belsky, Bakermans-Kranenburg & van IJzendoorn (2007) For Better and For Worse — Current Directions in Psychological Science](https://journals.sagepub.com/doi/10.1111/j.1467-8721.2007.00525.x) `学術`
 - [Wikipedia — Differential susceptibility](https://en.wikipedia.org/wiki/Differential_susceptibility) `リファレンス`
 
+## 関連概念
+- [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]] — 同分野の近傍
+- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

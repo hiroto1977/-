@@ -29,6 +29,18 @@ aliases:
 - [Rosen, S. (1981) The Economics of Superstars — American Economic Review 71(5)](https://www.jstor.org/stable/1803469) `学術`
 - [Wikipedia: The Winner-Take-All Society — Frank & Cook, relative performance, positional competition](https://en.wikipedia.org/wiki/The_Winner-Take-All_Society) `リファレンス`
 
+## 関連概念
+- [[econ-superstar-economics|スーパースターの経済学]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
+- [[econ-spatial-equilibrium-rosen-roback|空間均衡モデル——ローゼン＝ロバックの都市間均衡と補償的賃金格差]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
+- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]] — 同分野の近傍
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

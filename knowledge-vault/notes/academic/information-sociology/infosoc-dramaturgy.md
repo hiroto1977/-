@@ -30,6 +30,16 @@ aliases:
 - [Wikipedia: The Presentation of Self in Everyday Life (1956/1959, front/back stage, impression management)](https://en.wikipedia.org/wiki/The_Presentation_of_Self_in_Everyday_Life) `リファレンス`
 - [EBSCO Research Starters: Dramaturgical Analysis](https://www.ebsco.com/research-starters/drama-and-theater-arts/dramaturgical-analysis) `リファレンス`
 
+## 関連概念
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 語彙が近い
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同じ思想家
+- [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同じ思想家
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
+- [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Fredrickson, B. L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist](https://doi.org/10.1037/0003-066X.56.3.218) `学術`
 - [Wikipedia: Broaden-and-build — positive emotions and upward spiral dynamics overview](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
 
+## 関連概念
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同じ思想家
+- [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 同じ思想家
+- [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

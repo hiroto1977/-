@@ -30,6 +30,15 @@ aliases:
 - [US Courts Chapter 11 Bankruptcy Basics — Federal Judiciary](https://www.uscourts.gov/services-forms/bankruptcy/bankruptcy-basics/chapter-11-bankruptcy-basics) `公的`
 - [Wikipedia: 民事再生法 — 事業再生手続きと倒産法制の解説](https://ja.wikipedia.org/wiki/%E6%B0%91%E4%BA%8B%E5%86%8D%E7%94%9F%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同じ思想家
+- [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同じ思想家
+- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 同分野の近傍
+- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

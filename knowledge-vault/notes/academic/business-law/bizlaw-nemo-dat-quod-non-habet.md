@@ -29,6 +29,13 @@ Ulpian（D.50.17.54 — ローマ法における原則の定式化）／Cundy v 
 - [UCC § 2-403 Power to Transfer; Good Faith Purchase of Goods — Cornell Law Institute](https://www.law.cornell.edu/ucc/2/2-403) `リファレンス`
 - [Sale of Goods (Amendment) Act 1994 — legislation.gov.uk](https://www.legislation.gov.uk/ukpga/1994/32) `公的`
 
+## 関連概念
+- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 同じ思想家
+- [[bizlaw-reves-family-resemblance|リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み]] — 同じ思想家
+- [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

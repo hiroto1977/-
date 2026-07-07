@@ -29,6 +29,12 @@ aliases:
 - [White, M. & Epston, D. (1990) Narrative Means to Therapeutic Ends — Norton](https://doi.org/10.4324/9781315820729) `学術`
 - [Wikipedia: Narrative therapy — postmodern psychotherapy](https://en.wikipedia.org/wiki/Narrative_therapy) `リファレンス`
 
+## 関連概念
+- [[human-narrative-therapy|ナラティブ・セラピー]] — 同じ思想家
+- [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
+- [[human-double-bind|ダブルバインド（二重拘束）]] — 同分野の近傍
+- [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

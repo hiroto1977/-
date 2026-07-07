@@ -30,6 +30,18 @@ aliases:
 - [St. Louis Fed — What Does the Beveridge Curve Tell Us about the Labor Market Recovery?](https://www.stlouisfed.org/on-the-economy/2022/jul/beveridge-curve-labor-market-recovery) `公的`
 - [Wikipedia — Beveridge curve（定義・W.ベバリッジ由来・1944年著作）](https://en.wikipedia.org/wiki/Beveridge_curve) `リファレンス`
 
+## 関連概念
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 語彙が近い
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 語彙が近い
+- [[econ-expectations-hypothesis|金利の期間構造の期待仮説]] — 出典を共有
+- [[econ-financial-repression|金融抑圧]] — 出典を共有
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 出典を共有
+- [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 出典を共有
+- [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
+- [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 出典を共有
+- [[econ-helicopter-money|ヘリコプターマネー]] — 出典を共有
+- [[econ-liquidity-trap|流動性のわな]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

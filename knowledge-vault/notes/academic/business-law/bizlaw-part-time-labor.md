@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省「同一労働同一賃金特集ページ」](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000144972.html) `公的`
 - [日本の人事部「パートタイム・有期雇用労働法とは」（第8条・第9条・説明義務の解説）](https://jinjibu.jp/keyword/detl/1391/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
+- [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 分野横断
+- [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 分野横断
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 出典を共有
+- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

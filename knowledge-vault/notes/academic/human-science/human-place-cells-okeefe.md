@@ -30,6 +30,11 @@ John O'Keefe ／ May-Britt Moser ／ Edvard I. Moser
 - [2014 Nobel Prize in Physiology or Medicine — press release](https://www.nobelprize.org/prizes/medicine/2014/press-release/) `リファレンス`
 - [O'Keefe & Nadel (1978) The Hippocampus as a Cognitive Map — OUP](https://psycnet.apa.org/record/1978-06699-000) `学術`
 
+## 関連概念
+- [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 語彙が近い
+- [[human-place-cells|場所細胞（Place Cells）]] — 同じ思想家
+- [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

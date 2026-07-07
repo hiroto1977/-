@@ -30,6 +30,12 @@ aliases:
 - [法務省「商法及び国際海上物品運送法の一部を改正する法律について」（平成30年改正）](https://www.moj.go.jp/MINJI/minji07_00219.html) `公的`
 - [コトバンク「商法」](https://kotobank.jp/word/%E5%95%86%E6%B3%95-79819) `リファレンス`
 
+## 関連概念
+- [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同分野の近傍
+- [[bizlaw-condition-suspensive|停止条件・解除条件]] — 同分野の近傍
+- [[bizlaw-insurance-business-act|保険業法]] — 同分野の近傍
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

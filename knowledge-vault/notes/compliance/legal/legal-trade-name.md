@@ -30,6 +30,18 @@ aliases:
 - [衆議院 会社法（平成17年法律第86号）](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/16220050726086.htm) `公的`
 - [法務省 商号調査について](https://www.moj.go.jp/MINJI/minji06_00076.html) `公的`
 
+## 関連概念
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+- [[bizlaw-broadcast-act|放送法]] — 出典を共有
+- [[bizlaw-karoshi-prevention|過労死等防止対策推進法]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

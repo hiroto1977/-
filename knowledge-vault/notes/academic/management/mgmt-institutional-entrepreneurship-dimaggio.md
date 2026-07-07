@@ -29,6 +29,17 @@ aliases:
 - [DiMaggio, P.J. (1988) Interest and Agency in Institutional Theory — Institutional Patterns and Organizations（制度的起業家精神の原論文）](https://doi.org/10.1086/228499) `学術`
 - [Wikipedia: Institutional entrepreneurship — 制度的起業家精神の概説](https://en.wikipedia.org/wiki/Institutional_entrepreneurship) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-isomorphism|制度的同型化]] — 同じ思想家
+- [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
+- [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同じ思想家
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同じ思想家
+- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同分野の近傍
+- [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

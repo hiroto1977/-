@@ -29,6 +29,17 @@ aliases:
 - [McCombs, López-Escobar & Llamas, "Setting the Agenda of Attributes in the 1996 Spanish General Election," Journal of Communication 50(2), 2000](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1460-2466.2000.tb02842.x) `学術`
 - [Montgomery College, Introduction to Communication Inquiry & Theory — Agenda Setting Theory (first/second level, substantive & affective dimensions)](https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-15-agenda-setting-theory/) `リファレンス`
 
+## 関連概念
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 同じ思想家
+- [[econ-financial-repression|金融抑圧]] — 同じ思想家
+- [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
+- [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 出典を共有
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
+- [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
+- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同分野の近傍
+- [[infosoc-splinternet|スプリンターネット（インターネットの分断）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

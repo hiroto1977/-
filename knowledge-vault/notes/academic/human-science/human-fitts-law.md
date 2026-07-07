@@ -29,6 +29,15 @@ aliases:
 - [Fitts, P. M. (1954) The Information Capacity of the Human Motor System in Controlling the Amplitude of Movement — Journal of Experimental Psychology, 47(6), 381–391](https://doi.org/10.1037/h0055392) `学術`
 - [Wikipedia: Fitts's law — MT = a + b·log2(2D/W), index of difficulty (bits), speed–accuracy tradeoff, HCI target acquisition](https://en.wikipedia.org/wiki/Fitts%27s_law) `リファレンス`
 
+## 関連概念
+- [[human-hick-law|ヒックの法則——選択肢が増えるほど決定に時間がかかる]] — 語彙が近い
+- [[infosoc-information-theory|情報理論（シャノン）]] — 同じ思想家
+- [[infosoc-information-foraging|情報採餌理論（インフォメーション・フォージング）]] — 同じ思想家
+- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
+- [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
+- [[mgmt-organizational-citizenship-organ|組織市民行動——報酬制度に明示されない自発的貢献が組織を機能させる]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

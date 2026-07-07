@@ -29,6 +29,18 @@ aliases:
 - [Fisher, I. (1911) The Purchasing Power of Money — Macmillan](https://doi.org/10.2307/j.ctv131bw6h) `学術`
 - [Wikipedia: Quantity theory of money — Fisher equation, velocity, monetarism, M targeting](https://en.wikipedia.org/wiki/Quantity_theory_of_money) `リファレンス`
 
+## 関連概念
+- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 語彙が近い
+- [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 語彙が近い
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 同じ思想家
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — 同じ思想家
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

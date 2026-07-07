@@ -36,6 +36,18 @@ national
 - [資源エネルギー庁 ZEB 各種支援制度](https://www.enecho.meti.go.jp/category/saving_and_new/saving/enterprise/support/index02.html) `公的`
 - [環境共創イニシアチブ（SII）ZEB実証事業 補助事業](https://sii.or.jp/zeb07/public.html) `運営団体`
 
+## 関連概念
+- [[subsidy-zeh|ZEH支援事業]] — 語彙が近い
+- [[subsidy-energy-saving-sii|省エネ補助金（省エネルギー投資促進・需要構造転換支援事業等）]] — 出典を共有
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
+- [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有
+- [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]] — 出典を共有
+- [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]] — 出典を共有
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 出典を共有
+- [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

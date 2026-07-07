@@ -29,6 +29,18 @@ aliases:
 - [Hurwicz (1972) On Informationally Decentralized Systems — Decision and Organization, North-Holland](https://doi.org/10.2307/1913771) `学術`
 - [Wikipedia: Mechanism design — incentive compatibility, revelation principle, auction theory, market design](https://en.wikipedia.org/wiki/Mechanism_design) `リファレンス`
 
+## 関連概念
+- [[econ-mechanism-design|メカニズムデザイン]] — 語彙が近い
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 語彙が近い
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

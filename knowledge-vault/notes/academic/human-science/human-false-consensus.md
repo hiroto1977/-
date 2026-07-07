@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia「False consensus effect」— 定義・実験・原因](https://en.wikipedia.org/wiki/False_consensus_effect) `リファレンス`
 - [APA Dictionary of Psychology「false-uniqueness effect」— 対照概念](https://dictionary.apa.org/false-uniqueness-effect) `リファレンス`
 
+## 関連概念
+- [[human-naive-realism|素朴実在論（ナイーブ・リアリズム）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同じ思想家
+- [[human-signal-detection-theory|信号検出理論（SDT）]] — 同じ思想家
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

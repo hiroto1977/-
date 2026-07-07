@@ -30,6 +30,18 @@ aliases:
 - [コトバンク「くもの巣理論」（平凡社 世界大百科事典ほか）](https://kotobank.jp/word/%E3%81%8F%E3%82%82%E3%81%AE%E5%B7%A3%E7%90%86%E8%AB%96-831121) `リファレンス`
 - [Wikipedia: Cobweb model（傾き／弾力性による収束・発散条件）](https://en.wikipedia.org/wiki/Cobweb_model) `リファレンス`
 
+## 関連概念
+- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 語彙が近い
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 語彙が近い
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同じ思想家
+- [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

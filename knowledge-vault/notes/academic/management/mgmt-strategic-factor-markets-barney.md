@@ -30,6 +30,18 @@ aliases:
 - [Dierickx & Cool (1989) Asset Stock Accumulation and Sustainability of Competitive Advantage — Management Science](https://doi.org/10.1287/mnsc.35.12.1504) `学術`
 - [Wikipedia: Resource-based view — 資源ベース理論と戦略的要素市場の概説](https://en.wikipedia.org/wiki/Resource-based_view) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 語彙が近い
+- [[mgmt-strategic-human-capital|戦略的人的資本論]] — 語彙が近い
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
+- [[mgmt-diversification|多角化戦略]] — 同じ思想家
+- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

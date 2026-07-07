@@ -31,6 +31,11 @@ aliases:
 - [e-Gov法令検索「日本国憲法」（law id 321CONSTITUTION、第21条）](https://laws.e-gov.go.jp/law/321CONSTITUTION) `公的`
 - [ウィキペディア「日本国憲法第21条」](https://ja.wikipedia.org/wiki/日本国憲法第21条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 同分野の近傍
+- [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

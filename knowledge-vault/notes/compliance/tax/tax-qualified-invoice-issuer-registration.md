@@ -30,6 +30,11 @@ aliases:
 - [国税庁 適格請求書発行事業者公表サイト 登録番号とは](https://www.invoice-kohyo.nta.go.jp/about-toroku/index.html) `公的`
 - [マネーフォワード 適格請求書発行事業者の登録 解説](https://biz.moneyforward.com/invoice/basic/55222/) `メディア`
 
+## 関連概念
+- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 分野横断
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 同分野の近傍
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

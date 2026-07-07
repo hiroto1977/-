@@ -31,6 +31,13 @@ aliases:
 - [Edvinsson, L. (2013) IC 21: Reflections from 21 Years of IC Practice and Theory — Journal of Intellectual Capital, 14(1), 163–172](https://doi.org/10.1108/14691930710731923) `学術`
 - [Wikipedia: Intellectual capital — human, structural, relational capital; Skandia Navigator; IC reporting frameworks](https://en.wikipedia.org/wiki/Intellectual_capital) `リファレンス`
 
+## 関連概念
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 出典を共有
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 出典を共有
+- [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 出典を共有
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
+- [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

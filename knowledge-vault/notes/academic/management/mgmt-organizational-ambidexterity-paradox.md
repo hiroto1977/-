@@ -31,6 +31,18 @@ Wendy K. Smith ／ Marianne W. Lewis ／ Charles A. O'Reilly III ／ Michael L. 
 - [Schad, Lewis, Raisch & Tushman (2016) Paradox Research in Management Science — AMA 10(1)](https://journals.aom.org/doi/10.5465/19416520.2016.1162422) `学術`
 - [Andriopoulos & Lewis (2009) Exploitation-Exploration Tensions — Organization Science 20(4)](https://pubsonline.informs.org/doi/10.1287/orsc.1080.0406) `学術`
 
+## 関連概念
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
+- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 語彙が近い
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
+- [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

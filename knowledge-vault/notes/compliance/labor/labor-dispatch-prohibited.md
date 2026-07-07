@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省 労働者派遣事業関係業務取扱要領](https://www.mhlw.go.jp/general/seido/anteikyoku/jukyu/haken/youryou_2020/index.html) `公的`
 - [労働者派遣法 4条 適用除外業務 条文](https://www.rodo.co.jp/laws/117588/) `メディア`
 
+## 関連概念
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 出典を共有
+- [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有
+- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
+- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
+- [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
+- [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

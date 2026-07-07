@@ -31,6 +31,16 @@ aliases:
 - [Hepp, A. & Hjarvard, S. (2014) Mediatized Worlds: Culture and Society in a Media Age — Palgrave Macmillan（社会・文化への応用）](https://doi.org/10.1080/21670811.2014.926833) `学術`
 - [Wikipedia: Mediatization (media) — Hjarvard, media logic, institutional vs. social mediatization, critique](https://en.wikipedia.org/wiki/Mediatization_(media)) `リファレンス`
 
+## 関連概念
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同じ思想家
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同じ思想家
+- [[human-dopamine-reward-prediction-error|ドーパミン報酬予測誤差仮説：強化学習の神経基盤と意思決定の計算論的モデル]] — 同じ思想家
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同じ思想家
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同分野の近傍
+- [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — 同分野の近傍
+- [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

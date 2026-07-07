@@ -31,6 +31,18 @@ aliases:
 - [Raymond, E. S. (2001) The Cathedral and the Bazaar — First Monday（オープンソース開発方法論の哲学）](https://firstmonday.org/ojs/index.php/fm/article/view/1472/1387) `学術`
 - [Wikipedia: Hacker culture — history, ethics, and relationship to open source and creative commons movements](https://en.wikipedia.org/wiki/Hacker_culture) `リファレンス`
 
+## 関連概念
+- [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 同じ思想家
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同じ思想家
+- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
+- [[infosoc-privacy-paradox|プライバシー・パラドックス]] — 出典を共有
+- [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

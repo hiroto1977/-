@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia: Testing Effect — retrieval practice and long-term retention](https://en.wikipedia.org/wiki/Testing_effect) `リファレンス`
 - [Karpicke, J.D. (2012) Retrieval-Based Learning: Active Retrieval Promotes Meaningful Learning — Current Directions in Psychological Science 21(3)](https://doi.org/10.1016/j.tics.2011.09.001) `学術`
 
+## 関連概念
+- [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同じ思想家
+- [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-spacing-effect-cepeda|間隔効果——分散学習が集中学習より記憶保持を向上させるメカニズム]] — 同じ思想家
+- [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]] — 同分野の近傍
+- [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

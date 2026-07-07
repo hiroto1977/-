@@ -31,6 +31,13 @@ aliases:
 - [Kyle 1985 — Continuous Auctions and Insider Trading](https://doi.org/10.2307/1913732) `学術`
 - [Hasbrouck 2007 — Empirical Market Microstructure](https://doi.org/10.1093/acprof:oso/9780195073683.001.0001) `学術`
 
+## 関連概念
+- [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — 同じ思想家
+- [[econ-nirvana-fallacy|ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）]] — 同じ思想家
+- [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

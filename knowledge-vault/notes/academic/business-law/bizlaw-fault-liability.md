@@ -30,6 +30,18 @@ aliases:
 - [Wikibooks「民法第709条」（不法行為による損害賠償・条文と解説）](https://ja.wikibooks.org/wiki/民法第709条) `リファレンス`
 - [経済産業省「交通事故時の法的責任および根拠法」（自賠法・無過失責任の整理）](https://www.meti.go.jp/policy/mono_info_service/mono/automobile/jido_soko/pdf/sanko_01.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 語彙が近い
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 語彙が近い
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

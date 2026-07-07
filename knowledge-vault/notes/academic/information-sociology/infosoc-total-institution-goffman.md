@@ -29,6 +29,18 @@ aliases:
 - [Goffman, E. (1961) Asylums: Essays on the Social Situation of Mental Patients — Anchor (WorldCat)](https://www.worldcat.org/oclc/353809) `学術`
 - [Wikipedia: Total institution — Goffman, batch living, mortification of self, resocialization](https://en.wikipedia.org/wiki/Total_institution) `リファレンス`
 
+## 関連概念
+- [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 同じ思想家
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家
+- [[infosoc-synopticon|シノプティコン]] — 同じ思想家
+- [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]] — 同じ思想家
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
+- [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

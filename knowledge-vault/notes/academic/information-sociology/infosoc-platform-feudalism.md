@@ -30,6 +30,12 @@ aliases:
 - [Y. Varoufakis, Technofeudalism: What Killed Capitalism, Melville House (2023)](https://newbooksnetwork.com/technofeudalism) `メディア`
 - [J. Dean, Communicative Capitalism and Neo-Feudalism, Journal of Asia-Pacific Pop Culture (2021)](https://scholarlypublishingcollective.org/jappc/article-lookup/doi/10.5325/jasiapacipopcult.6.1.0191) `学術`
 
+## 関連概念
+- [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 語彙が近い
+- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 同じ思想家
+- [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同じ思想家
+- [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ B・J・フォッグ ／ スキナー（行動主義の系譜） ／ リチャ�
 - [Fogg, B. J. (2020) Tiny Habits: The Small Changes That Change Everything — Houghton Mifflin Harcourt](https://www.harpercollins.com/products/tiny-habits-bj-fogg) `リファレンス`
 - [Wikipedia: Persuasive technology — Fogg's captology, FBM, applications, and ethical critiques](https://en.wikipedia.org/wiki/Persuasive_technology) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
+- [[econ-january-effect|1月効果——株価が1月に異常な高収益を示す季節的アノマリー]] — 同じ思想家
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

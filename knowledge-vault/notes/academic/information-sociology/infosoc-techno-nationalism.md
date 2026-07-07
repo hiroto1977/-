@@ -32,6 +32,16 @@ Richard J. Samuels（Cornell University Press, 1994, Rich Nation Strong Army —
 - [Lim, D. J. & Mukherjee, R. (2019) What Money Can't Buy: The Security Externalities of Chinese Economic Statecraft in Southeast Asia — Asian Security, 15(2), 177–195（テクノ・ナショナリズムと安全保障の交差）](https://doi.org/10.1093/ia/iiab159) `学術`
 - [Wikipedia: Techno-nationalism — Samuels, dual-use, CHIPS Act, tech decoupling, semiconductor geopolitics](https://en.wikipedia.org/wiki/Techno-nationalism) `リファレンス`
 
+## 関連概念
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — 同じ思想家
+- [[bizlaw-cy-pres|サイプレ原則（近接原則／Cy-près doctrine）]] — 同じ思想家
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同じ思想家
+- [[bizlaw-disclose-or-abstain-rule|開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる]] — 出典を共有
+- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 出典を共有
+- [[mgmt-high-performance-work-systems|高業績ワークシステム]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

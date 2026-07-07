@@ -30,6 +30,18 @@ aliases:
 - [Semantic Scholar: Castells, Communication Power (2009)](https://www.semanticscholar.org/paper/Communication-Power:-Mass-Communication,-Mass-and-Castells/e030433a720c7894fd072f7e2718a6d9fc7f11fb) `リファレンス`
 - [P2P Foundation Wiki: Mass Self-Communication（自己生成/自己指向/自己選択の定義）](https://wiki.p2pfoundation.net/Mass_Self_Communication) `リファレンス`
 
+## 関連概念
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
+- [[infosoc-time-space-distanciation-giddens|時空間の遠隔化——社会関係が局所的文脈から引き離され広域に伸張する]] — 同じ思想家
+- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
+- [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 出典を共有
+- [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 出典を共有
+- [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

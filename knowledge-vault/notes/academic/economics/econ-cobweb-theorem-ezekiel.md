@@ -29,6 +29,13 @@ aliases:
 - [Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）](https://doi.org/10.2307/1907330) `学術`
 - [Wikipedia: Cobweb model — コブウェブモデルの概説](https://en.wikipedia.org/wiki/Cobweb_model) `リファレンス`
 
+## 関連概念
+- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 同じ思想家
+- [[econ-cobweb|クモの巣理論]] — 同じ思想家
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 同じ思想家
+- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 同分野の近傍
+- [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,13 @@ aliases:
 - [Tajfel & Turner (1979) An Integrative Theory of Intergroup Conflict — Psychology of Intergroup Relations](https://doi.org/10.1111/j.2044-8309.1979.tb00307.x) `学術`
 - [Wikipedia: Social identity theory — in-group favoritism, minimal group, SIT, SCT, intergroup conflict](https://en.wikipedia.org/wiki/Social_identity_theory) `リファレンス`
 
+## 関連概念
+- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 語彙が近い
+- [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 同じ思想家
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
+- [[human-self-categorization-theory|自己カテゴリー化理論]] — 同分野の近傍
+- [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ W.S.ジェヴォンズ『石炭問題』1865／効率改善→コスト低下→
 - [Yale University, Energy History — W. Stanley Jevons, "The Coal Question," 1865（一次資料・原典引用）](https://energyhistory.yale.edu/w-stanley-jevons-the-coal-question-1865/) `学術`
 - [Wikipedia — Jevons paradox（リバウンド効果・バックファイアの定義）](https://en.wikipedia.org/wiki/Jevons_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 同分野の近傍
+- [[econ-malthusian-trap|マルサスの罠]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

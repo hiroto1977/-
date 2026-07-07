@@ -32,6 +32,18 @@ Yanis Varoufakis ／ Cédric Durand ／ Evgeny Morozov
 - [Tripathy, H. (2025). Technofeudalism: What Killed Capitalism — A Review. Doing Sociology.](https://doingsociology.org/2025/11/26/technofeudalism-what-killed-capitalism-by-yanis-varoufakis-2023-a-review-by-harshvardhan-tripathy/) `メディア`
 - [Gane, N. (2025). Capitalism is capitalism, not technofeudalism. Journal of Classical Sociology.](https://journals.sagepub.com/doi/10.1177/1468795X241269293) `学術`
 
+## 関連概念
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
+- [[infosoc-slacktivism|スラックティビズム]] — 同じ思想家
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同じ思想家
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 出典を共有
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 出典を共有
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
+- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

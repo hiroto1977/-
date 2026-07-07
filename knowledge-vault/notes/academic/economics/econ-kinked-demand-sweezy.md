@@ -29,6 +29,18 @@ aliases:
 - [Sweezy, P.M. (1939) Demand Under Conditions of Oligopoly — Journal of Political Economy 47(4)](https://doi.org/10.1086/255301) `学術`
 - [Wikipedia: Kinked demand — Sweezy, Hall & Hitch, price rigidity, marginal revenue gap, oligopoly](https://en.wikipedia.org/wiki/Kinked_demand) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[econ-peltzman-effect-risk-compensation|ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺]] — 同じ思想家
+- [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家
+- [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-experience-goods-nelson|探索財・経験財・信用財——品質評価の時点による財の三分類]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
+- [[econ-lerner-index-market-power|ラーナー指数（市場支配力の測定）]] — 同じ思想家
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

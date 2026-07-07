@@ -29,6 +29,17 @@ aliases:
 - [Florida, R. (2002) The Rise of the Creative Class — Basic Books](https://www.worldcat.org/oclc/49544499) `学術`
 - [Wikipedia: Creative class — three Ts, talent, tolerance, creative city](https://en.wikipedia.org/wiki/Creative_class) `リファレンス`
 
+## 関連概念
+- [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
+- [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
+- [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

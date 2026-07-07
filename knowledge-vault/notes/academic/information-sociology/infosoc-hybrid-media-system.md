@@ -30,6 +30,12 @@ aliases:
 - [学術誌 Social Forces（OUP）掲載書評（査読誌、2013年版・OUP刊を明記）](https://academic.oup.com/sf/article/94/4/e97/2461366) `学術`
 - [著者アンドリュー・チャドウィック公式サイト：The Hybrid Media System（概要・受賞歴）](https://www.andrewchadwick.com/hybrid-media-system) `学術`
 
+## 関連概念
+- [[infosoc-epistemic-bubbles-echo-chambers|認識論的バブルとエコーチェンバー]] — 同分野の近傍
+- [[infosoc-technopopulism-bickerton|テクノポピュリズム——デジタル技術と反エリート主義の融合する政治変容]] — 同分野の近傍
+- [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同分野の近傍
+- [[infosoc-parasocial-interaction-horton|パラソーシャル相互作用——メディア人物との一方向的疑似関係の形成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

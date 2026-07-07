@@ -29,6 +29,11 @@ aliases:
 - [Demsetz, H. (1969) "Information and Efficiency: Another Viewpoint," Journal of Law and Economics 12(1):1-22（University of Chicago Press）](https://www.journals.uchicago.edu/doi/10.1086/466945) `学術`
 - [The Concise Encyclopedia of Economics (Econlib) — Government Failure（ニルヴァーナ・アプローチと比較制度分析の文脈）](https://www.econlib.org/library/Enc/GovernmentFailure.html) `リファレンス`
 
+## 関連概念
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
+- [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

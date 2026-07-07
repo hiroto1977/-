@@ -30,6 +30,12 @@ aliases:
 - [Venkatesh, V. et al. 2003 User Acceptance of Information Technology: Toward a Unified View. MIS Quarterly 27(3) 425-478](https://doi.org/10.2307/30036540) `学術`
 - [Chau, P.Y.K. & Hu, P.J.-H. 2002 Investigating healthcare professionals' decisions to accept telemedicine technology. Information & Management 39(4) 297-311](https://doi.org/10.1016/S0378-7206(01)00098-2) `学術`
 
+## 関連概念
+- [[mgmt-technology-acceptance-model|技術受容モデル（TAM）——情報システム採用の知覚有用性と知覚容易性]] — 分野横断
+- [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
+- [[infosoc-telemedicine|遠隔医療（テレメディシン）：エビデンスと政策的枠組みの体系化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

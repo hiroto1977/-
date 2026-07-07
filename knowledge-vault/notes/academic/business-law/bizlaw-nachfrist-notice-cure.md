@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia: Nachfrist — additional period for performance in contract law](https://en.wikipedia.org/wiki/Nachfrist) `リファレンス`
 - [Honnold, J.O. (2009) Uniform Law for International Sales Under the 1980 United Nations Convention — Kluwer 4th ed.](https://doi.org/10.1093/acprof:oso/9780199535491.001.0001) `学術`
 
+## 関連概念
+- [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 語彙が近い
+- [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

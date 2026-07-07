@@ -29,6 +29,15 @@ aliases:
 - [Barlow, J.P. (1996) A Declaration of the Independence of Cyberspace — Electronic Frontier Foundation](https://www.eff.org/cyberspace-independence) `リファレンス`
 - [Wikipedia: A Declaration of the Independence of Cyberspace — Barlow, cyber-libertarianism, Lessig critique](https://en.wikipedia.org/wiki/A_Declaration_of_the_Independence_of_Cyberspace) `リファレンス`
 
+## 関連概念
+- [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
+- [[infosoc-cyberspace|サイバースペース]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同じ思想家
+- [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同分野の近傍
+- [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

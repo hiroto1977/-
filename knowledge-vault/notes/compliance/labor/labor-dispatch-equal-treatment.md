@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省 派遣先均等・均衡方式／労使協定方式](https://www.mhlw.go.jp/content/000497032.pdf) `公的`
 - [厚生労働省 労働者派遣法改正の概要（同一労働同一賃金）](https://www.mhlw.go.jp/content/000473039.pdf) `公的`
 
+## 関連概念
+- [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 語彙が近い
+- [[bizlaw-worker-dispatch|労働者派遣法]] — 語彙が近い
+- [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]] — 語彙が近い
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 語彙が近い
+- [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 分野横断
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 同分野の近傍
+- [[labor-collective-agreement|労働協約（労働組合法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [Motta (2004) Competition Policy: Theory and Practice — Cambridge University Press](https://doi.org/10.1017/CBO9780511804038) `学術`
 - [Wikipedia: Cartel — カルテルの定義・歴史・各国規制制度の概説](https://en.wikipedia.org/wiki/Cartel) `リファレンス`
 
+## 関連概念
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同分野の近傍
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 同分野の近傍
+- [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Conservatism (belief revision) — Wikipedia（エドワーズ1968、ベイズ未満の不十分な信念更新）](https://en.wikipedia.org/wiki/Conservatism_(belief_revision)) `リファレンス`
 - [A model of investor sentiment, Journal of Financial Economics 49(3), 307–343（決算発表へのアンダーリアクション）](https://www.sciencedirect.com/science/article/abs/pii/S0304405X98000270) `学術`
 
+## 関連概念
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同分野の近傍
+- [[human-welfare-state-typology|福祉国家類型論（福祉レジーム論）：エスピン＝アンデルセンの三つの世界]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

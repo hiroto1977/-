@@ -36,6 +36,11 @@ national
 - [中退共 掛金の一部を国が助成してくれる制度](https://chutaikyo.taisyokukin.go.jp/faq/qa-01/1-2-1.html) `運営団体`
 - [厚生労働省 一般の中小企業退職金共済制度に係る掛金助成](https://www.mhlw.go.jp/bunya/roudoukijun/taisilyokukin_kyousai/ippanchuutai/dl/kakekin_josei.pdf) `公的`
 
+## 関連概念
+- [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]] — 分野横断
+- [[subsidy-small-business-mutual-aid|小規模企業共済]] — 同分野の近傍
+- [[subsidy-child-allowance|児童手当]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

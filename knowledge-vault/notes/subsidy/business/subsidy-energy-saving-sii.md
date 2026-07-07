@@ -36,6 +36,15 @@ national
 - [資源エネルギー庁 省エネ設備導入支援](https://www.enecho.meti.go.jp/category/saving_and_new/saving/enterprise/support/) `公的`
 - [資源エネルギー庁 省エネルギー政策](https://www.enecho.meti.go.jp/category/saving_and_new/saving/) `公的`
 
+## 関連概念
+- [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
+- [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]] — 出典を共有
+- [[eh-1974|1974年（昭和49年）]] — 出典を共有
+- [[subsidy-kyuto-shoene|給湯省エネ事業]] — 出典を共有
+- [[subsidy-zeh|ZEH支援事業]] — 出典を共有
+- [[subsidy-fukui|企業における省エネ設備等導入支援事業補助金（福井県）]] — 同分野の近傍
+- [[subsidy-tottori|鳥取県産業成長応援補助金（企業立地・設備投資等大型投資への支援）（鳥取県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [LibreTexts: International Trade — The Rybczynski Theorem](https://socialsci.libretexts.org/Bookshelves/Economics/International_Trade_-_Theory_and_Policy/05%3A_The_Heckscher-Ohlin_(Factor_Proportions)_Model/5.04%3A_The_Rybczynski_Theorem) `学術`
 - [Wikipedia: Rybczynski theorem](https://en.wikipedia.org/wiki/Rybczynski_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 語彙が近い
+- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 語彙が近い
+- [[econ-income-substitution-effect|所得効果と代替効果]] — 出典を共有
+- [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 出典を共有
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 出典を共有
+- [[infosoc-mcdonaldization|マクドナルド化]] — 出典を共有
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 出典を共有
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 出典を共有
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

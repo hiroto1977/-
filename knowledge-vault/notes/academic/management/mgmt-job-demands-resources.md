@@ -30,6 +30,18 @@ aliases:
 - [労働政策研究・研修機構（JILPT）「仕事の要求度-資源モデル」](https://www.jil.go.jp/institute/zassi/backnumber/2019/09/pdf/081-082.pdf) `公的`
 - [島津明人（東京大学）職業性ストレスとワーク・エンゲイジメント（J-STAGE）](https://www.jstage.jst.go.jp/article/stresskagakukenkyu/25/0/25_0_1/_pdf) `学術`
 
+## 関連概念
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 語彙が近い
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
+- [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[econ-time-preference|時間選好]] — 出典を共有
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

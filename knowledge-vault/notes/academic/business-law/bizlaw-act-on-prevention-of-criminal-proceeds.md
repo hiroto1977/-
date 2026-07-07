@@ -30,6 +30,15 @@ aliases:
 - [金融庁 — 犯罪による収益の移転防止に関する法律](https://www.fsa.go.jp/news/19/sonota/20080213-1.html) `公的`
 - [国立国会図書館 日本法令索引（平成19年法律第22号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000109687) `公的`
 
+## 関連概念
+- [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 語彙が近い
+- [[bizlaw-anti-money-laundering-fatf|マネーロンダリング防止とFATF勧告体制の国際法]] — 語彙が近い
+- [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
+- [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
+- [[bizlaw-judicial-scrivener-act|司法書士法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

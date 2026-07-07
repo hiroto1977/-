@@ -29,6 +29,13 @@ aliases:
 - [Robertson, R. (1995) Glocalization: Time-Space and Homogeneity-Heterogeneity — in Global Modernities (Sage)](https://doi.org/10.4135/9781446250563.n2) `学術`
 - [Wikipedia: Glocalization — Robertson, dochakuka, universalization of particular, homogenization critique](https://en.wikipedia.org/wiki/Glocalization) `リファレンス`
 
+## 関連概念
+- [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 同じ思想家
+- [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同じ思想家
+- [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同じ思想家
+- [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

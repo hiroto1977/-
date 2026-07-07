@@ -29,6 +29,18 @@ aliases:
 - [Alesina, A. (1987) Macroeconomic policy in a two-party system as a repeated game — Quarterly Journal of Economics](https://doi.org/10.2307/1885296) `学術`
 - [Wikipedia: Political business cycle — rational partisan theory, Alesina, Hibbs, Nordhaus](https://en.wikipedia.org/wiki/Political_business_cycle) `リファレンス`
 
+## 関連概念
+- [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+- [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
+- [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

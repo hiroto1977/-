@@ -30,6 +30,18 @@ aliases:
 - [Balassa, B. (1965) Tariff Protection in Industrial Countries — Journal of Political Economy](https://doi.org/10.1086/259074) `学術`
 - [Wikipedia: Effective rate of protection — value-added based trade protection measurement](https://en.wikipedia.org/wiki/Effective_rate_of_protection) `リファレンス`
 
+## 関連概念
+- [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 語彙が近い
+- [[econ-immiserizing-growth|窮乏化成長]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-optimal-tariff|最適関税論]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
+- [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同じ思想家
+- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

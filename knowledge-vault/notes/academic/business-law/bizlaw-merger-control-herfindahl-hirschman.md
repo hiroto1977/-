@@ -29,6 +29,17 @@ aliases:
 - [DOJ/FTC (2010) Horizontal Merger Guidelines — US Department of Justice](https://www.justice.gov/atr/horizontal-merger-guidelines-08192010) `公的`
 - [Wikipedia: Herfindahl–Hirschman index — market concentration](https://en.wikipedia.org/wiki/Herfindahl%E2%80%93Hirschman_index) `リファレンス`
 
+## 関連概念
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-unbalanced-growth-hirschman|不均衡成長論——戦略的部門への投資が連関を通じて発展を牽引する]] — 同じ思想家
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 出典を共有
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 出典を共有
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 出典を共有
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
+- [[bizlaw-corporate-restructuring-m-and-a|M&A法と企業再構築——株主保護・競争法審査・情報開示義務の国際比較]] — 同分野の近傍
+- [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,12 @@ aliases:
 - [Bikhchandani & Sharma 2001 — Herd Behavior in Financial Markets](https://doi.org/10.1006/jeth.2001.2971) `学術`
 - [Hirshleifer & Teoh 2003 — Limited Attention, Information Disclosure, and Financial Reporting](https://doi.org/10.1016/j.jfineco.2003.08.008) `学術`
 
+## 関連概念
+- [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同じ思想家
+- [[econ-harris-todaro|ハリス＝トダロ・モデル]] — 同分野の近傍
+- [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]] — 同分野の近傍
+- [[econ-prisoners-dilemma|囚人のジレンマ（prisoner’s dilemma）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

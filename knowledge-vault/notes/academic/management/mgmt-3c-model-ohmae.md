@@ -29,6 +29,18 @@ aliases:
 - [Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/8170169) `学術`
 - [Wikipedia: 3Cs model — Ohmae, customer/company/competition, strategic triangle](https://en.wikipedia.org/wiki/3C%27s_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-3c-analysis|3C分析]] — 語彙が近い
+- [[mgmt-marketing-myopia|マーケティング近視眼]] — 同じ思想家
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
+- [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

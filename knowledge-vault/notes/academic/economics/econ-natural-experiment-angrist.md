@@ -29,6 +29,14 @@ aliases:
 - [Angrist (1990) Lifetime Earnings and the Vietnam Era Draft Lottery — AER 80(3)](https://doi.org/10.2307/2937954) `学術`
 - [Wikipedia: Natural experiment — IV, RDD, DiD, credibility revolution, Angrist, Card](https://en.wikipedia.org/wiki/Natural_experiment) `リファレンス`
 
+## 関連概念
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
+- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

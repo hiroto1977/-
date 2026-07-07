@@ -30,6 +30,18 @@ aliases:
 - [Nelson & Winter 1982 — An Evolutionary Theory of Economic Change, Harvard University Press](https://www.hup.harvard.edu/catalog.php?isbn=9780674272286) `学術`
 - [Perez 2002 — Technological Revolutions and Financial Capital, Edward Elgar](https://www.elgaronline.com/view/9781843763314.xml) `学術`
 
+## 関連概念
+- [[econ-creative-destruction|創造的破壊]] — 語彙が近い
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 語彙が近い
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
+- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
+- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

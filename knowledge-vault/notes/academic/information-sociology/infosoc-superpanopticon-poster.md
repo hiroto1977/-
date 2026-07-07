@@ -29,6 +29,18 @@ aliases:
 - [Lyon, D. (1993) An Electronic Panopticon? A Sociological Critique of Surveillance Theory — The Sociological Review, 41(4), 653–678 (engages Poster's superpanopticon)](https://doi.org/10.1111/j.1467-954X.1993.tb00896.x) `学術`
 - [Wikipedia: Mark Poster — The Mode of Information (1990), Superpanopticon, databases as discourse constituting subjects](https://en.wikipedia.org/wiki/Mark_Poster) `リファレンス`
 
+## 関連概念
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
+- [[infosoc-synopticon|シノプティコン]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
+- [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

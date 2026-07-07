@@ -31,6 +31,18 @@ aliases:
 - [Blaug (1958) Ricardian Economics: A Historical Study, Yale UP](https://archive.org/details/ricardianeconomi0000blau) `リファレンス`
 - [Schumpeter (1954) History of Economic Analysis, Oxford UP (ed. E.B. Schumpeter)](https://archive.org/details/dli.ernet.505700) `リファレンス`
 
+## 関連概念
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

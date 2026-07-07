@@ -31,6 +31,12 @@ aliases:
 - [Mankiw, N. G. (2019) A Skeptic's Guide to Modern Monetary Theory — AEA Papers & Proceedings, 110, 141–144（代表的批判論文）](https://doi.org/10.1257/jep.33.3.141) `学術`
 - [Wikipedia: Modern monetary theory — chartalism, Knapp, Wray, Kelton, JGP, Mankiw critique](https://en.wikipedia.org/wiki/Modern_monetary_theory) `リファレンス`
 
+## 関連概念
+- [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同じ思想家
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同じ思想家
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
+- [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

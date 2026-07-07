@@ -29,6 +29,11 @@ aliases:
 - [Cepeda, N.J. et al. (2006) Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis — Psychological Bulletin 132(3)](https://doi.org/10.1037/0033-2909.132.3.354) `学術`
 - [Wikipedia: Spacing effect — Ebbinghaus, distributed vs massed practice, spaced repetition, retention](https://en.wikipedia.org/wiki/Spacing_effect) `リファレンス`
 
+## 関連概念
+- [[human-forgetting-curve-ebbinghaus|忘却曲線——学習直後に急速に進み次第に緩やかになる忘却]] — 同じ思想家
+- [[human-spacing-effect-cepeda|間隔効果——分散学習が集中学習より記憶保持を向上させるメカニズム]] — 同じ思想家
+- [[human-repression-sandor-ferenczi|トラウマと解離——ヴァルシントンとフェレンツィの抑圧概念]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

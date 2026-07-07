@@ -29,6 +29,18 @@ aliases:
 - [Buchanan & Tullock (1962) The Calculus of Consent — University of Michigan Press](https://doi.org/10.1017/CBO9780511759024) `学術`
 - [Wikipedia: Public choice — Buchanan, Tullock, government failure, rent-seeking, constitutional economics](https://en.wikipedia.org/wiki/Public_choice) `リファレンス`
 
+## 関連概念
+- [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
+- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
+- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
+- [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
+- [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

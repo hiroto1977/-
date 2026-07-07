@@ -30,6 +30,18 @@ aliases:
 - [Fisher, G. (2012) Effectuation, Causation, and Bricolage — Entrepreneurship Theory and Practice](https://doi.org/10.5465/amr.2012.0431) `学術`
 - [Wikipedia: Bricolage — creative recombination of available resources overview](https://en.wikipedia.org/wiki/Bricolage) `リファレンス`
 
+## 関連概念
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 語彙が近い
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 語彙が近い
+- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 語彙が近い
+- [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同じ思想家
+- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

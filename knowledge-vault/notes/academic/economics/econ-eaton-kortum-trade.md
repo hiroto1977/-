@@ -29,6 +29,18 @@ aliases:
 - [Eaton, J. & Kortum, S. (2002) Technology, geography, and trade — Econometrica](https://doi.org/10.1111/1468-0262.00352) `学術`
 - [Wikipedia: Eaton–Kortum model — Ricardian, Fréchet, gravity, gains from trade](https://en.wikipedia.org/wiki/Gravity_model_of_trade) `リファレンス`
 
+## 関連概念
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
+- [[econ-international-trade-gains-ricardo|比較優位と貿易利益（リカード）]] — 同じ思想家
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
+- [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

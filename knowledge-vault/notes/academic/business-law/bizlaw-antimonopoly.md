@@ -30,6 +30,10 @@ aliases:
 - [公正取引委員会「独占禁止法の規制内容」](https://www.jftc.go.jp/dk/dkgaiyo/kisei.html) `公的`
 - [コトバンク「独占禁止法」（日本大百科全書・世界大百科事典ほか）](https://kotobank.jp/word/独占禁止法-6659) `リファレンス`
 
+## 関連概念
+- [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — 同分野の近傍
+- [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

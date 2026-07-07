@@ -31,6 +31,18 @@ aliases:
 - [Carter & McCullough (2014) “Publication bias and the limited strength model of self-control” Frontiers in Psychology](https://pubmed.ncbi.nlm.nih.gov/25126083/) `学術`
 - [Wikipedia「Ego depletion」（概説・再現性論争の整理）](https://en.wikipedia.org/wiki/Ego_depletion) `リファレンス`
 
+## 関連概念
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同じ思想家
+- [[human-ego-depletion-baumeister|自我消耗理論（バウマイスター）]] — 同じ思想家
+- [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]] — 同じ思想家
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
+- [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
+- [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 出典を共有
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

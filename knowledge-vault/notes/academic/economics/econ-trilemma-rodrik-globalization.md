@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Globalization Paradox — Rodrik political trilemma of world economy](https://en.wikipedia.org/wiki/Globalization_paradox) `リファレンス`
 - [Rodrik, D. (2011) The Globalization Paradox — W.W. Norton](https://doi.org/10.1093/acprof:osobl/9780199603336.001.0001) `学術`
 
+## 関連概念
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 語彙が近い
+- [[econ-hot-money-flows-kindleberger|ホットマネーと国際資本移動——投機的資本フローの不安定化効果]] — 同じ思想家
+- [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 同じ思想家
+- [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

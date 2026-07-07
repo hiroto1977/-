@@ -29,6 +29,17 @@ aliases:
 - [Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies](https://www.worldcat.org/oclc/48417854) `学術`
 - [Wikipedia: Bouba/kiki effect — sound symbolism, cross-modal, arbitrariness of the sign](https://en.wikipedia.org/wiki/Bouba/kiki_effect) `リファレンス`
 
+## 関連概念
+- [[human-gestalt-principles|ゲシュタルト知覚の法則]] — 同じ思想家
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-charles-bonnet-syndrome|シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視]] — 同じ思想家
+- [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
+- [[human-fregoli-delusion|フレゴリの錯覚——「変装した同一人物」という妄想的誤認]] — 同じ思想家
+- [[human-phi-phenomenon-wertheimer|ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

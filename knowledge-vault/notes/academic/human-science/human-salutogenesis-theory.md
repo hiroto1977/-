@@ -34,6 +34,10 @@ aliases:
 - [Antonovsky et al. (1971) Twenty-five years later (Social Psychiatry)](https://doi.org/10.1007/BF00578367) `学術`
 - [Eriksson & Lindström (2006) JECH — SOC scale and health: systematic review](https://doi.org/10.1136/jech.2005.041616) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

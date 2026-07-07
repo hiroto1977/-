@@ -30,6 +30,12 @@ aliases:
 - [e-Gov法令検索 金融サービス提供法](https://laws.e-gov.go.jp/law/412AC0000000101) `公的`
 - [金融サービス仲介業 態勢整備 解説](https://www.businesslawyers.jp/articles/1030) `メディア`
 
+## 関連概念
+- [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 語彙が近い
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 語彙が近い
+- [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
+- [[legal-land-state-attribution|相続土地国庫帰属制度（2023年4月施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

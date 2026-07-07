@@ -30,6 +30,18 @@ aliases:
 - [Sraffa, P. (1960) Production of Commodities by Means of Commodities — Cambridge University Press](https://archive.org/details/productionofcomm0000sraf) `学術`
 - [Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics](https://doi.org/10.2307/1882916) `学術`
 
+## 関連概念
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 同じ思想家
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
+- [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

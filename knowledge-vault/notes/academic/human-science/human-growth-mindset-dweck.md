@@ -29,6 +29,14 @@ aliases:
 - [Dweck (2000) Self-Theories: Their Role in Motivation, Personality, and Development — Psychology Press](https://doi.org/10.1146/annurev.psych.54.101601.145237) `学術`
 - [Wikipedia: Mindset — Dweck, growth vs fixed, neuroplasticity, educational interventions](https://en.wikipedia.org/wiki/Mindset#Fixed_and_growth_mindset) `リファレンス`
 
+## 関連概念
+- [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 同じ思想家
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
+- [[human-cognitive-load|認知負荷理論]] — 同分野の近傍
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同分野の近傍
+- [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

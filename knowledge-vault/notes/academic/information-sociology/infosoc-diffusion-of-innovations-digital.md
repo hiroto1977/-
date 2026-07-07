@@ -31,6 +31,14 @@ Everett M. Rogers ／ Geoffrey A. Moore ／ Frank M. Bass
 - [Rogers / Bass / Moore の普及理論比較](https://www.researchgate.net/publication/235250288_Can_You_See_the_Chasm_Innovation_Diffusion_According_to_Rogers_Bass_and_Moore) `学術`
 - [HBR — デジタル時代のイノベーション普及とキャズム](https://hbr.org/2002/08/crossing-the-chasm-in-the-digital-age) `メディア`
 
+## 関連概念
+- [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]] — 同じ思想家
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同分野の近傍
+- [[infosoc-hacktivism|ハクティビズム]] — 同分野の近傍
+- [[infosoc-information-cascade|情報カスケード]] — 同分野の近傍
+- [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
+- [[infosoc-social-comparison-social-media|ソーシャルメディアにおける社会比較と主観的幸福感]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

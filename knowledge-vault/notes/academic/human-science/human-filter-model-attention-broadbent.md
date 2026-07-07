@@ -29,6 +29,15 @@ aliases:
 - [Broadbent, D.E. (1958) Perception and Communication — Pergamon Press (WorldCat)](https://www.worldcat.org/oclc/598382) `学術`
 - [Wikipedia: Broadbents filter model — early selection, dichotic listening, bottleneck, Treisman attenuation](https://en.wikipedia.org/wiki/Broadbent%27s_filter_model_of_attention) `リファレンス`
 
+## 関連概念
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 語彙が近い
+- [[human-late-selection-deutsch-norman|後期選択理論——すべての刺激が意味処理された後で注意が選択する]] — 語彙が近い
+- [[human-feature-integration-treisman|特徴統合理論——注意が分離した特徴を統合し対象を知覚する]] — 同じ思想家
+- [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同じ思想家
+- [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
+- [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
+- [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

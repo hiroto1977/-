@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia: “Transportation theory (psychology)” — Green & Brock の物語移入、トランスポーテーション尺度、反論抑制、2002年トランスポーテーション・イメージ・モデル](https://en.wikipedia.org/wiki/Transportation_theory_(psychology)) `リファレンス`
 - [Van Laer, T., De Ruyter, K., Visconti, L. M., & Wetzels, M. (2014). The Extended Transportation-Imagery Model: A Meta-Analysis of the Antecedents and Consequences of Consumers’ Narrative Transportation. Journal of Consumer Research, 40(5), 797–817.](https://doi.org/10.1086/673383) `学術`
 
+## 関連概念
+- [[infosoc-information-encountering-erdelez|情報との遭遇——探していない有用な情報に偶然出会う]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

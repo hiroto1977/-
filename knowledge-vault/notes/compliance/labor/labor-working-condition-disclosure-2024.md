@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 無期転換サイト 労働条件明示ルールの変更](https://muki.mhlw.go.jp/rule.html) `公的`
 - [滋賀労働局 令和6年4月から労働条件明示のルールが変わります](https://jsite.mhlw.go.jp/shiga-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/youshiki_newroudoutuuti.html) `公的`
 
+## 関連概念
+- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]] — 語彙が近い
+- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 語彙が近い
+- [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 分野横断
+- [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

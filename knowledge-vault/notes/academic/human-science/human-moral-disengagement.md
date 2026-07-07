@@ -29,6 +29,16 @@ aliases:
 - [Bandura (1999) "Moral Disengagement in the Perpetration of Inhumanities," Personality and Social Psychology Review 3(3): 193-209](https://journals.sagepub.com/doi/10.1207/s15327957pspr0303_3) `学術`
 - [Albert Bandura Official Site — Moral Disengagement（著作・論文一覧）](https://albertbandura.com/albert-bandura-moral-disengagement.html) `リファレンス`
 
+## 関連概念
+- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — 語彙が近い
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家
+- [[human-moral-foundations-haidt|道徳基盤理論——多元的道徳直観の進化的・文化的基盤]] — 同分野の近傍
+- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同分野の近傍
+- [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

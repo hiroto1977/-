@@ -29,6 +29,11 @@ aliases:
 - [Weiss, H.M. & Cropanzano, R. (1996) Affective Events Theory: A Theoretical Discussion of the Structure, Causes and Consequences of Affective Experiences at Work — Research in Organizational Behavior 18, 1–74（AETの原論文）](https://doi.org/10.1016/S0191-3085(96)18002-7) `学術`
 - [Wikipedia: Affective events theory — 感情的出来事理論の概説](https://en.wikipedia.org/wiki/Affective_events_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
+- [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

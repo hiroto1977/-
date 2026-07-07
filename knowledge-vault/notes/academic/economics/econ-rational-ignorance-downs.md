@@ -29,6 +29,18 @@ aliases:
 - [Downs, A. (1957) An Economic Theory of Democracy — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/254163) `学術`
 - [Wikipedia: Rational ignorance — Downs, cost-benefit of information, voting, special interests](https://en.wikipedia.org/wiki/Rational_ignorance) `リファレンス`
 
+## 関連概念
+- [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
+- [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
+- [[econ-median-voter|中位投票者定理]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — 同じ思想家
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-conflict-economics-hirshleifer|紛争の経済学——「力の暗黒面」と奪取の合理的選択]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+- [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

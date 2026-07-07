@@ -30,6 +30,13 @@ Sir Edward Hall Alderson (Alderson B, 財務府裁判所/Court of Exchequer) ／
 - [Victor P. Goldberg, 'The Achilleas: Forsaking Foreseeability', Current Legal Problems, vol. 66, no. 1 (2013), pp. 107–130, Oxford University Press — on the Hadley v Baxendale remoteness rule and its reappraisal in The Achilleas](https://academic.oup.com/clp/article/66/1/107/311242) `学術`
 - [House of Lords, Jackson v Royal Bank of Scotland [2005] UKHL 3 — judicial application and discussion of the two-limb rule in Hadley v Baxendale (UK Parliament publications)](https://publications.parliament.uk/pa/ld200405/ldjudgmt/jd050127/bank-2.htm) `公的`
 
+## 関連概念
+- [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
+- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 出典を共有
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

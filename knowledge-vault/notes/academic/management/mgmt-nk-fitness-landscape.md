@@ -29,6 +29,12 @@ NK適応度地形モデル（NK model、NKフィットネス・ランドスケ�
 - [Levinthal, D. A. (1997) Adaptation on Rugged Landscapes — Management Science, 43(7), 934–950 (NK model applied to organizational form, local optima, tight vs. loose coupling)](https://ideas.repec.org/a/inm/ormnsc/v43y1997i7p934-950.html) `学術`
 - [Wikipedia: NK model — Kauffman, tunable ruggedness via N (elements) and K (interdependence/epistasis), rugged fitness landscapes and local optima](https://en.wikipedia.org/wiki/NK_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

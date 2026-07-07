@@ -32,6 +32,11 @@ Barry M. Staw ／ Jerry Ross ／ Joel Brockner ／ Dustin J. Sleesman
 - [Sleesman et al. 2012 — meta-analysis](https://doi.org/10.5465/amj.2012.0847) `学術`
 - [Whyte 1986 — prospect theory link](https://doi.org/10.5465/amr.1986.4306006) `学術`
 
+## 関連概念
+- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 語彙が近い
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
+- [[mgmt-regulatory-focus-theory-work|制御焦点理論（職場応用）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

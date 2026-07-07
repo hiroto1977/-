@@ -30,6 +30,18 @@ aliases:
 - [Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Fed Minneapolis QR](https://doi.org/10.2307/1805521) `学術`
 - [Wikipedia: Hyperinflation — 超インフレの歴史と経済理論](https://en.wikipedia.org/wiki/Hyperinflation) `リファレンス`
 
+## 関連概念
+- [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同じ思想家
+- [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]] — 同じ思想家
+- [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — 同じ思想家
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 同じ思想家
+- [[econ-policy-ineffectiveness|政策無効命題]] — 同じ思想家
+- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
+- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

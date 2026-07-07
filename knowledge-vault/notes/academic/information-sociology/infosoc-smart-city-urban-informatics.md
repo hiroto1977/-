@@ -29,6 +29,13 @@ aliases:
 - [Hollands (2008) Will the Real Smart City Please Stand Up? — City 12(3)](https://doi.org/10.1080/01900692.2013.786164) `学術`
 - [Wikipedia: Smart city — ICT, urban informatics, surveillance, civic tech, Alphabet Sidewalk Labs](https://en.wikipedia.org/wiki/Smart_city) `リファレンス`
 
+## 関連概念
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同じ思想家
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
+- [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 同じ思想家
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

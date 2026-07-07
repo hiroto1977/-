@@ -30,6 +30,14 @@ aliases:
 - [デジタル庁 青少年インターネット環境整備法 — デジタル庁](https://www.digital.go.jp/laws/youth-internet) `公的`
 - [Wikipedia: 青少年の精神健康 — SNSとスマートフォンの影響に関する論争の解説](https://ja.wikipedia.org/wiki/%E9%9D%92%E5%B0%91%E5%B9%B4%E3%81%AE%E7%B2%BE%E7%A5%9E%E5%81%A5%E5%BA%B7) `リファレンス`
 
+## 関連概念
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 同じ思想家
+- [[human-moral-foundations-haidt|道徳基盤理論——多元的道徳直観の進化的・文化的基盤]] — 同じ思想家
+- [[infosoc-digital-identity|デジタルアイデンティティ]] — 出典を共有
+- [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 出典を共有
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同分野の近傍
+- [[infosoc-online-disinhibition|オンライン脱抑制効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

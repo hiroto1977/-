@@ -30,6 +30,18 @@ aliases:
 - [Engestrom, Y. (2015). Learning by Expanding: An Activity-Theoretical Approach to Developmental Research (2nd ed.). Cambridge University Press.](https://www.cambridge.org/core/books/learning-by-expanding/6D0648C3DEDE20157B359E464AFDB8C1) `学術`
 - [Engestrom, Y. (2001). Expansive learning at work: Toward an activity theoretical reconceptualization. Journal of Education and Work, 14(1), 133-156.](https://doi.org/10.1080/13639080020028747) `学術`
 
+## 関連概念
+- [[human-cultural-historical-activity-theory-engestrom|文化歴史的活動理論——エンゲストロームの拡張的学習と活動システム分析]] — 分野横断
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 出典を共有
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 出典を共有
+- [[infosoc-technological-determinism|技術決定論]] — 出典を共有
+- [[econ-division-of-labour|分業]] — 出典を共有
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同分野の近傍
+- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

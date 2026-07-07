@@ -29,6 +29,18 @@ aliases:
 - [DeFond, M. & Zhang, J. (2014) A Review of Archival Auditing Research — Journal of Accounting and Economics 58(2), 275–326（法定監査研究の包括的レビュー）](https://doi.org/10.1111/1475-679X.12020) `学術`
 - [Wikipedia: Audit committee — 監査委員会の概説](https://en.wikipedia.org/wiki/Audit_committee) `リファレンス`
 
+## 関連概念
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 語彙が近い
+- [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
+- [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
+- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,18 @@ Albert Bandura ／ Julian B. Rotter
 - [Simply Psychology — Bandura's Social Learning Theory](https://www.simplypsychology.org/bandura.html) `リファレンス`
 - [Classics in the History of Psychology — Bandura (1961) Bobo Doll Experiment full text](https://psychclassics.yorku.ca/Bandura/bobo.htm) `リファレンス`
 
+## 関連概念
+- [[human-observational-learning|観察学習（バンデューラ）]] — 語彙が近い
+- [[human-self-efficacy-theory|自己効力感理論]] — 語彙が近い
+- [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — 同じ思想家
+- [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 出典を共有
+- [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
+- [[human-stroop-effect|ストループ効果]] — 出典を共有
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 出典を共有
+- [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
+- [[human-premack-principle|プレマックの原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省｜労働者派遣法（昭和60年7月5日法律第88号）](https://www.mhlw.go.jp/web/t_doc?dataId=75021000&dataType=0&pageNo=1) `公的`
 - [高崎経済大学｜労働者派遣法の歴史](http://www1.tcue.ac.jp/home1/takamatsu/107016/6.html) `学術`
 
+## 関連概念
+- [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 語彙が近い
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 語彙が近い
+- [[bizlaw-employment-security|職業安定法]] — 語彙が近い
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 分野横断
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Frith & Frith (2003) Development and Neurophysiology of Mentalizing — Philosophical Transactions](https://doi.org/10.1037/0003-066X.58.1.69) `学術`
 - [Wikipedia: Theory of mind — 心の理論の概念と神経科学的研究](https://en.wikipedia.org/wiki/Theory_of_mind) `リファレンス`
 
+## 関連概念
+- [[human-theory-of-mind|心の理論]] — 語彙が近い
+- [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 同じ思想家
+- [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — 同分野の近傍
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

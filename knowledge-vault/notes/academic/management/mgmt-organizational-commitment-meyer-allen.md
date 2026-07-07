@@ -29,6 +29,12 @@ aliases:
 - [Meyer, J.P. & Allen, N.J. (1991) A Three-Component Conceptualization of Organizational Commitment — HRM Review 1(1)](https://doi.org/10.1016/1053-4822(91)90011-Z) `学術`
 - [Wikipedia: Organizational commitment — Meyer & Allen, affective/continuance/normative components](https://en.wikipedia.org/wiki/Organizational_commitment) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-commitment|組織コミットメント]] — 語彙が近い
+- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
+- [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
+- [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

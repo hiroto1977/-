@@ -30,6 +30,15 @@ Ben S. Bernanke／Mark Gertler／Simon Gilchrist／Anil K. Kashyap／Jeremy C. S
 - [Kashyap & Stein (2000) What Do a Million Observations on Banks Say about the Transmission of Monetary Policy? AER 90(3):407-428](https://www.aeaweb.org/articles?id=10.1257/aer.90.3.407) `学術`
 - [Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework, Handbook of Macroeconomics](https://www.sciencedirect.com/science/article/pii/S1574004899100182) `学術`
 
+## 関連概念
+- [[econ-credit-channel-theory|信用チャネル理論]] — 語彙が近い
+- [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
+- [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
+- [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
+- [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
+- [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

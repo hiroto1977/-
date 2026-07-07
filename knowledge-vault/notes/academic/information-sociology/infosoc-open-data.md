@@ -29,6 +29,15 @@ aliases:
 - [Open Knowledge Foundation — Open Definition](https://opendefinition.org/) `学術`
 - [データカタログサイト DATA.GO.JP（日本政府オープンデータポータル）](https://www.data.go.jp/) `公的`
 
+## 関連概念
+- [[infosoc-open-data-government-transparency|オープンデータと政府透明性の情報社会論]] — 語彙が近い
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 語彙が近い
+- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 語彙が近い
+- [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
+- [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — 同じ思想家
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

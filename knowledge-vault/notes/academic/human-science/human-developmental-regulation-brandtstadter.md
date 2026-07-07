@@ -31,6 +31,11 @@ aliases:
 - [Brandtstädter, J. (2009) Goal Pursuit and Goal Adjustment: Self-Regulation and Intentional Self-Development in Changing Developmental Contexts — Advances in Life Course Research, 14(1–2), 52–62（理論の最新展開）](https://doi.org/10.1177/1745691614531961) `学術`
 - [Wikipedia: Jochen Brandtstädter — assimilation/accommodation, tenacious/flexible coping, SOC model](https://en.wikipedia.org/wiki/Jochen_Brandtstädter) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 同じ思想家
+- [[human-joint-action|共同行為（Joint Action）]] — 同分野の近傍
+- [[human-constructive-developmental-kegan|構成的発達理論——意味構成の段階的変容と主体-客体均衡]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Adler & Borys (1996) full text — Paul S. Adler faculty page, USC Marshall School of Business (author-hosted primary source)](https://faculty.marshall.usc.edu/Paul-Adler/research/ASQ%20copy-1.pdf) `学術`
 - [Ahrens, T. & Chapman, C. S. (2004) "Accounting for Flexibility and Efficiency: A Field Study of Management Control Systems in a Restaurant Chain," Contemporary Accounting Research 21(2):271-301 (Wiley) — enabling/coercive control extension](https://onlinelibrary.wiley.com/doi/abs/10.1506/VJR6-RP75-7GUX-XH0X) `学術`
 
+## 関連概念
+- [[human-illusory-correlation|錯誤相関]] — 同じ思想家
+- [[mgmt-stp-marketing|STPマーケティング]] — 出典を共有
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同分野の近傍
+- [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

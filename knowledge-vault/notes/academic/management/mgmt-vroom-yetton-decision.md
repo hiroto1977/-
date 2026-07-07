@@ -29,6 +29,12 @@ aliases:
 - [Vroom, V.H. & Yetton, P.W. (1973) Leadership and Decision-Making — University of Pittsburgh Press (WorldCat)](https://www.worldcat.org/oclc/759939) `学術`
 - [Wikipedia: Vroom–Yetton decision model — five decision styles, decision tree, participation, normative](https://en.wikipedia.org/wiki/Vroom%E2%80%93Yetton_decision_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]] — 語彙が近い
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ aliases:
 - [Samuelson, P. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics](https://doi.org/10.2307/2296638) `学術`
 - [Wikipedia: Balassa–Samuelson effect — 効果の概要](https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect) `リファレンス`
 
+## 関連概念
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同じ思想家
+- [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
+- [[econ-secular-stagnation-hansen|長期停滞論（ハンセン＆サマーズ）]] — 同分野の近傍
+- [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同分野の近傍
+- [[econ-roy-model|ロイ・モデル——比較優位による職業の自己選択]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

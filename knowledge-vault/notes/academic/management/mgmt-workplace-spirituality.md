@@ -31,6 +31,14 @@ Ian I. Mitroff ／ Elizabeth A. Denton ／ Judi Neal
 - [Wikipedia — Workplace Spirituality](https://en.wikipedia.org/wiki/Workplace_spirituality) `リファレンス`
 - [Neal (ed.) — Handbook of Faith and Spirituality in the Workplace, Springer](https://link.springer.com/book/10.1007/978-1-4614-5233-1) `学術`
 
+## 関連概念
+- [[mgmt-open-innovation|オープン・イノベーション]] — 出典を共有
+- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 出典を共有
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 出典を共有
+- [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
+- [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 同分野の近傍
+- [[mgmt-trust-integrative-model|組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

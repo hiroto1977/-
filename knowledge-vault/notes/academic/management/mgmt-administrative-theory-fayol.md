@@ -29,6 +29,11 @@ aliases:
 - [Fayol, H. (1916/1949) General and Industrial Management — Pitman (WorldCat)](https://www.worldcat.org/oclc/1392559) `学術`
 - [Wikipedia: Henri Fayol — five functions of management, 14 principles, administrative theory, POSDCORB](https://en.wikipedia.org/wiki/Henri_Fayol) `リファレンス`
 
+## 関連概念
+- [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同じ思想家
+- [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-matrix-organization|マトリックス組織]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

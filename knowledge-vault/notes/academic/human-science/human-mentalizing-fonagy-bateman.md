@@ -30,6 +30,15 @@ aliases:
 - [Fonagy, P. et al. (2002) Affect Regulation, Mentalization, and the Development of the Self — Routledge](https://doi.org/10.4324/9780429471643) `学術`
 - [Wikipedia: Mentalization-based treatment — MBTの概要](https://en.wikipedia.org/wiki/Mentalization-based_treatment) `リファレンス`
 
+## 関連概念
+- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同じ思想家
+- [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]] — 同じ思想家
+- [[human-still-face-tronick|スティルフェイス実験（トロニック）——無表情の母親と乳児の情動調整]] — 同じ思想家
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
+- [[human-mentalization-fonagy|メンタライジングと反省的機能（フォナジー）]] — 同分野の近傍
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同分野の近傍
+- [[human-interpersonal-neurobiology-siegel|対人神経生物学——シーゲルの統合マインド理論と関係性が脳発達に与える神経科学的基盤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

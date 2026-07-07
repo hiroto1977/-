@@ -30,6 +30,11 @@ aliases:
 - [消費者庁 — 特定電子メール法（特定商取引法との連携）](https://www.caa.go.jp/policies/policy/consumer_transaction/specifed_email/) `公的`
 - [日本法令索引（国立国会図書館）— 平成14年4月17日法律第26号](https://hourei.ndl.go.jp/simple/detail?lawId=0000092408&current=-1) `公的`
 
+## 関連概念
+- [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 分野横断
+- [[bizlaw-money-lending-act|貸金業法]] — 同分野の近傍
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

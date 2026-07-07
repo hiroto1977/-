@@ -30,6 +30,18 @@ Joseph E. Stiglitz／Andrew Weiss
 - [Wikipedia — Credit rationing](https://en.wikipedia.org/wiki/Credit_rationing) `リファレンス`
 - [NobelPrize.org — 2001年経済学賞（非対称情報下の市場分析）](https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/) `リファレンス`
 
+## 関連概念
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
+- [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
+- [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
+- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
+- [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
+- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同分野の近傍
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

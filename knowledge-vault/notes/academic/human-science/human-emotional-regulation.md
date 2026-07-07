@@ -31,6 +31,15 @@ aliases:
 - [Aldao, Nolen-Hoeksema & Schweizer 2010 — Emotion-Regulation Strategies Across Psychopathology: A Meta-Analytic Review, Clinical Psychology Review 30(2):217-237](https://doi.org/10.1016/j.cpr.2009.11.004) `学術`
 - [Ochsner & Gross 2005 — The Cognitive Control of Emotion, Trends in Cognitive Sciences 9(5):242-249](https://doi.org/10.1016/j.tics.2005.03.010) `学術`
 
+## 関連概念
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 語彙が近い
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 語彙が近い
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 語彙が近い
+- [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
+- [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

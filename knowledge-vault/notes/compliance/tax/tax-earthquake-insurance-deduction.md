@@ -30,6 +30,11 @@ aliases:
 - [国税庁 No.1146 地震保険料控除の対象契約](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1146.htm) `公的`
 - [地震保険料控除 控除額 解説](https://www.sonysonpo.co.jp/fire/earthquake_005.html) `メディア`
 
+## 関連概念
+- [[tax-life-insurance-deduction|生命保険料控除]] — 語彙が近い
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

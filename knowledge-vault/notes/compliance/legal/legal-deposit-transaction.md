@@ -30,6 +30,11 @@ aliases:
 - [消費者庁 販売預託は原則禁止](https://www.caa.go.jp/policies/policy/consumer_transaction/act_on_deposit/sales_consignment/index.html) `公的`
 - [熊本市 販売預託は原則禁止](https://www.city.kumamoto.jp/kiji00364405/index.html) `自治体`
 
+## 関連概念
+- [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
+- [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
+- [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

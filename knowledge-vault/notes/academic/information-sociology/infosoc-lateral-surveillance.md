@@ -29,6 +29,13 @@ Mark Andrejevic（2005年論文・概念の提唱者） ／ 水平的・対等�
 - [Andrejevic, M. (2005). The Work of Watching One Another: Lateral Surveillance, Risk, and Governance. Surveillance & Society, 2(4), 479-497.](https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/3359) `学術`
 - [Semantic Scholar 収録の書誌（Andrejevic [2005], Surveillance & Society 2(4):479-497・対等者間の相互監視・responsibilization・リスク社会）](https://www.semanticscholar.org/paper/The-Work-of-Watching-One-Another:-Lateral-Risk,-and-Andrejevic/c84d728d2afcd242ca58d0b2be91cf97536f95f5) `リファレンス`
 
+## 関連概念
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-panopticon|パノプティコンと規律権力]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

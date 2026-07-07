@@ -29,6 +29,17 @@ aliases:
 - [Roberson, B. (2006) The Colonel Blotto game — Economic Theory](https://doi.org/10.1007/s00199-005-0071-5) `学術`
 - [Wikipedia: Blotto game — resource allocation, contests, mixed strategies, Borel](https://en.wikipedia.org/wiki/Blotto_game) `リファレンス`
 
+## 関連概念
+- [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — 同じ思想家
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
+- [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

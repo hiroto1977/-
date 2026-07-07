@@ -29,6 +29,11 @@ aliases:
 - [Brom, D. et al. (2017) Somatic Experiencing for PTSD — Psychotherapy](https://doi.org/10.1037/pst0000021) `学術`
 - [Wikipedia: Somatic experiencing — trauma therapy](https://en.wikipedia.org/wiki/Somatic_experiencing) `リファレンス`
 
+## 関連概念
+- [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同じ思想家
+- [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同じ思想家
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

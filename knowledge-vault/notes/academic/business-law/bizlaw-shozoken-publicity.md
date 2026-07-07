@@ -29,6 +29,18 @@ aliases:
 - [最高裁判所 — 平成24年2月2日判決（ピンク・レディー事件、パブリシティ権の最高裁初承認）](https://www.courts.go.jp/app/hanrei_jp/detail2?id=81920) `公的`
 - [文化庁 — 著作権制度の解説（肖像権・パブリシティ権を含む人格的利益の保護）](https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/hajimete_chosaku/) `公的`
 
+## 関連概念
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-copyright|著作権法]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

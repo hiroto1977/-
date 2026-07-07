@@ -30,6 +30,18 @@ aliases:
 - [行政事件訴訟法（昭和37年法律第139号）e-Gov法令検索](https://laws.e-gov.go.jp/law/337AC0000000139) `公的`
 - [行政手続法（平成5年法律第88号）e-Gov法令検索](https://laws.e-gov.go.jp/law/405AC0000000088) `公的`
 
+## 関連概念
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 語彙が近い
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 語彙が近い
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
+- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

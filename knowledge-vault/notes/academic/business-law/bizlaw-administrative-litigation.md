@@ -30,6 +30,10 @@ aliases:
 - [法務省「平成16年改正行政事件訴訟法の概要」](https://www.moj.go.jp/content/000103905.pdf) `公的`
 - [ウィキペディア「行政事件訴訟法」](https://ja.wikipedia.org/wiki/%E8%A1%8C%E6%94%BF%E4%BA%8B%E4%BB%B6%E8%A8%B4%E8%A8%9F%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [How Does Market Competition Affect Supplier-Induced Demand? (Frontiers in Public Health, 2023) — physician agency, information asymmetry (on Evans 1974, Fuchs 1978)](https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2023.1024337/full) `学術`
 - [Wikipedia: Supplier-induced demand — physician as agent, information asymmetry, fee-for-service, Evans (1974), Fuchs (1978)](https://en.wikipedia.org/wiki/Supplier-induced_demand) `リファレンス`
 
+## 関連概念
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-contingent-valuation|仮想評価法——表明選好により非市場財の価値を計測する手法]] — 同じ思想家
+- [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

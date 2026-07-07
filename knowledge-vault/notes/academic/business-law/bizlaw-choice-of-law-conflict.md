@@ -31,6 +31,13 @@ aliases:
 - [Cavers, D. F. (1950) The Choice-of-Law Process — University of Michigan Press（政府利益分析の批判と発展）](https://doi.org/10.2307/1120010) `学術`
 - [Wikipedia: Conflict of laws — Rome I/II, most significant relationship, party autonomy, public policy exception](https://en.wikipedia.org/wiki/Conflict_of_laws) `リファレンス`
 
+## 関連概念
+- [[bizlaw-private-international-law|国際私法（法の適用に関する通則法）]] — 同じ思想家
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
+- [[econ-ecological-footprint-biocapacity|生態足跡とバイオキャパシティ]] — 同じ思想家
+- [[bizlaw-lex-loci-delicti|不法行為地法主義（Lex Loci Delicti）]] — 同分野の近傍
+- [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

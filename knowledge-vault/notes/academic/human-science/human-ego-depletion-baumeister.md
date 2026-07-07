@@ -31,6 +31,16 @@ aliases:
 - [Inzlicht, M., Schmeichel, B. J. & Macrae, C. N. (2014) Why Self-Control Seems (But May Not Be) Limited — Trends in Cognitive Sciences, 18(3), 127–133（批判的理論的展開）](https://doi.org/10.1037/pspa0000116) `学術`
 - [Wikipedia: Ego depletion — Baumeister, limited resource model, replication crisis, willpower](https://en.wikipedia.org/wiki/Ego_depletion) `リファレンス`
 
+## 関連概念
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同じ思想家
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
+- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同じ思想家
+- [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]] — 同じ思想家
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

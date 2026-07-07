@@ -29,6 +29,12 @@ aliases:
 - [Walsh, J.P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3), 280–321（経営者認知論の包括的レビュー）](https://doi.org/10.1177/0149206395021006002) `学術`
 - [Wikipedia: Managerial cognition — 経営者認知論の概説](https://en.wikipedia.org/wiki/Managerial_cognition) `リファレンス`
 
+## 関連概念
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 語彙が近い
+- [[mgmt-managerial-cognition|経営者認知理論]] — 語彙が近い
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
+- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

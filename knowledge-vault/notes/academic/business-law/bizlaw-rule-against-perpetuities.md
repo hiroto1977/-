@@ -33,6 +33,18 @@ Lord Nottingham（1682 ノーフォーク公爵事件で原型を確立）／Joh
 - [Waggoner, The Uniform Statutory Rule Against Perpetuities: The Rationale of the 90-Year Waiting Period — University of Michigan Law](https://repository.law.umich.edu/facarticles/394/) `学術`
 - [Duke of Norfolk's Case (1682), 22 ER 931 — full report (uniset.ca)](http://www.uniset.ca/other/css/22ER931.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-comity-of-nations|国際礼譲（Comity of Nations）]] — 同じ思想家
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
+- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

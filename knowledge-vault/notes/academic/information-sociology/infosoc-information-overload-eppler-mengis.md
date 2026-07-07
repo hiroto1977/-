@@ -30,6 +30,18 @@ aliases:
 - [Miller (1956) The Magical Number Seven, Plus or Minus Two — Psychological Review](https://doi.org/10.1037/h0043158) `学術`
 - [Wikipedia: Information overload — 情報過負荷の歴史・理論・対策の概説](https://en.wikipedia.org/wiki/Information_overload) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
+- [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
+- [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
+- [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

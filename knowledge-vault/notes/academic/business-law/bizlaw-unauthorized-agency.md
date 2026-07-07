@@ -30,6 +30,18 @@ aliases:
 - [民法第113条（無権代理）｜tek-law.jp（弁護士 金子剛）](https://tek-law.jp/civil-code/general-provisions/juridical-acts/agency/article-113/) `メディア`
 - [民法 第117条【無権代理人の責任】｜クレアール司法書士講座](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0117-00/) `メディア`
 
+## 関連概念
+- [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — 出典を共有
+- [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]] — 出典を共有
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 出典を共有
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
+- [[bizlaw-earnest-money|手付（民法557条）]] — 出典を共有
+- [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 出典を共有
+- [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+- [[bizlaw-public-order|公序良俗（民法90条）]] — 出典を共有
+- [[bizlaw-retention-lien|留置権（民法295条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

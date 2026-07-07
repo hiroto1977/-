@@ -30,6 +30,14 @@ aliases:
 - [UC Berkeley GSPP, Public Economics — Deadweight Loss & Optimal Taxation（講義ノート）](https://gspp.berkeley.edu/assets/uploads/courses/notes/Lec2-DWL-Optimal-Tax.pdf) `学術`
 - [New Palgrave Dictionary of Economics (Springer) — Excess Burden of Taxation](https://link.springer.com/rwe/10.1057/978-1-349-95121-5_2374-1) `学術`
 
+## 関連概念
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 語彙が近い
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 語彙が近い
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同分野の近傍
+- [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同分野の近傍
+- [[econ-land-value-tax-george|土地価値税とジョージズム]] — 同分野の近傍
+- [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,12 @@ prefecture
 - [東京都 令和8年度 創業助成事業 募集（報道発表）](https://www.metro.tokyo.lg.jp/information/press/2026/02/2026021609) `自治体`
 - [TOKYO創業ステーション 創業助成事業](https://startup-station.jp/m2/services/sogyokassei/) `運営団体`
 
+## 関連概念
+- [[subsidy-tokyo-equipment|躍進的な事業推進のための設備投資支援事業（東京都）]] — 語彙が近い
+- [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 出典を共有
+- [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 同分野の近傍
+- [[subsidy-kyoto-city|京都市伝統産業設備改修等補助制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

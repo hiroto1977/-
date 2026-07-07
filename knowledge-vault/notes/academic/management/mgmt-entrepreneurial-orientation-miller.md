@@ -31,6 +31,18 @@ aliases:
 - [Rauch, A. et al. (2009) Entrepreneurial Orientation and Business Performance: An Assessment of Past Research and Suggestions for the Future — Entrepreneurship Theory and Practice, 33(3), 761–787（メタ分析）](https://doi.org/10.5465/amj.2009.44773175) `学術`
 - [Wikipedia: Entrepreneurial orientation — Miller, Covin & Slevin, Lumpkin & Dess five dimensions, meta-analysis](https://en.wikipedia.org/wiki/Entrepreneurial_orientation) `リファレンス`
 
+## 関連概念
+- [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 語彙が近い
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
+- [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — 同じ思想家
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

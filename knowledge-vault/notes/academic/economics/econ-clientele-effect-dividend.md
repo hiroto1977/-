@@ -29,6 +29,18 @@ aliases:
 - [Black, F. & Scholes, M. (1974) The Effects of Dividend Yield and Dividend Policy on Common Stock Prices and Returns — JFE 1(1)](https://doi.org/10.1016/0304-405X(74)90006-3) `学術`
 - [Wikipedia: Clientele effect — Miller & Modigliani, investor tax preferences, dividend policy, stable policy](https://en.wikipedia.org/wiki/Clientele_effect) `リファレンス`
 
+## 関連概念
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[mgmt-real-options-theory|リアル・オプション理論]] — 同じ思想家
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
+- [[econ-greenspan-put|グリーンスパン・プット]] — 同じ思想家
+- [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

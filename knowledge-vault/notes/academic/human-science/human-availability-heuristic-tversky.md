@@ -29,6 +29,18 @@ aliases:
 - [Tversky, A. & Kahneman, D. (1973) Availability: A Heuristic for Judging Frequency and Probability — Cognitive Psychology 5(2)](https://doi.org/10.1016/0010-0285(73)90033-9) `学術`
 - [Wikipedia: Availability heuristic — Tversky & Kahneman, ease of recall, vividness/recency bias, risk perception](https://en.wikipedia.org/wiki/Availability_heuristic) `リファレンス`
 
+## 関連概念
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,11 @@ national
 - [経済産業省 J-Startup 選定企業の発表](https://www.meti.go.jp/press/2023/04/20230406003/20230406003.html) `公的`
 - [J-Startup 地域版 サポーター企業認定（地域版・サポーター制度の確認）](https://prtimes.jp/main/html/rd/p/000000009.000052863.html) `メディア`
 
+## 関連概念
+- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 同分野の近傍
+- [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同分野の近傍
+- [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

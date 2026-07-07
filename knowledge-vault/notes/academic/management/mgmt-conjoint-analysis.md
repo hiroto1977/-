@@ -30,6 +30,10 @@ Paul E. Green (ポール・グリーン, ウォートン校) ／ Vithala R. Rao 
 - [Green, Paul E.; Srinivasan, V. (1978). "Conjoint Analysis in Consumer Research: Issues and Outlook." Journal of Consumer Research, 5(2), 103–123. DOI:10.1086/208721.](https://doi.org/10.1086/208721) `学術`
 - ["V. Srinivasan" (Wikipedia) — Adams Distinguished Professor of Management Emeritus, Stanford GSB; co-author (with Paul Green) of the 1978 paper that coined the term "conjoint analysis."](https://en.wikipedia.org/wiki/V._Srinivasan) `リファレンス`
 
+## 関連概念
+- [[mgmt-reverse-mentoring|リバース・メンタリング]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

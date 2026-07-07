@@ -29,6 +29,11 @@ aliases:
 - [Singer, H. (1950) The Distribution of Gains between Investing and Borrowing Countries — American Economic Review](https://doi.org/10.2307/1882508) `学術`
 - [Wikipedia: Prebisch-Singer hypothesis — terms of trade, primary commodities, ISI](https://en.wikipedia.org/wiki/Prebisch%E2%80%93Singer_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同じ思想家
+- [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同じ思想家
+- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

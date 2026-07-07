@@ -30,6 +30,10 @@ Catherine D'Ignazio（MIT）& Lauren F. Klein（Emory University）（MIT Press,
 - [Data Feminism — Wikipedia（7原則・理論的基盤・影響の概要）](https://en.wikipedia.org/wiki/Data_Feminism) `リファレンス`
 - [Wikipedia: Data feminism — intersectionality, power, classification, critical data studies](https://en.wikipedia.org/wiki/Data_feminism) `リファレンス`
 
+## 関連概念
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

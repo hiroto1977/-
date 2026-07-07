@@ -30,6 +30,13 @@ aliases:
 - [e-Gov法令検索 民法（541条・542条・543条）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 - [契約解除と帰責事由の関係 解説](https://www.businesslawyers.jp/practices/1175) `メディア`
 
+## 関連概念
+- [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 語彙が近い
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 語彙が近い
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 分野横断
+- [[legal-risk-bearing|危険負担（改正民法536条）]] — 同分野の近傍
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

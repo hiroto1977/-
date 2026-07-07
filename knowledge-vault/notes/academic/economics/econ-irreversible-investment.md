@@ -29,6 +29,12 @@ aliases:
 - [Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton University Press (WorldCat)](https://www.worldcat.org/oclc/29361643) `学術`
 - [Wikipedia: Real options / irreversible investment — Dixit & Pindyck, option value of waiting, NPV wedge](https://en.wikipedia.org/wiki/Real_options_valuation) `リファレンス`
 
+## 関連概念
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-real-options-dixit-pindyck|実物オプション——ディキシット＆ピンダイクの不可逆投資と「待機価値」]] — 同じ思想家
+- [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — 同じ思想家
+- [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

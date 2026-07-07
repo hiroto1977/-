@@ -30,6 +30,11 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Phenomenology](https://plato.stanford.edu/entries/phenomenology/) `学術`
 - [Encyclopaedia Britannica — Phenomenological Reduction](https://www.britannica.com/topic/phenomenological-reduction) `リファレンス`
 
+## 関連概念
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 語彙が近い
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
+- [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

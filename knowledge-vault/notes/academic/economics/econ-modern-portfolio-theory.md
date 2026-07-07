@@ -31,6 +31,11 @@ aliases:
 - [Modern portfolio theory — Wikipedia](https://en.wikipedia.org/wiki/Modern_portfolio_theory) `リファレンス`
 - [Modern Portfolio Theory — Britannica Money](https://www.britannica.com/money/modern-portfolio-theory-explained) `リファレンス`
 
+## 関連概念
+- [[econ-tobin-separation|トービンの分離定理（Tobin Separation Theorem）]] — 語彙が近い
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,16 @@ aliases:
 - [Scheerder, van Deursen & van Dijk (2017) 第二・第三レベルのデジタル格差の系統的レビュー, Telematics and Informatics (Univ. of Twente)](https://research.utwente.nl/en/publications/determinants-of-internet-skills-use-and-outcomes-a-systematic-rev/) `学術`
 - [Examining First- and Second-Level Digital Divide（NIH/PMC 査読）](https://pmc.ncbi.nlm.nih.gov/articles/PMC11308174/) `リファレンス`
 
+## 関連概念
+- [[infosoc-privacy-paradox|プライバシー・パラドックス]] — 出典を共有
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
+- [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
+- [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
+- [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

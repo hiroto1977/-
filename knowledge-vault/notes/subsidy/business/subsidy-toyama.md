@@ -36,6 +36,10 @@ prefecture
 - [富山県新世紀産業機構（Tonio）募集案内](https://www.tonio.or.jp/search/20251216-xformation/) `運営団体`
 - [富山県よろず支援拠点 補助金の案内](https://toyama-yorozushien.go.jp/news/2026/02/post-5153/) `公的`
 
+## 関連概念
+- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]] — 同分野の近傍
+- [[subsidy-sendai|仙台市中小企業チャレンジ補助金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

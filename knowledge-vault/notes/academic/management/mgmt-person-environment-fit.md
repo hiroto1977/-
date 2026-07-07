@@ -31,6 +31,14 @@ John R. P. French Jr. ／ Robert D. Caplan ／ Amy L. Kristof-Brown
 - [ScienceDirect — P-E fit topic overview](https://www.sciencedirect.com/topics/psychology/person-environment-fit) `学術`
 - [ILO Encyclopaedia — Person-environment fit entry](https://www.iloencyclopaedia.org/part-v-77965/psychosocial-and-organizational-factors/factors-intrinsic-to-the-job/item/14-person-environment-fit) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同分野の近傍
+- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
+- [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同分野の近傍
+- [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — 同分野の近傍
+- [[mgmt-affective-events-theory-weiss|感情的出来事理論（ワイス＆クロパンザーノ）]] — 同分野の近傍
+- [[mgmt-romance-of-leadership-meindl|リーダーシップの幻想——成果をリーダーに帰属させる認知的傾向]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

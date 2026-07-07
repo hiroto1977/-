@@ -30,6 +30,15 @@ aliases:
 - [厚生労働省 労働契約法16条 権利濫用に該当する解雇](https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/11_0003.pdf) `公的`
 - [解雇権濫用の法理 解説](https://www.konishilaw.jp/column/7862/) `メディア`
 
+## 関連概念
+- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 語彙が近い
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
+- [[bizlaw-labor-contract-act|労働契約法]] — 語彙が近い
+- [[labor-trial-period|試用期間の労働法上の取扱い]] — 語彙が近い
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 同分野の近傍
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 同分野の近傍
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

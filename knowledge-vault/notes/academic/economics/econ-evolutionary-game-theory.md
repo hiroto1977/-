@@ -30,6 +30,17 @@ aliases:
 - [Evolutionarily stable strategy — Wikipedia](https://en.wikipedia.org/wiki/Evolutionarily_stable_strategy) `リファレンス`
 - [Evolutionarily stable strategy analysis... — Philosophical Transactions of the Royal Society B（査読論文）](https://royalsocietypublishing.org/rstb/article/378/1876/20210496/109181/Evolutionarily-stable-strategy-analysis-and-its) `学術`
 
+## 関連概念
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 語彙が近い
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同じ思想家
+- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
+- [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
+- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

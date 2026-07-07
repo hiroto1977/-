@@ -29,6 +29,16 @@ aliases:
 - [Wikipedia: Time–space compression — Harvey, annihilation of space by time, postmodernity](https://en.wikipedia.org/wiki/Time%E2%80%93space_compression) `リファレンス`
 - [Harvey, D. (1989) The Condition of Postmodernity — Blackwell (WorldCat)](https://www.worldcat.org/oclc/18747380) `リファレンス`
 
+## 関連概念
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 同じ思想家
+- [[econ-fundamental-marxian-theorem-morishima|マルクスの基本定理——利潤の正は労働搾取の正と同値である]] — 同じ思想家
+- [[infosoc-time-space-distanciation-giddens|時空間の遠隔化——社会関係が局所的文脈から引き離され広域に伸張する]] — 同じ思想家
+- [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

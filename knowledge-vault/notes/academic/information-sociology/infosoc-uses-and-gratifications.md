@@ -29,6 +29,13 @@ aliases:
 - [Katz, E., Blumler, J.G. & Gurevitch, M. (1973) Uses and Gratifications Research — Public Opinion Quarterly 37(4)](https://www.jstor.org/stable/2747854) `学術`
 - [Wikipedia: Uses and gratifications theory — active audience, needs typology, Katz/Blumler](https://en.wikipedia.org/wiki/Uses_and_gratifications_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 同じ思想家
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同じ思想家
+- [[infosoc-pseudo-event-boorstin|疑似イベント（ブーアスティン）——報道されるために作られる出来事]] — 同じ思想家
+- [[infosoc-reinforcing-spirals-model|強化スパイラルモデル（相互強化スパイラル・モデル／Reinforcing Spirals Model, RSM）——選択的接触と効果が時間とともに互いを強める動的フィードバック・ループ]] — 同分野の近傍
+- [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

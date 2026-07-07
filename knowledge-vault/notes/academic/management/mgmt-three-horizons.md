@@ -30,6 +30,18 @@ aliases:
 - [Mindtools — McKinsey's Three Horizons of Growth](https://www.mindtools.com/aue0yg1/mckinseys-three-horizons-of-growth/) `リファレンス`
 - [Strategic Management Insight — McKinsey's Three Horizons of Growth Model Explained](https://strategicmanagementinsight.com/tools/three-horizons-growth-model/) `リファレンス`
 
+## 関連概念
+- [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
+- [[mgmt-3c-analysis|3C分析]] — 出典を共有
+- [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
+- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 出典を共有
+- [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有
+- [[mgmt-value-proposition|バリュープロポジション]] — 出典を共有
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 出典を共有
+- [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

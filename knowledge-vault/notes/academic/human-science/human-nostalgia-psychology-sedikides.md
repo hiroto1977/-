@@ -30,6 +30,11 @@ aliases:
 - [Wildschut, T. et al. (2006) Nostalgia: Content, Triggers, Functions — Journal of Personality and Social Psychology](https://doi.org/10.1037/a0024292) `学術`
 - [Wikipedia: Nostalgia — sentimental longing and psychological functions overview](https://en.wikipedia.org/wiki/Nostalgia) `リファレンス`
 
+## 関連概念
+- [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同じ思想家
+- [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同分野の近傍
+- [[human-illusion-of-control|コントロールの錯覚]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

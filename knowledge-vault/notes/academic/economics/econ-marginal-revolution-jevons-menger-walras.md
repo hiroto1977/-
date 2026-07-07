@@ -29,6 +29,18 @@ aliases:
 - [Howey, R. S. (1960) The Rise of the Marginal Utility School — Duke University Press](https://doi.org/10.1215/00182702-32-Supplement-1-185) `学術`
 - [Wikipedia: Marginal revolution — Jevons, Menger, Walras, marginal utility, neoclassical](https://en.wikipedia.org/wiki/Marginal_revolution) `リファレンス`
 
+## 関連概念
+- [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 語彙が近い
+- [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — 語彙が近い
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-double-coincidence-of-wants|欲望の二重の一致]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-walras-law|ワルラスの法則]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

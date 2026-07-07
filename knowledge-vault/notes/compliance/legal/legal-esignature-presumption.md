@@ -30,6 +30,13 @@ aliases:
 - [クラウドサイン 電子署名法 解説](https://www.cloudsign.jp/media/20180803-denshisyomeihou/) `メディア`
 - [マネーフォワード 電子署名法第3条](https://biz.moneyforward.com/contract/basic/22406/) `メディア`
 
+## 関連概念
+- [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
+- [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
+- [[legal-pse|電気用品安全法とPSEマーク制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

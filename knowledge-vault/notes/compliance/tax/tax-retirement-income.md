@@ -30,6 +30,11 @@ aliases:
 - [国税庁 No.2732 退職手当等に対する源泉徴収](https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2732.htm) `公的`
 - [国税庁 暮らしの税情報 退職金と税](https://www.nta.go.jp/publication/pamph/koho/kurashi/html/02_3.htm) `公的`
 
+## 関連概念
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
+- [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 語彙が近い
+- [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

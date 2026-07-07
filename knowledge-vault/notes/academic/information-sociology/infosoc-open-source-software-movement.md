@@ -33,6 +33,18 @@ aliases:
 - [Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press](https://doi.org/10.2307/j.ctt1njknw) `学術`
 - [Wikipedia: Open-source-software movement — OSS運動の歴史と思想の概説](https://en.wikipedia.org/wiki/Open-source-software_movement) `リファレンス`
 
+## 関連概念
+- [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 同じ思想家
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

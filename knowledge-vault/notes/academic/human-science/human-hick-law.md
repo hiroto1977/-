@@ -29,6 +29,13 @@ aliases:
 - [Hick, W. E. (1952) On the Rate of Gain of Information — Quarterly Journal of Experimental Psychology, 4(1), 11–26](https://doi.org/10.1080/17470215208416600) `学術`
 - [Wikipedia: Hick law — Hick (1952) & Hyman (1953), reaction time vs. log of number of choices, information theory, HCI](https://en.wikipedia.org/wiki/Hick%27s_law) `リファレンス`
 
+## 関連概念
+- [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 語彙が近い
+- [[infosoc-information-theory|情報理論（シャノン）]] — 同じ思想家
+- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
+- [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
+- [[human-trolley-problem|トロッコ問題]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

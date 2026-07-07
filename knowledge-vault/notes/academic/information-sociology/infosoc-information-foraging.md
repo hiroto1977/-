@@ -30,6 +30,13 @@ aliases:
 - [Nielsen Norman Group — Information Foraging: A Theory of How People Navigate on the Web](https://www.nngroup.com/articles/information-foraging/) `リファレンス`
 - [Wikipedia — Information foraging (Pirolli & Card, Xerox PARC)](https://en.wikipedia.org/wiki/Information_foraging) `リファレンス`
 
+## 関連概念
+- [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
+- [[mgmt-service-blueprint|サービス・ブループリント]] — 出典を共有
+- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

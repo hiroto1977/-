@@ -30,6 +30,10 @@ aliases:
 - [経済産業省 (2024) データ利活用促進政策の概要](https://www.meti.go.jp/policy/it_policy/data_policy/index.html) `公的`
 - [Wikipedia: Data governance — データガバナンスの概念と法制化動向](https://en.wikipedia.org/wiki/Data_governance) `リファレンス`
 
+## 関連概念
+- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
+- [[bizlaw-data-protection-gdpr-principles|データ保護法とGDPR原則——EU一般データ保護規則の七原則と越境データ流通]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

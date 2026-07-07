@@ -34,6 +34,15 @@ IS-LM分析：政府支出増→IS右シフト→利子率上昇→民間投資�
 - [Wikipedia: Crowding Out — fiscal expansion reducing private investment](https://en.wikipedia.org/wiki/Crowding_out_(economics)) `リファレンス`
 - [Auerbach, A.J. & Gorodnichenko, Y. (2012) Fiscal Multipliers in Recession and Expansion — AER P&P 102(3)](https://doi.org/10.1257/aer.101.5.2083) `学術`
 
+## 関連概念
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 出典を共有
+- [[econ-leverage-cycle|レバレッジ・サイクル]] — 出典を共有
+- [[econ-opportunity-cost|機会費用（opportunity cost）]] — 出典を共有
+- [[econ-price-elasticity-demand|需要の価格弾力性]] — 出典を共有
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同分野の近傍
+- [[econ-stagflation|スタグフレーション]] — 同分野の近傍
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

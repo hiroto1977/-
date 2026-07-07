@@ -34,6 +34,18 @@ aliases:
 - [Maitlis, S. & Christianson, M. (2014). Sensemaking in Organizations: Taking Stock and Moving Forward. Academy of Management Annals, 8(1), 57-125.](https://www.tandfonline.com/doi/abs/10.1080/19416520.2014.873177) `学術`
 - [Weick, K.E. (1993). The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster. Administrative Science Quarterly, 38(4), 628-652.](https://www.jstor.org/stable/2393339) `学術`
 
+## 関連概念
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 語彙が近い
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

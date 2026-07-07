@@ -29,6 +29,14 @@ aliases:
 - [Noelle-Neumann, E. (1974) The Spiral of Silence: A Theory of Public Opinion — Journal of Communication 24(2)](https://doi.org/10.1111/j.1460-2466.1974.tb00367.x) `学術`
 - [Wikipedia: Spiral of silence — Noelle-Neumann, fear of isolation, quasi-statistical sense, hard core](https://en.wikipedia.org/wiki/Spiral_of_silence) `リファレンス`
 
+## 関連概念
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同じ思想家
+- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — 同じ思想家
+- [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

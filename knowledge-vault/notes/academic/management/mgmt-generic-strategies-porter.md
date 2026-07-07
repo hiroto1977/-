@@ -29,6 +29,18 @@ aliases:
 - [Porter, M.E. (1980) Competitive Strategy: Techniques for Analyzing Industries and Competitors — Free Press (WorldCat)](https://www.worldcat.org/oclc/5726400) `学術`
 - [Wikipedia: Porters generic strategies — cost leadership, differentiation, focus, stuck in the middle](https://en.wikipedia.org/wiki/Porter%27s_generic_strategies) `リファレンス`
 
+## 関連概念
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 語彙が近い
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
+- [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [Virno, P. & Hardt, M. eds. (1996) "Radical Thought in Italy: A Potential Politics," University of Minnesota Press（ラザラート「Immaterial Labor」収録論集）](https://www.upress.umn.edu/9780816631179/radical-thought-in-italy/) `学術`
 - [Stanford Encyclopedia of Philosophy — "Exploitation"（搾取論の哲学的文脈・非物質的労働と関連する議論）](https://plato.stanford.edu/entries/exploitation/) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同分野の近傍
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 同分野の近傍
+- [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

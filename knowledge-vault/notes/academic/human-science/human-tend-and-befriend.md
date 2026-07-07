@@ -29,6 +29,18 @@ aliases:
 - [Taylor SE et al. (2000) Biobehavioral responses to stress in females: tend-and-befriend, not fight-or-flight. Psychological Review 107(3):411-429 (PubMed)](https://pubmed.ncbi.nlm.nih.gov/10941275/) `学術`
 - [American Psychological Association, Monitor on Psychology — tending and befriending during stress](https://www.apa.org/monitor/jan04/habit) `リファレンス`
 
+## 関連概念
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
+- [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
+- [[human-tend-and-befriend-taylor|思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

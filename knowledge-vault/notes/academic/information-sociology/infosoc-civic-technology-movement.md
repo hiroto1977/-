@@ -31,6 +31,18 @@ Jennifer Pahlka ／ Tim O'Reilly ／ Micah L. Sifry
 - [O'Reilly: Government as a Platform — MIT Press Innovations, Vol.6 No.1 (2011)](https://direct.mit.edu/itgg/article/6/1/13/9649/Government-as-a-Platform) `学術`
 - [Jennifer Pahlka: Recoding America (Macmillan, 2023)](https://us.macmillan.com/books/9781250266774/recodingamerica/) `メディア`
 
+## 関連概念
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 出典を共有
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 出典を共有
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+- [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
+- [[infosoc-web3|Web3]] — 出典を共有
+- [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 出典を共有
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

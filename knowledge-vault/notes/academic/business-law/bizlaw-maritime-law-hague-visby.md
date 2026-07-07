@@ -29,6 +29,17 @@ CMI（万国海法会） ／ UNCITRAL ／ ウィリアム・テトリー ／ IMO
 - [UNCITRAL — Rotterdam Rules: Convention on Contracts for International Carriage of Goods](https://uncitral.un.org/en/texts/transportgoods/conventions/rotterdam_rules) `公的`
 - [Wikipedia: Hague-Visby Rules — bill of lading, carrier liability, maritime transport](https://en.wikipedia.org/wiki/Hague%E2%80%93Visby_Rules) `リファレンス`
 
+## 関連概念
+- [[bizlaw-arbitration-act|仲裁法]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同じ思想家
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 同じ思想家
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
+- [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 同じ思想家
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 出典を共有
+- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

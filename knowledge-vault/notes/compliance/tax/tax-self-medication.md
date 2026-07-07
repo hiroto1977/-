@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.1131 通常の医療費控除との選択適用](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1131.htm) `公的`
 - [厚生労働省 セルフメディケーション税制について](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000124853.html) `公的`
 
+## 関連概念
+- [[tax-medical-expense-deduction|医療費控除]] — 同分野の近傍
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

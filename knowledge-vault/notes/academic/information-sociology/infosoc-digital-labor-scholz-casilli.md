@@ -30,6 +30,18 @@ aliases:
 - [Casilli, A. (2019) En attendant les robots: Enquete sur le travail du clic — Seuil](https://doi.org/10.1093/oso/9780198799009.001.0001) `学術`
 - [Wikipedia: Digital labor — プラットフォーム経済と労働の再定義](https://en.wikipedia.org/wiki/Digital_labor) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 語彙が近い
+- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同じ思想家
+- [[infosoc-playbour-kucklich|プレイバー——遊びと労働の境界が溶解しゲーム文化で価値を生む無償活動]] — 同じ思想家
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同じ思想家
+- [[infosoc-ghost-work|ゴーストワーク（AI背後の不可視労働）]] — 同じ思想家
+- [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同じ思想家
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

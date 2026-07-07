@@ -30,6 +30,15 @@ aliases:
 - [Javidan, M. et al. (2006) "Conceptualizing and Measuring Cultures — GLOBE" — Journal of World Business](https://doi.org/10.1016/j.jwb.2006.01.006) `学術`
 - [Wikipedia: GLOBE project — 文化次元とリーダーシップの国際比較](https://en.wikipedia.org/wiki/GLOBE_project) `リファレンス`
 
+## 関連概念
+- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同じ思想家
+- [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同じ思想家
+- [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 同じ思想家
+- [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同じ思想家
+- [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — 同分野の近傍
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — 同分野の近傍
+- [[mgmt-responsible-innovation-stilgoe|責任ある研究・イノベーション（RRI）と科学技術ガバナンス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

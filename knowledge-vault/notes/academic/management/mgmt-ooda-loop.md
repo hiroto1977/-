@@ -29,6 +29,11 @@ OODAループは、米空軍大佐で軍事戦略家のジョン・ボイドが�
 - [EBSCO Research Starters — OODA loop (Military History and Science)](https://www.ebsco.com/research-starters/military-history-and-science/ooda-loop) `リファレンス`
 - [Wikipedia — OODA loop](https://en.wikipedia.org/wiki/OODA_loop) `リファレンス`
 
+## 関連概念
+- [[mgmt-affective-events-theory-weiss|感情的出来事理論（ワイス＆クロパンザーノ）]] — 同分野の近傍
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同分野の近傍
+- [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

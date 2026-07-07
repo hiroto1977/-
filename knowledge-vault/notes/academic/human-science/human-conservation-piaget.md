@@ -29,6 +29,14 @@ aliases:
 - [Wikipedia: Piaget — conservation, centration, reversibility, concrete operational stage, horizontal décalage, McGarrigle & Donaldson critique](https://en.wikipedia.org/wiki/Piaget%27s_theory_of_cognitive_development) `リファレンス`
 - [SimplyPsychology: Concrete Operational Stage — conservation tasks (number/mass/volume), decentration, reversibility, ages of acquisition](https://www.simplypsychology.org/concrete-operational.html) `リファレンス`
 
+## 関連概念
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同じ思想家
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 同じ思想家
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 同分野の近傍
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

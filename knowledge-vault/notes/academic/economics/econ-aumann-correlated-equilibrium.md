@@ -29,6 +29,18 @@ aliases:
 - [Aumann, R. J. (1974) Subjectivity and correlation in randomized strategies — Journal of Mathematical Economics](https://doi.org/10.1016/0304-4068(74)90037-8) `学術`
 - [Wikipedia: Correlated equilibrium — Aumann, correlating device, Nash equilibrium generalization](https://en.wikipedia.org/wiki/Correlated_equilibrium) `リファレンス`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同じ思想家
+- [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[econ-schelling-segregation|シェリングの分居モデル]] — 同じ思想家
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

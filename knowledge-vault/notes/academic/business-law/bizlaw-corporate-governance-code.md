@@ -31,6 +31,18 @@ aliases:
 - [金融庁 — コーポレートガバナンス改革に向けた取組みについて](https://www.fsa.go.jp/policy/corporategovernencereform/20240115.html) `公的`
 - [ICLG — Corporate Governance Laws and Regulations: Japan 2025-2026](https://iclg.com/practice-areas/corporate-governance-laws-and-regulations/japan) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
+- [[bizlaw-stewardship-code|日本版スチュワードシップ・コード]] — 同分野の近傍
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

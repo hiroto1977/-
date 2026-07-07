@@ -31,6 +31,11 @@ Yaakov Stern ／ Nikolaos Scarmeas
 - [Stern 2012: Cognitive reserve, Lancet Neurology](https://www.thelancet.com/article/S1474-4422(12)70191-6/fulltext) `学術`
 - [Cognitive Reserve — Wikipedia overview](https://en.wikipedia.org/wiki/Cognitive_reserve) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-reserve-stern|認知予備力（スターン）]] — 語彙が近い
+- [[infosoc-digital-phenotyping-theory|デジタル表現型理論]] — 出典を共有
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

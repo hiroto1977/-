@@ -29,6 +29,13 @@ aliases:
 - [Kuhlthau, C. C. (1991) Inside the search process: Information seeking from the user's perspective — Journal of the ASIS](https://doi.org/10.1002/(SICI)1097-4571(199106)42:5%3C361::AID-ASI6%3E3.0.CO;2-%23) `学術`
 - [Wikipedia: Carol Kuhlthau — Information Search Process, uncertainty principle, zones of intervention](https://en.wikipedia.org/wiki/Carol_Kuhlthau) `リファレンス`
 
+## 関連概念
+- [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]] — 同じ思想家
+- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同じ思想家
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

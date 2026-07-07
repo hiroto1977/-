@@ -30,6 +30,18 @@ aliases:
 - [JSTOR — A Behavioral Agency Model of Managerial Risk Taking, Academy of Management Review 23(1)](https://www.jstor.org/stable/259103) `学術`
 - [Larraza-Kintana, Wiseman, Gómez-Mejía & Welbourne (2007) Disentangling Compensation and Employment Risks Using the Behavioral Agency Model — Strategic Management Journal 28(10): 1001-1019](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.624) `学術`
 
+## 関連概念
+- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
+- [[mgmt-family-business-succession|ファミリービジネスの事業承継と経営継続性の組織論]] — 同じ思想家
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
+- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

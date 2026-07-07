@@ -30,6 +30,16 @@ aliases:
 - [e-Gov法令検索 登録免許税法](https://elaws.e-gov.go.jp/document?lawid=342AC0000000035_20240401_506AC0000000008) `公的`
 - [法務局 登録免許税の計算](https://houmukyoku.moj.go.jp/homu/content/001325693.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 語彙が近い
+- [[bizlaw-companies-act|会社法]] — 出典を共有
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 出典を共有
+- [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 出典を共有
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 同分野の近傍
+- [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

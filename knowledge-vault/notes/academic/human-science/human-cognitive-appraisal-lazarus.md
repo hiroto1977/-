@@ -30,6 +30,16 @@ aliases:
 - [Lazarus (2003) Does the Positive Psychology Movement Have Legs? — Psychological Inquiry](https://doi.org/10.1146/annurev.psych.54.1.93) `学術`
 - [Wikipedia: Appraisal theory — 認知的評価理論とストレス研究](https://en.wikipedia.org/wiki/Appraisal_theory) `リファレンス`
 
+## 関連概念
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 語彙が近い
+- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — 語彙が近い
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 語彙が近い
+- [[human-cbt|認知行動療法（CBT）]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[human-self-expansion-aron|自己拡張モデル（アーロン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

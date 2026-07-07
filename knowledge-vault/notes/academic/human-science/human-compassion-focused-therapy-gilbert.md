@@ -29,6 +29,11 @@ aliases:
 - [Gilbert, P. (2010) Compassion Focused Therapy — Routledge](https://doi.org/10.4324/9780203851197) `学術`
 - [Wikipedia: Compassion-focused therapy — Gilbert, three systems, self-criticism, shame](https://en.wikipedia.org/wiki/Compassion-focused_therapy) `リファレンス`
 
+## 関連概念
+- [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 同じ思想家
+- [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
+- [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

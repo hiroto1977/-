@@ -29,6 +29,12 @@ aliases:
 - [Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton UP](https://doi.org/10.1515/9781400830176) `学術`
 - [Wikipedia: Real options valuation — managerial flexibility](https://en.wikipedia.org/wiki/Real_options_valuation) `リファレンス`
 
+## 関連概念
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-irreversible-investment|不可逆投資と待機のオプション価値——不確実性下で投資を遅らせる合理性]] — 同じ思想家
+- [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — 同じ思想家
+- [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

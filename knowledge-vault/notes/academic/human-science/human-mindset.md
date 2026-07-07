@@ -31,6 +31,11 @@ C.ドゥエックが提唱／固定マインドセット(能力は不変)vs成�
 - [Mueller & Dweck (1998) "Praise for Intelligence Can Undermine Children's Motivation and Performance," JPSP 75:33–52（PubMed PMID 9686450）](https://pubmed.ncbi.nlm.nih.gov/9686450/) `学術`
 - [KQED MindShift — 成長マインドセット介入の効果量・再現性をめぐる対立的メタ分析の解説](https://www.kqed.org/mindshift/60490/does-growth-mindset-matter-the-debate-heats-up-with-dueling-meta-analyses) `メディア`
 
+## 関連概念
+- [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 語彙が近い
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 分野横断
+- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

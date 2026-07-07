@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Quistclose trust — purpose trust, resulting trust, insolvency, Barclays v Quistclose](https://en.wikipedia.org/wiki/Quistclose_trust) `リファレンス`
 - [Wikipedia: Resulting trust — Quistclose, beneficial interest, failure of purpose](https://en.wikipedia.org/wiki/Resulting_trust) `リファレンス`
 
+## 関連概念
+- [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同じ思想家
+- [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
+- [[bizlaw-economic-duress|経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消]] — 同じ思想家
+- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同じ思想家
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
+- [[bizlaw-ebrahimi-westbourne|エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散]] — 同じ思想家
+- [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同じ思想家
+- [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

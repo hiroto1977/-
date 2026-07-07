@@ -30,6 +30,18 @@ aliases:
 - [Bandura (1982) Self-Efficacy Mechanism in Human Agency — American Psychologist](https://doi.org/10.1037/0003-066X.37.2.122) `学術`
 - [Wikipedia: Self-efficacy — バンデューラの自己効力感理論](https://en.wikipedia.org/wiki/Self-efficacy) `リファレンス`
 
+## 関連概念
+- [[human-self-efficacy-theory|自己効力感理論]] — 語彙が近い
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

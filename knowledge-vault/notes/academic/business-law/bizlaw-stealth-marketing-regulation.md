@@ -29,6 +29,11 @@ aliases:
 - [消費者庁 — ステルスマーケティング規制（告示の詳細・適用範囲・ガイドライン・Q&A）](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/) `公的`
 - [消費者庁 — ステマ告示本文PDF（2023年3月28日公表）](https://www.caa.go.jp/notice/assets/representation_cms216_230328_01.pdf) `公的`
 
+## 関連概念
+- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 語彙が近い
+- [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 語彙が近い
+- [[bizlaw-property-liability-rules|財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

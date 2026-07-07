@@ -30,6 +30,18 @@ aliases:
 - [Gilbert, D. T. et al. (1998) "Immune Neglect" — Journal of Personality and Social Psychology](https://doi.org/10.1037/0022-3514.75.3.617) `学術`
 - [Wikipedia: Affective forecasting — 感情予測バイアスの理論と実証](https://en.wikipedia.org/wiki/Affective_forecasting) `リファレンス`
 
+## 関連概念
+- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 語彙が近い
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 語彙が近い
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 語彙が近い
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
+- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同じ思想家
+- [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

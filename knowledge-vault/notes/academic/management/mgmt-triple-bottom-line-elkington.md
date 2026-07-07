@@ -30,6 +30,13 @@ aliases:
 - [GRI (2021) GRI Standards — Global Reporting Initiative](https://www.globalreporting.org/how-to-use-the-gri-standards/) `リファレンス`
 - [Wikipedia: Triple bottom line — TBLの概念と企業サステナビリティ](https://en.wikipedia.org/wiki/Triple_bottom_line) `リファレンス`
 
+## 関連概念
+- [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]] — 語彙が近い
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同分野の近傍
+- [[mgmt-intellectual-capital-edvinsson|知的資本（エドビンソン＆マローン）]] — 同分野の近傍
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

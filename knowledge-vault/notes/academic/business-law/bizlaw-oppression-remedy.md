@@ -31,6 +31,17 @@ Brian R. Cheffins ／ Jeffrey G. MacIntosh ／ Daniel D. Prentice
 - [Wikipedia — Oppression Remedy](https://en.wikipedia.org/wiki/Oppression_remedy) `リファレンス`
 - [Canada Business Corporations Act s.241 — statutory text](https://laws-lois.justice.gc.ca/eng/acts/C-44/section-241.html) `公的`
 
+## 関連概念
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 語彙が近い
+- [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — 同じ思想家
+- [[econ-tying|抱き合わせ販売（tying）]] — 出典を共有
+- [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 出典を共有
+- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

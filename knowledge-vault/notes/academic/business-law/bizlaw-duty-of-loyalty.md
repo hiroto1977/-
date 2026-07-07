@@ -30,6 +30,11 @@ aliases:
 - [市原尚子「取締役等の責任における忠実義務の役割についての再考」（神戸学院大学法学部）— 善管注意義務と忠実義務の関係（同質説・異質説）](https://www.law-kobegakuin.jp/wp/wp-content/uploads/2024/09/%E5%B8%82%E5%8E%9F%E5%85%88%E7%94%9F.pdf) `学術`
 - [スマート会社法 会社法第355条（忠実義務）解説 — 民法644条善管注意義務との関係](https://corporate-law.net/archives/1068) `リファレンス`
 
+## 関連概念
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 語彙が近い
+- [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 語彙が近い
+- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

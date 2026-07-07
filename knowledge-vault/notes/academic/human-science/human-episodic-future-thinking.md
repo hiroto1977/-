@@ -30,6 +30,11 @@ aliases:
 - [Schacter & Addis (2007) The cognitive neuroscience of constructive memory, Phil Trans R Soc B 362(1481), 773-786](https://doi.org/10.1098/rstb.2007.2087) `学術`
 - [Szpunar (2010) Episodic future thought: An emerging concept, Perspectives on Psychological Science 5(2), 142-162](https://doi.org/10.1177/1745691610362350) `学術`
 
+## 関連概念
+- [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同じ思想家
+- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 同分野の近傍
+- [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

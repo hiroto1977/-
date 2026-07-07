@@ -29,6 +29,18 @@ aliases:
 - [Bergmann, B. R. (1974) Occupational Segregation, Wages and Profits When Employers Discriminate by Race or Sex — Eastern Economic Journal, 1(2), 103–110](https://ideas.repec.org/a/eej/eeconj/v1y1974i2p103-110.html) `学術`
 - [Encyclopedia.com: Crowding Hypothesis — Bergmann, occupational segregation, overcrowding, depressed wages](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/crowding-hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-statistical-discrimination-arrow-phelps|統計的差別——不完全情報下で集団属性を代理指標とする合理的差別]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [Wikipedia — Fundamental theorems of welfare economics（第一基本定理）](https://en.wikipedia.org/wiki/Fundamental_theorems_of_welfare_economics) `リファレンス`
 - [Oxford Reference — Fundamental theorems of welfare](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095838553) `学術`
 
+## 関連概念
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[mgmt-juran-trilogy|ジュランの品質トリロジー——計画・管理・改善からなる品質マネジメント]] — 同じ思想家
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同分野の近傍
+- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同分野の近傍
+- [[econ-hayek-knowledge|ハイエクの知識の分散と価格メカニズム]] — 同分野の近傍
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同分野の近傍
+- [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同分野の近傍
+- [[econ-macroprudential-policy|マクロプルーデンス政策]] — 同分野の近傍
+- [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

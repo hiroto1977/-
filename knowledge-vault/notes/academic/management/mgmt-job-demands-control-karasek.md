@@ -29,6 +29,17 @@ aliases:
 - [Karasek, R. A. (1979) Job demands, job decision latitude, and mental strain — Administrative Science Quarterly](https://doi.org/10.2307/2392498) `学術`
 - [Wikipedia: Job demands-control model — strain hypothesis, decision latitude, demand-control-support](https://en.wikipedia.org/wiki/Job_demands-resources_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — 同じ思想家
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
+- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
+- [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

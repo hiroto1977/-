@@ -31,6 +31,14 @@ Egashira Kenjiro ／ Kanda Hideki ／ Nakahigashi Masafumi
 - [Puchniak & Nakahigashi (2012) — A New Era for the Business Judgment Rule in Japan?, SSRN](https://papers.ssrn.com/sol3/Papers.cfm?abstract_id=2257827) `学術`
 - [OIKE LIBRARY — アパマンショップ最高裁判決と経営判断の原則](https://www.oike-law.gr.jp/wp-content/uploads/oike33-01.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同じ思想家
+- [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 同分野の近傍
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 同分野の近傍
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍
+- [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [FDIC Historical Timeline（1933年創設）](https://www.fdic.gov/90years) `公的`
 - [Encyclopaedia Britannica「Deposit insurance」](https://www.britannica.com/money/deposit-insurance) `リファレンス`
 
+## 関連概念
+- [[bizlaw-deposit-insurance-act|預金保険法]] — 分野横断
+- [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 同分野の近傍
+- [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

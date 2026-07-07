@@ -30,6 +30,14 @@ Thompson, Richard F.／Spencer, W. Alden （1966 Psychological Review「Habituat
 - [Rankin, C. H. et al. (2009) "Habituation revisited: An updated and revised description of the behavioral characteristics of habituation", Neurobiology of Learning and Memory 92(2):135–138 — open-access full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC2754195/) `学術`
 - ["Habituation: A History" (Neurobiology of Learning and Memory, 2009) — peer-reviewed review covering Groves & Thompson's dual-process theory and Kandel's Aplysia work (open-access, PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC2714193/) `学術`
 
+## 関連概念
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同じ思想家
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同じ思想家
+- [[human-neuroplasticity-theory|神経可塑性理論]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

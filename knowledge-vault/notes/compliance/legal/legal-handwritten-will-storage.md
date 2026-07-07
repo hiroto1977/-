@@ -30,6 +30,15 @@ aliases:
 - [法務省 自筆証書遺言書保管制度（保管制度利用で検認不要）](https://www.moj.go.jp/MINJI/04.html) `公的`
 - [熊本地方法務局 自筆証書遺言書保管制度（令和2年7月10日開始）](https://houmukyoku.moj.go.jp/kumamoto/page000001_00331.html) `公的`
 
+## 関連概念
+- [[bizlaw-companies-act|会社法]] — 出典を共有
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 出典を共有
+- [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 出典を共有
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
+- [[legal-design-right|意匠権（意匠法）]] — 同分野の近傍
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

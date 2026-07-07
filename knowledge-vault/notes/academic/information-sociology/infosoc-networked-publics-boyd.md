@@ -30,6 +30,18 @@ aliases:
 - [Marwick, A.E. & boyd, d. (2011) I Tweet Honestly, I Tweet Passionately — New Media & Society, 13(1), 114-133](https://doi.org/10.1177/1461444810365313) `学術`
 - [boyd, d. (2008) Taken Out of Context: American Teen Sociality in Networked Publics — PhD dissertation, UC Berkeley](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1344756) `学術`
 
+## 関連概念
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 語彙が近い
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 語彙が近い
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
+- [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Anton, G. (1899) Über die Selbstwahrnehmung der Herderkrankungen des Gehirns（皮質盲の病態失認の原記載）](https://www.worldcat.org/oclc/1781585) `リファレンス`
 - [Wikipedia: Anton syndrome — cortical blindness, anosognosia, confabulation, awareness](https://en.wikipedia.org/wiki/Anton_syndrome) `リファレンス`
 
+## 関連概念
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 同じ思想家
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同じ思想家
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
+- [[human-charles-bonnet-syndrome|シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視]] — 同じ思想家
+- [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[human-fregoli-delusion|フレゴリの錯覚——「変装した同一人物」という妄想的誤認]] — 同じ思想家
+- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Langdon Winner／Evgeny Morozov／Richard Barbrook／Andy Cameron／Fred Turner
 - [Barbrook & Cameron (1996) The Californian Ideology, Science as Culture 6(1):44-72](https://www.tandfonline.com/doi/abs/10.1080/09505439609526455) `学術`
 - [Turner (2006) From Counterculture to Cyberculture, University of Chicago Press](https://press.uchicago.edu/ucp/books/book/chicago/F/bo3773600.html) `学術`
 
+## 関連概念
+- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 同じ思想家
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
+- [[infosoc-slacktivism|スラックティビズム]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [消費者庁 — 製造物責任法（PL法）の解説](https://www.consumer.go.jp/info/pl/) `公的`
 - [Wikipedia: Product liability — strict and negligence liability](https://en.wikipedia.org/wiki/Product_liability) `リファレンス`
 
+## 関連概念
+- [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 同分野の近傍
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

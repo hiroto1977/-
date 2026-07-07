@@ -30,6 +30,12 @@ aliases:
 - [Campbell et al. (2012) Resource Aggregation and Its Implications for Strategic Management — Strategic Management Journal](https://doi.org/10.1002/smj.2116) `学術`
 - [Wikipedia: Human capital — 人的資本理論の経済学・経営学横断的概説](https://en.wikipedia.org/wiki/Human_capital) `リファレンス`
 
+## 関連概念
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同分野の近傍
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
+- [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

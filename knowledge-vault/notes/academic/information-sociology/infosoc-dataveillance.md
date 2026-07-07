@@ -29,6 +29,18 @@ aliases:
 - [Roger A. Clarke, "Information Technology and Dataveillance," Communications of the ACM 31(5):498–512 (1988)](https://dl.acm.org/doi/10.1145/42411.42413) `学術`
 - [Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 語彙が近い
+- [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
+- [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
+- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

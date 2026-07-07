@@ -30,6 +30,18 @@ aliases:
 - [Wray (2015) Modern Money Theory — Palgrave Macmillan](https://doi.org/10.4337/9781800882560) `学術`
 - [Wikipedia: Functional finance — 機能的財政論とMMTの系譜](https://en.wikipedia.org/wiki/Functional_finance) `リファレンス`
 
+## 関連概念
+- [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 同じ思想家
+- [[econ-chartalism-modern-money|シャルタリズムと現代貨幣理論（MMT）]] — 同じ思想家
+- [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同じ思想家
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
+- [[econ-lerner-index-market-power|ラーナー指数（市場支配力の測定）]] — 同じ思想家
+- [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

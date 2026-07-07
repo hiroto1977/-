@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 中央労働委員会 労働組合法](https://www.mhlw.go.jp/churoi/hourei/kumiaihou.html) `公的`
 - [京都府労働委員会 不当労働行為とは（団交拒否）](https://www.pref.kyoto.jp/kyoroi/1316155874200.html) `自治体`
 
+## 関連概念
+- [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 語彙が近い
+- [[subsidy-kyoto|京都府中小企業経営基盤強化推進事業費補助金・奨励金]] — 出典を共有
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

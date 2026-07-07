@@ -29,6 +29,12 @@ aliases:
 - [Myers, D.G. & Lamm, H. (1976) The Group Polarization Phenomenon — Psychological Bulletin 83(4)](https://doi.org/10.1037/0033-2909.83.4.602) `学術`
 - [Wikipedia: Group polarization — Myers & Lamm, risky shift, persuasive arguments, social comparison](https://en.wikipedia.org/wiki/Group_polarization) `リファレンス`
 
+## 関連概念
+- [[human-group-polarization|集団極性化]] — 語彙が近い
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 同じ思想家
+- [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

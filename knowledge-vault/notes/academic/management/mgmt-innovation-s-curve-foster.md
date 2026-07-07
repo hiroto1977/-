@@ -30,6 +30,18 @@ aliases:
 - [Foster (1986) Innovation: The Attacker's Advantage — Harvard Business Review](https://hbr.org/1986/11/innovation-the-attackers-advantage) `メディア`
 - [Wikipedia: S-curve (technology) — 技術Sカーブの概念と応用](https://en.wikipedia.org/wiki/S-curve_(technology)) `リファレンス`
 
+## 関連概念
+- [[mgmt-technology-s-curve|技術のSカーブ]] — 同じ思想家
+- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]] — 同じ思想家
+- [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同じ思想家
+- [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

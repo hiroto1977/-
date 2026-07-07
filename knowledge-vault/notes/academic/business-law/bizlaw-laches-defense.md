@@ -31,6 +31,16 @@ Samuel L. Bray ／ John Norton Pomeroy ／ Dan B. Dobbs
 - [SCA Hygiene v First Quality (2017) — Supreme Court Opinion](https://www.supremecourt.gov/opinions/16pdf/15-927_6j37.pdf) `公的`
 - [National Law Review — Laches in Patent Law (2017)](https://natlawreview.com/article/us-supreme-court-knocks-out-equitable-defense-laches-patent-law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-laches-doctrine|ラッチェス法理]] — 語彙が近い
+- [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 同じ思想家
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
+- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
+- [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 出典を共有
+- [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 出典を共有
+- [[bizlaw-disgorgement-remedy|吐出し命令——不正利得の剥奪的救済と抑止機能]] — 同分野の近傍
+- [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

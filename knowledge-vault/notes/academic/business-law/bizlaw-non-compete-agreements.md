@@ -31,6 +31,18 @@ aliases:
 - [Starr, E., Prescott, J. J. & Bishara, N. (2021) Noncompetes in the U.S. Labor Force — Journal of Law and Economics, 64(1), 53–84](https://epic.org/documents/waddoups-v-dillard-s-inc-1/) `リファレンス`
 - [Wikipedia: Non-compete clause — enforceability, state-by-state variation, and FTC rulemaking](https://en.wikipedia.org/wiki/Non-compete_clause) `リファレンス`
 
+## 関連概念
+- [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 語彙が近い
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

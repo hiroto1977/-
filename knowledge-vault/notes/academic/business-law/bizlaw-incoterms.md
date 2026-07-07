@@ -29,6 +29,11 @@ aliases:
 - [ICC: Incoterms 2020 — standardized trade terms, seller/buyer responsibilities, risk and cost allocation](https://iccwbo.org/business-solutions/incoterms-rules/) `リファレンス`
 - [Wikipedia: Incoterms — ICC, EXW/FOB/CIF/DDP, carriage/insurance/clearance, risk transfer, not title](https://en.wikipedia.org/wiki/Incoterms) `リファレンス`
 
+## 関連概念
+- [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

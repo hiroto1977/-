@@ -30,6 +30,18 @@ aliases:
 - [京都大学OpenCourseWare 松岡久和「民法第2部 第12回 物権法定主義と用益物権」](https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2009_minpou-dai2_12.pdf) `学術`
 - [コトバンク「物権法定主義」（日本大百科全書ほか）](https://kotobank.jp/word/%E7%89%A9%E6%A8%A9%E6%B3%95%E5%AE%9A%E4%B8%BB%E7%BE%A9-125134) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

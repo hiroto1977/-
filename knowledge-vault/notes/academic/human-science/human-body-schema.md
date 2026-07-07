@@ -30,6 +30,12 @@ aliases:
 - [Gallagher (2005) How the Body Shapes the Mind, Oxford University Press](https://global.oup.com/academic/product/how-the-body-shapes-the-mind-9780199271948) `学術`
 - [Gallagher & Cole (1995) Body image and body schema in a deafferented subject, Journal of Mind and Behavior 16(4):369-390](https://www.tandfonline.com/doi/abs/10.1080/09515089508573266) `学術`
 
+## 関連概念
+- [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同分野の近傍
+- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同分野の近傍
+- [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

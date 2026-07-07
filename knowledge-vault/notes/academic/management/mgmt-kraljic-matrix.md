@@ -30,6 +30,11 @@ aliases:
 - [Wikipedia — Kraljic matrix](https://en.wikipedia.org/wiki/Kraljic_matrix) `リファレンス`
 - [Harvard Business Review (1983) — Purchasing Must Become Supply Management (原典)](https://hbr.org/1983/09/purchasing-must-become-supply-management) `メディア`
 
+## 関連概念
+- [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
+- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同分野の近傍
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

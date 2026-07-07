@@ -31,6 +31,12 @@ aliases:
 - [ScienceDirect Topics: Ultimatum Game（提案・拒否率と公平性解釈の学術概説）](https://www.sciencedirect.com/topics/neuroscience/ultimatum-game) `学術`
 - [UC San Diego (Andreoni et al.): subgame perfection と公平性を分離する実験](https://econweb.ucsd.edu/~jandreon/Publications/ExEc%202006.pdf) `学術`
 
+## 関連概念
+- [[econ-dictator-game|独裁者ゲーム]] — 同分野の近傍
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同分野の近傍
+- [[econ-inequity-aversion|不公平回避：利他的懲罰と互恵的公正選好の行動経済学的モデル]] — 同分野の近傍
+- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

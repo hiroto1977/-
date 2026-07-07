@@ -29,6 +29,11 @@ aliases:
 - [Sitkin et al. (2011) "The Paradox of Stretch Goals: Organizations in Pursuit of the Seemingly Impossible," Academy of Management Review 36(3):544–566](https://journals.aom.org/doi/10.5465/amr.2011.61031811) `学術`
 - [Harvard Business Review (2017) "The Stretch Goal Paradox"（ストレッチ目標が有効な条件・逆効果となる条件の実務解説）](https://hbr.org/2017/01/the-stretch-goal-paradox) `メディア`
 
+## 関連概念
+- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
+- [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

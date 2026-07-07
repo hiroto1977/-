@@ -30,6 +30,18 @@ aliases:
 - [Faul & LaBar (2022) “Mood-Congruent Memory Revisited”, Psychological Review（査読論文、Duke University）](https://dibs-web01.vm.duke.edu/labar/pdfs/Faul_and_LaBar_2022.pdf) `学術`
 - [Wikipedia — “Mood congruence”（バウアー連合ネットワーク理論・状態依存との区別）](https://en.wikipedia.org/wiki/Mood_congruence) `リファレンス`
 
+## 関連概念
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 出典を共有
+- [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 出典を共有
+- [[human-spreading-activation|活性化拡散]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

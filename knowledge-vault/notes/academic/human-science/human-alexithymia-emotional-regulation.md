@@ -30,6 +30,11 @@ aliases:
 - [Taylor, Bagby & Parker (2000) The 20-Item Toronto Alexithymia Scale — Journal of Psychosomatic Research](https://doi.org/10.1176/appi.ajp.163.2.198) `学術`
 - [Wikipedia: Alexithymia — アレキシサイミアの概念と研究動向](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`
 
+## 関連概念
+- [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]] — 語彙が近い
+- [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]] — 同じ思想家
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

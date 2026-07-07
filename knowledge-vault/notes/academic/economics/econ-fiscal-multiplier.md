@@ -31,6 +31,13 @@ aliases:
 - [Wikipedia: Fiscal multiplier（mechanism, formula, Kahn 1931 origin）](https://en.wikipedia.org/wiki/Fiscal_multiplier) `リファレンス`
 - [U.S. Congress Joint Economic Committee: Keynesian Tax and Spending Multipliers (2009)](https://www.jec.senate.gov/public/_cache/files/aa63e97b-ad62-4910-884f-54ff1aa67c6f/keynesiantaxandspendingmultipliers.pdf) `公的`
 
+## 関連概念
+- [[econ-fiscal-multiplier-theory|財政乗数理論]] — 語彙が近い
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 語彙が近い
+- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 語彙が近い
+- [[eh-2015|2015年（平成27年）]] — 出典を共有
+- [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

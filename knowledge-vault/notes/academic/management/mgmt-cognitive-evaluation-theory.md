@@ -32,6 +32,12 @@ Edward L. Deci ／ Richard M. Ryan ／ Richard Koestner
 - [Deci, Koestner & Ryan (1999) Meta-Analytic Review of Extrinsic Rewards — Psychological Bulletin 125(6)](https://doi.org/10.1037/0033-2909.125.6.627) `学術`
 - [Wikipedia: Cognitive Evaluation Theory](https://en.wikipedia.org/wiki/Cognitive_evaluation_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 語彙が近い
+- [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 語彙が近い
+- [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同じ思想家
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

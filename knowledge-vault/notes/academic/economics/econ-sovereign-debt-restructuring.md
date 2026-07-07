@@ -30,6 +30,18 @@ aliases:
 - [World Bank Debt — Sovereign Debt Management and Restructuring](https://www.worldbank.org/en/topic/debt) `公的`
 - [Wikipedia: 国家債務 — ソブリン債務危機と再編の解説](https://ja.wikipedia.org/wiki/%E5%9B%BD%E5%AE%B6%E5%80%BA%E5%8B%99) `リファレンス`
 
+## 関連概念
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同じ思想家
+- [[econ-sovereign-debt-crisis-reinhart-rogoff|国家債務危機——ラインハートとロゴフの「今回は違う」と財政持続可能性の実証分析]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

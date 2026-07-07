@@ -30,6 +30,16 @@ aliases:
 - [Hambrick, D. C. & DAveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly](https://doi.org/10.2307/2393470) `学術`
 - [Wikipedia: Organizational decline — stages and turnaround strategies overview](https://en.wikipedia.org/wiki/Organizational_decline) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 語彙が近い
+- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
+- [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 同じ思想家
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
+- [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

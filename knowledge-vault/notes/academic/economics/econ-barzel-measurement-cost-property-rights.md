@@ -30,6 +30,11 @@ aliases:
 - [Barzel, Y. (1989/1997) Economic Analysis of Property Rights, Cambridge University Press](https://www.cambridge.org/core/books/economic-analysis-of-property-rights/6D5E9A3AA67284FD9A12379CA3028D50) `学術`
 - [Wikipedia "Yoram Barzel" — biography, measurement cost theory, property rights economics lineage (Alchian, Cheung, Coase)](https://en.wikipedia.org/wiki/Yoram_Barzel) `リファレンス`
 
+## 関連概念
+- [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

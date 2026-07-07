@@ -31,6 +31,13 @@ Fred Luthans ／ Carolyn M. Youssef-Morgan ／ Bruce J. Avolio
 - [Youssef-Morgan & Luthans (2015) Psychological capital and well-being — Stress and Health](https://doi.org/10.1177/1548051814534492) `学術`
 - [Avey, Reichard, Luthans & Mhatre (2011) Meta-analysis of the impact of positive psychological capital — Human Resource Development Quarterly](https://doi.org/10.1037/a0016998) `学術`
 
+## 関連概念
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 語彙が近い
+- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — 語彙が近い
+- [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 語彙が近い
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 同分野の近傍
+- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

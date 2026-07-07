@@ -30,6 +30,10 @@ aliases:
 - [Encyclopaedia Britannica — Ferdinand Tönnies](https://www.britannica.com/biography/Ferdinand-Tonnies) `リファレンス`
 - [Wikipedia — Gemeinschaft and Gesellschaft (Wesenwille/Kürwille)](https://en.wikipedia.org/wiki/Gemeinschaft_and_Gesellschaft) `リファレンス`
 
+## 関連概念
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

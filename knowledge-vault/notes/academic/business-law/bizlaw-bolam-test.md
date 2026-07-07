@@ -29,6 +29,12 @@ aliases:
 - [Wikipedia: Bolam v Friern Hospital Management Committee [1957] 1 WLR 582 — Bolam test, responsible body of professional opinion, McNair J](https://en.wikipedia.org/wiki/Bolam_v_Friern_Hospital_Management_Committee) `リファレンス`
 - [Wikipedia: Bolitho v City and Hackney HA [1998] — refines Bolam, professional opinion must be logically defensible](https://en.wikipedia.org/wiki/Bolitho_v_City_and_Hackney_HA) `リファレンス`
 
+## 関連概念
+- [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同じ思想家
+- [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

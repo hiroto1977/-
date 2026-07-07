@@ -30,6 +30,16 @@ GE・マッキンゼー・マトリクス（ビジネス・スクリーン）は
 - [Esade Business School — The McKinsey matrix: concept and application](https://www.esade.edu/beyond/en/mckinsey-matrix/) `学術`
 - [Strategic Management Insight — GE-McKinsey Matrix: The Ultimate Guide](https://strategicmanagementinsight.com/tools/ge-mckinsey-matrix/) `リファレンス`
 
+## 関連概念
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
+- [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
+- [[mgmt-value-proposition|バリュープロポジション]] — 出典を共有
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 出典を共有
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
+- [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]] — 同分野の近傍
+- [[mgmt-five-forces|ファイブフォース分析（5つの競争要因）]] — 同分野の近傍
+- [[mgmt-hypercompetition|ハイパーコンペティション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

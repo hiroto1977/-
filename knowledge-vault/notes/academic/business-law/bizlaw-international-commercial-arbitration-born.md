@@ -30,6 +30,18 @@ aliases:
 - [UNCITRAL Model Law on International Commercial Arbitration — 模範仲裁法テキスト](https://uncitral.un.org/en/texts/arbitration/modellaw/commercial_arbitration) `公的`
 - [Wikipedia: International commercial arbitration — 制度・条約・主要仲裁機関](https://en.wikipedia.org/wiki/International_commercial_arbitration) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 語彙が近い
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 語彙が近い
+- [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 語彙が近い
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同じ思想家
+- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 同じ思想家
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
+- [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

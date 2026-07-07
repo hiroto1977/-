@@ -29,6 +29,18 @@ aliases:
 - [Bartlett, F.C. (1932) Remembering: A Study in Experimental and Social Psychology — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/179702) `学術`
 - [Wikipedia: Reconstructive memory — Bartlett, War of the Ghosts, schema, systematic distortion](https://en.wikipedia.org/wiki/Reconstructive_memory) `リファレンス`
 
+## 関連概念
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同じ思想家
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 同じ思想家
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 同じ思想家
+- [[human-spreading-activation|活性化拡散]] — 同じ思想家
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 同じ思想家
+- [[human-false-memory|虚記憶（フォールス・メモリ）]] — 同じ思想家
+- [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同じ思想家
+- [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-weapon-focus-effect|凶器注目効果——武器の存在が目撃者の顔識別を低下させる注意バイアス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

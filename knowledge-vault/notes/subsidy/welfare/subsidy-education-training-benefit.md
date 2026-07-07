@@ -36,6 +36,15 @@ national
 - [ハローワーク 教育訓練給付](https://www.hellowork.mhlw.go.jp/insurance/insurance_education.html) `公的`
 - [厚生労働省 教育訓練給付制度 検索システム](https://www.kyufu.mhlw.go.jp/kyufuportal/) `公的`
 
+## 関連概念
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 出典を共有
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 出典を共有
+- [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 出典を共有
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 出典を共有
+- [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 同分野の近傍
+- [[subsidy-child-allowance|児童手当]] — 同分野の近傍
+- [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

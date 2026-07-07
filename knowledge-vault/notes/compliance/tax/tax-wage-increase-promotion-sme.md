@@ -30,6 +30,12 @@ aliases:
 - [国税庁 No.5927-2 中小企業者等における賃上げ促進税制](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5927-2.htm) `公的`
 - [辻・本郷 令和6年改正 中小企業向け賃上げ促進税制の留意点](https://www.ht-tax.or.jp/topics/r6-chinage-tekiyou/) `メディア`
 
+## 関連概念
+- [[tax-wage-increase-credit|賃上げ促進税制]] — 語彙が近い
+- [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 語彙が近い
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 出典を共有
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

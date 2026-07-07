@@ -31,6 +31,15 @@ Charlotte Hess ／ Elinor Ostrom ／ Brett M. Frischmann ／ Michael J. Madison 
 - [Ostrom Workshop, Indiana University — Knowledge Commons Teaching Tools](https://ostromworkshop.indiana.edu/courses-teaching/teaching-tools/knowledge-commons/index.html) `リファレンス`
 - [Workshop on Governing Knowledge Commons — GKC Publications & Research Framework](https://knowledge-commons.net/publications/gkc/) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — 語彙が近い
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 語彙が近い
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
+- [[econ-new-institutional-economics|新制度派経済学]] — 同じ思想家
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同分野の近傍
+- [[infosoc-dark-web-anonymity-tor|ダークウェブと匿名性技術の社会学——Tor・I2P・暗号通貨の重層的分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

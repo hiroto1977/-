@@ -31,6 +31,10 @@ aliases:
 - [Cascone, K. (2000) The Aesthetics of Failure: "Post-Digital" Tendencies in Contemporary Computer Music — Computer Music Journal, 24(4), 12–18（美学的起源）](https://doi.org/10.1080/14626268.2016.1219003) `学術`
 - [Wikipedia: Post-digital — Cramer, analog revival, post-digital pedagogy, AI content backlash](https://en.wikipedia.org/wiki/Post-digital) `リファレンス`
 
+## 関連概念
+- [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍
+- [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

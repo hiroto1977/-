@@ -29,6 +29,12 @@ aliases:
 - [Whittington, R. (2006) Completing the Practice Turn in Strategy Research — Organization Studies 27(5)](https://doi.org/10.1177/0170840606064101) `学術`
 - [Wikipedia: Strategy as practice — Whittington, praxis/practices/practitioners, micro-level activity](https://en.wikipedia.org/wiki/Strategy_as_practice) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同じ思想家
+- [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 同じ思想家
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同分野の近傍
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Berger, P.G., Ofek, E. & Yermack, D.L. (1997) "Managerial Entrenchment and Capital Structure Decisions," The Journal of Finance 52(4):1411–1438](https://doi.org/10.1111/j.1540-6261.1997.tb01115.x) `学術`
 - [RePEc/IDEAS — Shleifer & Vishny (1989) "Management entrenchment: The case of manager-specific investments," Journal of Financial Economics 25(1):123–139](https://ideas.repec.org/a/eee/jfinec/v25y1989i1p123-139.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — 同じ思想家
+- [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同じ思想家
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同じ思想家
+- [[econ-yardstick-competition-shleifer|ヤードスティック競争——他社の費用を基準とする規制が費用削減を誘発する]] — 同じ思想家
+- [[mgmt-sensemaking|センスメイキング]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

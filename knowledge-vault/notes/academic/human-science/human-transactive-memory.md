@@ -30,6 +30,13 @@ aliases:
 - [Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Journal of Applied Psychology 84(6) 925-937](https://doi.org/10.1037/0021-9010.84.6.925) `学術`
 - [Lewis, K. 2003 Measuring transactive memory systems in the field. Journal of Applied Psychology 88(4) 587-604](https://doi.org/10.1287/orsc.14.5.587.16475) `学術`
 
+## 関連概念
+- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 語彙が近い
+- [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 同じ思想家
+- [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

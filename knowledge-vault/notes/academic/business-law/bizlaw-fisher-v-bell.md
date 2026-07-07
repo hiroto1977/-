@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: Fisher v Bell [1961] 1 QB 394 — invitation to treat, display of goods, Restriction of Offensive Weapons Act, literal interpretation](https://en.wikipedia.org/wiki/Fisher_v_Bell) `リファレンス`
 - [Wikipedia: Invitation to treat — Fisher v Bell, Pharmaceutical Society v Boots, Partridge v Crittenden, offer vs. invitation](https://en.wikipedia.org/wiki/Invitation_to_treat) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

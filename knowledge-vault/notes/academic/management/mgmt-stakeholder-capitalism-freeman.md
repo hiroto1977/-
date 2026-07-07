@@ -29,6 +29,18 @@ aliases:
 - [Freeman, R.E. (1984). Strategic Management: A Stakeholder Approach — Cambridge UP](https://doi.org/10.1017/CBO9780511815768) `学術`
 - [Wikipedia: Stakeholder capitalism — corporate governance](https://en.wikipedia.org/wiki/Stakeholder_capitalism) `リファレンス`
 
+## 関連概念
+- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 語彙が近い
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-presumption-advancement|前渡しの推定——一定の関係では無償移転を贈与と推定する]] — 同じ思想家
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
+- [[econ-financialization-lazonick-shareholder|金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換]] — 同じ思想家
+- [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

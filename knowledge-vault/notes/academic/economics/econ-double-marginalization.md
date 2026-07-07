@@ -30,6 +30,11 @@ aliases:
 - [Linnemer, “Doubling Back on Double Marginalization”, Review of Industrial Organization (Springer, 査読)](https://link.springer.com/article/10.1007/s11151-022-09872-z) `学術`
 - [Spengler, “Vertical Integration and Antitrust Policy”, Journal of Political Economy 58:347–352 (1950)（IDEAS/RePEc）](https://ideas.repec.org/a/ucp/jpolec/v58y1950p347.html) `学術`
 
+## 関連概念
+- [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

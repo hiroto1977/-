@@ -29,6 +29,18 @@ Byrne v. Boadle（1863・2 H&C 722／159 ER 299・法理確立の記念碑的判
 - [Wikipedia, “Byrne v Boadle”（1863・小麦粉樽の落下・res ipsa loquitur 確立・Pollock C.B.・事実関係と法理の概説）](https://en.wikipedia.org/wiki/Byrne_v_Boadle) `リファレンス`
 - [Byrne v. Boadle, 159 Eng. Rep. 299 (Exch. 1863)（Justia 収録の判決原文・Pollock C.B. の判示）](https://law.justia.com/cases/foreign/united-kingdom/159-eng-rep-299-1863.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
+- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 出典を共有
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

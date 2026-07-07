@@ -30,6 +30,12 @@ aliases:
 - [Econlib (Library of Economics and Liberty) — Creative Destruction](https://www.econlib.org/library/Enc/CreativeDestruction.html) `リファレンス`
 - [Britannica — Capitalism, Socialism, and Democracy (work by Schumpeter)](https://www.britannica.com/topic/Capitalism-Socialism-and-Democracy) `リファレンス`
 
+## 関連概念
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 語彙が近い
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 語彙が近い
+- [[econ-regulatory-capture-stigler|規制の虜——規制が被規制産業の利益のために運営される現象]] — 同分野の近傍
+- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

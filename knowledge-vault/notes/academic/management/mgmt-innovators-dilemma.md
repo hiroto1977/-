@@ -31,6 +31,17 @@ C.クリステンセン1997『The Innovator's Dilemma』／持続的イノベー
 - [Wikipedia — The Innovator's Dilemma (1997, Christensen)](https://en.wikipedia.org/wiki/The_Innovator%27s_Dilemma) `リファレンス`
 - [Christensen Institute — Disruptive Innovation Theory](https://www.christenseninstitute.org/theory/disruptive-innovation/) `リファレンス`
 
+## 関連概念
+- [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 出典を共有
+- [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
+- [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 出典を共有
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 出典を共有
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-stakeholder-salience-mitchell-agle-wood|ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位]] — 同分野の近傍
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同分野の近傍
+- [[mgmt-crossing-the-chasm|キャズム理論（Crossing the Chasm）]] — 同分野の近傍
+- [[mgmt-competitive-positions|競争地位別戦略（リーダー・チャレンジャー・フォロワー・ニッチャー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

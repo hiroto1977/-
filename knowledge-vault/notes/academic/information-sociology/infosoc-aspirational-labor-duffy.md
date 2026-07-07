@@ -30,6 +30,16 @@ Brooke Erin Duffy（アスピレーショナル労働の提唱者、コーネル
 - [Duffy, Brooke Erin (2017). (Not) Getting Paid to Do What You Love: Gender, Social Media, and Aspirational Work. New Haven: Yale University Press, ISBN 9780300218176（Yale Scholarship Online／Oxford Academic 収録）](https://academic.oup.com/yale-scholarship-online/book/14420) `学術`
 - [Yale University Press 書誌ページ：Brooke Erin Duffy, (Not) Getting Paid to Do What You Love: Gender, Social Media, and Aspirational Work（2017年）](https://yalebooks.yale.edu/book/9780300227666/not-getting-paid-to-do-what-you-love/) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 出典を共有
+- [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 出典を共有
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

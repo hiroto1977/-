@@ -36,6 +36,12 @@ national
 - [新潟労働局 職業訓練実施計画届 様式](https://jsite.mhlw.go.jp/niigata-roudoukyoku/content/contents/2-1_keikakutodokejinzaiikusei.docx) `公的`
 - [人材開発支援助成金 コース・申請の流れ 解説](https://www.manpowergroup.jp/client/manpowerclip/hrtraining/subsidy3.html) `メディア`
 
+## 関連概念
+- [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
+- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 出典を共有
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 出典を共有
+- [[subsidy-career-up|キャリアアップ助成金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

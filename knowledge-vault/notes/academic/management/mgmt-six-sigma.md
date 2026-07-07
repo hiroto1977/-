@@ -31,6 +31,16 @@ aliases:
 - [Wikipedia — Six Sigma（1986年モトローラ／ビル・スミス起源、1.5σシフト、GE/ウェルチ1995年展開）](https://en.wikipedia.org/wiki/Six_Sigma) `リファレンス`
 - [Lean Enterprise Institute — Six Sigma（3.4 DPMO・DMAIC・ばらつき削減）](https://www.lean.org/lexicon-terms/six-sigma/) `リファレンス`
 
+## 関連概念
+- [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]] — 出典を共有
+- [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 出典を共有
+- [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]] — 出典を共有
+- [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
+- [[mgmt-double-diamond|ダブルダイヤモンド（デザインプロセス）]] — 同分野の近傍
+- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

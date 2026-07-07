@@ -29,6 +29,10 @@ aliases:
 - [Burgelman & Grove (1996) "Strategic Dissonance", California Management Review 38(2), 8–28](https://journals.sagepub.com/doi/abs/10.2307/41165830) `学術`
 - [Encyclopaedia Britannica Money — Andrew S. Grove（経歴・戦略的転換点の概要）](https://www.britannica.com/money/Andrew-S-Grove) `リファレンス`
 
+## 関連概念
+- [[mgmt-coopetition|コーペティション（協調的競争）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

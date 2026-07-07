@@ -30,6 +30,13 @@ H.H.ゴッセン（1854、第一法則）／限界革命: ジェヴォンズ(187
 - [Encyclopaedia Britannica — Diamond-water paradox（価値の逆説の限界効用による解決）](https://www.britannica.com/topic/diamond-water-paradox) `リファレンス`
 - [Wikipedia — Gossen’s laws（第一法則=限界効用逓減・第二法則=均等）](https://en.wikipedia.org/wiki/Gossen%27s_laws) `リファレンス`
 
+## 関連概念
+- [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 語彙が近い
+- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 語彙が近い
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同分野の近傍
+- [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
+- [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

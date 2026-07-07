@@ -30,6 +30,10 @@ Robert Desimone ／ John Duncan ／ Jeffrey Moran ／ John H. R. Maunsell
 - [Desimone, R., & Duncan, J. (1995). Neural mechanisms of selective visual attention. Annual Review of Neuroscience, 18(1), 193–222. doi:10.1146/annurev.ne.18.030195.001205](https://doi.org/10.1146/annurev.ne.18.030195.001205) `学術`
 - [Wikipedia「Biased competition theory」— Desimone & Duncan (1995) によるバイアス付き競合理論の概説、Moran & Desimone (1985) のV4/IT単一細胞記録、トップダウン変調を含む（2026年6月閲覧）](https://en.wikipedia.org/wiki/Biased_competition_theory) `リファレンス`
 
+## 関連概念
+- [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

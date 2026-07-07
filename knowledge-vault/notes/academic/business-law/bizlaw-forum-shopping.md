@@ -29,6 +29,11 @@ Gulf Oil Corp. v. Gilbert（1947, 米国法上の管轄権放棄法理の確立�
 - [Gulf Oil Corp. v. Gilbert, 330 U.S. 501 (1947) — US Supreme Court Opinion](https://supreme.justia.com/cases/federal/us/330/501/) `リファレンス`
 - [Juenger (1989) Forum Shopping, Domestic and International — Tulane Law Review 63(3)](https://www.tulanelawreview.org/pub/volume63/issue3/forum-shopping-domestic-and-international) `学術`
 
+## 関連概念
+- [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

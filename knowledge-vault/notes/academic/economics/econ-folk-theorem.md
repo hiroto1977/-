@@ -30,6 +30,18 @@ James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric M
 - [Wikipedia「Folk theorem (game theory)」（定義・Friedman 1971・名称の由来）](https://en.wikipedia.org/wiki/Folk_theorem_(game_theory)) `リファレンス`
 - [Halpern & Pass, “The Truth Behind the Myth of the Folk Theorem”（Cornell・個別合理性とミニマックス）](https://www.cs.cornell.edu/home/halpern/papers/itcs.pdf) `学術`
 
+## 関連概念
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
+- [[econ-all-pay-auction|オールペイ・オークション]] — 出典を共有
+- [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ OECD移転価格ガイドライン（初版1979年、累次改訂）／アーム
 - [OECD — Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations（アーム・レングス原則・国際標準ガイドライン）](https://www.oecd.org/tax/transfer-pricing/oecd-transfer-pricing-guidelines-for-multinational-enterprises-and-tax-administrations-20769717.htm) `公的`
 - [国税庁 — 移転価格税制の概要（租税特別措置法66条の4・独立企業間価格の算定方法）](https://www.nta.go.jp/taxes/shiraberu/kokusai/ibenkikaku/01.htm) `公的`
 
+## 関連概念
+- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — 語彙が近い
+- [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

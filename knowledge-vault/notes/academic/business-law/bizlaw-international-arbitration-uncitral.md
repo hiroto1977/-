@@ -29,6 +29,18 @@ UNCITRAL ／ ピーター・サンダース ／ ICSID ／ ゲイリー・ボー�
 - [UNCITRAL — International Commercial Arbitration: Model Law & Rules](https://uncitral.un.org/en/texts/arbitration) `公的`
 - [Wikipedia: International arbitration — New York Convention, UNCITRAL, ICC, ICSID](https://en.wikipedia.org/wiki/International_arbitration) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 語彙が近い
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 語彙が近い
+- [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 語彙が近い
+- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 語彙が近い
+- [[bizlaw-arbitration-act|仲裁法]] — 同じ思想家
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同じ思想家
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 同じ思想家
+- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

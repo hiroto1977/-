@@ -29,6 +29,11 @@ Anthony B. Atkinson（Journal of Economic Theory 2(3), 1970, アトキンソン�
 - [Atkinson (1970) On the Measurement of Inequality — Journal of Economic Theory 2(3), pp.244-263](https://doi.org/10.1016/0022-0531(70)90039-6) `学術`
 - [IDEAS/RePEc entry — On the Measurement of Inequality](https://ideas.repec.org/a/eee/jetheo/v2y1970i3p244-263.html) `学術`
 
+## 関連概念
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同分野の近傍
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

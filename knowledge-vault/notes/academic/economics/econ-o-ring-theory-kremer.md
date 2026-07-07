@@ -29,6 +29,18 @@ aliases:
 - [Kremer, M. (1993) The O-ring theory of economic development — Quarterly Journal of Economics](https://doi.org/10.2307/2118400) `学術`
 - [Wikipedia: O-ring theory of economic development — multiplicative production, skill complementarity, matching](https://en.wikipedia.org/wiki/O-ring_theory_of_economic_development) `リファレンス`
 
+## 関連概念
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-superstar-economics|スーパースターの経済学]] — 同じ思想家
+- [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
+- [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

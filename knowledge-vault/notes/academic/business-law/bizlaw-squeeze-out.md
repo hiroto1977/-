@@ -29,6 +29,12 @@ aliases:
 - [e-Gov法令検索 会社法（第179条〜179条の10 特別支配株主の株式等売渡請求）](https://laws.e-gov.go.jp/law/417AC0000000086) `公的`
 - [BUSINESS LAWYERS — 株式等売渡請求とは？法改正や実務の動向を踏まえて解説](https://www.businesslawyers.jp/articles/6) `リファレンス`
 
+## 関連概念
+- [[legal-share-types|会社法における種類株式]] — 語彙が近い
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同分野の近傍
+- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 同分野の近傍
+- [[bizlaw-provider-liability|プロバイダ責任制限法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

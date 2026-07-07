@@ -29,6 +29,18 @@ aliases:
 - [Krugman, P. (1998) Its Baaack: Japans Slump and the Return of the Liquidity Trap — Brookings Papers 1998(2)](https://www.brookings.edu/articles/its-baaack-japans-slump-and-the-return-of-the-liquidity-trap/) `学術`
 - [Wikipedia: Liquidity trap — Keynes, zero lower bound, monetary policy ineffectiveness](https://en.wikipedia.org/wiki/Liquidity_trap) `リファレンス`
 
+## 関連概念
+- [[econ-liquidity-trap|流動性のわな]] — 語彙が近い
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

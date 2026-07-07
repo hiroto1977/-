@@ -30,6 +30,17 @@ aliases:
 - [Encyclopaedia Britannica — Income effect](https://www.britannica.com/topic/income-effect) `リファレンス`
 - [LibreTexts, Intermediate Microeconomics — Income and Substitution Effects（Hicks/Slutsky）](https://socialsci.libretexts.org/Bookshelves/Economics/Intermediate_Microeconomics_with_Excel_(Barreto)/04:_Compartive_Statics/4.06:_Income_and_Substitution_Effects) `学術`
 
+## 関連概念
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 同じ思想家
+- [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 出典を共有
+- [[econ-rybczynski|リブチンスキー定理]] — 出典を共有
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 出典を共有
+- [[infosoc-mcdonaldization|マクドナルド化]] — 出典を共有
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 出典を共有
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 出典を共有
+- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

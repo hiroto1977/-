@@ -29,6 +29,18 @@ aliases:
 - [Black & Scholes (1973) The Pricing of Options and Corporate Liabilities — Journal of Political Economy 81(3)](https://doi.org/10.1086/260062) `学術`
 - [Wikipedia: Black-Scholes model — option pricing, risk-neutral measure, volatility smile, Greeks](https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model) `リファレンス`
 
+## 関連概念
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[mgmt-real-options-theory|リアル・オプション理論]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-siegel-paradox-exchange|シーゲルのパラドックス——為替の期待は両通貨で同時に不偏たりえない]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

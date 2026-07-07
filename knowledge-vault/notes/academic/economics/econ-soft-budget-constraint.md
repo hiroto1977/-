@@ -29,6 +29,11 @@ aliases:
 - [Library of Economics and Liberty (Econlib) — Soft Budget Constraint（コルナイの定義・社会主義および市場経済への応用）](https://www.econlib.org/library/Enc/SoftBudgetConstraint.html) `リファレンス`
 - [IMF Working Paper WP/99/13 — "Soft Budget Constraint"（Kornai, Maskin & Roland）](https://www.imf.org/external/pubs/ft/wp/1999/wp9913.pdf) `公的`
 
+## 関連概念
+- [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同分野の近傍
+- [[econ-anticommons|アンチコモンズの悲劇]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ Stanislas Dehaene（スタニスラス・ドゥアンヌ・1993年論文の筆�
 - [Dehaene, S., Bossini, S., & Giraux, P. (1993). The Mental Representation of Parity and Number Magnitude. Journal of Experimental Psychology: General, 122(3), 371-396.](https://doi.org/10.1037/0096-3445.122.3.371) `学術`
 - [Wikipedia, “Numerical cognition”（SNARC 効果・心的数直線・数量の空間表象と読字方向依存の概説）](https://en.wikipedia.org/wiki/Numerical_cognition) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

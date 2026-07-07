@@ -29,6 +29,14 @@ aliases:
 - [Bass (1985) Leadership and Performance Beyond Expectations — Free Press (cited in AMR 2004)](https://doi.org/10.2307/256939) `学術`
 - [Wikipedia: Transformational leadership — Bass, Burns, 4Is, MLQ, transactional, charisma](https://en.wikipedia.org/wiki/Transformational_leadership) `リファレンス`
 
+## 関連概念
+- [[mgmt-transformational-leadership|変革型リーダーシップ]] — 語彙が近い
+- [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 同じ思想家
+- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
+- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同じ思想家
+- [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同分野の近傍
+- [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

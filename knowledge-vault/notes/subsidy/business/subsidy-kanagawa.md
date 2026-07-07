@@ -36,6 +36,13 @@ prefecture
 - [神奈川県 補助金公募開始 プレスリリース](https://www.pref.kanagawa.jp/docs/m2w/prs/r2625041.html) `自治体`
 - [神奈川産業振興センター 補助金・助成金のご案内](https://www.kipc.or.jp/topics/information/subgrants/) `運営団体`
 
+## 関連概念
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 語彙が近い
+- [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い
+- [[subsidy-single-parent-welfare-loan|母子父子寡婦福祉資金貸付金]] — 出典を共有
+- [[subsidy-ishikawa|小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）]] — 同分野の近傍
+- [[subsidy-kyoto|京都府中小企業経営基盤強化推進事業費補助金・奨励金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

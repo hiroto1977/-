@@ -29,6 +29,18 @@ aliases:
 - [Gillespie, T. (2010) The politics of "platforms" — New Media & Society 12(3), 347–364（プラットフォーム・ガバナンス論の原論文）](https://doi.org/10.1080/1369118x.2010.508516) `学術`
 - [Wikipedia: Content moderation — プラットフォームのコンテンツモデレーションの概説](https://en.wikipedia.org/wiki/Content_moderation) `リファレンス`
 
+## 関連概念
+- [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 語彙が近い
+- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同じ思想家
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同じ思想家
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
+- [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — 同じ思想家
+- [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

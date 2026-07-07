@@ -30,6 +30,16 @@ Web3（ウェブ3）は、ブロックチェーンやトークン経済・暗号
 - [Exploring Web3 From the View of Blockchain (arXiv 2206.08821)](https://arxiv.org/pdf/2206.08821) `学術`
 - [Wikipedia — Web3 (Gavin Wood 2014 coinage, criticism)](https://en.wikipedia.org/wiki/Web3) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 出典を共有
+- [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
+- [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 同分野の近傍
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同分野の近傍
+- [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]] — 同分野の近傍
+- [[infosoc-moores-law|ムーアの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

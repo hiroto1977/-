@@ -29,6 +29,14 @@ aliases:
 - [Harlow, H. F. (1958) The Nature of Love — American Psychologist, 13(12), 673–685](https://doi.org/10.1037/h0047884) `学術`
 - [Wikipedia: Harry Harlow — rhesus monkey surrogate-mother experiments, contact comfort, attachment, The Nature of Love (1958)](https://en.wikipedia.org/wiki/Harry_Harlow) `リファレンス`
 
+## 関連概念
+- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同じ思想家
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
+- [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同じ思想家
+- [[human-still-face-tronick|スティルフェイス実験（トロニック）——無表情の母親と乳児の情動調整]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

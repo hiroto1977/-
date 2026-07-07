@@ -30,6 +30,18 @@ aliases:
 - [UK Contracts (Rights of Third Parties) Act 1999 — statutory third-party beneficiary rights](https://www.legislation.gov.uk/ukpga/1999/31) `公的`
 - [Wikipedia: Third-party beneficiary — contractual rights for non-parties overview](https://en.wikipedia.org/wiki/Third-party_beneficiary) `リファレンス`
 
+## 関連概念
+- [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 語彙が近い
+- [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 語彙が近い
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家
+- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
+- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

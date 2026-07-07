@@ -29,6 +29,17 @@ aliases:
 - [Wikipedia: The Gift (Mauss) — three obligations, total social fact, hau, potlatch, kula](https://en.wikipedia.org/wiki/The_Gift_(essay)) `リファレンス`
 - [Mauss, M. (1925) Essai sur le don / The Gift — translated W.D. Halls (WorldCat)](https://www.worldcat.org/oclc/26263200) `リファレンス`
 
+## 関連概念
+- [[infosoc-gift-economy|贈与経済（贈与論）]] — 語彙が近い
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
+- [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
+- [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
+- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — 同分野の近傍
+- [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

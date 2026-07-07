@@ -29,6 +29,15 @@ aliases:
 - [Wikipedia: Excitation-transfer theory — Zillmann (1971), residual sympathetic arousal misattributed to a later stimulus, builds on Schachter two-factor theory](https://en.wikipedia.org/wiki/Excitation-transfer_theory) `リファレンス`
 - [Cummins, R. G. Excitation Transfer Theory — The International Encyclopedia of Media Psychology (Wiley): residual arousal, misattribution, media-effects applications](https://onlinelibrary.wiley.com/doi/10.1002/9781119011071.iemp0055) `学術`
 
+## 関連概念
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[human-two-factor-emotion|情動二要因理論]] — 同じ思想家
+- [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
+- [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
+- [[human-motion-aftereffect-waterfall|運動残効（滝の錯視）——一方向の運動を見続けた後に逆向きの運動が見える]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

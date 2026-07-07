@@ -30,6 +30,13 @@ aliases:
 - [Hannan, M. T. & Carroll, G. R. (1992) Dynamics of Organizational Populations — Oxford University Press](https://doi.org/10.1093/oso/9780195071917.001.0001) `学術`
 - [Wikipedia: Organizational ecology — population-level analysis of organizational dynamics overview](https://en.wikipedia.org/wiki/Organizational_ecology) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同じ思想家
+- [[mgmt-resource-munificence-aldrich|資源余剰性と組織生態学（アルドリッチ）]] — 同じ思想家
+- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同分野の近傍
+- [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同分野の近傍
+- [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

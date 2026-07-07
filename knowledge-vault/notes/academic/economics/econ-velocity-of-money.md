@@ -29,6 +29,18 @@ aliases:
 - [Fisher, I. (1911) The Purchasing Power of Money — Macmillan; equation of exchange (WorldCat)](https://www.worldcat.org/oclc/1297455) `学術`
 - [Wikipedia: Velocity of money — equation of exchange, quantity theory, income velocity](https://en.wikipedia.org/wiki/Velocity_of_money) `リファレンス`
 
+## 関連概念
+- [[econ-velocity-of-money-fisher-equation|貨幣数量説とフィッシャーの交換方程式——MV=PTから現代金融政策への展開]] — 語彙が近い
+- [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 語彙が近い
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]] — 同じ思想家
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

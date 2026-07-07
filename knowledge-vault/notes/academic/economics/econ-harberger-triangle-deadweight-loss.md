@@ -29,6 +29,18 @@ aliases:
 - [Harberger, A. C. (1954) Monopoly and Resource Allocation — American Economic Review](https://doi.org/10.1257/aer.44.2.77) `学術`
 - [Wikipedia: Deadweight loss — Harberger triangle, monopoly, taxation, consumer surplus](https://en.wikipedia.org/wiki/Deadweight_loss) `リファレンス`
 
+## 関連概念
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 語彙が近い
+- [[econ-deadweight-loss|死荷重（死重損失・超過負担）]] — 語彙が近い
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同じ思想家
+- [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

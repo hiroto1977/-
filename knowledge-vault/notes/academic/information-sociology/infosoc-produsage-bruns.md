@@ -29,6 +29,18 @@ aliases:
 - [Bruns, A. (2008) Blogs, Wikipedia, Second Life, and Beyond: From Production to Produsage — Peter Lang (WorldCat)](https://www.worldcat.org/oclc/166358264) `学術`
 - [Wikipedia: Produsage — Bruns, producer/user, open participation, heterarchy, unfinished artifacts, prosumer](https://en.wikipedia.org/wiki/Produsage) `リファレンス`
 
+## 関連概念
+- [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

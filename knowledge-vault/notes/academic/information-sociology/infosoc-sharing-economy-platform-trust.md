@@ -29,6 +29,14 @@ aliases:
 - [Schor, J.B. (2017). Does the sharing economy increase inequality? — Cambridge Journal of Regions](https://doi.org/10.1177/0263276417732554) `学術`
 - [Wikipedia: Sharing economy — platform trust sociology](https://en.wikipedia.org/wiki/Sharing_economy) `リファレンス`
 
+## 関連概念
+- [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 同じ思想家
+- [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同じ思想家
+- [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
+- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同じ思想家
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
+- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

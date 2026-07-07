@@ -29,6 +29,15 @@ aliases:
 - [Elliot, A.J. & McGregor, H.A. (2001) A 2×2 Achievement Goal Framework — JPSP 80(3)](https://doi.org/10.1037/0022-3514.80.3.501) `学術`
 - [Wikipedia: Approach-avoidance — Elliot, 2x2 achievement goals, BAS/BIS, Lewin/Atkinson](https://en.wikipedia.org/wiki/Approach-avoidance_conflict) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 同じ思想家
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
+- [[human-hedonic-adaptation|快楽順応]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia — The Structural Transformation of the Public Sphere（1962）](https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere) `リファレンス`
 - [MIT Press — The Structural Transformation of the Public Sphere（英訳版書誌）](https://mitpress.mit.edu/9780262581080/the-structural-transformation-of-the-public-sphere/) `学術`
 
+## 関連概念
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
+- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同じ思想家
+- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
+- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

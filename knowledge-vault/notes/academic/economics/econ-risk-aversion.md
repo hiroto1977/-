@@ -30,6 +30,12 @@ John W. Pratt（1964「Risk Aversion in the Small and in the Large」）と Kenn
 - [Princeton University Press, “Risk Aversion”（教科書サンプル章、確実性等価・リスクプレミアム・アロー＝プラット測度）](https://assets.press.princeton.edu/chapters/s7945.pdf) `学術`
 - [Journal of Financial and Quantitative Analysis (Cambridge Core), “Measures of Risk Aversion: Some Clarifying Comments”](https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis/article/abs/measures-of-risk-aversion-some-clarifying-comments/003B53B989623ECA8128543AE488CE90) `学術`
 
+## 関連概念
+- [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 出典を共有
+- [[econ-price-discrimination|価格差別（price discrimination）]] — 出典を共有
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同分野の近傍
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

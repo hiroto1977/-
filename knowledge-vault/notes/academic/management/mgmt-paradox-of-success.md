@@ -30,6 +30,18 @@ James G. March／Dorothy Leonard-Barton／Danny Miller
 - [Leonard-Barton (1992) Core Capabilities and Core Rigidities, Strategic Management Journal 13(S):111-125](https://doi.org/10.1002/smj.4250131009) `学術`
 - [Levitt & March (1988) Organizational Learning, Annual Review of Sociology 14:319-338](https://doi.org/10.1146/annurev.so.14.080188.001535) `学術`
 
+## 関連概念
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 語彙が近い
+- [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

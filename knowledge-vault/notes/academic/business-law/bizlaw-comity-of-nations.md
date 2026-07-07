@@ -29,6 +29,12 @@ Justice Horace Gray（Hilton v. Guyot, 159 U.S. 113, 1895 — 礼譲の古典的
 - [Hilton v. Guyot, 159 U.S. 113 (1895) — US Supreme Court](https://supreme.justia.com/cases/federal/us/159/113/) `公的`
 - [Hartford Fire Insurance Co. v. California, 509 U.S. 764 (1993) — Cornell LII](https://www.law.cornell.edu/supremecourt/text/509/764) `公的`
 
+## 関連概念
+- [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — 同じ思想家
+- [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

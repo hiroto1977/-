@@ -30,6 +30,10 @@ aliases:
 - [Hänninen, R., Taipale, S. & Luostari, R. (2021) Exploring heterogeneous ICT use among older adults: The warm experts' perspective — New Media & Society 23(6)](https://doi.org/10.1177/1461444820917353) `学術`
 - [Martínez, C. & Olsson, T. (2022) The warm expert — a warm teacher? Learning about digital media in intergenerational interaction — Convergence 28(6)](https://doi.org/10.1177/13548565211070409) `学術`
 
+## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 同分野の近傍
+- [[infosoc-time-space-distanciation-giddens|時空間の遠隔化——社会関係が局所的文脈から引き離され広域に伸張する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

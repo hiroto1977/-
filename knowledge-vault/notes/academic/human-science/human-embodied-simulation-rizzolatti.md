@@ -29,6 +29,12 @@ aliases:
 - [Rizzolatti, G. et al. (1996). Premotor cortex and the recognition of motor actions — Cognitive Brain Research](https://doi.org/10.1016/0926-6410(96)00039-2) `学術`
 - [Wikipedia: Mirror neuron — embodied simulation](https://en.wikipedia.org/wiki/Mirror_neuron) `リファレンス`
 
+## 関連概念
+- [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — 語彙が近い
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 語彙が近い
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 同じ思想家
+- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

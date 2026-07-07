@@ -31,6 +31,10 @@ aliases:
 - [Bird, G. & Cook, R. (2013) Mixed Emotions: The Contribution of Alexithymia to the Emotional Symptoms of Autism — Translational Psychiatry, 3(7), e285（ASDとアレキシサイミアの関係）](https://doi.org/10.1016/j.concog.2010.11.001) `学術`
 - [Wikipedia: Alexithymia — Sifneos, TAS-20, emotional regulation, ASD, psychosomatic](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`
 
+## 関連概念
+- [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]] — 語彙が近い
+- [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

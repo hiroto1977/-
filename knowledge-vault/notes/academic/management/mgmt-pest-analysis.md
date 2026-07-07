@@ -31,6 +31,10 @@ Politics・Economy・Society・Technologyのマクロ環境分析／SWOTの外�
 - [Washington State University Libraries LibGuide「PESTEL Analysis」（外部環境分析ツールの解説）](https://libguides.libraries.wsu.edu/c.php?g=294263&p=4358409) `学術`
 - [Wikipedia「PEST analysis」（アギュラー1967/ETPS起源説と帰属の議論）](https://en.wikipedia.org/wiki/PEST_analysis) `リファレンス`
 
+## 関連概念
+- [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 語彙が近い
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

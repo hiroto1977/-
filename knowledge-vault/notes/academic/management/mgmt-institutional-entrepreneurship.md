@@ -29,6 +29,10 @@ Paul J. DiMaggio（1988, Institutional Patterns and Organizations — 制度的�
 - [Battilana, Leca & Boxenbaum (2009) How Actors Change Institutions — Academy of Management Annals 3(1), pp.65-107](https://journals.aom.org/doi/10.5465/19416520903053598) `学術`
 - [Seo & Creed (2002) Institutional Contradictions, Praxis, and Institutional Change — AMR 27(2), pp.222-247](https://journals.aom.org/doi/abs/10.5465/amr.2002.6588004) `学術`
 
+## 関連概念
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

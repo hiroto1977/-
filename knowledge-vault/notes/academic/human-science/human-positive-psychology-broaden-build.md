@@ -31,6 +31,14 @@ aliases:
 - [Seligman & Csikszentmihalyi2000 — Positive Psychology: An Introduction, American Psychologist 55(1):5-14](https://doi.org/10.1037/0003-066X.55.1.5) `学術`
 - [Seligman2011 — Flourish: A Visionary New Understanding of Happiness and Well-being, Free Press ISBN:9781439190760](https://www.simonandschuster.com/books/Flourish/Martin-E-P-Seligman/9781439190760) `リファレンス`
 
+## 関連概念
+- [[human-positive-psychology|ポジティブ心理学]] — 語彙が近い
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 分野横断
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 出典を共有
+- [[human-flow-state|フロー状態（Flow State）]] — 同分野の近傍
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

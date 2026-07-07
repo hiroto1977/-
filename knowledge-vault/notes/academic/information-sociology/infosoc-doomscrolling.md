@@ -30,6 +30,17 @@ aliases:
 - [Sharma et al., Doomscrolling Scale (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9580444/) `学術`
 - [Journalism Studies — Doomscrolling, Monitoring and Avoiding (COVID-19)](https://www.tandfonline.com/doi/full/10.1080/1461670X.2021.1952475) `学術`
 
+## 関連概念
+- [[econ-stagflation|スタグフレーション]] — 出典を共有
+- [[infosoc-astroturfing|アストロターフィング]] — 出典を共有
+- [[infosoc-clickbait|クリックベイト（釣り見出し）]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同分野の近傍
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同分野の近傍
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

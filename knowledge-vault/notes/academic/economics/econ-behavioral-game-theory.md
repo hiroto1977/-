@@ -31,6 +31,18 @@ aliases:
 - [Fehr & Gächter 2000 — Cooperation and Punishment in Public Goods Experiments, American Economic Review 90(4):980-994](https://doi.org/10.1257/aer.90.4.980) `学術`
 - [Camerer 2003 — Behavioral Game Theory: Experiments in Strategic Interaction, Princeton University Press](https://press.princeton.edu/books/hardcover/9780691090399/behavioral-game-theory) `リファレンス`
 
+## 関連概念
+- [[econ-inequity-aversion|不公平回避：利他的懲罰と互恵的公正選好の行動経済学的モデル]] — 語彙が近い
+- [[econ-dollar-auction|ドル・オークション：エスカレーション・トラップのゲーム理論的モデル]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
+- [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

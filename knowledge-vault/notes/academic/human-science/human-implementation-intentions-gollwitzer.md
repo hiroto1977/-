@@ -29,6 +29,10 @@ aliases:
 - [Gollwitzer, P.M. (1999) Implementation Intentions: Strong Effects of Simple Plans — American Psychologist 54(7)](https://doi.org/10.1037/0003-066X.54.7.493) `学術`
 - [Wikipedia: Implementation intention — Gollwitzer, if-then plans, intention-behavior gap](https://en.wikipedia.org/wiki/Implementation_intention) `リファレンス`
 
+## 関連概念
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同分野の近傍
+- [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

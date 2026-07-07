@@ -29,6 +29,16 @@ aliases:
 - [Cornell LII Wex: Force majeure — superior force, contractual clause, Act of God](https://www.law.cornell.edu/wex/force_majeure) `リファレンス`
 - [Wikipedia: Force majeure — civil law origin, contractual interpretation, ICC model clause](https://en.wikipedia.org/wiki/Force_majeure) `リファレンス`
 
+## 関連概念
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 語彙が近い
+- [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — 同じ思想家
+- [[bizlaw-warranty-condition-distinction|条件と担保条項の区別——契約条項の重要性に応じた救済の差異]] — 同じ思想家
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同じ思想家
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
+- [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 同分野の近傍
+- [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — 同分野の近傍
+- [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

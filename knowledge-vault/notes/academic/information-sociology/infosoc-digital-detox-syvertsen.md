@@ -30,6 +30,10 @@ aliases:
 - [Hesselberth (2018) Discourses on Disconnectivity and the Right to Disconnect — New Media & Society](https://doi.org/10.1177/1461444819844200) `学術`
 - [Wikipedia: Digital detox — デジタルデトックスの定義と社会的意義の概説](https://en.wikipedia.org/wiki/Digital_detox) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-detox|デジタルデトックス]] — 同分野の近傍
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Thaler & Sunstein (2008) Nudge: Improving Decisions About Health, Wealth, and Happiness — Yale UP](https://doi.org/10.7208/chicago/9780226469850.001.0001) `学術`
 - [Wikipedia: Nudge theory — choice architecture, libertarian paternalism, BIT, default effects](https://en.wikipedia.org/wiki/Nudge_theory) `リファレンス`
 
+## 関連概念
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 語彙が近い
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 語彙が近い
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[bizlaw-environmental-law-regulation|環境法と持続可能性規制の法律体系——ESG義務化と企業責任]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

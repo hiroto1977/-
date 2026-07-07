@@ -31,6 +31,14 @@ Robert A. Mundell ／ J. Marcus Fleming ／ Maurice Obstfeld ／ Alan M. Taylor 
 - [Obstfeld, Shambaugh & Taylor (2005) "The Trilemma in History: Tradeoffs among Exchange Rates, Monetary Policies, and Capital Mobility" Review of Economics and Statistics](https://doi.org/10.1162/0034653054638300) `学術`
 - [Rey (2015) "Dilemma not Trilemma: The Global Financial Cycle and Monetary Policy Independence" NBER Working Paper 21162](https://www.nber.org/papers/w21162) `学術`
 
+## 関連概念
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 語彙が近い
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 語彙が近い
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 語彙が近い
+- [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同じ思想家
+- [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同分野の近傍
+- [[econ-piketty|ピケティの r>g（資本収益率と格差）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

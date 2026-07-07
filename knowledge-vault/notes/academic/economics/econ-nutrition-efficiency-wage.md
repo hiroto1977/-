@@ -30,6 +30,18 @@ Harvey Leibenstein（ハーヴェイ・ライベンシュタイン, 1957） ／ 
 - [Stiglitz, J. E. (1976) "The Efficiency Wage Hypothesis, Surplus Labour, and the Distribution of Income in L.D.C.s," Oxford Economic Papers 28(2): 185–207（DOI）](https://doi.org/10.1093/oxfordjournals.oep.a041340) `学術`
 - [Wikipedia: Efficiency wage（栄養に基づく効率賃金モデル＝Leibenstein 1957 起源、発展途上国の賃金硬直性を解説する節を含む）](https://en.wikipedia.org/wiki/Efficiency_wage) `リファレンス`
 
+## 関連概念
+- [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
+- [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]] — 同じ思想家
+- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
+- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
+- [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
+- [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

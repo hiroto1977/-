@@ -30,6 +30,18 @@ aliases:
 - [Benkler, Y. (2002) Coase's Penguin, or Linux and the Nature of the Firm — Yale Law Journal](https://doi.org/10.1177/0002764202045011004) `学術`
 - [Wikipedia: Commons-based peer production — CBPPの概要](https://en.wikipedia.org/wiki/Commons-based_peer_production) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 語彙が近い
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
+- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 同じ思想家
+- [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
+- [[mgmt-lead-user|リードユーザー法]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

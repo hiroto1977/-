@@ -29,6 +29,10 @@ aliases:
 - [Cooperrider, D.L. & Srivastva, S. (1987). Appreciative inquiry — Research in OD](https://doi.org/10.1080/00197859308434498) `学術`
 - [Wikipedia: Appreciative inquiry — positive organizational development](https://en.wikipedia.org/wiki/Appreciative_inquiry) `リファレンス`
 
+## 関連概念
+- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 語彙が近い
+- [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

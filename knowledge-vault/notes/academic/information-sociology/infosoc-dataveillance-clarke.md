@@ -29,6 +29,18 @@ aliases:
 - [Clarke, R. (1988) Information Technology and Dataveillance — Communications of the ACM 31(5)](https://doi.org/10.1145/42411.42413) `学術`
 - [Wikipedia: Dataveillance — Clarke, data trails, personal vs mass dataveillance, privacy, presumption of innocence](https://en.wikipedia.org/wiki/Dataveillance) `リファレンス`
 
+## 関連概念
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
+- [[infosoc-surveillance-society|監視社会]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
+- [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+- [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
+- [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

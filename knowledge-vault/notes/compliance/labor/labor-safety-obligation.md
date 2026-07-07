@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省 労働契約法第5条 解説](https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/13.pdf) `公的`
 - [安全配慮義務 解説](https://www.manpowergroup.jp/client/manpowerclip/hrconsulting/labor_contracts_act_ch1alt5.html) `メディア`
 
+## 関連概念
+- [[legal-product-liability|製造物責任法（PL法）]] — 語彙が近い
+- [[subsidy-human-resource-development|人材開発支援助成金]] — 出典を共有
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 出典を共有
+- [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,11 @@ aliases:
 - [Greenwood, R. et al. (2011) Theorizing Change: The Role of Professional Associations in the Transformation of Institutionalized Fields — Academy of Management Journal, 45(1), 58–80（ロジック変化の制度論）](https://doi.org/10.5465/amj.2013.0670) `学術`
 - [Wikipedia: Institutional logic — Friedland & Alford, Thornton, plurality, hybrid organizations, translation](https://en.wikipedia.org/wiki/Institutional_logic) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 同じ思想家
+- [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同分野の近傍
+- [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [国税庁 青色申告の承認申請](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_14.htm) `公的`
 - [マネーフォワード 会社設立の届出](https://biz.moneyforward.com/establish/basic/683/) `メディア`
 
+## 関連概念
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+- [[tax-business-succession|法人版事業承継税制（特例措置）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

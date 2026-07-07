@@ -30,6 +30,12 @@ aliases:
 - [EU (2024) AI Act — Regulation 2024/1689](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689) `公的`
 - [Wikipedia: Affective computing — 感情認識AIの技術と倫理](https://en.wikipedia.org/wiki/Affective_computing) `リファレンス`
 
+## 関連概念
+- [[human-differential-emotions|分化感情理論（ディファレンシャル・エモーションズ理論）]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
+- [[infosoc-digital-phenotyping-theory|デジタル表現型理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

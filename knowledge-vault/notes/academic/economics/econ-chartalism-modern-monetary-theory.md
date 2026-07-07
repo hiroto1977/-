@@ -30,6 +30,17 @@ Georg Friedrich Knapp／L. Randall Wray／Stephanie Kelton／Warren Mosler／Pav
 - [Tcherneva (2006) Chartalism and the Tax-Driven Approach to Money, in Handbook of Alternative Monetary Economics, pp. 69-86](https://econpapers.repec.org/bookchap/elgeechap/3506_5f5.htm) `学術`
 - [Kelton (2020) The Deficit Myth: Modern Monetary Theory, PublicAffairs [Cambridge Core review]](https://www.cambridge.org/core/journals/economics-and-philosophy/article/abs/deficit-myth-modern-monetary-theory-and-the-birth-of-the-peoples-economy-stephanie-kelton-public-affairs-2020-325-pages/7CF88986E1DF34B0E3DA8112E0CC7AAB) `学術`
 
+## 関連概念
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
+- [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
+- [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
+- [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 出典を共有
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
+- [[econ-rational-addiction|合理的依存]] — 出典を共有
+- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同分野の近傍
+- [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

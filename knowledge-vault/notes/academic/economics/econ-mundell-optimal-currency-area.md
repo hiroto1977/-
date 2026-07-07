@@ -30,6 +30,18 @@ aliases:
 - [Frankel & Rose (1998) The Endogeneity of the Optimum Currency Area Criteria — Economic Journal](https://doi.org/10.1111/1468-0297.00327) `学術`
 - [Wikipedia: Optimum currency area — 最適通貨圏理論の概説](https://en.wikipedia.org/wiki/Optimum_currency_area) `リファレンス`
 
+## 関連概念
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 語彙が近い
+- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
+- [[econ-financial-repression|金融抑圧]] — 同じ思想家
+- [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同じ思想家
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
+- [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
+- [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

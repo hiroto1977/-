@@ -29,6 +29,11 @@ aliases:
 - [公正取引委員会 — 課徴金減免制度（リニエンシー制度）の概要](https://www.jftc.go.jp/dk/seido/kachodkin.html) `公的`
 - [Wikipedia: Leniency policy — cartel detection, immunity, prisoners dilemma, antitrust](https://en.wikipedia.org/wiki/Leniency_policy) `リファレンス`
 
+## 関連概念
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 同分野の近傍
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同分野の近傍
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

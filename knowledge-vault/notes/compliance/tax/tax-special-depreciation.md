@@ -30,6 +30,18 @@ aliases:
 - [中小企業庁 中小企業投資促進税制](https://www.chusho.meti.go.jp/zaimu/zeisei/tyuusyoukigyoutousisokusinzeisei.html) `公的`
 - [中小機構 J-Net21 特別償却または税額控除](https://j-net21.smrj.go.jp/accounts/tax_benefits/20140330_23.html) `メディア`
 
+## 関連概念
+- [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 語彙が近い
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 語彙が近い
+- [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 出典を共有
+- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

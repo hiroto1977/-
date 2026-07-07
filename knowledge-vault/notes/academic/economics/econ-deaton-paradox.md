@@ -30,6 +30,18 @@ aliases:
 - [Angus Deaton (Princeton) — full text of Campbell & Deaton (1989)](https://www.princeton.edu/~deaton/downloads/Why_is_Consumption_So_Smooth.pdf) `学術`
 - [Harvard DASH repository record — Campbell & Deaton, excess smoothness of consumption](https://dash.harvard.edu/handle/1/3221494) `リファレンス`
 
+## 関連概念
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 語彙が近い
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
+- [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 同じ思想家
+- [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
+- [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同じ思想家
+- [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同じ思想家
+- [[econ-modigliani-cohn-inflation-illusion|モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 出典を共有
+- [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 出典を共有
+- [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

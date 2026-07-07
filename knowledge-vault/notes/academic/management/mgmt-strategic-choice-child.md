@@ -29,6 +29,18 @@ aliases:
 - [Child, J. (1972) Organizational Structure, Environment and Performance: The Role of Strategic Choice — Sociology 6(1)](https://doi.org/10.1177/003803857200600101) `学術`
 - [Wikipedia: Strategic choice — Child, dominant coalition, agency, critique of contingency determinism](https://en.wikipedia.org/wiki/Strategic_choice_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同じ思想家
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
+- [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同じ思想家
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
+- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

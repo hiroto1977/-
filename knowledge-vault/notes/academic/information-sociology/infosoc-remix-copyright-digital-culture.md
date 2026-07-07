@@ -29,6 +29,16 @@ aliases:
 - [Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press](https://doi.org/10.1017/9781316519547) `学術`
 - [Wikipedia: Remix culture — Lessig, Creative Commons, CBPP, DSM Directive, copyright, mash-up](https://en.wikipedia.org/wiki/Remix_culture) `リファレンス`
 
+## 関連概念
+- [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]] — 語彙が近い
+- [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 語彙が近い
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
+- [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同じ思想家
+- [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同じ思想家
+- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

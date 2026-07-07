@@ -30,6 +30,12 @@ aliases:
 - [法務省「借地借家法等の改正（定期借地権・定期建物賃貸借関係）について」](https://www.moj.go.jp/MINJI/minji07_00304.html) `公的`
 - [コトバンク（日本大百科全書ほか）「借地借家法」](https://kotobank.jp/word/%E5%80%9F%E5%9C%B0%E5%80%9F%E5%AE%B6%E6%B3%95-167983) `リファレンス`
 
+## 関連概念
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 分野横断
+- [[legal-land-lease-right|借地借家法における借地権]] — 分野横断
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 同分野の近傍
+- [[bizlaw-change-of-circumstances|事情変更の原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

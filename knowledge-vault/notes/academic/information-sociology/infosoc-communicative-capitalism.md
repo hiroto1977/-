@@ -30,6 +30,15 @@ aliases:
 - [Dean (2005) Communicative Capitalism — ResearchGate](https://www.researchgate.net/publication/240798916_Communicative_Capitalism_Circulation_and_the_Foreclosure_of_Politics) `学術`
 - [Dean (2009) Democracy and Other Neoliberal Fantasies — Duke UP](https://read.dukeupress.edu/books/book/1283/Democracy-and-Other-Neoliberal) `学術`
 
+## 関連概念
+- [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 同じ思想家
+- [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同じ思想家
+- [[econ-contestable-markets|コンテスタブル市場]] — 出典を共有
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同分野の近傍
+- [[infosoc-information-theory|情報理論（シャノン）]] — 同分野の近傍
+- [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

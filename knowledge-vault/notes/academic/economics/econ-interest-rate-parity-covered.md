@@ -30,6 +30,18 @@ aliases:
 - [Du, W. & Schreger, J. (2022) CIP Deviations, the Dollar, and Frictions in International Capital Markets — Annual Review of Economics](https://doi.org/10.1146/annurev-financial-012820-012020) `学術`
 - [Wikipedia: Interest rate parity — covered and uncovered arbitrage conditions overview](https://en.wikipedia.org/wiki/Interest_rate_parity) `リファレンス`
 
+## 関連概念
+- [[econ-interest-rate-parity|金利平価説]] — 語彙が近い
+- [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 語彙が近い
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

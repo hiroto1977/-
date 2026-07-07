@@ -29,6 +29,12 @@ aliases:
 - [経済産業省 — 営業秘密の保護・管理に関する施策](https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html) `公的`
 - [Wikipedia: Trade secret — UTSA, DTSA, secrecy, misappropriation, Coca-Cola formula](https://en.wikipedia.org/wiki/Trade_secret) `リファレンス`
 
+## 関連概念
+- [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 語彙が近い
+- [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同じ思想家
+- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
+- [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,13 @@ aliases:
 - [Bourgeois, L. J. (1981) On the Measurement of Organizational Slack — Academy of Management Review, 6(1), 29–39（スラック概念の操作化）](https://doi.org/10.5465/amr.1983.4284602) `学術`
 - [Wikipedia: Population ecology (organizational) — Hannan & Freeman, Aldrich, VSR, density dependence, munificence](https://en.wikipedia.org/wiki/Population_ecology_(organizational)) `リファレンス`
 
+## 関連概念
+- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
+- [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
+- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

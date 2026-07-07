@@ -29,6 +29,11 @@ Donald L. Kirkpatrick（1924-2014・4段階モデルの提唱者） ／ 4つの�
 - [Wikipedia, “Kirkpatrick model”（4段階＝反応・学習・行動・結果、1959年ASTD連載・1994年著書、Phillips による ROI 拡張の概説）](https://en.wikipedia.org/wiki/Kirkpatrick_model) `リファレンス`
 - [Bates, R. (2004). A critical analysis of evaluation practice: the Kirkpatrick model and the principle of beneficence. Evaluation and Program Planning, 27(3), 341-347.](https://doi.org/10.1016/j.evalprogplan.2004.04.011) `学術`
 
+## 関連概念
+- [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 同じ思想家
+- [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

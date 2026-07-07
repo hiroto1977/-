@@ -30,6 +30,13 @@ aliases:
 - [Berman, M.G., Jonides, J. & Kaplan, S. (2008) The Cognitive Benefits of Interacting With Nature — Psychological Science, 19(12), 1207-1212](https://doi.org/10.1111/j.1467-9280.2008.02225.x) `学術`
 - [Kaplan, R. & Kaplan, S. (1989) The Experience of Nature: A Psychological Perspective — Cambridge University Press](https://www.semanticscholar.org/paper/The-Experience-of-Nature:-A-Psychological-Kaplan-Kaplan/61f30c93c68064d8706ba7b6d3b57701bd1b9ffc) `学術`
 
+## 関連概念
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同じ思想家
+- [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
+- [[human-ecopsychology-roszak-nature-wellbeing|エコサイコロジーと自然体験——ロザックの「地球の声」論と人間-自然の心理的相互作用]] — 同じ思想家
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同分野の近傍
+- [[human-occupational-science-yerxa-clark|作業科学——人間の作業的存在としての健康と参加の学際的探究]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

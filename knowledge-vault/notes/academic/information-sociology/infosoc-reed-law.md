@@ -29,6 +29,13 @@ aliases:
 - [Wikipedia: Reed's law — value of group-forming networks scales as 2^N (subgroups = 2^N − N − 1), vs. Sarnoff (N) and Metcalfe (N²)](https://en.wikipedia.org/wiki/Reed%27s_law) `リファレンス`
 - [Briscoe, Odlyzko & Tilly "Metcalfe's Law is Wrong" — IEEE Spectrum (2006): critique that network value scales nearer n·log(n), not n² or 2^n](https://spectrum.ieee.org/metcalfes-law-is-wrong) `メディア`
 
+## 関連概念
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 同じ思想家
+- [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 出典を共有
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
+- [[infosoc-media-literacy|メディア・リテラシー]] — 同分野の近傍
+- [[infosoc-deepfake|ディープフェイク]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

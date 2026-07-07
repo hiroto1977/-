@@ -29,6 +29,18 @@ aliases:
 - [Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)](https://www.worldcat.org/oclc/977195) `学術`
 - [Wikipedia: Goodwin model (economics) — predator-prey, employment, wage share, class struggle](https://en.wikipedia.org/wiki/Goodwin_model_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 同じ思想家
+- [[econ-fundamental-marxian-theorem-morishima|マルクスの基本定理——利潤の正は労働搾取の正と同値である]] — 同じ思想家
+- [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同分野の近傍
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同分野の近傍
+- [[econ-cobra-effect|コブラ効果（意図せざる結果の法則）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,16 @@ aliases:
 - [Schwartz, A. & Scott, R. E. (2003) Contract Theory and the Limits of Contract Law — Yale Law Journal, 113(3), 541–619（契約法の経済的効率論）](https://doi.org/10.1093/lpr/mgs026) `学術`
 - [Wikipedia: Liquidated damages — genuine pre-estimate, penalty clause, UCC 2-718, Japan Civil Code 420](https://en.wikipedia.org/wiki/Liquidated_damages) `リファレンス`
 
+## 関連概念
+- [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 語彙が近い
+- [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同じ思想家
+- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
+- [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
+- [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同じ思想家
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

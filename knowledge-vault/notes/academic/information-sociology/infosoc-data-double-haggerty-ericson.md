@@ -29,6 +29,15 @@ aliases:
 - [Haggerty, K.D. & Ericson, R.V. (2000) The Surveillant Assemblage — British Journal of Sociology 51(4)](https://doi.org/10.1080/00071310020015280) `学術`
 - [Wikipedia: Surveillant assemblage — Haggerty & Ericson, data double, Deleuze/Guattari, disappearance of disappearance](https://en.wikipedia.org/wiki/Surveillance#Surveillant_assemblage) `リファレンス`
 
+## 関連概念
+- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 語彙が近い
+- [[infosoc-surveillance-society|監視社会]] — 語彙が近い
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
+- [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[infosoc-protocol-galloway|プロトコル——脱中心化したネットワークに内在する新たな統制の様式]] — 同じ思想家
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

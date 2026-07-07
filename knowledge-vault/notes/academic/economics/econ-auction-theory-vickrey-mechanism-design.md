@@ -29,6 +29,18 @@ aliases:
 - [Vickrey, W. (1961) Counterspeculation, Auctions — Journal of Finance](https://doi.org/10.1111/j.1540-5982.1961.tb00037.x) `学術`
 - [Wikipedia: Vickrey auction — mechanism design](https://en.wikipedia.org/wiki/Vickrey_auction) `リファレンス`
 
+## 関連概念
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 語彙が近い
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-mechanism-design|メカニズムデザイン]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,16 @@ aliases:
 - [Caplan, Bryan (2001), 'Rational Irrationality and the Microfoundations of Political Failure', Public Choice, vol. 107, no. 3–4, pp. 311–331, DOI 10.1023/A:1010311704540](https://link.springer.com/article/10.1023/A:1010311704540) `学術`
 - [Caplan, Bryan (2001), 'Rational Ignorance versus Rational Irrationality', Kyklos, vol. 54, no. 1, pp. 3–26, DOI 10.1111/1467-6435.00138](https://onlinelibrary.wiley.com/doi/abs/10.1111/1467-6435.00138) `学術`
 
+## 関連概念
+- [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
+- [[econ-median-voter|中位投票者定理]] — 同じ思想家
+- [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — 同じ思想家
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
+- [[econ-technological-unemployment|技術的失業]] — 同分野の近傍
+- [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

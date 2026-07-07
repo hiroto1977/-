@@ -29,6 +29,11 @@ aliases:
 - [Brown, A. S. (2003) A review of the déjà vu experience — Psychological Bulletin](https://doi.org/10.1037/0033-2909.129.3.394) `学術`
 - [Wikipedia: Déjà vu — familiarity vs recollection, temporal lobe, gestalt familiarity](https://en.wikipedia.org/wiki/D%C3%A9j%C3%A0_vu) `リファレンス`
 
+## 関連概念
+- [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

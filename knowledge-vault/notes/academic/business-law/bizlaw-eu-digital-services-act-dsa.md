@@ -30,6 +30,13 @@ EUデジタルサービス法（Regulation 2022/2065, DSA）は、2000年の電�
 - [De Gregorio, G. (2022) "The Digital Services Act" — German Law Journal](https://doi.org/10.1093/gruam/gkac014) `学術`
 - [Wikipedia: Digital Services Act — DSAの義務体系と執行メカニズム](https://en.wikipedia.org/wiki/Digital_Services_Act) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-constitutionalism|デジタル立憲主義]] — 同じ思想家
+- [[bizlaw-eu-digital-markets-act-dma|EUデジタル市場法（DMA）——ゲートキーパー・プラットフォームの事前規制]] — 同じ思想家
+- [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-part-payment-foakes|債務の一部弁済と約因——フォークス対ビア事件（Foakes v Beer 1884）とピンネル事件の準則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

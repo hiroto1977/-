@@ -30,6 +30,18 @@ aliases:
 - [Simply Psychology: Piaget's Theory and Stages of Cognitive Development](https://www.simplypsychology.org/piaget.html) `リファレンス`
 - [Wikipedia: Piaget's theory of cognitive development](https://en.wikipedia.org/wiki/Piaget's_theory_of_cognitive_development) `リファレンス`
 
+## 関連概念
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 同じ思想家
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 同じ思想家
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-defense-mechanisms|防衛機制]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+- [[human-group-polarization|集団極性化]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,16 @@ aliases:
 - [Ouchi, W.G. (1981) Theory Z — HBR Review](https://hbr.org/1981/03/going-from-z-to-a) `メディア`
 - [Wikipedia: 組織文化と統制理論 — 大内のクラン・官僚制・市場の解説](https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%A9%E3%83%B3%E7%B5%B1%E5%88%B6) `リファレンス`
 
+## 関連概念
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[econ-hold-up-problem-williamson|ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
+- [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
+- [[mgmt-ringi|稟議制]] — 同分野の近傍
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

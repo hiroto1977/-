@@ -29,6 +29,18 @@ aliases:
 - [Benkler, Y. (2006). The Wealth of Networks — Yale UP](https://doi.org/10.2307/j.ctt5hjptk) `学術`
 - [Wikipedia: User-generated content — prosumer economy](https://en.wikipedia.org/wiki/User-generated_content) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 語彙が近い
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同じ思想家
+- [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,17 @@ aliases:
 - [Ibarra, H. & Barbulescu, R. (2010) Identity as Narrative: Prevalence, Effectiveness, and Consequences of Narrative Identity Work in Macro Work Role Transitions — Academy of Management Review, 35(1), 135–154（物語的アイデンティティ・ワーク）](https://doi.org/10.1002/job.2064) `学術`
 - [Wikipedia: Identity work — Pratt, Ashforth, identity threat, compartmentalization, socialization](https://en.wikipedia.org/wiki/Identity_work) `リファレンス`
 
+## 関連概念
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
+- [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同じ思想家
+- [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — 同じ思想家
+- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
+- [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同じ思想家
+- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同じ思想家
+- [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

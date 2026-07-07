@@ -29,6 +29,15 @@ aliases:
 - [Morishima, M. (1973) Marx's Economics: A Dual Theory of Value and Growth — Cambridge University Press](https://www.worldcat.org/oclc/610137) `学術`
 - [Wikipedia: Fundamental Marxian theorem — exploitation, profit, Okishio, Morishima](https://en.wikipedia.org/wiki/Fundamental_Marxian_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 同じ思想家
+- [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — 同じ思想家
+- [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
+- [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

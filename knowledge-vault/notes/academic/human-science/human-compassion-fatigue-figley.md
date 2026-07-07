@@ -31,6 +31,10 @@ aliases:
 - [Newell, J. M. & MacNeil, G. A. (2010) Professional Burnout, Vicarious Trauma, Secondary Traumatic Stress, and Compassion Fatigue — Best Practices in Mental Health, 6(2)](https://pubmed.ncbi.nlm.nih.gov/25312274/) `学術`
 - [Wikipedia: Compassion fatigue — definition, measurement, causes, protective factors, and COVID-19 context](https://en.wikipedia.org/wiki/Compassion_fatigue) `リファレンス`
 
+## 関連概念
+- [[human-compassion-fatigue-burnout-stamm|共感疲労とバーンアウト・二次的外傷性ストレス（スタム）]] — 語彙が近い
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

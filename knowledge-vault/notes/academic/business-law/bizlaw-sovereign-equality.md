@@ -30,6 +30,16 @@ aliases:
 - [UN Repertory of Practice — Article 2(1)-(5)](https://legal.un.org/repertory/art2.shtml) `公的`
 - [Article 2(1) — The Charter of the United Nations: A Commentary (Oxford)](https://academic.oup.com/book/58198/chapter/481341184) `学術`
 
+## 関連概念
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 出典を共有
+- [[bizlaw-trail-smelter-principle|トレイル・スメルター原則（Trail Smelter Principle）]] — 出典を共有
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 出典を共有
+- [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
+- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

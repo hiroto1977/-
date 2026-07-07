@@ -29,6 +29,12 @@ Peter A. Diamond（1982年論文・モデルの提唱者・2010年ノーベル�
 - [Diamond, P. A. (1982). Aggregate Demand Management in Search Equilibrium. Journal of Political Economy, 90(5), 881-894.](https://www.journals.uchicago.edu/doi/10.1086/261099) `学術`
 - [IDEAS/RePEc 収録の書誌（Diamond [1982], JPE 90(5):881-894・確率的マッチング・複数定常均衡と非効率・厚い市場の外部性）](https://ideas.repec.org/a/ucp/jpolec/v90y1982i5p881-94.html) `リファレンス`
 
+## 関連概念
+- [[econ-laffer-curve-theory|ラッファー曲線理論]] — 同じ思想家
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
+- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同分野の近傍
+- [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

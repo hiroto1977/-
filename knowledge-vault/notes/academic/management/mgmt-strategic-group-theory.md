@@ -31,6 +31,11 @@ Michael S. Hunt ／ Michael E. Porter ／ Richard E. Caves ／ Karel Cool ／ Da
 - [McGee & Thomas (1986) "Strategic Groups: Theory, Research and Taxonomy" — Strategic Management Journal](https://doi.org/10.1002/smj.4250070105) `学術`
 - [Porter (1980) Competitive Strategy — Free Press (mobility barriers & strategic groups)](https://doi.org/10.1016/0024-6301(80)90041-5) `学術`
 
+## 関連概念
+- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 語彙が近い
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

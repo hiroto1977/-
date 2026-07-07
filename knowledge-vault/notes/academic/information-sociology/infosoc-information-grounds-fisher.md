@@ -29,6 +29,16 @@ aliases:
 - [Pettigrew, K. E. (1999) Waiting for chiropody: information behaviour among attendees at community clinics — Information Processing & Management](https://doi.org/10.1016/S0306-4573(99)00024-5) `学術`
 - [Wikipedia: Information ground — Karen Fisher, serendipitous information sharing, everyday settings](https://en.wikipedia.org/wiki/Information_ground) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-poverty-chatman|情報貧困論（チャトマン理論）]] — 同じ思想家
+- [[infosoc-third-place|サードプレイス]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[infosoc-information-encountering-erdelez|情報との遭遇——探していない有用な情報に偶然出会う]] — 同じ思想家
+- [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同じ思想家
+- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

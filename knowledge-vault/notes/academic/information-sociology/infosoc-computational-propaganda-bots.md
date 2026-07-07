@@ -30,6 +30,14 @@ aliases:
 - [European Commission Digital Services Act (DSA) — EU](https://digital-strategy.ec.europa.eu/en/policies/digital-services-act-package) `公的`
 - [Wikipedia: ソーシャルボット — 自動化された情報操作と世論の解説](https://ja.wikipedia.org/wiki/%E3%82%BD%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%AB%E3%83%9C%E3%83%83%E3%83%88) `リファレンス`
 
+## 関連概念
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 語彙が近い
+- [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — 同じ思想家
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 出典を共有
+- [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 出典を共有
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

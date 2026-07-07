@@ -29,6 +29,10 @@ aliases:
 - [Le Masurier, M. (2015) "What is Slow Journalism?" Journalism Practice 9(2)（Taylor & Francis・概念整理の主要論文）](https://www.tandfonline.com/doi/full/10.1080/17512786.2014.916471) `学術`
 - [The Slow Journalism Company / Delayed Gratification — スロー・ジャーナリズムを標榜する英国の長文ジャーナリズム誌（実践例）](https://www.slow-journalism.com/) `メディア`
 
+## 関連概念
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
+- [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

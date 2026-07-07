@@ -30,6 +30,18 @@ Francisco J. Varela ／ Evan Thompson ／ Eleanor Rosch ／ George Lakoff ／ Ma
 - [Varela, Thompson & Rosch — The Embodied Mind: Cognitive Science and Human Experience (MIT Press, 1991)](https://direct.mit.edu/books/monograph/3956/The-Embodied-MindCognitive-Science-and-Human) `学術`
 - [PhilPapers — Varela, Thompson & Rosch: The Embodied Mind (canonical record)](https://philpapers.org/rec/VARTEM) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 語彙が近い
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 同じ思想家
+- [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同じ思想家
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同じ思想家
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+- [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

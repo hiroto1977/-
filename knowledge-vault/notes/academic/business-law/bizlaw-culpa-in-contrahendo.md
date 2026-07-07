@@ -30,6 +30,11 @@ aliases:
 - [契約締結上の過失 — Wikipedia（信義則根拠・類型・信頼利益/履行利益）](https://ja.wikipedia.org/wiki/契約締結上の過失) `リファレンス`
 - [Wikibooks 民法第412条の2（2017年改正・原始的不能と債務不履行構成）](https://ja.wikibooks.org/wiki/民法第412条の2) `リファレンス`
 
+## 関連概念
+- [[bizlaw-renvoi|反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理]] — 出典を共有
+- [[bizlaw-promissory-estoppel-reliance|約束的禁反言法理]] — 同分野の近傍
+- [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

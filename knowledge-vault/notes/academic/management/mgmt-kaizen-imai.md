@@ -29,6 +29,13 @@ aliases:
 - [Imai, M. (1986) Kaizen: The Key to Japans Competitive Success — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/13096733) `学術`
 - [Wikipedia: Kaizen — Imai, continuous incremental improvement, everyone participates, Toyota Production System, PDCA](https://en.wikipedia.org/wiki/Kaizen) `リファレンス`
 
+## 関連概念
+- [[mgmt-total-quality-management-deming-juran|総合的品質管理——デミングとジュランの継続的改善と全社的品質経営]] — 語彙が近い
+- [[mgmt-juran-trilogy|ジュランの品質トリロジー——計画・管理・改善からなる品質マネジメント]] — 同じ思想家
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
+- [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同じ思想家
+- [[mgmt-fogg-behavior-model|フォッグ行動モデル（FBM）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

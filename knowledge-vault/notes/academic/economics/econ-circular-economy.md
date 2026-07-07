@@ -29,6 +29,18 @@ aliases:
 - [Ellen MacArthur Foundation — What is a Circular Economy?（定義・バタフライ図・リニアvs.サーキュラー・経済的根拠）](https://www.ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview) `学術`
 - [環境省 — サーキュラーエコノミー（循環型社会形成推進基本法・循環経済ビジョン2020・政策の全体像）](https://www.env.go.jp/recycle/circulareconomy/) `公的`
 
+## 関連概念
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有
+- [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]] — 出典を共有
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 出典を共有
+- [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 出典を共有
+- [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
+- [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
+- [[subsidy-zeh|ZEH支援事業]] — 出典を共有
+- [[econ-signaling|シグナリング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

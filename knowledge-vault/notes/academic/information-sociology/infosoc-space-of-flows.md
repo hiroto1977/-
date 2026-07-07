@@ -30,6 +30,17 @@ aliases:
 - [Springer — Space of Flows and Space of Places: Manuel Castells and the Information Age](https://link.springer.com/chapter/10.1007/978-3-030-68824-0_24) `学術`
 - [Radical Philosophy — The space of flows and timeless time: Castells’s The Information Age](https://www.radicalphilosophy.com/article/the-space-of-flows-and-timeless-time) `学術`
 
+## 関連概念
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-time-space-distanciation-giddens|時空間の遠隔化——社会関係が局所的文脈から引き離され広域に伸張する]] — 同じ思想家
+- [[infosoc-network-society-castells|ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治]] — 同分野の近傍
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

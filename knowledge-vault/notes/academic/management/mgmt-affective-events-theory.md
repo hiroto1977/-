@@ -33,6 +33,18 @@ Howard M. Weiss（1996 感情イベント理論をResearch in Organizational Beh
 - [Miner, Glomb & Hulin (2005) Experience sampling mood and its correlates at work — Journal of Occupational and Organizational Psychology 78, 171-193](https://doi.org/10.1348/096317905X40105) `学術`
 - [Weiss & Beal (2005) Reflections on Affective Events Theory — Research on Emotion in Organizations Vol. 1, Emerald](https://doi.org/10.1016/S1746-9791(05)01101-6) `学術`
 
+## 関連概念
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-organizational-neuroscience|組織神経科学]] — 同じ思想家
+- [[mgmt-social-exchange-theory|社会的交換理論]] — 同じ思想家
+- [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

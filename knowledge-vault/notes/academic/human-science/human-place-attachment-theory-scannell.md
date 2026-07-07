@@ -30,6 +30,14 @@ aliases:
 - [Lewicka, M. (2011) "Place Attachment: How Far Have We Come?" — JEP](https://doi.org/10.1006/jevp.2001.0226) `学術`
 - [Wikipedia: Place attachment — 場所愛着の理論と測定法](https://en.wikipedia.org/wiki/Place_attachment) `リファレンス`
 
+## 関連概念
+- [[human-place-attachment-theory|場所愛着理論]] — 語彙が近い
+- [[human-place-identity|場所アイデンティティ（Place Identity）]] — 同じ思想家
+- [[human-illusory-correlation|錯誤相関]] — 同じ思想家
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同じ思想家
+- [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同じ思想家
+- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

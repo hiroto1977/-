@@ -30,6 +30,11 @@ aliases:
 - [e-Gov 製造物責任法](https://laws.e-gov.go.jp/law/406AC0000000085) `公的`
 - [製造物責任法 概説](https://ja.wikipedia.org/wiki/%E8%A3%BD%E9%80%A0%E7%89%A9%E8%B2%AC%E4%BB%BB%E6%B3%95) `メディア`
 
+## 関連概念
+- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 語彙が近い
+- [[legal-product-safety|消費生活用製品安全法（消安法）]] — 同分野の近傍
+- [[legal-tort-liability|不法行為による損害賠償責任（民法709条等）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

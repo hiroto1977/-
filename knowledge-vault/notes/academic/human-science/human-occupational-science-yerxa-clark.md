@@ -30,6 +30,10 @@ aliases:
 - [Townsend & Wilcock (2004) Occupational Justice and Client-Centred Practice — CJOT](https://doi.org/10.1177/000841740407100303) `学術`
 - [Wikipedia: Occupational science — 作業科学の歴史・理論・実践の概説](https://en.wikipedia.org/wiki/Occupational_science) `リファレンス`
 
+## 関連概念
+- [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同分野の近傍
+- [[human-premack-principle|プレマックの原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

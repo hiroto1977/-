@@ -31,6 +31,11 @@ aliases:
 - [Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）](https://doi.org/10.1016/j.jinteco.2015.01.002) `学術`
 - [Wikipedia: Carry (investment) — UIP puzzle, carry crash, yen carry trade, risk-off dynamics](https://en.wikipedia.org/wiki/Carry_(investment)) `リファレンス`
 
+## 関連概念
+- [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同分野の近傍
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同分野の近傍
+- [[econ-shadow-banking-fsb|シャドーバンキング（金融安定理事会定義）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

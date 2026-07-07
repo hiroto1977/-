@@ -32,6 +32,11 @@ Lord Camden (Charles Pratt) ／ Ruth Bader Ginsburg ／ John Henry Merryman
 - [Oxford Handbook of Intellectual Property Law](https://doi.org/10.1093/oxfordhb/9780199673599.013.28) `学術`
 - [Spry, Principles of Equitable Remedies](https://doi.org/10.1017/S0008197300040854) `学術`
 
+## 関連概念
+- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 語彙が近い
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — 同じ思想家
+- [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

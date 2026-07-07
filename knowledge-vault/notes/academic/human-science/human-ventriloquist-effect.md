@@ -29,6 +29,11 @@ aliases:
 - [Alais, D. & Burr, D. (2004) The ventriloquist effect results from near-optimal bimodal integration — Current Biology](https://doi.org/10.1016/j.cub.2004.01.029) `学術`
 - [Wikipedia: Ventriloquism — ventriloquist effect, audiovisual integration, visual capture](https://en.wikipedia.org/wiki/Ventriloquism) `リファレンス`
 
+## 関連概念
+- [[human-double-flash-illusion|音誘発フラッシュ錯覚——音の数が見える閃光の数を変える]] — 同じ思想家
+- [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

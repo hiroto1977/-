@@ -29,6 +29,18 @@ aliases:
 - [Cyert & March (1963) A Behavioral Theory of the Firm — Prentice-Hall (2nd ed. 1992 Blackwell)](https://doi.org/10.1007/978-3-642-48748-8) `学術`
 - [Wikipedia: Behavioral Theory of the Firm — Cyert, March, satisficing, organizational slack, bounded rationality](https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm) `リファレンス`
 
+## 関連概念
+- [[human-bounded-rationality|限定合理性]] — 語彙が近い
+- [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
+- [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
+- [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同じ思想家
+- [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

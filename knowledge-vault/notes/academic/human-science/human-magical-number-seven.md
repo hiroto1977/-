@@ -30,6 +30,11 @@ aliases:
 - [Modelling Working Memory Capacity（Cowan 2001 約4チャンクへの再評価, PMC）](https://pmc.ncbi.nlm.nih.gov/articles/PMC11259112/) `学術`
 - [Encyclopædia Britannica: The Magical Number Seven（Miller 1956 論文）](https://www.britannica.com/topic/The-Magical-Number-Seven-Plus-or-Minus-Two-Some-Limits-on-Our-Capacity-for-Processing-Information) `リファレンス`
 
+## 関連概念
+- [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
+- [[human-yerkes-dodson-law|ヤーキーズ＝ドッドソンの法則——覚醒水準とパフォーマンスの逆U字関係]] — 同分野の近傍
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

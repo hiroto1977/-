@@ -30,6 +30,12 @@ aliases:
 - [経済産業省 Web3 第三者保有の暗号資産の期末時価評価課税の見直し](https://www.meti.go.jp/policy/economy/keiei_innovation/sangyokinyu/Web3/zeiseikaisei_results_R6.pdf) `公的`
 - [PwC 暗号資産の評価方法の改正と届出 解説](https://www.pwc.com/jp/ja/knowledge/news/tax-jtu/20240710.html) `メディア`
 
+## 関連概念
+- [[tax-dividends-received|受取配当等の益金不算入]] — 出典を共有
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 同分野の近傍
+- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

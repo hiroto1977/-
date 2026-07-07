@@ -30,6 +30,16 @@ aliases:
 - [総務省統計局 (2020) 産業連関表の作成とその解説](https://www.stat.go.jp/data/io/explanation.html) `公的`
 - [Wikipedia: Input–output model — 投入産出分析の理論と応用](https://en.wikipedia.org/wiki/Input%E2%80%93output_model) `リファレンス`
 
+## 関連概念
+- [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — 語彙が近い
+- [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
+- [[econ-social-discount-rate|社会的割引率——将来の費用と便益を現在価値に換算する公共の割引率]] — 同分野の近傍
+- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ PPM（BCGマトリクス）は、ボストン・コンサルティング・グ�
 - [EBSCO Research Starters — Growth–share matrix](https://www.ebsco.com/research-starters/business-and-management/growth-share-matrix) `学術`
 - [Wikipedia — Growth–share matrix](https://en.wikipedia.org/wiki/Growth%E2%80%93share_matrix) `リファレンス`
 
+## 関連概念
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 語彙が近い
+- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — 同じ思想家
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

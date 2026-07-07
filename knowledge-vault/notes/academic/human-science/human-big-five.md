@@ -31,6 +31,11 @@ aliases:
 - [APA PsycNet — The Five-Factor model of personality across cultures（文化横断的頑健性）](https://psycnet.apa.org/record/2003-06478-000) `学術`
 - [APA PsycNet — Personality and job performance: The Big Five revisited（職務成績の予測）](https://psycnet.apa.org/record/2000-16508-004) `学術`
 
+## 関連概念
+- [[human-interpersonal-theory-leary|対人関係理論（リアリー／サリヴァン）]] — 同分野の近傍
+- [[human-community-psychology-rappaport-empowerment|コミュニティ心理学——ラパポートのエンパワーメント理論と社会変革]] — 同分野の近傍
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

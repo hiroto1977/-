@@ -30,6 +30,18 @@ aliases:
 - [個人情報保護委員会 個人データの共同利用 FAQ](https://www.ppc.go.jp/all_faq_index/faq1-q7-51/) `公的`
 - [個人情報保護委員会 ガイドライン（通則編）](https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/) `公的`
 
+## 関連概念
+- [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
+- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 語彙が近い
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 出典を共有
+- [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 出典を共有
+- [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

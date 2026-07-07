@@ -31,6 +31,12 @@ aliases:
 - [Masuda, T. & Nisbett, R. E. (2001) Attending Holistically Versus Analytically: Comparing the Context Sensitivity of Japanese and Americans — Journal of Personality and Social Psychology, 81(5), 922–934（認知スタイルの文化差実証）](https://doi.org/10.1037/0022-3514.84.1.60) `学術`
 - [Wikipedia: Self-construal — Markus & Kitayama, independent/interdependent, cognitive and emotional consequences](https://en.wikipedia.org/wiki/Self-construal) `リファレンス`
 
+## 関連概念
+- [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 語彙が近い
+- [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
+- [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
+- [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

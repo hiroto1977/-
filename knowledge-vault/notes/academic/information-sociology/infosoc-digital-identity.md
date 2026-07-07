@@ -29,6 +29,13 @@ W3C勧告「Decentralized Identifiers (DIDs) v1.0」(2022年7月)／EU eIDAS規�
 - [W3C — "Decentralized Identifiers (DIDs) v1.0" W3C勧告（2022年7月19日、DIDの定義・仕様）](https://www.w3.org/TR/did-core/) `学術`
 - [デジタル庁 — デジタルアイデンティティ政策（日本の標準化・行政DXの取組）](https://www.digital.go.jp/policies/digital_identity) `公的`
 
+## 関連概念
+- [[infosoc-digital-identity-self-sovereign|デジタルアイデンティティと自己主権——SSIの分散管理と個人情報支配の再設計]] — 語彙が近い
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — 出典を共有
+- [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 出典を共有
+- [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 出典を共有
+- [[infosoc-technological-singularity|技術的特異点（シンギュラリティ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

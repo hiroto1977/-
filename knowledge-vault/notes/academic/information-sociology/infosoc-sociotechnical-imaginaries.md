@@ -31,6 +31,18 @@ Sheila Jasanoff ／ Sang-Hyun Kim
 - [Sismondo (2020) Sociotechnical imaginaries — Social Studies of Science](https://journals.sagepub.com/doi/10.1177/0306312720944753) `学術`
 - [Wikipedia — Sociotechnical system](https://en.wikipedia.org/wiki/Sociotechnical_system) `リファレンス`
 
+## 関連概念
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
+- [[mgmt-role-exit-theory|役割退出理論]] — 出典を共有
+- [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

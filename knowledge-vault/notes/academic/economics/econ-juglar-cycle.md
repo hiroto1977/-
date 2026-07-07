@@ -30,6 +30,15 @@ aliases:
 - [Le Grand & Hagemann — Business Cycles in Juglar and Schumpeter — ResearchGate](https://www.researchgate.net/publication/228706798_Business_Cycles_in_Juglar_and_Schumpeter) `学術`
 - [Encyclopedia.com: Clément Juglar](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/juglar-clement) `リファレンス`
 
+## 関連概念
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同分野の近傍
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

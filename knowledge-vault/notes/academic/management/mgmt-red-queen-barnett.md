@@ -29,6 +29,13 @@ aliases:
 - [Barnett, W.P. & Hansen, M.T. (1996) The Red Queen in Organizational Evolution — Strategic Management Journal 17(S1)](https://www.jstor.org/stable/2486816) `学術`
 - [Wikipedia: Red Queen hypothesis — Van Valen, coevolution, organizational evolution](https://en.wikipedia.org/wiki/Red_Queen_hypothesis) `リファレンス`
 
+## 関連概念
+- [[mgmt-red-queen-effect|赤の女王効果（Red Queen Effect）]] — 語彙が近い
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
+- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同じ思想家
+- [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 同分野の近傍
+- [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

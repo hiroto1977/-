@@ -31,6 +31,18 @@ W・アーサー・ルイス ／ ジョン・フェイ ／ グスタフ・ラニ
 - [Minami, R. (1973) The Turning Point in Economic Development: Japan's Experience — Princeton University Press](https://press.princeton.edu/books/hardcover/9780691041384/the-turning-point-in-economic-development) `学術`
 - [Ranis, G. & Fei, J.C.H. (1988) Development Economics: What Next? — World Bank Economic Review](https://doi.org/10.1093/wber/1.2.215) `学術`
 
+## 関連概念
+- [[econ-lewis-turning-point|ルイスの二重経済モデル（転換点）]] — 語彙が近い
+- [[econ-fei-ranis|フェイ＝ラニス・モデル]] — 同じ思想家
+- [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
+- [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

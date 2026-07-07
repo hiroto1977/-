@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Set-off (law) — equitable set-off, close connection, substantive defence, cross-claim](https://en.wikipedia.org/wiki/Set-off_(law)) `リファレンス`
 - [Wikipedia: Equitable set-off — Hanak v Green, Geldof v Simon Carves, manifest injustice](https://en.wikipedia.org/wiki/Set-off_(law)#Equitable_set-off) `リファレンス`
 
+## 関連概念
+- [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同じ思想家
+- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同じ思想家
+- [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]] — 同じ思想家
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
+- [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同じ思想家
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
+- [[bizlaw-subordination-agreement|劣後契約——債権の弁済順位を合意で後順位に置く]] — 同じ思想家
+- [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — 同じ思想家
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

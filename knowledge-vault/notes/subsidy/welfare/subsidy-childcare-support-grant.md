@@ -36,6 +36,18 @@ municipality
 - [こども家庭庁 妊婦のための支援給付](https://www.cfa.go.jp/policies/shussan-kosodate/joseikingaku) `公的`
 - [横浜市 出産・子育て応援事業](https://www.city.yokohama.lg.jp/kurashi/kosodate-kyoiku/oyako/teate-josei/shussankosodate.html) `自治体`
 
+## 関連概念
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
+- [[subsidy-child-allowance|児童手当]] — 同じ思想家
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家
+- [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 同じ思想家
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 同じ思想家
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
+- [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同じ思想家
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 同じ思想家
+- [[subsidy-kyoto-city|京都市伝統産業設備改修等補助制度]] — 同じ思想家
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

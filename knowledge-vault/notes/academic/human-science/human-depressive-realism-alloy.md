@@ -30,6 +30,17 @@ aliases:
 - [Taylor & Brown (1988) Illusion and Well-Being: A Social Psychological Perspective on Mental Health — Psychological Bulletin](https://doi.org/10.1037/0033-2909.103.2.193) `学術`
 - [Wikipedia: Depressive realism — 抑うつリアリズム仮説の実験的証拠と批判的検討](https://en.wikipedia.org/wiki/Depressive_realism) `リファレンス`
 
+## 関連概念
+- [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 同じ思想家
+- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
+- [[human-tend-and-befriend-taylor|思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式]] — 同じ思想家
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
+- [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

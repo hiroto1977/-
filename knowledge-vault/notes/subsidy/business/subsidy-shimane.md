@@ -36,6 +36,11 @@ prefecture
 - [島根県商工会連合会 公募案内](https://shoko-shimane.or.jp/2025/06/20/6763/) `運営団体`
 - [奥出雲町 しまね起業支援事業費補助金 公募のお知らせ](https://www.town.okuizumo.shimane.jp/www/contents/1750639339577/index.html) `自治体`
 
+## 関連概念
+- [[subsidy-tochigi|地域課題解決型創業支援補助金（栃木県）]] — 語彙が近い
+- [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 語彙が近い
+- [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

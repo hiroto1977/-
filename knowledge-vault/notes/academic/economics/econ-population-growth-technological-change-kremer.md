@@ -30,6 +30,11 @@ Kremer, Michael （1993 Population Growth and Technological Change: One Million 
 - [IDEAS/RePEc — Kremer (1993) Population Growth and Technological Change, QJE bibliographic record](https://ideas.repec.org/a/oup/qjecon/v108y1993i3p681-716..html) `学術`
 - [Oxford Academic — The Quarterly Journal of Economics 108(3): 681-716, official article page](https://academic.oup.com/qje/article-abstract/108/3/681/1881850) `学術`
 
+## 関連概念
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

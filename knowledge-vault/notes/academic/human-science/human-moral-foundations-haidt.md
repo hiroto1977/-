@@ -30,6 +30,12 @@ aliases:
 - [Haidt, J. (2001) The Emotional Dog and Its Rational Tail — Psychological Review](https://doi.org/10.1016/S0065-2601(08)60024-7) `学術`
 - [Wikipedia: Moral foundations theory — evolved moral intuitions and political ideology overview](https://en.wikipedia.org/wiki/Moral_foundations_theory) `リファレンス`
 
+## 関連概念
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 同じ思想家
+- [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 同じ思想家
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同分野の近傍
+- [[human-trolley-problem|トロッコ問題]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

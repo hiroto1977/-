@@ -29,6 +29,18 @@ aliases:
 - [Zeuthen, F. (1930) Problems of Monopoly and Economic Warfare — Routledge](https://www.worldcat.org/oclc/953185) `学術`
 - [Wikipedia: Bargaining — Zeuthen model, risk limit, Nash bargaining solution, Harsanyi](https://en.wikipedia.org/wiki/Bargaining) `リファレンス`
 
+## 関連概念
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[is-lm-model|IS-LM分析]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

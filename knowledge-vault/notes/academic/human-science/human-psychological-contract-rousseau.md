@@ -30,6 +30,17 @@ aliases:
 - [Morrison, E. & Robinson, S. (1997) When Employees Feel Betrayed — AMR](https://doi.org/10.5465/amr.1997.9707180265) `学術`
 - [Wikipedia: Psychological contract — 心理的契約の概要](https://en.wikipedia.org/wiki/Psychological_contract) `リファレンス`
 
+## 関連概念
+- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 語彙が近い
+- [[mgmt-psychological-contract|心理的契約]] — 分野横断
+- [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同じ思想家
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
+- [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
+- [[human-rumination|反芻思考]] — 同分野の近傍
+- [[human-affordance-theory|アフォーダンス理論]] — 同分野の近傍
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

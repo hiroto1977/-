@@ -29,6 +29,18 @@ aliases:
 - [Friedman, M. (1957) A Theory of the Consumption Function — Princeton University Press](https://press.princeton.edu/books/paperback/9780691168531/a-theory-of-the-consumption-function) `学術`
 - [Wikipedia: Permanent income hypothesis — Friedman, consumption smoothing, lifecycle](https://en.wikipedia.org/wiki/Permanent_income_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-life-cycle-hypothesis-modigliani|ライフサイクル仮説——生涯を通じた消費平準化と貯蓄の動学]] — 語彙が近い
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

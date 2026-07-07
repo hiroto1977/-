@@ -29,6 +29,13 @@ aliases:
 - [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（側抑制と明るさの錯視）](https://www.worldcat.org/oclc/35780015) `学術`
 - [Wikipedia: Grid illusion — Hermann grid, lateral inhibition, scintillating grid](https://en.wikipedia.org/wiki/Grid_illusion) `リファレンス`
 
+## 関連概念
+- [[human-mach-bands|マッハバンド——輪郭を強調する明るさの錯視と側抑制]] — 同じ思想家
+- [[human-mccollough-effect|マッカロー効果——方位に依存する持続的な色残効]] — 同じ思想家
+- [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

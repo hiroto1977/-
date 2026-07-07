@@ -31,6 +31,18 @@ Melvin A. Eisenberg ／ Frank H. Easterbrook ／ Daniel R. Fischel
 - [Vanderbilt Law Review — Historical Perspective on Duty of Care, Loyalty](https://scholarship.law.vanderbilt.edu/vlr/vol40/iss3/4/) `学術`
 - [Eisenberg — Duty of Care of Corporate Directors and Officers, UC Berkeley](https://lawcat.berkeley.edu/record/1113486/files/fulltext.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 語彙が近い
+- [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
+- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.2090 新たに事業を始めたときの届出](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2090.htm) `公的`
 - [e-Gov法令検索 所得税法（229条）](https://laws.e-gov.go.jp/law/340AC0000000033) `公的`
 
+## 関連概念
+- [[tax-income-categories|所得税における所得の10種類の区分]] — 語彙が近い
+- [[tax-loss-offsetting|所得税の損益通算]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

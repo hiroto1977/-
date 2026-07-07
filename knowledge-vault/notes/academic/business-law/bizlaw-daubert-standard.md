@@ -30,6 +30,12 @@ aliases:
 - [Federal Rules of Evidence, Rule 702: Testimony by Expert Witnesses. Cornell Law Institute.](https://www.law.cornell.edu/rules/fre/rule_702) `リファレンス`
 - [Kumho Tire Co. v. Carmichael, 526 U.S. 137 (1999)](https://supreme.justia.com/cases/federal/us/526/137/) `公的`
 
+## 関連概念
+- [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同じ思想家
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 同分野の近傍
+- [[bizlaw-offer-acceptance|契約の成立（申込みと承諾・民法522条）]] — 同分野の近傍
+- [[bizlaw-negotiorum-gestio|事務管理（民法697条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

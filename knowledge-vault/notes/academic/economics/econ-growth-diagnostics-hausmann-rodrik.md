@@ -29,6 +29,18 @@ aliases:
 - [Hausmann, R., Rodrik, D. & Velasco, A. (2008) Growth diagnostics — in The Washington Consensus Reconsidered](https://www.worldcat.org/oclc/181368015) `学術`
 - [Wikipedia: Growth diagnostics — binding constraints, decision tree, development policy](https://en.wikipedia.org/wiki/Growth_diagnostics) `リファレンス`
 
+## 関連概念
+- [[econ-washington-consensus|ワシントン・コンセンサス]] — 同じ思想家
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
+- [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同じ思想家
+- [[econ-demographic-dividend-bloom-williamson|人口ボーナスと人口転換——ブルーム＝ウィリアムソンの経済成長への人口学的寄与の分析]] — 同じ思想家
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 同じ思想家
+- [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
+- [[econ-hot-money-flows-kindleberger|ホットマネーと国際資本移動——投機的資本フローの不安定化効果]] — 同じ思想家
+- [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同じ思想家
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

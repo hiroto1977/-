@@ -29,6 +29,16 @@ aliases:
 - [Hosios, A. J. (1990) On the Efficiency of Matching and Related Models of Search and Unemployment — Review of Economic Studies, 57(2), 279–298](https://academic.oup.com/restud/article-abstract/57/2/279/1551634) `学術`
 - [Wikipedia: Matching theory (economics) — search frictions, matching function, Hosios condition for constrained-efficient vacancy creation](https://en.wikipedia.org/wiki/Matching_theory_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+- [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 同じ思想家
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同じ思想家
+- [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
+- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同じ思想家
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 同分野の近傍
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同分野の近傍
+- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

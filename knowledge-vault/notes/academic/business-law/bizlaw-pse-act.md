@@ -30,6 +30,12 @@ aliases:
 - [日本法令索引「電気用品安全法 昭和36年11月16日法律第234号」（国立国会図書館）](https://hourei.ndl.go.jp/simple/detail?lawId=0000053331) `公的`
 - [Wikipedia「電気用品安全法」](https://ja.wikipedia.org/wiki/%E9%9B%BB%E6%B0%97%E7%94%A8%E5%93%81%E5%AE%89%E5%85%A8%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[legal-pse|電気用品安全法とPSEマーク制度]] — 分野横断
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

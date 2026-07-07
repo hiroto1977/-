@@ -30,6 +30,11 @@ R.ルーズベルト・トーマスJr.（R. Roosevelt Thomas Jr., 1990 HBR）／
 - [van Knippenberg & Schippers (2007), Work group diversity, Annual Review of Psychology (PubMed)](https://pubmed.ncbi.nlm.nih.gov/15584838/) `学術`
 - [R. R. Thomas Jr. (1990), From Affirmative Action to Affirming Diversity, Harvard Business Review](https://hbr.org/1990/03/from-affirmative-action-to-affirming-diversity) `学術`
 
+## 関連概念
+- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同じ思想家
+- [[mgmt-talent-management-strategy|タレントマネジメント戦略と人材の識別・開発・維持の組織論]] — 同分野の近傍
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

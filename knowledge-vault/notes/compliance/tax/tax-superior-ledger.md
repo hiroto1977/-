@@ -30,6 +30,14 @@ aliases:
 - [国税庁 電子帳簿保存法の概要](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/02.htm) `公的`
 - [税研 用語解説](https://www.zeiken.co.jp/yougo/) `メディア`
 
+## 関連概念
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+- [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 語彙が近い
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 語彙が近い
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 語彙が近い
+- [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 出典を共有
+- [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

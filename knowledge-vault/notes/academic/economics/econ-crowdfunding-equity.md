@@ -29,6 +29,10 @@ Belleflamme, Paul （2014 Journal of Business Venturing）／Lambert, Thomas ／
 - [Belleflamme, P., Lambert, T., & Schwienbacher, A. (2014) Crowdfunding: Tapping the Right Crowd, Journal of Business Venturing 29(5): 585–609 (Elsevier)](https://doi.org/10.1016/j.jbusvent.2013.07.003) `学術`
 - [Mollick, E. (2014) The Dynamics of Crowdfunding: An Exploratory Study, Journal of Business Venturing 29(1): 1–16 (Elsevier)](https://doi.org/10.1016/j.jbusvent.2013.06.005) `学術`
 
+## 関連概念
+- [[econ-debt-deflation-theory|債務デフレ理論]] — 同分野の近傍
+- [[econ-debt-overhang|デット・オーバーハング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Andrew DeNatale／Prudence B. Abram／David G. Epstein／Jonathan Landers／Lawr
 - [Justia — Benjamin v. Diamond (In re Mobile Steel Co.), 563 F.2d 692 (5th Cir. 1977)](https://law.justia.com/cases/federal/appellate-courts/F2/563/692/360445/) `リファレンス`
 - [LII Cornell — 11 U.S.C. § 510: Subordination (Bankruptcy Code Section 510(c))](https://www.law.cornell.edu/uscode/text/11/510) `公的`
 
+## 関連概念
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+- [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — 出典を共有
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 出典を共有
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

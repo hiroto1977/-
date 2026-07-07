@@ -29,6 +29,13 @@ aliases:
 - [Cornell LII Wex: Uberrimae fidei — utmost good faith, duty of disclosure, material facts, insurance](https://www.law.cornell.edu/wex/uberrimae_fidei) `リファレンス`
 - [Wikipedia: Uberrima fides — utmost good faith, Carter v Boehm, Marine Insurance Act 1906, material facts](https://en.wikipedia.org/wiki/Uberrima_fides) `リファレンス`
 
+## 関連概念
+- [[bizlaw-insurance-contract-law-utmost-good-faith|保険契約法——最大善意義務と告知義務の法的枠組み]] — 語彙が近い
+- [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]] — 同じ思想家
+- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同じ思想家
+- [[bizlaw-promissory-note|約束手形——一定金額の支払を約する二当事者間の流通証券]] — 同じ思想家
+- [[bizlaw-insurable-interest|被保険利益——損をする立場にある者だけが保険をかけられる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

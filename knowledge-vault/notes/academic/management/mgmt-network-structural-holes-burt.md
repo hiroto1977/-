@@ -29,6 +29,17 @@ aliases:
 - [Burt (1992) Structural Holes: The Social Structure of Competition — Harvard University Press](https://doi.org/10.2307/2782989) `学術`
 - [Wikipedia: Structural holes — Burt, brokerage, weak ties, social capital, network advantage](https://en.wikipedia.org/wiki/Structural_holes) `リファレンス`
 
+## 関連概念
+- [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
+- [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
+- [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
+- [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同分野の近傍
+- [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

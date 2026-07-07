@@ -29,6 +29,18 @@ aliases:
 - [Smith, A. (1776) An Inquiry into the Nature and Causes of the Wealth of Nations — Book I, Ch. 10 (WorldCat)](https://www.worldcat.org/oclc/2304948) `学術`
 - [Wikipedia: Compensating differential — Adam Smith, net advantages, hedonic wages, Rosen](https://en.wikipedia.org/wiki/Compensating_differential) `リファレンス`
 
+## 関連概念
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 同じ思想家
+- [[econ-division-of-labour|分業]] — 同じ思想家
+- [[econ-invisible-hand|見えざる手]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-superstar-economics|スーパースターの経済学]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

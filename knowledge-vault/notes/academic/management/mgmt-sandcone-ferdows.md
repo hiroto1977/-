@@ -29,6 +29,17 @@ aliases:
 - [Ferdows, K. & De Meyer, A. (1990) Lasting Improvements in Manufacturing Performance: In Search of a New Theory — Journal of Operations Management, 9(2), 168–184](https://doi.org/10.1016/0272-6963(90)90094-T) `学術`
 - [Cambridge IfM: Trade-off & sand cone models — Ferdows & De Meyer (1990), cumulative capabilities quality → dependability → speed → cost](https://www.ifm.eng.cam.ac.uk/research/dstools/trade-off-models/) `リファレンス`
 
+## 関連概念
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
+- [[mgmt-focused-factory-skinner|集中工場（スキナー）——「絞り込み」が競争力を生む製造戦略]] — 同じ思想家
+- [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 同じ思想家
+- [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 出典を共有
+- [[mgmt-swot-analysis|SWOT分析]] — 出典を共有
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

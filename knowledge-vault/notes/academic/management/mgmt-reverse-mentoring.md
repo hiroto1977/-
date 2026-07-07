@@ -29,6 +29,11 @@ aliases:
 - [Harvard Business Review — "Why Reverse Mentoring Works and How to Do It Right"（2019年、実践ガイドと効果の解説）](https://hbr.org/2019/10/why-reverse-mentoring-works-and-how-to-do-it-right) `メディア`
 - [SHRM (Society for Human Resource Management) — Reverse Mentoring: What It Is and How to Make It Work（人事管理専門団体による定義・実践指針）](https://www.shrm.org/topics-tools/news/employee-relations/reverse-mentoring-what-it-is-and-how-to-make-it-work) `リファレンス`
 
+## 関連概念
+- [[mgmt-mentoring|メンタリング]] — 同分野の近傍
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
+- [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

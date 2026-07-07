@@ -30,6 +30,18 @@ aliases:
 - [Reicher, Spears & Postmes (1995) A Social Identity Model of Deindividuation Phenomena, European Review of Social Psychology 6, 161–198](https://www.scirp.org/reference/referencespapers?referenceid=2192573) `学術`
 - [Postmes, Spears, Sakhel & de Groot (2001) Social Influence in Computer-Mediated Communication, PSPB](https://journals.sagepub.com/doi/10.1177/01461672012710001) `学術`
 
+## 関連概念
+- [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]] — 語彙が近い
+- [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

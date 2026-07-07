@@ -30,6 +30,14 @@ aliases:
 - [Izard, C.E. (1991) The Psychology of Emotions — Springer](https://doi.org/10.1007/978-1-4899-0615-1) `学術`
 - [Izard, C.E. (2010) The Many Meanings/Aspects of Emotion — Emotion Review, 2(4), 363-370](https://doi.org/10.1177/1754073910361982) `学術`
 
+## 関連概念
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]] — 同じ思想家
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同分野の近傍
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同分野の近傍
+- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 同分野の近傍
+- [[human-microaggression|マイクロアグレッション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

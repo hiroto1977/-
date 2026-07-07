@@ -30,6 +30,18 @@ aliases:
 - [Cambridge University Press — McLuhan's Global Village Today (Global Immediacy)](https://www.cambridge.org/core/books/mcluhans-global-village-today/0CD7154B232AFD638DCD0FFF29E4C3BC) `学術`
 - [University of Minnesota Press — Re-tribalization & simultaneity](https://manifold.umn.edu/read/the-neocolonialism-of-the-global-village/) `学術`
 
+## 関連概念
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 語彙が近い
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 同じ思想家
+- [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+- [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

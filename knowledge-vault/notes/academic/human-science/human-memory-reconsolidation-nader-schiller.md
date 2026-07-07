@@ -30,6 +30,11 @@ aliases:
 - [Schiller et al. (2010) Preventing the return of fear in humans using reconsolidation update mechanisms — Nature](https://doi.org/10.1038/nature08637) `学術`
 - [Wikipedia: Memory reconsolidation — 記憶再固定化の神経機構と臨床応用の概説](https://en.wikipedia.org/wiki/Memory_reconsolidation) `リファレンス`
 
+## 関連概念
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
+- [[human-memory-reconsolidation|記憶の再固定化]] — 同分野の近傍
+- [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

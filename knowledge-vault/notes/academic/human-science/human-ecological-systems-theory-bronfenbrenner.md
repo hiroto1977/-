@@ -29,6 +29,18 @@ aliases:
 - [Bronfenbrenner, U. (1979) The Ecology of Human Development — Harvard University Press](https://www.hup.harvard.edu/books/9780674224575) `学術`
 - [Wikipedia: Ecological systems theory — Bronfenbrenner, nested systems, micro/meso/exo/macro](https://en.wikipedia.org/wiki/Ecological_systems_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 同じ思想家
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同じ思想家
+- [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同じ思想家
+- [[human-cultural-historical-activity-theory-engestrom|文化歴史的活動理論——エンゲストロームの拡張的学習と活動システム分析]] — 同じ思想家
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
+- [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

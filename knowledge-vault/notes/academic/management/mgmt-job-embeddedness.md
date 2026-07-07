@@ -31,6 +31,18 @@ Terence R. Mitchell ／ Brooks C. Holtom ／ Thomas W. Lee
 - [日本の人事部 — ジョブ・エンベデッドネス解説](https://jinjibu.jp/keyword/detl/1649/) `リファレンス`
 - [JIL（労働政策研究・研修機構）— Off-the-job embeddedness解説](https://www.jil.go.jp/institute/zassi/backnumber/2021/09/pdf/089-090.pdf) `公的`
 
+## 関連概念
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 語彙が近い
+- [[mgmt-event-system-theory|出来事システム理論（Event System Theory）]] — 同じ思想家
+- [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 出典を共有
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 出典を共有
+- [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
+- [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

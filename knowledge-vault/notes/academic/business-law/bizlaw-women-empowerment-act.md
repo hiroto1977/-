@@ -30,6 +30,11 @@ aliases:
 - [国立国会図書館 日本法令索引（平成27年法律第64号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000136773) `公的`
 - [Wikipedia「女性の職業生活における活躍の推進に関する法律」](https://ja.wikipedia.org/wiki/%E5%A5%B3%E6%80%A7%E3%81%AE%E8%81%B7%E6%A5%AD%E7%94%9F%E6%B4%BB%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E6%B4%BB%E8%BA%8D%E3%81%AE%E6%8E%A8%E9%80%B2%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B) `リファレンス`
 
+## 関連概念
+- [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 分野横断
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

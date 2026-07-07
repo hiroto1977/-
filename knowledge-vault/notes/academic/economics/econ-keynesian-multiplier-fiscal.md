@@ -30,6 +30,18 @@ aliases:
 - [IMF World Economic Outlook (2012) Coping with High Debt and Sluggish Growth — IMF](https://www.imf.org/en/Publications/WEO) `公的`
 - [Wikipedia: 乗数効果 — ケインズ乗数の解説](https://ja.wikipedia.org/wiki/%E4%B9%97%E6%95%B0%E5%8A%B9%E6%9E%9C) `リファレンス`
 
+## 関連概念
+- [[econ-fiscal-multiplier|乗数効果（財政乗数）]] — 語彙が近い
+- [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 語彙が近い
+- [[econ-fiscal-multiplier-theory|財政乗数理論]] — 語彙が近い
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同じ思想家
+- [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

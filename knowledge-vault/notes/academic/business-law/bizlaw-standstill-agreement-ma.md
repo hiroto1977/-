@@ -31,6 +31,18 @@ aliases:
 - [UK Takeover Panel — The City Code on Takeovers and Mergers（英国テイクオーバー・コード全文）](https://www.thetakeoverappealboard.org.uk/rules/takeover-code/) `公的`
 - [Wikipedia: Standstill agreement — M&A context, securities law threshold, board neutrality rule](https://en.wikipedia.org/wiki/Standstill_agreement) `リファレンス`
 
+## 関連概念
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
+- [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 同じ思想家
+- [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[bizlaw-carbon-border-adjustment|炭素国境調整メカニズム（CBAM）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

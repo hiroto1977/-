@@ -29,6 +29,10 @@ aliases:
 - [Britannica — Laurence J. Peter](https://www.britannica.com/biography/Laurence-J-Peter) `リファレンス`
 - [Benson, Li & Shue (2019) "Promotions and the Peter Principle" Quarterly Journal of Economics 134(4)](https://academic.oup.com/qje/article/134/4/2085/5550760) `学術`
 
+## 関連概念
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 同分野の近傍
+- [[mgmt-job-insecurity-greenhalgh-rosenblatt|雇用不安——雇用の継続が脅かされているという無力な知覚]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

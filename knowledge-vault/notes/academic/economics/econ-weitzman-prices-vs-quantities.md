@@ -29,6 +29,11 @@ Martin L. Weitzman（1974年論文・理論の提唱者） ／ 価格規制（�
 - [Weitzman, M. L. (1974). Prices vs. Quantities. The Review of Economic Studies, 41(4), 477-491.](https://academic.oup.com/restud/article-abstract/41/4/477/1543334) `学術`
 - [IDEAS/RePEc 収録の書誌（Weitzman [1974], RES 41(4):477-491・費用不確実性下での価格手段と数量手段の比較・限界便益と限界費用の傾きによる優劣）](https://ideas.repec.org/a/oup/restud/v41y1974i4p477-491..html) `リファレンス`
 
+## 関連概念
+- [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]] — 同じ思想家
+- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 同分野の近傍
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

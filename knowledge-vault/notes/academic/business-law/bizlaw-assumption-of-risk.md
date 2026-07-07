@@ -31,6 +31,18 @@ aliases:
 - [CourtListener — Murphy v. Steeplechase Amusement Co., 250 N.Y. 479, 166 N.E. 173 (1929) (Cardozo, J.)](https://www.courtlistener.com/opinion/3595079/murphy-v-steeplechase-amusement-co/) `リファレンス`
 - [Kenneth W. Simons, "Reflections on Assumption of Risk," 50 UCLA Law Review 481 (2002)](https://www.uclalawreview.org/wp-content/uploads/2019/09/32_50UCLALRev4812002-2003.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同じ思想家
+- [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
+- [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
+- [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同じ思想家
+- [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 同じ思想家
+- [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 同じ思想家
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
+- [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
+- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

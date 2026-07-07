@@ -29,6 +29,10 @@ Aaron Director（アーロン・ディレクター・法則の名の由来・命
 - [Stigler, G. J. (1970). Director's Law of Public Income Redistribution. Journal of Law and Economics, 13(1), 1-10.](https://www.journals.uchicago.edu/doi/abs/10.1086/466680) `学術`
 - [IDEAS/RePEc 収録の書誌（Stigler [1970], JLE 13(1):1-10・「公共支出は中間層の便益のため・財源は貧者と富者が負担」という Director の命題）](https://ideas.repec.org/a/ucp/jlawec/v13y1970i1p1-10.html) `リファレンス`
 
+## 関連概念
+- [[econ-lucas-paradox|ルーカスのパラドックス]] — 同分野の近傍
+- [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ UberやAmazon Mechanical Turk等のデジタルプラットフォームは、従
 - [Vallas, S. & Schor, J. (2020) What Do Platforms Do? Understanding the Gig Economy — Annual Review of Sociology, 46, 273-294](https://doi.org/10.1146/annurev-soc-090820-023943) `学術`
 - [Mohlmann, M. & Zalmanson, L. (2017) Hands on the Wheel: Navigating Algorithmic Management — Academy of Management Proceedings](https://doi.org/10.5465/AMBPP.2017.58) `学術`
 
+## 関連概念
+- [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 語彙が近い
+- [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同じ思想家
+- [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]] — 同じ思想家
+- [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
+- [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
+- [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 同分野の近傍
+- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
+- [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同分野の近傍
+- [[infosoc-technical-debt|技術的負債]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

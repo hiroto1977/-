@@ -29,6 +29,11 @@ aliases:
 - [van der Linden et al. (2017) Inoculating the Public against Misinformation — Global Challenges 1(2)](https://doi.org/10.1177/2053168017726off) `学術`
 - [Wikipedia: Misinformation — illusory truth, inoculation theory, fact-checking, cognitive biases](https://en.wikipedia.org/wiki/Misinformation) `リファレンス`
 
+## 関連概念
+- [[infosoc-misinformation-correction-backfire|誤情報訂正とバックファイア効果の実証研究]] — 語彙が近い
+- [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — 同じ思想家
+- [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

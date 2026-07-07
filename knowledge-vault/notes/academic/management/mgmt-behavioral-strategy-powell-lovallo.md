@@ -30,6 +30,11 @@ aliases:
 - [Lovallo, D. & Sibony, O. (2010) The Case for Behavioral Strategy — McKinsey Quarterly / Management Science](https://doi.org/10.1287/mnsc.1110.1435) `学術`
 - [Wikipedia: Behavioral strategy — 行動戦略論の概要](https://en.wikipedia.org/wiki/Behavioral_strategy) `リファレンス`
 
+## 関連概念
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 語彙が近い
+- [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同分野の近傍
+- [[mgmt-delphi-method|デルファイ法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

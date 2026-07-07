@@ -30,6 +30,15 @@ aliases:
 - [Davis, D. R. & Weinstein, D. E. (2003) "Market Access, Economic Geography and Comparative Advantage" — JIE](https://doi.org/10.1257/aer.91.5.1423) `学術`
 - [Wikipedia: Rybczynski theorem — 要素増加と産出量変化の定理](https://en.wikipedia.org/wiki/Rybczynski_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-rybczynski|リブチンスキー定理]] — 語彙が近い
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同じ思想家
+- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
+- [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 同じ思想家
+- [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+- [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

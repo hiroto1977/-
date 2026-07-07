@@ -30,6 +30,15 @@ aliases:
 - [Kotter Inc., “The 8-Step Process for Leading Change” — 著者本人の組織による公式解説](https://www.kotterinc.com/methodology/8-steps/) `リファレンス`
 - [Mark Hughes, “Leading changes: Why transformation explanations fail,” Leadership 13(4), SAGE (2016) — 批判的検討](https://journals.sagepub.com/doi/abs/10.1177/1742715015571393) `学術`
 
+## 関連概念
+- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 語彙が近い
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 語彙が近い
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 語彙が近い
+- [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

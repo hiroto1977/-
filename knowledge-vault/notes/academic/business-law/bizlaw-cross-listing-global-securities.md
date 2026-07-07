@@ -29,6 +29,18 @@ aliases:
 - [Coffee, J.C. (1999). The future as history — Northwestern University Law Review](https://doi.org/10.1093/jla/lap005) `学術`
 - [Wikipedia: Cross listing — global securities regulation](https://en.wikipedia.org/wiki/Cross_listing) `リファレンス`
 
+## 関連概念
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同じ思想家
+- [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同じ思想家
+- [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 同じ思想家
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同じ思想家
+- [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同じ思想家
+- [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

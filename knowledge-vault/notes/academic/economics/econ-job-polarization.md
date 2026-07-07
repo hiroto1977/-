@@ -29,6 +29,10 @@ David Autor・Frank Levy・Richard Murnane（2003年論文・タスク・アプ�
 - [Autor, D. H., Levy, F., & Murnane, R. J. (2003). The Skill Content of Recent Technological Change: An Empirical Exploration. The Quarterly Journal of Economics, 118(4), 1279-1333.](https://academic.oup.com/qje/article-abstract/118/4/1279/1925105) `学術`
 - [Autor, D. H., & Dorn, D. (2013). The Growth of Low-Skill Service Jobs and the Polarization of the US Labor Market. American Economic Review, 103(5), 1553-1597.](https://www.aeaweb.org/articles?id=10.1257/aer.103.5.1553) `学術`
 
+## 関連概念
+- [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 同分野の近傍
+- [[econ-baumol-cost-disease|ボーモルのコスト病]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

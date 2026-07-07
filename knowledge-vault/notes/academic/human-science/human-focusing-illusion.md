@@ -30,6 +30,18 @@ aliases:
 - [Kahneman et al. (2006) “Would You Be Happier If You Were Richer? A Focusing Illusion”, Science 312(5782):1908–1910](https://www.science.org/doi/abs/10.1126/science.1129688) `学術`
 - [Wikipedia: Focusing illusion（focalism／焦点化の錯覚）](https://en.wikipedia.org/wiki/Focusing_illusion) `リファレンス`
 
+## 関連概念
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 語彙が近い
+- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同じ思想家
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 同じ思想家
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 同じ思想家
+- [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

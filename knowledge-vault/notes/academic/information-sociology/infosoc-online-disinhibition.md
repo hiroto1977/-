@@ -30,6 +30,10 @@ aliases:
 - [著者本人（Rider大学 John Suler教授）公開の原論文PDF](https://johnsuler.com/article_pdfs/online_dis_effect.pdf) `学術`
 - [Wikipedia「Online disinhibition effect」（良性/有害の区別・6要因）](https://en.wikipedia.org/wiki/Online_disinhibition_effect) `リファレンス`
 
+## 関連概念
+- [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

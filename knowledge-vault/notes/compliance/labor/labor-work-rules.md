@@ -30,6 +30,10 @@ aliases:
 - [就業規則の作成義務と届出 解説](https://www.chukidan.jp/navi/column/work-rules/11286/) `メディア`
 - [就業規則の届出義務 解説](https://www.authense.jp/authense-sr/column/syugyokisoku/17/) `メディア`
 
+## 関連概念
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ aliases:
 - [厚生労働省 スタートアップ労働条件 有給休暇](https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q9.html) `公的`
 - [有給休暇の年5日取得義務 解説](https://www.aig.co.jp/kokokarakaeru/management/human-resource/yuukyu02) `メディア`
 
+## 関連概念
+- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 語彙が近い
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 語彙が近い
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
+- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

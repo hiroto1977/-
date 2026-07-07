@@ -30,6 +30,18 @@ Paul E. Meehl ／ Joseph Zubin ／ Bonnie Spring ／ Scott M. Monroe ／ Andrew 
 - [Monroe SM & Simons AD (1991) Diathesis-stress theories in the context of life stress research. Psychological Bulletin, 110(3), 406-425.](https://psycnet.apa.org/record/1992-05606-001) `学術`
 - [APA Dictionary of Psychology — Diathesis-Stress Model](https://dictionary.apa.org/diathesis-stress-model) `リファレンス`
 
+## 関連概念
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 出典を共有
+- [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 出典を共有
+- [[human-spreading-activation|活性化拡散]] — 出典を共有
+- [[human-stockholm-syndrome|ストックホルム症候群]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

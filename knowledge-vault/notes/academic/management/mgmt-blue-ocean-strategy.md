@@ -32,6 +32,10 @@ W・チャン・キム（W. Chan Kim, INSEAD教授）／レネ・モボルニュ
 - [Wikipedia — Blue Ocean Strategy（出版情報・定義）](https://en.wikipedia.org/wiki/Blue_Ocean_Strategy) `リファレンス`
 - [Kim, W.C. & Mauborgne, R. (2005) Blue Ocean Strategy — HBS Press](https://doi.org/10.1016/j.lrp.2015.09.002) `学術`
 
+## 関連概念
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

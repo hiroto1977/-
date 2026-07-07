@@ -29,6 +29,13 @@ aliases:
 - [Dean, J. W., Brandes, P. & Dharwadkar, R. (1998) Organizational cynicism — Academy of Management Review](https://doi.org/10.2307/259378) `学術`
 - [Wikipedia: Organizational cynicism — belief, affect, behavior, attitude, change](https://en.wikipedia.org/wiki/Organizational_culture) `リファレンス`
 
+## 関連概念
+- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 同じ思想家
+- [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 同じ思想家
+- [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同分野の近傍
+- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
+- [[mgmt-freemium|フリーミアム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

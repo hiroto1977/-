@@ -29,6 +29,13 @@ Lord Goff of Chieveley（Aerospatiale [1987] / Airbus [1999] — ASI の現代�
 - [Airbus Industrie GIE v Patel [1999] 1 AC 119 — House of Lords judgment](https://publications.parliament.uk/pa/ld199798/ldjudgmt/jd980402/patel01.htm) `公的`
 - [Allianz SpA v West Tankers (Case C-185/07) [2009] ECR I-663 — EUR-Lex](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX%3A62007CJ0185) `公的`
 
+## 関連概念
+- [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
+- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 出典を共有
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

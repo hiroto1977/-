@@ -30,6 +30,11 @@ aliases:
 - [Caramani (2017) Will vs. Reason: The Populist and Technocratic Forms of Political Representation — American Political Science Review](https://doi.org/10.1177/1354068820963537) `学術`
 - [Wikipedia: Technopopulism — テクノポピュリズムの定義と政治的展開](https://en.wikipedia.org/wiki/Technopopulism) `リファレンス`
 
+## 関連概念
+- [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
+- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
+- [[infosoc-post-normal-science-funtowicz-ravetz|ポストノーマル科学——不確実性と利害が高い問題における科学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

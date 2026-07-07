@@ -30,6 +30,11 @@ William Poole（ウィリアム・プール, 1970） ／ Quarterly Journal of Ec
 - [IDEAS/RePEc: Poole, William (1970) 'Optimal Choice of Monetary Policy Instruments in a Simple Stochastic Macro Model', Quarterly Journal of Economics 84(2):197-216 — 書誌情報](https://ideas.repec.org/a/oup/qjecon/v84y1970i2p197-216..html) `リファレンス`
 - [Wikipedia: William Poole (economist, b.1937) — 米経済学者、セントルイス連銀総裁（1998-2008）、1970年QJE論文の著者](https://en.wikipedia.org/wiki/William_Poole_(economist)) `リファレンス`
 
+## 関連概念
+- [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同分野の近傍
+- [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同分野の近傍
+- [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

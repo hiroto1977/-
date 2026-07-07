@@ -30,6 +30,18 @@ aliases:
 - [Gourinchas & Rey (2007) From World Banker to World Venture Capitalist: US External Adjustment and the Exorbitant Privilege — in G7 Current Account Imbalances](https://doi.org/10.1086/521966) `学術`
 - [Wikipedia: Exorbitant privilege — 基軸通貨の法外な特権の概説](https://en.wikipedia.org/wiki/Exorbitant_privilege) `リファレンス`
 
+## 関連概念
+- [[econ-dollar-hegemony-theory|ドル覇権理論]] — 語彙が近い
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 語彙が近い
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
+- [[econ-hot-money-flows-kindleberger|ホットマネーと国際資本移動——投機的資本フローの不安定化効果]] — 同じ思想家
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
+- [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同じ思想家
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
+- [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

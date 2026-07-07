@@ -30,6 +30,12 @@ aliases:
 - [Weltevrede, E. & Helmond, A. (2019) Medium-Specific Platform Features — Internet Policy Review](https://doi.org/10.1177/1461444819845319) `学術`
 - [Wikipedia: Platform studies — digital infrastructure and temporal structuration overview](https://en.wikipedia.org/wiki/Platform_studies) `リファレンス`
 
+## 関連概念
+- [[infosoc-platformization|プラットフォーム化（Platformization）]] — 同じ思想家
+- [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同じ思想家
+- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
+- [[infosoc-immaterial-labor|非物質的労働（immaterial labor）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

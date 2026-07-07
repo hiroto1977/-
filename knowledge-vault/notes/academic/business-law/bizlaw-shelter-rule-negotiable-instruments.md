@@ -30,6 +30,18 @@ Karl Nickerson Llewellyn ／ Grant Gilmore ／ Gregory E. Maggs（1998）／ UCC
 - [Gregory E. Maggs (1998) The Holder in Due Course Doctrine as a Default Rule — Georgia Law Review, GW Law Faculty Scholarship](https://scholarship.law.gwu.edu/faculty_publications/688/) `学術`
 - [Colorado Revised Statutes § 4-3-203 — Transfer of Instrument; Rights Acquired by Transfer (UCC Shelter Rule, state codification)](https://law.justia.com/codes/colorado/2022/title-4/article-3/part-2/section-4-3-203/) `公的`
 
+## 関連概念
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同じ思想家
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

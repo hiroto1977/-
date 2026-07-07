@@ -30,6 +30,13 @@ aliases:
 - [国税庁 No.7400 法定調書の提出義務者](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hotei/7400.htm) `公的`
 - [法定調書 電子申告義務化 解説](https://www.obc.co.jp/360/list/post139) `メディア`
 
+## 関連概念
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 出典を共有
+- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 出典を共有
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 同分野の近傍
+- [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

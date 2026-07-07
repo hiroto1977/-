@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 男女の賃金の差異の情報公表について](https://www.mhlw.go.jp/content/11900000/000970983.pdf) `公的`
 - [HRプロ 男女の賃金差の公表義務 101人以上への拡大](https://www.hrpro.co.jp/series_detail.php?t_no=3090) `メディア`
 
+## 関連概念
+- [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 語彙が近い
+- [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

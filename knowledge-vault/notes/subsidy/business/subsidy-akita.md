@@ -36,6 +36,18 @@ prefecture
 - [秋田県 あきた企業活性化センター 紹介](https://www.pref.akita.lg.jp/pages/genre/11973) `自治体`
 - [補助金ポータル 秋田県 あきた農商工応援ファンド事業](https://hojyokin-portal.jp/subsidies/72685) `メディア`
 
+## 関連概念
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
+- [[subsidy-fukui|企業における省エネ設備等導入支援事業補助金（福井県）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

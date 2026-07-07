@@ -30,6 +30,18 @@ aliases:
 - [e-Gov法令検索 民法（明治29年法律第89号）— 709条・710条・723条の条文](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 - [裁判所 名誉毀損の真実性・真実相当性に関する判決（公開判例PDF）](https://www.courts.go.jp/assets/hanrei/hanrei-pdf-52287.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]] — 同じ思想家
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
+- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

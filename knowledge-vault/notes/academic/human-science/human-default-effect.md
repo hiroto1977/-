@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia — Default effect（メカニズム：effort / implied endorsement / loss aversion）](https://en.wikipedia.org/wiki/Default_effect) `リファレンス`
 - [Kellogg School of Management（Northwestern Univ.）— Do defaults save lives?](https://www.kellogg.northwestern.edu/news/blog/2015/01/22/do-defaults-save-lives/) `学術`
 
+## 関連概念
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
+- [[human-recognition-heuristic|再認ヒューリスティック]] — 同じ思想家
+- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
+- [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

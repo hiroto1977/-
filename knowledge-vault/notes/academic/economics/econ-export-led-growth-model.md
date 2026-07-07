@@ -31,6 +31,11 @@ aliases:
 - [Krueger, A. O. (1987) The Importance of Economic Policy in Development: Contrasts Between Korea and Turkey — NBER Working Paper 2094（ELG政策の比較分析）](https://www.nber.org/papers/w2094) `学術`
 - [Wikipedia: Export-led growth — theory, East Asian evidence, critique, and policy debate](https://en.wikipedia.org/wiki/Export-led_growth) `リファレンス`
 
+## 関連概念
+- [[eh-1952|1952年（昭和27年）]] — 出典を共有
+- [[econ-granger-causality|グレンジャー因果性]] — 同分野の近傍
+- [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [Silverstone, R. & Hirsch, E. (eds.) (1992) Consuming Technologies: Media and Information in Domestic Spaces — Routledge (WorldCat)](https://www.worldcat.org/oclc/25008143) `学術`
 - [Wikipedia: Domestication of technology — Silverstone/Hirsch/Morley, appropriation/objectification/incorporation/conversion, moral economy](https://en.wikipedia.org/wiki/Domestication_(media)) `リファレンス`
 
+## 関連概念
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 同じ思想家
+- [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

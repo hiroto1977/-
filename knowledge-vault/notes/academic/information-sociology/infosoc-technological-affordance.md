@@ -30,6 +30,14 @@ J.J. ギブソン（1979 The Ecological Approach to Visual Perception）／D. �
 - [IxDF Encyclopedia of Human-Computer Interaction 第2版 — Affordances（Gibson・Norman概説）](https://www.interaction-design.org/literature/book/the-encyclopedia-of-human-computer-interaction-2nd-ed/affordances) `リファレンス`
 - [Evans, Pearce, Vitak & Treem (2017) Explicating Affordances, JCMC 22(1):35-52](https://doi.org/10.1111/jcc4.12180) `学術`
 
+## 関連概念
+- [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 語彙が近い
+- [[human-affordance-theory|アフォーダンス理論]] — 分野横断
+- [[infosoc-gamification|ゲーミフィケーション]] — 出典を共有
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
+- [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — 同分野の近傍
+- [[infosoc-tam-healthcare|医療情報技術の受容モデル：TAM・UTAUTのヘルスケア領域への適用と拡張]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

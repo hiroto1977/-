@@ -31,6 +31,12 @@ aliases:
 - [Oxford Reference — Post-industrial society](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100339541) `リファレンス`
 - [国立国会図書館サーチ — 梅棹忠夫『情報産業論』(1963)](https://iss.ndl.go.jp/books/R000000004-I728841-00) `公的`
 
+## 関連概念
+- [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — 出典を共有
+- [[mgmt-value-co-creation|価値共創]] — 出典を共有
+- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
+- [[infosoc-onlife|オンライフ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

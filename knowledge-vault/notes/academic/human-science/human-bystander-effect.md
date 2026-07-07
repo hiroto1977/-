@@ -30,6 +30,15 @@ aliases:
 - [Darley & Latané (1968) Bystander intervention in emergencies, JPSP 8(4):377-383（原典）](https://psycnet.apa.org/record/1968-08862-001) `学術`
 - [British Psychological Society — ジェノヴィーズ通説の検証](https://www.bps.org.uk/research-digest/truth-behind-story-kitty-genovese-and-bystander-effect) `リファレンス`
 
+## 関連概念
+- [[human-social-loafing-latane|社会的手抜き——集団作業で個人の努力が低下する現象]] — 同じ思想家
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 出典を共有
+- [[human-social-proof|社会的証明]] — 同分野の近傍
+- [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]] — 同分野の近傍
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 同分野の近傍
+- [[human-social-facilitation|社会的促進と社会的抑制]] — 同分野の近傍
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

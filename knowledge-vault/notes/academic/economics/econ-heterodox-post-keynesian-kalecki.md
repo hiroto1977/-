@@ -30,6 +30,18 @@ aliases:
 - [Lavoie (2014) Post-Keynesian Economics: New Foundations — Edward Elgar](https://doi.org/10.4337/9781785364280) `学術`
 - [Wikipedia: Post-Keynesian economics — ポスト・ケインズ派の理論と系譜](https://en.wikipedia.org/wiki/Post-Keynesian_economics) `リファレンス`
 
+## 関連概念
+- [[econ-kalecki-profit|カレツキの利潤理論]] — 同じ思想家
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Nardi, B.A. & ODay, V.L. (1999) Information Ecologies: Using Technology with Heart — MIT Press (WorldCat)](https://www.worldcat.org/oclc/40193223) `学術`
 - [Wikipedia: Information ecology — Nardi & ODay, system of people/practices/values/technology, keystone species](https://en.wikipedia.org/wiki/Information_ecology) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 語彙が近い
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
+- [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
+- [[human-double-bind|ダブルバインド（二重拘束）]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同じ思想家
+- [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

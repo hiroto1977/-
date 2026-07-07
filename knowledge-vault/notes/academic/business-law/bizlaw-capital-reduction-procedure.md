@@ -31,6 +31,18 @@ aliases:
 - [Davies, P. & Worthington, S. (2016) Gower & Davies: Principles of Modern Company Law — Sweet & Maxwell（資本維持原則と減資の法理）](https://doi.org/10.1093/ojls/gqi037) `学術`
 - [Wikipedia: Capital reduction — Companies Act 2006, Japan company law 449, creditor protection, EU second directive](https://en.wikipedia.org/wiki/Capital_reduction) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
+- [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

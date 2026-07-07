@@ -30,6 +30,18 @@ aliases:
 - [Encyclopaedia Britannica「Heckscher-Ohlin theory / Leontief Paradox」](https://www.britannica.com/money/Heckscher-Ohlin-theory) `リファレンス`
 - [The New Palgrave Dictionary of Economics「Leontief Paradox」(SpringerLink)](https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_1257-1) `学術`
 
+## 関連概念
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 語彙が近い
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
+- [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-input-output-analysis-leontief|投入産出分析——レオンチェフ・マトリクスと産業連関の定量的分析]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

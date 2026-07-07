@@ -31,6 +31,17 @@ Lord Hoffmann ／ Paul L. Davies ／ Sarah Worthington
 - [Cambridge Law Review — Unfair prejudice petition analysis](https://www.cambridgelawreview.org/_files/ugd/fb0f90_a580c08697994712bcced88bd257da18.pdf) `学術`
 - [Wikipedia — Unfair prejudice in United Kingdom company law](https://en.wikipedia.org/wiki/Unfair_prejudice_in_United_Kingdom_company_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 語彙が近い
+- [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
+- [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 出典を共有
+- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 同分野の近傍
+- [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 同分野の近傍
+- [[bizlaw-eu-general-data-protection-regulation-gdpr|EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制]] — 同分野の近傍
+- [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-m-and-a|M&A法と企業再構築——株主保護・競争法審査・情報開示義務の国際比較]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

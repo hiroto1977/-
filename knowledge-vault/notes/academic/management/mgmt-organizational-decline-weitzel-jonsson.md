@@ -29,6 +29,18 @@ aliases:
 - [Weitzel, W. & Jonsson, E. (1989) Decline in Organizations — Academy of Management Review](https://doi.org/10.2307/258079) `学術`
 - [Wikipedia: Organizational decline — five stages, turnaround, Icarus paradox, escalation](https://en.wikipedia.org/wiki/Organizational_decline) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 語彙が近い
+- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同じ思想家
+- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[econ-dollar-auction|ドル・オークション：エスカレーション・トラップのゲーム理論的モデル]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

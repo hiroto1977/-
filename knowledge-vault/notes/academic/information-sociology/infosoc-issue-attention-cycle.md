@@ -30,6 +30,11 @@ Anthony Downs（アンソニー・ダウンズ, 1930-2021, 米経済学者・ブ
 - [Wikipedia「Issue-attention cycle」— アンソニー・ダウンズ1972年の五段階モデル（前問題／警戒的発見・熱狂／代償への自覚／関心の漸減／後問題）の概説](https://en.wikipedia.org/wiki/Issue-attention_cycle) `リファレンス`
 - [Peters, B. G. ＆ Hogwood, B. W. (1985) "In Search of the Issue-Attention Cycle," The Journal of Politics 47(1): 238-253（University of Chicago Press, 査読誌・実証的検討）](https://www.journals.uchicago.edu/doi/10.2307/2131074) `学術`
 
+## 関連概念
+- [[human-sociometer-theory|ソシオメーター理論]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

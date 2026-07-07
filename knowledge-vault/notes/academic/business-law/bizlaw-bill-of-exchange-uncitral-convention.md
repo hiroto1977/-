@@ -30,6 +30,18 @@ aliases:
 - [Schmitthoff, C. (1990) Schmitthoff's Export Trade — Stevens & Sons](https://doi.org/10.1093/law/9780199546435.013.0007) `学術`
 - [Wikipedia: UN Convention on International Bills of Exchange — 条約の概要](https://en.wikipedia.org/wiki/United_Nations_Convention_on_International_Bills_of_Exchange_and_International_Promissory_Notes) `リファレンス`
 
+## 関連概念
+- [[bizlaw-bills-act|手形法]] — 語彙が近い
+- [[bizlaw-arbitration-act|仲裁法]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同じ思想家
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 同じ思想家
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 出典を共有
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 出典を共有
+- [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

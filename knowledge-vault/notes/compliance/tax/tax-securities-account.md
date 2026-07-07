@@ -30,6 +30,17 @@ aliases:
 - [国税庁 特定口座（源泉徴収あり）とは](https://www.keisan.nta.go.jp/r2yokuaru/cat2/cat21/cat219/yogosetsumei/gensenchoshukoza.html) `公的`
 - [特定口座制度 解説](https://member.rakuten-sec.co.jp/web/service/specific/tax_system_outline.html) `メディア`
 
+## 関連概念
+- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 出典を共有
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-nisa|NISA（少額投資非課税制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

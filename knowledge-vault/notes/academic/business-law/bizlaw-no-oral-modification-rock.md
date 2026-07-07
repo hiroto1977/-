@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: MWB v Rock Advertising — No Oral Modification clauses, party autonomy, UK Supreme Court](https://en.wikipedia.org/wiki/MWB_Business_Exchange_Centres_Ltd_v_Rock_Advertising_Ltd) `リファレンス`
 - [Wikipedia: Variation (contract law) — contract amendment, formalities, NOM clauses](https://en.wikipedia.org/wiki/Variation_(contract_law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
+- [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同じ思想家
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
+- [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同じ思想家
+- [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
+- [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
+- [[bizlaw-subordination-agreement|劣後契約——債権の弁済順位を合意で後順位に置く]] — 同じ思想家
+- [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同じ思想家
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

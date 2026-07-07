@@ -29,6 +29,16 @@ aliases:
 - [Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz](https://www.worldcat.org/oclc/3186950) `学術`
 - [Wikipedia: Downs–Thomson paradox — road capacity, public transport, Mohring effect](https://en.wikipedia.org/wiki/Downs%E2%80%93Thomson_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-median-voter|中位投票者定理]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
+- [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

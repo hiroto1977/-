@@ -29,6 +29,13 @@ aliases:
 - [Wikipedia: Social penetration theory — Altman & Taylor (1973), onion model, breadth/depth of self-disclosure, social exchange](https://en.wikipedia.org/wiki/Social_penetration_theory) `リファレンス`
 - [A First Look at Communication Theory: Social Penetration Theory — Altman & Taylor, onion analogy, self-disclosure, depenetration](https://www.afirstlook.com/docs/socialpenetration.pdf) `リファレンス`
 
+## 関連概念
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同じ思想家
+- [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同じ思想家
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

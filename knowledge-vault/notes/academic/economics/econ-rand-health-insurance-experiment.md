@@ -30,6 +30,16 @@ RAND医療保険実験は、ランド研究所が1971年から1982年にかけ�
 - [RAND Corporation, “The Health Insurance Experiment: A Classic RAND Study Speaks to the Current Health Care Reform Debate”（RB-9174, 1971–1982／自己負担率0–95%・価格弾力性約−0.2を要約）](https://www.rand.org/pubs/research_briefs/RB9174.html) `リファレンス`
 - [Newhouse, J. P. and the Insurance Experiment Group (1993) Free for All? Lessons from the RAND Health Insurance Experiment, Harvard University Press, Cambridge, MA（ISBN 0-674-31846-3／主要報告書, 書評via Cambridge Core）](https://www.cambridge.org/core/journals/journal-of-public-policy/article/abs/joseph-p-newhouse-and-the-insurance-experiment-group-free-for-all-lessons-from-the-rand-health-insurance-experimentcambridge-mass-harvard-university-press-1993-isbn-0674318463/FA55C461640D9D1B335D4AE6D2B53646) `学術`
 
+## 関連概念
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 出典を共有
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 出典を共有
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 出典を共有
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 出典を共有
+- [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 出典を共有
+- [[mgmt-delphi-method|デルファイ法]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ Walter Y. Oi（ウォルター・オイ, 1929-2013, 原典1962） ／ firm-speci
 - [IDEAS/RePEc — Oi, Walter Y. (1962) 'Labor as a Quasi-Fixed Factor', Journal of Political Economy 70:538（書誌レコード）](https://ideas.repec.org/a/ucp/jpolec/v70y1962p538.html) `リファレンス`
 - [Wikipedia — Walter Oi（1929-2013, Elmer B. Milliman Professor, University of Rochester；'Labor as a Quasi-Fixed Factor' 1962 を含む業績）](https://en.wikipedia.org/wiki/Walter_Oi) `リファレンス`
 
+## 関連概念
+- [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同分野の近傍
+- [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 同分野の近傍
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

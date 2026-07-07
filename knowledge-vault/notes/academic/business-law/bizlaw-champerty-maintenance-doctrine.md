@@ -31,6 +31,18 @@ Anthony J. Sebok ／ Maya Steinitz ／ Joanna Shepherd
 - [RAND report on third-party litigation funding](https://www.rand.org/pubs/research_reports/RR630.html) `学術`
 - [Wikipedia overview of champerty and maintenance](https://en.wikipedia.org/wiki/Champerty_and_maintenance) `リファレンス`
 
+## 関連概念
+- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — 語彙が近い
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 出典を共有
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 出典を共有
+- [[econ-rand-health-insurance-experiment|RAND医療保険実験（The RAND Health Insurance Experiment, HIE）——自己負担率を無作為に変え、医療需要の費用分担効果（モラルハザード）を実証した大規模社会実験]] — 出典を共有
+- [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 出典を共有
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 出典を共有
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 出典を共有
+- [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 出典を共有
+- [[mgmt-delphi-method|デルファイ法]] — 出典を共有
+- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

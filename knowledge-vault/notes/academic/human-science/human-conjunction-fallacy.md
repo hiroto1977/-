@@ -30,6 +30,18 @@ aliases:
 - [ERIC (U.S. Dept. of Education) record: Tversky & Kahneman 1983, Psychological Review 90, 293–315](https://eric.ed.gov/?id=EJ304963) `公的`
 - [Wikipedia: Conjunction fallacy (Linda problem, conjunction rule, representativeness)](https://en.wikipedia.org/wiki/Conjunction_fallacy) `リファレンス`
 
+## 関連概念
+- [[human-representativeness|代表性ヒューリスティック]] — 語彙が近い
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

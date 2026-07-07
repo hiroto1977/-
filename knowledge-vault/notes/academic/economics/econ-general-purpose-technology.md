@@ -29,6 +29,14 @@ aliases:
 - [Bresnahan, T.F. & Trajtenberg, M. (1995) General Purpose Technologies: Engines of Growth? — Journal of Econometrics 65(1)](https://doi.org/10.1016/0304-4076(94)01598-T) `学術`
 - [Wikipedia: General purpose technology — pervasiveness, improvement, innovational complementarities, productivity paradox](https://en.wikipedia.org/wiki/General_purpose_technology) `リファレンス`
 
+## 関連概念
+- [[econ-path-dependence|経路依存]] — 同じ思想家
+- [[econ-path-dependence-david|経路依存性——歴史的偶然が固定化し劣位の技術が存続する]] — 同じ思想家
+- [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-unbalanced-growth-hirschman|不均衡成長論——戦略的部門への投資が連関を通じて発展を牽引する]] — 同分野の近傍
+- [[econ-productivity-paradox|生産性パラドックス]] — 同分野の近傍
+- [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

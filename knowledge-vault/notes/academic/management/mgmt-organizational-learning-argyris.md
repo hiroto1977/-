@@ -31,6 +31,15 @@ aliases:
 - [Garvin, D. A. (1993) Building a Learning Organization — Harvard Business Review, 71(4), 78–91（実践的学習組織論）](https://doi.org/10.1016/0024-6301(93)90040-U) `学術`
 - [Wikipedia: Double-loop learning — Argyris & Schön, single vs double loop, defensive routines, learning organization](https://en.wikipedia.org/wiki/Double-loop_learning) `リファレンス`
 
+## 関連概念
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 語彙が近い
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同じ思想家
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
+- [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
+- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia — Public Opinion (book, 1922)（擬似環境・頭の中の像）](https://en.wikipedia.org/wiki/Public_Opinion_(book)) `リファレンス`
 - [Project Gutenberg — Walter Lippmann, Public Opinion (1922) 全文（原典）](https://www.gutenberg.org/ebooks/6456) `学術`
 
+## 関連概念
+- [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 語彙が近い
+- [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
+- [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 同分野の近傍
+- [[infosoc-information-subsidy|情報補助金]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

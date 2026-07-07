@@ -33,6 +33,18 @@ aliases:
 - [Wellbeing Economy Governments (WEGo) — Platform for post-growth policy implementation](https://wellbeingeconomy.org/) `リファレンス`
 - [Ecological Economics Journal — Primary venue for degrowth scholarship (1,821+ articles)](https://www.sciencedirect.com/journal/ecological-economics) `学術`
 
+## 関連概念
+- [[econ-emmanuel-unequal-exchange|不等価交換論（エマニュエル理論）]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 出典を共有
+- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — 出典を共有
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
+- [[econ-exit-voice-loyalty|離脱・発言・忠誠（ハーシュマン）]] — 出典を共有
+- [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

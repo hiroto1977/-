@@ -29,6 +29,15 @@ aliases:
 - [経済産業省 — M&A・企業再編政策：会社法改正・指針・統計資料](https://www.meti.go.jp/policy/economy/keiei_innovation/sangyokinyu/MA_index.html) `公的`
 - [Wikipedia: Corporate spin-off — demerger, split-off, carve-out, fiduciary duty, Delaware law](https://en.wikipedia.org/wiki/Corporate_spin-off) `リファレンス`
 
+## 関連概念
+- [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 語彙が近い
+- [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 同じ思想家
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+- [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 同分野の近傍
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 同分野の近傍
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同分野の近傍
+- [[bizlaw-local-autonomy|地方自治法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

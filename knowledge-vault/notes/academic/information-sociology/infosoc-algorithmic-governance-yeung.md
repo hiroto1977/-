@@ -29,6 +29,14 @@ aliases:
 - [Yeung, K. (2018) Algorithmic Regulation: A Critical Interrogation — Regulation & Governance](https://doi.org/10.1111/rego.12158) `学術`
 - [Wikipedia: Algorithmic governance — automated decision-making, accountability, AI regulation](https://en.wikipedia.org/wiki/Algorithmic_governance) `リファレンス`
 
+## 関連概念
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 語彙が近い
+- [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
+- [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同じ思想家
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

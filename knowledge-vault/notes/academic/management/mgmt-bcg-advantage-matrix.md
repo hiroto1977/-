@@ -29,6 +29,13 @@ BCGアドバンテージ・マトリクスは、ボストン・コンサルテ�
 - [Boston Consulting Group 公式サイト — The Advantage Matrix（フレームワークの概念・4象限・戦略含意）](https://www.bcg.com/capabilities/strategy/advantage-matrix) `リファレンス`
 - [Harvard Business School Institute for Strategy and Competitiveness — Business Strategy（競争優位とポートフォリオ戦略ツールの学術的文脈）](https://www.isc.hbs.edu/strategy/business-strategy/Pages/default.aspx) `学術`
 
+## 関連概念
+- [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 同じ思想家
+- [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — 同じ思想家
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 出典を共有
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 出典を共有
+- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

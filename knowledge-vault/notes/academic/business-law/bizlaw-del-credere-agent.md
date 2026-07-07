@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Del credere agent — suretyship, commission, buyer solvency guarantee](https://en.wikipedia.org/wiki/Del_credere_agent) `リファレンス`
 - [Wikipedia: Law of agency — types of agents, authority, commercial agency](https://en.wikipedia.org/wiki/Law_of_agency) `リファレンス`
 
+## 関連概念
+- [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 語彙が近い
+- [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]] — 同じ思想家
+- [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 同じ思想家
+- [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
+- [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
+- [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同じ思想家
+- [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

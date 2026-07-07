@@ -30,6 +30,18 @@ aliases:
 - [衆議院「譲渡担保契約及び所有権留保契約に関する法律案」本文](https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/honbun/houan/g21709043.htm) `公的`
 - [立命館大学法学（生熊）「動産譲渡担保権・留保所有権の法的構成・優劣および集合動産譲渡担保の対抗力について」](https://www.ritsumei.ac.jp/acd/cg/law/lex/21-1/003ikuma.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-retention-of-title|所有権留保]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Averch, H. & Johnson, L.L. (1962) Behavior of the Firm Under Regulatory Constraint — American Economic Review 52(5)](https://www.jstor.org/stable/1812181) `学術`
 - [Wikipedia: Averch–Johnson effect — rate-of-return regulation, over-capitalization, gold-plating](https://en.wikipedia.org/wiki/Averch%E2%80%93Johnson_effect) `リファレンス`
 
+## 関連概念
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
+- [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

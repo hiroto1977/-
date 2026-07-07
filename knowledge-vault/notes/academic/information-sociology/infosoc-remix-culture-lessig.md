@@ -29,6 +29,17 @@ aliases:
 - [Creative Commons (2001) About the History of Creative Commons — creativecommons.org（クリエイティブ・コモンズの設立と目的）](https://creativecommons.org/about/history/) `公的`
 - [Wikipedia: Remix (book) — レシッグ「リミックス」の概説](https://en.wikipedia.org/wiki/Remix_(book)) `リファレンス`
 
+## 関連概念
+- [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]] — 語彙が近い
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 語彙が近い
+- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 語彙が近い
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
+- [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同じ思想家
+- [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同じ思想家
+- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+- [[infosoc-web2|Web 2.0]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

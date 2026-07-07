@@ -31,6 +31,14 @@ aliases:
 - [Surveillance & Society (Queen's University) — Surveillance, Panopticism, and Self-Discipline in the Digital Age](https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/8346) `学術`
 - [SozTheo — Michel Foucault, Discipline and Punish (1975)（規律権力・自己監視の解説）](https://soztheo.com/sociology/key-works-in-sociology/michel-foucault-discipline-and-punish-1975/) `リファレンス`
 
+## 関連概念
+- [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 出典を共有
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
+- [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 同分野の近傍
+- [[infosoc-postdigital-culture-cramer|ポストデジタル文化（クレーマー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

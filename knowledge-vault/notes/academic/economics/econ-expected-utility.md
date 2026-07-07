@@ -30,6 +30,12 @@ aliases:
 - [Stanford Encyclopedia of Philosophy「Normative Theories of Rational Choice: Expected Utility」（VNM表現定理・独立性公理）](https://plato.stanford.edu/entries/rationality-normative-utility/) `学術`
 - [Stanford Encyclopedia of Philosophy「The St. Petersburg Paradox」（ベルヌーイ1738・限界効用逓減・リスク回避）](https://plato.stanford.edu/entries/paradox-stpetersburg/) `学術`
 
+## 関連概念
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同分野の近傍
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同分野の近傍
+- [[econ-allais-paradox|アレのパラドックス]] — 同分野の近傍
+- [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

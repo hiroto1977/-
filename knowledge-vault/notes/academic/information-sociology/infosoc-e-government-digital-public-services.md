@@ -30,6 +30,13 @@ aliases:
 - [デジタル庁 (2021) デジタル社会形成の基本方針 — 日本の電子政府推進](https://www.digital.go.jp/) `公的`
 - [Wikipedia: E-government — 電子政府の国際動向と理論](https://en.wikipedia.org/wiki/E-government) `リファレンス`
 
+## 関連概念
+- [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — 語彙が近い
+- [[infosoc-digital-identity|デジタルアイデンティティ]] — 出典を共有
+- [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 出典を共有
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

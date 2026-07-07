@@ -30,6 +30,17 @@ WHO（国際保健機関） ／ マーク・グリフィス ／ ダリウス・�
 - [Griffiths et al. (2017) Working Towards an International Consensus on Gaming Disorder — Addiction](https://doi.org/10.1111/add.14457) `学術`
 - [Wikipedia: Video game addiction — ゲーム依存の定義・診断・論争](https://en.wikipedia.org/wiki/Video_game_addiction) `リファレンス`
 
+## 関連概念
+- [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 出典を共有
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 出典を共有
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 出典を共有
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 出典を共有
+- [[infosoc-infodemic|インフォデミック]] — 出典を共有
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
+- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同分野の近傍
+- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同分野の近傍
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

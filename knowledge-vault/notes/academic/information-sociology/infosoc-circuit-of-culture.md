@@ -30,6 +30,18 @@ Du Gay, Paul （1997 Doing Cultural Studies: The Story of the Sony Walkman）／
 - [ERIC ED544487, "The Circuit of Culture as a Generative Tool of Contemporary Analysis" (AARE, 2012)](https://eric.ed.gov/?id=ED544487) `学術`
 - [Oxford Reference — "Circuit of culture"](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095613171) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
+- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Leland, H. E. & Pyle, D. H. (1977) Informational asymmetries, financial structure, and financial intermediation — Journal of Finance](https://doi.org/10.2307/2326770) `学術`
 - [Wikipedia: Signalling (economics) — Leland–Pyle, retained equity, corporate finance](https://en.wikipedia.org/wiki/Signalling_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同じ思想家
+- [[econ-precautionary-saving|予備的貯蓄]] — 同じ思想家
+- [[econ-signaling|シグナリング]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — 同じ思想家
+- [[econ-job-competition-thurow|仕事をめぐる競争モデル（サロー）——賃金競争への対抗と「労働の待ち行列」]] — 同じ思想家
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
+- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

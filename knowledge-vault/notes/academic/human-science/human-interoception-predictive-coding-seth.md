@@ -30,6 +30,15 @@ aliases:
 - [Seth, A. K. & Tsakiris, M. (2018) "Being a Beast Machine" — Nature Reviews Neuroscience](https://doi.org/10.1038/s41583-019-0234-1) `学術`
 - [Wikipedia: Interoception — 内受容感覚の神経科学と意識研究](https://en.wikipedia.org/wiki/Interoception) `リファレンス`
 
+## 関連概念
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
+- [[human-thermal-grill-illusion|温度格子錯覚——温と冷を交互に触れると熱い痛みを感じる]] — 同じ思想家
+- [[human-predictive-processing-theory|予測処理理論]] — 同分野の近傍
+- [[human-central-pattern-generator|中枢パターン発生器（CPG）]] — 同分野の近傍
+- [[human-interoception-theory|内受容感覚理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

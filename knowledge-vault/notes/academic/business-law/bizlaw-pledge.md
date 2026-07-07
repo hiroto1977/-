@@ -30,6 +30,18 @@ aliases:
 - [筑波大学ロースクール 直井義典「明治期における流質禁止をめぐる議論」（流質契約・349条）](https://www.lawschool.tsukuba.ac.jp/wp/wp-content/uploads/2019/02/fb4a7dd957f855151662a89cba33b915.pdf) `学術`
 - [Wikibooks 商法第515条（商行為による質権への民法349条不適用＝流質許容）](https://ja.wikibooks.org/wiki/商法第515条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

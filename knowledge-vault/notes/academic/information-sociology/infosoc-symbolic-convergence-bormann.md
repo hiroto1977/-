@@ -29,6 +29,10 @@ aliases:
 - [Bormann, E. G. (1972) Fantasy and rhetorical vision: The rhetorical criticism of social reality — Quarterly Journal of Speech](https://doi.org/10.1080/00335637209383138) `学術`
 - [Wikipedia: Symbolic convergence theory — fantasy theme, rhetorical vision, chaining](https://en.wikipedia.org/wiki/Symbolic_convergence_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 同分野の近傍
+- [[infosoc-collective-memory|集合的記憶]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

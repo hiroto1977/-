@@ -32,6 +32,11 @@ Franz Halberg ／ Jeffrey C. Hall ／ Michael Rosbash ／ Michael W. Young ／ T
 - [SCN master clock — Dibner et al. (2010)](https://doi.org/10.1038/nrn2950) `学術`
 - [Chronopharmacology review (2019)](https://doi.org/10.1038/s41573-019-0048-6) `学術`
 
+## 関連概念
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 同分野の近傍
+- [[human-circadian-rhythm|概日リズム（サーカディアンリズム）]] — 同分野の近傍
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

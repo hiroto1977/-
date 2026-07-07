@@ -30,6 +30,10 @@ EUマネーロンダリング防止指令（Anti-Money Laundering Directives: AM
 - [Gilmore, W. C. (2011) Dirty Money — Council of Europe Publishing](https://doi.org/10.1093/law/9780198867036.001.0001) `学術`
 - [Wikipedia: Anti-Money Laundering Directives — EU AML法制の発展](https://en.wikipedia.org/wiki/Anti-Money_Laundering_Directive) `リファレンス`
 
+## 関連概念
+- [[bizlaw-anti-money-laundering-fatf|マネーロンダリング防止とFATF勧告体制の国際法]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

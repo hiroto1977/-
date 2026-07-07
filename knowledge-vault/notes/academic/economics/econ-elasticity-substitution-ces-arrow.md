@@ -30,6 +30,18 @@ CES（Constant Elasticity of Substitution）生産関数は、ケネス・アロ
 - [Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica](https://doi.org/10.1257/aer.104.6.1667) `学術`
 - [Wikipedia: CES — CES生産関数の概要](https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution) `リファレンス`
 
+## 関連概念
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同じ思想家
+- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

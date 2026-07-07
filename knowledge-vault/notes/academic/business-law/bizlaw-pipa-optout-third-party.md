@@ -29,6 +29,18 @@ aliases:
 - [個人情報保護委員会 — 個人情報の保護に関する法律についてのガイドライン（通則編）（第27条オプトアウト規定を含む公式解説）](https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/) `公的`
 - [e-Gov法令検索 — 個人情報の保護に関する法律（平成15年法律第57号、第27条 オプトアウト規定）](https://laws.e-gov.go.jp/law/415AC0000000057) `公的`
 
+## 関連概念
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 出典を共有
+- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 出典を共有
+- [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 出典を共有
+- [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 出典を共有
+- [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 出典を共有
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

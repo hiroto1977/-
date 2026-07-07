@@ -30,6 +30,16 @@ aliases:
 - [Profile of Lee D. Ross, PNAS (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC3358840/) `学術`
 - [錯思コレクション100（十文字学園女子大学・池田研究室）「ナイーブ・リアリズム」](https://www.jumonji-u.ac.jp/sscs/ikeda/cognitive_bias/cate_s/s_15.html) `リファレンス`
 
+## 関連概念
+- [[human-bias-blind-spot|バイアスの盲点]] — 語彙が近い
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同じ思想家
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
+- [[human-normalcy-bias|正常性バイアス]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

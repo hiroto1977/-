@@ -31,6 +31,10 @@ aliases:
 - [Slapper, G. & Tombs, S. (1999) Corporate Crime — Pearson Longman（コーポレート・クライム論の体系的研究）](https://www.semanticscholar.org/paper/Corporate-Manslaughter-and-Corporate-Homicide%3A-A-Slapper-Tombs/b49a74b5a67daf7a5a4cdf8c5ae53dbdcc1a4f79) `学術`
 - [Wikipedia: Corporate manslaughter — directing mind doctrine, 2007 Act, and comparative law analysis](https://en.wikipedia.org/wiki/Corporate_manslaughter) `リファレンス`
 
+## 関連概念
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
+- [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

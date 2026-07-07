@@ -30,6 +30,14 @@ Taina Bucher／Motahhare Eslami／Emilee Rader／Tarleton Gillespie
 - [Eslami, M. et al. (2015) Reasoning about Invisible Algorithms in News Feeds, CHI '15:153-162](https://doi.org/10.1145/2702123.2702556) `学術`
 - [Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI '15:173-182](https://doi.org/10.1145/2702123.2702174) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 語彙が近い
+- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 同分野の近傍
+- [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

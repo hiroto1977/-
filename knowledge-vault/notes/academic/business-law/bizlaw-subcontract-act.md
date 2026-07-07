@@ -30,6 +30,11 @@ aliases:
 - [公正取引委員会 — 親事業者の禁止行為（11項目）](https://www.jftc.go.jp/shitauke/shitaukegaiyo/oyakinsi.html) `公的`
 - [e-Gov法令検索 — 下請代金支払遅延等防止法（法令ID 331AC0000000120）](https://laws.e-gov.go.jp/document?lawid=331AC0000000120) `公的`
 
+## 関連概念
+- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 語彙が近い
+- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

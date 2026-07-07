@@ -29,6 +29,11 @@ aliases:
 - [Faure, M.G. (2016). Environmental Liability and Ecological Damage — Edward Elgar](https://doi.org/10.4337/9781782540298) `学術`
 - [Wikipedia: Polluter pays principle — environmental liability law](https://en.wikipedia.org/wiki/Polluter_pays_principle) `リファレンス`
 
+## 関連概念
+- [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]] — 同じ思想家
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同分野の近傍
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

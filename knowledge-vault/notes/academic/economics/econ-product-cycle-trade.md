@@ -29,6 +29,10 @@ aliases:
 - [Vernon, R. (1966) "International Investment and International Trade in the Product Cycle," The Quarterly Journal of Economics, 80(2), 190–207 (Oxford Academic)](https://academic.oup.com/qje/article-abstract/80/2/190/1868595) `学術`
 - [Product life-cycle theory — Wikipedia](https://en.wikipedia.org/wiki/Product_life-cycle_theory) `リファレンス`
 
+## 関連概念
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 同分野の近傍
+- [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

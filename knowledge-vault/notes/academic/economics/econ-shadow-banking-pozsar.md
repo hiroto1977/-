@@ -30,6 +30,17 @@ aliases:
 - [Gorton & Metrick (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics](https://doi.org/10.1257/aer.104.2.425) `学術`
 - [Wikipedia: Shadow banking system — シャドーバンキングの定義と規制動向の概説](https://en.wikipedia.org/wiki/Shadow_banking_system) `リファレンス`
 
+## 関連概念
+- [[econ-shadow-banking-fsb|シャドーバンキング（金融安定理事会定義）]] — 語彙が近い
+- [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — 同じ思想家
+- [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — 出典を共有
+- [[econ-leverage-cycle|レバレッジ・サイクル]] — 出典を共有
+- [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
+- [[eh-2007|2007年（平成19年）]] — 出典を共有
+- [[eh-2014|2014年（平成26年）]] — 出典を共有
+- [[econ-regulatory-arbitrage|規制裁定：企業による規制差異の利用と市場効率性]] — 同分野の近傍
+- [[econ-all-pay-auction|オールペイ・オークション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

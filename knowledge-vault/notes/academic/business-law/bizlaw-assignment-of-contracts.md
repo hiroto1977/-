@@ -30,6 +30,18 @@ E・アラン・ファーンズワース ／ グラント・ギルモア ／ チ
 - [Goetz & Scott (1977) Liquidated Damages, Penalties and the Just Compensation Principle — Columbia Law Review](https://doi.org/10.2307/1340553) `学術`
 - [Wikipedia: Assignment (law) — 契約上の権利の譲渡の法的要件と制限の概説](https://en.wikipedia.org/wiki/Assignment_(law)) `リファレンス`
 
+## 関連概念
+- [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 語彙が近い
+- [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — 語彙が近い
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 語彙が近い
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同じ思想家
+- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
+- [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
+- [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: Rylands v Fletcher (1868) LR 3 HL 330 — strict liability, escape, non-natural use, Blackburn J / Lord Cairns](https://en.wikipedia.org/wiki/Rylands_v_Fletcher) `リファレンス`
 - [Wikipedia: Strict liability — liability without fault, Rylands v Fletcher, abnormally dangerous activities](https://en.wikipedia.org/wiki/Strict_liability) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

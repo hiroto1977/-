@@ -36,6 +36,11 @@ national
 - [厚生労働省 特定求職者雇用開発助成金](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index_00058.html) `公的`
 - [特定求職者雇用開発助成金 各コース・申請 解説](https://biz.moneyforward.com/payroll/basic/67167/) `メディア`
 
+## 関連概念
+- [[subsidy-regional-employment|地域雇用開発助成金]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

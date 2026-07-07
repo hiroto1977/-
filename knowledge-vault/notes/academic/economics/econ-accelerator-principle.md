@@ -30,6 +30,14 @@ aliases:
 - [The New Palgrave Dictionary of Economics — “Acceleration Principle” (Springer Nature)](https://link.springer.com/rwe/10.1057/978-1-349-95121-5_202-2) `学術`
 - [History of Economic Thought — The Aftalion-Clark Accelerator](https://cruel.org/econthought/essays/capital/accelerator.html) `リファレンス`
 
+## 関連概念
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
+- [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同じ思想家
+- [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
+- [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同分野の近傍
+- [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

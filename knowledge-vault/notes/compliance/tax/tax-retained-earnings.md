@@ -30,6 +30,11 @@ aliases:
 - [e-Gov法令検索 法人税法（67条）](https://elaws.e-gov.go.jp/document?lawid=340AC0000000034) `公的`
 - [中小特定同族会社の留保金課税の適用除外 解説](https://www.sn-hoki.co.jp/article/tamasters/ta3445/) `メディア`
 
+## 関連概念
+- [[bizlaw-worker-cooperative|労働者協同組合法]] — 出典を共有
+- [[tax-group-taxation|法人税のグループ通算制度]] — 同分野の近傍
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

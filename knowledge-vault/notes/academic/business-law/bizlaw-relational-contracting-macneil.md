@@ -33,6 +33,11 @@ aliases:
 - [Williamson, O. E. (1985) The Economic Institutions of Capitalism — Harvard University Press (theoretical extension)](https://doi.org/10.4159/harvard.9780674422742) `学術`
 - [Deakin, S. & Wilkinson, F. (2010) Relational Contracts and the Evolution of Enterprise — Business History Vol. 52, No. 3](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-8543.2010.00814.x) `学術`
 
+## 関連概念
+- [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 同分野の近傍
+- [[bizlaw-public-records-management|公文書管理法]] — 同分野の近傍
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,11 @@ national
 - [労働者健康安全機構 未払賃金の立替払事業](https://www.johas.go.jp/chinginengo/miharai/tabid/417/Default.aspx) `公的`
 - [厚生労働省 未払賃金立替払制度 Q&A](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/faq_miharaichingin.html) `公的`
 
+## 関連概念
+- [[subsidy-occupational-health|産業保健関係助成金（団体経由産業保健活動推進助成金 等）]] — 語彙が近い
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同分野の近傍
+- [[subsidy-child-allowance|児童手当]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

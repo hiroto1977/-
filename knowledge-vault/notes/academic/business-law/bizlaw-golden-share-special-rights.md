@@ -31,6 +31,13 @@ aliases:
 - [Bebchuk, L. A. & Kastiel, K. (2017) The Untenable Case for Perpetual Dual-Class Stock — Virginia Law Review, 103(4), 585–631（二重クラス株批判）](https://doi.org/10.1111/jlei.12192) `学術`
 - [Wikipedia: Golden share — UK privatization, EU case law, dual-class shares, founders' control](https://en.wikipedia.org/wiki/Golden_share) `リファレンス`
 
+## 関連概念
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同分野の近傍
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

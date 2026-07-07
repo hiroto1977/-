@@ -29,6 +29,10 @@ aliases:
 - [Encyclopaedia Britannica — Anomie（マートンのストレイン理論・五類型・デュルケームとの関係）](https://www.britannica.com/topic/anomie) `リファレンス`
 - [Stanford Encyclopedia of Philosophy — Social Norms（規範・アノミー・逸脱の学術的位置づけ）](https://plato.stanford.edu/entries/social-norms/) `学術`
 
+## 関連概念
+- [[human-stockholm-syndrome|ストックホルム症候群]] — 同分野の近傍
+- [[human-zeigarnik|ツァイガルニク効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

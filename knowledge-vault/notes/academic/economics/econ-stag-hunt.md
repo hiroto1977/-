@@ -30,6 +30,12 @@ aliases:
 - [Brian Skyrms “The Stag Hunt”（UC Irvine 掲載、2004年著作の基礎論文）](https://sites.socsci.uci.edu/~bskyrms/bio/papers/StagHunt.pdf) `学術`
 - [Wikipedia: Stag hunt（ルソー起源・利得優位／リスク優位の2均衡）](https://en.wikipedia.org/wiki/Stag_hunt) `リファレンス`
 
+## 関連概念
+- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
+- [[econ-zeuthen-bargaining|ツォイテンの交渉モデル——衝突を賭ける覚悟が譲歩を決める]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

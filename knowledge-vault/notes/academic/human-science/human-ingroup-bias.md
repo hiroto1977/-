@@ -30,6 +30,15 @@ aliases:
 - [MIT Open Encyclopedia of Cognitive Science「Social Identity」](https://oecs.mit.edu/pub/qlm9zp9e) `学術`
 - [Collabra: Psychology (UC Press)「Minimal Group Procedures and Outcomes」](https://online.ucpress.edu/collabra/article/9/1/90187/198721/Minimal-Group-Procedures-and-Outcomes) `学術`
 
+## 関連概念
+- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 語彙が近い
+- [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 語彙が近い
+- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同じ思想家
+- [[econ-public-goods-game|公共財ゲーム]] — 出典を共有
+- [[human-synesthesia|共感覚（シナスタジア）]] — 出典を共有
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 出典を共有
+- [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

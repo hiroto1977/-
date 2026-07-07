@@ -29,6 +29,15 @@ aliases:
 - [MIT DSpace — Sheffi, Y. (2001) "Supply Chain Management under the Threat of International Terrorism"（SCRの基礎論文）](https://dspace.mit.edu/handle/1721.1/7951) `学術`
 - [International Journal of Logistics, Christopher & Peck (2004) "Building the Resilient Supply Chain"（冗長性・フレキシビリティ・可視性の3要素枠組み）](https://www.tandfonline.com/doi/abs/10.1080/13675560500405985) `学術`
 
+## 関連概念
+- [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 同じ思想家
+- [[econ-externality-market-failure|外部性と市場の失敗]] — 出典を共有
+- [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 出典を共有
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 出典を共有
+- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
+- [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同分野の近傍
+- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

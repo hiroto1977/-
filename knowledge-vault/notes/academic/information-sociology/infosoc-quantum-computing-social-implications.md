@@ -29,6 +29,10 @@ aliases:
 - [Chen, L. et al. (2024) NIST Post-Quantum Cryptography Standardization — NIST](https://doi.org/10.1145/3613507.3613540) `学術`
 - [Wikipedia: Quantum computing — social and security implications](https://en.wikipedia.org/wiki/Quantum_computing) `リファレンス`
 
+## 関連概念
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

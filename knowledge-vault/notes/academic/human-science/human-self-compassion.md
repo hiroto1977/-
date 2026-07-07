@@ -30,6 +30,18 @@ aliases:
 - [Neff, K. D. (2003). Self-Compassion: An Alternative Conceptualization of a Healthy Attitude Toward Oneself. Self and Identity, 2(2)（概念の原典）](https://www.tandfonline.com/doi/abs/10.1080/15298860309032) `学術`
 - [Neff, K. D. & Vonk, R. (2009). Self-compassion versus global self-esteem. Journal of Personality（自尊心との区別, PubMed）](https://pubmed.ncbi.nlm.nih.gov/19076996/) `学術`
 
+## 関連概念
+- [[human-compassion-focused-therapy-gilbert|コンパッション焦点化療法——ギルバートの三情動制御システムと自己批判への介入]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 出典を共有
+- [[human-spreading-activation|活性化拡散]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

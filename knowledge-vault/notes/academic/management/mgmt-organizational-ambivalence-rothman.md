@@ -30,6 +30,12 @@ aliases:
 - [Pratt, M. G. & Doucet, L. (2000) Ambivalent Feelings in Organizational Relationships — Academy of Management Review](https://doi.org/10.5465/amr.2008.0494) `学術`
 - [Wikipedia: Ambivalence — coexistence of conflicting attitudes and emotions overview](https://en.wikipedia.org/wiki/Ambivalence) `リファレンス`
 
+## 関連概念
+- [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同分野の近傍
+- [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 同分野の近傍
+- [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

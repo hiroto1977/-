@@ -30,6 +30,11 @@ aliases:
 - [EU (2024) Directive 2024/2853 on Liability for Defective Products](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024L2853) `公的`
 - [Wikipedia: Product liability — 製造物責任の国際比較](https://en.wikipedia.org/wiki/Product_liability) `リファレンス`
 
+## 関連概念
+- [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 語彙が近い
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
+- [[bizlaw-tcfd|気候関連財務情報開示タスクフォース（TCFD）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

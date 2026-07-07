@@ -30,6 +30,18 @@ aliases:
 - [ScienceDirect Topics：Context-Dependent Memory 概説](https://www.sciencedirect.com/topics/neuroscience/context-dependent-memory) `リファレンス`
 - [Wikipedia：Context-dependent memory（状態依存・気分一致との区別・再認での限界）](https://en.wikipedia.org/wiki/Context-dependent_memory) `リファレンス`
 
+## 関連概念
+- [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同じ思想家
+- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同じ思想家
+- [[human-phonological-loop|音韻ループ（Phonological Loop）]] — 同じ思想家
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 出典を共有
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 出典を共有
+- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
+- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
+- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

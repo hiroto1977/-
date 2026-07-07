@@ -29,6 +29,15 @@ X理論・Y理論は、ダグラス・マグレガーが1960年の著作『企�
 - [McGregor, D. (1960) The Human Side of Enterprise — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/256632) `学術`
 - [Wikipedia: Theory X and Theory Y — McGregor, managerial assumptions, Maslow, self-fulfilling prophecy](https://en.wikipedia.org/wiki/Theory_X_and_Theory_Y) `リファレンス`
 
+## 関連概念
+- [[maslow-hierarchy|マズローの欲求階層説]] — 同じ思想家
+- [[mgmt-likert-systems|リッカートのシステム4]] — 同じ思想家
+- [[mgmt-theory-z|セオリーZ]] — 同じ思想家
+- [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同じ思想家
+- [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
+- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ aliases:
 - [Ebbinghaus, H. (1885) Über das Gedächtnis (Memory: A Contribution to Experimental Psychology) (WorldCat)](https://www.worldcat.org/oclc/1373773) `学術`
 - [Wikipedia: Forgetting curve — Ebbinghaus, nonsense syllables, savings, overlearning, spaced repetition](https://en.wikipedia.org/wiki/Forgetting_curve) `リファレンス`
 
+## 関連概念
+- [[human-spacing-effect-ebbinghaus|分散効果——学習を時間的に分散させると記憶が長く定着する]] — 同じ思想家
+- [[human-spacing-effect-cepeda|間隔効果——分散学習が集中学習より記憶保持を向上させるメカニズム]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

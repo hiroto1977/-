@@ -29,6 +29,15 @@ aliases:
 - [Wikipedia: Agency in English law — authority, agency of necessity, ratification](https://en.wikipedia.org/wiki/Agency_in_English_law) `リファレンス`
 - [Wikipedia: Agency of necessity — maritime law, emergency, reimbursement](https://en.wikipedia.org/wiki/Agency_of_necessity) `リファレンス`
 
+## 関連概念
+- [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同じ思想家
+- [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同じ思想家
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
+- [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同じ思想家
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 同分野の近傍
+- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同分野の近傍
+- [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [国税庁 No.6531 新規設立法人の届出](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6531.htm) `公的`
 - [国税庁 質疑応答 特定新規設立法人の特例](https://www.nta.go.jp/law/shitsugi/shohi/22/15.htm) `公的`
 
+## 関連概念
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

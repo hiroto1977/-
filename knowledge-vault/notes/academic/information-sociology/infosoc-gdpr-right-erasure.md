@@ -30,6 +30,15 @@ GDPR=Regulation (EU) 2016/679（2018/5/25適用）・第17条消去権／Google 
 - [Art. 17 GDPR — Right to erasure (right to be forgotten)](https://gdpr-info.eu/art-17-gdpr/) `リファレンス`
 - [Columbia Global Freedom of Expression — Google Spain v. AEPD（C-131/12）](https://globalfreedomofexpression.columbia.edu/cases/google-spain-sl-v-agencia-espanola-de-proteccion-de-datos-aepd/) `学術`
 
+## 関連概念
+- [[bizlaw-eu-general-data-protection-regulation-gdpr|EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制]] — 語彙が近い
+- [[bizlaw-data-protection-gdpr-principles|データ保護法とGDPR原則——EU一般データ保護規則の七原則と越境データ流通]] — 語彙が近い
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 出典を共有
+- [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 出典を共有
+- [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 出典を共有
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

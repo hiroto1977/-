@@ -29,6 +29,12 @@ aliases:
 - [Craik, F.I.M. & Lockhart, R.S. (1972) Levels of Processing: A Framework for Memory Research — JVLVB 11(6)](https://doi.org/10.1016/S0022-5371(72)80001-X) `学術`
 - [Wikipedia: Levels of processing — Craik & Lockhart, shallow vs deep, semantic encoding, elaborative rehearsal](https://en.wikipedia.org/wiki/Levels_of_processing_model) `リファレンス`
 
+## 関連概念
+- [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同じ思想家
+- [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
+- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
+- [[human-phonological-loop|音韻ループ（Phonological Loop）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

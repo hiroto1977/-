@@ -29,6 +29,10 @@ aliases:
 - [e-Gov法令検索 — 民法（明治29年法律第89号）第369条・378条・379条（抵当権・代価弁済・消滅請求）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 - [Encyclopaedia Britannica — Mortgage（抵当権の物権的効力・第三取得者に対する追及力の一般法理）](https://www.britannica.com/topic/mortgage) `リファレンス`
 
+## 関連概念
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同分野の近傍
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

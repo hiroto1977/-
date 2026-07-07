@@ -29,6 +29,18 @@ aliases:
 - [Doepke, M. — Gary Becker on the Quantity and Quality of Children (survey; on Becker & Lewis 1973, Journal of Political Economy 81: S279–S288)](https://faculty.wcas.northwestern.edu/mdo738/research/Doepke_Becker_QQ_1114.pdf) `学術`
 - [Wikipedia: Economics of fertility — Becker, quantity-quality tradeoff, shadow price of children, demographic transition](https://en.wikipedia.org/wiki/Economics_of_fertility) `リファレンス`
 
+## 関連概念
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
+- [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+- [[econ-rational-addiction|合理的依存]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

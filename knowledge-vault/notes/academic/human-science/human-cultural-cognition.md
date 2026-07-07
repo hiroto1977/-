@@ -30,6 +30,10 @@ Kahan, Dan M. （2012 Nature Climate Change）／Slovic, Paul ／Braman, Donald 
 - [Kahan, D. M., Wittlin, M., Peters, E., Slovic, P., Ouellette, L. L., Braman, D., & Mandel, G. N. (2011) The Tragedy of the Risk-Perception Commons, Cultural Cognition Project Working Paper No. 89 (SSRN)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1871503) `学術`
 - [Cultural Cognition Project — The Tragedy of the Risk-Perception Commons 論文ページ](https://www.culturalcognition.net/browse-papers/the-tragedy-of-the-risk-perception-commons-culture-conflict.html) `リファレンス`
 
+## 関連概念
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同じ思想家
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

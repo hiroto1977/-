@@ -29,6 +29,16 @@ aliases:
 - [Pierce, J.L., Kostova, T. & Dirks, K.T. (2001) Toward a Theory of Psychological Ownership in Organizations — Academy of Management Review 26(2), 298–310（心理的所有権理論の原論文）](https://doi.org/10.5465/amr.2001.4378028) `学術`
 - [Wikipedia: Psychological ownership — 心理的所有権の概説](https://en.wikipedia.org/wiki/Psychological_ownership) `リファレンス`
 
+## 関連概念
+- [[mgmt-psychological-ownership|心理的所有感]] — 語彙が近い
+- [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]] — 語彙が近い
+- [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同じ思想家
+- [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — 同じ思想家
+- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
+- [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
+- [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

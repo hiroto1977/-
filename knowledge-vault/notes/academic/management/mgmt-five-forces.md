@@ -30,6 +30,11 @@ aliases:
 - [Encyclopaedia Britannica Money — Porter’s Five Forces](https://www.britannica.com/money/porters-five-forces-explained) `リファレンス`
 - [Baruch College (CUNY) Library — Porter’s Five Forces Analysis](https://guides.newman.baruch.cuny.edu/porter) `学術`
 
+## 関連概念
+- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同分野の近傍
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 同分野の近傍
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

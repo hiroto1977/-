@@ -31,6 +31,18 @@ aliases:
 - [Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（B-S効果とPPPパズルの統合論考）](https://doi.org/10.1257/jep.10.4.97) `学術`
 - [Wikipedia: Balassa–Samuelson effect — Penn effect, non-traded goods, real exchange rate, IMF](https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect) `リファレンス`
 
+## 関連概念
+- [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同じ思想家
+- [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — 同じ思想家
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同じ思想家
+- [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — 同じ思想家
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
+- [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

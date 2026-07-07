@@ -31,6 +31,18 @@ aliases:
 - [Tim O’Reilly, “Open Data and Algorithmic Regulation,” Beyond Transparency (2013)](https://beyondtransparency.org/chapters/part-5/open-data-and-algorithmic-regulation/) `リファレンス`
 - [Antoinette Rouvroy & Thomas Berns, “Algorithmic governmentality and prospects of emancipation,” Réseaux (2013)](https://shs.cairn.info/article/E_RES_177_0163?lang=en) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 語彙が近い
+- [[infosoc-web2|Web 2.0]] — 同じ思想家
+- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 同じ思想家
+- [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同じ思想家
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
+- [[infosoc-technological-drama|テクノロジカル・ドラマ（技術の政治的闘争論）]] — 出典を共有
+- [[mgmt-organizational-aesthetics|組織美学]] — 出典を共有
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[infosoc-phenomenological-technology|技術の現象学]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

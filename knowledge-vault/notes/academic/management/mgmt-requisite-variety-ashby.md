@@ -30,6 +30,18 @@ aliases:
 - [Beer (1985) Diagnosing the System for Organizations — John Wiley & Sons](https://doi.org/10.1002/sres.3850090107) `学術`
 - [Wikipedia: Variety (cybernetics) — 必要多様性の法則とサイバネティクスにおける多様性概念](https://en.wikipedia.org/wiki/Variety_(cybernetics)) `リファレンス`
 
+## 関連概念
+- [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 語彙が近い
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
+- [[infosoc-cybernetics|サイバネティクス]] — 同じ思想家
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [Immiserizing growth — Wikipedia](https://en.wikipedia.org/wiki/Immiserizing_growth) `リファレンス`
 - [International Trade and Finance (eCampusOntario open textbook), 3.5 Economic Growth and Its Implications for Trade](https://ecampusontario.pressbooks.pub/internationaltradefinancepart1/chapter/ch03-5/) `学術`
 
+## 関連概念
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
+- [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — 同じ思想家
+- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 出典を共有
+- [[econ-price-elasticity-demand|需要の価格弾力性]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

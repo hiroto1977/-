@@ -30,6 +30,15 @@ aliases:
 - [Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management, 34(3), 375-409](https://doi.org/10.5465/amr.2009.0078) `学術`
 - [O'Reilly, C.A. & Tushman, M.L. (2004) The Ambidextrous Organization — Harvard Business Review, 82(4), 74-81](https://doi.org/10.1287/orsc.1050.0134) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
+- [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Thompson, R.B. & Thomas, R.S. 2004. The Public and Private Faces of Derivative Lawsuits. Vanderbilt Law Review, 57(5).](https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=1083&context=vlr) `学術`
 - [American Bar Association, Business Law Today — Shareholder Oppression in Close Corporations (2019).](https://www.americanbar.org/groups/business_law/resources/business-law-today/2019-march/shareholder-oppression-in-close-corporations/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 語彙が近い
+- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 語彙が近い
+- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 語彙が近い
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 出典を共有
+- [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 出典を共有
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
+- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

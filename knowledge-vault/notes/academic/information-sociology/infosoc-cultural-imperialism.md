@@ -30,6 +30,18 @@ aliases:
 - [Simon Fraser University thesis — Re-examining Herbert Schiller’s Cultural Imperialism Thesis](https://summit.sfu.ca/_flysystem/fedora/sfu_migrate/16257/etd9424_YZhang.pdf) `学術`
 - [iResearchNet (Communication) — Cultural Imperialism Theories](https://communication.iresearchnet.com/international-communication/cultural-imperialism-theories/) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
+- [[infosoc-media-logic|メディア・ロジック]] — 出典を共有
+- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 出典を共有
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 出典を共有
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 出典を共有
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 出典を共有
+- [[infosoc-media-events|メディア・イベント]] — 出典を共有
+- [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同分野の近傍
+- [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

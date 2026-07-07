@@ -29,6 +29,11 @@ aliases:
 - [Turkle, S. (1984) The Second Self: Computers and the Human Spirit — Simon & Schuster (WorldCat)](https://www.worldcat.org/oclc/9946048) `学術`
 - [Wikipedia: Sherry Turkle / The Second Self — computer as evocative object, identity, mind, second self](https://en.wikipedia.org/wiki/Sherry_Turkle) `リファレンス`
 
+## 関連概念
+- [[infosoc-alone-together|つながっていても孤独（アローン・トゥギャザー）]] — 語彙が近い
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同分野の近傍
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Cohen, J.E. 2019. Between Truth and Power: The Legal Constructions of Informational Capitalism. Oxford University Press.](https://academic.oup.com/book/37371) `学術`
 - [Mayer-Schönberger, V. 2009. Delete: The Virtue of Forgetting in the Digital Age. Princeton University Press.](https://press.princeton.edu/books/paperback/9780691150369/delete) `学術`
 
+## 関連概念
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同じ思想家
+- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同じ思想家
+- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
+- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

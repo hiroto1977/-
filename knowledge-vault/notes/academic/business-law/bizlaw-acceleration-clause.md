@@ -31,6 +31,18 @@ Grant Gilmore ／ E. Allan Farnsworth ／ Darlene M. Nowak
 - [Boston College Law Review — UCC Commentary: Acceleration Clauses in Sales and Secured Transactions](https://bclawreview.bc.edu/articles/2160/files/63d8b6d0a6e24.pdf) `学術`
 - [民法第137条（期限の利益の喪失）解説](https://www.minnpou-sousoku.com/commentary-on-civil-law/137/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 語彙が近い
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
+- [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-minimum-wage-act|最低賃金法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

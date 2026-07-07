@@ -31,6 +31,18 @@ aliases:
 - [立命館大学・生熊長幸「動産譲渡担保権・留保所有権の法的構成・優劣」（留保所有権＝非典型担保の法的構成）](https://www.ritsumei.ac.jp/acd/cg/law/lex/21-1/003ikuma.pdf) `学術`
 - [コトバンク「所有権留保」（代金完済まで所有権を売主に留保する担保的特約）](https://kotobank.jp/word/所有権留保-80635) `リファレンス`
 
+## 関連概念
+- [[bizlaw-assignment-security|譲渡担保]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

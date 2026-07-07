@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省 出産育児一時金等について](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/shussan/index.html) `公的`
 - [協会けんぽ 子どもが生まれたとき FAQ](https://www.kyoukaikenpo.or.jp/g6/cat620/r310/) `運営団体`
 
+## 関連概念
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 語彙が近い
+- [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
+- [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
+- [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

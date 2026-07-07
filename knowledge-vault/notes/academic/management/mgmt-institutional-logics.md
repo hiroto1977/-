@@ -29,6 +29,11 @@ aliases:
 - [Thornton & Ocasio 1999 — Institutional Logics and the Historical Contingency of Power in Organizations, American Journal of Sociology 105(3):801-843](https://www.jstor.org/stable/2657300) `学術`
 - [Thornton, Ocasio & Lounsbury 2012 — The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process, Oxford University Press](https://global.oup.com/academic/product/the-institutional-logics-perspective-9780199601936) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 語彙が近い
+- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同じ思想家
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

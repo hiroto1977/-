@@ -30,6 +30,10 @@ Edvard Westermarck（1862–1939, 1891 提唱） ／ Joseph Shepher（1971 キ�
 - [Shepher, J. (1971) Mate selection among second generation kibbutz adolescents and adults: Incest avoidance and negative imprinting. Archives of Sexual Behavior 1(4): 293–307（同一ピアグループ内婚の不在を報告）](https://link.springer.com/article/10.1007/BF01638058) `学術`
 - [Wolf, A. P. (1968) Adopt a Daughter-in-Law, Marry a Sister: A Chinese Solution to the Problem of the Incest Taboo. American Anthropologist 70(5): 864–874（台湾シンプア婚によるウェスタマーク仮説の検証）](https://anthrosource.onlinelibrary.wiley.com/doi/abs/10.1525/aa.1968.70.5.02a00040) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

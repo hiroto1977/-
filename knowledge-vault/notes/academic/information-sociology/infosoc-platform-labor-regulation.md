@@ -30,6 +30,11 @@ aliases:
 - [De Stefano (2016) The Rise of the Just-in-Time Workforce: On-Demand Work, Crowdwork, and Labor Protection in the Gig-Economy — Comparative Labor Law & Policy Journal](https://doi.org/10.1111/ijel.12039) `学術`
 - [Wikipedia: Gig worker — ギグワーカーの法的地位と規制動向の概説](https://en.wikipedia.org/wiki/Gig_worker) `リファレンス`
 
+## 関連概念
+- [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 語彙が近い
+- [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 語彙が近い
+- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [文部科学省 著作権法（抄）職務著作](https://www.mext.go.jp/b_menu/shingi/gijyutu/gijyutu8/toushin/attach/1366561.htm) `公的`
 - [文化庁 著作権テキスト（職務著作）](https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf) `公的`
 
+## 関連概念
+- [[legal-moral-rights|著作者人格権]] — 語彙が近い
+- [[legal-employee-invention|職務発明（特許法35条）]] — 語彙が近い
+- [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 分野横断
+- [[bizlaw-copyright|著作権法]] — 出典を共有
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 出典を共有
+- [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 出典を共有
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
+- [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 出典を共有
+- [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Robert J. Barro, "Are Government Bonds Net Wealth?", Journal of Political Economy 82(6), 1974（University of Chicago Press）](https://www.journals.uchicago.edu/doi/10.1086/260266) `学術`
 - [Wikipedia, "Ricardian equivalence"（Ricardo 1820 / Barro coinage の補足確認）](https://en.wikipedia.org/wiki/Ricardian_equivalence) `リファレンス`
 
+## 関連概念
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
+- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

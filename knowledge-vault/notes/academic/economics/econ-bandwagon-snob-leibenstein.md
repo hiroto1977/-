@@ -29,6 +29,18 @@ aliases:
 - [Leibenstein, H. (1950) Bandwagon, Snob, and Veblen Effects in the Theory of Consumers Demand — QJE 64(2)](https://doi.org/10.2307/1882692) `学術`
 - [Wikipedia: Bandwagon effect — Leibenstein, snob effect, Veblen effect, demand interdependence](https://en.wikipedia.org/wiki/Bandwagon_effect) `リファレンス`
 
+## 関連概念
+- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 語彙が近い
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+- [[econ-rational-addiction|合理的依存]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
+- [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家
+- [[econ-demographic-transition-theory|人口転換理論と少子化の経済学——出生率低下の人口学的・経済的メカニズム]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

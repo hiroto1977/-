@@ -30,6 +30,18 @@ aliases:
 - [Strategic Management Insight — Galbraith's Star Model Explained](https://strategicmanagementinsight.com/tools/galbraiths-star-model-explained/) `リファレンス`
 - [Toolshero — Jay Galbraith's Star Model](https://www.toolshero.com/management/jay-galbraiths-star-model/) `リファレンス`
 
+## 関連概念
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同じ思想家
+- [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
+- [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 出典を共有
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 出典を共有
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 出典を共有
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 出典を共有
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

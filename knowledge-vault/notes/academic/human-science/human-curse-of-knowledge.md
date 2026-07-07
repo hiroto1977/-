@@ -30,6 +30,18 @@ aliases:
 - [University of Arizona, UCATT — "The Curse of Knowledge"](https://ucatt.arizona.edu/news/curse-knowledge) `リファレンス`
 - [Wikipedia — Curse of knowledge (Newton 1990 tappers-and-listeners; Heath "Made to Stick")](https://en.wikipedia.org/wiki/Curse_of_knowledge) `リファレンス`
 
+## 関連概念
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同じ思想家
+- [[infosoc-mcdonaldization|マクドナルド化]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同じ思想家
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同じ思想家
+- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

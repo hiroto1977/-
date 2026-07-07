@@ -30,6 +30,10 @@ Underhill v. Hernandez（168 U.S. 250, 1897 — 法理確立判例）／Banco Na
 - [Banco Nacional de Cuba v. Sabbatino, 376 U.S. 398 (1964) — Justia](https://supreme.justia.com/cases/federal/us/376/398/) `リファレンス`
 - [Act of State Doctrine — Wikipedia](https://en.wikipedia.org/wiki/Act_of_state_doctrine) `リファレンス`
 
+## 関連概念
+- [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]] — 語彙が近い
+- [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

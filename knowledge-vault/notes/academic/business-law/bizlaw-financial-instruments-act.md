@@ -30,6 +30,11 @@ aliases:
 - [国立国会図書館 日本法令索引「金融商品取引法 昭和23年法律第25号」](https://hourei.ndl.go.jp/simple/detail?lawId=0000039991) `公的`
 - [東証マネ部！（JPX）金融商品取引法 解説](https://money-bu-jpx.com/news/article053103/) `リファレンス`
 
+## 関連概念
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 語彙が近い
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 語彙が近い
+- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

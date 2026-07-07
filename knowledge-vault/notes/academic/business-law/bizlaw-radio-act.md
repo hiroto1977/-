@@ -30,6 +30,10 @@ aliases:
 - [国立国会図書館 日本法令索引 — 電波法 昭和25年5月2日法律第131号](https://hourei.ndl.go.jp/simple/detail?lawId=0000042505) `公的`
 - [コトバンク — 電波法（電波利用の基本法、免許・無線従事者・罰則）](https://kotobank.jp/word/%E9%9B%BB%E6%B3%A2%E6%B3%95-102712) `リファレンス`
 
+## 関連概念
+- [[bizlaw-payment-services-act|資金決済法]] — 同分野の近傍
+- [[bizlaw-broadcast-act|放送法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [不法行為（民法709条）の要件・時効 解説](https://www.daylight-law.jp/songaibaisho/qa/qa7/) `メディア`
 - [使用者責任（民法715条）解説](https://corporate.vbest.jp/columns/2238/) `メディア`
 
+## 関連概念
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 語彙が近い
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 同分野の近傍
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 同分野の近傍
+- [[legal-product-liability|製造物責任法（PL法）]] — 同分野の近傍
+- [[legal-set-off|相殺（民法505条等）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

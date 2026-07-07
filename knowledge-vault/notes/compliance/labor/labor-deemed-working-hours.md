@@ -30,6 +30,17 @@ aliases:
 - [e-Gov法令検索 労働基準法（38条の2）](https://laws.e-gov.go.jp/law/322AC0000000049) `公的`
 - [厚生労働省 事業場外みなし労働 Q&A](https://www.check-roudou.mhlw.go.jp/qa/roudousya/roudoujikan/q10.html) `公的`
 
+## 関連概念
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
+- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
+- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
+- [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 出典を共有
+- [[labor-variable-working-hours|変形労働時間制]] — 同分野の近傍
+- [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

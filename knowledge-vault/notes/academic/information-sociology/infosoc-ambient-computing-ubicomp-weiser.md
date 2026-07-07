@@ -30,6 +30,15 @@ aliases:
 - [Abowd & Mynatt (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM TOCHI](https://doi.org/10.1016/j.pmcj.2013.12.009) `学術`
 - [Wikipedia: Ubiquitous computing — ユビキタスコンピューティングの概念と実現](https://en.wikipedia.org/wiki/Ubiquitous_computing) `リファレンス`
 
+## 関連概念
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
+- [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 同じ思想家
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同じ思想家
+- [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
+- [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
+- [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

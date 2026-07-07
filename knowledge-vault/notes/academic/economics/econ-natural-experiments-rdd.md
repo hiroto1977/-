@@ -31,6 +31,18 @@ aliases:
 - [Angrist and Pischke 2009 — Mostly Harmless Econometrics: An Empiricist's Companion, Princeton University Press](https://press.princeton.edu/books/paperback/9780691120355/mostly-harmless-econometrics) `リファレンス`
 - [Imbens and Lemieux 2008 — Regression Discontinuity Designs: A Guide to Practice, Journal of Econometrics 142(2):615-635](https://doi.org/10.1016/j.jeconom.2007.05.001) `学術`
 
+## 関連概念
+- [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 同じ思想家
+- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

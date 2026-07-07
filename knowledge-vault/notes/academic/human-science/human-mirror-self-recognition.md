@@ -30,6 +30,12 @@ aliases:
 - [Mirror Self-Recognition — Routledge Encyclopedia of Philosophy](https://www.rep.routledge.com/articles/thematic/mirror-self-recognition/v-1) `リファレンス`
 - [Corkum & Moore — Just Before I Recognize Myself — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6001620/) `学術`
 
+## 関連概念
+- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同じ思想家
+- [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同じ思想家
+- [[human-false-belief-task|誤信念課題（False Belief Task）]] — 同分野の近傍
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

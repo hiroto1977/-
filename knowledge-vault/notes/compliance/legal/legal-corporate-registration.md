@@ -30,6 +30,14 @@ aliases:
 - [法務省 株式会社の設立手続](https://www.moj.go.jp/MINJI/minji06_00134.html) `公的`
 - [法務局 登記事項証明書の取得](https://houmukyoku.moj.go.jp/homu/shomeisho_000002.html) `公的`
 
+## 関連概念
+- [[bizlaw-companies-act|会社法]] — 出典を共有
+- [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
+- [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 出典を共有
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

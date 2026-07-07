@@ -29,6 +29,13 @@ EU欧州議会・欧州委員会 ／ 個人情報保護委員会（日本） ／
 - [EU Parliament & Council (2016) General Data Protection Regulation — GDPR](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679) `公的`
 - [Wikipedia: GDPR — data protection principles](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation) `リファレンス`
 
+## 関連概念
+- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 語彙が近い
+- [[bizlaw-data-protection-gdpr-adequacy|GDPRと十分性認定——個人データの越境移転とプライバシー保護の国際的枠組み]] — 同じ思想家
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 同じ思想家
+- [[bizlaw-competition-law-abuse-dominance|競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制]] — 同分野の近傍
+- [[bizlaw-data-governance-data-act|データガバナンス法制——EU Data Act・データ利活用促進法とデータ共有の権利・義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [Kotter Inc. — The 8-Step Process for Leading Change](https://www.kotterinc.com/methodology/8-steps/) `リファレンス`
 - [MindTools — Kotter’s 8-Step Change Model](https://www.mindtools.com/a8nu5v5/kotters-8-step-change-model/) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 語彙が近い
+- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 語彙が近い
+- [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
+- [[mgmt-3c-analysis|3C分析]] — 出典を共有
+- [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有
+- [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

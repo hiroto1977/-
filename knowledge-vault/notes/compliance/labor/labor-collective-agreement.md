@@ -30,6 +30,18 @@ aliases:
 - [厚生労働省 法令データベース 労働組合法](https://www.mhlw.go.jp/web/t_doc?dataId=73001000&dataType=0) `公的`
 - [日本法令外国語訳DB 労働組合法](https://www.japaneselawtranslation.go.jp/ja/laws/view/3805) `公的`
 
+## 関連概念
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
+- [[bizlaw-civil-execution|民事執行法]] — 出典を共有
+- [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — 出典を共有
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 出典を共有
+- [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 出典を共有
+- [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 出典を共有
+- [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 出典を共有
+- [[legal-share-types|会社法における種類株式]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

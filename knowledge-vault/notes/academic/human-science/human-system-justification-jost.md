@@ -30,6 +30,10 @@ aliases:
 - [Jost, J. T., Banaji, M. R. & Nosek, B. A. (2004) A Decade of System Justification Theory — Political Psychology](https://doi.org/10.1037/0033-295X.111.2.405) `学術`
 - [Wikipedia: System justification — ideological support for existing social arrangements overview](https://en.wikipedia.org/wiki/System_justification) `リファレンス`
 
+## 関連概念
+- [[human-compensatory-control-kay|補償的制御理論（コンペンサトリー・コントロール理論）]] — 同分野の近傍
+- [[human-self-categorization-theory|自己カテゴリー化理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

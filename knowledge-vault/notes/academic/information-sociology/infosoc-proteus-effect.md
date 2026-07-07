@@ -30,6 +30,10 @@ Yee, Nick （2007 The Proteus Effect, Human Communication Research）／Bailenso
 - [Ratan, Beyea, Li & Graciano (2020) "Avatar characteristics induce users' behavioral conformity with small-to-medium effect sizes: a meta-analysis of the proteus effect" — Media Psychology 23(5)（46実験メタ分析）](https://www.tandfonline.com/doi/full/10.1080/15213269.2019.1623698) `学術`
 - [Wikipedia: Proteus effect — Yee & Bailenson (2007)、自己知覚理論・SIDEモデルによる説明、追試・メタ分析の概観](https://en.wikipedia.org/wiki/Proteus_effect) `リファレンス`
 
+## 関連概念
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

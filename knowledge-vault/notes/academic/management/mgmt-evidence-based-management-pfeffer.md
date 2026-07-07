@@ -29,6 +29,14 @@ aliases:
 - [Pfeffer, J. & Sutton, R.I. (2006). Evidence-based management — Harvard Business Review](https://doi.org/10.1007/s10551-006-9190-6) `学術`
 - [Wikipedia: Evidence-based management — organizational research](https://en.wikipedia.org/wiki/Evidence-based_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 語彙が近い
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 語彙が近い
+- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
+- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同じ思想家
+- [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

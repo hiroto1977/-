@@ -30,6 +30,11 @@ Forgo case (French Cour de cassation, 1878/1882) ／ In re Annesley [1926] 1 Ch 
 - [Ernest G. Lorenzen, "The 'Renvoi' Theory and the Application of Foreign Law," Columbia Law Review, Vol. 10, No. 4 (Apr. 1910), pp. 327–344](https://www.jstor.org/stable/1110212) `学術`
 - ["Renvoi," in J. Basedow, K. J. Hopt & R. Zimmermann (eds.), The Max Planck Encyclopedia of European Private Law (Oxford University Press, 2012; Max-EuP 2012 online ed.)](https://max-eup2012.mpipriv.de/index.php/Renvoi) `リファレンス`
 
+## 関連概念
+- [[bizlaw-culpa-in-contrahendo|契約締結上の過失]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

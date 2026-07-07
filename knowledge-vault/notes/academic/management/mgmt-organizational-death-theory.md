@@ -32,6 +32,18 @@ Arthur L. Stinchcombe ／ John H. Freeman ／ Glenn R. Carroll ／ Michael T. Ha
 - [Semantic Scholar — Freeman, Carroll & Hannan (1983) The Liability of Newness (citation record)](https://www.semanticscholar.org/paper/The-Liability-of-Newness:-Age-Dependence-in-Death-Freeman-Carroll/bcd11cacc7ffc88321f59400905e8b54d74dbd3f) `学術`
 - [Carroll & Hannan (2000) The Demography of Corporations and Industries. Princeton University Press](https://books.google.com/books/about/The_Demography_of_Corporations_and_Indus.html?id=YodoS1i8gN0C) `リファレンス`
 
+## 関連概念
+- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同じ思想家
+- [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同じ思想家
+- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同じ思想家
+- [[mgmt-category-theory-markets|市場カテゴリー理論]] — 同じ思想家
+- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同じ思想家
+- [[human-appraisal-theory-of-emotion|感情の評価理論]] — 出典を共有
+- [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]] — 出典を共有
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

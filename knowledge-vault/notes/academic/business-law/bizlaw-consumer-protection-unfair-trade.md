@@ -29,6 +29,11 @@ aliases:
 - [消費者庁 — 消費者政策・法制の概要、景品表示法・消費者契約法ガイドライン](https://www.caa.go.jp/policies/policy/consumer_research/) `公的`
 - [Wikipedia: Consumer protection — EU directives, unfair practices, behavioral consumer law, dark patterns](https://en.wikipedia.org/wiki/Consumer_protection) `リファレンス`
 
+## 関連概念
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 同じ思想家
+- [[bizlaw-insurable-interest|被保険利益——損をする立場にある者だけが保険をかけられる]] — 同分野の近傍
+- [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,13 @@ Daniel Kahneman ／ Amos Tversky ／ Richard Thaler
 - [Thaler, R. H. (2008). Mental Accounting and Consumer Choice. Marketing Science, 27(1), 15–25.](https://doi.org/10.1287/mnsc.1070.0843) `学術`
 - [Thaler, R. H. (2017). From Cashews to Nudges: The Evolution of Behavioral Economics. Nobel Prize Lecture.](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/lecture/) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 語彙が近い
+- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 語彙が近い
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

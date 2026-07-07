@@ -31,6 +31,18 @@ aliases:
 - [Jack Tate (1952) Letter to Acting Attorney General — State Department（制限的免除への転換を示す米国実行）](https://www.foreignaffairs.com/articles/1952-01-01/tate-letter-immunity) `リファレンス`
 - [Wikipedia: Sovereign immunity — absolute vs restrictive theory, commercial acts, and waiver mechanisms](https://en.wikipedia.org/wiki/Sovereign_immunity) `リファレンス`
 
+## 関連概念
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 出典を共有
+- [[bizlaw-trail-smelter-principle|トレイル・スメルター原則（Trail Smelter Principle）]] — 出典を共有
+- [[econ-dollar-hegemony-theory|ドル覇権理論]] — 出典を共有
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 出典を共有
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 出典を共有
+- [[eh-1950|1950年（昭和25年）]] — 出典を共有
+- [[eh-1951|1951年（昭和26年）]] — 出典を共有
+- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

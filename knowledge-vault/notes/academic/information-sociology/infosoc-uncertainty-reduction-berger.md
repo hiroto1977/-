@@ -29,6 +29,10 @@ aliases:
 - [Berger, C. R. & Calabrese, R. J. (1975) Some Explorations in Initial Interaction and Beyond — Human Communication Research, 1(2), 99–112](https://doi.org/10.1111/j.1468-2958.1975.tb00258.x) `学術`
 - [Wikipedia: Uncertainty reduction theory — Berger & Calabrese (1975), axioms/theorems, initial interaction, self-disclosure, reciprocity](https://en.wikipedia.org/wiki/Uncertainty_reduction_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

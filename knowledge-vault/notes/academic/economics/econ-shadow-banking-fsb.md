@@ -31,6 +31,12 @@ aliases:
 - [Pozsar, Z. et al. (2013) Shadow Banking — Federal Reserve Bank of New York Staff Reports No. 458（体系的整理）](https://doi.org/10.1093/rfs/hhs100) `学術`
 - [Wikipedia: Shadow banking system — definition, components, FSB framework, 2008 crisis role](https://en.wikipedia.org/wiki/Shadow_banking_system) `リファレンス`
 
+## 関連概念
+- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 語彙が近い
+- [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
+- [[econ-carry-trade-foreign-exchange|キャリートレード（外国為替）]] — 同分野の近傍
+- [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

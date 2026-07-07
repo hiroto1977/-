@@ -29,6 +29,14 @@ aliases:
 - [Wilson, T. D. (1999) Models in information behaviour research — Journal of Documentation](https://doi.org/10.1108/EUM0000000007145) `学術`
 - [Wikipedia: Information behavior — Wilson model, information need, seeking, barriers](https://en.wikipedia.org/wiki/Information_behavior) `リファレンス`
 
+## 関連概念
+- [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]] — 同じ思想家
+- [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]] — 同じ思想家
+- [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

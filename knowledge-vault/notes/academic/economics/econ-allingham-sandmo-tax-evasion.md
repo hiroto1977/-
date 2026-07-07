@@ -30,6 +30,15 @@ aliases:
 - [Allingham & Sandmo (1972) 原論文フルテキスト（U.C. Berkeley・E. Saez 講義資料、オープンアクセスPDF）](https://eml.berkeley.edu/~saez/course/Allingham&SandmoJPubE(1972).pdf) `学術`
 - [Andreoni, J., Erard, B. & Feinstein, J. (1998) Tax Compliance — Journal of Economic Literature, 36(2), 818-860（RePEc/IDEAS）](https://ideas.repec.org/a/aea/jeclit/v36y1998i2p818-860.html) `リファレンス`
 
+## 関連概念
+- [[econ-precautionary-saving|予備的貯蓄]] — 同じ思想家
+- [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]] — 同じ思想家
+- [[econ-median-voter|中位投票者定理]] — 出典を共有
+- [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 出典を共有
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

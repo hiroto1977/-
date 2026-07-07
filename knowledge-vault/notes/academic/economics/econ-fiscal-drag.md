@@ -30,6 +30,12 @@ aliases:
 - [Tax Foundation TaxEDU: Bracket Creep（隠れた増税の定義）](https://taxfoundation.org/taxedu/glossary/bracket-creep/) `学術`
 - [ITEP: Indexing Income Taxes for Inflation（インデクセーション対策）](https://itep.org/indexing-income-taxes-for-inflation-why-it-matters-1/) `学術`
 
+## 関連概念
+- [[econ-pigouvian-tax|ピグー税]] — 出典を共有
+- [[econ-monetarism|マネタリズム]] — 同分野の近傍
+- [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 同分野の近傍
+- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

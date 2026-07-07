@@ -29,6 +29,18 @@ aliases:
 - [Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press (WorldCat)](https://www.worldcat.org/oclc/64594290) `学術`
 - [Wikipedia: Convergence culture — Jenkins, participatory culture, collective intelligence, transmedia](https://en.wikipedia.org/wiki/Convergence_culture) `リファレンス`
 
+## 関連概念
+- [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+- [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
+- [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
+- [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

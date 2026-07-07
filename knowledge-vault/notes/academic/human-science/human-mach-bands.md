@@ -29,6 +29,12 @@ aliases:
 - [Ratliff, F. (1965) Mach Bands: Quantitative Studies on Neural Networks in the Retina — Holden-Day](https://www.worldcat.org/oclc/345413) `学術`
 - [Wikipedia: Mach bands — lateral inhibition, edge enhancement, brightness perception](https://en.wikipedia.org/wiki/Mach_bands) `リファレンス`
 
+## 関連概念
+- [[human-cafe-wall-illusion|カフェウォール錯視——平行な線が傾いて見える幾何学的錯視]] — 同じ思想家
+- [[human-hermann-grid|ヘルマン格子錯視——白い交差点に現れる灰色の幻]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

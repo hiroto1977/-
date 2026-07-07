@@ -30,6 +30,13 @@ Andrew K. Przybylski／Kou Murayama（2013・FoMO Scale）／Patrick J. McGinnis
 - [Wiley Online Library, Major Reference Works “Fear of Missing Out”（査読リファレンス事典）](https://onlinelibrary.wiley.com/doi/full/10.1002/9781119011071.iemp0185) `リファレンス`
 - [Wikipedia “Fear of missing out”（語源・McGinnis 2004・FOBO/JOMO・Oxford 2013）](https://en.wikipedia.org/wiki/Fear_of_missing_out) `リファレンス`
 
+## 関連概念
+- [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 出典を共有
+- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 出典を共有
+- [[human-self-determination|自己決定理論（SDT）]] — 出典を共有
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同分野の近傍
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Hermans, H.J.M. et al. (1992). The dialogical self — American Psychologist](https://doi.org/10.1037/0003-066X.47.1.23) `学術`
 - [Wikipedia: Dialogical self — polyphonic identity theory](https://en.wikipedia.org/wiki/Dialogical_self) `リファレンス`
 
+## 関連概念
+- [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同分野の近傍
+- [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

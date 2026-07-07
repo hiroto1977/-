@@ -29,6 +29,13 @@ aliases:
 - [Wikipedia, “Failure mode and effects analysis”（起源＝MIL-P-1629/NASA/自動車AIAG・故障モードと影響の分析・RPN＝S×O×D・DFMEA/PFMEA の概説）](https://en.wikipedia.org/wiki/Failure_mode_and_effects_analysis) `リファレンス`
 - [American Society for Quality (ASQ) — Failure Mode and Effects Analysis (FMEA)（手順・severity/occurrence/detection・RPN・未然防止の解説）](https://asq.org/quality-resources/fmea) `リファレンス`
 
+## 関連概念
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 出典を共有
+- [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]] — 出典を共有
+- [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

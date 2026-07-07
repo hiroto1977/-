@@ -36,6 +36,18 @@ national
 - [特許庁 審査請求料の減免制度の改正（令和6年4月）](https://www.jpo.go.jp/system/process/tesuryo/genmen/genmen_240131.html) `公的`
 - [J-Net21 特許料等の減免制度](https://j-net21.smrj.go.jp/support/publicsupport/2020010701.html) `メディア`
 
+## 関連概念
+- [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
+- [[bizlaw-trademark|商標法]] — 出典を共有
+- [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[bizlaw-utility-model|実用新案法]] — 出典を共有
+- [[legal-employee-invention|職務発明（特許法35条）]] — 出典を共有
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 出典を共有
+- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,16 @@ aliases:
 - [Greenberg, J. et al. (1986). Evidence for Terror Management Theory — JPSP](https://doi.org/10.1016/0022-1031(86)90070-3) `学術`
 - [Wikipedia: Terror management theory — social psychology](https://en.wikipedia.org/wiki/Terror_management_theory) `リファレンス`
 
+## 関連概念
+- [[human-terror-management-greenberg|恐怖管理理論（グリーンバーグ＆ピジシンスキー）]] — 語彙が近い
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同じ思想家
+- [[human-terror-management-theory-becker|テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験]] — 同じ思想家
+- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
+- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
+- [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同じ思想家
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
+- [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

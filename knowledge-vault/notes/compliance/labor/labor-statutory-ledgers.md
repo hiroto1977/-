@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 沖縄労働局 法定帳簿](https://jsite.mhlw.go.jp/okinawa-roudoukyoku/library/okinawa-roudoukyoku/04rouki/houteichoubo.pdf) `公的`
 - [法定三帳簿 解説](https://biz.moneyforward.com/payroll/basic/87661/) `メディア`
 
+## 関連概念
+- [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

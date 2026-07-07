@@ -31,6 +31,13 @@ aliases:
 - [Stanford Encyclopedia of Philosophy: Nishida Kitaro — philosophical foundation of the Ba concept](https://plato.stanford.edu/entries/nishida-kitaro/) `リファレンス`
 - [Wikipedia: Ba (knowledge) — overview of the Ba concept and its role in the SECI model](https://en.wikipedia.org/wiki/Ba_(knowledge)) `リファレンス`
 
+## 関連概念
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 出典を共有
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同分野の近傍
+- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

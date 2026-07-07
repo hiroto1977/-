@@ -30,6 +30,12 @@ Karl Friston ／ Andy Clark ／ Jakob Hohwy
 - [Clark, A. (2013). Whatever next? Predictive brains, situated agents, and the future of cognitive science. Behavioral and Brain Sciences, 36(3), 181–204](https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/whatever-next-predictive-brains-situated-agents-and-the-future-of-cognitive-science/33542C736E17E3D1D44E8D03BE5F4CD9) `学術`
 - [Hohwy, J. (2013). The Predictive Mind. Oxford University Press](https://global.oup.com/academic/product/the-predictive-mind-9780199682737) `リファレンス`
 
+## 関連概念
+- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同じ思想家
+- [[human-interoception-theory|内受容感覚理論]] — 同じ思想家
+- [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同分野の近傍
+- [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

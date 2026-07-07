@@ -29,6 +29,14 @@ aliases:
 - [Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity — Journal of Management](https://doi.org/10.1177/0149206308316058) `学術`
 - [Wikipedia: Ambidextrous organization — structural, contextual, exploration-exploitation](https://en.wikipedia.org/wiki/Ambidextrous_organization) `リファレンス`
 
+## 関連概念
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同分野の近傍
+- [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同分野の近傍
+- [[mgmt-matrix-organization|マトリックス組織]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

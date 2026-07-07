@@ -29,6 +29,15 @@ ERG理論は、心理学者クレイトン・アルダーファーが1969年の�
 - [Alderfer, C. P. (1969) An Empirical Test of a New Theory of Human Needs — Organizational Behavior and Human Performance, 4(2), 142–175](https://doi.org/10.1016/0030-5073(69)90004-X) `学術`
 - [Wikipedia: ERG theory — Alderfer, existence/relatedness/growth, frustration-regression, refinement of Maslow](https://en.wikipedia.org/wiki/ERG_theory) `リファレンス`
 
+## 関連概念
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同じ思想家
+- [[maslow-hierarchy|マズローの欲求階層説]] — 同じ思想家
+- [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
+- [[mgmt-competency|コンピテンシー]] — 同じ思想家
+- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同分野の近傍
+- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

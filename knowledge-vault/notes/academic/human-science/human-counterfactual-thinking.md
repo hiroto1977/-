@@ -30,6 +30,18 @@ aliases:
 - [Medvec, Madey & Gilovich (1995) When Less Is More, J. Pers. Soc. Psychol. 69:603-610](https://pubmed.ncbi.nlm.nih.gov/7473022/) `学術`
 - [Kahneman & Miller (1986) Norm Theory, Psychological Review](https://eric.ed.gov/?id=EJ333757) `学術`
 
+## 関連概念
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-moral-licensing|モラル・ライセンシング（道徳的自己許可）]] — 同じ思想家
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
+- [[econ-public-goods-game|公共財ゲーム]] — 出典を共有
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[human-synesthesia|共感覚（シナスタジア）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

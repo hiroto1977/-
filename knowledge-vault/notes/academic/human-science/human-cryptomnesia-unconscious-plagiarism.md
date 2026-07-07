@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Cryptomnesia — unconscious plagiarism and source monitoring failures](https://en.wikipedia.org/wiki/Cryptomnesia) `リファレンス`
 - [Johnson, M.K., Hashtroudi, S. & Lindsay, D.S. (1993) Source Monitoring — Psychological Review 100(1)](https://doi.org/10.1037/0033-295X.100.1.3) `学術`
 
+## 関連概念
+- [[human-deja-vu|デジャヴ（既視感）——初めての経験を「前にもあった」と感じる]] — 同じ思想家
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
+- [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]] — 同じ思想家
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同じ思想家
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

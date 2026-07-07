@@ -30,6 +30,10 @@ Martin L. Weitzman（マーティン・ワイツマン） ／ Dismal Theorem（�
 - [Weitzman, M. L. (2009) "On Modeling and Interpreting the Economics of Catastrophic Climate Change", Review of Economics and Statistics 91(1): 1-19 (IDEAS/RePEc 書誌・抄録)](https://ideas.repec.org/a/tpr/restat/v91y2009i1p1-19.html) `学術`
 - ["Martin Weitzman", Wikipedia — マーティン・ワイツマン（1942-2019）の経歴と悲観定理・ファットテール論・著書『Climate Shock』の概説](https://en.wikipedia.org/wiki/Martin_Weitzman) `リファレンス`
 
+## 関連概念
+- [[econ-weitzman-prices-vs-quantities|ワイツマンの「価格か数量か」（Prices vs. Quantities／Weitzman 1974）——不確実性下では限界費用と限界便益の傾きが規制手段の優劣を決める]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

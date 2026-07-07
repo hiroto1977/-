@@ -30,6 +30,15 @@ aliases:
 - [Banerjee & Duflo (2011) Poor Economics — PublicAffairs](https://doi.org/10.2307/j.ctvcm4j8j) `学術`
 - [Wikipedia: RCT in Economics — 経済学における無作為化比較試験の展開](https://en.wikipedia.org/wiki/Randomized_controlled_trial#Economics) `リファレンス`
 
+## 関連概念
+- [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
+- [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 同じ思想家
+- [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同分野の近傍
+- [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

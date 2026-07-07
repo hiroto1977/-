@@ -29,6 +29,18 @@ aliases:
 - [The Hartwick Rule: Myths and Facts (VU Research Portal) — on Hartwick (1977) Intergenerational Equity..., American Economic Review 67(5):972–974](https://research.vu.nl/ws/portalfiles/portal/1823891/thehartwickrule.pdf) `学術`
 - [Wikipedia: Hartwick rule — invest exhaustible-resource rents in reproducible capital, intergenerational equity, weak sustainability](https://en.wikipedia.org/wiki/Hartwick%27s_rule) `リファレンス`
 
+## 関連概念
+- [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 語彙が近い
+- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

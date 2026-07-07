@@ -29,6 +29,15 @@ aliases:
 - [Baumeister, R.F. et al. (1998) Ego Depletion — JPSP](https://doi.org/10.1037/0022-3514.74.5.1252) `学術`
 - [Wikipedia: Ego depletion — willpower research and controversy](https://en.wikipedia.org/wiki/Ego_depletion) `リファレンス`
 
+## 関連概念
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同じ思想家
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
+- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同じ思想家
+- [[human-ego-depletion-baumeister|自我消耗理論（バウマイスター）]] — 同じ思想家
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

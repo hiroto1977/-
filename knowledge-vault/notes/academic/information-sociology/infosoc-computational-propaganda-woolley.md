@@ -31,6 +31,11 @@ aliases:
 - [European Parliament (2022) Regulation (EU) 2022/2065 — Digital Services Act (DSA) — Very Large Online Platforms obligations](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2065) `公的`
 - [Wikipedia: Computational propaganda — Woolley & Howard, social bots, astroturfing, COMPROP, DSA](https://en.wikipedia.org/wiki/Computational_propaganda) `リファレンス`
 
+## 関連概念
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
+- [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 同じ思想家
+- [[infosoc-computational-journalism|計算論的ジャーナリズムとデータ・ドリブン報道の社会学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

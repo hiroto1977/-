@@ -30,6 +30,16 @@ aliases:
 - [Article 26 Pacta Sunt Servanda — Vienna Convention Commentary (Springer)](https://link.springer.com/chapter/10.1007/978-3-642-19291-3_29) `学術`
 - [Article 26 — The Vienna Conventions on the Law of Treaties: A Commentary (Oxford)](https://academic.oup.com/UrlRedirect/FromBookOrChapterDoiAsync?doi=10.1093%2Flaw%2F9780199546640.001.0001%2Flaw-9780199573523-chapter-53) `学術`
 
+## 関連概念
+- [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 語彙が近い
+- [[bizlaw-change-of-circumstances|事情変更の原則]] — 語彙が近い
+- [[bizlaw-trail-smelter-principle|トレイル・スメルター原則（Trail Smelter Principle）]] — 出典を共有
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 出典を共有
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 出典を共有
+- [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
+- [[bizlaw-cartel-regulation-antitrust-eu|カルテル規制——競争法における水平的共謀の禁止と制裁]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

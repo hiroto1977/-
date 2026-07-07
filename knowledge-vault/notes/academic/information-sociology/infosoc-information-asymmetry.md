@@ -30,6 +30,12 @@ G.アカロフ／M.スペンス／J.スティグリッツ（2001年ノーベル�
 - [Wikipedia — The Market for Lemons (Akerlof 1970)](https://en.wikipedia.org/wiki/The_Market_for_Lemons) `リファレンス`
 - [Encyclopaedia Britannica Money — Moral hazard](https://www.britannica.com/money/moral-hazard) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 語彙が近い
+- [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
+- [[econ-lemons-problem-akerlof|レモン市場]] — 分野横断
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

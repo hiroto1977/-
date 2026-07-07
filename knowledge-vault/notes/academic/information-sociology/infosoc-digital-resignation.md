@@ -31,6 +31,12 @@ Nora A. Draper ／ Joseph Turow ／ Ari Ezra Waldman
 - [Annenberg Public Policy Center (2015) — Americans resigned to giving up personal data](https://www.annenbergpublicpolicycenter.org/americans-resigned-to-giving-up-personal-data-study-finds/) `リファレンス`
 - [Big Data & Society — Digital Resignation and Privacy Cynicism special theme (2024)](https://journals.sagepub.com/page/bds/digitalresignationandprivacycynicism) `学術`
 
+## 関連概念
+- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
+- [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 出典を共有
+- [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

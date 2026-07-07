@@ -30,6 +30,12 @@ aliases:
 - [日本赤十字社「避難の妨げになる『正常性バイアス・同調性バイアス』」](https://www.jrc.or.jp/about/publication/news/20210901_020612.html) `公的`
 - [十文字学園女子大学「錯思コレクション100：正常性バイアス」](https://www.jumonji-u.ac.jp/sscs/ikeda/cognitive_bias/cate_d/d_19.html) `学術`
 
+## 関連概念
+- [[human-naive-realism|素朴実在論（ナイーブ・リアリズム）]] — 出典を共有
+- [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 同分野の近傍
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同分野の近傍
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

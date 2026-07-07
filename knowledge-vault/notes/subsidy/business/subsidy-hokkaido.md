@@ -36,6 +36,12 @@ prefecture
 - [北海道中小企業総合支援センター 競争力強化促進事業 募集](https://www.hsc.or.jp/news/2024jyourei_1-2/) `運営団体`
 - [公益財団法人 北海道中小企業総合支援センター](https://www.hsc.or.jp/) `運営団体`
 
+## 関連概念
+- [[subsidy-regional-employment|地域雇用開発助成金]] — 出典を共有
+- [[tax-real-estate-acquisition|不動産取得税]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同分野の近傍
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

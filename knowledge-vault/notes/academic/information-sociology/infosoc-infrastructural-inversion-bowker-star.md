@@ -30,6 +30,12 @@ aliases:
 - [Edwards, P. N. et al. (2007) "Understanding Infrastructure" — Journal of the Association for Information Systems](https://doi.org/10.1177/0306312706056047) `学術`
 - [Wikipedia: Sorting Things Out — ボウカー＆スターの分類研究](https://en.wikipedia.org/wiki/Sorting_Things_Out) `リファレンス`
 
+## 関連概念
+- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 語彙が近い
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
+- [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

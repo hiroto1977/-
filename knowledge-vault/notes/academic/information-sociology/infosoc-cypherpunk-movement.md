@@ -33,6 +33,18 @@ aliases:
 - [Steven Levy「Crypto Rebels」— WIRED (1993)](https://www.wired.com/1993/02/crypto-rebels/) `メディア`
 - [Timothy C. May「The Crypto Anarchist Manifesto」(1988) — MIT CSAIL](https://groups.csail.mit.edu/mac/classes/6.805/articles/crypto/cypherpunks/may-crypto-manifesto.html) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 出典を共有
+- [[infosoc-enshittification|エンシティフィケーション（Enshittification）]] — 出典を共有
+- [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

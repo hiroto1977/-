@@ -31,6 +31,18 @@ GDPギャップ＝（実際GDP−潜在GDP）÷潜在GDP（IMF表記 (Y−Y*)/Y*
 - [日本銀行「需給ギャップ・潜在成長率および労働需給関連指標」（観測不能で推計依存・四半期公表）](https://www.boj.or.jp/research/research_data/gap/index.htm) `公的`
 - [Wikipedia "Output gap"（actual−potential の定義、正＝inflationary gap、オークンの法則）](https://en.wikipedia.org/wiki/Output_gap) `リファレンス`
 
+## 関連概念
+- [[econ-auerbach-kotlikoff-generational|世代会計（Generational Accounting）]] — 出典を共有
+- [[econ-bop-stages|国際収支の発展段階説]] — 出典を共有
+- [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — 出典を共有
+- [[econ-inflation-deflation|インフレーションとデフレーション（物価変動と金融政策）]] — 出典を共有
+- [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 出典を共有
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 出典を共有
+- [[econ-wage-price-spiral|賃金・物価スパイラル]] — 出典を共有
+- [[eh-2001|2001年（平成13年）]] — 出典を共有
+- [[eh-2006|2006年（平成18年）]] — 出典を共有
+- [[econ-forward-guidance|フォワードガイダンス（時間軸政策）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

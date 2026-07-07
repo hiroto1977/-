@@ -30,6 +30,11 @@ aliases:
 - [国税庁 国税通則法基本通達 第60条関係](https://www.nta.go.jp/law/tsutatsu/kihon/tsusoku/06/01/60.htm) `公的`
 - [e-Gov法令検索 国税通則法（60条）](https://laws.e-gov.go.jp/law/337AC0000000066) `公的`
 
+## 関連概念
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

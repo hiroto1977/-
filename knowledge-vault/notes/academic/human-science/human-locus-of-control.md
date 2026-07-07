@@ -31,6 +31,12 @@ aliases:
 - [Springer, Encyclopedia of Personality and Individual Differences: Locus of Control](https://link.springer.com/referenceworkentry/10.1007/978-3-319-24612-3_41) `リファレンス`
 - [Wikipedia: Locus of control（一次文献 Rotter 1966 の書誌情報を含む）](https://en.wikipedia.org/wiki/Locus_of_control) `リファレンス`
 
+## 関連概念
+- [[human-social-learning-theory|社会的学習理論]] — 同分野の近傍
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
+- [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 同分野の近傍
+- [[human-actor-observer-bias|行為者-観察者バイアス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

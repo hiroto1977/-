@@ -29,6 +29,12 @@ aliases:
 - [Prebisch, R. (1950) The Economic Development of Latin America and Its Principal Problems — UN ECLA (WorldCat)](https://www.worldcat.org/oclc/3030120) `学術`
 - [Wikipedia: Dependency theory — Prebisch-Singer, core-periphery, terms of trade, underdevelopment](https://en.wikipedia.org/wiki/Dependency_theory) `リファレンス`
 
+## 関連概念
+- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同じ思想家
+- [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同分野の近傍
+- [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

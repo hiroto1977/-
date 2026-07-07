@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Good faith — implied covenant of good faith and fair dealing, UCC, Restatement §205](https://www.law.cornell.edu/wex/good_faith) `リファレンス`
 - [Wikipedia: Good faith (law) — UCC, Treu und Glauben, English law, Yam Seng, relational contracts](https://en.wikipedia.org/wiki/Good_faith_(law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 語彙が近い
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 語彙が近い
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同じ思想家
+- [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]] — 同じ思想家
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同じ思想家
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

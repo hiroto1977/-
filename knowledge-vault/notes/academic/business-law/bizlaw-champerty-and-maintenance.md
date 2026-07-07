@@ -31,6 +31,10 @@ Percy Henry Winfield ／ Rachael Mulheron
 - [Criminal Law Act 1967 s.14 (UK)](https://www.legislation.gov.uk/ukpga/1967/58/section/14) `公的`
 - [Mulheron, Modern Doctrines (OUP 2023)](https://global.oup.com/academic/product/the-modern-doctrines-of-champerty-and-maintenance-9780192898739) `学術`
 
+## 関連概念
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 語彙が近い
+- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

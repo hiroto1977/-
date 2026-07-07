@@ -30,6 +30,18 @@ aliases:
 - [Private information, money, and growth: ...and the Mundell-Tobin effect — Journal of Economic Growth (Springer)](https://link.springer.com/article/10.1007/BF00141041) `学術`
 - [Liquidity, the Mundell–Tobin Effect, and the Friedman Rule — Journal of Money, Credit and Banking (Wiley, 2024)](https://onlinelibrary.wiley.com/doi/10.1111/jmcb.12994) `学術`
 
+## 関連概念
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 語彙が近い
+- [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
+- [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
+- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
+- [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

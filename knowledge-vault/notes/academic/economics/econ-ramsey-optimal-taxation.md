@@ -30,6 +30,18 @@ aliases:
 - [Mirrlees, J. (1971) An Exploration in the Theory of Optimum Income Taxation — REStud](https://doi.org/10.2307/2296779) `学術`
 - [Wikipedia: Optimal tax — 最適課税理論の概要](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 
+## 関連概念
+- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 語彙が近い
+- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 語彙が近い
+- [[econ-optimal-taxation-theory|最適課税理論]] — 語彙が近い
+- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 語彙が近い
+- [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
+- [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
+- [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
+- [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

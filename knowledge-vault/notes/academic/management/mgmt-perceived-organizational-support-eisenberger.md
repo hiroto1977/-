@@ -29,6 +29,11 @@ aliases:
 - [Eisenberger, R. et al. (1986) Perceived Organizational Support — Journal of Applied Psychology 71(3)](https://doi.org/10.1037/0021-9010.71.3.500) `学術`
 - [Wikipedia: Perceived organizational support — Eisenberger, social exchange, reciprocity, commitment](https://en.wikipedia.org/wiki/Perceived_organizational_support) `リファレンス`
 
+## 関連概念
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
+- [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

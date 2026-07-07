@@ -32,6 +32,10 @@ Edmund Husserl ／ Amedeo Giorgi ／ Max van Manen ／ Clark Moustakas ／ Mauri
 - [Finlay (2012) Debating phenomenological methods — Hermeneutic Phenomenology in Education](https://doi.org/10.1080/14780887.2012.690338) `学術`
 - [Stanford Encyclopedia of Philosophy: Phenomenology (Woodruff Smith, 2018)](https://plato.stanford.edu/entries/phenomenology/) `リファレンス`
 
+## 関連概念
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 語彙が近い
+- [[human-narrative-therapy|ナラティブ・セラピー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

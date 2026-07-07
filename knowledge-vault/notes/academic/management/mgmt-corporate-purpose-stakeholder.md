@@ -31,6 +31,18 @@ R・エドワード・フリーマン ／ ミルトン・フリードマン ／ 
 - [Mayer, C. (2018) Prosperity: Better Business Makes the Greater Good — Oxford University Press](https://global.oup.com/academic/product/prosperity-9780198799887) `学術`
 - [Wikipedia: Stakeholder capitalism — history, BRT 2019 statement, and critique of purpose-washing](https://en.wikipedia.org/wiki/Stakeholder_capitalism) `リファレンス`
 
+## 関連概念
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同じ思想家
+- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

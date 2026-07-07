@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Laches — equitable defense, unreasonable delay, prejudice, vs statute of limitations](https://www.law.cornell.edu/wex/laches) `リファレンス`
 - [Wikipedia: Laches (equity) — delay and prejudice, equity aids the vigilant, discretionary bar](https://en.wikipedia.org/wiki/Laches_(equity)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — 語彙が近い
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同じ思想家
+- [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同じ思想家
+- [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 同じ思想家
+- [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 同じ思想家
+- [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

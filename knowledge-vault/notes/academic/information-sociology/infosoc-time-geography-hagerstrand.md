@@ -29,6 +29,10 @@ aliases:
 - [Hägerstrand, T. (1970) What about People in Regional Science? — Papers of the Regional Science Association 24(1)](https://doi.org/10.1007/BF01936872) `学術`
 - [Wikipedia: Time geography — Hägerstrand, space-time path/prism, capability/coupling/authority constraints](https://en.wikipedia.org/wiki/Time_geography) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-humanities-mccarty|デジタル・ヒューマニティーズ——マッカーシーの計算的モデリングと人文知の変容]] — 同分野の近傍
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

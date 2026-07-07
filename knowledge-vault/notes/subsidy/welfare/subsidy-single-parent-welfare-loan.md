@@ -36,6 +36,18 @@ national
 - [神奈川県 母子父子寡婦福祉資金について](https://www.pref.kanagawa.jp/docs/he8/hitorioya-support/fukushishikin/index.html) `自治体`
 - [横浜市 母子父子寡婦福祉資金](https://www.city.yokohama.lg.jp/kosodate-kyoiku/oyakokenko/hitorioya/boshifushikafushikin.html) `自治体`
 
+## 関連概念
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 出典を共有
+- [[subsidy-child-allowance|児童手当]] — 出典を共有
+- [[subsidy-kanagawa|中小企業生産性向上促進事業費補助金（神奈川県）]] — 出典を共有
+- [[subsidy-single-parent-allowance|児童扶養手当]] — 出典を共有
+- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 出典を共有
+- [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 出典を共有
+- [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 出典を共有
+- [[tax-light-vehicle-tax|軽自動車税（種別割）]] — 出典を共有
+- [[subsidy-special-child-allowance|特別児童扶養手当]] — 出典を共有
+- [[subsidy-livelihood-welfare-loan|生活福祉資金貸付制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [NLRB (2023) Who We Are — National Labor Relations Board](https://www.nlrb.gov/about-nlrb/who-we-are/our-history) `公的`
 - [Wikipedia: Collective bargaining — 団体交渉の国際比較](https://en.wikipedia.org/wiki/Collective_bargaining) `リファレンス`
 
+## 関連概念
+- [[bizlaw-labor-union-act|労働組合法]] — 語彙が近い
+- [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

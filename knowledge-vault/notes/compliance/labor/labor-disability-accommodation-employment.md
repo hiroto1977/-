@@ -30,6 +30,18 @@ aliases:
 - [JEED 障害者への差別禁止と合理的配慮](https://www.jeed.go.jp/disability/data/handbook/q2k4vk000003mbmt.html) `公的`
 - [鹿児島県 雇用分野の合理的配慮](https://www.pref.kagoshima.jp/af04/sangyo-rodo/rodo/syogaisya/gouritekihairyo.html) `自治体`
 
+## 関連概念
+- [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 語彙が近い
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 語彙が近い
+- [[bizlaw-disability-employment|障害者雇用促進法]] — 出典を共有
+- [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 出典を共有
+- [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]] — 出典を共有
+- [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 出典を共有
+- [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 出典を共有
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 出典を共有
+- [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 同分野の近傍
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

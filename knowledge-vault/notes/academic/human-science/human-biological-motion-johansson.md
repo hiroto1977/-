@@ -31,6 +31,11 @@ aliases:
 - [Simion, F., Regolin, L. & Bulf, H. (2008) A Predisposition for Biological Motion in the Newborn Baby — PNAS, 105(2), 809-813（新生児の生得的選好の実証）](https://doi.org/10.1073/pnas.0707021105) `学術`
 - [Wikipedia: Biological motion perception — Johansson point-light walker, posterior STS, inversion effect, applications (gait recognition, motion capture)](https://en.wikipedia.org/wiki/Biological_motion_perception) `リファレンス`
 
+## 関連概念
+- [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

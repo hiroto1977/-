@@ -30,6 +30,12 @@ aliases:
 - [内閣府 公益法人Information「公益法人制度改革の成果」](https://www.koeki-info.go.jp/regulations/01bpjc0uhx.html) `公的`
 - [国立国会図書館 日本法令索引（平成18年法律第48号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000106760) `リファレンス`
 
+## 関連概念
+- [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]] — 語彙が近い
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同分野の近傍
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同分野の近傍
+- [[bizlaw-worker-cooperative|労働者協同組合法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

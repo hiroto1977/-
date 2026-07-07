@@ -29,6 +29,15 @@ aliases:
 - [Cornell LII Wex: Covenant running with the land — benefit/burden to successors, touch and concern, restrictive covenants](https://www.law.cornell.edu/wex/covenant) `リファレンス`
 - [Wikipedia: Covenant (law) — running with the land, Tulk v Moxhay, restrictive vs positive, privity exception](https://en.wikipedia.org/wiki/Covenant_(law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 同じ思想家
+- [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]] — 同じ思想家
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
+- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
+- [[bizlaw-fixtures-property|定着物（フィクスチャー）——土地に付着して不動産の一部となった動産]] — 同じ思想家
+- [[bizlaw-estoppel-by-deed|証書禁反言（エストッペル・バイ・ディード）]] — 同分野の近傍
+- [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

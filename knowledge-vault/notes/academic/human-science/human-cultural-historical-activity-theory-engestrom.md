@@ -30,6 +30,12 @@ aliases:
 - [Engeström & Sannino (2010) Studies of Expansive Learning: Foundations, Findings and Future Challenges — Educational Research Review](https://doi.org/10.1177/1350507610378462) `学術`
 - [Wikipedia: Activity theory — 活動理論の歴史的展開と三世代モデルの概説](https://en.wikipedia.org/wiki/Activity_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 分野横断
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

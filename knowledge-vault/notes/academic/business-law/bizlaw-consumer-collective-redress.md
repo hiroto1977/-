@@ -30,6 +30,12 @@ aliases:
 - [消費者庁 — 消費者裁判手続特例法](https://www.caa.go.jp/policies/policy/consumer_system/consumer_court_proceedings/) `公的`
 - [BUSINESS LAWYERS — 令和4年改正・消費者裁判手続特例法のポイント解説](https://www.businesslawyers.jp/articles/1203) `リファレンス`
 
+## 関連概念
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 分野横断
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 同分野の近傍
+- [[bizlaw-consumer-contract-unfair-terms|消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正]] — 同分野の近傍
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

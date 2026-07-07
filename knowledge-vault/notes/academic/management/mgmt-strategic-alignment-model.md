@@ -30,6 +30,16 @@ John C. Henderson／N. Venkatraman
 - [IBM Systems Journal Vol.32 No.1 — IEEE Xplore (Henderson & Venkatraman 1993)](https://ieeexplore.ieee.org/document/5387370) `学術`
 - [Wikipedia — Strategic alignment](https://en.wikipedia.org/wiki/Strategic_alignment) `リファレンス`
 
+## 関連概念
+- [[infosoc-technological-momentum|技術的モメンタム]] — 出典を共有
+- [[infosoc-technical-debt|技術的負債]] — 出典を共有
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
+- [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
+- [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 同分野の近傍
+- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
+- [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
+- [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

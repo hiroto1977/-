@@ -31,6 +31,18 @@ aliases:
 - [Bostrom, N. (2003) Human Genetic Enhancements: A Transhumanist Perspective — Journal of Value Inquiry, 37(4), 493–506（トランスヒューマニズムの代表論文）](https://doi.org/10.2307/4140875) `学術`
 - [Wikipedia: Posthumanism — Hayles, Braidotti, transhumanism, AI governance, cyborg theory](https://en.wikipedia.org/wiki/Posthumanism) `リファレンス`
 
+## 関連概念
+- [[infosoc-cybernetics|サイバネティクス]] — 同じ思想家
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

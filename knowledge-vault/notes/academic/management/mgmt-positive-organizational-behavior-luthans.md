@@ -31,6 +31,18 @@ aliases:
 - [Luthans, F. & Youssef-Morgan, C. M. (2017) Psychological Capital: An Evidence-Based Positive Approach — Annual Review of Organizational Psychology, 4, 339–366（PsyCap研究総括）](https://doi.org/10.1177/1059601117718524) `学術`
 - [Wikipedia: Positive organizational behavior — Luthans, PsyCap, HERO, POB vs PERMA](https://en.wikipedia.org/wiki/Positive_organizational_behavior) `リファレンス`
 
+## 関連概念
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
+- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — 語彙が近い
+- [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 語彙が近い
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 分野横断
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

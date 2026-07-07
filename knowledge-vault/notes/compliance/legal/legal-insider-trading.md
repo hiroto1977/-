@@ -30,6 +30,18 @@ aliases:
 - [日本取引所グループ インサイダー取引規制](https://www.jpx.co.jp/regulation/preventing/insider/index.html) `メディア`
 - [証券取引等監視委員会 インサイダー取引とは](https://www.fsa.go.jp/sesc/actions/kokuhatu/02/shiryou.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
+- [[legal-external-transmission|電気通信事業法の外部送信規律]] — 同分野の近傍
+- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

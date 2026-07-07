@@ -31,6 +31,16 @@ aliases:
 - [European Parliament (2024) Regulation (EU) 2024/1689 — EU AI Act（ディープフェイク・操作コンテンツ規制）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) `公的`
 - [Wikipedia: Misinformation — Wardle & Derakhshan typology, disinformation, malinformation, deepfakes, DSA](https://en.wikipedia.org/wiki/Misinformation) `リファレンス`
 
+## 関連概念
+- [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 同じ思想家
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
+- [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 出典を共有
+- [[infosoc-information-disorder|情報障害（Information Disorder）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

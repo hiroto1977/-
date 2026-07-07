@@ -29,6 +29,10 @@ aliases:
 - [Broome, A. (2009). The Global Economic Crisis and FATF — Routledge](https://doi.org/10.4337/9781781952641) `学術`
 - [Wikipedia: Financial Action Task Force — AML international standards](https://en.wikipedia.org/wiki/Financial_Action_Task_Force) `リファレンス`
 
+## 関連概念
+- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 語彙が近い
+- [[bizlaw-anti-money-laundering-directive-eu|EUマネーロンダリング防止指令——金融システムの健全性保護]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

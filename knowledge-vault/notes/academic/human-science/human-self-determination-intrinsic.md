@@ -30,6 +30,18 @@ aliases:
 - [Ryan & Deci (2000) Self-Determination Theory and the Facilitation of Intrinsic Motivation, Social Development, and Well-Being — American Psychologist](https://doi.org/10.1037/0003-066X.55.1.68) `学術`
 - [Wikipedia: Self-determination theory — 自己決定理論と基本的心理欲求の概説](https://en.wikipedia.org/wiki/Self-determination_theory) `リファレンス`
 
+## 関連概念
+- [[human-self-determination|自己決定理論（SDT）]] — 語彙が近い
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 語彙が近い
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+- [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

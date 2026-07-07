@@ -30,6 +30,18 @@ aliases:
 - [法務省 債権譲渡登記制度とは（動産・債権譲渡特例法）](https://www.moj.go.jp/MINJI/saikenjouto-01.html) `公的`
 - [横浜国立大学 法科大学院 集合債権譲渡担保 解説（最判平11・1・29、平13・11・22）](https://www.ls.ynu.ac.jp/about/program/financial/PDF/kaisetsu.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 語彙が近い
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [ICSID International Centre for Settlement of Investment Disputes — World Bank](https://www.icsid.worldbank.org/) `公的`
 - [Wikipedia: ジョイント・ベンチャー — 合弁事業の法的構造と契約の解説](https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%A7%E3%82%A4%E3%83%B3%E3%83%88%E3%83%BB%E3%83%99%E3%83%B3%E3%83%81%E3%83%A3%E3%83%BC) `リファレンス`
 
+## 関連概念
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

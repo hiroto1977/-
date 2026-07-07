@@ -29,6 +29,11 @@ aliases:
 - [EU Council Directive 93/13/EEC — Unfair Terms in Consumer Contracts](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31993L0013) `公的`
 - [Wikipedia: Unfair terms in consumer contracts — EU and UK law](https://en.wikipedia.org/wiki/Unfair_Contract_Terms_Act_1977) `リファレンス`
 
+## 関連概念
+- [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — 同分野の近傍
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [経済産業省 DX推進指標 — 組織変革と経営改革の枠組み](https://www.meti.go.jp/policy/it_policy/dx/dx.html) `公的`
 - [Wikipedia: 組織変革 — コッターの8ステップと変革管理の解説](https://ja.wikipedia.org/wiki/%E7%B5%84%E7%B9%94%E5%A4%89%E9%9D%A9) `リファレンス`
 
+## 関連概念
+- [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 語彙が近い
+- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 同じ思想家
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
+- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
+- [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同じ思想家
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
+- [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-stage-gate|ステージゲート法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [Mendelsohn, M. (2004). The Guide to Franchising — International Thompson](https://doi.org/10.4337/9781848441958) `学術`
 - [Wikipedia: Franchise — disclosure regulation comparative law](https://en.wikipedia.org/wiki/Franchise) `リファレンス`
 
+## 関連概念
+- [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]] — 語彙が近い
+- [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 語彙が近い
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [CISA “Tactics of Disinformation”（mis-/dis-/mal-information の定義）](https://www.cisa.gov/sites/default/files/publications/tactics-of-disinformation_508.pdf) `公的`
 - [Wikipedia: Disinformation](https://en.wikipedia.org/wiki/Disinformation) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 語彙が近い
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
+- [[infosoc-information-disorder|情報障害（Information Disorder）]] — 同じ思想家
+- [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同じ思想家
+- [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 同じ思想家
+- [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 同じ思想家
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
+- [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]] — 出典を共有
+- [[infosoc-digital-citizenship|デジタル・シティズンシップ]] — 同分野の近傍
+- [[infosoc-infodemic|インフォデミック]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Samuelson, P.A. (1939) Interactions between the Multiplier Analysis and the Principle of Acceleration — REStat 21(2)](https://doi.org/10.2307/1927758) `学術`
 - [Wikipedia: Multiplier–accelerator model — Samuelson, induced investment, endogenous business cycle](https://en.wikipedia.org/wiki/Multiplier%E2%80%93accelerator_model) `リファレンス`
 
+## 関連概念
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[is-lm-model|IS-LM分析]] — 同じ思想家
+- [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
+- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 同じ思想家
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

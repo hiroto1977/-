@@ -30,6 +30,18 @@ aliases:
 - [Schippers, M. C. et al. (2013) Reflexivity in Teams — Journal of Management](https://doi.org/10.5465/amj.2010.0583) `学術`
 - [Wikipedia: Team reflexivity — collective reflection and adaptation overview](https://en.wikipedia.org/wiki/Team_reflexivity) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同じ思想家
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+- [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
+- [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同分野の近傍
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
+- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

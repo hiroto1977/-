@@ -29,6 +29,18 @@ aliases:
 - [Lerner, A.P. (1944) The Economics of Control — Macmillan; Marshall-Lerner condition (WorldCat)](https://www.worldcat.org/oclc/1296599) `学術`
 - [Wikipedia: Marshall–Lerner condition — elasticities sum > 1, depreciation, trade balance, J-curve](https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition) `リファレンス`
 
+## 関連概念
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 同じ思想家
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

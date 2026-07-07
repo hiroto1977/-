@@ -30,6 +30,18 @@ aliases:
 - [関東財務局 企業内容等開示制度の概要](https://lfb.mof.go.jp/kantou/disclo/gaiyou.htm) `公的`
 - [日本取引所グループ 用語集 有価証券報告書](https://www.jpx.co.jp/glossary/ya/446.html) `メディア`
 
+## 関連概念
+- [[bizlaw-financial-instruments-act|金融商品取引法]] — 語彙が近い
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 分野横断
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
+- [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 出典を共有
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
+- [[bizlaw-tob|公開買付け（TOB）]] — 出典を共有
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

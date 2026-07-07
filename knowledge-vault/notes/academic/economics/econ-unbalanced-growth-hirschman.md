@@ -29,6 +29,12 @@ aliases:
 - [Hirschman, A.O. (1958) The Strategy of Economic Development — Yale University Press (WorldCat)](https://www.worldcat.org/oclc/192767) `学術`
 - [Wikipedia: Unbalanced growth — Hirschman, backward/forward linkages, strategic sectors](https://en.wikipedia.org/wiki/Unbalanced_growth) `リファレンス`
 
+## 関連概念
+- [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-general-purpose-technology|汎用技術——広範な波及と補完的革新を通じて成長を牽引する基盤技術]] — 同分野の近傍
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

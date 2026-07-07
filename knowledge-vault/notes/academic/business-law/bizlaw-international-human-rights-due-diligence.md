@@ -29,6 +29,11 @@ aliases:
 - [Ruggie, J. (2013). Just Business — W.W. Norton](https://doi.org/10.1017/9781316492116) `学術`
 - [Wikipedia: UN Guiding Principles on Business and Human Rights](https://en.wikipedia.org/wiki/UN_Guiding_Principles_on_Business_and_Human_Rights) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-social-responsibility-law|CSRの法的規制——企業の社会的責任の自主規制から強制開示・デューデリジェンス義務への展開]] — 語彙が近い
+- [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 語彙が近い
+- [[bizlaw-corporate-social-responsibility-directive|企業持続可能性デューディリジェンス指令——サプライチェーンにおける人権・環境配慮義務]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

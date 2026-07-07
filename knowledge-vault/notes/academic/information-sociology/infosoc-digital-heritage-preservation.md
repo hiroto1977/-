@@ -30,6 +30,12 @@ aliases:
 - [国立国会図書館 (2023) 国立国会図書館デジタルコレクション](https://ndldigital.ndl.go.jp/) `公的`
 - [Wikipedia: Digital preservation — デジタル保存の技術と課題](https://en.wikipedia.org/wiki/Digital_preservation) `リファレンス`
 
+## 関連概念
+- [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 出典を共有
+- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 出典を共有
+- [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同分野の近傍
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

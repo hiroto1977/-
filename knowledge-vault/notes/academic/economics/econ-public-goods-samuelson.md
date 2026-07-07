@@ -30,6 +30,18 @@ aliases:
 - [Nobel Prize (2009) Elinor Ostrom — Governing the Commons](https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/) `リファレンス`
 - [Wikipedia: 公共財 — 非競合性・非排除性と市場の失敗の解説](https://ja.wikipedia.org/wiki/%E5%85%AC%E5%85%B1%E8%B2%A1) `リファレンス`
 
+## 関連概念
+- [[econ-public-goods|公共財（非競合性・非排除性）]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
+- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
+- [[econ-merit-goods|メリット財（価値財）]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
+- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

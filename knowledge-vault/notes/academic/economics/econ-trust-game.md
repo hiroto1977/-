@@ -30,6 +30,18 @@ aliases:
 - [Stanford University course notes — Berg, Dickhaut & McCabe trust game (structure, trust/trustworthiness measures)](https://web.stanford.edu/~niederle/trust.pdf) `学術`
 - [Tzieropoulos, "Trust Games and Beyond," Frontiers in Neuroscience (2019)](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2019.00887/full) `学術`
 
+## 関連概念
+- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
+- [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — 出典を共有
+- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 出典を共有
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
+- [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
+- [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 出典を共有
+- [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 出典を共有
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

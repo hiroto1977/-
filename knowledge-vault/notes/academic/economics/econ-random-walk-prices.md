@@ -29,6 +29,18 @@ aliases:
 - [Fama, E.F. (1965) Random Walks in Stock Market Prices — Financial Analysts Journal 21(5)](https://doi.org/10.2469/faj.v21.n5.55) `学術`
 - [Wikipedia: Random walk hypothesis — Bachelier, Kendall, Fama, Samuelson, efficient markets, Malkiel](https://en.wikipedia.org/wiki/Random_walk_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
+- [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
+- [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[econ-pecking-order-theory-myers|ペッキングオーダー理論——情報の非対称が規定する資金調達の優先順位]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

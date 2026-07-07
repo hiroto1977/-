@@ -29,6 +29,18 @@ Wanda J. Orlikowski & Debra C. Gash（ACM TOIS 12(2), 1994 — テクノロジ�
 - [Orlikowski & Gash (1994) Technological Frames: Making Sense of IT in Organizations — ACM TOIS 12(2), pp.174-207](https://dl.acm.org/doi/10.1145/196734.196745) `学術`
 - [Semantic Scholar: Orlikowski & Gash (1994)](https://www.semanticscholar.org/paper/Technological-frames-Orlikowski-Gash/dcfb1f7bb415b1a4259457237a8881ab053aea2e) `学術`
 
+## 関連概念
+- [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 語彙が近い
+- [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]] — 同じ思想家
+- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
+- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
+- [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
+- [[infosoc-smart-mob|スマートモブ]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

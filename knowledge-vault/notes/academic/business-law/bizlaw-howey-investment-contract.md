@@ -30,6 +30,18 @@ SEC v. W. J. Howey Co. (328 U.S. 293, 1946) ／ Securities Act of 1933 §2(a)(1)
 - ['Howey test', Wex Legal Dictionary, Legal Information Institute, Cornell Law School — four elements (investment of money / common enterprise / expectation of profits / efforts of others) derived from SEC v. W. J. Howey Co. (1946)](https://www.law.cornell.edu/wex/howey_test) `リファレンス`
 - [U.S. Securities and Exchange Commission, Strategic Hub for Innovation and Financial Technology, 'Framework for "Investment Contract" Analysis of Digital Assets' (Apr. 3, 2019) — applies the Howey four-prong test to crypto-assets](https://www.sec.gov/files/dlt-framework.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-nemo-dat-quod-non-habet|ネモ・ダット原則（Nemo Dat Quod Non Habet）]] — 同じ思想家
+- [[bizlaw-reves-family-resemblance|リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み]] — 同じ思想家
+- [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 同じ思想家
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
+- [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 出典を共有
+- [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]] — 出典を共有
+- [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — 出典を共有
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 出典を共有
+- [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 出典を共有
+- [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

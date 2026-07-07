@@ -29,6 +29,10 @@ aliases:
 - [Baron, D.P. (1995) Integrated Strategy: Market and Nonmarket Components — California Management Review 37(2), 47–65（非市場戦略・CPAの原論文）](https://doi.org/10.2307/41165697) `学術`
 - [Wikipedia: Corporate political activity — 企業の政治的活動の概説](https://en.wikipedia.org/wiki/Corporate_political_activity) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
+- [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

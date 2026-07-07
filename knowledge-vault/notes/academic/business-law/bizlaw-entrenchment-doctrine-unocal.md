@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Unocal v. Mesa — proportionality test for takeover defenses](https://en.wikipedia.org/wiki/Unocal_Corp._v._Mesa_Petroleum_Co.) `リファレンス`
 - [Gilson, R.J. & Kraakman, R. (1991) Reinventing the Outside Director — Stanford Law Review 43(4)](https://doi.org/10.2307/1073418) `学術`
 
+## 関連概念
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 語彙が近い
+- [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
+- [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同じ思想家
+- [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同じ思想家
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 同じ思想家
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

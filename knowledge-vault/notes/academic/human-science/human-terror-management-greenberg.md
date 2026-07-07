@@ -31,6 +31,16 @@ aliases:
 - [Pyszczynski, T., Greenberg, J. & Solomon, S. (2005) Proximal and Distal Defense: A New Perspective on Unconscious Motivation — Psychological Review, 112(2), 435–437（緩衝機構の理論精緻化）](https://doi.org/10.1037/0033-295X.112.2.435) `学術`
 - [Wikipedia: Terror management theory — Becker, mortality salience, worldview defense, self-esteem buffer](https://en.wikipedia.org/wiki/Terror_management_theory) `リファレンス`
 
+## 関連概念
+- [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 語彙が近い
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同じ思想家
+- [[human-terror-management-theory-becker|テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験]] — 同じ思想家
+- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
+- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
+- [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同じ思想家
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
+- [[human-moral-licensing|モラル・ライセンシング（道徳的自己許可）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

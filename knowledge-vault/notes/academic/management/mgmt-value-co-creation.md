@@ -30,6 +30,12 @@ C・K・プラハラード／ベンカト・ラマスワミ（2004）
 - [Taylor & Francis 査読論文: co-creation (DART) の4要素 Dialogue/Access/Risk-assessment/Transparency を Prahalad & Ramaswamy に帰属](https://www.tandfonline.com/doi/full/10.1080/10696679.2022.2120013) `学術`
 - [国立国会図書館サーチ：邦訳『価値共創の未来へ―顧客と企業のco-creation』(2004)](https://iss.ndl.go.jp/books/R100000002-I000007561849-00) `公的`
 
+## 関連概念
+- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 出典を共有
+- [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — 出典を共有
+- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 同分野の近傍
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

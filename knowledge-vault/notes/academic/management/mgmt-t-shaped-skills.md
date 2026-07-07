@@ -29,6 +29,15 @@ T字型人材（T-shaped professional）とは、ある特定分野に深い専�
 - [MIT Sloan Management Review — "The Versatility of T-Shaped Managers"（T字型マネジャーの組織内役割と知識統合機能）](https://sloanreview.mit.edu/article/the-versatility-of-t-shaped-managers/) `学術`
 - [Harvard Business Review — Tim Brown "The Next Step in Business Building"（T字型人材とIDEOの実践、2010年7月）](https://hbr.org/2010/07/the-next-step-in-business-building) `メディア`
 
+## 関連概念
+- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同じ思想家
+- [[mgmt-open-innovation|オープン・イノベーション]] — 出典を共有
+- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 出典を共有
+- [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
+- [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
+- [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

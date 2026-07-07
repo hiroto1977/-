@@ -30,6 +30,11 @@ aliases:
 - [Hsieh & Klenow, "Misallocation and Manufacturing TFP in China and India," NBER Working Paper No. 13290](https://www.nber.org/papers/w13290) `学術`
 - [IDEAS/RePEc bibliographic record — Hsieh & Klenow (2009), QJE 124(4):1403-1448](https://ideas.repec.org/a/oup/qjecon/v124y2009i4p1403-1448..html) `リファレンス`
 
+## 関連概念
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 同分野の近傍
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

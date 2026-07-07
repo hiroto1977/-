@@ -30,6 +30,17 @@ aliases:
 - [Shimer (2005) The Cyclical Behavior of Equilibrium Unemployment and Vacancies — AER](https://doi.org/10.1257/0002828053828572) `学術`
 - [Wikipedia: Search and matching theory — サーチ・マッチング理論の概説](https://en.wikipedia.org/wiki/Search_and_matching_theory_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]] — 語彙が近い
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 語彙が近い
+- [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 語彙が近い
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+- [[econ-hosios-condition|ホシオス条件——サーチ市場が効率的になる分配のルール]] — 同じ思想家
+- [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
+- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

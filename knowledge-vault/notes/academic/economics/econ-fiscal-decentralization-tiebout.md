@@ -30,6 +30,18 @@ aliases:
 - [総務省 地方財政制度の概要 — 地方分権と財政調整の解説](https://www.soumu.go.jp/menu_seisaku/chiho/02zeimu01_03000023.html) `公的`
 - [Wikipedia: 財政分権 — ティブー仮説と地方財政連邦主義の解説](https://ja.wikipedia.org/wiki/%E8%B2%A1%E6%94%BF%E5%88%86%E6%A8%A9) `リファレンス`
 
+## 関連概念
+- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
+- [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — 同じ思想家
+- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 同じ思想家
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
+- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 同じ思想家
+- [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
+- [[econ-auerbach-kotlikoff-generational|世代会計（Generational Accounting）]] — 同分野の近傍
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

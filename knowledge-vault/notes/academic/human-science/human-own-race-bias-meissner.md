@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Cross-Race Effect — own-race bias in face recognition](https://en.wikipedia.org/wiki/Cross-race_effect) `リファレンス`
 - [Hugenberg, K., Young, S.G., Bernstein, M.J. & Sacco, D.F. (2010) The Categorization–Individuation Model — Psychological Review 117(4)](https://doi.org/10.1016/j.tics.2010.12.001) `学術`
 
+## 関連概念
+- [[human-change-blindness-simons|変化盲——視覚環境の大規模変化に気づかない知覚的失敗]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-weapon-focus-effect|凶器注目効果——武器の存在が目撃者の顔識別を低下させる注意バイアス]] — 同じ思想家
+- [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
+- [[human-cheerleader-effect|チアリーダー効果（集団魅力効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

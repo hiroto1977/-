@@ -30,6 +30,11 @@ aliases:
 - [ウィキペディア「大野耐一」— TPS体系化・後工程引取り・かんばん](https://ja.wikipedia.org/wiki/%E5%A4%A7%E9%87%8E%E8%80%90%E4%B8%80) `リファレンス`
 - [Wikipedia "Kanban" — Ohno/Toyota origin, pull system, supermarket inspiration, overproduction reduction](https://en.wikipedia.org/wiki/Kanban) `リファレンス`
 
+## 関連概念
+- [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 同分野の近傍
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同分野の近傍
+- [[mgmt-bpr|ビジネスプロセス・リエンジニアリング（BPR）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

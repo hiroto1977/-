@@ -30,6 +30,18 @@ aliases:
 - [Galor, Oded (2011). Unified Growth Theory. Princeton, NJ: Princeton University Press. ISBN 9780691130026.](https://press.princeton.edu/books/hardcover/9780691130026/unified-growth-theory) `リファレンス`
 - [Galor, Oded & Weil, David N. (2000), American Economic Review 90(4): 806–828 — IDEAS/RePEc record (RePEc:aea:aecrev:v:90:y:2000:i:4:p:806-828).](https://ideas.repec.org/a/aea/aecrev/v90y2000i4p806-828.html) `学術`
 
+## 関連概念
+- [[econ-malthusian-trap|マルサスの罠]] — 同じ思想家
+- [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

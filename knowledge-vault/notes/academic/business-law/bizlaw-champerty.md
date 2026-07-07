@@ -29,6 +29,13 @@ Statute of Conspirators (1305)／Maintenance and Embracery Act 1540 (32 Hen. 8 c
 - [UK Legislation — Criminal Law Act 1967, Section 14（champerty & maintenance の不法行為としての廃止・公序留保規定）](https://www.legislation.gov.uk/ukpga/1967/58/section/14) `公的`
 - [Encyclopedia.com — Champerty and Maintenance (West's Encyclopedia of American Law)](https://www.encyclopedia.com/law/encyclopedias-almanacs-transcripts-and-maps/champerty-and-maintenance) `リファレンス`
 
+## 関連概念
+- [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 同じ思想家
+- [[bizlaw-cy-pres|サイプレ原則（近接原則／Cy-près doctrine）]] — 同じ思想家
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

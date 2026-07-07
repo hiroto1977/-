@@ -30,6 +30,12 @@ aliases:
 - [Nerlove (1958) Adaptive Expectations and Cobweb Phenomena — QJE](https://doi.org/10.2307/1905380) `学術`
 - [Wikipedia: Cobweb model — くもの巣モデルの動学分析と期待形成の概説](https://en.wikipedia.org/wiki/Cobweb_model) `リファレンス`
 
+## 関連概念
+- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 語彙が近い
+- [[econ-cobweb|クモの巣理論]] — 語彙が近い
+- [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同じ思想家
+- [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

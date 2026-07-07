@@ -29,6 +29,16 @@ aliases:
 - [Wikipedia: Tracing (law) — equitable tracing, mixed funds, Foskett v McKeown, following](https://en.wikipedia.org/wiki/Tracing_(law)) `リファレンス`
 - [Wikipedia: English trusts law — tracing, proprietary claims, constructive trust, equitable lien](https://en.wikipedia.org/wiki/English_trusts_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
+- [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
+- [[bizlaw-economic-duress|経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消]] — 同じ思想家
+- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同じ思想家
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

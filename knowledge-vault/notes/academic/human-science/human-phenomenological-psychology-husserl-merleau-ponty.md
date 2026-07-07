@@ -30,6 +30,16 @@ aliases:
 - [Smith (2011) Evaluating the Contribution of Interpretative Phenomenological Analysis — Health Psychology Review](https://doi.org/10.1080/14780880903340091) `学術`
 - [Wikipedia: Phenomenological psychology — 現象学的心理学の歴史と方法論の概説](https://en.wikipedia.org/wiki/Phenomenological_psychology) `リファレンス`
 
+## 関連概念
+- [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — 語彙が近い
+- [[human-phenomenological-psychology|現象学的心理学]] — 語彙が近い
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 同じ思想家
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 同じ思想家
+- [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
+- [[human-compassion-fatigue-figley|共感疲労（フィグリー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

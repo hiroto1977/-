@@ -30,6 +30,15 @@ aliases:
 - [経済産業省 限定提供データに関する指針](https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/h31pd.pdf) `公的`
 - [限定提供データ 改正不正競争防止法 解説](https://xtrend.nikkei.com/atcl/contents/skillup/00009/00041/) `メディア`
 
+## 関連概念
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 語彙が近い
+- [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — 語彙が近い
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 同分野の近傍
+- [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 同分野の近傍
+- [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 同分野の近傍
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

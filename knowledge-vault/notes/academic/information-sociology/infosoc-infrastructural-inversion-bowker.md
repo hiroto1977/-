@@ -30,6 +30,13 @@ aliases:
 - [Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics — MIT Press](https://doi.org/10.1177/0306312706056047) `学術`
 - [Wikipedia: Information infrastructure — invisible systems and classification politics overview](https://en.wikipedia.org/wiki/Information_infrastructure) `リファレンス`
 
+## 関連概念
+- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 語彙が近い
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
+- [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
+- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同じ思想家
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

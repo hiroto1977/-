@@ -29,6 +29,11 @@ aliases:
 - [Encyclopaedia Britannica — Colin Clark（ペティの観察とクラークによる三部門分類の体系化）](https://www.britannica.com/money/Colin-Clark-economist) `リファレンス`
 - [OECD — Structural Transformation（産業構造の高次化・三部門シフトを扱う国際機関ページ）](https://www.oecd.org/en/topics/structural-transformation.html) `公的`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同分野の近傍
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同分野の近傍
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

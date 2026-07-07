@@ -30,6 +30,10 @@ Michael C. Anderson ／ Robert A. Bjork ／ Elizabeth L. Bjork ／ Retrieval-Pra
 - [Storm, B. C. & Levy, B. J. (2012) "A progress report on the inhibitory account of retrieval-induced forgetting," Memory & Cognition, 40(6), 827–843](https://link.springer.com/article/10.3758/s13421-012-0211-7) `学術`
 - [Wikipedia: Retrieval-induced forgetting — retrieval-practice paradigm, Anderson, Bjork & Bjork (1994), inhibitory vs. interference accounts](https://en.wikipedia.org/wiki/Retrieval-induced_forgetting) `リファレンス`
 
+## 関連概念
+- [[human-schema|スキーマ理論]] — 同分野の近傍
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

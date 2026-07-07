@@ -30,6 +30,10 @@ Seers, Anson （1989 Team-Member Exchange Quality: A New Construct for Role-Maki
 - [Seers, A., Petty, M.M. & Cashman, J.F. (1995) "Team-Member Exchange Under Team and Traditional Management," Group & Organization Management 20(1), 18-38](https://journals.sagepub.com/doi/abs/10.1177/1059601195201003) `学術`
 - [A Cross-Level Investigation of Team-Member Exchange on Team and Individual Job Crafting (PMC/NCBI) — TMX theory background and citation of Seers (1989)](https://pmc.ncbi.nlm.nih.gov/articles/PMC7143217/) `公的`
 
+## 関連概念
+- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 語彙が近い
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

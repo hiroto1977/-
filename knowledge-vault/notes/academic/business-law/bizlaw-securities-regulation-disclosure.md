@@ -29,6 +29,18 @@ aliases:
 - [SEC — Division of Corporation Finance: disclosure requirements, registration, prospectus rules](https://www.sec.gov/divisions/corpfin/guidance/cfguidance.shtml) `公的`
 - [Wikipedia: Securities regulation — SEC, insider trading, disclosure, MAR, prospectus, 1933/34 Acts](https://en.wikipedia.org/wiki/Securities_regulation_in_the_United_States) `リファレンス`
 
+## 関連概念
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 語彙が近い
+- [[bizlaw-financial-instruments-act|金融商品取引法]] — 語彙が近い
+- [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 同じ思想家
+- [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 同じ思想家
+- [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同じ思想家
+- [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同じ思想家
+- [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
+- [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

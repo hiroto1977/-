@@ -31,6 +31,10 @@ aliases:
 - ["Latent Inhibition" — overview, ScienceDirect Topics (definition, pre-exposure paradigm, selective attention, schizophrenia and antipsychotic screening).](https://www.sciencedirect.com/topics/psychology/latent-inhibition) `リファレンス`
 - [Carson, S. H., Peterson, J. B., & Higgins, D. M. (2003). Decreased latent inhibition is associated with increased creative achievement in high-functioning individuals. Journal of Personality and Social Psychology, 85(3), 499-506.](https://doi.org/10.1037/0022-3514.85.3.499) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

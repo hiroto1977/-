@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: Carlill v Carbolic Smoke Ball Co [1893] 1 QB 256 — unilateral contract, offer to the world, acceptance by conduct, intention, consideration](https://en.wikipedia.org/wiki/Carlill_v_Carbolic_Smoke_Ball_Co) `リファレンス`
 - [Wikipedia: Offer and acceptance — unilateral contract, offer to the world (Carlill), acceptance by performance](https://en.wikipedia.org/wiki/Offer_and_acceptance) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia — Gartner hype cycle（フェン1995帰属・5局面・批判）](https://en.wikipedia.org/wiki/Gartner_hype_cycle) `リファレンス`
 - [Springer — Does Gartner’s Hype Cycle Theory Match Practice?（実証検証の不足を論じる学術文献）](https://link.springer.com/chapter/10.1007/978-3-031-72490-9_33) `学術`
 
+## 関連概念
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

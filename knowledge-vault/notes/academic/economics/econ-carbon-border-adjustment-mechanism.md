@@ -30,6 +30,17 @@ aliases:
 - [経済産業省 炭素国境調整措置（CBAM）への対応 — METI](https://www.meti.go.jp/policy/energy_environment/global_warming/cbam.html) `公的`
 - [Wikipedia: 炭素国境調整 — CBAMとカーボンリーケージの解説](https://ja.wikipedia.org/wiki/%E7%82%AD%E7%B4%A0%E5%9B%BD%E5%A2%83%E8%AA%BF%E6%95%B4) `リファレンス`
 
+## 関連概念
+- [[bizlaw-carbon-border-adjustment|炭素国境調整メカニズム（CBAM）]] — 分野横断
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — 同じ思想家
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+- [[econ-rational-partisan-theory-alesina|合理的パルチザン理論——選挙の不確実性が政治的景気循環を生む]] — 同じ思想家
+- [[econ-social-discount-rate|社会的割引率——将来の費用と便益を現在価値に換算する公共の割引率]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同分野の近傍
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

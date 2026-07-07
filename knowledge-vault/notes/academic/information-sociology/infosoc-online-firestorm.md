@@ -30,6 +30,10 @@ SNS・ブログ・電子掲示板上で、ある個人・企業・団体に対�
 - [田中辰雄・山口真一『ネット炎上の研究』勁草書房](https://www.keisoshobo.co.jp/book/b220024.html) `学術`
 - [コトバンク「炎上（エンジョウ）」](https://kotobank.jp/word/%E7%82%8E%E4%B8%8A-447739) `リファレンス`
 
+## 関連概念
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [兵庫労働局 労働時間](https://jsite.mhlw.go.jp/hyogo-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/_79872/roudoujikan.html) `公的`
 - [変形労働時間制 解説](https://www.freee.co.jp/kb/kb-attendance/variable-working-hours-systems/) `メディア`
 
+## 関連概念
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 語彙が近い
+- [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 語彙が近い
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
+- [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
+- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
+- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

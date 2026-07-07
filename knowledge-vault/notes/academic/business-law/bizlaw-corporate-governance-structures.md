@@ -30,6 +30,10 @@ Aguilera, Ruth V. （2010 Academy of Management Annals）／Jackson, Gregory ／
 - [Aguilera, R. V., & Jackson, G. (2010) Comparative and International Corporate Governance, Academy of Management Annals 4(1): 485–556](https://journals.aom.org/doi/10.5465/19416520.2010.495525) `学術`
 - [金融庁 CG コード改訂関連会議資料（2025 年 10 月）— 東証上場会社の機関設計データ（監査等委員会設置会社がプライムで最多）](https://www.fsa.go.jp/singi/revision_corporategovernance/siryo/20251021/05.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同分野の近傍
+- [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

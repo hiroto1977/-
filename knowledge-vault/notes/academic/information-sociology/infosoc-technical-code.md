@@ -30,6 +30,11 @@ aliases:
 - [Feenberg, A. (1992) "Subversive Rationalization: Technology, Power, and Democracy," Inquiry 35(3-4), 301-322 (DOI 10.1080/00201749208602296) — 過少決定・民主的合理化](https://doi.org/10.1080/00201749208602296) `学術`
 - [Wikipedia: Andrew Feenberg — critical theory of technology, technical code, instrumentalization theory, student of Herbert Marcuse](https://en.wikipedia.org/wiki/Andrew_Feenberg) `リファレンス`
 
+## 関連概念
+- [[infosoc-cultural-industry-adorno-horkheimer|文化産業論——標準化された大量生産文化による大衆欺瞞]] — 同じ思想家
+- [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

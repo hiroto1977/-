@@ -30,6 +30,14 @@ aliases:
 - [Jarzabkowski, Lê & Van de Ven (2013) Responding to Competing Strategic Demands — Organization Science](https://doi.org/10.5465/19416520.2013.795155) `学術`
 - [Wikipedia: Paradox theory — 組織パラドックス理論の概説](https://en.wikipedia.org/wiki/Paradox_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同じ思想家
+- [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
+- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
+- [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
+- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

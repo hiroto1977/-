@@ -30,6 +30,15 @@ aliases:
 - [Ito et al. (2013) Connected Learning: An Agenda for Research and Design — Digital Media and Learning Research Hub](https://doi.org/10.7916/D8KW5D7K) `学術`
 - [Wikipedia: Connected learning — コネクテッド・ラーニングの概念と実践](https://en.wikipedia.org/wiki/Connected_learning) `リファレンス`
 
+## 関連概念
+- [[infosoc-citizen-journalism-participatory-media|市民ジャーナリズムと参加型メディア——ウェブ2.0が変えた報道の担い手と情報権力の分散]] — 同じ思想家
+- [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
+- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同じ思想家
+- [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
+- [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
+- [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]] — 同分野の近傍
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

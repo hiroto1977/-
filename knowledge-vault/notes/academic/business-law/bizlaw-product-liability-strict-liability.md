@@ -29,6 +29,18 @@ aliases:
 - [消費者庁 — 製造物責任法（PL法）の概要](https://www.caa.go.jp/policies/policy/consumer_safety/other/product_liability_act/) `公的`
 - [Wikipedia: Product liability — strict liability, design defect, Greenman v. Yuba Power](https://en.wikipedia.org/wiki/Product_liability) `リファレンス`
 
+## 関連概念
+- [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 語彙が近い
+- [[bizlaw-product-liability-directive-eu|EU製造物責任指令と無過失責任——欠陥製品による損害と生産者の厳格責任]] — 語彙が近い
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 語彙が近い
+- [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 同じ思想家
+- [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
+- [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同じ思想家
+- [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ aliases:
 - [Jurgenson, "Digital Dualism versus Augmented Reality", Cyborgology (一次資料, 2011)](https://thesocietypages.org/cyborgology/2011/02/24/digital-dualism-versus-augmented-reality/) `リファレンス`
 - [Jurgenson, "The IRL Fetish", The New Inquiry (2012)](https://thenewinquiry.com/the-irl-fetish/) `メディア`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 出典を共有
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
+- [[mgmt-organizational-entropy|組織エントロピー]] — 出典を共有
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同分野の近傍
+- [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

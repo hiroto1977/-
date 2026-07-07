@@ -32,6 +32,18 @@ Herbert Alexander Simon ／ Michael H. Goldhaber ／ Thomas H. Davenport ／ Joh
 - [Zuboff, S. (2019) The Age of Surveillance Capitalism — Harvard Business School Faculty Page](https://www.hbs.edu/faculty/Pages/item.aspx?num=56791) `学術`
 - [Simon, H.A. (1971) "Designing Organizations for an Information-Rich World" — analysis & citation](https://sites.psu.edu/digitalshred/2021/05/07/designing-organizations-for-an-information-rich-world-simon/) `学術`
 
+## 関連概念
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 同じ思想家
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
+- [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

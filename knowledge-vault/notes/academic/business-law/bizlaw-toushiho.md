@@ -30,6 +30,18 @@ aliases:
 - [財務省 — 出資の受入れ、預り金及び金利等の取締りに関する法律（正式名称）](https://www.mof.go.jp/application-contact/procedure/disclosure_etc/tuuhou/laws/syussinoukeire.html) `公的`
 - [コトバンク — 出資法（昭和29年/1954年制定・概要）](https://kotobank.jp/word/%E5%87%BA%E8%B3%87%E6%B3%95-528926) `リファレンス`
 
+## 関連概念
+- [[bizlaw-money-lending-act|貸金業法]] — 語彙が近い
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 出典を共有
+- [[tax-income-tax-progressive|所得税の超過累進税率]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

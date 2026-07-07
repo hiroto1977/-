@@ -29,6 +29,14 @@ aliases:
 - [Levy Economics Institute — Minsky (1992) "The Financial Instability Hypothesis," Working Paper No. 74（金融不安定性仮説の定式化）](https://www.levyinstitute.org/pubs/wp74.pdf) `学術`
 - [IMF Finance & Development — "The Credit Crunch: A Minsky Moment"（2008年12月号、ミンスキー理論と世界金融危機の解説）](https://www.imf.org/external/pubs/ft/fandd/2008/12/whalen.htm) `公的`
 
+## 関連概念
+- [[econ-debt-deflation-theory|債務デフレ理論]] — 出典を共有
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 出典を共有
+- [[econ-financialization|金融化——経済の金融部門支配]] — 出典を共有
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+- [[econ-fiscal-multiplier-theory|財政乗数理論]] — 同分野の近傍
+- [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

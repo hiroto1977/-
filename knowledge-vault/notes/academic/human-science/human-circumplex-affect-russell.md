@@ -29,6 +29,11 @@ James A. Russell（1980年論文・モデルの提唱者） ／ 二次元の直�
 - [Russell, J. A. (1980). A circumplex model of affect. Journal of Personality and Social Psychology, 39(6), 1161-1178.](https://doi.org/10.1037/h0077714) `学術`
 - [Wikipedia, “Emotion classification”（次元論的感情モデル・Russell の感情円環・valence/arousal 二次元・基本感情説との対比の概説）](https://en.wikipedia.org/wiki/Emotion_classification) `リファレンス`
 
+## 関連概念
+- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同じ思想家
+- [[human-spreading-activation|活性化拡散]] — 同分野の近傍
+- [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

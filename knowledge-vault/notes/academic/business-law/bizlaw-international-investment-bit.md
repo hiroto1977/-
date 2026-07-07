@@ -29,6 +29,18 @@ aliases:
 - [UNCTAD Investment Policy Hub — BIT database, ISDS tracker, investment law reform](https://unctad.org/topic/investment/investment-policy-hub) `公的`
 - [Wikipedia: Bilateral investment treaty — FET, ISDS, regulatory expropriation, ICSID, ICS](https://en.wikipedia.org/wiki/Bilateral_investment_treaty) `リファレンス`
 
+## 関連概念
+- [[tax-customs-duty|関税（輸入品に課される国税）]] — 語彙が近い
+- [[bizlaw-indirect-expropriation|間接収用（Indirect Expropriation）]] — 語彙が近い
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 同じ思想家
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 同じ思想家
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
+- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 出典を共有
+- [[econ-flying-geese|雁行形態論]] — 出典を共有
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
+- [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [AIA A201-2017 General Conditions of the Contract for Construction — 代位権放棄条項を含む標準契約書式](https://www.aia.org/resource-center/aiaa201-2017) `リファレンス`
 - [Wikipedia: Subrogation — 代位の法的原則と代位権放棄の実務的意義の概説](https://en.wikipedia.org/wiki/Subrogation) `リファレンス`
 
+## 関連概念
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同分野の近傍
+- [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

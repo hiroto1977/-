@@ -29,6 +29,18 @@ aliases:
 - [Panzar, J.C. & Willig, R.D. (1981) Economies of Scope — American Economic Review 71(2)](https://www.jstor.org/stable/1805884) `学術`
 - [Wikipedia: Economies of scope — Panzar & Willig, joint production, shared inputs, vs economies of scale](https://en.wikipedia.org/wiki/Economies_of_scope) `リファレンス`
 
+## 関連概念
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 語彙が近い
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同じ思想家
+- [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家
+- [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
+- [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同じ思想家
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+- [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
+- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

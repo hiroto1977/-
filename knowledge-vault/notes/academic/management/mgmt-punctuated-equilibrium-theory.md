@@ -32,6 +32,15 @@ Michael L. Tushman ／ Elaine Romanelli ／ Connie J.G. Gersick ／ William H. N
 - [Tushman, Newman & Romanelli (1986) - Convergence and Upheaval: Managing the Unsteady Pace of Organizational Evolution, California Management Review](https://journals.sagepub.com/doi/10.2307/41165225) `学術`
 - [Besson & Rowe (2012) - Punctuated Equilibrium Theory in IS Research, Springer](https://link.springer.com/chapter/10.1007/978-1-4419-6108-2_17) `リファレンス`
 
+## 関連概念
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 語彙が近い
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

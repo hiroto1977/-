@@ -30,6 +30,18 @@ aliases:
 - [Battilana, J. (2006) "Agency and Institutions" — Organization Studies](https://doi.org/10.1177/0170840606067995) `学術`
 - [Wikipedia: Institutional entrepreneur — 制度的企業家と埋め込まれたエージェンシー](https://en.wikipedia.org/wiki/Institutional_entrepreneur) `リファレンス`
 
+## 関連概念
+- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 同じ思想家
+- [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同じ思想家
+- [[mgmt-institutional-isomorphism|制度的同型化]] — 同じ思想家
+- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同分野の近傍
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 同分野の近傍
+- [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 同分野の近傍
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

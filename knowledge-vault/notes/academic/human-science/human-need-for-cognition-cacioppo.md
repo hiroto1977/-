@@ -29,6 +29,15 @@ aliases:
 - [Cacioppo, J.T. & Petty, R.E. (1982) The Need for Cognition — Journal of Personality and Social Psychology 42(1)](https://doi.org/10.1037/0022-3514.42.1.116) `学術`
 - [Wikipedia: Need for cognition — Cacioppo, Petty, NCS scale, elaboration likelihood model](https://en.wikipedia.org/wiki/Need_for_cognition) `リファレンス`
 
+## 関連概念
+- [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同じ思想家
+- [[human-emotional-contagion|情動感染]] — 同じ思想家
+- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
+- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
+- [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家
+- [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
+- [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

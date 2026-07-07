@@ -29,6 +29,18 @@ aliases:
 - [Harsanyi, J. C. (1955) Cardinal Welfare, Individualistic Ethics, and Interpersonal Comparisons of Utility — Journal of Political Economy, 63(4), 309–321](https://doi.org/10.1086/257678) `学術`
 - [Wikipedia: John Harsanyi — aggregation/utilitarian theorem, impartial observer, veil of ignorance, welfare economics, Nobel 1994](https://en.wikipedia.org/wiki/John_Harsanyi) `リファレンス`
 
+## 関連概念
+- [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同じ思想家
+- [[econ-rawls-justice|ロールズの正義論（公正としての正義）]] — 同じ思想家
+- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同じ思想家
+- [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,13 @@ aliases:
 - [Bar-Eli et al. (2007) "Action bias among elite soccer goalkeepers: The case of penalty kicks", Journal of Economic Psychology 28(5):606-621 (ScienceDirect)](https://www.sciencedirect.com/science/article/abs/pii/S0167487006001048) `学術`
 - [The Decision Lab — Action Bias (definition, norm theory, goalkeeper case, relation to omission bias)](https://thedecisionlab.com/biases/action-bias) `リファレンス`
 
+## 関連概念
+- [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — 出典を共有
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 出典を共有
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

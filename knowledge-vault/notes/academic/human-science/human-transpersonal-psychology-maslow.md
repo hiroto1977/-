@@ -30,6 +30,10 @@ aliases:
 - [Association for Transpersonal Psychology — Transpersonal Psychology and Peak Experiences](https://www.atpweb.org/) `リファレンス`
 - [Wikipedia: トランスパーソナル心理学 — 至高体験と自己超越の解説](https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B9%E3%83%91%E3%83%BC%E3%82%BD%E3%83%8A%E3%83%AB%E5%BF%83%E7%90%86%E5%AD%A6) `リファレンス`
 
+## 関連概念
+- [[maslow-hierarchy|マズローの欲求階層説]] — 語彙が近い
+- [[human-humanistic-psychology-rogers-person-centered|ロジャーズの人間中心アプローチ——無条件の積極的関心・共感・自己一致による人格成長]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

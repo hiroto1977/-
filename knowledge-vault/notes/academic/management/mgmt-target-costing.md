@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Target costing](https://en.wikipedia.org/wiki/Target_costing) `リファレンス`
 - [早稲田大学 — 原価企画の運用に関する論文（目標原価＝目標売価−目標利益）](https://www.waseda.jp/fcom/soc/assets/uploads/2018/12/189a7ad3fb2939229c4b21bf6e315ca2.pdf) `学術`
 
+## 関連概念
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 同じ思想家
+- [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — 出典を共有
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同分野の近傍
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

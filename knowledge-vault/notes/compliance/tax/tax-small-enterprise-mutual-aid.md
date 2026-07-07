@@ -30,6 +30,18 @@ aliases:
 - [国税庁 確定申告書等作成コーナー 掛金控除](https://www.keisan.nta.go.jp/r6yokuaru/cat2/cat22/cat223/cid073.html) `公的`
 - [国税庁 所得税基本通達 法第75条関係](https://www.nta.go.jp/law/tsutatsu/kihon/shotoku/16/02.htm) `公的`
 
+## 関連概念
+- [[bizlaw-defined-contribution-pension|確定拠出年金法]] — 語彙が近い
+- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 語彙が近い
+- [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 語彙が近い
+- [[labor-ideco|iDeCo（個人型確定拠出年金）の制度概要]] — 分野横断
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 出典を共有
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

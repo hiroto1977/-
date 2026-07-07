@@ -30,6 +30,11 @@ aliases:
 - [Coan, J. A. et al. (2006) "Lending a Hand: Social Regulation of the Neural Response to Threat" — Psychological Science](https://doi.org/10.1037/a0014546) `学術`
 - [Wikipedia: Social baseline theory — 社会的近接性の神経生理的基盤](https://en.wikipedia.org/wiki/Social_baseline_theory) `リファレンス`
 
+## 関連概念
+- [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同分野の近傍
+- [[human-actor-observer-bias|行為者-観察者バイアス]] — 同分野の近傍
+- [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Leon J. Kamin (1968/1969 阻止効果の発見) ／ Robert A. Rescorla (Rescorla
 - [Kamin, L. J. (1969). Predictability, surprise, attention, and conditioning. In B. A. Campbell & R. M. Church (Eds.), Punishment and Aversive Behavior (pp. 279-296). New York: Appleton-Century-Crofts.](https://www.scirp.org/reference/referencespapers?referenceid=1871289) `学術`
 - [Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian conditioning: Variations in the effectiveness of reinforcement and nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), Classical Conditioning II: Current Research and Theory (pp. 64-99). New York: Appleton-Century-Crofts.](https://www.scirp.org/reference/referencespapers?referenceid=187864) `学術`
 
+## 関連概念
+- [[infosoc-media-multitasking|メディア・マルチタスキング]] — 同じ思想家
+- [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 出典を共有
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

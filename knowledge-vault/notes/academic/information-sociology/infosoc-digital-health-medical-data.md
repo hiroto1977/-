@@ -29,6 +29,10 @@ aliases:
 - [Obermeyer et al. (2019) Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations — Science 366](https://doi.org/10.1126/science.aax2342) `学術`
 - [Wikipedia: Digital health — EHR, wearables, AI bias, algorithmic discrimination, data governance](https://en.wikipedia.org/wiki/Digital_health) `リファレンス`
 
+## 関連概念
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

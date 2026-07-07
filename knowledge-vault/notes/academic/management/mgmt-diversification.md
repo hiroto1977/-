@@ -31,6 +31,17 @@ aliases:
 - [EBSCO Research Starters — Ansoff Matrix（多角化が最もリスクの高い新製品×新市場象限であること）](https://www.ebsco.com/research-starters/business-and-management/ansoff-matrix) `リファレンス`
 - [東京大学 OpenCourseWare 経営戦略講義「多角化戦略・シナジー効果」（日本語の一次的講義資料）](https://ocw.u-tokyo.ac.jp/lecture_files/eco_07/10/notes/ja/shintaku-10-2.pdf) `学術`
 
+## 関連概念
+- [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 語彙が近い
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
+- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
+- [[eh-1970|1970年（昭和45年）]] — 出典を共有
+- [[mgmt-emergent-strategy|創発戦略]] — 出典を共有
+- [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

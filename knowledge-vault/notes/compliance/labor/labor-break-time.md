@@ -30,6 +30,10 @@ aliases:
 - [栃木労働局 休憩（労基法34条）](https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article34.html) `公的`
 - [労働基準法34条 休憩の3原則 解説](https://biz.moneyforward.com/payroll/basic/87993/) `メディア`
 
+## 関連概念
+- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

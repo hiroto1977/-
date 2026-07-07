@@ -30,6 +30,12 @@ aliases:
 - [経済産業省 割賦販売法 監督の基本方針](https://www.meti.go.jp/policy/economy/consumer/credit/2509atobaraikantokunokihonhousin.pdf) `公的`
 - [日本クレジット協会 加盟店の義務](https://www.j-credit.or.jp/security/understanding/member-store.html) `運営団体`
 
+## 関連概念
+- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
+- [[bizlaw-installment-sales-act|割賦販売法]] — 分野横断
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 同分野の近傍
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

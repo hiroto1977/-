@@ -30,6 +30,12 @@ aliases:
 - [中小企業庁 交際費課税の特例](https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/kousai.html) `公的`
 - [国税庁 接待飲食費FAQ](https://www.nta.go.jp/publication/pamph/hojin/settai_faq/01.htm) `公的`
 
+## 関連概念
+- [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 語彙が近い
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 語彙が近い
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 同分野の近傍
+- [[tax-dividends-received|受取配当等の益金不算入]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

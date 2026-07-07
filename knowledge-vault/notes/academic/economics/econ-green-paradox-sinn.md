@@ -29,6 +29,13 @@ aliases:
 - [Sinn, H.-W. (2008) Public Policies against Global Warming: A Supply Side Approach — International Tax and Public Finance 15(4)](https://doi.org/10.1007/s10797-008-9082-z) `学術`
 - [Wikipedia: Green paradox — Sinn, intertemporal extraction, supply-side, fossil fuel acceleration](https://en.wikipedia.org/wiki/Green_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 同じ思想家
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+- [[econ-greenfield-paradox|グリーンフィールド・パラドックス]] — 同分野の近傍
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [国税庁 一括比例配分方式とは](https://www.keisan.nta.go.jp/r6yokuaru_sp/socat4/scid1969.html) `公的`
 - [国税庁 課税売上高5億円超の場合の仕入税額控除](https://www.nta.go.jp/law/shitsugi/shohi/19/19.htm) `公的`
 
+## 関連概念
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 語彙が近い
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 出典を共有
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-securities-account|上場株式等の特定口座制度]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

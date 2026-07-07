@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia「Signalling (economics)」（コストのかかる信頼できるシグナル／スクリーニングとの対比）](https://en.wikipedia.org/wiki/Signalling_(economics)) `リファレンス`
 - [NBER「Stiglitz, Akerlof, and Spence Won 2001 Nobel Prize for Analyses of Markets with Asymmetric Information」](https://www.nber.org/news/joseph-e-stiglitz-george-akerlof-and-michael-spence-won-2001-nobel-prize-their-analyses-markets) `学術`
 
+## 関連概念
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同じ思想家
+- [[econ-adverse-selection|逆選択（レモン市場）]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-job-competition-thurow|仕事をめぐる競争モデル（サロー）——賃金競争への対抗と「労働の待ち行列」]] — 同じ思想家
+- [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]] — 同じ思想家
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
+- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
+- [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

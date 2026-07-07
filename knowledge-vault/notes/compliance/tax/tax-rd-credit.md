@@ -30,6 +30,11 @@ aliases:
 - [経済産業省 研究開発税制について](https://www.meti.go.jp/policy/tech_promotion/tax/about_tax.html) `公的`
 - [国税庁 No.5444 中小企業技術基盤強化税制](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5444.htm) `公的`
 
+## 関連概念
+- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 語彙が近い
+- [[tax-wage-increase-credit|賃上げ促進税制]] — 語彙が近い
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

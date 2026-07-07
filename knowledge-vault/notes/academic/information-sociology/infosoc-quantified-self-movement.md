@@ -31,6 +31,11 @@ Deborah Lupton ／ Btihaj Ajana ／ Dawn Nafus
 - [Deborah Lupton, The Quantified Self: A Sociology of Self-Tracking (Polity, 2016) — UC Research Portal](https://researchprofiles.canberra.edu.au/en/publications/the-quantified-self-a-sociology-of-self-tracking/) `学術`
 - [Lupton, "Self-Tracking for Health and the Quantified Self: Re-Articulating Autonomy, Solidarity, and Authenticity" — ResearchGate](https://www.researchgate.net/publication/301481639_Self-Tracking_for_Health_and_the_Quantified_Self_Re-Articulating_Autonomy_Solidarity_and_Authenticity_in_an_Age_of_Personalized_Healthcare) `学術`
 
+## 関連概念
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 語彙が近い
+- [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同分野の近傍
+- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

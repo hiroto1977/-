@@ -29,6 +29,17 @@ aliases:
 - [Jensen, R. T. & Miller, N. H. (2008) Giffen Behavior and Subsistence Consumption — American Economic Review](https://doi.org/10.1257/aer.98.4.1553) `学術`
 - [Wikipedia: Giffen good — demand law exception, income effect, substitution effect](https://en.wikipedia.org/wiki/Giffen_good) `リファレンス`
 
+## 関連概念
+- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — 語彙が近い
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 語彙が近い
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Stigler, G.J. (1971) The Theory of Economic Regulation — Bell Journal of Economics 2(1)](https://www.jstor.org/stable/3003160) `学術`
 - [Wikipedia: Regulatory capture — Stigler, concentrated producers, dispersed consumers, Peltzman](https://en.wikipedia.org/wiki/Regulatory_capture) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同じ思想家
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-peltzman-effect-risk-compensation|ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
+- [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+- [[econ-rational-addiction|合理的依存]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

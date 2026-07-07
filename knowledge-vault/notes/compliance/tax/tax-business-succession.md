@@ -30,6 +30,10 @@ aliases:
 - [中小企業庁 法人版事業承継税制（特例措置）](https://www.chusho.meti.go.jp/zaimu/shoukei/shoukei_enkatsu_zouyo_souzoku.html) `公的`
 - [国税庁 No.4148 非上場株式等の相続税の納税猶予](https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4148.htm) `公的`
 
+## 関連概念
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
+- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

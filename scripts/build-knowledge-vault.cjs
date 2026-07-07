@@ -26,6 +26,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const kc = require('../orchestration/knowledge-context.cjs');
+const kg = require('../orchestration/knowledge-graph.cjs');
 
 const VAULT_DIR = path.join(kc.REPO_ROOT, 'knowledge-vault');
 const EXEC_ORDER = ['coo', 'cso', 'cfo', 'chro', 'cio', 'cqo'];
@@ -48,7 +49,51 @@ function yamlStr(s) {
 // ---------------------------------------------------------------------------
 // ノート本文
 // ---------------------------------------------------------------------------
-function entryNote(e) {
+/** エッジ型 → ノートに表示する日本語ラベル。 */
+const EDGE_TYPE_LABEL = {
+  'term-overlap': '語彙が近い',
+  'discipline-bridge': '分野横断',
+  'shares-thinker': '同じ思想家',
+  'shares-source': '出典を共有',
+  'same-category': '同分野の近傍',
+};
+
+/**
+ * 知識グラフからノートごとの「関連概念」上位 relatedTop 件を導出する。
+ * 決定論の一点ルール: 委託 NDJSON を読み戻さず、同一純関数 computeGraph(entries) から
+ * その場導出する（NDJSON との一致は verify:graph が別途保証）。
+ */
+function buildRelatedMap(entries, relatedTop = 10) {
+  const { edges } = kg.computeGraph(entries);
+  const titleOf = new Map(entries.map((e) => [e.id, e.title]));
+  const incident = new Map();
+  for (const e of edges) {
+    (incident.get(e.a) || incident.set(e.a, []).get(e.a)).push({ other: e.b, type: e.type, score: e.score });
+    (incident.get(e.b) || incident.set(e.b, []).get(e.b)).push({ other: e.a, type: e.type, score: e.score });
+  }
+  const related = new Map();
+  for (const [id, arr] of incident) {
+    arr.sort(
+      (x, y) =>
+        kg.TYPE_PRIORITY[x.type] - kg.TYPE_PRIORITY[y.type] ||
+        y.score - x.score ||
+        (x.other < y.other ? -1 : x.other > y.other ? 1 : 0),
+    );
+    // 同一相手は最優先の 1 本だけ見せる（term-overlap と shares-thinker の重複列挙を防ぐ）。
+    const seen = new Set();
+    const top = [];
+    for (const x of arr) {
+      if (seen.has(x.other)) continue;
+      seen.add(x.other);
+      top.push({ id: x.other, title: titleOf.get(x.other) || x.other, typeLabel: EDGE_TYPE_LABEL[x.type] || x.type });
+      if (top.length >= relatedTop) break;
+    }
+    related.set(id, top);
+  }
+  return related;
+}
+
+function entryNote(e, related = []) {
   const fm = ['---', `collection: ${e.collection}`, `id: ${e.id}`, `category: ${yamlStr(e.category)}`, `category_ja: ${yamlStr(e.categoryLabel)}`, `title: ${yamlStr(e.title)}`];
   if (e.asOf) fm.push(`as_of: ${yamlStr(e.asOf)}`);
   fm.push(`source_count: ${e.sources.length}`, `authoritative: ${e.authoritative}`, 'tags:', `  - collection/${e.collection}`, `  - ${e.collection}/${e.category}`, '  - knowledge/verified', 'aliases:', `  - ${yamlStr(e.title)}`, '---');
@@ -58,7 +103,13 @@ function entryNote(e) {
 
   const parts = [fm.join('\n'), '', `# ${e.title}`, '', info, '', '## 概要', e.summary, ''];
   for (const m of e.meta) parts.push(`## ${m.label}`, m.value, '');
-  parts.push('## 出典', sources, '', '## 関連', `- コレクション: [[${e.collectionLabel}]]`, '- ヴォルト入口: [[Home]]', '- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
+  parts.push('## 出典', sources, '');
+  if (related.length > 0) {
+    parts.push('## 関連概念');
+    for (const r of related) parts.push(`- [[${r.id}|${r.title}]] — ${r.typeLabel}`);
+    parts.push('');
+  }
+  parts.push('## 関連', `- コレクション: [[${e.collectionLabel}]]`, '- ヴォルト入口: [[Home]]', '- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
   return parts.join('\n');
 }
 
@@ -386,10 +437,14 @@ function buildFiles() {
   files['Home.md'] = homeNote(byCollection, entries.length);
   files['AI_ORCHESTRATION_CONTEXT.md'] = orchestrationContextNote(entries, map);
 
+  // 知識グラフから「関連概念」を導出（読み戻しなし・同一純関数から）。
+  const related = buildRelatedMap(entries);
+
   for (const col of kc.COLLECTIONS) {
     const list = byCollection.get(col.key) || [];
     files[path.join('MOC', `${col.label}.md`)] = mocNote(col, list);
-    for (const e of list) files[path.join('notes', e.collection, e.category, `${e.id}.md`)] = entryNote(e);
+    for (const e of list)
+      files[path.join('notes', e.collection, e.category, `${e.id}.md`)] = entryNote(e, related.get(e.id) || []);
   }
 
   for (const [name, content] of Object.entries(METHODOLOGY)) files[path.join('methodology', `${name}.md`)] = content;

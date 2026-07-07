@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Generation Effect — self-generated information memory advantage](https://en.wikipedia.org/wiki/Generation_effect) `リファレンス`
 - [McDaniel, M.A., Waddill, P.J. & Einstein, G.O. (1988) A Contextual Account of the Generation Effect — Journal of Memory and Language 27(5)](https://doi.org/10.1037/0278-7393.14.3.521) `学術`
 
+## 関連概念
+- [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同じ思想家
+- [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同分野の近傍
+- [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [厚生労働省 法令データ 労働基準法（20条・21条）](https://www.mhlw.go.jp/web/t_doc?dataId=73022000&dataType=0) `公的`
 - [e-Gov電子申請 解雇予告除外認定申請](https://shinsei.e-gov.go.jp/recept/procedure/lists/procedureInformation?gtaTetCd=4950013309636) `公的`
 
+## 関連概念
+- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 語彙が近い
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
+- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
+- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
+- [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 出典を共有
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

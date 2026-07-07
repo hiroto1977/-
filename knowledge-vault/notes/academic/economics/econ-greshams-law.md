@@ -30,6 +30,12 @@ aliases:
 - [Econlib（Library of Economics and Liberty）— 法定平価が前提で為替自由変動では不成立、悪貨流通・良貨退蔵の仕組み](https://www.econlib.org/library/YPDBooks/Brough/brghNLM.html) `リファレンス`
 - [Federal Reserve Bank of Cleveland, "The Tale of Gresham's Law" — 命名経緯と先行者](https://www.clevelandfed.org/-/media/project/clevelandfedtenant/clevelandfedsite/publications/economic-commentary/2005/ec-20051001-the-tale-of-greshams-law-pdf.pdf) `公的`
 
+## 関連概念
+- [[econ-okuns-law|オーカンの法則]] — 出典を共有
+- [[econ-menu-costs|メニューコスト]] — 出典を共有
+- [[econ-ppp|購買力平価（PPP）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

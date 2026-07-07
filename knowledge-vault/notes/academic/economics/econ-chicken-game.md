@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia「Chicken (game)」— 利得順序 T>R>S>P・反協調ゲーム・混合戦略均衡・名称由来・囚人のジレンマとの差異](https://en.wikipedia.org/wiki/Chicken_(game)) `リファレンス`
 - [Oxford Reference「Hawk–Dove game」— チキンゲームの別名・生物学的定式化](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095924919) `リファレンス`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同じ思想家
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 同じ思想家
+- [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
+- [[econ-schelling-segregation|シェリングの分居モデル]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-cheap-talk-crawford-sobel|チープトーク——費用のかからない発言はどこまで信用できるか]] — 同じ思想家
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

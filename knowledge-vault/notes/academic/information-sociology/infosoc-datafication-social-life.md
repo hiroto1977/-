@@ -29,6 +29,17 @@ aliases:
 - [Kitchin (2014) The Data Revolution: Big Data, Open Data, Data Infrastructures and Their Consequences — Sage](https://doi.org/10.4135/9781473909472) `学術`
 - [Wikipedia: Datafication — big data, algorithmic governance, ADM, surveillance capitalism, GDPR](https://en.wikipedia.org/wiki/Datafication) `リファレンス`
 
+## 関連概念
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 語彙が近い
+- [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 同じ思想家
+- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
+- [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同じ思想家
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同じ思想家
+- [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — 同分野の近傍
+- [[infosoc-smart-mob|スマートモブ]] — 同分野の近傍
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

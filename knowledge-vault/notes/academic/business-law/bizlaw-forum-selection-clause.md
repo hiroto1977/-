@@ -31,6 +31,18 @@ aliases:
 - [Code of Civil Procedure (民事訴訟法), Art. 3-7 — Japanese Law Translation](https://www.japaneselawtranslation.go.jp/en/laws/view/4786) `公的`
 - [Cornell LII — Forum Selection Clause (Wex Legal Encyclopedia)](https://www.law.cornell.edu/wex/forum_selection_clause) `リファレンス`
 
+## 関連概念
+- [[bizlaw-daubert-standard|ドーバート基準：専門家証言の許容性判定基準と科学的証拠法の転換]] — 同じ思想家
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
+- [[bizlaw-civil-execution|民事執行法]] — 出典を共有
+- [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — 出典を共有
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 出典を共有
+- [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 出典を共有
+- [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
+- [[labor-collective-agreement|労働協約（労働組合法）]] — 出典を共有
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

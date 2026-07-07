@@ -30,6 +30,18 @@ aliases:
 - [法務省 民法（債権関係）部会資料65（事情変更の法理の検討）](https://www.moj.go.jp/content/000115628.pdf) `公的`
 - [明治大学法科大学院論集「近時の『事情変更の原則』論の変容」](https://meiji.repo.nii.ac.jp/record/11387/files/houkadaigakuinronshu_6_113.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 語彙が近い
+- [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 語彙が近い
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

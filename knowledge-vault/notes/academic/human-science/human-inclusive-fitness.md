@@ -31,6 +31,10 @@ W・D・ハミルトン（William D. Hamilton, 1964年の論文で包括適応�
 - [Wikipedia — The Genetical Evolution of Social Behaviour（1964年論文の書誌：J. Theor. Biol. 7, 1–16 / 17–52）](https://en.wikipedia.org/wiki/The_Genetical_Evolution_of_Social_Behaviour) `リファレンス`
 - [Wikipedia — Kin selection（血縁選択とホールデンの逸話・血縁度の数値）](https://en.wikipedia.org/wiki/Kin_selection) `リファレンス`
 
+## 関連概念
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

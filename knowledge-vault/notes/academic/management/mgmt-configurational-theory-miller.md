@@ -31,6 +31,18 @@ aliases:
 - [Miller, D. (1996) Configurations Revisited — Strategic Management Journal, 17(7), 505–512](https://www.semanticscholar.org/paper/Configurations-Revisited-Miller/d7f15f1e2c7b86b4f7f0fd7e4a48fa6ea7c3f90a) `学術`
 - [Wikipedia: Configuration theory — gestalt archetypes, profile deviation, and QCA applications](https://en.wikipedia.org/wiki/Configuration_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
+- [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
+- [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同じ思想家
+- [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — 同じ思想家
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

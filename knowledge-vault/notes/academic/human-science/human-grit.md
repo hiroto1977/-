@@ -30,6 +30,10 @@ Angela Duckworth（提唱者・グリット概念とGrit Scaleの開発者）／
 - [Credé, Tynan & Harms (2016), “Much ado about grit: A meta-analytic synthesis,” JPSP — PubMed（批判的メタ分析）](https://pubmed.ncbi.nlm.nih.gov/27845531/) `学術`
 - [Wikipedia: Grit (personality trait)（2因子・批判の概観）](https://en.wikipedia.org/wiki/Grit_(personality_trait)) `リファレンス`
 
+## 関連概念
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同分野の近傍
+- [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [東京くらしWEB 連鎖販売取引](https://www.shouhiseikatu.metro.tokyo.lg.jp/keiyaku/torihiki/rensa.html) `自治体`
 - [国民生活センター マルチ取引](https://www.kokusen.go.jp/soudan_now/data/multi.html) `メディア`
 
+## 関連概念
+- [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 語彙が近い
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
+- [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Lane, P. J., Koka, B. R. & Pathak, S. (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review, 31(4), 833–863（概念的批判と再整備）](https://doi.org/10.1111/j.1467-6486.2008.00790.x) `学術`
 - [Wikipedia: Absorptive capacity — Cohen & Levinthal, PACAP/RACAP, prior knowledge, open innovation](https://en.wikipedia.org/wiki/Absorptive_capacity) `リファレンス`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]] — 語彙が近い
+- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 語彙が近い
+- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 語彙が近い
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 語彙が近い
+- [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同じ思想家
+- [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
+- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
+- [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
+- [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

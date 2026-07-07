@@ -29,6 +29,18 @@ aliases:
 - [Eppler, M.J. & Mengis, J. (2004) The Concept of Information Overload: A Review of Literature — The Information Society 20(5), 325–344（情報過負荷研究の体系的レビュー）](https://doi.org/10.1080/01972240490507974) `学術`
 - [Wikipedia: Information overload — 情報過負荷の概説](https://en.wikipedia.org/wiki/Information_overload) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-overload-theory|情報過負荷理論]] — 語彙が近い
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
+- [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

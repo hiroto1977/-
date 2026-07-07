@@ -30,6 +30,18 @@ aliases:
 - [Nickell & Andrews (1983) Unions, Real Wages and Employment in Britain — Oxford Economic Papers](https://academic.oup.com/oep/article-abstract/35/supp/183/2361000) `学術`
 - [Lindbeck & Snower (1988) The Insider-Outsider Theory of Employment and Unemployment — MIT Press](https://mitpress.mit.edu/9780262620741/the-insider-outsider-theory-of-employment-and-unemployment/) `学術`
 
+## 関連概念
+- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同じ思想家
+- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

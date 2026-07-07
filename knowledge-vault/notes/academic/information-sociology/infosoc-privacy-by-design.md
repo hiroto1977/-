@@ -29,6 +29,15 @@ aliases:
 - [Information and Privacy Commissioner of Ontario — Privacy by Design（カブーキアン本人の機関による7原則の公式解説）](https://www.ipc.on.ca/en/resources-and-decisions/privacy-by-design) `公的`
 - [GDPR Art. 25 — Data protection by design and by default（EUのプライバシー・バイ・デザイン法制化条文）](https://gdpr-info.eu/art-25-gdpr/) `リファレンス`
 
+## 関連概念
+- [[infosoc-privacy-by-design-cavoukian|プライバシー・バイ・デザインと個人情報保護の設計原則（カブキアン）]] — 語彙が近い
+- [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 同じ思想家
+- [[infosoc-profiling|プロファイリングと自動意思決定]] — 同じ思想家
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 出典を共有
+- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 出典を共有
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
+- [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

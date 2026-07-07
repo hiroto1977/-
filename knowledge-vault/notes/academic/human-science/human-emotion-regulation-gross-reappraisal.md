@@ -29,6 +29,16 @@ aliases:
 - [Gross, J.J. (1999) Emotion Regulation — Psychological Bulletin](https://doi.org/10.1037/0033-2909.125.5.525) `学術`
 - [Wikipedia: Emotion regulation — psychology and neuroscience](https://en.wikipedia.org/wiki/Emotion_regulation) `リファレンス`
 
+## 関連概念
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同じ思想家
+- [[econ-strategic-complementarity|戦略的補完性]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
+- [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 同分野の近傍
+- [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

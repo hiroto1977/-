@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 法令データ 労働者協同組合法（令和02年12月11日法律第78号）— 条文・目的規定](https://www.mhlw.go.jp/web/t_doc?dataId=73ab7953&dataType=0&pageNo=1) `公的`
 - [新日本法規 PICKUP法令改正情報 — 公布日・施行日（令和3年政令第252号で令和4年10月1日施行）](https://www.sn-hoki.co.jp/article/pickup_hourei/pickup_hourei1212577/) `リファレンス`
 
+## 関連概念
+- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 出典を共有
+- [[legal-worker-cooperative|労働者協同組合法の施行（2022年10月1日・準則主義による新法人制度）]] — 出典を共有
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
+- [[bizlaw-general-incorporated-associations|一般社団・財団法人法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Social Referencing — ScienceDirect Topics](https://www.sciencedirect.com/topics/psychology/social-referencing) `リファレンス`
 - [Acquisition of Social Referencing via Discrimination Training in Infants — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3297351/) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

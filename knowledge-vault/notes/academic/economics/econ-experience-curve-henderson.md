@@ -29,6 +29,18 @@ aliases:
 - [Henderson, B.D. (1968/1973) The Experience Curve — Boston Consulting Group Perspectives (WorldCat)](https://www.worldcat.org/oclc/4515065) `学術`
 - [Wikipedia: Experience curve effects — Henderson, BCG, Wright learning curve, cumulative production, cost decline](https://en.wikipedia.org/wiki/Experience_curve_effects) `リファレンス`
 
+## 関連概念
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 語彙が近い
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 語彙が近い
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-contingent-valuation|仮想評価法——表明選好により非市場財の価値を計測する手法]] — 同じ思想家
+- [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

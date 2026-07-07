@@ -29,6 +29,18 @@ aliases:
 - [Harcourt, G. C. (1972) Some Cambridge Controversies in the Theory of Capital — Cambridge University Press](https://www.worldcat.org/oclc/385183) `学術`
 - [Wikipedia: Cambridge capital controversy — Wicksell effect, reswitching, aggregate capital](https://en.wikipedia.org/wiki/Cambridge_capital_controversy) `リファレンス`
 
+## 関連概念
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 同じ思想家
+- [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
+- [[econ-austrian-business-cycle-theory|オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）]] — 同じ思想家
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
+- [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

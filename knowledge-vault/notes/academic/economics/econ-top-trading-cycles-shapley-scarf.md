@@ -29,6 +29,18 @@ aliases:
 - [Shapley, L. & Scarf, H. (1974) On cores and indivisibility — Journal of Mathematical Economics](https://doi.org/10.1016/0304-4068(74)90033-0) `学術`
 - [Wikipedia: Top trading cycle — housing market, core, strategy-proof, kidney exchange](https://en.wikipedia.org/wiki/Top_trading_cycle) `リファレンス`
 
+## 関連概念
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-shapley-value|シャープレー値]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同じ思想家
+- [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
+- [[econ-shapley-folkman-lemma|シャプリー＝フォルクマンの補題——多数の和は近似的に凸になる]] — 同じ思想家
+- [[econ-menu-costs|メニューコスト]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ C・K・プラハラード ／ リチャード・ベティス ／ ゲイリー�
 - [Prahalad, C.K. & Bettis, R.A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — SMJ 7(6)](https://doi.org/10.1002/smj.4250070602) `学術`
 - [Wikipedia: Managerial cognition / dominant logic — Prahalad & Bettis, mental map, resource allocation, inertia](https://en.wikipedia.org/wiki/Dominant_design) `リファレンス`
 
+## 関連概念
+- [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 同じ思想家
+- [[mgmt-diversification|多角化戦略]] — 同じ思想家
+- [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同じ思想家
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
+- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

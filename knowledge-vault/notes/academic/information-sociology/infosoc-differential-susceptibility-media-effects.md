@@ -30,6 +30,11 @@ Patti Valkenburg ／ Jochen Peter ／ Journal of Communication 2013 ／ Cognitiv
 - [Valkenburg, P. M. (2020). Differential Susceptibility to Media Effects Model. In The International Encyclopedia of Media Psychology. Wiley. DOI: 10.1002/9781119011071.iemp0122](https://onlinelibrary.wiley.com/doi/10.1002/9781119011071.iemp0122) `リファレンス`
 - [Valkenburg & Peter (2013), 'The Differential Susceptibility to Media Effects Model', Journal of Communication 63(2):221–243 — Oxford Academic listing](https://academic.oup.com/joc/article-abstract/63/2/221/4085964) `学術`
 
+## 関連概念
+- [[bizlaw-disclose-or-abstain-rule|開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる]] — 同じ思想家
+- [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

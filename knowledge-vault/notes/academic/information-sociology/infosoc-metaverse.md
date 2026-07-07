@@ -30,6 +30,18 @@ aliases:
 - [総務省『令和6年版 情報通信白書』仮想空間（メタバース・デジタルツイン）](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r06/html/nd132100.html) `公的`
 - [A Survey on Metaverse: Fundamentals, Security, and Privacy（arXiv）](https://arxiv.org/pdf/2203.02662) `学術`
 
+## 関連概念
+- [[econ-stagflation|スタグフレーション]] — 出典を共有
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 出典を共有
+- [[infosoc-astroturfing|アストロターフィング]] — 出典を共有
+- [[infosoc-clickbait|クリックベイト（釣り見出し）]] — 出典を共有
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
+- [[infosoc-web3|Web3]] — 出典を共有
+- [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

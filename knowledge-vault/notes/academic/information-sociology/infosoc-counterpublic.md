@@ -30,6 +30,17 @@ aliases:
 - [Nancy Fraser, "Rethinking the Public Sphere" (1990, Social Text) — 概要・全文](https://www.femres.org/en/papers/rethinking-public-sphere) `リファレンス`
 - [Critical Legal Thinking: "Nancy Fraser: Subaltern Counterpublics"](https://criticallegalthinking.com/2016/11/06/nancy-fraser-subaltern-counterpublics/) `リファレンス`
 
+## 関連概念
+- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同じ思想家
+- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同分野の近傍
+- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 同分野の近傍
+- [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同分野の近傍
+- [[infosoc-third-place|サードプレイス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

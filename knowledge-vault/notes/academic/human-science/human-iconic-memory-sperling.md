@@ -29,6 +29,12 @@ aliases:
 - [Sperling, G. (1960) The information available in brief visual presentations — Psychological Monographs](https://doi.org/10.1037/h0093759) `学術`
 - [Wikipedia: Iconic memory — Sperling, partial report, sensory memory, decay](https://en.wikipedia.org/wiki/Iconic_memory) `リファレンス`
 
+## 関連概念
+- [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

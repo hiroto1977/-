@@ -31,6 +31,10 @@ aliases:
 - [Kiesler, D. J. (1996) Contemporary Interpersonal Theory and Research: Personality, Psychopathology, and Psychotherapy — Wiley（現代対人関係理論の体系書）](https://doi.org/10.1016/0022-3999(95)00052-6) `学術`
 - [Wikipedia: Interpersonal circumplex — Leary, dominance-submissiveness, affiliation-hostility axes, complementarity](https://en.wikipedia.org/wiki/Interpersonal_circumplex) `リファレンス`
 
+## 関連概念
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 同分野の近傍
+- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

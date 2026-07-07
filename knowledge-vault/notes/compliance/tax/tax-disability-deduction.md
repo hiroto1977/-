@@ -30,6 +30,18 @@ aliases:
 - [国税庁 障害者と税](https://www.nta.go.jp/publication/pamph/koho/kurashi/html/03_2.htm) `公的`
 - [障害者控除 解説](https://www.freee.co.jp/kb/kb-payroll/yearend-adjustment-exemption-for-the-disabled/) `メディア`
 
+## 関連概念
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 語彙が近い
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-dependent-deduction|扶養控除]] — 語彙が近い
+- [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
+- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
+- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ aliases:
 - [Wikipedia: Ipso Facto Clause — insolvency-triggered contract termination restrictions](https://en.wikipedia.org/wiki/Ipso_facto_clause) `リファレンス`
 - [Jackson, T.H. (1986) The Logic and Limits of Bankruptcy Law — Harvard UP ch.5](https://doi.org/10.2307/1073090) `学術`
 
+## 関連概念
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同じ思想家
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同じ思想家
+- [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同じ思想家
+- [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同じ思想家
+- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
+- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

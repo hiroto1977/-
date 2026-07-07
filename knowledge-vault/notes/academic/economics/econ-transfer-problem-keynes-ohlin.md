@@ -30,6 +30,18 @@ aliases:
 - [Jones, R. W. & Neary, J. P. (1984) The Positive Theory of International Trade — Handbook of International Economics](https://doi.org/10.1016/S1573-4404(84)01006-4) `学術`
 - [Wikipedia: Transfer problem — international capital transfers and terms of trade overview](https://en.wikipedia.org/wiki/Transfer_problem) `リファレンス`
 
+## 関連概念
+- [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 語彙が近い
+- [[econ-immiserizing-growth|窮乏化成長]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
+- [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
+- [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

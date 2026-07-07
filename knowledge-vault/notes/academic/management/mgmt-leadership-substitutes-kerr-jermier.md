@@ -29,6 +29,12 @@ aliases:
 - [Kerr, S. & Jermier, J.M. (1978) Substitutes for Leadership: Their Meaning and Measurement — OBHP 22(3)](https://doi.org/10.1016/0030-5073(78)90023-5) `学術`
 - [Wikipedia: Substitutes for Leadership Theory — Kerr & Jermier, substitutes vs neutralizers](https://en.wikipedia.org/wiki/Substitutes_for_Leadership_Theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-substitutes-leadership|リーダーシップの代替要因理論]] — 同じ思想家
+- [[mgmt-organizational-citizenship-organ|組織市民行動——報酬制度に明示されない自発的貢献が組織を機能させる]] — 同じ思想家
+- [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]] — 同分野の近傍
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

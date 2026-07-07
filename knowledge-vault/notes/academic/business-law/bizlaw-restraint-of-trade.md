@@ -29,6 +29,13 @@ aliases:
 - [Cornell LII Wex: Restraint of trade — non-compete, reasonableness, legitimate interest, public policy](https://www.law.cornell.edu/wex/restraint_of_trade) `リファレンス`
 - [Wikipedia: Restraint of trade — Nordenfelt, reasonableness between parties and public interest](https://en.wikipedia.org/wiki/Restraint_of_trade) `リファレンス`
 
+## 関連概念
+- [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 語彙が近い
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
+- [[bizlaw-covenant-running-with-land|土地に伴う約款——後続の所有者を拘束する土地に関する約束]] — 同じ思想家
+- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
+- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

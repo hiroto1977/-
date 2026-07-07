@@ -30,6 +30,15 @@ aliases:
 - [協会けんぽ 傷病手当金](https://www.kyoukaikenpo.or.jp/benefit/injury_and_sickness_allowance/index.html) `運営団体`
 - [厚生労働省 傷病手当金の支給期間の通算化](https://www.mhlw.go.jp/stf/newpage_22308.html) `公的`
 
+## 関連概念
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 語彙が近い
+- [[bizlaw-health-insurance|健康保険法]] — 語彙が近い
+- [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
+- [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
+- [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
+- [[labor-standard-remuneration|標準報酬月額]] — 同分野の近傍
+- [[labor-childcare-leave|育児休業と育児休業給付金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

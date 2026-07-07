@@ -29,6 +29,12 @@ aliases:
 - [Jasanoff, S. (2005) Designs on Nature: Science and Democracy in Europe and the United States — Princeton University Press](https://www.worldcat.org/oclc/57010936) `学術`
 - [Wikipedia: Civic epistemology — public knowledge, political culture, Jasanoff, co-production](https://en.wikipedia.org/wiki/Civic_epistemology) `リファレンス`
 
+## 関連概念
+- [[infosoc-lay-expertise-epstein|素人専門知——資格なき人々が科学に参加し知を変える]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

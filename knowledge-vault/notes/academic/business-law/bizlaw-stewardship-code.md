@@ -30,6 +30,12 @@ aliases:
 - [金融庁「『責任ある機関投資家』の諸原則≪日本版スチュワードシップ・コード≫」（2020年改訂版本文）](https://www.fsa.go.jp/news/r1/singi/20200324/01.pdf) `公的`
 - [野村證券 証券用語解説集「日本版スチュワードシップ・コード」](https://www.nomura.co.jp/terms/japan/ni/A02755.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 同分野の近傍
+- [[bizlaw-civil-execution|民事執行法]] — 同分野の近傍
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 同分野の近傍
+- [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

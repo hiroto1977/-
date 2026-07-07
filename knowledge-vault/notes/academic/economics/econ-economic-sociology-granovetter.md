@@ -31,6 +31,18 @@ aliases:
 - [Polanyi, K. (1944) The Great Transformation — Beacon Press（埋め込みの原典）](https://www.hup.harvard.edu/books/9780674905863) `学術`
 - [Wikipedia: Mark Granovetter — embeddedness theory, weak ties, and new economic sociology](https://en.wikipedia.org/wiki/Mark_Granovetter) `リファレンス`
 
+## 関連概念
+- [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]] — 同じ思想家
+- [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同じ思想家
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
+- [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同じ思想家
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-small-world|スモールワールド現象（六次の隔たり）]] — 同じ思想家
+- [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
+- [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
+- [[mgmt-middle-status-conformity-phillips|中位地位同調性——組織階層における地位と逸脱の非線形的関係]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

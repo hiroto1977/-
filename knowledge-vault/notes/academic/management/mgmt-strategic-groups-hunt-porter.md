@@ -29,6 +29,18 @@ aliases:
 - [Caves, R. & Porter, M. (1977) From Entry Barriers to Mobility Barriers — Quarterly Journal of Economics](https://doi.org/10.2307/2392455) `学術`
 - [Wikipedia: Strategic group — mobility barriers, industry structure, competitive dynamics](https://en.wikipedia.org/wiki/Strategic_group) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-group-theory|戦略グループ理論]] — 語彙が近い
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
+- [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
+- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

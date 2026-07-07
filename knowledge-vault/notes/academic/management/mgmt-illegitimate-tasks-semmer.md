@@ -29,6 +29,18 @@ aliases:
 - [Semmer, N. K. et al. (2015) Illegitimate tasks as a source of work stress — Work & Stress](https://doi.org/10.1080/02678373.2015.1003996) `学術`
 - [Wikipedia: Occupational stress — illegitimate tasks, stress-as-offense-to-self, unreasonable/unnecessary](https://en.wikipedia.org/wiki/Occupational_stress) `リファレンス`
 
+## 関連概念
+- [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同じ思想家
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同じ思想家
+- [[human-terror-management-greenberg|恐怖管理理論（グリーンバーグ＆ピジシンスキー）]] — 同じ思想家
+- [[human-terror-management-theory-becker|テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験]] — 同じ思想家
+- [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — 同じ思想家
+- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同じ思想家
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
+- [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

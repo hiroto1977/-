@@ -31,6 +31,18 @@ aliases:
 - [Encyclopaedia Britannica — Finn E. Kydland（1977年論文と動学的不整合の定義）](https://www.britannica.com/money/Finn-E-Kydland) `リファレンス`
 - [Journal of Political Economy (1977) — Rules Rather than Discretion（一次文献）](https://www.journals.uchicago.edu/doi/abs/10.1086/260580) `学術`
 
+## 関連概念
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 語彙が近い
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 出典を共有
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 出典を共有
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 出典を共有
+- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[eh-2005|2005年（平成17年）]] — 出典を共有
+- [[eh-2021|2021年（令和3年）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

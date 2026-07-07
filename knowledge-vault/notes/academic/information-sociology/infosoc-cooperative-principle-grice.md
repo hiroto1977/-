@@ -29,6 +29,11 @@ aliases:
 - [Wikipedia: Cooperative principle — Grice (1975), maxims of quantity/quality/relation/manner, conversational implicature](https://en.wikipedia.org/wiki/Cooperative_principle) `リファレンス`
 - [Wikipedia: Implicature — Grice, conversational vs. conventional implicature, flouting the maxims](https://en.wikipedia.org/wiki/Implicature) `リファレンス`
 
+## 関連概念
+- [[infosoc-speech-act-theory|言語行為論]] — 同じ思想家
+- [[infosoc-communication-accommodation-theory|コミュニケーション適応理論（Communication Accommodation Theory, CAT）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

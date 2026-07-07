@@ -30,6 +30,18 @@ aliases:
 - [Madianou & Miller, Migration and New Media: Transnational Families and Polymedia (Routledge, 2012)](https://www.routledge.com/Migration-and-New-Media-Transnational-Families-and-Polymedia/Madianou-Miller/p/book/9780415679299) `学術`
 - [Wikipedia — Polymedia（三前提・道徳的説明責任・エスノグラフィ概要）](https://en.wikipedia.org/wiki/Polymedia) `リファレンス`
 
+## 関連概念
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
+- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
+- [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同じ思想家
+- [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — 同じ思想家
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

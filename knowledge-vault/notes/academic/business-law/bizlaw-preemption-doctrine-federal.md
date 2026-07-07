@@ -31,6 +31,13 @@ aliases:
 - [Sharkey, C. M. (2008) Federalism in Action: FDA Preemption of State Tort Law in Pharmaceutical Cases — Journal of Health Politics, Policy and Law, 33(1), 23–43（医薬品訴訟への応用）](https://doi.org/10.1111/j.1747-4469.2010.01199.x) `学術`
 - [Wikipedia: Preemption (law) — supremacy clause, express/implied/field/conflict preemption, Wyeth v. Levine](https://en.wikipedia.org/wiki/Preemption_(law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 同じ思想家
+- [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 同じ思想家
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

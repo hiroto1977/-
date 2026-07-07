@@ -29,6 +29,10 @@ Larry G. Epstein（Econometrica 57(4), 1989）／Stanley E. Zin（Econometrica 5
 - [Epstein & Zin (1989) Substitution, Risk Aversion, and the Temporal Behavior — Econometrica 57(4)](https://www.jstor.org/stable/1913778) `学術`
 - [Bansal & Yaron (2004) Risks for the Long Run — Journal of Finance 59(4)](https://doi.org/10.1111/j.1540-6261.2004.00670.x) `学術`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

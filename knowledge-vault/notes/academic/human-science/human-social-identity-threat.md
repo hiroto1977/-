@@ -30,6 +30,14 @@ Claude M. Steele／Joshua Aronson／Naomi Ellemers／Nyla R. Branscombe／Russel
 - [Branscombe et al. (1999) The context and content of social identity threat, PSPB 25(6):723-739](https://doi.org/10.1177/0146167299025006006) `学術`
 - [Ellemers, Spears & Doosje (2002) Self and social identity, Annual Review of Psychology 53:161-186](https://doi.org/10.1146/annurev.psych.53.100901.135228) `学術`
 
+## 関連概念
+- [[human-stereotype-threat|ステレオタイプ脅威]] — 同じ思想家
+- [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同分野の近傍
+- [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 同分野の近傍
+- [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 同分野の近傍
+- [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同分野の近傍
+- [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

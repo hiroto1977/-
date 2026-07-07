@@ -29,6 +29,12 @@ aliases:
 - [Westbrook, J.L. et al. (2010). A Global View of Business Insolvency Systems — World Bank](https://doi.org/10.1017/9781316556795) `学術`
 - [Wikipedia: UNCITRAL cross-border insolvency — international law](https://en.wikipedia.org/wiki/UNCITRAL_Model_Law_on_Cross-Border_Insolvency) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同じ思想家
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 同分野の近傍
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

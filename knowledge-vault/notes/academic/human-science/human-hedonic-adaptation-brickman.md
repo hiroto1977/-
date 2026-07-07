@@ -30,6 +30,15 @@ aliases:
 - [Diener, E., Lucas, R. E. & Scollon, C. N. (2006) Beyond the Hedonic Treadmill — American Psychologist](https://doi.org/10.1037/0003-066X.61.4.305) `学術`
 - [Wikipedia: Hedonic treadmill — happiness set point and adaptation overview](https://en.wikipedia.org/wiki/Hedonic_treadmill) `リファレンス`
 
+## 関連概念
+- [[human-hedonic-adaptation|快楽順応]] — 語彙が近い
+- [[human-hedonic-treadmill|快楽の踏み車（快楽適応）]] — 同じ思想家
+- [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同じ思想家
+- [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

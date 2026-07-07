@@ -29,6 +29,10 @@ Adolf A. Berle ／ Gardiner C. Means ／ Harold Demsetz ／ The Modern Corporati
 - [Berle, A. A., Jr. & Means, G. C. (1932) The Modern Corporation and Private Property. New York: Macmillan — Wikipedia (所有と経営の分離・経営者支配の命題)](https://en.wikipedia.org/wiki/The_Modern_Corporation_and_Private_Property) `リファレンス`
 - [Demsetz, H. (1983) The Structure of Ownership and the Theory of the Firm. Journal of Law and Economics, 26(2), 375–390（バーリ＝ミーンズ命題への批判）](https://doi.org/10.1086/467041) `学術`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

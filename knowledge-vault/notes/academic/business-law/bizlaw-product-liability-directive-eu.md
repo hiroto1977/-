@@ -30,6 +30,11 @@ EU製造物責任指令（85/374/EEC、2024年改正指令2024/2853）は、欠�
 - [Stapleton, J. (2007) Bugs in Anglo-American Products Liability — Oxford Handbook of European Private Law](https://doi.org/10.1093/oxfordhb/9780199546435.013.0024) `学術`
 - [Wikipedia: Product Liability Directive — EU製造物責任指令の概要](https://en.wikipedia.org/wiki/Product_Liability_Directive) `リファレンス`
 
+## 関連概念
+- [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 語彙が近い
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 語彙が近い
+- [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

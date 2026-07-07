@@ -31,6 +31,18 @@ Irving Fisher ／ Hyman Philip Minsky ／ Ben Shalom Bernanke
 - [Bernanke, B. S. (1983). Nonmonetary Effects of the Financial Crisis in the Propagation of the Great Depression. NBER Working Paper No. 1148.](https://www.nber.org/papers/w1148) `学術`
 - [IMF World Economic Outlook (April 2012). Dealing with Household Debt. Chapter 3.](https://www.imf.org/external/pubs/ft/weo/2012/01/pdf/c3.pdf) `公的`
 
+## 関連概念
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 語彙が近い
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 語彙が近い
+- [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
+- [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
+- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
+- [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
+- [[econ-financialization|金融化——経済の金融部門支配]] — 同じ思想家
+- [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
+- [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 出典を共有
+- [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

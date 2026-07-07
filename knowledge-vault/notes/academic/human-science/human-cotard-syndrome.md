@@ -29,6 +29,10 @@ Jules Cotard（Archives de Neurologie 4, 1882, 原記載）／German E. Berrios�
 - [Berrios & Luque (1995) Cotard's syndrome: analysis of 100 cases — Acta Psychiatrica Scandinavica 91(3), pp.185-188](https://doi.org/10.1111/j.1600-0447.1995.tb09764.x) `学術`
 - [Charland-Verville et al. (2013) The neural correlates of subjective experience of Cotard delusion — Cortex 49(7)](https://doi.org/10.1016/j.cortex.2013.03.003) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,16 @@ aliases:
 - [Sharpe (1964) Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk — JF 19(3)](https://doi.org/10.2307/2977928) `学術`
 - [Wikipedia: CAPM — beta, SML, Fama-French, Jensen alpha, Sharpe ratio, market portfolio](https://en.wikipedia.org/wiki/Capital_asset_pricing_model) `リファレンス`
 
+## 関連概念
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 語彙が近い
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
+- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — 同じ思想家
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 同じ思想家
+- [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

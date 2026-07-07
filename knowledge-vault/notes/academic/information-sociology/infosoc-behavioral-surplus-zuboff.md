@@ -31,6 +31,18 @@ aliases:
 - [European Parliament (2016) Regulation (EU) 2016/679 — GDPR（行動データ保護の立法）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679) `公的`
 - [Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, Google Adsense, behavioral modification, GDPR](https://en.wikipedia.org/wiki/Surveillance_capitalism) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 語彙が近い
+- [[infosoc-data-colonialism|データ植民地主義]] — 同じ思想家
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
+- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同じ思想家
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+- [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
+- [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

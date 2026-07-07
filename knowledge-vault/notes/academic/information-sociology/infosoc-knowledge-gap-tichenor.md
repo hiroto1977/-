@@ -29,6 +29,12 @@ aliases:
 - [Tichenor, P.J., Donohue, G.A. & Olien, C.N. (1970) Mass Media Flow and Differential Growth in Knowledge — POQ 34(2)](https://doi.org/10.1086/267786) `学術`
 - [Wikipedia: Knowledge gap hypothesis — Tichenor, socioeconomic status, digital divide](https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis) `リファレンス`
 
+## 関連概念
+- [[knowledge-gap-hypothesis|知識格差仮説]] — 語彙が近い
+- [[infosoc-third-person-effect-davison|第三者効果——メディアの影響を他者により強く帰属する知覚的偏向]] — 同分野の近傍
+- [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同分野の近傍
+- [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

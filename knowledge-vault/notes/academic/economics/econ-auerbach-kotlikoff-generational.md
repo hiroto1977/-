@@ -31,6 +31,18 @@ Alan J. Auerbach ／ Jagadeesh Gokhale ／ Laurence J. Kotlikoff
 - [Wikipedia — Generational accounting](https://en.wikipedia.org/wiki/Generational_accounting) `リファレンス`
 - [内閣府 — 世代会計分析資料](https://www5.cao.go.jp/keizai2/keizai-syakai/k-s-kouzou/shiryou/wg2-3kai/pdf/1.pdf) `公的`
 
+## 関連概念
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 出典を共有
+- [[econ-wage-price-spiral|賃金・物価スパイラル]] — 出典を共有
+- [[econ-output-gap|GDPギャップ（需給ギャップ）]] — 出典を共有
+- [[eh-1956|1956年（昭和31年）]] — 出典を共有
+- [[eh-1966|1966年（昭和41年）]] — 出典を共有
+- [[eh-1976|1976年（昭和51年）]] — 出典を共有
+- [[eh-1988|1988年（昭和63年）]] — 出典を共有
+- [[eh-2002|2002年（平成14年）]] — 出典を共有
+- [[eh-2011|2011年（平成23年）]] — 出典を共有
+- [[eh-2017|2017年（平成29年）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

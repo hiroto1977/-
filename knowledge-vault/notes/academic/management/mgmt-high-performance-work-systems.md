@@ -32,6 +32,11 @@ Mark A. Huselid ／ Eileen Appelbaum ／ Thomas Bailey ／ Peter Berg ／ Arne L
 - [Purcell et al. (2003) Understanding the People and Performance Link: Unlocking the Black Box — CIPD Publishing](https://www.semanticscholar.org/paper/Understanding-the-people-and-performance-link:-the-Purcell-Kinnie/0bd59121122e9f7faf6b37e0a3e1021da9abbd49) `リファレンス`
 - [Boxall & Macky (2012) "High-performance work systems: what, why, how and for whom?" — Asia Pacific Journal of Human Resources 50(2): 169–186](https://onlinelibrary.wiley.com/doi/10.1111/j.1744-7941.2011.00012.x) `学術`
 
+## 関連概念
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 語彙が近い
+- [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

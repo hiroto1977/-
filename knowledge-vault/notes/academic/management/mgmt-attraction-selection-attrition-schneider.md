@@ -29,6 +29,14 @@ aliases:
 - [Schneider, B. (1987) The People Make the Place — Personnel Psychology, 40(3), 437–453](https://doi.org/10.1111/j.1744-6570.1987.tb00609.x) `学術`
 - [iResearchNet (I/O Psychology): Attraction-Selection-Attrition — Schneider ASA cycle, person-organization fit, homogeneity](https://psychology.iresearchnet.com/industrial-organizational-psychology/organizational-development/attraction-selection-attrition/) `リファレンス`
 
+## 関連概念
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 語彙が近い
+- [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 出典を共有
+- [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
+- [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
+- [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

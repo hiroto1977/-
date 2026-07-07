@@ -30,6 +30,12 @@ aliases:
 - [内閣府 経済社会総合研究所 — 景気基準日付（山・谷の事後認定）](https://www.esri.cao.go.jp/jp/stat/di/hiduke.html) `公的`
 - [Le Grand & Hagemann — Business Cycles in Juglar and Schumpeter（経済学史学会）](https://www.jshet.net/old/annals/het47-50/4901/legrandandhagemann4901.pdf) `学術`
 
+## 関連概念
+- [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 語彙が近い
+- [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 出典を共有
+- [[eh-1986|1986年（昭和61年）]] — 出典を共有
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

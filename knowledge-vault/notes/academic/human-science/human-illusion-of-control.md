@@ -30,6 +30,10 @@ aliases:
 - [Clark & Wohl (2021), Langer's Illusion of Control and the Cognitive Model of Disordered Gambling (University of British Columbia)](https://gamblingresearch.sites.olt.ubc.ca/files/2021/09/ClarkWohl_2021_LangersIoC_AAM.pdf) `学術`
 - [Illusion of control — Wikipedia（定義・命名・技能手がかりの百科事典的解説）](https://en.wikipedia.org/wiki/Illusion_of_control) `リファレンス`
 
+## 関連概念
+- [[human-nostalgia-psychology-sedikides|ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持]] — 同分野の近傍
+- [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

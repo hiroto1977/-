@@ -30,6 +30,18 @@ aliases:
 - [Michael Heller, "Empty Moscow Stores: A Cautionary Tale for Property Theory" (University of Michigan Law)](https://repository.law.umich.edu/cgi/viewcontent.cgi?article=1395&context=book_chapters) `学術`
 - [Tragedy of the anticommons — Wikipedia (Heller 1998, Harvard Law Review 111:621-688)](https://en.wikipedia.org/wiki/Tragedy_of_the_anticommons) `リファレンス`
 
+## 関連概念
+- [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — 同じ思想家
+- [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 同じ思想家
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
+- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
+- [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

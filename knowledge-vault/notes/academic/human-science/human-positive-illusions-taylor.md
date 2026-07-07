@@ -31,6 +31,17 @@ aliases:
 - [Weinstein, N. D. (1980) Unrealistic Optimism About Future Life Events — JPSP, 39(5), 806–820（非現実的楽観主義）](https://pubmed.ncbi.nlm.nih.gov/3629255/) `学術`
 - [Wikipedia: Positive illusions — overview, adaptive value, cross-cultural findings, and depressive realism](https://en.wikipedia.org/wiki/Positive_illusions) `リファレンス`
 
+## 関連概念
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 同じ思想家
+- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同じ思想家
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
+- [[human-tend-and-befriend-taylor|思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式]] — 同じ思想家
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

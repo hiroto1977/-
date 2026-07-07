@@ -34,6 +34,18 @@ aliases:
 - [EDPB (2023) Guidelines 3/2022 on Dark Patterns in Social Media Platforms — European Data Protection Board](https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf) `公的`
 - [Gray, C. M. et al. (2020) The Dark Side of UX Design — CHI 2020 Extended Abstracts（dark pattern類型とUX倫理）](https://doi.org/10.1145/3313831.3376600) `学術`
 
+## 関連概念
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 出典を共有
+- [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
+- [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — 出典を共有
+- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 出典を共有
+- [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 出典を共有
+- [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
+- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

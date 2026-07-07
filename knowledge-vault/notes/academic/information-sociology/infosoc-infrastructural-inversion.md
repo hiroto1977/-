@@ -29,6 +29,11 @@ Geoffrey C. Bowker & Susan Leigh Star（MIT Press, 1999, Sorting Things Out — 
 - [Bowker & Star (1999) Sorting Things Out: Classification and Its Consequences — MIT Press](https://doi.org/10.7551/mitpress/6352.001.0001) `学術`
 - [Star & Ruhleder (1996) Steps Toward an Ecology of Infrastructure — Information Systems Research 7(1), pp.111-134](https://doi.org/10.1287/isre.7.1.111) `学術`
 
+## 関連概念
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同じ思想家
+- [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — 同じ思想家
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

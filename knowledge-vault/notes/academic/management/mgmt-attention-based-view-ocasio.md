@@ -30,6 +30,18 @@ aliases:
 - [Ocasio, W. (2011) Attention to Attention, Organization Science 22(5): 1286-1296](https://pubsonline.informs.org/doi/10.1287/orsc.1100.0602) `学術`
 - [Bower, J.L. (1970) Managing the Resource Allocation Process, Harvard Business School](https://www.hbs.edu/faculty/Pages/item.aspx?num=4884) `リファレンス`
 
+## 関連概念
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 語彙が近い
+- [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 同じ思想家
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同じ思想家
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
+- [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 出典を共有
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 出典を共有
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Tinbergen, N. (1951) The Study of Instinct — Oxford University Press (WorldCat)](https://www.worldcat.org/oclc/657072) `学術`
 - [Wikipedia: Fixed action pattern — Lorenz, Tinbergen, sign stimulus, innate releasing mechanism, supranormal stimulus](https://en.wikipedia.org/wiki/Fixed_action_pattern) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

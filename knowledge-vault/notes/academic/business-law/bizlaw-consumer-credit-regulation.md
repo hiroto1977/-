@@ -29,6 +29,15 @@ aliases:
 - [Ramsay, I. (2012). Consumer Law and Policy — Hart Publishing](https://doi.org/10.4337/9781848444539) `学術`
 - [Wikipedia: Consumer credit — overindebtedness regulation](https://en.wikipedia.org/wiki/Consumer_credit) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同じ思想家
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同じ思想家
+- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-condition-suspensive|停止条件・解除条件]] — 同分野の近傍
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
+- [[bizlaw-regulatory-sandbox|規制サンドボックス（フィンテック・イノベーション実証制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

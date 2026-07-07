@@ -30,6 +30,18 @@ aliases:
 - [中小企業庁 法人税率の軽減](https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/houjin_keigen.html) `公的`
 - [財務省 令和7年度税制改正の大綱（軽減税率特例の延長）](https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2025/07taikou_03.htm) `公的`
 
+## 関連概念
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 語彙が近い
+- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
+- [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]] — 語彙が近い
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 語彙が近い
+- [[bizlaw-corporation-tax|法人税法]] — 分野横断
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

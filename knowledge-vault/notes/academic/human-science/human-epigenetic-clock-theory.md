@@ -31,6 +31,12 @@ Steve Horvath ／ Morgan Levine
 - [Levine et al. 2018 PhenoAge epigenetic biomarker](https://pmc.ncbi.nlm.nih.gov/articles/PMC5940111/) `学術`
 - [DNA methylation aging clocks challenges review](https://link.springer.com/article/10.1186/s13059-019-1824-y) `学術`
 
+## 関連概念
+- [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — 語彙が近い
+- [[human-developmental-origins-of-health-disease|健康と疾病の発達起源説（DOHaD）]] — 同分野の近傍
+- [[human-central-pattern-generator|中枢パターン発生器（CPG）]] — 同分野の近傍
+- [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

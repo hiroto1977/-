@@ -31,6 +31,10 @@ aliases:
 - [学術論文 "Origins and Development of the Product Life Cycle Concept"（起源と発展・批判の整理）](https://core.ac.uk/download/pdf/62433731.pdf) `学術`
 - [オープン教科書 "A Great Marketing Textbook"（4段階と全製品同曲線ではない点）](https://pressbooks.pub/agreatmarketingtextbook/chapter/introduction-to-product-life-cycle/) `学術`
 
+## 関連概念
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同分野の近傍
+- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

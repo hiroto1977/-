@@ -32,6 +32,18 @@ Robert Axelrod ／ Colin Eden ／ Anne Sigismund Huff ／ Fran Ackermann ／ Kar
 - [Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies](https://doi.org/10.1016/0024-6301(92)90172-W) `学術`
 - [Gary & Wood (2011) Mental models, decision rules, and performance heterogeneity — Strategic Management Journal](https://www.sciencedirect.com/science/article/pii/S0149206310001382) `学術`
 
+## 関連概念
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 語彙が近い
+- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
+- [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

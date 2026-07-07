@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: Balfour v Balfour [1919] 2 KB 571 — intention to create legal relations, domestic agreements presumption, Atkin LJ](https://en.wikipedia.org/wiki/Balfour_v_Balfour) `リファレンス`
 - [Wikipedia: Intention to create legal relations — domestic/social vs. commercial presumptions, Balfour v Balfour, Merritt v Merritt](https://en.wikipedia.org/wiki/Intention_to_create_legal_relations) `リファレンス`
 
+## 関連概念
+- [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

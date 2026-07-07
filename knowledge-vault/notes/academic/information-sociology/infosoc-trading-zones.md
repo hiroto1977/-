@@ -29,6 +29,18 @@ Peter Galison（1997, Image and Logic — トレーディング・ゾーン概�
 - [Galison (1997) Image and Logic: A Material Culture of Microphysics — University of Chicago Press](https://press.uchicago.edu/ucp/books/book/chicago/I/bo3710110.html) `学術`
 - [Bowker & Star (1999) Sorting Things Out: Classification and Its Consequences — MIT Press](https://mitpress.mit.edu/9780262522953/sorting-things-out/) `学術`
 
+## 関連概念
+- [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同じ思想家
+- [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
+- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

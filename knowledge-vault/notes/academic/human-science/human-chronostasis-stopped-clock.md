@@ -29,6 +29,14 @@ aliases:
 - [Yarrow, K. et al. (2001) Illusory perceptions of space and time preserve cross-saccadic perceptual continuity — Nature](https://doi.org/10.1038/35107075) `学術`
 - [Wikipedia: Chronostasis — stopped-clock illusion, saccadic suppression, postdiction](https://en.wikipedia.org/wiki/Chronostasis) `リファレンス`
 
+## 関連概念
+- [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]] — 同じ思想家
+- [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
+- [[human-theory-of-mind|心の理論]] — 同分野の近傍
+- [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — 同分野の近傍
+- [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]] — 同分野の近傍
+- [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

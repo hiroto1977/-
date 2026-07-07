@@ -30,6 +30,18 @@ aliases:
 - [Summers, L.H. 2014. U.S. Economic Prospects: Secular Stagnation, Hysteresis, and the Zero Lower Bound. Business Economics, 49(2), 65-73.](https://ideas.repec.org/a/pal/buseco/v49y2014i2p65-73.html) `学術`
 - [Ball, L. 2014. Long-Term Damage from the Great Recession in OECD Countries. NBER Working Paper 20185.](https://doi.org/10.3386/w20185) `学術`
 
+## 関連概念
+- [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 語彙が近い
+- [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
+- [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+- [[econ-secular-stagnation-hansen|長期停滞論（ハンセン＆サマーズ）]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
+- [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
+- [[econ-eurosclerosis-giersch|ユーロスクレローシス——欧州経済の構造的硬直性と高失業の持続]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

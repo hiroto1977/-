@@ -31,6 +31,17 @@ aliases:
 - [Teasdale et al. (2000), Prevention of relapse/recurrence in major depression by MBCT — PubMed（査読論文）](https://pubmed.ncbi.nlm.nih.gov/10965637/) `学術`
 - [Wikipedia — Mindfulness-based stress reduction（百科事典級リファレンス）](https://en.wikipedia.org/wiki/Mindfulness-based_stress_reduction) `リファレンス`
 
+## 関連概念
+- [[human-mindfulness-based-stress-reduction|マインドフルネスに基づくストレス低減法（MBSR）とその臨床的展開]] — 語彙が近い
+- [[human-mindfulness-based-stress-reduction-kabat-zinn|マインドフルネスストレス低減法——カバットジンのMBSRと世俗的瞑想の医療・心理応用]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

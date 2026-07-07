@@ -29,6 +29,11 @@ aliases:
 - [Harvard Kennedy School — Essence of Decision: Explaining the Cuban Missile Crisis（アリソン著書の公式紹介）](https://www.hks.harvard.edu/publications/essence-decision-explaining-cuban-missile-crisis) `学術`
 - [Encyclopaedia Britannica — Essence of Decision（3モデルの解説・政策科学への影響）](https://www.britannica.com/topic/Essence-of-Decision) `リファレンス`
 
+## 関連概念
+- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 語彙が近い
+- [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — 出典を共有
+- [[econ-poole-instrument-choice|プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

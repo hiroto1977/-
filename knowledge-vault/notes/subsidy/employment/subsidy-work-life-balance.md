@@ -36,6 +36,13 @@ national
 - [東京労働局 両立支援等助成金 支給申請の案内](https://jsite.mhlw.go.jp/tokyo-roudoukyoku/newpage_00331.html) `公的`
 - [両立支援等助成金 各コースの要点 解説](https://hrzine.jp/article/detail/6540) `メディア`
 
+## 関連概念
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 同分野の近傍
+- [[subsidy-career-up|キャリアアップ助成金]] — 同分野の近傍
+- [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 同分野の近傍
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 同分野の近傍
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

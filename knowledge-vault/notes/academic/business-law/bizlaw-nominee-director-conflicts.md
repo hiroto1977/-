@@ -31,6 +31,18 @@ aliases:
 - [日本法務省 (2005) 会社法356条（取締役の競業禁止義務・利益相反取引）e-Gov](https://elaws.e-gov.go.jp/document?lawid=417AC0000000086) `公的`
 - [Wikipedia: Nominee director — Companies Act 2006, duty of loyalty, PE/VC conflicts, fiduciary duty](https://en.wikipedia.org/wiki/Nominee_director) `リファレンス`
 
+## 関連概念
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 語彙が近い
+- [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 同じ思想家
+- [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
+- [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

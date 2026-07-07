@@ -30,6 +30,17 @@ aliases:
 - [IMF, Finance & Development "Back to Basics"（モラルハザードの定義・保険者が損害責任の所在を判別できない例）](https://www.imf.org/external/pubs/ft/fandd/2010/12/pdf/basics.pdf) `公的`
 - [Federal Reserve Bank of Minneapolis — "Too Big To Fail: The Hazards of Bank Bailouts"（救済期待による過大リスク）](https://www.minneapolisfed.org/article/2003/too-big-to-fail-the-hazards-of-bank-bailouts) `公的`
 
+## 関連概念
+- [[econ-too-big-to-fail|大きすぎて潰せない]] — 語彙が近い
+- [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 出典を共有
+- [[econ-rbc|実物的景気循環論（RBC）]] — 出典を共有
+- [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 出典を共有
+- [[econ-real-bills-doctrine|真正手形主義（リアルビルズ・ドクトリン）]] — 出典を共有
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 出典を共有
+- [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
+- [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — 同分野の近傍
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

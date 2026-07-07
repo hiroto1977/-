@@ -31,6 +31,10 @@ aliases:
 - [Simply Psychology — Hawthorne Effect (Landsberger 1958 命名, illumination studies)](https://www.simplypsychology.org/hawthorne-effect.html) `リファレンス`
 - [NBER Working Paper 15016 — “Was There Really a Hawthorne Effect at the Hawthorne Plant?”（再分析・批判）](https://www.nber.org/system/files/working_papers/w15016/w15016.pdf) `学術`
 
+## 関連概念
+- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

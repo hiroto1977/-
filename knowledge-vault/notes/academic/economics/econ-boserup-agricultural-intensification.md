@@ -30,6 +30,18 @@ Ester Boserup (1910-1999, 仮説の提唱者) ／ Thomas Robert Malthus (逆転�
 - [Turner, B. L., II, & Ali, A. M. S. (1996). Induced intensification: Agricultural change in Bangladesh with implications for Malthus and Boserup. PNAS, 93(25), 14984-14991. doi:10.1073/pnas.93.25.14984](https://www.pnas.org/doi/10.1073/pnas.93.25.14984) `学術`
 - [Wikipedia, "Ester Boserup"（Boserup, E. [1965]. The Conditions of Agricultural Growth: The Economics of Agrarian Change under Population Pressure. London: George Allen & Unwin; Chicago: Aldine, 124 pp. の書誌・伝記）](https://en.wikipedia.org/wiki/Ester_Boserup) `リファレンス`
 
+## 関連概念
+- [[econ-population-growth-technological-change-kremer|クレマーの人口成長と技術変化——紀元前100万年からの超長期データが示すアイデア駆動型成長]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[human-flynn-effect|フリン効果]] — 出典を共有
+- [[infosoc-media-multitasking|メディア・マルチタスキング]] — 出典を共有
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 出典を共有
+- [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 出典を共有
+- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 出典を共有
+- [[human-emotional-contagion|情動感染]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [University of Cambridge, Institute for Manufacturing — SWOT](https://www.ifm.eng.cam.ac.uk/research/dstools/swot/) `学術`
 - [Long Range Planning (ScienceDirect) — The origins of SWOT analysis（起源の学術的検証）](https://www.sciencedirect.com/science/article/pii/S0024630123000110) `学術`
 
+## 関連概念
+- [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 出典を共有
+- [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 出典を共有
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同分野の近傍
+- [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

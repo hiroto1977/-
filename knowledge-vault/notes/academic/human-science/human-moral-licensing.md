@@ -30,6 +30,12 @@ aliases:
 - [Khan & Dhar (2006) Licensing Effect in Consumer Choice, Journal of Marketing Research 43(2):259–266](https://journals.sagepub.com/doi/10.1509/jmkr.43.2.259) `学術`
 - [Self-licensing（モラル・ライセンシングの定義・自己イメージ機構・応用領域）](https://en.wikipedia.org/wiki/Self-licensing) `リファレンス`
 
+## 関連概念
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 同じ思想家
+- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同じ思想家
+- [[human-terror-management-greenberg|恐怖管理理論（グリーンバーグ＆ピジシンスキー）]] — 同分野の近傍
+- [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

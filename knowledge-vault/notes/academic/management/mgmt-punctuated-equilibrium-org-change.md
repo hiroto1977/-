@@ -31,6 +31,17 @@ Connie J.G. Gersick ／ Michael L. Tushman ／ Elaine Romanelli
 - [Gersick 1991 — Semantic Scholar entry](https://www.semanticscholar.org/paper/REVOLUTIONARY-CHANGE-THEORIES:-A-MULTILEVEL-OF-THE-Gersick/52524271c3298b5541c4346b18f5e07ac6c4590e) `学術`
 - [Punctuated equilibrium in social theory — Wikipedia](https://en.wikipedia.org/wiki/Punctuated_equilibrium_in_social_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 語彙が近い
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
+- [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [山田希 — 契約自由の原則とその制約法理をめぐる改正論議（立命館法学）](https://www.ritsumei.ac.jp/acd/cg/law/lex/15-56/036%20yamadanozomi.pdf) `学術`
 - [クラウドサイン — 改正民法522条・契約方式自由の原則とその例外](https://www.cloudsign.jp/media/houshikinojiyuu/) `メディア`
 
+## 関連概念
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 語彙が近い
+- [[legal-land-lease-right|借地借家法における借地権]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 出典を共有
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
+- [[bizlaw-real-subrogation|物上代位（民法304条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

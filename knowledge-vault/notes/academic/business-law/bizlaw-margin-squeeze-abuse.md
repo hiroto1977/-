@@ -31,6 +31,10 @@ aliases:
 - [Vogelsang, I. (2009) Margin Squeezes in Telecommunications: A Competition Law and Regulatory Perspective — Review of Network Economics, 8(4), 396–428（電気通信業での比較法分析）](https://doi.org/10.1093/antitrust/aat024) `学術`
 - [Wikipedia: Margin squeeze — EU Article 102, TeliaSonera, linkLine (US), regulatory economics](https://en.wikipedia.org/wiki/Margin_squeeze) `リファレンス`
 
+## 関連概念
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

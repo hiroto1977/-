@@ -30,6 +30,18 @@ aliases:
 - [Arrow, K. & Debreu, G. (1954) Existence of an Equilibrium for a Competitive Economy — Econometrica](https://doi.org/10.2307/1913610) `学術`
 - [Wikipedia: Edgeworth box — エッジワース・ボックスの概要](https://en.wikipedia.org/wiki/Edgeworth_box) `リファレンス`
 
+## 関連概念
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 語彙が近い
+- [[econ-edgeworth-box|エッジワース・ボックス]] — 語彙が近い
+- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同じ思想家
+- [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家
+- [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
+- [[econ-walras-law|ワルラスの法則]] — 同じ思想家
+- [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

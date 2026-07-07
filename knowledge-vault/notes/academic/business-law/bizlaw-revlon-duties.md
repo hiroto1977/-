@@ -30,6 +30,18 @@ Andrew G.T. Moore II（意見執筆判事）
 - [Harvard Law Forum — Analysis of Revlon Duty (2024)](https://corpgov.law.harvard.edu/2024/01/04/the-impact-of-the-duty-to-maximize-short-term-value-in-mergers-and-acquisitions-an-analysis-of-revlon/) `学術`
 - [Furlow, C.W. (2009) Reflections on the Revlon Doctrine, 11 U. Pa. J. Bus. L. 519](https://scholarship.law.upenn.edu/jbl/vol11/iss3/1/) `学術`
 
+## 関連概念
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 語彙が近い
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 出典を共有
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

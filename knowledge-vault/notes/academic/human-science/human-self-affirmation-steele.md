@@ -29,6 +29,13 @@ aliases:
 - [Steele, C.M. (1988) The Psychology of Self-Affirmation — Advances in Experimental Social Psychology 21](https://doi.org/10.1016/S0065-2601(08)60229-4) `学術`
 - [Wikipedia: Self-affirmation — Steele, self-integrity, defensiveness reduction, values affirmation](https://en.wikipedia.org/wiki/Self-affirmation) `リファレンス`
 
+## 関連概念
+- [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 同じ思想家
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同じ思想家
+- [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

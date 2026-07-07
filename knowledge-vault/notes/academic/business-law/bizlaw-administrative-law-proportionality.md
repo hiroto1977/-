@@ -29,6 +29,11 @@ aliases:
 - [Alexy, R. (2002). A Theory of Constitutional Rights — Oxford UP](https://doi.org/10.1017/CBO9780511777141) `学術`
 - [Wikipedia: Proportionality in law — administrative rights limitation](https://en.wikipedia.org/wiki/Proportionality_(law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]] — 同分野の近傍
+- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 同分野の近傍
+- [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

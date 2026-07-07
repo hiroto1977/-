@@ -29,6 +29,18 @@ aliases:
 - [Mintzberg, H. (1979) The Structuring of Organizations — Prentice-Hall (WorldCat)](https://www.worldcat.org/oclc/4136131) `学術`
 - [Wikipedia: Mintzberg organizational configurations — simple/machine/professional/divisional/adhocracy, coordination mechanisms](https://en.wikipedia.org/wiki/Henry_Mintzberg#Organizational_configurations) `リファレンス`
 
+## 関連概念
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同じ思想家
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-woodward-technology|ウッドワードの技術類型]] — 同じ思想家
+- [[infosoc-mcdonaldization|マクドナルド化]] — 同じ思想家
+- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

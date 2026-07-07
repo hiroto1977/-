@@ -29,6 +29,18 @@ aliases:
 - [Bhagwati, J. N. (1982) Directly unproductive, profit-seeking (DUP) activities — Journal of Political Economy](https://doi.org/10.1086/261015) `学術`
 - [Wikipedia: Rent-seeking — directly unproductive profit-seeking (DUP), Bhagwati, deadweight loss](https://en.wikipedia.org/wiki/Rent-seeking) `リファレンス`
 
+## 関連概念
+- [[econ-immiserizing-growth|窮乏化成長]] — 同じ思想家
+- [[econ-rent-seeking|レントシーキング]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+- [[econ-conflict-economics-hirshleifer|紛争の経済学——「力の暗黒面」と奪取の合理的選択]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

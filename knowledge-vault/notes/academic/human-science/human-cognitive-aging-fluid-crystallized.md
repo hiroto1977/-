@@ -30,6 +30,12 @@ aliases:
 - [国立保健医療科学院 認知症・老化研究 — 高齢化と認知機能](https://www.niph.go.jp/research/aging/) `公的`
 - [Wikipedia: 流動性知能 — キャッテルのGf-Gcモデルと老化の解説](https://ja.wikipedia.org/wiki/%E6%B5%81%E5%8B%95%E6%80%A7%E7%9F%A5%E8%83%BD) `リファレンス`
 
+## 関連概念
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 語彙が近い
+- [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]] — 同じ思想家
+- [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同じ思想家
+- [[human-triarchic-intelligence-sternberg|知能の鼎立理論——分析的・創造的・実践的知能の三側面]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

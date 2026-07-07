@@ -29,6 +29,17 @@ aliases:
 - [Sachs, J.D. & Warner, A.M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398](https://www.nber.org/papers/w5398) `学術`
 - [Wikipedia: Resource curse — Sachs & Warner, Dutch disease, rent-seeking, weak institutions, paradox of plenty](https://en.wikipedia.org/wiki/Resource_curse) `リファレンス`
 
+## 関連概念
+- [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]] — 同じ思想家
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

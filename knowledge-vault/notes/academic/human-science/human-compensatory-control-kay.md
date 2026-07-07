@@ -30,6 +30,10 @@ Kay, Aaron C.　（2008 God and the Government: Testing a Compensatory Control M
 - [Kay, A.C., Whitson, J.A., Gaucher, D. & Galinsky, A.D. (2009) Compensatory Control: Achieving Order Through the Mind, Our Institutions, and the Heavens, Current Directions in Psychological Science 18(5), 264-268](https://journals.sagepub.com/doi/10.1111/j.1467-8721.2009.01649.x) `学術`
 - [Friesen, J.P., Kay, A.C., Eibach, R.P. & Galinsky, A.D. (2014) Seeking Structure in Social Organization: Compensatory Control and the Psychological Advantages of Hierarchy, Journal of Personality and Social Psychology 106(4), 590-609](https://pubmed.ncbi.nlm.nih.gov/24512510/) `学術`
 
+## 関連概念
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同分野の近傍
+- [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

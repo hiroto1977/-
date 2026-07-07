@@ -36,6 +36,18 @@ prefecture
 - [岩手県中小企業団体中央会 公募告知](https://www.ginga.or.jp/2025/04/07/14868/) `運営団体`
 - [J-Net21 支援情報（岩手県 賃上げ環境整備補助金）](https://j-net21.smrj.go.jp/snavi/support) `公的`
 
+## 関連概念
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 語彙が近い
+- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 語彙が近い
+- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 出典を共有
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 出典を共有
+- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [北海道 不動産取得税（相続は非課税）](https://www.pref.hokkaido.lg.jp/sm/zim/tax/fudou01.html) `自治体`
 - [東京都主税局 不動産取得税（課税標準・軽減措置）](https://www.tax.metro.tokyo.lg.jp/shitsumon/real_estate/f) `自治体`
 
+## 関連概念
+- [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 語彙が近い
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 語彙が近い
+- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]] — 語彙が近い
+- [[tax-city-planning-tax|都市計画税]] — 語彙が近い
+- [[subsidy-regional-employment|地域雇用開発助成金]] — 出典を共有
+- [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 出典を共有
+- [[subsidy-hokkaido|中小企業競争力強化促進事業（北海道）]] — 出典を共有
+- [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
+- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

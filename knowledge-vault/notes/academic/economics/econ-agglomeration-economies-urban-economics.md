@@ -30,6 +30,18 @@ aliases:
 - [Glaeser et al. (1992) Growth in Cities — Journal of Political Economy](https://doi.org/10.1016/0094-1190(91)90002-C) `学術`
 - [Wikipedia: Economies of agglomeration — 集積経済の理論と実証](https://en.wikipedia.org/wiki/Economies_of_agglomeration) `リファレンス`
 
+## 関連概念
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[econ-forward-guidance|フォワードガイダンス（時間軸政策）]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 同じ思想家
+- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+- [[econ-land-value-tax-george|土地価値税とジョージズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

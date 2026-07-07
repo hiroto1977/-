@@ -29,6 +29,11 @@ aliases:
 - [Craig, A. D. & Bushnell, M. C. (1994) The thermal grill illusion: unmasking the burn of cold pain — Science](https://doi.org/10.1126/science.8023145) `学術`
 - [Wikipedia: Thermal grill illusion — pain, central integration, disinhibition, cold](https://en.wikipedia.org/wiki/Thermal_grill_illusion) `リファレンス`
 
+## 関連概念
+- [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

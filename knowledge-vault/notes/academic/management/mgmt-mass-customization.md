@@ -30,6 +30,11 @@ aliases:
 - [Springer Nature — Mass Customization（概念・定義）](https://link.springer.com/chapter/10.1007/978-1-4615-1705-4_23) `学術`
 - [Wikipedia — Mass customization（デイビス1987命名・パイン1993・定義）](https://en.wikipedia.org/wiki/Mass_customization) `リファレンス`
 
+## 関連概念
+- [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — 同じ思想家
+- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
+- [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

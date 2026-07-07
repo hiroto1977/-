@@ -36,6 +36,18 @@ municipality
 - [広島市中小企業支援センター 創業チャレンジ・ベンチャー支援](https://www.assist.ipc.city.hiroshima.jp/sougyou/sougyou05.html) `運営団体`
 - [広島市産業振興センター 概要](https://www.ipc.city.hiroshima.jp/gaiyou.html) `運営団体`
 
+## 関連概念
+- [[subsidy-mie|三重県経営向上計画・経営革新計画に基づく支援（三重県）]] — 語彙が近い
+- [[subsidy-kanagawa|中小企業生産性向上促進事業費補助金（神奈川県）]] — 語彙が近い
+- [[subsidy-saitama-city|さいたま市起業家支援補助金（SCAP連動）]] — 語彙が近い
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
+- [[subsidy-child-allowance|児童手当]] — 同じ思想家
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家
+- [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 同じ思想家
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

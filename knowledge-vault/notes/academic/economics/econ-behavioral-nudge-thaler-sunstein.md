@@ -30,6 +30,18 @@ aliases:
 - [Behavioural Insights Team (BIT) — UK Government Nudge Unit](https://www.bi.team/) `公的`
 - [Wikipedia: ナッジ — 選択アーキテクチャと行動経済学の政策応用](https://ja.wikipedia.org/wiki/%E3%83%8A%E3%83%83%E3%82%B8) `リファレンス`
 
+## 関連概念
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 語彙が近い
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 語彙が近い
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

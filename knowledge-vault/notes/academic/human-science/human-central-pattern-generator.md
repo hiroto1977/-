@@ -31,6 +31,11 @@ Thomas Graham Brown ／ Sten Grillner ／ Eve Marder
 - [Grillner (2006) "Biological pattern generation: the cellular and computational logic of networks in motion" — Neuron 52(5):751–766](https://pubmed.ncbi.nlm.nih.gov/17145498/) `学術`
 - [Central pattern generator — Wikipedia](https://en.wikipedia.org/wiki/Central_pattern_generator) `リファレンス`
 
+## 関連概念
+- [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — 同分野の近傍
+- [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同分野の近傍
+- [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

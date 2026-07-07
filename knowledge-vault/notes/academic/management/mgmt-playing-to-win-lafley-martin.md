@@ -29,6 +29,18 @@ A・G・ラフリー ／ ロジャー・マーティン ／ マイケル・ポ�
 - [Lafley, A. G. & Martin, R. L. (2013) Playing to Win: How Strategy Really Works — Harvard Business Review Press](https://www.worldcat.org/oclc/812254346) `学術`
 - [Wikipedia: Roger Martin — Playing to Win, strategic choice cascade, where to play / how to win](https://en.wikipedia.org/wiki/Roger_Martin_(professor)) `リファレンス`
 
+## 関連概念
+- [[mgmt-management-by-objectives|目標管理（MBO）]] — 同じ思想家
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同じ思想家
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
+- [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
+- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同じ思想家
+- [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

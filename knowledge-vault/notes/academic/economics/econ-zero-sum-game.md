@@ -30,6 +30,18 @@ aliases:
 - [Minimax Theorem — Wolfram MathWorld（von Neumann 1928）](https://mathworld.wolfram.com/MinimaxTheorem.html) `リファレンス`
 - [Zero Sum Games and the MinMax Theorem — University of Pennsylvania 講義資料](https://www.cis.upenn.edu/~aaroth/courses/slides/agt17/lect06.pdf) `学術`
 
+## 関連概念
+- [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]] — 同じ思想家
+- [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
+- [[econ-condorcet-jury-theorem|コンドルセの陪審定理（Condorcet Jury Theorem）]] — 出典を共有
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 同分野の近傍
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

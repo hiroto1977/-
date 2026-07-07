@@ -31,6 +31,10 @@ aliases:
 - [Apperzeption — Deutsche Vierteljahrsschrift für Literaturwissenschaft und Geistesgeschichte (Springer).](https://link.springer.com/article/10.1007/s41245-020-00117-z) `学術`
 - [Herbartianism — Encyclopaedia Britannica.](https://www.britannica.com/topic/Herbartianism) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
+- [[human-social-proof|社会的証明]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

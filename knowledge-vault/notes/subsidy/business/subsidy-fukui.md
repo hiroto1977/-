@@ -36,6 +36,18 @@ prefecture
 - [福井県商工会連合会 補助金案内](https://www.shokokai-fukui.or.jp/) `運営団体`
 - [補助金ポータル 福井県 省エネ設備等導入支援事業補助金](https://hojyokin-portal.jp/subsidies/58521) `メディア`
 
+## 関連概念
+- [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 出典を共有
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

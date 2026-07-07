@@ -31,6 +31,15 @@ G.H. Treitel ／ Arthur L. Corbin ／ Samuel Williston
 - [UK Contracts (Rights of Third Parties) Act 1999](https://www.legislation.gov.uk/ukpga/1999/13/contents) `公的`
 - [Harvard Law Review — Formation of contract and the posting rule](https://www.jstor.org/stable/1120480) `学術`
 
+## 関連概念
+- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 語彙が近い
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 語彙が近い
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

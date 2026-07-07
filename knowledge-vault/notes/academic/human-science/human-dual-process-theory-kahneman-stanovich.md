@@ -30,6 +30,11 @@ aliases:
 - [Evans (2008) Dual-Processing Accounts of Reasoning, Judgment, and Social Cognition — Annual Review of Psychology](https://doi.org/10.1146/annurev.psych.59.103006.093629) `学術`
 - [Wikipedia: Dual process theory — 二重過程理論の歴史・類型・批判の概説](https://en.wikipedia.org/wiki/Dual_process_theory) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同分野の近傍
+- [[human-stereotype-threat|ステレオタイプ脅威]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

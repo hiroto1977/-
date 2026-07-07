@@ -30,6 +30,11 @@ EU一般データ保護規則（GDPR、2016年制定、2018年施行）は、個
 - [Kuner, C. (2020) Transborder Data Flows and Data Privacy Law — Oxford University Press](https://doi.org/10.1017/9781108292825) `学術`
 - [Wikipedia: GDPR — 一般データ保護規則の概要](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation) `リファレンス`
 
+## 関連概念
+- [[bizlaw-eu-general-data-protection-regulation-gdpr|EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制]] — 語彙が近い
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 語彙が近い
+- [[bizlaw-data-protection-gdpr-principles|データ保護法とGDPR原則——EU一般データ保護規則の七原則と越境データ流通]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [McCarty, W. (2005) Humanities Computing — Palgrave Macmillan](https://doi.org/10.1093/llc/fqp036) `学術`
 - [Wikipedia: Digital humanities — computational methods in arts](https://en.wikipedia.org/wiki/Digital_humanities) `リファレンス`
 
+## 関連概念
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同分野の近傍
+- [[infosoc-time-geography-hagerstrand|時間地理学——個人の時空間軌跡と行動を制約する三つの拘束]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

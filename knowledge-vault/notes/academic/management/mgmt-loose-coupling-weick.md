@@ -33,6 +33,11 @@ aliases:
 - [Weick, K.E. (1976). Educational Organizations as Loosely Coupled Systems. Administrative Science Quarterly, 21(1), 1-19.](https://www.jstor.org/stable/2391875) `学術`
 - [Orton, J.D. & Weick, K.E. (1990). Loosely Coupled Systems: A Reconceptualization. Academy of Management Review, 15(2), 203-223.](https://journals.aom.org/doi/10.5465/amr.1990.4308154) `学術`
 
+## 関連概念
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

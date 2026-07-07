@@ -29,6 +29,11 @@ aliases:
 - [Wikipedia: Johann Heinrich von Thünen — Der isolierte Staat (1826), agricultural location rings, land rent, transport cost](https://en.wikipedia.org/wiki/Johann_Heinrich_von_Th%C3%BCnen) `リファレンス`
 - [Wikipedia: Bid rent theory — von Thünen rings, Alonso urban extension, distance and the rent gradient](https://en.wikipedia.org/wiki/Bid_rent_theory) `リファレンス`
 
+## 関連概念
+- [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

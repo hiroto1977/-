@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Subrogation — step into the shoes, insurer recovery, double recovery prevention](https://www.law.cornell.edu/wex/subrogation) `リファレンス`
 - [Wikipedia: Subrogation — subrogee/subrogor, insurance, legal/conventional/equitable subrogation](https://en.wikipedia.org/wiki/Subrogation) `リファレンス`
 
+## 関連概念
+- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 語彙が近い
+- [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家
+- [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同じ思想家
+- [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — 同じ思想家
+- [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 同じ思想家
+- [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同じ思想家
+- [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 同じ思想家
+- [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 同じ思想家
+- [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

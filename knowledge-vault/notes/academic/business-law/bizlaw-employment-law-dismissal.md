@@ -29,6 +29,12 @@ aliases:
 - [OECD — Employment Protection Legislation (EPL) Index: methodology, indicators, country comparisons](https://www.oecd.org/employment/emp/employmentprotection.htm) `公的`
 - [Wikipedia: Wrongful dismissal — employment law, unfair dismissal, just cause, EPL, EU directives](https://en.wikipedia.org/wiki/Wrongful_dismissal) `リファレンス`
 
+## 関連概念
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
+- [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
+- [[bizlaw-assignment-security|譲渡担保]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

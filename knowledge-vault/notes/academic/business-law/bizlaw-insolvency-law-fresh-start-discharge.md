@@ -29,6 +29,15 @@ aliases:
 - [法務省 — 民事再生法・破産法の解説](https://www.moj.go.jp/MINJI/minji03.html) `公的`
 - [Wikipedia: Insolvency — bankruptcy law and fresh start doctrine](https://en.wikipedia.org/wiki/Insolvency) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同じ思想家
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同じ思想家
+- [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同じ思想家
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
+- [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ aliases:
 - [消費者庁 — 公益通報者保護制度の概要](https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/) `公的`
 - [Wikipedia: Whistleblower protection — SOX, Dodd-Frank, EU Directive, retaliation](https://en.wikipedia.org/wiki/Whistleblower_protection_in_the_United_States) `リファレンス`
 
+## 関連概念
+- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-dodd-frank|内部告発者保護とドッド・フランク法（米国）]] — 語彙が近い
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

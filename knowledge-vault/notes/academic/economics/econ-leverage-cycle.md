@@ -30,6 +30,17 @@ aliases:
 - [Geanakoplos, "Solving the Present Crisis and Managing the Leverage Cycle," NY Fed Economic Policy Review (2010)](https://www.newyorkfed.org/medialibrary/media/research/epr/10v16n1/1008gean.pdf) `公的`
 - [Fostel & Geanakoplos, "Endogenous Collateral Constraints and the Leverage Cycle," Annual Review of Economics (2014)](https://pages.stern.nyu.edu/~dbackus/BFZ/Literature/FostelGeanakoplos_ARE_14.pdf) `学術`
 
+## 関連概念
+- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 出典を共有
+- [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — 出典を共有
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 出典を共有
+- [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
+- [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 出典を共有
+- [[eh-2007|2007年（平成19年）]] — 出典を共有
+- [[eh-2014|2014年（平成26年）]] — 出典を共有
+- [[econ-financial-contagion|金融コンタジオン：銀行間ネットワークのトポロジーとシステミックリスクの連鎖波及メカニズム]] — 同分野の近傍
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

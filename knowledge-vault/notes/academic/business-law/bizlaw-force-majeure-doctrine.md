@@ -32,6 +32,18 @@ Ewan McKendrick ／ Gerhard Treitel ／ Arthur Linton Corbin ／ Hein Kötz ／ 
 - [Rowan (2021) "The UNIDROIT Principles & COVID-19 Force Majeure" — Oxford Journal of Legal Studies](https://doi.org/10.1093/ojls/gqab027) `学術`
 - [UNCITRAL — United Nations Convention on Contracts for the International Sale of Goods (CISG)](https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg) `公的`
 
+## 関連概念
+- [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 語彙が近い
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 同じ思想家
+- [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 出典を共有
+- [[bizlaw-equitable-estoppel|衡平法上の禁反言]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

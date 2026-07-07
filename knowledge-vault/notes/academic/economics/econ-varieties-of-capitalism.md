@@ -29,6 +29,10 @@ aliases:
 - [Oxford University Press — Hall & Soskice eds.『Varieties of Capitalism: The Institutional Foundations of Comparative Advantage』(2001) 原著](https://academic.oup.com/book/771) `学術`
 - [Encyclopaedia Britannica — Capitalism（資本主義の制度的多様性・比較資本主義論の文脈）](https://www.britannica.com/topic/capitalism) `リファレンス`
 
+## 関連概念
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同分野の近傍
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

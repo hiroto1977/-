@@ -29,6 +29,15 @@ aliases:
 - [Sonnentag, S. & Fritz, C. (2007) The Recovery Experience Questionnaire — Journal of Occupational Health Psychology](https://doi.org/10.1037/1076-8998.12.3.204) `学術`
 - [Wikipedia: Recovery experiences — psychological detachment, relaxation, mastery, control](https://en.wikipedia.org/wiki/Occupational_burnout) `リファレンス`
 
+## 関連概念
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同じ思想家
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

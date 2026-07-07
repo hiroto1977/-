@@ -30,6 +30,11 @@ aliases:
 - [Computer History Museum「Moore’s Law」（コンピュータ史博物館の解説）](https://www.computerhistory.org/revolution/digital-logic/12/267) `リファレンス`
 - [imec「What is Moore’s law? / Is Moore’s law dead?」（半導体研究機関による定義と鈍化論）](https://www.imec-int.com/en/what-we-offer/semiconductor-education-and-workforce-development/microchips/moores-law) `学術`
 
+## 関連概念
+- [[eh-1977|1977年（昭和52年）]] — 出典を共有
+- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
+- [[infosoc-web3|Web3]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Mittelstadt, B. et al. (2016) "The Ethics of Algorithms" — Big Data & Society](https://doi.org/10.1177/2053951716679679) `学術`
 - [Wikipedia: Algorithmic accountability — 概念・方法論・規制動向](https://en.wikipedia.org/wiki/Algorithmic_accountability) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
+- [[infosoc-algorithmic-governance-yeung|アルゴリズム統治——自動化された意思決定の社会的制御と民主的正統性]] — 同じ思想家
+- [[infosoc-profiling|プロファイリングと自動意思決定]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

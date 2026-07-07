@@ -30,6 +30,12 @@ aliases:
 - [Ruggie (2011) Guiding Principles on Business and Human Rights — UN Human Rights Council](https://doi.org/10.1017/S0020589311000224) `学術`
 - [Wikipedia: CSDDD — EU企業デューディリジェンス指令の概説](https://en.wikipedia.org/wiki/Corporate_Sustainability_Due_Diligence_Directive) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-human-rights-due-diligence|国際人権デューデリジェンス（UNGPs）の法的義務化と企業責任]] — 語彙が近い
+- [[bizlaw-corporate-social-responsibility-law|CSRの法的規制——企業の社会的責任の自主規制から強制開示・デューデリジェンス義務への展開]] — 語彙が近い
+- [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 同じ思想家
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

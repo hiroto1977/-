@@ -29,6 +29,10 @@ Simone Bosbach, Jonathan Cole, Wolfgang Prinz & Günther Knoblich（Nature Neuro
 - [Bosbach et al. (2005) Inferring Another's Expectation from Action: The Role of Peripheral Sensation — Nature Neuroscience 8(10), pp.1295-1297](https://www.nature.com/articles/nn1535) `学術`
 - [Bosbach et al. (2005) Full-Text PDF — ResearchGate](https://www.researchgate.net/publication/7625237_Inferring_another's_expectation_from_action_The_role_of_peripheral_sensation) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [内閣府 合理的配慮の提供義務化リーフレット](https://www8.cao.go.jp/shougai/suishin/sabekai_leaflet-r05.html) `公的`
 - [政府広報オンライン 合理的配慮の提供が義務化](https://www.gov-online.go.jp/article/202402/entry-5611.html) `メディア`
 
+## 関連概念
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 語彙が近い
+- [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 分野横断
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
+- [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 出典を共有
+- [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

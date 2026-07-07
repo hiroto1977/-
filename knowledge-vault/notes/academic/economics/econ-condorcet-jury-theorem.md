@@ -30,6 +30,11 @@ aliases:
 - [Condorcet's Jury Theorem — Wolfram MathWorld](https://mathworld.wolfram.com/CondorcetsJuryTheorem.html) `リファレンス`
 - [Boland (1989) Majority Systems and the Condorcet Jury Theorem — JRSS Series D](https://academic.oup.com/jrsssd/article-pdf/38/3/181/49926771/jrsssd_38_3_181.pdf) `学術`
 
+## 関連概念
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 語彙が近い
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

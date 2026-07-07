@@ -30,6 +30,17 @@ aliases:
 - [Poell, Nieborg & van Dijck (2019) Platformisation — Internet Policy Review 8(4)](https://policyreview.info/concepts/platformisation) `学術`
 - [van Dijck, Poell & de Waal (2018) The Platform Society — Oxford University Press](https://global.oup.com/academic/product/the-platform-society-9780190889760) `学術`
 
+## 関連概念
+- [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同じ思想家
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 出典を共有
+- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
+- [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同分野の近傍
+- [[infosoc-datafication-theory|データフィケーション理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

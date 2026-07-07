@@ -31,6 +31,18 @@ aliases:
 - [EconPapers / RePEc — 原論文の書誌情報（掲載誌・巻号・頁）](https://econpapers.repec.org/RePEc:ucp:jpolec:v:81:y:1973:i:3:p:637-54) `学術`
 - [Wikipedia — ボラティリティ・スマイル（一定ボラティリティ・対数正規前提の破綻と限界）](https://en.wikipedia.org/wiki/Volatility_smile) `リファレンス`
 
+## 関連概念
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[mgmt-real-options-theory|リアル・オプション理論]] — 同じ思想家
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
+- [[econ-siegel-paradox-exchange|シーゲルのパラドックス——為替の期待は両通貨で同時に不偏たりえない]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

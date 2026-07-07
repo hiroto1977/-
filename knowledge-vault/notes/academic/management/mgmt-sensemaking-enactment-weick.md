@@ -31,6 +31,18 @@ Karl E. Weick ／ Kathleen M. Sutcliffe ／ David Obstfeld
 - [Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)](https://link.springer.com/article/10.1007/s10551-011-0888-6) `学術`
 - [Oxford Bibliographies — Sensemaking in Organizations](https://www.oxfordbibliographies.com/display/document/obo-9780199846740/obo-9780199846740-0090.xml) `リファレンス`
 
+## 関連概念
+- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
+- [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
+- [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

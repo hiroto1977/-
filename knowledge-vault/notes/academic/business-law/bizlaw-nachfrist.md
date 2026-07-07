@@ -29,6 +29,12 @@ aliases:
 - [UNCITRAL — CISG条文テキスト（第47条・第63条のNachfrist規定を含む国際統一売買法）](https://www.uncitral.org/pdf/english/texts/sales/cisg/V1056997-CISG-e-book.pdf) `公的`
 - [法務省 — 民法（債権関係）改正の概要（541条催告解除の改正を含む）](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 
+## 関連概念
+- [[legal-contract-cancellation|契約の解除（催告解除・無催告解除／改正民法）]] — 語彙が近い
+- [[bizlaw-nachfrist-notice-cure|ナッハフリスト制度——追加履行期間の設定による契約解除手続]] — 語彙が近い
+- [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同分野の近傍
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

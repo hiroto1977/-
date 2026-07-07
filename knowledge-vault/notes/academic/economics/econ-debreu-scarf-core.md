@@ -29,6 +29,18 @@ aliases:
 - [Debreu, G. & Scarf, H. (1963) A limit theorem on the core of an economy — International Economic Review](https://doi.org/10.2307/2525306) `学術`
 - [Wikipedia: Core (economics) — Debreu–Scarf theorem, Edgeworth conjecture, competitive equilibrium](https://en.wikipedia.org/wiki/Core_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 同じ思想家
+- [[econ-edgeworth-box|エッジワース・ボックス]] — 同じ思想家
+- [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

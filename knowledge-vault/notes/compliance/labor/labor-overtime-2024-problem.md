@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 建設業・ドライバー・医師の上限規制 特設サイト](https://hatarakikatasusume.mhlw.go.jp/about.html) `公的`
 - [2024年問題 時間外労働上限規制 解説](https://www.otsuka-shokai.co.jp/erpnavi/service/personnel/startingwork/solving-problems/archive/240418-02.html) `メディア`
 
+## 関連概念
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 語彙が近い
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
+- [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

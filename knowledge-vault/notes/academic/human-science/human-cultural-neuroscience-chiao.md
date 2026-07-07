@@ -30,6 +30,11 @@ aliases:
 - [Han, S. & Northoff, G. (2008) "Culture-Sensitive Neural Substrates of Human Cognition" — Nature Reviews Neuroscience](https://doi.org/10.1038/nrn2646) `学術`
 - [Wikipedia: Cultural neuroscience — 文化と脳機能の相互作用研究](https://en.wikipedia.org/wiki/Cultural_neuroscience) `リファレンス`
 
+## 関連概念
+- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — 同分野の近傍
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
+- [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [IEEE Spectrum “The Great Lightbulb Conspiracy”（Phoebus cartel 1924・電球寿命を1000時間に制限）](https://spectrum.ieee.org/the-great-lightbulb-conspiracy) `メディア`
 - [Wikipedia “Planned obsolescence”（定義・類型・スローンの年次モデルチェンジ・パッカード・right to repair）](https://en.wikipedia.org/wiki/Planned_obsolescence) `リファレンス`
 
+## 関連概念
+- [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 出典を共有
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 出典を共有
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
+- [[mgmt-organizational-death-theory|組織死亡理論]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

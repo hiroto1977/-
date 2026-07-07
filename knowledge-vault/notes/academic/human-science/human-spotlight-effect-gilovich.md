@@ -30,6 +30,12 @@ aliases:
 - [Gilovich, T., Savitsky, K. & Medvec, V. H. (1998) The Illusion of Transparency — Journal of Personality and Social Psychology](https://doi.org/10.1037/0022-3514.75.2.332) `学術`
 - [Wikipedia: Spotlight effect — overestimation of self-salience in social situations overview](https://en.wikipedia.org/wiki/Spotlight_effect) `リファレンス`
 
+## 関連概念
+- [[human-illusion-of-transparency|透明性の錯覚]] — 同じ思想家
+- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同じ思想家
+- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同分野の近傍
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

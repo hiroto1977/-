@@ -31,6 +31,18 @@ aliases:
 - [Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management, 30(6), 749–778（文献サーベイ）](https://doi.org/10.1002/smj.324) `学術`
 - [Wikipedia: Upper echelons theory — Hambrick & Mason, TMT diversity, CEO overconfidence, observable characteristics](https://en.wikipedia.org/wiki/Upper_echelons_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
+- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
+- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

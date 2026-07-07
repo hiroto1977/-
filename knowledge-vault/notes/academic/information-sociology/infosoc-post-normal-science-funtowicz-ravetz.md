@@ -29,6 +29,11 @@ aliases:
 - [Funtowicz, S. O. & Ravetz, J. R. (1993) Science for the post-normal age — Futures](https://doi.org/10.1016/0016-3287(93)90022-L) `学術`
 - [Wikipedia: Post-normal science — decision stakes, uncertainty, extended peer community](https://en.wikipedia.org/wiki/Post-normal_science) `リファレンス`
 
+## 関連概念
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-mode-2-knowledge-gibbons|モード2知識生産——応用の文脈で生まれる学際的な知]] — 同じ思想家
+- [[infosoc-technopopulism-bickerton|テクノポピュリズム——デジタル技術と反エリート主義の融合する政治変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Cepeda, Vul, Rohrer, Wixted & Pashler (2008) Spacing Effects in Learning: A Temporal Ridgeline of Optimal Retention — Psychological Science](https://doi.org/10.1111/j.1467-9280.2008.02209.x) `学術`
 - [Wikipedia: Spacing effect — 間隔効果の実験的証拠と応用の概説](https://en.wikipedia.org/wiki/Spacing_effect) `リファレンス`
 
+## 関連概念
+- [[human-spacing-effect-ebbinghaus|分散効果——学習を時間的に分散させると記憶が長く定着する]] — 同じ思想家
+- [[human-forgetting-curve-ebbinghaus|忘却曲線——学習直後に急速に進み次第に緩やかになる忘却]] — 同じ思想家
+- [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同じ思想家
+- [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同分野の近傍
+- [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

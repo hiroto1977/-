@@ -29,6 +29,11 @@ aliases:
 - [Berne, E. (1961) Transactional Analysis in Psychotherapy — Grove Press](https://doi.org/10.1177/036215376100100101) `学術`
 - [Wikipedia: Transactional analysis — ego states, Parent-Adult-Child, games, Berne](https://en.wikipedia.org/wiki/Transactional_analysis) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同じ思想家
+- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

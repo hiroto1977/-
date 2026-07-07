@@ -31,6 +31,18 @@ Richard A. Posner ／ W. Page Keeton
 - [Wikipedia — Pure economic loss](https://en.wikipedia.org/wiki/Pure_economic_loss) `リファレンス`
 - [Britannica — Tort law](https://www.britannica.com/topic/tort-law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 同じ思想家
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 出典を共有
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同分野の近傍
+- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

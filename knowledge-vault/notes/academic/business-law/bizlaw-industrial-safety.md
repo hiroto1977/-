@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省「労働安全衛生法（昭和47年6月8日法律第57号）」](https://www.mhlw.go.jp/web/t_doc?dataId=74001000&dataType=0&pageNo=1) `公的`
 - [厚生労働省「ストレスチェック制度・メンタルヘルス対策」](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/index.html) `公的`
 
+## 関連概念
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 分野横断
+- [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
+- [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 同分野の近傍
+- [[bizlaw-food-labeling|食品表示法]] — 同分野の近傍
+- [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

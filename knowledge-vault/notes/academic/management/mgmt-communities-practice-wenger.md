@@ -29,6 +29,14 @@ aliases:
 - [Wenger (1998) Communities of Practice: Learning, Meaning, and Identity — Cambridge University Press](https://doi.org/10.1017/CBO9780511803932) `学術`
 - [Wikipedia: Community of practice — Wenger, Lave, LPP, knowledge management, organizational learning](https://en.wikipedia.org/wiki/Community_of_practice) `リファレンス`
 
+## 関連概念
+- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 語彙が近い
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
+- [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
+- [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同分野の近傍
+- [[mgmt-middle-up-down-management-nonaka|ミドル・アップダウン・マネジメント（野中郁次郎）]] — 同分野の近傍
+- [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

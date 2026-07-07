@@ -29,6 +29,10 @@ aliases:
 - [Greenhalgh, L. & Rosenblatt, Z. (1984) Job insecurity: Toward conceptual clarity — Academy of Management Review](https://doi.org/10.2307/258284) `学術`
 - [Wikipedia: Job security — job insecurity, perceived threat, powerlessness, work stress](https://en.wikipedia.org/wiki/Job_security) `リファレンス`
 
+## 関連概念
+- [[mgmt-peter-principle|ピーターの法則]] — 同分野の近傍
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

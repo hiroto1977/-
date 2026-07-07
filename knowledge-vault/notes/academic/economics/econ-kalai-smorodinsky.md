@@ -29,6 +29,17 @@ aliases:
 - [Kalai, E. & Smorodinsky, M. (1975) Other solutions to Nash's bargaining problem — Econometrica](https://doi.org/10.2307/1913844) `学術`
 - [Wikipedia: Kalai–Smorodinsky bargaining solution — monotonicity, ideal point, bargaining](https://en.wikipedia.org/wiki/Kalai%E2%80%93Smorodinsky_bargaining_solution) `リファレンス`
 
+## 関連概念
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[econ-zeuthen-bargaining|ツォイテンの交渉モデル——衝突を賭ける覚悟が譲歩を決める]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-stag-hunt|鹿狩りゲーム（スタグハント）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+- [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同じ思想家
+- [[econ-salop-model|サロップの円環都市モデル]] — 同分野の近傍
+- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

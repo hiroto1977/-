@@ -30,6 +30,18 @@ aliases:
 - [Tversky & Kahneman (1971) “Belief in the Law of Small Numbers”, Psychological Bulletin（小数の法則）](http://stats.org.uk/statistical-inference/TverskyKahneman1971.pdf) `学術`
 - [Chen, Moskowitz & Shue (2016) QJE 131(3):1181–1242（負の自己相関の実証）](https://academic.oup.com/qje/article/131/3/1181/2590011) `学術`
 
+## 関連概念
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

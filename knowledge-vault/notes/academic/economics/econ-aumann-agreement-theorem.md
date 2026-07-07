@@ -29,6 +29,10 @@ Robert J. Aumann（ロバート・オーマン・1976年論文・2005年ノー�
 - [Aumann, R. J. (1976). Agreeing to Disagree. The Annals of Statistics, 4(6), 1236-1239.](https://projecteuclid.org/journals/annals-of-statistics/volume-4/issue-6/Agreeing-to-Disagree/10.1214/aos/1176343654.full) `学術`
 - [Wikipedia, “Aumann's agreement theorem”（共通事前確率＋事後確率の共有知識→事後確率は一致・共有知識・無取引定理との関係の概説）](https://en.wikipedia.org/wiki/Aumann%27s_agreement_theorem) `リファレンス`
 
+## 関連概念
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同分野の近傍
+- [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

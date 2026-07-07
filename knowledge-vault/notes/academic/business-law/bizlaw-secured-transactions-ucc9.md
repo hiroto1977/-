@@ -31,6 +31,18 @@ aliases:
 - [UNIDROIT Cape Town Convention (2001) — International interests in mobile equipment; aircraft, rail, space objects protocols](https://elibrary.unidroit.org/en/permalink/f/lhu48k/UNIDROIT_IND_2021002) `公的`
 - [Wikipedia: UCC Article 9 — attachment, perfection, priority, enforcement of security interests](https://en.wikipedia.org/wiki/Uniform_Commercial_Code#Article_9) `リファレンス`
 
+## 関連概念
+- [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 語彙が近い
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
+- [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同じ思想家
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同じ思想家
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
+- [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

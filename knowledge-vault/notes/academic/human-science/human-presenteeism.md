@@ -30,6 +30,10 @@ aliases:
 - [Hemp, P. 2004 Presenteeism: At Work—But Out of It. Harvard Business Review 82(10) 49-58](https://hbr.org/2004/10/presenteeism-at-work-but-out-of-it) `学術`
 - [Johns, G. 2010 Presenteeism in the workplace: A review and research agenda. Journal of Organizational Behavior 31(4) 519-542](https://doi.org/10.1002/job.630) `学術`
 
+## 関連概念
+- [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]] — 同分野の近傍
+- [[human-resilience|レジリエンス（心理的回復力）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

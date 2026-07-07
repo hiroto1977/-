@@ -30,6 +30,17 @@ aliases:
 - [Encyclopedia.com: Toffler, Alvin（第二の波の6原則・脱大量化）](https://www.encyclopedia.com/media/encyclopedias-almanacs-transcripts-and-maps/toffler-alvin-1928) `リファレンス`
 - [Springer Nature Link: The Prosumer Movement（プロシューマー概念の学術的位置づけ）](https://link.springer.com/chapter/10.1007/978-3-531-91998-0_2) `学術`
 
+## 関連概念
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

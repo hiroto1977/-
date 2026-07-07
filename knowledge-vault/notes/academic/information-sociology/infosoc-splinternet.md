@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Splinternet](https://en.wikipedia.org/wiki/Splinternet) `リファレンス`
 - [Council on Foreign Relations — The Internet Is Fragmented](https://www.cfr.org/blog/internet-fragmented-what-should-united-states-do-now) `リファレンス`
 
+## 関連概念
+- [[eh-1986|1986年（昭和61年）]] — 出典を共有
+- [[eh-2007|2007年（平成19年）]] — 出典を共有
+- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
+- [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Jenkins, H. (1992) Textual Poachers: Television Fans and Participatory Culture — Routledge](https://www.worldcat.org/oclc/24503865) `学術`
 - [Wikipedia: Textual poaching — fans, appropriation, de Certeau, participatory culture](https://en.wikipedia.org/wiki/Textual_poaching) `リファレンス`
 
+## 関連概念
+- [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同じ思想家
+- [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同じ思想家
+- [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

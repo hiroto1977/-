@@ -32,6 +32,12 @@ Ronald K. Mitchell ／ Bradley R. Agle ／ Donna J. Wood
 - [Neville & Menguc (2006) empirical test](https://doi.org/10.1177/0007650305280102) `学術`
 - [Parent & Deephouse (2007) salience empirics](https://doi.org/10.1111/j.1467-8551.2011.00784.x) `学術`
 
+## 関連概念
+- [[mgmt-stakeholder-salience-mitchell-agle|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル]] — 語彙が近い
+- [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — 同じ思想家
+- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同分野の近傍
+- [[mgmt-rfm-analysis|RFM分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

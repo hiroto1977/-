@@ -31,6 +31,17 @@ aliases:
 - [Wang, G. et al. (2016) Strategic Leadership Across Organizational Levels: A Meta-Analytic Review — Journal of Management, 42(5), 1374–1408（メタ分析）](https://doi.org/10.1177/0149206316647581) `学術`
 - [Wikipedia: Upper echelon theory — Hambrick & Mason, TMT demographics, managerial discretion, empirical research](https://en.wikipedia.org/wiki/Upper_echelon_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
+- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-ringi|稟議制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

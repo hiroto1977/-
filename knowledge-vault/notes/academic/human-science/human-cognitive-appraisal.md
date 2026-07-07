@@ -30,6 +30,18 @@ aliases:
 - [Appraisal theory（評価による感情・個人差・一次/二次評価）](https://en.wikipedia.org/wiki/Appraisal_theory) `リファレンス`
 - [Lazarus, On the Primacy of Cognition, American Psychologist (1984)（ザイアンスとの優位性論争）](https://eric.ed.gov/?id=EJ294312) `学術`
 
+## 関連概念
+- [[human-appraisal-theory-of-emotion|感情の評価理論]] — 語彙が近い
+- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 語彙が近い
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 語彙が近い
+- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — 同じ思想家
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール�
 - [Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508](https://search.worldcat.org/oclc/255508) `学術`
 - [Sherif, C. W., Sherif, M. & Nebergall, R. E. (1965) Attitude and Attitude Change: The Social Judgment-Involvement Approach. Philadelphia & London: W. B. Saunders, pp. 264 — book review, The British Journal of Psychiatry (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/abs/attitude-and-attitude-changes-the-social-judgmentinvolvement-approach-by-caro-lyn-w-sherif-muzafer-sherif-and-roger-e-nebergalk-philadelphia-and-london-w-b-saunders-company-1965-pp-264-price-2-18s-od/5AC604AB150601BC120EC0558C8F0406) `学術`
 
+## 関連概念
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同分野の近傍
+- [[infosoc-strong-programme|ストロング・プログラム（Strong Programme／Bloor 1976）——科学的知識の社会学（SSK）の綱領、真偽を問わず信念の原因を対称的に説明する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

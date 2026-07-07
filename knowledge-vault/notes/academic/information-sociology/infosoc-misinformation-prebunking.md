@@ -30,6 +30,12 @@ aliases:
 - [総務省 インターネット上の偽・誤情報対策 — 総務省](https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/sns.html) `公的`
 - [Wikipedia: 誤情報 — ミスインフォメーションとデジタル情報環境の解説](https://ja.wikipedia.org/wiki/%E8%AA%A4%E6%83%85%E5%A0%B1) `リファレンス`
 
+## 関連概念
+- [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — 語彙が近い
+- [[infosoc-misinformation-cognitive-science|誤情報の認知科学と信念訂正研究の情報行動論]] — 同じ思想家
+- [[infosoc-misinformation-correction-backfire|誤情報訂正とバックファイア効果の実証研究]] — 同じ思想家
+- [[infosoc-deepfake|ディープフェイク]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

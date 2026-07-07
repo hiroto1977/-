@@ -29,6 +29,12 @@ PESTEL分析（PESTEL analysis）は、組織が事業を営むマクロ環境�
 - [Aguilar, F.J. (1967) Scanning the Business Environment — Macmillan; ETPS (WorldCat)](https://www.worldcat.org/oclc/385778) `学術`
 - [Wikipedia: PEST/PESTEL analysis — Aguilar, political/economic/social/technological/environmental/legal, macro-environment](https://en.wikipedia.org/wiki/PEST_analysis) `リファレンス`
 
+## 関連概念
+- [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 語彙が近い
+- [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同じ思想家
+- [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同じ思想家
+- [[mgmt-swot-analysis|SWOT分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

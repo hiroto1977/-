@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Subordinated debt — subordination agreement, priority, pari passu, insolvency](https://en.wikipedia.org/wiki/Subordinated_debt) `リファレンス`
 - [Wikipedia: Intercreditor agreement — senior/junior creditors, subordination, structured finance](https://en.wikipedia.org/wiki/Intercreditor_agreement) `リファレンス`
 
+## 関連概念
+- [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同じ思想家
+- [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
+- [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]] — 同じ思想家
+- [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同じ思想家
+- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
+- [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
+- [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
+- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

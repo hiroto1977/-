@@ -32,6 +32,18 @@ Albert Bandura ／ Dale H. Schunk ／ Frank Pajares
 - [Ackerman, C. E. (2024). Self-Efficacy Theory: Bandura's 4 Sources of Efficacy Beliefs. PositivePsychology.com](https://positivepsychology.com/self-efficacy-bandura/) `リファレンス`
 - [American Psychological Association - Self-Efficacy Overview](https://www.apa.org/pi/aids/resources/education/self-efficacy) `リファレンス`
 
+## 関連概念
+- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 語彙が近い
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 語彙が近い
+- [[human-social-learning-theory|社会的学習理論]] — 語彙が近い
+- [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — 同じ思想家
+- [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-executive-function-development|実行機能の発達と前頭前野の神経科学的基盤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Hess, C. & Ostrom, E. (2007) Understanding Knowledge as a Commons — MIT Press](https://doi.org/10.7551/mitpress/12906.001.0001) `学術`
 - [Wikipedia: Knowledge commons — Hess, Ostrom, second enclosure, peer production](https://en.wikipedia.org/wiki/Knowledge_commons) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 語彙が近い
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 語彙が近い
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 語彙が近い
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
+- [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

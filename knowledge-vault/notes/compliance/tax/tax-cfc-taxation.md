@@ -31,6 +31,18 @@ aliases:
 - [M&Aキャピタルパートナーズ 外国子会社合算税制（CFC税制）の解説](https://www.ma-cp.com/about-ma/cfc-taxation/) `メディア`
 - [国税庁 外国子会社合算税制に関するQ&A](https://www.nta.go.jp/law/joho-zeikaishaku/hojin/180111/index.htm) `公的`
 
+## 関連概念
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ Dan B. Dobbs ／ Howard W. Brill ／ Samuel Williston
 - [Brill (1983) The Election of Remedies Doctrine in Arkansas — Arkansas Law Review](https://scholarworks.uark.edu/lawpub/61/) `学術`
 - [Remedy for Election of Remedies: A Proposed Act — Columbia Law Review](https://scholarship.law.cornell.edu/cgi/viewcontent.cgi?article=1278&context=clr) `学術`
 
+## 関連概念
+- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 同じ思想家
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
+- [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
+- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

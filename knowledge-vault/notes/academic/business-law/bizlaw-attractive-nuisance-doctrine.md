@@ -31,6 +31,13 @@ William Strong ／ Francis H. Bohlen ／ William L. Prosser
 - [Indiana Law Journal Vol. 32 — The Attractive Nuisance Doctrine (1956)](https://www.repository.law.indiana.edu/cgi/viewcontent.cgi?article=2759&context=ilj) `学術`
 - [Marquette University Law Review — Elements of Attractive Nuisance](https://scholarship.law.marquette.edu/cgi/viewcontent.cgi?article=3290&context=mulr) `学術`
 
+## 関連概念
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
+- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同分野の近傍
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

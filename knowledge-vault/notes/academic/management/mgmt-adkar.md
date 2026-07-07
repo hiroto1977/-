@@ -30,6 +30,10 @@ aliases:
 - [EBSCO Research Starters — ADKAR Change Management Model](https://www.ebsco.com/research-starters/business-and-management/adkar-change-management-model) `リファレンス`
 - [Prosci — Individual Barriers to Change（障壁点の説明）](https://www.prosci.com/blog/individual-barriers-to-change-and-what-to-do-about-them) `リファレンス`
 
+## 関連概念
+- [[mgmt-fogg-behavior-model|フォッグ行動モデル（FBM）]] — 同分野の近傍
+- [[mgmt-aida|AIDAモデル（購買行動モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

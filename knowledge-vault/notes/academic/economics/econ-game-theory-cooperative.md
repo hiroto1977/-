@@ -30,6 +30,18 @@ aliases:
 - [Nash 1950 — The Bargaining Problem, Econometrica 18(2):155-162](https://doi.org/10.2307/1907266) `学術`
 - [von Neumann & Morgenstern 1944 — Theory of Games and Economic Behavior, Princeton University Press](https://press.princeton.edu/books/paperback/9780691130613/theory-of-games-and-economic-behavior) `リファレンス`
 
+## 関連概念
+- [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+- [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]] — 同じ思想家
+- [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [船橋市 償却資産の概要](https://www.city.funabashi.lg.jp/kurashi/zei/003/04/p000859.html) `自治体`
 - [償却資産申告の留意点](https://www.tkc.jp/consolidate/webcolumn/023880/) `メディア`
 
+## 関連概念
+- [[tax-real-estate-acquisition|不動産取得税]] — 語彙が近い
+- [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 語彙が近い
+- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 同分野の近傍
+- [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

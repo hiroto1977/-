@@ -29,6 +29,18 @@ aliases:
 - [Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/653927) `学術`
 - [Wikipedia: Mintzbergs managerial roles — interpersonal/informational/decisional, ten roles, structured observation](https://en.wikipedia.org/wiki/Henry_Mintzberg) `リファレンス`
 
+## 関連概念
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 語彙が近い
+- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 同じ思想家
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
+- [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
+- [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — 同じ思想家
+- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,18 @@ national
 - [環境省 脱炭素先行地域選定結果](https://www.env.go.jp/press/press_03770.html) `公的`
 - [瀬戸内市 脱炭素先行地域に選定](https://www.city.setouchi.lg.jp/site/zero-co2/133814.html) `自治体`
 
+## 関連概念
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
+- [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有
+- [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]] — 出典を共有
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 出典を共有
+- [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
+- [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
+- [[subsidy-zeh|ZEH支援事業]] — 出典を共有
+- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

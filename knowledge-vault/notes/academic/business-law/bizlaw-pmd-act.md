@@ -30,6 +30,11 @@ aliases:
 - [MIPRO（対日貿易投資交流促進協会）医薬品医療機器等法（薬機法）規制対象解説](https://www.mipro.or.jp/Document/hti0re0000000vi2-att/pdf_publications_0098ngb.pdf) `公的`
 - [Wikipedia: Pharmaceuticals and Medical Devices Agency (PMDA)](https://en.wikipedia.org/wiki/Pharmaceuticals_and_Medical_Devices_Agency) `リファレンス`
 
+## 関連概念
+- [[tax-customs-duty|関税（輸入品に課される国税）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

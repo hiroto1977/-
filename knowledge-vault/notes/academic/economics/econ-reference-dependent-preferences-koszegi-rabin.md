@@ -29,6 +29,11 @@ Botond Kőszegi（ボツォンド・コーセギ・2006年論文の共著者） 
 - [Kőszegi, B., & Rabin, M. (2006). A Model of Reference-Dependent Preferences. The Quarterly Journal of Economics, 121(4), 1133-1165.](https://academic.oup.com/qje/article-abstract/121/4/1133/1855210) `学術`
 - [Kőszegi & Rabin (2006) 全文PDF（Haverford College 収録・consumption utility と gain-loss utility・personal equilibrium / preferred personal equilibrium の定式）](https://www.haverford.edu/sites/default/files/KoszegiRabin2006.pdf) `学術`
 
+## 関連概念
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
+- [[econ-revealed-preference|顕示選好]] — 同分野の近傍
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

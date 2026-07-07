@@ -30,6 +30,11 @@ aliases:
 - [Janz, N.K. & Becker, M.H. 1984 The Health Belief Model: A decade later. Health Education Quarterly 11(1) 1-47](https://doi.org/10.1177/109019818801500203) `学術`
 - [Rosenstock, I.M. et al. 1988 Social learning theory and the Health Belief Model. Health Education Quarterly 15(2) 175-183](https://doi.org/10.1037/0278-6133.11.3.170) `学術`
 
+## 関連概念
+- [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 語彙が近い
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
+- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

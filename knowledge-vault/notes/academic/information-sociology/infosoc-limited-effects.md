@@ -30,6 +30,18 @@ aliases:
 - [SAGE Encyclopedia of Political Communication — Two-Step Flow Model](https://sk.sagepub.com/ency/edvol/politicalcommunication/chpt/twostep-flow-model-communication) `学術`
 - [ウィキペディア「メディア効果論」](https://ja.wikipedia.org/wiki/メディア効果論) `リファレンス`
 
+## 関連概念
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 語彙が近い
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[mgmt-simmelian-ties-krackhardt|ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

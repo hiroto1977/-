@@ -30,6 +30,18 @@ aliases:
 - [UK Misrepresentation Act 1967 — statutory remedies for pre-contractual misstatements](https://www.legislation.gov.uk/ukpga/1967/7) `公的`
 - [Wikipedia: Misrepresentation — false statement and contractual remedies overview](https://en.wikipedia.org/wiki/Misrepresentation) `リファレンス`
 
+## 関連概念
+- [[bizlaw-misrepresentation|不実表示（misrepresentation、英米契約法）]] — 語彙が近い
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 同じ思想家
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 同じ思想家
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
+- [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
+- [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — 同じ思想家
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同分野の近傍
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

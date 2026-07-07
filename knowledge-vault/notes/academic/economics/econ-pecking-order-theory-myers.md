@@ -29,6 +29,18 @@ aliases:
 - [Myers, S.C. & Majluf, N.S. (1984) Corporate Financing and Investment Decisions When Firms Have Information That Investors Do Not Have — JFE 13(2)](https://doi.org/10.1016/0304-405X(84)90023-0) `学術`
 - [Wikipedia: Pecking order theory — Myers & Majluf, asymmetric information, internal funds/debt/equity, vs trade-off](https://en.wikipedia.org/wiki/Pecking_order_theory) `リファレンス`
 
+## 関連概念
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
+- [[econ-life-cycle-hypothesis-modigliani|ライフサイクル仮説——生涯を通じた消費平準化と貯蓄の動学]] — 同じ思想家
+- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
+- [[econ-modigliani-cohn-inflation-illusion|モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する]] — 同じ思想家
+- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 同じ思想家
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [政府広報オンライン インボイス制度](https://www.gov-online.go.jp/article/202210/entry-10343.html) `公的`
 - [日本税理士会連合会](https://www.nichizeiren.or.jp/taxaccount/invoice/) `運営団体`
 
+## 関連概念
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 語彙が近い
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 語彙が近い
+- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 分野横断
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

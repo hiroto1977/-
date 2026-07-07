@@ -30,6 +30,13 @@ aliases:
 - [Nardi, B. (2010) My Life as a Night Elf Priest — University of Michigan Press](https://doi.org/10.1177/1461444809342738) `学術`
 - [Wikipedia: Information ecology — 情報エコロジーの概要](https://en.wikipedia.org/wiki/Information_ecology) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 語彙が近い
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
+- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家
+- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

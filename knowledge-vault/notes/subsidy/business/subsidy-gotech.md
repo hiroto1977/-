@@ -36,6 +36,16 @@ national
 - [関東経済産業局 Go-Tech事業](https://www.kanto.meti.go.jp/seisaku/sapoin/index.html) `公的`
 - [ミラサポplus Go-Tech事業](https://mirasapo-plus.go.jp/subsidy/go-tech/) `公的`
 
+## 関連概念
+- [[legal-product-safety|消費生活用製品安全法（消安法）]] — 出典を共有
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 出典を共有
+- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 出典を共有
+- [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 出典を共有
+- [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]] — 出典を共有
+- [[subsidy-patent-fee-reduction|特許料等の減免制度]] — 同分野の近傍
+- [[subsidy-kochi|高知県戦略的製品開発推進事業費補助金（高知県）]] — 同分野の近傍
+- [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

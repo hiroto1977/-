@@ -30,6 +30,17 @@ aliases:
 - [ハローワーク 雇用継続給付](https://www.hellowork.mhlw.go.jp/insurance/insurance_continue.html) `公的`
 - [厚生労働省 高年齢雇用継続給付 Q&A](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158464.html) `公的`
 
+## 関連概念
+- [[bizlaw-employment-insurance|雇用保険法]] — 語彙が近い
+- [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 語彙が近い
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 出典を共有
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 出典を共有
+- [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 出典を共有
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 出典を共有
+- [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 同分野の近傍
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 同分野の近傍
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [Oxford Reference — “Liquid modernity”（グローバル資本主義下の現在的条件を指すバウマンの語）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100108465) `リファレンス`
 - [SpringerPlus (査読論文) — “Zygmunt Bauman. Individual and society in the liquid modernity” (2013)](https://link.springer.com/article/10.1186/2193-1801-2-191) `学術`
 
+## 関連概念
+- [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 同じ思想家
+- [[infosoc-glocalization-robertson|グローカリゼーション——グローバルとローカルの相互浸透と普遍／特殊の弁証法]] — 同じ思想家
+- [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
+- [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 同分野の近傍
+- [[infosoc-appadurai-scapes|アパデュライのスケープ（グローバルな文化フローの5次元）]] — 同分野の近傍
+- [[infosoc-political-polarization|政治的分極化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ aliases:
 - [個人情報保護委員会 FAQ 利用目的の公表](https://www.ppc.go.jp/all_faq_index/faq4-q102/) `公的`
 - [STORIA法律事務所 個人情報保護法の整理](https://storialaw.jp/blog/9609) `メディア`
 
+## 関連概念
+- [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
+- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
+- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 語彙が近い
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,13 @@ aliases:
 - [UC Berkeley Graduate School of Journalism — Ben Bagdikian（著者所属機関・学部長として在職、The Media Monopoly著者の来歴）](https://journalism.berkeley.edu/person/bagdikian-ben/) `学術`
 - [Centre for Media Pluralism and Media Freedom, European University Institute — Media Pluralism Monitor（EU委託によるメディア所有集中の定量評価枠組み）](https://cmpf.eui.eu/media-pluralism-monitor/) `学術`
 
+## 関連概念
+- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
+- [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
+- [[infosoc-media-logic|メディア・ロジック]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

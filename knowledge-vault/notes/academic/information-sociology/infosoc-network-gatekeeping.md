@@ -30,6 +30,10 @@ aliases:
 - [Barzilai-Nahon (2008) Network Gatekeeping Framework — ResearchGate](https://www.researchgate.net/publication/220432928_Toward_a_Theory_of_Network_Gatekeeping_A_Framework_for_Exploring_Information_Control) `学術`
 - [Gatekeeping Theory — The Comm Spot](https://thecommspot.com/communication-basics/communication-theories/gatekeeping-theory/) `リファレンス`
 
+## 関連概念
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 同分野の近傍
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

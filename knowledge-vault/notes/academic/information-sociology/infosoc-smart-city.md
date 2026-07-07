@@ -30,6 +30,18 @@ aliases:
 - [Cohen 2012 — Smart City Wheel: A Comprehensive Framework for Defining the Smart City, Fast Company](https://www.fastcompany.com/1680538/a-closer-look-at-boyd-cohens-smart-city-wheel) `メディア`
 - [内閣府 2021 — スマートシティリファレンスアーキテクチャ（内閣府スマートシティ推進事務局）](https://www8.cao.go.jp/cstp/society5_0/smartcity/index.html) `公的`
 
+## 関連概念
+- [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 出典を共有
+- [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — 出典を共有
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
+- [[human-narrative-therapy|ナラティブ・セラピー]] — 出典を共有
+- [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 出典を共有
+- [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — 出典を共有
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 出典を共有
+- [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 出典を共有
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

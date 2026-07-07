@@ -30,6 +30,16 @@ aliases:
 - [文部科学省 アクティブラーニングの理論的背景 — 文部科学省](https://www.mext.go.jp/b_menu/shingi/chukyo/chukyo3/siryo/attach/1325939.htm) `公的`
 - [Wikipedia: ヴィゴツキー — 最近接発達領域と文化歴史的発達理論の解説](https://ja.wikipedia.org/wiki/%E3%83%B4%E3%82%A3%E3%82%B4%E3%83%84%E3%82%AD%E3%83%BC) `リファレンス`
 
+## 関連概念
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同じ思想家
+- [[human-cultural-historical-activity-theory-engestrom|文化歴史的活動理論——エンゲストロームの拡張的学習と活動システム分析]] — 同じ思想家
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,17 @@ aliases:
 - [Springer — "Technological Remedies for Social Problems", Science and Engineering Ethics (2024)](https://link.springer.com/article/10.1007/s11948-024-00524-x) `学術`
 - [Public Books — "The Folly of Technological Solutionism: An Interview with Evgeny Morozov"](https://www.publicbooks.org/the-folly-of-technological-solutionism-an-interview-with-evgeny-morozov/) `リファレンス`
 
+## 関連概念
+- [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 語彙が近い
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同じ思想家
+- [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同じ思想家
+- [[infosoc-technopoly|テクノポリ（技術独占）]] — 同じ思想家
+- [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

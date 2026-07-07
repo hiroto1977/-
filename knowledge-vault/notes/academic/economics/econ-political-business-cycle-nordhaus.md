@@ -29,6 +29,18 @@ aliases:
 - [Nordhaus, W.D. (1975) The Political Business Cycle — Review of Economic Studies 42(2)](https://doi.org/10.2307/2296528) `学術`
 - [Wikipedia: Political business cycle — Nordhaus, opportunistic policy, Phillips curve, partisan models](https://en.wikipedia.org/wiki/Political_business_cycle) `リファレンス`
 
+## 関連概念
+- [[econ-kalecki-profit|カレツキの利潤理論]] — 同じ思想家
+- [[econ-rational-partisan-theory-alesina|合理的パルチザン理論——選挙の不確実性が政治的景気循環を生む]] — 同じ思想家
+- [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同じ思想家
+- [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
+- [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

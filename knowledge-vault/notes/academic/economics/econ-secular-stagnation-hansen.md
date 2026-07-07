@@ -31,6 +31,18 @@ aliases:
 - [Bernanke, B. S. (2015) Why Are Interest Rates So Low? The Global Savings Glut Revisited — Brookings（貯蓄の過剰仮説の更新）](https://doi.org/10.1016/j.jmoneco.2015.02.001) `学術`
 - [Wikipedia: Secular stagnation — Hansen, Summers, natural rate, ZLB, savings glut, Japan](https://en.wikipedia.org/wiki/Secular_stagnation) `リファレンス`
 
+## 関連概念
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
+- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[is-lm-model|IS-LM分析]] — 同じ思想家
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
+- [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

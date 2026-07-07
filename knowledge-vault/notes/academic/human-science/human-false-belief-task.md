@@ -30,6 +30,13 @@ aliases:
 - [Assessing False-Belief Understanding in Children with Autism Using a Computer Application — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6153757/) `学術`
 - [Sally Anne Test: Understanding False Belief in Children — Arab Psychology Database](https://db.arabpsychology.com/sally-anne-test/) `リファレンス`
 
+## 関連概念
+- [[human-theory-of-mind|心の理論]] — 語彙が近い
+- [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 語彙が近い
+- [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同分野の近傍
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同分野の近傍
+- [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

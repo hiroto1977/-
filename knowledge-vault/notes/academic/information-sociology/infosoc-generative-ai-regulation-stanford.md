@@ -31,6 +31,14 @@ aliases:
 - [IMF (2024) Gen-AI: Artificial Intelligence and the Future of Work — IMF Staff Discussion Note（生成AIと雇用の影響分析）](https://www.imf.org/en/Publications/WP/Issues/2024/01/14/Gen-AI) `公的`
 - [Wikipedia: Regulation of artificial intelligence — EU AI Act, Executive Order 14110, Bletchley Declaration, GPAI](https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence) `リファレンス`
 
+## 関連概念
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同じ思想家
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
+- [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 同分野の近傍
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同分野の近傍
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

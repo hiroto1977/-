@@ -29,6 +29,12 @@ aliases:
 - [Kanizsa, G. (1979) Organization in Vision: Essays on Gestalt Perception — Praeger（主観的輪郭の体系的考察）](https://www.worldcat.org/oclc/5727628) `学術`
 - [Wikipedia: Illusory contours — Kanizsa triangle, modal/amodal completion, Gestalt](https://en.wikipedia.org/wiki/Illusory_contours) `リファレンス`
 
+## 関連概念
+- [[human-gestalt-principles|ゲシュタルト知覚の法則]] — 同じ思想家
+- [[human-phi-phenomenon-wertheimer|ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

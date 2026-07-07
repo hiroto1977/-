@@ -30,6 +30,18 @@ aliases:
 - [CJEU (2012) UsedSoft GmbH v Oracle — C-128/11 ソフトウェア中古販売](https://curia.europa.eu/juris/document/document.jsf?docid=124564) `公的`
 - [Wikipedia: Exhaustion of intellectual property rights — 権利消尽原則の国際比較](https://en.wikipedia.org/wiki/Exhaustion_of_intellectual_property_rights) `リファレンス`
 
+## 関連概念
+- [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 語彙が近い
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

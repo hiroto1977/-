@@ -29,6 +29,13 @@ aliases:
 - [Addams, R. (1834) An account of a peculiar optical phænomenon — London and Edinburgh Philosophical Magazine](https://doi.org/10.1080/14786443408648481) `学術`
 - [Wikipedia: Motion aftereffect — waterfall illusion, direction-selective adaptation, area MT](https://en.wikipedia.org/wiki/Motion_aftereffect) `リファレンス`
 
+## 関連概念
+- [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]] — 同じ思想家
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-purkinje-effect|プルキニェ現象——明るさが変わると色の見え方の明暗が逆転する]] — 同じ思想家
+- [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Betts, C. & Devereux, M. B. (2000) Exchange Rate Dynamics in a Model of Pricing-to-Market — Journal of International Economics](https://doi.org/10.1016/S0022-1996(00)00040-4) `学術`
 - [Wikipedia: New open-economy macroeconomics — micro-founded open economy models overview](https://en.wikipedia.org/wiki/New_open-economy_macroeconomics) `リファレンス`
 
+## 関連概念
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]] — 同じ思想家
+- [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
+- [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同じ思想家
+- [[econ-currency-crisis-speculative-attack-krugman|通貨危機の世代別モデル——クルーグマン・第二世代・第三世代の投機的攻撃理論]] — 同じ思想家
+- [[econ-global-imbalances-bernanke|グローバル・インバランスと貯蓄過剰仮説——経常収支不均衡のマクロ経済学]] — 同じ思想家
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+- [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — 同じ思想家
+- [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

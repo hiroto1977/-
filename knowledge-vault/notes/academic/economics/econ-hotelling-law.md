@@ -30,6 +30,18 @@ aliases:
 - [Harold Hotelling, “Stability in Competition,” Economic Journal 39 (1929): 41-57（トロント大学ホストの原典PDF）](https://www.math.toronto.edu/mccann/assignments/477/Hotelling29.pdf) `学術`
 - [d’Aspremont, Gabszewicz & Thisse, “On Hotelling’s Stability in Competition,” Econometrica 47(5) (1979): 1145-1150（Econometric Society）](https://www.econometricsociety.org/publications/econometrica/browse/1979/09/01/hotellings-stability-competition) `学術`
 
+## 関連概念
+- [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 同じ思想家
+- [[econ-median-voter|中位投票者定理]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+- [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — 同じ思想家
+- [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
+- [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

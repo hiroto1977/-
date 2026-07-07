@@ -30,6 +30,11 @@ aliases:
 - [Harberger (1962) Corporation Income Tax Incidence — IDEAS/RePEc](https://ideas.repec.org/a/ucp/jpolec/v70y1962p215.html) `学術`
 - [CBO (2010) Corporate Tax Incidence: Review of General Equilibrium Estimates](https://www.cbo.gov/sites/default/files/111th-congress-2009-2010/workingpaper/05-2010-working_paper-corp_tax_incidence-review_of_gen_eq_estimates_0.pdf) `公的`
 
+## 関連概念
+- [[econ-tax-incidence-theory|租税帰着理論]] — 語彙が近い
+- [[econ-ces-production|CES生産関数]] — 出典を共有
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

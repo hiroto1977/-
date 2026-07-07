@@ -30,6 +30,12 @@ aliases:
 - [Encyclopaedia Britannica — "The Gift" (work by Mauss)](https://www.britannica.com/topic/The-Gift-by-Mauss) `リファレンス`
 - [Wikipedia — "Gift economy"](https://en.wikipedia.org/wiki/Gift_economy) `リファレンス`
 
+## 関連概念
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 語彙が近い
+- [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

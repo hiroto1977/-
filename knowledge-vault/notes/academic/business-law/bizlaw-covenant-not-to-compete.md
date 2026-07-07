@@ -30,6 +30,12 @@ aliases:
 - [Bishara, N. D. (2011) Fifty Ways to Leave Your Employer — U Michigan Law & Economics Working Paper](https://doi.org/10.1007/s10551-016-3196-3) `学術`
 - [Wikipedia: Non-compete clause — restrictive covenant in employment law overview](https://en.wikipedia.org/wiki/Non-compete_clause) `リファレンス`
 
+## 関連概念
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 語彙が近い
+- [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 語彙が近い
+- [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同じ思想家
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

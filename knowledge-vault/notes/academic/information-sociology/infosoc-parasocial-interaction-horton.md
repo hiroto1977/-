@@ -30,6 +30,11 @@ aliases:
 - [Wikipedia: Parasocial Interaction — Horton & Wohl media relationship theory](https://en.wikipedia.org/wiki/Parasocial_interaction) `リファレンス`
 - [Dibble, J.L., Hartmann, T. & Rosaen, S.F. (2016) Parasocial Interaction and Parasocial Relationship — Communication Monographs 83(1)](https://doi.org/10.1111/jcom.12120) `学術`
 
+## 関連概念
+- [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
+- [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

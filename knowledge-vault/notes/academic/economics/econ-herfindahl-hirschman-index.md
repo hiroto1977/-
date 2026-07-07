@@ -29,6 +29,15 @@ aliases:
 - [U.S. Department of Justice Antitrust Division — Herfindahl-Hirschman Index（公式定義・閾値）](https://www.justice.gov/atr/herfindahl-hirschman-index) `公的`
 - [Encyclopaedia Britannica — Orris C. Herfindahl（1918–1972、コロンビア大博士論文1950）](https://www.britannica.com/biography/Orris-C-Herfindahl) `リファレンス`
 
+## 関連概念
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 出典を共有
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 出典を共有
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 出典を共有
+- [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 出典を共有
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
+- [[econ-nominal-anchor-inflation-targeting|インフレ目標政策（ノミナル・アンカー）]] — 同分野の近傍
+- [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

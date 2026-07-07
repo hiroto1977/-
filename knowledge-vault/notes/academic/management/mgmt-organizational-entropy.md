@@ -30,6 +30,18 @@ Norbert Wiener ／ W. Ross Ashby ／ Anthony Stafford Beer ／ Ilya Prigogine �
 - [Jia & Wang, Introducing Entropy into Organizational Psychology: An Entropy-Based Proactive Control Model, Behavioral Sciences (MDPI) 14(1):54, 2024](https://www.mdpi.com/2076-328X/14/1/54) `学術`
 - [Chappell & Dewey, Defining the Entropy of Hierarchical Organizations, Complexity, Governance & Networks, 2014, DOI:10.7564/14-CGN17](https://ubp.uni-bamberg.de/ojs/index.php/cgn/article/view/26) `学術`
 
+## 関連概念
+- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

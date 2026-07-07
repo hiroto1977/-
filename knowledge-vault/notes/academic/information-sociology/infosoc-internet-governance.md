@@ -29,6 +29,10 @@ aliases:
 - [ITU／UN WSIS「ジュネーブ原則宣言」（2003）— インターネット・ガバナンスの国際的政策議論の出発点](https://www.itu.int/net/wsis/docs/geneva/official/dop.html) `公的`
 - [インターネット・ガバナンス・フォーラム（IGF）公式サイト「About IGF」— マルチステークホルダー・モデルの制度的根拠](https://www.intgovforum.org/en/content/about-igf) `公的`
 
+## 関連概念
+- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同分野の近傍
+- [[infosoc-third-person-effect-davison|第三者効果——メディアの影響を他者により強く帰属する知覚的偏向]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

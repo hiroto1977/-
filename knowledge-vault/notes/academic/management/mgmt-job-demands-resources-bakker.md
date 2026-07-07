@@ -30,6 +30,18 @@ aliases:
 - [Schaufeli, W. B. & Bakker, A. B. (2004) "Job Demands, Job Resources, and Their Relationship with Burnout and Engagement" — JOB](https://doi.org/10.1002/job.665) `学術`
 - [Wikipedia: Job demands-resources model — 理論構造と実証的展開](https://en.wikipedia.org/wiki/Job_demands-resources_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 語彙が近い
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 語彙が近い
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
+- [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — 同じ思想家
+- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
+- [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同じ思想家
+- [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

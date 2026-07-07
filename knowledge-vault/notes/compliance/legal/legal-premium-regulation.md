@@ -30,6 +30,11 @@ aliases:
 - [消費者庁 一般懸賞について](https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/lotteries) `公的`
 - [景品規制 解説](https://ueno.law/topics/keihyouhou-keihin-kisei/) `メディア`
 
+## 関連概念
+- [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 語彙が近い
+- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 語彙が近い
+- [[legal-companies-act-2019-reform|令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

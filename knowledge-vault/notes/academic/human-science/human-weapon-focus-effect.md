@@ -30,6 +30,15 @@ aliases:
 - [Wikipedia: Weapon Focus — attentional bias reducing eyewitness identification accuracy](https://en.wikipedia.org/wiki/Weapon_focus) `リファレンス`
 - [Steblay, N.M. (1992) A Meta-Analytic Review of the Weapon Focus Effect — Law and Human Behavior 16(4)](https://doi.org/10.1037/1076-8971.12.1.1) `学術`
 
+## 関連概念
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-spreading-activation|活性化拡散]] — 同じ思想家
+- [[human-false-memory|虚記憶（フォールス・メモリ）]] — 同じ思想家
+- [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

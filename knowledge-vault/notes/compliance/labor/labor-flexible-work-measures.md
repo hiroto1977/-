@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 令和6年改正育児・介護休業法 Q&A](https://www.mhlw.go.jp/content/11900000/001567572.pdf) `公的`
 - [2025年10月施行 育児介護休業法改正 解説](https://kidsline.me/information/ikuji_kaisei2025) `メディア`
 
+## 関連概念
+- [[labor-childcare-short-time|育児のための短時間勤務制度（育児・介護休業法23条）]] — 語彙が近い
+- [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 語彙が近い
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 語彙が近い
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

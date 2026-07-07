@@ -30,6 +30,11 @@ James D. Cox／Donald C. Langevoort／Robert W. Hillman
 - [Basic Inc. v. Levinson, 485 U.S. 224 (1988) — Justia U.S. Supreme Court](https://supreme.justia.com/cases/federal/us/485/224/) `リファレンス`
 - [Langevoort (2009) Basic at Twenty: Rethinking Fraud-on-the-Market, 2009 Wis. L. Rev. 151](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1026316) `学術`
 
+## 関連概念
+- [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 語彙が近い
+- [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 出典を共有
+- [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

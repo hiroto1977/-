@@ -30,6 +30,18 @@ aliases:
 - [European Commission Digital Decade 2030 — Digital Inclusion Goals](https://digital-strategy.ec.europa.eu/en/policies/europes-digital-decade) `公的`
 - [Wikipedia: デジタルデバイド — 高齢者と情報格差の解説](https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%83%87%E3%83%90%E3%82%A4%E3%83%89) `リファレンス`
 
+## 関連概念
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
+- [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
+- [[infosoc-onlife|オンライフ]] — 同じ思想家
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 出典を共有
+- [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 出典を共有
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
+- [[infosoc-privacy-calculus|プライバシー計算——開示はリスクと便益の天秤]] — 同分野の近傍
+- [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Pettigrew, T.F. & Tropp, L.R. (2006) A meta-analytic test of intergroup contact theory — Journal of Personality and Social Psychology](https://doi.org/10.1037/0022-3514.90.5.751) `学術`
 - [Pettigrew, T.F. & Tropp, L.R. (2008) How does intergroup contact reduce prejudice? Meta-analytic tests of three mediators — European Journal of Social Psychology](https://doi.org/10.1111/j.1540-4560.2008.00552.x) `学術`
 
+## 関連概念
+- [[human-mere-exposure-zajonc|単純接触効果——反復的接触が対象への好意を増大させる現象]] — 同分野の近傍
+- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

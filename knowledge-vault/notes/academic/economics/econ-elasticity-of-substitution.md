@@ -31,6 +31,14 @@ John R. Hicks／Joan Robinson／Kenneth J. Arrow／Robert M. Solow
 - [Investopedia — Elasticity of Substitution](https://www.investopedia.com/terms/e/elasticity-of-substitution.asp) `リファレンス`
 - [Chirinko (2008) σ: The Long and Short of It, NBER Working Paper](https://www.nber.org/papers/w13351) `学術`
 
+## 関連概念
+- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — 語彙が近い
+- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — 語彙が近い
+- [[econ-productivity-paradox|生産性パラドックス]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 出典を共有
+- [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 出典を共有
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

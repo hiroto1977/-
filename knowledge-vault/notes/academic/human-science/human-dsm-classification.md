@@ -30,6 +30,11 @@ DSM（Diagnostic and Statistical Manual of Mental Disorders）はアメリカ精
 - [American Psychiatric Association — DSM-5-TR: Diagnostic and Statistical Manual of Mental Disorders](https://psychiatry.org/psychiatrists/practice/dsm) `リファレンス`
 - [First, M.B. et al. 2015 An Organization- and Category-Level Comparison of Diagnostic Requirements for Mental Disorders in ICD-11 and DSM-5. World Psychiatry 14(3) 293-296](https://doi.org/10.1002/wps.20269) `学術`
 
+## 関連概念
+- [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 同じ思想家
+- [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia — Lawrence Kohlberg’s stages of moral development](https://en.wikipedia.org/wiki/Lawrence_Kohlberg%27s_stages_of_moral_development) `リファレンス`
 - [Lumen Learning (SUNY) — Kohlberg’s Stages of Moral Development](https://courses.lumenlearning.com/suny-lifespandevelopment/chapter/kohlbergs-stages-of-moral-development/) `学術`
 
+## 関連概念
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[human-operant-conditioning|オペラント条件づけ]] — 出典を共有
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
+- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

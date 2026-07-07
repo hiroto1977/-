@@ -29,6 +29,10 @@ Pinnel's Case（1602・5 Co Rep 117a・一部弁済は債務全体の満足と�
 - [Wikipedia, “Foakes v Beer”（1884・9 App Cas 605・Pinnel's Case の確認・一部弁済は約因とならない・High Trees の約束的禁反言による緩和の概説）](https://en.wikipedia.org/wiki/Foakes_v_Beer) `リファレンス`
 - [Australian Contract Law（J. Clarke）— Foakes v Beer (1884) 9 App Cas 605 の事実関係・判旨・part payment of debt の準則](https://www.australiancontractlaw.info/cases/database/foakes-v-beer) `リファレンス`
 
+## 関連概念
+- [[bizlaw-eu-digital-services-act-dsa|EUデジタルサービス法（DSA）——オンライン仲介サービスの責任と透明性]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

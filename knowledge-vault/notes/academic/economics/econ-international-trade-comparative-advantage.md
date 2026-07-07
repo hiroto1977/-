@@ -30,6 +30,18 @@ aliases:
 - [WTO (2005) Comparative Advantage and the Pattern of Trade — WTO Research Paper](https://www.wto.org/english/res_e/reser_e/gtdw_e/wkshop05_e/kim05_e.pdf) `リファレンス`
 - [Wikipedia: 比較優位 — リカードとH-O定理の解説](https://ja.wikipedia.org/wiki/%E6%AF%94%E8%BC%83%E5%84%AA%E4%BD%8D) `リファレンス`
 
+## 関連概念
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 語彙が近い
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 語彙が近い
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
+- [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同じ思想家
+- [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

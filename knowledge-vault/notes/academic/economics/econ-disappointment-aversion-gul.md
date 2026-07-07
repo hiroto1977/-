@@ -29,6 +29,15 @@ aliases:
 - [Gul, F. (1991) A theory of disappointment aversion — Econometrica](https://doi.org/10.2307/2938260) `学術`
 - [Wikipedia: Disappointment — disappointment aversion, first-order risk aversion, reference point](https://en.wikipedia.org/wiki/Disappointment) `リファレンス`
 
+## 関連概念
+- [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 語彙が近い
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[econ-present-bias|現在バイアス：先延ばし行動と自己制御の行動経済学的分析]] — 同じ思想家
+- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
+- [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

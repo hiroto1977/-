@@ -30,6 +30,17 @@ aliases:
 - [Federal Rules of Civil Procedure, Rule 23 — クラスアクションの法的枠組み](https://www.law.cornell.edu/rules/frcp/rule_23) `公的`
 - [Wikipedia: Class action — 集団訴訟制度の構造と各法域比較](https://en.wikipedia.org/wiki/Class_action) `リファレンス`
 
+## 関連概念
+- [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 語彙が近い
+- [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 同じ思想家
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同じ思想家
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
+- [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
+- [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同分野の近傍
+- [[bizlaw-nachfrist-notice-cure|ナッハフリスト制度——追加履行期間の設定による契約解除手続]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

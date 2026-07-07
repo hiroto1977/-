@@ -31,6 +31,10 @@ aliases:
 - [Acemoglu, Ozdaglar & Tahbaz-Salehi 2015 — Systemic Risk and Stability in Financial Networks, American Economic Review 105(2):564-608](https://doi.org/10.1257/aer.20130456) `学術`
 - [Caballero & Simsek 2013 — Fire Sales in a Model of Complexity, Journal of Finance 68(6):2549-2587](https://doi.org/10.1111/jofi.12087) `学術`
 
+## 関連概念
+- [[econ-leverage-cycle|レバレッジ・サイクル]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

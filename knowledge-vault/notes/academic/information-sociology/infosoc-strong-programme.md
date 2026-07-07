@@ -29,6 +29,11 @@ David Bloor（1976・『Knowledge and Social Imagery』・ストロング・プ�
 - [Wikipedia, “Strong programme”（Bloor [1976] Knowledge and Social Imagery・因果性/公平性/対称性/再帰性の4原則・エディンバラ学派・SSKの概説）](https://en.wikipedia.org/wiki/Strong_programme) `リファレンス`
 - [Stanford Encyclopedia of Philosophy, “The Social Dimensions of Scientific Knowledge”（Bloor のストロング・プログラムと対称性原則・SSK の位置づけ）](https://plato.stanford.edu/entries/scientific-knowledge-social/) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

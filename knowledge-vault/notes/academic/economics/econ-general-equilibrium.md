@@ -31,6 +31,11 @@ aliases:
 - [NobelPrize.org 1983年経済学賞プレスリリース（ドブリュー「一般均衡理論の厳密な再定式化」）](https://www.nobelprize.org/prizes/economic-sciences/1983/press-release/) `リファレンス`
 - [Econlib「Léon Walras」（連立方程式・タトヌマン・パレート最適性）](https://www.econlib.org/library/Enc/bios/Walras.html) `リファレンス`
 
+## 関連概念
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 語彙が近い
+- [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 語彙が近い
+- [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

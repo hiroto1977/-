@@ -29,6 +29,14 @@ aliases:
 - [Banerjee, A.V. (1992) A Simple Model of Herd Behavior — Quarterly Journal of Economics 107(3)](https://doi.org/10.2307/2118364) `学術`
 - [Wikipedia: Information cascade — Banerjee, Bikhchandani-Hirshleifer-Welch, herd behavior, fragility](https://en.wikipedia.org/wiki/Information_cascade) `リファレンス`
 
+## 関連概念
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同分野の近傍
+- [[econ-momentum-jegadeesh-titman|モメンタム効果——過去の勝者が勝ち続ける市場の異常現象]] — 同分野の近傍
+- [[econ-deposit-insurance|預金保険制度（ペイオフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

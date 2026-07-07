@@ -29,6 +29,11 @@ aliases:
 - [Dinev, T. & Hart, P. (2006) An Extended Privacy Calculus Model for E-Commerce Transactions — Information Systems Research, 17(1), 61–80 (risk–benefit disclosure)](https://ideas.repec.org/a/inm/orisre/v17y2006i1p61-80.html) `学術`
 - [Culnan, M. J. & Armstrong, P. K. (1999) Information Privacy Concerns, Procedural Fairness, and Impersonal Trust — Organization Science, 10(1), 104–115 (privacy calculus)](https://doi.org/10.1287/orsc.10.1.104) `学術`
 
+## 関連概念
+- [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — 語彙が近い
+- [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同分野の近傍
+- [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [EBSCO Research Starters「Trolley problem」（フット1967・トムソン1976/1985・歩道橋＝fat man版）](https://www.ebsco.com/research-starters/religion-and-philosophy/trolley-problem) `リファレンス`
 - [Greene et al. (2001) “An fMRI Investigation of Emotional Engagement in Moral Judgment”, Science 293:2105（personal/impersonal・二重過程説）](https://www.science.org/doi/10.1126/science.1062872) `学術`
 
+## 関連概念
+- [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
+- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
+- [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

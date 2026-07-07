@@ -31,6 +31,18 @@ aliases:
 - [Brown, N. J. L., Sokal, A. D. & Friedman, H. L. (2013) The Complex Dynamics of Wishful Thinking: The Critical Positivity Ratio — American Psychologist, 68(9), 801–813（ポジティビティ比批判）](https://doi.org/10.1037/a0032850) `学術`
 - [Wikipedia: Broaden-and-build — Fredrickson, positive emotions, resources accumulation, positivity ratio debate](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
 
+## 関連概念
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 語彙が近い
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

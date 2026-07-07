@@ -30,6 +30,10 @@ aliases:
 - [Charles Sherrington — Nobel Prize 1932](https://www.nobelprize.org/prizes/medicine/1932/sherrington/facts/) `リファレンス`
 - [Charles Scott Sherrington — Wikipedia](https://en.wikipedia.org/wiki/Charles_Scott_Sherrington) `リファレンス`
 
+## 関連概念
+- [[human-biopsychosocial-model|生物心理社会モデル]] — 同分野の近傍
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

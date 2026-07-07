@@ -31,6 +31,12 @@ aliases:
 - [Samuelson, P. A. (1938) “A Note on the Pure Theory of Consumer’s Behaviour”, Economica 5(17): 61-71 — 原典（Semantic Scholar 書誌）](https://www.semanticscholar.org/paper/A-Note-on-the-Pure-Theory-of-Consumer's-Behaviour-Samuelson/1de2464829944076ef547f7a4f8b9aaa8dc871a0) `学術`
 - [Springer「Samuelson and Consumption Theory」— 顕示選好の操作主義的基礎づけに関する学術解説](https://link.springer.com/chapter/10.1007/978-94-009-7377-0_2) `学術`
 
+## 関連概念
+- [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 語彙が近い
+- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同分野の近傍
+- [[econ-reference-dependent-preferences-koszegi-rabin|期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

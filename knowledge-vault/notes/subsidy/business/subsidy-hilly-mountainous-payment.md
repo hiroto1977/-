@@ -36,6 +36,18 @@ national
 - [農林水産省 中山間地域等直接支払制度（第5期対策）の最終評価](https://www.maff.go.jp/j/press/nousin/tyusan/240830.html) `公的`
 - [新潟県 中山間地域等直接支払制度について](https://www.pref.niigata.lg.jp/sec/chiikinosei/tyuusankan-tyokubarai.html) `自治体`
 
+## 関連概念
+- [[bizlaw-geographical-indication|地理的表示法（GI法）]] — 出典を共有
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 出典を共有
+- [[bizlaw-plant-variety|種苗法]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
+- [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
+- [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 出典を共有
+- [[subsidy-shimane|地域課題解決型しまね起業支援事業費補助金（島根県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

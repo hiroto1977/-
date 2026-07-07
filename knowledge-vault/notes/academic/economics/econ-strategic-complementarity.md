@@ -31,6 +31,13 @@ aliases:
 - [Cooper & John (1988) “Coordinating Coordination Failures in Keynesian Models,” Quarterly Journal of Economics 103(3):441-463（マクロ応用・複数均衡）](https://academic.oup.com/qje/article-abstract/103/3/441/1904690) `学術`
 - [Encyclopedia.com「Coordination Failure」— 戦略的補完性による協調失敗・複数均衡](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/coordination-failure) `リファレンス`
 
+## 関連概念
+- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
+- [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同分野の近傍
+- [[econ-real-business-cycle-theory|実物景気循環理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

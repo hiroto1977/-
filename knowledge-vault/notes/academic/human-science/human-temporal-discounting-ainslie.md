@@ -30,6 +30,17 @@ aliases:
 - [Frederick, Loewenstein & O Donoghue (2002) Time Discounting and Time Preference: A Critical Review — Journal of Economic Literature](https://doi.org/10.1257/002205102320161311) `学術`
 - [Wikipedia: Hyperbolic discounting — 双曲割引と時間選好の理論的概説](https://en.wikipedia.org/wiki/Hyperbolic_discounting) `リファレンス`
 
+## 関連概念
+- [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — 語彙が近い
+- [[human-hyperbolic-discounting|双曲割引]] — 語彙が近い
+- [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — 同じ思想家
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同じ思想家
+- [[econ-present-bias|現在バイアス：先延ばし行動と自己制御の行動経済学的分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

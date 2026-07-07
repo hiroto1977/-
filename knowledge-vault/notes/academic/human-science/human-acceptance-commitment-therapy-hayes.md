@@ -29,6 +29,14 @@ aliases:
 - [Hayes, S.C. et al. (2004) Acceptance and Commitment Therapy — BRAT](https://doi.org/10.1016/j.brat.2004.06.006) `学術`
 - [Wikipedia: Acceptance and commitment therapy — third-wave CBT](https://en.wikipedia.org/wiki/Acceptance_and_commitment_therapy) `リファレンス`
 
+## 関連概念
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 語彙が近い
+- [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 語彙が近い
+- [[human-relational-frame-theory|関係フレーム理論（RFT）]] — 同分野の近傍
+- [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
+- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

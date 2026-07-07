@@ -31,6 +31,15 @@ aliases:
 - [Wikipedia「Ownership (psychology)」— 定義・3ルート・自己アイデンティティ・テリトリアリティ・IKEA効果](https://en.wikipedia.org/wiki/Ownership_(psychology)) `リファレンス`
 - [“Psychological Ownership: A 20-Year Review,” Japanese Journal of Human Resource Management（査読・学会誌）](https://www.jstage.jst.go.jp/article/jshrm/22/2/22_87/_html/-char/en) `学術`
 
+## 関連概念
+- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 語彙が近い
+- [[econ-time-preference|時間選好]] — 出典を共有
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[mgmt-attention-based-view-ocasio|企業のアテンション・ベースト・ビュー（注意基盤理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

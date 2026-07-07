@@ -31,6 +31,18 @@ Samuel Williston ／ Karl Llewellyn ／ Arthur Corbin ／ Lon Fuller ／ Eric Po
 - [Statute of Frauds — Cornell LII Wex Legal Dictionary](https://www.law.cornell.edu/wex/statute_of_frauds) `リファレンス`
 - [Fuller & Perdue, "The Reliance Interest in Contract Damages" Yale Law Journal (1936)](https://www.jstor.org/stable/792041) `学術`
 
+## 関連概念
+- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 語彙が近い
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-promissory-estoppel-reliance|約束的禁反言法理]] — 同じ思想家
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

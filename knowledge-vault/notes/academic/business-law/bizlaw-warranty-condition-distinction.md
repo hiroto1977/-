@@ -29,6 +29,12 @@ aliases:
 - [Cornell LII Wex: Warranty / condition — term classification, termination vs damages, Sale of Goods](https://www.law.cornell.edu/wex/warranty) `リファレンス`
 - [Wikipedia: Innominate term — Hong Kong Fir, condition/warranty/innominate, seriousness of breach](https://en.wikipedia.org/wiki/Innominate_term) `リファレンス`
 
+## 関連概念
+- [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — 語彙が近い
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同じ思想家
+- [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

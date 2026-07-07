@@ -36,6 +36,16 @@ national
 - [厚生労働省 求職者支援訓練 リーフレット](https://www.mhlw.go.jp/bunya/nouryoku/training/dl/training01m.pdf) `公的`
 - [連合 求職者支援制度 Q&A](https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_35.html) `メディア`
 
+## 関連概念
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
+- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 同分野の近傍
+- [[subsidy-child-allowance|児童手当]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

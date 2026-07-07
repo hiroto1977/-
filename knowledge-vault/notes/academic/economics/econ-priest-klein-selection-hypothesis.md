@@ -30,6 +30,11 @@ George L. Priest（1947-2024, Yale Law School） ／ Benjamin Klein（UCLA, 共�
 - [IDEAS/RePEc — Priest, George L. & Klein, Benjamin (1984) 'The Selection of Disputes for Litigation,' Journal of Legal Studies, vol. 13(1), pp. 1-56（書誌・被引用情報）](https://ideas.repec.org/a/ucp/jlstud/v13y1984i1p1-56.html) `リファレンス`
 - [Lee, Y.-H. A. & Klerman, D. M. (2016) The Priest-Klein Hypotheses: Proofs and Generality. International Review of Law and Economics, 48, 59-76（50%命題の証明条件・一般性・批判の整理）](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2538854) `学術`
 
+## 関連概念
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

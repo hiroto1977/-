@@ -33,6 +33,11 @@ aliases:
 - [Hickel, Sullivan & Zoomkawala (2021) Plunder in the Post-Colonial Era — New Political Economy 26(6)](https://doi.org/10.1080/13563467.2021.1899153) `学術`
 - [Monthly Review Press — Emmanuel, Unequal Exchange: A Study of the Imperialism of Trade (Updated Edition)](https://monthlyreview.org/9781685901431/) `リファレンス`
 
+## 関連概念
+- [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

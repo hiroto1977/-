@@ -30,6 +30,10 @@ aliases:
 - [Underwood, B.J. 1957 Interference and forgetting. Psychological Review 64(1) 49-60](https://doi.org/10.1037/h0044580) `学術`
 - [Anderson, M.C. 2003 Rethinking interference theory: Executive control and the mechanisms of forgetting. Journal of Memory and Language 49(4) 415-445](https://doi.org/10.1037/0278-7393.29.4.545) `学術`
 
+## 関連概念
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

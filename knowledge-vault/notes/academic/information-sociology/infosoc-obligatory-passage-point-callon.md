@@ -29,6 +29,17 @@ aliases:
 - [Callon, M. (1986) Some elements of a sociology of translation — in Power, Action and Belief (ed. Law)](https://doi.org/10.1111/j.1467-954X.1984.tb00113.x) `学術`
 - [Wikipedia: Actor–network theory — obligatory passage point, translation, Callon, enrolment](https://en.wikipedia.org/wiki/Actor%E2%80%93network_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

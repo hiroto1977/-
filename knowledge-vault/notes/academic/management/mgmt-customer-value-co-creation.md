@@ -29,6 +29,11 @@ aliases:
 - [Vargo, S.L. & Lusch, R.F. (2004). Evolving to a new dominant logic — Journal of Marketing](https://doi.org/10.1509/jmkg.68.1.1.24036) `学術`
 - [Wikipedia: Service-dominant logic — value co-creation](https://en.wikipedia.org/wiki/Service-dominant_logic) `リファレンス`
 
+## 関連概念
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 語彙が近い
+- [[mgmt-value-co-creation|価値共創]] — 同分野の近傍
+- [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

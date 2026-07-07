@@ -29,6 +29,13 @@ aliases:
 - [Padilla, A., Hogan, R. & Kaiser, R. B. (2007) The toxic triangle — The Leadership Quarterly](https://doi.org/10.1016/j.leaqua.2007.03.001) `学術`
 - [Wikipedia: Toxic leader — toxic triangle, destructive leaders, susceptible followers, environment](https://en.wikipedia.org/wiki/Toxic_leader) `リファレンス`
 
+## 関連概念
+- [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — 同じ思想家
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同分野の近傍
+- [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
+- [[mgmt-followership|フォロワーシップ論]] — 同分野の近傍
+- [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

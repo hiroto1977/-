@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Ostrich effect（ガライ&サーデ2006命名・情報回避・金融での実証）](https://en.wikipedia.org/wiki/Ostrich_effect) `リファレンス`
 - [The Decision Lab: Ostrich Effect（市場下落時にポートフォリオ確認頻度が低下）](https://thedecisionlab.com/biases/ostrich-effect) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-avoidance-theory|情報回避理論]] — 語彙が近い
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
+- [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — 出典を共有
+- [[human-action-bias|行動バイアス（アクション・バイアス）]] — 出典を共有
+- [[human-barnum-effect|バーナム効果（フォアラー効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

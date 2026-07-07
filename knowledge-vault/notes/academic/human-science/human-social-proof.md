@@ -31,6 +31,11 @@ aliases:
 - [Synthese (Springer) — Pluralistic ignorance in the bystander effect（社会的証明と傍観者効果）](https://link.springer.com/article/10.1007/s11229-014-0435-0) `学術`
 - [Robert Cialdini, Influence, Ch.4 "Social Proof"（原典・ラフトラック例）](https://www.media-studies.ca/articles/influence_ch4.htm) `リファレンス`
 
+## 関連概念
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 出典を共有
+- [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 同分野の近傍
+- [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

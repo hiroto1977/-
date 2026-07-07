@@ -30,6 +30,16 @@ aliases:
 - [Stiglitz, “In Praise of Frank Ramsey’s Contribution to the Theory of Taxation”, The Economic Journal 125(583), 2015](https://academic.oup.com/ej/article/125/583/235/5076989) `学術`
 - [Ramsey Pricing — ScienceDirect Topics（マークアップと需要弾力性の反比例）](https://www.sciencedirect.com/topics/economics-econometrics-and-finance/ramsey-pricing) `学術`
 
+## 関連概念
+- [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 同じ思想家
+- [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同じ思想家
+- [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 同じ思想家
+- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 同じ思想家
+- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
+- [[econ-social-discount-rate|社会的割引率——将来の費用と便益を現在価値に換算する公共の割引率]] — 同じ思想家
+- [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

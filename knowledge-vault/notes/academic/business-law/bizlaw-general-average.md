@@ -29,6 +29,10 @@ aliases:
 - [Cornell LII Wex: General average — maritime law, sacrifice for common safety, proportional contribution, York-Antwerp Rules](https://www.law.cornell.edu/wex/general_average) `リファレンス`
 - [Wikipedia: General average — Lex Rhodia, jettison, common peril, proportional sharing, York-Antwerp Rules](https://en.wikipedia.org/wiki/General_average) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

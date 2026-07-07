@@ -30,6 +30,13 @@ aliases:
 - [生命保険文化センター — 保険法の概要](https://www.jili.or.jp/knows_learns/law/) `リファレンス`
 - [Wikipedia — 保険法](https://ja.wikipedia.org/wiki/%E4%BF%9D%E9%99%BA%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 出典を共有
+- [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
+- [[bizlaw-insurance-contract-law-utmost-good-faith|保険契約法——最大善意義務と告知義務の法的枠組み]] — 同分野の近傍
+- [[bizlaw-insurable-interest|被保険利益——損をする立場にある者だけが保険をかけられる]] — 同分野の近傍
+- [[bizlaw-cheque-act|小切手法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

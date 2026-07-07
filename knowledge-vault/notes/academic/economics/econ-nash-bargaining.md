@@ -30,6 +30,18 @@ aliases:
 - [Nash (1950) “The Bargaining Problem” 原論文 PDF（Haverford College ホスト）](https://www.haverford.edu/sites/default/files/Nash1950.pdf) `学術`
 - [Rubinstein bargaining model（非協力的基礎づけと Nash 解への収束）](https://en.wikipedia.org/wiki/Rubinstein_bargaining_model) `リファレンス`
 
+## 関連概念
+- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
+- [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同じ思想家
+- [[econ-zeuthen-bargaining|ツォイテンの交渉モデル——衝突を賭ける覚悟が譲歩を決める]] — 同じ思想家
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-reference-dependent-preferences-koszegi-rabin|期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる]] — 出典を共有
+- [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

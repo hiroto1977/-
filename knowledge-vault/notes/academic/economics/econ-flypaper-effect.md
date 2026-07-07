@@ -30,6 +30,11 @@ aliases:
 - [Bradford, D. F. & Oates, W. E. (1971) "The Analysis of Revenue Sharing in a New Approach to Collective Fiscal Decisions", Quarterly Journal of Economics, 85(3), 416–439（等価定理）](https://academic.oup.com/qje/article-abstract/85/3/416/1909940) `学術`
 - [Flypaper effect (Wikipedia) — Gramlich 1969 / Okun の命名 "money sticks where it hits"、中位投票者予測との不整合、財政錯覚・予算最大化による説明](https://en.wikipedia.org/wiki/Flypaper_effect) `リファレンス`
 
+## 関連概念
+- [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
+- [[econ-menu-costs|メニューコスト]] — 同分野の近傍
+- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

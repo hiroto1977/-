@@ -30,6 +30,10 @@ Heckman, James J.（1979 "Sample Selection Bias as a Specification Error", Econo
 - [The Sveriges Riksbank Prize in Economic Sciences 2000 — Nobel Prize Summary (Heckman & McFadden)](https://www.nobelprize.org/prizes/economic-sciences/2000/summary/) `公的`
 - [Heckman, J.J. (1977/1979) Sample Selection Bias As a Specification Error (with an Application to the Estimation of Labor Supply Functions) — NBER Working Paper 172](https://www.nber.org/papers/w0172) `学術`
 
+## 関連概念
+- [[econ-lancaster-characteristics|ランカスターの特性アプローチ]] — 同分野の近傍
+- [[econ-rational-inattention-sims|合理的不注意理論——情報処理コストに基づく意思決定と価格硬直性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

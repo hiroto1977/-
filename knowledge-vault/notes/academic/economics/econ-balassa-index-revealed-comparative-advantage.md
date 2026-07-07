@@ -30,6 +30,17 @@ aliases:
 - [Hidalgo, C. A. et al. (2007) "The Product Space" — Science](https://doi.org/10.1126/science.1144581) `学術`
 - [Wikipedia: Revealed comparative advantage — バラッサ指数の定義と応用](https://en.wikipedia.org/wiki/Revealed_comparative_advantage) `リファレンス`
 
+## 関連概念
+- [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同じ思想家
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
+- [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
+- [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同分野の近傍
+- [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

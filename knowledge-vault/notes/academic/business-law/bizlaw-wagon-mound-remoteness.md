@@ -29,6 +29,10 @@ aliases:
 - [Wikipedia: The Wagon Mound (No 1) [1961] AC 388 — remoteness in negligence, reasonable foreseeability replacing Re Polemis directness test](https://en.wikipedia.org/wiki/Overseas_Tankship_(UK)_Ltd_v_Morts_Dock_and_Engineering_Co_Ltd) `リファレンス`
 - [Wikipedia: Remoteness in English law — Wagon Mound, reasonable foreseeability, type of harm, Re Polemis](https://en.wikipedia.org/wiki/Remoteness_in_English_law) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

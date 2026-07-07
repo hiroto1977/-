@@ -29,6 +29,11 @@ aliases:
 - [McIntyre, L. (2018). Post-Truth — MIT Press](https://doi.org/10.7551/mitpress/11483.001.0001) `学術`
 - [Wikipedia: Post-truth politics — epistemological crisis](https://en.wikipedia.org/wiki/Post-truth_politics) `リファレンス`
 
+## 関連概念
+- [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 語彙が近い
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 語彙が近い
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

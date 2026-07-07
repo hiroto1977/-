@@ -30,6 +30,10 @@ aliases:
 - [Judd, K. L. (1985) Redistributive Taxation in a Simple Perfect Foresight Model — Journal of Public Economics 28(1): 59-83](https://doi.org/10.1016/0047-2727(85)90020-9) `学術`
 - [Straub, L. & Werning, I. (2020) Positive Long-Run Capital Taxation: Chamley-Judd Revisited — American Economic Review 110(1): 86-119](https://www.aeaweb.org/articles?id=10.1257/aer.20150210) `学術`
 
+## 関連概念
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同分野の近傍
+- [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

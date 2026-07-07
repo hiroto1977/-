@@ -29,6 +29,15 @@ aliases:
 - [Goode, R. & Gullifer, L. (2019) Goode and Gullifer on Legal Problems of Credit and Security — Oxford University Press（担保法・倒産法の主要テキスト）](https://doi.org/10.1093/oso/9780198786641.001.0001) `学術`
 - [Wikipedia: Administration (law) — 英国管理手続（企業救済型倒産）の概説](https://en.wikipedia.org/wiki/Administration_(law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同じ思想家
+- [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
+- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同分野の近傍
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

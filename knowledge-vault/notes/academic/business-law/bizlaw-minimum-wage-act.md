@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省「最低賃金制度とは」](https://www.mhlw.go.jp/www2/topics/seido/kijunkyoku/minimum/minimum-10.htm) `公的`
 - [ウィキペディア「最低賃金法」](https://ja.wikipedia.org/wiki/%E6%9C%80%E4%BD%8E%E8%B3%83%E9%87%91%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 語彙が近い
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

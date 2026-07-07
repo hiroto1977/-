@@ -29,6 +29,18 @@ aliases:
 - [Thompson, J.D. (1967) Organizations in Action — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/240798) `学術`
 - [Wikipedia: James D. Thompson — long-linked/mediating/intensive technology, pooled/sequential/reciprocal interdependence](https://en.wikipedia.org/wiki/James_D._Thompson) `リファレンス`
 
+## 関連概念
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同じ思想家
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同じ思想家
+- [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — 同じ思想家
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
+- [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
+- [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同じ思想家
+- [[mgmt-kanban|かんばん方式]] — 同分野の近傍
+- [[mgmt-woodward-technology|ウッドワードの技術類型]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

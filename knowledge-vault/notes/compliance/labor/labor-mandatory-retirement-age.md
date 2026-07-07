@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省 高年齢者雇用安定法の概要（PDF）](https://www.mhlw.go.jp/content/11700000/001245647.pdf) `公的`
 - [高年齢者雇用安定法 8条 解説](https://www.rodo.co.jp/laws/117605/) `メディア`
 
+## 関連概念
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 語彙が近い
+- [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 分野横断
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 出典を共有
+- [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 出典を共有
+- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
+- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
+- [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

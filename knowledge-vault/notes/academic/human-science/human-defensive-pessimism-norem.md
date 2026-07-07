@@ -29,6 +29,12 @@ aliases:
 - [Norem, J.K. & Cantor, N. (1986) Defensive Pessimism: Harnessing Anxiety as Motivation — JPSP 51(6)](https://doi.org/10.1037/0022-3514.51.6.1208) `学術`
 - [Wikipedia: Defensive pessimism — Norem & Cantor, low expectations, playing through, strategic optimism](https://en.wikipedia.org/wiki/Defensive_pessimism) `リファレンス`
 
+## 関連概念
+- [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 同じ思想家
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同分野の近傍
+- [[human-golem-effect|ゴーレム効果]] — 同分野の近傍
+- [[human-dark-triad|ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

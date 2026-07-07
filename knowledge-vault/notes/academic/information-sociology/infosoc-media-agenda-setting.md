@@ -31,6 +31,18 @@ aliases:
 - [McCombs 2004 — Setting the Agenda: The Mass Media and Public Opinion, Polity Press](https://www.wiley.com/en-us/Setting+the+Agenda%3A+The+Mass+Media+and+Public+Opinion-p-9780745623474) `リファレンス`
 - [Scheufele & Tewksbury 2007 — Framing, Agenda Setting, and Priming: The Evolution of Three Media Effects Models, Journal of Communication 57(1):9-20](https://doi.org/10.1111/j.0021-9916.2007.00326.x) `学術`
 
+## 関連概念
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 語彙が近い
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 出典を共有
+- [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

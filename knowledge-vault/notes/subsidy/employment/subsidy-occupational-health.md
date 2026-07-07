@@ -36,6 +36,11 @@ national
 - [厚生労働省 団体経由産業保健活動推進助成金 案内](https://www.mhlw.go.jp/content/001492559.pdf) `公的`
 - [労働者健康安全機構 団体経由産業保健活動推進助成金 手引](https://www.johas.go.jp/Portals/0/data0/sanpo/sanpojoseikin/R7/org_josei_tebiki_R7.pdf) `公的`
 
+## 関連概念
+- [[subsidy-unpaid-wage|未払賃金立替払制度]] — 語彙が近い
+- [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 同分野の近傍
+- [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

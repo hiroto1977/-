@@ -33,6 +33,18 @@ Louis Albert Necker（1832 結晶図・立方体の見えの反転を報告）�
 - [Spontaneous Necker-cube reversals may not be that spontaneous (2023) — Frontiers in Human Neuroscience](https://doi.org/10.3389/fnhum.2023.1179081) `学術`
 - [The publications and collections of Louis-Albert Necker (1786–1861) (2015) — Archives of Natural History](https://doi.org/10.3366/anh.2015.0279) `学術`
 
+## 関連概念
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 出典を共有
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 出典を共有
+- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
+- [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
+- [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 出典を共有
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 出典を共有
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
+- [[infosoc-preferential-attachment|優先的選択（スケールフリー・ネットワーク）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

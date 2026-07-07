@@ -29,6 +29,12 @@ aliases:
 - [OECD (2017) Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations — OECD Publishing（移転価格ガイドラインの国際基準）](https://doi.org/10.1787/9789264265127-en) `公的`
 - [Wikipedia: Transfer pricing — 移転価格税制の概説](https://en.wikipedia.org/wiki/Transfer_pricing) `リファレンス`
 
+## 関連概念
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 語彙が近い
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 同じ思想家
+- [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]] — 同分野の近傍
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

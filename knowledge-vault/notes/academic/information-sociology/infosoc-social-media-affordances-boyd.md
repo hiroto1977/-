@@ -31,6 +31,18 @@ danah boyd ／ ニコール・エリソン ／ ジェームズ・ギブソン �
 - [Boyd, d. (2014) It's Complicated: The Social Lives of Networked Teens — Yale University Press](https://yalebooks.yale.edu/book/9780300166316/its-complicated/) `学術`
 - [Wikipedia: Affordance — Gibson's original ecological concept and its extension to social media design](https://en.wikipedia.org/wiki/Affordance) `リファレンス`
 
+## 関連概念
+- [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 語彙が近い
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 語彙が近い
+- [[infosoc-digital-inequality|デジタル格差・デジタル不平等：情報技術へのアクセスと活用における社会的不均衡]] — 同じ思想家
+- [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
+- [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同じ思想家
+- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

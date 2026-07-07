@@ -30,6 +30,13 @@ Alistair S. Duff／Safiya Umoja Noble／Virginia Eubanks／Tressie McMillan Cott
 - [Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press](https://nyupress.org/9781479837243/algorithms-of-oppression/) `リファレンス`
 - [Gordon (2019) Review of Eubanks (2018) Automating Inequality, Law Technology and Humans 1(1):162-164](https://lthj.qut.edu.au/article/view/1386) `学術`
 
+## 関連概念
+- [[infosoc-digital-redlining|デジタル・レッドライニング（Digital Redlining）]] — 同じ思想家
+- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同じ思想家
+- [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同分野の近傍
+- [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

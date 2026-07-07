@@ -30,6 +30,10 @@ aliases:
 - [e-Gov法令検索 行政手続法（平成5年法律第88号、法令ID 405AC0000000088）](https://laws.e-gov.go.jp/law/405AC0000000088) `公的`
 - [Wikipedia「行政手続法」（条文構成・2014年改正の概観）](https://ja.wikipedia.org/wiki/行政手続法) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 語彙が近い
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

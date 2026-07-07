@@ -29,6 +29,18 @@ aliases:
 - [Wikipedia: Saunders v Vautier — absolutely entitled beneficiaries, trust termination, dead hand](https://en.wikipedia.org/wiki/Saunders_v_Vautier) `リファレンス`
 - [Wikipedia: English trusts law — rule in Saunders v Vautier, beneficiary autonomy, variation](https://en.wikipedia.org/wiki/English_trusts_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-strong-v-bird|ストロング対バードの準則——不完全な贈与が遺言執行者就任で完成する]] — 同じ思想家
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同じ思想家
+- [[bizlaw-donatio-mortis-causa|死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与]] — 同じ思想家
+- [[bizlaw-beneficiary-principle|受益者原則——信託には執行できる受益者が必要である]] — 同じ思想家
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
+- [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
+- [[bizlaw-mutual-wills|相互遺言——撤回しない合意が擬制信託を生む]] — 同じ思想家
+- [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同じ思想家
+- [[bizlaw-presumption-advancement|前渡しの推定——一定の関係では無償移転を贈与と推定する]] — 同じ思想家
+- [[bizlaw-secret-trust|秘密信託——遺言の表面に現れない受託の合意]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

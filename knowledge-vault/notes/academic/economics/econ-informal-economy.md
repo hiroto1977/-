@@ -29,6 +29,14 @@ aliases:
 - [International Labour Organization — Informal Economy（国際労働機関公式ページ）](https://www.ilo.org/resource/other/informal-economy) `公的`
 - [WIEGO — Informal Economy: History & Debates（学術研究機関による概念史）](https://www.wiego.org/informal-economy/history-debates/) `学術`
 
+## 関連概念
+- [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — 出典を共有
+- [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 出典を共有
+- [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
+- [[econ-kuznets-curve|クズネッツ曲線]] — 同分野の近傍
+- [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

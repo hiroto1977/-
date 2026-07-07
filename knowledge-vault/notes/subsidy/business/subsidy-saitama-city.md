@@ -36,6 +36,18 @@ municipality
 - [さいたま市産業創造財団](https://www.sozo-saitama.or.jp/) `運営団体`
 - [さいたま市起業家支援補助金 解説](https://biz.stayway.jp/hojyo_detail/51400/) `メディア`
 
+## 関連概念
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 語彙が近い
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
+- [[subsidy-child-allowance|児童手当]] — 同じ思想家
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家
+- [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 同じ思想家
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
+- [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同じ思想家
+- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

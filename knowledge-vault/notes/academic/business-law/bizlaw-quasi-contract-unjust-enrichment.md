@@ -31,6 +31,18 @@ aliases:
 - [Birks, P. (2005) Unjust Enrichment (2nd ed.) — Oxford University Press（不当利得法の学術体系化）](https://global.oup.com/academic/product/unjust-enrichment-9780199276981) `学術`
 - [Burrows, A. (2011) The Law of Restitution (3rd ed.) — Oxford University Press](https://global.oup.com/academic/product/the-law-of-restitution-9780199252381) `学術`
 
+## 関連概念
+- [[bizlaw-unjust-enrichment|不当利得（民法703条・704条）]] — 語彙が近い
+- [[bizlaw-economic-duress|経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消]] — 同じ思想家
+- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同じ思想家
+- [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]] — 同じ思想家
+- [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
+- [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同じ思想家
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Two-factor theory](https://en.wikipedia.org/wiki/Two-factor_theory) `リファレンス`
 - [Simply Psychology — Herzberg’s Two-Factor Theory](https://www.simplypsychology.org/herzbergs-two-factor-theory.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
+- [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
+- [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]] — 同分野の近傍
+- [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ EU機能条約（TFEU）102条は、域内市場またはその実質的部分�
 - [Whish, R. & Bailey, D. (2018) Competition Law, 9th ed. — Oxford Univ Press](https://doi.org/10.1093/acprof:oso/9780199566730.001.0001) `学術`
 - [Wikipedia: TFEU Article 102 — 支配的地位の濫用の法的枠組み](https://en.wikipedia.org/wiki/Article_102_of_the_Treaty_on_the_Functioning_of_the_European_Union) `リファレンス`
 
+## 関連概念
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 語彙が近い
+- [[bizlaw-competition-law-merger-control-eu|EU競争法における企業結合規制——欧州委員会の合併審査とSIECテスト]] — 同じ思想家
+- [[bizlaw-eu-digital-markets-act-dma|EUデジタル市場法（DMA）——ゲートキーパー・プラットフォームの事前規制]] — 同じ思想家
+- [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同分野の近傍
+- [[bizlaw-competition-law-abuse-dominance|競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制]] — 同分野の近傍
+- [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

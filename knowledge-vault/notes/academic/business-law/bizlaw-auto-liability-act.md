@@ -30,6 +30,18 @@ aliases:
 - [国土交通省「自賠責保険・共済ってどんなもの？」（強制加入・被害者保護）](https://www.mlit.go.jp/jidosha/jibaiseki/about/overview/index.html) `公的`
 - [国土交通省「政府保障事業」（ひき逃げ・無保険車被害者の救済、人身損害のみ）](https://www.mlit.go.jp/jidosha/jibaiseki/public_payment/index.html) `公的`
 
+## 関連概念
+- [[bizlaw-building-standards|建築基準法]] — 出典を共有
+- [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — 出典を共有
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 出典を共有
+- [[legal-land-lease-right|借地借家法における借地権]] — 出典を共有
+- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]] — 出典を共有
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 出典を共有
+- [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 出典を共有
+- [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 出典を共有
+- [[legal-logistics-efficiency-act|改正物流効率化法（物流2法・物流2024年問題への対応）]] — 出典を共有
+- [[subsidy-housing-safety-net|住宅セーフティネット制度]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

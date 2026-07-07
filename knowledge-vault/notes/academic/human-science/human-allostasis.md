@@ -30,6 +30,13 @@ Peter Sterling & Joseph Eyer（1988, Handbook of Life Stress — アロスタシ
 - [Sterling & Eyer (1988) Allostasis: A New Paradigm to Explain Arousal Pathology — Semantic Scholar](https://www.semanticscholar.org/paper/Allostasis:-A-new-paradigm-to-explain-arousal-Sterling-Eyer/26009c73354023e6c1c3b81fbd200706e9972c34) `学術`
 - [Fisher & Reason (Eds.) (1988) Handbook of Life Stress, Cognition and Health — WorldCat](https://search.worldcat.org/title/17234042) `リファレンス`
 
+## 関連概念
+- [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 同じ思想家
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 出典を共有
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

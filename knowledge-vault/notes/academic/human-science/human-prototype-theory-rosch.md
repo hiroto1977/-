@@ -30,6 +30,11 @@ Rosch, Eleanor（1973 "Natural Categories"／1975 "Cognitive Representations of 
 - [Rosch, E. (1975) "Cognitive Representations of Semantic Categories", Journal of Experimental Psychology: General 104(3), 192-233](https://www.semanticscholar.org/paper/Cognitive-Representations-of-Semantic-Categories.-Rosch/fcd1453f7dda96718b4092354f2a19069041b3a8) `学術`
 - [Wikipedia — "Prototype theory" (graded membership, typicality effects, robin/penguin example, basic-level categories overview)](https://en.wikipedia.org/wiki/Prototype_theory) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-theory|身体化された認知]] — 同じ思想家
+- [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
+- [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

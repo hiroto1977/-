@@ -29,6 +29,15 @@ aliases:
 - [Ellis, H. D. & Young, A. W. (1990) Accounting for delusional misidentifications — British Journal of Psychiatry, 157, 239–248](https://doi.org/10.1192/bjp.157.2.239) `学術`
 - [Wikipedia: Fregoli delusion — Courbon & Fail (1927), delusional misidentification, converse of Capgras](https://en.wikipedia.org/wiki/Fregoli_delusion) `リファレンス`
 
+## 関連概念
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
+- [[human-charles-bonnet-syndrome|シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視]] — 同じ思想家
+- [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

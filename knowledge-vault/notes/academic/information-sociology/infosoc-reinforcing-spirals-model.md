@@ -30,6 +30,10 @@ Michael D. Slater（マイケル・D・スレイター, RSM 提唱者, 2007） �
 - [Slater, M. D. (2015). Reinforcing Spirals Model: Conceptualizing the Relationship Between Media Content Exposure and the Development and Maintenance of Attitudes. Media Psychology, 18(3), 370–395 (open access via NIH PMC4565521).](https://pmc.ncbi.nlm.nih.gov/articles/PMC4565521/) `公的`
 - [Slater, M. D. (2007). Reinforcing Spirals (abstract), Communication Theory 17(3):281–303, Oxford Academic. DOI 10.1111/j.1468-2885.2007.00296.x](https://academic.oup.com/ct/article-abstract/17/3/281/4098761) `学術`
 
+## 関連概念
+- [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同分野の近傍
+- [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

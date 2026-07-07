@@ -30,6 +30,10 @@ aliases:
 - [栃木労働局 裁量労働制（38条の3・38条の4）](https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/_79159/discretion38-3-4.html) `公的`
 - [厚生労働省 専門業務型裁量労働制の解説（令和6年改正対応）](https://jsite.mhlw.go.jp/fukui-roudoukyoku/content/contents/001661796.pdf) `公的`
 
+## 関連概念
+- [[labor-variable-working-hours|変形労働時間制]] — 語彙が近い
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

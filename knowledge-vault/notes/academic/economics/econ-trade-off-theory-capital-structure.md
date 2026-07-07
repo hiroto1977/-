@@ -29,6 +29,18 @@ aliases:
 - [Kraus, A. & Litzenberger, R.H. (1973) A State-Preference Model of Optimal Financial Leverage — Journal of Finance 28(4)](https://doi.org/10.1111/j.1540-6261.1973.tb01415.x) `学術`
 - [Wikipedia: Trade-off theory — tax shield vs financial distress costs, Modigliani-Miller, target capital structure](https://en.wikipedia.org/wiki/Trade-off_theory_of_capital_structure) `リファレンス`
 
+## 関連概念
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — 同じ思想家
+- [[econ-greenspan-put|グリーンスパン・プット]] — 同じ思想家
+- [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]] — 同じ思想家
+- [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同じ思想家
+- [[econ-life-cycle-hypothesis-modigliani|ライフサイクル仮説——生涯を通じた消費平準化と貯蓄の動学]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

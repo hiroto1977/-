@@ -31,6 +31,14 @@ Steven W. Floyd ／ Peter J. Lane ／ Rajshree Agarwal ／ Constance E. Helfat �
 - [Volberda et al. 2001 LRP](https://doi.org/10.1016/S0024-6301(01)00032-2) `学術`
 - [Crossan & Berdrow 2003 SMJ](https://doi.org/10.1002/smj.342) `学術`
 
+## 関連概念
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同じ思想家
+- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同じ思想家
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同じ思想家
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
+- [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

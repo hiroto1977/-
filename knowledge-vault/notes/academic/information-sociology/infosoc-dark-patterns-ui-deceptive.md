@@ -29,6 +29,11 @@ aliases:
 - [Mathur, A. et al. (2019). Dark patterns at scale — ACM CHI](https://doi.org/10.1145/3313831.3376600) `学術`
 - [Wikipedia: Dark pattern — deceptive UX design](https://en.wikipedia.org/wiki/Dark_pattern) `リファレンス`
 
+## 関連概念
+- [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同分野の近傍
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

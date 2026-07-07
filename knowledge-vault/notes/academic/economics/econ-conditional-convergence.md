@@ -29,6 +29,13 @@ aliases:
 - [Econlib (Concise Encyclopedia of Economics): Empirics of Economic Growth — MRW1992 & Barro ~2% conditional convergence](https://www.econlib.org/library/Enc/EmpiricsofEconomicGrowth.html) `リファレンス`
 - [Barro & Sala-i-Martin, Economic Growth (2nd ed., MIT Press) — absolute vs conditional β-convergence, ~2% speed](http://piketty.pse.ens.fr/files/BarroSalaIMartin2004Chap1-2.pdf) `学術`
 
+## 関連概念
+- [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 出典を共有
+- [[econ-baumol-cost-disease|ボーモルのコスト病]] — 出典を共有
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
+- [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同分野の近傍
+- [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ iDeCo（個人型確定拠出年金）は、確定拠出年金法に基づき国
 - [iDeCo公式（国民年金基金連合会）制度の仕組み](https://www.ideco-koushiki.jp/guide/structure.html) `運営団体`
 - [iDeCo公式 掛金が全額所得控除](https://www.ideco-koushiki.jp/guide/good.html) `運営団体`
 
+## 関連概念
+- [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 語彙が近い
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 分野横断
+- [[bizlaw-defined-contribution-pension|確定拠出年金法]] — 分野横断
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

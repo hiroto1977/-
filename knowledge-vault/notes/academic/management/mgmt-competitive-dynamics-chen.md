@@ -31,6 +31,18 @@ aliases:
 - [Chen, M.-J. & Hambrick, D. C. (1995) Speed, Stealth, and Selective Attack: How Small Firms Differ from Large Firms in Competitive Behavior — Academy of Management Journal, 38(2), 453–482（規模別競争行動の差異）](https://doi.org/10.5465/amj.1995.9506290196) `学術`
 - [Wikipedia: Competitive dynamics — Chen AMC model, action-response dyad, market commonality, resource similarity](https://en.wikipedia.org/wiki/Competitive_dynamics) `リファレンス`
 
+## 関連概念
+- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
+- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
+- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

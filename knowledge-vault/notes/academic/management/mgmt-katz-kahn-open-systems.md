@@ -29,6 +29,15 @@ aliases:
 - [Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley](https://www.worldcat.org/oclc/255184) `学術`
 - [Wikipedia: Open system (systems theory) — negative entropy, equifinality, organizations](https://en.wikipedia.org/wiki/Open_system_(systems_theory)) `リファレンス`
 
+## 関連概念
+- [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 同じ思想家
+- [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同分野の近傍
+- [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同分野の近傍
+- [[mgmt-organizational-entropy|組織エントロピー]] — 同分野の近傍
+- [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
+- [[mgmt-teal-organization|ティール組織]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

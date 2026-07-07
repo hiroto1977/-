@@ -30,6 +30,18 @@ aliases:
 - [Brown, R. E. (2016) “Hebb and Cattell: The Genesis of the Theory of Fluid and Crystallized Intelligence”, Frontiers in Human Neuroscience（査読論文、理論の起源と定義）](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156710/) `学術`
 - [加齢に伴う流動性知能の低下と結晶性知能の維持に関する査読レビュー](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8628958/) `学術`
 
+## 関連概念
+- [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 語彙が近い
+- [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]] — 同じ思想家
+- [[human-triarchic-intelligence-sternberg|知能の鼎立理論——分析的・創造的・実践的知能の三側面]] — 同じ思想家
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-defense-mechanisms|防衛機制]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-group-polarization|集団極性化]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
+- [[human-mcgurk-effect|マガーク効果]] — 出典を共有
+- [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

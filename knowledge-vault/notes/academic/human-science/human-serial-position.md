@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia — Serial-position effect（Ebbinghaus 起源・Murdock 1962・多重貯蔵説）](https://en.wikipedia.org/wiki/Serial-position_effect) `リファレンス`
 - [PMC（NIH）— Serial-Position Effects on a Free-Recall Task（U字型曲線・初頭/新近効果の実証）](https://pmc.ncbi.nlm.nih.gov/articles/PMC4633394/) `学術`
 
+## 関連概念
+- [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]] — 語彙が近い
+- [[human-halo-effect|ハロー効果（後光効果, halo effect）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

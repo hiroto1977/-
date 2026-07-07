@@ -30,6 +30,12 @@ aliases:
 - [Roenneberg et al. (2003) Life between Clocks: Daily Temporal Patterns of Human Chronotypes — J Biol Rhythms](https://doi.org/10.1177/0748730403251042) `学術`
 - [Roenneberg et al. (2012) Social Jetlag and Obesity — Current Biology](https://doi.org/10.1016/j.cub.2012.03.038) `学術`
 
+## 関連概念
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同じ思想家
+- [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 同じ思想家
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 同分野の近傍
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

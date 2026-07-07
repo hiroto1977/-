@@ -29,6 +29,18 @@ E・グレン・ワイル ／ エリック・ポズナー ／ スティーブン
 - [Lalley, S. P. & Weyl, E. G. (2018) Quadratic Voting: How Mechanism Design Can Radicalize Democracy — AEA Papers and Proceedings, 108, 33–37](https://www.aeaweb.org/articles?id=10.1257/pandp.20181002) `学術`
 - [Wikipedia: Quadratic voting — Weyl & Posner, vote buying at quadratic cost, preference intensity, Radical Markets](https://en.wikipedia.org/wiki/Quadratic_voting) `リファレンス`
 
+## 関連概念
+- [[bizlaw-environmental-liability-polluter-pays|環境責任と汚染者負担原則の法制度比較]] — 同じ思想家
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

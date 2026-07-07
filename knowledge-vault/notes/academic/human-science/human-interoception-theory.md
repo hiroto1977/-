@@ -32,6 +32,13 @@ Arthur D. Craig ／ Hugo D. Critchley ／ Lisa Feldman Barrett ／ Karl J. Frist
 - [Seth (2013) — Interoceptive inference, emotion, and the embodied self](https://www.sciencedirect.com/science/article/pii/S1364661313002118) `学術`
 - [Friston et al. (2017) — Active interoceptive inference and the emotional brain](https://pmc.ncbi.nlm.nih.gov/articles/PMC5062097/) `学術`
 
+## 関連概念
+- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同じ思想家
+- [[human-predictive-processing-theory|予測処理理論]] — 同じ思想家
+- [[human-emotional-granularity|感情粒度]] — 同じ思想家
+- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同じ思想家
+- [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

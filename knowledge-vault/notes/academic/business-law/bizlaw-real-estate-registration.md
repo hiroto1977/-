@@ -30,6 +30,10 @@ aliases:
 - [法務省「登記 -不動産登記-」](https://www.moj.go.jp/MINJI/fudousantouki.html) `公的`
 - [Wikipedia「不動産登記法」（全部改正・相続登記義務化）](https://ja.wikipedia.org/wiki/%E4%B8%8D%E5%8B%95%E7%94%A3%E7%99%BB%E8%A8%98%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
+- [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

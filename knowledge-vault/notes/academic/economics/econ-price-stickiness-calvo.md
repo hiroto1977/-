@@ -29,6 +29,18 @@ aliases:
 - [Calvo, G.A. (1983) Staggered Prices in a Utility-Maximizing Framework — Journal of Monetary Economics 12(3)](https://doi.org/10.1016/0304-3932(83)90060-0) `学術`
 - [Wikipedia: Calvo (staggered) contracts — price stickiness, New Keynesian Phillips curve, DSGE](https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts) `リファレンス`
 
+## 関連概念
+- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 語彙が近い
+- [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 同じ思想家
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
+- [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

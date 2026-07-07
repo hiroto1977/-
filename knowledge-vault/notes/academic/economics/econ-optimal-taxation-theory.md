@@ -30,6 +30,18 @@ Frank P. Ramsey／James A. Mirrlees／Peter A. Diamond／Anthony B. Atkinson／J
 - [Diamond & Mirrlees (1971) Optimal Taxation and Public Production I: Production Efficiency, AER 61(1):8-27](https://www.aeaweb.org/aer/top20/61.1.8-27.pdf) `学術`
 - [Saez (2001) Using Elasticities to Derive Optimal Income Tax Rates, Review of Economic Studies 68(1):205-229](https://www.nber.org/papers/w7628) `学術`
 
+## 関連概念
+- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 語彙が近い
+- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 語彙が近い
+- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 語彙が近い
+- [[econ-atkinson-inequality-index|アトキンソン不等式指数（不等式測定指数）]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
+- [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]] — 同じ思想家
+- [[econ-laffer-curve-theory|ラッファー曲線理論]] — 同じ思想家
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
+- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
+- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

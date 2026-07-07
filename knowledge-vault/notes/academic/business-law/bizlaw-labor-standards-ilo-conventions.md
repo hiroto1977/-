@@ -29,6 +29,10 @@ aliases:
 - [Vosko, L. (2010). Managing the Margins — Oxford UP](https://doi.org/10.1017/9781108595872) `学術`
 - [Wikipedia: International labour law — ILO conventions](https://en.wikipedia.org/wiki/International_labour_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 同分野の近傍
+- [[bizlaw-arbitration-act|仲裁法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

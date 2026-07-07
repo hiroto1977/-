@@ -30,6 +30,10 @@ Aleksandr V. Chayanov（アレクサンドル・チャヤノフ） ／ 消費者
 - [Hammel, E. A. (2005). Chayanov revisited: A model for the economics of complex kin units. Proceedings of the National Academy of Sciences (PNAS) 102(19): 7043–7046. doi:10.1073/pnas.0501987102 — on the consumer/producer ratio over the domestic cycle](https://doi.org/10.1073/pnas.0501987102) `学術`
 - [Review of A. V. Chayanov, The Theory of Peasant Economy, eds. D. Thorner, B. Kerblay & R. E. F. Smith (R. D. Irwin for the American Economic Association, Homewood, Illinois, 1966), in The Economic Journal 78(310): 469 (1968)](https://academic.oup.com/ej/article-abstract/78/310/469/5235893) `学術`
 
+## 関連概念
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

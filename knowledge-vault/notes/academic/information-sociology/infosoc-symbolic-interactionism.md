@@ -30,6 +30,11 @@ G.H.ミード（源流）／H.ブルーマー（1937命名・1969体系化）／
 - [The Cambridge Handbook of Social Theory, Ch.11 — Symbolic Interactionism](https://www.cambridge.org/core/books/abs/cambridge-handbook-of-social-theory/symbolic-interactionism/AF7CEEEDDD2193573F45E2E5CB30B633) `学術`
 - [Montgomery College — Symbolic Interactionism: Mead & Blumer（3前提）](https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-5-symbolic-interactionism-george-herbert-mead-herbert-blumer/) `学術`
 
+## 関連概念
+- [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 出典を共有
+- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同分野の近傍
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

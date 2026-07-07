@@ -29,6 +29,17 @@ aliases:
 - [Freedman, J.L. & Fraser, S.C. (1966) Compliance without Pressure: The Foot-in-the-Door Technique — JPSP 4(2)](https://doi.org/10.1037/h0023552) `学術`
 - [Wikipedia: Foot-in-the-door technique — Freedman & Fraser, compliance, self-perception, consistency](https://en.wikipedia.org/wiki/Foot-in-the-door_technique) `リファレンス`
 
+## 関連概念
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 語彙が近い
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同じ思想家
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
+- [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
+- [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同じ思想家
+- [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同じ思想家
+- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

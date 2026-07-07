@@ -33,6 +33,13 @@ Albert Bandura（1997 『Self-Efficacy: The Exercise of Control』で集合的�
 - [Gully, Incalcaterra, Joshi & Beaubien (2002) A Meta-Analysis of Team-Efficacy, Potency, and Performance — Journal of Applied Psychology 87(5)](https://doi.org/10.1037/0021-9010.87.5.819) `学術`
 - [Goddard, Hoy & Woolfolk Hoy (2000) Collective Teacher Efficacy: Its Meaning, Measure, and Impact on Student Achievement — American Educational Research Journal 37(2)](https://journals.sagepub.com/doi/10.3102/00028312037002479) `学術`
 
+## 関連概念
+- [[human-social-learning-theory|社会的学習理論]] — 同じ思想家
+- [[human-self-efficacy-theory|自己効力感理論]] — 同じ思想家
+- [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同じ思想家
+- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

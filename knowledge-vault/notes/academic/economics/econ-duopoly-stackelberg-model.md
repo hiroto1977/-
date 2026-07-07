@@ -30,6 +30,11 @@ Heinrich von Stackelberg
 - [EconLib — Game Theory (Library of Economics and Liberty)](https://www.econlib.org/library/Enc/GameTheory.html) `リファレンス`
 - [Gal-Or, E. (1985) First Mover and Second Mover Advantages, Review of Economic Studies 52(4)](https://www.jstor.org/stable/1819460) `学術`
 
+## 関連概念
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 語彙が近い
+- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 語彙が近い
+- [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

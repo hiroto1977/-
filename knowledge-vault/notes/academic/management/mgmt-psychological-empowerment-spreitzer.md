@@ -29,6 +29,13 @@ aliases:
 - [Spreitzer, G.M. (1995) Psychological Empowerment in the Workplace — Academy of Management Journal 38(5)](https://doi.org/10.2307/256865) `学術`
 - [Wikipedia: Empowerment — Spreitzer, meaning/competence/self-determination/impact, intrinsic motivation](https://en.wikipedia.org/wiki/Empowerment) `リファレンス`
 
+## 関連概念
+- [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
+- [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同じ思想家
+- [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
+- [[mgmt-perceived-organizational-support-eisenberger|組織的支援知覚——組織が自分を尊重し配慮していると従業員が感じる程度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,16 @@ aliases:
 - [Lee & Lemieux (2010), Regression Discontinuity Designs in Economics, NBER Working Paper No. 14723](https://www.princeton.edu/~davidlee/wp/w14723.pdf) `学術`
 - [ScienceDirect Topics — Regression Discontinuity Design (overview)](https://www.sciencedirect.com/topics/economics-econometrics-and-finance/regression-discontinuity-design) `リファレンス`
 
+## 関連概念
+- [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同じ思想家
+- [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 出典を共有
+- [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 出典を共有
+- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 出典を共有
+- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,10 @@ aliases:
 - [Wikipedia "Information cascade" — 定義・ハーディングとの区別](https://en.wikipedia.org/wiki/Information_cascade) `リファレンス`
 - [Cornell INFO 2040 course blog — 情報カスケード対群集行動の区別](https://blogs.cornell.edu/info2040/2017/11/24/informational-cascade-vs-herd-behavior/) `学術`
 
+## 関連概念
+- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同分野の近傍
+- [[infosoc-hacktivism|ハクティビズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

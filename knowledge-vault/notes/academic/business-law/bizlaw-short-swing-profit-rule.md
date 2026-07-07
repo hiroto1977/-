@@ -30,6 +30,15 @@ Securities Exchange Act of 1934 §16(b) (15 U.S.C. 78p) ／ Smolowe v. Delendo C
 - [Kern County Land Co. v. Occidental Petroleum Corp., 411 U.S. 582 (1973)（合衆国最高裁。16条(b)を予防的・厳格責任と位置づけ、「型破りな取引」法理を示した判例。Justia U.S. Supreme Court Center 収録）](https://supreme.justia.com/cases/federal/us/411/582/) `リファレンス`
 - [Stuart J. Kaswell (2020), "Repeal or Amend Section 16(b) of the Securities Exchange Act of 1934, the 'Short Swing' Disgorgement Provision," Business Law Today, American Bar Association（厳格責任・予防的設計と改正論を論じた専門法律誌記事）](https://www.americanbar.org/groups/business_law/resources/business-law-today/2020-august/repeal-or-amend-section-16-b/) `学術`
 
+## 関連概念
+- [[bizlaw-nemo-dat-quod-non-habet|ネモ・ダット原則（Nemo Dat Quod Non Habet）]] — 同じ思想家
+- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 同じ思想家
+- [[bizlaw-reves-family-resemblance|リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み]] — 同じ思想家
+- [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 出典を共有
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

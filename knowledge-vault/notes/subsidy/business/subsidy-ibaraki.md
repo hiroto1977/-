@@ -36,6 +36,18 @@ prefecture
 - [古河市 いばらき業務改善奨励金](https://www.city.ibaraki-koga.lg.jp/soshiki/syoko/3/20609.html) `自治体`
 - [いばらき業務改善奨励金 概要](https://hojyokin-portal.jp/subsidies/58756) `メディア`
 
+## 関連概念
+- [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 語彙が近い
+- [[subsidy-work-improvement|業務改善助成金]] — 分野横断
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

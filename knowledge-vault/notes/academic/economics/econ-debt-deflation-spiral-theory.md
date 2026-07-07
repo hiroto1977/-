@@ -32,6 +32,18 @@ Irving Fisher ／ Ben S. Bernanke ／ Hyman P. Minsky
 - [BIS Working Paper No. 176 — Debt-deflation: concepts and a stylised model](https://www.bis.org/publ/work176.pdf) `公的`
 - [Wikipedia — Debt deflation](https://en.wikipedia.org/wiki/Debt_deflation) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation-theory|債務デフレ理論]] — 語彙が近い
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 語彙が近い
+- [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
+- [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
+- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
+- [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
+- [[econ-financialization|金融化——経済の金融部門支配]] — 同じ思想家
+- [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
+- [[econ-macroprudential-policy|マクロプルーデンス政策]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

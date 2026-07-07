@@ -36,6 +36,16 @@ national
 - [中小企業庁 SBIR制度が新しくなりました](https://www.chusho.meti.go.jp/keiei/gijut/2021/210817sbr.html) `公的`
 - [STARTUP DB SBIR（中小企業技術革新制度）の解説](https://journal.startup-db.com/articles/words-sbir) `メディア`
 
+## 関連概念
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
+- [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 出典を共有
+- [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — 出典を共有
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 出典を共有
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[subsidy-nedo-startup|NEDO 研究開発型スタートアップ支援事業]] — 出典を共有
+- [[subsidy-jstartup|J-Startup]] — 同分野の近傍
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

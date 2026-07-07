@@ -30,6 +30,12 @@ aliases:
 - [Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal](https://doi.org/10.1177/2043820614532284) `学術`
 - [Wikipedia: Smart city — スマートシティの概念と批判的議論](https://en.wikipedia.org/wiki/Smart_city) `リファレンス`
 
+## 関連概念
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 語彙が近い
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
+- [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
+- [[infosoc-gamification|ゲーミフィケーション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

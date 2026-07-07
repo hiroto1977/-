@@ -30,6 +30,18 @@ aliases:
 - [Core (game theory) — Wikipedia](https://en.wikipedia.org/wiki/Core_(game_theory)) `リファレンス`
 - [Edgeworth's limit theorem / Debreu–Scarf theorem — Wikipedia](https://en.wikipedia.org/wiki/Edgeworth_conjecture) `リファレンス`
 
+## 関連概念
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 同じ思想家
+- [[econ-edgeworth-box|エッジワース・ボックス]] — 同じ思想家
+- [[econ-shapley-value|シャープレー値]] — 同じ思想家
+- [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同じ思想家
+- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

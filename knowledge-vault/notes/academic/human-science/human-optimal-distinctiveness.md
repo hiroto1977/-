@@ -29,6 +29,12 @@ Marilynn B. Brewer（1991年論文・理論の提唱者） ／ 同化・包摂�
 - [Brewer, M. B. (1991). The Social Self: On Being the Same and Different at the Same Time. Personality and Social Psychology Bulletin, 17(5), 475-482.](https://doi.org/10.1177/0146167291175001) `学術`
 - [Wikipedia, “Optimal distinctiveness theory”（同化欲求と差異化欲求の対立・最適弁別性・社会的アイデンティティ理論との関係の概説）](https://en.wikipedia.org/wiki/Optimal_distinctiveness_theory) `リファレンス`
 
+## 関連概念
+- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同じ思想家
+- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 同分野の近傍
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同分野の近傍
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

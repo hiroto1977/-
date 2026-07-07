@@ -29,6 +29,13 @@ aliases:
 - [Lavie, N. (1995) Perceptual Load as a Necessary Condition for Selective Attention — JEP:HPP 21(3)](https://doi.org/10.1037/0096-1523.21.3.451) `学術`
 - [Wikipedia: Load theory — Lavie, perceptual load, early vs late selection, spillover, cognitive load](https://en.wikipedia.org/wiki/Load_theory) `リファレンス`
 
+## 関連概念
+- [[human-late-selection-deutsch-norman|後期選択理論——すべての刺激が意味処理された後で注意が選択する]] — 語彙が近い
+- [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同じ思想家
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 同じ思想家
+- [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
+- [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

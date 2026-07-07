@@ -30,6 +30,18 @@ aliases:
 - [McIntosh, R. I.; Culley, S. J.; Mileham, A. R.; Owen, G. W. (2000) “A critical evaluation of Shingo's ‘SMED’ (Single Minute Exchange of Die) methodology,” International Journal of Production Research, 38(11), pp. 2377–2395](https://doi.org/10.1080/00207540050031823) `学術`
 - [Shigeo Shingo (trans. Andrew P. Dillon), A Revolution in Manufacturing: The SMED System, Productivity Press, 1985 (ISBN 9780915299034) — 一次文献（書誌）](https://www.routledge.com/A-Revolution-in-Manufacturing-The-SMED-System/Dillon-Shingo/p/book/9780915299034) `リファレンス`
 
+## 関連概念
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ Kenneth J. Arrow／Hollis B. Chenery／Bagicha S. Minhas／Robert M. Solow／Joh
 - [Elasticity of Substitution — The New Palgrave Dictionary of Economics (Springer)](https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_468-1) `リファレンス`
 - [NBER chapter: Recent Empirical Studies of the CES and Related Production Functions](https://www.nber.org/system/files/chapters/c1477/c1477.pdf) `学術`
 
+## 関連概念
+- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — 語彙が近い
+- [[econ-elasticity-of-substitution|代替の弾力性]] — 語彙が近い
+- [[econ-productivity-paradox|生産性パラドックス]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）](https://doi.org/10.1177/0170840606062431) `学術`
 - [Wikipedia: Sensemaking — Weick, Gioia sensegiving, strategic ambiguity, organizational change](https://en.wikipedia.org/wiki/Sensemaking) `リファレンス`
 
+## 関連概念
+- [[mgmt-grow-model|GROWモデル（コーチング）]] — 語彙が近い
+- [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 語彙が近い
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

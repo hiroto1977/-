@@ -30,6 +30,18 @@ aliases:
 - [Rogers (2009) Negotiable Instruments — Max Planck Encyclopedia of Public International Law](https://doi.org/10.1093/law:epil/9780199231690/e1002) `学術`
 - [Wikipedia: Negotiable instrument — 有価証券の法的概念と各国制度比較](https://en.wikipedia.org/wiki/Negotiable_instrument) `リファレンス`
 
+## 関連概念
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
+- [[bizlaw-civil-execution|民事執行法]] — 出典を共有
+- [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — 出典を共有
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 出典を共有
+- [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 出典を共有
+- [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
+- [[labor-collective-agreement|労働協約（労働組合法）]] — 出典を共有
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 出典を共有
+- [[legal-share-types|会社法における種類株式]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility — Journal of Economic Perspectives, 5(2), 193–206（情動予測と経済学）](https://doi.org/10.1023/A:1008012424582) `学術`
 - [Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect, duration bias](https://en.wikipedia.org/wiki/Affective_forecasting) `リファレンス`
 
+## 関連概念
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 語彙が近い
+- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同じ思想家
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
+- [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
+- [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
+- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

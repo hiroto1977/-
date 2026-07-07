@@ -30,6 +30,18 @@ aliases:
 - [Deegan (2002) Introduction: The Legitimising Effect of Social and Environmental Disclosures — Accounting, Auditing & Accountability Journal](https://doi.org/10.1016/S0361-3682(02)00039-8) `学術`
 - [Wikipedia: Legitimacy — 正統性の概念と組織理論における応用の概説](https://en.wikipedia.org/wiki/Legitimacy_(political_science)) `リファレンス`
 
+## 関連概念
+- [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
+- [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+- [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]] — 同じ思想家
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
+- [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
+- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [Cornell LII Wex: Letter of credit — bank undertaking, documents against payment, autonomy, strict compliance, UCC Art. 5](https://www.law.cornell.edu/wex/letter_of_credit) `リファレンス`
 - [Wikipedia: Letter of credit — documentary credit, independence principle, strict compliance, UCP 600](https://en.wikipedia.org/wiki/Letter_of_credit) `リファレンス`
 
+## 関連概念
+- [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]] — 同じ思想家
+- [[bizlaw-promissory-note|約束手形——一定金額の支払を約する二当事者間の流通証券]] — 同じ思想家
+- [[bizlaw-marine-insurance-utmost-good-faith|最大善意の原則——保険契約における重要事実の開示義務]] — 同じ思想家
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同じ思想家
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同じ思想家
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 同じ思想家
+- [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

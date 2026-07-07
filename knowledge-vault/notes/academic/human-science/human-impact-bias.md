@@ -30,6 +30,14 @@ aliases:
 - [Wilson & Gilbert (2005) “Affective Forecasting”, Current Directions in Psychological Science（Sage・査読誌）](https://journals.sagepub.com/doi/abs/10.1111/j.0963-7214.2005.00355.x) `学術`
 - [Wikipedia「Impact bias」](https://en.wikipedia.org/wiki/Impact_bias) `リファレンス`
 
+## 関連概念
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 語彙が近い
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
+- [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
+- [[human-defensive-attribution-hypothesis|防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

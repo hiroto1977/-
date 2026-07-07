@@ -29,6 +29,15 @@ aliases:
 - [Toolshero: Order Winners and Qualifiers — Terry Hill (Manufacturing Strategy, 1985), qualifiers to compete vs. winners to win the order](https://www.toolshero.com/strategy/order-winners-and-qualifiers/) `リファレンス`
 - [Wikipedia: Order winner — Terry Hill, order winners vs. order qualifiers, linking manufacturing strategy to competitive priorities](https://en.wikipedia.org/wiki/Order_winner) `リファレンス`
 
+## 関連概念
+- [[mgmt-focused-factory-skinner|集中工場（スキナー）——「絞り込み」が競争力を生む製造戦略]] — 同じ思想家
+- [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 同じ思想家
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 出典を共有
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 出典を共有
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同分野の近傍
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

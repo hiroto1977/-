@@ -29,6 +29,18 @@ aliases:
 - [Gross, J.J. (1998) The Emerging Field of Emotion Regulation — Review of General Psychology 2(3)](https://doi.org/10.1037/1089-2680.2.3.271) `学術`
 - [Wikipedia: Emotional self-regulation — Gross process model, reappraisal vs suppression](https://en.wikipedia.org/wiki/Emotional_self-regulation) `リファレンス`
 
+## 関連概念
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 語彙が近い
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 語彙が近い
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 語彙が近い
+- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同じ思想家
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
+- [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 同じ思想家
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 同じ思想家
+- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

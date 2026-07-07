@@ -29,6 +29,14 @@ aliases:
 - [Berglas, S. & Jones, E.E. (1978) Drug Choice as a Self-Handicapping Strategy — JPSP 36(4)](https://doi.org/10.1177/014616727800400215) `学術`
 - [Wikipedia: Self-handicapping — Jones & Berglas, behavioral/claimed handicaps, self-esteem protection](https://en.wikipedia.org/wiki/Self-handicapping) `リファレンス`
 
+## 関連概念
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
+- [[infosoc-techno-nationalism-digital-sovereignty|テクノナショナリズムとデジタル主権戦略の比較政治経済学]] — 同じ思想家
+- [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
+- [[human-psychomotor-vigilance|精神運動覚醒課題（PVT）]] — 同分野の近傍
+- [[human-wernicke-aphasia|ウェルニッケ失語]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

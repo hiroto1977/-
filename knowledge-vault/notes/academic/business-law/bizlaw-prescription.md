@@ -30,6 +30,18 @@ aliases:
 - [クレアール — 民法166条【債権等の消滅時効】（2020改正）](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0166-00/) `リファレンス`
 - [BUSINESS LAWYERS（弁護士監修）— 民法改正による消滅時効の変更点（主観的起算点）](https://www.businesslawyers.jp/practices/1185) `メディア`
 
+## 関連概念
+- [[legal-prescription-renewal|消滅時効の完成猶予・更新（改正民法）]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 分野横断
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+- [[bizlaw-public-order|公序良俗（民法90条）]] — 出典を共有
+- [[bizlaw-retention-lien|留置権（民法295条）]] — 出典を共有
+- [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — 出典を共有
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 出典を共有
+- [[bizlaw-statutory-lien|先取特権（民法303条）]] — 出典を共有
+- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

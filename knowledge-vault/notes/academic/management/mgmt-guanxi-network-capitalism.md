@@ -30,6 +30,12 @@ Boisot, Max ／Child, John （1996 Administrative Science Quarterly）／Yeung, 
 - [Chen, C. C., Chen, X-P., & Huang, S. (2013) Chinese Guanxi: An Integrative Review and New Directions for Future Research, Management and Organization Review 9(1): 167–207](https://www.cambridge.org/core/journals/management-and-organization-review/article/chinese-guanxi-an-integrative-review-and-newdirections-for-future-research/01B691E6A8EFA2F0E1AC05E9013C0E39) `学術`
 - [Luo, Y. — Guanxi and Business, World Scientific (Asia-Pacific Business Series)](https://www.worldscientific.com/worldscibooks/10.1142/6256) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
+- [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 同分野の近傍
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同分野の近傍
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

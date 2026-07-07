@@ -29,6 +29,10 @@ aliases:
 - [Azariadis, C. (1975) "Implicit Contracts and Underemployment Equilibria," Journal of Political Economy 83(6):1183–1202（University of Chicago Press）](https://www.journals.uchicago.edu/doi/10.1086/260388) `学術`
 - [Stanford Encyclopedia of Philosophy — Philosophy of Economics（名目硬直性・契約理論を含む労働市場分析の文脈）](https://plato.stanford.edu/entries/economics/) `リファレンス`
 
+## 関連概念
+- [[econ-okuns-law|オーカンの法則]] — 同分野の近傍
+- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

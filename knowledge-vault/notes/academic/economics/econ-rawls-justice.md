@@ -31,6 +31,16 @@ aliases:
 - [Internet Encyclopedia of Philosophy — “John Rawls”（1971年刊行・二原理の正確な定式）](https://iep.utm.edu/rawls/) `リファレンス`
 - [EBSCO Research Starters — “A Theory of Justice by John Rawls”（二原理・マキシミン・辞書式優先）](https://www.ebsco.com/research-starters/literature-and-writing/theory-justice-john-rawls) `リファレンス`
 
+## 関連概念
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 語彙が近い
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]] — 同じ思想家
+- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 出典を共有
+- [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
+- [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

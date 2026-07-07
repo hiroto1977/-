@@ -30,6 +30,11 @@ aliases:
 - [Aitken, B. & Harrison, A. (1999) "Do Domestic Firms Benefit from FDI?" — AER](https://doi.org/10.1257/aer.89.3.605) `学術`
 - [Wikipedia: Greenfield investment — 定義と形態別FDI比較](https://en.wikipedia.org/wiki/Greenfield_investment) `リファレンス`
 
+## 関連概念
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 語彙が近い
+- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 語彙が近い
+- [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [日本取引所グループ（JPX）「適時開示制度の概要」](https://www.jpx.co.jp/equities/listing/disclosure/overview/index.html) `リファレンス`
 - [金融庁 証券取引等監視委員会「開示規制違反に係る課徴金額の算定方法等」](https://www.fsa.go.jp/sesc/support/kaiji-ihan/sanshutsu.html) `公的`
 
+## 関連概念
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 語彙が近い
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 分野横断
+- [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 同じ思想家
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
+- [[bizlaw-tob|公開買付け（TOB）]] — 出典を共有
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

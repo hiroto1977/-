@@ -30,6 +30,12 @@ aliases:
 - [法務省 民法（債権関係）の改正に関する検討事項（債権譲渡）](https://www.moj.go.jp/content/000052602.pdf) `公的`
 - [BUSINESS LAWYERS「民法改正で債権譲渡はどう変わった？譲渡禁止特約の効力は？」](https://www.businesslawyers.jp/practices/1197) `メディア`
 
+## 関連概念
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 語彙が近い
+- [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 分野横断
+- [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
+- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

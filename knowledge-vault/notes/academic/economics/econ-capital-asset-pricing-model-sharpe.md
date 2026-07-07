@@ -29,6 +29,18 @@ aliases:
 - [Sharpe, W. F. (1964) Capital Asset Prices — Journal of Finance](https://doi.org/10.2307/2977928) `学術`
 - [Wikipedia: CAPM — beta, security market line, Sharpe, Markowitz, Fama-French](https://en.wikipedia.org/wiki/Capital_asset_pricing_model) `リファレンス`
 
+## 関連概念
+- [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 語彙が近い
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
+- [[econ-modern-portfolio-theory|現代ポートフォリオ理論（MPT）]] — 同じ思想家
+- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — 同じ思想家
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 同じ思想家
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

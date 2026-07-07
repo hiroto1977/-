@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia: Small-world experiment（実験概要・中間者数・完了率）](https://en.wikipedia.org/wiki/Small-world_experiment) `リファレンス`
 - [Stanford Report — “The strength of weak ties”（Granovetter弱い紐帯との関連）](https://news.stanford.edu/stories/2023/07/strength-weak-ties) `リファレンス`
 
+## 関連概念
+- [[infosoc-small-world-milgram|スモールワールド実験——六次の隔たりと社会ネットワークの近接性]] — 語彙が近い
+- [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 同じ思想家
+- [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
+- [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同じ思想家
+- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — 同じ思想家
+- [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]] — 同じ思想家
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同じ思想家
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同じ思想家
+- [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

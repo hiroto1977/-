@@ -29,6 +29,12 @@ aliases:
 - [Sternberg, R.J. (1985) Beyond IQ: A Triarchic Theory of Human Intelligence — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/11468492) `学術`
 - [Wikipedia: Triarchic theory of intelligence — Sternberg, analytical/creative/practical, successful intelligence](https://en.wikipedia.org/wiki/Triarchic_theory_of_intelligence) `リファレンス`
 
+## 関連概念
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同じ思想家
+- [[human-multiple-intelligences|多重知能理論（ガードナー）]] — 同じ思想家
+- [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

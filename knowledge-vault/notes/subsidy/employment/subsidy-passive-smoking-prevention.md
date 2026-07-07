@@ -36,6 +36,10 @@ national
 - [厚生労働省 受動喫煙防止対策助成金のご案内](https://www.mhlw.go.jp/bunya/roudoukijun/jigyousya/kitsuenboushi/dl/pamphlet.pdf) `公的`
 - [JT 受動喫煙防止対策助成金の解説](https://www.jti.co.jp/coexistence/bunen/subsidy/) `メディア`
 
+## 関連概念
+- [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 同分野の近傍
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,13 @@ Russell Golman ／ David Hagmann ／ George Loewenstein ／ Kate Sweeny ／ Dary
 - [Foust & Taber (2025) "Information Avoidance: Past Perspectives and Future Directions" — Perspectives on Psychological Science 20(2): 241–263](https://doi.org/10.1177/17456916231197668) `学術`
 - [Golman, Hagmann & Loewenstein — "Information Avoidance" SSRN preprint (working paper)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2633226) `リファレンス`
 
+## 関連概念
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 語彙が近い
+- [[human-hedonic-adaptation|快楽順応]] — 同じ思想家
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同じ思想家
+- [[infosoc-technopoly|テクノポリ（技術独占）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

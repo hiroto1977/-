@@ -30,6 +30,11 @@ aliases:
 - [勤労者退職金共済機構 中退共 制度の概要](https://chutaikyo.taisyokukin.go.jp/kentou/seido/seido01.html) `公的`
 - [中退共 Q&A 国の掛金助成](https://chutaikyo.taisyokukin.go.jp/faq/qa-01/1-2-1.html) `運営団体`
 
+## 関連概念
+- [[subsidy-chutaikyo|中小企業退職金共済制度（中退共）・新規加入等掛金助成]] — 分野横断
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
+- [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

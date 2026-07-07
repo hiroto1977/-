@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省 高年齢者雇用安定法の概要](https://www.mhlw.go.jp/content/11700000/001245647.pdf) `公的`
 - [高年齢者雇用安定法改正 解説](https://biz.moneyforward.com/contract/basic/9357/) `メディア`
 
+## 関連概念
+- [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 語彙が近い
+- [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 分野横断
+- [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 分野横断
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ aliases:
 - [Siegrist, J. (1996) Adverse health effects of high-effort/low-reward conditions — Journal of Occupational Health Psychology](https://doi.org/10.1037/1076-8998.1.1.27) `学術`
 - [Wikipedia: Effort-reward imbalance — effort, reward, overcommitment, reciprocity, health](https://en.wikipedia.org/wiki/Effort-reward_imbalance) `リファレンス`
 
+## 関連概念
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 同じ思想家
+- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

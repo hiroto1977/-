@@ -31,6 +31,18 @@ aliases:
 - [Lindquist, K. A. et al. (2012) The Brain Basis of Emotion: A Meta-Analytic Review — Behavioral and Brain Sciences, 35(3), 121–143（脳画像研究と構成主義理論の統合）](https://doi.org/10.1017/S0140525X15001235) `学術`
 - [Wikipedia: Emotional granularity — Barrett, constructed emotion, allostasis, emotion vocabulary](https://en.wikipedia.org/wiki/Emotional_granularity) `リファレンス`
 
+## 関連概念
+- [[human-emotional-granularity|感情粒度]] — 語彙が近い
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
+- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 同じ思想家
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同じ思想家
+- [[human-differential-emotions|分化感情理論（ディファレンシャル・エモーションズ理論）]] — 同じ思想家
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同じ思想家
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

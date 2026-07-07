@@ -29,6 +29,12 @@ aliases:
 - [Klibanoff, P., Marinacci, M. & Mukerji, S. (2005) A smooth model of decision making under ambiguity — Econometrica](https://doi.org/10.1111/j.1468-0262.2005.00640.x) `学術`
 - [Wikipedia: Ambiguity aversion — smooth ambiguity model, second-order prior, Ellsberg](https://en.wikipedia.org/wiki/Ambiguity_aversion) `リファレンス`
 
+## 関連概念
+- [[econ-expected-utility|期待効用理論]] — 同分野の近傍
+- [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同分野の近傍
+- [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同分野の近傍
+- [[econ-disposition-effect-shefrin-statman|ディスポジション効果——値上がり株を早く売り値下がり株を持ち続ける傾向]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

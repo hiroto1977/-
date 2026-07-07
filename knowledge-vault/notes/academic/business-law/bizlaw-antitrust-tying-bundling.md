@@ -30,6 +30,15 @@ aliases:
 - [Whinston (1990) Tying, Foreclosure, and Exclusion — American Economic Review](https://doi.org/10.2307/3480530) `学術`
 - [Wikipedia: Tying (commerce) — 抱き合わせ販売と競争法規制](https://en.wikipedia.org/wiki/Tying_(commerce)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 出典を共有
+- [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 出典を共有
+- [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 出典を共有
+- [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同分野の近傍
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

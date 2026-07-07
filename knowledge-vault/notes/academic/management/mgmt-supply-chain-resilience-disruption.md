@@ -30,6 +30,14 @@ aliases:
 - [Sheffi, Y. (2020) Building Supply Chains That Can Handle Unexpected Disruptions — HBR](https://hbr.org/2020/09/building-supply-chains-that-can-handle-unexpected-disruptions) `メディア`
 - [Wikipedia: サプライチェーン — レジリエンスと断絶リスク管理の解説](https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%97%E3%83%A9%E3%82%A4%E3%83%81%E3%82%A7%E3%83%BC%E3%83%B3) `リファレンス`
 
+## 関連概念
+- [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同じ思想家
+- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 出典を共有
+- [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 出典を共有
+- [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

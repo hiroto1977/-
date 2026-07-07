@@ -30,6 +30,13 @@ aliases:
 - [Bernard, A. B. & Jensen, J. B. (1999) "Exceptional Exporter Performance" — AER](https://doi.org/10.1257/aer.89.1.1) `学術`
 - [Wikipedia: Melitz model — 異質的企業と貿易の選別効果](https://en.wikipedia.org/wiki/Melitz_model) `リファレンス`
 
+## 関連概念
+- [[econ-new-new-trade-theory-melitz|「新」新貿易理論（メリッツ・モデル）]] — 語彙が近い
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
+- [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
+- [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同じ思想家
+- [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

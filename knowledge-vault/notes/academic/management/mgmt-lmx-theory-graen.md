@@ -29,6 +29,11 @@ aliases:
 - [Graen, G.B. & Uhl-Bien, M. (1995) Relationship-Based Approach to Leadership: LMX Theory — Leadership Quarterly 6(2)](https://doi.org/10.1016/1048-9843(95)90036-5) `学術`
 - [Wikipedia: Leader–member exchange theory — Graen, in-group/out-group, dyadic relationships](https://en.wikipedia.org/wiki/Leader%E2%80%93member_exchange_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 同じ思想家
+- [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
+- [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

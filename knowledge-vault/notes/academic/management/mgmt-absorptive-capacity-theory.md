@@ -32,6 +32,14 @@ Wesley M. Cohen ／ Daniel A. Levinthal ／ Shaker A. Zahra ／ Gerard George
 - [ResearchGate — Zahra & George (2002) full text & citations](https://www.researchgate.net/publication/215485503_Absorptive_Capacity_A_Review_Reconceptualization_and_Extension) `リファレンス`
 - [Wikipedia — Absorptive capacity overview](https://en.wikipedia.org/wiki/Absorptive_capacity) `リファレンス`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 語彙が近い
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 語彙が近い
+- [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]] — 語彙が近い
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 語彙が近い
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

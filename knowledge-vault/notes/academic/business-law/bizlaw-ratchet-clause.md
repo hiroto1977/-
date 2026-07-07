@@ -30,6 +30,18 @@ NAFTA第1108条(1)(c)（1994、ラチェット条項の先駆）／CPTPP第9.12�
 - [R. Zhang & C. Sasanabanchakul (2022) Means of Liberalization and Beyond: Understanding Scheduling Approaches in Services Trade Agreements, WTO Staff Working Paper ERSD-2022-13 — 187のRTAにおけるスケジューリング方式・ラチェット・スタンドスティルを比較分析](https://www.wto.org/english/res_e/reser_e/ersd202213_e.htm) `学術`
 - [EU Access2Markets Glossary — Ratchet Clause（定義・具体例・ネガティブリストとの関係）](https://trade.ec.europa.eu/access-to-markets/en/content/ratchet-clause) `リファレンス`
 
+## 関連概念
+- [[bizlaw-indirect-expropriation|間接収用（Indirect Expropriation）]] — 同じ思想家
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同じ思想家
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同じ思想家
+- [[eh-1994|1994年（平成6年）]] — 同じ思想家
+- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 同じ思想家
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
+- [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — 出典を共有
+- [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 出典を共有
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
+- [[econ-flying-geese|雁行形態論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

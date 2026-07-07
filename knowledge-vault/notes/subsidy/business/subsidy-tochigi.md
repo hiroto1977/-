@@ -36,6 +36,18 @@ prefecture
 - [栃木県産業振興センター 地域課題解決型創業支援補助金](https://www.tochigi-iin.or.jp/home/2/5/1.html) `運営団体`
 - [J-Net21 地域課題解決型創業支援補助金（栃木県）](https://j-net21.smrj.go.jp/snavi/articles/152319) `公的`
 
+## 関連概念
+- [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 語彙が近い
+- [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い
+- [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 語彙が近い
+- [[subsidy-shimane|地域課題解決型しまね起業支援事業費補助金（島根県）]] — 語彙が近い
+- [[subsidy-gunma|ぐんまクロススタート補助金（群馬県・旧 起業支援金）]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

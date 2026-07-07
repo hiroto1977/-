@@ -29,6 +29,11 @@ aliases:
 - [Erdelez, S. (1999) Information encountering: It's more than just bumping into information — Bulletin of the ASIS](https://www.worldcat.org/oclc/42654818) `学術`
 - [Wikipedia: Information seeking — information encountering, serendipity, opportunistic acquisition](https://en.wikipedia.org/wiki/Information_seeking) `リファレンス`
 
+## 関連概念
+- [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]] — 同じ思想家
+- [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
+- [[infosoc-narrative-transportation|ナラティブ・トランスポーテーション理論（narrative transportation／物語移入）——物語世界に没入した受け手の信念が物語の含意へ傾く説得メカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

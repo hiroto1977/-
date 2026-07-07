@@ -30,6 +30,18 @@ aliases:
 - [Festinger, L. & Carlsmith, J.M. 1959. Cognitive Consequences of Forced Compliance. Journal of Abnormal and Social Psychology, 58(2), 203-210.](https://psycnet.apa.org/doi/10.1037/h0042519) `学術`
 - [Cooper, J. & Fazio, R.H. 1984. A New Look at Dissonance Theory. Advances in Experimental Social Psychology, 17, 229-266.](https://doi.org/10.1016/S0065-2601(08)60121-5) `学術`
 
+## 関連概念
+- [[human-cognitive-dissonance-reduction|認知的不協和低減]] — 語彙が近い
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
+- [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同じ思想家
+- [[human-effort-justification|努力の正当化]] — 同じ思想家
+- [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同じ思想家
+- [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,12 @@ GDPR 4条4号＝プロファイリングの定義（評価目的の自動処理�
 - [Mittelstadt et al. (2016) “The ethics of algorithms: Mapping the debate”, Big Data & Society](https://journals.sagepub.com/doi/10.1177/2053951716679679) `学術`
 - [Mireille Hildebrandt — profiling, automated decision-making and the rule of law](https://en.wikipedia.org/wiki/Mireille_Hildebrandt) `リファレンス`
 
+## 関連概念
+- [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 同じ思想家
+- [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 同じ思想家
+- [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同分野の近傍
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

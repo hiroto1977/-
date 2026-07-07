@@ -29,6 +29,16 @@ aliases:
 - [Bryman, A. (1999) The Disneyization of society — The Sociological Review](https://doi.org/10.1111/1467-954X.00161) `学術`
 - [Wikipedia: Disneyization — theming, hybrid consumption, performative labor, McDonaldization](https://en.wikipedia.org/wiki/Disneyization) `リファレンス`
 
+## 関連概念
+- [[human-emotional-labor|感情労働（ホックシールド）]] — 同じ思想家
+- [[infosoc-mcdonaldization|マクドナルド化]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+- [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同じ思想家
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-pseudo-event-boorstin|疑似イベント（ブーアスティン）——報道されるために作られる出来事]] — 同じ思想家
+- [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

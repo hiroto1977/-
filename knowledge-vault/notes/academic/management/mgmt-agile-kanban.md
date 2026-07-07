@@ -31,6 +31,11 @@ aliases:
 - [Ahmad, M. O. et al. (2015) Kanban in Software Engineering: A Systematic Mapping Study — Journal of Systems and Software, 107, 55–77](https://doi.org/10.1016/j.infsof.2015.03.002) `学術`
 - [Wikipedia: Kanban (development) — Anderson method, WIP limits, Little's law, flow metrics](https://en.wikipedia.org/wiki/Kanban_(development)) `リファレンス`
 
+## 関連概念
+- [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 同分野の近傍
+- [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
+- [[mgmt-just-in-time-ohno|ジャストインタイム——必要なものを必要なときに必要なだけ生産する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

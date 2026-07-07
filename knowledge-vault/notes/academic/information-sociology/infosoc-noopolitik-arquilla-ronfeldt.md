@@ -29,6 +29,12 @@ aliases:
 - [Arquilla, J. & Ronfeldt, D. (1999) The Emergence of Noopolitik — RAND Corporation](https://www.worldcat.org/oclc/43367015) `学術`
 - [Wikipedia: Noopolitik — noosphere, soft power, Realpolitik, information strategy](https://en.wikipedia.org/wiki/Noopolitik) `リファレンス`
 
+## 関連概念
+- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同じ思想家
+- [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [総務省 通信の秘密（電気通信事業法第4条）FAQ](https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/th_faq.html) `公的`
 - [コトバンク 電気通信事業法](https://kotobank.jp/word/%E9%9B%BB%E6%B0%97%E9%80%9A%E4%BF%A1%E4%BA%8B%E6%A5%AD%E6%B3%95-6484) `リファレンス`
 
+## 関連概念
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同分野の近傍
+- [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — 同分野の近傍
+- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

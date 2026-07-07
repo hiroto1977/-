@@ -29,6 +29,10 @@ aliases:
 - [Vogel, E.A. et al. (2014). Social comparison on Facebook — PSPR](https://doi.org/10.1177/0963721415605364) `学術`
 - [Wikipedia: Social comparison theory — SNS and wellbeing](https://en.wikipedia.org/wiki/Social_comparison_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同分野の近傍
+- [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

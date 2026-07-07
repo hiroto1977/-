@@ -30,6 +30,10 @@ Abadie, Alberto （2003 "The Economic Costs of Conflict: A Case Study of the Bas
 - [Abadie, A. (2021) "Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects", Journal of Economic Literature 59(2), 391-425](https://www.aeaweb.org/articles?id=10.1257/jel.20191450) `学術`
 - [Wikipedia — Synthetic control method (Abadie & Gardeazabal 2003 Basque Country origin, weighted counterfactual construction, applications overview)](https://en.wikipedia.org/wiki/Synthetic_control_method) `リファレンス`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia: Von Restorff Effect — isolation effect and distinctiveness in memory](https://en.wikipedia.org/wiki/Von_Restorff_effect) `リファレンス`
 - [Schmidt, S.R. (1991) Can We Have a Distinctive Theory of Memory? — Memory & Cognition 19(6)](https://doi.org/10.1037/h0094069) `学術`
 
+## 関連概念
+- [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]] — 同じ思想家
+- [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
+- [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同じ思想家
+- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

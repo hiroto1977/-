@@ -29,6 +29,13 @@ aliases:
 - [Wertheimer, M. (1912) Experimentelle Studien über das Sehen von Bewegung — Zeitschrift für Psychologie](https://www.worldcat.org/oclc/5184644) `学術`
 - [Wikipedia: Phi phenomenon — apparent motion, Gestalt psychology, Wertheimer](https://en.wikipedia.org/wiki/Phi_phenomenon) `リファレンス`
 
+## 関連概念
+- [[human-gestalt-principles|ゲシュタルト知覚の法則]] — 同じ思想家
+- [[human-kanizsa-triangle|カニッツァの三角形——存在しない輪郭を見る主観的輪郭]] — 同じ思想家
+- [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

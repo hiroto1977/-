@@ -30,6 +30,13 @@ Rasch, Georg （1960 Probabilistic Models for Some Intelligence and Attainment T
 - [Wikipedia, "Georg Rasch" (1960 Probabilistic Models for Some Intelligence and Attainment Tests, specific objectivity, one-parameter logistic model)](https://en.wikipedia.org/wiki/Georg_Rasch) `リファレンス`
 - [Lord, F.M. & Novick, M.R. (1968) Statistical Theories of Mental Test Scores — Addison-Wesley (contains Birnbaum's logistic IRT chapters)](https://books.google.com/books/about/Statistical_Theories_of_Mental_Test_Scor.html?id=0nkMX_MqEQ4C) `学術`
 
+## 関連概念
+- [[human-appraisal-theory-of-emotion|感情の評価理論]] — 出典を共有
+- [[mgmt-organizational-death-theory|組織死亡理論]] — 出典を共有
+- [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]] — 出典を共有
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

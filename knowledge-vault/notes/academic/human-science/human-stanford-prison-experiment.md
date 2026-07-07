@@ -29,6 +29,12 @@ aliases:
 - [Haney, Banks & Zimbardo (1973) "Interpersonal dynamics in a simulated prison," International Journal of Criminology and Penology 1, 69–97（APA PsycNet）](https://psycnet.apa.org/record/1974-28840-001) `学術`
 - [Encyclopaedia Britannica — Stanford Prison Experiment](https://www.britannica.com/event/Stanford-Prison-Experiment) `リファレンス`
 
+## 関連概念
+- [[human-broken-windows-theory|割れ窓理論]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-terror-management-theory-becker|テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験]] — 同分野の近傍
+- [[human-emerging-adulthood|新興成人期（エマージング・アダルトフッド）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

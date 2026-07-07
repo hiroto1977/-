@@ -30,6 +30,18 @@ aliases:
 - [Correll & Ridgeway (2006) Expectation States Theory, Annual Review of Sociology](https://www.annualreviews.org/content/journals/10.1146/annurev-soc-071913-043157) `学術`
 - [Ridgeway (1991) The Social Construction of Status Value — Social Forces](https://journals.sagepub.com/doi/10.1177/0190272591004001002) `学術`
 
+## 関連概念
+- [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

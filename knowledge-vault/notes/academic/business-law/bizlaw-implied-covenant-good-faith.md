@@ -30,6 +30,17 @@ Robert S. Summers／Steven J. Burton／E. Allan Farnsworth／Harold Dubroff／Em
 - [Cornell LII — UCC § 1-304: Obligation of Good Faith](https://www.law.cornell.edu/ucc/1/1-304) `リファレンス`
 - [ALI — Restatement (Second) of Contracts § 205: Duty of Good Faith and Fair Dealing](https://www.ali.org/publications/show/restatement-law-contracts/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 語彙が近い
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 出典を共有
+- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
+- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Tichenor, Donohue & Olien (1970) "Mass Media Flow and Differential Growth in Knowledge", Public Opinion Quarterly 34(2), 159–170（原著論文）](https://doi.org/10.1086/267786) `学術`
 - [Wikipedia — Knowledge gap hypothesis（包括的参考文献付き）](https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis) `リファレンス`
 
+## 関連概念
+- [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 語彙が近い
+- [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,15 @@ aliases:
 - [French, K.R. & Poterba, J.M. (1991) Investor Diversification and International Equity Markets — American Economic Review 81(2)](https://www.jstor.org/stable/2006858) `学術`
 - [Wikipedia: Home bias — French & Poterba, Tesar & Werner, under-diversification, familiarity bias](https://en.wikipedia.org/wiki/Home_bias_in_trade_puzzle) `リファレンス`
 
+## 関連概念
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
+- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

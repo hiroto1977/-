@@ -30,6 +30,10 @@ aliases:
 - [Breitbart, W. et al. 2010 Meaning-centered group psychotherapy for patients with advanced cancer: a pilot RCT. Psycho-Oncology 19(1) 21-28](https://onlinelibrary.wiley.com/doi/10.1002/pon.1556) `学術`
 - [Breitbart, W.S. 2017 Meaning-Centered Psychotherapy in the Cancer Setting. Oxford University Press](https://global.oup.com/academic/product/meaning-centered-psychotherapy-in-the-cancer-setting-9780199837229) `学術`
 
+## 関連概念
+- [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
+- [[human-humanistic-psychology-rogers-person-centered|ロジャーズの人間中心アプローチ——無条件の積極的関心・共感・自己一致による人格成長]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

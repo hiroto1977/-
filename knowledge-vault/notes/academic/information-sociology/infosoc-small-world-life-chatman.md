@@ -29,6 +29,18 @@ aliases:
 - [Chatman, E. A. (1999) A theory of life in the round — Journal of the American Society for Information Science](https://doi.org/10.1002/(SICI)1097-4571(199933)50:3%3C207::AID-ASI3%3E3.0.CO;2-8) `学術`
 - [Wikipedia: Elfreda Chatman — information poverty, life in the round, small worlds](https://en.wikipedia.org/wiki/Elfreda_Chatman) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-poverty-chatman|情報貧困論（チャトマン理論）]] — 同じ思想家
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同じ思想家
+- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同じ思想家
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

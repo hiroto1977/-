@@ -29,6 +29,18 @@ aliases:
 - [UC Berkeley Econ 202A 講義ノート（Gourinchas）— RCKモデル・オイラー方程式・修正黄金律](https://eml.berkeley.edu/~webfac/gourinchas/e202a_f14/Notes_Ramsey_Cass_Koopmans_pog.pdf) `学術`
 - [Wikipedia: Ramsey–Cass–Koopmans model — 内生的貯蓄率・ラムゼー1928/キャス&クープマンス1965・動学的非効率なし](https://en.wikipedia.org/wiki/Ramsey%E2%80%93Cass%E2%80%93Koopmans_model) `リファレンス`
 
+## 関連概念
+- [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 語彙が近い
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
+- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
+- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
+- [[econ-sunspot-equilibrium|サンスポット均衡]] — 同じ思想家
+- [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 出典を共有
+- [[econ-median-voter|中位投票者定理]] — 出典を共有
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 出典を共有
+- [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]] — 同分野の近傍
+- [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

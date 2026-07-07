@@ -30,6 +30,12 @@ aliases:
 - [Increasing Team Performance through Temporal Leadership — TU Eindhoven](https://pure.tue.nl/ws/files/46933488/844973-1.pdf) `学術`
 - [Mohammed & Nadkarni (2011) — ResearchGate](https://www.researchgate.net/publication/280077033_Temporal_Diversity_and_Team_Performance_The_Moderating_Role_of_Team_Temporal_Leadership) `学術`
 
+## 関連概念
+- [[mgmt-stakeholder-salience-mitchell-agle|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル]] — 同分野の近傍
+- [[mgmt-social-impact-bond|社会的インパクト・ボンド（SIB）]] — 同分野の近傍
+- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同分野の近傍
+- [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

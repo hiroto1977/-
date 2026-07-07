@@ -30,6 +30,16 @@ aliases:
 - [NobelPrize.org — Thomas C. Schelling, 2005年ノーベル経済学賞（Aumannと共同受賞）](https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/) `リファレンス`
 - [Wikipedia — Schelling’s model of segregation（約1/3の選好閾値・創発）](https://en.wikipedia.org/wiki/Schelling%27s_model_of_segregation) `リファレンス`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-cheap-talk-crawford-sobel|チープトーク——費用のかからない発言はどこまで信用できるか]] — 同じ思想家
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同分野の近傍
+- [[econ-double-auction|連続ダブルオークション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

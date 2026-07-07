@@ -29,6 +29,14 @@ aliases:
 - [Herrnstein, R. J. (1961) Relative and absolute strength of response as a function of frequency of reinforcement — JEAB](https://doi.org/10.1901/jeab.1961.4-267) `学術`
 - [Wikipedia: Matching law — relative reinforcement, choice, melioration vs maximizing](https://en.wikipedia.org/wiki/Matching_law) `リファレンス`
 
+## 関連概念
+- [[human-flynn-effect|フリン効果]] — 同じ思想家
+- [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — 同じ思想家
+- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同じ思想家
+- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 同分野の近傍
+- [[econ-prisoners-dilemma|囚人のジレンマ（prisoner’s dilemma）]] — 同分野の近傍
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

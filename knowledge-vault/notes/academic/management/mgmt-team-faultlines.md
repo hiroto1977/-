@@ -29,6 +29,10 @@ aliases:
 - [Lau, D. C. & Murnighan, J. K. (1998) Demographic Diversity and Faultlines: The Compositional Dynamics of Organizational Groups — Academy of Management Review, 23(2), 325–340](https://journals.aom.org/doi/10.5465/AMR.1998.533229) `学術`
 - [Group Decision and Negotiation: Cracks in Diversity Research — The Effects of Diversity Faultlines on Conflict and Performance (faultline strength, subgroup conflict)](https://link.springer.com/article/10.1023/A:1023325406946) `学術`
 
+## 関連概念
+- [[mgmt-likert-systems|リッカートのシステム4]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

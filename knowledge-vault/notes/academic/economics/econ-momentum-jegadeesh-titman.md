@@ -29,6 +29,12 @@ aliases:
 - [Jegadeesh, N. & Titman, S. (1993) Returns to Buying Winners and Selling Losers — Journal of Finance 48(1)](https://doi.org/10.1111/j.1540-6261.1993.tb04702.x) `学術`
 - [Wikipedia: Momentum (finance) — Jegadeesh & Titman, winners/losers, anomaly, Carhart four-factor](https://en.wikipedia.org/wiki/Momentum_(finance)) `リファレンス`
 
+## 関連概念
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同分野の近傍
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同分野の近傍
+- [[econ-january-effect|1月効果——株価が1月に異常な高収益を示す季節的アノマリー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

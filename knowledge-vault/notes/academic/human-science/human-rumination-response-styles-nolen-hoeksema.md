@@ -30,6 +30,12 @@ aliases:
 - [Treynor, W. et al. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research](https://doi.org/10.1037/0021-843X.112.4.558) `学術`
 - [Wikipedia: Rumination (psychology) — 心理学における反すうの概要](https://en.wikipedia.org/wiki/Rumination_(psychology)) `リファレンス`
 
+## 関連概念
+- [[human-rumination|反芻思考]] — 語彙が近い
+- [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 語彙が近い
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
+- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

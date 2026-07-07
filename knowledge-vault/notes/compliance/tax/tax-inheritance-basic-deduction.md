@@ -30,6 +30,12 @@ aliases:
 - [国税庁 No.4102 相続税がかかる場合](https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4102.htm) `公的`
 - [相続税の基礎控除 解説](https://www.smtb.jp/personal/entrustment/entrustment-column/column-08) `メディア`
 
+## 関連概念
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 語彙が近い
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 語彙が近い
+- [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
+- [[tax-business-succession|法人版事業承継税制（特例措置）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

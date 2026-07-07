@@ -30,6 +30,14 @@ aliases:
 - [山田誠一「定型約款に関する規定（548条の2、548条の3）について」金融法務研究会（全国銀行協会）](https://www.zenginkyo.or.jp/fileadmin/res/abstract/affiliate/kinpo/kinpo2016_2_5.pdf) `学術`
 - [BUSINESS LAWYERS「民法改正により新設された定型約款とは」](https://www.businesslawyers.jp/practices/1093) `メディア`
 
+## 関連概念
+- [[legal-standard-terms|定型約款（改正民法）]] — 分野横断
+- [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — 出典を共有
+- [[bizlaw-cheque-act|小切手法]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 同分野の近傍
+- [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同分野の近傍
+- [[bizlaw-deposit-insurance-act|預金保険法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

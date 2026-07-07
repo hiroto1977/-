@@ -30,6 +30,13 @@ Cameron, Kim S. （2004 Exploring the Relationships between Organizational Virtu
 - [Cameron, K.S., Bright, D. & Caza, A. (2005) "The Amplifying and Buffering Effects of Virtuousness in Downsized Organizations," Journal of Business Ethics, 58(1-3), 249-269](https://link.springer.com/article/10.1007/s10551-005-5904-4) `学術`
 - [University of Michigan, Center for Positive Organizations — "Exploring the relationships between organizational virtuousness and performance" (research summary)](https://positiveorgs.bus.umich.edu/articles/exploring-the-relationships-between-organizational-virtuousness-and-performance/) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
+- [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同分野の近傍
+- [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

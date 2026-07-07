@@ -30,6 +30,12 @@ Sonia Roccas／Marilynn B. Brewer
 - [Wikipedia — Social identity complexity](https://en.wikipedia.org/wiki/Social_identity_complexity) `リファレンス`
 - [Brewer & Pierce (2005) Social Identity Complexity and Outgroup Tolerance, PSPB 31(3):428-437](https://doi.org/10.1177/0146167204271710) `学術`
 
+## 関連概念
+- [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 語彙が近い
+- [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]] — 同じ思想家
+- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同分野の近傍
+- [[human-differential-susceptibility|差次感受性仮説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

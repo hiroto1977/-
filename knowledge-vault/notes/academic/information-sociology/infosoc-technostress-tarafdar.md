@@ -29,6 +29,11 @@ aliases:
 - [Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Decision Sciences](https://doi.org/10.1111/j.1540-5915.2007.00161.x) `学術`
 - [Wikipedia: Technostress — ICT overload, invasion, complexity, insecurity, job performance](https://en.wikipedia.org/wiki/Technostress) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同分野の近傍
+- [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]] — 同分野の近傍
+- [[infosoc-technostress-theory|テクノストレス理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

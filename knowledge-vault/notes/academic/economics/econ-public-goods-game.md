@@ -30,6 +30,13 @@ Ernst Fehr & Simon Gächter（2000/2002・利他的処罰）／R. Mark Isaac & J
 - [Fehr & Gächter (2000) “Cooperation and Punishment in Public Goods Experiments,” American Economic Review 90(4):980-994](https://www.aeaweb.org/articles?id=10.1257%2Faer.90.4.980) `学術`
 - [MIT Open Encyclopedia of Cognitive Science「Economic Games」— 公共財ゲームを含む解説](https://oecs.mit.edu/pub/0i6tb22l/release/1) `リファレンス`
 
+## 関連概念
+- [[human-synesthesia|共感覚（シナスタジア）]] — 出典を共有
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 出典を共有
+- [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 出典を共有
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

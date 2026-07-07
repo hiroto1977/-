@@ -29,6 +29,16 @@ Michael L. Tushman & Elenna Romanelli（Research in Organizational Behavior 7, 1
 - [Gersick (1991) Revolutionary Change Theories — Academy of Management Review 16(1), pp.10-36](https://journals.aom.org/doi/10.5465/amr.1991.4278988) `学術`
 - [Romanelli & Tushman (1994) Organizational Transformation as Punctuated Equilibrium — Academy of Management Journal 37(5), pp.1141-1166](https://journals.aom.org/doi/abs/10.5465/256669) `学術`
 
+## 関連概念
+- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
+- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

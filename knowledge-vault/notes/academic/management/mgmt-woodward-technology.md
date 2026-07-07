@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia — Joan Woodward（生産技術3類型と組織構造研究）](https://en.wikipedia.org/wiki/Joan_Woodward) `リファレンス`
 - [Collins & Hull, “Technology and Span of Control: Woodward Revisited”, Journal of Management Studies (1986, 査読論文)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1986.tb00417.x) `学術`
 
+## 関連概念
+- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 同分野の近傍
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

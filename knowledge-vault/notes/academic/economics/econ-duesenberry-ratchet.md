@@ -29,6 +29,10 @@ aliases:
 - [Encyclopaedia Britannica Money — Ratchet effect（消費の下方硬直性・デューゼンベリーの相対所得仮説）](https://www.britannica.com/money/ratchet-effect) `リファレンス`
 - [Library of Economics and Liberty (Econlib) — Relative Income Hypothesis（デューゼンベリーの仮説・ラチェット効果の理論的根拠）](https://www.econlib.org/library/Enc/RelativeIncome.html) `リファレンス`
 
+## 関連概念
+- [[econ-demonstration-effect|デモンストレーション効果]] — 語彙が近い
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

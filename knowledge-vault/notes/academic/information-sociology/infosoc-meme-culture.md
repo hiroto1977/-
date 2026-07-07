@@ -30,6 +30,18 @@ aliases:
 - [Knobel, Michele & Lankshear, Colin 2007 Online Memes, Affinities, and Cultural Production](https://www.academia.edu/4998838/Online_Memes_Affinities_and_Cultural_Production) `学術`
 - [Dawkins, Richard 1976 The Selfish Gene, Oxford University Press](https://global.oup.com/academic/product/the-selfish-gene-9780198788607) `リファレンス`
 
+## 関連概念
+- [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
+- [[infosoc-meme|ミーム（meme）]] — 同じ思想家
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+- [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ Bengt Holmström（1991年論文の共著者・2016年ノーベル経済学賞�
 - [Holmström, B., & Milgrom, P. (1991). Multitask Principal-Agent Analyses: Incentive Contracts, Asset Ownership, and Job Design. Journal of Law, Economics, & Organization, 7(Special Issue), 24-52.](https://academic.oup.com/jleo/article-abstract/7/special_issue/24/2194011) `学術`
 - [Wikipedia, “Principal–agent problem”（マルチタスク・モデルの節：測定可能な課題への強い誘因が測定困難な課題への努力を歪める・固定給や職務設計による対処の概説）](https://en.wikipedia.org/wiki/Principal%E2%80%93agent_problem) `リファレンス`
 
+## 関連概念
+- [[econ-linder-hypothesis|リンダー仮説（重複需要理論）]] — 同分野の近傍
+- [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

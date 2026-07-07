@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 勤務間インターバル制度関連資料](https://www.mhlw.go.jp/content/11201250/000462015.pdf) `公的`
 - [勤務間インターバル制度 解説](https://biz.moneyforward.com/payroll/basic/70320/) `メディア`
 
+## 関連概念
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 語彙が近い
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

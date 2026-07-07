@@ -31,6 +31,13 @@ aliases:
 - [Padilla, A., Hogan, R. & Kaiser, R. B. (2007) The Toxic Triangle: Destructive Leaders, Susceptible Followers, and Conducive Environments — The Leadership Quarterly, 18(3), 176–194](https://doi.org/10.1080/07491409.2007.11673952) `学術`
 - [Wikipedia: Toxic leader — types, dark triad roots, follower susceptibility, and organizational consequences](https://en.wikipedia.org/wiki/Toxic_leader) `リファレンス`
 
+## 関連概念
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 出典を共有
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 出典を共有
+- [[mgmt-intellectual-capital-edvinsson|知的資本（エドビンソン＆マローン）]] — 出典を共有
+- [[mgmt-team-cohesion-carron|チーム凝集性（キャロン）]] — 同分野の近傍
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

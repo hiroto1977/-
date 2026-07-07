@@ -30,6 +30,17 @@ aliases:
 - [Hickok, G. 2009. Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans. Journal of Cognitive Neuroscience, 21(7), 1229-1243.](https://pmc.ncbi.nlm.nih.gov/articles/PMC2773693/) `学術`
 - [Hickok, G. 2014. The Myth of Mirror Neurons: The Real Neuroscience of Communication and Cognition. W.W. Norton.](https://wwnorton.com/books/The-Myth-of-Mirror-Neurons/) `学術`
 
+## 関連概念
+- [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]] — 語彙が近い
+- [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — 同じ思想家
+- [[human-chameleon-effect-chartrand|カメレオン効果（シャートランド＆バーク）]] — 同じ思想家
+- [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — 出典を共有
+- [[human-narrative-therapy|ナラティブ・セラピー]] — 出典を共有
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
+- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 出典を共有
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[human-narrative-identity-ricoeur|物語的アイデンティティ（リクール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

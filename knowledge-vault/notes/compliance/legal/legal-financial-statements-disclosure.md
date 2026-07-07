@@ -30,6 +30,10 @@ aliases:
 - [法務省 電子公告制度について](https://www.moj.go.jp/MINJI/minji81.html) `公的`
 - [決算公告の期限・方法・罰則 解説](https://biz.moneyforward.com/erp/basic/2193/) `メディア`
 
+## 関連概念
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

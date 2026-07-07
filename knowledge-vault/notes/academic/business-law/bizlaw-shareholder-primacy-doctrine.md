@@ -30,6 +30,18 @@ Milton Friedman／Michael C. Jensen／R. Edward Freeman／Lynn A. Stout
 - [Dodge v. Ford Motor Co., 204 Mich. 459, 170 N.W. 668 (1919)](https://law.justia.com/cases/michigan/supreme-court/1919/204-mich-459-170-n-w-668-1919.html) `リファレンス`
 - [Business Roundtable (2019) Statement on the Purpose of a Corporation](https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans) `リファレンス`
 
+## 関連概念
+- [[econ-peso-problem|ペソ問題（Peso Problem）]] — 同じ思想家
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
+- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

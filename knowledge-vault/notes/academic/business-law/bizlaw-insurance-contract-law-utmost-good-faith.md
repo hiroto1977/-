@@ -30,6 +30,11 @@ aliases:
 - [Heiss (2011) Insurance Contract Law — Max Planck Encyclopedia of European Private Law](https://doi.org/10.1093/law:epil/9780199231690/e894) `学術`
 - [Wikipedia: Uberrima fides — 最大善意義務の法的原則の概説](https://en.wikipedia.org/wiki/Uberrima_fides) `リファレンス`
 
+## 関連概念
+- [[bizlaw-marine-insurance-utmost-good-faith|最大善意の原則——保険契約における重要事実の開示義務]] — 語彙が近い
+- [[bizlaw-insurance-act|保険法]] — 同分野の近傍
+- [[bizlaw-saunders-v-vautier|サンダース対ボーティアの準則——受益者全員の合意で信託を終わらせる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

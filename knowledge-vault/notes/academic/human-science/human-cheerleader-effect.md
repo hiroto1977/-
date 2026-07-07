@@ -30,6 +30,11 @@ aliases:
 - [PubMed (NLM) — abstract index for Walker & Vul 2014](https://pubmed.ncbi.nlm.nih.gov/24163333/) `リファレンス`
 - [Wikipedia: Cheerleader effect (mechanism, findings, HIMYM naming origin)](https://en.wikipedia.org/wiki/Cheerleader_effect) `リファレンス`
 
+## 関連概念
+- [[human-endowment-effect|保有効果（授かり効果）]] — 同分野の近傍
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同分野の近傍
+- [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

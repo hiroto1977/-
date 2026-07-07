@@ -30,6 +30,13 @@ aliases:
 - [Encyclopædia Britannica Money — Gross domestic product（定義・支出法）](https://www.britannica.com/money/gross-domestic-product) `リファレンス`
 - [内閣府 経済社会総合研究所 — 国民経済計算とは（SNA国際基準）](https://www.esri.cao.go.jp/jp/sna/contents/sna.html) `公的`
 
+## 関連概念
+- [[econ-business-cycles|景気循環とその諸波動]] — 出典を共有
+- [[eh-1986|1986年（昭和61年）]] — 出典を共有
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同分野の近傍
+- [[econ-kalecki-profit|カレツキの利潤理論]] — 同分野の近傍
+- [[econ-wagner-law|ワグナーの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

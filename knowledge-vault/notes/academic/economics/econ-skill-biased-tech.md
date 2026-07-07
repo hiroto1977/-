@@ -29,6 +29,15 @@ aliases:
 - [Katz & Murphy (1992) "Changes in the Wage Structure 1963–87: Supply and Demand Factors," Quarterly Journal of Economics（SBTC概念の原典・MIT経済学部公開版）](https://economics.mit.edu/sites/default/files/publications/changes-relative-wages.pdf) `学術`
 - [OECD (1998) "Technology, Productivity and Job Creation"（スキルバイアス型技術変化と雇用・賃金格差への政策的含意）](https://www.oecd.org/en/publications/technology-productivity-and-job-creation_9789264065529-en.html) `公的`
 
+## 関連概念
+- [[econ-fair-wage-effort|公正賃金・努力仮説]] — 語彙が近い
+- [[econ-gender-wage-gap-goldin|ジェンダー賃金格差と職業分離の経済学——ゴールディンの労働経済分析]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-technological-unemployment|技術的失業]] — 同じ思想家
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 出典を共有
+- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 出典を共有
+- [[econ-job-polarization|雇用の二極化とタスク・アプローチ（Job Polarization／Autor-Levy-Murnane 2003）——コンピュータ化は中位のルーティン職を掘り崩す]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

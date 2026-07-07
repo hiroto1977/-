@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 法令データ 労働契約法](https://www.mhlw.go.jp/web/t_doc?dataId=73aa9536) `公的`
 - [就業規則の不利益変更 解説](https://hcm-jinjer.com/blog/jinji/labor-contract-law_article-10/) `メディア`
 
+## 関連概念
+- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]] — 同分野の近傍
+- [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 同分野の近傍
+- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 同分野の近傍
+- [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

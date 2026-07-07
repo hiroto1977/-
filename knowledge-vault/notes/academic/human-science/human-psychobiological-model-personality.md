@@ -31,6 +31,10 @@ C. Robert Cloninger ／ Dragan M. Svrakic ／ Thomas R. Przybeck
 - [Svrakic et al. (2002) Temperament, character, and personality disorders — Biological Psychiatry](https://doi.org/10.1016/S0006-3223(00)00156-3) `学術`
 - [Cloninger, Svrakic & Przybeck (1994) TCI: Temperament and Character Inventory](https://pubmed.ncbi.nlm.nih.gov/8545957/) `リファレンス`
 
+## 関連概念
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 同分野の近傍
+- [[maslow-hierarchy|マズローの欲求階層説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

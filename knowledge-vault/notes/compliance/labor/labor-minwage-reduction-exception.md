@@ -30,6 +30,12 @@ aliases:
 - [鳥取労働局 最低賃金の減額の特例許可制度](https://jsite.mhlw.go.jp/tottori-roudoukyoku/library/tottori-roudoukyoku/seido/pdf/gengaku_leaflet.pdf) `公的`
 - [e-Gov法令検索 最低賃金法（7条）](https://laws.e-gov.go.jp/law/334AC0000000137) `公的`
 
+## 関連概念
+- [[bizlaw-minimum-wage-act|最低賃金法]] — 語彙が近い
+- [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]] — 語彙が近い
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 同分野の近傍
+- [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

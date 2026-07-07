@@ -29,6 +29,13 @@ aliases:
 - [Bates, M. J. (1989) The design of browsing and berrypicking techniques for the online search interface — Online Review](https://doi.org/10.1108/eb024320) `学術`
 - [Wikipedia: Marcia J. Bates — berrypicking, evolving search, information seeking](https://en.wikipedia.org/wiki/Marcia_J._Bates) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]] — 同じ思想家
+- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同じ思想家
+- [[infosoc-information-encountering-erdelez|情報との遭遇——探していない有用な情報に偶然出会う]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

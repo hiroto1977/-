@@ -29,6 +29,10 @@ aliases:
 - [Yates, F.A. (1966) The Art of Memory — University of Chicago Press (WorldCat)](https://www.worldcat.org/oclc/235660) `学術`
 - [Wikipedia: Method of loci — Simonides, memory palace, spatial memory, Roman rhetoric, memory champions](https://en.wikipedia.org/wiki/Method_of_loci) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

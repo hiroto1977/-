@@ -29,6 +29,10 @@ aliases:
 - [Latané, B., Williams, K. & Harkins, S. (1979) Many Hands Make Light the Work: Social Loafing — JPSP 37(6)](https://doi.org/10.1037/0022-3514.37.6.822) `学術`
 - [Wikipedia: Social loafing — Latané, Ringelmann effect, diffusion of responsibility, identifiability](https://en.wikipedia.org/wiki/Social_loafing) `リファレンス`
 
+## 関連概念
+- [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 同じ思想家
+- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

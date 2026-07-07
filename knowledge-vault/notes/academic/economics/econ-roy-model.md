@@ -29,6 +29,10 @@ aliases:
 - [Roy, A. D. (1951) Some Thoughts on the Distribution of Earnings — Oxford Economic Papers, 3(2), 135–146 (self-selection on comparative advantage)](https://academic.oup.com/oep/article-abstract/3/2/135/2360754) `学術`
 - [The New Palgrave Dictionary of Economics: Roy model — sectoral self-selection, comparative advantage, selection bias, Borjas immigrant selection](https://link.springer.com/chapter/10.1057/9780230280816_27) `リファレンス`
 
+## 関連概念
+- [[econ-is-lm|IS-LMモデル]] — 同分野の近傍
+- [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

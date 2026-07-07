@@ -29,6 +29,11 @@ aliases:
 - [Baddeley, A.D. & Hitch, G. (1974) Working Memory — Psychology of Learning and Motivation 8](https://doi.org/10.1016/S0079-7421(08)60452-1) `学術`
 - [Wikipedia: Baddeleys model of working memory — central executive, phonological loop, visuospatial sketchpad, episodic buffer](https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory) `リファレンス`
 
+## 関連概念
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同じ思想家
+- [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同じ思想家
+- [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

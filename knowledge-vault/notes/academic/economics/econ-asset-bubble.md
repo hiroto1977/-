@@ -31,6 +31,16 @@ aliases:
 - [Federal Reserve Board — F. Mishkin, "How Should We Respond to Asset Price Bubbles?" (2008)](https://www.federalreserve.gov/newsevents/speech/mishkin20080515a.htm) `公的`
 - [IMF Working Paper WP/13/45 — A. Scherbina, "Asset Price Bubbles: A Selective Survey"](https://www.imf.org/external/pubs/ft/wp/2013/wp1345.pdf) `公的`
 
+## 関連概念
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 語彙が近い
+- [[econ-speculative-bubbles-kindleberger|投機的バブルの解剖——キンドルバーガーのマニア＝パニック＝崩壊モデル]] — 語彙が近い
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 出典を共有
+- [[econ-rational-bubble|合理的バブル]] — 出典を共有
+- [[econ-behavioral-finance|行動ファイナンス]] — 同分野の近傍
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同分野の近傍
+- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同分野の近傍
+- [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

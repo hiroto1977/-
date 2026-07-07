@@ -31,6 +31,14 @@ aliases:
 - [金融庁 (2023) コーポレートガバナンス・コード改訂版（スチュワードシップ責任・アクティビスト対応）](https://www.fsa.go.jp/singi/corporategovernance/siryou/20230331/01.pdf) `公的`
 - [Wikipedia: Shareholder activism — hedge fund campaigns, SEC 13D, short-termism, CGC Japan](https://en.wikipedia.org/wiki/Shareholder_activism) `リファレンス`
 
+## 関連概念
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+- [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同じ思想家
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 同じ思想家
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

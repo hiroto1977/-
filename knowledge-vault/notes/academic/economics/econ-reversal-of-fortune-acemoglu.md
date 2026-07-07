@@ -29,6 +29,18 @@ aliases:
 - [Acemoglu, D., Johnson, S. & Robinson, J. A. (2002) Reversal of fortune — Quarterly Journal of Economics](https://doi.org/10.1162/003355302320935025) `学術`
 - [Wikipedia: Reversal of Fortune — institutions vs geography, colonial origins, development](https://en.wikipedia.org/wiki/Reversal_of_Fortune_(paper)) `リファレンス`
 
+## 関連概念
+- [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
+- [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 同じ思想家
+- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同じ思想家
+- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
+- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
+- [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

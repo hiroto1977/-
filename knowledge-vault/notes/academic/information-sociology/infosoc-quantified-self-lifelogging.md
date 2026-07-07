@@ -29,6 +29,11 @@ aliases:
 - [Lupton, D. (2016). The Quantified Self — Polity Press](https://doi.org/10.1177/1461444815582081) `学術`
 - [Wikipedia: Quantified self — lifelogging and self-tracking](https://en.wikipedia.org/wiki/Quantified_self) `リファレンス`
 
+## 関連概念
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 語彙が近い
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 語彙が近い
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

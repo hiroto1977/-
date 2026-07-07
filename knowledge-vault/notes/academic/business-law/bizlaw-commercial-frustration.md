@@ -31,6 +31,18 @@ Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論�
 - [Davis Contractors Ltd v Fareham UDC [1956] AC 696 (HL) — Lord Radcliffe's radically different test](https://publications.parliament.uk/pa/ld199596/ldjudgmt/davis.htm) `リファレンス`
 - [Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration](https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677) `リファレンス`
 
+## 関連概念
+- [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — 同じ思想家
+- [[bizlaw-warranty-condition-distinction|条件と担保条項の区別——契約条項の重要性に応じた救済の差異]] — 同じ思想家
+- [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
+- [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
+- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 出典を共有
+- [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
+- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,14 @@ aliases:
 - [Stallman, R. M. (2002) Free Software, Free Society: Selected Essays — GNU Press（ストールマンの政治哲学）](https://www.oreilly.com/library/view/free-software-free/9780983159216/) `学術`
 - [Wikipedia: Copyleft — history, GPL variants, share-alike principle, and creative commons extension](https://en.wikipedia.org/wiki/Copyleft) `リファレンス`
 
+## 関連概念
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 語彙が近い
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同じ思想家
+- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+- [[infosoc-web2|Web 2.0]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

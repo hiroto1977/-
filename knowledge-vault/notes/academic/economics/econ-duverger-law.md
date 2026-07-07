@@ -31,6 +31,11 @@ aliases:
 - [Dunleavy, 'Duverger's law is a dead parrot', LSE British Politics and Policy（ロンドン大学 LSE・批判的論点）](https://blogs.lse.ac.uk/politicsandpolicy/duvergers-law-dead-parrot-dunleavy/) `学術`
 - [Benoit, 'Duverger's Law and the Study of Electoral Systems', French Politics（学術論文）](https://kenbenoit.net/pdfs/Benoit_FrenchPolitics_2006.pdf) `学術`
 
+## 関連概念
+- [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [Sinan, A. & Roberts, P. (2015) "Imprinting and the Foundations of Organizational Change" — ASQ](https://doi.org/10.1177/0001839214527997) `学術`
 - [Wikipedia: Organizational imprinting — 創設時条件の持続的影響](https://en.wikipedia.org/wiki/Organizational_imprinting) `リファレンス`
 
+## 関連概念
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 語彙が近い
+- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同じ思想家
+- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

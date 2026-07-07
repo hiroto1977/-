@@ -29,6 +29,18 @@ aliases:
 - [Greiner, L.E. (1972/1998) Evolution and Revolution as Organizations Grow — Harvard Business Review 50(4)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `学術`
 - [Wikipedia: Greiners growth model — evolution/revolution, five phases, leadership/autonomy/control crises](https://en.wikipedia.org/wiki/Greiner%27s_growth_model) `リファレンス`
 
+## 関連概念
+- [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — 同じ思想家
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[mgmt-strategic-types-miles-snow|マイルズ＆スノーの戦略類型——環境適応の様式による四つの組織類型]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

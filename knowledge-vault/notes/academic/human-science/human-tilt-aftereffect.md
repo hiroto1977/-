@@ -29,6 +29,15 @@ aliases:
 - [Gibson, J. J. & Radner, M. (1937) Adaptation, after-effect and contrast in the perception of tilted lines — Journal of Experimental Psychology](https://doi.org/10.1037/h0059826) `学術`
 - [Wikipedia: Tilt aftereffect — orientation adaptation, V1, population coding](https://en.wikipedia.org/wiki/Tilt_aftereffect) `リファレンス`
 
+## 関連概念
+- [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同じ思想家
+- [[human-critical-period-plasticity|神経発達の臨界期：視覚野可塑性と経験依存的回路形成]] — 同じ思想家
+- [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 同じ思想家
+- [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同じ思想家
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
+- [[human-mental-rotation-shepard-metzler|心的回転——心的イメージのアナログ的変換を示す実験]] — 同分野の近傍
+- [[human-ventriloquist-effect|腹話術効果——音の位置が視覚に引き寄せられる多感覚統合]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

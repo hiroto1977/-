@@ -30,6 +30,18 @@ aliases:
 - [Pfeffer & Sutton (2006) Hard Facts, Dangerous Half-Truths — Harvard Business School Press](https://doi.org/10.1111/j.1744-6570.2007.00075.x) `学術`
 - [Wikipedia: Evidence-based management — EBMgtの概念と実践](https://en.wikipedia.org/wiki/Evidence-based_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 語彙が近い
+- [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 語彙が近い
+- [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
+- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+- [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
+- [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]] — 同じ思想家
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
+- [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

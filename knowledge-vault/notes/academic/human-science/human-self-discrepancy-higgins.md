@@ -29,6 +29,11 @@ E・トーリー・ヒギンズ ／ ティモシー・ストローマン ／ ジ
 - [Higgins, E.T. (1987) Self-Discrepancy: A Theory Relating Self and Affect — Psychological Review 94(3)](https://doi.org/10.1037/0033-295X.94.3.319) `学術`
 - [Wikipedia: Self-discrepancy theory — actual/ideal/ought self, dejection vs agitation emotions](https://en.wikipedia.org/wiki/Self-discrepancy_theory) `リファレンス`
 
+## 関連概念
+- [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
+- [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同じ思想家
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

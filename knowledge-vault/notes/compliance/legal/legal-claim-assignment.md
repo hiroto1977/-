@@ -30,6 +30,13 @@ aliases:
 - [法務省 民法（債権法）改正について](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 - [経済産業省 債権法改正と資金調達（譲渡制限特約）](https://www.meti.go.jp/policy/economy/keiei_innovation/sangyokinyu/ABL/14_1.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 語彙が近い
+- [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — 分野横断
+- [[legal-risk-bearing|危険負担（改正民法536条）]] — 同分野の近傍
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍
+- [[legal-insolvency-procedures|法的倒産処理手続（破産・民事再生・会社更生・特別清算）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

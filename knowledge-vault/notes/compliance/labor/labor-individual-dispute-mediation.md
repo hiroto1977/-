@@ -30,6 +30,10 @@ aliases:
 - [e-Gov法令検索 個別労働関係紛争解決促進法](https://laws.e-gov.go.jp/law/413AC0000000112) `公的`
 - [東京労働局 個別労働紛争解決制度](https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/kobetsu_roudou_funsou.html) `公的`
 
+## 関連概念
+- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 語彙が近い
+- [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

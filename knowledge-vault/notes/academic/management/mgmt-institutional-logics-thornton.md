@@ -30,6 +30,15 @@ aliases:
 - [Thornton, P.H., Ocasio, W. & Lounsbury, M. 2012. The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process. Oxford University Press.](https://global.oup.com/academic/product/the-institutional-logics-perspective-9780199601936) `学術`
 - [Wikipedia — Institutional logic](https://en.wikipedia.org/wiki/Institutional_logic) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 語彙が近い
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
+- [[mgmt-attention-based-view-ocasio|企業のアテンション・ベースト・ビュー（注意基盤理論）]] — 同じ思想家
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同じ思想家
+- [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 同分野の近傍
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同分野の近傍
+- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

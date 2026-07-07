@@ -30,6 +30,18 @@ William T. Allen（元デラウェア衡平法裁判所長官）
 - [Justia — Aronson v. Lewis, 473 A.2d 805 (Del. 1984)](https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-4.html) `リファレンス`
 - [Allen, W.T. Modern Corporate Governance and the Erosion of the BJR in Delaware (SSRN)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1105591) `学術`
 
+## 関連概念
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
+- [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

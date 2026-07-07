@@ -30,6 +30,11 @@ aliases:
 - [公正取引委員会 企業結合の禁止期間](https://www.jftc.go.jp/dk/kiketsu/kigyoketsugo/qa/kinshikikan.html) `公的`
 - [独占禁止法の企業結合規制 解説](https://www.businesslawyers.jp/practices/643) `メディア`
 
+## 関連概念
+- [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 語彙が近い
+- [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — 同分野の近傍
+- [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

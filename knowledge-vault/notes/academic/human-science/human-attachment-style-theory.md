@@ -32,6 +32,15 @@ John Bowlby ／ Mary Ainsworth ／ Cindy Hazan ／ Phillip Shaver ／ Kim Bartho
 - [Feeney & Noller (1996) — Adult attachment review, Psychological Bulletin](https://doi.org/10.1037/0033-2909.117.3.387) `学術`
 - [Cassidy & Shaver (Eds.) (2016) — Handbook of Attachment: Theory, Research, and Clinical Applications (3rd ed.), Guilford Press](https://www.guilford.com/books/Handbook-of-Attachment/Cassidy-Shaver/9781462538683) `リファレンス`
 
+## 関連概念
+- [[human-attachment-theory-adult|成人愛着理論]] — 語彙が近い
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 同じ思想家
+- [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 出典を共有
+- [[human-motivational-interviewing-miller-rollnick|動機づけ面接——ミラー＆ロルニックのチェンジトークと行動変容支援]] — 出典を共有
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

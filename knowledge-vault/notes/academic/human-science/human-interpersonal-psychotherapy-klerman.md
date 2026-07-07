@@ -30,6 +30,17 @@ aliases:
 - [WHO (2016) mhGAP Intervention Guide — Interpersonal Therapy for Depression](https://www.who.int/publications/i/item/9789241548571) `公的`
 - [Wikipedia: Interpersonal psychotherapy — 対人関係療法の理論と実践](https://en.wikipedia.org/wiki/Interpersonal_psychotherapy) `リファレンス`
 
+## 関連概念
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 出典を共有
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 出典を共有
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 出典を共有
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
+- [[infosoc-infodemic|インフォデミック]] — 出典を共有
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同分野の近傍
+- [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

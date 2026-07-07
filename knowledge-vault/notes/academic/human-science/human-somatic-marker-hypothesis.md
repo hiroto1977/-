@@ -30,6 +30,18 @@ aliases:
 - [Bechara & Damasio (2005) The Somatic Marker Hypothesis: A Neural Theory of Economic Decision — Games and Economic Behavior](https://www.sciencedirect.com/science/article/abs/pii/S0899825604001034) `学術`
 - [Dunn et al. (2006) The Somatic Marker Hypothesis: A Critical Evaluation — Neuroscience & Biobehavioral Reviews](https://www.mrc-cbu.cam.ac.uk/personal/tim.dalgleish/dunnsmhreview.pdf) `学術`
 
+## 関連概念
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同じ思想家
+- [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
+- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 出典を共有
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 出典を共有
+- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
+- [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
+- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

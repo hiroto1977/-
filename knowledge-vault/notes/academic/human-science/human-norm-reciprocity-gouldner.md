@@ -29,6 +29,17 @@ aliases:
 - [Gouldner, A. W. (1960) The Norm of Reciprocity: A Preliminary Statement — American Sociological Review, 25(2), 161–178](https://doi.org/10.2307/2092623) `学術`
 - [Wikipedia: Norm of reciprocity — Gouldner (1960), universal norm, starting mechanism, positive/negative reciprocity, Cialdini](https://en.wikipedia.org/wiki/Norm_of_reciprocity) `リファレンス`
 
+## 関連概念
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同じ思想家
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
+- [[infosoc-gift-economy|贈与経済（贈与論）]] — 同じ思想家
+- [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
+- [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同じ思想家
+- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

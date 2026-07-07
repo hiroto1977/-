@@ -29,6 +29,18 @@ aliases:
 - [Sarasvathy, S. D. (2001) Causation and Effectuation — Academy of Management Review](https://doi.org/10.2307/259121) `学術`
 - [Wikipedia: Effectuation — Sarasvathy, entrepreneurial decision-making, five principles](https://en.wikipedia.org/wiki/Effectuation) `リファレンス`
 
+## 関連概念
+- [[mgmt-effectuation|エフェクチュエーション]] — 語彙が近い
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — 同じ思想家
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
+- [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

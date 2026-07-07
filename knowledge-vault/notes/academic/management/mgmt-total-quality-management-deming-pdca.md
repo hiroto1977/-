@@ -29,6 +29,13 @@ W・エドワーズ・デミング ／ ジョセフ・ジュラン ／ フィリ
 - [Deming, W.E. (1986) Out of the Crisis — MIT Press](https://doi.org/10.1002/9781118234013) `学術`
 - [Wikipedia: Total quality management — Deming and PDCA](https://en.wikipedia.org/wiki/Total_quality_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-total-quality-management-deming-juran|総合的品質管理——デミングとジュランの継続的改善と全社的品質経営]] — 語彙が近い
+- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同じ思想家
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
+- [[mgmt-juran-trilogy|ジュランの品質トリロジー——計画・管理・改善からなる品質マネジメント]] — 同じ思想家
+- [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

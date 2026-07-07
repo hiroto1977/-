@@ -31,6 +31,16 @@ aliases:
 - [Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy — Journal of Applied Psychology, 88(5), 866–878（TMSの三次元実証）](https://doi.org/10.2307/30040696) `学術`
 - [Wikipedia: Transactive memory — Wegner, differentiation, credibility, coordination, remote work](https://en.wikipedia.org/wiki/Transactive_memory) `リファレンス`
 
+## 関連概念
+- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 語彙が近い
+- [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 同じ思想家
+- [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
+- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
+- [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
+- [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
+- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同分野の近傍
+- [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

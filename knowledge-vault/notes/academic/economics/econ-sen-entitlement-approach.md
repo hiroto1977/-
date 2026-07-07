@@ -29,6 +29,11 @@ Amartya Sen（アマルティア・セン・1981年『貧困と飢饉』・1998�
 - [Sen, A. (1981). Poverty and Famines: An Essay on Entitlement and Deprivation. Oxford: Clarendon Press.（Harvard Scholars 収録の書誌）](https://sen.scholars.harvard.edu/publications/poverty-and-famines-essay-entitlement-and-deprivation) `学術`
 - [Encyclopaedia Britannica, “Poverty and Famines” — 権原アプローチ・FAD仮説の否定・交換権原の失敗としての飢饉の概説](https://www.britannica.com/topic/Poverty-and-Famines-An-Essay-on-Entitlement-and-Deprivation) `リファレンス`
 
+## 関連概念
+- [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

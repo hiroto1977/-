@@ -30,6 +30,12 @@ aliases:
 - [Zimmerman (2000) Empowerment Theory: Psychological, Organizational and Community Levels of Analysis — Handbook of Community Psychology](https://doi.org/10.1023/A:1022691003422) `学術`
 - [Wikipedia: Community psychology — コミュニティ心理学の歴史と理論的基盤の概説](https://en.wikipedia.org/wiki/Community_psychology) `リファレンス`
 
+## 関連概念
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 同分野の近傍
+- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 同分野の近傍
+- [[human-solution-focused-brief-therapy-deshazer|解決志向ブリーフセラピー——ド・シェイザーの例外探しとミラクル・クエスチョン]] — 同分野の近傍
+- [[human-strengths-perspective|ストレングス視点：ソーシャルワークにおける当事者の強みに基づく支援モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

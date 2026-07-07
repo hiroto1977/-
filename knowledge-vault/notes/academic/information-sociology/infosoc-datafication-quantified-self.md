@@ -30,6 +30,18 @@ aliases:
 - [Lupton, D. (2016) The Quantified Self — Polity Press](https://www.routledge.com/The-Quantified-Self-A-Sociology-of-Self-Tracking/Lupton/p/book/9781509500703) `学術`
 - [Wikipedia: クオンティファイド・セルフ — 定量的自己追跡と情報社会の解説](https://ja.wikipedia.org/wiki/%E3%82%AF%E3%82%AA%E3%83%B3%E3%83%86%E3%82%A3%E3%83%95%E3%82%A1%E3%82%A4%E3%83%89%E3%83%BB%E3%82%BB%E3%83%AB%E3%83%95) `リファレンス`
 
+## 関連概念
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 同じ思想家
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同じ思想家
+- [[infosoc-quantified-self-lifelogging|数値化される自己（クワンティファイド・セルフ）と自己追跡の社会学]] — 同じ思想家
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

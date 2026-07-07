@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.5100 新設法人の届出書類](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm) `公的`
 - [国税庁 No.5762 青色申告と欠損金の繰越控除](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm) `公的`
 
+## 関連概念
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 語彙が近い
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

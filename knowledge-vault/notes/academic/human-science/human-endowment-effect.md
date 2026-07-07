@@ -30,6 +30,18 @@ R.セイラーが1980年に命名／WTA(受入額)>WTP(支払額)／カーネマ
 - [Kahneman, Knetsch & Thaler (1991), "Anomalies: The Endowment Effect, Loss Aversion, and Status Quo Bias," Journal of Economic Perspectives 5(1):193–206（AEA）](https://www.aeaweb.org/articles?id=10.1257%2Fjep.5.1.193) `学術`
 - [Wikipedia: Endowment effect（Thaler 1980 命名・WTA>WTP の補強）](https://en.wikipedia.org/wiki/Endowment_effect) `リファレンス`
 
+## 関連概念
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 語彙が近い
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
+- [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
+- [[econ-liquidity-trap|流動性のわな]] — 出典を共有
+- [[human-effort-justification|努力の正当化]] — 出典を共有
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 出典を共有
+- [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

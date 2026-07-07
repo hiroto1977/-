@@ -31,6 +31,11 @@ aliases:
 - [Effectuation.org — The Five Principles of Effectuation（5原則の一次的リファレンス）](https://effectuation.org/the-five-principles-of-effectuation-detail) `リファレンス`
 - [Wikipedia — Saras Sarasvathy（経歴・研究背景）](https://en.wikipedia.org/wiki/Saras_Sarasvathy) `リファレンス`
 
+## 関連概念
+- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 語彙が近い
+- [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同分野の近傍
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

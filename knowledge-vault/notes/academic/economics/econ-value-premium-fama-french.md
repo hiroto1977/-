@@ -29,6 +29,18 @@ aliases:
 - [Fama, E.F. & French, K.R. (1992) The Cross-Section of Expected Stock Returns — Journal of Finance 47(2)](https://doi.org/10.1111/j.1540-6261.1992.tb04398.x) `学術`
 - [Wikipedia: Value premium — Fama-French, book-to-market, HML factor, risk vs behavioral explanation](https://en.wikipedia.org/wiki/Value_premium) `リファレンス`
 
+## 関連概念
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
+- [[econ-home-bias-puzzle|ホームバイアス・パズル——投資家が自国資産に過度に偏る謎]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

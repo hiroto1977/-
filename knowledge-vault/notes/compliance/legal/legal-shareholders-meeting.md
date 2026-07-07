@@ -30,6 +30,11 @@ aliases:
 - [法務省 定時株主総会の開催について](https://www.moj.go.jp/MINJI/minji07_00021.html) `公的`
 - [株主総会の決議方法（普通決議・特別決議）解説](https://www.businesslawyers.jp/practices/19) `メディア`
 
+## 関連概念
+- [[legal-standard-terms|定型約款（改正民法）]] — 同分野の近傍
+- [[legal-companies-act-2019-reform|令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）]] — 同分野の近傍
+- [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

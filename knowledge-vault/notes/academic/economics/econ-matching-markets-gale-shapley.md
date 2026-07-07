@@ -29,6 +29,17 @@ aliases:
 - [Gale, D. & Shapley, L.S. (1962) College Admissions and the Stability of Marriage — American Mathematical Monthly 69(1)](https://doi.org/10.2307/2312726) `学術`
 - [Wikipedia: Gale–Shapley algorithm — stable matching, deferred acceptance, market design, Roth](https://en.wikipedia.org/wiki/Gale%E2%80%93Shapley_algorithm) `リファレンス`
 
+## 関連概念
+- [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-shapley-value|シャープレー値]] — 同じ思想家
+- [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同じ思想家
+- [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
+- [[econ-shapley-folkman-lemma|シャプリー＝フォルクマンの補題——多数の和は近似的に凸になる]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

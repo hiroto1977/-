@@ -31,6 +31,17 @@ aliases:
 - [The Concise Encyclopedia of Economics (Econlib) — Wassily Leontief](https://www.econlib.org/library/Enc/bios/Leontief.html) `リファレンス`
 - [ScienceDirect Topics — Input-Output Model（投入係数・(I−A)⁻¹・収穫一定の前提）](https://www.sciencedirect.com/topics/economics-econometrics-and-finance/input-output-model) `学術`
 
+## 関連概念
+- [[econ-input-output-analysis-leontief|投入産出分析——レオンチェフ・マトリクスと産業連関の定量的分析]] — 語彙が近い
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
+- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
+- [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同分野の近傍
+- [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]] — 同分野の近傍
+- [[econ-tying|抱き合わせ販売（tying）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ Jan Tinbergen／James E. Anderson／Eric van Wincoop／Keith Head／Thierry Maye
 - [Head & Mayer (2014) Gravity Equations: Workhorse, Toolkit, and Cookbook, Handbook of International Economics Vol.4 pp.131-195](https://www.sciencedirect.com/science/article/abs/pii/B9780444543141000033) `学術`
 - [Tinbergen (1962) Shaping the World Economy — Wiley record](https://onlinelibrary.wiley.com/doi/10.1002/tie.5060050113) `学術`
 
+## 関連概念
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 語彙が近い
+- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 同じ思想家
+- [[econ-new-new-trade-theory-melitz|「新」新貿易理論（メリッツ・モデル）]] — 同じ思想家
+- [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Lee, H.L., Padmanabhan, V. & Whang, S. (1997) Information Distortion in a Supply Chain: The Bullwhip Effect — Management Science 43(4)](https://www.jstor.org/stable/2634936) `学術`
 - [Wikipedia: Bullwhip effect — Forrester, demand signal, order batching, shortage gaming](https://en.wikipedia.org/wiki/Bullwhip_effect) `リファレンス`
 
+## 関連概念
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
+- [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

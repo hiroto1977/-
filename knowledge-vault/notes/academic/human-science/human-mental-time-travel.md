@@ -31,6 +31,18 @@ Endel Tulving（エピソード記憶・意識1972-2002）; Thomas Suddendorf & 
 - [Tulving, E. (1985). Memory and consciousness. Canadian Psychology, 26(1), 1–12.](https://doi.org/10.1037/h0080017) `学術`
 - [Tulving, E. (1972). Episodic and semantic memory. In E. Tulving & W. Donaldson (Eds.), Organization of Memory (pp. 381–403). Academic Press.](https://psycnet.apa.org/record/1972-31301-011) `リファレンス`
 
+## 関連概念
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
+- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

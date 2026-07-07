@@ -29,6 +29,15 @@ aliases:
 - [Cornell LII Wex: Duress — economic duress, illegitimate pressure, voidable contract, consent](https://www.law.cornell.edu/wex/duress) `リファレンス`
 - [Wikipedia: Economic duress — illegitimate pressure, no reasonable alternative, Pao On, Universe Tankships](https://en.wikipedia.org/wiki/Undue_influence#Economic_duress) `リファレンス`
 
+## 関連概念
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
+- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同じ思想家
+- [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
+- [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同じ思想家
+- [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同分野の近傍
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

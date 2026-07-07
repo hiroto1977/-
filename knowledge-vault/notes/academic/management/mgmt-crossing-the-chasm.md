@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia — Crossing the Chasm（1991年刊・ビジョナリーと実利主義者の断絶）](https://en.wikipedia.org/wiki/Crossing_the_Chasm) `リファレンス`
 - [Can You See the Chasm? — Rogers/Bass/Mooreの普及理論比較（学術文献）](https://www.researchgate.net/publication/235250288_Can_You_See_the_Chasm_Innovation_Diffusion_According_to_Rogers_Bass_and_Moore) `学術`
 
+## 関連概念
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
+- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

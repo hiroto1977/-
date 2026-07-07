@@ -29,6 +29,11 @@ aliases:
 - [Zihl, J., von Cramon, D. & Mai, N. (1983) Selective disturbance of movement vision after bilateral brain damage — Brain](https://doi.org/10.1093/brain/106.2.313) `学術`
 - [Wikipedia: Akinetopsia — motion blindness, area V5/MT, functional specialization, patient L.M.](https://en.wikipedia.org/wiki/Akinetopsia) `リファレンス`
 
+## 関連概念
+- [[human-motion-aftereffect-waterfall|運動残効（滝の錯視）——一方向の運動を見続けた後に逆向きの運動が見える]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

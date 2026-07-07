@@ -30,6 +30,18 @@ Medical Committee for Human Rights v. SEC （1970）／Trinity Wall Street v. Wa
 - [Cornell LII — 17 CFR §240.14a-8 Shareholder proposals](https://www.law.cornell.edu/cfr/text/17/240.14a-8) `リファレンス`
 - [Harvard Law School Forum on Corporate Governance — SEC Increases Rule 14a-8 Thresholds (2020)](https://corpgov.law.harvard.edu/2020/10/12/sec-increases-rule-14a-8-thresholds/) `学術`
 
+## 関連概念
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同じ思想家
+- [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]] — 出典を共有
+- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+- [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

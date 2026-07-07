@@ -30,6 +30,12 @@ aliases:
 - [The Two Facets of Collaboration: Cooperation and Coordination in Strategic Alliances — Academy of Management Annals](https://journals.aom.org/doi/10.5465/19416520.2012.691646) `学術`
 - [Strategic Alliances — ResearchGate](https://www.researchgate.net/publication/228158906_Strategic_Alliances) `学術`
 
+## 関連概念
+- [[mgmt-strategic-alliances|戦略的提携・アライアンス：企業間協力による競争優位・知識学習・社会ネットワークの組織間関係論]] — 同じ思想家
+- [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同分野の近傍
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 同分野の近傍
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

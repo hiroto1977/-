@@ -31,6 +31,13 @@ aliases:
 - [Dorn, S. et al. (2016) A Systematic Review of Coopetition Research — Journal of Management, 42(7), 1898–1938（文献メタ分析）](https://doi.org/10.1177/0149206318801823) `学術`
 - [Wikipedia: Coopetition — Brandenburger & Nalebuff, value net, simultaneous cooperation and competition](https://en.wikipedia.org/wiki/Coopetition) `リファレンス`
 
+## 関連概念
+- [[mgmt-coopetition|コーペティション（協調的競争）]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — 同分野の近傍
+- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
+- [[mgmt-effectuation|エフェクチュエーション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

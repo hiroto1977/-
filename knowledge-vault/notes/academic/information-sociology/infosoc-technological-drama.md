@@ -31,6 +31,16 @@ Bryan Pfaffenberger ／ Victor Turner ／ Wiebe Bijker
 - [PhilPapers — Technological Dramas bibliographic record](https://philpapers.org/rec/PFATD) `リファレンス`
 - [Full text PDF — Cornell/Nissenbaum archive](https://nissenbaum.tech.cornell.edu/papers/technologicaldramas.pdf) `学術`
 
+## 関連概念
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
+- [[mgmt-organizational-aesthetics|組織美学]] — 出典を共有
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 出典を共有
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[infosoc-phenomenological-technology|技術の現象学]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同分野の近傍
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

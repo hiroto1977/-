@@ -29,6 +29,13 @@ aliases:
 - [Tulving, E. & Thomson, D.M. (1973) Encoding Specificity and Retrieval Processes in Episodic Memory — Psychological Review 80(5)](https://doi.org/10.1037/h0020071) `学術`
 - [Wikipedia: Encoding specificity principle — Tulving & Thomson, context/state-dependent memory, retrieval cues](https://en.wikipedia.org/wiki/Encoding_specificity_principle) `リファレンス`
 
+## 関連概念
+- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同じ思想家
+- [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
+- [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — 同じ思想家
+- [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]] — 同分野の近傍
+- [[human-spacing-effect-cepeda|間隔効果——分散学習が集中学習より記憶保持を向上させるメカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,14 @@ Edward L. Deci ／ Richard M. Ryan ／ Maarten Vansteenkiste ／ Christopher P. 
 - [Self-Determination Theory — Official SDT Website: Overview of the Six Mini-Theories](https://selfdeterminationtheory.org/theory/) `リファレンス`
 - [Vansteenkiste, Niemiec & Soenens (2010) — The Development of the Five Mini-Theories of Self-Determination Theory (Advances in Motivation and Achievement)](https://doi.org/10.1007/978-94-007-7644-4) `学術`
 
+## 関連概念
+- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同じ思想家
+- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同じ思想家
+- [[infosoc-fomo|FOMO（取り残されることへの恐れ）]] — 出典を共有
+- [[human-self-determination|自己決定理論（SDT）]] — 出典を共有
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

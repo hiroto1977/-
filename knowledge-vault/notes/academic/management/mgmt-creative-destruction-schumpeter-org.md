@@ -30,6 +30,18 @@ aliases:
 - [Foster, R. & Kaplan, S. (2001) Creative Destruction — Currency/Doubleday](https://doi.org/10.1002/smj.249) `学術`
 - [Wikipedia: Creative destruction — Schumpeterian innovation and industrial transformation overview](https://en.wikipedia.org/wiki/Creative_destruction) `リファレンス`
 
+## 関連概念
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 語彙が近い
+- [[econ-creative-destruction|創造的破壊]] — 語彙が近い
+- [[mgmt-technology-s-curve|技術のSカーブ]] — 同じ思想家
+- [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
+- [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [Stevens, S. S. (1957). On the psychophysical law. Psychological Review, 64(3), 153–181. doi:10.1037/h0046162](https://doi.org/10.1037/h0046162) `学術`
 - [Encyclopedia.com — Stevens, Stanley Smith（1906–1973, ハーバードの精神物理学者・マグニチュード推定法・べき法則によるフェヒナー法則の批判）](https://www.encyclopedia.com/science/dictionaries-thesauruses-pictures-and-press-releases/stevens-stanley-smith) `リファレンス`
 
+## 関連概念
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

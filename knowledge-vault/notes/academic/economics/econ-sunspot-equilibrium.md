@@ -30,6 +30,12 @@ aliases:
 - [Karl Shell, "Sunspot Equilibrium", The New Palgrave Dictionary of Economics, 2nd ed.](https://link.springer.com/rwe/10.1057/978-1-349-95121-5_1362-2) `リファレンス`
 - [Sunspots (economics) — Wikipedia](https://en.wikipedia.org/wiki/Sunspots_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 同じ思想家
+- [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 同じ思想家
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同分野の近傍
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

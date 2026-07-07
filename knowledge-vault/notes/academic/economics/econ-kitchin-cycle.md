@@ -31,6 +31,18 @@ aliases:
 - [Schumpeter, J.A. 1939. Business Cycles: A Theoretical, Historical, and Statistical Analysis of the Capitalist Process. McGraw-Hill.](https://archive.org/details/businesscycles0001schu) `学術`
 - [Korotayev, A.V. & Tsirel, S.V. 2010. A Spectral Analysis of World GDP Dynamics. Structure and Dynamics, 4(1), 3-57.](https://escholarship.org/uc/item/9jv108xp) `学術`
 
+## 関連概念
+- [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 語彙が近い
+- [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]] — 同じ思想家
+- [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

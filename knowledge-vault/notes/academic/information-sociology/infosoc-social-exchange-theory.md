@@ -29,6 +29,10 @@ aliases:
 - [Homans (1958) "Social Behavior as Exchange," American Journal of Sociology 63(6):597–606（原典、University of Chicago Press）](https://www.journals.uchicago.edu/doi/10.1086/222355) `学術`
 - [Encyclopaedia Britannica — Social exchange theory（報酬・コスト・互恵性の規範・ホーマンズとブラウの貢献）](https://www.britannica.com/topic/social-exchange-theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

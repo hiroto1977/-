@@ -30,6 +30,18 @@ aliases:
 - [Kashyap, Stein & Wilcox (1993) Monetary Policy and Credit Conditions: Evidence from the Composition of External Finance — American Economic Review](https://doi.org/10.1016/S0304-3932(97)00072-2) `学術`
 - [Wikipedia: Credit channel — 銀行貸出チャネルと信用チャネルの理論的概説](https://en.wikipedia.org/wiki/Credit_channel) `リファレンス`
 
+## 関連概念
+- [[econ-credit-channel-theory|信用チャネル理論]] — 語彙が近い
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
+- [[econ-bagehot-lender-last-resort|最後の貸し手とバジョットの原則——金融危機における中央銀行の役割]] — 同じ思想家
+- [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 同じ思想家
+- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]
