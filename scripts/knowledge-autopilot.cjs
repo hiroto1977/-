@@ -69,7 +69,7 @@ function monthsSince(asOf, today) {
 function titleCore(title) {
   return (title || '')
     .replace(/[—―‐-]{2,}.*$/u, '')
-    .replace(/[（(【［\[].*?[）)】］\]]/gu, '')
+    .replace(/[（(【［[].*?[）)】］\]]/gu, '')
     .replace(/[\s、。・:：;；,，"'「」『』]/gu, '')
     .toLowerCase();
 }
