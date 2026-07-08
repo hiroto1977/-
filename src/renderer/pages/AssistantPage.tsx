@@ -84,6 +84,17 @@ interface Theme {
 const HISTORY_KEY = 'assistant-history';
 const THEME_KEY = 'assistant-theme';
 const PROVIDER_KEY = 'assistant-provider';
+/** エージェント選択の特別値: 設定済みの全プロバイダへ同時に質問する合議モード。 */
+const ALL_AGENTS = '__all__';
+
+/** chatAll (全AI合議) の 1 プロバイダ分の回答。 */
+interface EnsembleAnswer {
+  readonly provider: string;
+  readonly model: string;
+  readonly text: string;
+  readonly ok: boolean;
+  readonly error?: string;
+}
 const HISTORY_MAX = 50;
 const TURN_WINDOW = 16; // AI へ渡す直近会話数
 
@@ -389,6 +400,50 @@ export function AssistantPage() {
       const prevUser = [...messages].reverse().find((m) => m.role === 'user')?.text ?? '';
       const ragQuery = prevUser && prevUser !== text ? `${prevUser}\n${text}` : text;
       const system = buildSystemPrompt(ragQuery, serviceCatalog);
+
+      // 🤝 全AI合議: 設定済みの全プロバイダへ同時に質問し、回答を並べて表示する。
+      if (provider === ALL_AGENTS) {
+        const resAll = await hub.invoke<{ answers: EnsembleAnswer[] }>('assistant', 'chatAll', {
+          system,
+          messages: turns,
+        });
+        if (resAll.ok && Array.isArray(resAll.data.answers) && resAll.data.answers.length > 0) {
+          const answers = resAll.data.answers;
+          const okCount = answers.filter((a) => a.ok).length;
+          const relServices = retrieveServices(text, serviceCatalog);
+          append({
+            role: 'assistant',
+            text: `🤝 全AI合議 — ${answers.length} プロバイダに同時質問（回答 ${okCount} 件）`,
+            offline: true,
+          });
+          for (const a of answers) {
+            const label = providers.find((p) => p.id === a.provider)?.label ?? a.provider;
+            if (a.ok) {
+              append({
+                role: 'assistant',
+                text: a.text,
+                services: relServices,
+                provider: `${label}${a.model ? ` (${a.model})` : ''}`,
+              });
+            } else {
+              append({
+                role: 'assistant',
+                text: `⚠ ${label} は応答できませんでした: ${a.error ?? '不明なエラー'}`,
+                offline: true,
+              });
+            }
+          }
+          return;
+        }
+        append({
+          role: 'assistant',
+          text: `（全AI合議を利用できないため簡易モードで回答します: ${resAll.ok ? '回答がありません' : resAll.message}）`,
+          offline: true,
+        });
+        replyOffline(text);
+        return;
+      }
+
       const res = await hub.invoke<{ text: string; model?: string; provider?: string }>(
         'assistant',
         'chat',
@@ -465,6 +520,9 @@ export function AssistantPage() {
             style={{ fontSize: 12, borderRadius: 8, padding: '4px 8px' }}
           >
             <option value="">エージェント自動 (既定)</option>
+            <option value={ALL_AGENTS}>
+              🤝 全AI合議 (設定済み {providers.filter((p) => p.configured).length} 社へ同時質問)
+            </option>
             {providers.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.label}

@@ -244,6 +244,83 @@ describe("ACTIONS['chat'] — multi-provider routing", () => {
   });
 });
 
+describe("ACTIONS['chatAll'] — 全AI合議 (設定済み全プロバイダへ同時質問)", () => {
+  interface Answers {
+    answers: Array<{ provider: string; model: string; text: string; ok: boolean; error?: string }>;
+  }
+  const CREDS = JSON.stringify({ anthropic: 'sk-ant-a', openai: 'sk-oai-b' });
+
+  /** URL でプロバイダを見分ける fetch モック。 */
+  const routeMock = (openaiOk = true) =>
+    vi.fn<typeof fetch>().mockImplementation(async (input) => {
+      const url = String(input);
+      if (url.includes('api.anthropic.com')) {
+        return jsonResponse({ content: [{ type: 'text', text: 'Claude!' }] });
+      }
+      if (!openaiOk) return jsonResponse({ error: 'boom' }, false, 500);
+      return jsonResponse({ choices: [{ message: { content: 'ChatGPT!' } }] });
+    });
+
+  it('設定済みの全プロバイダへ並列に問い合わせ、定義順で回答を返す', async () => {
+    const fetchMock = routeMock();
+    const res = (await ACTIONS['chatAll']!({
+      token: CREDS,
+      fetch: fetchMock,
+      payload: { system: 'sys', messages: [{ role: 'user', content: 'hi' }] },
+    })) as Answers;
+    expect(res.answers.map((a) => a.provider)).toEqual(['anthropic', 'openai']);
+    expect(res.answers[0]).toMatchObject({ ok: true, text: 'Claude!' });
+    expect(res.answers[1]).toMatchObject({ ok: true, text: 'ChatGPT!' });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('1 社の失敗は ok:false + error として返し、他社の回答を巻き込まない', async () => {
+    const res = (await ACTIONS['chatAll']!({
+      token: CREDS,
+      fetch: routeMock(false),
+      payload: { messages: [{ role: 'user', content: 'hi' }] },
+    })) as Answers;
+    const claude = res.answers.find((a) => a.provider === 'anthropic')!;
+    const gpt = res.answers.find((a) => a.provider === 'openai')!;
+    expect(claude.ok).toBe(true);
+    expect(claude.text).toBe('Claude!');
+    expect(gpt.ok).toBe(false);
+    expect(typeof gpt.error).toBe('string');
+    expect(gpt.error!.length).toBeGreaterThan(0);
+    expect(gpt.text).toBe('');
+  });
+
+  it('生キー (非 JSON) は Anthropic 1 社のみの合議として動く (後方互換)', async () => {
+    const res = (await ACTIONS['chatAll']!({
+      token: 'sk-ant-raw',
+      fetch: routeMock(),
+      payload: { messages: [{ role: 'user', content: 'hi' }] },
+    })) as Answers;
+    expect(res.answers.map((a) => a.provider)).toEqual(['anthropic']);
+    expect(res.answers[0]).toMatchObject({ ok: true, text: 'Claude!' });
+  });
+
+  it('トークン未設定はエラー (chat と同じ案内)', async () => {
+    await expect(
+      ACTIONS['chatAll']!({
+        token: '',
+        fetch: vi.fn<typeof fetch>(),
+        payload: { messages: [{ role: 'user', content: 'hi' }] },
+      }),
+    ).rejects.toThrow(/API キーが必要/);
+  });
+
+  it('最後の発話が user でなければエラー', async () => {
+    await expect(
+      ACTIONS['chatAll']!({
+        token: CREDS,
+        fetch: vi.fn<typeof fetch>(),
+        payload: { messages: [{ role: 'assistant', content: 'yo' }] },
+      }),
+    ).rejects.toThrow(/最後の発話は user/);
+  });
+});
+
 describe("ACTIONS['providers']", () => {
   it('reports per-provider configured status from JSON credentials', async () => {
     const res = (await ACTIONS['providers']!({

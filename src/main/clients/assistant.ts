@@ -25,6 +25,8 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import {
+  configForProvider,
+  configuredProviders,
   parseAiCredentials,
   providerStatuses,
   resolveProvider,
@@ -161,8 +163,68 @@ async function providers(ctx: ActionContext): Promise<{ providers: unknown[] }> 
   return Promise.resolve({ providers: providerStatuses(creds) });
 }
 
+// --- chatAll action (全AI合議) ---------------------------------------------
+
+/** 合議モードの 1 プロバイダ分の回答 (失敗はエラー文字列つきで他を巻き込まない)。 */
+export interface EnsembleAnswer {
+  provider: string;
+  model: string;
+  text: string;
+  ok: boolean;
+  error?: string;
+}
+
+/**
+ * 設定済みの **全** AI プロバイダへ同じ質問を並列に投げ、回答を並べて返す。
+ *   - 対象は資格情報が設定済みのプロバイダのみ (順序は AI_PROVIDER_IDS の定義順で決定論)。
+ *   - 1 社の失敗は ok:false + error として返し、他社の回答を巻き込まない。
+ *   - 1 社も設定が無ければ chat と同趣旨のエラーを投げる (UI は決定論フォールバックへ)。
+ */
+async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] }> {
+  const { messages, system, model } = ctx.payload as unknown as ChatPayload;
+  const turns = sanitizeMessages(messages);
+  if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
+  if (turns[turns.length - 1]?.role !== 'user') {
+    throw new Error('最後の発話は user である必要があります');
+  }
+  if (!ctx.token) {
+    throw new Error(
+      'AI プロバイダの API キーが必要です (assistant のトークンに API キーまたは JSON 資格情報を設定してください)',
+    );
+  }
+  const creds = parseAiCredentials(ctx.token);
+  const ids = configuredProviders(creds);
+  if (ids.length === 0) {
+    throw new Error('設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
+  }
+  const sys = typeof system === 'string' ? system.slice(0, MAX_SYSTEM) : '';
+  const answers = await Promise.all(
+    ids.map(async (id): Promise<EnsembleAnswer> => {
+      try {
+        const result = await runAiChat({
+          provider: id,
+          cfg: configForProvider(id, creds),
+          request: {
+            model: typeof model === 'string' && model.length > 0 ? model : undefined,
+            system: sys || undefined,
+            messages: turns,
+            maxTokens: ASSISTANT_MAX_TOKENS,
+          },
+          fetchFn: ctx.fetch,
+        });
+        return { provider: id, model: result.model, text: result.text, ok: true };
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return { provider: id, model: '', text: '', ok: false, error: msg.slice(0, 300) };
+      }
+    }),
+  );
+  return { answers };
+}
+
 export const ACTIONS: ActionMap = {
   chat,
+  chatAll,
   providers,
 };
 // Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

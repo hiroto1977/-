@@ -101,6 +101,8 @@ import {
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
 import { AI_PROVIDERS } from '../shared/ai/providers';
 import {
+  configForProvider,
+  configuredProviders,
   parseAiCredentials,
   providerStatuses,
   resolveProvider,
@@ -636,6 +638,74 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   }
 }
 
+/**
+ * assistant/chatAll (全AI合議): 設定済みの全プロバイダへ同じ質問を並列に投げ、
+ * 回答を並べて返す。1 社の失敗 (CORS プロキシ未設定を含む) は ok:false として
+ * 他社の回答を巻き込まない。順序は AI_PROVIDER_IDS の定義順で決定論。
+ */
+async function callAssistantChatAll(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  const turns = sanitizeAssistantTurns(payload['messages']);
+  if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
+    return err('action_failed', '最後の発話は user である必要があります');
+  }
+  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
+
+  const credsRead = await readAssistantCredsRaw();
+  if (!credsRead.ok) return credsRead.res;
+  if (!credsRead.raw) {
+    return err(
+      'not_configured',
+      'AI プロバイダが未設定です。アシスタントの「エージェント設定」または「設定」ページから API キーを保存してください',
+    );
+  }
+  const creds = parseAiCredentials(credsRead.raw);
+  const ids = configuredProviders(creds);
+  if (ids.length === 0) {
+    return err('not_configured', '設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
+  }
+  const proxyCfg = await getProxyConfig().catch(() => null);
+  const answers = await Promise.all(
+    ids.map(async (id) => {
+      const spec = AI_PROVIDERS[id];
+      let fetchFn: typeof fetch | undefined;
+      if (!spec.browserDirect) {
+        if (!proxyCfg) {
+          return {
+            provider: id,
+            model: '',
+            text: '',
+            ok: false,
+            error: `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
+          };
+        }
+        fetchFn = (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) =>
+          fetchViaProxy(String(input), init ?? {}, proxyCfg);
+      }
+      try {
+        const result = await runAiChat({
+          provider: id,
+          cfg: { ...configForProvider(id, creds), browser: true },
+          request: {
+            model:
+              typeof payload['model'] === 'string' && (payload['model'] as string).length > 0
+                ? (payload['model'] as string)
+                : undefined,
+            system: system || undefined,
+            messages: turns,
+            maxTokens: 2048,
+          },
+          fetchFn,
+        });
+        return { provider: id, model: result.model, text: result.text, ok: true };
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        return { provider: id, model: '', text: '', ok: false, error: msg.slice(0, 300) };
+      }
+    }),
+  );
+  return ok({ answers });
+}
+
 /** assistant/providers: 各 AI プロバイダの設定状況 (エージェント選択 UI 用)。 */
 async function callAssistantProviders(): Promise<ActionResult<unknown>> {
   const credsRead = await readAssistantCredsRaw();
@@ -1055,6 +1125,9 @@ const shim = {
     // (Claude/ChatGPT/Gemini/Ollama/互換API) を直接または BYO プロキシ経由で呼ぶ。
     if (serviceId === 'assistant' && action === 'chat') {
       return (await callAssistantChat(payload)) as ActionResult<T>;
+    }
+    if (serviceId === 'assistant' && action === 'chatAll') {
+      return (await callAssistantChatAll(payload)) as ActionResult<T>;
     }
     if (serviceId === 'assistant' && action === 'providers') {
       return (await callAssistantProviders()) as ActionResult<T>;
