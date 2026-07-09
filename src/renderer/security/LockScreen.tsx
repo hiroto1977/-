@@ -15,7 +15,7 @@ import { looksLikeValidMnemonic } from './mnemonic';
  * Skipped when the host environment provides a non-web serviceHub (Electron)
  * — the parent App component decides whether to mount this.
  */
-type View = 'password' | 'mnemonic' | 'recovery';
+type View = 'password' | 'mnemonic' | 'recovery' | 'reset';
 
 export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   const [status, setStatus] = useState<VaultStatus | 'loading'>('loading');
@@ -27,6 +27,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   const [recoveryNewPw, setRecoveryNewPw] = useState('');
   const [recoveryNewPwConfirm, setRecoveryNewPwConfirm] = useState('');
   const [mnemonicAcknowledged, setMnemonicAcknowledged] = useState(false);
+  const [resetAcknowledged, setResetAcknowledged] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   // Ephemeral feedback for clipboard / download actions in the mnemonic view.
@@ -97,6 +98,21 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     setMnemonic('');
     setMnemonicAcknowledged(false);
     onUnlocked();
+  }
+
+  /** 完全初期化: パスワードもリカバリーキーも失った場合の最終手段。
+   *  保存済みトークン等を全消去して初回設定に戻す (vault.wipeAndReset)。 */
+  async function submitReset() {
+    setErr(null);
+    setBusy(true);
+    try {
+      await getVault().wipeAndReset();
+      // 状態を確実に作り直すためリロードして初回設定フローへ。
+      window.location.reload();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+      setBusy(false);
+    }
   }
 
   async function submitRecovery() {
@@ -186,6 +202,73 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     return (
       <div style={overlayStyle}>
         <div style={{ color: 'var(--text-mute)' }}>読み込み中…</div>
+      </div>
+    );
+  }
+
+  // --- View: reset (lost both password and recovery key) -------------
+  if (view === 'reset') {
+    return (
+      <div style={overlayStyle}>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: '#ef4444' }}>
+            ⚠ 完全初期化 — 最初からやり直す
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7, marginBottom: 14 }}>
+            マスターパスワードもリカバリーキー (24 語) も失った場合の最終手段です。
+            このブラウザに保存された暗号化ボールト
+            <strong style={{ color: 'var(--text)' }}>
+              （各サービスの API キー・トークン・エージェント設定）を全て消去
+            </strong>
+            し、初回設定に戻します。
+            <br />
+            消去されるのは接続用の鍵だけで、アプリ本体・知識ベース・外部サービス側のデータには影響しません。
+            この操作は<strong style={{ color: '#ef4444' }}>取り消せません</strong>。
+          </div>
+
+          {err && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{err}</div>}
+
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text)', marginBottom: 14, lineHeight: 1.5 }}>
+            <input
+              type="checkbox"
+              checked={resetAcknowledged}
+              onChange={(e) => setResetAcknowledged(e.target.checked)}
+              style={{ marginTop: 3 }}
+            />
+            <span>
+              保存済みの API キー・トークンが全て消去され、復元できないことを理解しました。
+            </span>
+          </label>
+
+          <button
+            type="button"
+            onClick={() => void submitReset()}
+            disabled={!resetAcknowledged || busy}
+            style={{
+              ...buttonStyle,
+              width: '100%',
+              background: resetAcknowledged && !busy ? '#ef4444' : 'var(--bg-elev)',
+              cursor: resetAcknowledged && !busy ? 'pointer' : 'not-allowed',
+              opacity: resetAcknowledged && !busy ? 1 : 0.5,
+            }}
+          >
+            {busy ? '初期化中…' : '全て消去して初回設定に戻る'}
+          </button>
+
+          <div style={{ marginTop: 12, textAlign: 'center' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setView('password');
+                setResetAcknowledged(false);
+                setErr(null);
+              }}
+              style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline' }}
+            >
+              ← 戻る（初期化しない）
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -452,6 +535,26 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               }}
             >
               パスワードを忘れた場合 — リカバリーキーで復元
+            </button>
+            <br />
+            <button
+              type="button"
+              onClick={() => {
+                setView('reset');
+                setResetAcknowledged(false);
+                setErr(null);
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#ef4444',
+                cursor: 'pointer',
+                fontSize: 11,
+                textDecoration: 'underline',
+                marginTop: 6,
+              }}
+            >
+              リカバリーキーも無い場合 — 初期化して最初からやり直す
             </button>
           </div>
         )}
