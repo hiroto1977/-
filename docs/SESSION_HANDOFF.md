@@ -20,7 +20,7 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,606**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パス+オートパイロット消化で 4,350→3,606・**−744**） |
-| **直近完了作業** | 🔓 ロック画面に「初期化してやり直す」導線を追加（既存 vault.wipeAndReset を二段確認 UI で露出・E2E 検証済み — パスワード/リカバリー両損失でも詰まない）＋🤝 全AI合議モード出荷: assistant に `chatAll`（設定済み全プロバイダへ並列質問・AI_PROVIDER_IDS 順で決定論・部分失敗許容）を Electron/web-shim 両実装、AssistantPage エージェント選択に「🤝 全AI合議」追加（プロバイダ別バブル表示）。＋柱B Phase 3（100万行 1,037,371 突破・フロア≥1,000,000） |
+| **直近完了作業** | 📱 モバイル/タブレット最適化: ≤768px でサイドバーをオーバーレイ・ドロワー化（トップバー ☰ で開閉・ナビ/背景タップで自動クローズ・`App.tsx` の `navOpen`＋`styles.css` メディアクエリ）、タッチ最適化（`pointer: coarse` でタップ目標拡大・fav 星常時表示・`touch-action: manipulation`）、入力 16px（フォーカス時自動ズーム防止）、`100dvh`、`viewport-fit=cover`。Playwright で phone/tablet/desktop 3 幅 E2E 済み。＋🧾 業務自動化ダッシュボード出荷: Canva 設計図（POS→会計→CRM whiteboard）を `scripts/build-integration-demo.cjs` → `dist/業務自動化ダッシュボード.html`（単一ファイル・ダブルクリック起動・複式簿記/軽減税率/CRM LTV 実装・レスポンシブ）に実装。＋🔓 ロック画面「初期化してやり直す」＋🤝 全AI合議モード（前セッション） |
 | **サービス数** | **70**（village 追加） |
 | **Knowledge Vault** | 7,710 files（知識 4,233＋人物 1,506＋出典 1,518＋年表 242＋パス 22＋教育 44＋MOC/組織） |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |

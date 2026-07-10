@@ -344,6 +344,20 @@ const PAGE_CSS = `
   .log-placeholder { color: var(--sub); text-align: center; padding: 26px 0;
                      font-size: 12px; }
   footer { color: var(--sub); font-size: 11px; margin-top: 18px; text-align: center; }
+
+  /* --- モバイル/タブレット (Android スマホ等) --- */
+  @media (max-width: 760px) {
+    body { padding: 14px; }
+    .kpis { grid-template-columns: 1fr; }         /* KPI カードを縦積みに */
+    .flow { grid-template-columns: 1fr; }          /* フローも縦 1 列に */
+    .arrow { transform: rotate(90deg); }           /* 矢印を下向きへ */
+    .controls { flex-wrap: wrap; }
+    button { flex: 1 1 auto; padding: 13px 12px; } /* 指で押しやすい幅と高さ */
+    .chart-wrap { flex-direction: column; align-items: stretch; }
+  }
+  @media (pointer: coarse) {
+    button { touch-action: manipulation; }         /* ダブルタップズーム防止 */
+  }
 `;
 
 function buildHtml() {

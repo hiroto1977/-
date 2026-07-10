@@ -59,6 +59,9 @@ a:hover { text-decoration: underline; }
      overflow-y:auto で縦スクロールに切り替える。 */
   grid-template-rows: minmax(0, 1fr);
   height: 100vh;
+  /* モバイルブラウザの動的 URL バー対策: 対応環境では実表示高 (dvh) を使う。
+     100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -199,7 +202,38 @@ a:hover { text-decoration: underline; }
   margin: 0;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
+
+/* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
+.menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  flex: none;
+}
+
+/* ドロワー開時の背景 (モバイルのみ・タップで閉じる) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* 音声ボタンが狭い画面で 2 行に折り返してトップバーを壊すのを防ぐ */
+.voice-mic { white-space: nowrap; }
 .topbar .description {
   color: var(--text-muted);
   font-size: 13px;
@@ -244,28 +278,50 @@ a:hover { text-decoration: underline; }
   max-width: 100%;
 }
 
-/* 狭い画面ではサイドバーと余白を詰めて表示領域を確保する。 */
+/* --- モバイル/タブレット最適化 (Android スマホ・タブレット・iPad) ---
+   768px 以下ではサイドバーを常設せず、ハンバーガーで開くオーバーレイ・
+   ドロワーに切り替える。コンテンツが全幅を使えるので、スマホでも
+   デスクトップと同じページがそのまま操作できる。 */
 @media (max-width: 768px) {
   .app {
-    grid-template-columns: 200px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr); /* サイドバー列を畳む */
   }
-  .content {
-    padding: 16px;
+  .menu-btn { display: inline-flex; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(300px, 84vw);
+    z-index: 50;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    /* ノッチ/ジェスチャーバーを避ける (viewport-fit=cover 時のみ効く) */
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .sidebar-item {
-    padding: 10px 14px;
-  }
+  .app.nav-open .sidebar { transform: translateX(0); }
+  .app.nav-open .sidebar-backdrop { display: block; }
+  .content { padding: 16px; }
+  .topbar { padding: 0 12px; gap: 10px; }
+  /* フォーカス時の自動ズーム防止: モバイル Safari/Chrome は 16px 未満の
+     入力欄にフォーカスするとページ全体を拡大してしまう。 */
+  input, select, textarea { font-size: 16px; }
 }
-@media (max-width: 560px) {
-  .app {
-    grid-template-columns: 168px minmax(0, 1fr);
-  }
-  .content {
-    padding: 12px;
-  }
-  .topbar {
-    padding: 0 12px;
-  }
+@media (max-width: 640px) {
+  .topbar .description { display: none; } /* タイトル+音声ボタンを優先 */
+  .content { padding: 12px; }
+}
+
+/* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
+@media (pointer: coarse) {
+  .sidebar-item { padding: 13px 20px; } /* 指で押しやすい高さ (~44px) */
+  .sidebar-item:active { background: rgba(255, 255, 255, 0.08); }
+  /* ホバーで出す UI はタッチでは永遠に出ないので、常時うっすら表示 */
+  .fav-toggle { opacity: 0.45; }
+  .data-list-open { padding: 8px 14px; }
+  button { touch-action: manipulation; } /* ダブルタップズームの誤発火防止 */
 }
 
 .page-grid {
