@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build && electron-builder",
     "build:deliberation-demo": "node scripts/build-deliberation-demo.cjs",
     "build:demo": "node scripts/build-counseling-demo.cjs",
+    "build:docs-studio": "node scripts/build-docs-studio.cjs",
     "build:integration-demo": "node scripts/build-integration-demo.cjs",
     "build:landing": "node scripts/build-landing.cjs",
     "build:renderer": "tsc -b && vite build",
