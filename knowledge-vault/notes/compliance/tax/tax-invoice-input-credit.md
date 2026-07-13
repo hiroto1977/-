@@ -31,8 +31,8 @@ aliases:
 - [インボイスの経過措置 解説](https://ayusawa-partners.jp/column/invoice-keika-sochi-80-50) `メディア`
 
 ## 関連概念
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 語彙が近い

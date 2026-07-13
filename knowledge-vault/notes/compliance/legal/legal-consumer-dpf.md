@@ -39,8 +39,8 @@ aliases:
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
-- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -36,7 +36,7 @@ aliases:
 - [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
-- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 同分野の近傍
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -32,10 +32,10 @@ aliases:
 
 ## 関連概念
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 語彙が近い
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

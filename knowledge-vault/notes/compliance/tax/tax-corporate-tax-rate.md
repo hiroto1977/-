@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 語彙が近い
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
-- [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]] — 語彙が近い
-- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 語彙が近い
 - [[bizlaw-corporation-tax|法人税法]] — 分野横断
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
 - [[eh-1992|1992年（平成4年）]] — 出典を共有
 - [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

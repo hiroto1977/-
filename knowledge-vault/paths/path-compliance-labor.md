@@ -13,12 +13,12 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 24）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 23）
+- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 20）
-- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 20）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 19）
-- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 19）
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 18）
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
 - [[labor-variable-working-hours|変形労働時間制]]（接続 18）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 17）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 17）

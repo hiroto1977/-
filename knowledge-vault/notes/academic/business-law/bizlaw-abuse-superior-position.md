@@ -34,7 +34,6 @@ aliases:
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 語彙が近い
 - [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 同分野の近傍
 - [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同分野の近傍
-- [[bizlaw-subcontract-act|下請法（下請代金支払遅延等防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

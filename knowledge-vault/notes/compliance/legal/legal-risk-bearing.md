@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 分野横断
 - [[legal-contract-cancellation|契約の解除（催告解除・無催告解除／改正民法）]] — 同分野の近傍
-- [[legal-statutory-interest|民法の法定利率（変動制）]] — 同分野の近傍
 - [[legal-set-off|相殺（民法505条等）]] — 同分野の近傍
+- [[legal-statutory-interest|民法の法定利率（変動制）]] — 同分野の近傍
 - [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 同分野の近傍
 
 ## 関連

@@ -34,11 +34,11 @@ aliases:
 - [政府広報オンライン フリーランス新法 2024年11月開始](https://www.gov-online.go.jp/article/202408/entry-6301.html) `メディア`
 
 ## 関連概念
-- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 語彙が近い
 - [[bizlaw-freelance-protection|フリーランス保護新法（特定受託事業者取引適正化等法）]] — 分野横断
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 出典を共有
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有

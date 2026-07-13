@@ -31,9 +31,9 @@ aliases:
 - [e-Gov法令検索 — 下請代金支払遅延等防止法（法令ID 331AC0000000120）](https://laws.e-gov.go.jp/document?lawid=331AC0000000120) `公的`
 
 ## 関連概念
-- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 語彙が近い
-- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 同分野の近傍
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 分野横断
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

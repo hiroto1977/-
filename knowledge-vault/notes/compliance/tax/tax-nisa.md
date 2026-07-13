@@ -36,11 +36,11 @@ NISAは、NISA口座（非課税口座）内で得た上場株式・投資信託
 - [[legal-companies-act-2019-reform|令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 出典を共有
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
-- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

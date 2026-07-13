@@ -16,18 +16,18 @@ tags:
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]]（接続 26）
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]]（接続 25）
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]]（接続 24）
-- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 23）
 - [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]]（接続 22）
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]]（接続 22）
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]]（接続 22）
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 19）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 17）
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 17）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 17）
 - [[legal-cooling-off|クーリング・オフ（特定商取引法）]]（接続 16）
-- [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]]（接続 15）
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 15）
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 15）
-- [[legal-design-right|意匠権（意匠法）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -35,6 +35,7 @@ tags:
 - 2020年: [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]]
 - 2020年: [[legal-personal-guarantee-reform|改正民法による個人保証の保護強化（根保証の極度額・保証意思宣明公正証書／2020年4月施行）]]
 - 2020年: [[legal-spousal-residence-right|配偶者居住権（2020年4月1日施行の改正相続法）]]
+- 2022年: [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]]
 - 2022年: [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]]
 - 2022年: [[legal-whistleblower|公益通報者保護法（2022年改正）]]
 - 2022年: [[legal-worker-cooperative|労働者協同組合法の施行（2022年10月1日・準則主義による新法人制度）]]
@@ -50,7 +51,6 @@ tags:
 - 2026年: [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]]
 
 ## 第 3 部 — 年代情報のない項目
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
 - [[legal-agency|民法の代理（代理権・無権代理・表見代理）]]
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]]
@@ -81,6 +81,7 @@ tags:
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]]
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]]
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]]
+- [[legal-design-right|意匠権（意匠法）]]
 - [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]]
 - [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]]
 - [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]]
@@ -141,7 +142,6 @@ tags:
 - [[legal-standard-terms|定型約款（改正民法）]]
 - [[legal-statutory-interest|民法の法定利率（変動制）]]
 - [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]]
-- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]]
 - [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]]
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]]
 - [[legal-third-party-provision|個人データの第三者提供の制限]]

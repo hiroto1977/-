@@ -37,8 +37,8 @@ J.フリードマン&S.フレイザー 1966（Journal of Personality and Social 
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
 - [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 出典を共有
 - [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
-- [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
 - [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 同分野の近傍
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
 - [[human-visual-agnosia|視覚性失認（Visual Agnosia）]] — 同分野の近傍
 
 ## 関連

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 語彙が近い
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-securities-account|上場株式等の特定口座制度]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -35,7 +35,7 @@ aliases:
 ## 関連概念
 - [[legal-antimonopoly|独占禁止法]] — 語彙が近い
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 語彙が近い
-- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 同分野の近傍
+- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍
 - [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 同分野の近傍

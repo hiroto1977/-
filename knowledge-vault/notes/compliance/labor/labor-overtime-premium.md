@@ -37,6 +37,7 @@ aliases:
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 語彙が近い
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 同分野の近傍
+- [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 同分野の近傍
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 同分野の近傍
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 同分野の近傍
 

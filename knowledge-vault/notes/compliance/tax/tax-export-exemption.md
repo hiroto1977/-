@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]] — 語彙が近い
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 出典を共有
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 同分野の近傍
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 同分野の近傍
 - [[tax-customs-duty|関税（輸入品に課される国税）]] — 同分野の近傍
 - [[tax-transfer-pricing|移転価格税制]] — 同分野の近傍

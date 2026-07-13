@@ -2,7 +2,7 @@
 title: "jftc.go.jp"
 type: source-domain
 host: "jftc.go.jp"
-cite_count: 40
+cite_count: 41
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jftc.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **40 件**（公的 40）
+> [!info] 出典ドメイン索引 ・ 引用 **41 件**（公的 41）
 
 ## このドメインを出典とする項目
 
@@ -52,7 +52,8 @@ tags:
 - [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 公正取引委員会調査協力減算制度の運用方針
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 公正取引委員会企業結合の禁止期間
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 公正取引委員会独占禁止法の規制内容（企業結合）
-- [[legal-subcontract-act|親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）]] — 公正取引委員会親事業者の禁止行為
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 公正取引委員会中小受託取引適正化法（取適法）
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 公正取引委員会旧下請法の親事業者の禁止行為
 - [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]] — 公正取引委員会取適法・振興法特設ページ
 
 ## 関連

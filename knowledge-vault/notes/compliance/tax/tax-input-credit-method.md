@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 語彙が近い
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
 - [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 出典を共有

@@ -49,11 +49,14 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'インボイス制度（適格請求書等保存方式）',
       statement:
         '令和5年（2023年）10月1日から開始。仕入税額控除には適格請求書（インボイス）の保存が必要。' +
-        '免税事業者等からの課税仕入れには2029年9月までの6年間、一定割合を控除できる経過措置がある。',
+        '免税事業者等からの課税仕入れの経過措置は令和8年度税制改正で見直され、控除割合は2026年9月30日まで80%、' +
+        '以後 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小して2031年9月末で終了する' +
+        '（同一の免税事業者等からの課税仕入れは年1億円が上限。80%か70%かは請求書の発行日ではなく課税仕入れの時期で判定）。',
       authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-06',
+      asOf: '2026-07',
     },
     sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm', type: 'government', label: '国税庁 令和8年度税制改正 インボイス関連特集' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
       { url: 'https://www.gov-online.go.jp/article/202210/entry-10343.html', type: 'government', label: '政府広報オンライン インボイス制度' },
       { url: 'https://www.nichizeiren.or.jp/taxaccount/invoice/', type: 'operator', label: '日本税理士会連合会' },
@@ -182,18 +185,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'legal-subcontract-act',
       domain: 'legal',
-      title: '親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）',
+      title: '委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）',
       statement:
-        '親事業者は、発注書面（3条書面）の交付・取引書類の作成保存（2年）・下請代金の支払期日を給付受領日から' +
-        '60日以内に定めること・遅延時の遅延利息支払 等の義務を負う。受領拒否、下請代金の減額・支払遅延、返品、' +
-        '買いたたき、報復措置 等が禁止行為として定められている。',
-      authority: '所管: 公正取引委員会・中小企業庁（下請代金支払遅延等防止法）',
-      asOf: '2026-06',
+        '下請法は令和7年改正（法律第41号）により「中小受託取引適正化法（取適法）」へ改められ、2026年（令和8年）1月1日に施行された。' +
+        '用語は 親事業者→委託事業者、下請事業者→中小受託事業者、下請代金→製造委託等代金 に変更され、従来の資本金基準に従業員数基準' +
+        '（製造委託等は300人以下、情報成果物・役務は100人以下）が併用で追加された。委託事業者は、発注書面（旧3条書面・新法4条）の明示' +
+        '（電磁的方法での明示が受託者の承諾なしで可能に）・取引書類の作成保存（2年）・代金支払期日を給付受領日から60日以内に定めること・' +
+        '遅延利息の支払 等の義務を負い、手形による代金支払は禁止された。受領拒否、代金の減額・支払遅延、返品、買いたたき、' +
+        '協議に応じない一方的な代金決定、報復措置 等が禁止行為として定められている。',
+      authority: '所管: 公正取引委員会・中小企業庁（中小受託取引適正化法）',
+      asOf: '2026-07',
     },
     sources: [
-      { url: 'https://www.jftc.go.jp/shitauke/shitaukegaiyo/oyakinsi.html', type: 'government', label: '公正取引委員会 親事業者の禁止行為' },
-      { url: 'https://www.gov-online.go.jp/tokusyu/shitauke/', type: 'government', label: '政府広報オンライン 下請法' },
-      { url: 'https://roudou-sos.jp/subcontract-act/', type: 'media', label: 'みらい総合法律事務所 解説' },
+      { url: 'https://www.jftc.go.jp/partnership_package/toritekihou.html', type: 'government', label: '公正取引委員会 中小受託取引適正化法（取適法）' },
+      { url: 'https://www.gov-online.go.jp/article/202511/entry-9983.html', type: 'government', label: '政府広報オンライン 2026年1月から下請法が「取適法」に' },
+      { url: 'https://www.jftc.go.jp/shitauke/shitaukegaiyo/oyakinsi.html', type: 'government', label: '公正取引委員会 旧下請法の親事業者の禁止行為' },
     ],
   },
   {
