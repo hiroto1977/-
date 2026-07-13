@@ -731,7 +731,9 @@ const PAGE_CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
          background: var(--bg); color: var(--ink); height: 100vh; height: 100dvh;
-         display: grid; grid-template-rows: 52px minmax(0, 1fr); }
+         display: grid; grid-template-rows: 52px minmax(0, 1fr);
+         /* 列を明示しないと暗黙列が max-content 幅まで膨張し横スクロールが出る */
+         grid-template-columns: minmax(0, 1fr); }
   header.bar { display: flex; align-items: center; gap: 10px; padding: 0 14px;
          background: var(--accent); color: #fff;
          font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
