@@ -66,6 +66,7 @@ import { ObsidianPage } from './pages/ObsidianPage';
 import { DockerPage } from './pages/DockerPage';
 import { AssistantPage } from './pages/AssistantPage';
 import { VillagePage } from './pages/VillagePage';
+import { DocstudioPage } from './pages/DocstudioPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -638,6 +639,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: '🏡',
     description: 'AI 組織 143 体が働く様子をどうぶつの森風に可視化 — 画面に話しかけて対話できる',
     page: VillagePage,
+    category: 'featured',
+  },
+  {
+    id: 'docstudio',
+    label: '書類スタジオ',
+    icon: '🗂',
+    description: '契約・経理・組織・規程 12 書式＋電子定款＋就業規則 — 入力→即プレビュー→印刷/PDF（検証済み法令注記つき）',
+    page: DocstudioPage,
     category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

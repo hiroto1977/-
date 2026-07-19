@@ -132,6 +132,7 @@ export function normalizeUtterance(text: string): string {
 const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   home: ['ほーむ', 'とっぷ', 'top', 'home'],
   village: ['むら', 'village', 'ゔぃれっじ', 'どうぶつのもり', 'aiのむら', 'えーあいのむら'],
+  docstudio: ['しょるい', 'しょるいすたじお', '書類', 'けいやくしょ', 'ていかん', 'しゅうぎょうきそく'],
   github: ['github', 'ぎっとはぶ', 'ぎっと'],
   wordpress: ['wordpress', 'わーどぷれす', 'wp'],
   atlassian: ['atlassian', 'あとらしあん', 'jira', 'じら', 'confluence', 'こんふるえんす'],

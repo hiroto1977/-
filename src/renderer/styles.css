@@ -495,3 +495,56 @@ a:hover { text-decoration: underline; }
   border-radius: 50%;
   border: 1px solid var(--border);
 }
+
+/* --- 書類スタジオ (DocstudioPage): 書面プレビュー + 印刷 --- */
+.ds-paper {
+  background: #ffffff;
+  color: #1c2027;
+  border-radius: 10px;
+  padding: 40px 44px;
+  line-height: 1.95;
+  font-size: 13.5px;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+  max-width: 760px;
+}
+.ds-title { text-align: center; font-size: 20px; letter-spacing: 0.14em; font-weight: 700; margin: 0 0 22px; }
+.ds-chapter { text-align: center; font-weight: 700; margin: 18px 0 6px; letter-spacing: 0.2em; }
+.ds-h { font-weight: 700; margin: 12px 0 2px; }
+.ds-p { margin: 4px 0; text-align: justify; }
+.ds-li { margin: 2px 0 2px 1.5em; }
+.ds-right { text-align: right; margin: 7px 0; }
+.ds-fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
+.ds-fill.ds-empty { color: #b06060; font-weight: 400; }
+.ds-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+.ds-table th, .ds-table td { border: 1px solid #8892a0; padding: 6px 10px; }
+.ds-table th { background: #f2f5fa; }
+.ds-table td.ds-num { text-align: right; font-variant-numeric: tabular-nums; }
+.ds-table tr.ds-total td { font-weight: 700; background: #f8f9fc; }
+.ds-sign { display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap; }
+.ds-sign-side { flex: 1 1 220px; }
+.ds-big { text-align: center; font-size: 21px; font-weight: 700; border: 2px solid #1c2027;
+          padding: 10px 16px; margin: 14px auto; max-width: 420px; }
+.ds-stamp { width: 110px; height: 70px; border: 1px dashed #999; color: #999; font-size: 9.5px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            padding: 4px; margin-top: 12px; font-family: 'Hiragino Sans', sans-serif; }
+.ds-disclaimer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d5d9e0; color: #667;
+                 font-size: 10.5px; font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+
+/* 印刷: アプリの UI を隠し、書面 (.ds-paper) だけを A4 に出力する */
+@media print {
+  body.ds-printing .sidebar,
+  body.ds-printing .sidebar-backdrop,
+  body.ds-printing .topbar,
+  body.ds-printing .ds-side,
+  body.ds-printing .chatbot-widget {
+    display: none !important;
+  }
+  body.ds-printing .app { display: block; height: auto; overflow: visible; }
+  body.ds-printing .main { overflow: visible; }
+  body.ds-printing .content { overflow: visible; padding: 0; }
+  body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
+                               padding: 0; font-size: 11.5pt; }
+  body.ds-printing .ds-fill.ds-empty { color: #444; }
+}

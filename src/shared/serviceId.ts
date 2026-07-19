@@ -77,6 +77,7 @@ export const SERVICE_IDS = [
   'docker',
   'assistant',
   'village',
+  'docstudio',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

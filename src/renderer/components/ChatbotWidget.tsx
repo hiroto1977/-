@@ -364,6 +364,7 @@ export function ChatbotWidget() {
 
       <button
         type="button"
+        className="chatbot-widget"
         style={fabStyle}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'チャットを閉じる' : 'AI コンシェルジュを開く'}

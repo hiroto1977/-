@@ -68,6 +68,7 @@ import { fetchComplianceSnapshot } from './compliance';
 import { fetchObsidianSnapshot } from './obsidian';
 import { fetchDockerSnapshot } from './docker';
 import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistant';
+import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -145,6 +146,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   obsidian: fetchObsidianSnapshot,
   docker: fetchDockerSnapshot,
   assistant: fetchAssistantSnapshot,
+  docstudio: fetchDocstudioSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -174,6 +176,8 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  token is not an error here. */
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'home',
+  // 書類スタジオ: テンプレートは renderer 内蔵。認証・ネットワーク不要。
+  'docstudio',
   // AIの村: registry.json から renderer 側で導出する全画面シーン。認証不要。
   'village',
   'skills',
@@ -267,6 +271,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   shopify: SHOPIFY_ACTIONS,
   'microsoft-365': MICROSOFT365_ACTIONS,
   assistant: ASSISTANT_ACTIONS,
+  docstudio: DOCSTUDIO_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 
