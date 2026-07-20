@@ -141,7 +141,27 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   gap: 6,
                 }}
               >
-                <div style={{ fontSize: 12, fontWeight: 600 }}>{duty.title}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600 }}>{duty.title}</div>
+                  <span
+                    title={
+                      duty.scope === 'exclusive'
+                        ? 'この士業の独占業務 — 無資格者が業として行うことは士業法で制限されます'
+                        : '独占業務ではありませんが、この士業の専門性で頼るのが定石の領域です'
+                    }
+                    style={{
+                      flex: 'none',
+                      fontSize: 10,
+                      border: `1px solid ${duty.scope === 'exclusive' ? '#f87171' : 'var(--border)'}`,
+                      borderRadius: 999,
+                      padding: '1px 8px',
+                      color: duty.scope === 'exclusive' ? '#f87171' : 'var(--text-mute)',
+                      cursor: 'help',
+                    }}
+                  >
+                    {duty.scope === 'exclusive' ? '独占業務' : '専門相談'}
+                  </span>
+                </div>
                 <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.55, flex: 1 }}>
                   {duty.desc}
                 </div>
