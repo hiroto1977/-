@@ -3,13 +3,16 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (71)
+## サービス一覧 (72)
 
 | カテゴリ | サービス |
 |---|---|
-| **おすすめ** (常時表示, 9) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 / 売上集計 / チーム管理 / 経営サマリー |
-| **分析・ツール** (14) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / Uber Eats / 出前館 / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 |
-| **外部サービス連携** (38) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / 税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok |
+| **おすすめ** (常時表示, 12) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 / 売上集計 / チーム管理 / 経営サマリー / AI アシスタント / AIの村 / 書類スタジオ |
+| **士業連携** (8) | 税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 — 各ページに「担当領域 (事業仕分け)」ナビ |
+| **分析・ツール** (18) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 / 資金調達レーダー / コネクター / Linux / コンプライアンス / Obsidian / Docker |
+| **外部サービス連携** (32) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok / freee 会計 |
+
+ほかに Uber Eats / 出前館 (サイドバー非表示 — 事業ダッシュボードのフードデリバリー欄へ統合) を含め全 72 サービス。
 
 ## 2 通りの動かし方
 

@@ -52,6 +52,7 @@ export const SERVICE_IDS = [
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  'cpa',
   'base',
   'netsea',
   'super-delivery',

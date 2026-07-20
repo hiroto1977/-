@@ -6,6 +6,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
+import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
 
 const STATUS_COLOR: Record<ShigyoConsultationStatus, string> = {
   相談予約: '#94a3b8',
@@ -36,13 +37,20 @@ export interface ShigyoConsoleProps {
   readonly disclaimer?: ReactNode;
 }
 
+/** アプリ内遷移 (App.tsx が servicehub:navigate を listen)。 */
+function navigateTo(serviceId: ServiceId): void {
+  window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
+}
+
 /**
  * 士業 (専門家) 連携の共通コンソール。
  *
- * 7 士業 (税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 /
- * 弁理士) は同一の軽量 CRM UI — 連絡先 / 月次サマリ / 相談履歴 / 書類 —
- * を共有するため、各 Page はこのコンポーネントに `serviceId` / `snapshot`
- * / `label` (+ 任意の `disclaimer`) を渡すだけにする。
+ * 8 士業 (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 /
+ * 中小企業診断士 / 弁理士) は同一の軽量 CRM UI — 担当領域 (事業仕分け) /
+ * 連絡先 / 月次サマリ / 相談履歴 / 書類 — を共有するため、各 Page はこの
+ * コンポーネントに `serviceId` / `snapshot` / `label` (+ 任意の
+ * `disclaimer`) を渡すだけにする。担当領域は `data/professionalMap.ts` の
+ * 事業仕分けマップから serviceId で引く。
  */
 export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: ShigyoConsoleProps) {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -50,6 +58,8 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     snapshot,
   );
   const { contacts, recentConsultations, pendingDocuments, monthlyFee, outstandingInvoice } = data;
+  const profile = isProfessionalId(serviceId) ? PROFESSIONAL_MAP[serviceId] : null;
+  const others = isProfessionalId(serviceId) ? otherProfessionals(serviceId) : [];
 
   return (
     <div>
@@ -79,6 +89,95 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         >
           ⚖️ {disclaimer}
         </div>
+      )}
+
+      {profile != null && (
+        <Section title="担当領域 (事業仕分け)" count={profile.duties.length}>
+          <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 6, lineHeight: 1.6 }}>
+            {profile.summary}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+            <span
+              style={{
+                fontSize: 11,
+                border: '1px solid var(--border)',
+                borderRadius: 999,
+                padding: '2px 10px',
+                color: 'var(--text-mute)',
+              }}
+            >
+              根拠法: {profile.law}
+            </span>
+            <span
+              title={profile.exclusive}
+              style={{
+                fontSize: 11,
+                border: '1px solid #3b82f6',
+                borderRadius: 999,
+                padding: '2px 10px',
+                color: '#3b82f6',
+                cursor: 'help',
+              }}
+            >
+              独占業務: {profile.exclusive.length > 26 ? `${profile.exclusive.slice(0, 26)}…` : profile.exclusive}
+            </span>
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              gap: 10,
+            }}
+          >
+            {profile.duties.map((duty) => (
+              <div
+                key={duty.title}
+                style={{
+                  border: '1px solid var(--border)',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
+                }}
+              >
+                <div style={{ fontSize: 12, fontWeight: 600 }}>{duty.title}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.55, flex: 1 }}>
+                  {duty.desc}
+                </div>
+                {duty.link != null && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => navigateTo(duty.link!.serviceId)}
+                      style={{ fontSize: 11 }}
+                    >
+                      {duty.link.label} を開く →
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {others.length > 0 && (
+        <Section title="他の士業に相談" count={others.length}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {others.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => navigateTo(p.id)}
+                title={p.summary}
+                style={{ fontSize: 12 }}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </Section>
       )}
 
       <Section title="連携先一覧" count={contacts.length}>

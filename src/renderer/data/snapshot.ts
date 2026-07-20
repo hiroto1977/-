@@ -658,7 +658,7 @@ export const SNAPSHOT = {
   //    書類 / 顧問料を軽量 CRM として管理する。Phase 6 で IndexedDB
   //    永続化 + 「専門家を追加」フォームに対応予定。
 
-  // 士業 7 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
+  // 士業 8 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
   // ShigyoSnapshot` で検証することで、従来の per-field `as {...}[]` /
   // `as number` キャストを排した (HANDOFF 罠 5 / PR #7 R1 #4)。月次料金は
   // ShigyoSnapshot.monthlyFee が `number` 型なのでリテラル narrow されない。
@@ -766,6 +766,22 @@ export const SNAPSHOT = {
     ],
     monthlyFee: 0,
     outstandingInvoice: 165_000,
+  } satisfies ShigyoSnapshot,
+
+  cpa: {
+    contacts: [
+      { id: 'cp-1', name: '中村 六実', firm: '中村公認会計士事務所', email: 'nakamura@cpa.example.com', phone: '03-8800-4400' },
+    ],
+    recentConsultations: [
+      { id: 'cpc-1', contactId: 'cp-1', date: '2026-05-09', topic: '決算書の任意監査 (金融機関提出用)', status: '対応中' },
+      { id: 'cpc-2', contactId: 'cp-1', date: '2026-05-21', topic: '経費精算フローの内部統制整備', status: '相談予約' },
+    ],
+    pendingDocuments: [
+      { id: 'cpd-1', title: '監査計画書 ドラフト', direction: 'received', date: '2026-05-13' },
+      { id: 'cpd-2', title: '固定資産台帳 (確認依頼)', direction: 'sent', date: '2026-05-16' },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 110_000,
   } satisfies ShigyoSnapshot,
 
   base: {

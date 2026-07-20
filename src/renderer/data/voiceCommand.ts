@@ -177,6 +177,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   'admin-scrivener': ['行政書士', 'ぎょうせいしょし'],
   'sme-consultant': ['中小企業診断士', 'ちゅうしょうきぎょうしんだんし', '診断士', 'しんだんし'],
   'patent-attorney': ['弁理士', 'べんりし'],
+  cpa: ['公認会計士', 'こうにんかいけいし', '会計士', 'かいけいし', '監査', 'かんさ'],
   base: ['base', 'べーす'],
   netsea: ['netsea', 'ねっしー'],
   'super-delivery': ['すーぱーでりばりー', 'superdelivery'],

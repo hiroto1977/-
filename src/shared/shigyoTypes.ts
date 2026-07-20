@@ -1,9 +1,9 @@
 /**
  * 士業 (専門家) 連携の共通型。
  *
- * 7 つの士業サービス (税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 /
- * 中小企業診断士 / 弁理士) は同一の軽量 CRM 構造 — 連絡先 / 相談履歴 /
- * 書類 / 月次請求 — を共有する。各 client がこの型を import し、
+ * 8 つの士業サービス (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 /
+ * 行政書士 / 中小企業診断士 / 弁理士) は同一の軽量 CRM 構造 — 連絡先 /
+ * 相談履歴 / 書類 / 月次請求 — を共有する。各 client がこの型を import し、
  * UI は `components/ShigyoConsole.tsx` がこの型で描画する。
  *
  * 公式 API は無いため snapshot 専用。Phase 6 で IndexedDB 永続化に切替予定。
@@ -38,7 +38,7 @@ export interface ShigyoDocument {
   readonly date: string;
 }
 
-/** 士業サービス 1 つ分の snapshot。7 士業すべてがこの shape を共有する。 */
+/** 士業サービス 1 つ分の snapshot。8 士業すべてがこの shape を共有する。 */
 export interface ShigyoSnapshot {
   readonly contacts: ReadonlyArray<ShigyoContact>;
   readonly recentConsultations: ReadonlyArray<ShigyoConsultation>;

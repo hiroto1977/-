@@ -89,6 +89,7 @@ export function App() {
   const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
+    professionals: COLLAPSED_BY_DEFAULT.has('professionals'),
     tools: COLLAPSED_BY_DEFAULT.has('tools'),
     integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
   });
@@ -209,6 +210,7 @@ export function App() {
   const grouped = useMemo(() => {
     const out: Record<ServiceCategory, typeof SERVICES> = {
       featured: [],
+      professionals: [],
       tools: [],
       integrations: [],
     };
@@ -355,7 +357,7 @@ export function App() {
                   {recentServices.map(renderItem)}
                 </div>
               )}
-              {(['featured', 'tools', 'integrations'] as const).map((cat) => {
+              {(['featured', 'professionals', 'tools', 'integrations'] as const).map((cat) => {
                 const items = grouped[cat];
                 if (items.length === 0) return null;
                 const isCollapsed = collapsed[cat];

@@ -44,6 +44,7 @@ import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
 import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
 import { fetchSmeConsultantSnapshot } from './sme-consultant';
 import { fetchPatentAttorneySnapshot } from './patent-attorney';
+import { fetchCpaSnapshot } from './cpa';
 import { fetchBaseSnapshot } from './base';
 import { fetchNetseaSnapshot } from './netsea';
 import { fetchSuperDeliverySnapshot } from './super-delivery';
@@ -122,6 +123,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'admin-scrivener': fetchAdminScrivenerSnapshot,
   'sme-consultant': fetchSmeConsultantSnapshot,
   'patent-attorney': fetchPatentAttorneySnapshot,
+  cpa: fetchCpaSnapshot,
   base: fetchBaseSnapshot,
   netsea: fetchNetseaSnapshot,
   'super-delivery': fetchSuperDeliverySnapshot,
@@ -206,6 +208,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  'cpa',
   // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
   'netsea',
   'super-delivery',
