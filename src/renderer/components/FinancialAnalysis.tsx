@@ -9,6 +9,14 @@
  */
 import { useMemo, useState, type CSSProperties } from 'react';
 import { calcCorporateTax } from '../../shared/taxCorporate';
+import {
+  compareBusinessTaxMethods,
+  isTaxExempt,
+  canUseSimplified,
+  EXEMPTION_THRESHOLD,
+  SIMPLIFIED_ELIGIBILITY_THRESHOLD,
+} from '../../shared/taxConsumptionBusiness';
+import type { SimplifiedBusinessType, ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
 import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
@@ -198,7 +206,23 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
   );
 }
 
-// --- 法人税等 (概算) ブロック ------------------------------------------
+// --- 法人税等 + 消費税 (概算) ブロック ----------------------------------
+/** 簡易課税の事業区分ラベル (第1〜6種・みなし仕入率)。 */
+const BIZ_TYPE_LABEL: Record<SimplifiedBusinessType, string> = {
+  wholesale: '第1種 卸売業 (みなし仕入率90%)',
+  retail: '第2種 小売業 (80%)',
+  manufacturing: '第3種 製造業・建設業 (70%)',
+  other: '第4種 飲食店業等 (60%)',
+  service: '第5種 サービス業 (50%)',
+  'real-estate': '第6種 不動産業 (40%)',
+};
+
+const CT_METHOD_LABEL: Record<ConsumptionTaxMethod, string> = {
+  standard: '本則課税',
+  simplified: '簡易課税',
+  'twenty-percent': '2割特例',
+};
+
 /**
  * 経常利益 (ordinaryProfit) を課税所得の概算として `calcCorporateTax` を呼び出し、
  * 法人税等・実効税率・税引後利益を表示するカード。
@@ -208,12 +232,30 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
  * いずれか入力があるとき → 入力値を profile に乗せて再計算し、
  * 実効税率・税引後利益・法人税等内訳がライブ更新される。
  *
+ * 消費税ブロック: 課税売上 (既定 = 年商) と課税仕入 (既定 = 費用から給与・
+ * 減価償却・支払利息など不課税/対象外を除いた概算) から、本則課税・簡易課税・
+ * 2割特例の納付見込みを `compareBusinessTaxMethods` で比較し、最有利方式と
+ * 「法人税等 + 消費税」の税負担合計を表示する。免税判定 (基準期間 1,000 万円
+ * 以下) と簡易課税の適用可否 (同 5,000 万円以下) も注記する。
+ *
  * 注意:
  * - 会計上の利益と税法上の課税所得の差異 (損金不算入等) は概算では無視する。
  * - 各種税額控除・中間納付・外形標準課税等は考慮しない。
+ * - 消費税は預かった税と支払った税の差額を納付する仕組みのため、税引後利益の
+ *   計算には含めない (税抜経理を前提)。軽減税率 8% の売上は未考慮。
  * - これは概算試算であり、正確な税額計算・税務助言ではありません。
  */
-function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
+function CorporateTaxCard({
+  ordinaryProfit,
+  revenue,
+  taxablePurchases,
+}: {
+  ordinaryProfit: number;
+  /** 年間課税売上高の既定値 (税抜年商の概算)。 */
+  revenue: number;
+  /** 年間課税仕入高の既定値 (給与・償却・利息を除いた費用概算)。 */
+  taxablePurchases: number;
+}) {
   const [capitalStr, setCapitalStr] = useState('');
   const [employeesStr, setEmployeesStr] = useState('');
   const [carryforwardLossStr, setCarryforwardLossStr] = useState('');
@@ -237,6 +279,26 @@ function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
   const isLoss = ordinaryProfit <= 0;
   const afterTaxColor = breakdown.afterTaxProfit >= 0 ? '#5cb85c' : '#e36b6b';
 
+  // --- 消費税 (本則 / 簡易 / 2割特例) ---
+  const [ctSalesStr, setCtSalesStr] = useState('');
+  const [ctPurchasesStr, setCtPurchasesStr] = useState('');
+  const [ctBizType, setCtBizType] = useState<SimplifiedBusinessType>('service');
+
+  const ctSalesParsed = ctSalesStr.trim() !== '' ? parseFloat(ctSalesStr.replace(/,/g, '')) : undefined;
+  const ctPurchasesParsed = ctPurchasesStr.trim() !== '' ? parseFloat(ctPurchasesStr.replace(/,/g, '')) : undefined;
+  const ctSales = ctSalesParsed !== undefined && isFinite(ctSalesParsed) ? Math.max(0, ctSalesParsed) : Math.max(0, revenue);
+  const ctPurchases = ctPurchasesParsed !== undefined && isFinite(ctPurchasesParsed) ? Math.max(0, ctPurchasesParsed) : Math.max(0, taxablePurchases);
+
+  const ct = compareBusinessTaxMethods(
+    [{ type: ctBizType, sales: { standard: ctSales, reduced: 0 } }],
+    { standard: ctPurchases, reduced: 0 },
+  );
+  const ctExempt = isTaxExempt(ctSales);
+  const ctSimplifiedOk = canUseSimplified(ctSales);
+  // 本則が還付見込み (負値) のときは合計に 0 として算入し、還付は注記で伝える。
+  const ctBestPayable = Math.max(0, ct.bestAmount);
+  const totalTaxBurden = breakdown.totalTax + (ctExempt ? 0 : ctBestPayable);
+
   const inputStyle: CSSProperties = {
     background: 'var(--bg-elev)',
     border: '1px solid var(--border)',
@@ -251,7 +313,7 @@ function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
 
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🏢 法人税等の概算（税引後利益の可視化）</div>
+      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🏢 税の概算 — 法人税等の概算（税引後利益）＋ 消費税</div>
 
       {/* 精度パラメータ入力欄 (round 58) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 8, marginBottom: 12, padding: '10px 12px', background: 'var(--bg)', borderRadius: 8, border: '1px solid var(--border)' }}>
@@ -340,10 +402,111 @@ function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
         {breakdown.deductedLoss > 0 && <span>繰越欠損金控除: {yen.format(breakdown.deductedLoss)}</span>}
         {breakdown.remainingLoss > 0 && <span>繰越残額: {yen.format(breakdown.remainingLoss)}</span>}
       </div>
-      <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 12 }}>
         ※ 経常利益を課税所得の概算として使用（会計上の利益と税法上の課税所得の差異は無視）。
         各種税額控除・外形標準課税・自治体別超過税率等は非考慮。令和6年度ベース。
-        <strong>税務助言ではありません。申告・納税は税理士・e-Taxで確定してください。</strong>
+      </div>
+
+      {/* --- 消費税の概算 (納付見込み) --- */}
+      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🧾 消費税の概算（納付見込み・本則 / 簡易 / 2割特例）</div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 8, marginBottom: 12, padding: '10px 12px', background: 'var(--bg)', borderRadius: 8, border: '1px solid var(--border)' }}>
+          <div>
+            <label style={labelStyle} htmlFor="ct-sales">課税売上高（年・税抜、任意）</label>
+            <input
+              id="ct-sales"
+              type="number"
+              min={0}
+              step={1}
+              value={ctSalesStr}
+              onChange={(e) => setCtSalesStr(e.target.value)}
+              placeholder={`既定: ${Math.max(0, Math.round(revenue))}`}
+              aria-label="課税売上高"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={labelStyle} htmlFor="ct-purchases">課税仕入高（年・税抜、任意）</label>
+            <input
+              id="ct-purchases"
+              type="number"
+              min={0}
+              step={1}
+              value={ctPurchasesStr}
+              onChange={(e) => setCtPurchasesStr(e.target.value)}
+              placeholder={`既定: ${Math.max(0, Math.round(taxablePurchases))}`}
+              aria-label="課税仕入高"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={labelStyle} htmlFor="ct-biztype">事業区分（簡易課税）</label>
+            <select
+              id="ct-biztype"
+              value={ctBizType}
+              onChange={(e) => setCtBizType(e.target.value as SimplifiedBusinessType)}
+              aria-label="簡易課税の事業区分"
+              style={{ ...inputStyle, height: 30 }}
+            >
+              {(Object.keys(BIZ_TYPE_LABEL) as SimplifiedBusinessType[]).map((t) => (
+                <option key={t} value={t}>{BIZ_TYPE_LABEL[t]}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+              空欄 = 既定（売上高と、費用から給与・償却・利息を除いた概算仕入）。
+            </div>
+          </div>
+        </div>
+
+        {ctExempt && (
+          <div style={{ fontSize: 12, color: '#43c3b8', marginBottom: 10 }}>
+            課税売上高が {yen.format(EXEMPTION_THRESHOLD)} 以下 — 基準期間（前々事業年度）も同水準なら<strong>免税事業者（納付不要）の見込み</strong>です。
+            インボイス（適格請求書発行事業者）登録済みの場合は課税事業者として納付が必要で、2割特例の対象になりえます。
+          </div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 100%), 1fr))', gap: 10, marginBottom: 10 }}>
+          {([
+            ['standard', ct.standard, ct.standard < 0 ? '仕入超過 → 還付見込み' : '売上税額 − 仕入税額'],
+            ['simplified', ct.simplified, `みなし仕入率 ${(ct.appliedDeemedRate * 100).toFixed(0)}%${ctSimplifiedOk ? '' : ' · 基準期間5,000万円超は選択不可'}`],
+            ['twenty-percent', ct.twentyPercent, '売上税額 × 20%（インボイス登録の小規模事業者）'],
+          ] as const).map(([method, amount, sub]) => (
+            <div
+              key={method}
+              style={{
+                background: 'var(--bg)',
+                borderRadius: 8,
+                padding: '10px 14px',
+                border: ct.best === method ? '1px solid #5cb85c' : '1px solid transparent',
+              }}
+            >
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>
+                {CT_METHOD_LABEL[method]}
+                {ct.best === method && <span style={{ color: '#5cb85c', fontWeight: 700 }}> · 最有利</span>}
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 700 }}>{yen.format(amount)}</div>
+              <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>{sub}</div>
+            </div>
+          ))}
+          <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px', border: '1px solid var(--accent, #5b8def)' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>税負担 合計（法人税等 ＋ 消費税）</div>
+            <div style={{ fontSize: 17, fontWeight: 700 }}>{yen.format(totalTaxBurden)}</div>
+            <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
+              {ctExempt ? '免税見込みのため消費税 0 で合算' : `消費税は最有利方式（${CT_METHOD_LABEL[ct.best]}）で合算`}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+          ※ 消費税は「預かった税 − 支払った税」を納付する仕組みのため、税引後利益の計算には含めていません（税抜経理を前提）。
+          簡易課税は基準期間の課税売上高 {yen.format(SIMPLIFIED_ELIGIBILITY_THRESHOLD)} 以下＋事前届出で選択可。
+          2割特例はインボイス登録で免税から課税になった事業者の経過措置（令和8年9月30日を含む課税期間まで）。
+          軽減税率 8% の売上・仕入は未考慮。
+          <strong>税務助言ではありません。申告・納税は税理士・e-Taxで確定してください。</strong>
+        </div>
       </div>
     </div>
   );
@@ -565,7 +728,11 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
         </div>
       </div>
 
-      <CorporateTaxCard ordinaryProfit={fin.ordinaryProfit} />
+      <CorporateTaxCard
+        ordinaryProfit={fin.ordinaryProfit}
+        revenue={fin.revenue}
+        taxablePurchases={Math.max(0, fin.revenue - fin.ordinaryProfit - fin.laborCost - fin.depreciation - (fin.interestExpense ?? 0))}
+      />
 
       <div style={cardStyle}>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
