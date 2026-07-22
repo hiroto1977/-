@@ -10,6 +10,7 @@ import {
   PROPERTIES_COLLECTION,
   PROPERTY_TYPES,
   parsePropertyEntry,
+  propertyToForm,
   computeRealEstatePortfolio,
   type PropertyEntry,
 } from '../data/investments';
@@ -59,9 +60,11 @@ export function RealEstatePage() {
   const { monthlyCashflow } = data;
 
   // ユーザー追加の物件 (record store 永続化・端末内)。
-  const { records: userProps, add: addProperty, remove: removeProperty } = useCollection<PropertyEntry>(PROPERTIES_COLLECTION);
+  const { records: userProps, add: addProperty, edit: editProperty, remove: removeProperty } = useCollection<PropertyEntry>(PROPERTIES_COLLECTION);
   const [propForm, setPropForm] = useState(EMPTY_PROPERTY_FORM);
   const [propError, setPropError] = useState<string>();
+  /** 編集中のユーザー物件 id (null = 新規追加モード)。 */
+  const [editingPropId, setEditingPropId] = useState<string | null>(null);
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト。 */
   const properties = useMemo(
@@ -78,15 +81,33 @@ export function RealEstatePage() {
     [properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment],
   );
 
-  async function onAddProperty() {
+  async function onSaveProperty() {
     try {
       const parsed = parsePropertyEntry(propForm);
       setPropError(undefined);
-      await addProperty(parsed);
+      if (editingPropId !== null) {
+        await editProperty(editingPropId, parsed);
+        setEditingPropId(null);
+      } else {
+        await addProperty(parsed);
+      }
       setPropForm(EMPTY_PROPERTY_FORM);
     } catch (e) {
       setPropError(e instanceof Error ? e.message : '入力エラー');
     }
+  }
+
+  /** ユーザー行の「編集」— フォームへ読み込み、保存で自動反映。 */
+  function onStartEditProperty(rowId: string, p: PropertyEntry) {
+    setPropForm(propertyToForm(p));
+    setEditingPropId(rowId);
+    setPropError(undefined);
+  }
+
+  function onCancelEditProperty() {
+    setEditingPropId(null);
+    setPropForm(EMPTY_PROPERTY_FORM);
+    setPropError(undefined);
   }
 
   // レバレッジ試算 (CCR・イールドギャップ) — 入力はローカル。
@@ -163,9 +184,11 @@ export function RealEstatePage() {
         </div>
       </Section>
 
-      <Section title="物件を追加 (任意・この端末に保存)">
+      <Section title={editingPropId !== null ? `物件を編集中 — ${propForm.name || '(無題)'}` : '物件を追加 (任意・この端末に保存)'}>
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
-          追加した物件は上の KPI・下の一覧とキャッシュフローに即時反映されます。
+          {editingPropId !== null
+            ? '値を書き換えて「保存」すると、KPI・キャッシュフロー・利回りへ即時に自動反映されます。'
+            : '追加した物件は上の KPI・下の一覧とキャッシュフローに即時反映され、一覧の「編集」でいつでも入力し直せます。'}
           データはこの端末のブラウザ内 (IndexedDB) にのみ保存され、どこにも送信されません。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 8 }}>
@@ -206,7 +229,14 @@ export function RealEstatePage() {
               onChange={(e) => setPropForm((f) => ({ ...f, occupied: e.target.checked }))} />
             入居中
           </label>
-          <button type="button" onClick={onAddProperty}>＋ 物件を追加</button>
+          <button type="button" onClick={onSaveProperty}>
+            {editingPropId !== null ? '保存 (自動反映)' : '＋ 物件を追加'}
+          </button>
+          {editingPropId !== null && (
+            <button type="button" onClick={onCancelEditProperty} style={{ color: 'var(--text-mute)' }}>
+              キャンセル
+            </button>
+          )}
         </div>
         {propError && <div style={{ color: '#f87171', fontSize: 12 }}>{propError}</div>}
       </Section>
@@ -250,9 +280,14 @@ export function RealEstatePage() {
                 </td>
                 <td style={tdStyle}>
                   {p.user && (
-                    <button type="button" onClick={() => removeProperty(p.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
-                      削除
-                    </button>
+                    <span style={{ display: 'inline-flex', gap: 6 }}>
+                      <button type="button" onClick={() => onStartEditProperty(p.rowId, p)} style={{ fontSize: 11 }}>
+                        編集
+                      </button>
+                      <button type="button" onClick={() => removeProperty(p.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                        削除
+                      </button>
+                    </span>
                   )}
                 </td>
               </tr>

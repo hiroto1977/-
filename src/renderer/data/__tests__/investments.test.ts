@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   parsePropertyEntry,
   parseHoldingEntry,
+  holdingToForm,
+  propertyToForm,
   computeRealEstatePortfolio,
   computeFundPortfolio,
   fundValuation,
@@ -104,13 +106,36 @@ describe('computeRealEstatePortfolio', () => {
 describe('parseHoldingEntry (投資信託の任意追加)', () => {
   const valid = { code: '9C31118A', name: 'ニッセイ外国株式インデックス', units: '500000', navPerUnit: '32000' };
 
-  it('parses a valid entry and derives valuation (口数÷1万×基準価額)', () => {
+  it('parses a valid entry and derives valuation (口数÷1万×基準価額 = auto モード)', () => {
     const h = parseHoldingEntry(valid);
     expect(h.valuation).toBe(fundValuation(500_000, 32_000));
     expect(h.valuation).toBe(1_600_000);
+    expect(h.valuationMode).toBe('auto');
     // 取得額の既定は評価額 (損益 0)、YTD の既定は 0。
     expect(h.acquisitionCost).toBe(1_600_000);
     expect(h.ytdReturnPct).toBe(0);
+  });
+
+  it('評価額を直接入力すると manual モード (口数・基準価額は任意)', () => {
+    const h = parseHoldingEntry({ name: '手動ファンド', valuation: '2,500,000' });
+    expect(h.valuationMode).toBe('manual');
+    expect(h.valuation).toBe(2_500_000);
+    expect(h.units).toBe(0);
+    expect(h.navPerUnit).toBe(0);
+    expect(h.acquisitionCost).toBe(2_500_000);
+  });
+
+  it('manual モードでも口数・基準価額を併記でき、評価額は入力値が勝つ', () => {
+    const h = parseHoldingEntry({ ...valid, valuation: '1500000' });
+    expect(h.valuationMode).toBe('manual');
+    expect(h.valuation).toBe(1_500_000);
+    expect(h.units).toBe(500_000);
+    expect(h.navPerUnit).toBe(32_000);
+  });
+
+  it('manual の評価額 0 円・不正値は拒否 (自動へ戻すには空欄)', () => {
+    expect(() => parseHoldingEntry({ name: 'x', valuation: '0' })).toThrow('評価額');
+    expect(() => parseHoldingEntry({ name: 'x', valuation: 'abc' })).toThrow('評価額');
   });
 
   it('accepts optional acquisitionCost / ytdReturnPct', () => {
@@ -131,6 +156,31 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     for (const h of SNAPSHOT.mutualFunds.holdings) {
       expect(fundValuation(h.units, h.navPerUnit)).toBe(h.valuation);
     }
+  });
+
+  it('holdingToForm: auto は評価額欄を空欄で往復 (再保存しても auto のまま)', () => {
+    const auto = parseHoldingEntry(valid);
+    const form = holdingToForm(auto);
+    expect(form.valuation).toBe('');
+    expect(parseHoldingEntry(form)).toEqual(auto);
+  });
+
+  it('holdingToForm: manual は評価額を持って往復し、空欄にすれば auto へ切替', () => {
+    const manual = parseHoldingEntry({ ...valid, valuation: '1500000' });
+    const form = holdingToForm(manual);
+    expect(form.valuation).toBe('1500000');
+    expect(parseHoldingEntry(form)).toEqual(manual);
+    // 評価額を空欄にして保存し直す → auto に戻り、口数×基準価額で自動計算。
+    const back = parseHoldingEntry({ ...form, valuation: '' });
+    expect(back.valuationMode).toBe('auto');
+    expect(back.valuation).toBe(1_600_000);
+  });
+
+  it('propertyToForm: 物件は往復で等価 (任意欄 0 は空欄へ)', () => {
+    const p = parsePropertyEntry({ name: '往復物件', type: '一棟', monthlyRent: '250000', purchasePrice: '38000000' });
+    const form = propertyToForm(p);
+    expect(form.monthlyExpenses).toBe('');
+    expect(parsePropertyEntry(form)).toEqual(p);
   });
 });
 

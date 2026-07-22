@@ -9,6 +9,7 @@ import { useCollection } from '../data/useCollection';
 import {
   HOLDINGS_COLLECTION,
   parseHoldingEntry,
+  holdingToForm,
   computeFundPortfolio,
   type HoldingEntry,
 } from '../data/investments';
@@ -41,7 +42,7 @@ const simInputStyle: React.CSSProperties = {
   width: 110,
 };
 
-const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', acquisitionCost: '', ytdReturnPct: '' };
+const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', valuation: '', acquisitionCost: '', ytdReturnPct: '' };
 
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -51,15 +52,24 @@ export function MutualFundsPage() {
   const { recentDividends } = data;
 
   // ユーザー追加の保有銘柄 (record store 永続化・端末内)。
-  const { records: userHoldings, add: addHolding, remove: removeHolding } = useCollection<HoldingEntry>(HOLDINGS_COLLECTION);
+  const { records: userHoldings, add: addHolding, edit: editHolding, remove: removeHolding } = useCollection<HoldingEntry>(HOLDINGS_COLLECTION);
   const [fundForm, setFundForm] = useState(EMPTY_HOLDING_FORM);
   const [fundError, setFundError] = useState<string>();
+  /** 編集中のユーザー銘柄 id (null = 新規追加モード)。 */
+  const [editingFundId, setEditingFundId] = useState<string | null>(null);
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
   const holdings = useMemo(
     () => [
-      ...data.holdings.map((h) => ({ ...h, rowId: h.code, user: false as const })),
-      ...userHoldings.map((r) => ({ ...r.data, userTag: '追加', rowId: r.id, user: true as const })),
+      ...data.holdings.map((h) => ({ ...h, rowId: h.code, user: false as const, valuationMode: undefined })),
+      ...userHoldings.map((r) => ({
+        ...r.data,
+        // 旧データ (valuationMode なし) は auto 扱い。
+        valuationMode: r.data.valuationMode ?? ('auto' as const),
+        userTag: '追加',
+        rowId: r.id,
+        user: true as const,
+      })),
     ],
     [data.holdings, userHoldings],
   );
@@ -75,15 +85,33 @@ export function MutualFundsPage() {
     [holdings, data.portfolio.totalCostBasis, userHoldings],
   );
 
-  async function onAddHolding() {
+  async function onSaveHolding() {
     try {
       const parsed = parseHoldingEntry(fundForm);
       setFundError(undefined);
-      await addHolding(parsed);
+      if (editingFundId !== null) {
+        await editHolding(editingFundId, parsed);
+        setEditingFundId(null);
+      } else {
+        await addHolding(parsed);
+      }
       setFundForm(EMPTY_HOLDING_FORM);
     } catch (e) {
       setFundError(e instanceof Error ? e.message : '入力エラー');
     }
+  }
+
+  /** ユーザー行の「編集」— フォームへ読み込み (auto の評価額は空欄のまま)。 */
+  function onStartEditHolding(rowId: string, h: HoldingEntry) {
+    setFundForm(holdingToForm(h));
+    setEditingFundId(rowId);
+    setFundError(undefined);
+  }
+
+  function onCancelEditHolding() {
+    setEditingFundId(null);
+    setFundForm(EMPTY_HOLDING_FORM);
+    setFundError(undefined);
   }
 
   const [simMonthly, setSimMonthly] = useState('30000');
@@ -271,9 +299,13 @@ export function MutualFundsPage() {
         </div>
       </Section>
 
-      <Section title="銘柄を追加 (任意・この端末に保存)">
+      <Section title={editingFundId !== null ? `銘柄を編集中 — ${fundForm.name || '(無題)'}` : '銘柄を追加 (任意・この端末に保存)'}>
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
-          評価額は「口数 ÷ 1万 × 基準価額」で自動計算し、上のポートフォリオへ即時反映されます。
+          {editingFundId !== null
+            ? '値を書き換えて「保存」するとポートフォリオへ即時に自動反映されます。'
+            : '上のポートフォリオへ即時反映されます。一覧の「編集」でいつでも入力し直せます。'}
+          評価額は<strong>空欄なら「口数 ÷ 1万 × 基準価額」で自動計算</strong>、
+          <strong>直接入力すればその値 (手動)</strong> — どちらの方式でも使えます。
           データはこの端末のブラウザ内 (IndexedDB) にのみ保存され、どこにも送信されません。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 8 }}>
@@ -298,6 +330,11 @@ export function MutualFundsPage() {
               onChange={(e) => setFundForm((f) => ({ ...f, navPerUnit: e.target.value }))} style={simInputStyle} />
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            評価額 (円)
+            <input type="text" inputMode="numeric" value={fundForm.valuation} placeholder="空欄=自動計算"
+              onChange={(e) => setFundForm((f) => ({ ...f, valuation: e.target.value }))} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             取得額 (任意・円)
             <input type="text" inputMode="numeric" value={fundForm.acquisitionCost} placeholder="空欄=損益0"
               onChange={(e) => setFundForm((f) => ({ ...f, acquisitionCost: e.target.value }))} style={simInputStyle} />
@@ -307,7 +344,14 @@ export function MutualFundsPage() {
             <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="0"
               onChange={(e) => setFundForm((f) => ({ ...f, ytdReturnPct: e.target.value }))} style={simInputStyle} />
           </label>
-          <button type="button" onClick={onAddHolding}>＋ 銘柄を追加</button>
+          <button type="button" onClick={onSaveHolding}>
+            {editingFundId !== null ? '保存 (自動反映)' : '＋ 銘柄を追加'}
+          </button>
+          {editingFundId !== null && (
+            <button type="button" onClick={onCancelEditHolding} style={{ color: 'var(--text-mute)' }}>
+              キャンセル
+            </button>
+          )}
         </div>
         {fundError && <div style={{ color: '#f87171', fontSize: 12 }}>{fundError}</div>}
       </Section>
@@ -337,17 +381,34 @@ export function MutualFundsPage() {
                     </span>
                   )}
                 </td>
-                <td style={tdNum}>{h.units.toLocaleString()}</td>
-                <td style={tdNum}>{jpy(h.navPerUnit)}</td>
-                <td style={tdNum}>{jpy(h.valuation)}</td>
+                <td style={tdNum}>{h.units > 0 ? h.units.toLocaleString() : '—'}</td>
+                <td style={tdNum}>{h.navPerUnit > 0 ? jpy(h.navPerUnit) : '—'}</td>
+                <td style={tdNum}>
+                  {jpy(h.valuation)}
+                  {h.user && (
+                    <span
+                      title={h.valuationMode === 'manual'
+                        ? '手動入力の評価額 (編集で空欄にすると自動計算に戻ります)'
+                        : '口数 ÷ 1万 × 基準価額 で自動計算 (口数・基準価額の編集に追従)'}
+                      style={{ marginLeft: 4, fontSize: 9, color: 'var(--text-mute)', cursor: 'help' }}
+                    >
+                      {h.valuationMode === 'manual' ? '手動' : '自動'}
+                    </span>
+                  )}
+                </td>
                 <td style={{ ...tdNum, color: h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}>
                   {h.ytdReturnPct >= 0 ? '+' : ''}{h.ytdReturnPct.toFixed(1)}%
                 </td>
                 <td style={tdStyle}>
                   {h.user && (
-                    <button type="button" onClick={() => removeHolding(h.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
-                      削除
-                    </button>
+                    <span style={{ display: 'inline-flex', gap: 6 }}>
+                      <button type="button" onClick={() => onStartEditHolding(h.rowId, h)} style={{ fontSize: 11 }}>
+                        編集
+                      </button>
+                      <button type="button" onClick={() => removeHolding(h.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                        削除
+                      </button>
+                    </span>
                   )}
                 </td>
               </tr>

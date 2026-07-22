@@ -148,16 +148,27 @@ export function computeRealEstatePortfolio(
 // 投資信託: 保有銘柄エントリ
 // ---------------------------------------------------------------------------
 
+/**
+ * 評価額の算出モード:
+ * - `auto`   — 評価額 = 口数 ÷ 1万 × 基準価額 で自動計算 (口数/基準価額の
+ *              編集に自動追従する)。
+ * - `manual` — 証券会社アプリ等で見た評価額をそのまま手入力 (口数・基準価額は
+ *              任意)。編集フォームで評価額を空欄にすればいつでも auto に戻る。
+ */
+export type ValuationMode = 'auto' | 'manual';
+
 export interface HoldingEntry extends Record<string, unknown> {
   /** 銘柄コード (任意・英数 16 字まで)。空なら表示は '—'。 */
   readonly code: string;
   readonly name: string;
-  /** 口数。 */
+  /** 口数 (manual モードでは任意・0 可)。 */
   readonly units: number;
-  /** 基準価額 (円・1 万口あたり)。 */
+  /** 基準価額 (円・1 万口あたり。manual モードでは任意・0 可)。 */
   readonly navPerUnit: number;
-  /** 評価額 (円) = 口数 ÷ 10,000 × 基準価額 (四捨五入・導出値)。 */
+  /** 評価額 (円)。auto なら導出値、manual なら手入力値。 */
   readonly valuation: number;
+  /** 評価額の算出モード (過去データに無い場合は auto 扱い)。 */
+  readonly valuationMode: ValuationMode;
   /** 取得額 (円・任意)。空欄は評価額と同額 (損益 0) とみなす。 */
   readonly acquisitionCost: number;
   /** 年初来リターン (%・任意、既定 0)。 */
@@ -169,11 +180,20 @@ export function fundValuation(units: number, navPerUnit: number): number {
   return Math.round((units / 10_000) * navPerUnit);
 }
 
+/**
+ * 追加/編集フォームの入力を検証して HoldingEntry にする。
+ *
+ * 評価額 (`valuation`) の扱いが「任意入力⇄自動反映」の切替点:
+ * - 空欄 → `auto`: 口数・基準価額 (どちらも必須) から自動計算。
+ * - 入力 → `manual`: その値をそのまま評価額にする。口数・基準価額は任意
+ *   (空欄は 0)。後で空欄にして保存し直せば auto に戻る。
+ */
 export function parseHoldingEntry(input: {
   code?: unknown;
   name?: unknown;
   units?: unknown;
   navPerUnit?: unknown;
+  valuation?: unknown;
   acquisitionCost?: unknown;
   ytdReturnPct?: unknown;
 }): HoldingEntry {
@@ -183,13 +203,35 @@ export function parseHoldingEntry(input: {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   if (name.length === 0 || name.length > 80) throw new Error('ファンド名は 1〜80 文字で入力してください');
 
-  const units = toAmount(input.units);
-  if (units === null || units <= 0) throw new Error('口数は 1 以上の数値で入力してください');
+  const manual = input.valuation !== undefined && input.valuation !== '';
 
-  const navPerUnit = toAmount(input.navPerUnit);
-  if (navPerUnit === null || navPerUnit <= 0) throw new Error('基準価額 (1万口あたり・円) を入力してください');
-
-  const valuation = fundValuation(units, navPerUnit);
+  let units: number;
+  let navPerUnit: number;
+  let valuation: number;
+  let valuationMode: ValuationMode;
+  if (manual) {
+    // 手動: 評価額を直接入力。口数・基準価額は任意 (空欄 0)。
+    const v = toAmount(input.valuation);
+    if (v === null || v <= 0) throw new Error('評価額は 1 円以上の数値で入力してください (空欄にすると自動計算)');
+    const u = input.units === undefined || input.units === '' ? 0 : toAmount(input.units);
+    if (u === null) throw new Error('口数は 0 以上の数値で入力してください');
+    const nav = input.navPerUnit === undefined || input.navPerUnit === '' ? 0 : toAmount(input.navPerUnit);
+    if (nav === null) throw new Error('基準価額は 0 以上の数値で入力してください');
+    units = u;
+    navPerUnit = nav;
+    valuation = v;
+    valuationMode = 'manual';
+  } else {
+    // 自動: 口数 × 基準価額から評価額を導出。
+    const u = toAmount(input.units);
+    if (u === null || u <= 0) throw new Error('口数は 1 以上の数値で入力してください (評価額を直接入力する場合は評価額欄へ)');
+    const nav = toAmount(input.navPerUnit);
+    if (nav === null || nav <= 0) throw new Error('基準価額 (1万口あたり・円) を入力してください');
+    units = u;
+    navPerUnit = nav;
+    valuation = fundValuation(u, nav);
+    valuationMode = 'auto';
+  }
 
   const acqRaw = input.acquisitionCost;
   const acquisitionCost = acqRaw === undefined || acqRaw === '' ? valuation : toAmount(acqRaw);
@@ -203,7 +245,44 @@ export function parseHoldingEntry(input: {
     ytdReturnPct = n;
   }
 
-  return { code, name, units, navPerUnit, valuation, acquisitionCost, ytdReturnPct };
+  return { code, name, units, navPerUnit, valuation, valuationMode, acquisitionCost, ytdReturnPct };
+}
+
+/**
+ * 保存済みエントリを編集フォームの初期値 (文字列) に変換する。
+ * auto の評価額は空欄にして「自動計算のまま」を保つ (値を入れると manual に
+ * 切り替わる)。0 の任意項目は空欄に戻す。
+ */
+export function holdingToForm(h: HoldingEntry): {
+  code: string; name: string; units: string; navPerUnit: string;
+  valuation: string; acquisitionCost: string; ytdReturnPct: string;
+} {
+  const mode: ValuationMode = h.valuationMode ?? 'auto';
+  return {
+    code: h.code,
+    name: h.name,
+    units: h.units > 0 ? String(h.units) : '',
+    navPerUnit: h.navPerUnit > 0 ? String(h.navPerUnit) : '',
+    valuation: mode === 'manual' ? String(h.valuation) : '',
+    acquisitionCost: String(h.acquisitionCost),
+    ytdReturnPct: h.ytdReturnPct !== 0 ? String(h.ytdReturnPct) : '',
+  };
+}
+
+/** 保存済み物件を編集フォームの初期値 (文字列) に変換する。 */
+export function propertyToForm(p: PropertyEntry): {
+  name: string; type: string; monthlyRent: string; purchasePrice: string;
+  monthlyExpenses: string; monthlyLoan: string; occupied: boolean;
+} {
+  return {
+    name: p.name,
+    type: p.type,
+    monthlyRent: String(p.monthlyRent),
+    purchasePrice: String(p.purchasePrice),
+    monthlyExpenses: p.monthlyExpenses > 0 ? String(p.monthlyExpenses) : '',
+    monthlyLoan: p.monthlyLoan > 0 ? String(p.monthlyLoan) : '',
+    occupied: p.occupied,
+  };
 }
 
 /** 集計に必要な保有銘柄の最小 shape。 */
