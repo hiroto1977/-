@@ -5,6 +5,14 @@ import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useCollection } from '../data/useCollection';
+import {
+  PROPERTIES_COLLECTION,
+  PROPERTY_TYPES,
+  parsePropertyEntry,
+  computeRealEstatePortfolio,
+  type PropertyEntry,
+} from '../data/investments';
 import { jpy } from '../../shared/formatters';
 import {
   calcRealEstateYield,
@@ -33,12 +41,53 @@ const reNum = (s: string): number => {
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 
+const EMPTY_PROPERTY_FORM = {
+  name: '',
+  type: PROPERTY_TYPES[0] as string,
+  monthlyRent: '',
+  purchasePrice: '',
+  monthlyExpenses: '',
+  monthlyLoan: '',
+  occupied: true,
+};
+
 export function RealEstatePage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
     'real-estate',
     SNAPSHOT.realEstate,
   );
-  const { properties, monthlyCashflow, portfolioYield, occupancyRate } = data;
+  const { monthlyCashflow } = data;
+
+  // ユーザー追加の物件 (record store 永続化・端末内)。
+  const { records: userProps, add: addProperty, remove: removeProperty } = useCollection<PropertyEntry>(PROPERTIES_COLLECTION);
+  const [propForm, setPropForm] = useState(EMPTY_PROPERTY_FORM);
+  const [propError, setPropError] = useState<string>();
+
+  /** デモ (snapshot) 行 + ユーザー行の結合リスト。 */
+  const properties = useMemo(
+    () => [
+      ...data.properties.map((p) => ({ ...p, rowId: p.id, user: false as const })),
+      ...userProps.map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
+    ],
+    [data.properties, userProps],
+  );
+
+  // ポートフォリオ集計は結合リストから再計算する (追加ゼロなら snapshot と同値)。
+  const portfolio = useMemo(
+    () => computeRealEstatePortfolio(properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment),
+    [properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment],
+  );
+
+  async function onAddProperty() {
+    try {
+      const parsed = parsePropertyEntry(propForm);
+      setPropError(undefined);
+      await addProperty(parsed);
+      setPropForm(EMPTY_PROPERTY_FORM);
+    } catch (e) {
+      setPropError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
 
   // レバレッジ試算 (CCR・イールドギャップ) — 入力はローカル。
   const [reRentStr, setReRentStr] = useState('168000');
@@ -102,16 +151,64 @@ export function RealEstatePage() {
         errorMessage={errorMessage}
         isConfigured={isConfigured}
         onRefresh={refresh}
-        who={<>不動産投資 · {properties.length} 物件 / 月次 CF {jpy(monthlyCashflow.netCashflow)}</>}
+        who={<>不動産投資 · {properties.length} 物件 / 月次 CF {jpy(portfolio.netCashflow)}</>}
       />
 
       <Section title="ポートフォリオ KPI" count={4}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
-          <Stat label="月次キャッシュフロー" value={jpy(monthlyCashflow.netCashflow)} />
-          <Stat label="ポートフォリオ利回り" value={`${portfolioYield.toFixed(1)}%`} />
-          <Stat label="入居率" value={`${(occupancyRate * 100).toFixed(0)}%`} />
-          <Stat label="月次家賃収入 (実績)" value={jpy(monthlyCashflow.grossRent)} />
+          <Stat label="月次キャッシュフロー" value={jpy(portfolio.netCashflow)} positive={portfolio.netCashflow >= 0} />
+          <Stat label="ポートフォリオ利回り" value={`${portfolio.portfolioYield.toFixed(1)}%`} />
+          <Stat label="入居率" value={`${(portfolio.occupancyRate * 100).toFixed(0)}%`} />
+          <Stat label="月次家賃収入 (実績)" value={jpy(portfolio.grossRent)} />
         </div>
+      </Section>
+
+      <Section title="物件を追加 (任意・この端末に保存)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          追加した物件は上の KPI・下の一覧とキャッシュフローに即時反映されます。
+          データはこの端末のブラウザ内 (IndexedDB) にのみ保存され、どこにも送信されません。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 8 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            物件名
+            <input type="text" value={propForm.name} placeholder="例: 福岡市アパート"
+              onChange={(e) => setPropForm((f) => ({ ...f, name: e.target.value }))} style={{ ...reInputStyle, width: 180 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            種別
+            <select value={propForm.type} onChange={(e) => setPropForm((f) => ({ ...f, type: e.target.value }))}
+              style={{ ...reInputStyle, width: 130 }}>
+              {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            家賃 (月・円)
+            <input type="text" inputMode="numeric" value={propForm.monthlyRent} placeholder="100000"
+              onChange={(e) => setPropForm((f) => ({ ...f, monthlyRent: e.target.value }))} style={reInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            取得価格 (円)
+            <input type="text" inputMode="numeric" value={propForm.purchasePrice} placeholder="12000000"
+              onChange={(e) => setPropForm((f) => ({ ...f, purchasePrice: e.target.value }))} style={reInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            月次経費 (任意)
+            <input type="text" inputMode="numeric" value={propForm.monthlyExpenses} placeholder="0"
+              onChange={(e) => setPropForm((f) => ({ ...f, monthlyExpenses: e.target.value }))} style={reInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            月次返済 (任意)
+            <input type="text" inputMode="numeric" value={propForm.monthlyLoan} placeholder="0"
+              onChange={(e) => setPropForm((f) => ({ ...f, monthlyLoan: e.target.value }))} style={reInputStyle} />
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
+            <input type="checkbox" checked={propForm.occupied}
+              onChange={(e) => setPropForm((f) => ({ ...f, occupied: e.target.checked }))} />
+            入居中
+          </label>
+          <button type="button" onClick={onAddProperty}>＋ 物件を追加</button>
+        </div>
+        {propError && <div style={{ color: '#f87171', fontSize: 12 }}>{propError}</div>}
       </Section>
 
       <Section title="保有物件" count={properties.length}>
@@ -125,14 +222,22 @@ export function RealEstatePage() {
               <th style={thNum}>表面利回り</th>
               <th style={thNum}>実質利回り (入居反映)</th>
               <th style={thStyle}>入居</th>
+              <th style={thStyle} />
             </tr>
           </thead>
           <tbody>
             {properties.map((p) => {
               const y = calcRealEstateYield(p.monthlyRent, p.purchasePrice, p.occupied ? 1 : 0);
               return (
-              <tr key={p.id}>
-                <td style={tdStyle}>{p.name}</td>
+              <tr key={p.rowId}>
+                <td style={tdStyle}>
+                  {p.name}
+                  {!p.user && (
+                    <span style={{ marginLeft: 6, padding: '1px 6px', background: 'var(--bg-elev)', color: 'var(--text-mute)', borderRadius: 3, fontSize: 10 }}>
+                      デモ
+                    </span>
+                  )}
+                </td>
                 <td style={tdStyle}>{p.type}</td>
                 <td style={tdNum}>{jpy(p.monthlyRent)}</td>
                 <td style={tdNum}>{jpyM(p.purchasePrice)}</td>
@@ -142,6 +247,13 @@ export function RealEstatePage() {
                   <span style={{ color: p.occupied ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
                     {p.occupied ? '● 入居中' : '○ 空室'}
                   </span>
+                </td>
+                <td style={tdStyle}>
+                  {p.user && (
+                    <button type="button" onClick={() => removeProperty(p.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                      削除
+                    </button>
+                  )}
                 </td>
               </tr>
               );
@@ -155,15 +267,20 @@ export function RealEstatePage() {
       <Section title="月次キャッシュフロー内訳" count={4}>
         <table style={tableStyle}>
           <tbody>
-            <tr><td style={tdStyle}>家賃収入 (実績、空室除外)</td><td style={tdNum}>{jpy(monthlyCashflow.grossRent)}</td></tr>
-            <tr><td style={tdStyle}>運営費用</td><td style={tdNum}>−{jpy(monthlyCashflow.operatingExpenses)}</td></tr>
-            <tr><td style={tdStyle}>ローン返済</td><td style={tdNum}>−{jpy(monthlyCashflow.mortgagePayment)}</td></tr>
+            <tr><td style={tdStyle}>家賃収入 (実績、空室除外)</td><td style={tdNum}>{jpy(portfolio.grossRent)}</td></tr>
+            <tr><td style={tdStyle}>運営費用</td><td style={tdNum}>−{jpy(portfolio.operatingExpenses)}</td></tr>
+            <tr><td style={tdStyle}>ローン返済</td><td style={tdNum}>−{jpy(portfolio.mortgagePayment)}</td></tr>
             <tr style={{ background: 'var(--bg-elev)' }}>
               <td style={{ ...tdStyle, fontWeight: 700 }}>純キャッシュフロー</td>
-              <td style={{ ...tdNum, fontWeight: 700, color: '#22c55e' }}>{jpy(monthlyCashflow.netCashflow)}</td>
+              <td style={{ ...tdNum, fontWeight: 700, color: portfolio.netCashflow >= 0 ? '#22c55e' : '#ef4444' }}>{jpy(portfolio.netCashflow)}</td>
             </tr>
           </tbody>
         </table>
+        {userProps.length > 0 && (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>
+            ※ 追加した {userProps.length} 物件の家賃・経費・返済を含めて再計算しています (デモ物件の経費・返済は既定値)。
+          </div>
+        )}
       </Section>
 
       <Section title="レバレッジ試算 (CCR・イールドギャップ)">

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 72 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **5646** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5731) |
+| ユニットテスト | **5661** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5746) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 1000000** | 自己検証（`git ls-files` 全ファイルの改行数合算。柱 B Phase 3 完了で 100 万行を突破 — 現在 ~1,037k） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -457,8 +457,8 @@ union を参照する。
 | `settings` | 設定 (API キー管理 + Vault) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
-| `real-estate` | 不動産投資 (snapshot のみ) | Bearer (将来 REIT/楽待) | ✅ | | (read-only — 保有物件 / 月次キャッシュフロー / 利回り / 入居率) |
-| `mutual-funds` | 投資信託 (snapshot のみ) | Bearer (将来 SBI/楽天証券) | ✅ | | (read-only — 保有ファンド / 評価額 / 基準価額 / 分配金) |
+| `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率) |
+| `mutual-funds` | 投資信託 (snapshot + 銘柄の任意追加 = record store) | Bearer (将来 SBI/楽天証券) | ✅ | | (ローカル編集 — 保有銘柄の追加/削除 / 評価額 / 基準価額 / 分配金) |
 | `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
 | `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
 | `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
