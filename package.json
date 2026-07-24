@@ -17,6 +17,8 @@
     "build:research-demo": "node scripts/build-research-demo.cjs",
     "build:web": "tsc -b && vite build && node scripts/inline-html.cjs",
     "build:web:lite": "SERVICE_HUB_LITE=1 npm run build:web && mv dist/standalone.html dist/standalone-lite.html",
+    "e2e": "node scripts/e2e/core.cjs",
+    "e2e:lite": "SERVICE_HUB_E2E_FILE=dist/standalone-lite.html node scripts/e2e/core.cjs",
     "chain:append": "node scripts/integrity-chain.cjs append",
     "chain:show": "node scripts/integrity-chain.cjs show",
     "chain:verify": "node scripts/integrity-chain.cjs verify",
