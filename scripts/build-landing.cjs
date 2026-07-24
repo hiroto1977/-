@@ -23,8 +23,8 @@ const REPO_URL = 'https://github.com/hiroto1977/-';
 const OG_IMAGE = SITE_URL + 'og.png';
 const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
 
-const CATEGORY_LABEL = { featured: 'おすすめ', tools: '分析・ツール', integrations: '外部サービス連携' };
-const CATEGORY_ORDER = ['featured', 'tools', 'integrations'];
+const CATEGORY_LABEL = { featured: 'おすすめ', professionals: '士業連携', tools: '分析・ツール', integrations: '外部サービス連携' };
+const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'];
 
 /** services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。 */
 function parseServices() {
@@ -43,7 +43,7 @@ function parseServices() {
 /** SERVICES 配列の category: 出現数 (parse 漏れ検知の基準)。 */
 function countEntries() {
   const text = fs.readFileSync(SERVICES_TS, 'utf8');
-  return (text.match(/^\s*category:\s*'(?:featured|tools|integrations)'/gm) || []).length;
+  return (text.match(/^\s*category:\s*'(?:featured|professionals|tools|integrations)'/gm) || []).length;
 }
 
 /** src 配下の *.test.ts の静的 it( 件数。 */
