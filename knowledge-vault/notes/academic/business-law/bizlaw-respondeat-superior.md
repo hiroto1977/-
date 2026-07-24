@@ -30,6 +30,16 @@ Lord Chief Justice Sir John Holt（Jones v. Hart, 1698 — 使用者責任の司
 - [Faragher v. City of Boca Raton, 524 U.S. 775 (1998) — Cornell LII](https://www.law.cornell.edu/supremecourt/text/524/775) `リファレンス`
 - [New York Central & Hudson River Railroad v. United States, 212 U.S. 481 (1909) — Justia](https://supreme.justia.com/cases/federal/us/212/481/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同じ思想家
+- [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
+- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
+- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同分野の近傍
+- [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

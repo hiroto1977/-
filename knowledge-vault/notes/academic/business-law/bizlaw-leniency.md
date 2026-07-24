@@ -30,6 +30,11 @@ aliases:
 - [公正取引委員会「改正独占禁止法（令和元年）」](https://www.jftc.go.jp/dk/kaisei/r1kaisei/index.html) `公的`
 - [e-Gov法令検索「私的独占の禁止及び公正取引の確保に関する法律」（独占禁止法）](https://laws.e-gov.go.jp/law/322AC0000000054) `公的`
 
+## 関連概念
+- [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

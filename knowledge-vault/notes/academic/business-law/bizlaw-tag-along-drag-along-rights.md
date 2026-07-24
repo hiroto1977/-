@@ -31,6 +31,13 @@ Steven N. Kaplan ／ Per Strömberg ／ Michael Ewens
 - [NVCA Model Legal Documents — standard co-sale and drag-along forms](https://nvca.org/document-category/model-legal-documents/) `リファレンス`
 - [Wikipedia — Drag-along right](https://en.wikipedia.org/wiki/Drag-along_right) `リファレンス`
 
+## 関連概念
+- [[bizlaw-anti-dilution-venture|アンチダイリューション条項（ベンチャー投資）]] — 出典を共有
+- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 出典を共有
+- [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]] — 同分野の近傍
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
+- [[bizlaw-squeeze-out|スクイーズアウト（特別支配株主の株式等売渡請求）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

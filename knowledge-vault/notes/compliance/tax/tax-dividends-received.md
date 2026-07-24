@@ -30,6 +30,13 @@ aliases:
 - [国税庁 受取配当等の益金不算入（株式区分と不算入割合）](https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2015_5/pdf/04.pdf) `公的`
 - [受取配当等の益金不算入制度 解説](https://www.pwc.com/jp/ja/knowledge/news/tax-jtu/20230130-2.html) `メディア`
 
+## 関連概念
+- [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 語彙が近い
+- [[tax-crypto-asset-valuation|法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）]] — 出典を共有
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 同分野の近傍
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

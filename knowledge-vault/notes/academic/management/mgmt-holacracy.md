@@ -30,6 +30,11 @@ aliases:
 - [EBSCO Research Starters (Business and Management)「Holacracy」](https://www.ebsco.com/research-starters/business-and-management/holacracy) `リファレンス`
 - [B. J. Robertson “Organization at the Leading Edge: Introducing Holacracy” (2007) — 提唱者本人による初出論考](https://library.uniteddiversity.coop/Decision_Making_and_Democracy/Holacracy/HolacracyIntro2007-06.pdf) `メディア`
 
+## 関連概念
+- [[mgmt-substitutes-leadership|リーダーシップの代替要因理論]] — 同分野の近傍
+- [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

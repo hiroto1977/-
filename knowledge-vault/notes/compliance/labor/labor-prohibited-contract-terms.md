@@ -30,6 +30,10 @@ aliases:
 - [栃木労働局 賠償予定の禁止（16条）](https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article16.html) `公的`
 - [和歌山労働局 賠償予定の禁止 解説](https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00465.html) `公的`
 
+## 関連概念
+- [[labor-payment-on-termination|金品の返還（労働基準法23条）]] — 同分野の近傍
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

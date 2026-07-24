@@ -29,6 +29,11 @@ Milton Friedman（1970年代 — ペソ先物ディスカウントの非公式�
 - [Krasker (1980) The "Peso Problem" in Testing the Efficiency of Forward Exchange Markets — JME 6(2), pp.269-276](https://ideas.repec.org/a/eee/moneco/v6y1980i2p269-276.html) `学術`
 - [Lewis (1995) Puzzles in International Financial Markets — NBER Working Paper 4951](https://www.nber.org/papers/w4951) `学術`
 
+## 関連概念
+- [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

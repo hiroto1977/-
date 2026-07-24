@@ -30,6 +30,18 @@ Bayless Manning ／ Ronald J. Gilson ／ Bernard S. Black ／ Hideki Kanda
 - [会社法（英訳）第785条・第786条 — 反対株主の株式買取請求 (Japanese Companies Act, Arts. 785-786, Ministry of Justice)](https://www.japaneselawtranslation.go.jp/en/laws/view/3207/en) `公的`
 - ["How does the Appraisal Right with the Concept of the Fair Value Including Synergies Work?: Lessons from Japan," Asian Journal of Comparative Law 18(3) (2023)](https://www.cambridge.org/core/journals/asian-journal-of-comparative-law/article/how-does-the-appraisal-right-with-the-concept-of-the-fair-value-including-synergies-work-lessons-from-japan/33F191336253DDEBACB8310C697E1BEE) `学術`
 
+## 関連概念
+- [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 語彙が近い
+- [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 語彙が近い
+- [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家
+- [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 同じ思想家
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
+- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

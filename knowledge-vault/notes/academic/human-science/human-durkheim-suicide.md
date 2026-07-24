@@ -29,6 +29,18 @@ aliases:
 - [Durkheim, É. "Suicide: A Study in Sociology," trans. Spaulding & Simpson, University of Chicago Press（原著1897年、英訳標準版）](https://press.uchicago.edu/ucp/books/book/chicago/S/bo3625434.html) `学術`
 - [Encyclopaedia Britannica — "Suicide" by Émile Durkheim（著作解説・4類型・社会的統合の概要）](https://www.britannica.com/topic/Suicide-by-Emile-Durkheim) `リファレンス`
 
+## 関連概念
+- [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 同じ思想家
+- [[infosoc-collective-memory|集合的記憶]] — 同じ思想家
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+- [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

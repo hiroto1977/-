@@ -30,6 +30,18 @@ aliases:
 - [Luthans, Youssef & Avolio 2007 — Psychological Capital: Developing the Human Competitive Edge, Oxford University Press](https://doi.org/10.1093/acprof:oso/9780195187526.001.0001) `学術`
 - [Seligman & Csikszentmihalyi 2000 — Positive psychology: An introduction, American Psychologist 55(1):5-14](https://doi.org/10.1037/0003-066X.55.1.5) `学術`
 
+## 関連概念
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 分野横断
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
+- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
+- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

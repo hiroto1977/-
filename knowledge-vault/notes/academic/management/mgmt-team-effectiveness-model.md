@@ -32,6 +32,18 @@ Joseph Edward McGrath ／ J. Richard Hackman ／ Daniel R. Ilgen ／ John R. Hol
 - [Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams](https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-032414-111418) `学術`
 - [Hackman (2002) Leading Teams: Setting the Stage for Great Performances — APA](https://www.apa.org/pubs/books/4316012) `リファレンス`
 
+## 関連概念
+- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 語彙が近い
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 同じ思想家
+- [[human-embodied-cognition-theory|身体化された認知]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

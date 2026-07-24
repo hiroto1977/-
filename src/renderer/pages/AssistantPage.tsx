@@ -16,7 +16,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
-import { buildSystemPrompt, retrieveServices, type AssistantService } from '../data/assistantContext';
+import {
+  buildOfflineKnowledgeAnswer,
+  buildSystemPrompt,
+  retrieveServices,
+  type AssistantService,
+} from '../data/assistantContext';
 import { parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
 import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
@@ -30,7 +35,45 @@ interface ChatMessage {
   readonly services?: readonly AssistantService[];
   /** オフライン (ルールエンジン) 応答か。 */
   readonly offline?: boolean;
+  /** 応答した AI プロバイダ (assistant 発話・オンライン時)。 */
+  readonly provider?: string;
 }
+
+/** assistant/providers アクションが返すプロバイダ設定状況。 */
+interface ProviderStatus {
+  readonly id: string;
+  readonly label: string;
+  readonly configured: boolean;
+  readonly isDefault: boolean;
+  readonly browserDirect: boolean;
+  readonly needsApiKey: boolean;
+  readonly defaultModel: string;
+}
+
+/** エージェント設定パネルの入力フィールド (保存時に空欄は除外)。 */
+interface AgentCredsForm {
+  default: string;
+  anthropic: string;
+  openai: string;
+  gemini: string;
+  ollamaUrl: string;
+  ollamaModel: string;
+  compatUrl: string;
+  compatKey: string;
+  compatModel: string;
+}
+
+const EMPTY_CREDS_FORM: AgentCredsForm = {
+  default: '',
+  anthropic: '',
+  openai: '',
+  gemini: '',
+  ollamaUrl: '',
+  ollamaModel: '',
+  compatUrl: '',
+  compatKey: '',
+  compatModel: '',
+};
 
 interface Theme {
   readonly bg: string;
@@ -40,8 +83,20 @@ interface Theme {
 
 const HISTORY_KEY = 'assistant-history';
 const THEME_KEY = 'assistant-theme';
+const PROVIDER_KEY = 'assistant-provider';
+/** エージェント選択の特別値: 設定済みの全プロバイダへ同時に質問する合議モード。 */
+const ALL_AGENTS = '__all__';
+
+/** chatAll (全AI合議) の 1 プロバイダ分の回答。 */
+interface EnsembleAnswer {
+  readonly provider: string;
+  readonly model: string;
+  readonly text: string;
+  readonly ok: boolean;
+  readonly error?: string;
+}
 const HISTORY_MAX = 50;
-const TURN_WINDOW = 16; // Claude へ渡す直近会話数
+const TURN_WINDOW = 16; // AI へ渡す直近会話数
 
 const DEFAULT_THEME: Theme = { bg: '#ffffff', fg: '#000000', image: '' };
 
@@ -200,7 +255,68 @@ export function AssistantPage() {
   const [busy, setBusy] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => loadTheme());
   const [showTheme, setShowTheme] = useState(false);
+  const [providers, setProviders] = useState<ProviderStatus[]>([]);
+  const [provider, setProvider] = useState<string>(() => {
+    try {
+      return localStorage.getItem(PROVIDER_KEY) ?? '';
+    } catch {
+      return '';
+    }
+  });
+  const [showAgents, setShowAgents] = useState(false);
+  const [credsForm, setCredsForm] = useState<AgentCredsForm>(EMPTY_CREDS_FORM);
+  const [credsMessage, setCredsMessage] = useState('');
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  /** プロバイダ設定状況を取得 (未設定・ブラウザ版 Vault ロック時は空のまま)。 */
+  const refreshProviders = async () => {
+    try {
+      const hub = window.serviceHub;
+      if (!hub) return;
+      const res = await hub.invoke<{ providers: ProviderStatus[] }>('assistant', 'providers', {});
+      if (res.ok && Array.isArray(res.data.providers)) setProviders(res.data.providers);
+    } catch {
+      /* 取得失敗は無視 (チャットのフォールバックは別途機能する) */
+    }
+  };
+
+  useEffect(() => {
+    void refreshProviders();
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(PROVIDER_KEY, provider);
+    } catch {
+      /* 無視 */
+    }
+  }, [provider]);
+
+  /** エージェント設定 (JSON マルチプロバイダ資格情報) を assistant スロットへ保存。 */
+  const saveAgentCreds = async () => {
+    const hub = window.serviceHub;
+    if (!hub) {
+      setCredsMessage('serviceHub が利用できません');
+      return;
+    }
+    const creds: Record<string, string> = {};
+    (Object.keys(credsForm) as Array<keyof AgentCredsForm>).forEach((k) => {
+      const v = credsForm[k].trim();
+      if (v) creds[k] = v;
+    });
+    if (Object.keys(creds).length === 0) {
+      setCredsMessage('少なくとも 1 つの API キー / URL を入力してください');
+      return;
+    }
+    try {
+      await hub.setToken('assistant', JSON.stringify(creds));
+      setCredsMessage('保存しました (キーは暗号化ストレージに格納され、再表示はされません)');
+      setCredsForm(EMPTY_CREDS_FORM);
+      await refreshProviders();
+    } catch (e) {
+      setCredsMessage(`保存に失敗しました: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  };
 
   // SERVICES は循環 import 回避のためコンポーネント内で解決する (初期化済み)。
   const serviceCatalog = useMemo<AssistantService[]>(
@@ -243,6 +359,20 @@ export function AssistantPage() {
   /** ルールエンジンによるオフライン応答 (フォールバック)。 */
   const replyOffline = (text: string) => {
     const reply = replyTo(text, chatContext);
+    // 解釈不能 (fallback) のときだけ確証済みナレッジの直答を先に試す。危機対応・
+    // 手取り計算・案内などの決定論インテントはルールエンジンの優先順位を維持する。
+    if (reply.kind === 'fallback') {
+      const knowledge = buildOfflineKnowledgeAnswer(text);
+      if (knowledge) {
+        append({
+          role: 'assistant',
+          text: knowledge,
+          services: retrieveServices(text, serviceCatalog),
+          offline: true,
+        });
+        return;
+      }
+    }
     const services = reply.navigateTo
       ? serviceCatalog.filter((s) => s.id === reply.navigateTo)
       : retrieveServices(text, serviceCatalog);
@@ -265,16 +395,70 @@ export function AssistantPage() {
       const turns = history
         .slice(-TURN_WINDOW)
         .map((m) => ({ role: m.role, content: m.text }));
-      const system = buildSystemPrompt(text, serviceCatalog);
-      const res = await hub.invoke<{ text: string; model?: string }>('assistant', 'chat', {
-        system,
-        messages: turns,
-      });
+      // 追問 (「それを詳しく」等) で RAG 文脈が切れないよう、直前のユーザー発話を
+      // 検索クエリへ連結する (AI へ渡す会話履歴 turns とは別物)。
+      const prevUser = [...messages].reverse().find((m) => m.role === 'user')?.text ?? '';
+      const ragQuery = prevUser && prevUser !== text ? `${prevUser}\n${text}` : text;
+      const system = buildSystemPrompt(ragQuery, serviceCatalog);
+
+      // 🤝 全AI合議: 設定済みの全プロバイダへ同時に質問し、回答を並べて表示する。
+      if (provider === ALL_AGENTS) {
+        const resAll = await hub.invoke<{ answers: EnsembleAnswer[] }>('assistant', 'chatAll', {
+          system,
+          messages: turns,
+        });
+        if (resAll.ok && Array.isArray(resAll.data.answers) && resAll.data.answers.length > 0) {
+          const answers = resAll.data.answers;
+          const okCount = answers.filter((a) => a.ok).length;
+          const relServices = retrieveServices(text, serviceCatalog);
+          append({
+            role: 'assistant',
+            text: `🤝 全AI合議 — ${answers.length} プロバイダに同時質問（回答 ${okCount} 件）`,
+            offline: true,
+          });
+          for (const a of answers) {
+            const label = providers.find((p) => p.id === a.provider)?.label ?? a.provider;
+            if (a.ok) {
+              append({
+                role: 'assistant',
+                text: a.text,
+                services: relServices,
+                provider: `${label}${a.model ? ` (${a.model})` : ''}`,
+              });
+            } else {
+              append({
+                role: 'assistant',
+                text: `⚠ ${label} は応答できませんでした: ${a.error ?? '不明なエラー'}`,
+                offline: true,
+              });
+            }
+          }
+          return;
+        }
+        append({
+          role: 'assistant',
+          text: `（全AI合議を利用できないため簡易モードで回答します: ${resAll.ok ? '回答がありません' : resAll.message}）`,
+          offline: true,
+        });
+        replyOffline(text);
+        return;
+      }
+
+      const res = await hub.invoke<{ text: string; model?: string; provider?: string }>(
+        'assistant',
+        'chat',
+        {
+          system,
+          messages: turns,
+          ...(provider ? { provider } : {}),
+        },
+      );
       if (res.ok) {
         append({
           role: 'assistant',
           text: res.data.text,
           services: retrieveServices(text, serviceCatalog),
+          provider: res.data.provider,
         });
       } else {
         // API 未設定/失敗 → 決定論フォールバック。一度だけ理由を添える。
@@ -323,10 +507,32 @@ export function AssistantPage() {
         <div>
           <strong style={{ fontSize: 18 }}>🤖 AI アシスタント</strong>
           <div style={{ fontSize: 12, opacity: 0.7 }}>
-            Claude を頭脳に、確証済みナレッジと {SERVICES.length} サービスを統合して回答します
+            選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、
+            確証済みナレッジと {SERVICES.length} サービスを統合して回答します
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
+          <select
+            value={provider}
+            aria-label="AI エージェントを選択"
+            title="このチャットが使う AI エージェント"
+            onChange={(e) => setProvider(e.target.value)}
+            style={{ fontSize: 12, borderRadius: 8, padding: '4px 8px' }}
+          >
+            <option value="">エージェント自動 (既定)</option>
+            <option value={ALL_AGENTS}>
+              🤝 全AI合議 (設定済み {providers.filter((p) => p.configured).length} 社へ同時質問)
+            </option>
+            {providers.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+                {p.configured ? '' : ' (未設定)'}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={() => setShowAgents((v) => !v)} title="AI エージェントの接続設定">
+            ⚙ エージェント
+          </button>
           <button type="button" onClick={() => setShowTheme((v) => !v)} title="背景をカスタマイズ">
             🎨 背景
           </button>
@@ -335,6 +541,159 @@ export function AssistantPage() {
           </button>
         </div>
       </div>
+
+      {providers.length > 0 ? (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+          {providers.map((p) => (
+            <span
+              key={p.id}
+              title={
+                p.configured
+                  ? `${p.label} 接続済み${p.isDefault ? ' (既定)' : ''}`
+                  : `${p.label} 未設定 — ⚙ エージェント から設定`
+              }
+              style={{
+                fontSize: 11,
+                borderRadius: 999,
+                padding: '2px 10px',
+                border: '1px solid rgba(127,127,127,0.35)',
+                opacity: p.configured ? 1 : 0.5,
+              }}
+            >
+              {p.configured ? '🟢' : '⚪'} {p.label}
+              {p.isDefault ? ' ★' : ''}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {showAgents ? (
+        <div
+          style={{
+            padding: '12px 14px',
+            marginBottom: 10,
+            border: '1px solid rgba(127,127,127,0.4)',
+            borderRadius: 10,
+            fontSize: 13,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: 10,
+          }}
+        >
+          <div style={{ gridColumn: '1 / -1', fontWeight: 700 }}>
+            🔌 AI エージェント接続設定
+            <span style={{ fontWeight: 400, opacity: 0.7, marginLeft: 8 }}>
+              入力したキーは暗号化スロットに JSON でまとめて保存されます (空欄は未変更ではなく「未設定」として保存)。
+            </span>
+          </div>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            既定エージェント
+            <select
+              value={credsForm.default}
+              aria-label="既定エージェント"
+              onChange={(e) => setCredsForm((f) => ({ ...f, default: e.target.value }))}
+            >
+              <option value="">自動 (設定済みの先頭)</option>
+              <option value="anthropic">Claude (Anthropic)</option>
+              <option value="openai">ChatGPT (OpenAI)</option>
+              <option value="gemini">Gemini (Google)</option>
+              <option value="ollama">Ollama (ローカル)</option>
+              <option value="compat">OpenAI 互換 API</option>
+            </select>
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            Anthropic API キー
+            <input
+              type="password"
+              value={credsForm.anthropic}
+              placeholder="sk-ant-…"
+              aria-label="Anthropic API キー"
+              onChange={(e) => setCredsForm((f) => ({ ...f, anthropic: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            OpenAI API キー (ChatGPT)
+            <input
+              type="password"
+              value={credsForm.openai}
+              placeholder="sk-…"
+              aria-label="OpenAI API キー"
+              onChange={(e) => setCredsForm((f) => ({ ...f, openai: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            Google Gemini API キー
+            <input
+              type="password"
+              value={credsForm.gemini}
+              placeholder="AIza…"
+              aria-label="Google Gemini API キー"
+              onChange={(e) => setCredsForm((f) => ({ ...f, gemini: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            Ollama URL (ローカル)
+            <input
+              type="text"
+              value={credsForm.ollamaUrl}
+              placeholder="http://127.0.0.1:11434"
+              aria-label="Ollama URL"
+              onChange={(e) => setCredsForm((f) => ({ ...f, ollamaUrl: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            Ollama モデル (任意)
+            <input
+              type="text"
+              value={credsForm.ollamaModel}
+              placeholder="llama3.2"
+              aria-label="Ollama モデル"
+              onChange={(e) => setCredsForm((f) => ({ ...f, ollamaModel: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            互換 API ベース URL (LiteLLM / Groq 等)
+            <input
+              type="text"
+              value={credsForm.compatUrl}
+              placeholder="http://localhost:4000 または https://…/openai/v1"
+              aria-label="互換 API ベース URL"
+              onChange={(e) => setCredsForm((f) => ({ ...f, compatUrl: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            互換 API キー (任意)
+            <input
+              type="password"
+              value={credsForm.compatKey}
+              placeholder="キー不要のサーバーは空欄"
+              aria-label="互換 API キー"
+              onChange={(e) => setCredsForm((f) => ({ ...f, compatKey: e.target.value }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            互換 API モデル
+            <input
+              type="text"
+              value={credsForm.compatModel}
+              placeholder="例: groq/llama-3.3-70b"
+              aria-label="互換 API モデル"
+              onChange={(e) => setCredsForm((f) => ({ ...f, compatModel: e.target.value }))}
+            />
+          </label>
+          <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 10, alignItems: 'center' }}>
+            <button type="button" className="primary" onClick={() => void saveAgentCreds()}>
+              保存
+            </button>
+            <span style={{ fontSize: 12, opacity: 0.75 }}>{credsMessage}</span>
+          </div>
+          <div style={{ gridColumn: '1 / -1', fontSize: 11, opacity: 0.65, lineHeight: 1.6 }}>
+            ブラウザ版: ChatGPT / 互換 API は CORS のため「設定」ページのプロキシ (Cloudflare Worker)
+            経由で呼び出します。Ollama は <code>OLLAMA_ORIGINS</code> の設定が必要な場合があります。
+            既存の Anthropic 単独キー (生文字列) もそのまま利用できます (後方互換)。
+          </div>
+        </div>
+      ) : null}
 
       {showTheme ? (
         <div
@@ -412,6 +771,9 @@ export function AssistantPage() {
                 {isUser ? m.text : <MarkdownView blocks={parseMarkdown(m.text)} fg={theme.fg} />}
                 {m.offline ? (
                   <div style={{ fontSize: 10, opacity: 0.6, marginTop: 4 }}>簡易モード（オフライン）</div>
+                ) : null}
+                {!isUser && !m.offline && m.provider ? (
+                  <div style={{ fontSize: 10, opacity: 0.55, marginTop: 4 }}>via {m.provider}</div>
                 ) : null}
               </div>
               {!isUser && m.services && m.services.length > 0 ? (

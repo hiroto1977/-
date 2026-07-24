@@ -30,6 +30,18 @@ aliases:
 - [Goldsmith & Wu (2006) Who Controls the Internet? — Oxford University Press](https://global.oup.com/academic/product/who-controls-the-internet-9780195340648) `学術`
 - [Internet Censorship — Wikipedia](https://en.wikipedia.org/wiki/Internet_censorship) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-digital-platforms|デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制]] — 同じ思想家
+- [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同じ思想家
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同じ思想家
+- [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
+- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Scheibehenne, Greifeneder & Todd (2010), meta-analytic review of choice overload, Journal of Consumer Research](https://www.semanticscholar.org/paper/Can-There-Ever-Be-Too-Many-Options-A-Meta-Analytic-Scheibehenne-Greifeneder/07775d812c00a97aaa57b55596b39e26b8baaa0b) `学術`
 - [Wikipedia — Overchoice (Toffler, Future Shock 1970; Schwartz, Paradox of Choice 2004)](https://en.wikipedia.org/wiki/Overchoice) `リファレンス`
 
+## 関連概念
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 語彙が近い
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
+- [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
+- [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

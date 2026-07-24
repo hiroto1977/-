@@ -29,6 +29,11 @@ aliases:
 - [Encyclopaedia Britannica — Double bind（ベイトソン1956・矛盾コミュニケーション・統合失調症仮説・家族療法への応用）](https://www.britannica.com/science/double-bind) `リファレンス`
 - [Bateson, Jackson, Haley & Weakland (1956) "Toward a Theory of Schizophrenia," Behavioral Science 1(4):251-264（APA PsycNet）](https://psycnet.apa.org/record/1958-00045-001) `学術`
 
+## 関連概念
+- [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 同じ思想家
+- [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同分野の近傍
+- [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

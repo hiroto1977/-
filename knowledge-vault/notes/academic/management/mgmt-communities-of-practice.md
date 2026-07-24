@@ -30,6 +30,13 @@ aliases:
 - [Wenger-Trayner — Introduction to communities of practice（領域・共同体・実践の3要素）](https://www.wenger-trayner.com/introduction-to-communities-of-practice/) `リファレンス`
 - [Academy of Management Learning & Education — Cultivating Communities of Practice 書評（Wenger, McDermott & Snyder 2002／KM vehicle・cultivate）](https://journals.aom.org/doi/10.5465/amle.2009.41788855) `学術`
 
+## 関連概念
+- [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 語彙が近い
+- [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 語彙が近い
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
+- [[mgmt-tuckman-stages|タックマンのチーム発達段階モデル]] — 出典を共有
+- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [国税庁 2割特例（小規模事業者に対する負担軽減措置）の概要](https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm) `公的`
 - [マネーフォワード インボイス制度における軽減措置の解説](https://biz.moneyforward.com/invoice/basic/55388/) `メディア`
 
+## 関連概念
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 語彙が近い
+- [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 語彙が近い
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 語彙が近い
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

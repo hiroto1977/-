@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 Q&A 介護休業給付（67%）](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html) `公的`
 - [東京都 両立支援ポータル 介護休業中の給与](https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-2/w-2-12/) `自治体`
 
+## 関連概念
+- [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 語彙が近い
+- [[labor-childcare-leave|育児休業と育児休業給付金]] — 語彙が近い
+- [[bizlaw-childcare-leave|育児・介護休業法]] — 語彙が近い
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

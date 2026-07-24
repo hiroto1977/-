@@ -30,6 +30,18 @@ aliases:
 - [長崎大学学術リポジトリ — 民法709条における不法行為の成立要件の再構築](https://nagasaki-u.repo.nii.ac.jp/record/14482/files/keinen26_101.pdf) `学術`
 - [立命館大学 — 民法715条における使用者の負担部分](https://www.ritsumei.ac.jp/acd/cg/law/lex/21-56/040wadashinichi.pdf) `学術`
 
+## 関連概念
+- [[legal-tort-liability|不法行為による損害賠償責任（民法709条等）]] — 語彙が近い
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
+- [[bizlaw-real-subrogation|物上代位（民法304条）]] — 出典を共有
+- [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

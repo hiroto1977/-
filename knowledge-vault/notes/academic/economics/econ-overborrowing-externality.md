@@ -29,6 +29,10 @@ Guido Lorenzoni（Review of Economic Studies 75(3), 2008 — 非効率的信用�
 - [Lorenzoni (2008) Inefficient Credit Booms — Review of Economic Studies 75(3), pp.809-833](https://academic.oup.com/restud/article-abstract/75/3/809/1554574) `学術`
 - [Bianchi (2011) Overborrowing and Systemic Externalities in the Business Cycle — AER 101(7), pp.3400-3426](https://www.aeaweb.org/articles?id=10.1257/aer.101.7.3400) `学術`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

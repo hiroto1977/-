@@ -30,6 +30,12 @@ aliases:
 - [公益社団法人 全日本不動産協会 法律用語集「損益相殺」](https://www.zennichi.or.jp/law_faq/%E6%90%8D%E7%9B%8A%E7%9B%B8%E6%AE%BA/) `リファレンス`
 - [日本共済協会 判例研究（最高裁平成27年3月4日大法廷判決・損益相殺的調整の解説）](https://www.jcia.or.jp/publication/pdf/hanrei_56.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
+- [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 同分野の近傍
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,15 @@ Ashbury Railway Carriage & Iron Co v Riche [1875] LR 7 HL 653（英国貴族院�
 - [UK Legislation — Companies Act 2006, Section 39: A Company's Capacity（ultra vires廃止規定の原典）](https://www.legislation.gov.uk/ukpga/2006/46/section/39) `公的`
 - [CiNii Research — 山田創一「Ultra Vires法理の機能と課題」専修ロージャーナル4号（2009年）](https://cir.nii.ac.jp/crid/1390853649757221888) `学術`
 
+## 関連概念
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
+- [[econ-rostow-stages|ロストウの経済成長段階説]] — 出典を共有
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
+- [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]] — 同分野の近傍
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

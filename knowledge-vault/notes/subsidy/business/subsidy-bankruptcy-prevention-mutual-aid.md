@@ -36,6 +36,14 @@ national
 - [中小企業庁 中小企業倒産防止共済制度について](https://www.chusho.meti.go.jp/faq/faq/faq16_tosankyosai.html) `公的`
 - [国税庁 令和6年度税制改正の概要（再加入時の掛金損金算入制限）](https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2024/pdf/O.pdf) `公的`
 
+## 関連概念
+- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 分野横断
+- [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
+- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 出典を共有
+- [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 同分野の近傍
+- [[subsidy-akita|あきた農商工応援ファンド事業（助成金）（秋田県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [BIS Working Paper No. 396 — Fama regression, negative slope, time-varying risk premium](https://www.bis.org/publ/work396.pdf) `学術`
 - [Forward premium anomaly (encyclopedia overview)](https://en.wikipedia.org/wiki/Forward_premium_anomaly) `リファレンス`
 
+## 関連概念
+- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — 語彙が近い
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
+- [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+- [[econ-random-walk-prices|ランダムウォーク仮説——株価変動は予測不可能であるとする命題]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
+- [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

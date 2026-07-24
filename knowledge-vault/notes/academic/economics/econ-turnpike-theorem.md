@@ -30,6 +30,16 @@ aliases:
 - [Turnpike Theory — The New Palgrave Dictionary of Economics / Springer](https://link.springer.com/rwe/10.1057/978-1-349-95121-5_1628-2) `リファレンス`
 - [McKenzie — The Dorfman-Samuelson-Solow Turnpike Theorem — JSTOR](https://www.jstor.org/stable/2525453) `学術`
 
+## 関連概念
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]] — 同じ思想家
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
+- [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
+- [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
+- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
+- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

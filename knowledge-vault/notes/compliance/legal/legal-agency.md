@@ -30,6 +30,11 @@ aliases:
 - [法務省 民法（債権関係）改正資料（表見代理等）](https://www.moj.go.jp/content/000118124.pdf) `公的`
 - [民法113条（無権代理）条文](https://ja.wikibooks.org/wiki/民法第113条) `メディア`
 
+## 関連概念
+- [[bizlaw-apparent-agency|表見代理]] — 分野横断
+- [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

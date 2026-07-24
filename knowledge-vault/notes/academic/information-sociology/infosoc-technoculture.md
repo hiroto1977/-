@@ -30,6 +30,18 @@ aliases:
 - [Winner 1980 — Do Artifacts Have Politics?, Daedalus 109(1):121-136](https://doi.org/10.2307/20024652) `学術`
 - [Bijker, Hughes & Pinch 1987 — The Social Construction of Technological Systems, MIT Press](https://mitpress.mit.edu/9780262517607/) `学術`
 
+## 関連概念
+- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 語彙が近い
+- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 語彙が近い
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
+- [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
+- [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

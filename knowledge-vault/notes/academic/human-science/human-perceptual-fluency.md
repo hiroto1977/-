@@ -30,6 +30,12 @@ aliases:
 - [Jacoby & Dallas (1981) On the Relationship Between Autobiographical Memory and Perceptual Learning — JEP:General](https://doi.org/10.1037/0096-3445.110.3.306) `学術`
 - [Processing Fluency — Wikipedia](https://en.wikipedia.org/wiki/Processing_fluency) `リファレンス`
 
+## 関連概念
+- [[human-mere-exposure-zajonc|単純接触効果——反復的接触が対象への好意を増大させる現象]] — 同じ思想家
+- [[human-processing-fluency|処理流暢性]] — 同じ思想家
+- [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]] — 同じ思想家
+- [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

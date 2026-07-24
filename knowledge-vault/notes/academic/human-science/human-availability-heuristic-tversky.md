@@ -1,0 +1,50 @@
+---
+collection: academic
+id: human-availability-heuristic-tversky
+category: "human-science"
+category_ja: "人間科学"
+title: "利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/human-science
+  - knowledge/verified
+aliases:
+  - "利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道"
+---
+
+# 利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+利用可能性ヒューリスティック（availability heuristic）は、エイモス・トヴェルスキーとダニエル・カーネマンが1973年の論文「利用可能性——頻度と確率を判断するためのヒューリスティック」で提唱した認知的な判断の近道で、人がある出来事の頻度や確率を見積もる際に、その実例や事例がどれだけ容易に思い浮かぶか（利用可能性）を手がかりにする傾向を指す。頻度の高い出来事の実例は一般に思い出しやすいため、想起のしやすさを頻度の代理指標として用いることは、多くの場合おおむね妥当な近道として機能する。しかし、想起のしやすさは実際の頻度だけでなく、それ以外のさまざまな要因によっても左右されるため、この近道は系統的な判断の偏り（バイアス）を生む。実例が最近起きたこと（新近性）、生々しく印象的であること（鮮明性）、感情的に強く喚起すること、メディアで大きく報じられること、自分が直接経験したことなどは、いずれもその出来事を思い出しやすくし、実際の頻度以上に頻繁だと感じさせる。その結果、人々は、飛行機事故、サメによる襲撃、殺人、テロといった、劇的で記憶に残りやすい稀なリスクを過大評価する一方、糖尿病、脳卒中、心臓病といった、ありふれていて目立たないが実際には頻度の高いリスクを過小評価する傾向がある。たとえば、大きく報道された事件の直後には、人々はその種の危険が増えたと感じやすい。利用可能性ヒューリスティックはまた、誤った情報や懸念が反復的な報道や言及を通じて次々と想起されやすくなり、社会全体でリスク認知が膨れ上がる「利用可能性カスケード」の基礎ともなる。この概念は、トヴェルスキーとカーネマンが展開した「ヒューリスティックとバイアス」研究プログラムの中心的な発見の一つであり、代表性ヒューリスティックやアンカリングと並んで、人間の確率判断が規範的な確率計算からいかに体系的に逸脱するかを明らかにした。利用可能性ヒューリスティックは、リスク認知、世論、消費者行動、政策判断の研究に広く応用され、人々の直観的判断の特性とその限界を理解する基礎的な知見となっている。
+
+## 提唱者・初出
+エイモス・トヴェルスキー ／ ダニエル・カーネマン ／ ポール・スロヴィック ／ ノーバート・シュワルツ
+
+## 出典
+- [Tversky, A. & Kahneman, D. (1973) Availability: A Heuristic for Judging Frequency and Probability — Cognitive Psychology 5(2)](https://doi.org/10.1016/0010-0285(73)90033-9) `学術`
+- [Wikipedia: Availability heuristic — Tversky & Kahneman, ease of recall, vividness/recency bias, risk perception](https://en.wikipedia.org/wiki/Availability_heuristic) `リファレンス`
+
+## 関連概念
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

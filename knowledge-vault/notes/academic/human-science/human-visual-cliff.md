@@ -30,6 +30,10 @@ aliases:
 - [Visual Cliff Experiment (Gibson & Walk, 1960) — Simply Psychology](https://www.simplypsychology.org/visual-cliff-experiment.html) `リファレンス`
 - [Depth Perception: Insights from The Visual Cliff Experiment — Achology](https://achology.com/general-interest/depth-perception-insights-from-the-visual-cliff-experiment/) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同分野の近傍
+- [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [中小企業庁 エンジェル税制の仕組み](https://www.chusho.meti.go.jp/keiei/chiiki/angel/structure/index.html) `公的`
 - [国税庁 No.1533 特定投資株式の譲渡損失の繰越（エンジェル税制）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1533.htm) `公的`
 
+## 関連概念
+- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 語彙が近い
+- [[tax-wage-increase-credit|賃上げ促進税制]] — 同分野の近傍
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 同分野の近傍
+- [[tax-furusato-point-ban|ふるさと納税 ポイント付与する仲介サイト経由の募集禁止（2025年10月〜）]] — 同分野の近傍
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

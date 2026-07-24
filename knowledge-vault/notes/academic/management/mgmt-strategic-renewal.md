@@ -30,6 +30,18 @@ aliases:
 - [Schmitt et al. (2018) Strategic Renewal: Past Research, Theoretical Tensions — Intl J Management Reviews (Wiley)](https://onlinelibrary.wiley.com/doi/full/10.1111/ijmr.12117) `学術`
 - [What Do We Talk About When We Talk About Strategic Renewal — Central European Management Journal (Emerald)](https://www.emerald.com/insight/content/doi/10.1108/cemj-01-2023-0003/full/html) `学術`
 
+## 関連概念
+- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
+- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
+- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
+- [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 同分野の近傍
+- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 同分野の近傍
+- [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

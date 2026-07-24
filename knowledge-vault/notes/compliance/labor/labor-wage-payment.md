@@ -30,6 +30,18 @@ aliases:
 - [労働政策研究・研修機構 解説](https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html) `公的`
 - [賃金デジタル払いの解説](https://keiyaku-watch.jp/media/hourei/digital-payroll/) `メディア`
 
+## 関連概念
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 語彙が近い
+- [[legal-funds-transfer|資金移動業]] — 語彙が近い
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
+- [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
+- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 出典を共有
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
+- [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
+- [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

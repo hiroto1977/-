@@ -30,6 +30,10 @@ aliases:
 - [Stanford Graduate School of Education — 提唱者 John D. Krumboltz と planned happenstance 理論](https://ed.stanford.edu/news/stanford-professor-john-d-krumboltz-who-developed-theory-planned-happenstance-dies) `学術`
 - [NACADA（Kansas State University）— 理論概要と5つのスキルの解説](https://nacada.ksu.edu/Resources/Academic-Advising-Today/View-Articles/Planned-Happenstance-Preparing-Liberal-Arts-and-Social-Science-Students-to-Follow-Their-Hearts-to-Career-Success.aspx) `学術`
 
+## 関連概念
+- [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同分野の近傍
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

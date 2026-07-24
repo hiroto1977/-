@@ -31,6 +31,18 @@ aliases:
 - [BUSINESS LAWYERS「民法の連帯債務とは？」（改正による相対効化の解説）](https://www.businesslawyers.jp/practices/1196) `メディア`
 - [Wikibooks 民法第436条（条文と注釈）](https://ja.wikibooks.org/wiki/民法第436条) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
+- [[bizlaw-real-subrogation|物上代位（民法304条）]] — 出典を共有
+- [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
+- [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 出典を共有
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

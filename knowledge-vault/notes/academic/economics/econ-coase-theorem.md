@@ -30,6 +30,18 @@ aliases:
 - [NobelPrize.org — Ronald Coase, 1991 Prize Lecture](https://www.nobelprize.org/prizes/economic-sciences/1991/coase/lecture/) `公的`
 - [Wikipedia — Coase theorem（定義・スティグラー命名の経緯）](https://en.wikipedia.org/wiki/Coase_theorem) `リファレンス`
 
+## 関連概念
+- [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同じ思想家
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
+- [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同じ思想家
+- [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同じ思想家
+- [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 同じ思想家
+- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

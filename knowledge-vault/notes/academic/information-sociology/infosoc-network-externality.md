@@ -30,6 +30,18 @@ aliases:
 - [Rohlfs (1974) "A Theory of Interdependent Demand for a Communications Service", Bell Journal of Economics 5: 16-37 — EconPapers/RePEc](https://econpapers.repec.org/RePEc:rje:bellje:v:5:y:1974:i:spring:p:16-37) `学術`
 - [Wikipedia: Network effect（定義・直接/間接・クリティカルマス・ロックイン・winner-take-all）](https://en.wikipedia.org/wiki/Network_effect) `リファレンス`
 
+## 関連概念
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 語彙が近い
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 同じ思想家
+- [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
+- [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — 同じ思想家
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同じ思想家
+- [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

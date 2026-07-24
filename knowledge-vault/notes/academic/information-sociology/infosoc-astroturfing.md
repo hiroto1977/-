@@ -29,6 +29,16 @@ aliases:
 - [Merriam-Webster Dictionary — "astroturfing"（定義・AstroTurf語源・ベンツェン1985）](https://www.merriam-webster.com/dictionary/astroturfing) `リファレンス`
 - [Jovy Chan, "Online astroturfing: A problem beyond disinformation," Philosophy & Social Criticism (SAGE, 2024)](https://journals.sagepub.com/doi/10.1177/01914537221108467) `学術`
 
+## 関連概念
+- [[econ-stagflation|スタグフレーション]] — 出典を共有
+- [[infosoc-clickbait|クリックベイト（釣り見出し）]] — 出典を共有
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

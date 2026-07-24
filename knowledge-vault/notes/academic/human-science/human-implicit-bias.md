@@ -30,6 +30,18 @@ aliases:
 - [American Psychological Association — Implicit bias (implicit social cognition; Project Implicit)](https://www.apa.org/topics/implicit-bias) `リファレンス`
 - [Kurdi et al. (2019), Predicting Behavior With Implicit Measures, Frontiers in Psychology (predictive-validity/reliability debate)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6856205/) `学術`
 
+## 関連概念
+- [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 語彙が近い
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

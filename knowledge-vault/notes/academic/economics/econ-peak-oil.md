@@ -29,6 +29,12 @@ M. King Hubbert（Shell Development Company, Drilling and Production Practice, 1
 - [Hubbert (1956) Nuclear Energy and the Fossil Fuels — Drilling and Production Practice, Vol.95, pp.1-57（原論文PDF）](https://aspofrance.org/wp-content/uploads/2024/04/king_hubbert_1956_ocr.pdf) `学術`
 - [Campbell & Laherrère (1998) The End of Cheap Oil — Scientific American 278(3), pp.78-83](https://www.scientificamerican.com/article/the-end-of-cheap-oil/) `メディア`
 
+## 関連概念
+- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
+- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,11 @@ national
 - [中小企業庁 デジタル化・AI導入補助金2026 公募要領公開](https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2026/260310001.html) `公的`
 - [デジタル化・AI導入補助金2026 公募要領（通常枠）](https://it-shien.smrj.go.jp/pdf/it2026_koubo_tsujyo.pdf) `公的`
 
+## 関連概念
+- [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 語彙が近い
+- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

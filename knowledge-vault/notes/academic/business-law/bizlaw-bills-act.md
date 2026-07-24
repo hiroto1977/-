@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia「手形法」（ジュネーヴ統一手形法の国内法化・1932制定）](https://ja.wikipedia.org/wiki/%E6%89%8B%E5%BD%A2%E6%B3%95) `リファレンス`
 - [コトバンク「手形抗弁」（人的抗弁の切断・善意取得）](https://kotobank.jp/word/%E6%89%8B%E5%BD%A2%E6%8A%97%E5%BC%81-100728) `リファレンス`
 
+## 関連概念
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 語彙が近い
+- [[bizlaw-cheque-act|小切手法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

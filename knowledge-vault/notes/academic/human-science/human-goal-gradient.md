@@ -30,6 +30,10 @@ aliases:
 - [SAGE Journals — Journal of Marketing Research 43(1):39–58（査読論文書誌）](https://journals.sagepub.com/doi/abs/10.1509/jmkr.43.1.39) `学術`
 - [Wikipedia — Clark L. Hull（1932年 goal-gradient hypothesis の起源）](https://en.wikipedia.org/wiki/Clark_L._Hull) `リファレンス`
 
+## 関連概念
+- [[human-bounded-rationality|限定合理性]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -17,6 +17,12 @@ import {
 } from '../../shared/connectors/pluginRuntime';
 import { executeFreeConnector, type ExecutionResult } from '../data/connectorExecution';
 import { realConnectorSinks } from '../data/connectorSinks';
+import {
+  MCP_CONNECTORS_FREE,
+  MCP_CONNECTORS_AUTH,
+  MCP_AGENT_BRIDGES,
+  mcpConnectorCounts,
+} from '../../shared/connectors/mcpConnectors';
 
 /**
  * コネクター / 自動化ページ。
@@ -304,6 +310,65 @@ export function ConnectorsPage() {
         <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
           ※ これらは宣言と計画の可視化です。実際の書き出し・記録はアダプタ層が担います
           (本画面は純ロジック `shared/connectors/*` をそのまま描画)。
+        </p>
+      </Section>
+
+      {/* MCP コネクタ — AI エージェント (Claude / ChatGPT 等) との連携 */}
+      <Section
+        title="MCP コネクタ (AI エージェント連携)"
+        count={mcpConnectorCounts().total}
+      >
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7, marginTop: 0 }}>
+          本リポジトリには <strong>{mcpConnectorCounts().total} 個の MCP サーバー</strong>
+          (即使える {mcpConnectorCounts().free} + 要 API キー {mcpConnectorCounts().auth}) が
+          同梱されており、Claude Code / Claude Desktop だけでなく <strong>ChatGPT (mcp-remote
+          ブリッジ経由) や LiteLLM</strong> などあらゆる MCP 対応 AI エージェントから
+          利用できます。設定手順・キー取得先は <code>docs/MCP_SETUP.md</code>、検証は{' '}
+          <code>npm run mcp:check</code>。
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginBottom: 12 }}>
+          {MCP_AGENT_BRIDGES.map((b) => (
+            <div key={b.id} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px' }}>
+              <strong style={{ fontSize: 13 }}>{b.label}</strong>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
+                {b.description}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>ID</th>
+                <th style={thStyle}>サーバー</th>
+                <th style={thStyle}>説明</th>
+                <th style={thStyle}>認証</th>
+                <th style={thStyle}>必要な環境変数 (.env.mcp)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...MCP_CONNECTORS_FREE, ...MCP_CONNECTORS_AUTH].map((c) => (
+                <tr key={c.id}>
+                  <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{c.id}</td>
+                  <td style={tdStyle}>{c.label}</td>
+                  <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-mute)' }}>{c.description}</td>
+                  <td style={{ ...tdStyle, color: c.auth === 'none' ? 'var(--success)' : 'var(--text-mute)' }}>
+                    {c.auth === 'none' ? '不要' : c.auth === 'oauth' ? 'OAuth' : 'API キー'}
+                  </td>
+                  <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 11 }}>
+                    {c.envKeys.length > 0 ? c.envKeys.join(', ') : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
+          ※ AI チャット (会話) 側のエージェント切替は「AI アシスタント」ページの ⚙ エージェント設定から。
+          Claude / ChatGPT / Gemini / Ollama / OpenAI 互換 API を選択できます。
         </p>
       </Section>
     </div>

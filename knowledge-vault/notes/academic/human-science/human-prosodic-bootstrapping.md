@@ -30,6 +30,18 @@ aliases:
 - [Christophe et al. (2008) Bootstrapping Lexical and Syntactic Acquisition — Language and Speech](https://journals.sagepub.com/doi/10.1177/00238309080510010501) `学術`
 - [Christophe et al. (1997) Reflections on Phonological Bootstrapping — Language & Cognitive Processes](https://www.researchgate.net/publication/239653441_Reflections_on_Phonological_Bootstrapping_Its_Role_for_Lexical_and_Syntactic_Acquisition) `学術`
 
+## 関連概念
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 出典を共有
+- [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

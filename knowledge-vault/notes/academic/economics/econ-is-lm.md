@@ -29,6 +29,18 @@ IS-LMモデル（ヒックス＝ハンセン・モデル）は、ジョン・ヒ
 - [University of Toronto — Topic 3: The IS and LM Curves](https://www.economics.utoronto.ca/jfloyd/modules/islm.html) `学術`
 - [Wikipedia — IS–LM model (Hicks–Hansen model)](https://en.wikipedia.org/wiki/IS%E2%80%93LM_model) `リファレンス`
 
+## 関連概念
+- [[is-lm-model|IS-LM分析]] — 語彙が近い
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同じ思想家
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

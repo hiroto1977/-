@@ -31,6 +31,11 @@ Colin R. Moore ／ Brenda Hannigan ／ Nobuo Nakamura
 - [SBEEA 2015 s.89 — extension of general duties to shadow directors](https://www.legislation.gov.uk/ukpga/2015/26/section/89) `公的`
 - [Nakamura (Waseda) — 英国影の取締役規制の比較分析](https://www.waseda.jp/folaw/icl/assets/uploads/2014/05/A04408055-00-042010211.pdf) `学術`
 
+## 関連概念
+- [[mgmt-target-costing|原価企画（目標原価計算）]] — 出典を共有
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 同分野の近傍
+- [[bizlaw-banking-act|銀行法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

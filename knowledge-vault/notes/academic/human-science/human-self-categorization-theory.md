@@ -32,6 +32,14 @@ John C. Turner ／ Penelope J. Oakes ／ Michael A. Hogg ／ Stephen D. Reicher 
 - [Voci (2006) Relevance of social categories, depersonalization and group processes: two field tests of SCT — European Journal of Social Psychology](https://doi.org/10.1002/ejsp.259) `学術`
 - [Wikipedia — Self-categorization theory](https://en.wikipedia.org/wiki/Self-categorization_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同じ思想家
+- [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同じ思想家
+- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同分野の近傍
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
+- [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — 同分野の近傍
+- [[human-chunking|チャンク化（チャンキング）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

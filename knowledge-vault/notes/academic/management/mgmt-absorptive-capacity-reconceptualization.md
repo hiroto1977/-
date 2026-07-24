@@ -30,6 +30,11 @@ aliases:
 - [Cohen, W.M. & Levinthal, D.A. (1990) Absorptive capacity: A new perspective on learning and innovation, ASQ 35(1):128-152](https://doi.org/10.2307/2393553) `学術`
 - [Zahra & George (2002) — JSTOR全文アーカイブ（AMR Vol. 27 No. 2）](https://www.jstor.org/stable/4134351) `リファレンス`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 語彙が近い
+- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 語彙が近い
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

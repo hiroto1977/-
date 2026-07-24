@@ -30,6 +30,18 @@ aliases:
 - [SAGE Glossary of the Social and Behavioral Sciences — "Status Conferral"](https://sk.sagepub.com/dict/edvol/behavioralsciences/chpt/status-conferral) `リファレンス`
 - [Wikipedia — Narcotizing dysfunction（3機能の並置：地位付与/規範強制/麻酔的逆機能）](https://en.wikipedia.org/wiki/Narcotizing_dysfunction) `リファレンス`
 
+## 関連概念
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 語彙が近い
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同じ思想家
+- [[infosoc-limited-effects|限定効果論]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[infosoc-agnotology-proctor|アグノトロジー——無知はいかに作り出されるか]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

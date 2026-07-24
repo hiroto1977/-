@@ -30,6 +30,11 @@ aliases:
 - [国立国会図書館 日本法令索引 — 利息制限法（昭和29年5月15日法律第100号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000046978) `公的`
 - [金融庁「貸金業法改正等の概要」（グレーゾーン金利撤廃・総量規制）](https://www.fsa.go.jp/policy/kashikin/04.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-money-lending-act|貸金業法]] — 語彙が近い
+- [[legal-interest-limit|利息制限法の上限金利]] — 語彙が近い
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

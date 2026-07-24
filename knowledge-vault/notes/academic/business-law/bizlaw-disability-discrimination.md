@@ -30,6 +30,18 @@ aliases:
 - [内閣府「障害者差別解消法が改正 事業者にも合理的配慮の提供が義務」](https://www8.cao.go.jp/shougai/suishin/sabekai_chirashi-r05.html) `公的`
 - [事業者による合理的配慮の提供の義務化（2024年4月施行）解説](https://keiyaku-watch.jp/media/hourei/goritekihairyo-2024/) `リファレンス`
 
+## 関連概念
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 語彙が近い
+- [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 分野横断
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
+- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 出典を共有
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
+- [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — 出典を共有
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 出典を共有
+- [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 出典を共有
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

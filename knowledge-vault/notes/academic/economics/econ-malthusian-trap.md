@@ -29,6 +29,11 @@ aliases:
 - [Encyclopædia Britannica — Malthusianism (1798 attribution, geometric vs arithmetical, positive/preventive checks)](https://www.britannica.com/money/Malthusianism) `リファレンス`
 - [コトバンク（日本大百科全書ほか）— マルサスの人口原理（食料は算術級数的・人口は幾何級数的）](https://kotobank.jp/word/%E3%81%BE%E3%82%8B%E3%81%95%E3%81%99%E3%81%AE%E4%BA%BA%E5%8F%A3%E5%8E%9F%E7%90%86-1420871) `リファレンス`
 
+## 関連概念
+- [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 同じ思想家
+- [[econ-diminishing-returns|収穫逓減の法則（限界生産力逓減）]] — 同分野の近傍
+- [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

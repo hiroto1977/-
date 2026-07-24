@@ -30,6 +30,12 @@ aliases:
 - [Haggerty & Ericson (2000) — Semantic Scholar](https://www.semanticscholar.org/paper/The-surveillant-assemblage.-Haggerty-Ericson/4911a1630b63096f6748fcc5424635c6e5860961) `学術`
 - [Haggerty & Ericson (2000) — ResearchGate](https://www.researchgate.net/publication/12188129_The_Surveillant_Assemblage) `学術`
 
+## 関連概念
+- [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 語彙が近い
+- [[infosoc-surveillance-society|監視社会]] — 語彙が近い
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[infosoc-data-doubles|データ・ダブル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

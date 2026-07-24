@@ -30,6 +30,10 @@ aliases:
 - [Solomon & Corbit (1974) An Opponent-Process Theory of Motivation — Semantic Scholar](https://www.semanticscholar.org/paper/An-opponent-process-theory-of-motivation.-I.-of-Solomon-Corbit/9d60db72214f9375b00021ee91c83a23d5cccdf2) `学術`
 - [Simply Psychology: Opponent Process Theory of Emotion](https://www.simplypsychology.org/opponent-process-theory.html) `リファレンス`
 
+## 関連概念
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同分野の近傍
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

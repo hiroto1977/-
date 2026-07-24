@@ -36,6 +36,9 @@ national
 - [中小機構 事業継続力強化計画の認定制度とは](https://kyoujinnka.smrj.go.jp/outline/certification-system.html) `公的`
 - [経済産業省 令和7年度 経済産業関係税制改正（防災・減災投資促進税制）](https://www.meti.go.jp/main/yosan/yosan_fy2025/pdf/03.pdf) `公的`
 
+## 関連概念
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

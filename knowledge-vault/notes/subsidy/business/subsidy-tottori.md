@@ -36,6 +36,12 @@ prefecture
 - [鳥取県 産業成長応援補助金（大型投資）認定要件の改正](https://www.pref.tottori.lg.jp/291544.htm) `自治体`
 - [鳥取県企業立地情報サイト TOTTORICH NAVI 各種支援制度](https://ritti-pref.tottori.jp/support/) `運営団体`
 
+## 関連概念
+- [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 出典を共有
+- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]] — 同分野の近傍
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 同分野の近傍
+- [[subsidy-energy-saving-sii|省エネ補助金（省エネルギー投資促進・需要構造転換支援事業等）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [コトバンク「限界生産力説」（要素は限界生産力に応じて分配・労働の価値限界生産力＝賃金）](https://kotobank.jp/word/%E9%99%90%E7%95%8C%E7%94%9F%E7%94%A3%E5%8A%9B%E8%AA%AC-60306) `リファレンス`
 - [History of Political Economy (Duke UP) — Clarkの「素朴な生産力倫理」とその批判](https://read.dukeupress.edu/hope/article/55/2/353/320797/On-John-Bates-Clark-s-Naive-Productivity-Ethics-A) `学術`
 
+## 関連概念
+- [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — 語彙が近い
+- [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]] — 同じ思想家
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同じ思想家
+- [[econ-austrian-business-cycle-theory|オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）]] — 同じ思想家
+- [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
+- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同じ思想家
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
+- [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
+- [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

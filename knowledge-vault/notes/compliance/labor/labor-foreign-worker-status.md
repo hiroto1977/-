@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 外国人雇用状況の届出](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/gaikokujin/todokede/index.html) `公的`
 - [育成就労制度（技能実習からの移行）解説](https://global-saponet.mgl.mynavi.jp/visa/18276) `メディア`
 
+## 関連概念
+- [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
+- [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]] — 語彙が近い
+- [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

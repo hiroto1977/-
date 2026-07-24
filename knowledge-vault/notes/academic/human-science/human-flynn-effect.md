@@ -30,6 +30,18 @@ aliases:
 - [Trahan et al., “The Flynn Effect: A Meta-analysis,” Psychological Bulletin（PMC, NCBI）](https://pmc.ncbi.nlm.nih.gov/articles/PMC4152423/) `学術`
 - [Wikipedia: Flynn effect（命名・上昇率・課題別パターン）](https://en.wikipedia.org/wiki/Flynn_effect) `リファレンス`
 
+## 関連概念
+- [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同じ思想家
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[infosoc-media-multitasking|メディア・マルチタスキング]] — 出典を共有
+- [[econ-economic-complexity|経済的複雑性指数（ECI）]] — 出典を共有
+- [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 出典を共有
+- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 出典を共有
+- [[human-emotional-contagion|情動感染]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

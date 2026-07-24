@@ -30,6 +30,12 @@ aliases:
 - [消費者庁 景品表示法とステルスマーケティング](https://www.caa.go.jp/policies/policy/representation/fair_labeling/assets/representation_cms216_200901_01.pdf) `公的`
 - [松田綜合法律事務所 解説](https://jmatsuda-law.com/legal-note/2023-3-1/) `メディア`
 
+## 関連概念
+- [[legal-premium-regulation|景品表示法の景品規制]] — 語彙が近い
+- [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 語彙が近い
+- [[legal-antimonopoly|独占禁止法]] — 語彙が近い
+- [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

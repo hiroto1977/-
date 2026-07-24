@@ -31,6 +31,18 @@ William Ocasio ／ Herbert A. Simon ／ James G. March ／ Richard M. Cyert ／ 
 - [Ocasio & Joseph (2012) "The Attention-Based View of the Firm: A 15-Year Review" — Journal of Management Studies](https://doi.org/10.1111/j.1467-6486.2011.01020.x) `学術`
 - [March & Simon (1958) "Organizations" — Wiley (Carnegie School foundation for bounded rationality)](https://doi.org/10.1093/0195044320.001.0001) `リファレンス`
 
+## 関連概念
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

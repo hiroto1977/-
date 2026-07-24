@@ -30,6 +30,12 @@ Archie B. Carroll ／ Donna J. Wood
 - [Wood (1991) Corporate Social Performance Revisited — Academy of Management Review](https://doi.org/10.5465/amr.1991.4279495) `学術`
 - [Wikipedia — Corporate social responsibility](https://en.wikipedia.org/wiki/Corporate_social_responsibility) `リファレンス`
 
+## 関連概念
+- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]] — 同じ思想家
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

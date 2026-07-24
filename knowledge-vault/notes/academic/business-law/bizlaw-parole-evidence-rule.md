@@ -31,6 +31,18 @@ Samuel Williston ／ Arthur Linton Corbin ／ Karl Nickerson Llewellyn
 - [American Law Institute — Restatement (Second) of Contracts](https://www.ali.org/publications/show/contracts/) `学術`
 - [Uniform Law Commission — Uniform Commercial Code](https://www.uniformlaws.org/acts/ucc) `公的`
 
+## 関連概念
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
+- [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ William Blackstone（Commentaries on the Laws of England, 1765, 理論的基礎�
 - [Encyclopaedia Britannica — Parens patriae（定義・英国法起源・米国法における展開）](https://www.britannica.com/topic/parens-patriae) `リファレンス`
 - [15 U.S.C. §15c — Antitrust parens patriae actions by state attorneys general（Hart-Scott-Rodino Act §301による州のパレンス・パトリエ反トラスト訴権）](https://www.law.cornell.edu/uscode/text/15/15c) `公的`
 
+## 関連概念
+- [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 同じ思想家
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

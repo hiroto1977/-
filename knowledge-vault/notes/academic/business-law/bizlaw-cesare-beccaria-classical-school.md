@@ -31,6 +31,11 @@ aliases:
 - [Columbia Law School — Beccaria and His Legacies](https://cccct.law.columbia.edu/content/torture-death-penalty-imprisonment-beccaria-and-his-legacies) `学術`
 - [NIJ — Five Things About Deterrence](https://nij.ojp.gov/topics/articles/five-things-about-deterrence) `公的`
 
+## 関連概念
+- [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同じ思想家
+- [[bizlaw-compliance|コンプライアンス（法令遵守と企業倫理）]] — 同分野の近傍
+- [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

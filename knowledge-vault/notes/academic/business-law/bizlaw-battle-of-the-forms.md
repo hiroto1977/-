@@ -32,6 +32,18 @@ Karl Nickerson Llewellyn ／ John Otto Honnold ／ Grant Gilmore ／ John Edward
 - [CISG-online.org — Art. 19 CISG: Battle of the Forms under the Convention](https://cisg-online.org/cisg-article-by-article/part-2/art.-19-cisg) `学術`
 - ["Exploring the Battle of the Forms in Action," Michigan Law Review](https://repository.law.umich.edu/cgi/viewcontent.cgi?article=2785&context=mlr) `学術`
 
+## 関連概念
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

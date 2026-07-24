@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 1回の契約期間の上限（14条）](https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/roudoukijun/keiyaku/kaisei/dl/pamphlet09.pdf) `公的`
 - [和歌山労働局 労働契約期間（14条）](https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00463.html) `公的`
 
+## 関連概念
+- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 語彙が近い
+- [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 語彙が近い
+- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 同分野の近傍
+- [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

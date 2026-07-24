@@ -30,6 +30,11 @@ K.アロー1951『社会的選択と個人的評価』で証明／個人選好�
 - [Stanford Encyclopedia of Philosophy — Arrow's Theorem](https://plato.stanford.edu/entries/arrows-theorem/) `学術`
 - [NobelPrize.org — Kenneth J. Arrow, 1972年経済学賞](https://www.nobelprize.org/prizes/economic-sciences/1972/arrow/facts/) `リファレンス`
 
+## 関連概念
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 語彙が近い
+- [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 語彙が近い
+- [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

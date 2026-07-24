@@ -30,6 +30,16 @@ Shaker A. Zahra／Gerard George／Wesley M. Cohen／Daniel A. Levinthal／Henk W
 - [Zahra & George (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension, AMR 27(2):185-203](https://doi.org/10.5465/amr.2002.6587995) `学術`
 - [Volberda, Foss & Lyles (2010) Absorbing the Concept of Absorptive Capacity, Organization Science 21(4):931-951](https://doi.org/10.1287/orsc.1090.0503) `学術`
 
+## 関連概念
+- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 語彙が近い
+- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 語彙が近い
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 語彙が近い
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同じ思想家
+- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 同じ思想家
+- [[mgmt-team-cohesion-carron|チーム凝集性（キャロン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

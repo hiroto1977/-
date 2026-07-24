@@ -30,6 +30,12 @@ aliases:
 - [法務省 会社法改正（株式交付制度の創設）](https://www.moj.go.jp/MINJI/minji07_00001.html) `公的`
 - [組織再編の会社形態一覧 解説](https://shiodome.co.jp/js/blog/7478) `メディア`
 
+## 関連概念
+- [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 語彙が近い
+- [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 分野横断
+- [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 同分野の近傍
+- [[legal-prescription-renewal|消滅時効の完成猶予・更新（改正民法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

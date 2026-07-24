@@ -30,6 +30,18 @@ aliases:
 - [Levitt, T. (1960) Marketing Myopia. Harvard Business Review, 38, 45-56 (academic citation)](https://www.scirp.org/reference/referencespapers?referenceid=2066868) `学術`
 - [DIAMONDハーバード・ビジネス・レビュー 恩藏直人「T.レビットに学ぶ」マーケティング近視眼](https://www.dhbr.net/articles/-/2987) `メディア`
 
+## 関連概念
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同じ思想家
+- [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]] — 同じ思想家
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

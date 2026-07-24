@@ -29,6 +29,10 @@ aliases:
 - [Oxford Reference — Critical Discourse Analysis](https://www.oxfordreference.com/view/10.1093/oi/authority.20110803095648450) `リファレンス`
 - [Fairclough (1992) "Discourse and Text: Linguistic and Intertextual Analysis within Discourse Analysis," Discourse & Society 3(2)](https://journals.sagepub.com/doi/10.1177/0957926592003002004) `学術`
 
+## 関連概念
+- [[infosoc-ai-governance-human-rights|AIガバナンスと人権基盤アプローチの国際政治社会学]] — 同分野の近傍
+- [[infosoc-overton-window|オーバートンの窓]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

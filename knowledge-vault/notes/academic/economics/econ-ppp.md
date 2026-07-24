@@ -31,6 +31,12 @@ aliases:
 - [The Library of Economics and Liberty (Econlib), biography of Gustav Cassel](https://www.econlib.org/library/Enc/bios/Cassel.html) `リファレンス`
 - [Wikipedia, "Purchasing power parity"](https://en.wikipedia.org/wiki/Purchasing_power_parity) `リファレンス`
 
+## 関連概念
+- [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 語彙が近い
+- [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — 同分野の近傍
+- [[econ-greshams-law|グレシャムの法則]] — 同分野の近傍
+- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

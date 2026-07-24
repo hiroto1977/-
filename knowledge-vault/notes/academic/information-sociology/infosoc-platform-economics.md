@@ -30,6 +30,17 @@ aliases:
 - [Parker & Van Alstyne 2005 — Two-Sided Network Effects: A Theory of Information Product Design, Management Science 51(10):1494-1504](https://doi.org/10.1287/mnsc.1040.0250) `学術`
 - [Nobel Prize 2014 — Economic Sciences: Jean Tirole — The Sveriges Riksbank Prize in Economic Sciences](https://www.nobelprize.org/prizes/economic-sciences/2014/summary/) `リファレンス`
 
+## 関連概念
+- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 語彙が近い
+- [[econ-rational-bubble|合理的バブル]] — 同じ思想家
+- [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同じ思想家
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
+- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同じ思想家
+- [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同じ思想家
+- [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同分野の近傍
+- [[infosoc-web3|Web3]] — 同分野の近傍
+- [[infosoc-network-externality|ネットワーク外部性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

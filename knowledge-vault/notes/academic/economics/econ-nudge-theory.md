@@ -30,6 +30,18 @@ aliases:
 - [NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `公的`
 - [Institute for Government — Nudge Unit（BIT 2010設立・応用例）](https://www.instituteforgovernment.org.uk/article/explainer/nudge-unit) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 語彙が近い
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 語彙が近い
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-january-effect|1月効果——株価が1月に異常な高収益を示す季節的アノマリー]] — 同じ思想家
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ LMX理論（leader–member exchange theory）は、リーダーシップを、�
 - [Graen & Uhl-Bien (1995) “Relationship-Based Approach to Leadership: Development of LMX Theory over 25 Years,” The Leadership Quarterly 6(2):219-247（UNL）](https://digitalcommons.unl.edu/managementfacpub/57/) `学術`
 - [Northouse, Leadership: Theory and Practice, Ch.7 Leader–Member Exchange Theory (SAGE)](https://us.sagepub.com/sites/default/files/chapter_7._leader-member_exchange_theory.pdf) `学術`
 
+## 関連概念
+- [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]] — 同じ思想家
+- [[mgmt-organizational-commitment|組織コミットメント]] — 出典を共有
+- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 出典を共有
+- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 出典を共有
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
+- [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 出典を共有
+- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

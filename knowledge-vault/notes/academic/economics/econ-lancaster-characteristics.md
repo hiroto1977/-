@@ -29,6 +29,12 @@ aliases:
 - [Columbia University Economics — Kelvin John Lancaster (1924-1999) Memorial](https://econ.columbia.edu/faculty/in-memoriam/kelvin-john-lancaster-1924-1999/) `学術`
 - [Lancaster (1966) "A New Approach to Consumer Theory" Journal of Political Economy 74](https://www.semanticscholar.org/paper/A-New-Approach-to-Consumer-Theory-Lancaster/78915db8cbb8ee3b24f43d168438fe79edc7bb2b) `学術`
 
+## 関連概念
+- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
+- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
+- [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]] — 同分野の近傍
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

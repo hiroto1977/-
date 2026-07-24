@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.2020 確定申告](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2020.htm) `公的`
 - [国税庁 No.1901 同族会社役員で確定申告が必要な人](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1901.htm) `公的`
 
+## 関連概念
+- [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 同分野の近傍
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

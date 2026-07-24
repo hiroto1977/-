@@ -31,6 +31,18 @@ aliases:
 - [Encyclopedia.com — Liquidity Trap](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/liquidity-trap) `リファレンス`
 - [Wikipedia — Liquidity trap (Keynes 1936 / Hicks IS-LM)](https://en.wikipedia.org/wiki/Liquidity_trap) `リファレンス`
 
+## 関連概念
+- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 語彙が近い
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
+- [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]] — 同じ思想家
+- [[econ-trade-adjustment-assistance-kaldor-hicks|カルドア＝ヒックス基準と貿易調整支援——自由貿易の恩恵と損失者への再分配政策]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-is-lm|IS-LMモデル]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

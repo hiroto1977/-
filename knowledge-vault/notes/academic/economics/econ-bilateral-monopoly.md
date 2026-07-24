@@ -30,6 +30,18 @@ aliases:
 - [SUNY / Lumen Learning — Bilateral Monopoly (Microeconomics)](https://courses.lumenlearning.com/suny-fmcc-microeconomics/chapter/bilateral-monopoly/) `学術`
 - [Springer / Palgrave — Bilateral Monopoly](https://link.springer.com/content/pdf/10.1007/978-1-349-20181-5_4.pdf) `学術`
 
+## 関連概念
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-optimal-tariff|最適関税論]] — 同じ思想家
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
+- [[human-operant-conditioning|オペラント条件づけ]] — 出典を共有
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
+- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

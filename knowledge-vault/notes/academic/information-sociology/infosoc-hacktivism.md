@@ -29,6 +29,12 @@ aliases:
 - [Encyclopaedia Britannica — Hacktivism（定義・歴史・主要事例の百科事典的解説）](https://www.britannica.com/topic/hacktivism) `リファレンス`
 - [Stanford Encyclopedia of Philosophy — Civil Disobedience（デジタル市民的不服従としてのハクティビズムの位置づけ）](https://plato.stanford.edu/entries/civil-disobedience/) `リファレンス`
 
+## 関連概念
+- [[infosoc-hacktivism-anonymous-digital-activism|ハクティビズムとデジタル行動主義——アノニマスが体現するオンライン政治抵抗の倫理と法的問題]] — 同分野の近傍
+- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同分野の近傍
+- [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 同分野の近傍
+- [[infosoc-information-cascade|情報カスケード]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

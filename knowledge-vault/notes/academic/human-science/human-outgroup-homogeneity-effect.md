@@ -29,6 +29,12 @@ aliases:
 - [Park, B. & Rothbart, M. (1982) "Perception of Out-Group Homogeneity and Levels of Social Categorization," Journal of Personality and Social Psychology 42(6)（実証的先行研究）](https://psycnet.apa.org/doi/10.1037/0022-3514.42.6.1051) `学術`
 - [ScienceDirect Topics — Outgroup Homogeneity（Elsevier参照項目・定義・研究の流れ）](https://www.sciencedirect.com/topics/psychology/outgroup-homogeneity) `リファレンス`
 
+## 関連概念
+- [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同分野の近傍
+- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同分野の近傍
+- [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同分野の近傍
+- [[human-priming|プライミング効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

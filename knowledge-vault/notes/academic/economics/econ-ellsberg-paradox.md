@@ -30,6 +30,12 @@ aliases:
 - [Ellsberg paradox（Wikipedia：2色壺の定式化と確実性原理違反）](https://en.wikipedia.org/wiki/Ellsberg_paradox) `リファレンス`
 - [On the Ellsberg and Machina paradoxes, Theory and Decision（査読誌：曖昧性回避とGilboa–Schmeidlerモデル）](https://link.springer.com/article/10.1007/s11238-023-09935-x) `学術`
 
+## 関連概念
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同分野の近傍
+- [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

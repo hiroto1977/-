@@ -30,6 +30,12 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 - [John Bowlby's Attachment Theory — Simply Psychology](https://www.simplypsychology.org/bowlby.html) `学術`
 - [Mary Ainsworth Strange Situation Experiment — Simply Psychology](https://www.simplypsychology.org/mary-ainsworth.html) `学術`
 
+## 関連概念
+- [[human-attachment-style-theory|愛着スタイル理論]] — 同じ思想家
+- [[human-attachment-theory-adult|成人愛着理論]] — 同分野の近傍
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 同分野の近傍
+- [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [RePEc/IDEAS bibliographic record: Econometrica 50(1), pp. 97-109 (1982)](https://ideas.repec.org/a/ecm/emetrp/v50y1982i1p97-109.html) `学術`
 - [Rubinstein bargaining model — Wikipedia (alternating offers, discounting, unique SPE, patience)](https://en.wikipedia.org/wiki/Rubinstein_bargaining_model) `リファレンス`
 
+## 関連概念
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
+- [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
+- [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — 出典を共有
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

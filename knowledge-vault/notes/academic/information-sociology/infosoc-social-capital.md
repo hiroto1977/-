@@ -30,6 +30,17 @@ aliases:
 - [OECD — Four Interpretations of Social Capital（bonding/bridging/linking）](https://www.oecd.org/en/publications/four-interpretations-of-social-capital_5jzbcx010wmt-en.html) `公的`
 - [Wikipedia — Bowling Alone（Putnam 2000）](https://en.wikipedia.org/wiki/Bowling_Alone) `リファレンス`
 
+## 関連概念
+- [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 分野横断
+- [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
+- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
+- [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
+- [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同分野の近傍
+- [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

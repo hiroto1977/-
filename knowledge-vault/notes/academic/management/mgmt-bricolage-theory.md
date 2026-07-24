@@ -30,6 +30,18 @@ Claude Lévi-Strauss／Ted Baker／Reed E. Nelson／Karl E. Weick
 - [Desa, G. & Basu, S. (2013) Optimization or Bricolage? Strategic Entrepreneurship Journal](https://doi.org/10.1016/j.respol.2013.10.004) `学術`
 - [Wikipedia — Bricolage in business and management](https://en.wikipedia.org/wiki/Bricolage#In_business_and_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 語彙が近い
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 語彙が近い
+- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
+- [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
+- [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
+- [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

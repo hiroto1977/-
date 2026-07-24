@@ -1,0 +1,267 @@
+---
+title: "nta.go.jp"
+type: source-domain
+host: "nta.go.jp"
+cite_count: 244
+tags:
+  - source-domain
+  - index
+---
+
+# nta.go.jp
+
+> [!info] 出典ドメイン索引 ・ 引用 **244 件**（公的 244）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — 国税庁印紙税質疑応答事例「債務引受けの意義」
+- [[bizlaw-consumption-tax|消費税法]] — 国税庁税務大学校消費税法（基礎編）
+- [[bizlaw-corporation-tax|法人税法]] — 国税庁タックスアンサーNo.5759法人税の税率（基本税率23.2%・中小法人軽減税率15%）
+- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 国税庁「電子帳簿保存法の概要」(3区分・電子取引保存義務)
+- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 国税庁「電子帳簿等保存制度特設サイト」
+- [[bizlaw-income-tax-act|所得税法]] — 国税庁No.2011課税される所得と非課税所得（10種類の所得区分）
+- [[bizlaw-income-tax-act|所得税法]] — 国税庁No.2260所得税の税率（5%〜45%超過累進税率）
+- [[bizlaw-inheritance-tax|相続税法]] — 国税庁No.4102相続税がかかる場合（基礎控除）
+- [[bizlaw-inheritance-tax|相続税法]] — 国税庁相続税・贈与税
+- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 国税庁インボイス制度について（登録番号・仕入税額控除）
+- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 国税庁タックスアンサーNo.6498適格請求書等保存方式（インボイス制度）
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 国税庁徴収法基本通達（抵当権の優先・登記順位に関する官公庁解説）
+- [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 国税庁「社会保障・税番号制度（マイナンバー制度）の概要」（12桁・3分野）
+- [[bizlaw-set-off|相殺（民法505条）]] — 国税庁税務大学校論叢「差し押さえた債権を受働債権とする相殺について」（民法511条）
+- [[bizlaw-statutory-lien|先取特権（民法303条）]] — 国税庁国税徴収法基本通達第19条関係不動産保存の先取特権等の優先
+- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 国税庁税制改革の議論——最適課税と日本の税体系
+- [[econ-transfer-pricing|移転価格税制]] — 国税庁—移転価格税制の概要（租税特別措置法66条の4・独立企業間価格の算定方法）
+- [[eh-1949|1949年（昭和24年）]] — 国税庁税務大学校—シャウプ勧告と税制改正
+- [[eh-1989|1989年（昭和64/平成元年）]] — 国税庁—消費税の沿革（1989/4/1税率3%で導入）
+- [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 国税庁No.5231確定給付企業年金等に係る課税関係
+- [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 国税庁質疑応答事例請負の意義
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 国税庁電磁的記録の印紙税の取扱い
+- [[legal-employee-invention|職務発明（特許法35条）]] — 名古屋国税局職務発明の相当の利益の税務上の取扱い
+- [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 国税庁社会保障・税番号制度の概要
+- [[legal-spousal-residence-right|配偶者居住権（2020年4月1日施行の改正相続法）]] — 国税庁No.4666配偶者居住権等の評価
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 国税庁法令解釈通達農業経営基盤強化準備金関係
+- [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 国税庁令和6年度税制改正の概要（再加入時の掛金損金算入制限）
+- [[subsidy-small-business-mutual-aid|小規模企業共済]] — 国税庁No.1135小規模企業共済等掛金控除
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 国税庁No.2024確定申告を忘れたとき（期限後申告）
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 国税庁No.2026確定申告を間違えたとき（修正申告）
+- [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 国税庁No.1533特定投資株式の譲渡損失の繰越（エンジェル税制）
+- [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]] — 国税庁No.3405事業用資産の買換え特例
+- [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]] — 国税庁措置法37条関係通達
+- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 国税庁No.5320貸倒損失として処理できる場合
+- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 国税庁No.5501一括評価金銭債権に係る貸倒引当金
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 国税庁No.1199基礎控除
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 国税庁令和7年度税制改正による基礎控除の見直し
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 国税庁A1-8青色申告承認申請手続
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 国税庁No.2070青色申告制度
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁青色申告特別控除
+- [[tax-business-succession|法人版事業承継税制（特例措置）]] — 国税庁No.4148非上場株式等の相続税の納税猶予
+- [[tax-business-succession|法人版事業承継税制（特例措置）]] — 国税庁No.4439非上場株式等の贈与税の納税猶予（事業承継税制）
+- [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 国税庁内国法人の外国関係会社に係る所得の課税の特例（制度の概要）
+- [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 国税庁外国子会社合算税制に関するQ&A
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁No.2026確定申告を間違えたとき
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁更正の請求期間の延長等について
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6137課税期間（個人事業者）
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6601申告と納税
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6610法人の消費税確定申告書の提出期限
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 国税庁No.6609中間申告の方法
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 国税庁消費税の中間申告制度
+- [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]] — 国税庁No.6105課税の対象
+- [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]] — 国税庁No.6201非課税となる取引
+- [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]] — 国税庁No.6209非課税と不課税の違い
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 国税庁No.6501納税義務の免除
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 国税庁特定期間による判定
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁C1-19青色申告書の承認の申請
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁No.5100新設法人の届出書類
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁No.5762青色申告と欠損金の繰越控除
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁No.5100新設法人の届出書類
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁青色申告の承認申請
+- [[tax-corp-interim-return|法人税の中間申告]] — 国税庁中間（予定）税額の算出
+- [[tax-corp-interim-return|法人税の中間申告]] — 国税庁予定申告及び納税の義務
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 国税庁C1-1法人税の申告
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 国税庁C1-17申告期限の延長の特例
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 国税庁No.5759法人税の税率
+- [[tax-crypto-asset-valuation|法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）]] — 国税庁令和6年度法人税関係法令の改正の概要（暗号資産の評価方法の見直し）
+- [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 国税庁防衛特別法人税に関する納付手続等について
+- [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 国税庁所得税基本通達繰延資産の償却費
+- [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 国税庁法人税基本通達繰延資産の意義及び範囲
+- [[tax-delinquent-tax|国税の延滞税]] — 国税庁No.9205延滞税について
+- [[tax-delinquent-tax|国税の延滞税]] — 国税庁国税通則法基本通達第60条関係
+- [[tax-dependent-deduction|扶養控除]] — 国税庁No.1180扶養控除
+- [[tax-dependent-deduction|扶養控除]] — 国税庁令和7年度税制改正（所得要件の見直し）
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.2100減価償却のあらまし
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.5409償却方法の選定手続き
+- [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 国税庁No.2100減価償却のあらまし
+- [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 国税庁No.5404中古資産の耐用年数
+- [[tax-disability-deduction|所得税の障害者控除]] — 国税庁No.1160障害者控除
+- [[tax-disability-deduction|所得税の障害者控除]] — 国税庁障害者と税
+- [[tax-dividends-received|受取配当等の益金不算入]] — 国税庁受取配当等の益金不算入（株式区分と不算入割合）
+- [[tax-dividends-received|受取配当等の益金不算入]] — 国税庁法人税基本通達受取配当等の益金不算入
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 国税庁No.5281寄附金の損金不算入
+- [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1150寄附金控除
+- [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1155ふるさと納税（寄附金控除）
+- [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1260政党等寄附金特別控除（税額控除）
+- [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1145地震保険料控除
+- [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1146地震保険料控除の対象契約
+- [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]] — 国税庁電子帳簿等保存制度特設サイト
+- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
+- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答（電子取引関係）
+- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 国税庁質疑応答事例電磁的記録と印紙税
+- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 福岡国税局注文請書を電子メール送信した場合の印紙税
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁No.1410給与所得控除
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
+- [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 国税庁タックスアンサーNo.5265交際費等の範囲と損金不算入額の計算
+- [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁No.2040予定納税
+- [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁予定納税（第1期分）
+- [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁予定納税（第2期分）
+- [[tax-export-exemption|消費税の輸出免税]] — 国税庁No.6551輸出取引の免税
+- [[tax-export-exemption|消費税の輸出免税]] — 国税庁質疑応答事例輸出免税の適用者
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁主な国税の納期限
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁申告と納税
+- [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.1900給与所得者で確定申告が必要な人
+- [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.1901同族会社役員で確定申告が必要な人
+- [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.2020確定申告
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 国税庁定額減税について
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 国税庁ふるさと納税をされた方へ
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 国税庁No.4452夫婦間の居住用不動産贈与の配偶者控除
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 国税庁贈与税の配偶者控除の特例（概要・要件）
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4402贈与税がかかる場合
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4408贈与税の計算と税率（暦年課税）
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 国税庁グローバル・ミニマム課税関係
+- [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 国税庁グループ法人税制質疑応答事例
+- [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 国税庁法人税基本通達完全支配関係がある法人間の寄附金
+- [[tax-group-taxation|法人税のグループ通算制度]] — 国税庁C3-1グループ通算制度の承認の申請
+- [[tax-group-taxation|法人税のグループ通算制度]] — 国税庁No.5900グループ通算制度の概要
+- [[tax-group-taxation|法人税のグループ通算制度]] — 国税庁連結納税からグループ通算制度への移行
+- [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 国税庁No.7400法定調書の提出義務者
+- [[tax-housing-fund-gift|直系尊属からの住宅取得等資金贈与の非課税特例]] — 国税庁No.4508住宅取得等資金贈与の非課税
+- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]] — 国税庁No.1211-1住宅借入金等特別控除（新築等）
+- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]] — 国税庁No.1211-3住宅借入金等特別控除（中古住宅）
+- [[tax-income-categories|所得税における所得の10種類の区分]] — 国税庁No.1300所得の区分のあらまし
+- [[tax-income-categories|所得税における所得の10種類の区分]] — 国税庁確定申告の手引き所得の種類
+- [[tax-income-tax-progressive|所得税の超過累進税率]] — 国税庁No.2260所得税の税率
+- [[tax-income-tax-progressive|所得税の超過累進税率]] — 国税庁復興特別所得税のあらまし
+- [[tax-individual-business-tax|個人事業税]] — 国税庁確定申告の手引き（住民税・事業税）
+- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 国税庁A1-4純損失の繰戻し還付請求
+- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 国税庁No.2070青色申告制度
+- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 国税庁確定申告の手引き（損失申告用）
+- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 国税庁No.4102相続税がかかる場合
+- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 国税庁No.4152相続税の計算
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 国税庁No.6401仕入控除税額の計算方法
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 国税庁課税売上高5億円超の場合の仕入税額控除
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 国税庁インボイス制度について
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 国税庁令和8年度税制改正インボイス関連特集
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁2割特例特設ページ
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁2割特例（小規模事業者に対する負担軽減措置）の概要
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 国税庁2割特例特設ページ
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 国税庁2割特例の概要
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁No.6498インボイス制度
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁インボイス制度について
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 国税庁インボイスQ&A事務負担の軽減措置
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 国税庁少額特例（事務負担の軽減措置）の概要
+- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 国税庁大法人の電子申告義務化について
+- [[tax-life-insurance-deduction|生命保険料控除]] — 国税庁No.1140生命保険料控除
+- [[tax-life-insurance-deduction|生命保険料控除]] — 国税庁質疑応答事例生命保険料控除の限度額
+- [[tax-liquor-tax|酒税の概要]] — 国税庁お酒のQ&A酒税の納税義務者
+- [[tax-liquor-tax|酒税の概要]] — 国税庁お酒のQ&A酒類の定義・分類
+- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 国税庁No.1330配当金を受け取ったとき
+- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 国税庁No.1463株式等を譲渡したときの課税
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 国税庁C1-52欠損金の繰戻し還付の請求
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 国税庁No.5763欠損金の繰戻しによる還付
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5762欠損金の繰越控除
+- [[tax-loss-offsetting|所得税の損益通算]] — 国税庁No.1391不動産所得が赤字のときの通算
+- [[tax-loss-offsetting|所得税の損益通算]] — 国税庁No.2250損益通算
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 国税庁No.5403少額の減価償却資産の判定
+- [[tax-medical-expense-deduction|医療費控除]] — 国税庁No.1119医療費控除に関する手続
+- [[tax-medical-expense-deduction|医療費控除]] — 国税庁No.1120医療費を支払ったとき
+- [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁No.6503基準期間がない法人の納税義務免除の特例
+- [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁No.6531新規設立法人の届出
+- [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁質疑応答特定新規設立法人の特例
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁No.5211役員に対する給与
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期同額給与
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法令解釈通達役員給与等
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁税務大学校論叢
+- [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁No.7456国外財産調書の提出義務
+- [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁国外財産調書制度に関するお知らせ
+- [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁国外財産調書及び財産債務調書の提出（QA）
+- [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 国税庁国税徴収法基本通達換価の猶予の要件
+- [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 国税庁納期限までに納付が困難な方へ（猶予制度）
+- [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 国税庁納税の猶予制度FAQ
+- [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 国税庁No.1600公的年金等の課税関係
+- [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 国税庁暮らしの税情報年金と税
+- [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 国税庁No.6568プラットフォーム課税
+- [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 国税庁消費税のプラットフォーム課税について
+- [[tax-platform-taxation-digital|国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）]] — 国税庁No.6118国境を越えた役務の提供に係る消費税（リバースチャージ）
+- [[tax-platform-taxation-digital|国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）]] — 国税庁No.6568プラットフォーム課税
+- [[tax-qualified-invoice-issuer-registration|適格請求書発行事業者の登録制度（インボイス制度）]] — 国税庁インボイス制度について
+- [[tax-rd-credit|研究開発税制（試験研究費の税額控除）]] — 国税庁No.5441研究開発税制について
+- [[tax-rd-credit|研究開発税制（試験研究費の税額控除）]] — 国税庁No.5444中小企業技術基盤強化税制
+- [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 国税庁No.1440譲渡所得（土地や建物を譲渡したとき）
+- [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 国税庁No.3208長期譲渡所得の税額の計算
+- [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 国税庁No.3211短期譲渡所得の税額の計算
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁No.7105金銭の受取書・領収書
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁クレジット販売の領収書
+- [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁No.6102軽減税率制度
+- [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁軽減税率制度の概要
+- [[tax-registration-license-tax|登録免許税の概要]] — 国税庁No.7191登録免許税の税額表
+- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 国税庁特定同族会社の特別税率（留保金課税）
+- [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 国税庁No.1420退職金を受け取ったとき
+- [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 国税庁No.2732退職手当等に対する源泉徴収
+- [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 国税庁暮らしの税情報退職金と税
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 国税庁スキャナ保存の適用要件
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 国税庁スキャナ保存一問一答
+- [[tax-securities-account|上場株式等の特定口座制度]] — 国税庁No.1476特定口座制度
+- [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 国税庁No.1129セルフメディケーション税制
+- [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 国税庁No.1131通常の医療費控除との選択適用
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁No.6505簡易課税制度
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁消費税の届出
+- [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 国税庁No.5408中小企業者等の少額減価償却資産の特例
+- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 国税庁No.1135小規模企業共済等掛金控除
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 国税庁No.1135小規模企業共済等掛金控除
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 国税庁所得税基本通達法第75条関係
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 国税庁No.4124小規模宅地等の特例
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 国税庁法令解釈通達措置法69条の4
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 国税庁No.5433中小企業投資促進税制
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 国税庁No.5434中小企業経営強化税制
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A1-5個人事業の開業・廃業等届出手続
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁No.2090新たに事業を始めたときの届出
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 国税庁No.5433中小企業投資促進税制（特別償却又は税額控除）
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1191配偶者控除
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1195配偶者特別控除
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁No.7131印紙税を納めなかったとき
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙税不納付事実申出手続
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁タックスアンサーNo.7100課税文書に該当するかどうかの判断
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁文書回答事例電磁的記録に関する印紙税の取扱い
+- [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 国税庁No.1540ストックオプション税制
+- [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 国税庁No.1543税制非適格ストックオプションの課税
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 国税庁優良な電子帳簿の要件
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 国税庁電子帳簿保存法の概要
+- [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 国税庁法令解釈通達事前通知（74条の9〜11）
+- [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 国税庁法令解釈通達質問検査権（74条の2〜6）
+- [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 国税庁税務調査手続に関するFAQ
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 国税庁No.6559外国人旅行者等の免税購入対象者
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 国税庁輸出物品販売場における輸出免税
+- [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 国税庁No.6902総額表示の義務付け
+- [[tax-transfer-pricing|移転価格税制]] — 国税庁移転価格税制（事前確認）
+- [[tax-vehicle-weight-tax|自動車重量税]] — 国税庁No.7192自動車重量税のあらまし
+- [[tax-wage-increase-credit|賃上げ促進税制]] — 国税庁No.5927-2中小企業者等の賃上げ促進税制
+- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 国税庁No.5927-2中小企業者等における賃上げ促進税制
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2502源泉徴収義務者
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2505納付期限と納期の特例
+- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2878国内源泉所得の範囲
+- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2880非居住者等に不動産の賃借料を支払ったとき
+- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2884非居住者等に対する源泉徴収の税率
+- [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 国税庁A2-8納期の特例の承認申請
+- [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 国税庁No.2110事業主がする源泉徴収
+- [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 国税庁No.2505源泉所得税の納付期限と納期の特例
+- [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 国税庁No.7411源泉徴収票の提出範囲
+- [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 国税庁質疑応答事例源泉徴収票等の交付義務
+- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2665年末調整の対象となる人
+- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2675年末調整の対象となる給与
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

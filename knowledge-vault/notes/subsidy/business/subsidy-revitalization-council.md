@@ -36,6 +36,15 @@ national
 - [中小機構 中小企業活性化協議会による支援](https://www.smrj.go.jp/sme/succession/revitalization/index.html) `運営団体`
 - [東京商工会議所 中小企業活性化協議会（運営受託）](https://www.tokyo-cci.or.jp/regene/) `運営団体`
 
+## 関連概念
+- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 出典を共有
+- [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
+- [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
+- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
+- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 出典を共有
+- [[subsidy-nara|中小企業省力化・生産性向上設備投資支援補助金（奈良県）]] — 同分野の近傍
+- [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

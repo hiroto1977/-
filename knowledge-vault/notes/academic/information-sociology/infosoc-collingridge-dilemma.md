@@ -29,6 +29,17 @@ aliases:
 - [Collingridge (1982) "Hedging and Flexing: Two Ways of Choosing Under Ignorance," Science and Public Policy 9(1)](https://academic.oup.com/spp/article-abstract/9/1/47/1667087) `学術`
 - [European Parliament Think Tank — AI規制におけるコリングリッジのジレンマの政策的含意](https://www.europarl.europa.eu/thinktank/en/document/EPRS_BRI(2021)698792) `公的`
 
+## 関連概念
+- [[infosoc-technopoly|テクノポリ（技術独占）]] — 同じ思想家
+- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 出典を共有
+- [[eh-1958|1958年（昭和33年）]] — 出典を共有
+- [[eh-2012|2012年（平成24年）]] — 出典を共有
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
+- [[eh-2015|2015年（平成27年）]] — 出典を共有
+- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
+- [[infosoc-risk-society|リスク社会（ベック）]] — 同分野の近傍
+- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

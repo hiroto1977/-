@@ -30,6 +30,18 @@ aliases:
 - [Lexical decision task — Meyer & Schvaneveldt (1971) と意味的プライミング](https://en.wikipedia.org/wiki/Lexical_decision_task) `リファレンス`
 - [Doyen et al. (2012) PLOS One — 行動的プライミングの再現失敗（Bargh 1996 論争）](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0029081) `学術`
 
+## 関連概念
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 出典を共有
+- [[human-reminiscence-bump|レミニセンス・バンプ]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

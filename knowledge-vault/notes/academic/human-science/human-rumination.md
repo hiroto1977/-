@@ -30,6 +30,18 @@ aliases:
 - [APA Dictionary of Psychology — "rumination"](https://dictionary.apa.org/rumination) `リファレンス`
 - [Treynor, Gonzalez & Nolen-Hoeksema (2003) "Rumination Reconsidered: A Psychometric Analysis" (RRS / brooding vs. reflection)](https://websites.umich.edu/~gonzo/papers/treynor-rumination.pdf) `学術`
 
+## 関連概念
+- [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 語彙が近い
+- [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 語彙が近い
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

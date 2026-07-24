@@ -30,6 +30,18 @@ aliases:
 - [総務省 令和6年版 情報通信白書 — 偽・誤情報の流通・拡散等の課題及び対策](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r06/html/nd141210.html) `公的`
 - [MIT Sloan — Deepfakes, explained](https://mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained) `学術`
 
+## 関連概念
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 出典を共有
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 出典を共有
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
+- [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
+- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
+- [[infosoc-deepfake-synthetic-media-ethics|ディープフェイクと合成メディア倫理——生成AI時代の真正性の危機と規制の展望]] — 同分野の近傍
+- [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — 同分野の近傍
+- [[infosoc-participatory-culture|参加型文化]] — 同分野の近傍
+- [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 同分野の近傍
+- [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

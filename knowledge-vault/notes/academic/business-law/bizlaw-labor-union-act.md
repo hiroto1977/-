@@ -30,6 +30,18 @@ aliases:
 - [中央労働委員会（厚生労働省）— 労働委員会とは（救済命令・三者構成）](https://www.mhlw.go.jp/churoi/qa/index.html) `公的`
 - [衆議院 制定法律 — 法律第百七十四号（昭24・6・1）労働組合法（全部改正＝現行法）](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/00519490601174.htm) `公的`
 
+## 関連概念
+- [[bizlaw-labor-collective-bargaining-law|集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較]] — 語彙が近い
+- [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 語彙が近い
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

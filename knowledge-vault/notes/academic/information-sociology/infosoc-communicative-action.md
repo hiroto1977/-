@@ -31,6 +31,14 @@ J.ハーバーマス『コミュニケーション的行為の理論』(1981)／
 - [Communicative versus Strategic Rationality: Habermas' Theory of Communicative Action and the Social Brain — PLOS ONE（査読論文）](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0065111) `学術`
 - [Colonization of the Lifeworld — The Cambridge Habermas Lexicon (Cambridge University Press)](https://www.cambridge.org/core/books/cambridge-habermas-lexicon/colonization-of-the-lifeworld/36E8421628B4E1914F7E675B31977ADC) `学術`
 
+## 関連概念
+- [[human-reminiscence-bump|レミニセンス・バンプ]] — 出典を共有
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 出典を共有
+- [[human-priming|プライミング効果]] — 出典を共有
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同分野の近傍
+- [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

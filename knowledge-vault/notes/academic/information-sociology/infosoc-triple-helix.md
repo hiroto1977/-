@@ -30,6 +30,11 @@ aliases:
 - [Journal of Innovation and Entrepreneurship (Springer) — The Triple Helix model 論考](https://innovation-entrepreneurship.springeropen.com/articles/10.1186/s13731-017-0066-z) `学術`
 - [L. Leydesdorff — The Triple Helix of University-Industry-Government Relations](https://www.leydesdorff.net/th2/) `学術`
 
+## 関連概念
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同分野の近傍
+- [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

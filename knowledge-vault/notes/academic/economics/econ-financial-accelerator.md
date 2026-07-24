@@ -30,6 +30,18 @@ aliases:
 - [Bernanke, Gertler & Gilchrist, "The Financial Accelerator and the Flight to Quality" (NBER WP 4789, 1996)](https://www.nber.org/system/files/working_papers/w4789/w4789.pdf) `学術`
 - [Bernanke, Gertler & Gilchrist, "The Financial Accelerator in a Quantitative Business Cycle Framework" (Handbook of Macroeconomics, 1999)](https://faculty.wcas.northwestern.edu/lchrist/course/Czech/BGG%201999%20Handbook%20chapter.pdf) `学術`
 
+## 関連概念
+- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
+- [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-bagehot-lender-last-resort|最後の貸し手とバジョットの原則——金融危機における中央銀行の役割]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

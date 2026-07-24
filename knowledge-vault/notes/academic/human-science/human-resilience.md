@@ -31,6 +31,18 @@ aliases:
 - [Masten A.S. (2001) “Ordinary magic: Resilience processes in development,” American Psychologist（査読論文、PubMed）](https://pubmed.ncbi.nlm.nih.gov/11315249/) `学術`
 - [Werner E.E. — Risk, resilience, and recovery: Perspectives from the Kauai Longitudinal Study, Development and Psychopathology（Cambridge、査読誌）](https://www.cambridge.org/core/journals/development-and-psychopathology/article/abs/risk-resilience-and-recovery-perspectives-from-the-kauai-longitudinal-study/DC3C3F10587A1A7D04C0310270717B3E) `学術`
 
+## 関連概念
+- [[human-resilience-theory-masten|レジリエンス理論——逆境からの回復力と「普通の魔法」]] — 語彙が近い
+- [[human-developmental-psychopathology-cicchetti|発達精神病理学——正常と異常の発達的連続性と多重決定性]] — 同じ思想家
+- [[human-resilience-adversity-luthar|レジリエンスと逆境適応の発達心理学——リスク・保護因子の動態モデル（ルサール）]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

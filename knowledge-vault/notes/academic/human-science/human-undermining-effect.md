@@ -30,6 +30,18 @@ aliases:
 - [Deci, Koestner & Ryan (1999) “A Meta-Analytic Review...”（University of Washington ホスト、Psychological Bulletin）](https://depts.washington.edu/techdocs/papers/deciExtrinsicRewardsAndIntrinsicMotivation99.pdf) `学術`
 - [PMC収載のレビュー論文（過正当化効果の定量的レビュー、Deci 1971・Lepper et al. 1973を引用）](https://pmc.ncbi.nlm.nih.gov/articles/PMC5386788/) `学術`
 
+## 関連概念
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
+- [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

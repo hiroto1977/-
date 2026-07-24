@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia “Technological determinism” — ヴェブレンによる語の起源・マルクス・ハード/ソフト区別](https://en.wikipedia.org/wiki/Technological_determinism) `リファレンス`
 - [Karl Marx, The Poverty of Philosophy (1847), Ch.2（marxists.org 一次資料）— 手挽き臼/蒸気臼の一節](https://www.marxists.org/archive/marx/works/1847/poverty-philosophy/ch02.htm) `リファレンス`
 
+## 関連概念
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 同じ思想家
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
+- [[econ-fundamental-marxian-theorem-morishima|マルクスの基本定理——利潤の正は労働搾取の正と同値である]] — 同じ思想家
+- [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+- [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — 同じ思想家
+- [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

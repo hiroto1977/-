@@ -31,6 +31,15 @@ aliases:
 - [Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）](https://spectrum.ieee.org/metcalfes-law-is-wrong) `学術`
 - [University of Minnesota Experts（Odlyzko所属大学による同論文の書誌）](https://experts.umn.edu/en/publications/metcalfes-law-is-wrong/) `学術`
 
+## 関連概念
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 語彙が近い
+- [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 同じ思想家
+- [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 出典を共有
+- [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 出典を共有
+- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
+- [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — 同分野の近傍
+- [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

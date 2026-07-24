@@ -29,6 +29,16 @@ aliases:
 - [MIT Open Encyclopedia of Cognitive Science — Synesthesia](https://oecs.mit.edu/pub/rma3jjdk/release/1) `学術`
 - [Cytowic, R. E. (1989) Synesthesia: A Union of the Senses, Springer](https://link.springer.com/book/10.1007/978-1-4612-3542-2) `学術`
 
+## 関連概念
+- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同じ思想家
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同じ思想家
+- [[infosoc-wisdom-of-crowds|群衆の叡智]] — 同じ思想家
+- [[econ-public-goods-game|公共財ゲーム]] — 出典を共有
+- [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 出典を共有
+- [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 出典を共有
+- [[human-change-blindness-simons|変化盲——視覚環境の大規模変化に気づかない知覚的失敗]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

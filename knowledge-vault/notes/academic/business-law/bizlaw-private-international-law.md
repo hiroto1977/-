@@ -29,6 +29,11 @@ aliases:
 - [e-Gov法令検索「法の適用に関する通則法（平成18年法律第78号）」](https://laws.e-gov.go.jp/law/418AC0000000078) `公的`
 - [国際私法学会（Private International Law Association of Japan）公式サイト](http://www.pilaj.jp/) `学術`
 
+## 関連概念
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
+- [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 同じ思想家
+- [[bizlaw-lex-loci-delicti|不法行為地法主義（Lex Loci Delicti）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

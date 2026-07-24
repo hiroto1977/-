@@ -29,6 +29,18 @@ aliases:
 - [Ostrom, E. (1990) "Governing the Commons", Cambridge University Press（コモンズ・ガバナンスの原典）](https://www.cambridge.org/core/books/governing-the-commons/7AB7AE11BADA84409C34815CC288CD79) `学術`
 - [Hess, C. & Ostrom, E. eds. (2007) "Understanding Knowledge as a Commons", MIT Press](https://direct.mit.edu/books/edited-volume/3807/Understanding-Knowledge-as-a-CommonsFrom-Theory-to) `学術`
 
+## 関連概念
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 語彙が近い
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
+- [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
+- [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

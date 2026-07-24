@@ -29,6 +29,18 @@ aliases:
 - [Skitka, Mosier & Burdick (1999) "Does automation bias decision-making?" International Journal of Human-Computer Studies 51(5)（ScienceDirect・主要実証論文）](https://www.sciencedirect.com/science/article/pii/S1071581999902456) `学術`
 - [APA Monitor on Psychology (2023) — "Trusting algorithms"（AIへの過信とオートメーション・バイアスの現代的議論）](https://www.apa.org/monitor/2023/01/trends-trusting-algorithms) `リファレンス`
 
+## 関連概念
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+- [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 出典を共有
+- [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 出典を共有
+- [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

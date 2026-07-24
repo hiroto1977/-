@@ -29,6 +29,10 @@ aliases:
 - [Encyclopaedia Britannica — "Industry 4.0"（第四次産業革命・AI・IoT・スマートファクトリーの定義と社会的影響）](https://www.britannica.com/technology/Industry-4-0) `リファレンス`
 - [World Economic Forum — Klaus Schwab "The Fourth Industrial Revolution: what it means, how to respond"（2016年1月、概念の一次提示）](https://www.weforum.org/agenda/2016/01/the-fourth-industrial-revolution-what-it-means-and-how-to-respond/) `メディア`
 
+## 関連概念
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同分野の近傍
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

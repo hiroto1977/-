@@ -30,6 +30,11 @@ aliases:
 - [公正取引委員会・中小企業庁 説明資料（令和6年11月1日施行・60日支払・明示義務）](https://www.chusho.meti.go.jp/keiei/torihiki/download/freelance/law_02.pdf) `公的`
 - [日本法令索引 令和5年5月12日法律第25号](https://hourei.ndl.go.jp/simple/detail?lawId=0000160208) `リファレンス`
 
+## 関連概念
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 分野横断
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 同分野の近傍
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [国税庁 確定申告の手引き（損失申告用）](https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2024/pdf/003.pdf) `公的`
 - [国税庁 A1-4 純損失の繰戻し還付請求](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/23200002.htm) `公的`
 
+## 関連概念
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 語彙が近い
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+- [[tax-rd-credit|研究開発税制（試験研究費の税額控除）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

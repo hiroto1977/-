@@ -36,6 +36,12 @@ prefecture
 - [京都産業21 同補助金・奨励金 案内](https://www.ki21.jp/subsidy/25keiei/) `運営団体`
 - [京都産業21 補助金トップ](https://www.ki21.jp/subsidy/) `運営団体`
 
+## 関連概念
+- [[labor-collective-bargaining|団体交渉拒否の禁止（労働組合法7条）]] — 出典を共有
+- [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]] — 同分野の近傍
+- [[subsidy-kanagawa|中小企業生産性向上促進事業費補助金（神奈川県）]] — 同分野の近傍
+- [[subsidy-tourism-revitalization|地域一体となった観光地・観光産業の再生・高付加価値化事業（観光庁）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

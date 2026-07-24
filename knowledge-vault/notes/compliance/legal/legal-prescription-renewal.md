@@ -30,6 +30,13 @@ aliases:
 - [e-Gov法令検索 民法（147条〜152条）](https://laws.e-gov.go.jp/law/129AC0000000089/20200401_429AC0000000044/) `公的`
 - [消滅時効の民法改正の概要 解説](https://www.businesslawyers.jp/practices/226) `メディア`
 
+## 関連概念
+- [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 同分野の近傍
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 同分野の近傍
+- [[legal-land-lease-right|借地借家法における借地権]] — 同分野の近傍
+- [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

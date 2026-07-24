@@ -30,6 +30,18 @@ aliases:
 - [Backwardation — Investopedia](https://www.investopedia.com/terms/b/backwardation.asp) `リファレンス`
 - [Contango — Investopedia](https://www.investopedia.com/terms/c/contango.asp) `リファレンス`
 
+## 関連概念
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
+- [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

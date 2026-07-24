@@ -30,6 +30,18 @@ aliases:
 - [クレアール司法書士講座 民法第413条【受領遅滞】解説](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0413-00/) `メディア`
 - [tek-law 民法第413条の2（履行遅滞中又は受領遅滞中の履行不能と帰責事由）](https://tek-law.jp/civil-code/claims/general-provisions/effects-of-claims/liability-for-non-performance/article-413-2/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-tender-of-performance|弁済の提供（民法492条・493条）]] — 語彙が近い
+- [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]] — 語彙が近い
+- [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 出典を共有
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 出典を共有
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
+- [[bizlaw-earnest-money|手付（民法557条）]] — 出典を共有
+- [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 出典を共有
+- [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

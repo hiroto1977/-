@@ -32,6 +32,18 @@ Thomas C. Powell ／ Dan Lovallo ／ Craig G. Fox ／ Giovanni Gavetti ／ Danie
 - [Lovallo & Sibony, "The Case for Behavioral Strategy", Harvard Business Review (2010)](https://hbr.org/2010/06/the-case-for-behavioral-strategy) `メディア`
 - [Encyclopaedia Britannica — Behavioral Economics (行動経済学・行動戦略の理論的基盤)](https://www.britannica.com/topic/behavioral-economics) `リファレンス`
 
+## 関連概念
+- [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]] — 語彙が近い
+- [[econ-behavioral-finance-kahneman|行動ファイナンス理論（認知バイアスと意思決定）]] — 同じ思想家
+- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

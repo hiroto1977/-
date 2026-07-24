@@ -31,6 +31,17 @@ Sorelle A. Friedler ／ Alexandra Chouldechova ／ Andrew D. Selbst
 - [Selbst et al. (2019) — Fairness and Abstraction in Sociotechnical Systems, FAT*](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3265913) `学術`
 - [Stanford Encyclopedia of Philosophy — Algorithmic Fairness](https://plato.stanford.edu/entries/algorithmic-fairness/) `リファレンス`
 
+## 関連概念
+- [[infosoc-web3|Web3]] — 出典を共有
+- [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同分野の近傍
+- [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同分野の近傍
+- [[infosoc-profiling|プロファイリングと自動意思決定]] — 同分野の近傍
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 同分野の近傍
+- [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

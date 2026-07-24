@@ -31,6 +31,12 @@ aliases:
 - [Federal Reserve Bank of Cleveland — “An Unstable Okun’s Law”（係数の不安定性）](https://www.clevelandfed.org/publications/economic-commentary/2012/ec-201208-an-unstable-okuns-law-not-the-best-rule-of-thumb) `公的`
 - [Laurence M. Ball et al., “Okun’s Law: Fit at Fifty?” NBER Working Paper No. 18668](https://www.nber.org/system/files/working_papers/w18668/w18668.pdf) `学術`
 
+## 関連概念
+- [[econ-greshams-law|グレシャムの法則]] — 出典を共有
+- [[econ-menu-costs|メニューコスト]] — 出典を共有
+- [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同分野の近傍
+- [[econ-implicit-contract-theory|暗黙的契約理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

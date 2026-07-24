@@ -32,6 +32,17 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [Tirole, J. (2014). Market failures and public policy. Nobel Prize Lecture / American Economic Review, 104(6), 1609-1652.](https://doi.org/10.1257/aer.104.6.1609) `学術`
 - [Srnicek, N. (2017). Platform Capitalism. Polity Press.](https://doi.org/10.1111/1467-954X.12408) `学術`
 
+## 関連概念
+- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 語彙が近い
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
+- [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 同じ思想家
+- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [税関 関税の納税義務者](https://www.customs.go.jp/tetsuzuki/c-answer/imtsukan/1103_jr.htm) `公的`
 - [MIPRO 関税率の種類](https://www.mipro.or.jp/Import/qanda/trade/q04.html) `メディア`
 
+## 関連概念
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 語彙が近い
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-pmd-act|薬機法（医薬品医療機器等法）]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

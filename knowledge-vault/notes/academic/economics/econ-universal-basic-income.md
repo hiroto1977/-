@@ -29,6 +29,18 @@ aliases:
 - [OECD (2017) "Basic Income as a Policy Option: Can it Add Up?"（制度類型・財政影響・労働供給効果の国際比較）](https://www.oecd.org/els/soc/Basic-Income-Policy-Option-2017.pdf) `公的`
 - [BIEN（Basic Income Earth Network）— UBIの定義・歴史・国際研究動向（1986年設立の学術ネットワーク）](https://basicincome.org/basic-income/) `リファレンス`
 
+## 関連概念
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — 同じ思想家
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
+- [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — 同じ思想家
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

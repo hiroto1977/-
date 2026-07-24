@@ -30,6 +30,12 @@ aliases:
 - [Encyclopedia.com — Harris-Todaro Model](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/harris-todaro-model) `リファレンス`
 - [Todaro paradox (Wikipedia)](https://en.wikipedia.org/wiki/Todaro_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
+- [[econ-kuznets-curve|クズネッツ曲線]] — 同分野の近傍
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

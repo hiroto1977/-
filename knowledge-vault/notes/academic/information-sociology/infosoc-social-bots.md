@@ -31,6 +31,18 @@ aliases:
 - [Oxford Internet Institute (Howard & Kollanyi) — Brexit/計算プロパガンダにおける政治ボット](https://www.oii.ox.ac.uk/blog/bots-strongerin-and-brexit-computational-propaganda-during-the-uk-eu-referendum) `学術`
 - [Ferrara, “Social bot detection in the age of ChatGPT,” First Monday (2023) — LLM時代の検出課題](https://firstmonday.org/ojs/index.php/fm/article/download/13185/11042) `学術`
 
+## 関連概念
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 出典を共有
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
+- [[infosoc-technological-momentum|技術的モメンタム]] — 出典を共有
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
+- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
+- [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

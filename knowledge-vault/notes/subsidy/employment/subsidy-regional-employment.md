@@ -36,6 +36,12 @@ national
 - [厚生労働省 地域雇用開発助成金 パンフレット](https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/dl/chikikoyoukaihatu.pdf) `公的`
 - [北海道 地域雇用開発助成金 案内](https://www.pref.hokkaido.lg.jp/kz/rkr/chikaikin.html) `自治体`
 
+## 関連概念
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 語彙が近い
+- [[subsidy-hokkaido|中小企業競争力強化促進事業（北海道）]] — 出典を共有
+- [[tax-real-estate-acquisition|不動産取得税]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

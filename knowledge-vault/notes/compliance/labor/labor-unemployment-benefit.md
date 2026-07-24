@@ -30,6 +30,15 @@ aliases:
 - [厚生労働省 基本手当・再就職手当 Q&A](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000139508.html) `公的`
 - [石川労働局 雇用保険（基本手当）Q&A](https://jsite.mhlw.go.jp/ishikawa-roudoukyoku/content/contents/001763032.pdf) `公的`
 
+## 関連概念
+- [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 語彙が近い
+- [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 語彙が近い
+- [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 分野横断
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 出典を共有
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 出典を共有
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 出典を共有
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

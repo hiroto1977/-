@@ -30,6 +30,18 @@ aliases:
 - [消費者庁 訪問販売](https://www.no-trouble.caa.go.jp/what/doortodoorsales/) `公的`
 - [滋賀県 クーリング・オフ](https://www.pref.shiga.lg.jp/shohi/105947.html) `自治体`
 
+## 関連概念
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 語彙が近い
+- [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 語彙が近い
+- [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 語彙が近い
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 語彙が近い
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 語彙が近い
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 分野横断
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
+- [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

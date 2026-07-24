@@ -30,6 +30,12 @@ Marc J. Melitz／Elhanan Helpman／Andrew B. Bernard／Thierry Mayer／Marc-Andr
 - [Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316](https://doi.org/10.1162/0033553041382139) `学術`
 - [Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130](https://doi.org/10.1257/jel.45.1.39) `学術`
 
+## 関連概念
+- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル——企業の異質性と貿易による選別効果]] — 語彙が近い
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 同じ思想家
+- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]] — 同じ思想家
+- [[econ-kaldor-verdoorn|ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

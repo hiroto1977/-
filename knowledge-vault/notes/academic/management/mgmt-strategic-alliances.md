@@ -31,6 +31,11 @@ aliases:
 - [Yoshino & Rangan 1995 — Strategic Alliances: An Entrepreneurial Approach to Globalization, Harvard Business School Press](https://www.worldcat.org/isbn/9780875846521) `リファレンス`
 - [Doz & Hamel 1998 — Alliance Advantage: The Art of Creating Value through Partnering, Harvard Business School Press](https://www.worldcat.org/isbn/9780875847429) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — 同じ思想家
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

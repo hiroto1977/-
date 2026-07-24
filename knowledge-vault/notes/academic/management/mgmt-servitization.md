@@ -29,6 +29,11 @@ aliases:
 - [Vandermerwe & Rada (1988) Servitization of Business, European Management Journal 6(4):314-324](https://www.sciencedirect.com/science/article/abs/pii/S0263237388900333) `学術`
 - [Andy Neely (Cambridge) What is Servitization? — PSS定義・サービス化のパラドックス](http://andyneely.blogspot.com/2013/11/what-is-servitization.html) `学術`
 
+## 関連概念
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
+- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 同分野の近傍
+- [[mgmt-exploration-exploitation|知の探索と知の深化（探索と活用）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

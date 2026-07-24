@@ -31,6 +31,18 @@ aliases:
 - [American Psychological Association「Christina Maslach: The pioneer behind burnout research」（MBIと3次元の体系化）](https://www.apa.org/members/content/burnout-research) `リファレンス`
 - [Wikipedia「Maslach Burnout Inventory」（情緒的消耗感・脱人格化・個人的達成感の低下）](https://en.wikipedia.org/wiki/Maslach_Burnout_Inventory) `リファレンス`
 
+## 関連概念
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 語彙が近い
+- [[human-boreout|ボアアウト（退屈燃え尽き症候群）]] — 語彙が近い
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 出典を共有
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

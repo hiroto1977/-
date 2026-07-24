@@ -31,6 +31,13 @@ aliases:
 - [Greater Good Science Center, UC Berkeley — What Is Emotional Labor](https://greatergood.berkeley.edu/article/item/what_is_emotional_labor_and_why_does_it_matter) `学術`
 - [PMC査読論文 — 感情労働・バーンアウト・離職意図（看護職、感情的不協和の帰結）](https://pmc.ncbi.nlm.nih.gov/articles/PMC7078559/) `学術`
 
+## 関連概念
+- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
+- [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 出典を共有
+- [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
+- [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同分野の近傍
+- [[human-positive-youth-development-lerner|ポジティブ青少年発達——ラーナーの5C理論と強みに基づく青年期研究]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

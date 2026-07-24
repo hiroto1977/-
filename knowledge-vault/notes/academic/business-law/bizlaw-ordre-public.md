@@ -29,6 +29,11 @@ Friedrich Carl von Savigny（System des heutigen Römischen Rechts Bd.VIII, 1849
 - [e-Gov法令検索 — 法の適用に関する通則法（平成18年法律第78号）第42条（外国法適用の公序条項）](https://laws.e-gov.go.jp/law/418AC0000000078) `公的`
 - [Convention on the Recognition and Enforcement of Foreign Arbitral Awards (New York, 1958) — UNCITRAL公式テキスト, Article V(2)(b)](https://www.newyorkconvention.org/11165/web/files/original/1/5/15189.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

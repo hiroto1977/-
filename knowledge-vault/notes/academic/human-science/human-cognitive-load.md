@@ -31,6 +31,12 @@ aliases:
 - [InstructionalDesign.org「Cognitive Load Theory (John Sweller)」（理論概要・外在性負荷削減）](https://www.instructionaldesign.org/theories/cognitive-load/) `リファレンス`
 - [Chandler & Sweller, "The split-attention effect…", British Journal of Educational Psychology（Wiley 査読誌）](https://bpspsychub.onlinelibrary.wiley.com/doi/abs/10.1111/j.2044-8279.1992.tb01017.x) `学術`
 
+## 関連概念
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 出典を共有
+- [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同分野の近傍
+- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,12 @@ William J. Becker ／ Russell Cropanzano ／ Carl Senior ／ Nick Lee ／ Colin 
 - [Sanfey (2007) "Social Decision-Making: Insights from Game Theory and Neuroscience" — Nature Reviews Neuroscience](https://doi.org/10.1038/nrn2357) `学術`
 - [Waldman et al. (2014) "Leadership and Neuroscience" — Leadership Quarterly](https://doi.org/10.1016/j.leaqua.2014.06.005) `学術`
 
+## 関連概念
+- [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
+- [[mgmt-social-exchange-theory|社会的交換理論]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同分野の近傍
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

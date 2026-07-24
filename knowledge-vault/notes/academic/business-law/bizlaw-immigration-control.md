@@ -29,6 +29,11 @@ aliases:
 - [e-Gov法令検索 — 出入国管理及び難民認定法（昭和26年政令第319号）](https://elaws.e-gov.go.jp/document?lawid=326CO0000000319) `公的`
 - [出入国在留管理庁 — 新たな外国人材の受入れ（2018年改正の概要）](https://www.moj.go.jp/isa/laws/h30_kaisei.html) `公的`
 
+## 関連概念
+- [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 語彙が近い
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

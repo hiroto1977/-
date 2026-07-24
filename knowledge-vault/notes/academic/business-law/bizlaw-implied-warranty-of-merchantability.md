@@ -32,6 +32,18 @@ Karl Nickerson Llewellyn ／ William A. Hawkland ／ James J. White ／ Robert S
 - [Implied Warranties Under the UCC — Duke Law Journal](https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=3444&context=dlj) `学術`
 - [Uniform Law Commission — UCC Article 2 (Sales) Overview](https://www.uniformlaws.org/committees/community-home?CommunityKey=3c4f4fd8-258d-4012-b0b2-e79c5c98c44d) `リファレンス`
 
+## 関連概念
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 語彙が近い
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同じ思想家
+- [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

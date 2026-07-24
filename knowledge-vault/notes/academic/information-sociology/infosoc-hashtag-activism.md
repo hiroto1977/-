@@ -30,6 +30,18 @@ aliases:
 - [EBSCO Research Starters — Hashtag Activism](https://www.ebsco.com/research-starters/social-sciences-and-humanities/hashtag-activism) `リファレンス`
 - [TIME — Black Lives Matter founders Garza, Cullors, Tometi (2013)](https://time.com/5793789/black-lives-matter-founders-100-women-of-the-year/) `メディア`
 
+## 関連概念
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+- [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — 出典を共有
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
+- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

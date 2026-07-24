@@ -30,6 +30,18 @@ Karl Llewellyn（UCC起草主任）／E. Allan Farnsworth（Restatement報告者
 - [Transatlantic Financing Corp. v. United States, 363 F.2d 312 (D.C. Cir. 1966)](https://law.justia.com/cases/federal/appellate-courts/F2/363/312/264117/) `リファレンス`
 - [Camero (2015) Mission Impracticable: The Impossibility of Commercial Impracticability, 13 U.N.H. L. Rev.](https://scholars.unh.edu/unh_lr/vol13/iss1/2/) `学術`
 
+## 関連概念
+- [[bizlaw-commercial-impracticability-ucc|商事上の履行困難性——UCC第2-615条と予見不能なリスクの配分]] — 語彙が近い
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 同じ思想家
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同じ思想家
+- [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

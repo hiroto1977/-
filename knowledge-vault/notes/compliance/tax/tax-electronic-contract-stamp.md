@@ -30,6 +30,13 @@ aliases:
 - [参議院 印紙税に関する答弁書（平成17年）](https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm) `公的`
 - [福岡国税局 注文請書を電子メール送信した場合の印紙税](https://www.nta.go.jp/about/organization/fukuoka/bunshokaito/inshi_sonota/081024/01.htm) `公的`
 
+## 関連概念
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 語彙が近い
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 語彙が近い
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 分野横断
+- [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有
+- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,10 @@ prefecture
 - [観音寺市 香川県未来投資応援補助金の案内](https://www.city.kanonji.kagawa.jp/soshiki/21/59935.html) `自治体`
 - [高松商工会議所 香川県未来投資応援補助金について](https://www.takacci.or.jp/news/news-16254/) `運営団体`
 
+## 関連概念
+- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 同分野の近傍
+- [[subsidy-okinawa|沖縄県産業振興基金事業補助金（沖縄県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

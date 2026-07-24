@@ -29,6 +29,11 @@ aliases:
 - [Eisenhower Presidential Library and Museum — Eisenhower Quotes（大統領図書館による引用の一次資料）](https://www.eisenhowerlibrary.gov/eisenhower/eisenhower-quotes) `公的`
 - [FranklinCovey — The 7 Habits of Highly Effective People（コヴィーによる第3の習慣・緊急/重要マトリクスの公式解説）](https://www.franklincovey.com/the-7-habits/) `リファレンス`
 
+## 関連概念
+- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
+- [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — 同分野の近傍
+- [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

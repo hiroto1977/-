@@ -30,6 +30,10 @@ Alvin Toffler ／ George Ritzer ／ Nathan Jurgenson
 - [Ritzer (2014) Prosumption: Evolution, Revolution, or Eternal Return of the Same? — Sociology](https://doi.org/10.1177/0038038513479755) `学術`
 - [Wikipedia — Prosumer](https://en.wikipedia.org/wiki/Prosumer) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

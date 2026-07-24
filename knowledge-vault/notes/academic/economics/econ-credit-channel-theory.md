@@ -30,6 +30,17 @@ Ben Bernanke ／ Mark Gertler ／ Simon Gilchrist ／ Alan Blinder
 - [Bernanke, Gertler, & Gilchrist "The Financial Accelerator..." NBER Working Paper 6455, 1998](https://www.nber.org/papers/w6455) `学術`
 - [信用経路 — みずほ証券ファイナンス用語集](https://glossary.mizuho-sc.com/faq/show/1217?site_domain=default) `リファレンス`
 
+## 関連概念
+- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 語彙が近い
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 語彙が近い
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 語彙が近い
+- [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
+- [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
+- [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
+- [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
+- [[econ-seigniorage|シニョリッジ（通貨発行益）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [国税庁 65万円控除の適用要件](https://www.keisan.nta.go.jp/r6yokuaru_sp/cat2/cat26/cat267/scid1688.html) `公的`
 - [freee 青色申告特別控除の要件](https://www.freee.co.jp/kb/kb-blue-return/requirement/) `メディア`
 
+## 関連概念
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
+- [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
+- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

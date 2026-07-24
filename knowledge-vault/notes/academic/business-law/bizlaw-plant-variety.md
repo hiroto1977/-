@@ -30,6 +30,18 @@ aliases:
 - [国立国会図書館 日本法令索引「種苗法（平成10年法律第83号）」](https://hourei.ndl.go.jp/simple/detail?lawId=0000084232) `公的`
 - [日本弁理士会「植物新品種の保護」](https://www.jpaa.or.jp/nousui-ip/newvarieties.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-geographical-indication|地理的表示法（GI法）]] — 出典を共有
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
+- [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
+- [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
+- [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+- [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 同分野の近傍
+- [[bizlaw-structure-liability|工作物責任（民法717条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

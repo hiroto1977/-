@@ -30,6 +30,12 @@ aliases:
 - [法務省 民法（債権法）改正について](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 - [民法96条 詐欺・強迫 解説](https://www.agaroot.jp/shiho/column/fraud-duress/) `メディア`
 
+## 関連概念
+- [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]] — 語彙が近い
+- [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 同分野の近傍
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
+- [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

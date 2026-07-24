@@ -30,6 +30,18 @@ aliases:
 - [Harry G. Johnson, "Optimum Tariffs and Retaliation," Review of Economic Studies (1953-54)](https://academic.oup.com/restud/article-abstract/21/2/142/1555371) `学術`
 - [Richmond Fed Economic Review (1987) — Classical and Neoclassical Roots of the Theory of Optimum Tariffs](https://www.richmondfed.org/~/media/richmondfedorg/publications/research/economic_review/1987/pdf/er730402.pdf) `学術`
 
+## 関連概念
+- [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]] — 語彙が近い
+- [[econ-bilateral-monopoly|双方独占]] — 同じ思想家
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+- [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
+- [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同じ思想家
+- [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
+- [[econ-expectations-hypothesis|金利の期間構造の期待仮説]] — 出典を共有
+- [[econ-financial-repression|金融抑圧]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ Edward H. Bowman ／ Dileep Hurry ／ Rita Gunther McGrath ／ Lenos Trigeorgis
 - [McGrath (1997) A Real Options Logic for Initiating Technology Positioning Investments — Academy of Management Review](https://www.semanticscholar.org/paper/A-Real-Options-Logic-for-Initiating-Technology-McGrath/bf72148c8b36d0e1951937b045b5bf682a7a7345) `学術`
 - [Trigeorgis & Reuer (2017) Real Options Theory in Strategic Management — Strategic Management Journal](https://giesbusiness.illinois.edu/josephm/BA549_Fall%202018/Session%207/Trigeorgis%20and%20Reuer%20(2017).pdf) `リファレンス`
 
+## 関連概念
+- [[mgmt-freemium|フリーミアム]] — 同分野の近傍
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

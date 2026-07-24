@@ -30,6 +30,14 @@ aliases:
 - [金融庁 疑わしい取引の届出手続き](https://www.fsa.go.jp/str/tetuzuki/index.html) `公的`
 - [経済産業省 犯罪収益移転防止法関係](https://www.meti.go.jp/policy/economy/consumer/credit/anti_money_laundering.html) `公的`
 
+## 関連概念
+- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 語彙が近い
+- [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
+- [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

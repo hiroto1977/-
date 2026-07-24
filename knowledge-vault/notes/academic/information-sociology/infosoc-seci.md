@@ -30,6 +30,18 @@ aliases:
 - [Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation. Organization Science, 5, 14-37（書誌）](https://www.scirp.org/reference/referencespapers?referenceid=1392655) `学術`
 - [Wikipedia: SECI model of knowledge dimensions](https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions) `リファレンス`
 
+## 関連概念
+- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 語彙が近い
+- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 語彙が近い
+- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 分野横断
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 分野横断
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
+- [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

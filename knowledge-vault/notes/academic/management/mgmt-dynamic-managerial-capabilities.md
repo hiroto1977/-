@@ -30,6 +30,18 @@ aliases:
 - [Helfat & Martin (2015) Dynamic Managerial Capabilities: Review and Assessment — Journal of Management 41(5)](https://journals.sagepub.com/doi/10.1177/0149206314561301) `学術`
 - [Oxford Research Encyclopedia — Dynamic Managerial Capabilities](https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-20) `リファレンス`
 
+## 関連概念
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 語彙が近い
+- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 語彙が近い
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

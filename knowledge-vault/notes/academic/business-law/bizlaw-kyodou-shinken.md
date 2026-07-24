@@ -29,6 +29,10 @@ aliases:
 - [法務省 — 民法等の一部を改正する法律（令和6年法律第49号）の概要（共同親権導入の政府解説）](https://www.moj.go.jp/MINJI/minji07_00311.html) `公的`
 - [e-Gov法令検索 — 民法（第819条 離婚後の親権、改正後条文）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 
+## 関連概念
+- [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

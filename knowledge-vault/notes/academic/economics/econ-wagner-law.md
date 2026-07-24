@@ -30,6 +30,11 @@ aliases:
 - [「公共経費膨脹の法則—A・ワグナー法則の検討—」明治大学政治経済研究所](https://meiji.repo.nii.ac.jp/record/3219/files/seikeironso_32_3_61.pdf) `学術`
 - [Wikipedia "Wagner's law"](https://en.wikipedia.org/wiki/Wagner%27s_law) `リファレンス`
 
+## 関連概念
+- [[bizlaw-change-of-circumstances|事情変更の原則]] — 出典を共有
+- [[econ-twin-deficits|双子の赤字]] — 同分野の近傍
+- [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

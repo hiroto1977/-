@@ -30,6 +30,18 @@ aliases:
 - [法務省 相続人申告登記について](https://www.moj.go.jp/MINJI/minji05_00602.html) `公的`
 - [政府広報オンライン 不動産の相続登記義務化](https://www.gov-online.go.jp/article/202512/entry-10431.html) `公的`
 
+## 関連概念
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 語彙が近い
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
+- [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 出典を共有
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

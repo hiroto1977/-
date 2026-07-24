@@ -31,6 +31,11 @@ Lawrence Weiskrantz ／ Alan Cowey ／ Nicholas Humphrey
 - [Stanford Encyclopedia of Philosophy: Neuroscience of Consciousness](https://plato.stanford.edu/entries/consciousness-neuroscience/) `リファレンス`
 - [Cowey & Stoerig (1997) blindsight in monkeys, Current Biology](https://www.sciencedirect.com/science/article/abs/pii/S0960982298701394) `学術`
 
+## 関連概念
+- [[human-blindsight|ブラインドサイト（Blindsight）]] — 同じ思想家
+- [[human-psychomotor-vigilance|精神運動覚醒課題（PVT）]] — 同分野の近傍
+- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

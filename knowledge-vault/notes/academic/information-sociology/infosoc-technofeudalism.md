@@ -31,6 +31,15 @@ aliases:
 - [Jacobin (2023) “We’re Still Living Under Capitalism, Not Techno-Feudalism” — 批判](https://jacobin.com/2023/10/cloud-capitalism-technofeudalism-serfs-cloud-big-data-yanis-varoufakis) `メディア`
 - [Yanis Varoufakis, Technofeudalism: What Killed Capitalism (2023) — 概念の主要文献](https://www.goodreads.com/book/show/75560036-technofeudalism) `リファレンス`
 
+## 関連概念
+- [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 語彙が近い
+- [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+- [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
+- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
+- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,14 @@ George Gerbner ／ Larry Gross ／ Michael Morgan
 - [Cultivation in the digital age: social media and streaming research](https://www.tandfonline.com/doi/full/10.1080/08838151.2016.1262920) `学術`
 - [Pew Research on social media consumption patterns](https://www.pewresearch.org/internet/2021/04/07/social-media-use-in-2021/) `リファレンス`
 
+## 関連概念
+- [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同分野の近傍
+- [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

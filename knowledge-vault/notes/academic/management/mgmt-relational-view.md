@@ -30,6 +30,12 @@ aliases:
 - [The Relational View — CBS Research Portal](https://research.cbs.dk/en/publications/the-relational-view/) `学術`
 - [Dyer and Singh: The Relational View — Future of Sourcing](https://futureofsourcing.com/dyer-and-singh-the-relational-view-for-alliances-and-alignment/) `リファレンス`
 
+## 関連概念
+- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
+- [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
+- [[mgmt-value-proposition|バリュープロポジション]] — 同分野の近傍
+- [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,16 @@ aliases:
 - [Wikipedia「Infodemic」— 語源（information+epidemic）・ロスコフ2003年造語](https://en.wikipedia.org/wiki/Infodemic) `リファレンス`
 - [Simon & Camargo (2021) “Autopsy of a metaphor: ... the ‘infodemic’”, New Media & Society（査読論文）](https://journals.sagepub.com/doi/full/10.1177/14614448211031908) `学術`
 
+## 関連概念
+- [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 出典を共有
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 出典を共有
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 出典を共有
+- [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 出典を共有
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,13 @@ aliases:
 - [UCL Institute for Innovation & Public Purpose — Mariana Mazzucato（著者・機関プロフィール）](https://www.ucl.ac.uk/bartlett/public-purpose/people/institute-director-mariana-mazzucato) `学術`
 - [Institute for New Economic Thinking — Value Creation and the Entrepreneurial State（Mazzucato）](https://www.ineteconomics.org/uploads/papers/Mazzucato-Value-Creation-and-the-Entrepreneurial-State-INET-version.pdf) `学術`
 
+## 関連概念
+- [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
+- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — 出典を共有
+- [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 出典を共有
+- [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

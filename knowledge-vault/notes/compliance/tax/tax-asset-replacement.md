@@ -30,6 +30,10 @@ aliases:
 - [国税庁 措置法37条 関係通達](https://www.nta.go.jp/law/tsutatsu/kobetsu/shotoku/sochiho/710826/sanrin/sanjyou/soti37/01.htm) `公的`
 - [事業用資産の買換え特例（令和8年度改正）解説](https://www.fp-soken.or.jp/fpnews/business-fpnews/no559/) `メディア`
 
+## 関連概念
+- [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 語彙が近い
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

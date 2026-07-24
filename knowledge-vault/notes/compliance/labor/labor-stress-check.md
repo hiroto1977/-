@@ -30,6 +30,10 @@ aliases:
 - [アドバンテッジ ストレスチェック義務化 解説](https://www.armg.jp/journal/404-2/) `メディア`
 - [SOMPO ヘルスサポート 解説](https://www.sompo-hs.co.jp/useful/2025/10/000873/) `メディア`
 
+## 関連概念
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 語彙が近い
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

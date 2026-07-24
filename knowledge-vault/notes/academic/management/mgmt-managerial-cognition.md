@@ -30,6 +30,18 @@ James P. Walsh ／ Karl E. Weick ／ Anne Sigismund Huff ／ Joseph F. Porac ／
 - [Porac, Thomas & Baden-Fuller (1989) Competitive Groups as Cognitive Communities — Journal of Management Studies](https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.1989.tb00736.x) `学術`
 - [Fiol & Huff (1992) Maps for Managers — Journal of Management Studies](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1992.tb00665.x) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 語彙が近い
+- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 語彙が近い
+- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
+- [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
+- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
+- [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
+- [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

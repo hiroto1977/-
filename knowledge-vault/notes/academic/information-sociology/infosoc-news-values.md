@@ -30,6 +30,11 @@ aliases:
 - [Harcup & O'Neill, "What is News? News values revisited (again)", Journalism Studies (Taylor & Francis)](https://www.tandfonline.com/doi/abs/10.1080/1461670X.2016.1150193) `学術`
 - [News Values — ReviseSociology](https://revisesociology.com/2017/07/02/news-values/) `リファレンス`
 
+## 関連概念
+- [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 同じ思想家
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同分野の近傍
+- [[infosoc-computational-journalism|計算論的ジャーナリズムとデータ・ドリブン報道の社会学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ aliases:
 - [Siemens (2005) "Connectivism: A Learning Theory for the Digital Age", IJTDL 2(1)（原著論文）](https://www.itdl.org/Journal/Jan_05/article01.htm) `学術`
 - [University of Arkansas Open Textbook — Connectivism（大学教科書）](https://uark.pressbooks.pub/edtech/chapter/elearnspace-connectivism-a-learning-theory-for-the-digital-age/) `学術`
 
+## 関連概念
+- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — 同分野の近傍
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

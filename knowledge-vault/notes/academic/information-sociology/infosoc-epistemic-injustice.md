@@ -29,6 +29,14 @@ aliases:
 - [Fricker (2007) "Epistemic Injustice: Power and the Ethics of Knowing," Oxford University Press（認識的不正義の原典）](https://academic.oup.com/book/32817) `学術`
 - [Internet Encyclopedia of Philosophy — Epistemic Injustice（概念の定義・類型・批判・発展の包括的解説）](https://iep.utm.edu/epistemic-injustice/) `リファレンス`
 
+## 関連概念
+- [[infosoc-hermeneutic-injustice-crerar|解釈的不正義——社会的経験を理解するための概念的資源の不均等配分]] — 同じ思想家
+- [[econ-rawls-justice|ロールズの正義論（公正としての正義）]] — 出典を共有
+- [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
+- [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 出典を共有
+- [[infosoc-epistemic-communities|エピステミック・コミュニティと専門知の流通構造]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

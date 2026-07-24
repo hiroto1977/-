@@ -29,6 +29,14 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Claude Lévi-Strauss（ブリコラージュ・『野生の思考』・神話論の分析）](https://plato.stanford.edu/entries/levi-strauss/) `学術`
 - [Encyclopaedia Britannica — Claude Lévi-Strauss（ブリコラージュ概念の位置づけ・著作解説）](https://www.britannica.com/biography/Claude-Levi-Strauss) `リファレンス`
 
+## 関連概念
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
+- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同分野の近傍
+- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

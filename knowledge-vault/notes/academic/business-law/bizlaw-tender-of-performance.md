@@ -30,6 +30,18 @@ aliases:
 - [京都大学OCW 債権総論 第22回講義 弁済の提供・債権者遅滞（松岡久和）](https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2003_minopu-3_22.pdf) `学術`
 - [Wikibooks 民法第493条（弁済の提供の方法：現実の提供・口頭の提供）](https://ja.wikibooks.org/wiki/民法第493条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — 語彙が近い
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 語彙が近い
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

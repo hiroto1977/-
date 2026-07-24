@@ -30,6 +30,18 @@ aliases:
 - [Dutton & Ashford (1993) Selling Issues to Top Management — ResearchGate](https://www.researchgate.net/publication/234021482_Selling_Issues_to_Top_Management) `学術`
 - [Dutton et al. (2001) Moves That Matter: Issue Selling and Organizational Change — ResearchGate](https://www.researchgate.net/publication/237828497_Moves_That_Matter_Issue_Selling_and_Organizational_Change) `学術`
 
+## 関連概念
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 語彙が近い
+- [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 語彙が近い
+- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
+- [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 同じ思想家
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
+- [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]] — 同分野の近傍
+- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]] — 同分野の近傍
+- [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

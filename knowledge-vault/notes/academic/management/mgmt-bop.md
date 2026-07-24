@@ -30,6 +30,17 @@ C・K・プラハラード／スチュアート・ハート（Prahalad & Hart, 2
 - [University of Michigan Ross — Karnani, The Mirage of Marketing to the Bottom of the Pyramid](https://michiganross.umich.edu/about/100-years/our-impact/2007/mirage-marketing-bottom-pyramid) `学術`
 - [Prahalad & Hart (2002), "The Fortune at the Bottom of the Pyramid," strategy+business](https://www.strategy-business.com/article/11518) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同じ思想家
+- [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 出典を共有
+- [[mgmt-strategic-silence|組織における戦略的沈黙]] — 出典を共有
+- [[mgmt-reverse-innovation|リバース・イノベーション]] — 出典を共有
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 出典を共有
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 出典を共有
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

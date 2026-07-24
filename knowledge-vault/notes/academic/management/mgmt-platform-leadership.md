@@ -29,6 +29,15 @@ aliases:
 - [MITスローン経営大学院 — Michael A. Cusumano 教授プロフィール（Platform Leadership共著者・プラットフォーム戦略研究）](https://mitsloan.mit.edu/faculty/directory/michael-a-cusumano) `学術`
 - [Harvard Business School Publishing — Gawer & Cusumano『Platform Leadership』(2002) 原著](https://hbsp.harvard.edu/product/2264-HTM-ENG) `学術`
 
+## 関連概念
+- [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 語彙が近い
+- [[infosoc-deepfake|ディープフェイク]] — 出典を共有
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 出典を共有
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 出典を共有
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
+- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
+- [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

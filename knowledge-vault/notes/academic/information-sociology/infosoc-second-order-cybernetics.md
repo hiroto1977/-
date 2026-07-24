@@ -31,6 +31,16 @@ Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela
 - [Glanville (2004) The purpose of second-order cybernetics, Kybernetes 33(9/10) 1379-1386](https://www.emerald.com/insight/content/doi/10.1108/03684920410556016/full/html) `学術`
 - [Wikipedia — Second-order cybernetics](https://en.wikipedia.org/wiki/Second-order_cybernetics) `リファレンス`
 
+## 関連概念
+- [[human-embodied-cognition-theory|身体化された認知]] — 同じ思想家
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
+- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
+- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
+- [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[infosoc-cybernetics|サイバネティクス]] — 同分野の近傍
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

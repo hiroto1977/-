@@ -31,6 +31,11 @@ aliases:
 - [EBSCO Research Starters — Parasocial Interactions (Communication & Mass Media)](https://www.ebsco.com/research-starters/communication-and-mass-media/parasocial-interactions) `リファレンス`
 - [Taylor & Francis (Intl. Journal of Adolescence and Youth) — Parasocial relationships, social support and well-being（査読）](https://www.tandfonline.com/doi/full/10.1080/02673843.2025.2480712) `学術`
 
+## 関連概念
+- [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — 同分野の近傍
+- [[infosoc-parasocial-interaction-horton|パラソーシャル相互作用——メディア人物との一方向的疑似関係の形成]] — 同分野の近傍
+- [[infosoc-pseudo-event-boorstin|疑似イベント（ブーアスティン）——報道されるために作られる出来事]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

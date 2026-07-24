@@ -31,6 +31,15 @@ aliases:
 - [Western Sydney University (Pressbooks) — Galbraith (1958): The Dependence Effect](https://westernsydney.pressbooks.pub/criticalanalysis/chapter/galbraith-1958-the-dependence-effect/) `学術`
 - [Montclair State University — Galbraith, “Consumer Behavior and the Dependence Effect”（一次テキスト抜粋）](https://msuweb.montclair.edu/~lebelp/GalbraithDepEffect1958.pdf) `学術`
 
+## 関連概念
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同じ思想家
+- [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+- [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
+- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
+- [[econ-double-coincidence-of-wants|欲望の二重の一致]] — 同分野の近傍
+- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

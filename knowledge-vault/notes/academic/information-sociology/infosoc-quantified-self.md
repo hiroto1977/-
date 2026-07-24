@@ -30,6 +30,17 @@ aliases:
 - [査読誌 Sociology of Health & Illness 書評（Petrakaki, 2017）— ラプトン2016年著作](https://onlinelibrary.wiley.com/doi/10.1111/1467-9566.12495) `学術`
 - [PMC/NIH 査読論文 — ウルフ&ケリーの「self-knowledge through numbers」定義](https://pmc.ncbi.nlm.nih.gov/articles/PMC8896409/) `学術`
 
+## 関連概念
+- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]] — 語彙が近い
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 語彙が近い
+- [[infosoc-quantified-self-lifelogging|数値化される自己（クワンティファイド・セルフ）と自己追跡の社会学]] — 語彙が近い
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
+- [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
+- [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
+- [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
+- [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

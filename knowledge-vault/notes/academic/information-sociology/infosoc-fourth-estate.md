@@ -30,6 +30,18 @@ aliases:
 - [Oxford Internet Institute, University of Oxford — “The Fifth Estate” project (W. H. Dutton)](https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/) `学術`
 - [Word Histories — origin of “the fourth estate”（Carlyle/Burke attribution）](https://wordhistories.net/2016/08/09/the-fourth-estate/) `リファレンス`
 
+## 関連概念
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

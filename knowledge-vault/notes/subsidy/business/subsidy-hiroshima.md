@@ -36,6 +36,13 @@ prefecture
 - [広島県 中小企業支援課](https://www.pref.hiroshima.lg.jp/soshiki/70/index-2.html) `自治体`
 - [広島県 チャレンジ応援事業助成金 解説](https://biz.stayway.jp/hojyo_detail/1495/) `メディア`
 
+## 関連概念
+- [[subsidy-special-disability-allowance|特別障害者手当]] — 出典を共有
+- [[subsidy-nagasaki|長崎県地域産業雇用創出チャレンジ支援事業（長崎県創業支援事業補助金）（長崎県）]] — 出典を共有
+- [[subsidy-saitama-city|さいたま市起業家支援補助金（SCAP連動）]] — 出典を共有
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 同分野の近傍
+- [[subsidy-tokushima|徳島県生産性向上・成長力強化支援事業費補助金（徳島県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

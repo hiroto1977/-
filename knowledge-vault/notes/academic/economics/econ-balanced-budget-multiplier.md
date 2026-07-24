@@ -30,6 +30,18 @@ aliases:
 - [The New Palgrave Dictionary of Economics, "Balanced Budget Multiplier"（Springer / Palgrave Macmillan）](https://link.springer.com/rwe/10.1057/978-1-349-95189-5_412) `リファレンス`
 - [名古屋大学 OpenCourseWare 経済理論I（マクロ経済学）第6回 講義資料（均衡予算乗数=1 の導出）](https://ocw.nagoya-u.jp/files/41/yanagihara06.pdf) `学術`
 
+## 関連概念
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
+- [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — 出典を共有
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+- [[econ-welfare-theorems|厚生経済学の基本定理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ aliases:
 - [消費者庁「電磁的記録によるクーリング・オフに関するQ&A」](https://www.no-trouble.caa.go.jp/qa/coolingoff.html) `公的`
 - [e-Gov法令検索「特定商取引に関する法律」（昭和51年法律第57号）](https://laws.e-gov.go.jp/law/351AC0000000057/) `公的`
 
+## 関連概念
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ Lawrence Weiskrantz（Oxford, 1974/1986/1998 — ブラインドサイト概念�
 - [Weiskrantz, Warrington, Sanders & Marshall (1974) Visual Capacity in the Hemianopic Field — Brain 97(1), pp.709-728](https://academic.oup.com/brain/article-abstract/97/1/709/315495) `学術`
 - [PubMed: Weiskrantz et al. (1974) PMID 4434190](https://pubmed.ncbi.nlm.nih.gov/4434190/) `学術`
 
+## 関連概念
+- [[human-blindsight-weiskrantz|盲視（ブラインドサイト）]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

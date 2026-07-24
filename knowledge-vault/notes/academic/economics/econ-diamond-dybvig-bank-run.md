@@ -29,6 +29,11 @@ Douglas W. Diamond／Philip H. Dybvig
 - [Diamond & Dybvig (1983) Bank Runs, Deposit Insurance, and Liquidity, JPE 91(3):401-419](https://doi.org/10.1086/261155) `学術`
 - [2022年ノーベル経済学賞（Diamond・Dybvig・Bernanke）](https://www.nobelprize.org/prizes/economic-sciences/2022/summary/) `リファレンス`
 
+## 関連概念
+- [[econ-diamond-dybvig-bank-runs|銀行取付モデル（ダイヤモンド＆ディブビッグ）]] — 語彙が近い
+- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同分野の近傍
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

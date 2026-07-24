@@ -29,6 +29,13 @@ aliases:
 - [コトバンク「双子の赤字」](https://kotobank.jp/word/%E5%8F%8C%E5%AD%90%E3%81%AE%E8%B5%A4%E5%AD%97-169395) `リファレンス`
 - [Springer: Ricardian equivalence and twin deficits hypotheses in the euro area](https://link.springer.com/article/10.1007/s40847-015-0013-4) `学術`
 
+## 関連概念
+- [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — 同分野の近傍
+- [[econ-wagner-law|ワグナーの法則]] — 同分野の近傍
+- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同分野の近傍
+- [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

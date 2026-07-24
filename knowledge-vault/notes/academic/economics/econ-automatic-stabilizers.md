@@ -30,6 +30,18 @@ aliases:
 - [IMF Staff Position Note — Automatic Fiscal Stabilizers (2009)](https://www.imf.org/external/pubs/ft/spn/2009/spn0923.pdf) `公的`
 - [Brookings Institution — What are automatic stabilizers?](https://www.brookings.edu/articles/what-are-automatic-stabilizers/) `学術`
 
+## 関連概念
+- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
+- [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 出典を共有
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
+- [[eh-1993|1993年（平成5年）]] — 出典を共有
+- [[infosoc-third-place|サードプレイス]] — 出典を共有
+- [[econ-taylor-rule|テイラールール]] — 出典を共有
+- [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
+- [[eh-2013|2013年（平成25年）]] — 出典を共有
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同分野の近傍
+- [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

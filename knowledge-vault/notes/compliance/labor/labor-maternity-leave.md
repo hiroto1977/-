@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 母性保護規定](https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05i_0011.pdf) `公的`
 - [産前産後休業 解説](https://biz.moneyforward.com/payroll/basic/87784/) `メディア`
 
+## 関連概念
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 語彙が近い
+- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 同分野の近傍
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

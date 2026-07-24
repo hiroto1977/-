@@ -29,6 +29,13 @@ aliases:
 - [McGuire (1964) "Inducing Resistance to Persuasion," Advances in Experimental Social Psychology, Vol.1（接種理論の原典）](https://www.jstor.org/stable/2786372) `学術`
 - [van der Linden et al. (2021) "Inoculating the public against misinformation about climate change," Nature Human Behaviour（誤情報接種の実証）](https://www.nature.com/articles/s41562-021-01070-z) `学術`
 
+## 関連概念
+- [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — 語彙が近い
+- [[infosoc-misinformation-cognitive-science|誤情報の認知科学と信念訂正研究の情報行動論]] — 同じ思想家
+- [[infosoc-misinformation-correction-backfire|誤情報訂正とバックファイア効果の実証研究]] — 同じ思想家
+- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 同分野の近傍
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

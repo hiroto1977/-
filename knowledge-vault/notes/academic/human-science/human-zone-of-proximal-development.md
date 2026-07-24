@@ -30,6 +30,18 @@ aliases:
 - [Simply Psychology — Zone of Proximal Development（MKO・足場かけ・学習が促進される領域）](https://www.simplypsychology.org/zone-of-proximal-development.html) `リファレンス`
 - [Mind, Culture, and Activity（査読誌）— scaffolding metaphor（ウッド／ブルーナー／ロス1976とZPDの関係）](https://www.tandfonline.com/doi/full/10.1080/10749039.2019.1574306) `学術`
 
+## 関連概念
+- [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
+- [[human-cultural-historical-activity-theory-engestrom|文化歴史的活動理論——エンゲストロームの拡張的学習と活動システム分析]] — 同じ思想家
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
+- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同じ思想家
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

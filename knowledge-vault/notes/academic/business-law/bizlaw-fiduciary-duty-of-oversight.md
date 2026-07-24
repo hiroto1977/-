@@ -31,6 +31,18 @@ William T. Allen ／ Leo E. Strine Jr.
 - [Harvard Law School Forum — Caremark and ESG Oversight (2020)](https://corpgov.law.harvard.edu/2020/02/10/caremark-and-esg-oversight/) `学術`
 - [Wikipedia: In re Caremark International Inc. Derivative Litigation](https://en.wikipedia.org/wiki/In_re_Caremark_International_Inc._Derivative_Litigation) `リファレンス`
 
+## 関連概念
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
+- [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

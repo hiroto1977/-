@@ -30,6 +30,10 @@ aliases:
 - [総務省 募集適正基準 告示改正通知（総税市第65号）](https://www.soumu.go.jp/main_content/000955668.pdf) `公的`
 - [山田&パートナーズ ふるさと納税ポイント付与禁止の解説](https://www.yamada-partners.jp/tax-topics/r070929) `メディア`
 
+## 関連概念
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 同分野の近傍
+- [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

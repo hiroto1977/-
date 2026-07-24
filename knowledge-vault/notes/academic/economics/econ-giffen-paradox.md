@@ -30,6 +30,17 @@ aliases:
 - [Wikipedia — Giffen good（定義・歴史・所得効果メカニズム）](https://en.wikipedia.org/wiki/Giffen_good) `リファレンス`
 - [Econlib — Giffen Goods（経済学百科事典）](https://www.econlib.org/library/Enc/GiffenGoods.html) `リファレンス`
 
+## 関連概念
+- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 語彙が近い
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
+- [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [日本年金機構 年金の繰上げ・繰下げ受給](https://www.nenkin.go.jp/service/jukyu/seido/roureinenkin/kuriage-kurisage/20140421-01.html) `公的`
 - [厚生労働省 老齢年金の繰下げ・繰上げ受給](https://www.mhlw.go.jp/stf/nenkin_shikumi_011.html) `公的`
 
+## 関連概念
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 語彙が近い
+- [[bizlaw-employees-pension|厚生年金保険法]] — 出典を共有
+- [[bizlaw-national-pension|国民年金法]] — 出典を共有
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
+- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 出典を共有
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
+- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
+- [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,14 @@ national
 - [資源エネルギー庁 給湯省エネ事業について](https://www.enecho.meti.go.jp/category/saving_and_new/saving/general/housing/kyutokidonyu/kyutodonyuhojo2025.html) `公的`
 - [給湯省エネ事業 補助額・申請方法 解説](https://rehome-navi.com/articles/3637) `メディア`
 
+## 関連概念
+- [[subsidy-mado-renovation|先進的窓リノベ事業]] — 語彙が近い
+- [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]] — 出典を共有
+- [[subsidy-energy-saving-sii|省エネ補助金（省エネルギー投資促進・需要構造転換支援事業等）]] — 出典を共有
+- [[eh-1974|1974年（昭和49年）]] — 出典を共有
+- [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
+- [[subsidy-kosodate-green-housing|子育てグリーン住宅支援事業]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

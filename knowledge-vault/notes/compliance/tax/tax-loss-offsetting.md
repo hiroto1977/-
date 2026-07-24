@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.1391 不動産所得が赤字のときの通算](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1391.htm) `公的`
 - [損益通算 解説](https://biz.moneyforward.com/accounting/basic/18981/) `メディア`
 
+## 関連概念
+- [[tax-income-categories|所得税における所得の10種類の区分]] — 語彙が近い
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

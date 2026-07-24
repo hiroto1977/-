@@ -31,6 +31,18 @@ aliases:
 - [Michelbach, “Deliberative Democracy,” Wiley Encyclopedia of Political Thought（定義・熟議的転回・キーパーソン）](https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118474396.wbept0247) `学術`
 - [Stanford Deliberative Democracy Lab — Deliberative Polling / Fishkin（ミニ・パブリックス・討論型世論調査）](https://deliberation.stanford.edu/publications/journal-articles/deliberative-polling-comes-age-symposium-james-s-fishkin-democracy) `学術`
 
+## 関連概念
+- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同じ思想家
+- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同じ思想家
+- [[econ-rawls-justice|ロールズの正義論（公正としての正義）]] — 同じ思想家
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同じ思想家
+- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
+- [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同じ思想家
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同じ思想家
+- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同じ思想家
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

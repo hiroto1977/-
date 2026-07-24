@@ -30,6 +30,11 @@ aliases:
 - [The Looking Chamber Experiment, Robert Fantz, 1961 — NSUWorks](https://nsuworks.nova.edu/cgi/viewcontent.cgi?article=1115&context=edp) `学術`
 - [Infant Visual Habituation — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2758574/) `学術`
 
+## 関連概念
+- [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 同分野の近傍
+- [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — 同分野の近傍
+- [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

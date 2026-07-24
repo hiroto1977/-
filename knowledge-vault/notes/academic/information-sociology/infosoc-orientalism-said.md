@@ -29,6 +29,10 @@ aliases:
 - [Encyclopaedia Britannica — Orientalism（サイードの定義・植民地的言説・ポストコロニアル理論への影響）](https://www.britannica.com/topic/Orientalism-cultural-attitude) `リファレンス`
 - [Stanford Encyclopedia of Philosophy — Orientalism（サイードの理論的枠組み・批判・継承・ポストコロニアル研究）](https://plato.stanford.edu/entries/orientalism/) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同分野の近傍
+- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

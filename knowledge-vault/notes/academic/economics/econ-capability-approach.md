@@ -31,6 +31,18 @@ aliases:
 - [1998年スウェーデン国立銀行賞（ノーベル経済学賞）受賞: Amartya Sen — NobelPrize.org（公式）](https://www.nobelprize.org/prizes/economic-sciences/1998/summary/) `公的`
 - [Amartya Sen, “Equality of What?”（1979年タナー講義）— Harvard University](https://sen.scholars.harvard.edu/publications/equality-what) `学術`
 
+## 関連概念
+- [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 同じ思想家
+- [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
+- [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同じ思想家
+- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

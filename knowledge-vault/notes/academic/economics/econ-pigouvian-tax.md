@@ -31,6 +31,11 @@ A.C.ピグー『厚生経済学』(1920)／負の外部性に外部費用分を�
 - [Energy Education (University of Calgary) — Pigouvian subsidy](https://energyeducation.ca/encyclopedia/Pigouvian_subsidy) `学術`
 - [Wikipedia — Pigouvian tax](https://en.wikipedia.org/wiki/Pigouvian_tax) `リファレンス`
 
+## 関連概念
+- [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — 出典を共有
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同分野の近傍
+- [[econ-tatonnement|タトヌマン（模索過程）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

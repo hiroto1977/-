@@ -36,6 +36,18 @@ prefecture
 - [21あおもり産業総合支援センター あおもり起業支援事業費補助金](https://www.21aomori.or.jp/topics/25496) `運営団体`
 - [J-Net21 青森県 起業・スタートアップ補助金](https://j-net21.smrj.go.jp/snavi2/articles/184141) `公的`
 
+## 関連概念
+- [[subsidy-tochigi|地域課題解決型創業支援補助金（栃木県）]] — 語彙が近い
+- [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 語彙が近い
+- [[subsidy-shimane|地域課題解決型しまね起業支援事業費補助金（島根県）]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-furusato-designation|ふるさと納税の指定制度（返礼品の基準）]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 出典を共有
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [特許庁 令和元年意匠法改正特設サイト（保護対象拡充・存続期間延長）](https://www.jpo.go.jp/system/design/gaiyo/seidogaiyo/isyou_kaisei_2019.html) `公的`
 - [特許庁 産業財産権法（令和元年改正）解説書 第1章 意匠の定義の見直し](https://www.jpo.go.jp/system/laws/rule/kaisetu/2019/document/2019-03kaisetsu/2019-03kaisetsu-02-01.pdf) `公的`
 
+## 関連概念
+- [[legal-design-right|意匠権（意匠法）]] — 分野横断
+- [[bizlaw-trademark|商標法]] — 出典を共有
+- [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[bizlaw-utility-model|実用新案法]] — 出典を共有
+- [[legal-employee-invention|職務発明（特許法35条）]] — 出典を共有
+- [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 出典を共有
+- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 出典を共有
+- [[bizlaw-patent-system|特許制度（特許法）]] — 出典を共有
+- [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 出典を共有
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

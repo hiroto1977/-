@@ -83,9 +83,13 @@ export function App() {
   const searchRef = useRef<HTMLInputElement>(null);
   const [recents, setRecents] = useState<ServiceId[]>(() => loadIds(RECENTS_KEY));
   const [favorites, setFavorites] = useState<ServiceId[]>(() => loadIds(FAVORITES_KEY));
+  // モバイル/タブレット (≤768px) のドロワー開閉。デスクトップでは
+  // .menu-btn / .sidebar-backdrop が CSS で不可視のため常に無害。
+  const [navOpen, setNavOpen] = useState(false);
   const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
+    professionals: COLLAPSED_BY_DEFAULT.has('professionals'),
     tools: COLLAPSED_BY_DEFAULT.has('tools'),
     integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
   });
@@ -158,6 +162,7 @@ export function App() {
         if (def) {
           setCollapsed((prev) => ({ ...prev, [def.category]: false }));
         }
+        setNavOpen(false); // ページ内リンク遷移でもモバイルのドロワーを閉じる
       }
     }
     window.addEventListener('servicehub:navigate', onNavigate);
@@ -205,6 +210,7 @@ export function App() {
   const grouped = useMemo(() => {
     const out: Record<ServiceCategory, typeof SERVICES> = {
       featured: [],
+      professionals: [],
       tools: [],
       integrations: [],
     };
@@ -219,11 +225,12 @@ export function App() {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }
 
-  /** サービスを選択し、属するカテゴリを展開する。 */
+  /** サービスを選択し、属するカテゴリを展開する。モバイルではドロワーも閉じる。 */
   function selectService(id: ServiceId) {
     setActiveId(id);
     const def = SERVICES.find((s) => s.id === id);
     if (def) setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+    setNavOpen(false);
   }
 
   /** 検索ボックスのキー操作: Enter=先頭ヒット選択、Escape=クリア。 */
@@ -259,7 +266,7 @@ export function App() {
   const activeOrder = SERVICE_ORDER.get(active.id) ?? 0;
   // 設定・ホームは常に開放: 設定は招待コードでの全機能無償化やマスターパスワード等の
   // 基盤機能を含むため、プランでロックしない (ロックすると無償化に辿り着けない)。
-  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home']);
+  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home', 'village']);
   const activeUnlocked = ALWAYS_UNLOCKED.has(active.id) || isServiceUnlocked(plan, activeOrder);
   const requiredPlan = requiredPlanForServiceIndex(activeOrder);
 
@@ -314,7 +321,7 @@ export function App() {
   };
 
   return (
-    <div className="app">
+    <div className={navOpen ? 'app nav-open' : 'app'}>
       <aside className="sidebar">
         <div className="sidebar-header">サービスハブ</div>
         <div className="sidebar-search">
@@ -350,7 +357,7 @@ export function App() {
                   {recentServices.map(renderItem)}
                 </div>
               )}
-              {(['featured', 'tools', 'integrations'] as const).map((cat) => {
+              {(['featured', 'professionals', 'tools', 'integrations'] as const).map((cat) => {
                 const items = grouped[cat];
                 if (items.length === 0) return null;
                 const isCollapsed = collapsed[cat];
@@ -425,8 +432,24 @@ export function App() {
           </div>
         </div>
       </aside>
+      {navOpen && (
+        <div
+          className="sidebar-backdrop"
+          aria-hidden="true"
+          onClick={() => setNavOpen(false)}
+        />
+      )}
       <main className="main">
         <header className="topbar">
+          <button
+            type="button"
+            className="menu-btn"
+            aria-label={navOpen ? 'メニューを閉じる' : 'メニューを開く'}
+            aria-expanded={navOpen}
+            onClick={() => setNavOpen((o) => !o)}
+          >
+            ☰
+          </button>
           <h1>{active.label}</h1>
           <span className="description">{active.description}</span>
           <span style={{ marginLeft: 'auto' }}>

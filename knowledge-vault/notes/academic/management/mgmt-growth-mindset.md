@@ -33,6 +33,18 @@ Carol S. Dweck（Stanford University）、Ellen L. Leggett、David S. Yeager
 - [Yeager & Dweck (2020) — What Can Be Learned from Growth Mindset Controversies? American Psychologist, 75(9), 1269–1284.](https://doi.org/10.1037/amp0000794) `学術`
 - [Macnamara & Burgoyne (2023) — Do Growth Mindset Interventions Impact Students' Academic Achievement? A Systematic Review and Meta-Analysis. Psychological Bulletin, 149(3–4), 133–173.](https://doi.org/10.1037/bul0000352) `学術`
 
+## 関連概念
+- [[human-mindset|マインドセット（成長/固定）]] — 分野横断
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

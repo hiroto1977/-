@@ -31,6 +31,18 @@ aliases:
 - [Goode, W. J. (1960) “A Theory of Role Strain,” American Sociological Review 25:483-496（査読論文）](https://www.scirp.org/reference/referencespapers?referenceid=395529) `学術`
 - [Kahn, Wolfe, Quinn & Snoek (1964) Organizational Stress（Social Forces 誌書評：役割葛藤・役割曖昧性と職務ストレス）](https://academic.oup.com/sf/article-abstract/43/4/591/2227932) `学術`
 
+## 関連概念
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
+- [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 出典を共有
+- [[infosoc-information-subsidy|情報補助金]] — 出典を共有
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

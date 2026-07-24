@@ -29,6 +29,18 @@ aliases:
 - [Mercatus Center — The Case for Nominal GDP Targeting（Scott Sumner、2012）](https://www.mercatus.org/research/research-papers/case-nominal-gdp-targeting) `学術`
 - [University of Chicago Press — The Money Illusion: Market Monetarism, the Great Recession, and the Future of Monetary Policy（Sumner、2021）](https://press.uchicago.edu/ucp/books/book/chicago/M/bo85902197.html) `学術`
 
+## 関連概念
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+- [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
+- [[mgmt-role-exit-theory|役割退出理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

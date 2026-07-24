@@ -31,6 +31,12 @@ Judy Wajcman ／ Donna Haraway ／ Cynthia Cockburn ／ Anne Balsamo ／ Rosi Br
 - [Cockburn, C. (1985). Machinery of Dominance: Women, Men and Technical Know-How. Pluto Press.](https://doi.org/10.1093/sf/70.4.1101) `学術`
 - [Wajcman, J. (1998). Feminism Confronts Technology. Penn State University Press.](https://doi.org/10.1177/0306312798028003004) `学術`
 
+## 関連概念
+- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 同じ思想家
+- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同分野の近傍
+- [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

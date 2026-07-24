@@ -18,18 +18,19 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 69 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 72 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 69 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 72 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
-| 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **5444** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5529) |
+| 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
+| ユニットテスト | **5689** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5774) |
+| 追跡行数（リポジトリ全体・下限） | **≥ 1000000** | 自己検証（`git ls-files` 全ファイルの改行数合算。柱 B Phase 3 完了で 100 万行を突破 — 現在 ~1,037k） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 178 | 自己検証 |
+| `file:line` 参照数 | 187 | 自己検証 |
 
 ### 統合フロー図
 
@@ -422,7 +423,7 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 69 services の認証スタイル
+### 3.1 70 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -456,8 +457,8 @@ union を参照する。
 | `settings` | 設定 (API キー管理 + Vault) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
-| `real-estate` | 不動産投資 (snapshot のみ) | Bearer (将来 REIT/楽待) | ✅ | | (read-only — 保有物件 / 月次キャッシュフロー / 利回り / 入居率) |
-| `mutual-funds` | 投資信託 (snapshot のみ) | Bearer (将来 SBI/楽天証券) | ✅ | | (read-only — 保有ファンド / 評価額 / 基準価額 / 分配金) |
+| `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率) |
+| `mutual-funds` | 投資信託 (snapshot + 銘柄の任意追加 = record store) | Bearer (将来 SBI/楽天証券) | ✅ | | (ローカル編集 — 保有銘柄の追加/削除 / 評価額 / 基準価額 / 分配金) |
 | `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
 | `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
 | `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
@@ -477,6 +478,7 @@ union を参照する。
 | `admin-scrivener` | 行政書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 許認可申請 / 補助金) |
 | `sme-consultant` | 中小企業診断士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 経営診断 / 事業計画) |
 | `patent-attorney` | 弁理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 特許 / 商標 / 意匠出願) |
+| `cpa` | 公認会計士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 監査 / 内部統制 / 決算分析) |
 | `base` | BASE ネットショップ (公式 OAuth API 実配線) | OAuth (`api.thebase.in`) | | ✅ | (read-only — 商品 / 価格 / 在庫 / 公開状態) |
 | `netsea` | NETSEA B2B 卸 (snapshot のみ) | パートナー API (未公開) | ✅ | | (read-only) |
 | `super-delivery` | スーパーデリバリー B2B 卸 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
@@ -498,7 +500,9 @@ union を参照する。
 | `compliance` | コンプライアンス — 法務/税務/労務の確証済み制度知識 (出典付き) | none | ✅ | | (read-only — 実データは renderer の complianceKnowledge。確証規律で集計) |
 | `obsidian` | Obsidian — ローカル知識ベース (Vault) を GitHub 連携・暗号化し業務効率化を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.obsidian。実 Vault は fs で読む Phase 6) |
 | `docker` | Docker — コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.docker。実 Engine は socket で読む Phase 6) |
-| `assistant` | AI アシスタント — Claude を頭脳に確証済みナレッジ + 全サービスを統合した専用チャット | Bearer (Anthropic, chat のみ) | ✅ | | `chat` (RAG 文脈は renderer の `data/assistantContext.ts` で構築。表/成果物は `data/assistantMarkdown.ts` で描画。未設定時は `data/chatbot.ts` の決定論エンジンへフォールバック) |
+| `assistant` | AI アシスタント — マルチエージェント AI ハブ。Claude / ChatGPT / Gemini / Ollama / OpenAI 互換 API を `src/shared/ai/providers.ts` のプロバイダレジストリで呼び分け | JSON マルチプロバイダ資格情報 (`src/shared/ai/credentials.ts`。生キーは Anthropic 後方互換) | ✅ | | `chat` + `providers` (RAG 文脈は renderer の `data/assistantContext.ts` で構築 — IDF 重み + 膠着語降格 + フレーズボーナス + 近似タイトル代表化。表/成果物は `data/assistantMarkdown.ts` で描画。未設定時は `data/chatbot.ts` の決定論エンジンへフォールバックし、解釈不能時のみ確証済みナレッジ直答 `buildOfflineKnowledgeAnswer` を先に試す) |
+| `village` | AIの村 — AI オーケストレーション組織 143 体をどうぶつの森風の全画面シーンに村人として可視化。タスク実行を常時アニメーションで表示し、画面に話しかけて対話 (音声) | none | ✅ | | (read-only — `orchestration/registry.json` から `data/villageData` が純導出。ルーティングは `data/chatOrg.routeTopicScored`、返答は `data/chatbot.replyTo`＋AI 設定時は `assistant/chat`。音声は `voice/speechAdapter`＋`voice/ttsAdapter`) |
+| `docstudio` | 書類スタジオ — 経営書類 12 書式＋電子定款 (株式/合同)＋就業規則 (10章47条) を入力→即プレビュー→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。入力は localStorage 保存・印刷は `body.ds-printing`) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:145-183`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。
@@ -527,7 +531,7 @@ union を参照する。
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | to/subject 必須 + Graph message envelope | `microsoft-365.ts:131-169` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | subject/start/end 必須 + Tokyo TZ | `microsoft-365.ts:171-209` |
 
-### 3.3 ネットワーク egress マトリクス (13 ホスト)
+### 3.3 ネットワーク egress マトリクス (15 ホスト + ユーザー指定)
 
 外部接続は **main プロセスからのみ**。下記以外のホストへの接続は存在しない。
 
@@ -546,6 +550,11 @@ union を参照する。
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:267-280` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:232`, `emotions.ts:209` |
+| assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:111-147` |
+| assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
+| assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:174-214` |
+| assistant (AI ハブ・ollama) | 既定 `127.0.0.1:11434` (資格情報で上書き可) | `POST /api/chat` | none | `src/shared/ai/providers.ts:216-243` |
+| assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:245-283` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
 | ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
 
@@ -601,7 +610,7 @@ graph TB
 
 | 攻撃面 | 例 | 防御 (file:line) |
 |---|---|---|
-| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:77`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
+| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:93`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:27`) + `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) |
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
@@ -1017,7 +1026,7 @@ classDiagram
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `src/main/oauth.ts:196-201` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `src/main/secrets.ts:14-39` |
-| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:81`) 両方に登録 | scaffold script |
+| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:100`) 両方に登録 | scaffold script |
 | 15 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)

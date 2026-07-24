@@ -10,19 +10,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **69 services** through a unified,
-category-grouped sidebar (おすすめ / 分析・ツール / 外部サービス連携). Services span third-party SaaS
+Service Hub — a Japanese-facing business dashboard exposing **72 services** through a unified,
+category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
 tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks, Storage), business operations
 (Home, Business Dashboard, Team Radar, Templates, Library, Settings, Quality), food delivery
-(Uber Eats, 出前館), investment (Real Estate 不動産投資, Mutual Funds 投資信託) and seven 士業
-professional integrations (税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士).
+(Uber Eats, 出前館), investment (Real Estate 不動産投資, Mutual Funds 投資信託) and eight 士業
+professional integrations (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士)
+with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-first CRM.
 
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (~510 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (~10 MB full / ~2.2 MB `build:web:lite` mobile variant) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -43,6 +44,8 @@ and are injected as context into the AI-orchestration runtime per executive role
 npm install              # install deps
 npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
+npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
+npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
@@ -67,6 +70,8 @@ npm run lint:test-coverage # every service must have a test + an action register
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage/shell)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
+npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+                           #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
 ```
 
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker

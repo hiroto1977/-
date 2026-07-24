@@ -30,6 +30,13 @@ aliases:
 - [Einstein & McDaniel (2005) Prospective Memory — Current Directions in Psychological Science / SAGE](https://journals.sagepub.com/doi/10.1111/j.0963-7214.2005.00382.x) `学術`
 - [Prospective Memory — ScienceDirect Topics](https://www.sciencedirect.com/topics/neuroscience/prospective-memory) `リファレンス`
 
+## 関連概念
+- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同分野の近傍
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同分野の近傍
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 同分野の近傍
+- [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

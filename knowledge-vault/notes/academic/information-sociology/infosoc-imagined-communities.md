@@ -31,6 +31,11 @@ B.アンダーソン『想像の共同体』1983／国民＝イメージとし�
 - [Cornell Chronicle (Cornell University) — Benedict Anderson obituary / Imagined Communities](https://news.cornell.edu/stories/2015/12/benedict-anderson-who-wrote-imagined-communities-dies) `学術`
 - [Wikipedia — Imagined Communities (corroborating reference)](https://en.wikipedia.org/wiki/Imagined_Communities) `リファレンス`
 
+## 関連概念
+- [[infosoc-imagined-communities-anderson-digital|想像の共同体とデジタル・ナショナリズム——アンダーソンのメディア論の情報社会への拡張]] — 同分野の近傍
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同分野の近傍
+- [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

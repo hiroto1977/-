@@ -30,6 +30,12 @@ Raúl Prebisch／Hans W. Singer／Enzo Grilli／Maw Cheng Yang／David Harvey
 - [Grilli & Yang (1988) Primary Commodity Prices, Manufactured Goods Prices, and the Terms of Trade, World Bank Economic Review 2(1):1-47](https://doi.org/10.1093/wber/2.1.1) `学術`
 - [Harvey et al. (2010) The Prebisch-Singer Hypothesis: Four Centuries of Evidence, Review of Economics and Statistics 92(2):367-377](https://doi.org/10.1162/rest.2010.12184) `学術`
 
+## 関連概念
+- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 語彙が近い
+- [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同分野の近傍
+- [[econ-random-walk-prices|ランダムウォーク仮説——株価変動は予測不可能であるとする命題]] — 同分野の近傍
+- [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

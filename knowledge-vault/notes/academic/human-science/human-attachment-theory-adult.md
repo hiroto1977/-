@@ -32,6 +32,11 @@ Cindy Hazan ／ Phillip R. Shaver ／ Kim Bartholomew ／ Leonard M. Horowitz �
 - [Fraley & Shaver (2000) Adult Romantic Attachment: Theoretical Developments — Review of General Psychology](https://doi.org/10.1037/1089-2680.4.2.132) `学術`
 - [Fraley, R. C. — A Brief Overview of Adult Attachment Theory and Research (University of Illinois)](https://labs.psychology.illinois.edu/~rcfraley/attachment.htm) `リファレンス`
 
+## 関連概念
+- [[human-attachment-style-theory|愛着スタイル理論]] — 語彙が近い
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — 語彙が近い
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

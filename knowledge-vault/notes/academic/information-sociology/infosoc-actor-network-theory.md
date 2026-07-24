@@ -30,6 +30,18 @@ aliases:
 - [Oxford Reference — Actor-network theory](https://www.oxfordreference.com/display/10.1093/acref/9780191843273.001.0001/acref-9780191843273-e-3) `リファレンス`
 - [アクターネットワーク理論 — Wikipedia（日本語）](https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E7%90%86%E8%AB%96) `リファレンス`
 
+## 関連概念
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家
+- [[infosoc-obligatory-passage-point-callon|義務的通過点——ネットワークに不可欠な存在になること]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,17 @@ aliases:
 - [Merriam-Webster Dictionary「stagflation」（stagnation+inflation 合成語の定義）](https://www.merriam-webster.com/dictionary/stagflation) `リファレンス`
 - [NBER Working Paper No.19267「The Natural Rate Hypothesis」](https://www.nber.org/system/files/working_papers/w19267/w19267.pdf) `学術`
 
+## 関連概念
+- [[infosoc-astroturfing|アストロターフィング]] — 出典を共有
+- [[infosoc-clickbait|クリックベイト（釣り見出し）]] — 出典を共有
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
+- [[econ-secular-stagnation-hansen|長期停滞論（ハンセン＆サマーズ）]] — 同分野の近傍
+- [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

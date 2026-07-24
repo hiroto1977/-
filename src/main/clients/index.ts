@@ -18,6 +18,7 @@ import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './busines
 import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamradar';
 import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
 import { fetchHomeSnapshot } from './home';
+import { fetchVillageSnapshot } from './village';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
 import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats';
@@ -43,6 +44,7 @@ import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
 import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
 import { fetchSmeConsultantSnapshot } from './sme-consultant';
 import { fetchPatentAttorneySnapshot } from './patent-attorney';
+import { fetchCpaSnapshot } from './cpa';
 import { fetchBaseSnapshot } from './base';
 import { fetchNetseaSnapshot } from './netsea';
 import { fetchSuperDeliverySnapshot } from './super-delivery';
@@ -67,6 +69,7 @@ import { fetchComplianceSnapshot } from './compliance';
 import { fetchObsidianSnapshot } from './obsidian';
 import { fetchDockerSnapshot } from './docker';
 import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistant';
+import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -75,6 +78,7 @@ export type { ServiceId };
 
 export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unknown>> = {
   home: fetchHomeSnapshot,
+  village: fetchVillageSnapshot,
   github: fetchGithubSnapshot,
   wordpress: fetchWordPressSnapshot,
   atlassian: fetchAtlassianSnapshot,
@@ -119,6 +123,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'admin-scrivener': fetchAdminScrivenerSnapshot,
   'sme-consultant': fetchSmeConsultantSnapshot,
   'patent-attorney': fetchPatentAttorneySnapshot,
+  cpa: fetchCpaSnapshot,
   base: fetchBaseSnapshot,
   netsea: fetchNetseaSnapshot,
   'super-delivery': fetchSuperDeliverySnapshot,
@@ -143,6 +148,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   obsidian: fetchObsidianSnapshot,
   docker: fetchDockerSnapshot,
   assistant: fetchAssistantSnapshot,
+  docstudio: fetchDocstudioSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -172,6 +178,10 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  token is not an error here. */
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'home',
+  // 書類スタジオ: テンプレートは renderer 内蔵。認証・ネットワーク不要。
+  'docstudio',
+  // AIの村: registry.json から renderer 側で導出する全画面シーン。認証不要。
+  'village',
   'skills',
   'security',
   'emotions',
@@ -198,6 +208,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  'cpa',
   // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
   'netsea',
   'super-delivery',
@@ -263,6 +274,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   shopify: SHOPIFY_ACTIONS,
   'microsoft-365': MICROSOFT365_ACTIONS,
   assistant: ASSISTANT_ACTIONS,
+  docstudio: DOCSTUDIO_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

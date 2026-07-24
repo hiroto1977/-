@@ -31,6 +31,11 @@ P.コトラー（STPの体系化・普及）／ポジショニング：アル・
 - [Wikipedia — Segmenting-targeting-positioning（STP, Kotler; STP戦略 vs 4P戦術）](https://en.wikipedia.org/wiki/Segmenting-targeting-positioning) `リファレンス`
 - [USC Marshall School of Business — STP（BUAD 307 講義資料）](https://faculty.marshall.usc.edu/Davide-Proserpio/BUAD307-fall19/lectures/BUAD-307-Chap09.pdf) `学術`
 
+## 関連概念
+- [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]] — 出典を共有
+- [[mgmt-marketing-myopia|マーケティング近視眼]] — 同分野の近傍
+- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

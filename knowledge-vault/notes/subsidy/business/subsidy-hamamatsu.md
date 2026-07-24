@@ -36,6 +36,18 @@ municipality
 - [浜松市 創業支援事業費補助金（賃料補助）](https://www.city.hamamatsu.shizuoka.jp/sangyoshinko/2016122601.html) `自治体`
 - [浜松市ファンドサポート事業 解説](https://expact.jp/hamamatsu_fund_support/) `メディア`
 
+## 関連概念
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
+- [[subsidy-child-allowance|児童手当]] — 同じ思想家
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 同じ思想家
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
+- [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同じ思想家
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 同じ思想家
+- [[subsidy-kyoto-city|京都市伝統産業設備改修等補助制度]] — 同じ思想家
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

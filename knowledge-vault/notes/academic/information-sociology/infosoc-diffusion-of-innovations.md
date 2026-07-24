@@ -30,6 +30,10 @@ aliases:
 - [Boston University School of Public Health「Diffusion of Innovation Theory」（大学教材）](https://sphweb.bumc.bu.edu/otlt/mph-modules/sb/behavioralchangetheories/behavioralchangetheories4.html) `学術`
 - [Wikipedia「Diffusion of innovations」](https://en.wikipedia.org/wiki/Diffusion_of_innovations) `リファレンス`
 
+## 関連概念
+- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同分野の近傍
+- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

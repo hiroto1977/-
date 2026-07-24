@@ -30,6 +30,12 @@ aliases:
 - [金融庁 貸金業法のキホン（利息制限法と出資法）](https://www.fsa.go.jp/policy/kashikin/kihon.html) `公的`
 - [J-FLEC 用語集 利息制限法](https://www.j-flec.go.jp/public/learn/glossary/r_risoku_seigenho/) `公的`
 
+## 関連概念
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 語彙が近い
+- [[bizlaw-interest-rate-restriction|利息制限法]] — 語彙が近い
+- [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 同分野の近傍
+- [[legal-statutory-interest|民法の法定利率（変動制）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ k%ルールとは、ミルトン・フリードマンが1960年の著書『A Pro
 - [Federal Reserve Board — Bernanke (2006) "Monetary Aggregates and Monetary Policy at the Federal Reserve: A Historical Perspective"（金融政策史とマネタリー・ターゲティングの放棄）](https://www.federalreserve.gov/newsevents/speech/bernanke20061110a.htm) `公的`
 - [Wikipedia — Friedman's k-percent rule（k%ルールの定義・批判・テイラー・ルールへの移行）](https://en.wikipedia.org/wiki/Friedman%27s_k-percent_rule) `リファレンス`
 
+## 関連概念
+- [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 同じ思想家
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
+- [[econ-velocity-of-money-fisher-equation|貨幣数量説とフィッシャーの交換方程式——MV=PTから現代金融政策への展開]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

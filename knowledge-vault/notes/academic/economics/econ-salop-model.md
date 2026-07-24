@@ -29,6 +29,12 @@ aliases:
 - [Athens University of Economics and Business — Lecture notes: Circular city model Salop (Bell, 1979)](https://eclass.aueb.gr/modules/document/file.php/OIK214/Lecture5-6.pdf) `学術`
 - [Policonomics — Salop's circular city](https://policonomics.com/salops-circular-city/) `リファレンス`
 
+## 関連概念
+- [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同分野の近傍
+- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
+- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

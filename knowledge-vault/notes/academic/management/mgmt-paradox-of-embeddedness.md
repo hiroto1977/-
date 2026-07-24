@@ -29,6 +29,10 @@ Brian Uzzi（Administrative Science Quarterly 42(1), 1997 — 埋め込みのパ
 - [Uzzi (1997) Social Structure and Competition in Interfirm Networks: The Paradox of Embeddedness — ASQ 42(1), pp.35-67](https://www.jstor.org/stable/2393808) `学術`
 - [Northwestern Scholars: Uzzi (1997) — publication record](https://www.scholars.northwestern.edu/en/publications/social-structure-and-competition-in-interfirm-networks-the-parado-2) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

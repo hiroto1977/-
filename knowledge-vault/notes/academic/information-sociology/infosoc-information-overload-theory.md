@@ -30,6 +30,15 @@ Martin J. Eppler／Jeannette Mengis／Herbert A. Simon／Alvin Toffler／David B
 - [Bawden & Robinson (2009) The dark side of information, Journal of Information Science 35(2):180-191](https://doi.org/10.1108/00220410910984577) `学術`
 - [Encyclopaedia Britannica — Information theory (Simon attention scarcity context)](https://www.britannica.com/topic/information-theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 語彙が近い
+- [[infosoc-prosumption-theory|プロシューマー理論]] — 同じ思想家
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

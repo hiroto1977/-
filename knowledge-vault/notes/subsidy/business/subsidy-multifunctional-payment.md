@@ -36,6 +36,18 @@ national
 - [農林水産省 多面的機能支払交付金実施要綱](https://www.maff.go.jp/j/nousin/kanri/attach/pdf/tamen_siharai-148.pdf) `公的`
 - [高知県 多面的機能支払制度について](https://www.pref.kochi.lg.jp/doc/2025051200191/) `自治体`
 
+## 関連概念
+- [[bizlaw-geographical-indication|地理的表示法（GI法）]] — 出典を共有
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 出典を共有
+- [[bizlaw-plant-variety|種苗法]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
+- [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
+- [[subsidy-kochi|高知県戦略的製品開発推進事業費補助金（高知県）]] — 出典を共有
+- [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [消費者庁 令和3年特定商取引法・預託法の改正](https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/) `公的`
 - [改正特商法 最終確認画面の表示義務 解説](https://www.it-houmu.com/archives/2178) `メディア`
 
+## 関連概念
+- [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 同分野の近傍
+- [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

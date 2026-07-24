@@ -30,6 +30,11 @@ aliases:
 - [国税庁 税務大学校 論叢](https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/111/04/index.htm) `公的`
 - [役員退職金の計算 解説](https://legacy.ne.jp/legacy-cloud/tax_practice/001-yakuin-taishokukin-keisanhouhou-kougaku/) `メディア`
 
+## 関連概念
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 出典を共有
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 同分野の近傍
+- [[tax-dividends-received|受取配当等の益金不算入]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

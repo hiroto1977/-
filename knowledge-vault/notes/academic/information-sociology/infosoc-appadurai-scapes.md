@@ -29,6 +29,11 @@ aliases:
 - [Arjun Appadurai, "Disjuncture and Difference in the Global Cultural Economy", Theory, Culture & Society (1990) — 一次文献（査読誌）](https://journals.sagepub.com/doi/10.1177/026327690007002017) `学術`
 - [Wikipedia: Global cultural flows（5つのスケープ・パースペクティブ的構築物・非同型/ディスジャンクチャー）](https://en.wikipedia.org/wiki/Global_cultural_flows) `リファレンス`
 
+## 関連概念
+- [[infosoc-imagined-communities-anderson-digital|想像の共同体とデジタル・ナショナリズム——アンダーソンのメディア論の情報社会への拡張]] — 同じ思想家
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同分野の近傍
+- [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

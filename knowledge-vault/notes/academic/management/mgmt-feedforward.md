@@ -29,6 +29,13 @@ I・A・リチャーズ（I. A. Richards, 1893–1979）／マーシャル・ゴ
 - [Goldsmith, M. (2002) "Try Feedforward Instead of Feedback" Leader to Leader](https://www.marshallgoldsmith.com/post/try-feedforward-instead-of-feedback) `学術`
 - [Wikipedia — Marshall Goldsmith](https://en.wikipedia.org/wiki/Marshall_Goldsmith) `リファレンス`
 
+## 関連概念
+- [[mgmt-cynefin|クネビン・フレームワーク]] — 同分野の近傍
+- [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同分野の近傍
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
+- [[mgmt-action-learning|アクションラーニング]] — 同分野の近傍
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

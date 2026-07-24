@@ -29,6 +29,12 @@ Wanda J. Orlikowski（Organization Studies 28(9), 2007, 概念定式化）／Orl
 - [Orlikowski (2007) Sociomaterial Practices: Exploring Technology at Work — Organization Studies 28(9), pp.1435-1448](https://doi.org/10.1177/0170840607081138) `学術`
 - [Orlikowski & Scott (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — AMA Annals 2(1), pp.433-474](https://doi.org/10.1080/19416520802211644) `学術`
 
+## 関連概念
+- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 同じ思想家
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ Douglas G. Baird ／ Thomas H. Jackson
 - [Uniform Law Commission: Voidable Transactions Act](https://www.uniformlaws.org/committees/community-home?CommunityKey=64ee1ccc-a3ae-4a5e-a18f-a5ba8206bf49) `公的`
 - [Baird & Jackson, Fraudulent Conveyance Law (1985)](https://scholarship.law.vanderbilt.edu/vlr/vol38/iss4/4/) `学術`
 
+## 関連概念
+- [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 語彙が近い
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 語彙が近い
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同じ思想家
+- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同じ思想家
+- [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
+- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+- [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

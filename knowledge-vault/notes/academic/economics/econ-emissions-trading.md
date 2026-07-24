@@ -31,6 +31,14 @@ J. H. デイルズ(1968)：譲渡可能排出許可の構想を定式化（先�
 - [Ellerman & Joskow (MIT) — Emissions Trading in the United States（クロッカー1966・デイルズ1968の構想を解説）](https://economics.mit.edu/sites/default/files/2022-09/Emissions%20Trading%20in%20the%20United%20States.pdf) `学術`
 - [Wikipedia — Emissions trading（cap and trade の定義・コースの定理との関係）](https://en.wikipedia.org/wiki/Emissions_trading) `リファレンス`
 
+## 関連概念
+- [[econ-baumol-oates-standards-charges|ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する]] — 出典を共有
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 出典を共有
+- [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 出典を共有
+- [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同分野の近傍
+- [[econ-double-dividend|二重の配当（環境税）]] — 同分野の近傍
+- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

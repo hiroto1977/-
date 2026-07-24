@@ -30,6 +30,14 @@ aliases:
 - [MIT OpenCourseWare — Principles of Microeconomics, Oligopoly II（クールノー均衡・ベルトラン・カルテル）](https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/pages/unit-5-monopoly-and-oligopoly/oligopoly-ii/) `学術`
 - [Encyclopaedia Britannica — Researches into the Mathematical Principles of the Theory of Wealth (1838)](https://www.britannica.com/topic/Researches-into-the-Mathematical-Principles-of-the-Theory-of-Wealth) `リファレンス`
 
+## 関連概念
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 語彙が近い
+- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同じ思想家
+- [[econ-price-discrimination|価格差別（price discrimination）]] — 出典を共有
+- [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]] — 出典を共有
+- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
+- [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

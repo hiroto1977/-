@@ -30,6 +30,17 @@ aliases:
 - [厚生労働省 新規学卒者の内定取消し（通知・企業名公表）](https://www.mhlw.go.jp/houdou/2009/01/h0119-2a.html) `公的`
 - [大日本印刷事件（採用内定の取消）判例解説](https://www.roudoukeiyaku.net/dnp.html) `メディア`
 
+## 関連概念
+- [[labor-trial-period|試用期間の労働法上の取扱い]] — 語彙が近い
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
+- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
+- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
+- [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 出典を共有
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

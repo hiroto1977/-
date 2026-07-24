@@ -29,6 +29,18 @@ aliases:
 - [APA PsycNet — Leary et al. (1995) "Self-esteem as an interpersonal monitor: The sociometer hypothesis," JPSP 68(3):518–530（原典）](https://psycnet.apa.org/doi/10.1037/0022-3514.68.3.518) `学術`
 - [Annual Review of Psychology — Leary & Baumeister "The nature and function of self-esteem: Sociometer theory"（査読サーベイ）](https://www.annualreviews.org/content/journals/10.1146/annurev.psych.58.110405.085712) `学術`
 
+## 関連概念
+- [[infosoc-issue-attention-cycle|争点注目サイクル（イシュー・アテンション・サイクル、Issue-Attention Cycle）——社会問題への世論の注目が解決ではなく注目資源の周期的消耗によって浮上・衰退する五段階モデル]] — 同じ思想家
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

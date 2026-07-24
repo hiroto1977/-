@@ -29,6 +29,11 @@ aliases:
 - [Econlib — The Concise Encyclopedia of Economics: Seigniorage](https://www.econlib.org/seigniorage/) `学術`
 - [みずほ証券 ファイナンス用語集「通貨発行益」](https://glossary.mizuho-sc.com/faq/show/2294) `リファレンス`
 
+## 関連概念
+- [[econ-credit-channel-theory|信用チャネル理論]] — 出典を共有
+- [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — 同分野の近傍
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

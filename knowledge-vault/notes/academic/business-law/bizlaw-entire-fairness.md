@@ -30,6 +30,17 @@ aliases:
 - [Penn Carey Law — Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)](https://www.law.upenn.edu/live/news/7001-weinberger-v-uop-inc-457-a2d-701-del-1983) `学術`
 - [Wikipedia — Weinberger v. UOP, Inc.（完全公正基準の先例）](https://en.wikipedia.org/wiki/Weinberger_v._UOP,_Inc.) `リファレンス`
 
+## 関連概念
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 語彙が近い
+- [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 語彙が近い
+- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 出典を共有
+- [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [NobelPrize.org — Paul Krugman Facts, 2008 Sveriges Riksbank Prize（貿易パターンと経済活動の立地に関する分析）](https://www.nobelprize.org/prizes/economic-sciences/2008/krugman/facts/) `リファレンス`
 - [Krugman, P. "The New Economic Geography, Now Middle-Aged"（プリンストン大学ホスト・AAG講演論文）](https://www.princeton.edu/~pkrugman/aag.pdf) `学術`
 
+## 関連概念
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 語彙が近い
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
+- [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同じ思想家
+- [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

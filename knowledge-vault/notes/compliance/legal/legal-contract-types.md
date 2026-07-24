@@ -30,6 +30,13 @@ aliases:
 - [国税庁 質疑応答事例 請負の意義](https://www.nta.go.jp/law/shitsugi/inshi/12/09.htm) `公的`
 - [準委任契約と請負契約の違い 解説](https://www.cloudsign.jp/media/quasi-delegation-contract-contract/) `メディア`
 
+## 関連概念
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
+- [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — 同分野の近傍
+- [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [NBER Working Paper — Domestic Savings and International Capital Flows（Feldstein & Horioka）](https://www.nber.org/papers/w0310) `学術`
 - [Feldstein–Horioka puzzle（English Wikipedia）](https://en.wikipedia.org/wiki/Feldstein%E2%80%93Horioka_puzzle) `リファレンス`
 
+## 関連概念
+- [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
+- [[econ-conditional-convergence|条件付き収束]] — 同分野の近傍
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

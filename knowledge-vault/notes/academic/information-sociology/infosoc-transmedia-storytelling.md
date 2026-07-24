@@ -30,6 +30,18 @@ aliases:
 - [Henry Jenkins, "Transmedia Storytelling", MIT Technology Review (2003)](https://www.technologyreview.com/2003/01/15/234540/transmedia-storytelling/) `学術`
 - [EBSCO Research Starters — Transmedia Storytelling](https://www.ebsco.com/research-starters/communication-and-mass-media/transmedia-storytelling) `リファレンス`
 
+## 関連概念
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
+- [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 出典を共有
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 出典を共有
+- [[infosoc-media-logic|メディア・ロジック]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Coopetition — Wikipedia（混成語・Noorda造語・Value Net）](https://en.wikipedia.org/wiki/Coopetition) `リファレンス`
 - [Co-Opetition — Encyclopedia.com](https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/co-opetition) `リファレンス`
 
+## 関連概念
+- [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
+- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
+- [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
+- [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

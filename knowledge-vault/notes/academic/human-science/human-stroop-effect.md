@@ -29,6 +29,17 @@ aliases:
 - [York University Classics in the History of Psychology — Stroop (1935) "Studies of Interference in Serial Verbal Reactions" 原典全文](https://psychclassics.yorku.ca/Stroop/) `学術`
 - [APA PsycNet — Stroop, J.R. (1935) Studies of interference in serial verbal reactions, Journal of Experimental Psychology, 18(6), 643-662](https://psycnet.apa.org/record/1936-01863-001) `学術`
 
+## 関連概念
+- [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]] — 同じ思想家
+- [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 出典を共有
+- [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
+- [[human-social-learning-theory|社会的学習理論]] — 出典を共有
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 出典を共有
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
+- [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 同分野の近傍
+- [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,12 @@ aliases:
 - [Oxford Reference — Self-defeating prophecy（逆作用＝自己破壊的予言）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100453214) `リファレンス`
 - [Springer — Pygmalion Effect（教育文脈での自己成就的予言の一事例）](https://link.springer.com/rwe/10.1007/978-0-387-79061-9_2327) `学術`
 
+## 関連概念
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
+- [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — 同じ思想家
+- [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

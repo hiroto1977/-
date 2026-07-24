@@ -30,6 +30,18 @@ aliases:
 - [Hepp & Hasebrink (2018) A Figurational Approach — Springer Chapter 2](https://link.springer.com/chapter/10.1007/978-3-319-65584-0_2) `学術`
 - [Hepp (2020) Deep Mediatization — Routledge](https://www.routledge.com/Deep-Mediatization/Hepp/p/book/9781138024991) `学術`
 
+## 関連概念
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 語彙が近い
+- [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同じ思想家
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

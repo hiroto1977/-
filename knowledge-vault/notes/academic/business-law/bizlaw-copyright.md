@@ -30,6 +30,18 @@ aliases:
 - [文化庁 — 著作物等の保護期間の延長に関するQ&A（死後70年化）](https://www.bunka.go.jp/seisaku/chosakuken/hokaisei/kantaiheiyo_chosakuken/1411890.html) `公的`
 - [Wikipedia — 著作権法](https://ja.wikipedia.org/wiki/著作権法) `リファレンス`
 
+## 関連概念
+- [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 語彙が近い
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
+- [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 出典を共有
+- [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 出典を共有
+- [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
+- [[legal-moral-rights|著作者人格権]] — 出典を共有
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
+- [[subsidy-culture-arts|文化芸術振興費補助金（文化芸術創造活動への支援）]] — 出典を共有
+- [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

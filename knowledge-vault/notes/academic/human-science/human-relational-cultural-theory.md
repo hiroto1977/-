@@ -30,6 +30,18 @@ Jean Baker Miller／Judith V. Jordan／Irene P. Stiver／Janet L. Surrey／Alexa
 - [ACA VISTAS — Relational-Cultural Theory: A Framework for Bridging Relational, Multicultural, and Social Justice Competencies](https://www.counseling.org/docs/default-source/vistas/relational-cultural-theory.pdf) `学術`
 - [Wikipedia — Relational-cultural theory](https://en.wikipedia.org/wiki/Relational%E2%80%93cultural_theory) `リファレンス`
 
+## 関連概念
+- [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+- [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

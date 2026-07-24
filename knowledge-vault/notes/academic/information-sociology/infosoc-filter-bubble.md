@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia — Filter bubble](https://en.wikipedia.org/wiki/Filter_bubble) `リファレンス`
 - [Wikipedia — Echo chamber (media)](https://en.wikipedia.org/wiki/Echo_chamber_(media)) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
+- [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — 出典を共有
+- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
+- [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

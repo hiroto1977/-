@@ -30,6 +30,18 @@ James J. Gross ／ Gal Sheppes
 - [Sheppes et al. (2011) Emotion-Regulation Choice — Psychological Science](https://journals.sagepub.com/doi/10.1177/0956797611418350) `学術`
 - [Emotion Regulation — APA Dictionary of Psychology](https://dictionary.apa.org/emotion-regulation) `リファレンス`
 
+## 関連概念
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 語彙が近い
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 語彙が近い
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 語彙が近い
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

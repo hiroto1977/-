@@ -30,6 +30,16 @@ aliases:
 - [大阪府 国保の自己負担割合](https://www.pref.osaka.lg.jp/annai/qa/detail.php?recid=1041) `自治体`
 - [千葉市 国保の医療費の自己負担割合](https://www.city.chiba.jp/faq/hokenfukushi/iryoeisei/hoken/729.html) `自治体`
 
+## 関連概念
+- [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 語彙が近い
+- [[bizlaw-national-health-insurance|国民健康保険法]] — 語彙が近い
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 出典を共有
+- [[subsidy-osaka-startup|大阪起業家グローイングアップ補助金（大阪府）]] — 出典を共有
+- [[subsidy-special-child-allowance|特別児童扶養手当]] — 出典を共有
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 同分野の近傍
+- [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

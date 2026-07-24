@@ -30,6 +30,18 @@ William P. Barnett ／ Morten T. Hansen ／ Leigh Van Valen
 - [Barnett & McKendrick (2004) "Why Are Some Organizations More Competitive Than Others?" Administrative Science Quarterly](https://journals.sagepub.com/doi/10.2307/4131490) `学術`
 - [Wikipedia — Red Queen hypothesis](https://en.wikipedia.org/wiki/Red_Queen_hypothesis) `リファレンス`
 
+## 関連概念
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
+- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

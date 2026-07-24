@@ -30,6 +30,18 @@ Restatement (Second) of Torts §339／Sioux City & Pacific Railroad Co. v. Stout
 - [Wikipedia: Attractive Nuisance Doctrine](https://en.wikipedia.org/wiki/Attractive_nuisance_doctrine) `リファレンス`
 - [Restatement's Attractive Nuisance Doctrine — Ohio State Knowledge Bank](https://kb.osu.edu/bitstreams/047e2c00-8942-5119-acb4-ebbc2bb6cd49/download) `学術`
 
+## 関連概念
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同じ思想家
+- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
+- [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
+- [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同分野の近傍
+- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同分野の近傍
+- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — 同分野の近傍
+- [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

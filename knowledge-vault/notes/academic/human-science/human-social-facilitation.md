@@ -31,6 +31,10 @@ aliases:
 - [Oxford Reference — Drive theory of social facilitation](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095731503) `リファレンス`
 - [EBSCO Research Starters (Psychology) — Social facilitation](https://www.ebsco.com/research-starters/psychology/social-facilitation) `リファレンス`
 
+## 関連概念
+- [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 同分野の近傍
+- [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

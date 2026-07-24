@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia — Median voter theorem（単峰性・コンドルセ勝者・多次元での不成立）](https://en.wikipedia.org/wiki/Median_voter_theorem) `リファレンス`
 - [E. Saez, UC Berkeley Econ 131 講義ノート — 前提（一次元・単峰）と多次元での循環](https://eml.berkeley.edu/~saez/course131/political_ch09.pdf) `学術`
 
+## 関連概念
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — 同じ思想家
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
+- [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
+- [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 出典を共有
+- [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 出典を共有
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 出典を共有
+- [[econ-logrolling|ログローリング（票の取引）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

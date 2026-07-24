@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省 職場のあんぜんサイト 過重労働対策](https://anzeninfo.mhlw.go.jp/yougo/yougo05_1.html) `公的`
 - [e-Gov法令検索 労働安全衛生法（66条の8）](https://elaws.e-gov.go.jp/document?lawid=347AC0000000057_20220617_504AC0000000068) `公的`
 
+## 関連概念
+- [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 語彙が近い
+- [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 出典を共有
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
+- [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

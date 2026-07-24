@@ -30,6 +30,18 @@ aliases:
 - [Encyclopedia of Law and Economics: "Crime and Punishment (Becker 1968)" (Springer)](https://link.springer.com/rwe/10.1007/978-1-4614-7883-6_17-1) `リファレンス`
 - [Encyclopedia of Criminological Theory: "Becker, Gary S.: Punishment, Human Capital, and Crime" (SAGE)](https://sk.sagepub.com/ency/edvol/download/criminologicaltheory/chpt/becker-gary-s-punishment-human-capital-crime.pdf) `リファレンス`
 
+## 関連概念
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
+- [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家
+- [[econ-demographic-transition-theory|人口転換理論と少子化の経済学——出生率低下の人口学的・経済的メカニズム]] — 同じ思想家
+- [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
+- [[econ-grossman-health-demand|グロスマンの健康需要モデル（Grossman demand-for-health model／健康資本論）——健康を減価する耐久資本ストックととらえ、医療需要をその派生需要として説明する枠組み]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 同じ思想家
+- [[econ-intergenerational-mobility-chetty|世代間所得移動性——チェティの機会の平等研究とアメリカン・ドリームの実証分析]] — 同じ思想家
+- [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

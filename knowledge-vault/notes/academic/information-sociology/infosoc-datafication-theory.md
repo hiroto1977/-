@@ -31,6 +31,18 @@ Viktor Mayer-Schönberger ／ Kenneth Cukier ／ Jose van Dijck ／ Nick Couldry
 - [Couldry & Mejias (2019) The Costs of Connection — Stanford University Press](https://www.sup.org/books/sociology/costs-connection) `学術`
 - [Couldry & Mejias (2018) Data Colonialism — Television & New Media 20(4)](https://doi.org/10.1177/1527476418796632) `学術`
 
+## 関連概念
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
+- [[econ-dollar-hegemony-theory|ドル覇権理論]] — 出典を共有
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
+- [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 出典を共有
+- [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
+- [[eh-1950|1950年（昭和25年）]] — 出典を共有
+- [[eh-1951|1951年（昭和26年）]] — 出典を共有
+- [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
+- [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
+- [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

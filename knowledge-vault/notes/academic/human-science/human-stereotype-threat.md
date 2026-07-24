@@ -30,6 +30,11 @@ Claude M. Steele（クロード・スティール）／Joshua Aronson（ジョ�
 - [Schmader (2010) “Stereotype Threat Deconstructed”, Current Directions in Psychological Science（WM機序）](https://journals.sagepub.com/doi/10.1177/0963721409359292) `学術`
 - [PLOS One／PMC — ステレオタイプ脅威メタ分析（出版バイアス・効果量・再現性議論）](https://pmc.ncbi.nlm.nih.gov/articles/PMC11268653/) `学術`
 
+## 関連概念
+- [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 語彙が近い
+- [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同じ思想家
+- [[human-dual-process-theory-kahneman-stanovich|二重過程理論——システム1・システム2の認知的二元構造]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

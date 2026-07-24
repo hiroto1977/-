@@ -29,6 +29,10 @@ aliases:
 - [ジョージタウン大学コンピュータ科学科 — Cal Newport 教授プロフィール（デジタル・ミニマリズム提唱者の所属機関）](https://www.cs.georgetown.edu/people/cal-newport/) `学術`
 - [The New Yorker — Cal Newport 寄稿者ページ（注意・テクノロジーと集中をめぐる論考の継続的発表）](https://www.newyorker.com/contributors/cal-newport) `メディア`
 
+## 関連概念
+- [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同分野の近傍
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

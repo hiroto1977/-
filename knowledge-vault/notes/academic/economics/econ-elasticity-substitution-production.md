@@ -30,6 +30,13 @@ John R. Hicks ／ Kenneth J. Arrow ／ Hollis B. Chenery ／ Bagicha S. Minhas �
 - [Antras (2004) Is the U.S. Aggregate Production Function Cobb-Douglas? — Contributions to Macroeconomics](https://doi.org/10.1016/j.jinteco.2003.10.005) `学術`
 - [Elasticity of Substitution — The New Palgrave Dictionary of Economics](https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_468-1) `リファレンス`
 
+## 関連概念
+- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — 語彙が近い
+- [[econ-elasticity-of-substitution|代替の弾力性]] — 語彙が近い
+- [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — 語彙が近い
+- [[econ-productivity-paradox|生産性パラドックス]] — 同じ思想家
+- [[econ-harrod-domar|ハロッド＝ドーマー成長モデル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

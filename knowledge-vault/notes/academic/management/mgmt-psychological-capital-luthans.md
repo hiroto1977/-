@@ -32,6 +32,18 @@ Fred Luthans ／ Carolyn Youssef-Morgan ／ Bruce J. Avolio
 - [Annual Review of Organizational Psychology — Psychological Capital](https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-032516-113324) `リファレンス`
 - [Wikipedia - Positive Psychological Capital (PsyCap)](https://en.wikipedia.org/wiki/Positive_psychological_capital) `リファレンス`
 
+## 関連概念
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 語彙が近い
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

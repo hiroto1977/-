@@ -30,6 +30,18 @@ aliases:
 - [Mazzoleni & Splendore, "Media Logic and Mediatization", Oxford Bibliographies in Communication (OUP)](https://www.oxfordbibliographies.com/display/document/obo-9780199756841/obo-9780199756841-0166.xml) `学術`
 - [Altheide, "Media Logic", The International Encyclopedia of Political Communication (Wiley)](https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118541555.wbiepc088) `リファレンス`
 
+## 関連概念
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 語彙が近い
+- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 出典を共有
+- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 出典を共有
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 出典を共有
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 出典を共有
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 出典を共有
+- [[infosoc-media-events|メディア・イベント]] — 出典を共有
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同分野の近傍
+- [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

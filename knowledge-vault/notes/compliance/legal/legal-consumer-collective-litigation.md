@@ -30,6 +30,18 @@ aliases:
 - [政府広報オンライン 消費者団体訴訟制度](https://www.gov-online.go.jp/useful/article/201401/3.html) `公的`
 - [国民生活センター 消費者団体訴訟制度の紹介](https://www.kokusen.go.jp/danso/) `メディア`
 
+## 関連概念
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 語彙が近い
+- [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — 分野横断
+- [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 出典を共有
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

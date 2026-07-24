@@ -30,6 +30,14 @@ aliases:
 - [協会けんぽ 高額な医療費を支払ったとき](https://www.kyoukaikenpo.or.jp/faq/benefit/004/index.html) `運営団体`
 - [協会けんぽ 限度額適用認定証](https://www.kyoukaikenpo.or.jp/benefit/high_cost_medical_expenses/001/index.html) `運営団体`
 
+## 関連概念
+- [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
+- [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 出典を共有
+- [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
+- [[labor-national-health-insurance|国民健康保険（国保）]] — 同分野の近傍
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

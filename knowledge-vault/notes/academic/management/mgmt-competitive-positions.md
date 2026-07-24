@@ -30,6 +30,10 @@ P.コトラー／リーダー・チャレンジャー・フォロワー・ニッ
 - [Cornell University, Dyson School — Marketing Module 4: Competitor Analysis](https://publications.dyson.cornell.edu/outreach/extensionpdf/2013/Cornell-Dyson-eb1305.pdf) `学術`
 - [野村総合研究所（NRI）用語解説「コトラーの競争地位戦略」](https://www.nri.com/jp/knowledge/glossary/kotlers_compe.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

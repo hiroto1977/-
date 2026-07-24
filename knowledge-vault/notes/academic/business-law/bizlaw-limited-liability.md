@@ -30,6 +30,11 @@ aliases:
 - [コトバンク — 株主有限責任の原則（間接有限責任の定義）](https://kotobank.jp/word/%E6%A0%AA%E4%B8%BB%E6%9C%89%E9%99%90%E8%B2%AC%E4%BB%BB%E3%81%AE%E5%8E%9F%E5%89%87-167490) `リファレンス`
 - [Wikibooks — 会社法第104条（条文・解説）](https://ja.wikibooks.org/wiki/%E4%BC%9A%E7%A4%BE%E6%B3%95%E7%AC%AC104%E6%9D%A1) `リファレンス`
 
+## 関連概念
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 語彙が近い
+- [[bizlaw-companies-act|会社法]] — 語彙が近い
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

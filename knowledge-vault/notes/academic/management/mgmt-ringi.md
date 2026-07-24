@@ -30,6 +30,10 @@ aliases:
 - [中村健壽「オフィス環境の変化と稟議制度に関する一考察」静岡県立大学](https://oshika.u-shizuoka-ken.ac.jp/media/10_10.pdf) `学術`
 - [コトバンク「稟議制度」](https://kotobank.jp/word/%E7%A8%9F%E8%AD%B0%E5%88%B6%E5%BA%A6-150285) `リファレンス`
 
+## 関連概念
+- [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同分野の近傍
+- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

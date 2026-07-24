@@ -31,6 +31,12 @@ aliases:
 - [N. Diakopoulos「Algorithmic Accountability: On the Investigation of Black Boxes」Columbia Journalism Review / Tow Center](https://www.cjr.org/tow_center_reports/algorithmic_accountability_on_the_investigation_of_black_boxes.php) `メディア`
 - [“Algorithmic Accountability in the Making,” Social Philosophy and Policy (Cambridge Core, 査読誌)](https://www.cambridge.org/core/journals/social-philosophy-and-policy/article/algorithmic-accountability-in-the-making/6F3CE994EC96C65392C5374B3CDE3C51) `学術`
 
+## 関連概念
+- [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — 出典を共有
+- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同分野の近傍
+- [[infosoc-explainable-ai|説明可能なAI（XAI）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

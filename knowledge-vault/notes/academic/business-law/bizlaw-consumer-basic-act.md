@@ -30,6 +30,14 @@ aliases:
 - [消費者庁「消費者基本計画等」](https://www.caa.go.jp/policies/policy/consumer_policy/basic_plan/) `公的`
 - [コトバンク「消費者基本法」](https://kotobank.jp/word/%E6%B6%88%E8%B2%BB%E8%80%85%E5%9F%BA%E6%9C%AC%E6%B3%95-156335) `リファレンス`
 
+## 関連概念
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 語彙が近い
+- [[bizlaw-consumer-contract-act|消費者契約法]] — 同分野の近傍
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
+- [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 同分野の近傍
+- [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 同分野の近傍
+- [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

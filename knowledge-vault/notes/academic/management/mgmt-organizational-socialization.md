@@ -30,6 +30,15 @@ aliases:
 - [University of Rhode Island DigitalCommons — Van Maanen & Schein (1979) 6戦術と制度化/個別化の整理](https://digitalcommons.uri.edu/cgi/viewcontent.cgi?article=1043&context=lrc_paper_series) `学術`
 - [Saks, Uggerslev & Fassina (2007), Journal of Vocational Behavior — 社会化戦術と新人適応のメタ分析](https://www.sciencedirect.com/science/article/abs/pii/S0001879106001205) `学術`
 
+## 関連概念
+- [[mgmt-organizational-culture-theory|組織文化理論]] — 同じ思想家
+- [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 出典を共有
+- [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
+- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 出典を共有
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
+- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
+- [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

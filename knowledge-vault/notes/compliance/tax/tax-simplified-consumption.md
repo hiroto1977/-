@@ -30,6 +30,13 @@ aliases:
 - [国税庁 消費税の届出](https://www.nta.go.jp/publication/pamph/koho/campaign/r5/Nov/02.htm) `公的`
 - [freee 消費税の簡易課税制度](https://support.freee.co.jp/hc/ja/articles/23391692865177) `メディア`
 
+## 関連概念
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 語彙が近い
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
+- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

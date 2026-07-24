@@ -30,6 +30,14 @@ aliases:
 - [Silverstone & Haddon (1996) Design and the Domestication of ICTs — Springer](https://link.springer.com/chapter/10.1057/9780230508538_2) `学術`
 - [Domestication Theory — Wikipedia](https://en.wikipedia.org/wiki/Domestication_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 語彙が近い
+- [[infosoc-domestication-technology-silverstone|技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+- [[infosoc-techno-orientalism-morley|テクノ・オリエンタリズム——東アジアの技術的他者化と西洋の想像力]] — 同じ思想家
+- [[infosoc-data-colonialism|データ植民地主義]] — 同分野の近傍
+- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [The Digital Labour Theory of Value and Karl Marx in the Age of Facebook... (Springer Nature)](https://link.springer.com/chapter/10.1057/9781137478573_2) `学術`
 - [Digital labor — Wikipedia（定義・研究領域の概観）](https://en.wikipedia.org/wiki/Digital_labor) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-playbour-kucklich|プレイバー——遊びと労働の境界が溶解しゲーム文化で価値を生む無償活動]] — 同じ思想家
+- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

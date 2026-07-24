@@ -31,6 +31,11 @@ aliases:
 - [金融庁：財務報告に係る内部統制の評価及び監査に関する実施基準等（内部統制報告制度の所管・運用基準）](https://www.fsa.go.jp/news/19/sonota/20080208-2.html) `公的`
 - [Wikipedia：上場企業会計改革および投資家保護法（米国SOX法 2002年）](https://ja.wikipedia.org/wiki/上場企業会計改革および投資家保護法) `リファレンス`
 
+## 関連概念
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同分野の近傍
+- [[bizlaw-financial-instruments-act|金融商品取引法]] — 同分野の近傍
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

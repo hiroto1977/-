@@ -30,6 +30,16 @@ aliases:
 - [Wikipedia — Cumulative process (Wicksell)](https://en.wikipedia.org/wiki/Cumulative_process) `リファレンス`
 - [Library of Economics and Liberty (Econlib) — Knut Wicksell](https://www.econlib.org/library/Enc/bios/Wicksell.html) `リファレンス`
 
+## 関連概念
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 語彙が近い
+- [[econ-austrian-business-cycle-theory|オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）]] — 同じ思想家
+- [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
+- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同じ思想家
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同分野の近傍
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [衆議院 — 放送法（昭和25年法律第132号）](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/00719500502132.htm) `公的`
 - [コトバンク — 民間放送・放送法](https://kotobank.jp/word/%E6%B0%91%E9%96%93%E6%94%BE%E9%80%81-140015) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+- [[bizlaw-karoshi-prevention|過労死等防止対策推進法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -28,6 +28,11 @@ aliases:
 - [奈良いのちの電話協会](https://nara-inochi.jp/m1_9.html) `運営団体`
 - [厚生労働省「まもろうよ こころ」](https://www.mhlw.go.jp/mamorouyokokoro/) `公的`
 
+## 関連概念
+- [[support-03|こころの健康相談統一ダイヤル]] — 語彙が近い
+- [[support-02|よりそいホットライン]] — 出典を共有
+- [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 出典を共有
+
 ## 関連
 - コレクション: [[相談窓口]]
 - ヴォルト入口: [[Home]]

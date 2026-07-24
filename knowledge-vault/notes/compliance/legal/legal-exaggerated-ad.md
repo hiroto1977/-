@@ -30,6 +30,18 @@ aliases:
 - [消費者庁 特定商取引法ガイド 通信販売](https://www.no-trouble.caa.go.jp/what/mailorder/) `公的`
 - [特商法の広告規制（12条・12条の2）解説](https://www.it-houmu.com/archives/1575) `メディア`
 
+## 関連概念
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
+- [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 出典を共有
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+- [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+- [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

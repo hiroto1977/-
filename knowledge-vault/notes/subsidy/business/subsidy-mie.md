@@ -36,6 +36,11 @@ prefecture
 - [三重県 中小企業・サービス産業振興課](https://www.pref.mie.lg.jp/CHSANGYO/HP/) `自治体`
 - [三重県産業支援センター（中小企業支援）](https://www.miesc.or.jp/) `運営団体`
 
+## 関連概念
+- [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 語彙が近い
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 語彙が近い
+- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

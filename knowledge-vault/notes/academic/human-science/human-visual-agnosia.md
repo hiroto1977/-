@@ -30,6 +30,13 @@ aliases:
 - [Visual Agnosia — ScienceDirect Topics Overview](https://www.sciencedirect.com/topics/neuroscience/visual-agnosia) `学術`
 - [MedLink Neurology: Visual Agnosias](https://www.medlink.com/articles/visual-agnosias) `リファレンス`
 
+## 関連概念
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 同じ思想家
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同じ思想家
+- [[human-defense-mechanisms|防衛機制]] — 同じ思想家
+- [[human-wernicke-aphasia|ウェルニッケ失語]] — 同分野の近傍
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

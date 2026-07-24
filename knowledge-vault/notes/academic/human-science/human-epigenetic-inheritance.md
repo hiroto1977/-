@@ -31,6 +31,10 @@ Marcus Pembrey ／ Michael K. Skinner ／ Lars Olov Bygren
 - [Pembrey et al. — Sex-specific transgenerational responses, EJHG](https://www.nature.com/articles/5201538) `学術`
 - [Critical view on transgenerational epigenetic inheritance — Nature Communications (2018)](https://www.nature.com/articles/s41467-018-05445-5) `学術`
 
+## 関連概念
+- [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — 語彙が近い
+- [[maslow-hierarchy|マズローの欲求階層説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,11 @@ prefecture
 - [岡山県 産業振興（中小企業支援）](https://www.pref.okayama.jp/site/sangyoshinko/) `自治体`
 - [岡山県 公式サイト](https://www.pref.okayama.jp/) `自治体`
 
+## 関連概念
+- [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 出典を共有
+- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 同分野の近傍
+- [[subsidy-okinawa|沖縄県産業振興基金事業補助金（沖縄県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

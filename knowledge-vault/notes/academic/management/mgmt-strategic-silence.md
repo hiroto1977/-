@@ -31,6 +31,12 @@ Elizabeth W. Morrison ／ Frances J. Milliken ／ Michael R. Parke
 - [Brinsfield (2013) — Employee Silence Motives, J. of Organizational Behavior](https://onlinelibrary.wiley.com/doi/10.1002/job.1829) `学術`
 - [Wharton Knowledge — How Strategic Silence Helps Employees](https://knowledge.wharton.upenn.edu/podcast/this-week-in-business/how-strategic-silence-helps-employees/) `メディア`
 
+## 関連概念
+- [[mgmt-reverse-innovation|リバース・イノベーション]] — 出典を共有
+- [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 出典を共有
+- [[mgmt-organizational-silence-morrison|組織的沈黙（モリソン＆ミリケン）]] — 同分野の近傍
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,17 @@ UNIDROIT（1994年国際商事契約原則でハードシップを独立承認�
 - [Veneziano (2010) UNIDROIT Principles and CISG: Change of Circumstances — UNIDROIT](https://www.unidroit.org/english/publications/review/articles/2010-1-veneziano-e.pdf) `学術`
 - [Hardship and Changed Circumstances as Grounds for Excuse — Arnold & Porter](https://www.arnoldporter.com/-/media/files/perspectives/publications/2006/04/hardship-and-changed-circumstances-as-grounds-fo__/files/publication/fileattachment/hardship_excuse_article.pdf) `学術`
 
+## 関連概念
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 語彙が近い
+- [[bizlaw-change-of-circumstances|事情変更の原則]] — 語彙が近い
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 出典を共有
+- [[bizlaw-equitable-estoppel|衡平法上の禁反言]] — 出典を共有
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 出典を共有
+- [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同分野の近傍
+- [[bizlaw-injunction-equity|差止命令——金銭賠償では不十分な場合に行為を命じ又は禁じる衡平法上の救済]] — 同分野の近傍
+- [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

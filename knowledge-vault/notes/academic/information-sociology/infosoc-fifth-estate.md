@@ -29,6 +29,11 @@ aliases:
 - [W. H. Dutton, "The Fifth Estate Emerging through the Network of Networks," Prometheus 27(1):1-15 (2009)](https://www.tandfonline.com/doi/full/10.1080/08109020802657453) `学術`
 - [Oxford Internet Institute (University of Oxford) — The Fifth Estate research project](https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/) `リファレンス`
 
+## 関連概念
+- [[infosoc-fourth-estate|第四の権力]] — 出典を共有
+- [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
+- [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

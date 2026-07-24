@@ -30,6 +30,10 @@ aliases:
 - [e-Gov法令検索 労働基準法（12条）](https://laws.e-gov.go.jp/law/322AC0000000049) `公的`
 - [神奈川労働局 平均賃金について](https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/hourei_seido_tetsuzuki/saiteichingin_chinginseido/heikinchi.html) `公的`
 
+## 関連概念
+- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 語彙が近い
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

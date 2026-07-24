@@ -29,6 +29,18 @@ aliases:
 - [Hidalgo & Hausmann (2009) "The Building Blocks of Economic Complexity," PNAS 106(26):10570–10575（ECI提唱論文）](https://www.pnas.org/doi/10.1073/pnas.0900943106) `学術`
 - [The Atlas of Economic Complexity — Harvard Center for International Development（ECI・製品空間の公式データベース・解説）](https://atlas.cid.harvard.edu) `学術`
 
+## 関連概念
+- [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 出典を共有
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 出典を共有
+- [[human-flynn-effect|フリン効果]] — 出典を共有
+- [[infosoc-media-multitasking|メディア・マルチタスキング]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

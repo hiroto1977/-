@@ -31,6 +31,15 @@ Donald C. Hambrick ／ Phyllis A. Mason ／ Mason A. Carpenter ／ Marta A. Gele
 - [Carpenter, Geletkanycz & Sanders (2004) JM](https://doi.org/10.1016/j.jm.2004.06.001) `学術`
 - [Finkelstein, Hambrick & Cannella (2009) Strategic Leadership](https://academic.oup.com/book/10716) `リファレンス`
 
+## 関連概念
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 語彙が近い
+- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同じ思想家
+- [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
+- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

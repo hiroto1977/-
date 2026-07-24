@@ -30,6 +30,18 @@ aliases:
 - [消費者庁 特商法逐条解説 電話勧誘販売（16条・17条）](https://www.no-trouble.caa.go.jp/pdf/20180625ac05.pdf) `公的`
 - [国民生活センター クーリング・オフ（電話勧誘8日間）](https://www.kokusen.go.jp/soudan_now/data/coolingoff.html) `メディア`
 
+## 関連概念
+- [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 語彙が近い
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
+- [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
+- [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 同分野の近傍
+- [[legal-computer-virus|不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

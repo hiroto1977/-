@@ -31,6 +31,11 @@ W・アーサー・ルイス（W. Arthur Lewis, 1915–1991, 1954年論文・197
 - [Wikipedia — Dual-sector model（モデル構造・余剰労働・無制限供給）](https://en.wikipedia.org/wiki/Dual-sector_model) `リファレンス`
 - [Wikipedia — Lewis turning point（転換点の定義・中国の議論）](https://en.wikipedia.org/wiki/Lewis_turning_point) `リファレンス`
 
+## 関連概念
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 語彙が近い
+- [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同じ思想家
+- [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

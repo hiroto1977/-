@@ -29,6 +29,15 @@ aliases:
 - [Cooperrider & Srivastva, "Appreciative Inquiry in Organizational Life" (1987), Research in Organizational Change and Development, Vol. 1](https://www.emerald.com/insight/content/doi/10.1108/S1475-9152(2013)0000004001/full/html) `学術`
 - [Case Western Reserve University, Fowler Center — Appreciative Inquiry（提唱者所属大学公式ページ）](https://weatherhead.case.edu/centers/fowler/about/appreciative-inquiry) `学術`
 
+## 関連概念
+- [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — 語彙が近い
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
+- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
+- [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[mgmt-3c-analysis|3C分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

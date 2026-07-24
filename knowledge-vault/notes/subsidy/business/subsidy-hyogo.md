@@ -36,6 +36,18 @@ prefecture
 - [ひょうご産業活性化センター 起業家支援事業](https://web.hyogo-iic.ne.jp/shinjigyo/kigyoka) `運営団体`
 - [兵庫県 起業家支援事業 解説](https://hojyokin-portal.jp/subsidies/55660) `メディア`
 
+## 関連概念
+- [[subsidy-tochigi|地域課題解決型創業支援補助金（栃木県）]] — 語彙が近い
+- [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

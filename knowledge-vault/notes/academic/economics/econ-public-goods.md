@@ -30,6 +30,12 @@ aliases:
 - [IMF Finance & Development — What Are Global Public Goods?](https://www.imf.org/en/publications/fandd/issues/2021/12/global-public-goods-chin-basics) `公的`
 - [Journal of the History of Economic Thought (Cambridge UP) — サミュエルソン1954論文の評価](https://www.cambridge.org/core/journals/journal-of-the-history-of-economic-thought/article/abs/fifty-years-after-samuelsons-the-pure-theory-of-public-expenditure-what-are-we-left-with/CD54F8996C2F64B8C1E137D68E9B79DB) `学術`
 
+## 関連概念
+- [[econ-free-rider|フリーライダー問題]] — 語彙が近い
+- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 語彙が近い
+- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

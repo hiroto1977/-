@@ -29,6 +29,12 @@ John O'Keefe & Jonathan Dostrovsky（Brain Research 34(1), 1971 — 場所細胞
 - [O'Keefe & Dostrovsky (1971) The hippocampus as a spatial map — Brain Research 34(1), pp.171-175](https://www.sciencedirect.com/science/article/abs/pii/0006899371903581) `学術`
 - [2014 Nobel Prize in Physiology or Medicine — press release](https://www.nobelprize.org/prizes/medicine/2014/press-release/) `リファレンス`
 
+## 関連概念
+- [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 同じ思想家
+- [[human-place-cells-okeefe|場所細胞と認知地図]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

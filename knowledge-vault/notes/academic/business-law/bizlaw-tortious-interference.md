@@ -29,6 +29,10 @@ Crompton J.（Lumley v Gye [1853] 2 El & Bl 216, 原理確立）／American Law 
 - [Tortious interference — Wikipedia（Lumley v Gye・Restatement §766・要件と抗弁の包括的解説）](https://en.wikipedia.org/wiki/Tortious_interference) `リファレンス`
 - [Lumley v Gye [1853] — Wikipedia（契約干渉の不法行為法理の起源判決）](https://en.wikipedia.org/wiki/Lumley_v_Gye) `リファレンス`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

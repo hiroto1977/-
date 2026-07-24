@@ -30,6 +30,18 @@ aliases:
 - [衆議院 — 公益通報者保護法（平成16年6月18日法律第122号）](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/15920040618122.htm) `公的`
 - [国立国会図書館 日本法令索引 — 公益通報者保護法](https://hourei.ndl.go.jp/simple/detail?lawId=0000098401&current=-1) `公的`
 
+## 関連概念
+- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 分野横断
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+- [[bizlaw-broadcast-act|放送法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

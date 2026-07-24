@@ -30,6 +30,11 @@ aliases:
 - [An Application of David A. Aaker's Brand Identity Planning Model（査読付ケーススタディ）](https://www.researchgate.net/publication/256015218) `学術`
 - [Summary of Aaker (1996) Building Strong Brands](https://www.alexmurrell.co.uk/summaries/david-a-aaker-building-strong-brands) `メディア`
 
+## 関連概念
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同分野の近傍
+- [[mgmt-diversification|多角化戦略]] — 同分野の近傍
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

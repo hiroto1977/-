@@ -29,6 +29,12 @@ Arnold C. Harberger（AER 44(2), 1954, 死荷重の三角形計測）／Harvey L
 - [Harberger (1954) Monopoly and Resource Allocation — American Economic Review 44(2), pp.77-87](https://www.jstor.org/stable/1818325) `学術`
 - [Tullock (1967) The Welfare Costs of Tariffs, Monopolies, and Theft — Western Economic Journal 5(3), pp.224-232](https://doi.org/10.1111/j.1465-7295.1967.tb01923.x) `学術`
 
+## 関連概念
+- [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
+- [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

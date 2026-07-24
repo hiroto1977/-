@@ -30,6 +30,18 @@ aliases:
 - [Hepp (2018) Researching Transforming Communications in Times of Deep Mediatization — Springer](https://link.springer.com/chapter/10.1007/978-3-319-65584-0_2) `学術`
 - [Necessary Entanglements: Materialist Phenomenology in Researching Deep Mediatization — Sociologica (UniBo)](https://sociologica.unibo.it/article/view/15793) `学術`
 
+## 関連概念
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 語彙が近い
+- [[infosoc-data-colonialism|データ植民地主義]] — 同じ思想家
+- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同じ思想家
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-digital-dualism|デジタル・デュアリズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [MIT Press: Norbert Wiener, Cybernetics（1948年初版／一次資料の刊行元）](https://mitpress.mit.edu/9780262537841/cybernetics-or-control-and-communication-in-the-animal-and-the-machine/) `学術`
 - [Wikipedia「Second-order cybernetics」（フォン・フェルスターによる観察者を含む第二次サイバネティクス）](https://en.wikipedia.org/wiki/Second-order_cybernetics) `リファレンス`
 
+## 関連概念
+- [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 同じ思想家
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
+- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
+- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
+- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 出典を共有
+- [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [Wikipedia「Accident triangle」（1:29:300比率・75,000件データ・バード1:10:30:600）](https://en.wikipedia.org/wiki/Accident_triangle) `リファレンス`
 - [Safety+Health Magazine（米国安全評議会NSC機関誌）— 88-10-2の方法論批判・原始データ消失](https://www.safetyandhealthmagazine.com/articles/6368-examining-the-foundation) `メディア`
 
+## 関連概念
+- [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,13 @@ Michael E. Brown ／ Linda K. Treviño ／ David A. Harrison
 - [Wikipedia — Ethical leadership](https://en.wikipedia.org/wiki/Ethical_leadership) `リファレンス`
 - [Treviño, Hartman & Brown (2000) Moral Person — CMR](https://journals.sagepub.com/doi/10.2307/41166057) `学術`
 
+## 関連概念
+- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同分野の近傍
+- [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同分野の近傍
+- [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

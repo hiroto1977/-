@@ -30,6 +30,10 @@ aliases:
 - [法務省 民法の一部を改正する法律（債権法改正）について](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 - [Wikibooks 民法第513条（条文・解説）](https://ja.wikibooks.org/wiki/民法第513条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

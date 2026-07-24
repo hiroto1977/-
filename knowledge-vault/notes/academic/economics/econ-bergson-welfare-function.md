@@ -29,6 +29,10 @@ aliases:
 - [Bergson, A. (1938) "A Reformulation of Certain Aspects of Welfare Economics," Quarterly Journal of Economics 52(2):310–334（JSTOR）](https://www.jstor.org/stable/1881737) `学術`
 - [Stanford Encyclopedia of Philosophy — Social Choice Theory（バーグソン厚生関数・アロー不可能性定理・パレート効率性の文脈）](https://plato.stanford.edu/entries/social-choice/) `リファレンス`
 
+## 関連概念
+- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

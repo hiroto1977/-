@@ -30,6 +30,18 @@ aliases:
 - [e-Gov法令検索 著作権法](https://laws.e-gov.go.jp/law/345AC0000000048) `公的`
 - [著作権情報センター 著作者の権利](https://www.cric.or.jp/qa/hajime/hajime2.html) `メディア`
 
+## 関連概念
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 語彙が近い
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 分野横断
+- [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 出典を共有
+- [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
+- [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 出典を共有
+- [[bizlaw-copyright|著作権法]] — 出典を共有
+- [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 出典を共有
+- [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 出典を共有
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
+- [[subsidy-culture-arts|文化芸術振興費補助金（文化芸術創造活動への支援）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

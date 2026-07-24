@@ -29,6 +29,14 @@ Thomas B. Rogers・Nicholas L. Kuiper・Walter S. Kirk（1977）「Self-referenc
 - [APA PsycNet — Rogers, Kuiper & Kirk (1977) "Self-reference and the encoding of personal information"（原著論文）](https://psycnet.apa.org/record/1978-10678-001) `学術`
 - [Neuropsychologia (2019) "The self-reference effect on memory: A quantitative review"（自己参照効果のメタ分析・神経基盤）](https://www.sciencedirect.com/science/article/abs/pii/S0028393218303452) `学術`
 
+## 関連概念
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同分野の近傍
+- [[human-interpersonal-theory-leary|対人関係理論（リアリー／サリヴァン）]] — 同分野の近傍
+- [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同分野の近傍
+- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同分野の近傍
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
+- [[human-hawthorne-effect|ホーソン効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,14 @@ Avi Fiegenbaum ／ Stuart L. Hart ／ Dan E. Schendel ／ Daniel Kahneman ／ Am
 - [Powell, Lovallo & Fox (2011) "Behavioral Strategy" — Strategic Management Journal 32(13)](https://doi.org/10.1002/smj.968) `学術`
 - [Prospect Theory — Wikipedia](https://en.wikipedia.org/wiki/Prospect_theory) `リファレンス`
 
+## 関連概念
+- [[econ-behavioral-finance-kahneman|行動ファイナンス理論（認知バイアスと意思決定）]] — 同じ思想家
+- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
+- [[mgmt-strategic-group-theory|戦略グループ理論]] — 同じ思想家
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

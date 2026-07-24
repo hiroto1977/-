@@ -29,6 +29,10 @@ aliases:
 - [国税庁 電子帳簿等保存制度特設サイト](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/index.htm) `公的`
 - [マネーフォワード クラウド会計 解説](https://biz.moneyforward.com/accounting/basic/44331/) `メディア`
 
+## 関連概念
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 語彙が近い
+- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,11 @@ W. Lance Bennett ／ Alexandra Segerberg
 - [Bimber, Flanagin & Stohl (2005) collective action space](https://doi.org/10.1111/j.1460-2466.2005.tb02685.x) `学術`
 - [Bennett & Segerberg (2013) response & extension](https://doi.org/10.1080/1369118X.2013.808364) `学術`
 
+## 関連概念
+- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 語彙が近い
+- [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同分野の近傍
+- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

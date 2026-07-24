@@ -30,6 +30,18 @@ aliases:
 - [日本年金機構 定時決定（算定基礎届）](https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120822.html) `公的`
 - [標準報酬月額 解説](https://www.freee.co.jp/kb/kb-payroll/standard-monthly-remuneration/) `メディア`
 
+## 関連概念
+- [[bizlaw-employees-pension|厚生年金保険法]] — 出典を共有
+- [[bizlaw-national-pension|国民年金法]] — 出典を共有
+- [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
+- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
+- [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
+- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

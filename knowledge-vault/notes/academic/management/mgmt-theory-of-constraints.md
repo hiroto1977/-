@@ -31,6 +31,10 @@ aliases:
 - [LeanProduction: Theory of Constraints（5 Focusing Steps / POOGI 解説）](https://www.leanproduction.com/theory-of-constraints/) `メディア`
 - [Theory of Constraints Institute: Five Focusing Steps](https://www.tocinstitute.org/five-focusing-steps.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

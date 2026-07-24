@@ -30,6 +30,16 @@ Martin Lipton（1982年考案）／Moran v. Household International, 500 A.2d 13
 - [経済産業省・法務省 買収防衛策に関する指針（2005年）](https://www.meti.go.jp/policy/economy/keiei_innovation/keizaihousei/pdf/3-shishinn-honntai-set.pdf) `公的`
 - [Wikipedia — 株主権利プラン（ポイズンピル）概説](https://en.wikipedia.org/wiki/Shareholder_rights_plan) `リファレンス`
 
+## 関連概念
+- [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 出典を共有
+- [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

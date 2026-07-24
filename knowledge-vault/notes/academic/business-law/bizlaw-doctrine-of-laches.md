@@ -29,6 +29,11 @@ Lord Camden（Smith v Clay (1767) 3 Bro CC 639）／Ruth Bader Ginsburg（Petrel
 - [Petrella v. Metro-Goldwyn-Mayer, Inc., 572 U.S. 663 (2014) — Justia US Supreme Court](https://supreme.justia.com/cases/federal/us/572/663/) `公的`
 - [Cornell Law School LII — Laches (Wex legal encyclopedia)](https://www.law.cornell.edu/wex/laches) `リファレンス`
 
+## 関連概念
+- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]] — 語彙が近い
+- [[bizlaw-laches-doctrine|ラッチェス法理]] — 同じ思想家
+- [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

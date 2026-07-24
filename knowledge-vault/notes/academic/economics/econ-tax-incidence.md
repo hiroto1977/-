@@ -30,6 +30,17 @@ aliases:
 - [一橋大学 佐藤主光 公共経済分析II 講義ノート4（租税の帰着）](https://www.ipp.hit-u.ac.jp/satom/lecture/pubecon2/2017_pubecon2_note04.pdf) `学術`
 - [Wikipedia — Tax incidence](https://en.wikipedia.org/wiki/Tax_incidence) `リファレンス`
 
+## 関連概念
+- [[econ-tax-incidence-theory|租税帰着理論]] — 語彙が近い
+- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 出典を共有
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 出典を共有
+- [[human-hyperbolic-discounting|双曲割引]] — 出典を共有
+- [[econ-menu-costs|メニューコスト]] — 出典を共有
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
+- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

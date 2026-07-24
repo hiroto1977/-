@@ -30,6 +30,11 @@ aliases:
 - [預金保険機構 — 保護の範囲（一般預金1,000万円＋利息／決済用預金全額）](https://www.dic.go.jp/yokinsha/page_000016.html) `公的`
 - [日本法令索引（国立国会図書館）— 預金保険法 昭和46年法律第34号](https://hourei.ndl.go.jp/simple/detail?lawId=0000061485) `公的`
 
+## 関連概念
+- [[econ-deposit-insurance|預金保険制度（ペイオフ）]] — 分野横断
+- [[bizlaw-toushiho|出資法]] — 同分野の近傍
+- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

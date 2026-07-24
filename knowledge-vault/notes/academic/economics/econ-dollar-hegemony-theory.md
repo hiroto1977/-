@@ -31,6 +31,14 @@ Barry Eichengreen ／ Robert Triffin ／ Michael Hudson
 - [Wikipedia: Triffin dilemma](https://en.wikipedia.org/wiki/Triffin_dilemma) `リファレンス`
 - [Wikipedia: Exorbitant privilege](https://en.wikipedia.org/wiki/Exorbitant_privilege) `リファレンス`
 
+## 関連概念
+- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 語彙が近い
+- [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
+- [[eh-1950|1950年（昭和25年）]] — 出典を共有
+- [[eh-1951|1951年（昭和26年）]] — 出典を共有
+- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

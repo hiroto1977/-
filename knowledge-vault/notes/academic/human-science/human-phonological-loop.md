@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia: Baddeley's Model of Working Memory](https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory) `リファレンス`
 - [Baddeley (1986/1992) Articulatory Rehearsal and Phonological Storage — Memory & Cognition (Springer)](https://link.springer.com/article/10.3758/BF03211160) `学術`
 
+## 関連概念
+- [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
+- [[human-emotional-contagion|情動感染]] — 同分野の近傍
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同分野の近傍
+- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,18 @@ prefecture
 - [群馬県産業支援機構 創業に関する補助金](https://www.g-inf.or.jp/html/startup_002.html) `運営団体`
 - [ぐんまクロススタート補助金 概要](https://hojyokin-portal.jp/subsidies/56584) `メディア`
 
+## 関連概念
+- [[subsidy-tochigi|地域課題解決型創業支援補助金（栃木県）]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

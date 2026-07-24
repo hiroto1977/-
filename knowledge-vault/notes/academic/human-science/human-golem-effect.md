@@ -29,6 +29,11 @@ aliases:
 - [Eden & Shani (1982) "Pygmalion Goes to Boot Camp: Expectancy, Leadership, and Trainee Performance," Journal of Applied Psychology 67(2):194–199（ゴーレム効果の実証原典）](https://psycnet.apa.org/doi/10.1037/0021-9010.67.2.194) `学術`
 - [Encyclopaedia Britannica — "Pygmalion effect"（ピグマリオン効果・ゴーレム効果・自己成就的予言との関係）](https://www.britannica.com/topic/Pygmalion-effect) `リファレンス`
 
+## 関連概念
+- [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同じ思想家
+- [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同分野の近傍
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

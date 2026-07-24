@@ -29,6 +29,13 @@ Ben Caldecott（Oxford Smith School, 2013, Stranded Assets Programme設立）／
 - [Oxford Smith School Sustainable Finance Programme（旧Stranded Assets Programme）— 座礁資産研究の学術拠点](https://www.smithschool.ox.ac.uk/research/sustainable-finance) `学術`
 - [Carney (2015) Breaking the Tragedy of the Horizon — Bank of England, Lloyd's of London講演（気候変動と金融安定性、座礁資産リスクの中央銀行による公式警告）](https://www.bankofengland.co.uk/speech/2015/breaking-the-tragedy-of-the-horizon-climate-change-and-financial-stability) `公的`
 
+## 関連概念
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 出典を共有
+- [[econ-money-creation|信用創造と貨幣乗数]] — 出典を共有
+- [[econ-quantitative-easing|量的緩和（QE）]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

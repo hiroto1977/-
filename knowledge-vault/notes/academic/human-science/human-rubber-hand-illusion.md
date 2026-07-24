@@ -29,6 +29,18 @@ aliases:
 - [Botvinick & Cohen (1998) "Rubber hands feel touch that eyes see," Nature 391:756](https://www.nature.com/articles/35784) `学術`
 - [PLOS ONE: The Rubber Hand Illusion — Feeling of Ownership and Proprioceptive Drift](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0021659) `学術`
 
+## 関連概念
+- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同じ思想家
+- [[human-reminiscence-bump|レミニセンス・バンプ]] — 出典を共有
+- [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — 出典を共有
+- [[human-priming|プライミング効果]] — 出典を共有
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
+- [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 同分野の近傍
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

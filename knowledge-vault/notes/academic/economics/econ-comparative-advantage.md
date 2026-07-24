@@ -30,6 +30,18 @@ aliases:
 - [AEA, Journal of Economic Perspectives — Ricardo’s 1817 Formulation of Comparative Advantage](https://www.aeaweb.org/articles?id=10.1257%2Fjep.32.4.227) `学術`
 - [IMF Finance & Development — Back to Basics: Why Countries Trade](https://www.imf.org/external/pubs/ft/fandd/2009/12/basics.htm) `公的`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 同じ思想家
+- [[econ-division-of-labour|分業]] — 同じ思想家
+- [[econ-invisible-hand|見えざる手]] — 同じ思想家
+- [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
+- [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]] — 同じ思想家
+- [[econ-broken-window-fallacy-bastiat|割れ窓の誤謬（バスティア）——「見えるもの」と「見えざるもの」]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

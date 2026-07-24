@@ -30,6 +30,18 @@ aliases:
 - [Springer Reference Work: Misattribution of Arousal](https://link.springer.com/rwe/10.1007/978-3-031-08956-5_2147-1) `学術`
 - [SAGE Encyclopedia of Social Psychology: Misattribution of Arousal](https://sk.sagepub.com/ency/edvol/socialpsychology/chpt/misattribution-arousal) `リファレンス`
 
+## 関連概念
+- [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

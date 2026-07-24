@@ -31,6 +31,14 @@ aliases:
 - [Watts, Duncan & Quan (2018) “Revisiting the Marshmallow Test,” Psychological Science（査読・概念的再現）](https://journals.sagepub.com/doi/abs/10.1177/0956797618761661) `学術`
 - [Columbia University 心理学部 — In Memoriam: Walter Mischel（経歴・テスト概要）](https://psychology.columbia.edu/news/memoriam-walter-mischel-psychologist-who-developed-pioneering-marshmallow-test) `学術`
 
+## 関連概念
+- [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同じ思想家
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
+- [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同じ思想家
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

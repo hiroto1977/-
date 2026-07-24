@@ -36,6 +36,18 @@ national
 - [厚生労働省 キャリアアップ助成金のご案内](https://www.mhlw.go.jp/content/11910500/001512366.pdf) `公的`
 - [キャリアアップ助成金 解説](https://hojyokin-portal.jp/columns/career-up_summary) `メディア`
 
+## 関連概念
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 語彙が近い
+- [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 語彙が近い
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

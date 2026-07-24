@@ -31,6 +31,13 @@ Elisabeth Noelle-Neumann ／ Keith N. Hampton ／ Wenhong Chen
 - [Gearhart & Zhang, "Was It Something I Said?" Journal of Communication (2015)](https://doi.org/10.1111/jcom.12186) `学術`
 - [Matthes et al., "A Cross-National Study of the Spiral of Silence," Political Communication (2018)](https://www.tandfonline.com/doi/full/10.1080/10584609.2016.1202053) `学術`
 
+## 関連概念
+- [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
+- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

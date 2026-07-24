@@ -29,6 +29,11 @@ aliases:
 - [Bexton, Heron & Scott (1954) "Effects of decreased variation in the sensory environment" Canadian Journal of Psychology 8(2)](https://pubmed.ncbi.nlm.nih.gov/13160864/) `学術`
 - [The Canadian Encyclopedia — Donald Olding Hebb](https://www.thecanadianencyclopedia.ca/en/article/donald-olding-hebb) `リファレンス`
 
+## 関連概念
+- [[human-mindfulness-based-stress-reduction-kabat-zinn|マインドフルネスストレス低減法——カバットジンのMBSRと世俗的瞑想の医療・心理応用]] — 同分野の近傍
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同分野の近傍
+- [[human-ecopsychology-roszak-nature-wellbeing|エコサイコロジーと自然体験——ロザックの「地球の声」論と人間-自然の心理的相互作用]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

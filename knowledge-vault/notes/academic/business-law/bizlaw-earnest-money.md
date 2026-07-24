@@ -30,6 +30,18 @@ aliases:
 - [Wikibooks 民法第557条（手付の種類・解約手付・履行の着手・545条4項排除）](https://ja.wikibooks.org/wiki/民法第557条) `リファレンス`
 - [弁護士解説 民法第557条（手付）— 解約手付・現実の提供・損害賠償不発生](https://tek-law.jp/civil-code/claims/contracts/sale/article-557/) `メディア`
 
+## 関連概念
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
+- [[bizlaw-negotiorum-gestio|事務管理（民法697条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

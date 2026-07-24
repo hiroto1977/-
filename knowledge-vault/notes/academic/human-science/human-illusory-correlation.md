@@ -30,6 +30,18 @@ aliases:
 - [APA Dictionary of Psychology — illusory correlation 定義](https://dictionary.apa.org/illusory-correlation) `リファレンス`
 - [Wikipedia: Illusory correlation — Chapman (1967) 命名・Hamilton & Gifford distinctiveness 理論](https://en.wikipedia.org/wiki/Illusory_correlation) `リファレンス`
 
+## 関連概念
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同じ思想家
+- [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同じ思想家
+- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同じ思想家
+- [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

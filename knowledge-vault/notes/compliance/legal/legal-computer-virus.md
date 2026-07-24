@@ -30,6 +30,10 @@ aliases:
 - [総務省 サイバーセキュリティサイト 刑法](https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/basic_legal_02.html) `公的`
 - [法務省 コンピュータ・ウイルスに関する罪について](https://www.moj.go.jp/content/001267498.pdf) `公的`
 
+## 関連概念
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 同分野の近傍
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

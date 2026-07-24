@@ -30,6 +30,18 @@ aliases:
 - [アガルート「民法96条の詐欺・強迫とは？」（司法試験講座解説）](https://www.agaroot.jp/shiho/column/fraud-duress/) `メディア`
 - [クレアール司法書士講座 民法第96条【詐欺又は強迫】](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0096-00/) `メディア`
 
+## 関連概念
+- [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]] — 語彙が近い
+- [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 語彙が近い
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 同じ思想家
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
+- [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+- [[bizlaw-public-order|公序良俗（民法90条）]] — 出典を共有
+- [[bizlaw-retention-lien|留置権（民法295条）]] — 出典を共有
+- [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — 出典を共有
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,14 @@ national
 - [厚生労働省 住居確保給付金の概要](https://www.mhlw.go.jp/stf/wp/hakusyo/kousei/20/backdata/2-1-4-6.html) `公的`
 - [大阪市 住居確保給付金（家賃補助）](https://www.city.osaka.lg.jp/fukushi/page/0000501083.html) `自治体`
 
+## 関連概念
+- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]] — 出典を共有
+- [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 出典を共有
+- [[support-03|こころの健康相談統一ダイヤル]] — 出典を共有
+- [[tax-city-planning-tax|都市計画税]] — 出典を共有
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 同分野の近傍
+- [[subsidy-child-allowance|児童手当]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,18 @@ John Child ／ Richard M. Cyert ／ James G. March ／ Alfred D. Chandler Jr. �
 - [Grokipedia: Strategic Choice Theory — overview of core concepts and key scholars](https://grokipedia.com/page/strategic_choice_theory) `リファレンス`
 - [Elgar Online: Strategic Choice Theory — chapter in A Guide to Key Theories for Human Resource Management Research](https://www.elgaronline.com/edcollchap/book/9781035308767/ch40.xml) `学術`
 
+## 関連概念
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
+- [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

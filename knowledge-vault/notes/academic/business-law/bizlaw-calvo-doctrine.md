@@ -30,6 +30,10 @@ aliases:
 - [Calvo Doctrine — Britannica](https://www.britannica.com/topic/Calvo-Doctrine) `リファレンス`
 - [Revisiting Carlos Calvo — EJIL:Talk! (European Journal of International Law)](https://www.ejiltalk.org/revisiting-carlos-calvo-on-the-200th-anniversary-of-his-birth/) `学術`
 
+## 関連概念
+- [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同じ思想家
+- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

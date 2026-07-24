@@ -30,6 +30,12 @@ C. Thi Nguyen／Cass R. Sunstein／Eli Pariser／Kathleen Hall Jamieson／Joseph
 - [Sunstein (2017) #Republic: Divided Democracy in the Age of Social Media, Princeton UP](https://doi.org/10.2307/j.ctv4nczgf) `学術`
 - [Jamieson & Cappella (2008) Echo Chamber: Rush Limbaugh and the Conservative Media Establishment, Oxford UP](https://doi.org/10.1093/acprof:oso/9780195398601.001.0001) `学術`
 
+## 関連概念
+- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 同じ思想家
+- [[infosoc-filter-bubble-theory|フィルターバブル理論]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
+- [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

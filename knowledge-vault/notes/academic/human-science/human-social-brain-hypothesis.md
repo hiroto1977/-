@@ -31,6 +31,12 @@ Robin Dunbar ／ Richard Byrne ／ Andrew Whiten
 - [PubMed entry PMID 19575315](https://pubmed.ncbi.nlm.nih.gov/19575315/) `リファレンス`
 - [Wikipedia — Social brain hypothesis](https://en.wikipedia.org/wiki/Social_brain_hypothesis) `リファレンス`
 
+## 関連概念
+- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 語彙が近い
+- [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
+- [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 同分野の近傍
+- [[human-sociometer-theory|ソシオメーター理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

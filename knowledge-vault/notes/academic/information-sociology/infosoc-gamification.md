@@ -30,6 +30,12 @@ aliases:
 - [Wikipedia「Sebastian Deterding」— 提唱者と2011年定義論文・The Gameful World（MIT Press）](https://en.wikipedia.org/wiki/Sebastian_Deterding) `リファレンス`
 - [Interaction Design Foundation（IxDF, HCI専門リファレンス）「What is Gamification?」](https://www.interaction-design.org/literature/topics/gamification) `学術`
 
+## 関連概念
+- [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 出典を共有
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
+- [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 同分野の近傍
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

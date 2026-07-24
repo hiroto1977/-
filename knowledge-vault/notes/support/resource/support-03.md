@@ -27,6 +27,15 @@ aliases:
 - [山梨県](https://www.pref.yamanashi.jp/kenko-zsn/j-taisaku/kokoro.html) `自治体`
 - [大阪市](https://www.city.osaka.lg.jp/kenko/page/0000555283.html) `自治体`
 
+## 関連概念
+- [[support-01|いのちの電話 (ナビダイヤル)]] — 語彙が近い
+- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]] — 出典を共有
+- [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 出典を共有
+- [[subsidy-housing-security|住居確保給付金（生活困窮者自立支援制度）]] — 出典を共有
+- [[tax-city-planning-tax|都市計画税]] — 出典を共有
+- [[subsidy-yamanashi|中小企業等生産性向上設備整備等支援補助金（山梨県）]] — 出典を共有
+- [[support-02|よりそいホットライン]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[相談窓口]]
 - ヴォルト入口: [[Home]]

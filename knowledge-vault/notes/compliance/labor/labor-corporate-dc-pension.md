@@ -30,6 +30,12 @@ aliases:
 - [国税庁 No.5231 確定給付企業年金等に係る課税関係](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5231.htm) `公的`
 - [企業年金連合会 マッチング拠出](https://www.pfa.or.jp/yogoshu/ma/ma08.html) `運営団体`
 
+## 関連概念
+- [[labor-ideco|iDeCo（個人型確定拠出年金）の制度概要]] — 語彙が近い
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
+- [[bizlaw-defined-contribution-pension|確定拠出年金法]] — 語彙が近い
+- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

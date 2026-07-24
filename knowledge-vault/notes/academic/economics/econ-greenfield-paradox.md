@@ -30,6 +30,12 @@ Hans-Werner Sinn ／ Reyer Gerlagh ／ Edwin van der Werf ／ Corrado Di Maria
 - [Gerlagh, R., & van der Werf, E. (2012). Carbon Leakage and the Green Paradox. SSRN Working Paper.](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2037694) `学術`
 - [Wikipedia — Green paradox](https://en.wikipedia.org/wiki/Green_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — 同分野の近傍
+- [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同分野の近傍
+- [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — 同分野の近傍
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

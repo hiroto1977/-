@@ -30,6 +30,15 @@ aliases:
 - [e-Gov法令検索 — 消費者契約法（平成12年法律第61号）](https://elaws.e-gov.go.jp/document?lawid=412AC0000000061_20250616_504AC0000000068) `公的`
 - [参議院 — 消費者団体訴訟制度の創設（2006年改正）](https://www.sangiin.go.jp/japanese/annai/chousa/rippou_chousa/backnumber/2006pdf/2006070709.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 語彙が近い
+- [[legal-consumer-contract-act|消費者契約法]] — 分野横断
+- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 出典を共有
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
+- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

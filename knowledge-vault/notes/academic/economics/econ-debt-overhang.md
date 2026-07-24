@@ -30,6 +30,18 @@ aliases:
 - [Krugman, P. (1988) "Financing vs. Forgiving a Debt Overhang," Journal of Development Economics 29(3): 253–268](https://www.sciencedirect.com/science/article/abs/pii/0304387888900442) `学術`
 - [Wikipedia: Debt overhang](https://en.wikipedia.org/wiki/Debt_overhang) `リファレンス`
 
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+- [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

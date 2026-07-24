@@ -30,6 +30,10 @@ aliases:
 - [American Mathematical Society (AMS) Feature Column — The Legend of Abraham Wald](https://www.ams.org/publicoutreach/feature-column/fc-2016-06) `学術`
 - [Wikipedia — Survivorship bias](https://en.wikipedia.org/wiki/Survivorship_bias) `リファレンス`
 
+## 関連概念
+- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

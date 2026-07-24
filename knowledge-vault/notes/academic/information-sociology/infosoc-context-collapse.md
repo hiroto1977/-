@@ -30,6 +30,18 @@ aliases:
 - [“One Size Fits All: Context Collapse, Self-Presentation Strategies and Language Styles on Facebook.” Journal of Computer-Mediated Communication 23(3) (Oxford Academic)](https://academic.oup.com/jcmc/article/23/3/127/4962540) `学術`
 - [Wikipedia: Context collapse（概念・最低共通分母・ゴッフマンの聴衆分離との関係）](https://en.wikipedia.org/wiki/Context_collapse) `リファレンス`
 
+## 関連概念
+- [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 語彙が近い
+- [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 同じ思想家
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 同じ思想家
+- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
+- [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 同じ思想家
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

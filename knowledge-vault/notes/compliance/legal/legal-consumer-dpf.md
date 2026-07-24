@@ -30,6 +30,18 @@ aliases:
 - [政府広報オンライン 取引DPF消費者保護法](https://www.gov-online.go.jp/useful/article/202212/3.html) `公的`
 - [国民生活センター 取引DPF消費者保護法の概要](https://www.kokusen.go.jp/wko/pdf/wko-202204_04.pdf) `メディア`
 
+## 関連概念
+- [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 語彙が近い
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 出典を共有
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
+- [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
+- [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

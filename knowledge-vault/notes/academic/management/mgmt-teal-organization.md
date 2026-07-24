@@ -30,6 +30,10 @@ F.ラルー『ティール組織（Reinventing Organizations）』2014／組織�
 - [Frédéric Laloux 本人サイト掲載の原著PDF（一次資料）](https://www.reinventingorganizations.com/uploads/2/1/9/8/21988088/140305_laloux_reinventing_organizations.pdf) `リファレンス`
 - [Wikipedia — Teal organisation（定義・自主経営／全体性／存在目的）](https://en.wikipedia.org/wiki/Teal_organisation) `リファレンス`
 
+## 関連概念
+- [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

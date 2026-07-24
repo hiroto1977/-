@@ -30,6 +30,16 @@ aliases:
 - [Merriam-Webster Dictionary — "Skunk Works"](https://www.merriam-webster.com/dictionary/Skunk%20Works) `リファレンス`
 - [Wikipedia — Skunkworks project](https://en.wikipedia.org/wiki/Skunkworks_project) `リファレンス`
 
+## 関連概念
+- [[econ-stagflation|スタグフレーション]] — 出典を共有
+- [[infosoc-astroturfing|アストロターフィング]] — 出典を共有
+- [[infosoc-clickbait|クリックベイト（釣り見出し）]] — 出典を共有
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[mgmt-action-learning|アクションラーニング]] — 同分野の近傍
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

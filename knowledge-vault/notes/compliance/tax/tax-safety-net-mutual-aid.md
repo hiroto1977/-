@@ -30,6 +30,13 @@ aliases:
 - [中小機構 経営セーフティ共済 制度の概要](https://www.smrj.go.jp/kyosai/tkyosai/features/) `運営団体`
 - [経営セーフティ共済とは 解説](https://biz.moneyforward.com/accounting/basic/45216/) `メディア`
 
+## 関連概念
+- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 語彙が近い
+- [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 分野横断
+- [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
+- [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

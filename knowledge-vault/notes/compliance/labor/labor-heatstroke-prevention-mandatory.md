@@ -30,6 +30,10 @@ aliases:
 - [熊本労働局 熱中症対策が義務化されます（令和7年6月1日施行）](https://jsite.mhlw.go.jp/kumamoto-roudoukyoku/newpage_01552.html) `公的`
 - [釜石市 職場における熱中症対策強化（令和7年6月1日施行）](https://www.city.kamaishi.iwate.jp/docs/2025052100056/) `自治体`
 
+## 関連概念
+- [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
+- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

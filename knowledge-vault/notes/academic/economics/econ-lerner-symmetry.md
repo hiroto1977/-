@@ -29,6 +29,10 @@ Abba P. Lerner（Economica, New Series, 3(11), 1936, 原証明）／Ronald I. Mc
 - [Lerner symmetry theorem — Wikipedia（定理の概要・前提条件・政策的含意）](https://en.wikipedia.org/wiki/Lerner_symmetry_theorem) `リファレンス`
 - [McKinnon (1966) Intermediate Products and Differential Tariffs: A Generalization of Lerner's Symmetry Theorem — QJE 80(4), pp.584-615](https://doi.org/10.2307/1884325) `学術`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

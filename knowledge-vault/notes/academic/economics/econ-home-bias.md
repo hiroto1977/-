@@ -30,6 +30,15 @@ aliases:
 - [Equity home bias puzzle — Wikipedia (French & Poterba 1991 attribution, country shares, Obstfeld–Rogoff puzzle)](https://en.wikipedia.org/wiki/Equity_home_bias_puzzle) `リファレンス`
 - [Van Nieuwerburgh & Veldkamp, "Information Immobility and the Home Bias Puzzle," NBER WP 13366 / Journal of Finance 2009](https://www.nber.org/papers/w13366) `学術`
 
+## 関連概念
+- [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
+- [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-home-bias-puzzle|ホームバイアス・パズル——投資家が自国資産に過度に偏る謎]] — 同じ思想家
+- [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
+- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
+- [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

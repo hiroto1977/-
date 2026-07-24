@@ -30,6 +30,10 @@ aliases:
 - [ハローワーク渋谷（東京労働局）出生後休業支援給付金・育児時短就業給付金の創設](https://jsite.mhlw.go.jp/tokyo-hellowork/list/shibuya/important_topics/070116_00001.html) `公的`
 - [マネーフォワード 育児時短就業給付金の解説（支給率・対象・申請）](https://biz.moneyforward.com/payroll/basic/97314/) `メディア`
 
+## 関連概念
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 同分野の近傍
+- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)](https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning) `学術`
 - [Small Business Economics (Springer): comparing effectuation, DDP, lean startup, design thinking (2019)](https://link.springer.com/article/10.1007/s11187-019-00153-w) `学術`
 
+## 関連概念
+- [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 語彙が近い
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
+- [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

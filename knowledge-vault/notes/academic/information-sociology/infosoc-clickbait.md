@@ -30,6 +30,15 @@ curiosity gap（好奇心の隙間）／Loewenstein情報ギャップ理論／�
 - [Scott, K. (2021) “...Clickbait, relevance and the curiosity gap”, Journal of Pragmatics 175（査読論文）](https://www.sciencedirect.com/science/article/abs/pii/S0378216621000229) `学術`
 - [Lischka & Garz (2023) “Clickbait news and algorithmic curation”, New Media & Society 25(8)（査読論文）](https://journals.sagepub.com/doi/10.1177/14614448211027174) `学術`
 
+## 関連概念
+- [[econ-stagflation|スタグフレーション]] — 出典を共有
+- [[infosoc-astroturfing|アストロターフィング]] — 出典を共有
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

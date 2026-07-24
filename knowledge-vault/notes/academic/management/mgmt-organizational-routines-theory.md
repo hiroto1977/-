@@ -32,6 +32,18 @@ Richard R. Nelson ／ Sidney G. Winter ／ Martha S. Feldman ／ Brian T. Pentla
 - [Organisational Routines - Wikipedia](https://en.wikipedia.org/wiki/Organisational_routines) `リファレンス`
 - [Organizational Routines: Between Change and Stability - Industrial and Corporate Change, Oxford Academic (2023)](https://academic.oup.com/icc/article-abstract/32/6/1305/7332198) `学術`
 
+## 関連概念
+- [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 語彙が近い
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 語彙が近い
+- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — 同じ思想家
+- [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
+- [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

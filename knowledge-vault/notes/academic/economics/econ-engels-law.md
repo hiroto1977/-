@@ -30,6 +30,11 @@ aliases:
 - [Encyclopaedia Britannica — Ernst Engel（人物・1857年/ベルギー家計調査）](https://www.britannica.com/money/Ernst-Engel) `リファレンス`
 - [St. Louis Fed（FRED Blog）— Engel's law](https://fredblog.stlouisfed.org/2016/10/engels-law-is-still-good-food-for-thought/) `公的`
 
+## 関連概念
+- [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 語彙が近い
+- [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 同分野の近傍
+- [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

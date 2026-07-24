@@ -30,6 +30,11 @@ aliases:
 - [栃木労働局 退職時の証明（22条）](https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article22.html) `公的`
 - [和歌山労働局 解雇理由・退職時の証明（22条）](https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00486.html) `公的`
 
+## 関連概念
+- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 語彙が近い
+- [[labor-trial-period|試用期間の労働法上の取扱い]] — 同分野の近傍
+- [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

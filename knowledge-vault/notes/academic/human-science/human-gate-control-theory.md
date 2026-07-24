@@ -32,6 +32,18 @@ Ronald Melzack ／ Patrick D. Wall
 - [Moayedi & Davis (2013) The golden anniversary of Melzack and Wall's gate control theory. Pain Research & Management, 18(6), 307–308.](https://pmc.ncbi.nlm.nih.gov/articles/PMC4676495/) `学術`
 - [IASP — Pain mechanisms: a new theory（ゲートコントロール理論 紹介ページ）](https://www.iasp-pain.org/publications/pain-research-forum/papers-of-the-week/paper/5984-pain-mechanisms-new-theory/) `リファレンス`
 
+## 関連概念
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同じ思想家
+- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
+- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
+- [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

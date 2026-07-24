@@ -30,6 +30,18 @@ aliases:
 - [Fontana (2007) Endogenous Money: Structuralist and Horizontalist — Levy Institute WP 512](https://www.levyinstitute.org/pubs/wp_512.pdf) `学術`
 - [Post Keynesian Endogeneity of Money Supply — Procedia Economics and Finance (ScienceDirect)](https://www.sciencedirect.com/science/article/pii/S2212567113002177/pdf) `学術`
 
+## 関連概念
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 語彙が近い
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 語彙が近い
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-cobweb|クモの巣理論]] — 同じ思想家
+- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

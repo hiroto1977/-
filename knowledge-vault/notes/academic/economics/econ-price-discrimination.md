@@ -30,6 +30,12 @@ A.C.ピグー（3度の分類）／成立条件: 市場支配力・支払意思�
 - [ScienceDirect Topics — Price Discrimination: an overview](https://www.sciencedirect.com/topics/economics-econometrics-and-finance/price-discrimination) `学術`
 - [MIT OpenCourseWare 14.271 Industrial Organization — Price Discrimination](https://ocw.mit.edu/courses/14-271-industrial-organization-i-fall-2022/mit14_271_f22_lec3slides.pdf) `学術`
 
+## 関連概念
+- [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 語彙が近い
+- [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 出典を共有
+- [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]] — 出典を共有
+- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

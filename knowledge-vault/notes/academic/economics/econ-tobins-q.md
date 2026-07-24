@@ -30,6 +30,12 @@ J.トービン提唱／q＝市場価値÷資本の再取得費用／q>1で投資
 - [Encyclopaedia Britannica — Tobin's q（資産の市場価値の再取得費用に対する比、q>1で新規投資が有利）](https://www.britannica.com/topic/Tobins-q) `リファレンス`
 - [Wikipedia — Tobin's q（市場価値÷再取得費用、限界q／平均qの区別）](https://en.wikipedia.org/wiki/Tobin%27s_q) `リファレンス`
 
+## 関連概念
+- [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 語彙が近い
+- [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同分野の近傍
+- [[econ-modigliani-cohn-inflation-illusion|モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する]] — 同分野の近傍
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

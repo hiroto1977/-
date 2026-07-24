@@ -29,6 +29,10 @@ aliases:
 - [Cooper, R.G. (1990) "Stage-Gate Systems: A New Tool for Managing New Products", Business Horizons 33(3):44-54](https://ideas.repec.org/a/eee/bushor/v33y1990i3p44-54.html) `学術`
 - [Cooper, "The Stage-Gate Idea-to-Launch System", Wiley International Encyclopedia of Marketing](https://onlinelibrary.wiley.com/doi/full/10.1002/9781444316568.wiem05014) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同分野の近傍
+- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

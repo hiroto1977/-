@@ -31,6 +31,18 @@ aliases:
 - [Akerlof 1970 — The Market for Lemons: Quality Uncertainty and the Market Mechanism, Quarterly Journal of Economics 84(3):488-500](https://doi.org/10.2307/1879431) `学術`
 - [Weiss 1995 — Human Capital vs. Signaling Explanations of Wages, Journal of Economic Perspectives 9(4):133-154](https://www.jstor.org/stable/2138873) `学術`
 
+## 関連概念
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-job-competition-thurow|仕事をめぐる競争モデル（サロー）——賃金競争への対抗と「労働の待ち行列」]] — 同じ思想家
+- [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]] — 同じ思想家
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
+- [[econ-signaling|シグナリング]] — 同じ思想家
+- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

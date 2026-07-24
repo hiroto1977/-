@@ -30,6 +30,18 @@ Kimberlé Williams Crenshaw／Patricia Hill Collins／bell hooks／Leslie McCall
 - [Encyclopaedia Britannica — Intersectionality](https://www.britannica.com/topic/intersectionality) `リファレンス`
 - [UN Women / CEDAW — Concept Note on Intersectionality](https://www.un.org/womenwatch/daw/cedaw/cedaw25years/content/english/CONCEPT_NOTE_Platform_for_Action_and_CEDAW.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
+- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
+- [[human-spreading-activation|活性化拡散]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

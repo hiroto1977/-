@@ -30,6 +30,18 @@ aliases:
 - [横浜市 法人市民税](https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/jigyosya/shizei/hojin/houjin.html) `自治体`
 - [弥生 法人住民税](https://www.yayoi-kk.co.jp/kaikei/oyakudachi/corporate-inhabitant-tax/) `メディア`
 
+## 関連概念
+- [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 語彙が近い
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 語彙が近い
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 出典を共有
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 出典を共有
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 出典を共有
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 出典を共有
+- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 出典を共有
+- [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 出典を共有
+- [[tax-light-vehicle-tax|軽自動車税（種別割）]] — 出典を共有
+- [[subsidy-child-allowance|児童手当]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

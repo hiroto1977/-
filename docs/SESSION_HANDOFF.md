@@ -14,19 +14,146 @@
 
 - **完全な運用仕様 → [`docs/BATCH_APPEND_SPECIFICATION.md`](BATCH_APPEND_SPECIFICATION.md)**（機械可読AIエージェント向け）。
 - **概念背景 → [`docs/ACADEMIC_KNOWLEDGE.md`](ACADEMIC_KNOWLEDGE.md)**（学術の枠・検証原則）。
-- **進捗状況**:
-  - ✅ **Batch 376 完了** (2,261 → 2,267 概念, PR #マージ済み)
-  - ✅ **Batch 377 完了** (2,267 → 2,273 概念, 6 concepts 追加: Adverse Selection / Bounded Rationality / Narrative Identity / Good Faith / Second-Order Cybernetics / Signaling & Screening)
-  - ✅ **Batch 378 完了** (2,273 → 2,279 概念, 6 concepts 追加: Portfolio Theory / Organizational Sensemaking / Memory Consolidation / Agency Relationship / Digital Divide / Psychological Capital)
-  - ✅ **Batch 379 完了** (2,279 → 2,285 概念, 6 concepts 追加: Behavioral Finance / Adaptive Leadership / Flow Psychology / Tortious Interference / Network Effects / Theory of Mind)
-  - ✅ **Batch 380 完了** (2,285 → 2,291 概念, 6 concepts 追加: Product Liability / Financialization / Growth Mindset / Mental Time Travel / Corporate Governance / Cognitive Surplus) — Commit 2e50f61, PR #704
-  - 🔄 **Batch 381 準備中**: 次の候補生成 & デデュプ検証待機中
-- 開発ブランチ: **タスクプロンプトで指定されたブランチ**を使用（現在: `claude/eager-brown-7cev3c`）。
-- 1 バッチ = デデュプ → 候補生成 → 6並列エージェント → JSON収集 → ファイル追記 → ゲート全green → コミット → プッシュ。
-- 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
-  アンダーマイニング）③リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検
-  ④エージェントがファイルを無断修正する→プロンプトで「JSON返却のみ」と明示。
-- ゲート: `vault:build ×2 && typecheck && verify:all && test && build:web`（詳細は仕様書参照）。
+
+### 📊 進捗ダッシュボード（毎バッチ完了時に更新 — 新セッションはここだけ見れば現在地がわかる）
+
+| 項目 | 値 |
+|---|---|
+| **現在の概念総数** | **3,606**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パス+オートパイロット消化で 4,350→3,606・**−744**） |
+| **直近完了作業** | 🚀 最適化スプリント (今まで学習した全てを踏まえたシステム最適化): ①Playwright E2E をリポジトリ常設化 — `npm run e2e` / `e2e:lite` (scripts/e2e/core.cjs・desktop/phone/tablet 3プロファイル・18チェック・chromium 不在は exit 2) ②GitHub Pages にモバイル配信を追加 — pages.yml が `/lite.html` (2.2MB) を公開 (フル版退避→lite 生成→復元の順序必須・PWA タグも注入) ③PR #707 のタイトル/本文を全成果反映に刷新 (マージ+Pages 有効化で恒久モバイル URL 完成) ④本引継ぎの旧履歴を下の「📜 直近の完了履歴」へ分離 ⑤新規純関数の mutation 実測: zoningPlanner **97.1%** / investments **73.7%** / shigyoDirectory **78.5%** → 100% 到達までは stryker.config へ未追加 (テスト増強が残作業。survived は丸め境界・エラー文言・既定値系) |
+| **サービス数** | **72**（cpa 追加 — 士業連携カテゴリ 8 士業＋担当領域ナビ） |
+| **Knowledge Vault** | 7,709 files（知識 4,233＋人物 1,506＋出典 1,517＋年表 242＋パス 22＋教育 44＋MOC/組織 — 出典差替えでドメイン1減） |
+| **開発ブランチ** | `claude/eager-brown-7cev3c` |
+| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ + チャットボット v2 + 重複統合 + AIの村 + 増強 を蓄積、まだ未マージ） |
+| **次のアクション** | ①dedupeGraph 53 ペアの裁定（テイラールール 3 変種を含む）②増強バックログ 510 件のトランシェ消化 ③新規概念 Batch 724 ④柱 B Phase 4（余裕枠: 人物増強・graph.json pretty・docs/KNOWLEDGE_GRAPH.md） |
+
+### 📜 直近の完了履歴 (新しい順・ダッシュボードから移設)
+
+- 🪶 スマホで開けない対応 = **LITE ビルド新設**: `npm run build:web:lite` (SERVICE_HUB_LITE=1) が vite の academicJsonParse transform で学術コーパスを空化し **10MB→2.2MB** の `dist/standalone-lite.html` を生成 (型は実ソースで tsc 済み・コンプラ/補助金/相談窓口/経済史ナレッジは搭載维持・初期表示1.2s)。🧭 アーティファクトは以後 **LITE 版を配信** (スマホが主用途のため)・フル版はファイル配布。**罠**: フル `build:web` は emptyOutDir で dist/ を掃除するため lite を先に退避すること。dist/standalone-lite.html は gitignore (dist/* 除外・!standalone.html のみ追跡)
+- 📱 モバイル最適化 v2 (今セッション新設UIの総点検): styles.css に `.field-grid` (フォーム列 auto-fit minmax 160px・input幅は !important で100%) と `.stat-grid` (Statカード列 auto-fit minmax 150px) を新設し、RealEstate/MutualFunds/ShigyoConsole の固定 flex行+repeat(N,1fr) 34箇所を一括変換。768px以下の input font-size 16px は **!important 化** (inline fontSize:13 が iOS 自動ズーム防止を迂回していたのを修正)。E2E 13チェック (phone412: 横スクロールなし・計算フォント16px・KPI 2列折返し・タップで物件/専門家追加、tablet834: 3列活用)。**罠**: python 置換で raw string の \" が JSX に混入し1箇所構文破壊 → 修正済み (正規表現置換後は必ず typecheck)
+- 👥 士業CRM Phase 6 実装: `data/shigyoDirectory.ts` (SHIGYO_CONTACTS/CONSULTATIONS コレクション・serviceId で8士業を1コレクション同居・parse検証+8テスト) → 共有 ShigyoConsole に**専門家の追加/編集/削除**フォームと**相談履歴の追加/インラインステータス変更/削除** (日付降順ソート・デモ行はバッジ区別・ヘッダ連携数は結合数)。UI の「Phase 6 で対応予定」約束を解消 — 1コンポーネント修正で8ページ全対応。E2E 9チェック (追加→ヘッダ反映→編集→相談記録→降順→ステータス変更→リロード永続→他士業ページへ非漏出)
+- 🌱 敷地プランナー (植物工場×近隣商業の検証付き): `shared/zoningPlanner.ts` (planSite/planFactory 純関数+14テスト) を不動産ページに実装 — 建ぺい率/容積率/前面道路12m未満の6/10・4/10制限/角地・耐火+10%/80%×防火×耐火=100%特例 → 建築面積・延べ床上限、作業場150㎡クランプ+直売/上階配分+overCap警告。**一次資料検証済み**: 150㎡は法48条9項+別表第二(り)項1号→(ぬ)項2号引用 (日刊新聞印刷所・300㎡以下自動車修理工場は例外)・「危険性…おそれ」句は法文でなく概要表ラベル・建蔽率は53条1項3号の60/80二択・容積率は52条1項2号の100〜500メニュー・作業場は実作業部分のみで事務所等不算入が一般的取扱い・植物工場の工場該当性は特定行政庁判断 (令2 国住街80号技術的助言)・見落とし=近商の日影規制 (高さ10m超・商業は対象外)/騒音規制法特定施設届出/駐車場附置義務条例/工場立地法は農業不適用
+- ✍️🔄 投資データの任意入力⇄自動反映: 両ページのフォームを追加⇄**編集**兼用に (ユーザー行の「編集」→プリフィル→保存で KPI へ即時自動反映・キャンセル可)。投信の評価額は **ValuationMode (auto/manual)** — 空欄なら口数÷1万×基準価額で自動計算・直接入力ならその値 (セルに 自動/手動 マーク・編集で空欄に戻せば auto 復帰)。manual では口数・基準価額は任意。holdingToForm/propertyToForm で form 往復等価をテスト固定 (+6 → 静的5667/実行時5752)。E2E 11 チェック (編集の KPI 反映 343k→393k・手動30万追加→auto 切替 8,540,140→8,640,140→復帰)
+- 🏠📈 不動産投資/投資信託の任意追加: `data/investments.ts` 新設 (PROPERTIES/HOLDINGS コレクション・parse検証・ポートフォリオ再計算の純関数)。両ページに追加フォーム+削除+KPI 即時再計算 (useCollection = IndexedDB record store 永続・端末内のみ)。**不変条件テストで固定**: ユーザー行 0 件なら snapshot 手書き集計値 (月次CF 243k/利回り6.15/入居率0.75/評価額8,240,140/損益率14.8) と完全一致 — 利回りは物件ごと小数1位丸め後に平均、投信評価額 = 口数÷1万×基準価額。snapshot 行は「デモ」バッジ・ユーザー行のみ削除可。テスト+15 (`investments.test.ts`)。E2E 15 チェック (追加→KPI→リロード永続→削除→復帰・phone 横スクロールなし)
+- 🧾 経営サマリー税セクション拡張: FinancialAnalysis の税カードを「法人税等＋消費税」に拡張 — 既存の検証済み純関数 `compareBusinessTaxMethods` (shared/taxConsumptionBusiness) を再利用し、本則/簡易(第1〜6種・加重みなし仕入率)/2割特例の納付見込み比較・最有利チップ・免税判定 (基準期間1,000万円)・簡易適用可否 (5,000万円)・「税負担 合計（法人税等 ＋ 消費税）」を表示。既定入力 = 課税売上=年商・課税仕入=費用−給与−償却−利息 (編集可)。消費税は預り金性質のため税引後利益とは別建て (注記)。テスト+10 (`FinancialAnalysis.consumptionTax.test.ts`)。**sandbox の electron 罠と回避 (解決済み)**: fresh コンテナは electron バイナリ DL が egress 403 で `npm ci` ごと失敗 → `ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci` の後 `printf 'electron' > node_modules/electron/path.txt` を書けば `require('electron')` が正規インストール後と同じパス文字列を返し、vitest 全 241 ファイル (property.test.ts 含む 5,731 tests) がローカル完走する (vitest は Node 実行でバイナリを起動しないため結果は CI と同一)。実バイナリが要る `npm run dev`/`smoke` のみ CI・実機で
+- 🎯 仕分け精度向上 (4並列エージェント・政府一次資料検証): duty 44 件に scope (独占業務/専門相談) バッジ、根拠法を条文特定。**発見済み修正** = 行政書士法は令和8年1月施行改正で旧1条の2→**1条の3** に繰下げ (アプリ反映済み)・司法書士の独占は裁判所提出書類の作成まで含む (3条1項1〜5号)・設立登記は911条/変更登記は915条・家事調停の代理は「原則」弁護士 (家事事件手続法22条の許可代理例外)・IT導入/持続化補助金は民間事務局宛で行政書士の独占外・事業再構築補助金は2025-03で新規公募終了→405事業に時点更新・ストレスチェックは2025改正で50人未満も義務化決定 (2028-05までに施行)・賃金台帳作成は2号独占。**追加 duty** = 税務調査立会い(税)・法定監査/IPO(会)・雇用助成金(社労・独占)・労働審判(弁)・相続登記義務化 76条の2(司)・酒販免許 酒税法9条(行)・経営力向上計画(診)・税関輸入差止 4条2項1号(理)。検証OK済み: 先願主義8条1項・先使用権79条・認定司法書士140万・古物商3条・食品衛生法55条・会計参与333条・無償独占通達2-1・経過措置80→70→50→30%
+- ⚖️ 士業連携 最適化再構築: **公認会計士 (`cpa`) を 8 人目の士業として追加**（`createShigyoFetcher` 系一式＋snapshot＋CpaPage＋voice 語彙「こうにんかいけいし/かいけいし/かんさ」）。**サイドバーに専用カテゴリ「士業連携」を新設**（`ServiceCategory` に `professionals` 追加・おすすめ直下に常時展開・8 士業を外部サービス連携から移設）。**事業仕分けマップ `data/professionalMap.ts` 新設** — 8 士業それぞれに根拠法/独占業務/summary/duties（アプリ内機能への `servicehub:navigate` リンク付き 3〜5 件）を定義し、共有 `ShigyoConsole` に「担当領域 (事業仕分け)」セクション＋「他の士業に相談」クイックナビを追加（1 コンポーネント修正で 8 ページ全対応）。リンク先は SERVICES 実在チェック（uber-eats はサイドバー非表示のため business へ）。`professionalMap.test.ts` 7 テスト
+- 🗂→📦 統合再構築: 3つの単体書類ツール（経営書類12・電子定款・就業規則）を `data/docStudioData.ts`（単一データソース）＋ `DocstudioPage`（1エンジン）として **アプリ内サービス docstudio に統合**（LOCAL_SERVICES・印刷は body.ds-printing・入力は localStorage）。＋🎯 法務書類ツール精度検証（4並列エージェント・政府一次資料）: 発見済み修正 = 下請法→**取適法**（2026/1施行・注文書と KB `legal-subcontract-act` を全面更新・手形払い禁止/従業員数基準）、インボイス経過措置 **80→70→50→30%**（令和8年度改正・KB `tax-invoice` 更新）、退職30日前は民法627条(2週間)に配慮した表現へ、定款認証手数料 2024/12改正（1.5万円区分＋全株引受文言を定款に追加）、ウェブ会議原則/48h/72h、簡易インボイス業種限定、休暇の書面明示。＋📖 就業規則メーカー出荷: `scripts/build-shugyokisoku-maker.cjs`（10章47条・年5日時季指定/育介2025(4月・10月)/カスハラ2026年10月先取り/減給91条制限/導入4ステップガイド）＋📜 電子定款メーカー出荷: `scripts/build-teikan-maker.cjs` → `dist/電子定款メーカー.html`（株式会社〔取締役会非設置・30条・6章〕/ 合同会社〔5章〕の定款を動的採番で生成。目的の号自動列挙＋附帯事業自動付加・公告方法切替・電子定款化手順ガイド＋根拠注意書き。body グリッドの暗黙列膨張バグを両スタジオで修正〔grid-template-columns 明示〕）＋🗂 経営書類スタジオ出荷: `scripts/build-docs-studio.cjs` → `dist/経営書類スタジオ.html`（契約4・経理4・組織3・規程1 の 12 書式。差込フォーム＋ライブプレビュー＋印刷/PDF。検証済みコンプラ知識を注意書きに反映 — インボイス税率別自動計算/2024労働条件明示改正/下請法3条書面/フリーランス新法60日ルール/会社法議事録/印紙税電子非課税。E2E 済み）＋📱 モバイル/タブレット最適化: ≤768px でサイドバーをオーバーレイ・ドロワー化（トップバー ☰ で開閉・ナビ/背景タップで自動クローズ・`App.tsx` の `navOpen`＋`styles.css` メディアクエリ）、タッチ最適化（`pointer: coarse` でタップ目標拡大・fav 星常時表示・`touch-action: manipulation`）、入力 16px（フォーカス時自動ズーム防止）、`100dvh`、`viewport-fit=cover`。Playwright で phone/tablet/desktop 3 幅 E2E 済み。＋🧾 業務自動化ダッシュボード出荷: Canva 設計図（POS→会計→CRM whiteboard）を `scripts/build-integration-demo.cjs` → `dist/業務自動化ダッシュボード.html`（単一ファイル・ダブルクリック起動・複式簿記/軽減税率/CRM LTV 実装・レスポンシブ）に実装。＋🔓 ロック画面「初期化してやり直す」＋🤝 全AI合議モード（前セッション）
+
+### 🏡 AIの村（2026-07-05 出荷・見やすさ再設計 v2）
+
+AI オーケストレーション組織 143 体（CEO/COO/役員5/秘書室20/管理職8/一般職108）をどうぶつの森風の
+全画面シーンに村人として可視化し、画面に話しかけて対話できる 70 番目のサービス。
+- `data/villageData.ts`（registry.json から純導出・決定論）＋`data/villageLayout.ts`（街区パッキング＋
+  三角関数徘徊・乱数なし・`villageLayout.test.ts` 20 テスト）＋`pages/VillagePage.tsx`（絵文字/CSS/インライン
+  SVG のみ・setInterval で徘徊＋PDCA タスクループ）。
+- **見やすさ再設計 v2**（「もっと見やすくして」対応）: 143 体が細い列に密集して読めなかったのを解消。
+  ①役員ごとの**建物カード**で街区分離（色ヘッダ＋チーム数）②街区内はチームを**部長ごとにクラスタ**配置
+  ③**建物クリックで街区を全画面拡大**（チーム名まで読める・「← 全体マップ」で戻る）④足元の影＋名前チップ
+  ⑤情景（太陽/雲/池/小道＝SVG、木/花＝絵文字）。`layoutDistrict`/`computeDistrictFocus`/`FOCUS_RECT` 追加。
+- 音声（両対応）: `voice/speechAdapter`（認識）→`chatOrg.routeTopicScored` で担当キャラ選定→`chatbot.replyTo`
+  即応＋AI 設定時 `assistant/chat`→`voice/ttsAdapter`（高品質日本語ボイス選択＋読み上げ整形・非対応は degrade）。
+- バンドル制約順守: 大量データは足さず registry（既存 import）＋純導出のみ。standalone.html は ~10.0MB。
+- **今後の大規模化（柱 B）は非バンドルの vault/knowledge-graph に置く**（`src/renderer/data` は standalone に
+  インライン化されるため肥大化厳禁）。
+
+### 🧹 知識ベース重複統合（2026-07-02 完了）
+
+高スループットのバッチパイプラインの副作用で、同一概念が別 id で 2〜5 回収載されていた
+（例: `econ-menu-cost`/`econ-menu-costs`、購買力平価 ×6、法人格否認 ×4、統計法令の `-act` 有無違い）。
+機械監査（`scratchpad/audit_knowledge.py`）で検出し、**3 パスで計 725 件を統合**
+（各クラスタで最も内容の厚い 1 件を残し薄い重複を削除。4,350→3,625・−16.7%）:
+- **Pass 1**（タイトル bigram Jaccard・分野内）: 185 件。
+- **Pass 2**（id-stem クラスタ → タイトルコア一致 or 著者一致＋類似）: 119 件。長い「——副題」で
+  タイトルが乖離した重複・分野を跨ぐ重複（econ↔mgmt 等）を捕捉。
+- **Pass 3**（残余 588 ペアを 98 エージェント Workflow で判定＋懐疑検証）: 421 件。
+  判定 SAME → 独立の懐疑者が反証を試み、反証失敗のみ統合（469 確定）。**92 ペアは反証成立で保持**
+  （例: 同一法理の日本法版と米国法版、追試危機の記述を片方のみ保有 — 削除すると情報が失われる対）。
+  27 は判定段階で DISTINCT。ガードはペア単位（裁定済み別概念ペアの統合を機械的に阻止）。
+- **保持した「同名だが別概念」**: 環境クズネッツ曲線≠クズネッツ曲線、電子消費者契約法≠消費者契約法、
+  第二次デジタル・ディバイド、逆方向の法人格否認、同一労働同一賃金、March&Simon 行動的意思決定理論、
+  Hotelling の法則（空間競争）≠ルール（枯渇資源）、Taylor 原理≠ルール、代理（民法99条）≠エージェンシー理論。
+- 罠と対策: id-stem や著者一致だけでは同著者・別概念（Hotelling 法則/ルール）を誤統合する →
+  **タイトルコア（括弧・副題除去後）一致**を第一シグナルにし、著者一致は補助に留める。
+  検証は「drop id が code/test から参照されていないこと」「全生存概念が確証ゲート通過」を必須確認。
+
+### 🤖 マルチエージェント AI ハブ (2026-07-02 再構築完了)
+
+`assistant` サービスを **Claude / ChatGPT (OpenAI) / Gemini / Ollama / OpenAI 互換 API
+(LiteLLM・Groq・DeepSeek・LM Studio 等)** を呼び分けるハブに再構築済み。
+
+- **中核**: `src/shared/ai/`（providers.ts=プロバイダレジストリ+総当たり不変条件 /
+  credentials.ts=JSON 資格情報(1スロット複数キー・生キーは Anthropic 後方互換) /
+  chat.ts=runAiChat）。**新しい AI 呼び出しは必ずこの層を経由すること。**
+- Electron main (`clients/assistant.ts`) とブラウザ (`web-shim.ts`) の両対応。
+  ブラウザで CORS 不可の OpenAI/互換 API は BYO プロキシ経由。
+- UI: AssistantPage にエージェント選択・接続チップ・⚙エージェント設定パネル
+  (hub.setToken('assistant', JSON) で保存)。
+- MCP コネクタ 25 個 + ChatGPT(mcp-remote)/LiteLLM ブリッジを ConnectorsPage で可視化
+  (`src/shared/connectors/mcpConnectors.ts`、docs/MCP_SETUP.md と件数同期)。
+- **修正した罠**: inline-html.cjs の standalone CSP が `connect-src 'none'` で
+  ブラウザ版の全外部 API 呼び出しを無言でブロックしていた → https:+localhost 許可に修正。
+- **残 follow-up**: ①business/stocks/skills/emotions アドバイザーの shared/ai 移行
+  (エラー文字列・モデル既定まで mutation テストで固定されているため、opt-in の
+  provider パラメータ方式で慎重に) ②shared/ai の Stryker mutate スコープ追加検討
+  ③GH Pages 配信版 (dist/index.html) の CSP は connect-src 'self' のままで外部 API
+  不可 — standalone.html の利用を案内するか要検討。
+
+### 🎯 チャットボット回答精度 v2 (2026-07-02 完了)
+
+`data/assistantContext.ts` の RAG を全面改良（4,300+ 概念コーパスを本気で活かす検索へ）:
+
+- **IDF 重み** (`ln(1+N/(1+df))`・出現数キャップ 3) + **膠着語降格**（ひらがなのみ
+  バイグラム w=0.2、内容語ヒット 0 の文書は除外）+ **フレーズボーナス**（内容語連続列
+  「プロテウス効果」等のタイトル/本文一致を強加点）+ **近似タイトル代表化**
+  (bigram Jaccard ≥ 0.6 で 1 件に絞る)。
+- コーパスに **経済史 84 年分** (`economicHistoryKnowledge.ts`) を追加（5 種別に）。
+  本文キャップ 320→600 字 + keyFigures + 第一出典ラベル `［出典: …］` を注入。
+- system 指示を強化: ナレッジ最優先 + 末尾に「参照: 〈項目名〉（種別）」の出典列挙 +
+  数値/年号/条文は記載どおり引用 + URL 創作禁止 + 曖昧時は確認質問 1 つ。
+- **オフライン直答** `buildOfflineKnowledgeAnswer` (score ≥ 8 で上位 2 件を出典つき
+  提示)。AssistantPage は `replyTo` が `kind==='fallback'` のときだけ前段で試す
+  （危機対応・手取り計算・案内の決定論優先順位は不変 — ここを崩さないこと）。
+- 追問対応: `send()` の RAG クエリは直前ユーザー発話 + 今回発話の連結
+  (AI へ渡す会話履歴 turns とは別物)。
+- テスト 15→33 (`assistantContext.test.ts`)。静的 it() 5,516→5,534・実行時 5,619。
+
+**直近バッチ履歴**（詳細は PR #707 の説明欄に全件記載）:
+
+| Batch | 概念数(累計) | 追加分野の概要 |
+|---|---|---|
+| 714 | 4,289→4,295 | 学校選択メカニズムデザイン／Ben-Porath／カンター・トークニズム／補償的制御理論／Say on Pay／ネットワーク議題設定 |
+| 715 | 4,295→4,301 | バーゼル測定費用理論／連帯責任型グループ貸付／バーレイ技術構造化／社会情動的選択性／事業目的の法理／選好偽装理論 |
+| 716 | 4,301→4,307 | バロン=マイヤーソン規制理論／ペルツマン効果／出来事システム理論／ユニモデル説得理論／クラウンジュエル防衛／CAT理論 |
+| 717 | 4,307→4,314（7件） | イートン=リプシー／ヘックマン標本選択／TMX理論／組織的信頼統合モデル／プロトタイプ理論／補償条項/防御義務／カルチュラル・サーキット |
+| 718 | 4,314→4,320 | 合成コントロール法／退職消費パズル／組織的美徳性理論／項目反応理論／シェルター・ルール／ネイティブ広告=説得知識モデル |
+| 719 | 4,320→4,326 | 保護の販売モデル／純化定理／多市場接触=相互自制／精神病の予測符号化理論／SEC規則14a-8／プロテウス効果 |
+| 720 | 4,326→4,332 | シェ=クレノウ ミスアロケーション理論／アリンガム=サンドモ脱税モデル／ジンメリアン・タイ／馴化（非連合学習）／完全履行提供の原則（UCC 2-601）／MAINモデル |
+| 721 | 4,332→4,338 | クレマー人口成長と技術変化（1993 QJE・繰越）／オアハカ=ブラインダー分解／行動エージェンシー・モデル（Wiseman&Gómez-Mejía 1998）／潜在制止（Lubow&Moore 1959）／ノア・ペニントン法理／ウォーム・エキスパート（Bakardjieva 2005） |
+| 722 | 4,338→4,344 | ボーモル=オーツ標準・価格アプローチ（1971）／チャムリー=ジャッド定理（資本所得税ゼロ）／時間ベース競争（Stalk 1988）／顔倒立効果（Yin 1969）／実体的併合（破産法）／アルゴリズム的アイデンティティ（Cheney-Lippold 2011） |
+| 723 | 4,344→4,350 | ハーシュライファー情報の私的/社会的価値（1971）／マスキン単調性・遂行理論（1999）／イネーブリング官僚制（Adler&Borys 1996）／バイオロジカルモーション（Johansson 1973）／危険の引受（不法行為抗弁）／技術的コード（Feenberg） ※Diamond探索パラドックスは Burdett-Mortensen エントリと絡み合い過多で却下→Hirshleiferに差替 |
+
+- 1 バッチ = 候補選定（フレッシュなニッチ複数案+フォールバック） → 6並列リサーチエージェント（各自 grep でデデュプ検証必須） →
+  **自分で独立に再検証（別表現の grep で）** → ファイル追記 → `docs/ACADEMIC_KNOWLEDGE.md` 表更新 → ゲート全green →
+  コミット → プッシュ → PR #707 の説明欄を最新バッチ履歴に更新 → **本ダッシュボード（概念総数・直近バッチ・
+  Vault件数・直近バッチ履歴表）も更新**（新セッションが常に正しい現在地を見られるようにするため必須）。
+- 最重要の罠（Batch 714-718 で実際に踏んだもの）:
+  1. **id 衝突は title grep で見抜けない**（必ず id を grep）。
+  2. **エージェントの「非重複確認済み」自己申告は信用しない** — Batch 715/716/718 で、エージェントが
+     「grep で確認した」と主張した概念が実は **3件も既存重複していた**（MAC条項・context collapse・
+     holder in due course・equitable subordination 等）。**必ず自分で改めて grep（別の言い回しで）
+     再検証してから挿入する。**
+  3. 意味的重複（例: 過剰正当化≒アンダーマイニング、preference falsification と pluralistic ignorance
+     は近いが別概念——出典が別なら残す）は本文を読んで判断。
+  4. リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検。
+  5. エージェントが返す `statement` に**文字数カウントの注記**（例:「（635文字）」）が混入することがある
+     → 挿入前に除去。
+  6. エージェントがファイルを無断修正する→プロンプトで「JSON/構造化テキスト返却のみ」と明示。
+  7. 分野の取り違え（例: 経営学の概念を human-science 担当エージェントが提出）が起こりうる →
+     出典ジャーナル（AMR/ASQ等は経営学、心理学誌は human-science）で最終判定。
+  8. データベースが密になるほど、エージェントは**5〜30件以上の既出候補を潰してから**やっとクリーンな
+     ものを見つける。1回の依頼で見つからなければ SendMessage でリダイレクト（新ニッチ提示）すればよい。
+- ゲート: `vault:build && typecheck && verify:all && test && build:web`（詳細は仕様書参照）。
 
 ## 現状サマリ (69 services)
 

@@ -30,6 +30,18 @@ W・ランス・ベネット＆アレクサンドラ・セゲルベリ（2012 In
 - [Bennett & Segerberg (2013) The Logic of Connective Action — Cambridge UP](https://www.cambridge.org/core/books/logic-of-connective-action/6B54DBBEAD1625C2778F8D80A17D58E1) `学術`
 - [Bennett & Segerberg (2012) — ResearchGate](https://www.researchgate.net/publication/287393379_The_logic_of_connective_action_Digital_media_and_the_personalization_of_contentious_politics) `学術`
 
+## 関連概念
+- [[infosoc-connective-action-theory|接続的行為理論]] — 語彙が近い
+- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — 語彙が近い
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 語彙が近い
+- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
+- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
+- [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
+- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Robert A. Mundell／J. Marcus Fleming／Maurice Obstfeld／Alan M. Taylor／Hél
 - [Obstfeld, Shambaugh & Taylor (2005) The Trilemma in History, Review of Economics and Statistics 87(3):423-438](https://direct.mit.edu/rest/article-abstract/87/3/423/57586) `学術`
 - [IMF Finance & Development — Back to Basics: The Impossible Trinity](https://www.imf.org/external/pubs/ft/fandd/2010/09/basics.htm) `公的`
 
+## 関連概念
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ]] — 語彙が近い
+- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 語彙が近い
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 語彙が近い
+- [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同じ思想家
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+- [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

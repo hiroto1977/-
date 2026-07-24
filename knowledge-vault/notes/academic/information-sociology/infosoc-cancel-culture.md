@@ -30,6 +30,18 @@ aliases:
 - [Merriam-Webster — cancel culture（マスキャンセル/コールアウト、語の台頭）](https://www.merriam-webster.com/dictionary/cancel%20culture) `リファレンス`
 - [Pew Research Center 2021（説明責任 vs 検閲・処罰の両論）](https://www.pewresearch.org/internet/2021/05/19/americans-and-cancel-culture-where-some-see-calls-for-accountability-others-see-censorship-punishment/) `学術`
 
+## 関連概念
+- [[econ-stagflation|スタグフレーション]] — 出典を共有
+- [[infosoc-astroturfing|アストロターフィング]] — 出典を共有
+- [[infosoc-clickbait|クリックベイト（釣り見出し）]] — 出典を共有
+- [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — 出典を共有
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
+- [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 出典を共有
+- [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

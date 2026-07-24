@@ -30,6 +30,18 @@ P.ドラッカー1954『現代の経営』で提唱(Management by Objectives and
 - [Wikipedia (English) — Management by objectives](https://en.wikipedia.org/wiki/Management_by_objectives) `リファレンス`
 - [JILPT 労働政策研究・研修機構 — MBO（目標管理）解説（日本労働研究雑誌）](https://www.jil.go.jp/institute/zassi/backnumber/2015/04/pdf/040-041.pdf) `学術`
 
+## 関連概念
+- [[mgmt-management-by-objectives|目標管理（MBO）]] — 語彙が近い
+- [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
+- [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
+- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — 同分野の近傍
+- [[mgmt-stage-gate|ステージゲート法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

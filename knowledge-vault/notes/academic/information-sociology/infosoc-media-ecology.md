@@ -31,6 +31,18 @@ aliases:
 - [Scolari, "Media Ecology: A Complex and Systemic Metadiscipline" (Humanities, MDPI 査読論文)](https://www.mdpi.com/2409-9287/1/3/190) `学術`
 - [EBSCO Research Starters「Media ecology」（学術リファレンス級概説）](https://www.ebsco.com/research-starters/social-sciences-and-humanities/media-ecology) `リファレンス`
 
+## 関連概念
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
+- [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+- [[infosoc-technopoly|テクノポリ（技術独占）]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
+- [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

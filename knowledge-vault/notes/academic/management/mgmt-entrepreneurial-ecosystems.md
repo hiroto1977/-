@@ -30,6 +30,15 @@ aliases:
 - [Feld 2012 — Startup Communities: Building an Entrepreneurial Ecosystem in Your City, Wiley](https://www.wiley.com/en-us/Startup+Communities%3A+Building+an+Entrepreneurial+Ecosystem+in+Your+City-p-9781118441558) `リファレンス`
 - [Autio et al. 2014 — Entrepreneurial ecosystems: An introduction and a review of the literature, Research Policy 43(7):1097-1108](https://doi.org/10.1016/j.respol.2014.08.017) `学術`
 
+## 関連概念
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
+- [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
+- [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 同分野の近傍
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

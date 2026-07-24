@@ -30,6 +30,12 @@ Finn E. Kydland ／ Edward C. Prescott ／ John B. Long ／ Charles I. Plosser �
 - [Real Business Cycle Theory — A Systematic Review, Munich Personal RePEC Archive (MPRA)](https://mpra.ub.uni-muenchen.de/17932/) `学術`
 - [Kydland & Prescott (1982): Time to Build and Aggregate Fluctuations — Econometrica, IDEAS/RePEC](https://ideas.repec.org/a/ecm/emetrp/v50y1982i6p1345-70.html) `学術`
 
+## 関連概念
+- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 同じ思想家
+- [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]] — 同じ思想家
+- [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同分野の近傍
+- [[econ-strategic-complementarity|戦略的補完性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

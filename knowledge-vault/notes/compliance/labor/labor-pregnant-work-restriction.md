@@ -30,6 +30,15 @@ aliases:
 - [厚生労働省 女性労働者の母性健康管理](https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05a.pdf) `公的`
 - [労働基準法 64条の2〜68条 条文](https://www.rodo.co.jp/laws/116890/) `メディア`
 
+## 関連概念
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 出典を共有
+- [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 出典を共有
+- [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有
+- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
+- [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 同分野の近傍
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

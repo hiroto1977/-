@@ -30,6 +30,13 @@ aliases:
 - [厚生労働省 産後パパ育休 特設サイト](https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/paternity/) `公的`
 - [厚生労働省 産後パパ育休とは Q&A](https://ryouritsu.mhlw.go.jp/qa02_20.html) `公的`
 
+## 関連概念
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 語彙が近い
+- [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 語彙が近い
+- [[bizlaw-childcare-leave|育児・介護休業法]] — 分野横断
+- [[labor-childcare-leave|育児休業と育児休業給付金]] — 出典を共有
+- [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,15 @@ aliases:
 - [Open innovation — Wikipedia（定義・outside-in/inside-out）](https://en.wikipedia.org/wiki/Open_innovation) `リファレンス`
 - [Henry Chesbrough — Wikipedia（UCバークレー所属・2003年著書）](https://en.wikipedia.org/wiki/Henry_Chesbrough) `リファレンス`
 
+## 関連概念
+- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 語彙が近い
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同じ思想家
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 出典を共有
+- [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
+- [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
+- [[mgmt-resource-dependence|資源依存理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

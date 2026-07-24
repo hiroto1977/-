@@ -30,6 +30,10 @@ aliases:
 - [中小企業庁 交際費課税の特例](https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/kousai.html) `公的`
 - [ソリマチ 税務ニュース 交際費から除かれる飲食費が1万円までに](https://sorimachi.co.jp/column/taxnews/20240508_01/) `メディア`
 
+## 関連概念
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 語彙が近い
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,18 @@ Douglas G. Baird ／ Thomas H. Jackson ／ Vern Countryman ／ Robert Charles Cl
 - [法務省 — 民法（債権関係）の改正に関する説明資料（詐害行為取消権）](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 - [Elizabeth Warren, "Bankruptcy Policy" (1987) 54 University of Chicago Law Review 775](https://doi.org/10.2307/3481524) `学術`
 
+## 関連概念
+- [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 語彙が近い
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 語彙が近い
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同じ思想家
+- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同じ思想家
+- [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
+- [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
+- [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
+- [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 出典を共有
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [法務省「平成16年改正行政事件訴訟法の概要」（9条・11条・14条の改正点）](https://www.moj.go.jp/content/000103905.pdf) `公的`
 - [Wikipedia「行政事件訴訟法」（制度全体の概観）](https://ja.wikipedia.org/wiki/行政事件訴訟法) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 語彙が近い
+- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
+- [[bizlaw-administrative-litigation|行政事件訴訟法]] — 同分野の近傍
+- [[bizlaw-corporate-manslaughter|法人の業務上過失致死（コーポレート・マンスローター）]] — 同分野の近傍
+- [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

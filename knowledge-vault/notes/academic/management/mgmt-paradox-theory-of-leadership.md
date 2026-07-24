@@ -31,6 +31,12 @@ Wendy K. Smith ／ Marianne W. Lewis
 - [JABS — Paradox theory in organization development](https://journals.sagepub.com/doi/abs/10.1177/0021886314522322) `学術`
 - [Smith & Lewis — Both/And Thinking](https://bothandthinking.net/) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
+- [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同分野の近傍
+- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

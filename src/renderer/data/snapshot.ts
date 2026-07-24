@@ -21,7 +21,7 @@ export const SNAPSHOT = {
     isMock: true,
   },
   assistant: {
-    note: 'AI アシスタントは Claude を頭脳に、確証済みナレッジと全サービスを統合して応答します',
+    note: 'AI アシスタントは選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、確証済みナレッジと全サービスを統合して応答します',
     capabilities: [
       '質問への的確な回答',
       '経営・法務・労務・税務のアドバイス (確証済みナレッジに基づく)',
@@ -658,7 +658,7 @@ export const SNAPSHOT = {
   //    書類 / 顧問料を軽量 CRM として管理する。Phase 6 で IndexedDB
   //    永続化 + 「専門家を追加」フォームに対応予定。
 
-  // 士業 7 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
+  // 士業 8 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
   // ShigyoSnapshot` で検証することで、従来の per-field `as {...}[]` /
   // `as number` キャストを排した (HANDOFF 罠 5 / PR #7 R1 #4)。月次料金は
   // ShigyoSnapshot.monthlyFee が `number` 型なのでリテラル narrow されない。
@@ -766,6 +766,22 @@ export const SNAPSHOT = {
     ],
     monthlyFee: 0,
     outstandingInvoice: 165_000,
+  } satisfies ShigyoSnapshot,
+
+  cpa: {
+    contacts: [
+      { id: 'cp-1', name: '中村 六実', firm: '中村公認会計士事務所', email: 'nakamura@cpa.example.com', phone: '03-8800-4400' },
+    ],
+    recentConsultations: [
+      { id: 'cpc-1', contactId: 'cp-1', date: '2026-05-09', topic: '決算書の任意監査 (金融機関提出用)', status: '対応中' },
+      { id: 'cpc-2', contactId: 'cp-1', date: '2026-05-21', topic: '経費精算フローの内部統制整備', status: '相談予約' },
+    ],
+    pendingDocuments: [
+      { id: 'cpd-1', title: '監査計画書 ドラフト', direction: 'received', date: '2026-05-13' },
+      { id: 'cpd-2', title: '固定資産台帳 (確認依頼)', direction: 'sent', date: '2026-05-16' },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 110_000,
   } satisfies ShigyoSnapshot,
 
   base: {
@@ -1003,6 +1019,16 @@ export const SNAPSHOT = {
       { id: 'w3', name: 'ボリューム自動バックアップ', description: 'cron コンテナで永続ボリュームを暗号化バックアップ', automated: true },
       { id: 'w4', name: '本番デプロイの手動承認', description: 'タグ付けリリースは人手レビューを挟む（誤デプロイ防止）', automated: false },
     ] as { id: string; name: string; description: string; automated: boolean }[],
+  },
+
+  docstudio: {
+    collections: [
+      { id: 'studio', label: '経営書類（契約・経理・組織・規程）', docCount: 12 },
+      { id: 'teikan', label: '電子定款（株式会社・合同会社）', docCount: 2 },
+      { id: 'shugyo', label: '就業規則（10章47条）', docCount: 1 },
+    ] as { id: string; label: string; docCount: number }[],
+    fetchedAt: '2035-05-15T00:00:00.000Z',
+    isMock: true,
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

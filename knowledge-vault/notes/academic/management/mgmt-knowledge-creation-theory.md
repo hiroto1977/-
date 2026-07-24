@@ -30,6 +30,18 @@ Ikujiro Nonaka ／ Hirotaka Takeuchi
 - [Nonaka & Takeuchi (1995) The Knowledge-Creating Company, Oxford University Press](https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691) `学術`
 - [Wikipedia — SECI model of knowledge dimensions](https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions) `リファレンス`
 
+## 関連概念
+- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
+- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
+- [[infosoc-seci|SECIモデル（知識創造理論）]] — 分野横断
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同じ思想家
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

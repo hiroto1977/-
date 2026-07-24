@@ -31,6 +31,17 @@ aliases:
 - [Wikipedia「Evolution and the Theory of Games」（Maynard Smith 1982年著書・タカ・ハト・ゲーム）](https://en.wikipedia.org/wiki/Evolution_and_the_Theory_of_Games) `リファレンス`
 - [Wikipedia「Evolutionarily stable strategy」（1973年 Nature 論文での導入と定義）](https://en.wikipedia.org/wiki/Evolutionarily_stable_strategy) `リファレンス`
 
+## 関連概念
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 語彙が近い
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同じ思想家
+- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
+- [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
+- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

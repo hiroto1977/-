@@ -32,6 +32,12 @@ Olivier Blanchard ／ Lawrence Summers ／ Assar Lindbeck ／ Dennis Snower ／ 
 - [Ball (2009)](https://doi.org/10.1111/j.1538-4616.2009.00235.x) `学術`
 - [Blanchard & Wolfers (2000)](https://doi.org/10.1257/jep.12.1.157) `学術`
 
+## 関連概念
+- [[econ-fiscal-multiplier-theory|財政乗数理論]] — 同じ思想家
+- [[econ-probabilistic-voting|確率的投票モデル（probabilistic voting model）——有権者の選択が政策に確率的に反応すると仮定し、多次元でも均衡を与える選挙競争理論]] — 同じ思想家
+- [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同分野の近傍
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

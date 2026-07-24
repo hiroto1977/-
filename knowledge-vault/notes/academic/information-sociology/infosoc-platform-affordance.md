@@ -30,6 +30,12 @@ aliases:
 - [Social Media Intervention Design: Applying an Affordances Framework — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6454336/) `学術`
 - [The Affordances of Social Media Platforms — Anne Helmond](https://www.annehelmond.nl/2016/08/01/the-affordances-of-social-media-platforms/) `リファレンス`
 
+## 関連概念
+- [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同分野の近傍
+- [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
+- [[infosoc-information-justice|情報正義]] — 同分野の近傍
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

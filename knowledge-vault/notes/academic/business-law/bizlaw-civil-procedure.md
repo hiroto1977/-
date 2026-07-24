@@ -30,6 +30,18 @@ aliases:
 - [裁判所 改正民訴法等で変わる民事訴訟手続の概要（IT化）](https://www.courts.go.jp/saiban/minjidejitaruka/minso_gaiyou/index.html) `公的`
 - [コトバンク 民事訴訟法](https://kotobank.jp/word/%E6%B0%91%E4%BA%8B%E8%A8%B4%E8%A8%9F%E6%B3%95-140038) `リファレンス`
 
+## 関連概念
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
+- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
+- [[labor-tribunal|労働審判制度（労働審判法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

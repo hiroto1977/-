@@ -29,6 +29,11 @@ aliases:
 - [NYU Center for Neural Science (D. Heeger) — Signal Detection Theory 講義ノート](https://www.cns.nyu.edu/~david/courses/perception/lecturenotes/sdt/sdt.html) `学術`
 - [Wikipedia — Detection theory（四結果・d′・ROC・Green & Swets/Tanner & Swets）](https://en.wikipedia.org/wiki/Detection_theory) `リファレンス`
 
+## 関連概念
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同じ思想家
+- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同分野の近傍
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,15 @@ aliases:
 - [Lewandowsky et al. 2012 — Misinformation and Its Correction: Continued Influence and Successful Debiasing, Psychological Science in the Public Interest 13(3):106-131](https://doi.org/10.1177/1529100612451018) `学術`
 - [Pennycook & Rand 2019 — Fighting Misinformation on Social Media Using Crowdsourced Judgments of News Source Quality, PNAS 116(7):2521-2526](https://doi.org/10.1073/pnas.1806781116) `学術`
 
+## 関連概念
+- [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 語彙が近い
+- [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 同じ思想家
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
+- [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

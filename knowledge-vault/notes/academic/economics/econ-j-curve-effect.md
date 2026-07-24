@@ -30,6 +30,13 @@ Jカーブ効果（J-Curve Effect）とは、通貨切り下げ・減価後に�
 - [Encyclopedia.com: J-Curve](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/j-curve) `リファレンス`
 - [J-Curve Effect — Economics Help](https://www.economicshelp.org/blog/143448/economics/j-curve-effect/) `リファレンス`
 
+## 関連概念
+- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 出典を共有
+- [[econ-rotten-kid-theorem|腐った子定理]] — 出典を共有
+- [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同分野の近傍
+- [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

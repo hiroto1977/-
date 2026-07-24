@@ -31,6 +31,13 @@ Mary Uhl-Bien ／ George B. Graen ／ Dian Marie Hosking
 - [PMC (2022) — Leadership Development: Relational Leadership in Healthcare Organizations](https://pmc.ncbi.nlm.nih.gov/articles/PMC9739944/) `学術`
 - [EBSCO Research Starters — Leader-Member Exchange (LMX) Theory](https://www.ebsco.com/research-starters/social-sciences-and-humanities/leader-member-exchange-lmx-theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-commitment|組織コミットメント]] — 出典を共有
+- [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
+- [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 同分野の近傍
+- [[mgmt-social-exchange-theory|社会的交換理論]] — 同分野の近傍
+- [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

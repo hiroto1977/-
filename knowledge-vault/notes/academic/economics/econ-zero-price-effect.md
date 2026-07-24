@@ -29,6 +29,18 @@ aliases:
 - [Shampanier, Mazar & Ariely (2007) "Zero as a Special Price: The True Value of Free Products," Marketing Science 26(6)（INFORMS）](https://pubsonline.informs.org/doi/10.1287/mksc.1060.0254) `学術`
 - [Encyclopaedia Britannica — Behavioral economics（損失回避・無料の心理・行動経済学の文脈）](https://www.britannica.com/topic/behavioral-economics) `リファレンス`
 
+## 関連概念
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 同じ思想家
+- [[human-ikea-effect|イケア効果]] — 同じ思想家
+- [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同じ思想家
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

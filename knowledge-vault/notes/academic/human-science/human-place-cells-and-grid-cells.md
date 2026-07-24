@@ -30,6 +30,11 @@ John O'Keefe／May-Britt Moser／Edvard I. Moser／Jonathan Dostrovsky
 - [Hafting, T. et al. (2005) Microstructure of a spatial map in the entorhinal cortex, Nature 436:801-806](https://doi.org/10.1038/nature03721) `学術`
 - [Nobel Prize 2014 — The brain's positioning system (O'Keefe, Moser & Moser)](https://www.nobelprize.org/prizes/medicine/2014/summary/) `リファレンス`
 
+## 関連概念
+- [[human-place-cells-okeefe|場所細胞と認知地図]] — 語彙が近い
+- [[human-place-cells|場所細胞（Place Cells）]] — 同じ思想家
+- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

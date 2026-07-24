@@ -30,6 +30,11 @@ SGS v. パキスタン事件（2003 ICSID 制限的解釈）／SGS v. フィリ�
 - [Umbrella Clauses Since SGS v. Pakistan and SGS v. Philippines — Arbitration International (Oxford)](https://academic.oup.com/arbitration/article-abstract/29/4/607/177001) `学術`
 - [Umbrella Clauses in Investment Treaty Arbitration — Charles Russell Speechlys](https://www.charlesrussellspeechlys.com/en/insights/expert-insights/dispute-resolution/2025/umbrella-clauses-in-investment-treaty-arbitration/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同分野の近傍
+- [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 同分野の近傍
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

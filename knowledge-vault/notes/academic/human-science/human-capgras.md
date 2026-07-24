@@ -29,6 +29,17 @@ Joseph Capgras・Jean Reboul-Lachaux（Bulletin de la Société Clinique de Méd
 - [Capgras delusion — Wikipedia（原論文・Ellis & Young 1990・Ramachandran 1997 を包括的に引用）](https://en.wikipedia.org/wiki/Capgras_delusion) `リファレンス`
 - [Hirstein & Ramachandran (1997) Capgras Syndrome: A Novel Probe — Proc. R. Soc. Lond. B 264(1380)](https://royalsocietypublishing.org/doi/10.1098/rspb.1997.0062) `学術`
 
+## 関連概念
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 出典を共有
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 出典を共有
+- [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
+- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
+- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

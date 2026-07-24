@@ -30,6 +30,11 @@ aliases:
 - [国税庁 No.2011 課税される所得と非課税所得（10種類の所得区分）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2011.htm) `公的`
 - [国税庁 No.2260 所得税の税率（5%〜45%超過累進税率）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm) `公的`
 
+## 関連概念
+- [[tax-income-categories|所得税における所得の10種類の区分]] — 語彙が近い
+- [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
+- [[bizlaw-inheritance-tax|相続税法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,15 @@ Thomas Schelling（1968 "The Life You Save May Be Your Own"）／Deborah Small &
 - [Small & Loewenstein (2003) "Helping a Victim or Helping the Victim", Journal of Risk and Uncertainty 26(1)](https://doi.org/10.1023/A:1022299422219) `学術`
 - [Slovic (2007) "If I Look at the Mass I Will Never Act: Psychic Numbing and Genocide", Judgment and Decision Making 2(2)](https://doi.org/10.1017/S1930297500000061) `学術`
 
+## 関連概念
+- [[human-cultural-cognition|文化的認知と世界観による動機付けられた推論]] — 同じ思想家
+- [[human-hedonic-adaptation|快楽順応]] — 同じ思想家
+- [[infosoc-information-avoidance-theory|情報回避理論]] — 同じ思想家
+- [[human-just-world-hypothesis-lerner|公正世界仮説——人は相応しい結果を得るという信念とその社会的帰結]] — 同分野の近傍
+- [[human-groupthink|集団思考（グループシンク, groupthink）]] — 同分野の近傍
+- [[human-cheerleader-effect|チアリーダー効果（集団魅力効果）]] — 同分野の近傍
+- [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

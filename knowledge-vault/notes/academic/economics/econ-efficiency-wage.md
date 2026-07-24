@@ -30,6 +30,11 @@ aliases:
 - [Akerlof (1982) Labor Contracts as Partial Gift Exchange, QJE 97(4):543-569](https://academic.oup.com/qje/article-abstract/97/4/543/1846076) `学術`
 - [London School of Economics EC423 — Efficiency Wages（講義ノート）](https://econ.lse.ac.uk/staff/bpetrong/ec423/lecture3.pdf) `学術`
 
+## 関連概念
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 語彙が近い
+- [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

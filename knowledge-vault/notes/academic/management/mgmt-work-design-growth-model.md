@@ -31,6 +31,14 @@ J. Richard Hackman ／ Greg R. Oldham ／ Sharon K. Parker
 - [Parker & Knight (2024) — The SMART Model of Work Design, Human Resource Management (Wiley)](https://onlinelibrary.wiley.com/doi/10.1002/hrm.22200) `学術`
 - [Job Characteristics Model (Hackman and Oldham) — Toolshero](https://www.toolshero.com/human-resources/job-characteristics-model/) `リファレンス`
 
+## 関連概念
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同じ思想家
+- [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 出典を共有
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 出典を共有
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
+- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同分野の近傍
+- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

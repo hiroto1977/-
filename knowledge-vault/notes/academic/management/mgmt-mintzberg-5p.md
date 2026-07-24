@@ -29,6 +29,18 @@ aliases:
 - [Mintzberg, H. (1987) "The Strategy Concept I: Five Ps for Strategy", California Management Review 30(1): 11-24 (UC Berkeley)](https://cmr.berkeley.edu/1987/11/30-1-the-strategy-concept-i-five-ps-for-strategy/) `学術`
 - [University of Cambridge, Institute for Manufacturing — Mintzberg's 5 Ps for Strategy](https://www.ifm.eng.cam.ac.uk/research/dstools/mintzbergs-5-ps-for-strategy/) `リファレンス`
 
+## 関連概念
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
+- [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]] — 同じ思想家
+- [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
+- [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

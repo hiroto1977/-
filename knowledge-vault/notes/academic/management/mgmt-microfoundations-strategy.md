@@ -30,6 +30,14 @@ aliases:
 - [Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)](https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001) `学術`
 - [Felin et al. (eds.) Microfoundations — Cambridge University Press](https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1) `学術`
 
+## 関連概念
+- [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 語彙が近い
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 語彙が近い
+- [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]] — 同分野の近傍
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同分野の近傍
+- [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

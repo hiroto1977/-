@@ -30,6 +30,16 @@ aliases:
 - [林野庁 森林環境税及び森林環境譲与税](https://www.rinya.maff.go.jp/j/keikaku/kankyouzei/kankyouzei_jouyozei.html) `公的`
 - [横浜市 森林環境税（国税）について](https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/y-shizei/kojin-shiminzei-kenminzei/shinrinkankyouzei.html) `自治体`
 
+## 関連概念
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 出典を共有
+- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 出典を共有
+- [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 出典を共有
+- [[tax-light-vehicle-tax|軽自動車税（種別割）]] — 出典を共有
+- [[subsidy-child-allowance|児童手当]] — 出典を共有
+- [[subsidy-single-parent-welfare-loan|母子父子寡婦福祉資金貸付金]] — 出典を共有
+- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 同分野の近傍
+- [[tax-withholding|源泉徴収義務と納付期限]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

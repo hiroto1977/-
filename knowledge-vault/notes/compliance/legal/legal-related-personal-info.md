@@ -30,6 +30,18 @@ aliases:
 - [e-Gov法令検索 個人情報保護法（31条・2022年4月施行版）](https://laws.e-gov.go.jp/law/415AC0000000057/20220401_502AC0000000044) `公的`
 - [個人関連情報 解説](https://www.morihamada.com/ja/insights/legal-topics/105366/105381) `メディア`
 
+## 関連概念
+- [[legal-external-transmission|電気通信事業法の外部送信規律]] — 語彙が近い
+- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 語彙が近い
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 出典を共有
+- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 出典を共有
+- [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

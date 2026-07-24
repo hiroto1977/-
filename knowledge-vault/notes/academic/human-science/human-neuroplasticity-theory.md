@@ -32,6 +32,18 @@ Donald O. Hebb ／ Michael Merzenich ／ Alvaro Pascual-Leone ／ Eric Kandel �
 - [Mateos-Aparicio & Rodríguez-Moreno (2019) — The impact of studying Hebb's synaptic plasticity, Frontiers in Cellular Neuroscience](https://doi.org/10.1038/nrn.2017.83) `学術`
 - [StatPearls — Neuroplasticity (2023), NCBI Bookshelf](https://www.ncbi.nlm.nih.gov/books/NBK557811/) `リファレンス`
 
+## 関連概念
+- [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 同じ思想家
+- [[human-habituation|馴化（habituation）——単一刺激の反復による反応減弱と非連合学習]] — 同じ思想家
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-defense-mechanisms|防衛機制]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+- [[human-group-polarization|集団極性化]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
+- [[human-mcgurk-effect|マガーク効果]] — 出典を共有
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

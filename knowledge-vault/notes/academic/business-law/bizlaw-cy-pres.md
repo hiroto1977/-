@@ -29,6 +29,14 @@ Jackson v. Phillips, 96 Mass. (14 Allen) 539 (1867)／In re Neher's Will, 279 N.
 - [UK Legislation — Charities Act 2011, Section 67: Cy-près schemes（英国制定法におけるcy-prèsスキーム策定権限）](https://www.legislation.gov.uk/ukpga/2011/25/section/67) `公的`
 - [Sherman, C.R. (2018) The Uses of the Dead: The Early Modern Development of Cy-Pres Doctrine, Catholic University of America Press](https://doi.org/10.2307/j.ctt1w1vkhb) `学術`
 
+## 関連概念
+- [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 同じ思想家
+- [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 同じ思想家
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — 同じ思想家
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同じ思想家
+- [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

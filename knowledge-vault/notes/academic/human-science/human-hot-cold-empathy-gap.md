@@ -30,6 +30,18 @@ aliases:
 - [BehavioralEconomics.com — Mini-Encyclopedia of BE: (Hot-cold) Empathy gap](https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/hot-cold-empathy-gap/) `リファレンス`
 - [Wikipedia — Hot-cold empathy gap](https://en.wikipedia.org/wiki/Hot-cold_empathy_gap) `リファレンス`
 
+## 関連概念
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 語彙が近い
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同じ思想家
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 出典を共有
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 出典を共有
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 出典を共有
+- [[human-hedonic-adaptation|快楽順応]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

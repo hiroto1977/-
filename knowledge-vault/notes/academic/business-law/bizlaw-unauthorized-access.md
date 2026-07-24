@@ -30,6 +30,14 @@ aliases:
 - [国立国会図書館 日本法令索引 不正アクセス行為の禁止等に関する法律（平成11年法律第128号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000085830) `公的`
 - [Wikipedia 不正アクセス行為の禁止等に関する法律（公布・施行日、2012年改正）](https://ja.wikipedia.org/wiki/%E4%B8%8D%E6%AD%A3%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E8%A1%8C%E7%82%BA%E3%81%AE%E7%A6%81%E6%AD%A2%E7%AD%89%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B) `リファレンス`
 
+## 関連概念
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 分野横断
+- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 出典を共有
+- [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
+- [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 出典を共有
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

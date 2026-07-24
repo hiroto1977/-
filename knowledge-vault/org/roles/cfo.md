@@ -19,41 +19,41 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全420件）
-- [[act-on-electronic-records|電子帳簿保存法]]
+### 学術概念 / ビジネス法務（全700件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
-- …ほか 414 件 → [[学術概念]]
+- …ほか 694 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全622件）
-- [[econ-absorption-approach|アブソープション・アプローチ]]
-- [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
+### 学術概念 / 経済学（全960件）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
-- …ほか 616 件 → [[学術概念]]
+- …ほか 954 件 → [[学術概念]]
 
-### 法務・税務・労務 / 法務（全140件）
+### 法務・税務・労務 / 法務（全138件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]]
 - [[legal-agency|民法の代理（代理権・無権代理・表見代理）]]
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
-- …ほか 134 件 → [[法務・税務・労務]]
+- …ほか 132 件 → [[法務・税務・労務]]
 
-### 法務・税務・労務 / 税務（全135件）
+### 法務・税務・労務 / 税務（全134件）
 - [[tax-amended-return|修正申告・期限後申告と加算税]]
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
 - [[tax-automobile-tax|自動車税（種別割）]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]
-- …ほか 129 件 → [[法務・税務・労務]]
+- …ほか 128 件 → [[法務・税務・労務]]
 
 ### 補助金・助成金 / 税制優遇（全2件）
 - [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]]

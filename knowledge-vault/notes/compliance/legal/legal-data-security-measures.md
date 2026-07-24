@@ -30,6 +30,18 @@ aliases:
 - [個人情報保護委員会 安全管理措置の基本的な考え方](https://www.ppc.go.jp/files/pdf/280526_siryou1-2.pdf) `公的`
 - [内閣サイバーセキュリティ 法令ハンドブック 安全管理措置](https://security-portal.cyber.go.jp/guidance/law-handbook/v2-04.html) `公的`
 
+## 関連概念
+- [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]] — 語彙が近い
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い
+- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 語彙が近い
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 語彙が近い
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 語彙が近い
+- [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
+- [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 語彙が近い
+- [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 語彙が近い
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

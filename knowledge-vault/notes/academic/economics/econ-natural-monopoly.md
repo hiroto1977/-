@@ -30,6 +30,18 @@ aliases:
 - [OpenStax/BCcampus, Principles of Economics 11.3 — Regulating Natural Monopolies](https://opentextbc.ca/principlesofeconomics/chapter/11-3-regulating-natural-monopolies/) `学術`
 - [Wikipedia — Natural monopoly（固定費優位・規模の経済）](https://en.wikipedia.org/wiki/Natural_monopoly) `リファレンス`
 
+## 関連概念
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
+- [[human-operant-conditioning|オペラント条件づけ]] — 出典を共有
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
+- [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

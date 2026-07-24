@@ -29,6 +29,18 @@ aliases:
 - [G. Sandstrom, "Laws of media – The four effects," Social Epistemology Review and Reply Collective (2012)](https://social-epistemology.com/wp-content/uploads/2012/11/sandstrom_mcluhan.pdf) `学術`
 - [Wikipedia: Tetrad of media effects](https://en.wikipedia.org/wiki/Tetrad_of_media_effects) `リファレンス`
 
+## 関連概念
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
+- [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
+- [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 同じ思想家
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+- [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

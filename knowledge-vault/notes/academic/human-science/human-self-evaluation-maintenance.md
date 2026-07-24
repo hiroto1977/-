@@ -30,6 +30,15 @@ aliases:
 - [Self-Evaluation Maintenance Model — Social Psychology (iResearchNet)](https://psychology.iresearchnet.com/social-psychology/self/self-evaluation-maintenance-model/) `リファレンス`
 - [Self-evaluation maintenance theory — Wikipedia](https://en.wikipedia.org/wiki/Self-evaluation_maintenance_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
+- [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
+- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 出典を共有
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
+- [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
+- [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同分野の近傍
+- [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ OECD（2004 FET基準の体系的分析）／クリストフ・シュロイア�
 - [Fair and Equitable Treatment — Jus Mundi Wiki](https://jusmundi.com/en/document/publication/en-fair-and-equitable-treatment) `リファレンス`
 - [OECD — Fair and Equitable Treatment Standard in International Investment Law (2004)](https://www.oecd.org/content/dam/oecd/en/publications/reports/2004/09/fair-and-equitable-treatment-standard-in-international-investment-law_g17a166b/675702255435.pdf) `リファレンス`
 
+## 関連概念
+- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 語彙が近い
+- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 語彙が近い
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
+- [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
+- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

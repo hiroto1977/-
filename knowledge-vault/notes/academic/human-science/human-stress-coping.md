@@ -30,6 +30,18 @@ aliases:
 - [Wiley — Lazarus and Folkman’s Psychological Stress and Coping Theory（The Handbook of Stress and Health 査読付き章）](https://onlinelibrary.wiley.com/doi/10.1002/9781118993811.ch21) `学術`
 - [Lumen Learning（Waymaker Psychology）— Regulation of Stress（大学教材）](https://courses.lumenlearning.com/waymaker-psychology/chapter/regulation-of-stress/) `学術`
 
+## 関連概念
+- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — 語彙が近い
+- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 語彙が近い
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
+- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

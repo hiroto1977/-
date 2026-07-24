@@ -31,6 +31,18 @@ aliases:
 - [Nagel, R. (1995) “Unraveling in Guessing Games: An Experimental Study,” American Economic Review 85(5):1313–1326（査読論文／p-beauty contest）](https://ideas.repec.org/a/aea/aecrev/v85y1995i5p1313-26.html) `学術`
 - [Encyclopedia.com: Beauty Contest Metaphor（百科事典級リファレンス）](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/beauty-contest-metaphor) `リファレンス`
 
+## 関連概念
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]] — 同じ思想家
+- [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

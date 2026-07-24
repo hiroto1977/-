@@ -30,6 +30,13 @@ aliases:
 - [Rabanal (2007) The Price Puzzle Revisited: Can the Cost Channel Explain? — ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0164070408000669) `学術`
 - [Castelnuovo (2010) Monetary Policy, Inflation Expectations and The Price Puzzle — Economic Journal (Wiley)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-0297.2010.02368.x) `学術`
 
+## 関連概念
+- [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
+- [[econ-rational-inattention-sims|合理的不注意理論——情報処理コストに基づく意思決定と価格硬直性]] — 同じ思想家
+- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

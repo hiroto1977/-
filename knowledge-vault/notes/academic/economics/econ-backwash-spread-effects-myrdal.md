@@ -31,6 +31,18 @@ Gunnar Myrdal ／ Albert O. Hirschman ／ Nicholas Kaldor
 - [Myrdal's Theory of Cumulative Causation — ResearchGate](https://www.researchgate.net/publication/274455034_Myrdal's_Theory_of_Cumulative_Causation) `学術`
 - [Myrdal's Theory Cumulative Causation — SAGE Encyclopedia of World Poverty](https://sk.sagepub.com/ency/edvol/the-sage-encyclopedia-of-world-poverty-second-edition/chpt/myrdal-s-theory-cumulative-causation) `学術`
 
+## 関連概念
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 同じ思想家
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
+- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

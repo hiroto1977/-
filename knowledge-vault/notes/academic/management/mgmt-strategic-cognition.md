@@ -30,6 +30,12 @@ aliases:
 - [Porac et al. (1989) — Semantic Scholar](https://www.semanticscholar.org/paper/Competitive-Groups-as-Cognitive-Communities%3A-The-of-Porac-Thomas/b5e3d8f2a1c4d6e7f8a9b0c1d2e3f4a5b6c7d8e9) `学術`
 - [Strategic Management (cognitive school) — Wikipedia](https://en.wikipedia.org/wiki/Strategic_management) `リファレンス`
 
+## 関連概念
+- [[mgmt-managerial-cognition|経営者認知理論]] — 語彙が近い
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 語彙が近い
+- [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 同分野の近傍
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

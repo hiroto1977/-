@@ -31,6 +31,12 @@ Jo Tacchi ／ Greg Hearn ／ Jerry Watkins
 - [Wikipedia: Communicative ecology](https://en.wikipedia.org/wiki/Communicative_ecology) `リファレンス`
 - [Bau: Communicative ecology of refugees (2025)](https://doi.org/10.1057/s41599-025-06355-w) `学術`
 
+## 関連概念
+- [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 出典を共有
+- [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 出典を共有
+- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同分野の近傍
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

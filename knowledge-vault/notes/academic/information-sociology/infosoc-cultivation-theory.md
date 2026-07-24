@@ -30,6 +30,18 @@ aliases:
 - [Gerbner & Gross (1976) Living with Television: The Violence Profile, Journal of Communication 26(2):172-194（原典）](https://eric.ed.gov/?id=EJ139260) `学術`
 - [Potter (1993) Cultivation Theory and Research, Human Communication Research（査読・批判）](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-2958.1993.tb00313.x) `学術`
 
+## 関連概念
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同じ思想家
+- [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同じ思想家
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia — Likert’s management systems（システム1〜4の定義）](https://en.wikipedia.org/wiki/Likert%27s_management_systems) `リファレンス`
 - [Science誌 書評 — The Human Organization (1967, McGraw-Hill) の出版確認](https://www.science.org/doi/10.1126/science.162.3859.1260) `学術`
 
+## 関連概念
+- [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同じ思想家
+- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
+- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
+- [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

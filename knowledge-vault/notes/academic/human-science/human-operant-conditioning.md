@@ -30,6 +30,18 @@ B.F.スキナー（B. F. Skinner）／エドワード・ソーンダイク（効
 - [EBSCO Research Starters — Operant conditioning](https://www.ebsco.com/research-starters/social-sciences-and-humanities/operant-conditioning) `リファレンス`
 - [Lumen Learning (SUNY HVCC) — Introduction to Psychology: Operant Conditioning](https://courses.lumenlearning.com/suny-hvcc-psychology-1/chapter/reading-operant-conditioning/) `学術`
 
+## 関連概念
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
+- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
+- [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

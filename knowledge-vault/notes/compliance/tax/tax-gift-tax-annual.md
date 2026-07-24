@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.4408 贈与税の計算と税率（暦年課税）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4408.htm) `公的`
 - [暦年贈与の非課税枠 解説](https://chester-tax.com/encyclopedia/9307.html) `メディア`
 
+## 関連概念
+- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 語彙が近い
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

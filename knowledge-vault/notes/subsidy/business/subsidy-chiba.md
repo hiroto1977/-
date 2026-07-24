@@ -36,6 +36,10 @@ prefecture
 - [千葉県産業振興センター](https://www.ccjc-net.or.jp/) `運営団体`
 - [千葉県 中小企業成長促進補助金 解説](https://www.sato-group-sr.jp/business_guide/archives/1083) `メディア`
 
+## 関連概念
+- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]] — 語彙が近い
+- [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 語彙が近い
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

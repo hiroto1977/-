@@ -30,6 +30,18 @@ E.デシ&R.ライアンが提唱（ロチェスター大学）／3つの基本�
 - [American Psychological Association — Self-determination theory](https://www.apa.org/research-practice/conduct-research/self-determination-theory.html) `学術`
 - [Ryan & Deci (2000), American Psychologist（査読論文・PubMed索引）](https://pubmed.ncbi.nlm.nih.gov/11392867/) `学術`
 
+## 関連概念
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 語彙が近い
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

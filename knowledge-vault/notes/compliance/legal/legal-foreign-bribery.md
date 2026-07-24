@@ -30,6 +30,14 @@ aliases:
 - [外務省 OECD外国公務員贈賄防止条約の概要](https://www.mofa.go.jp/mofaj/gaiko/oecd/komuin.html) `公的`
 - [経済産業省 外国公務員贈賄防止指針](https://www.meti.go.jp/policy/external_economy/zouwai/overviewofguidelines.html) `公的`
 
+## 関連概念
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 語彙が近い
+- [[eh-1956|1956年（昭和31年）]] — 出典を共有
+- [[eh-1988|1988年（昭和63年）]] — 出典を共有
+- [[eh-1972|1972年（昭和47年）]] — 出典を共有
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 同分野の近傍
+- [[legal-limited-provision-data|不正競争防止法における「限定提供データ」の保護]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

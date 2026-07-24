@@ -41,6 +41,7 @@ import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
 import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
 import { SmeConsultantPage } from './pages/SmeConsultantPage';
 import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
+import { CpaPage } from './pages/CpaPage';
 import { BasePage } from './pages/BasePage';
 import { NetseaPage } from './pages/NetseaPage';
 import { SuperDeliveryPage } from './pages/SuperDeliveryPage';
@@ -65,6 +66,8 @@ import { CompliancePage } from './pages/CompliancePage';
 import { ObsidianPage } from './pages/ObsidianPage';
 import { DockerPage } from './pages/DockerPage';
 import { AssistantPage } from './pages/AssistantPage';
+import { VillagePage } from './pages/VillagePage';
+import { DocstudioPage } from './pages/DocstudioPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -72,9 +75,11 @@ import type { ServiceId } from '../shared/serviceId';
 export type { ServiceId };
 
 /** Sidebar grouping. Pages in `featured` are shown prominently in an
- *  always-expanded section; `tools` and `integrations` are collapsed by
- *  default to reduce overwhelm for non-technical users. */
-export type ServiceCategory = 'featured' | 'tools' | 'integrations';
+ *  always-expanded section; `professionals` groups the 8 士業 advisors
+ *  (also always expanded — they are the business-support entry point);
+ *  `tools` and `integrations` are collapsed by default to reduce
+ *  overwhelm for non-technical users. */
+export type ServiceCategory = 'featured' | 'professionals' | 'tools' | 'integrations';
 
 export interface ServiceDefinition {
   id: ServiceId;
@@ -87,6 +92,7 @@ export interface ServiceDefinition {
 
 export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
   featured: 'おすすめ',
+  professionals: '士業連携',
   tools: '分析・ツール',
   integrations: '外部サービス連携',
 };
@@ -275,7 +281,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'real-estate',
     label: '不動産投資',
     icon: 'RE',
-    description: '物件 / 賃貸キャッシュフロー / 利回りを一括把握',
+    description: '物件を任意追加 / 賃貸キャッシュフロー / 利回り・DSCR・IRR',
     page: RealEstatePage,
     category: 'tools',
   },
@@ -283,7 +289,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'mutual-funds',
     label: '投資信託',
     icon: 'MF',
-    description: 'ファンド評価額 / 基準価額 / 分配金履歴',
+    description: '銘柄を任意追加 / 評価額・損益 / 積立・貯蓄シミュレーション',
     page: MutualFundsPage,
     category: 'tools',
   },
@@ -383,13 +389,25 @@ export const SERVICES: ServiceDefinition[] = [
     page: StoragePage,
     category: 'tools',
   },
+  // ── 士業連携 (professionals): 8 士業を専用カテゴリに集約。各ページは
+  //    共通 CRM (ShigyoConsole) + 担当領域ナビ (professionalMap.ts の
+  //    事業仕分け) を表示する。並びは 会計税務 → 労務 → 法務 → 登記・
+  //    許認可 → 経営 → 知財 の相談フロー順。
   {
     id: 'tax-accountant',
     label: '税理士',
     icon: 'TX',
-    description: '記帳代行 / 確定申告 / 月次決算 / 節税相談',
+    description: '記帳代行 / 確定申告 / 月次決算 / 節税相談・インボイス',
     page: TaxAccountantPage,
-    category: 'integrations',
+    category: 'professionals',
+  },
+  {
+    id: 'cpa',
+    label: '公認会計士',
+    icon: 'CP',
+    description: '財務諸表監査 / 決算の信頼性 / 内部統制 / 資金調達支援',
+    page: CpaPage,
+    category: 'professionals',
   },
   {
     id: 'labor-consultant',
@@ -397,7 +415,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'LC',
     description: '社会保険手続 / 給与計算 / 就業規則 / 労務相談',
     page: LaborConsultantPage,
-    category: 'integrations',
+    category: 'professionals',
   },
   {
     id: 'lawyer',
@@ -405,7 +423,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'LW',
     description: '契約書レビュー / 紛争対応 / 法務顧問',
     page: LawyerPage,
-    category: 'integrations',
+    category: 'professionals',
   },
   {
     id: 'judicial-scrivener',
@@ -413,7 +431,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'JS',
     description: '商業登記 / 不動産登記 / 相続手続',
     page: JudicialScrivenerPage,
-    category: 'integrations',
+    category: 'professionals',
   },
   {
     id: 'admin-scrivener',
@@ -421,7 +439,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'AD',
     description: '許認可申請 / 在留資格 / 補助金',
     page: AdminScrivenerPage,
-    category: 'integrations',
+    category: 'professionals',
   },
   {
     id: 'sme-consultant',
@@ -429,7 +447,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'SM',
     description: '経営診断 / 補助金申請 / 事業計画',
     page: SmeConsultantPage,
-    category: 'integrations',
+    category: 'professionals',
   },
   {
     id: 'patent-attorney',
@@ -437,7 +455,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'PA',
     description: '特許 / 商標 / 意匠出願 / 知財コンサル',
     page: PatentAttorneyPage,
-    category: 'integrations',
+    category: 'professionals',
   },
   {
     id: 'base',
@@ -629,6 +647,22 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'AI',
     description: 'Claude を頭脳に確証済みナレッジと全サービスを統合 — 質問・助言・表/成果物の生成',
     page: AssistantPage,
+    category: 'featured',
+  },
+  {
+    id: 'village',
+    label: 'AIの村',
+    icon: '🏡',
+    description: 'AI 組織 143 体が働く様子をどうぶつの森風に可視化 — 画面に話しかけて対話できる',
+    page: VillagePage,
+    category: 'featured',
+  },
+  {
+    id: 'docstudio',
+    label: '書類スタジオ',
+    icon: '🗂',
+    description: '契約・経理・組織・規程 12 書式＋電子定款＋就業規則 — 入力→即プレビュー→印刷/PDF（検証済み法令注記つき）',
+    page: DocstudioPage,
     category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

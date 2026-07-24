@@ -30,6 +30,16 @@ aliases:
 - [Wikipedia「Overshooting model」](https://en.wikipedia.org/wiki/Overshooting_model) `リファレンス`
 - [熊本学園大学リポジトリ「ドーンブッシュのオーバーシューティング・モデル再考」](https://kumagaku.repo.nii.ac.jp/record/3553/files/keizai27(1-4)-08.pdf) `学術`
 
+## 関連概念
+- [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — 語彙が近い
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
+- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同じ思想家
+- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 同分野の近傍
+- [[econ-walras-law|ワルラスの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

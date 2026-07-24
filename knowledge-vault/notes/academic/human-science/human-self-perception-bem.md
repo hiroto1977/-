@@ -1,0 +1,50 @@
+---
+collection: academic
+id: human-self-perception-bem
+category: "human-science"
+category_ja: "人間科学"
+title: "自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する"
+as_of: "2026-06-26"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/human-science
+  - knowledge/verified
+aliases:
+  - "自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する"
+---
+
+# 自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+自己知覚理論（self-perception theory）は、ダリル・ベムが1967年から1972年にかけて提唱した社会心理学の理論で、人は自分の内的な状態（態度や感情）を直接的な内省によって知るとは限らず、内的な手がかりが弱く、曖昧で、解釈しがたいときには、あたかも外部の観察者がそうするように、自分自身の行動とその行動が生じた状況を観察することによって、自らの態度や感情を推論すると説く。「私は黒パンを食べている、ゆえに私は黒パンが好きなのだろう」というように、行動が先にあり、態度はそこから事後的に導き出される。ベムがこの理論を提起した重要な動機は、レオン・フェスティンガーの認知的不協和理論への対案を示すことにあった。認知的不協和理論は、自分の信念と矛盾する行動をとると不快な緊張状態（不協和）が生じ、それを解消するために態度が変化すると説明する。これに対しベムは、態度変化を説明するのに、内的な緊張という観察できない動因を仮定する必要はないと論じた。人は単に、自分が報酬も強制もなくある行動をとったという事実を観察し、「自分はそれを好むからそうしたのだろう」と態度を推論するだけでよい、というのである。両理論は多くの場面で同じ予測を生むため激しい論争を呼んだが、研究の蓄積を通じて、不快な覚醒を伴う場面では不協和理論が、態度が当初から曖昧・希薄な場面では自己知覚理論がより妥当に適用されると整理されていった。自己知覚理論は、外的報酬が内発的動機づけを損なう「過正当化効果」や、小さな承諾が大きな承諾を導く「フット・イン・ザ・ドア」など、行動が態度を形づくる多くの現象を説明する基盤を提供している。
+
+## 提唱者・初出
+ダリル・ベム ／ レオン・フェスティンガー ／ エドワード・ジョーンズ ／ ラッセル・ファジオ
+
+## 出典
+- [Bem, D.J. (1972) Self-Perception Theory — Advances in Experimental Social Psychology 6](https://doi.org/10.1016/S0065-2601(08)60024-6) `学術`
+- [Wikipedia: Self-perception theory — Bem, inferring attitudes from behavior, dissonance alternative](https://en.wikipedia.org/wiki/Self-perception_theory) `リファレンス`
+
+## 関連概念
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
+- [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — 同じ思想家
+- [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
+- [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

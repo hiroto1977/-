@@ -31,6 +31,10 @@ aliases:
 - [Rochet & Tirole (2003) Platform Competition in Two-Sided Markets — Journal of the European Economic Association 1(4)](https://academic.oup.com/jeea/article-pdf/1/4/990/10312916/jeea0990.pdf) `学術`
 - [Abramovaite et al. (2022) Classical Deterrence Theory Revisited — Sage Journals](https://journals.sagepub.com/doi/10.1177/14773708211072415) `学術`
 
+## 関連概念
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同分野の近傍
+- [[infosoc-metcalfe-law|メトカーフの法則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [国税庁 印紙税不納付事実申出手続](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/23120080.htm) `公的`
 - [GMOサイン 印紙税の過怠税](https://www.gmosign.com/media/electronic-contract/inshizei-kataizei/) `メディア`
 
+## 関連概念
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 語彙が近い
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 語彙が近い
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

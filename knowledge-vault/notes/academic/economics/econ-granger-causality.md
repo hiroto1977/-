@@ -29,6 +29,11 @@ aliases:
 - [Granger, C. W. J. (1969) "Investigating Causal Relations by Econometric Models and Cross-spectral Methods," Econometrica 37(3), 424–438](https://www.jstor.org/stable/1912791) `学術`
 - [NobelPrize.org — Clive W. J. Granger, Prize in Economic Sciences 2003](https://www.nobelprize.org/prizes/economic-sciences/2003/granger/facts/) `リファレンス`
 
+## 関連概念
+- [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同じ思想家
+- [[econ-export-led-growth-model|輸出主導型成長モデル]] — 同分野の近傍
+- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

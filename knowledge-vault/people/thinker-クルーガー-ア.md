@@ -1,0 +1,33 @@
+---
+title: "アラン・クルーガー"
+type: thinker
+person_key: "クルーガー|ア"
+concept_count: 11
+tags:
+  - person
+  - index
+---
+
+# アラン・クルーガー
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（11件）
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 競業避止義務契約（non-competeagreement/covenantnottocompete:CNC）は、退職…
+- [[econ-difference-in-differences|差の差分析（DID）]] — 差の差分析（差分の差法、difference-in-differences,DID）は、観察データ（パネルデータ）から…
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 直接的に非生産的な利潤追求活動（directlyunproductive,profit-seekingactiviti…
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 環境クズネッツ曲線（EKC）は、環境汚染や環境負荷と一人当たり所得との間に逆U字型の関係があるとする仮説である。
+- [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — デイヴィッド・カードとアラン・クルーガー（1994）は、ニュージャージー州とペンシルベニア州の隣接ファストフード店を「…
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 買い手独占（monopsony、モノプソニー）は、ある財や生産要素に対して単一あるいは支配的な買い手しか存在しない市場…
+- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 自然実験（naturalexperiment）は、研究者が意図的に介入せず、政策変更や制度差など外生的な要因が対象を処…
+- [[econ-rent-seeking|レントシーキング]] — レントシーキング（rent-seeking）とは、公共選択論における概念で、新たな富や価値を生み出すのではなく、既存の…
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — レント・シーキング（rent-seeking）とは、生産的経済活動によらず規制・補助金・独占特権など政治的手段を通じて…
+- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — ソブリン債務危機（SovereignDebtCrisis）とは、国家が対外・対内債務の返済不能に陥るリスクを指し、19…
+- [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — タロックのパラドックス（Tullockparadox）は、公共選択論の経済学者ゴードン・タロックが提起した謎で、「レン…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

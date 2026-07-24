@@ -30,6 +30,12 @@ aliases:
 - [国税庁 No.5501 一括評価金銭債権に係る貸倒引当金](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5501.htm) `公的`
 - [会計検査院 中小企業等の貸倒引当金の特例](https://report.jbaudit.go.jp/org/h30/2018-h30-0669-0.htm) `公的`
 
+## 関連概念
+- [[eh-1996|1996年（平成8年）]] — 出典を共有
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 同分野の近傍
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 同分野の近傍
+- [[tax-crypto-asset-valuation|法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

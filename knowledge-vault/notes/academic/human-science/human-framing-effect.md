@@ -30,6 +30,18 @@ aliases:
 - [PubMed（米国立医学図書館）— PMID 7455683 書誌](https://pubmed.ncbi.nlm.nih.gov/7455683/) `学術`
 - [Wikipedia — Framing effect (psychology)（利得/損失フレーム・選好逆転）](https://en.wikipedia.org/wiki/Framing_effect_(psychology)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 同じ思想家
+- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[econ-disposition-effect-shefrin-statman|ディスポジション効果——値上がり株を早く売り値下がり株を持ち続ける傾向]] — 同じ思想家
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

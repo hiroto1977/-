@@ -30,6 +30,18 @@ aliases:
 - [名古屋法務局 住所・名前の変更登記の手続（令和8年4月から義務化）](https://houmukyoku.moj.go.jp/nagoya/page000001_00951.html) `公的`
 - [仙台市 住所・氏名の変更登記が義務化](https://guide.callcenter.city.sendai.jp/hc/ja/articles/5130051096606) `自治体`
 
+## 関連概念
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 語彙が近い
+- [[bizlaw-companies-act|会社法]] — 出典を共有
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 出典を共有
+- [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
+- [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 同分野の近傍
+- [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍
+- [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 同分野の近傍
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

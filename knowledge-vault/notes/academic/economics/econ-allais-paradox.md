@@ -31,6 +31,10 @@ M.アレ1953提示（"Le Comportement de l'Homme Rationnel devant le Risque", Ec
 - [NobelPrize.org — Maurice Allais, 1988年経済学賞](https://www.nobelprize.org/prizes/economic-sciences/1988/allais/facts/) `リファレンス`
 - [Wikipedia — Allais paradox（提示年・選択構造・実験比率）](https://en.wikipedia.org/wiki/Allais_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-expected-utility|期待効用理論]] — 同分野の近傍
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

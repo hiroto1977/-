@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 — 国民健康保険制度](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/iryouhoken01/index.html) `公的`
 - [コトバンク（日本大百科全書ほか）— 国民健康保険法](https://kotobank.jp/word/国民健康保険法-63681) `リファレンス`
 
+## 関連概念
+- [[labor-national-health-insurance|国民健康保険（国保）]] — 語彙が近い
+- [[bizlaw-health-insurance|健康保険法]] — 同分野の近傍
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 同分野の近傍
+- [[bizlaw-long-term-care-insurance|介護保険法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

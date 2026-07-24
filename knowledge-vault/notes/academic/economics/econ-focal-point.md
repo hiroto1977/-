@@ -30,6 +30,18 @@ aliases:
 - [NobelPrize.org: 2005年経済学賞（Schelling・Aumann共同受賞）](https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/) `公的`
 - [American Economic Association: Schellingの焦点と交渉に関する解説](https://www.aeaweb.org/research/can-schellings-focal-points-help-us-understand-high-stakes-negotiations) `学術`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同じ思想家
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-schelling-segregation|シェリングの分居モデル]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
+- [[econ-cheap-talk-crawford-sobel|チープトーク——費用のかからない発言はどこまで信用できるか]] — 同じ思想家
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

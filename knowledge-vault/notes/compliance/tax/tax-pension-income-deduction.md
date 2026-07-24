@@ -30,6 +30,13 @@ aliases:
 - [国税庁 暮らしの税情報 年金と税](https://www.nta.go.jp/publication/pamph/koho/kurashi/html/03_1.htm) `公的`
 - [公的年金の所得税の計算 解説](https://www.jili.or.jp/lifeplan/lifesecurity/1125.html) `メディア`
 
+## 関連概念
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 語彙が近い
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 語彙が近い
+- [[bizlaw-insurance-act|保険法]] — 出典を共有
+- [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

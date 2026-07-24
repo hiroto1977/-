@@ -30,6 +30,18 @@ aliases:
 - [ScienceDirect Topics: Management by Objectives — an overview](https://www.sciencedirect.com/topics/social-sciences/management-by-objectives) `リファレンス`
 - [A fresh look at management by objectives, Business Horizons (1967)](https://www.sciencedirect.com/science/article/abs/pii/0007681367900845) `学術`
 
+## 関連概念
+- [[mgmt-mbo|目標による管理（MBO）]] — 語彙が近い
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同じ思想家
+- [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
+- [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同じ思想家
+- [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同じ思想家
+- [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

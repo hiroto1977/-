@@ -30,6 +30,10 @@ aliases:
 - [Kolb’s Experiential Learning Cycle — Toronto Metropolitan University（大学公式）](https://www.torontomu.ca/experiential-learning/faculty-staff/kolbs-el-cycle/) `学術`
 - [Kolb’s Four Stages of Learning — University of Florida CITT（大学公式）](https://citt.it.ufl.edu/resources/course-development/the-learning-process/types-of-learners/kolbs-four-stages-of-learning/) `学術`
 
+## 関連概念
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 同分野の近傍
+- [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ Marianne W. Lewis（AMR 25(4), 2000, 概念的基盤）／Wendy K. Smith & Maria
 - [Smith & Lewis (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — AMR 36(2), pp.381-403](https://doi.org/10.5465/amr.2009.0223) `学術`
 - [Smith, Lewis, Jarzabkowski & Langley eds. (2017) The Oxford Handbook of Organizational Paradox — Oxford University Press](https://doi.org/10.1093/oxfordhb/9780198754428.001.0001) `学術`
 
+## 関連概念
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
+- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同じ思想家
+- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
+- [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

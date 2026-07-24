@@ -30,6 +30,16 @@ aliases:
 - [民法第93条（心裡留保）条文・解説（tek-law）](https://tek-law.jp/civil-code/general-provisions/juridical-acts/manifestations-of-intention/article-93/) `リファレンス`
 - [Wikibooks 民法第93条（条文・2017年改正）](https://ja.wikibooks.org/wiki/民法第93条) `リファレンス`
 
+## 関連概念
+- [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — 語彙が近い
+- [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]] — 語彙が近い
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 出典を共有
+- [[bizlaw-earnest-money|手付（民法557条）]] — 出典を共有
+- [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — 出典を共有
+- [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]] — 出典を共有
+- [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 出典を共有
+- [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

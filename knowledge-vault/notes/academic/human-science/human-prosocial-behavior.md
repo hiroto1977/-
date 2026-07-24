@@ -30,6 +30,12 @@ aliases:
 - [Eisenberg & Mussen 1989 — The Roots of Prosocial Behavior in Children, Cambridge University Press](https://doi.org/10.1016/C2013-0-10417-8) `学術`
 - [Hamilton 1964 — The Genetical Evolution of Social Behaviour, Journal of Theoretical Biology 7(1):1-16](https://doi.org/10.1016/0022-5193(64)90038-4) `学術`
 
+## 関連概念
+- [[human-reciprocal-altruism|互恵的利他主義]] — 語彙が近い
+- [[human-social-brain-hypothesis|社会脳仮説]] — 同分野の近傍
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同分野の近傍
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

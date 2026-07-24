@@ -29,6 +29,15 @@ C・オットー・シャーマー（C. Otto Scharmer, MIT上級講師）／主�
 - [MIT Sloan School of Management — Otto Scharmer 教員紹介（著者所属・職位の一次情報）](https://mitsloan.mit.edu/faculty/directory/otto-scharmer) `学術`
 - [Presencing Institute — Theory U（著者自身の研究機関による概念解説）](https://www.presencing.org/theoryu) `学術`
 
+## 関連概念
+- [[infosoc-deepfake|ディープフェイク]] — 出典を共有
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 出典を共有
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 出典を共有
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
+- [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
+- [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同分野の近傍
+- [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

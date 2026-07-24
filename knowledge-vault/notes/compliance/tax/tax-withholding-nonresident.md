@@ -30,6 +30,13 @@ aliases:
 - [国税庁 No.2880 非居住者等に不動産の賃借料を支払ったとき](https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2880.htm) `公的`
 - [国税庁 No.2878 国内源泉所得の範囲](https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2878.htm) `公的`
 
+## 関連概念
+- [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 語彙が近い
+- [[tax-withholding|源泉徴収義務と納付期限]] — 語彙が近い
+- [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
+- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

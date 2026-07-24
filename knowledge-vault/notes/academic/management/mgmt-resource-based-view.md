@@ -30,6 +30,18 @@ aliases:
 - [Barney (1991) Firm Resources and Sustained Competitive Advantage, J. of Management 17(1):99-120（原典）](https://journals.sagepub.com/doi/10.1177/014920639101700108) `学術`
 - [Wikipedia — Resource-based view（VRIN→VRIOの経緯・限界）](https://en.wikipedia.org/wiki/Resource-based_view) `リファレンス`
 
+## 関連概念
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 語彙が近い
+- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 語彙が近い
+- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同じ思想家
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

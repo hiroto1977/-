@@ -30,6 +30,11 @@ aliases:
 - [Keller (1993) 本文PDF（Duke University 教員ホスト）— CBBEの差別的効果の定義](https://people.duke.edu/~moorman/Marketing-Strategy-Seminar-2015/Session%203/Keller.pdf) `学術`
 - [Wikipedia「Brand equity」— Aakerの資産・負債定義と5要素、一般的定義](https://en.wikipedia.org/wiki/Brand_equity) `リファレンス`
 
+## 関連概念
+- [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 出典を共有
+- [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]] — 同分野の近傍
+- [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

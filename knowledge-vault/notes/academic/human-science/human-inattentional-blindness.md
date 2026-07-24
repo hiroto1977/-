@@ -30,6 +30,18 @@ aliases:
 - [Scholarpedia — “Inattentional blindness”（査読制百科事典；変化盲との区別）](http://www.scholarpedia.org/article/Inattentional_blindness) `リファレンス`
 - [Simons & Chabris (1999) “Gorillas in our midst...”, Perception 28(9):1059–1074](https://journals.sagepub.com/doi/10.1068/p281059) `学術`
 
+## 関連概念
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 語彙が近い
+- [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

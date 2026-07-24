@@ -131,6 +131,8 @@ export function normalizeUtterance(text: string): string {
 // Stryker disable all
 const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   home: ['ほーむ', 'とっぷ', 'top', 'home'],
+  village: ['むら', 'village', 'ゔぃれっじ', 'どうぶつのもり', 'aiのむら', 'えーあいのむら'],
+  docstudio: ['しょるい', 'しょるいすたじお', '書類', 'けいやくしょ', 'ていかん', 'しゅうぎょうきそく'],
   github: ['github', 'ぎっとはぶ', 'ぎっと'],
   wordpress: ['wordpress', 'わーどぷれす', 'wp'],
   atlassian: ['atlassian', 'あとらしあん', 'jira', 'じら', 'confluence', 'こんふるえんす'],
@@ -175,6 +177,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   'admin-scrivener': ['行政書士', 'ぎょうせいしょし'],
   'sme-consultant': ['中小企業診断士', 'ちゅうしょうきぎょうしんだんし', '診断士', 'しんだんし'],
   'patent-attorney': ['弁理士', 'べんりし'],
+  cpa: ['公認会計士', 'こうにんかいけいし', '会計士', 'かいけいし', '監査', 'かんさ'],
   base: ['base', 'べーす'],
   netsea: ['netsea', 'ねっしー'],
   'super-delivery': ['すーぱーでりばりー', 'superdelivery'],

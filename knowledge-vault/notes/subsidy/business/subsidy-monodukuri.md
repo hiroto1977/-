@@ -36,6 +36,14 @@ national
 - [ものづくり補助金 公式事務局（全国中小企業団体中央会）](https://portal.monodukuri-hojo.jp/about.html) `運営団体`
 - [ミラサポplus ものづくり補助金](https://mirasapo-plus.go.jp/subsidy/manufacturing/) `公的`
 
+## 関連概念
+- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
+- [[subsidy-it-introduction|IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）]] — 語彙が近い
+- [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 語彙が近い
+- [[subsidy-gotech|Go-Tech事業（成長型中小企業等研究開発支援事業）]] — 出典を共有
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 出典を共有
+- [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

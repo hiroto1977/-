@@ -29,6 +29,15 @@ aliases:
 - [Gereffi, Humphrey & Sturgeon (2005) "The governance of global value chains," Review of International Political Economy 12(1): 78-104](https://www.tandfonline.com/doi/abs/10.1080/09692290500049805) `学術`
 - [World Bank — Global Value Chains Topic Page](https://www.worldbank.org/en/topic/global-value-chains) `リファレンス`
 
+## 関連概念
+- [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 同じ思想家
+- [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 出典を共有
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
+- [[econ-microfinance|マイクロファイナンス]] — 出典を共有
+- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 出典を共有
+- [[eh-1944|1944年（昭和19年）]] — 出典を共有
+- [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

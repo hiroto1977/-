@@ -19,32 +19,32 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全420件）
-- [[act-on-electronic-records|電子帳簿保存法]]
+### 学術概念 / ビジネス法務（全700件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
-- …ほか 414 件 → [[学術概念]]
+- …ほか 694 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全438件）
-- [[bystander-effect|傍観者効果]]
-- [[cognitive-dissonance|認知的不協和理論]]
-- [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
+### 学術概念 / 人間科学（全650件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
-- …ほか 432 件 → [[学術概念]]
+- [[human-action-bias|行動バイアス（アクション・バイアス）]]
+- …ほか 644 件 → [[学術概念]]
 
-### 法務・税務・労務 / 労務（全127件）
+### 法務・税務・労務 / 労務（全126件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]]
 - [[labor-average-wage|平均賃金（労働基準法12条）]]
 - [[labor-break-time|休憩時間（労働基準法34条）]]
 - [[labor-care-leave|介護休業と介護休業給付金]]
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
-- …ほか 121 件 → [[法務・税務・労務]]
+- …ほか 120 件 → [[法務・税務・労務]]
 
 ### 補助金・助成金 / 雇用（全17件）
 - [[subsidy-age-friendly|エイジフレンドリー補助金]]

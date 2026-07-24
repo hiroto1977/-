@@ -31,6 +31,17 @@ Steven J. Jackson ／ Stephen Graham ／ Nigel Thrift
 - [Repair — Society for Cultural Anthropology Fieldsights](https://www.culanth.org/fieldsights/repair) `学術`
 - [Graham & Thrift (2007) — Out of Order, Theory Culture & Society](https://journals.sagepub.com/doi/10.1177/0263276407075954) `学術`
 
+## 関連概念
+- [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
+- [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

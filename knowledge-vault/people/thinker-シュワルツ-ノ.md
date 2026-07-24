@@ -1,0 +1,25 @@
+---
+title: "ノルベルト・シュワルツ"
+type: thinker
+person_key: "シュワルツ|ノ"
+concept_count: 3
+tags:
+  - person
+  - index
+---
+
+# ノルベルト・シュワルツ
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（3件）
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 利用可能性ヒューリスティック（availabilityheuristic）は、エイモス・トヴェルスキーとダニエル・カー…
+- [[human-mere-exposure-zajonc|単純接触効果——反復的接触が対象への好意を増大させる現象]] — ロバート・ザイアンスが1968年に実験的に確立した単純接触効果（mereexposureeffect）は、人間が繰り返…
+- [[human-processing-fluency|処理流暢性]] — 処理流暢性とは、情報を知覚・読解・理解・想起する際に経験される主観的な容易さ／困難さを指す。
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

@@ -31,6 +31,12 @@ Thomas S. Bateman ／ J. Michael Crant ／ Adam M. Grant
 - [PMC (2022) — Meta-analysis of proactive personality and career success](https://pmc.ncbi.nlm.nih.gov/articles/PMC9606340/) `学術`
 - [UCSD EMERGE Lab — Proactive Personality Scale overview](https://emerge.ucsd.edu/r_ymqnqptjjnf1jqr/) `リファレンス`
 
+## 関連概念
+- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同分野の近傍
+- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 同分野の近傍
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
+- [[mgmt-stretch-goal|ストレッチ目標（超高難度目標）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

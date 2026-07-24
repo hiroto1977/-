@@ -29,6 +29,10 @@ aliases:
 - [IMF Working Paper — Hanke & Kwok "On the Measurement of Zimbabwe's Hyperinflation"（ジンバブエ超インフレの計測・ケーガン定義の適用）](https://www.imf.org/external/pubs/ft/wp/2007/wp0758.pdf) `公的`
 - [Encyclopaedia Britannica Money — Hyperinflation（定義・原因・歴史的事例の概説）](https://www.britannica.com/money/hyperinflation) `リファレンス`
 
+## 関連概念
+- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

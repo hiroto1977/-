@@ -31,6 +31,12 @@ aliases:
 - [中田裕康「債務引受の明文化の意義と課題」全国銀行協会 金融法務研究会報告書](https://www.zenginkyo.or.jp/fileadmin/res/abstract/affiliate/kinpo/kinpo2016_2_4.pdf) `学術`
 - [Wikipedia「債務引受」](https://ja.wikipedia.org/wiki/債務引受) `リファレンス`
 
+## 関連概念
+- [[bizlaw-novation|更改（民法513条）]] — 語彙が近い
+- [[bizlaw-cheque-act|小切手法]] — 出典を共有
+- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 出典を共有
+- [[bizlaw-mutual-wills|相互遺言——撤回しない合意が擬制信託を生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

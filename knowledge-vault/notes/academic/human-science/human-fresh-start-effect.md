@@ -30,6 +30,18 @@ aliases:
 - [University of Pennsylvania (Wharton) hosted full-text PDF of Dai, Milkman & Riis (2014)](https://faculty.wharton.upenn.edu/wp-content/uploads/2014/06/Dai_Fresh_Start_2014_Mgmt_Sci.pdf) `学術`
 - [Dai et al. (2021) “Behavioural nudges increase COVID-19 vaccinations”, Nature — fresh-start型リマインダー応用](https://www.nature.com/articles/s41586-021-03843-2) `学術`
 
+## 関連概念
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 出典を共有
+- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

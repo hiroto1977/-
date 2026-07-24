@@ -30,6 +30,18 @@ aliases:
 - [衆議院 電子消費者契約法 条文](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/15120010629095.htm) `公的`
 - [大阪市消費者センター 電子消費者契約法](https://www.city.osaka.lg.jp/lnet/page/0000002409.html) `自治体`
 
+## 関連概念
+- [[bizlaw-electronic-consumer-contract|電子消費者契約法]] — 語彙が近い
+- [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — 分野横断
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

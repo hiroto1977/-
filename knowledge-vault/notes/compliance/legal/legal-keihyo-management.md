@@ -30,6 +30,14 @@ aliases:
 - [消費者庁 表示等の管理上の措置についての指針](https://www.caa.go.jp/policies/policy/representation/fair_labeling/pdf/141114premiums_5.pdf) `公的`
 - [公正取引委員会 景品表示法に関する業務](https://www.jftc.go.jp/info/nenpou/h27/div02/div_02_13.html) `公的`
 
+## 関連概念
+- [[legal-premium-regulation|景品表示法の景品規制]] — 語彙が近い
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 語彙が近い
+- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
+- [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
+- [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 同分野の近傍
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,13 @@ William Vickrey（1961年に4形式と第二価格入札を先駆的に分析、
 - [Roger B. Myerson (1981) “Optimal Auction Design”, Mathematics of Operations Research](https://www.cs.princeton.edu/courses/archive/spr10/cos444/papers/myerson81.pdf) `学術`
 - [Wikipedia “Vickrey auction” — 第二価格封印入札と支配戦略・収益同値](https://en.wikipedia.org/wiki/Vickrey_auction) `リファレンス`
 
+## 関連概念
+- [[econ-revenue-equivalence|収入同値定理]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同分野の近傍
+- [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同分野の近傍
+- [[econ-dollar-auction|ドル・オークション：エスカレーション・トラップのゲーム理論的モデル]] — 同分野の近傍
+- [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

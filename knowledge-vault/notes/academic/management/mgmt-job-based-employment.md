@@ -29,6 +29,17 @@ aliases:
 - [労働政策研究・研修機構（JILPT）研究員プロフィール — 濱口桂一郎](https://www.jil.go.jp/profile/khama.html) `公的`
 - [岩波書店 — 濱口桂一郎『ジョブ型雇用社会とは何か――正社員体制の矛盾と転機』岩波新書（2021年）](https://www.iwanami.co.jp/book/b589310.html) `メディア`
 
+## 関連概念
+- [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
+- [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
+- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同分野の近傍
+- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

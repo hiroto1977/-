@@ -30,6 +30,12 @@ aliases:
 - [厚労省 ガイドライン本文(PDF)](https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000149439.pdf) `公的`
 - [労働時間の適正把握 解説](https://www.obc.co.jp/360/list/post191) `メディア`
 
+## 関連概念
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 語彙が近い
+- [[labor-flexible-work-measures|育児・介護休業法「柔軟な働き方を実現するための措置」（2025年10月施行）]] — 語彙が近い
+- [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 出典を共有
+- [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

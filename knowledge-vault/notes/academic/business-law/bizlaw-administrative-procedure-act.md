@@ -30,6 +30,18 @@ aliases:
 - [衆議院 法律第八十八号（平成5年11月12日）](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/12819931112088.htm) `公的`
 - [ウィキペディア「行政手続法」](https://ja.wikipedia.org/wiki/%E8%A1%8C%E6%94%BF%E6%89%8B%E7%B6%9A%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-guidance|行政指導（行政手続法）]] — 語彙が近い
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 語彙が近い
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [Kruger & Dunning (1999), “Unskilled and Unaware of It,” Journal of Personality and Social Psychology 77(6):1121–1134（APA PsycNet, DOI）](https://doi.org/10.1037/0022-3514.77.6.1121) `学術`
 - [Gignac & Zajenkowski (2020) — The Dunning-Kruger effect is (mostly) a statistical artefact（Intelligence, ScienceDirect・批判）](https://www.sciencedirect.com/science/article/abs/pii/S0160289620300271) `学術`
 
+## 関連概念
+- [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同じ思想家
+- [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — 同分野の近傍
+- [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — 同分野の近傍
+- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
+- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 同分野の近傍
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

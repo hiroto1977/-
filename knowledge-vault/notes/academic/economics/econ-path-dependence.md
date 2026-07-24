@@ -31,6 +31,17 @@ aliases:
 - [Santa Fe Institute — W. Brian Arthur, “Increasing Returns and Path Dependence in the Economy” (Preface)](https://sites.santafe.edu/~wbarthur/Books/IR_Book_Preface.pdf) `学術`
 - [Cambridge University Press — P. David, “Path dependence in economic processes”](https://www.cambridge.org/core/books/evolutionary-foundations-of-economics/path-dependence-in-economic-processes-implications-for-policy-analysis-in-dynamical-system-contexts/93AFD05279B914C7FA74B5F9912D45E2) `学術`
 
+## 関連概念
+- [[econ-path-dependence-david|経路依存性——歴史的偶然が固定化し劣位の技術が存続する]] — 同じ思想家
+- [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-general-purpose-technology|汎用技術——広範な波及と補完的革新を通じて成長を牽引する基盤技術]] — 同じ思想家
+- [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — 出典を共有
+- [[eh-1940|1940年（昭和15年）]] — 出典を共有
+- [[eh-1943|1943年（昭和18年）]] — 出典を共有
+- [[eh-1944|1944年（昭和19年）]] — 出典を共有
+- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同分野の近傍
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

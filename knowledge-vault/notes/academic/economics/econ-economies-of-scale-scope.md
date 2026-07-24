@@ -30,6 +30,18 @@ aliases:
 - [Lumen Learning Microeconomics — Economies of Scale](https://courses.lumenlearning.com/wm-microeconomics/chapter/economies-of-scale/) `学術`
 - [Wikipedia — Economies of scope](https://en.wikipedia.org/wiki/Economies_of_scope) `リファレンス`
 
+## 関連概念
+- [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 語彙が近い
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
+- [[human-operant-conditioning|オペラント条件づけ]] — 出典を共有
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
+- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

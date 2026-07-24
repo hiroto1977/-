@@ -30,6 +30,10 @@ aliases:
 - [国税庁 グループ法人税制 質疑応答事例](https://www.nta.go.jp/law/joho-zeikaishaku/hojin/101006/index.htm) `公的`
 - [グループ法人税制 適用範囲 解説](https://u-ks.jp/column/company-management/group-houjin-requirements) `メディア`
 
+## 関連概念
+- [[tax-dividends-received|受取配当等の益金不算入]] — 語彙が近い
+- [[tax-group-taxation|法人税のグループ通算制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

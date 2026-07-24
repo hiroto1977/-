@@ -30,6 +30,18 @@ aliases:
 - [Bauer (2015) A Complementary Processes Account of Childhood Amnesia — Psychological Review (APA)](https://www.apa.org/pubs/journals/features/rev-a0038939.pdf) `学術`
 - [Bauer & Larkina (2014) The Onset of Childhood Amnesia in Childhood — PMC / Memory](https://pmc.ncbi.nlm.nih.gov/articles/PMC4025992/) `学術`
 
+## 関連概念
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 同じ思想家
+- [[human-defense-mechanisms|防衛機制]] — 同じ思想家
+- [[human-visual-agnosia|視覚性失認（Visual Agnosia）]] — 同じ思想家
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+- [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

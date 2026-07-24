@@ -30,6 +30,18 @@ OECD/G20のBEPS2.0「第2の柱」に基づき、日本では令和5年度税制
 - [財務省 令和5年度税制改正 国際課税](https://www.mof.go.jp/tax_policy/publication/brochure/zeisei23/05.html) `公的`
 - [経済産業省 Pillar2（グローバル・ミニマム課税）制度の概要](https://www.meti.go.jp/policy/external_economy/toshi/kokusaisozei/itaxseminar2023/26.Pillar2.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 語彙が近い
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
+- [[tax-income-tax-progressive|所得税の超過累進税率]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

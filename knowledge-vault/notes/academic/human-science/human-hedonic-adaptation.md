@@ -30,6 +30,18 @@ Philip Brickman ／ Donald T. Campbell ／ Ronnie Janoff-Bulman ／ Shane Freder
 - [Frederick & Loewenstein (1999) — Hedonic Adaptation. In Kahneman, Diener & Schwarz (Eds.), Well-Being: The Foundations of Hedonic Psychology (pp. 302–329). Russell Sage Foundation](https://www.scirp.org/reference/referencespapers?referenceid=1734656) `学術`
 - [Hedonic Adaptation — BehavioralEconomics.com Mini-Encyclopedia of Behavioral Economics](https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/hedonic-adaptation/) `リファレンス`
 
+## 関連概念
+- [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — 語彙が近い
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同じ思想家
+- [[infosoc-information-avoidance-theory|情報回避理論]] — 同じ思想家
+- [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 出典を共有
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 出典を共有
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

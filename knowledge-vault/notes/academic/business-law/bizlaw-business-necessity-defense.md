@@ -31,6 +31,11 @@ Warren Earl Burger ／ Michael Selmi ／ George A. Rutherglen
 - [Selmi (2006) Was the Disparate Impact Theory a Mistake? — 53 UCLA L. Rev. 701](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=881606) `学術`
 - [Barocas & Selbst (2016) Big Data's Disparate Impact — 104 Cal. L. Rev. 671](https://doi.org/10.15779/Z38BG31) `学術`
 
+## 関連概念
+- [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 出典を共有
+- [[bizlaw-laches-doctrine|ラッチェス法理]] — 同分野の近傍
+- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

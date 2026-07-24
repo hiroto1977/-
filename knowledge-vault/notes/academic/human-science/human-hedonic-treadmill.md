@@ -29,6 +29,13 @@ aliases:
 - [Diener, Lucas & Scollon (2006) "Beyond the Hedonic Treadmill: Revising the Adaptation Theory of Well-Being," American Psychologist 61(4), 305–314](https://doi.org/10.1037/0003-066X.61.4.305) `学術`
 - [Brickman, Coates & Janoff-Bulman (1978) "Lottery Winners and Accident Victims: Is Happiness Relative?" JPSP 36(8), 917–927（宝くじ当選者・事故被害者の幸福度比較研究）](https://doi.org/10.1037/0022-3514.36.8.917) `学術`
 
+## 関連概念
+- [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
+- [[human-hedonic-adaptation|快楽順応]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

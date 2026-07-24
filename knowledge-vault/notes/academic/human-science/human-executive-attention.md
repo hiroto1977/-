@@ -30,6 +30,18 @@ aliases:
 - [Fan et al. (2002) Testing the Efficiency and Independence of Attentional Networks — Journal of Cognitive Neuroscience](https://www.jneurosci.org/content/22/1/1) `学術`
 - [Executive Attention — Wikipedia](https://en.wikipedia.org/wiki/Attention#Executive_attention) `リファレンス`
 
+## 関連概念
+- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-glymphatic-system|グリンパティック系]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
+- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
+- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
+- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
+- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

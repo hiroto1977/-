@@ -30,6 +30,18 @@ aliases:
 - [Defence mechanism — Wikipedia（Anna Freudの10機制・Vaillant階層を記載）](https://en.wikipedia.org/wiki/Defence_mechanism) `リファレンス`
 - [The Ego and the Mechanisms of Defence — Encyclopedia.com](https://www.encyclopedia.com/psychology/dictionaries-thesauruses-pictures-and-press-releases/ego-and-mechanisms-defence) `リファレンス`
 
+## 関連概念
+- [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 同じ思想家
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同じ思想家
+- [[human-visual-agnosia|視覚性失認（Visual Agnosia）]] — 同じ思想家
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+- [[human-group-polarization|集団極性化]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
+- [[human-mcgurk-effect|マガーク効果]] — 出典を共有
+- [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

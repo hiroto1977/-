@@ -30,6 +30,15 @@ aliases:
 - [Kokolakis, S. (2017) “Privacy attitudes and privacy behaviour: A review of current research on the privacy paradox phenomenon”, Computers & Security 64:122-134](https://www.sciencedirect.com/science/article/pii/S0167404818303031) `学術`
 - [Acquisti, A. & Grossklags, J. “What Can Behavioral Economics Teach Us About Privacy?”（Carnegie Mellon University, Heinz College）](https://www.heinz.cmu.edu/~acquisti/papers/Acquisti-Grossklags-Chapter-Etrics.pdf) `学術`
 
+## 関連概念
+- [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 出典を共有
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
+- [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

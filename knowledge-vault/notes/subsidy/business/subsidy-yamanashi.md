@@ -36,6 +36,13 @@ prefecture
 - [山梨県生産性向上設備補助金 公式ポータル（事務局）](https://www.yamanashi-seisansei-up.jp/) `運営団体`
 - [甲州市 生産性向上設備整備等支援補助金の募集について](https://www.city.koshu.yamanashi.jp/docs/2026050700026) `自治体`
 
+## 関連概念
+- [[support-03|こころの健康相談統一ダイヤル]] — 出典を共有
+- [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 同分野の近傍
+- [[subsidy-miyagi|ものづくり中小企業生産性向上設備導入補助金（宮城県）]] — 同分野の近傍
+- [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 同分野の近傍
+- [[subsidy-regional-public-transport|地域公共交通確保維持改善事業]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

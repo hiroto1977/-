@@ -30,6 +30,11 @@ aliases:
 - [Cynefin framework — Wikipedia](https://en.wikipedia.org/wiki/Cynefin_framework) `リファレンス`
 - [Cynefin framework — Praxis Framework](https://www.praxisframework.org/en/library/cynefin-framework) `リファレンス`
 
+## 関連概念
+- [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — 同じ思想家
+- [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
+- [[mgmt-iron-law-oligarchy|寡頭制の鉄則（Iron Law of Oligarchy）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,16 @@ aliases:
 - [e-Gov法令検索 LGBT理解増進法（令和5年法律第68号）](https://laws.e-gov.go.jp/law/504AC0000000068) `公的`
 - [大東市 LGBT理解増進法が令和5年6月23日に公布・施行](https://www.city.daito.lg.jp/soshiki/19/56048.html) `自治体`
 
+## 関連概念
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
+- [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 出典を共有
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 出典を共有
+- [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 出典を共有
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[subsidy-nedo-startup|NEDO 研究開発型スタートアップ支援事業]] — 出典を共有
+- [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 同分野の近傍
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

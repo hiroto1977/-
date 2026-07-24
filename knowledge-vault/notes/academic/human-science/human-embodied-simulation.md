@@ -31,6 +31,13 @@ aliases:
 - [Gallese, Keysers & Rizzolatti 2004 — A Unifying View of the Basis of Social Cognition, Trends in Cognitive Sciences 8(9):396-403](https://doi.org/10.1016/j.tics.2004.07.002) `学術`
 - [Gallese 2001 — The 'Shared Manifold' Hypothesis: From Mirror Neurons to Empathy, Journal of Consciousness Studies 8(5-7):33-50](https://www.imprint.co.uk/jcs_8_5-7.html) `リファレンス`
 
+## 関連概念
+- [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]] — 語彙が近い
+- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 同じ思想家
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同じ思想家
+- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
+- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

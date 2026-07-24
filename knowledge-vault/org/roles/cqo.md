@@ -19,32 +19,32 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全420件）
-- [[act-on-electronic-records|電子帳簿保存法]]
+### 学術概念 / ビジネス法務（全700件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
-- …ほか 414 件 → [[学術概念]]
+- …ほか 694 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全403件）
-- [[digital-divide|デジタル・デバイド（情報格差）]]
+### 学術概念 / 情報社会学（全625件）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
-- [[infosoc-affordance|アフォーダンス]]
+- [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
+- [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]]
-- [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
-- …ほか 397 件 → [[学術概念]]
+- …ほか 619 件 → [[学術概念]]
 
-### 法務・税務・労務 / 法務（全140件）
+### 法務・税務・労務 / 法務（全138件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]]
 - [[legal-agency|民法の代理（代理権・無権代理・表見代理）]]
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
-- …ほか 134 件 → [[法務・税務・労務]]
+- …ほか 132 件 → [[法務・税務・労務]]
 
 
 ## 関連

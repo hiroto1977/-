@@ -30,6 +30,13 @@ aliases:
 - [国税庁 贈与税の配偶者控除の特例（概要・要件）](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/shinkoku/zoyo/tebiki2018/pdf/015.pdf) `公的`
 - [贈与税の配偶者控除 解説](https://legacy.ne.jp/knowledge/before/zouyo-zei/240-haiguushakoujyo-kyojyuuyoufudousan-tokurei/) `メディア`
 
+## 関連概念
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 語彙が近い
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 出典を共有
+- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 同分野の近傍
+- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

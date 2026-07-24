@@ -31,6 +31,13 @@ Jane E. Dutton ／ Monica C. Worline ／ Jacoba M. Lilius
 - [Emergent Organizational Capacity for Compassion — Academy of Management Review](https://journals.aom.org/doi/10.5465/amr.2010.0424) `学術`
 - [Oxford Handbook of Compassion Science, Ch. 30 — Organizational Compassion](https://academic.oup.com/edited-volume/27953/chapter/211540772) `リファレンス`
 
+## 関連概念
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同じ思想家
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
+- [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
+- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

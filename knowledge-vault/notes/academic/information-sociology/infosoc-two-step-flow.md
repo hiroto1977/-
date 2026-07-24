@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia — Two-step flow of communication](https://en.wikipedia.org/wiki/Two-step_flow_of_communication) `リファレンス`
 - [SAGE Encyclopedia of Communication Theory — Two-Step and Multi-Step Flow](https://sk.sagepub.com/ency/edvol/download/communicationtheory/chpt/twostep-multistep-flow.pdf) `学術`
 
+## 関連概念
+- [[infosoc-limited-effects|限定効果論]] — 語彙が近い
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同じ思想家
+- [[infosoc-pseudo-event-boorstin|疑似イベント（ブーアスティン）——報道されるために作られる出来事]] — 同じ思想家
+- [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

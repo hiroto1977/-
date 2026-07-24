@@ -29,6 +29,16 @@ aliases:
 - [Weber–Fechner law（ウェーバー比一定・対数法則・人物帰属・スティーヴンス法則）](https://en.wikipedia.org/wiki/Weber%E2%80%93Fechner_law) `リファレンス`
 - [Classics in the History of Psychology, York University — Fechner『精神物理学要綱』(1860) 解説](https://psychclassics.yorku.ca/Fechner/wozniak.htm) `学術`
 
+## 関連概念
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-stevens-power-law|スティーヴンスのべき法則（Stevens' power law）——感覚の大きさは刺激強度のべき関数で増える]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 出典を共有
+- [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
+- [[human-social-learning-theory|社会的学習理論]] — 出典を共有
+- [[human-stroop-effect|ストループ効果]] — 出典を共有
+- [[human-recognition-heuristic|再認ヒューリスティック]] — 同分野の近傍
+- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,11 @@ aliases:
 - [Geert Hofstede 公式サイト「The 6 dimensions model of national culture」](https://geerthofstede.com/culture-geert-hofstede-gert-jan-hofstede/6d-model-of-national-culture/) `リファレンス`
 - [Wikipedia: Hofstede’s cultural dimensions theory](https://en.wikipedia.org/wiki/Hofstede%27s_cultural_dimensions_theory) `リファレンス`
 
+## 関連概念
+- [[human-cultural-dimensions-hofstede|ホフステッドの文化次元理論]] — 語彙が近い
+- [[mgmt-organizational-culture-theory|組織文化理論]] — 出典を共有
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

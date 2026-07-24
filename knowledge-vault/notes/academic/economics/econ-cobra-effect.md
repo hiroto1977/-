@@ -29,6 +29,10 @@ aliases:
 - [Library of Economics and Liberty — 意図せざる結果とインセンティブの逆効果に関する経済学的解説](https://www.econlib.org/library/Columns/y2003/Lomasky.html) `リファレンス`
 - [Siebert (2001) "Der Kobra-Effekt"のコンセプトを国際経済政策論の文脈で展開したOxford学術文献](https://academic.oup.com/book/5511) `学術`
 
+## 関連概念
+- [[econ-gender-wage-gap-goldin|ジェンダー賃金格差と職業分離の経済学——ゴールディンの労働経済分析]] — 同分野の近傍
+- [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 雇用保険法 法令本文](https://www.mhlw.go.jp/web/t_doc?dataId=75161000&dataType=0&pageNo=1) `公的`
 - [国立国会図書館 日本法令索引 雇用保険法](https://hourei.ndl.go.jp/simple/detail?lawId=0000064796) `公的`
 
+## 関連概念
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 語彙が近い
+- [[bizlaw-employment-security|職業安定法]] — 語彙が近い
+- [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,16 @@ aliases:
 - [White, M. & Epston, D. (1990) Narrative Means to Therapeutic Ends, W.W. Norton](https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/) `学術`
 - [GoodTherapy — Michael White biography](https://www.goodtherapy.org/famous-psychologists/michael-white.html) `リファレンス`
 
+## 関連概念
+- [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同じ思想家
+- [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 出典を共有
+- [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — 出典を共有
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
+- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 出典を共有
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
+- [[human-phenomenological-psychology|現象学的心理学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

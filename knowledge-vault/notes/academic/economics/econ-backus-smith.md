@@ -30,6 +30,10 @@ aliases:
 - [Corsetti et al. (2008) Understanding the Backus-Smith Puzzle — J Intl Money & Finance / ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0261560609000795) `学術`
 - [Corsetti, Dedola, Leduc (2005) International Risk-Sharing — FRB IFDP 826](https://www.federalreserve.gov/pubs/ifdp/2005/826/ifdp826.htm) `公的`
 
+## 関連概念
+- [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同分野の近傍
+- [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

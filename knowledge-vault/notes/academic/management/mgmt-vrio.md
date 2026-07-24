@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia: VRIO（1991 VRIN提唱、1995 VRIO公表、4基準の定義）](https://en.wikipedia.org/wiki/VRIO) `リファレンス`
 - [Strategic Management Insight — VRIO Framework Explained（4つの問いと競争優位の判定）](https://strategicmanagementinsight.com/tools/vrio/) `リファレンス`
 
+## 関連概念
+- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 語彙が近い
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 語彙が近い
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 語彙が近い
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
+- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同じ思想家
+- [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — 出典を共有
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [e-Gov法令検索 資金決済に関する法律](https://laws.e-gov.go.jp/law/421AC0000000059) `公的`
 - [暗号資産交換業の登録 解説](https://www.businesslawyers.jp/articles/788) `メディア`
 
+## 関連概念
+- [[legal-money-lending|貸金業法（登録制と総量規制）]] — 語彙が近い
+- [[legal-funds-transfer|資金移動業]] — 同分野の近傍
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ ESG投資とは、企業への投資判断に財務指標だけでなく環境�
 - [UN PRI — What are the Principles for Responsible Investment（責任投資原則の定義・6原則・署名機関の義務）](https://www.unpri.org/about-us/what-are-the-principles-for-responsible-investment) `学術`
 - [年金積立金管理運用独立行政法人（GPIF） — ESG投資（ESG指数・運用実績・取り組みの詳細）](https://www.gpif.go.jp/investment/esg/) `公的`
 
+## 関連概念
+- [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 語彙が近い
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

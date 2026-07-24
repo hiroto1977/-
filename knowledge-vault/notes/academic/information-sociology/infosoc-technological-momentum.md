@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia: Technological momentum](https://en.wikipedia.org/wiki/Technological_momentum) `リファレンス`
 - [Wikipedia: Thomas P. Hughes (historian) — Networks of Power (1983), large technical systems](https://en.wikipedia.org/wiki/Thomas_P._Hughes_(historian)) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
+- [[infosoc-technical-debt|技術的負債]] — 出典を共有
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
+- [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,13 @@ aliases:
 - [The Cocktail Party Effect — American Academy of Audiology（米国聴覚学会）](https://www.audiology.org/the-cocktail-party-effect/) `リファレンス`
 - [Cocktail party effect — Wikipedia（フィルター説/減衰説の論争）](https://en.wikipedia.org/wiki/Cocktail_party_effect) `リファレンス`
 
+## 関連概念
+- [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 語彙が近い
+- [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同じ思想家
+- [[human-navon-global-precedence|大域優先性（ナヴォン）——「木を見る前に森を見る」知覚]] — 同じ思想家
+- [[human-reciprocal-altruism|互恵的利他主義]] — 同分野の近傍
+- [[human-interference-theory|干渉理論：記憶の忘却メカニズムにおける順向・逆向干渉]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

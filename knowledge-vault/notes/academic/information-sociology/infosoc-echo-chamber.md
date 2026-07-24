@@ -31,6 +31,18 @@ aliases:
 - [Cambridge University Press — "Social Media, Echo Chambers, and Political Polarization"](https://www.cambridge.org/core/books/social-media-and-democracy/social-media-echo-chambers-and-political-polarization/333A5B4DE1B67EFF7876261118CCFE19) `学術`
 - [Cass R. Sunstein, "#Republic: Divided Democracy in the Age of Social Media", Princeton University Press](https://press.princeton.edu/books/paperback/9780691180908/republic) `学術`
 
+## 関連概念
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

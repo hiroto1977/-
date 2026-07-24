@@ -30,6 +30,11 @@ J.ベルトラン1883（クールノー批判）／戦略変数は価格／同�
 - [Wikipedia — Bertrand paradox (economics)](https://en.wikipedia.org/wiki/Bertrand_paradox_(economics)) `リファレンス`
 - [The New Palgrave Dictionary of Economics — "Bertrand competition"（Springer Nature）](https://link.springer.com/rwe/10.1007/978-1-349-58802-2_129) `学術`
 
+## 関連概念
+- [[econ-bertrand-paradox|ベルトランのパラドックス]] — 語彙が近い
+- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 語彙が近い
+- [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

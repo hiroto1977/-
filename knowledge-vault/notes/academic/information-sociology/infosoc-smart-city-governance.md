@@ -29,6 +29,18 @@ aliases:
 - [European Commission — Smart Cities（EU都市政策・EIP-SCC・市民参加・ガバナンス枠組みの公式説明）](https://ec.europa.eu/info/eu-regional-and-urban-development/topics/cities-and-urban-development/city-initiatives/smart-cities_en) `公的`
 - [OECD — "Smart Cities and Inclusive Growth"（スマートシティの包括的ガバナンス・格差・市民関与の政策分析）](https://www.oecd.org/cfe/cities/smart-cities-and-inclusive-growth-d96ae5d4-en.htm) `公的`
 
+## 関連概念
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同じ思想家
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同じ思想家
+- [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 出典を共有
+- [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 出典を共有
+- [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 出典を共有
+- [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 出典を共有
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同分野の近傍
+- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

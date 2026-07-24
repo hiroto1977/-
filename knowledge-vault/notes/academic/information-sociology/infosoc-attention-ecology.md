@@ -30,6 +30,16 @@ aliases:
 - [Citton, The Ecology of Attention — British Society for Literature and Science Review](https://www.bsls.ac.uk/reviews/general-and-theory/yves-citton-the-ecology-of-attention/) `リファレンス`
 - [Beyond the Attention Economy, Towards an Ecology of Attending — AI & Society / Springer](https://link.springer.com/article/10.1007/s00146-025-02405-8) `学術`
 
+## 関連概念
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
+- [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
+- [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
+- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同分野の近傍
+- [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

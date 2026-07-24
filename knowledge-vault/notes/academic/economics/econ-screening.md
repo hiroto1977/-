@@ -31,6 +31,18 @@ aliases:
 - [Stiglitz & Weiss, “Sorting Out the Differences Between Signaling and Screening Models,” NBER](https://www.nber.org/papers/t0093) `学術`
 - [Wikipedia — Screening (economics)（自己選択・分離均衡・シグナリングとの対比）](https://en.wikipedia.org/wiki/Screening_(economics)) `リファレンス`
 
+## 関連概念
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 語彙が近い
+- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家
+- [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
+- [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

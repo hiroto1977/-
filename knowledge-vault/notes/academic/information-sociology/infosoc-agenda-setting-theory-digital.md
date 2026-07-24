@@ -31,6 +31,14 @@ Maxwell McCombs ／ Donald Shaw ／ Guy Golan
 - [Evolution of agenda-setting research 1972-2025](https://link.springer.com/article/10.1007/s44382-025-00016-x) `学術`
 - [Agenda-setting theory — Wikipedia overview](https://en.wikipedia.org/wiki/Agenda-setting_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同じ思想家
+- [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同分野の近傍
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
+- [[infosoc-mode-2-knowledge-gibbons|モード2知識生産——応用の文脈で生まれる学際的な知]] — 同分野の近傍
+- [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]] — 同分野の近傍
+- [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

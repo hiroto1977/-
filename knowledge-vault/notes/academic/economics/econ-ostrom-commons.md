@@ -30,6 +30,10 @@ aliases:
 - [NobelPrize.org — Elinor Ostrom Facts](https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/) `リファレンス`
 - [Encyclopaedia Britannica — Elinor Ostrom（設計原理・コモンズ理論）](https://www.britannica.com/money/Elinor-Ostrom) `リファレンス`
 
+## 関連概念
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同分野の近傍
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

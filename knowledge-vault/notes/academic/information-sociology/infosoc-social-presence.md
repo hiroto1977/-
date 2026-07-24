@@ -29,6 +29,12 @@ aliases:
 - [Information Systems Theories — Social Presence Theory](https://is.theorizeit.org/wiki/Social_Presence_Theory) `学術`
 - [Wikipedia — Social presence theory](https://en.wikipedia.org/wiki/Social_presence_theory) `リファレンス`
 
+## 関連概念
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 語彙が近い
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 語彙が近い
+- [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 出典を共有
+- [[infosoc-media-synchronicity-theory|メディア同期性理論（Media Synchronicity Theory／Dennis, Fuller & Valacich 2008）——伝達と収束という二過程からメディア適合を捉え直す]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

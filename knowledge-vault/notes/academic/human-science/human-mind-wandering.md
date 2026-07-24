@@ -31,6 +31,18 @@ aliases:
 - [Soc. Cogn. Affect. Neurosci. (Oxford): マインドワンダリングを支えるDMNの構成過程](https://academic.oup.com/scan/article/12/7/1047/3574671) `学術`
 - [APA Dictionary of Psychology: mind wandering（定義）](https://dictionary.apa.org/mind-wandering) `リファレンス`
 
+## 関連概念
+- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同じ思想家
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

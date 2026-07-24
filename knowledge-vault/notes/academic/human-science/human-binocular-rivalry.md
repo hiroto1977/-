@@ -30,6 +30,11 @@ aliases:
 - [Blake & Logothetis (2002) — Semantic Scholar](https://www.semanticscholar.org/paper/Visual-competition.-Blake-Logothetis/8af82bd96e2ba8d32c61a93b70c0b4fb21ac1f9e) `学術`
 - [Binocular Rivalry — Wikipedia](https://en.wikipedia.org/wiki/Binocular_rivalry) `リファレンス`
 
+## 関連概念
+- [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]] — 同じ思想家
+- [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
+- [[human-neuroplasticity-theory|神経可塑性理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

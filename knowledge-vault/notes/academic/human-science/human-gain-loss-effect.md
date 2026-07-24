@@ -30,6 +30,18 @@ aliases:
 - [Aronson & Linder (1965) “Gain and loss of esteem as determinants of interpersonal attractiveness”, J. Exp. Soc. Psychol. 1, 156-171（一次資料）](https://www.sciencedirect.com/science/article/abs/pii/0022103165900430) `学術`
 - [Oxford Reference — Gain-loss effect](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095840471) `リファレンス`
 
+## 関連概念
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-effort-justification|努力の正当化]] — 同じ思想家
+- [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-negativity-bias|ネガティビティ・バイアス]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

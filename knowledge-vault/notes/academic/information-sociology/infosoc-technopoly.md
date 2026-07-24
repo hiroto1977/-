@@ -29,6 +29,14 @@ aliases:
 - [Encyclopaedia Britannica — Neil Postman（メディア生態学者・Technopoly等の業績）](https://www.britannica.com/biography/Neil-Postman) `リファレンス`
 - [Media Ecology Association — Neil Postman（テクノポリ・メディア生態学における業績、ポストマンが共同創設した学会）](https://www.media-ecology.org/Neil-Postman) `学術`
 
+## 関連概念
+- [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 同じ思想家
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
+- [[infosoc-information-avoidance-theory|情報回避理論]] — 同分野の近傍
+- [[infosoc-risk-society|リスク社会（ベック）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

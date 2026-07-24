@@ -31,6 +31,11 @@ T.ピケティ『21世紀の資本』2013(仏)/2014(英訳)／資本収益率r>�
 - [Wikipedia — Capital in the Twenty-First Century（仏語2013/英訳2014、Goldhammer訳、Belknap/Harvard、論争）](https://en.wikipedia.org/wiki/Capital_in_the_Twenty-First_Century) `リファレンス`
 - [Chicago Booth Review（シカゴ大学）— IGM調査で約80%がr>gを最強要因とする見方に不同意](https://www.chicagobooth.edu/review/piketty-on-inequality-34-economists-who-arent-convinced-and-one-who-is) `学術`
 
+## 関連概念
+- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同分野の近傍
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ]] — 同分野の近傍
+- [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

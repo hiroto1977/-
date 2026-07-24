@@ -30,6 +30,18 @@ aliases:
 - [The theory of peak-load pricing: A survey, Journal of Regulatory Economics (Springer)](https://link.springer.com/article/10.1007/BF01070807) `学術`
 - [Introduction to Economic Analysis §15.7 Peak-load Pricing (LibreTexts)](https://socialsci.libretexts.org/Bookshelves/Economics/Introduction_to_Economic_Analysis/15:_Monopoly/15.07:_Peak-load_Pricing) `リファレンス`
 
+## 関連概念
+- [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
+- [[econ-income-substitution-effect|所得効果と代替効果]] — 出典を共有
+- [[econ-rybczynski|リブチンスキー定理]] — 出典を共有
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 出典を共有
+- [[infosoc-mcdonaldization|マクドナルド化]] — 出典を共有
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 出典を共有
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 出典を共有
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 出典を共有
+- [[econ-liquidity-trap|流動性のわな]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

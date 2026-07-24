@@ -30,6 +30,18 @@ aliases:
 - [Oxford Reference — “cognitive miser”（オックスフォード大学出版局）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095622297) `リファレンス`
 - [Wikipedia — “Cognitive miser”（Fiske & Taylor 1984 起源・naïve scientist／motivated tactician 系譜）](https://en.wikipedia.org/wiki/Cognitive_miser) `リファレンス`
 
+## 関連概念
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 語彙が近い
+- [[human-attribution-theory|帰属理論]] — 同じ思想家
+- [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
+- [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
+- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

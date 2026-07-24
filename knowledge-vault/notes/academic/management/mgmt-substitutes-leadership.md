@@ -29,6 +29,11 @@ aliases:
 - [Kerr & Jermier (1978) "Substitutes for Leadership: Their Meaning and Measurement," Organizational Behavior and Human Performance 22(3)（原論文・ScienceDirect）](https://www.sciencedirect.com/science/article/abs/pii/0030507378900235) `学術`
 - [Encyclopaedia Britannica — Leadership（コンティンジェンシー理論・状況要因とリーダーシップ研究の文脈）](https://www.britannica.com/topic/leadership) `リファレンス`
 
+## 関連概念
+- [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同じ思想家
+- [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

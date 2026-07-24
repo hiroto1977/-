@@ -30,6 +30,18 @@ aliases:
 - [Cialdini et al. (1975) Reciprocal Concessions Procedure (Door-in-the-Face), JPSP](https://www.semanticscholar.org/paper/Reciprocal-Concessions-Procedure-for-Inducing-The-Cialdini-Vincent/92b260654b792a48084c99fb8f844e18183a5933) `学術`
 - [Wikipedia — The Gift (Mauss, 1925)（互酬性の社会理論の基礎）](https://en.wikipedia.org/wiki/The_Gift_(essay)) `リファレンス`
 
+## 関連概念
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同じ思想家
+- [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
+- [[infosoc-gift-economy|贈与経済（贈与論）]] — 同じ思想家
+- [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
+- [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同じ思想家
+- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 同分野の近傍
+- [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

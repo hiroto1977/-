@@ -31,6 +31,18 @@ aliases:
 - [N.G. Mankiw, "Small Menu Costs and Large Business Cycles," Quarterly Journal of Economics (1985)（Harvard 配信）](https://scholar.harvard.edu/files/mankiw/files/small_menu_costs.pdf) `学術`
 - [N.G. Mankiw, "New Keynesian Economics," The Concise Encyclopedia of Economics（Econlib）](https://www.econlib.org/library/Enc/NewKeynesianEconomics.html) `リファレンス`
 
+## 関連概念
+- [[econ-greshams-law|グレシャムの法則]] — 出典を共有
+- [[econ-okuns-law|オーカンの法則]] — 出典を共有
+- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 出典を共有
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 出典を共有
+- [[human-hyperbolic-discounting|双曲割引]] — 出典を共有
+- [[econ-tax-incidence|租税の帰着]] — 出典を共有
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
+- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[econ-flypaper-effect|フライペーパー効果（flypaper effect／ハエ取り紙効果）——一括補助金が私的所得より地方公共支出を強く押し上げる現象]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

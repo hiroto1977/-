@@ -1,0 +1,47 @@
+---
+title: "archive.org"
+type: source-domain
+host: "archive.org"
+cite_count: 24
+tags:
+  - source-domain
+  - index
+---
+
+# archive.org
+
+> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 12 ・ リファレンス 12）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — Dicey1885IntroductiontotheStudyoftheLawoftheConstitution,Macmillan
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — Jackson1986TheLogicandLimitsofBankruptcyLaw,HarvardUniversityPress
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — Kelsen,H.(1967).PureTheoryofLaw(trans.MaxKnight).UniversityofCaliforn…
+- [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — Kahn-Freund1972—LabourandtheLaw,Stevens&Sons
+- [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — TheRuleAgainstPerpetuities—JohnChipmanGray(1886),InternetArchive
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — Sraffa,P.(1960)ProductionofCommoditiesbyMeansofCommodities—CambridgeU…
+- [[econ-giffen-good-theory|ギッフェン財理論]] — Marshall,A.(1895)PrinciplesofEconomics,3rded.—Giffengoodoriginalpassa…
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — Schumpeter,J.A.1939.BusinessCycles:ATheoretical,Historical,andStatist…
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Blaug(1958)RicardianEconomics:AHistoricalStudy,YaleUP
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Schumpeter(1954)HistoryofEconomicAnalysis,OxfordUP(ed.E.B.Schumpeter)
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — Tinbergen1962—ShapingtheWorldEconomy:SuggestionsforanInternationalEco…
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — Pigou1920—TheEconomicsofWelfare,Macmillan
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — Kahneman,AttentionandEffort(Prentice-Hall,1973)
+- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — Brooks(1981)MinorityStressandLesbianWomen,LexingtonBooks
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — Davenport,T.H.&Beck,J.C.(2001)TheAttentionEconomy:UnderstandingtheNew…
+- [[infosoc-dataveillance-theory|データ監視理論]] — Lyon(2001)SurveillanceSociety:MonitoringEverydayLife—OpenUniversityPr…
+- [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — Makimoto&Manners(1997)DigitalNomad,Wiley(InternetArchive)
+- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — Haraway(1985)AManifestoforCyborgs—SocialistReview(InternetArchive)
+- [[infosoc-technostress-theory|テクノストレス理論]] — Brod,Craig(1984)—Technostress:TheHumanCostoftheComputerRevolution,Add…
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — Levi-Strauss,C.(1962)LaPenseeSauvage(TheSavageMind)—Plon/Universityof…
+- [[mgmt-corporate-parenting|ペアレンティング戦略]] — Goold,Campbell&Alexander,Corporate-LevelStrategy:CreatingValueintheMu…
+- [[mgmt-johari-window|ジョハリの窓]] — Luft,J.(1969)OfHumanInteraction,NationalPressBooks—InternetArchive
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — Argyris&Schön1978—OrganizationalLearning:TheoryofAction
+- [[mgmt-taguchi-methods|品質工学（タグチメソッド／田口メソッド）——品質を目標値からのずれによる社会的損失の最小化として捉え、ロバスト設計で上流から品質を作り込む]] — Taguchi,G.(1986).IntroductiontoQualityEngineering:DesigningQualityint…
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

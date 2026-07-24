@@ -31,6 +31,18 @@ Eli Pariser ／ Cass R. Sunstein ／ C. Thi Nguyen
 - [TED Talk — Eli Pariser "Beware online filter bubbles" (2011)](https://www.ted.com/talks/eli_pariser_beware_online_filter_bubbles) `メディア`
 - [PMC — Through the Newsfeed Glass: Rethinking Filter Bubbles and Echo Chambers](https://pmc.ncbi.nlm.nih.gov/articles/PMC8923337/) `学術`
 
+## 関連概念
+- [[infosoc-filter-bubble-theory|フィルターバブル理論]] — 語彙が近い
+- [[infosoc-epistemic-bubbles-echo-chambers|認識論的バブルとエコーチェンバー]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
+- [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

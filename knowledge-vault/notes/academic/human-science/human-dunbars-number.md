@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia: Dunbar's number（定義・階層構造・論争の概観）](https://en.wikipedia.org/wiki/Dunbar%27s_number) `リファレンス`
 - [Scientific American: Social Network Size Linked to Brain Size（社会脳仮説の解説）](https://www.scientificamerican.com/article/social-network-size-linked-brain-size/) `メディア`
 
+## 関連概念
+- [[human-social-brain-hypothesis|社会脳仮説]] — 語彙が近い
+- [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 出典を共有
+- [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 出典を共有
+- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
+- [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
+- [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]] — 出典を共有
+- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
+- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+- [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

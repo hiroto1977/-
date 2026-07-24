@@ -29,6 +29,10 @@ aliases:
 - [e-Gov法令検索 — 少年法（昭和23年法律第168号）](https://laws.e-gov.go.jp/law/323AC0000000168) `公的`
 - [法務省 — 少年法の一部を改正する法律（令和3年法律第47号）の概要](https://www.moj.go.jp/keiji1/keiji14_00015.html) `公的`
 
+## 関連概念
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ US Supreme Court（Aerospatiale v. US District Court, 482 U.S. 522, 1987 — ハ
 - [28 U.S.C. § 1781 — Transmittal of letter rogatory or request (Cornell LII)](https://www.law.cornell.edu/uscode/text/28/1781) `公的`
 - [Aerospatiale v. US District Court, 482 U.S. 522 (1987) — Justia](https://supreme.justia.com/cases/federal/us/482/522/) `公的`
 
+## 関連概念
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

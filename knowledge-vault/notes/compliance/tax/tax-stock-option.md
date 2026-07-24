@@ -30,6 +30,10 @@ aliases:
 - [経済産業省 ストックオプション税制](https://www.meti.go.jp/policy/newbusiness/stock-option.html) `公的`
 - [国税庁 No.1543 税制非適格ストックオプションの課税](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1543.htm) `公的`
 
+## 関連概念
+- [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]] — 語彙が近い
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

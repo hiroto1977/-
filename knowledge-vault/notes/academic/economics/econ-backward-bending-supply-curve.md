@@ -31,6 +31,12 @@ Alfred Marshall ／ Lionel Robbins ／ Mark R. Killingsworth ／ John Pencavel
 - [Pencavel (1986) "Labor Supply of Men: A Survey" — Handbook of Labor Economics Vol. 1](https://doi.org/10.1016/S1573-4463(86)01006-6) `学術`
 - [Blundell & MaCurdy (1999) "Labor Supply: A Review of Alternative Approaches" — Handbook of Labor Economics Vol. 3A](https://doi.org/10.1016/S1573-4463(99)03008-4) `学術`
 
+## 関連概念
+- [[econ-giffen-good-theory|ギッフェン財理論]] — 同じ思想家
+- [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
+- [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — 同分野の近傍
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

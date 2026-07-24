@@ -29,6 +29,11 @@ aliases:
 - [Encyclopaedia Britannica Money — Greenmail（定義・歴史・規制の概要）](https://www.britannica.com/money/greenmail) `リファレンス`
 - [経済産業省（2023年8月）「企業買収における行動指針」公表（買収防衛措置の適正化に関する政府指針）](https://www.meti.go.jp/press/2023/08/20230831004/20230831004.html) `公的`
 
+## 関連概念
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同分野の近傍
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同分野の近傍
+- [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

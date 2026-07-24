@@ -30,6 +30,17 @@ aliases:
 - [Algorithmic Governmentality, Digital Sovereignty — Weizenbaum Journal of the Digital Society](https://ojs.weizenbaum-institut.de/index.php/wjds/article/view/87/80) `学術`
 - [Big Data, Algorithmic Governmentality and Pandemic Risk — European J Risk Regulation (Cambridge)](https://www.cambridge.org/core/journals/european-journal-of-risk-regulation/article/big-data-algorithmic-governmentality-and-the-regulation-of-pandemic-risk/416F40B302B67C6C598D3BCEDFBD6286) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 語彙が近い
+- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
+- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 出典を共有
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
+- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
+- [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同分野の近傍
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

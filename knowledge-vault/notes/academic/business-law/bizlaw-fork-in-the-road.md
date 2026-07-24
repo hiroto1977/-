@@ -30,6 +30,18 @@ Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（
 - [Pantechniki v. Albania ICSID Case No. ARB/07/21 — italaw](https://www.italaw.com/cases/813) `学術`
 - [Fork-in-the-Road — Jus Mundi](https://jusmundi.com/en/document/publication/en-fork-in-the-road) `リファレンス`
 
+## 関連概念
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同じ思想家
+- [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
+- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 同じ思想家
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
+- [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
+- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
+- [[econ-flying-geese|雁行形態論]] — 出典を共有
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
+- [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同分野の近傍
+- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

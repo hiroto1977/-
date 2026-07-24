@@ -29,6 +29,16 @@ aliases:
 - [NobelPrize.org — Muhammad Yunus Facts（2006年ノーベル平和賞）](https://www.nobelprize.org/prizes/peace/2006/yunus/facts/) `リファレンス`
 - [World Bank — "Does Microfinance Still Hold Promise for Reaching the Poor?"（世界銀行）](https://www.worldbank.org/en/news/feature/2015/03/30/does-microfinance-still-hold-promise-for-reaching-the-poor) `公的`
 
+## 関連概念
+- [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 出典を共有
+- [[econ-global-value-chain|グローバル・バリューチェーン（GVC）]] — 出典を共有
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
+- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 出典を共有
+- [[eh-1944|1944年（昭和19年）]] — 出典を共有
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
+- [[econ-price-level-targeting|物価水準目標政策]] — 同分野の近傍
+- [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

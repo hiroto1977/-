@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia — Information subsidy](https://en.wikipedia.org/wiki/Information_subsidy) `リファレンス`
 - [Gandy, O. H., Jr. (1982). Beyond Agenda-Setting: Information Subsidies and Public Policy. Ablex (citation record)](https://www.scirp.org/reference/referencespapers?referenceid=943993) `学術`
 
+## 関連概念
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

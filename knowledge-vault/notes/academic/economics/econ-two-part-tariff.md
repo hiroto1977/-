@@ -30,6 +30,18 @@ aliases:
 - [Walter Y. Oi, “A Disneyland Dilemma: Two-Part Tariffs for a Mickey Mouse Monopoly,” Quarterly Journal of Economics 85(1), 1971, pp.77–96（Oxford Academic）](https://academic.oup.com/qje/article-abstract/85/1/77/1861193) `学術`
 - [Social Sci LibreTexts (Barkley) — Two-Part Pricing（最適理論 P=MC＋固定料金=消費者余剰）](https://socialsci.libretexts.org/Bookshelves/Economics/The_Economics_of_Food_and_Agricultural_Markets_(Barkley)/04:__Pricing_with_Market_Power/4.05:_Two-Part_Pricing) `学術`
 
+## 関連概念
+- [[econ-income-substitution-effect|所得効果と代替効果]] — 出典を共有
+- [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 出典を共有
+- [[econ-rybczynski|リブチンスキー定理]] — 出典を共有
+- [[infosoc-mcdonaldization|マクドナルド化]] — 出典を共有
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 出典を共有
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 出典を共有
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 出典を共有
+- [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 同分野の近傍
+- [[econ-oi-quasi-fixed-labor|労働の準固定的生産要素（Oi の quasi-fixed factor）——雇用・訓練の固定費が労働を「半固定」にする]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ F.ハイエク「社会における知識の利用」1945(American Economic Revi
 - [Britannica — F.A. Hayek（価格が分散知識を伝達、社会主義批判、1974年ミュルダールと共同受賞）](https://www.britannica.com/money/F-A-Hayek/Hayeks-intellectual-contributions) `リファレンス`
 - [Econlib — 原文「The Use of Knowledge in Society」(1945) 全文](https://www.econlib.org/library/Essays/hykKnw.html) `リファレンス`
 
+## 関連概念
+- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同分野の近傍
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,12 @@ PIMS（GE→マーケティング・サイエンス研究所/ハーバード→�
 - [Business and Management Studies（査読誌）— PIMSにおける市場シェアと収益性、相対品質・因果性をめぐる批判](https://www.macrothink.org/journal/index.php/bms/article/download/21499/16833) `学術`
 - [Encyclopedia.com — PIMSの起源(GE→ハーバード→SPI)、SBUデータベース、ROIと戦略要因](https://www.encyclopedia.com/entrepreneurs/encyclopedias-almanacs-transcripts-and-maps/profit-impact-market-strategies-pims) `リファレンス`
 
+## 関連概念
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 同分野の近傍
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同分野の近傍
+- [[mgmt-kirkpatrick-evaluation|カークパトリックの4段階評価モデル（Kirkpatrick Model）——研修の効果を反応・学習・行動・結果の4層で測る]] — 同分野の近傍
+- [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

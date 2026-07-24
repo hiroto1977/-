@@ -30,6 +30,12 @@ aliases:
 - [鳥取労働局 労災給付の種類](https://jsite.mhlw.go.jp/tottori-roudoukyoku/hourei_seido_tetsuzuki/rousai_hoken/rousaikyuuhushurui.html) `公的`
 - [厚生労働省 複数事業労働者への労災保険給付](https://www.mhlw.go.jp/content/000662505.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 分野横断
+- [[labor-commuting-injury|通勤災害（労災保険）]] — 同分野の近傍
+- [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]] — 同分野の近傍
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

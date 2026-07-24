@@ -30,6 +30,18 @@ aliases:
 - [Dutton & Jackson (1987) — Semantic Scholar](https://www.semanticscholar.org/paper/Categorizing-Strategic-Issues:-Links-to-Action-Dutton-Jackson/af92da04b72b2dc00ccad690da12c90f2720c214) `学術`
 - [Dutton & Jackson (1987) — Google Scholar](https://scholar.google.com/scholar_lookup?doi=10.5465/amr.1987.4306483) `リファレンス`
 
+## 関連概念
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 語彙が近い
+- [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同じ思想家
+- [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同じ思想家
+- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
+- [[human-metacognition|メタ認知（Metacognition）]] — 出典を共有
+- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 出典を共有
+- [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

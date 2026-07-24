@@ -30,6 +30,10 @@ aliases:
 - [Understanding Joint Action: Current Theoretical and Empirical Approaches — Acta Psychologica / ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0001691821000354) `学術`
 - [Psychological Research on Joint Action: Theory and Data — Butterfill](https://www.butterfill.com/writing/psychological_research_on_joint_action/) `学術`
 
+## 関連概念
+- [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
+- [[human-joint-attention|共同注意（Joint Attention）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

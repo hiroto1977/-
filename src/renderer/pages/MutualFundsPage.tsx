@@ -5,6 +5,14 @@ import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useCollection } from '../data/useCollection';
+import {
+  HOLDINGS_COLLECTION,
+  parseHoldingEntry,
+  holdingToForm,
+  computeFundPortfolio,
+  type HoldingEntry,
+} from '../data/investments';
 import { jpy } from '../../shared/formatters';
 import {
   calcCompoundingFutureValue,
@@ -34,12 +42,77 @@ const simInputStyle: React.CSSProperties = {
   width: 110,
 };
 
+const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', valuation: '', acquisitionCost: '', ytdReturnPct: '' };
+
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
     'mutual-funds',
     SNAPSHOT.mutualFunds,
   );
-  const { holdings, portfolio, recentDividends } = data;
+  const { recentDividends } = data;
+
+  // ユーザー追加の保有銘柄 (record store 永続化・端末内)。
+  const { records: userHoldings, add: addHolding, edit: editHolding, remove: removeHolding } = useCollection<HoldingEntry>(HOLDINGS_COLLECTION);
+  const [fundForm, setFundForm] = useState(EMPTY_HOLDING_FORM);
+  const [fundError, setFundError] = useState<string>();
+  /** 編集中のユーザー銘柄 id (null = 新規追加モード)。 */
+  const [editingFundId, setEditingFundId] = useState<string | null>(null);
+
+  /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
+  const holdings = useMemo(
+    () => [
+      ...data.holdings.map((h) => ({ ...h, rowId: h.code, user: false as const, valuationMode: undefined })),
+      ...userHoldings.map((r) => ({
+        ...r.data,
+        // 旧データ (valuationMode なし) は auto 扱い。
+        valuationMode: r.data.valuationMode ?? ('auto' as const),
+        userTag: '追加',
+        rowId: r.id,
+        user: true as const,
+      })),
+    ],
+    [data.holdings, userHoldings],
+  );
+
+  // ポートフォリオ集計は結合リストから再計算 (追加ゼロなら snapshot と同値)。
+  const portfolio = useMemo(
+    () =>
+      computeFundPortfolio(
+        holdings,
+        data.portfolio.totalCostBasis,
+        userHoldings.map((r) => r.data.acquisitionCost),
+      ),
+    [holdings, data.portfolio.totalCostBasis, userHoldings],
+  );
+
+  async function onSaveHolding() {
+    try {
+      const parsed = parseHoldingEntry(fundForm);
+      setFundError(undefined);
+      if (editingFundId !== null) {
+        await editHolding(editingFundId, parsed);
+        setEditingFundId(null);
+      } else {
+        await addHolding(parsed);
+      }
+      setFundForm(EMPTY_HOLDING_FORM);
+    } catch (e) {
+      setFundError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  /** ユーザー行の「編集」— フォームへ読み込み (auto の評価額は空欄のまま)。 */
+  function onStartEditHolding(rowId: string, h: HoldingEntry) {
+    setFundForm(holdingToForm(h));
+    setEditingFundId(rowId);
+    setFundError(undefined);
+  }
+
+  function onCancelEditHolding() {
+    setEditingFundId(null);
+    setFundForm(EMPTY_HOLDING_FORM);
+    setFundError(undefined);
+  }
 
   const [simMonthly, setSimMonthly] = useState('30000');
   const [simRate, setSimRate] = useState('5');
@@ -145,7 +218,7 @@ export function MutualFundsPage() {
       />
 
       <Section title="ポートフォリオ" count={4}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div className="stat-grid" style={{ marginBottom: 16 }}>
           <Stat label="評価額" value={jpy(portfolio.totalValuation)} />
           <Stat label="取得原価" value={jpy(portfolio.totalCostBasis)} />
           <Stat label="評価損益" value={jpy(portfolio.unrealizedGain)} positive={portfolio.unrealizedGain >= 0} />
@@ -154,13 +227,13 @@ export function MutualFundsPage() {
       </Section>
 
       <Section title="トータルリターン・リスク (分配金再投資ベース・概算)">
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             保有年数
             <input type="text" inputMode="decimal" value={holdYears} onChange={(e) => setHoldYears(e.target.value)} style={simInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat
             label="トータルリターン"
             value={totalReturn.totalReturnPct === null ? '—' : `${totalReturn.totalReturnPct}%`}
@@ -180,7 +253,7 @@ export function MutualFundsPage() {
       </Section>
 
       <Section title="実質コスト (信託報酬 + 隠れコスト・概算)">
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             信託報酬 (年率%)
             <input type="text" inputMode="decimal" value={costExpense} onChange={(e) => setCostExpense(e.target.value)} style={simInputStyle} />
@@ -194,7 +267,7 @@ export function MutualFundsPage() {
             <input type="text" inputMode="decimal" value={costGross} onChange={(e) => setCostGross(e.target.value)} style={simInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="実質コスト率 (年率)" value={`${realCost.annualCostPct}%`} />
           <Stat label="年間コスト概算" value={jpy(realCost.annualCostYen)} />
           <Stat label={`${holdYears}年累計の蝕み効果`} value={jpy(realCost.cumulativeCostYen)} />
@@ -205,7 +278,7 @@ export function MutualFundsPage() {
       </Section>
 
       <Section title="ドルコスト平均法シミュレーション (概算)">
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             毎月の積立額 (円)
             <input type="text" inputMode="decimal" value={dcaMonthly} onChange={(e) => setDcaMonthly(e.target.value)} style={simInputStyle} />
@@ -215,7 +288,7 @@ export function MutualFundsPage() {
             <input type="text" value={dcaPrices} onChange={(e) => setDcaPrices(e.target.value)} style={{ ...simInputStyle, width: '100%' }} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="取得口数" value={dca.totalUnits.toLocaleString()} />
           <Stat label="平均取得単価" value={dca.averageCost === null ? '—' : jpy(dca.averageCost)} />
           <Stat label="評価額" value={jpy(dca.finalValuation)} />
@@ -224,6 +297,63 @@ export function MutualFundsPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 各期に一定額を投じ、価格が下がった期ほど多くの口数を取得する効果を概算。手数料・税は含みません。概算であり投資助言ではありません。
         </div>
+      </Section>
+
+      <Section title={editingFundId !== null ? `銘柄を編集中 — ${fundForm.name || '(無題)'}` : '銘柄を追加 (任意・この端末に保存)'}>
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          {editingFundId !== null
+            ? '値を書き換えて「保存」するとポートフォリオへ即時に自動反映されます。'
+            : '上のポートフォリオへ即時反映されます。一覧の「編集」でいつでも入力し直せます。'}
+          評価額は<strong>空欄なら「口数 ÷ 1万 × 基準価額」で自動計算</strong>、
+          <strong>直接入力すればその値 (手動)</strong> — どちらの方式でも使えます。
+          データはこの端末のブラウザ内 (IndexedDB) にのみ保存され、どこにも送信されません。
+        </div>
+        <div className="field-grid" style={{ marginBottom: 8 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            ファンド名
+            <input type="text" value={fundForm.name} placeholder="例: ニッセイ外国株式"
+              onChange={(e) => setFundForm((f) => ({ ...f, name: e.target.value }))} style={{ ...simInputStyle, width: 200 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            銘柄コード (任意)
+            <input type="text" value={fundForm.code} placeholder="9C31118A"
+              onChange={(e) => setFundForm((f) => ({ ...f, code: e.target.value }))} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            口数
+            <input type="text" inputMode="numeric" value={fundForm.units} placeholder="500000"
+              onChange={(e) => setFundForm((f) => ({ ...f, units: e.target.value }))} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            基準価額 (1万口)
+            <input type="text" inputMode="numeric" value={fundForm.navPerUnit} placeholder="32000"
+              onChange={(e) => setFundForm((f) => ({ ...f, navPerUnit: e.target.value }))} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            評価額 (円)
+            <input type="text" inputMode="numeric" value={fundForm.valuation} placeholder="空欄=自動計算"
+              onChange={(e) => setFundForm((f) => ({ ...f, valuation: e.target.value }))} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            取得額 (任意・円)
+            <input type="text" inputMode="numeric" value={fundForm.acquisitionCost} placeholder="空欄=損益0"
+              onChange={(e) => setFundForm((f) => ({ ...f, acquisitionCost: e.target.value }))} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            YTD % (任意)
+            <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="0"
+              onChange={(e) => setFundForm((f) => ({ ...f, ytdReturnPct: e.target.value }))} style={simInputStyle} />
+          </label>
+          <button type="button" onClick={onSaveHolding}>
+            {editingFundId !== null ? '保存 (自動反映)' : '＋ 銘柄を追加'}
+          </button>
+          {editingFundId !== null && (
+            <button type="button" onClick={onCancelEditHolding} style={{ color: 'var(--text-mute)' }}>
+              キャンセル
+            </button>
+          )}
+        </div>
+        {fundError && <div style={{ color: '#f87171', fontSize: 12 }}>{fundError}</div>}
       </Section>
 
       <Section title="保有銘柄" count={holdings.length}>
@@ -236,12 +366,13 @@ export function MutualFundsPage() {
               <th style={thNum}>基準価額</th>
               <th style={thNum}>評価額</th>
               <th style={thNum}>YTD</th>
+              <th style={thStyle} />
             </tr>
           </thead>
           <tbody>
             {holdings.map((h) => (
-              <tr key={h.code}>
-                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{h.code}</td>
+              <tr key={h.rowId}>
+                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{h.code || '—'}</td>
                 <td style={tdStyle}>
                   {h.name}
                   {h.userTag && (
@@ -250,11 +381,35 @@ export function MutualFundsPage() {
                     </span>
                   )}
                 </td>
-                <td style={tdNum}>{h.units.toLocaleString()}</td>
-                <td style={tdNum}>{jpy(h.navPerUnit)}</td>
-                <td style={tdNum}>{jpy(h.valuation)}</td>
+                <td style={tdNum}>{h.units > 0 ? h.units.toLocaleString() : '—'}</td>
+                <td style={tdNum}>{h.navPerUnit > 0 ? jpy(h.navPerUnit) : '—'}</td>
+                <td style={tdNum}>
+                  {jpy(h.valuation)}
+                  {h.user && (
+                    <span
+                      title={h.valuationMode === 'manual'
+                        ? '手動入力の評価額 (編集で空欄にすると自動計算に戻ります)'
+                        : '口数 ÷ 1万 × 基準価額 で自動計算 (口数・基準価額の編集に追従)'}
+                      style={{ marginLeft: 4, fontSize: 9, color: 'var(--text-mute)', cursor: 'help' }}
+                    >
+                      {h.valuationMode === 'manual' ? '手動' : '自動'}
+                    </span>
+                  )}
+                </td>
                 <td style={{ ...tdNum, color: h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}>
                   {h.ytdReturnPct >= 0 ? '+' : ''}{h.ytdReturnPct.toFixed(1)}%
+                </td>
+                <td style={tdStyle}>
+                  {h.user && (
+                    <span style={{ display: 'inline-flex', gap: 6 }}>
+                      <button type="button" onClick={() => onStartEditHolding(h.rowId, h)} style={{ fontSize: 11 }}>
+                        編集
+                      </button>
+                      <button type="button" onClick={() => removeHolding(h.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                        削除
+                      </button>
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -290,7 +445,7 @@ export function MutualFundsPage() {
       </Section>
 
       <Section title="積立シミュレーション (複利・概算)">
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             月額積立 (円)
             <input type="text" inputMode="decimal" value={simMonthly} onChange={(e) => setSimMonthly(e.target.value)} style={simInputStyle} />
@@ -304,7 +459,7 @@ export function MutualFundsPage() {
             <input type="text" inputMode="decimal" value={simYears} onChange={(e) => setSimYears(e.target.value)} style={simInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
           <Stat label="累計拠出額" value={jpy(sim.totalContributed)} />
           <Stat label={`運用益 (${sim.gainPct.toFixed(1)}%)`} value={jpy(sim.totalGain)} positive={sim.totalGain >= 0} />
@@ -315,7 +470,7 @@ export function MutualFundsPage() {
       </Section>
 
       <Section title="貯蓄計画 (目標達成・緊急予備資金・概算)">
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             目標額 (円)
             <input type="text" inputMode="decimal" value={goalTarget} onChange={(e) => setGoalTarget(e.target.value)} style={simInputStyle} />
@@ -345,12 +500,12 @@ export function MutualFundsPage() {
             <input type="text" inputMode="decimal" value={cashOnHand} onChange={(e) => setCashOnHand(e.target.value)} style={simInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
           <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
           <Stat label="緊急予備資金 (生活費6か月)" value={jpy(emergency)} />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 12 }}>
+        <div className="stat-grid" style={{ marginTop: 12 }}>
           <Stat
             label="現行積立での到達見込み"
             value={`${jpy(projection.projected)}${projection.onTrack ? ' (達成)' : ` (不足 ${jpy(projection.shortfall)})`}`}
@@ -370,7 +525,7 @@ export function MutualFundsPage() {
       </Section>
 
       <Section title="外貨換算・為替損益 (概算)">
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             外貨額
             <input type="text" inputMode="decimal" value={fxAmount} onChange={(e) => setFxAmount(e.target.value)} style={simInputStyle} />
@@ -384,7 +539,7 @@ export function MutualFundsPage() {
             <input type="text" inputMode="decimal" value={fxCurRate} onChange={(e) => setFxCurRate(e.target.value)} style={simInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="現在の円換算額" value={jpy(fxJpy)} />
           <Stat label="為替損益" value={jpy(fxPnl.gain)} positive={fxPnl.gain >= 0} />
           <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={(fxPnl.gainPct ?? 0) >= 0} />
@@ -393,13 +548,13 @@ export function MutualFundsPage() {
           ※ 為替変動による円ベースの損益のみの概算で、手数料・スプレッド・税は含みません。投資助言ではありません。
         </div>
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', margin: '16px 0 12px' }}>
+        <div className="field-grid" style={{ margin: '16px 0 12px' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             片道手数料 (円/通貨)
             <input type="text" inputMode="decimal" value={fxFee} onChange={(e) => setFxFee(e.target.value)} style={simInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="TTM (仲値)" value={fxTt ? `${fxTt.ttm}` : '—'} />
           <Stat label="TTS (売・顧客が買う)" value={fxTt ? `${fxTt.tts}` : '—'} />
           <Stat label="TTB (買・顧客が売る)" value={fxTt ? `${fxTt.ttb}` : '—'} />

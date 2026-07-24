@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 
 /**
@@ -138,7 +137,7 @@ const COLLECTIONS = [
     file: path.join(DATA, 'economicHistoryKnowledge.ts'),
     exportName: 'ECONOMIC_HISTORY',
     categoryLabel: (c) => c,
-    adapt: (y) => ({
+    adapt: (y, _i, mod) => ({
       id: `eh-${y.year}`,
       title: `${y.year}年（${y.era}）`,
       category: decade(y.year),
@@ -150,7 +149,8 @@ const COLLECTIONS = [
         { label: '留意', value: clean(y.caveats) },
       ],
       sources: y.sources || [],
-      asOf: '',
+      // 年表は一括確証のため、データ側の検証基準月（ECONOMIC_HISTORY_AS_OF）を全項目に適用。
+      asOf: mod.ECONOMIC_HISTORY_AS_OF || '',
     }),
   },
 ];
@@ -176,7 +176,7 @@ function loadEntries() {
     const raw = mod[col.exportName];
     if (!Array.isArray(raw)) throw new Error(`${col.exportName} が配列ではありません (${col.file})`);
     raw.forEach((r, i) => {
-      const n = col.adapt(r, i);
+      const n = col.adapt(r, i, mod);
       n.collection = col.key;
       n.collectionLabel = col.label;
       n.categoryLabel = col.categoryLabel(n.category);

@@ -30,6 +30,10 @@ aliases:
 - [経済産業省「情報信託機能の認定に係る指針ver1.0を取りまとめました」(2018年6月26日)](https://www.meti.go.jp/press/2018/06/20180626002/20180626002.html) `公的`
 - [H. Kümmerle, “More Than a Certification Scheme: Information Banks in Japan...” (Springer, 2023)](https://link.springer.com/chapter/10.1007/978-981-99-0321-4_12) `学術`
 
+## 関連概念
+- [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
+- [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

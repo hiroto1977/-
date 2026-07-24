@@ -31,6 +31,15 @@ aliases:
 - [Nordhaus 2007 — Two Centuries of Productivity Growth in Computing](https://doi.org/10.3386/w12972) `学術`
 - [WIPO — World Intellectual Property Report 2015](https://www.wipo.int/edocs/pubdocs/en/wipo_pub_901_2015.pdf) `リファレンス`
 
+## 関連概念
+- [[bizlaw-doctrine-of-equivalents|均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理]] — 出典を共有
+- [[bizlaw-intellectual-property-trademark|商標法と知的財産保護の法律理論——ブランド価値と識別性基準]] — 出典を共有
+- [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 出典を共有
+- [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 同分野の近傍
+- [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同分野の近傍
+- [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同分野の近傍
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

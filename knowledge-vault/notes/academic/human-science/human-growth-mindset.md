@@ -31,6 +31,11 @@ aliases:
 - [Mueller & Dweck (1998) “Praise for Intelligence Can Undermine Children’s Motivation and Performance”, J. Personality and Social Psychology 75:33–52, PubMed](https://pubmed.ncbi.nlm.nih.gov/9686450/) `学術`
 - [Mindset Theory – Fixed vs. Growth Mindset (Dweck), Learning Theories](https://learning-theories.com/mindset-theory-fixed-vs-growth-mindset-dweck.html) `リファレンス`
 
+## 関連概念
+- [[human-mindset|マインドセット（成長/固定）]] — 語彙が近い
+- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
+- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

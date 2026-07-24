@@ -36,6 +36,13 @@ national
 - [ハローワーク 雇用保険の給付](https://www.hellowork.mhlw.go.jp/insurance/insurance_continue.html) `公的`
 - [高年齢求職者給付金 条件・金額 解説](https://www.orixbank.co.jp/column/article/277/) `メディア`
 
+## 関連概念
+- [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 語彙が近い
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 分野横断
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 出典を共有
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 出典を共有
+- [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

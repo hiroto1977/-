@@ -31,6 +31,17 @@ David J. Teece ／ Gary Pisano ／ Amy Shuen
 - [Oxford Research Encyclopedia — Dynamic Capabilities](https://oxfordre.com/business/display/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-11) `リファレンス`
 - [Teece, Dynamic Capabilities and Strategic Management (OUP, 2009)](https://global.oup.com/academic/product/dynamic-capabilities-and-strategic-management-9780199545124) `リファレンス`
 
+## 関連概念
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
+- [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
+- [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
+- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

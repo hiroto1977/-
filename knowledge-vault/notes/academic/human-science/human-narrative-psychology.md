@@ -30,6 +30,18 @@ aliases:
 - [McAdams 1993 — The Stories We Live By: Personal Myths and the Making of the Self, Guilford Press](https://guilford.com/books/The-Stories-We-Live-By/Dan-McAdams/9780898621730) `学術`
 - [White & Epston 1990 — Narrative Means to Therapeutic Ends, W.W. Norton](https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/) `リファレンス`
 
+## 関連概念
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
+- [[human-narrative-identity-ricoeur|物語的アイデンティティ（リクール）]] — 同じ思想家
+- [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同じ思想家
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
+- [[econ-exit-voice-loyalty|離脱・発言・忠誠（ハーシュマン）]] — 出典を共有
+- [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
+- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
+- [[human-attachment-style-theory|愛着スタイル理論]] — 出典を共有
+- [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

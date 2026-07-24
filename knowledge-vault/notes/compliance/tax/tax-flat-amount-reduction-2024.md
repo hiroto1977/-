@@ -30,6 +30,18 @@ aliases:
 - [総務省 個人住民税の定額減税について（令和6年度分）](https://www.soumu.go.jp/main_content/000939507.pdf) `公的`
 - [財務省 所得税の定額減税の意義と実施方法](https://www.mof.go.jp/public_relations/finance/202407/202407c.pdf) `公的`
 
+## 関連概念
+- [[tax-disability-deduction|所得税の障害者控除]] — 語彙が近い
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 出典を共有
+- [[tax-income-tax-progressive|所得税の超過累進税率]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ aliases:
 - [IMF Finance & Development — Fiscal Sustainability（財政持続可能性の定義・ドーマー条件・DSA・政策含意）](https://www.imf.org/external/pubs/ft/fandd/basics/finsust.htm) `公的`
 - [財務省 — 日本の財政関係資料（2024年6月）（プライマリーバランスの現状・国債残高・財政持続可能性）](https://www.mof.go.jp/policy/budget/fiscal_condition/related_data/202406_01.pdf) `公的`
 
+## 関連概念
+- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 同じ思想家
+- [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
+- [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同じ思想家
+- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同じ思想家
+- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 同じ思想家
+- [[bizlaw-consumption-tax|消費税法]] — 出典を共有
+- [[bizlaw-toushiho|出資法]] — 出典を共有
+- [[eh-1992|1992年（平成4年）]] — 出典を共有
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

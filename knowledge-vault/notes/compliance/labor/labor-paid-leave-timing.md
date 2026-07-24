@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 年次有給休暇 リーフレット](https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/dl/140811-3.pdf) `公的`
 - [厚生労働省 法令データベース 労働基準法](https://www.mhlw.go.jp/web/t_doc?dataId=73022000) `公的`
 
+## 関連概念
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 語彙が近い
+- [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 語彙が近い
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ N.コンドラチェフが1920年代に提唱／約40〜60年(約50年)周期の
 - [Wikipedia — "Kondratiev wave"（50〜60年周期、1926年の長波論、1939年シュンペーター命名）](https://en.wikipedia.org/wiki/Kondratiev_wave) `リファレンス`
 - [New World Encyclopedia — Nikolai Kondratiev（1925年論文、物価・利子率・生産の分析、実証の論争）](https://www.newworldencyclopedia.org/entry/Nikolai_Kondratiev) `リファレンス`
 
+## 関連概念
+- [[econ-business-cycles|景気循環とその諸波動]] — 語彙が近い
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 語彙が近い
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
+- [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

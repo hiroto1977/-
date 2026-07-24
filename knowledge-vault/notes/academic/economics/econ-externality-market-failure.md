@@ -30,6 +30,14 @@ A.C.ピグー（ピグー税・1920）／R.コース（コースの定理）
 - [Econlib (Concise Encyclopedia of Economics) — Externalities](https://www.econlib.org/library/Enc/Externalities.html) `リファレンス`
 - [MIT 14.03 (D.Autor) — Externalities, the Coase Theorem and Market Remedies](https://dspace.mit.edu/bitstream/handle/1721.1/71009/14-03-fall-2004/contents/lecture-notes/lecture17.pdf) `学術`
 
+## 関連概念
+- [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 出典を共有
+- [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 出典を共有
+- [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 出典を共有
+- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同分野の近傍
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

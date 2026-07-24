@@ -32,6 +32,18 @@ John C. Coates IV ／ Guhan Subramanian ／ Lynn A. Stout ／ Ronald J. Gilson
 - [Subramanian, "Deal Process Design in Management Buyouts" — Harvard Law Review (2008)](https://doi.org/10.2139/ssrn.1996080) `学術`
 - [Harvard Law School Forum on Corporate Governance, "Don't Ask, Don't Waive Standstills" (2013)](https://corpgov.law.harvard.edu/2013/02/07/dont-ask-dont-waive-standstills/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 同じ思想家
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
+- [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同じ思想家
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 出典を共有
+- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+- [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

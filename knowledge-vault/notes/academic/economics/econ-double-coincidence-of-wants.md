@@ -29,6 +29,11 @@ aliases:
 - [EconLib Concise Encyclopedia of Economics — Money（double coincidence of wants・交換媒介機能の根拠）](https://www.econlib.org/library/Enc/Money.html) `リファレンス`
 - [IMF Finance & Development "Back to Basics: What Is Money?"（欲望の二重の一致と貨幣の起源）](https://www.imf.org/external/pubs/ft/fandd/2012/09/basics.htm) `公的`
 
+## 関連概念
+- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同分野の近傍
+- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,18 @@ Robert Giffen ／ Alfred Marshall ／ Robert T. Jensen ／ Nolan H. Miller
 - [Battalio, Kagel & Kogut — "Giffen Goods", Library of Economics and Liberty (EconLib)](https://www.econlib.org/library/Enc/GiffenGoods.html) `リファレンス`
 - [Jensen & Miller (2010) "A Revealed Preference Test of Giffen Behavior" — Journal of Development Economics](https://doi.org/10.1016/j.jdeveco.2010.01.001) `学術`
 
+## 関連概念
+- [[econ-backward-bending-supply-curve|後屈労働供給曲線]] — 同じ思想家
+- [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
+- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
+- [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

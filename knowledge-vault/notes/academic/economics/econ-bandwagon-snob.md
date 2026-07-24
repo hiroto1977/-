@@ -30,6 +30,11 @@ aliases:
 - [JMR生活総合研究所 マーケティング用語集「バンドワゴン効果、スノッブ効果、ヴェブレン効果」](https://www.jmrlsi.co.jp/knowledge/yougo/my10/my1033.html) `リファレンス`
 - [佐野正博(2010)「ライベンシュタインおよびロルフスのバンドワゴン効果論」明治大学](https://www.sanosemi.com/biztech/document/bandwagon2011.pdf) `学術`
 
+## 関連概念
+- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 語彙が近い
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
+- [[econ-income-substitution-effect|所得効果と代替効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [国立国会図書館 日本法令索引（令和2年法律第38号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000151745) `公的`
 - [Wikipedia（日本語）特定デジタルプラットフォームの透明性及び公正性の向上に関する法律](https://ja.wikipedia.org/wiki/%E7%89%B9%E5%AE%9A%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%83%97%E3%83%A9%E3%83%83%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%81%AE%E9%80%8F%E6%98%8E%E6%80%A7%E5%8F%8A%E3%81%B3%E5%85%AC%E6%AD%A3%E6%80%A7%E3%81%AE%E5%90%91%E4%B8%8A%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B) `リファレンス`
 
+## 関連概念
+- [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 語彙が近い
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
+- [[bizlaw-franchise-contract|フランチャイズ契約]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

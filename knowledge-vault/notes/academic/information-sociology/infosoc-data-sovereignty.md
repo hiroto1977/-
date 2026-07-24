@@ -29,6 +29,17 @@ aliases:
 - [Electronic Markets (Springer) — Data Sovereignty in Information Systems: 体系的文献レビュー（査読誌）](https://link.springer.com/article/10.1007/s12525-024-00693-4) `学術`
 - [PMC (NIH) — Data, Big Tech, and the New Concept of Sovereignty（査読付き）](https://pmc.ncbi.nlm.nih.gov/articles/PMC10155150/) `学術`
 
+## 関連概念
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
+- [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同じ思想家
+- [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
+- [[infosoc-onlife|オンライフ]] — 同じ思想家
+- [[infosoc-open-data|オープンデータ]] — 同じ思想家
+- [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
+- [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — 同分野の近傍
+- [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

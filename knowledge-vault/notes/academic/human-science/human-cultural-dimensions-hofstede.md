@@ -30,6 +30,12 @@ Geert Hofstede／Michael H. Bond／Michael Minkov／Gert Jan Hofstede
 - [McSweeney (2002) Hofstede's model of national cultural differences — critique, Human Relations](https://doi.org/10.1177/0170840602232155) `学術`
 - [Encyclopaedia Britannica — Hofstede's Cultural Dimensions Theory](https://www.britannica.com/topic/Hofstedes-cultural-dimensions-theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-hofstede-dimensions|ホフステッドの文化次元論]] — 語彙が近い
+- [[mgmt-organizational-culture-theory|組織文化理論]] — 同じ思想家
+- [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

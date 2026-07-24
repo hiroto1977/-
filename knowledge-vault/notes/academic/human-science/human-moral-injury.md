@@ -29,6 +29,10 @@ Jonathan Shay（Atheneum, 1994, Achilles in Vietnam — 概念の初期定式化
 - [Litz et al. (2009) Moral injury and moral repair in war veterans: A preliminary model and intervention — Clinical Psychology Review 29(8), pp.695-706](https://doi.org/10.1016/j.cpr.2009.07.003) `学術`
 - [Shay (2014) Moral Injury — Psychoanalytic Psychology 31(2), pp.182-191](https://doi.org/10.1037/a0036090) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

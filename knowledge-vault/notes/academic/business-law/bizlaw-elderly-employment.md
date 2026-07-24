@@ -29,6 +29,12 @@ aliases:
 - [厚生労働省「高年齢者雇用安定法の概要」](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page09_00001.html) `公的`
 - [日本法令索引（国立国会図書館）高年齢者等の雇用の安定等に関する法律 昭和46年法律第68号](https://hourei.ndl.go.jp/simple/detail?lawId=0000061607) `公的`
 
+## 関連概念
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 分野横断
+- [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 分野横断
+- [[bizlaw-patent-system|特許制度（特許法）]] — 同分野の近傍
+- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

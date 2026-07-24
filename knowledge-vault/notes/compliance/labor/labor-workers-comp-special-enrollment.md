@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 フリーランスの労災特別加入（2024/11）](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/kanyu_r3.4.1_00010.html) `公的`
 - [神奈川労働局 労災保険の特別加入制度](https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/hourei_seido_tetsuzuki/rousaihoken-tokubetukanyuu_2020.html) `公的`
 
+## 関連概念
+- [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

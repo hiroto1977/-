@@ -30,6 +30,14 @@ aliases:
 - [京都大学OCW 民法第1部 第16回 — 代理(3)表見代理の基本問題（松岡久和教授）](https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2005_minpou-1_16.pdf) `学術`
 - [マネーフォワード クラウド契約 — 表見代理と無権代理（成立要件・具体例）](https://biz.moneyforward.com/contract/basic/17902/) `メディア`
 
+## 関連概念
+- [[legal-agency|民法の代理（代理権・無権代理・表見代理）]] — 分野横断
+- [[bizlaw-agency|代理（民法99条）]] — 出典を共有
+- [[bizlaw-numerus-clausus|物権法定主義（民法175条）]] — 出典を共有
+- [[bizlaw-tender-of-performance|弁済の提供（民法492条・493条）]] — 出典を共有
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同分野の近傍
+- [[bizlaw-derivative-action-foss-harbottle|株主代表訴訟とフォス対ハーボトル原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

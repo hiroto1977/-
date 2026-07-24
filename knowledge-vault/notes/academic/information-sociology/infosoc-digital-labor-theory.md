@@ -30,6 +30,18 @@ Tiziana Terranova／Christian Fuchs／Trebor Scholz
 - [Fuchs (2014) Digital Labour and Karl Marx, Routledge](https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716161) `学術`
 - [Scholz (ed.) (2013) Digital Labor: The Internet as Playground and Factory, Routledge](https://www.routledge.com/Digital-Labor-The-Internet-as-Playground-and-Factory/Scholz/p/book/9780415896955) `学術`
 
+## 関連概念
+- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 語彙が近い
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 語彙が近い
+- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 同じ思想家
+- [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 同じ思想家
+- [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

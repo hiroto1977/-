@@ -29,6 +29,10 @@ aliases:
 - [Trivers, R. L. (1971) "The Evolution of Reciprocal Altruism" The Quarterly Review of Biology 46(1)](https://www.jstor.org/stable/2822435) `学術`
 - [Wikipedia — Reciprocal altruism](https://en.wikipedia.org/wiki/Reciprocal_altruism) `リファレンス`
 
+## 関連概念
+- [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 語彙が近い
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 雇用関係助成金一覧](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index_00057.html) `公的`
 - [雇用調整助成金（雇用安定事業）解説](https://ja.wikipedia.org/wiki/雇用調整助成金) `メディア`
 
+## 関連概念
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 分野横断
+- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

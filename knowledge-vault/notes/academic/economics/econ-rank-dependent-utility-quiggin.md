@@ -1,0 +1,50 @@
+---
+collection: academic
+id: econ-rank-dependent-utility-quiggin
+category: "economics"
+category_ja: "経済学"
+title: "順位依存効用——累積確率を歪めてリスク態度を表す"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "順位依存効用——累積確率を歪めてリスク態度を表す"
+---
+
+# 順位依存効用——累積確率を歪めてリスク態度を表す
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+順位依存効用（rank-dependent utility、RDU、当初は「期待効用の予期（anticipated utility）」）は、ジョン・クイギンが1982年に提示した、リスク下の意思決定モデルで、期待効用理論を一般化して、観察される諸違反（アレのパラドックスなど）を捉えつつ、初期の代替理論が抱えた問題を回避するものである。鍵となる考え方はこうである。期待効用理論のように各結果の効用をその客観的な確率で重みづけるのではなく、RDUは「確率加重関数」を、「累積された（順位づけられた）」確率に適用する。すなわち、ある結果に付される意思決定上の重みは、その結果の「順位（最悪から最善への順序のなかでの位置）」に依存し、単にその確率だけによるのではない。具体的には、結果を順位づけたうえで、累積分布関数を（典型的には非線形の、S字あるいは逆S字の）加重関数 w(p) で変換し、各結果への重みを、変換された累積確率の差として与える。この順位依存性によって、極端な・起こりにくい結果を「過大に重みづける」こと（たとえば、大きな利得・損失の小さな確率を過大評価し——賭博と保険を同時に説明する——悲観や楽観を表すこと）が、初期の（1979年の）プロスペクト理論の確率加重を悩ませた「確率優越の侵害」という問題を起こさずに、可能になる。累積された（順位づけられた）確率を重みづけるため、RDUは一次の確率優越を尊重するのである。RDUは決定的な理論的前進であった。それは「累積プロスペクト理論」（トヴェルスキーとカーネマン、1992年）に取り込まれ、累積プロスペクト理論は、順位依存の加重を、参照点依存と損失回避と組み合わせて、リスク下の選択の記述理論の主流となった。RDUはまた、「ショケ期待効用」とも結びつき、行動経済学・意思決定理論、そしてリスク態度（悲観、株式プレミアムなど）の研究の基礎をなす。クイギンのRDUとシュマイドラーのショケ期待効用は、ほぼ同時期に展開された。順位依存効用は、累積確率を加重関数で歪めることによって、確率優越を侵さずにリスク態度を表現し、累積プロスペクト理論の基礎となった、意思決定理論の重要なモデルである。
+
+## 提唱者・初出
+ジョン・クイギン ／ ダニエル・カーネマン ／ エイモス・トヴェルスキー ／ ダヴィッド・シュマイドラー
+
+## 出典
+- [Quiggin, J. (1982) A theory of anticipated utility — Journal of Economic Behavior & Organization](https://doi.org/10.1016/0167-2681(82)90008-7) `学術`
+- [Wikipedia: Rank-dependent expected utility — probability weighting, cumulative prospect theory](https://en.wikipedia.org/wiki/Rank-dependent_expected_utility) `リファレンス`
+
+## 関連概念
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同じ思想家
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
+- [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

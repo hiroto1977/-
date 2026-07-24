@@ -31,6 +31,18 @@ aliases:
 - [Schwartz & Solove 2011 — The PII Problem: Privacy and a New Concept of Personally Identifiable Information, New York University Law Review 86(6):1814-1894](https://ssrn.com/abstract=1747374) `学術`
 - [Mayer-Schönberger 2009 — Delete: The Virtue of Forgetting in the Digital Age, Princeton University Press](https://press.princeton.edu/books/paperback/9780691150369/delete) `リファレンス`
 
+## 関連概念
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
+- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
+- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同じ思想家
+- [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同じ思想家
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 出典を共有
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
+- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

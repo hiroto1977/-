@@ -38,6 +38,7 @@ jobs:
       - run: npm run lint:shell
       - run: npm run verify:orchestration
       - run: npm run vault:check
+      - run: npm run verify:graph
       - run: npm run chain:verify
       - run: npm run lint
 

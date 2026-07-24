@@ -30,6 +30,18 @@ aliases:
 - [政府広報オンライン 個人情報保護法](https://www.gov-online.go.jp/article/201703/entry-7660.html) `公的`
 - [個人情報保護委員会 漏えい等の対応](https://www.ppc.go.jp/personalinfo/legal/leakAction/) `公的`
 
+## 関連概念
+- [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
+- [[legal-third-party-provision|個人データの第三者提供の制限]] — 語彙が近い
+- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

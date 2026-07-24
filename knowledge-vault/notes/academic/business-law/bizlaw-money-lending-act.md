@@ -30,6 +30,13 @@ aliases:
 - [金融庁「貸金業法改正等の概要」（2006改正・出資法/利息制限法の一本化）](https://www.fsa.go.jp/policy/kashikin/04.pdf) `公的`
 - [コトバンク「貸金業法」（制定経緯・2006年改正・出資法/利息制限法）](https://kotobank.jp/word/%E8%B2%B8%E9%87%91%E6%A5%AD%E6%B3%95-462012) `リファレンス`
 
+## 関連概念
+- [[bizlaw-interest-rate-restriction|利息制限法]] — 語彙が近い
+- [[bizlaw-toushiho|出資法]] — 語彙が近い
+- [[bizlaw-installment-sales-act|割賦販売法]] — 同分野の近傍
+- [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同分野の近傍
+- [[bizlaw-anti-spam-act|特定電子メール法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.7411 源泉徴収票の提出範囲](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hotei/7411.htm) `公的`
 - [e-Gov法令検索 所得税法（226条）](https://laws.e-gov.go.jp/law/340AC0000000033) `公的`
 
+## 関連概念
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

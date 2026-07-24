@@ -29,6 +29,17 @@ aliases:
 - [Collins, A., Brown, J. S., & Newman, S. E. (1989) "Cognitive apprenticeship: Teaching the crafts of reading, writing, and mathematics," in Knowing, Learning, and Instruction（IDEALS, University of Illinois）](https://www.ideals.illinois.edu/items/11936) `学術`
 - [Brown, Collins & Duguid (1989) "Situated Cognition and the Culture of Learning," Educational Researcher 18(1):32–42（SAGE・関連基礎論文）](https://journals.sagepub.com/doi/10.3102/0013189X018001032) `学術`
 
+## 関連概念
+- [[human-spreading-activation|活性化拡散]] — 同じ思想家
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
+- [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
+- [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — 同分野の近傍
+- [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同分野の近傍
+- [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 同分野の近傍
+- [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

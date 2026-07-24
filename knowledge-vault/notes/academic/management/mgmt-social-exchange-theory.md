@@ -30,6 +30,13 @@ George C. Homans ／ Peter M. Blau ／ Richard M. Emerson ／ Alvin W. Gouldner 
 - [Cropanzano, Anthony, Daniels & Hall — Social Exchange Theory: A Critical Review with Theoretical Remedies, Academy of Management Annals 11 (2017)](https://journals.aom.org/doi/10.5465/annals.2015.0099) `学術`
 - [Wikipedia — Social exchange theory (Homans, Blau, Emerson overview)](https://en.wikipedia.org/wiki/Social_exchange_theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
+- [[mgmt-organizational-neuroscience|組織神経科学]] — 同じ思想家
+- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同分野の近傍
+- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

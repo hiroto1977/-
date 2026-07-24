@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 一般事業主行動計画を策定しましょう](https://www.mhlw.go.jp/content/11900000/000614010.pdf) `公的`
 - [愛媛労働局 女性活躍推進法 行動計画・認定](https://jsite.mhlw.go.jp/ehime-roudoukyoku/hourei_seido_tetsuzuki/koyou_kintou/newpage_00341.html) `公的`
 
+## 関連概念
+- [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
+- [[bizlaw-women-empowerment-act|女性活躍推進法]] — 分野横断
+- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 同分野の近傍
+- [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

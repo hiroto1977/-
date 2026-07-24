@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 最低賃金制度 特設サイト](https://saiteichingin.mhlw.go.jp/) `公的`
 - [最低賃金ランキング解説](https://www.rshd.co.jp/news/saiyou-kaitei.html) `メディア`
 
+## 関連概念
+- [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
+- [[labor-standard-remuneration|標準報酬月額]] — 同分野の近傍
+- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

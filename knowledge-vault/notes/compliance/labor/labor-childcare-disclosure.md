@@ -30,6 +30,18 @@ aliases:
 - [厚生労働省 育児・介護休業法 法改正のポイント](https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/law-amendment/) `公的`
 - [男性育休取得率 開示義務化を300人超企業に拡大](https://www.nikkei.com/article/DGKKZO79165740S4A310C2MM0000/) `メディア`
 
+## 関連概念
+- [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 語彙が近い
+- [[eh-1987|1987年（昭和62年）]] — 出典を共有
+- [[eh-2003|2003年（平成15年）]] — 出典を共有
+- [[eh-2010|2010年（平成22年）]] — 出典を共有
+- [[eh-2011|2011年（平成23年）]] — 出典を共有
+- [[eh-2018|2018年（平成30年）]] — 出典を共有
+- [[eh-2020|2020年（令和2年）]] — 出典を共有
+- [[eh-2022|2022年（令和4年）]] — 出典を共有
+- [[eh-2024|2024年（令和6年）]] — 出典を共有
+- [[legal-civil-procedure-digitalization|民事訴訟手続のIT化（改正民事訴訟法・段階施行）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

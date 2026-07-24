@@ -30,6 +30,12 @@ aliases:
 - [Encyclopaedia Britannica — Neuromancer（ギブスン1984年、サイバーパンクと普及）](https://www.britannica.com/topic/Neuromancer) `リファレンス`
 - [A Declaration of the Independence of Cyberspace（バーロウ1996・自治領域）](https://en.wikipedia.org/wiki/A_Declaration_of_the_Independence_of_Cyberspace) `リファレンス`
 
+## 関連概念
+- [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
+- [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]] — 同じ思想家
+- [[infosoc-metaverse|メタバース]] — 同分野の近傍
+- [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

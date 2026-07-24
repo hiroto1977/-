@@ -30,6 +30,15 @@ aliases:
 - [Bjørnland (2009) Monetary Policy and Exchange Rate Overshooting: Dornbusch Was Right After All — J Intl Economics (ScienceDirect)](https://www.sciencedirect.com/science/article/abs/pii/S0022199609000841) `学術`
 - [Shifts in Monetary Policy and Exchange Rate Dynamics: Is Dornbusch's Overshooting Hypothesis Intact? — J Intl Economics (ScienceDirect)](https://www.sciencedirect.com/science/article/abs/pii/S002219962030060X) `学術`
 
+## 関連概念
+- [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 語彙が近い
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
+- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同じ思想家
+- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同分野の近傍
+- [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

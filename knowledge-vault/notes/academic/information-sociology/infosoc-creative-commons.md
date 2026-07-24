@@ -31,6 +31,10 @@ aliases:
 - [University of British Columbia (POSE) — 6種CCライセンスの種類と4要素の解説](https://pose.open.ubc.ca/open-education/creative-commons/what-are-the-different-types-of-creative-commons-licenses/) `学術`
 - [Wikipedia — Creative Commons license（CC0・要素・ライセンス一覧）](https://en.wikipedia.org/wiki/Creative_Commons_license) `リファレンス`
 
+## 関連概念
+- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 語彙が近い
+- [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

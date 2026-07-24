@@ -30,6 +30,11 @@ aliases:
 - [財務省関東財務局「株券等の大量保有の状況等に関する開示制度（5％ルール）の概要について」](https://lfb.mof.go.jp/kantou/disclo/tairyou/mokuji.htm) `公的`
 - [金融庁「大量保有報告書等の提出について」](https://www.fsa.go.jp/common/shinsei/tairyohoyu/index.html) `公的`
 
+## 関連概念
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 同じ思想家
+- [[bizlaw-tob|公開買付け（TOB）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,10 @@ David Clarence McClelland ／ John William Atkinson ／ David Grayson Winter
 - [McClelland, D.C. (1962). Business Drive and National Achievement. Harvard Business Review.](https://hbr.org/1968/01/business-drive-and-national-achievement) `メディア`
 - [Winter, D.G. (1973). The Power Motive. Free Press. (review in Organizational Behavior and Human Performance)](https://www.sciencedirect.com/science/article/abs/pii/0030507376900219) `学術`
 
+## 関連概念
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 語彙が近い
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

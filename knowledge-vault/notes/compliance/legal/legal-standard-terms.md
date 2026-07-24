@@ -30,6 +30,11 @@ aliases:
 - [日本損害保険協会 改正民法について](https://www.sonpo.or.jp/news/caution/minpou.html) `メディア`
 - [民法548条の2（条文・定型取引）](https://ja.wikibooks.org/wiki/民法第548条の2) `メディア`
 
+## 関連概念
+- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 分野横断
+- [[legal-consumer-contract-act|消費者契約法]] — 同分野の近傍
+- [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

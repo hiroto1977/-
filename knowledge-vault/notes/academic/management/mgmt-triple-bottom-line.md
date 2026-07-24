@@ -31,6 +31,10 @@ aliases:
 - [Harvard Business Review (2018), John Elkington — TBLの「リコール」表明（一次資料）](https://hbr.org/2018/06/25-years-ago-i-coined-the-phrase-triple-bottom-line-heres-why-im-giving-up-on-it) `メディア`
 - [Wikipedia — John Elkington（提唱者・初出・1997年著書・2018年リコール）](https://en.wikipedia.org/wiki/John_Elkington_(business_author)) `リファレンス`
 
+## 関連概念
+- [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — 語彙が近い
+- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

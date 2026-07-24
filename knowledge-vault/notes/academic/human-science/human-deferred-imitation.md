@@ -30,6 +30,16 @@ aliases:
 - [Deferred Imitation — ScienceDirect Topics](https://www.sciencedirect.com/topics/psychology/deferred-imitation) `リファレンス`
 - [Deferred Imitation in Children and Apes — British Psychological Society](https://www.bps.org.uk/psychologist/deferred-imitation-children-and-apes) `リファレンス`
 
+## 関連概念
+- [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — 語彙が近い
+- [[human-intermodal-matching|感覚間マッチング（Intermodal Matching）]] — 語彙が近い
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同じ思想家
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 同じ思想家
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 出典を共有
+- [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

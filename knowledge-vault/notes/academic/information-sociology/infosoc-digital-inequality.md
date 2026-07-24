@@ -31,6 +31,13 @@ aliases:
 - [DiMaggio et al. 2001 — Social Implications of the Internet, Annual Review of Sociology 27:307-336](https://doi.org/10.1146/annurev.soc.27.1.307) `学術`
 - [NTIA 1995 — Falling Through the Net: A Survey of the Have Nots in Rural and Urban America](https://www.ntia.doc.gov/report/1995/falling-through-net-survey-have-nots-rural-and-urban-america) `公的`
 
+## 関連概念
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
+- [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
+- [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

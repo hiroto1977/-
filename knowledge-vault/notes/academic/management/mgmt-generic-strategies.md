@@ -30,6 +30,18 @@ aliases:
 - [EBSCO Research Starters — Porter’s Generic Strategies](https://www.ebsco.com/research-starters/marketing/porters-generic-strategies) `学術`
 - [Wikipedia — Porter’s generic strategies](https://en.wikipedia.org/wiki/Porter%27s_generic_strategies) `リファレンス`
 
+## 関連概念
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 語彙が近い
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
+- [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
+- [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

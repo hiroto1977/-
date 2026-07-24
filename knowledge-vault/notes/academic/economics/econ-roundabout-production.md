@@ -30,6 +30,10 @@ aliases:
 - [Britannica — Eugen von Böhm-Bawerk（資本・利子論とオーストリア学派資本理論）](https://www.britannica.com/money/Eugen-von-Bohm-Bawerk) `リファレンス`
 - [コトバンク「迂回生産」（間接的生産・産出増・漁師の例・資本蓄積）](https://kotobank.jp/word/%E8%BF%82%E5%9B%9E%E7%94%9F%E7%94%A3-34316) `リファレンス`
 
+## 関連概念
+- [[econ-time-preference|時間選好]] — 同じ思想家
+- [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

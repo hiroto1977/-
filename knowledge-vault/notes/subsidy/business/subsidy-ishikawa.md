@@ -36,6 +36,11 @@ prefecture
 - [石川県産業創出支援機構（ISICO）制度ページ](https://www.isico.or.jp/support/dgnet/d41187942.html) `運営団体`
 - [石川県商工会連合会 事業継続支援補助金 案内](https://shoko.or.jp/info/common/3132) `運営団体`
 
+## 関連概念
+- [[subsidy-kanagawa|中小企業生産性向上促進事業費補助金（神奈川県）]] — 同分野の近傍
+- [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 同分野の近傍
+- [[subsidy-saigai-nariwai|なりわい再建支援補助金（中小企業等グループ補助金）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

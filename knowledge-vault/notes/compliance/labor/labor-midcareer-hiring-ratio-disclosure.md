@@ -30,6 +30,11 @@ aliases:
 - [青森労働局 中途採用比率の公表義務化（令和3年4月1日）](https://jsite.mhlw.go.jp/aomori-roudoukyoku/news_topics/topics/_00048.html) `公的`
 - [浅野総合法律事務所 中途採用比率の公表義務化の解説](https://aglaw.jp/chutosaiyou-kouhyougimuka/) `メディア`
 
+## 関連概念
+- [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
+- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 語彙が近い
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

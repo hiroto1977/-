@@ -30,6 +30,12 @@ aliases:
 - [国税庁 C1-17 申告期限の延長の特例](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_12.htm) `公的`
 - [法人税の申告期限 解説](https://biz.moneyforward.com/accounting/basic/21077/) `メディア`
 
+## 関連概念
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 語彙が近い
+- [[bizlaw-corporation-tax|法人税法]] — 語彙が近い
+- [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

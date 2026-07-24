@@ -30,6 +30,11 @@ Steven C. Hayes／Dermot Barnes-Holmes／Bryan Roche
 - [Hayes, Barnes-Holmes & Roche (2001) Relational Frame Theory, Springer](https://doi.org/10.1007/978-1-4757-3357-4) `学術`
 - [Association for Contextual Behavioral Science — RFT](https://contextualscience.org/relational_frame_theory) `リファレンス`
 
+## 関連概念
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
+- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

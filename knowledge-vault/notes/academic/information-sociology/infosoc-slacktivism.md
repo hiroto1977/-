@@ -30,6 +30,13 @@ Kirk Kristofferson／Katherine White／John Peloza（2014, JCR）／Evgeny Moroz
 - [Springer Nature, Encyclopedia of Diversity, Equity, Inclusion and Spirituality — “Slacktivism”](https://link.springer.com/10.1007/978-3-031-32257-0_50-1) `リファレンス`
 - [Wikipedia — Slacktivism（定義・語源・批判と擁護の両論）](https://en.wikipedia.org/wiki/Slacktivism) `リファレンス`
 
+## 関連概念
+- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 同じ思想家
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同じ思想家
+- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 同分野の近傍
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

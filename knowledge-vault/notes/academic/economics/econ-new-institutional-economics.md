@@ -30,6 +30,16 @@ Ronald H. Coase／Oliver E. Williamson／Douglass C. North／Elinor Ostrom／Dar
 - [North (1990) Institutions, Institutional Change and Economic Performance, Cambridge UP](https://doi.org/10.1017/CBO9780511805387) `学術`
 - [Econlib Encyclopedia — New Institutional Economics (overview)](https://www.econlib.org/library/Enc/NewInstitutionalEconomics.html) `リファレンス`
 
+## 関連概念
+- [[mgmt-transaction-cost|取引費用理論]] — 分野横断
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同分野の近傍
+- [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 同分野の近傍
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同分野の近傍
+- [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

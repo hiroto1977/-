@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 被保険者とサービス受給者の範囲](https://www.mhlw.go.jp/shingi/2004/04/s0426-6c2.html) `公的`
 - [厚生労働省 介護保険の保険料](https://www.mhlw.go.jp/topics/kaigo/zaisei/sikumi_04.html) `公的`
 
+## 関連概念
+- [[bizlaw-long-term-care-insurance|介護保険法]] — 出典を共有
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 同分野の近傍
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

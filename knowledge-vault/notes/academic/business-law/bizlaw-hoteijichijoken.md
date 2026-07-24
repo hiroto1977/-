@@ -29,6 +29,18 @@ aliases:
 - [e-Gov法令検索 — 民法（明治29年法律第89号）第388条（法定地上権）](https://laws.e-gov.go.jp/law/129AC0000000089/) `公的`
 - [最高裁判所判例検索 — 法定地上権の成立要件に関する判例](https://www.courts.go.jp/app/hanrei_jp/detail2?id=52497) `公的`
 
+## 関連概念
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
+- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
+- [[labor-tribunal|労働審判制度（労働審判法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [金融庁 — 少額短期保険業者向けの監督指針](https://www.fsa.go.jp/common/law/guide/syougaku/01.html) `公的`
 - [コトバンク — 保険業法](https://kotobank.jp/word/%E4%BF%9D%E9%99%BA%E6%A5%AD%E6%B3%95-132856) `リファレンス`
 
+## 関連概念
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+- [[bizlaw-broadcast-act|放送法]] — 出典を共有
+- [[bizlaw-karoshi-prevention|過労死等防止対策推進法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

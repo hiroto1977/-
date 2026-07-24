@@ -31,6 +31,18 @@ aliases:
 - [Wilden et al. (2019) Journal of Management Studies「60 Years of March and Simon’s Organizations」（査読誌）](https://onlinelibrary.wiley.com/doi/10.1111/joms.12531) `学術`
 - [ERIC ED213096 — バーナードの協働的組織行動と公式組織における経営者機能（米教育省データベース）](https://eric.ed.gov/?id=ED213096) `学術`
 
+## 関連概念
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
+- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
+- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 出典を共有
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 賃金の支払方法 FAQ](https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei05.html) `公的`
 - [24協定 解説](https://www.nakagrps.co.jp/blog/11189/) `メディア`
 
+## 関連概念
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

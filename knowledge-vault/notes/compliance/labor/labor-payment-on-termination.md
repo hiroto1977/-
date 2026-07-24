@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 労働基準法23条 金品の返還](https://www.mhlw.go.jp/file/04-Houdouhappyou-11202000-Roudoukijunkyoku-Kantokuka/0000126325.pdf) `公的`
 - [労働基準法23条 解説](https://hrnote.jp/contents/roumu-rodokijunho-23jo-20230120/) `メディア`
 
+## 関連概念
+- [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — 同分野の近傍
+- [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Sbordone (2002) Inflation Dynamics, Marginal Cost, and the Output Gap — FRBSF](https://www.frbsf.org/wp-content/uploads/nkpcnn.pdf) `公的`
 - [Bentolila et al. (2006) NKPC and Inflation Expectations — Economic Theory (Springer)](https://link.springer.com/article/10.1007/s00199-006-0100-z) `学術`
 
+## 関連概念
+- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 語彙が近い
+- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 語彙が近い
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
+- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
+- [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

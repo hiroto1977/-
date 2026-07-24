@@ -1,0 +1,43 @@
+---
+collection: academic
+id: infosoc-domestication-technology-silverstone
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程"
+---
+
+# 技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+技術の家庭化（domestication of technology）は、ロジャー・シルバーストーン、エリック・ハーシュ、デヴィッド・モーレイらが1990年代に発展させた、メディア・技術研究の枠組みで、家庭（世帯）が、テレビ、コンピュータ、電話といった新しい技術を、日常生活の習慣・価値・意味の中へと取り込み、馴致し（飼いならし）、自らのものにしていく過程を分析する。「家庭化（domestication）」という言葉は、野生の動物を飼いならして家畜にすることになぞらえたもので、人々が、最初はなじみのない新奇な技術を、生活に溶け込んだ身近な存在へと変えていくことを表す。この枠組みの核心的な主張は、技術が、あらかじめ決められた使い方を持つ固定された物として、そのまま受け入れられるのではないという点にある。むしろ、利用者は、技術を能動的に自分のものにし、それぞれの家庭の文脈に合わせて意味づけ、使いこなしていく。同じ技術でも、それがどの家庭で、どのように位置づけられ、使われるかは、その家庭の価値観や生活様式によって異なる。技術の家庭化は、いくつかの局面からなる過程として捉えられる。第一は「専有（appropriation）」で、技術を購入し家庭に持ち込み、所有する局面。第二は「客体化（objectification）」で、技術を家庭の空間のどこに置き、どう配置し、展示するか——居間の中心に置くのか、子ども部屋に置くのか——を通じて、家庭の中での位置づけを定める局面。第三は「組み込み（incorporation）」で、技術を日々の生活の時間とルーティンの中に組み込み、いつ、どのように使うかという習慣を形づくる局面。第四は「転換（conversion）」で、技術の使用を通じて、自らのアイデンティティや地位を、外の世界に対して表現し定義する局面である。シルバーストーンは、家庭を、独自の価値と意味の体系を持つ「道徳経済（moral economy）」として捉え、技術がこの道徳経済の中へと統合されていく過程を家庭化と呼んだ。技術の家庭化の枠組みの重要な意義は、技術決定論——技術がそれ自体の論理によって社会や生活を一方的に変えるとする見方——への批判にある。家庭化の視点は、技術がどう使われ、どんな意味を持つかが、利用者である人々の能動的な意味づけと、家庭という生活の場の文脈によって形づくられることを強調する。技術は、人々の生活を一方的に規定するのではなく、人々によって自らの生活へと飼いならされ、意味を与えられるのである。技術の家庭化は、メディアと技術が、人々の日常生活、家庭、アイデンティティの中にいかに組み込まれていくかを、利用者の能動性と意味形成を中心に理解する、メディア研究と技術社会論の重要な枠組みであり、レスリー・ハドンらによってモバイル技術やデジタル技術の研究へと展開されている。
+
+## 提唱者・初出
+ロジャー・シルバーストーン ／ エリック・ハーシュ ／ デヴィッド・モーレイ ／ レスリー・ハドン
+
+## 出典
+- [Silverstone, R. & Hirsch, E. (eds.) (1992) Consuming Technologies: Media and Information in Domestic Spaces — Routledge (WorldCat)](https://www.worldcat.org/oclc/25008143) `学術`
+- [Wikipedia: Domestication of technology — Silverstone/Hirsch/Morley, appropriation/objectification/incorporation/conversion, moral economy](https://en.wikipedia.org/wiki/Domestication_(media)) `リファレンス`
+
+## 関連概念
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 同じ思想家
+- [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

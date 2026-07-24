@@ -29,6 +29,10 @@ aliases:
 - [Kelley, R. E. (1988) "In Praise of Followers" Harvard Business Review 66(6)](https://hbr.org/1988/11/in-praise-of-followers) `学術`
 - [Wikipedia — Followership](https://en.wikipedia.org/wiki/Followership) `リファレンス`
 
+## 関連概念
+- [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
+- [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

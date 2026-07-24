@@ -26,6 +26,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const kc = require('../orchestration/knowledge-context.cjs');
+const kg = require('../orchestration/knowledge-graph.cjs');
+const edu = require('../orchestration/education.cjs');
 
 const VAULT_DIR = path.join(kc.REPO_ROOT, 'knowledge-vault');
 const EXEC_ORDER = ['coo', 'cso', 'cfo', 'chro', 'cio', 'cqo'];
@@ -48,7 +50,51 @@ function yamlStr(s) {
 // ---------------------------------------------------------------------------
 // ノート本文
 // ---------------------------------------------------------------------------
-function entryNote(e) {
+/** エッジ型 → ノートに表示する日本語ラベル。 */
+const EDGE_TYPE_LABEL = {
+  'term-overlap': '語彙が近い',
+  'discipline-bridge': '分野横断',
+  'shares-thinker': '同じ思想家',
+  'shares-source': '出典を共有',
+  'same-category': '同分野の近傍',
+};
+
+/**
+ * 知識グラフからノートごとの「関連概念」上位 relatedTop 件を導出する。
+ * 決定論の一点ルール: 委託 NDJSON を読み戻さず、同一純関数 computeGraph(entries) から
+ * その場導出する（NDJSON との一致は verify:graph が別途保証）。
+ */
+function buildRelatedMap(graph, entries, relatedTop = 10) {
+  const { edges } = graph;
+  const titleOf = new Map(entries.map((e) => [e.id, e.title]));
+  const incident = new Map();
+  for (const e of edges) {
+    (incident.get(e.a) || incident.set(e.a, []).get(e.a)).push({ other: e.b, type: e.type, score: e.score });
+    (incident.get(e.b) || incident.set(e.b, []).get(e.b)).push({ other: e.a, type: e.type, score: e.score });
+  }
+  const related = new Map();
+  for (const [id, arr] of incident) {
+    arr.sort(
+      (x, y) =>
+        kg.TYPE_PRIORITY[x.type] - kg.TYPE_PRIORITY[y.type] ||
+        y.score - x.score ||
+        (x.other < y.other ? -1 : x.other > y.other ? 1 : 0),
+    );
+    // 同一相手は最優先の 1 本だけ見せる（term-overlap と shares-thinker の重複列挙を防ぐ）。
+    const seen = new Set();
+    const top = [];
+    for (const x of arr) {
+      if (seen.has(x.other)) continue;
+      seen.add(x.other);
+      top.push({ id: x.other, title: titleOf.get(x.other) || x.other, typeLabel: EDGE_TYPE_LABEL[x.type] || x.type });
+      if (top.length >= relatedTop) break;
+    }
+    related.set(id, top);
+  }
+  return related;
+}
+
+function entryNote(e, related = []) {
   const fm = ['---', `collection: ${e.collection}`, `id: ${e.id}`, `category: ${yamlStr(e.category)}`, `category_ja: ${yamlStr(e.categoryLabel)}`, `title: ${yamlStr(e.title)}`];
   if (e.asOf) fm.push(`as_of: ${yamlStr(e.asOf)}`);
   fm.push(`source_count: ${e.sources.length}`, `authoritative: ${e.authoritative}`, 'tags:', `  - collection/${e.collection}`, `  - ${e.collection}/${e.category}`, '  - knowledge/verified', 'aliases:', `  - ${yamlStr(e.title)}`, '---');
@@ -58,7 +104,264 @@ function entryNote(e) {
 
   const parts = [fm.join('\n'), '', `# ${e.title}`, '', info, '', '## 概要', e.summary, ''];
   for (const m of e.meta) parts.push(`## ${m.label}`, m.value, '');
-  parts.push('## 出典', sources, '', '## 関連', `- コレクション: [[${e.collectionLabel}]]`, '- ヴォルト入口: [[Home]]', '- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
+  parts.push('## 出典', sources, '');
+  if (related.length > 0) {
+    parts.push('## 関連概念');
+    for (const r of related) parts.push(`- [[${r.id}|${r.title}]] — ${r.typeLabel}`);
+    parts.push('');
+  }
+  parts.push('## 関連', `- コレクション: [[${e.collectionLabel}]]`, '- ヴォルト入口: [[Home]]', '- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// 人物ページ・出典ドメインページ（柱 B Phase 2）
+// ---------------------------------------------------------------------------
+/** 人物キー / ホスト名 → ファイル slug（衝突時は昇順で -2, -3 を付す）。 */
+function makeSlugger(prefix) {
+  const used = new Map();
+  return (raw) => {
+    const base = `${prefix}-${String(raw).replace(/[|.]/g, '-').replace(/-+/g, '-').replace(/-+$/, '')}`;
+    const n = used.get(base) || 0;
+    used.set(base, n + 1);
+    return n === 0 ? base : `${base}-${n + 1}`;
+  };
+}
+
+/**
+ * 人物ごとに関連概念を束ねる（2 概念以上の人物のみページ化 — 1 件のみの
+ * 人物ページはナビゲーション価値が薄くスタブを 5,000 枚生むため）。
+ * display は最長の表記を代表とする（情報量最大・決定論）。
+ */
+function collectThinkers(entries) {
+  const byKey = new Map(); // key → {displays:Set, items:[entry]}
+  for (const e of entries) {
+    const metaText = (e.meta || []).map((m) => m.value).join('／');
+    for (const { key, display } of kg.extractAuthorNames(metaText)) {
+      if (!byKey.has(key)) byKey.set(key, { displays: [], items: [] });
+      const t = byKey.get(key);
+      t.displays.push(display);
+      t.items.push(e);
+    }
+  }
+  const thinkers = [];
+  for (const [key, t] of byKey) {
+    if (t.items.length < 2) continue;
+    const display = [...t.displays].sort((a, b) => b.length - a.length || (a < b ? -1 : 1))[0];
+    t.items.sort((a, b) => (a.id < b.id ? -1 : 1));
+    thinkers.push({ key, display, items: t.items });
+  }
+  thinkers.sort((a, b) => (a.key < b.key ? -1 : 1));
+  return thinkers;
+}
+
+function thinkerNote(t) {
+  const fm = ['---', `title: ${yamlStr(t.display)}`, 'type: thinker', `person_key: ${yamlStr(t.key)}`, `concept_count: ${t.items.length}`, 'tags:', '  - person', '  - index', '---'];
+  const parts = [fm.join('\n'), '', `# ${t.display}`, '', `> [!info] 人物索引 ・ 関連する検証済み概念 **${t.items.length} 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）`, ''];
+  const groups = new Map();
+  for (const e of t.items) {
+    const g = groups.get(e.collectionLabel) || [];
+    g.push(e);
+    groups.set(e.collectionLabel, g);
+  }
+  for (const [label, items] of [...groups.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    parts.push(`## ${label}（${items.length}件）`);
+    for (const e of items) parts.push(`- [[${e.id}|${e.title}]] — ${kc.oneLiner(e.summary, 60)}`);
+    parts.push('');
+  }
+  parts.push('## 関連', '- 索引: [[人物索引]]', '- ヴォルト入口: [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+/** ホストごとに引用元の概念を束ねる（全ホスト）。 */
+function collectSourceDomains(entries) {
+  const byHost = new Map(); // host → {items:[{entry, label, type}]}
+  for (const e of entries) {
+    for (const s of e.sources || []) {
+      const h = kg.hostOf(s.url);
+      if (!h) continue;
+      if (!byHost.has(h)) byHost.set(h, []);
+      byHost.get(h).push({ entry: e, label: s.label, type: s.type });
+    }
+  }
+  const hosts = [];
+  for (const [host, items] of byHost) {
+    items.sort((a, b) => (a.entry.id < b.entry.id ? -1 : a.entry.id > b.entry.id ? 1 : a.label < b.label ? -1 : 1));
+    hosts.push({ host, items });
+  }
+  hosts.sort((a, b) => (a.host < b.host ? -1 : 1));
+  return hosts;
+}
+
+function sourceDomainNote(d) {
+  const typeCount = new Map();
+  for (const it of d.items) typeCount.set(it.type, (typeCount.get(it.type) || 0) + 1);
+  const typeLine = [...typeCount.entries()]
+    .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
+    .map(([t, n]) => `${kc.SOURCE_TYPE_LABEL[t] || t} ${n}`)
+    .join(' ・ ');
+  const fm = ['---', `title: ${yamlStr(d.host)}`, 'type: source-domain', `host: ${yamlStr(d.host)}`, `cite_count: ${d.items.length}`, 'tags:', '  - source-domain', '  - index', '---'];
+  const parts = [fm.join('\n'), '', `# ${d.host}`, '', `> [!info] 出典ドメイン索引 ・ 引用 **${d.items.length} 件**（${typeLine}）`, '', '## このドメインを出典とする項目', ''];
+  for (const it of d.items) parts.push(`- [[${it.entry.id}|${it.entry.title}]] — ${kc.oneLiner(it.label, 70)}`);
+  parts.push('', '## 関連', '- 索引: [[出典ドメイン索引]]', '- ヴォルト入口: [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+function thinkerIndexNote(thinkers, slugOf) {
+  const fm = ['---', 'title: 人物索引', 'type: MOC', `person_count: ${thinkers.length}`, 'tags:', '  - MOC', '  - person', '---'];
+  const parts = [fm.join('\n'), '', '# 人物索引 — 思想家・研究者から概念を辿る', '', `検証済み知識に 2 概念以上で登場する人物 **${thinkers.length} 名**。関連概念数の降順。`, ''];
+  const sorted = [...thinkers].sort((a, b) => b.items.length - a.items.length || (a.key < b.key ? -1 : 1));
+  for (const t of sorted) parts.push(`- [[${slugOf.get(t.key)}|${t.display}]]（${t.items.length}件）`);
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+function sourceDomainIndexNote(domains, slugOf) {
+  const fm = ['---', 'title: 出典ドメイン索引', 'type: MOC', `domain_count: ${domains.length}`, 'tags:', '  - MOC', '  - source-domain', '---'];
+  const parts = [fm.join('\n'), '', '# 出典ドメイン索引 — 引用元から概念を辿る', '', `全出典 URL のドメイン **${domains.length} 件**。引用数の降順。`, ''];
+  const sorted = [...domains].sort((a, b) => b.items.length - a.items.length || (a.host < b.host ? -1 : 1));
+  for (const d of sorted) parts.push(`- [[${slugOf.get(d.host)}|${d.host}]]（${d.items.length}件）`);
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// 年表・学習パス・教育 MOC（柱 B Phase 3）
+// ---------------------------------------------------------------------------
+/** 年表: 初出年ごとの year-<YYYY>.md と decade-<YYYY>s.md（グラフノードの year を使用）。 */
+function timelinePages(entries, yearOf) {
+  const byYear = new Map();
+  for (const e of entries) {
+    const y = yearOf.get(e.id);
+    if (!y) continue;
+    (byYear.get(y) || byYear.set(y, []).get(y)).push(e);
+  }
+  const files = {};
+  const years = [...byYear.keys()].sort((a, b) => a - b);
+  for (const y of years) {
+    const items = byYear.get(y).sort((a, b) => (a.id < b.id ? -1 : 1));
+    const fm = ['---', `title: "${y}年の概念・制度"`, 'type: timeline-year', `year: ${y}`, `entry_count: ${items.length}`, 'tags:', '  - timeline', '---'];
+    const parts = [fm.join('\n'), '', `# ${y}年 — 初出・提唱・成立`, '', `> [!info] 年表索引 ・ この年に紐づく検証済み項目 **${items.length} 件**（提唱・初出・制定等の最初期年）`, ''];
+    for (const e of items) parts.push(`- [[${e.id}|${e.title}]]（${e.collectionLabel}）`);
+    parts.push('', '## 関連', `- 年代: [[decade-${Math.floor(y / 10) * 10}s]]`, '- 索引: [[年表索引]]', '', '---', GENERATED_NOTE, '');
+    files[path.join('timeline', `year-${y}.md`)] = parts.join('\n');
+  }
+  // decade ページ
+  const byDecade = new Map();
+  for (const y of years) {
+    const d = Math.floor(y / 10) * 10;
+    (byDecade.get(d) || byDecade.set(d, []).get(d)).push(y);
+  }
+  for (const [d, ys] of [...byDecade.entries()].sort((a, b) => a[0] - b[0])) {
+    const total = ys.reduce((n, y) => n + byYear.get(y).length, 0);
+    const fm = ['---', `title: "${d}年代"`, 'type: timeline-decade', `decade: ${d}`, `entry_count: ${total}`, 'tags:', '  - timeline', '---'];
+    const parts = [fm.join('\n'), '', `# ${d}年代 — ${total} 件`, ''];
+    for (const y of ys) parts.push(`- [[year-${y}|${y}年]]（${byYear.get(y).length}件）`);
+    parts.push('', '## 関連', '- 索引: [[年表索引]]', '', '---', GENERATED_NOTE, '');
+    files[path.join('timeline', `decade-${d}s.md`)] = parts.join('\n');
+  }
+  return { files, years, byYear, byDecade };
+}
+
+function timelineIndexNote(byDecade, byYear) {
+  const fm = ['---', 'title: 年表索引', 'type: MOC', 'tags:', '  - MOC', '  - timeline', '---'];
+  const parts = [fm.join('\n'), '', '# 年表索引 — 概念・制度を初出年から辿る', '', '各項目の「最初期に言及された年」（提唱・初出・制定）に基づく決定論的な年表。', ''];
+  for (const [d, ys] of [...byDecade.entries()].sort((a, b) => a[0] - b[0])) {
+    const total = ys.reduce((n, y) => n + byYear.get(y).length, 0);
+    parts.push(`- [[decade-${d}s|${d}年代]]（${total}件・${ys.length}年）`);
+  }
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+/** 学習パス: カテゴリごとに「中心概念 → 年代順 → 年代不明」の決定論カリキュラム。 */
+function pathPages(entries, yearOf, degreeOf) {
+  const files = {};
+  const groups = new Map();
+  for (const e of entries) {
+    const k = `${e.collection}-${e.category}`;
+    (groups.get(k) || groups.set(k, { label: `${e.collectionLabel}／${e.categoryLabel}`, items: [] }).get(k)).items.push(e);
+  }
+  const keys = [...groups.keys()].sort();
+  for (const k of keys) {
+    const g = groups.get(k);
+    const items = g.items.sort((a, b) => (a.id < b.id ? -1 : 1));
+    const central = [...items]
+      .sort((a, b) => (degreeOf.get(b.id) || 0) - (degreeOf.get(a.id) || 0) || (a.id < b.id ? -1 : 1))
+      .slice(0, Math.min(15, items.length));
+    const centralIds = new Set(central.map((e) => e.id));
+    const dated = items.filter((e) => !centralIds.has(e.id) && yearOf.get(e.id)).sort((a, b) => yearOf.get(a.id) - yearOf.get(b.id) || (a.id < b.id ? -1 : 1));
+    const undated = items.filter((e) => !centralIds.has(e.id) && !yearOf.get(e.id));
+    const fm = ['---', `title: ${yamlStr(`学習パス: ${g.label}`)}`, 'type: learning-path', `path_key: ${yamlStr(k)}`, `entry_count: ${items.length}`, 'tags:', '  - MOC', '  - learning-path', '---'];
+    const parts = [fm.join('\n'), '', `# 学習パス — ${g.label}（${items.length}件）`, '', '> [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。', '', `## 第 1 部 — 中心概念（グラフ接続数 上位 ${central.length}）`];
+    for (const e of central) parts.push(`- [[${e.id}|${e.title}]]（接続 ${degreeOf.get(e.id) || 0}）`);
+    if (dated.length > 0) {
+      parts.push('', '## 第 2 部 — 年代順の展開');
+      for (const e of dated) parts.push(`- ${yearOf.get(e.id)}年: [[${e.id}|${e.title}]]`);
+    }
+    if (undated.length > 0) {
+      parts.push('', '## 第 3 部 — 年代情報のない項目');
+      for (const e of undated) parts.push(`- [[${e.id}|${e.title}]]`);
+    }
+    parts.push('', '## 関連', '- 索引: [[学習パス索引]]', `- フラッシュカード: [[deck-${k}]]`, `- クイズ: [[quiz-${k}]]`, '', '---', GENERATED_NOTE, '');
+    files[path.join('paths', `path-${k}.md`)] = parts.join('\n');
+  }
+  return { files, keys, groups };
+}
+
+/** 教育 MOC: education.cjs のカード/クイズをカテゴリ別 md に展開（幻覚ゼロのまま）。 */
+function educationPages(entries) {
+  const files = {};
+  const cards = edu.buildFlashcards(entries);
+  const quiz = edu.buildQuiz(entries);
+  const groupOf = (x) => `${x.collection}-${x.category}`;
+  const labelOf = new Map(entries.map((e) => [`${e.collection}-${e.category}`, `${e.collectionLabel}／${e.categoryLabel}`]));
+
+  const cardGroups = new Map();
+  for (const c of cards) (cardGroups.get(groupOf(c)) || cardGroups.set(groupOf(c), []).get(groupOf(c))).push(c);
+  for (const [k, list] of [...cardGroups.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    const fm = ['---', `title: ${yamlStr(`フラッシュカード: ${labelOf.get(k)}`)}`, 'type: flashcard-deck', `deck_key: ${yamlStr(k)}`, `card_count: ${list.length}`, 'tags:', '  - education', '  - flashcards', '---'];
+    const parts = [fm.join('\n'), '', `# フラッシュカード — ${labelOf.get(k)}（${list.length}枚）`, '', '> [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。', ''];
+    for (const c of list) {
+      parts.push(`- **Q:** ${c.front}`);
+      parts.push(`  - **A:** ${c.back}（→ [[${c.ref}]]）`);
+    }
+    parts.push('', '## 関連', '- 索引: [[教育素材索引]]', `- 学習パス: [[path-${k}]]`, '', '---', GENERATED_NOTE, '');
+    files[path.join('education', `deck-${k}.md`)] = parts.join('\n');
+  }
+
+  const quizGroups = new Map();
+  for (const q of quiz) (quizGroups.get(groupOf(q)) || quizGroups.set(groupOf(q), []).get(groupOf(q))).push(q);
+  const OPT = ['A', 'B', 'C', 'D'];
+  for (const [k, list] of [...quizGroups.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    const fm = ['---', `title: ${yamlStr(`クイズ: ${labelOf.get(k)}`)}`, 'type: quiz', `quiz_key: ${yamlStr(k)}`, `question_count: ${list.length}`, 'tags:', '  - education', '  - quiz', '---'];
+    const parts = [fm.join('\n'), '', `# 4 択クイズ — ${labelOf.get(k)}（${list.length}問）`, '', '> [!info] 誤答選択肢も実在する概念タイトルのみ（幻覚ゼロ）。`knowledge-graph/education/quiz.ndjson` と同一の純関数から生成。', ''];
+    list.forEach((q, i) => {
+      parts.push(`### 第 ${i + 1} 問`, q.question);
+      q.options.forEach((o, j) => parts.push(`- ${OPT[j]}. ${o}`));
+      parts.push(`> [!success]- 答え`, `> ${OPT[q.answer]}. ${q.options[q.answer]}（→ [[${q.ref}]]）`, '');
+    });
+    parts.push('## 関連', '- 索引: [[教育素材索引]]', `- 学習パス: [[path-${k}]]`, '', '---', GENERATED_NOTE, '');
+    files[path.join('education', `quiz-${k}.md`)] = parts.join('\n');
+  }
+  return { files, deckKeys: [...cardGroups.keys()].sort(), quizKeys: [...quizGroups.keys()].sort(), labelOf };
+}
+
+function pathIndexNote(keys, groups) {
+  const fm = ['---', 'title: 学習パス索引', 'type: MOC', 'tags:', '  - MOC', '  - learning-path', '---'];
+  const parts = [fm.join('\n'), '', '# 学習パス索引 — 分野別カリキュラム', ''];
+  for (const k of keys) parts.push(`- [[path-${k}|${groups.get(k).label}]]（${groups.get(k).items.length}件）`);
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+function educationIndexNote(deckKeys, quizKeys, labelOf) {
+  const fm = ['---', 'title: 教育素材索引', 'type: MOC', 'tags:', '  - MOC', '  - education', '---'];
+  const parts = [fm.join('\n'), '', '# 教育素材索引 — フラッシュカードとクイズ', '', '全て検証済みフィールドのコピー・切詰め・並べ替えのみで生成（新規散文ゼロ=幻覚ゼロ）。', '', '## フラッシュカード'];
+  for (const k of deckKeys) parts.push(`- [[deck-${k}|${labelOf.get(k)}]]`);
+  parts.push('', '## 4 択クイズ');
+  for (const k of quizKeys) parts.push(`- [[quiz-${k}|${labelOf.get(k)}]]`);
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
   return parts.join('\n');
 }
 
@@ -99,6 +402,13 @@ function homeNote(byCollection, total) {
     '',
     '## コレクション別MOC',
     lines,
+    '',
+    '## 横断索引（柱 B）',
+    '- [[人物索引]] — 思想家・研究者から概念を辿る（2 概念以上で登場する人物）',
+    '- [[出典ドメイン索引]] — 引用元ドメインから概念を辿る',
+    '- [[年表索引]] — 初出・提唱・制定の年から辿る',
+    '- [[学習パス索引]] — 分野別カリキュラム（中心概念→年代順）',
+    '- [[教育素材索引]] — フラッシュカード・4 択クイズ（幻覚ゼロ）',
     '',
     '## AIオーケストレーション連携',
     '- [[Organization]] — 組織図（CEO→COO→役員→秘書室／管理職→一般職）とサイクル。各役員ノートに知識ブリーフを相互リンク',
@@ -386,11 +696,44 @@ function buildFiles() {
   files['Home.md'] = homeNote(byCollection, entries.length);
   files['AI_ORCHESTRATION_CONTEXT.md'] = orchestrationContextNote(entries, map);
 
+  // 知識グラフは 1 回だけ計算し、関連概念・年表・学習パスで共有（読み戻しなし・同一純関数から）。
+  const graph = kg.computeGraph(entries);
+  const related = buildRelatedMap(graph, entries);
+  const yearOf = new Map(graph.nodes.map((n) => [n.id, n.year]));
+  const degreeOf = new Map(graph.nodes.map((n) => [n.id, n.degree]));
+
   for (const col of kc.COLLECTIONS) {
     const list = byCollection.get(col.key) || [];
     files[path.join('MOC', `${col.label}.md`)] = mocNote(col, list);
-    for (const e of list) files[path.join('notes', e.collection, e.category, `${e.id}.md`)] = entryNote(e);
+    for (const e of list)
+      files[path.join('notes', e.collection, e.category, `${e.id}.md`)] = entryNote(e, related.get(e.id) || []);
   }
+
+  // 柱 B Phase 2: 人物ページ（2 概念以上の人物）と出典ドメインページ（全ホスト）+ 索引 MOC。
+  const thinkers = collectThinkers(entries);
+  const thinkerSlug = makeSlugger('thinker');
+  const thinkerSlugOf = new Map();
+  for (const t of thinkers) thinkerSlugOf.set(t.key, thinkerSlug(t.key));
+  for (const t of thinkers) files[path.join('people', `${thinkerSlugOf.get(t.key)}.md`)] = thinkerNote(t);
+  files[path.join('MOC', '人物索引.md')] = thinkerIndexNote(thinkers, thinkerSlugOf);
+
+  const domains = collectSourceDomains(entries);
+  const domainSlug = makeSlugger('source');
+  const domainSlugOf = new Map();
+  for (const d of domains) domainSlugOf.set(d.host, domainSlug(d.host));
+  for (const d of domains) files[path.join('sources', `${domainSlugOf.get(d.host)}.md`)] = sourceDomainNote(d);
+  files[path.join('MOC', '出典ドメイン索引.md')] = sourceDomainIndexNote(domains, domainSlugOf);
+
+  // 柱 B Phase 3: 年表・学習パス・教育 MOC。
+  const tl = timelinePages(entries, yearOf);
+  Object.assign(files, tl.files);
+  files[path.join('MOC', '年表索引.md')] = timelineIndexNote(tl.byDecade, tl.byYear);
+  const lp = pathPages(entries, yearOf, degreeOf);
+  Object.assign(files, lp.files);
+  files[path.join('MOC', '学習パス索引.md')] = pathIndexNote(lp.keys, lp.groups);
+  const ed = educationPages(entries);
+  Object.assign(files, ed.files);
+  files[path.join('MOC', '教育素材索引.md')] = educationIndexNote(ed.deckKeys, ed.quizKeys, ed.labelOf);
 
   for (const [name, content] of Object.entries(METHODOLOGY)) files[path.join('methodology', `${name}.md`)] = content;
 

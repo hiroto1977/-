@@ -30,6 +30,14 @@ aliases:
 - [Wikipedia — Cannibalization (marketing)（定義・偶発/意図的の区別・cannibalisation strategy）](https://en.wikipedia.org/wiki/Cannibalization_(marketing)) `リファレンス`
 - [arXiv 1811.03362 — Lotka-Volterra model of (inverse) product cannibalisation in ICTs（iPhone/iPad の学術的カニバリ分析）](https://arxiv.org/pdf/1811.03362) `学術`
 
+## 関連概念
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 出典を共有
+- [[infosoc-web3|Web3]] — 出典を共有
+- [[infosoc-metaverse|メタバース]] — 出典を共有
+- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
+- [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 同分野の近傍
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

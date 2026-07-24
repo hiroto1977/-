@@ -30,6 +30,17 @@ aliases:
 - [国税庁 法令解釈通達 措置法69条の4](https://www.nta.go.jp/law/tsutatsu/kobetsu/sozoku/sochiho/080708/69_4/01.htm) `公的`
 - [国税庁 相続税申告要否判定 小規模宅地等](https://www.keisan.nta.go.jp/oshirase/sozoku/yohihantei/yohihantei/shokibo.html) `公的`
 
+## 関連概念
+- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 語彙が近い
+- [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
+- [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
+- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 出典を共有
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-securities-account|上場株式等の特定口座制度]] — 出典を共有
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

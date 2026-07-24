@@ -30,6 +30,12 @@ aliases:
 - [Meltzoff & Marshall (2018) Early Imitation Within a Functional Framework — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4137790/) `学術`
 - [ManyBabies 6: Neonatal Imitation Multi-Lab Replication — ManyBabies.org](https://manybabies.org/MB6/) `学術`
 
+## 関連概念
+- [[human-intermodal-matching|感覚間マッチング（Intermodal Matching）]] — 語彙が近い
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 語彙が近い
+- [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]] — 同分野の近傍
+- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,18 @@ Munzer判決（破毀院1964年 — 近代的エクセクアトゥル要件の�
 - [UNCITRAL — 1958年外国仲裁判断の承認及び執行に関する条約（ニューヨーク条約）](https://uncitral.un.org/en/texts/arbitration/conventions/foreign_arbitral_awards) `公的`
 - [EU e-Justice — Brussels I Regulation Recast (EU No 1215/2012)](https://e-justice.europa.eu/topics/taking-legal-action/european-judicial-atlas-civil-matters/brussels-i-regulation-recast_en) `公的`
 
+## 関連概念
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 出典を共有
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 出典を共有
+- [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 出典を共有
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 出典を共有
+- [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 出典を共有
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 出典を共有
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
+- [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 出典を共有
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

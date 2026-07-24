@@ -59,6 +59,9 @@ a:hover { text-decoration: underline; }
      overflow-y:auto で縦スクロールに切り替える。 */
   grid-template-rows: minmax(0, 1fr);
   height: 100vh;
+  /* モバイルブラウザの動的 URL バー対策: 対応環境では実表示高 (dvh) を使う。
+     100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -199,7 +202,38 @@ a:hover { text-decoration: underline; }
   margin: 0;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
+
+/* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
+.menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  flex: none;
+}
+
+/* ドロワー開時の背景 (モバイルのみ・タップで閉じる) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* 音声ボタンが狭い画面で 2 行に折り返してトップバーを壊すのを防ぐ */
+.voice-mic { white-space: nowrap; }
 .topbar .description {
   color: var(--text-muted);
   font-size: 13px;
@@ -244,28 +278,74 @@ a:hover { text-decoration: underline; }
   max-width: 100%;
 }
 
-/* 狭い画面ではサイドバーと余白を詰めて表示領域を確保する。 */
+/* --- モバイル/タブレット最適化 (Android スマホ・タブレット・iPad) ---
+   768px 以下ではサイドバーを常設せず、ハンバーガーで開くオーバーレイ・
+   ドロワーに切り替える。コンテンツが全幅を使えるので、スマホでも
+   デスクトップと同じページがそのまま操作できる。 */
 @media (max-width: 768px) {
   .app {
-    grid-template-columns: 200px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr); /* サイドバー列を畳む */
   }
-  .content {
-    padding: 16px;
+  .menu-btn { display: inline-flex; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(300px, 84vw);
+    z-index: 50;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    /* ノッチ/ジェスチャーバーを避ける (viewport-fit=cover 時のみ効く) */
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .sidebar-item {
-    padding: 10px 14px;
-  }
+  .app.nav-open .sidebar { transform: translateX(0); }
+  .app.nav-open .sidebar-backdrop { display: block; }
+  .content { padding: 16px; }
+  .topbar { padding: 0 12px; gap: 10px; }
+  /* フォーカス時の自動ズーム防止: モバイル Safari/Chrome は 16px 未満の
+     入力欄にフォーカスするとページ全体を拡大してしまう。ページ側の
+     inline style (fontSize: 13 等) にも勝つ必要があるため !important。 */
+  input, select, textarea { font-size: 16px !important; }
 }
-@media (max-width: 560px) {
-  .app {
-    grid-template-columns: 168px minmax(0, 1fr);
-  }
-  .content {
-    padding: 12px;
-  }
-  .topbar {
-    padding: 0 12px;
-  }
+
+/* ページ内フォーム/統計カードのレスポンシブユーティリティ。
+   .field-grid — 入力フォームの列。デスクトップは複数列、狭幅では自動で
+     1〜2 列に折り返す。inline の固定幅 (width: 140 等) より優先させるため
+     幅は !important で 100% にする (checkbox/radio は除外)。
+   .stat-grid — Stat カードの列。repeat(N, 1fr) 固定だとスマホで金額が
+     潰れるため、auto-fit + minmax で折り返す。 */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: 10px 12px;
+  align-items: end;
+}
+.field-grid input:not([type="checkbox"]):not([type="radio"]),
+.field-grid select {
+  width: 100% !important;
+  min-width: 0;
+}
+.stat-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+}
+@media (max-width: 640px) {
+  .topbar .description { display: none; } /* タイトル+音声ボタンを優先 */
+  .content { padding: 12px; }
+}
+
+/* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
+@media (pointer: coarse) {
+  .sidebar-item { padding: 13px 20px; } /* 指で押しやすい高さ (~44px) */
+  .sidebar-item:active { background: rgba(255, 255, 255, 0.08); }
+  /* ホバーで出す UI はタッチでは永遠に出ないので、常時うっすら表示 */
+  .fav-toggle { opacity: 0.45; }
+  .data-list-open { padding: 8px 14px; }
+  button { touch-action: manipulation; } /* ダブルタップズームの誤発火防止 */
 }
 
 .page-grid {
@@ -438,4 +518,57 @@ a:hover { text-decoration: underline; }
   height: 28px;
   border-radius: 50%;
   border: 1px solid var(--border);
+}
+
+/* --- 書類スタジオ (DocstudioPage): 書面プレビュー + 印刷 --- */
+.ds-paper {
+  background: #ffffff;
+  color: #1c2027;
+  border-radius: 10px;
+  padding: 40px 44px;
+  line-height: 1.95;
+  font-size: 13.5px;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+  max-width: 760px;
+}
+.ds-title { text-align: center; font-size: 20px; letter-spacing: 0.14em; font-weight: 700; margin: 0 0 22px; }
+.ds-chapter { text-align: center; font-weight: 700; margin: 18px 0 6px; letter-spacing: 0.2em; }
+.ds-h { font-weight: 700; margin: 12px 0 2px; }
+.ds-p { margin: 4px 0; text-align: justify; }
+.ds-li { margin: 2px 0 2px 1.5em; }
+.ds-right { text-align: right; margin: 7px 0; }
+.ds-fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
+.ds-fill.ds-empty { color: #b06060; font-weight: 400; }
+.ds-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+.ds-table th, .ds-table td { border: 1px solid #8892a0; padding: 6px 10px; }
+.ds-table th { background: #f2f5fa; }
+.ds-table td.ds-num { text-align: right; font-variant-numeric: tabular-nums; }
+.ds-table tr.ds-total td { font-weight: 700; background: #f8f9fc; }
+.ds-sign { display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap; }
+.ds-sign-side { flex: 1 1 220px; }
+.ds-big { text-align: center; font-size: 21px; font-weight: 700; border: 2px solid #1c2027;
+          padding: 10px 16px; margin: 14px auto; max-width: 420px; }
+.ds-stamp { width: 110px; height: 70px; border: 1px dashed #999; color: #999; font-size: 9.5px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            padding: 4px; margin-top: 12px; font-family: 'Hiragino Sans', sans-serif; }
+.ds-disclaimer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d5d9e0; color: #667;
+                 font-size: 10.5px; font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+
+/* 印刷: アプリの UI を隠し、書面 (.ds-paper) だけを A4 に出力する */
+@media print {
+  body.ds-printing .sidebar,
+  body.ds-printing .sidebar-backdrop,
+  body.ds-printing .topbar,
+  body.ds-printing .ds-side,
+  body.ds-printing .chatbot-widget {
+    display: none !important;
+  }
+  body.ds-printing .app { display: block; height: auto; overflow: visible; }
+  body.ds-printing .main { overflow: visible; }
+  body.ds-printing .content { overflow: visible; padding: 0; }
+  body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
+                               padding: 0; font-size: 11.5pt; }
+  body.ds-printing .ds-fill.ds-empty { color: #444; }
 }

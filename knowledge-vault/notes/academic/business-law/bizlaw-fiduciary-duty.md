@@ -29,6 +29,11 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Fiduciary Duty（忠実義務・注意義務・信認関係の哲学的・法学的分析）](https://plato.stanford.edu/entries/fiduciary-duty/) `リファレンス`
 - [e-Gov法令検索 — 会社法（平成17年法律第86号）第355条（忠実義務）・第330条（委任の準用）](https://laws.e-gov.go.jp/law/417AC0000000086) `公的`
 
+## 関連概念
+- [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
+- [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同分野の近傍
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,10 @@ Alan T. Peacock・Jack Wiseman（NBER / Princeton University Press, 1961, The Gr
 - [Peacock & Wiseman (1961) The Growth of Public Expenditure in the United Kingdom — NBER Studies in Fiscal Policy No.72, Princeton University Press](https://www.nber.org/books-and-chapters/growth-public-expenditure-united-kingdom) `学術`
 - [Peacock & Wiseman (2023 Routledge Revivals) The Growth of Public Expenditure in the United Kingdom — DOI: 10.4324/9781003503484](https://doi.org/10.4324/9781003503484) `学術`
 
+## 関連概念
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ Lord Eldon（Aldrich v. Cooper判決）／Samuel Williston／Grant Gilmore
 - [Cornell Law Institute — UCC Article 9: Secured Transactions](https://www.law.cornell.edu/ucc/9) `リファレンス`
 - [Wikipedia — Marshalling (law)](https://en.wikipedia.org/wiki/Marshalling_(law)) `リファレンス`
 
+## 関連概念
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
+- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
+- [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [公正取引委員会 — 独占禁止法の規制内容（不公正な取引方法・19条・排除措置/課徴金）](https://www.jftc.go.jp/dk/dkgaiyo/kisei.html) `公的`
 - [e-Gov法令検索 — 私的独占の禁止及び公正取引の確保に関する法律（昭和22年法律第54号）](https://laws.e-gov.go.jp/law/322AC0000000054/) `公的`
 
+## 関連概念
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 語彙が近い
+- [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

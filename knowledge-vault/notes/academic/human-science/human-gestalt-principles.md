@@ -29,6 +29,13 @@ aliases:
 - [Encyclopaedia Britannica — Gestalt psychology（ゲシュタルト心理学の起源・知覚法則・主要人物）](https://www.britannica.com/science/Gestalt-psychology) `リファレンス`
 - [Encyclopaedia Britannica — Max Wertheimer（ゲシュタルト知覚法則の定式化者の業績）](https://www.britannica.com/biography/Max-Wertheimer) `リファレンス`
 
+## 関連概念
+- [[human-phi-phenomenon-wertheimer|ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点]] — 同じ思想家
+- [[human-kanizsa-triangle|カニッツァの三角形——存在しない輪郭を見る主観的輪郭]] — 同じ思想家
+- [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

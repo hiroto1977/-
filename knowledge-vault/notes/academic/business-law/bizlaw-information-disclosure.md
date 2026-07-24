@@ -30,6 +30,10 @@ aliases:
 - [総務省「情報公開・個人情報保護審査会」（審査請求の審理機関）](https://www.soumu.go.jp/main_sosiki/singi/jyouhou/index.html) `公的`
 - [Wikipedia「行政機関の保有する情報の公開に関する法律」（平成11年法律第42号、第3条何人も開示請求）](https://ja.wikipedia.org/wiki/%E8%A1%8C%E6%94%BF%E6%A9%9F%E9%96%A2%E3%81%AE%E4%BF%9D%E6%9C%89%E3%81%99%E3%82%8B%E6%83%85%E5%A0%B1%E3%81%AE%E5%85%AC%E9%96%8B%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B) `リファレンス`
 
+## 関連概念
+- [[bizlaw-public-records-management|公文書管理法]] — 語彙が近い
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

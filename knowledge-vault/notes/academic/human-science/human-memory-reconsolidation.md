@@ -31,6 +31,10 @@ Karim Nader／Joseph E. LeDoux／Daniela Schiller／Cristina M. Alberini
 - [Nader & Hardt (2009) A single standard for memory: the case for reconsolidation, Nature Reviews Neuroscience 10:224-234](https://www.nature.com/articles/nrn2590) `学術`
 - [Alberini & LeDoux (2013) Memory reconsolidation, Current Biology 23(17):R746-R750](https://pubmed.ncbi.nlm.nih.gov/24028957/) `リファレンス`
 
+## 関連概念
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
+- [[human-memory-reconsolidation-nader-schiller|記憶再固定化——想起時の記憶可塑性とトラウマ治療への応用]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

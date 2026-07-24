@@ -30,6 +30,18 @@ aliases:
 - [厚生労働省 時間外労働の上限規制 わかりやすい解説](https://www.mhlw.go.jp/content/000463185.pdf) `公的`
 - [日本労働組合総連合会 労働相談Q&A](https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_13.html) `運営団体`
 
+## 関連概念
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 語彙が近い
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 語彙が近い
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 語彙が近い
+- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 分野横断
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
+- [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

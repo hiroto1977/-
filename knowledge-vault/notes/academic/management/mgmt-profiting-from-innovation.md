@@ -29,6 +29,18 @@ aliases:
 - [Teece (1986), Research Policy 15(6):285-305 — IDEAS/RePEc 書誌・要旨](https://ideas.repec.org/a/eee/respol/v15y1986i6p285-305.html) `学術`
 - [Wikipedia「Complementary assets」— PFI枠組み・三構成要素・統合/ライセンス](https://en.wikipedia.org/wiki/Complementary_assets) `リファレンス`
 
+## 関連概念
+- [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
+- [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
+- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
+- [[mgmt-strategic-human-capital-coff-kryscynski|戦略的人的資本——知識労働者の獲得・保持と持続的競争優位]] — 同分野の近傍
+- [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
+- [[mgmt-open-innovation|オープン・イノベーション]] — 同分野の近傍
+- [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

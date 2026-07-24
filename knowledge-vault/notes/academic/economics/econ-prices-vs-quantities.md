@@ -30,6 +30,17 @@ aliases:
 - [Martin Weitzman publication page, Harvard University](https://scholar.harvard.edu/weitzman/publications/prices-vs-quantities) `学術`
 - [NBER Working Paper "Prices vs. Quantities vs. Tradable Quantities"](https://www.nber.org/system/files/working_papers/w9283/w9283.pdf) `学術`
 
+## 関連概念
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 出典を共有
+- [[human-hyperbolic-discounting|双曲割引]] — 出典を共有
+- [[econ-menu-costs|メニューコスト]] — 出典を共有
+- [[econ-tax-incidence|租税の帰着]] — 出典を共有
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
+- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
+- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[econ-weitzman-prices-vs-quantities|ワイツマンの「価格か数量か」（Prices vs. Quantities／Weitzman 1974）——不確実性下では限界費用と限界便益の傾きが規制手段の優劣を決める]] — 同分野の近傍
+- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

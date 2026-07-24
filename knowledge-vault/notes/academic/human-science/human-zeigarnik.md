@@ -31,6 +31,10 @@ aliases:
 - [Wikipedia — Zeigarnik effect](https://en.wikipedia.org/wiki/Zeigarnik_effect) `リファレンス`
 - [Humanities and Social Sciences Communications (Nature, 2025) — meta-analysis of the Zeigarnik and Ovsiankina effects](https://www.nature.com/articles/s41599-025-05000-w) `学術`
 
+## 関連概念
+- [[human-hindsight-bias|後知恵バイアス]] — 同分野の近傍
+- [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

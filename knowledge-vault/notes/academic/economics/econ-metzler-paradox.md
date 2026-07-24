@@ -30,6 +30,12 @@ aliases:
 - [Metzler's Tariff Paradox and the Transfer Problem — Springer](https://link.springer.com/chapter/10.1007/978-1-349-10911-1_8) `学術`
 - [HandWiki: Metzler Paradox](https://handwiki.org/wiki/Finance:Metzler_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 語彙が近い
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
+- [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同分野の近傍
+- [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

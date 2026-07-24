@@ -30,6 +30,13 @@ aliases:
 - [Tanzi effect — Wikipedia（Olivera 1967 / Tanzi 1977・徴収ラグ機構・赤字動学）](https://en.wikipedia.org/wiki/Tanzi_effect) `リファレンス`
 - [IMF Working Paper 1990/048, "Fiscal Revenue and Inflationary Finance"（赤字＝インフレの悪循環）](https://www.elibrary.imf.org/view/journals/001/1990/048/article-A001-en.xml) `学術`
 
+## 関連概念
+- [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 出典を共有
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
+- [[eh-1980|1980年（昭和55年）]] — 出典を共有
+- [[econ-seigniorage|シニョリッジ（通貨発行益）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

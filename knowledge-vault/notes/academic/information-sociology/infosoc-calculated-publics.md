@@ -29,6 +29,18 @@ aliases:
 - [Tarleton Gillespie, "The Relevance of Algorithms," in Media Technologies (MIT Press, 2014) — 全文PDF](https://www.microsoft.com/en-us/research/wp-content/uploads/2014/01/Gillespie_2014_The-Relevance-of-Algorithms.pdf) `学術`
 - [MIT Comparative Media Studies/Writing — "Algorithms, and the Production of Calculated Publics"](https://cmsw.mit.edu/event/tarleton-gillespie-algorithms-and-the-production-of-calculated-publics/) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同じ思想家
+- [[infosoc-ghost-work|ゴーストワーク（AI背後の不可視労働）]] — 出典を共有
+- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同分野の近傍
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

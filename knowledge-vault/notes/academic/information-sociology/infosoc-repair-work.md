@@ -29,6 +29,18 @@ Stephen Graham & Nigel Thrift（Theory, Culture & Society 24(3), 2007 — 保守
 - [Graham & Thrift (2007) Out of Order: Understanding Repair and Maintenance — Theory, Culture & Society 24(3)](https://journals.sagepub.com/doi/10.1177/0263276407075954) `学術`
 - [Jackson (2014) Rethinking Repair — Media Technologies, MIT Press, pp.221-239](https://direct.mit.edu/books/edited-volume/3021/chapter/82557/Rethinking-Repair) `学術`
 
+## 関連概念
+- [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — 同じ思想家
+- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
+- [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
+- [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,14 @@ aliases:
 - [Tim O'Reilly, "What Is Web 2.0" (2005, O'Reilly Media) — 原典](https://www.oreilly.com/pub/a/web2/archive/what-is-web-20.html) `学術`
 - [Encyclopaedia Britannica — "Web 2.0"](https://www.britannica.com/topic/Web-20) `リファレンス`
 
+## 関連概念
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同じ思想家
+- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 同じ思想家
+- [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 出典を共有
+- [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 同分野の近傍
+- [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 同分野の近傍
+- [[infosoc-warranting-walther|ワランティング理論（ウォルサー）——オンラインの印象形成と「操作されにくい情報」]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

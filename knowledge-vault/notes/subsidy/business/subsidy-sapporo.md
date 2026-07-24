@@ -36,6 +36,18 @@ municipality
 - [札幌商工会議所 補助金等支援策](https://www.sapporo-cci.or.jp/web/purpose/04/details/post_128.html) `運営団体`
 - [さっぽろ新規創業促進補助金 概要](https://www.smart-hojokin.jp/subsidies/22951) `メディア`
 
+## 関連概念
+- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]] — 語彙が近い
+- [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 語彙が近い
+- [[subsidy-sakai|堺市の創業支援（特定創業支援等事業・S-Cube）]] — 語彙が近い
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 語彙が近い
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
+- [[subsidy-child-allowance|児童手当]] — 同じ思想家
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
+- [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家
+- [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 同じ思想家
+- [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

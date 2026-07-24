@@ -32,6 +32,18 @@ Pablo Martin de Holan ／ Nelson Phillips ／ Thomas B. Lawrence ／ Linda Argot
 - [Linda Argote — Organizational Learning: Creating, Retaining and Transferring Knowledge (Springer, 2013)](https://link.springer.com/book/10.1007/978-1-4614-5251-5) `学術`
 - [Organizational Forgetting — Handbook of Organizational Learning and Knowledge Management (Wiley, 2nd ed.)](https://onlinelibrary.wiley.com/doi/10.1002/9781119207245.ch20) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-work|制度的ワーク]] — 同じ思想家
+- [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
+- [[mgmt-open-innovation|オープン・イノベーション]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [Gumperz, J. J. (1982) Discourse Strategies, Cambridge University Press](https://www.cambridge.org/core/books/discourse-strategies/1A14A6D2E00D06EB5EC76B8D4DB09B0F) `学術`
 - [Wikipedia — Code-switching](https://en.wikipedia.org/wiki/Code-switching) `リファレンス`
 
+## 関連概念
+- [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同分野の近傍
+- [[infosoc-speech-act-theory|言語行為論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

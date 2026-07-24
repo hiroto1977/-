@@ -30,6 +30,13 @@ aliases:
 - [University of Nebraska-Lincoln Digital Commons — Organizational Commitment（大学リポジトリ）](https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1081&context=qicwdumbrella) `学術`
 - [Meyer, Allen & Smith — Affective, Continuance, and Normative Commitment: Construct Validity（PubMed・査読誌）](https://pubmed.ncbi.nlm.nih.gov/8980084/) `学術`
 
+## 関連概念
+- [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 語彙が近い
+- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 出典を共有
+- [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
+- [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
+- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

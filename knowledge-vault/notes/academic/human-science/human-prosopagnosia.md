@@ -29,6 +29,10 @@ Joachim Bodamer（Archiv für Psychiatrie 179, 1947, 用語の造語と初期症
 - [Bodamer (1947) Die Prosop-Agnosie — Archiv für Psychiatrie und Nervenkrankheiten 179(1-2), S.6-53](https://doi.org/10.1007/BF00352849) `学術`
 - [Kanwisher, McDermott & Chun (1997) The Fusiform Face Area — Journal of Neuroscience 17(11), pp.4302-4311](https://doi.org/10.1523/JNEUROSCI.17-11-04302.1997) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

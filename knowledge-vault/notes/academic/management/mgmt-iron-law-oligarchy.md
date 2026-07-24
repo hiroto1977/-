@@ -29,6 +29,10 @@ aliases:
 - [Encyclopaedia Britannica — Iron law of oligarchy（ミヒェルスの寡頭制の鉄則の定義と背景）](https://www.britannica.com/topic/iron-law-of-oligarchy) `リファレンス`
 - [Drochon (2020) "Robert Michels, the iron law of oligarchy and dynamic democracy," Constellations (Wiley)](https://onlinelibrary.wiley.com/doi/full/10.1111/1467-8675.12494) `学術`
 
+## 関連概念
+- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — 同分野の近傍
+- [[mgmt-cynefin|クネビン・フレームワーク]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,14 @@ aliases:
 - [Object Permanence — Simply Psychology](https://www.simplypsychology.org/object-permanence.html) `リファレンス`
 - [Wikipedia: A-not-B Error](https://en.wikipedia.org/wiki/A-not-B_error) `リファレンス`
 
+## 関連概念
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同じ思想家
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 同じ思想家
+- [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 同じ思想家
+- [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-defense-mechanisms|防衛機制]] — 同分野の近傍
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,18 @@ Samuel Williston ／ Arthur Linton Corbin ／ Sir Frederick Pollock ／ Lord Edw
 - [UNIDROIT Principles of International Commercial Contracts 2016](https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/) `学術`
 - [United Nations Convention on Contracts for the International Sale of Goods (CISG)](https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg) `学術`
 
+## 関連概念
+- [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 語彙が近い
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 出典を共有
+- [[bizlaw-equitable-estoppel|衡平法上の禁反言]] — 出典を共有
+- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

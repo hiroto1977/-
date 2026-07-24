@@ -30,6 +30,16 @@ aliases:
 - [京都労働局 令和6年4月1日から新たな化学物質規制が全面施行](https://jsite.mhlw.go.jp/kyoto-roudoukyoku/content/contents/chemicalmaterial2024.pdf) `公的`
 - [KEIYAKU-WATCH 化学物質管理者 選任義務の解説](https://keiyaku-watch.jp/media/hourei/kagakubusshitsukanrisya-2024/) `メディア`
 
+## 関連概念
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
+- [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
+- [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

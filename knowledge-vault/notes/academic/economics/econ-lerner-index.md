@@ -30,6 +30,17 @@ aliases:
 - [コトバンク — 独占度（ラーナー指数）](https://kotobank.jp/word/%E7%8B%AC%E5%8D%A0%E5%BA%A6-104803) `リファレンス`
 - [AEA — The Lerner Index of Monopoly Power: Origins and Uses](https://www.aeaweb.org/conference/2011/retrieve.php?pdfid=222) `学術`
 
+## 関連概念
+- [[econ-lerner-index-market-power|ラーナー指数（市場支配力の測定）]] — 語彙が近い
+- [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — 同じ思想家
+- [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同じ思想家
+- [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+- [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 同じ思想家
+- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

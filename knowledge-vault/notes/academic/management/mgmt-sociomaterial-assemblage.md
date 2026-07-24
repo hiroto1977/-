@@ -31,6 +31,13 @@ Wanda J. Orlikowski ／ Susan V. Scott ／ Gilles Deleuze
 - [Wikipedia — Sociomateriality](https://en.wikipedia.org/wiki/Sociomateriality) `リファレンス`
 - [Müller (2015) — Assemblage thinking and actor-network theory, Transactions IBG](https://rgs-ibg.onlinelibrary.wiley.com/doi/10.1111/tran.12117) `学術`
 
+## 関連概念
+- [[infosoc-data-doubles|データ・ダブル]] — 語彙が近い
+- [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]] — 同じ思想家
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同分野の近傍
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

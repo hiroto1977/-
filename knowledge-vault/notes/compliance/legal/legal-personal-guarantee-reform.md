@@ -30,6 +30,10 @@ aliases:
 - [法務省 民法の一部を改正する法律（債権法改正）について](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 - [日本公証人連合会 保証意思宣明公正証書](https://www.koshonin.gr.jp/notary/ow05_2) `運営団体`
 
+## 関連概念
+- [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]] — 語彙が近い
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ aliases:
 - [Cotter et al. (2001) "The Glass Ceiling Effect" Social Forces 80(2)](https://academic.oup.com/sf/article-abstract/80/2/655/2234418) `学術`
 - [Federal Glass Ceiling Commission (1995) "Good for Business" Report — Cornell University eCommons](https://ecommons.cornell.edu/items/db3feed5-34f1-49ab-8f23-f779befb1164) `学術`
 
+## 関連概念
+- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 出典を共有
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 同分野の近傍
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

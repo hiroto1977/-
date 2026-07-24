@@ -30,6 +30,13 @@ aliases:
 - [Wikipedia — Pratfall effect（概要・コーヒーこぼし実験・調整要因）](https://en.wikipedia.org/wiki/Pratfall_effect) `リファレンス`
 - [Brescia University — Interesting Psychological Phenomena: The Pratfall Effect](https://www.brescia.edu/2017/06/pratfall-effect/) `学術`
 
+## 関連概念
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同じ思想家
+- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-effort-justification|努力の正当化]] — 同じ思想家
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同分野の近傍
+- [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

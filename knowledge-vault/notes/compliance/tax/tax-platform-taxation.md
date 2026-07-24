@@ -30,6 +30,10 @@ aliases:
 - [国税庁 消費税のプラットフォーム課税について](https://www.nta.go.jp/publication/pamph/shohi/kazei/index.htm) `公的`
 - [プラットフォーム課税 解説](https://biz.moneyforward.com/accounting/basic/82447/) `メディア`
 
+## 関連概念
+- [[tax-platform-taxation-digital|国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）]] — 語彙が近い
+- [[tax-group-taxation|法人税のグループ通算制度]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

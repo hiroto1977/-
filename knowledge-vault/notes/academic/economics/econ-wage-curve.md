@@ -31,6 +31,10 @@ David G. Blanchflower ／ Andrew J. Oswald ／ Alex Bryson
 - [Wikipedia — Wage curve](https://en.wikipedia.org/wiki/Wage_curve) `リファレンス`
 - [Blanchflower, Bryson & Spurling (2022) — The Wage Curve After the Great Recession, NBER WP](https://www.nber.org/papers/w30322) `学術`
 
+## 関連概念
+- [[econ-backward-bending-supply-curve|後屈労働供給曲線]] — 同分野の近傍
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

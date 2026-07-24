@@ -30,6 +30,18 @@ aliases:
 - [農林水産省「地理的表示（GI）保護制度」](https://www.maff.go.jp/j/shokusan/gi_act/index.html) `公的`
 - [Wikipedia「特定農林水産物等の名称の保護に関する法律」](https://ja.wikipedia.org/wiki/%E7%89%B9%E5%AE%9A%E8%BE%B2%E6%9E%97%E6%B0%B4%E7%94%A3%E7%89%A9%E7%AD%89%E3%81%AE%E5%90%8D%E7%A7%B0%E3%81%AE%E4%BF%9D%E8%AD%B7%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B) `リファレンス`
 
+## 関連概念
+- [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 出典を共有
+- [[bizlaw-plant-variety|種苗法]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
+- [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
+- [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
+- [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
+- [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

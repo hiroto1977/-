@@ -29,6 +29,12 @@ EU規則（Regulation (EU) 2023/956, 2023年発効）／欧州委員会提案（
 - [European Commission — Carbon Border Adjustment Mechanism（制度概要・対象品目・スケジュール・根拠規則）](https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism_en) `公的`
 - [OECD — Carbon Border Adjustment Mechanisms（各国動向・WTO整合性・炭素リーケージ防止効果の政策分析）](https://www.oecd.org/en/topics/carbon-border-adjustment-mechanisms.html) `公的`
 
+## 関連概念
+- [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — 分野横断
+- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 同分野の近傍
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 同分野の近傍
+- [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

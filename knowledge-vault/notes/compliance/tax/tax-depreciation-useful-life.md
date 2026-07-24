@@ -30,6 +30,11 @@ aliases:
 - [e-Gov法令検索 減価償却資産の耐用年数等に関する省令](https://laws.e-gov.go.jp/law/340M50000040015) `公的`
 - [国税庁 No.5404 中古資産の耐用年数](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5404_qa.htm) `公的`
 
+## 関連概念
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 語彙が近い
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 同分野の近傍
+- [[tax-registration-license-tax|登録免許税の概要]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

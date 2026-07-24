@@ -30,6 +30,10 @@ A.M. Liberman・K.S. Harris・H.S. Hoffman・B.C. Griffith（1957 音声カテ�
 - [PubMed — Goldstone & Hendrickson (2010) Categorical perception, WIREs Cognitive Science](https://pubmed.ncbi.nlm.nih.gov/26272840/) `学術`
 - [Wikipedia — Categorical perception（カテゴリー知覚の概説）](https://en.wikipedia.org/wiki/Categorical_perception) `リファレンス`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

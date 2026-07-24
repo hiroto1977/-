@@ -30,6 +30,18 @@ aliases:
 - [Stanford Graduate School of Business — First-Mover Advantages (faculty publication)](https://www.gsb.stanford.edu/faculty-research/publications/first-mover-advantages) `学術`
 - [Lieberman & Montgomery (1998) "First-Mover (Dis)advantages," SMJ 19:1111–1125 (UCLA Anderson)](https://www.anderson.ucla.edu/faculty/marvin.lieberman/publications/FMA2-SMH1998.pdf) `学術`
 
+## 関連概念
+- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
+- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
+- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
+- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
+- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

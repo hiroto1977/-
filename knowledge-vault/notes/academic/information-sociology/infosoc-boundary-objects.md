@@ -29,6 +29,12 @@ Susan Leigh Star & James R. Griesemer（Social Studies of Science 19(3), 1989 �
 - [Star & Griesemer (1989) Institutional Ecology, Translations and Boundary Objects — Social Studies of Science 19(3), pp.387-420](https://doi.org/10.1177/030631289019003001) `学術`
 - [JSTOR: Star & Griesemer (1989) — stable URL](http://www.jstor.org/stable/285080) `学術`
 
+## 関連概念
+- [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同じ思想家
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

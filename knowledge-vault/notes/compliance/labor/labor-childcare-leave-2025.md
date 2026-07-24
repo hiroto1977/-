@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 育児・介護休業法 2025年4月改正](https://sendai-elcc.mhlw.go.jp/column/column1783/) `公的`
 - [2025年改正ポイント 解説](https://www.businesslawyers.jp/articles/1442) `メディア`
 
+## 関連概念
+- [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]] — 語彙が近い
+- [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

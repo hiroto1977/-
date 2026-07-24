@@ -29,6 +29,10 @@ aliases:
 - [Lorenzen (2017) "Diderot Effect", The Blackwell Encyclopedia of Sociology (Wiley)](https://doi.org/10.1002/9781405165518.wbeosd046.pub2) `学術`
 - ["The Diderot effect: a data-driven validation" (2024), Journal of Marketing Analytics](https://doi.org/10.1057/s41270-024-00371-6) `学術`
 
+## 関連概念
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [コトバンク — ゴミ箱モデル（日本語百科事典的解説）](https://kotobank.jp/word/%E3%81%94%E3%81%BF%E7%AE%B1%E3%82%82%E3%81%A7%E3%82%8B-160472) `リファレンス`
 - [Springer, Global Encyclopedia of Public Administration — Garbage-Can Model of Organizations](https://link.springer.com/referenceworkentry/10.1007/978-3-030-66252-3_62) `リファレンス`
 
+## 関連概念
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同分野の近傍
+- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

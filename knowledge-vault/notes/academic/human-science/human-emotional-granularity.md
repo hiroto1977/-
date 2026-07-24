@@ -30,6 +30,12 @@ Lisa Feldman Barrett／Todd B. Kashdan／Michele M. Tugade／Barbara L. Fredrick
 - [Tugade, M.M., Fredrickson, B.L. & Barrett, L.F. (2004) Psychological resilience and positive emotional granularity](https://doi.org/10.1037/0022-3514.86.2.320) `学術`
 - [Kashdan, T.B., Barrett, L.F. & McKnight, P.E. (2015) Unpacking emotion differentiation, Current Directions in Psychological Science](https://doi.org/10.1177/0963721415580294) `学術`
 
+## 関連概念
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 語彙が近い
+- [[human-interoception-theory|内受容感覚理論]] — 同じ思想家
+- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同じ思想家
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

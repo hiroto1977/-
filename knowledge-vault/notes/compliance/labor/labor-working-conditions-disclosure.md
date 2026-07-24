@@ -30,6 +30,12 @@ aliases:
 - [厚生労働省 労働条件明示ルール変更](https://muki.mhlw.go.jp/rule.html) `公的`
 - [労働条件明示ルール変更 社労士解説](https://proactive.jp/resources/columns/obligation-to-state-working-conditions/) `メディア`
 
+## 関連概念
+- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 語彙が近い
+- [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 出典を共有
+- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
+- [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

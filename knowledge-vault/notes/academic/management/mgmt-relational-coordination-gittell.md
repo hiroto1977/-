@@ -1,0 +1,50 @@
+---
+collection: academic
+id: mgmt-relational-coordination-gittell
+category: "management"
+category_ja: "経営学"
+title: "リレーショナル・コーディネーション（ギッテル）"
+as_of: "2026-06-26"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/management
+  - knowledge/verified
+aliases:
+  - "リレーショナル・コーディネーション（ギッテル）"
+---
+
+# リレーショナル・コーディネーション（ギッテル）
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+ギッテル（Jody Hoffer Gittell）は2002年に，航空会社（サウスウェスト航空等）と病院を対象とした実証研究から，タスク相互依存性が高い仕事では，共有目標・共有知識・相互尊重（三種の関係品質）と高頻度・適時・問題解決志向コミュニケーション（三種の関係コミュニケーション）の組み合わせ「リレーショナル・コーディネーション（relational coordination, RC）」が品質・効率・顧客満足の全指標を同時に向上させることを発見した。従来の「バトン渡し型」協調から「同時解決型」協調への転換を組織設計の中心に置くRC理論は，医療・航空・社会サービスなど高可変・高複雑環境での組織開発・変革マネジメントに広く応用されており，横断的職種間の境界を越えた協働の基盤として評価されている。
+
+## 提唱者・初出
+ジョディ・ホファー・ギッテル ／ エイミー・エドモンドソン ／ ロバート・ギバス ／ カルロス・モンタルバン
+
+## 出典
+- [Gittell, J.H. (2002) Coordinating Mechanisms in Care Provider Groups: Relational Coordination as a Mediator — Management Science 48(11), 1408–1426（リレーショナル・コーディネーションの原論文）](https://doi.org/10.1287/mnsc.48.11.1408.268) `学術`
+- [Wikipedia: Relational coordination — リレーショナル・コーディネーションの概説](https://en.wikipedia.org/wiki/Relational_coordination) `リファレンス`
+
+## 関連概念
+- [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
+- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同じ思想家
+- [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]] — 同じ思想家
+- [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
+- [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同じ思想家
+- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同じ思想家
+- [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

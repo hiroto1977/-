@@ -29,6 +29,10 @@ FSB（金融安定理事会）設置／マイケル・ブルームバーグ（�
 - [TCFD（Task Force on Climate-related Financial Disclosures）公式サイト — Recommendations（2017最終提言）](https://www.fsb-tcfd.org/recommendations/) `公的`
 - [金融庁 — サステナブルファイナンス有識者会議（気候変動開示・TCFD対応の国内政策）](https://www.fsa.go.jp/singi/singi_kinyu/tosin/20220706.html) `公的`
 
+## 関連概念
+- [[bizlaw-food-labeling|食品表示法]] — 同分野の近傍
+- [[bizlaw-product-liability-strict-tort|製造物責任と無過失責任——PL法・EU製造物責任指令とグローバルサプライチェーンの法的リスク]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

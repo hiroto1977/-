@@ -30,6 +30,10 @@ aliases:
 - [Wikipedia: Fei–Ranis model of economic growth（ルイス拡張・3局面・農業余剰）](https://en.wikipedia.org/wiki/Fei%E2%80%93Ranis_model_of_economic_growth) `リファレンス`
 - [ウィキペディア日本語版: フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）](https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A7%E3%82%A4%EF%BC%9D%E3%83%A9%E3%83%8B%E3%82%B9%E3%83%BB%E3%83%A2%E3%83%87%E3%83%AB) `リファレンス`
 
+## 関連概念
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同じ思想家
+- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

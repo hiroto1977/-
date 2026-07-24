@@ -30,6 +30,10 @@ aliases:
 - [法務省 民法（相続法）の改正について](https://www.moj.go.jp/MINJI/minji07_00222.html) `公的`
 - [国税庁 No.4666 配偶者居住権等の評価](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hyoka/4666.htm) `公的`
 
+## 関連概念
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

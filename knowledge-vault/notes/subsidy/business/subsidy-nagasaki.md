@@ -36,6 +36,12 @@ prefecture
 - [長崎県創業支援事業補助金 事務局 事業概要](https://sougyoushien.com/detail/) `運営団体`
 - [補助金クラウド 長崎県 地域産業雇用創出チャレンジ支援事業](https://biz.stayway.jp/hojyo_detail/74004/) `メディア`
 
+## 関連概念
+- [[subsidy-hiroshima|中小・ベンチャー企業チャレンジ応援事業助成金（広島県）]] — 出典を共有
+- [[subsidy-saitama-city|さいたま市起業家支援補助金（SCAP連動）]] — 出典を共有
+- [[subsidy-okayama|岡山市創業者支援事業補助金]] — 同分野の近傍
+- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

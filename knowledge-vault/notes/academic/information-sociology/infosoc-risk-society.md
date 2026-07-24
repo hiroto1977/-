@@ -31,6 +31,10 @@ U.ベック『リスク社会』1986(英訳1992)／近代化の副産物とし�
 - [Risk Society — Encyclopedia.com](https://www.encyclopedia.com/science/encyclopedias-almanacs-transcripts-and-maps/risk-society) `リファレンス`
 - [Risk society — Wikipedia（突合・補助）](https://en.wikipedia.org/wiki/Risk_society) `リファレンス`
 
+## 関連概念
+- [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 同分野の近傍
+- [[infosoc-technopoly|テクノポリ（技術独占）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

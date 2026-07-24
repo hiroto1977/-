@@ -30,6 +30,17 @@ aliases:
 - [クレアール司法書士講座 民法第415条【債務不履行による損害賠償】](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0415-00/) `メディア`
 - [金子総合法律事務所 民法第416条（損害賠償の範囲）](https://tek-law.jp/civil-code/claims/general-provisions/effects-of-claims/liability-for-non-performance/article-416/) `メディア`
 
+## 関連概念
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 語彙が近い
+- [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — 語彙が近い
+- [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 出典を共有
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 出典を共有
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
+- [[bizlaw-earnest-money|手付（民法557条）]] — 出典を共有
+- [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 出典を共有
+- [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,10 @@ aliases:
 - [国税庁 中間（予定）税額の算出](https://www.nta.go.jp/law/shitsugi/hojin/24/04.htm) `公的`
 - [マネーフォワード 法人税の中間納付](https://biz.moneyforward.com/accounting/basic/17300/) `メディア`
 
+## 関連概念
+- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

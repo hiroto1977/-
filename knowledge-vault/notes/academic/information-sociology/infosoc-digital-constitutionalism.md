@@ -31,6 +31,11 @@ aliases:
 - [Wikipedia: Digital constitutionalism（概念・主要論者・実践例）](https://en.wikipedia.org/wiki/Digital_constitutionalism) `リファレンス`
 - [“The Marco Civil da Internet and Digital Constitutionalism,” Oxford Handbook of Online Intermediary Liability (Oxford Academic)](https://academic.oup.com/edited-volume/34234/chapter/290273128) `学術`
 
+## 関連概念
+- [[bizlaw-eu-digital-services-act-dsa|EUデジタルサービス法（DSA）——オンライン仲介サービスの責任と透明性]] — 同じ思想家
+- [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 同分野の近傍
+- [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

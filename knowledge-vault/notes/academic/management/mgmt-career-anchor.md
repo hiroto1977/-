@@ -30,6 +30,18 @@ aliases:
 - [5 enduring management ideas from MIT Sloan’s Edgar Schein (MIT Sloan School of Management)](https://mitsloan.mit.edu/ideas-made-to-matter/5-enduring-management-ideas-mit-sloans-edgar-schein) `学術`
 - [Edgar Schein — Wikipedia](https://en.wikipedia.org/wiki/Edgar_Schein) `リファレンス`
 
+## 関連概念
+- [[infosoc-deepfake|ディープフェイク]] — 出典を共有
+- [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 出典を共有
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 出典を共有
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 出典を共有
+- [[mgmt-organizational-entropy|組織エントロピー]] — 出典を共有
+- [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
+- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
+- [[infosoc-digital-dualism|デジタル・デュアリズム]] — 出典を共有
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

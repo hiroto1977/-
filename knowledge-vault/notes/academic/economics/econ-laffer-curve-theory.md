@@ -31,6 +31,11 @@ Arthur B. Laffer ／ Mathias Trabandt ／ Harald Uhlig ／ Peter A. Diamond ／ 
 - [Trabandt & Uhlig (2009) "How Far Are We From The Slippery Slope? The Laffer Curve Revisited" — NBER Working Paper](https://www.nber.org/papers/w15343) `学術`
 - [Encyclopaedia Britannica — Arthur Laffer: biography and the Laffer Curve](https://www.britannica.com/money/Arthur-Laffer) `リファレンス`
 
+## 関連概念
+- [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]] — 同じ思想家
+- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

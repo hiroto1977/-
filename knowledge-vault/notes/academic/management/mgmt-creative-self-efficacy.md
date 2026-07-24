@@ -31,6 +31,13 @@ Pamela Tierney ／ Steven M. Farmer ／ Albert Bandura
 - [Creative Self-Efficacy — Encyclopedia of Creativity, Invention, Innovation and Entrepreneurship (Springer)](https://link.springer.com/10.1007/978-3-030-90913-0_244) `リファレンス`
 - [Creative Self-Efficacy — ScienceDirect Topics overview](https://www.sciencedirect.com/topics/psychology/creative-self-efficacy) `リファレンス`
 
+## 関連概念
+- [[human-social-learning-theory|社会的学習理論]] — 同じ思想家
+- [[human-self-efficacy-theory|自己効力感理論]] — 同じ思想家
+- [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — 同じ思想家
+- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 同分野の近傍
+- [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -36,6 +36,13 @@ national
 - [大阪労働局 就業促進手当（再就職手当）](https://jsite.mhlw.go.jp/osaka-roudoukyoku/hourei_seido_tetsuzuki/koyou_hoken/hourei_seido/situgyo/minasama/sokusin.html) `公的`
 - [再就職手当 受給条件・手続き 解説](https://doda.jp/guide/naiteitaisyoku/006.html) `メディア`
 
+## 関連概念
+- [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 語彙が近い
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 語彙が近い
+- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 語彙が近い
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 同分野の近傍
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

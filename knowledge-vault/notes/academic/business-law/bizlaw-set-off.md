@@ -30,6 +30,18 @@ aliases:
 - [国税庁 税務大学校論叢「差し押さえた債権を受働債権とする相殺について」（民法511条）](https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/107/04/index.htm) `公的`
 - [筑波大学ロースクール 岡本裕樹「日本相殺法概観（3）」研究ノート（相殺適状・法定相殺）](https://www.lawschool.tsukuba.ac.jp/wp/wp-content/uploads/2024/03/da8191bd4a70bd14d0d207a622cc7e91.pdf) `学術`
 
+## 関連概念
+- [[legal-set-off|相殺（民法505条等）]] — 分野横断
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,18 @@ Shoshana Zuboff ／ Erik Brattberg ／ Milton Mueller ／ Nick Couldry ／ Mikke
 - [Couldry & Mejias — The Costs of Connection: Data Colonialism (Information, Communication & Society, 2022)](https://www.tandfonline.com/doi/full/10.1080/1369118X.2021.1993042) `学術`
 - [Encyclopaedia Britannica — Digital Sovereignty (overview)](https://www.britannica.com/topic/digital-sovereignty) `リファレンス`
 
+## 関連概念
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
+- [[infosoc-datafication-theory|データフィケーション理論]] — 同じ思想家
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
+- [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 出典を共有
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 出典を共有
+- [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 出典を共有
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 出典を共有
+- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 出典を共有
+- [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,14 @@ aliases:
 - [内閣府 — 経済安全保障推進法（所管府省の公式制度紹介ページ）](https://www.cao.go.jp/keizai_anzen_hosho/suishinhou/suishinhou.html) `公的`
 - [国立国会図書館 日本法令索引 — 経済施策を一体的に講ずることによる安全保障の確保の推進に関する法律（令和4年法律第43号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000157096&current=1) `公的`
 
+## 関連概念
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 分野横断
+- [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 出典を共有
+- [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 出典を共有
+- [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同分野の近傍
+- [[bizlaw-change-of-circumstances|事情変更の原則]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

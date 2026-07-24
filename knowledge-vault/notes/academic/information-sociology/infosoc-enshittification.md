@@ -29,6 +29,13 @@ Cory Doctorow（Pluralistic / Wired, 2022-2023, 造語者）／American Dialect 
 - [Enshittification — Wikipedia（ドクトロウ原典・ADS選出・プラットフォーム劣化三段階モデルの包括的解説）](https://en.wikipedia.org/wiki/Enshittification) `リファレンス`
 - [Doctorow (2023) The "Enshittification" of TikTok — Wired](https://www.wired.com/story/tiktok-platforms-cory-doctorow/) `メディア`
 
+## 関連概念
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 出典を共有
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 出典を共有
+- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同分野の近傍
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,16 @@ Douglas G. Baird／Thomas H. Jackson／David Gray Carlson／Marie T. Reilly／Em
 - [Uniform Voidable Transactions Act (UVTA) — Uniform Law Commission](https://www.uniformlaws.org/committees/community-home?CommunityKey=2e70ab8d-afe2-4428-9f14-3d9e6cc6e1a2) `リファレンス`
 - [11 U.S.C. § 548 — Fraudulent Transfers and Obligations, Bankruptcy Code](https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title11-section548&num=0&edition=prelim) `公的`
 
+## 関連概念
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 語彙が近い
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 語彙が近い
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同じ思想家
+- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同じ思想家
+- [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
+- [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
+- [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

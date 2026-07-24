@@ -31,6 +31,18 @@ Vaughan Williams ／ Guenter H. Treitel ／ Patrick S. Atiyah
 - [Burrows, A Casebook on Contract (5th ed., Hart 2021) — Frustration and Force Majeure](https://www.bloomsbury.com/uk/casebook-on-contract-9781509945498/) `学術`
 - [Restatement (Second) of Contracts, Section 265 — Discharge by Supervening Frustration (ALI 1981)](https://www.ali.org/publications/show/contracts/) `リファレンス`
 
+## 関連概念
+- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 語彙が近い
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 出典を共有
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
+- [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

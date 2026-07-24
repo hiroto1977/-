@@ -29,6 +29,13 @@ Barry M. Staw, Lance E. Sandelands & Jane E. Dutton（Administrative Science Qua
 - [Staw, Sandelands & Dutton (1981) Threat-Rigidity Effects in Organizational Behavior — Administrative Science Quarterly 26(4), pp.501-524](https://www.jstor.org/stable/2392337) `学術`
 - [ResearchGate full-text repository — Threat-Rigidity Effects in Organizational Behavior](https://www.researchgate.net/publication/242540547_Threat_Rigidity_Effects_in_Organizational_Behavior_A_Multilevel_Analysis) `学術`
 
+## 関連概念
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 語彙が近い
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
+- [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
+- [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
+- [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

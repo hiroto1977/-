@@ -31,6 +31,13 @@ aliases:
 - [BUSINESS LAWYERS「株主代表訴訟とは？ 提訴請求の要件、流れ、会社側の対応など」](https://www.businesslawyers.jp/practices/839) `リファレンス`
 - [Wikipedia「株主代表訴訟」（手数料・改正経緯の概観）](https://ja.wikipedia.org/wiki/株主代表訴訟) `リファレンス`
 
+## 関連概念
+- [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — 語彙が近い
+- [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
+- [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
+- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同分野の近傍
+- [[bizlaw-trust-act|信託法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

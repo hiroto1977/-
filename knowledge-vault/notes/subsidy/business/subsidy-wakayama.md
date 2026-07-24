@@ -36,6 +36,18 @@ prefecture
 - [J-Net21 和歌山県 中小企業成長促進補助金](https://j-net21.smrj.go.jp/snavi2/articles/181089) `公的`
 - [紀州有田商工会議所 制度案内](https://kishuarida-cci.jp/5816/) `運営団体`
 
+## 関連概念
+- [[subsidy-chiba|千葉県中小企業成長促進補助金]] — 語彙が近い
+- [[subsidy-iwate|中小企業者等賃上げ環境整備支援事業費補助金（岩手県）]] — 語彙が近い
+- [[subsidy-saga|佐賀県中小企業生産性向上支援補助金（佐賀県）]] — 語彙が近い
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 出典を共有
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 出典を共有
+- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,14 @@ aliases:
 - [Dual labour market theory — The Open University OpenLearn（大学教材）](https://www.open.edu/openlearn/society-politics-law/economics/economics-explains-discrimination-the-labour-market/content-section-6.2) `学術`
 - [A Theory of Dual Labor Markets — NBER Working Paper](https://www.nber.org/system/files/working_papers/w1666/w1666.pdf) `学術`
 
+## 関連概念
+- [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 語彙が近い
+- [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 出典を共有
+- [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]] — 出典を共有
+- [[mgmt-technology-s-curve|技術のSカーブ]] — 出典を共有
+- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同分野の近傍
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 雇用保険業務取扱要領](https://www.mhlw.go.jp/content/11600000/000637955.pdf) `公的`
 - [雇用保険の加入条件 解説](https://hataluck.jp/column/store-management/conditions/) `メディア`
 
+## 関連概念
+- [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
+- [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 同分野の近傍
+- [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

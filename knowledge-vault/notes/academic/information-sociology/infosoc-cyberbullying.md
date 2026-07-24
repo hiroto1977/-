@@ -29,6 +29,13 @@ aliases:
 - [StopBullying.gov（米国保健福祉省）— "What is Cyberbullying"（政府の定義・特徴・法律の概要）](https://www.stopbullying.gov/cyberbullying/what-is-it) `公的`
 - [Pew Research Center — "Teens and Cyberbullying 2022"（全国調査・実態データ・定義整理）](https://www.pewresearch.org/internet/2022/12/15/teens-and-cyberbullying-2022/) `リファレンス`
 
+## 関連概念
+- [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — 出典を共有
+- [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 出典を共有
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
+- [[infosoc-dataveillance-theory|データ監視理論]] — 同分野の近傍
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,11 @@ R・ダンカン・ルース（R. Duncan Luce）／ハワード・ライファ�
 - [Stanford Encyclopedia of Philosophy — Game Theory and Ethics (Notes)](https://plato.stanford.edu/entries/game-ethics/notes.html) `学術`
 - [Serrano et al., “Game Theory”（academic survey, IILJ/NYU）— PD と Battle of the Sexes](https://iilj.org/wp-content/uploads/2016/08/Serrano-etal-Game-Theory-2010.pdf) `学術`
 
+## 関連概念
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 語彙が近い
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同分野の近傍
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

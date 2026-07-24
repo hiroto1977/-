@@ -1,0 +1,24 @@
+---
+title: "ジョン・マーカス・フレミング"
+type: thinker
+person_key: "フレミング|ジ"
+concept_count: 2
+tags:
+  - person
+  - index
+---
+
+# ジョン・マーカス・フレミング
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（2件）
+- [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — 共同不法行為者間の求償（contributionamongtortfeasors）は、複数の不法行為者が共同して損害を…
+- [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — マーティン・フェルドシュタインは1980年代のレーガン政権期における米国の財政赤字と経常収支赤字の同時拡大を分析し，両…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

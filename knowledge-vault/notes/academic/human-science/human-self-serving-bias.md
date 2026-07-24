@@ -31,6 +31,18 @@ aliases:
 - [Miller & Ross (1975), Psychological Bulletin — "Self-Serving Biases in the Attribution of Causality"（MIT 配信PDF）](https://web.mit.edu/curhan/www/docs/Articles/biases/82_Psychological_Bulletin_213_(Miller).pdf) `学術`
 - [Lumen Learning / SUNY — Principles of Social Psychology, "Biases in Attribution"（集団奉仕バイアス）](https://courses.lumenlearning.com/suny-social-psychology/chapter/biases-in-attribution/) `学術`
 
+## 関連概念
+- [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
+- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
+- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
+- [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

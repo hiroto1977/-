@@ -33,6 +33,9 @@ export interface YearlyEconomy {
   sources: EconHistorySource[];
 }
 
+/** 年表全体の検証基準月（YYYY-MM）。年表は一括で確証しているため項目共通。再検証したら更新する。 */
+export const ECONOMIC_HISTORY_AS_OF = '2026-06';
+
 // Stryker disable all : 静的な確証済みデータ（ロジックなし）
 export const ECONOMIC_HISTORY: YearlyEconomy[] = [
   {

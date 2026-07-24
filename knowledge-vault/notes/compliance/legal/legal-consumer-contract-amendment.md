@@ -30,6 +30,17 @@ aliases:
 - [国民生活センター 令和4年改正消費者契約法 解説](https://www.kokusen.go.jp/wko/pdf/wko-202304_03.pdf) `メディア`
 - [令和4年消費者契約法改正の実務対応 解説](https://www.businesslawyers.jp/articles/1189) `メディア`
 
+## 関連概念
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 出典を共有
+- [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 出典を共有
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 出典を共有
+- [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 出典を共有
+- [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 出典を共有
+- [[legal-consumer-contract-act|消費者契約法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

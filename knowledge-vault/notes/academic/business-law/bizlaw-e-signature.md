@@ -30,6 +30,10 @@ aliases:
 - [法務省「電子署名法の概要と認定制度について」](https://www.moj.go.jp/MINJI/minji32.html) `公的`
 - [総務省「電子署名及び認証業務に関する法律の施行について」](https://www.soumu.go.jp/main_sosiki/joho_tsusin/top/denshi_syomei/index.html) `公的`
 
+## 関連概念
+- [[bizlaw-two-stage-presumption|二段の推定（文書の真正成立）]] — 同分野の近傍
+- [[bizlaw-employment-security|職業安定法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

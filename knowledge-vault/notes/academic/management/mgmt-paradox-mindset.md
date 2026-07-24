@@ -30,6 +30,11 @@ aliases:
 - [Miron-Spektor et al. (2018) — Semantic Scholar](https://www.semanticscholar.org/paper/Microfoundations-of-Organizational-Paradox:-The-Is-Miron-Spektor-Ingram/d77ebbb5f7ebd353661c36328a5662a6203e2cba) `学術`
 - [Miron-Spektor et al. (2018) — City Research Online (Open Access)](https://openaccess.city.ac.uk/id/eprint/17049/) `学術`
 
+## 関連概念
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
+- [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同分野の近傍
+- [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

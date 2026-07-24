@@ -36,6 +36,11 @@ prefecture
 - [内閣府 移住支援金の概要](https://www.chisou.go.jp/sousei/about/ijuu_shienkin/pdf/r5_ijuu_gaiyou.pdf) `公的`
 - [JOIN（移住・交流推進機構）移住支援金 解説](https://www.iju-join.jp/feature_cont/guide/079.html) `メディア`
 
+## 関連概念
+- [[subsidy-regional-public-transport|地域公共交通確保維持改善事業]] — 出典を共有
+- [[subsidy-housing-safety-net|住宅セーフティネット制度]] — 同分野の近傍
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

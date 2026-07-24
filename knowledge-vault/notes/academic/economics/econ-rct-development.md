@@ -30,6 +30,17 @@ aliases:
 - [J-PAL — The 2019 Nobel Prize-Winning Scientific Movement](https://www.povertyactionlab.org/blog/12-10-19/2019-nobel-prize-winning-scientific-movement-can-transform-us-policymaking) `学術`
 - [MIT News — Duflo and Banerjee Win 2019 Nobel Prize](https://news.mit.edu/2019/esther-duflo-abhijit-banerjee-win-2019-nobel-prize-economics-1014) `学術`
 
+## 関連概念
+- [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]] — 同じ思想家
+- [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 同じ思想家
+- [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 出典を共有
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

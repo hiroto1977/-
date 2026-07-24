@@ -30,6 +30,18 @@ aliases:
 - [裁判所（courts.go.jp）民事（通常）再生の手続](https://www.courts.go.jp/nagoya/saiban/tetuzuki/minzi_tujo_mositate01/index.html) `公的`
 - [ウィキペディア「会社更生法」（会社更生との対比・対象法人）](https://ja.wikipedia.org/wiki/%E4%BC%9A%E7%A4%BE%E6%9B%B4%E7%94%9F%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
+- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
+- [[labor-tribunal|労働審判制度（労働審判法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

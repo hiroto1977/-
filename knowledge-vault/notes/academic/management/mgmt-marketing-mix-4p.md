@@ -30,6 +30,11 @@ N.ボーデン（マーケティング・ミックス命名・1950年代）／E.
 - [Springer Nature — Lauterborn’s 4Cs](https://link.springer.com/rwe/10.1007/978-3-030-14449-4_12-2) `学術`
 - [Journal of Marketing Education (SAGE) — Yudelson (1999): 1960年マッカーシーの4P導入](https://journals.sagepub.com/doi/10.1177/0273475399211008) `学術`
 
+## 関連概念
+- [[mgmt-stp-marketing|STPマーケティング]] — 同分野の近傍
+- [[mgmt-customer-journey|カスタマージャーニー]] — 同分野の近傍
+- [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,11 @@ Gulf Oil Corp. v. Gilbert, 330 U.S. 501 (1947)／Piper Aircraft Co. v. Reyno, 45
 - [Cornell Law School LII — Forum Non Conveniens (Wex legal encyclopedia)](https://www.law.cornell.edu/wex/forum_non_conveniens) `リファレンス`
 - [e-Gov法令検索 民事訴訟法（3条の9・特別の事情による訴えの却下）](https://laws.e-gov.go.jp/law/408AC0000000109) `公的`
 
+## 関連概念
+- [[bizlaw-forum-shopping|フォーラム・ショッピング（訴訟地戦略的選択）]] — 同じ思想家
+- [[bizlaw-arbitration-act|仲裁法]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

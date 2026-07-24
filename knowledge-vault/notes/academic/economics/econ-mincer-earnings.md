@@ -30,6 +30,13 @@ aliases:
 - [IZA DP 3181 "The Mincer Earnings Function and Its Applications"](https://docs.iza.org/dp3181.pdf) `学術`
 - [Wikipedia: Mincer earnings function](https://en.wikipedia.org/wiki/Mincer_earnings_function) `リファレンス`
 
+## 関連概念
+- [[econ-human-capital|人的資本論]] — 語彙が近い
+- [[econ-gibrat-law|ジブラの法則]] — 出典を共有
+- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 出典を共有
+- [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有
+- [[econ-ben-porath-human-capital-lifecycle|ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

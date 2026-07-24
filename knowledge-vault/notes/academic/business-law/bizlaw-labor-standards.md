@@ -30,6 +30,17 @@ aliases:
 - [厚生労働省 — 時間外労働の上限について（36協定・月45h/年360h・特別条項）](https://www.startup-roudou.mhlw.go.jp/36_pact.html) `公的`
 - [厚生労働省 — 時間外労働の上限規制 わかりやすい解説（年720h以下・複数月平均80h・単月100h未満）](https://www.mhlw.go.jp/content/000463185.pdf) `公的`
 
+## 関連概念
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 分野横断
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 分野横断
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[bizlaw-childcare-leave|育児・介護休業法]] — 同分野の近傍
+- [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]] — 同分野の近傍
+- [[bizlaw-iryubun|遺留分（民法1042条）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

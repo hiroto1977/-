@@ -30,6 +30,18 @@ aliases:
 - [Games (MDPI査読誌)「Coordination Games and Local Interactions: A Survey」（慣習・社会規範・均衡選択）](https://www.mdpi.com/2073-4336/1/4/551) `学術`
 - [Wikipedia「Coordination game」（純粋協調／両性の闘い・複数純粋戦略ナッシュ均衡）](https://en.wikipedia.org/wiki/Coordination_game) `リファレンス`
 
+## 関連概念
+- [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]] — 語彙が近い
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
+- [[econ-cheap-talk-crawford-sobel|チープトーク——費用のかからない発言はどこまで信用できるか]] — 同じ思想家
+- [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
+- [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
+- [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
+- [[econ-schelling-segregation|シェリングの分居モデル]] — 同じ思想家
+- [[econ-rawls-justice|ロールズの正義論（公正としての正義）]] — 出典を共有
+- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 出典を共有
+- [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -32,6 +32,12 @@ Tim Wu ／ Lawrence Lessig ／ Barbara van Schewick
 - [Hildebrandt & Wiewiorra — "The past, present, and future of (net) neutrality: A state of knowledge review and research agenda" (2024), Information Systems Journal](https://journals.sagepub.com/doi/10.1177/02683962231170891) `学術`
 - [Wikipedia — Net neutrality: overview of principles, history, key figures & policy debates](https://en.wikipedia.org/wiki/Net_neutrality) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

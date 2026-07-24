@@ -36,6 +36,18 @@ prefecture
 - [東京都産業労働局 設備投資支援](https://www.sangyo-rodo.metro.tokyo.lg.jp/chusho/shoko/keiei/setubi/) `自治体`
 - [東京都 設備投資支援事業 解説](https://hojyokin-portal.jp/columns/tokyo_yakushinteki) `メディア`
 
+## 関連概念
+- [[subsidy-tokyo-startup|創業助成事業（創業助成金）（東京都）]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

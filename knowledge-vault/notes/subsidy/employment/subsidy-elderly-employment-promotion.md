@@ -36,6 +36,18 @@ national
 - [JEED 65歳超継続雇用促進コース](https://www.jeed.go.jp/elderly/subsidy/subsidy_keizoku.html) `運営団体`
 - [厚生労働省 65歳超雇用推進助成金](https://www.mhlw.go.jp/stf/newpage_54824.html) `公的`
 
+## 関連概念
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 分野横断
+- [[bizlaw-disability-employment|障害者雇用促進法]] — 出典を共有
+- [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 出典を共有
+- [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]] — 出典を共有
+- [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 出典を共有
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 同分野の近傍
+- [[subsidy-age-friendly|エイジフレンドリー補助金]] — 同分野の近傍
+- [[subsidy-occupational-health|産業保健関係助成金（団体経由産業保健活動推進助成金 等）]] — 同分野の近傍
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

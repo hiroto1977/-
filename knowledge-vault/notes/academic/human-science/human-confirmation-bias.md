@@ -30,6 +30,12 @@ aliases:
 - [Nickerson (1998) Confirmation Bias, Review of General Psychology 2(2):175-220（SAGE 査読論文）](https://journals.sagepub.com/doi/abs/10.1037/1089-2680.2.2.175) `学術`
 - [Wikipedia — Confirmation bias](https://en.wikipedia.org/wiki/Confirmation_bias) `リファレンス`
 
+## 関連概念
+- [[human-group-polarization|集団極性化]] — 同分野の近傍
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 同分野の近傍
+- [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
+- [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

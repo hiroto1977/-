@@ -30,6 +30,11 @@ aliases:
 - [石川労働局 通勤災害に関する保険給付](https://jsite.mhlw.go.jp/ishikawa-roudoukyoku/hourei_seido_tetsuzuki/rousai_hoken/hourei_seido/kyufu/kyufu05.html) `公的`
 - [通勤災害の逸脱・中断 解説](https://www.rouki.jp/itsudatsu) `メディア`
 
+## 関連概念
+- [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 語彙が近い
+- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

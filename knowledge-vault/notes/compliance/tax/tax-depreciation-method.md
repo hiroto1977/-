@@ -30,6 +30,11 @@ aliases:
 - [国税庁 No.5409 償却方法の選定手続き](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5409.htm) `公的`
 - [マネーフォワード 減価償却の方法](https://biz.moneyforward.com/accounting/basic/65288/) `メディア`
 
+## 関連概念
+- [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 語彙が近い
+- [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 同分野の近傍
+- [[tax-customs-duty|関税（輸入品に課される国税）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

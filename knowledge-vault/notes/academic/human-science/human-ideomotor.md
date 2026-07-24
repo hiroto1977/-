@@ -30,6 +30,12 @@ aliases:
 - [Britannica: Ideomotor Effect](https://www.britannica.com/science/ideomotor-effect) `リファレンス`
 - [Stock & Stock (2004) A Short History of Ideo-Motor Action — ResearchGate](https://www.researchgate.net/publication/8950368_A_short_history_of_ideo-motor_action) `学術`
 
+## 関連概念
+- [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
+- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
+- [[human-joint-attention|共同注意（Joint Attention）]] — 同分野の近傍
+- [[human-chronobiology-theory|時間生物学理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

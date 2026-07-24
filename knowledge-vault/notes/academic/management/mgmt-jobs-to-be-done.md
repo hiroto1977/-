@@ -30,6 +30,18 @@ aliases:
 - [Clayton Christensen Institute — Jobs to Be Done Theory（解説ページ）](https://www.christenseninstitute.org/theory/jobs-to-be-done/) `リファレンス`
 - [Harvard Business School Faculty & Research — “Know Your Customers’ ‘Jobs to Be Done’” 書誌情報（R1609D）](https://www.hbs.edu/faculty/Pages/item.aspx?num=51553) `学術`
 
+## 関連概念
+- [[mgmt-marketing-myopia|マーケティング近視眼]] — 同じ思想家
+- [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]] — 同じ思想家
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
+- [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

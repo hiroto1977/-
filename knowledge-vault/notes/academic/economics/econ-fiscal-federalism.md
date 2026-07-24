@@ -29,6 +29,18 @@ aliases:
 - [IMF Finance & Development (1999) — Fiscal Federalism（定義・分権化定理・各国政策応用の概説）](https://www.imf.org/external/pubs/ft/fandd/1999/06/tanzi.htm) `公的`
 - [OECD Fiscal Federalism Network — 財政連邦主義の理論・各国実践・政策指針](https://www.oecd.org/regional/fiscal-federalism-20786533.htm) `公的`
 
+## 関連概念
+- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 語彙が近い
+- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 語彙が近い
+- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同じ思想家
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 同じ思想家
+- [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
+- [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — 同じ思想家
+- [[econ-merit-goods|メリット財（価値財）]] — 同じ思想家
+- [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-expected-utility|期待効用理論]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

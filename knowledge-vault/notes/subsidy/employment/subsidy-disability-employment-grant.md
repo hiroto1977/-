@@ -36,6 +36,14 @@ national
 - [JEED 令和8年度 納付金・調整金等 申告申請案内](https://www.jeed.go.jp/location/shibu/osaka/r8_nofukin-shinkoku.html) `公的`
 - [厚生労働省 障害者雇用納付金制度について](https://www.mhlw.go.jp/content/11704000/001462468.pdf) `公的`
 
+## 関連概念
+- [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
+- [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 分野横断
+- [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 出典を共有
+- [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 出典を共有
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 出典を共有
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

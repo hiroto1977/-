@@ -30,6 +30,18 @@ aliases:
 - [Encyclopedia of Management (Encyclopedia.com) — Theory Z](https://www.encyclopedia.com/management/encyclopedias-almanacs-transcripts-and-maps/theory-z) `リファレンス`
 - [Wikipedia — Theory Z of Ouchi](https://en.wikipedia.org/wiki/Theory_Z_of_Ouchi) `リファレンス`
 
+## 関連概念
+- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

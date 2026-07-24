@@ -30,6 +30,15 @@ aliases:
 - [Communication Theory (Oxford Academic) — 生活世界とシステム・植民地化テーゼ](https://academic.oup.com/ct/article/33/2-3/153/7223415) `学術`
 - [The Colonization Thesis: Habermas on Reification（PhilArchive）](https://philarchive.org/archive/JTTTCT) `学術`
 
+## 関連概念
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
+- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
+- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同じ思想家
+- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同分野の近傍
+- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

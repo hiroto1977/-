@@ -30,6 +30,18 @@ aliases:
 - [中路敬「アーヴィング・フィッシャーの利子率決定理論」経済学史学会年報（J-STAGE）](https://www.jstage.jst.go.jp/article/jshet1963/35/35/35_35_84/_pdf) `学術`
 - [ウィキペディア日本語版「時間選好」— 時間選好率の定義・異時点間選択・割引](https://ja.wikipedia.org/wiki/%E6%99%82%E9%96%93%E9%81%B8%E5%A5%BD) `リファレンス`
 
+## 関連概念
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
+- [[econ-roundabout-production|迂回生産]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
+- [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
+- [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -31,6 +31,10 @@ Michael M. Lombardo ／ Robert W. Eichinger ／ W. Warner Burke
 - [Leadership Development: Exploring, Clarifying, and Expanding Our Understanding of Learning Agility — Cambridge Core](https://www.cambridge.org/core/journals/industrial-and-organizational-psychology/article/abs/leadership-development-exploring-clarifying-and-expanding-our-understanding-of-learning-agility/0287460FE98A0FD1DB4CBED426D941F9) `学術`
 - [次世代リーダーに求められる能力 ラーニングアジリティとは — 株式会社ビジネスコンサルタント](https://www.bcon.jp/%E3%82%B3%E3%83%A9%E3%83%A0/%E3%82%B3%E3%83%A9%E3%83%A0%E4%B8%80%E8%A6%A7/next-generation-leader_learning_agility/) `リファレンス`
 
+## 関連概念
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
+- [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

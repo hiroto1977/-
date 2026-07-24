@@ -30,6 +30,11 @@ aliases:
 - [Fort Lewis College ECON 307 — Cantillon（大学講義資料）](https://faculty.fortlewis.edu/walker_d/econ_307_-_pre_adam_smith_-_cantillon.htm) `学術`
 - [Econlib — Essai sur la Nature du Commerce en Général（原典・出典1755）](https://www.econlib.org/library/NPDBooks/Cantillon/cntNT.html) `リファレンス`
 
+## 関連概念
+- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 同分野の近傍
+- [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同分野の近傍
+- [[econ-rent-seeking|レントシーキング]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

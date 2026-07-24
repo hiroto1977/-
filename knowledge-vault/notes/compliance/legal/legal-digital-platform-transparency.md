@@ -30,6 +30,11 @@ aliases:
 - [e-Gov法令検索 取引透明化法（令和2年法律第38号）](https://elaws.e-gov.go.jp/document?lawid=502AC0000000038_20220525_504AC0000000048) `公的`
 - [経済産業省 デジタルプラットフォーム取引 関連情報](https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html) `メディア`
 
+## 関連概念
+- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 語彙が近い
+- [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 語彙が近い
+- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

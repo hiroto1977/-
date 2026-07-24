@@ -30,6 +30,18 @@ aliases:
 - [東京都主税局 個人住民税の特別徴収](https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju/tokubetsu/about) `自治体`
 - [大阪府 個人住民税の特別徴収](https://www.pref.osaka.lg.jp/o050040/zei/alacarte/juminzei_tokucho.html) `自治体`
 
+## 関連概念
+- [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 語彙が近い
+- [[tax-withholding|源泉徴収義務と納付期限]] — 語彙が近い
+- [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 出典を共有
+- [[labor-national-health-insurance|国民健康保険（国保）]] — 出典を共有
+- [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
+- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
+- [[tax-city-planning-tax|都市計画税]] — 出典を共有
+- [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -1,0 +1,49 @@
+---
+collection: academic
+id: infosoc-indexing-hypothesis-bennett
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "インデックス仮説——報道は公的エリートの論争の幅に従う"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "インデックス仮説——報道は公的エリートの論争の幅に従う"
+---
+
+# インデックス仮説——報道は公的エリートの論争の幅に従う
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+インデックス仮説（indexing hypothesis、指標化仮説）は、政治コミュニケーション研究者W・ランス・ベネットが1990年に提唱した、報道機関と国家・政府との関係に関する理論である。報道は、しばしば権力を監視する独立した「番犬（watchdog）」であるべきだとされる。だが、ベネットが米国の政治報道の実態を分析して見いだしたのは、それとは異なる傾向であった。インデックス仮説によれば、主流のニュースメディアは、ある争点をめぐって報じる際に、提示する意見や論争の幅を、政府高官や制度的なエリート（議会、政権など）の間で実際に表明されている意見の幅に合わせて「インデックス（index、指標づけ・較正）」する傾向がある。すなわち、ジャーナリストは、客観性の規範や、信頼できる情報源として公的な権威に依存する取材慣行に従うがゆえに、自分たちが報道で取り上げる議論の範囲を、おおむね公的なエリートたちの意見対立の枠内に限定してしまう。この仮説の含意は重大である。政府高官やエリートの間で意見が一致している（コンセンサスがある）ときには、たとえ市民社会や専門家の間に異論があっても、それらの反対意見や代替的な視点は報道のなかで周縁化され、ほとんど取り上げられない。逆に、エリートの間で意見が割れているときには、報道にもより活発な論争が現れる。つまり、報道に現れる議論の幅は、世論や争点の実態そのものではなく、エリート内部の不一致の程度を映す鏡だというのである。これは、報道機関が権力を独立して監視し、議題を主導するというより、むしろエリートの意見に追随しがちであることを意味する。とりわけ、戦争に向かう局面などで、もし政権と議会の主流が一致して異を唱えなければ、報道もまた批判的な視点を欠いたまま追随してしまい、公的な討論の幅が狭められてしまう危険がある。インデックス仮説は、ダニエル・ハリンが論じた「合意の領域／正当な論争の領域／逸脱の領域」という報道の分類や、エドワード・ハーマンとノーム・チョムスキーの「プロパガンダ・モデル」とも関連づけて論じられてきた。インデックス仮説は、報道の独立性の限界と、報道がエリートの論争構造に従属しがちであることを明らかにし、報道と権力の関係をめぐる政治コミュニケーション研究の重要な理論である。
+
+## 提唱者・初出
+W・ランス・ベネット ／ ダニエル・ハリン ／ エドワード・ハーマン ／ ノーム・チョムスキー
+
+## 出典
+- [Bennett, W. L. (1990) Toward a theory of press-state relations in the United States — Journal of Communication](https://doi.org/10.1111/j.1460-2466.1990.tb02265.x) `学術`
+- [Wikipedia: Indexing (politics) — press-state relations, elite consensus, news framing](https://en.wikipedia.org/wiki/Indexing_(politics)) `リファレンス`
+
+## 関連概念
+- [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]] — 同じ思想家
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同じ思想家
+- [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
+- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
+- [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
+- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — 同じ思想家
+- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
+- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

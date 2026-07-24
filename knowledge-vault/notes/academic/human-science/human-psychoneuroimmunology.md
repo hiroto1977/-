@@ -32,6 +32,11 @@ Robert Ader ／ Nicholas Cohen ／ Janice Kiecolt-Glaser ／ George Solomon ／ 
 - [Segerstrom & Miller 2004 meta-analysis stress and immunity](https://doi.org/10.1037/0033-2909.130.4.601) `学術`
 - [Glaser & Kiecolt-Glaser 2009 wound healing review](https://doi.org/10.1016/j.psyneuen.2008.09.016) `学術`
 
+## 関連概念
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
+- [[human-psychoneuroimmunology-ader-cohen|精神神経免疫学——心理・神経・免疫系の双方向的相互作用]] — 同分野の近傍
+- [[human-stress-immune-axis|ストレス-免疫軸：HPA軸を介した心理的ストレスと免疫機能の双方向的調節機構]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

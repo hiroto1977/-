@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia「著作者人格権」（公表権・氏名表示権・同一性保持権と一身専属性）](https://ja.wikipedia.org/wiki/著作者人格権) `リファレンス`
 - [咲くやこの花法律事務所「著作者人格権とは？」（著作財産権との区別・不行使特約の実務）](https://kigyobengo.com/media/useful/837.html) `メディア`
 
+## 関連概念
+- [[legal-moral-rights|著作者人格権]] — 分野横断
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
+- [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

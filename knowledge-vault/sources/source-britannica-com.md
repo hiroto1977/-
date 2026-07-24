@@ -1,0 +1,303 @@
+---
+title: "britannica.com"
+type: source-domain
+host: "britannica.com"
+cite_count: 280
+tags:
+  - source-domain
+  - index
+---
+
+# britannica.com
+
+> [!info] 出典ドメイン索引 ・ 引用 **280 件**（リファレンス 280）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — EncyclopaediaBritannica—AgencyandtheLawofAgency
+- [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — CalvoDoctrine—Britannica
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — EncyclopaediaBritannica—Unconscionability
+- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — Britannica—Tortlaw
+- [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]] — EncyclopaediaBritannicaMoney—Greenmail（定義・歴史・規制の概要）
+- [[bizlaw-mortgage-pursuit|抵当権の追及効]] — EncyclopaediaBritannica—Mortgage（抵当権の物権的効力・第三取得者に対する追及力の一般法理）
+- [[bizlaw-parens-patriae|パレンス・パトリエ法理（Parens Patriae Doctrine）]] — EncyclopaediaBritannica—Parenspatriae（定義・英国法起源・米国法における展開）
+- [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — EncyclopaediaBritannica—Contractlaw（約因・禁反言・信頼利益保護を含む契約法の概観）
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — EncyclopaediaBritannica—Acceleratorprinciple(economics)
+- [[econ-adverse-selection|逆選択（レモン市場）]] — EncyclopaediaBritannica（Money）—GeorgeAkerlof：中古車市場での逆選択と1970年論文
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — BritannicaMoney—Adverseselection
+- [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — EncyclopaediaBritannica—EssenceofDecision（3モデルの解説・政策科学への影響）
+- [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — BritannicaMoney—"WhatIsArbitrage?"（裁定の定義・リスクフリー利益・市場間価格差の解消）
+- [[econ-arrow-impossibility|アローの不可能性定理]] — EncyclopaediaBritannica—Impossibilitytheorem(Arrow'sParadox,VotingThe…
+- [[econ-asset-bubble|資産価格バブル]] — BritannicaMoney—GreaterFoolTheory（バブルと投機的フィードバックループ）
+- [[econ-austrian-business-cycle-theory|オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）]] — EncyclopaediaBritannica—Austrianschoolofeconomics
+- [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — EncyclopaediaBritannica(Money)—FiscalPolicy（automaticstabilizers）
+- [[econ-business-cycles|景気循環とその諸波動]] — BritannicaMoney—Businesscycle（四循環の定義・周期）
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — EncyclopædiaBritannica(Money)—TheCoasetheorem
+- [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — EncyclopædiaBritannica—"Cobb-Douglasfunction"(economics)
+- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — Britannica:CobwebTheoremoverview
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — EncyclopaediaBritannicaMoney—Simplifiedtheoryofcomparativeadvantage
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — EncyclopaediaBritannicaMoney—Consumersurplus（消費者余剰とヒックスの補償変分・等価変分の関係）
+- [[econ-creative-destruction|創造的破壊]] — BritannicaMoney—CreativeDestruction:Innovation,Growth,&Examples
+- [[econ-creative-destruction|創造的破壊]] — Britannica—Capitalism,Socialism,andDemocracy(workbySchumpeter)
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — EncyclopaediaBritannicaMoney—Cross-PriceElasticityofDemand（代替財・補完財の判定…
+- [[econ-demonstration-effect|デモンストレーション効果]] — EncyclopaediaBritannicaMoney—Demonstrationeffect（デューゼンベリーの相対所得仮説・ヌルクセ…
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — EncyclopaediaBritannica—JohnKennethGalbraith:Biography&Facts
+- [[econ-dependence-effect|依存効果（ガルブレイス）]] — EncyclopaediaBritannica—TheAffluentSociety(workbyGalbraith)
+- [[econ-deposit-insurance|預金保険制度（ペイオフ）]] — EncyclopaediaBritannica「Depositinsurance」
+- [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — EncyclopaediaBritannica(Money)—Marginalutility
+- [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — EncyclopaediaBritannica—Diamond-waterparadox（価値の逆説の限界効用による解決）
+- [[econ-diminishing-returns|収穫逓減の法則（限界生産力逓減）]] — BritannicaMoney—Diminishingreturns
+- [[econ-division-of-labour|分業]] — Britannica—分業は市場の大きさによって制限される
+- [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — EncyclopaediaBritannicaMoney—Ratcheteffect（消費の下方硬直性・デューゼンベリーの相対所得仮説）
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — EncyclopaediaBritannicaMoney—Economyofscale
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — EncyclopædiaBritannicaMoney—Efficient-MarketHypothesis（3形態・批判）
+- [[econ-engels-law|エンゲルの法則]] — EncyclopaediaBritannica—Engelcurve/Engel'slaw
+- [[econ-engels-law|エンゲルの法則]] — EncyclopaediaBritannica—ErnstEngel（人物・1857年/ベルギー家計調査）
+- [[econ-expected-utility|期待効用理論]] — Britannica「VonNeumann–Morgensternutilityfunction」（VNM公理・期待効用最大化）
+- [[econ-externality-market-failure|外部性と市場の失敗]] — EncyclopaediaBritannicaMoney—Externality
+- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — EncyclopaediaBritannica—FiscalFederalism
+- [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — BritannicaMoney—IrvingFisher
+- [[econ-free-rider|フリーライダー問題]] — EncyclopædiaBritannica—“Freeriding”（集合財の便益にコストを負担せず与ること、Olson1965に由来）
+- [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — EncyclopædiaBritannicaMoney—Grossdomesticproduct（定義・支出法）
+- [[econ-general-equilibrium|一般均衡理論]] — EncyclopaediaBritannica「Generalequilibriumtheory」
+- [[econ-general-equilibrium|一般均衡理論]] — EncyclopaediaBritannica「LéonWalras」（『純粋経済学要論』1874–77,連立方程式による一般均衡）
+- [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — EncyclopaediaBritannicaMoney—Economichistory（ゲルシェンクロンの工業化比較研究を経済史の中心的…
+- [[econ-gini-coefficient|ジニ係数とローレンツ曲線]] — EncyclopaediaBritannica—Ginicoefficient（定義・式・ローレンツ曲線）
+- [[econ-greshams-law|グレシャムの法則]] — EncyclopaediaBritannica—Gresham'slaw（法定平価で安価な金属の貨幣が流通し良貨は退蔵・輸出される）
+- [[econ-harrod-domar|ハロッド＝ドーマー成長モデル]] — EncyclopaediaBritannica—Harrod-Domarequation
+- [[econ-hayek-knowledge|ハイエクの知識の分散と価格メカニズム]] — Britannica—F.A.Hayek（価格が分散知識を伝達、社会主義批判、1974年ミュルダールと共同受賞）
+- [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — BritannicaMoney—Heckscher-Ohlintheory（定義・例・レオンチェフの逆説）
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — EncyclopaediaBritannica—OrrisC.Herfindahl（1918–1972、コロンビア大博士論文1950）
+- [[econ-human-capital|人的資本論]] — EncyclopædiaBritannica（Money）—Wage:Human-capitaltheory
+- [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]] — EncyclopaediaBritannicaMoney—Hyperinflation（定義・原因・歴史的事例の概説）
+- [[econ-income-substitution-effect|所得効果と代替効果]] — EncyclopaediaBritannica—Incomeeffect
+- [[econ-income-substitution-effect|所得効果と代替効果]] — EncyclopaediaBritannica—Substitutioneffect
+- [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — EncyclopaediaBritannica—WassilyLeontief:Input-OutputAnalysis
+- [[econ-invisible-hand|見えざる手]] — EncyclopædiaBritannica「invisiblehand」（自己利益と意図せぬ公益・スミス帰属・留保）
+- [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — EncyclopaediaBritannica—TheCoalQuestion(workbyJevons)
+- [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — EncyclopaediaBritannica—TheGeneralTheoryofEmployment,InterestandMoney
+- [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — EncyclopaediaBritannica—"Kondratyevcycle"（約50年の景気循環、コンドラチェフにちなむ）
+- [[econ-laffer-curve-theory|ラッファー曲線理論]] — EncyclopaediaBritannica—ArthurLaffer:biographyandtheLafferCurve
+- [[econ-leontief-paradox|レオンチェフの逆説]] — EncyclopaediaBritannica「Heckscher-Ohlintheory/LeontiefParadox」
+- [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — BritannicaMoney—Lernerindex
+- [[econ-lucas-critique|ルーカス批判]] — EncyclopædiaBritannica—"Lucascritique"
+- [[econ-malthusian-trap|マルサスの罠]] — EncyclopædiaBritannica—Malthusianism(1798attribution,geometricvsarith…
+- [[econ-modern-portfolio-theory|現代ポートフォリオ理論（MPT）]] — ModernPortfolioTheory—BritannicaMoney
+- [[econ-monetarism|マネタリズム]] — EncyclopaediaBritannica—Monetarism
+- [[econ-monopolistic-competition|独占的競争]] — EncyclopaediaBritannica—EdwardHastingsChamberlin（Chamberlin/Robinson1…
+- [[econ-monopolistic-competition|独占的競争]] — EncyclopaediaBritannica（BritannicaMoney）—Monopolisticcompetition
+- [[econ-moral-hazard|モラルハザード（道徳的危険）]] — BritannicaMoney—Moralhazard（契約後に一方をリスクから保護することで誤った行動の誘因が生じる。
+- [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — EncyclopaediaBritannica—Nashequilibrium
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — EncyclopædiaBritannica—InterestandPrices(Wicksell)
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — EncyclopaediaBritannica—EdmundS.Phelps（自然失業率・期待修正フィリップス曲線）
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — EncyclopaediaBritannica—RichardThaler（Nudge・libertarianpaternalism）
+- [[econ-okuns-law|オーカンの法則]] — EncyclopædiaBritannica—“Okun’sLaw”
+- [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — EncyclopaediaBritannica—Antoine-AugustinCournot（複占・均衡分析）
+- [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — EncyclopaediaBritannica—ResearchesintotheMathematicalPrinciplesoftheT…
+- [[econ-opportunity-cost|機会費用（opportunity cost）]] — EncyclopaediaBritannicaMoney—Opportunitycost
+- [[econ-ostrom-commons|オストロムのコモンズ統治]] — EncyclopaediaBritannica—ElinorOstrom（設計原理・コモンズ理論）
+- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — BritannicaMoney—Pareto-optimality
+- [[econ-path-dependence|経路依存]] — EncyclopaediaBritannica,“Pathdependence”
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — EncyclopaediaBritannica—ColinClark（ペティの観察とクラークによる三部門分類の体系化）
+- [[econ-pigou-effect|ピグー効果（実質残高効果）]] — EncyclopaediaBritannicaMoney—ArthurCecilPigou（厚生経済学・Pigoueffectの名祖）
+- [[econ-pigouvian-tax|ピグー税]] — EncyclopaediaBritannica—Pigouviantax
+- [[econ-piketty|ピケティの r>g（資本収益率と格差）]] — EncyclopaediaBritannica—ThomasPiketty（r>gを資本主義の中心的矛盾とする主張、累進的富裕税の提案）
+- [[econ-price-discrimination|価格差別（price discrimination）]] — BritannicaMoney—Pricediscrimination
+- [[econ-price-elasticity-demand|需要の価格弾力性]] — EncyclopaediaBritannicaMoney—Elasticity
+- [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — BritannicaMoney—Financialagencytheory
+- [[econ-prisoners-dilemma|囚人のジレンマ（prisoner’s dilemma）]] — EncyclopaediaBritannica—Gametheory:Theprisoners’dilemma
+- [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — EncyclopaediaBritannica—Theoryofrationalexpectations
+- [[econ-rbc|実物的景気循環論（RBC）]] — Britannica—TimetoBuildandAggregateFluctuations（1982年論文）
+- [[econ-rent-seeking|レントシーキング]] — BritannicaMoney—“Rentseeking|Definition&Facts”
+- [[econ-revealed-preference|顕示選好]] — EncyclopaediaBritannica(Money)「Revealedpreferencetheory」—1938年サミュエルソン…
+- [[econ-rostow-stages|ロストウの経済成長段階説]] — Britannica—TheStagesofEconomicGrowth:ANon-CommunistManifesto(Rostow,1…
+- [[econ-roundabout-production|迂回生産]] — Britannica—EugenvonBöhm-Bawerk（資本・利子論とオーストリア学派資本理論）
+- [[econ-says-law|セイの法則（販路法則）]] — EncyclopædiaBritannica—J.-B.Say:LawofMarkets
+- [[econ-sen-entitlement-approach|センの権原アプローチ（Entitlement Approach／Sen 1981）——飢饉は食料の絶対量不足ではなく、人々が食料を入手する「権原」の崩壊によって起こる]] — EncyclopaediaBritannica,“PovertyandFamines”—権原アプローチ・FAD仮説の否定・交換権原の失敗と…
+- [[econ-solow-growth-model|ソロー成長モデル]] — EncyclopædiaBritannica—RobertSolow:Biography,NobelPrize,&Facts
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — EncyclopaediaBritannicaMoney—Productivityparadox（IT生産性パラドックスの定義・原因・歴史…
+- [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — EncyclopaediaBritannicaMoney—Sunkcost
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — EncyclopædiaBritannicaMoney—AlfredMarshall（はさみの両刃・1890）
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — EncyclopædiaBritannicaMoney—Supplyanddemand:Marketequilibrium
+- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — EncyclopaediaBritannica—FinnE.Kydland（1977年論文と動学的不整合の定義）
+- [[econ-tobins-q|トービンのq]] — EncyclopaediaBritannica—Tobin'sq（資産の市場価値の再取得費用に対する比、q>1で新規投資が有利）
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — EncyclopaediaBritannica—GarrettHardin
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — EncyclopaediaBritannica—Tragedyofthecommons
+- [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]] — EncyclopaediaBritannicaMoney—Trickle-downeconomics（サプライサイド経済学・レーガノミクス…
+- [[econ-varieties-of-capitalism|資本主義の多様性（VoC）論]] — EncyclopaediaBritannica—Capitalism（資本主義の制度的多様性・比較資本主義論の文脈）
+- [[econ-veblen-good|ヴェブレン財と顕示的消費]] — BritannicaMoney—Conspicuousconsumption（ヴェブレンが1899年『有閑階級の理論』で命名した経緯の解説）
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — EncyclopaediaBritannica—Involuntaryunemployment（ケインズ経済学）
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — EncyclopaediaBritannica—Behavioraleconomics（損失回避・無料の心理・行動経済学の文脈）
+- [[eh-1941|1941年（昭和16年）]] — EncyclopaediaBritannica—OperationBarbarossa（独ソ戦開始）
+- [[eh-1942|1942年（昭和17年）]] — EncyclopaediaBritannica—BattleofMidway
+- [[eh-1950|1950年（昭和25年）]] — EncyclopaediaBritannica—KoreanWar（1950/6/25勃発）
+- [[eh-1954|1954年（昭和29年）]] — EncyclopaediaBritannica—BattleofDienBienPhu/GenevaAccords
+- [[eh-1962|1962年（昭和37年）]] — EncyclopaediaBritannica—Cubanmissilecrisis
+- [[eh-1967|1967年（昭和42年）]] — EncyclopaediaBritannica—Six-DayWar（1967/6）
+- [[eh-1968|1968年（昭和43年）]] — EncyclopaediaBritannica—EventsofMay1968（フランス五月革命）
+- [[eh-1976|1976年（昭和51年）]] — EncyclopaediaBritannica—1976年米大統領選（カーター当選）
+- [[eh-2003|2003年（平成15年）]] — Britannica—IraqWar（2003/3/20開戦）
+- [[eh-2004|2004年（平成16年）]] — Britannica—2004年インド洋大津波（12/26）
+- [[eh-2009|2009年（平成21年）]] — BritannicaMoney—GreatRecession
+- [[eh-2021|2021年（令和3年）]] — Britannica—FumioKishida（2021/10/4首相就任）
+- [[human-acquired-needs-theory|獲得欲求理論]] — EncyclopaediaBritannica—McClelland'sTheoryofNeeds
+- [[human-anchoring|アンカリング効果（係留と調整）]] — EncyclopaediaBritannica—Heuristic（係留と調整ヒューリスティックの帰属）
+- [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — Herbartianism—EncyclopaediaBritannica.
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — EncyclopaediaBritannica—Conformity（同調と実験設計）
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — EncyclopaediaBritannica—SolomonAsch
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — EncyclopaediaBritannica—Attachmenttheory|Definition,Features,&Types
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — EncyclopaediaBritannica—MarySalterAinsworth（ストレンジ・シチュエーション法の開発者）
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — AttachmentTheory|Britannica
+- [[human-barnum-effect|バーナム効果（フォアラー効果）]] — EncyclopaediaBritannica—BarnumEffect
+- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — EncyclopædiaBritannica—Heritability（遺伝率の定義）
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — EncyclopædiaBritannica—Five-factormodelofpersonality（5因子の定義）
+- [[human-broken-windows-theory|割れ窓理論]] — EncyclopaediaBritannica—Brokenwindowstheory
+- [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — EncyclopaediaBritannica—Bystandereffect
+- [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — EncyclopaediaBritannica—IvanPavlov（生涯・条件反射・1904年ノーベル賞）
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — EncyclopaediaBritannica—LeonFestinger:Cognitivedissonance
+- [[human-confirmation-bias|確証バイアス（confirmation bias）]] — EncyclopaediaBritannica—Confirmationbias
+- [[human-cultural-dimensions-hofstede|ホフステッドの文化次元理論]] — EncyclopaediaBritannica—Hofstede'sCulturalDimensionsTheory
+- [[human-dark-triad|ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合]] — EncyclopaediaBritannica,"Darktriad:Definition,Traits,Personality,&Cau…
+- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — EncyclopaediaBritannica—Grief（悲嘆の定義・類型・剥奪された悲嘆を含む学術的解説）
+- [[human-double-bind|ダブルバインド（二重拘束）]] — EncyclopaediaBritannica—Doublebind（ベイトソン1956・矛盾コミュニケーション・統合失調症仮説・家族療法…
+- [[human-dunning-kruger|ダニング＝クルーガー効果]] — EncyclopaediaBritannica—Dunning-Krugereffect
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — EncyclopaediaBritannica—"Suicide"byÉmileDurkheim（著作解説・4類型・社会的統合の概要）
+- [[human-emerging-adulthood|新興成人期（エマージング・アダルトフッド）]] — EncyclopaediaBritannica—EmergingAdulthood（発達段階の定義・5特性・文化的検討の概説）
+- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — EncyclopaediaBritannica—Emotionregulation（定義・グロスのプロセスモデル・認知的再評価と表現抑制）
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — EncyclopaediaBritannica—“ChildhoodandSociety”（エリクソンの主著・初出1950）
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — EncyclopaediaBritannica—Humanintelligence:Psychometrictheories（Cattel…
+- [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — Britannica—Frustration-aggressionhypothesis(1939Yaleattribution,displ…
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — EncyclopaediaBritannica「Fundamentalattributionerror」項目
+- [[human-gestalt-principles|ゲシュタルト知覚の法則]] — EncyclopaediaBritannica—Gestaltpsychology（ゲシュタルト心理学の起源・知覚法則・主要人物）
+- [[human-gestalt-principles|ゲシュタルト知覚の法則]] — EncyclopaediaBritannica—MaxWertheimer（ゲシュタルト知覚法則の定式化者の業績）
+- [[human-golem-effect|ゴーレム効果]] — EncyclopaediaBritannica—"Pygmalioneffect"（ピグマリオン効果・ゴーレム効果・自己成就的予言との関係）
+- [[human-groupthink|集団思考（グループシンク, groupthink）]] — EncyclopaediaBritannica—Groupthink
+- [[human-groupthink|集団思考（グループシンク, groupthink）]] — EncyclopaediaBritannica—VictimsofGroupthink（原著解説）
+- [[human-halo-effect|ハロー効果（後光効果, halo effect）]] — EncyclopaediaBritannica—Haloeffect
+- [[human-hawthorne-effect|ホーソン効果]] — EncyclopaediaBritannica—EltonMayo:HawthorneStudies,HumanRelations&Man…
+- [[human-hawthorne-effect|ホーソン効果]] — EncyclopaediaBritannica—Hawthorneresearch
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — EncyclopaediaBritannicaMoney—Two-factortheory
+- [[human-hindsight-bias|後知恵バイアス]] — EncyclopaediaBritannica—Hindsightbias:Definition,Psychology,&Examples
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — Britannica:IdeomotorEffect
+- [[human-inclusive-fitness|包括適応度と血縁選択（ハミルトン則）]] — EncyclopaediaBritannica—Hamilton’sRule（rB>Cと各項の定義）
+- [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — EncyclopædiaBritannica「Socialidentitytheory」
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — EncyclopaediaBritannica—Intersectionality
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — EncyclopaediaBritannica—LawrenceKohlberg(biography)
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — EncyclopaediaBritannica—LawrenceKohlberg’sstagesofmoraldevelopment
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — EncyclopaediaBritannica—Learnedhelplessness
+- [[human-magical-number-seven|マジカルナンバー7±2]] — EncyclopædiaBritannica:TheMagicalNumberSeven（Miller1956論文）
+- [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]] — EncyclopaediaBritannica—Delayofgratification
+- [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]] — EncyclopaediaBritannica—WalterMischel（StanfordMarshmallowExperiment/満…
+- [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — EncyclopaediaBritannica—Anomie（マートンのストレイン理論・五類型・デュルケームとの関係）
+- [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — EncyclopaediaBritannica—Milgramexperiment
+- [[human-multiple-intelligences|多重知能理論（ガードナー）]] — EncyclopædiaBritannica「Multipleintelligences」（8つの知能と定義）
+- [[human-observational-learning|観察学習（バンデューラ）]] — EncyclopaediaBritannica「Observationallearning」
+- [[human-operant-conditioning|オペラント条件づけ]] — EncyclopaediaBritannica—Operantconditioning
+- [[human-phantom-limb|幻肢（ファントムリム）]] — Britannica—Phantomlimbsyndrome
+- [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — EncyclopaediaBritannica—PhenomenologicalReduction
+- [[human-premack-principle|プレマックの原理]] — EncyclopaediaBritannica—DavidPremack
+- [[human-representativeness|代表性ヒューリスティック]] — EncyclopaediaBritannica—Heuristic（Kahneman&Tversky:representativeness…
+- [[human-sapir-whorf|サピア・ウォーフ仮説（言語相対性仮説）]] — EncyclopaediaBritannica—Sapir-Whorfhypothesis（定義・強弱の区別・ウォーフのホピ語分析・現代評…
+- [[human-schema|スキーマ理論]] — EncyclopaediaBritannica—FredericBartlett(psychologist)
+- [[human-schema|スキーマ理論]] — EncyclopaediaBritannica—Schema(cognition)
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — EncyclopaediaBritannica—Self-regulatedlearning（定義・3フェーズモデル・認知・メタ認知・動機…
+- [[human-social-facilitation|社会的促進と社会的抑制]] — EncyclopaediaBritannica—Socialfacilitation
+- [[human-stanford-prison-experiment|スタンフォード監獄実験]] — EncyclopaediaBritannica—StanfordPrisonExperiment
+- [[human-stockholm-syndrome|ストックホルム症候群]] — EncyclopaediaBritannica—Stockholmsyndrome（定義・1973年事件・Bejerot命名）
+- [[human-survivorship-bias|生存者バイアス]] — EncyclopaediaBritannica—Survivorshipbias:Definition,Meaning,&Examples
+- [[human-synesthesia-neuroscience|共感覚の神経科学]] — EncyclopaediaBritannica—Synesthesiaoverview
+- [[human-welfare-state-typology|福祉国家類型論（福祉レジーム論）：エスピン＝アンデルセンの三つの世界]] — EncyclopaediaBritannica—WelfareState(comparativemodelsandtypologies)
+- [[human-wernicke-aphasia|ウェルニッケ失語]] — Britannica—CarlWernicke
+- [[human-zeigarnik|ツァイガルニク効果]] — EncyclopaediaBritannica—Memory(psychology):Retrieval
+- [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — EncyclopaediaBritannica—ClaudeLévi-Strauss（ブリコラージュ概念の位置づけ・著作解説）
+- [[infosoc-cancel-culture|キャンセルカルチャー]] — EncyclopaediaBritannica—Cancelculture（社会的排斥・SNS上の支持撤回の定義）
+- [[infosoc-citizen-journalism|市民ジャーナリズム]] — EncyclopaediaBritannica—Citizenjournalism(Gillmor2004/OhmyNewslineage…
+- [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — JürgenHabermas:Philosophyandsocialtheory—EncyclopaediaBritannica
+- [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]] — EncyclopædiaBritannica—CreativeCommons:Organization,History,&Facts
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — EncyclopaediaBritannica—Cultivationanalysis
+- [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]] — Britannica—WilliamFieldingOgburn
+- [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — EncyclopaediaBritannica—"TheodorWiesengrundAdorno"（批判理論・文化産業）
+- [[infosoc-cybernetics|サイバネティクス]] — EncyclopaediaBritannica「Cybernetics|Definition&Facts」（定義・語源kybernetes…
+- [[infosoc-cyberspace|サイバースペース]] — EncyclopaediaBritannica—Cyberspace（観念的・仮想的な「空間」としての定義）
+- [[infosoc-cyberspace|サイバースペース]] — EncyclopaediaBritannica—Neuromancer（ギブスン1984年、サイバーパンクと普及）
+- [[infosoc-deepfake|ディープフェイク]] — EncyclopædiaBritannica—Deepfake
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — EncyclopaediaBritannica「Diffusionofinnovations」
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — EncyclopaediaBritannica—DigitalSovereignty(overview)
+- [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — EncyclopaediaBritannica—Digitaltwin（定義・NASAの起源・製造業・スマートシティ・IoT応用）
+- [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — EncyclopædiaBritannica—“Fakenews”
+- [[infosoc-fourth-industrial-revolution|第四次産業革命]] — EncyclopaediaBritannica—"Industry4.0"（第四次産業革命・AI・IoT・スマートファクトリーの定義と社会…
+- [[infosoc-gemeinschaft-gesellschaft|ゲマインシャフトとゲゼルシャフト]] — EncyclopaediaBritannica—FerdinandTönnies
+- [[infosoc-gemeinschaft-gesellschaft|ゲマインシャフトとゲゼルシャフト]] — EncyclopaediaBritannica—GemeinschaftandGesellschaft
+- [[infosoc-gift-economy|贈与経済（贈与論）]] — EncyclopaediaBritannica—"TheGift"(workbyMauss)
+- [[infosoc-gig-economy|ギグ・エコノミー]] — EncyclopaediaBritannica—TheGigEconomy（定義・「ギグ」の由来・柔軟性）
+- [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — EncyclopædiaBritannica—Globalvillage(McLuhantheory,definition)
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — EncyclopaediaBritannica—ErvingGoffman（スティグマ論の著書・三類型・象徴的相互作用論の概説）
+- [[infosoc-hacktivism|ハクティビズム]] — EncyclopaediaBritannica—Hacktivism（定義・歴史・主要事例の百科事典的解説）
+- [[infosoc-homophily|ホモフィリー（同類性）]] — EncyclopædiaBritannica—Homophily
+- [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — EncyclopaediaBritannica—IvanIllich（脱学校化社会・隠れたカリキュラム・コンヴィヴィアリティの概説）
+- [[infosoc-imagined-communities|想像の共同体（アンダーソン）]] — EncyclopaediaBritannica—BenedictAnderson(biography,politicalscientist)
+- [[infosoc-imagined-communities|想像の共同体（アンダーソン）]] — EncyclopaediaBritannica—ImaginedCommunities(booksummary)
+- [[infosoc-information-asymmetry|情報の非対称性（逆選択・モラルハザード）]] — EncyclopaediaBritannicaMoney—Moralhazard
+- [[infosoc-information-overload-theory|情報過負荷理論]] — EncyclopaediaBritannica—Informationtheory(Simonattentionscarcityconte…
+- [[infosoc-information-theory|情報理論（シャノン）]] — EncyclopædiaBritannica—ClaudeShannon（提唱者・情報理論の創始）
+- [[infosoc-information-theory|情報理論（シャノン）]] — EncyclopædiaBritannica—Informationtheory（定義・歴史・通信モデル）
+- [[infosoc-limited-effects|限定効果論]] — EncyclopaediaBritannica—Two-stepflowmodelofcommunication
+- [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]] — EncyclopaediaBritannica—WalterLippmann（PublicOpinion）
+- [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — EncyclopædiaBritannica—“LiquidModernity”(workbyBauman)
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — EncyclopaediaBritannica—Globalvillage（地球村）
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — EncyclopaediaBritannica—MarshallMcLuhan（"themediumisthemessage"・1964）
+- [[infosoc-meme|ミーム（meme）]] — Britannica「Meme」—定義・語源（Greekmimema）・Dawkins1976『TheSelfishGene』による造語
+- [[infosoc-moores-law|ムーアの法則]] — EncyclopaediaBritannica「Moore’slaw」（1965年起源・1975年の2年への修正）
+- [[infosoc-orientalism-said|オリエンタリズム（エドワード・サイード）]] — EncyclopaediaBritannica—Orientalism（サイードの定義・植民地的言説・ポストコロニアル理論への影響）
+- [[infosoc-overton-window|オーバートンの窓]] — EncyclopædiaBritannica—Overtonwindow(definition,origin,six-categorysp…
+- [[infosoc-panopticon|パノプティコンと規律権力]] — EncyclopaediaBritannica—Panopticon（ベンサム考案、1791年設計図公刊、構造と自己規律化）
+- [[infosoc-parasocial|パラソーシャル関係]] — EncyclopaediaBritannica—Parasocialinteraction(Psychology,History&Fact…
+- [[infosoc-parasocial|パラソーシャル関係]] — EncyclopaediaBritannica—Parasocialrelationship(sociology)
+- [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]] — EncyclopaediaBritannica—TheGreatTransformation（workbyPolanyi）（埋め込み・擬制…
+- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — EncyclopædiaBritannica—Postindustrialsociety（特徴・職業構成・知識中心）
+- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — EncyclopædiaBritannica—TheComingofPost-IndustrialSociety(workbyBell)
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — EncyclopædiaBritannica「ErvingGoffman|SymbolicInteractionism,Dramaturg…
+- [[infosoc-semantic-web|セマンティック・ウェブ]] — EncyclopaediaBritannica—SemanticWeb（概念・技術・LinkedDataとの関連の解説）
+- [[infosoc-simulacra|シミュラークルとハイパーリアリティ]] — EncyclopaediaBritannica—"JeanBaudrillard"（hyperreal／simulacra／"desert…
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — EncyclopaediaBritannica—Socialcapital
+- [[infosoc-social-exchange-theory|社会交換理論]] — EncyclopaediaBritannica—Socialexchangetheory（報酬・コスト・互恵性の規範・ホーマンズとブラウの…
+- [[infosoc-technopoly|テクノポリ（技術独占）]] — EncyclopaediaBritannica—NeilPostman（メディア生態学者・Technopoly等の業績）
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — EncyclopædiaBritannica—Two-stepflowmodelofcommunication
+- [[infosoc-web2|Web 2.0]] — EncyclopaediaBritannica—"Web2.0"
+- [[infosoc-web3|Web3]] — EncyclopædiaBritannica—WhatisWeb3?
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — EncyclopaediaBritannica—BehavioralEconomics(行動経済学・行動戦略の理論的基盤)
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — EncyclopaediaBritannica—HerbertA.Simon
+- [[mgmt-blue-ocean-strategy|ブルー・オーシャン戦略]] — EncyclopædiaBritannicaMoney—BlueOceanStrategyExplained（戦略キャンバス・ERRCグリ…
+- [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]] — EncyclopaediaBritannicaMoney—BrandIdentity（ブランドパーソナリティを含むブランド・アイデンティテ…
+- [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — EncyclopædiaBritannica—Diversity,Equity,andInclusionPrograms
+- [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — BritannicaMoney—DynamicPricing&SurgePricing:HowDoesItWork?
+- [[mgmt-five-forces|ファイブフォース分析（5つの競争要因）]] — EncyclopaediaBritannicaMoney—Porter’sFiveForces
+- [[mgmt-iron-law-oligarchy|寡頭制の鉄則（Iron Law of Oligarchy）]] — EncyclopaediaBritannica—Ironlawofoligarchy（ミヒェルスの寡頭制の鉄則の定義と背景）
+- [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — EncyclopaediaBritannica—KurtLewin（社会心理学者、場の理論・集団力学）
+- [[mgmt-likert-systems|リッカートのシステム4]] — EncyclopaediaBritannica—RensisLikert（生涯・4リーダーシップ類型・参加型の優位）
+- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — EncyclopædiaBritannica—Marketing:Themarketingprocess（4P）
+- [[mgmt-matrix-organization|マトリックス組織]] — EncyclopaediaBritannica(Money)—“Matrixorganization:Advantages&Disadva…
+- [[mgmt-mentoring|メンタリング]] — Britannica—Mentoring
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — EncyclopaediaBritannicaMoney—Middlemanagement
+- [[mgmt-parkinsons-law|パーキンソンの法則]] — EncyclopaediaBritannica—C.NorthcoteParkinson(1909–1993)
+- [[mgmt-parkinsons-law|パーキンソンの法則]] — EncyclopaediaBritannica—Parkinson'sLaw,orThePursuitofProgress
+- [[mgmt-peter-principle|ピーターの法則]] — Britannica—LaurenceJ.Peter
+- [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — EncyclopaediaBritannica“plannedobsolescence”（定義・機能/欲求の陳腐化の類型）
+- [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — EncyclopaediaBritannica—FrederickW.Taylor（科学的選抜・訓練、時間動作研究、誘因賃金、計画と執行の…
+- [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — EncyclopaediaBritannica—Taylorism（1911年『科学的管理法の諸原理』、時間動作研究と唯一最善の方法）
+- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — Britannica—Self-determinationtheory
+- [[mgmt-stp-marketing|STPマーケティング]] — EncyclopaediaBritannica—Targetmarketing（segmentation→targeting→positi…
+- [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]] — EncyclopaediaBritannicaMoney—AndrewS.Grove（経歴・戦略的転換点の概要）
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — EncyclopaediaBritannica—Softwareasaservice(computing)
+- [[mgmt-substitutes-leadership|リーダーシップの代替要因理論]] — EncyclopaediaBritannica—Leadership（コンティンジェンシー理論・状況要因とリーダーシップ研究の文脈）
+- [[mgmt-swot-analysis|SWOT分析]] — EncyclopaediaBritannicaMoney—SWOTAnalysis（4要素の定義）
+- [[mgmt-transaction-cost|取引費用理論]] — BritannicaMoney—Transactioncost（限定合理性・資産特殊性・ガバナンス構造）
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — EncyclopædiaBritannicaMoney—WhatIsaValueChain?
+- [[mgmt-woodward-technology|ウッドワードの技術類型]] — EncyclopædiaBritannica—IndustrialOrganization:TheoryandPractice(JoanW…
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

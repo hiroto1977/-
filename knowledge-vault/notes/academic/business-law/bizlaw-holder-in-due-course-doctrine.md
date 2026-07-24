@@ -32,6 +32,18 @@ William Murray (Lord Mansfield) ／ Mackenzie Dalzell Edwin Stewart Chalmers ／
 - [Gregory E. Maggs — The Holder in Due Course Doctrine as a Default Rule (Georgia Law Review, 1998)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1040581) `学術`
 - [Holder in Due Course — Wikipedia](https://en.wikipedia.org/wiki/Holder_in_due_course) `リファレンス`
 
+## 関連概念
+- [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 同じ思想家
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
+- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 同じ思想家
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
+- [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

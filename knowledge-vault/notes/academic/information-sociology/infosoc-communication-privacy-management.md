@@ -31,6 +31,18 @@ Sandra Petronio ／ Irwin Altman ／ Leslie A. Baxter
 - [Oxford Research Encyclopedia — CPM in health and risk messaging](https://oxfordre.com/communication/display/10.1093/acrefore/9780190228613.001.0001/acrefore-9780190228613-e-513) `学術`
 - [ScienceDirect — Conceptualization and utility of CPM Theory](https://www.sciencedirect.com/science/article/abs/pii/S2352250X19301320) `学術`
 
+## 関連概念
+- [[human-place-attachment-theory|場所愛着理論]] — 同じ思想家
+- [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
+- [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
+- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
+- [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
+- [[infosoc-cybernetics|サイバネティクス]] — 同分野の近傍
+- [[infosoc-information-asymmetry|情報の非対称性（逆選択・モラルハザード）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [Calvo & Reinhart, "Fear of Floating," NBER Working Paper 7993](https://www.nber.org/papers/w7993) `学術`
 - [IMF Finance & Development — Choosing an Exchange Rate Regime (de jure vs de facto)](https://www.imf.org/external/pubs/ft/fandd/2009/12/ghosh.htm) `公的`
 
+## 関連概念
+- [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
+- [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同じ思想家
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
+- [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
+- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
+- [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同じ思想家
+- [[econ-sovereign-debt-crisis-reinhart-rogoff|国家債務危機——ラインハートとロゴフの「今回は違う」と財政持続可能性の実証分析]] — 同じ思想家
+- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 同じ思想家
+- [[econ-hot-money-flows-kindleberger|ホットマネーと国際資本移動——投機的資本フローの不安定化効果]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

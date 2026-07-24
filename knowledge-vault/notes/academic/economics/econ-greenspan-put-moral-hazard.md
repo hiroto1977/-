@@ -31,6 +31,11 @@ Marcus H. Miller ／ Paul A. Weller ／ Raghuram G. Rajan
 - [Rajan (2005) Has Financial Development Made the World Riskier? — NBER](https://www.nber.org/papers/w11728) `学術`
 - [Rajan 2005 Jackson Hole symposium paper — Kansas City Fed](https://www.kansascityfed.org/documents/3326/PDF-Rajan2005.pdf) `公的`
 
+## 関連概念
+- [[econ-washington-consensus|ワシントン・コンセンサス]] — 出典を共有
+- [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
+- [[econ-contestable-markets|コンテスタブル市場]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

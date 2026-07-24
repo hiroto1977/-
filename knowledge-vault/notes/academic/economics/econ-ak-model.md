@@ -30,6 +30,18 @@ AKモデルとは、生産関数を Y＝AK（A は正の定数、K は物的・�
 - [S. Rebelo, “Long-Run Policy Analysis and Long-Run Growth”, Journal of Political Economy 99(3), 1991](https://www.jstor.org/stable/2937905) `学術`
 - [University of North Carolina (L. Hendricks) lecture notes — The AK model](https://lhendricks.org/econ720/ip2/Romer_AK_notes.pdf) `学術`
 
+## 関連概念
+- [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同じ思想家
+- [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
+- [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同じ思想家
+- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
+- [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — 同じ思想家
+- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

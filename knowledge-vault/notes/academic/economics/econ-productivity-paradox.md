@@ -30,6 +30,18 @@ Robert M. Solow ／ Erik Brynjolfsson ／ Daniel E. Sichel ／ Stephen D. Oliner
 - [Oliner, S. D. & Sichel, D. E. (2000). The Resurgence of Growth in the Late 1990s: Is Information Technology the Story? Journal of Economic Perspectives, 14(4), 3–22.](https://www.frbsf.org/wp-content/uploads/resurgence.pdf) `学術`
 - [Productivity paradox — Wikipedia](https://en.wikipedia.org/wiki/Productivity_paradox) `リファレンス`
 
+## 関連概念
+- [[econ-bundling|バンドリング（束ね売り）]] — 同じ思想家
+- [[econ-elasticity-of-substitution|代替の弾力性]] — 同じ思想家
+- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — 同じ思想家
+- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
+- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 出典を共有
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 出典を共有
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

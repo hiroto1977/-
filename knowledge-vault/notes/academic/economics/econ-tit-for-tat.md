@@ -31,6 +31,18 @@ aliases:
 - [PLOS Computational Biology — Properties of winning Iterated Prisoner's Dilemma strategies（nice/retaliating/forgiving/clear）](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012644) `学術`
 - [Harvard (E. Maskin) — The Folk Theorem in Repeated Games](https://scholar.harvard.edu/files/maskin/files/folk_theorem_in_repeated_games_with_discounting_or_incomplete_information.pdf) `学術`
 
+## 関連概念
+- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 出典を共有
+- [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 出典を共有
+- [[human-hyperbolic-discounting|双曲割引]] — 出典を共有
+- [[human-reminiscence-bump|レミニセンス・バンプ]] — 出典を共有
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 出典を共有
+- [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — 出典を共有
+- [[econ-menu-costs|メニューコスト]] — 出典を共有
+- [[econ-tax-incidence|租税の帰着]] — 出典を共有
+- [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
+- [[human-priming|プライミング効果]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

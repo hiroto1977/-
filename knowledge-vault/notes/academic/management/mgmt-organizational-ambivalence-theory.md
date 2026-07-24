@@ -32,6 +32,11 @@ Robert K. Merton ／ Naomi B. Rothman ／ Michael G. Pratt ／ Blake E. Ashforth
 - [Merton, R.K. (1976) Sociological Ambivalence and Other Essays — Free Press, New York](https://www.worldcat.org/oclc/1672010) `リファレンス`
 - [Wikipedia: Ambivalence — sociological ambivalence concept and background](https://en.wikipedia.org/wiki/Ambivalence) `リファレンス`
 
+## 関連概念
+- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同じ思想家
+- [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
+- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ aliases:
 - [e-Gov法令検索 貸金業法（3条）](https://laws.e-gov.go.jp/law/358AC1000000032) `公的`
 - [日本貸金業協会 総量規制（年収の3分の1）](https://www.j-fsa.or.jp/association/money_lending/law/annual_income.php) `運営団体`
 
+## 関連概念
+- [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 語彙が近い
+- [[legal-funds-transfer|資金移動業]] — 語彙が近い
+- [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
+- [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 同分野の近傍
+- [[legal-food-sanitation|食品衛生法の営業許可・届出とHACCPに沿った衛生管理]] — 同分野の近傍
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 同分野の近傍
+- [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

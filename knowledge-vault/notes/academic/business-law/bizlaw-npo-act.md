@@ -30,6 +30,15 @@ aliases:
 - [内閣府「公益法人と特定非営利活動法人(NPO法人)」](https://www.cao.go.jp/others/koeki_npo/index.html) `公的`
 - [日本法令索引「特定非営利活動促進法 平成10年3月25日法律第7号」](https://hourei.ndl.go.jp/simple/detail?lawId=0000083899&current=1) `公的`
 
+## 関連概念
+- [[eh-1995|1995年（平成7年）]] — 語彙が近い
+- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 出典を共有
+- [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 出典を共有
+- [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 出典を共有
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
+- [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]] — 同分野の近傍
+- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

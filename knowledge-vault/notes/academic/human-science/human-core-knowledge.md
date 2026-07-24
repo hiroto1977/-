@@ -30,6 +30,18 @@ aliases:
 - [Spelke & Kinzler (2007) Core Knowledge — Harvard Laboratory for Developmental Studies](https://www.harvardlds.org/wp-content/uploads/2017/01/SpelkeKinzler07-1.pdf) `学術`
 - [Core Knowledge — Semantic Scholar](https://www.semanticscholar.org/paper/Core-knowledge.-Spelke-Kinzler/1207aa55c8a2b47a25fc17c18328910daf3feb71) `学術`
 
+## 関連概念
+- [[econ-income-substitution-effect|所得効果と代替効果]] — 出典を共有
+- [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 出典を共有
+- [[econ-rybczynski|リブチンスキー定理]] — 出典を共有
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 出典を共有
+- [[infosoc-mcdonaldization|マクドナルド化]] — 出典を共有
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 出典を共有
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 出典を共有
+- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
+- [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

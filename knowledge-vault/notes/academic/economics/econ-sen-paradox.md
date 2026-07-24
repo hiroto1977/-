@@ -29,6 +29,18 @@ aliases:
 - [Amartya Sen, "The Impossibility of a Paretian Liberal," Journal of Political Economy 78(1), 1970, pp. 152–157](https://www.journals.uchicago.edu/doi/abs/10.1086/259614) `学術`
 - [Stanford Encyclopedia of Philosophy — Social Choice Theory (Sen's liberal paradox / Lady Chatterley illustration)](https://plato.stanford.edu/entries/social-choice/) `リファレンス`
 
+## 関連概念
+- [[econ-arrow-impossibility|アローの不可能性定理]] — 語彙が近い
+- [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 同じ思想家
+- [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
+- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同じ思想家
+- [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同じ思想家
+- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,15 @@ William J. Baumol／John C. Panzar／Robert D. Willig（1982）／サンクコ�
 - [“Contestability Theory and the Deregulation of US Airlines”, History of Political Economy (Duke University Press)](https://read.dukeupress.edu/hope/article/57/3/371/396345/Contestability-Theory-and-the-Deregulation-of-US) `学術`
 - [Economics Online — Contestable Markets（概説）](https://www.economicsonline.co.uk/business_economics/contestable_markets.html/) `リファレンス`
 
+## 関連概念
+- [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 語彙が近い
+- [[econ-baumol-oates-standards-charges|ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する]] — 同じ思想家
+- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 出典を共有
+- [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
+- [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
+- [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 同分野の近傍
+- [[econ-hartwick-rule|ハートウィックの規則——枯渇性資源レントの投資と世代間の公平]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

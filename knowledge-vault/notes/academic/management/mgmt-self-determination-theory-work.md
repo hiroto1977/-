@@ -31,6 +31,14 @@ Edward L. Deci ／ Richard M. Ryan ／ Marylène Gagné
 - [SDT official — Theory overview](https://selfdeterminationtheory.org/theory/) `リファレンス`
 - [Britannica — Self-determination theory](https://www.britannica.com/science/self-determination-theory) `リファレンス`
 
+## 関連概念
+- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 語彙が近い
+- [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 語彙が近い
+- [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同じ思想家
+- [[infosoc-fomo|FOMO（取り残されることへの恐れ）]] — 出典を共有
+- [[human-self-determination|自己決定理論（SDT）]] — 出典を共有
+- [[mgmt-regulatory-focus-theory-work|制御焦点理論（職場応用）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

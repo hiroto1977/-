@@ -30,6 +30,18 @@ aliases:
 - [Simply Psychology: Fundamental Attribution Error Theory（Ross 1977命名・Jones & Harris 1967実験を解説）](https://www.simplypsychology.org/fundamental-attribution.html) `リファレンス`
 - [Krull et al. (1999) “The Fundamental Fundamental Attribution Error: Correspondence Bias in Individualist and Collectivist Cultures”, PSPB（査読論文・文化差）](https://journals.sagepub.com/doi/10.1177/0146167299258003) `学術`
 
+## 関連概念
+- [[human-naive-realism|素朴実在論（ナイーブ・リアリズム）]] — 同じ思想家
+- [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同じ思想家
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
+- [[human-self-serving-bias|自己奉仕バイアス]] — 同分野の近傍
+- [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 同分野の近傍
+- [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同分野の近傍
+- [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

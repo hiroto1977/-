@@ -31,6 +31,10 @@ Edward T. Hall ／ Allen C. Bluedorn ／ Carol Kaufman-Scarborough
 - [Kaufman-Scarborough — Monochronic and Polychronic Time, Wiley International Encyclopedia of Intercultural Communication](https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118783665.ieicc0110) `リファレンス`
 - [Kaufman-Scarborough — Polychronicity Research Overview, Rutgers University](https://crab.rutgers.edu/users/ckaufman/polychronicity.html) `学術`
 
+## 関連概念
+- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同分野の近傍
+- [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,13 @@ MPEG LA（MPEG・H.264等の主要パテント・プール管理機関）／DVD6
 - [公正取引委員会 — 「知的財産の利用に関する独占禁止法上の指針」（パテント・プールの競争法的評価基準）](https://www.jftc.go.jp/dk/guideline/unyoukijun/chizai.html) `公的`
 - [WIPO Magazine (2014) — "Patent Pools and Antitrust"（パテント・プールの定義・機能・競争法上の評価をWIPOが概説）](https://www.wipo.int/wipo_magazine/en/2014/01/article_0006.html) `リファレンス`
 
+## 関連概念
+- [[bizlaw-doctrine-of-equivalents|均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理]] — 出典を共有
+- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 出典を共有
+- [[bizlaw-intellectual-property-trademark|商標法と知的財産保護の法律理論——ブランド価値と識別性基準]] — 出典を共有
+- [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-cartel-regulation-antitrust-eu|カルテル規制——競争法における水平的共謀の禁止と制裁]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

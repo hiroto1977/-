@@ -29,6 +29,10 @@ aliases:
 - [Vinge (1993) "The Coming Technological Singularity"（NASA VISION-21 シンポジウム原論文、CMU Robotics Institute 掲載）](https://www.frc.ri.cmu.edu/~hpm/book98/com.ch1/vinge.singularity.html) `学術`
 - [Stanford Encyclopedia of Philosophy — Artificial Intelligence（超知性・シンギュラリティの哲学的位置づけ）](https://plato.stanford.edu/entries/artificial-intelligence/) `リファレンス`
 
+## 関連概念
+- [[infosoc-digital-identity|デジタルアイデンティティ]] — 同分野の近傍
+- [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

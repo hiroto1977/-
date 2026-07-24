@@ -30,6 +30,10 @@ aliases:
 - [神戸大学附属図書館リポジトリ「不法原因給付に関する一つの覚書」（民法708条）](https://da.lib.kobe-u.ac.jp/da/kernel/81005103/81005103.pdf) `学術`
 - [Wikibooks 民法第703条（不当利得の返還義務）条文](https://ja.wikibooks.org/wiki/%E6%B0%91%E6%B3%95%E7%AC%AC703%E6%9D%A1) `リファレンス`
 
+## 関連概念
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 語彙が近い
+- [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

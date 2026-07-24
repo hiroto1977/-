@@ -30,6 +30,16 @@ aliases:
 - [法務省 法務局「持分会社（合同会社・合名会社・合資会社）」](https://houmukyoku.moj.go.jp/homu/houjin2.html) `公的`
 - [Wikipedia「会社法」](https://ja.wikipedia.org/wiki/%E4%BC%9A%E7%A4%BE%E6%B3%95) `リファレンス`
 
+## 関連概念
+- [[bizlaw-limited-liability|株主有限責任の原則]] — 語彙が近い
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 出典を共有
+- [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
+- [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 出典を共有
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
+- [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 同分野の近傍
+- [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

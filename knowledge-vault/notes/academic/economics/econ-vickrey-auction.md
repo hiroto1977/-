@@ -30,6 +30,18 @@ aliases:
 - [NobelPrize.org — Sveriges Riksbank Prize in Economic Sciences 1996 (William Vickrey)](https://www.nobelprize.org/prizes/economic-sciences/1996/vickrey/facts/) `リファレンス`
 - [Wikipedia — Vickrey auction（メカニズム・支配戦略・英国式との戦略的同値・収入同値）](https://en.wikipedia.org/wiki/Vickrey_auction) `リファレンス`
 
+## 関連概念
+- [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 語彙が近い
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
+- [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

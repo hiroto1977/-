@@ -31,6 +31,18 @@ EU AI規制法（AI Act、規則(EU)2024/1689）は、人工知能システム�
 - [Wikipedia「Artificial Intelligence Act」（規則番号・公布/発効日・条文構成）](https://en.wikipedia.org/wiki/Artificial_Intelligence_Act) `リファレンス`
 - [Cambridge Core / International Legal Materials「Regulation 2024/1689 of June 13, 2024」](https://www.cambridge.org/core/journals/international-legal-materials/article/regulation-20241689-of-the-eur-parl-council-of-june-13-2024-eu-artificial-intelligence-act/64F1F6734F8C66CA3EEA149C9759194E) `学術`
 
+## 関連概念
+- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 出典を共有
+- [[eh-1958|1958年（昭和33年）]] — 出典を共有
+- [[eh-2012|2012年（平成24年）]] — 出典を共有
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 出典を共有
+- [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 出典を共有
+- [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 出典を共有
+- [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 出典を共有
+- [[eh-2015|2015年（平成27年）]] — 出典を共有
+- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
+- [[infosoc-explainable-ai|説明可能なAI（XAI）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

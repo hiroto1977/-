@@ -36,6 +36,15 @@ national
 - [世田谷区 葬祭費の支給（国民健康保険）](https://www.city.setagaya.lg.jp/02060/329.html) `自治体`
 - [中野区 後期高齢者医療 葬祭費](https://www.city.tokyo-nakano.lg.jp/kurashi/koukikourei/sosaihi.html) `自治体`
 
+## 関連概念
+- [[labor-national-health-insurance|国民健康保険（国保）]] — 語彙が近い
+- [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
+- [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
+- [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 出典を共有
+- [[subsidy-child-allowance|児童手当]] — 同分野の近傍
+- [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

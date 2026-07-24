@@ -30,6 +30,18 @@ aliases:
 - [法務省 仲裁法の一部を改正する法律等について](https://www.moj.go.jp/MINJI/minji07_00328.html) `公的`
 - [コトバンク 外国仲裁判断（ニューヨーク条約との関連）](https://kotobank.jp/word/%E5%A4%96%E5%9B%BD%E4%BB%B2%E8%A3%81%E5%88%A4%E6%96%AD-1521474) `リファレンス`
 
+## 関連概念
+- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
+- [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同じ思想家
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 同じ思想家
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
+- [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同分野の近傍
+- [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — 同分野の近傍
+- [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -29,6 +29,14 @@ aliases:
 - [Encyclopaedia Britannica — Citizen journalism (Gillmor 2004 / OhmyNews lineage, definition)](https://www.britannica.com/topic/citizen-journalism) `リファレンス`
 - [Humanities and Social Sciences Communications (Nature, peer-reviewed) — credibility, bias and verification of citizen journalism](https://www.nature.com/articles/s41599-025-06216-6) `学術`
 
+## 関連概念
+- [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
+- [[infosoc-citizen-journalism-participatory-media|市民ジャーナリズムと参加型メディア——ウェブ2.0が変えた報道の担い手と情報権力の分散]] — 同じ思想家
+- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同分野の近傍
+- [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同分野の近傍
+- [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同分野の近傍
+- [[infosoc-slow-journalism|スロー・ジャーナリズム]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

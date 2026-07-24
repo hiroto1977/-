@@ -30,6 +30,16 @@ aliases:
 - [Michael Lynch, “Social Constructivism in Science and Technology Studies”, Human Studies (Springer, 2016)](https://link.springer.com/article/10.1007/s10746-016-9385-5) `学術`
 - [EBSCO Research Starters「Social Construction of Reality」— 外在化／客体化／内在化の三過程](https://www.ebsco.com/research-starters/religion-and-philosophy/social-construction-reality) `リファレンス`
 
+## 関連概念
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 同じ思想家
+- [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 同じ思想家
+- [[infosoc-collective-memory|集合的記憶]] — 同じ思想家
+- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 同分野の近傍
+- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同分野の近傍
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
+- [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

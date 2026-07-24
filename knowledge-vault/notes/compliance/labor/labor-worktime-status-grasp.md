@@ -30,6 +30,10 @@ aliases:
 - [厚生労働省 労働時間の適正把握ガイドライン](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/070614-2.html) `公的`
 - [安衛法上の労働時間把握義務 解説](https://www.saitama-bengoshi.com/oyakudachi/20230424-20/) `メディア`
 
+## 関連概念
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 語彙が近い
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,18 @@ aliases:
 - [A Review of Study on the Competing Values Framework（2軸・4象限と因子分析的起源の学術レビュー）](https://www.researchgate.net/publication/41891587_A_Review_of_Study_on_the_Competing_Values_Framework) `学術`
 - [OCAI Online — Competing Values Framework Culture Model（4文化類型とCameron & QuinnのOCAI応用）](https://www.ocai-online.com/blog/competing-values-framework-culture-model) `リファレンス`
 
+## 関連概念
+- [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 語彙が近い
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同じ思想家
+- [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
+- [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
+- [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
+- [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

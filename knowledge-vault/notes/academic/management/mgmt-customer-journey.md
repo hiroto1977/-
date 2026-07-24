@@ -30,6 +30,18 @@ aliases:
 - [Court, Elzinga, Mulder & Vetvik, "The consumer decision journey," McKinsey Quarterly, 2009](https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-consumer-decision-journey) `メディア`
 - [Harvard Business School Online — What Is a Customer Journey Map?](https://online.hbs.edu/blog/post/customer-journey-map) `リファレンス`
 
+## 関連概念
+- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同じ思想家
+- [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 出典を共有
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 出典を共有
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-value-proposition|バリュープロポジション]] — 出典を共有
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
+- [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
+- [[mgmt-aida|AIDAモデル（購買行動モデル）]] — 同分野の近傍
+- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

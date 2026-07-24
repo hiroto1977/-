@@ -30,6 +30,11 @@ aliases:
 - [Gneezy & Smorodinsky, "All-pay auctions—an experimental study" (UCSD)](https://rady.ucsd.edu/_files/faculty-research/uri-gneezy/all-pay-auctions.pdf) `学術`
 - [All-pay auction — Wikipedia](https://en.wikipedia.org/wiki/All-pay_auction) `リファレンス`
 
+## 関連概念
+- [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — 出典を共有
+- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 同分野の近傍
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

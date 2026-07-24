@@ -29,6 +29,10 @@ aliases:
 - [日本アクションラーニング協会（JIAL）— アクションラーニングとは](https://www.jial.or.jp/about/detail/) `学術`
 - [Wikipedia — Reg Revans](https://en.wikipedia.org/wiki/Reg_Revans) `リファレンス`
 
+## 関連概念
+- [[mgmt-skunkworks|スカンクワークス]] — 同分野の近傍
+- [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

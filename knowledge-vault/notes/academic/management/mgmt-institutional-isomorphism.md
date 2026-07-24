@@ -30,6 +30,18 @@ aliases:
 - [Sage “International Encyclopedia of Organization Studies” — Institutional Isomorphism 項目](https://sk.sagepub.com/ency/edvol/organization/chpt/institutional-isomorphism) `リファレンス`
 - [Patricia H. Thornton, “Isomorphism” — Palgrave Encyclopedia 項目（三機構と正統性の解説）](https://patriciathornton.com/wp-content/uploads/2012/02/Palgrave-entry-on-isomorphism3.pdf) `リファレンス`
 
+## 関連概念
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 語彙が近い
+- [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
+- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同じ思想家
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
+- [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[human-microaggression|マイクロアグレッション]] — 出典を共有
+- [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
+- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

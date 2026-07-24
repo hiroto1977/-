@@ -31,6 +31,18 @@ aliases:
 - [World Health Organization — “Addictive behaviours: Gaming disorder” (ICD-11)](https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder) `公的`
 - [Wikipedia — “Center for Humane Technology” (Tristan Harris, 2018 Digital Wellbeing/Screen Time)](https://en.wikipedia.org/wiki/Center_for_Humane_Technology) `リファレンス`
 
+## 関連概念
+- [[human-transactional-analysis-berne|交流分析——バーンの自我状態モデルとゲーム理論的対人関係分析]] — 同じ思想家
+- [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 出典を共有
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 出典を共有
+- [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 出典を共有
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
+- [[infosoc-infodemic|インフォデミック]] — 出典を共有
+- [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
+- [[infosoc-digital-detox-syvertsen|デジタルデトックス論——テクノロジーからの意図的離脱の社会学]] — 同分野の近傍
+- [[infosoc-doomscrolling|ドゥームスクローリング]] — 同分野の近傍
+- [[infosoc-fomo|FOMO（取り残されることへの恐れ）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

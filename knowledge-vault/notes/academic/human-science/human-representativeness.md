@@ -30,6 +30,11 @@ aliases:
 - [SimplyPsychology — Base Rate Fallacy / 代表性と基準率の無視・連言錯誤（リンダ問題）](https://www.simplypsychology.org/base-rate-fallacy.html) `リファレンス`
 - [Tversky & Kahneman (1971) "Belief in the Law of Small Numbers", Psychological Bulletin](https://www.semanticscholar.org/paper/BELIEF-IN-THE-LAW-OF-SMALL-NUMBERS-Tversky-Kahneman/894fc603f9b16e775f95045fb805b5d7e6935944) `学術`
 
+## 関連概念
+- [[human-conjunction-fallacy|連言錯誤]] — 語彙が近い
+- [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
+- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

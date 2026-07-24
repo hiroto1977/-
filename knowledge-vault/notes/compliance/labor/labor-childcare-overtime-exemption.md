@@ -30,6 +30,16 @@ aliases:
 - [厚生労働省 令和7年4月1日施行の改正内容](https://www.mhlw.go.jp/content/11900000/001407488.pdf) `公的`
 - [2025年育児介護休業法改正のポイント 解説](https://www.businesslawyers.jp/articles/1442) `メディア`
 
+## 関連概念
+- [[labor-childcare-short-time|育児のための短時間勤務制度（育児・介護休業法23条）]] — 語彙が近い
+- [[labor-childcare-leave-2025|育児・介護休業法 2025年4月改正]] — 語彙が近い
+- [[labor-flexible-work-measures|育児・介護休業法「柔軟な働き方を実現するための措置」（2025年10月施行）]] — 語彙が近い
+- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 語彙が近い
+- [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 同分野の近傍
+- [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]] — 同分野の近傍
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 同分野の近傍
+- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

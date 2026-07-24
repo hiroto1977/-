@@ -32,6 +32,15 @@ George Spencer Bower ／ Alexander Turner ／ Elizabeth Cooke ／ Andrew Roberts
 - [UNIDROIT Principles of International Commercial Contracts 2016, Art. 1.8](https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/) `リファレンス`
 - [Atiyah (1976) "When is an Enforceable Agreement Not a Contract?" — Law Quarterly Review](https://www.jstor.org/stable/1228534) `学術`
 
+## 関連概念
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 語彙が近い
+- [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 出典を共有
+- [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 出典を共有
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
+- [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 出典を共有
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 同分野の近傍
+- [[bizlaw-proprietary-estoppel|財産的禁反言——約束への信頼が財産上の権利を生む]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

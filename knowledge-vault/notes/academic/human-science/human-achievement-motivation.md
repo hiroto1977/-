@@ -31,6 +31,18 @@ D.マクレランドが提唱（主著『The Achieving Society』1961）／後�
 - [New World Encyclopedia — David McClelland](https://www.newworldencyclopedia.org/entry/David_McClelland) `リファレンス`
 - [PubMed (History of the Human Sciences) — McClelland, McBer & the business of the TAT, 1962–1985](https://pubmed.ncbi.nlm.nih.gov/31782177/) `学術`
 
+## 関連概念
+- [[human-acquired-needs-theory|獲得欲求理論]] — 語彙が近い
+- [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
+- [[econ-bilateral-monopoly|双方独占]] — 出典を共有
+- [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
+- [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 出典を共有
+- [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
+- [[human-operant-conditioning|オペラント条件づけ]] — 出典を共有
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
+- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

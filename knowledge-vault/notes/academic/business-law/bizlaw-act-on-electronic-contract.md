@@ -30,6 +30,11 @@ aliases:
 - [経済産業省 電子契約法 逐条解説（平成13年12月）](https://www.meti.go.jp/policy/it_policy/ec/e11225bj.pdf) `公的`
 - [Wikipedia「電子消費者契約に関する民法の特例に関する法律」](https://ja.wikipedia.org/wiki/電子消費者契約に関する民法の特例に関する法律) `リファレンス`
 
+## 関連概念
+- [[bizlaw-electronic-consumer-contract|電子消費者契約法]] — 語彙が近い
+- [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 分野横断
+- [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

@@ -30,6 +30,12 @@ aliases:
 - [経済産業省「営業秘密～営業秘密を守り活用する～」](https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html) `公的`
 - [経済産業省「逐条解説 不正競争防止法」](https://www.meti.go.jp/policy/economy/chizai/chiteki/pdf/Chikujo.pdf) `公的`
 
+## 関連概念
+- [[legal-limited-provision-data|不正競争防止法における「限定提供データ」の保護]] — 語彙が近い
+- [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 同分野の近傍
+- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
+- [[bizlaw-copyright|著作権法]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

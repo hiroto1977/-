@@ -30,6 +30,13 @@ aliases:
 - [国税庁 令和7年度税制改正（所得要件の見直し）](https://www.nta.go.jp/users/gensen/2025kiso/index.htm) `公的`
 - [扶養控除 要件・概要 解説](https://www.bk.mufg.jp/column/others/b0035.html) `メディア`
 
+## 関連概念
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-disability-deduction|所得税の障害者控除]] — 語彙が近い
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 語彙が近い
+- [[tax-medical-expense-deduction|医療費控除]] — 出典を共有
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

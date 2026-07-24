@@ -30,6 +30,18 @@ aliases:
 - [個人情報保護委員会 ガイドライン（仮名加工情報・匿名加工情報編）](https://www.ppc.go.jp/personalinfo/legal/guidelines_anonymous/) `公的`
 - [中小機構 J-Net21 仮名加工情報とは](https://j-net21.smrj.go.jp/law/20221228.html) `メディア`
 
+## 関連概念
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 語彙が近い
+- [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]] — 語彙が近い
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 分野横断
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

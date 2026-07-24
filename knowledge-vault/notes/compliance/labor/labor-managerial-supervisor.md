@@ -30,6 +30,11 @@ aliases:
 - [大阪労働局 管理監督者の範囲](https://jsite.mhlw.go.jp/osaka-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/hourei_seido/jikan2/kanri.html) `公的`
 - [厚生労働省 こころの耳 管理監督者 用語解説](https://kokoro.mhlw.go.jp/glossaries/word-1718/) `メディア`
 
+## 関連概念
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 出典を共有
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

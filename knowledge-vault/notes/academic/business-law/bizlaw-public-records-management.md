@@ -30,6 +30,18 @@ aliases:
 - [e-Gov データポータル／内閣府「公文書管理制度及び関係法令」](https://data.e-gov.go.jp/data/dataset/cao_20150903_0100) `公的`
 - [Wikipedia「公文書等の管理に関する法律」（制定・施行・対象・情報公開法との関係）](https://ja.wikipedia.org/wiki/%E5%85%AC%E6%96%87%E6%9B%B8%E7%AD%89%E3%81%AE%E7%AE%A1%E7%90%86%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B) `リファレンス`
 
+## 関連概念
+- [[bizlaw-information-disclosure|情報公開法]] — 語彙が近い
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-banking-act|銀行法]] — 出典を共有
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
+- [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
+- [[bizlaw-labor-union-act|労働組合法]] — 出典を共有
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-bankruptcy|破産法]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

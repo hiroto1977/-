@@ -30,6 +30,11 @@ aliases:
 - [Thorndike (1920) A Constant Error in Psychological Ratings — APA PsycNet（原典書誌）](https://psycnet.apa.org/record/1920-10104-014) `学術`
 - [A Constant Error, Revisited: A New Explanation of the Halo Effect — PMC（査読）](https://pmc.ncbi.nlm.nih.gov/articles/PMC11614318/) `学術`
 
+## 関連概念
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
+- [[human-anchoring|アンカリング効果（係留と調整）]] — 同分野の近傍
+- [[human-serial-position|系列位置効果（初頭効果・新近効果）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

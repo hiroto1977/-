@@ -30,6 +30,18 @@ aliases:
 - [消費者庁 通信販売の事例](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html) `公的`
 - [通信販売の返品 解説](https://kigyobengo.com/blog/1678) `メディア`
 
+## 関連概念
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 出典を共有
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 出典を共有
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
+- [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

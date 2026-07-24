@@ -31,6 +31,18 @@ aliases:
 - [Langevoort 2016 — Selling Hope, Selling Risk: Corporations, Wall Street, and the Dilemmas of Investor Protection, Oxford University Press](https://global.oup.com/academic/product/selling-hope-selling-risk-9780199988631) `リファレンス`
 - [SEC 2024 — What We Do: Mission and Regulatory Framework, U.S. Securities and Exchange Commission](https://www.sec.gov/about/what-we-do) `公的`
 
+## 関連概念
+- [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 語彙が近い
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同じ思想家
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
+- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
+- [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 出典を共有
+- [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]] — 出典を共有
+- [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — 出典を共有
+- [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 出典を共有
+- [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]] — 出典を共有
+- [[bizlaw-materiality-securities-law|証券法における重要性基準]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

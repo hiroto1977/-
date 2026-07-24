@@ -36,6 +36,18 @@ prefecture
 - [J-Net21 熊本県 くまもと型小規模事業者経営発展支援事業補助金](https://j-net21.smrj.go.jp/snavi/articles/82076) `公的`
 - [補助金ポータル 熊本県 くまもと型小規模事業者経営発展支援事業補助金](https://hojyokin-portal.jp/subsidies/60616) `メディア`
 
+## 関連概念
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 出典を共有
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

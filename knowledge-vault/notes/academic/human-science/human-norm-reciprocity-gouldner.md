@@ -1,0 +1,49 @@
+---
+collection: academic
+id: human-norm-reciprocity-gouldner
+category: "human-science"
+category_ja: "人間科学"
+title: "返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/human-science
+  - knowledge/verified
+aliases:
+  - "返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範"
+---
+
+# 返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+返報性の規範（the norm of reciprocity）は、社会学者アルヴィン・ゴールドナーが1960年の論文「返報性の規範——予備的考察」で提唱した概念で、ほとんどあらゆる社会に普遍的に見られる、「人から受けた恩には報いるべきだ」という道徳的な規範を指す。ゴールドナーは、この規範が二つの要請を含むと定式化した。第一に「自分を助けてくれた人を助けるべきだ（恩には恩で報いよ）」、第二に「自分を助けてくれた人を傷つけてはならない」。そして、この義務を果たさない者には正当な制裁が加えられうる。彼は、近親者間の愛情のような特定の関係に限られた互酬とは別に、見知らぬ相手にも適用される一般化された規範として、返報性が存在すると論じた（ごく幼い者・病人・高齢者などは免除されうる）。ゴールドナーの理論的な貢献は二つある。第一に、返報性の規範を、社会関係を「始動させる仕組み（starting mechanism）」として位置づけた点である。まだ信頼関係のない者どうしが関係を築くとき、一方が先に何かを与え、相手がいずれ返してくれるという返報の規範への期待があるからこそ、最初の一歩を踏み出せる。第二に、それを社会システムを「安定させる仕組み」として捉えた点である。受けた恩への返済義務が、人々を相互の交換と義務の網の目につなぎとめ、関係の継続と社会の結束を支える。返報性の規範は、贈与交換（モースの贈与論）、社会的交換理論（ホマンズ、ブラウ）と密接に関わり、人がなぜ親切に親切で応じるのか、なぜ無償の好意がかえって相手に「お返ししなければ」という心理的負債を生むのかを説明する。この心理は、説得・マーケティング（チャルディーニの影響力の武器における「返報性」の原理——試供品や譲歩が見返りを引き出す）にも応用される。返報性の規範は、協力・信頼・社会秩序の基盤を説明する、社会心理学・社会学の基礎概念である。
+
+## 提唱者・初出
+アルヴィン・ゴールドナー ／ マルセル・モース ／ ジョージ・ホマンズ ／ ロバート・チャルディーニ
+
+## 出典
+- [Gouldner, A. W. (1960) The Norm of Reciprocity: A Preliminary Statement — American Sociological Review, 25(2), 161–178](https://doi.org/10.2307/2092623) `学術`
+- [Wikipedia: Norm of reciprocity — Gouldner (1960), universal norm, starting mechanism, positive/negative reciprocity, Cialdini](https://en.wikipedia.org/wiki/Norm_of_reciprocity) `リファレンス`
+
+## 関連概念
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同じ思想家
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
+- [[infosoc-gift-economy|贈与経済（贈与論）]] — 同じ思想家
+- [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
+- [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
+- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同じ思想家
+- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
+- [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

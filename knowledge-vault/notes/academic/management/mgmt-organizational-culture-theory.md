@@ -32,6 +32,13 @@ Edgar H. Schein ／ Geert Hofstede ／ Terrence E. Deal ／ Allan A. Kennedy ／
 - [Martin, J. (1992). Cultures in Organizations: Three Perspectives. Oxford University Press.](https://www.semanticscholar.org/paper/Cultures-in-Organizations:-Three-Perspectives-Martin/b4c6a80a9c42e0bc818ffb019eddd550acea6fc9) `学術`
 - [Organizational culture — Wikipedia](https://en.wikipedia.org/wiki/Organizational_culture) `リファレンス`
 
+## 関連概念
+- [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 語彙が近い
+- [[human-cultural-dimensions-hofstede|ホフステッドの文化次元理論]] — 同じ思想家
+- [[mgmt-organizational-socialization|組織社会化]] — 同じ思想家
+- [[mgmt-hofstede-dimensions|ホフステッドの文化次元論]] — 出典を共有
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

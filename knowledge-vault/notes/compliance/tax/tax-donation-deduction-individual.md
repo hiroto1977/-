@@ -30,6 +30,10 @@ aliases:
 - [国税庁 No.1155 ふるさと納税（寄附金控除）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1155.htm) `公的`
 - [国税庁 No.1260 政党等寄附金特別控除（税額控除）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1260.htm) `公的`
 
+## 関連概念
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 語彙が近い
+- [[tax-furusato-designation|ふるさと納税の指定制度（返礼品の基準）]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

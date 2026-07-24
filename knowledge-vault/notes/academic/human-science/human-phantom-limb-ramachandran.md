@@ -31,6 +31,18 @@ Vilayanur S. Ramachandran ／ Ronald Melzack ／ Lorimer Moseley
 - [StatPearls: Phantom Limb Pain overview](https://www.ncbi.nlm.nih.gov/books/NBK544227/) `リファレンス`
 - [Frontiers in Human Neuroscience: mirror therapy mechanisms review](https://www.frontiersin.org/articles/10.3389/fnhum.2018.00092/full) `学術`
 
+## 関連概念
+- [[human-gate-control-theory|ゲートコントロール理論]] — 同じ思想家
+- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同じ思想家
+- [[human-synesthesia-neuroscience|共感覚の神経科学]] — 同じ思想家
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
+- [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
+- [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
+- [[human-defense-mechanisms|防衛機制]] — 出典を共有
+- [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
+- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

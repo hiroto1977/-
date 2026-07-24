@@ -31,6 +31,11 @@ aliases:
 - [Federal Reserve Bank of St. Louis — Thornton "Resolving the Unbiasedness and Forward Premium Puzzles"](https://files.stlouisfed.org/files/htdocs/conferences/integration/Thornton.pdf) `公的`
 - [Wikipedia "Interest rate parity"（CIP/UIPの定義・無裁定条件）](https://en.wikipedia.org/wiki/Interest_rate_parity) `リファレンス`
 
+## 関連概念
+- [[econ-interest-rate-parity-covered|カバー付き金利平価——先渡為替レートと内外金利差の裁定均衡]] — 語彙が近い
+- [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 語彙が近い
+- [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

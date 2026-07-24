@@ -30,6 +30,18 @@ aliases:
 - [和田真一「民法715条における使用者の負担部分――最判令和2年2月28日判決に関する覚書」立命館法学](https://www.ritsumei.ac.jp/acd/cg/law/lex/21-56/040wadashinichi.pdf) `学術`
 - [ベリーベスト法律事務所「使用者責任（民法715条）とは？要件や損害賠償責任を負う範囲」](https://corporate.vbest.jp/columns/2238/) `メディア`
 
+## 関連概念
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 語彙が近い
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
+- [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
+- [[bizlaw-real-subrogation|物上代位（民法304条）]] — 出典を共有
+- [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
+- [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

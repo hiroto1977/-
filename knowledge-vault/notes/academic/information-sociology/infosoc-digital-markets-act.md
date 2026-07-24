@@ -31,6 +31,18 @@ aliases:
 - [Digital Markets Act — Council of the European Union](https://www.consilium.europa.eu/en/policies/digital-markets-act/) `公的`
 - [Deal on Digital Markets Act — European Parliament](https://www.europarl.europa.eu/news/en/press-room/20220315IPR25504/deal-on-digital-markets-act-ensuring-fair-competition-and-more-choice-for-users) `公的`
 
+## 関連概念
+- [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 出典を共有
+- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 出典を共有
+- [[eh-1958|1958年（昭和33年）]] — 出典を共有
+- [[eh-2012|2012年（平成24年）]] — 出典を共有
+- [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 出典を共有
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 出典を共有
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 出典を共有
+- [[eh-2015|2015年（平成27年）]] — 出典を共有
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

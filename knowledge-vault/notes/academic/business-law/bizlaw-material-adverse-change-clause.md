@@ -32,6 +32,18 @@ Leo E. Strine Jr. ／ Ronald J. Gilson ／ Alan Schwartz
 - [Akorn v. Fresenius Kabi (Del. Ch. 2018)](https://law.justia.com/cases/delaware/court-of-chancery/2018/ca-2018-0300-jtl.html) `リファレンス`
 - [Coates & Molk (2019) Akorn MAC Analysis](https://doi.org/10.1093/jla/laz009) `学術`
 
+## 関連概念
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 語彙が近い
+- [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 語彙が近い
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
+- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

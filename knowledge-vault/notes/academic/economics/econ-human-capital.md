@@ -31,6 +31,18 @@ aliases:
 - [Wikipedia — Mincer earnings function（教育年数・経験の二次関数によるlog賃金モデル）](https://en.wikipedia.org/wiki/Mincer_earnings_function) `リファレンス`
 - [The Nobel Prize — 1992年経済学賞 ゲーリー・ベッカー 公式プレスリリース](https://www.nobelprize.org/prizes/economic-sciences/1992/press-release/) `公的`
 
+## 関連概念
+- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 語彙が近い
+- [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
+- [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家
+- [[econ-demographic-transition-theory|人口転換理論と少子化の経済学——出生率低下の人口学的・経済的メカニズム]] — 同じ思想家
+- [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
+- [[econ-grossman-health-demand|グロスマンの健康需要モデル（Grossman demand-for-health model／健康資本論）——健康を減価する耐久資本ストックととらえ、医療需要をその派生需要として説明する枠組み]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

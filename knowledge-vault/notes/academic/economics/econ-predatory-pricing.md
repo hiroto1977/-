@@ -30,6 +30,18 @@ aliases:
 - [US Federal Trade Commission — Predatory or Below-Cost Pricing](https://www.ftc.gov/advice-guidance/competition-guidance/guide-antitrust-laws/single-firm-conduct/predatory-or-below-cost-pricing) `公的`
 - [公正取引委員会「不当廉売に関する独占禁止法上の考え方」](https://www.jftc.go.jp/dk/guideline/unyoukijun/futorenbai.html) `公的`
 
+## 関連概念
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 出典を共有
+- [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
+- [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — 出典を共有
+- [[econ-tying|抱き合わせ販売（tying）]] — 出典を共有
+- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 出典を共有
+- [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 出典を共有
+- [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
+- [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 出典を共有
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

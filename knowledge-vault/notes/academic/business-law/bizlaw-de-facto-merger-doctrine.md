@@ -30,6 +30,13 @@ Jan G. Deutsch／Walter Rand III／W. B. Davis
 - [Davis (2008) De Facto Merger, Federal Common Law, and Erie, Colum. Bus. L. Rev. 2008(2)](https://journals.library.columbia.edu/index.php/CBLR/article/view/2957) `学術`
 - [Rand (1964) Corporations — De Facto Merger — Minority Shareholder Appraisal Rights, 42 N.C. L. Rev. 436](https://scholarship.law.unc.edu/nclr/vol42/iss2/14) `学術`
 
+## 関連概念
+- [[mgmt-matrix-organization|マトリックス組織]] — 同じ思想家
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同分野の近傍
+- [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同分野の近傍
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

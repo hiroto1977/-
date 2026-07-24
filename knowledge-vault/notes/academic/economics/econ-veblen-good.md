@@ -31,6 +31,11 @@ aliases:
 - [The Conversation（大学研究者寄稿）— ヴェブレン財とギッフェン財の相違（奢侈品/社会的動機 対 必需品/所得効果）](https://theconversation.com/what-are-veblen-and-giffen-goods-241799) `メディア`
 - [Leibenstein (1950) “Bandwagon, Snob, and Veblen Effects”, QJE 64(2), Oxford Academic（用語の原典）](https://academic.oup.com/qje/article-abstract/64/2/183/1931945) `学術`
 
+## 関連概念
+- [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — 同分野の近傍
+- [[econ-engels-law|エンゲルの法則]] — 同分野の近傍
+- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

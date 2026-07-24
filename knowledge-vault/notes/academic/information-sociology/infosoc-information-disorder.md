@@ -30,6 +30,13 @@ aliases:
 - [Wardle-Derakhshan Framework of Information Disorder — Profolus](https://www.profolus.com/topics/wardle-derakhshan-framework-of-information-disorder/) `リファレンス`
 - [Misinformation vs Disinformation vs Malinformation — Konsyse](https://www.konsyse.com/articles/misinformation-vs-disinformation-vs-malinformation/) `リファレンス`
 
+## 関連概念
+- [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 語彙が近い
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 語彙が近い
+- [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同じ思想家
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
+- [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

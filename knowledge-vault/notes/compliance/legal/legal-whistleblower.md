@@ -30,6 +30,11 @@ aliases:
 - [消費者庁 指針の解説](https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview/assets/overview_211013_0001.pdf) `公的`
 - [改正公益通報者保護法の要点](https://www.businesslawyers.jp/articles/908) `メディア`
 
+## 関連概念
+- [[bizlaw-whistleblower-protection|公益通報者保護法]] — 分野横断
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 同分野の近傍
+- [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

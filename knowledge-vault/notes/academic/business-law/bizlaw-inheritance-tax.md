@@ -30,6 +30,11 @@ aliases:
 - [国税庁 相続税・贈与税](https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/sozoku-zoyo.htm) `公的`
 - [国税庁 No.4102 相続税がかかる場合（基礎控除）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4102.htm) `公的`
 
+## 関連概念
+- [[bizlaw-income-tax-act|所得税法]] — 同分野の近傍
+- [[bizlaw-local-tax-act|地方税法]] — 同分野の近傍
+- [[bizlaw-strong-v-bird|ストロング対バードの準則——不完全な贈与が遺言執行者就任で完成する]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

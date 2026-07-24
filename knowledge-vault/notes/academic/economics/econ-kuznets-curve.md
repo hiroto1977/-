@@ -30,6 +30,11 @@ aliases:
 - [EBSCO Research Starters (Economics) — Kuznets Curve](https://www.ebsco.com/research-starters/economics/kuznets-curve) `リファレンス`
 - [Encyclopedia.com — Environmental Kuznets Curves（派生概念）](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/environmental-kuznets-curves) `リファレンス`
 
+## 関連概念
+- [[econ-harris-todaro|ハリス＝トダロ・モデル]] — 同分野の近傍
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
+- [[econ-informal-economy|インフォーマル経済]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

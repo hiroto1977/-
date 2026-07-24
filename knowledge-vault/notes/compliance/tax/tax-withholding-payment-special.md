@@ -30,6 +30,12 @@ aliases:
 - [国税庁 No.2110 事業主がする源泉徴収](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2110.htm) `公的`
 - [国税庁 A2-8 納期の特例の承認申請](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_14.htm) `公的`
 
+## 関連概念
+- [[tax-withholding|源泉徴収義務と納付期限]] — 語彙が近い
+- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 語彙が近い
+- [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
+- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

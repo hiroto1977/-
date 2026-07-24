@@ -30,6 +30,18 @@ aliases:
 - [Wikipedia: Financial repression（定義・McKinnon & Shaw 1973・典型的手段）](https://en.wikipedia.org/wiki/Financial_repression) `リファレンス`
 - [Federal Reserve Bank of Richmond, Econ Focus: "A Look Back at Financial Repression"](https://www.richmondfed.org/publications/research/econ_focus/2021/q1/economic_history) `公的`
 
+## 関連概念
+- [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 語彙が近い
+- [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
+- [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同じ思想家
+- [[econ-expectations-hypothesis|金利の期間構造の期待仮説]] — 出典を共有
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 出典を共有
+- [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]] — 出典を共有
+- [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
+- [[econ-helicopter-money|ヘリコプターマネー]] — 出典を共有
+- [[econ-optimal-tariff|最適関税論]] — 出典を共有
+- [[eh-2019|2019年（平成31年/令和元年）]] — 出典を共有
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

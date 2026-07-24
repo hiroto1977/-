@@ -30,6 +30,11 @@ aliases:
 - [厚生労働省 HACCP](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/haccp/index.html) `公的`
 - [東京都 HACCPに沿った衛生管理の制度化](https://www.hokeniryo1.metro.tokyo.lg.jp/shokuhin/kaisei/haccp.html) `自治体`
 
+## 関連概念
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 語彙が近い
+- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 出典を共有
+- [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[法務・税務・労務]]
 - ヴォルト入口: [[Home]]

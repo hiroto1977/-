@@ -1,0 +1,26 @@
+---
+title: "politybooks.com"
+type: source-domain
+host: "politybooks.com"
+cite_count: 3
+tags:
+  - source-domain
+  - index
+---
+
+# politybooks.com
+
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 1 ・ メディア 1 ・ リファレンス 1）
+
+## このドメインを出典とする項目
+
+- [[infosoc-platform-capitalism|プラットフォーム資本主義]] — PolityPress—PlatformCapitalism（原著出版社・書誌）
+- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — Srnicek2016—PlatformCapitalism,PolityPress
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — PolityBooks—Srnicek,PlatformCapitalism(2017)
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

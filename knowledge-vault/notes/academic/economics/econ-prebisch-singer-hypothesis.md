@@ -30,6 +30,12 @@ aliases:
 - [Singer, H.W. (1950) The Distribution of Gains between Investing and Borrowing Countries, AER 40(2):473-485](https://www.jstor.org/stable/1818064) `学術`
 - [Wikipedia — Prebisch–Singer hypothesis](https://en.wikipedia.org/wiki/Prebisch%E2%80%93Singer_hypothesis) `リファレンス`
 
+## 関連概念
+- [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 語彙が近い
+- [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同じ思想家
+- [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同じ思想家
+- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同分野の近傍
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

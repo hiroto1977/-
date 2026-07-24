@@ -29,6 +29,18 @@ aliases:
 - [Autor, D. H. (2015) "Why Are There Still So Many Jobs? The History and Future of Workplace Automation," Journal of Economic Perspectives 29(3):3-30（AEA）](https://www.aeaweb.org/articles?id=10.1257/jep.29.3.3) `学術`
 - [IMF Working Paper (2018) "Robotics, Automation, Employment and the Economy"（国際通貨基金）](https://www.imf.org/en/Publications/WP/Issues/2018/01/31/Robotics-Automation-Employment-and-the-Economy-What-Do-We-Know-45571) `公的`
 
+## 関連概念
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 同じ思想家
+- [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
+
 ## 関連
 - コレクション: [[学術概念]]
 - ヴォルト入口: [[Home]]

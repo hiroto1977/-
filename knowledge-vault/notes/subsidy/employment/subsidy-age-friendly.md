@@ -36,6 +36,18 @@ national
 - [日本労働安全衛生コンサルタント会 エイジフレンドリー補助金事務センター](https://www.jashcon-age.or.jp/) `運営団体`
 - [補助金ポータル エイジフレンドリー補助金の案内](https://hojyokin-portal.jp/) `メディア`
 
+## 関連概念
+- [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
+- [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
+- [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
+- [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
+- [[subsidy-akita|あきた農商工応援ファンド事業（助成金）（秋田県）]] — 出典を共有
+- [[subsidy-fukui|企業における省エネ設備等導入支援事業補助金（福井県）]] — 出典を共有
+
 ## 関連
 - コレクション: [[補助金・助成金]]
 - ヴォルト入口: [[Home]]

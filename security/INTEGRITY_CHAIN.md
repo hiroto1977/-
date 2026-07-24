@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 1
+- ブロック数: 3
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
+- 末尾(tip)ハッシュ: `39cef8f4fd753a7ead472590c44ec00bcf27650ab9e1213e1b8047c00971fc45`
 - 保護対象: 15 ファイル
 
 ## ブロック
@@ -14,6 +14,8 @@
 | # | merkleRoot (先頭16) | prevHash (先頭16) | hash (先頭16) | note |
 | --- | --- | --- | --- | --- |
 | 0 | `6c2cc5354cb080c4` | `0000000000000000` | `773e7442591bb228` | genesis |
+| 1 | `139a9c7c85736a5a` | `773e7442591bb228` | `5872f6c23c534bf0` | update ci.yml |
+| 2 | `42703eb4c2162b18` | `5872f6c23c534bf0` | `39cef8f4fd753a7e` | update LockScreen.tsx |
 
 ## 保護対象ファイル
 
