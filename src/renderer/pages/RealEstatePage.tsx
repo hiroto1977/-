@@ -25,6 +25,12 @@ import {
   calcIrr,
 } from '../../shared/realEstateMetrics';
 import { straightLineAnnual, straightLineSchedule } from '../../shared/depreciation';
+import {
+  planSite,
+  planFactory,
+  NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP,
+  type RoadMultiplierCategory,
+} from '../../shared/zoningPlanner';
 
 const reInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -41,6 +47,13 @@ const reNum = (s: string): number => {
 };
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
+
+/** 敷地プランナーの用途地域プリセット (指定値は土地ごとに異なるため編集可)。 */
+const ZONE_PRESETS = [
+  { key: 'kinsho', label: '近隣商業地域', cov: '80', far: '200', workshopCap: String(NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP) },
+  { key: 'shogyo', label: '商業地域', cov: '80', far: '400', workshopCap: String(NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP) },
+  { key: 'custom', label: 'その他 (手入力)', cov: '60', far: '200', workshopCap: '' },
+] as const;
 
 const EMPTY_PROPERTY_FORM = {
   name: '',
@@ -153,6 +166,48 @@ export function RealEstatePage() {
     const irr = calcIrr(flows);
     return { years, npv, irr };
   }, [npvYearsStr, npvSaleStr, reEquityStr, npvDiscountStr, leverage.lev.annualCashflow]);
+
+  // 敷地プランナー — 用途地域の規制から建てられる規模と工場150㎡プランを試算。
+  const [zoneKey, setZoneKey] = useState<(typeof ZONE_PRESETS)[number]['key']>('kinsho');
+  const [zpSiteStr, setZpSiteStr] = useState('300');
+  const [zpCovStr, setZpCovStr] = useState('80');
+  const [zpFarStr, setZpFarStr] = useState('200');
+  const [zpRoadStr, setZpRoadStr] = useState('6');
+  const [zpCat, setZpCat] = useState<RoadMultiplierCategory>('other');
+  const [zpCorner, setZpCorner] = useState(false);
+  const [zpFireproof, setZpFireproof] = useState(false);
+  const [zpCapStr, setZpCapStr] = useState(String(NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP));
+  const [zpWorkshopStr, setZpWorkshopStr] = useState('');
+
+  function onZonePreset(key: (typeof ZONE_PRESETS)[number]['key']) {
+    setZoneKey(key);
+    const preset = ZONE_PRESETS.find((z) => z.key === key);
+    if (preset) {
+      setZpCovStr(preset.cov);
+      setZpFarStr(preset.far);
+      setZpCapStr(preset.workshopCap);
+    }
+  }
+
+  const zoning = useMemo(() => {
+    const site = planSite({
+      siteArea: reNum(zpSiteStr),
+      coverageRatioPct: reNum(zpCovStr),
+      farPct: reNum(zpFarStr),
+      roadWidthM: reNum(zpRoadStr),
+      category: zpCat,
+      cornerLot: zpCorner,
+      fireproofBonus: zpFireproof,
+    });
+    const capRaw = zpCapStr.trim() === '' ? Number.POSITIVE_INFINITY : reNum(zpCapStr);
+    const factory = planFactory({
+      maxFootprint: site.maxFootprint,
+      maxTotalFloor: site.maxTotalFloor,
+      workshopCapSqm: capRaw,
+      ...(zpWorkshopStr.trim() !== '' ? { desiredWorkshopSqm: reNum(zpWorkshopStr) } : {}),
+    });
+    return { site, factory, capUnlimited: zpCapStr.trim() === '' };
+  }, [zpSiteStr, zpCovStr, zpFarStr, zpRoadStr, zpCat, zpCorner, zpFireproof, zpCapStr, zpWorkshopStr]);
 
   // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
   const [bldgCostStr, setBldgCostStr] = useState('25000000');
@@ -416,6 +471,98 @@ export function RealEstatePage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
           <Stat label="償却年数" value={`${depreciation.schedule.length} 年`} />
+        </div>
+      </Section>
+
+      <Section title="敷地プランナー — 建てられる規模と工場150㎡プラン (概算)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          用途地域の建ぺい率・容積率・前面道路幅員から<strong>建築面積と延べ床面積の上限</strong>を概算し、
+          近隣商業地域で植物工場などを計画する際の<strong>「作業場 150 ㎡以下 + 直売・カフェ併設」プラン</strong>を試算します。
+          建ぺい率・容積率は都市計画で土地ごとに指定されるため、実際の指定値に書き換えてください。
+          <strong>※ 概算であり建築・法務助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            用途地域プリセット
+            <select value={zoneKey} onChange={(e) => onZonePreset(e.target.value as (typeof ZONE_PRESETS)[number]['key'])} style={{ ...reInputStyle, width: 160 }}>
+              {ZONE_PRESETS.map((z) => <option key={z.key} value={z.key}>{z.label}</option>)}
+            </select>
+          </label>
+          {([
+            ['敷地面積 (㎡)', zpSiteStr, setZpSiteStr],
+            ['建ぺい率 (%)', zpCovStr, setZpCovStr],
+            ['容積率 (%)', zpFarStr, setZpFarStr],
+            ['前面道路幅員 (m)', zpRoadStr, setZpRoadStr],
+          ] as const).map(([label, val, setter]) => (
+            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {label}
+              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={{ ...reInputStyle, width: 110 }} />
+            </label>
+          ))}
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            道路乗数の区分
+            <select value={zpCat} onChange={(e) => setZpCat(e.target.value as RoadMultiplierCategory)} style={{ ...reInputStyle, width: 150 }}>
+              <option value="other">商業系ほか (6/10)</option>
+              <option value="residential">住居系 (4/10)</option>
+            </select>
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
+            <input type="checkbox" checked={zpCorner} onChange={(e) => setZpCorner(e.target.checked)} />
+            角地 (+10%)
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
+            <input type="checkbox" checked={zpFireproof} onChange={(e) => setZpFireproof(e.target.checked)} />
+            防火地域内の耐火建築物
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 14 }}>
+          <Stat label="適用建ぺい率" value={`${zoning.site.effectiveCoveragePct}%`} />
+          <Stat label="建築面積の上限" value={`${zoning.site.maxFootprint.toLocaleString()} ㎡`} />
+          <Stat
+            label={zoning.site.roadLimitedFarPct !== null && zoning.site.roadLimitedFarPct < reNum(zpFarStr) ? '実効容積率 (道路幅員で制限)' : '実効容積率'}
+            value={`${zoning.site.effectiveFarPct}%`}
+          />
+          <Stat label="延べ床面積の上限" value={`${zoning.site.maxTotalFloor.toLocaleString()} ㎡`} />
+        </div>
+        {zoning.site.floorsToUseAll !== null && zoning.site.floorsToUseAll > 1 && (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12 }}>
+            延べ床上限を使い切るには約 {zoning.site.floorsToUseAll} フロア相当の計画になります。
+          </div>
+        )}
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            作業場の法定上限 (㎡・空欄=制限なし)
+            <input type="text" inputMode="numeric" value={zpCapStr} onChange={(e) => setZpCapStr(e.target.value)} style={{ ...reInputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            希望する作業場面積 (㎡・空欄=上限まで)
+            <input type="text" inputMode="numeric" value={zpWorkshopStr} onChange={(e) => setZpWorkshopStr(e.target.value)} style={{ ...reInputStyle, width: 170 }} />
+          </label>
+        </div>
+        {zoning.factory.overCap && (
+          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+            希望の作業場面積が法定上限を超えています — この用途地域では建てられないため、面積の縮小か準工業地域などの立地見直しが必要です。
+          </div>
+        )}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 10 }}>
+          <Stat label="作業場 (栽培室等)" value={`${zoning.factory.workshopArea.toLocaleString()} ㎡`} />
+          <Stat label="1階の残り (直売・カフェ・事務)" value={`${zoning.factory.groundFloorOther.toLocaleString()} ㎡`} />
+          <Stat label="2階以上に回せる面積" value={`${zoning.factory.upperFloorsArea.toLocaleString()} ㎡`} />
+          <Stat
+            label="作業場の延べ床比率"
+            value={zoning.factory.workshopSharePct === null ? '—' : `${zoning.factory.workshopSharePct}%`}
+          />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+          ※ 近隣商業地域・商業地域では、原動機を使用する工場は<strong>作業場の床面積合計 150 ㎡以下</strong>に制限されます (建築基準法 別表第二)。
+          150 ㎡は栽培室など「作業場」部分で判定されるため、直売所・事務所・カフェをどう切り分けるかが設計の要点です。
+          建ぺい率の角地 +10%・防火地域内の耐火建築物 +10% (指定 80% 区域では適用除外 = 100%) は建築基準法53条、
+          前面道路 12m 未満の容積率制限 (幅員 × 住居系 4/10・その他 6/10) は52条2項によります。
+          このほか斜線・日影・防火規制や、水耕栽培施設を「工場」としてどう扱うかの整理は自治体ごとに異なるため、
+          <strong>最終判断は必ず自治体の建築指導課への事前相談と建築確認で行ってください。</strong>
+          LED の遮光・空調騒音・深夜搬出入への配慮は、住宅が混在しやすい近隣商業地域では特に重要です。
         </div>
       </Section>
     </div>
