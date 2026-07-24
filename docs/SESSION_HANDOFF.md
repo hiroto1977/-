@@ -20,15 +20,16 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,606**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パス+オートパイロット消化で 4,350→3,606・**−744**） |
-| **直近完了作業** | 🚀 最適化スプリント (今まで学習した全てを踏まえたシステム最適化): ①Playwright E2E をリポジトリ常設化 — `npm run e2e` / `e2e:lite` (scripts/e2e/core.cjs・desktop/phone/tablet 3プロファイル・18チェック・chromium 不在は exit 2) ②GitHub Pages にモバイル配信を追加 — pages.yml が `/lite.html` (2.2MB) を公開 (フル版退避→lite 生成→復元の順序必須・PWA タグも注入) ③PR #707 のタイトル/本文を全成果反映に刷新 (マージ+Pages 有効化で恒久モバイル URL 完成) ④本引継ぎの旧履歴を下の「📜 直近の完了履歴」へ分離 ⑤新規純関数の mutation 実測: zoningPlanner **97.1%** / investments **73.7%** / shigyoDirectory **78.5%** → 100% 到達までは stryker.config へ未追加 (テスト増強が残作業。survived は丸め境界・エラー文言・既定値系) |
+| **直近完了作業** | 🎉 **PR #707 を代理マージ** (ユーザー委任「代わりに押してください」・merge commit `4346e152`・72サービスが main 到達) → 直後の Pages run #693 が `build:landing` 自己検証で失敗。**原因** = build-landing.cjs が士業連携カテゴリに未追従 (countEntries 正規表現と CATEGORY_LABEL/ORDER が featured/tools/integrations 固定 → 70 parsed vs 62 counted)。**修正** = CATEGORY_ORDER から正規表現を導出 + professionals 追加 (サイドバー順) + unknown-category ガード新設。**再発防止** = ci.yml に Pages 専用ビルド検証を追加 (landing/デモ3種/lite + フル・lite 両サイズ検査) — pages.yml は main 限定で PR CI の死角だったため。pages.yml 全手順 (full→退避→lite→復元→landing→デモ3種→_site 組立→inject-pwa) をローカル通し検証済み (55秒・全成功) |
 | **サービス数** | **72**（cpa 追加 — 士業連携カテゴリ 8 士業＋担当領域ナビ） |
 | **Knowledge Vault** | 7,709 files（知識 4,233＋人物 1,506＋出典 1,517＋年表 242＋パス 22＋教育 44＋MOC/組織 — 出典差替えでドメイン1減） |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |
-| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ + チャットボット v2 + 重複統合 + AIの村 + 増強 を蓄積、まだ未マージ） |
+| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707) は **2026-07-24 マージ済み**（merge commit `4346e152`）。ブランチ `claude/eager-brown-7cev3c` は main へ仕切り直し済み — **以後の作業は新規 PR**（マージ済み PR への積み増し禁止） |
 | **次のアクション** | ①dedupeGraph 53 ペアの裁定（テイラールール 3 変種を含む）②増強バックログ 510 件のトランシェ消化 ③新規概念 Batch 724 ④柱 B Phase 4（余裕枠: 人物増強・graph.json pretty・docs/KNOWLEDGE_GRAPH.md） |
 
 ### 📜 直近の完了履歴 (新しい順・ダッシュボードから移設)
 
+- 🚀 最適化スプリント (今まで学習した全てを踏まえたシステム最適化): ①Playwright E2E をリポジトリ常設化 — `npm run e2e` / `e2e:lite` (scripts/e2e/core.cjs・desktop/phone/tablet 3プロファイル・18チェック・chromium 不在は exit 2) ②GitHub Pages にモバイル配信を追加 — pages.yml が `/lite.html` (2.2MB) を公開 (フル版退避→lite 生成→復元の順序必須・PWA タグも注入) ③PR #707 のタイトル/本文を全成果反映に刷新 ④引継ぎの旧履歴を本リストへ分離 ⑤新規純関数の mutation 実測: zoningPlanner **97.1%** / investments **73.7%** / shigyoDirectory **78.5%** → 100% 到達までは stryker.config へ未追加 (テスト増強が残作業。survived は丸め境界・エラー文言・既定値系)
 - 🪶 スマホで開けない対応 = **LITE ビルド新設**: `npm run build:web:lite` (SERVICE_HUB_LITE=1) が vite の academicJsonParse transform で学術コーパスを空化し **10MB→2.2MB** の `dist/standalone-lite.html` を生成 (型は実ソースで tsc 済み・コンプラ/補助金/相談窓口/経済史ナレッジは搭載维持・初期表示1.2s)。🧭 アーティファクトは以後 **LITE 版を配信** (スマホが主用途のため)・フル版はファイル配布。**罠**: フル `build:web` は emptyOutDir で dist/ を掃除するため lite を先に退避すること。dist/standalone-lite.html は gitignore (dist/* 除外・!standalone.html のみ追跡)
 - 📱 モバイル最適化 v2 (今セッション新設UIの総点検): styles.css に `.field-grid` (フォーム列 auto-fit minmax 160px・input幅は !important で100%) と `.stat-grid` (Statカード列 auto-fit minmax 150px) を新設し、RealEstate/MutualFunds/ShigyoConsole の固定 flex行+repeat(N,1fr) 34箇所を一括変換。768px以下の input font-size 16px は **!important 化** (inline fontSize:13 が iOS 自動ズーム防止を迂回していたのを修正)。E2E 13チェック (phone412: 横スクロールなし・計算フォント16px・KPI 2列折返し・タップで物件/専門家追加、tablet834: 3列活用)。**罠**: python 置換で raw string の \" が JSX に混入し1箇所構文破壊 → 修正済み (正規表現置換後は必ず typecheck)
 - 👥 士業CRM Phase 6 実装: `data/shigyoDirectory.ts` (SHIGYO_CONTACTS/CONSULTATIONS コレクション・serviceId で8士業を1コレクション同居・parse検証+8テスト) → 共有 ShigyoConsole に**専門家の追加/編集/削除**フォームと**相談履歴の追加/インラインステータス変更/削除** (日付降順ソート・デモ行はバッジ区別・ヘッダ連携数は結合数)。UI の「Phase 6 で対応予定」約束を解消 — 1コンポーネント修正で8ページ全対応。E2E 9チェック (追加→ヘッダ反映→編集→相談記録→降順→ステータス変更→リロード永続→他士業ページへ非漏出)

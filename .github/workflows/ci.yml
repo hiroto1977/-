@@ -61,3 +61,29 @@ jobs:
             echo "standalone.html is suspiciously small" >&2
             exit 1
           fi
+
+      # Pages 専用ビルド (pages.yml は main でしか走らない) を PR 段階で検証する。
+      # 2026-07 の landing 自己検証落ち (士業カテゴリ追従漏れ) の再発防止。
+      # 各スクリプトは自己検証付きなので、走らせること自体がテストになる。
+      # build:web:lite は dist/ を空にして standalone.html を消費するため最後に実行。
+      - run: npm run build:landing
+      - run: npm run build:demo
+      - run: npm run build:deliberation-demo
+      - run: npm run build:research-demo
+      - run: npm run build:web:lite
+      - name: Verify standalone-lite.html size
+        run: |
+          if [ ! -f dist/standalone-lite.html ]; then
+            echo "standalone-lite.html not generated" >&2
+            exit 1
+          fi
+          SIZE=$(stat -c%s dist/standalone-lite.html)
+          echo "standalone-lite.html size: $SIZE bytes"
+          if [ "$SIZE" -lt 500000 ]; then
+            echo "standalone-lite.html is suspiciously small" >&2
+            exit 1
+          fi
+          if [ "$SIZE" -gt 4000000 ]; then
+            echo "standalone-lite.html exceeds 4MB — 学術コーパス除去 (SERVICE_HUB_LITE) が効いていない可能性" >&2
+            exit 1
+          fi

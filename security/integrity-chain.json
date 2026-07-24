@@ -42,10 +42,18 @@
       "leafCount": 15,
       "note": "update LockScreen.tsx",
       "hash": "39cef8f4fd753a7ead472590c44ec00bcf27650ab9e1213e1b8047c00971fc45"
+    },
+    {
+      "index": 3,
+      "prevHash": "39cef8f4fd753a7ead472590c44ec00bcf27650ab9e1213e1b8047c00971fc45",
+      "merkleRoot": "8562ab8da46fbc1dce9d1ec994be22d6b3c8a157da5e1394111fa78bf651a1ae",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "f5b5925a555d09a8baf1146b6cae4de9a265f77e1f36d28f1a2824f9e5e777c7"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "ef4142a26945c69ee8e4c1a318ec3001c155d99e55b57a32ffaf4d9a90de5746",
+    ".github/workflows/ci.yml": "cba7092bb5863b75e0400c59a7a806a8cb4787e4e5da33d4a81ebe0d3fbdb956",
     "docs/SECURITY_CHAIN.md": "df4126864c8e17b6464fd4fc16715885ba415cc199c6ee88b9055563ce7d1012",
     "scripts/integrity-chain.cjs": "4bf5dcba4528d6607f348a6aed6c03d506c126fef7a26eced145bf7928911ada",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
