@@ -42,6 +42,14 @@ function academicJsonParse(): Plugin {
     apply: 'build',
     async transform(code, id) {
       if (!TARGET.test(id)) return null;
+      // LITE ビルド (SERVICE_HUB_LITE=1): 学術コーパス (~8.2MB) を空にして
+      // モバイル回線・WebView でも開けるサイズ (~2MB) の standalone を作る。
+      // 型は tsc が実ソースで検査済みなので、ランタイム export のみ空にする。
+      // コンプラ/補助金/相談窓口/経済史の各ナレッジはそのまま搭載される。
+      if (process.env.SERVICE_HUB_LITE === '1') {
+        this.warn('LITE build: academic corpus stripped (VERIFIED_CONCEPTS = [])');
+        return { code: 'export const VERIFIED_CONCEPTS = [];\n', map: null };
+      }
       try {
         const { code: cjs } = await transformWithEsbuild(code, id, {
           loader: 'ts',
