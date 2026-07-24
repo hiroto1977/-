@@ -306,8 +306,32 @@ a:hover { text-decoration: underline; }
   .content { padding: 16px; }
   .topbar { padding: 0 12px; gap: 10px; }
   /* フォーカス時の自動ズーム防止: モバイル Safari/Chrome は 16px 未満の
-     入力欄にフォーカスするとページ全体を拡大してしまう。 */
-  input, select, textarea { font-size: 16px; }
+     入力欄にフォーカスするとページ全体を拡大してしまう。ページ側の
+     inline style (fontSize: 13 等) にも勝つ必要があるため !important。 */
+  input, select, textarea { font-size: 16px !important; }
+}
+
+/* ページ内フォーム/統計カードのレスポンシブユーティリティ。
+   .field-grid — 入力フォームの列。デスクトップは複数列、狭幅では自動で
+     1〜2 列に折り返す。inline の固定幅 (width: 140 等) より優先させるため
+     幅は !important で 100% にする (checkbox/radio は除外)。
+   .stat-grid — Stat カードの列。repeat(N, 1fr) 固定だとスマホで金額が
+     潰れるため、auto-fit + minmax で折り返す。 */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: 10px 12px;
+  align-items: end;
+}
+.field-grid input:not([type="checkbox"]):not([type="radio"]),
+.field-grid select {
+  width: 100% !important;
+  min-width: 0;
+}
+.stat-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
 }
 @media (max-width: 640px) {
   .topbar .description { display: none; } /* タイトル+音声ボタンを優先 */

@@ -290,7 +290,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       )}
 
       <Section title="連携先一覧" count={contacts.length}>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        <div className="field-grid" style={{ marginBottom: 10 }}>
           {([
             ['氏名', 'name', '例: 山田 太郎'],
             ['事務所 (任意)', 'firm', '例: 山田会計事務所'],
@@ -375,14 +375,14 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       </Section>
 
       <Section title="月次サマリ" count={2}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="月次顧問料" value={jpy(monthlyFee)} />
           <Stat label="未払い請求額" value={jpy(outstandingInvoice)} positive={outstandingInvoice === 0} />
         </div>
       </Section>
 
       <Section title="直近の相談" count={recentConsultations.length}>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        <div className="field-grid" style={{ marginBottom: 10 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             相談日
             <input

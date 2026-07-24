@@ -231,7 +231,7 @@ export function RealEstatePage() {
       />
 
       <Section title="ポートフォリオ KPI" count={4}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div className="stat-grid" style={{ marginBottom: 16 }}>
           <Stat label="月次キャッシュフロー" value={jpy(portfolio.netCashflow)} positive={portfolio.netCashflow >= 0} />
           <Stat label="ポートフォリオ利回り" value={`${portfolio.portfolioYield.toFixed(1)}%`} />
           <Stat label="入居率" value={`${(portfolio.occupancyRate * 100).toFixed(0)}%`} />
@@ -246,7 +246,7 @@ export function RealEstatePage() {
             : '追加した物件は上の KPI・下の一覧とキャッシュフローに即時反映され、一覧の「編集」でいつでも入力し直せます。'}
           データはこの端末のブラウザ内 (IndexedDB) にのみ保存され、どこにも送信されません。
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 8 }}>
+        <div className="field-grid" style={{ marginBottom: 8 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             物件名
             <input type="text" value={propForm.name} placeholder="例: 福岡市アパート"
@@ -379,7 +379,7 @@ export function RealEstatePage() {
           イールドギャップがプラスなら借入が収益にプラスに働きます (正レバレッジ)。
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
             ['月額賃料', reRentStr, setReRentStr],
             ['物件価格', rePriceStr, setRePriceStr],
@@ -394,7 +394,7 @@ export function RealEstatePage() {
             </label>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="実質利回り" value={`${leverage.y.netYieldPct}%`} />
           <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
           <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
@@ -409,13 +409,13 @@ export function RealEstatePage() {
           損益分岐入居率を実際の入居率が下回ると赤字に転じます。
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             想定入居率(%)
             <input type="text" inputMode="decimal" value={reOccStr} onChange={(e) => setReOccStr(e.target.value)} style={reInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="NOI (年)" value={jpy(refined.noiY.noi)} positive={refined.noiY.noi >= 0} />
           <Stat label="NOI 利回り" value={refined.noiY.noiYieldPct === null ? '—' : `${refined.noiY.noiYieldPct}%`} />
           <Stat
@@ -434,7 +434,7 @@ export function RealEstatePage() {
           IRR は NPV がゼロになる割引率の目安です。
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
             ['割引率(%)', npvDiscountStr, setNpvDiscountStr],
             ['保有年数', npvYearsStr, setNpvYearsStr],
@@ -446,7 +446,7 @@ export function RealEstatePage() {
             </label>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={(dcf.npv ?? 0) >= 0} />
           <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={(dcf.irr ?? 0) >= 0} />
           <Stat label="返済後CF (年・前提)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
@@ -458,7 +458,7 @@ export function RealEstatePage() {
           建物 (1998年4月以降取得) は定額法。法定耐用年数は構造で異なります (RC造 47年 / 重量鉄骨 34年 / 木造 22年)。
           減価償却費は会計上の費用で節税に寄与しますが、<strong>※ 概算であり税務助言ではありません。</strong>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             建物取得価額
             <input type="text" inputMode="decimal" value={bldgCostStr} onChange={(e) => setBldgCostStr(e.target.value)} style={reInputStyle} />
@@ -468,7 +468,7 @@ export function RealEstatePage() {
             <input type="text" inputMode="decimal" value={bldgLifeStr} onChange={(e) => setBldgLifeStr(e.target.value)} style={reInputStyle} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
           <Stat label="償却年数" value={`${depreciation.schedule.length} 年`} />
         </div>
@@ -481,7 +481,7 @@ export function RealEstatePage() {
           建ぺい率・容積率は都市計画で土地ごとに指定されるため、実際の指定値に書き換えてください。
           <strong>※ 概算であり建築・法務助言ではありません。</strong>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             用途地域プリセット
             <select value={zoneKey} onChange={(e) => onZonePreset(e.target.value as (typeof ZONE_PRESETS)[number]['key'])} style={{ ...reInputStyle, width: 160 }}>
@@ -515,7 +515,7 @@ export function RealEstatePage() {
             防火地域内の耐火建築物
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 14 }}>
+        <div className="stat-grid" style={{ marginBottom: 14 }}>
           <Stat label="適用建ぺい率" value={`${zoning.site.effectiveCoveragePct}%`} />
           <Stat label="建築面積の上限" value={`${zoning.site.maxFootprint.toLocaleString()} ㎡`} />
           <Stat
@@ -531,7 +531,7 @@ export function RealEstatePage() {
         )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             作業場の法定上限 (㎡・空欄=制限なし)
             <input type="text" inputMode="numeric" value={zpCapStr} onChange={(e) => setZpCapStr(e.target.value)} style={{ ...reInputStyle, width: 150 }} />
@@ -546,7 +546,7 @@ export function RealEstatePage() {
             希望の作業場面積が法定上限を超えています — この用途地域では建てられないため、面積の縮小か準工業地域などの立地見直しが必要です。
           </div>
         )}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 10 }}>
+        <div className="stat-grid" style={{ marginBottom: 10 }}>
           <Stat label="作業場 (栽培室等)" value={`${zoning.factory.workshopArea.toLocaleString()} ㎡`} />
           <Stat label="1階の残り (直売・カフェ・事務)" value={`${zoning.factory.groundFloorOther.toLocaleString()} ㎡`} />
           <Stat label="2階以上に回せる面積" value={`${zoning.factory.upperFloorsArea.toLocaleString()} ㎡`} />
