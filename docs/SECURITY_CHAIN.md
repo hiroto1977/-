@@ -54,22 +54,32 @@ npm run chain:show     # 台帳の要約を表示
 | **Obsidian** | `security/INTEGRITY_CHAIN.md` を人間可読の台帳ノートとして生成・相互リンク | 知識ヴォルトと同じく決定論生成、`chain:verify` が同期を強制 |
 | **Docker** | 再現可能なコンテナで `chain:verify` を実行＝検証の再現性（誰が検証しても同じ） | `scripts/setup-obsidian-docker.sh` を保護対象に含む |
 | **サンドボックス** | Electron `contextIsolation`/`sandbox`・ブラウザ Vault のメモリ隔離 | `lint:forbidden` が `nodeIntegration`/`contextIsolation:false` を禁止 |
-| **生体認証** | WebAuthn/パスキー（プラットフォーム認証器）で Vault 解錠を門番 | `src/renderer/security/webauthn.ts`（`userVerification: 'required'`） |
+| **生体認証** | WebAuthn/パスキーの**能力検出・登録のみ**実装（検証は未実装・fail-closed） | `src/renderer/security/webauthn.ts`（`verifyBiometric` は常に throw） |
 
 ## 3. 生体認証レイヤ（WebAuthn / パスキー）
 
-`src/renderer/security/webauthn.ts` がプラットフォーム認証器（Touch ID / Windows
-Hello / Android 生体）による所持証明を提供する。
+> **⚠️ 現状: 能力検出と登録までの実装で、検証は未実装（fail-closed）。**
+> Vault の解錠フローには接続されていない（2026-07 監査 R2 の指摘を受けた是正）。
+
+`src/renderer/security/webauthn.ts` はプラットフォーム認証器（Touch ID / Windows
+Hello / Android 生体）を扱う土台のみを持つ。
 
 - `isBiometricAvailable()` — 生体認証が使えるか（`isUserVerifyingPlatformAuthenticatorAvailable`）
-- `registerBiometric(userId, userName)` — クレデンシャル登録、保存すべき `credentialId` を返す
-- `verifyBiometric(credentialId)` — 登録済み資格情報で所持証明を検証（成功で `true`）
+- `registerBiometric(userId, userName)` — クレデンシャル登録、保存すべき `credentialId` を返す。
+  登録できても**それ自体は何の権限も与えない**（検証が未実装のため）
+- `verifyBiometric(credentialId)` — **常に例外を投げる**。以前は認証器が
+  `rawId.byteLength > 0` のアサーションを返しさえすれば `true` を返していたが、
+  署名をサーバ側公開鍵で検証しておらず、チャレンジもクライアント生成・使い捨てだったため
+  「所持しているように見える」だけの無意味な判定だった。誤って解錠ゲートに配線されるのを
+  防ぐため、認証器を呼ぶ前に fail-closed で落とす
 - 秘密鍵は認証器内（Secure Enclave / TPM）に留まり JS からは取り出せない。
   本モジュールは公開識別子のみ扱い、ネットワーク送信はしない。
 
-Credential Vault（`vault.ts`：WebCrypto AES-GCM-256＋PBKDF2 600k）の解錠を、
-マスターパスワードに加えて生体で門番できる。純粋ヘルパーは単体テスト済み
-（`__tests__/webauthn.test.ts`）。
+**将来実装する際の不変条件**: WebAuthn は鍵素材を返せないため、生体解錠を実現しようと
+マスターパスワードや PBKDF2 派生鍵を保存してはならない（それをやると Vault の
+「鍵はメモリのみ・非抽出」という前提が崩れ、生体認証を足したことで全体が弱くなる）。
+生体は**解錠済みセッションの再認証（step-up）**にのみ使い、KDF の代替にはしないこと。
+純粋ヘルパーは単体テスト済み（`__tests__/webauthn.test.ts`）。
 
 ## 4. 同期と整合の保証（CI ゲート）
 

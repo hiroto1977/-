@@ -63,6 +63,21 @@ describe('planSite (建築面積・延べ床の上限)', () => {
     expect(r.roadLimitedFarPct).toBeNull();
     expect(r.floorsToUseAll).toBeNull();
   });
+
+  // 符号付きゼロ (-0) はフォームの "-0" 入力 (Number('-0') === -0) から入り込む。
+  // String(-0) は "0" だが Intl.NumberFormat('ja-JP').format(-0) は "-0" を返すため、
+  // 結果に -0 を残すと「-0 ㎡」と表示されてしまう。0 へ正規化されることを固定する。
+  it('-0 入力は +0 に正規化して結果へ持ち込まない (「-0 ㎡」表示の防止)', () => {
+    const far0 = planSite({ ...KINSHO, farPct: -0 });
+    expect(far0.effectiveFarPct).toBe(0);
+    expect(Object.is(far0.effectiveFarPct, 0)).toBe(true);
+    expect(new Intl.NumberFormat('ja-JP').format(far0.effectiveFarPct)).toBe('0');
+
+    const site0 = planSite({ ...KINSHO, siteArea: -0 });
+    expect(Object.is(site0.maxFootprint, 0)).toBe(true);
+    expect(Object.is(site0.maxTotalFloor, 0)).toBe(true);
+    expect(site0.floorsToUseAll).toBeNull();
+  });
 });
 
 describe('planFactory (作業場150㎡制限を踏まえた平面プラン)', () => {
@@ -116,5 +131,25 @@ describe('planFactory (作業場150㎡制限を踏まえた平面プラン)', ()
     expect(p.workshopArea).toBe(0);
     expect(p.workshopSharePct).toBeNull();
     expect(p.fitsOneFloor).toBe(false);
+  });
+
+  // 狭小前面道路 (52条2項) で実効容積率が建ぺい率を下回ると 延べ床 < 建築面積 になる。
+  // 上階は 0 なので totalPlanned は「建築面積」ではなく「延べ床」で頭打ちになる。
+  it('延べ床が建築面積を下回る敷地は totalPlanned が延べ床で頭打ち (建築面積ではない)', () => {
+    const p = planFactory({ maxFootprint: 240, maxTotalFloor: 180 });
+    expect(p.upperFloorsArea).toBe(0);
+    expect(p.totalPlanned).toBe(180);
+    expect(p.workshopArea).toBe(150);
+    expect(p.groundFloorOther).toBe(90);
+    expect(p.workshopSharePct).toBe(83.3);
+  });
+
+  // 0.1㎡ 丸めの境界: 建築面積 149.96㎡ は表示上 150.0㎡ に丸まるが、作業場 150.0㎡ は
+  // 実際には収まらない。丸め後の数値どおり fitsOneFloor = false を返すこと。
+  it('建築面積に 0.1㎡ 未満の端数があると丸め後の作業場は 1 フロアに収まらない', () => {
+    const p = planFactory({ maxFootprint: 149.96, maxTotalFloor: 600 });
+    expect(p.workshopArea).toBe(150);
+    expect(p.fitsOneFloor).toBe(false);
+    expect(p.groundFloorOther).toBe(0);
   });
 });

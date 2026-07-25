@@ -174,6 +174,34 @@ export async function listConfiguredServices(): Promise<string[]> {
   return Object.keys(store);
 }
 
+/** How tokens are protected at rest, for display in the UI. */
+export interface StorageProtection {
+  /** OS keychain (safeStorage) usable → values are really encrypted. */
+  readonly encrypted: boolean;
+  /** Count of stored values still under the `plain:` obfuscation. */
+  readonly plainCount: number;
+  /** Absolute path of the secrets file, so the user can inspect/remove it. */
+  readonly file: string;
+}
+
+/**
+ * Report the at-rest protection state.
+ *
+ * The `plain:` fallback (keychain-less Linux) has always emitted a loud
+ * `console.warn`, but a GUI user never sees stdout — so the accepted risk was
+ * invisible to exactly the person who needs to decide about it (2026-07 audit
+ * follow-up). Surfacing it lets the UI say "this device cannot encrypt your
+ * tokens" instead of silently degrading.
+ */
+export async function getStorageProtection(): Promise<StorageProtection> {
+  const store = await readStore();
+  return {
+    encrypted: safeStorage.isEncryptionAvailable(),
+    plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,
+    file: secretsPath(),
+  };
+}
+
 // --- OAuth-aware helpers ------------------------------------------------
 // Tokens stored under an OAuth-enabled service id are JSON-encoded
 // TokenSet values. Everywhere else (raw PAT/Bearer paste), the value is

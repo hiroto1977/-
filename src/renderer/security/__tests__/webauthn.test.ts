@@ -6,6 +6,7 @@ if (!('subtle' in globalThis.crypto)) {
 }
 
 import {
+  BiometricVerificationUnimplementedError,
   base64urlToBuffer,
   buildCreationOptions,
   buildRequestOptions,
@@ -89,14 +90,20 @@ describe('registerBiometric / verifyBiometric', () => {
     await expect(registerBiometric('uid', 'Bob')).rejects.toThrow();
   });
 
-  it('verifies a non-empty assertion as success', async () => {
+  // 2026-07 監査: 旧実装は assertion の rawId が空でなければ true を返していた
+  // （署名・challenge 未検証）。fail-closed 化したので「成功する認証器」でも通らない。
+  it('rejects even when the authenticator returns a valid-looking assertion', async () => {
     const rawId = new Uint8Array([1, 2]).buffer;
     vi.stubGlobal('navigator', { credentials: { get: () => Promise.resolve({ rawId }) } });
-    expect(await verifyBiometric(bufferToBase64url(new Uint8Array([1, 2])))).toBe(true);
+    await expect(verifyBiometric(bufferToBase64url(new Uint8Array([1, 2])))).rejects.toThrow(
+      BiometricVerificationUnimplementedError,
+    );
   });
 
-  it('returns false when the assertion fails', async () => {
-    vi.stubGlobal('navigator', { credentials: { get: () => Promise.reject(new Error('denied')) } });
-    expect(await verifyBiometric('AAAA')).toBe(false);
+  it('throws without invoking the authenticator ceremony at all', async () => {
+    const get = vi.fn();
+    vi.stubGlobal('navigator', { credentials: { get } });
+    await expect(verifyBiometric('AAAA')).rejects.toThrow(/未実装/);
+    expect(get).not.toHaveBeenCalled();
   });
 });

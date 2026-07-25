@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
+// 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
+// 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
+import { safeImageSrc } from './DataList';
 
 interface Props {
   who: ReactNode;
@@ -97,11 +100,15 @@ export function StatusBar({
   const editButtonLabel =
     errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenSetup?.label ?? 'トークン設定';
 
+  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外なら
+  // `undefined` になり <img> ごと描画しない（`src=""` を出さない）。
+  const avatarSrc = safeImageSrc(avatarUrl);
+
   return (
     <div className="status-bar">
       <span className={badge.cls}>{badge.text}</span>
       <div className="who">
-        {avatarUrl ? <img src={avatarUrl} alt="" /> : null}
+        {avatarSrc ? <img src={avatarSrc} alt="" /> : null}
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{who}</span>
       </div>
       {tokenSetup && !editing && oauthSupported ? (

@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DataList } from '../DataList';
+import { DataList, safeImageSrc } from '../DataList';
 import type { DataListItem } from '../DataList';
 
 describe('DataList — empty state', () => {
@@ -82,6 +82,78 @@ describe('DataList — with items', () => {
     const noHref: DataListItem[] = [{ key: 'x', title: 'no link' }];
     const html = renderToStaticMarkup(createElement(DataList, { items: noHref }));
     expect(html).not.toContain('開く');
+  });
+});
+
+/**
+ * 2026-07 セキュリティ監査（多層防御）: 第三者由来の画像 URL のスキーム検証。
+ * `<img src>` 自体はスクリプトを実行しないが、同じ値が `<a href>` / CSS `url()` /
+ * SVG `<use>` に移った瞬間に危険になるため、入口で許可スキームに限定する。
+ */
+describe('safeImageSrc — 許可スキーム', () => {
+  it('https / http はそのまま通す', () => {
+    expect(safeImageSrc('https://example.com/a.png')).toBe('https://example.com/a.png');
+    expect(safeImageSrc('http://example.com/a.png')).toBe('http://example.com/a.png');
+    expect(safeImageSrc('HTTPS://EXAMPLE.COM/A.PNG')).toBe('HTTPS://EXAMPLE.COM/A.PNG');
+  });
+
+  it('data:image/* は通す（base64 / 非 base64 とも）', () => {
+    expect(safeImageSrc('data:image/png;base64,iVBORw0KGgo=')).toBe('data:image/png;base64,iVBORw0KGgo=');
+    expect(safeImageSrc('data:image/svg+xml,%3Csvg%2F%3E')).toBe('data:image/svg+xml,%3Csvg%2F%3E');
+  });
+
+  it('javascript: を拒否する', () => {
+    expect(safeImageSrc('javascript:alert(1)')).toBeUndefined();
+    expect(safeImageSrc('JaVaScRiPt:alert(1)')).toBeUndefined();
+  });
+
+  it('tab/改行で難読化した javascript: も拒否する', () => {
+    // HTML は URL 属性のパース前に tab/LF/CR を除去するため、検証側も同じ正規化が必要。
+    expect(safeImageSrc('java\tscript:alert(1)')).toBeUndefined();
+    expect(safeImageSrc('  java\nscript:alert(1)  ')).toBeUndefined();
+  });
+
+  it('data:image/* 以外の data: URI を拒否する', () => {
+    expect(safeImageSrc('data:text/html,<script>alert(1)</script>')).toBeUndefined();
+    expect(safeImageSrc('data:image')).toBeUndefined();
+    expect(safeImageSrc('data:imagex/png;base64,AA')).toBeUndefined();
+  });
+
+  it('その他のスキーム / 相対パス / 空値を拒否する', () => {
+    expect(safeImageSrc('vbscript:msgbox(1)')).toBeUndefined();
+    expect(safeImageSrc('file:///etc/passwd')).toBeUndefined();
+    expect(safeImageSrc('//example.com/a.png')).toBeUndefined();
+    expect(safeImageSrc('./a.png')).toBeUndefined();
+    expect(safeImageSrc('')).toBeUndefined();
+    expect(safeImageSrc(undefined)).toBeUndefined();
+  });
+});
+
+describe('DataList — thumbnailUrl のスキーム検証', () => {
+  const thumb = (thumbnailUrl: string): string =>
+    renderToStaticMarkup(
+      createElement(DataList, { items: [{ key: 't', title: 'item', thumbnailUrl }] }),
+    );
+
+  it('javascript: の場合は img 要素も src 属性も出力しない', () => {
+    const html = thumb('javascript:alert(1)');
+    expect(html).not.toContain('<img');
+    // 空の src="" はページ自身の再取得を起こすため、絶対に出さない。
+    expect(html).not.toContain('src=');
+    expect(html).not.toContain('javascript:');
+    expect(html).toContain('item'); // 他の内容は通常どおり描画される
+  });
+
+  it('data:image/* のサムネイルは描画する', () => {
+    const html = thumb('data:image/png;base64,iVBORw0KGgo=');
+    expect(html).toContain('data-list-thumb');
+    expect(html).toContain('data:image/png;base64,iVBORw0KGgo=');
+  });
+
+  it('data:text/html のサムネイルは描画しない', () => {
+    const html = thumb('data:text/html,<script>alert(1)</script>');
+    expect(html).not.toContain('<img');
+    expect(html).not.toContain('data:text/html');
   });
 });
 

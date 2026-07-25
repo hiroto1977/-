@@ -30,7 +30,7 @@ Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS
 **修正しなかった (受容 / 上流責務)**:
 - SSRF ガードは**ホスト名文字列のみ**を見るため、公開 DNS が私設 IP を返す形 (`169-254-169-254.sslip.io`, DNS リバインド) は原理的に client 側では防げない → プロキシ側の解決後 IP 再検査が本質的な防御線 (`docs/PROXY_EXAMPLE.md` §3 に明記済み・リダイレクト各ホップの再検査も同様)。
 - リカバリー 24 語のクリップボード / 平文 `.txt` 保存は「書き留める」UX と不可分。
-- `webauthn.ts` は未配線の死コードで、`verifyBiometric` は署名検証をしない。将来解錠ゲートに使う場合は本物のセレモニーを実装すること (現状到達不能)。
+- `webauthn.ts` は未配線のまま。`verifyBiometric` は署名検証をしていなかったため **fail-closed 化済み** (認証器を呼ぶ前に throw し、誤って解錠ゲートに配線されても通らない)。将来実装する場合の不変条件 — マスターパスワード/派生鍵を生体解錠のために保存しないこと — をモジュール冒頭と `docs/SECURITY_CHAIN.md` §3 に明記した。
 - `secrets.ts` の `plain:` フォールバック (keychain 不在 Linux) は第1ラウンドで受容済み。
 
 production npm audit: **0 脆弱性**。dev 依存には 29 件 (electron-builder / vitest / vite 系) あるが

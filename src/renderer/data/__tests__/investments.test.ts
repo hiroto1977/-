@@ -50,6 +50,41 @@ describe('parsePropertyEntry (不動産の任意追加)', () => {
     expect(PROPERTY_TYPES).toContain('区分所有');
     expect(PROPERTY_TYPES).toContain('一棟');
   });
+
+  it('数値そのままの入力 (保存済みエントリの再検証) も受理する', () => {
+    const p = parsePropertyEntry({
+      name: '数値入力', type: '一棟', monthlyRent: 250_000, purchasePrice: 38_000_000,
+      monthlyExpenses: 30_000, monthlyLoan: 120_000,
+    });
+    expect(p.monthlyRent).toBe(250_000);
+    expect(p.purchasePrice).toBe(38_000_000);
+    expect(p.monthlyExpenses).toBe(30_000);
+    expect(p.monthlyLoan).toBe(120_000);
+  });
+
+  it('家賃 0 円 (賃料未設定の物件) は受理する (境界)', () => {
+    expect(parsePropertyEntry({ ...valid, monthlyRent: '0' }).monthlyRent).toBe(0);
+  });
+
+  it('家賃未入力・返済額が不正ならそれぞれのエラーになる', () => {
+    expect(() => parsePropertyEntry({ ...valid, monthlyRent: undefined }))
+      .toThrow('家賃 (月額) は 0 以上の数値で入力してください');
+    expect(() => parsePropertyEntry({ ...valid, monthlyLoan: 'abc' }))
+      .toThrow('月次返済額は 0 以上の数値で入力してください');
+  });
+
+  it('物件名は 64 文字・種別は 16 文字まで受理し 1 文字超過で拒否 (境界)', () => {
+    expect(parsePropertyEntry({ ...valid, name: 'あ'.repeat(64) }).name).toBe('あ'.repeat(64));
+    expect(() => parsePropertyEntry({ ...valid, name: 'あ'.repeat(65) })).toThrow('物件名');
+    expect(parsePropertyEntry({ ...valid, type: 'あ'.repeat(16) }).type).toBe('あ'.repeat(16));
+    expect(() => parsePropertyEntry({ ...valid, type: 'あ'.repeat(17) })).toThrow('種別');
+  });
+
+  it('物件名・種別が文字列でない場合も該当エラー / 種別も trim する', () => {
+    expect(() => parsePropertyEntry({ ...valid, name: undefined })).toThrow('物件名は 1〜64 文字で入力してください');
+    expect(() => parsePropertyEntry({ ...valid, type: undefined })).toThrow('種別を選択してください');
+    expect(parsePropertyEntry({ ...valid, type: ' 一棟 ' }).type).toBe('一棟');
+  });
 });
 
 describe('computeRealEstatePortfolio', () => {
@@ -100,6 +135,33 @@ describe('computeRealEstatePortfolio', () => {
   it('物件 0 件は全て 0 (ゼロ除算なし)', () => {
     const p = computeRealEstatePortfolio([], 0, 0);
     expect(p).toEqual({ grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0, portfolioYield: 0, occupancyRate: 0 });
+  });
+
+  it('snapshot 側の経費・返済が負や NaN なら 0 として扱う (負のキャッシュアウトを作らない)', () => {
+    const neg = computeRealEstatePortfolio(base.properties, -5_000, -3_000);
+    expect(neg.operatingExpenses).toBe(0);
+    expect(neg.mortgagePayment).toBe(0);
+    expect(neg.netCashflow).toBe(base.monthlyCashflow.grossRent);
+
+    const nan = computeRealEstatePortfolio(base.properties, Number.NaN, Number.NaN);
+    expect(nan.operatingExpenses).toBe(0);
+    expect(nan.mortgagePayment).toBe(0);
+    expect(nan.netCashflow).toBe(base.monthlyCashflow.grossRent);
+  });
+
+  // -0 は Intl.NumberFormat('ja-JP').format(-0) が "-0" を返すため、
+  // そのまま持ち回すと「-0 円」と表示される。+0 への正規化を固定する。
+  it('-0 の経費・返済は +0 に正規化する (「-0 円」表示の防止)', () => {
+    const p = computeRealEstatePortfolio([], -0, -0);
+    expect(Object.is(p.operatingExpenses, 0)).toBe(true);
+    expect(Object.is(p.mortgagePayment, 0)).toBe(true);
+  });
+
+  it('取得価格 0 の行は利回りに加算しない (Infinity を出さない)', () => {
+    const p = computeRealEstatePortfolio([{ monthlyRent: 50_000, purchasePrice: 0, occupied: true }], 0, 0);
+    expect(p.portfolioYield).toBe(0);
+    expect(Number.isFinite(p.portfolioYield)).toBe(true);
+    expect(p.grossRent).toBe(50_000);
   });
 });
 
@@ -182,6 +244,81 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(form.monthlyExpenses).toBe('');
     expect(parsePropertyEntry(form)).toEqual(p);
   });
+
+  it('propertyToForm: 0 の任意欄は空欄・値があれば文字列で残す', () => {
+    const zero = propertyToForm(parsePropertyEntry({ name: '任意欄なし', type: '一棟', monthlyRent: '250000', purchasePrice: '38000000' }));
+    expect(zero.monthlyExpenses).toBe('');
+    expect(zero.monthlyLoan).toBe('');
+
+    const filled = parsePropertyEntry({
+      name: '任意欄あり', type: '一棟', monthlyRent: '250000', purchasePrice: '38000000',
+      monthlyExpenses: '30000', monthlyLoan: '120000',
+    });
+    const form = propertyToForm(filled);
+    expect(form.monthlyExpenses).toBe('30000');
+    expect(form.monthlyLoan).toBe('120000');
+    expect(parsePropertyEntry(form)).toEqual(filled);
+  });
+
+  it('銘柄コードは trim し 16 文字まで受理・17 文字は拒否 (境界)', () => {
+    expect(parseHoldingEntry({ ...valid, code: ' 9C31118A ' }).code).toBe('9C31118A');
+    expect(parseHoldingEntry({ ...valid, code: 'A'.repeat(16) }).code).toBe('A'.repeat(16));
+    expect(() => parseHoldingEntry({ ...valid, code: 'A'.repeat(17) })).toThrow('銘柄コード');
+  });
+
+  it('ファンド名は trim し 80 文字まで受理・81 文字と非文字列は拒否 (境界)', () => {
+    expect(parseHoldingEntry({ ...valid, name: ' ひふみプラス ' }).name).toBe('ひふみプラス');
+    expect(parseHoldingEntry({ ...valid, name: 'あ'.repeat(80) }).name).toBe('あ'.repeat(80));
+    expect(() => parseHoldingEntry({ ...valid, name: 'あ'.repeat(81) })).toThrow('ファンド名');
+    expect(() => parseHoldingEntry({ ...valid, name: undefined })).toThrow('ファンド名は 1〜80 文字で入力してください');
+  });
+
+  it('manual モードの口数・基準価額・取得額の不正値はそれぞれのエラーになる', () => {
+    expect(() => parseHoldingEntry({ name: 'x', valuation: '100', units: 'abc' }))
+      .toThrow('口数は 0 以上の数値で入力してください');
+    expect(() => parseHoldingEntry({ name: 'x', valuation: '100', navPerUnit: 'abc' }))
+      .toThrow('基準価額は 0 以上の数値で入力してください');
+    expect(() => parseHoldingEntry({ ...valid, acquisitionCost: 'abc' }))
+      .toThrow('取得額は 0 以上の数値で入力してください');
+  });
+
+  it('取得額を空欄にすると評価額と同額 (損益 0) になる — 0 円ではない', () => {
+    const h = parseHoldingEntry({ ...valid, acquisitionCost: '' });
+    expect(h.acquisitionCost).toBe(h.valuation);
+    expect(h.acquisitionCost).toBe(1_600_000);
+  });
+
+  it('YTD リターンは −100〜1000 を含む範囲 (境界) で、空白入り・数値入力も受理する', () => {
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '-100' }).ytdReturnPct).toBe(-100);
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '1000' }).ytdReturnPct).toBe(1000);
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: ' 12.5 ' }).ytdReturnPct).toBe(12.5);
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: 12.5 }).ytdReturnPct).toBe(12.5);
+    expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '-101' })).toThrow('YTD');
+    expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: 'abc' })).toThrow('YTD');
+  });
+
+  it('holdingToForm: manual の 0 の任意欄 (口数・基準価額・YTD) は空欄へ戻す', () => {
+    const manual = parseHoldingEntry({ name: '手動ファンド', valuation: '2500000' });
+    const form = holdingToForm(manual);
+    expect(form.units).toBe('');
+    expect(form.navPerUnit).toBe('');
+    expect(form.ytdReturnPct).toBe('');
+    expect(form.valuation).toBe('2500000');
+    expect(form.acquisitionCost).toBe('2500000');
+    expect(parseHoldingEntry(form)).toEqual(manual);
+  });
+
+  it('holdingToForm: 0 以外の YTD は文字列で残す', () => {
+    const form = holdingToForm(parseHoldingEntry({ ...valid, ytdReturnPct: '8.7' }));
+    expect(form.ytdReturnPct).toBe('8.7');
+  });
+
+  it('holdingToForm: valuationMode を持たない過去データは auto 扱い (評価額欄は空欄)', () => {
+    const legacy = { ...parseHoldingEntry(valid), valuationMode: undefined } as unknown as Parameters<typeof holdingToForm>[0];
+    const form = holdingToForm(legacy);
+    expect(form.valuation).toBe('');
+    expect(parseHoldingEntry(form).valuationMode).toBe('auto');
+  });
 });
 
 describe('computeFundPortfolio', () => {
@@ -205,5 +342,20 @@ describe('computeFundPortfolio', () => {
 
   it('保有 0 件・原価 0 は全て 0 (ゼロ除算なし)', () => {
     expect(computeFundPortfolio([], 0, [])).toEqual({ totalValuation: 0, totalCostBasis: 0, unrealizedGain: 0, unrealizedGainPct: 0 });
+  });
+
+  it('取得原価・ユーザー取得額の負値/NaN は 0 として扱う (原価を減らさない)', () => {
+    const p = computeFundPortfolio(base.holdings, -1_000, [-500, Number.NaN, 200_000]);
+    expect(p.totalCostBasis).toBe(200_000);
+    expect(p.totalValuation).toBe(base.portfolio.totalValuation);
+
+    const nan = computeFundPortfolio(base.holdings, Number.NaN, []);
+    expect(nan.totalCostBasis).toBe(0);
+    expect(nan.unrealizedGainPct).toBe(0);
+  });
+
+  it('-0 の取得原価は +0 に正規化する (「-0 円」表示の防止)', () => {
+    const p = computeFundPortfolio([], -0, []);
+    expect(Object.is(p.totalCostBasis, 0)).toBe(true);
   });
 });

@@ -328,7 +328,7 @@ export function DocstudioPage() {
   const teikanChapters = useMemo(
     () => (collection === 'teikan' ? (teikanType === 'kk' ? buildKkChapters(val) : buildGkChapters(val)) : []),
     // val は values から導出される安定した参照ではないため values を依存に取る
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // （react-hooks/exhaustive-deps は eslint.config.js で off。抑制指示は不要）
     [collection, teikanType, values],
   );
 

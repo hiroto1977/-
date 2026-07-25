@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import {
   clearToken,
+  getStorageProtection,
   getValidToken,
   listConfiguredServices,
   setOAuthTokens,
@@ -185,6 +186,10 @@ ipcMain.handle('secrets:clear', async (_e, serviceId: unknown) => {
   await clearToken(serviceId);
 });
 ipcMain.handle('secrets:list', () => listConfiguredServices());
+// Read-only report of at-rest protection. Returns no secret material — only
+// whether the OS keychain is usable, how many values are still `plain:`, and the
+// file path — so the UI can warn the user instead of degrading silently.
+ipcMain.handle('secrets:protection', () => getStorageProtection());
 
 ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   if (!isServiceId(serviceId)) {

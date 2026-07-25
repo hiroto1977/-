@@ -15,6 +15,14 @@ export type OAuthResult =
   | { ok: true; data: { scope?: string; expiresAt?: number } }
   | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
 
+/** `secrets:protection` の戻り値。src/main/secrets.ts の StorageProtection と同形
+ *  (preload は main を import できないため構造だけを再宣言する)。 */
+export interface StorageProtection {
+  readonly encrypted: boolean;
+  readonly plainCount: number;
+  readonly file: string;
+}
+
 const api = {
   getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
@@ -28,6 +36,10 @@ const api = {
   clearToken: (serviceId: ServiceId): Promise<void> =>
     ipcRenderer.invoke('secrets:clear', serviceId),
   listConfigured: (): Promise<ServiceId[]> => ipcRenderer.invoke('secrets:list'),
+  /** 保存時の保護状態 (OS キーチェーンが使えるか / 平文のまま残っている件数)。
+   *  秘密そのものは返さない。 */
+  storageProtection: (): Promise<StorageProtection> =>
+    ipcRenderer.invoke('secrets:protection'),
 
   fetchSnapshot: <T = unknown>(serviceId: ServiceId): Promise<FetchResult<T>> =>
     ipcRenderer.invoke('fetch:snapshot', serviceId),

@@ -93,6 +93,38 @@ describe('StatusBar — who / avatarUrl', () => {
   });
 });
 
+/**
+ * 2026-07 セキュリティ監査（多層防御）: avatarUrl は第三者 API 由来。
+ * `safeImageSrc`（DataList.tsx）で許可スキームに限定してから src に渡す。
+ */
+describe('StatusBar — avatarUrl のスキーム検証', () => {
+  it('javascript: の avatarUrl では img も src 属性も出力しない', () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, { who: 'user', avatarUrl: 'javascript:alert(1)' }),
+    );
+    expect(html).not.toContain('<img');
+    // 空の src="" はページ自身を再取得してしまうため、属性ごと出さない。
+    expect(html).not.toContain('src=');
+    expect(html).not.toContain('javascript:');
+    expect(html).toContain('user'); // status-bar 本体は通常どおり描画される
+  });
+
+  it('data:image/* の avatarUrl は描画する', () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, { who: 'user', avatarUrl: 'data:image/png;base64,iVBORw0KGgo=' }),
+    );
+    expect(html).toContain('<img');
+    expect(html).toContain('data:image/png;base64,iVBORw0KGgo=');
+  });
+
+  it('data:text/html や file: の avatarUrl は描画しない', () => {
+    for (const avatarUrl of ['data:text/html,<script>alert(1)</script>', 'file:///etc/passwd']) {
+      const html = renderToStaticMarkup(createElement(StatusBar, { who: 'user', avatarUrl }));
+      expect(html).not.toContain('<img');
+    }
+  });
+});
+
 describe('StatusBar — errorMessage', () => {
   it('errorMessage があれば表示', () => {
     const html = renderToStaticMarkup(

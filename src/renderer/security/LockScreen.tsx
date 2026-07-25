@@ -32,7 +32,9 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   const [err, setErr] = useState<string | null>(null);
   // Ephemeral feedback for clipboard / download actions in the mnemonic view.
   // Tuple of (message, kind). `kind` controls the color.
-  const [feedback, setFeedback] = useState<{ msg: string; kind: 'info' | 'error' } | null>(null);
+  const [feedback, setFeedback] = useState<{ msg: string; kind: 'info' | 'warn' | 'error' } | null>(
+    null,
+  );
   // Holds the pending clipboard-wipe timer. Allows us to (a) reset the
   // 30-second countdown if the user presses "copy" again, and (b) clear
   // the timer on unmount so we don't try to write to a navigator object
@@ -192,9 +194,15 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // 平文であることを明示する。このファイル 1 つでマスターキーが復元できる
+    // (パスワードは不要) ため、Downloads に置いたままにするリスクは
+    // 「パスワードを書いたメモを置き忘れる」より大きい (2026-07 監査)。
     setFeedback({
-      msg: '💾 ダウンロードしました — Downloads から速やかにパスワード保管庫または紙へ移してください',
-      kind: 'info',
+      msg:
+        '💾 ダウンロードしました — このファイルは暗号化されていない平文です。' +
+        'これ 1 つで Vault を復元できるため、パスワード保管庫か紙へ移して、' +
+        'Downloads からは削除してください',
+      kind: 'warn',
     });
   }
 
@@ -415,7 +423,12 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             <div
               style={{
                 fontSize: 11,
-                color: feedback.kind === 'error' ? '#ef4444' : '#22c55e',
+                color:
+                  feedback.kind === 'error'
+                    ? '#ef4444'
+                    : feedback.kind === 'warn'
+                      ? '#fbbf24'
+                      : '#22c55e',
                 marginBottom: 12,
                 lineHeight: 1.5,
               }}
