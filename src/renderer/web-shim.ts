@@ -815,6 +815,13 @@ const shim = {
       return [];
     }
   },
+  // ブラウザ版は常に WebCrypto Vault (AES-GCM-256 + PBKDF2 600k) を通るため、
+  // Electron 版のような「OS キーチェーン不在で平文」状態は原理的に起きない。
+  storageProtection: async (): Promise<{ encrypted: boolean; plainCount: number; file: string }> => ({
+    encrypted: true,
+    plainCount: 0,
+    file: 'IndexedDB (business-hub-vault)',
+  }),
 
   fetchSnapshot: async <T>(serviceId?: string): Promise<ActionResult<T>> => {
     // stocks はブラウザ版でもウォッチリスト登録に対応する。登録銘柄は

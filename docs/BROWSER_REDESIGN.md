@@ -438,7 +438,8 @@ proxy → client: 200 OK with envelope
    関連: ロック画面の「パスワードを忘れた場合」リンクから
    `recoverWithMnemonic(mnemonic, newPassword)` を呼ぶフロー。
 2. **Proxy デプロイの責務** — Cloudflare Worker サンプル提供で十分。
-   `docs/PROXY_EXAMPLE.md` に 30 行リファレンスを掲載済。
+   `docs/PROXY_EXAMPLE.md` にリファレンス実装を掲載済 (ホスト名アローリストに加え、
+   DoH で解決した IP を private/reserved 判定し、リダイレクト各ホップも再検査する)。
 3. **Library の保存上限** — 50 MB / 100 件で固定 (現状)。
    `navigator.storage.estimate` による動的拡張は将来課題。
 4. **Anthropic キーの警告強度** — 初回設定時のみ免責バナーを表示

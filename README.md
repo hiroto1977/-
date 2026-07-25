@@ -108,7 +108,8 @@ scripts/
   `extractable: false` でメモリのみ保持。
 - **Auto-lock**: タブが hidden 5 分超 / 操作 idle 15 分でロック。
 - **CORS-blocked API** (Notion / Atlassian / Cloudflare): ユーザー自前の
-  Cloudflare Worker 経由。docs/PROXY_EXAMPLE.md に 30 行リファレンス実装。
+  Cloudflare Worker 経由。docs/PROXY_EXAMPLE.md にリファレンス実装 (アローリスト +
+  DoH による解決後 IP 再検査 + リダイレクト各ホップ再検査)。
 - **OAuth**: file:// 環境では out-of-band paste、hosted では popup callback。
 - **CSP**: standalone HTML は `'unsafe-inline'` (file:// 動作のため)。
   hosted 版は `sha256` ハッシュベース推奨。

@@ -58,23 +58,31 @@
       "leafCount": 15,
       "note": "update oauth.ts,LockScreen.tsx,dataCrypto.ts,vault.ts",
       "hash": "b5aa9b099a70bc82cf48c48e6591f9a1ed5cf5aef997c095ef7ee13d75380756"
+    },
+    {
+      "index": 5,
+      "prevHash": "b5aa9b099a70bc82cf48c48e6591f9a1ed5cf5aef997c095ef7ee13d75380756",
+      "merkleRoot": "7b26b4fed70912f54ea9c5d3f1780f8808ce0fb833781e608a05a6455a610d4e",
+      "leafCount": 15,
+      "note": "update SECURITY_CHAIN.md,secrets.ts,preload.ts,LockScreen.tsx,webauthn.ts",
+      "hash": "7ad1f5e36ee1dc8683020f91cf8267450c9482cf5e58bd2b4bd8218297ce6933"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "cba7092bb5863b75e0400c59a7a806a8cb4787e4e5da33d4a81ebe0d3fbdb956",
-    "docs/SECURITY_CHAIN.md": "df4126864c8e17b6464fd4fc16715885ba415cc199c6ee88b9055563ce7d1012",
+    "docs/SECURITY_CHAIN.md": "83e6827788ec41c4980111f2129b9234b9b40266c0daa3d62fdc204d5e660e3b",
     "scripts/integrity-chain.cjs": "4bf5dcba4528d6607f348a6aed6c03d506c126fef7a26eced145bf7928911ada",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "src/main/oauth.ts": "42d4a99f49be0141c44315f2189a838bafc23101aad71d721faf3550cea2b785",
-    "src/main/secrets.ts": "058491d3b22b2db5a65b46271a8b67abc6fa74a3c59648f646804930e94dff65",
-    "src/preload/preload.ts": "e6c255ca2fad685a4c6e7a50500e34e281708a3f482b250fe2ac9996c3a0c7ce",
-    "src/renderer/security/LockScreen.tsx": "5592e923ea1aade9869736e5f76d5b12b277f8aa8bb5fc45c0bfa30f2f0fdb9c",
+    "src/main/secrets.ts": "57872e52b0023ca2ac952d99a69b284ba443f401f6ae22b14e21ee6a4bfbdc39",
+    "src/preload/preload.ts": "b81c01219c598067e1590fad52cc0789f5014403c2013f5d176d809016dbd01f",
+    "src/renderer/security/LockScreen.tsx": "1fdf41fd002d9a8ee6bf3e505250775f5a80d1671e3915480e62295d855289f7",
     "src/renderer/security/autoLock.ts": "e1cd5a4fc282d6f32d14e1ae99b5cb0701f5600dbd4dfd8366419938282fbed0",
     "src/renderer/security/dataCrypto.ts": "92c8e27b6589bffb66f4999840119b70d21c5749db5f0c06859533d1f212d102",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "32315d232dd3d91b0d7488770b604076fd66454e50a7025865c1e0f748ca3759",
-    "src/renderer/security/webauthn.ts": "1c9b4021790ec730fb879d039bdca309793eb55b8535733320021e4b3d810b62"
+    "src/renderer/security/webauthn.ts": "4ccdd906ce2e880a5b8f47bbcb0af0b055b0b76edf301bc8fb28465c6d40e24f"
   }
 }

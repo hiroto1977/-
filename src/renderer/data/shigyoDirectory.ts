@@ -24,6 +24,9 @@ export const CONSULTATION_STATUSES: readonly ShigyoConsultationStatus[] = [
 ];
 
 function isConsultationStatus(v: unknown): v is ShigyoConsultationStatus {
+  // Stryker disable next-line ConditionalExpression: typeof を true 固定にしても
+  // includes は SameValueZero 比較で配列は文字列のみ → 非文字列は決してヒットせず、
+  // 返り値は全入力で同一 (等価変異)。型ガードとしての記述は残す。
   return typeof v === 'string' && (CONSULTATION_STATUSES as readonly string[]).includes(v);
 }
 
@@ -87,6 +90,8 @@ export function parseShigyoConsultation(input: {
   topic?: unknown;
   status?: unknown;
 }): ShigyoConsultationEntry {
+  // Stryker disable next-line StringLiteral: '' を別文字列にしても直後の
+  // /^\d{4}-\d{2}-\d{2}$/ を通らず、同一の 相談日 エラーになる (等価変異)。
   const date = typeof input.date === 'string' ? input.date.trim() : '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('相談日は YYYY-MM-DD 形式で入力してください (例: 2026-07-25)');
 

@@ -19,11 +19,11 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | 軸 | 値 | 出典 |
 |---|---:|---|
 | サービス数 | 72 | `src/shared/serviceId.ts:9-43` |
-| IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
+| IPC ハンドラ数 | 12 | `src/main/main.ts:111-296` |
 | client モジュール (fetcher + actions) | 72 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **5709** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5794) |
+| ユニットテスト | **5782** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5867) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 1000000** | 自己検証（`git ls-files` 全ファイルの改行数合算。柱 B Phase 3 完了で 100 万行を突破 — 現在 ~1,037k） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |

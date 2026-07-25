@@ -735,6 +735,88 @@ export function SettingsPage() {
       <Section title="Vault 管理" count={3}>
         <VaultControls onLocked={() => setLocked(true)} />
       </Section>
+
+      <Section title="保存時の保護状態" count={1}>
+        <StorageProtectionNotice />
+      </Section>
+    </div>
+  );
+}
+
+/**
+ * 保存時の保護状態を表示する。
+ *
+ * Electron 版で OS キーチェーン (safeStorage) が使えない環境 (gnome-keyring /
+ * kwallet 不在の Linux 等) では、トークンは base64 の難読化のみで保存される。
+ * これは以前から `console.warn` で警告していたが、GUI 利用者は標準出力を見ない
+ * ため「本人が判断すべきリスクが本人に届かない」状態だった (2026-07 監査の
+ * フォローアップ)。ここで可視化して、暗号化を有効にする手順まで案内する。
+ */
+function StorageProtectionNotice() {
+  const [state, setState] = useState<{ encrypted: boolean; plainCount: number; file: string } | null>(
+    null,
+  );
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    window.serviceHub
+      .storageProtection()
+      .then((r) => {
+        if (alive) setState(r);
+      })
+      .catch(() => {
+        if (alive) setFailed(true);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (failed) {
+    return <p style={{ fontSize: 13, color: 'var(--mute)' }}>保護状態を取得できませんでした。</p>;
+  }
+  if (!state) {
+    return <p style={{ fontSize: 13, color: 'var(--mute)' }}>確認中…</p>;
+  }
+
+  if (state.encrypted && state.plainCount === 0) {
+    return (
+      <div style={{ fontSize: 13, lineHeight: 1.7 }}>
+        <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ 暗号化されています</strong>
+        <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
+          トークンは OS のキーチェーン由来の鍵で暗号化して保存されています。
+          <br />
+          保存先: <code>{state.file}</code>
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ fontSize: 13, lineHeight: 1.7 }}>
+      <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+        ⚠️ このデバイスではトークンを暗号化できません
+      </strong>
+      <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
+        OS のキーチェーン (safeStorage) が利用できないため、トークンは
+        <strong> base64 の難読化のみ</strong>で保存されています（暗号化ではありません）。
+        このユーザーでファイルを読める人・バックアップ・root は復元できます。
+        {state.plainCount > 0 && (
+          <>
+            <br />
+            未暗号化のまま保存されている項目: <strong>{state.plainCount} 件</strong>
+          </>
+        )}
+        <br />
+        保存先: <code>{state.file}</code>
+      </p>
+      <p style={{ margin: '8px 0 0' }}>
+        <strong>対処:</strong> Linux では <code>gnome-keyring</code> または{' '}
+        <code>kwallet</code> をインストールして再起動すると、次回のトークン保存時に
+        既存の項目もまとめて暗号化へ移行します。それが難しい場合は、重要度の高い
+        トークンをこの端末に保存しない運用を検討してください。
+      </p>
     </div>
   );
 }
