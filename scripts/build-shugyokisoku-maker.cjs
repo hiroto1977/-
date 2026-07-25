@@ -27,6 +27,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { replaceJsonToken } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', '就業規則メーカー.html');
@@ -339,11 +340,11 @@ const PAGE_CSS = `
 `;
 
 function buildHtml() {
-  const pageJs = PAGE_JS
-    .replace('__FIELDS__', JSON.stringify(FIELDS))
-    .replace('__CHAPTERS__', JSON.stringify(CHAPTERS))
-    .replace('__STEPS__', JSON.stringify(STEPS))
-    .replace('__NOTES__', JSON.stringify(NOTES));
+  let pageJs = PAGE_JS;
+  pageJs = replaceJsonToken(pageJs, '__FIELDS__', FIELDS);
+  pageJs = replaceJsonToken(pageJs, '__CHAPTERS__', CHAPTERS);
+  pageJs = replaceJsonToken(pageJs, '__STEPS__', STEPS);
+  pageJs = replaceJsonToken(pageJs, '__NOTES__', NOTES);
   return [
     '<!DOCTYPE html>',
     '<html lang="ja">',

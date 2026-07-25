@@ -42,7 +42,11 @@ html = html.replace(/<link\s+rel="modulepreload"[^>]*>/g, '');
 //    (AES-GCM) 管理・送信先はコード上のアローリスト & SSRF ガードで統制。
 html = html.replace(
   /<meta\s+http-equiv="Content-Security-Policy"[^>]*>/,
-  '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob: https:; connect-src \'self\' https: http://localhost:* http://127.0.0.1:*; object-src \'none\'; frame-src \'none\'; base-uri \'self\'; form-action \'none\'">',
+  //    worker-src 'self': without it, `worker-src` falls back to `script-src`
+  //    (which is only 'unsafe-inline' here), so the Pages build could never
+  //    register its own Service Worker — CSP blocked it and PWA offline/install
+  //    silently did nothing. 'self' allows OUR sw.js and nothing else.
+  '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'unsafe-inline\'; worker-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob: https:; connect-src \'self\' https: http://localhost:* http://127.0.0.1:*; object-src \'none\'; frame-src \'none\'; base-uri \'self\'; form-action \'none\'">',
 );
 
 fs.writeFileSync(outHtml, html);

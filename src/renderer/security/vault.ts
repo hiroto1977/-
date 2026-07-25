@@ -29,6 +29,8 @@ const DB_VERSION = 1;
 const META_STORE = 'meta';
 const TOKEN_STORE = 'tokens';
 const PBKDF2_ITERATIONS = 600_000;
+/** Minimum master-password length for new vaults / password resets. */
+export const MIN_PASSWORD_LENGTH = 12;
 const SALT_BYTES = 32;
 const IV_BYTES = 12;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
@@ -381,8 +383,14 @@ class BrowserVault implements Vault {
   }
 
   async initialize(password: string): Promise<InitResult> {
-    if (typeof password !== 'string' || password.length < 8) {
-      throw new Error('パスワードは 8 文字以上で設定してください');
+    // 12 chars minimum (raised from 8 in the 2026-07 audit). The stored `kcv`
+    // and `master-wrap` both let anyone holding a copy of the IndexedDB verify a
+    // guess offline, so password entropy is the only thing standing between a
+    // stolen browser profile and every SaaS token in the vault; 600k PBKDF2
+    // slows each guess but cannot rescue an 8-char human-chosen password.
+    // Existing vaults are unaffected — `unlock()` never re-checks policy.
+    if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error(`パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (password.length > 256) {
       throw new Error('パスワードが長すぎます (256 字以内)');
@@ -473,8 +481,13 @@ class BrowserVault implements Vault {
     // itself was the encryption key. Fall back gracefully.
     if (masterWrap) {
       const masterRaw = await decryptBytes(passwordKey, masterWrap);
-      this.currentKey = await importNonExtractable(masterRaw);
-      masterRaw.fill(0);
+      // finally: zero the raw master even if the import rejects, matching
+      // initialize() / recoverWithMnemonic() (2026-07 audit — memory hygiene).
+      try {
+        this.currentKey = await importNonExtractable(masterRaw);
+      } finally {
+        masterRaw.fill(0);
+      }
     } else {
       this.currentKey = passwordKey;
     }
@@ -519,6 +532,13 @@ class BrowserVault implements Vault {
   }
 
   async clearToken(serviceId: string): Promise<void> {
+    // Require an unlocked vault and a sane id, like setToken/getToken. Deleting
+    // is not a confidentiality leak, but a locked vault should be inert
+    // (2026-07 audit).
+    if (!this.currentKey) throw new Error('Vault がロックされています');
+    if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
+      throw new Error('serviceId が不正です');
+    }
     const db = await openDb();
     try {
       await idbDelete(db, TOKEN_STORE, serviceId);
@@ -539,8 +559,8 @@ class BrowserVault implements Vault {
   // --- Phase E: recovery API ----------------------------------------
 
   async recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void> {
-    if (typeof newPassword !== 'string' || newPassword.length < 8) {
-      throw new Error('新しいパスワードは 8 文字以上で設定してください');
+    if (typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
+      throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (newPassword.length > 256) {
       throw new Error('新しいパスワードが長すぎます (256 字以内)');

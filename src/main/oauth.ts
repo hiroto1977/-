@@ -18,6 +18,20 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
+import { redactSecrets } from '../shared/redact';
+
+/**
+ * Refuse to send an authorization code / refresh token to a non-HTTPS token
+ * endpoint. Today every OAUTH_CONFIGS entry hardcodes https and the IPC layer
+ * only lets the renderer override `clientId`, so this is unreachable — it is a
+ * standing guard so a future config (or a test fixture copied into prod) can
+ * never exchange credentials in cleartext. RFC 8252 §8.3.
+ */
+function assertHttpsTokenUrl(tokenUrl: string): void {
+  if (!tokenUrl.startsWith('https://')) {
+    throw new Error('OAuth token endpoint must use https');
+  }
+}
 
 export interface OAuthConfig {
   authorizeUrl: string;
@@ -324,9 +338,13 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
         // refused with 400, but the listener keeps waiting for the
         // legitimate provider callback. Without this, a local attacker
         // could DoS every OAuth flow by spraying the loopback port.
+        //
+        // Deliberately NOT counted toward STRAY_LIMIT: state-mismatch is
+        // the exact shape a local attacker sprays, so counting it would
+        // re-introduce the DoS this branch exists to prevent (50 forged
+        // callbacks would close the server before the real one arrives).
+        // The 5-minute timeout remains the bound for this case.
         res.writeHead(400).end('state mismatch');
-        strayCount++;
-        if (strayCount >= STRAY_LIMIT) server.close();
         return;
       case 'oauth-error':
         // State already validated before this branch — this IS the
@@ -404,6 +422,7 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   if (!config.clientId) {
     throw new Error('OAuth client ID is not configured for this service');
   }
+  assertHttpsTokenUrl(config.tokenUrl);
   const { verifier, challenge } = generatePkce();
   const state = base64url(randomBytes(16));
 
@@ -423,7 +442,7 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`Token exchange failed (${res.status}): ${body.slice(0, 200)}`);
+    throw new Error(`Token exchange failed (${res.status}): ${redactSecrets(body.slice(0, 200))}`);
   }
   const raw = (await res.json()) as TokenResponse;
   return tokenResponseToSet(raw);
@@ -440,6 +459,7 @@ export async function refresh(
   if (!current.refreshToken) {
     throw new Error('no refresh token available');
   }
+  assertHttpsTokenUrl(config.tokenUrl);
   const res = await fetchFn(config.tokenUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -447,7 +467,7 @@ export async function refresh(
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`Token refresh failed (${res.status}): ${body.slice(0, 200)}`);
+    throw new Error(`Token refresh failed (${res.status}): ${redactSecrets(body.slice(0, 200))}`);
   }
   const raw = (await res.json()) as TokenResponse;
   return tokenResponseToSet(raw, current.refreshToken);

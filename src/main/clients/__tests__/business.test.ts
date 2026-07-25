@@ -1172,7 +1172,12 @@ describe('isSafeBusinessDashboardPath', () => {
   const home = '/home/user';
 
   it('accepts a .html file inside the home directory', () => {
-    expect(isSafeBusinessDashboardPath('/home/user/.local/x.html', home)).toBe(true);
+    expect(isSafeBusinessDashboardPath('/home/user/.local/business-hub/data/x.html', home)).toBe(true);
+    // Anywhere else under $HOME is rejected since the 2026-07 audit: exports are
+    // confined to ~/.local/business-hub so a compromised renderer cannot write
+    // (or clobber) files elsewhere in the home tree.
+    expect(isSafeBusinessDashboardPath('/home/user/x.html', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/user/.config/evil.html', home)).toBe(false);
   });
 
   it('rejects non-string', () => {
@@ -1215,7 +1220,8 @@ describe('isSafeBusinessDashboardMdPath', () => {
   const home = '/home/user';
 
   it('accepts .md inside home', () => {
-    expect(isSafeBusinessDashboardMdPath('/home/user/x.md', home)).toBe(true);
+    expect(isSafeBusinessDashboardMdPath('/home/user/.local/business-hub/data/x.md', home)).toBe(true);
+    expect(isSafeBusinessDashboardMdPath('/home/user/x.md', home)).toBe(false);
   });
 
   it('rejects .html (wrong extension for md variant)', () => {

@@ -204,7 +204,17 @@ const INTERNAL_TLDS: ReadonlySet<string> = new Set([
 export function isPrivateOrReservedTarget(parsed: URL): boolean {
   const host = parsed.hostname.toLowerCase();
   // Strip IPv6 brackets if any (URL.hostname returns bracketed form).
-  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
+  const bracketless = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
+
+  // Strip a single trailing dot (fully-qualified form). `URL` PRESERVES it for
+  // named hosts — `new URL('http://localhost./').hostname === 'localhost.'` —
+  // so without this every name-based rule below was bypassable by appending a
+  // dot: `localhost.`, `metadata.google.internal.`, `printer.local.`,
+  // `x.internal.` all resolve to the same targets as their dotless forms yet
+  // failed the exact-equality and last-label checks (2026-07 security audit).
+  // IP literals are unaffected — `URL` already normalizes `169.254.169.254.`
+  // to `169.254.169.254` — but trimming is harmless for them.
+  const bare = bracketless.endsWith('.') ? bracketless.slice(0, -1) : bracketless;
 
   // Loopback / common local hostnames.
   if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
@@ -247,6 +257,8 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     if (a === 172 && b >= 16 && b <= 31) return true;   // 172.16/12
     if (a === 192 && b === 168) return true;            // 192.168/16
     if (a === 0) return true;                           // 0.0.0.0/8
+    if (a === 100 && b >= 64 && b <= 127) return true;  // 100.64/10 CGNAT (RFC 6598)
+    if (a === 198 && (b === 18 || b === 19)) return true; // 198.18/15 benchmark (RFC 2544)
     if (a >= 224) return true;                          // multicast + reserved
     return false;
   }
@@ -434,7 +446,15 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   }
 
   const envelope = {
-    url: targetUrl,
+    // Forward the NORMALIZED url — the exact string the SSRF guard validated —
+    // never the raw input. Otherwise the object we check and the string we send
+    // can disagree whenever the proxy's URL parser differs from WHATWG:
+    // `https://public.com\@169.254.169.254/` parses to hostname `public.com`
+    // here (allowed) but a non-WHATWG parser on the proxy side may read the
+    // authority as `169.254.169.254`. `parsed.href` collapses that ambiguity
+    // (it normalizes to `https://public.com/@169.254.169.254/`), so client and
+    // proxy cannot be made to disagree (2026-07 security audit).
+    url: parsed.href,
     method: typeof init.method === 'string' ? init.method.toUpperCase() : 'GET',
     headers: flatHeaders,
     body: typeof init.body === 'string' ? init.body : undefined,

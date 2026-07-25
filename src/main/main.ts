@@ -11,6 +11,7 @@ import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './c
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { isServiceId } from '../shared/serviceId';
 import { redactSecrets } from './clients/types';
+import { exportRoot } from './clients/exportPaths';
 
 /** All IPC handlers feed user-supplied strings as map keys. Use this
  *  before indexing to defeat prototype-pollution lookups like
@@ -63,16 +64,27 @@ function createWindow(): BrowserWindow {
 
   // Block all in-app navigation away from the loaded renderer; this
   // includes the renderer trying to navigate via window.location.
-  win.webContents.on('will-navigate', (event, navigationUrl) => {
+  //
+  // The Vite HMR exemption is gated on dev: in a packaged build nothing of ours
+  // listens on 5173, so leaving it open only let a compromised renderer aim the
+  // main window at whatever local process happened to hold that port
+  // (2026-07 audit). `will-redirect` gets the same treatment — otherwise a 3xx
+  // during an allowed navigation would land somewhere unvetted.
+  const allowNavigation = (navigationUrl: string): boolean => {
+    if (!isDev || !process.env.VITE_DEV_SERVER_URL) return false;
     try {
       const u = new URL(navigationUrl);
-      // Allow Vite HMR navigation only.
-      if (u.host === 'localhost:5173' || u.host === '127.0.0.1:5173') return;
+      return u.host === 'localhost:5173' || u.host === '127.0.0.1:5173';
     } catch {
-      // fall through
+      return false;
     }
+  };
+  const guardNavigation = (event: { preventDefault: () => void }, navigationUrl: string): void => {
+    if (allowNavigation(navigationUrl)) return;
     event.preventDefault();
-  });
+  };
+  win.webContents.on('will-navigate', guardNavigation);
+  win.webContents.on('will-redirect', guardNavigation);
 
   if (isDev && process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
@@ -114,31 +126,52 @@ ipcMain.handle('app:openExternal', async (_e, url: string) => {
   await shell.openExternal(parsed.toString());
 });
 
-ipcMain.handle('app:revealInFolder', (_e, filePath: unknown) => {
+/**
+ * Gate for the two shell handlers below. The renderer may only ever point them
+ * at a file it just produced via an export action, so we require exactly that:
+ * inside `~/.local/business-hub/`, with a non-executable extension.
+ *
+ * Before the 2026-07 audit both handlers accepted **any** path under `$HOME`.
+ * `shell.openPath` uses the OS "open" verb, so on Windows that was a code-
+ * execution primitive: a compromised renderer could call
+ * `openPath('C:\\Users\\me\\Downloads\\installer.exe')` and the shell would run
+ * it with no prompt. Confining to the export root plus an extension allowlist
+ * removes the primitive; no UI ever passed anything else, so nothing is lost.
+ *
+ * `realpath` runs first because `path.resolve` is purely lexical — a symlink
+ * planted inside the export dir would otherwise redirect the open outside it.
+ */
+const SHELL_OPEN_EXTS = new Set(['.html', '.md', '.svg', '.png', '.pdf', '.json', '.csv', '.txt']);
+
+async function shellTargetOrNull(filePath: unknown): Promise<string | null> {
+  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return null;
+  if (/[\0\r\n]/.test(filePath)) return null;
+  const nodePath = require('node:path') as typeof import('node:path');
+  const nodeFs = require('node:fs/promises') as typeof import('node:fs/promises');
+  const resolved = nodePath.resolve(filePath);
+  // Follow symlinks before the containment check; a missing file keeps the
+  // lexical path so a not-yet-created export still fails closed on the checks.
+  const real = await nodeFs.realpath(resolved).catch(() => resolved);
+  if (!real.startsWith(exportRoot() + nodePath.sep)) return null;
+  if (!SHELL_OPEN_EXTS.has(nodePath.extname(real).toLowerCase())) return null;
+  return real;
+}
+
+ipcMain.handle('app:revealInFolder', async (_e, filePath: unknown) => {
   // Reveal a saved file in the OS file manager (Finder / Explorer / Nautilus).
-  // Only accept paths under the user's home directory — the renderer should
-  // only ever pass paths it just wrote via an export action, which already
-  // path-traversal-guard to ~/.local/business-hub/**, but we re-check here
-  // as defense-in-depth.
-  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return;
-  if (/[\0\r\n]/.test(filePath)) return;
-  const resolved = require('node:path').resolve(filePath);
-  const home = require('node:path').resolve(require('node:os').homedir());
-  if (!resolved.startsWith(home + require('node:path').sep)) return;
-  shell.showItemInFolder(resolved);
+  const target = await shellTargetOrNull(filePath);
+  if (target === null) return;
+  shell.showItemInFolder(target);
 });
 
 ipcMain.handle('app:openPath', async (_e, filePath: unknown) => {
   // Open a file with the OS default application (SVG → image viewer,
-  // HTML → browser, MD → text editor, etc.). Same path-traversal guard
-  // as revealInFolder above. Returns empty string on success or an error
-  // string on failure (Electron's shell.openPath contract).
-  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return;
-  if (/[\0\r\n]/.test(filePath)) return;
-  const resolved = require('node:path').resolve(filePath);
-  const home = require('node:path').resolve(require('node:os').homedir());
-  if (!resolved.startsWith(home + require('node:path').sep)) return;
-  await shell.openPath(resolved);
+  // HTML → browser, MD → text editor, etc.). Same gate as revealInFolder.
+  // Returns empty string on success or an error string on failure
+  // (Electron's shell.openPath contract).
+  const target = await shellTargetOrNull(filePath);
+  if (target === null) return;
+  await shell.openPath(target);
 });
 
 ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown) => {

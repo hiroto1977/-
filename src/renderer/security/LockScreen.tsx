@@ -305,7 +305,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setRecoveryNewPw(e.target.value)}
               style={inputStyle}
-              placeholder="8 文字以上"
+              placeholder="12 文字以上"
             />
           </label>
 
@@ -482,7 +482,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               if (e.key === 'Enter' && !busy) submitPassword();
             }}
             style={inputStyle}
-            placeholder="8 文字以上"
+            placeholder="12 文字以上"
           />
         </label>
 

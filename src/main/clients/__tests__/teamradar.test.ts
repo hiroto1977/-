@@ -485,7 +485,8 @@ describe('defaultSvgExportPath', () => {
 describe('isSafeSvgExportPath', () => {
   const home = '/home/user';
   it('accepts a .svg in home', () => {
-    expect(isSafeSvgExportPath('/home/user/x.svg', home)).toBe(true);
+    expect(isSafeSvgExportPath('/home/user/.local/business-hub/data/x.svg', home)).toBe(true);
+    expect(isSafeSvgExportPath('/home/user/x.svg', home)).toBe(false); // outside export root
   });
   it('rejects non-string / empty / oversized', () => {
     expect(isSafeSvgExportPath(42 as unknown as string, home)).toBe(false);
