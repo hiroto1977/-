@@ -41,7 +41,9 @@ describe('Vault — initialization', () => {
 
   it('rejects passwords shorter than 8 chars', async () => {
     const vault = getVault();
-    await expect(vault.initialize('short')).rejects.toThrow(/8 文字以上/);
+    await expect(vault.initialize('short')).rejects.toThrow(/12 文字以上/);
+    // 11 chars is now rejected too (policy raised 8 → 12 in the 2026-07 audit).
+    await expect(vault.initialize('elevenchars')).rejects.toThrow(/12 文字以上/);
   });
 
   it('rejects oversized passwords (> 256 chars)', async () => {
@@ -304,7 +306,7 @@ describe('Vault — recoverWithMnemonic', () => {
     const { mnemonic } = await v.initialize('original-password-12345');
     _resetVaultForTests();
     const v2 = getVault();
-    await expect(v2.recoverWithMnemonic(mnemonic, 'short')).rejects.toThrow(/8 文字以上/);
+    await expect(v2.recoverWithMnemonic(mnemonic, 'short')).rejects.toThrow(/12 文字以上/);
   });
 
   it('rejects oversize new password', async () => {

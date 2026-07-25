@@ -22,6 +22,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { replaceJsonToken } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', '経営書類スタジオ.html');
@@ -844,7 +845,7 @@ const PAGE_CSS = `
 `;
 
 function buildHtml() {
-  const pageJs = PAGE_JS.replace('__TEMPLATES__', JSON.stringify(TEMPLATES));
+  const pageJs = replaceJsonToken(PAGE_JS, '__TEMPLATES__', TEMPLATES);
   return [
     '<!DOCTYPE html>',
     '<html lang="ja">',

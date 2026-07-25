@@ -50,6 +50,14 @@
       "leafCount": 15,
       "note": "update ci.yml",
       "hash": "f5b5925a555d09a8baf1146b6cae4de9a265f77e1f36d28f1a2824f9e5e777c7"
+    },
+    {
+      "index": 4,
+      "prevHash": "f5b5925a555d09a8baf1146b6cae4de9a265f77e1f36d28f1a2824f9e5e777c7",
+      "merkleRoot": "ceada09c34c616c1c6ab0db413dd93b0a8b5612085da2cc63382a9a9def170b1",
+      "leafCount": 15,
+      "note": "update oauth.ts,LockScreen.tsx,dataCrypto.ts,vault.ts",
+      "hash": "b5aa9b099a70bc82cf48c48e6591f9a1ed5cf5aef997c095ef7ee13d75380756"
     }
   ],
   "tipManifest": {
@@ -59,14 +67,14 @@
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
-    "src/main/oauth.ts": "a1dfc4a65dbe993c42385a401e911ed685e4d1a4550b4bec17e1a5179489beba",
+    "src/main/oauth.ts": "42d4a99f49be0141c44315f2189a838bafc23101aad71d721faf3550cea2b785",
     "src/main/secrets.ts": "058491d3b22b2db5a65b46271a8b67abc6fa74a3c59648f646804930e94dff65",
     "src/preload/preload.ts": "e6c255ca2fad685a4c6e7a50500e34e281708a3f482b250fe2ac9996c3a0c7ce",
-    "src/renderer/security/LockScreen.tsx": "298c1ba081e52ec0f61120e19b85dae38d77d2a6aba2aa84e2da8dd1c7e90596",
+    "src/renderer/security/LockScreen.tsx": "5592e923ea1aade9869736e5f76d5b12b277f8aa8bb5fc45c0bfa30f2f0fdb9c",
     "src/renderer/security/autoLock.ts": "e1cd5a4fc282d6f32d14e1ae99b5cb0701f5600dbd4dfd8366419938282fbed0",
-    "src/renderer/security/dataCrypto.ts": "d70dc8c317bd046d7a1dc67bfed2423c384a14ac598e9d74b39dad8a16d473c4",
+    "src/renderer/security/dataCrypto.ts": "92c8e27b6589bffb66f4999840119b70d21c5749db5f0c06859533d1f212d102",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "66e19d3035754915354cd32a790ef8cbf9206ca3ea041d08f31e992b6e7291bf",
+    "src/renderer/security/vault.ts": "32315d232dd3d91b0d7488770b604076fd66454e50a7025865c1e0f748ca3759",
     "src/renderer/security/webauthn.ts": "1c9b4021790ec730fb879d039bdca309793eb55b8535733320021e4b3d810b62"
   }
 }

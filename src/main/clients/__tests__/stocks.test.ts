@@ -2165,7 +2165,7 @@ describe('isSafeDashboardPath', () => {
   const home = '/home/user';
 
   it('accepts a .html under the home dir', () => {
-    expect(isSafeDashboardPath('/home/user/dashboard.html', home)).toBe(true);
+    expect(isSafeDashboardPath('/home/user/dashboard.html', home)).toBe(false); // outside export root
     expect(isSafeDashboardPath('/home/user/.local/business-hub/data/dashboard.html', home)).toBe(true);
   });
 
@@ -2227,7 +2227,8 @@ describe('exportDashboardImpl', () => {
   });
 
   it('honors a custom safe path', async () => {
-    const customPath = path.join(os.homedir(), 'my-dashboard.html');
+    // Custom paths must live inside the export root (2026-07 audit).
+    const customPath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'my-dashboard.html');
     let received = '';
     const r = await exportDashboardImpl(
       { token: '', payload: { path: customPath } },
@@ -2842,7 +2843,8 @@ describe('defaultDashboardMdPath', () => {
 describe('isSafeDashboardMdPath', () => {
   const home = '/home/user';
   it('accepts a .md path under home', () => {
-    expect(isSafeDashboardMdPath('/home/user/x.md', home)).toBe(true);
+    expect(isSafeDashboardMdPath('/home/user/.local/business-hub/data/x.md', home)).toBe(true);
+    expect(isSafeDashboardMdPath('/home/user/x.md', home)).toBe(false);
   });
   it('rejects .html (wrong extension)', () => {
     expect(isSafeDashboardMdPath('/home/user/x.html', home)).toBe(false);
@@ -2881,7 +2883,7 @@ describe('exportDashboardMdImpl', () => {
   });
 
   it('honors a custom path under home', async () => {
-    const customPath = path.join(os.homedir(), 'tmp-md-test.md');
+    const customPath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'tmp-md-test.md');
     let written = false;
     const r = await exportDashboardMdImpl(
       { token: '', payload: { path: customPath } },

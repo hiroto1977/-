@@ -381,7 +381,7 @@ describe('exportTemplateImpl', () => {
   });
 
   it('uses custom safe path when provided', async () => {
-    const customPath = path.join(os.homedir(), 'custom.svg');
+    const customPath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'custom.svg');
     let writtenPath = '';
     const result = await exportTemplateImpl(
       { token: '', payload: { templateId: 'business-card', path: customPath } },

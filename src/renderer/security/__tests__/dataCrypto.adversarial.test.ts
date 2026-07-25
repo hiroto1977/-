@@ -35,8 +35,22 @@ describe('dataCrypto — adversarial / tamper resistance', () => {
 
   it('rejects a downgraded iteration count in the bundle (auth still binds the key)', async () => {
     const bundle = await encryptString('x', 'pw');
-    // An attacker lowering iterations changes the derived key → decryption fails.
-    await expect(decryptString({ ...bundle, iterations: 1 }, 'pw')).rejects.toThrow(/復号に失敗/);
+    // In-range but different → the derived key differs, so GCM auth fails.
+    await expect(decryptString({ ...bundle, iterations: 150_000 }, 'pw')).rejects.toThrow(/復号に失敗/);
+  });
+
+  it('rejects out-of-range iteration counts before running PBKDF2 (CPU-DoS guard)', async () => {
+    const bundle = await encryptString('x', 'pw');
+    // A hostile bundle asking for 1e10 iterations would freeze the tab; and a
+    // count of 1 is not a work factor we ever wrote. Both fail closed, early,
+    // without touching the KDF (2026-07 audit).
+    await expect(decryptString({ ...bundle, iterations: 1 }, 'pw')).rejects.toThrow(/反復回数/);
+    await expect(decryptString({ ...bundle, iterations: 10_000_000_000 }, 'pw')).rejects.toThrow(/反復回数/);
+  });
+
+  it('writes new bundles at the OWASP SHA-256 floor (600k)', async () => {
+    const bundle = await encryptString('x', 'pw');
+    expect(bundle.iterations).toBe(600_000);
   });
 
   it('rejects structurally invalid bundles before attempting crypto', async () => {

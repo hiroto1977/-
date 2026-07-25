@@ -103,6 +103,25 @@ describe('fetchViaProxy', () => {
     expect(env.headers.Authorization).toBe('Bearer secret_xxx');
   });
 
+  it('forwards the NORMALIZED url, not the raw input (parser-differential SSRF)', async () => {
+    // A backslash-authority URL parses to hostname `public.com` under WHATWG
+    // (so the guard allows it) but a proxy with a non-WHATWG parser could read
+    // the authority as 169.254.169.254. Sending `parsed.href` removes the
+    // ambiguity: the proxy receives the same target the guard validated.
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelope({ status: 200, body: '' }));
+    globalThis.fetch = mockFetch;
+
+    const raw = 'https://public.example.com\\@169.254.169.254/latest/meta-data/';
+    await fetchViaProxy(raw, { method: 'GET' }, { url: 'https://my-worker.example.com/proxy' });
+
+    const init = mockFetch.mock.calls[0]![1]!;
+    const env = JSON.parse(init.body as string) as { url: string };
+    expect(env.url).toBe(new URL(raw).href);
+    expect(env.url).not.toBe(raw);
+    expect(env.url).not.toContain('\\');
+    expect(new URL(env.url).hostname).toBe('public.example.com');
+  });
+
   it('forwards shared secret as X-Proxy-Auth header', async () => {
     const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
       envelope({ status: 200, body: '' }),
@@ -373,6 +392,34 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://[::ffff:e000:1]/')).toBe(true);    // 224.0.0.1 (multicast)
     // Public IPs in mapped form should pass through.
     expect(pri('http://[::ffff:808:808]/')).toBe(false);  // 8.8.8.8 (Google DNS)
+  });
+
+  describe('SSRF edge cases — Round 4 (2026-07 audit)', () => {
+    it('rejects trailing-dot (FQDN) forms of every name-based rule', () => {
+      // `URL` PRESERVES a trailing dot for named hosts, so exact-equality and
+      // last-label checks were bypassable by appending one. These resolve to
+      // exactly the same targets as their dotless forms.
+      expect(new URL('http://localhost./').hostname).toBe('localhost.'); // pins the parser premise
+      expect(pri('http://localhost./')).toBe(true);
+      expect(pri('http://metadata.google.internal./')).toBe(true);
+      expect(pri('http://printer.local./')).toBe(true);
+      expect(pri('http://x.internal./')).toBe(true);
+      expect(pri('http://dc01.corp./')).toBe(true);
+      expect(pri('http://foo.home.arpa./')).toBe(true);
+      // A public name with a trailing dot is still public.
+      expect(pri('https://api.notion.com./')).toBe(false);
+    });
+
+    it('rejects CGNAT 100.64/10 and benchmarking 198.18/15, with boundaries', () => {
+      expect(pri('http://100.64.0.1/')).toBe(true);
+      expect(pri('http://100.127.255.255/')).toBe(true);
+      expect(pri('http://100.63.255.255/')).toBe(false); // just below CGNAT
+      expect(pri('http://100.128.0.1/')).toBe(false); // just above CGNAT
+      expect(pri('http://198.18.0.1/')).toBe(true);
+      expect(pri('http://198.19.255.255/')).toBe(true);
+      expect(pri('http://198.20.0.1/')).toBe(false); // just above benchmark range
+      expect(pri('http://198.17.255.255/')).toBe(false); // just below
+    });
   });
 
   describe('IPv6 SSRF edge cases — Round 3', () => {

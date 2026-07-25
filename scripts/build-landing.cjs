@@ -13,6 +13,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { jsonForScript } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const SERVICES_TS = path.join(ROOT, 'src/renderer/services.ts');
@@ -93,7 +94,9 @@ function buildHtml(services, tests) {
   const counts = Object.fromEntries(CATEGORY_ORDER.map((c) => [c, byCat(c).length]));
   const total = services.length;
   const description = `${total} のサービス${DESC}`;
-  const jsonLd = JSON.stringify({
+  // `<` escaped so a future value containing `</script>` can't terminate the
+  // JSON-LD block early (see scripts/lib/json-for-script.cjs).
+  const jsonLd = jsonForScript({
     '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'Service Hub',
     applicationCategory: 'BusinessApplication', operatingSystem: 'Web, Windows, macOS, Linux',
     description, url: SITE_URL, offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },

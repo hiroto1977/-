@@ -12,7 +12,17 @@
  */
 
 const KDF = 'PBKDF2-SHA256';
-const ITERATIONS = 210_000; // OWASP 2023 PBKDF2-SHA256 floor
+// OWASP 2023 floor for PBKDF2-**SHA256** is 600,000 (210,000 is the SHA-512
+// row). This module hashes with SHA-256, so 210k ran at ~1/3 of the intended
+// work factor and disagreed with the Vault's own 600k — corrected in the
+// 2026-07 audit. `iterations` is carried inside each bundle, so bundles written
+// under the old value still decrypt with their own stored count.
+const ITERATIONS = 600_000;
+// Bundles are self-describing, and a hostile/corrupt one could ask for an
+// absurd count to freeze the tab. Lowering is harmless (GCM binds the key, so a
+// wrong key simply fails), only the upper bound needs a cap.
+const MIN_ITERATIONS = 100_000;
+const MAX_ITERATIONS = 4_000_000;
 const SALT_BYTES = 16;
 const IV_BYTES = 12;
 
@@ -94,6 +104,9 @@ export async function decryptString(bundle: EncryptedBundle, password: string): 
   if (!isEncryptedBundle(bundle)) throw new Error('暗号化データの形式が不正です');
   const salt = fromBase64(bundle.salt);
   const iv = fromBase64(bundle.iv);
+  if (bundle.iterations < MIN_ITERATIONS || bundle.iterations > MAX_ITERATIONS) {
+    throw new Error('暗号化データの反復回数が許容範囲外です');
+  }
   const key = await deriveKey(password, salt, bundle.iterations);
   let plain: ArrayBuffer;
   try {

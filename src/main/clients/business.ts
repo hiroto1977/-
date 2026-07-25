@@ -2,6 +2,7 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { isSafeExportPath } from './exportPaths';
 
 /**
  * Business operations dashboard — 17 番目のサービス。
@@ -755,13 +756,7 @@ export function defaultBusinessDashboardMdPath(): string {
 // kills under perTest; block-form pragma.
 // Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator
 function isSafeBusinessPathWithExt(filePath: string, home: string, ext: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
-  if (filePath.length > 1024) return false;
-  if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith(ext)) return false;
-  const resolved = path.resolve(filePath);
-  const resolvedHome = path.resolve(home);
-  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+  return isSafeExportPath(filePath, home, ext);
 }
 
 export function isSafeBusinessDashboardPath(filePath: string, home: string): boolean {
