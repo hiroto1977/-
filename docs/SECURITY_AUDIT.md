@@ -27,16 +27,29 @@ Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS
 | R2-12 | 低 | `vault.ts` | `clearToken` がロック中でも動作・`serviceId` 未検証 / `unlock()` の例外時に生マスター鍵を zero 化しない | 修正 |
 | R2-13 | 低 | 書類メーカー3種 + landing | `JSON.stringify` を inline `<script>` に埋め込み `<` 未エスケープ → データに `</script>` が入るとページ崩壊 (2026-07-24 の Pages 事故と同型)。`replace(str,str)` の `$&` 解釈も同時に是正 | 修正 |
 
-**修正しなかった (受容 / 上流責務)**:
-- SSRF ガードは**ホスト名文字列のみ**を見るため、公開 DNS が私設 IP を返す形 (`169-254-169-254.sslip.io`, DNS リバインド) は原理的に client 側では防げない → プロキシ側の解決後 IP 再検査が本質的な防御線 (`docs/PROXY_EXAMPLE.md` §3 に明記済み・リダイレクト各ホップの再検査も同様)。
-- リカバリー 24 語のクリップボード / 平文 `.txt` 保存は「書き留める」UX と不可分。
+**修正しなかった (受容 / 上流責務)** — ※ 第3ラウンド (下記) でほぼ全て解消済み:
+- ~~SSRF ガードはホスト名文字列のみ~~ → **R3 で上流実装**。`docs/PROXY_EXAMPLE.md` の Worker が DoH で解決後 IP を再検査し、リダイレクト各ホップも再検査する。client 側の限界は変わらないが、文書上の防御線が実在するようになった。
+- リカバリー 24 語のクリップボード / 平文 `.txt` 保存は「書き留める」UX と不可分 → **警告文を明確化** (平文であり単体で Vault を復元できる旨をダウンロード時に表示)。
 - `webauthn.ts` は未配線のまま。`verifyBiometric` は署名検証をしていなかったため **fail-closed 化済み** (認証器を呼ぶ前に throw し、誤って解錠ゲートに配線されても通らない)。将来実装する場合の不変条件 — マスターパスワード/派生鍵を生体解錠のために保存しないこと — をモジュール冒頭と `docs/SECURITY_CHAIN.md` §3 に明記した。
-- `secrets.ts` の `plain:` フォールバック (keychain 不在 Linux) は第1ラウンドで受容済み。
+- `secrets.ts` の `plain:` フォールバック (keychain 不在 Linux) は暗号化の代替が無いため受容継続。ただし **R3 で利用者に可視化** (`secrets:protection` IPC + 設定画面に暗号化可否/未暗号化件数/keyring 導入手順)。従来は `console.warn` だけで GUI 利用者に届いていなかった。
 
-production npm audit: **0 脆弱性**。dev 依存には 29 件 (electron-builder / vitest / vite 系) あるが
-出荷物 (`standalone.html` / Electron ランタイム) の依存ツリー (react, react-dom) には 1 件も入らない。
-**ただし Electron 本体は ^33 ピン留めで既知 CVE あり (最新は 43)** — メジャー更新は破壊的変更を伴うため
-別タスクとして残す。
+### 第3ラウンド (2026-07-25) — 未対処項目の総ざらい
+
+| ID | 対象 | 内容 | 状態 |
+|---|---|---|---|
+| R3-1 | `docs/PROXY_EXAMPLE.md` | リファレンス Worker が文書化済みの「解決後 IP 再検査」を実装していなかった → DoH (A/AAAA) で全アドレスを private/reserved 判定・`redirect:'manual'` + ホップ上限 3 で各 `Location` を再検査・非 http(s) 拒否・ホスト跨ぎで `Authorization`/`Cookie`/`x-proxy-auth` 破棄・301/302/303 は POST→GET 降格・DoH 失敗/NXDOMAIN/回答ゼロは fail-closed | 修正 |
+| R3-2 | 同上 | 共有シークレット比較が `!==` (先頭一致文字数が応答時間から漏れる) → XOR 累積の定数時間比較 | 修正 |
+| R3-3 | `scripts/inline-html.cjs`, `inject-pwa.cjs` | `script-src 'unsafe-inline'` = 注入された任意の inline `<script>` も実行可 → バンドルの sha256 ハッシュに固定し、SW スニペットのハッシュを冪等追記。仕上がり文書から再導出して未ピン留めならビルド失敗。実 chromium で 10MB/2.2MB の正常描画と注入 script の遮断を確認 | 修正 |
+| R3-4 | `security/webauthn.ts` | `rawId.byteLength > 0` だけで所持証明 true (署名未検証・チャレンジ使い捨て) → 認証器呼び出し前に throw する fail-closed 化。誤配線事故を構造的に防ぐ | 修正 |
+| R3-5 | `main/secrets.ts` + 設定画面 | `plain:` フォールバックの警告が `console.warn` のみで GUI 利用者に不可視 → `secrets:protection` IPC (秘密を返さず encrypted/plainCount/path のみ) + 設定画面表示 | 修正 |
+| R3-6 | `components/DataList.tsx`, `StatusBar.tsx` | 第三者由来 `thumbnailUrl`/`avatarUrl` のスキーム未検証 (現状 `<img>` なので実害なし。`href`/CSS `url()`/SVG `use` へ移した瞬間に危険) → https?/data:image のみ許可し、それ以外は `src` 属性自体を出さない。tab/CR/LF を除去してから判定 | 修正 |
+| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認 | 修正 |
+
+production npm audit: **0 脆弱性**。dev 依存の残りは electron-builder の推移的依存 (brace-expansion /
+minimatch / ejs / temp / glob の DoS・ReDoS) と vite/vitest 系。いずれも**出荷物の依存ツリーには入らず**、
+かつ攻撃前提が本プロジェクトの使い方では成立しない (`vitest --ui` は未使用、vite dev server は
+ローカルのみ、electron-builder はリリースタグ時に自前ソースをビルドするだけ)。
+electron-builder については npm の提案が 25 系への降格であり、Electron 43 を扱えなくなるため採らない。
 
 ### 第1ラウンド (2026-05-12)
 
