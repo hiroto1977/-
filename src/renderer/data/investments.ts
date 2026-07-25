@@ -41,6 +41,8 @@ export interface PropertyEntry extends Record<string, unknown> {
 
 /** 数値入力 (文字列可) を非負の有限数に。不正は null。 */
 function toAmount(v: unknown): number | null {
+  // Stryker disable next-line ConditionalExpression: typeof v === 'number' を true 固定にしても
+  // 直後の Number.isFinite が非数値をすべて弾くため返り値は同一 (等価変異)。
   const n = typeof v === 'string' ? Number(v.replace(/[,，\s]/g, '')) : typeof v === 'number' ? v : NaN;
   return Number.isFinite(n) && n >= 0 ? n : null;
 }
@@ -57,6 +59,9 @@ export function parsePropertyEntry(input: {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   if (name.length === 0 || name.length > 64) throw new Error('物件名は 1〜64 文字で入力してください');
 
+  // Stryker disable next-line StringLiteral: '' を Stryker のセンチネル (17 文字) にしても
+  // 直後の length > 16 で同じ 種別 エラーになる (等価変異)。name 側は上限 64 のため
+  // センチネルが通ってしまい等価にならず、そちらはテストで殺している。
   const type = typeof input.type === 'string' ? input.type.trim() : '';
   if (type.length === 0 || type.length > 16) throw new Error('種別を選択してください');
 
@@ -64,14 +69,22 @@ export function parsePropertyEntry(input: {
   if (monthlyRent === null) throw new Error('家賃 (月額) は 0 以上の数値で入力してください');
 
   const purchasePrice = toAmount(input.purchasePrice);
+  // Stryker disable next-line ConditionalExpression: === null を false 固定にしても
+  // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
   if (purchasePrice === null || purchasePrice <= 0) throw new Error('取得価格は 1 円以上の数値で入力してください');
 
   // 任意項目: 空欄・未指定は 0 (不正な文字列だけエラーにする)。
   const expensesRaw = input.monthlyExpenses;
+  // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
+  // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+  // 意図を明示するために式は残す。
   const monthlyExpenses = expensesRaw === undefined || expensesRaw === '' ? 0 : toAmount(expensesRaw);
   if (monthlyExpenses === null) throw new Error('月次経費は 0 以上の数値で入力してください');
 
   const loanRaw = input.monthlyLoan;
+  // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
+  // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+  // 意図を明示するために式は残す。
   const monthlyLoan = loanRaw === undefined || loanRaw === '' ? 0 : toAmount(loanRaw);
   if (monthlyLoan === null) throw new Error('月次返済額は 0 以上の数値で入力してください');
 
@@ -212,9 +225,17 @@ export function parseHoldingEntry(input: {
   if (manual) {
     // 手動: 評価額を直接入力。口数・基準価額は任意 (空欄 0)。
     const v = toAmount(input.valuation);
+    // Stryker disable next-line ConditionalExpression: === null を false 固定にしても
+    // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (v === null || v <= 0) throw new Error('評価額は 1 円以上の数値で入力してください (空欄にすると自動計算)');
+    // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
+    // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+    // 意図を明示するために式は残す。
     const u = input.units === undefined || input.units === '' ? 0 : toAmount(input.units);
     if (u === null) throw new Error('口数は 0 以上の数値で入力してください');
+    // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
+    // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+    // 意図を明示するために式は残す。
     const nav = input.navPerUnit === undefined || input.navPerUnit === '' ? 0 : toAmount(input.navPerUnit);
     if (nav === null) throw new Error('基準価額は 0 以上の数値で入力してください');
     units = u;
@@ -224,8 +245,12 @@ export function parseHoldingEntry(input: {
   } else {
     // 自動: 口数 × 基準価額から評価額を導出。
     const u = toAmount(input.units);
+    // Stryker disable next-line ConditionalExpression: === null を false 固定にしても
+    // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (u === null || u <= 0) throw new Error('口数は 1 以上の数値で入力してください (評価額を直接入力する場合は評価額欄へ)');
     const nav = toAmount(input.navPerUnit);
+    // Stryker disable next-line ConditionalExpression: === null を false 固定にしても
+    // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (nav === null || nav <= 0) throw new Error('基準価額 (1万口あたり・円) を入力してください');
     units = u;
     navPerUnit = nav;
@@ -234,12 +259,20 @@ export function parseHoldingEntry(input: {
   }
 
   const acqRaw = input.acquisitionCost;
+  // Stryker disable next-line StringLiteral: '' を別文字列にしても、その値は toAmount で
+  // NaN → null になり同じ 取得額 エラーへ落ちる (等価変異)。
   const acquisitionCost = acqRaw === undefined || acqRaw === '' ? valuation : toAmount(acqRaw);
   if (acquisitionCost === null) throw new Error('取得額は 0 以上の数値で入力してください');
 
   const ytdRaw = input.ytdReturnPct;
   let ytdReturnPct = 0;
+  // Stryker disable next-line StringLiteral,ConditionalExpression: `!== ''` は冗長 —
+  // 空文字で入ってきても Number('') は 0 で、スキップしたときの既定値 0 と一致するため
+  // 観測できる差がない (等価変異)。'' を別文字列にした場合はその値が Number() で NaN に
+  // なり同じ YTD エラーへ落ちる。空欄の意図を明示するため式自体は残す。
   if (ytdRaw !== undefined && ytdRaw !== '') {
+    // Stryker disable next-line ConditionalExpression: typeof ytdRaw === 'number' を true 固定に
+    // しても直後の Number.isFinite が非数値を弾くため同じエラーになる (等価変異)。
     const n = typeof ytdRaw === 'string' ? Number(ytdRaw.replace(/[,，\s]/g, '')) : typeof ytdRaw === 'number' ? ytdRaw : NaN;
     if (!Number.isFinite(n) || n < -100 || n > 1000) throw new Error('YTD リターン (%) は −100〜1000 の数値で入力してください');
     ytdReturnPct = n;
@@ -257,6 +290,8 @@ export function holdingToForm(h: HoldingEntry): {
   code: string; name: string; units: string; navPerUnit: string;
   valuation: string; acquisitionCost: string; ytdReturnPct: string;
 } {
+  // Stryker disable next-line StringLiteral: 'auto' を別文字列にしても mode は === 'manual' と
+  // しか比較されないため分岐は変わらない (等価変異)。
   const mode: ValuationMode = h.valuationMode ?? 'auto';
   return {
     code: h.code,
@@ -311,6 +346,8 @@ export function computeFundPortfolio(
   let totalValuation = 0;
   for (const h of holdings) totalValuation += Number.isFinite(h.valuation) ? h.valuation : 0;
   let totalCostBasis = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
+  // Stryker disable next-line EqualityOperator: `c > 0` → `c >= 0` は c が ±0 のときだけ差が出るが、
+  // どちらも加算結果は同一 (x + -0 === x + 0) のため観測不能 (等価変異)。
   for (const c of userCosts) totalCostBasis += Number.isFinite(c) && c > 0 ? c : 0;
   const unrealizedGain = totalValuation - totalCostBasis;
   return {

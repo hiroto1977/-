@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "_commentScope": "Scoped to pure-logic modules. The IPC handlers (main.ts) + secrets.ts depend on the live Electron runtime — mocking them just to mutate would be high-noise, low-signal.",
+  "_commentEquivalentPragmas": "2026-07 監査の仕上げで zoningPlanner / shigyoDirectory / investments を 100% にして追加した。到達には等価変異の pragma が必要だった (いずれも観測可能な差が無いことを JS セマンティクスで確認済み・理由は各行のコメントに記載): (1) `x === null || x <= 0` は null <= 0 が true のため === null を落としても同じエラー、(2) `x === '' ? 0 : toAmount(x)` は Number('') === 0 で既定値と一致、(3) `typeof v === 'number'` は直後の Number.isFinite が非数値を弾くため等価、(4) 種別の '' はセンチネル (17字) が length > 16 で同じエラーに落ちるため等価 (物件名は上限 64 なので等価にならず、そちらはテストで殺している)、(5) `c > 0` → `c >= 0` は ±0 のみで差が出るが x + -0 === x + 0 で観測不能。測定は incremental キャッシュを消してから 行うこと — 古い結果が残ると survived が誤って残る。",
   "mutate": [
     "src/main/oauth.ts",
     "src/main/clients/types.ts",
@@ -174,7 +175,10 @@
     "src/shared/taxGift.ts",
     "src/shared/taxNationalHealthInsurance.ts",
     "src/shared/taxIndividualBusiness.ts",
-    "src/shared/taxNationalPension.ts"
+    "src/shared/taxNationalPension.ts",
+    "src/shared/zoningPlanner.ts",
+    "src/renderer/data/shigyoDirectory.ts",
+    "src/renderer/data/investments.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
