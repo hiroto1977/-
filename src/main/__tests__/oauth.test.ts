@@ -884,3 +884,40 @@ describe('refresh', () => {
     expect(caught!.message.length).toBeLessThan(longBody.length);
   });
 });
+
+describe('assertHttpsTokenUrl (RFC 8252 §8.3 — トークン交換を平文で行わせない)', () => {
+  // authorize() / refresh() の冒頭ガード。現行の OAUTH_CONFIGS は全て https を
+  // ハードコードしており IPC 層も clientId しか上書きさせないため到達しないが、
+  // 将来の設定追加やテスト用 fixture の混入で平文交換が起きないための常設ガード。
+  // ここを固定しないと「if を消す/条件を false にする」変異が生き残る = ガードが
+  // 実際に効いているという保証が無い状態になる。
+  const httpCfg: OAuthConfig = { ...CFG, tokenUrl: 'http://oauth2.example.com/token' };
+
+  it('authorize は http のトークンエンドポイントを拒否する (ブラウザを開く前に落ちる)', async () => {
+    const before = openExternalMock.mock.calls.length;
+    await expect(authorize(httpCfg)).rejects.toThrow('OAuth token endpoint must use https');
+    // 順序も重要: 平文だと分かった時点で、認可URLを開く副作用より前に止まること。
+    expect(openExternalMock.mock.calls.length).toBe(before);
+  });
+
+  it('refresh は http のトークンエンドポイントを拒否する (fetch を呼ばない)', async () => {
+    const fetchSpy = vi.fn<typeof fetch>();
+    await expect(refresh(httpCfg, { accessToken: 'at', refreshToken: 'rt' }, fetchSpy)).rejects.toThrow(
+      'OAuth token endpoint must use https',
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('https のトークンエンドポイントはガードを通過する (誤検知しない)', async () => {
+    const fetchSpy = vi.fn<typeof fetch>(
+      async () =>
+        new Response(JSON.stringify({ access_token: 'at', token_type: 'Bearer', expires_in: 3600 }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+    );
+    const set = await refresh(CFG, { accessToken: 'old', refreshToken: 'rt' }, fetchSpy);
+    expect(set.accessToken).toBe('at');
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+});
