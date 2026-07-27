@@ -54,7 +54,7 @@ import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates'
 import { getVault } from './security/vault';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
-import { OLLAMA_PORT_KEY, probeOllama } from './network/ollamaWeb';
+import { loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -835,13 +835,7 @@ const shim = {
     // CORS ヘッダを返さないため、失敗時は「未起動」と「OLLAMA_ORIGINS 未設定」を
     // 切り分けて返す (ページがその手順を案内する)。詳細は network/ollamaWeb.ts。
     if (serviceId === 'ollama') {
-      let port: string | null = null;
-      try {
-        port = localStorage.getItem(OLLAMA_PORT_KEY);
-      } catch {
-        port = null;
-      }
-      const probe = await probeOllama(port ?? undefined);
+      const probe = await probeOllama(loadEndpointSetting());
       if (probe.status === 'ok') return ok(probe.snapshot) as ActionResult<T>;
       // 接続できないことは異常ではない (Ollama を入れていない利用者が大多数)。
       // ページ側で状況と対処を出せるよう、失敗理由を message に載せて返す。
