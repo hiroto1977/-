@@ -9,8 +9,43 @@ import { encryptString, decryptString, isEncryptedBundle } from '../dataCrypto';
 describe('dataCrypto — adversarial / tamper resistance', () => {
   it('rejects a flipped IV (GCM nonce tamper)', async () => {
     const bundle = await encryptString('機密', 'pw-strong');
-    const iv = bundle.iv.slice(0, -2) + (bundle.iv.endsWith('A') ? 'B' : 'A') + bundle.iv.slice(-1);
+    // 置換文字は **置換対象の文字** を見て選ぶ。以前は末尾文字を見て決めていたため、
+    // 対象文字がたまたま置換先と同じだと改竄にならず復号が成功してしまい、
+    // 約 1/64 の確率で落ちるフレークだった (2026-07 に実際に観測)。
+    const target = bundle.iv[bundle.iv.length - 2];
+    const iv = bundle.iv.slice(0, -2) + (target === 'A' ? 'B' : 'A') + bundle.iv.slice(-1);
+    expect(iv).not.toBe(bundle.iv);
     await expect(decryptString({ ...bundle, iv }, 'pw-strong')).rejects.toThrow(/復号に失敗/);
+  });
+
+  // 反復回数の許容範囲は MIN=100,000 / MAX=4,000,000 の **両端を含む**。
+  // `<` / `>` を `<=` / `>=` に取り違えると、境界ちょうどの正規バンドルが
+  // 「範囲外」として復号不能になる (= 過去に保存したデータを読めなくする事故)。
+  // 境界そのものを固定して、その取り違えを検出できるようにする。
+  it('accepts iterations exactly at the lower bound (100,000) — 範囲エラーにしない', async () => {
+    const bundle = await encryptString('境界下限', 'pw');
+    // 反復回数だけ下限へ差し替える。鍵は 600,000 で導出されているため復号自体は
+    // 失敗するが、投げられるのは「範囲外」ではなく「復号に失敗」でなければならない。
+    const at = { ...bundle, iterations: 100_000 };
+    await expect(decryptString(at, 'pw')).rejects.toThrow(/復号に失敗/);
+    await expect(decryptString(at, 'pw')).rejects.not.toThrow(/範囲外/);
+  });
+
+  it('rejects iterations just below the lower bound (99,999)', async () => {
+    const bundle = await encryptString('境界外', 'pw');
+    await expect(decryptString({ ...bundle, iterations: 99_999 }, 'pw')).rejects.toThrow(/範囲外/);
+  });
+
+  it('accepts iterations exactly at the upper bound (4,000,000) — 範囲エラーにしない', async () => {
+    const bundle = await encryptString('境界上限', 'pw');
+    const at = { ...bundle, iterations: 4_000_000 };
+    await expect(decryptString(at, 'pw')).rejects.toThrow(/復号に失敗/);
+    await expect(decryptString(at, 'pw')).rejects.not.toThrow(/範囲外/);
+  });
+
+  it('rejects iterations just above the upper bound (4,000,001)', async () => {
+    const bundle = await encryptString('境界外', 'pw');
+    await expect(decryptString({ ...bundle, iterations: 4_000_001 }, 'pw')).rejects.toThrow(/範囲外/);
   });
 
   it('rejects a swapped salt (key no longer derives)', async () => {

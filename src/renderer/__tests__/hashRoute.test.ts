@@ -2,6 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { serviceIdFromHash, hashForService } from '../hashRoute';
 
 describe('serviceIdFromHash', () => {
+  it('先頭以外の # は除去しない (アンカー ^ を外すと別サービスへ誤ルーティングする)', () => {
+    // /^#\/?/ の ^ を落とすと 'gith#ub' → 'github' になり、壊れた hash が
+    // 実在サービスへ解決してしまう。アンカーが効いていることを固定する。
+    expect(serviceIdFromHash('gith#ub')).toBeNull();
+    expect(serviceIdFromHash('stock#s')).toBeNull();
+  });
+
   it('有効な #<id> を ServiceId に解決する', () => {
     expect(serviceIdFromHash('#stocks')).toBe('stocks');
     expect(serviceIdFromHash('#github')).toBe('github');
