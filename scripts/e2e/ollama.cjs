@@ -112,8 +112,11 @@ async function unlockAndOpenOllama(page){
     await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
-    const ok=/接続できませんでした|起動しているか/.test(body) && /つながらない場合/.test(body) && /OLLAMA_ORIGINS/.test(body);
-    console.log(`${ok?'✅':'❌'} 未起動: 原因と対処 (起動 + OLLAMA_ORIGINS 手順) を表示`);
+    // 未起動なら「導入からの通し手順」を出す。ここで許可設定だけ見せると、
+    // Ollama 自体を持っていない人は手順どおりにやっても動かない。
+    const ok=/接続できませんでした|起動しているか/.test(body) && /はじめて使う/.test(body)
+      && /ollama pull llama3\.2:1b/.test(body) && /ollama\.com\/download/.test(body) && /OLLAMA_ORIGINS/.test(body);
+    console.log(`${ok?'✅':'❌'} 未起動: 導入→モデル取得→許可→確認 の通し手順を表示`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,300));}
     await ctx.close();
   }
@@ -126,8 +129,11 @@ async function unlockAndOpenOllama(page){
     await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
-    const ok=/CORS/.test(body) && /OLLAMA_ORIGINS/.test(body);
-    console.log(`${ok?'✅':'❌'} CORS未許可: 「起動しているが拒否」と判定して設定手順を提示`);
+    // 起動が検出できている段階では、導入・モデル取得の手順は出さない
+    // (済んでいる段を読ませると、どこを直せばいいのか分からなくなる)。
+    const ok=/CORS/.test(body) && /OLLAMA_ORIGINS/.test(body) && /あと 1 つだけ設定が要ります/.test(body)
+      && !/ollama pull llama3\.2:1b/.test(body);
+    console.log(`${ok?'✅':'❌'} CORS未許可: 残り 1 手順だけに絞って提示 (導入手順は出さない)`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,300));}
     await ctx.close();
   }
@@ -143,7 +149,7 @@ async function unlockAndOpenOllama(page){
     const body=await page.evaluate(()=>document.body.innerText);
     const hasModels=/llama3\.2:latest/.test(body) && /qwen2\.5-coder:7b/.test(body);
     const hasVersion=/0\.5\.4/.test(body);
-    const noSetupHint=!/つながらない場合/.test(body);
+    const noSetupHint=!/はじめて使う/.test(body) && !/あと 1 つだけ設定が要ります/.test(body);
     const ok=hasModels&&hasVersion&&noSetupHint;
     console.log(`${ok?'✅':'❌'} 接続成功: 実モデル2件とバージョン0.5.4を表示 (models=${hasModels} version=${hasVersion} 案内非表示=${noSetupHint})`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,400));}

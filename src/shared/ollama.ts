@@ -28,6 +28,14 @@
 export const MIN_SAFE_VERSION = '0.1.46';
 export const DEFAULT_OLLAMA_PORT = 11434;
 
+/**
+ * 初回セットアップで入れてもらうモデル。約 1.3 GB と小さく、CPU だけでも動く。
+ * 「まず 1 回動かす」ことが目的なので、賢さより **確実に載ること** を優先する
+ * (大きいモデルはメモリ不足で最初の 1 回に失敗しやすく、そこで諦められてしまう)。
+ * scripts/ollama-setup.sh も同じ値を使う (ollamaSetup.test.ts が一致を検証)。
+ */
+export const DEFAULT_SETUP_MODEL = 'llama3.2:1b';
+
 /** 許可するループバックホスト。これ以外は base URL として受け付けない。 */
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
 

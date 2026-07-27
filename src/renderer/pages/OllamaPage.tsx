@@ -3,7 +3,12 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { OLLAMA_ENDPOINT_KEY, loadEndpointSetting, originsSetupSteps } from '../network/ollamaWeb';
+import {
+  OLLAMA_ENDPOINT_KEY,
+  loadEndpointSetting,
+  originsSetupSteps,
+  setupCommands,
+} from '../network/ollamaWeb';
 import { DEFAULT_OLLAMA_PORT, isLoopbackHostname, parseOllamaEndpoint } from '../../shared/ollama';
 
 const inputStyle: React.CSSProperties = {
@@ -280,7 +285,10 @@ function ConnectionSetup({
   // ループバックで開いている限り、スマホからは到達できない (127.0.0.1 は各端末の自分自身)。
   const servedFromLoopback = pageHostname === '' || isLoopbackHostname(pageHostname);
   const resolved = parseOllamaEndpoint(endpoint, pageHostname);
+  // 「起動しているが CORS 拒否」なら許可の設定だけ、そうでなければ導入から全部を出す。
+  // 診断で分かっている段階を飛ばして長い手順を読ませると、そこで諦められてしまう。
   const steps = originsSetupSteps(origin);
+  const fullSetup = setupCommands(origin);
 
   function applyEndpoint() {
     try {
@@ -450,18 +458,28 @@ function ConnectionSetup({
             gap: 8,
           }}
         >
-          <strong style={{ fontSize: 13 }}>つながらない場合</strong>
+          <strong style={{ fontSize: 13 }}>
+            {corsBlocked ? 'あと 1 つだけ設定が要ります' : 'はじめて使う — これを 1 回貼るだけ'}
+          </strong>
           <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
-            <strong>1. Ollama を起動</strong> — <code>ollama serve</code>（または Ollama アプリを開く）。
-            <br />
-            <strong>2. このページからの読み取りを許可</strong> — Ollama は既定で他オリジンからの
-            読み取りを拒否します（ブラウザ版のみ該当）。
-            {corsBlocked
-              ? ' 起動は検出できているので、あとはこの設定だけです。'
-              : ' 起動を確認したうえで、まだ読み取れない場合は下のコマンドを実行してください。'}
-            設定後に「接続テスト」を押します。
+            {corsBlocked ? (
+              <>
+                <strong>Ollama の起動は検出できています。</strong>
+                残っているのは「このページからの読み取りを許可する」設定だけです。Ollama は既定で
+                他オリジンからの読み取りを拒否します（ブラウザ版のみ該当）。
+                お使いの OS のコマンドを実行し、設定後に「接続テスト」を押してください。
+              </>
+            ) : (
+              <>
+                <strong>Ollama がまだ動いていません。</strong>
+                下のブロックには <strong>導入 → モデル取得 → 読み取り許可 → 再起動 → 確認</strong>{' '}
+                が全部入っています。お使いの OS のものを丸ごとコピーしてターミナルに貼り、
+                最後に <code>{'{"version":"…"}'}</code> が出れば成功です。そのあと
+                「接続テスト」を押してください。
+              </>
+            )}
           </p>
-          {steps.map((s) => (
+          {(corsBlocked ? steps : fullSetup).map((s) => (
             <div key={s.os} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 600 }}>{s.os}</span>
