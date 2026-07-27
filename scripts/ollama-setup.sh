@@ -67,9 +67,12 @@ ok()   { printf '  ✅ %s\n' "$1"; }
 warn() { printf '  ⚠  %s\n' "$1"; }
 die()  { printf '  ❌ %s\n' "$1" >&2; exit 1; }
 
-# サーバが応答するか (到達性のみ。中身は見ない)
+# サーバが応答するか (到達性のみ。中身は見ない)。
+# 相手はローカルなので接続は即座に成立するか即座に拒否されるはず。--connect-timeout を
+# 付けないと、閉じたポートへの接続が環境によっては --max-time いっぱい待つことがあり、
+# 起動待ちループ (最大10周) が 40 秒級に膨らむ (Windows ランナーで実測)。
 server_up() {
-  curl -fsS --max-time 3 "${BASE}/api/version" >/dev/null 2>&1
+  curl -fsS --connect-timeout 1 --max-time 3 "${BASE}/api/version" >/dev/null 2>&1
 }
 
 # 後始末: このスクリプトが起動したサーバだけ止める。元から動いていたものは触らない。

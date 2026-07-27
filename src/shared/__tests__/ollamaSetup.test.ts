@@ -181,11 +181,17 @@ describe('ollama-setup.sh — 失敗を隠さない', () => {
     expect(r.stderr).toContain('エラーを返しました');
   });
 
-  it('サーバが居ないポートでは、起動を試みたうえで失敗として終わる', async () => {
-    const r = await run(['--no-install', '--port', String(port + 1)]);
-    expect(r.code).toBe(1);
-    expect(r.stdout).not.toContain('使える状態です');
-  });
+  // このケースだけは「起動を待つループ」(最大10周) を必ず一周しきるので遅い。
+  // Windows ランナーではプロセス起動が重く既定の 30 秒を超えたため、明示的に伸ばす。
+  it(
+    'サーバが居ないポートでは、起動を試みたうえで失敗として終わる',
+    async () => {
+      const r = await run(['--no-install', '--port', String(port + 1)]);
+      expect(r.code).toBe(1);
+      expect(r.stdout).not.toContain('使える状態です');
+    },
+    120_000,
+  );
 
   it('Ollama が未導入で --no-install なら、導入せずに失敗する', async () => {
     const r = await run(['--no-install', '--port', String(port + 1)], { withOllama: false });
