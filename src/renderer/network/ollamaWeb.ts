@@ -562,6 +562,44 @@ export function setupCommands(
   ];
 }
 
+/**
+ * **デスクトップ (Electron) 版向け**の初回セットアップ。
+ *
+ * main プロセスが直接叩くためブラウザの CORS が存在せず、`OLLAMA_ORIGINS` は
+ * **一切不要**。setupCommands (ブラウザ版向け) をそのまま出すと、やらなくていい
+ * sudo / launchctl 作業を初心者に課すことになるので、導入とモデル取得だけに絞る。
+ */
+export function desktopSetupCommands(model: string = DEFAULT_SETUP_MODEL): {
+  os: string;
+  command: string;
+}[] {
+  return [
+    {
+      os: 'Linux',
+      command:
+        `# 1. Ollama を入れる (入っていれば何もしません)\n` +
+        `command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh\n` +
+        `# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)\n` +
+        `ollama pull ${model}`,
+    },
+    {
+      os: 'macOS',
+      command:
+        `# 1. https://ollama.com/download から Ollama.app を入れて一度起動\n` +
+        `# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)\n` +
+        `ollama pull ${model}`,
+    },
+    {
+      os: 'Windows (PowerShell)',
+      command:
+        `# 1. Ollama を入れる (入っていれば何もしません)\n` +
+        `if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }\n` +
+        `# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)\n` +
+        `ollama pull ${model}`,
+    },
+  ];
+}
+
 /** OS ごとの OLLAMA_ORIGINS 設定手順 (UI に出す)。origin は実行中のページのもの。 */
 export function originsSetupSteps(origin: string): { os: string; command: string }[] {
   const value = origin === 'null' || origin === '' ? '*' : origin;

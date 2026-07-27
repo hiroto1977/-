@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   chatOllama,
   createCspWatcher,
+  desktopSetupCommands,
   originsSetupSteps,
   probeOllama,
   setupCommands,
@@ -528,5 +529,42 @@ describe('createCspWatcher', () => {
     const w = createCspWatcher('http://127.0.0.1:11434/api/version');
     expect(w.hit()).toBe(false);
     expect(() => w.stop()).not.toThrow();
+  });
+});
+
+/*
+ * desktopSetupCommands — デスクトップ (Electron) 版向けの簡略手順。
+ *
+ * main プロセスが直接叩くため CORS が存在せず、OLLAMA_ORIGINS は一切不要。
+ * ブラウザ版の通し手順をそのまま出すと、やらなくていい sudo / launchctl 作業を
+ * 初心者に課すことになる。「不要な段を出さない」ことが要件。
+ */
+describe('desktopSetupCommands', () => {
+  it('導入とモデル取得だけで、許可設定 (OLLAMA_ORIGINS) を含まない', () => {
+    for (const c of desktopSetupCommands()) {
+      expect(c.command, c.os).toContain(`ollama pull ${DEFAULT_SETUP_MODEL}`);
+      expect(c.command, c.os).not.toContain('OLLAMA_ORIGINS');
+      expect(c.command, c.os).not.toContain('sudo');
+      expect(c.command, c.os).not.toContain('launchctl');
+    }
+  });
+
+  it('3 OS ぶんを返し、既導入なら何もしない形にする', () => {
+    const cmds = desktopSetupCommands();
+    expect(cmds.map((c) => c.os)).toEqual(['Linux', 'macOS', 'Windows (PowerShell)']);
+    expect(cmds[0]?.command).toContain('command -v ollama >/dev/null ||');
+    expect(cmds[2]?.command).toContain('Get-Command ollama');
+  });
+
+  it('モデルは差し替えられる', () => {
+    for (const c of desktopSetupCommands('qwen2.5:0.5b')) {
+      expect(c.command).toContain('ollama pull qwen2.5:0.5b');
+    }
+  });
+
+  it('取得・削除系の API は出てこない', () => {
+    for (const c of desktopSetupCommands()) {
+      expect(c.command).not.toMatch(/\/api\/(pull|create|push|copy|delete|blobs|upload)/);
+    }
   });
 });

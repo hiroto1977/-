@@ -5,6 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
   OLLAMA_ENDPOINT_KEY,
+  desktopSetupCommands,
   loadEndpointSetting,
   originsSetupSteps,
   setupCommands,
@@ -282,6 +283,11 @@ function ConnectionSetup({
   // 配信元の CSP がローカル接続を禁じている場合、Ollama 側を何度直しても解決しない。
   // ここを「未起動」と同じ案内にすると、絶対に終わらない作業へ送り込むことになる。
   const cspBlocked = /CSP/.test(errorMessage ?? '');
+  // デスクトップ (Electron) 版の判定も **診断結果** から行う (ビルド種別の推測はしない)。
+  // ブラウザ版の probe は失敗時に必ず理由メッセージを返すが、Electron 版は main の
+  // フェッチャが「running:false のスナップショット」を正常応答として返すため、
+  // 未起動でも errorMessage が無い。この差だけで確実に見分けられる。
+  const desktopMode = !running && (errorMessage === undefined || errorMessage === '');
   const origin = typeof location !== 'undefined' ? location.origin : '';
   const pageHostname = typeof location !== 'undefined' ? location.hostname : '';
   // 別端末から使うには、アプリ自身をその端末から見えるホストで配信する必要がある。
@@ -292,6 +298,7 @@ function ConnectionSetup({
   // 診断で分かっている段階を飛ばして長い手順を読ませると、そこで諦められてしまう。
   const steps = originsSetupSteps(origin);
   const fullSetup = setupCommands(origin);
+  const desktopSetup = desktopSetupCommands();
 
   function applyEndpoint() {
     try {
@@ -520,7 +527,11 @@ function ConnectionSetup({
           }}
         >
           <strong style={{ fontSize: 13 }}>
-            {corsBlocked ? 'あと 1 つだけ設定が要ります' : 'はじめて使う — これを 1 回貼るだけ'}
+            {corsBlocked
+              ? 'あと 1 つだけ設定が要ります'
+              : desktopMode
+                ? 'はじめて使う — 2 つ実行するだけ (許可設定は不要)'
+                : 'はじめて使う — これを 1 回貼るだけ'}
           </strong>
           <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
             {corsBlocked ? (
@@ -529,6 +540,13 @@ function ConnectionSetup({
                 残っているのは「このページからの読み取りを許可する」設定だけです。Ollama は既定で
                 他オリジンからの読み取りを拒否します（ブラウザ版のみ該当）。
                 お使いの OS のコマンドを実行し、設定後に「接続テスト」を押してください。
+              </>
+            ) : desktopMode ? (
+              <>
+                <strong>Ollama がまだ動いていません。</strong>
+                デスクトップ版はアプリ内部から直接接続するため、ブラウザ版で必要な
+                読み取り許可 (<code>OLLAMA_ORIGINS</code>) は<strong>不要</strong>です。
+                下の 2 行を実行してから、上の「更新」を押してください。
               </>
             ) : (
               <>
@@ -540,7 +558,7 @@ function ConnectionSetup({
               </>
             )}
           </p>
-          {(corsBlocked ? steps : fullSetup).map((s) => (
+          {(corsBlocked ? steps : desktopMode ? desktopSetup : fullSetup).map((s) => (
             <div key={s.os} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 600 }}>{s.os}</span>
