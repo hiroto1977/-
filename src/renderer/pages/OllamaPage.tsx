@@ -5,6 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
   OLLAMA_ENDPOINT_KEY,
+  desktopSetupCommands,
   loadEndpointSetting,
   originsSetupSteps,
   setupCommands,
@@ -279,6 +280,14 @@ function ConnectionSetup({
   // 「起動しているのに CORS で拒否された」時だけで、これは network/ollamaWeb.ts の
   // probe が返すメッセージから判定できる (Electron 版は main 経由なので CORS は起きない)。
   const corsBlocked = /CORS/.test(errorMessage ?? '');
+  // 配信元の CSP がローカル接続を禁じている場合、Ollama 側を何度直しても解決しない。
+  // ここを「未起動」と同じ案内にすると、絶対に終わらない作業へ送り込むことになる。
+  const cspBlocked = /CSP/.test(errorMessage ?? '');
+  // デスクトップ (Electron) 版の判定も **診断結果** から行う (ビルド種別の推測はしない)。
+  // ブラウザ版の probe は失敗時に必ず理由メッセージを返すが、Electron 版は main の
+  // フェッチャが「running:false のスナップショット」を正常応答として返すため、
+  // 未起動でも errorMessage が無い。この差だけで確実に見分けられる。
+  const desktopMode = !running && (errorMessage === undefined || errorMessage === '');
   const origin = typeof location !== 'undefined' ? location.origin : '';
   const pageHostname = typeof location !== 'undefined' ? location.hostname : '';
   // 別端末から使うには、アプリ自身をその端末から見えるホストで配信する必要がある。
@@ -289,6 +298,7 @@ function ConnectionSetup({
   // 診断で分かっている段階を飛ばして長い手順を読ませると、そこで諦められてしまう。
   const steps = originsSetupSteps(origin);
   const fullSetup = setupCommands(origin);
+  const desktopSetup = desktopSetupCommands();
 
   function applyEndpoint() {
     try {
@@ -447,7 +457,65 @@ function ConnectionSetup({
         </div>
       </details>
 
-      {!running && (
+      {/* 配信元の CSP で塞がれている場合は、Ollama 側の手順を一切出さない。
+          原因がこちら側の配布形態にあるので、出せば必ず徒労になる。 */}
+      {cspBlocked && (
+        <div
+          style={{
+            border: '1px solid var(--warning)',
+            borderRadius: 8,
+            padding: 12,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}
+        >
+          <strong style={{ fontSize: 13, color: 'var(--warning)' }}>
+            この配布形態では接続できません
+          </strong>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
+            いまこのページを配信している場所が、<strong>ローカルへの接続そのものを禁止</strong>
+            しています（<code>connect-src</code>）。ブラウザがリクエストを送る前に落とすため、
+            <strong>Ollama をどう設定しても解決しません</strong>。
+            claude.ai のアーティファクトとして開いた場合がこれに当たります。
+            <br />
+            他の機能はそのまま使えます。Ollama だけは下のどれかで開いてください。
+          </p>
+          <ol
+            style={{
+              margin: 0,
+              paddingLeft: '1.4em',
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              lineHeight: 1.8,
+            }}
+          >
+            <li>
+              <strong>ターミナルから使う（設定ゼロ・いちばん確実）</strong>
+              <br />
+              <code>npm run ollama:setup</code> → <code>npm run ollama -- chat</code>。
+              ブラウザを通らないので CORS も CSP も発生しません。
+            </li>
+            <li>
+              <strong>アプリを localhost から開く（許可設定も不要）</strong>
+              <br />
+              <code>standalone.html</code> を置いたフォルダで{' '}
+              <code>python3 -m http.server 8080</code> を実行し、
+              <code>http://localhost:8080/standalone.html</code> を開きます。Ollama は
+              <strong>既定で localhost からの読み取りを許可している</strong>ため、
+              <code>OLLAMA_ORIGINS</code> の設定すら要りません。
+            </li>
+            <li>
+              <strong>デスクトップ版を使う</strong>
+              <br />
+              Electron 版は main プロセスから直接叩くため、ブラウザ由来の制約が
+              いっさい発生しません。
+            </li>
+          </ol>
+        </div>
+      )}
+
+      {!running && !cspBlocked && (
         <div
           style={{
             border: '1px solid var(--border)',
@@ -459,7 +527,11 @@ function ConnectionSetup({
           }}
         >
           <strong style={{ fontSize: 13 }}>
-            {corsBlocked ? 'あと 1 つだけ設定が要ります' : 'はじめて使う — これを 1 回貼るだけ'}
+            {corsBlocked
+              ? 'あと 1 つだけ設定が要ります'
+              : desktopMode
+                ? 'はじめて使う — 2 つ実行するだけ (許可設定は不要)'
+                : 'はじめて使う — これを 1 回貼るだけ'}
           </strong>
           <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
             {corsBlocked ? (
@@ -468,6 +540,13 @@ function ConnectionSetup({
                 残っているのは「このページからの読み取りを許可する」設定だけです。Ollama は既定で
                 他オリジンからの読み取りを拒否します（ブラウザ版のみ該当）。
                 お使いの OS のコマンドを実行し、設定後に「接続テスト」を押してください。
+              </>
+            ) : desktopMode ? (
+              <>
+                <strong>Ollama がまだ動いていません。</strong>
+                デスクトップ版はアプリ内部から直接接続するため、ブラウザ版で必要な
+                読み取り許可 (<code>OLLAMA_ORIGINS</code>) は<strong>不要</strong>です。
+                下の 2 行を実行してから、上の「更新」を押してください。
               </>
             ) : (
               <>
@@ -479,7 +558,7 @@ function ConnectionSetup({
               </>
             )}
           </p>
-          {(corsBlocked ? steps : fullSetup).map((s) => (
+          {(corsBlocked ? steps : desktopMode ? desktopSetup : fullSetup).map((s) => (
             <div key={s.os} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 600 }}>{s.os}</span>

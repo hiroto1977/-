@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { chatOllama, originsSetupSteps, probeOllama, setupCommands } from '../ollamaWeb';
+import {
+  chatOllama,
+  createCspWatcher,
+  desktopSetupCommands,
+  originsSetupSteps,
+  probeOllama,
+  setupCommands,
+} from '../ollamaWeb';
 import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
 
 /*
@@ -446,6 +453,117 @@ describe('setupCommands', () => {
 
   it('取得・削除系の API は一切出てこない (利用者にも叩かせない)', () => {
     for (const c of setupCommands('https://claude.ai')) {
+      expect(c.command).not.toMatch(/\/api\/(pull|create|push|copy|delete|blobs|upload)/);
+    }
+  });
+});
+
+/*
+ * 配信元 CSP による遮断の切り分け。
+ *
+ * claude.ai のアーティファクトは `connect-src 'self'` で配信されるため、
+ * ローカルへの fetch はサーバに届く前にブラウザが落とす。この失敗は「Ollama が
+ * 起動していない」ときと **まったく同じ形** で観測される (通常 fetch も no-cors も
+ * 失敗する)。素直に判定すると not-running と誤診し、利用者を「Ollama を入れて
+ * 起動する」という **絶対に解決しない作業** へ送り込む。
+ * securitypolicyviolation の有無で確定できることをここで固定する。
+ */
+describe('probeOllama — 配信元 CSP による遮断', () => {
+  /** CSP 違反が観測された状態の watcher。 */
+  const hitWatcher = () => ({ hit: () => true, stop: () => undefined });
+  /** 違反なしの watcher。 */
+  const missWatcher = () => ({ hit: () => false, stop: () => undefined });
+
+  it('CSP 違反が出ていれば csp-blocked (未起動と混同しない)', async () => {
+    const r = await probeOllama(11434, unreachableFetch(), '', hitWatcher);
+    expect(r.status).toBe('csp-blocked');
+    expect(r.message).toContain('CSP');
+    expect(r.snapshot.running).toBe(false);
+  });
+
+  it('csp-blocked のときは Ollama 側の設定を促さない (解決しないため)', async () => {
+    const r = await probeOllama(11434, unreachableFetch(), '', hitWatcher);
+    expect(r.message).not.toContain('OLLAMA_ORIGINS');
+    expect(r.message).toContain('解決しません');
+  });
+
+  it('同じ失敗でも違反が無ければ not-running のまま', async () => {
+    const r = await probeOllama(11434, unreachableFetch(), '', missWatcher);
+    expect(r.status).toBe('not-running');
+  });
+
+  it('CORS 拒否 (no-cors は通る) より CSP を優先する — 送信すらできていないため', async () => {
+    const r = await probeOllama(11434, corsBlockedFetch(), '', hitWatcher);
+    expect(r.status).toBe('csp-blocked');
+  });
+
+  it('接続できている場合は watcher を見ない', async () => {
+    const r = await probeOllama(11434, healthyFetch('0.5.4', []), '', hitWatcher);
+    expect(r.status).toBe('ok');
+  });
+
+  it('違反イベントが遅れて届いても取りこぼさない', async () => {
+    // 実ブラウザでは securitypolicyviolation は **タスク** として配送されるため、
+    // fetch の reject 直後に読むとまだ届いていない。実際にこれで not-running と
+    // 誤診するのを E2E で踏んだので、遅延到着を再現して固定する。
+    const late = () => {
+      let seen = false;
+      setTimeout(() => (seen = true), 10);
+      return { hit: () => seen, stop: () => undefined };
+    };
+    const r = await probeOllama(11434, unreachableFetch(), '', late);
+    expect(r.status).toBe('csp-blocked');
+  });
+
+  it('監視は必ず解除する (リスナを積み残さない)', async () => {
+    let stopped = 0;
+    const counting = () => ({ hit: () => false, stop: () => void stopped++ });
+    await probeOllama(11434, healthyFetch('0.5.4', []), '', counting);
+    await probeOllama(11434, unreachableFetch(), '', counting);
+    expect(stopped).toBe(2);
+  });
+});
+
+describe('createCspWatcher', () => {
+  it('document が無い環境 (Node) でも安全に動く', () => {
+    const w = createCspWatcher('http://127.0.0.1:11434/api/version');
+    expect(w.hit()).toBe(false);
+    expect(() => w.stop()).not.toThrow();
+  });
+});
+
+/*
+ * desktopSetupCommands — デスクトップ (Electron) 版向けの簡略手順。
+ *
+ * main プロセスが直接叩くため CORS が存在せず、OLLAMA_ORIGINS は一切不要。
+ * ブラウザ版の通し手順をそのまま出すと、やらなくていい sudo / launchctl 作業を
+ * 初心者に課すことになる。「不要な段を出さない」ことが要件。
+ */
+describe('desktopSetupCommands', () => {
+  it('導入とモデル取得だけで、許可設定 (OLLAMA_ORIGINS) を含まない', () => {
+    for (const c of desktopSetupCommands()) {
+      expect(c.command, c.os).toContain(`ollama pull ${DEFAULT_SETUP_MODEL}`);
+      expect(c.command, c.os).not.toContain('OLLAMA_ORIGINS');
+      expect(c.command, c.os).not.toContain('sudo');
+      expect(c.command, c.os).not.toContain('launchctl');
+    }
+  });
+
+  it('3 OS ぶんを返し、既導入なら何もしない形にする', () => {
+    const cmds = desktopSetupCommands();
+    expect(cmds.map((c) => c.os)).toEqual(['Linux', 'macOS', 'Windows (PowerShell)']);
+    expect(cmds[0]?.command).toContain('command -v ollama >/dev/null ||');
+    expect(cmds[2]?.command).toContain('Get-Command ollama');
+  });
+
+  it('モデルは差し替えられる', () => {
+    for (const c of desktopSetupCommands('qwen2.5:0.5b')) {
+      expect(c.command).toContain('ollama pull qwen2.5:0.5b');
+    }
+  });
+
+  it('取得・削除系の API は出てこない', () => {
+    for (const c of desktopSetupCommands()) {
       expect(c.command).not.toMatch(/\/api\/(pull|create|push|copy|delete|blobs|upload)/);
     }
   });
