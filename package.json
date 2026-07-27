@@ -23,6 +23,7 @@
     "dev": "vite",
     "e2e": "node scripts/e2e/core.cjs",
     "e2e:lite": "SERVICE_HUB_E2E_FILE=dist/standalone-lite.html node scripts/e2e/core.cjs",
+    "e2e:ollama": "node scripts/e2e/ollama.cjs",
     "exp:overflow": "xvfb-run -a electron --no-sandbox scripts/overflow-check.cjs",
     "exp:runtime": "xvfb-run -a electron --no-sandbox scripts/runtime-security-exp.cjs",
     "exp:soak": "xvfb-run -a electron --no-sandbox scripts/soak-test.cjs",

@@ -54,6 +54,7 @@ import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates'
 import { getVault } from './security/vault';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import { OLLAMA_PORT_KEY, probeOllama } from './network/ollamaWeb';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -829,6 +830,25 @@ const shim = {
     // (Electron 版の state.json 由来フェッチと同じ操作感: 「更新」/登録で反映)
     if (serviceId === 'stocks') {
       return ok(buildStocksSnapshot()) as ActionResult<T>;
+    }
+    // ollama はブラウザ版でも **実際にローカルへ接続する**。Ollama は既定で
+    // CORS ヘッダを返さないため、失敗時は「未起動」と「OLLAMA_ORIGINS 未設定」を
+    // 切り分けて返す (ページがその手順を案内する)。詳細は network/ollamaWeb.ts。
+    if (serviceId === 'ollama') {
+      let port: string | null = null;
+      try {
+        port = localStorage.getItem(OLLAMA_PORT_KEY);
+      } catch {
+        port = null;
+      }
+      const probe = await probeOllama(port ?? undefined);
+      if (probe.status === 'ok') return ok(probe.snapshot) as ActionResult<T>;
+      // 接続できないことは異常ではない (Ollama を入れていない利用者が大多数)。
+      // ページ側で状況と対処を出せるよう、失敗理由を message に載せて返す。
+      // code は 'ollama_' + status。'not_configured' は使わない — それだと
+      // useServiceData が errorKind='auth' に分類し、認証の問題だと誤表示される
+      // (Ollama はローカルで認証を使わない)。
+      return err<T>(`ollama_${probe.status}`, probe.message);
     }
     // emotions は localStorage に気分ログ / 分析履歴を保存する。
     if (serviceId === 'emotions') {
