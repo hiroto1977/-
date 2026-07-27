@@ -181,11 +181,20 @@ describe('ollama-setup.sh — 失敗を隠さない', () => {
     expect(r.stderr).toContain('エラーを返しました');
   });
 
-  it('サーバが居ないポートでは、起動を試みたうえで失敗として終わる', async () => {
-    const r = await run(['--no-install', '--port', String(port + 1)]);
-    expect(r.code).toBe(1);
-    expect(r.stdout).not.toContain('使える状態です');
-  });
+  it(
+    'サーバが居ないポートでは、起動を試みたうえで失敗として終わる',
+    async () => {
+      const r = await run(['--no-install', '--port', String(port + 1)]);
+      expect(r.code).toBe(1);
+      expect(r.stdout).not.toContain('使える状態です');
+    },
+    // windows-latest では閉じたポートへの curl が即座に拒否されず --max-time 3 を
+    // 使い切るため、スクリプトの起動待ちループ (10 回 + sleep) が ~45 秒かかる。
+    // Linux の ~10 秒に合わせた既定 30 秒では CI の Windows だけがタイムアウトする
+    // (v0.1.0 リリースラン 2 回目の唯一の失敗)。run() 側の execFile timeout 60 秒が
+    // 実質の上限なので、それを越える余裕を持たせる。
+    90_000,
+  );
 
   it('Ollama が未導入で --no-install なら、導入せずに失敗する', async () => {
     const r = await run(['--no-install', '--port', String(port + 1)], { withOllama: false });
