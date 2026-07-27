@@ -22,9 +22,22 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+// 判定ロジックは main / renderer 共通 (src/shared/ollama.ts) に 1 つだけ置く。
+// ブラウザ版 (renderer/network/ollamaWeb.ts) が同じ制約で動くための単一の真実。
+import {
+  MIN_SAFE_VERSION,
+  UNPATCHED_OOB_NOTICE,
+  compareVersions,
+  isSafeModelName,
+  isVersionSafe,
+  type OllamaSnapshot,
+} from '../../shared/ollama';
+
+// 既存の import 元 (このモジュール) を維持するため再 export する。
+export { MIN_SAFE_VERSION, UNPATCHED_OOB_NOTICE, compareVersions, isSafeModelName, isVersionSafe };
+export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
-export const MIN_SAFE_VERSION = '0.1.46';
 const REQUEST_TIMEOUT_MS = 30_000;
 const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -46,84 +59,9 @@ export function isAllowedEndpoint(url: string): boolean {
   return ALLOWED_ENDPOINTS.has(url);
 }
 
-/** Warning emitted on every snapshot until Ollama publishes a patch for
- *  the model/engine file parser OOB read. Surfaces the operational
- *  mitigations the user must apply outside the app. */
-export const UNPATCHED_OOB_NOTICE =
-  'Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) ' +
-  'が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない ' +
-  '設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は ' +
-  '必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は ' +
-  'docs/OLLAMA_SECURITY.md を参照。';
 
-/** Allow model identifiers like "llama3.2", "qwen2.5-coder:7b",
- *  "library/mistral:latest". Reject anything with whitespace, `..`,
- *  backslash, scheme markers, or other shell-meaningful characters. */
-const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]{0,127}$/i;
 
-export function isSafeModelName(name: string): boolean {
-  if (typeof name !== 'string') return false;
-  if (name.includes('..')) return false;
-  return MODEL_NAME_RE.test(name);
-}
 
-/** Strict semver-ish compare. Returns -1 / 0 / +1 like Array.sort.
- *  Handles "0.1.46", "0.5.0", "0.1.46-rc1" (trailing tag ignored).
- *
- *  The inner `?.split('+')[0]` chain has equivalent mutants — empty
- *  string input handles all bogus inputs uniformly; the `i < len`
- *  vs `i <= len` mutant just adds one extra zero-iteration. */
-export function compareVersions(a: string, b: string): number {
-  const parse = (v: string): number[] => {
-    // String.prototype.split always returns ≥1 element, so [0] is always
-    // defined; the optional-chain and the `?? ''` fallback exist purely
-    // for type-narrowing and are unreachable at runtime.
-    // Stryker disable next-line OptionalChaining,StringLiteral
-    const clean = v.split('-')[0]?.split('+')[0] ?? '';
-    return clean.split('.').map((x) => {
-      const n = Number(x);
-      return Number.isFinite(n) ? n : 0;
-    });
-  };
-  const pa = parse(a);
-  const pb = parse(b);
-  const len = Math.max(pa.length, pb.length);
-  // Stryker disable next-line EqualityOperator
-  for (let i = 0; i < len; i++) {
-    const ai = pa[i] ?? 0;
-    const bi = pb[i] ?? 0;
-    if (ai > bi) return 1;
-    if (ai < bi) return -1;
-  }
-  return 0;
-}
-
-/** True iff the given version is at or above MIN_SAFE_VERSION. An
- *  empty or malformed string is treated as "unsafe" — better safe than
- *  silently waving an unknown version through.
- *
- *  The guard `!version || typeof version !== 'string'` is defense in
- *  depth: even when mutated (|| → &&, or either side flipped), the
- *  fall-through path either returns -1 from compareVersions on bogus
- *  parses or hits the catch → returns false. So all 3 mutants on this
- *  line produce the same `false` result for every input we care about. */
-// Stryker disable next-line LogicalOperator,ConditionalExpression
-export function isVersionSafe(version: string): boolean {
-  // Stryker disable next-line LogicalOperator,ConditionalExpression
-  if (!version || typeof version !== 'string') return false;
-  // Defense-in-depth: the top-level type-guard blocks non-string inputs,
-  // and compareVersions never throws on a string (split/map are total
-  // over String). The catch is unreachable; both the body's
-  // BlockStatement (`{}`) and BooleanLiteral (`true`) mutants survive
-  // as equivalent.
-  // Stryker disable BlockStatement,BooleanLiteral
-  try {
-    return compareVersions(version, MIN_SAFE_VERSION) >= 0;
-  } catch {
-    return false;
-  }
-  // Stryker restore BlockStatement,BooleanLiteral
-}
 
 interface OllamaModelTag {
   name: string;
@@ -145,21 +83,6 @@ interface OllamaVersionResponse {
   version: string;
 }
 
-export interface OllamaSnapshot {
-  running: boolean;
-  version: string;
-  versionSafe: boolean;
-  versionMinRecommended: string;
-  models: {
-    name: string;
-    family: string;
-    parameterSize: string;
-    quantization: string;
-    sizeMb: number;
-    modifiedAt: string;
-  }[];
-  warnings: string[];
-}
 
 /** Wraps fetch in a per-request timeout. Returns the response, throws
  *  if the timeout fires or the server is unreachable. */

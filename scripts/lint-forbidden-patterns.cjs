@@ -103,10 +103,15 @@ const FORBIDDEN_PATTERNS = [
     // the network (the renderer's CSP `connect-src 'self'` blocks it).
     pattern: /\/api\/(pull|create|push|copy|delete|blobs|upload)\b/,
     // Skip renderer pages (display only; can't make network calls per CSP)
-    // and the Ollama client itself (where ALLOWED_ENDPOINTS and the
-    // UNPATCHED_OOB_NOTICE warning enumerate them as denied).
+    // and the two modules that *define* the deny-list: the Ollama client
+    // (ALLOWED_ENDPOINTS) and src/shared/ollama.ts (OLLAMA_READ_PATHS —
+    // the allowlist both processes share). Both enumerate these paths in
+    // order to refuse them, and UNPATCHED_OOB_NOTICE must name them for the
+    // user-facing warning to mean anything. Listed as exact paths, not a
+    // prefix, so a new file under src/shared/ is still checked.
     allowFile: (rel) =>
       rel === 'src/main/clients/ollama.ts' ||
+      rel === 'src/shared/ollama.ts' ||
       rel.startsWith('src/renderer/'),
     rationale: 'invariants #7-#8 — these endpoints are CVE prone',
   },

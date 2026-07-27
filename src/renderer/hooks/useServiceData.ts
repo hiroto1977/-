@@ -23,7 +23,16 @@ function classifyError(message: string): ErrorKind {
   return 'unknown';
 }
 
-export function useServiceData<T>(serviceId: ServiceId, snapshot: T): ServiceState<T> {
+/**
+ * @param options.autoFetch  資格情報の有無に関わらずマウント時に 1 度取得する。
+ *   認証を使わないローカルサービス (Ollama 等) 向け。既定 false = 従来どおり
+ *   「トークンがある時だけ自動取得」。
+ */
+export function useServiceData<T>(
+  serviceId: ServiceId,
+  snapshot: T,
+  options: { autoFetch?: boolean } = {},
+): ServiceState<T> {
   const [data, setData] = useState<T>(snapshot);
   const [source, setSource] = useState<Source>('snapshot');
   const [status, setStatus] = useState<Status>('idle');
@@ -68,7 +77,7 @@ export function useServiceData<T>(serviceId: ServiceId, snapshot: T): ServiceSta
       if (cancelled) return;
       const has = configured.includes(serviceId);
       setIsConfigured(has);
-      if (has && !autoRefreshFired.current) {
+      if ((has || options.autoFetch === true) && !autoRefreshFired.current) {
         autoRefreshFired.current = true;
         refresh();
       }
@@ -78,7 +87,7 @@ export function useServiceData<T>(serviceId: ServiceId, snapshot: T): ServiceSta
       cancelled = true;
     };
     /* Stryker restore all */
-  }, [serviceId, refresh]);
+  }, [serviceId, refresh, options.autoFetch]);
 
   return { data, source, status, errorMessage, errorKind, refresh, isConfigured };
 }
