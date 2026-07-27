@@ -163,7 +163,8 @@ describe('scanSkills', () => {
       source: 'user',
       description: 'Reviews diffs for security issues.',
     });
-    expect(result[1]!.path).toContain('security-review/SKILL.md');
+    // Windows では区切りが \ になるため、期待値も path.join で組み立てる。
+    expect(result[1]!.path).toContain(path.join('security-review', 'SKILL.md'));
   });
 
   it('skips directories that have no SKILL.md', async () => {

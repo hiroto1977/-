@@ -7,8 +7,12 @@ import { exportRoot, isSafeExportPath } from '../exportPaths';
 // guard accepted anything under $HOME, giving a compromised renderer an
 // arbitrary-write primitive across the home tree (and a file to plant for
 // app:openPath to launch).
-const HOME = '/home/user';
-const ROOT = '/home/user/.local/business-hub';
+//
+// パスは POSIX リテラルではなく path.resolve/join で組み立てる。Windows では
+// path.resolve('/home/user') がドライブレター付き (D:\home\user) になるため、
+// リテラル比較はリリースビルド (windows-latest) でだけ落ちる。
+const HOME = path.resolve('/home/user');
+const ROOT = path.join(HOME, '.local', 'business-hub');
 const inRoot = (rel: string): string => path.join(ROOT, rel);
 
 describe('exportRoot', () => {
@@ -17,7 +21,8 @@ describe('exportRoot', () => {
   });
 
   it('resolves a non-normalized home', () => {
-    expect(exportRoot('/home/user/../user')).toBe(ROOT);
+    // path.join は連結時に正規化してしまうため、未正規化入力は文字列連結で作る。
+    expect(exportRoot(`${HOME}${path.sep}..${path.sep}user`)).toBe(ROOT);
   });
 });
 
@@ -29,16 +34,21 @@ describe('isSafeExportPath', () => {
   });
 
   it('rejects paths elsewhere under $HOME (the capability this closes)', () => {
-    expect(isSafeExportPath('/home/user/x.html', HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/user/.config/autostart/evil.html', HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/user/.local/other/x.html', HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/user/Documents/notes.md', HOME, '.md')).toBe(false);
+    expect(isSafeExportPath(path.join(HOME, 'x.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(path.join(HOME, '.config/autostart/evil.html'), HOME, '.html')).toBe(
+      false,
+    );
+    expect(isSafeExportPath(path.join(HOME, '.local/other/x.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(path.join(HOME, 'Documents/notes.md'), HOME, '.md')).toBe(false);
   });
 
   it('rejects paths outside $HOME, including traversal out of the root', () => {
     expect(isSafeExportPath('/etc/passwd.html', HOME, '.html')).toBe(false);
     expect(isSafeExportPath(inRoot('../../../etc/x.html'), HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/other/.local/business-hub/x.html', HOME, '.html')).toBe(false);
+    const otherHome = path.join(path.dirname(HOME), 'other');
+    expect(
+      isSafeExportPath(path.join(otherHome, '.local/business-hub/x.html'), HOME, '.html'),
+    ).toBe(false);
   });
 
   it('rejects the export root itself (it is a directory, never a target)', () => {
@@ -61,8 +71,8 @@ describe('isSafeExportPath', () => {
   });
 
   it('is not fooled by a sibling directory sharing the root prefix', () => {
-    // `/home/user/.local/business-hub-evil/x.html` starts with the root string
+    // `…/.local/business-hub-evil/x.html` starts with the root string
     // but is a different directory — the separator check must catch it.
-    expect(isSafeExportPath('/home/user/.local/business-hub-evil/x.html', HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(`${ROOT}-evil${path.sep}x.html`, HOME, '.html')).toBe(false);
   });
 });

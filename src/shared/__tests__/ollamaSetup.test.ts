@@ -104,7 +104,15 @@ function run(
         env: {
           ...process.env,
           // 偽バイナリを見せる / 見せないで「未導入」を再現する。
-          PATH: withOllama ? `${binDir}:${process.env['PATH'] ?? ''}` : '/usr/bin:/bin',
+          // 「見せない」側を '/usr/bin:/bin' に固定すると Windows (Git Bash) では
+          // bash.exe 自体が見つからず、スクリプトが 1 行も出力せずに死ぬ —
+          // リリースビルドの windows-latest で実際に踏んだ。CI ランナーに本物の
+          // ollama は居ないため、Windows では元の PATH のままで「未導入」になる。
+          PATH: withOllama
+            ? `${binDir}${path.delimiter}${process.env['PATH'] ?? ''}`
+            : process.platform === 'win32'
+              ? (process.env['PATH'] ?? '')
+              : '/usr/bin:/bin',
         },
       },
       (err, stdout, stderr) => {
