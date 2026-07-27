@@ -24,6 +24,8 @@
  */
 
 import {
+  DEFAULT_OLLAMA_PORT,
+  DEFAULT_SETUP_MODEL,
   MIN_SAFE_VERSION,
   adviseFromBody,
   buildOllamaUrl,
@@ -404,6 +406,74 @@ async function listInstalledModels(
   } catch {
     return [];
   }
+}
+
+/**
+ * **初回セットアップの全手順**を OS ごとに 1 ブロックへまとめる。
+ *
+ * originsSetupSteps は「Ollama は入っていて、あとは許可だけ」の人向け。
+ * だが実際に詰まるのは *その手前* —— Ollama 自体が入っていない / モデルが 1 つも
+ * 無い —— であることが多く、そこを飛ばした案内は「手順どおりにやったのに動かない」
+ * になる。ここでは 導入 → モデル取得 → 許可 → 再起動 → 確認 を通しで出し、
+ * **貼って実行すれば終わる**状態にする。
+ *
+ * 導入行は `command -v ollama` で分岐させ、既に入っている人には何もしない。
+ * macOS だけは公式スクリプトが Linux 向けのため、アプリのダウンロードを案内する。
+ */
+export function setupCommands(
+  origin: string,
+  model: string = DEFAULT_SETUP_MODEL,
+): { os: string; command: string }[] {
+  const value = origin === 'null' || origin === '' ? '*' : origin;
+  const verify = `sleep 3 && curl -s http://127.0.0.1:${DEFAULT_OLLAMA_PORT}/api/version`;
+  return [
+    {
+      os: 'macOS',
+      command:
+        `# 1. Ollama を入れる — 未導入なら https://ollama.com/download から\n` +
+        `#    Ollama.app を入れて一度起動 (ここだけ手作業)\n` +
+        `# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)\n` +
+        `ollama pull ${model}\n` +
+        `# 3. このページからの読み取りを許可して再起動\n` +
+        `launchctl setenv OLLAMA_ORIGINS "${value}"\n` +
+        `killall ollama 2>/dev/null; open -a Ollama\n` +
+        `# 4. 確認 — {"version":"..."} が出れば成功\n` +
+        verify,
+    },
+    {
+      os: 'Linux (systemd)',
+      command:
+        `# 1. Ollama を入れる (入っていれば何もしません)\n` +
+        `command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh\n` +
+        `# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)\n` +
+        `ollama pull ${model}\n` +
+        `# 3. このページからの読み取りを許可して再起動\n` +
+        `sudo mkdir -p /etc/systemd/system/ollama.service.d\n` +
+        `printf '[Service]\\nEnvironment="OLLAMA_ORIGINS=${value}"\\n' \\\n` +
+        `  | sudo tee /etc/systemd/system/ollama.service.d/origins.conf\n` +
+        `sudo systemctl daemon-reload && sudo systemctl restart ollama\n` +
+        `# 4. 確認 — {"version":"..."} が出れば成功\n` +
+        verify,
+    },
+    {
+      os: 'Windows (PowerShell)',
+      command:
+        `# 1. Ollama を入れる (入っていれば何もしません)\n` +
+        `if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }\n` +
+        `# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)\n` +
+        `ollama pull ${model}\n` +
+        `# 3. このページからの読み取りを許可して再起動\n` +
+        `[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "${value}", "User")\n` +
+        `Get-Process ollama -EA SilentlyContinue | Stop-Process\n` +
+        `Start-Process "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama app.exe"\n` +
+        `# 4. 確認 — {"version":"..."} が出れば成功\n` +
+        `Start-Sleep 3; curl.exe -s http://127.0.0.1:${DEFAULT_OLLAMA_PORT}/api/version`,
+    },
+    {
+      os: '1 回だけ試す (OS 共通・このターミナルは開いたまま)',
+      command: `ollama pull ${model}\nOLLAMA_ORIGINS="${value}" ollama serve`,
+    },
+  ];
 }
 
 /** OS ごとの OLLAMA_ORIGINS 設定手順 (UI に出す)。origin は実行中のページのもの。 */

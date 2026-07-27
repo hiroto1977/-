@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { chatOllama, originsSetupSteps, probeOllama } from '../ollamaWeb';
-import { MIN_SAFE_VERSION } from '../../../shared/ollama';
+import { chatOllama, originsSetupSteps, probeOllama, setupCommands } from '../ollamaWeb';
+import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
 
 /*
  * probeOllama の要点は **失敗理由の切り分け**。利用者から見ると「未起動」と
@@ -382,5 +382,71 @@ describe('chatOllama — 送信', () => {
       'hiroto1977.github.io',
     );
     expect(r.ok && r.reply).toBe('ok');
+  });
+});
+
+/*
+ * setupCommands — 「はじめて使う人」に出す通し手順。
+ *
+ * originsSetupSteps は「Ollama は入っていて、あとは許可だけ」の人向け。実際に
+ * 詰まるのはその手前 (未導入 / モデルが無い) なので、こちらは導入からモデル取得・
+ * 許可・再起動・確認までを 1 ブロックにまとめる。**貼れば終わる**ことが要件なので、
+ * 「段が抜けていない」ことをここで固定する。
+ */
+describe('setupCommands', () => {
+  const OSES = ['macOS', 'Linux (systemd)', 'Windows (PowerShell)'];
+
+  it('主要 OS ＋「1 回だけ試す」の 4 ブロックを返す', () => {
+    const cmds = setupCommands('https://claude.ai');
+    expect(cmds.map((c) => c.os).slice(0, 3)).toEqual(OSES);
+    expect(cmds).toHaveLength(4);
+  });
+
+  it('どのブロックにも モデル取得・許可・確認 が入っている (段抜けを防ぐ)', () => {
+    for (const c of setupCommands('https://claude.ai')) {
+      expect(c.command, c.os).toContain(`ollama pull ${DEFAULT_SETUP_MODEL}`);
+      expect(c.command, c.os).toContain('OLLAMA_ORIGINS');
+      expect(c.command, c.os).toContain('https://claude.ai');
+    }
+    // 確認コマンドは常駐設定を伴う 3 OS 向け (「1回だけ試す」は serve が前面で走る)。
+    for (const c of setupCommands('https://claude.ai').slice(0, 3)) {
+      expect(c.command, c.os).toContain('/api/version');
+    }
+  });
+
+  it('導入手順を含む — ただし macOS は公式スクリプトが Linux 向けなのでアプリ導入を案内', () => {
+    const [mac, linux, win] = setupCommands('https://claude.ai');
+    expect(mac?.command).toContain('ollama.com/download');
+    expect(mac?.command).not.toContain('install.sh');
+    expect(linux?.command).toContain('install.sh');
+    expect(win?.command).toContain('winget install');
+  });
+
+  it('既に入っている人には何もしない形にする (command -v での分岐)', () => {
+    const [, linux, win] = setupCommands('https://claude.ai');
+    expect(linux?.command).toContain('command -v ollama >/dev/null ||');
+    expect(win?.command).toContain('Get-Command ollama');
+  });
+
+  it('origin が特定できない場合のみ * を使う (file:// や sandbox)', () => {
+    for (const origin of ['null', '']) {
+      for (const c of setupCommands(origin)) {
+        expect(c.command).toContain('OLLAMA_ORIGINS');
+        expect(c.command).toContain('*');
+        expect(c.command).not.toContain('"null"');
+      }
+    }
+  });
+
+  it('モデルは差し替えられる', () => {
+    for (const c of setupCommands('https://claude.ai', 'qwen2.5:0.5b')) {
+      expect(c.command).toContain('ollama pull qwen2.5:0.5b');
+    }
+  });
+
+  it('取得・削除系の API は一切出てこない (利用者にも叩かせない)', () => {
+    for (const c of setupCommands('https://claude.ai')) {
+      expect(c.command).not.toMatch(/\/api\/(pull|create|push|copy|delete|blobs|upload)/);
+    }
   });
 });

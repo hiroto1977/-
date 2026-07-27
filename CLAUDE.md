@@ -49,6 +49,8 @@ npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:li
 npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。要 build:web + build:web:lite
 npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)。未起動/CORS未許可/接続成功の3状態
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
+npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
+                         #   `-- --check` で現状確認のみ / `-- --origin <URL>` でブラウザ許可も案内
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
