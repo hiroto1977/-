@@ -108,8 +108,23 @@ export function buildCorpus(): KnowledgeDoc[] {
   return docs;
 }
 
-/** モジュール読込時に 1 度だけ構築する既定コーパス。 */
-export const KNOWLEDGE_CORPUS: readonly KnowledgeDoc[] = buildCorpus();
+let corpusCache: readonly KnowledgeDoc[] | null = null;
+
+/**
+ * 既定コーパス (初回呼び出し時に 1 度だけ構築してキャッシュ)。
+ *
+ * **必ず遅延にすること。** 以前は `export const KNOWLEDGE_CORPUS = buildCorpus()` と
+ * モジュール読込時に構築していたが、`services.ts` が全ページを静的 import する構造の
+ * ため AssistantPage 経由でこのモジュールが起動時に必ず評価され、
+ * 学術コーパス 8MB の JSON.parse + 全 4,000 件超のマッピングをアプリ起動の
+ * クリティカルパスで実行していた。実測 (chromium・スマホ幅) で
+ * **DOMContentLoaded 637ms → 142ms / JS ヒープ 42.6MB → 8.1MB** の差になっていた
+ * (= LITE 版と同じ初期コストまで縮む)。AI アシスタントを開かない利用者は
+ * このコストを一切払わない。
+ */
+export function knowledgeCorpus(): readonly KnowledgeDoc[] {
+  return (corpusCache ??= buildCorpus());
+}
 
 /** CJK 文字か (ひらがな・カタカナ・漢字)。 */
 function isCjk(ch: string): boolean {
@@ -246,7 +261,7 @@ const DEDUPE_SIMILARITY = 0.6;
 export function retrieveScored(
   query: string,
   k = 6,
-  corpus: readonly KnowledgeDoc[] = KNOWLEDGE_CORPUS,
+  corpus: readonly KnowledgeDoc[] = knowledgeCorpus(),
 ): ScoredDoc[] {
   const terms = extractWeightedTerms(query);
   if (terms.length === 0) return [];
@@ -316,7 +331,7 @@ export function retrieveScored(
 export function retrieve(
   query: string,
   k = 6,
-  corpus: readonly KnowledgeDoc[] = KNOWLEDGE_CORPUS,
+  corpus: readonly KnowledgeDoc[] = knowledgeCorpus(),
 ): KnowledgeDoc[] {
   return retrieveScored(query, k, corpus).map((s) => s.doc);
 }
@@ -410,7 +425,7 @@ export const OFFLINE_MIN_SCORE = 8;
  */
 export function buildOfflineKnowledgeAnswer(
   query: string,
-  corpus: readonly KnowledgeDoc[] = KNOWLEDGE_CORPUS,
+  corpus: readonly KnowledgeDoc[] = knowledgeCorpus(),
 ): string | null {
   const top = retrieveScored(query, 2, corpus).filter((s) => s.score >= OFFLINE_MIN_SCORE);
   if (top.length === 0) return null;

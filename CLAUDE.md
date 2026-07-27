@@ -46,6 +46,7 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
+npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。要 build:web + build:web:lite
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   buildCorpus,
-  KNOWLEDGE_CORPUS,
+  knowledgeCorpus,
   extractTerms,
   extractWeightedTerms,
   extractContentRuns,
@@ -29,8 +29,12 @@ describe('buildCorpus', () => {
     expect(kinds).toContain('相談窓口');
   });
 
-  it('is exposed as a prebuilt KNOWLEDGE_CORPUS', () => {
-    expect(KNOWLEDGE_CORPUS.length).toBe(buildCorpus().length);
+  it('caches: 2 回目の呼び出しは同一インスタンスを返す (再構築しない)', () => {
+    expect(knowledgeCorpus()).toBe(knowledgeCorpus());
+  });
+
+  it('is exposed as a lazily built, cached knowledgeCorpus()', () => {
+    expect(knowledgeCorpus().length).toBe(buildCorpus().length);
   });
 });
 
@@ -126,17 +130,17 @@ describe('prompt assembly', () => {
 
 describe('buildCorpus v2', () => {
   it('includes 経済史 yearly entries with structured titles', () => {
-    const hist = KNOWLEDGE_CORPUS.filter((d) => d.kind === '経済史');
+    const hist = knowledgeCorpus().filter((d) => d.kind === '経済史');
     expect(hist.length).toBeGreaterThan(50);
     expect(hist[0]?.title).toMatch(/^\d{4}年（.+）の世界と日本の経済$/);
   });
 
   it('spans the full verified knowledge base (>4000 docs)', () => {
-    expect(KNOWLEDGE_CORPUS.length).toBeGreaterThan(4000);
+    expect(knowledgeCorpus().length).toBeGreaterThan(4000);
   });
 
   it('injects the first source label into academic bodies', () => {
-    const academic = KNOWLEDGE_CORPUS.find((d) => d.kind === '学術概念');
+    const academic = knowledgeCorpus().find((d) => d.kind === '学術概念');
     expect(academic?.body).toContain('［出典:');
   });
 });
