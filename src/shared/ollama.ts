@@ -244,6 +244,179 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
   return out;
 }
 
+/* ───────────────────────  実 Ollama が返すエラーの解釈  ─────────────────────── */
+
+/**
+ * Ollama は失敗時に **HTTP ステータス + `{"error": "…"}` の封筒** を返す。
+ * 生の本文をそのまま画面に出すと英語の内部メッセージが出るだけで、利用者は
+ * 次に何をすればいいか分からない。ここで封筒を開けて種類に分類し、日本語の
+ * 説明と「次の一手」に変換する。
+ *
+ * 実際に最初に踏むのはほぼ必ず model-not-found (まだ pull していないモデルを
+ * 指定した) で、次が out-of-memory (端末のメモリより大きいモデル)。この 2 つを
+ * 取り違えずに案内できるかが、使えるか使えないかの分かれ目になる。
+ */
+
+/** エラー文の表示上限。異常に長い本文をそのままログ・UI へ流さないための上限。 */
+const MAX_ERROR_DETAIL = 300;
+
+/** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
+export function extractOllamaError(json: unknown, text = ''): string {
+  const err = (json as { error?: unknown } | null)?.error;
+  if (typeof err === 'string' && err.trim() !== '') return err.trim().slice(0, MAX_ERROR_DETAIL);
+  // 稀に {"error": {"message": "…"}} の入れ子で返す経路もある。
+  const nested = (err as { message?: unknown } | null)?.message;
+  if (typeof nested === 'string' && nested.trim() !== '') {
+    return nested.trim().slice(0, MAX_ERROR_DETAIL);
+  }
+  // JSON として読めたのに error が無いなら、本文を出しても情報がない。
+  if (json !== null && json !== undefined) return '';
+  // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
+  return (text ?? '').trim().slice(0, MAX_ERROR_DETAIL);
+}
+
+export type OllamaErrorKind =
+  | 'model-not-found' // 指定したモデルが未取得
+  | 'out-of-memory' // モデルが端末の空きメモリより大きい
+  | 'runner-failed' // 推論プロセスが落ちた (壊れたモデル / GPU ドライバ等)
+  | 'forbidden-origin' // OLLAMA_ORIGINS 未設定で拒否された
+  | 'no-such-endpoint' // そのパスが無い (古い Ollama / 前段のプロキシ)
+  | 'unknown';
+
+/** ステータスとエラー本文から種類を判定する。 */
+export function classifyOllamaError(status: number, detail: string): OllamaErrorKind {
+  const d = (detail ?? '').toLowerCase();
+  if (/not found, try pulling it first|model .* not found|no such model/.test(d)) {
+    return 'model-not-found';
+  }
+  if (/more system memory|out of memory|insufficient memory|not enough memory/.test(d)) {
+    return 'out-of-memory';
+  }
+  if (/runner process has terminated|llama runner|error loading model|failed to load model/.test(d)) {
+    return 'runner-failed';
+  }
+  if (status === 403) return 'forbidden-origin';
+  if (status === 404) return 'no-such-endpoint';
+  return 'unknown';
+}
+
+/** `model "llama3" not found, try pulling it first` からモデル名を取り出す。 */
+export function extractMissingModel(detail: string): string {
+  const m = /model\s+["'“”`]?([A-Za-z0-9._:/-]+)["'“”`]?\s+not found/i.exec(detail ?? '');
+  const name = m?.[1] ?? '';
+  return isSafeModelName(name) ? name : '';
+}
+
+/**
+ * 指定されたモデル名に近い **インストール済み** モデルを 1 つ提案する。
+ * `llama3.2` と入力したが実体は `llama3.2:latest`、といった食い違いが実運用で
+ * いちばん多いので、タグ補完 → 前方一致 の順に見る。無ければ空文字。
+ */
+export function suggestInstalledModel(requested: string, installed: string[]): string {
+  const want = (requested ?? '').trim().toLowerCase();
+  if (want === '') return '';
+  const list = (installed ?? []).filter((n) => typeof n === 'string' && n !== '');
+  if (list.some((n) => n.toLowerCase() === want)) return ''; // 一致しているなら提案不要
+  const base = want.split(':')[0] ?? want;
+  return (
+    list.find((n) => n.toLowerCase() === `${want}:latest`) ??
+    list.find((n) => (n.toLowerCase().split(':')[0] ?? '') === base) ??
+    list.find((n) => n.toLowerCase().startsWith(base)) ??
+    ''
+  );
+}
+
+export interface OllamaErrorAdvice {
+  kind: OllamaErrorKind;
+  /** Ollama が返した生のエラー文 (無ければ空)。ログ・詳細表示用。 */
+  detail: string;
+  /** 利用者向けの 1 行説明。 */
+  message: string;
+  /** 次にやること。順序に意味がある (上から試す)。 */
+  hints: string[];
+}
+
+/**
+ * HTTP エラー応答を利用者向けの説明へ変換する。
+ *
+ * @param status   HTTP ステータス
+ * @param detail   extractOllamaError の結果
+ * @param ctx.model      リクエストで指定したモデル名 (chat のとき)
+ * @param ctx.installed  /api/tags で取れたモデル名一覧 (あれば提案に使う)
+ */
+export function describeOllamaError(
+  status: number,
+  detail: string,
+  ctx: { model?: string; installed?: string[] } = {},
+): OllamaErrorAdvice {
+  const kind = classifyOllamaError(status, detail);
+  const requested = ctx.model ?? extractMissingModel(detail);
+  const installed = ctx.installed ?? [];
+  const hints: string[] = [];
+  let message = '';
+
+  switch (kind) {
+    case 'model-not-found': {
+      const name = requested || extractMissingModel(detail) || '(不明)';
+      message = `モデル「${name}」がまだ取得されていません。`;
+      const near = suggestInstalledModel(name, installed);
+      if (near !== '') hints.push(`インストール済みの「${near}」を指定すると動きます。`);
+      hints.push(`取得する: ollama pull ${name}`);
+      if (installed.length > 0) {
+        hints.push(`現在あるモデル: ${installed.join(', ')}`);
+      } else {
+        hints.push('まだ 1 つもモデルがありません。例: ollama pull llama3.2');
+      }
+      break;
+    }
+    case 'out-of-memory':
+      message = 'モデルが大きすぎて、この端末の空きメモリに載りませんでした。';
+      hints.push('より小さいモデルを試す (例: llama3.2:1b / qwen2.5:0.5b)');
+      hints.push('量子化の強い版を選ぶ (Q4_K_M など)');
+      hints.push('他のアプリを閉じて空きメモリを増やす');
+      break;
+    case 'runner-failed':
+      message = '推論プロセスが起動できませんでした (モデル破損 / GPU ドライバの可能性)。';
+      hints.push(`モデルを取り直す: ollama rm ${requested || '<モデル>'} && ollama pull ${requested || '<モデル>'}`);
+      hints.push('Ollama を再起動する');
+      hints.push('CPU で動かす: OLLAMA_NUM_GPU=0 ollama serve');
+      break;
+    case 'forbidden-origin':
+      message = 'Ollama にリクエストは届きましたが、接続元が許可されていません。';
+      hints.push('Ollama 側に OLLAMA_ORIGINS を設定して再起動してください。');
+      break;
+    case 'no-such-endpoint':
+      message = `Ollama がそのエンドポイントを知りません (HTTP ${status})。`;
+      hints.push('Ollama のバージョンが古い可能性があります (ollama --version)。');
+      hints.push('別のサーバがそのポートを使っていないか確認してください。');
+      break;
+    default:
+      message = `Ollama が HTTP ${status} を返しました。`;
+      if (detail !== '') hints.push(detail);
+      break;
+  }
+  return { kind, detail: detail ?? '', message, hints };
+}
+
+/**
+ * HTTP エラー応答の **生本文** から直接 advice を作る。
+ * 呼び出し側 (main / CLI) が JSON.parse を各自で書くと、パース失敗時の扱いが
+ * ばらつくので入口を 1 つにする。本文が空・非 JSON でも必ず結果を返す。
+ */
+export function adviseFromBody(
+  status: number,
+  body: string,
+  ctx: { model?: string; installed?: string[] } = {},
+): OllamaErrorAdvice {
+  let parsed: unknown = null;
+  try {
+    parsed = JSON.parse(body) as unknown;
+  } catch {
+    parsed = null;
+  }
+  return describeOllamaError(status, extractOllamaError(parsed, body), ctx);
+}
+
 /** バージョンから警告リストを組み立てる (UI 表示順を固定するため純関数化)。 */
 export function buildWarnings(version: string): string[] {
   const warnings: string[] = [UNPATCHED_OOB_NOTICE];

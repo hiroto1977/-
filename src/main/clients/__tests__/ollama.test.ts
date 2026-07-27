@@ -445,20 +445,32 @@ describe('ACTIONS["chat"]', () => {
     expect(body.messages[1]).toEqual({ role: 'user', content: 'hi' });
   });
 
-  it('propagates a non-2xx response as FetchError with the upstream body in the message', async () => {
-    // Asserts the SPECIFIC `ollama 404: model not found` message — kills the
-    // `if (!res.ok)` ConditionalExpression false mutation, which would skip
-    // the status-aware error and fall through to `non-JSON` instead.
-    const fetchMock = vi
-      .fn<typeof fetch>()
-      .mockResolvedValueOnce(new Response('model not found', { status: 404 }));
-    await expect(
-      ACTIONS['chat']!({
+  it('translates a non-2xx response into actionable guidance naming the requested model', async () => {
+    // Kills the `if (!res.ok)` ConditionalExpression false mutation (which
+    // would skip the status-aware error and fall through to `non-JSON`), and
+    // the `{ model }` ObjectLiteral mutation: this body does NOT name the
+    // model, so only the passed-in `model` can produce "unknown-model".
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: 'model not found, try pulling it first' }), {
+        status: 404,
+      }),
+    );
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: 'unknown-model', prompt: 'hi' },
-      }),
-    ).rejects.toThrow(/ollama 404: model not found/);
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeInstanceOf(FetchError);
+    expect(caught!.message).toContain('unknown-model');
+    // The hint must survive into the message — knowing the cause without the
+    // next step leaves the user stuck (kills the `hints.length > 0` → false
+    // mutation, which would drop the parenthesised hint).
+    expect(caught!.message).toContain('ollama pull unknown-model');
   });
 
   it('rejects an over-MAX_RESPONSE_BYTES response (DoS / memory exhaustion guard)', async () => {
@@ -539,8 +551,8 @@ describe('ACTIONS["chat"]', () => {
     expect(body.messages[0].content.length).toBe(8192);
   });
 
-  it('truncates a long chat-error body to 200 chars (kills `body.slice(0, 200)` → `body`)', async () => {
-    const longErrorBody = 'X'.repeat(500);
+  it('bounds a long chat-error body instead of echoing it whole', async () => {
+    const longErrorBody = 'X'.repeat(5000);
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response(longErrorBody, { status: 500 }));
@@ -555,14 +567,16 @@ describe('ACTIONS["chat"]', () => {
       caught = err as Error;
     }
     expect(caught).toBeInstanceOf(FetchError);
-    expect(caught!.message).toMatch(/ollama 500: X{200}$/);
+    // Unclassifiable body → the raw detail is surfaced as the hint, capped at
+    // MAX_ERROR_DETAIL (300) by extractOllamaError.
+    expect(caught!.message).toMatch(/X{300}\)$/);
     expect(caught!.message.length).toBeLessThan(longErrorBody.length);
     // Pin serviceId='ollama' on the chat-4xx FetchError
-    // (kills StringLiteral mutant on ollama.ts:318 3rd arg → "").
+    // (kills the StringLiteral mutant on the 3rd FetchError arg → "").
     expect((caught as unknown as FetchError).serviceId).toBe('ollama');
   });
 
-  it('falls back to empty body when chat res.text() rejects (kills `() => ""` → `() => undefined`)', async () => {
+  it('falls back to an empty body when chat res.text() rejects (kills the `body = ""` seed)', async () => {
     const erroringBody = new ReadableStream({
       start(controller) {
         controller.error(new Error('body read failed'));
@@ -582,7 +596,9 @@ describe('ACTIONS["chat"]', () => {
       caught = err as Error;
     }
     expect(caught).toBeInstanceOf(FetchError);
-    expect(caught!.message).toBe('ollama 503: ');
+    // No body to classify → status-only message, and no parenthesised hint
+    // (kills `hints.length > 0` → true, which would append `(undefined)`).
+    expect(caught!.message).toBe('Ollama が HTTP 503 を返しました。');
   });
 
   it('accepts a response of EXACTLY MAX_RESPONSE_BYTES bytes (kills `>` → `>=`)', async () => {

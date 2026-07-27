@@ -25,11 +25,16 @@
 
 import {
   MIN_SAFE_VERSION,
+  adviseFromBody,
   buildOllamaUrl,
   buildWarnings,
+  describeOllamaError,
+  extractOllamaError,
+  isSafeModelName,
   isVersionSafe,
   normalizeModels,
   parseOllamaEndpoint,
+  type OllamaErrorAdvice,
   type OllamaSnapshot,
 } from '../../shared/ollama';
 
@@ -83,9 +88,10 @@ async function fetchWithTimeout(
   fetchFn: typeof fetch,
   url: string,
   init: RequestInit,
+  timeoutMs: number = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     return await fetchFn(url, { ...init, signal: controller.signal });
   } finally {
@@ -115,6 +121,21 @@ async function reachableButOpaque(fetchFn: typeof fetch, url: string): Promise<b
   } catch {
     return false;
   }
+}
+
+/**
+ * HTTP エラーを UI 用の結果へ整形する。**説明だけでなく最初の「次の一手」まで**
+ * 載せる — 原因が分かっても手順が無ければ利用者は動けない。
+ */
+function httpError(status: number, advice: OllamaErrorAdvice): OllamaProbeResult {
+  const hint = advice.hints[0];
+  return {
+    status: 'error',
+    message:
+      `Ollama が HTTP ${status} を返しました。${advice.message}` +
+      (hint === undefined ? '' : ` ${hint}`),
+    snapshot: emptySnapshot(),
+  };
 }
 
 /**
@@ -178,28 +199,49 @@ export async function probeOllama(
         };
   }
 
-  if (!versionRes.ok) {
-    return {
-      status: 'error',
-      message: `Ollama が HTTP ${versionRes.status} を返しました。`,
-      snapshot: emptySnapshot(),
-    };
+  let version = '';
+  // /api/version が 404 なのは「古い Ollama にそのエンドポイントが無い」ケースが
+  // ある (0.1.14 未満)。サーバ自体は生きているので、ここで打ち切らず /api/tags で
+  // 生存を確かめ、読めたらバージョン不明のまま接続成功として扱う。
+  let versionAdvice: ReturnType<typeof describeOllamaError> | null = null;
+  if (versionRes.ok) {
+    const versionJson = await readJsonCapped(versionRes);
+    version =
+      typeof (versionJson as { version?: unknown } | null)?.version === 'string'
+        ? ((versionJson as { version: string }).version)
+        : '';
+  } else {
+    const body = await readJsonCapped(versionRes);
+    versionAdvice = describeOllamaError(versionRes.status, extractOllamaError(body, ''));
+    // 403 は「届いているが接続元が許可されていない」= CORS 未設定と同じ直し方。
+    // UI 側の設定手順をそのまま出したいので cors-blocked に寄せる。
+    if (versionAdvice.kind === 'forbidden-origin') {
+      return {
+        status: 'cors-blocked',
+        message:
+          `Ollama は ${base} で動作していますが、このページからの読み取りが拒否されました (HTTP 403)。` +
+          'Ollama 側に OLLAMA_ORIGINS を設定して再起動してください (下の手順を参照)。',
+        snapshot: emptySnapshot(),
+      };
+    }
+    if (versionRes.status !== 404) return httpError(versionRes.status, versionAdvice);
   }
 
-  const versionJson = await readJsonCapped(versionRes);
-  const version =
-    typeof (versionJson as { version?: unknown } | null)?.version === 'string'
-      ? ((versionJson as { version: string }).version)
-      : '';
-
   // モデル一覧は取れなくても致命ではない (バージョンが読めた時点で接続は成功)。
+  // 逆にバージョンが読めていない場合は、ここが唯一の生存確認になる。
   let models: OllamaProbeResult['snapshot']['models'] = [];
+  let tagsOk = false;
   try {
     const tagsRes = await fetchWithTimeout(fetchFn, tagsUrl, { cache: 'no-store' });
-    if (tagsRes.ok) models = normalizeModels(await readJsonCapped(tagsRes));
+    if (tagsRes.ok) {
+      models = normalizeModels(await readJsonCapped(tagsRes));
+      tagsOk = true;
+    }
   } catch {
     /* モデル一覧のみ失敗 — 空配列で続行 */
   }
+
+  if (versionAdvice !== null && !tagsOk) return httpError(versionRes.status, versionAdvice);
 
   return {
     status: 'ok',
@@ -214,6 +256,154 @@ export async function probeOllama(
       warnings: buildWarnings(version),
     },
   };
+}
+
+/* ─────────────────────────────  チャット  ───────────────────────────── */
+
+/** 生成は診断より時間がかかる。5 秒で切ると実用にならないので別枠にする。 */
+const CHAT_TIMEOUT_MS = 120_000;
+/** 送信サイズの上限 (main プロセス側の chat と同じ)。 */
+const MAX_SYSTEM_CHARS = 8_192;
+const MAX_PROMPT_CHARS = 32_768;
+
+export type OllamaChatOutcome =
+  | { ok: true; reply: string; durationMs: number }
+  | { ok: false; kind: string; message: string };
+
+export interface OllamaChatInput {
+  model: string;
+  prompt: string;
+  system?: string;
+  endpoint?: string;
+}
+
+/**
+ * ブラウザ版からローカル Ollama へ 1 往復のチャットを投げる。
+ *
+ * Electron 版は main プロセスの `clients/ollama.ts` が同じことをする。ブラウザ版に
+ * これが無いと **画面にチャット欄はあるのに送信だけ動かない**ので、同じ制約
+ * (接続先 3 通り・/api/chat のみ・モデル名検証・NUL 拒否・長さ上限・タイムアウト)
+ * でここに実装する。失敗時は shared/ollama.ts の分類器を通して「次の一手」まで返す。
+ */
+export async function chatOllama(
+  input: OllamaChatInput,
+  fetchFn: typeof fetch = fetch,
+  pageHostname: string = typeof location !== 'undefined' ? location.hostname : '',
+): Promise<OllamaChatOutcome> {
+  const model = (input.model ?? '').trim();
+  const prompt = (input.prompt ?? '').trim();
+  const system = (input.system ?? '').trim();
+
+  const base = parseOllamaEndpoint(input.endpoint ?? '', pageHostname);
+  if (base === null) {
+    return { ok: false, kind: 'bad-endpoint', message: '接続先が不正か、許可されていません。' };
+  }
+  if (!isSafeModelName(model)) {
+    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${model.slice(0, 32)}` };
+  }
+  if (prompt === '') {
+    return { ok: false, kind: 'empty-prompt', message: 'プロンプトを入力してください。' };
+  }
+  // NUL は上流パーサのバグの足がかりになるため送らない (main 版と同じ判断)。
+  if (prompt.includes('\0') || system.includes('\0')) {
+    return { ok: false, kind: 'bad-input', message: '入力に NUL 文字が含まれています。' };
+  }
+
+  const url = buildOllamaUrl(base, '/api/chat', pageHostname);
+  if (url === null) {
+    return { ok: false, kind: 'bad-endpoint', message: '接続先 URL の組み立てに失敗しました。' };
+  }
+
+  const messages: { role: string; content: string }[] = [];
+  if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_SYSTEM_CHARS) });
+  messages.push({ role: 'user', content: prompt.slice(0, MAX_PROMPT_CHARS) });
+
+  const started = now();
+  let res: Response;
+  try {
+    res = await fetchWithTimeout(
+      fetchFn,
+      url,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ model, messages, stream: false }),
+      },
+      CHAT_TIMEOUT_MS,
+    );
+  } catch {
+    // 診断と同じ切り分け: 到達はしているのか、そもそも届いていないのか。
+    const reachable = await reachableButOpaque(fetchFn, url);
+    return reachable
+      ? {
+          ok: false,
+          kind: 'cors-blocked',
+          message:
+            `Ollama は ${base} で動作していますが、このページからの送信が CORS で拒否されました。` +
+            'OLLAMA_ORIGINS を設定して再起動してください。',
+        }
+      : {
+          ok: false,
+          kind: 'not-running',
+          message: `${base} に接続できませんでした。Ollama が起動しているか確認してください。`,
+        };
+  }
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    // 未取得モデルのときだけ、実際にあるモデルを添えて案内する。
+    const first = adviseFromBody(res.status, body, { model });
+    const installed =
+      first.kind === 'model-not-found' ? await listInstalledModels(fetchFn, base, pageHostname) : [];
+    const advice = adviseFromBody(res.status, body, { model, installed });
+    return { ok: false, kind: advice.kind, message: [advice.message, ...advice.hints].join(' ') };
+  }
+
+  const text = await res.text();
+  if (text.length > MAX_RESPONSE_BYTES) {
+    return { ok: false, kind: 'too-large', message: '応答が大きすぎたため中断しました。' };
+  }
+  let parsed: unknown = null;
+  try {
+    parsed = JSON.parse(text) as unknown;
+  } catch {
+    return { ok: false, kind: 'bad-response', message: 'Ollama が JSON 以外を返しました。' };
+  }
+  // HTTP 200 でも本文にエラーを載せてくる経路がある。
+  const inline = extractOllamaError(parsed, '');
+  if (inline !== '') {
+    const advice = describeOllamaError(200, inline, { model });
+    return { ok: false, kind: advice.kind, message: [advice.message, ...advice.hints].join(' ') };
+  }
+
+  const content = (parsed as { message?: { content?: unknown } } | null)?.message?.content;
+  return {
+    ok: true,
+    reply: typeof content === 'string' ? content.trim() : '',
+    durationMs: Math.max(0, Math.round(now() - started)),
+  };
+}
+
+/** 経過時間の取得。performance が無い環境 (テスト) でも動くようにする。 */
+function now(): number {
+  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
+
+/** モデル名だけを引く (失敗しても案内を止めないので空配列)。 */
+async function listInstalledModels(
+  fetchFn: typeof fetch,
+  base: string,
+  pageHostname: string,
+): Promise<string[]> {
+  const url = buildOllamaUrl(base, '/api/tags', pageHostname);
+  if (url === null) return [];
+  try {
+    const res = await fetchWithTimeout(fetchFn, url, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return normalizeModels(await readJsonCapped(res)).map((m) => m.name);
+  } catch {
+    return [];
+  }
 }
 
 /** OS ごとの OLLAMA_ORIGINS 設定手順 (UI に出す)。origin は実行中のページのもの。 */

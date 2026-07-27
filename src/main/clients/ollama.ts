@@ -27,6 +27,7 @@ import {
 import {
   MIN_SAFE_VERSION,
   UNPATCHED_OOB_NOTICE,
+  adviseFromBody,
   compareVersions,
   isSafeModelName,
   isVersionSafe,
@@ -262,8 +263,22 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   );
 
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new FetchError(`ollama ${res.status}: ${body.slice(0, 200)}`, res.status, 'ollama');
+    // 本文が読めない経路 (接続断) もあるので、空文字から始めて上書きする。
+    let body = '';
+    try {
+      body = await res.text();
+    } catch {
+      /* 本文なしのまま案内へ進む */
+    }
+    // 生の英語エラーをそのまま投げると UI に内部メッセージが出るだけなので、
+    // 共有ロジックで「何が起きて次に何をすればいいか」に翻訳してから投げる
+    // (長さ上限も adviseFromBody 側で掛かる)。
+    const advice = adviseFromBody(res.status, body, { model });
+    throw new FetchError(
+      advice.hints.length > 0 ? `${advice.message} (${advice.hints[0]})` : advice.message,
+      res.status,
+      'ollama',
+    );
   }
 
   // Defense against an unbounded response: read as text up to a cap.

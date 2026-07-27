@@ -6,10 +6,13 @@
  *
  *   npm run e2e:ollama      # 要 dist/standalone.html (npm run build:web)
  *
- * 本物の Ollama を用意せずに 3 つの状態を再現して、**利用者に出る文言**まで検証する:
+ * 本物の Ollama を用意せずに各状態を再現して、**利用者に出る文言**まで検証する:
  *   1. 未起動          → 起動手順が出る
  *   2. 起動 + CORS 未許可 → 「起動は検出、あとは OLLAMA_ORIGINS」と出る
  *   3. 起動 + CORS 許可   → 実モデル一覧とバージョンが出て、案内は消える
+ *   3b. チャット送信      → ブラウザから /api/chat へ実 HTTP で往復し応答が出る
+ *      (画面に入力欄があるだけでは「使える」ことにならないので、ここまで見る。
+ *       POST + JSON は CORS プリフライトを起こすため、スタブも OPTIONS に応答する)
  *
  * 2 と 1 を取り違えると「壊れている」と誤解されるため、切り分けが効いていることを
  * ここで固定する (単体テストは src/renderer/network/__tests__/ollamaWeb.test.ts)。
@@ -32,14 +35,41 @@ const pw=resolvePlaywright();
 if(!pw){console.error('e2e:ollama: playwright が見つかりません');process.exit(2);}
 const DIR=path.join(__dirname,'..','..','dist');
 
+const STUB_MODELS=['llama3.2:latest','qwen2.5-coder:7b'];
+
 function ollamaStub(withCors){
   return http.createServer((req,res)=>{
-    const h = withCors ? {'access-control-allow-origin':'*'} : {};
+    // 本物の Ollama は OLLAMA_ORIGINS 許可時、プリフライトにも応答する。
+    // POST + content-type: application/json はプリフライトを起こすので、
+    // ここを省くとチャットだけブラウザに落とされる (スタブでだけ通る状態になる)。
+    const h = withCors ? {
+      'access-control-allow-origin':'*',
+      'access-control-allow-methods':'GET,POST,OPTIONS',
+      'access-control-allow-headers':'content-type',
+    } : {};
+    if(req.method==='OPTIONS'){res.writeHead(withCors?204:403,h);res.end();return;}
     if(req.url==='/api/version'){res.writeHead(200,{...h,'content-type':'application/json'});res.end(JSON.stringify({version:'0.5.4'}));return;}
     if(req.url==='/api/tags'){res.writeHead(200,{...h,'content-type':'application/json'});
       res.end(JSON.stringify({models:[
         {name:'llama3.2:latest',size:2*1024**3,modified_at:'2026-07-01T00:00:00Z',details:{family:'llama',parameter_size:'3B',quantization_level:'Q4_K_M'}},
         {name:'qwen2.5-coder:7b',size:4*1024**3,modified_at:'2026-07-05T00:00:00Z',details:{family:'qwen2',parameter_size:'7B',quantization_level:'Q4_0'}}]}));return;}
+    if(req.url==='/api/chat'&&req.method==='POST'){
+      let body='';req.on('data',c=>{body+=c;});
+      req.on('end',()=>{
+        let p;
+        try{p=JSON.parse(body||'{}');}catch{p={};}
+        // 未取得モデルは本物と同じ 404 + エラー封筒で返す。
+        if(!STUB_MODELS.includes(p.model)){
+          res.writeHead(404,{...h,'content-type':'application/json'});
+          res.end(JSON.stringify({error:`model "${p.model}" not found, try pulling it first`}));
+          return;
+        }
+        const last=(p.messages||[]).slice(-1)[0]||{};
+        res.writeHead(200,{...h,'content-type':'application/json'});
+        res.end(JSON.stringify({message:{role:'assistant',content:`STUB_REPLY:${last.content||''}`},total_duration:1234567}));
+      });
+      return;
+    }
     res.writeHead(404,h);res.end('nf');
   });
 }
@@ -117,6 +147,23 @@ async function unlockAndOpenOllama(page){
     const ok=hasModels&&hasVersion&&noSetupHint;
     console.log(`${ok?'✅':'❌'} 接続成功: 実モデル2件とバージョン0.5.4を表示 (models=${hasModels} version=${hasVersion} 案内非表示=${noSetupHint})`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,400));}
+
+    // --- ケース3b: 実際にチャットを送って応答が返る ---
+    // 画面にチャット欄があるだけでは「使える」ことにならない。ブラウザから
+    // 実 HTTP (プリフライト含む) で /api/chat まで往復することをここで固定する。
+    try{
+      await page.getByRole('button',{name:'送信'}).first().click();
+      const card=page.locator('.card').filter({has:page.locator('textarea')}).first();
+      await card.locator('textarea').waitFor({timeout:15000});
+      await card.locator('select').selectOption('llama3.2:latest');
+      await card.locator('textarea').fill('E2Eテスト');
+      await card.locator('button.primary').click();
+      await page.waitForTimeout(3000);
+      const after=await page.evaluate(()=>document.body.innerText);
+      const replied=/STUB_REPLY:E2Eテスト/.test(after);
+      console.log(`${replied?'✅':'❌'} チャット送信: ブラウザから /api/chat へ往復して応答を表示`);
+      if(!replied){fail++;console.log('   body抜粋:',after.replace(/\s+/g,' ').slice(0,400));}
+    }catch(e){fail++;console.log('❌ チャット送信: 例外',e.message);}
     await ctx.close();
   }
   await new Promise(r=>withCors.close(r));

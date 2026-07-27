@@ -54,7 +54,7 @@ import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates'
 import { getVault } from './security/vault';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
-import { loadEndpointSetting, probeOllama } from './network/ollamaWeb';
+import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -901,6 +901,23 @@ const shim = {
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
       }
+    }
+
+    // Ollama チャット: ブラウザ版でも **実際にローカルの Ollama へ送る**。
+    // ここが無いと「画面にチャット欄はあるのに送信だけ動かない」状態になる
+    // (Electron 版は main プロセスの clients/ollama.ts が同じことをしている)。
+    // 接続先・エンドポイント・モデル名の制約は network/ollamaWeb.ts が共有ロジックで担保。
+    if (serviceId === 'ollama' && action === 'chat') {
+      const p = payload as { model?: unknown; prompt?: unknown; system?: unknown };
+      const out = await chatOllama({
+        model: typeof p.model === 'string' ? p.model : '',
+        prompt: typeof p.prompt === 'string' ? p.prompt : '',
+        system: typeof p.system === 'string' ? p.system : '',
+        endpoint: loadEndpointSetting(),
+      });
+      return out.ok
+        ? (ok({ reply: out.reply, durationMs: out.durationMs }) as ActionResult<T>)
+        : err<T>(`ollama_${out.kind}`, out.message);
     }
 
     // Stocks ウォッチリスト登録 / 解除: localStorage に永続化する。
