@@ -53,11 +53,12 @@ jobs:
           npm run typecheck
           npm test
 
-      # Per-OS electron-builder runs. On non-tag CI runs we'd want
-      # `--publish never`, but this workflow is gated on a tag so we let
-      # electron-builder pick its defaults.
+      # electron-builder は CI を検知すると **暗黙に** GitHub Releases へ publish
+      # しようとする (v0.1.0 の失敗ランで実際に発火し、softprops ステップと二重
+      # アップロードになりかけた)。公開は下の softprops に一本化するため、
+      # ビルドは常に --publish never で行う。
       - name: Build
-        run: npm run build
+        run: npm run build -- --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
