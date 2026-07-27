@@ -7,9 +7,18 @@
  *
  * 守っている制約 (docs/OLLAMA_SECURITY.md — Probllama / CVE-2024-37032 と
  * 0.1.46 のまとめ、および未パッチのパーサ OOB read):
- *   - **ループバックのみ**。任意ホストを指定できるようにすると、ページから
- *     内部ネットワークを叩ける踏み台になる (プロキシ側の SSRF ガードと同じ理由)。
- *     ポートだけは変更可 (既定 11434)。
+ *   - **接続先は 3 通りだけ** (isAllowedOllamaBase)。任意ホストへの http を許すと
+ *     ページが内部ネットワークの探索に使える踏み台になるため、次に限定する:
+ *       (1) ループバック (127.0.0.1 / localhost / ::1) — 同じ端末で動かす通常ケース
+ *       (2) **ページ自身と同じホスト名** への http — PC で配信したページをスマホから
+ *           開く場合。既に利用者がそのホストからアプリを読み込んでいるので、新たな
+ *           到達先を与えていない (探索には使えない)
+ *       (3) 任意の **https** エンドポイント — cloudflared / Tailscale Serve 等の
+ *           トンネル経由。https なので https ページから mixed content で弾かれず、
+ *           経路も暗号化される。相手側が CORS で明示的に許可しないと読めないため、
+ *           ホスト名を絞らなくても「勝手に内部を覗く」ことはできない
+ *     いずれの場合も **平文 http で別ホストへ** は許可しない (ブラウザの
+ *     mixed content でも弾かれるうえ、プロンプトが平文で流れる)。
  *   - **読み取り 3 エンドポイントのみ**。/api/pull・/api/create・/api/push・
  *     /api/copy・/api/delete・/api/blobs は呼ばない — これらが上記 CVE の攻撃
  *     ベクトルであり、未パッチ OOB read の入口でもある。
@@ -46,8 +55,27 @@ export function buildLoopbackBase(port: number | string): string | null {
   return `http://127.0.0.1:${n}`;
 }
 
-/** base URL がループバックか (http のみ・ホストは許可リスト・パスなし)。 */
-export function isLoopbackBase(base: string): boolean {
+/** ホスト名がループバックか。 */
+export function isLoopbackHostname(hostname: string): boolean {
+  return LOOPBACK_HOSTS.has(hostname);
+}
+
+/** base URL の形が Ollama の接続先として妥当か (スキーム・認証情報・パスなし)。 */
+function isWellFormedBase(u: URL): boolean {
+  // 認証情報付き URL (http://user:pass@…) は拒否 — パーサ差異の温床。
+  if (u.username !== '' || u.password !== '') return false;
+  if (u.pathname !== '/' && u.pathname !== '') return false;
+  return u.search === '' && u.hash === '';
+}
+
+/**
+ * 接続先として許可するか。モジュール冒頭の 3 通りだけを通す。
+ *
+ * @param base         判定する base URL
+ * @param pageHostname アプリを配信しているホスト名 (ブラウザなら location.hostname)。
+ *                     空文字なら「同じホスト」条件は無効化される (Electron 版など)。
+ */
+export function isAllowedOllamaBase(base: string, pageHostname = ''): boolean {
   if (typeof base !== 'string' || base.length === 0) return false;
   let u: URL;
   try {
@@ -55,20 +83,50 @@ export function isLoopbackBase(base: string): boolean {
   } catch {
     return false;
   }
-  // https でローカルを叩く構成は想定しない (Ollama は既定で平文)。
+  if (!isWellFormedBase(u)) return false;
+  // (3) https は任意ホストを許可 — 相手が CORS で許可しない限り読めないため、
+  //     ホスト名を絞らなくても内部探索には使えない。
+  if (u.protocol === 'https:') return true;
   if (u.protocol !== 'http:') return false;
-  // 認証情報付き URL (http://user:pass@…) は拒否 — パーサ差異の温床。
-  if (u.username !== '' || u.password !== '') return false;
-  if (u.pathname !== '/' && u.pathname !== '') return false;
-  if (u.search !== '' || u.hash !== '') return false;
-  return LOOPBACK_HOSTS.has(u.hostname);
+  // (1) ループバック
+  if (isLoopbackHostname(u.hostname)) return true;
+  // (2) ページ自身と同じホスト名 (PC で配信したページをスマホから開くケース)。
+  //     大文字小文字は URL 側で正規化済み。pageHostname 側も揃える。
+  return pageHostname !== '' && u.hostname === pageHostname.toLowerCase();
 }
 
-/** base + 許可パス を結合する。base が非ループバック / パスが未許可なら null。 */
-export function buildOllamaUrl(base: string, path: OllamaReadPath): string | null {
-  if (!isLoopbackBase(base)) return null;
+/** base + 許可パス を結合する。base が未許可 / パスが未許可なら null。 */
+export function buildOllamaUrl(
+  base: string,
+  path: OllamaReadPath,
+  pageHostname = '',
+): string | null {
+  if (!isAllowedOllamaBase(base, pageHostname)) return null;
   if (!(OLLAMA_READ_PATHS as readonly string[]).includes(path)) return null;
   return `${base.replace(/\/+$/, '')}${path}`;
+}
+
+/**
+ * 利用者が入力した接続先文字列を正規化する。
+ * 受け付ける形: `11434` (ポートのみ = ループバック) / `http://host:port` / `https://host`
+ * ホスト名のみ・スキーム省略も http:// を補って解釈する。
+ */
+export function parseOllamaEndpoint(input: string, pageHostname = ''): string | null {
+  const raw = (input ?? '').trim();
+  if (raw === '') return buildLoopbackBase(DEFAULT_OLLAMA_PORT);
+  // 数字のみ → ループバックのポート指定
+  if (/^\d+$/.test(raw)) return buildLoopbackBase(raw);
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `http://${raw}`;
+  let u: URL;
+  try {
+    u = new URL(withScheme);
+  } catch {
+    return null;
+  }
+  // ポート未指定なら Ollama の既定ポートを補う (https トンネルは 443 のままにする)。
+  if (u.port === '' && u.protocol === 'http:') u.port = String(DEFAULT_OLLAMA_PORT);
+  const base = `${u.protocol}//${u.host}`;
+  return isAllowedOllamaBase(base, pageHostname) ? base : null;
 }
 
 /**

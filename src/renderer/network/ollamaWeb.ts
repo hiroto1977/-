@@ -24,18 +24,31 @@
  */
 
 import {
-  DEFAULT_OLLAMA_PORT,
   MIN_SAFE_VERSION,
-  buildLoopbackBase,
   buildOllamaUrl,
   buildWarnings,
   isVersionSafe,
   normalizeModels,
+  parseOllamaEndpoint,
   type OllamaSnapshot,
 } from '../../shared/ollama';
 
-/** ポート設定の保存キー (localStorage)。UI と web-shim が共有する。 */
+/** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
+ *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
+export const OLLAMA_ENDPOINT_KEY = 'servicehub.ollama.endpoint';
+/** 旧キー (ポート番号のみを保存していた)。後方互換のため読み取りだけ続ける。 */
 export const OLLAMA_PORT_KEY = 'servicehub.ollama.port';
+
+/** 保存済みの接続先設定を読む (新キー優先・無ければ旧キー・どちらも無ければ空)。 */
+export function loadEndpointSetting(): string {
+  try {
+    return (
+      localStorage.getItem(OLLAMA_ENDPOINT_KEY) ?? localStorage.getItem(OLLAMA_PORT_KEY) ?? ''
+    );
+  } catch {
+    return '';
+  }
+}
 
 const REQUEST_TIMEOUT_MS = 5_000;
 const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
@@ -44,8 +57,8 @@ const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
 export type OllamaProbeStatus =
   | 'ok' // 接続できてバージョン/モデルが読めた
   | 'cors-blocked' // 起動しているが OLLAMA_ORIGINS 未設定
-  | 'not-running' // 到達できない (未起動 / ポート違い)
-  | 'bad-port' // 入力ポートが不正
+  | 'not-running' // 到達できない (未起動 / ポート違い / 別端末に届いていない)
+  | 'bad-endpoint' // 入力された接続先が不正 or 許可外
   | 'error'; // 応答はあったが読めなかった (想定外)
 
 export interface OllamaProbeResult {
@@ -105,26 +118,34 @@ async function reachableButOpaque(fetchFn: typeof fetch, url: string): Promise<b
 }
 
 /**
- * ローカル Ollama を診断する。
+ * Ollama を診断する。
  *
- * @param port  既定 11434。文字列でも可 (UI の input から直接渡せる)。
- * @param fetchFn テスト用に注入可能。
+ * @param endpoint 接続先。ポート番号のみ (= ループバック) か `http(s)://host:port`。
+ *                 空文字なら既定の `http://127.0.0.1:11434`。
+ * @param fetchFn  テスト用に注入可能。
+ * @param pageHostname アプリを配信しているホスト名。ブラウザでは location.hostname を
+ *                 渡す。これにより「PC で配信したページをスマホから開く」構成で
+ *                 同じホストの Ollama へ http 接続できる (shared/ollama.ts の方針 (2))。
  */
 export async function probeOllama(
-  port: number | string = DEFAULT_OLLAMA_PORT,
+  endpoint: number | string = '',
   fetchFn: typeof fetch = fetch,
+  pageHostname: string = typeof location !== 'undefined' ? location.hostname : '',
 ): Promise<OllamaProbeResult> {
-  const base = buildLoopbackBase(port);
+  const base = parseOllamaEndpoint(String(endpoint), pageHostname);
   if (base === null) {
     return {
-      status: 'bad-port',
-      message: 'ポート番号は 1〜65535 の整数で入力してください。',
+      status: 'bad-endpoint',
+      message:
+        '接続先が不正か、許可されていません。ポート番号のみ (例 11434)、' +
+        'このページと同じホストの http (例 http://192.168.1.10:11434)、' +
+        'または https のトンネル URL を入力してください。',
       snapshot: emptySnapshot(),
     };
   }
-  const versionUrl = buildOllamaUrl(base, '/api/version');
-  const tagsUrl = buildOllamaUrl(base, '/api/tags');
-  // buildLoopbackBase の出力は必ずループバックなので null にはならない。
+  const versionUrl = buildOllamaUrl(base, '/api/version', pageHostname);
+  const tagsUrl = buildOllamaUrl(base, '/api/tags', pageHostname);
+  // parseOllamaEndpoint が許可済みの base を返すので null にはならない。
   // 型の narrowing のためだけのガード。
   if (versionUrl === null || tagsUrl === null) {
     return {
@@ -151,8 +172,8 @@ export async function probeOllama(
       : {
           status: 'not-running',
           message:
-            `${base} に接続できませんでした。Ollama が起動しているか、ポートが合っているかを確認してください ` +
-            '(既定は 11434 / `ollama serve` で起動)。',
+            `${base} に接続できませんでした。Ollama が起動しているか、接続先が合っているかを確認してください ` +
+            '(同じ端末なら 11434 / 別端末からは下の「スマホなど別の端末から使う」を参照)。',
           snapshot: emptySnapshot(),
         };
   }

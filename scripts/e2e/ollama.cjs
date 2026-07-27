@@ -16,6 +16,9 @@
  *
  * ポート 11434 を bind するので、実 Ollama が動いている環境では EADDRINUSE で
  * 失敗する (その場合は実機で手動確認するのが正しい)。
+ *
+ * ケース 4-5 は「別端末から使う」経路 —— 保存した接続先が使われること、および
+ * 平文 http で別ホストを指定したら接続を試みずに拒否すること —— を固定する。
  */
 
 const http=require('node:http'), fs=require('node:fs'), path=require('node:path');
@@ -117,6 +120,42 @@ async function unlockAndOpenOllama(page){
     await ctx.close();
   }
   await new Promise(r=>withCors.close(r));
+
+  // --- ケース4: 別端末経路 (ページと同じホスト名への http) ---
+  // アプリを 127.0.0.1 ではないホスト名で配信し、同じホストの Ollama へ繋がることを見る。
+  // (実機ではこれが「PC で配信したページをスマホから開く」構成に対応する)
+  const lanOllama=ollamaStub(true);
+  await new Promise(r=>lanOllama.listen(OLLAMA_PORT,'127.0.0.1',r));
+  {
+    const ctx=await browser.newContext(); const page=await ctx.newPage();
+    // localhost は loopback 判定に入るため、同一ホスト経路の検証には使えない。
+    // hosts に依存せず必ず解決する名前として ip6-localhost 等は環境差があるので、
+    // ここでは localhost を使い「保存した接続先が使われること」を検証する。
+    await page.goto(`http://localhost:${appPort}/`,{waitUntil:'load',timeout:120000});
+    await page.evaluate(()=>localStorage.setItem('servicehub.ollama.endpoint','http://localhost:11434'));
+    await page.reload({waitUntil:'load',timeout:120000});
+    await unlockAndOpenOllama(page);
+    const body=await page.evaluate(()=>document.body.innerText);
+    const ok=/llama3\.2:latest/.test(body) && /0\.5\.4/.test(body);
+    console.log(`${ok?'✅':'❌'} 別端末経路: 保存した接続先 (http://localhost:11434) で接続しモデルを表示`);
+    if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,300));}
+    await ctx.close();
+  }
+  await new Promise(r=>lanOllama.close(r));
+
+  // --- ケース5: 許可外の接続先は接続を試みずに拒否 ---
+  {
+    const ctx=await browser.newContext(); const page=await ctx.newPage();
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
+    await page.evaluate(()=>localStorage.setItem('servicehub.ollama.endpoint','http://192.168.99.99:11434'));
+    await page.reload({waitUntil:'load',timeout:120000});
+    await unlockAndOpenOllama(page);
+    const body=await page.evaluate(()=>document.body.innerText);
+    const ok=/許可されていません|指定できません/.test(body);
+    console.log(`${ok?'✅':'❌'} 許可外の接続先 (平文http・別ホスト) を拒否`);
+    if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,300));}
+    await ctx.close();
+  }
 
   await browser.close(); appServer.close();
   console.log(fail? `\n${fail} 件失敗` : '\nALL OLLAMA CHECKS PASSED');

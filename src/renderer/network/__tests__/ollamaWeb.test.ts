@@ -64,7 +64,7 @@ describe('probeOllama — 接続成功', () => {
   });
 
   it('古いバージョンでは versionSafe:false と更新警告を載せる', async () => {
-    const r = await probeOllama(11434, healthyFetch('0.1.30', []));
+    const r = await probeOllama(11434, healthyFetch('0.1.30', []), '');
     expect(r.status).toBe('ok');
     expect(r.snapshot.versionSafe).toBe(false);
     expect(r.snapshot.warnings[0]).toContain(MIN_SAFE_VERSION);
@@ -76,7 +76,7 @@ describe('probeOllama — 接続成功', () => {
       if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
       throw new TypeError('tags failed');
     }) as unknown as typeof fetch;
-    const r = await probeOllama(11434, f);
+    const r = await probeOllama(11434, f, '');
     expect(r.status).toBe('ok');
     expect(r.snapshot.models).toEqual([]);
   });
@@ -87,7 +87,7 @@ describe('probeOllama — 接続成功', () => {
       if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
-    await probeOllama(11434, spy);
+    await probeOllama(11434, spy, '');
     const urls = (spy as unknown as { mock: { calls: [string][] } }).mock.calls.map((c) =>
       String(c[0]),
     );
@@ -98,41 +98,73 @@ describe('probeOllama — 接続成功', () => {
   });
 });
 
+describe('probeOllama — 別端末から使う経路', () => {
+  it('ページと同じホストの http は接続できる (PC配信ページをスマホから開く構成)', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      expect(u.startsWith('http://192.168.1.10:11434/')).toBe(true);
+      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      return json({ models: [] });
+    }) as unknown as typeof fetch;
+    const r = await probeOllama('http://192.168.1.10:11434', f, '192.168.1.10');
+    expect(r.status).toBe('ok');
+  });
+
+  it('https のトンネル URL は任意ホストでも接続できる', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      expect(u.startsWith('https://abc.trycloudflare.com/')).toBe(true);
+      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      return json({ models: [] });
+    }) as unknown as typeof fetch;
+    const r = await probeOllama('https://abc.trycloudflare.com', f, 'hiroto1977.github.io');
+    expect(r.status).toBe('ok');
+  });
+});
+
 describe('probeOllama — 失敗理由の切り分け', () => {
   it('起動しているが CORS 未許可 → cors-blocked と設定手順の案内', async () => {
-    const r = await probeOllama(11434, corsBlockedFetch());
+    const r = await probeOllama(11434, corsBlockedFetch(), '');
     expect(r.status).toBe('cors-blocked');
     expect(r.message).toContain('OLLAMA_ORIGINS');
     expect(r.snapshot.running).toBe(false);
   });
 
   it('到達不能 → not-running (未起動 / ポート違いの案内)', async () => {
-    const r = await probeOllama(11434, unreachableFetch());
+    const r = await probeOllama(11434, unreachableFetch(), '');
     expect(r.status).toBe('not-running');
     expect(r.message).toContain('11434');
     expect(r.snapshot.running).toBe(false);
   });
 
   it('cors-blocked と not-running を取り違えない (no-cors の成否だけで決まる)', async () => {
-    const blocked = await probeOllama(11434, corsBlockedFetch());
-    const down = await probeOllama(11434, unreachableFetch());
+    const blocked = await probeOllama(11434, corsBlockedFetch(), '');
+    const down = await probeOllama(11434, unreachableFetch(), '');
     expect(blocked.status).not.toBe(down.status);
   });
 
   it('HTTP エラー応答は error', async () => {
     const f = vi.fn(async () => json({}, 500)) as unknown as typeof fetch;
-    const r = await probeOllama(11434, f);
+    const r = await probeOllama(11434, f, '');
     expect(r.status).toBe('error');
     expect(r.message).toContain('500');
   });
 
-  it('不正なポートは接続を試みずに bad-port', async () => {
+  it('許可外の接続先は接続を試みずに bad-endpoint', async () => {
     const f = vi.fn() as unknown as typeof fetch;
-    for (const bad of ['0', '70000', 'abc', '0x2b', '']) {
-      const r = await probeOllama(bad, f);
-      expect(r.status, bad).toBe('bad-port');
+    for (const bad of ['0', '70000', 'abc', '0x2b', 'file:///etc/passwd']) {
+      const r = await probeOllama(bad, f, '');
+      expect(r.status, bad).toBe('bad-endpoint');
     }
+    // 平文 http で「ページと違うホスト」も拒否 (内部探索の踏み台化を防ぐ)
+    const r = await probeOllama('http://192.168.1.99:11434', f, '192.168.1.10');
+    expect(r.status).toBe('bad-endpoint');
     expect(f).not.toHaveBeenCalled();
+  });
+
+  it('空文字は既定のループバックとして扱う (bad-endpoint にしない)', async () => {
+    const r = await probeOllama('', healthyFetch('0.5.4', []), '');
+    expect(r.status).toBe('ok');
   });
 
   it('JSON でない応答でもクラッシュせず、バージョン不明として接続成功にする', async () => {
@@ -141,7 +173,7 @@ describe('probeOllama — 失敗理由の切り分け', () => {
         ? new Response('not json', { status: 200 })
         : json({ models: [] }),
     ) as unknown as typeof fetch;
-    const r = await probeOllama(11434, f);
+    const r = await probeOllama(11434, f, '');
     expect(r.status).toBe('ok');
     expect(r.snapshot.version).toBe('');
     expect(r.snapshot.versionSafe).toBe(false);

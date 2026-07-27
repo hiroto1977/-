@@ -8,7 +8,8 @@ import {
   buildOllamaUrl,
   buildWarnings,
   compareVersions,
-  isLoopbackBase,
+  isAllowedOllamaBase,
+  parseOllamaEndpoint,
   isSafeModelName,
   isVersionSafe,
   normalizeModels,
@@ -44,51 +45,97 @@ describe('buildLoopbackBase', () => {
   });
 });
 
-describe('isLoopbackBase — 任意ホストへの踏み台化を防ぐ', () => {
-  it('ループバックホストは許可', () => {
-    expect(isLoopbackBase('http://127.0.0.1:11434')).toBe(true);
-    expect(isLoopbackBase('http://localhost:11434')).toBe(true);
-    expect(isLoopbackBase('http://[::1]:11434')).toBe(true);
+describe('isAllowedOllamaBase — 接続先を 3 通りに限定する', () => {
+  it('(1) ループバックは許可', () => {
+    expect(isAllowedOllamaBase('http://127.0.0.1:11434')).toBe(true);
+    expect(isAllowedOllamaBase('http://localhost:11434')).toBe(true);
+    expect(isAllowedOllamaBase('http://[::1]:11434')).toBe(true);
   });
 
-  it('外部ホスト・内部ネットワークは拒否 (SSRF 踏み台化の防止)', () => {
+  it('(2) ページ自身と同じホスト名への http は許可 (PC配信ページをスマホから開く構成)', () => {
+    expect(isAllowedOllamaBase('http://192.168.1.10:11434', '192.168.1.10')).toBe(true);
+    expect(isAllowedOllamaBase('http://mypc.local:11434', 'mypc.local')).toBe(true);
+    // 大文字小文字は正規化して比較する
+    expect(isAllowedOllamaBase('http://MyPC.local:11434', 'mypc.local')).toBe(true);
+  });
+
+  it('(3) https は任意ホストを許可 (トンネル経由。CORS が相手側の同意を要求する)', () => {
+    expect(isAllowedOllamaBase('https://abc-def.trycloudflare.com')).toBe(true);
+    expect(isAllowedOllamaBase('https://mypc.tail1234.ts.net')).toBe(true);
+  });
+
+  it('平文 http で「別ホスト」は拒否 — 内部探索の踏み台化とプロンプト平文送信を防ぐ', () => {
     for (const bad of [
-      'http://example.com:11434',
+      'http://192.168.1.10:11434', // pageHostname 未指定 = 別ホスト扱い
       'http://169.254.169.254/', // クラウドメタデータ
-      'http://192.168.1.10:11434',
       'http://10.0.0.5:11434',
+      'http://example.com:11434',
       'http://127.0.0.1.evil.com:11434', // 見た目だけループバック
-      'http://ollama.local:11434',
     ]) {
-      expect(isLoopbackBase(bad), bad).toBe(false);
+      expect(isAllowedOllamaBase(bad), bad).toBe(false);
     }
+    // ページのホストと違えば同じ LAN 内でも拒否
+    expect(isAllowedOllamaBase('http://192.168.1.99:11434', '192.168.1.10')).toBe(false);
   });
 
-  it('http 以外のスキームは拒否', () => {
-    expect(isLoopbackBase('https://127.0.0.1:11434')).toBe(false);
-    expect(isLoopbackBase('file:///etc/passwd')).toBe(false);
-    expect(isLoopbackBase('ws://127.0.0.1:11434')).toBe(false);
+  it('http / https 以外のスキームは拒否', () => {
+    expect(isAllowedOllamaBase('file:///etc/passwd')).toBe(false);
+    expect(isAllowedOllamaBase('ws://127.0.0.1:11434')).toBe(false);
+    expect(isAllowedOllamaBase('javascript:alert(1)')).toBe(false);
   });
 
   it('認証情報つき URL は拒否 (パーサ差異の温床)', () => {
-    expect(isLoopbackBase('http://user:pass@127.0.0.1:11434')).toBe(false);
-    expect(isLoopbackBase('http://evil.com@127.0.0.1:11434')).toBe(false);
+    expect(isAllowedOllamaBase('http://user:pass@127.0.0.1:11434')).toBe(false);
+    expect(isAllowedOllamaBase('https://user:pass@tunnel.example')).toBe(false);
+    expect(isAllowedOllamaBase('http://evil.com@127.0.0.1:11434')).toBe(false);
   });
 
   it('パス・クエリ・フラグメント付きは拒否', () => {
-    expect(isLoopbackBase('http://127.0.0.1:11434/api')).toBe(false);
-    expect(isLoopbackBase('http://127.0.0.1:11434/?x=1')).toBe(false);
-    expect(isLoopbackBase('http://127.0.0.1:11434/#f')).toBe(false);
+    expect(isAllowedOllamaBase('http://127.0.0.1:11434/api')).toBe(false);
+    expect(isAllowedOllamaBase('http://127.0.0.1:11434/?x=1')).toBe(false);
+    expect(isAllowedOllamaBase('https://tunnel.example/#f')).toBe(false);
   });
 
   it('末尾スラッシュのみは許可 (URL 正規化の結果)', () => {
-    expect(isLoopbackBase('http://127.0.0.1:11434/')).toBe(true);
+    expect(isAllowedOllamaBase('http://127.0.0.1:11434/')).toBe(true);
   });
 
   it('壊れた入力は拒否', () => {
     for (const bad of ['', 'not a url', '://', null, undefined, 123]) {
-      expect(isLoopbackBase(bad as string)).toBe(false);
+      expect(isAllowedOllamaBase(bad as string)).toBe(false);
     }
+  });
+});
+
+describe('parseOllamaEndpoint — 利用者入力の正規化', () => {
+  it('空文字は既定のループバック', () => {
+    expect(parseOllamaEndpoint('')).toBe('http://127.0.0.1:11434');
+    expect(parseOllamaEndpoint('   ')).toBe('http://127.0.0.1:11434');
+  });
+
+  it('数字のみはループバックのポート指定', () => {
+    expect(parseOllamaEndpoint('11434')).toBe('http://127.0.0.1:11434');
+    expect(parseOllamaEndpoint(' 8080 ')).toBe('http://127.0.0.1:8080');
+  });
+
+  it('スキーム省略は http を補い、ポート省略は 11434 を補う', () => {
+    expect(parseOllamaEndpoint('192.168.1.10', '192.168.1.10')).toBe('http://192.168.1.10:11434');
+    expect(parseOllamaEndpoint('192.168.1.10:11500', '192.168.1.10')).toBe(
+      'http://192.168.1.10:11500',
+    );
+  });
+
+  it('https はポートを補わない (トンネルは 443)', () => {
+    expect(parseOllamaEndpoint('https://abc.trycloudflare.com')).toBe(
+      'https://abc.trycloudflare.com',
+    );
+  });
+
+  it('許可外の接続先は null', () => {
+    expect(parseOllamaEndpoint('http://192.168.1.99:11434', '192.168.1.10')).toBeNull();
+    expect(parseOllamaEndpoint('0x2b')).toBeNull();
+    expect(parseOllamaEndpoint('70000')).toBeNull();
+    expect(parseOllamaEndpoint('file:///etc/passwd')).toBeNull();
   });
 });
 
@@ -111,8 +158,18 @@ describe('buildOllamaUrl — 読み取り 3 エンドポイント以外は組み
     }
   });
 
-  it('非ループバック base では許可パスでも null', () => {
+  it('許可外 base では許可パスでも null', () => {
     expect(buildOllamaUrl('http://evil.com', '/api/tags')).toBeNull();
+    expect(buildOllamaUrl('http://192.168.1.99:11434', '/api/tags', '192.168.1.10')).toBeNull();
+  });
+
+  it('ページと同じホスト / https では組み立てる', () => {
+    expect(buildOllamaUrl('http://192.168.1.10:11434', '/api/tags', '192.168.1.10')).toBe(
+      'http://192.168.1.10:11434/api/tags',
+    );
+    expect(buildOllamaUrl('https://abc.trycloudflare.com', '/api/chat')).toBe(
+      'https://abc.trycloudflare.com/api/chat',
+    );
   });
 
   it('OLLAMA_READ_PATHS は読み取り 3 本のみ', () => {
