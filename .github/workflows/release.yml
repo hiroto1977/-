@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - 'v*'
+  # タグを push できない環境 (Claude Code のリモートセッションは指定ブランチ以外の
+  # ref を送れない) からもリリースを切れるように、手動起動を用意する。
+  # tag_name を渡すと softprops/action-gh-release が起動時の SHA にタグを作る。
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag (e.g. v0.1.0)'
+        required: true
 
 permissions:
   contents: write  # required for softprops/action-gh-release
@@ -56,6 +64,9 @@ jobs:
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          # タグ push なら ref_name がタグ。手動起動なら入力値を使い、タグが
+          # 無ければこのランの SHA に新規作成される。
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
           files: ${{ matrix.artifact_glob }}
           fail_on_unmatched_files: false
           generate_release_notes: true
