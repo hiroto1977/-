@@ -2,6 +2,10 @@
   "name": "service-hub-desktop",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "AMITARIS",
+    "email": "onceinlifetime2015@gmail.com"
+  },
   "description": "Desktop dashboard skeleton for GitHub, WordPress.com, Atlassian, Notion, Google Drive, Calendar, Gmail, Slack, and Canva.",
   "main": "dist-electron/main.js",
   "scripts": {

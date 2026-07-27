@@ -22,6 +22,12 @@ import { DEFAULT_SETUP_MODEL } from '../ollama';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const SCRIPT = path.join(ROOT, 'scripts', 'ollama-setup.sh');
 
+// bash スクリプトを実プロセスで走らせ、偽 `ollama` の PATH 差し込みなど POSIX の
+// プロセス制御に依存する。Windows (Git Bash) では PATH 区切りや子プロセスの挙動が
+// 異なり検証にならない (リリースビルドの Windows ジョブで実測: ハング/空出力) ため
+// POSIX でのみ実行する。
+const describePosix = describe.skipIf(process.platform === 'win32');
+
 let port = 0;
 let server: Server;
 /** /api/tags が返すモデル。テストごとに差し替えて「モデル無し」を再現する。 */
@@ -120,7 +126,7 @@ function run(
   });
 }
 
-describe('ollama-setup.sh — 既に整っている場合', () => {
+describePosix('ollama-setup.sh — 既に整っている場合', () => {
   it('何も変更せず、1 往復して「使える状態」と報告する', async () => {
     const r = await run(['--no-install', '--port', String(port)]);
     expect(r.code).toBe(0);
@@ -138,7 +144,7 @@ describe('ollama-setup.sh — 既に整っている場合', () => {
   });
 });
 
-describe('ollama-setup.sh — 足りないものだけを埋める', () => {
+describePosix('ollama-setup.sh — 足りないものだけを埋める', () => {
   it('モデルが無ければ pull する', async () => {
     installed = [];
     const r = await run(['--no-install', '--port', String(port)]);
@@ -164,7 +170,7 @@ describe('ollama-setup.sh — 足りないものだけを埋める', () => {
   });
 });
 
-describe('ollama-setup.sh — 失敗を隠さない', () => {
+describePosix('ollama-setup.sh — 失敗を隠さない', () => {
   it('生成が失敗したら成功と言わない (エラー封筒を検出する)', async () => {
     chatFails = true;
     const r = await run(['--no-install', '--port', String(port)]);
@@ -205,7 +211,7 @@ describe('ollama-setup.sh — 失敗を隠さない', () => {
   });
 });
 
-describe('ollama-setup.sh — 設定の重複を防ぐ', () => {
+describePosix('ollama-setup.sh — 設定の重複を防ぐ', () => {
   it('既定モデルが shared の DEFAULT_SETUP_MODEL と一致している', () => {
     // スクリプトは TS を読めないので値を持たざるを得ない。ズレると
     // 「UI が案内したモデルと、スクリプトが入れるモデルが違う」事故になる。

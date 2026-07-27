@@ -7,8 +7,12 @@ import { exportRoot, isSafeExportPath } from '../exportPaths';
 // guard accepted anything under $HOME, giving a compromised renderer an
 // arbitrary-write primitive across the home tree (and a file to plant for
 // app:openPath to launch).
-const HOME = '/home/user';
-const ROOT = '/home/user/.local/business-hub';
+// Fixtures are written POSIX-style; `path.resolve` maps them onto the host's
+// root (a drive letter on Windows), so the same assertions hold on every OS
+// the release build runs on.
+const abs = (p: string): string => path.resolve(p);
+const HOME = abs('/home/user');
+const ROOT = path.join(HOME, '.local', 'business-hub');
 const inRoot = (rel: string): string => path.join(ROOT, rel);
 
 describe('exportRoot', () => {
@@ -29,16 +33,16 @@ describe('isSafeExportPath', () => {
   });
 
   it('rejects paths elsewhere under $HOME (the capability this closes)', () => {
-    expect(isSafeExportPath('/home/user/x.html', HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/user/.config/autostart/evil.html', HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/user/.local/other/x.html', HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/user/Documents/notes.md', HOME, '.md')).toBe(false);
+    expect(isSafeExportPath(abs('/home/user/x.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(abs('/home/user/.config/autostart/evil.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(abs('/home/user/.local/other/x.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(abs('/home/user/Documents/notes.md'), HOME, '.md')).toBe(false);
   });
 
   it('rejects paths outside $HOME, including traversal out of the root', () => {
-    expect(isSafeExportPath('/etc/passwd.html', HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(abs('/etc/passwd.html'), HOME, '.html')).toBe(false);
     expect(isSafeExportPath(inRoot('../../../etc/x.html'), HOME, '.html')).toBe(false);
-    expect(isSafeExportPath('/home/other/.local/business-hub/x.html', HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(abs('/home/other/.local/business-hub/x.html'), HOME, '.html')).toBe(false);
   });
 
   it('rejects the export root itself (it is a directory, never a target)', () => {
@@ -63,6 +67,6 @@ describe('isSafeExportPath', () => {
   it('is not fooled by a sibling directory sharing the root prefix', () => {
     // `/home/user/.local/business-hub-evil/x.html` starts with the root string
     // but is a different directory — the separator check must catch it.
-    expect(isSafeExportPath('/home/user/.local/business-hub-evil/x.html', HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(abs('/home/user/.local/business-hub-evil/x.html'), HOME, '.html')).toBe(false);
   });
 });
