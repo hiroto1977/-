@@ -7,7 +7,12 @@ import {
   buildLoopbackBase,
   buildOllamaUrl,
   buildWarnings,
+  classifyOllamaError,
   compareVersions,
+  describeOllamaError,
+  extractMissingModel,
+  extractOllamaError,
+  suggestInstalledModel,
   isAllowedOllamaBase,
   parseOllamaEndpoint,
   isSafeModelName,
@@ -304,5 +309,215 @@ describe('buildWarnings', () => {
 
   it('バージョン不明 (空文字) では更新警告を出さない (誤警告を避ける)', () => {
     expect(buildWarnings('')).toEqual([UNPATCHED_OOB_NOTICE]);
+  });
+});
+
+/*
+ * 実 Ollama のエラー応答の解釈。
+ *
+ * この環境には本物の Ollama を入れられない (公式配布も GitHub releases も
+ * プロキシが遮断する) ため、**本物が返す文字列そのもの**を固定値としてここに
+ * 置き、スタブと実物の差が入り込む余地を潰す。文言は Ollama の server/routes.go
+ * および llm/server.go が実際に返すものに合わせている。
+ */
+describe('extractOllamaError', () => {
+  it('{"error": "…"} の封筒から本文を取り出す', () => {
+    expect(extractOllamaError({ error: 'model "x" not found, try pulling it first' })).toBe(
+      'model "x" not found, try pulling it first',
+    );
+  });
+
+  it('入れ子の {"error": {"message": "…"}} も読む', () => {
+    expect(extractOllamaError({ error: { message: 'boom' } })).toBe('boom');
+  });
+
+  it('JSON として読めたのに error が無ければ空 (本文を垂れ流さない)', () => {
+    expect(extractOllamaError({ ok: true }, '{"ok":true}')).toBe('');
+    expect(extractOllamaError({}, '{}')).toBe('');
+  });
+
+  it('JSON でない本文はそのまま返す (Ollama が素の文字列を返す経路)', () => {
+    expect(extractOllamaError(null, '  Forbidden  ')).toBe('Forbidden');
+    expect(extractOllamaError(null, '404 page not found')).toBe('404 page not found');
+  });
+
+  it('空白のみ・空文字は空', () => {
+    expect(extractOllamaError(null, '   ')).toBe('');
+    expect(extractOllamaError(null)).toBe('');
+    expect(extractOllamaError({ error: '   ' }, '')).toBe('');
+  });
+
+  it('長大な本文は 300 文字で切る', () => {
+    expect(extractOllamaError(null, 'x'.repeat(5000))).toHaveLength(300);
+  });
+});
+
+describe('classifyOllamaError', () => {
+  it('未取得モデル', () => {
+    expect(
+      classifyOllamaError(404, 'model "mistral" not found, try pulling it first'),
+    ).toBe('model-not-found');
+    expect(classifyOllamaError(400, 'no such model')).toBe('model-not-found');
+  });
+
+  it('メモリ不足', () => {
+    expect(
+      classifyOllamaError(500, 'model requires more system memory (37.9 GiB) than is available (14.2 GiB)'),
+    ).toBe('out-of-memory');
+  });
+
+  it('推論プロセスの異常終了', () => {
+    expect(classifyOllamaError(500, 'llama runner process has terminated: exit status 2')).toBe(
+      'runner-failed',
+    );
+    expect(classifyOllamaError(500, 'error loading model: unable to allocate backend buffer')).toBe(
+      'runner-failed',
+    );
+  });
+
+  it('403 は接続元の拒否 (OLLAMA_ORIGINS 未設定)', () => {
+    expect(classifyOllamaError(403, 'Forbidden')).toBe('forbidden-origin');
+  });
+
+  it('本文なしの 404 はエンドポイント不在 (古い Ollama)', () => {
+    expect(classifyOllamaError(404, '')).toBe('no-such-endpoint');
+  });
+
+  it('分類できないものは unknown', () => {
+    expect(classifyOllamaError(500, 'something odd')).toBe('unknown');
+    expect(classifyOllamaError(502, '')).toBe('unknown');
+  });
+
+  it('大文字小文字は問わない', () => {
+    expect(classifyOllamaError(500, 'MODEL "X" NOT FOUND')).toBe('model-not-found');
+  });
+});
+
+describe('extractMissingModel', () => {
+  it('二重引用符・単引用符のどちらでも取り出す', () => {
+    expect(extractMissingModel('model "llama3.2:latest" not found, try pulling it first')).toBe(
+      'llama3.2:latest',
+    );
+    expect(extractMissingModel("model 'mistral' not found")).toBe('mistral');
+  });
+
+  it('引用符なしでも取り出す', () => {
+    expect(extractMissingModel('model qwen2.5 not found')).toBe('qwen2.5');
+  });
+
+  it('モデル名として不正なものは返さない (そのまま画面に出さない)', () => {
+    expect(extractMissingModel('model "../../etc/passwd" not found')).toBe('');
+    expect(extractMissingModel('nothing here')).toBe('');
+    expect(extractMissingModel('')).toBe('');
+  });
+});
+
+describe('suggestInstalledModel', () => {
+  it('タグ違いを補う (llama3.2 → llama3.2:latest)', () => {
+    expect(suggestInstalledModel('llama3.2', ['llama3.2:latest', 'mistral:7b'])).toBe(
+      'llama3.2:latest',
+    );
+  });
+
+  it('タグが違うだけの別バージョンも拾う (mistral → mistral:7b)', () => {
+    expect(suggestInstalledModel('mistral', ['mistral:7b'])).toBe('mistral:7b');
+  });
+
+  it('完全一致しているなら提案しない', () => {
+    expect(suggestInstalledModel('llama3.2:latest', ['llama3.2:latest'])).toBe('');
+    expect(suggestInstalledModel('LLaMA3.2:latest', ['llama3.2:latest'])).toBe('');
+  });
+
+  it('候補が無ければ空', () => {
+    expect(suggestInstalledModel('gemma2', ['llama3.2:latest'])).toBe('');
+    expect(suggestInstalledModel('gemma2', [])).toBe('');
+    expect(suggestInstalledModel('', ['llama3.2:latest'])).toBe('');
+  });
+});
+
+describe('describeOllamaError', () => {
+  it('未取得モデル: pull コマンドと現在のモデル一覧を案内する', () => {
+    const a = describeOllamaError(404, 'model "mistral" not found, try pulling it first', {
+      model: 'mistral',
+      installed: ['llama3.2:latest'],
+    });
+    expect(a.kind).toBe('model-not-found');
+    expect(a.message).toContain('mistral');
+    expect(a.hints.some((h) => h.includes('ollama pull mistral'))).toBe(true);
+    expect(a.hints.some((h) => h.includes('llama3.2:latest'))).toBe(true);
+  });
+
+  it('未取得モデル: 近いモデルがあれば最初に提案する (pull より手軽なので)', () => {
+    const a = describeOllamaError(404, 'model "llama3.2" not found, try pulling it first', {
+      model: 'llama3.2',
+      installed: ['llama3.2:latest'],
+    });
+    expect(a.hints[0]).toContain('llama3.2:latest');
+  });
+
+  it('未取得モデル: モデルが 1 つも無ければ、その旨と最初の 1 つを案内する', () => {
+    const a = describeOllamaError(404, 'model "x" not found', { model: 'x', installed: [] });
+    expect(a.hints.some((h) => h.includes('1 つもモデルがありません'))).toBe(true);
+  });
+
+  it('未取得モデル: model 未指定でもエラー文からモデル名を復元する', () => {
+    const a = describeOllamaError(404, 'model "qwen2.5:0.5b" not found, try pulling it first');
+    expect(a.message).toContain('qwen2.5:0.5b');
+  });
+
+  it('メモリ不足: pull を勧めず、小さいモデルへ誘導する', () => {
+    const a = describeOllamaError(
+      500,
+      'model requires more system memory (37.9 GiB) than is available (14.2 GiB)',
+      { model: 'llama3.1:70b' },
+    );
+    expect(a.kind).toBe('out-of-memory');
+    expect(a.hints.join(' ')).not.toContain('ollama pull llama3.1:70b');
+    expect(a.hints.join(' ')).toContain('小さいモデル');
+  });
+
+  it('推論プロセス異常: 対象モデル名を再取得コマンドに埋める', () => {
+    const a = describeOllamaError(500, 'llama runner process has terminated: exit status 2', {
+      model: 'broken:latest',
+    });
+    expect(a.kind).toBe('runner-failed');
+    expect(a.hints[0]).toContain('broken:latest');
+  });
+
+  it('403: OLLAMA_ORIGINS の設定へ誘導する', () => {
+    const a = describeOllamaError(403, 'Forbidden');
+    expect(a.kind).toBe('forbidden-origin');
+    expect(a.hints[0]).toContain('OLLAMA_ORIGINS');
+  });
+
+  it('本文なし 404: 古いバージョンの可能性を示す', () => {
+    const a = describeOllamaError(404, '');
+    expect(a.kind).toBe('no-such-endpoint');
+    expect(a.message).toContain('404');
+    expect(a.hints.join(' ')).toContain('ollama --version');
+  });
+
+  it('未知のエラーはステータスと生の本文を落とさず伝える', () => {
+    const a = describeOllamaError(503, 'upstream unavailable');
+    expect(a.kind).toBe('unknown');
+    expect(a.message).toContain('503');
+    expect(a.hints).toContain('upstream unavailable');
+    expect(a.detail).toBe('upstream unavailable');
+  });
+
+  it('どの種類でも message は非空で、detail を保持する', () => {
+    const cases: [number, string][] = [
+      [404, 'model "x" not found'],
+      [500, 'model requires more system memory (1 GiB) than is available (0 GiB)'],
+      [500, 'llama runner process has terminated'],
+      [403, 'Forbidden'],
+      [404, ''],
+      [500, 'mystery'],
+    ];
+    for (const [status, detail] of cases) {
+      const a = describeOllamaError(status, detail);
+      expect(a.message.length, `${status} ${detail}`).toBeGreaterThan(0);
+      expect(a.detail).toBe(detail);
+    }
   });
 });

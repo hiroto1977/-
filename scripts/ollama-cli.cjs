@@ -112,30 +112,78 @@ function unreachable(base, err) {
   process.exit(2);
 }
 
+/** インストール済みモデル名だけを引く (失敗しても案内を止めないので空配列を返す)。 */
+async function listModels(base) {
+  try {
+    const r = await fetchJson(shared.buildOllamaUrl(base, '/api/tags'), { cache: 'no-store' });
+    return r.ok ? shared.normalizeModels(r.json).map((m) => m.name) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** describeOllamaError の結果を人間向けに出す (JSON モードでは構造化して出す)。 */
+function reportError(advice, opts, exitCode = 1) {
+  if (opts.json) {
+    console.log(
+      JSON.stringify(
+        { ok: false, kind: advice.kind, message: advice.message, detail: advice.detail, hints: advice.hints },
+        null,
+        2,
+      ),
+    );
+  } else {
+    console.error(`❌ ${advice.message}`);
+    if (advice.hints.length > 0) {
+      console.error('');
+      for (const h of advice.hints) console.error(`  → ${h}`);
+    }
+    if (advice.detail !== '' && advice.kind !== 'unknown') {
+      console.error('');
+      console.error(`  (Ollama からの応答: ${advice.detail.slice(0, 200)})`);
+    }
+  }
+  process.exit(exitCode);
+}
+
 async function cmdStatus(base, opts) {
   const versionUrl = shared.buildOllamaUrl(base, '/api/version');
   let version = '';
+  // /api/version が読めなかったときの HTTP エラー。/api/tags が通れば「接続は
+  // できているがバージョンが読めない」だけなので、ここでは即終了しない。
+  let versionError = null;
   try {
     const r = await fetchJson(versionUrl, { cache: 'no-store' });
-    if (!r.ok) {
-      console.error(`❌ Ollama が HTTP ${r.status} を返しました`);
-      process.exit(1);
+    if (r.ok) {
+      version = typeof r.json?.version === 'string' ? r.json.version : '';
+    } else {
+      versionError = shared.describeOllamaError(r.status, shared.extractOllamaError(r.json, r.text));
     }
-    version = typeof r.json?.version === 'string' ? r.json.version : '';
   } catch (err) {
     unreachable(base, err);
   }
 
   let models = [];
+  let tagsOk = false;
   try {
     const r = await fetchJson(shared.buildOllamaUrl(base, '/api/tags'), { cache: 'no-store' });
-    if (r.ok) models = shared.normalizeModels(r.json);
+    if (r.ok) {
+      models = shared.normalizeModels(r.json);
+      tagsOk = true;
+    } else if (versionError === null) {
+      versionError = shared.describeOllamaError(r.status, shared.extractOllamaError(r.json, r.text));
+    }
   } catch {
     /* モデル一覧のみ失敗 — 接続自体は成功している */
   }
 
+  // /api/version が無いのは古い Ollama によくある (0.1.14 未満)。モデル一覧が
+  // 読めているならサーバは生きているので、バージョン不明として接続成功にする。
+  if (versionError !== null && !tagsOk) reportError(versionError, opts);
+
   const warnings = shared.buildWarnings(version);
   const versionSafe = shared.isVersionSafe(version);
+  const versionUnknown = version === '';
 
   if (opts.json) {
     console.log(
@@ -151,7 +199,9 @@ async function cmdStatus(base, opts) {
   console.log(`✅ ${base} に接続しました`);
   console.log(
     `   バージョン: ${version || '(不明)'} ${
-      versionSafe ? '' : `⚠ 推奨 ${shared.MIN_SAFE_VERSION} 未満`
+      // バージョン不明は「古い」とは限らない (/api/version が無い古い版か、
+      // 前段のプロキシが返さないだけ)。断定を避けて注記だけ出す。
+      versionUnknown ? '— /api/version が読めませんでした' : versionSafe ? '' : `⚠ 推奨 ${shared.MIN_SAFE_VERSION} 未満`
     }`,
   );
   console.log('');
@@ -203,8 +253,20 @@ async function cmdChat(base, opts) {
     unreachable(base, err);
   }
   if (!r.ok) {
-    console.error(`❌ Ollama が HTTP ${r.status} を返しました: ${r.text.slice(0, 300)}`);
-    process.exit(1);
+    // 実運用でいちばん多いのは「まだ pull していないモデルを指定した」ケース。
+    // その場合だけ /api/tags を引いて、実際にあるモデルを一緒に出す
+    // (生の英語エラーだけ出しても、次に何をすればいいか分からないため)。
+    const detail = shared.extractOllamaError(r.json, r.text);
+    let installed = [];
+    if (shared.classifyOllamaError(r.status, detail) === 'model-not-found') {
+      installed = await listModels(base);
+    }
+    reportError(shared.describeOllamaError(r.status, detail, { model, installed }), opts);
+  }
+  // Ollama は HTTP 200 でも本文に error を載せて返すことがある (ストリーム無効時)。
+  const inlineError = shared.extractOllamaError(r.json, '');
+  if (inlineError !== '') {
+    reportError(shared.describeOllamaError(200, inlineError, { model }), opts);
   }
   const reply = typeof r.json?.message?.content === 'string' ? r.json.message.content.trim() : '';
   const ms = Date.now() - started;

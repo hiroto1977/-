@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { originsSetupSteps, probeOllama } from '../ollamaWeb';
+import { chatOllama, originsSetupSteps, probeOllama } from '../ollamaWeb';
 import { MIN_SAFE_VERSION } from '../../../shared/ollama';
 
 /*
@@ -150,6 +150,45 @@ describe('probeOllama — 失敗理由の切り分け', () => {
     expect(r.message).toContain('500');
   });
 
+  it('/api/version が無い古い Ollama でも、/api/tags が読めれば接続成功にする', async () => {
+    // 0.1.14 未満には /api/version が無く、gin が 404 を返す。ここで打ち切ると
+    // 「動いているのに使えない」と誤診してしまう。
+    const f = vi.fn(async (url: string | URL | Request) =>
+      String(url).endsWith('/api/version')
+        ? new Response('404 page not found', { status: 404 })
+        : json({ models: [] }),
+    ) as unknown as typeof fetch;
+    const r = await probeOllama(11434, f, '');
+    expect(r.status).toBe('ok');
+    expect(r.snapshot.running).toBe(true);
+    expect(r.snapshot.version).toBe('');
+    expect(r.message).toContain('バージョン不明');
+  });
+
+  it('/api/version も /api/tags も 404 なら error (Ollama ではない何かが応答している)', async () => {
+    const f = vi.fn(async () => new Response('404 page not found', { status: 404 })) as unknown as typeof fetch;
+    const r = await probeOllama(11434, f, '');
+    expect(r.status).toBe('error');
+    expect(r.message).toContain('404');
+    expect(r.snapshot.running).toBe(false);
+  });
+
+  it('403 は cors-blocked として扱う (直し方が OLLAMA_ORIGINS 設定で同じため)', async () => {
+    const f = vi.fn(async () => new Response('Forbidden', { status: 403 })) as unknown as typeof fetch;
+    const r = await probeOllama(11434, f, '');
+    expect(r.status).toBe('cors-blocked');
+    expect(r.message).toContain('OLLAMA_ORIGINS');
+  });
+
+  it('エラー封筒の内容を説明に反映する (生の英語だけで終わらせない)', async () => {
+    const f = vi.fn(async () =>
+      json({ error: 'model requires more system memory (37.9 GiB) than is available (14.2 GiB)' }, 500),
+    ) as unknown as typeof fetch;
+    const r = await probeOllama(11434, f, '');
+    expect(r.status).toBe('error');
+    expect(r.message).toContain('空きメモリに載りません');
+  });
+
   it('許可外の接続先は接続を試みずに bad-endpoint', async () => {
     const f = vi.fn() as unknown as typeof fetch;
     for (const bad of ['0', '70000', 'abc', '0x2b', 'file:///etc/passwd']) {
@@ -199,5 +238,149 @@ describe('originsSetupSteps', () => {
         expect(s.command).not.toContain('null');
       }
     }
+  });
+});
+
+/*
+ * chatOllama — ブラウザ版の送信経路。
+ *
+ * ここが無いと「画面にチャット欄はあるのに送信だけ動かない」状態になる。
+ * Electron 版 (main/clients/ollama.ts) と同じ制約が効いていること、そして
+ * 実 Ollama のエラー応答を「次の一手」まで翻訳できることを固定する。
+ */
+describe('chatOllama — 送信', () => {
+  /** 実 Ollama と同じ形で応答するスタブ。未取得モデルは 404 + エラー封筒。 */
+  function chatServer(installed: string[] = ['llama3.2:latest']): typeof fetch {
+    return vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) {
+        return json({ models: installed.map((name) => ({ name, size: 1024 ** 3 })) });
+      }
+      if (!u.endsWith('/api/chat')) throw new Error(`unexpected url: ${u}`);
+      const body = JSON.parse(String(init?.body ?? '{}')) as {
+        model?: string;
+        messages?: { role: string; content: string }[];
+        stream?: boolean;
+      };
+      if (!installed.includes(body.model ?? '')) {
+        return json({ error: `model "${body.model}" not found, try pulling it first` }, 404);
+      }
+      return json({
+        message: { role: 'assistant', content: `echo:${body.messages?.at(-1)?.content ?? ''}` },
+      });
+    }) as unknown as typeof fetch;
+  }
+
+  it('応答本文を返す', async () => {
+    const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'やあ' }, chatServer(), '');
+    expect(r.ok).toBe(true);
+    expect(r.ok && r.reply).toBe('echo:やあ');
+    expect(r.ok && typeof r.durationMs).toBe('number');
+  });
+
+  it('stream:false で送る (逐次応答は未対応 — 部分応答を確定扱いしないため)', async () => {
+    const f = chatServer();
+    await chatOllama({ model: 'llama3.2:latest', prompt: 'x' }, f, '');
+    const call = (f as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls.at(-1);
+    const sent = JSON.parse(String(call?.[1].body ?? '{}')) as { stream?: boolean };
+    expect(sent.stream).toBe(false);
+    expect(call?.[1].method).toBe('POST');
+  });
+
+  it('system プロンプトを先頭メッセージとして送る', async () => {
+    const f = chatServer();
+    await chatOllama({ model: 'llama3.2:latest', prompt: '本文', system: '要約器' }, f, '');
+    const call = (f as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls.at(-1);
+    const sent = JSON.parse(String(call?.[1].body ?? '{}')) as {
+      messages: { role: string; content: string }[];
+    };
+    expect(sent.messages[0]).toEqual({ role: 'system', content: '要約器' });
+    expect(sent.messages[1]).toEqual({ role: 'user', content: '本文' });
+  });
+
+  it('未取得モデルは pull コマンドと実際にあるモデルを案内する', async () => {
+    const r = await chatOllama({ model: 'mistral', prompt: 'やあ' }, chatServer(), '');
+    expect(r.ok).toBe(false);
+    expect(!r.ok && r.kind).toBe('model-not-found');
+    expect(!r.ok && r.message).toContain('ollama pull mistral');
+    expect(!r.ok && r.message).toContain('llama3.2:latest');
+  });
+
+  it('モデル名の検証は送信前に行う (不正なら 1 本もリクエストを出さない)', async () => {
+    const f = vi.fn() as unknown as typeof fetch;
+    for (const bad of ['../../etc/passwd', 'http://x/y', 'model name', '']) {
+      const r = await chatOllama({ model: bad, prompt: 'x' }, f, '');
+      expect(r.ok, bad).toBe(false);
+      expect(!r.ok && r.kind).toBe('bad-model');
+    }
+    expect(f).not.toHaveBeenCalled();
+  });
+
+  it('空のプロンプト・NUL 入りは送信しない', async () => {
+    const f = vi.fn() as unknown as typeof fetch;
+    const empty = await chatOllama({ model: 'llama3.2:latest', prompt: '  ' }, f, '');
+    expect(!empty.ok && empty.kind).toBe('empty-prompt');
+    const nul = await chatOllama({ model: 'llama3.2:latest', prompt: 'a\0b' }, f, '');
+    expect(!nul.ok && nul.kind).toBe('bad-input');
+    expect(f).not.toHaveBeenCalled();
+  });
+
+  it('許可外の接続先へは送らない', async () => {
+    const f = vi.fn() as unknown as typeof fetch;
+    const r = await chatOllama(
+      { model: 'llama3.2:latest', prompt: 'x', endpoint: 'http://192.168.1.99:11434' },
+      f,
+      '192.168.1.10',
+    );
+    expect(!r.ok && r.kind).toBe('bad-endpoint');
+    expect(f).not.toHaveBeenCalled();
+  });
+
+  it('叩くのは /api/chat と /api/tags だけ (書き込み系を呼ばない)', async () => {
+    const f = chatServer();
+    await chatOllama({ model: 'mistral', prompt: 'x' }, f, ''); // 404 → tags も引く経路
+    const urls = (f as unknown as { mock: { calls: [string][] } }).mock.calls.map((c) => String(c[0]));
+    expect(urls.length).toBeGreaterThan(1);
+    for (const u of urls) expect(u).toMatch(/\/api\/(chat|tags)$/);
+  });
+
+  it('到達不能と CORS 拒否を取り違えない', async () => {
+    const down = await chatOllama({ model: 'llama3.2:latest', prompt: 'x' }, unreachableFetch(), '');
+    expect(!down.ok && down.kind).toBe('not-running');
+    const blocked = await chatOllama(
+      { model: 'llama3.2:latest', prompt: 'x' },
+      corsBlockedFetch(),
+      '',
+    );
+    expect(!blocked.ok && blocked.kind).toBe('cors-blocked');
+    expect(!blocked.ok && blocked.message).toContain('OLLAMA_ORIGINS');
+  });
+
+  it('HTTP 200 でも本文にエラーが載っていれば失敗として扱う', async () => {
+    const f = vi.fn(async () =>
+      json({ error: 'model requires more system memory (37.9 GiB) than is available (14.2 GiB)' }),
+    ) as unknown as typeof fetch;
+    const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'x' }, f, '');
+    expect(r.ok).toBe(false);
+    expect(!r.ok && r.kind).toBe('out-of-memory');
+  });
+
+  it('JSON でない応答は bad-response', async () => {
+    const f = vi.fn(async () => new Response('not json', { status: 200 })) as unknown as typeof fetch;
+    const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'x' }, f, '');
+    expect(!r.ok && r.kind).toBe('bad-response');
+  });
+
+  it('https トンネル経由でも送れる', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      expect(String(url)).toBe('https://abc.trycloudflare.com/api/chat');
+      return json({ message: { role: 'assistant', content: 'ok' } });
+    }) as unknown as typeof fetch;
+    const r = await chatOllama(
+      { model: 'llama3.2:latest', prompt: 'x', endpoint: 'https://abc.trycloudflare.com' },
+      f,
+      'hiroto1977.github.io',
+    );
+    expect(r.ok && r.reply).toBe('ok');
   });
 });

@@ -22,6 +22,51 @@ let server: Server;
 /** CLI が叩いた URL を記録して、書き込み系を呼んでいないことを検証する。 */
 const hits: string[] = [];
 
+/**
+ * インストール済みモデル。実 Ollama と同じく **タグ付き** で持つ
+ * (`llama3.2` と入力しても実体は `llama3.2:latest` — この食い違いが実運用で
+ * 最初に踏む壁なので、スタブ側も同じ形にしておく)。
+ */
+const INSTALLED = ['llama3.2:latest'];
+
+/**
+ * 実 Ollama のエラー封筒を再現する。本物は失敗時に
+ * `HTTP 404 {"error":"model \"x\" not found, try pulling it first"}` を返し、
+ * メモリ不足なら `HTTP 500 {"error":"model requires more system memory ..."}`。
+ * ここを 200/簡易メッセージで済ませると、スタブでだけ通るコードになる。
+ */
+function chatResponse(body: string): { status: number; json: unknown } {
+  const parsed = JSON.parse(body || '{}') as {
+    model?: string;
+    messages?: { role: string; content: string }[];
+  };
+  const model = parsed.model ?? '';
+  if (model === 'huge-model:70b') {
+    return {
+      status: 500,
+      json: { error: 'model requires more system memory (37.9 GiB) than is available (14.2 GiB)' },
+    };
+  }
+  if (model === 'broken:latest') {
+    return { status: 500, json: { error: 'llama runner process has terminated: exit status 2' } };
+  }
+  if (!INSTALLED.includes(model)) {
+    return { status: 404, json: { error: `model "${model}" not found, try pulling it first` } };
+  }
+  return {
+    status: 200,
+    json: {
+      message: {
+        role: 'assistant',
+        content: `echo:${model}:${parsed.messages?.at(-1)?.content ?? ''}`,
+      },
+    },
+  };
+}
+
+/** /api/version を持たない古い Ollama を再現するときに立てる。 */
+let hideVersion = false;
+
 beforeAll(async () => {
   server = createServer((req, res) => {
     hits.push(req.url ?? '');
@@ -29,6 +74,12 @@ beforeAll(async () => {
     req.on('data', (c) => (body += c));
     req.on('end', () => {
       if (req.url === '/api/version') {
+        if (hideVersion) {
+          // 0.1.14 未満には /api/version が無く、gin が 404 を返す。
+          res.writeHead(404, { 'content-type': 'text/plain' });
+          res.end('404 page not found');
+          return;
+        }
         res.writeHead(200, { 'content-type': 'application/json' });
         res.end(JSON.stringify({ version: '0.5.4' }));
         return;
@@ -37,32 +88,20 @@ beforeAll(async () => {
         res.writeHead(200, { 'content-type': 'application/json' });
         res.end(
           JSON.stringify({
-            models: [
-              {
-                name: 'llama3.2:latest',
-                size: 2 * 1024 ** 3,
-                modified_at: '2026-07-01T00:00:00Z',
-                details: { family: 'llama', parameter_size: '3B', quantization_level: 'Q4_K_M' },
-              },
-            ],
+            models: INSTALLED.map((name) => ({
+              name,
+              size: 2 * 1024 ** 3,
+              modified_at: '2026-07-01T00:00:00Z',
+              details: { family: 'llama', parameter_size: '3B', quantization_level: 'Q4_K_M' },
+            })),
           }),
         );
         return;
       }
       if (req.url === '/api/chat') {
-        const parsed = JSON.parse(body || '{}') as {
-          model?: string;
-          messages?: { role: string; content: string }[];
-        };
-        res.writeHead(200, { 'content-type': 'application/json' });
-        res.end(
-          JSON.stringify({
-            message: {
-              role: 'assistant',
-              content: `echo:${parsed.model}:${parsed.messages?.at(-1)?.content ?? ''}`,
-            },
-          }),
-        );
+        const { status, json } = chatResponse(body);
+        res.writeHead(status, { 'content-type': 'application/json' });
+        res.end(JSON.stringify(json));
         return;
       }
       res.writeHead(404);
@@ -158,6 +197,77 @@ describe('ollama CLI — チャット', () => {
     expect(parsed.model).toBe('llama3.2:latest');
     expect(parsed.reply).toContain('echo:');
     expect(typeof parsed.durationMs).toBe('number');
+  });
+});
+
+describe('ollama CLI — 実 Ollama のエラー応答', () => {
+  /*
+   * ここが「スタブでだけ動く」を防ぐ肝。実 Ollama は失敗を HTTP ステータス +
+   * {"error": "…"} の封筒で返す。その本文をそのまま出すのではなく、種類を
+   * 判定して次の一手まで案内できているかを固定する。
+   */
+
+  it('未取得のモデルは、pull コマンドと実際にあるモデルを案内する', async () => {
+    const r = await runCli(['--port', String(port), 'chat', 'mistral', 'やあ']);
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain('モデル「mistral」がまだ取得されていません');
+    expect(r.stderr).toContain('ollama pull mistral');
+    // 「今あるモデル」を出さないと、利用者は何を指定すればいいか分からない。
+    expect(r.stderr).toContain('llama3.2:latest');
+    // 生の英語エラーを唯一の説明にしない。
+    expect(r.stderr).not.toMatch(/^❌ Ollama が HTTP 404 を返しました: /m);
+  });
+
+  it('タグ違い (llama3.2 と llama3.2:latest) は近いモデルを提案する', async () => {
+    const r = await runCli(['--port', String(port), 'chat', 'llama3.2', 'やあ']);
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain('インストール済みの「llama3.2:latest」を指定すると動きます');
+  });
+
+  it('メモリ不足は「小さいモデルを試す」へ誘導する (pull を勧めない)', async () => {
+    const r = await runCli(['--port', String(port), 'chat', 'huge-model:70b', 'やあ']);
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain('空きメモリに載りません');
+    expect(r.stderr).toContain('より小さいモデル');
+    expect(r.stderr).not.toContain('ollama pull huge-model:70b');
+  });
+
+  it('推論プロセスの異常終了はモデル再取得と再起動を案内する', async () => {
+    const r = await runCli(['--port', String(port), 'chat', 'broken:latest', 'やあ']);
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain('推論プロセスが起動できませんでした');
+    expect(r.stderr).toContain('broken:latest');
+  });
+
+  it('--json ではエラーも構造化して返す (kind / hints つき)', async () => {
+    const r = await runCli(['--port', String(port), '--json', 'chat', 'mistral', 'やあ']);
+    expect(r.code).toBe(1);
+    const parsed = JSON.parse(r.stdout) as {
+      ok: boolean;
+      kind: string;
+      message: string;
+      detail: string;
+      hints: string[];
+    };
+    expect(parsed.ok).toBe(false);
+    expect(parsed.kind).toBe('model-not-found');
+    expect(parsed.detail).toContain('not found, try pulling it first');
+    expect(parsed.hints.some((h) => h.includes('ollama pull mistral'))).toBe(true);
+  });
+
+  it('/api/version が無い古い Ollama でも、モデル一覧が読めれば接続成功にする', async () => {
+    hideVersion = true;
+    try {
+      const r = await runCli(['--port', String(port)]);
+      expect(r.code).toBe(0);
+      expect(r.stdout).toContain('接続しました');
+      expect(r.stdout).toContain('(不明)');
+      expect(r.stdout).toContain('llama3.2:latest');
+      // バージョンが読めないだけで「脆弱」と断定しない。
+      expect(r.stdout).not.toContain('⚠ 推奨');
+    } finally {
+      hideVersion = false;
+    }
   });
 });
 
