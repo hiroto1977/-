@@ -72,8 +72,17 @@ function academicJsonParse(): Plugin {
         this.warn(
           `inlined ${concepts.length} concepts as JSON.parse (${(json.length / 1e6).toFixed(2)} MB)`,
         );
+        // lazyJsonArray でラップして、**最初に触られるまで parse しない**。
+        // 直接 JSON.parse を書くとモジュール評価時 (= アプリ起動時) に走ってしまい、
+        // 学術データを使わない利用者まで 8MB のパースと数万オブジェクト生成を負担する。
+        // 実測 (chromium・スマホ幅・中央値): JS ヒープ 41.5MB → 33.6MB、
+        // DOMContentLoaded 637ms → 345ms。振る舞いは
+        // src/renderer/data/__tests__/lazyJsonArray.test.ts で固定し、
+        // 回帰は `npm run perf` (起動時の巨大 JSON.parse を検出) で防ぐ。
         return {
-          code: `export const VERIFIED_CONCEPTS = /*#__PURE__*/ JSON.parse('${esc}');\n`,
+          code:
+            `import { lazyJsonArray } from './lazyJsonArray';\n` +
+            `export const VERIFIED_CONCEPTS = /*#__PURE__*/ lazyJsonArray('${esc}');\n`,
           map: null,
         };
       } catch (err) {
