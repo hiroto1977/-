@@ -64,9 +64,64 @@ const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
 export type OllamaProbeStatus =
   | 'ok' // 接続できてバージョン/モデルが読めた
   | 'cors-blocked' // 起動しているが OLLAMA_ORIGINS 未設定
+  | 'csp-blocked' // 配信元の CSP がローカルへの接続そのものを禁じている
   | 'not-running' // 到達できない (未起動 / ポート違い / 別端末に届いていない)
   | 'bad-endpoint' // 入力された接続先が不正 or 許可外
   | 'error'; // 応答はあったが読めなかった (想定外)
+
+/**
+ * **配信元の CSP がローカル接続を禁じているか**を見張る。
+ *
+ * claude.ai のアーティファクトのように `connect-src 'self'` で配信されている場合、
+ * fetch はサーバに届く前にブラウザが落とす。この失敗は「Ollama が起動していない」
+ * ときと **区別がつかない** —— 通常 fetch も no-cors も同じように失敗するため、
+ * 素直に判定すると `not-running` と誤診し、利用者を「Ollama を入れて起動する」
+ * という **絶対に解決しない作業** へ送り込んでしまう。
+ *
+ * `securitypolicyviolation` イベントは CSP がブロックしたときだけ発火し、
+ * blockedURI に対象が入る。これが出たなら原因は CSP だと確定できる。
+ */
+export interface CspWatcher {
+  /** CSP 違反が観測されたか。 */
+  hit: () => boolean;
+  /** 監視をやめる (必ず呼ぶ)。 */
+  stop: () => void;
+}
+
+/**
+ * 違反イベントは **タスク** として配送されるため、fetch の reject 直後
+ * (マイクロタスク連鎖の中) に読むとまだ届いていない。実ブラウザで
+ * 「CSP が塞いだのに not-running と誤診する」のを再現したので、
+ * 一度タスクキューへ譲ってから読む。
+ */
+const CSP_SETTLE_MS = 60;
+
+async function settledCspHit(csp: CspWatcher): Promise<boolean> {
+  if (csp.hit()) return true;
+  await new Promise((resolve) => setTimeout(resolve, CSP_SETTLE_MS));
+  return csp.hit();
+}
+
+export function createCspWatcher(url: string): CspWatcher {
+  if (typeof document === 'undefined') {
+    return { hit: () => false, stop: () => undefined };
+  }
+  let seen = false;
+  const onViolation = (event: Event) => {
+    const e = event as SecurityPolicyViolationEvent;
+    // connect-src 違反の blockedURI はオリジンまでに切り詰められることがあるため、
+    // 前方一致で照合する。ディレクティブ名だけでも判定材料にする。
+    const blocked = typeof e.blockedURI === 'string' ? e.blockedURI : '';
+    const directive = typeof e.violatedDirective === 'string' ? e.violatedDirective : '';
+    if (blocked !== '' && url.startsWith(blocked)) seen = true;
+    else if (directive.startsWith('connect-src')) seen = true;
+  };
+  document.addEventListener('securitypolicyviolation', onViolation);
+  return {
+    hit: () => seen,
+    stop: () => document.removeEventListener('securitypolicyviolation', onViolation),
+  };
+}
 
 export interface OllamaProbeResult {
   status: OllamaProbeStatus;
@@ -154,6 +209,7 @@ export async function probeOllama(
   endpoint: number | string = '',
   fetchFn: typeof fetch = fetch,
   pageHostname: string = typeof location !== 'undefined' ? location.hostname : '',
+  watchCsp: (url: string) => CspWatcher = createCspWatcher,
 ): Promise<OllamaProbeResult> {
   const base = parseOllamaEndpoint(String(endpoint), pageHostname);
   if (base === null) {
@@ -179,11 +235,28 @@ export async function probeOllama(
   }
 
   let versionRes: Response;
+  const csp = watchCsp(versionUrl);
   try {
     versionRes = await fetchWithTimeout(fetchFn, versionUrl, { cache: 'no-store' });
+    csp.stop();
   } catch {
     // 通常 fetch が失敗 → 到達性だけ no-cors で確かめて原因を切り分ける。
     const reachable = await reachableButOpaque(fetchFn, versionUrl);
+    // CSP でブロックされた場合、通常 fetch も no-cors も同じように失敗するため
+    // 「未起動」と見分けがつかない。違反イベントが出ていたらそちらを優先する
+    // (誤診したまま「Ollama を入れて起動」へ送ると、絶対に解決しない)。
+    const cspBlocked = await settledCspHit(csp);
+    csp.stop();
+    if (cspBlocked) {
+      return {
+        status: 'csp-blocked',
+        message:
+          'このページの配信元が CSP でローカルへの接続を禁止しているため、Ollama へ接続できません。' +
+          'Ollama の設定を変えても解決しません（ブラウザがリクエストを送る前に落としています）。' +
+          '下の「この配布形態では接続できません」を参照してください。',
+        snapshot: emptySnapshot(),
+      };
+    }
     return reachable
       ? {
           status: 'cors-blocked',
@@ -322,6 +395,7 @@ export async function chatOllama(
 
   const started = now();
   let res: Response;
+  const csp = createCspWatcher(url);
   try {
     res = await fetchWithTimeout(
       fetchFn,
@@ -333,9 +407,21 @@ export async function chatOllama(
       },
       CHAT_TIMEOUT_MS,
     );
+    csp.stop();
   } catch {
-    // 診断と同じ切り分け: 到達はしているのか、そもそも届いていないのか。
+    // 診断と同じ切り分け: 配信元の CSP か / 到達しているのか / 届いていないのか。
     const reachable = await reachableButOpaque(fetchFn, url);
+    const cspBlocked = await settledCspHit(csp);
+    csp.stop();
+    if (cspBlocked) {
+      return {
+        ok: false,
+        kind: 'csp-blocked',
+        message:
+          'このページの配信元が CSP でローカルへの接続を禁止しているため送信できません。' +
+          'Ollama 側の設定では解決しません。',
+      };
+    }
     return reachable
       ? {
           ok: false,

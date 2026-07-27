@@ -73,9 +73,15 @@ function ollamaStub(withCors){
     res.writeHead(404,h);res.end('nf');
   });
 }
+// アーティフ ァクト配信 (claude.ai) を再現するためのスイッチ。真にすると
+// connect-src 'self' を **HTTP ヘッダ** で送る。アプリ自身の meta CSP はループバックを
+// 許可しているが、2 つのポリシーは積で効くのでローカルへの fetch は落とされる。
+let RESTRICT_CSP=false;
 const appServer=http.createServer((req,res)=>{
   const p=path.join(DIR,'standalone.html');
-  res.writeHead(200,{'content-type':'text/html; charset=utf-8'});
+  const h={'content-type':'text/html; charset=utf-8'};
+  if(RESTRICT_CSP) h['content-security-policy']="connect-src 'self'";
+  res.writeHead(200,h);
   fs.createReadStream(p).pipe(res);
 });
 
@@ -209,6 +215,30 @@ async function unlockAndOpenOllama(page){
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,300));}
     await ctx.close();
   }
+
+  // --- ケース6: 配信元 CSP がローカル接続を禁じている (claude.ai アーティファクト相当) ---
+  // 通常 fetch も no-cors も同じように失敗するため、素直に判定すると「未起動」と
+  // 誤診し、利用者を絶対に解決しない作業へ送り込む。securitypolicyviolation で
+  // 確定できていることを実ブラウザで固定する。
+  const cspOllama=ollamaStub(true);
+  await new Promise(r=>cspOllama.listen(OLLAMA_PORT,'127.0.0.1',r));
+  RESTRICT_CSP=true;
+  {
+    const ctx=await browser.newContext(); const page=await ctx.newPage();
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
+    await unlockAndOpenOllama(page);
+    const body=await page.evaluate(()=>document.body.innerText);
+    const named=/この配布形態では接続できません/.test(body);
+    // Ollama 側をいじらせる案内を出していないこと (出せば必ず徒労になる)
+    const noFutileSteps=!/はじめて使う/.test(body) && !/ollama\.com\/download/.test(body);
+    const hasWayOut=/npm run ollama:setup/.test(body) && /localhost:8080/.test(body);
+    const ok=named&&noFutileSteps&&hasWayOut;
+    console.log(`${ok?'✅':'❌'} 配信元CSP遮断: 未起動と誤診せず、原因と代替経路を提示 (判定=${named} 徒労な手順を出さない=${noFutileSteps} 代替=${hasWayOut})`);
+    if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,500));}
+    await ctx.close();
+  }
+  RESTRICT_CSP=false;
+  await new Promise(r=>cspOllama.close(r));
 
   await browser.close(); appServer.close();
   console.log(fail? `\n${fail} 件失敗` : '\nALL OLLAMA CHECKS PASSED');

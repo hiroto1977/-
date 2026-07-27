@@ -279,6 +279,9 @@ function ConnectionSetup({
   // 「起動しているのに CORS で拒否された」時だけで、これは network/ollamaWeb.ts の
   // probe が返すメッセージから判定できる (Electron 版は main 経由なので CORS は起きない)。
   const corsBlocked = /CORS/.test(errorMessage ?? '');
+  // 配信元の CSP がローカル接続を禁じている場合、Ollama 側を何度直しても解決しない。
+  // ここを「未起動」と同じ案内にすると、絶対に終わらない作業へ送り込むことになる。
+  const cspBlocked = /CSP/.test(errorMessage ?? '');
   const origin = typeof location !== 'undefined' ? location.origin : '';
   const pageHostname = typeof location !== 'undefined' ? location.hostname : '';
   // 別端末から使うには、アプリ自身をその端末から見えるホストで配信する必要がある。
@@ -447,7 +450,65 @@ function ConnectionSetup({
         </div>
       </details>
 
-      {!running && (
+      {/* 配信元の CSP で塞がれている場合は、Ollama 側の手順を一切出さない。
+          原因がこちら側の配布形態にあるので、出せば必ず徒労になる。 */}
+      {cspBlocked && (
+        <div
+          style={{
+            border: '1px solid var(--warning)',
+            borderRadius: 8,
+            padding: 12,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}
+        >
+          <strong style={{ fontSize: 13, color: 'var(--warning)' }}>
+            この配布形態では接続できません
+          </strong>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
+            いまこのページを配信している場所が、<strong>ローカルへの接続そのものを禁止</strong>
+            しています（<code>connect-src</code>）。ブラウザがリクエストを送る前に落とすため、
+            <strong>Ollama をどう設定しても解決しません</strong>。
+            claude.ai のアーティファクトとして開いた場合がこれに当たります。
+            <br />
+            他の機能はそのまま使えます。Ollama だけは下のどれかで開いてください。
+          </p>
+          <ol
+            style={{
+              margin: 0,
+              paddingLeft: '1.4em',
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              lineHeight: 1.8,
+            }}
+          >
+            <li>
+              <strong>ターミナルから使う（設定ゼロ・いちばん確実）</strong>
+              <br />
+              <code>npm run ollama:setup</code> → <code>npm run ollama -- chat</code>。
+              ブラウザを通らないので CORS も CSP も発生しません。
+            </li>
+            <li>
+              <strong>アプリを localhost から開く（許可設定も不要）</strong>
+              <br />
+              <code>standalone.html</code> を置いたフォルダで{' '}
+              <code>python3 -m http.server 8080</code> を実行し、
+              <code>http://localhost:8080/standalone.html</code> を開きます。Ollama は
+              <strong>既定で localhost からの読み取りを許可している</strong>ため、
+              <code>OLLAMA_ORIGINS</code> の設定すら要りません。
+            </li>
+            <li>
+              <strong>デスクトップ版を使う</strong>
+              <br />
+              Electron 版は main プロセスから直接叩くため、ブラウザ由来の制約が
+              いっさい発生しません。
+            </li>
+          </ol>
+        </div>
+      )}
+
+      {!running && !cspBlocked && (
         <div
           style={{
             border: '1px solid var(--border)',
