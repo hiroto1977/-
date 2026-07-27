@@ -42,6 +42,7 @@
     "mutate": "stryker run",
     "mutate:next": "node scripts/suggest-next-kill.cjs",
     "mutate:triage": "node scripts/triage-mutations.cjs",
+    "ollama": "node scripts/ollama-cli.cjs",
     "orchestrate": "node scripts/orchestrate.cjs",
     "orchestrate:context": "node scripts/orchestrate-context.cjs",
     "orchestrate:dispatch": "node scripts/orchestrate.cjs dispatch",

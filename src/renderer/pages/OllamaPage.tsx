@@ -366,6 +366,32 @@ function ConnectionSetup({
           </p>
 
           <div>
+            <strong>いちばん確実: ターミナルから使う（ブラウザ不要）</strong>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
+              CORS も mixed content も「間にブラウザがいる」ことが原因なので、Node から
+              直接叩けば一つも起きません。リポジトリを持っている端末で:
+            </p>
+            <pre
+              style={{
+                margin: '4px 0 0',
+                padding: '8px 10px',
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                fontSize: 11.5,
+                overflowX: 'auto',
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {'npm run ollama                              # 状態とモデル一覧\nnpm run ollama -- chat llama3.2 "こんにちは"   # チャット'}
+            </pre>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
+              制約は画面版と同一（ループバック限定・読み取り3エンドポイントのみ）。
+              Ollama と同じマシンで実行してください。
+            </p>
+          </div>
+
+          <div>
             <strong>A. 同じ Wi-Fi で使う（追加ソフト不要）</strong>
             <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
               <li>

@@ -112,6 +112,8 @@ const FORBIDDEN_PATTERNS = [
     allowFile: (rel) =>
       rel === 'src/main/clients/ollama.ts' ||
       rel === 'src/shared/ollama.ts' ||
+      // CLI も「呼ばない API」を明記して利用者に伝える必要がある (--help に出る)。
+      rel === 'scripts/ollama-cli.cjs' ||
       rel.startsWith('src/renderer/'),
     rationale: 'invariants #7-#8 — these endpoints are CVE prone',
   },
