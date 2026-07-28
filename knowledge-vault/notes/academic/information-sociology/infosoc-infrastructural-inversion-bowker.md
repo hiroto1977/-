@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Bowker, G. C. & Star, S. L. (1999) Sorting Things Out: Classification and Its Consequences — MIT Press](https://doi.org/10.7551/mitpress/6352.001.0001) `学術`
-- [Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics — MIT Press](https://doi.org/10.1177/0306312706056047) `学術`
+- [Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics at Schlumberger, 1920-1940 — MIT Press (Inside Technology), ISBN 978-0-262-02367-2](https://mitpress.mit.edu/9780262023672/science-on-the-run/) `学術`
 - [Wikipedia: Information infrastructure — invisible systems and classification politics overview](https://en.wikipedia.org/wiki/Information_infrastructure) `リファレンス`
 
 ## 関連概念

@@ -23,10 +23,10 @@ tags:
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-defense-mechanisms|防衛機制]]（接続 25）
 - [[human-group-polarization|集団極性化]]（接続 25）
+- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 24）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
-- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 24）
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）
 
 ## 第 2 部 — 年代順の展開

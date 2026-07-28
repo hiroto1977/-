@@ -36,11 +36,8 @@ aliases:
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
-- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
-- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 出典を共有
+- [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]] — 同分野の近傍
+- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

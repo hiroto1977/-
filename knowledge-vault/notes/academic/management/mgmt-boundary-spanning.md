@@ -37,10 +37,6 @@ aliases:
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
 - [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
 - [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同分野の近傍
 
 ## 関連

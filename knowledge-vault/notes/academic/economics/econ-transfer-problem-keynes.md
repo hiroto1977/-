@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Keynes, J.M. (1929) The German Transfer Problem — Economic Journal 39(153)](https://doi.org/10.2307/2224211) `学術`
 - [Wikipedia: Transfer Problem — Keynes–Ohlin debate overview](https://en.wikipedia.org/wiki/Transfer_problem) `リファレンス`
-- [Samuelson, P. (1952) The Transfer Problem and Transport Costs — Economic Journal 62(246)](https://doi.org/10.2307/2296547) `学術`
+- [Samuelson, P. A. (1952) The Transfer Problem and Transport Costs: The Terms of Trade When Impediments Are Absent — Economic Journal 62(246), 278-304](https://doi.org/10.2307/2227005) `学術`
 
 ## 関連概念
 - [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — 語彙が近い

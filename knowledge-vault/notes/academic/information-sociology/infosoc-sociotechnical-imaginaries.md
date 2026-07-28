@@ -40,8 +40,8 @@ Sheila Jasanoff ／ Sang-Hyun Kim
 - [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
 - [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 出典を共有
 - [[mgmt-role-exit-theory|役割退出理論]] — 出典を共有
-- [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

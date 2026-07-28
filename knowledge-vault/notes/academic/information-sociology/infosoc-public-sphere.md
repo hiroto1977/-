@@ -36,11 +36,8 @@ aliases:
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
-- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同分野の近傍
+- [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

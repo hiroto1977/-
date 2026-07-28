@@ -33,13 +33,13 @@ Peter Galison（1997, Image and Logic — トレーディング・ゾーン概�
 - [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同じ思想家
 - [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — 同じ思想家
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
 - [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
-- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
 - [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
+- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
+- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
+- [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

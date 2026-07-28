@@ -40,8 +40,8 @@ aliases:
 - [[infosoc-technological-momentum|技術的モメンタム]] — 出典を共有
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
 - [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
-- [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

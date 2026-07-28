@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 出典を共有
-- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 出典を共有
 - [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 出典を共有
+- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 出典を共有
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — 同分野の近傍
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同分野の近傍

@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
 - [[infosoc-dataveillance-theory|データ監視理論]] — 出典を共有
+- [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
-- [[infosoc-technostress-theory|テクノストレス理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

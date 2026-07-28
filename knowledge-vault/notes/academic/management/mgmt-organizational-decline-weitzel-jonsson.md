@@ -26,7 +26,7 @@ aliases:
 ウィリアム・ウェイツェル ／ エレン・ジョンソン ／ ダニー・ミラー ／ バリー・スタウ
 
 ## 出典
-- [Weitzel, W. & Jonsson, E. (1989) Decline in Organizations — Academy of Management Review](https://doi.org/10.2307/258079) `学術`
+- [Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109](https://doi.org/10.2307/2392987) `学術`
 - [Wikipedia: Organizational decline — five stages, turnaround, Icarus paradox, escalation](https://en.wikipedia.org/wiki/Organizational_decline) `リファレンス`
 
 ## 関連概念

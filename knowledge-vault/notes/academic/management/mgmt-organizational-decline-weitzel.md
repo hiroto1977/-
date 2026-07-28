@@ -26,8 +26,8 @@ aliases:
 ウィリアム・ウェイツェル ／ エレン・ジョンソン ／ キム・キャメロン ／ ドナルド・ハンバリック
 
 ## 出典
-- [Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly](https://doi.org/10.2307/258302) `学術`
-- [Hambrick, D. C. & DAveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly](https://doi.org/10.2307/2393470) `学術`
+- [Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109](https://doi.org/10.2307/2392987) `学術`
+- [Hambrick, D. C. & D'Aveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly 33(1), 1-23](https://doi.org/10.2307/2392853) `学術`
 - [Wikipedia: Organizational decline — stages and turnaround strategies overview](https://en.wikipedia.org/wiki/Organizational_decline) `リファレンス`
 
 ## 関連概念

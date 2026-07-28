@@ -30,16 +30,8 @@ Matt Ratto（The Information Society 27(4), 2011, クリティカル・メイキ
 - [Ratto & Boler eds. (2014) DIY Citizenship: Critical Making and Social Media — MIT Press](https://mitpress.mit.edu/9780262525527/diy-citizenship/) `学術`
 
 ## 関連概念
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
-- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
-- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 出典を共有
-- [[infosoc-cybernetics|サイバネティクス]] — 出典を共有
-- [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]] — 出典を共有
-- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 出典を共有
-- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

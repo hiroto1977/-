@@ -33,14 +33,8 @@ Paul Krugman（クルーグマン, 1980） ／ Elhanan Helpman（ヘルプマン
 ## 関連概念
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同じ思想家
 - [[econ-new-new-trade-theory-melitz|「新」新貿易理論（メリッツ・モデル）]] — 同じ思想家
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
-- [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 出典を共有
-- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 出典を共有
-- [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]] — 出典を共有
-- [[infosoc-cybernetics|サイバネティクス]] — 出典を共有
-- [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]] — 出典を共有
+- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同分野の近傍
+- [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

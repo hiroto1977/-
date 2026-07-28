@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 62）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 42）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 65）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 44）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
 - [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]]（接続 24）
@@ -26,8 +26,8 @@ tags:
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
-- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]]（接続 21）
 - [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 21）
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -85,7 +85,6 @@ tags:
 - 1962年: [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]]
 - 1962年: [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]]
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
-- 1963年: [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
 - 1964年: [[infosoc-information-overload|情報過多（情報オーバーロード）]]
@@ -197,6 +196,7 @@ tags:
 - 2005年: [[infosoc-warm-expert-bakardjieva|ウォーム・エキスパート——身近な技術支援者が生活世界とシステム世界を橋渡しする]]
 - 2005年: [[infosoc-web2|Web 2.0]]
 - 2006年: [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]]
+- 2006年: [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]]
 - 2006年: [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]]
 - 2006年: [[infosoc-media-repertoire-theory|メディア・レパートリー理論]]
 - 2006年: [[infosoc-participation-inequality|参加格差（90-9-1の法則）]]

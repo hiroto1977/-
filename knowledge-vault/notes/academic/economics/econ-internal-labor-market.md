@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-dual-labor-market|二重労働市場論]] — 語彙が近い
+- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 出典を共有
 - [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 出典を共有
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
 - [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
-- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

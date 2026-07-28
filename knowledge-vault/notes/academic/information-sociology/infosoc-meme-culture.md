@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
 - [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
+- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
+- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]
