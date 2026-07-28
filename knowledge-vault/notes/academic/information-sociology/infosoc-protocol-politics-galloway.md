@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-surveillance-society|監視社会]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
+- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

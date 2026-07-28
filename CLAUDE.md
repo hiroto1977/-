@@ -71,9 +71,10 @@ npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics 
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
 npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
 npm run lint:docs          # cross-document consistency
+npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
 npm run lint:test-coverage # every service must have a test + an action registered
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
-npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage/shell)
+npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/citations/test-coverage/shell)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)

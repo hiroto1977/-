@@ -32,11 +32,11 @@ aliases:
 
 ## 関連概念
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 語彙が近い
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 出典を共有
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
-- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍

@@ -34,10 +34,10 @@ aliases:
 - [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同じ思想家
 - [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 出典を共有
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
-- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[mgmt-market-orientation|市場志向]] — 同分野の近傍

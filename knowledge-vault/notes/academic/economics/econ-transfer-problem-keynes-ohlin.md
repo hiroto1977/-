@@ -26,7 +26,7 @@ aliases:
 ジョン・メイナード・ケインズ ／ ベルティル・オリーン ／ ポール・サミュエルソン ／ ジャグディッシュ・バグワティ
 
 ## 出典
-- [Keynes, J. M. (1929) The German Transfer Problem — Economic Journal](https://doi.org/10.2307/2223852) `学術`
+- [Keynes, J. M. (1929) The German Transfer Problem — Economic Journal 39(153), 1-7](https://doi.org/10.2307/2224211) `学術`
 - [Jones, R. W. & Neary, J. P. (1984) The Positive Theory of International Trade — Handbook of International Economics](https://doi.org/10.1016/S1573-4404(84)01006-4) `学術`
 - [Wikipedia: Transfer problem — international capital transfers and terms of trade overview](https://en.wikipedia.org/wiki/Transfer_problem) `リファレンス`
 

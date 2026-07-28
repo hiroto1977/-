@@ -33,10 +33,10 @@ aliases:
 ## 関連概念
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同じ思想家
 - [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同じ思想家
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 出典を共有
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
-- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[infosoc-media-logic|メディア・ロジック]] — 同分野の近傍

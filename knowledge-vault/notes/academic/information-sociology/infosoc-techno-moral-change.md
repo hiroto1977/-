@@ -43,7 +43,7 @@ Tsjalling Swierstra（2009 テクノモラル・チェンジの先駆的定式�
 - [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
 - [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
-- [[mgmt-role-exit-theory|役割退出理論]] — 出典を共有
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

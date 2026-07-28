@@ -40019,7 +40019,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2224211', type: 'academic', label: 'Keynes, J.M. (1929) The German Transfer Problem — Economic Journal 39(153)' },
       { url: 'https://en.wikipedia.org/wiki/Transfer_problem', type: 'reference', label: 'Wikipedia: Transfer Problem — Keynes–Ohlin debate overview' },
-      { url: 'https://doi.org/10.2307/2296547', type: 'academic', label: 'Samuelson, P. (1952) The Transfer Problem and Transport Costs — Economic Journal 62(246)' },
+      { url: 'https://doi.org/10.2307/2227005', type: 'academic', label: 'Samuelson, P. A. (1952) The Transfer Problem and Transport Costs: The Terms of Trade When Impediments Are Absent — Economic Journal 62(246), 278-304' },
     ],
   },
   {
@@ -40481,12 +40481,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-slack-resources-bourgeois',
     discipline: 'management',
     title: '組織スラック論——余剰資源の緩衝・革新・政治的機能',
-    statement: '組織スラック（Organizational Slack）とは、組織が現在の運営に厳密に必要な量を超えて保有する余剰資源（資金、人員、時間、設備等）を指す概念であり、サイアートとマーチが1963年の行動的意思決定理論で体系化した。ブルジョアは1981年に組織スラックの戦略的機能を整理し、スラックが（1）環境変動に対する緩衝材として機能し、（2）革新的プロジェクトへの実験的投資を可能にし、（3）組織内の政治的コンフリクトを緩和する三つの役割を果たすことを論じた。ノリアとグルクは実証研究において、組織スラックとパフォーマンスの関係が逆U字型であることを示し、適度なスラックは業績を向上させるが、過度のスラックは経営の弛緩と非効率をもたらすことを明らかにした。リーン経営やコスト削減を追求する現代の経営環境において、組織スラックの適切な水準を維持することの重要性が改めて認識されている。',
-    keyFigures: 'リチャード・サイアート ／ ジェームズ・マーチ ／ L・ジェイ・ブルジョア ／ ニティン・ノリア',
+    statement: '組織スラック（Organizational Slack）とは、組織が現在の運営に厳密に必要な量を超えて保有する余剰資源（資金、人員、時間、設備等）を指す概念であり、サイアートとマーチが1963年の行動的意思決定理論で体系化した。ブルジョアは1981年に組織スラックの戦略的機能を整理し、スラックが（1）環境変動に対する緩衝材として機能し、（2）革新的プロジェクトへの実験的投資を可能にし、（3）組織内の政治的コンフリクトを緩和する三つの役割を果たすことを論じた。ノーリアとグラティは実証研究において、組織スラックとパフォーマンスの関係が逆U字型であることを示し、適度なスラックは業績を向上させるが、過度のスラックは経営の弛緩と非効率をもたらすことを明らかにした。リーン経営やコスト削減を追求する現代の経営環境において、組織スラックの適切な水準を維持することの重要性が改めて認識されている。',
+    keyFigures: 'リチャード・サイアート ／ ジェームズ・マーチ ／ L・ジェイ・ブルジョア ／ ニティン・ノーリア',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2392580', type: 'academic', label: 'Bourgeois (1981) On the Measurement of Organizational Slack — Academy of Management Review' },
-      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199611)17:9<693::AID-SMJ854>3.0.CO;2-C', type: 'academic', label: 'Nohria & Gulati (1996) Is Slack Good or Bad for Innovation? — Academy of Management Journal' },
+      { url: 'https://doi.org/10.5465/amr.1981.4287985', type: 'academic', label: 'Bourgeois, L. J., III (1981) On the Measurement of Organizational Slack — Academy of Management Review 6(1), 29-39' },
+      { url: 'https://doi.org/10.5465/256998', type: 'academic', label: 'Nohria, N. & Gulati, R. (1996) Is Slack Good or Bad for Innovation? — Academy of Management Journal 39(5), 1245-1264' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_slack', type: 'reference', label: 'Wikipedia: Organizational slack — 組織スラックの概念と戦略的含意の概説' },
     ],
   },
@@ -40901,8 +40901,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ウィリアム・ウェイツェル ／ エレン・ジョンソン ／ キム・キャメロン ／ ドナルド・ハンバリック',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/258302', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.2307/2393470', type: 'academic', label: 'Hambrick, D. C. & DAveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly' },
+      { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109' },
+      { url: 'https://doi.org/10.2307/2392853', type: 'academic', label: "Hambrick, D. C. & D'Aveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly 33(1), 1-23" },
       { url: 'https://en.wikipedia.org/wiki/Organizational_decline', type: 'reference', label: 'Wikipedia: Organizational decline — stages and turnaround strategies overview' },
     ],
   },
@@ -40941,7 +40941,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker, G. C. & Star, S. L. (1999) Sorting Things Out: Classification and Its Consequences — MIT Press' },
-      { url: 'https://doi.org/10.1177/0306312706056047', type: 'academic', label: 'Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics — MIT Press' },
+      { url: 'https://mitpress.mit.edu/9780262023672/science-on-the-run/', type: 'academic', label: 'Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics at Schlumberger, 1920-1940 — MIT Press (Inside Technology), ISBN 978-0-262-02367-2' },
       { url: 'https://en.wikipedia.org/wiki/Information_infrastructure', type: 'reference', label: 'Wikipedia: Information infrastructure — invisible systems and classification politics overview' },
     ],
   },
@@ -40975,12 +40975,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-organizational-slack-bourgeois',
     discipline: 'management',
     title: '組織スラック理論——余剰資源の緩衝機能と戦略的活用',
-    statement: '組織スラック（organizational slack）は、サイアートとマーチが1963年の企業行動理論で定式化し、ブルジョワが1981年に戦略経営の文脈で再概念化した概念であり、組織が内部連合体の要求を満たすために最低限必要とする資源を超えて保有する余剰資源の総体を指す。スラックは環境変動に対する緩衝（buffer）として機能し、短期的なパフォーマンス低下を吸収して組織の存続を支える。ブルジョワはスラックを利用可能なスラック（available slack：流動比率等）、回復可能なスラック（recoverable slack：SGA費用等）、潜在的スラック（potential slack：負債余力等）の三類型に区分した。ヌーリアとサージェントの実証研究は、スラックとパフォーマンスの間に逆U字型の関係があることを示し、過少なスラックは適応能力を制約し、過大なスラックは規律の弛緩と非効率を招くことを実証した。',
+    statement: '組織スラック（organizational slack）は、サイアートとマーチが1963年の企業行動理論で定式化し、ブルジョワが1981年に戦略経営の文脈で再概念化した概念であり、組織が内部連合体の要求を満たすために最低限必要とする資源を超えて保有する余剰資源の総体を指す。スラックは環境変動に対する緩衝（buffer）として機能し、短期的なパフォーマンス低下を吸収して組織の存続を支える。ブルジョワはスラックを利用可能なスラック（available slack：流動比率等）、回復可能なスラック（recoverable slack：SGA費用等）、潜在的スラック（potential slack：負債余力等）の三類型に区分した。ノーリアとグラティの実証研究は、スラックとパフォーマンスの間に逆U字型の関係があることを示し、過少なスラックは適応能力を制約し、過大なスラックは規律の弛緩と非効率を招くことを実証した。',
     keyFigures: 'リチャード・サイアート ／ ジェームズ・マーチ ／ ジェイ・ブルジョワ ／ ダニエル・レヴィンタール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2392586', type: 'academic', label: 'Bourgeois, L. J. (1981) On the Measurement of Organizational Slack — Academy of Management Review' },
-      { url: 'https://doi.org/10.5465/amr.2005.19139064', type: 'academic', label: 'George, G. (2005) Slack Resources and the Performance of Privately Held Firms — Academy of Management Journal' },
+      { url: 'https://doi.org/10.5465/amr.1981.4287985', type: 'academic', label: 'Bourgeois, L. J., III (1981) On the Measurement of Organizational Slack — Academy of Management Review 6(1), 29-39' },
+      { url: 'https://doi.org/10.5465/amj.2005.17843944', type: 'academic', label: 'George, G. (2005) Slack Resources and the Performance of Privately Held Firms — Academy of Management Journal 48(4), 661-676' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_slack', type: 'reference', label: 'Wikipedia: Organizational slack — excess resources and buffering function overview' },
     ],
   },
@@ -41356,7 +41356,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・メイナード・ケインズ ／ ベルティル・オリーン ／ ポール・サミュエルソン ／ ジャグディッシュ・バグワティ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2223852', type: 'academic', label: 'Keynes, J. M. (1929) The German Transfer Problem — Economic Journal' },
+      { url: 'https://doi.org/10.2307/2224211', type: 'academic', label: 'Keynes, J. M. (1929) The German Transfer Problem — Economic Journal 39(153), 1-7' },
       { url: 'https://doi.org/10.1016/S1573-4404(84)01006-4', type: 'academic', label: 'Jones, R. W. & Neary, J. P. (1984) The Positive Theory of International Trade — Handbook of International Economics' },
       { url: 'https://en.wikipedia.org/wiki/Transfer_problem', type: 'reference', label: 'Wikipedia: Transfer problem — international capital transfers and terms of trade overview' },
     ],
@@ -42068,7 +42068,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker, G. C. & Star, S. L. (1999) Sorting Things Out — MIT Press' },
-      { url: 'https://doi.org/10.1177/0306312706056047', type: 'academic', label: 'Edwards, P. N. et al. (2007) "Understanding Infrastructure" — Journal of the Association for Information Systems' },
+      { url: 'https://doi.org/10.17705/1jais.00200', type: 'academic', label: 'Edwards, P. N., Bowker, G. C., Jackson, S. J. & Williams, R. (2009) Introduction: An Agenda for Infrastructure Studies — Journal of the Association for Information Systems 10(5), 364-374' },
       { url: 'https://en.wikipedia.org/wiki/Sorting_Things_Out', type: 'reference', label: 'Wikipedia: Sorting Things Out — ボウカー＆スターの分類研究' },
     ],
   },
@@ -43711,7 +43711,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ウィリアム・ウェイツェル ／ エレン・ジョンソン ／ ダニー・ミラー ／ バリー・スタウ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/258079', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations — Academy of Management Review' },
+      { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_decline', type: 'reference', label: 'Wikipedia: Organizational decline — five stages, turnaround, Icarus paradox, escalation' },
     ],
   },

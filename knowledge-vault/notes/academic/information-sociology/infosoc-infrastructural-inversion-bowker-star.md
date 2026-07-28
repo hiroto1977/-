@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Bowker, G. C. & Star, S. L. (1999) Sorting Things Out — MIT Press](https://doi.org/10.7551/mitpress/6352.001.0001) `学術`
-- [Edwards, P. N. et al. (2007) "Understanding Infrastructure" — Journal of the Association for Information Systems](https://doi.org/10.1177/0306312706056047) `学術`
+- [Edwards, P. N., Bowker, G. C., Jackson, S. J. & Williams, R. (2009) Introduction: An Agenda for Infrastructure Studies — Journal of the Association for Information Systems 10(5), 364-374](https://doi.org/10.17705/1jais.00200) `学術`
 - [Wikipedia: Sorting Things Out — ボウカー＆スターの分類研究](https://en.wikipedia.org/wiki/Sorting_Things_Out) `リファレンス`
 
 ## 関連概念

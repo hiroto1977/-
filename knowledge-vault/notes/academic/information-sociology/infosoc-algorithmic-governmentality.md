@@ -32,10 +32,10 @@ aliases:
 
 ## 関連概念
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 語彙が近い
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 出典を共有
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
-- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同分野の近傍

@@ -40,6 +40,7 @@ aliases:
 - [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
 - [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同じ思想家
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
+- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

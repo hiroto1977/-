@@ -23,11 +23,11 @@ tags:
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]]（接続 35）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 33）
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 31）
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -369,6 +369,7 @@ tags:
 - 1992年: [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]]
 - 1993年: [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]]
 - 1993年: [[econ-backus-smith|バッカス＝スミス・パズル（Backus-Smith Puzzle）]]
+- 1993年: [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]]
 - 1993年: [[econ-taylor-principle|テイラー原理（Taylor Principle）]]
 - 1993年: [[econ-taylor-rule|テイラールール]]
 - 1994年: [[econ-dictator-game|独裁者ゲーム]]
@@ -706,7 +707,6 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]]
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]]
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]]
-- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]]
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]]
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]]

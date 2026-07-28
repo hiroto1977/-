@@ -34,13 +34,11 @@ aliases:
 - [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 同じ思想家
 - [[econ-eurosclerosis-giersch|ユーロスクレローシス——欧州経済の構造的硬直性と高失業の持続]] — 同じ思想家
 - [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 出典を共有
-- [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 出典を共有
 - [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 出典を共有
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 出典を共有
-- [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — 出典を共有
-- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 出典を共有
 - [[econ-gibrat-law|ジブラの法則]] — 出典を共有
+- [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
+- [[econ-dual-labor-market|二重労働市場論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

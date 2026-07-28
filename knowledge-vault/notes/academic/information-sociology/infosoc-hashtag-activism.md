@@ -37,9 +37,9 @@ aliases:
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
-- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
 
 ## 関連

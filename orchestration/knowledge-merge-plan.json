@@ -2,27 +2,6 @@
   "description": "重複統合パス4（2026-07-28, 4並列エージェントが全文読解のうえ裁定）で「統合すべき」と判定されたペアの実行計画。DISTINCT 裁定は knowledge-distinct-pairs.json、こちらは MERGE 側。keep に残し、drop を削除する前に migrate の内容を必ず keep 側へ取り込むこと（統合＝削除ではない）。実行後は vault:build → vault:check → verify:knowledge → verify:graph を通す。",
   "adjudicatedAt": "2026-07-28",
   "method": "各ペアについて両エントリの全文（title / statement / keyFigures / authority / sources）を読み、『同じ対象を同じ粒度で説明した実質的な言い換え』のみを MERGE と判定。粒度違い・法域違い・上位/下位・片方にしかない条文や数値がある場合は DISTINCT として除外した。",
-  "blockedOnCitationCheck": {
-    "note": "同一論文にペア間で異なる DOI / 掲載誌が付いており、少なくとも一方が誤り。統合すると誤った方を正として固定してしまうため、一次資料で確認するまで実行しないこと。推測で直さないこと（このコーパスの価値は出典の正確さにある）。",
-    "items": [
-      {
-        "pair": ["mgmt-organizational-decline-weitzel", "mgmt-organizational-decline-weitzel-jonsson"],
-        "conflict": "Weitzel & Jonsson (1989) に 10.2307/258302（AMR）と 10.2307/258079（ASQ）の2通り"
-      },
-      {
-        "pair": ["econ-transfer-problem-keynes", "econ-transfer-problem-keynes-ohlin"],
-        "conflict": "Keynes (1929) に 10.2307/2224211 と 10.2307/2223852 の2通り。後者はオリーンの反論論文の可能性"
-      },
-      {
-        "pair": ["mgmt-organizational-slack-bourgeois", "mgmt-slack-resources-bourgeois"],
-        "conflict": "DISTINCT 裁定済みだが、Bourgeois (1981) に 10.2307/2392586 と 10.2307/2392580 の2通り。Nohria & Gulati (1996) も DOI は SMJ でラベルが AMJ"
-      },
-      {
-        "pair": ["infosoc-infrastructural-inversion-bowker", "infosoc-infrastructural-inversion-bowker-star"],
-        "conflict": "DISTINCT 裁定済みだが、同一 DOI 10.1177/0306312706056047 を Bowker(1994) 書籍と Edwards et al.(2007) 論文の2ラベルで引用"
-      }
-    ]
-  },
   "clusters": {
     "note": "3件以上が同一概念に収束するため、ペア単位でなくまとめて処理すること。ペアごとに実行すると統合先が二重に残る。",
     "items": [
@@ -136,6 +115,38 @@
       "drop": "econ-tinbergen-gravity-model",
       "why": "Tinbergen 1962 → Anderson 1979 → Anderson & van Wincoop 2003 → Head & Mayer 2014 という同一系譜を同一粒度でたどり出典もほぼ同一集合。keep 側は PPML 推定と FTA 評価も記述",
       "migrate": "Tinbergen 1962 の「付録IVで初めて計量的に定式化」という初出の具体性、AER 各論文の巻・頁、「長らく理論的基礎を欠いた」という位置づけ"
+    },
+    {
+      "keep": "mgmt-organizational-decline-weitzel",
+      "drop": "mgmt-organizational-decline-weitzel-jonsson",
+      "why": "同一著者・同一年 (Weitzel & Jonsson 1989) の五段階モデルを同一粒度で説明した言い換え。DOI 照合が済み、両者が同一の正しい DOI を指すようになったため統合可",
+      "migrate": "ダニー・ミラー『イカロスの逆説』(1990)、バリー・スタウの投資の段階的拡大による誤行動段階の持続メカニズム、アイゼンハート＆ブラウンのシンプル・ルール戦略"
+    },
+    {
+      "keep": "econ-transfer-problem-keynes",
+      "drop": "econ-transfer-problem-keynes-ohlin",
+      "why": "1929 年のケインズ＝オリーン論争とサミュエルソン 1952 の決着を同一粒度で記述した言い換え。DOI 照合が済み統合可",
+      "migrate": "orthodox case / anti-orthodox case の術語、オランダ病への応用、バグワティの言及、Jones & Neary 1984 ハンドブック出典 (10.1016/S1573-4404(84)01006-4)"
     }
-  ]
+  ],
+  "citationCheckResolved": {
+    "resolvedAt": "2026-07-28",
+    "note": "blockedOnCitationCheck の 4 組はすべて WebSearch で一次照合し、academicKnowledge.ts を修正済み。照合の過程で当初 4 件を超える 13 件の誤りが確定した (DOI が別論文を指す 9 件・書籍に他誌論文の DOI 2 件・人名の誤り 2 件)。以後この種の混入は lint:citations が検出する (orchestration/knowledge-citation-baseline.json)。",
+    "fixes": [
+      "Weitzel & Jonsson (1989): 10.2307/258302 と 10.2307/258079 の両方が誤り (258xxx は AMR 帯で ASQ 論文にはありえない) → 正 10.2307/2392987 (ASQ 34(1), 91-109)。掲載誌ラベル AMR も ASQ へ訂正",
+      "同エントリ内で追加発見 — Hambrick & D'Aveni (1988): 10.2307/2393470 → 正 10.2307/2392853 (ASQ 33(1), 1-23)。帯は正しいため DOI 帯チェックでは検出できない型",
+      "Keynes (1929): 10.2307/2223852 は EJ 42(166) 1932 の別項目 → 正 10.2307/2224211 (EJ 39(153), 1-7)。当初仮説『オリーンの反論論文』は否定された",
+      "同エントリ内で追加発見 — Samuelson (1952): 10.2307/2296547 は Phelps & Pollak (1968) Review of Economic Studies 35(2) → 正 10.2307/2227005 (EJ 62(246), 278-304)",
+      "Bourgeois (1981): 10.2307/2392586 と 10.2307/2392580 の両方が誤りで、いずれも ASQ 23(4) 1978 内の別項目 (前者は無題書評、後者は Gephart 1978) → 正 10.5465/amr.1981.4287985 (AMR 6(1), 29-39)",
+      "同エントリ内で追加発見 — Nohria & Gulati (1996): SICI 形式 DOI の AID トークンが 1997 年 Smith et al. のもので内部矛盾する無効値。ラベル (AMJ) は正しい → 正 10.5465/256998 (AMJ 39(5), 1245-1264)",
+      "同エントリ内で追加発見 — George (2005): amr 接頭辞だが実体は AMJ → 正 10.5465/amj.2005.17843944 (AMJ 48(4), 661-676)",
+      "10.1177/0306312706056047 の実体は Gillespie (2006) Engineering a Principle — Social Studies of Science 36(3), 427-457 で、Bowker とも Edwards とも無関係だった。Bowker (1994) は書籍で DOI 未付与 → MIT Press 商品ページ + ISBN 978-0-262-02367-2 へ。『Edwards et al. (2007) JAIS』は 2007 年のタイトルと 2009 年の掲載誌の合成ラベル → 正 10.17705/1jais.00200 (2009, JAIS 10(5), 364-374)",
+      "人名: 『ヌーリアとサージェント』(マクロ経済学者 Thomas Sargent の混入) と『ノリアとグルク』→ ともに『ノーリアとグラティ』へ。keyFigures の『ニティン・ノリア』→『ニティン・ノーリア』"
+    ],
+    "stillUnverified": [
+      "10.2307/258302 / 258079 / 2393470 / 2223852 / 2296547 / 2392586 / 2392580 / amr.2005.19139064 の各『実体』は JSTOR/Crossref に到達できないため未特定 (誤りであることは確定)",
+      "en.wikipedia.org/wiki/Organizational_decline と /wiki/Sorting_Things_Out は検索上存在しない疑いがある (HTTP ステータス未確認)。前者が 404 なら mgmt-organizational-decline-weitzel-jonsson の有効出典が 1 件になり確証ゲートに抵触する",
+      "Gillespie の 3 件 (L48878 の 10.1080/1369118x.2010.508516、L24348/L49196 の 10.1177/1461444812437963 / 10.1177/1461444813490395) は接頭辞と出版社が不一致の疑い。同一論文にコーパス内で別 DOI が併存しており未照合"
+    ]
+  }
 }
