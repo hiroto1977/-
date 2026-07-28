@@ -1,0 +1,141 @@
+{
+  "description": "重複統合パス4（2026-07-28, 4並列エージェントが全文読解のうえ裁定）で「統合すべき」と判定されたペアの実行計画。DISTINCT 裁定は knowledge-distinct-pairs.json、こちらは MERGE 側。keep に残し、drop を削除する前に migrate の内容を必ず keep 側へ取り込むこと（統合＝削除ではない）。実行後は vault:build → vault:check → verify:knowledge → verify:graph を通す。",
+  "adjudicatedAt": "2026-07-28",
+  "method": "各ペアについて両エントリの全文（title / statement / keyFigures / authority / sources）を読み、『同じ対象を同じ粒度で説明した実質的な言い換え』のみを MERGE と判定。粒度違い・法域違い・上位/下位・片方にしかない条文や数値がある場合は DISTINCT として除外した。",
+  "blockedOnCitationCheck": {
+    "note": "同一論文にペア間で異なる DOI / 掲載誌が付いており、少なくとも一方が誤り。統合すると誤った方を正として固定してしまうため、一次資料で確認するまで実行しないこと。推測で直さないこと（このコーパスの価値は出典の正確さにある）。",
+    "items": [
+      {
+        "pair": ["mgmt-organizational-decline-weitzel", "mgmt-organizational-decline-weitzel-jonsson"],
+        "conflict": "Weitzel & Jonsson (1989) に 10.2307/258302（AMR）と 10.2307/258079（ASQ）の2通り"
+      },
+      {
+        "pair": ["econ-transfer-problem-keynes", "econ-transfer-problem-keynes-ohlin"],
+        "conflict": "Keynes (1929) に 10.2307/2224211 と 10.2307/2223852 の2通り。後者はオリーンの反論論文の可能性"
+      },
+      {
+        "pair": ["mgmt-organizational-slack-bourgeois", "mgmt-slack-resources-bourgeois"],
+        "conflict": "DISTINCT 裁定済みだが、Bourgeois (1981) に 10.2307/2392586 と 10.2307/2392580 の2通り。Nohria & Gulati (1996) も DOI は SMJ でラベルが AMJ"
+      },
+      {
+        "pair": ["infosoc-infrastructural-inversion-bowker", "infosoc-infrastructural-inversion-bowker-star"],
+        "conflict": "DISTINCT 裁定済みだが、同一 DOI 10.1177/0306312706056047 を Bowker(1994) 書籍と Edwards et al.(2007) 論文の2ラベルで引用"
+      }
+    ]
+  },
+  "clusters": {
+    "note": "3件以上が同一概念に収束するため、ペア単位でなくまとめて処理すること。ペアごとに実行すると統合先が二重に残る。",
+    "items": [
+      {
+        "topic": "感情調整（Gross のプロセスモデル）",
+        "ids": [
+          "human-emotion-regulation-gross",
+          "human-emotional-regulation",
+          "human-emotion-regulation",
+          "human-emotional-regulation-process-model"
+        ],
+        "issue": "別チャンクの裁定で human-emotional-regulation と human-emotional-regulation-process-model の2つが survivor になった。4件を1件へ統合するのが正しい"
+      },
+      {
+        "topic": "ストレス・コーピング（Lazarus & Folkman 1984）",
+        "ids": [
+          "human-cognitive-appraisal-lazarus-folkman",
+          "human-cognitive-appraisal-lazarus",
+          "human-stress-coping"
+        ],
+        "keep": "human-stress-coping",
+        "issue": "3-way 統合。なお human-cognitive-appraisal（アーノルド1960起点）と human-emotion-appraisal-lazarus は感情理論側の別概念で対象外"
+      },
+      {
+        "topic": "代替の弾力性",
+        "ids": [
+          "econ-elasticity-of-substitution-ces",
+          "econ-elasticity-substitution-production",
+          "econ-elasticity-of-substitution"
+        ],
+        "keep": "econ-elasticity-of-substitution-ces",
+        "issue": "第3のエントリ econ-elasticity-of-substitution（Joan Robinson 1933 の独立導入と Chirinko 2008 を持つ）も同主題。3件まとめて整理"
+      }
+    ]
+  },
+  "ready": [
+    {
+      "keep": "econ-metzler-paradox-tariff",
+      "drop": "econ-metzler-paradox",
+      "why": "同一定理（Metzler 1949 JPE）を同一粒度で解説した言い換え。keep 側が一次文献 DOI と Jones & Neary 1984 ハンドブックを持ち出典が強い",
+      "migrate": "オファーカーブ弾力性による逆説成立条件の表現、ヘクシャー＝オーリン／ストルパー＝サミュエルソン定理との明示的対照、移転問題と結びつけた Springer 章の出典"
+    },
+    {
+      "keep": "econ-monetary-policy-trilemma",
+      "drop": "econ-impossible-trinity-trilemma",
+      "why": "同一命題・同一論者列・同一構成の純粋な重複。keep 側は出典4件で Fleming 1962 IMF Staff Papers と Rey 2015 NBER WP21162 を含む",
+      "migrate": "別称「不可能の三位一体」を title に併記、IMF Finance & Development の government 出典"
+    },
+    {
+      "keep": "econ-uncovered-interest-parity-fama",
+      "drop": "econ-uncovered-interest-parity",
+      "why": "両者とも UIP 定義＋ファマ 1984 のフォワード・プレミアム・パズル＋説明仮説という同一構成。drop 側も本文の過半がパズルで一般/特殊の切り分けになっていない",
+      "migrate": "New Fama Puzzle 文献（Bussière & Chinn 2018 NBER WP24342 / 2022 IMF Econ Review）、Chinn 2003「UIP は長期のみ成立」という期間依存性"
+    },
+    {
+      "keep": "mgmt-job-embeddedness-theory",
+      "drop": "mgmt-job-embeddedness",
+      "why": "同一理論を同一粒度（どちらも1文のスタブ）で説明した完全な重複。keep 側は出典4件すべて academic で Mitchell 2001 AMJ 原著を含む",
+      "migrate": "「2001年に提唱」の年、JILPT の government 出典と日本語解説リンク、「地域コミュニティへの埋め込み」という日本語の言い換え。統合を機に加筆推奨（両者とも短文キューに載っている）"
+    },
+    {
+      "keep": "tax-invoice-20percent-special",
+      "drop": "tax-invoice-2wari",
+      "why": "同一の2割特例を同一粒度で記述。keep 側は対象外要件と一般課税/簡易課税いずれでも適用可という具体を持つ上位互換",
+      "migrate": "「課税期間ごとに選択適用できる」という選択単位の明示、国税庁 確定申告書等作成コーナーの出典"
+    },
+    {
+      "keep": "mgmt-mbo",
+      "drop": "mgmt-management-by-objectives",
+      "why": "同一概念の訳語違い（目標管理／目標による管理）。ドラッカー1954、正式名 MBO and Self-Control、参加型目標設定と自己統制まで全一致",
+      "migrate": "オディオーン(1965)による普及、SMART 目標との接続、数値偏重批判のデミングへの帰属、Business Horizons (1967) 出典。あわせて keep 側 keyFigures が要約詰め込みになっているので提唱者・初出の形へ直す"
+    },
+    {
+      "keep": "mgmt-attention-based-view",
+      "drop": "mgmt-attention-based-view-ocasio",
+      "why": "同一論文（Ocasio 1997 SMJ 18:187-206）の同一理論を二重記述。3原則の説明がほぼ逐語一致",
+      "migrate": "Bower (1970) 資源配分プロセス研究という先行知見の位置づけ、Ocasio (2011)「Attention to Attention」による拡張と該当2出典"
+    },
+    {
+      "keep": "tax-stamp-duty-electronic",
+      "drop": "tax-electronic-contract-stamp",
+      "why": "結論も根拠も同一で出典3件中2件は URL まで一致。keep 側は課税文書の3要件を加えた完全な上位集合",
+      "migrate": "福岡国税局「注文請書を電子メール送信した場合の印紙税」の出典（具体事例の裏付けとして残す）"
+    },
+    {
+      "keep": "econ-is-lm",
+      "drop": "is-lm-model",
+      "why": "同一モデル・同一提唱者（Hicks 1937 Econometrica）・同一政策分析の二重記述。keep 側が曲線の機構・流動性の罠・ルーカス批判まで含み内容を包含",
+      "migrate": "**必須**: Hicks (1937) Econometrica 5(2) 147-159 の原典 DOI 10.2307/1907242（移さないと keep 側の権威ある出典が大学の講義ページのみになり確証ゲートの水準が下がる）。あわせてクラウディングアウトの語、ヒックス1972年ノーベル賞・生没年"
+    },
+    {
+      "keep": "infosoc-knowledge-management-nonaka-takeuchi",
+      "drop": "infosoc-seci",
+      "why": "どちらも野中・竹内1995のSECIモデルを同一粒度で解説し、4モードもポランニーへの言及も一致。keep 側は書籍 DOI と Organization Science DOI で権威性が高い",
+      "migrate": "「Ba（場）」概念、「個人→集団→組織へのスパイラル増幅」の記述、Frontiers in Psychology の SECI 操作化論文の出典"
+    },
+    {
+      "keep": "econ-bandwagon-snob",
+      "drop": "econ-bandwagon-snob-leibenstein",
+      "why": "同一論文（Leibenstein 1950 QJE）の同一3効果を同一粒度で解説。keep 側は出典3件で需要弾力性の方向まで記述",
+      "migrate": "ヴェブレン効果の詳述（高価格が地位誇示となり右上がりの需要曲線を生む）、新古典派の需要独立仮定の緩和という位置づけ、keyFigures のベッカー/フランク"
+    },
+    {
+      "keep": "mgmt-amo-model",
+      "drop": "mgmt-ability-motivation-opportunity",
+      "why": "どちらも Appelbaum et al. (2000) 由来の AMO で P=f(A,M,O)・3要素の人事施策・HPWS との接続まで同一。keep 側は Bos-Nehles et al. 2023 IJMR 査読レビューを持ち源流の区別もある",
+      "migrate": "「人事施策と組織成果を結ぶブラックボックス」という定式化、3要素のいずれか1つでも欠ければ業績が損なわれるという記述、keyFigures のフェファー/ヒュースリッド"
+    },
+    {
+      "keep": "econ-trade-gravity-model",
+      "drop": "econ-tinbergen-gravity-model",
+      "why": "Tinbergen 1962 → Anderson 1979 → Anderson & van Wincoop 2003 → Head & Mayer 2014 という同一系譜を同一粒度でたどり出典もほぼ同一集合。keep 側は PPML 推定と FTA 評価も記述",
+      "migrate": "Tinbergen 1962 の「付録IVで初めて計量的に定式化」という初出の具体性、AER 各論文の巻・頁、「長らく理論的基礎を欠いた」という位置づけ"
+    }
+  ]
+}

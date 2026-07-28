@@ -9,6 +9,7 @@
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const fs = require('node:fs/promises');
+const fsSync = require('node:fs');
 const path = require('node:path');
 
 const SERVICES = [
@@ -38,16 +39,61 @@ const SERVICES = [
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');
 
-ipcMain.handle('app:getVersion', () => '0.1.0-smoke');
-ipcMain.handle('app:openExternal', () => undefined);
-ipcMain.handle('secrets:list', () => []);
-ipcMain.handle('secrets:set', () => undefined);
-ipcMain.handle('secrets:clear', () => undefined);
-ipcMain.handle('fetch:snapshot', (_e, id) => ({
-  ok: false,
-  code: 'not_configured',
-  message: `smoke test does not call ${id}`,
-}));
+/*
+ * スタブは **main.ts が登録する全チャンネル** を覆う必要がある。
+ *
+ * 覆えていないチャンネルを renderer が呼ぶと Electron が
+ * "No handler registered for 'x'" を stderr に出すだけで、この smoke は
+ * exit 0 のまま通ってしまう。つまり **main.ts 側で本当に登録を忘れた場合と
+ * 見分けがつかない**。実際 oauth:isSupported / secrets:protection は
+ * スタブ漏れでこのノイズを出し続けていた。
+ *
+ * そこで main.ts からチャンネル一覧を抜き出し、スタブ集合と突き合わせて
+ * ズレたら落とす。新しい IPC を足したらここも足すことが強制される。
+ */
+const STUBS = {
+  'app:getVersion': () => '0.1.0-smoke',
+  'app:openExternal': () => undefined,
+  'app:revealInFolder': () => undefined,
+  'app:openPath': () => undefined,
+  'secrets:list': () => [],
+  'secrets:set': () => undefined,
+  'secrets:clear': () => undefined,
+  'secrets:protection': () => ({ encrypted: true, plainCount: 0, file: 'smoke' }),
+  'fetch:snapshot': (_e, id) => ({
+    ok: false,
+    code: 'not_configured',
+    message: `smoke test does not call ${id}`,
+  }),
+  'action:invoke': (_e, id, action) => ({
+    ok: false,
+    code: 'action_not_found',
+    message: `smoke test does not invoke ${id}/${action}`,
+  }),
+  'oauth:isSupported': () => false,
+  'oauth:authorize': () => ({ ok: false, code: 'not_supported', message: 'smoke test' }),
+};
+
+function mainProcessChannels() {
+  const src = fsSync.readFileSync(
+    path.join(__dirname, '..', 'src', 'main', 'main.ts'),
+    'utf8',
+  );
+  // ipcMain.handle('チャンネル' … — 引数が次行に折り返される呼び出しもあるので
+  // 改行を許す。
+  return [...src.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)].map((m) => m[1]);
+}
+
+const missing = mainProcessChannels().filter((c) => !(c in STUBS));
+const extra = Object.keys(STUBS).filter((c) => !mainProcessChannels().includes(c));
+if (missing.length > 0 || extra.length > 0) {
+  console.error('smoke: IPC スタブが main.ts とズレています');
+  if (missing.length > 0) console.error(`  スタブ不足: ${missing.join(', ')}`);
+  if (extra.length > 0) console.error(`  main.ts に無い: ${extra.join(', ')}`);
+  process.exit(1);
+}
+
+for (const [channel, handler] of Object.entries(STUBS)) ipcMain.handle(channel, handler);
 
 async function run() {
   await fs.mkdir(OUT_DIR, { recursive: true });
