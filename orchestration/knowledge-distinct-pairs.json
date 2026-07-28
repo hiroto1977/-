@@ -2,6 +2,10 @@
   "description": "重複統合パス3（2026-07-02, 98エージェントWorkflow判定+懐疑検証）で「別概念として保持」と裁定されたペアの台帳。knowledge-autopilot の重複疑いキューから機械的に除外される。新たに裁定したペアは [idA, idB]（辞書順）で追記する。",
   "adjudicatedDistinct": [
     [
+      "bizlaw-act-of-state-doctrine",
+      "bizlaw-hickenlooper-amendment"
+    ],
+    [
       "bizlaw-agency-apparent-authority",
       "bizlaw-apparent-agency"
     ],
@@ -22,6 +26,10 @@
       "bizlaw-assignment-of-claims"
     ],
     [
+      "bizlaw-bill-of-exchange",
+      "bizlaw-promissory-note"
+    ],
+    [
       "bizlaw-business-judgment-rule-delaware",
       "bizlaw-business-judgment-rule-japan"
     ],
@@ -34,12 +42,20 @@
       "bizlaw-caveat-emptor-laidlaw"
     ],
     [
+      "bizlaw-champerty-and-maintenance",
+      "bizlaw-champerty-maintenance-doctrine"
+    ],
+    [
       "bizlaw-corporate-governance-code",
       "bizlaw-corporate-governance-code-japan"
     ],
     [
       "bizlaw-corporate-veil-piercing-doctrine",
       "bizlaw-piercing-corporate-veil-reverse"
+    ],
+    [
+      "bizlaw-creditor-subrogation",
+      "bizlaw-fraudulent-rescission"
     ],
     [
       "bizlaw-cy-pres",
@@ -80,6 +96,10 @@
     [
       "bizlaw-fraudulent-rescission",
       "bizlaw-fraudulent-transfer-avoidance"
+    ],
+    [
+      "bizlaw-hardship-clause",
+      "bizlaw-pacta-sunt-servanda"
     ],
     [
       "bizlaw-insider-trading",
@@ -158,6 +178,10 @@
       "econ-harberger-triangle-deadweight-loss"
     ],
     [
+      "econ-kaldor-verdoorn",
+      "econ-kaldor-verdoorn-law"
+    ],
+    [
       "econ-optimal-taxation-mirrlees",
       "econ-optimal-taxation-theory"
     ],
@@ -178,6 +202,14 @@
       "mgmt-real-options-theory"
     ],
     [
+      "econ-revealed-preference",
+      "econ-revealed-preference-samuelson"
+    ],
+    [
+      "econ-solow-residual",
+      "econ-solow-residual-total-factor-productivity"
+    ],
+    [
       "econ-welfare-economics",
       "econ-welfare-economics-pigou-kaldor-hicks"
     ],
@@ -188,6 +220,10 @@
     [
       "human-affordance-theory",
       "infosoc-affordance-theory-gibson"
+    ],
+    [
+      "human-attachment-style-theory",
+      "human-attachment-theory-adult"
     ],
     [
       "human-broaden-and-build-theory-fredrickson",
@@ -212,6 +248,10 @@
     [
       "human-embodied-cognition-barsalou",
       "human-embodied-cognition-lakoff"
+    ],
+    [
+      "human-erikson-psychosocial",
+      "human-psychosocial-development-erikson"
     ],
     [
       "human-growth-mindset",
@@ -244,6 +284,10 @@
     [
       "human-self-determination",
       "mgmt-self-determination-theory-work"
+    ],
+    [
+      "human-self-efficacy-performance-bandura",
+      "human-self-efficacy-theory"
     ],
     [
       "human-stereotype-threat",
@@ -290,6 +334,10 @@
       "infosoc-platform-labor-gig-economy"
     ],
     [
+      "infosoc-infrastructural-inversion-bowker",
+      "infosoc-infrastructural-inversion-bowker-star"
+    ],
+    [
       "infosoc-network-effects",
       "infosoc-network-effects-metcalfe"
     ],
@@ -314,12 +362,68 @@
       "infosoc-technological-determinism-mcluhan"
     ],
     [
+      "labor-child-nursing-leave",
+      "labor-childcare-leave-2025"
+    ],
+    [
+      "labor-collective-bargaining",
+      "labor-unfair-labor-practice"
+    ],
+    [
+      "labor-dispatch-equal-treatment",
+      "labor-equal-pay"
+    ],
+    [
+      "labor-maternity-harassment",
+      "labor-sexual-harassment"
+    ],
+    [
+      "labor-overtime-60h-premium",
+      "labor-overtime-premium"
+    ],
+    [
+      "labor-overtime-cap",
+      "labor-overtime-special-cap"
+    ],
+    [
+      "legal-cooling-off",
+      "legal-document-electronic"
+    ],
+    [
+      "legal-guarantee-contract",
+      "legal-personal-guarantee-reform"
+    ],
+    [
+      "legal-patent-right",
+      "legal-trademark"
+    ],
+    [
+      "mgmt-absorptive-capacity-realization",
+      "mgmt-absorptive-capacity-theory"
+    ],
+    [
+      "mgmt-absorptive-capacity-realization",
+      "mgmt-absorptive-capacity-zahra"
+    ],
+    [
       "mgmt-absorptive-capacity-reconceptualization",
+      "mgmt-absorptive-capacity-zahra"
+    ],
+    [
+      "mgmt-absorptive-capacity-theory",
       "mgmt-absorptive-capacity-zahra"
     ],
     [
       "mgmt-escalation-of-commitment",
       "mgmt-escalation-of-commitment-theory"
+    ],
+    [
+      "mgmt-organizational-routines-as-grammars",
+      "mgmt-organizational-routines-feldman"
+    ],
+    [
+      "mgmt-organizational-slack-bourgeois",
+      "mgmt-slack-resources-bourgeois"
     ],
     [
       "mgmt-regulatory-focus-theory-higgins",
@@ -336,6 +440,30 @@
     [
       "mgmt-strategic-human-capital",
       "mgmt-strategic-human-capital-theory"
+    ],
+    [
+      "tax-consumption-final-return",
+      "tax-filing-deadline"
+    ],
+    [
+      "tax-corp-blue-application",
+      "tax-corp-establishment-filing"
+    ],
+    [
+      "tax-entertainment-expense",
+      "tax-entertainment-expense-meal-threshold"
+    ],
+    [
+      "tax-income-categories",
+      "tax-loss-offsetting"
+    ],
+    [
+      "tax-platform-taxation",
+      "tax-platform-taxation-digital"
+    ],
+    [
+      "tax-withholding",
+      "tax-withholding-payment-special"
     ]
   ]
 }
