@@ -54,3 +54,21 @@ describe('finance pages render without crashing (no TDZ / NaN throw)', () => {
     });
   }
 });
+
+describe('real-estate 水循環プランナー — 既定入力の実値が描画される', () => {
+  it('既定 200L/14日/回収75% で水収支・RO 稼働率・硝化・排水が計算されて出る', () => {
+    const def = SERVICES.find((s) => s.id === 'real-estate');
+    const html = renderToStaticMarkup(createElement(def!.page));
+    // セクションが存在する
+    expect(html).toContain('水循環プランナー');
+    // 水収支: 200L・回収75% → 透過150L / 濃縮50L / 濃縮倍率4倍
+    expect(html).toContain('150 L'); // 再利用する透過水
+    expect(html).toContain('4倍'); // 濃縮倍率 = 1/(1-0.75)
+    // RO: 14日ごと8時間運転は稼働率が低く止水警告が出る
+    expect(html).toContain('バイオフィルム');
+    // 硝化: N 50mg/L × 200L = 10g
+    expect(html).toContain('10 g');
+    // 排水: 濃縮液 400mg/L は地下水基準(10)の40倍
+    expect(html).toContain('40倍');
+  });
+});
