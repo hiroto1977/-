@@ -2,15 +2,15 @@
 title: "1940年代"
 type: timeline-decade
 decade: 1940
-entry_count: 67
+entry_count: 66
 tags:
   - timeline
 ---
 
-# 1940年代 — 67 件
+# 1940年代 — 66 件
 
 - [[year-1940|1940年]]（4件）
-- [[year-1941|1941年]]（5件）
+- [[year-1941|1941年]]（4件）
 - [[year-1942|1942年]]（3件）
 - [[year-1943|1943年]]（4件）
 - [[year-1944|1944年]]（8件）

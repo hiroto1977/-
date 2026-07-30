@@ -35,12 +35,12 @@ aliases:
 - [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 語彙が近い
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 語彙が近い
 - [[human-premack-principle|プレマックの原理]] — 同じ思想家
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
+- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

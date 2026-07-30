@@ -2,7 +2,7 @@
 title: "worldcat.org"
 type: source-domain
 host: "worldcat.org"
-cite_count: 151
+cite_count: 150
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # worldcat.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **151 件**（学術 137 ・ リファレンス 14）
+> [!info] 出典ドメイン索引 ・ 引用 **150 件**（学術 136 ・ リファレンス 14）
 
 ## このドメインを出典とする項目
 
@@ -121,7 +121,6 @@ tags:
 - [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — Goffman,E.(1961)Asylums:EssaysontheSocialSituationofMentalPatients—An…
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — Tapscott,D.&Williams,A.D.(2006)Wikinomics:HowMassCollaborationChanges…
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — Ohmae,K.(1982)TheMindoftheStrategist:TheArtofJapaneseBusiness—McGraw-…
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — Appelbaum,E.etal.(2000)ManufacturingAdvantage:WhyHigh-PerformanceWork…
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — Adair,J.(1973)Action-CentredLeadership—McGraw-Hill
 - [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — Fayol,H.(1916/1949)GeneralandIndustrialManagement—Pitman(WorldCat)
 - [[mgmt-benchmarking-camp|ベンチマーキング——最良の実践との体系的な比較による改善]] — Camp,R.C.(1989)Benchmarking:TheSearchforIndustryBestPracticesThatLead…

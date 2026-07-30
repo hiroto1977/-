@@ -39,6 +39,7 @@ William T. Allen ／ Melvin A. Eisenberg ／ Bernard S. Black
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 同じ思想家
 - [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 同分野の近傍
 - [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同分野の近傍
+- [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

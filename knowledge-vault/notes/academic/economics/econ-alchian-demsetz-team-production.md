@@ -34,12 +34,12 @@ aliases:
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
 - [[econ-nirvana-fallacy|ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）]] — 同じ思想家
-- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — 同じ思想家
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
 - [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
 - [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同じ思想家
 - [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

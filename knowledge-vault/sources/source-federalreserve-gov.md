@@ -34,7 +34,7 @@ tags:
 - [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]] — Bernanke,B.S.(2005)TheGlobalSavingGlutandtheU.S.CurrentAccountDeficit…
 - [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — PrinciplesfortheConductofMonetaryPolicy—FederalReserveBoard
 - [[econ-taylor-rule|テイラールール]] — FederalReserveBoard—PolicyRulesandHowPolicymakersUseThem
-- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — Chinn(2003)UncoveredInterestParity:ItWorks,ButNotForLong—FRBIFDP752
+- [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — Chinn(2003)UncoveredInterestParity:ItWorks,ButNotForLong—FRBIFDP752
 - [[eh-1994|1994年（平成6年）]] — 米FRB—FOMC1994年声明（同年の金融引き締め）
 - [[eh-2004|2004年（平成16年）]] — 米FRB—FOMC声明2004/6/30（FF金利1.25%へ利上げ）
 - [[eh-2006|2006年（平成18年）]] — 米FRB—FOMC声明2006/6/29（FF金利5.25%へ・打ち止め）

@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 語彙が近い
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
-- [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

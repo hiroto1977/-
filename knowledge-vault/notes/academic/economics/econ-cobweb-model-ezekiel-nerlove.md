@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 語彙が近い
-- [[econ-cobweb|クモの巣理論]] — 語彙が近い
 - [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同じ思想家
+- [[econ-cobweb|クモの巣理論]] — 同じ思想家
 - [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — 同分野の近傍
 
 ## 関連

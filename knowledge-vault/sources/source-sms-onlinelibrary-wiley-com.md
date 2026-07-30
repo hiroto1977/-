@@ -2,7 +2,7 @@
 title: "sms.onlinelibrary.wiley.com"
 type: source-domain
 host: "sms.onlinelibrary.wiley.com"
-cite_count: 20
+cite_count: 19
 tags:
   - source-domain
   - index
@@ -10,14 +10,13 @@ tags:
 
 # sms.onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 20）
+> [!info] 出典ドメイン索引 ・ 引用 **19 件**（学術 19）
 
 ## このドメインを出典とする項目
 
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — Townsendetal.(2024),“WhatisKnightianuncertainty?”,StrategicEntreprene…
 - [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — StrategicManagementJournal—PlatformEnvelopment（Eisenmann,Parker&VanAl…
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — Ocasio,W.(1997)TowardsanAttention-BasedViewoftheFirm,StrategicManagem…
-- [[mgmt-attention-based-view-ocasio|企業のアテンション・ベースト・ビュー（注意基盤理論）]] — Ocasio,W.(1997)TowardsanAttention-BasedViewoftheFirm,StrategicManagem…
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — Larraza-Kintana,Wiseman,Gómez-Mejía&Welbourne(2007)DisentanglingCompe…
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — Chen&Miller(2015)ReconceptualizingCompetitiveDynamics—StrategicManage…
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Adner&Zemsky(2006)—Demand-BasedSustainableCompetitiveAdvantage,SMJ

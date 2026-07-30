@@ -37,9 +37,9 @@ aliases:
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家
 - [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — 同じ思想家
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
 - [[human-mindset|マインドセット（成長/固定）]] — 同分野の近傍
-- [[human-social-loafing-latane|社会的手抜き——集団作業で個人の努力が低下する現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

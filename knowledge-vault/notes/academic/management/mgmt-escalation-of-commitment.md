@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 語彙が近い
 - [[econ-dollar-auction|ドル・オークション：エスカレーション・トラップのゲーム理論的モデル]] — 同じ思想家
-- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[mgmt-stretch-goal|ストレッチ目標（超高難度目標）]] — 同分野の近傍
 

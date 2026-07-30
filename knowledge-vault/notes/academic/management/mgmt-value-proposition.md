@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
-- [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
 - [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]] — 同分野の近傍
 - [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同分野の近傍
 

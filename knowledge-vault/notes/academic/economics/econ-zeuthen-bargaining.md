@@ -35,11 +35,11 @@ aliases:
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
 - [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
 - [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
-- [[is-lm-model|IS-LM分析]] — 同じ思想家
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 - [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

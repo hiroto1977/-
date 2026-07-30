@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 語彙が近い
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
-- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同分野の近傍
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 同分野の近傍
 
 ## 関連

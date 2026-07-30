@@ -34,7 +34,7 @@ Knut Wicksell ／ Dennis Robertson ／ Bertil Ohlin
 ## 関連概念
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 出典を共有
 - [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 出典を共有
-- [[is-lm-model|IS-LM分析]] — 同分野の近傍
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同分野の近傍
 - [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同分野の近傍
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
 

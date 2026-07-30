@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 960
+entry_count: 951
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（960件）
+# 学習パス — 学術概念／経済学（951件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -17,17 +17,17 @@ tags:
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 47）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
-- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 45）
-- [[econ-liquidity-trap|流動性のわな]]（接続 41）
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
+- [[econ-liquidity-trap|流動性のわな]]（接続 42）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 39）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 33）
+- [[econ-behavioral-finance|行動ファイナンス]]（接続 34）
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 31）
-- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 31）
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -67,7 +67,7 @@ tags:
 - 1883年: [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]]
 - 1883年: [[econ-bertrand-paradox|ベルトランのパラドックス]]
 - 1885年: [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]
-- 1887年: [[is-lm-model|IS-LM分析]]
+- 1887年: [[econ-is-lm|IS-LMモデル]]
 - 1889年: [[econ-roundabout-production|迂回生産]]
 - 1889年: [[econ-time-preference|時間選好]]
 - 1891年: [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]]
@@ -143,7 +143,6 @@ tags:
 - 1936年: [[econ-lerner-symmetry|ラーナー対称性定理（Lerner Symmetry Theorem）]]
 - 1936年: [[econ-paradox-of-thrift|倹約のパラドックス]]
 - 1936年: [[econ-wage-rigidity|名目賃金の下方硬直性]]
-- 1937年: [[econ-is-lm|IS-LMモデル]]
 - 1937年: [[econ-washington-consensus|ワシントン・コンセンサス]]
 - 1938年: [[econ-cobra-effect|コブラ効果（意図せざる結果の法則）]]
 - 1938年: [[econ-revealed-preference|顕示選好]]
@@ -153,7 +152,6 @@ tags:
 - 1940年: [[econ-identity-economics|アイデンティティ経済学]]
 - 1940年: [[econ-microfinance|マイクロファイナンス]]
 - 1941年: [[econ-informal-economy|インフォーマル経済]]
-- 1941年: [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]]
 - 1942年: [[econ-creative-destruction|創造的破壊]]
 - 1943年: [[econ-implicit-contract-theory|暗黙的契約理論]]
 - 1944年: [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]]
@@ -331,7 +329,6 @@ tags:
 - 1984年: [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]]
 - 1984年: [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]]
 - 1984年: [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]]
-- 1984年: [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]]
 - 1985年: [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]]
 - 1985年: [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]]
 - 1985年: [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]]
@@ -446,7 +443,6 @@ tags:
 - [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]]
 - [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]]
 - [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]]
-- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]]
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]]
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]]
 - [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]]
@@ -472,7 +468,6 @@ tags:
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]]
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]]
 - [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]]
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]]
 - [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]]
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]]
@@ -568,12 +563,10 @@ tags:
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]]
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]]
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]]
-- [[econ-elasticity-of-substitution|代替の弾力性]]
 - [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]]
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]]
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]]
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]]
-- [[econ-elasticity-substitution-production|生産要素代替弾力性]]
 - [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]]
 - [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]]
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]]
@@ -675,7 +668,6 @@ tags:
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]]
 - [[econ-hysteresis-unemployment-theory|ヒステリシス失業理論]]
 - [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]]
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]]
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]]
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]]
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]]
@@ -707,6 +699,7 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]]
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]]
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]]
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]]
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]]
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]]
@@ -760,7 +753,7 @@ tags:
 - [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]]
 - [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]]
 - [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]]
-- [[econ-monetary-policy-trilemma|金融政策のトリレンマ]]
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]]
 - [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]]
 - [[econ-money-illusion-fisher|貨幣錯覚（アーヴィング・フィッシャー）]]
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]]
@@ -919,7 +912,6 @@ tags:
 - [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]]
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]]
 - [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]]
-- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]]
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]]
 - [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]]
 - [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]]
@@ -938,7 +930,6 @@ tags:
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]]
 - [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]]
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]]
-- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]]
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]]
 - [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]]
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]]

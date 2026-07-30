@@ -34,6 +34,7 @@ W・エドワーズ・デミング ／ ジョセフ・ジュラン ／ フィリ
 - [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同じ思想家
 - [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
 - [[mgmt-juran-trilogy|ジュランの品質トリロジー——計画・管理・改善からなる品質マネジメント]] — 同じ思想家
+- [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同分野の近傍
 
 ## 関連

@@ -37,7 +37,6 @@ aliases:
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
-- [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

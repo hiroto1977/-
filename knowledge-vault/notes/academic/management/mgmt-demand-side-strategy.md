@@ -42,7 +42,7 @@ Richard L. Priem（2007 消費者便益に基づく需要側の価値創造論�
 - [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

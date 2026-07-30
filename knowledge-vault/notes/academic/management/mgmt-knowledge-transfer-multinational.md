@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: 知識移転 — 多国籍企業における知識管理の解説](https://ja.wikipedia.org/wiki/%E7%9F%A5%E8%AD%98%E7%A7%BB%E8%BB%A2) `リファレンス`
 
 ## 関連概念
-- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同分野の近傍
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同分野の近傍
+- [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同分野の近傍
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]] — 同分野の近傍
 
 ## 関連

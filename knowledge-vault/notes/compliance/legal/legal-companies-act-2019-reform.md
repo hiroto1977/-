@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-nisa|NISA（少額投資非課税制度）]] — 出典を共有
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍
-- [[legal-premium-regulation|景品表示法の景品規制]] — 同分野の近傍
 - [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — 同分野の近傍
 
 ## 関連

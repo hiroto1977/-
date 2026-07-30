@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 語彙が近い
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 語彙が近い
-- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 語彙が近い
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

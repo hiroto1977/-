@@ -30,7 +30,7 @@ aliases:
 - [環境省 — 廃棄物処理法の概要](https://www.env.go.jp/recycle/waste/laws.html) `公的`
 
 ## 関連概念
-- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 分野横断
+- [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 語彙が近い
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
 - [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有

@@ -2,7 +2,7 @@
 title: "direct.mit.edu"
 type: source-domain
 host: "direct.mit.edu"
-cite_count: 11
+cite_count: 10
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # direct.mit.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **11 件**（学術 11）
+> [!info] 出典ドメイン索引 ・ 引用 **10 件**（学術 10）
 
 ## このドメインを出典とする項目
 
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — Obstfeld,Shambaugh&Taylor(2005)TheTrilemmainHistory,ReviewofEconomics…
 - [[human-embodied-cognition-theory|身体化された認知]] — Varela,Thompson&Rosch—TheEmbodiedMind:CognitiveScienceandHumanExperie…
 - [[human-theory-of-mind|心の理論]] — MITPress—Baron-Cohen“Mindblindness:AnEssayonAutismandTheoryofMind”
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — Jackson(2014)—RethinkingRepair,MITPress

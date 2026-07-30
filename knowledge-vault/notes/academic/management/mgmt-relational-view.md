@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
 - [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
-- [[mgmt-value-proposition|バリュープロポジション]] — 同分野の近傍
 - [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
 
 ## 関連

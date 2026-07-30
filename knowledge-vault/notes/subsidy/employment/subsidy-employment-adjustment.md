@@ -43,10 +43,10 @@ national
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 出典を共有
 - [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]] — 出典を共有
 - [[bizlaw-plant-variety|種苗法]] — 出典を共有
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 出典を共有
 - [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
 - [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
 - [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
+- [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

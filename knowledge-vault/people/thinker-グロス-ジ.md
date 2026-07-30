@@ -2,7 +2,7 @@
 title: "ジェイムズ・グロス"
 type: thinker
 person_key: "グロス|ジ"
-concept_count: 6
+concept_count: 5
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # ジェイムズ・グロス
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（6件）
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 感情制御の過程モデル（processmodelofemotionregulation）は、ジェームズ・グロスが1998…
+## 学術概念（5件）
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 感情調節（emotionregulation）とは，感情の体験・表出・生理的反応をどのように意識的・無意識的に管理する…
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 感情粒度（emotionalgranularity）は、リサ・フェルドマン・バレット（2004）が提唱した、個人が自己…
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 感情制御（感情調整）とは、個人が自らの感情をいつ・どのように経験し、表出するかに影響を及ぼす内的・外的プロセスの総体で…

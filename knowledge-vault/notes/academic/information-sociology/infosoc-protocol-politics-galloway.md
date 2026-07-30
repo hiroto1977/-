@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-surveillance-society|監視社会]] — 同じ思想家
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
+- [[human-theory-of-mind|心の理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

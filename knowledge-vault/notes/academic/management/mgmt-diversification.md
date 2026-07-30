@@ -41,6 +41,7 @@ aliases:
 - [[eh-1970|1970年（昭和45年）]] — 出典を共有
 - [[mgmt-emergent-strategy|創発戦略]] — 出典を共有
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — 同分野の近傍
+- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

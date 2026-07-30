@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 出典を共有
 - [[bizlaw-national-health-insurance|国民健康保険法]] — 同分野の近傍
-- [[bizlaw-employees-pension|厚生年金保険法]] — 同分野の近傍
+- [[bizlaw-consumption-tax|消費税法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

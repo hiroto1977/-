@@ -35,7 +35,7 @@ aliases:
 - [[econ-grossman-health-demand|グロスマンの健康需要モデル（Grossman demand-for-health model／健康資本論）——健康を減価する耐久資本ストックととらえ、医療需要をその派生需要として説明する枠組み]] — 同じ思想家
 - [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
-- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
 - [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
 - [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]] — 同じ思想家
 - [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家

@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 625
+entry_count: 624
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（625件）
+# 学習パス — 学術概念／情報社会学（624件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -18,16 +18,16 @@ tags:
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
 - [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]]（接続 24）
-- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 23）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 22）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
-- [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -157,7 +157,6 @@ tags:
 - 1995年: [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]]
 - 1995年: [[infosoc-digital-divide|デジタルディバイド（情報格差）]]
 - 1995年: [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]]
-- 1995年: [[infosoc-seci|SECIモデル（知識創造理論）]]
 - 1995年: [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]]
 - 1996年: [[infosoc-immaterial-labor|非物質的労働（immaterial labor）]]
 - 1996年: [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]]
@@ -236,6 +235,7 @@ tags:
 - 2012年: [[infosoc-digital-detox|デジタルデトックス]]
 - 2012年: [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]]
 - 2012年: [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]]
+- 2012年: [[infosoc-polymedia|ポリメディア（Polymedia）]]
 - 2012年: [[infosoc-social-bots|ソーシャルボット]]
 - 2013年: [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]]
 - 2013年: [[infosoc-datafication|データ化（データ化現象）]]
@@ -526,7 +526,6 @@ tags:
 - [[infosoc-phenomenological-technology|技術の現象学]]
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]]
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]]
-- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]]
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]]
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]]

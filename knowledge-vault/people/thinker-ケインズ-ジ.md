@@ -2,7 +2,7 @@
 title: "ジョン・メイナード・ケインズ"
 type: thinker
 person_key: "ケインズ|ジ"
-concept_count: 28
+concept_count: 27
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ジョン・メイナード・ケインズ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **28 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **27 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（28件）
+## 学術概念（27件）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 先物価格が予想将来スポット価格を下回る状態（バックワーデーション）と上回る状態（コンタンゴ）を対比する先物市場の価格構…
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — ボーリーの法則（Bowley'slaw）は、国民所得のうち労働への分配（賃金として支払われる割合＝労働分配率）が、賃金…
 - [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 資本課徴金（capitallevy）は、国家が累積した巨額の公的債務を圧縮するために、民間保有の資産・資本に対して一回…
@@ -39,7 +39,6 @@ tags:
 - [[econ-technological-unemployment|技術的失業]] — 技術的失業（technologicalunemployment）とは、労働節約的な技術革新（機械化・自動化・AIの導入…
 - [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — トービンのq理論（Tobin'sqtheoryofinvestment）は、ジェームズ・トービンが1969年に定式化し…
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 移転問題（transferproblem）は、国際的な一方的資本移動（戦争賠償・援助・債務返済）が交易条件に及ぼす影響…
-- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — 移転問題（transferproblem）は、国際的な資本移転（賠償金・対外援助・送金等）が支払国と受取国の交易条件に…
 - [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 貨幣の流通速度（velocityofmoney）は、一定期間に経済の中で貨幣が取引のために何回使われるか、すなわち一単…
 
 ## 関連

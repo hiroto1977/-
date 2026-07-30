@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 語彙が近い
-- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 語彙が近い
-- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 語彙が近い
-- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — 同じ思想家
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
 - [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

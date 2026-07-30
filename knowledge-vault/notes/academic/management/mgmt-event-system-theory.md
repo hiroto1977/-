@@ -31,7 +31,6 @@ Morgeson, Frederick P.（2015 Academy of Management Review）／Mitchell, Terenc
 - [EconBiz bibliographic record — Event system theory: an event-oriented approach to the organizational sciences](https://www.econbiz.de/Record/event-system-theory-an-event-oriented-approach-to-the-organizational-sciences-morgeson-frederick/10011391811) `リファレンス`
 
 ## 関連概念
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 同じ思想家
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同じ思想家
 - [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同分野の近傍
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍

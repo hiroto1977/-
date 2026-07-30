@@ -38,8 +38,8 @@ aliases:
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
 - [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
 - [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 同じ思想家
-- [[is-lm-model|IS-LM分析]] — 同じ思想家
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

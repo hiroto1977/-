@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — 出典を共有
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 
 ## 関連

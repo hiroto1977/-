@@ -33,13 +33,13 @@ aliases:
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
-- [[is-lm-model|IS-LM分析]] — 同じ思想家
 - [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同じ思想家
 - [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
 - [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
 - [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

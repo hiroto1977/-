@@ -20,7 +20,7 @@ tags:
 - [[human-diathesis-stress-model|素因ストレスモデル]] — APADictionaryofPsychology—Diathesis-StressModel
 - [[human-effort-justification|努力の正当化]] — APADictionaryofPsychology—EffortJustification
 - [[human-emotional-contagion|情動感染]] — APADictionaryofPsychology—emotionalcontagion
-- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — EmotionRegulation—APADictionaryofPsychology
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — EmotionRegulation—APADictionaryofPsychology
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — APADictionaryofPsychology「false-uniquenesseffect」—対照概念
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — APADictionaryofPsychology—gain–losstheory（米国心理学会）
 - [[human-illusory-correlation|錯誤相関]] — APADictionaryofPsychology—illusorycorrelation定義

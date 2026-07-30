@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 111
+cite_count: 109
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **111 件**（学術 98 ・ リファレンス 13）
+> [!info] 出典ドメイン索引 ・ 引用 **109 件**（学術 97 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -44,7 +44,6 @@ tags:
 - [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]] — ScienceDirectTopics—RegressionDiscontinuityDesign(overview)
 - [[econ-shapley-value|シャープレー値]] — ScienceDirectTopics—ShapleyValueoverview
 - [[econ-sonnenschein-mantel-debreu-theorem|ゾンネンシャイン＝マンテル＝ドブリュー定理（SMD定理）]] — Debreu(1974)ExcessDemandFunctions—JournalofMathematicalEconomics1(1),…
-- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]] — Head&Mayer(2014)GravityEquations:Workhorse,Toolkit,andCookbook,Handbo…
 - [[econ-ultimatum-game|最後通牒ゲーム]] — ScienceDirectTopics:UltimatumGame（提案・拒否率と公平性解釈の学術概説）
 - [[human-acquired-needs-theory|獲得欲求理論]] — Winter,D.G.(1973).ThePowerMotive.FreePress.(reviewinOrganizationalBeh…
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — Bar-Elietal.(2007)"Actionbiasamongelitesoccergoalkeepers:Thecaseofpen…
@@ -104,8 +103,7 @@ tags:
 - [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — Brown&Treviño(2006)Review—LeadershipQuarterly
 - [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — Brown,Treviño&Harrison(2005)Ethicalleadership—OBHDP
 - [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — JournalofPurchasing&SupplyManagement—PurchasingstrategiesintheKraljic…
-- [[mgmt-management-by-objectives|目標管理（MBO）]] — Afreshlookatmanagementbyobjectives,BusinessHorizons(1967)
-- [[mgmt-management-by-objectives|目標管理（MBO）]] — ScienceDirectTopics:ManagementbyObjectives—anoverview
+- [[mgmt-mbo|目標による管理（MBO）]] — Odiorne系の普及期文献—Afreshlookatmanagementbyobjectives,BusinessHorizons(19…
 - [[mgmt-mckinsey-7s|マッキンゼーの7Sフレームワーク]] — Waterman,Peters&Phillips(1980)StructureIsNotOrganization,BusinessHori…
 - [[mgmt-organizational-commitment|組織コミットメント]] — Meyer&Allen(1991)"Athree-componentconceptualizationoforganizationalco…
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — Lengnick-Hall,Beck&Lengnick-Hall(2011)Developingacapacityfororganizat…

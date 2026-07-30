@@ -39,7 +39,6 @@ aliases:
 - [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
 - [[econ-optimal-tariff|最適関税論]] — 出典を共有
 - [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 出典を共有
-- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

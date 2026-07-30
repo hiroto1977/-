@@ -35,16 +35,16 @@ J.B.テイラー1993提唱／政策金利をインフレ率と産出ギャップ
 - [Wikipedia: Taylor rule — テイラー・ルールの概要](https://en.wikipedia.org/wiki/Taylor_rule) `リファレンス`
 
 ## 関連概念
-- [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 語彙が近い
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
 - [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 出典を共有
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
 - [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 出典を共有
+- [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 出典を共有
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 出典を共有
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 出典を共有
 - [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]] — 出典を共有
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 出典を共有
+- [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

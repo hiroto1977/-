@@ -37,9 +37,9 @@ Stephen Graham & Nigel Thrift（Theory, Culture & Society 24(3), 2007 — 保守
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
+- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

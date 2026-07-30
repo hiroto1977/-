@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

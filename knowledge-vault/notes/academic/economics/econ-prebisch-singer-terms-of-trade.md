@@ -33,6 +33,7 @@ aliases:
 - [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同じ思想家
 - [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同じ思想家
 - [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 同分野の近傍
+- [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

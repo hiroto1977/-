@@ -25,9 +25,9 @@ tags:
 - [[labor-standard-remuneration|標準報酬月額]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]（接続 14）
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]]（接続 14）
-- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]]（接続 13）
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 13）
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 13）
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]（接続 13）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -35,6 +35,7 @@ tags:
 - 2024年: [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]]
 - 2025年: [[labor-childcare-leave-2025|育児・介護休業法 2025年4月改正]]
 - 2025年: [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]
+- 2025年: [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]]
 - 2025年: [[labor-flexible-work-measures|育児・介護休業法「柔軟な働き方を実現するための措置」（2025年10月施行）]]
 - 2025年: [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]]
 - 2025年: [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]]
@@ -101,7 +102,6 @@ tags:
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]]
 - [[labor-national-health-insurance|国民健康保険（国保）]]
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]]
-- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]]
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]
 - [[labor-paid-leave-grant|年次有給休暇の付与]]
@@ -119,7 +119,6 @@ tags:
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]]
 - [[labor-safety-management|安全衛生管理体制（50人以上）]]
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]]
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]
 - [[labor-sickness-allowance|健康保険の傷病手当金]]
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]]
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]]
@@ -130,6 +129,7 @@ tags:
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]]
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]]
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]]
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]]
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]]
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]]
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]]

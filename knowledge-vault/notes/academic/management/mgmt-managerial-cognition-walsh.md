@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 語彙が近い
 - [[mgmt-managerial-cognition|経営者認知理論]] — 語彙が近い
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同分野の近傍
 
 ## 関連

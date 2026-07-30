@@ -2,7 +2,7 @@
 title: "scirp.org"
 type: source-domain
 host: "scirp.org"
-cite_count: 23
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # scirp.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 20 ・ リファレンス 3）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 19 ・ リファレンス 3）
 
 ## このドメインを出典とする項目
 
@@ -25,7 +25,6 @@ tags:
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — McCombs&Shaw(1972)TheAgenda-SettingFunctionofMassMedia,POQ36:176-187（…
 - [[infosoc-information-subsidy|情報補助金]] — Gandy,O.H.,Jr.(1982).BeyondAgenda-Setting:InformationSubsidiesandPubl…
 - [[infosoc-networked-publics|ネットワーク化された公衆]] — Boyd,D.(2010),inZ.Papacharissi(Ed.),ANetworkedSelf,Routledge—citation…
-- [[infosoc-seci|SECIモデル（知識創造理論）]] — Nonaka,I.(1994)ADynamicTheoryofOrganizationalKnowledgeCreation.Organi…
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — Reicher,Spears&Postmes(1995)ASocialIdentityModelofDeindividuationPhen…
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — Quinn&Rohrbaugh(1983),ASpatialModelofEffectivenessCriteria,Management…
 - [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — Lawrence&Lorsch(1967)“DifferentiationandIntegrationinComplexOrganizat…

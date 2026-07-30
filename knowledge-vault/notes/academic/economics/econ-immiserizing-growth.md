@@ -36,10 +36,10 @@ aliases:
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
 - [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — 同じ思想家
-- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — 同じ思想家
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 出典を共有
 - [[econ-price-elasticity-demand|需要の価格弾力性]] — 出典を共有
 - [[econ-optimal-tariff|最適関税論]] — 同分野の近傍
+- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

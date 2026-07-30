@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同じ思想家
 - [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — 同じ思想家
 - [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
-- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 同じ思想家
+- [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

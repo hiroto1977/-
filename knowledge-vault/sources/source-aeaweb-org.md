@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 31
+cite_count: 30
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **31 件**（学術 31）
+> [!info] 出典ドメイン索引 ・ 引用 **30 件**（学術 30）
 
 ## このドメインを出典とする項目
 
@@ -40,7 +40,6 @@ tags:
 - [[econ-school-choice-mechanism-design|学校選択メカニズムデザイン（School Choice Mechanism Design）]] — Abdulkadiroğlu,A.&Sönmez,T.(2003)"SchoolChoice:AMechanismDesignApproa…
 - [[econ-synthetic-control-method|合成コントロール法（synthetic control method）]] — Abadie,A.(2021)"UsingSyntheticControls:Feasibility,DataRequirements,a…
 - [[econ-technological-unemployment|技術的失業]] — Autor,D.H.(2015)"WhyAreThereStillSoManyJobs?TheHistoryandFutureofWork…
-- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]] — Anderson&vanWincoop(2003)GravitywithGravitas,AERVol.93pp.170-192
 - [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — Blanchflower&Oswald(1995)—AnIntroductiontotheWageCurve,JEP
 - [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — Frederick(2005)"CognitiveReflectionandDecisionMaking,"JournalofEconom…
 - [[human-endowment-effect|保有効果（授かり効果）]] — Kahneman,Knetsch&Thaler(1991),"Anomalies:TheEndowmentEffect,LossAvers…

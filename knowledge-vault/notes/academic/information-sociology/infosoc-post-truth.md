@@ -36,12 +36,12 @@ Oxford Dictionaries（2016 Word of the Year に選定・定義）／ラルフ・
 - [[infosoc-post-truth-politics-mcintyre|ポスト真実政治と認識論的民主主義の危機（マッキンタイア）]] — 同じ思想家
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

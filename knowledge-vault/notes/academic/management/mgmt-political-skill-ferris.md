@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-emotional-intelligence|感情知性（EQ）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
 - [[human-emotional-intelligence|情動知能（EQ）]] — 同じ思想家
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+- [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

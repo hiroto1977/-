@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
-- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家

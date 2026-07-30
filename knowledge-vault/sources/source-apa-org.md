@@ -2,7 +2,7 @@
 title: "apa.org"
 type: source-domain
 host: "apa.org"
-cite_count: 20
+cite_count: 19
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # apa.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 11 ・ リファレンス 9）
+> [!info] 出典ドメイン索引 ・ 引用 **19 件**（学術 10 ・ リファレンス 9）
 
 ## このドメインを出典とする項目
 
@@ -20,7 +20,6 @@ tags:
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — Bauer(2015)AComplementaryProcessesAccountofChildhoodAmnesia—Psycholog…
 - [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — AmericanPsychologicalAssociation(APA)—ClassicalConditioning教材
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — APAMonitoronPsychology—認められない悲嘆（disenfranchisedgrief）の臨床的意義の解説
-- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — APAPsychologicalReview—Gross(1998)"TheEmergingFieldofEmotionRegulatio…
 - [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — Fazio,Brashier,Payne&Marsh(2015)“KnowledgeDoesNotProtectAgainstIlluso…
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — AmericanPsychologicalAssociation—Implicitbias(implicitsocialcognition…
 - [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — APA—TheScienceofFacialExpressions

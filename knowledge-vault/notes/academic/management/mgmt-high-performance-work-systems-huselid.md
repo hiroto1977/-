@@ -30,16 +30,16 @@ aliases:
 - [Wikipedia: High-performance work system — HPWS, HRM bundles, Huselid, Pfeffer](https://en.wikipedia.org/wiki/High-performance_work_system) `リファレンス`
 
 ## 関連概念
-- [[mgmt-high-performance-work-systems|高業績ワークシステム]] — 語彙が近い
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
 - [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]] — 同じ思想家
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同じ思想家
 - [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]] — 同じ思想家
+- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

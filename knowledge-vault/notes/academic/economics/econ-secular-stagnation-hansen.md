@@ -39,9 +39,9 @@ aliases:
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
-- [[is-lm-model|IS-LM分析]] — 同じ思想家
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
 - [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
+- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ J.M.バーンズ1978(著書Leadership)が変革型/取引型を区別／B.バス
 ## 関連概念
 - [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]] — 語彙が近い
 - [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 語彙が近い
-- [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

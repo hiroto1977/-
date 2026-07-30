@@ -2,7 +2,7 @@
 title: "journals.aom.org"
 type: source-domain
 host: "journals.aom.org"
-cite_count: 71
+cite_count: 70
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.aom.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **71 件**（学術 71）
+> [!info] 出典ドメイン索引 ・ 引用 **70 件**（学術 70）
 
 ## このドメインを出典とする項目
 
@@ -39,7 +39,6 @@ tags:
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — Ordóñezetal.(2009)GoalsGoneWild,AcademyofManagementPerspectives23(1):…
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — Battilana,Leca&Boxenbaum(2009)HowActorsChangeInstitutions—AcademyofMa…
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — Seo&Creed(2002)InstitutionalContradictions,Praxis,andInstitutionalCha…
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — Mitchelletal.(2001)—WhyPeopleStay,AcademyofManagementJournal
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — Leeetal.2004,AMJon/off-the-jobeffects
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — Mitchelletal.2001,AMJoriginalpaper
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Orton,J.D.&Weick,K.E.(1990).LooselyCoupledSystems:AReconceptualizatio…

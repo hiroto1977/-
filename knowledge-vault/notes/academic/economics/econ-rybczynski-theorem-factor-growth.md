@@ -32,10 +32,12 @@ aliases:
 
 ## 関連概念
 - [[econ-rybczynski|リブチンスキー定理]] — 語彙が近い
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同じ思想家
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 同じ思想家
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
 - [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
 - [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同分野の近傍
 

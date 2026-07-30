@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 91
+cite_count: 90
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **91 件**（学術 75 ・ リファレンス 16）
+> [!info] 出典ドメイン索引 ・ 引用 **90 件**（学術 74 ・ リファレンス 16）
 
 ## このドメインを出典とする項目
 
@@ -23,7 +23,6 @@ tags:
 - [[econ-price-puzzle|プライス・パズル（Price Puzzle）]] — Castelnuovo(2010)MonetaryPolicy,InflationExpectationsandThePricePuzzl…
 - [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — Caplan,Bryan(2001),'RationalIgnoranceversusRationalIrrationality',Kyk…
 - [[econ-rent-seeking|レントシーキング]] — GordonTullock(1967)“TheWelfareCostsofTariffs,Monopolies,andTheft”,Eco…
-- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]] — Tinbergen(1962)ShapingtheWorldEconomy—Wileyrecord
 - [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — Vickrey,W.(1961)“Counterspeculation,Auctions,andCompetitiveSealedTend…
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — Sweller,"CognitiveLoadDuringProblemSolving,"CognitiveScience12(2),1988
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — Cummins,R.G.ExcitationTransferTheory—TheInternationalEncyclopediaofMe…

@@ -2,31 +2,31 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 650
+entry_count: 645
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（650件）
+# 学習パス — 学術概念／人間科学（645件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 106）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 69）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 107）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 70）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 30）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 29）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
-- [[human-defense-mechanisms|防衛機制]]（接続 25）
+- [[human-defense-mechanisms|防衛機制]]（接続 26）
 - [[human-group-polarization|集団極性化]]（接続 25）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
-- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 24）
+- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
@@ -52,6 +52,7 @@ tags:
 - 1904年: [[human-classical-conditioning|古典的条件づけ（パブロフ）]]
 - 1904年: [[human-double-bind|ダブルバインド（二重拘束）]]
 - 1904年: [[human-sensory-deprivation|感覚遮断（感覚剥奪）]]
+- 1905年: [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]
 - 1906年: [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]]
 - 1907年: [[human-semantic-satiation|意味飽和（セマンティック・サティエイション）]]
 - 1908年: [[maslow-hierarchy|マズローの欲求階層説]]
@@ -247,7 +248,6 @@ tags:
 - 1997年: [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]]
 - 1997年: [[human-hyperbolic-discounting|双曲割引]]
 - 1998年: [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]]
-- 1998年: [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]]
 - 1998年: [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]]
 - 1998年: [[human-growth-mindset|マインドセット理論（ドゥエック）]]
 - 1998年: [[human-illusion-of-transparency|透明性の錯覚]]
@@ -352,8 +352,6 @@ tags:
 - [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]]
 - [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]]
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]]
-- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]]
-- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]]
 - [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]]
 - [[human-cognitive-dissonance-reduction|認知的不協和低減]]
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]]
@@ -412,13 +410,11 @@ tags:
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]]
 - [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]]
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]]
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]]
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]]
 - [[human-emotional-granularity|感情粒度]]
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]]
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]]
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]]
-- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]]
 - [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]]
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]]
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]]
@@ -613,7 +609,6 @@ tags:
 - [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]]
 - [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]]
 - [[human-social-brain-hypothesis|社会脳仮説]]
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]]
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]]
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]]

@@ -33,10 +33,8 @@ Paul R. Krugman ／ Maurice Obstfeld ／ Robert P. Flood ／ Peter M. Garber ／
 
 ## 関連概念
 - [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 同じ思想家
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 同じ思想家
-- [[econ-monetary-policy-trilemma|金融政策のトリレンマ]] — 同じ思想家
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — 同じ思想家
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
-- [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

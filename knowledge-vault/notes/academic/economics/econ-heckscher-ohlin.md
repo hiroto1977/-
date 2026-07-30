@@ -39,7 +39,6 @@ aliases:
 - [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 同じ思想家
-- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — 同じ思想家
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
 
