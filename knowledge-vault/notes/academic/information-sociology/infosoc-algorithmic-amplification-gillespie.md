@@ -26,7 +26,7 @@ aliases:
 タルトン・ギレスピー ／ ニック・ドラエール ／ ケイト・スターバード ／ シナン・アラル
 
 ## 出典
-- [Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society（アルゴリズム的文化仲介の原典）](https://doi.org/10.1177/1461444813490395) `学術`
+- [Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society, MIT Press, pp.167–194（アルゴリズム的文化仲介の原典）](https://doi.org/10.7551/mitpress/9780262525374.003.0009) `学術`
 - [Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS, 119(1), e2025334119（アルゴリズム増幅の実証）](https://doi.org/10.1126/science.abf1511) `学術`
 - [European Parliament (2022) Digital Services Act — Regulation (EU) 2022/2065（アルゴリズム透明性・システミックリスク規制）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2065) `公的`
 - [Wikipedia: Algorithmic amplification — Gillespie, engagement optimization, DSA, systemic risk, platform governance](https://en.wikipedia.org/wiki/Algorithmic_amplification) `リファレンス`
