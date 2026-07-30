@@ -31,6 +31,13 @@ import {
   NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP,
   type RoadMultiplierCategory,
 } from '../../shared/zoningPlanner';
+import {
+  planWaterBalance,
+  planRoSizing,
+  planNitrification,
+  planAeration,
+  checkEffluent,
+} from '../../shared/waterCyclePlanner';
 
 const reInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -208,6 +215,51 @@ export function RealEstatePage() {
     });
     return { site, factory, capUnlimited: zpCapStr.trim() === '' };
   }, [zpSiteStr, zpCovStr, zpFarStr, zpRoadStr, zpCat, zpCorner, zpFireproof, zpCapStr, zpWorkshopStr]);
+
+  // 水循環プランナー — クローズド水耕の水収支・RO 稼働率・硝化・排水規制を試算。
+  const [wcVolStr, setWcVolStr] = useState('200');
+  const [wcCycleStr, setWcCycleStr] = useState('14');
+  const [wcRecoveryStr, setWcRecoveryStr] = useState('75');
+  const [wcRejectionStr, setWcRejectionStr] = useState('90');
+  const [wcWindowStr, setWcWindowStr] = useState('8');
+  const [wcRoCapStr, setWcRoCapStr] = useState('600');
+  const [wcTankStr, setWcTankStr] = useState('300');
+  const [wcNStr, setWcNStr] = useState('50');
+  const [wcConcNStr, setWcConcNStr] = useState('400');
+  const [wcConcPStr, setWcConcPStr] = useState('40');
+  const [wcToPublic, setWcToPublic] = useState(false);
+
+  const water = useMemo(() => {
+    const balance = planWaterBalance({
+      systemVolumeL: reNum(wcVolStr),
+      exchangeCycleDays: reNum(wcCycleStr),
+      roRecoveryPct: reNum(wcRecoveryStr),
+      roRejectionPct: reNum(wcRejectionStr),
+    });
+    const ro = planRoSizing({
+      batchVolumeL: reNum(wcVolStr),
+      processingWindowHours: reNum(wcWindowStr),
+      exchangeCycleDays: reNum(wcCycleStr),
+      ...(wcRoCapStr.trim() !== '' ? { machineCapacityLPerDay: reNum(wcRoCapStr) } : {}),
+    });
+    const nitri = planNitrification({ ammoniacalNMgL: reNum(wcNStr), volumeL: reNum(wcVolStr) });
+    // 曝気タンクへの流入は「循環量 ÷ 交換周期」= 1 日あたりの入替量。
+    const cycleDays = reNum(wcCycleStr);
+    const aeration = planAeration({
+      tankVolumeL: reNum(wcTankStr),
+      inflowLPerDay: cycleDays > 0 ? reNum(wcVolStr) / cycleDays : 0,
+    });
+    const effluent = checkEffluent({
+      concentrateTnMgL: reNum(wcConcNStr),
+      concentrateTpMgL: reNum(wcConcPStr),
+      annualDischargeL: balance.annualDischargeL,
+      dischargeToPublicWater: wcToPublic,
+    });
+    return { balance, ro, nitri, aeration, effluent };
+  }, [
+    wcVolStr, wcCycleStr, wcRecoveryStr, wcRejectionStr, wcWindowStr, wcRoCapStr,
+    wcTankStr, wcNStr, wcConcNStr, wcConcPStr, wcToPublic,
+  ]);
 
   // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
   const [bldgCostStr, setBldgCostStr] = useState('25000000');
@@ -569,6 +621,127 @@ export function RealEstatePage() {
           屋内栽培施設を「工場」としてどう扱うかは特定行政庁の個別判断です (令和2年 国住街第80号 技術的助言参照) —
           <strong>最終判断は必ず自治体の建築指導課への事前相談と建築確認で行ってください。</strong>
           LED の遮光・空調騒音・深夜搬出入への配慮は、住宅が混在しやすい近隣商業地域では特に重要です。
+        </div>
+      </Section>
+
+      <Section title="水循環プランナー — クローズド水耕の水収支と機材規模 (概算)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          有機水耕の閉ループ (生物処理 → 前処理 → RO) の<strong>水収支・RO 稼働率・硝化のアルカリ度消費・
+          曝気タンクの滞留時間・排水の法規制</strong>を試算します。「排水を 100% 再利用」は物質収支上成立しない
+          (濃縮廃液の排出が塩類の唯一の出口) こと、バッチ運転だと RO 膜が止水して詰まることを数値で確認できます。
+          <strong>※ 概算であり設計・水処理・法務の専門助言ではありません。</strong>
+        </div>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
+          {([
+            ['循環量 (L)', wcVolStr, setWcVolStr],
+            ['交換周期 (日)', wcCycleStr, setWcCycleStr],
+            ['RO 回収率 (%)', wcRecoveryStr, setWcRecoveryStr],
+            ['RO 塩除去率 (%)', wcRejectionStr, setWcRejectionStr],
+            ['RO 処理目標 (h)', wcWindowStr, setWcWindowStr],
+            ['RO 機の日産 (L/日・空欄可)', wcRoCapStr, setWcRoCapStr],
+            ['曝気タンク容量 (L)', wcTankStr, setWcTankStr],
+            ['硝化する N 濃度 (mg/L)', wcNStr, setWcNStr],
+            ['濃縮液の全窒素 (mg/L)', wcConcNStr, setWcConcNStr],
+            ['濃縮液の全りん (mg/L)', wcConcPStr, setWcConcPStr],
+          ] as const).map(([label, val, setter]) => (
+            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {label}
+              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
+            </label>
+          ))}
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
+            <input type="checkbox" checked={wcToPublic} onChange={(e) => setWcToPublic(e.target.checked)} />
+            濃縮液を公共用水域へ放流
+          </label>
+        </div>
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>💧 水収支 (1 バッチ)</div>
+        <div className="stat-grid" style={{ marginBottom: 8 }}>
+          <Stat label="再利用する透過水" value={`${water.balance.permeatePerBatchL.toLocaleString()} L`} />
+          <Stat label="排出する濃縮廃液" value={`${water.balance.concentratePerBatchL.toLocaleString()} L`} />
+          <Stat label="補給する新水" value={`${water.balance.freshMakeupPerBatchL.toLocaleString()} L`} />
+          <Stat
+            label="濃縮倍率"
+            value={water.balance.concentrationFactor === null ? '∞ (排出口なし)' : `${water.balance.concentrationFactor}倍`}
+          />
+        </div>
+        <div className="stat-grid" style={{ marginBottom: 8 }}>
+          <Stat label="実際の水回収率" value={`${water.balance.recoveryPct}%`} />
+          <Stat label="年間節水量" value={`${Math.round(water.balance.annualWaterSavedL).toLocaleString()} L`} />
+          <Stat label="年間排出量" value={`${Math.round(water.balance.annualDischargeL).toLocaleString()} L`} />
+          <Stat label="透過水の EC 持ち越し" value={`${water.balance.permeateEcCarryoverPct}%`} />
+        </div>
+        {water.balance.recoveryPct >= 100 && (
+          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
+            回収率 100% は物質収支上成立しません — 排出をゼロにすると塩類が無限に蓄積します。ブリード (濃縮廃液の排出) が塩類の唯一の出口です。
+          </div>
+        )}
+        {water.balance.accumulationRisk && (
+          <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
+            ⚠ RO 塩除去率が 90% 未満です — 透過水に 10% 超の塩が残り、閉ループで特定イオンが蓄積しやすくなります。
+          </div>
+        )}
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🔧 RO 稼働率と膜の保護</div>
+        <div className="stat-grid" style={{ marginBottom: 8 }}>
+          <Stat label="必要な RO 能力" value={`${Math.round(water.ro.requiredCapacityLPerDay).toLocaleString()} L/日`} />
+          <Stat label="実処理時間" value={water.ro.actualProcessingHours === null ? '—' : `${water.ro.actualProcessingHours} h`} />
+          <Stat label="稼働率 (周期比)" value={water.ro.dutyCyclePct === null ? '—' : `${water.ro.dutyCyclePct}%`} />
+          <Stat label="連続止水日数" value={water.ro.idleDays === null ? '—' : `${water.ro.idleDays} 日`} />
+        </div>
+        {water.ro.capacityAdequate === false && (
+          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
+            導入予定の RO 機では目標時間内にバッチを処理しきれません。能力の大きい機種か処理時間の延長が必要です。
+          </div>
+        )}
+        {water.ro.stagnationRisk && (
+          <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
+            ⚠ 交換周期が長く RO 膜が大半の時間止水します — バイオフィルムが育ち、この設計が防ごうとしている目詰まりを運用で作ってしまいます。
+            <strong>日々少量を入れ替える連続循環</strong>に変えるか、停止中の<strong>自動フラッシュ</strong>を制御に入れてください。
+          </div>
+        )}
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🧪 硝化・アルカリ度・曝気</div>
+        <div className="stat-grid" style={{ marginBottom: 8 }}>
+          <Stat label="硝化する窒素" value={`${water.nitri.nitrogenLoadG} g`} />
+          <Stat label="消費アルカリ度" value={`${water.nitri.alkalinityConsumedGCaCO3} g (CaCO₃)`} />
+          <Stat label="酸素要求量" value={`${water.nitri.oxygenDemandG} g`} />
+          <Stat label="曝気タンク HRT" value={water.aeration.hrtHours === null ? '—' : `${water.aeration.hrtHours} h`} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.7 }}>
+          給水は緩衝能ゼロの RO 水なので、消費したアルカリ度を戻さないと pH 制御が発振します。
+          炭酸水素カリウムなら約 <strong>{water.nitri.khco3ToRedoseG} g</strong> の再付与が目安です。
+          {water.aeration.adequate === false && (
+            <span style={{ color: 'var(--warning)' }}>
+              {' '}⚠ 曝気タンクの滞留時間 (HRT) が 24h 未満です — 有機物の無機化が不十分だと下流の膜が詰まります。
+              目安タンク容量は約 {Math.round(water.aeration.requiredTankVolumeL).toLocaleString()} L。
+            </span>
+          )}
+        </div>
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>⚖️ 濃縮廃液の排出</div>
+        <div className="stat-grid" style={{ marginBottom: 8 }}>
+          <Stat label="年間 窒素排出" value={`${water.effluent.annualNitrogenKg} kg`} />
+          <Stat label="年間 りん排出" value={`${water.effluent.annualPhosphorusKg} kg`} />
+          <Stat label="1日あたり排出" value={`${water.effluent.dailyDischargeM3} m³`} />
+          <Stat label="地下水基準比 (硝酸性N)" value={`${water.effluent.nitrateVsGroundwaterFactor}倍`} />
+        </div>
+        {water.effluent.recommendReuse && (
+          <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
+            ⚠ 濃縮廃液の窒素・りんが一律排水基準を超えています。この液は硝酸・カリ・りん酸が濃縮された<strong>液肥そのもの</strong>なので、
+            放流せず<strong>露地・土耕へ希釈施用</strong>するのが技術的にも法的にも安全です (捨てれば産業廃棄物・地下水の硝酸汚染の問題になります)。
+          </div>
+        )}
+        {water.effluent.wpclNpApplicable && (
+          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
+            排出水量が 50 m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
+          </div>
+        )}
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+          ※ 硝化は窒素 1mg あたり CaCO₃ 換算 7.14mg のアルカリ度を消費し、酸素 4.57mg を要します (硝化の化学量論)。
+          地下水の環境基準は硝酸性窒素及び亜硝酸性窒素で 10mg/L、公共用水域への一律排水基準は全窒素 120mg/L・全りん 16mg/L
+          (閉鎖性水域の日間平均は 60 / 8mg/L) が目安です。<strong>実際の適用は自治体の上乗せ条例・地域指定・排出規模で変わる</strong>ため、
+          放流を伴う場合は必ず自治体の環境部局に確認してください。濃縮廃液を捨てずに再利用すれば、これらの規制の多くを回避できます。
         </div>
       </Section>
     </div>
