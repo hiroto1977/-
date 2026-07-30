@@ -65,7 +65,51 @@ function canonicalOAuthCount() {
   return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
 }
 
+/*
+ * 知識コーパスの件数。実測すると docs/KNOWLEDGE_AUTOPILOT.md が学術 3,606 /
+ * 総計 4,233 のまま止まっていた (実際は 3,583 / 4,208)。ここまで検査対象が
+ * 「サービス数・IPC ハンドラ数・OAuth 数・サービス一覧」の 4 件だけだったため、
+ * 統合でコーパスが減るたびに黙ってズレていた。コーパス件数は統合・追加のたびに
+ * 動くので、いちばんズレやすい数字を無検査で放置していたことになる。
+ */
+function canonicalAcademicCount() {
+  const src = read(path.join(REPO_ROOT, 'src/renderer/data/academicKnowledge.ts'));
+  if (src == null) return null;
+  return [...src.matchAll(/^ {4}id: '/gm)].length;
+}
+
+function canonicalKnowledgeTotal() {
+  try {
+    const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+    return kc.loadEntries().length;
+  } catch {
+    return null;
+  }
+}
+
 const FACTS = [
+  {
+    name: 'academic concept count',
+    canonical: canonicalAcademicCount(),
+    claims: [
+      {
+        file: 'docs/KNOWLEDGE_AUTOPILOT.md',
+        pattern: /知識ベース（学術 ([\d,]+) \//,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
+    ],
+  },
+  {
+    name: 'knowledge entry total',
+    canonical: canonicalKnowledgeTotal(),
+    claims: [
+      {
+        file: 'docs/KNOWLEDGE_AUTOPILOT.md',
+        pattern: /= ([\d,]+) 項目）/,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
+    ],
+  },
   {
     name: 'service count',
     canonical: canonicalServiceCount(),

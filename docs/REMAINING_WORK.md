@@ -1,33 +1,47 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-05-12  
-対象ブランチ: `claude/add-claude-documentation-F7HIa`
+最終更新: 2026-07-30
+対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 
-このドキュメントは、現在の状態から「自分のマシンで毎日使うレベル」までに必要な
-作業をフェーズ別に並べたランブックです。各フェーズは独立しており、必要な順に
-着手できます。所要時間は経験者基準。
+このドキュメントは「今の状態から先に何が残っているか」を並べたランブックです。
+**2026-05-12 版は 10 サービス / PR #2 draft を前提にしていて 2 か月半ズレていた**ため、
+実測値で書き直しました。以後もズレたら実測で直してください（件数の一部は
+`npm run lint:docs` が機械照合します）。
 
 ---
 
-## 現状
+## 現状（2026-07-30 実測）
 
-- [x] 10 サービスの UI + 実データスナップショット表示 (Skills 含む)
-- [x] 全 10 サービスのライブフェッチャー
-- [x] 全 10 サービスの write アクション (create-issue / send-message / create-page 等)
-- [x] OAuth 2.0 + PKCE code flow (Google 配線済み、他は config 追加だけ)
+- [x] **72 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
+- [x] 全 72 サービスのライブフェッチャー（`LIVE_FETCHERS` は総和型。欠けたら起動時に落ちる）
+- [x] write アクション（`LIVE_ACTIONS`）+ `lint:test-coverage` が全サービスのテストとアクションを強制
+- [x] OAuth 2.0 + PKCE code flow — **5 プロバイダ配線済み**（drive / calendar / gmail / freee / microsoft-365）
 - [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
-- [x] Vitest 83 件合格・typecheck・build green
-- [x] アプリアイコン (build/icon.svg → 512×512 PNG)
-- [x] Linux x86-64 AppImage を git にチャンクコミット済み
-- [x] GitHub Actions: ci.yml + release.yml (3 OS マトリックス)
-- [x] PR #2 (draft) push 済み
+- [x] **テスト 6,064 件合格**・typecheck・`verify:all` 13 ゲート green
+- [x] ブラウザ単体版 `dist/standalone.html`（10.0 MB）と LITE 版 `standalone-lite.html`（2.2 MB）
+- [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
+      — AppImage / `.deb` / arm64 `.dmg` / Windows `.exe`
+- [x] GitHub Pages 配信（landing + デモ 3 種 + lite）
+- [x] 知識コーパス **4,208 項目**（学術 3,583 / 法令実務 396 / 補助金 140 / 経済史 86 / 相談窓口 3）
+      + Obsidian vault 7,671 ノート + knowledge-graph（nodes 4,208 / edges 21,085）
+- [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**
 
-未完了の主要タスク:
-- [ ] 自分のマシンで起動して使う（Phase 0）
-- [ ] PR レビュー → main マージ（Phase 1）
-- [ ] スナップショット最新化（Phase 2、優先度低）
-- [ ] OAuth: 他プロバイダ (Notion/Slack/Canva/WP/Atlassian) の config 追加（Phase 4 残）
-- [ ] 配布署名 (Phase 7-1) / 自動アップデート (Phase 7-2)
+未完了の主要タスク（優先度順）:
+- [ ] **知識コーパスの増強バックログ 504 件**（学術 415 / 法令実務 89）
+      — 法令実務側は 65〜80 字の税・労務カードで、**条文番号と政府一次資料の裏取りが 1 件ずつ必要**
+- [ ] **単発誤 DOI の掃討** — `lint:citations` は同一 DOI に年の矛盾があるときだけ落ちるので、
+      **1 回しか引かれていない DOI の誤りは原理的に検出できない**（2,449 引用の大半が単発）。
+      接頭辞と誌名/出版社の整合は機械判定できるので、そこを検査するゲートが次の恒久対策
+- [ ] **dev 依存の脆弱性 29 件**（critical 2 / high 21）— 本番依存は 0 件。
+      electron-builder 系と vitest 系。**リリース成果物を作る鎖なのでサプライチェーン上は無視できない**
+- [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ
+- [ ] OAuth: 他プロバイダ（Notion / Slack / Canva / WordPress / Atlassian）の config 追加
+- [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）
+- [ ] **リポジトリ肥大**: `dist/standalone.html`（10 MB）を追跡しているため `.git` が 488 MB。
+      blob 342 版で論理 2.7 GB 相当。知識コーパスを触るたびに 10 MB が増える。
+      Release 資産か Pages 配信に寄せて追跡を外すかの判断が必要
+- [ ] `e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザ・Electron が要るため **CI 外**。
+      renderer や起動性能を触ったらローカルで回すこと
 
 ---
 
@@ -65,7 +79,7 @@ npm run build      # release/ に .dmg / .exe を出力
 ### 動作確認チェックリスト
 
 - [ ] Electron ウィンドウが開く
-- [ ] サイドバーの 9 サービスが表示される
+- [ ] サイドバーに 72 サービスがカテゴリ別（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）で表示される
 - [ ] 各タブをクリックしてスナップショットデータが表示される
 - [ ] GitHub タブで「PAT を設定」 → PAT を貼り付け → 「保存」 → バッジが `Live` に変わる
 - [ ] 「更新」ボタンで再フェッチ → 最新の自分の PR が表示される
@@ -199,7 +213,7 @@ main 側で分岐する設計でも良い。
 
 ---
 
-## Phase 6: Mac / Windows 用インストーラ（OS ごと 30 分）
+## Phase 6: Mac / Windows 用インストーラ ✅ v0.1.0 で配布済み（Intel Mac のみ残）
 
 `electron-builder` は **動作させる OS と同じターゲット** をネイティブビルドする
 のが安定運用。
