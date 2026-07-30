@@ -24092,7 +24092,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O\'Neil ／ Frank Pasquale',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1177/1461444812437963', type: 'academic', label: 'Gillespie, T. (2012). The Relevance of Algorithms. Media Technologies, MIT Press.' },
+      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies, MIT Press, pp.167–194' },
       { url: 'https://doi.org/10.1177/1461444816643163', type: 'academic', label: 'Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.' },
       { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'reference', label: 'Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.' },
       { url: 'https://doi.org/10.1093/oso/9780190905491.001.0001', type: 'academic', label: 'Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.' },
@@ -48496,7 +48496,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'タールトン・ギレスピー ／ ソフィア・ノーブル ／ ニック・サーニセック ／ エブゲニー・モロゾフ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1080/1369118x.2010.508516', type: 'academic', label: 'Gillespie, T. (2010) The politics of "platforms" — New Media & Society 12(3), 347–364（プラットフォーム・ガバナンス論の原論文）' },
+      { url: 'https://doi.org/10.1177/1461444809342738', type: 'academic', label: 'Gillespie, T. (2010) The politics of "platforms" — New Media & Society 12(3), 347–364（プラットフォーム・ガバナンス論の原論文）' },
       { url: 'https://en.wikipedia.org/wiki/Content_moderation', type: 'reference', label: 'Wikipedia: Content moderation — プラットフォームのコンテンツモデレーションの概説' },
     ],
   },
@@ -48814,7 +48814,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'タルトン・ギレスピー ／ ニック・ドラエール ／ ケイト・スターバード ／ シナン・アラル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/1461444813490395', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society（アルゴリズム的文化仲介の原典）' },
+      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society, MIT Press, pp.167–194（アルゴリズム的文化仲介の原典）' },
       { url: 'https://doi.org/10.1126/science.abf1511', type: 'academic', label: 'Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS, 119(1), e2025334119（アルゴリズム増幅の実証）' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2065', type: 'government', label: 'European Parliament (2022) Digital Services Act — Regulation (EU) 2022/2065（アルゴリズム透明性・システミックリスク規制）' },
       { url: 'https://en.wikipedia.org/wiki/Algorithmic_amplification', type: 'reference', label: 'Wikipedia: Algorithmic amplification — Gillespie, engagement optimization, DSA, systemic risk, platform governance' },

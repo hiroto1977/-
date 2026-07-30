@@ -26,7 +26,7 @@ aliases:
 Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O'Neil ／ Frank Pasquale
 
 ## 出典
-- [Gillespie, T. (2012). The Relevance of Algorithms. Media Technologies, MIT Press.](https://doi.org/10.1177/1461444812437963) `学術`
+- [Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies, MIT Press, pp.167–194](https://doi.org/10.7551/mitpress/9780262525374.003.0009) `学術`
 - [Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.](https://doi.org/10.1177/1461444816643163) `学術`
 - [Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.](https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/) `リファレンス`
 - [Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.](https://doi.org/10.1093/oso/9780190905491.001.0001) `学術`

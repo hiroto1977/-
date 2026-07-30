@@ -26,7 +26,7 @@ aliases:
 タールトン・ギレスピー ／ ソフィア・ノーブル ／ ニック・サーニセック ／ エブゲニー・モロゾフ
 
 ## 出典
-- [Gillespie, T. (2010) The politics of "platforms" — New Media & Society 12(3), 347–364（プラットフォーム・ガバナンス論の原論文）](https://doi.org/10.1080/1369118x.2010.508516) `学術`
+- [Gillespie, T. (2010) The politics of "platforms" — New Media & Society 12(3), 347–364（プラットフォーム・ガバナンス論の原論文）](https://doi.org/10.1177/1461444809342738) `学術`
 - [Wikipedia: Content moderation — プラットフォームのコンテンツモデレーションの概説](https://en.wikipedia.org/wiki/Content_moderation) `リファレンス`
 
 ## 関連概念
