@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 666
+entry_count: 665
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（666件）
+# 学習パス — 学術概念／経営学（665件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -17,7 +17,7 @@ tags:
 - [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]]（接続 34）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 31）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 31）
-- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 28）
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 25）
@@ -141,7 +141,6 @@ tags:
 - 1981年: [[mgmt-organizational-unlearning|組織的アンラーニング]]
 - 1981年: [[mgmt-theory-z|セオリーZ]]
 - 1981年: [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]]
-- 1982年: [[mgmt-3c-analysis|3C分析]]
 - 1982年: [[mgmt-organizational-routines|組織ルーチン]]
 - 1983年: [[mgmt-competing-values|競合価値フレームワーク（CVF）]]
 - 1983年: [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]]

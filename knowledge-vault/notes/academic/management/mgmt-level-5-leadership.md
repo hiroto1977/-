@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家
 - [[mgmt-stockdale-paradox|ストックデールの逆説]] — 同じ思想家
-- [[mgmt-3c-analysis|3C分析]] — 出典を共有
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 出典を共有
 - [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 出典を共有
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有

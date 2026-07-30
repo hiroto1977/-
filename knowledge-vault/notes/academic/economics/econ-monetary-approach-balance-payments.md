@@ -36,10 +36,10 @@ aliases:
 - [[econ-optimal-tariff|最適関税論]] — 同じ思想家
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
 - [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+- [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

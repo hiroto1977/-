@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
-- [[mgmt-3c-analysis|3C分析]] — 出典を共有
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 出典を共有
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有

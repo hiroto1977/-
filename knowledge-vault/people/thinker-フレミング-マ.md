@@ -2,7 +2,7 @@
 title: "マーカス・フレミング"
 type: thinker
 person_key: "フレミング|マ"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # マーカス・フレミング
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 国際金融のトリレンマ（ImpossibleTrinity）とは、固定為替レート、自由な資本移動、独立した金融政策の三つ…
+## 学術概念（2件）
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — ミードの内外均衡葛藤（Meadeconflict）は、ジェームズ・ミードが1951年の著書で分析した開放経済の政策問題…
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — マンデル＝フレミング・モデル（Mundell-FlemingModel）とは、閉鎖経済のIS-LMモデルを開放経済に拡…
 

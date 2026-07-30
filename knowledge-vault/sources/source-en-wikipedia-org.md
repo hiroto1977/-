@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2282
+cite_count: 2281
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2282 件**（リファレンス 2282）
+> [!info] 出典ドメイン索引 ・ 引用 **2281 件**（リファレンス 2281）
 
 ## このドメインを出典とする項目
 
@@ -663,7 +663,6 @@ tags:
 - [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — Wikipedia:Hysteresis(economics)—失業ヒステリシスの理論と実証
 - [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — Wikipedia—Hysteresis(Economics)
 - [[econ-immiserizing-growth|窮乏化成長]] — Immiserizinggrowth—Wikipedia
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — Wikipedia:Impossibletrinity—国際金融のトリレンマの理論と歴史的展開
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — Wikipedia:Inadaconditions—neoclassicalgrowth,productionfunction,Solow…
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — Wikipedia:Capitalinthe21stCentury—r>g,wealthinequality,inheritance,gl…
 - [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]] — Wikipedia:Incompletecontracts—Hart,Grossman,Moore,residualcontrolrigh…
@@ -769,6 +768,7 @@ tags:
 - [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]] — Wikipedia:Taylorrule—テイラー・ルールと中央銀行政策
 - [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — Wikipedia:Taylorrule—interestrate,inflationgap,outputgap,ZLB,forwardg…
 - [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — Wikipedia:Monetarypolicytransmissionmechanism—金融政策の波及経路の概説
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — Wikipedia:Impossibletrinity—国際金融のトリレンマの理論と歴史的展開
 - [[econ-money-creation|信用創造と貨幣乗数]] — Wikipedia—Moneymultiplier（貨幣乗数=マネーサプライ/マネタリーベース・1/準備率）
 - [[econ-money-illusion-fisher|貨幣錯覚（アーヴィング・フィッシャー）]] — Wikipedia:Moneyillusion—Fisher,framingeffect,near-rationality,inflati…
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — Wikipedia:Monopsony—singlebuyer,marginalfactorcost,labormarkets,minim…
@@ -1895,7 +1895,6 @@ tags:
 - [[infosoc-wisdom-of-crowds|群衆の叡智]] — Wikipedia"TheWisdomofCrowds"（4条件と失敗要因）
 - [[knowledge-gap-hypothesis|知識格差仮説]] — Wikipedia—Knowledgegaphypothesis（包括的参考文献付き）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — Wikipedia:360-degreefeedback（定義・多面評価・能力開発と考課・評価者バイアス・1990年代普及）
-- [[mgmt-3c-analysis|3C分析]] — 3Csmodel—Wikipedia
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — Wikipedia:3Csmodel—Ohmae,customer/company/competition,strategictriang…
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — Wikipedia:Abileneparadox—JerryB.Harvey,mismanagementofagreement,plura…
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — Wikipedia:Absorptivecapacity—Cohen&Levinthal,PACAP/RACAP,priorknowled…

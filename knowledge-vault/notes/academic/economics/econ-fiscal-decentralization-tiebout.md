@@ -39,8 +39,8 @@ aliases:
 - [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 同じ思想家
 - [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
-- [[econ-auerbach-kotlikoff-generational|世代会計（Generational Accounting）]] — 同分野の近傍
-- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
+- [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — 同分野の近傍
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

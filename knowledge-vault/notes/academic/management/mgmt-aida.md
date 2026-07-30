@@ -32,7 +32,6 @@ E・セント・エルモ・ルイス（E. St. Elmo Lewis, 1898頃）／AIDMA・
 
 ## 関連概念
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 出典を共有
-- [[mgmt-3c-analysis|3C分析]] — 同分野の近傍
 - [[mgmt-adkar|ADKARモデル]] — 同分野の近傍
 - [[mgmt-customer-journey|カスタマージャーニー]] — 同分野の近傍
 

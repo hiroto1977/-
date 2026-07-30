@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
-- [[mgmt-3c-analysis|3C分析]] — 出典を共有
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 出典を共有
 - [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
 - [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 出典を共有
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有

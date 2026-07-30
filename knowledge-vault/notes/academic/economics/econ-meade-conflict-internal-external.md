@@ -34,13 +34,13 @@ aliases:
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 語彙が近い
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 語彙が近い
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
 - [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 同じ思想家
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
+- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

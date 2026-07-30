@@ -38,9 +38,9 @@ Dirk Schoenmaker ／ Charles Goodhart
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同分野の近傍
 - [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同分野の近傍
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 同分野の近傍
+- [[econ-regulatory-arbitrage|規制裁定：企業による規制差異の利用と市場効率性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

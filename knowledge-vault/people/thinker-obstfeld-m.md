@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（2件）
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — Krugman（1979）の第一世代モデルは、財政赤字と固定為替レート制度の組み合わせにより外貨準備が枯渇すると投機的…
-- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — 金融政策のトリレンマ（不可能の三位一体、impossibletrinity）とは、固定為替レート、自由な資本移動、独立…
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — 金融政策のトリレンマ（不可能の三位一体、impossibletrinity。
 
 ## 関連
 - 索引: [[人物索引]]

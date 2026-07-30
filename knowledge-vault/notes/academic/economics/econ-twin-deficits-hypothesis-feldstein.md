@@ -36,10 +36,10 @@ aliases:
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
 - [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — 同じ思想家
 - [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 同じ思想家
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
 - [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
+- [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

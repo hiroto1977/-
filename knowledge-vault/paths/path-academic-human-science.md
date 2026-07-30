@@ -16,7 +16,7 @@ tags:
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 107）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 70）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 29）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）

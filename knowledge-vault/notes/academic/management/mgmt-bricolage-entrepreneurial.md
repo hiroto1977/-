@@ -40,7 +40,7 @@ aliases:
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[mgmt-transaction-cost|取引費用理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
