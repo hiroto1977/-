@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 671
+card_count: 666
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（671枚）
+# フラッシュカード — 学術概念／経営学（666枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -24,8 +24,6 @@ tags:
   - **A:** デイビッド・A・アーカーが1996年『Building Strong Brands（ブランド優位の戦略）』で体系化した枠組み。ブランド・アイデンティティとは、ブランド戦略家が創造・維持を目指す独自のブランド連想の集合であり、組織がブランドに「何を表してほしいか」という志向を示す。（→ [[mgmt-aaker-brand-identity]]）
 - **Q:** アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗
   - **A:** アビリーンのパラドックス（the Abilene paradox）は、経営学者ジェリー・B・ハーヴェイが1974年の論文「アビリーンのパラドックス——合意のマネジメント」で提唱した組織行動論の概念で、集団が、構成員の誰一人として本当は望んでいない行動を、全員一致したかのように取ってしまう逆説を指す。名前は、ハーヴェイ自身の体験談に由来する。（→ [[mgmt-abilene-paradox-harvey]]）
-- **Q:** AMOフレームワーク——能力・動機・機会が業績を生む
-  - **A:** AMOフレームワーク（ability-motivation-opportunity framework、能力・動機・機会の枠組み）は、戦略的人的資源管理（HRM）における理論モデルで、人事施策が、いかにして従業員の業績を、ひいては組織の成果を高めるのかを説明する。（→ [[mgmt-ability-motivation-opportunity]]）
 - **Q:** 吸収能力（コーエン＆レヴィンソール）
   - **A:** 吸収能力（absorptive capacity）は、コーエン＆レヴィンソール（1990）が提唱した、組織が外部知識を認識・同化・活用する能力を指す概念である。R&Dは単に新知識を生み出すだけでなく、外部の科学・技術知識を評価・取り込む「二面的機能（dual role of R&D）」を持つと論じ、吸収能力が高い組織ほど産業スピルオーバーを活用し、イノベーションで優位に立つことを実証した。（→ [[mgmt-absorptive-capacity-cohen]]）
 - **Q:** 吸収能力の実現化モデル：潜在的能力と実現的能力
@@ -98,8 +96,6 @@ tags:
   - **A:** アストン研究（Aston studies）は、1960年代にイギリスのアストン大学（バーミンガム）で、デレク・パグ、デヴィッド・ヒクソン、クリストファー・ハイニングスらの研究グループによって行われた、組織構造に関する大規模な実証研究である。それまでの組織論は、官僚制を論じたマックス・ウェーバーや、管理原則を説いた古典的管理論のように、しばしば理論的・規範的な議論にとどまっていた。（→ [[mgmt-aston-studies-organization]]）
 - **Q:** 注意ベース理論（アテンション・ベースト・ビュー）
   - **A:** ウィリアム・オカシオが1997年に『Strategic Management Journal』誌（第18巻187-206頁）の論文「Towards an Attention-Based View of the Firm」で提示した理論。企業の行動は、希少な資源である意思決定者の「注意（アテンション）」を、企業がどの争点や答えに振り向け配分するかの結果だとする。（→ [[mgmt-attention-based-view]]）
-- **Q:** 企業のアテンション・ベースト・ビュー（注意基盤理論）
-  - **A:** ウィリアム・オカシオが1997年にStrategic Management Journal誌で発表した「Towards an Attention-Based View of the Firm」で提唱した理論。企業行動は意思決定者がどの争点（issues）と答え（answers）に注意を向けるかによって決定されるとする。（→ [[mgmt-attention-based-view-ocasio]]）
 - **Q:** 魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」
   - **A:** 魅力＝選択＝消耗の枠組み（attraction-selection-attrition framework、ASAフレームワーク）は、組織心理学者ベンジャミン・シュナイダーが1987年の論文「人が場所をつくる（The People Make the Place）」で提唱した組織行動論の理論で、組織の性格や文化が、究極的にはそこに集まる「人」によって形づくられると論じる。（→ [[mgmt-attraction-selection-attrition-schneider]]）
 - **Q:** 真正リーダーシップ——自己認識・関係的透明性・道徳的行為
@@ -566,10 +562,8 @@ tags:
   - **A:** デマロウティ＆バッカーら（2001, Journal of Applied Psychology／2007）が提唱した産業保健心理学の主要枠組み。あらゆる職場の労働条件を2区分する。仕事の要求度は持続的な努力を要し心身のコストを伴う側面（仕事量・時間的切迫・情緒的負担など）を、仕事の資源は目標達成を助け要求度を減らし成長を促す側面（裁量・フィードバック・社会的支援・上司の支援など）を指す。（→ [[mgmt-job-demands-resources]]）
 - **Q:** 職務要求-資源モデル——ストレスとエンゲージメントの二重過程
   - **A:** アーノルド・バッカーとエヴァンゲリア・デメルーティが2001年に提唱した職務要求-資源（JD-R）モデルは、職務特性を要求（demands: 身体的・心理的・組織的コスト）と資源（resources: 目標達成・成長・学習を促進する要因）に二分し、要求が消耗（exhaustion）を経てバーンアウトに至る「健康障害プロセス」と、資源がワーク・エンゲージメントを経て組織成果に至る「動機づけプロセス」の二重経路を仮定する。（→ [[mgmt-job-demands-resources-bakker]]）
-- **Q:** ジョブ・エンベデッドネス（職務埋め込み理論）
-  - **A:** Mitchell・Holtom・Leeらが2001年に提唱。従業員の定着を「つながり（Links）」「適合（Fit）」「犠牲（Sacrifice）」の3次元で説明し、職場内・地域コミュニティ双方への埋め込みが離職意図を抑制すると示した。（→ [[mgmt-job-embeddedness]]）
 - **Q:** 職務埋め込み理論
-  - **A:** Mitchell・Holtom・Leeらが提唱。従業員の在職をリンク（人的つながり）・フィット（適合）・犠牲（離職コスト）の3要因で職場内外6次元から説明し、満足度を超えた離職予測を実現した理論。（→ [[mgmt-job-embeddedness-theory]]）
+  - **A:** Mitchell・Holtom・Leeらが2001年に提唱。従業員の在職をリンク（人的つながり）・フィット（適合）・犠牲（離職コスト）の3要因で説明し、それぞれを「職場（on-the-job）」と「地域コミュニティ（off-the-job）」の両側面に分けた計6次元から捉える。（→ [[mgmt-job-embeddedness-theory]]）
 - **Q:** 職務拡大と職務充実
   - **A:** 職務拡大（job enlargement）と職務充実（job enrichment）は、分業・職務細分化による単調で退屈な職務を見直し、働く人の動機づけと満足を高める職務再設計の手法であり、拡大の方向が異なる。職務拡大は水平的拡大（horizontal job loading）で、同程度の難易度・責任のタスクの種類や範囲を増やして仕事の多様性を高め単調さを減らすが、責任や自律性は変えない。（→ [[mgmt-job-enrichment]]）
 - **Q:** 雇用不安——雇用の継続が脅かされているという無力な知覚
@@ -662,8 +656,6 @@ tags:
   - **A:** 疎結合システムとは、組織を構成する部門・職務・活動などの要素が相互に応答し合いながらも、各要素が独自のアイデンティティと物理的・論理的な分離性を保持している結合状態を指す組織論の概念である。（→ [[mgmt-loose-coupling-weick]]）
 - **Q:** 緩やかに結合したシステム（疎結合）
   - **A:** カール・ワイクが1976年（Administrative Science Quarterly、教育組織を例に）に提唱した概念。組織の要素や下位単位は互いに反応し合いつつも、各自が固有のアイデンティティと論理的/物理的な分離性を保つ。すなわち結合が弱く・まれ・遅く・重要でない状態を指し、ある要素の変化が他に急速かつ強く波及する密結合（タイトカップリング）と対比される。（→ [[mgmt-loosely-coupled-systems]]）
-- **Q:** 目標管理（MBO）
-  - **A:** ピーター・ドラッカーが1954年の著書『現代の経営（The Practice of Management）』で提唱・命名した経営手法。組織全体の目標を上位から下位へ連鎖させ、上司と部下が協働して各人が達成すべき具体的目標を設定し、その達成度で業績を評価・管理する。（→ [[mgmt-management-by-objectives]]）
 - **Q:** 経営ファッション論——経営技法の流行とその供給・需要の力学
   - **A:** 経営ファッション論（management fashion）は、エリック・アブラハムソンが1991年と1996年の論文で展開した理論で、経営技法が、合理的な進歩というよりも、流行（ファッション）として広まり、やがて廃れていく現象を分析する。（→ [[mgmt-management-fashion-abrahamson]]）
 - **Q:** 経営者認知理論
@@ -784,8 +776,6 @@ tags:
   - **A:** Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段階で適切な介入がなければ衰退が進行すると論じた。Cameron・Whetten・Kim（1987）は衰退を「停滞（資源縮小）」と「削減（意図的なコスト削減）」に区別し、それぞれが組織行動に異なる影響を与えることを明らかにした。（→ [[mgmt-organizational-decline-theory]]）
 - **Q:** 組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体
   - **A:** 組織衰退の段階モデル（stages of organizational decline）は、ウェイツェルとジョンソンが1989年に提唱した枠組みであり、組織が衰退する過程を五つの段階に区分して分析する。（→ [[mgmt-organizational-decline-weitzel]]）
-- **Q:** 組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性
-  - **A:** ウィリアム・ウェイツェルとエレン・ジョンソンは1989年の論文「Decline in Organizations: A Literature Integration and Extension」において，組織の衰退（organizational decline）を五つの段階として体系化した：①盲目段階（blinded stage：衰退の兆候を認識できない），②不活動段階（inaction stage：兆候を認識するが対処しない），③誤…（→ [[mgmt-organizational-decline-weitzel-jonsson]]）
 - **Q:** 組織エコロジー（Organizational Ecology）
   - **A:** 組織エコロジー（organizational ecology）とは、マイケル・T・ハナンとジョン・フリーマンが1977年の論文「The Population Ecology of Organizations」（American Journal of Sociology, Vol.82, No.5, pp.929-964, DOI: 10.1086/226424）において提唱した組織理論の研究プログラムであり、個別組織の合理的適応（ra…（→ [[mgmt-organizational-ecology]]）
 - **Q:** 組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅

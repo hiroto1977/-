@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同じ思想家
 - [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同じ思想家
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家

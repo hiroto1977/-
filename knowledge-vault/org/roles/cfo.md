@@ -28,14 +28,14 @@ aliases:
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
 - …ほか 694 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全960件）
+### 学術概念 / 経済学（全951件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
-- …ほか 954 件 → [[学術概念]]
+- …ほか 945 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 法務（全138件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
@@ -46,14 +46,14 @@ aliases:
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
 - …ほか 132 件 → [[法務・税務・労務]]
 
-### 法務・税務・労務 / 税務（全134件）
+### 法務・税務・労務 / 税務（全132件）
 - [[tax-amended-return|修正申告・期限後申告と加算税]]
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
 - [[tax-automobile-tax|自動車税（種別割）]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]
-- …ほか 128 件 → [[法務・税務・労務]]
+- …ほか 126 件 → [[法務・税務・労務]]
 
 ### 補助金・助成金 / 税制優遇（全2件）
 - [[subsidy-agriculture-reserve|農業経営基盤強化準備金制度]]

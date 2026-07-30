@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 138
+cite_count: 137
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **138 件**（学術 116 ・ リファレンス 22）
+> [!info] 出典ドメイン索引 ・ 引用 **137 件**（学術 116 ・ リファレンス 21）
 
 ## このドメインを出典とする項目
 
@@ -27,7 +27,6 @@ tags:
 - [[econ-dictator-game|独裁者ゲーム]] — DictatorGame—EncyclopediaofLawandEconomics(SpringerNature)
 - [[econ-double-marginalization|二重マージン（二重限界化）]] — Linnemer,“DoublingBackonDoubleMarginalization”,ReviewofIndustrialOrga…
 - [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — ElasticityofSubstitution—TheNewPalgraveDictionaryofEconomics(Springer)
-- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — ElasticityofSubstitution—TheNewPalgraveDictionaryofEconomics
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — OntheEllsbergandMachinaparadoxes,TheoryandDecision（査読誌：曖昧性回避とGilboa–S…
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — BiophysicalEconomicsandSustainability(Springer)—IsThereaKuznetsCurvef…
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — Sims(1994)ASimpleModelforStudyoftheDeterminationofthePriceLevel—Econo…
@@ -38,7 +37,7 @@ tags:
 - [[econ-leontief-paradox|レオンチェフの逆説]] — TheNewPalgraveDictionaryofEconomics「LeontiefParadox」(SpringerLink)
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — TheNewPalgrave(Springer)“LindahlEquilibrium”—個別価格と限界効用に等しい税率・公共経済学の標準…
 - [[econ-logrolling|ログローリング（票の取引）]] — PublicChoice(Springer)—Logrolling,VoteTrading,andtheParadoxofVoting
-- [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]] — Metzler'sTariffParadoxandtheTransferProblem—Springer
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — Metzler'sTariffParadoxandtheTransferProblem—Springer（移転問題との接続）
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — Privateinformation,money,andgrowth:...andtheMundell-Tobineffect—Journ…
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — Bentolilaetal.(2006)NKPCandInflationExpectations—EconomicTheory(Sprin…
 - [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — Thetheoryofpeak-loadpricing:Asurvey,JournalofRegulatoryEconomics(Spri…
@@ -53,7 +52,7 @@ tags:
 - [[econ-switching-cost|スイッチングコストとロックイン]] — SpringerNature—“Lock-InandSwitchingCosts”
 - [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — TurnpikeTheory—TheNewPalgraveDictionaryofEconomics/Springer
 - [[econ-twin-deficits|双子の赤字]] — Springer:Ricardianequivalenceandtwindeficitshypothesesintheeuroarea
-- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — Bussièreetal.(2022)TheNewFamaPuzzle—IMFEconomicReview(Springer)
+- [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — Bussièreetal.(2022)TheNewFamaPuzzle—IMFEconomicReview
 - [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — EconomiaPolitica(Springer,査読論文):Kaldor–Verdoornlaw（誘発される技術進歩・累積的因果）
 - [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — Apperzeption—DeutscheVierteljahrsschriftfürLiteraturwissenschaftundGe…
 - [[human-attribution-theory|帰属理論]] — Heider(1958):ThePsychologyofInterpersonalRelations—SpringerNature

@@ -36,7 +36,6 @@ Steven W. Floyd／Bill Wooldridge／Quy Nguyen Huy／Ikujiro Nonaka／Peter J. L
 - [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同分野の近傍
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同分野の近傍
 - [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 同分野の近傍
-- [[mgmt-middle-up-down-management-nonaka|ミドル・アップダウン・マネジメント（野中郁次郎）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

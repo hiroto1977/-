@@ -2131,24 +2131,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'tax-invoice-2wari',
-      domain: 'tax',
-      title: 'インボイス制度の2割特例（小規模事業者の負担軽減）',
-      statement:
-        '免税事業者からインボイス発行事業者として課税事業者になった小規模事業者は、令和5年10月1日から令和8年9月30日までの日の属する' +
-        '各課税期間について、納付する消費税額を売上に係る消費税額の2割とすることができる経過措置（2割特例）を適用できる。' +
-        '事前の届出は不要で、確定申告書にその旨を付記して課税期間ごとに選択適用できる。',
-      authority: '所管: 国税庁（消費税法／経過措置）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm', type: 'government', label: '国税庁 2割特例の概要' },
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_2tokurei.htm', type: 'government', label: '国税庁 2割特例 特設ページ' },
-      { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/socat4/scid1924.html', type: 'government', label: '国税庁 確定申告書等作成コーナー 2割特例' },
-    ],
-  },
-  {
-    value: {
       id: 'labor-safety-education',
       domain: 'labor',
       title: '雇入れ時等の安全衛生教育（労働安全衛生法59条）',
@@ -4456,23 +4438,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'tax-electronic-contract-stamp',
-      domain: 'tax',
-      title: '電子契約（電磁的記録）と印紙税の非課税',
-      statement:
-        '印紙税は課税物件表に掲げる「文書」の作成に対して課される税であり、課税文書を電磁的記録（電子契約・PDF等）で作成し電子的に' +
-        '交付・保存する場合は、文書の「作成」に当たらないため印紙税は課されないと解されている（国税庁の質疑応答事例および平成17年の政府答弁書による）。',
-      authority: '所管: 国税庁（印紙税法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 質疑応答事例 電磁的記録と印紙税' },
-      { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 印紙税に関する答弁書（平成17年）' },
-      { url: 'https://www.nta.go.jp/about/organization/fukuoka/bunshokaito/inshi_sonota/081024/01.htm', type: 'government', label: '福岡国税局 注文請書を電子メール送信した場合の印紙税' },
-    ],
-  },
-  {
-    value: {
       id: 'labor-high-professional',
       domain: 'labor',
       title: '高度プロフェッショナル制度（労基法41条の2）',
@@ -6156,6 +6121,7 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7100.htm', type: 'government', label: '国税庁 タックスアンサー No.7100 課税文書に該当するかどうかの判断' },
       { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 内閣答弁書 文書課税である印紙税は電磁的記録に課税されない' },
       { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 文書回答事例 電磁的記録に関する印紙税の取扱い' },
+      { url: 'https://www.nta.go.jp/about/organization/fukuoka/bunshokaito/inshi_sonota/081024/01.htm', type: 'government', label: '福岡国税局 注文請書を電子メール送信した場合の印紙税（具体事例）' },
     ],
   },
   {
@@ -6250,6 +6216,7 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_2tokurei.htm', type: 'government', label: '国税庁 2割特例 特設ページ' },
       { url: 'https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm', type: 'government', label: '国税庁 2割特例（小規模事業者に対する負担軽減措置）の概要' },
       { url: 'https://biz.moneyforward.com/invoice/basic/55388/', type: 'media', label: 'マネーフォワード インボイス制度における軽減措置の解説' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/socat4/scid1924.html', type: 'government', label: '国税庁 確定申告書等作成コーナー 2割特例' },
     ],
   },
   {

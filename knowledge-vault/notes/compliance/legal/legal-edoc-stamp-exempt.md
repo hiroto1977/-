@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 語彙が近い
-- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 分野横断
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 分野横断
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 分野横断
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有

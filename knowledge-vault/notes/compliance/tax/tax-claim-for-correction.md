@@ -34,7 +34,7 @@ aliases:
 - [[tax-amended-return|修正申告・期限後申告と加算税]] — 語彙が近い
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 語彙が近い
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
-- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 出典を共有
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 出典を共有
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有

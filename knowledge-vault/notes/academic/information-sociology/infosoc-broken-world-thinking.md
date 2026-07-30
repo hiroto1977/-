@@ -33,7 +33,6 @@ Steven J. Jackson ／ Stephen Graham ／ Nigel Thrift
 
 ## 関連概念
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
@@ -41,6 +40,7 @@ Steven J. Jackson ／ Stephen Graham ／ Nigel Thrift
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
 - [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

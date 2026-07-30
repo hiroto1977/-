@@ -31,8 +31,8 @@ aliases:
 - [東京都環境局 排出事業者の責務](https://www.kankyo.metro.tokyo.lg.jp/resource/industrial_waste/on_waste/sekimu) `自治体`
 
 ## 関連概念
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 語彙が近い
 - [[legal-food-sanitation|食品衛生法の営業許可・届出とHACCPに沿った衛生管理]] — 語彙が近い
-- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 分野横断
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
 - [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有

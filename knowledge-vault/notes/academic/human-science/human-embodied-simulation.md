@@ -37,6 +37,7 @@ aliases:
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同じ思想家
 - [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
 - [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 同分野の近傍
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

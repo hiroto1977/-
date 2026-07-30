@@ -2,13 +2,13 @@
 title: "学習パス: 法務・税務・労務／税務"
 type: learning-path
 path_key: "compliance-tax"
-entry_count: 134
+entry_count: 132
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 法務・税務・労務／税務（134件）
+# 学習パス — 法務・税務・労務／税務（132件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -16,11 +16,11 @@ tags:
 - [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 25）
 - [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 25）
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 23）
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 23）
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 22）
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 22）
-- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 22）
 - [[tax-blue-return-application|所得税の青色申告承認申請]]（接続 21）
-- [[tax-consumption-taxpayer|消費税の納税義務者の判定]]（接続 20）
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]]（接続 19）
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 18）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 18）
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 18）
@@ -68,7 +68,6 @@ tags:
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]]
 - [[tax-earthquake-insurance-deduction|地震保険料控除]]
 - [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]]
-- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]]
 - [[tax-employment-income-deduction|給与所得控除]]
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]]
 - [[tax-estimated-prepayment|所得税の予定納税]]
@@ -91,7 +90,6 @@ tags:
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]]
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]]
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]
-- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]]
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]]
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]]

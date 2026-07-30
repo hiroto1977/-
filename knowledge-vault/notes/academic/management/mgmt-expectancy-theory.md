@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
 - [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 同分野の近傍
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同分野の近傍
+- [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2294
+cite_count: 2282
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2294 件**（リファレンス 2294）
+> [!info] 出典ドメイン索引 ・ 引用 **2282 件**（リファレンス 2282）
 
 ## このドメインを出典とする項目
 
@@ -397,7 +397,6 @@ tags:
 - [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — Wikipedia:Balancesheetrecession—概念と日本経済への適用
 - [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — Wikipedia:Revealedcomparativeadvantage—バラッサ指数の定義と応用
 - [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — Wikipedia:Balassa–Samuelsoneffect—効果の概要
-- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — Wikipedia:Bandwagoneffect—Leibenstein,snobeffect,Vebleneffect,demandi…
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — Wikipedia:Creditchannel—銀行貸出チャネルと信用チャネルの理論的概説
 - [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]] — Wikipedia"YoramBarzel"—biography,measurementcosttheory,propertyrights…
 - [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]] — Wikipedia—Battleofthesexes(gametheory)
@@ -534,7 +533,6 @@ tags:
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — Wikipedia:Effectiverateofprotection—value-addedbasedtradeprotectionme…
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — Wikipedia:Efficiencywage—shirkingmodel,involuntaryunemployment,wageri…
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — Wikipedia:Efficient-markethypothesis—weak/semi-strong/strongform,anom…
-- [[econ-elasticity-of-substitution|代替の弾力性]] — Wikipedia—Elasticityofsubstitution
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — Wikipedia:Marshall–LernerCondition—tradebalanceandexchangerateelastic…
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — Wikipedia:Elasticityofsubstitution—代替の弾力性の定義と拡張の概説
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — Wikipedia:CES—CES生産関数の概要
@@ -755,7 +753,6 @@ tags:
 - [[econ-merit-goods|メリット財（価値財）]] — Meritgood—Wikipedia（定義・マスグレイブ1957/1959・過少消費・正の外部性・公共財との区別）
 - [[econ-merit-goods|メリット財（価値財）]] — RichardMusgrave(economist)—Wikipedia（提唱者と『TheTheoryofPublicFinance』19…
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — Wikipedia:Meritgood—Musgrave,consumersovereignty,paternalism,demeritg…
-- [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]] — Wikipedia:MetzlerParadox
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — Wikipedia:Metzlerparadox—tariffanddomesticpricereversaloverview
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — Wikipedia:Generalequilibriumtheory—welfaretheorems
 - [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — Wikipedia:Middleincometrap—growthslowdown,innovation,convergence,deve…
@@ -981,7 +978,6 @@ tags:
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — Wikipedia:Transferpricing—移転価格制度の概要と国際動向
 - [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — Wikipedia:Transferpricing—移転価格の定義と国際的規制動向の概説
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — Wikipedia:TransferProblem—Keynes–Ohlindebateoverview
-- [[econ-transfer-problem-keynes-ohlin|移転問題論争——国際資本移転と交易条件への影響]] — Wikipedia:Transferproblem—internationalcapitaltransfersandtermsoftrad…
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — Wikipedia:Tremblinghandperfectequilibrium—Selten,Nashrefinement,weakl…
 - [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — Wikipedia:GlobalizationParadox—Rodrikpoliticaltrilemmaofworldeconomy
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — Wikipedia:Tullockparadox—rent-seeking,lobbying,publicchoice
@@ -1136,8 +1132,6 @@ tags:
 - [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]] — Wikipedia,“Emotionclassification”（次元論的感情モデル・Russellの感情円環・valence/arou…
 - [[human-cocktail-party-effect|カクテルパーティー効果]] — Cocktailpartyeffect—Wikipedia（フィルター説/減衰説の論争）
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — Appraisaltheory（評価による感情・個人差・一次/二次評価）
-- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — Wikipedia:Appraisaltheory—認知的評価理論とストレス研究
-- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — Wikipedia:Cognitiveappraisal—認知的評価の概要
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — Wikipedia—Cognitivedissonance
 - [[human-cognitive-dissonance-reduction|認知的不協和低減]] — Wikipedia—Cognitivedissonance
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — Wikipedia:Cognitivedissonance—contemporaryrevisionsandneuroscienceove…
@@ -1206,7 +1200,6 @@ tags:
 - [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — Wikipedia:Embodiedcognition—身体化認知の概説
 - [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]] — Wikipedia:Mirrorneuron—embodiedsimulation
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — Wikipedia:Appraisaltheory—Lazarus,primary/secondary,Scherer,CBT,reapp…
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — Wikipedia:Emotionalself-regulation—Grossprocessmodel,reappraisalvssup…
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — Wikipedia:Emotionregulation—psychologyandneuroscience
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — Wikipedia:Emotionalgranularity—Barrett,constructedemotion,allostasis,…
 - [[human-emotional-labor|感情労働（ホックシールド）]] — Wikipedia—TheManagedHeart（表層演技・深層演技・客室乗務員/集金人事例）
@@ -1824,7 +1817,6 @@ tags:
 - [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — Wikipedia:Remixculture—リミックス文化の歴史と著作権問題の概説
 - [[infosoc-risk-society|リスク社会（ベック）]] — Risksociety—Wikipedia（突合・補助）
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — Wikipedia:MadeleineAkrich—script,inscription/de-scription,projectedvs…
-- [[infosoc-seci|SECIモデル（知識創造理論）]] — Wikipedia:SECImodelofknowledgedimensions
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — Wikipedia—Second-ordercybernetics
 - [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — Wikipedia:SherryTurkle/TheSecondSelf—computerasevocativeobject,identi…
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — Wikipedia「ThePresentationofSelfinEverydayLife」（1956/1959刊行・MacIver賞）
@@ -1901,13 +1893,11 @@ tags:
 - [[infosoc-web3|Web3]] — Wikipedia—Web3(GavinWood2014coinage,criticism)
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — Wikipedia:Wikinomics—Tapscott&Williams,openness/peering/sharing/actin…
 - [[infosoc-wisdom-of-crowds|群衆の叡智]] — Wikipedia"TheWisdomofCrowds"（4条件と失敗要因）
-- [[is-lm-model|IS-LM分析]] — Wikipedia—IS–LMmodel（包括的参考文献付き）
 - [[knowledge-gap-hypothesis|知識格差仮説]] — Wikipedia—Knowledgegaphypothesis（包括的参考文献付き）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — Wikipedia:360-degreefeedback（定義・多面評価・能力開発と考課・評価者バイアス・1990年代普及）
 - [[mgmt-3c-analysis|3C分析]] — 3Csmodel—Wikipedia
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — Wikipedia:3Csmodel—Ohmae,customer/company/competition,strategictriang…
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — Wikipedia:Abileneparadox—JerryB.Harvey,mismanagementofagreement,plura…
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — Wikipedia:High-performanceworksystems—AMOmodel,ability,motivation,opp…
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — Wikipedia:Absorptivecapacity—Cohen&Levinthal,PACAP/RACAP,priorknowled…
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — Wikipedia—Absorptivecapacityoverview
 - [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — Wikipedia:Abusivesupervision—destructiveleadership,hostilebehavior,ou…
@@ -1926,6 +1916,7 @@ tags:
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — Wikipedia:Organizationalambidexterity—ambidextrousleadership
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]] — Wikipedia:Ambidextrousorganization—structuralandcontextualapproacheso…
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — Wikipedia:Organizationalambidexterity—explorationandexploitation
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — Wikipedia:High-performanceworksystems—AMOモデルとHPWSの接続
 - [[mgmt-amoeba-management|アメーバ経営（稲盛和夫）]] — AmoebaManagement—Wikipedia（英語版百科事典）
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — Wikipedia—Ansoffmatrix（1957HBR論文・4戦略・リスク逓増）
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — Wikipedia:Appreciativeinquiry—positiveorganizationaldevelopment
@@ -2073,7 +2064,6 @@ tags:
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — Wikipedia:Jobcrafting—Wrzesniewski&Dutton,threedimensions,JD-Rintegra…
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — Wikipedia:Jobdemands-controlmodel—strainhypothesis,decisionlatitude,d…
 - [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — Wikipedia:Jobdemands-resourcesmodel—理論構造と実証的展開
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — Wikipedia—JobEmbeddedness
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — Jobenlargement—Wikipedia（水平的拡大としての職務拡大）
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — Jobenrichment—Wikipedia（垂直的拡大／Herzberg二要因理論との関係）
 - [[mgmt-job-insecurity-greenhalgh-rosenblatt|雇用不安——雇用の継続が脅かされているという無力な知覚]] — Wikipedia:Jobsecurity—jobinsecurity,perceivedthreat,powerlessness,wor…
@@ -2103,7 +2093,6 @@ tags:
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]] — Wikipedia:Logicalincrementalism—strategyformation,emergentstrategy,in…
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Wikipedia:Loosecoupling—organizationaltheoryoverview
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — Wikipedia—NormalAccidents(Perrow):tightvs.loosecouplinginaccidentanal…
-- [[mgmt-management-by-objectives|目標管理（MBO）]] — Wikipedia:Managementbyobjectives
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — Wikipedia:Managementfashion/fad—Abrahamson,fashionsetters,bell-shaped…
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — Wikipedia:Managerialcognition—schemas,enactment,sensemaking,cognitive…
 - [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — Wikipedia:Managerialcognition—経営者認知論の概説
@@ -2137,7 +2126,6 @@ tags:
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — Wikipedia:Organizationalcynicism—belief,affect,behavior,attitude,chan…
 - [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — OrganizationalLifeCycle—Wikipedia
 - [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — Wikipedia:Organizationaldecline—stagesandturnaroundstrategiesoverview
-- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — Wikipedia:Organizationaldecline—fivestages,turnaround,Icarusparadox,e…
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — Wikipedia:Organizationalecology—population-levelanalysisoforganizatio…
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — Wikipedia「AdministrativeBehavior」（サイモン1947年、誘因＝貢献均衡のバーナード由来）
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — Wikipedia「TheFunctionsoftheExecutive」（バーナード1938年、協働体系・有効性と能率）

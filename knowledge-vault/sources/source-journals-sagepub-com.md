@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 173
+cite_count: 172
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **173 件**（学術 172 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **172 件**（学術 171 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -32,8 +32,7 @@ tags:
 - [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — Haggeretal.(2016)“AMultilabPreregisteredReplicationoftheEgo-Depletion…
 - [[human-emotional-contagion|情動感染]] — Hatfield,Cacioppo&Rapson(1993),CurrentDirectionsinPsychologicalScience
 - [[human-emotional-intelligence|情動知能（EQ）]] — Salovey,P.&Mayer,J.D.(1990)“EmotionalIntelligence”,Imagination,Cognit…
-- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — Gross(1998)TheEmergingFieldofEmotionRegulation:AnIntegrativeReview—Re…
-- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — Sheppesetal.(2011)Emotion-RegulationChoice—PsychologicalScience
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — Sheppesetal.(2011)Emotion-RegulationChoice—PsychologicalScience（感情強度に…
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — Krulletal.(1999)“TheFundamentalFundamentalAttributionError:Correspond…
 - [[human-goal-gradient|目標勾配効果]] — SAGEJournals—JournalofMarketingResearch43(1):39–58（査読論文書誌）
 - [[human-illusion-of-transparency|透明性の錯覚]] — Gilovich&Savitsky(1999).TheSpotlightEffectandtheIllusionofTransparenc…

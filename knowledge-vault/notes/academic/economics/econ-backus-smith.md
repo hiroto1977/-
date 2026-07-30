@@ -31,6 +31,7 @@ aliases:
 - [Corsetti, Dedola, Leduc (2005) International Risk-Sharing — FRB IFDP 826](https://www.federalreserve.gov/pubs/ifdp/2005/826/ifdp826.htm) `公的`
 
 ## 関連概念
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同分野の近傍
 - [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — 同分野の近傍
 

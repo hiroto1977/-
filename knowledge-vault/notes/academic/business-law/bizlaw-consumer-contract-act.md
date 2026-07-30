@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 語彙が近い
 - [[legal-consumer-contract-act|消費者契約法]] — 分野横断
-- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 出典を共有
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有

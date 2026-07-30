@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[econ-interest-rate-parity-covered|カバー付き金利平価——先渡為替レートと内外金利差の裁定均衡]] — 語彙が近い
 - [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 語彙が近い
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同分野の近傍
 - [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]] — 同分野の近傍
 
 ## 関連

@@ -33,7 +33,6 @@ Y=A·L^α·K^β／A=全要素生産性、α・β=産出弾力性／α+β=1で規
 
 ## 関連概念
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 語彙が近い
-- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — 語彙が近い
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 出典を共有
 - [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 出典を共有
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 出典を共有

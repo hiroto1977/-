@@ -41,7 +41,6 @@ aliases:
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
-- [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -20,7 +20,7 @@ tags:
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 労働政策研究・研修機構解説
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 労働政策研究・研修機構（JILPT）研究員プロフィール—濱口桂一郎
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 労働政策研究・研修機構（JILPT）「仕事の要求度-資源モデル」
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]] — JIL（労働政策研究・研修機構）—Off-the-jobembeddedness解説
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — JILPT労働政策研究・研修機構—off-the-jobembeddedness解説（日本労働研究雑誌）
 - [[mgmt-mbo|目標による管理（MBO）]] — JILPT労働政策研究・研修機構—MBO（目標管理）解説（日本労働研究雑誌）
 
 ## 関連

@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同じ思想家
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同分野の近傍
 - [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 同分野の近傍
+- [[econ-harrod-domar|ハロッド＝ドーマー成長モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

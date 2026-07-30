@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
-- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

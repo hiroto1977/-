@@ -33,13 +33,14 @@ aliases:
 ## 関連概念
 - [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 語彙が近い
 - [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 語彙が近い
-- [[econ-cobweb|クモの巣理論]] — 語彙が近い
 - [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
+- [[econ-cobweb|クモの巣理論]] — 同じ思想家
 - [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同じ思想家
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
+- [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

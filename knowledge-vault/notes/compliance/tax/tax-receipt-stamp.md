@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 語彙が近い
-- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 語彙が近い
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 分野横断
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

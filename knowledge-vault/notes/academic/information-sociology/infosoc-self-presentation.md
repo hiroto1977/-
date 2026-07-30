@@ -32,8 +32,8 @@ aliases:
 - [Masaryk University Journal of Law and Technology（査読論文）「Goffman’s Theory as a Framework for Analysis of Self Presentation on Online Social Networks」](https://journals.muni.cz/mujlt/article/view/11836) `学術`
 
 ## 関連概念
-- [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 語彙が近い
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 語彙が近い
+- [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 語彙が近い
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同じ思想家

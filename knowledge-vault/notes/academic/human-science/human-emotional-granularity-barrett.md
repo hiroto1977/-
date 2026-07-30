@@ -40,8 +40,8 @@ aliases:
 - [[human-differential-emotions|分化感情理論（ディファレンシャル・エモーションズ理論）]] — 同じ思想家
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同じ思想家
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
+- [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

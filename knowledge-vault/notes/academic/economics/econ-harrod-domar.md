@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同分野の近傍
-- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — 同分野の近傍
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

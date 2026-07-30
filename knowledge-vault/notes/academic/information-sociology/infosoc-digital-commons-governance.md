@@ -39,8 +39,8 @@ Charlotte Hess／Elinor Ostrom／Yochai Benkler／Brett M. Frischmann
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
 - [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

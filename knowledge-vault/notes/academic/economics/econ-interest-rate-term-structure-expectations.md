@@ -37,9 +37,9 @@ aliases:
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
 - [[econ-time-preference|時間選好]] — 同じ思想家
-- [[is-lm-model|IS-LM分析]] — 同じ思想家
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

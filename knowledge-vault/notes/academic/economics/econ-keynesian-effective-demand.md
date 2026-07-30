@@ -31,8 +31,8 @@ J.M.ケインズ（1936『一般理論』）
 - [Wikipedia — Principle of effective demand](https://en.wikipedia.org/wiki/Principle_of_effective_demand) `リファレンス`
 
 ## 関連概念
-- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 語彙が近い
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 語彙が近い
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 語彙が近い
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 同分野の近傍
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同分野の近傍
 - [[econ-inflation-deflation|インフレーションとデフレーション（物価変動と金融政策）]] — 同分野の近傍

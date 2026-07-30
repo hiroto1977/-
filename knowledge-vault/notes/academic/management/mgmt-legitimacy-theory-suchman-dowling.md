@@ -34,11 +34,11 @@ aliases:
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
 - [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]] — 同じ思想家
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
 - [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同分野の近傍
 

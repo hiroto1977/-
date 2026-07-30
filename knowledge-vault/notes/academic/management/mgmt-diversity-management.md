@@ -33,7 +33,7 @@ R.ルーズベルト・トーマスJr.（R. Roosevelt Thomas Jr., 1990 HBR）／
 ## 関連概念
 - [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同じ思想家
 - [[mgmt-talent-management-strategy|タレントマネジメント戦略と人材の識別・開発・維持の組織論]] — 同分野の近傍
-- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同分野の近傍
+- [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

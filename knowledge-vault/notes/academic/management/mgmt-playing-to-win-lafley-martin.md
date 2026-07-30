@@ -30,7 +30,6 @@ A・G・ラフリー ／ ロジャー・マーティン ／ マイケル・ポ�
 - [Wikipedia: Roger Martin — Playing to Win, strategic choice cascade, where to play / how to win](https://en.wikipedia.org/wiki/Roger_Martin_(professor)) `リファレンス`
 
 ## 関連概念
-- [[mgmt-management-by-objectives|目標管理（MBO）]] — 同じ思想家
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同じ思想家
 - [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同じ思想家
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
@@ -40,6 +39,7 @@ A・G・ラフリー ／ ロジャー・マーティン ／ マイケル・ポ�
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
 - [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同じ思想家
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "Maurice Obstfeld"
 type: thinker
 person_key: "obstfeld|m"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # Maurice Obstfeld
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（2件）
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — Krugman（1979）の第一世代モデルは、財政赤字と固定為替レート制度の組み合わせにより外貨準備が枯渇すると投機的…
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 不可能の三位一体（トリレンマ）とは、固定為替レートの維持・資本移動の自由化・独立した金融政策の三つを同時に達成すること…
-- [[econ-monetary-policy-trilemma|金融政策のトリレンマ]] — 金融政策のトリレンマとは、固定為替レート、自由な資本移動、独立した金融政策の三つを同時に達成することは不可能であるとい…
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — 金融政策のトリレンマ（不可能の三位一体、impossibletrinity）とは、固定為替レート、自由な資本移動、独立…
 
 ## 関連
 - 索引: [[人物索引]]

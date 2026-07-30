@@ -1,5 +1,5 @@
 {
-  "description": "重複統合パス3（2026-07-02, 98エージェントWorkflow判定+懐疑検証）で「別概念として保持」と裁定されたペアの台帳。knowledge-autopilot の重複疑いキューから機械的に除外される。新たに裁定したペアは [idA, idB]（辞書順）で追記する。",
+  "description": "重複統合パス3（2026-07-02, 98エージェントWorkflow判定+懐疑検証）で「別概念として保持」と裁定されたペアの台帳。knowledge-autopilot の重複疑いキューから機械的に除外される。新たに裁定したペアは [idA, idB]（辞書順）で追記する。 統合(パス4)で一方が削除されたペアは、比較対象が消えて意味を失うため台帳から除去する（lint:knowledge-refs が実在しない id への参照を検出する）。",
   "adjudicatedDistinct": [
     [
       "bizlaw-act-of-state-doctrine",
@@ -158,10 +158,6 @@
       "econ-lewis-turning-point"
     ],
     [
-      "econ-elasticity-of-substitution",
-      "econ-elasticity-substitution-allen-uzawa"
-    ],
-    [
       "econ-fiscal-multiplier-auerbach-gorodnichenko",
       "econ-fiscal-multiplier-keynesian-analysis"
     ],
@@ -235,14 +231,6 @@
     ],
     [
       "human-cognitive-appraisal",
-      "human-cognitive-appraisal-lazarus-folkman"
-    ],
-    [
-      "human-cognitive-appraisal",
-      "mgmt-cognitive-evaluation-theory"
-    ],
-    [
-      "human-cognitive-appraisal-lazarus-folkman",
       "mgmt-cognitive-evaluation-theory"
     ],
     [

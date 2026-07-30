@@ -39,7 +39,7 @@ aliases:
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
-- [[is-lm-model|IS-LM分析]] — 同じ思想家
+- [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

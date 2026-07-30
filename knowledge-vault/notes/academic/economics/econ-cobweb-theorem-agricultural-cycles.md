@@ -33,8 +33,6 @@ Mordecai Ezekiel ／ Jan Tinbergen ／ Umberto Ricci
 
 ## 関連概念
 - [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 語彙が近い
-- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]] — 同じ思想家
-- [[econ-cobweb|クモの巣理論]] — 同分野の近傍
 - [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同分野の近傍
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同分野の近傍
 

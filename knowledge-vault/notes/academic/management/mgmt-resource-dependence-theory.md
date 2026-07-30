@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
-- [[mgmt-discovery-driven-planning|発見志向計画法（ディスカバリー・ドリブン・プランニング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 語彙が近い
+- [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 語彙が近い
 - [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 同じ思想家
-- [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 

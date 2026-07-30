@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Elasticity of substitution — 代替の弾力性の定義と拡張の概説](https://en.wikipedia.org/wiki/Elasticity_of_substitution) `リファレンス`
 
 ## 関連概念
+- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — 語彙が近い
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
-- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

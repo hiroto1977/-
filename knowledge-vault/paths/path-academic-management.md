@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 671
+entry_count: 666
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（671件）
+# 学習パス — 学術概念／経営学（666件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 57）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 58）
 - [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]]（接続 34）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 31）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 31）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 28）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
-- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 25）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 25）
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]（接続 22）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]（接続 22）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 22）
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]（接続 22）
+- [[mgmt-mbo|目標による管理（MBO）]]（接続 22）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -68,8 +68,6 @@ tags:
 - 1950年: [[mgmt-mentoring|メンタリング]]
 - 1950年: [[mgmt-product-life-cycle|プロダクト・ライフサイクル（製品ライフサイクル）]]
 - 1951年: [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]]
-- 1954年: [[mgmt-management-by-objectives|目標管理（MBO）]]
-- 1954年: [[mgmt-mbo|目標による管理（MBO）]]
 - 1955年: [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]]
 - 1957年: [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]]
 - 1957年: [[mgmt-diversification|多角化戦略]]
@@ -225,6 +223,7 @@ tags:
 - 1996年: [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]]
 - 1996年: [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]]
 - 1996年: [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]]
+- 1997年: [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]
 - 1997年: [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]]
 - 1997年: [[mgmt-collective-efficacy-bandura|集合的効力感理論]]
 - 1997年: [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]]
@@ -289,7 +288,6 @@ tags:
 
 ## 第 3 部 — 年代情報のない項目
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]]
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]]
 - [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]]
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]]
@@ -313,7 +311,6 @@ tags:
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]]
 - [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]]
 - [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]]
-- [[mgmt-attention-based-view-ocasio|企業のアテンション・ベースト・ビュー（注意基盤理論）]]
 - [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]]
 - [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]]
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]]
@@ -448,7 +445,6 @@ tags:
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]]
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]]
 - [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]]
-- [[mgmt-job-embeddedness|ジョブ・エンベデッドネス（職務埋め込み理論）]]
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]]
 - [[mgmt-job-insecurity-greenhalgh-rosenblatt|雇用不安——雇用の継続が脅かされているという無力な知覚]]
 - [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]]
@@ -507,7 +503,6 @@ tags:
 - [[mgmt-organizational-death-theory|組織死亡理論]]
 - [[mgmt-organizational-decline-theory|組織衰退理論]]
 - [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]]
-- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]]
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]]
 - [[mgmt-organizational-energy-bruch|組織エネルギー理論——集団的活力の質と強度による組織診断]]
 - [[mgmt-organizational-entropy|組織エントロピー]]

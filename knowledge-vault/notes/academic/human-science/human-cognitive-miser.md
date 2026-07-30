@@ -37,7 +37,7 @@ aliases:
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
-- [[human-emotional-regulation-process-model|感情調整のプロセスモデル]] — 出典を共有
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 出典を共有
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
 - [[human-illusory-correlation|錯誤相関]] — 出典を共有

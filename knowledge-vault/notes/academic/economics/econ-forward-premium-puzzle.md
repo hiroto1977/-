@@ -31,7 +31,6 @@ aliases:
 - [Forward premium anomaly (encyclopedia overview)](https://en.wikipedia.org/wiki/Forward_premium_anomaly) `リファレンス`
 
 ## 関連概念
-- [[econ-uncovered-interest-parity|カバーなし金利平価（Uncovered Interest Parity）]] — 語彙が近い
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 同じ思想家
 - [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
+- [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

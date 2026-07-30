@@ -35,7 +35,6 @@ William J. Baumol（1922-2017、1971年論文の共著者・標準・価格ア�
 - [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 出典を共有
 - [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同分野の近傍
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

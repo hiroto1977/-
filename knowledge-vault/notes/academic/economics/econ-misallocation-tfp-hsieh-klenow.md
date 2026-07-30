@@ -31,8 +31,8 @@ aliases:
 - [IDEAS/RePEc bibliographic record — Hsieh & Klenow (2009), QJE 124(4):1403-1448](https://ideas.repec.org/a/oup/qjecon/v124y2009i4p1403-1448..html) `リファレンス`
 
 ## 関連概念
-- [[econ-impossible-trinity-trilemma|不可能の三位一体（マンデル＝フレミングのトリレンマ）]] — 同分野の近傍
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同分野の近傍
 - [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同分野の近傍
 
 ## 関連

@@ -34,7 +34,6 @@ C. K. Prahalad & Richard A. Bettis（SMJ 7(6), 1986, 原提唱）／Bettis & Pra
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 同じ思想家
 - [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
-- [[mgmt-organizational-decline-weitzel-jonsson|組織衰退の五段階モデル——ウェイツェル＆ジョンソンの衰退プロセスと再生可能性]] — 同分野の近傍
 - [[mgmt-benchmarking-camp|ベンチマーキング——最良の実践との体系的な比較による改善]] — 同分野の近傍
 
 ## 関連

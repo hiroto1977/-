@@ -37,8 +37,8 @@ Amy Wrzesniewski ／ Jane E. Dutton ／ Justin M. Berg
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同分野の近傍
-- [[mgmt-stockdale-paradox|ストックデールの逆説]] — 同分野の近傍
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同分野の近傍
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同分野の近傍
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同分野の近傍
 

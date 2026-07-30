@@ -2,7 +2,7 @@
 title: "Robert Solow"
 type: thinker
 person_key: "solow|r"
-concept_count: 4
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,10 @@ tags:
 
 # Robert Solow
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
-- [[econ-elasticity-of-substitution|代替の弾力性]] — 代替の弾力性とは、生産要素間の相対価格が変化した際に、要素投入比率がどの程度変化するかを測る指標である。
+## 学術概念（2件）
 - [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — Hicks（1932）は著書TheTheoryofWagesにおいて、資本と労働の間の代替の弾力性（elasticit…
-- [[econ-elasticity-substitution-production|生産要素代替弾力性]] — 生産要素代替弾力性とは、生産技術において資本と労働（または任意の二要素）の間で、相対価格が1％変化したときに要素投入比…
 - [[econ-productivity-paradox|生産性パラドックス]] — Solow（1987）は「コンピュータ時代はいたるところで目にできるが、生産性統計には現れない」と指摘し、ITへの大規…
 
 ## 関連

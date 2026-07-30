@@ -32,8 +32,8 @@ Ikujiro Nonaka ／ Hirotaka Takeuchi
 
 ## 関連概念
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 語彙が近い
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
-- [[infosoc-seci|SECIモデル（知識創造理論）]] — 分野横断
 - [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同じ思想家
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有

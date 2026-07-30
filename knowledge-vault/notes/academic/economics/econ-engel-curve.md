@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 語彙が近い
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 出典を共有
-- [[econ-elasticity-of-substitution|代替の弾力性]] — 出典を共有
 - [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 出典を共有
 - [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
 - [[econ-engels-law|エンゲルの法則]] — 同分野の近傍

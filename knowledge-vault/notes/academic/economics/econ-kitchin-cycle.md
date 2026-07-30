@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 語彙が近い
-- [[econ-metzler-paradox|メッツラーのパラドックス（Metzler Paradox）]] — 同じ思想家
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

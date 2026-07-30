@@ -30,16 +30,16 @@ X非効率（X-inefficiency）は、ハーヴェイ・ライベンシュタイ�
 - [Wikipedia: X-inefficiency — Leibenstein, organizational slack, monopoly, cost minimization](https://en.wikipedia.org/wiki/X-inefficiency) `リファレンス`
 
 ## 関連概念
-- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同じ思想家
-- [[econ-bandwagon-snob-leibenstein|バンドワゴン・スノッブ・ヴェブレン効果——需要の相互依存性が需要曲線を歪める]] — 同じ思想家
+- [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
 - [[econ-hold-up-problem-williamson|ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く]] — 同じ思想家
 - [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
 - [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同じ思想家
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

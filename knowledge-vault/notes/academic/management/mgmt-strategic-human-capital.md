@@ -34,7 +34,7 @@ David Lepak ／ Scott Snell ／ Patrick Wright
 ## 関連概念
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 語彙が近い
 - [[mgmt-strategic-human-capital-theory|戦略的人的資本理論]] — 同じ思想家
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同分野の近傍
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
 - [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 同分野の近傍
 
 ## 関連

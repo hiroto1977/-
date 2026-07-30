@@ -35,12 +35,12 @@ aliases:
 - [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
 - [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 出典を共有
+- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 出典を共有
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 出典を共有
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 出典を共有
 - [[human-boreout|ボアアウト（退屈燃え尽き症候群）]] — 出典を共有
 - [[human-fading-affect-bias|感情消失バイアス]] — 出典を共有
 - [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 出典を共有
-- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

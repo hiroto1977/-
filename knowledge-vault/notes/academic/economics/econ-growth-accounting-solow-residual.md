@@ -32,13 +32,14 @@ aliases:
 
 ## 関連概念
 - [[econ-solow-residual-total-factor-productivity|ソロー残差と全要素生産性——技術進歩の計測とその解釈を巡る論争]] — 語彙が近い
-- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 語彙が近い
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-gibrat-law|ジブラの法則]] — 出典を共有
 
 ## 関連

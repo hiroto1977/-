@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 語彙が近い
-- [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 語彙が近い
+- [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 同分野の近傍
 - [[bizlaw-property-liability-rules|財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）]] — 同分野の近傍
 
 ## 関連

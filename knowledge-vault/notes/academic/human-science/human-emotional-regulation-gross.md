@@ -30,14 +30,14 @@ aliases:
 - [Wikipedia: Emotional self-regulation — Gross process model](https://en.wikipedia.org/wiki/Emotional_self-regulation) `リファレンス`
 
 ## 関連概念
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 語彙が近い
+- [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 語彙が近い
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同じ思想家
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
-- [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
 - [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同じ思想家
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
-- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — 同分野の近傍
+- [[human-appraisal-theory-of-emotion|感情の評価理論]] — 同分野の近傍
+- [[human-phonological-loop|音韻ループ（Phonological Loop）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

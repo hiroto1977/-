@@ -35,11 +35,11 @@ aliases:
 - [[infosoc-attention-economy-goldhaber-citton|アテンション・エコノミー——注意の希少性と経済的価値]] — 同じ思想家
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 出典を共有
-- [[econ-elasticity-of-substitution|代替の弾力性]] — 出典を共有
 - [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 出典を共有
 - [[econ-leverage-cycle|レバレッジ・サイクル]] — 出典を共有
 - [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 出典を共有
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同分野の近傍
+- [[econ-atkinson-inequality-index|アトキンソン不等式指数（不等式測定指数）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

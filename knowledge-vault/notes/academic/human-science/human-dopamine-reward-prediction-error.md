@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 語彙が近い
 - [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同じ思想家
-- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 同分野の近傍
+- [[human-golem-effect|ゴーレム効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

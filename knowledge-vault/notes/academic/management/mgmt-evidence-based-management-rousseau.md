@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 語彙が近い
 - [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
 - [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 同じ思想家
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
 - [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]] — 同じ思想家
 - [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家

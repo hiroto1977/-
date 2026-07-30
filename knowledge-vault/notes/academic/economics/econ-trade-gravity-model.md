@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-24 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-貿易の重力モデルは、二国間の貿易量が両国の経済規模（GDP）に比例し、地理的距離に反比例するという実証的規則性を定式化した国際貿易理論の基盤モデルである。1962年にティンバーゲン（Jan Tinbergen）がニュートンの万有引力の法則に着想を得て提唱し、輸出国・輸入国のGDPを「質量」、両国間の距離を「引力の逆数」として貿易フローを説明した。アンダーソン（James Anderson）は1979年にアーミントン需要仮定に基づく理論的基礎を確立し、さらにアンダーソンとヴァン・ウィンクープ（van Wincoop）は2003年に「多角的抵抗項（multilateral resistance terms）」の概念を導入することで、二国間の貿易障壁が世界全体の相対的コスト構造に依存するという境界効果パズルを解決した。ヘッド（Keith Head）とメイヤー（Mayer）は2014年にポワソン擬似最尤推定（PPML）を含む推定手法を体系化し、FTA評価・通商政策分析・国境効果の計測など実証研究への応用を広げた。現在、重力モデルは国際貿易実証分析の標準的ワークホースとして広く活用されている。
+貿易の重力モデルは、二国間の貿易量が両国の経済規模（GDP）に比例し、地理的距離に反比例するという実証的規則性を定式化した国際貿易理論の基盤モデルである。1962年にティンバーゲン（Jan Tinbergen）が著書 Shaping the World Economy の付録IVでニュートンの万有引力の法則に着想を得て初めて計量的に定式化し、輸出国・輸入国のGDPを「質量」、両国間の距離を「引力の逆数」として貿易フローを説明した。ただし同モデルは長らく理論的基礎を欠くとされていた。アンダーソン（James Anderson）は1979年にアーミントン需要仮定に基づく理論的基礎を確立し、さらにアンダーソンとヴァン・ウィンクープ（van Wincoop）は2003年に「多角的抵抗項（multilateral resistance terms）」の概念を導入することで、二国間の貿易障壁が世界全体の相対的コスト構造に依存するという境界効果パズルを解決した。ヘッド（Keith Head）とメイヤー（Mayer）は2014年にポワソン擬似最尤推定（PPML）を含む推定手法を体系化し、FTA評価・通商政策分析・国境効果の計測など実証研究への応用を広げた。現在、重力モデルは国際貿易実証分析の標準的ワークホースとして広く活用されている。
 
 ## 提唱者・初出
 ティンバーゲン ／ アンダーソン ／ ヘッド
@@ -32,8 +32,6 @@ aliases:
 - [Tinbergen 1962 — Shaping the World Economy: Suggestions for an International Economic Policy, Twentieth Century Fund](https://archive.org/details/shapingworldecon0000tinb) `リファレンス`
 
 ## 関連概念
-- [[econ-tinbergen-gravity-model|ティンバーゲン重力モデル（国際貿易の重力方程式）]] — 語彙が近い
-- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 語彙が近い
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
@@ -42,6 +40,8 @@ aliases:
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
 - [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
 - [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — 出典を共有
+- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 出典を共有
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

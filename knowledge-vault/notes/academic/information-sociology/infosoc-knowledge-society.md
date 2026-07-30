@@ -31,10 +31,10 @@ aliases:
 - [UNESCO, Towards Knowledge Societies: 複数形の知識社会と情報社会の区別](https://www.un.org/en/development/desa/policy/untaskteam_undf/groupb_unesco_knowledge_societies.pdf) `公的`
 
 ## 関連概念
-- [[mgmt-management-by-objectives|目標管理（MBO）]] — 同じ思想家
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
 - [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
+- [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同じ思想家
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家

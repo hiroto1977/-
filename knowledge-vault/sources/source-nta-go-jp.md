@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 244
+cite_count: 241
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **244 件**（公的 244）
+> [!info] 出典ドメイン索引 ・ 引用 **241 件**（公的 241）
 
 ## このドメインを出典とする項目
 
@@ -105,8 +105,6 @@ tags:
 - [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]] — 国税庁電子帳簿等保存制度特設サイト
 - [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
 - [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答（電子取引関係）
-- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 国税庁質疑応答事例電磁的記録と印紙税
-- [[tax-electronic-contract-stamp|電子契約（電磁的記録）と印紙税の非課税]] — 福岡国税局注文請書を電子メール送信した場合の印紙税
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁No.1410給与所得控除
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
@@ -153,8 +151,6 @@ tags:
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 国税庁令和8年度税制改正インボイス関連特集
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁2割特例特設ページ
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁2割特例（小規模事業者に対する負担軽減措置）の概要
-- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 国税庁2割特例特設ページ
-- [[tax-invoice-2wari|インボイス制度の2割特例（小規模事業者の負担軽減）]] — 国税庁2割特例の概要
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁No.6498インボイス制度
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁インボイス制度について
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 国税庁インボイスQ&A事務負担の軽減措置
@@ -232,6 +228,7 @@ tags:
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙税不納付事実申出手続
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁タックスアンサーNo.7100課税文書に該当するかどうかの判断
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁文書回答事例電磁的記録に関する印紙税の取扱い
+- [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 福岡国税局注文請書を電子メール送信した場合の印紙税（具体事例）
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 国税庁No.1540ストックオプション税制
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 国税庁No.1543税制非適格ストックオプションの課税
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 国税庁優良な電子帳簿の要件

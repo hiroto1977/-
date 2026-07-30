@@ -32,9 +32,9 @@ aliases:
 - [Wikipedia「Strategic fit」— 適合（fit）と資源ベース理論・競争優位の関係](https://en.wikipedia.org/wiki/Strategic_fit) `リファレンス`
 
 ## 関連概念
-- [[mgmt-ability-motivation-opportunity|AMOフレームワーク——能力・動機・機会が業績を生む]] — 語彙が近い
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 語彙が近い
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 同分野の近傍
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同分野の近傍
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同分野の近傍
 - [[mgmt-reverse-innovation|リバース・イノベーション]] — 同分野の近傍
 

@@ -33,6 +33,7 @@ aliases:
 - [[human-optimism-bias|楽観バイアス]] — 同分野の近傍
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同分野の近傍
 - [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同分野の近傍
+- [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
 - [[human-compassion-fatigue-burnout-stamm|共感疲労とバーンアウト・二次的外傷性ストレス（スタム）]] — 同分野の近傍
 
 ## 関連

@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 280
+cite_count: 279
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **280 件**（リファレンス 280）
+> [!info] 出典ドメイン索引 ・ 引用 **279 件**（リファレンス 279）
 
 ## このドメインを出典とする項目
 
@@ -163,7 +163,6 @@ tags:
 - [[human-dunning-kruger|ダニング＝クルーガー効果]] — EncyclopaediaBritannica—Dunning-Krugereffect
 - [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — EncyclopaediaBritannica—"Suicide"byÉmileDurkheim（著作解説・4類型・社会的統合の概要）
 - [[human-emerging-adulthood|新興成人期（エマージング・アダルトフッド）]] — EncyclopaediaBritannica—EmergingAdulthood（発達段階の定義・5特性・文化的検討の概説）
-- [[human-emotion-regulation|感情調整（グロスのプロセスモデル）]] — EncyclopaediaBritannica—Emotionregulation（定義・グロスのプロセスモデル・認知的再評価と表現抑制）
 - [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — EncyclopaediaBritannica—“ChildhoodandSociety”（エリクソンの主著・初出1950）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — EncyclopaediaBritannica—Humanintelligence:Psychometrictheories（Cattel…
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — Britannica—Frustration-aggressionhypothesis(1939Yaleattribution,displ…

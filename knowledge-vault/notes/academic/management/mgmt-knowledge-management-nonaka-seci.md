@@ -31,7 +31,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 語彙が近い
-- [[infosoc-seci|SECIモデル（知識創造理論）]] — 分野横断
+- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 語彙が近い
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
 - [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同じ思想家

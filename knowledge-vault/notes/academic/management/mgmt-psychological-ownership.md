@@ -38,7 +38,7 @@ aliases:
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
-- [[mgmt-attention-based-view-ocasio|企業のアテンション・ベースト・ビュー（注意基盤理論）]] — 同分野の近傍
+- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

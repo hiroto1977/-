@@ -34,12 +34,11 @@ aliases:
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同じ思想家
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 同じ思想家
-- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
-- [[human-cognitive-appraisal-lazarus|認知的評価理論とストレス——ラザルスによる一次・二次評価と心理的対処プロセスの解明]] — 同じ思想家
-- [[human-cognitive-appraisal-lazarus-folkman|認知的評価理論——ラザルスとフォルクマンのストレス・コーピング・トランザクショナルモデル]] — 同じ思想家
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
-- [[human-emotion-regulation-gross|感情制御の過程モデル——感情生成の時間軸に沿った先行焦点と反応焦点の方略]] — 同じ思想家
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
+- [[human-appraisal-theory-of-emotion|感情の評価理論]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
