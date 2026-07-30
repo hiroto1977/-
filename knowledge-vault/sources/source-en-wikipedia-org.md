@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2281
+cite_count: 2279
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2281 件**（リファレンス 2281）
+> [!info] 出典ドメイン索引 ・ 引用 **2279 件**（リファレンス 2279）
 
 ## このドメインを出典とする項目
 
@@ -1704,7 +1704,6 @@ tags:
 - [[infosoc-information-theory|情報理論（シャノン）]] — Wikipedia—Shannon’ssourcecodingtheorem（情報源符号化定理：圧縮限界=エントロピー）
 - [[infosoc-informational-self-determination|情報自己決定権]] — Wikipedia「Informationalself-determination」
 - [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — Wikipedia:Informationinfrastructure—invisiblesystemsandclassification…
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — Wikipedia:SortingThingsOut—ボウカー＆スターの分類研究
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — Wikipedia:Internetofthings—ubiquitouscomputing
 - [[infosoc-issue-attention-cycle|争点注目サイクル（イシュー・アテンション・サイクル、Issue-Attention Cycle）——社会問題への世論の注目が解決ではなく注目資源の周期的消耗によって浮上・衰退する五段階モデル]] — Wikipedia「Issue-attentioncycle」—アンソニー・ダウンズ1972年の五段階モデル（前問題／警戒的発見・熱狂／代…
 - [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — Wikipedia:Knowledgegaphypothesis—Tichenor,socioeconomicstatus,digital…
@@ -2124,7 +2123,6 @@ tags:
 - [[mgmt-organizational-culture-theory|組織文化理論]] — Organizationalculture—Wikipedia
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — Wikipedia:Organizationalcynicism—belief,affect,behavior,attitude,chan…
 - [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — OrganizationalLifeCycle—Wikipedia
-- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — Wikipedia:Organizationaldecline—stagesandturnaroundstrategiesoverview
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — Wikipedia:Organizationalecology—population-levelanalysisoforganizatio…
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — Wikipedia「AdministrativeBehavior」（サイモン1947年、誘因＝貢献均衡のバーナード由来）
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — Wikipedia「TheFunctionsoftheExecutive」（バーナード1938年、協働体系・有効性と能率）

@@ -26,7 +26,7 @@ aliases:
 ハリー・ブリグナル ／ アーバジ・マシュア ／ コリン・グレイ ／ アーウィン・チェリン
 
 ## 出典
-- [Mathur, A. et al. (2019). Dark patterns at scale — ACM CHI](https://doi.org/10.1145/3313831.3376600) `学術`
+- [Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW), Article 81](https://doi.org/10.1145/3359183) `学術`
 - [Wikipedia: Dark pattern — deceptive UX design](https://en.wikipedia.org/wiki/Dark_pattern) `リファレンス`
 
 ## 関連概念

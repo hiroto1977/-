@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [UK Government (2006) Companies Act 2006 Part 18 — Acquisition of Own Shares（英国財務支援規制の現行法）](https://www.legislation.gov.uk/ukpga/2006/46/part/18/chapter/2) `公的`
 - [Hong Kong Government (2014) Companies Ordinance Cap. 622 — Financial Assistance（香港ホワイトウォッシュ手続き規定）](https://www.elegislation.gov.hk/hk/cap622!en) `公的`
-- [Davies, P. L. & Worthington, S. (2012) Gower & Davies' Principles of Modern Company Law — Sweet & Maxwell, 9th ed.（財務支援と会社法原理の解説）](https://doi.org/10.1093/ojls/gqi037) `学術`
+- [Davies, P. L. & Worthington, S. (2012) Gower & Davies: Principles of Modern Company Law — 9th ed., Sweet & Maxwell, ISBN 9780414022720（財務支援と会社法原理の解説）](https://www.wildy.com/isbn/9780414022720/gower-davies-principles-of-modern-company-law-9th-ed-paperback-sweet-maxwell-ltd) `学術`
 - [Wikipedia: Financial assistance (company law) — whitewash procedure, MBO/LBO, Companies Act 2006, Hong Kong](https://en.wikipedia.org/wiki/Financial_assistance_(company_law)) `リファレンス`
 
 ## 関連概念
@@ -41,7 +41,6 @@ aliases:
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,8 +39,8 @@ aliases:
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
 - [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 出典を共有
+- [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — 出典を共有
 - [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 出典を共有
-- [[mgmt-real-options-theory|リアル・オプション理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ Dirk Schoenmaker ／ Charles Goodhart
 
 ## 関連概念
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
+- [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 出典を共有
@@ -40,7 +41,6 @@ Dirk Schoenmaker ／ Charles Goodhart
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
 - [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同分野の近傍
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 同分野の近傍
-- [[econ-regulatory-arbitrage|規制裁定：企業による規制差異の利用と市場効率性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

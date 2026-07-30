@@ -26,7 +26,7 @@ aliases:
 ジョシュア・アングリスト ／ グイド・インベンス ／ デビッド・カード ／ ヨルン＝シュテフェン・ピシュケ
 
 ## 出典
-- [Angrist (1990) Lifetime Earnings and the Vietnam Era Draft Lottery — AER 80(3)](https://doi.org/10.2307/2937954) `学術`
+- [Angrist, J. D. (1990) Lifetime Earnings and the Vietnam Era Draft Lottery: Evidence from Social Security Administrative Records — American Economic Review 80(3), 313–336 (RePEc 書誌)](https://econpapers.repec.org/RePEc:aea:aecrev:v:80:y:1990:i:3:p:313-36) `学術`
 - [Wikipedia: Natural experiment — IV, RDD, DiD, credibility revolution, Angrist, Card](https://en.wikipedia.org/wiki/Natural_experiment) `リファレンス`
 
 ## 関連概念
@@ -35,7 +35,11 @@ aliases:
 - [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
 - [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
-- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同分野の近傍
+- [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
+- [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
+- [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
+- [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
+- [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

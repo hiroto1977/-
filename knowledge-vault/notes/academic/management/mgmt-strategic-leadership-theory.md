@@ -28,7 +28,7 @@ Donald C. Hambrick／Sydney Finkelstein／Albert A. Cannella Jr.／Mason A. Carp
 ## 出典
 - [Hambrick & Mason (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers, AMR 9(2):193-206](https://doi.org/10.2307/258434) `学術`
 - [Finkelstein, Hambrick & Cannella (2009) Strategic Leadership: Theory and Research on Executives, Oxford UP](https://doi.org/10.1093/acprof:oso/9780195162073.001.0001) `学術`
-- [Carpenter, Geletkanycz & Sanders (2004) Upper Echelons Research Revisited, Journal of Management 30(6):749-778](https://doi.org/10.5465/amr.2007.24345254) `学術`
+- [Carpenter, Geletkanycz & Sanders (2004) Upper Echelons Research Revisited: Antecedents, Elements, and Consequences of Top Management Team Composition — Journal of Management 30(6), 749-778](https://doi.org/10.1016/j.jm.2004.06.001) `学術`
 
 ## 関連概念
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 語彙が近い

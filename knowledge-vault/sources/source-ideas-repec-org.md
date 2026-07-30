@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 81
+cite_count: 82
 tags:
   - source-domain
   - index
@@ -10,11 +10,12 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **81 件**（学術 67 ・ リファレンス 14）
+> [!info] 出典ドメイン索引 ・ 引用 **82 件**（学術 68 ・ リファレンス 14）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — Gilson&Schwartz,"UnderstandingMACs:MoralHazardinAcquisitions,"21J.Law…
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — Alchian,A.A.&Demsetz,H.(1972)Production,InformationCosts,andEconomicO…
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — Allingham,M.G.&Sandmo,A.(1972)IncomeTaxEvasion:ATheoreticalAnalysis—J…
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — Andreoni,J.,Erard,B.&Feinstein,J.(1998)TaxCompliance—JournalofEconomi…
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — Fama&French(2012)Size,Value,andMomentuminInternationalStockReturns—JF…

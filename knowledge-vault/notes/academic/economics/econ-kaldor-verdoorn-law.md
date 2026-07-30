@@ -33,9 +33,13 @@ Petrus Johannes Verdoorn／Nicholas Kaldor／John McCombie／Anthony P. Thirlwal
 ## 関連概念
 - [[econ-kaldor-verdoorn|ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）]] — 語彙が近い
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 同じ思想家
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 出典を共有
-- [[econ-financialization|金融化——経済の金融部門支配]] — 同分野の近傍
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

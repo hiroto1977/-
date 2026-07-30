@@ -26,7 +26,7 @@ aliases:
 ホセ・ヴァン・ダイク ／ ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ダニエル・チャバジー
 
 ## 出典
-- [van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（データ化の批判的分析）](https://doi.org/10.1177/2053951714528481) `学術`
+- [van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（データ化の批判的分析）](https://doi.org/10.24908/ss.v12i2.4776) `学術`
 - [Kitchin, R. & McArdle, G. (2016) What Makes Big Data, Big Data? Exploring the Ontological Characteristics of 26 Datasets — Big Data & Society, 3(1)（データの存在論的分析）](https://doi.org/10.1177/2053951717751551) `学術`
 - [Taylor, L. (2017) What Is Data Justice? The Case for Connecting Digital Rights and Freedoms Globally — Big Data & Society, 4(2)（データ正義の概念化）](https://doi.org/10.1080/1369118X.2019.1611830) `学術`
 - [Wikipedia: Datafication — van Dijck, Mayer-Schönberger, social media quantification, data justice, smart city](https://en.wikipedia.org/wiki/Datafication) `リファレンス`

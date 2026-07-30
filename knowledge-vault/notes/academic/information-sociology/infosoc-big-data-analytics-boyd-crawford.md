@@ -26,7 +26,7 @@ aliases:
 ダナ・ボイド ／ ケイト・クロフォード ／ キャシー・オニール ／ ヴィクター・マイヤー＝ショーンベルガー
 
 ## 出典
-- [Boyd, D. & Crawford, K. (2012) Critical Questions for Big Data — Information, Communication & Society](https://doi.org/10.1177/2053951714528481) `学術`
+- [Boyd, D. & Crawford, K. (2012) Critical Questions for Big Data — Information, Communication & Society 15(5), 662–679](https://doi.org/10.1080/1369118X.2012.678878) `学術`
 - [Wikipedia: Big data — analytics and critical perspectives](https://en.wikipedia.org/wiki/Big_data) `リファレンス`
 
 ## 関連概念

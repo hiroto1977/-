@@ -26,7 +26,7 @@ aliases:
 ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ジョゼ・ファン・ダイク ／ ケイト・クロフォード
 
 ## 出典
-- [van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（ダタフィケーションの社会学的分析）](https://doi.org/10.1177/2053951714528481) `学術`
+- [van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（ダタフィケーションの社会学的分析）](https://doi.org/10.24908/ss.v12i2.4776) `学術`
 - [Mayer-Schönberger, V. & Cukier, K. (2013) Big Data: A Revolution That Will Transform How We Live, Work, and Think — Houghton Mifflin（ビッグデータ論の一般書）](https://www.hmhbooks.com/shop/books/Big-Data/9780544227750) `リファレンス`
 - [Crawford, K. (2021) Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence — Yale University Press（データ産出の批判的政治経済学）](https://doi.org/10.12794/metaverse.2021.9.5) `学術`
 - [Wikipedia: Datafication — Mayer-Schönberger & Cukier, quantification of human behavior, GDPR context](https://en.wikipedia.org/wiki/Datafication) `リファレンス`

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Mayer-Schönberger & Cukier (2013) Big Data: A Revolution — Houghton Mifflin Harcourt](https://doi.org/10.2307/j.ctt1hj9w84) `学術`
-- [van Dijck (2014) Datafication, Dataism and Dataveillance — Surveillance & Society](https://doi.org/10.1177/2053951714528481) `学術`
+- [van Dijck (2014) Datafication, Dataism and Dataveillance — Surveillance & Society 12(2), 197–208](https://doi.org/10.24908/ss.v12i2.4776) `学術`
 - [Wikipedia: Datafication — データフィケーションと情報社会の変容](https://en.wikipedia.org/wiki/Datafication) `リファレンス`
 
 ## 関連概念

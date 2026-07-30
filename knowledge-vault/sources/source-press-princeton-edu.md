@@ -2,7 +2,7 @@
 title: "press.princeton.edu"
 type: source-domain
 host: "press.princeton.edu"
-cite_count: 24
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # press.princeton.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 16 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 17 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -25,6 +25,7 @@ tags:
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — Shiller,R.J.2019.NarrativeEconomics:HowStoriesGoViralandDriveMajorEco…
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — AngristandPischke2009—MostlyHarmlessEconometrics:AnEmpiricist'sCompan…
 - [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — Friedman,M.(1957)ATheoryoftheConsumptionFunction—PrincetonUniversityP…
+- [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — Dixit,A.K.&Pindyck,R.S.(1994)InvestmentUnderUncertainty—PrincetonUniv…
 - [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — Putnam,R.D.,Leonardi,R.,&Nanetti,R.Y.(1993)MakingDemocracyWork—Prince…
 - [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — Galor,Oded(2011).UnifiedGrowthTheory.Princeton,NJ:PrincetonUniversity…
 - [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — Collins,R.(2004)InteractionRitualChains—PrincetonUniversityPress

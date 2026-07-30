@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Jenkins, H., Ford, S. & Green, J. (2013) Spreadable Media — NYU Press](https://doi.org/10.18574/9780814743508) `学術`
 - [Wikipedia: Spreadable Media — Jenkins participatory culture and content circulation](https://en.wikipedia.org/wiki/Spreadable_media) `リファレンス`
-- [Jenkins, H. (2009) If It Doesn't Spread, It's Dead — Convergence 15(4)](https://doi.org/10.1177/1354856510394539) `学術`
+- [Jenkins, H. (2009) If It Doesn't Spread, It's Dead (Part Two): Sticky and Spreadable — Two Paradigms — henryjenkins.org（2008年 Convergence Culture Consortium ホワイトペーパーを発展させた連載）](http://henryjenkins.org/blog/2009/02/if_it_doesnt_spread_its_dead_p_1.html) `リファレンス`
 
 ## 関連概念
 - [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家

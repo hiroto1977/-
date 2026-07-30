@@ -42,7 +42,6 @@ Douglas G. Baird ／ Thomas H. Jackson ／ Vern Countryman ／ Robert Charles Cl
 - [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
 - [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 出典を共有
-- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

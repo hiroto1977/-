@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
+- [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同分野の近傍
-- [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

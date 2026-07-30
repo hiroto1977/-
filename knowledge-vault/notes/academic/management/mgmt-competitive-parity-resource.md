@@ -26,7 +26,7 @@ aliases:
 ジェイ・バーニー ／ リチャード・ルメルト ／ マーガレット・ピーテラフ ／ ビル・フナーバック
 
 ## 出典
-- [Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management, 17(1), 99–120（RBV原典・VRIO枠組み）](https://doi.org/10.1002/smj.4250050207) `学術`
+- [Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management, 17(1), 99–120（RBV原典・VRIO枠組み）](https://doi.org/10.1177/014920639101700108) `学術`
 - [Rumelt, R. P. (1984) Towards a Strategic Theory of the Firm — in Lamb ed., Competitive Strategic Management, 556–570（模倣障壁の概念）](https://doi.org/10.2307/2392376) `学術`
 - [Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal, 14(3), 179–191（RBVの精緻化）](https://doi.org/10.1002/smj.4250141009) `学術`
 - [Wikipedia: Competitive advantage — RBV, VRIO, parity vs. advantage, isolating mechanisms](https://en.wikipedia.org/wiki/Competitive_advantage) `リファレンス`

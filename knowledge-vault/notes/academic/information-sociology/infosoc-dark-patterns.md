@@ -30,9 +30,9 @@ aliases:
 - [U.S. Federal Trade Commission (2022) “Bringing Dark Patterns to Light”](https://www.ftc.gov/reports/bringing-dark-patterns-light) `公的`
 - [Harry Brignull, Deceptive Design (旧 darkpatterns.org, 2010〜) 概念の一次情報源](https://www.deceptive.design/) `リファレンス`
 - [Wikipedia「Dark pattern」（DSA・CPRA等の規制状況含む）](https://en.wikipedia.org/wiki/Dark_pattern) `リファレンス`
-- [Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction (CSCW), 3, 1–32](https://doi.org/10.1145/3173574.3174108) `学術`
+- [Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW), Article 81](https://doi.org/10.1145/3359183) `学術`
 - [EDPB (2023) Guidelines 3/2022 on Dark Patterns in Social Media Platforms — European Data Protection Board](https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf) `公的`
-- [Gray, C. M. et al. (2020) The Dark Side of UX Design — CHI 2020 Extended Abstracts（dark pattern類型とUX倫理）](https://doi.org/10.1145/3313831.3376600) `学術`
+- [Gray, C. M. et al. (2018) The Dark (Patterns) Side of UX Design — CHI 2018（dark pattern 類型と UX 倫理）](https://doi.org/10.1145/3173574.3174108) `学術`
 
 ## 関連概念
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
