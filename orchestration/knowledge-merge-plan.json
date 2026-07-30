@@ -156,9 +156,11 @@
       "人名: 『ヌーリアとサージェント』(マクロ経済学者 Thomas Sargent の混入) と『ノリアとグルク』→ ともに『ノーリアとグラティ』へ。keyFigures の『ニティン・ノリア』→『ニティン・ノーリア』"
     ],
     "stillUnverified": [
-      "10.2307/258302 / 258079 / 2393470 / 2223852 / 2296547 / 2392586 / 2392580 / amr.2005.19139064 の各『実体』は JSTOR/Crossref に到達できないため未特定 (誤りであることは確定)",
-      "en.wikipedia.org/wiki/Organizational_decline と /wiki/Sorting_Things_Out は検索上存在しない疑いがある (HTTP ステータス未確認)。前者が 404 なら mgmt-organizational-decline-weitzel-jonsson の有効出典が 1 件になり確証ゲートに抵触する",
-      "Gillespie の 3 件 (L48878 の 10.1080/1369118x.2010.508516、L24348/L49196 の 10.1177/1461444812437963 / 10.1177/1461444813490395) は接頭辞と出版社が不一致の疑い。同一論文にコーパス内で別 DOI が併存しており未照合"
+      "10.2307/258302 / 258079 / 2393470 / 2223852 / 2296547 / 2392586 / 2392580 / amr.2005.19139064 の各『実体』は JSTOR/Crossref に到達できないため未特定 (誤りであることは確定し、出典自体はパス4で差し替え済み)",
+      "Gillespie の 3 件 (L48878 の 10.1080/1369118x.2010.508516、L24348/L49196 の 10.1177/1461444812437963 / 10.1177/1461444813490395) は接頭辞と出版社が不一致の疑い。同一論文にコーパス内で別 DOI が併存しており未照合。lint:citations は『同一著作が別 DOI で引かれている』を意図的に検査しないため、これは人が照合する残作業"
+    ],
+    "resolvedLater": [
+      "2026-07-30: en.wikipedia.org/wiki/Organizational_decline と /wiki/Sorting_Things_Out は**実際に存在しなかった** (台帳の疑いが的中)。前者は Serra et al. (2017) BAR 14(2) e160110 のレビュー論文 (10.1590/1807-7692bar2017160110) に、後者は MIT Press の書籍ページに差し替えた。mgmt-organizational-decline-weitzel は academic 出典が 2→3 に増えた"
     ]
   },
   "pass5": {
@@ -175,5 +177,12 @@
       ],
       "lesson": "同一 DOI に複数の出版年がぶつかっているとき、正解が候補のどれかである保証はない。まず DOI の実体を確定し、そのうえで各主張者を個別に照合する。"
     }
+  },
+  "pass6": {
+    "appliedAt": "2026-07-30",
+    "note": "knowledge-citation-baseline.json の残 17 件をすべて一次照合し knownConflicts を 0 件にした。詳細 (誰が誤りで正 DOI が何か) はベースライン側の resolved2026_07_30 に記録している。",
+    "wrongCitationsFixed": 28,
+    "allClaimantsWrongCount": 5,
+    "provenanceDelta": "infosoc-spreadability-jenkins のみ academic 2→1。Jenkins「If It Doesn't Spread, It's Dead」は査読誌論文ではなく 2008 年ホワイトペーパー＋2009 年連載ブログなので reference が正しい種別で、水増しの是正であって情報の喪失ではない。mgmt-organizational-decline-weitzel は 2→3 に増加。他は全エントリで出典の件数・種別が完全に同一。"
   }
 }

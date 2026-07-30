@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Krell v Henry [1903] 2 KB 740 — Court of Appeal frustration of purpose landmark](https://www.bailii.org/uk/cases/UKHL/1903/2.html) `公的`
-- [Treitel, G. H. (2014) Frustration and Force Majeure — 3rd ed., Sweet & Maxwell](https://doi.org/10.1093/he/9780198876984.001.0001) `学術`
+- [Treitel, G. H. (2014) Frustration and Force Majeure — 3rd ed., Sweet & Maxwell, ISBN 9780414028531](https://www.wildy.com/isbn/9780414028531/frustration-and-force-majeure-3rd-ed-hardback-sweet-maxwell-ltd) `学術`
 - [Wikipedia: Frustration of purpose — supervening impossibility doctrine overview](https://en.wikipedia.org/wiki/Frustration_of_purpose) `リファレンス`
 
 ## 関連概念
@@ -38,9 +38,9 @@ aliases:
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
+- [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 出典を共有
 - [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
-- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

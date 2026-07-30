@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cavendish Square v El Makdessi [2015] UKSC 67 — penalty clause modern test](https://www.bailii.org/uk/cases/UKSC/2015/67.html) `公的`
-- [Peel, E. & Treitel, G. H. (2015) Remedies for Breach — The Law of Contract, 14th ed.](https://doi.org/10.1093/he/9780198876984.001.0001) `学術`
+- [Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
 - [Wikipedia: Penalty clause — liquidated damages and judicial control overview](https://en.wikipedia.org/wiki/Penalty_clause) `リファレンス`
 
 ## 関連概念
@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
 - [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
-- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — 出典を共有
-- [[bizlaw-rule-in-claytons-case|クレイトン事件の準則（Rule in Clayton's Case／Devaynes v Noble）——混合口座の追及で引き出しを入金順に充当する先入先出の推定]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

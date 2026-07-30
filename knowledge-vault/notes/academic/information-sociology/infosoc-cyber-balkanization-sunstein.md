@@ -26,7 +26,7 @@ aliases:
 キャス・サンスティーン ／ マーシャル・ヴァン・アルスタイン ／ エリック・ブリニョルフソン ／ イーライ・パリサー
 
 ## 出典
-- [Van Alstyne, M. & Brynjolfsson, E. (2005) Global Village or Cyber-Balkans — Management Science 51(6)](https://doi.org/10.1126/science.1167742) `学術`
+- [Van Alstyne, M. & Brynjolfsson, E. (2005) Global Village or Cyber-Balkans? Modeling and Measuring the Integration of Electronic Communities — Management Science 51(6), 851–868](https://doi.org/10.1287/mnsc.1050.0363) `学術`
 - [Wikipedia: Cyberbalkanization — internet fragmentation and ideological isolation](https://en.wikipedia.org/wiki/Cyberbalkanization) `リファレンス`
 - [Sunstein, C.R. (2017) #Republic: Divided Democracy in the Age of Social Media — Princeton UP](https://doi.org/10.1515/9781400884711) `学術`
 - [Van Alstyne & Brynjolfsson (1996) "Electronic Communities: Global Village or Cyberbalkans?" (MIT)](https://web.mit.edu/marshall/www/papers/CyberBalkans.pdf) `学術`

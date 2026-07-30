@@ -26,7 +26,7 @@ aliases:
 アーメン・アルチャン ／ ハロルド・デムセッツ ／ マイケル・ジェンセン ／ ユージン・ファーマ
 
 ## 出典
-- [Alchian, A.A. & Demsetz, H. (1972) Production, Information Costs, and Economic Organization — American Economic Review 62(5), 777–795（チーム生産理論の原論文）](https://doi.org/10.2307/3003320) `学術`
+- [Alchian, A. A. & Demsetz, H. (1972) Production, Information Costs, and Economic Organization — American Economic Review 62(5), 777–795（チーム生産理論の原論文・RePEc 書誌）](https://ideas.repec.org/a/aea/aecrev/v62y1972i5p777-95.html) `学術`
 - [Wikipedia: Alchian–Demsetz production — チーム生産と残余請求権の概説](https://en.wikipedia.org/wiki/Alchian%E2%80%93Demsetz_production) `リファレンス`
 
 ## 関連概念

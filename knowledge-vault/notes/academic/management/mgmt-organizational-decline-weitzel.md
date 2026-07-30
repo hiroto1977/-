@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109](https://doi.org/10.2307/2392987) `学術`
 - [Hambrick, D. C. & D'Aveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly 33(1), 1-23](https://doi.org/10.2307/2392853) `学術`
-- [Wikipedia: Organizational decline — stages and turnaround strategies overview](https://en.wikipedia.org/wiki/Organizational_decline) `リファレンス`
+- [Serra, F. A. R., Pinto, R., Guerrazzi, L. & Ferreira, M. P. (2017) Organizational Decline Research Review: Challenges and Issues for a Future Research Agenda — Brazilian Administration Review 14(2), e160110（組織衰退研究のレビュー）](https://doi.org/10.1590/1807-7692bar2017160110) `学術`
 
 ## 関連概念
 - [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家

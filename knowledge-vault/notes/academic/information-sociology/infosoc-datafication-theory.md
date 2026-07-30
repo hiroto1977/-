@@ -29,7 +29,7 @@ Viktor Mayer-Schönberger ／ Kenneth Cukier ／ Jose van Dijck ／ Nick Couldry
 - [Mayer-Schönberger & Cukier (2013) The Rise of Big Data — Foreign Affairs](https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data) `メディア`
 - [van Dijck (2014) Datafication, dataism and dataveillance — Surveillance & Society 12(2)](https://doi.org/10.24908/ss.v12i2.4776) `学術`
 - [Couldry & Mejias (2019) The Costs of Connection — Stanford University Press](https://www.sup.org/books/sociology/costs-connection) `学術`
-- [Couldry & Mejias (2018) Data Colonialism — Television & New Media 20(4)](https://doi.org/10.1177/1527476418796632) `学術`
+- [Couldry & Mejias (2019) Data Colonialism: Rethinking Big Data's Relation to the Contemporary Subject — Television & New Media 20(4), 336–349](https://doi.org/10.1177/1527476418796632) `学術`
 
 ## 関連概念
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家

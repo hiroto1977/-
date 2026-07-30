@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [日本法務省 (2005) 会社法第446条〜449条（資本金の額の減少）e-Gov](https://elaws.e-gov.go.jp/document?lawid=417AC0000000086) `公的`
 - [UK Government (2006) Companies Act 2006 Part 17 Ch.10 s.641 — Reduction of Share Capital（英国減資手続）](https://www.legislation.gov.uk/ukpga/2006/46/part/17/chapter/10) `公的`
-- [Davies, P. & Worthington, S. (2016) Gower & Davies: Principles of Modern Company Law — Sweet & Maxwell（資本維持原則と減資の法理）](https://doi.org/10.1093/ojls/gqi037) `学術`
+- [Davies, P. & Worthington, S. (2016) Gower: Principles of Modern Company Law — 10th ed., Sweet & Maxwell, ISBN 9780414056268（資本維持原則と減資の法理）](https://www.wildy.com/isbn/9780414056268/gower-davies-principles-of-modern-company-law-10th-ed-paperback-sweet-maxwell-ltd) `学術`
 - [Wikipedia: Capital reduction — Companies Act 2006, Japan company law 449, creditor protection, EU second directive](https://en.wikipedia.org/wiki/Capital_reduction) `リファレンス`
 
 ## 関連概念
@@ -40,8 +40,7 @@ aliases:
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
 - [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

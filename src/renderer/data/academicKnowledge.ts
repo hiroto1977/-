@@ -6560,9 +6560,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ftc.gov/reports/bringing-dark-patterns-light', type: 'government', label: 'U.S. Federal Trade Commission (2022) “Bringing Dark Patterns to Light”' },
       { url: 'https://www.deceptive.design/', type: 'reference', label: 'Harry Brignull, Deceptive Design (旧 darkpatterns.org, 2010〜) 概念の一次情報源' },
       { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia「Dark pattern」（DSA・CPRA等の規制状況含む）' },
-      { url: 'https://doi.org/10.1145/3173574.3174108', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction (CSCW), 3, 1–32' },
+      { url: 'https://doi.org/10.1145/3359183', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW), Article 81' },
       { url: 'https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf', type: 'government', label: 'EDPB (2023) Guidelines 3/2022 on Dark Patterns in Social Media Platforms — European Data Protection Board' },
-      { url: 'https://doi.org/10.1145/3313831.3376600', type: 'academic', label: 'Gray, C. M. et al. (2020) The Dark Side of UX Design — CHI 2020 Extended Abstracts（dark pattern類型とUX倫理）' },
+      { url: 'https://doi.org/10.1145/3173574.3174108', type: 'academic', label: 'Gray, C. M. et al. (2018) The Dark (Patterns) Side of UX Design — CHI 2018（dark pattern 類型と UX 倫理）' },
     ],
   },
   {
@@ -22092,7 +22092,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/258434', type: 'academic', label: 'Hambrick & Mason (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers, AMR 9(2):193-206' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780195162073.001.0001', type: 'academic', label: 'Finkelstein, Hambrick & Cannella (2009) Strategic Leadership: Theory and Research on Executives, Oxford UP' },
-      { url: 'https://doi.org/10.5465/amr.2007.24345254', type: 'academic', label: 'Carpenter, Geletkanycz & Sanders (2004) Upper Echelons Research Revisited, Journal of Management 30(6):749-778' },
+      { url: 'https://doi.org/10.1016/j.jm.2004.06.001', type: 'academic', label: 'Carpenter, Geletkanycz & Sanders (2004) Upper Echelons Research Revisited: Antecedents, Elements, and Consequences of Top Management Team Composition — Journal of Management 30(6), 749-778' },
     ],
   },
   {
@@ -24065,7 +24065,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.2307/2095567', type: 'academic', label: 'Hannan & Freeman (1984) "Structural Inertia and Organizational Change" — American Sociological Review' },
-      { url: 'https://doi.org/10.2307/2392498', type: 'academic', label: 'Hannan & Freeman (1977) "The Population Ecology of Organizations" — American Journal of Sociology' },
+      { url: 'https://doi.org/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977) "The Population Ecology of Organizations" — American Journal of Sociology 82(5), 929–964' },
       { url: 'https://doi.org/10.2307/2393017', type: 'academic', label: 'Carroll & Hannan (1989) "Density Delay in the Evolution of Organizational Populations" — Administrative Science Quarterly' },
       { url: 'https://press.princeton.edu/books/paperback/9780691034775/organizations-in-industry', type: 'reference', label: 'Carroll & Hannan (1995) "Organizations in Industry" — Princeton University Press' },
     ],
@@ -24706,7 +24706,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data', type: 'media', label: 'Mayer-Schönberger & Cukier (2013) The Rise of Big Data — Foreign Affairs' },
       { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck (2014) Datafication, dataism and dataveillance — Surveillance & Society 12(2)' },
       { url: 'https://www.sup.org/books/sociology/costs-connection', type: 'academic', label: 'Couldry & Mejias (2019) The Costs of Connection — Stanford University Press' },
-      { url: 'https://doi.org/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias (2018) Data Colonialism — Television & New Media 20(4)' },
+      { url: 'https://doi.org/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias (2019) Data Colonialism: Rethinking Big Data\'s Relation to the Contemporary Subject — Television & New Media 20(4), 336–349' },
     ],
   },
   {
@@ -25409,7 +25409,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a theory of paradox AMR' },
-      { url: 'https://journals.aom.org/doi/10.5465/amj.2016.0594', type: 'academic', label: 'Smith et al. (2017) Paradox and leadership AMJ' },
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2016.0594', type: 'academic', label: 'Miron-Spektor, Ingram, Keller, Smith & Lewis (2018) Microfoundations of Organizational Paradox: The Problem Is How We Think about the Problem — Academy of Management Journal 61(1), 26–45' },
       { url: 'https://journals.sagepub.com/doi/abs/10.1177/0021886314522322', type: 'academic', label: 'JABS — Paradox theory in organization development' },
       { url: 'https://bothandthinking.net/', type: 'reference', label: 'Smith & Lewis — Both/And Thinking' },
     ],
@@ -30587,7 +30587,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ジョゼ・ファン・ダイク ／ ケイト・クロフォード',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/2053951714528481', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（ダタフィケーションの社会学的分析）' },
+      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（ダタフィケーションの社会学的分析）' },
       { url: 'https://www.hmhbooks.com/shop/books/Big-Data/9780544227750', type: 'reference', label: 'Mayer-Schönberger, V. & Cukier, K. (2013) Big Data: A Revolution That Will Transform How We Live, Work, and Think — Houghton Mifflin（ビッグデータ論の一般書）' },
       { url: 'https://doi.org/10.12794/metaverse.2021.9.5', type: 'academic', label: 'Crawford, K. (2021) Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence — Yale University Press（データ産出の批判的政治経済学）' },
       { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — Mayer-Schönberger & Cukier, quantification of human behavior, GDPR context' },
@@ -30629,7 +30629,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェイ・バーニー ／ リチャード・ルメルト ／ マーガレット・ピーテラフ ／ ビル・フナーバック',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1002/smj.4250050207', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management, 17(1), 99–120（RBV原典・VRIO枠組み）' },
+      { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management, 17(1), 99–120（RBV原典・VRIO枠組み）' },
       { url: 'https://doi.org/10.2307/2392376', type: 'academic', label: 'Rumelt, R. P. (1984) Towards a Strategic Theory of the Firm — in Lamb ed., Competitive Strategic Management, 556–570（模倣障壁の概念）' },
       { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal, 14(3), 179–191（RBVの精緻化）' },
       { url: 'https://en.wikipedia.org/wiki/Competitive_advantage', type: 'reference', label: 'Wikipedia: Competitive advantage — RBV, VRIO, parity vs. advantage, isolating mechanisms' },
@@ -39186,7 +39186,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'キャス・サンスティーン ／ マーシャル・ヴァン・アルスタイン ／ エリック・ブリニョルフソン ／ イーライ・パリサー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1126/science.1167742', type: 'academic', label: 'Van Alstyne, M. & Brynjolfsson, E. (2005) Global Village or Cyber-Balkans — Management Science 51(6)' },
+      { url: 'https://doi.org/10.1287/mnsc.1050.0363', type: 'academic', label: 'Van Alstyne, M. & Brynjolfsson, E. (2005) Global Village or Cyber-Balkans? Modeling and Measuring the Integration of Electronic Communities — Management Science 51(6), 851–868' },
       { url: 'https://en.wikipedia.org/wiki/Cyberbalkanization', type: 'reference', label: 'Wikipedia: Cyberbalkanization — internet fragmentation and ideological isolation' },
       { url: 'https://doi.org/10.1515/9781400884711', type: 'academic', label: 'Sunstein, C.R. (2017) #Republic: Divided Democracy in the Age of Social Media — Princeton UP' },
       { url: 'https://web.mit.edu/marshall/www/papers/CyberBalkans.pdf', type: 'academic', label: 'Van Alstyne & Brynjolfsson (1996) "Electronic Communities: Global Village or Cyberbalkans?" (MIT)' },
@@ -39528,7 +39528,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.18574/9780814743508', type: 'academic', label: 'Jenkins, H., Ford, S. & Green, J. (2013) Spreadable Media — NYU Press' },
       { url: 'https://en.wikipedia.org/wiki/Spreadable_media', type: 'reference', label: 'Wikipedia: Spreadable Media — Jenkins participatory culture and content circulation' },
-      { url: 'https://doi.org/10.1177/1354856510394539', type: 'academic', label: 'Jenkins, H. (2009) If It Doesn\'t Spread, It\'s Dead — Convergence 15(4)' },
+      { url: 'http://henryjenkins.org/blog/2009/02/if_it_doesnt_spread_its_dead_p_1.html', type: 'reference', label: 'Jenkins, H. (2009) If It Doesn\'t Spread, It\'s Dead (Part Two): Sticky and Spreadable — Two Paradigms — henryjenkins.org（2008年 Convergence Culture Consortium ホワイトペーパーを発展させた連載）' },
     ],
   },
   {
@@ -40451,7 +40451,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.bailii.org/ew/cases/EWHC/QB/1853/J72.html', type: 'government', label: 'Hochster v De La Tour [1853] EWHC QB J72 — anticipatory breach landmark' },
-      { url: 'https://doi.org/10.1093/he/9780198876984.001.0001', type: 'academic', label: 'Peel, E. & Treitel, G. H. (2015) Anticipatory Breach — The Law of Contract, 14th ed.' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://en.wikipedia.org/wiki/Anticipatory_repudiation', type: 'reference', label: 'Wikipedia: Anticipatory repudiation — pre-performance breach doctrine overview' },
     ],
   },
@@ -40572,7 +40572,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109' },
       { url: 'https://doi.org/10.2307/2392853', type: 'academic', label: "Hambrick, D. C. & D'Aveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly 33(1), 1-23" },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_decline', type: 'reference', label: 'Wikipedia: Organizational decline — stages and turnaround strategies overview' },
+      { url: 'https://doi.org/10.1590/1807-7692bar2017160110', type: 'academic', label: 'Serra, F. A. R., Pinto, R., Guerrazzi, L. & Ferreira, M. P. (2017) Organizational Decline Research Review: Challenges and Issues for a Future Research Agenda — Brazilian Administration Review 14(2), e160110（組織衰退研究のレビュー）' },
     ],
   },
   {
@@ -40740,7 +40740,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.bailii.org/uk/cases/UKSC/2015/67.html', type: 'government', label: 'Cavendish Square v El Makdessi [2015] UKSC 67 — penalty clause modern test' },
-      { url: 'https://doi.org/10.1093/he/9780198876984.001.0001', type: 'academic', label: 'Peel, E. & Treitel, G. H. (2015) Remedies for Breach — The Law of Contract, 14th ed.' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://en.wikipedia.org/wiki/Penalty_clause', type: 'reference', label: 'Wikipedia: Penalty clause — liquidated damages and judicial control overview' },
     ],
   },
@@ -40804,7 +40804,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エドウィン・ペール ／ ヒュー・コリンズ ／ ジョン・カータライト ／ アンドリュー・バロウズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/he/9780198876984.001.0001', type: 'academic', label: 'Peel, E. & Treitel, G. H. (2015) Waiver and Estoppel — The Law of Contract, 14th ed.' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Waiver and Estoppel — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://doi.org/10.1093/law/9780198755166.001.0001', type: 'academic', label: 'Cartwright, J. (2016) Contract Law: An Introduction — 3rd ed., Hart Publishing' },
       { url: 'https://en.wikipedia.org/wiki/Waiver', type: 'reference', label: 'Wikipedia: Waiver — voluntary relinquishment of contractual rights overview' },
     ],
@@ -41051,7 +41051,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エドウィン・ペール ／ ギュンター・トレーテル ／ ジョン・カータライト ／ アンドリュー・バロウズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/he/9780198876984.001.0001', type: 'academic', label: 'Peel, E. & Treitel, G. H. (2015) Misrepresentation and Non-Disclosure — The Law of Contract, 14th ed.' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Misrepresentation and Non-Disclosure — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://www.legislation.gov.uk/ukpga/1967/7', type: 'government', label: 'UK Misrepresentation Act 1967 — statutory remedies for pre-contractual misstatements' },
       { url: 'https://en.wikipedia.org/wiki/Misrepresentation', type: 'reference', label: 'Wikipedia: Misrepresentation — false statement and contractual remedies overview' },
     ],
@@ -41104,7 +41104,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デニング卿 ／ ジョン・カーター ／ アンドリュー・バロウズ ／ エドウィン・ペール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/he/9780198876984.001.0001', type: 'academic', label: 'Peel, E. & Treitel, G. H. (2015) The Law of Contract — 14th ed., Sweet & Maxwell' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Treitel on the Law of Contract — 14th ed., Sweet & Maxwell, ISBN 9780414037397 (OCLC 910717405)' },
       { url: 'https://www.bailii.org/ew/cases/EWHC/KB/1947/1.html', type: 'government', label: 'Central London Property Trust v High Trees House [1947] KB 130 — promissory estoppel landmark' },
       { url: 'https://en.wikipedia.org/wiki/Estoppel', type: 'reference', label: 'Wikipedia: Estoppel — reliance-based preclusion doctrine overview' },
     ],
@@ -41157,7 +41157,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.bailii.org/uk/cases/UKHL/1903/2.html', type: 'government', label: 'Krell v Henry [1903] 2 KB 740 — Court of Appeal frustration of purpose landmark' },
-      { url: 'https://doi.org/10.1093/he/9780198876984.001.0001', type: 'academic', label: 'Treitel, G. H. (2014) Frustration and Force Majeure — 3rd ed., Sweet & Maxwell' },
+      { url: 'https://www.wildy.com/isbn/9780414028531/frustration-and-force-majeure-3rd-ed-hardback-sweet-maxwell-ltd', type: 'academic', label: 'Treitel, G. H. (2014) Frustration and Force Majeure — 3rd ed., Sweet & Maxwell, ISBN 9780414028531' },
       { url: 'https://en.wikipedia.org/wiki/Frustration_of_purpose', type: 'reference', label: 'Wikipedia: Frustration of purpose — supervening impossibility doctrine overview' },
     ],
   },
@@ -41247,7 +41247,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ポール・サミュエルソン ／ ジェームズ・アンダーソン ／ エリック・ヴァン・ウィンクープ ／ デイヴィッド・ネイヴィ ／ デニス・ニクイタ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/1884513', type: 'academic', label: 'Samuelson, P. A. (1954) "The Transfer Problem and Transport Costs" — EJ' },
+      { url: 'https://doi.org/10.2307/2226834', type: 'academic', label: 'Samuelson, P. A. (1954) The Transfer Problem and Transport Costs, II: Analysis of Effects of Trade Impediments — The Economic Journal 64(254), 264–289' },
       { url: 'https://doi.org/10.1257/jel.42.3.691', type: 'academic', label: 'Anderson, J. E. & van Wincoop, E. (2004) "Trade Costs" — Journal of Economic Literature' },
       { url: 'https://en.wikipedia.org/wiki/Iceberg_transport_costs', type: 'reference', label: 'Wikipedia: Iceberg transport costs — サミュエルソンの貿易費用モデル' },
     ],
@@ -41726,7 +41726,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker, G. C. & Star, S. L. (1999) Sorting Things Out — MIT Press' },
       { url: 'https://doi.org/10.17705/1jais.00200', type: 'academic', label: 'Edwards, P. N., Bowker, G. C., Jackson, S. J. & Williams, R. (2009) Introduction: An Agenda for Infrastructure Studies — Journal of the Association for Information Systems 10(5), 364-374' },
-      { url: 'https://en.wikipedia.org/wiki/Sorting_Things_Out', type: 'reference', label: 'Wikipedia: Sorting Things Out — ボウカー＆スターの分類研究' },
+      { url: 'https://mitpress.mit.edu/9780262522953/sorting-things-out/', type: 'reference', label: 'MIT Press: Sorting Things Out — Classification and Its Consequences（ボウカー＆スターの分類研究・出版社ページ）' },
     ],
   },
   {
@@ -42192,7 +42192,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アビナッシュ・ディクシット ／ ロバート・ピンダイク ／ ロバート・マクドナルド ／ マイケル・ブレナン ／ レノス・トリジョルジス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2937686', type: 'academic', label: 'Dixit & Pindyck (1994) Investment Under Uncertainty — Princeton University Press' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691034102/investment-under-uncertainty', type: 'academic', label: 'Dixit, A. K. & Pindyck, R. S. (1994) Investment Under Uncertainty — Princeton University Press, ISBN 9780691034102（出版社ページ）' },
       { url: 'https://doi.org/10.2307/1884175', type: 'academic', label: 'McDonald & Siegel (1986) The Value of Waiting to Invest — QJE' },
       { url: 'https://en.wikipedia.org/wiki/Real_options_valuation', type: 'reference', label: 'Wikipedia: Real options valuation — リアル・オプションの理論と応用の概説' },
     ],
@@ -42258,7 +42258,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1086/260790', type: 'academic', label: 'Hall (1978) Stochastic Implications of the Life Cycle–Permanent Income Hypothesis — JPE' },
-      { url: 'https://doi.org/10.2307/2937686', type: 'academic', label: 'Deaton (1991) Saving and Liquidity Constraints — Econometrica' },
+      { url: 'https://doi.org/10.2307/2938366', type: 'academic', label: 'Deaton (1991) Saving and Liquidity Constraints — Econometrica 59(5), 1221–1248' },
       { url: 'https://en.wikipedia.org/wiki/Consumption_smoothing', type: 'reference', label: 'Wikipedia: Consumption smoothing — 恒常所得仮説とライフサイクル仮説の概説' },
     ],
   },
@@ -44430,7 +44430,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ダナ・ボイド ／ ケイト・クロフォード ／ キャシー・オニール ／ ヴィクター・マイヤー＝ショーンベルガー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/2053951714528481', type: 'academic', label: 'Boyd, D. & Crawford, K. (2012) Critical Questions for Big Data — Information, Communication & Society' },
+      { url: 'https://doi.org/10.1080/1369118X.2012.678878', type: 'academic', label: 'Boyd, D. & Crawford, K. (2012) Critical Questions for Big Data — Information, Communication & Society 15(5), 662–679' },
       { url: 'https://en.wikipedia.org/wiki/Big_data', type: 'reference', label: 'Wikipedia: Big data — analytics and critical perspectives' },
     ],
   },
@@ -45358,7 +45358,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/j.ctt1hj9w84', type: 'academic', label: 'Mayer-Schönberger & Cukier (2013) Big Data: A Revolution — Houghton Mifflin Harcourt' },
-      { url: 'https://doi.org/10.1177/2053951714528481', type: 'academic', label: 'van Dijck (2014) Datafication, Dataism and Dataveillance — Surveillance & Society' },
+      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck (2014) Datafication, Dataism and Dataveillance — Surveillance & Society 12(2), 197–208' },
       { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — データフィケーションと情報社会の変容' },
     ],
   },
@@ -46971,7 +46971,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョシュア・アングリスト ／ グイド・インベンス ／ デビッド・カード ／ ヨルン＝シュテフェン・ピシュケ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2937954', type: 'academic', label: 'Angrist (1990) Lifetime Earnings and the Vietnam Era Draft Lottery — AER 80(3)' },
+      { url: 'https://econpapers.repec.org/RePEc:aea:aecrev:v:80:y:1990:i:3:p:313-36', type: 'academic', label: 'Angrist, J. D. (1990) Lifetime Earnings and the Vietnam Era Draft Lottery: Evidence from Social Security Administrative Records — American Economic Review 80(3), 313–336 (RePEc 書誌)' },
       { url: 'https://en.wikipedia.org/wiki/Natural_experiment', type: 'reference', label: 'Wikipedia: Natural experiment — IV, RDD, DiD, credibility revolution, Angrist, Card' },
     ],
   },
@@ -47463,7 +47463,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ハリー・ブリグナル ／ アーバジ・マシュア ／ コリン・グレイ ／ アーウィン・チェリン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1145/3313831.3376600', type: 'academic', label: 'Mathur, A. et al. (2019). Dark patterns at scale — ACM CHI' },
+      { url: 'https://doi.org/10.1145/3359183', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW), Article 81' },
       { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia: Dark pattern — deceptive UX design' },
     ],
   },
@@ -48400,7 +48400,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーメン・アルチャン ／ ハロルド・デムセッツ ／ マイケル・ジェンセン ／ ユージン・ファーマ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/3003320', type: 'academic', label: 'Alchian, A.A. & Demsetz, H. (1972) Production, Information Costs, and Economic Organization — American Economic Review 62(5), 777–795（チーム生産理論の原論文）' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v62y1972i5p777-95.html', type: 'academic', label: 'Alchian, A. A. & Demsetz, H. (1972) Production, Information Costs, and Economic Organization — American Economic Review 62(5), 777–795（チーム生産理論の原論文・RePEc 書誌）' },
       { url: 'https://en.wikipedia.org/wiki/Alchian%E2%80%93Demsetz_production', type: 'reference', label: 'Wikipedia: Alchian–Demsetz production — チーム生産と残余請求権の概説' },
     ],
   },
@@ -48564,7 +48564,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://elaws.e-gov.go.jp/document?lawid=417AC0000000086', type: 'government', label: '日本法務省 (2005) 会社法第446条〜449条（資本金の額の減少）e-Gov' },
       { url: 'https://www.legislation.gov.uk/ukpga/2006/46/part/17/chapter/10', type: 'government', label: 'UK Government (2006) Companies Act 2006 Part 17 Ch.10 s.641 — Reduction of Share Capital（英国減資手続）' },
-      { url: 'https://doi.org/10.1093/ojls/gqi037', type: 'academic', label: 'Davies, P. & Worthington, S. (2016) Gower & Davies: Principles of Modern Company Law — Sweet & Maxwell（資本維持原則と減資の法理）' },
+      { url: 'https://www.wildy.com/isbn/9780414056268/gower-davies-principles-of-modern-company-law-10th-ed-paperback-sweet-maxwell-ltd', type: 'academic', label: 'Davies, P. & Worthington, S. (2016) Gower: Principles of Modern Company Law — 10th ed., Sweet & Maxwell, ISBN 9780414056268（資本維持原則と減資の法理）' },
       { url: 'https://en.wikipedia.org/wiki/Capital_reduction', type: 'reference', label: 'Wikipedia: Capital reduction — Companies Act 2006, Japan company law 449, creditor protection, EU second directive' },
     ],
   },
@@ -48634,7 +48634,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32005L0056', type: 'government', label: 'European Parliament (2005) Directive 2005/56/EC — Cross-Border Mergers of Limited Liability Companies（越境合併指令原文）' },
       { url: 'https://curia.europa.eu/juris/liste.jsf?num=C-411/03', type: 'government', label: 'Court of Justice of the EU (2005) Case C-411/03 SEVIC Systems AG — ECJ判決（越境合併の設立自由原則適用）' },
-      { url: 'https://doi.org/10.1093/ojls/gqi037', type: 'academic', label: 'Davies, P. L. & Worthington, S. (2012) Gower & Davies\' Principles of Modern Company Law — Sweet & Maxwell（EU会社法越境合併解説）' },
+      { url: 'https://www.wildy.com/isbn/9780414022720/gower-davies-principles-of-modern-company-law-9th-ed-paperback-sweet-maxwell-ltd', type: 'academic', label: 'Davies, P. L. & Worthington, S. (2012) Gower & Davies: Principles of Modern Company Law — 9th ed., Sweet & Maxwell, ISBN 9780414022720（EU会社法越境合併解説）' },
       { url: 'https://en.wikipedia.org/wiki/Cross-border_mergers_in_the_European_Union', type: 'reference', label: 'Wikipedia: Cross-border mergers in the EU — CBMD, SEVIC, co-determination, 2017/1132/EU' },
     ],
   },
@@ -48646,7 +48646,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ホセ・ヴァン・ダイク ／ ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ダニエル・チャバジー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/2053951714528481', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（データ化の批判的分析）' },
+      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（データ化の批判的分析）' },
       { url: 'https://doi.org/10.1177/2053951717751551', type: 'academic', label: 'Kitchin, R. & McArdle, G. (2016) What Makes Big Data, Big Data? Exploring the Ontological Characteristics of 26 Datasets — Big Data & Society, 3(1)（データの存在論的分析）' },
       { url: 'https://doi.org/10.1080/1369118X.2019.1611830', type: 'academic', label: 'Taylor, L. (2017) What Is Data Justice? The Case for Connecting Digital Rights and Freedoms Globally — Big Data & Society, 4(2)（データ正義の概念化）' },
       { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — van Dijck, Mayer-Schönberger, social media quantification, data justice, smart city' },
@@ -48688,7 +48688,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・マーチ ／ ダニエル・レビンタール ／ ロバート・チャップル ／ フレッド・ルーサンズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science, 2(1), 71–87（探索—深化ジレンマの原典）' },
+      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science, 2(1), 71–87（探索—深化ジレンマの原典）' },
       { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal, 14(S2), 95–112（学習の近視眼モデル）' },
       { url: 'https://doi.org/10.1007/978-1-4612-3670-6_1', type: 'academic', label: 'Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, Method, and Practice — Addison-Wesley（コンピタンシー・トラップの組織学習論的文脈）' },
       { url: 'https://en.wikipedia.org/wiki/Competency_trap', type: 'reference', label: 'Wikipedia: Competency trap — March, Levinthal, exploration/exploitation, success trap, myopia' },
@@ -48718,7 +48718,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.legislation.gov.uk/ukpga/2006/46/part/18/chapter/2', type: 'government', label: 'UK Government (2006) Companies Act 2006 Part 18 — Acquisition of Own Shares（英国財務支援規制の現行法）' },
       { url: 'https://www.elegislation.gov.hk/hk/cap622!en', type: 'government', label: 'Hong Kong Government (2014) Companies Ordinance Cap. 622 — Financial Assistance（香港ホワイトウォッシュ手続き規定）' },
-      { url: 'https://doi.org/10.1093/ojls/gqi037', type: 'academic', label: 'Davies, P. L. & Worthington, S. (2012) Gower & Davies\' Principles of Modern Company Law — Sweet & Maxwell, 9th ed.（財務支援と会社法原理の解説）' },
+      { url: 'https://www.wildy.com/isbn/9780414022720/gower-davies-principles-of-modern-company-law-9th-ed-paperback-sweet-maxwell-ltd', type: 'academic', label: 'Davies, P. L. & Worthington, S. (2012) Gower & Davies: Principles of Modern Company Law — 9th ed., Sweet & Maxwell, ISBN 9780414022720（財務支援と会社法原理の解説）' },
       { url: 'https://en.wikipedia.org/wiki/Financial_assistance_(company_law)', type: 'reference', label: 'Wikipedia: Financial assistance (company law) — whitewash procedure, MBO/LBO, Companies Act 2006, Hong Kong' },
     ],
   },
@@ -48954,7 +48954,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ポール・デービース ／ サラ・ウォーシントン ／ フランク・イースターブルック ／ 落合誠一',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/ojls/gqi037', type: 'academic', label: 'Davies, P. & Worthington, S. (2016) Gower & Davies: Principles of Modern Company Law — Sweet & Maxwell（会社法取締役義務の標準的テキスト）' },
+      { url: 'https://www.wildy.com/isbn/9780414056268/gower-davies-principles-of-modern-company-law-10th-ed-paperback-sweet-maxwell-ltd', type: 'academic', label: 'Davies, P. & Worthington, S. (2016) Gower: Principles of Modern Company Law — 10th ed., Sweet & Maxwell, ISBN 9780414056268（会社法取締役義務の標準的テキスト）' },
       { url: 'https://doi.org/10.1093/jlb/lsab019', type: 'academic', label: 'Edelman, J. (2020) Nominee Directors and the Conflict of Interests in Company Law — Melbourne University Law Review, 44(1), 1–45（ノミニー取締役利益相反の法的分析）' },
       { url: 'https://elaws.e-gov.go.jp/document?lawid=417AC0000000086', type: 'government', label: '日本法務省 (2005) 会社法356条（取締役の競業禁止義務・利益相反取引）e-Gov' },
       { url: 'https://en.wikipedia.org/wiki/Nominee_director', type: 'reference', label: 'Wikipedia: Nominee director — Companies Act 2006, duty of loyalty, PE/VC conflicts, fiduciary duty' },

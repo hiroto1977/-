@@ -31,6 +31,7 @@ Georg Friedrich Knapp／L. Randall Wray／Stephanie Kelton／Warren Mosler／Pav
 - [Kelton (2020) The Deficit Myth: Modern Monetary Theory, PublicAffairs [Cambridge Core review]](https://www.cambridge.org/core/journals/economics-and-philosophy/article/abs/deficit-myth-modern-monetary-theory-and-the-birth-of-the-peoples-economy-stephanie-kelton-public-affairs-2020-325-pages/7CF88986E1DF34B0E3DA8112E0CC7AAB) `学術`
 
 ## 関連概念
+- [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有

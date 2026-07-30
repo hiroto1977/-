@@ -27,7 +27,7 @@ Wendy K. Smith ／ Marianne W. Lewis
 
 ## 出典
 - [Smith & Lewis (2011) Toward a theory of paradox AMR](https://journals.aom.org/doi/abs/10.5465/amr.2009.0223) `学術`
-- [Smith et al. (2017) Paradox and leadership AMJ](https://journals.aom.org/doi/10.5465/amj.2016.0594) `学術`
+- [Miron-Spektor, Ingram, Keller, Smith & Lewis (2018) Microfoundations of Organizational Paradox: The Problem Is How We Think about the Problem — Academy of Management Journal 61(1), 26–45](https://journals.aom.org/doi/10.5465/amj.2016.0594) `学術`
 - [JABS — Paradox theory in organization development](https://journals.sagepub.com/doi/abs/10.1177/0021886314522322) `学術`
 - [Smith & Lewis — Both/And Thinking](https://bothandthinking.net/) `リファレンス`
 

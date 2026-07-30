@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Hochster v De La Tour [1853] EWHC QB J72 — anticipatory breach landmark](https://www.bailii.org/ew/cases/EWHC/QB/1853/J72.html) `公的`
-- [Peel, E. & Treitel, G. H. (2015) Anticipatory Breach — The Law of Contract, 14th ed.](https://doi.org/10.1093/he/9780198876984.001.0001) `学術`
+- [Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
 - [Wikipedia: Anticipatory repudiation — pre-performance breach doctrine overview](https://en.wikipedia.org/wiki/Anticipatory_repudiation) `リファレンス`
 
 ## 関連概念
@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
 - [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
-- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有
+- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

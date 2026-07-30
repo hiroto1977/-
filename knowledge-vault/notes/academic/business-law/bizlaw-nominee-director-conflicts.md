@@ -26,7 +26,7 @@ aliases:
 ポール・デービース ／ サラ・ウォーシントン ／ フランク・イースターブルック ／ 落合誠一
 
 ## 出典
-- [Davies, P. & Worthington, S. (2016) Gower & Davies: Principles of Modern Company Law — Sweet & Maxwell（会社法取締役義務の標準的テキスト）](https://doi.org/10.1093/ojls/gqi037) `学術`
+- [Davies, P. & Worthington, S. (2016) Gower: Principles of Modern Company Law — 10th ed., Sweet & Maxwell, ISBN 9780414056268（会社法取締役義務の標準的テキスト）](https://www.wildy.com/isbn/9780414056268/gower-davies-principles-of-modern-company-law-10th-ed-paperback-sweet-maxwell-ltd) `学術`
 - [Edelman, J. (2020) Nominee Directors and the Conflict of Interests in Company Law — Melbourne University Law Review, 44(1), 1–45（ノミニー取締役利益相反の法的分析）](https://doi.org/10.1093/jlb/lsab019) `学術`
 - [日本法務省 (2005) 会社法356条（取締役の競業禁止義務・利益相反取引）e-Gov](https://elaws.e-gov.go.jp/document?lawid=417AC0000000086) `公的`
 - [Wikipedia: Nominee director — Companies Act 2006, duty of loyalty, PE/VC conflicts, fiduciary duty](https://en.wikipedia.org/wiki/Nominee_director) `リファレンス`

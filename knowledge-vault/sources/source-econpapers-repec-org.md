@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 8
+cite_count: 9
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（学術 7 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **9 件**（学術 8 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — EconPapers/RePEc—原論文の書誌情報（掲載誌・巻号・頁）
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Tcherneva(2006)ChartalismandtheTax-DrivenApproachtoMoney,inHandbookof…
+- [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — Angrist,J.D.(1990)LifetimeEarningsandtheVietnamEraDraftLottery:Eviden…
 - [[econ-rational-addiction|合理的依存]] — EconPapers/RePEcbibliographicrecord—Becker&Murphy,JPE1988
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — EconPapers—ANoteonWelfarePropositions(1941)
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — EconPapers/RePEc—"Thefinancialtrilemma,"EconomicsLettersv.111y.2011i.…

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Hall (1978) Stochastic Implications of the Life Cycle–Permanent Income Hypothesis — JPE](https://doi.org/10.1086/260790) `学術`
-- [Deaton (1991) Saving and Liquidity Constraints — Econometrica](https://doi.org/10.2307/2937686) `学術`
+- [Deaton (1991) Saving and Liquidity Constraints — Econometrica 59(5), 1221–1248](https://doi.org/10.2307/2938366) `学術`
 - [Wikipedia: Consumption smoothing — 恒常所得仮説とライフサイクル仮説の概説](https://en.wikipedia.org/wiki/Consumption_smoothing) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ポール・サミュエルソン ／ ジェームズ・アンダーソン ／ エリック・ヴァン・ウィンクープ ／ デイヴィッド・ネイヴィ ／ デニス・ニクイタ
 
 ## 出典
-- [Samuelson, P. A. (1954) "The Transfer Problem and Transport Costs" — EJ](https://doi.org/10.2307/1884513) `学術`
+- [Samuelson, P. A. (1954) The Transfer Problem and Transport Costs, II: Analysis of Effects of Trade Impediments — The Economic Journal 64(254), 264–289](https://doi.org/10.2307/2226834) `学術`
 - [Anderson, J. E. & van Wincoop, E. (2004) "Trade Costs" — Journal of Economic Literature](https://doi.org/10.1257/jel.42.3.691) `学術`
 - [Wikipedia: Iceberg transport costs — サミュエルソンの貿易費用モデル](https://en.wikipedia.org/wiki/Iceberg_transport_costs) `リファレンス`
 

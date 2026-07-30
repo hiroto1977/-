@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [European Parliament (2005) Directive 2005/56/EC — Cross-Border Mergers of Limited Liability Companies（越境合併指令原文）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32005L0056) `公的`
 - [Court of Justice of the EU (2005) Case C-411/03 SEVIC Systems AG — ECJ判決（越境合併の設立自由原則適用）](https://curia.europa.eu/juris/liste.jsf?num=C-411/03) `公的`
-- [Davies, P. L. & Worthington, S. (2012) Gower & Davies' Principles of Modern Company Law — Sweet & Maxwell（EU会社法越境合併解説）](https://doi.org/10.1093/ojls/gqi037) `学術`
+- [Davies, P. L. & Worthington, S. (2012) Gower & Davies: Principles of Modern Company Law — 9th ed., Sweet & Maxwell, ISBN 9780414022720（EU会社法越境合併解説）](https://www.wildy.com/isbn/9780414022720/gower-davies-principles-of-modern-company-law-9th-ed-paperback-sweet-maxwell-ltd) `学術`
 - [Wikipedia: Cross-border mergers in the EU — CBMD, SEVIC, co-determination, 2017/1132/EU](https://en.wikipedia.org/wiki/Cross-border_mergers_in_the_European_Union) `リファレンス`
 
 ## 関連概念

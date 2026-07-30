@@ -27,7 +27,7 @@ Michael T. Hannan ／ John Freeman ／ Glenn R. Carroll
 
 ## 出典
 - [Hannan & Freeman (1984) "Structural Inertia and Organizational Change" — American Sociological Review](https://doi.org/10.2307/2095567) `学術`
-- [Hannan & Freeman (1977) "The Population Ecology of Organizations" — American Journal of Sociology](https://doi.org/10.2307/2392498) `学術`
+- [Hannan & Freeman (1977) "The Population Ecology of Organizations" — American Journal of Sociology 82(5), 929–964](https://doi.org/10.1086/226424) `学術`
 - [Carroll & Hannan (1989) "Density Delay in the Evolution of Organizational Populations" — Administrative Science Quarterly](https://doi.org/10.2307/2393017) `学術`
 - [Carroll & Hannan (1995) "Organizations in Industry" — Princeton University Press](https://press.princeton.edu/books/paperback/9780691034775/organizations-in-industry) `リファレンス`
 

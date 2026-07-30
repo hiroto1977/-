@@ -26,7 +26,7 @@ aliases:
 デニング卿 ／ ジョン・カーター ／ アンドリュー・バロウズ ／ エドウィン・ペール
 
 ## 出典
-- [Peel, E. & Treitel, G. H. (2015) The Law of Contract — 14th ed., Sweet & Maxwell](https://doi.org/10.1093/he/9780198876984.001.0001) `学術`
+- [Peel, E. (2015) Treitel on the Law of Contract — 14th ed., Sweet & Maxwell, ISBN 9780414037397 (OCLC 910717405)](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
 - [Central London Property Trust v High Trees House [1947] KB 130 — promissory estoppel landmark](https://www.bailii.org/ew/cases/EWHC/KB/1947/1.html) `公的`
 - [Wikipedia: Estoppel — reliance-based preclusion doctrine overview](https://en.wikipedia.org/wiki/Estoppel) `リファレンス`
 

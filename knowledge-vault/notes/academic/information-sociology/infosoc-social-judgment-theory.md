@@ -31,8 +31,13 @@ Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール�
 - [Sherif, C. W., Sherif, M. & Nebergall, R. E. (1965) Attitude and Attitude Change: The Social Judgment-Involvement Approach. Philadelphia & London: W. B. Saunders, pp. 264 — book review, The British Journal of Psychiatry (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/abs/attitude-and-attitude-changes-the-social-judgmentinvolvement-approach-by-caro-lyn-w-sherif-muzafer-sherif-and-roger-e-nebergalk-philadelphia-and-london-w-b-saunders-company-1965-pp-264-price-2-18s-od/5AC604AB150601BC120EC0558C8F0406) `学術`
 
 ## 関連概念
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 出典を共有
 - [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同分野の近傍
 - [[infosoc-strong-programme|ストロング・プログラム（Strong Programme／Bloor 1976）——科学的知識の社会学（SSK）の綱領、真偽を問わず信念の原因を対称的に説明する]] — 同分野の近傍
 
