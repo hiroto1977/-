@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2231
+cite_count: 2229
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2231 件**（学術 2223 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2229 件**（学術 2221 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1425,8 +1425,6 @@ tags:
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — Zuboff,S.(2019).TheAgeofSurveillanceCapitalism—PublicAffairs
 - [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — Crawford,K.(2021)AtlasofAI:Power,Politics,andthePlanetaryCostsofArtif…
 - [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — vanDijck,J.(2014)Datafication,DataismandDataveillance:BigDataBetweenS…
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — Mayer-Schönberger&Cukier(2013)BigData:ARevolution—HoughtonMifflinHarc…
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — vanDijck(2014)Datafication,DataismandDataveillance—Surveillance&Socie…
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — Kitchin(2014)TheDataRevolution:BigData,OpenData,DataInfrastructuresan…
 - [[infosoc-datafication-theory|データフィケーション理論]] — Couldry&Mejias(2019)DataColonialism:RethinkingBigData'sRelationtotheC…
 - [[infosoc-datafication-theory|データフィケーション理論]] — vanDijck(2014)Datafication,dataismanddataveillance—Surveillance&Socie…

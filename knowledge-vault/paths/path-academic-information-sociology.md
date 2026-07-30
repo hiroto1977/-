@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 624
+entry_count: 623
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（624件）
+# 学習パス — 学術概念／情報社会学（623件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -17,7 +17,6 @@ tags:
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 44）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]]（接続 24）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 23）
@@ -28,6 +27,7 @@ tags:
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 20）
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -535,7 +535,6 @@ tags:
 - [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]]
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]]
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]]
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]]
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]]
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]]

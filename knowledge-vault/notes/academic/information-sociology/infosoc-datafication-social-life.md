@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Datafication — big data, algorithmic governance, ADM, surveillance capitalism, GDPR](https://en.wikipedia.org/wiki/Datafication) `リファレンス`
 
 ## 関連概念
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 語彙が近い
 - [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 同じ思想家
 - [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
 - [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同じ思想家

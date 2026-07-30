@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
 - [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家
-- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]] — 語彙が近い
-- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 語彙が近い
+- [[tax-special-depreciation|特別償却（租税特別措置法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
