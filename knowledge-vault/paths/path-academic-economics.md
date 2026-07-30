@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 951
+entry_count: 950
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（951件）
+# 学習パス — 学術概念／経済学（950件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -667,7 +667,6 @@ tags:
 - [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]]
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]]
 - [[econ-hysteresis-unemployment-theory|ヒステリシス失業理論]]
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]]
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]]
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]]
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]]

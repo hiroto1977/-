@@ -127,6 +127,18 @@
       "drop": "econ-transfer-problem-keynes-ohlin",
       "why": "1929 年のケインズ＝オリーン論争とサミュエルソン 1952 の決着を同一粒度で記述した言い換え。DOI 照合が済み統合可",
       "migrate": "orthodox case / anti-orthodox case の術語、オランダ病への応用、バグワティの言及、Jones & Neary 1984 ハンドブック出典 (10.1016/S1573-4404(84)01006-4)"
+    },
+    {
+      "keep": "econ-monetary-policy-trilemma",
+      "drop": "econ-impossible-trinity-obstfeld",
+      "why": "同一命題 (Mundell-Fleming のトリレンマ) を同一粒度で解説した言い換え。keep 側が Mundell 1963 / Fleming 1962 の一次文献と Obstfeld-Shambaugh-Taylor 2005 の実証論文、IMF の政府系解説を持ち出典が強い",
+      "migrate": "金本位制・ブレトンウッズ体制という体制別の具体例、資本フロー管理とマクロプルーデンス規制をめぐる政策論争への含意、別名『国際金融のトリレンマ』、Obstfeld & Taylor 2004 の書籍出典 (DOI は誤りだったため一次照合のうえ 10.1017/CBO9780511616525 に訂正して移行)、Wikipedia: Impossible trinity"
+    },
+    {
+      "keep": "mgmt-3c-model-ohmae",
+      "drop": "mgmt-3c-analysis",
+      "why": "大前研一 1982 の 3C を同一粒度で解説した言い換え。keep 側が Ohmae 1982 の一次文献 (WorldCat) を持ち、記述量も約 3 倍 (drop は reference 出典のみ)",
+      "migrate": "別名『3C分析』、実務上の分析項目 (顧客=市場規模・ニーズ・購買行動 / 競合=強み・弱み・市場シェア / 自社=経営資源・強み・弱み)、MindTools と日本経営心理士協会の出典 2 件"
     }
   ],
   "citationCheckResolved": {
@@ -148,5 +160,20 @@
       "en.wikipedia.org/wiki/Organizational_decline と /wiki/Sorting_Things_Out は検索上存在しない疑いがある (HTTP ステータス未確認)。前者が 404 なら mgmt-organizational-decline-weitzel-jonsson の有効出典が 1 件になり確証ゲートに抵触する",
       "Gillespie の 3 件 (L48878 の 10.1080/1369118x.2010.508516、L24348/L49196 の 10.1177/1461444812437963 / 10.1177/1461444813490395) は接頭辞と出版社が不一致の疑い。同一論文にコーパス内で別 DOI が併存しており未照合"
     ]
+  },
+  "pass5": {
+    "appliedAt": "2026-07-30",
+    "note": "重複疑いキューを 0 件まで完走。パス4の統合で記述が充実し新たに閾値を超えた 2 件を全文読解のうえ裁定・適用した。両ペアとも keep の出典が +2 件、本文が +100 字以上で、減少した指標はない。",
+    "citationResolved": {
+      "doi": "10.1017/CBO9780511559747",
+      "actualWork": "Rogers, C. (1989) Money, Interest and Capital: A Study in the Foundations of Monetary Theory — Cambridge University Press, Modern Cambridge Economics Series",
+      "method": "WebSearch で DOI 接尾辞そのもの (CBO9780511559747) を完全一致検索し、Cambridge Core が返す章ページ群 (Preface / Contents / Index / Chapter 2,3,5,6,9) がすべて同一書籍であることを確認した。要約の主張ではなく検索索引が返すページ実体を証拠とする。",
+      "wrongClaimants": [
+        "econ-corridor-of-stability-leijonhufvud — Leijonhufvud (1968) は Oxford UP 刊。DOI を持たないため Internet Archive の書誌 (onkeynesianecono0000leij, ISBN 0195009487) に差し替え",
+        "econ-endogenous-money-supply-moore — Moore (1988) は Cambridge 刊だが CBO DOI を確定できず。Internet Archive の書誌 (horizontalistsve0000moor, ISBN 0521350794) に差し替え、あわせて書評論文 Bindseil & König (2013) ROKE 1(4) 383-390 の実 DOI 10.4337/roke.2013.04.01 を追加 (academic 1→2)",
+        "econ-impossible-trinity-obstfeld — 正 DOI は 10.1017/CBO9780511616525 (完全一致検索が Global Capital Markets の Cambridge Core ページ群を返すことで確認)。統合先へ訂正のうえ移行"
+      ],
+      "lesson": "同一 DOI に複数の出版年がぶつかっているとき、正解が候補のどれかである保証はない。まず DOI の実体を確定し、そのうえで各主張者を個別に照合する。"
+    }
   }
 }

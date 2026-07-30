@@ -39,11 +39,11 @@ Lord Nottingham（1682 ノーフォーク公爵事件で原型を確立）／Joh
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
 - [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
 - [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
-- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
-- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

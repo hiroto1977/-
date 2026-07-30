@@ -2,7 +2,7 @@
 title: "archive.org"
 type: source-domain
 host: "archive.org"
-cite_count: 24
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # archive.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 12 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 14 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,8 @@ tags:
 - [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — Kahn-Freund1972—LabourandtheLaw,Stevens&Sons
 - [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — TheRuleAgainstPerpetuities—JohnChipmanGray(1886),InternetArchive
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — Sraffa,P.(1960)ProductionofCommoditiesbyMeansofCommodities—CambridgeU…
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — Leijonhufvud,A.(1968)OnKeynesianEconomicsandtheEconomicsofKeynes:AStu…
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — Moore,B.J.(1988)HorizontalistsandVerticalists:TheMacroeconomicsofCred…
 - [[econ-giffen-good-theory|ギッフェン財理論]] — Marshall,A.(1895)PrinciplesofEconomics,3rded.—Giffengoodoriginalpassa…
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — Schumpeter,J.A.1939.BusinessCycles:ATheoretical,Historical,andStatist…
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Blaug(1958)RicardianEconomics:AHistoricalStudy,YaleUP

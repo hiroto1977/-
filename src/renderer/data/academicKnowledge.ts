@@ -8931,21 +8931,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-3c-analysis',
-    discipline: 'management',
-    title: '3C分析',
-    statement:
-      '3C分析は、経営コンサルタントの大前研一が著書『The Mind of the Strategist』（1982年）で提示した戦略立案のフレームワークである。事業戦略を成功させるには、顧客（Customer）・競合（Competitor）・自社（Company）という三つの要素を統合的に分析する必要があるとし、大前はこの相互に影響し合う関係を「戦略の三角形（strategic triangle）」と呼んだ。' +
-      '顧客では市場規模やニーズ・購買行動を、競合では競争相手の強み・弱みや市場シェアを、自社では自社の経営資源・強み・弱みを分析する。三つのどれか一つではなく、三者を統合して初めて持続的な競争優位が生まれる点が核心であり、顧客ニーズを競合より自社の強みでうまく満たすことを目指す。マーケティングや経営戦略立案の基本フレームワークとして世界的に普及している。',
-    keyFigures: '大前研一（Kenichi Ohmae, 1982『The Mind of the Strategist』）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/3Cs_model', type: 'reference', label: '3Cs model — Wikipedia' },
-      { url: 'https://www.mindtools.com/avi3qka/ohmaes-3cs-model/', type: 'reference', label: 'MindTools — Ohmae\'s 3Cs Model' },
-      { url: 'https://keiei-shinri.or.jp/word/3c/', type: 'reference', label: '一般社団法人日本経営心理士協会 — 3C分析' },
-    ],
-  },
-  {
     id: 'bizlaw-stewardship-code',
     discipline: 'business-law',
     title: '日本版スチュワードシップ・コード',
@@ -24191,15 +24176,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-monetary-policy-trilemma',
     discipline: 'economics',
     title: '金融政策のトリレンマ（不可能の三位一体）',
-    statement: '金融政策のトリレンマ（不可能の三位一体、impossible trinity）とは、固定為替レート、自由な資本移動、独立した金融政策の三つを同時に達成することは不可能であり、いずれか一つを犠牲にしなければならないという理論的命題である。Mundellは1960年代に国際マクロ経済学の枠組みとしてこの概念を定式化し、Flemingは同時期にIMFでの研究においてほぼ同様の結論を独立して導き出した。これらの研究を統合したMundell-Flemingモデルは、開放経済における財政・金融政策の有効性を体系的に説明する分析枠組みである。ObstfeldとTaylorは長期的な国際資本移動の歴史データを用いて、各時代の政策体制がトリレンマの制約のもとで行われた選択を反映していることを実証した。一方、Reyはグローバル金融サイクルの存在を根拠に、変動相場制を採用しても資本自由化によって金融政策の独立性は実質的に失われるとして、これはトリレンマではなく「ジレンマ」であると論じた。',
+    statement: '金融政策のトリレンマ（不可能の三位一体、impossible trinity。国際金融のトリレンマとも呼ばれる）とは、固定為替レート、自由な資本移動、独立した金融政策の三つを同時に達成することは不可能であり、いずれか一つを犠牲にしなければならないという理論的命題である。Mundellは1960年代に国際マクロ経済学の枠組みとしてこの概念を定式化し、Flemingは同時期にIMFでの研究においてほぼ同様の結論を独立して導き出した。これらの研究を統合したMundell-Flemingモデルは、開放経済における財政・金融政策の有効性を体系的に説明する分析枠組みである。ObstfeldとTaylorは長期的な国際資本移動の歴史データを用いて、各時代の政策体制がトリレンマの制約のもとで行われた選択を反映していることを実証した。たとえば金本位制下の諸国は為替の安定と資本移動の自由を享受したが金融政策の独立性を犠牲にし、ブレトンウッズ体制は為替安定と金融政策の独立を確保するために資本規制を採用した。一方、Reyはグローバル金融サイクルの存在を根拠に、変動相場制を採用しても資本自由化によって金融政策の独立性は実質的に失われるとして、これはトリレンマではなく「ジレンマ」であると論じた。この修正仮説は、資本フロー管理（capital flow management）とマクロプルーデンス規制の役割をめぐる新たな政策論争を喚起している。',
     keyFigures: 'Robert A. Mundell ／ J. Marcus Fleming ／ Maurice Obstfeld ／ Alan M. Taylor ／ Hélène Rey',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.jstor.org/stable/139707', type: 'academic', label: 'Mundell (1963) "Capital Mobility and Stabilization Policy under Fixed and Flexible Exchange Rates" Canadian Journal of Economics and Political Science' },
       { url: 'https://doi.org/10.2307/3866091', type: 'academic', label: 'Fleming (1962) "Domestic Financial Policies under Fixed and Floating Exchange Rates" IMF Staff Papers' },
       { url: 'https://doi.org/10.1162/0034653054638300', type: 'academic', label: 'Obstfeld, Shambaugh & Taylor (2005) "The Trilemma in History: Tradeoffs among Exchange Rates, Monetary Policies, and Capital Mobility" Review of Economics and Statistics' },
+      { url: 'https://doi.org/10.1017/CBO9780511616525', type: 'academic', label: 'Obstfeld & Taylor (2004) Global Capital Markets: Integration, Crisis, and Growth — Cambridge University Press (Japan-US Center UFJ Bank Monographs on International Financial Markets)' },
       { url: 'https://www.nber.org/papers/w21162', type: 'academic', label: 'Rey (2015) "Dilemma not Trilemma: The Global Financial Cycle and Monetary Policy Independence" NBER Working Paper 21162' },
       { url: 'https://www.imf.org/external/pubs/ft/fandd/2010/09/basics.htm', type: 'government', label: 'IMF Finance & Development — Back to Basics: The Impossible Trinity' },
+      { url: 'https://en.wikipedia.org/wiki/Impossible_trinity', type: 'reference', label: 'Wikipedia: Impossible trinity — 国際金融のトリレンマの理論と歴史的展開' },
     ],
   },
   {
@@ -35983,12 +35970,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-3c-model-ohmae',
     discipline: 'management',
     title: '大前の3Cモデル——顧客・自社・競合の戦略的三角形',
-    statement: '3Cモデル（3C model）は、経営コンサルタントの大前研一が1982年の著作『ストラテジック・マインド（The Mind of the Strategist）』で提示した戦略立案の枠組みで、成功する事業戦略が、三つの主要な要素——三つのC——を統合し、その均衡を図ることによって築かれると説く。三つのCとは、第一に「顧客（Customer）」、第二に「自社（Company）」、第三に「競合（Competition）」である。大前は、これら三者が織りなす関係を「戦略的三角形（strategic triangle）」と呼んだ。第一の「顧客」は、戦略の出発点であり中心である。大前は、戦略がまず顧客のニーズの理解から始まらねばならないと強調した。顧客を適切に細分化（セグメンテーション）し、それぞれのセグメントが何を真に求めているかを把握することが、戦略の基礎となる。第二の「自社」は、企業自身の強み・能力・経営資源を指す。戦略は、自社が持つ独自の強みを、競合と比較して最大限に活かす方向で構築されねばならない。どの機能で差別化するか、どこに資源を集中するかが問われる。第三の「競合」は、市場で争う競争相手である。戦略は、競合との違いを生み出し、競争優位を築くことを目指す。価格、製品、技術、サービス、ブランドなど、何によって競合と差別化するかが鍵となる。大前の3Cモデルの核心は、これら三つの要素を切り離してではなく、相互の関係の中で統合的に捉える点にある。優れた戦略とは、自社の相対的な強みを活かして、競合よりもよりよく顧客のニーズに応えるように、企業を位置づけることである。顧客のニーズ、自社の能力、競合の動向のいずれか一つでも見落とせば、戦略は破綻する。大前はまた、戦略立案が、緻密な分析だけで機械的に導かれるものではなく、洞察力と直観、すなわち「戦略家の心（the mind of the strategist）」を必要とすると論じた。データの分析は重要だが、それを超えて、市場の本質を見抜き、創造的な解を構想する直観的な思考こそが、優れた戦略を生むとした。3Cモデルは、マイケル・ポーターの競争戦略論やセオドア・レビットのマーケティング論と並んで、戦略を顧客・自社・競合の三者関係から捉える簡潔で実践的な枠組みとして、戦略立案やマーケティングの実務に広く用いられている、戦略経営の古典的なモデルである。',
+    statement: '3Cモデル（3C model、日本では「3C分析」の名で広く知られる）は、経営コンサルタントの大前研一が1982年の著作『ストラテジック・マインド（The Mind of the Strategist）』で提示した戦略立案の枠組みで、成功する事業戦略が、三つの主要な要素——三つのC——を統合し、その均衡を図ることによって築かれると説く。三つのCとは、第一に「顧客（Customer）」、第二に「自社（Company）」、第三に「競合（Competition）」である。大前は、これら三者が織りなす関係を「戦略的三角形（strategic triangle）」と呼んだ。第一の「顧客」は、戦略の出発点であり中心である。大前は、戦略がまず顧客のニーズの理解から始まらねばならないと強調した。顧客を適切に細分化（セグメンテーション）し、それぞれのセグメントが何を真に求めているかを把握することが、戦略の基礎となる。第二の「自社」は、企業自身の強み・能力・経営資源を指す。戦略は、自社が持つ独自の強みを、競合と比較して最大限に活かす方向で構築されねばならない。どの機能で差別化するか、どこに資源を集中するかが問われる。第三の「競合」は、市場で争う競争相手である。戦略は、競合との違いを生み出し、競争優位を築くことを目指す。価格、製品、技術、サービス、ブランドなど、何によって競合と差別化するかが鍵となる。大前の3Cモデルの核心は、これら三つの要素を切り離してではなく、相互の関係の中で統合的に捉える点にある。優れた戦略とは、自社の相対的な強みを活かして、競合よりもよりよく顧客のニーズに応えるように、企業を位置づけることである。顧客のニーズ、自社の能力、競合の動向のいずれか一つでも見落とせば、戦略は破綻する。大前はまた、戦略立案が、緻密な分析だけで機械的に導かれるものではなく、洞察力と直観、すなわち「戦略家の心（the mind of the strategist）」を必要とすると論じた。データの分析は重要だが、それを超えて、市場の本質を見抜き、創造的な解を構想する直観的な思考こそが、優れた戦略を生むとした。実務上は、顧客について市場規模・ニーズ・購買行動を、競合について競争相手の強み・弱みと市場シェアを、自社について経営資源・強み・弱みを、それぞれ具体的な分析項目として洗い出す。3Cモデルは、マイケル・ポーターの競争戦略論やセオドア・レビットのマーケティング論と並んで、戦略を顧客・自社・競合の三者関係から捉える簡潔で実践的な枠組みとして、戦略立案やマーケティングの実務に広く用いられている、戦略経営の古典的なモデルである。',
     keyFigures: '大前研一 ／ マイケル・ポーター ／ セオドア・レビット ／ ヘンリー・ミンツバーグ',
     asOf: '2026-06-27',
     sources: [
       { url: 'https://www.worldcat.org/oclc/8170169', type: 'academic', label: 'Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/3C%27s_model', type: 'reference', label: 'Wikipedia: 3Cs model — Ohmae, customer/company/competition, strategic triangle' },
+      { url: 'https://www.mindtools.com/avi3qka/ohmaes-3cs-model/', type: 'reference', label: 'MindTools — Ohmae\'s 3Cs Model' },
+      { url: 'https://keiei-shinri.or.jp/word/3c/', type: 'reference', label: '一般社団法人日本経営心理士協会 — 3C分析' },
     ],
   },
   {
@@ -39331,7 +39320,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1816021', type: 'academic', label: 'Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)' },
       { url: 'https://en.wikipedia.org/wiki/Axel_Leijonhufvud', type: 'reference', label: 'Wikipedia: Axel Leijonhufvud — corridor hypothesis and Keynesian economics reinterpretation' },
-      { url: 'https://doi.org/10.1017/CBO9780511559747', type: 'academic', label: 'Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes — Oxford UP' },
+      { url: 'https://archive.org/details/onkeynesianecono0000leij', type: 'academic', label: 'Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes: A Study in Monetary Theory — Oxford University Press, New York, ISBN 0195009487 (Internet Archive)' },
     ],
   },
   {
@@ -40386,19 +40375,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Federal Reserve Bank of Minneapolis Quarterly Review' },
       { url: 'https://doi.org/10.1086/261117', type: 'academic', label: 'Sargent (1982) The Ends of Four Big Inflations — in Inflation: Causes and Effects, U of Chicago Press' },
       { url: 'https://en.wikipedia.org/wiki/Fiscal_dominance', type: 'reference', label: 'Wikipedia: Fiscal dominance — 財政支配の定義と政策含意の概説' },
-    ],
-  },
-  {
-    id: 'econ-impossible-trinity-obstfeld',
-    discipline: 'economics',
-    title: '国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体',
-    statement: '国際金融のトリレンマ（Impossible Trinity）とは、固定為替レート、自由な資本移動、独立した金融政策の三つを同時に達成することは不可能であるという命題である。マンデルとフレミングが1960年代に開放経済モデルで理論的基礎を築き、オブストフェルドとテイラーが歴史的データを用いてこの制約が19世紀の金本位制から現代の変動相場制に至るまで一貫して作用してきたことを実証した。例えば、金本位制下の諸国は為替安定と資本移動の自由を享受したが金融政策の独立性を犠牲にし、ブレトンウッズ体制は為替安定と金融政策独立を確保するために資本規制を採用した。レイは2015年に「グローバル金融サイクル」の存在を指摘し、トリレンマは実質的にジレンマに縮退するとの修正仮説を提示し、資本フローの管理と金融規制の役割に関する新たな議論を喚起している。',
-    keyFigures: 'ロバート・マンデル ／ マーカス・フレミング ／ モーリス・オブストフェルド ／ アラン・テイラー ／ エレーヌ・レイ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511559747', type: 'academic', label: 'Obstfeld & Taylor (2004) Global Capital Markets: Integration, Crisis, and Growth — Cambridge University Press' },
-      { url: 'https://doi.org/10.3386/w21162', type: 'academic', label: 'Rey (2015) Dilemma not Trilemma: The Global Financial Cycle and Monetary Policy Independence — NBER Working Paper 21162' },
-      { url: 'https://en.wikipedia.org/wiki/Impossible_trinity', type: 'reference', label: 'Wikipedia: Impossible trinity — 国際金融のトリレンマの理論と歴史的展開' },
     ],
   },
   {
@@ -43824,7 +43800,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'バジル・ムーア ／ ハイマン・ミンスキー ／ ランダル・レイ ／ ニコラス・カルドア',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511559747', type: 'academic', label: 'Moore, B. J. (1988) Horizontalists and Verticalists — Cambridge University Press' },
+      { url: 'https://archive.org/details/horizontalistsve0000moor', type: 'academic', label: 'Moore, B. J. (1988) Horizontalists and Verticalists: The Macroeconomics of Credit Money — Cambridge University Press, ISBN 0521350794 (Internet Archive)' },
+      { url: 'https://doi.org/10.4337/roke.2013.04.01', type: 'academic', label: 'Bindseil, U. & König, P. J. (2013) Basil J. Moore\'s Horizontalists and Verticalists: an appraisal 25 years later — Review of Keynesian Economics 1(4), 383-390' },
       { url: 'https://en.wikipedia.org/wiki/Endogenous_money', type: 'reference', label: 'Wikipedia: Endogenous money — credit creation, horizontalism, post-Keynesian' },
     ],
   },

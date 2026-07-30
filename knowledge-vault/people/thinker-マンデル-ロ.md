@@ -2,7 +2,7 @@
 title: "ロバート・マンデル"
 type: thinker
 person_key: "マンデル|ロ"
-concept_count: 13
+concept_count: 12
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # ロバート・マンデル
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **13 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **12 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（13件）
-- [[econ-impossible-trinity-obstfeld|国際金融のトリレンマ——為替安定・資本移動・金融政策独立の不可能な三位一体]] — 国際金融のトリレンマ（ImpossibleTrinity）とは、固定為替レート、自由な資本移動、独立した金融政策の三つ…
+## 学術概念（12件）
 - [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — アーサー・ラッファーは1974年頃（伝説ではワシントンD.C.のレストランのナプキンに描いたとされる）に，税率と税収の…
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — ミードの内外均衡葛藤（Meadeconflict）は、ジェームズ・ミードが1951年の著書で分析した開放経済の政策問題…
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 国際収支の貨幣的アプローチ（monetaryapproachtothebalanceofpayments、MABP）は…

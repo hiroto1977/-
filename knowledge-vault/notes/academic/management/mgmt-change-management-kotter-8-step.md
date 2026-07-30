@@ -32,9 +32,9 @@ aliases:
 
 ## 関連概念
 - [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 語彙が近い
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 語彙が近い
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
-- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
 - [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同じ思想家
 
 ## 関連
