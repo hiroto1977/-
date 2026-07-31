@@ -654,9 +654,10 @@ export const SNAPSHOT = {
     ] as string[],
   },
 
-  // ── 士業連携 (snapshot 専用)。個別の専門家との連絡先 / 相談履歴 /
-  //    書類 / 顧問料を軽量 CRM として管理する。Phase 6 で IndexedDB
-  //    永続化 + 「専門家を追加」フォームに対応予定。
+  // ── 士業連携。個別の専門家との連絡先 / 相談履歴 / 書類 / 顧問料を軽量 CRM
+  //    として管理する。ここにあるのは「デモ」バッジ付きの初期表示行で、
+  //    利用者が追加した分は Phase 6 で IndexedDB 永続化済み
+  //    (`data/shigyoDirectory.ts` + ShigyoConsole の追加/編集フォーム)。
 
   // 士業 8 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
   // ShigyoSnapshot` で検証することで、従来の per-field `as {...}[]` /

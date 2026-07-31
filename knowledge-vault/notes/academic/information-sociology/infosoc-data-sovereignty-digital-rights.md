@@ -33,13 +33,13 @@ aliases:
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
+- [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

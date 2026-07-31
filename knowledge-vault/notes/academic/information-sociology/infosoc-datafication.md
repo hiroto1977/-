@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia — Datafication](https://en.wikipedia.org/wiki/Datafication) `リファレンス`
 
 ## 関連概念
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 語彙が近い
 - [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同じ思想家
 - [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
 - [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 出典を共有
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

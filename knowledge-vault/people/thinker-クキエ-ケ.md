@@ -2,7 +2,7 @@
 title: "ケネス・クキエ"
 type: thinker
 person_key: "クキエ|ケ"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # ケネス・クキエ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（3件）
 - [[infosoc-datafication|データ化（データ化現象）]] — データ化（datafication）は、ビクター・マイヤー＝ショーンベルガーとケネス・クキエが2013年の著書『ビッグ…
-- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — ダタフィケーション（datafication）は、マイヤー＝シェーンベルガー＆クキエ（2013）が「ビッグデータ」論の…
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — データフィケーション（datafication）とは、ヴィクトル・マイヤー＝ショーンベルガーとケネス・クキエが『ビッグ…
+- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — ダタフィケーション（datafication、データフィケーションとも訳される）は、ヴィクトル・マイヤー＝シェーンベル…
 - [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — データ化（datafication）は、ホセ・ヴァン・ダイク（2014）および以前のマイヤー＝シェーンベルガー＆クキエ…
 
 ## 関連

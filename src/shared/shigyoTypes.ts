@@ -6,7 +6,10 @@
  * 相談履歴 / 書類 / 月次請求 — を共有する。各 client がこの型を import し、
  * UI は `components/ShigyoConsole.tsx` がこの型で描画する。
  *
- * 公式 API は無いため snapshot 専用。Phase 6 で IndexedDB 永続化に切替予定。
+ * 公式 API は無いため、デモ行は snapshot 由来。利用者が追加した専門家 / 相談履歴は
+ * Phase 6 で IndexedDB (record store) 永続化済み — `data/shigyoDirectory.ts` の
+ * SHIGYO_CONTACTS_COLLECTION / SHIGYO_CONSULTATIONS_COLLECTION を
+ * ShigyoConsole が useCollection で読み書きする。
  */
 
 /** 連携先の専門家 (連絡先 CRM の 1 レコード)。 */

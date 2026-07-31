@@ -34,11 +34,14 @@ jobs:
       - run: npm run lint:forbidden
       - run: npm run lint:imports
       - run: npm run lint:docs
+      - run: npm run lint:citations
+      - run: npm run lint:knowledge-refs
       - run: npm run lint:test-coverage
       - run: npm run lint:shell
       - run: npm run verify:orchestration
       - run: npm run vault:check
       - run: npm run verify:graph
+      - run: npm run verify:knowledge
       - run: npm run chain:verify
       - run: npm run lint
 

@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同じ思想家
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

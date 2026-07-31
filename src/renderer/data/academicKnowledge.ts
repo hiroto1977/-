@@ -30583,7 +30583,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-datafication-mayer-schoenberger',
     discipline: 'information-sociology',
     title: 'データ化（ダタフィケーション）とビッグデータ社会',
-    statement: 'ダタフィケーション（datafication）は、マイヤー＝シェーンベルガー＆クキエ（2013）が「ビッグデータ」論の文脈で論じた、これまで計量されなかった人間行動・社会現象・物理世界のあらゆる側面をデータに変換（数値化・デジタル記録）するプロセスである。ランシマン（2014）はダタフィケーションを「質的現象の量的記号への変換とその蓄積・分析」として社会学的に位置づけた。予測・最適化・資本化（データから商品・サービス・意思決定価値を生む）の三機能を持ち、感情のデータ化（ライク・顔認識）・移動のデータ化（GPSログ）・社会関係のデータ化（SNGネットワーク）・健康のデータ化（ウェアラブル）が代表例である。批判的視点からはクロフォード（2021）が「AIアトラス」でデータの産出が「労働・自然・権力の構造的不平等」を反映・再生産すると論じた。GDPR・AI法・データガバナンス法はダタフィケーションによる個人・集合的権利への影響を規制しようとする制度的応答である。',
+    statement: 'ダタフィケーション（datafication、データフィケーションとも訳される）は、ヴィクトル・マイヤー＝シェーンベルガー＆ケネス・クキエが『ビッグデータの正体』（2013）で論じた、これまで計量されなかった人間行動・社会現象・物理世界のあらゆる側面をデータに変換（数値化・デジタル記録）するプロセスである。ランシマン（2014）はダタフィケーションを「質的現象の量的記号への変換とその蓄積・分析」として社会学的に位置づけた。予測・最適化・資本化（データから商品・サービス・意思決定価値を生む）の三機能を持ち、感情のデータ化（ライク・顔認識）・移動のデータ化（GPSログ）・社会関係のデータ化（SNGネットワーク）・健康のデータ化（ウェアラブル）が代表例である。批判的視点からはクロフォード（2021）が「AIアトラス」でデータの産出が「労働・自然・権力の構造的不平等」を反映・再生産すると論じた。実装面では信用スコアリング（アリペイ等の個人信用評価）・採用AI・医療診断・犯罪予測など多領域に浸透し、プロファイリングによるプライバシー侵害・アルゴリズム差別・自律性の喪失が批判される。GDPR・AI法・データガバナンス法はダタフィケーションによる個人・集合的権利への影響を規制しようとする制度的応答であり、とくにGDPR（2018年施行）はプロファイリングに基づく自動決定に異議を申し立てる権利を明文化してデータ主権の法的根拠となっている。',
     keyFigures: 'ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ジョゼ・ファン・ダイク ／ ケイト・クロフォード',
     asOf: '2026-06-26',
     sources: [
@@ -45347,19 +45347,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=62639', type: 'government', label: '最高裁判所 (1997) BBS事件判決 — 特許権の国際消尽' },
       { url: 'https://curia.europa.eu/juris/document/document.jsf?docid=124564', type: 'government', label: 'CJEU (2012) UsedSoft GmbH v Oracle — C-128/11 ソフトウェア中古販売' },
       { url: 'https://en.wikipedia.org/wiki/Exhaustion_of_intellectual_property_rights', type: 'reference', label: 'Wikipedia: Exhaustion of intellectual property rights — 権利消尽原則の国際比較' },
-    ],
-  },
-  {
-    id: 'infosoc-datafication-mayer-schonberger',
-    discipline: 'information-sociology',
-    title: 'データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換',
-    statement: 'データフィケーション（datafication）とは、ヴィクトル・マイヤー＝ショーンベルガーとケネス・クキエが『ビッグデータの正体』（2013年）で提唱した概念で、これまで数値化されていなかった人間行動・感情・社会関係が常時デジタルデータとして捕捉・蓄積・分析可能になる社会変容を指す。位置情報・検索履歴・SNSへの反応・ウェアラブルセンサーなどが「人間のデジタル痕跡」を生成し、機械学習アルゴリズムがパターンを抽出して将来行動を予測する。データフィケーションは信用スコアリング（アリペイ・個人ローン）・採用AI・医療診断・犯罪予測など多領域に浸透し、プロファイリングによるプライバシー侵害・アルゴリズム差別・自律性の喪失が批判される。EUのGDPR（2018年）はプロファイリングに基づく自動決定への異議申し立て権を明文化し、データ主権の法的根拠となっている。',
-    keyFigures: 'ヴィクトル・マイヤー＝ショーンベルガー ／ ケネス・クキエ ／ ショシャナ・ズボフ ／ ダナ・ボイド',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/j.ctt1hj9w84', type: 'academic', label: 'Mayer-Schönberger & Cukier (2013) Big Data: A Revolution — Houghton Mifflin Harcourt' },
-      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck (2014) Datafication, Dataism and Dataveillance — Surveillance & Society 12(2), 197–208' },
-      { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — データフィケーションと情報社会の変容' },
     ],
   },
   {

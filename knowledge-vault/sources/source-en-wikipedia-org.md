@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2279
+cite_count: 2278
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2279 件**（リファレンス 2279）
+> [!info] 出典ドメイン索引 ・ 引用 **2278 件**（リファレンス 2278）
 
 ## このドメインを出典とする項目
 
@@ -1595,7 +1595,6 @@ tags:
 - [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — Wikipedia:TheLanguageofNewMedia—Manovich,databasevsnarrative,symbolic…
 - [[infosoc-datafication|データ化（データ化現象）]] — Wikipedia—Datafication
 - [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — Wikipedia:Datafication—Mayer-Schönberger&Cukier,quantificationofhuman…
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — Wikipedia:Datafication—データフィケーションと情報社会の変容
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — Wikipedia:Datafication—bigdata,algorithmicgovernance,ADM,surveillance…
 - [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — Wikipedia:Datafication—vanDijck,Mayer-Schönberger,socialmediaquantifi…
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — Wikipedia:Dataveillance—Clarke,datatrails,personalvsmassdataveillance…

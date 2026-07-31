@@ -36,10 +36,10 @@ aliases:
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
-- [[infosoc-datafication-mayer-schonberger|データフィケーションとビッグデータ社会——人間行動の定量化・予測・価値化のパラダイム転換]] — 同じ思想家
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同じ思想家
 - [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
 - [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
+- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

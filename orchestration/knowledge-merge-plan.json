@@ -139,6 +139,12 @@
       "drop": "mgmt-3c-analysis",
       "why": "大前研一 1982 の 3C を同一粒度で解説した言い換え。keep 側が Ohmae 1982 の一次文献 (WorldCat) を持ち、記述量も約 3 倍 (drop は reference 出典のみ)",
       "migrate": "別名『3C分析』、実務上の分析項目 (顧客=市場規模・ニーズ・購買行動 / 競合=強み・弱み・市場シェア / 自社=経営資源・強み・弱み)、MindTools と日本経営心理士協会の出典 2 件"
+    },
+    {
+      "keep": "infosoc-datafication-mayer-schoenberger",
+      "drop": "infosoc-datafication-mayer-schonberger",
+      "why": "同一概念 (Mayer-Schönberger & Cukier 2013 のデータ化論) を同一粒度で解説した言い換え。id は ö の翻字ゆれ (schoenberger / schonberger) だけの差。keep 側が記述量で上 (434 対 381 字) かつ Crawford 2021 Atlas of AI とランシマン 2014 を持ち出典が厚い",
+      "migrate": "別名「データフィケーション」、原典の邦題『ビッグデータの正体』、応用領域 (信用スコアリング・採用AI・医療診断・犯罪予測)、プロファイリング批判 (アルゴリズム差別・自律性の喪失)、GDPR のプロファイリング自動決定への異議申し立て権。**移送しなかった出典**: drop 側の 10.2307/j.ctt1hj9w84 は実体が Schonfeld, Bowen & Varian \"JSTOR: A History\" (Princeton UP) で誤り。keep は同じ本を出版社ページ (hmhbooks.com) で正しく引いている"
     }
   ],
   "citationCheckResolved": {
@@ -184,5 +190,11 @@
     "wrongCitationsFixed": 28,
     "allClaimantsWrongCount": 5,
     "provenanceDelta": "infosoc-spreadability-jenkins のみ academic 2→1。Jenkins「If It Doesn't Spread, It's Dead」は査読誌論文ではなく 2008 年ホワイトペーパー＋2009 年連載ブログなので reference が正しい種別で、水増しの是正であって情報の喪失ではない。mgmt-organizational-decline-weitzel は 2→3 に増加。他は全エントリで出典の件数・種別が完全に同一。"
+  },
+  "pass7": {
+    "appliedAt": "2026-07-30",
+    "note": "「残作業は無いか徹底的に解析して」で実施した全体監査で発見した 1 ペアを統合。**既存の 2 系列の検出器がともにすり抜けていた** — titleCore は「データ化」vs「データフィケーション」で不一致 (同義語だが文字列が違う)、term-overlap も閾値 3000 未満。id を正規化すれば一発で並ぶので、恒久対策として idDedupeSuspects (人名の翻字ゆれ検出) を autopilot に新設した。負のコントロール (統合前の状態を模した入力で検出・裁定済み台帳で除外) を確認済み。",
+    "provenanceDelta": "keep は src 4→4 / auth 4→4 / academic 2→2 / 本文 434→621 字。減少なし。",
+    "newFindingOutsideGates": "10.2307/j.ctt1hj9w84 (Mayer-Schönberger & Cukier 2013 と誤記) の実体は Schonfeld, Bowen & Varian \"JSTOR: A History\"。**1 回しか引かれていない DOI は lint:citations では検出できない** (年の矛盾が生じないため)。単発誤 DOI は 2,449 件の引用の大半を占めるので、構造的な残作業として記録する。"
   }
 }

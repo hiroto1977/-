@@ -65,7 +65,51 @@ function canonicalOAuthCount() {
   return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
 }
 
+/*
+ * 知識コーパスの件数。実測すると docs/KNOWLEDGE_AUTOPILOT.md が学術 3,606 /
+ * 総計 4,233 のまま止まっていた (実際は 3,583 / 4,208)。ここまで検査対象が
+ * 「サービス数・IPC ハンドラ数・OAuth 数・サービス一覧」の 4 件だけだったため、
+ * 統合でコーパスが減るたびに黙ってズレていた。コーパス件数は統合・追加のたびに
+ * 動くので、いちばんズレやすい数字を無検査で放置していたことになる。
+ */
+function canonicalAcademicCount() {
+  const src = read(path.join(REPO_ROOT, 'src/renderer/data/academicKnowledge.ts'));
+  if (src == null) return null;
+  return [...src.matchAll(/^ {4}id: '/gm)].length;
+}
+
+function canonicalKnowledgeTotal() {
+  try {
+    const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+    return kc.loadEntries().length;
+  } catch {
+    return null;
+  }
+}
+
 const FACTS = [
+  {
+    name: 'academic concept count',
+    canonical: canonicalAcademicCount(),
+    claims: [
+      {
+        file: 'docs/KNOWLEDGE_AUTOPILOT.md',
+        pattern: /知識ベース（学術 ([\d,]+) \//,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
+    ],
+  },
+  {
+    name: 'knowledge entry total',
+    canonical: canonicalKnowledgeTotal(),
+    claims: [
+      {
+        file: 'docs/KNOWLEDGE_AUTOPILOT.md',
+        pattern: /= ([\d,]+) 項目）/,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
+    ],
+  },
   {
     name: 'service count',
     canonical: canonicalServiceCount(),
@@ -139,6 +183,51 @@ const FACTS = [
 ];
 
 // ---------------------------------------------------------------------------
+// 構造チェック: verify:all のゲートは全部 ci.yml で実行されていること
+// ---------------------------------------------------------------------------
+
+/*
+ * ゲートを足しても ci.yml に足し忘れると、**ゲートは存在するのに何も守っていない**
+ * 状態になる。実測するとこれが起きていた: verify:all の 13 ゲートのうち
+ * lint:citations / lint:knowledge-refs / verify:knowledge の 3 つが ci.yml から
+ * 漏れており、確証ゲート (出典2件以上・権威1件以上 — このコーパスの価値の土台) が
+ * PR で一度も走っていなかった。CLAUDE.md は「typecheck + all verify/lint」と
+ * 書いてあったので、記述を信じるかぎり気づけない。
+ *
+ * 「存在確認ではなく機能確認」をここでも機械化する。verify:all に足したゲートが
+ * ci.yml に無ければ落ちる。逆方向 (ci.yml にしか無い) は許す — CI には
+ * verify:all に属さない手順 (build 検証など) が正当に存在するため。
+ */
+function checkCiGateCoverage(failures) {
+  const pkg = JSON.parse(read(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+  const all = pkg.scripts?.['verify:all'];
+  const ci = read(path.join(REPO_ROOT, '.github/workflows/ci.yml'));
+  if (!all || ci == null) {
+    failures.push({
+      fact: 'CI gate coverage',
+      reason: 'package.json の verify:all か .github/workflows/ci.yml を読めない',
+    });
+    return 0;
+  }
+  const gates = all
+    .split('&&')
+    .map((s) => s.trim().replace(/^npm run /, ''))
+    .filter((s) => s !== '');
+  for (const g of gates) {
+    // ci.yml の `- run: npm run <gate>` を行単位で照合する (前方一致では
+    // lint:test-coverage が lint:test に誤ヒットするため行末まで見る)
+    const re = new RegExp(`^\\s*-\\s*run:\\s*npm run ${g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'm');
+    if (!re.test(ci)) {
+      failures.push({
+        fact: 'CI gate coverage',
+        reason: `verify:all のゲート "${g}" が ci.yml で実行されていない — ゲートが存在するだけで何も守っていない状態`,
+      });
+    }
+  }
+  return gates.length;
+}
+
+// ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
 
@@ -183,9 +272,13 @@ function main() {
     }
   }
 
-  console.log(`Checked ${factCount} cross-doc facts against canonical source`);
+  const gateCount = checkCiGateCoverage(failures);
+
+  console.log(
+    `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml`,
+  );
   if (failures.length === 0) {
-    console.log('✅ all docs agree with source');
+    console.log('✅ all docs agree with source, and every gate runs in CI');
     return 0;
   }
   console.error(`❌ ${failures.length} cross-doc inconsistency(ies):`);

@@ -154,6 +154,47 @@ function audit(entries, today) {
 }
 
 /**
+ * id 由来の重複疑い: **人名の翻字ゆれ**で id が別物になっているペアを拾う。
+ *
+ * 実測した見逃し: `infosoc-datafication-mayer-schoenberger` と
+ * `infosoc-datafication-mayer-schonberger` は同一概念 (Mayer-Schönberger &
+ * Cukier 2013 のデータ化論) だったが、
+ *   - titleCore は「データ化とビッグデータ社会」vs「データフィケーションとビッグデータ社会」で
+ *     不一致 (同義語だが文字列が違う)
+ *   - term-overlap も GRAPH_DUP_SCORE 未満
+ * のため **両系列をすり抜けた**。ö を oe と書くか o と書くかという 1 文字の差で、
+ * タイトル照合も語彙照合も効かない。id を正規化すれば一発で並ぶので検査する。
+ *
+ * 正規化: 記号を落とし、ドイツ語ウムラウトの二重母音表記 (oe/ae/ue) を単母音へ畳む。
+ */
+function idDedupeSuspects(entries, distinct) {
+  const norm = new Map();
+  for (const e of entries) {
+    const k = String(e.id)
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .replace(/oe/g, 'o')
+      .replace(/ae/g, 'a')
+      .replace(/ue/g, 'u');
+    if (!norm.has(k)) norm.set(k, []);
+    norm.get(k).push(e.id);
+  }
+  const out = [];
+  for (const [key, ids] of norm) {
+    if (ids.length < 2) continue;
+    ids.sort();
+    for (let i = 0; i < ids.length; i += 1) {
+      for (let j = i + 1; j < ids.length; j += 1) {
+        if (distinct.has(`${ids[i]}|${ids[j]}`)) continue;
+        out.push({ a: ids[i], b: ids[j], normalizedId: key });
+      }
+    }
+  }
+  out.sort((x, y) => (x.a < y.a ? -1 : x.a > y.a ? 1 : x.b < y.b ? -1 : 1));
+  return out;
+}
+
+/**
  * 知識グラフ由来の重複疑い: term-overlap スコアが閾値以上のペアは
  * 「語彙がほぼ同一」であり、副題違いで titleCore 照合をすり抜けた残存重複の
  * 有力候補（例: リーンスタートアップの第 3 変種を実際に発見）。裁定済みペアは除外。
@@ -245,6 +286,7 @@ function run(label, file, args = []) {
   // 1. AUDIT
   const q = audit(entries, today);
   const dedupeGraph = graphDedupeSuspects(entries, q.distinct);
+  const dedupeId = idDedupeSuspects(entries, q.distinct);
   let links = { checked: 0, totalUrls: 0, dead: [], suspect: [] };
   if (args.links) {
     const n = Number(args.links) || 100;
@@ -276,6 +318,7 @@ function run(label, file, args = []) {
       missingAsOf: q.missingAsOf,
       dedupe: q.dedupe,
       dedupeGraph,
+      dedupeId,
       sourceHygiene: q.sourceHygiene,
       deadLinks: links.dead,
       suspectLinks: links.suspect,
@@ -286,6 +329,7 @@ function run(label, file, args = []) {
       missingAsOf: q.missingAsOf.reduce((n, m) => n + m.count, 0),
       dedupe: q.dedupe.length,
       dedupeGraph: dedupeGraph.length,
+      dedupeId: dedupeId.length,
       sourceHygiene: q.sourceHygiene.length,
       deadLinks: links.dead.length,
       suspectLinks: links.suspect.length,
@@ -301,6 +345,7 @@ function run(label, file, args = []) {
     `asOf 欠落: ${s.missingAsOf}（${q.missingAsOf.map((m) => `${m.collection} ${m.count}`).join(' / ') || 'なし'}）`,
     `重複疑い（タイトルコア一致・裁定済み除外後）: ${s.dedupe}`,
     `重複疑い（グラフ term-overlap ≥ ${GRAPH_DUP_SCORE}・裁定済み除外後）: ${s.dedupeGraph}`,
+    `重複疑い（id 正規化＝人名の翻字ゆれ・裁定済み除外後）: ${s.dedupeId}`,
     `出典衛生（<2件 or 権威なし）: ${s.sourceHygiene}`,
     `リンク切れ: ${s.deadLinks}（要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}）`,
   ];
@@ -321,6 +366,7 @@ function run(label, file, args = []) {
       `| asOf 欠落 | ${s.missingAsOf} |`,
       `| 重複疑い（タイトルコア） | ${s.dedupe} |`,
       `| 重複疑い（グラフ語彙） | ${s.dedupeGraph} |`,
+      `| 重複疑い（id 翻字ゆれ） | ${s.dedupeId} |`,
       `| 出典衛生 | ${s.sourceHygiene} |`,
       `| リンク切れ | ${s.deadLinks} (要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}) |`,
       '',
@@ -329,7 +375,8 @@ function run(label, file, args = []) {
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n');
   }
 
-  const actionable = s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.sourceHygiene + s.deadLinks;
+  const actionable =
+    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.sourceHygiene + s.deadLinks;
   console.log(actionable > 0 ? `\n⏳ LLM 作業 ${actionable} 件が待機中` : '\n✅ 全て最新 — LLM 作業なし');
 })().catch((err) => {
   console.error('\n❌ 知識オートパイロット失敗:', err.message || err);

@@ -84,11 +84,18 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + all verify/lint, vitest + coverage, and
-`build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed from 3 jobs
-to 1 to minimize GitHub Actions minutes on the free tier.
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 13 `verify:all` gates**, vitest +
+coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
+from 3 jobs
+to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in
+`verify:all` actually appears in `ci.yml`** — adding a gate without wiring it into CI leaves it
+existing but guarding nothing, which is exactly what happened to `lint:citations`,
+`lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
-`mutation.yml` runs Stryker.
+`mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
+`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` /
+`e2e:ollama` / `perf` / `smoke` need a real browser or Electron and are **not** in CI — run them
+locally before shipping renderer or startup-performance changes.
 
 ## Architecture
 
