@@ -166,3 +166,231 @@ export function planFactory(input: FactoryPlanInput): FactoryPlanResult {
     fitsOneFloor: workshopArea <= footprint && footprint > 0,
   };
 }
+
+/* ───────────────  高さ制限: 道路斜線 (法56条1項1号・2項)  ─────────────── */
+
+/**
+ * 道路斜線の勾配 (法別表第三(に)欄)。住居系 1.25 / その他 1.5。
+ * 「反対側の境界から 1m につき何 m 上がれるか」を表す。
+ */
+export const ROAD_SLOPE_RESIDENTIAL = 1.25;
+export const ROAD_SLOPE_OTHER = 1.5;
+
+/**
+ * 日影規制 (法56条の2) の対象となる高さ。近隣商業・商業・準工業・住居系は
+ * 「高さ 10m 超」。低層住居専用・田園住居は「軒高 7m 超 または 地上 3 階以上」
+ * と別基準なので、その場合は thresholdM に 7 を渡して使う。
+ */
+export const SHADOW_HEIGHT_THRESHOLD_M = 10;
+
+/** 用途区分から道路斜線の勾配を引く。 */
+export function roadSlopeFactor(category: RoadMultiplierCategory): number {
+  return category === 'residential' ? ROAD_SLOPE_RESIDENTIAL : ROAD_SLOPE_OTHER;
+}
+
+/** 0.01 単位で切り上げる (後退距離は切り下げると違反になるため)。 */
+function ceil2(n: number): number {
+  return Math.ceil(n * 100) / 100;
+}
+
+/** 0.01 単位に丸める。 */
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+export interface RoadSlopeInput {
+  /** 前面道路の幅員 (m)。 */
+  readonly roadWidthM: number;
+  /** 道路境界からの後退距離 (m)。法56条2項により反対側境界も同じだけ外側とみなす。 */
+  readonly setbackM: number;
+  /** 用途区分 (勾配 1.25 / 1.5 の別)。 */
+  readonly category: RoadMultiplierCategory;
+  /** 計画している最高高さ (m)。 */
+  readonly plannedHeightM: number;
+  /**
+   * 別表第三(は)欄の適用距離 (m)。地域と基準容積率の組合せで決まる値なので
+   * **表から読んで渡す**。省略すると適用距離の判定を行わない
+   * (applicationDistanceChecked=false)。推測値を埋めない。
+   */
+  readonly applicationDistanceM?: number;
+  /** 道路の反対側境界から建築物までの水平距離 (m)。適用距離の判定に使う。 */
+  readonly distanceFromOppositeBoundaryM?: number;
+}
+
+export interface RoadSlopeResult {
+  /** 適用した勾配。 */
+  readonly slopeFactor: number;
+  /** 高さの限度 (m) = (幅員 + 後退 × 2) × 勾配。 */
+  readonly limitM: number;
+  /** 計画高さが限度以下か。 */
+  readonly ok: boolean;
+  /** 余裕 (m) = 限度 − 計画高さ。マイナスなら超過分。 */
+  readonly marginM: number;
+  /** 計画高さを通すのに必要な最小後退距離 (m)。後退なしで通るなら 0。 */
+  readonly minSetbackM: number;
+  /** 適用距離の判定を行ったか (入力が揃っている場合のみ true)。 */
+  readonly applicationDistanceChecked: boolean;
+  /** 適用距離の外にあり道路斜線の適用を受けないか。未判定なら false。 */
+  readonly beyondApplicationDistance: boolean;
+}
+
+/**
+ * 道路斜線の高さ限度と、計画高さを通すのに必要な後退距離を求める。
+ *
+ * 限度 = (前面道路幅員 + 後退距離 × 2) × 勾配。後退すると反対側の境界も同じだけ
+ * 外側にあるとみなされる (法56条2項) ため、後退は 2 倍で効く。
+ * 逆に解くと必要後退 a = (計画高さ ÷ 勾配 − 幅員) ÷ 2。
+ */
+export function planRoadSlope(input: RoadSlopeInput): RoadSlopeResult {
+  const width = nonNegative(input.roadWidthM);
+  const setback = nonNegative(input.setbackM);
+  const height = nonNegative(input.plannedHeightM);
+  const slopeFactor = roadSlopeFactor(input.category);
+
+  const limitM = round2((width + setback * 2) * slopeFactor);
+  const needed = (height / slopeFactor - width) / 2;
+
+  const checked =
+    input.applicationDistanceM !== undefined && input.distanceFromOppositeBoundaryM !== undefined;
+  const beyond = checked
+    ? nonNegative(input.distanceFromOppositeBoundaryM) > nonNegative(input.applicationDistanceM)
+    : false;
+
+  return {
+    slopeFactor,
+    limitM,
+    // 適用距離の外なら斜線の適用を受けないので、高さに関わらず可。
+    ok: beyond || height <= limitM,
+    marginM: round2(limitM - height),
+    // Math.max で 0 に丸める。三項分岐にすると > 0 と >= 0 が同値になり
+    // 区別できない変異が残るため、分岐そのものを持たせない。
+    minSetbackM: Math.max(0, ceil2(needed)),
+    applicationDistanceChecked: checked,
+    beyondApplicationDistance: beyond,
+  };
+}
+
+/* ───────────────  高さ制限: 日影規制 (法56条の2)  ─────────────── */
+
+export interface ShadowRegulationInput {
+  /** 計画している最高高さ (m)。 */
+  readonly plannedHeightM: number;
+  /** 対象となる高さの閾値 (m)。既定 10 (近隣商業等)。低層住専は軒高 7。 */
+  readonly thresholdM?: number;
+  /**
+   * 当該区域が条例で日影規制の対象区域に指定されているか。
+   * **区域指定は自治体の条例なので機械判定できない**。未指定なら regulated は
+   * null (不明) を返し、「対象でない」と誤って断定しない。
+   */
+  readonly designatedArea?: boolean;
+}
+
+export interface ShadowRegulationResult {
+  /** 適用した閾値 (m)。 */
+  readonly thresholdM: number;
+  /** 計画高さが閾値を超えるか (対象建築物の高さ要件を満たすか)。 */
+  readonly exceedsThreshold: boolean;
+  /** 閾値までの余裕 (m)。マイナスなら超過分。 */
+  readonly headroomM: number;
+  /**
+   * 実際に規制を受けるか。対象区域の指定が不明なら null。
+   * true = 対象区域かつ閾値超 / false = 対象区域でない、または閾値以下。
+   */
+  readonly regulated: boolean | null;
+  /** 規制を避けられる高さの上限 (m) = 閾値ちょうど (「超える」が要件のため)。 */
+  readonly maxHeightToAvoidM: number;
+}
+
+/**
+ * 日影規制の対象建築物に当たるかを判定する。
+ *
+ * 対象要件は「対象区域内」かつ「一定の高さを超える」の 2 つ。前者は自治体の
+ * 条例指定なので入力に取り、未指定なら null を返して**不明を不明のまま扱う**。
+ * 「10m を超える」が要件なので、ちょうど 10.0m は対象外になる。
+ */
+export function planShadowRegulation(input: ShadowRegulationInput): ShadowRegulationResult {
+  const height = nonNegative(input.plannedHeightM);
+  const thresholdM =
+    input.thresholdM === undefined ? SHADOW_HEIGHT_THRESHOLD_M : nonNegative(input.thresholdM);
+  const exceedsThreshold = height > thresholdM;
+
+  return {
+    thresholdM,
+    exceedsThreshold,
+    headroomM: round2(thresholdM - height),
+    regulated: input.designatedArea === undefined ? null : input.designatedArea && exceedsThreshold,
+    maxHeightToAvoidM: thresholdM,
+  };
+}
+
+/* ───────────────  後退距離と建築面積のトレードオフ  ─────────────── */
+
+export interface SetbackTradeoffInput {
+  /** 敷地の奥行 (m・道路に直交する方向)。 */
+  readonly siteDepthM: number;
+  /** 敷地の間口 (m・道路に平行な方向)。 */
+  readonly siteWidthM: number;
+  /** 道路と反対側 (背面) の後退距離 (m)。民法 234 条の 0.5m など。 */
+  readonly rearSetbackM: number;
+  /** 側面の後退距離の合計 (m)。 */
+  readonly sideSetbackTotalM: number;
+  /** planSite が返した建築面積の上限 (㎡)。 */
+  readonly maxFootprint: number;
+  /** 前面道路の幅員 (m)。 */
+  readonly roadWidthM: number;
+  /** 用途区分。 */
+  readonly category: RoadMultiplierCategory;
+  /** 計画している最高高さ (m)。 */
+  readonly plannedHeightM: number;
+}
+
+export interface SetbackTradeoffResult {
+  /** 道路斜線を通すのに必要な最小後退 (m)。 */
+  readonly requiredSetbackM: number;
+  /** 建てられる奥行 (m) = 敷地奥行 − 必要後退 − 背面後退。 */
+  readonly buildableDepthM: number;
+  /** 建てられる間口 (m) = 敷地間口 − 側面後退合計。 */
+  readonly buildableWidthM: number;
+  /** 幾何的に取れる建築面積 (㎡) = 奥行 × 間口。 */
+  readonly geometricFootprint: number;
+  /** 実際に取れる建築面積 (㎡) = min(幾何, 建蔽率上限)。 */
+  readonly footprint: number;
+  /** 何に縛られているか。建蔽率か、後退による寸法か。 */
+  readonly limitedBy: 'coverage' | 'geometry';
+}
+
+/**
+ * 「高さを下げると後退を詰められ、その分だけ奥行が伸びる」関係を数値化する。
+ *
+ * 道路斜線の必要後退は高さに比例して増えるので、計画高さを下げると後退が減り、
+ * 敷地の奥行をより多く使える。ただし建蔽率の上限を超えては建てられないため、
+ * 最終的にどちらに縛られているかを limitedBy で示す。
+ */
+export function planSetbackTradeoff(input: SetbackTradeoffInput): SetbackTradeoffResult {
+  const slope = planRoadSlope({
+    roadWidthM: input.roadWidthM,
+    setbackM: 0,
+    category: input.category,
+    plannedHeightM: input.plannedHeightM,
+  });
+  const requiredSetbackM = slope.minSetbackM;
+
+  const buildableDepthM = round2(
+    Math.max(0, nonNegative(input.siteDepthM) - requiredSetbackM - nonNegative(input.rearSetbackM)),
+  );
+  const buildableWidthM = round2(
+    Math.max(0, nonNegative(input.siteWidthM) - nonNegative(input.sideSetbackTotalM)),
+  );
+  const geometricFootprint = sqm(buildableDepthM * buildableWidthM);
+  const cap = nonNegative(input.maxFootprint);
+  const footprint = sqm(Math.min(geometricFootprint, cap));
+
+  return {
+    requiredSetbackM,
+    buildableDepthM,
+    buildableWidthM,
+    geometricFootprint,
+    footprint,
+    limitedBy: geometricFootprint > cap ? 'coverage' : 'geometry',
+  };
+}

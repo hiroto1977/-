@@ -30,6 +30,10 @@ import {
   planFactory,
   NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP,
   type RoadMultiplierCategory,
+  planRoadSlope,
+  planShadowRegulation,
+  planSetbackTradeoff,
+  SHADOW_HEIGHT_THRESHOLD_M,
 } from '../../shared/zoningPlanner';
 import {
   planWaterBalance,
@@ -185,6 +189,16 @@ export function RealEstatePage() {
   const [zpFireproof, setZpFireproof] = useState(false);
   const [zpCapStr, setZpCapStr] = useState(String(NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP));
   const [zpWorkshopStr, setZpWorkshopStr] = useState('');
+  // 高さ制限 — 道路斜線 (法56条1項1号) と日影規制 (法56条の2)。
+  const [zpHeightStr, setZpHeightStr] = useState('12.1');
+  const [zpSetbackStr, setZpSetbackStr] = useState('1.5');
+  const [zpRearStr, setZpRearStr] = useState('0.5');
+  const [zpSideStr, setZpSideStr] = useState('3.0');
+  const [zpSiteDepthStr, setZpSiteDepthStr] = useState('20');
+  const [zpSiteWidthStr, setZpSiteWidthStr] = useState('15');
+  const [zpShadowThresholdStr, setZpShadowThresholdStr] = useState(String(SHADOW_HEIGHT_THRESHOLD_M));
+  // 対象区域かどうかは自治体の条例指定。'unknown' を既定にして断定しない。
+  const [zpShadowArea, setZpShadowArea] = useState<'unknown' | 'yes' | 'no'>('unknown');
 
   function onZonePreset(key: (typeof ZONE_PRESETS)[number]['key']) {
     setZoneKey(key);
@@ -213,8 +227,34 @@ export function RealEstatePage() {
       workshopCapSqm: capRaw,
       ...(zpWorkshopStr.trim() !== '' ? { desiredWorkshopSqm: reNum(zpWorkshopStr) } : {}),
     });
-    return { site, factory, capUnlimited: zpCapStr.trim() === '' };
-  }, [zpSiteStr, zpCovStr, zpFarStr, zpRoadStr, zpCat, zpCorner, zpFireproof, zpCapStr, zpWorkshopStr]);
+    const height = reNum(zpHeightStr);
+    const slope = planRoadSlope({
+      roadWidthM: reNum(zpRoadStr),
+      setbackM: reNum(zpSetbackStr),
+      category: zpCat,
+      plannedHeightM: height,
+    });
+    const shadow = planShadowRegulation({
+      plannedHeightM: height,
+      thresholdM: reNum(zpShadowThresholdStr),
+      ...(zpShadowArea === 'unknown' ? {} : { designatedArea: zpShadowArea === 'yes' }),
+    });
+    const tradeoff = planSetbackTradeoff({
+      siteDepthM: reNum(zpSiteDepthStr),
+      siteWidthM: reNum(zpSiteWidthStr),
+      rearSetbackM: reNum(zpRearStr),
+      sideSetbackTotalM: reNum(zpSideStr),
+      maxFootprint: site.maxFootprint,
+      roadWidthM: reNum(zpRoadStr),
+      category: zpCat,
+      plannedHeightM: height,
+    });
+    return { site, factory, slope, shadow, tradeoff, capUnlimited: zpCapStr.trim() === '' };
+  }, [
+    zpSiteStr, zpCovStr, zpFarStr, zpRoadStr, zpCat, zpCorner, zpFireproof, zpCapStr, zpWorkshopStr,
+    zpHeightStr, zpSetbackStr, zpRearStr, zpSideStr, zpSiteDepthStr, zpSiteWidthStr,
+    zpShadowThresholdStr, zpShadowArea,
+  ]);
 
   // 水循環プランナー — クローズド水耕の水収支・RO 稼働率・硝化・排水規制を試算。
   const [wcVolStr, setWcVolStr] = useState('200');
@@ -581,6 +621,83 @@ export function RealEstatePage() {
             延べ床上限を使い切るには約 {zoning.site.floorsToUseAll} フロア相当の計画になります。
           </div>
         )}
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>📐 高さ制限 (道路斜線・日影規制)</div>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            計画する最高高さ (m)
+            <input type="text" inputMode="decimal" value={zpHeightStr} onChange={(e) => setZpHeightStr(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            道路境界からの後退 (m)
+            <input type="text" inputMode="decimal" value={zpSetbackStr} onChange={(e) => setZpSetbackStr(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            日影規制の対象高さ (m)
+            <input type="text" inputMode="decimal" value={zpShadowThresholdStr} onChange={(e) => setZpShadowThresholdStr(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            日影規制の対象区域か (条例指定)
+            <select value={zpShadowArea} onChange={(e) => setZpShadowArea(e.target.value as 'unknown' | 'yes' | 'no')} style={{ ...reInputStyle, width: 180 }}>
+              <option value="unknown">未確認 (自治体に照会)</option>
+              <option value="yes">対象区域</option>
+              <option value="no">対象外</option>
+            </select>
+          </label>
+        </div>
+        <div className="stat-grid" style={{ marginBottom: 10 }}>
+          <Stat label="道路斜線の高さ限度" value={`${zoning.slope.limitM.toLocaleString()} m`} />
+          <Stat label={zoning.slope.ok ? '余裕' : '超過'} value={`${Math.abs(zoning.slope.marginM).toLocaleString()} m`} />
+          <Stat label="この高さに必要な最小後退" value={`${zoning.slope.minSetbackM.toLocaleString()} m`} />
+          <Stat label="日影規制を避けられる上限" value={`${zoning.shadow.maxHeightToAvoidM.toLocaleString()} m`} />
+        </div>
+        {!zoning.slope.ok && (
+          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+            道路斜線を超えています — 後退を {zoning.slope.minSetbackM} m 以上取るか、高さを {zoning.slope.limitM} m 以下に抑える必要があります。
+          </div>
+        )}
+        {zoning.shadow.regulated === null && zoning.shadow.exceedsThreshold && (
+          <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 10 }}>
+            計画高さが {zoning.shadow.thresholdM} m を超えています。日影規制の対象区域かどうかは<strong>自治体の条例指定</strong>なのでここでは判定できません
+            — 建築指導課に照会してください。対象だった場合は最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下に抑えると対象から外れます。
+          </div>
+        )}
+        {zoning.shadow.regulated === true && (
+          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+            日影規制の対象です — 最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下にすると対象から外れます (現在 {Math.abs(zoning.shadow.headroomM)} m 超過)。
+          </div>
+        )}
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>↔️ 後退と建築面積のトレードオフ</div>
+        <div className="field-grid" style={{ marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            敷地の奥行 (m)
+            <input type="text" inputMode="decimal" value={zpSiteDepthStr} onChange={(e) => setZpSiteDepthStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            敷地の間口 (m)
+            <input type="text" inputMode="decimal" value={zpSiteWidthStr} onChange={(e) => setZpSiteWidthStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            背面の後退 (m)
+            <input type="text" inputMode="decimal" value={zpRearStr} onChange={(e) => setZpRearStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            側面の後退 合計 (m)
+            <input type="text" inputMode="decimal" value={zpSideStr} onChange={(e) => setZpSideStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
+          </label>
+        </div>
+        <div className="stat-grid" style={{ marginBottom: 10 }}>
+          <Stat label="斜線を通す最小後退" value={`${zoning.tradeoff.requiredSetbackM.toLocaleString()} m`} />
+          <Stat label="建てられる奥行" value={`${zoning.tradeoff.buildableDepthM.toLocaleString()} m`} />
+          <Stat label="建てられる間口" value={`${zoning.tradeoff.buildableWidthM.toLocaleString()} m`} />
+          <Stat
+            label={zoning.tradeoff.limitedBy === 'coverage' ? '建築面積 (建ぺい率で頭打ち)' : '建築面積 (寸法で決まる)'}
+            value={`${zoning.tradeoff.footprint.toLocaleString()} ㎡`}
+          />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 14 }}>
+          高さを下げると必要な後退が減り、その分だけ奥行を使えます。建ぺい率の上限に当たるまでは、高さを削るほど建築面積が増えます。
+        </div>
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
