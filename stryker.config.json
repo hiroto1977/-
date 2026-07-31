@@ -178,7 +178,8 @@
     "src/shared/taxNationalPension.ts",
     "src/shared/zoningPlanner.ts",
     "src/renderer/data/shigyoDirectory.ts",
-    "src/renderer/data/investments.ts"
+    "src/renderer/data/investments.ts",
+    "src/shared/buildingIso.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
