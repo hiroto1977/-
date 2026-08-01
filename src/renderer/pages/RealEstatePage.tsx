@@ -35,6 +35,8 @@ import {
   planSetbackTradeoff,
   SHADOW_HEIGHT_THRESHOLD_M,
 } from '../../shared/zoningPlanner';
+import { buildSchematicFloors } from '../../shared/buildingIso';
+import { BuildingIso } from '../components/BuildingIso';
 import {
   planWaterBalance,
   planRoSizing,
@@ -249,7 +251,23 @@ export function RealEstatePage() {
       category: zpCat,
       plannedHeightM: height,
     });
-    return { site, factory, slope, shadow, tradeoff, capUnlimited: zpCapStr.trim() === '' };
+    // 立体プレビューは「実際に建てられる寸法」で組む。トレードオフが建蔽率で
+    // 頭打ちなら、幅はそのままで奥行を建蔽率上限に合わせて詰める。
+    const isoWidth = tradeoff.buildableWidthM;
+    const isoDepth =
+      isoWidth > 0 ? Math.min(tradeoff.buildableDepthM, tradeoff.footprint / isoWidth) : 0;
+    const schematic = buildSchematicFloors({
+      widthM: isoWidth,
+      depthM: isoDepth,
+      workshopSqm: factory.workshopArea,
+      groundOtherSqm: factory.groundFloorOther,
+      upperFloorsSqm: factory.upperFloorsArea,
+    });
+    return {
+      site, factory, slope, shadow, tradeoff, schematic,
+      isoWidth, isoDepth,
+      capUnlimited: zpCapStr.trim() === '',
+    };
   }, [
     zpSiteStr, zpCovStr, zpFarStr, zpRoadStr, zpCat, zpCorner, zpFireproof, zpCapStr, zpWorkshopStr,
     zpHeightStr, zpSetbackStr, zpRearStr, zpSideStr, zpSiteDepthStr, zpSiteWidthStr,
@@ -698,6 +716,14 @@ export function RealEstatePage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 14 }}>
           高さを下げると必要な後退が減り、その分だけ奥行を使えます。建ぺい率の上限に当たるまでは、高さを削るほど建築面積が増えます。
         </div>
+
+        <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🧊 立体プレビュー (分解アイソメ)</div>
+        <BuildingIso
+          widthM={zoning.isoWidth}
+          depthM={zoning.isoDepth}
+          floors={zoning.schematic}
+          caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
+        />
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
