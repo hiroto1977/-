@@ -1024,7 +1024,7 @@ export const SNAPSHOT = {
 
   docstudio: {
     collections: [
-      { id: 'studio', label: '経営書類（契約・経理・組織・規程）', docCount: 12 },
+      { id: 'studio', label: '経営書類（契約・経理・組織・規程・事業計画）', docCount: 14 },
       { id: 'teikan', label: '電子定款（株式会社・合同会社）', docCount: 2 },
       { id: 'shugyo', label: '就業規則（10章47条）', docCount: 1 },
     ] as { id: string; label: string; docCount: number }[],

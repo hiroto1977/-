@@ -8,8 +8,8 @@ describe('fetchDocstudioSnapshot', () => {
     expect(snap.isMock).toBe(true);
     expect(snap.collections).toHaveLength(3);
     expect(snap.collections.map((c) => c.id)).toEqual(['studio', 'teikan', 'shugyo']);
-    // 経営書類 12 種がデータソース (docStudioData.ts) と一致していること
-    expect(snap.collections[0]).toMatchObject({ id: 'studio', docCount: 12 });
+    // 経営書類 14 種がデータソース (docStudioData.ts) と一致していること
+    expect(snap.collections[0]).toMatchObject({ id: 'studio', docCount: 14 });
   });
 });
 
