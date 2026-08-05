@@ -8,6 +8,7 @@ import {
   SHUGYO_FIELDS,
   SHUGYO_NOTES,
   SHUGYO_STEPS,
+  STUDIO_CATEGORIES,
   STUDIO_TEMPLATES,
   TEIKAN_FORMS,
   TEIKAN_NOTES,
@@ -17,8 +18,11 @@ import {
   teikanClosing,
   type DocBlock,
   type DocField,
+  type DocTable,
+  type StudioDoc,
   type TeikanChapter,
 } from '../data/docStudioData';
+import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
 
 /**
  * 書類スタジオ — これまで単体 HTML として配布していた 3 ツール
@@ -36,6 +40,8 @@ interface StoreShape {
   studio?: Record<string, Values>;
   teikan?: { kk?: Values; gk?: Values };
   shugyo?: Values;
+  /** 最近使った書式 id（新しい順）。書式が増えたので探す手間を減らす。 */
+  recent?: string[];
 }
 
 const LS_KEY = 'servicehub.docstudio.v1';
@@ -151,6 +157,38 @@ function InvoiceTable({ values }: { values: Values }) {
   );
 }
 
+/** 汎用の差込表（36協定・精算書・株主名簿など）。sum があれば最終列を合計する。 */
+function FillTable({ spec, fields, values }: { spec: DocTable; fields: readonly DocField[]; values: Values }) {
+  const total = spec.sum ? spec.sum.keys.reduce((s, k) => s + (yen(values[k] ?? '') ?? 0), 0) : null;
+  const cls = (i: number) => (spec.align?.[i] === 'r' ? 'ds-num' : undefined);
+  return (
+    <table className="ds-table">
+      <thead>
+        <tr>{spec.head.map((h, i) => <th key={i}>{h}</th>)}</tr>
+      </thead>
+      <tbody>
+        {spec.rows.map((row, r) => (
+          <tr key={r}>
+            {spec.head.map((_, c) => (
+              <td key={c} className={cls(c)}>
+                {row[c] ? <Fill text={row[c]!} fields={fields} values={values} /> : '　'}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+      {spec.sum && total !== null && (
+        <tfoot>
+          <tr className="ds-total">
+            <td colSpan={Math.max(1, spec.head.length - 1)}>{spec.sum.label}</td>
+            <td className="ds-num">{fmt(total)} 円</td>
+          </tr>
+        </tfoot>
+      )}
+    </table>
+  );
+}
+
 function SignBlock({ values }: { values: Values }) {
   const sides = [
     { label: '甲', addr: values['kouAddr'], name: values['kou'], rep: values['kouRep'] },
@@ -190,6 +228,7 @@ function Blocks({ blocks, fields, values }: { blocks: readonly DocBlock[]; field
         }
         if (b.items) return <ItemsTable key={i} values={values} />;
         if (b.invoiceItems) return <InvoiceTable key={i} values={values} />;
+        if (b.table) return <FillTable key={i} spec={b.table} fields={fields} values={values} />;
         if (b.sign) return <SignBlock key={i} values={values} />;
         if (b.bigAmount) {
           const n = yen(values['amount'] ?? '');
@@ -233,36 +272,101 @@ function Chapters({ chapters, fields, values }: { chapters: readonly TeikanChapt
   );
 }
 
-function FieldInputs({ fields, values, onChange }: { fields: readonly DocField[]; values: Values; onChange: (k: string, v: string) => void }) {
+const LEVEL_COLOR: Record<DocIssue['level'], string> = { fatal: '#e5484d', warn: '#e08c1a', info: 'var(--text-mute)' };
+const LEVEL_MARK: Record<DocIssue['level'], string> = { fatal: '⛔', warn: '⚠️', info: '🕒' };
+const LEVEL_NAME: Record<DocIssue['level'], string> = { fatal: 'このままでは無効', warn: '要確認', info: '交付後にやること' };
+
+function FieldInputs({
+  fields,
+  values,
+  onChange,
+  flagged = {},
+}: {
+  fields: readonly DocField[];
+  values: Values;
+  onChange: (k: string, v: string) => void;
+  flagged?: Record<string, DocIssue['level']>;
+}) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {fields.map((f) => (
-        <label key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-mute)' }}>
-          {f.label}
-          {f.options ? (
-            <select
-              value={values[f.k] ?? f.options[0]}
-              onChange={(e) => onChange(f.k, e.target.value)}
-              aria-label={f.label}
-              style={{ padding: '8px 10px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
-            >
-              {f.options.map((o) => (
-                <option key={o} value={o}>{o}</option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              value={values[f.k] ?? ''}
-              placeholder={f.ph ?? ''}
-              inputMode={f.num ? 'numeric' : undefined}
-              onChange={(e) => onChange(f.k, e.target.value)}
-              aria-label={f.label}
-              style={{ padding: '8px 10px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
-            />
-          )}
-        </label>
-      ))}
+      {fields.map((f) => {
+        const level = flagged[f.k];
+        const border = level ? `1px solid ${LEVEL_COLOR[level]}` : '1px solid var(--border)';
+        return (
+          <label key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-mute)' }}>
+            <span>
+              {f.label}
+              {f.req && <span style={{ color: '#e5484d', marginLeft: 4 }} title="必須">＊</span>}
+            </span>
+            {f.options ? (
+              <select
+                value={values[f.k] ?? f.options[0]}
+                onChange={(e) => onChange(f.k, e.target.value)}
+                aria-label={f.label}
+                data-field={f.k}
+                style={{ padding: '8px 10px', background: 'var(--bg-elev)', border, borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
+              >
+                {f.options.map((o) => (
+                  <option key={o} value={o}>{o}</option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={values[f.k] ?? ''}
+                placeholder={f.ph ?? ''}
+                inputMode={f.num ? 'numeric' : undefined}
+                onChange={(e) => onChange(f.k, e.target.value)}
+                aria-label={f.label}
+                data-field={f.k}
+                style={{ padding: '8px 10px', background: 'var(--bg-elev)', border, borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
+              />
+            )}
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
+/** 事前チェックの結果。fatal → warn → info の順で、根拠つきで並べる。 */
+function CheckPanel({ issues }: { issues: readonly DocIssue[] }) {
+  const counts = { fatal: 0, warn: 0, info: 0 };
+  for (const i of issues) counts[i.level] += 1;
+  const clean = counts.fatal === 0 && counts.warn === 0;
+  return (
+    <div
+      data-check-panel
+      data-fatal={counts.fatal}
+      data-warn={counts.warn}
+      style={{
+        border: `1px solid ${counts.fatal ? LEVEL_COLOR.fatal : counts.warn ? LEVEL_COLOR.warn : 'var(--border)'}`,
+        borderRadius: 10,
+        padding: '12px 14px',
+        background: 'var(--bg-elev)',
+        fontSize: 12,
+        lineHeight: 1.7,
+        marginTop: 12,
+      }}
+    >
+      <strong style={{ fontSize: 13 }}>
+        🔍 交付前チェック — {clean ? '無効リスクは見つかりませんでした' : `⛔ ${counts.fatal} 件 / ⚠️ ${counts.warn} 件`}
+      </strong>
+      <div style={{ color: 'var(--text-mute)', marginTop: 2 }}>
+        入力した値を法令の要件と突き合わせています。空欄・数値の矛盾・上限超過など、書いた本人が気づきにくい失敗だけを挙げます。
+      </div>
+      {issues.length === 0 ? (
+        <div style={{ marginTop: 8 }}>指摘はありません。</div>
+      ) : (
+        issues.map((it, i) => (
+          <div key={i} style={{ marginTop: 8 }}>
+            <div style={{ color: LEVEL_COLOR[it.level], fontWeight: it.level === 'info' ? 400 : 700 }}>
+              {LEVEL_MARK[it.level]} [{LEVEL_NAME[it.level]}] {it.message}
+            </div>
+            {it.basis && <div style={{ color: 'var(--text-mute)' }}>根拠: {it.basis}</div>}
+          </div>
+        ))
+      )}
     </div>
   );
 }
@@ -286,10 +390,20 @@ function GuideBox({ title, steps, notes }: { title: string; steps?: readonly (re
 }
 
 const COLLECTIONS: { id: Collection; label: string }[] = [
-  { id: 'studio', label: '🗂 経営書類（12種）' },
+  { id: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
   { id: 'teikan', label: '📜 電子定款' },
   { id: 'shugyo', label: '📖 就業規則' },
 ];
+
+const RECENT_MAX = 6;
+
+/** ラベル・カテゴリ・キーワード・差込項目名を横断して 1 語ずつ AND 検索する。 */
+function matches(doc: StudioDoc, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const hay = [doc.label, doc.cat, ...(doc.kw ?? []), ...doc.fields.map((f) => f.label)].join(' ').toLowerCase();
+  return q.split(/\s+/).every((term) => hay.includes(term));
+}
 
 export function DocstudioPage() {
   const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
@@ -297,10 +411,18 @@ export function DocstudioPage() {
   const [collection, setCollection] = useState<Collection>('studio');
   const [docId, setDocId] = useState<string>(STUDIO_TEMPLATES[0]!.id);
   const [teikanType, setTeikanType] = useState<'kk' | 'gk'>('kk');
+  const [query, setQuery] = useState('');
+  const [cat, setCat] = useState<string>('すべて');
 
   useEffect(() => saveStore(store), [store]);
 
   const studioDoc = useMemo(() => STUDIO_TEMPLATES.find((d) => d.id === docId) ?? STUDIO_TEMPLATES[0]!, [docId]);
+
+  /** 書式を選ぶ。最近使った書類の先頭に積み直す。 */
+  function pickDoc(id: string) {
+    setDocId(id);
+    setStore((prev) => ({ ...prev, recent: [id, ...(prev.recent ?? []).filter((x) => x !== id)].slice(0, RECENT_MAX) }));
+  }
 
   const values: Values =
     collection === 'studio'
@@ -345,11 +467,33 @@ export function DocstudioPage() {
   const notes = collection === 'studio' ? studioDoc.note : collection === 'teikan' ? TEIKAN_NOTES : SHUGYO_NOTES;
   const steps = collection === 'teikan' ? TEIKAN_STEPS[teikanType] : collection === 'shugyo' ? SHUGYO_STEPS : undefined;
 
+  // 表示順は STUDIO_CATEGORIES で固定し、そこに無い cat は末尾に回す（追加漏れで消えないように）。
   const cats = useMemo(() => {
-    const out: string[] = [];
-    for (const d of STUDIO_TEMPLATES) if (!out.includes(d.cat)) out.push(d.cat);
-    return out;
+    const seen: string[] = [];
+    for (const d of STUDIO_TEMPLATES) if (!seen.includes(d.cat)) seen.push(d.cat);
+    return [...STUDIO_CATEGORIES.filter((c) => seen.includes(c)), ...seen.filter((c) => !STUDIO_CATEGORIES.includes(c))];
   }, []);
+
+  const hits = useMemo(
+    () => STUDIO_TEMPLATES.filter((d) => (cat === 'すべて' || d.cat === cat) && matches(d, query)),
+    [cat, query],
+  );
+  const recent = useMemo(
+    () => (store.recent ?? []).map((id) => STUDIO_TEMPLATES.find((d) => d.id === id)).filter((d): d is StudioDoc => !!d),
+    [store.recent],
+  );
+
+  const issues = useMemo(() => (collection === 'studio' ? checkDoc(studioDoc, values) : []), [collection, studioDoc, values]);
+  const flagged = useMemo(() => {
+    const out: Record<string, DocIssue['level']> = {};
+    for (const it of issues) {
+      if (!it.field || it.level === 'info') continue;
+      if (out[it.field] !== 'fatal') out[it.field] = it.level;
+    }
+    return out;
+  }, [issues]);
+  const blanks = collection === 'studio' ? countBlank(studioDoc, values) : 0;
+  const fatalCount = issues.filter((i) => i.level === 'fatal').length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -361,7 +505,7 @@ export function DocstudioPage() {
           errorMessage={errorMessage}
           isConfigured
           onRefresh={refresh}
-          who={<>書類スタジオ · 経営12書式 + 電子定款 + 就業規則 — 入力→即プレビュー→印刷/PDF</>}
+          who={<>書類スタジオ · 経営{STUDIO_TEMPLATES.length}書式 + 電子定款 + 就業規則 — 入力→交付前チェック→印刷/PDF</>}
         />
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
@@ -377,7 +521,19 @@ export function DocstudioPage() {
               {c.label}
             </button>
           ))}
-          <button type="button" onClick={printDoc} style={{ marginLeft: 'auto', fontSize: 13, padding: '9px 14px' }}>
+          {fatalCount > 0 && (
+            <span
+              data-fatal-badge
+              style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 12, fontWeight: 700, color: LEVEL_COLOR.fatal }}
+            >
+              ⛔ このままでは無効になる指摘 {fatalCount} 件
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={printDoc}
+            style={{ marginLeft: fatalCount > 0 ? 8 : 'auto', fontSize: 13, padding: '9px 14px' }}
+          >
             🖨 印刷 / PDF 保存
           </button>
         </div>
@@ -386,27 +542,83 @@ export function DocstudioPage() {
       <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         <div className="ds-side" style={{ flex: '1 1 300px', minWidth: 0, maxWidth: 440 }}>
           {collection === 'studio' && (
-            <Section title="書類を選ぶ" count={STUDIO_TEMPLATES.length}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {cats.map((cat) => (
-                  <div key={cat}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-mute)', margin: '4px 0' }}>{cat}</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      {STUDIO_TEMPLATES.filter((d) => d.cat === cat).map((d) => (
-                        <button
-                          key={d.id}
-                          type="button"
-                          data-doc-id={d.id}
-                          onClick={() => setDocId(d.id)}
-                          className={d.id === studioDoc.id ? 'primary' : ''}
-                          style={{ fontSize: 12, padding: '7px 10px' }}
-                        >
-                          {d.icon} {d.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+            <Section title="書類を選ぶ" count={hits.length}>
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="書式名・場面で検索（例: 残業 / 退職 / 未払 / 登記）"
+                aria-label="書式を検索"
+                data-doc-search
+                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
+              />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8 }}>
+                {['すべて', ...cats].map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    data-cat={c}
+                    onClick={() => setCat(c)}
+                    className={cat === c ? 'primary' : ''}
+                    style={{ fontSize: 11, padding: '5px 9px' }}
+                  >
+                    {c}
+                    <span style={{ opacity: 0.65, marginLeft: 4 }}>
+                      {c === 'すべて' ? STUDIO_TEMPLATES.length : STUDIO_TEMPLATES.filter((d) => d.cat === c).length}
+                    </span>
+                  </button>
                 ))}
+              </div>
+
+              {recent.length > 0 && !query && cat === 'すべて' && (
+                <div style={{ marginTop: 10 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-mute)', margin: '4px 0' }}>最近使った書類</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {recent.map((d) => (
+                      <button
+                        key={d.id}
+                        type="button"
+                        data-recent-id={d.id}
+                        onClick={() => pickDoc(d.id)}
+                        className={d.id === studioDoc.id ? 'primary' : ''}
+                        style={{ fontSize: 12, padding: '7px 10px' }}
+                      >
+                        {d.icon} {d.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
+                {hits.length === 0 && (
+                  <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+                    該当する書式がありません。別の語で検索するか、カテゴリを「すべて」に戻してください。
+                  </div>
+                )}
+                {cats.map((c) => {
+                  const inCat = hits.filter((d) => d.cat === c);
+                  if (inCat.length === 0) return null;
+                  return (
+                    <div key={c}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-mute)', margin: '4px 0' }}>{c}</div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {inCat.map((d) => (
+                          <button
+                            key={d.id}
+                            type="button"
+                            data-doc-id={d.id}
+                            onClick={() => pickDoc(d.id)}
+                            className={d.id === studioDoc.id ? 'primary' : ''}
+                            style={{ fontSize: 12, padding: '7px 10px' }}
+                          >
+                            {d.icon} {d.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </Section>
           )}
@@ -424,8 +636,15 @@ export function DocstudioPage() {
           )}
 
           <Section title="差込フォーム（入力は端末内に自動保存）" count={fields.length}>
-            <FieldInputs fields={fields} values={values} onChange={setValue} />
+            {collection === 'studio' && (
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
+                ＊ は空欄のまま交付すると書類として成立しない項目。未入力 {blanks} / {fields.length} 件。
+              </div>
+            )}
+            <FieldInputs fields={fields} values={values} onChange={setValue} flagged={flagged} />
           </Section>
+
+          {collection === 'studio' && <CheckPanel issues={issues} />}
 
           <GuideBox
             title={
