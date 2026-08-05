@@ -1,0 +1,325 @@
+import { describe, expect, it } from 'vitest';
+import {
+  DEFAULT_RATE_POINTS,
+  LOCAL_RATIO,
+  MAX_RATE,
+  NATIONAL_SHARE,
+  breakEvenRate,
+  buildSchedule,
+  calcAnnualTax,
+  finalDueDate,
+  floor100,
+  interimCount,
+  nextBusinessDay,
+  planInterim,
+  roundRefund,
+  settle,
+  sweepRates,
+  type ScheduleInput,
+} from '../taxConsumptionSchedule';
+
+/** 個人事業者・暦年・本則課税の基本形。 */
+const individual = (over: Partial<ScheduleInput> = {}): ScheduleInput => ({
+  filer: 'individual',
+  fiscalEndMonth: 12,
+  fiscalEndYear: 2026,
+  extendedDeadline: false,
+  method: 'standard',
+  taxableSales: 30_000_000,
+  taxablePurchases: 10_000_000,
+  deemedPurchaseRate: 0.5,
+  priorNationalTax: 0,
+  eTax: true,
+  ...over,
+});
+
+/** 3月決算法人。 */
+const corporate = (over: Partial<ScheduleInput> = {}): ScheduleInput =>
+  individual({ filer: 'corporate', fiscalEndMonth: 3, fiscalEndYear: 2027, ...over });
+
+describe('端数処理', () => {
+  it('100円未満を切り捨てる（国税通則法119条1項）', () => {
+    expect(floor100(1_234_567)).toBe(1_234_500);
+    expect(floor100(99)).toBe(0);
+    expect(floor100(100)).toBe(100);
+    expect(floor100(0)).toBe(0);
+  });
+
+  it('還付は1円未満切捨て。ただし1円未満の正値は1円', () => {
+    expect(roundRefund(1234.9)).toBe(1234);
+    expect(roundRefund(0.4)).toBe(1);
+    expect(roundRefund(0)).toBe(0);
+    expect(roundRefund(-5)).toBe(0);
+  });
+});
+
+describe('年税額', () => {
+  it('現行10%・本則課税で、国税と地方の区分が 78 : 22 になる', () => {
+    const a = calcAnnualTax(individual(), 0.1);
+    // 課税ベース 2,000万円 × 10% × 78% = 1,560,000（国税）
+    expect(a.national).toBe(1_560_000);
+    // 地方 = 国税 × 22/78 = 440,000
+    expect(a.local).toBe(440_000);
+    // 合計は 課税ベース × 税率 に一致する
+    expect(a.total).toBe(2_000_000);
+    expect(a.isRefund).toBe(false);
+  });
+
+  it('税率0%なら税額も0', () => {
+    const a = calcAnnualTax(individual(), 0);
+    expect(a.total).toBe(0);
+    expect(a.isRefund).toBe(false);
+  });
+
+  it('税率50%まで比例する（上限を超える指定は50%に丸められる）', () => {
+    expect(calcAnnualTax(individual(), 0.5).total).toBe(10_000_000);
+    expect(calcAnnualTax(individual(), 0.8).rate).toBe(MAX_RATE);
+    expect(calcAnnualTax(individual(), 0.8).total).toBe(calcAnnualTax(individual(), 0.5).total);
+  });
+
+  it('仕入が売上を上回れば還付になり、税率を変えても還付のままである', () => {
+    const lossMaking = individual({ taxableSales: 10_000_000, taxablePurchases: 30_000_000 });
+    for (const r of [0.01, 0.08, 0.1, 0.25, 0.5]) {
+      const a = calcAnnualTax(lossMaking, r);
+      expect(a.isRefund, `rate=${r}`).toBe(true);
+      expect(a.total, `rate=${r}`).toBeLessThan(0);
+    }
+    // 本則課税では納付/還付の別は税率に依存しない（差額の符号で決まる）
+    expect(calcAnnualTax(lossMaking, 0.1).total).toBe(-2_000_000);
+  });
+
+  it('簡易課税はみなし仕入率で控除し、還付は生じない', () => {
+    const s = individual({ method: 'simplified', deemedPurchaseRate: 0.5, taxablePurchases: 999_999_999 });
+    const a = calcAnnualTax(s, 0.1);
+    // 3,000万 × 10% × (1 − 0.5) = 1,500,000
+    expect(a.total).toBe(1_500_000);
+    expect(a.isRefund).toBe(false);
+  });
+
+  it('みなし仕入率100%でも還付にはならない（税額0）', () => {
+    const a = calcAnnualTax(individual({ method: 'simplified', deemedPurchaseRate: 1 }), 0.1);
+    expect(a.total).toBe(0);
+    expect(a.isRefund).toBe(false);
+  });
+
+  it('2割特例は売上税額の20%で、仕入額に影響されない', () => {
+    const base = individual({ method: 'twenty-percent' });
+    const a = calcAnnualTax(base, 0.1);
+    // 3,000万 × 10% × 20% = 600,000
+    expect(a.total).toBe(600_000);
+    expect(calcAnnualTax({ ...base, taxablePurchases: 0 }, 0.1).total).toBe(600_000);
+    expect(calcAnnualTax({ ...base, taxablePurchases: 100_000_000 }, 0.1).total).toBe(600_000);
+  });
+
+  it('地方消費税は「100円未満切捨て後の国税額」に対して計算する', () => {
+    const a = calcAnnualTax(individual({ taxableSales: 1_234_567, taxablePurchases: 0 }), 0.1);
+    expect(a.national).toBe(floor100(1_234_567 * 0.1 * NATIONAL_SHARE));
+    expect(a.local).toBe(floor100(a.national * LOCAL_RATIO));
+  });
+});
+
+describe('中間申告の判定', () => {
+  it('前期の確定消費税額（国税分）で回数が決まる', () => {
+    expect(interimCount(0)).toBe(0);
+    expect(interimCount(480_000)).toBe(0);
+    expect(interimCount(480_001)).toBe(1);
+    expect(interimCount(4_000_000)).toBe(1);
+    expect(interimCount(4_000_001)).toBe(3);
+    expect(interimCount(48_000_000)).toBe(3);
+    expect(interimCount(48_000_001)).toBe(11);
+  });
+
+  it('48万円以下なら中間申告なし', () => {
+    const p = planInterim(individual({ priorNationalTax: 400_000 }));
+    expect(p.count).toBe(0);
+    expect(p.payments).toEqual([]);
+    expect(p.total).toBe(0);
+  });
+
+  it('年1回: 個人事業者は 6/30 締め・8/31 期限、納付は前期国税の 6/12', () => {
+    const p = planInterim(individual({ priorNationalTax: 600_000 }));
+    expect(p.count).toBe(1);
+    expect(p.payments).toHaveLength(1);
+    expect(p.payments[0]!.periodEnd).toBe('2026-06-30');
+    expect(p.payments[0]!.due).toBe('2026-08-31');
+    expect(p.payments[0]!.national).toBe(300_000);
+    expect(p.payments[0]!.local).toBe(floor100(300_000 * LOCAL_RATIO));
+  });
+
+  it('年3回: 個人事業者は 5/31・8/31・11/30 が期限、各回 3/12', () => {
+    const p = planInterim(individual({ priorNationalTax: 6_000_000 }));
+    expect(p.count).toBe(3);
+    expect(p.payments.map((x) => x.due)).toEqual(['2026-06-01', '2026-08-31', '2026-11-30']); // 5/31 は日曜
+    expect(p.payments.map((x) => x.periodEnd)).toEqual(['2026-03-31', '2026-06-30', '2026-09-30']);
+    for (const x of p.payments) expect(x.national).toBe(1_500_000);
+  });
+
+  it('年11回: 最初の1か月分は開始日から2か月経過後2か月以内、以後は対象期間末日の翌日から2か月以内', () => {
+    const p = planInterim(individual({ priorNationalTax: 60_000_000 }));
+    expect(p.count).toBe(11);
+    expect(p.payments).toHaveLength(11);
+    // 1月分と2月分がいずれも 4/30
+    expect(p.payments[0]!.due).toBe('2026-04-30');
+    expect(p.payments[1]!.due).toBe('2026-04-30');
+    // 3月分の期限 5/31 は日曜なので 6/1
+    expect(p.payments[2]!.due).toBe('2026-06-01');
+    // 11月分は 11/30 の翌日から2か月 = 1/31（日曜）なので 2/1
+    expect(p.payments[10]!.periodEnd).toBe('2026-11-30');
+    expect(p.payments[10]!.due).toBe('2027-02-01');
+    // 対象期間の末日は暦のとおりで、休日送りをしない
+    expect(p.payments.map((x) => x.periodEnd)).toEqual([
+      '2026-01-31', '2026-02-28', '2026-03-31', '2026-04-30', '2026-05-31', '2026-06-30',
+      '2026-07-31', '2026-08-31', '2026-09-30', '2026-10-31', '2026-11-30',
+    ]);
+    for (const x of p.payments) expect(x.national).toBe(floor100(60_000_000 / 12));
+  });
+
+  it('年11回・申告期限延長の法人は、開始後2か月分が3か月経過後2か月以内になる', () => {
+    const p = planInterim(corporate({ priorNationalTax: 60_000_000, extendedDeadline: true }));
+    // 3月決算 → 課税期間 4/1〜3/31。開始後1・2か月分の期限は 8/31
+    expect(p.payments[0]!.due).toBe('2026-08-31');
+    expect(p.payments[1]!.due).toBe('2026-08-31');
+    expect(p.payments[2]!.due).toBe('2026-08-31');
+    expect(p.payments[3]!.due).toBe('2026-09-30');
+  });
+
+  it('中間納付の合計は各回の合計に一致する', () => {
+    const p = planInterim(individual({ priorNationalTax: 6_000_000 }));
+    expect(p.total).toBe(p.payments.reduce((s, x) => s + x.total, 0));
+    expect(p.totalNational).toBe(4_500_000);
+  });
+});
+
+describe('期限の算定', () => {
+  it('個人事業者の確定申告期限は翌年3月31日', () => {
+    expect(finalDueDate(individual({ fiscalEndYear: 2026 }))).toBe('2027-03-31');
+  });
+
+  it('期限が土日なら翌開庁日へ送る', () => {
+    // 2029-03-31 は土曜 → 4/2(月)
+    expect(finalDueDate(individual({ fiscalEndYear: 2028 }))).toBe('2029-04-02');
+  });
+
+  it('12/29〜1/3 は行政機関の休日として翌開庁日へ送る', () => {
+    // 10月決算法人 → 期限 12/31 → 翌年 1/4
+    expect(finalDueDate(corporate({ fiscalEndMonth: 10, fiscalEndYear: 2026 }))).toBe('2027-01-04');
+    expect(nextBusinessDay(new Date(Date.UTC(2026, 11, 29)))).toEqual(new Date(Date.UTC(2027, 0, 4))); // 1/4 は月曜
+  });
+
+  it('法人は課税期間末日の翌日から2か月、延長特例があれば3か月', () => {
+    expect(finalDueDate(corporate({ fiscalEndMonth: 3, fiscalEndYear: 2027 }))).toBe('2027-05-31');
+    expect(finalDueDate(corporate({ fiscalEndMonth: 3, fiscalEndYear: 2027, extendedDeadline: true }))).toBe('2027-06-30');
+  });
+});
+
+describe('確定申告時に動く金額', () => {
+  it('中間納付がなければ年税額をそのまま納付する', () => {
+    const input = individual();
+    const s = settle(input, calcAnnualTax(input, 0.1), planInterim(input));
+    expect(s.kind).toBe('payment');
+    expect(s.amount).toBe(2_000_000);
+    expect(s.due).toBe('2027-03-31');
+    expect(s.refundWindow).toBeUndefined();
+  });
+
+  it('中間納付が年税額を上回ると、確定申告では還付になる', () => {
+    const input = individual({ priorNationalTax: 6_000_000 }); // 中間 3 回・合計 約577万
+    const s = settle(input, calcAnnualTax(input, 0.1), planInterim(input));
+    expect(s.interimTotal).toBeGreaterThan(s.annualTotal);
+    expect(s.kind).toBe('refund');
+    expect(s.amount).toBeLessThan(0);
+  });
+
+  it('還付の目安時期は e-Tax と書面で変わる', () => {
+    const base = individual({ taxableSales: 0, taxablePurchases: 30_000_000 });
+    const e = settle(base, calcAnnualTax(base, 0.1), planInterim(base));
+    const paper = settle({ ...base, eTax: false }, calcAnnualTax(base, 0.1), planInterim(base));
+    expect(e.kind).toBe('refund');
+    expect(e.refundWindow?.from).toBe('2027-04-14');
+    expect(e.refundWindow?.to).toBe('2027-04-21');
+    expect(paper.refundWindow?.from).toBe('2027-04-30');
+    expect(paper.refundWindow?.to).toBe('2027-05-17');
+    expect(new Date(paper.refundWindow!.from) > new Date(e.refundWindow!.from)).toBe(true);
+  });
+
+  it('年税額と中間納付が一致すればどちらでもない', () => {
+    const input = individual({ taxableSales: 0, taxablePurchases: 0, priorNationalTax: 0 });
+    const s = settle(input, calcAnnualTax(input, 0.1), planInterim(input));
+    expect(s.kind).toBe('none');
+    expect(s.amount).toBe(0);
+  });
+});
+
+describe('税率の掃引と分岐税率', () => {
+  it('既定の税率点は 0%〜50% に収まり、現行の 8% と 10% を含む', () => {
+    expect(Math.min(...DEFAULT_RATE_POINTS)).toBe(0);
+    expect(Math.max(...DEFAULT_RATE_POINTS)).toBe(MAX_RATE);
+    expect(DEFAULT_RATE_POINTS).toContain(0.08);
+    expect(DEFAULT_RATE_POINTS).toContain(0.1);
+  });
+
+  it('掃引すると税率に比例して年税額が増える', () => {
+    const rows = sweepRates(individual());
+    expect(rows).toHaveLength(DEFAULT_RATE_POINTS.length);
+    expect(rows[0]!.annual.total).toBe(0);
+    for (let i = 1; i < rows.length; i += 1) {
+      expect(rows[i]!.annual.total).toBeGreaterThan(rows[i - 1]!.annual.total);
+    }
+  });
+
+  it('範囲外の税率は掃引から除かれる', () => {
+    expect(sweepRates(individual(), [-0.1, 0.1, 0.6])).toHaveLength(1);
+  });
+
+  it('分岐税率を下回ると確定申告が還付に変わる', () => {
+    const input = individual({ priorNationalTax: 6_000_000 });
+    const r = breakEvenRate(input);
+    expect(r).not.toBeNull();
+    const below = settle(input, calcAnnualTax(input, r! - 0.01), planInterim(input));
+    const above = settle(input, calcAnnualTax(input, r! + 0.01), planInterim(input));
+    expect(below.kind).toBe('refund');
+    expect(above.kind).toBe('payment');
+  });
+
+  it('中間納付がなければ分岐税率は無い', () => {
+    expect(breakEvenRate(individual({ priorNationalTax: 0 }))).toBeNull();
+  });
+
+  it('課税ベースが0以下（常に還付）なら分岐税率は無い', () => {
+    expect(breakEvenRate(individual({ taxableSales: 0, taxablePurchases: 1_000_000, priorNationalTax: 6_000_000 }))).toBeNull();
+  });
+
+  it('分岐税率が50%を超える場合は無い扱いにする', () => {
+    // 課税ベースが極端に小さく、中間納付が大きい
+    expect(breakEvenRate(individual({ taxableSales: 5_000_000, taxablePurchases: 4_900_000, priorNationalTax: 48_000_000 }))).toBeNull();
+  });
+
+  it('簡易課税・2割特例でも分岐税率が求まる', () => {
+    const s = breakEvenRate(individual({ method: 'simplified', deemedPurchaseRate: 0.5, priorNationalTax: 600_000 }));
+    const t = breakEvenRate(individual({ method: 'twenty-percent', priorNationalTax: 600_000 }));
+    expect(s).toBeGreaterThan(0);
+    expect(t).toBeGreaterThan(0);
+    // 2割特例の方が課税ベースが小さいので、分岐税率は高くなる
+    expect(t!).toBeGreaterThan(s!);
+  });
+});
+
+describe('buildSchedule — 画面が使う一括の結果', () => {
+  it('年税額・中間・確定・分岐・掃引をまとめて返す', () => {
+    const r = buildSchedule(individual({ priorNationalTax: 600_000 }), 0.1);
+    expect(r.annual.total).toBe(2_000_000);
+    expect(r.interim.count).toBe(1);
+    expect(r.settlement.due).toBe('2027-03-31');
+    expect(r.settlement.amount).toBe(r.annual.total - r.interim.total);
+    expect(r.breakEven).toBeGreaterThan(0);
+    expect(r.sweep.length).toBe(DEFAULT_RATE_POINTS.length);
+  });
+
+  it('掃引の各行の確定額は「年税額 − 中間納付」に一致する', () => {
+    const input = individual({ priorNationalTax: 6_000_000 });
+    const r = buildSchedule(input, 0.1);
+    for (const row of r.sweep) {
+      expect(row.settlement.amount).toBe(row.annual.total - r.interim.total);
+    }
+  });
+});

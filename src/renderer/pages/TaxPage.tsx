@@ -6,7 +6,12 @@ import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
-import { GuardSummary } from '../components/GuardedNumber';
+import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
+import {
+  MAX_RATE,
+  buildSchedule,
+  type ScheduleInput,
+} from '../../shared/taxConsumptionSchedule';
 import { guardAll, readNumber } from '../data/inputGuards';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
@@ -45,7 +50,7 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
-import { type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import { DEEMED_PURCHASE_RATES, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { compareBusinessTaxMethods, isTaxExempt } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
@@ -335,6 +340,34 @@ export function TaxPage() {
       ),
     [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType],
   );
+  // ⑩-2 納付/還付スケジュール — 税率 0%〜50% を範囲に、金額と時期を出す。
+  const [csRateStr, setCsRateStr] = useState('10');
+  const [csFiler, setCsFiler] = useState<'individual' | 'corporate'>('individual');
+  const [csEndMonth, setCsEndMonth] = useState('12');
+  const [csEndYear, setCsEndYear] = useState('2026');
+  const [csExtended, setCsExtended] = useState(false);
+  const [csMethod, setCsMethod] = useState<'standard' | 'simplified' | 'twenty-percent'>('standard');
+  const [csPriorStr, setCsPriorStr] = useState('0');
+  const [csETax, setCsETax] = useState(true);
+
+  const csInput = useMemo<ScheduleInput>(
+    () => ({
+      filer: csFiler,
+      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.min(12, Math.max(1, Math.round(num(csEndMonth)) || 12)),
+      fiscalEndYear: Math.round(num(csEndYear)) || 2026,
+      extendedDeadline: csFiler === 'corporate' && csExtended,
+      method: csMethod,
+      taxableSales: num(ctSalesStr) + num(ctReducedSalesStr),
+      taxablePurchases: num(ctPurchaseStr),
+      deemedPurchaseRate: DEEMED_PURCHASE_RATES[ctBizType],
+      priorNationalTax: num(csPriorStr),
+      eTax: csETax,
+    }),
+    [csFiler, csEndMonth, csEndYear, csExtended, csMethod, ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, csPriorStr, csETax],
+  );
+  const csRate = useMemo(() => Math.min(MAX_RATE, Math.max(0, num(csRateStr) / 100)), [csRateStr]);
+  const schedule = useMemo(() => buildSchedule(csInput, csRate), [csInput, csRate]);
+
   const ctExempt = useMemo(
     () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr)),
     [ctSalesStr, ctReducedSalesStr],
@@ -1086,6 +1119,201 @@ export function TaxPage() {
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
           <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
           <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
+        </div>
+      </Section>
+
+      <Section title="⑩-2 納付/還付の金額と時期 (税率 0%〜50%)" count={4}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          消費税率を <strong>0%〜50%</strong> の範囲で動かし、年税額（国税＋地方消費税）、中間申告の回数と各回の納付額・期限、
+          確定申告のときに実際に動く金額（納付か還付か）と、その期限・還付の入金目安を出します。
+          金額は <strong>国税は100円未満切捨て</strong>（国税通則法119条1項）、<strong>地方消費税は「切捨て後の国税額」× 22/78</strong> で計算します。
+          売上・仕入・事業区分は上の ⑩ の入力を使います。
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            事業者の区分
+            <select value={csFiler} onChange={(e) => setCsFiler(e.target.value as 'individual' | 'corporate')} style={{ ...inputStyle, width: 150 }}>
+              <option value="individual">個人事業者</option>
+              <option value="corporate">法人</option>
+            </select>
+          </label>
+          {csFiler === 'corporate' && (
+            <GuardedNumber spec={{ label: '決算月 (1-12)', kind: 'count', min: 1, max: 12 }} value={csEndMonth} onChange={setCsEndMonth} width={110} />
+          )}
+          <GuardedNumber spec={{ label: '課税期間の終了年 (西暦)', kind: 'count', min: 2000, max: 2100 }} value={csEndYear} onChange={setCsEndYear} width={150} />
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            納付方式
+            <select value={csMethod} onChange={(e) => setCsMethod(e.target.value as typeof csMethod)} style={{ ...inputStyle, width: 170 }}>
+              <option value="standard">本則課税</option>
+              <option value="simplified">簡易課税</option>
+              <option value="twenty-percent">2割特例</option>
+            </select>
+          </label>
+          <GuardedNumber
+            spec={{ label: '前課税期間の確定消費税額（国税分・円）', kind: 'money', allowZero: true }}
+            value={csPriorStr}
+            onChange={setCsPriorStr}
+            width={200}
+          />
+          {csFiler === 'corporate' && (
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={csExtended} onChange={(e) => setCsExtended(e.target.checked)} />
+              申告期限延長の特例あり
+            </label>
+          )}
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+            <input type="checkbox" checked={csETax} onChange={(e) => setCsETax(e.target.checked)} />
+            e-Tax で申告する
+          </label>
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2, flex: '1 1 260px', minWidth: 220 }}>
+            消費税率 {(csRate * 100).toFixed(1)}%
+            <input
+              type="range"
+              min={0}
+              max={MAX_RATE * 100}
+              step={0.1}
+              value={Math.min(MAX_RATE * 100, Math.max(0, num(csRateStr)))}
+              onChange={(e) => setCsRateStr(e.target.value)}
+              aria-label="消費税率"
+              data-cs-rate-slider
+              style={{ width: '100%' }}
+            />
+          </label>
+          <GuardedNumber spec={{ label: '税率 (%) 直接入力', kind: 'percent', allowZero: true, max: MAX_RATE * 100 }} value={csRateStr} onChange={setCsRateStr} width={130} />
+        </div>
+
+        <div
+          data-cs-verdict
+          data-kind={schedule.settlement.kind}
+          style={{
+            border: '1px solid var(--border)',
+            borderLeft: `3px solid ${schedule.settlement.kind === 'refund' ? '#3ec98a' : '#fbbf24'}`,
+            borderRadius: 6,
+            padding: '10px 12px',
+            marginBottom: 12,
+            fontSize: 13,
+            color: 'var(--text)',
+            lineHeight: 1.8,
+          }}
+        >
+          税率 <strong>{(csRate * 100).toFixed(1)}%</strong> のとき — 年税額{' '}
+          <strong>{schedule.annual.isRefund ? `還付 ${jpy(-schedule.annual.total)}` : jpy(schedule.annual.total)}</strong>
+          （国税 {jpy(Math.abs(schedule.annual.national))} ／ 地方 {jpy(Math.abs(schedule.annual.local))}）
+          {schedule.annual.isRefund && <span style={{ color: '#3ec98a' }}>（仕入れが売上を上回る＝控除不足還付）</span>}
+          <div>
+            中間納付 {schedule.interim.count === 0 ? 'なし' : `${schedule.interim.count} 回 合計 ${jpy(schedule.interim.total)}`}
+          </div>
+          <div style={{ fontWeight: 700 }}>
+            {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due}）</>}
+            {schedule.settlement.kind === 'refund' && (
+              <span style={{ color: '#3ec98a' }}>
+                確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due}）
+              </span>
+            )}
+            {schedule.settlement.kind === 'none' && <>確定申告での納付・還付は発生しません（期限 {schedule.settlement.due}）</>}
+          </div>
+          {schedule.settlement.refundWindow && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              入金の目安: {schedule.settlement.refundWindow.from} 〜 {schedule.settlement.refundWindow.to}
+               （{schedule.settlement.refundWindow.note}）
+            </div>
+          )}
+          {schedule.breakEven !== null && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              分岐税率 <strong>{(schedule.breakEven * 100).toFixed(2)}%</strong> — これを下回ると、中間納付のしすぎで確定申告は還付に変わります。
+            </div>
+          )}
+        </div>
+
+        {schedule.interim.count > 0 && (
+          <>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', margin: '12px 0 6px' }}>
+              中間申告 — {schedule.interim.band}
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={tableStyle}>
+                <thead>
+                  <tr>
+                    <th style={thStyle}>回</th>
+                    <th style={thStyle}>対象期間の末日</th>
+                    <th style={thStyle}>申告・納付の期限</th>
+                    <th style={thStyle}>消費税(国税)</th>
+                    <th style={thStyle}>地方消費税</th>
+                    <th style={thStyle}>合計</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {schedule.interim.payments.map((p) => (
+                    <tr key={p.no} data-interim-row={p.no}>
+                      <td style={tdStyle}>第{p.no}回</td>
+                      <td style={tdStyle}>{p.periodEnd}</td>
+                      <td style={tdStyle}>{p.due}</td>
+                      <td style={tdStyle}>{jpy(p.national)}</td>
+                      <td style={tdStyle}>{jpy(p.local)}</td>
+                      <td style={tdStyle}>{jpy(p.total)}</td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td style={tdStyle} colSpan={5}>中間納付 合計</td>
+                    <td style={tdStyle}>{jpy(schedule.interim.total)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', margin: '14px 0 6px' }}>税率別の一覧 (0%〜50%)</div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>税率</th>
+                <th style={thStyle}>年税額 (国税+地方)</th>
+                <th style={thStyle}>中間納付</th>
+                <th style={thStyle}>確定申告で動く額</th>
+                <th style={thStyle}>納付 / 還付</th>
+              </tr>
+            </thead>
+            <tbody>
+              {schedule.sweep.map((row) => (
+                <tr
+                  key={row.rate}
+                  data-sweep-rate={(row.rate * 100).toFixed(1)}
+                  style={Math.abs(row.rate - csRate) < 0.0005 ? { background: 'var(--bg-elev)' } : undefined}
+                >
+                  <td style={tdStyle}>{(row.rate * 100).toFixed(row.rate * 100 % 1 === 0 ? 0 : 1)}%</td>
+                  <td style={{ ...tdStyle, color: row.annual.isRefund ? '#3ec98a' : undefined }}>
+                    {row.annual.isRefund ? `還付 ${jpy(-row.annual.total)}` : jpy(row.annual.total)}
+                  </td>
+                  <td style={tdStyle}>{jpy(schedule.interim.total)}</td>
+                  <td style={tdStyle}>{jpy(Math.abs(row.settlement.amount))}</td>
+                  <td style={{ ...tdStyle, color: row.settlement.kind === 'refund' ? '#3ec98a' : undefined }}>
+                    {row.settlement.kind === 'refund' ? '還付' : row.settlement.kind === 'payment' ? '納付' : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.7 }}>
+          ※ 国税と地方消費税の区分は現行法の <strong>78 : 22</strong>（標準10% = 国税7.8% + 地方2.2%）を仮定しています。
+          税率が変われば法律上の区分も変わり得るため、10% 以外の税率は「その比率が維持された場合」の試算です。<br />
+          ※ 中間申告の回数は<strong>前課税期間の確定消費税額（国税分・地方消費税を含まない）</strong>で決まります
+          — 48万円以下は不要、48万円超400万円以下は年1回、400万円超4,800万円以下は年3回、4,800万円超は年11回。
+          各回の納付額は前期の国税額 × 6/12・3/12・1/12 です。当期の税率を動かしても中間納付額は変わりません
+          （前期の実績で決まるため）。<br />
+          ※ 期限は土日と 12/29〜1/3 を休日として翌開庁日へ送っています。<strong>国民の祝日は考慮していません</strong>。<br />
+          ※ 還付の入金時期は目安です（e-Tax で2〜3週間程度、書面で1か月〜1か月半程度）。<strong>保証された日付ではありません</strong>。
+          期限より早く申告すればその分早まります。<br />
+          ※ 本欄は概算です。課税標準額の1,000円未満切捨て、課税売上割合による仕入税額控除の調整（個別対応方式・一括比例配分方式）、
+          貸倒れ、棚卸資産の調整、免税事業者からの仕入れの経過措置、特定課税仕入れなどは反映していません。
+          申告・納付は税理士・国税庁 / e-Tax で確定してください。
         </div>
       </Section>
 
