@@ -72,6 +72,55 @@ export function isRegistrationNo(raw: string | undefined): boolean {
   return /^T\d{13}$/.test(half.replace(/[-\s]/g, '').toUpperCase());
 }
 
+
+/** 品目別の税率区分（i1..i6）に共通する検査。invoice / shiharai で共用する。 */
+function taxItemIssues(v: Values, max: number): DocIssue[] {
+  const out: DocIssue[] = [];
+  const usedCustom = new Set<string>();
+  let anyLine = false;
+  for (let n = 1; n <= max; n += 1) {
+    const kind = (v[`i${n}kind`] ?? '').trim();
+    const name = (v[`i${n}name`] ?? '').trim();
+    const price = (v[`i${n}price`] ?? '').trim();
+    const filled = name !== '' || price !== '';
+    if (kind === '任意税率A') usedCustom.add('A');
+    if (kind === '任意税率B') usedCustom.add('B');
+    if (kind !== '' && kind !== '（使わない）') anyLine = true;
+    if (filled && (kind === '' || kind === '（使わない）')) {
+      out.push({
+        level: 'warn',
+        field: `i${n}kind`,
+        message: `品目${n} に入力がありますが、税率区分が「（使わない）」のため請求書に載りません。区分を選ぶか、入力を消してください。`,
+      });
+    }
+    if (filled && price === '') {
+      out.push({ level: 'warn', field: `i${n}price`, message: `品目${n} の単価が未入力です。金額 0 円として計算されます。` });
+    }
+  }
+  for (const tag of usedCustom) {
+    const raw = (v[`rate${tag}`] ?? '').trim();
+    const val = toNum(raw);
+    if (raw === '' || val === null) {
+      out.push({
+        level: 'fatal',
+        field: `rate${tag}`,
+        message: `任意税率${tag} を使う品目がありますが、税率が未入力です。0% として計算され、消費税額が 0 になります。`,
+      });
+    } else if (val < 0 || val > 50) {
+      out.push({ level: 'fatal', field: `rate${tag}`, message: `任意税率${tag} は 0〜50% の範囲で入力してください（現在 ${val}）。` });
+    }
+  }
+  if (!anyLine) {
+    out.push({ level: 'warn', message: 'いずれの品目にも税率区分が選ばれていません。明細が空のまま交付されます。' });
+  }
+  out.push({
+    level: 'info',
+    message: '消費税額の端数処理は一の適格請求書につき税率ごとに1回です。行ごとに端数処理して積み上げる方法は認められません（本書式は区分ごとに1回だけ処理しています）。',
+    basis: '消費税法57条の4',
+  });
+  return out;
+}
+
 /** 書式ごとの個別ルール。値が入っていない項目は原則として空欄チェックに任せる。 */
 const RULES: Record<string, (v: Values) => DocIssue[]> = {
   mimoto(v) {
@@ -280,7 +329,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
   },
 
   invoice(v) {
-    const out: DocIssue[] = [];
+    const out: DocIssue[] = [...taxItemIssues(v, 6)];
     if (v['regno'] && !isRegistrationNo(v['regno'])) {
       out.push({
         level: 'warn',
@@ -293,7 +342,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
   },
 
   shiharai(v) {
-    const out: DocIssue[] = [];
+    const out: DocIssue[] = [...taxItemIssues(v, 4)];
     if (v['toReg'] && !isRegistrationNo(v['toReg'])) {
       out.push({
         level: 'warn',

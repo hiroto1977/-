@@ -23,6 +23,18 @@ import {
   type TeikanChapter,
 } from '../data/docStudioData';
 import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
+import { readNumber } from '../data/inputGuards';
+import {
+  MAX_ITEM_RATE,
+  ROUNDING_LABEL,
+  groupByTaxKind,
+  lineAmount,
+  perLineRoundingDelta,
+  rateLabel,
+  type RoundingMode,
+  type TaxKind,
+  type TaxLine,
+} from '../../shared/invoiceTax';
 
 /**
  * 書類スタジオ — これまで単体 HTML として配布していた 3 ツール
@@ -123,37 +135,122 @@ function ItemsTable({ values }: { values: Values }) {
   );
 }
 
-/** 適格請求書の明細（税率別集計・端数は税率ごとに1回切捨て）。 */
-function InvoiceTable({ values }: { values: Values }) {
-  const n10 = yen(values['amount10'] ?? '');
-  const n8 = yen(values['amount8'] ?? '');
-  const tax10 = n10 !== null ? Math.floor(n10 * 0.1) : 0;
-  const tax8 = n8 !== null ? Math.floor(n8 * 0.08) : 0;
-  const base10 = n10 ?? 0;
-  const base8 = n8 ?? 0;
-  const rows: { label: string; rate: string; amount: number | null }[] = [];
-  if (values['item10a'] || n10 !== null) rows.push({ label: values['item10a'] || '—', rate: '10%', amount: n10 });
-  if (values['item8a'] || n8 !== null) rows.push({ label: `${values['item8a'] || '—'}（軽減税率対象）`, rate: '8%', amount: n8 });
+/**
+ * 未入力のフィールドに `def` を埋めた値を返す。
+ *
+ * select の既定値を入力欄の表示だけに効かせると、「画面には選ばれているのに
+ * 書面には出ない」というズレが生まれる。フォーム・書面・チェックの三者が
+ * 同じ値を見るように、ここで一度だけ既定を解決する。
+ */
+function withDefaults(fields: readonly DocField[], values: Values): Values {
+  let out: Values | null = null;
+  for (const f of fields) {
+    if (f.def === undefined) continue;
+    if ((values[f.k] ?? '') !== '') continue;
+    if (!out) out = { ...values };
+    out[f.k] = f.def;
+  }
+  return out ?? values;
+}
+
+/** 画面の選択肢 → 税率区分。'（使わない）' はその行ごと捨てる。 */
+const KIND_BY_LABEL: Record<string, TaxKind> = {
+  '標準税率': 'standard',
+  '軽減税率': 'reduced',
+  '任意税率A': 'customA',
+  '任意税率B': 'customB',
+  '免税（輸出取引等）': 'exportExempt',
+  '非課税': 'nonTaxable',
+  '不課税（対象外）': 'outOfScope',
+};
+const ROUNDING_BY_LABEL: Record<string, RoundingMode> = {
+  '切捨て': 'floor',
+  '切上げ': 'ceil',
+  '四捨五入': 'round',
+};
+
+/** 差込フォームの i1..iN から明細行を組み立てる。 */
+function readTaxLines(values: Values, max = 6): TaxLine[] {
+  const out: TaxLine[] = [];
+  for (let n = 1; n <= max; n += 1) {
+    const kindLabel = values[`i${n}kind`] ?? '';
+    const kind = KIND_BY_LABEL[kindLabel];
+    if (!kind) continue; // 未選択 / （使わない）
+    const name = values[`i${n}name`] ?? '';
+    const qtyRaw = values[`i${n}qty`] ?? '';
+    const priceRaw = values[`i${n}price`] ?? '';
+    const qty = readNumber(qtyRaw);
+    const unitPrice = readNumber(priceRaw) ?? 0;
+    out.push({ name, qty: qty === null ? (qtyRaw.trim() === '' ? 1 : 0) : qty, unitPrice, kind });
+  }
+  return out;
+}
+
+/**
+ * 適格請求書の明細 — 品目ごとに割り当てた税率区分で自動的に仕分けし、
+ * 区分の合計に対して1回だけ端数処理して消費税額を出す
+ * （行ごとに端数処理して積み上げる方式は認められない・消費税法57条の4）。
+ */
+function TaxItemsTable({ values }: { values: Values }) {
+  const lines = readTaxLines(values);
+  const pct = (k: string) => {
+    const v = readNumber(values[k] ?? '');
+    return v === null ? 0 : Math.min(MAX_ITEM_RATE, Math.max(0, v / 100));
+  };
+  const totals = groupByTaxKind(lines, {
+    customRateA: pct('rateA'),
+    customRateB: pct('rateB'),
+    rounding: ROUNDING_BY_LABEL[values['rounding'] ?? ''] ?? 'floor',
+  });
+  const delta = perLineRoundingDelta(totals);
+
   return (
-    <table className="ds-table">
-      <thead>
-        <tr><th>品目</th><th>税率</th><th>金額（税抜）</th></tr>
-      </thead>
-      <tbody>
-        {rows.length === 0 ? (
-          <tr><td>（フォームで品目と金額を入力してください）</td><td>—</td><td className="ds-num">—</td></tr>
-        ) : (
-          rows.map((r, i) => (
-            <tr key={i}><td>{r.label}</td><td>{r.rate}</td><td className="ds-num">{r.amount !== null ? `${fmt(r.amount)} 円` : '—'}</td></tr>
-          ))
-        )}
-      </tbody>
-      <tfoot>
-        <tr><td>10%対象 計（税抜）</td><td>消費税額 {fmt(tax10)} 円</td><td className="ds-num">{fmt(base10)} 円</td></tr>
-        <tr><td>8%対象 計（税抜）</td><td>消費税額 {fmt(tax8)} 円</td><td className="ds-num">{fmt(base8)} 円</td></tr>
-        <tr className="ds-total"><td>合計（税込）</td><td /><td className="ds-num">{fmt(base10 + tax10 + base8 + tax8)} 円</td></tr>
-      </tfoot>
-    </table>
+    <div data-tax-items>
+      <table className="ds-table">
+        <thead>
+          <tr><th>品目</th><th>数量</th><th>単価（税抜）</th><th>税率</th><th>金額（税抜）</th></tr>
+        </thead>
+        <tbody>
+          {totals.groups.length === 0 ? (
+            <tr><td colSpan={4}>（フォームで品目・単価・税率区分を入力してください）</td><td className="ds-num">—</td></tr>
+          ) : (
+            totals.groups.flatMap((g) =>
+              g.lines.map((l, i) => (
+                <tr key={`${g.kind}-${i}`} data-item-kind={g.kind}>
+                  <td>{(l.name || '—') + (g.isReduced ? ' ※' : '')}</td>
+                  <td className="ds-num">{fmt(l.qty)}</td>
+                  <td className="ds-num">{fmt(l.unitPrice)} 円</td>
+                  <td>{rateLabel(g)}</td>
+                  <td className="ds-num">{fmt(lineAmount(l))} 円</td>
+                </tr>
+              )),
+            )
+          )}
+        </tbody>
+        <tfoot>
+          {totals.groups.map((g) => (
+            <tr key={g.kind} data-group={g.kind}>
+              <td colSpan={3}>
+                {g.label}
+                {g.taxable && g.rate !== null ? ` ${rateLabel(g)} 対象 計（税抜）` : ' 計'}
+              </td>
+              <td>{g.taxable && g.rate !== null ? `消費税額 ${fmt(g.tax)} 円` : '—'}</td>
+              <td className="ds-num">{fmt(g.subtotal)} 円</td>
+            </tr>
+          ))}
+          <tr className="ds-total">
+            <td colSpan={3}>合計（税込）</td>
+            <td>消費税額 計 {fmt(totals.totalTax)} 円</td>
+            <td className="ds-num">{fmt(totals.grandTotal)} 円</td>
+          </tr>
+        </tfoot>
+      </table>
+      {totals.hasReduced && <p className="ds-p">※ は軽減税率（8%）の対象品目です。</p>}
+      <p className="ds-p" style={{ fontSize: 11 }}>
+        消費税額は税率ごとに1回だけ{ROUNDING_LABEL[totals.rounding]}で計算しています
+        {delta !== 0 && `（行ごとに${ROUNDING_LABEL[totals.rounding]}して積み上げる方法は認められません。その方法との差は ${fmt(Math.abs(delta))} 円です）`}。
+      </p>
+    </div>
   );
 }
 
@@ -227,7 +324,7 @@ function Blocks({ blocks, fields, values }: { blocks: readonly DocBlock[]; field
           );
         }
         if (b.items) return <ItemsTable key={i} values={values} />;
-        if (b.invoiceItems) return <InvoiceTable key={i} values={values} />;
+        if (b.taxItems) return <TaxItemsTable key={i} values={values} />;
         if (b.table) return <FillTable key={i} spec={b.table} fields={fields} values={values} />;
         if (b.sign) return <SignBlock key={i} values={values} />;
         if (b.bigAmount) {
@@ -446,6 +543,9 @@ export function DocstudioPage() {
   const fields: readonly DocField[] =
     collection === 'studio' ? studioDoc.fields : collection === 'teikan' ? TEIKAN_FORMS[teikanType] : SHUGYO_FIELDS;
 
+  // 書面の描画・チェック・入力欄はすべてこの値を見る（既定値のズレを作らない）。
+  const filled = useMemo(() => withDefaults(fields, values), [fields, values]);
+
   const val = (k: string) => values[k] ?? '';
   const teikanChapters = useMemo(
     () => (collection === 'teikan' ? (teikanType === 'kk' ? buildKkChapters(val) : buildGkChapters(val)) : []),
@@ -483,7 +583,7 @@ export function DocstudioPage() {
     [store.recent],
   );
 
-  const issues = useMemo(() => (collection === 'studio' ? checkDoc(studioDoc, values) : []), [collection, studioDoc, values]);
+  const issues = useMemo(() => (collection === 'studio' ? checkDoc(studioDoc, filled) : []), [collection, studioDoc, filled]);
   const flagged = useMemo(() => {
     const out: Record<string, DocIssue['level']> = {};
     for (const it of issues) {
@@ -492,7 +592,7 @@ export function DocstudioPage() {
     }
     return out;
   }, [issues]);
-  const blanks = collection === 'studio' ? countBlank(studioDoc, values) : 0;
+  const blanks = collection === 'studio' ? countBlank(studioDoc, filled) : 0;
   const fatalCount = issues.filter((i) => i.level === 'fatal').length;
 
   return (
@@ -641,7 +741,7 @@ export function DocstudioPage() {
                 ＊ は空欄のまま交付すると書類として成立しない項目。未入力 {blanks} / {fields.length} 件。
               </div>
             )}
-            <FieldInputs fields={fields} values={values} onChange={setValue} flagged={flagged} />
+            <FieldInputs fields={fields} values={filled} onChange={setValue} flagged={flagged} />
           </Section>
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
@@ -661,7 +761,7 @@ export function DocstudioPage() {
 
         <div style={{ flex: '2 1 420px', minWidth: 0 }}>
           <div className="ds-paper">
-            {collection === 'studio' && <Blocks blocks={studioDoc.body} fields={fields} values={values} />}
+            {collection === 'studio' && <Blocks blocks={studioDoc.body} fields={fields} values={filled} />}
             {collection === 'teikan' && (
               <>
                 <div className="ds-title">{val('shogo') || (teikanType === 'kk' ? '株式会社【商号】' : '合同会社【商号】')} 定款</div>
