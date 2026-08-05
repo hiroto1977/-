@@ -6,6 +6,8 @@ import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
+import { GuardSummary } from '../components/GuardedNumber';
+import { guardAll, readNumber } from '../data/inputGuards';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
   CONSUMPTION_TAX_REDUCED,
@@ -124,9 +126,11 @@ export function TaxPage() {
   const [bonusCountStr, setBonusCountStr] = useState('2');
   // 文字列入力を数値に変換する純粋ヘルパ。下の useMemo 群がレンダー時に
   // 即時実行されるため、それより前に宣言しておく必要がある (TDZ 回避)。
+  // 読み取りは inputGuards に統一し、下の GuardSummary と同じ関数で判定する。
+  // （従来の parseAmountInput は「500円」のような単位付きを 0 に落としていた）
   const num = (s: string): number => {
-    const p = parseAmountInput(s);
-    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
+    const v = readNumber(s);
+    return v !== null && v > 0 ? v : 0;
   };
   const socialInsurancePrecise = useMemo(() => {
     const bonusPer = num(bonusPerStr);
@@ -442,6 +446,96 @@ export function TaxPage() {
     void window.serviceHub.openExternal(url);
   };
 
+
+  // 入力の読み取り不能・範囲外をまとめて検査する。読めなかった欄は 0 として
+  // 計算されるため、その事実を数字の手前で必ず見せる。
+  const inputIssues = useMemo(() => guardAll([
+      [incomeStr, { label: '課税所得 (年・円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [grossStr, { label: '額面年収 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [netStr, { label: '目標手取り (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [bonusPerStr, { label: '賞与1回あたり (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [bonusCountStr, { label: '賞与の回数', kind: 'count', allowEmpty: true, allowZero: true, max: 12 }],
+      [dGrossStr, { label: '給与収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dSocialStr, { label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dIdecoStr, { label: 'iDeCo 掛金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dSmallBizStr, { label: '小規模企業共済 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dLifeStr, { label: '生命保険料 (新制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dLifeOldStr, { label: '生命保険料 (旧制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dQuakeStr, { label: '地震保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dMedicalStr, { label: '医療費 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dSelfMedStr, { label: 'セルフメディケーション (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dDonationStr, { label: '寄附金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [spouseIncomeStr, { label: '配偶者の合計所得 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [generalDeps, { label: '一般扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],
+      [specificDeps, { label: '特定扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],
+      [mortgageBalanceStr, { label: '住宅ローン年末残高 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dividendStr, { label: '配当所得 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [severanceStr, { label: '退職金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [yearsStr, { label: '勤続年数', kind: 'years', allowEmpty: true, allowZero: true, max: 60 }],
+      [casualGrossStr, { label: '一時所得の総収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [casualExpStr, { label: '一時所得の支出 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [cgProceedsStr, { label: '譲渡価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [cgCostStr, { label: '取得費 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [cgFeeStr, { label: '譲渡費用 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [fsDonationStr, { label: 'ふるさと納税額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [fsMunicipalitiesStr, { label: '寄附先の自治体数', kind: 'count', allowEmpty: true, allowZero: true, max: 100 }],
+      [divIncomeStr, { label: '配当収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [pensionIncomeStr, { label: '公的年金等の収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctSalesStr, { label: '課税売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctReducedSalesStr, { label: '軽減税率の売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctPurchaseStr, { label: '課税仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [faAssessedStr, { label: '固定資産税評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [faAreaStr, { label: '敷地面積 (㎡)', kind: 'area', allowEmpty: true, allowZero: true }],
+      [faDwellingsStr, { label: '住戸数', kind: 'count', allowEmpty: true, allowZero: true, max: 1000 }],
+      [acqAssessedStr, { label: '不動産取得税の評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [regTaxableStr, { label: '登録免許税の課税標準 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [stampAmountStr, { label: '契約金額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [costAssessedStr, { label: '評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [costContractStr, { label: '契約金額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+  ] as const), [
+    incomeStr,
+    grossStr,
+    netStr,
+    bonusPerStr,
+    bonusCountStr,
+    dGrossStr,
+    dSocialStr,
+    dIdecoStr,
+    dSmallBizStr,
+    dLifeStr,
+    dLifeOldStr,
+    dQuakeStr,
+    dMedicalStr,
+    dSelfMedStr,
+    dDonationStr,
+    spouseIncomeStr,
+    generalDeps,
+    specificDeps,
+    mortgageBalanceStr,
+    dividendStr,
+    severanceStr,
+    yearsStr,
+    casualGrossStr,
+    casualExpStr,
+    cgProceedsStr,
+    cgCostStr,
+    cgFeeStr,
+    fsDonationStr,
+    fsMunicipalitiesStr,
+    divIncomeStr,
+    pensionIncomeStr,
+    ctSalesStr,
+    ctReducedSalesStr,
+    ctPurchaseStr,
+    faAssessedStr,
+    faAreaStr,
+    faDwellingsStr,
+    acqAssessedStr,
+    regTaxableStr,
+    stampAmountStr,
+    costAssessedStr,
+    costContractStr,
+  ]);
   return (
     <div>
       <StatusBar
@@ -472,6 +566,8 @@ export function TaxPage() {
         下部の公式ツール (国税庁 / e-Tax / 会計ソフト) で確定してください。
         <strong>本アプリが自動で納付・申告を行うことはありません。</strong>
       </div>
+
+      <GuardSummary issues={inputIssues} title="入力の確認 (試算の前提)" />
 
       <Section title="① 課税所得から所得税・住民税を試算" count={2}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
