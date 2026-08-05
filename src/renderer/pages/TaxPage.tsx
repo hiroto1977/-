@@ -12,6 +12,14 @@ import {
   buildSchedule,
   type ScheduleInput,
 } from '../../shared/taxConsumptionSchedule';
+import {
+  VAT_REFERENCE,
+  VAT_REFERENCE_AS_OF,
+  calcExport,
+  calcJapanImport,
+  lookupVat,
+  type CustomsBasis,
+} from '../../shared/tradeTax';
 import { guardAll, readNumber } from '../data/inputGuards';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
@@ -367,6 +375,68 @@ export function TaxPage() {
   );
   const csRate = useMemo(() => Math.min(MAX_RATE, Math.max(0, num(csRateStr) / 100)), [csRateStr]);
   const schedule = useMemo(() => buildSchedule(csInput, csRate), [csInput, csRate]);
+
+  // ⑫ 貿易にかかる税 — 輸入（関税＋輸入消費税）／輸出（輸出税＋仕向国の関税・付加価値税）
+  const [imGoodsStr, setImGoodsStr] = useState('500000');
+  const [imFreightStr, setImFreightStr] = useState('30000');
+  const [imInsuranceStr, setImInsuranceStr] = useState('5000');
+  const [imDutyStr, setImDutyStr] = useState('4.5');
+  const [imExciseStr, setImExciseStr] = useState('0');
+  const [imReduced, setImReduced] = useState(false);
+  const [imPersonal, setImPersonal] = useState(false);
+  const [imExcluded, setImExcluded] = useState(false);
+
+  const importTax = useMemo(
+    () =>
+      calcJapanImport({
+        goodsValue: num(imGoodsStr),
+        freight: num(imFreightStr),
+        insurance: num(imInsuranceStr),
+        dutyRate: num(imDutyStr) / 100,
+        otherExcise: num(imExciseStr),
+        reducedRate: imReduced,
+        personalUse: imPersonal,
+        exemptionExcluded: imExcluded,
+      }),
+    [imGoodsStr, imFreightStr, imInsuranceStr, imDutyStr, imExciseStr, imReduced, imPersonal, imExcluded],
+  );
+
+  const [exGoodsStr, setExGoodsStr] = useState('1000000');
+  const [exFreightStr, setExFreightStr] = useState('80000');
+  const [exInsuranceStr, setExInsuranceStr] = useState('10000');
+  const [exExportDutyStr, setExExportDutyStr] = useState('0');
+  const [exBasis, setExBasis] = useState<CustomsBasis>('CIF');
+  const [exDestDutyStr, setExDestDutyStr] = useState('5');
+  const [exCountry, setExCountry] = useState('FR');
+  const [exVatStr, setExVatStr] = useState('20');
+  const [exVatIncludesDuty, setExVatIncludesDuty] = useState(true);
+  const [exBearer, setExBearer] = useState<'seller' | 'buyer'>('buyer');
+
+  const exportTax = useMemo(
+    () =>
+      calcExport({
+        goodsValue: num(exGoodsStr),
+        freight: num(exFreightStr),
+        insurance: num(exInsuranceStr),
+        exportDutyRate: num(exExportDutyStr) / 100,
+        destBasis: exBasis,
+        destDutyRate: num(exDestDutyStr) / 100,
+        destVatRate: num(exVatStr) / 100,
+        vatIncludesDuty: exVatIncludesDuty,
+        bearer: exBearer,
+      }),
+    [exGoodsStr, exFreightStr, exInsuranceStr, exExportDutyStr, exBasis, exDestDutyStr, exVatStr, exVatIncludesDuty, exBearer],
+  );
+
+  /** 参考税率を選ぶと税率欄と課税価格の基準を埋める（値は入力欄で上書きできる）。 */
+  function applyVatReference(code: string) {
+    setExCountry(code);
+    const ref = lookupVat(code);
+    if (!ref) return;
+    if (ref.standard !== null) setExVatStr(String(Number((ref.standard * 100).toFixed(2))));
+    if (code === 'US') { setExVatStr('0'); setExBasis('FOB'); }
+    else setExBasis('CIF');
+  }
 
   const ctExempt = useMemo(
     () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr)),
@@ -1531,6 +1601,137 @@ export function TaxPage() {
       </Section>
 
       <WelfareSchemeCard />
+
+      <Section title="⑫ 貿易にかかる税 (輸入の関税・消費税 / 輸出と仕向国の付加価値税)" count={2}>
+        <div
+          role="note"
+          style={{
+            margin: '0 0 12px', padding: 10, background: 'rgba(251, 191, 36, 0.08)',
+            border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: '#fbbf24', lineHeight: 1.6,
+          }}
+        >
+          ⚠️ <strong>概算であり通関実務の助言ではありません。</strong>実際の税額は品目の HS コード・原産地・適用する協定
+          (WTO / 特恵 / EPA)・加算要素 (買手が負担する容器包装費・ロイヤルティ等) で変わります。
+          関税率は<strong>実行関税率表</strong>で品目ごとに確認し、申告は<strong>税関・通関業者</strong>にご確認ください。
+        </div>
+
+        {/* (a) 輸入 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 18 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>(a) 日本へ輸入する</div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            課税価格 (CIF＝商品代金＋国際運賃＋保険料) の<strong>1,000円未満を切捨て</strong>→ 関税率を掛けて
+            <strong>100円未満を切捨て</strong>→ 課税価格＋関税＋個別消費税の<strong>1,000円未満を切捨て</strong>て消費税の課税標準とし、
+            国税 7.8% (軽減 6.24%) を掛けて<strong>100円未満を切捨て</strong>、地方消費税はその <strong>22/78</strong>。
+            関税が消費税の課税標準に入るため、関税が高いほど消費税も増えます。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <GuardedNumber spec={{ label: '商品代金 (輸入・円)', kind: 'money', allowZero: false }} value={imGoodsStr} onChange={setImGoodsStr} width={150} />
+            <GuardedNumber spec={{ label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true }} value={imFreightStr} onChange={setImFreightStr} width={130} />
+            <GuardedNumber spec={{ label: '保険料 (輸入・円)', kind: 'money', allowZero: true }} value={imInsuranceStr} onChange={setImInsuranceStr} width={130} />
+            <GuardedNumber spec={{ label: '関税率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={imDutyStr} onChange={setImDutyStr} width={110} />
+            <GuardedNumber spec={{ label: '個別消費税 (酒税・たばこ税等・円)', kind: 'money', allowZero: true }} value={imExciseStr} onChange={setImExciseStr} width={190} />
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={imReduced} onChange={(e) => setImReduced(e.target.checked)} />
+              軽減税率の対象 (飲食料品等)
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={imPersonal} onChange={(e) => setImPersonal(e.target.checked)} />
+              個人的使用 (課税価格を小売価格の60%で計算)
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={imExcluded} onChange={(e) => setImExcluded(e.target.checked)} />
+              革製バッグ・ニット製衣類等 (少額免税の対象外)
+            </label>
+          </div>
+
+          <div className="stat-grid" data-import-stats data-exempted={String(importTax.exempted)}>
+            <Stat label="課税価格 (1,000円未満切捨て)" value={jpy(importTax.customsValue)} />
+            <Stat label="関税 (100円未満切捨て)" value={jpy(importTax.duty)} />
+            <Stat label="消費税の課税標準" value={jpy(importTax.consumptionBase)} />
+            <Stat label="消費税 (国税)" value={jpy(importTax.nationalTax)} />
+            <Stat label="地方消費税" value={jpy(importTax.localTax)} />
+            <Stat label="税の合計" value={jpy(importTax.totalTax)} />
+            <Stat label="通関までの原価" value={jpy(importTax.landedCost)} positive />
+          </div>
+          {importTax.notes.map((n, i) => (
+            <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
+          ))}
+        </div>
+
+        {/* (b) 輸出 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>(b) 日本から輸出する</div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            <strong>日本は輸出に関税を課していません。</strong>輸出取引は消費税も免除されます (消費税法7条)。
+            負担が生じるのは<strong>仕向国の輸入関税と付加価値税</strong>で、DDP なら売手、DAP・FOB なら買手が負担します。
+            課税価格の基準は国で違い、多くの国は CIF ですが<strong>米国は FOB</strong> (運賃・保険料を含まない) です。
+            日本以外から輸出する場合に備え、輸出税の税率も入力できます。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <GuardedNumber spec={{ label: '商品代金 (輸出・円)', kind: 'money', allowZero: false }} value={exGoodsStr} onChange={setExGoodsStr} width={150} />
+            <GuardedNumber spec={{ label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true }} value={exFreightStr} onChange={setExFreightStr} width={130} />
+            <GuardedNumber spec={{ label: '保険料 (輸出・円)', kind: 'money', allowZero: true }} value={exInsuranceStr} onChange={setExInsuranceStr} width={130} />
+            <GuardedNumber spec={{ label: '輸出税率 (%・日本は0)', kind: 'percent', allowZero: true, max: 100 }} value={exExportDutyStr} onChange={setExExportDutyStr} width={150} />
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              仕向国 (参考税率を差し込む)
+              <select value={exCountry} onChange={(e) => applyVatReference(e.target.value)} style={{ ...inputStyle, width: 200 }}>
+                {VAT_REFERENCE.map((v) => (
+                  <option key={v.code} value={v.code}>
+                    {v.name}
+                    {v.standard === null ? '（付加価値税なし）' : `（${Number((v.standard * 100).toFixed(2))}%）`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              課税価格の基準
+              <select value={exBasis} onChange={(e) => setExBasis(e.target.value as CustomsBasis)} style={{ ...inputStyle, width: 220 }}>
+                <option value="CIF">CIF（運賃・保険料を含む・EU ほか）</option>
+                <option value="FOB">FOB（含まない・米国）</option>
+              </select>
+            </label>
+            <GuardedNumber spec={{ label: '仕向国の関税率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={exDestDutyStr} onChange={setExDestDutyStr} width={140} />
+            <GuardedNumber spec={{ label: '仕向国の付加価値税 (%)', kind: 'percent', allowZero: true, max: 100 }} value={exVatStr} onChange={setExVatStr} width={160} />
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={exVatIncludesDuty} onChange={(e) => setExVatIncludesDuty(e.target.checked)} />
+              付加価値税の課税標準に関税を含める
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              誰が仕向国の税を負担するか
+              <select value={exBearer} onChange={(e) => setExBearer(e.target.value as 'seller' | 'buyer')} style={{ ...inputStyle, width: 200 }}>
+                <option value="buyer">買手（DAP・FOB ほか）</option>
+                <option value="seller">売手（DDP）</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="stat-grid" data-export-stats>
+            <Stat label="日本の輸出関税" value={jpy(0)} />
+            <Stat label="日本の消費税（輸出免税）" value={jpy(0)} />
+            <Stat label="輸出税（日本以外の場合）" value={jpy(Math.round(exportTax.exportDuty))} />
+            <Stat label="仕向国の課税価格" value={jpy(Math.round(exportTax.destCustomsValue))} />
+            <Stat label="仕向国の関税" value={jpy(Math.round(exportTax.destDuty))} />
+            <Stat label="仕向国の付加価値税" value={jpy(Math.round(exportTax.destVat))} />
+            <Stat label="仕向国の税 合計" value={jpy(Math.round(exportTax.destTotalTax))} />
+            <Stat label="売手の負担" value={jpy(Math.round(exportTax.sellerBurden))} positive={exportTax.sellerBurden === 0} />
+            <Stat label="買手の負担" value={jpy(Math.round(exportTax.buyerBurden))} />
+          </div>
+          {exportTax.notes.map((n, i) => (
+            <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
+          ))}
+          {lookupVat(exCountry)?.note && (
+            <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>・{lookupVat(exCountry)!.note}</div>
+          )}
+        </div>
+
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.7 }}>
+          ※ 付加価値税の参考税率は<strong>{VAT_REFERENCE_AS_OF}時点</strong>で確認できたものだけを載せています。網羅表ではなく、
+          <strong>改正で変わります</strong>。計算には必ず入力欄の値を使うので、最新の税率に書き換えてください。<br />
+          ※ 課税価格が1万円以下の輸入は関税・消費税が免除されます（革製バッグ・ニット製衣類等を除く。酒税・たばこ税等の個別消費税は免除されません）。
+          この免税と、個人的使用の課税価格60%の特例は、<strong>2028年4月1日から廃止・縮小される予定</strong>です。<br />
+          ※ 仕向国側には端数処理を仮定していません（規則が国ごとに違うため）。日本側のみ法定の切捨てを行っています。
+        </div>
+      </Section>
 
       <Section title="節税制度の案内 (一般情報)" count={tips.length}>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.9 }}>
