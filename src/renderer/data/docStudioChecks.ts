@@ -563,7 +563,8 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
   out.push(...(RULES[doc.id]?.(values) ?? []));
 
   const rank: Record<CheckLevel, number> = { fatal: 0, warn: 1, info: 2 };
-  return out.map((x, i) => ({ x, i })).sort((a, b) => rank[a.x.level] - rank[b.x.level] || a.i - b.i).map(({ x }) => x);
+  // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
+  return [...out].sort((a, b) => rank[a.level] - rank[b.level]);
 }
 
 /** 未入力のフィールド数（差込プレビューで【】のまま残る数）。 */

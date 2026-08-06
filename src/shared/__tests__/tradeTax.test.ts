@@ -273,3 +273,148 @@ describe('付加価値税の参考税率', () => {
     }
   });
 });
+
+/* mutation testing で生き残った変異体を狙って足したケース。 */
+
+describe('輸入 — 注記の文面', () => {
+  it('個人的使用のときだけ 60% 特例の注記が出る', () => {
+    expect(calcJapanImport(imp({ personalUse: true })).notes).toContain(
+      '個人的使用の特例により、課税価格を海外小売価格の60%で計算しました（この特例は2028年4月1日から廃止される予定です）。',
+    );
+    expect(calcJapanImport(imp()).notes.some((n) => n.includes('60%'))).toBe(false);
+  });
+
+  it('少額免税の注記は免税が効いたときだけ出る', () => {
+    const exempt = calcJapanImport(imp({ goodsValue: 5_000, freight: 0, insurance: 0 }));
+    expect(exempt.notes).toContain(
+      '課税価格の合計額が1万円以下のため、関税と消費税が免除されます（酒税・たばこ税等の個別消費税は免除されません）。この免税は2028年4月1日から一部廃止される予定です。',
+    );
+    expect(calcJapanImport(imp()).notes.some((n) => n.includes('1万円以下のため'))).toBe(false);
+  });
+
+  it('除外品目の注記は「1万円以下 かつ 除外」のときだけ出る', () => {
+    const msg = '課税価格は1万円以下ですが、革製バッグ・ニット製衣類等は少額免税の対象外のため課税されます。';
+    expect(calcJapanImport(imp({ goodsValue: 5_000, freight: 0, insurance: 0, exemptionExcluded: true })).notes).toContain(msg);
+    // 1万円超なら（除外品目でも）この注記は出ない
+    expect(calcJapanImport(imp({ exemptionExcluded: true })).notes.some((n) => n.includes('少額免税の対象外'))).toBe(false);
+    // 除外指定が無ければ出ない
+    expect(calcJapanImport(imp({ goodsValue: 5_000, freight: 0, insurance: 0 })).notes.some((n) => n.includes('少額免税の対象外'))).toBe(false);
+  });
+
+  it('個別消費税の注記は「課税されて かつ 個別消費税がある」ときだけ出る', () => {
+    const msg = '個別消費税（酒税・たばこ税等）は消費税の課税標準にも含まれます。税額は品目ごとに異なるため、税関にご確認ください。';
+    expect(calcJapanImport(imp({ otherExcise: 1_000 })).notes).toContain(msg);
+    // 個別消費税が 0 なら出ない
+    expect(calcJapanImport(imp()).notes.some((n) => n.includes('個別消費税（酒税'))).toBe(false);
+    // 免税なら出ない（課税自体が無い）
+    expect(
+      calcJapanImport(imp({ goodsValue: 5_000, freight: 0, insurance: 0, otherExcise: 1_000 }))
+        .notes.some((n) => n.includes('個別消費税（酒税')),
+    ).toBe(false);
+  });
+
+  it('何も特別な事情が無ければ注記は空', () => {
+    expect(calcJapanImport(imp()).notes).toEqual([]);
+  });
+
+  it('nonNeg は 0・NaN・Infinity・負値をすべて 0 にする', () => {
+    for (const bad of [0, -1, NaN, Infinity, -Infinity]) {
+      const r = calcJapanImport({ goodsValue: bad, freight: bad, insurance: bad, dutyRate: 0, smallValueExemption: false });
+      expect(r.customsValue, String(bad)).toBe(0);
+      expect(r.landedCost, String(bad)).toBe(0);
+    }
+    // 正の値はそのまま
+    expect(calcJapanImport(imp({ goodsValue: 1, freight: 0, insurance: 0, smallValueExemption: false })).customsValueRaw).toBe(1);
+  });
+});
+
+describe('輸出 — 注記と既定', () => {
+  it('輸出税が 0 のときと 0 超のときで先頭の注記が入れ替わる', () => {
+    expect(calcExport(exp()).notes[0]).toBe(
+      '日本は輸出に関税を課していません。輸出取引は消費税も免除されます（消費税法7条）。',
+    );
+    expect(calcExport(exp({ exportDutyRate: 0.01 })).notes[0]).toBe(
+      '日本は輸出に関税を課していません。輸出税を入力しているため、日本以外からの輸出として計算しています。',
+    );
+  });
+
+  it('課税価格の基準ごとに注記が変わる', () => {
+    expect(calcExport(exp({ destBasis: 'CIF' })).notes[1]).toBe(
+      '課税価格を CIF（国際運賃・保険料を含む）で計算しています。EU をはじめ多くの国はこの基準です。',
+    );
+    expect(calcExport(exp({ destBasis: 'FOB' })).notes[1]).toBe(
+      '課税価格を FOB（国際運賃・保険料を含まない）で計算しています。米国はこの基準です。',
+    );
+  });
+
+  it('負担者ごとに注記が変わり、既定は買手', () => {
+    expect(calcExport(exp({ bearer: 'seller' })).notes[2]).toBe(
+      'DDP など売手が輸入通関を行う条件のため、仕向国の関税・付加価値税を売手の負担として計上しています。',
+    );
+    expect(calcExport(exp({ bearer: 'buyer' })).notes[2]).toBe(
+      'DAP・FOB など買手が輸入通関を行う条件のため、仕向国の関税・付加価値税は買手の負担です。',
+    );
+    // 未指定は買手
+    const d = calcExport(exp());
+    expect(d.notes[2]).toContain('買手の負担です');
+    expect(d.buyerBurden).toBeCloseTo(d.destTotalTax, 6);
+  });
+
+  it('注記は必ず 4 件（輸出税・基準・負担者・丸め）', () => {
+    expect(calcExport(exp()).notes).toHaveLength(4);
+    expect(calcExport(exp()).notes[3]).toBe('仕向国側の端数処理は国ごとに規則が異なるため、丸めを行っていません。');
+  });
+
+  it('vatIncludesDuty の既定は true', () => {
+    expect(calcExport(exp()).destVatBase).toBe(calcExport(exp({ vatIncludesDuty: true })).destVatBase);
+  });
+
+  it('exportDutyRate の既定は 0', () => {
+    expect(calcExport(exp()).exportDuty).toBe(0);
+  });
+
+  it('負の税率は 0 として扱う', () => {
+    const r = calcExport(exp({ exportDutyRate: -1, destDutyRate: -1, destVatRate: -1 }));
+    expect(r.exportDuty).toBe(0);
+    expect(r.destDuty).toBe(0);
+    expect(r.destVat).toBe(0);
+  });
+});
+
+describe('付加価値税の参考税率 — 表そのものを固定する', () => {
+  it('掲載順と全項目', () => {
+    expect(VAT_REFERENCE.map((v) => v.code)).toEqual(['JP', 'GB', 'FR', 'DE', 'KR', 'CN', 'US', 'EU']);
+    expect(VAT_REFERENCE.map((v) => v.name)).toEqual([
+      '日本', '英国', 'フランス', 'ドイツ', '韓国', '中国', '米国', 'EU（指令の下限）',
+    ]);
+    expect(VAT_REFERENCE.map((v) => v.standard)).toEqual([0.1, 0.2, 0.2, 0.19, 0.1, 0.13, null, 0.15]);
+  });
+
+  it('軽減税率を持つのは日本とフランスだけ', () => {
+    expect(lookupVat('JP')!.reduced).toEqual([0.08]);
+    expect(lookupVat('FR')!.reduced).toEqual([0.1, 0.055, 0.021]);
+    for (const c of ['GB', 'DE', 'KR', 'CN', 'US', 'EU']) {
+      expect(lookupVat(c)!.reduced, c).toBeUndefined();
+    }
+  });
+
+  it('注記を持つのは米国と EU だけ', () => {
+    for (const c of ['JP', 'GB', 'FR', 'DE', 'KR', 'CN']) {
+      expect(lookupVat(c)!.note, c).toBeUndefined();
+    }
+    expect(lookupVat('US')!.note).toBe(
+      '連邦の付加価値税はありません。州・地方の小売売上税（sales tax）が課され、税率は州や郡・市で異なります。関税の課税価格は FOB 基準です。',
+    );
+    expect(lookupVat('EU')!.note).toBe(
+      'EU 指令は標準税率を15%以上と定めており、実際の税率は加盟国ごとに異なります。',
+    );
+  });
+
+  it('定数の値', () => {
+    expect(JP_NATIONAL_STANDARD).toBe(0.078);
+    expect(JP_NATIONAL_REDUCED).toBe(0.0624);
+    expect(JP_LOCAL_RATIO).toBe(22 / 78);
+    expect(SMALL_VALUE_LIMIT).toBe(10_000);
+    expect(PERSONAL_USE_FACTOR).toBe(0.6);
+  });
+});

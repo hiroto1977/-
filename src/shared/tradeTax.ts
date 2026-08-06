@@ -45,7 +45,8 @@ export type CustomsBasis = 'CIF' | 'FOB';
 
 const floor1000 = (n: number) => Math.floor(n / 1000) * 1000;
 const floor100 = (n: number) => Math.floor(n / 100) * 100;
-const nonNeg = (n: number) => (Number.isFinite(n) && n > 0 ? n : 0);
+// n > 0 / n >= 0 は n === 0 で同値になり変異を区別できないため、比較ごと Math.max に寄せる。
+const nonNeg = (n: number) => (Number.isFinite(n) ? Math.max(0, n) : 0);
 
 export interface ImportInput {
   /** 商品代金（円）。個人使用のときは海外小売価格。 */

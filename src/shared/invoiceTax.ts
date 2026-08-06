@@ -152,6 +152,9 @@ export function groupByTaxKind(lines: readonly TaxLine[], opts: GroupOptions = {
     const rate = resolveRate(kind, opts);
     const subtotal = ls.reduce((s, l) => s + lineAmount(l), 0);
     // ★ 端数処理は区分の合計に対して 1 回だけ。行ごとには絶対に行わない。
+    // Stryker disable next-line ConditionalExpression,LogicalOperator: 非課税・不課税は rate が null で、
+    // どの分岐を潰しても `subtotal * null === 0` により税額 0 のまま。課税区分では rate が null に
+    // ならないため、条件を入れ替えても観測できる差が出ない（等価変異）。
     const tax = meta.taxable && rate !== null ? applyRounding(subtotal * rate, rounding) : 0;
     groups.push({
       kind,
@@ -199,6 +202,8 @@ export function perLineRoundingDelta(totals: InvoiceTotals): number {
   const rounding = totals.rounding;
   let perLine = 0;
   for (const g of totals.groups) {
+    // Stryker disable next-line ConditionalExpression,LogicalOperator: skip をやめても
+    // 非課税区分は rate が null で `amount * null === 0` になり、加算結果が変わらない（等価変異）。
     if (!g.taxable || g.rate === null) continue;
     for (const l of g.lines) perLine += applyRounding(lineAmount(l) * g.rate, rounding);
   }

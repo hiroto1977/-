@@ -194,3 +194,121 @@ describe('税率の表示', () => {
     expect(rateLabel(g('nonTaxable'))).toBe('—');
   });
 });
+
+/* mutation testing で生き残った変異体を狙って足したケース。 */
+
+describe('税率区分の定義（表そのものを固定する）', () => {
+  it('7 区分すべての表示名・既定税率・軽減フラグ・課税フラグ・並び順', () => {
+    expect(TAX_KINDS).toEqual({
+      standard: { label: '標準税率', defaultRate: 0.1, isReduced: false, taxable: true, order: 1 },
+      reduced: { label: '軽減税率', defaultRate: 0.08, isReduced: true, taxable: true, order: 2 },
+      customA: { label: '任意税率A', defaultRate: null, isReduced: false, taxable: true, order: 3 },
+      customB: { label: '任意税率B', defaultRate: null, isReduced: false, taxable: true, order: 4 },
+      exportExempt: { label: '免税（輸出取引等）', defaultRate: 0, isReduced: false, taxable: true, order: 5 },
+      nonTaxable: { label: '非課税', defaultRate: null, isReduced: false, taxable: false, order: 6 },
+      outOfScope: { label: '不課税（対象外）', defaultRate: null, isReduced: false, taxable: false, order: 7 },
+    });
+  });
+
+  it('グループの label は区分の表示名がそのまま入る', () => {
+    const g = (k: TaxKind) => groupByTaxKind([line('x', 1, 100, k)]).groups[0]!;
+    expect(g('standard').label).toBe('標準税率');
+    expect(g('reduced').label).toBe('軽減税率');
+    expect(g('customA').label).toBe('任意税率A');
+    expect(g('customB').label).toBe('任意税率B');
+    expect(g('exportExempt').label).toBe('免税（輸出取引等）');
+    expect(g('nonTaxable').label).toBe('非課税');
+    expect(g('outOfScope').label).toBe('不課税（対象外）');
+  });
+
+  it('軽減フラグが立つのは reduced だけ', () => {
+    for (const k of ['standard', 'customA', 'customB', 'exportExempt', 'nonTaxable', 'outOfScope'] as const) {
+      expect(groupByTaxKind([line('x', 1, 100, k)]).groups[0]!.isReduced, k).toBe(false);
+    }
+    expect(groupByTaxKind([line('x', 1, 100, 'reduced')]).groups[0]!.isReduced).toBe(true);
+  });
+
+  it('課税対象外は nonTaxable と outOfScope だけ', () => {
+    for (const k of ['standard', 'reduced', 'customA', 'customB', 'exportExempt'] as const) {
+      expect(groupByTaxKind([line('x', 1, 100, k)]).groups[0]!.taxable, k).toBe(true);
+    }
+    for (const k of ['nonTaxable', 'outOfScope'] as const) {
+      expect(groupByTaxKind([line('x', 1, 100, k)]).groups[0]!.taxable, k).toBe(false);
+    }
+  });
+});
+
+describe('集計の細部', () => {
+  it('端数処理を省略すると切捨てになる', () => {
+    // 105 × 8% = 8.4 → 切捨て 8
+    expect(groupByTaxKind([line('a', 1, 105, 'reduced')]).totalTax).toBe(8);
+    expect(groupByTaxKind([line('a', 1, 105, 'reduced')]).rounding).toBe('floor');
+    expect(groupByTaxKind([line('a', 1, 105, 'reduced')], {}).rounding).toBe('floor');
+  });
+
+  it('名前だけの行も金額だけの行も残す（どちらか一方でよい）', () => {
+    expect(groupByTaxKind([line('名前だけ', 0, 0, 'standard')]).groups[0]!.lines).toHaveLength(1);
+    expect(groupByTaxKind([line('', 1, 500, 'standard')]).groups[0]!.lines).toHaveLength(1);
+    // 両方無い行だけが捨てられる
+    expect(groupByTaxKind([line('', 0, 0, 'standard')]).groups).toHaveLength(0);
+    expect(groupByTaxKind([line('  ', 0, 0, 'standard')]).groups).toHaveLength(0);
+  });
+
+  it('非課税・不課税の税額は 0 で、税率が null なら計算しない', () => {
+    const t = groupByTaxKind([line('x', 1, 1_000_000, 'nonTaxable')]);
+    expect(t.groups[0]!.tax).toBe(0);
+    expect(t.groups[0]!.total).toBe(1_000_000);
+    expect(t.totalTax).toBe(0);
+  });
+
+  it('グループの total は 税抜小計 + 消費税', () => {
+    const g = groupByTaxKind([line('a', 2, 500, 'standard')]).groups[0]!;
+    expect(g.subtotal).toBe(1000);
+    expect(g.tax).toBe(100);
+    expect(g.total).toBe(1100);
+  });
+
+  it('hasReduced は軽減の小計が 0 より大きいときだけ true', () => {
+    // 軽減の行はあるが金額 0（名前だけ）→ false
+    expect(groupByTaxKind([line('名前だけ', 0, 0, 'reduced')]).hasReduced).toBe(false);
+    expect(groupByTaxKind([line('弁当', 1, 1, 'reduced')]).hasReduced).toBe(true);
+  });
+
+  it('perLineRoundingDelta は非課税・税率 null の区分を無視する', () => {
+    const t = groupByTaxKind([
+      line('a', 1, 105, 'reduced'),
+      line('b', 1, 105, 'reduced'),
+      line('c', 1, 105, 'reduced'),
+      line('土地', 1, 999_999, 'nonTaxable'),
+    ]);
+    expect(perLineRoundingDelta(t)).toBe(-1);
+  });
+
+  it('端数が出ない組合せでは差が 0 になる', () => {
+    const t = groupByTaxKind([line('a', 1, 1000, 'standard'), line('b', 1, 2000, 'standard')]);
+    expect(perLineRoundingDelta(t)).toBe(0);
+  });
+
+  it('切上げでは行ごとの積み上げが本来より多くなる', () => {
+    const t = groupByTaxKind(
+      [line('a', 1, 105, 'reduced'), line('b', 1, 105, 'reduced'), line('c', 1, 105, 'reduced')],
+      { rounding: 'ceil' },
+    );
+    expect(t.totalTax).toBe(26); // 315 × 8% = 25.2 → 26
+    expect(perLineRoundingDelta(t)).toBe(1); // 9×3 = 27
+  });
+
+  it('lineAmount は数量 × 単価', () => {
+    expect(lineAmount(line('x', 3, 1080, 'reduced'))).toBe(3240);
+    expect(lineAmount(line('x', 0, 1080, 'reduced'))).toBe(0);
+  });
+
+  it('applyRounding の既定は切捨て', () => {
+    expect(applyRounding(9.9, 'floor')).toBe(9);
+  });
+
+  it('resolveRate は任意税率の指定が無ければ 0 を返す', () => {
+    expect(resolveRate('customA', {})).toBe(0);
+    expect(resolveRate('customB', {})).toBe(0);
+  });
+});

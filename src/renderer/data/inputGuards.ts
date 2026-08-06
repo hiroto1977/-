@@ -70,9 +70,9 @@ const DECORATION = /[¥￥$,\s円％%人年月日個株㎡ｍm]/g;
  * - `万` `億` などの単位語を含むものは読まない（誤解釈より未読を選ぶ）
  */
 export function readNumber(raw: string | undefined | null): number | null {
-  if (raw === undefined || raw === null) return null;
-  const half = toHalfWidth(String(raw)).trim();
-  if (half.length === 0) return null;
+  // null / undefined / 空文字を早期 return しないのは、下の厳格な正規表現が
+  // 'undefined' 'null' '' をいずれも弾くため。分岐を足しても結果は変わらない。
+  const half = toHalfWidth(String(raw));
   if (UNIT_WORD.test(half)) return null;
   const bare = half.replace(DECORATION, '');
   if (!/^[+-]?\d+(\.\d+)?$/.test(bare)) return null;
@@ -87,7 +87,8 @@ export function readNumberOr0(raw: string | undefined | null): number {
 
 /** 単位語（万・億）が含まれているか。指摘の文面を変えるために使う。 */
 export function hasUnitWord(raw: string | undefined | null): boolean {
-  if (!raw) return false;
+  // 空・null・undefined を早期 return しないのは、'undefined' 'null' '' の
+  // いずれも UNIT_WORD に当たらず false になるため（分岐を足しても同じ）。
   return UNIT_WORD.test(toHalfWidth(String(raw)));
 }
 
@@ -118,7 +119,7 @@ const KIND: Record<NumKind, KindRule> = {
  */
 export function guardNumber(raw: string | undefined | null, spec: NumSpec): GuardIssue | null {
   const rule = KIND[spec.kind];
-  const text = raw === undefined || raw === null ? '' : String(raw).trim();
+  const text = raw == null ? '' : String(raw).trim();
 
   if (text.length === 0) {
     if (spec.allowEmpty) return null;
@@ -147,10 +148,13 @@ export function guardNumber(raw: string | undefined | null, spec: NumSpec): Guar
   if (value === 0 && (spec.allowZero ?? !rule.zeroIsFatal) === false) {
     return { level: 'fatal', label: spec.label, message: `0 ${rule.unit} では計算できません。` };
   }
+  // Stryker disable next-line ConditionalExpression: !== undefined を true 固定にしても
+  // spec.min が undefined のとき `value < undefined` が常に false になるため結果は同じ（等価変異）。
   if (spec.min !== undefined && value < spec.min) {
     return { level: 'fatal', label: spec.label, message: `${spec.min} ${rule.unit} 以上で入力してください（現在 ${value}）。` };
   }
   const max = spec.max ?? rule.max;
+  // Stryker disable next-line ConditionalExpression: 上と同じ理由（`value > undefined` は false）。
   if (max !== undefined && value > max) {
     return { level: 'fatal', label: spec.label, message: `${max} ${rule.unit} 以下で入力してください（現在 ${value}）。` };
   }
@@ -158,6 +162,7 @@ export function guardNumber(raw: string | undefined | null, spec: NumSpec): Guar
     return { level: 'warn', label: spec.label, message: `整数で入力してください（現在 ${value}）。小数は切り捨てられます。` };
   }
   const sane = spec.sane ?? rule.sane;
+  // Stryker disable next-line ConditionalExpression: 上と同じ理由（`value > undefined` は false）。
   if (sane !== undefined && value > sane) {
     return {
       level: 'warn',
@@ -176,7 +181,8 @@ export function guardAll(entries: readonly (readonly [string | undefined | null,
     if (issue) out.push(issue);
   }
   const rank: Record<GuardLevel, number> = { fatal: 0, warn: 1, info: 2 };
-  return out.map((x, i) => ({ x, i })).sort((a, b) => rank[a.x.level] - rank[b.x.level] || a.i - b.i).map(({ x }) => x);
+  // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
+  return [...out].sort((a, b) => rank[a.level] - rank[b.level]);
 }
 
 /** 画面のバッジ表示用の件数。 */

@@ -179,7 +179,10 @@
     "src/shared/zoningPlanner.ts",
     "src/renderer/data/shigyoDirectory.ts",
     "src/renderer/data/investments.ts",
-    "src/shared/buildingIso.ts"
+    "src/shared/buildingIso.ts",
+    "src/renderer/data/inputGuards.ts",
+    "src/shared/invoiceTax.ts",
+    "src/shared/tradeTax.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
