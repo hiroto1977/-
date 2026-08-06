@@ -323,3 +323,186 @@ describe('buildSchedule — 画面が使う一括の結果', () => {
     }
   });
 });
+
+/* mutation testing で生き残った変異体を狙って足したケース。 */
+
+describe('端数と日付ユーティリティの境界', () => {
+  it('還付は 1円未満なら 1円、1円ちょうどは 1円のまま', () => {
+    expect(roundRefund(0.9)).toBe(1);
+    expect(roundRefund(1)).toBe(1);
+    expect(roundRefund(1.9)).toBe(1);
+    expect(roundRefund(2)).toBe(2);
+  });
+
+  it('年末年始は 12/29〜1/3 で、1/4 と 12/28 は開庁日', () => {
+    const d = (y: number, m: number, day: number) => new Date(Date.UTC(y, m - 1, day));
+    // 2027-12-28 は火曜（開庁日）
+    expect(nextBusinessDay(d(2027, 12, 28))).toEqual(d(2027, 12, 28));
+    // 12/29 以降は送られる
+    expect(nextBusinessDay(d(2027, 12, 29))).toEqual(d(2028, 1, 4));
+    expect(nextBusinessDay(d(2028, 1, 3))).toEqual(d(2028, 1, 4));
+    // 1/4 は送られない（月曜以外でも開庁日）
+    expect(nextBusinessDay(d(2028, 1, 4))).toEqual(d(2028, 1, 4));
+  });
+
+  it('土日は翌開庁日へ送る', () => {
+    const d = (y: number, m: number, day: number) => new Date(Date.UTC(y, m - 1, day));
+    expect(nextBusinessDay(d(2026, 5, 30))).toEqual(d(2026, 6, 1)); // 土
+    expect(nextBusinessDay(d(2026, 5, 31))).toEqual(d(2026, 6, 1)); // 日
+    expect(nextBusinessDay(d(2026, 6, 1))).toEqual(d(2026, 6, 1)); // 月
+  });
+
+  it('12月決算法人の課税期間は 1月開始（開始月の算出）', () => {
+    // 12月決算 → 課税期間 1/1〜12/31 → 年1回中間の対象期間末日は 6/30
+    const p = planInterim(corporate({ fiscalEndMonth: 12, fiscalEndYear: 2026, priorNationalTax: 600_000 }));
+    expect(p.payments[0]!.periodEnd).toBe('2026-06-30');
+    expect(p.payments[0]!.due).toBe('2026-08-31');
+  });
+
+  it('1月決算法人の課税期間は前年2月開始', () => {
+    const p = planInterim(corporate({ fiscalEndMonth: 1, fiscalEndYear: 2027, priorNationalTax: 600_000 }));
+    // 課税期間 2026-02-01〜2027-01-31 → 6か月中間の末日は 2026-07-31
+    expect(p.payments[0]!.periodEnd).toBe('2026-07-31');
+    expect(p.payments[0]!.due).toBe('2026-09-30');
+  });
+});
+
+describe('中間申告の区分ラベルと内訳', () => {
+  it('区分ごとのラベル文面', () => {
+    expect(planInterim(individual({ priorNationalTax: 0 })).band)
+      .toBe('48万円以下 — 中間申告は不要（任意の中間申告制度あり）');
+    expect(planInterim(individual({ priorNationalTax: 600_000 })).band)
+      .toBe('48万円超 400万円以下 — 年1回（6か月中間申告）');
+    expect(planInterim(individual({ priorNationalTax: 6_000_000 })).band)
+      .toBe('400万円超 4,800万円以下 — 年3回（3か月中間申告）');
+    expect(planInterim(individual({ priorNationalTax: 60_000_000 })).band)
+      .toBe('4,800万円超 — 年11回（1か月中間申告）');
+  });
+
+  it('各回の total は 国税 + 地方（引き算ではない）', () => {
+    for (const prior of [600_000, 6_000_000, 60_000_000]) {
+      const p = planInterim(individual({ priorNationalTax: prior }));
+      for (const x of p.payments) {
+        expect(x.total, String(prior)).toBe(x.national + x.local);
+        expect(x.total, String(prior)).toBeGreaterThan(x.national);
+      }
+    }
+  });
+
+  it('地方消費税は国税に 22/78 を掛ける（割るのではない）', () => {
+    const p = planInterim(individual({ priorNationalTax: 60_000_000 }));
+    const x = p.payments[0]!;
+    expect(x.local).toBeLessThan(x.national);
+    expect(x.local).toBe(floor100(x.national * LOCAL_RATIO));
+  });
+
+  it('回数は 1 から始まり連番になる', () => {
+    expect(planInterim(individual({ priorNationalTax: 6_000_000 })).payments.map((x) => x.no)).toEqual([1, 2, 3]);
+    expect(planInterim(individual({ priorNationalTax: 60_000_000 })).payments.map((x) => x.no))
+      .toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  });
+});
+
+describe('還付の目安の文面', () => {
+  it('e-Tax と書面で注記が変わる', () => {
+    const base = individual({ taxableSales: 0, taxablePurchases: 30_000_000 });
+    expect(settle(base, calcAnnualTax(base, 0.1), planInterim(base)).refundWindow?.note)
+      .toBe('e-Tax で申告した場合のおおむねの目安（申告から2〜3週間程度）。期限より早く申告すればその分早まります。');
+    const paper = { ...base, eTax: false };
+    expect(settle(paper, calcAnnualTax(paper, 0.1), planInterim(paper)).refundWindow?.note)
+      .toBe('書面で申告した場合のおおむねの目安（申告から1か月〜1か月半程度）。期限より早く申告すればその分早まります。');
+  });
+});
+
+describe('年税額の還付側', () => {
+  it('還付のとき国税・地方はいずれも負の値になる', () => {
+    const a = calcAnnualTax(individual({ taxableSales: 0, taxablePurchases: 10_000_000 }), 0.1);
+    expect(a.isRefund).toBe(true);
+    expect(a.national).toBeLessThan(0);
+    expect(a.local).toBeLessThan(0);
+    expect(a.total).toBe(a.national + a.local);
+  });
+
+  it('納付のときはいずれも 0 以上', () => {
+    const a = calcAnnualTax(individual(), 0.1);
+    expect(a.isRefund).toBe(false);
+    expect(a.national).toBeGreaterThan(0);
+    expect(a.local).toBeGreaterThan(0);
+  });
+});
+
+describe('分岐税率の課税ベース', () => {
+  it('簡易課税の課税ベースは 売上 ×（1 − みなし仕入率）', () => {
+    // 売上3,000万・みなし50% → ベース1,500万。中間150万なら分岐は 10%
+    const input = individual({ method: 'simplified', deemedPurchaseRate: 0.5, priorNationalTax: 600_000 });
+    const interim = planInterim(input);
+    expect(breakEvenRate(input)).toBeCloseTo(interim.total / 15_000_000, 10);
+  });
+
+  it('みなし仕入率が上がると課税ベースが減り、分岐税率は上がる', () => {
+    const low = breakEvenRate(individual({ method: 'simplified', deemedPurchaseRate: 0.4, priorNationalTax: 600_000 }))!;
+    const high = breakEvenRate(individual({ method: 'simplified', deemedPurchaseRate: 0.8, priorNationalTax: 600_000 }))!;
+    expect(high).toBeGreaterThan(low);
+  });
+
+  it('みなし仕入率の範囲外指定は 0〜1 に丸める', () => {
+    const over = breakEvenRate(individual({ method: 'simplified', deemedPurchaseRate: 5, priorNationalTax: 600_000 }));
+    const under = breakEvenRate(individual({ method: 'simplified', deemedPurchaseRate: -5, priorNationalTax: 600_000 }));
+    // 1 に丸められるとベースが 0 になり分岐なし
+    expect(over).toBeNull();
+    // 0 に丸められるとベースは売上全額
+    expect(under).toBeCloseTo(planInterim(individual({ priorNationalTax: 600_000 })).total / 30_000_000, 10);
+  });
+
+  it('課税ベースがちょうど 0 なら分岐税率は無い', () => {
+    expect(breakEvenRate(individual({ taxableSales: 1_000_000, taxablePurchases: 1_000_000, priorNationalTax: 600_000 }))).toBeNull();
+  });
+
+  it('分岐税率がちょうど 50% なら返す（超えたときだけ null）', () => {
+    // 中間納付 = ベース × 0.5 になるように売上を決める
+    const interim = planInterim(individual({ priorNationalTax: 6_000_000 }));
+    const sales = interim.total / 0.5;
+    const input = individual({ taxableSales: sales, taxablePurchases: 0, priorNationalTax: 6_000_000 });
+    expect(breakEvenRate(input)).toBeCloseTo(MAX_RATE, 10);
+    // わずかに売上を減らすと 50% を超えて null
+    expect(breakEvenRate({ ...input, taxableSales: sales * 0.99 })).toBeNull();
+  });
+});
+
+describe('残った変異体を狙う — 観測できる差があるもの', () => {
+  it('11月決算法人の課税期間は前年12月開始（開始月の年またぎ）', () => {
+    const p = planInterim(corporate({ fiscalEndMonth: 11, fiscalEndYear: 2027, priorNationalTax: 600_000 }));
+    // 課税期間 2026-12-01〜2027-11-30 → 6か月中間の末日は 2027-05-31
+    expect(p.payments[0]!.periodEnd).toBe('2027-05-31');
+    expect(p.payments[0]!.due).toBe('2027-08-02'); // 7/31 は土曜
+  });
+
+  it('決算月ごとに中間対象期間の末日が 1 か月ずつずれる', () => {
+    const endOf = (m: number) =>
+      planInterim(corporate({ fiscalEndMonth: m, fiscalEndYear: 2027, priorNationalTax: 600_000 })).payments[0]!.periodEnd;
+    expect(endOf(3)).toBe('2026-09-30'); // 課税期間 2026-04-01〜
+    expect(endOf(6)).toBe('2026-12-31'); // 2026-07-01〜
+    expect(endOf(9)).toBe('2027-03-31'); // 2026-10-01〜
+    expect(endOf(11)).toBe('2027-05-31'); // 2026-12-01〜
+    expect(endOf(12)).toBe('2027-06-30'); // 2027-01-01〜
+  });
+
+  it('還付の端数は「1円未満切捨て」であって 100円単位ではない', () => {
+    // 仕入 20,001 × 10% × 78% = 1,560.078 → 還付は 1,560 円（100円単位なら 1,600 になる）
+    const input = individual({ taxableSales: 0, taxablePurchases: 20_001 });
+    const a = calcAnnualTax(input, 0.1);
+    expect(a.isRefund).toBe(true);
+    expect(a.national).toBe(-1_560);
+    // 地方も 1円単位: 1,560 × 22/78 = 440.0 → 440
+    expect(a.local).toBe(-440);
+    expect(a.total).toBe(-2_000);
+  });
+
+  it('納付側は 100円未満切捨てのまま（還付と扱いが違う）', () => {
+    const input = individual({ taxableSales: 20_001, taxablePurchases: 0 });
+    const a = calcAnnualTax(input, 0.1);
+    expect(a.isRefund).toBe(false);
+    expect(a.national).toBe(1_500); // 1,560.078 → 100円未満切捨て
+    expect(a.local).toBe(400); // 1,500 × 22/78 = 423.07 → 400
+  });
+});

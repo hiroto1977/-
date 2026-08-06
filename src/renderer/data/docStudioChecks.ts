@@ -33,7 +33,10 @@ type Values = Record<string, string>;
 export function toNum(raw: string | undefined): number | null {
   if (!raw) return null;
   const half = raw.replace(/[０-９．－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
-  const m = half.replace(/[,\s]/g, '').match(/-?\d+(\.\d+)?/);
+  // 桁区切りは半角 , だけとは限らない。日本語 IME は全角 ，や読点 、を平気で挟むので
+  // ここで一緒に落とす（\s は U+3000 全角スペースも含む）。落とし損ねると
+  // 「１，２３４」が 1 と読まれ、金額チェックが静かに的外れになる。
+  const m = half.replace(/[,，、\s]/g, '').match(/-?\d+(\.\d+)?/);
   if (!m) return null;
   const n = Number(m[0]);
   return Number.isFinite(n) ? n : null;
@@ -48,11 +51,13 @@ export function parseJpDate(raw: string | undefined): number | null {
   const y = Number(m[1]);
   const mo = Number(m[2]);
   const d = Number(m[3]);
-  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  // 月だけは先に弾く。Date.UTC は 0 月を前年12月、13月を翌年1月として受け取ってしまい、
+  // 日は動かないので後段の照合をすり抜ける。
+  if (mo < 1 || mo > 12) return null;
   const t = Date.UTC(y, mo - 1, d);
-  // 2月30日のような存在しない日付を弾く
-  const back = new Date(t);
-  if (back.getUTCMonth() !== mo - 1 || back.getUTCDate() !== d) return null;
+  // 2月30日・4月31日・0日のような実在しない日は Date.UTC が別の月へ繰り上げ／繰り下げるため、
+  // 日が入力どおりに戻ってこない。日の照合だけで足りる（月は上で範囲を保証済み）。
+  if (new Date(t).getUTCDate() !== d) return null;
   return t;
 }
 
@@ -72,6 +77,34 @@ export function isRegistrationNo(raw: string | undefined): boolean {
   return /^T\d{13}$/.test(half.replace(/[-\s]/g, '').toUpperCase());
 }
 
+/** 入力欄の値。前後の空白は書式上の意味を持たないので落とす。 */
+function text(v: Values, key: string): string {
+  return (v[key] ?? '').trim();
+}
+
+/**
+ * 判定用に数値を読む。読めなければ NaN。
+ *
+ * null ではなく NaN を返すのは、「読めなかった値はどの閾値にも引っかからない」という
+ * この画面の方針をそのまま演算に載せるため。NaN との比較は常に false なので、
+ * 呼び出し側に `x !== null &&` を書き足す必要がない（書いても結果は変わらない）。
+ * 「読めないこと自体」で判定を止めたい箇所だけ Number.isFinite で明示する。
+ */
+function num(v: Values, key: string): number {
+  const parsed = toNum(v[key]);
+  return parsed === null ? Number.NaN : parsed;
+}
+
+/** 判定用に日付を読む。読めなければ NaN（差を取っても NaN のまま伝播する）。 */
+function day(v: Values, key: string): number {
+  const t = parseJpDate(v[key]);
+  return t === null ? Number.NaN : t;
+}
+
+/** 選択肢が指定の書き出しかどうか。未選択なら false（判定しない）。 */
+function chose(v: Values, key: string, prefix: string): boolean {
+  return v[key]?.startsWith(prefix) ?? false;
+}
 
 /** 品目別の税率区分（i1..i6）に共通する検査。invoice / shiharai で共用する。 */
 function taxItemIssues(v: Values, max: number): DocIssue[] {
@@ -79,9 +112,9 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
   const usedCustom = new Set<string>();
   let anyLine = false;
   for (let n = 1; n <= max; n += 1) {
-    const kind = (v[`i${n}kind`] ?? '').trim();
-    const name = (v[`i${n}name`] ?? '').trim();
-    const price = (v[`i${n}price`] ?? '').trim();
+    const kind = text(v, `i${n}kind`);
+    const name = text(v, `i${n}name`);
+    const price = text(v, `i${n}price`);
     const filled = name !== '' || price !== '';
     if (kind === '任意税率A') usedCustom.add('A');
     if (kind === '任意税率B') usedCustom.add('B');
@@ -98,9 +131,9 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
     }
   }
   for (const tag of usedCustom) {
-    const raw = (v[`rate${tag}`] ?? '').trim();
-    const val = toNum(raw);
-    if (raw === '' || val === null) {
+    // 空欄も「読めない」に含まれる（toNum は空文字で null を返す）ので、null 判定だけでよい。
+    const val = toNum(v[`rate${tag}`]);
+    if (val === null) {
       out.push({
         level: 'fatal',
         field: `rate${tag}`,
@@ -125,8 +158,9 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
 const RULES: Record<string, (v: Values) => DocIssue[]> = {
   mimoto(v) {
     const out: DocIssue[] = [];
-    const limit = toNum(v['limit']);
-    if (limit === null || limit <= 0) {
+    const limit = num(v, 'limit');
+    // 読めない（NaN）も 0 以下も「極度額の定めなし」。NaN > 0 は false なので一本で足りる。
+    if (!(limit > 0)) {
       out.push({
         level: 'fatal',
         field: 'limit',
@@ -134,8 +168,8 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
         basis: '民法465条の2（個人根保証契約は極度額を定めなければ効力を生じない）',
       });
     }
-    const years = toNum(v['years']);
-    if (years !== null && years > 5) {
+    const years = num(v, 'years');
+    if (years > 5) {
       out.push({
         level: 'fatal',
         field: 'years',
@@ -148,16 +182,16 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   saburoku(v) {
     const out: DocIssue[] = [];
-    const month = toNum(v['monthLimit']);
-    const year = toNum(v['yearLimit']);
-    if (month !== null && month >= 100) {
+    const month = num(v, 'monthLimit');
+    const year = num(v, 'yearLimit');
+    if (month >= 100) {
       out.push({
         level: 'fatal',
         field: 'monthLimit',
         message: `1か月の延長時間が ${month} 時間です。休日労働を含めて1か月100時間未満でなければならず、特別条項でもこの上限は超えられません。`,
         basis: '労働基準法36条6項2号',
       });
-    } else if (month !== null && month > 45) {
+    } else if (month > 45) {
       out.push({
         level: 'warn',
         field: 'monthLimit',
@@ -165,14 +199,14 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
         basis: '労働基準法36条4項・5項',
       });
     }
-    if (year !== null && year > 720) {
+    if (year > 720) {
       out.push({
         level: 'fatal',
         field: 'yearLimit',
         message: `1年の延長時間が ${year} 時間です。特別条項を締結しても1年720時間を超えることはできません。`,
         basis: '労働基準法36条5項',
       });
-    } else if (year !== null && year > 360) {
+    } else if (year > 360) {
       out.push({
         level: 'warn',
         field: 'yearLimit',
@@ -180,16 +214,16 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
         basis: '労働基準法36条4項',
       });
     }
-    if (month !== null && year !== null && year > month * 12) {
+    if (year > month * 12) {
       out.push({
         level: 'warn',
         field: 'yearLimit',
         message: `1年の延長時間（${year} 時間）が、1か月の延長時間 × 12（${month * 12} 時間）を上回っています。月の上限を守ると年の枠を使い切れません。`,
       });
     }
-    const target = toNum(v['target']);
-    const workers = toNum(v['workers']);
-    if (target !== null && workers !== null && target > workers) {
+    const target = num(v, 'target');
+    const workers = num(v, 'workers');
+    if (target > workers) {
       out.push({
         level: 'warn',
         field: 'target',
@@ -206,20 +240,18 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   shohi(v) {
     const out: DocIssue[] = [];
-    const amount = toNum(v['amount']);
-    const rate = toNum(v['rate']);
-    if (amount !== null && rate !== null) {
-      const cap = interestCap(amount);
-      if (rate > cap) {
-        out.push({
-          level: 'fatal',
-          field: 'rate',
-          message: `元本 ${amount.toLocaleString('ja-JP')} 円に対する上限利率は年 ${cap}% です。年 ${rate}% とした場合、超過部分は無効になります。`,
-          basis: '利息制限法1条',
-        });
-      }
+    const amount = num(v, 'amount');
+    const rate = num(v, 'rate');
+    // 元本が読めないと上限区分（20/18/15%）が決まらないので、利率だけでは判定しない。
+    if (Number.isFinite(amount) && rate > interestCap(amount)) {
+      out.push({
+        level: 'fatal',
+        field: 'rate',
+        message: `元本 ${amount.toLocaleString('ja-JP')} 円に対する上限利率は年 ${interestCap(amount)}% です。年 ${rate}% とした場合、超過部分は無効になります。`,
+        basis: '利息制限法1条',
+      });
     }
-    if (amount !== null && amount >= 10_000) {
+    if (amount >= 10_000) {
       out.push({
         level: 'info',
         message: '紙で作成する場合は印紙税第1号の3文書として記載金額に応じた収入印紙が必要です。電子契約として交付すれば課税文書に当たりません。',
@@ -231,10 +263,11 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   chintai(v) {
     const out: DocIssue[] = [];
-    const term = v['term'] ?? '';
-    const years = /(\d+)\s*年/.exec(term);
+    const term = text(v, 'term');
+    // 「1年6か月」のように年が併記されていれば1年未満ではない。年の数値自体は使わない。
+    const hasYear = /\d\s*年/.test(term);
     const months = /(\d+)\s*(?:か月|ヶ月|カ月|箇月)/.exec(term);
-    if (!years && months && Number(months[1]) < 12) {
+    if (!hasYear && months && Number(months[1]) < 12) {
       out.push({
         level: 'warn',
         field: 'term',
@@ -242,9 +275,9 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
         basis: '借地借家法29条1項・38条',
       });
     }
-    const rent = toNum(v['rent']);
-    const shiki = toNum(v['shikikin']);
-    if (rent !== null && shiki !== null && rent > 0 && shiki > rent * 12) {
+    const rent = num(v, 'rent');
+    const shiki = num(v, 'shikikin');
+    if (rent > 0 && shiki > rent * 12) {
       out.push({
         level: 'warn',
         field: 'shikikin',
@@ -256,30 +289,26 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   'kaiko-yokoku'(v) {
     const out: DocIssue[] = [];
-    const notice = parseJpDate(v['noticeDate']);
-    const dismiss = parseJpDate(v['dismissDate']);
-    const teate = v['teate'] ?? '';
-    if (notice !== null && dismiss !== null) {
-      const days = Math.round((dismiss - notice) / DAY);
-      if (days < 0) {
-        out.push({ level: 'warn', field: 'dismissDate', message: '解雇の日が通知日より前になっています。' });
-      } else if (days < 30 && teate.startsWith('支給しない')) {
-        out.push({
-          level: 'fatal',
-          field: 'teate',
-          message: `予告期間が ${days} 日しかありません。30日前の予告に満たない場合は、不足日数分以上の平均賃金（解雇予告手当）の支払が必要です。`,
-          basis: '労働基準法20条',
-        });
-      } else if (days < 30) {
-        out.push({
-          level: 'warn',
-          field: 'teateAmount',
-          message: `予告期間は ${days} 日です。不足する ${30 - days} 日分以上の平均賃金を解雇予告手当として支払ってください。`,
-          basis: '労働基準法20条2項',
-        });
-      }
+    // 日付が読めなければ days は NaN になり、以下の比較はすべて false になる（＝判定しない）。
+    const days = Math.round((day(v, 'dismissDate') - day(v, 'noticeDate')) / DAY);
+    if (days < 0) {
+      out.push({ level: 'warn', field: 'dismissDate', message: '解雇の日が通知日より前になっています。' });
+    } else if (days < 30 && chose(v, 'teate', '支給しない')) {
+      out.push({
+        level: 'fatal',
+        field: 'teate',
+        message: `予告期間が ${days} 日しかありません。30日前の予告に満たない場合は、不足日数分以上の平均賃金（解雇予告手当）の支払が必要です。`,
+        basis: '労働基準法20条',
+      });
+    } else if (days < 30) {
+      out.push({
+        level: 'warn',
+        field: 'teateAmount',
+        message: `予告期間は ${days} 日です。不足する ${30 - days} 日分以上の平均賃金を解雇予告手当として支払ってください。`,
+        basis: '労働基準法20条2項',
+      });
     }
-    if (!v['reason']) {
+    if (!text(v, 'reason')) {
       out.push({
         level: 'warn',
         field: 'reason',
@@ -297,7 +326,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   'taishoku-shomei'(v) {
     const out: DocIssue[] = [];
-    if ((v['requested'] ?? '').startsWith('はい')) {
+    if (chose(v, 'requested', 'はい')) {
       out.push({
         level: 'warn',
         message: '本人が請求していない事項は記入できません。請求のなかった項目は空欄のままにするか、行ごと削除して交付してください。',
@@ -309,7 +338,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   roudou(v) {
     const out: DocIssue[] = [];
-    if (!v['placeRange']) {
+    if (!text(v, 'placeRange')) {
       out.push({
         level: 'fatal',
         field: 'placeRange',
@@ -317,7 +346,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
         basis: '労働基準法15条1項・同法施行規則5条',
       });
     }
-    if (!v['dutyRange']) {
+    if (!text(v, 'dutyRange')) {
       out.push({
         level: 'fatal',
         field: 'dutyRange',
@@ -369,18 +398,15 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   kenshu(v) {
     const out: DocIssue[] = [];
-    const receive = parseJpDate(v['receiveDate']);
-    const pay = parseJpDate(v['payday']);
-    if (receive !== null && pay !== null) {
-      const days = Math.round((pay - receive) / DAY);
-      if (days > 60) {
-        out.push({
-          level: 'fatal',
-          field: 'payday',
-          message: `支払期日が受領日から ${days} 日後になっています。支払期日は給付を受領した日から起算して60日以内に定める必要があります（起算日は検収日ではなく受領日）。`,
-          basis: '中小受託取引適正化法（2026年1月施行）・フリーランス法',
-        });
-      }
+    // 日付が読めなければ NaN になり、60日の判定は行われない。
+    const days = Math.round((day(v, 'payday') - day(v, 'receiveDate')) / DAY);
+    if (days > 60) {
+      out.push({
+        level: 'fatal',
+        field: 'payday',
+        message: `支払期日が受領日から ${days} 日後になっています。支払期日は給付を受領した日から起算して60日以内に定める必要があります（起算日は検収日ではなく受領日）。`,
+        basis: '中小受託取引適正化法（2026年1月施行）・フリーランス法',
+      });
     }
     return out;
   },
@@ -410,8 +436,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
   },
 
   ryoshu(v) {
-    const amount = toNum(v['amount']);
-    if (amount !== null && amount >= 50_000) {
+    if (num(v, 'amount') >= 50_000) {
       return [{
         level: 'info' as const,
         message: '紙で交付する受取書は、受取金額5万円以上で収入印紙が必要です（5万円以上100万円以下は200円）。消費税額を区分記載していれば税抜金額で判定できます。電子交付なら不要です。',
@@ -427,9 +452,10 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   'kabunushi-meibo'(v) {
     const out: DocIssue[] = [];
-    const total = toNum(v['totalShares']);
+    const total = num(v, 'totalShares');
     const sum = ['s1shares', 's2shares', 's3shares'].reduce((s, k) => s + (toNum(v[k]) ?? 0), 0);
-    if (total !== null && sum > 0 && sum !== total) {
+    // 総数が読めないと突き合わせようがない。NaN は !== がつねに成立してしまうので明示的に外す。
+    if (Number.isFinite(total) && sum > 0 && sum !== total) {
       out.push({
         level: 'warn',
         field: 'totalShares',
@@ -437,7 +463,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
         basis: '会社法121条',
       });
     }
-    if (total !== null && sum > total) {
+    if (Number.isFinite(total) && sum > total) {
       out.push({ level: 'fatal', field: 's1shares', message: '株主の保有株式数の合計が発行済株式の総数を超えています。' });
     }
     return out;
@@ -477,7 +503,7 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   kaijo(v) {
     const out: DocIssue[] = [];
-    if ((v['kind'] ?? '').startsWith('催告を要せず')) {
+    if (chose(v, 'kind', '催告を要せず')) {
       out.push({
         level: 'warn',
         field: 'kind',
@@ -524,9 +550,9 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 /** 議事録の定足数チェック（出席数 > 総数 は明らかな記載誤り）。 */
 function meetingQuorum(totalKey: string, presentKey: string, presentLabel: string, totalLabel: string) {
   return (v: Values): DocIssue[] => {
-    const total = toNum(v[totalKey]);
-    const present = toNum(v[presentKey]);
-    if (total === null || present === null) return [];
+    const total = num(v, totalKey);
+    const present = num(v, presentKey);
+    // どちらかが読めなければ present > total は false になり、そのまま [] を返す。
     if (present > total) {
       return [{
         level: 'fatal',
@@ -547,14 +573,14 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
 
   // 必須項目の空欄
   for (const f of doc.fields) {
-    if (f.req && !(values[f.k] ?? '').trim()) {
+    if (f.req && !text(values, f.k)) {
       out.push({ level: 'warn', field: f.k, message: `「${f.label}」が未入力です。` });
     }
   }
 
   // 数値項目に数値が入っていない
   for (const f of doc.fields) {
-    const raw = (values[f.k] ?? '').trim();
+    const raw = text(values, f.k);
     if (f.num && raw && toNum(raw) === null) {
       out.push({ level: 'warn', field: f.k, message: `「${f.label}」を数値として読み取れません（入力値: ${raw}）。` });
     }

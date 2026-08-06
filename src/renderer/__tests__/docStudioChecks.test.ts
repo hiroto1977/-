@@ -255,3 +255,505 @@ describe('テンプレート集合の健全性', () => {
     for (const id of withRules) expect(STUDIO_TEMPLATES.some((d) => d.id === id), id).toBe(true);
   });
 });
+
+/* ------------------------------------------------------------------ *
+ * 全ルールの網羅。
+ *
+ * 25 ある個別ルールのうち、これまで assert していたのは一部だけだった
+ * （mutation testing で「一度も実行されていないルール」が 88 変異体ぶん
+ * 見つかった）。ここでは全書式について checkDoc を 2 状態で実行し、
+ * 出てくる指摘（レベル・文面・根拠）をスナップショットで固定する。
+ * 目的は「文面が黙って変わらないこと」。中身の妥当性は上の個別テストで
+ * 見ているので、ここは差分検知に徹する。
+ * ------------------------------------------------------------------ */
+
+/** 指摘を比較しやすい 1 行にする。 */
+const flat = (id: string, v: Record<string, string>) =>
+  checkDoc(doc(id), v).map((i) => `${i.level}|${i.field ?? '-'}|${i.message}|${i.basis ?? '-'}`);
+
+const RULE_IDS = [
+  'mimoto', 'saburoku', 'shohi', 'chintai', 'kaiko-yokoku', 'taishoku-shomei', 'roudou',
+  'invoice', 'shiharai', 'nouhin', 'kenshu', 'hacchu', 'chuumon-uke', 'baibai', 'ryoshu',
+  'kabunushi-meibo', 'shunin', 'annai', 'naiyo', 'tokusoku', 'kaijo', 'kojin-itaku',
+  'privacy', 'chingin', 'harassment',
+] as const;
+
+describe('全ルールの網羅 — 指摘の文面を固定する', () => {
+  it('個別ルールを持つ 25 書式がすべて実在する', () => {
+    for (const id of RULE_IDS) expect(STUDIO_TEMPLATES.some((d) => d.id === id), id).toBe(true);
+  });
+
+  it('placeholder で埋めた状態の指摘', () => {
+    const out: Record<string, string[]> = {};
+    for (const id of RULE_IDS) out[id] = flat(id, filled(id));
+    expect(out).toMatchSnapshot('filled');
+  });
+
+  it('全欄が空の状態の指摘', () => {
+    const out: Record<string, string[]> = {};
+    for (const id of RULE_IDS) out[id] = flat(id, {});
+    expect(out).toMatchSnapshot('empty');
+  });
+
+  it('ルールを持たない書式は空欄チェックだけを返す', () => {
+    // nda は個別ルールが無い。必須項目の warn だけが出る。
+    const issues = checkDoc(doc('nda'), {});
+    expect(issues.every((i) => i.level === 'warn' && i.message.endsWith('が未入力です。'))).toBe(true);
+    expect(checkDoc(doc('nda'), filled('nda'))).toEqual([]);
+  });
+
+  it('すべての指摘は fatal → warn → info の順に並ぶ', () => {
+    const rank = { fatal: 0, warn: 1, info: 2 } as const;
+    for (const id of RULE_IDS) {
+      for (const v of [filled(id), {}]) {
+        const levels = checkDoc(doc(id), v).map((i) => rank[i.level]);
+        expect([...levels].sort((a, b) => a - b), id).toEqual(levels);
+      }
+    }
+  });
+
+  it('根拠つきの指摘は必ず条文か制度名を含む', () => {
+    for (const id of RULE_IDS) {
+      for (const i of checkDoc(doc(id), filled(id))) {
+        if (!i.basis) continue;
+        expect(i.basis, `${id}: ${i.basis}`).toMatch(/法|規則|指針|ガイドライン|Q&A/);
+      }
+    }
+  });
+});
+
+describe('共通ヘルパの境界', () => {
+  it('toNum は全角・区切りを外し、小数を桁数によらず読む', () => {
+    expect(toNum('１，２３４．５６')).toBe(1234.56);
+    expect(toNum('－５')).toBe(-5);
+    expect(toNum('3.25')).toBe(3.25);
+    expect(toNum('12.3456')).toBe(12.3456);
+    expect(toNum('第5条')).toBe(5); // 数字を含めば拾う
+    expect(toNum('あいう')).toBeNull();
+  });
+
+  it('parseJpDate は全角数字も読み、区切りを問わない', () => {
+    expect(parseJpDate('２０２６年８月５日')).toBe(Date.UTC(2026, 7, 5));
+    expect(parseJpDate('2026.8.5')).toBe(Date.UTC(2026, 7, 5));
+    expect(parseJpDate('2026 年 8 月 5 日')).toBe(Date.UTC(2026, 7, 5));
+  });
+
+  it('parseJpDate は月・日の範囲を個別に弾く', () => {
+    expect(parseJpDate('2026年0月5日')).toBeNull();
+    expect(parseJpDate('2026年13月5日')).toBeNull();
+    expect(parseJpDate('2026年8月0日')).toBeNull();
+    expect(parseJpDate('2026年8月32日')).toBeNull();
+    // 31日まである月は通る
+    expect(parseJpDate('2026年8月31日')).toBe(Date.UTC(2026, 7, 31));
+  });
+
+  it('parseJpDate は存在しない日（月・日それぞれ）を弾く', () => {
+    expect(parseJpDate('2026年2月29日')).toBeNull(); // 平年
+    expect(parseJpDate('2028年2月29日')).toBe(Date.UTC(2028, 1, 29)); // 閏年
+    expect(parseJpDate('2026年4月31日')).toBeNull();
+  });
+
+  it('isRegistrationNo は全角・ハイフン・小文字を吸収する', () => {
+    expect(isRegistrationNo('Ｔ１２３４５６７８９０１２３')).toBe(true);
+    expect(isRegistrationNo('T-1234-5678-90123')).toBe(true);
+    expect(isRegistrationNo('T 1234567890123')).toBe(true);
+    expect(isRegistrationNo('T12345678901234')).toBe(false); // 14 桁
+    expect(isRegistrationNo(undefined)).toBe(false);
+  });
+});
+
+describe('品目別の税率区分チェック（invoice / shiharai 共通）', () => {
+  const inv = (over: Record<string, string>) => checkDoc(doc('invoice'), filled('invoice', over));
+
+  it('入力があるのに「（使わない）」なら明細に載らない旨を warn', () => {
+    const out = inv({ i3name: '追加品', i3kind: '（使わない）' });
+    expect(out.some((i) => i.field === 'i3kind' && i.message.includes('請求書に載りません'))).toBe(true);
+    // 単価だけでも同じ
+    expect(inv({ i4price: '1000', i4kind: '（使わない）' }).some((i) => i.field === 'i4kind')).toBe(true);
+    // どちらも空なら出ない
+    expect(inv({ i5name: '', i5price: '', i5kind: '（使わない）' }).some((i) => i.field === 'i5kind')).toBe(false);
+  });
+
+  it('区分は選んでいるのに単価が空なら warn', () => {
+    const out = inv({ i3name: '追加品', i3price: '', i3kind: '標準税率' });
+    expect(out.some((i) => i.field === 'i3price' && i.message.includes('0 円として計算'))).toBe(true);
+  });
+
+  it('任意税率A / B をそれぞれ独立に検査する', () => {
+    expect(inv({ i3name: 'A品', i3price: '100', i3kind: '任意税率A', rateA: '' })
+      .some((i) => i.field === 'rateA' && i.level === 'fatal')).toBe(true);
+    expect(inv({ i3name: 'B品', i3price: '100', i3kind: '任意税率B', rateB: '' })
+      .some((i) => i.field === 'rateB' && i.level === 'fatal')).toBe(true);
+    // A を使っていなければ rateA が空でも指摘しない
+    expect(inv({ rateA: '' }).some((i) => i.field === 'rateA')).toBe(false);
+  });
+
+  it('任意税率の範囲外は fatal（0 と 50 は通す）', () => {
+    const withA = (rateA: string) => inv({ i3name: 'A', i3price: '100', i3kind: '任意税率A', rateA });
+    expect(withA('-1').some((i) => i.field === 'rateA' && i.message.includes('0〜50%'))).toBe(true);
+    expect(withA('51').some((i) => i.field === 'rateA' && i.message.includes('0〜50%'))).toBe(true);
+    expect(withA('0').some((i) => i.field === 'rateA')).toBe(false);
+    expect(withA('50').some((i) => i.field === 'rateA')).toBe(false);
+  });
+
+  it('どの品目にも区分が無ければ明細が空である旨を warn', () => {
+    const allUnused: Record<string, string> = {};
+    for (let n = 1; n <= 6; n += 1) allUnused[`i${n}kind`] = '（使わない）';
+    expect(inv(allUnused).some((i) => i.message.includes('明細が空のまま'))).toBe(true);
+    // 1 つでも選ばれていれば出ない
+    expect(inv({}).some((i) => i.message.includes('明細が空のまま'))).toBe(false);
+  });
+
+  it('支払通知書は品目 4 件まで検査する', () => {
+    const out = checkDoc(doc('shiharai'), filled('shiharai', { i4name: 'X', i4kind: '（使わない）' }));
+    expect(out.some((i) => i.field === 'i4kind')).toBe(true);
+  });
+});
+
+describe('各ルールの分岐を個別に踏む', () => {
+  const at = (id: string, over: Record<string, string>) => checkDoc(doc(id), filled(id, over));
+
+  it('36協定: 月45時間ちょうど・年360時間ちょうどは指摘なし、超えると warn', () => {
+    expect(at('saburoku', { monthLimit: '45', yearLimit: '360' }).some((i) => i.level === 'warn')).toBe(false);
+    expect(at('saburoku', { monthLimit: '46', yearLimit: '360' }).some((i) => i.field === 'monthLimit')).toBe(true);
+    expect(at('saburoku', { monthLimit: '45', yearLimit: '361' }).some((i) => i.field === 'yearLimit')).toBe(true);
+  });
+
+  it('36協定: 月99時間は warn、100時間ちょうどで fatal', () => {
+    expect(at('saburoku', { monthLimit: '99', yearLimit: '360' }).some((i) => i.level === 'fatal')).toBe(false);
+    expect(at('saburoku', { monthLimit: '100', yearLimit: '360' }).some((i) => i.level === 'fatal')).toBe(true);
+  });
+
+  it('36協定: 年720時間ちょうどは warn、721で fatal', () => {
+    expect(at('saburoku', { monthLimit: '80', yearLimit: '720' }).some((i) => i.field === 'yearLimit' && i.level === 'fatal')).toBe(false);
+    expect(at('saburoku', { monthLimit: '80', yearLimit: '721' }).some((i) => i.field === 'yearLimit' && i.level === 'fatal')).toBe(true);
+  });
+
+  it('36協定: 年が 月×12 を超えると整合性の warn を追加で出す', () => {
+    const out = at('saburoku', { monthLimit: '30', yearLimit: '400' });
+    expect(out.some((i) => i.message.includes('× 12'))).toBe(true);
+    expect(at('saburoku', { monthLimit: '40', yearLimit: '360' }).some((i) => i.message.includes('× 12'))).toBe(false);
+  });
+
+  it('36協定: 対象者数が同数なら指摘なし', () => {
+    expect(at('saburoku', { monthLimit: '40', yearLimit: '320', workers: '8', target: '8' })
+      .some((i) => i.field === 'target')).toBe(false);
+  });
+
+  it('建物賃貸借: 12か月ちょうどは指摘なし、11か月は warn、「年」表記があれば見ない', () => {
+    expect(at('chintai', { term: '12か月' }).some((i) => i.field === 'term')).toBe(false);
+    expect(at('chintai', { term: '11ヶ月' }).some((i) => i.field === 'term')).toBe(true);
+    expect(at('chintai', { term: '6カ月' }).some((i) => i.field === 'term')).toBe(true);
+    expect(at('chintai', { term: '1年6箇月' }).some((i) => i.field === 'term')).toBe(false);
+  });
+
+  it('建物賃貸借: 敷金が賃料12か月ちょうどは指摘なし、13か月分で warn', () => {
+    expect(at('chintai', { rent: '100000', shikikin: '1200000' }).some((i) => i.field === 'shikikin')).toBe(false);
+    expect(at('chintai', { rent: '100000', shikikin: '1300000' }).some((i) => i.field === 'shikikin')).toBe(true);
+    // 賃料 0 なら比較しない
+    expect(at('chintai', { rent: '0', shikikin: '1300000' }).some((i) => i.field === 'shikikin')).toBe(false);
+  });
+
+  it('解雇予告: 30日ちょうどは指摘なし、29日で不足を出す', () => {
+    const base = { noticeDate: '2026年9月1日' };
+    expect(at('kaiko-yokoku', { ...base, dismissDate: '2026年10月1日', teate: '支給しない（30日前に予告するため）' })
+      .some((i) => i.level === 'fatal')).toBe(false);
+    expect(at('kaiko-yokoku', { ...base, dismissDate: '2026年9月30日', teate: '支給しない（30日前に予告するため）' })
+      .some((i) => i.level === 'fatal')).toBe(true);
+  });
+
+  it('解雇予告: 理由が空なら warn、あれば出ない', () => {
+    expect(at('kaiko-yokoku', { reason: '' }).some((i) => i.field === 'reason')).toBe(true);
+    expect(at('kaiko-yokoku', { reason: '就業規則第10条該当' }).some((i) => i.field === 'reason')).toBe(false);
+  });
+
+  it('解雇予告: 日付が読めなければ日数の指摘は出ない', () => {
+    expect(at('kaiko-yokoku', { noticeDate: '未定', dismissDate: '未定' })
+      .some((i) => i.field === 'teate' || i.field === 'teateAmount' || i.field === 'dismissDate')).toBe(false);
+  });
+
+  it('領収書: 印紙の info は 5万円が境界', () => {
+    expect(at('ryoshu', { amount: '49999' }).some((i) => i.level === 'info')).toBe(false);
+    expect(at('ryoshu', { amount: '50000' }).some((i) => i.level === 'info')).toBe(true);
+    expect(at('ryoshu', { amount: '' }).some((i) => i.level === 'info')).toBe(false);
+  });
+
+  it('金銭消費貸借: 印紙の info は 1万円が境界', () => {
+    expect(at('shohi', { amount: '9999', rate: '3' }).some((i) => i.level === 'info')).toBe(false);
+    expect(at('shohi', { amount: '10000', rate: '3' }).some((i) => i.level === 'info')).toBe(true);
+  });
+
+  it('金銭消費貸借: 元本か利率が読めなければ上限判定をしない', () => {
+    expect(at('shohi', { amount: '未定', rate: '30' }).some((i) => i.field === 'rate')).toBe(false);
+    expect(at('shohi', { amount: '3000000', rate: '応相談' }).some((i) => i.field === 'rate')).toBe(false);
+  });
+
+  it('金銭消費貸借: 上限ちょうどは通す（元本区分ごと）', () => {
+    expect(at('shohi', { amount: '50000', rate: '20' }).some((i) => i.field === 'rate')).toBe(false);
+    expect(at('shohi', { amount: '50000', rate: '20.1' }).some((i) => i.field === 'rate')).toBe(true);
+    expect(at('shohi', { amount: '500000', rate: '18' }).some((i) => i.field === 'rate')).toBe(false);
+    expect(at('shohi', { amount: '500000', rate: '18.1' }).some((i) => i.field === 'rate')).toBe(true);
+  });
+
+  it('株主名簿: 合計が一致すれば指摘なし、少なければ warn、超えれば fatal', () => {
+    const set = (t: string, a: string, b: string, c: string) =>
+      at('kabunushi-meibo', { totalShares: t, s1shares: a, s2shares: b, s3shares: c });
+    expect(set('100株', '60', '40', '').some((i) => i.field === 'totalShares')).toBe(false);
+    expect(set('100株', '60', '30', '').some((i) => i.level === 'warn' && i.field === 'totalShares')).toBe(true);
+    expect(set('100株', '60', '50', '').some((i) => i.level === 'fatal')).toBe(true);
+    // 誰も入力していなければ判定しない
+    expect(set('100株', '', '', '').some((i) => i.field === 'totalShares')).toBe(false);
+  });
+
+  it('身元保証書: 極度額 0 も無効扱い、1円以上なら通す', () => {
+    expect(at('mimoto', { limit: '0' }).some((i) => i.field === 'limit' && i.level === 'fatal')).toBe(true);
+    expect(at('mimoto', { limit: '1' }).some((i) => i.field === 'limit')).toBe(false);
+    expect(at('mimoto', { limit: '読めない' }).some((i) => i.field === 'limit' && i.level === 'fatal')).toBe(true);
+  });
+
+  it('身元保証書: 期間が読めなければ期間の指摘は出ない', () => {
+    expect(at('mimoto', { years: '未定' }).some((i) => i.field === 'years')).toBe(false);
+  });
+
+  it('検収書: 60日ちょうどは通す、日付が読めなければ判定しない', () => {
+    expect(at('kenshu', { receiveDate: '2026年9月30日', payday: '2026年11月29日' }).some((i) => i.field === 'payday')).toBe(false);
+    expect(at('kenshu', { receiveDate: '2026年9月30日', payday: '2026年11月30日' }).some((i) => i.field === 'payday')).toBe(true);
+    expect(at('kenshu', { receiveDate: '未定', payday: '2026年12月31日' }).some((i) => i.field === 'payday')).toBe(false);
+  });
+
+  it('登録番号は空欄なら形式の指摘を出さない（未入力の指摘に任せる）', () => {
+    // req: true の空欄警告も同じ field に出るうえ、ラベル自体が「登録番号（T+13桁）」なので
+    // 桁数だけでは区別できない。形式ルール側にしか無い 「T」＋13桁 で拾う。
+    const fmt = (id: string, over: Record<string, string>) =>
+      at(id, over).some((i) => i.message.includes('「T」＋13桁'));
+    expect(fmt('invoice', { regno: '' })).toBe(false);
+    expect(fmt('invoice', { regno: 'T123' })).toBe(true);
+    expect(fmt('shiharai', { toReg: '' })).toBe(false);
+    expect(fmt('nouhin', { reg: '' })).toBe(false);
+    expect(fmt('nouhin', { reg: 'T1234567890123' })).toBe(false);
+    expect(fmt('nouhin', { reg: 'T123' })).toBe(true);
+  });
+
+  it('退職証明書: 全項目の記載を請求されている場合は 22条3項の warn を出さない', () => {
+    expect(at('taishoku-shomei', { requested: '全項目の記載を請求されている' })
+      .some((i) => i.basis?.includes('22条3項'))).toBe(false);
+  });
+
+  it('契約解除通知: 催告解除なら要件確認の warn を出さない', () => {
+    expect(at('kaijo', { kind: '催告のうえ解除する（催告解除）' }).some((i) => i.field === 'kind')).toBe(false);
+  });
+});
+
+/**
+ * 分岐ごとの「読まれる文面」を丸ごと固定する。
+ *
+ * レベルや field だけを見ていると、文面が空になっても・条文が消えても・
+ * 数値の差し込みが壊れても素通りする。この書式群では文面そのものが成果物なので、
+ * 各分岐を1回ずつ踏んだうえで level|field|message|basis を全部スナップショットする。
+ */
+describe('分岐ごとの文面を丸ごと固定する', () => {
+  /** [書式 id, 分岐の名前, 差し替える値] */
+  const SCENARIOS: readonly (readonly [string, string, Record<string, string>])[] = [
+    // 身元保証書 — 極度額・保証期間
+    ['mimoto', '極度額なし', { limit: '' }],
+    ['mimoto', '極度額0', { limit: '0' }],
+    ['mimoto', '期間6年', { limit: '3000000', years: '6' }],
+    // 36協定 — 上限規制の各段
+    ['saburoku', '月100時間', { monthLimit: '100', yearLimit: '360' }],
+    ['saburoku', '月46時間', { monthLimit: '46', yearLimit: '360' }],
+    ['saburoku', '年721時間', { monthLimit: '45', yearLimit: '721' }],
+    ['saburoku', '年361時間', { monthLimit: '45', yearLimit: '361' }],
+    ['saburoku', '年が月×12超', { monthLimit: '10', yearLimit: '361' }],
+    ['saburoku', '対象者数が超過', { monthLimit: '45', yearLimit: '360', target: '11', workers: '10' }],
+    // 金銭消費貸借 — 利息制限法の3区分と印紙
+    ['shohi', '元本9万・21%', { amount: '90000', rate: '21' }],
+    ['shohi', '元本50万・19%', { amount: '500000', rate: '19' }],
+    ['shohi', '元本100万・16%', { amount: '1000000', rate: '16' }],
+    // 建物賃貸借
+    ['chintai', '期間11か月', { term: '11か月' }],
+    ['chintai', '敷金13か月分', { term: '2年', rent: '100000', shikikin: '1300000' }],
+    // 解雇予告
+    ['kaiko-yokoku', '解雇日が通知日より前', { noticeDate: '2026年5月1日', dismissDate: '2026年4月1日', reason: '就業規則第50条' }],
+    ['kaiko-yokoku', '29日・手当なし', { noticeDate: '2026年5月1日', dismissDate: '2026年5月30日', teate: '支給しない', reason: '就業規則第50条' }],
+    ['kaiko-yokoku', '29日・手当あり', { noticeDate: '2026年5月1日', dismissDate: '2026年5月30日', teate: '支給する', reason: '就業規則第50条' }],
+    ['kaiko-yokoku', '理由が空', { noticeDate: '2026年5月1日', dismissDate: '2026年7月1日', reason: '' }],
+    // 退職証明書 / 労働条件通知書
+    ['taishoku-shomei', '一部のみ請求', { requested: 'はい（一部の事項のみ）' }],
+    ['roudou', '就業場所の範囲が空', { placeRange: '' }],
+    ['roudou', '業務の範囲が空', { dutyRange: '' }],
+    // 適格請求書 — 品目別の税率区分
+    ['invoice', '登録番号の形式誤り', { regno: 'T123' }],
+    ['invoice', '入力ありで使わない', { i1name: '事務用品', i1kind: '（使わない）' }],
+    ['invoice', '区分ありで単価が空', { i1name: '事務用品', i1price: '' }],
+    ['invoice', '任意税率A未入力', { i1kind: '任意税率A', rateA: '' }],
+    ['invoice', '任意税率Aが51%', { i1kind: '任意税率A', rateA: '51' }],
+    ['invoice', '任意税率Bが-1%', { i2kind: '任意税率B', rateB: '-1' }],
+    ['shiharai', '相手方登録番号の形式誤り', { toReg: 'T123' }],
+    ['nouhin', '登録番号の形式誤り', { reg: 'T123' }],
+    // 検収書 — 支払期日
+    ['kenshu', '61日後', { receiveDate: '2026年4月1日', payday: '2026年6月1日' }],
+    // 領収書 — 印紙
+    ['ryoshu', '5万円ちょうど', { amount: '50000' }],
+    // 議事録 — 定足数（株主総会と取締役会でラベルが違う）
+    ['sokai', '出席が総数超過', { totalShares: '100', presentShares: '101' }],
+    ['rinji-sokai', '出席が総数超過', { totalShares: '100', presentShares: '101' }],
+    ['torishimari', '出席が総数超過', { total: '5', present: '6' }],
+    // 株主名簿
+    ['kabunushi-meibo', '合計が不足', { totalShares: '100', s1shares: '50', s2shares: '20', s3shares: '10' }],
+    ['kabunushi-meibo', '合計が超過', { totalShares: '100', s1shares: '80', s2shares: '80', s3shares: '0' }],
+    // 契約解除通知
+    ['kaijo', '無催告解除', { kind: '催告を要せず解除する（無催告解除）' }],
+  ];
+
+  it('固有の分岐名で重複していない', () => {
+    const keys = SCENARIOS.map(([id, name]) => `${id}/${name}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it('シナリオはすべて何らかの指摘を出す（分岐を踏み外していないことの確認）', () => {
+    for (const [id, name, over] of SCENARIOS) {
+      expect(flat(id, filled(id, over)).length, `${id}/${name}`).toBeGreaterThan(0);
+    }
+  });
+
+  for (const [id, name, over] of SCENARIOS) {
+    it(`${id} — ${name}`, () => {
+      expect(flat(id, filled(id, over))).toMatchSnapshot();
+    });
+  }
+});
+
+/**
+ * 「読めない値は判定しない」の徹底。
+ *
+ * 数値も日付も、読めなければ NaN として扱い、どの閾値にも引っかからない。
+ * 一方で「読めないこと自体で判定を止める」箇所（元本・発行済総数）は明示的に止める。
+ * ここが崩れると、空欄の書類に根拠のない fatal が並ぶか、逆に無効な書類が素通りする。
+ */
+describe('読めない値の扱い', () => {
+  const at = (id: string, over: Record<string, string>) => checkDoc(doc(id), filled(id, over));
+
+  it('金銭消費貸借: 元本が読めなければ上限区分が決まらないので利率を判定しない', () => {
+    // 元本が NaN のまま interestCap に渡すと 15% 扱いになり、根拠のない fatal が出る。
+    expect(at('shohi', { amount: 'あとで', rate: '30' }).some((i) => i.field === 'rate')).toBe(false);
+    expect(at('shohi', { amount: '5000', rate: '30' }).some((i) => i.field === 'rate')).toBe(true);
+  });
+
+  it('株主名簿: 発行済総数が読めなければ突き合わせない', () => {
+    const set = (t: string) =>
+      at('kabunushi-meibo', { totalShares: t, s1shares: '60', s2shares: '40', s3shares: '' });
+    expect(set('未定').some((i) => i.field === 'totalShares' || i.level === 'fatal')).toBe(false);
+    expect(set('90').some((i) => i.field === 'totalShares')).toBe(true);
+  });
+
+  it('株主名簿: 合計が総数ちょうどなら fatal を出さない', () => {
+    const out = at('kabunushi-meibo', { totalShares: '100', s1shares: '100', s2shares: '', s3shares: '' });
+    expect(out.some((i) => i.level === 'fatal')).toBe(false);
+  });
+
+  it('36協定: 年が 月×12 ちょうどなら整合性の warn は出さない', () => {
+    const has = (m: string, y: string) =>
+      at('saburoku', { monthLimit: m, yearLimit: y }).some((i) => i.message.includes('を上回っています'));
+    expect(has('30', '360')).toBe(false);
+    expect(has('30', '361')).toBe(true);
+    // どちらかが読めなければ比較しない
+    expect(has('未定', '361')).toBe(false);
+    expect(has('30', '未定')).toBe(false);
+  });
+
+  it('議事録: 出席が総数以下・読めない場合は指摘を出さない', () => {
+    expect(checkDoc(doc('sokai'), filled('sokai', { totalShares: '100', presentShares: '100' }))).toEqual([]);
+    expect(checkDoc(doc('sokai'), filled('sokai', { totalShares: '100', presentShares: '未集計' }))).toEqual([]);
+    expect(checkDoc(doc('torishimari'), filled('torishimari', { total: '5', present: '5' }))).toEqual([]);
+  });
+
+  it('解雇予告: 通知日と解雇日が同日なら「通知日より前」ではなく不足日数を出す', () => {
+    const out = at('kaiko-yokoku', {
+      noticeDate: '2026年9月1日', dismissDate: '2026年9月1日', teate: '支給する', reason: '就業規則第10条',
+    });
+    expect(out.some((i) => i.message.includes('通知日より前'))).toBe(false);
+    expect(out.some((i) => i.message.includes('予告期間は 0 日'))).toBe(true);
+  });
+
+  it('解雇予告: 手当の選択が無ければ fatal ではなく不足日数の warn にとどめる', () => {
+    // teate 自体が未選択の状態。「支給しない」と決め打ちすると根拠なく fatal になる。
+    const out = checkDoc(doc('kaiko-yokoku'), {
+      noticeDate: '2026年9月1日', dismissDate: '2026年9月10日', reason: '就業規則第10条',
+    });
+    expect(out.some((i) => i.field === 'teate' && i.level === 'fatal')).toBe(false);
+    expect(out.some((i) => i.field === 'teateAmount')).toBe(true);
+  });
+
+  it('契約解除通知・退職証明書: 選択が無ければ判定しない', () => {
+    // 未入力の warn とは別物なので、条文の根拠が付いた指摘だけを見る。
+    expect(checkDoc(doc('kaijo'), {}).some((i) => i.basis?.includes('542条'))).toBe(false);
+    expect(checkDoc(doc('taishoku-shomei'), {}).some((i) => i.basis?.includes('22条3項'))).toBe(false);
+  });
+
+  it('選択肢は「書き出し」で見る（末尾一致では拾わない）', () => {
+    // '催告を要せず…（無催告解除）' は前方一致でのみ当たる。
+    expect(at('kaijo', { kind: '催告を要せず解除する（無催告解除）' }).some((i) => i.field === 'kind')).toBe(true);
+    expect(at('kaijo', { kind: '本件は催告を要せず' }).some((i) => i.field === 'kind')).toBe(false);
+  });
+});
+
+describe('前後の空白は入力とみなさない', () => {
+  it('必須項目が空白だけなら未入力として扱う', () => {
+    const out = checkDoc(doc('invoice'), { regno: '   ' });
+    expect(out.some((i) => i.field === 'regno' && i.message.endsWith('が未入力です。'))).toBe(true);
+  });
+
+  it('数値項目が空白だけなら「読み取れません」ではなく未入力として扱う', () => {
+    const numField = doc('shohi').fields.find((f) => f.num)!;
+    const out = checkDoc(doc('shohi'), { [numField.k]: '   ' });
+    expect(out.some((i) => i.message.includes('数値として読み取れません'))).toBe(false);
+  });
+
+  it('品目名が空白だけなら明細に入力があるとみなさない', () => {
+    const out = checkDoc(doc('invoice'), { i1name: '   ', i1price: '  ', i1kind: '（使わない）' });
+    expect(out.some((i) => i.field === 'i1kind' || i.field === 'i1price')).toBe(false);
+  });
+
+  it('税率区分の前後に空白が入っても選択として読む', () => {
+    const out = checkDoc(doc('invoice'), { i1name: '事務用品', i1kind: ' 任意税率A ', rateA: '' });
+    expect(out.some((i) => i.field === 'rateA' && i.level === 'fatal')).toBe(true);
+  });
+
+  it('単価だけの入力でも明細に入力があるとみなす', () => {
+    const out = checkDoc(doc('invoice'), { i1name: '', i1price: '1000', i1kind: '（使わない）' });
+    expect(out.some((i) => i.field === 'i1kind')).toBe(true);
+  });
+
+  it('区分が未選択のまま入力されていれば載らない旨を出す', () => {
+    const out = checkDoc(doc('invoice'), { i1name: '事務用品', i1price: '1000', i1kind: '' });
+    expect(out.some((i) => i.field === 'i1kind')).toBe(true);
+  });
+});
+
+describe('日付・登録番号の追加境界', () => {
+  it('parseJpDate は月の範囲を上下とも弾く', () => {
+    expect(parseJpDate('2026年0月10日')).toBeNull();
+    expect(parseJpDate('2026年13月10日')).toBeNull();
+    expect(parseJpDate('2026年1月10日')).toBe(Date.UTC(2026, 0, 10));
+    expect(parseJpDate('2026年12月10日')).toBe(Date.UTC(2026, 11, 10));
+  });
+
+  it('parseJpDate は日の繰り上がり・繰り下がりを弾く', () => {
+    expect(parseJpDate('2026年1月0日')).toBeNull();
+    expect(parseJpDate('2026年1月32日')).toBeNull();
+    expect(parseJpDate('2026年1月31日')).toBe(Date.UTC(2026, 0, 31));
+  });
+
+  it('isRegistrationNo は先頭から見る（前に何か付いていれば不可）', () => {
+    expect(isRegistrationNo('XT1234567890123')).toBe(false);
+    expect(isRegistrationNo('T1234567890123')).toBe(true);
+  });
+
+  it('建物賃貸借: 年・か月の間に空白が入っても読む', () => {
+    // 「1 年6か月」の年を見落とすと、6か月契約と誤認して余計な warn を出す。
+    expect(at2('chintai', { term: '1 年6か月' }).some((i) => i.field === 'term')).toBe(false);
+    expect(at2('chintai', { term: '6 か月' }).some((i) => i.field === 'term')).toBe(true);
+  });
+});
+
+const at2 = (id: string, over: Record<string, string>) => checkDoc(doc(id), filled(id, over));

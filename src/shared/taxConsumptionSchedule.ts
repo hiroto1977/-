@@ -45,8 +45,9 @@ export function floor100(n: number): number {
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
 export function roundRefund(n: number): number {
   if (n <= 0) return 0;
-  if (n < 1) return 1;
-  return Math.floor(n);
+  // 1円未満切捨て。ただし正の値が1円未満なら1円（Math.floor(1) === 1 なので
+  // 「1未満なら1」の分岐は Math.max に畳める）。
+  return Math.max(1, Math.floor(n));
 }
 
 export interface ScheduleInput {
@@ -156,6 +157,9 @@ function addDays(d: Date, n: number): Date {
  */
 export function nextBusinessDay(d: Date): Date {
   let cur = d;
+  // Stryker disable next-line EqualityOperator,AssignmentOperator: 14 は到達しない安全弁。
+  // 実際の送り幅は最大でも 12/29 → 1/4 の 6 日で、7 以上ならどの上限でも同じ結果になる
+  // （減算に変えても、開庁日が見つかった時点で return するため観測できない）。
   for (let i = 0; i < 14; i += 1) {
     const dow = cur.getUTCDay();
     const m = cur.getUTCMonth() + 1;
@@ -406,6 +410,8 @@ export function breakEvenRate(input: ScheduleInput): number | null {
   } else {
     base = sales - Math.max(0, input.taxablePurchases);
   }
+  // Stryker disable next-line EqualityOperator: <= を < にしても base===0 では
+  // 除算が Infinity になり、直後の `r > MAX_RATE` で null になるため結果は同じ（等価変異）。
   if (base <= 0) return null;
 
   const r = interim.total / base;
