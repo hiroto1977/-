@@ -18,12 +18,15 @@ export function GuardedNumber({
   onChange,
   style,
   width,
+  placeholder,
 }: {
   spec: NumSpec;
   value: string;
   onChange: (v: string) => void;
   style?: CSSProperties;
   width?: number;
+  /** 入力例。数値の桁感を示すために残す（e2e もこれで欄を特定している）。 */
+  placeholder?: string;
 }) {
   const issue = guardNumber(value, spec);
   const color = issue?.level === 'fatal' ? FATAL : issue ? WARN : undefined;
@@ -34,6 +37,7 @@ export function GuardedNumber({
         type="text"
         inputMode="decimal"
         value={value}
+        placeholder={placeholder}
         aria-label={spec.label}
         aria-invalid={issue?.level === 'fatal' || undefined}
         data-guard={issue ? issue.level : 'ok'}
