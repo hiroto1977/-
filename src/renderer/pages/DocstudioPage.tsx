@@ -13,15 +13,17 @@ import {
   TEIKAN_FORMS,
   TEIKAN_NOTES,
   TEIKAN_STEPS,
-  buildGkChapters,
-  buildKkChapters,
-  teikanClosing,
   type DocBlock,
   type DocField,
   type DocTable,
   type StudioDoc,
-  type TeikanChapter,
 } from '../data/docStudioData';
+import {
+  buildGkChapters,
+  buildKkChapters,
+  teikanClosing,
+  type TeikanChapter,
+} from '../data/docStudioTeikan';
 import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
 import { readNumber } from '../data/inputGuards';
 import {

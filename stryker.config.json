@@ -184,7 +184,8 @@
     "src/shared/invoiceTax.ts",
     "src/shared/tradeTax.ts",
     "src/shared/taxConsumptionSchedule.ts",
-    "src/renderer/data/docStudioChecks.ts"
+    "src/renderer/data/docStudioChecks.ts",
+    "src/renderer/data/docStudioTeikan.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
