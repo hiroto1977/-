@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { professionalsForService } from '../data/businessTriage';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
@@ -21,6 +22,29 @@ interface Props {
     label: string;
     placeholder?: string;
   };
+}
+
+/**
+ * この機能の担当士業（事業仕分けの逆引き）。
+ *
+ * 担当が定義されていないサービスでは何も出さない（72 中 20 だけが対象）。
+ * 独占業務なら「独占」を明示する — 他人のために業として行うと士業法に触れる
+ * 領域なのか、単に相談先なのかで、読む側の意味が変わるため。
+ */
+function DutyOwner({ serviceId }: { serviceId?: string }) {
+  const owners = serviceId ? professionalsForService(serviceId) : [];
+  if (owners.length === 0) return null;
+  const seen = new Set<string>();
+  const uniq = owners.filter((o) => (seen.has(o.id) ? false : (seen.add(o.id), true)));
+  return (
+    <span
+      data-duty-owner={serviceId}
+      title={owners.map((o) => `${o.label}: ${o.title}`).join(' / ')}
+      style={{ fontSize: 11, color: 'var(--text-mute)', whiteSpace: 'nowrap' }}
+    >
+      ⚖️ 担当: {uniq.map((o) => o.label + (o.scope === 'exclusive' ? '（独占）' : '')).join('・')}
+    </span>
+  );
 }
 
 export function StatusBar({
@@ -111,6 +135,7 @@ export function StatusBar({
         {avatarSrc ? <img src={avatarSrc} alt="" /> : null}
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{who}</span>
       </div>
+      <DutyOwner serviceId={serviceId} />
       {tokenSetup && !editing && oauthSupported ? (
         <button onClick={browserAuth} disabled={authorizing}>
           {authorizing ? '認証中…' : isConfigured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
