@@ -25,6 +25,8 @@ import {
   type TeikanChapter,
 } from '../data/docStudioTeikan';
 import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
+import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import type { ProfessionalId } from '../data/professionalMap';
 import { readNumber } from '../data/inputGuards';
 import {
   MAX_ITEM_RATE,
@@ -470,6 +472,79 @@ function CheckPanel({ issues }: { issues: readonly DocIssue[] }) {
   );
 }
 
+/**
+ * 事業仕分け — 「この書類、自分で作って出していいのか」に答える。
+ *
+ * 交付前チェックが「入力が正しいか」を見るのに対し、こちらは「誰がやる仕事か」を見る。
+ * 士業法の独占はいずれも「他人の求めに応じ」「業として」が要件なので、自社分は
+ * 原則やってよい。その事実を先に出さないと、作れる書類の前で手が止まる。
+ */
+function TriagePanel({ doc }: { doc: string }) {
+  const t = triageFor(doc);
+  if (!t) return null;
+  const names = (ids: readonly ProfessionalId[]) => ids.map((id) => labelOf(id)).join('・');
+  return (
+    <div
+      data-triage-panel
+      data-doc={doc}
+      data-exclusive={t.exclusiveTo.length}
+      style={{
+        border: '1px solid var(--border)',
+        borderRadius: 10,
+        padding: '12px 14px',
+        background: 'var(--bg-elev)',
+        fontSize: 12,
+        lineHeight: 1.7,
+        marginTop: 12,
+      }}
+    >
+      <strong style={{ fontSize: 13 }}>⚖️ 事業仕分け — 自社でやるか、士業に頼むか</strong>
+
+      <div style={{ marginTop: 8 }}>
+        <span style={{ fontWeight: 700, color: 'var(--ok, #2e7d32)' }}>
+          自社分: 作成から提出まで自分でできます{t.ownUse === 'ok-with-care' ? '（手順に注意）' : ''}
+        </span>
+        <div style={{ color: 'var(--text-mute)' }}>{t.ownNote}</div>
+      </div>
+
+      <div style={{ marginTop: 8 }}>
+        {t.exclusiveTo.length > 0 ? (
+          <>
+            <span style={{ fontWeight: 700 }}>
+              他人のために業として行うなら: {names(t.exclusiveTo)}の独占業務
+            </span>
+            <div style={{ color: 'var(--text-mute)' }}>
+              根拠: {t.exclusiveTo.map((id) => lawOf(id)).join(' / ')}
+            </div>
+          </>
+        ) : (
+          <span style={{ color: 'var(--text-mute)' }}>
+            他人のために業として作成しても、それ自体はどの士業の独占業務にも当たりません。
+          </span>
+        )}
+      </div>
+
+      {t.caseByCase && (
+        <div style={{ marginTop: 8 }}>
+          <span style={{ fontWeight: 700 }}>事案によって変わる点</span>
+          <div style={{ color: 'var(--text-mute)' }}>{t.caseByCase}</div>
+        </div>
+      )}
+
+      {t.consult.length > 0 && (
+        <div style={{ marginTop: 8, color: 'var(--text-mute)' }}>
+          迷ったら相談: {names(t.consult)}
+        </div>
+      )}
+
+      <div style={{ marginTop: 8, color: 'var(--text-mute)', fontSize: 11 }}>
+        独占規定はいずれも「他人の求めに応じ」「業として」を要件に置くため、自社の書類を自社の名で
+        出す分は制限されません。ただし形式だけ本人名義にして実質が他人からの依頼なら、同じく制限を受けます。
+      </div>
+    </div>
+  );
+}
+
 function GuideBox({ title, steps, notes }: { title: string; steps?: readonly (readonly [string, string])[]; notes: readonly string[] }) {
   return (
     <div style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', background: 'var(--bg-elev)', fontSize: 12, lineHeight: 1.7, marginTop: 12 }}>
@@ -747,6 +822,7 @@ export function DocstudioPage() {
           </Section>
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
+          <TriagePanel doc={collection === 'teikan' ? `teikan-${teikanType}` : collection === 'shugyo' ? 'shugyo' : docId} />
 
           <GuideBox
             title={
