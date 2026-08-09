@@ -13,6 +13,7 @@
  *
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
+import { navigateTo } from '../navigate';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
@@ -137,10 +138,6 @@ function loadTheme(): Theme {
   } catch {
     return DEFAULT_THEME;
   }
-}
-
-function navigateTo(serviceId: ServiceId): void {
-  window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
 /** インライントークン列を React ノードへ。 */

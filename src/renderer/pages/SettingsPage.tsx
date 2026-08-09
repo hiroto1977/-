@@ -1,3 +1,4 @@
+import { navigateTo } from '../navigate';
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
@@ -593,7 +594,7 @@ function ConnectionHub({ refreshKey }: { refreshKey: number }) {
     configured ?? new Set(),
   );
 
-  const open = (id: string) => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: id }));
+  const open = navigateTo;
 
   if (configured === null) {
     return <div style={{ fontSize: 13, color: 'var(--text-mute)' }}>読み込み中…</div>;

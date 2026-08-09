@@ -10,6 +10,7 @@
  * プライバシー: 入力配列のみを扱い、ネットワーク・保存・時刻取得をしない (決定論的)。
  */
 
+import { round1 } from '../../shared/num';
 import { analyzeProfile, type EmotionProfile, type ScoredNote, type DominantLike, type SentimentLike } from './emotionInsights';
 
 /** 感情レーダーの 5 軸 (チームレーダーの軸数 5 に合わせる)。 */
@@ -53,9 +54,6 @@ function clamp1to5(n: number): number {
 }
 
 /** 小数第1位に丸める (レーダー描画・表示用)。 */
-function round1(n: number): number {
-  return Math.round(n * 10) / 10;
-}
 
 /** 傾向を回復力スコアの加点へ写す (improving +2 / stable 0 / declining -2)。 */
 export function trendScore(trend: EmotionProfile['trend']): number {

@@ -505,6 +505,18 @@ describe('isSafeSvgExportPath', () => {
     expect(isSafeSvgExportPath('/etc/x.svg', home)).toBe(false);
     expect(isSafeSvgExportPath('/home/user/../etc/x.svg', home)).toBe(false);
   });
+
+  it('.svg 以外の拡張子を拒む（ラッパーの役目は拡張子の固定）', () => {
+    const home = '/home/user';
+    const root = '/home/user/.local/business-hub/data/';
+    // 中身が SVG でも、書き出し先が別の拡張子なら通さない。
+    expect(isSafeSvgExportPath(root + 'x.html', home)).toBe(false);
+    expect(isSafeSvgExportPath(root + 'x.sh', home)).toBe(false);
+    expect(isSafeSvgExportPath(root + 'x', home)).toBe(false);
+    expect(isSafeSvgExportPath(root + 'x.svg.txt', home)).toBe(false);
+    // 正しい拡張子は通る（上の否定が「何でも false」でないことの確認）
+    expect(isSafeSvgExportPath(root + 'x.svg', home)).toBe(true);
+  });
 });
 
 describe('exportTeamRadarSvgImpl', () => {

@@ -18,6 +18,7 @@
  */
 
 import { readNumber } from './inputGuards';
+import type { IssueLevel } from '../../shared/issueLevel';
 
 /** 表示区分。貸借対照表・損益計算書の区分表示に対応する。 */
 export type Section =
@@ -357,7 +358,7 @@ export function buildBalanceRows(v: Amounts, opt: BalanceOptions, netIncome: num
   return { assets, liabilitiesEquity };
 }
 
-export type IssueLevel = 'fatal' | 'warn' | 'info';
+export type { IssueLevel } from '../../shared/issueLevel';
 
 export interface StatementIssue {
   readonly level: IssueLevel;

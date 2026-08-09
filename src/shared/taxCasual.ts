@@ -16,9 +16,7 @@
  * 公式ツール / 税理士で確認すること。
  */
 
-function yen(n: number): number {
-  return Math.round(n);
-}
+import { nonNeg, yen } from './num';
 
 /** 一時所得の特別控除額の上限 (円)。 */
 export const CASUAL_INCOME_SPECIAL_DEDUCTION = 500_000;
@@ -78,9 +76,6 @@ export function calcCasualIncome(grossIncome: number, expenses = 0): CasualIncom
 // ---------------------------------------------------------------------------
 
 /** 有限な非負数に正規化する。非有限値は 0 とみなす。 */
-function safeNonNeg(n: number): number {
-  return Number.isFinite(n) ? Math.max(0, n) : 0;
-}
 
 /**
  * 金融類似商品 (源泉分離課税) の判定。
@@ -184,8 +179,8 @@ export function calcAggregatedCasualIncome(
     if (!Number.isFinite(item.grossIncome)) return null;
     const exp = item.expenses ?? 0;
     if (!Number.isFinite(exp)) return null;
-    const gross = safeNonNeg(item.grossIncome);
-    const cost = safeNonNeg(exp);
+    const gross = nonNeg(item.grossIncome);
+    const cost = nonNeg(exp);
     // 件ごとに「収入を得るための支出」を先に控除 (件単位の損失は他件と通算しない)。
     totalProfit += Math.max(0, gross - cost);
   }

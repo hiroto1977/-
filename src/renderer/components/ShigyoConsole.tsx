@@ -1,3 +1,4 @@
+import { navigateTo } from '../navigate';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Section, StatusBar } from './StatusBar';
 import { Stat } from './Stat';
@@ -59,11 +60,6 @@ export interface ShigyoConsoleProps {
    * 指定すると最上部に警告バナーを表示する。
    */
   readonly disclaimer?: ReactNode;
-}
-
-/** アプリ内遷移 (App.tsx が servicehub:navigate を listen)。 */
-function navigateTo(serviceId: ServiceId): void {
-  window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
 /**

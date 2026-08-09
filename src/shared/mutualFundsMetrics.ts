@@ -6,9 +6,7 @@
  * 元本割れの可能性があります。過去の実績は将来を保証しません。
  */
 
-function yen(n: number): number {
-  return Math.round(n);
-}
+import { round2, yen } from './num';
 
 export interface CompoundingSimulation {
   /** 期間終了時の評価額 (円)。 */
@@ -75,10 +73,6 @@ export function calcSharpeRatio(
   return Math.round(sr * 100) / 100;
 }
 
-function pct2(n: number): number {
-  return Math.round(n * 100) / 100;
-}
-
 function isFiniteNumber(n: number): boolean {
   // 引数は型で number 保証済み。NaN / ±Infinity のみを弾く。
   return Number.isFinite(n);
@@ -119,13 +113,13 @@ export function calcTotalReturn(
   const finalValue = endingValue + dividends;
   const totalGain = yen(finalValue - principal);
   const totalReturn = finalValue / principal - 1;
-  const totalReturnPct = pct2(totalReturn * 100);
+  const totalReturnPct = round2(totalReturn * 100);
 
   // CAGR は finalValue<=0 (元本全損超) では実数解を持たないため null。
   let cagrPct: number | null = null;
   if (isFiniteNumber(years) && years > 0 && finalValue > 0) {
     const cagr = Math.pow(finalValue / principal, 1 / years) - 1;
-    cagrPct = pct2(cagr * 100);
+    cagrPct = round2(cagr * 100);
   }
   return { totalReturnPct, cagrPct, totalGain };
 }
@@ -166,7 +160,7 @@ export function calcRealCost(
   const gross = isFiniteNumber(grossReturnPct) ? grossReturnPct : 0;
   const yrs = isFiniteNumber(years) ? Math.max(0, years) : 0;
 
-  const annualCostPct = pct2(expense + hidden);
+  const annualCostPct = round2(expense + hidden);
   const annualCostYen = yen(amount * (annualCostPct / 100));
 
   // コスト無し vs コスト控除後の将来価値差 (複利での蝕み効果)。
@@ -204,7 +198,7 @@ export function calcStdDev(returns: readonly number[], sample = false): number |
     return acc + dev * dev;
   }, 0);
   const divisor = sample ? n - 1 : n;
-  return pct2(Math.sqrt(sumSq / divisor));
+  return round2(Math.sqrt(sumSq / divisor));
 }
 
 export interface DcaSimulation {
@@ -263,7 +257,7 @@ export function calcDcaSimulation(
   // Stryker disable next-line EqualityOperator
   if (totalUnits <= 0) return empty;
 
-  const averageCost = pct2(totalInvested / totalUnits);
+  const averageCost = round2(totalInvested / totalUnits);
   const finalValuation = yen(lastValidPrice * totalUnits);
   const gain = finalValuation - totalInvested;
   return {

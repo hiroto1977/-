@@ -12,9 +12,7 @@
  * 上限を反映します。実額は給与明細・日本年金機構で確認すること。
  */
 
-function yen(n: number): number {
-  return Math.round(n);
-}
+import { yen } from './num';
 
 // --- 標準報酬月額の等級表 (令和6年度・協会けんぽ全国共通) ----------------
 //

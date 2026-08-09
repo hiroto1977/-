@@ -22,6 +22,7 @@
  */
 
 import { readNumber } from './inputGuards';
+import type { IssueLevel } from '../../shared/issueLevel';
 
 /** 資金繰り表の月数。1 年分。 */
 export const PLAN_MONTHS = 12;
@@ -168,7 +169,8 @@ export function monthsOfRunway(plan: CashPlan): number | null {
   return plan.endingBalance / avgOut;
 }
 
-export type PlanIssueLevel = 'fatal' | 'warn' | 'info';
+/** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。 */
+export type PlanIssueLevel = IssueLevel;
 
 export interface PlanIssue {
   readonly level: PlanIssueLevel;

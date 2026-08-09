@@ -18,6 +18,8 @@
  * 膜仕様・自治体の排水規制・条例を含めて専門家と設備メーカーの設計で決まります。
  */
 
+import { nonNeg, round1 } from './num';
+
 /* ─────────────────────────────  定数  ───────────────────────────── */
 
 /** 硝化 1 段で消費するアルカリ度 (N 1mg あたり CaCO3 換算 mg)。硝化の化学量論。 */
@@ -39,14 +41,8 @@ export const EFFLUENT_TP_DAILY_AVG_MG_L = 8;
 export const WPCL_NP_APPLICABILITY_M3_PER_DAY = 50;
 
 /** 非有限・負を 0 に丸める。 */
-function nonNegative(n: number): number {
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
 
 /** 0.1 単位に丸める。 */
-function round1(n: number): number {
-  return Math.round(n * 10) / 10;
-}
 
 /* ───────────────────────────  1. 水収支  ─────────────────────────── */
 
@@ -95,10 +91,10 @@ export interface WaterBalanceResult {
  * 「100% 再利用」がなぜ成立しないか (排出 = 塩類の唯一の出口) を数値で示す。
  */
 export function planWaterBalance(input: WaterBalanceInput): WaterBalanceResult {
-  const feed = nonNegative(input.systemVolumeL);
-  const cycleDays = nonNegative(input.exchangeCycleDays);
-  const r = Math.min(100, nonNegative(input.roRecoveryPct)) / 100;
-  const rej = Math.min(100, nonNegative(input.roRejectionPct)) / 100;
+  const feed = nonNeg(input.systemVolumeL);
+  const cycleDays = nonNeg(input.exchangeCycleDays);
+  const r = Math.min(100, nonNeg(input.roRecoveryPct)) / 100;
+  const rej = Math.min(100, nonNeg(input.roRejectionPct)) / 100;
 
   const permeate = feed * r;
   const concentrate = feed * (1 - r);
@@ -157,16 +153,16 @@ export interface RoSizingResult {
  * 止水して詰まる — その故障モードをここで顕在化させる。
  */
 export function planRoSizing(input: RoSizingInput): RoSizingResult {
-  const batch = nonNegative(input.batchVolumeL);
-  const windowH = nonNegative(input.processingWindowHours);
-  const cycleDays = nonNegative(input.exchangeCycleDays);
+  const batch = nonNeg(input.batchVolumeL);
+  const windowH = nonNeg(input.processingWindowHours);
+  const cycleDays = nonNeg(input.exchangeCycleDays);
   const cap = input.machineCapacityLPerDay;
 
   const requiredCapacity = windowH > 0 ? (batch * 24) / windowH : 0;
 
   let actualHours: number | null = null;
   let adequate: boolean | null = null;
-  if (cap !== undefined && nonNegative(cap) > 0) {
+  if (cap !== undefined && nonNeg(cap) > 0) {
     actualHours = round1((batch / cap) * 24);
     adequate = windowH > 0 ? actualHours <= windowH : null;
   }
@@ -216,8 +212,8 @@ export interface NitrificationResult {
  * 消費したアルカリ度を炭酸水素カリウム等で戻さないと pH 制御が発振する。
  */
 export function planNitrification(input: NitrificationInput): NitrificationResult {
-  const nMgL = nonNegative(input.ammoniacalNMgL);
-  const volumeL = nonNegative(input.volumeL);
+  const nMgL = nonNeg(input.ammoniacalNMgL);
+  const volumeL = nonNeg(input.volumeL);
   const nLoadG = (nMgL * volumeL) / 1000; // mg/L × L = mg → /1000 = g
 
   const alkalinityG = nLoadG * NITRIFICATION_ALKALINITY_MG_CACO3_PER_MG_N;
@@ -255,9 +251,9 @@ export interface AerationResult {
  * は UF/RO では止まらず、実際の防波堤は硝化・有機物無機化だからである。
  */
 export function planAeration(input: AerationInput): AerationResult {
-  const tankL = nonNegative(input.tankVolumeL);
-  const inflowPerDay = nonNegative(input.inflowLPerDay);
-  const minHrt = input.minRequiredHrtHours === undefined ? 24 : nonNegative(input.minRequiredHrtHours);
+  const tankL = nonNeg(input.tankVolumeL);
+  const inflowPerDay = nonNeg(input.inflowLPerDay);
+  const minHrt = input.minRequiredHrtHours === undefined ? 24 : nonNeg(input.minRequiredHrtHours);
 
   const hrtHours = inflowPerDay > 0 ? (tankL / inflowPerDay) * 24 : null;
 
@@ -305,9 +301,9 @@ export interface EffluentResult {
  * 実際の適用は自治体の上乗せ条例・地域指定で変わるため要確認。
  */
 export function checkEffluent(input: EffluentInput): EffluentResult {
-  const tn = nonNegative(input.concentrateTnMgL);
-  const tp = nonNegative(input.concentrateTpMgL);
-  const annualL = nonNegative(input.annualDischargeL);
+  const tn = nonNeg(input.concentrateTnMgL);
+  const tp = nonNeg(input.concentrateTpMgL);
+  const annualL = nonNeg(input.annualDischargeL);
   const toPublic = input.dischargeToPublicWater === true;
 
   const dailyM3 = annualL / 365 / 1000;

@@ -17,6 +17,7 @@
  * 申告・納税は税理士 / 国税庁・e-Tax で確定してください。
  */
 
+import { yen } from './num';
 import {
   CONSUMPTION_TAX_STANDARD,
   CONSUMPTION_TAX_REDUCED,
@@ -42,8 +43,16 @@ export const EXEMPTION_THRESHOLD = 10_000_000;
 export const SIMPLIFIED_ELIGIBILITY_THRESHOLD = 50_000_000;
 
 /** 円未満を四捨五入し、非有限はガードして 0 にする。 */
-function yen(n: number): number {
-  return Number.isFinite(n) ? Math.round(n) : 0;
+/**
+ * 円未満を四捨五入し、非有限値は 0 に落とす。
+ *
+ * 共通の `yen` は非有限値をそのまま伝播させる。ここだけ 0 に落とすのは、
+ * このモジュールが画面の入力欄を直接受け取り、「NaN 円」と表示するくらいなら
+ * 0 円と出したほうが読み手を惑わせないため（税額の 0 は「今回は納付なし」と
+ * 読める）。方針が違うので別名にし、共通の `yen` を内側で使う。
+ */
+function yenOr0(n: number): number {
+  return Number.isFinite(n) ? yen(n) : 0;
 }
 
 /** 非有限・負の金額を 0 に丸める。 */
@@ -70,7 +79,7 @@ function taxOf(a: AmountByRate): number {
  * 仕入が売上を上回る場合は負値 (還付見込み) を返す。
  */
 export function calcStandardTax(sales: AmountByRate, purchases: AmountByRate): number {
-  return yen(taxOf(sales) - taxOf(purchases));
+  return yenOr0(taxOf(sales) - taxOf(purchases));
 }
 
 // --- 簡易課税 (複数事業の加重みなし仕入率) -------------------------------
@@ -108,7 +117,7 @@ export function calcSimplifiedTax(segments: readonly BusinessSegment[]): number 
     totalSalesTax += taxOf(seg.sales);
   }
   const deemed = weightedDeemedRate(segments);
-  return yen(totalSalesTax * (1 - deemed));
+  return yenOr0(totalSalesTax * (1 - deemed));
 }
 
 // --- 2割特例 (軽減税率混在) ---------------------------------------------
@@ -118,7 +127,7 @@ export function calcSimplifiedTax(segments: readonly BusinessSegment[]): number 
  *   納付税額 = 売上に係る消費税額 × 20%
  */
 export function calcTwentyPercentTax(sales: AmountByRate): number {
-  return yen(taxOf(sales) * TWENTY_PERCENT_RATE);
+  return yenOr0(taxOf(sales) * TWENTY_PERCENT_RATE);
 }
 
 // --- 免税 / 簡易課税の適用判定 ------------------------------------------

@@ -188,7 +188,12 @@
     "src/renderer/data/docStudioTeikan.ts",
     "src/renderer/data/businessTriage.ts",
     "src/renderer/data/statementAccounts.ts",
-    "src/renderer/data/cashPlan.ts"
+    "src/renderer/data/cashPlan.ts",
+    "src/shared/num.ts",
+    "src/shared/escape.ts",
+    "src/shared/issueLevel.ts",
+    "src/shared/textWrap.ts",
+    "src/shared/seededNoise.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

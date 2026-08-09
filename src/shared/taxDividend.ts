@@ -17,6 +17,7 @@
  * 公式ツール / 税理士で確認すること。
  */
 
+import { yen } from './num';
 import {
   calcBaseIncomeTax,
   marginalIncomeTaxRate,
@@ -24,10 +25,6 @@ import {
   RESIDENT_TAX_RATE,
 } from './taxCalc';
 import { calcDividendCredit, type DividendKind } from './taxCredits';
-
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /** 源泉徴収 (申告不要) の所得税率 (15% × 1.021)。 */
 export const DIVIDEND_WITHHOLDING_INCOME_RATE = 0.15 * (1 + RECONSTRUCTION_SURTAX_RATE);

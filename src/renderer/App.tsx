@@ -1,3 +1,4 @@
+import { onNavigate } from './navigate';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from './services';
 import { isServiceId } from '../shared/serviceId';
@@ -152,22 +153,16 @@ export function App() {
   // Loosely-coupled navigation: any page can dispatch a CustomEvent to
   // jump to another service without prop-drilling a callback. The Home
   // page uses this for "細かく編集する" links.
-  useEffect(() => {
-    function onNavigate(e: Event) {
-      const target = (e as CustomEvent<unknown>).detail;
-      if (isServiceId(target)) {
-        setActiveId(target);
-        // Auto-expand the group containing the destination so it's visible.
-        const def = SERVICES.find((s) => s.id === target);
-        if (def) {
-          setCollapsed((prev) => ({ ...prev, [def.category]: false }));
-        }
-        setNavOpen(false); // ページ内リンク遷移でもモバイルのドロワーを閉じる
-      }
+  useEffect(() => onNavigate((target) => {
+    if (!isServiceId(target)) return;
+    setActiveId(target);
+    // Auto-expand the group containing the destination so it's visible.
+    const def = SERVICES.find((s) => s.id === target);
+    if (def) {
+      setCollapsed((prev) => ({ ...prev, [def.category]: false }));
     }
-    window.addEventListener('servicehub:navigate', onNavigate);
-    return () => window.removeEventListener('servicehub:navigate', onNavigate);
-  }, []);
+    setNavOpen(false); // ページ内リンク遷移でもモバイルのドロワーを閉じる
+  }), []);
 
   // Cmd/Ctrl-K でサイドバー検索にフォーカス (どの画面からでも)。
   useEffect(() => {

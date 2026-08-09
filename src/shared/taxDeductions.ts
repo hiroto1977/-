@@ -10,12 +10,10 @@
  * 所得税と住民税で控除額が異なるものは両方を返す。
  */
 
+import { yen } from './num';
 import { calcBasicDeduction, calcResidentBasicDeduction } from './taxCalc';
 
 /** 円未満を四捨五入。 */
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /** 所得税額 / 住民税額の両方を持つ控除額。 */
 export interface DeductionPair {

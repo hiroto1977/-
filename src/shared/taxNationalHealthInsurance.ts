@@ -21,10 +21,9 @@
  * 実額はここでの概算より低くなる。
  */
 
+import { yen } from './num';
+
 /** 円未満を四捨五入。 */
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 // --- 賦課限度額・基礎控除の固定値 (令和6年度の代表値) ----------------------
 //

@@ -11,6 +11,8 @@
  * UI から切り離して単体テスト可能にするため、計算はすべてここに集約する。
  */
 
+import { assertNonNegativeFinite, floorHundred } from './num';
+
 /** 固定資産税の標準税率 (1.4%)。地方税法 350 条の標準税率。 */
 export const FIXED_ASSET_STANDARD_RATE = 0.014;
 /** 都市計画税の制限税率 (上限 0.3%)。地方税法 702 条の4。 */
@@ -30,16 +32,8 @@ export type AssetType = 'land' | 'house' | 'depreciableAsset';
  * @param value 検証対象
  * @param label エラーメッセージに使うラベル
  */
-function assertNonNegativeFinite(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
-  }
-}
 
 /** 固定資産税の税額端数処理: 100 円未満を切り捨てる (地方税法 20 条の4の2)。 */
-function floorHundred(tax: number): number {
-  return Math.floor(tax / 100) * 100;
-}
 
 export interface FixedAssetTaxParams {
   /** 課税標準額 (円)。住宅用地特例適用後の額を渡すこと。 */

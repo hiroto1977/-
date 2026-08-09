@@ -18,7 +18,10 @@
  * 読み取れないと言い、円単位での入力を促す方が安全と判断した。
  */
 
-export type GuardLevel = 'fatal' | 'warn' | 'info';
+import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
+
+/** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。 */
+export type GuardLevel = IssueLevel;
 
 export interface GuardIssue {
   readonly level: GuardLevel;
@@ -180,9 +183,9 @@ export function guardAll(entries: readonly (readonly [string | undefined | null,
     const issue = guardNumber(raw, spec);
     if (issue) out.push(issue);
   }
-  const rank: Record<GuardLevel, number> = { fatal: 0, warn: 1, info: 2 };
+
   // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
-  return [...out].sort((a, b) => rank[a.level] - rank[b.level]);
+  return [...out].sort(byIssueLevel);
 }
 
 /** 画面のバッジ表示用の件数。 */

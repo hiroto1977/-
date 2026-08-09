@@ -22,21 +22,15 @@
  * ネットワーク / ファイル / Date.now / 乱数は一切使わない純粋関数のみ。
  */
 
+import { assertNonNegativeFinite, yen } from './num';
+
 /** 円未満を四捨五入 (内部計算の端数処理)。 */
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /**
  * 金額の入力検証。負値・非有限 (NaN / Infinity) は throw。
  * @param value 検証対象の金額 (円)
  * @param label エラーメッセージ用の項目名
  */
-function assertNonNegativeFinite(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
-  }
-}
 
 // --- 暦年課税の基礎控除 --------------------------------------------------
 //

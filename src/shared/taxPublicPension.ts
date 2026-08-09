@@ -11,9 +11,7 @@
  * 控除等を考慮しない簡易モデル。確定申告は公式ツール / 税理士で確認すること。
  */
 
-function yen(n: number): number {
-  return Math.round(n);
-}
+import { yen } from './num';
 
 /** 公的年金等控除の最低額 (65歳未満)。 */
 export const PENSION_DEDUCTION_MIN_UNDER65 = 600_000;

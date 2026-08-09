@@ -1,3 +1,5 @@
+import { wrapLines } from '../../shared/textWrap';
+import { escapeXml } from '../../shared/escape';
 import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -29,29 +31,6 @@ interface TemplatesSnapshot {
 }
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
-
-function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function wrapLines(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) { out.push(''); continue; }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) { out.push(buf); buf = ''; }
-      buf += ch;
-    }
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
-}
 
 // Mirror of the backend renderers so the renderer can preview without an IPC round-trip.
 function renderPreview(id: string, p: TemplateParams, d: TemplateDef): string {

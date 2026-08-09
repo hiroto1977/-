@@ -14,6 +14,8 @@
  * ネットワーク / ファイル / Date.now / 乱数は一切使わない純粋関数のみ。
  */
 
+import { assertNonNegativeFinite, floorHundred } from './num';
+
 // --- 税率・免税点の固定値テーブル ----------------------------------------
 //
 // 地方税法・租税特別措置法で定まる法定の固定値。値そのものの変異 (4% → 3% 等)
@@ -57,11 +59,6 @@ const PROPERTY_TYPES: readonly PropertyType[] = [
  * @param value 検証対象の金額 (円)
  * @param label エラーメッセージ用の項目名
  */
-function assertNonNegativeFinite(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
-  }
-}
 
 /** 不動産種別のホワイトリスト検証。範囲外は throw。 */
 function assertPropertyType(propertyType: PropertyType): void {
@@ -71,9 +68,6 @@ function assertPropertyType(propertyType: PropertyType): void {
 }
 
 /** 不動産取得税額の 100 円未満を切り捨てる (地方税法 20 条の4の2)。 */
-function floorHundred(tax: number): number {
-  return Math.floor(tax / 100) * 100;
-}
 
 /**
  * 種別と新築フラグから免税点を解決する。

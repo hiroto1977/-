@@ -15,8 +15,10 @@
  */
 
 import type { StudioDoc } from './docStudioData';
+import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
 
-export type CheckLevel = 'fatal' | 'warn' | 'info';
+/** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。旧名は呼び出し側のために残す。 */
+export type CheckLevel = IssueLevel;
 
 export interface DocIssue {
   readonly level: CheckLevel;
@@ -691,9 +693,8 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
 
   out.push(...(RULES[doc.id]?.(values) ?? []));
 
-  const rank: Record<CheckLevel, number> = { fatal: 0, warn: 1, info: 2 };
   // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
-  return [...out].sort((a, b) => rank[a.level] - rank[b.level]);
+  return [...out].sort(byIssueLevel);
 }
 
 /** 未入力のフィールド数（差込プレビューで【】のまま残る数）。 */

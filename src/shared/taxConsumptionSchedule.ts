@@ -23,6 +23,8 @@
  *   提出期限 / No.6371 端数計算、国税通則法119条、e-Tax 還付金処理状況確認。
  */
 
+import { floorHundred } from './num';
+
 /** 現行法における消費税（国税）の割合。標準10% = 国税7.8% + 地方2.2%。 */
 export const NATIONAL_SHARE = 0.78;
 /** 地方消費税は「納付すべき消費税額（国税）」× 22/78。 */
@@ -36,11 +38,6 @@ export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent';
 
 /** 2割特例の負担割合。 */
 const TWENTY_PERCENT = 0.2;
-
-/** 100円未満切捨て（国税通則法119条1項）。 */
-export function floor100(n: number): number {
-  return Math.floor(n / 100) * 100;
-}
 
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
 export function roundRefund(n: number): number {
@@ -229,8 +226,8 @@ export function calcAnnualTax(input: ScheduleInput, rate: number): AnnualTax {
     national = -refundNational;
     local = -roundRefund(refundNational * LOCAL_RATIO);
   } else {
-    national = floor100(netNationalRaw);
-    local = floor100(national * LOCAL_RATIO);
+    national = floorHundred(netNationalRaw);
+    local = floorHundred(national * LOCAL_RATIO);
   }
 
   return {
@@ -276,8 +273,8 @@ export function planInterim(input: ScheduleInput): InterimPlan {
   const payments: InterimPayment[] = [];
 
   if (count === 1) {
-    const national = floor100((prior * 6) / 12);
-    const local = floor100(national * LOCAL_RATIO);
+    const national = floorHundred((prior * 6) / 12);
+    const local = floorHundred(national * LOCAL_RATIO);
     payments.push({
       no: 1,
       periodEnd: monthEndAfter(start.year, start.month, 5),
@@ -288,8 +285,8 @@ export function planInterim(input: ScheduleInput): InterimPlan {
     });
   } else if (count === 3) {
     for (let i = 0; i < 3; i += 1) {
-      const national = floor100((prior * 3) / 12);
-      const local = floor100(national * LOCAL_RATIO);
+      const national = floorHundred((prior * 3) / 12);
+      const local = floorHundred(national * LOCAL_RATIO);
       payments.push({
         no: i + 1,
         periodEnd: monthEndAfter(start.year, start.month, 3 * i + 2),
@@ -306,8 +303,8 @@ export function planInterim(input: ScheduleInput): InterimPlan {
     const headMonths = input.extendedDeadline ? 2 : 1;
     const headDue = dueMonthEndAfter(start.year, start.month, input.extendedDeadline ? 4 : 3);
     for (let k = 1; k <= 11; k += 1) {
-      const national = floor100(prior / 12);
-      const local = floor100(national * LOCAL_RATIO);
+      const national = floorHundred(prior / 12);
+      const local = floorHundred(national * LOCAL_RATIO);
       payments.push({
         no: k,
         periodEnd: monthEndAfter(start.year, start.month, k - 1),

@@ -1,3 +1,4 @@
+import { seededNoise } from '../../shared/seededNoise';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -289,16 +290,6 @@ export function computeCategoryKpi(
 
 // --- Mock data source ----------------------------------------------------
 
-/** xorshift32 — same as kpi/stocks for deterministic mock series. */
-function noise(seed: number): number {
-  // Stryker disable next-line ConditionalExpression,LogicalOperator
-  let x = seed | 0 || 1;
-  x ^= x << 13;
-  x ^= x >>> 17;
-  x ^= x << 5;
-  return (x >>> 0) / 4294967296;
-}
-
 export const HISTORY_LENGTH = 30;
 
 export interface BusinessOpsDataSource {
@@ -320,11 +311,11 @@ export function createMockBusinessOpsDataSource(): BusinessOpsDataSource {
         const history: CategoryKpi[] = [];
         for (let i = 0; i < HISTORY_LENGTH; i++) {
           // Stryker disable next-line ArithmeticOperator
-          const dr = 0.7 + noise(seedBase + i) * 0.6;
+          const dr = 0.7 + seededNoise(seedBase + i) * 0.6;
           // Stryker disable next-line ArithmeticOperator
-          const dt = 0.6 + noise(seedBase + i + 3333) * 0.8;
+          const dt = 0.6 + seededNoise(seedBase + i + 3333) * 0.8;
           // Stryker disable next-line ArithmeticOperator
-          const droas = 0.75 + noise(seedBase + i + 7777) * 0.5;
+          const droas = 0.75 + seededNoise(seedBase + i + 7777) * 0.5;
           history.push(computeCategoryKpi(def, dr, dt, droas));
         }
         const current = history[history.length - 1]!;

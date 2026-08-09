@@ -12,9 +12,9 @@
  * 知識はすべて単一の真実源から導出する (SERVICES / orchestration registry /
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
  */
+import { navigateTo } from '../navigate';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
-import type { ServiceId } from '../../shared/serviceId';
 import { replyTo, type ChatReply } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
@@ -95,10 +95,6 @@ function downloadRequests(): void {
   a.download = 'chatbot-requests.md';
   a.click();
   URL.revokeObjectURL(url);
-}
-
-function navigateTo(serviceId: ServiceId): void {
-  window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
 /** Ollama 接続時の自由質問フォールバック (失敗したら null)。 */

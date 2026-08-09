@@ -1,3 +1,4 @@
+import { wrapLines } from '../../shared/textWrap';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -257,36 +258,13 @@ export function validateParams(
 
 // --- SVG helpers ------------------------------------------------------
 
-export function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
+import { escapeXml } from '../../shared/escape';
+
+export { escapeXml };
 
 /** Split text into lines no longer than `maxChars`. Newlines force a break. */
 // Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,ArithmeticOperator,BooleanLiteral
-export function wrapLines(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) {
-      out.push('');
-      continue;
-    }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) {
-        out.push(buf);
-        buf = '';
-      }
-      buf += ch;
-    }
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
-}
 // Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,ArithmeticOperator,BooleanLiteral
 
 // --- Individual template renderers ------------------------------------
@@ -544,3 +522,6 @@ async function exportTemplate(ctx: ActionContext): Promise<ExportResult> {
 export const ACTIONS: ActionMap = {
   'export-template': exportTemplate,
 };
+
+/** 印刷幅の折り返し。実装は `shared/textWrap.ts` に 1 つだけ持つ。 */
+export { wrapLines };

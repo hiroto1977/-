@@ -1,3 +1,4 @@
+import { floorHundred } from '../num';
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_RATE_POINTS,
@@ -8,7 +9,6 @@ import {
   buildSchedule,
   calcAnnualTax,
   finalDueDate,
-  floor100,
   interimCount,
   nextBusinessDay,
   planInterim,
@@ -39,10 +39,10 @@ const corporate = (over: Partial<ScheduleInput> = {}): ScheduleInput =>
 
 describe('端数処理', () => {
   it('100円未満を切り捨てる（国税通則法119条1項）', () => {
-    expect(floor100(1_234_567)).toBe(1_234_500);
-    expect(floor100(99)).toBe(0);
-    expect(floor100(100)).toBe(100);
-    expect(floor100(0)).toBe(0);
+    expect(floorHundred(1_234_567)).toBe(1_234_500);
+    expect(floorHundred(99)).toBe(0);
+    expect(floorHundred(100)).toBe(100);
+    expect(floorHundred(0)).toBe(0);
   });
 
   it('還付は1円未満切捨て。ただし1円未満の正値は1円', () => {
@@ -113,8 +113,8 @@ describe('年税額', () => {
 
   it('地方消費税は「100円未満切捨て後の国税額」に対して計算する', () => {
     const a = calcAnnualTax(individual({ taxableSales: 1_234_567, taxablePurchases: 0 }), 0.1);
-    expect(a.national).toBe(floor100(1_234_567 * 0.1 * NATIONAL_SHARE));
-    expect(a.local).toBe(floor100(a.national * LOCAL_RATIO));
+    expect(a.national).toBe(floorHundred(1_234_567 * 0.1 * NATIONAL_SHARE));
+    expect(a.local).toBe(floorHundred(a.national * LOCAL_RATIO));
   });
 });
 
@@ -143,7 +143,7 @@ describe('中間申告の判定', () => {
     expect(p.payments[0]!.periodEnd).toBe('2026-06-30');
     expect(p.payments[0]!.due).toBe('2026-08-31');
     expect(p.payments[0]!.national).toBe(300_000);
-    expect(p.payments[0]!.local).toBe(floor100(300_000 * LOCAL_RATIO));
+    expect(p.payments[0]!.local).toBe(floorHundred(300_000 * LOCAL_RATIO));
   });
 
   it('年3回: 個人事業者は 5/31・8/31・11/30 が期限、各回 3/12', () => {
@@ -171,7 +171,7 @@ describe('中間申告の判定', () => {
       '2026-01-31', '2026-02-28', '2026-03-31', '2026-04-30', '2026-05-31', '2026-06-30',
       '2026-07-31', '2026-08-31', '2026-09-30', '2026-10-31', '2026-11-30',
     ]);
-    for (const x of p.payments) expect(x.national).toBe(floor100(60_000_000 / 12));
+    for (const x of p.payments) expect(x.national).toBe(floorHundred(60_000_000 / 12));
   });
 
   it('年11回・申告期限延長の法人は、開始後2か月分が3か月経過後2か月以内になる', () => {
@@ -393,7 +393,7 @@ describe('中間申告の区分ラベルと内訳', () => {
     const p = planInterim(individual({ priorNationalTax: 60_000_000 }));
     const x = p.payments[0]!;
     expect(x.local).toBeLessThan(x.national);
-    expect(x.local).toBe(floor100(x.national * LOCAL_RATIO));
+    expect(x.local).toBe(floorHundred(x.national * LOCAL_RATIO));
   });
 
   it('回数は 1 から始まり連番になる', () => {

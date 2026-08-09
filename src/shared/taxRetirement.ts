@@ -20,11 +20,8 @@
  *   住民税        = 退職所得 × 10% (分離課税・調整控除なし)
  */
 
+import { yen } from './num';
 import { calcBaseIncomeTax, RECONSTRUCTION_SURTAX_RATE, RESIDENT_TAX_RATE } from './taxCalc';
-
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /**
  * 暦の勤続期間 (年数) を、退職所得控除の計算に用いる「勤続年数」へ換算する。

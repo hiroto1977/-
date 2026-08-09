@@ -24,7 +24,9 @@ import {
   teikanClosing,
   type TeikanChapter,
 } from '../data/docStudioTeikan';
-import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
+import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChecks';
+import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
+import { countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
 import {
   PLAN_ITEMS,
@@ -96,11 +98,6 @@ function saveStore(s: StoreShape): void {
   }
 }
 
-function yen(raw: string): number | null {
-  if (!raw) return null;
-  const n = Number(raw.replace(/[^0-9.-]/g, ''));
-  return Number.isFinite(n) ? n : null;
-}
 const fmt = (n: number) => n.toLocaleString('ja-JP');
 
 /** {{k}} プレースホルダを差込 span に展開する。 */
@@ -129,7 +126,7 @@ function Fill({ text, fields, values }: { text: string; fields: readonly DocFiel
 /** 経営書類の明細表（品目1..3・税10%集計）。 */
 function ItemsTable({ values }: { values: Values }) {
   const rows = [1, 2, 3]
-    .map((i) => ({ item: values[`item${i}`] ?? '', amount: yen(values[`amount${i}`] ?? '') }))
+    .map((i) => ({ item: values[`item${i}`] ?? '', amount: readNumber(values[`amount${i}`]) }))
     .filter((r) => r.item || r.amount !== null);
   const subtotal = rows.reduce((s, r) => s + (r.amount ?? 0), 0);
   const tax = Math.floor(subtotal * 0.1);
@@ -277,7 +274,9 @@ function TaxItemsTable({ values }: { values: Values }) {
 
 /** 汎用の差込表（36協定・精算書・株主名簿など）。sum があれば最終列を合計する。 */
 function FillTable({ spec, fields, values }: { spec: DocTable; fields: readonly DocField[]; values: Values }) {
-  const total = spec.sum ? spec.sum.keys.reduce((s, k) => s + (yen(values[k] ?? '') ?? 0), 0) : null;
+  // 検算（docStudioChecks）と同じ toNum で読む。ここだけ別のパーサを使うと、
+  // 書面には差額が出ているのに検算は何も言わない、という食い違いが生まれる。
+  const total = spec.sum ? spec.sum.keys.reduce((s, k) => s + (toNum(values[k]) ?? 0), 0) : null;
   const cls = (i: number) => (spec.align?.[i] === 'r' ? 'ds-num' : undefined);
   return (
     <table className="ds-table">
@@ -350,7 +349,7 @@ function Blocks({ blocks, fields, values }: { blocks: readonly DocBlock[]; field
         if (b.cashPlan) return <CashPlanTable key={i} values={values} />;
         if (b.sign) return <SignBlock key={i} values={values} />;
         if (b.bigAmount) {
-          const n = yen(values['amount'] ?? '');
+          const n = toNum(values['amount']);
           return <div key={i} className="ds-big">{n !== null ? `金 ${fmt(n)} 円 也（税込）` : '金 ＿＿＿＿＿＿＿ 円 也'}</div>;
         }
         if (b.stamp) return <div key={i} className="ds-stamp">収入印紙（紙で5万円以上の場合・電子交付は不要）</div>;
@@ -391,9 +390,7 @@ function Chapters({ chapters, fields, values }: { chapters: readonly TeikanChapt
   );
 }
 
-const LEVEL_COLOR: Record<DocIssue['level'], string> = { fatal: '#e5484d', warn: '#e08c1a', info: 'var(--text-mute)' };
-const LEVEL_MARK: Record<DocIssue['level'], string> = { fatal: '⛔', warn: '⚠️', info: '🕒' };
-const LEVEL_NAME: Record<DocIssue['level'], string> = { fatal: 'このままでは無効', warn: '要確認', info: '交付後にやること' };
+
 
 function FieldInputs({
   fields,
@@ -450,8 +447,7 @@ function FieldInputs({
 
 /** 事前チェックの結果。fatal → warn → info の順で、根拠つきで並べる。 */
 function CheckPanel({ issues }: { issues: readonly DocIssue[] }) {
-  const counts = { fatal: 0, warn: 0, info: 0 };
-  for (const i of issues) counts[i.level] += 1;
+  const counts = countByLevel(issues);
   const clean = counts.fatal === 0 && counts.warn === 0;
   return (
     <div
@@ -459,7 +455,7 @@ function CheckPanel({ issues }: { issues: readonly DocIssue[] }) {
       data-fatal={counts.fatal}
       data-warn={counts.warn}
       style={{
-        border: `1px solid ${counts.fatal ? LEVEL_COLOR.fatal : counts.warn ? LEVEL_COLOR.warn : 'var(--border)'}`,
+        border: `1px solid ${borderColorFor(counts)}`,
         borderRadius: 10,
         padding: '12px 14px',
         background: 'var(--bg-elev)',
@@ -674,15 +670,14 @@ function KessanCheckPanel({ values }: { values: Values }) {
     dividends: readNumber(values['dividends']) ?? 0,
   };
   const issues = checkStatements(values, opt);
-  const fatal = issues.filter((i) => i.level === 'fatal').length;
-  const warn = issues.filter((i) => i.level === 'warn').length;
+  const { fatal, warn } = countByLevel(issues);
   return (
     <div
       data-kessan-check
       data-fatal={fatal}
       data-warn={warn}
       style={{
-        border: `1px solid ${fatal ? LEVEL_COLOR.fatal : warn ? LEVEL_COLOR.warn : 'var(--border)'}`,
+        border: `1px solid ${borderColorFor({ fatal, warn })}`,
         borderRadius: 10, padding: '12px 14px', background: 'var(--bg-elev)',
         fontSize: 12, lineHeight: 1.7, marginTop: 12,
       }}
