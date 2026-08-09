@@ -59,7 +59,7 @@ export interface DocTriage {
 }
 
 /** 定款・就業規則は STUDIO_TEMPLATES の外にあるので擬似 id を振る。 */
-export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo'] as const;
+export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan'] as const;
 
 /** 契約書に共通の注意（個別の注意が無い書式で使う）。 */
 export const CONTRACT_NOTE =
@@ -343,6 +343,18 @@ const ROWS: readonly DocTriage[] = [
     exclusiveTo: [],
     caseByCase: '定款そのものの作成は権利義務・事実証明に関する書類として行政書士の領域。設立登記の申請代理と登記添付書類の作成は司法書士の領域。自社の設立を自分で進める分にはどちらも制限されない。',
     consult: ['admin-scrivener', 'judicial-scrivener'],
+  },
+  {
+    doc: 'kessan',
+    ownUse: 'ok-with-care',
+    ownNote: '計算書類の作成義務を負うのは会社自身で、自社で作って差し支えない（会社法435条2項）。'
+      + '作成した時から10年間の保存義務があり、定時株主総会の承認後は貸借対照表の公告も要る。',
+    exclusiveTo: [],
+    caseByCase: '決算書そのものの作成・記帳代行は独占業務ではない。ただし、そこから先の'
+      + '法人税・消費税の申告書作成と税務代理は税理士の独占（税理士法2条1項）。'
+      + '大会社等の法定監査は公認会計士の独占（公認会計士法2条1項）。自社の決算を自社で組み'
+      + '自社名で申告する分は、いずれの制限も受けない。',
+    consult: ['tax-accountant', 'cpa'],
   },
   {
     doc: 'shugyo',

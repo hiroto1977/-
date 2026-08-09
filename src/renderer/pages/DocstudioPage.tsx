@@ -26,6 +26,14 @@ import {
 } from '../data/docStudioTeikan';
 import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import {
+  ACCOUNTS,
+  buildBalanceRows,
+  buildIncomeRows,
+  checkStatements,
+  incomeTotals,
+  type StatementRow,
+} from '../data/statementAccounts';
 import type { ProfessionalId } from '../data/professionalMap';
 import { readNumber } from '../data/inputGuards';
 import {
@@ -49,13 +57,14 @@ import {
  * （styles.css の body.ds-printing ルール）。
  */
 
-type Collection = 'studio' | 'teikan' | 'shugyo';
+type Collection = 'studio' | 'teikan' | 'shugyo' | 'kessan';
 type Values = Record<string, string>;
 
 interface StoreShape {
   studio?: Record<string, Values>;
   teikan?: { kk?: Values; gk?: Values };
   shugyo?: Values;
+  kessan?: Values;
   /** 最近使った書式 id（新しい順）。書式が増えたので探す手間を減らす。 */
   recent?: string[];
 }
@@ -473,6 +482,107 @@ function CheckPanel({ issues }: { issues: readonly DocIssue[] }) {
 }
 
 /**
+ * 決算書の書面 — 損益計算書と貸借対照表。
+ *
+ * 当期純利益は損益計算書で確定してから貸借対照表へ渡す。二表を別々に組むと
+ * 連結が切れて、貸借だけ合っているのに利益が反映されていない書面が出来上がる。
+ */
+function KessanSheets({ values, fields }: { values: Values; fields: readonly DocField[] }) {
+  const inc = incomeTotals(values);
+  const opt = {
+    retainedEarningsOpening: readNumber(values['retainedEarningsOpening']) ?? 0,
+    dividends: readNumber(values['dividends']) ?? 0,
+  };
+  const bs = buildBalanceRows(values, opt, inc.netIncome);
+  return (
+    <div data-kessan-sheets>
+      <div className="ds-title"><Fill text="{{company}} 損益計算書" fields={fields} values={values} /></div>
+      <div className="ds-right">
+        <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
+      </div>
+      <StatementTable title="損益計算書" rows={buildIncomeRows(values)} />
+
+      <div className="ds-title" style={{ marginTop: 24 }}>
+        <Fill text="{{company}} 貸借対照表" fields={fields} values={values} />
+      </div>
+      <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
+      <StatementTable title="資産の部" rows={bs.assets} />
+      <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
+    </div>
+  );
+}
+
+/** 決算書の 1 表（損益計算書 / 貸借対照表の片側）。 */
+function StatementTable({ title, rows }: { title: string; rows: readonly StatementRow[] }) {
+  return (
+    <table className="ds-table" data-statement={title}>
+      <thead>
+        <tr><th>{title}</th><th>金額（円）</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr
+            key={`${r.label}-${i}`}
+            className={r.kind === 'total' ? 'ds-total' : undefined}
+            data-row-kind={r.kind}
+          >
+            <td style={{ paddingLeft: r.indent ? 20 : undefined, fontWeight: r.kind === 'item' ? 400 : 700 }}>
+              {r.contra ? `${r.label}（△）` : r.label}
+            </td>
+            <td className="ds-num">
+              {r.contra ? `△ ${fmt(Math.abs(r.amount))}` : fmt(r.amount)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+/**
+ * 決算書の検算。
+ *
+ * 交付前チェックと役割は同じだが、見るものが違う。こちらは貸借の一致と
+ * 二表の連結という、合計欄を眺めていても気づけない失敗を挙げる。
+ */
+function KessanCheckPanel({ values }: { values: Values }) {
+  const opt = {
+    retainedEarningsOpening: readNumber(values['retainedEarningsOpening']) ?? 0,
+    dividends: readNumber(values['dividends']) ?? 0,
+  };
+  const issues = checkStatements(values, opt);
+  const fatal = issues.filter((i) => i.level === 'fatal').length;
+  const warn = issues.filter((i) => i.level === 'warn').length;
+  return (
+    <div
+      data-kessan-check
+      data-fatal={fatal}
+      data-warn={warn}
+      style={{
+        border: `1px solid ${fatal ? LEVEL_COLOR.fatal : warn ? LEVEL_COLOR.warn : 'var(--border)'}`,
+        borderRadius: 10, padding: '12px 14px', background: 'var(--bg-elev)',
+        fontSize: 12, lineHeight: 1.7, marginTop: 12,
+      }}
+    >
+      <strong style={{ fontSize: 13 }}>
+        🧮 決算書の検算 — {fatal === 0 && warn === 0 ? '貸借は一致しています' : `⛔ ${fatal} 件 / ⚠️ ${warn} 件`}
+      </strong>
+      <div style={{ color: 'var(--text-mute)', marginTop: 2 }}>
+        資産合計と負債・純資産合計の一致、当期純利益が繰越利益剰余金に入っているかを突き合わせています。
+      </div>
+      {issues.map((it, i) => (
+        <div key={i} style={{ marginTop: 8 }}>
+          <div style={{ color: LEVEL_COLOR[it.level], fontWeight: it.level === 'info' ? 400 : 700 }}>
+            {LEVEL_MARK[it.level]} [{LEVEL_NAME[it.level]}] {it.message}
+          </div>
+          {it.basis && <div style={{ color: 'var(--text-mute)' }}>根拠: {it.basis}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * 事業仕分け — 「この書類、自分で作って出していいのか」に答える。
  *
  * 交付前チェックが「入力が正しいか」を見るのに対し、こちらは「誰がやる仕事か」を見る。
@@ -567,6 +677,35 @@ const COLLECTIONS: { id: Collection; label: string }[] = [
   { id: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
   { id: 'teikan', label: '📜 電子定款' },
   { id: 'shugyo', label: '📖 就業規則' },
+  { id: 'kessan', label: '📊 決算書（PL / BS）' },
+];
+
+/**
+ * 決算書の入力欄。勘定科目そのものが差込項目になる。
+ *
+ * 会社名・事業年度のあとに ACCOUNTS の順で並べる。並び順は決算書の表示順と
+ * 揃えてあるので、上から順に埋めれば決算書の並びのまま入力できる。
+ */
+const KESSAN_FIELDS: readonly DocField[] = [
+  { k: 'company', req: true, label: '会社名', ph: '株式会社サンプル' },
+  { k: 'fyStart', label: '事業年度（自）', ph: '2026年4月1日' },
+  { k: 'fyEnd', req: true, label: '事業年度（至）', ph: '2027年3月31日' },
+  { k: 'retainedEarningsOpening', num: true, label: '繰越利益剰余金（期首残高）', ph: '0' },
+  { k: 'dividends', num: true, label: '当期の剰余金の配当', ph: '0' },
+  ...ACCOUNTS.map((a) => ({ k: a.k, num: true as const, label: a.contra ? `${a.name}（控除）` : a.name, ph: '0' })),
+];
+
+const KESSAN_STEPS: readonly (readonly [string, string])[] = [
+  ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
+  ['② 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
+  ['③ 印刷 / PDF 保存', '「印刷 / PDF 保存」で損益計算書と貸借対照表を出力します。'],
+  ['④ 残る2点を揃える', '会社法の計算書類は株主資本等変動計算書と個別注記表を含めた4点です。定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。'],
+];
+
+const KESSAN_NOTES: readonly string[] = [
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。',
+  '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。',
+  'ここで作るのは科目残高の積み上げです。勘定科目への振り分け、引当金の計上要否、減価償却方法の選択、税効果といった会計・税務の判断そのものは代替しません。',
 ];
 
 const RECENT_MAX = 6;
@@ -618,7 +757,10 @@ export function DocstudioPage() {
   }
 
   const fields: readonly DocField[] =
-    collection === 'studio' ? studioDoc.fields : collection === 'teikan' ? TEIKAN_FORMS[teikanType] : SHUGYO_FIELDS;
+    collection === 'studio' ? studioDoc.fields
+      : collection === 'teikan' ? TEIKAN_FORMS[teikanType]
+        : collection === 'kessan' ? KESSAN_FIELDS
+          : SHUGYO_FIELDS;
 
   // 書面の描画・チェック・入力欄はすべてこの値を見る（既定値のズレを作らない）。
   const filled = useMemo(() => withDefaults(fields, values), [fields, values]);
@@ -641,8 +783,14 @@ export function DocstudioPage() {
     window.print();
   }
 
-  const notes = collection === 'studio' ? studioDoc.note : collection === 'teikan' ? TEIKAN_NOTES : SHUGYO_NOTES;
-  const steps = collection === 'teikan' ? TEIKAN_STEPS[teikanType] : collection === 'shugyo' ? SHUGYO_STEPS : undefined;
+  const notes = collection === 'studio' ? studioDoc.note
+    : collection === 'teikan' ? TEIKAN_NOTES
+      : collection === 'kessan' ? KESSAN_NOTES
+        : SHUGYO_NOTES;
+  const steps = collection === 'teikan' ? TEIKAN_STEPS[teikanType]
+    : collection === 'shugyo' ? SHUGYO_STEPS
+      : collection === 'kessan' ? KESSAN_STEPS
+        : undefined;
 
   // 表示順は STUDIO_CATEGORIES で固定し、そこに無い cat は末尾に回す（追加漏れで消えないように）。
   const cats = useMemo(() => {
@@ -822,7 +970,15 @@ export function DocstudioPage() {
           </Section>
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
-          <TriagePanel doc={collection === 'teikan' ? `teikan-${teikanType}` : collection === 'shugyo' ? 'shugyo' : docId} />
+          {collection === 'kessan' && <KessanCheckPanel values={filled} />}
+          <TriagePanel
+            doc={
+              collection === 'teikan' ? `teikan-${teikanType}`
+                : collection === 'shugyo' ? 'shugyo'
+                  : collection === 'kessan' ? 'kessan'
+                    : docId
+            }
+          />
 
           <GuideBox
             title={
@@ -830,7 +986,9 @@ export function DocstudioPage() {
                 ? `📄 電子定款にする手順（${teikanType === 'kk' ? '株式会社' : '合同会社'}）`
                 : collection === 'shugyo'
                   ? '📋 導入の手順（作成 → 意見聴取 → 届出 → 周知）'
-                  : '📌 この書式について'
+                  : collection === 'kessan'
+                    ? '📊 決算書を作る手順（残高入力 → 貸借の検算 → 出力 → 公告）'
+                    : '📌 この書式について'
             }
             steps={steps}
             notes={notes}
@@ -864,6 +1022,7 @@ export function DocstudioPage() {
                 <Chapters chapters={SHUGYO_CHAPTERS} fields={fields} values={values} />
               </>
             )}
+            {collection === 'kessan' && <KessanSheets values={filled} fields={fields} />}
             <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
           </div>
         </div>

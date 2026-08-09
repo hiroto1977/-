@@ -49,6 +49,7 @@ exports[`集計 > 仕分け全体をスナップショットで固定する 1`] 
   "plantfactory-funding|ok|-|sme-consultant+admin-scrivener|case",
   "teikan-kk|ok-with-care|-|admin-scrivener+judicial-scrivener|case",
   "teikan-gk|ok-with-care|-|admin-scrivener+judicial-scrivener|case",
+  "kessan|ok-with-care|-|tax-accountant+cpa|case",
   "shugyo|ok-with-care|labor-consultant|-|case",
 ]
 `;

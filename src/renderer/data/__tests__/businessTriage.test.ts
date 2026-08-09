@@ -32,11 +32,11 @@ describe('仕分けの網羅', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('対象は 45 書式 + 定款2 + 就業規則', () => {
+  it('対象は 45 書式 + 定款2 + 就業規則 + 決算書', () => {
     expect(STUDIO_TEMPLATES).toHaveLength(45);
-    expect(EXTRA_DOC_IDS).toHaveLength(3);
-    expect(TRIAGE_ROWS).toHaveLength(48);
-    expect(expectedDocIds()).toHaveLength(48);
+    expect(EXTRA_DOC_IDS).toHaveLength(4);
+    expect(TRIAGE_ROWS).toHaveLength(49);
+    expect(expectedDocIds()).toHaveLength(49);
   });
 });
 
