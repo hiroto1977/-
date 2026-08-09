@@ -37,6 +37,7 @@ aliases:
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

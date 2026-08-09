@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 同分野の近傍
 - [[tax-business-succession|法人版事業承継税制（特例措置）]] — 同分野の近傍
 
 ## 関連

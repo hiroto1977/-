@@ -35,6 +35,7 @@ aliases:
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 語彙が近い
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 語彙が近い
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
+- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

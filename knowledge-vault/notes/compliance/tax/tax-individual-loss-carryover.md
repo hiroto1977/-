@@ -34,6 +34,7 @@ aliases:
 - [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
 - [[tax-rd-credit|研究開発税制（試験研究費の税額控除）]] — 語彙が近い
+- [[tax-customs-duty|関税（輸入品に課される国税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

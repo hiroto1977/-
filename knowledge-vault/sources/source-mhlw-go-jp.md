@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 246
+cite_count: 248
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **246 件**（公的 246）
+> [!info] 出典ドメイン索引 ・ 引用 **248 件**（公的 248）
 
 ## このドメインを出典とする項目
 
@@ -202,12 +202,14 @@ tags:
 - [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]] — 厚生労働省労災保険率について
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 厚生労働省フリーランスの労災特別加入（2024/11）
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 厚生労働省特別加入制度とはFAQ
-- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 厚生労働省2024年4月から労働条件明示のルールが変わります
-- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]] — 厚生労働省2024年4月から労働条件明示のルールが変わります
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 厚生労働省2024年4月からの備えは大丈夫ですか（明示事項の追加）
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 厚生労働省2024年4月から労働条件明示のルールが変わります
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 厚生労働省募集・求人申込み時の明示事項の追加
 - [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 厚生労働省副業・兼業（ガイドライン）
 - [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 厚生労働省労働時間の適正把握ガイドライン
-- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 厚労省ガイドライン本文(PDF)
-- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 厚労省労働時間の適正把握ガイドライン
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 厚生労働省ガイドライン本文(PDF)
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 厚生労働省働き方改革関連法解説（労働安全衛生法・労働時間の状況の把握）
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 厚生労働省労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン
 - [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 厚生労働省障害者の利用者負担
 - [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 厚生労働省障害者総合支援法が施行されました
 - [[legal-food-sanitation|食品衛生法の営業許可・届出とHACCPに沿った衛生管理]] — 厚生労働省HACCP

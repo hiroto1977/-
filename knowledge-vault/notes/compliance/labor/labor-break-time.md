@@ -32,7 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
+- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

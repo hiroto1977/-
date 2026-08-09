@@ -2,7 +2,7 @@
 title: "hatarakikatakaikaku.mhlw.go.jp"
 type: source-domain
 host: "hatarakikatakaikaku.mhlw.go.jp"
-cite_count: 2
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # hatarakikatakaikaku.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（公的 2）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（公的 3）
 
 ## このドメインを出典とする項目
 
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 厚生労働省働き方改革時間外労働の上限規制
 - [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 厚生労働省働き方改革時間外労働の上限規制
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 厚生労働省働き方改革特設サイト時間外労働の上限規制
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

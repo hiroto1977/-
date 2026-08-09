@@ -39,8 +39,8 @@ aliases:
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

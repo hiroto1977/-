@@ -33,11 +33,14 @@ aliases:
 ## 関連概念
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 語彙が近い
 - [[labor-paid-leave-grant|年次有給休暇の付与]] — 語彙が近い
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
+- [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 語彙が近い
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

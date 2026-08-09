@@ -2,7 +2,7 @@
 title: "startup-roudou.mhlw.go.jp"
 type: source-domain
 host: "startup-roudou.mhlw.go.jp"
-cite_count: 6
+cite_count: 8
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # startup-roudou.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（公的 6）
+> [!info] 出典ドメイン索引 ・ 引用 **8 件**（公的 8）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,8 @@ tags:
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 厚生労働省時間外労働の上限について
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 厚生労働省スタートアップ労働条件有給休暇
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 厚生労働省スタートアップ労働条件Q&A（民法627条）
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省スタートアップ労働条件貸付金と賃金の相殺
+- [[labor-work-rules|就業規則の作成・届出義務]] — 厚生労働省スタートアップ労働条件就業規則の記載事項
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

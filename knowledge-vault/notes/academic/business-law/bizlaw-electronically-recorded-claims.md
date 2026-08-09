@@ -31,8 +31,8 @@ aliases:
 - [でんさいネット（全銀電子債権ネットワーク）パンフレット](https://www.densai.net/pdf/pamphlet_A002_02.pdf) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
 - [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
+- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

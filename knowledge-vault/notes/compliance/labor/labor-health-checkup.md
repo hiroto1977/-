@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 語彙が近い
-- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 語彙が近い
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 
 ## 関連

@@ -38,7 +38,7 @@ aliases:
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

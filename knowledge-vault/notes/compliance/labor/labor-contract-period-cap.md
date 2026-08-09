@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 語彙が近い
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 語彙が近い
-- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 同分野の近傍
+- [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 同分野の近傍
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
 
 ## 関連

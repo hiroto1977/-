@@ -32,12 +32,14 @@ aliases:
 
 ## 関連概念
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 語彙が近い
 - [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 語彙が近い
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 語彙が近い
+- [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
+- [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 分野横断
-- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 分野横断
-- [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 同分野の近傍
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 同分野の近傍
+- [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

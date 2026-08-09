@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[subsidy-fukui|企業における省エネ設備等導入支援事業補助金（福井県）]] — 出典を共有
-- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 同分野の近傍
 - [[labor-variable-working-hours|変形労働時間制]] — 同分野の近傍
+- [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 同分野の近傍
 - [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]] — 同分野の近傍
 
 ## 関連

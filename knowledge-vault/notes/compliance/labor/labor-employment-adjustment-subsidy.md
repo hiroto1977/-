@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[subsidy-employment-adjustment|雇用調整助成金]] — 分野横断
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
-- [[labor-maternity-allowance|健康保険の出産手当金]] — 同分野の近傍
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -38,6 +38,7 @@ aliases:
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
 - [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 同分野の近傍
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

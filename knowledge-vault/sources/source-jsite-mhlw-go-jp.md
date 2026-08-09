@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 48
+cite_count: 50
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **48 件**（公的 48）
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（公的 50）
 
 ## このドメインを出典とする項目
 
@@ -50,14 +50,16 @@ tags:
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 山梨労働局振替休日と代休
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 石川労働局雇用保険（基本手当）Q&A
 - [[labor-variable-working-hours|変形労働時間制]] — 兵庫労働局労働時間
-- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省神奈川労働局賃金控除協定
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省神奈川労働局賃金控除に関する労使協定
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省福井労働局賃金控除に関する協定書（記載例）
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 宮崎労働局未払賃金の請求期間の延長
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 愛媛労働局女性活躍推進法行動計画・認定
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]] — 東京労働局業務災害について（業務遂行性・業務起因性）
+- [[labor-work-rules|就業規則の作成・届出義務]] — 厚生労働省栃木労働局就業規則の作成・変更・届出の義務（89条・90条・92条）
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 厚生労働省高知労働局各種保険
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 鳥取労働局労災給付の種類
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 神奈川労働局労災保険の特別加入制度
-- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 滋賀労働局令和6年4月から労働条件明示のルールが変わります
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 厚生労働省滋賀労働局令和6年4月からの労働条件通知書の様式
 - [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 静岡労働局労働時間の状況の把握義務
 - [[subsidy-human-resource-development|人材開発支援助成金]] — 新潟労働局職業訓練実施計画届様式
 - [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 大阪労働局就業促進手当（再就職手当）

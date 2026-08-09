@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 語彙が近い
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 同分野の近傍
 
 ## 関連

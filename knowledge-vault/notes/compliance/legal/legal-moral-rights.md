@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 語彙が近い
+- [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 語彙が近い
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 分野横断
-- [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 出典を共有
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
 - [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 出典を共有
 - [[bizlaw-copyright|著作権法]] — 出典を共有

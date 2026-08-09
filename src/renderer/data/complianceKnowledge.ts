@@ -84,14 +84,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '時間外労働の上限規制（36協定）',
       statement:
-        '時間外労働の限度は原則「月45時間・年360時間」。特別条項でも、単月100時間未満、' +
-        '複数月（2〜6か月）平均80時間以下等の上限がある。違反は労働基準法違反（罰則あり）。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '時間外労働の限度は原則として月45時間・年360時間。通常予見することのできない業務量の大幅な増加等に' +
+        '限って特別条項付きの36協定を結べるが、その場合も年720時間以内、時間外労働と休日労働の合計が単月100時間未満、' +
+        '2〜6か月のいずれの平均でも80時間以下、月45時間を超えられるのは年6回まで、という上限を守る必要がある。' +
+        '違反には6か月以下の懲役または30万円以下の罰金が科され得る。適用が猶予されていた業種も2024年4月から' +
+        '対象になり、自動車運転の業務は特別条項の年間上限が960時間で単月100時間未満・複数月平均80時間以下の規制は' +
+        '適用されず、医師は特別条項の年間上限が最大1860時間、建設事業は災害時における復旧・復興の事業を除いて' +
+        '原則どおり適用される。',
+      authority: '所管: 厚生労働省（労働基準法第36条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.startup-roudou.mhlw.go.jp/36_pact.html', type: 'government', label: '厚生労働省 時間外労働の上限について' },
-      { url: 'https://www.mhlw.go.jp/content/000463185.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 わかりやすい解説' },
+      { url: 'https://www.mhlw.go.jp/content/001140962.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 わかりやすい解説' },
+      { url: 'https://hatarakikatakaikaku.mhlw.go.jp/overtime.html', type: 'government', label: '厚生労働省 働き方改革特設サイト 時間外労働の上限規制' },
+      { url: 'https://kensetsu-roudou-jikan.mhlw.go.jp/kensetsu_overtime.html', type: 'government', label: '厚生労働省 建設業にも時間外労働の上限規制が適用されています' },
       { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_13.html', type: 'operator', label: '日本労働組合総連合会 労働相談Q&A' },
     ],
   },
@@ -310,17 +317,26 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'labor-working-conditions-disclosure',
       domain: 'labor',
-      title: '労働条件明示のルール（就業場所・業務の変更の範囲）',
+      title: '労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）',
       statement:
-        '2024年4月から、労働契約の締結・有期契約の更新時の労働条件明示事項に「就業場所・業務の変更の範囲」が' +
-        '追加され、全ての労働者（有期・パート・派遣等を含む）への明示が必要となった。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '2024年4月から、全ての労働契約の締結時と有期労働契約の更新時に、雇入れ直後の就業場所・業務の内容に加えて' +
+        'それらの「変更の範囲」を明示することが必要になった（労働基準法施行規則5条1項1号の3）。' +
+        '「変更の範囲」とは雇入れ直後にとどまらず、将来の配置転換など今後の見込みも含めた、' +
+        '締結する労働契約の期間中における変更の範囲をいう。有期労働契約ではさらに、' +
+        '更新上限（通算契約期間または更新回数の上限）の有無と内容、無期転換申込権が発生する更新のタイミングごとに' +
+        '無期転換を申し込める旨と転換後の労働条件の明示が加わる。対象は有期・パート・派遣を含む全ての労働者で、' +
+        'あわせて職業安定法施行規則の改正により、募集や求人申込みの段階で明示すべき労働条件も追加された。' +
+        '厚生労働省は改正に対応した労働条件通知書のモデル様式を公開しており、' +
+        '改正前の様式を使い続けると追加された明示事項を満たせない。',
+      authority: '所管: 厚生労働省 労働基準局（労働基準法第15条・労働基準法施行規則第5条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/newpage_32105.html', type: 'government', label: '厚生労働省 2024年4月から労働条件明示のルールが変わります' },
-      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 労働条件明示ルール変更' },
-      { url: 'https://proactive.jp/resources/columns/obligation-to-state-working-conditions/', type: 'media', label: '労働条件明示ルール変更 社労士解説' },
+      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 有期契約労働者の無期転換サイト 労働条件明示ルール変更' },
+      { url: 'https://www.mhlw.go.jp/content/11200000/001298244.pdf', type: 'government', label: '厚生労働省 2024年4月からの備えは大丈夫ですか（明示事項の追加）' },
+      { url: 'https://www.mhlw.go.jp/content/001114110.pdf', type: 'government', label: '厚生労働省 募集・求人申込み時の明示事項の追加' },
+      { url: 'https://jsite.mhlw.go.jp/shiga-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/youshiki_newroudoutuuti.html', type: 'government', label: '厚生労働省 滋賀労働局 令和6年4月からの労働条件通知書の様式' },
     ],
   },
   {
@@ -619,15 +635,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '減価償却の方法と法定償却方法',
       statement:
-        '減価償却には定額法・定率法等があり、選定の届出をしないと法定償却方法（法人は原則定率法、個人は原則定額法）が適用される。' +
-        '建物・建物附属設備・構築物は定額法に限定される。',
+        '減価償却資産の償却方法は、資産の種類ごとに（事業所や船舶ごとの区分により）選定し、' +
+        '「減価償却資産の償却方法の届出書」を確定申告書の提出期限までに納税地の所轄税務署長へ提出する。' +
+        '届け出なかった場合は資産の種類等に応じた法定償却方法が適用され、法人は原則として定率法、' +
+        '個人事業主は原則として定額法になる。ただし平成10年4月1日以後に取得した建物は定額法（平成19年3月31日以前の' +
+        '取得分は旧定額法）に限られ、平成28年4月1日以後に取得した建物附属設備および構築物（鉱業用のものを除く）も' +
+        '定額法に限られる。いったん選定した償却方法を変更するには、変更承認申請書を提出して所轄税務署長の承認を' +
+        '受ける必要があり、届出書を出し直すだけでは変更できない。',
       authority: '所管: 国税庁（所得税法・法人税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm', type: 'government', label: '国税庁 No.2100 減価償却のあらまし' },
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5409.htm', type: 'government', label: '国税庁 No.5409 償却方法の選定手続き' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/65288/', type: 'media', label: 'マネーフォワード 減価償却の方法' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5409.htm', type: 'government', label: '国税庁 No.5409 減価償却資産の償却方法の選定手続き' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2106.htm', type: 'government', label: '国税庁 No.2106 定額法と定率法による減価償却' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/21.htm', type: 'government', label: '国税庁 A1-23 減価償却資産の償却方法の変更承認申請手続' },
     ],
   },
   {
@@ -636,15 +658,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '就業規則の作成・届出義務',
       statement:
-        '常時10人以上の労働者を使用する使用者は就業規則を作成し所轄労働基準監督署へ届け出る義務があり、' +
-        '作成・変更時は労働者代表の意見を聴取し、労働者へ周知しなければならない。',
-      authority: '所管: 厚生労働省（労働基準法第89条・90条）',
-      asOf: '2026-06',
+        '常時10人以上の労働者を使用する使用者は就業規則を作成し、所轄労働基準監督署長へ届け出なければならない' +
+        '（労働基準法89条）。変更したときも同様に届け出る。絶対的必要記載事項は、①始業・終業の時刻、休憩時間、' +
+        '休日、休暇、交替制の場合の就業時転換 ②賃金の決定・計算・支払の方法、賃金の締切り・支払の時期、昇給 ' +
+        '③退職に関する事項（解雇の事由を含む）の3つで、退職手当・臨時の賃金・安全衛生・表彰と制裁などは' +
+        '定めをする場合に記載を要する（相対的必要記載事項）。届出には過半数組合（ない場合は過半数を代表する者）の' +
+        '意見を記し氏名を記載した書面（意見書）を添付する（90条）。就業規則は法令および当該事業場に適用される' +
+        '労働協約に反してはならず、反する場合は所轄労働基準監督署長が変更を命ずることができる（92条）。' +
+        '作成・届出だけでは足りず、労働者への周知が必要である（106条）。',
+      authority: '所管: 厚生労働省（労働基準法第89条・90条・92条・106条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/model/index.html', type: 'government', label: '厚生労働省 モデル就業規則' },
-      { url: 'https://www.chukidan.jp/navi/column/work-rules/11286/', type: 'media', label: '就業規則の作成義務と届出 解説' },
-      { url: 'https://www.authense.jp/authense-sr/column/syugyokisoku/17/', type: 'media', label: '就業規則の届出義務 解説' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article89_90_92.html', type: 'government', label: '厚生労働省 栃木労働局 就業規則の作成・変更・届出の義務（89条・90条・92条）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/syuugyoukisoku/q4.html', type: 'government', label: '厚生労働省 確かめよう労働条件 就業規則の必須記載事項' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/syuugyoukisoku/q2.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 就業規則の記載事項' },
     ],
   },
   {
@@ -1129,15 +1158,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '賃金からの控除と労使協定（24協定）',
       statement:
-        '賃金は全額払いが原則だが、所得税・社会保険料等の法令で定めるもの以外を賃金から控除するには、' +
-        '過半数代表との書面による労使協定（賃金控除協定）が必要である。',
-      authority: '所管: 厚生労働省（労働基準法第24条）',
-      asOf: '2026-06',
+        '賃金は通貨で、直接労働者に、その全額を支払わなければならない（労働基準法24条1項）。' +
+        '全額払いの例外は、所得税・住民税の源泉徴収や健康保険・厚生年金保険・雇用保険の保険料など' +
+        '法令に定めのあるものと、過半数組合（ない場合は過半数を代表する者）との書面による労使協定' +
+        '（賃金控除協定）を結んだものに限られる。協定さえあれば何でも控除できるわけではなく、' +
+        '購買代金・社宅や寮その他の福利厚生施設の費用・社内預金・組合費など、控除の対象が事理明白なものに限られる。' +
+        'この協定は36協定と違って労働基準監督署長への届出を要しないが、締結して終わりではなく、' +
+        '労働者に周知し事業場に備え置く必要がある。',
+      authority: '所管: 厚生労働省（労働基準法第24条第1項但書）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002230320.pdf', type: 'government', label: '厚生労働省 神奈川労働局 賃金控除協定' },
+      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002230320.pdf', type: 'government', label: '厚生労働省 神奈川労働局 賃金控除に関する労使協定' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei05.html', type: 'government', label: '厚生労働省 賃金の支払方法 FAQ' },
-      { url: 'https://www.nakagrps.co.jp/blog/11189/', type: 'media', label: '24協定 解説' },
+      { url: 'https://jsite.mhlw.go.jp/fukui-roudoukyoku/content/contents/001714404.pdf', type: 'government', label: '厚生労働省 福井労働局 賃金控除に関する協定書（記載例）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/chingin/q12.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 貸付金と賃金の相殺' },
     ],
   },
   {
@@ -1333,15 +1368,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '労働時間の適正な把握義務',
       statement:
-        '使用者は労働時間を適正に把握する責務を負い、始業・終業時刻の確認・記録は、使用者の現認または' +
-        'タイムカード・ICカード等の客観的な記録を基礎とすることが原則とされている。',
-      authority: '所管: 厚生労働省（労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン）',
-      asOf: '2026-06',
+        '労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン（2017年1月20日策定）は、' +
+        '始業・終業時刻の確認と記録を、使用者が自ら現認するか、タイムカード・ICカード・パソコンの使用時間の記録等の' +
+        '客観的な記録を基礎として行うことを原則とする。自己申告制による場合は、労働者本人と労働時間を管理する者への' +
+        '十分な説明、自己申告した時間と実際の労働時間が合致しているかの実態調査、必要な補正が求められる。' +
+        'ガイドラインの対象労働者は労働基準法41条に定める者（管理監督者）とみなし労働時間制が適用される労働者を' +
+        '除く全ての者だが、これらの者も労働安全衛生法66条の8の3による「労働時間の状況」の把握義務の対象であり、' +
+        'タイムカードやパソコンの使用時間の記録等の客観的な方法で把握し、その記録を3年間保存する' +
+        '（労働安全衛生規則52条の7の3）。割増賃金の要否と、時間そのものを把握する義務は別物である。',
+      authority: '所管: 厚生労働省（労働時間適正把握ガイドライン・労働安全衛生法66条の8の3）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000148322.html', type: 'government', label: '厚労省 労働時間の適正把握ガイドライン' },
-      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000149439.pdf', type: 'government', label: '厚労省 ガイドライン本文(PDF)' },
-      { url: 'https://www.obc.co.jp/360/list/post191', type: 'media', label: '労働時間の適正把握 解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/070614-2.html', type: 'government', label: '厚生労働省 労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000149439.pdf', type: 'government', label: '厚生労働省 ガイドライン本文(PDF)' },
+      { url: 'https://www.mhlw.go.jp/content/000497962.pdf', type: 'government', label: '厚生労働省 働き方改革関連法解説（労働安全衛生法・労働時間の状況の把握）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/roudoujikan/q5.html', type: 'government', label: '厚生労働省 確かめよう労働条件 労働時間の適正な把握方法' },
     ],
   },
   {
@@ -6253,24 +6295,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf', type: 'government', label: '国税庁 令和6年1月からの電子取引データの保存方法' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/03-6.pdf', type: 'government', label: '国税庁 電子帳簿保存法一問一答（電子取引関係）' },
       { url: 'https://biz.moneyforward.com/accounting/basic/44331/', type: 'media', label: 'マネーフォワード 電子帳簿保存法 2024年改正点・保存要件の解説' },
-    ],
-  },
-  {
-    value: {
-      id: 'labor-working-condition-disclosure-2024',
-      domain: 'labor',
-      title: '労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）',
-      statement:
-        '2024年（令和6年）4月1日施行の労働基準法施行規則等の改正により、労働条件の明示事項が追加された。すべての労働者に対し、契約締結時及び有期労働契約の更新時に「就業場所・業務の変更の範囲」の明示が義務化された。' +
-        '有期契約労働者に対しては、更新上限（通算契約期間又は更新回数の上限）の有無と内容の明示が、また無期転換申込権が発生する更新時ごとに「無期転換を申し込むことができる旨（申込機会）」及び「無期転換後の労働条件」の明示が、' +
-        'それぞれ新たに義務付けられた。',
-      authority: '所管: 厚生労働省（労働基準局）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.mhlw.go.jp/stf/newpage_32105.html', type: 'government', label: '厚生労働省 2024年4月から労働条件明示のルールが変わります' },
-      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 無期転換サイト 労働条件明示ルールの変更' },
-      { url: 'https://jsite.mhlw.go.jp/shiga-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/youshiki_newroudoutuuti.html', type: 'government', label: '滋賀労働局 令和6年4月から労働条件明示のルールが変わります' },
     ],
   },
   {

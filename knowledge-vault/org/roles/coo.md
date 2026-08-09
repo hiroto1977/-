@@ -63,14 +63,14 @@ aliases:
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - …ほか 617 件 → [[学術概念]]
 
-### 法務・税務・労務 / 労務（全126件）
+### 法務・税務・労務 / 労務（全125件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]]
 - [[labor-average-wage|平均賃金（労働基準法12条）]]
 - [[labor-break-time|休憩時間（労働基準法34条）]]
 - [[labor-care-leave|介護休業と介護休業給付金]]
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
-- …ほか 120 件 → [[法務・税務・労務]]
+- …ほか 119 件 → [[法務・税務・労務]]
 
 ### 法務・税務・労務 / 法務（全138件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]

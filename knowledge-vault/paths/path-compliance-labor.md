@@ -2,37 +2,37 @@
 title: "学習パス: 法務・税務・労務／労務"
 type: learning-path
 path_key: "compliance-labor"
-entry_count: 126
+entry_count: 125
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 法務・税務・労務／労務（126件）
+# 学習パス — 法務・税務・労務／労務（125件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 23）
-- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 20）
+- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 22）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 19）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 18）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 18）
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
-- [[labor-variable-working-hours|変形労働時間制]]（接続 18）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 17）
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 17）
+- [[labor-variable-working-hours|変形労働時間制]]（接続 17）
 - [[labor-standard-remuneration|標準報酬月額]]（接続 15）
-- [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
-- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]（接続 14）
-- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 13）
-- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 13）
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 14）
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 14）
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]（接続 14）
+- [[labor-collective-agreement|労働協約（労働組合法）]]（接続 13）
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]（接続 13）
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]]（接続 13）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
 - 2024年: [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]]
-- 2024年: [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]]
+- 2024年: [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]]
 - 2025年: [[labor-childcare-leave-2025|育児・介護休業法 2025年4月改正]]
 - 2025年: [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]
 - 2025年: [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]]
@@ -76,6 +76,7 @@ tags:
 - [[labor-employment-insurance|雇用保険の被保険者加入要件]]
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]]
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]]
+- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]
 - [[labor-foreign-employment-report|外国人雇用状況の届出]]
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]]
@@ -102,8 +103,8 @@ tags:
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]]
 - [[labor-national-health-insurance|国民健康保険（国保）]]
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]]
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]]
-- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]
 - [[labor-paid-leave-grant|年次有給休暇の付与]]
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]]
 - [[labor-payment-on-termination|金品の返還（労働基準法23条）]]
@@ -129,7 +130,6 @@ tags:
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]]
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]]
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]]
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]]
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]]
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]]
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]]
@@ -139,7 +139,6 @@ tags:
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]]
 - [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]]
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]]
-- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]]
 - [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]]
 - [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]]
 - [[labor-worktime-tracking|労働時間の適正な把握義務]]

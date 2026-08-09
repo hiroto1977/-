@@ -2,7 +2,7 @@
 title: "obc.co.jp"
 type: source-domain
 host: "obc.co.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # obc.co.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
-- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 労働時間の適正把握解説
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 法定調書電子申告義務化解説
 
 ## 関連

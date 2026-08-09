@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 241
+cite_count: 243
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **241 件**（公的 241）
+> [!info] 出典ドメイン索引 ・ 引用 **243 件**（公的 243）
 
 ## このドメインを出典とする項目
 
@@ -88,8 +88,10 @@ tags:
 - [[tax-delinquent-tax|国税の延滞税]] — 国税庁国税通則法基本通達第60条関係
 - [[tax-dependent-deduction|扶養控除]] — 国税庁No.1180扶養控除
 - [[tax-dependent-deduction|扶養控除]] — 国税庁令和7年度税制改正（所得要件の見直し）
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁A1-23減価償却資産の償却方法の変更承認申請手続
 - [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.2100減価償却のあらまし
-- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.5409償却方法の選定手続き
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.2106定額法と定率法による減価償却
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.5409減価償却資産の償却方法の選定手続き
 - [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 国税庁No.2100減価償却のあらまし
 - [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 国税庁No.5404中古資産の耐用年数
 - [[tax-disability-deduction|所得税の障害者控除]] — 国税庁No.1160障害者控除

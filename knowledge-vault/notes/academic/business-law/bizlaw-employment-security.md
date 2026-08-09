@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-employment-insurance|雇用保険法]] — 語彙が近い
-- [[bizlaw-worker-dispatch|労働者派遣法]] — 語彙が近い
+- [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
 - [[bizlaw-e-signature|電子署名法]] — 同分野の近傍
 - [[bizlaw-national-pension|国民年金法]] — 同分野の近傍
 

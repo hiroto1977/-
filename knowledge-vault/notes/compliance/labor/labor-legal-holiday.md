@@ -38,7 +38,6 @@ aliases:
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
 - [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 同分野の近傍
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
-- [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

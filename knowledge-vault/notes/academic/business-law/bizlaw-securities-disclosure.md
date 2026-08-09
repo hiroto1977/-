@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 語彙が近い
+- [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 語彙が近い
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 分野横断
-- [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 同じ思想家
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
 - [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有

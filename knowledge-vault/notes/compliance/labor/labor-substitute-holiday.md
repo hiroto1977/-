@@ -35,11 +35,12 @@ aliases:
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 出典を共有
 - [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
+- [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
 - [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 出典を共有
-- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
