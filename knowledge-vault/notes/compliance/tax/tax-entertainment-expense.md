@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 語彙が近い
-- [[tax-officer-retirement|役員退職給与の損金算入]] — 同分野の近傍
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
 - [[tax-dividends-received|受取配当等の益金不算入]] — 同分野の近傍
 
 ## 関連

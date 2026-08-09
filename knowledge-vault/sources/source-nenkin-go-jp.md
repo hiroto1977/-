@@ -2,7 +2,7 @@
 title: "nenkin.go.jp"
 type: source-domain
 host: "nenkin.go.jp"
-cite_count: 15
+cite_count: 17
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nenkin.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **15 件**（公的 15）
+> [!info] 出典ドメイン索引 ・ 引用 **17 件**（公的 17）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,9 @@ tags:
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 日本年金機構老齢年金（受給要件・支給開始）
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 日本年金機構適用事業所と被保険者
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 日本年金機構短時間労働者に対する適用の拡大
+- [[labor-standard-remuneration|標準報酬月額]] — 日本年金機構報酬月額の届出（算定基礎届・月額変更届等）
 - [[labor-standard-remuneration|標準報酬月額]] — 日本年金機構定時決定（算定基礎届）
+- [[labor-standard-remuneration|標準報酬月額]] — 日本年金機構年間報酬の平均で算定するとき
 - [[labor-standard-remuneration|標準報酬月額]] — 日本年金機構標準報酬月額・標準賞与額とは
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 日本年金機構遺族厚生年金
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 日本年金機構遺族基礎年金

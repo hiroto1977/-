@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 254
+cite_count: 255
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **254 件**（公的 254）
+> [!info] 出典ドメイン索引 ・ 引用 **255 件**（公的 255）
 
 ## このドメインを出典とする項目
 
@@ -173,8 +173,9 @@ tags:
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 厚生労働省特別教育の概要（59条3項）
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 厚生労働省安全委員会・衛生委員会FAQ
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 厚生労働省安全衛生委員会を設置しましょう
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告
 - [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省衛生委員会FAQ
-- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省選任報告
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省選任の期限と報告先
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 厚生労働省労働契約法第5条解説
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 厚生労働省労働契約法第5条に関する裁判例
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 厚生労働省労働災害の発生と企業の責任

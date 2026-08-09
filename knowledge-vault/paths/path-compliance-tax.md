@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 28）
-- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 24）
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
+- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 29）
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 25）
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 23）
 - [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 23）
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 22）
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 22）
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 19）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 19）
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 19）
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 18）
-- [[tax-blue-return-application|所得税の青色申告承認申請]]（接続 17）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 17）
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]]（接続 17）
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 17）
-- [[tax-consumption-taxpayer|消費税の納税義務者の判定]]（接続 16）
+- [[tax-blue-return-application|所得税の青色申告承認申請]]（接続 16）
+- [[tax-automobile-tax|自動車税（種別割）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]]
@@ -39,7 +39,6 @@ tags:
 ## 第 3 部 — 年代情報のない項目
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
-- [[tax-automobile-tax|自動車税（種別割）]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]]
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]]
@@ -50,6 +49,7 @@ tags:
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]]
 - [[tax-consumption-interim|消費税の中間申告・中間納付]]
 - [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]]
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]]
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]]
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]]
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]]

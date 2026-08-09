@@ -4,8 +4,8 @@ id: labor-safety-management
 category: "labor"
 category_ja: "労務"
 title: "安全衛生管理体制（50人以上）"
-as_of: "2026-06"
-source_count: 3
+as_of: "2026-08"
+source_count: 4
 authoritative: true
 tags:
   - collection/compliance
@@ -17,24 +17,24 @@ aliases:
 
 # 安全衛生管理体制（50人以上）
 
-> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 労務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 労務 ・ asOf: 2026-08 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-常時50人以上の労働者を使用する事業場は、衛生管理者および産業医を選任し（事由発生から14日以内）、衛生委員会を設置して、所轄労働基準監督署長へ選任を報告する義務がある。
+安全衛生管理体制は会社単位ではなく事業場を適用単位として、業種と規模に応じて組み立てる（本社・工場・支店をそれぞれ 1 事業場として数える）。常時50人以上の労働者を使用する事業場は衛生管理者と産業医を選任し、衛生委員会を設置する。選任は事由が発生した日から14日以内に行い、様式第3号「総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告」を遅滞なく所轄労働基準監督署長へ提出する。常時10人以上50人未満の事業場は、衛生管理者等の選任に代えて安全衛生推進者等を選任する（規模が50人に満たなければ何もしなくてよい、ではない）。委員会は開催の都度、議事の概要を労働者へ遅滞なく周知しなければならない。常時3,000人を超える事業場は産業医を2人以上選任する。
 
 ## 所管・根拠
-所管: 厚生労働省（労働安全衛生法）
+所管: 厚生労働省（労働安全衛生法第10条〜第19条の2）
 
 ## 出典
-- [厚生労働省 選任報告](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html) `公的`
-- [厚生労働省 衛生委員会FAQ](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html) `公的`
-- [安全衛生管理体制 解説](https://doctor-trust.co.jp/law/law.html) `メディア`
+- [厚生労働省 総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html) `公的`
+- [厚生労働省 選任の期限と報告先](https://www.mhlw.go.jp/stf/newpage_09979.html) `公的`
+- [厚生労働省 新潟労働局 安全衛生管理体制のあらまし](https://jsite.mhlw.go.jp/niigata-roudoukyoku/library/niigata-roudoukyoku/jigyounushi/anzen/pdf/251007kanritaisei_aramashi_.pdf) `公的`
+- [厚生労働省 衛生委員会 FAQ](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html) `公的`
 
 ## 関連概念
+- [[bizlaw-industrial-safety|労働安全衛生法]] — 語彙が近い
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 語彙が近い
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
-- [[bizlaw-industrial-safety|労働安全衛生法]] — 分野横断
-- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 同分野の近傍
+- [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 語彙が近い
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

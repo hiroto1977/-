@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 語彙が近い
 - [[labor-paid-leave-grant|年次有給休暇の付与]] — 同分野の近傍
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

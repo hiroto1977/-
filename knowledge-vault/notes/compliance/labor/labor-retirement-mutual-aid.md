@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[subsidy-chutaikyo|中小企業退職金共済制度（中退共）・新規加入等掛金助成]] — 分野横断
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 同分野の近傍
+- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

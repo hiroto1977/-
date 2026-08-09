@@ -2,7 +2,7 @@
 title: "npa.go.jp"
 type: source-domain
 host: "npa.go.jp"
-cite_count: 6
+cite_count: 8
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # npa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（公的 6）
+> [!info] 出典ドメイン索引 ・ 引用 **8 件**（公的 8）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,8 @@ tags:
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — JAFIC・警察庁疑わしい取引の届出と届出先行政庁
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 警察庁古物営業について
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 警察庁不正アクセス対策
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 警察庁不正アクセス禁止法改正Q&A
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 警察庁不正アクセス行為の禁止等に関する法律の解説
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

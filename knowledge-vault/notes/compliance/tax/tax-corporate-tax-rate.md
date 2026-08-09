@@ -31,7 +31,6 @@ aliases:
 - [財務省 令和7年度税制改正の大綱（軽減税率特例の延長）](https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2025/07taikou_03.htm) `公的`
 
 ## 関連概念
-- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
 - [[bizlaw-corporation-tax|法人税法]] — 分野横断
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 出典を共有
+- [[tax-income-tax-progressive|所得税の超過累進税率]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

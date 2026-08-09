@@ -31,7 +31,6 @@ aliases:
 - [連合 休業中の賃金（労基法26条と民法536条2項）](https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_08.html) `メディア`
 
 ## 関連概念
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,6 +31,7 @@ aliases:
 - [安全衛生委員会 開催・保存 解説](https://www.rodo.co.jp/laws/117010/) `メディア`
 
 ## 関連概念
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
 - [[labor-dispatch-license|労働者派遣事業の許可制]] — 出典を共有
 - [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 出典を共有
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有

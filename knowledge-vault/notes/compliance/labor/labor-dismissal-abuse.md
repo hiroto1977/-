@@ -36,9 +36,9 @@ aliases:
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 語彙が近い
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 分野横断
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 同分野の近傍
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 同分野の近傍
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 同分野の近傍
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

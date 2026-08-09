@@ -17,7 +17,7 @@ tags:
 - [[bizlaw-patent-system|特許制度（特許法）]] — INPIT（工業所有権情報・研修館）—特許権の存続期間
 - [[legal-design-right|意匠権（意匠法）]] — INPIT意匠権の存続期間FAQ
 - [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — INPIT特許権の存続期間FAQ
-- [[legal-trademark|商標権の発生・存続期間と更新]] — INPIT商標権更新手続FAQ
+- [[legal-trademark|商標権の発生・存続期間と更新]] — INPIT商標権を更新する場合の手続期間
 - [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — INPIT実用新案権の存続期間FAQ
 - [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — INPIT実用新案権の行使の注意点FAQ
 

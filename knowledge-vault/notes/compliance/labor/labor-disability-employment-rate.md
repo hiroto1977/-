@@ -31,8 +31,8 @@ aliases:
 - [社労士法人とうかい 障害者雇用率2.7%への段階的引上げ 解説](https://www.tokai-sr.jp/column/employment-disabilities/) `メディア`
 
 ## 関連概念
-- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 語彙が近い
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 語彙が近い
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 語彙が近い
 
 ## 関連

@@ -31,8 +31,8 @@ aliases:
 - [厚生労働省 — 時間外労働の上限規制 わかりやすい解説（年720h以下・複数月平均80h・単月100h未満）](https://www.mhlw.go.jp/content/000463185.pdf) `公的`
 
 ## 関連概念
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 分野横断
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 分野横断
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有

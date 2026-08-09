@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 23）
-- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
+- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 25）
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 24）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 19）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 18）
-- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 18）
-- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 19）
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 19）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 17）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 17）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 15）
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
-- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 14）
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 14）
-- [[labor-standard-remuneration|標準報酬月額]]（接続 14）
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]]（接続 13）
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]]（接続 13）
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 13）
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]（接続 13）
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]（接続 13）
-- [[labor-variable-working-hours|変形労働時間制]]（接続 13）
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]]（接続 13）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -63,7 +63,6 @@ tags:
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]]
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]]
 - [[labor-dismissal-notice|解雇予告（労働基準法第20条）]]
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]]
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]]
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]]
 - [[labor-dispatch-license|労働者派遣事業の許可制]]
@@ -77,7 +76,6 @@ tags:
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]]
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]]
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]
-- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]
 - [[labor-foreign-employment-report|外国人雇用状況の届出]]
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]]
 - [[labor-gender-equality|男女雇用機会均等法における性別差別の禁止]]
@@ -88,7 +86,6 @@ tags:
 - [[labor-ideco|iDeCo（個人型確定拠出年金）の制度概要]]
 - [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]]
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]]
-- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]]
 - [[labor-leave-allowance|休業手当（労働基準法26条）]]
 - [[labor-legal-holiday|法定休日（労働基準法35条）]]
 - [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]]
@@ -113,14 +110,15 @@ tags:
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]]
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]]
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]]
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]
 - [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]]
 - [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]]
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]]
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]]
 - [[labor-safety-management|安全衛生管理体制（50人以上）]]
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]]
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]
 - [[labor-sickness-allowance|健康保険の傷病手当金]]
+- [[labor-standard-remuneration|標準報酬月額]]
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]]
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]]
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]]
@@ -129,7 +127,9 @@ tags:
 - [[labor-tribunal|労働審判制度（労働審判法）]]
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]]
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]]
+- [[labor-variable-working-hours|変形労働時間制]]
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]]
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]]
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]]
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]]
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]]

@@ -39,8 +39,8 @@ aliases:
 - [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
-- [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

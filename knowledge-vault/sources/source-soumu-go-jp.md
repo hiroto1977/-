@@ -52,7 +52,7 @@ tags:
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 総務省マイナンバー制度
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 総務省インターネット上の違法・有害情報への対応
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 総務省大規模特定電気通信役務提供者の指定
-- [[legal-unauthorized-access|不正アクセス禁止法]] — 総務省サイバーセキュリティサイト
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 総務省不正アクセス行為の禁止等に関する法律
 - [[tax-automobile-tax|自動車税（種別割）]] — 総務省地方税制度自動車税・軽自動車税
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 総務省地方税制度事業所税
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 総務省法人事業税における外形標準課税

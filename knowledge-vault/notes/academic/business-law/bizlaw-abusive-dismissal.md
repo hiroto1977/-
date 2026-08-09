@@ -37,10 +37,10 @@ aliases:
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
 - [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 同分野の近傍
+- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

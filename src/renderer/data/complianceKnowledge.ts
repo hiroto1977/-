@@ -98,7 +98,7 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
         '時間外労働の限度は原則として月45時間・年360時間。通常予見することのできない業務量の大幅な増加等に' +
         '限って特別条項付きの36協定を結べるが、その場合も年720時間以内、時間外労働と休日労働の合計が単月100時間未満、' +
         '2〜6か月のいずれの平均でも80時間以下、月45時間を超えられるのは年6回まで、という上限を守る必要がある。' +
-        '違反には6か月以下の懲役または30万円以下の罰金が科され得る。適用が猶予されていた業種も2024年4月から' +
+        '違反には6か月以下の拘禁刑または30万円以下の罰金が科され得る。適用が猶予されていた業種も2024年4月から' +
         '対象になり、自動車運転の業務は特別条項の年間上限が960時間で単月100時間未満・複数月平均80時間以下の規制は' +
         '適用されず、医師は特別条項の年間上限が最大1860時間、建設事業は災害時における復旧・復興の事業を除いて' +
         '原則どおり適用される。',
@@ -817,15 +817,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '安全衛生管理体制（50人以上）',
       statement:
-        '常時50人以上の労働者を使用する事業場は、衛生管理者および産業医を選任し（事由発生から14日以内）、' +
-        '衛生委員会を設置して、所轄労働基準監督署長へ選任を報告する義務がある。',
-      authority: '所管: 厚生労働省（労働安全衛生法）',
-      asOf: '2026-06',
+        '安全衛生管理体制は会社単位ではなく事業場を適用単位として、業種と規模に応じて組み立てる' +
+        '（本社・工場・支店をそれぞれ 1 事業場として数える）。常時50人以上の労働者を使用する事業場は' +
+        '衛生管理者と産業医を選任し、衛生委員会を設置する。選任は事由が発生した日から14日以内に行い、' +
+        '様式第3号「総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告」を遅滞なく所轄労働基準監督署長へ' +
+        '提出する。常時10人以上50人未満の事業場は、衛生管理者等の選任に代えて安全衛生推進者等を選任する' +
+        '（規模が50人に満たなければ何もしなくてよい、ではない）。委員会は開催の都度、議事の概要を' +
+        '労働者へ遅滞なく周知しなければならない。常時3,000人を超える事業場は産業医を2人以上選任する。',
+      authority: '所管: 厚生労働省（労働安全衛生法第10条〜第19条の2）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html', type: 'government', label: '厚生労働省 選任報告' },
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html', type: 'government', label: '厚生労働省 衛生委員会FAQ' },
-      { url: 'https://doctor-trust.co.jp/law/law.html', type: 'media', label: '安全衛生管理体制 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html', type: 'government', label: '厚生労働省 総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_09979.html', type: 'government', label: '厚生労働省 選任の期限と報告先' },
+      { url: 'https://jsite.mhlw.go.jp/niigata-roudoukyoku/library/niigata-roudoukyoku/jigyounushi/anzen/pdf/251007kanritaisei_aramashi_.pdf', type: 'government', label: '厚生労働省 新潟労働局 安全衛生管理体制のあらまし' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html', type: 'government', label: '厚生労働省 衛生委員会 FAQ' },
     ],
   },
   {
@@ -1318,15 +1324,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '役員退職給与の損金算入',
       statement:
-        '適正な役員退職給与は損金算入できるが、不相当に高額な部分の金額は損金不算入となる。適正額は功績倍率法等により、' +
-        '勤続期間・退職事情・同業類似法人の支給状況等に照らして判断される。',
-      authority: '所管: 国税庁（法人税法第34条）',
-      asOf: '2026-06',
+        '役員退職給与のうち不相当に高額な部分の金額は損金の額に算入されない（法人税法34条2項）。' +
+        '適正額の判断には功績倍率法が用いられることが多く、退職の直前に支給した給与の額を基礎に、' +
+        '業務に従事した期間と職責に応じた倍率を乗じて算定する。勤続期間・退職の事情・同業類似法人の' +
+        '支給状況等に照らして判断される点は変わらない。損金算入の時期は、株主総会の決議等により金額が' +
+        '具体的に確定した日の属する事業年度が原則で、支払った日の属する事業年度に損金経理した場合は' +
+        'それも認められる（法人税基本通達9-2-28）。役員が引き続き在職する場合でも、分掌変更等により' +
+        '実質的に退職したと同様の事情にあると認められるときは、打切り支給した臨時の給与を退職給与として' +
+        '扱う余地がある（同9-2-32）。金額も時期も税務調査で最も見られる論点なので、決議の記録を必ず残す。',
+      authority: '所管: 国税庁（法人税法第34条2項・法人税基本通達9-2-27の2以下）',
+      asOf: '2026-08',
     },
     sources: [
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/09/09_02_07.htm', type: 'government', label: '国税庁 法人税基本通達 第7款 退職給与' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5211.htm', type: 'government', label: '国税庁 No.5211 役員に対する給与' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/070313/10.htm', type: 'government', label: '国税庁 法令解釈通達 役員給与等' },
-      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/111/04/index.htm', type: 'government', label: '国税庁 税務大学校 論叢' },
-      { url: 'https://legacy.ne.jp/legacy-cloud/tax_practice/001-yakuin-taishokukin-keisanhouhou-kougaku/', type: 'media', label: '役員退職金の計算 解説' },
+      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/111/04/index.htm', type: 'government', label: '国税庁 税務大学校論叢 過大役員給与の損金不算入額算定' },
     ],
   },
   {
@@ -1369,15 +1382,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '不正アクセス禁止法',
       statement:
-        '他人の識別符号（ID・パスワード）の無断入力による不正ログインやセキュリティホールを突いた不正アクセスを禁止し、' +
-        '識別符号の不正取得・保管・フィッシング等の不正な要求も罰則付きで禁止する。',
-      authority: '所管: 警察庁・総務省・経済産業省（不正アクセス禁止法）',
-      asOf: '2026-06',
+        '他人の識別符号（ID・パスワード）を無断で入力する不正ログインや、セキュリティホールを突いた侵入を' +
+        '不正アクセス行為として禁止する（3条）。違反は3年以下の拘禁刑または100万円以下の罰金。' +
+        '周辺行為も罰則付きで禁止されており、不正アクセスの用に供する目的での識別符号の不正取得（4条）、' +
+        '第三者への提供による助長（5条）、不正に取得した識別符号の保管（6条）、アクセス管理者になりすまして' +
+        '識別符号の入力を求めるフィッシング（7条）は、いずれも1年以下の拘禁刑または50万円以下の罰金にあたる。' +
+        '規制の前提はアクセス制御機能があることなので、そもそも認証を設けていないシステムは本法では守られない。' +
+        'アクセス管理者には防御措置を講ずる努力義務が課されている。',
+      authority: '所管: 警察庁・総務省・経済産業省（不正アクセス行為の禁止等に関する法律）',
+      asOf: '2026-08',
     },
     sources: [
+      { url: 'https://www.npa.go.jp/bureau/cyber/pdf/1_kaisetsu.pdf', type: 'government', label: '警察庁 不正アクセス行為の禁止等に関する法律の解説' },
       { url: 'https://www.npa.go.jp/bureau/cyber/countermeasures/unauthorized-access.html', type: 'government', label: '警察庁 不正アクセス対策' },
-      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/09/', type: 'government', label: '総務省 サイバーセキュリティサイト' },
-      { url: 'https://www.fortinet.com/jp/resources/cyberglossary/unauthorized-computer-access-law', type: 'media', label: '不正アクセス禁止法 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/09/', type: 'government', label: '総務省 不正アクセス行為の禁止等に関する法律' },
+      { url: 'https://www.npa.go.jp/bureau/cyber/pdf/6_QA.pdf', type: 'government', label: '警察庁 不正アクセス禁止法改正Q&A' },
     ],
   },
   {
@@ -1474,14 +1493,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '標準報酬月額',
       statement:
         '健康保険・厚生年金保険の保険料や保険給付は、被保険者の報酬月額を区切りのよい幅で区分した' +
-        '標準報酬月額に基づいて算定される。原則として毎年7月の定時決定で1年間の標準報酬月額が決まる。',
+        '標準報酬月額に基づいて算定される。決まり方は3通りある。①定時決定 — 7月1日時点の被保険者について' +
+        '4月・5月・6月に支払った報酬を算定基礎届で届け出（提出期間は7月1日から7月10日）、' +
+        'その年の9月から翌年8月までの標準報酬月額が決まる。②資格取得時決定 — 入社時に見込みで決める。' +
+        '③随時改定 — 昇給・降給等で固定的賃金が変わり、変動後3か月の平均で標準報酬月額に2等級以上の差が' +
+        '生じたときに月額変更届で改定する。定時決定を待たずに直さなければならないのはこの③で、' +
+        '出し忘れると実際の報酬と保険料が長期間ずれたままになる。4月から6月の報酬が業務の性質上' +
+        '例年高くなる場合は、年間報酬の平均で算定する申立ての余地がある。',
       authority: '所管: 日本年金機構・厚生労働省（健康保険法・厚生年金保険法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120907.html', type: 'government', label: '日本年金機構 標準報酬月額・標準賞与額とは' },
-      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120822.html', type: 'government', label: '日本年金機構 定時決定（算定基礎届）' },
-      { url: 'https://www.freee.co.jp/kb/kb-payroll/standard-monthly-remuneration/', type: 'media', label: '標準報酬月額 解説' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/hoshu/20121017.html', type: 'government', label: '日本年金機構 定時決定（算定基礎届）' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/hoshu/20140527.html', type: 'government', label: '日本年金機構 報酬月額の届出（算定基礎届・月額変更届等）' },
+      { url: 'https://www.nenkin.go.jp/shinsei/kounen/tekiyo/hoshu/20141002.html', type: 'government', label: '日本年金機構 年間報酬の平均で算定するとき' },
     ],
   },
   {
@@ -1683,14 +1709,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '期間の定めのない労働契約の退職申入れ（民法627条）',
       statement:
         '期間の定めのない雇用契約では、労働者はいつでも解約（退職）の申入れができ、使用者の承諾がなくても、' +
-        '申入れの日から2週間を経過することによって雇用は終了する（民法627条1項）。',
+        '申入れの日から2週間を経過することによって雇用は終了する（民法627条1項）。' +
+        '2020年4月1日施行の改正民法により、月給制などで解約の申入れ時期を制限していた同条2項・3項は' +
+        '労働者からの申入れには適用されないことが整理された。したがって、労働基準法の適用がある雇用契約では、' +
+        '使用者からの解約に労働基準法20条（30日前の予告または予告手当）が、労働者からの解約に民法627条1項が' +
+        '適用される。就業規則に「退職は1か月前までに申し出ること」と書いてあっても、それは円滑な引継ぎを' +
+        '求める定めであって、2週間で終了する労働者の権利を奪うものではない。' +
+        '合意退職・辞職・解雇は法的な組立てが別なので、離職票の離職理由も含めて取り違えないこと。',
       authority: '所管: 法務省（民法）・厚生労働省（労働行政）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q7.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 Q&A（民法627条）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q7.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 解雇と合意退職・辞職の違い' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/yokuaru_goshitsumon/jigyounushi/taisyoku.html', type: 'government', label: '厚生労働省 大阪労働局 よくあるご質問（退職・解雇・雇止め）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_taisyoku.html', type: 'government', label: '厚生労働省 確かめよう労働条件 退職・解雇・雇止め' },
       { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（第627条）' },
-      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_22.html', type: 'media', label: '連合 退職の自由 Q&A' },
     ],
   },
   {
@@ -1803,15 +1836,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '商標権の発生・存続期間と更新',
       statement:
-        '商標を独占的に使用する権利（商標権）は、特許庁に出願し設定登録を受けることで発生する。商標権の存続期間は設定登録の日から' +
-        '10年であり、更新登録の申請により10年ごとに何度でも更新できる。',
+        '商標を独占的に使用する権利（商標権）は、特許庁に出願し設定登録を受けることで発生する。' +
+        '日本は先願主義を採っており、同一または類似の商標について出願が競合した場合は、先に使用していたかどうかに' +
+        'かかわらず先に出願した者に登録が認められる。存続期間は設定登録の日から10年で、更新登録の申請により' +
+        '10年ごとに何度でも更新できるが、申請できるのは存続期間の満了前6か月から満了の日までで、' +
+        'この期間を過ぎた場合も満了後6か月以内なら更新料を倍額納付して申請できる。' +
+        'また、日本国内で継続して3年以上、指定商品・指定役務について登録商標を使用していないときは、' +
+        '誰でも不使用取消審判を請求できる。登録して放置すれば安泰、という権利ではない。',
       authority: '所管: 特許庁（商標法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/seidogaiyo/chizai08.html', type: 'government', label: '特許庁 商標制度の概要' },
+      { url: 'https://www.jpo.go.jp/system/process/toroku/document/index/koshinkikan-chui.pdf', type: 'government', label: '特許庁 商標権の更新 更新登録申請期間開始日にご注意ください' },
+      { url: 'https://www.jpo.go.jp/system/trial_appeal/shubetu-shohyo_torikeshi/index.html', type: 'government', label: '特許庁 商標登録取消審判' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000204.html', type: 'government', label: 'INPIT 商標権を更新する場合の手続期間' },
       { url: 'https://laws.e-gov.go.jp/law/334AC0000000127', type: 'government', label: 'e-Gov法令検索 商標法（昭和34年法律第127号）' },
-      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000204.html', type: 'government', label: 'INPIT 商標権更新手続 FAQ' },
     ],
   },
   {

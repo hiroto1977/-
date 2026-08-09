@@ -37,8 +37,6 @@ aliases:
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 語彙が近い
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 同分野の近傍
 - [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]] — 同分野の近傍
-- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 同分野の近傍
-- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

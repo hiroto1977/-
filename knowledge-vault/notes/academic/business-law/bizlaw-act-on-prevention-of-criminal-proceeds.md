@@ -35,8 +35,8 @@ aliases:
 - [[bizlaw-anti-money-laundering-fatf|マネーロンダリング防止とFATF勧告体制の国際法]] — 語彙が近い
 - [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
 - [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
-- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[bizlaw-judicial-scrivener-act|司法書士法]] — 同分野の近傍
 
 ## 関連

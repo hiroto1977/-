@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 語彙が近い
-- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
+- [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

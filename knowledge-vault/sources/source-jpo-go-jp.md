@@ -2,7 +2,7 @@
 title: "jpo.go.jp"
 type: source-domain
 host: "jpo.go.jp"
-cite_count: 19
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jpo.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **19 件**（公的 19）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（公的 21）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,8 @@ tags:
 - [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 特許庁特許・実用新案とは
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 特許庁不正競争防止法違反被害への救済
 - [[legal-trademark|商標権の発生・存続期間と更新]] — 特許庁商標制度の概要
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 特許庁商標権の更新更新登録申請期間開始日にご注意ください
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 特許庁商標登録取消審判
 - [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 特許庁デッドコピー商品への対策（形態模倣）
 - [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 特許庁不正競争防止法違反被害への救済
 - [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 特許庁実用新案出願のいろは

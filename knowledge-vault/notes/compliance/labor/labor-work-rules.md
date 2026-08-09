@@ -32,6 +32,7 @@ aliases:
 - [厚生労働省 スタートアップ労働条件 就業規則の記載事項](https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/syuugyoukisoku/q2.html) `公的`
 
 ## 関連概念
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[labor-worktime-tracking|労働時間の適正な把握義務]] — 出典を共有
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
-- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

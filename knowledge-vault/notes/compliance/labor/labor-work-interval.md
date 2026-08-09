@@ -34,6 +34,7 @@ aliases:
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 語彙が近い
 - [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 同分野の近傍
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-standard-remuneration|標準報酬月額]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

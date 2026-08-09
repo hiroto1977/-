@@ -34,7 +34,7 @@ Warren Earl Burger ／ Michael Selmi ／ George A. Rutherglen
 ## 関連概念
 - [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 出典を共有
 - [[bizlaw-laches-doctrine|ラッチェス法理]] — 同分野の近傍
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 同分野の近傍
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

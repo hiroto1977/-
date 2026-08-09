@@ -31,9 +31,8 @@ aliases:
 - [埼玉県 大法人の電子申告義務化の概要](https://www.pref.saitama.lg.jp/a0209/z-kurashiindex/z-eltax-gimuka.html) `自治体`
 
 ## 関連概念
-- [[tax-corp-interim-return|法人税の中間申告]] — 語彙が近い
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 語彙が近い
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
+- [[tax-corp-interim-return|法人税の中間申告]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 出典を共有

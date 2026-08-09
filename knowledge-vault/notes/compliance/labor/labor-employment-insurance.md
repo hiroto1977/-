@@ -34,6 +34,7 @@ aliases:
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
 - [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 同分野の近傍
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
+- [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

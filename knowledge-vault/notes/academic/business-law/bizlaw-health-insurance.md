@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 語彙が近い
+- [[bizlaw-national-health-insurance|国民健康保険法]] — 語彙が近い
 - [[bizlaw-employees-pension|厚生年金保険法]] — 同分野の近傍
-- [[bizlaw-national-health-insurance|国民健康保険法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

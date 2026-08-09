@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 251
+cite_count: 253
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **251 件**（公的 251）
+> [!info] 出典ドメイン索引 ・ 引用 **253 件**（公的 253）
 
 ## このドメインを出典とする項目
 
@@ -183,8 +183,10 @@ tags:
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁質疑応答特定新規設立法人の特例
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁No.5211役員に対する給与
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期同額給与
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁No.5211役員に対する給与
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法人税基本通達第7款退職給与
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法令解釈通達役員給与等
-- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁税務大学校論叢
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁税務大学校論叢過大役員給与の損金不算入額算定
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁No.7456国外財産調書の提出義務
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁国外財産調書制度に関するお知らせ
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁国外財産調書及び財産債務調書の提出（QA）

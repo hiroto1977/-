@@ -31,10 +31,10 @@ aliases:
 - [デイライト法律事務所 解雇予告](https://www.komon-lawyer.jp/qa/teate/) `メディア`
 
 ## 関連概念
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 語彙が近い
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
-- [[labor-average-wage|平均賃金（労働基準法12条）]] — 語彙が近い
+- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 語彙が近い
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 語彙が近い
+- [[labor-average-wage|平均賃金（労働基準法12条）]] — 語彙が近い
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 出典を共有
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 出典を共有
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍

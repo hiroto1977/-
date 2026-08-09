@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 50
+cite_count: 52
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **50 件**（公的 50）
+> [!info] 出典ドメイン索引 ・ 引用 **52 件**（公的 52）
 
 ## このドメインを出典とする項目
 
@@ -44,7 +44,9 @@ tags:
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 青森労働局パワハラ対策義務化
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — 和歌山労働局賠償予定の禁止解説
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — 栃木労働局賠償予定の禁止（16条）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 厚生労働省大阪労働局よくあるご質問（退職・解雇・雇止め）
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 山口労働局安全衛生教育（59条・安衛則35条）
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省新潟労働局安全衛生管理体制のあらまし
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省沖縄労働局法定帳簿
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 厚生労働省東京労働局ストレスチェック制度の概要
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 山梨労働局振替休日と代休
