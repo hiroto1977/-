@@ -187,7 +187,8 @@
     "src/renderer/data/docStudioChecks.ts",
     "src/renderer/data/docStudioTeikan.ts",
     "src/renderer/data/businessTriage.ts",
-    "src/renderer/data/statementAccounts.ts"
+    "src/renderer/data/statementAccounts.ts",
+    "src/renderer/data/cashPlan.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

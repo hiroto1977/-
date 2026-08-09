@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { STUDIO_CATEGORIES, STUDIO_TEMPLATES, type StudioDoc } from '../data/docStudioData';
-import { checkDoc, countBlank, interestCap, isRegistrationNo, parseJpDate, toNum } from '../data/docStudioChecks';
+import { checkDoc, countBlank, interestCap, isRegistrationNo, parseJpDate, toNum, ruleDocIds } from '../data/docStudioChecks';
 
 const doc = (id: string): StudioDoc => {
   const found = STUDIO_TEMPLATES.find((d) => d.id === id);
@@ -271,16 +271,27 @@ describe('テンプレート集合の健全性', () => {
 const flat = (id: string, v: Record<string, string>) =>
   checkDoc(doc(id), v).map((i) => `${i.level}|${i.field ?? '-'}|${i.message}|${i.basis ?? '-'}`);
 
+/**
+ * 個別ルールを持つ書式。下の網羅テストが `ruleDocIds()` と突き合わせるので、
+ * ルールを足してここへ入れ忘れると落ちる（以前は 議事録 3 件が漏れていた）。
+ */
 const RULE_IDS = [
   'mimoto', 'saburoku', 'shohi', 'chintai', 'kaiko-yokoku', 'taishoku-shomei', 'roudou',
   'invoice', 'shiharai', 'nouhin', 'kenshu', 'hacchu', 'chuumon-uke', 'baibai', 'ryoshu',
+  'sokai', 'rinji-sokai', 'torishimari',
   'kabunushi-meibo', 'shunin', 'annai', 'naiyo', 'tokusoku', 'kaijo', 'kojin-itaku',
   'privacy', 'chingin', 'harassment',
+  'chotatsu-keikaku', 'jigyo-keikaku',
 ] as const;
 
 describe('全ルールの網羅 — 指摘の文面を固定する', () => {
-  it('個別ルールを持つ 25 書式がすべて実在する', () => {
+  it('個別ルールを持つ書式がすべて実在する', () => {
     for (const id of RULE_IDS) expect(STUDIO_TEMPLATES.some((d) => d.id === id), id).toBe(true);
+  });
+
+  it('ルールを持つ書式が網羅リストから漏れていない', () => {
+    // ルールだけ足して RULE_IDS に入れ忘れると、その書式が検査から静かに外れる。
+    expect([...ruleDocIds()].sort()).toEqual([...RULE_IDS].sort());
   });
 
   it('placeholder で埋めた状態の指摘', () => {
@@ -603,6 +614,14 @@ describe('分岐ごとの文面を丸ごと固定する', () => {
     ['kabunushi-meibo', '合計が超過', { totalShares: '100', s1shares: '80', s2shares: '80', s3shares: '0' }],
     // 契約解除通知
     ['kaijo', '無催告解除', { kind: '催告を要せず解除する（無催告解除）' }],
+    // 資金調達計画書 — 必要資金と調達の一致
+    ['chotatsu-keikaku', '必要資金と調達が食い違う', { equip: '8000000', working: '4000000', selfFund: '3000000', loanBank: '7000000', loanPublic: '0', subsidy: '0', otherFund: '0' }],
+    ['chotatsu-keikaku', '自己資金が1割未満', { equip: '9000000', working: '1000000', selfFund: '500000', loanBank: '9500000', loanPublic: '0', subsidy: '0', otherFund: '0' }],
+    ['chotatsu-keikaku', '補助金を当て込んでいる', { equip: '5000000', working: '0', selfFund: '2000000', loanBank: '2000000', loanPublic: '0', subsidy: '1000000', otherFund: '0' }],
+    // 事業計画書
+    ['jigyo-keikaku', '利益が売上を上回る', { y1sales: '1000000', y1profit: '2000000' }],
+    ['jigyo-keikaku', '3年で5倍超', { y1sales: '1000000', y3sales: '6000000' }],
+    ['jigyo-keikaku', '算出根拠が空欄', { basis: '' }],
   ];
 
   it('固有の分岐名で重複していない', () => {
@@ -757,3 +776,135 @@ describe('日付・登録番号の追加境界', () => {
 });
 
 const at2 = (id: string, over: Record<string, string>) => checkDoc(doc(id), filled(id, over));
+
+describe('資金調達計画書の検算', () => {
+  const at = (over: Record<string, string>) => checkDoc(doc('chotatsu-keikaku'), filled('chotatsu-keikaku', over));
+  /** 必要資金 1,200万 / 調達 1,200万 で釣り合った状態。 */
+  const BALANCED = {
+    equip: '8000000', working: '4000000',
+    selfFund: '3000000', loanBank: '7000000', loanPublic: '2000000', subsidy: '0', otherFund: '0',
+  };
+
+  it('必要資金と調達が一致していれば fatal は出ない', () => {
+    expect(at(BALANCED).some((i) => i.level === 'fatal')).toBe(false);
+  });
+
+  it('食い違えば差額を金額で示す', () => {
+    const out = at({ ...BALANCED, loanPublic: '1000000' });
+    const gap = out.find((i) => i.level === 'fatal');
+    expect(gap?.message).toContain('12,000,000 円');
+    expect(gap?.message).toContain('11,000,000 円');
+    expect(gap?.message).toContain('1,000,000 円 食い違って');
+  });
+
+  it('どちらも 0 なら判定しない（書きかけの状態を責めない）', () => {
+    const zero = { equip: '0', working: '0', selfFund: '0', loanBank: '0', loanPublic: '0', subsidy: '0', otherFund: '0' };
+    expect(at(zero).some((i) => i.level === 'fatal')).toBe(false);
+  });
+
+  it('片方だけ入っていれば食い違いとして拾う', () => {
+    const only = { equip: '1000000', working: '0', selfFund: '0', loanBank: '0', loanPublic: '0', subsidy: '0', otherFund: '0' };
+    expect(at(only).some((i) => i.level === 'fatal')).toBe(true);
+  });
+
+  it('使わない調達手段が空欄でも合計は 0 として扱う（書面の合計欄と一致させる）', () => {
+    // 空欄を「読めない」扱いにすると合計が NaN になり、書面には差額が出ているのに
+    // 何も指摘されないという最悪の状態になる。空欄は 0。
+    const out = checkDoc(doc('chotatsu-keikaku'), {
+      equip: '8000000', working: '4000000', selfFund: '3000000', loanBank: '7000000',
+    });
+    const gap = out.find((i) => i.level === 'fatal');
+    expect(gap?.message).toContain('12,000,000 円');
+    expect(gap?.message).toContain('10,000,000 円');
+    expect(gap?.message).toContain('2,000,000 円 食い違って');
+  });
+
+  it('空欄だけを埋めて一致させれば fatal が消える', () => {
+    const out = checkDoc(doc('chotatsu-keikaku'), {
+      equip: '8000000', working: '4000000', selfFund: '3000000', loanBank: '7000000', loanPublic: '2000000',
+    });
+    expect(out.some((i) => i.level === 'fatal')).toBe(false);
+  });
+
+  it('調達の 5 区分すべてが合計に効く', () => {
+    // どれか 1 つでも集計から漏れると、差額が出ているのに気づけない。
+    const base = { equip: '5000000', working: '0' };
+    const each: Record<string, string> = {
+      selfFund: '1000000', loanBank: '1000000', loanPublic: '1000000', subsidy: '1000000', otherFund: '1000000',
+    };
+    // 5 区分で 500 万 → 必要資金と一致
+    expect(checkDoc(doc('chotatsu-keikaku'), { ...base, ...each }).some((i) => i.level === 'fatal')).toBe(false);
+    // どれか 1 つを外すと必ず食い違う
+    for (const k of Object.keys(each)) {
+      const dropped = { ...each, [k]: '0' };
+      expect(
+        checkDoc(doc('chotatsu-keikaku'), { ...base, ...dropped }).some((i) => i.level === 'fatal'),
+        `${k} が合計に効いていない`,
+      ).toBe(true);
+    }
+  });
+
+  it('金額が読めなければ一致判定をしない', () => {
+    expect(at({ ...BALANCED, equip: '未定' }).some((i) => i.level === 'fatal')).toBe(false);
+    expect(at({ ...BALANCED, selfFund: '未定' }).some((i) => i.level === 'fatal')).toBe(false);
+  });
+
+  it('自己資金が調達総額の1割未満なら warn、ちょうど1割は通す', () => {
+    const tenth = { equip: '10000000', working: '0', selfFund: '1000000', loanBank: '9000000', loanPublic: '0', subsidy: '0', otherFund: '0' };
+    expect(at(tenth).some((i) => i.field === 'selfFund' && i.level === 'warn')).toBe(false);
+    const under = { ...tenth, selfFund: '999999', loanBank: '9000001' };
+    expect(at(under).some((i) => i.field === 'selfFund' && i.level === 'warn')).toBe(true);
+  });
+
+  it('調達が 0 なら自己資金の割合を判定しない', () => {
+    const none = { equip: '0', working: '0', selfFund: '0', loanBank: '0', loanPublic: '0', subsidy: '0', otherFund: '0' };
+    expect(at(none).some((i) => i.field === 'selfFund')).toBe(false);
+  });
+
+  it('補助金を計上したら精算払いであることを警告する', () => {
+    expect(at({ ...BALANCED, subsidy: '1000000', loanPublic: '1000000' }).some((i) => i.field === 'subsidy')).toBe(true);
+    expect(at(BALANCED).some((i) => i.field === 'subsidy')).toBe(false);
+  });
+
+  it('返済期間と借入があれば年あたりの元金返済を示す', () => {
+    const out = at({ ...BALANCED, years: '10' });
+    expect(out.some((i) => i.level === 'info' && i.message.includes('900,000 円 の返済'))).toBe(true);
+  });
+
+  it('返済期間が無い・借入が無ければ返済額を出さない', () => {
+    expect(at({ ...BALANCED, years: '0' }).some((i) => i.message.includes('元金だけで年'))).toBe(false);
+    const noDebt = { equip: '3000000', working: '0', selfFund: '3000000', loanBank: '0', loanPublic: '0', subsidy: '0', otherFund: '0', years: '5' };
+    expect(at(noDebt).some((i) => i.message.includes('元金だけで年'))).toBe(false);
+  });
+});
+
+describe('事業計画書の検算', () => {
+  const at = (over: Record<string, string>) => checkDoc(doc('jigyo-keikaku'), filled('jigyo-keikaku', over));
+
+  it('利益が売上を上回る年を名指しする', () => {
+    expect(at({ y1sales: '100', y1profit: '200' }).some((i) => i.field === 'y1profit')).toBe(true);
+    expect(at({ y2sales: '100', y2profit: '200' }).some((i) => i.field === 'y2profit')).toBe(true);
+    expect(at({ y3sales: '100', y3profit: '200' }).some((i) => i.field === 'y3profit')).toBe(true);
+  });
+
+  it('利益と売上が同額なら指摘しない', () => {
+    expect(at({ y1sales: '100', y1profit: '100', y2sales: '100', y2profit: '100', y3sales: '100', y3profit: '100' })
+      .some((i) => /経常利益が売上高を上回/.test(i.message))).toBe(false);
+  });
+
+  it('3年目が1年目の5倍を超えたら根拠を問う', () => {
+    expect(at({ y1sales: '1000', y3sales: '5001' }).some((i) => i.field === 'y3sales')).toBe(true);
+    // ちょうど5倍は通す
+    expect(at({ y1sales: '1000', y3sales: '5000' }).some((i) => i.field === 'y3sales')).toBe(false);
+  });
+
+  it('1年目の売上が 0 なら伸び率を判定しない', () => {
+    expect(at({ y1sales: '0', y3sales: '99999999' }).some((i) => i.field === 'y3sales')).toBe(false);
+  });
+
+  it('算出根拠が空欄なら fatal', () => {
+    expect(at({ basis: '' }).some((i) => i.field === 'basis' && i.level === 'fatal')).toBe(true);
+    expect(at({ basis: '   ' }).some((i) => i.field === 'basis' && i.level === 'fatal')).toBe(true);
+    expect(at({ basis: '単価5万 × 20社 × 12か月' }).some((i) => i.field === 'basis' && i.level === 'fatal')).toBe(false);
+  });
+});

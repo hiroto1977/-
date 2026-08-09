@@ -27,6 +27,14 @@ import {
 import { checkDoc, countBlank, type DocIssue } from '../data/docStudioChecks';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
 import {
+  PLAN_ITEMS,
+  PLAN_MONTHS,
+  buildCashPlan,
+  checkCashPlan,
+  monthsOfRunway,
+  planKey,
+} from '../data/cashPlan';
+import {
   ACCOUNTS,
   buildBalanceRows,
   buildIncomeRows,
@@ -339,6 +347,7 @@ function Blocks({ blocks, fields, values }: { blocks: readonly DocBlock[]; field
         if (b.items) return <ItemsTable key={i} values={values} />;
         if (b.taxItems) return <TaxItemsTable key={i} values={values} />;
         if (b.table) return <FillTable key={i} spec={b.table} fields={fields} values={values} />;
+        if (b.cashPlan) return <CashPlanTable key={i} values={values} />;
         if (b.sign) return <SignBlock key={i} values={values} />;
         if (b.bigAmount) {
           const n = yen(values['amount'] ?? '');
@@ -508,6 +517,120 @@ function KessanSheets({ values, fields }: { values: Values; fields: readonly Doc
       <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
       <StatementTable title="資産の部" rows={bs.assets} />
       <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
+    </div>
+  );
+}
+
+/**
+ * 資金繰り表 — 12 か月の入出金と繰越。
+ *
+ * 前月繰越は入力させず、必ず前月の翌月繰越から引き継ぐ。手で転記させると
+ * 1 か月ずれたまま表としては辻褄が合ってしまい、誰も気づけない。
+ */
+function CashPlanTable({ values }: { values: Values }) {
+  const opening = readNumber(values['openingBalance']) ?? 0;
+  const plan = buildCashPlan(values, opening);
+  const issues = checkCashPlan(plan);
+  const runway = monthsOfRunway(plan);
+  const shortfall = plan.shortfallMonth;
+  return (
+    <div data-cash-plan data-shortfall={shortfall ?? 0}>
+      <table className="ds-table">
+        <thead>
+          <tr>
+            <th>月</th><th>前月繰越</th><th>経常収入</th><th>経常支出</th>
+            <th>経常収支</th><th>財務収支</th><th>当月収支</th><th>翌月繰越</th>
+          </tr>
+        </thead>
+        <tbody>
+          {plan.months.map((m) => (
+            <tr key={m.month} data-month={m.month} data-short={m.closing < 0 ? '1' : undefined}>
+              <td>{m.month} か月目</td>
+              <td className="ds-num">{fmt(m.opening)}</td>
+              <td className="ds-num">{fmt(m.operatingIn)}</td>
+              <td className="ds-num">{fmt(m.operatingOut)}</td>
+              <td className="ds-num" style={{ color: m.operatingNet < 0 ? LEVEL_COLOR.warn : undefined }}>
+                {fmt(m.operatingNet)}
+              </td>
+              <td className="ds-num">{fmt(m.financeNet)}</td>
+              <td className="ds-num">{fmt(m.net)}</td>
+              <td className="ds-num" style={{ fontWeight: 700, color: m.closing < 0 ? LEVEL_COLOR.fatal : undefined }}>
+                {fmt(m.closing)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="ds-total">
+            <td>年間計</td>
+            <td className="ds-num">—</td>
+            <td className="ds-num">{fmt(plan.totalOperatingIn)}</td>
+            <td className="ds-num">{fmt(plan.totalOperatingOut)}</td>
+            <td className="ds-num">{fmt(plan.totalOperatingIn - plan.totalOperatingOut)}</td>
+            <td className="ds-num">{fmt(plan.totalFinanceIn - plan.totalFinanceOut)}</td>
+            <td className="ds-num">—</td>
+            <td className="ds-num">{fmt(plan.endingBalance)}</td>
+          </tr>
+        </tfoot>
+      </table>
+      <div style={{ fontSize: 12, marginTop: 8, color: 'var(--text-mute)' }}>
+        期首残高 {fmt(plan.openingBalance)} 円 ／ 期中の最低残高 {fmt(plan.minClosing)} 円
+        {runway !== null && ` ／ 期末残高は平均月次経常支出の ${runway.toFixed(1)} か月分`}
+      </div>
+      <div
+        data-cash-check
+        data-fatal={issues.filter((i) => i.level === 'fatal').length}
+        style={{
+          border: `1px solid ${shortfall !== null ? LEVEL_COLOR.fatal : 'var(--border)'}`,
+          borderRadius: 10, padding: '10px 12px', marginTop: 10,
+          fontSize: 12, lineHeight: 1.7, background: 'var(--bg-elev)',
+        }}
+      >
+        <strong>💰 資金繰りの検算 — {shortfall === null ? '期間中に資金ショートは起きません' : `⛔ ${shortfall} か月目にショート`}</strong>
+        {issues.map((it, i) => (
+          <div key={i} style={{ marginTop: 6, color: LEVEL_COLOR[it.level], fontWeight: it.level === 'info' ? 400 : 700 }}>
+            {LEVEL_MARK[it.level]} {it.message}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** 資金繰り表の月次入力（12 か月 × 項目）。 */
+function CashPlanInputs({ values, onChange }: { values: Values; onChange: (k: string, v: string) => void }) {
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <table className="ds-table" data-cash-inputs>
+        <thead>
+          <tr>
+            <th>項目</th>
+            {Array.from({ length: PLAN_MONTHS }, (_, i) => <th key={i}>{i + 1}月目</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {PLAN_ITEMS.map((it) => (
+            <tr key={it.id}>
+              <td style={{ whiteSpace: 'nowrap' }}>{it.label}</td>
+              {Array.from({ length: PLAN_MONTHS }, (_, i) => {
+                const k = planKey(i + 1, it.id);
+                return (
+                  <td key={k}>
+                    <input
+                      aria-label={`${it.label} ${i + 1}月目`}
+                      inputMode="numeric"
+                      value={values[k] ?? ''}
+                      placeholder="0"
+                      onChange={(e) => onChange(k, e.target.value)}
+                      style={{ width: 90, fontSize: 12 }}
+                    />
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -967,6 +1090,14 @@ export function DocstudioPage() {
               </div>
             )}
             <FieldInputs fields={fields} values={filled} onChange={setValue} flagged={flagged} />
+            {collection === 'studio' && docId === 'shikin-guri' && (
+              <div style={{ marginTop: 12 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>
+                  月ごとの入出金（前月繰越は自動で引き継ぐので入力しません）
+                </div>
+                <CashPlanInputs values={values} onChange={setValue} />
+              </div>
+            )}
           </Section>
 
           {collection === 'studio' && <CheckPanel issues={issues} />}

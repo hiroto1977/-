@@ -312,6 +312,32 @@ const ROWS: readonly DocTriage[] = [
 
   // ── 事業計画 ──────────────────────────────────────────────
   {
+    doc: 'jigyo-keikaku',
+    ownUse: 'ok',
+    ownNote: '事業計画は自社で書ける。むしろ書いた本人が数字の前提を説明できることに意味があり、'
+      + '審査の場では口頭で質問に答えられることが求められる。人に作らせた計画はそこで答えられない。',
+    exclusiveTo: [],
+    consult: ['sme-consultant', 'tax-accountant'],
+  },
+  {
+    doc: 'chotatsu-keikaku',
+    ownUse: 'ok-with-care',
+    ownNote: '必要資金の合計と調達の合計は必ず一致させること。補助金は原則として事業完了後の精算払いなので、'
+      + '交付が決まっていても入金までの資金は別途つなぐ必要がある。',
+    exclusiveTo: [],
+    caseByCase: '補助金・許認可の申請書を他人のために業として作成すると、官公署提出書類として行政書士の領域に入る。'
+      + '自社の申請を自社で出す分は制限されない。',
+    consult: ['sme-consultant', 'admin-scrivener'],
+  },
+  {
+    doc: 'shikin-guri',
+    ownUse: 'ok',
+    ownNote: '資金繰り表に法定の様式はない。掛け取引は売上が立った月ではなく入金される月に入れること。'
+      + '見るのは損益ではなく現金の出入りで、賞与・納税・返済が重なる月に詰まる。',
+    exclusiveTo: [],
+    consult: ['tax-accountant', 'sme-consultant'],
+  },
+  {
     doc: 'plantfactory-plan',
     ownUse: 'ok',
     ownNote: '事業計画は自社で書けるし、書いた本人が説明できることに意味がある。数字の前提を人に作らせると審査で答えられなくなる。',

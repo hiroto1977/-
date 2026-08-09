@@ -95,6 +95,19 @@ function num(v: Values, key: string): number {
   return parsed === null ? Number.NaN : parsed;
 }
 
+/**
+ * 合計に足す金額。空欄は 0、読めない入力は NaN。
+ *
+ * `num` は空欄も読めない入力も同じ NaN にする。合計を取る欄ではこの区別が要る:
+ * 使わない調達手段を空欄にしただけで合計が NaN になると、書面の合計欄
+ * （空欄を 0 として集計する）と検算の結果が食い違い、「表は差額が出ているのに
+ * 何も指摘されない」という一番たちの悪い状態になる。空欄は 0、
+ * 「読めない文字が入っている」ときだけ判定を止める。
+ */
+function money(v: Values, key: string): number {
+  return text(v, key) === '' ? 0 : num(v, key);
+}
+
 /** 判定用に日付を読む。読めなければ NaN（差を取っても NaN のまま伝播する）。 */
 function day(v: Values, key: string): number {
   const t = parseJpDate(v[key]);
@@ -514,6 +527,86 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     return out;
   },
 
+  'chotatsu-keikaku'(v) {
+    const out: DocIssue[] = [];
+    const need = money(v, 'equip') + money(v, 'working');
+    const raise = ['selfFund', 'loanBank', 'loanPublic', 'subsidy', 'otherFund']
+      .reduce((s, k) => s + money(v, k), 0);
+    // 必要資金と調達額は必ず一致する。片方だけ直して他方を直し忘れるのが定番。
+    // 空欄は num() が NaN を返すので isFinite で落ちる。両方 0 のときは need !== raise が
+    // false になるので、「まだ何も入っていない」を別に見張る必要はない。
+    if (Number.isFinite(need) && Number.isFinite(raise) && need !== raise) {
+      out.push({
+        level: 'fatal',
+        field: 'selfFund',
+        message: `必要資金の合計（${need.toLocaleString('ja-JP')} 円）と調達の合計（${raise.toLocaleString('ja-JP')} 円）が`
+          + `${Math.abs(need - raise).toLocaleString('ja-JP')} 円 食い違っています。一致していない資金計画は内容を見てもらえません。`,
+      });
+    }
+    const self = num(v, 'selfFund');
+    // 「自己資金が調達総額の 1 割未満」を割り算せずに書く。raise が 0 のときに
+    // 0/0 や x/0 の退化へ依存しなくて済み、ちょうど 1 割の境界もそのまま出る。
+    if (self * 10 < raise) {
+      out.push({
+        level: 'warn',
+        field: 'selfFund',
+        message: '自己資金が調達総額の 1 割未満です。創業融資では自己資金の割合が返済能力の判断材料になります。',
+      });
+    }
+    if (num(v, 'subsidy') > 0) {
+      out.push({
+        level: 'warn',
+        field: 'subsidy',
+        message: '補助金は原則として事業完了後の精算払いです。交付が決まっていても入金までの資金は別途つなぐ必要があるため、'
+          + '当座の資金として当て込まないでください。',
+      });
+    }
+    const years = num(v, 'years');
+    if (years > 0) {
+      const debt = money(v, 'loanBank') + money(v, 'loanPublic');
+      if (debt > 0) {
+        out.push({
+          level: 'info',
+          message: `借入 ${debt.toLocaleString('ja-JP')} 円を ${years} 年で返す場合、元金だけで年 `
+            + `${Math.round(debt / years).toLocaleString('ja-JP')} 円 の返済になります。`
+            + '返済原資（営業利益＋減価償却費）がこれを上回るか確認してください。',
+        });
+      }
+    }
+    return out;
+  },
+
+  'jigyo-keikaku'(v) {
+    const out: DocIssue[] = [];
+    const years = [1, 2, 3].map((n) => ({ n, sales: num(v, `y${n}sales`), profit: num(v, `y${n}profit`) }));
+    for (const y of years) {
+      if (y.profit > y.sales) {
+        out.push({
+          level: 'warn',
+          field: `y${y.n}profit`,
+          message: `${y.n}年目の経常利益が売上高を上回っています。数字の入れ違いがないか確認してください。`,
+        });
+      }
+    }
+    const first = num(v, 'y1sales');
+    const third = num(v, 'y3sales');
+    if (first > 0 && third > first * 5) {
+      out.push({
+        level: 'warn',
+        field: 'y3sales',
+        message: '3年目の売上高が1年目の5倍を超えています。算出根拠に単価・件数・頻度の内訳がないと、審査では根拠なしと見られます。',
+      });
+    }
+    if (!(v['basis'] ?? '').trim()) {
+      out.push({
+        level: 'fatal',
+        field: 'basis',
+        message: '売上計画の算出根拠が空欄です。融資・補助金の審査で最も見られる項目で、ここが無い計画書は数字を信用してもらえません。',
+      });
+    }
+    return out;
+  },
+
   'kojin-itaku'() {
     return [{
       level: 'info' as const,
@@ -562,6 +655,16 @@ function meetingQuorum(totalKey: string, presentKey: string, presentLabel: strin
     }
     return [];
   };
+}
+
+/**
+ * 個別ルールを持つ書式の id。
+ *
+ * ルールを足したのにテストの網羅リストへ入れ忘れると、その書式だけ検査から
+ * 静かに漏れる。実体から引けるようにしておき、テスト側で突き合わせる。
+ */
+export function ruleDocIds(): readonly string[] {
+  return Object.keys(RULES);
 }
 
 /**
