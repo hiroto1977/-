@@ -26,7 +26,7 @@ import {
 } from '../data/docStudioTeikan';
 import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChecks';
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
-import { countByLevel } from '../../shared/issueLevel';
+import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
 import {
   PLAN_ITEMS,
@@ -40,10 +40,20 @@ import {
   ACCOUNTS,
   buildBalanceRows,
   buildIncomeRows,
+  buildPublicNoticeRows,
   checkStatements,
   incomeTotals,
   type StatementRow,
 } from '../data/statementAccounts';
+import {
+  buildEquityRows,
+  buildNoteSections,
+  checkEquity,
+  type EquityOptions,
+  type EquityRow,
+  type NoteOptions,
+  type NoteSection,
+} from '../data/statementEquity';
 import type { ProfessionalId } from '../data/professionalMap';
 import { readNumber } from '../data/inputGuards';
 import {
@@ -487,17 +497,86 @@ function CheckPanel({ issues }: { issues: readonly DocIssue[] }) {
 }
 
 /**
- * 決算書の書面 — 損益計算書と貸借対照表。
+ * 決算書の入力を数値に読み替える。書面・検算・注記がすべてこの 1 本を通る。
  *
- * 当期純利益は損益計算書で確定してから貸借対照表へ渡す。二表を別々に組むと
- * 連結が切れて、貸借だけ合っているのに利益が反映されていない書面が出来上がる。
+ * 読み替えを画面ごとに書くと、片方だけ既定値がずれても誰も気づけない。
+ */
+function kessanOptions(values: Values): EquityOptions & NoteOptions {
+  const n = (k: string) => readNumber(values[k]) ?? 0;
+  const t = (k: string) => values[k] ?? '';
+  return {
+    retainedEarningsOpening: n('retainedEarningsOpening'),
+    dividends: n('dividends'),
+    reserveTransfer: n('reserveTransfer'),
+    newShares: n('newShares'),
+    newSharesSurplus: n('newSharesSurplus'),
+    sharesIssued: n('sharesIssued'),
+    inventoryPolicy: t('inventoryPolicy'),
+    depreciationPolicy: t('depreciationPolicy'),
+    allowancePolicy: t('allowancePolicy'),
+    consumptionTaxPolicy: t('consumptionTaxPolicy'),
+    contingent: t('contingent'),
+    otherNote: t('otherNote'),
+  };
+}
+
+/** 株主資本等変動計算書の表。列は株主資本の内訳 + 合計。 */
+function EquityTable({ rows }: { rows: readonly EquityRow[] }) {
+  return (
+    <table className="ds-table" data-statement="株主資本等変動計算書">
+      <thead>
+        <tr>
+          <th aria-label="変動事由" /><th>資本金</th><th>資本剰余金</th><th>利益準備金</th><th>繰越利益剰余金</th><th>純資産合計</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr
+            key={`${r.label}-${i}`}
+            className={r.kind === 'ending' ? 'ds-total' : undefined}
+            data-row-kind={r.kind}
+          >
+            <td style={{ paddingLeft: r.kind === 'change' ? 20 : undefined, fontWeight: r.kind === 'change' ? 400 : 700 }}>
+              {r.label}
+            </td>
+            <td className="ds-num">{fmt(r.capital)}</td>
+            <td className="ds-num">{fmt(r.capitalSurplus)}</td>
+            <td className="ds-num">{fmt(r.legalReserve)}</td>
+            <td className="ds-num">{fmt(r.retained)}</td>
+            <td className="ds-num" style={{ fontWeight: 700 }}>{fmt(r.total)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+/** 個別注記表。見出しごとに注記を並べる（表ではなく文章）。 */
+function NotesSheet({ sections }: { sections: readonly NoteSection[] }) {
+  return (
+    <div data-statement="個別注記表">
+      {sections.map((sec) => (
+        <div key={sec.heading} style={{ marginTop: 10 }}>
+          <div style={{ fontWeight: 700 }}>{sec.heading}</div>
+          {sec.items.map((line, i) => (
+            <div key={i} style={{ paddingLeft: 16, lineHeight: 1.9 }}>{line}</div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * 決算書の書面 — 会社法435条2項の計算書類 4 点。
+ *
+ * 当期純利益は損益計算書で確定してから貸借対照表へ渡し、株主資本等変動計算書の
+ * 当期末残高は貸借対照表から取る。4 枚を別々に組むと連結が切れて、貸借だけ合っているのに
+ * 利益が反映されていない書面が出来上がる。
  */
 function KessanSheets({ values, fields }: { values: Values; fields: readonly DocField[] }) {
   const inc = incomeTotals(values);
-  const opt = {
-    retainedEarningsOpening: readNumber(values['retainedEarningsOpening']) ?? 0,
-    dividends: readNumber(values['dividends']) ?? 0,
-  };
+  const opt = kessanOptions(values);
   const bs = buildBalanceRows(values, opt, inc.netIncome);
   return (
     <div data-kessan-sheets>
@@ -513,6 +592,29 @@ function KessanSheets({ values, fields }: { values: Values; fields: readonly Doc
       <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
       <StatementTable title="資産の部" rows={bs.assets} />
       <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
+
+      <div className="ds-title" style={{ marginTop: 24 }}>
+        <Fill text="{{company}} 株主資本等変動計算書" fields={fields} values={values} />
+      </div>
+      <div className="ds-right">
+        <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
+      </div>
+      <EquityTable rows={buildEquityRows(values, opt, inc.netIncome)} />
+
+      <div className="ds-title" style={{ marginTop: 24 }}>
+        <Fill text="{{company}} 個別注記表" fields={fields} values={values} />
+      </div>
+      <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
+      <NotesSheet sections={buildNoteSections(values, opt, inc.netIncome)} />
+
+      <div className="ds-title" style={{ marginTop: 24 }}>決算公告（貸借対照表の要旨）</div>
+      <div className="ds-right">
+        <Fill text="{{company}}　{{fyEnd}} 現在" fields={fields} values={values} />
+      </div>
+      <StatementTable title="貸借対照表の要旨" rows={buildPublicNoticeRows(values, opt, inc.netIncome)} />
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>
+        定時株主総会の終結後、遅滞なく公告してください。官報・日刊新聞紙による場合はこの要旨で足ります（会社法440条1項・2項）。
+      </div>
     </div>
   );
 }
@@ -665,11 +767,13 @@ function StatementTable({ title, rows }: { title: string; rows: readonly Stateme
  * 二表の連結という、合計欄を眺めていても気づけない失敗を挙げる。
  */
 function KessanCheckPanel({ values }: { values: Values }) {
-  const opt = {
-    retainedEarningsOpening: readNumber(values['retainedEarningsOpening']) ?? 0,
-    dividends: readNumber(values['dividends']) ?? 0,
-  };
-  const issues = checkStatements(values, opt);
+  const opt = kessanOptions(values);
+  const netIncome = incomeTotals(values).netIncome;
+  // 貸借対照表側と株主資本等変動計算書側を 1 枚のパネルに集約する。
+  // 別々に出すと片方を閉じたまま印刷され、指摘が読まれない。
+  const issues = [...checkStatements(values, opt), ...checkEquity(values, opt, netIncome)]
+    .slice()
+    .sort(byIssueLevel);
   const { fatal, warn } = countByLevel(issues);
   return (
     <div
@@ -683,10 +787,10 @@ function KessanCheckPanel({ values }: { values: Values }) {
       }}
     >
       <strong style={{ fontSize: 13 }}>
-        🧮 決算書の検算 — {fatal === 0 && warn === 0 ? '貸借は一致しています' : `⛔ ${fatal} 件 / ⚠️ ${warn} 件`}
+        🧮 計算書類の検算 — {fatal === 0 && warn === 0 ? '貸借は一致しています' : `⛔ ${fatal} 件 / ⚠️ ${warn} 件`}
       </strong>
       <div style={{ color: 'var(--text-mute)', marginTop: 2 }}>
-        資産合計と負債・純資産合計の一致、当期純利益が繰越利益剰余金に入っているかを突き合わせています。
+        資産合計と負債・純資産合計の一致、当期純利益が繰越利益剰余金に入っているか、準備金の積立が足りているかを突き合わせています。
       </div>
       {issues.map((it, i) => (
         <div key={i} style={{ marginTop: 8 }}>
@@ -795,7 +899,7 @@ const COLLECTIONS: { id: Collection; label: string }[] = [
   { id: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
   { id: 'teikan', label: '📜 電子定款' },
   { id: 'shugyo', label: '📖 就業規則' },
-  { id: 'kessan', label: '📊 決算書（PL / BS）' },
+  { id: 'kessan', label: '📊 計算書類（4点）' },
 ];
 
 /**
@@ -810,19 +914,34 @@ const KESSAN_FIELDS: readonly DocField[] = [
   { k: 'fyEnd', req: true, label: '事業年度（至）', ph: '2027年3月31日' },
   { k: 'retainedEarningsOpening', num: true, label: '繰越利益剰余金（期首残高）', ph: '0' },
   { k: 'dividends', num: true, label: '当期の剰余金の配当', ph: '0' },
+  { k: 'reserveTransfer', num: true, label: '当期の利益準備金への積立額', ph: '0' },
+  { k: 'newShares', num: true, label: '当期の新株発行（資本金の増加額）', ph: '0' },
+  { k: 'newSharesSurplus', num: true, label: '当期の新株発行（資本剰余金の増加額）', ph: '0' },
+  { k: 'sharesIssued', num: true, label: '発行済株式の総数（株）', ph: '100' },
   ...ACCOUNTS.map((a) => ({ k: a.k, num: true as const, label: a.contra ? `${a.name}（控除）` : a.name, ph: '0' })),
+  // 個別注記表の文言。空欄なら既定の書きぶりで埋まるので、必須にはしない。
+  { k: 'inventoryPolicy', label: '注記: 資産の評価基準及び評価方法', ph: '' },
+  { k: 'depreciationPolicy', label: '注記: 固定資産の減価償却の方法', ph: '' },
+  { k: 'allowancePolicy', label: '注記: 引当金の計上基準', ph: '' },
+  { k: 'consumptionTaxPolicy', label: '注記: 消費税等の会計処理', ph: '' },
+  { k: 'contingent', label: '注記: 保証債務その他の偶発債務', ph: '' },
+  { k: 'otherNote', label: '注記: その他', ph: '' },
 ];
 
 const KESSAN_STEPS: readonly (readonly [string, string])[] = [
   ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
-  ['② 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
-  ['③ 印刷 / PDF 保存', '「印刷 / PDF 保存」で損益計算書と貸借対照表を出力します。'],
-  ['④ 残る2点を揃える', '会社法の計算書類は株主資本等変動計算書と個別注記表を含めた4点です。定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。'],
+  ['② 当期の変動を入れる', '繰越利益剰余金の期首残高、剰余金の配当、利益準備金への積立、新株発行による増加額を入れます。期首残高は入力しません。期末残高から当期変動額を引いて逆算するので、内訳と食い違う期首を書けないようになっています。'],
+  ['③ 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
+  ['④ 印刷 / PDF 保存', '「印刷 / PDF 保存」で計算書類4点（損益計算書・貸借対照表・株主資本等変動計算書・個別注記表）をまとめて出力します。'],
+  ['⑤ 承認と公告', '定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。作成した計算書類は10年間の保存義務があります。'],
 ];
 
 const KESSAN_NOTES: readonly string[] = [
-  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。',
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。この画面は4点すべてを同じ科目残高から組み立てます。',
+  '株主資本等変動計算書の当期末残高は、貸借対照表の純資産の部と一致します。期首残高は入力させず期末から逆算するので、二表がずれることはありません。',
+  '剰余金の配当をするときは、配当により減少する剰余金の10分の1を資本準備金または利益準備金として計上する必要があります（会社法445条4項）。ただし準備金の合計が資本金の4分の1に達している場合を除きます。',
   '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。',
+  '注記すべき範囲は会社の区分（公開会社か、会計監査人設置会社か）で変わり、省略できる注記があります。この画面は省かずに並べるので、どれを残すかは税理士・公認会計士に確認してください。',
   'ここで作るのは科目残高の積み上げです。勘定科目への振り分け、引当金の計上要否、減価償却方法の選択、税効果といった会計・税務の判断そのものは代替しません。',
 ];
 
@@ -860,7 +979,9 @@ export function DocstudioPage() {
       ? store.studio?.[studioDoc.id] ?? {}
       : collection === 'teikan'
         ? store.teikan?.[teikanType] ?? {}
-        : store.shugyo ?? {};
+        : collection === 'kessan'
+          ? store.kessan ?? {}
+          : store.shugyo ?? {};
 
   function setValue(k: string, v: string) {
     setStore((prev) => {
@@ -870,6 +991,9 @@ export function DocstudioPage() {
       if (collection === 'teikan') {
         return { ...prev, teikan: { ...prev.teikan, [teikanType]: { ...prev.teikan?.[teikanType], [k]: v } } };
       }
+      // 決算書と就業規則は別の入れ物に入れる。どちらも company を持つので、
+      // 同じ袋に入れると会社名が混線し、決算書の科目残高が就業規則側にも溜まる。
+      if (collection === 'kessan') return { ...prev, kessan: { ...prev.kessan, [k]: v } };
       return { ...prev, shugyo: { ...prev.shugyo, [k]: v } };
     });
   }

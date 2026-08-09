@@ -11,7 +11,8 @@
  *   3. 区分の誤り  — 借入金を資産に置いた、のような入れ間違い
  *
  * 会社法435条2項の計算書類は 貸借対照表・損益計算書・株主資本等変動計算書・個別注記表 の
- * 4 点で、作成から10年間の保存義務がある（同条4項）。ここが作るのはうち 2 点。
+ * 4 点で、作成から10年間の保存義務がある（同条4項）。ここは前 2 点を作り、残る 2 点は
+ * `statementEquity.ts` が同じ科目残高から組み立てる。
  *
  * **概算ではなく積み上げだが、税務・会計の判断そのものは代替しない。** 勘定科目への
  * 振り分け、引当金の計上要否、税効果、減価償却方法の選択は税理士・公認会計士の領域。
@@ -291,6 +292,13 @@ export interface BalanceOptions {
   readonly retainedEarningsOpening: number;
   /** 当期に支払った剰余金の配当。 */
   readonly dividends: number;
+  /**
+   * 当期に繰越利益剰余金から利益準備金へ振り替えた額（省略時 0）。
+   *
+   * 利益準備金の残高は試算表から入る一方、その原資は繰越利益剰余金なので、
+   * ここで引かないと純資産が振替額の分だけ二重に立ち、貸借が合わなくなる。
+   */
+  readonly reserveTransfer?: number;
 }
 
 /**
@@ -313,7 +321,7 @@ export function balanceTotals(v: Amounts, opt: BalanceOptions, netIncome: number
   const capital = sectionTotal(v, 'capital');
   const capitalSurplus = sectionTotal(v, 'capital-surplus');
   const legalReserve = sectionTotal(v, 'retained-earnings');
-  const retainedEarnings = opt.retainedEarningsOpening + netIncome - opt.dividends;
+  const retainedEarnings = opt.retainedEarningsOpening + netIncome - opt.dividends - (opt.reserveTransfer ?? 0);
   const totalEquity = capital + capitalSurplus + legalReserve + retainedEarnings;
 
   const totalLiabilitiesEquity = totalLiabilities + totalEquity;
@@ -356,6 +364,36 @@ export function buildBalanceRows(v: Amounts, opt: BalanceOptions, netIncome: num
     { label: '負債・純資産合計', amount: t.totalLiabilitiesEquity, kind: 'total' },
   ];
   return { assets, liabilitiesEquity };
+}
+
+/**
+ * 決算公告（貸借対照表の要旨）の表示行。
+ *
+ * 会社法440条1項は定時株主総会の終結後遅滞なく貸借対照表の公告を求める。
+ * 官報・日刊新聞紙による場合は**要旨**で足りるので、明細を落として区分の合計だけを並べる。
+ * 貸借対照表そのものを載せ替えるのではなく、同じ集計値から要旨を組むことで
+ * 「公告した数字が決算書と違う」という事故を起こさないようにしている。
+ */
+export function buildPublicNoticeRows(v: Amounts, opt: BalanceOptions, netIncome: number): StatementRow[] {
+  const t = balanceTotals(v, opt, netIncome);
+  return [
+    { label: '資産の部', amount: t.totalAssets, kind: 'section' },
+    { label: '流動資産', amount: t.currentAssets, kind: 'item', indent: 1 },
+    { label: '固定資産', amount: t.fixedAssets, kind: 'item', indent: 1 },
+    { label: '繰延資産', amount: t.deferredAssets, kind: 'item', indent: 1 },
+    { label: '資産合計', amount: t.totalAssets, kind: 'subtotal' },
+    { label: '負債の部', amount: t.totalLiabilities, kind: 'section' },
+    { label: '流動負債', amount: t.currentLiabilities, kind: 'item', indent: 1 },
+    { label: '固定負債', amount: t.fixedLiabilities, kind: 'item', indent: 1 },
+    { label: '負債合計', amount: t.totalLiabilities, kind: 'subtotal' },
+    { label: '純資産の部', amount: t.totalEquity, kind: 'section' },
+    { label: '資本金', amount: t.capital, kind: 'item', indent: 1 },
+    { label: '資本剰余金', amount: t.capitalSurplus, kind: 'item', indent: 1 },
+    { label: '利益剰余金', amount: t.legalReserve + t.retainedEarnings, kind: 'item', indent: 1 },
+    { label: '（うち 当期純利益）', amount: netIncome, kind: 'item', indent: 1 },
+    { label: '純資産合計', amount: t.totalEquity, kind: 'subtotal' },
+    { label: '負債・純資産合計', amount: t.totalLiabilitiesEquity, kind: 'total' },
+  ];
 }
 
 export type { IssueLevel } from '../../shared/issueLevel';
@@ -449,8 +487,7 @@ export function checkStatements(v: Amounts, opt: BalanceOptions): readonly State
 
   out.push({
     level: 'info',
-    message: '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります。'
-      + 'ここで作れるのはうち2点です。',
+    message: '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります。',
     basis: '会社法435条2項・4項',
   });
   out.push({

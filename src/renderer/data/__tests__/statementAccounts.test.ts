@@ -6,6 +6,7 @@ import {
   balanceTotals,
   buildBalanceRows,
   buildIncomeRows,
+  buildPublicNoticeRows,
   checkStatements,
   incomeTotals,
   sectionTotal,
@@ -184,6 +185,19 @@ describe('貸借対照表', () => {
   it('配当は繰越利益剰余金から引く', () => {
     const t = balanceTotals({}, { retainedEarningsOpening: 500, dividends: 200 }, 300);
     expect(t.retainedEarnings).toBe(600); // 500 + 300 − 200
+  });
+
+  it('利益準備金への振替も繰越利益剰余金から引く（純資産は動かない）', () => {
+    const v = { legalReserve: '50' };
+    const t = balanceTotals(v, { retainedEarningsOpening: 500, dividends: 0, reserveTransfer: 50 }, 0);
+    expect(t.retainedEarnings).toBe(450); // 500 − 50
+    expect(t.legalReserve).toBe(50);
+    expect(t.totalEquity).toBe(500); // 振替は純資産の中の移動なので合計は変わらない
+  });
+
+  it('reserveTransfer を省いたら 0 として扱う', () => {
+    const t = balanceTotals({}, { retainedEarningsOpening: 500, dividends: 0 }, 0);
+    expect(t.retainedEarnings).toBe(500);
   });
 
   it('貸借が合う例では差額 0', () => {
@@ -485,5 +499,61 @@ describe('検算の境界', () => {
   it('純資産ちょうど 0 は債務超過にしない', () => {
     expect(has({}, NO_OPT, /債務超過/)).toBe(false);
     expect(has({}, { retainedEarningsOpening: -1, dividends: 0 }, /債務超過/)).toBe(true);
+  });
+});
+
+describe('決算公告（貸借対照表の要旨）', () => {
+  it('明細を落として区分の合計だけを並べる', () => {
+    const rows = buildPublicNoticeRows(BALANCED, BALANCED_OPT, 100);
+    expect(rows.map((r) => r.label)).toEqual([
+      '資産の部', '流動資産', '固定資産', '繰延資産', '資産合計',
+      '負債の部', '流動負債', '固定負債', '負債合計',
+      '純資産の部', '資本金', '資本剰余金', '利益剰余金', '（うち 当期純利益）', '純資産合計',
+      '負債・純資産合計',
+    ]);
+    // 科目名（現金及び預金など）は要旨には出さない
+    expect(rows.some((r) => r.label === '現金及び預金')).toBe(false);
+  });
+
+  it('金額は貸借対照表と同じ集計値になる', () => {
+    const t = balanceTotals(BALANCED, BALANCED_OPT, 100);
+    const rows = buildPublicNoticeRows(BALANCED, BALANCED_OPT, 100);
+    const amount = (label: string) => rows.find((r) => r.label === label)!.amount;
+    expect(amount('資産合計')).toBe(t.totalAssets);
+    expect(amount('流動資産')).toBe(t.currentAssets);
+    expect(amount('固定資産')).toBe(t.fixedAssets);
+    expect(amount('繰延資産')).toBe(t.deferredAssets);
+    expect(amount('負債合計')).toBe(t.totalLiabilities);
+    expect(amount('流動負債')).toBe(t.currentLiabilities);
+    expect(amount('固定負債')).toBe(t.fixedLiabilities);
+    expect(amount('資本金')).toBe(t.capital);
+    expect(amount('資本剰余金')).toBe(t.capitalSurplus);
+    expect(amount('純資産合計')).toBe(t.totalEquity);
+    expect(amount('負債・純資産合計')).toBe(t.totalLiabilitiesEquity);
+    expect(amount('（うち 当期純利益）')).toBe(100);
+    expect(amount('資産の部')).toBe(t.totalAssets);
+    expect(amount('負債の部')).toBe(t.totalLiabilities);
+    expect(amount('純資産の部')).toBe(t.totalEquity);
+  });
+
+  it('利益剰余金は 利益準備金 ＋ 繰越利益剰余金 をまとめて出す', () => {
+    const v = { ...BALANCED, legalReserve: '30' };
+    const t = balanceTotals(v, BALANCED_OPT, 100);
+    const rows = buildPublicNoticeRows(v, BALANCED_OPT, 100);
+    expect(rows.find((r) => r.label === '利益剰余金')!.amount).toBe(t.legalReserve + t.retainedEarnings);
+    expect(rows.find((r) => r.label === '利益剰余金')!.amount).toBe(230); // 30 + (100 + 100)
+  });
+
+  it('区分の見出し・小計・合計の別を持つ', () => {
+    const rows = buildPublicNoticeRows(BALANCED, BALANCED_OPT, 100);
+    // filter で数えると kind が空文字に化けたときに検出できないので、並びを丸ごと固定する
+    expect(rows.map((r) => r.kind)).toEqual([
+      'section', 'item', 'item', 'item', 'subtotal',
+      'section', 'item', 'item', 'subtotal',
+      'section', 'item', 'item', 'item', 'item', 'subtotal',
+      'total',
+    ]);
+    expect(rows.filter((r) => r.kind === 'item').map((r) => r.indent)).toEqual([1, 1, 1, 1, 1, 1, 1, 1, 1]);
+    expect(rows.filter((r) => r.kind !== 'item').every((r) => r.indent === undefined)).toBe(true);
   });
 });
