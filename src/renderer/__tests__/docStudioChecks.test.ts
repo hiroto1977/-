@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { STUDIO_CATEGORIES, STUDIO_TEMPLATES, type StudioDoc } from '../data/docStudioData';
-import { checkDoc, countBlank, interestCap, isRegistrationNo, parseJpDate, toNum, ruleDocIds } from '../data/docStudioChecks';
+import { checkDoc, countBlank, interestCap, isRegistrationNo, parseJpDate, toNum, ruleDocIds, type DocIssue } from '../data/docStudioChecks';
 
 const doc = (id: string): StudioDoc => {
   const found = STUDIO_TEMPLATES.find((d) => d.id === id);
@@ -282,6 +282,7 @@ const RULE_IDS = [
   'kabunushi-meibo', 'shunin', 'annai', 'naiyo', 'tokusoku', 'kaijo', 'kojin-itaku',
   'privacy', 'chingin', 'harassment',
   'chotatsu-keikaku', 'jigyo-keikaku',
+  'roudousha-meibo', 'chingin-daichou', 'shukkinbo', 'yukyu-kanribo',
 ] as const;
 
 describe('全ルールの網羅 — 指摘の文面を固定する', () => {
@@ -622,6 +623,15 @@ describe('分岐ごとの文面を丸ごと固定する', () => {
     ['jigyo-keikaku', '利益が売上を上回る', { y1sales: '1000000', y1profit: '2000000' }],
     ['jigyo-keikaku', '3年で5倍超', { y1sales: '1000000', y3sales: '6000000' }],
     ['jigyo-keikaku', '算出根拠が空欄', { basis: '' }],
+    // 法定帳簿
+    ['roudousha-meibo', '退職日だけ入って事由が空', { retired: '2027年3月31日', retireReason: '' }],
+    ['roudousha-meibo', '業務の種類が空', { duty: '' }],
+    ['chingin-daichou', '内数が労働時間を超える', { workHours: '160', overtimeHours: '100', holidayHours: '40', nightHours: '40' }],
+    ['chingin-daichou', '控除が支給を超える', { basic: '100000', overtimePay: '0', commute: '0', otherPay: '0', health: '90000', pension: '90000' }],
+    ['shukkinbo', '自己申告での把握', { method: '自己申告' }],
+    ['shukkinbo', '内数が総労働時間を超える', { totalHours: '100', overtime: '80', holidayWork: '40', night: '0' }],
+    ['yukyu-kanribo', '10日付与で取得4日', { granted: '10', taken: '4' }],
+    ['yukyu-kanribo', '時季の数と取得日数が食い違う', { granted: '10', taken: '5', d1: '2026年5月1日', d2: '2026年5月2日', d3: '', d4: '', d5: '', d6: '' }],
   ];
 
   it('固有の分岐名で重複していない', () => {
@@ -906,5 +916,253 @@ describe('事業計画書の検算', () => {
     expect(at({ basis: '' }).some((i) => i.field === 'basis' && i.level === 'fatal')).toBe(true);
     expect(at({ basis: '   ' }).some((i) => i.field === 'basis' && i.level === 'fatal')).toBe(true);
     expect(at({ basis: '単価5万 × 20社 × 12か月' }).some((i) => i.field === 'basis' && i.level === 'fatal')).toBe(false);
+  });
+});
+
+describe('法定帳簿の検算', () => {
+  const at = (id: string, over: Record<string, string>) => checkDoc(doc(id), filled(id, over));
+  /** 条件に当たる指摘をちょうど 1 件だけ取り出す。0 件でも 2 件でも落とす。 */
+  const one = (out: readonly DocIssue[], re: RegExp): DocIssue => {
+    const hits = out.filter((i) => re.test(i.message));
+    expect(hits).toHaveLength(1);
+    return hits[0]!;
+  };
+
+  describe('労働者名簿', () => {
+    it('退職日が入っているのに事由が空なら warn', () => {
+      const hit = one(at('roudousha-meibo', { retired: '2027年3月31日', retireReason: '' }), /退職の事由が空欄/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('retireReason');
+      expect(hit.basis).toBe('労働基準法施行規則53条1項');
+      expect(hit.message).toContain('解雇の場合はその理由');
+      expect(at('roudousha-meibo', { retired: '2027年3月31日', retireReason: '自己都合' })
+        .some((i) => i.field === 'retireReason')).toBe(false);
+      // 在職中（退職日が空）なら事由も空でよい
+      expect(at('roudousha-meibo', { retired: '', retireReason: '' })
+        .some((i) => i.field === 'retireReason')).toBe(false);
+      // 空白だけの入力は「空」と同じ扱い（退職日側）
+      expect(at('roudousha-meibo', { retired: '   ', retireReason: '' })
+        .some((i) => i.field === 'retireReason')).toBe(false);
+    });
+
+    it('業務の種類が空なら 30人未満の例外を案内する（責めない）', () => {
+      const hit = one(at('roudousha-meibo', { duty: '' }), /従事する業務の種類/);
+      expect(hit.level).toBe('info');
+      expect(hit.field).toBe('duty');
+      expect(hit.basis).toBe('労働基準法施行規則53条2項');
+      expect(hit.message).toContain('30人未満');
+      expect(hit.message).toContain('30人以上なら必要');
+      expect(at('roudousha-meibo', { duty: '開発' }).some((i) => i.field === 'duty')).toBe(false);
+      expect(at('roudousha-meibo', { duty: '  ' }).some((i) => i.field === 'duty')).toBe(true);
+    });
+
+    it('保存の起算日を必ず案内する', () => {
+      const hit = one(at('roudousha-meibo', {}), /保存期間は5年/);
+      expect(hit.level).toBe('info');
+      expect(hit.field).toBeUndefined();
+      expect(hit.basis).toBe('労働基準法109条・附則143条');
+      expect(hit.message).toContain('死亡・退職・解雇の日');
+      expect(hit.message).toContain('在職中に破棄せず');
+    });
+  });
+
+  describe('賃金台帳', () => {
+    it('時間外・休日・深夜は内数なので、合計が労働時間を超えたら warn', () => {
+      const hit = one(
+        at('chingin-daichou', { workHours: '160', overtimeHours: '100', holidayHours: '40', nightHours: '40' }),
+        /内数として記載/,
+      );
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('workHours');
+      expect(hit.basis).toBe('労働基準法施行規則54条');
+      // 3 項目の合計（100+40+40=180）と労働時間（160）を両方本文に出す
+      expect(hit.message).toContain('180 時間');
+      expect(hit.message).toContain('160 時間');
+      // ちょうど一致は通す
+      expect(at('chingin-daichou', { workHours: '160', overtimeHours: '100', holidayHours: '40', nightHours: '20' })
+        .some((i) => /内数として記載/.test(i.message))).toBe(false);
+      // 内数 3 項目はどれか 1 つでも効く
+      expect(at('chingin-daichou', { workHours: '0', overtimeHours: '1', holidayHours: '0', nightHours: '0' })
+        .some((i) => /内数として記載/.test(i.message))).toBe(true);
+      expect(at('chingin-daichou', { workHours: '0', overtimeHours: '0', holidayHours: '1', nightHours: '0' })
+        .some((i) => /内数として記載/.test(i.message))).toBe(true);
+      expect(at('chingin-daichou', { workHours: '0', overtimeHours: '0', holidayHours: '0', nightHours: '1' })
+        .some((i) => /内数として記載/.test(i.message))).toBe(true);
+    });
+
+    it('労働時間が出勤日数 × 24 を超えたら warn', () => {
+      const zero = { overtimeHours: '0', holidayHours: '0', nightHours: '0' };
+      const hit = one(at('chingin-daichou', { ...zero, workDays: '20', workHours: '481' }), /24時間/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('workHours');
+      expect(hit.basis).toBeUndefined();
+      expect(hit.message).toContain('（480 時間）'); // 20 × 24。割り算・引き算に化けたら落ちる
+      expect(at('chingin-daichou', { ...zero, workDays: '20', workHours: '480' })
+        .some((i) => /24時間/.test(i.message))).toBe(false);
+      // 日数が 0 なら判定しない（0 × 24 = 0 を超えた、で全件警告になるのを防ぐ）
+      expect(at('chingin-daichou', { ...zero, workDays: '0', workHours: '999' })
+        .some((i) => /24時間/.test(i.message))).toBe(false);
+      expect(at('chingin-daichou', { ...zero, workDays: '1', workHours: '25' })
+        .some((i) => /24時間/.test(i.message))).toBe(true);
+    });
+
+    it('控除が支給を超えたら warn', () => {
+      const over = { basic: '100000', overtimePay: '0', commute: '0', otherPay: '0',
+        health: '90000', pension: '90000', employment: '0', incomeTax: '0', residentTax: '0', otherDeduct: '0' };
+      const hit = one(at('chingin-daichou', over), /控除額の合計/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('otherDeduct');
+      expect(hit.message).toContain('180,000 円');
+      expect(hit.message).toContain('100,000 円');
+      expect(at('chingin-daichou', { ...over, pension: '5000' }).some((i) => /控除額の合計/.test(i.message))).toBe(false);
+      // 支給 4 項目・控除 6 項目のどれを動かしても効く（合計キーの取りこぼし検出）。
+      // 支給側は「その 1 項目だけで控除を上回る」形にする。0 を置いても合計から
+      // 落ちたことが観測できないので、必ず金額を持たせて指摘が消えることを確かめる。
+      for (const k of ['basic', 'overtimePay', 'commute', 'otherPay']) {
+        const onlyPaid = { basic: '0', overtimePay: '0', commute: '0', otherPay: '0',
+          health: '50000', pension: '0', employment: '0', incomeTax: '0', residentTax: '0', otherDeduct: '0',
+          [k]: '100000' };
+        expect(at('chingin-daichou', onlyPaid).some((i) => /控除額の合計/.test(i.message))).toBe(false);
+        expect(at('chingin-daichou', { ...onlyPaid, [k]: '0' })
+          .some((i) => /控除額の合計/.test(i.message))).toBe(true);
+      }
+      for (const k of ['health', 'pension', 'employment', 'incomeTax', 'residentTax', 'otherDeduct']) {
+        const only = { basic: '0', overtimePay: '0', commute: '0', otherPay: '0',
+          health: '0', pension: '0', employment: '0', incomeTax: '0', residentTax: '0', otherDeduct: '0', [k]: '1' };
+        expect(at('chingin-daichou', only).some((i) => /控除額の合計/.test(i.message))).toBe(true);
+      }
+    });
+
+    it('給与明細との違いを必ず案内する', () => {
+      const hit = one(at('chingin-daichou', {}), /給与明細を綴じただけ/);
+      expect(hit.level).toBe('info');
+      expect(hit.field).toBeUndefined();
+      expect(hit.basis).toBe('労働基準法108条・施行規則54条');
+      expect(hit.message).toContain('事業場に備え付ける帳簿');
+    });
+  });
+
+  describe('出勤簿', () => {
+    it('内数が総労働時間を超えたら warn', () => {
+      const hit = one(at('shukkinbo', { totalHours: '100', overtime: '80', holidayWork: '40', night: '0' }), /時間外・休日・深夜/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('totalHours');
+      expect(hit.message).toContain('120 時間');
+      expect(hit.message).toContain('100 時間');
+      expect(at('shukkinbo', { totalHours: '160', overtime: '10', holidayWork: '0', night: '0' })
+        .some((i) => /時間外・休日・深夜/.test(i.message))).toBe(false);
+      for (const k of ['overtime', 'holidayWork', 'night']) {
+        expect(at('shukkinbo', { totalHours: '0', overtime: '0', holidayWork: '0', night: '0', [k]: '1' })
+          .some((i) => /時間外・休日・深夜/.test(i.message))).toBe(true);
+      }
+    });
+
+    it('総労働時間が出勤日数 × 24 を超えたら warn', () => {
+      const zero = { overtime: '0', holidayWork: '0', night: '0' };
+      const hit = one(at('shukkinbo', { ...zero, workDays: '10', totalHours: '241' }), /24時間/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('totalHours');
+      expect(hit.message).toContain('（240 時間）'); // 10 × 24
+      expect(at('shukkinbo', { ...zero, workDays: '10', totalHours: '240' })
+        .some((i) => /24時間/.test(i.message))).toBe(false);
+      // 日数 0 は判定しない
+      expect(at('shukkinbo', { ...zero, workDays: '0', totalHours: '999' })
+        .some((i) => /24時間/.test(i.message))).toBe(false);
+      expect(at('shukkinbo', { ...zero, workDays: '1', totalHours: '25' })
+        .some((i) => /24時間/.test(i.message))).toBe(true);
+    });
+
+    it('自己申告なら乖離の是正を求める', () => {
+      const hit = one(at('shukkinbo', { method: '自己申告' }), /自己申告による把握/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('method');
+      expect(hit.basis).toBe('労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン');
+      expect(hit.message).toContain('客観的な記録');
+      expect(at('shukkinbo', { method: 'タイムカード' }).some((i) => i.field === 'method')).toBe(false);
+      expect(at('shukkinbo', { method: 'ICカード' }).some((i) => i.field === 'method')).toBe(false);
+      expect(at('shukkinbo', { method: '使用者による現認' }).some((i) => i.field === 'method')).toBe(false);
+    });
+
+    it('管理監督者も把握対象であることを案内する', () => {
+      const hit = one(at('shukkinbo', {}), /労働時間の状況の把握/);
+      expect(hit.level).toBe('info');
+      expect(hit.field).toBeUndefined();
+      expect(hit.basis).toBe('労働安全衛生法66条の8の3');
+      expect(hit.message).toContain('裁量労働制');
+    });
+  });
+
+  describe('年次有給休暇管理簿', () => {
+    it('10日以上付与で取得5日未満なら fatal（5日取得義務）', () => {
+      const hit = one(at('yukyu-kanribo', { granted: '10', taken: '4' }), /5日を取得させる義務/);
+      expect(hit.level).toBe('fatal');
+      expect(hit.field).toBe('taken');
+      expect(hit.basis).toBe('労働基準法39条7項・120条（労働者1人につき30万円以下の罰金）');
+      expect(hit.message).toContain('付与日数が 10 日');
+      expect(hit.message).toContain('取得日数が 4 日');
+      expect(hit.message).toContain('本人が希望しなかった');
+      expect(hit.message).toContain('使用者が時季を指定');
+    });
+
+    it('取得ちょうど5日は通す', () => {
+      expect(at('yukyu-kanribo', { granted: '10', taken: '5' }).some((i) => i.level === 'fatal')).toBe(false);
+      expect(at('yukyu-kanribo', { granted: '10', taken: '4' }).some((i) => i.level === 'fatal')).toBe(true);
+    });
+
+    it('付与9日なら 5日義務の対象外', () => {
+      expect(at('yukyu-kanribo', { granted: '9', taken: '0' }).some((i) => i.level === 'fatal')).toBe(false);
+      // 10 日ちょうどから対象
+      expect(at('yukyu-kanribo', { granted: '10', taken: '0' }).some((i) => i.level === 'fatal')).toBe(true);
+    });
+
+    it('記入した時季の数と取得日数が食い違えば warn', () => {
+      const base = { granted: '10', d1: '2026年5月1日', d2: '2026年5月2日', d3: '', d4: '', d5: '', d6: '' };
+      const hit = one(at('yukyu-kanribo', { ...base, taken: '5' }), /記入された時季/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('taken');
+      expect(hit.basis).toBeUndefined();
+      expect(hit.message).toContain('時季は 2 件');
+      expect(hit.message).toContain('取得日数は 5 日');
+      expect(hit.message).toContain('半日単位・時間単位');
+      expect(at('yukyu-kanribo', { ...base, taken: '2' }).some((i) => /記入された時季/.test(i.message))).toBe(false);
+      // 6 欄すべてを数える（どれか 1 欄でも落とすと件数がずれる）
+      for (const k of ['d1', 'd2', 'd3', 'd4', 'd5', 'd6']) {
+        const only = { granted: '10', taken: '5', d1: '', d2: '', d3: '', d4: '', d5: '', d6: '', [k]: '2026年5月1日' };
+        expect(at('yukyu-kanribo', only).some((i) => /時季は 1 件/.test(i.message))).toBe(true);
+      }
+      // 空白だけの欄は数えない
+      expect(at('yukyu-kanribo', { granted: '10', taken: '5', d1: '   ', d2: '', d3: '', d4: '', d5: '', d6: '' })
+        .some((i) => /記入された時季/.test(i.message))).toBe(false);
+    });
+
+    it('時季を 1 件も書いていなければ数の突合はしない', () => {
+      const none = { granted: '10', taken: '5', d1: '', d2: '', d3: '', d4: '', d5: '', d6: '' };
+      expect(at('yukyu-kanribo', none).some((i) => /記入された時季/.test(i.message))).toBe(false);
+    });
+
+    it('取得が付与＋繰越を超えたら warn', () => {
+      const hit = one(at('yukyu-kanribo', { granted: '10', carried: '5', taken: '16' }), /付与＋繰越/);
+      expect(hit.level).toBe('warn');
+      expect(hit.field).toBe('taken');
+      expect(hit.basis).toBeUndefined();
+      expect(hit.message).toContain('取得日数（16 日）');
+      expect(hit.message).toContain('（15 日）'); // 10 + 5。引き算・掛け算に化けたら落ちる
+      expect(at('yukyu-kanribo', { granted: '10', carried: '5', taken: '15' })
+        .some((i) => /付与＋繰越/.test(i.message))).toBe(false);
+      // 付与も繰越も 0 なら判定しない
+      expect(at('yukyu-kanribo', { granted: '0', carried: '0', taken: '3' })
+        .some((i) => /付与＋繰越/.test(i.message))).toBe(false);
+      // 繰越だけでも上限になる
+      expect(at('yukyu-kanribo', { granted: '0', carried: '2', taken: '3' })
+        .some((i) => /付与＋繰越/.test(i.message))).toBe(true);
+    });
+
+    it('3点セット（時季・日数・基準日）を必ず案内する', () => {
+      const hit = one(at('yukyu-kanribo', {}), /時季・日数・基準日/);
+      expect(hit.level).toBe('info');
+      expect(hit.field).toBeUndefined();
+      expect(hit.basis).toBe('労働基準法施行規則24条の7');
+      expect(hit.message).toContain('労働者ごとに');
+    });
   });
 });

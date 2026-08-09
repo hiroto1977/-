@@ -180,6 +180,43 @@ const ROWS: readonly DocTriage[] = [
     exclusiveTo: [],
     consult: ['labor-consultant'],
   },
+  // ── 法定帳簿（社労士法2条1項2号の帳簿書類の典型例） ────────────
+  {
+    doc: 'roudousha-meibo',
+    ownUse: 'ok-with-care',
+    ownNote: '各事業場ごとに労働者各人について調製する義務がある（労働基準法107条）。'
+      + '保存は5年（当分の間3年）で、起算日は退職・解雇・死亡の日。在職中に破棄しない。',
+    exclusiveTo: ['labor-consultant'],
+    caseByCase: '労働者名簿は社会保険労務士法2条1項2号の帳簿書類の典型例。自社の従業員について自社が調製する分は制限されない。',
+    consult: [],
+  },
+  {
+    doc: 'chingin-daichou',
+    ownUse: 'ok-with-care',
+    ownNote: '賃金支払の都度、遅滞なく記入する（労働基準法108条）。給与明細を綴じただけでは記載事項を満たさないことがある。',
+    exclusiveTo: ['labor-consultant'],
+    caseByCase: '賃金台帳は社会保険労務士法2条1項2号の帳簿書類の典型例。自社分の調製は制限されない。',
+    consult: [],
+  },
+  {
+    doc: 'shukkinbo',
+    ownUse: 'ok-with-care',
+    ownNote: '労働時間の把握は客観的な記録によるのが原則。自己申告に頼るなら実態調査と乖離の是正まで含めて手順にすること。',
+    exclusiveTo: [],
+    caseByCase: '出勤簿は労働基準法が名指しする帳簿ではないが、労働関係に関する重要な書類として保存義務の対象（109条）。'
+      + '労働社会保険諸法令に基づく帳簿として作成代行を業として行うなら社会保険労務士法2条1項2号の領域に入り得る。',
+    consult: ['labor-consultant'],
+  },
+  {
+    doc: 'yukyu-kanribo',
+    ownUse: 'ok-with-care',
+    ownNote: '年10日以上付与される労働者には基準日から1年以内に5日を取得させる義務がある。'
+      + '不足するなら使用者が時季を指定する。違反は労働者1人につき30万円以下の罰金。',
+    exclusiveTo: [],
+    caseByCase: '労働者名簿や賃金台帳とあわせて調製する場合、その部分は社会保険労務士法2条1項2号の帳簿書類に当たる。'
+      + '自社分の作成は制限されない。',
+    consult: ['labor-consultant'],
+  },
   {
     doc: 'naitei',
     ownUse: 'ok',

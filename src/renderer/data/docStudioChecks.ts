@@ -529,6 +529,153 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     return out;
   },
 
+  // ── 法定帳簿（労基法107〜109条・施行規則24条の7） ─────────────
+  'roudousha-meibo'(v) {
+    const out: DocIssue[] = [];
+    if (text(v, 'retired') !== '' && text(v, 'retireReason') === '') {
+      out.push({
+        level: 'warn',
+        field: 'retireReason',
+        message: '退職年月日が入っているのに退職の事由が空欄です。解雇の場合はその理由まで記載が必要です。',
+        basis: '労働基準法施行規則53条1項',
+      });
+    }
+    if (text(v, 'duty') === '') {
+      out.push({
+        level: 'info',
+        field: 'duty',
+        message: '「従事する業務の種類」が空欄です。常時30人未満の労働者を使用する事業では記入不要ですが、'
+          + '30人以上なら必要です。',
+        basis: '労働基準法施行規則53条2項',
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '保存期間は5年（経過措置により当分の間3年）で、起算日は死亡・退職・解雇の日です。'
+        + '在職中に破棄せず、退職後も期間が満了するまで保管してください。',
+      basis: '労働基準法109条・附則143条',
+    });
+    return out;
+  },
+
+  'chingin-daichou'(v) {
+    const out: DocIssue[] = [];
+    const total = money(v, 'workHours');
+    const inner = money(v, 'overtimeHours') + money(v, 'holidayHours') + money(v, 'nightHours');
+    // 時間外・休日・深夜は労働時間数の内数。外数として足すと総労働時間が二重計上になる。
+    if (inner > total) {
+      out.push({
+        level: 'warn',
+        field: 'workHours',
+        message: `時間外・休日・深夜の合計（${inner} 時間）が労働時間数（${total} 時間）を超えています。`
+          + 'これらは労働時間数の内数として記載します。別枠で足していないか確認してください。',
+        basis: '労働基準法施行規則54条',
+      });
+    }
+    const days = money(v, 'workDays');
+    if (days > 0 && total > days * 24) {
+      out.push({
+        level: 'warn',
+        field: 'workHours',
+        message: `労働時間数が出勤日数 × 24時間（${days * 24} 時間）を超えています。日数か時間数の取り違えがないか確認してください。`,
+      });
+    }
+    const paid = ['basic', 'overtimePay', 'commute', 'otherPay'].reduce((n, k) => n + money(v, k), 0);
+    const deducted = ['health', 'pension', 'employment', 'incomeTax', 'residentTax', 'otherDeduct']
+      .reduce((n, k) => n + money(v, k), 0);
+    if (deducted > paid) {
+      out.push({
+        level: 'warn',
+        field: 'otherDeduct',
+        message: `控除額の合計（${deducted.toLocaleString('ja-JP')} 円）が支給額の合計（${paid.toLocaleString('ja-JP')} 円）を超えています。`,
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '給与明細を綴じただけでは賃金台帳の記載事項を満たさないことがあります。'
+        + '明細は労働者へ交付する通知、台帳は事業場に備え付ける帳簿で別物です。',
+      basis: '労働基準法108条・施行規則54条',
+    });
+    return out;
+  },
+
+  shukkinbo(v) {
+    const out: DocIssue[] = [];
+    const total = money(v, 'totalHours');
+    const inner = money(v, 'overtime') + money(v, 'holidayWork') + money(v, 'night');
+    if (inner > total) {
+      out.push({
+        level: 'warn',
+        field: 'totalHours',
+        message: `時間外・休日・深夜の合計（${inner} 時間）が総労働時間（${total} 時間）を超えています。`,
+      });
+    }
+    const days = money(v, 'workDays');
+    if (days > 0 && total > days * 24) {
+      out.push({
+        level: 'warn',
+        field: 'totalHours',
+        message: `総労働時間が出勤日数 × 24時間（${days * 24} 時間）を超えています。`,
+      });
+    }
+    if (chose(v, 'method', '自己申告')) {
+      out.push({
+        level: 'warn',
+        field: 'method',
+        message: '自己申告による把握です。労働時間の把握は客観的な記録によることが原則で、自己申告によるときは'
+          + '実態調査と乖離の是正が求められます。入退場記録やPCの使用時間と突き合わせてください。',
+        basis: '労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン',
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '労働時間の状況の把握は管理監督者・裁量労働制の適用者も対象です。'
+        + '割増賃金の要否とは別に、時間そのものの把握義務があります。',
+      basis: '労働安全衛生法66条の8の3',
+    });
+    return out;
+  },
+
+  'yukyu-kanribo'(v) {
+    const out: DocIssue[] = [];
+    const granted = money(v, 'granted');
+    const taken = money(v, 'taken');
+    // 年10日以上付与される労働者は、基準日から1年以内に5日取得させる義務がある。
+    if (granted >= 10 && taken < 5) {
+      out.push({
+        level: 'fatal',
+        field: 'taken',
+        message: `付与日数が ${granted} 日（10日以上）なのに取得日数が ${taken} 日です。`
+          + '基準日から1年以内に5日を取得させる義務があり、不足するなら使用者が時季を指定して取得させる必要があります。'
+          + '「本人が希望しなかった」は理由になりません。',
+        basis: '労働基準法39条7項・120条（労働者1人につき30万円以下の罰金）',
+      });
+    }
+    const listed = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].filter((k) => text(v, k) !== '').length;
+    if (listed > 0 && taken !== listed) {
+      out.push({
+        level: 'warn',
+        field: 'taken',
+        message: `記入された時季は ${listed} 件ですが、取得日数は ${taken} 日になっています。`
+          + '半日単位・時間単位の取得を含むなら差が出ますが、そうでなければ数え違いです。',
+      });
+    }
+    const available = granted + money(v, 'carried');
+    if (available > 0 && taken > available) {
+      out.push({
+        level: 'warn',
+        field: 'taken',
+        message: `取得日数（${taken} 日）が付与＋繰越（${available} 日）を超えています。`,
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '時季・日数・基準日の3点を労働者ごとに明らかにして保存します。労働者名簿や賃金台帳とあわせて調製しても差し支えありません。',
+      basis: '労働基準法施行規則24条の7',
+    });
+    return out;
+  },
+
   'chotatsu-keikaku'(v) {
     const out: DocIssue[] = [];
     const need = money(v, 'equip') + money(v, 'working');
