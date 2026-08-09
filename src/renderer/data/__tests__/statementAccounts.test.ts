@@ -320,7 +320,11 @@ describe('検算', () => {
   it('会社法の作成義務と決算公告を必ず案内する', () => {
     const out = checkStatements(BALANCED, BALANCED_OPT);
     expect(out.some((i) => i.basis === '会社法435条2項・4項')).toBe(true);
-    expect(out.some((i) => i.basis === '会社法440条1項')).toBe(true);
+    const koukoku = out.find((i) => i.basis === '会社法440条1項・2項・3項');
+    expect(koukoku?.level).toBe('info');
+    // 電子公告は要旨では足りない — ここを落とすと「要旨を出せば済む」と読める案内になる
+    expect(koukoku?.message).toContain('電子公告を公告方法としている場合は要旨では足りず');
+    expect(koukoku?.message).toContain('官報・日刊新聞紙を公告方法とする会社は要旨で足り');
   });
 
   it('fatal → warn → info の順に並ぶ', () => {
