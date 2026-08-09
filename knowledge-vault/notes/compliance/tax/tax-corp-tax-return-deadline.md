@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 語彙が近い
-- [[tax-corp-interim-return|法人税の中間申告]] — 同分野の近傍
 - [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
 
 ## 関連

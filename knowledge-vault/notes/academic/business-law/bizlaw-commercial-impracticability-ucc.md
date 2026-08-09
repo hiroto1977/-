@@ -36,7 +36,6 @@ aliases:
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同分野の近傍
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同分野の近傍
-- [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

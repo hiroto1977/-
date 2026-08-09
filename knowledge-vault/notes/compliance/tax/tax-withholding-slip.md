@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
 - [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 同分野の近傍
+- [[tax-year-end-adjustment|年末調整]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

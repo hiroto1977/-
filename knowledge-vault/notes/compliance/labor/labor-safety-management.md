@@ -35,7 +35,6 @@ aliases:
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
 - [[bizlaw-industrial-safety|労働安全衛生法]] — 分野横断
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 同分野の近傍
-- [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

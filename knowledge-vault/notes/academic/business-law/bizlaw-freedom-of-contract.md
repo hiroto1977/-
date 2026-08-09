@@ -37,10 +37,10 @@ aliases:
 - [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 出典を共有
-- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
 - [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
 - [[bizlaw-real-subrogation|物上代位（民法304条）]] — 出典を共有
+- [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

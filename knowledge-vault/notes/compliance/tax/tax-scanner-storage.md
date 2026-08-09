@@ -31,14 +31,12 @@ aliases:
 - [弥生 スキャナ保存制度](https://www.yayoi-kk.co.jp/seikyusho/oyakudachi/scanner_hozon/) `メディア`
 
 ## 関連概念
-- [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 出典を共有
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 出典を共有
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 出典を共有
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 同分野の近傍
 - [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 同分野の近傍
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 同分野の近傍
-- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 同分野の近傍
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 同分野の近傍
 
 ## 関連

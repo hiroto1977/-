@@ -31,8 +31,8 @@ aliases:
 - [BUSINESS LAWYERS 令和5年景表法改正 確約手続・直罰規定の導入 解説](https://www.businesslawyers.jp/articles/1312) `メディア`
 
 ## 関連概念
-- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 語彙が近い
 - [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 語彙が近い
+- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 語彙が近い
 - [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 分野横断
 
 ## 関連

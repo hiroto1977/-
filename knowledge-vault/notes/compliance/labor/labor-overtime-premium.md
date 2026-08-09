@@ -35,7 +35,6 @@ aliases:
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 語彙が近い
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 語彙が近い
-- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

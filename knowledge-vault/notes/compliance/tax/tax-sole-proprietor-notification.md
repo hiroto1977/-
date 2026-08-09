@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-income-categories|所得税における所得の10種類の区分]] — 語彙が近い
 - [[tax-loss-offsetting|所得税の損益通算]] — 語彙が近い
+- [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

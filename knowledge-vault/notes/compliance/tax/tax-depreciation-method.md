@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 語彙が近い
-- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

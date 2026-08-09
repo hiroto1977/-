@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-product-safety|消費生活用製品安全法（消安法）]] — 語彙が近い
 - [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 分野横断
-- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 同分野の近傍
+- [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

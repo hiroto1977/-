@@ -38,7 +38,6 @@ aliases:
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
 - [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
 

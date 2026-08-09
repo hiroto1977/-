@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 253
+cite_count: 254
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **253 件**（公的 253）
+> [!info] 出典ドメイン索引 ・ 引用 **254 件**（公的 254）
 
 ## このドメインを出典とする項目
 
@@ -129,7 +129,8 @@ tags:
 - [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 厚生労働省女性活躍推進法の省令・告示を改正しました
 - [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 厚生労働省男女の賃金の差異の情報公表について
 - [[labor-health-checkup|定期健康診断の実施義務]] — 厚生労働省健康診断を実施しましょう
-- [[labor-health-checkup|定期健康診断の実施義務]] — 厚生労働省定期健康診断
+- [[labor-health-checkup|定期健康診断の実施義務]] — 厚生労働省労働安全衛生法に基づく健康診断の概要
+- [[labor-health-checkup|定期健康診断の実施義務]] — 厚生労働省労働安全衛生法に基づく定期健康診断
 - [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 厚生労働省改正労働安全衛生規則の施行について（基発0520第6号）
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 厚生労働省高額療養費制度を利用される皆さまへ
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 厚生労働省高度プロフェッショナル制度わかりやすい解説

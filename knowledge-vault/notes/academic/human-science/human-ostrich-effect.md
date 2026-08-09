@@ -40,7 +40,7 @@ aliases:
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — 出典を共有
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 出典を共有
-- [[human-barnum-effect|バーナム効果（フォアラー効果）]] — 同分野の近傍
+- [[human-normalcy-bias|正常性バイアス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

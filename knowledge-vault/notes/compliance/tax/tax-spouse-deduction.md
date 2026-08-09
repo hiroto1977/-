@@ -37,8 +37,8 @@ aliases:
 - [[tax-employment-income-deduction|給与所得控除]] — 語彙が近い
 - [[tax-income-tax-progressive|所得税の超過累進税率]] — 語彙が近い
 - [[tax-disability-deduction|所得税の障害者控除]] — 語彙が近い
-- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 語彙が近い
 - [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 語彙が近い
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 出典を共有
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 出典を共有
 

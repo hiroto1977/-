@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 語彙が近い
 - [[labor-flexible-work-measures|育児・介護休業法「柔軟な働き方を実現するための措置」（2025年10月施行）]] — 語彙が近い
-- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

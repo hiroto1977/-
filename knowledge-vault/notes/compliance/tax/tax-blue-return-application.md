@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 語彙が近い
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 語彙が近い
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
 - [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 語彙が近い
@@ -41,6 +40,7 @@ aliases:
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 - [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
+- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

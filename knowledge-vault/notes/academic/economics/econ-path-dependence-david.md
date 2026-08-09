@@ -38,7 +38,7 @@ aliases:
 - [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同じ思想家
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — 同じ思想家
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同分野の近傍
-- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同分野の近傍
+- [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "moj.go.jp"
 type: source-domain
 host: "moj.go.jp"
-cite_count: 83
+cite_count: 84
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # moj.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **83 件**（公的 83）
+> [!info] 出典ドメイン索引 ・ 引用 **84 件**（公的 84）
 
 ## このドメインを出典とする項目
 
@@ -71,6 +71,7 @@ tags:
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 法務省会社法改正（株式交付制度の創設）
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]] — 法務省民法（債権法）改正について
 - [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 法務省電子署名法の概要と認定制度
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 総務省・法務省・経済産業省電子契約サービスに関するQ&A（電子署名法第3条関係）
 - [[legal-family-register-furigana|戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）]] — 法務省戸籍にフリガナが記載されます
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 法務省電子公告制度について
 - [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]] — 法務省保証意思宣明公正証書の公証事務

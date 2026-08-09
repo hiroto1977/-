@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 語彙が近い
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 同分野の近傍
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
+- [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-is-lm|IS-LMモデル]] — 同分野の近傍
-- [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同分野の近傍
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

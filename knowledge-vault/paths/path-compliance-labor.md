@@ -15,18 +15,18 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 23）
 - [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 19）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 19）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 18）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 18）
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 17）
-- [[labor-variable-working-hours|変形労働時間制]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 14）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 14）
 - [[labor-standard-remuneration|標準報酬月額]]（接続 14）
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]（接続 13）
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]（接続 13）
+- [[labor-variable-working-hours|変形労働時間制]]（接続 13）
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]]（接続 13）
 
 ## 第 2 部 — 年代順の展開

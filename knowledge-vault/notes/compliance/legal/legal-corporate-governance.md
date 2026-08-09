@@ -33,12 +33,12 @@ aliases:
 ## 関連概念
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 語彙が近い
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 語彙が近い
+- [[legal-companies-act-2019-reform|令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）]] — 語彙が近い
 - [[bizlaw-companies-act|会社法]] — 出典を共有
 - [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 出典を共有
 - [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
 - [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 出典を共有
-- [[legal-companies-act-2019-reform|令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）]] — 同分野の近傍
 - [[legal-limited-provision-data|不正競争防止法における「限定提供データ」の保護]] — 同分野の近傍
 - [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 同分野の近傍
 

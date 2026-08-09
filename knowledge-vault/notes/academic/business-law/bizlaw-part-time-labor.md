@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]] — 語彙が近い
-- [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 分野横断
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 分野横断
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 出典を共有

@@ -32,9 +32,9 @@ aliases:
 
 ## 関連概念
 - [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 語彙が近い
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有

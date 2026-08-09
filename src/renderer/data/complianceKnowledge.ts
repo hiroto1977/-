@@ -66,16 +66,27 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'tax-edenshocho',
       domain: 'tax',
-      title: '電子帳簿保存法（電子取引データ保存）',
+      title: '電子取引データの電子保存義務（2024年1月〜）',
       statement:
-        '2024年1月1日から電子取引データの電子保存が完全義務化（個人事業主を含む）。' +
-        '原則7年間保存し、真実性（改ざん防止）と可視性（検索・表示）の要件を満たす必要がある。',
-      authority: '所管: 国税庁（電子帳簿保存法）',
-      asOf: '2026-06',
+        '所得税・法人税に係る保存義務者が、注文書・契約書・領収書・請求書などの取引情報を電子メールやEC等の' +
+        '電子取引で授受した場合、そのデータ自体を保存する義務がある（個人事業主も対象。' +
+        '出力した書面だけを保存する扱いは認められない）。原則の保存要件は、' +
+        '真実性の確保としてタイムスタンプの付与・訂正削除の履歴が残るシステムでの授受と保存・' +
+        '改ざん防止のための事務処理規程の策定のいずれか、可視性の確保として日付・金額・取引先での検索と' +
+        'ディスプレイやプリンタ等の備付けである。2023年12月31日で宥恕措置が終わり、2024年1月から猶予措置に' +
+        '置き換わった。猶予措置では、要件に従って保存できないことに相当の理由があると所轄税務署長が認め、' +
+        'ダウンロードの求めと書面の提示・提出の求めの両方に応じられるなら、改ざん防止や検索の要件を満たさずに' +
+        'データをそのまま保存しておくことができる。「相当の理由」の判断は税務署側にあるため、' +
+        '猶予措置を前提に何も整えない運用は勧められない。',
+      authority: '所管: 国税庁（電子帳簿保存法第7条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/index.htm', type: 'government', label: '国税庁 電子帳簿等保存制度特設サイト' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/44331/', type: 'media', label: 'マネーフォワード クラウド会計 解説' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07denshi/index.htm', type: 'government', label: '国税庁 電子帳簿保存法一問一答【電子取引関係】' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0024011-003_01.pdf', type: 'government', label: '国税庁 電子取引データを適切に保存できていますか' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0023003-082.pdf', type: 'government', label: '国税庁 令和5年度税制改正による電子帳簿保存法の改正事項' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf', type: 'government', label: '国税庁 令和6年1月からの電子取引データの保存方法' },
     ],
   },
   {
@@ -220,15 +231,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '電子署名の推定効（電子署名法3条）',
       statement:
-        '本人による電子署名（これを行うために必要な符号・物件を適正に管理し、本人だけが行えるものに限る）が' +
-        '行われた電磁的記録は、真正に成立したものと推定される（紙の押印に相当する推定効）。',
+        '本人（作成名義人）による電子署名（これを行うために必要な符号及び物件を適正に管理することにより' +
+        '本人だけが行うことができるものに限る）が行われた電磁的記録は、真正に成立したものと推定される' +
+        '（電子署名法3条・紙の押印に相当する推定効）。「本人による」とは、電子署名が作成名義人の意思に' +
+        '基づいて行われたことを求める趣旨である。あわせて、暗号化等の措置に用いる符号について他人が容易に' +
+        '同一のものを作成できないと認められること（固有性の要件）が必要で、そのために相応の技術的水準が' +
+        '要求される。利用者の指示に基づきサービス提供事業者自身の署名鍵で暗号化する立会人型（事業者署名型）の' +
+        '電子契約サービスについては、総務省・法務省・経済産業省が2020年9月4日に3条との関係を整理したQ&Aを' +
+        '公表しており、サービスを選ぶ際はこの整理に照らして固有性を満たすかを確認する。',
       authority: '所管: 法務省・総務省・経済産業省（電子署名及び認証業務に関する法律）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.moj.go.jp/MINJI/minji32.html', type: 'government', label: '法務省 電子署名法の概要と認定制度' },
-      { url: 'https://www.cloudsign.jp/media/20180803-denshisyomeihou/', type: 'media', label: 'クラウドサイン 電子署名法 解説' },
-      { url: 'https://biz.moneyforward.com/contract/basic/22406/', type: 'media', label: 'マネーフォワード 電子署名法第3条' },
+      { url: 'https://www.moj.go.jp/content/001327658.pdf', type: 'government', label: '総務省・法務省・経済産業省 電子契約サービスに関するQ&A（電子署名法第3条関係）' },
+      { url: 'https://www.meti.go.jp/covid-19/denshishomei3_qa.html', type: 'government', label: '経済産業省 電子署名法3条に関するQ&A' },
+      { url: 'https://www.soumu.go.jp/main_content/000711458.pdf', type: 'government', label: '総務省 電子署名を用いた電子契約サービスに関する整理' },
     ],
   },
   {
@@ -289,15 +307,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '青色申告特別控除（所得税）',
       statement:
-        '複式簿記・貸借対照表/損益計算書の添付・期限内申告の要件を満たすと55万円。加えて e-Tax による' +
-        '電子申告または優良な電子帳簿の保存を満たすと65万円。簡易な記帳等は10万円の控除。',
-      authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+        '55万円の控除を受けるには、①不動産所得または事業所得を生ずべき事業を営んでいること、' +
+        '②これらの所得に係る取引を正規の簿記の原則（一般には複式簿記）により記帳していること、' +
+        '③その記帳に基づいて作成した貸借対照表と損益計算書を確定申告書に添付し、控除を受ける金額を記載して' +
+        '期限内（翌年3月15日まで）に提出することの3つを満たす必要がある。65万円にするには、' +
+        '55万円の要件に加えて、その事業に係る仕訳帳と総勘定元帳について優良な電子帳簿の保存を行っているか、' +
+        '確定申告書・貸借対照表・損益計算書等をe-Taxで期限内に提出するかのいずれかを満たす。' +
+        'これらを満たさない青色申告者は10万円となる。期限内申告が要件なので、1日遅れるだけで55万円・65万円は' +
+        '使えなくなる点が実務上いちばん響く。',
+      authority: '所管: 国税庁（租税特別措置法第25条の2）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm', type: 'government', label: '国税庁 No.2072 青色申告特別控除' },
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除（パンフレット）' },
       { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/cat2/cat26/cat267/scid1688.html', type: 'government', label: '国税庁 65万円控除の適用要件' },
-      { url: 'https://www.freee.co.jp/kb/kb-blue-return/requirement/', type: 'media', label: 'freee 青色申告特別控除の要件' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2070.htm', type: 'government', label: '国税庁 No.2070 青色申告制度' },
     ],
   },
   {
@@ -495,15 +520,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '定期健康診断の実施義務',
       statement:
-        '労働安全衛生法により、事業者は常時使用する労働者に対し1年以内ごとに1回の定期健康診断を、雇入れ時には' +
-        '雇入れ時健康診断を実施する義務があり、その費用は事業者が負担する。',
-      authority: '所管: 厚生労働省（労働安全衛生法・労働安全衛生規則）',
-      asOf: '2026-06',
+        '事業者は、常時使用する労働者に対して雇入れの際に健康診断を行い（労働安全衛生規則43条）、' +
+        'その後は1年以内ごとに1回、定期に医師による健康診断を行わなければならない（同規則44条）。' +
+        '費用は事業者が負担する。「常時使用する労働者」は正社員に限らず、契約期間が1年以上（更新により' +
+        '1年以上になる見込みを含む）で、1週間の所定労働時間が同種の業務に従事する通常の労働者の4分の3以上' +
+        'であればパートタイム労働者も対象になる。実施したら結果の記録（健康診断個人票）を作成して5年間保存し、' +
+        '常時50人以上の労働者を使用する事業場は定期健康診断結果報告書を遅滞なく所轄労働基準監督署長へ提出する。' +
+        '受けさせるだけでは足りず、記録の作成と保存までが義務である点を落としやすい。',
+      authority: '所管: 厚生労働省（労働安全衛生法第66条・労働安全衛生規則第43条・第44条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000103900.pdf', type: 'government', label: '厚生労働省 健康診断を実施しましょう' },
-      { url: 'https://www.mhlw.go.jp/file/05-Shingikai-11201000-Roudoukijunkyoku-Soumuka/0000136750.pdf', type: 'government', label: '厚生労働省 定期健康診断' },
-      { url: 'https://mediment.jp/blog/regular-health-checkup', type: 'media', label: '定期健康診断の解説' },
+      { url: 'https://www.mhlw.go.jp/file/05-Shingikai-11201000-Roudoukijunkyoku-Soumuka/0000136750.pdf', type: 'government', label: '厚生労働省 労働安全衛生法に基づく定期健康診断' },
+      { url: 'https://www.mhlw.go.jp/shingi/2009/01/dl/s0119-4h.pdf', type: 'government', label: '厚生労働省 労働安全衛生法に基づく健康診断の概要' },
+      { url: 'https://anzeninfo.mhlw.go.jp/yougo/yougo51_1.html', type: 'government', label: '厚生労働省 職場のあんぜんサイト 定期健康診断' },
     ],
   },
   {
@@ -597,15 +628,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '景品表示法の課徴金制度',
       statement:
-        '優良誤認表示・有利誤認表示に対し、対象商品・役務の売上額の3%（対象期間は最長3年）が課徴金として' +
-        '賦課される。違反行為を自主申告した事業者は課徴金額が2分の1に減額される。',
-      authority: '所管: 消費者庁（景品表示法）',
-      asOf: '2026-06',
+        '優良誤認表示・有利誤認表示に対しては、対象となる商品・役務の売上額の3％（対象期間は最長3年）が' +
+        '課徴金として賦課される。違反行為を自主申告した事業者は課徴金額が2分の1に減額される。' +
+        '令和5年改正（2024年10月1日施行）で運用が強化され、①過去10年以内に課徴金納付命令を受けたことがある' +
+        '事業者は課徴金額が1.5倍に加算される、②売上額を把握できない期間について推計して課徴金を算定できる、' +
+        '③是正措置計画の認定を受けた事業者は措置命令・課徴金納付命令を受けない確約手続が導入された、' +
+        '④返金措置の手段に電子マネー等が追加された、⑤優良誤認表示・有利誤認表示に対する直罰' +
+        '（100万円以下の罰金）が新設された。繰り返しの違反ほど不利になる建付けになっている。',
+      authority: '所管: 消費者庁（不当景品類及び不当表示防止法第8条）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/violation', type: 'government', label: '消費者庁 景品表示法違反行為の措置' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/violation', type: 'government', label: '消費者庁 景品表示法違反行為を行った場合はどうなるのでしょうか' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/movie_explanation/assets/representation_cms216_240917_02.pdf', type: 'government', label: '消費者庁 【令和6年10月1日施行】改正景品表示法の概要' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/guideline/assets/representation_cms216_240418_03.pdf', type: 'government', label: '消費者庁 景品表示法第8条（課徴金納付命令の基本的要件）に関する考え方' },
       { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/amendment/pdf/141127premiums_1.pdf', type: 'government', label: '消費者庁 課徴金制度の概要' },
-      { url: 'https://www.89ji.com/keihyou-guide/administrative_monetary_penalty.html', type: 'media', label: '景品表示法の課徴金 解説' },
     ],
   },
   {
@@ -1389,15 +1426,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '年末調整',
       statement:
-        '給与の支払者は、その年最後の給与支払時に、源泉徴収した所得税等の合計額と本来納めるべき年税額との' +
-        '過不足を精算する年末調整を行う。給与総額が2,000万円を超える者等は対象外となる。',
+        '給与の支払者は、その年最後の給与を支払うときに、毎月源泉徴収した所得税等の合計額と本来納めるべき' +
+        '年税額との過不足を精算する（年末調整）。対象になるのは「給与所得者の扶養控除等（異動）申告書」を' +
+        '年末調整を行う日までに提出している人で、その年の給与総額が2,000万円を超える人と、' +
+        '災害減免法により源泉徴収の猶予や還付を受けた人は対象外となり、確定申告で精算する。' +
+        '対象となる給与はその年の1月1日から12月31日までに支払が確定したもので、未払いのものも含める一方、' +
+        '翌年1月10日払いのように支給日が規定で定まっているものは翌年分になる。年の中途で入社した人は、' +
+        '前職に扶養控除等申告書を提出していた場合、前職の源泉徴収票で金額を確認して合算する。',
       authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2665.htm', type: 'government', label: '国税庁 No.2665 年末調整の対象となる人' },
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2675.htm', type: 'government', label: '国税庁 No.2675 年末調整の対象となる給与' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/53611/', type: 'media', label: '年末調整 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2668.htm', type: 'government', label: '国税庁 No.2668 年末調整の対象となる給与' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2662.htm', type: 'government', label: '国税庁 No.2662 年末調整のしかた' },
+      { url: 'https://www.nta.go.jp/publication/pamph/gensen/nencho2021/pdf/06-07.pdf', type: 'government', label: '国税庁 年末調整とは（年末調整のしかた 抜粋）' },
     ],
   },
   {
@@ -6315,24 +6358,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nenkin.go.jp/service/kounen/tekiyo/jigyosho/tanjikan.html', type: 'government', label: '日本年金機構 短時間労働者に対する適用の拡大' },
       { url: 'https://www.mhlw.go.jp/tekiyoukakudai/', type: 'government', label: '厚生労働省 社会保険適用拡大特設サイト' },
       { url: 'https://www.gov-online.go.jp/article/202209/entry-10068.html', type: 'government', label: '政府広報オンライン 社会保険の適用が拡大 従業員51人以上' },
-    ],
-  },
-  {
-    value: {
-      id: 'tax-electronic-bookkeeping-etransaction',
-      domain: 'tax',
-      title: '電子取引データの電子保存義務化（2024年1月〜）',
-      statement:
-        '電子帳簿保存法上、所得税・法人税に係る保存義務者が注文書・契約書・請求書・領収書等の取引情報を電子メールやEC等の電子取引で授受した場合、2024年（令和6年）1月1日以後は原則としてその電子データのまま保存することが' +
-        '義務付けられ、出力書面のみの保存は認められなくなった（宥恕措置の終了）。保存には改ざん防止措置（タイムスタンプ・訂正削除の記録が残るシステム・事務処理規程の整備運用のいずれか）と、ディスプレイ等の備付け、' +
-        '「日付・金額・取引先」での検索要件を満たす必要がある。ただし税務署長が「相当の理由」を認め、調査時にデータと出力書面の提示提出に応じられる場合は検索要件等を満たさなくてよい猶予措置がある。基準額・細目は改正で変動するため要確認。',
-      authority: '所管: 国税庁（電子帳簿保存法第7条等）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf', type: 'government', label: '国税庁 令和6年1月からの電子取引データの保存方法' },
-      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/03-6.pdf', type: 'government', label: '国税庁 電子帳簿保存法一問一答（電子取引関係）' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/44331/', type: 'media', label: 'マネーフォワード 電子帳簿保存法 2024年改正点・保存要件の解説' },
     ],
   },
   {

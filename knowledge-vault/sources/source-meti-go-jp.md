@@ -2,7 +2,7 @@
 title: "meti.go.jp"
 type: source-domain
 host: "meti.go.jp"
-cite_count: 63
+cite_count: 64
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # meti.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **63 件**（公的 62 ・ メディア 1）
+> [!info] 出典ドメイン索引 ・ 引用 **64 件**（公的 63 ・ メディア 1）
 
 ## このドメインを出典とする項目
 
@@ -43,6 +43,7 @@ tags:
 - [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 経済産業省デジタルプラットフォーム取引関連情報
 - [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 経済産業省取引透明化法法律のポイント
 - [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 経済産業省電子消費者契約法逐条解説
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 経済産業省電子署名法3条に関するQ&A
 - [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 経済産業省外国公務員贈賄防止
 - [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 経済産業省外国公務員贈賄防止指針
 - [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]] — 経済産業省家電リサイクル法

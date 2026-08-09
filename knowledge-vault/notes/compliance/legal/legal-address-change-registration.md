@@ -38,7 +38,7 @@ aliases:
 - [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
 - [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 同分野の近傍
-- [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 同分野の近傍
 - [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 同分野の近傍
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 同分野の近傍
 

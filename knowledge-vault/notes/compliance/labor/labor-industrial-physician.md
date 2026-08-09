@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 語彙が近い
-- [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
+- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 同分野の近傍
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍
 

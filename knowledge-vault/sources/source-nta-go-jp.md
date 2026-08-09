@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 245
+cite_count: 251
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **245 件**（公的 245）
+> [!info] 出典ドメイン索引 ・ 引用 **251 件**（公的 251）
 
 ## このドメインを出典とする項目
 
@@ -53,7 +53,9 @@ tags:
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 国税庁令和7年度税制改正による基礎控除の見直し
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 国税庁A1-8青色申告承認申請手続
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 国税庁No.2070青色申告制度
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁青色申告特別控除
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁No.2070青色申告制度
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁No.2072青色申告特別控除
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁青色申告特別控除（パンフレット）
 - [[tax-business-succession|法人版事業承継税制（特例措置）]] — 国税庁No.4148非上場株式等の相続税の納税猶予
 - [[tax-business-succession|法人版事業承継税制（特例措置）]] — 国税庁No.4439非上場株式等の贈与税の納税猶予（事業承継税制）
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 国税庁内国法人の外国関係会社に係る所得の課税の特例（制度の概要）
@@ -104,9 +106,11 @@ tags:
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1260政党等寄附金特別控除（税額控除）
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1145地震保険料控除
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1146地震保険料控除の対象契約
-- [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]] — 国税庁電子帳簿等保存制度特設サイト
-- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
-- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答（電子取引関係）
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和5年度税制改正による電子帳簿保存法の改正事項
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子取引データを適切に保存できていますか
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答【電子取引関係】
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿等保存制度特設サイト
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁No.1410給与所得控除
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
@@ -257,8 +261,10 @@ tags:
 - [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 国税庁No.2505源泉所得税の納付期限と納期の特例
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 国税庁No.7411源泉徴収票の提出範囲
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 国税庁質疑応答事例源泉徴収票等の交付義務
+- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2662年末調整のしかた
 - [[tax-year-end-adjustment|年末調整]] — 国税庁No.2665年末調整の対象となる人
-- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2675年末調整の対象となる給与
+- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2668年末調整の対象となる給与
+- [[tax-year-end-adjustment|年末調整]] — 国税庁年末調整とは（年末調整のしかた抜粋）
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

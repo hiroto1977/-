@@ -37,8 +37,8 @@ aliases:
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 語彙が近い
 - [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 分野横断
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
-- [[labor-dispatch-license|労働者派遣事業の許可制]] — 同分野の近傍
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 同分野の近傍
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

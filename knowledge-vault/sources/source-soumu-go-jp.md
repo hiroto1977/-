@@ -2,7 +2,7 @@
 title: "soumu.go.jp"
 type: source-domain
 host: "soumu.go.jp"
-cite_count: 59
+cite_count: 60
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # soumu.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **59 件**（公的 59）
+> [!info] 出典ドメイン索引 ・ 引用 **60 件**（公的 60）
 
 ## このドメインを出典とする項目
 
@@ -46,6 +46,7 @@ tags:
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 総務省・消費者庁特定電子メールガイドライン
 - [[legal-computer-virus|不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）]] — 総務省サイバーセキュリティサイト刑法
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 総務省・消費者庁特定電子メール法パンフレット
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 総務省電子署名を用いた電子契約サービスに関する整理
 - [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律FAQ
 - [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律パンフレット
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 総務省マイナンバー制度

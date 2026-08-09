@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 語彙が近い
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
+- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 同分野の近傍
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
 - [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 同分野の近傍
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 同分野の近傍

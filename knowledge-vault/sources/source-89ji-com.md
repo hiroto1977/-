@@ -2,7 +2,7 @@
 title: "89ji.com"
 type: source-domain
 host: "89ji.com"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # 89ji.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 景表法の課徴金・確約手続解説
-- [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 景品表示法の課徴金解説
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

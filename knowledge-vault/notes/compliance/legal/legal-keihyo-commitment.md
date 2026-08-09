@@ -31,11 +31,10 @@ aliases:
 - [景表法の課徴金・確約手続 解説](https://www.89ji.com/keihyou-guide/administrative_monetary_penalty.html) `メディア`
 
 ## 関連概念
+- [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 語彙が近い
 - [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]] — 語彙が近い
 - [[legal-antimonopoly|独占禁止法]] — 語彙が近い
-- [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 出典を共有
-- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 同分野の近傍
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
