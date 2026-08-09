@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 同分野の近傍
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 同分野の近傍
 
 ## 関連

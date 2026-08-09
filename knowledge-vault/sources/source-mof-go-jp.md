@@ -2,7 +2,7 @@
 title: "mof.go.jp"
 type: source-domain
 host: "mof.go.jp"
-cite_count: 23
+cite_count: 24
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mof.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（公的 23）
+> [!info] 出典ドメイン索引 ・ 引用 **24 件**（公的 24）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[subsidy-jfc-loan|日本政策金融公庫の中小企業・小規模事業者向け融資]] — 財務省政府関係金融機関
 - [[tax-amended-return|修正申告・期限後申告と加算税]] — 財務省加算税制度の概要
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 財務省令和7年度税制改正の大綱
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 財務省令和6年度税制改正の大綱の概要
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 財務省外国子会社合算税制の概要
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 財務省令和7年度税制改正の大綱（軽減税率特例の延長）
 - [[tax-customs-duty|関税（輸入品に課される国税）]] — 財務省わが国の関税制度の概要

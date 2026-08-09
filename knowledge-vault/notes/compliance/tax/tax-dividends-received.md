@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 語彙が近い
 - [[tax-crypto-asset-valuation|法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）]] — 出典を共有
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 同分野の近傍
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 同分野の近傍
 

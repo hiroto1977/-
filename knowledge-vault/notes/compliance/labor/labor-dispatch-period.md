@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-worker-dispatch|労働者派遣法]] — 語彙が近い
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 語彙が近い
-- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 出典を共有
 - [[subsidy-human-resource-development|人材開発支援助成金]] — 出典を共有
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 同分野の近傍
 

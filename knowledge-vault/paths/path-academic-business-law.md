@@ -27,7 +27,7 @@ tags:
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]（接続 26）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
-- [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
+- [[bizlaw-consumption-tax|消費税法]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -152,7 +152,6 @@ tags:
 - 1985年: [[bizlaw-worker-dispatch|労働者派遣法]]
 - 1986年: [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]]
 - 1986年: [[bizlaw-greenwashing|グリーンウォッシング（虚偽・誇大な環境訴求）]]
-- 1988年: [[bizlaw-consumption-tax|消費税法]]
 - 1989年: [[bizlaw-civil-preservation|民事保全法]]
 - 1989年: [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]]
 - 1990年: [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]]
@@ -238,6 +237,7 @@ tags:
 - 2017年: [[bizlaw-condition-suspensive|停止条件・解除条件]]
 - 2017年: [[bizlaw-contract-termination|契約の解除（民法541条・542条）]]
 - 2017年: [[bizlaw-dation-in-payment|代物弁済（民法482条）]]
+- 2017年: [[bizlaw-earnest-money|手付（民法557条）]]
 - 2017年: [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]]
 - 2017年: [[bizlaw-freedom-of-contract|契約自由の原則]]
 - 2017年: [[bizlaw-guarantee-obligation|保証債務（民法446条）]]

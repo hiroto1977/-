@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — 同分野の近傍
-- [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

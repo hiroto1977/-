@@ -36,8 +36,8 @@ aliases:
 - [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 語彙が近い
 - [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 語彙が近い
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 語彙が近い
-- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 語彙が近い
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有

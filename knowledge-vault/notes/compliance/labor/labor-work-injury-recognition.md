@@ -31,8 +31,8 @@ aliases:
 - [厚生労働省 過労死等の労災補償状況（精神障害の認定）](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/090316_00002.html) `公的`
 
 ## 関連概念
-- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
+- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

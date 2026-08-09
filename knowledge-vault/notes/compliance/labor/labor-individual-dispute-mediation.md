@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 語彙が近い
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 同分野の近傍
+- [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 243
+cite_count: 245
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **243 件**（公的 243）
+> [!info] 出典ドメイン索引 ・ 引用 **245 件**（公的 245）
 
 ## このドメインを出典とする項目
 
@@ -116,7 +116,9 @@ tags:
 - [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁予定納税（第2期分）
 - [[tax-export-exemption|消費税の輸出免税]] — 国税庁No.6551輸出取引の免税
 - [[tax-export-exemption|消費税の輸出免税]] — 国税庁質疑応答事例輸出免税の適用者
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁主な国税の納期限
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁No.6137課税期間
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁No.6601消費税の申告と納税
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁主な国税の納期限（法定納期限）及び振替日
 - [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁申告と納税
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.1900給与所得者で確定申告が必要な人
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.1901同族会社役員で確定申告が必要な人

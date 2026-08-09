@@ -4,8 +4,8 @@ id: labor-workers-comp
 category: "labor"
 category_ja: "労務"
 title: "労災保険（労働者災害補償保険）の加入義務"
-as_of: "2026-06"
-source_count: 3
+as_of: "2026-08"
+source_count: 4
 authoritative: true
 tags:
   - collection/compliance
@@ -17,30 +17,24 @@ aliases:
 
 # 労災保険（労働者災害補償保険）の加入義務
 
-> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 労務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 労務 ・ asOf: 2026-08 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-労働者を1人でも雇用する事業は、雇用形態（正社員・パート・アルバイト・契約社員等）を問わず労災保険の加入義務がある。労災保険料は全額を事業主が負担する。
+労働者を1人でも雇用する事業は、雇用形態（正社員・パート・アルバイト・契約社員等）を問わず労災保険の加入義務がある。保険料は全額を事業主が負担し、雇用保険と違って労働者に負担させることはできない。給付の対象は事業主に雇用されて賃金を受ける労働者なので、事業主本人・自営業者・家族従業者は原則として対象外であり、業務中に負傷しても給付を受けられない（労働者以外を保護するのは別制度の特別加入で、加入は任意である）。保険料の申告・納付は年度更新として毎年6月1日から7月10日までに行う。手続きを取っていなくても、事業主が故意または重大な過失で保険関係成立届を出していない期間に労災が起きれば、労働者への給付は行われたうえで、最大2年遡った保険料と追徴金10％に加え、費用徴収として給付額の40％（適用事業となってから1年を経過してなお未手続きの重大な過失）または100％（指導を受けてなお未手続きの故意）が事業主から徴収される（労災保険法31条1項）。
 
 ## 所管・根拠
-所管: 厚生労働省（労働者災害補償保険法）
+所管: 厚生労働省（労働者災害補償保険法・労働保険徴収法）
 
 ## 出典
 - [厚生労働省 高知労働局 各種保険](https://jsite.mhlw.go.jp/kochi-roudoukyoku/riyousha_mokuteki_menu/mokuteki_naiyou/kakushu_hoken.html) `公的`
-- [freee 労働保険の基礎](https://www.freee.co.jp/kb/kb-payroll/how-to-calculate-labor-insurance-premium/) `メディア`
-- [労災保険料の負担 解説](https://onehr.jp/column/labor/workers-accident-insurance-who-pays/) `メディア`
+- [厚生労働省 労災保険の対象と特別加入制度](https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei15.html) `公的`
+- [厚生労働省 労災保険への加入](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/kanyu.html) `公的`
+- [厚生労働省 成立手続を怠っていた場合は（未手続事業主への費用徴収）](https://www.mhlw.go.jp/bunya/roudoukijun/neglect/index.html) `公的`
 
 ## 関連概念
 - [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
-- [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
-- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
-- [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
-- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
-- [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
-- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
+- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

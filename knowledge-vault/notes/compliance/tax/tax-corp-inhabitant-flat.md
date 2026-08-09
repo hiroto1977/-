@@ -31,7 +31,6 @@ aliases:
 - [弥生 法人住民税](https://www.yayoi-kk.co.jp/kaikei/oyakudachi/corporate-inhabitant-tax/) `メディア`
 
 ## 関連概念
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 語彙が近い
 - [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 出典を共有
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 出典を共有
 - [[tax-light-vehicle-tax|軽自動車税（種別割）]] — 出典を共有
 - [[subsidy-child-allowance|児童手当]] — 出典を共有
+- [[subsidy-single-parent-welfare-loan|母子父子寡婦福祉資金貸付金]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

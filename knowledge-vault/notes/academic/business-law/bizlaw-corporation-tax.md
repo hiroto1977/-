@@ -31,7 +31,6 @@ aliases:
 - [JCB — 法人税法とは（課税対象・益金損金・申告納付の解説）](https://www.jcb.co.jp/corporate/special/corp_tax.html) `リファレンス`
 
 ## 関連概念
-- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 語彙が近い
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 分野横断
 - [[bizlaw-income-tax-act|所得税法]] — 同分野の近傍
 - [[bizlaw-offsetting-benefits|損益相殺]] — 同分野の近傍

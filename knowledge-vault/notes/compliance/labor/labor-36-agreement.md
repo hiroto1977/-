@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 語彙が近い
 - [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
+- [[labor-variable-working-hours|変形労働時間制]] — 語彙が近い
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 語彙が近い
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有

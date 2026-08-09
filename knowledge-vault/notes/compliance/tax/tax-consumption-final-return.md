@@ -31,13 +31,13 @@ aliases:
 - [国税庁 No.6137 課税期間（個人事業者）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6137.htm) `公的`
 
 ## 関連概念
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 語彙が近い
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 語彙が近い
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 語彙が近い
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 同分野の近傍
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 同分野の近傍
+- [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 同分野の近傍
-- [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -39,8 +39,8 @@ aliases:
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 - [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

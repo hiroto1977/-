@@ -13,18 +13,18 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 25）
+- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 27）
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 24）
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
 - [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 24）
-- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 23）
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 23）
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 23）
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 22）
-- [[tax-blue-return-application|所得税の青色申告承認申請]]（接続 21）
-- [[tax-consumption-taxpayer|消費税の納税義務者の判定]]（接続 19）
-- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 18）
-- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 18）
-- [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 18）
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]]（接続 17）
+- [[tax-blue-return-application|所得税の青色申告承認申請]]（接続 19）
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 19）
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 19）
+- [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 19）
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 18）
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]]（接続 17）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 17）
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 17）
 - [[tax-automobile-tax|自動車税（種別割）]]（接続 15）
@@ -40,9 +40,9 @@ tags:
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]]
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]]
 - [[tax-business-succession|法人版事業承継税制（特例措置）]]
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]]
 - [[tax-city-planning-tax|都市計画税]]
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]]

@@ -54,7 +54,7 @@ tags:
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 総務省サイバーセキュリティサイト
 - [[tax-automobile-tax|自動車税（種別割）]] — 総務省地方税制度自動車税・軽自動車税
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 総務省地方税制度事業所税
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 総務省外形標準課税の概要
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 総務省法人事業税における外形標準課税
 - [[tax-city-planning-tax|都市計画税]] — 総務省地方税制度都市計画税
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 総務省法人住民税
 - [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 総務省固定資産税の概要

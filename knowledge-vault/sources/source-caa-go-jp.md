@@ -2,7 +2,7 @@
 title: "caa.go.jp"
 type: source-domain
 host: "caa.go.jp"
-cite_count: 55
+cite_count: 59
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # caa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **55 件**（公的 54 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **59 件**（公的 58 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -60,7 +60,11 @@ tags:
 - [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]] — 消費者庁令和6年10月1日施行改正景品表示法の概要
 - [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]] — 消費者庁景品表示法
 - [[legal-premium-regulation|景品表示法の景品規制]] — 消費者庁一般懸賞について
+- [[legal-premium-regulation|景品表示法の景品規制]] — 消費者庁共同懸賞について
 - [[legal-premium-regulation|景品表示法の景品規制]] — 消費者庁景品規制の概要
+- [[legal-premium-regulation|景品表示法の景品規制]] — 消費者庁総付景品について
+- [[legal-product-liability|製造物責任法（PL法）]] — 消費者庁民法改正に伴う製造物責任法の一部改正
+- [[legal-product-liability|製造物責任法（PL法）]] — 消費者庁製造物責任(PL)法の逐条解説
 - [[legal-product-liability|製造物責任法（PL法）]] — 消費者庁製造物責任法の概要Q&A
 - [[legal-product-safety|消費生活用製品安全法（消安法）]] — 消費者庁消費者安全（重大製品事故）
 - [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 消費者庁ステルスマーケティング規制

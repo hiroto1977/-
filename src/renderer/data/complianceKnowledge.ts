@@ -125,15 +125,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '確定申告の期限（所得税・個人事業者の消費税）',
       statement:
-        '所得税の確定申告は原則として翌年2月16日〜3月15日（期限が土日祝の場合は翌平日）。' +
-        '個人事業者の消費税及び地方消費税は翌年3月31日が申告・納付期限。',
-      authority: '所管: 国税庁（所得税法・消費税法）',
-      asOf: '2026-06',
+        '所得税及び復興特別所得税の確定申告は原則として翌年2月16日から3月15日まで（期限が土日祝日に当たる場合は' +
+        '翌開庁日）。個人事業者の消費税及び地方消費税は、12月31日の属する課税期間について翌年3月31日が申告・納付期限で、' +
+        '所得税より2週間ほど遅い。法人の確定申告は事業年度終了の日の翌日から2か月以内である。' +
+        '期限を過ぎて申告した場合や、申告せずに税務署から決定を受けた場合は、本来の税額に加えて無申告加算税' +
+        'または重加算税がかかることがあり、法定納期限の翌日から納付の日までの延滞税も併せて納める。' +
+        '期限後申告では申告書を提出した日がそのまま納期限になるので、遅れるほど延滞税の起算が伸びる点に注意する。',
+      authority: '所管: 国税庁（所得税法・消費税法・国税通則法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/publication/pamph/koho/kurashi/html/06_1.htm', type: 'government', label: '国税庁 申告と納税' },
-      { url: 'https://www.nta.go.jp/taxes/nozei/nofu/24200042/noufu_kigen.htm', type: 'government', label: '国税庁 主な国税の納期限' },
-      { url: 'https://www.freee.co.jp/kb/kb-kakuteishinkoku/deadline/', type: 'media', label: 'freee 確定申告の期限' },
+      { url: 'https://www.nta.go.jp/taxes/nozei/nofu/24200042/noufu_kigen.htm', type: 'government', label: '国税庁 主な国税の納期限（法定納期限）及び振替日' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6137.htm', type: 'government', label: '国税庁 No.6137 課税期間' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6601.htm', type: 'government', label: '国税庁 No.6601 消費税の申告と納税' },
     ],
   },
   {
@@ -363,14 +368,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '労災保険（労働者災害補償保険）の加入義務',
       statement:
         '労働者を1人でも雇用する事業は、雇用形態（正社員・パート・アルバイト・契約社員等）を問わず労災保険の' +
-        '加入義務がある。労災保険料は全額を事業主が負担する。',
-      authority: '所管: 厚生労働省（労働者災害補償保険法）',
-      asOf: '2026-06',
+        '加入義務がある。保険料は全額を事業主が負担し、雇用保険と違って労働者に負担させることはできない。' +
+        '給付の対象は事業主に雇用されて賃金を受ける労働者なので、事業主本人・自営業者・家族従業者は' +
+        '原則として対象外であり、業務中に負傷しても給付を受けられない（労働者以外を保護するのは別制度の' +
+        '特別加入で、加入は任意である）。保険料の申告・納付は年度更新として毎年6月1日から7月10日までに行う。' +
+        '手続きを取っていなくても、事業主が故意または重大な過失で保険関係成立届を出していない期間に労災が起きれば、' +
+        '労働者への給付は行われたうえで、最大2年遡った保険料と追徴金10％に加え、費用徴収として給付額の40％' +
+        '（適用事業となってから1年を経過してなお未手続きの重大な過失）または100％（指導を受けてなお未手続きの故意）が' +
+        '事業主から徴収される（労災保険法31条1項）。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法・労働保険徴収法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/kochi-roudoukyoku/riyousha_mokuteki_menu/mokuteki_naiyou/kakushu_hoken.html', type: 'government', label: '厚生労働省 高知労働局 各種保険' },
-      { url: 'https://www.freee.co.jp/kb/kb-payroll/how-to-calculate-labor-insurance-premium/', type: 'media', label: 'freee 労働保険の基礎' },
-      { url: 'https://onehr.jp/column/labor/workers-accident-insurance-who-pays/', type: 'media', label: '労災保険料の負担 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei15.html', type: 'government', label: '厚生労働省 労災保険の対象と特別加入制度' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/kanyu.html', type: 'government', label: '厚生労働省 労災保険への加入' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/neglect/index.html', type: 'government', label: '厚生労働省 成立手続を怠っていた場合は（未手続事業主への費用徴収）' },
     ],
   },
   {
@@ -903,15 +916,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '景品表示法の景品規制',
       statement:
-        '景品表示法は過大な景品類の提供を制限し、一般懸賞・共同懸賞・総付景品の類型ごとに取引価額に応じた景品の' +
-        '最高額と総額の上限を定めている。違反は措置命令等の対象となる。',
-      authority: '所管: 消費者庁（景品表示法）',
-      asOf: '2026-06',
+        '景品表示法は過大な景品類の提供を制限し、一般懸賞・共同懸賞・総付景品の3類型ごとに上限を定めている。' +
+        '一般懸賞（抽選など偶然性で提供先を定めるもの）は、取引価額5,000円未満なら景品類の最高額が取引価額の20倍、' +
+        '5,000円以上なら10万円で、総額は懸賞に係る売上予定総額の2％以内。共同懸賞（商店街や同業者が共同で行うもの）は' +
+        '取引価額にかかわらず最高額30万円、総額は売上予定総額の3％以内。総付景品（申込み順や来店順など懸賞によらず' +
+        '提供するもの）は、取引価額1,000円未満なら最高額200円、1,000円以上なら取引価額の20％。' +
+        '最高額だけを見て総額の枠を外すと超過しやすいので、企画時に両方を確認する。違反は措置命令等の対象となる。',
+      authority: '所管: 消費者庁（不当景品類及び不当表示防止法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/premium_regulation', type: 'government', label: '消費者庁 景品規制の概要' },
       { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/lotteries', type: 'government', label: '消費者庁 一般懸賞について' },
-      { url: 'https://ueno.law/topics/keihyouhou-keihin-kisei/', type: 'media', label: '景品規制 解説' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/joint', type: 'government', label: '消費者庁 共同懸賞について' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/not_lotteries', type: 'government', label: '消費者庁 総付景品について' },
     ],
   },
   {
@@ -920,15 +938,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '製造物責任法（PL法）',
       statement:
-        '製造物の欠陥により他人の生命・身体・財産に損害が生じた場合、製造業者等は過失の有無を問わず損害賠償責任を負う（無過失責任）。' +
-        'ただし製造物自体のみの損害は対象外。',
+        '製造物の欠陥により他人の生命・身体・財産に損害が生じた場合、製造業者等は過失の有無を問わず' +
+        '損害賠償責任を負う（無過失責任）。「欠陥」とは、引渡し時の技術水準等を考慮して当該製造物が' +
+        '通常有すべき安全性を欠いていることをいう。ただし損害が製造物自体にとどまる場合は対象外で、' +
+        'その場合は契約不適合責任などの一般の規律による。免責事由は2つで、引き渡した時点の科学・技術に関する知見では' +
+        '欠陥を認識できなかったこと（開発危険の抗弁）と、部品・原材料の欠陥がもっぱら組み込んだ側の製造業者の' +
+        '設計に関する指示に起因し欠陥の発生につき過失がないこと（同法4条）。期間制限は、損害及び賠償義務者を' +
+        '知った時から3年（人の生命または身体を侵害した場合は5年）、製造業者等が引き渡した時から10年で、' +
+        '長期側の起算点は消費者の手に渡った時ではなく流通させた時である（同法5条）。',
       authority: '所管: 消費者庁（製造物責任法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/pl_qa.html', type: 'government', label: '消費者庁 製造物責任法の概要Q&A' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/product_liability_act_annotations/', type: 'government', label: '消費者庁 製造物責任(PL)法の逐条解説' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/product_liability_act_amendment', type: 'government', label: '消費者庁 民法改正に伴う製造物責任法の一部改正' },
       { url: 'https://laws.e-gov.go.jp/law/406AC0000000085', type: 'government', label: 'e-Gov 製造物責任法' },
-      { url: 'https://ja.wikipedia.org/wiki/%E8%A3%BD%E9%80%A0%E7%89%A9%E8%B2%AC%E4%BB%BB%E6%B3%95', type: 'media', label: '製造物責任法 概説' },
     ],
   },
   {
@@ -1181,15 +1206,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '安全配慮義務（労働契約法第5条）',
       statement:
-        '使用者は労働契約に伴い、労働者がその生命・身体等の安全を確保しつつ労働できるよう必要な配慮をする義務を負う。' +
-        '違反は債務不履行等として損害賠償責任を生じうる。',
+        '使用者は労働契約に伴い、労働者がその生命・身体等の安全を確保しつつ労働することができるよう、' +
+        '必要な配慮をするものとされている（労働契約法5条）。この義務は同条が新設される前から判例で認められており、' +
+        '陸上自衛隊八戸車両整備工場事件（最三小判 昭和50年2月25日）が国の公務員に対する安全配慮義務を認め、' +
+        '川義事件（最三小判 昭和59年4月10日）が、労務提供のために設置した場所・設備・器具等を使用させ、' +
+        'または指揮下で労務を提供させる過程において労働者の生命及び身体等を危険から保護するよう配慮すべき義務が' +
+        'あるとした。電通事件（最二小判 平成12年3月24日）は長時間労働によるうつ病発症と自死との相当因果関係を認めており、' +
+        '対象は物理的な危険にとどまらない。労災保険給付は損害の全部を填補するものではないため、' +
+        '給付を超える部分について民事上の損害賠償を請求されることがある。',
       authority: '所管: 厚生労働省（労働契約法第5条）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://laws.e-gov.go.jp/law/419AC0000000128/', type: 'government', label: 'e-Gov 労働契約法' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/13.pdf', type: 'government', label: '厚生労働省 労働契約法第5条 解説' },
-      { url: 'https://www.manpowergroup.jp/client/manpowerclip/hrconsulting/labor_contracts_act_ch1alt5.html', type: 'media', label: '安全配慮義務 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/12.pdf', type: 'government', label: '厚生労働省 労働契約法第5条に関する裁判例' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei14/dl/081001-1b_0006.pdf', type: 'government', label: '厚生労働省 労働災害の発生と企業の責任' },
     ],
   },
   {
@@ -1334,15 +1366,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人事業税の外形標準課税',
       statement:
-        '資本金1億円超の普通法人には法人事業税の外形標準課税（付加価値割・資本割）が適用され、' +
-        '所得が赤字でも付加価値割・資本割が課される。',
+        '法人事業税の外形標準課税（付加価値割・資本割）は、所得が赤字でも課税されるため、' +
+        '対象になるかどうかで税負担の性質が変わる。従来の対象は事業年度終了の日の資本金が1億円超の普通法人だったが、' +
+        '令和6年度税制改正で対象が広がった。①減資への対応（令和7年4月1日以後開始事業年度）— 前事業年度に' +
+        '外形標準課税の対象だった法人は、期末資本金が1億円以下でも資本金と資本剰余金の合計額が10億円を超えれば対象。' +
+        '②100％子法人等への対応（令和8年4月1日以後開始事業年度）— 資本金と資本剰余金の合計額が50億円を超える' +
+        '特定法人の100％子法人等は、期末資本金が1億円以下でも同合計額が2億円を超えれば対象。' +
+        '減資だけで対象外にする組立てが通らなくなったので、資本政策を動かす前に判定し直す必要がある。',
       authority: '所管: 総務省・各都道府県（地方税法／法人事業税）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.soumu.go.jp/main_content/000149767.pdf', type: 'government', label: '総務省 外形標準課税の概要' },
-      { url: 'https://www.tax.metro.tokyo.lg.jp/shitsumon/work/a1/index.html#gaikei-faq', type: 'municipality', label: '東京都主税局 外形標準課税 FAQ' },
-      { url: 'https://www.pwc.com/jp/ja/knowledge/column/assurance-knowledge/pro-forma-standard-taxation.html', type: 'media', label: '外形標準課税 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_05.html', type: 'government', label: '総務省 法人事業税における外形標準課税' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/houjinji/gaikei_kaisei', type: 'municipality', label: '東京都主税局 外形標準課税の対象法人の見直し' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/houjinji/gaikei/gaikei-01', type: 'municipality', label: '東京都主税局 法人事業税に係る外形標準課税の概要' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2024/06taikou_gaiyou.htm', type: 'government', label: '財務省 令和6年度税制改正の大綱の概要' },
     ],
   },
   {

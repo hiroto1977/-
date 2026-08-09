@@ -35,7 +35,6 @@ aliases:
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 語彙が近い
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 語彙が近い
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有

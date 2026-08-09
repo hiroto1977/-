@@ -32,7 +32,7 @@ Queen Villas Homeowners Assn v. TCB Prop. Mgmt.（2007・カリフォルニア�
 
 ## 関連概念
 - [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]] — 同分野の近傍
-- [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同分野の近傍
+- [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
