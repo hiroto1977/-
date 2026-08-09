@@ -953,7 +953,7 @@ export function DocstudioPage() {
           errorMessage={errorMessage}
           isConfigured
           onRefresh={refresh}
-          who={<>書類スタジオ · 経営{STUDIO_TEMPLATES.length}書式 + 電子定款 + 就業規則 — 入力→交付前チェック→印刷/PDF</>}
+          who={<>書類スタジオ · 経営{STUDIO_TEMPLATES.length}書式 + 電子定款 + 就業規則 + 決算書 — 入力→交付前チェック→事業仕分け→印刷/PDF</>}
         />
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
