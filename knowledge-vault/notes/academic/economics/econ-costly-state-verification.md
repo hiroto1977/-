@@ -30,8 +30,8 @@ Robert M. Townsend（ロバート・タウンゼント・1979年論文・理論�
 - [Wikipedia, “Costly state verification”（Townsend [1979]・検証費用下での最適契約＝標準的負債契約・デフォルト時のみ検証の概説）](https://en.wikipedia.org/wiki/Costly_state_verification) `リファレンス`
 
 ## 関連概念
-- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同分野の近傍
 - [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

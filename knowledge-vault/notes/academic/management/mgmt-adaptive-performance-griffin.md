@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
-- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
 - [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,12 +30,12 @@ aliases:
 - [Wikipedia: Piercing the corporate veil — corporate liability](https://en.wikipedia.org/wiki/Piercing_the_corporate_veil) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 語彙が近い
-- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 語彙が近い
 - [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 同じ思想家
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 - [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — 同分野の近傍
 
 ## 関連

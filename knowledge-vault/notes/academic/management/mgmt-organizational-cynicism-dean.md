@@ -34,6 +34,7 @@ aliases:
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 同じ思想家
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同分野の近傍
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
+- [[mgmt-freemium|フリーミアム]] — 同分野の近傍
 - [[mgmt-fogg-behavior-model|フォッグ行動モデル（FBM）]] — 同分野の近傍
 
 ## 関連

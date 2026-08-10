@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同分野の近傍
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 同分野の近傍
-- [[bizlaw-injunction-equity|差止命令——金銭賠償では不十分な場合に行為を命じ又は禁じる衡平法上の救済]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

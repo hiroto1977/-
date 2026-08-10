@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Enactment / sensemaking — Weick, enacted environment, enactment-selection-retention](https://en.wikipedia.org/wiki/Enactment_(psychology)) `リファレンス`
 
 ## 関連概念
-- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 語彙が近い
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

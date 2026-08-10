@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-借主が債務不履行や誓約違反を生じた場合に、貸主が残存元本の全額を即時返済として請求できる権利を定めた契約条項。GilmoreのUCC担保法理論で貸主保護の核心的機能とされ、民法137条の期限の利益喪失規定と対応する。
+借主が債務不履行や誓約違反を生じた場合に、貸主が残存元本の全額を即時返済として請求できる権利を定めた契約条項。GilmoreのUCC担保法理論で貸主保護の核心的機能とされ、民法137条の期限の利益喪失規定と対応する。分割払い債権では条項がなければ貸主は各回の不履行ごとにしか請求できず、全額の回収は最終弁済期まで待つほかない——加速条項はこの時間的リスクを一挙に解消する装置で、担保実行・相殺・倒産手続での債権届出の前提を作る。任意加速（at will）型には UCC 1-309 が「自己の履行が危うくなったと誠実に信じる場合」に限る誠実義務の制約を課し、些細な形式違反での加速には衡平法上の救済（不当な加速の否認）が働き得る。実務では治癒期間（grace period）・重大性の限定・クロスデフォルト条項との組合せが交渉の焦点になる。日本法では民法137条（破産手続開始・担保の滅失毀損等）が法定の期限の利益喪失を定め、契約実務では請求喪失型（貸主の請求により喪失）と当然喪失型（事由発生で自動喪失）を書き分ける——当然喪失型は倒産局面で相殺の受働債権適格を早期に生む点で威力が違う、というのが金融取引の定番論点である。
 
 ## 提唱者・初出
 Grant Gilmore ／ E. Allan Farnsworth ／ Darlene M. Nowak
@@ -32,7 +32,6 @@ Grant Gilmore ／ E. Allan Farnsworth ／ Darlene M. Nowak
 - [民法第137条（期限の利益の喪失）解説](https://www.minnpou-sousoku.com/commentary-on-civil-law/137/) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 語彙が近い
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — 同じ思想家
 - [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
@@ -41,7 +40,8 @@ Grant Gilmore ／ E. Allan Farnsworth ／ Darlene M. Nowak
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
-- [[bizlaw-land-lease-act|借地借家法]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

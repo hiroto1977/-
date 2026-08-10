@@ -31,10 +31,10 @@ Frederick J. Powell／Robert B. Thompson
 - [Cornell LII — Piercing the Corporate Veil](https://www.law.cornell.edu/wex/piercing_the_corporate_veil) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 語彙が近い
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同じ思想家
 - [[human-habituation|馴化（habituation）——単一刺激の反復による反応減弱と非連合学習]] — 同じ思想家
+- [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同分野の近傍
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同分野の近傍
 - [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同分野の近傍

@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
 - [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
+- [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

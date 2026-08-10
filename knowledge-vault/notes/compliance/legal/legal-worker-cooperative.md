@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-worker-cooperative|労働者協同組合法]] — 出典を共有
 - [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 出典を共有
-- [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 同分野の近傍
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 同分野の近傍
+- [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

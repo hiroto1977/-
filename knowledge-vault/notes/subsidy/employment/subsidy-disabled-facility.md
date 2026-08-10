@@ -42,8 +42,8 @@ national
 - [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]] — 出典を共有
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 出典を共有
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 出典を共有
-- [[subsidy-work-life-balance|両立支援等助成金（子ども・子育て両立支援等助成金）]] — 同分野の近傍
 - [[subsidy-passive-smoking-prevention|受動喫煙防止対策助成金]] — 同分野の近傍
+- [[subsidy-work-life-balance|両立支援等助成金（子ども・子育て両立支援等助成金）]] — 同分野の近傍
 - [[subsidy-occupational-health|産業保健関係助成金（団体経由産業保健活動推進助成金 等）]] — 同分野の近傍
 
 ## 関連

@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Affective events theory — 感情的出来事理論の概説](https://en.wikipedia.org/wiki/Affective_events_theory) `リファレンス`
 
 ## 関連概念
-- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
 - [[mgmt-organizational-slack|組織スラック]] — 同分野の近傍
 - [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
 

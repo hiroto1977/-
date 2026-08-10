@@ -31,8 +31,8 @@ aliases:
 - [取締役の善管注意義務 解説](https://biz.moneyforward.com/ipo/basic/10318/) `メディア`
 
 ## 関連概念
+- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 語彙が近い
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 分野横断
-- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 分野横断
 - [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
 - [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
 - [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有

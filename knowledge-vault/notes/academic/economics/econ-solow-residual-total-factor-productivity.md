@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 語彙が近い
-- [[econ-solow-growth-model|ソロー成長モデル]] — 語彙が近い
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 語彙が近い
+- [[econ-solow-growth-model|ソロー成長モデル]] — 語彙が近い
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家

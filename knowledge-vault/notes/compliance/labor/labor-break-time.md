@@ -32,8 +32,8 @@ aliases:
 - [厚生労働省 休憩時間を分割する場合の注意](https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_14.html) `公的`
 
 ## 関連概念
-- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 同分野の近傍
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
+- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

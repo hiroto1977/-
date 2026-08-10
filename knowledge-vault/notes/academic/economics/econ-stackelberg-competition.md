@@ -39,6 +39,7 @@ aliases:
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 同分野の近傍
 - [[econ-rational-addiction|合理的依存]] — 同分野の近傍
+- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

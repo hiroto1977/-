@@ -34,8 +34,8 @@ aliases:
 - [[human-golem-effect|ゴーレム効果]] — 同じ思想家
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同じ思想家
-- [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
+- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

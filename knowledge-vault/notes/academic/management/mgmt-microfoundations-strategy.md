@@ -32,12 +32,11 @@ aliases:
 
 ## 関連概念
 - [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 語彙が近い
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 語彙が近い
 - [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]] — 同分野の近傍
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同分野の近傍
 - [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同分野の近傍
-- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

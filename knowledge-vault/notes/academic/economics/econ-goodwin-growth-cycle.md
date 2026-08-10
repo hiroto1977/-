@@ -37,8 +37,8 @@ aliases:
 - [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
 - [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
+- [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]] — 同分野の近傍
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同分野の近傍
-- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — 同分野の近傍
 - [[econ-cobra-effect|コブラ効果（意図せざる結果の法則）]] — 同分野の近傍
 
 ## 関連

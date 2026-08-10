@@ -34,6 +34,7 @@ aliases:
 - [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 語彙が近い
 - [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
 - [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
+- [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 同分野の近傍
 - [[tax-export-exemption|消費税の輸出免税]] — 同分野の近傍
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 同分野の近傍
 
