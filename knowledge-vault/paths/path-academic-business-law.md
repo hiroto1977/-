@@ -20,9 +20,9 @@ tags:
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 27）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 27）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
-- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）

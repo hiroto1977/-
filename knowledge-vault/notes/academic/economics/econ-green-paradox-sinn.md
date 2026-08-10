@@ -34,8 +34,8 @@ aliases:
 - [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 同じ思想家
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
-- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同分野の近傍
-- [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同分野の近傍
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同分野の近傍
 - [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同分野の近傍
 
 ## 関連

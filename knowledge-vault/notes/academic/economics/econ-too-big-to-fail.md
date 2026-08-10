@@ -31,7 +31,6 @@ aliases:
 - [Financial Stability Board — Ending Too-Big-To-Fail（G-SIB・破綻処理改革）](https://www.fsb.org/work-of-the-fsb/market-and-institutional-resilience/post-2008-financial-crisis-reforms/ending-too-big-to-fail/) `公的`
 
 ## 関連概念
-- [[econ-moral-hazard|モラルハザード（道徳的危険）]] — 語彙が近い
 - [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 出典を共有
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
 - [[econ-monetarism|マネタリズム]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[eh-1990|1990年（平成2年）]] — 出典を共有
 - [[eh-2009|2009年（平成21年）]] — 出典を共有
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
+- [[eh-1954|1954年（昭和29年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

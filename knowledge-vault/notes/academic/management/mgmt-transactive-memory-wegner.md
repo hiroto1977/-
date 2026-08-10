@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
 - [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
 - [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
-- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同分野の近傍
 - [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
 
 ## 関連

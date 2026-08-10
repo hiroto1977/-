@@ -36,7 +36,7 @@ aliases:
 - [[human-fresh-start-effect|フレッシュスタート効果]] — 出典を共有
 - [[mgmt-first-mover-advantage|先発者優位]] — 出典を共有
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
-- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同分野の近傍
 - [[mgmt-rfm-analysis|RFM分析]] — 同分野の近傍
 
 ## 関連

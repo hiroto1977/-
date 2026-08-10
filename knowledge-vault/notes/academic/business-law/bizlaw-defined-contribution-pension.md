@@ -35,6 +35,7 @@ aliases:
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 分野横断
 - [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同分野の近傍
 - [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — 同分野の近傍
+- [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

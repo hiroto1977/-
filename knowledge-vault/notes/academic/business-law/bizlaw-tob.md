@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同分野の近傍
+- [[bizlaw-squeeze-out|スクイーズアウト（特別支配株主の株式等売渡請求）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

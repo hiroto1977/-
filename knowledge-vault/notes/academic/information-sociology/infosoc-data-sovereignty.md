@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
 - [[infosoc-onlife|オンライフ]] — 同じ思想家
 - [[infosoc-open-data|オープンデータ]] — 同じ思想家
+- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同分野の近傍
 - [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
 - [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
 - [[infosoc-informational-self-determination|情報自己決定権]] — 同分野の近傍

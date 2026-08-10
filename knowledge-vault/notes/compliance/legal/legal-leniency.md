@@ -36,7 +36,6 @@ aliases:
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 分野横断
 - [[legal-antimonopoly|独占禁止法]] — 同分野の近傍
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
-- [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

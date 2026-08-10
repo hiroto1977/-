@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Probabilistic-serial procedure — random assignment, ordinal efficiency, envy-free](https://en.wikipedia.org/wiki/Probabilistic-serial_procedure) `リファレンス`
 
 ## 関連概念
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

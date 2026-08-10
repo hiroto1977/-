@@ -31,8 +31,8 @@ aliases:
 - [岡山県消費生活センター 業務提供誘引販売取引](https://www.pref.okayama.jp/site/syohi/mame-advice-gyoumuteikyou.html) `自治体`
 
 ## 関連概念
-- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 語彙が近い
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 語彙が近い
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 出典を共有
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有

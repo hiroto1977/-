@@ -35,6 +35,7 @@ EU環境責任指令（2004/35/CE）は、汚染者負担原則（Polluter Pays 
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同分野の近傍
 - [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同分野の近傍
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同分野の近傍
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

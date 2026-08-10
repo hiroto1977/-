@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
-- [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同分野の近傍
+- [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,13 +33,13 @@ aliases:
 
 ## 関連概念
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 語彙が近い
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 出典を共有
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 出典を共有
 - [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 出典を共有
-- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
 

@@ -31,8 +31,8 @@ aliases:
 - [国民生活センター 書面交付電子化の論点](https://www.kokusen.go.jp/wko/pdf/wko-202401_03.pdf) `メディア`
 
 ## 関連概念
-- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 語彙が近い
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 出典を共有
