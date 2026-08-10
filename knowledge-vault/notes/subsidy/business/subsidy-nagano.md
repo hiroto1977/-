@@ -39,11 +39,10 @@ prefecture
 ## 関連概念
 - [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]] — 語彙が近い
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 語彙が近い
+- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 語彙が近い
 - [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
 - [[subsidy-miyagi|ものづくり中小企業生産性向上設備導入補助金（宮城県）]] — 語彙が近い
 - [[subsidy-sapporo|さっぽろ新規創業促進補助金（札幌市）]] — 出典を共有
-- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 同分野の近傍
-- [[subsidy-fukuoka-pref|福岡県中小企業生産性向上・賃上げ緊急支援補助金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — 同じ思想家
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同分野の近傍
 - [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
+- [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
 - [[mgmt-followership|フォロワーシップ論]] — 同分野の近傍
 
 ## 関連

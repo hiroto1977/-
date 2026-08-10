@@ -35,6 +35,7 @@ aliases:
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
+- [[econ-job-competition-thurow|仕事をめぐる競争モデル（サロー）——賃金競争への対抗と「労働の待ち行列」]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

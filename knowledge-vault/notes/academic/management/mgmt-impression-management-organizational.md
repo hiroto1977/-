@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
 - [[mgmt-temporal-leadership|テンポラル・リーダーシップ（Temporal Leadership）]] — 同分野の近傍
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

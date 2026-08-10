@@ -41,7 +41,7 @@ aliases:
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 同じ思想家
 - [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
-- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
+- [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

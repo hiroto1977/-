@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
 - [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同分野の近傍
+- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

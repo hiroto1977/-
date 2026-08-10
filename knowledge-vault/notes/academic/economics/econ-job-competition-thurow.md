@@ -39,7 +39,7 @@ aliases:
 - [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 同分野の近傍
-- [[econ-human-capital|人的資本論]] — 同分野の近傍
+- [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -21,12 +21,12 @@ tags:
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-attribution-theory|帰属理論]]（接続 27）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 25）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
-- [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
 
 ## 第 2 部 — 年代順の展開

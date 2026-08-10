@@ -39,8 +39,8 @@ aliases:
 - [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 出典を共有
 - [[infosoc-technological-determinism|技術決定論]] — 出典を共有
 - [[econ-division-of-labour|分業]] — 出典を共有
-- [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同分野の近傍
 - [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

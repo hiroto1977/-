@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同じ思想家
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
-- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 同分野の近傍
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
 
 ## 関連

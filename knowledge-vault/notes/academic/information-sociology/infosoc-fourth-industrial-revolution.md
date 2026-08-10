@@ -30,8 +30,8 @@ aliases:
 - [World Economic Forum — Klaus Schwab "The Fourth Industrial Revolution: what it means, how to respond"（2016年1月、概念の一次提示）](https://www.weforum.org/agenda/2016/01/the-fourth-industrial-revolution-what-it-means-and-how-to-respond/) `メディア`
 
 ## 関連概念
-- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

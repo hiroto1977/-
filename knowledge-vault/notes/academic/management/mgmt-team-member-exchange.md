@@ -32,8 +32,8 @@ Seers, Anson （1989 Team-Member Exchange Quality: A New Construct for Role-Maki
 
 ## 関連概念
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同分野の近傍
-- [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
 - [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
+- [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,6 @@ Marilynn B. Brewer（1991年論文・理論の提唱者） ／ 同化・包摂�
 ## 関連概念
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同じ思想家
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同分野の近傍
-- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 同分野の近傍
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同分野の近傍
 
 ## 関連
