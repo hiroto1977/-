@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 語彙が近い
 - [[bizlaw-whistleblower-protection-dodd-frank|内部告発者保護とドッド・フランク法（米国）]] — 語彙が近い
-- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

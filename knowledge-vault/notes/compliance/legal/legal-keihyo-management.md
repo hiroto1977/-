@@ -31,8 +31,8 @@ aliases:
 - [公正取引委員会 景品表示法に関する業務](https://www.jftc.go.jp/info/nenpou/h27/div02/div_02_13.html) `公的`
 
 ## 関連概念
+- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
 - [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 同分野の近傍
-- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 同分野の近傍

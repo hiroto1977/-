@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 語彙が近い
-- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同じ思想家
+- [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 語彙が近い
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
 - [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家

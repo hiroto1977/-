@@ -2,7 +2,7 @@
 title: "semanticscholar.org"
 type: source-domain
 host: "semanticscholar.org"
-cite_count: 86
+cite_count: 87
 tags:
   - source-domain
   - index
@@ -10,11 +10,12 @@ tags:
 
 # semanticscholar.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 77 ・ リファレンス 9）
+> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 78 ・ リファレンス 9）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-corporate-manslaughter|法人の業務上過失致死（コーポレート・マンスローター）]] — Slapper,G.&Tombs,S.(1999)CorporateCrime—PearsonLongman（コーポレート・クライム論の体…
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — Schreuer(2010)FullProtectionandSecurity—JournalofInternationalDispute…
 - [[econ-export-led-growth-model|輸出主導型成長モデル]] — Balaguer,J.&Cantavella-Jorda,M.(2004)ExportCompositionandSpanishEcono…
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — Greenwald&Stiglitz(1986)—SemanticScholar
 - [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — SemanticScholar—Hirshleifer(1971)論文記録（被引用・関連文献一覧）

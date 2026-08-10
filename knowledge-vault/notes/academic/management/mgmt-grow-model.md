@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同分野の近傍
 - [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
-- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 - [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 同分野の近傍
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍
 

@@ -38,7 +38,6 @@ William J. Baumol／John C. Panzar／Robert D. Willig（1982）／サンクコ�
 - [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同分野の近傍
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同分野の近傍
 - [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 同分野の近傍
-- [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

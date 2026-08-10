@@ -33,7 +33,7 @@ EUデジタル市場法（Regulation 2022/1925, DMA）は、コアプラット�
 ## 関連概念
 - [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同じ思想家
 - [[bizlaw-eu-digital-services-act-dsa|EUデジタルサービス法（DSA）——オンライン仲介サービスの責任と透明性]] — 同じ思想家
-- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同分野の近傍
+- [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

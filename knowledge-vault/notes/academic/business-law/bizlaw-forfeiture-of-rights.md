@@ -37,6 +37,7 @@ aliases:
 - [[econ-rostow-stages|ロストウの経済成長段階説]] — 出典を共有
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同分野の近傍
 
 ## 関連

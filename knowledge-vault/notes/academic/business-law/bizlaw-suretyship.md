@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 語彙が近い
 - [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]] — 同分野の近傍
+- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

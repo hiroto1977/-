@@ -41,7 +41,7 @@ aliases:
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同分野の近傍
+- [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

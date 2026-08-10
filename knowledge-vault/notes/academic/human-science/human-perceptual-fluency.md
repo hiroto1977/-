@@ -34,6 +34,7 @@ aliases:
 - [[human-mere-exposure-zajonc|単純接触効果——反復的接触が対象への好意を増大させる現象]] — 同じ思想家
 - [[human-processing-fluency|処理流暢性]] — 同じ思想家
 - [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]] — 同じ思想家
+- [[human-false-belief-task|誤信念課題（False Belief Task）]] — 同分野の近傍
 - [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 同分野の近傍
 
 ## 関連

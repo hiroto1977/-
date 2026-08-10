@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
 - [[mgmt-work-design-growth-model|職務設計成長モデル]] — 同分野の近傍
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 同分野の近傍
-- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

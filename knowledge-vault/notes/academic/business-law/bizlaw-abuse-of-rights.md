@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 同分野の近傍
-- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

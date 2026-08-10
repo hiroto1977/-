@@ -37,8 +37,8 @@ aliases:
 - [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 出典を共有
 - [[human-hedonic-adaptation|快楽順応]] — 出典を共有
 - [[human-status-quo-bias|現状維持バイアス]] — 出典を共有
-- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 同分野の近傍
 
 ## 関連

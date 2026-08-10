@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 語彙が近い
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同分野の近傍
 - [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同分野の近傍
-- [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

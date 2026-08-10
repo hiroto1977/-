@@ -2,7 +2,7 @@
 title: "jusmundi.com"
 type: source-domain
 host: "jusmundi.com"
-cite_count: 4
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jusmundi.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **4 件**（リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -18,6 +18,7 @@ tags:
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — Prompt,AdequateandEffectiveCompensation—JusMundiWiki
 - [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — FairandEquitableTreatment—JusMundiWiki
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — Fork-in-the-Road—JusMundi
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — FullProtectionandSecurity(FPS)—JusMundiWiki
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

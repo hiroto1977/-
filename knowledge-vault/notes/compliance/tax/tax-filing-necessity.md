@@ -35,6 +35,7 @@ aliases:
 - [[tax-income-categories|所得税における所得の10種類の区分]] — 同分野の近傍
 - [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

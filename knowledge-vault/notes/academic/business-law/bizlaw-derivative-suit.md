@@ -35,6 +35,7 @@ aliases:
 - [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — 語彙が近い
 - [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
 - [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
+- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同分野の近傍
 - [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同分野の近傍
 - [[bizlaw-judicial-scrivener-act|司法書士法]] — 同分野の近傍

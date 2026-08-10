@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
 - [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同分野の近傍
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同分野の近傍
+- [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

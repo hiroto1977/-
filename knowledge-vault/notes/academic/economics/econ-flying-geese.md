@@ -31,10 +31,10 @@ aliases:
 - [コトバンク（日本大百科全書ほか）「雁行形態論」](https://kotobank.jp/word/%E9%9B%81%E8%A1%8C%E5%BD%A2%E6%85%8B%E8%AB%96-48707) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
 - [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 出典を共有
+- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 出典を共有
 - [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍

@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-interest-rate-restriction|利息制限法]] — 語彙が近い
 - [[bizlaw-toushiho|出資法]] — 語彙が近い
 - [[bizlaw-installment-sales-act|割賦販売法]] — 同分野の近傍
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 同分野の近傍
 - [[bizlaw-anti-spam-act|特定電子メール法]] — 同分野の近傍
 
 ## 関連

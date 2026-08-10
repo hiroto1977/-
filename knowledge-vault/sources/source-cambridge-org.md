@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 56
+cite_count: 55
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **56 件**（学術 54 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **55 件**（学術 53 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — "HowdoestheAppraisalRightwiththeConceptoftheFairValueIncludingSynergi…
 - [[bizlaw-derivative-action-foss-harbottle|株主代表訴訟とフォス対ハーボトル原則]] — K.W.Wedderburn,Shareholders'RightsandtheRuleinFossv.Harbottle,Cambrid…
-- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — Schreuer(2010)FullProtectionandSecurity—ICSIDReview
 - [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]] — RequiemforHickenlooper—AmericanJournalofInternationalLaw(CambridgeCor…
 - [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — VandenBossche&Zdouc2021TheLawandPolicyoftheWorldTradeOrganization(4th…
 - [[bizlaw-relational-contracting-macneil|関係的契約論（マクニール）]] — Campbell,D.(1992)TheRelationalTheoryofContract—CambridgeUniversityPre…
