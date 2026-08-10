@@ -41,7 +41,7 @@ aliases:
 - [[mgmt-organizational-aesthetics|組織美学]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
 - [[infosoc-phenomenological-technology|技術の現象学]] — 出典を共有
-- [[infosoc-algorithmic-governance-yeung|アルゴリズム統治——自動化された意思決定の社会的制御と民主的正統性]] — 同分野の近傍
+- [[infosoc-digital-citizenship|デジタル・シティズンシップ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

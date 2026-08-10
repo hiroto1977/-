@@ -32,8 +32,8 @@ aliases:
 - [ノーベル賞委員会 学術背景文書「Mechanism Design Theory」（専門解説PDF）](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `公的`
 
 ## 関連概念
-- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 語彙が近い
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 語彙が近い
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 語彙が近い
 - [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
 - [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家

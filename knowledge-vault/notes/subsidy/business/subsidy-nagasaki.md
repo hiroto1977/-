@@ -40,7 +40,7 @@ prefecture
 - [[subsidy-hiroshima|中小・ベンチャー企業チャレンジ応援事業助成金（広島県）]] — 出典を共有
 - [[subsidy-saitama-city|さいたま市起業家支援補助金（SCAP連動）]] — 出典を共有
 - [[subsidy-okayama|岡山市創業者支援事業補助金]] — 同分野の近傍
-- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 同分野の近傍
+- [[subsidy-tokyo-startup|創業助成事業（創業助成金）（東京都）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

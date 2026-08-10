@@ -36,7 +36,6 @@ aliases:
 - [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
 - [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
-- [[econ-balanced-budget-multiplier|均衡予算乗数]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

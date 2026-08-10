@@ -36,8 +36,9 @@ aliases:
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
+- [[infosoc-data-colonialism|データ植民地主義]] — 同分野の近傍
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同分野の近傍
 - [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 同分野の近傍
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同分野の近傍
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
 
 ## 関連

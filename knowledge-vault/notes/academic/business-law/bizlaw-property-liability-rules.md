@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
 - [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 同分野の近傍
-- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
 - [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]] — 同分野の近傍
-- [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

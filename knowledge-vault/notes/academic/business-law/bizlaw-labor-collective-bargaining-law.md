@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-labor-union-act|労働組合法]] — 語彙が近い
 - [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同分野の近傍
 - [[bizlaw-e-signature|電子署名法]] — 同分野の近傍
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 同分野の近傍
 - [[bizlaw-labor-relations-adjustment|労働関係調整法]] — 同分野の近傍
 
 ## 関連

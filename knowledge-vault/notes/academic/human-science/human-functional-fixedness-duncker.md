@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-hindsight-bias|後知恵バイアス]] — 同分野の近傍
-- [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 同分野の近傍
 - [[human-ikea-effect|イケア効果]] — 同分野の近傍
 
 ## 関連

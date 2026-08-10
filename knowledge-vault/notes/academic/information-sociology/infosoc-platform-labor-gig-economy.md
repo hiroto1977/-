@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Gig economy — platform labor, independent contractors, algorithmic management](https://en.wikipedia.org/wiki/Gig_economy) `リファレンス`
 
 ## 関連概念
-- [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]] — 語彙が近い
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 語彙が近い
+- [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]] — 語彙が近い
 - [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 語彙が近い
 - [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
 - [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同じ思想家

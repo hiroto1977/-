@@ -39,7 +39,6 @@ Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
-- [[bizlaw-property-liability-rules|財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

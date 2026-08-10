@@ -39,7 +39,7 @@ aliases:
 - [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同じ思想家
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同じ思想家
-- [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同じ思想家
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
