@@ -37,8 +37,8 @@ aliases:
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
 - [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同じ思想家
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同分野の近傍
 - [[econ-inflation-targeting|インフレ・ターゲティング]] — 同分野の近傍
-- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同分野の近傍
 - [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
 
 ## 関連

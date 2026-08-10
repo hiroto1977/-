@@ -40,7 +40,6 @@ aliases:
 - [[infosoc-network-society-castells|ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治]] — 同分野の近傍
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
 - [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同分野の近傍
-- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

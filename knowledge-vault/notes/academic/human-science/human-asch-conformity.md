@@ -35,8 +35,8 @@ aliases:
 - [[human-obedience|権威への服従（オベディエンス）]] — 同じ思想家
 - [[infosoc-spiral-of-silence-noelle-neumann|沈黙の螺旋——孤立の恐れが少数意見を沈黙させ多数意見を増幅する]] — 同じ思想家
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
-- [[human-stroop-effect|ストループ効果]] — 同分野の近傍
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
+- [[human-loss-aversion|損失回避]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

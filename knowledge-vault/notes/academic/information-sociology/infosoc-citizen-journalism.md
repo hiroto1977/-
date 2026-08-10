@@ -34,7 +34,6 @@ aliases:
 - [[infosoc-citizen-journalism-participatory-media|市民ジャーナリズムと参加型メディア——ウェブ2.0が変えた報道の担い手と情報権力の分散]] — 同じ思想家
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同分野の近傍
 - [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同分野の近傍
-- [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同分野の近傍
 - [[infosoc-slow-journalism|スロー・ジャーナリズム]] — 同分野の近傍
 
 ## 関連

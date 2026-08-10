@@ -39,6 +39,7 @@ aliases:
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同分野の近傍
 - [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同分野の近傍
 - [[econ-roy-model|ロイ・モデル——比較優位による職業の自己選択]] — 同分野の近傍
+- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

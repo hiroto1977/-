@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Activity theory — 活動理論の歴史的展開と三世代モデルの概説](https://en.wikipedia.org/wiki/Activity_theory) `リファレンス`
 
 ## 関連概念
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 分野横断
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同じ思想家
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家

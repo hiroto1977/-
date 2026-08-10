@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
 - [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家
 - [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 同分野の近傍
 
 ## 関連

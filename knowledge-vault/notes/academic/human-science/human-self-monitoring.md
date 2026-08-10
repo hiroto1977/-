@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-metcalfe-law|メトカーフの法則]] — 出典を共有
-- [[human-stroop-effect|ストループ効果]] — 同分野の近傍
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同分野の近傍
+- [[human-stroop-effect|ストループ効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

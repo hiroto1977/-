@@ -38,8 +38,8 @@ aliases:
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 出典を共有
 - [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同分野の近傍
-- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍
 - [[econ-double-marginalization|二重マージン（二重限界化）]] — 同分野の近傍
+- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

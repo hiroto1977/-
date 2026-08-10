@@ -35,6 +35,7 @@ aliases:
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
 - [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 同分野の近傍
+- [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

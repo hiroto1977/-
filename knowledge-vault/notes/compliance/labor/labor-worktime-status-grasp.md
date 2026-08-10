@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 語彙が近い
 - [[labor-worktime-tracking|労働時間の適正な把握義務]] — 語彙が近い
-- [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 同分野の近傍
 - [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍
 
 ## 関連

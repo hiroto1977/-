@@ -15,9 +15,9 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]]（接続 25）
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]]（接続 25）
-- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]]（接続 23）
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]]（接続 23）
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]]（接続 23）
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]]（接続 22）
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]]（接続 22）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 21）
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
