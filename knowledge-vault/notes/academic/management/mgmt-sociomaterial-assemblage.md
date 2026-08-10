@@ -35,8 +35,8 @@ Wanda J. Orlikowski ／ Susan V. Scott ／ Gilles Deleuze
 - [[infosoc-data-doubles|データ・ダブル]] — 語彙が近い
 - [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]] — 同じ思想家
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 同じ思想家
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Social comparison theory — SNS and wellbeing](https://en.wikipedia.org/wiki/Social_comparison_theory) `リファレンス`
 
 ## 関連概念
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 語彙が近い
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同分野の近傍
 

@@ -33,6 +33,7 @@ MAINモデル（MAIN model）は、S・シャイアム・スンダル（S. Shyam
 ## 関連概念
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同分野の近傍
 - [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同分野の近傍
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
 - [[infosoc-gamification|ゲーミフィケーション]] — 同分野の近傍
-- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

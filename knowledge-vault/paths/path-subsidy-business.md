@@ -26,8 +26,8 @@ tags:
 - [[subsidy-kobe|神戸市中小企業投資促進等助成制度]]（接続 16）
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]]（接続 16）
 - [[subsidy-patent-fee-reduction|特許料等の減免制度]]（接続 16）
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]]（接続 15）
 - [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]]（接続 14）
-- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2025年: [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]]

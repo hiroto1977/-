@@ -35,8 +35,8 @@ Irwin Altman ／ Setha M. Low ／ Harold M. Proshansky ／ Maria Lewicka ／ Dan
 ## 関連概念
 - [[human-place-identity|場所アイデンティティ（Place Identity）]] — 語彙が近い
 - [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 語彙が近い
+- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 語彙が近い
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同じ思想家
-- [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Vicarious liability — respondeat superior, Lister v Hesley Hall, close connection test](https://en.wikipedia.org/wiki/Vicarious_liability) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 語彙が近い
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 同じ思想家
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同じ思想家
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
-- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

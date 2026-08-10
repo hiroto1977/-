@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同分野の近傍
+- [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
 - [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
 
 ## 関連

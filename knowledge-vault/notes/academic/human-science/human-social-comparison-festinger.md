@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: 社会的比較理論 — フェスティンガーと自己評価の解説](https://ja.wikipedia.org/wiki/%E7%A4%BE%E4%BC%9A%E6%AF%94%E8%BC%83%E7%90%86%E8%AB%96) `リファレンス`
 
 ## 関連概念
+- [[infosoc-social-comparison-social-media|ソーシャルメディアにおける社会比較と主観的幸福感]] — 語彙が近い
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 語彙が近い
 - [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
 - [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
 - [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同じ思想家
-- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

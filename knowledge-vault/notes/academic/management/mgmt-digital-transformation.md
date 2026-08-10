@@ -30,12 +30,12 @@ aliases:
 - [MIT Sloan — "What is digital transformation?"（MITスローン経営大学院、ウェスターマンら研究グループによる解説）](https://mitsloan.mit.edu/ideas-made-to-matter/what-is-digital-transformation) `学術`
 
 ## 関連概念
-- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 語彙が近い
 - [[infosoc-deepfake|ディープフェイク]] — 出典を共有
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 出典を共有
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 - [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
 - [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
+- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 同分野の近傍
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同分野の近傍
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 同分野の近傍
 

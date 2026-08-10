@@ -32,7 +32,7 @@ F.ハイエク「社会における知識の利用」1945(American Economic Revi
 
 ## 関連概念
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
-- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
+- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

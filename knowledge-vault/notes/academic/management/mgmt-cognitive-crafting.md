@@ -38,6 +38,7 @@ Amy Wrzesniewski ／ Jane E. Dutton ／ Justin M. Berg
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
 - [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同分野の近傍
+- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

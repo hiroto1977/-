@@ -35,7 +35,6 @@ Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 語彙が近い
 - [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
 - [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
-- [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — 同分野の近傍
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — 同分野の近傍
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
 

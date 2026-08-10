@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — 同分野の近傍
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同分野の近傍
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同分野の近傍
-- [[mgmt-theory-z|セオリーZ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
