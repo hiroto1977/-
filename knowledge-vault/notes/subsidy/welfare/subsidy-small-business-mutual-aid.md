@@ -38,9 +38,9 @@ national
 
 ## 関連概念
 - [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
-- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
 - [[tax-small-business-mutual-aid|小規模企業共済制度]] — 出典を共有
 - [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
+- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
 - [[subsidy-chutaikyo|中小企業退職金共済制度（中退共）・新規加入等掛金助成]] — 同分野の近傍
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 同分野の近傍
 

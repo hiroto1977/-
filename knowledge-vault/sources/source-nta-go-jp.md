@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 258
+cite_count: 262
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **258 件**（公的 258）
+> [!info] 出典ドメイン索引 ・ 引用 **262 件**（公的 262）
 
 ## このドメインを出典とする項目
 
@@ -112,6 +112,9 @@ tags:
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答【電子取引関係】
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿等保存制度特設サイト
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁No.1410給与所得控除
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁令和7年度税制改正による所得税の基礎控除の見直し等について
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁令和7年度税制改正（基礎控除・給与所得控除・特定親族特別控除）
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁給与所得控除後の給与等の金額の表
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
 - [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 国税庁タックスアンサーNo.5265交際費等の範囲と損金不算入額の計算
@@ -219,8 +222,9 @@ tags:
 - [[tax-securities-account|上場株式等の特定口座制度]] — 国税庁No.1476特定口座制度
 - [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 国税庁No.1129セルフメディケーション税制
 - [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 国税庁No.1131通常の医療費控除との選択適用
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁D1-22消費税簡易課税制度選択届出手続
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁No.6505簡易課税制度
-- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁消費税の届出
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁No.6629消費税の各種届出書
 - [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 国税庁No.5408中小企業者等の少額減価償却資産の特例
 - [[tax-small-business-mutual-aid|小規模企業共済制度]] — 国税庁No.1135小規模企業共済等掛金控除
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 国税庁No.1135小規模企業共済等掛金控除

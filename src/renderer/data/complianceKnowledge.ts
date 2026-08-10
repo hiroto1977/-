@@ -273,15 +273,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '消費税の簡易課税制度',
       statement:
-        '基準期間の課税売上高が5,000万円以下の事業者は、「消費税簡易課税制度選択届出書」を提出することで' +
-        '簡易課税を選択でき、事業区分ごとの「みなし仕入率」で仕入控除税額を計算する（原則2年間継続）。',
-      authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-06',
+        '基準期間の課税売上高が5,000万円以下の事業者は「消費税簡易課税制度選択届出書」を提出することで' +
+        '簡易課税を選択でき、実際の仕入れを集計せず事業区分ごとの「みなし仕入率」で仕入控除税額を計算する。' +
+        'みなし仕入率は第一種（卸売業）90％・第二種（小売業）80％・第三種（製造業等）70％・' +
+        '第四種（その他）60％・第五種（サービス業等）50％・第六種（不動産業）40％の6区分。' +
+        '注意すべきはやめるときの縛りで、選択届出書の効力が生じた課税期間の初日から2年を経過する日の属する' +
+        '課税期間の初日以後でなければ選択不適用届出書を出せず、しかも適用をやめようとする課税期間の初日の前日までに' +
+        '提出する必要がある。設備投資が見込まれる期に本則へ戻れず還付を取り逃がす、というのが典型的な失敗である。',
+      authority: '所管: 国税庁（消費税法第37条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6505.htm', type: 'government', label: '国税庁 No.6505 簡易課税制度' },
-      { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r5/Nov/02.htm', type: 'government', label: '国税庁 消費税の届出' },
-      { url: 'https://support.freee.co.jp/hc/ja/articles/23391692865177', type: 'media', label: 'freee 消費税の簡易課税制度' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shohi/annai/1461_13.htm', type: 'government', label: '国税庁 D1-22 消費税簡易課税制度選択届出手続' },
+      { url: 'https://www.keisan.nta.go.jp/r5yokuaru/shohizei/kanikazei/kanikazeiseido/kanikazeiseido1.html', type: 'government', label: '国税庁 確定申告書等作成コーナー 簡易課税制度とは' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6629.htm', type: 'government', label: '国税庁 No.6629 消費税の各種届出書' },
     ],
   },
   {
@@ -617,15 +623,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '給与所得控除',
       statement:
-        '給与所得控除は給与収入に対し概算経費として差し引かれる控除で、控除額は収入に応じて段階的に逓増する。' +
-        '一定の最低保証額がある一方、高額収入には上限額が設定され、それ以上は控除額が増えない。',
+        '給与所得控除は給与収入に対して概算経費として差し引かれる控除で、控除額は収入に応じて段階的に逓増するが、' +
+        '低い側には最低保障額があり、高い側には上限がある。令和2年分以後は控除額が一律10万円引き下げられ、' +
+        '上限が適用される給与収入が850万円超、その上限額が195万円に引き下げられた。' +
+        'さらに令和7年度税制改正により、令和7年分以後は最低保障額が55万円から65万円に引き上げられた' +
+        '（基礎控除の見直しと特定親族特別控除の創設もあわせて行われている）。' +
+        '実額の経費を差し引く仕組みではないので、通勤費や書籍代を別に足し引きすることはできない。' +
+        '個別の金額は毎年の税制改正で動くため、年分ごとに国税庁の速算表で確認すること。',
       authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm', type: 'government', label: '国税庁 No.1410 給与所得控除' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/2894/', type: 'media', label: 'マネーフォワード 給与所得控除' },
-      { url: 'https://www.freee.co.jp/kb/kb-payroll/the-deduction-for-employment-income/', type: 'media', label: 'freee 給与所得控除' },
+      { url: 'https://www.nta.go.jp/users/gensen/2025kiso/index.htm', type: 'government', label: '国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について' },
+      { url: 'https://www.nta.go.jp/publication/pamph/gensen/0025004-025.pdf', type: 'government', label: '国税庁 令和7年度税制改正（基礎控除・給与所得控除・特定親族特別控除）' },
+      { url: 'https://www.nta.go.jp/publication/pamph/gensen/nencho2025/pdf/114.pdf', type: 'government', label: '国税庁 給与所得控除後の給与等の金額の表' },
     ],
   },
   {
@@ -1045,15 +1057,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '営業秘密の保護（不正競争防止法）',
       statement:
-        '秘密管理性・有用性・非公知性の3要件をすべて満たす情報は不正競争防止法上の営業秘密として保護され、' +
-        '不正な取得・使用・開示は差止請求・損害賠償の対象となり、刑事罰（営業秘密侵害罪）も科され得る。',
+        '秘密管理性・有用性・非公知性の3要件をすべて満たす情報が不正競争防止法上の営業秘密として保護される。' +
+        '実務でいちばん落ちるのは秘密管理性で、従業員が「これは秘密だ」と認識できる程度の管理措置' +
+        '（アクセス制限、マル秘表示など）が現に取られている必要がある。持っているだけでは保護されない。' +
+        '有用性は事業活動に有用な技術上・営業上の情報であることを指し、脱税や有害物質の不法投棄のように' +
+        '公序良俗に反する情報は除かれる。非公知性は保有者の管理下以外では一般に入手できないことをいう。' +
+        '不正な取得・使用・開示は差止請求・損害賠償の対象になり、営業秘密侵害罪として' +
+        '個人は10年以下の拘禁刑または2,000万円以下の罰金（国外での使用等は3,000万円以下）、' +
+        '法人は5億円以下の罰金（同10億円以下）が科され得る。' +
+        '3要件を満たさない電子データでも、限定提供データとして別枠で保護される場合がある。',
       authority: '所管: 経済産業省（不正競争防止法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省 営業秘密' },
-      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/r7ts.pdf', type: 'government', label: '経済産業省 営業秘密管理指針' },
-      { url: 'https://kigyobengo.com/media/useful/1461.html', type: 'media', label: '営業秘密の3要件 解説' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省 営業秘密〜営業秘密を守り活用する〜' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/r7ts.pdf', type: 'government', label: '経済産業省 営業秘密管理指針（令和7年3月改訂）' },
+      { url: 'https://www.meti.go.jp/policy/anpo/seminer/shiryo/eigyohimitsu.pdf', type: 'government', label: '経済産業省 秘密情報は大切な財産です' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/data.html', type: 'government', label: '経済産業省 限定提供データと利活用' },
     ],
   },
   {
@@ -1322,15 +1342,19 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '通信販売の返品ルール（特定商取引法）',
       statement:
-        '通信販売にクーリング・オフ制度はないが、広告に返品特約の表示がない場合、購入者は商品到着日から起算して8日以内であれば' +
-        '送料自己負担で返品（契約解除）できる。返品特約が表示されていればその内容に従う。',
-      authority: '所管: 消費者庁（特定商取引法）',
-      asOf: '2026-06',
+        '通信販売にクーリング・オフ制度はない。広告に返品特約の表示がない場合、購入者は商品の引渡しを受けた日から' +
+        '8日以内であれば、送料を自己負担して契約の申込みの撤回・解除ができる。' +
+        '返品特約を広告に表示していればその内容に従うので、「返品不可」とするなら広告に表示しておく必要がある' +
+        '（表示の仕方は消費者庁の返品特約の表示についてのガイドラインに従う）。' +
+        '返品の可否とは別に、申込みの最終確認画面の表示義務が令和3年改正で加わっている（定期購入の表示規制を参照）。',
+      authority: '所管: 消費者庁（特定商取引法第15条の3）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特商法ガイド 通信販売' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売' },
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20200331ra05.pdf', type: 'government', label: '消費者庁 通信販売における返品特約の表示についてのガイドライン' },
       { url: 'https://www.no-trouble.caa.go.jp/case/mailorder/case01.html', type: 'government', label: '消費者庁 通信販売の事例' },
-      { url: 'https://kigyobengo.com/blog/1678', type: 'media', label: '通信販売の返品 解説' },
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20080601sp04.pdf', type: 'government', label: '消費者庁 広告に返品特約がない場合は8日間以内であれば返品も可能に' },
     ],
   },
   {
@@ -1869,14 +1893,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '介護休業と介護休業給付金',
       statement:
         '労働者は、要介護状態にある対象家族1人につき通算93日まで、3回を上限に分割して介護休業を取得できる。' +
-        '一定要件を満たす雇用保険被保険者には、休業開始時賃金日額の67%相当額の介護休業給付金が支給される。',
+        '対象家族は配偶者（事実婚を含む）・父母・子・祖父母・兄弟姉妹・孫・配偶者の父母。' +
+        '一定要件を満たす雇用保険被保険者には、休業開始時賃金日額の67％相当額の介護休業給付金が支給される。' +
+        'これとは別に介護休暇があり、年5日（対象家族が2人以上なら10日）まで時間単位でも取得できる。' +
+        '労使協定で対象から外せるのは、入社1年未満の者・申出の日から93日以内に雇用関係が終了する者・' +
+        '1週間の所定労働日数が2日以下の者に限られる。' +
+        '2025年4月1日からは介護離職防止のための個別の周知・意向確認と雇用環境整備が事業主の義務になった。' +
+        '継続雇用期間6か月未満を介護休暇の対象から外す労使協定を結んでいた場合は締結し直す必要がある' +
+        '（同改正でこの除外ができなくなったため、古い協定のままだと運用が法に合わない）。',
       authority: '所管: 厚生労働省（育児・介護休業法／雇用保険法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト' },
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html', type: 'government', label: '厚生労働省 Q&A 介護休業給付（67%）' },
-      { url: 'https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-2/w-2-12/', type: 'municipality', label: '東京都 両立支援ポータル 介護休業中の給与' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト 介護休業' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/law-amendment/', type: 'government', label: '厚生労働省 介護休業制度特設サイト 法改正のポイント' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001407488.pdf', type: 'government', label: '厚生労働省 育児・介護休業法 令和6年改正内容の解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html', type: 'government', label: '厚生労働省 介護休業給付に関するQ&A' },
     ],
   },
   {

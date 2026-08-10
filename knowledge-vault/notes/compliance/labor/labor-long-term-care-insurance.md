@@ -31,9 +31,9 @@ aliases:
 - [厚生労働省 介護保険の保険料](https://www.mhlw.go.jp/topics/kaigo/zaisei/sikumi_04.html) `公的`
 
 ## 関連概念
-- [[bizlaw-long-term-care-insurance|介護保険法]] — 出典を共有
+- [[bizlaw-long-term-care-insurance|介護保険法]] — 語彙が近い
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 同分野の近傍
-- [[labor-care-leave|介護休業と介護休業給付金]] — 同分野の近傍
+- [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

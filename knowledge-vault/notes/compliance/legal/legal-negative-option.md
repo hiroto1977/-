@@ -40,7 +40,7 @@ aliases:
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
-- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

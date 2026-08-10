@@ -39,7 +39,6 @@ aliases:
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
-- [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

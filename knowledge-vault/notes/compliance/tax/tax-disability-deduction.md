@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 語彙が近い
-- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
 - [[tax-dependent-deduction|扶養控除]] — 語彙が近い
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
 - [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
 - [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
-- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

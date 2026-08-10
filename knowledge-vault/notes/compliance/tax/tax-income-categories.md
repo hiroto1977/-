@@ -35,6 +35,7 @@ aliases:
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 語彙が近い
 - [[bizlaw-income-tax-act|所得税法]] — 語彙が近い
 - [[tax-reduced-rate|消費税の軽減税率制度]] — 出典を共有
+- [[tax-transfer-pricing|移転価格税制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

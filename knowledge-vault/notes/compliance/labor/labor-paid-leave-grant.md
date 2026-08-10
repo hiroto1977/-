@@ -31,9 +31,16 @@ aliases:
 - [年次有給休暇の付与 解説](https://biz.moneyforward.com/payroll/basic/83032/) `メディア`
 
 ## 関連概念
+- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 語彙が近い
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 出典を共有
-- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 同分野の近傍
-- [[labor-average-wage|平均賃金（労働基準法12条）]] — 同分野の近傍
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
+- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

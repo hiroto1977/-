@@ -2,7 +2,7 @@
 title: "keisan.nta.go.jp"
 type: source-domain
 host: "keisan.nta.go.jp"
-cite_count: 8
+cite_count: 9
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # keisan.nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（公的 8）
+> [!info] 出典ドメイン索引 ・ 引用 **9 件**（公的 9）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,7 @@ tags:
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁確定申告書等作成コーナー2割特例
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 国税庁一括償却資産とは
 - [[tax-securities-account|上場株式等の特定口座制度]] — 国税庁特定口座（源泉徴収あり）とは
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁確定申告書等作成コーナー簡易課税制度とは
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 国税庁確定申告書等作成コーナー掛金控除
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 国税庁相続税申告要否判定小規模宅地等
 

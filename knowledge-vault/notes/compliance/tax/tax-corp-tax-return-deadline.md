@@ -33,7 +33,14 @@ aliases:
 ## 関連概念
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 語彙が近い
-- [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
+- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,9 +31,16 @@ aliases:
 - [労働基準法34条 休憩の3原則 解説](https://biz.moneyforward.com/payroll/basic/87993/) `メディア`
 
 ## 関連概念
-- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
-- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
-- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
+- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

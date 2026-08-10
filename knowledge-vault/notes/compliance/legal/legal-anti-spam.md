@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-anti-spam-act|特定電子メール法]] — 分野横断
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 同分野の近傍
 - [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 同分野の近傍
-- [[legal-pse|電気用品安全法とPSEマーク制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

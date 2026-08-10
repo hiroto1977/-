@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 同分野の近傍
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

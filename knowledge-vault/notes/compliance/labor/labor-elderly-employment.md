@@ -34,8 +34,13 @@ aliases:
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 語彙が近い
 - [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 分野横断
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 分野横断
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
-- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 同分野の近傍
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
+- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

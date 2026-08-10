@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 261
+cite_count: 263
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **261 件**（公的 261）
+> [!info] 出典ドメイン索引 ・ 引用 **263 件**（公的 263）
 
 ## このドメインを出典とする項目
 
@@ -59,8 +59,10 @@ tags:
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 厚生労働省労災かくしは犯罪です
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 厚生労働省死傷病報告の電子申請義務化
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 厚生労働省労働基準法FAQ休憩時間
-- [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省Q&A介護休業給付（67%）
-- [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省介護休業制度特設サイト
+- [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省介護休業制度特設サイト介護休業
+- [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省介護休業制度特設サイト法改正のポイント
+- [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省介護休業給付に関するQ&A
+- [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省育児・介護休業法令和6年改正内容の解説
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 厚生労働省化学物質による労働災害防止のための新たな規制
 - [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]] — 厚生労働省子の看護休暇の見直し（改正内容）
 - [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]] — 厚生労働省育児・介護休業等の規則の規定例（令和7年改正対応）

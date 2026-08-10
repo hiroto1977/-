@@ -31,9 +31,10 @@ aliases:
 - [厚生労働省 こころの耳 管理監督者 用語解説](https://kokoro.mhlw.go.jp/glossaries/word-1718/) `メディア`
 
 ## 関連概念
+- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 語彙が近い
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 出典を共有
-- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 同分野の近傍
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 同分野の近傍
 - [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 同分野の近傍
 
 ## 関連

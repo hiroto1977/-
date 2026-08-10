@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 分野横断
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同分野の近傍
 - [[bizlaw-employer-liability|使用者責任（民法715条）]] — 同分野の近傍
-- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

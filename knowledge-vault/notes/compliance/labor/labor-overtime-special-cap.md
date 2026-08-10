@@ -34,6 +34,7 @@ aliases:
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 語彙が近い
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 分野横断
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

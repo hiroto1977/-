@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 語彙が近い
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 語彙が近い
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
 - [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有
@@ -39,7 +40,6 @@ aliases:
 - [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
 - [[subsidy-zeh|ZEH支援事業]] — 出典を共有
-- [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -386,6 +386,10 @@
       "legal-personal-guarantee-reform"
     ],
     [
+      "legal-mailorder-return",
+      "legal-subscription-sales"
+    ],
+    [
       "legal-patent-right",
       "legal-trademark"
     ],
@@ -448,6 +452,10 @@
     [
       "tax-income-categories",
       "tax-loss-offsetting"
+    ],
+    [
+      "tax-invoice-input-credit",
+      "tax-invoice-small-amount-special"
     ],
     [
       "tax-platform-taxation",

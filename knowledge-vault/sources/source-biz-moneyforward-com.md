@@ -2,7 +2,7 @@
 title: "biz.moneyforward.com"
 type: source-domain
 host: "biz.moneyforward.com"
-cite_count: 26
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # biz.moneyforward.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（メディア 26）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（メディア 25）
 
 ## このドメインを出典とする項目
 
@@ -31,7 +31,6 @@ tags:
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — マネーフォワード会社設立の届出
 - [[tax-corp-interim-return|法人税の中間申告]] — マネーフォワード法人税の中間納付
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 法人税の申告期限解説
-- [[tax-employment-income-deduction|給与所得控除]] — マネーフォワード給与所得控除
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — マネーフォワードワンストップ特例
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — マネーフォワードインボイス制度における軽減措置の解説
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — マネーフォワード少額特例の解説

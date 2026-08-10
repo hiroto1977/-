@@ -31,8 +31,8 @@ aliases:
 - [神奈川労働局 平均賃金について](https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/hourei_seido_tetsuzuki/saiteichingin_chinginseido/heikinchi.html) `公的`
 
 ## 関連概念
+- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
 - [[labor-paid-leave-grant|年次有給休暇の付与]] — 同分野の近傍
-- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

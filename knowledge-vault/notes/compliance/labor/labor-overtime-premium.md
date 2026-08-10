@@ -35,6 +35,12 @@ aliases:
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 語彙が近い
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 語彙が近い
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

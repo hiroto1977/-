@@ -37,10 +37,10 @@ aliases:
 - [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 分野横断
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
-- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
-- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

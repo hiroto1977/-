@@ -2,7 +2,7 @@
 title: "no-trouble.caa.go.jp"
 type: source-domain
 host: "no-trouble.caa.go.jp"
-cite_count: 23
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # no-trouble.caa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（公的 23）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（公的 25）
 
 ## このドメインを出典とする項目
 
@@ -32,7 +32,9 @@ tags:
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 消費者庁特商法・割賦販売法改正（個別クレジット規制）
 - [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 消費者庁特定商取引法ガイド通信販売広告
 - [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 消費者庁通信販売広告Q&A
-- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 消費者庁特商法ガイド通信販売
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 消費者庁広告に返品特約がない場合は8日間以内であれば返品も可能に
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 消費者庁特定商取引法ガイド通信販売
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 消費者庁通信販売における返品特約の表示についてのガイドライン
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 消費者庁通信販売の事例
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 消費者庁売買契約に基づかないで送付された商品Q&A
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 消費者庁特商法逐条解説電話勧誘販売（16条・17条）

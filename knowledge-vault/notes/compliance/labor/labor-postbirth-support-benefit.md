@@ -35,12 +35,12 @@ aliases:
 
 ## 関連概念
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 語彙が近い
-- [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 分野横断
 - [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 出典を共有
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 出典を共有
 - [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 出典を共有
 - [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 出典を共有
+- [[labor-care-leave|介護休業と介護休業給付金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

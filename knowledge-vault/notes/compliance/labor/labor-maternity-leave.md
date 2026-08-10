@@ -32,8 +32,15 @@ aliases:
 
 ## 関連概念
 - [[labor-maternity-allowance|健康保険の出産手当金]] — 語彙が近い
-- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 同分野の近傍
-- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
+- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

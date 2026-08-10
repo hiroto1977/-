@@ -39,8 +39,8 @@ aliases:
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 語彙が近い
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 分野横断
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
-- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
+- [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

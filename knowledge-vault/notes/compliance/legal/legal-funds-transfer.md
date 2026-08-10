@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-payment-services-act|資金決済法]] — 分野横断
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 同分野の近傍
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍
+- [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

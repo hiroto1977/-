@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[eh-1996|1996年（平成8年）]] — 出典を共有
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 同分野の近傍
-- [[tax-simplified-consumption|消費税の簡易課税制度]] — 同分野の近傍
+- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

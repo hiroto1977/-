@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 語彙が近い
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
-- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
-- [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
-- [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
-- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

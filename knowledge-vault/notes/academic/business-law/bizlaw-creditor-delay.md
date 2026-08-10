@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-earnest-money|手付（民法557条）]] — 出典を共有
 - [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 出典を共有
 - [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
-- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
-- [[bizlaw-risk-bearing|危険負担（民法536条）]] — 同分野の近傍
+- [[bizlaw-public-order|公序良俗（民法90条）]] — 出典を共有
+- [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

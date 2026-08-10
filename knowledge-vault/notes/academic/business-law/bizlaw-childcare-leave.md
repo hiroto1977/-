@@ -31,7 +31,6 @@ aliases:
 - [日本大百科全書（ニッポニカ）育児・介護休業法 — 1991年制定・1995年介護追加の沿革](https://japanknowledge.com/contents/nipponica/sample_koumoku.html?entryid=2239) `リファレンス`
 
 ## 関連概念
-- [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 語彙が近い
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 分野横断
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 分野横断

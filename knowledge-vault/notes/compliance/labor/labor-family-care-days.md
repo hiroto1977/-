@@ -31,9 +31,10 @@ aliases:
 - [東京都 育児・介護休業法の概要](https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-1/ikuji-kaigo/) `自治体`
 
 ## 関連概念
-- [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 同分野の近傍
+- [[labor-care-leave|介護休業と介護休業給付金]] — 同分野の近傍
+- [[labor-childcare-leave-2025|育児・介護休業法 2025年4月改正]] — 同分野の近傍
+- [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
