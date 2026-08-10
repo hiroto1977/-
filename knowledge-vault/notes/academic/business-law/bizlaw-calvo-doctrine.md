@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

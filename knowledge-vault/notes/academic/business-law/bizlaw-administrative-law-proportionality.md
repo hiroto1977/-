@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]] — 同分野の近傍
 - [[bizlaw-receivables-security|集合債権譲渡担保（将来債権譲渡）]] — 同分野の近傍
+- [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — 同分野の近傍
 - [[bizlaw-utility-model|実用新案法]] — 同分野の近傍
 
 ## 関連

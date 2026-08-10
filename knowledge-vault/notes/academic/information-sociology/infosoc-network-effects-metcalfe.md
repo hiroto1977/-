@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-Robert Metcalfeが1983年に提唱したネットワーク効果の法則で、通信ネットワークの価値はノード数nの二乗（V∝n²）に比例すると定式化される。George Gilderはこれを帯域幅の指数的増大と結びつけ、Nicholas Economidesは補完性理論によりネットワーク外部性の経済的基盤を体系化した。Briscoe・Odlyzko・Tillyはジップの法則を援用しV∝n・log(n)を代替モデルとして提示したが、Zhang他（2015）はFacebook・Tencent実データで二乗則を実証的に支持した。
+Robert Metcalfe が1980年代に提唱したネットワーク効果の法則で、通信ネットワークの価値はノード数 n の二乗（V∝n²）に比例すると定式化される——n 台の機器が作れる接続の組は n(n−1)/2 であり、費用が n に比例して増えるのに対し価値が二乗で増えるため、両者が交差する臨界規模を超えれば導入が正当化されるという、イーサネット普及期の営業論理が原型である（命名は Gilder による）。Economides（1996）は、ネットワーク外部性を構成要素の補完性として定式化し、臨界質量・期待によって左右される普及・互換性と標準化競争・ロックインという産業組織論の分析枠組みに載せた。評価をめぐっては、Briscoe・Odlyzko・Tilly（2006）が、接続の価値は一様ではなくジップ則的に逓減するとして V∝n log n を対置し、二乗則の過大評価がバブル的な事業計画を正当化したと批判したのに対し、Metcalfe 自身（2013）が Facebook の実データで二乗則の適合を示し、Zhang ら（2015）も Tencent と Facebook の売上データで二乗則を実証的に支持した——実務では登録者数と活動的利用者の区別や価値の測り方に結果が依存する点に注意を要する。放送型の n に比例するサーノフの法則、グループ形成まで数える 2 のn乗のリードの法則と並ぶ規模と価値の関係則の代表であり、プラットフォームや通信網、暗号資産ネットワークの評価にも援用される、ネットワーク経済の基礎法則である。
 
 ## 提唱者・初出
 Robert Metcalfe ／ George Gilder ／ Nicholas Economides
@@ -40,7 +40,7 @@ Robert Metcalfe ／ George Gilder ／ Nicholas Economides
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
 - [[infosoc-technical-debt|技術的負債]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[infosoc-computational-journalism|計算論的ジャーナリズムとデータ・ドリブン報道の社会学]] — 同分野の近傍
+- [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

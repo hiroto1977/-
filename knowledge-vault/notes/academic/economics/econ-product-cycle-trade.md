@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 同分野の近傍
+- [[econ-kemp-wan-customs-union|ケンプ＝ウァンの定理（Kemp-Wan Theorem／1976）——どんな国の組み合わせでも、域外との貿易を変えない共通関税で必ず厚生改善的な関税同盟をつくれる]] — 同分野の近傍
 - [[econ-tariff-jumping-fdi|関税回避型直接投資——貿易障壁が誘発する海外直接投資の理論]] — 同分野の近傍
 
 ## 関連

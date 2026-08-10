@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-rybczynski|リブチンスキー定理]] — 語彙が近い
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同じ思想家
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家

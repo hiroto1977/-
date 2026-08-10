@@ -37,7 +37,6 @@ aliases:
 - [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 同分野の近傍
-- [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

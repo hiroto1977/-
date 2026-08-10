@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Optimum tariff — 最適関税と交易条件の国際経済学](https://en.wikipedia.org/wiki/Optimum_tariff) `リファレンス`
 
 ## 関連概念
-- [[econ-optimal-tariff|最適関税論]] — 語彙が近い
 - [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
 - [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]] — 同じ思想家
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
@@ -39,6 +38,7 @@ aliases:
 - [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
 - [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+- [[econ-optimal-tariff|最適関税論]] — 同じ思想家
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
 

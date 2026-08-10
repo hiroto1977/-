@@ -38,8 +38,8 @@ aliases:
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 同じ思想家
 - [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同じ思想家
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同分野の近傍
-- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

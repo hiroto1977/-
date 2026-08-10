@@ -37,7 +37,6 @@ aliases:
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
 - [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

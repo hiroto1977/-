@@ -30,8 +30,8 @@ Murray C. Kemp・Henry Y. Wan Jr.（1976年論文・定理の証明者） ／ �
 - [IDEAS/RePEc 収録の書誌（Kemp & Wan [1976], JIE 6(1):95-97・域外との純貿易を不変に保つ共通関税＋一括移転による必ずパレート改善的な関税同盟の存在証明）](https://ideas.repec.org/a/eee/inecon/v6y1976i1p95-97.html) `リファレンス`
 
 ## 関連概念
+- [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
 - [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — 同分野の近傍
-- [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

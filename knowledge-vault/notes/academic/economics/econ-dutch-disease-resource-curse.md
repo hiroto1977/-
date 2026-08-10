@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Dutch disease — オランダ病と資源の呪い](https://en.wikipedia.org/wiki/Dutch_disease) `リファレンス`
 
 ## 関連概念
-- [[econ-dutch-disease-theory|オランダ病理論]] — 語彙が近い
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
 - [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
 - [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
 - [[econ-resource-curse-sachs-warner|資源の呪い——天然資源の豊富さが経済発展を阻害する逆説]] — 同じ思想家
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
+- [[econ-dutch-disease-theory|オランダ病理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

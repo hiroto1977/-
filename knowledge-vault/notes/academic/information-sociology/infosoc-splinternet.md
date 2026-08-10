@@ -34,7 +34,7 @@ aliases:
 - [[eh-1986|1986年（昭和61年）]] — 出典を共有
 - [[eh-2007|2007年（平成19年）]] — 出典を共有
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同分野の近傍
-- [[infosoc-quantified-self-lifelogging|数値化される自己（クワンティファイド・セルフ）と自己追跡の社会学]] — 同分野の近傍
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

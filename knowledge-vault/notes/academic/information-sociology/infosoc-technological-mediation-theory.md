@@ -32,9 +32,8 @@ Peter-Paul Verbeek／Don Ihde／Bruno Latour／Andrew Feenberg／Albert Borgmann
 
 ## 関連概念
 - [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 同じ思想家
-- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同分野の近傍
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同分野の近傍
 - [[infosoc-phenomenological-technology|技術の現象学]] — 同分野の近傍
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
