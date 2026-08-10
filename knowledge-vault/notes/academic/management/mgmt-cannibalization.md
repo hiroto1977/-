@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 同分野の近傍
-- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

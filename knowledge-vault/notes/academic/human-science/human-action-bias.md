@@ -35,6 +35,7 @@ aliases:
 - [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
 - [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 同分野の近傍
+- [[human-motion-aftereffect-waterfall|運動残効（滝の錯視）——一方向の運動を見続けた後に逆向きの運動が見える]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

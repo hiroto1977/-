@@ -32,8 +32,8 @@ aliases:
 - [The Nobel Prize — 1992年経済学賞 ゲーリー・ベッカー 公式プレスリリース](https://www.nobelprize.org/prizes/economic-sciences/1992/press-release/) `公的`
 
 ## 関連概念
-- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 語彙が近い
 - [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
+- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 同じ思想家
 - [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
 - [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家

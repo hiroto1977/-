@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-leverage-cycle|レバレッジ・サイクル]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

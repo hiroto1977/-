@@ -32,9 +32,9 @@ aliases:
 - [PMC/NIH 査読論文 — ウルフ&ケリーの「self-knowledge through numbers」定義](https://pmc.ncbi.nlm.nih.gov/articles/PMC8896409/) `学術`
 
 ## 関連概念
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 語彙が近い
 - [[infosoc-quantified-self-lifelogging|数値化される自己（クワンティファイド・セルフ）と自己追跡の社会学]] — 語彙が近い
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
-- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同じ思想家
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有

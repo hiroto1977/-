@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — 同じ思想家
 - [[infosoc-digital-identity|デジタルアイデンティティ]] — 出典を共有
 - [[infosoc-fourth-industrial-revolution|第四次産業革命]] — 同分野の近傍
+- [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 同分野の近傍
 
 ## 関連

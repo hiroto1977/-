@@ -40,7 +40,7 @@ aliases:
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
-- [[infosoc-data-justice|データ正義（Data Justice）]] — 同分野の近傍
+- [[infosoc-digital-dualism|デジタル・デュアリズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

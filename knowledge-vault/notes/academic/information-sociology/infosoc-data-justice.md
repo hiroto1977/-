@@ -38,7 +38,6 @@ aliases:
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
 - [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同分野の近傍
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同分野の近傍
-- [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

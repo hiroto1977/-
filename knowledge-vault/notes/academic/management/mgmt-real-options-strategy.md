@@ -33,6 +33,7 @@ Edward H. Bowman ／ Dileep Hurry ／ Rita Gunther McGrath ／ Lenos Trigeorgis
 ## 関連概念
 - [[mgmt-freemium|フリーミアム]] — 同分野の近傍
 - [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
+- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

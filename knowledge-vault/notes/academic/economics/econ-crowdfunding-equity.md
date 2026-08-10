@@ -31,6 +31,7 @@ Belleflamme, Paul （2014 Journal of Business Venturing）／Lambert, Thomas ／
 
 ## 関連概念
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同分野の近傍
+- [[econ-money-creation|信用創造と貨幣乗数]] — 同分野の近傍
 - [[econ-debt-overhang|デット・オーバーハング]] — 同分野の近傍
 
 ## 関連
