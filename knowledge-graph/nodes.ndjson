@@ -1,5 +1,5 @@
 {"id":"agile-development","collection":"academic","category":"management","categoryLabel":"経営学","title":"アジャイルソフトウェア開発","year":2001,"authors":["サザーランド|ジ","シュウェイバー|ケ","ファウラー|マ","ベック|ケ"],"degree":68}
-{"id":"antimonopoly-surcharge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"課徴金制度（独占禁止法）","year":1977,"authors":[],"degree":72}
+{"id":"antimonopoly-surcharge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"課徴金制度（独占禁止法）","year":1977,"authors":[],"degree":74}
 {"id":"bizlaw-abuse-of-dominant-position-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU競争法における支配的地位の濫用（第102条）","year":null,"authors":["コワーヒ|ウ","フォックス|エ","ベスタゲル|マ","ラング|ジ"],"degree":48}
 {"id":"bizlaw-abuse-of-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"権利濫用の禁止（民法1条3項）","year":1965,"authors":[],"degree":2}
 {"id":"bizlaw-abuse-superior-position","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"優越的地位の濫用（独占禁止法）","year":null,"authors":[],"degree":4}
@@ -51,10 +51,10 @@
 {"id":"bizlaw-arbitration-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"仲裁法","year":2003,"authors":["uncitral|"],"degree":9}
 {"id":"bizlaw-arbitration-adr","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度","year":null,"authors":["サンダー|フ","ボーン|ゲ","ラウ|ア"],"degree":12}
 {"id":"bizlaw-arbitration-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"仲裁条項——紛争を裁判ではなく仲裁で解決する合意","year":null,"authors":["uncitral|","ボーン|ゲ"],"degree":12}
-{"id":"bizlaw-assignment-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債権譲渡——契約上の権利を第三者に移転する仕組み","year":null,"authors":["コービン|ア","ストーリー|ジ","ホールズワース|ウ"],"degree":21}
+{"id":"bizlaw-assignment-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債権譲渡——契約上の権利を第三者に移転する仕組み","year":null,"authors":["コービン|ア","ストーリー|ジ","ホールズワース|ウ"],"degree":20}
 {"id":"bizlaw-assignment-of-claims","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債権譲渡（民法466条）","year":2017,"authors":[],"degree":5}
 {"id":"bizlaw-assignment-of-contracts","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約上の権利の譲渡——債権譲渡の法的要件と制限","year":null,"authors":["ギルモア|グ","ゴエッツ|チ","ファーンズワース|ア"],"degree":14}
-{"id":"bizlaw-assignment-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"譲渡担保","year":2025,"authors":[],"degree":22}
+{"id":"bizlaw-assignment-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"譲渡担保","year":2025,"authors":[],"degree":21}
 {"id":"bizlaw-assumption-of-debt","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債務引受（民法470条）","year":2017,"authors":[],"degree":5}
 {"id":"bizlaw-assumption-of-risk","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁","year":1929,"authors":["cal|k","james|f","restatement|","カードーゾ|ベ"],"degree":11}
 {"id":"bizlaw-attractive-nuisance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"誘引的妨害物の法理（Attractive Nuisance Doctrine）","year":1873,"authors":["bohlen|f","prosser|w","restatement|","stout|p"],"degree":10}
@@ -66,7 +66,7 @@
 {"id":"bizlaw-bankruptcy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"破産法","year":2004,"authors":[],"degree":17}
 {"id":"bizlaw-bankruptcy-insolvency-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論","year":null,"authors":["ウォーレン|エ","ジャクソン|ト","ベアード|ダ"],"degree":18}
 {"id":"bizlaw-battle-of-the-forms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"書式の戦い","year":null,"authors":["gilmore|g","honnold|j","llewellyn|k","murray|j","viscasillas|m"],"degree":15}
-{"id":"bizlaw-beneficiary-principle","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"受益者原則——信託には執行できる受益者が必要である","year":null,"authors":["エヴァーシェッド|ロ","グラント|ウ","マクギー|ジ","メグリー|ロ"],"degree":14}
+{"id":"bizlaw-beneficiary-principle","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"受益者原則——信託には執行できる受益者が必要である","year":null,"authors":["エヴァーシェッド|ロ","グラント|ウ","マクギー|ジ","メグリー|ロ"],"degree":15}
 {"id":"bizlaw-benefit-corporation-legislation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ベネフィット・コーポレーション法——利益と公益の二重目的法人","year":null,"authors":["ギルバート|ジ","クラーク|ウ","スタウト|リ","マイヤー|コ","モンゴメリー|ジ"],"degree":4}
 {"id":"bizlaw-benefit-of-time","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"期限の利益（民法136条）","year":null,"authors":["law|e"],"degree":28}
 {"id":"bizlaw-berle-means-thesis","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る","year":1932,"authors":["berle|a","demsetz|h","means|g","property|t"],"degree":2}
@@ -76,7 +76,7 @@
 {"id":"bizlaw-bill-of-exchange-uncitral-convention","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み","year":null,"authors":["uncitral|","シュミットホフ|ク","シュレッサー|ル"],"degree":19}
 {"id":"bizlaw-bill-of-lading","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"船荷証券——海上運送における受取証・運送契約・権利証券","year":null,"authors":["スクラットン|ト","ストーリー|ジ","テッタリー|ウ"],"degree":15}
 {"id":"bizlaw-bills-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"手形法","year":1932,"authors":[],"degree":4}
-{"id":"bizlaw-blue-pencil-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ブルーペンシル法理","year":null,"authors":["finkin|m","nordenfelt|f","posner|r"],"degree":10}
+{"id":"bizlaw-blue-pencil-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ブルーペンシル法理","year":1894,"authors":["blake|h","nordenfelt|n"],"degree":9}
 {"id":"bizlaw-blue-sky-laws","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ブルースカイ法（州証券規制）","year":null,"authors":["long|j","loss|l","seligman|j"],"degree":11}
 {"id":"bizlaw-bolam-test","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ボーラム・テスト——専門家の過失をめぐる注意義務の基準","year":null,"authors":["ブラウン|ロ","ボーラム|"],"degree":4}
 {"id":"bizlaw-bona-fide-acquisition","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"即時取得（善意取得・民法192条）","year":null,"authors":[],"degree":14}
@@ -89,7 +89,7 @@
 {"id":"bizlaw-business-judgment-rule-enhanced","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"経営判断原則の拡張理論","year":null,"authors":["allen|w","bainbridge|s","gilson|r","kraakman|r"],"degree":12}
 {"id":"bizlaw-business-necessity-defense","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事業上の必要性の抗弁","year":null,"authors":["burger|w","rutherglen|g","selmi|m"],"degree":3}
 {"id":"bizlaw-business-purpose-doctrine-gregory-helvering","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認","year":1935,"authors":["elkins|d","gregory|e","hand|l","sutherland|g"],"degree":2}
-{"id":"bizlaw-calvo-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カルヴォ条項（Calvo Clause）","year":1868,"authors":["カルヴォ|カ"],"degree":7}
+{"id":"bizlaw-calvo-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カルヴォ条項（Calvo Clause）","year":1868,"authors":["カルヴォ|カ"],"degree":6}
 {"id":"bizlaw-calvo-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カルヴォ・ドクトリン（Calvo Doctrine）","year":1868,"authors":["カルヴォ|カ"],"degree":3}
 {"id":"bizlaw-capacity-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約締結能力——拘束力ある契約を結ぶための法的な資格","year":null,"authors":["ウィリストン|サ","コービン|ア","ブラックストン|ウ"],"degree":20}
 {"id":"bizlaw-caparo-v-dickman","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カパロ対ディックマン——過失責任における「注意義務」の三段階テスト","year":null,"authors":["インダストリーズ|カ","オリヴァー|ロ","ディックマン|","ブリッジ|ロ"],"degree":4}
@@ -130,7 +130,7 @@
 {"id":"bizlaw-comparative-negligence","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失相殺（民法418条・722条2項）","year":null,"authors":[],"degree":2}
 {"id":"bizlaw-competition-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析","year":null,"authors":["カーン|リ","ボーク|ロ","ポズナー|リ"],"degree":16}
 {"id":"bizlaw-competition-law-abuse-dominance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制","year":null,"authors":["competition|","ニコルソン|ヴ","フォックス|エ"],"degree":5}
-{"id":"bizlaw-competition-law-abuse-dominant-position","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"市場支配的地位の濫用——EU競争法102条の規制枠組み","year":null,"authors":["ウィッシュ|リ","コラー|ヴ","ベイリー|デ","モンティ|ジ","ヴェステアー|マ"],"degree":10}
+{"id":"bizlaw-competition-law-abuse-dominant-position","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"市場支配的地位の濫用——EU競争法102条の規制枠組み","year":null,"authors":["ウィッシュ|リ","コラー|ヴ","ベイリー|デ","モンティ|ジ","ヴェステアー|マ"],"degree":9}
 {"id":"bizlaw-competition-law-digital-markets","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"デジタル市場競争法と市場支配的地位の濫用規制","year":null,"authors":["ウー|テ","カーン|リ","クレーマー|ジ","ヴォゲル|ダ"],"degree":12}
 {"id":"bizlaw-competition-law-leniency-program","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カルテル規制とリニエンシー制度——自主申告に基づく独禁法エンフォースメントの革新","year":null,"authors":["ハリントン|ジ"],"degree":3}
 {"id":"bizlaw-competition-law-market-definition","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競争法における市場画定とHHI集中度分析の法的枠組み","year":null,"authors":["アレダ|フ","ティロール|ジ","フォックス|エ","リビングストン|ロ"],"degree":16}
@@ -193,7 +193,7 @@
 {"id":"bizlaw-crown-jewel-defense","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クラウンジュエル防衛（Crown Jewel Defense）","year":1986,"authors":["dann|l","deangelo|h","holdings|f","revlon|i"],"degree":17}
 {"id":"bizlaw-culpa-in-contrahendo","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約締結上の過失","year":1861,"authors":[],"degree":3}
 {"id":"bizlaw-cy-pres","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"サイプレ原則（近接原則／Cy-près doctrine）","year":1867,"authors":["act|c","gaos|f","mass|j","will|n"],"degree":6}
-{"id":"bizlaw-cy-pres-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"サイプレ法理（Cy Pres Doctrine）","year":1867,"authors":["gaos|f","phillips|j"],"degree":5}
+{"id":"bizlaw-cy-pres-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"サイプレ法理（Cy Pres Doctrine）","year":1867,"authors":["gaos|f","phillips|j"],"degree":6}
 {"id":"bizlaw-data-governance-data-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"データガバナンス法制——EU Data Act・データ利活用促進法とデータ共有の権利・義務","year":null,"authors":[],"degree":2}
 {"id":"bizlaw-data-protection-gdpr","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範","year":null,"authors":["シミティス|ス","シュワルツ|パ","マイヤー|ヴ"],"degree":12}
 {"id":"bizlaw-data-protection-gdpr-adequacy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"GDPRと十分性認定——個人データの越境移転とプライバシー保護の国際的枠組み","year":null,"authors":["シュレムス|マ","ブッタレッリ|ジ","レディング|ヴ"],"degree":7}
@@ -201,7 +201,7 @@
 {"id":"bizlaw-dation-in-payment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"代物弁済（民法482条）","year":2017,"authors":[],"degree":12}
 {"id":"bizlaw-daubert-standard","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ドーバート基準：専門家証言の許容性判定基準と科学的証拠法の転換","year":null,"authors":["バーガー|マ","バーンスタイン|デ","ブラックマン|ハ"],"degree":3}
 {"id":"bizlaw-de-facto-corporation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事実上の会社——設立手続きに瑕疵があっても会社として扱う法理","year":null,"authors":["アイゼンバーグ|メ","クラーク|ロ","ケアリー|ウ","バーリ|ア"],"degree":10}
-{"id":"bizlaw-de-facto-merger-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事実上の合併の法理（デ・ファクト・マージャー法理）","year":null,"authors":["davis|","deutsch|j","iii|w"],"degree":5}
+{"id":"bizlaw-de-facto-merger-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事実上の合併の法理（デ・ファクト・マージャー法理）","year":null,"authors":["davis|","deutsch|j","iii|w"],"degree":6}
 {"id":"bizlaw-deep-rock-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ディープ・ロック法理","year":null,"authors":["herzog|a","pardo|r","roberts|o","schwarcz|s","zweibel|j"],"degree":12}
 {"id":"bizlaw-defamation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"名誉毀損（刑法230条・民法709条/723条）","year":null,"authors":["e-gov|"],"degree":19}
 {"id":"bizlaw-default-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債務不履行と損害賠償（民法415条）","year":2020,"authors":[],"degree":10}
@@ -229,7 +229,7 @@
 {"id":"bizlaw-doctrine-of-necessaries","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"必需品の法理","year":null,"authors":["blackstone|w","buckley|h","cozens-hardy|h","moulton|j"],"degree":14}
 {"id":"bizlaw-doctrine-of-necessities","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任","year":null,"authors":["ブラックストン|ウ","マーシャル|ジ"],"degree":13}
 {"id":"bizlaw-donatio-mortis-causa","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与","year":null,"authors":["スウォドリング|ウ","マクギー|ジ","メグリー|ロ"],"degree":14}
-{"id":"bizlaw-drag-along-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ドラッグ・アロング権","year":null,"authors":["broughman|b","choi|a","fried|j","gilson|r","smith|g"],"degree":12}
+{"id":"bizlaw-drag-along-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ドラッグ・アロング権","year":null,"authors":["broughman|b","choi|a","fried|j","gilson|r","smith|g"],"degree":11}
 {"id":"bizlaw-dragnet-clause-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"包括担保条項の法理——将来債務を含む担保権の有効性と限界","year":null,"authors":["ギルモア|グ","サマーズ|ロ","ホワイト|ジ"],"degree":20}
 {"id":"bizlaw-duty-of-care","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"善管注意義務（善良な管理者の注意義務）","year":null,"authors":[],"degree":15}
 {"id":"bizlaw-duty-of-care-standard","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"注意義務の基準","year":null,"authors":["allen|w","black|b","eisenberg|m"],"degree":10}
@@ -241,9 +241,9 @@
 {"id":"bizlaw-ebrahimi-westbourne","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散","year":null,"authors":["ウィルバーフォース|ロ","エブラヒミ|","クロス|ロ","ナザール|"],"degree":6}
 {"id":"bizlaw-economic-analysis-of-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派","year":null,"authors":["カラブレイジ|グ","コース|ロ","ベッカー|ゲ","ポズナー|リ"],"degree":37}
 {"id":"bizlaw-economic-duress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消","year":null,"authors":["ゴフ|ロ","バークス|ピ"],"degree":7}
-{"id":"bizlaw-economic-loss-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"純粋経済的損失の法理","year":null,"authors":["calabresi|g","keeton|p","posner|r","prosser|w","rabin|r"],"degree":12}
-{"id":"bizlaw-economic-security-promotion-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"経済安全保障推進法","year":2021,"authors":[],"degree":7}
-{"id":"bizlaw-efficient-breach-theory","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"効率的契約違反論","year":null,"authors":["birmingham|r","friedmann|d","goetz|c","posner|r","scott|r"],"degree":11}
+{"id":"bizlaw-economic-loss-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"純粋経済的損失の法理","year":null,"authors":["calabresi|g","keeton|p","posner|r","prosser|w","rabin|r"],"degree":13}
+{"id":"bizlaw-economic-security-promotion-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"経済安全保障推進法","year":2021,"authors":[],"degree":8}
+{"id":"bizlaw-efficient-breach-theory","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"効率的契約違反論","year":null,"authors":["birmingham|r","friedmann|d","goetz|c","posner|r","scott|r"],"degree":10}
 {"id":"bizlaw-elderly-employment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"高年齢者雇用安定法","year":1971,"authors":[],"degree":5}
 {"id":"bizlaw-election-of-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"救済手段の選択法理（エレクション・オブ・レメディーズ）","year":null,"authors":["brill|h","dobbs|d","williston|s"],"degree":10}
 {"id":"bizlaw-electronic-consumer-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電子消費者契約法","year":2001,"authors":[],"degree":4}
@@ -277,9 +277,9 @@
 {"id":"bizlaw-eu-general-data-protection-regulation-gdpr","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制","year":null,"authors":["アルブレヒト|ヤ","クナー|ク","ハート|ポ","ビグノン|リ","レディング|ヴ"],"degree":5}
 {"id":"bizlaw-exculpatory-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"免責条項の法理：契約上の責任制限・免除とその規制","year":null,"authors":["アダムズ|ジ","ウィルバーフォース|リ","トブリーナー|マ","ブラウンズワード|ロ"],"degree":13}
 {"id":"bizlaw-exequatur","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"エクセクアトゥル（Exequatur）","year":1895,"authors":["berg|a","cornelissen|","guyot|h","munzer|"],"degree":10}
-{"id":"bizlaw-exhaustion-of-local-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国内救済手段の尽尽原則（Exhaustion of Local Remedies）","year":1965,"authors":["icsid|"],"degree":12}
+{"id":"bizlaw-exhaustion-of-local-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国内救済手段の尽尽原則（Exhaustion of Local Remedies）","year":1965,"authors":["icsid|"],"degree":11}
 {"id":"bizlaw-expropriation-compensation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"収用と補償・ハル公式（Expropriation & Hull Formula）","year":1938,"authors":["icsid|","ハル|コ"],"degree":15}
-{"id":"bizlaw-fair-and-equitable-treatment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"公正衡平待遇基準（Fair and Equitable Treatment）","year":2004,"authors":["シュロイアー|ク"],"degree":5}
+{"id":"bizlaw-fair-and-equitable-treatment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"公正衡平待遇基準（Fair and Equitable Treatment）","year":2004,"authors":["シュロイアー|ク"],"degree":6}
 {"id":"bizlaw-fair-use-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フェアユース（公正利用）——著作権の例外と四つの判断要素","year":null,"authors":["ストーリー|ジ","ルヴァル|ピ"],"degree":15}
 {"id":"bizlaw-fault-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失責任の原則と無過失責任","year":null,"authors":["law|e"],"degree":24}
 {"id":"bizlaw-feist-originality","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ファイスト判決と著作権の創作性要件（Feist v. Rural Telephone 1991）——「額に汗」理論の否定と事実の非保護","year":1991,"authors":["o'connor|s","service|f"],"degree":2}
@@ -297,7 +297,7 @@
 {"id":"bizlaw-force-majeure","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不可抗力条項——支配を超えた異常事態による契約上の免責の合意","year":null,"authors":["ケッツ|ハ","トライテル|ギ","ポティエ|ロ","マッケンドリック|ユ"],"degree":9}
 {"id":"bizlaw-force-majeure-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不可抗力の法理","year":null,"authors":["corbin|a","hein|","mckendrick|e","rabel|e","treitel|g"],"degree":15}
 {"id":"bizlaw-forfeiture-of-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"権利失効の原則","year":1781,"authors":["verwirkung|"],"degree":9}
-{"id":"bizlaw-fork-in-the-road","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"分岐条項（Fork-in-the-Road Clause）","year":2009,"authors":["icsid|p","lebanon|t","unctad|"],"degree":17}
+{"id":"bizlaw-fork-in-the-road","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"分岐条項（Fork-in-the-Road Clause）","year":2009,"authors":["icsid|p","lebanon|t","unctad|"],"degree":11}
 {"id":"bizlaw-forum-non-conveniens","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）","year":1947,"authors":["ecr|o","gilbert|g","reyno|p","spiliada|"],"degree":3}
 {"id":"bizlaw-forum-selection","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"裁判管轄合意条項（Forum Selection Clause）","year":1972,"authors":["off-shore|b","shute|c"],"degree":10}
 {"id":"bizlaw-forum-selection-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"合意管轄条項の有効性と国際裁判管轄","year":null,"authors":["バーガー|ウ","ブラックマン|ハ"],"degree":15}
@@ -313,8 +313,8 @@
 {"id":"bizlaw-fraudulent-transfer-avoidance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"詐害行為取消権（詐欺的譲渡回避）","year":null,"authors":["baird|d","carlson|d","jackson|t","reilly|m","sherwin|e"],"degree":11}
 {"id":"bizlaw-freedom-of-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約自由の原則","year":2017,"authors":[],"degree":15}
 {"id":"bizlaw-freelance-protection","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フリーランス保護新法（特定受託事業者取引適正化等法）","year":2023,"authors":[],"degree":3}
-{"id":"bizlaw-frustration-of-purpose","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア","フラー|ロ"],"degree":21}
-{"id":"bizlaw-full-protection-and-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"十分な保護及び安全（Full Protection and Security）","year":1990,"authors":["aapl|","republic|c","unctad|"],"degree":13}
+{"id":"bizlaw-frustration-of-purpose","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア","フラー|ロ"],"degree":22}
+{"id":"bizlaw-full-protection-and-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"十分な保護及び安全（Full Protection and Security）","year":1990,"authors":["aapl|","republic|c","unctad|"],"degree":12}
 {"id":"bizlaw-fundamental-breach","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題","year":null,"authors":["トライテル|ギ"],"degree":6}
 {"id":"bizlaw-general-average","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"共同海損——共通の危険を逃れるための犠牲を全関係者で分担する海法","year":null,"authors":["アボット|チ","ユスティニアヌス|"],"degree":2}
 {"id":"bizlaw-general-incorporated-associations","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"一般社団・財団法人法","year":2006,"authors":[],"degree":5}
@@ -370,9 +370,9 @@
 {"id":"bizlaw-interest-rate-restriction","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"利息制限法","year":1954,"authors":[],"degree":4}
 {"id":"bizlaw-internal-affairs-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則","year":1982,"authors":["america|c","corp|e","debate|c","restatement|"],"degree":10}
 {"id":"bizlaw-internal-control","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内部統制システム（J-SOX・内部統制報告制度）","year":2002,"authors":["coso|s"],"degree":4}
-{"id":"bizlaw-international-arbitration-uncitral","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み","year":null,"authors":["icsid|","uncitral|","サンダース|ピ","ボーン|ゲ"],"degree":28}
+{"id":"bizlaw-international-arbitration-uncitral","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み","year":null,"authors":["icsid|","uncitral|","サンダース|ピ","ボーン|ゲ"],"degree":27}
 {"id":"bizlaw-international-commercial-arbitration","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際商事仲裁とニューヨーク条約の執行規範","year":null,"authors":["パウルソン|ヤ","ボーン|ゲ","ミステリス|ル"],"degree":17}
-{"id":"bizlaw-international-commercial-arbitration-born","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際商事仲裁——ニューヨーク条約体制と仲裁手続法","year":null,"authors":["ガイヤール|エ","サヴェージ|ジ","パウルソン|ヤ","ベルグ|ア","ボーン|ゲ"],"degree":15}
+{"id":"bizlaw-international-commercial-arbitration-born","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際商事仲裁——ニューヨーク条約体制と仲裁手続法","year":null,"authors":["ガイヤール|エ","サヴェージ|ジ","パウルソン|ヤ","ベルグ|ア","ボーン|ゲ"],"degree":16}
 {"id":"bizlaw-international-human-rights-due-diligence","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際人権デューデリジェンス（UNGPs）の法的義務化と企業責任","year":null,"authors":["キニー|キ","ブス|フ","ライリー|ニ","ラギー|ジ"],"degree":9}
 {"id":"bizlaw-international-investment-bit","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際投資法とBIT（二国間投資協定）の投資家保護基準","year":null,"authors":["パウルソン|ヤ","ミステリス|ル","ラウンダー|ア"],"degree":11}
 {"id":"bizlaw-international-trade-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際通商法の基本原則と多角的貿易体制の法的枠組み","year":null,"authors":["ハデック|ロ","ボッシェ|ペ"],"degree":11}
@@ -394,7 +394,7 @@
 {"id":"bizlaw-kyodou-shinken","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"共同親権（2024年民法改正）","year":2022,"authors":[],"degree":2}
 {"id":"bizlaw-labor-collective-bargaining-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較","year":null,"authors":["nlrb|"],"degree":5}
 {"id":"bizlaw-labor-contract-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働契約法","year":2007,"authors":[],"degree":14}
-{"id":"bizlaw-labor-employment-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働法・雇用法：集団的労使関係と個別的雇用保護の法理論","year":null,"authors":["カーン|オ","ストーン|キ"],"degree":12}
+{"id":"bizlaw-labor-employment-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働法・雇用法：集団的労使関係と個別的雇用保護の法理論","year":null,"authors":["カーン|オ","ストーン|キ"],"degree":11}
 {"id":"bizlaw-labor-relations-adjustment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働関係調整法","year":1946,"authors":[],"degree":3}
 {"id":"bizlaw-labor-standards","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働基準法（労働時間・36協定）","year":2018,"authors":[],"degree":14}
 {"id":"bizlaw-labor-standards-ilo-conventions","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際労働基準とILO条約体制の国際労働法","year":null,"authors":["ゴッドフリー|ダ","ヘンリー|ダ","マウッパン|フ"],"degree":2}
@@ -412,7 +412,7 @@
 {"id":"bizlaw-lex-loci-delicti","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法行為地法主義（Lex Loci Delicti）","year":1934,"authors":["jackson|b"],"degree":6}
 {"id":"bizlaw-lex-mercatoria","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"レックス・メルカトーリア（Lex Mercatoria）","year":1961,"authors":["goldman|b","lando|o","schmitthoff|c"],"degree":2}
 {"id":"bizlaw-lien","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"リーエン——債務の弁済まで他人の財産に及ぶ担保的権利","year":null,"authors":["ギルモア|グ","ストーリー|ジ","ブラックストン|ウ"],"degree":15}
-{"id":"bizlaw-lien-priority-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"担保権優先順位の法則","year":null,"authors":["gilmore|g","harris|s","lopucki|l"],"degree":13}
+{"id":"bizlaw-lien-priority-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"担保権優先順位の法則","year":null,"authors":["gilmore|g","harris|s","lopucki|l"],"degree":10}
 {"id":"bizlaw-limited-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株主有限責任の原則","year":null,"authors":[],"degree":5}
 {"id":"bizlaw-liquidated-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定——違約金条項の有効性と違約罰との区別","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":14}
 {"id":"bizlaw-liquidated-damages-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定条項（清算損害賠償条項）","year":null,"authors":["サムナー|ア","ホームズ|オ","ルース|マ"],"degree":10}
@@ -443,7 +443,7 @@
 {"id":"bizlaw-misrepresentation-contract-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示法理——契約締結前の虚偽表示に対する救済体系","year":null,"authors":["カータライト|ジ","トレーテル|ギ","バロウズ|ア","ペール|エ"],"degree":14}
 {"id":"bizlaw-mistake","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"錯誤（民法95条）","year":2020,"authors":[],"degree":2}
 {"id":"bizlaw-mistake-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":23}
-{"id":"bizlaw-mitigation-of-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":13}
+{"id":"bizlaw-mitigation-of-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":14}
 {"id":"bizlaw-money-lending-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"貸金業法","year":2006,"authors":[],"degree":6}
 {"id":"bizlaw-moral-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"著作者人格権（著作権法18〜20条）","year":null,"authors":["law|e"],"degree":29}
 {"id":"bizlaw-mortgage","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"抵当権（民法369条）","year":null,"authors":["law|e"],"degree":17}
@@ -464,9 +464,9 @@
 {"id":"bizlaw-nemo-dat-quod-non-habet","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ネモ・ダット原則（Nemo Dat Quod Non Habet）","year":1878,"authors":["act|s","ukhl|c","ulpian|"],"degree":5}
 {"id":"bizlaw-no-oral-modification-rock","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"口頭変更禁止条項——書面によらない契約変更を封じる約定","year":null,"authors":["サンプション|ロ","トライテル|ガ","ビール|ヒ","ブリッグス|ロ"],"degree":10}
 {"id":"bizlaw-noerr-pennington-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理","year":1961,"authors":["elhauge|e","freight|e","pennington|u","pictures|p"],"degree":10}
-{"id":"bizlaw-nominee-director-conflicts","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ノミニー取締役と利益相反","year":null,"authors":["イースターブルック|フ","ウォーシントン|サ","デービース|ポ"],"degree":17}
+{"id":"bizlaw-nominee-director-conflicts","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ノミニー取締役と利益相反","year":null,"authors":["イースターブルック|フ","ウォーシントン|サ","デービース|ポ"],"degree":18}
 {"id":"bizlaw-nominee-director-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"名義取締役の責任と法的地位","year":null,"authors":["デービース|ポ","ハプト|ク","プレンティス|ダ"],"degree":11}
-{"id":"bizlaw-non-compete-agreements","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競業避止義務契約（ノン・コンピート条項）","year":null,"authors":["クルーガー|ア","シュライ|ダ","マクスウェル|マ","ランツ|オ"],"degree":20}
+{"id":"bizlaw-non-compete-agreements","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競業避止義務契約（ノン・コンピート条項）","year":null,"authors":["クルーガー|ア","シュライ|ダ","マクスウェル|マ","ランツ|オ"],"degree":19}
 {"id":"bizlaw-non-est-factum","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁","year":null,"authors":["アンソン|ウ","ウィルバーフォース|ロ","トライテル|ガ","リード|ロ"],"degree":10}
 {"id":"bizlaw-novation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"更改（民法513条）","year":2017,"authors":[],"degree":3}
 {"id":"bizlaw-npo-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"NPO法（特定非営利活動促進法）","year":1998,"authors":[],"degree":7}
@@ -517,7 +517,7 @@
 {"id":"bizlaw-promissory-estoppel-reliance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約束的禁反言法理","year":null,"authors":["fried|c","fuller|l","perdue|w"],"degree":4}
 {"id":"bizlaw-promissory-note","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約束手形——一定金額の支払を約する二当事者間の流通証券","year":null,"authors":["エイムズ|ジ","チャルマーズ|マ","ルウェリン|カ"],"degree":11}
 {"id":"bizlaw-proper-purpose-howard-smith","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取締役の権限濫用と適正目的の法理——ハワード・スミス対アンポル事件（Howard Smith v Ampol 1974）","year":1974,"authors":["ltd|h","wilberforce|l"],"degree":2}
-{"id":"bizlaw-property-liability-rules","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）","year":1932,"authors":["calabresi|","melamed|","カラブレシ|グ","メラメッド|ダ"],"degree":2}
+{"id":"bizlaw-property-liability-rules","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）","year":1932,"authors":["calabresi|","melamed|","カラブレシ|グ","メラメッド|ダ"],"degree":3}
 {"id":"bizlaw-property-transfer","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"物権変動と対抗要件（民法177条）","year":null,"authors":[],"degree":19}
 {"id":"bizlaw-proportionality-principle","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"比例原則（行政法・EU法）","year":2009,"authors":[],"degree":9}
 {"id":"bizlaw-proprietary-estoppel","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"財産的禁反言——約束への信頼が財産上の権利を生む","year":null,"authors":["ウェイド|ウ","ウォーカー|ロ","マクファーレン|ベ","メグリー|ロ"],"degree":10}
@@ -527,7 +527,7 @@
 {"id":"bizlaw-public-records-management","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"公文書管理法","year":2009,"authors":[],"degree":12}
 {"id":"bizlaw-quantum-meruit","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復","year":null,"authors":["ウィリストン|サ","コービン|ア","パーマー|ジ"],"degree":13}
 {"id":"bizlaw-quasi-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"準契約——合意なき法定の債務による不当利得の回復","year":null,"authors":["ストーリー|ジ","パーマー|ジ","ポロック|フ"],"degree":13}
-{"id":"bizlaw-quasi-contract-unjust-enrichment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不当利得（準契約・不当利得返還請求）","year":null,"authors":["ゴフ|ロ","ジョーンズ|ガ","バークス|ピ"],"degree":15}
+{"id":"bizlaw-quasi-contract-unjust-enrichment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不当利得（準契約・不当利得返還請求）","year":null,"authors":["ゴフ|ロ","ジョーンズ|ガ","バークス|ピ"],"degree":14}
 {"id":"bizlaw-quistclose-trust","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る","year":null,"authors":["ウィルバーフォース|ロ","チェンバース|ロ","バークス|ピ","ミレット|ロ"],"degree":12}
 {"id":"bizlaw-radio-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電波法","year":1950,"authors":[],"degree":2}
 {"id":"bizlaw-ratchet-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）","year":1994,"authors":["cptpp|","gats|w","nafta|","unctad|"],"degree":13}
@@ -545,7 +545,7 @@
 {"id":"bizlaw-rescission","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":13}
 {"id":"bizlaw-respondeat-superior","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"使用者責任の法理（Respondeat Superior）","year":1698,"authors":["cir|s","friendly|j","holt|l","restatement|"],"degree":7}
 {"id":"bizlaw-respondeat-superior-scope","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"使用者責任の範囲——代理責任法理と雇用関係における帰責原理","year":null,"authors":["シーヴィー|ウ","プロッサー|ウ","ボーレン|フ","ラスキ|ハ"],"degree":13}
-{"id":"bizlaw-restraint-of-trade","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取引制限の法理——営業の自由を制約する条項の合理性審査","year":null,"authors":["コーク|エ"],"degree":13}
+{"id":"bizlaw-restraint-of-trade","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取引制限の法理——営業の自由を制約する条項の合理性審査","year":null,"authors":["コーク|エ"],"degree":14}
 {"id":"bizlaw-retention-lien","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"留置権（民法295条）","year":null,"authors":["law|e"],"degree":25}
 {"id":"bizlaw-retention-of-title","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所有権留保","year":2025,"authors":[],"degree":16}
 {"id":"bizlaw-reves-family-resemblance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み","year":1934,"authors":["act|s","ernst|r","marshall|t","test|h","young|"],"degree":5}
@@ -589,7 +589,7 @@
 {"id":"bizlaw-sovereign-immunity-waiver","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"主権免除と放棄（ソブリン・イミュニティ）","year":null,"authors":["フォックス|ガ","ライル|ア","ラウターパクト|ハ"],"degree":10}
 {"id":"bizlaw-sovereign-wealth-fund-governance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則","year":null,"authors":["シュライファー|ア","トライマン|エ","ヘラービー|ラ"],"degree":10}
 {"id":"bizlaw-specific-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ","ファーンズワース|ア"],"degree":14}
-{"id":"bizlaw-specified-commercial-transactions","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定商取引法","year":1976,"authors":[],"degree":20}
+{"id":"bizlaw-specified-commercial-transactions","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定商取引法","year":1976,"authors":[],"degree":19}
 {"id":"bizlaw-squeeze-out","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スクイーズアウト（特別支配株主の株式等売渡請求）","year":2015,"authors":[],"degree":4}
 {"id":"bizlaw-stabilization-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"安定化条項（Stabilization Clause）","year":1803,"authors":["icsid|"],"degree":12}
 {"id":"bizlaw-standard-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"定型約款（民法548条の2）","year":2020,"authors":[],"degree":7}
@@ -615,7 +615,7 @@
 {"id":"bizlaw-suretyship","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保証契約・連帯保証（民法446条）","year":2017,"authors":[],"degree":3}
 {"id":"bizlaw-tag-along-drag-along","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"タグアロング・ドラッグアロング条項","year":null,"authors":["カプラン|ス","ストロームバーグ|パ"],"degree":8}
 {"id":"bizlaw-tag-along-drag-along-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"タグアロング権・ドラッグアロング権","year":null,"authors":["ewens|m","kaplan|s","mberg|p"],"degree":4}
-{"id":"bizlaw-tax-avoidance-beps-regulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革","year":null,"authors":["クラメン|ゲ","サン|パ","ピルス|マ"],"degree":3}
+{"id":"bizlaw-tax-avoidance-beps-regulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革","year":null,"authors":["クラメン|ゲ","サン|パ","ピルス|マ"],"degree":4}
 {"id":"bizlaw-tcfd","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"気候関連財務情報開示タスクフォース（TCFD）","year":2017,"authors":["ブルームバーグ|マ"],"degree":2}
 {"id":"bizlaw-telecom-business","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電気通信事業法","year":1984,"authors":[],"degree":3}
 {"id":"bizlaw-tender-of-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"弁済の提供（民法492条・493条）","year":null,"authors":["law|e"],"degree":12}
@@ -650,7 +650,7 @@
 {"id":"bizlaw-unauthorized-access","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不正アクセス禁止法","year":1999,"authors":[],"degree":8}
 {"id":"bizlaw-unauthorized-agency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"無権代理（民法113条・117条）","year":null,"authors":[],"degree":11}
 {"id":"bizlaw-unconscionability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"非良心性の法理（Unconscionability）","year":1751,"authors":["hardwicke|l","llewellyn|k","wright|s"],"degree":13}
-{"id":"bizlaw-undisclosed-principal-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理","year":null,"authors":["ボウステッド|ウ","マニデイ|ロ","レイノルズ|フ","ワッツ|ピ"],"degree":8}
+{"id":"bizlaw-undisclosed-principal-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理","year":null,"authors":["ボウステッド|ウ","マニデイ|ロ","レイノルズ|フ","ワッツ|ピ"],"degree":9}
 {"id":"bizlaw-undue-influence","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不当威圧——信頼関係の濫用による意思の歪曲と取引の取消","year":null,"authors":["ゴフ|ロ","バークス|ピ"],"degree":7}
 {"id":"bizlaw-unfair-competition","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不正競争防止法","year":1934,"authors":[],"degree":13}
 {"id":"bizlaw-unfair-competition-trade-secret","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不正競争防止と営業秘密保護の比較法制","year":null,"authors":["トルマン|リ","レミュー|マ","ロスノット|ク"],"degree":8}
@@ -672,7 +672,7 @@
 {"id":"bizlaw-whistleblower-protection","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"公益通報者保護法","year":2020,"authors":[],"degree":15}
 {"id":"bizlaw-whistleblower-protection-directive-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計","year":null,"authors":["デヴァイン|ト","ヨウロヴァー|ヴ","ワース|マ"],"degree":5}
 {"id":"bizlaw-whistleblower-protection-dodd-frank","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内部告発者保護とドッド・フランク法（米国）","year":null,"authors":["ガーセル|ゲ","ジンガレス|ル","ダイク|ア"],"degree":3}
-{"id":"bizlaw-whistleblower-protection-eu-directive","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内部通報者保護法——EU通報者保護指令と企業コンプライアンス","year":null,"authors":["ディヴァイン|ト","ワース|マ","ヴォーン|ロ"],"degree":6}
+{"id":"bizlaw-whistleblower-protection-eu-directive","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内部通報者保護法——EU通報者保護指令と企業コンプライアンス","year":null,"authors":["ディヴァイン|ト","ワース|マ","ヴォーン|ロ"],"degree":5}
 {"id":"bizlaw-whistleblower-protection-legislation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス","year":null,"authors":["ニア|ジ","ミセリ|マ"],"degree":5}
 {"id":"bizlaw-whistleblower-protection-sarbanes","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス","year":null,"authors":[],"degree":15}
 {"id":"bizlaw-whitewash-procedure-hk","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ホワイトウォッシュ手続き（違法財務支援除外申請）","year":null,"authors":["デービース|ポ","フィッシェル|ダ","ペリン|ジ"],"degree":10}
@@ -683,7 +683,7 @@
 {"id":"bizlaw-worker-dispatch","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働者派遣法","year":1985,"authors":[],"degree":4}
 {"id":"bizlaw-workers-comp","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働者災害補償保険法（労災保険）","year":1947,"authors":[],"degree":5}
 {"id":"econ-absolute-advantage-smith","collection":"academic","category":"economics","categoryLabel":"経済学","title":"絶対優位論（アダム・スミス）と国際分業の原理","year":null,"authors":["クルーグマン|ポ","スミス|ア","ヘクシャー|エ","リカード|デ"],"degree":83}
-{"id":"econ-absorption-approach-balance-payments","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アブソープション・アプローチ——所得と総支出の差として捉える国際収支","year":null,"authors":["アレクサンダー|シ","ジョンソン|ハ","マハループ|フ","ミード|ジ"],"degree":47}
+{"id":"econ-absorption-approach-balance-payments","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アブソープション・アプローチ——所得と総支出の差として捉える国際収支","year":null,"authors":["アレクサンダー|シ","ジョンソン|ハ","マハループ|フ","ミード|ジ"],"degree":46}
 {"id":"econ-accelerator-principle","collection":"academic","category":"economics","categoryLabel":"経済学","title":"加速度原理（投資の加速度原理）","year":1909,"authors":["アフタリオン|ア","クラーク|ジ","サミュエルソン|ポ"],"degree":7}
 {"id":"econ-ad-as","collection":"academic","category":"economics","categoryLabel":"経済学","title":"総需要・総供給モデル（AD-AS）","year":null,"authors":[],"degree":11}
 {"id":"econ-adverse-selection","collection":"academic","category":"economics","categoryLabel":"経済学","title":"逆選択（レモン市場）","year":1970,"authors":["アカロフ|ジ","スクリーニング|シ","スティグリッツ|ア"],"degree":13}
@@ -721,7 +721,7 @@
 {"id":"econ-automatic-stabilizers","collection":"academic","category":"economics","categoryLabel":"経済学","title":"自動安定化装置（ビルトイン・スタビライザー）","year":null,"authors":[],"degree":10}
 {"id":"econ-averch-johnson-effect","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み","year":null,"authors":["アバーチ|ハ","ウェリシュ|ス","カーン|ア","ジョンソン|リ"],"degree":2}
 {"id":"econ-backus-kehoe-kydland-puzzle","collection":"academic","category":"economics","categoryLabel":"経済学","title":"バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）","year":1992,"authors":["カイランド|フ","バックス|デ"],"degree":2}
-{"id":"econ-backus-smith","collection":"academic","category":"economics","categoryLabel":"経済学","title":"バッカス＝スミス・パズル（Backus-Smith Puzzle）","year":1993,"authors":["コラチェロ|","スミス|グ","バッカス|デ"],"degree":3}
+{"id":"econ-backus-smith","collection":"academic","category":"economics","categoryLabel":"経済学","title":"バッカス＝スミス・パズル（Backus-Smith Puzzle）","year":1993,"authors":["コラチェロ|","スミス|グ","バッカス|デ"],"degree":4}
 {"id":"econ-backward-bending-supply-curve","collection":"academic","category":"economics","categoryLabel":"経済学","title":"後屈労働供給曲線","year":null,"authors":["killingsworth|m","marshall|a","pencavel|j","robbins|l"],"degree":4}
 {"id":"econ-backwardation-contango","collection":"academic","category":"economics","categoryLabel":"経済学","title":"バックワーデーションとコンタンゴ（Backwardation & Contango）","year":1930,"authors":["ケインズ|ジ","ヒックス|ジ"],"degree":42}
 {"id":"econ-backwash-spread-effects-myrdal","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ミュルダールの逆流・波及効果","year":null,"authors":["hirschman|a","kaldor|n","myrdal|g"],"degree":22}
@@ -741,18 +741,17 @@
 {"id":"econ-battle-of-sexes","collection":"academic","category":"economics","categoryLabel":"経済学","title":"両性の闘い（battle of the sexes）","year":1957,"authors":["ライファ|ハ","ルース|ダ"],"degree":3}
 {"id":"econ-baumol-cost-disease","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ボーモルのコスト病","year":1966,"authors":["growth|p"],"degree":5}
 {"id":"econ-baumol-oates-standards-charges","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する","year":1920,"authors":["baumol|w","oates|w"],"degree":5}
-{"id":"econ-baumol-sales-maximization","collection":"academic","category":"economics","categoryLabel":"経済学","title":"売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者","year":null,"authors":["ウィリアムソン|オ","バーリ|ア","ボーモル|ウ","マリス|ロ"],"degree":15}
+{"id":"econ-baumol-sales-maximization","collection":"academic","category":"economics","categoryLabel":"経済学","title":"売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者","year":null,"authors":["ウィリアムソン|オ","バーリ|ア","ボーモル|ウ","マリス|ロ"],"degree":16}
 {"id":"econ-baumol-tobin","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ボーモル＝トービンの貨幣需要モデル","year":1952,"authors":["トービン|ジ","ボーモル|ウ"],"degree":14}
 {"id":"econ-bayesian-persuasion-kamenica","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ベイズ説得——情報の設計によって合理的な相手を動かす","year":null,"authors":["オーマン|ロ","カメニカ|エ","ゲンツコウ|マ","マイヤーソン|ロ"],"degree":13}
 {"id":"econ-becker-crime","collection":"academic","category":"economics","categoryLabel":"経済学","title":"犯罪の経済学","year":1968,"authors":["ベッカー|ゲ"],"degree":36}
 {"id":"econ-becker-quantity-quality","collection":"academic","category":"economics","categoryLabel":"経済学","title":"子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか","year":null,"authors":["ガロー|オ","バロー|ロ","ベッカー|ゲ","ルイス|グ"],"degree":18}
-{"id":"econ-behavioral-biases-heuristics","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究","year":null,"authors":["カーネマン|ダ","セイラー|リ","トヴェルスキー|エ"],"degree":27}
+{"id":"econ-behavioral-biases-heuristics","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究","year":null,"authors":["カーネマン|ダ","セイラー|リ","トヴェルスキー|エ"],"degree":26}
 {"id":"econ-behavioral-development-economics-banerjee","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価","year":null,"authors":["カーラン|デ","クレマー|マ","デュフロ|エ","バネルジー|ア"],"degree":8}
-{"id":"econ-behavioral-economics-kahneman-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論","year":null,"authors":["カーネマン|ダ","サンスタイン|キ","セイラー|リ","トベルスキー|エ"],"degree":20}
-{"id":"econ-behavioral-finance","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動ファイナンス","year":1979,"authors":["カーネマン|ダ","シラー|ロ","セイラー|リ","トヴェルスキー|エ","ファマ|ユ"],"degree":34}
+{"id":"econ-behavioral-economics-kahneman-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論","year":null,"authors":["カーネマン|ダ","サンスタイン|キ","セイラー|リ","トベルスキー|エ"],"degree":19}
+{"id":"econ-behavioral-finance","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動ファイナンス","year":1979,"authors":["カーネマン|ダ","シラー|ロ","セイラー|リ","トヴェルスキー|エ","ファマ|ユ"],"degree":31}
 {"id":"econ-behavioral-game-theory","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究","year":null,"authors":["カメラー|コ","シュービック|マ","フェール|エ"],"degree":25}
-{"id":"econ-behavioral-nudge-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッジと行動経済学的介入設計（セイラー・サンスタイン）","year":null,"authors":["カーネマン|ダ","サンスタイン|キ","スミス|ロ","セイラー|リ"],"degree":13}
-{"id":"econ-behavioral-nudge-thaler-sunstein","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入","year":null,"authors":["カーネマン|ダ","サンスティーン|キ","セイラー|リ","ハルパーン|デ"],"degree":22}
+{"id":"econ-behavioral-nudge-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッジと行動経済学的介入設計（セイラー・サンスタイン）","year":null,"authors":["カーネマン|ダ","サンスタイン|キ","スミス|ロ","セイラー|リ"],"degree":12}
 {"id":"econ-behavioral-theory-firm-cyert","collection":"academic","category":"economics","categoryLabel":"経済学","title":"企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）","year":null,"authors":["ウィリアムソン|オ","サイアート|リ","サイモン|ハ","マーチ|ジ"],"degree":29}
 {"id":"econ-ben-porath-human-capital-lifecycle","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）","year":1967,"authors":["becker|g","ben-porath|y","kuznets|s","mincer|j"],"degree":3}
 {"id":"econ-bergson-welfare-function","collection":"academic","category":"economics","categoryLabel":"経済学","title":"バーグソン＝サムエルソン社会厚生関数","year":1914,"authors":["bergson|","バーグソン|ア"],"degree":3}
@@ -828,7 +827,7 @@
 {"id":"econ-conflict-economics-hirshleifer","collection":"academic","category":"economics","categoryLabel":"経済学","title":"紛争の経済学——「力の暗黒面」と奪取の合理的選択","year":null,"authors":["グロスマン|ハ","スカペルダス|ス","タロック|ゴ","ハーシュライファー|ジ"],"degree":10}
 {"id":"econ-consumption-capm","collection":"academic","category":"economics","categoryLabel":"経済学","title":"消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル","year":1976,"authors":["マートン|ロ","ルービンシュタイン|マ"],"degree":9}
 {"id":"econ-consumption-smoothing-permanent-income","collection":"academic","category":"economics","categoryLabel":"経済学","title":"消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み","year":null,"authors":["キャンベル|ジ","ディートン|ア","フリードマン|ミ","ホール|ロ","モディリアーニ|フ"],"degree":27}
-{"id":"econ-contestable-markets","collection":"academic","category":"economics","categoryLabel":"経済学","title":"コンテスタブル市場","year":1982,"authors":["baumol|w","panzar|j","willig|r","ラン|ヒ"],"degree":8}
+{"id":"econ-contestable-markets","collection":"academic","category":"economics","categoryLabel":"経済学","title":"コンテスタブル市場","year":1982,"authors":["baumol|w","panzar|j","willig|r","ラン|ヒ"],"degree":9}
 {"id":"econ-contingent-valuation","collection":"academic","category":"economics","categoryLabel":"経済学","title":"仮想評価法——表明選好により非市場財の価値を計測する手法","year":null,"authors":["アロー|ケ","カーソン|リ","スミス|ケ","デイヴィス|ロ"],"degree":13}
 {"id":"econ-contract-curve","collection":"academic","category":"economics","categoryLabel":"経済学","title":"契約曲線（Contract Curve）","year":1881,"authors":["エッジワース|フ"],"degree":11}
 {"id":"econ-convergence-hypothesis","collection":"academic","category":"economics","categoryLabel":"経済学","title":"収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する","year":null,"authors":["サライマーティン|ザ","ソロー|ロ","バロー|ロ","ボーモル|ウ"],"degree":24}
@@ -972,7 +971,7 @@
 {"id":"econ-experience-curve-henderson","collection":"academic","category":"economics","categoryLabel":"経済学","title":"経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する","year":null,"authors":["アロー|ケ","ゲマワット|パ","ヘンダーソン|ブ"],"degree":21}
 {"id":"econ-experience-goods-nelson","collection":"academic","category":"economics","categoryLabel":"経済学","title":"探索財・経験財・信用財——品質評価の時点による財の三分類","year":null,"authors":["カルニ|エ","スティグラー|ジ","ダービー|マ","ネルソン|フ"],"degree":9}
 {"id":"econ-export-led-growth-model","collection":"academic","category":"economics","categoryLabel":"経済学","title":"輸出主導型成長モデル","year":null,"authors":["クワン|ダ","バルサ|ガ","フォックス|ジ","マドック|ブ"],"degree":3}
-{"id":"econ-externality-market-failure","collection":"academic","category":"economics","categoryLabel":"経済学","title":"外部性と市場の失敗","year":1920,"authors":[],"degree":6}
+{"id":"econ-externality-market-failure","collection":"academic","category":"economics","categoryLabel":"経済学","title":"外部性と市場の失敗","year":1920,"authors":[],"degree":7}
 {"id":"econ-externality-pigou-coase-theorem","collection":"academic","category":"economics","categoryLabel":"経済学","title":"外部性とピグー税——コースの定理と市場による外部性内部化の比較","year":null,"authors":["コース|ロ","スターン|ニ","ノードハウス|ウ","ピグー|ア"],"degree":14}
 {"id":"econ-factor-price-equalization","collection":"academic","category":"economics","categoryLabel":"経済学","title":"要素価格均等化定理","year":1948,"authors":["サミュエルソン|ポ"],"degree":11}
 {"id":"econ-fair-wage-effort","collection":"academic","category":"economics","categoryLabel":"経済学","title":"公正賃金・努力仮説","year":1990,"authors":["yellen|","アカロフ|ジ","イエレン|ジ"],"degree":12}
@@ -1058,7 +1057,7 @@
 {"id":"econ-greenspan-put-moral-hazard","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グリーンスパン・プットとモラルハザード","year":null,"authors":["miller|m","rajan|r","weller|p"],"degree":4}
 {"id":"econ-greenwald-stiglitz-theorem","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）","year":1986,"authors":["グリーンウォルド|ブ","スティグリッツ|","スティグリッツ|ジ"],"degree":17}
 {"id":"econ-greshams-law","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グレシャムの法則","year":null,"authors":["グレシャム|ト"],"degree":4}
-{"id":"econ-grossman-hart-takeover-free-rider","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗","year":null,"authors":["グロスマン|サ","シュライファー|ア","ハート|オ","ヴィシュニー|ロ"],"degree":13}
+{"id":"econ-grossman-hart-takeover-free-rider","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗","year":null,"authors":["グロスマン|サ","シュライファー|ア","ハート|オ","ヴィシュニー|ロ"],"degree":14}
 {"id":"econ-grossman-health-demand","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グロスマンの健康需要モデル（Grossman demand-for-health model／健康資本論）——健康を減価する耐久資本ストックととらえ、医療需要をその派生需要として説明する枠組み","year":1972,"authors":["columbia|","grossman|","グロスマン|マ","ベッカー|ゲ","マーフィー|ケ"],"degree":10}
 {"id":"econ-grossman-helpman-protection-for-sale","collection":"academic","category":"economics","categoryLabel":"経済学","title":"保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学","year":1994,"authors":["ウィンストン|マ","グロスマン|ジ","ゴールドバーグ|ピ","バーンハイム|","ヘルプマン|エ","マッジ|ジ"],"degree":11}
 {"id":"econ-grossman-stiglitz","collection":"academic","category":"economics","categoryLabel":"経済学","title":"グロスマン＝スティグリッツのパラドックス","year":1980,"authors":["stiglitz|","グロスマン|サ","スティグリッツ|ジ"],"degree":20}
@@ -1228,10 +1227,10 @@
 {"id":"econ-mechanism-design-hurwicz","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）","year":null,"authors":["ハービッツ|レ","マイヤーソン|ロ","マスキン|エ","ヴィックリー|ウ"],"degree":13}
 {"id":"econ-median-voter","collection":"academic","category":"economics","categoryLabel":"経済学","title":"中位投票者定理","year":1948,"authors":["ダウンズ|ア","ブラック|ダ"],"degree":10}
 {"id":"econ-melitz-heterogeneous-firms-trade","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メリッツ・モデル——企業の異質性と貿易による選別効果","year":null,"authors":["イェンセン|ブ","バーナード|ア","ヘルプマン|エ","メリッツ|マ","ロバーツ|マ"],"degree":6}
-{"id":"econ-mental-accounting","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メンタル・アカウンティング（心の会計）","year":1985,"authors":["making|m","カーネマン|ダ","セイラー|リ","トヴェルスキー|エ"],"degree":19}
+{"id":"econ-mental-accounting","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メンタル・アカウンティング（心の会計）","year":1985,"authors":["making|m","カーネマン|ダ","セイラー|リ","トヴェルスキー|エ"],"degree":21}
 {"id":"econ-menu-costs","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メニューコスト","year":1985,"authors":[],"degree":10}
-{"id":"econ-merit-goods","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メリット財（価値財）","year":1957,"authors":["determination|m","finance|t","マスグレイブ|リ"],"degree":7}
-{"id":"econ-merit-goods-musgrave","collection":"academic","category":"economics","categoryLabel":"経済学","title":"価値財——個人の選好を超えて社会が消費を奨励すべきとされる財","year":null,"authors":["サンスティーン|キ","セン|ア","ベッカーマン|ウ","マスグレイブ|リ"],"degree":14}
+{"id":"econ-merit-goods","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メリット財（価値財）","year":1957,"authors":["determination|m","finance|t","マスグレイブ|リ"],"degree":8}
+{"id":"econ-merit-goods-musgrave","collection":"academic","category":"economics","categoryLabel":"経済学","title":"価値財——個人の選好を超えて社会が消費を奨励すべきとされる財","year":null,"authors":["サンスティーン|キ","セン|ア","ベッカーマン|ウ","マスグレイブ|リ"],"degree":16}
 {"id":"econ-metzler-paradox-tariff","collection":"academic","category":"economics","categoryLabel":"経済学","title":"メッツラー・パラドックス——関税が国内価格を引き下げる逆説","year":null,"authors":["サミュエルソン|ポ","ジョンソン|ハ","ストルパー|ウ","メッツラー|ロ"],"degree":10}
 {"id":"econ-microeconomic-foundations-general-equilibrium","collection":"academic","category":"economics","categoryLabel":"経済学","title":"一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明","year":null,"authors":["アロー|ケ","ドブリュー|ジ","ハーン|フ","ワルラス|レ"],"degree":11}
 {"id":"econ-microfinance","collection":"academic","category":"economics","categoryLabel":"経済学","title":"マイクロファイナンス","year":1940,"authors":["ユヌス|ム"],"degree":8}
@@ -1244,7 +1243,7 @@
 {"id":"econ-modern-portfolio-theory","collection":"academic","category":"economics","categoryLabel":"経済学","title":"現代ポートフォリオ理論（MPT）","year":1952,"authors":["selection|p","マーコウィッツ|ハ"],"degree":4}
 {"id":"econ-modigliani-cohn-inflation-illusion","collection":"academic","category":"economics","categoryLabel":"経済学","title":"モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する","year":null,"authors":["キャンベル|ジ","コーン|リ","フィッシャー|ア","モディリアーニ|フ"],"degree":13}
 {"id":"econ-modigliani-miller","collection":"academic","category":"economics","categoryLabel":"経済学","title":"モディリアーニ＝ミラーの定理（MM理論）","year":1958,"authors":["modigliani|","ミラー|マ","モディリアーニ|フ"],"degree":14}
-{"id":"econ-mohring-effect","collection":"academic","category":"economics","categoryLabel":"経済学","title":"モーリング効果——利用者の増加が公共交通の便益を高める","year":null,"authors":["ダウンズ|ア","ピグー|ア","モーリング|ハ","ヴィックリー|ウ"],"degree":15}
+{"id":"econ-mohring-effect","collection":"academic","category":"economics","categoryLabel":"経済学","title":"モーリング効果——利用者の増加が公共交通の便益を高める","year":null,"authors":["ダウンズ|ア","ピグー|ア","モーリング|ハ","ヴィックリー|ウ"],"degree":16}
 {"id":"econ-momentum-jegadeesh-titman","collection":"academic","category":"economics","categoryLabel":"経済学","title":"モメンタム効果——過去の勝者が勝ち続ける市場の異常現象","year":null,"authors":["アスネス|ク","カーハート|マ","ジェガディーシュ|ナ","ティトマン|シ"],"degree":4}
 {"id":"econ-monetarism","collection":"academic","category":"economics","categoryLabel":"経済学","title":"マネタリズム","year":1980,"authors":["フリードマン|"],"degree":17}
 {"id":"econ-monetary-approach-balance-payments","collection":"academic","category":"economics","categoryLabel":"経済学","title":"国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支","year":null,"authors":["ジョンソン|ハ","ヒューム|デ","フレンケル|ジ","マンデル|ロ"],"degree":13}
@@ -1266,7 +1265,7 @@
 {"id":"econ-mundell-tobin-effect","collection":"academic","category":"economics","categoryLabel":"経済学","title":"マンデル＝トービン効果","year":1963,"authors":["トービン|ジ","マンデル|ロ"],"degree":19}
 {"id":"econ-myerson-optimal-auction","collection":"academic","category":"economics","categoryLabel":"経済学","title":"マイヤーソンの最適オークション——仮想評価による収入最大化","year":null,"authors":["ブロー|ジ","マイヤーソン|ロ","ミルグロム|ポ","ヴィックリー|ウ"],"degree":14}
 {"id":"econ-myerson-satterthwaite","collection":"academic","category":"economics","categoryLabel":"経済学","title":"マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性","year":null,"authors":["サタースウェイト|マ","ハーヴィッツ|レ","マイヤーソン|ロ","ヴィックリー|ウ"],"degree":12}
-{"id":"econ-myopic-loss-aversion-benartzi-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む","year":null,"authors":["カーネマン|ダ","セイラー|リ","トヴェルスキー|エ","ベナルチ|シ"],"degree":15}
+{"id":"econ-myopic-loss-aversion-benartzi-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む","year":null,"authors":["カーネマン|ダ","セイラー|リ","トヴェルスキー|エ","ベナルチ|シ"],"degree":16}
 {"id":"econ-narrative-economics","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム","year":null,"authors":["アカロフ|ジ","シラー|ロ"],"degree":29}
 {"id":"econ-nash-bargaining","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッシュ交渉解","year":1950,"authors":["ナッシュ|ジ","ルービンシュタイン|ア"],"degree":13}
 {"id":"econ-nash-equilibrium","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッシュ均衡（Nash equilibrium）","year":1950,"authors":["ゼルテン|ハ"],"degree":4}
@@ -1300,7 +1299,7 @@
 {"id":"econ-nominal-gdp-targeting","collection":"academic","category":"economics","categoryLabel":"経済学","title":"名目GDP目標（マーケット・マネタリズム）","year":1955,"authors":["illusion|t","sumner|","サムナー|ス"],"degree":10}
 {"id":"econ-north-institutions-economic-history","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明","year":null,"authors":["アセモグル|ダ","ウォリス|ジ","ノース|ダ","ロビンソン|ジ"],"degree":13}
 {"id":"econ-nucleolus-schmeidler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分","year":null,"authors":["オーマン|ロ","シャプレー|ロ","シュマイドラー|デ","マシュラー|マ"],"degree":12}
-{"id":"econ-nudge-theory","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッジ理論（nudge theory）","year":2008,"authors":["サンスティーン|キ","セイラー|リ"],"degree":22}
+{"id":"econ-nudge-theory","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッジ理論（nudge theory）","year":2008,"authors":["カーネマン|ダ","サンスティーン|キ","セイラー|リ"],"degree":22}
 {"id":"econ-nutrition-efficiency-wage","collection":"academic","category":"economics","categoryLabel":"経済学","title":"栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む","year":1957,"authors":["dasgupta|p","leibenstein|h","ray|d","stiglitz|j"],"degree":11}
 {"id":"econ-o-ring-theory-kremer","collection":"academic","category":"economics","categoryLabel":"経済学","title":"オーリング理論——一つの弱点が全体の価値を損なう生産と発展","year":null,"authors":["クレマー|マ","ベッカー|ゲ","ルーカス|ロ","ローゼン|シ"],"degree":16}
 {"id":"econ-oaxaca-blinder-decomposition","collection":"academic","category":"economics","categoryLabel":"経済学","title":"オアハカ＝ブラインダー分解——賃金格差を「属性の差」と「評価の差」に切り分ける","year":1955,"authors":["オアハカ|ロ","キタガワ|イ","フォルタン|ニ","ブラインダー|ア"],"degree":4}
@@ -1423,7 +1422,7 @@
 {"id":"econ-reciprocal-dumping-brander-krugman","collection":"academic","category":"economics","categoryLabel":"経済学","title":"相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易","year":null,"authors":["クルーグマン|ポ","ディキシット|ア","ブランダー|ジ","ヘルプマン|エ"],"degree":15}
 {"id":"econ-reference-dependent-preferences-koszegi-rabin","collection":"academic","category":"economics","categoryLabel":"経済学","title":"期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる","year":2006,"authors":["rabin|m","szegi|b"],"degree":3}
 {"id":"econ-regression-discontinuity","collection":"academic","category":"economics","categoryLabel":"経済学","title":"回帰不連続デザイン（RDD）","year":1960,"authors":["campbell|","imbens|","lemieux|","キャンベル|ド","シスルスウェイト|ド"],"degree":8}
-{"id":"econ-regret-theory-loomes-sugden","collection":"academic","category":"economics","categoryLabel":"経済学","title":"後悔理論——選ばなかった選択肢との比較が選択を左右する","year":null,"authors":["カーネマン|ダ","サグデン|ロ","ベル|デ","ルームズ|グ"],"degree":8}
+{"id":"econ-regret-theory-loomes-sugden","collection":"academic","category":"economics","categoryLabel":"経済学","title":"後悔理論——選ばなかった選択肢との比較が選択を左右する","year":null,"authors":["カーネマン|ダ","サグデン|ロ","ベル|デ","ルームズ|グ"],"degree":7}
 {"id":"econ-regulatory-arbitrage","collection":"academic","category":"economics","categoryLabel":"経済学","title":"規制裁定：企業による規制差異の利用と市場効率性","year":null,"authors":["パートノイ|フ","フライシャー|ヴ","ロマーノ|ロ"],"degree":12}
 {"id":"econ-regulatory-capture-stigler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"規制の虜——規制が被規制産業の利益のために運営される現象","year":null,"authors":["スティグラー|ジ","ベッカー|ゲ","ペルツマン|サ","ポズナー|リ"],"degree":11}
 {"id":"econ-rent-seeking","collection":"academic","category":"economics","categoryLabel":"経済学","title":"レントシーキング","year":1967,"authors":["クルーガー|ア","タロック|ゴ"],"degree":19}
@@ -1533,7 +1532,7 @@
 {"id":"econ-tax-smoothing","collection":"academic","category":"economics","categoryLabel":"経済学","title":"課税平準化（タックス・スムージング）","year":1979,"authors":["バロー|ロ"],"degree":21}
 {"id":"econ-taylor-principle","collection":"academic","category":"economics","categoryLabel":"経済学","title":"テイラー原理（Taylor Principle）","year":1993,"authors":["テイラー|ジ"],"degree":15}
 {"id":"econ-taylor-rule","collection":"academic","category":"economics","categoryLabel":"経済学","title":"テイラールール","year":1993,"authors":[],"degree":17}
-{"id":"econ-technological-unemployment","collection":"academic","category":"economics","categoryLabel":"経済学","title":"技術的失業","year":1930,"authors":["オーター|デ","ケインズ|ジ","ブリニョルフソン|エ","マカフィー|ア"],"degree":13}
+{"id":"econ-technological-unemployment","collection":"academic","category":"economics","categoryLabel":"経済学","title":"技術的失業","year":1930,"authors":["オーター|デ","ケインズ|ジ","ブリニョルフソン|エ","マカフィー|ア"],"degree":14}
 {"id":"econ-temptation-self-control-gul-pesendorfer","collection":"academic","category":"economics","categoryLabel":"経済学","title":"誘惑と自制の選好——選択肢の集合そのものを評価する","year":null,"authors":["グル|フ","ストロッツ|ロ","ペセンドルファー|ヴ","レイブソン|デ"],"degree":6}
 {"id":"econ-theil-index-inequality","collection":"academic","category":"economics","categoryLabel":"経済学","title":"タイル指数——情報理論にもとづく分解可能な不平等尺度","year":null,"authors":["アトキンソン|ア","シャノン|ク","セン|ア","タイル|ヘ"],"degree":14}
 {"id":"econ-tiebout-hypothesis-local-public-goods","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム","year":null,"authors":["オーツ|ウ","サミュエルソン|ポ","ティブー|チ","マスグレイヴ|リ"],"degree":10}
@@ -1714,7 +1713,7 @@
 {"id":"eh-2024","collection":"econ-history","category":"2020年代","categoryLabel":"2020年代","title":"2024年（令和6年）","year":2024,"authors":["etf|n","サービス|コ"],"degree":12}
 {"id":"eh-2025","collection":"econ-history","category":"2020年代","categoryLabel":"2020年代","title":"2025年（令和7年）","year":2025,"authors":["day|l"],"degree":6}
 {"id":"human-above-average-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"平均以上効果（優越の錯覚）","year":1981,"authors":["スヴェンソン|オ"],"degree":117}
-{"id":"human-acceptance-commitment-therapy","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ダール|ヨ","ヘイズ|ス"],"degree":82}
+{"id":"human-acceptance-commitment-therapy","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ダール|ヨ","ヘイズ|ス"],"degree":81}
 {"id":"human-acceptance-commitment-therapy-hayes","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ダール|ジ","ヘイズ|ス"],"degree":9}
 {"id":"human-achievement-motivation","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"達成動機理論（マクレランドの3欲求）","year":1961,"authors":[],"degree":12}
 {"id":"human-acquired-needs-theory","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"獲得欲求理論","year":null,"authors":["atkinson|j","mcclelland|d","winter|d"],"degree":3}
@@ -1757,7 +1756,7 @@
 {"id":"human-autobiographical-memory-conway","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル","year":null,"authors":["コンウェイ|マ","プレイデル|ク"],"degree":3}
 {"id":"human-autokinetic-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成","year":null,"authors":["アッシュ|ソ","シェリフ|ム","フェスティンガー|レ","ヘルムホルツ|ヘ"],"degree":23}
 {"id":"human-automation-bias","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"オートメーション・バイアス（自動化バイアス）","year":1997,"authors":["burdick|","skitka|m","スキトカ|リ","モージャー|キ"],"degree":19}
-{"id":"human-availability-cascade","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"利用可能性カスケード","year":1999,"authors":["sunstein|","クラン|テ","サンスティーン|キ"],"degree":11}
+{"id":"human-availability-cascade","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"利用可能性カスケード","year":1999,"authors":["sunstein|","クラン|テ","サンスティーン|キ"],"degree":10}
 {"id":"human-availability-heuristic-tversky","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道","year":null,"authors":["カーネマン|ダ","シュワルツ|ノ","スロヴィック|ポ","トヴェルスキー|エ"],"degree":15}
 {"id":"human-awe-emotion-keltner","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"畏敬（オー）の感情（ケルトナー＆ハイト）","year":null,"authors":["ケルトナー|ダ","ハイト|ジ","ピフ|ポ","ルーニー|マ"],"degree":8}
 {"id":"human-balance-theory-heider","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知的バランス理論（ハイダー）——P-O-X三者関係の均衡","year":null,"authors":["カートライト|ド","ハイダー|フ","ハラリー|フ","フェスティンガー|レ"],"degree":12}
@@ -1859,7 +1858,7 @@
 {"id":"human-dark-triad","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合","year":1957,"authors":["zettler|","ナルシシズム|","マキャヴェリアニズム|","モシャーゲン|モ"],"degree":3}
 {"id":"human-decision-fatigue","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"決定疲労（decision fatigue）","year":2011,"authors":["avnaim-pesso|s","hagger|m","バウマイスター|ロ"],"degree":17}
 {"id":"human-decoy-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"おとり効果（非対称的優位性効果）","year":1982,"authors":["アリエリー|ダ","フーバー|ジ","プット|ク","ペイン|ジ"],"degree":12}
-{"id":"human-default-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"デフォルト効果（初期設定効果）","year":2003,"authors":["オプトアウト|","オプトイン|","ゴールドスタイン|ダ","サンスティーン|キ","ジョンソン|エ","セイラー|リ"],"degree":15}
+{"id":"human-default-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"デフォルト効果（初期設定効果）","year":2003,"authors":["オプトアウト|","オプトイン|","ゴールドスタイン|ダ","サンスティーン|キ","ジョンソン|エ","セイラー|リ"],"degree":16}
 {"id":"human-default-mode-network-raichle","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理","year":null,"authors":["シュルマン|ゴ","スプレング|ダ","バックナー|ラ","フォックス|マ","レイクル|マ"],"degree":15}
 {"id":"human-defense-mechanisms","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"防衛機制","year":1936,"authors":["フロイト|ア","フロイト|ジ","ヴェイラント|ジ"],"degree":23}
 {"id":"human-defensive-attribution-hypothesis","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説","year":1966,"authors":["burger|j","effect|r","hatfield|","shaver|k","similarity|s","walster|e"],"degree":2}
@@ -1917,7 +1916,7 @@
 {"id":"human-emotional-regulation","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解","year":null,"authors":["アルダオ|ア","オクスナー|ケ","グロス|ジ"],"degree":23}
 {"id":"human-emotional-regulation-gross","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情調節理論（グロス）と認知的再評価・表現抑制","year":null,"authors":["グロス|ジ","ジョン|オ","バレット|リ","モーズレー|ア"],"degree":11}
 {"id":"human-emotional-stroop-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉","year":null,"authors":["ウィリアムズ|マ","ストループ|ジ","マクラウド|コ","マシューズ|ア"],"degree":6}
-{"id":"human-empathy-gap-loewenstein","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"共感ギャップ（ローウェンスタイン）","year":null,"authors":["セイラー|リ","プレレック|ド","ローウェンスタイン|ジ"],"degree":17}
+{"id":"human-empathy-gap-loewenstein","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"共感ギャップ（ローウェンスタイン）","year":null,"authors":["セイラー|リ","プレレック|ド","ローウェンスタイン|ジ"],"degree":16}
 {"id":"human-enactivism","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論","year":null,"authors":["トンプソン|エ","マトゥラーナ|ウ","ロッシュ|エ","ヴァレラ|フ"],"degree":10}
 {"id":"human-encoding-specificity-tulving","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する","year":null,"authors":["クレイク|フ","シャクター|ダ","タルヴィング|エ","トムソン|ド"],"degree":5}
 {"id":"human-end-of-history-illusion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"歴史の終わり錯覚","year":2013,"authors":["wilson|","ウィルソン|テ","ギルバート|ダ","クオイドバック|ジ"],"degree":10}
@@ -2289,7 +2288,7 @@
 {"id":"human-stanford-prison-experiment","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"スタンフォード監獄実験","year":1933,"authors":["ジンバルドー|フ","ハニー|ク"],"degree":4}
 {"id":"human-statistical-learning","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"統計的学習（Statistical Learning）","year":1996,"authors":["アスリン|リ","サフラン|ジ","ニューポート|エ"],"degree":12}
 {"id":"human-status-characteristics","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"地位特性理論（期待状態理論）","year":null,"authors":["アンダーソン|ボ","ゼルディッチ|モ","バーガー|ジ","リッジウェイ|セ"],"degree":17}
-{"id":"human-status-quo-bias","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"現状維持バイアス","year":1988,"authors":["サミュエルソン|ウ","ゼックハウザー|リ"],"degree":7}
+{"id":"human-status-quo-bias","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"現状維持バイアス","year":1988,"authors":["サミュエルソン|ウ","ゼックハウザー|リ"],"degree":8}
 {"id":"human-stereotype-content-model","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ステレオタイプ内容モデル（SCM）","year":2002,"authors":["カディ|エ","グリック|ピ","シュー|ジ","フィスク|ス"],"degree":20}
 {"id":"human-stereotype-threat","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ステレオタイプ脅威","year":1995,"authors":["aronson|","aronson|j","steele|","steele|c"],"degree":5}
 {"id":"human-stereotype-threat-steele","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう","year":null,"authors":["アロンソン|ジ","シュメイダー|ト","スティール|ク","スペンサー|ス"],"degree":6}
@@ -2319,7 +2318,7 @@
 {"id":"human-terror-management-greenberg","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"恐怖管理理論（グリーンバーグ＆ピジシンスキー）","year":null,"authors":["グリーンバーグ|ジ","ソロモン|シ","ピジシンスキー|ト","ベッカー|ア"],"degree":11}
 {"id":"human-terror-management-theory-becker","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験","year":null,"authors":["グリーンバーグ|ジ","ソロモン|シ","ピジジンスキー|ト","ベッカー|ア"],"degree":10}
 {"id":"human-testing-effect-roediger","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"テスト効果——検索練習が長期記憶保持を促進するメカニズム","year":null,"authors":["カーピック|ジ","ビョーク|エ","ビョーク|ロ","ロディガー|ヘ"],"degree":7}
-{"id":"human-theory-of-constructed-emotion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"情動の構成理論","year":null,"authors":["barrett|l","bliss-moreau|e","lindquist|k","mesquita|b","russell|j"],"degree":5}
+{"id":"human-theory-of-constructed-emotion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"情動の構成理論","year":null,"authors":["barrett|l","bliss-moreau|e","lindquist|k","mesquita|b","russell|j"],"degree":6}
 {"id":"human-theory-of-mind","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"心の理論","year":1978,"authors":["ウッドラフ|ガ","バロン|サ","プレマック|デ"],"degree":19}
 {"id":"human-theory-of-mind-baron-cohen","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論","year":null,"authors":["バロン|サ","フリス|ウ","プレマック|デ","レスリー|ア"],"degree":7}
 {"id":"human-theory-of-mind-frith-baron-cohen","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学","year":null,"authors":["バロン|ア","フォジェル|ヘ","フリス|ウ","フリス|ク"],"degree":5}
@@ -2352,12 +2351,12 @@
 {"id":"human-zeigarnik","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ツァイガルニク効果","year":1920,"authors":["マーケティング|ク"],"degree":11}
 {"id":"human-zone-of-proximal-development","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"発達の最近接領域（ZPD）","year":1930,"authors":["ross|","ロス|ウ","ヴィゴツキー|レ"],"degree":12}
 {"id":"infosoc-activity-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論","year":null,"authors":["エンゲストローム|ユ","レオンチェフ|ア","ヴィゴツキー|レ"],"degree":70}
-{"id":"infosoc-actor-network-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アクターネットワーク理論","year":1980,"authors":["カロン|ミ","ラトゥール|ブ","ロー|ジ"],"degree":40}
+{"id":"infosoc-actor-network-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アクターネットワーク理論","year":1980,"authors":["カロン|ミ","ラトゥール|ブ","ロー|ジ"],"degree":41}
 {"id":"infosoc-affective-computing-picard","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題","year":null,"authors":["エクマン|ポ","グルーバー|ジ","ジャン|テ","ピカード|ロ"],"degree":4}
 {"id":"infosoc-affective-publics-papacharissi","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"感情的公衆——デジタルメディアにおける情動的ネットワーク形成","year":null,"authors":["アーメッド|サ","ハーバーマス|ユ","パパチャリッシ|ジ","マスミ|ブ"],"degree":9}
 {"id":"infosoc-affordance-theory-gibson","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開","year":null,"authors":["ギブソン|ジ","ゲイヴァー|ウ","ノーマン|ド","ハッチビー|イ"],"degree":8}
 {"id":"infosoc-agenda-setting","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"議題設定理論（アジェンダ・セッティング）","year":1963,"authors":["ショー|ド","マコームズ|マ"],"degree":20}
-{"id":"infosoc-agenda-setting-theory-digital","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"議題設定理論（デジタル時代の展開）","year":null,"authors":["golan|g","mccombs|m","shaw|d"],"degree":4}
+{"id":"infosoc-agenda-setting-theory-digital","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"議題設定理論（デジタル時代の展開）","year":null,"authors":["golan|g","mccombs|m","shaw|d"],"degree":3}
 {"id":"infosoc-agnotology-proctor","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アグノトロジー——無知はいかに作り出されるか","year":null,"authors":["オレスケス|ナ","シービンガー|ロ","プロクター|ロ","マイケルズ|デ"],"degree":2}
 {"id":"infosoc-ai-governance-human-rights","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"AIガバナンスと人権基盤アプローチの国際政治社会学","year":null,"authors":["エラール|ヴ","ファラニョーリ|フ","マルク|ジ","ヨルダノフ|ヴ"],"degree":5}
 {"id":"infosoc-algorithmic-accountability","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズムの説明責任","year":2016,"authors":["propublica|","usacm|a","コリスカ|マ","ディアコポロス|ニ"],"degree":4}
@@ -2422,7 +2421,7 @@
 {"id":"infosoc-code-is-law-lessig","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ","year":null,"authors":["バーロウ|ジ","ベンクラー|ヨ","ライデンバーグ|ジ","レッシグ|ロ"],"degree":13}
 {"id":"infosoc-code-switching","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コードスイッチング","year":1922,"authors":["ガンパーズ|ジ","マイヤーズ|キ"],"degree":2}
 {"id":"infosoc-cognitive-capitalism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"認知資本主義","year":2011,"authors":["ムリエ|イ","ヴェルチェローネ|カ"],"degree":3}
-{"id":"infosoc-cognitive-surplus","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"認知的余剰（Cognitive Surplus）","year":2006,"authors":["benkler|y","everybody|h","morozov|e","shirky|c"],"degree":11}
+{"id":"infosoc-cognitive-surplus","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"認知的余剰（Cognitive Surplus）","year":2006,"authors":["benkler|y","everybody|h","morozov|e","shirky|c"],"degree":10}
 {"id":"infosoc-collective-intelligence-levy","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開","year":null,"authors":["サイモン|ハ","スロウィッキー|ジ","マローン|ト","レヴィ|ピ"],"degree":15}
 {"id":"infosoc-collective-memory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"集合的記憶","year":1877,"authors":["アスマン|ヤ","アルヴァックス|モ","デュルケーム|エ","ノラ|ピ"],"degree":17}
 {"id":"infosoc-collingridge-dilemma","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コリングリッジのジレンマ（技術制御の二重拘束）","year":1945,"authors":["technology|t","コリングリッジ|デ"],"degree":9}
@@ -2443,7 +2442,7 @@
 {"id":"infosoc-connected-learning-ito","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化","year":null,"authors":["イトウ|ミ","ショア|ジ","ジェンキンズ|ヘ","デービッドソン|キ"],"degree":7}
 {"id":"infosoc-connective-action","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"つながりの行為論理（コネクティブ・アクション）","year":2012,"authors":["セガーバーグ|ア","ベネット|ラ"],"degree":3}
 {"id":"infosoc-connectivism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コネクティビズム","year":1959,"authors":["シーメンズ|ジ","ダウンズ|ス"],"degree":2}
-{"id":"infosoc-content-moderation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践","year":null,"authors":["ギレスピー|タ","グリメルマン|ジ"],"degree":17}
+{"id":"infosoc-content-moderation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践","year":null,"authors":["ギレスピー|タ","グリメルマン|ジ"],"degree":16}
 {"id":"infosoc-context-collapse","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテキストの崩壊（文脈崩壊）","year":null,"authors":["ゴッフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":18}
 {"id":"infosoc-context-collapse-marwick","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ","year":null,"authors":["ゴフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":14}
 {"id":"infosoc-contextual-integrity","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー","year":2004,"authors":["context|p","integrity|p","nissenbaum|h","principles|t"],"degree":10}
@@ -2466,8 +2465,8 @@
 {"id":"infosoc-cultural-industry-adorno-horkheimer","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"文化産業論——標準化された大量生産文化による大衆欺瞞","year":null,"authors":["アドルノ|テ","ベンヤミン|ヴ","ホルクハイマー|マ","マルクーゼ|ヘ"],"degree":3}
 {"id":"infosoc-cultural-lag","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"カルチュラル・ラグ（文化遅滞）","year":1886,"authors":["オグバーン|ウ"],"degree":2}
 {"id":"infosoc-culture-industry","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"文化産業（フランクフルト学派）","year":1947,"authors":[],"degree":2}
-{"id":"infosoc-cyber-balkanization-sunstein","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離","year":null,"authors":["アルスタイン|マ","サンスティーン|キ","パリサー|イ","ブリニョルフソン|エ"],"degree":17}
-{"id":"infosoc-cyber-cascade","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"サイバーカスケード","year":2001,"authors":["republic|","サンスティーン|キ","ネグロポンテ|ニ"],"degree":13}
+{"id":"infosoc-cyber-balkanization-sunstein","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離","year":null,"authors":["アルスタイン|マ","サンスティーン|キ","パリサー|イ","ブリニョルフソン|エ"],"degree":18}
+{"id":"infosoc-cyber-cascade","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"サイバーカスケード","year":2001,"authors":["republic|","サンスティーン|キ","ネグロポンテ|ニ"],"degree":12}
 {"id":"infosoc-cyberbullying","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットいじめ（サイバーバリング）","year":2007,"authors":["ウィラード|ナ","コワルスキ|ロ","リンバー|ス"],"degree":5}
 {"id":"infosoc-cybernetics","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"サイバネティクス","year":1948,"authors":["ウィーナー|ノ","ビア|ス","フェルスター|ハ"],"degree":6}
 {"id":"infosoc-cybersecurity-governance-multi-stakeholder","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル","year":null,"authors":["シュナイアー|ブ","ナイ|ジ","ミューラー|ミ","ランセロット|ジ"],"degree":5}
@@ -2551,7 +2550,7 @@
 {"id":"infosoc-digital-rights-management-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル著作権管理理論","year":null,"authors":["benkler|y","gillespie|t","lessig|l","litman|j","samuelson|p"],"degree":12}
 {"id":"infosoc-digital-sovereignty-floridi","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル主権——国家・市民のデータ統制権とテクノロジー地政学","year":null,"authors":["フロリディ|ル","ブレトン|テ","マッツカート|マ","ライエン|ウ"],"degree":9}
 {"id":"infosoc-digital-sovereignty-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル主権論","year":null,"authors":["brattberg|e","couldry|n","flyverbom|m","mueller|m","zuboff|s"],"degree":14}
-{"id":"infosoc-digital-twin-grieves","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタルツイン（グリーブス）","year":null,"authors":["グリーブス|マ","ロサーレス|フ","ヴィッカーズ|ジ"],"degree":5}
+{"id":"infosoc-digital-twin-grieves","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタルツイン（グリーブス）","year":null,"authors":["グリーブス|マ","ロサーレス|フ","ヴィッカーズ|ジ"],"degree":4}
 {"id":"infosoc-digital-twin-industry4","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタルツインと第4次産業革命——サイバーフィジカルシステムが変える製造・都市・医療の未来","year":null,"authors":["グリーブス|マ","シュライヤー|ギ","シュワーブ|ク","ロス|ビ"],"degree":3}
 {"id":"infosoc-digital-wellbeing","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル・ウェルビーイング","year":2019,"authors":["オーベン|エ","ハリス|ト","プシビルスキ|ア","ヴェルダイン|フ"],"degree":10}
 {"id":"infosoc-disinformation","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"誤情報・偽情報（情報の無秩序）","year":2017,"authors":["making|i","ウォードル|ク","デラクシャン|ホ"],"degree":16}
@@ -2565,7 +2564,7 @@
 {"id":"infosoc-e-government-digital-public-services","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革","year":null,"authors":["アル|ア","テルマニ|テ","ラジ|デ"],"degree":6}
 {"id":"infosoc-echo-chamber","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"エコーチェンバー（反響室効果）","year":null,"authors":[],"degree":13}
 {"id":"infosoc-echo-chamber-polarization","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"エコーチェンバーと政治的分極化：選択的情報接触とアルゴリズム的フィルタリングが招く自己強化的意見分断","year":null,"authors":["パライザー|イ","ベイル|ク"],"degree":2}
-{"id":"infosoc-encoding-decoding","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"エンコーディング／デコーディング・モデル","year":1973,"authors":["ホール|ス"],"degree":6}
+{"id":"infosoc-encoding-decoding","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"エンコーディング／デコーディング・モデル","year":1973,"authors":["ホール|ス"],"degree":5}
 {"id":"infosoc-enshittification","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"エンシティフィケーション（Enshittification）","year":2022,"authors":["doctorow|c","society|a","wired|"],"degree":5}
 {"id":"infosoc-enshittification-doctorow","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"エンシッティフィケーション（ドクトロウ）","year":null,"authors":["ウー|テ","カーン|リ","スルニチェク|ニ","ドクトロウ|コ"],"degree":15}
 {"id":"infosoc-epistemic-bubbles-echo-chambers","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"認識論的バブルとエコーチェンバー","year":null,"authors":["cappella|j","jamieson|k","nguyen|t","pariser|e","sunstein|c"],"degree":3}
@@ -2578,7 +2577,7 @@
 {"id":"infosoc-fake-news-ecosystem-wardle","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"誤情報エコシステムの類型（ウォードル）","year":null,"authors":["ウォードル|ク","スターバード|ケ","デラクシャニ|ホ","フォシン|ジ"],"degree":9}
 {"id":"infosoc-feminist-technoscience-haraway","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"フェミニスト・テクノサイエンス論","year":null,"authors":["barad|k","haraway|d","harding|s"],"degree":12}
 {"id":"infosoc-fifth-estate","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"第五の権力（フィフス・エステート）","year":2007,"authors":["インターネット|オ"],"degree":5}
-{"id":"infosoc-filter-bubble","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"フィルターバブルとエコーチェンバー","year":2001,"authors":["グエン|テ","サンスティーン|カ","パリサー|イ","フラックスマン|セ"],"degree":11}
+{"id":"infosoc-filter-bubble","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"フィルターバブルとエコーチェンバー","year":2001,"authors":["グエン|テ","サンスティーン|カ","パリサー|イ","フラックスマン|セ"],"degree":12}
 {"id":"infosoc-filter-sovereignty","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"フィルター主権（Filter Sovereignty）","year":2006,"authors":["contested|","controlled|","ウー|テ","ゴールドスミス|ジ","デイバート|ロ"],"degree":10}
 {"id":"infosoc-fomo","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"FOMO（取り残されることへの恐れ）","year":2004,"authors":["fobo|","mcginnis|p","murayama|k","przybylski|a"],"degree":5}
 {"id":"infosoc-fourth-estate","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"第四の権力","year":null,"authors":["カーライル|ト","ダットン|ウ","バーク|エ"],"degree":12}
@@ -2630,7 +2629,7 @@
 {"id":"infosoc-information-avoidance-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報回避理論","year":null,"authors":["golman|r","hagmann|d","loewenstein|g","melnyk|d","shepperd|j","sweeny|k"],"degree":5}
 {"id":"infosoc-information-bank","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報銀行（情報利用信用銀行）","year":2018,"authors":[],"degree":2}
 {"id":"infosoc-information-behavior-wilson-model","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み","year":null,"authors":["クールソー|キ","サヴォライネン|リ","デルヴィン|ブ"],"degree":7}
-{"id":"infosoc-information-cocoon","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報の繭（インフォメーション・コクーン）","year":2006,"authors":["サンスティーン|キ"],"degree":12}
+{"id":"infosoc-information-cocoon","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報の繭（インフォメーション・コクーン）","year":2006,"authors":["サンスティーン|キ"],"degree":11}
 {"id":"infosoc-information-commons-hess-ostrom","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗","year":null,"authors":["オストロム|エ","ヘス|シ","ベンクラー|ヨ","ボイル|ジ"],"degree":19}
 {"id":"infosoc-information-commons-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報コモンズ理論","year":null,"authors":["benkler|y","hess|c","lessig|l","ostrom|e"],"degree":11}
 {"id":"infosoc-information-disorder","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報障害（Information Disorder）","year":2017,"authors":["デラクシャン|ホ","ワードル|ク"],"degree":11}
@@ -2688,7 +2687,7 @@
 {"id":"infosoc-mcdonaldization","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"マクドナルド化","year":1993,"authors":["ウェーバー|マ","リッツァ|ジ"],"degree":13}
 {"id":"infosoc-mcluhan-tetrad","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メディアの四法則（テトラッド）","year":1988,"authors":["マクルーハン|エ","マクルーハン|マ"],"degree":13}
 {"id":"infosoc-media-agenda-setting","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み","year":null,"authors":["コーエン|","ショー|","マコームズ|"],"degree":18}
-{"id":"infosoc-media-ecology","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メディア・エコロジー（メディア生態学）","year":1968,"authors":["イニス|ハ","エリュール|ル","オング|ウ","ポストマン|ニ","マクルーハン|マ"],"degree":19}
+{"id":"infosoc-media-ecology","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メディア・エコロジー（メディア生態学）","year":1968,"authors":["イニス|ハ","エリュール|ル","オング|ウ","ポストマン|ニ","マクルーハン|マ"],"degree":20}
 {"id":"infosoc-media-equation","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メディアの等式（メディア・イクエーション）","year":1996,"authors":["ナス|ク","リーブス|バ"],"degree":11}
 {"id":"infosoc-media-events","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メディア・イベント","year":1992,"authors":["hepp|","イベント|メ"],"degree":13}
 {"id":"infosoc-media-framing","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"フレーミング（メディアのフレーム分析, framing）","year":1974,"authors":["エントマン|ロ","ゴッフマン|ア"],"degree":24}
@@ -2712,7 +2711,7 @@
 {"id":"infosoc-meme-culture","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析","year":null,"authors":["シフマン|リ","ジェンキンス|ヘ","ドーキンス|リ"],"degree":15}
 {"id":"infosoc-metaverse","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メタバース","year":1992,"authors":["スティーヴンスン|ニ"],"degree":12}
 {"id":"infosoc-metcalfe-law","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"メトカーフの法則","year":1980,"authors":["log|b","ギルダー|ジ","メトカーフ|ロ"],"degree":9}
-{"id":"infosoc-microcelebrity","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"マイクロセレブリティ","year":2008,"authors":["センフト|テ","ボイド|ダ","マーウィック|ア"],"degree":11}
+{"id":"infosoc-microcelebrity","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"マイクロセレブリティ","year":2008,"authors":["センフト|テ","ボイド|ダ","マーウィック|ア"],"degree":10}
 {"id":"infosoc-misinformation-cognitive-science","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"誤情報の認知科学と信念訂正研究の情報行動論","year":null,"authors":["ゾワイフェル|エ","リンデン|サ","レバンドウスキー|ス","ロタン|ジ"],"degree":6}
 {"id":"infosoc-misinformation-correction-backfire","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"誤情報訂正とバックファイア効果の実証研究","year":null,"authors":["グレッコ|ジ","ニアン|ブ","ライフラー|ジ","リンデン|サ"],"degree":7}
 {"id":"infosoc-misinformation-disinformation","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究","year":null,"authors":["ウォードル|ク","スターバード|ケ","デラフシャン|ホ"],"degree":10}
@@ -2736,7 +2735,7 @@
 {"id":"infosoc-network-neutrality-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットワーク中立性理論","year":null,"authors":["lessig|l","schewick|b"],"degree":4}
 {"id":"infosoc-network-society-castells","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治","year":null,"authors":["カステルス|マ","セレニー|イ","フルッサー|ヴ","リオン|デ"],"degree":2}
 {"id":"infosoc-networked-public-sphere-fraser","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットワーク化された公共圏とデジタル・デモクラシー論","year":null,"authors":["シャーキー|ク","ハーバーマス|ユ","フレイザー|ナ","ベンクラー|ヨ"],"degree":15}
-{"id":"infosoc-networked-publics","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットワーク化された公衆","year":2010,"authors":["ボイド|ダ"],"degree":16}
+{"id":"infosoc-networked-publics","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットワーク化された公衆","year":2010,"authors":["ボイド|ダ"],"degree":17}
 {"id":"infosoc-networked-publics-boyd","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊","year":null,"authors":["パパチャリッシ|ジ","ボイド|ダ","マーウィック|ア"],"degree":14}
 {"id":"infosoc-news-values","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ニュース・バリュー（ニュースの価値）","year":1965,"authors":["ガルトゥング|ヨ","ハーカップ|","ルーゲ|マ"],"degree":3}
 {"id":"infosoc-non-places-auge","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"非‐場所——通過と消費の匿名的空間","year":null,"authors":["オジェ|マ","セルトー|ミ","バウマン|ジ","ルフェーヴル|ア"],"degree":7}
@@ -2758,12 +2757,12 @@
 {"id":"infosoc-panoptic-sort-gandy","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学","year":null,"authors":["ジュニア|オ","ズボフ|シ","フーコー|ミ","ライアン|デ"],"degree":13}
 {"id":"infosoc-panopticon","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"パノプティコンと規律権力","year":1791,"authors":[],"degree":6}
 {"id":"infosoc-parasocial","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"パラソーシャル関係","year":1956,"authors":["ファン|イ"],"degree":3}
-{"id":"infosoc-parasocial-interaction-horton","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"パラソーシャル相互作用——メディア人物との一方向的疑似関係の形成","year":null,"authors":["ウォール|リ","ギルス|デ","ホートン|ド","ルビン|ア"],"degree":3}
+{"id":"infosoc-parasocial-interaction-horton","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"パラソーシャル相互作用——メディア人物との一方向的疑似関係の形成","year":null,"authors":["ウォール|リ","ギルス|デ","ホートン|ド","ルビン|ア"],"degree":2}
 {"id":"infosoc-participation-inequality","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"参加格差（90-9-1の法則）","year":2006,"authors":["ニールセン|ヤ","ヒル|ウ"],"degree":12}
 {"id":"infosoc-participatory-culture","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"参加型文化","year":2006,"authors":["ジェンキンス|ヘ"],"degree":10}
 {"id":"infosoc-participatory-design","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"参加型デザイン（Participatory Design）","year":1988,"authors":["ehn|p","kuhn|s","muller|m","namioka|a","schuler|d"],"degree":15}
 {"id":"infosoc-participatory-design-information-systems","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"情報システムにおける参加型デザイン","year":null,"authors":["ehn|p","greenbaum|j","kyng|m","namioka|a","schuler|d"],"degree":12}
-{"id":"infosoc-persuasive-technology-fogg","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"説得的テクノロジー（フォッグ）","year":null,"authors":["セイラー|リ"],"degree":19}
+{"id":"infosoc-persuasive-technology-fogg","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"説得的テクノロジー（フォッグ）","year":null,"authors":["セイラー|リ"],"degree":18}
 {"id":"infosoc-phatic-culture","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大","year":2008,"authors":["miller|v","コミュニオン|フ"],"degree":3}
 {"id":"infosoc-phenomenological-technology","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"技術の現象学","year":null,"authors":["アイデ|ド","チャルマーズ|デ","ドレイファス|ヒ","ハイデッガー|マ"],"degree":8}
 {"id":"infosoc-platform-affordance","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"プラットフォーム・アフォーダンス（Platform Affordances）","year":2018,"authors":["ブッシャー|タ","ヘルモント|ア"],"degree":3}
@@ -2992,7 +2991,7 @@
 {"id":"labor-dispatch-license","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣事業の許可制","year":null,"authors":[],"degree":7}
 {"id":"labor-dispatch-period","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の期間制限（3年ルール）","year":null,"authors":[],"degree":3}
 {"id":"labor-dispatch-prohibited","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の適用除外業務（派遣禁止業務）","year":null,"authors":[],"degree":7}
-{"id":"labor-elderly-continued-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢雇用継続給付（雇用保険）","year":null,"authors":[],"degree":9}
+{"id":"labor-elderly-continued-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢雇用継続給付（雇用保険）","year":null,"authors":[],"degree":10}
 {"id":"labor-elderly-employment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢者雇用確保措置","year":null,"authors":[],"degree":3}
 {"id":"labor-employment-adjustment-subsidy","collection":"compliance","category":"labor","categoryLabel":"労務","title":"雇用調整助成金","year":null,"authors":[],"degree":3}
 {"id":"labor-employment-certificate","collection":"compliance","category":"labor","categoryLabel":"労務","title":"退職時等の証明（労働基準法22条）","year":null,"authors":[],"degree":5}
@@ -3024,12 +3023,12 @@
 {"id":"labor-maternity-harassment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）","year":null,"authors":[],"degree":19}
 {"id":"labor-maternity-leave","collection":"compliance","category":"labor","categoryLabel":"労務","title":"産前産後休業（労働基準法第65条）","year":null,"authors":[],"degree":13}
 {"id":"labor-medical-interview","collection":"compliance","category":"labor","categoryLabel":"労務","title":"長時間労働者に対する医師による面接指導","year":null,"authors":[],"degree":5}
-{"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":7}
+{"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":6}
 {"id":"labor-minimum-wage","collection":"compliance","category":"labor","categoryLabel":"労務","title":"地域別最低賃金（最低賃金法）","year":null,"authors":[],"degree":5}
 {"id":"labor-minor-protection","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年少者の労働保護（労働基準法 第6章）","year":null,"authors":[],"degree":4}
 {"id":"labor-minwage-reduction-exception","collection":"compliance","category":"labor","categoryLabel":"労務","title":"最低賃金の減額の特例許可制度（最低賃金法7条）","year":null,"authors":[],"degree":6}
 {"id":"labor-national-health-insurance","collection":"compliance","category":"labor","categoryLabel":"労務","title":"国民健康保険（国保）","year":null,"authors":[],"degree":8}
-{"id":"labor-national-pension","collection":"compliance","category":"labor","categoryLabel":"労務","title":"国民年金の加入と被保険者の種別","year":null,"authors":[],"degree":23}
+{"id":"labor-national-pension","collection":"compliance","category":"labor","categoryLabel":"労務","title":"国民年金の加入と被保険者の種別","year":null,"authors":[],"degree":24}
 {"id":"labor-old-age-pension","collection":"compliance","category":"labor","categoryLabel":"労務","title":"老齢年金（老齢基礎年金・老齢厚生年金）の受給","year":null,"authors":[],"degree":12}
 {"id":"labor-overtime-2024-problem","collection":"compliance","category":"labor","categoryLabel":"労務","title":"時間外労働の上限規制 適用猶予業種への適用（2024年問題）","year":2024,"authors":[],"degree":6}
 {"id":"labor-overtime-60h-premium","collection":"compliance","category":"labor","categoryLabel":"労務","title":"月60時間超の時間外労働の割増賃金率（50%以上）","year":null,"authors":[],"degree":12}
@@ -3070,11 +3069,11 @@
 {"id":"labor-wage-payment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"賃金支払の5原則とデジタル払い","year":null,"authors":[],"degree":10}
 {"id":"labor-wage-prescription","collection":"compliance","category":"labor","categoryLabel":"労務","title":"賃金請求権の消滅時効（労働基準法115条）","year":null,"authors":[],"degree":2}
 {"id":"labor-women-advancement","collection":"compliance","category":"labor","categoryLabel":"労務","title":"女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）","year":null,"authors":[],"degree":5}
-{"id":"labor-work-injury-recognition","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険における業務災害の認定（業務遂行性・業務起因性）","year":null,"authors":[],"degree":2}
+{"id":"labor-work-injury-recognition","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険における業務災害の認定（業務遂行性・業務起因性）","year":null,"authors":[],"degree":3}
 {"id":"labor-work-interval","collection":"compliance","category":"labor","categoryLabel":"労務","title":"勤務間インターバル制度","year":null,"authors":[],"degree":12}
 {"id":"labor-work-rules","collection":"compliance","category":"labor","categoryLabel":"労務","title":"就業規則の作成・届出義務","year":null,"authors":[],"degree":15}
 {"id":"labor-workers-comp","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険（労働者災害補償保険）の加入義務","year":null,"authors":[],"degree":3}
-{"id":"labor-workers-comp-benefits","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険の保険給付の種類","year":null,"authors":[],"degree":5}
+{"id":"labor-workers-comp-benefits","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険の保険給付の種類","year":null,"authors":[],"degree":6}
 {"id":"labor-workers-comp-rate","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険率（業種別・全額事業主負担）","year":null,"authors":[],"degree":2}
 {"id":"labor-workers-comp-special-enrollment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労災保険の特別加入制度","year":null,"authors":[],"degree":2}
 {"id":"labor-working-conditions-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）","year":2024,"authors":[],"degree":4}
@@ -3345,7 +3344,7 @@
 {"id":"mgmt-corporate-entrepreneurship-zahra","collection":"academic","category":"management","categoryLabel":"経営学","title":"コーポレート・アントレプレナーシップ（ザーラ）","year":null,"authors":["ザーラ|シ","デッス|グ","バーゲルマン|ロ","ラムプキン|ゲ"],"degree":10}
 {"id":"mgmt-corporate-governance","collection":"academic","category":"management","categoryLabel":"経営学","title":"コーポレートガバナンス（経営監視機構）","year":null,"authors":["fama|e","jensen|m","meckling|w","shleifer|a","vishny|r"],"degree":11}
 {"id":"mgmt-corporate-governance-stewardship","collection":"academic","category":"management","categoryLabel":"経営学","title":"コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比","year":null,"authors":["シュルマン|デ","シライファー|ア","デービス|ジ","フリーマン|エ"],"degree":14}
-{"id":"mgmt-corporate-parenting","collection":"academic","category":"management","categoryLabel":"経営学","title":"ペアレンティング戦略","year":1994,"authors":["アレクサンダー|マ","キャンベル|ア","グールド|マ"],"degree":13}
+{"id":"mgmt-corporate-parenting","collection":"academic","category":"management","categoryLabel":"経営学","title":"ペアレンティング戦略","year":1994,"authors":["アレクサンダー|マ","キャンベル|ア","グールド|マ"],"degree":12}
 {"id":"mgmt-corporate-political-activity","collection":"academic","category":"management","categoryLabel":"経営学","title":"コーポレート・ポリティカル・アクティビティ（バロン）","year":null,"authors":["シルバーマン|ブ","チャン|セ","バロン|デ","フィゲレード|ジ"],"degree":2}
 {"id":"mgmt-corporate-purpose-stakeholder","collection":"academic","category":"management","categoryLabel":"経営学","title":"企業目的論とステークホルダー資本主義","year":null,"authors":["エドマンズ|ア","フリードマン|ミ","フリーマン|エ","メイヤー|コ"],"degree":21}
 {"id":"mgmt-corporate-social-performance","collection":"academic","category":"management","categoryLabel":"経営学","title":"企業社会的パフォーマンスモデル","year":null,"authors":["carroll|a","wood|d"],"degree":4}
@@ -3354,7 +3353,7 @@
 {"id":"mgmt-corporate-venturing-burgelman","collection":"academic","category":"management","categoryLabel":"経営学","title":"コーポレート・ベンチャリング（バーゲルマン）","year":null,"authors":["ウィット|ロ","ザーラ|シ","バーゲルマン|ロ","マクミラン|ポ"],"degree":9}
 {"id":"mgmt-creative-destruction-schumpeter-org","collection":"academic","category":"management","categoryLabel":"経営学","title":"創造的破壊と組織革新——シュンペーター的競争の経営学的展開","year":null,"authors":["カプラン|サ","クリステンセン|ク","シュンペーター|ヨ","フォスター|リ"],"degree":14}
 {"id":"mgmt-creative-self-efficacy","collection":"academic","category":"management","categoryLabel":"経営学","title":"創造的自己効力感","year":null,"authors":["bandura|a","farmer|s","tierney|p"],"degree":5}
-{"id":"mgmt-cross-cultural-leadership-house-globe","collection":"academic","category":"management","categoryLabel":"経営学","title":"GLOBEプロジェクト——文化次元とリーダーシップの国際比較","year":null,"authors":["ジャヴィダン|マ","ドーフマン|ピ","ハウス|ロ","ハンゲス|ポ","ルーケ|メ"],"degree":7}
+{"id":"mgmt-cross-cultural-leadership-house-globe","collection":"academic","category":"management","categoryLabel":"経営学","title":"GLOBEプロジェクト——文化次元とリーダーシップの国際比較","year":null,"authors":["ジャヴィダン|マ","ドーフマン|ピ","ハウス|ロ","ハンゲス|ポ","ルーケ|メ"],"degree":6}
 {"id":"mgmt-crossing-the-chasm","collection":"academic","category":"management","categoryLabel":"経営学","title":"キャズム理論（Crossing the Chasm）","year":1991,"authors":[],"degree":2}
 {"id":"mgmt-csr","collection":"academic","category":"management","categoryLabel":"経営学","title":"企業の社会的責任（CSR）","year":1953,"authors":["フリードマン|ミ"],"degree":25}
 {"id":"mgmt-cultural-intelligence","collection":"academic","category":"management","categoryLabel":"経営学","title":"文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力","year":null,"authors":["ang|s","dyne|l","earley|c","scale|c"],"degree":7}
@@ -3394,7 +3393,7 @@
 {"id":"mgmt-eisenhower-matrix","collection":"academic","category":"management","categoryLabel":"経営学","title":"アイゼンハワーマトリクス（緊急・重要マトリクス）","year":1890,"authors":[],"degree":4}
 {"id":"mgmt-emergent-strategy","collection":"academic","category":"management","categoryLabel":"経営学","title":"創発戦略","year":1985,"authors":["ウォーターズ|ジ","ミンツバーグ|ヘ"],"degree":16}
 {"id":"mgmt-emotional-intelligence","collection":"academic","category":"management","categoryLabel":"経営学","title":"感情知性（EQ）","year":1990,"authors":["ゴールマン|ダ","サロベイ|","メイヤー|"],"degree":11}
-{"id":"mgmt-employee-engagement-kahn","collection":"academic","category":"management","categoryLabel":"経営学","title":"従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）","year":null,"authors":["エドモンドソン|エ","カーン|ウ","シャウフェリ|ウ","マクレイン|ウ"],"degree":15}
+{"id":"mgmt-employee-engagement-kahn","collection":"academic","category":"management","categoryLabel":"経営学","title":"従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）","year":null,"authors":["エドモンドソン|エ","カーン|ウ","シャウフェリ|ウ","マクレイン|ウ"],"degree":14}
 {"id":"mgmt-employee-silence-pinder-harlos","collection":"academic","category":"management","categoryLabel":"経営学","title":"従業員サイレンス——黙従的沈黙と諦観的沈黙","year":null,"authors":["エドモンドソン|エ","ダイン|リ","ハーロス|カ","ピンダー|ク"],"degree":10}
 {"id":"mgmt-empowering-leadership-ahearne","collection":"academic","category":"management","categoryLabel":"経営学","title":"エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー","year":null,"authors":["アハーン|マ","コンガー|ジ","スプライツァー|グ","マシュー|ジ"],"degree":6}
 {"id":"mgmt-empowerment-theory-spreitzer","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的エンパワーメント理論（Spreitzer）","year":null,"authors":["spreitzer|g","thomas|k","velthouse|b"],"degree":5}
@@ -3473,7 +3472,7 @@
 {"id":"mgmt-institutional-entrepreneurship-dimaggio","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度的起業家精神（ディマジオ）","year":null,"authors":["ガウド|ラ","ディマジオ|ポ","ハーディ|シ","マグアイア|ス"],"degree":10}
 {"id":"mgmt-institutional-isomorphism","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度的同型化","year":1983,"authors":["dimaggio|","powell|","ディマジオ|ポ"],"degree":11}
 {"id":"mgmt-institutional-logic-friedland","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度的ロジック（フリードランド＆アルフォード）","year":null,"authors":["アルフォード|ロ","グリュン|ロ","ソートウェル|パ","フリードランド|ロ"],"degree":3}
-{"id":"mgmt-institutional-logics","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度ロジック：信念体系が組織行動を形成するメカニズム","year":null,"authors":["ソーントン|パ","フリードランド|ロ","ラウンズベリー|マ"],"degree":6}
+{"id":"mgmt-institutional-logics","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度ロジック：信念体系が組織行動を形成するメカニズム","year":null,"authors":["ソーントン|パ","フリードランド|ロ","ラウンズベリー|マ"],"degree":7}
 {"id":"mgmt-institutional-logics-thornton","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度的ロジック理論：制度的多元性と組織的合理性の再解釈","year":null,"authors":["オカシオ|ウ","ソーントン|パ","ラウンズベリー|マ"],"degree":8}
 {"id":"mgmt-institutional-theory","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度理論（制度的同型化）","year":1977,"authors":["powell|","ディマジオ|ポ","パウエル|ウ","マイヤー|","ローワン|"],"degree":13}
 {"id":"mgmt-institutional-void","collection":"academic","category":"management","categoryLabel":"経営学","title":"制度的空白（Institutional Voids）","year":1997,"authors":["finance|j","framework|f","markets|w","カンナ|タ","パレプ|ク"],"degree":15}
@@ -3517,8 +3516,8 @@
 {"id":"mgmt-knowledge-transfer-multinational","collection":"academic","category":"management","categoryLabel":"経営学","title":"多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク","year":null,"authors":["ウィリアム|ビ","クマー|ス","シルガドー|ガ","ハンソン|ウ"],"degree":3}
 {"id":"mgmt-kotter-8-steps","collection":"academic","category":"management","categoryLabel":"経営学","title":"コッターの変革8段階モデル","year":1995,"authors":["レヴィン|ク"],"degree":11}
 {"id":"mgmt-kotter-change","collection":"academic","category":"management","categoryLabel":"経営学","title":"コッターの変革の8段階プロセス","year":1995,"authors":["コッター|ジ"],"degree":13}
-{"id":"mgmt-kraljic-matrix","collection":"academic","category":"management","categoryLabel":"経営学","title":"クラルジック・マトリクス（購買ポートフォリオ）","year":1983,"authors":["クラルジック|ピ"],"degree":3}
-{"id":"mgmt-lawrence-lorsch","collection":"academic","category":"management","categoryLabel":"経営学","title":"分化と統合（ローレンス＆ローシュ）","year":1967,"authors":[],"degree":14}
+{"id":"mgmt-kraljic-matrix","collection":"academic","category":"management","categoryLabel":"経営学","title":"クラルジック・マトリクス（購買ポートフォリオ）","year":1983,"authors":["クラルジック|ピ"],"degree":2}
+{"id":"mgmt-lawrence-lorsch","collection":"academic","category":"management","categoryLabel":"経営学","title":"分化と統合（ローレンス＆ローシュ）","year":1967,"authors":[],"degree":13}
 {"id":"mgmt-lead-user","collection":"academic","category":"management","categoryLabel":"経営学","title":"リードユーザー法","year":1986,"authors":["アーバン|グ","ヒッペル|エ"],"degree":12}
 {"id":"mgmt-leadership-substitutes-kerr-jermier","collection":"academic","category":"management","categoryLabel":"経営学","title":"リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因","year":null,"authors":["カー|ス","ジャーミア|ジ","ハウエル|ジ","ポドサコフ|フ"],"degree":5}
 {"id":"mgmt-lean-startup-ries-build-measure-learn","collection":"academic","category":"management","categoryLabel":"経営学","title":"リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略","year":null,"authors":["ブランク|ス","モーリャ|ア","ランドール|デ","リース|エ"],"degree":9}
@@ -3611,7 +3610,7 @@
 {"id":"mgmt-organizational-improvisation-weick","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織的即興——計画と実行が時間的に融合する行為としての組織化","year":null,"authors":["バレット|フ","マイナー|ア","ムーアマン|ク","ワイク|カ"],"degree":13}
 {"id":"mgmt-organizational-justice-greenberg","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚","year":null,"authors":["アダムス|ス","グリーンバーグ|ジ","バイズ|ロ","レヴェンタール|ジ"],"degree":10}
 {"id":"mgmt-organizational-learning","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織学習（オーガニゼーショナル・ラーニング）","year":null,"authors":["アージリス|ク","ショーン|ド","センゲ|ピ"],"degree":13}
-{"id":"mgmt-organizational-learning-argyris","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織学習とシングル・ダブルループ学習（アージリス）","year":null,"authors":["アージリス|ク","ガービン|デ","ショーン|ド","センゲ|ピ"],"degree":10}
+{"id":"mgmt-organizational-learning-argyris","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織学習とシングル・ダブルループ学習（アージリス）","year":null,"authors":["アージリス|ク","ガービン|デ","ショーン|ド","センゲ|ピ"],"degree":9}
 {"id":"mgmt-organizational-learning-cycles-levinthal","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）","year":null,"authors":["チャップル|ロ","マーチ|ジ","ルーサンズ|フ","レビンタール|ダ"],"degree":13}
 {"id":"mgmt-organizational-life-cycle-greiner","collection":"academic","category":"management","categoryLabel":"経営学","title":"グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展","year":null,"authors":["アディゼス|イ","グレイナー|ラ","ミラー|ダ","ミンツバーグ|ヘ"],"degree":15}
 {"id":"mgmt-organizational-neuroscience","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織神経科学","year":null,"authors":["becker|w","camerer|c","cropanzano|r","lee|n","rock|d","senior|c"],"degree":4}
@@ -3655,7 +3654,7 @@
 {"id":"mgmt-playing-to-win-lafley-martin","collection":"academic","category":"management","categoryLabel":"経営学","title":"プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード","year":null,"authors":["ドラッカー|ピ","ポーター|マ","マーティン|ロ"],"degree":21}
 {"id":"mgmt-poka-yoke","collection":"academic","category":"management","categoryLabel":"経営学","title":"ポカヨケ","year":null,"authors":[],"degree":2}
 {"id":"mgmt-political-skill-ferris","collection":"academic","category":"management","categoryLabel":"経営学","title":"政治的スキル——他者を理解し操られている感じを与えずに影響する力","year":null,"authors":["ゴールマン|ダ","フェファー|ジ","フェリス|ジ","ミンツバーグ|ヘ"],"degree":14}
-{"id":"mgmt-polychronicity","collection":"academic","category":"management","categoryLabel":"経営学","title":"ポリクロニシティ（多時間並行志向）","year":null,"authors":["bluedorn|a","hall|e","kaufman-scarborough|c"],"degree":2}
+{"id":"mgmt-polychronicity","collection":"academic","category":"management","categoryLabel":"経営学","title":"ポリクロニシティ（多時間並行志向）","year":null,"authors":["bluedorn|a","hall|e","kaufman-scarborough|c"],"degree":3}
 {"id":"mgmt-population-ecology-organization","collection":"academic","category":"management","categoryLabel":"経営学","title":"組織の個体群生態学","year":null,"authors":["freeman|j","hannan|m"],"degree":8}
 {"id":"mgmt-portfolio-matrix-bcg-growth-share","collection":"academic","category":"management","categoryLabel":"経営学","title":"BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク","year":null,"authors":["ヘンダーソン|ブ","ポーター|マ","ルメルト|リ"],"degree":22}
 {"id":"mgmt-positive-organizational-behavior-luthans","collection":"academic","category":"management","categoryLabel":"経営学","title":"ポジティブ組織行動論（ルーサンズ）","year":null,"authors":["アヴォリオ|ブ","イェウセフ|カ","キャメロン|キ","セリグマン|マ","ルーサンズ|フ"],"degree":21}
@@ -3881,7 +3880,7 @@
 {"id":"subsidy-bcp-disaster-tax","collection":"subsidy","category":"tax-incentive","categoryLabel":"税制優遇","title":"事業継続力強化計画（認定制度）・中小企業防災・減災投資促進税制","year":null,"authors":[],"degree":1}
 {"id":"subsidy-business-restructuring","collection":"subsidy","category":"business","categoryLabel":"事業","title":"事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）","year":2025,"authors":["gbizid|"],"degree":8}
 {"id":"subsidy-business-succession","collection":"subsidy","category":"business","categoryLabel":"事業","title":"事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）","year":null,"authors":["jgrants|"],"degree":10}
-{"id":"subsidy-career-up","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"キャリアアップ助成金","year":null,"authors":[],"degree":23}
+{"id":"subsidy-career-up","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"キャリアアップ助成金","year":null,"authors":[],"degree":22}
 {"id":"subsidy-chiba","collection":"subsidy","category":"business","categoryLabel":"事業","title":"千葉県中小企業成長促進補助金","year":null,"authors":[],"degree":4}
 {"id":"subsidy-chiba-city","collection":"subsidy","category":"business","categoryLabel":"事業","title":"千葉市創業支援補助金","year":null,"authors":["municipality|"],"degree":43}
 {"id":"subsidy-child-allowance","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"児童手当","year":null,"authors":["municipality|"],"degree":34}
@@ -3921,7 +3920,7 @@
 {"id":"subsidy-industrial-employment-stability","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"産業雇用安定助成金","year":null,"authors":[],"degree":20}
 {"id":"subsidy-ishikawa","collection":"subsidy","category":"business","categoryLabel":"事業","title":"小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）","year":null,"authors":["isico|"],"degree":2}
 {"id":"subsidy-it-introduction","collection":"subsidy","category":"business","categoryLabel":"事業","title":"IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）","year":2026,"authors":["action|g"],"degree":3}
-{"id":"subsidy-iwate","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業者等賃上げ環境整備支援事業費補助金（岩手県）","year":null,"authors":[],"degree":11}
+{"id":"subsidy-iwate","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業者等賃上げ環境整備支援事業費補助金（岩手県）","year":null,"authors":[],"degree":10}
 {"id":"subsidy-jfc-loan","collection":"subsidy","category":"business","categoryLabel":"事業","title":"日本政策金融公庫の中小企業・小規模事業者向け融資","year":null,"authors":[],"degree":11}
 {"id":"subsidy-jinzai-kakuho","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"人材確保等支援助成金","year":null,"authors":[],"degree":21}
 {"id":"subsidy-jizokuka","collection":"subsidy","category":"business","categoryLabel":"事業","title":"小規模事業者持続化補助金","year":null,"authors":["jgrants|"],"degree":10}
@@ -3961,7 +3960,7 @@
 {"id":"subsidy-oita","collection":"subsidy","category":"business","categoryLabel":"事業","title":"大分県省力化・生産性向上支援補助金（大分県）","year":null,"authors":[],"degree":6}
 {"id":"subsidy-okayama","collection":"subsidy","category":"business","categoryLabel":"事業","title":"岡山市創業者支援事業補助金","year":null,"authors":["municipality|"],"degree":11}
 {"id":"subsidy-okayama-pref","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）","year":null,"authors":[],"degree":4}
-{"id":"subsidy-okinawa","collection":"subsidy","category":"business","categoryLabel":"事業","title":"沖縄県産業振興基金事業補助金（沖縄県）","year":null,"authors":[],"degree":12}
+{"id":"subsidy-okinawa","collection":"subsidy","category":"business","categoryLabel":"事業","title":"沖縄県産業振興基金事業補助金（沖縄県）","year":null,"authors":[],"degree":13}
 {"id":"subsidy-osaka-city","collection":"subsidy","category":"business","categoryLabel":"事業","title":"大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）","year":null,"authors":["municipality|"],"degree":14}
 {"id":"subsidy-osaka-startup","collection":"subsidy","category":"business","categoryLabel":"事業","title":"大阪起業家グローイングアップ補助金（大阪府）","year":null,"authors":[],"degree":11}
 {"id":"subsidy-overseas-expansion","collection":"subsidy","category":"business","categoryLabel":"事業","title":"新輸出大国コンソーシアム（中小企業の海外展開支援）","year":null,"authors":["jetro|"],"degree":16}
@@ -4033,8 +4032,8 @@
 {"id":"tax-consumption-interim","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の中間申告・中間納付","year":null,"authors":[],"degree":10}
 {"id":"tax-consumption-taxable-scope","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の課税対象（課税・非課税・不課税）","year":null,"authors":[],"degree":3}
 {"id":"tax-consumption-taxpayer","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の納税義務者の判定","year":null,"authors":[],"degree":14}
-{"id":"tax-corp-blue-application","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の青色申告の承認申請","year":null,"authors":[],"degree":6}
-{"id":"tax-corp-establishment-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人設立後の税務署への届出期限","year":null,"authors":[],"degree":4}
+{"id":"tax-corp-blue-application","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の青色申告の承認申請","year":null,"authors":[],"degree":5}
+{"id":"tax-corp-establishment-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人設立後の税務署への届出期限","year":null,"authors":[],"degree":3}
 {"id":"tax-corp-inhabitant-flat","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人住民税の均等割","year":null,"authors":[],"degree":9}
 {"id":"tax-corp-interim-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の中間申告","year":null,"authors":[],"degree":3}
 {"id":"tax-corp-tax-return-deadline","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の確定申告・納付期限","year":null,"authors":[],"degree":14}

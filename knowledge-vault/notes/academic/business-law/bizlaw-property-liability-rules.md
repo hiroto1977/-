@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
 - [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 同分野の近傍
 
 ## 関連

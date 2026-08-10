@@ -32,8 +32,8 @@ Mark Andrejevic（2005年論文・概念の提唱者） ／ 水平的・対等�
 ## 関連概念
 - [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 出典を共有
 - [[infosoc-panopticon|パノプティコンと規律権力]] — 出典を共有
-- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

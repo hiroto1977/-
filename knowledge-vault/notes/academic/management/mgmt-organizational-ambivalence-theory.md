@@ -36,7 +36,7 @@ Robert K. Merton ／ Naomi B. Rothman ／ Michael G. Pratt ／ Blake E. Ashforth
 - [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同じ思想家
 - [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同じ思想家
-- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同分野の近傍
+- [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

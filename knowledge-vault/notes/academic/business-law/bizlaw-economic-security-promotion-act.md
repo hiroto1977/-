@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同分野の近傍
 - [[bizlaw-change-of-circumstances|事情変更の原則]] — 同分野の近傍
+- [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

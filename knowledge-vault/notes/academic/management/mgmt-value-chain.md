@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-subscription-model|サブスクリプション・モデル]] — 出典を共有
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
-- [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — 同分野の近傍
+- [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

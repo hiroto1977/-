@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 57
+cite_count: 56
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **57 件**（学術 55 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **56 件**（学術 54 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -19,7 +19,6 @@ tags:
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — Schreuer(2010)FullProtectionandSecurity—ICSIDReview
 - [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]] — RequiemforHickenlooper—AmericanJournalofInternationalLaw(CambridgeCor…
 - [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — VandenBossche&Zdouc2021TheLawandPolicyoftheWorldTradeOrganization(4th…
-- [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — Stone2004—FromWidgetstoDigits:EmploymentRegulationfortheChangingWorkp…
 - [[bizlaw-relational-contracting-macneil|関係的契約論（マクニール）]] — Campbell,D.(1992)TheRelationalTheoryofContract—CambridgeUniversityPre…
 - [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — Moore(2016)—ObligationsintheShade,LegalStudies
 - [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]] — Barzel,Y.(1989/1997)EconomicAnalysisofPropertyRights,CambridgeUnivers…

@@ -846,5 +846,49 @@
         }
       }
     ]
+  },
+  "pass26": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupeGraph（term-overlap 3267）",
+    "merges": [
+      {
+        "keep": "econ-nudge-theory",
+        "drop": "econ-behavioral-nudge-thaler-sunstein",
+        "reason": "同一分野（economics）の同一概念 — 双方が Thaler&Sunstein 2008・選択アーキテクチャ・デフォルト例・BIT 2010・ノーベル賞 2017・操作性批判を記述。keeper は Britannica/NobelPrize.org/IfG と全出典が精密で、タイトル・id も簡潔。",
+        "migrate": [
+          "https://yalebooks.yale.edu/book/9780300122237/nudge/",
+          "https://www.bi.team/"
+        ],
+        "notAbsorbed": [
+          {
+            "claim": "ハンナ・フリードリクセンらの自律性侵害批判",
+            "why": "実在確認不能の人名（confabulation 疑い）— 批判論点自体は人名なしで吸収"
+          },
+          {
+            "claim": "内閣府の行動ファイナンス研究・経産省ナッジ×デジタル",
+            "why": "無出典の省庁固有名。実在の環境省 BEST への推測差し替えもしない"
+          }
+        ],
+        "absorbed": "二重過程理論の基盤・401(k) 自動加入/自動増額・BIT の納税督促成果・批判 3 論点（効果量/民主的正統性/文化的移転）と設計原則（透明・回避容易）",
+        "provenanceDelta": {
+          "chars": [
+            363,
+            606
+          ],
+          "sources": [
+            3,
+            5
+          ],
+          "academic": [
+            0,
+            1
+          ],
+          "government": [
+            1,
+            2
+          ]
+        }
+      }
+    ]
   }
 }

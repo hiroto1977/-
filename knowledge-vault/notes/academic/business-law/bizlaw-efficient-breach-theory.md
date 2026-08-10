@@ -32,7 +32,6 @@ Robert L. Birmingham ／ Richard A. Posner ／ Charles J. Goetz ／ Robert E. Sc
 
 ## 関連概念
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 同じ思想家
-- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 同じ思想家
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
 - [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
 - [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有

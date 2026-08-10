@@ -32,11 +32,11 @@ Brooke Erin Duffy（アスピレーショナル労働の提唱者、コーネル
 
 ## 関連概念
 - [[infosoc-digital-labor-theory|デジタル労働理論]] — 同じ思想家
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 出典を共有
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 出典を共有
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 出典を共有
 - [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同分野の近傍
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 同分野の近傍
 

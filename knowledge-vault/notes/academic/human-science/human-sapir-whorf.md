@@ -30,8 +30,8 @@ aliases:
 - [Encyclopaedia Britannica — Sapir-Whorf hypothesis（定義・強弱の区別・ウォーフのホピ語分析・現代評価）](https://www.britannica.com/topic/Sapir-Whorf-hypothesis) `リファレンス`
 
 ## 関連概念
-- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同分野の近傍
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

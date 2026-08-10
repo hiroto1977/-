@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 140
+cite_count: 139
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **140 件**（リファレンス 138 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **139 件**（リファレンス 137 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -71,7 +71,6 @@ tags:
 - [[bizlaw-utility-model|実用新案法]] — Wikipedia「実用新案法」（小発明・無審査登録制度・沿革）
 - [[bizlaw-women-empowerment-act|女性活躍推進法]] — Wikipedia「女性の職業生活における活躍の推進に関する法律」
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — Wikipedia:エージェンシー理論—所有経営分離とインセンティブ設計の解説
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — Wikipedia:ナッジ—選択アーキテクチャと行動経済学の政策応用
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — Wikipedia:炭素国境調整—CBAMとカーボンリーケージの解説
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — Wikipedia:大推進論—協調の失敗と発展経済学の解説
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — Wikipedia:通貨危機—第一・第二・第三世代モデルの解説

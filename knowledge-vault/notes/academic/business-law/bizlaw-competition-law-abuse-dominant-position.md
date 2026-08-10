@@ -38,7 +38,6 @@ EU機能条約（TFEU）102条は、域内市場またはその実質的部分�
 - [[bizlaw-competition-law-abuse-dominance|競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制]] — 同分野の近傍
 - [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同分野の近傍
 - [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — 同分野の近傍
-- [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

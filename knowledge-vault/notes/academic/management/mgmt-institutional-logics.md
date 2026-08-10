@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 語彙が近い
 - [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同じ思想家
+- [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — 同分野の近傍
 - [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同分野の近傍
 - [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — 同分野の近傍
 

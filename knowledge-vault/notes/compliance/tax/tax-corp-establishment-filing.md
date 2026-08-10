@@ -32,7 +32,7 @@ aliases:
 - [国税庁 C1-33 減価償却資産の償却方法の届出](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_21.htm) `公的`
 
 ## 関連概念
-- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 同分野の近傍
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 同分野の近傍
 

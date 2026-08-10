@@ -33,13 +33,13 @@ aliases:
 - [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 語彙が近い
 - [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 語彙が近い
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
+- [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

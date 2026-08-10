@@ -713,13 +713,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'ナッジ理論（nudge theory）',
     statement:
       '選択の自由を保持しつつ、選択肢の提示方法（選択アーキテクチャ）を工夫することで、人々の行動を予測可能な形でより良い方向へ後押しする手法。禁止や経済的インセンティブの大きな変更によらず、デフォルト設定の変更や情報提示の工夫等で行動変容を促す。' +
-      'リチャード・セイラーとキャス・サンスティーンが2008年の著書『Nudge』で提唱し、「リバタリアン・パターナリズム」を掲げた。臓器提供のオプトアウト方式や年金への自動加入などが代表例。セイラーは行動経済学への貢献により2017年にノーベル経済学賞を受賞した。英国のBehavioural Insights Team（BIT、通称ナッジ・ユニット、2010年設立）をはじめ各国政府に応用組織が設けられた。批判として効果の持続性や操作性・倫理をめぐる議論がある。',
-    keyFigures: 'リチャード・セイラー & キャス・サンスティーン（2008『Nudge』）／セイラー2017ノーベル経済学賞',
+      'リチャード・セイラーとキャス・サンスティーンが2008年の著書『Nudge』で提唱し、選択の自由を残したまま厚生を改善する「リバタリアン・パターナリズム」を掲げた。理論的基盤は二重過程理論——自動的・直感的な思考と熟慮的な思考の区別——にあり、自動システムの系統的バイアス（現状維持バイアス・損失回避・先延ばし）を所与として環境側を設計する発想を採る。臓器提供のオプトアウト方式、401(k) 年金への自動加入・自動増額、情報の単純化やリマインダーが代表例。セイラーは行動経済学への貢献により2017年にノーベル経済学賞を受賞した。英国のBehavioural Insights Team（BIT、通称ナッジ・ユニット、2010年設立）は納税督促状の文面改善による納付率向上などで成果を示し、各国政府・国際機関へ応用組織が広がった。批判としては、効果量の小ささや持続性への疑問、透明性を欠けば操作となり民主的正統性を損なうという倫理問題、文化的文脈による移転可能性の限界が論じられ、透明で回避容易であることがナッジの設計原則として求められている。',
+    keyFigures: 'リチャード・セイラー & キャス・サンスティーン（2008『Nudge』）／ダニエル・カーネマン（二重過程理論）／セイラー2017ノーベル経済学賞',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/money/Richard-Thaler', type: 'reference', label: 'Encyclopaedia Britannica — Richard Thaler（Nudge・libertarian paternalism）' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/', type: 'government', label: 'NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）' },
       { url: 'https://www.instituteforgovernment.org.uk/article/explainer/nudge-unit', type: 'reference', label: 'Institute for Government — Nudge Unit（BIT 2010設立・応用例）' },
+      { url: 'https://yalebooks.yale.edu/book/9780300122237/nudge/', type: 'academic', label: 'Thaler, R.H. & Sunstein, C.R. (2008) Nudge: Improving Decisions About Health, Wealth, and Happiness — Yale University Press' },
+      { url: 'https://www.bi.team/', type: 'government', label: 'Behavioural Insights Team (BIT) — UK Government Nudge Unit' },
     ],
   },
   {
@@ -20912,7 +20914,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'business-law',
     title: '分岐条項（Fork-in-the-Road Clause）',
     statement:
-      '二国間投資協定（BIT）において投資家が紛争解決の場として国内裁判所と国際仲裁のいずれかを不可逆的に選択すべきことを定める条項。一方の紛争処理機関への付託後は他方が排除され、並行手続を防止する。契約上の請求と条約上の請求が「同一の紛争」か否かの解釈が仲裁実務上の争点となる。',
+      '二国間投資協定（BIT）において投資家が紛争解決の場として国内裁判所と国際仲裁のいずれかを不可逆的に選択すべきことを定める条項。一方の紛争処理機関への付託後は他方が排除され、並行手続と救済の二重取りを防止してホスト国の手続的負担を軽減する。実務上の最大の争点は契約上の請求と条約上の請求が「同一の紛争」か否かの判定で、初期の仲裁判断が当事者・訴訟物・請求原因の三重同一性テストを厳格に適用した結果、国内裁判所での契約請求と仲裁での条約請求はほぼ常に別個とされ、条項が現実に発動するのは稀で空文化しているとの評価が定着した。Pantechniki 対アルバニア（2009）はこの形式的基準を退け、両請求が「同一の基本的基礎」を共有し、それが国内裁判所へ真の選択として付託されたかで判断する実質基準を提示し、Toto 対レバノン（2012）等の後続判断に影響を与えた。UNCTAD は起草例を、選択の不可逆性を明示する型と黙示にとどめる型に整理し、仲裁付託の条件として国内手続の放棄を要求する NAFTA 型のウェイバー（ノー・ユーターン）条項との設計上の対比を示している。',
     keyFigures: 'Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（2012）／UNCTAD投資協定条項シリーズ',
     asOf: '2026-06',
     sources: [
@@ -24238,8 +24240,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-blue-pencil-doctrine',
     discipline: 'business-law',
     title: 'ブルーペンシル法理',
-    statement: '雇用・事業譲渡契約における競業禁止条項などの過度な制限特約を、裁判所が「青鉛筆」で不合理部分を削除・修正して残余を有効とする英米法上の法理。Nordenfelt判決（1894年）を起源とし、厳格削除・司法修正・全体無効の三方式を巡りPost、Bishopらが政策論を展開した。',
-    keyFigures: 'Francis Clerke Nordenfelt ／ Richard A. Posner ／ Matthew W. Finkin',
+    statement: '雇用・事業譲渡契約における競業禁止条項などの過度な制限特約を、裁判所が「青鉛筆」で不合理部分を削除・修正して残余を有効とする英米法上の法理。武器製造業者の事業譲渡に伴う世界規模の競業禁止を扱い、取引制限は原則無効としつつ合理的な範囲で有効と認める基準を確立した Nordenfelt 判決（1894年貴族院）を起源とする。現代アメリカ法は州ごとに、文言の削除のみ許し書き加えを認めない厳格ブルーペンシル方式、条項を合理的範囲へ書き直す司法修正（リフォメーション）方式、過大な条項を全体無効とし一切救済しない方式に三分される。Blake（1960）は、削除・修正による救済が使用者に「まず広く書き、争われたら狭めてもらう」誘因を与え、争う資力のない労働者への萎縮効果を生むと批判した古典的論文であり、ALI 雇用法リステイトメント 8.07条は誠実に起草された条項に限って修正を認める中間的立場を採る。法と経済学では、Rubin と Shedd（1981）が競業特約を使用者による一般的人的資本投資を保護する装置として正当化し、Garmaise（2011）は執行可能性の強い州ほど経営幹部の転職が減り、報酬構造と企業の投資配分が変化することを実証しており、方式の選択は司法技術にとどまらず州の労働市場政策の問題として議論される。',
+    keyFigures: 'Nordenfelt v Maxim Nordenfelt（1894 貴族院）／ Harlan M. Blake（1960 Harvard Law Review 論文）／ ALI 雇用法リステイトメント 8.07条（Reporter: Matthew W. Finkin）',
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.2307/795584', type: 'academic', label: 'Blake, Employee Covenants Not to Compete (1960)' },
@@ -25713,7 +25715,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-lien-priority-rule',
     discipline: 'business-law',
     title: '担保権優先順位の法則',
-    statement: '「先着優先の原則」（first in time, first in right）とは、複数の担保権が競合する場合に先に完成・登記した担保権が優先するという原則であり、GilmoreがUCC第9編で体系化した。ただし買戻し担保権（PMSI）や租税先取特権には法定の例外がある。',
+    statement: '「先着優先の原則」（first in time, first in right）とは、複数の担保権が競合する場合に先に完成・登記した担保権が優先するという原則で、Gilmore らが起草した UCC 第9編が動産担保について体系化した。UCC 9-322条(a)(1)は正確には「先に登録又は完成した方」（first to file or perfect）を基準とし、優先順位の基準時が登録と完成のいずれか早い方に遡るため、貸付実行前にファイナンシング・ステートメントを先行登録して順位を押さえる実務を可能にする。完成済み担保権は未完成担保権に常に優先し、未完成同士では先に付従（アタッチ）した方が勝つ。最重要の法定例外が購入代金担保権（PMSI）のスーパープライオリティ（9-324条）で、設備については債務者の占有取得から20日以内の完成、在庫については引渡し前の完成に加え先順位の在庫担保権者への事前通知を条件として、先行する包括担保権（アフター・アクワイヤード条項付きの浮動的担保）にも優先する——新規の売主金融・購入資金融資を既存の包括担保の独占から守る政策判断である。連邦租税リーエンその他の連邦債権との競合は連邦法準拠となり、担保権が特定・確定している（choate）ことを求める判例法理と、登録前の担保権者らを保護する内国歳入法典6323条の調整規定が働く（DOJ 実務マニュアルが競合類型を整理）。',
     keyFigures: 'Grant Gilmore ／ Steven L. Harris ／ Lynn M. LoPucki',
     asOf: '2026-06',
     sources: [
@@ -25727,7 +25729,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-polychronicity',
     discipline: 'management',
     title: 'ポリクロニシティ（多時間並行志向）',
-    statement: 'Hallが提唱した時間志向の文化的次元を起点に、Bluedorn・Kaufman-Scarborough・Lindquistが組織行動論へと展開した概念。複数の課題を同時進行することを好む傾向と一度に一つに集中する傾向の個人・組織差を測定し業務遂行や文化的適合性を説明する。',
+    statement: 'Hall が提唱した時間志向の文化的次元——複数の事柄を同時並行で進め人間関係を優先する P タイムと、一度に一つを順番に処理しスケジュールを優先する M タイム——を起点に、Bluedorn・Kaufman-Scarborough・Lindquist らが組織行動論・消費者行動論へ展開した概念。複数の課題や関与を同時に進めることを好む傾向（ポリクロニック）と一つに集中してから次へ移ることを好む傾向（モノクロニック）の連続体上の個人差・組織差を指し、Bluedorn らの IPV（Inventory of Polychronic Values、1999）が組織・集団レベルの時間文化を、Lindquist と Kaufman-Scarborough の PMTS（2007）が個人レベルの傾向を測定する尺度として整備された。概念上の要点は、これが選好・志向であって同時処理の能力ではなく、実際にマルチタスクが上手いことを意味しない点、および個人の時間志向と職務・組織の時間文化との適合が満足度や成果を左右するとされる点にある。文化比較（P タイム優位の地中海・中南米圏と M タイム優位の北欧・北米圏）、小売・サービスの待ち時間や買物行動の研究、マルチタスキングと業務スケジューリングの設計に応用されている。',
     keyFigures: 'Edward T. Hall ／ Allen C. Bluedorn ／ Carol Kaufman-Scarborough',
     asOf: '2026-06',
     sources: [
@@ -27290,12 +27292,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-labor-employment-law',
     discipline: 'business-law',
     title: '労働法・雇用法：集団的労使関係と個別的雇用保護の法理論',
-    statement: '労働法は使用者・労働者・労働組合の関係を規律する法分野。カーン＝フロイントが1972年に比較労働法の体系を確立し、雇用随意原則（アメリカ）とILO基本条約による国際基準が対比される。西谷敏は日本労働法学を主導し、集団的労使交渉・解雇規制・非正規雇用保護の理論的基盤を整備した。',
+    statement: '労働法は使用者・労働者・労働組合の関係を規律する法分野で、労使間の交渉力の構造的不均衡を前提に契約自由を修正する点に統一的性格を持つ。カーン＝フロイントは『Labour and the Law』（1972）で、法は労使の自治的な集団的交渉を支える補助線にとどまるべきだとする集団的自由放任（collective laissez-faire）論を軸に比較労働法の体系を確立した。アメリカの雇用随意原則（employment at will——期間の定めのない雇用は理由なく終了できるとする原則）と、結社の自由・団体交渉、強制労働の禁止、児童労働の撤廃、差別の排除（2022年改正で労働安全衛生を追加し5分野）を全加盟国が尊重すべき中核的労働基準とする ILO 1998年宣言に代表される国際基準とが、規制思想の対比軸となる。ストーンは『From Widgets to Digits』（2004）で、長期雇用・年功処遇・内部労働市場を前提に組み立てられた20世紀型の労働規制が、企業の境界を越えて移動するデジタル時代の働き方に適合しなくなったと診断し、移転可能な技能・持ち運び可能な給付・キャリア移行支援を軸とする規制の再設計を提唱した。日本では西谷敏らが集団的労使交渉・解雇規制・非正規雇用保護の理論的基盤を整備し、集団的労使関係法と個別的雇用保護法の二本柱に加えプラットフォーム就労への保護拡張が現代的課題となっている。',
     keyFigures: 'オットー・カーン＝フロイント ／ キャサリン・ストーン ／ 西谷敏',
     asOf: '2026-06-24',
     sources: [
       { url: 'https://archive.org/details/labourandlaw0000kahn', type: 'academic', label: 'Kahn-Freund 1972 — Labour and the Law, Stevens & Sons' },
-      { url: 'https://www.cambridge.org/core/books/from-widgets-to-digits/A3B2C1D4E5F6A7B8C9D0E1F2A3B4C5D6', type: 'academic', label: 'Stone 2004 — From Widgets to Digits: Employment Regulation for the Changing Workplace, Cambridge University Press' },
+      { url: 'https://assets.cambridge.org/97805218/29106/frontmatter/9780521829106_frontmatter.pdf', type: 'academic', label: 'Stone 2004 — From Widgets to Digits: Employment Regulation for the Changing Workplace, Cambridge University Press (frontmatter)' },
       { url: 'https://www.ilo.org/declaration/lang--en/index.htm', type: 'government', label: 'ILO 1998 — Declaration on Fundamental Principles and Rights at Work, International Labour Organization' },
     ],
   },
@@ -46017,19 +46019,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/journals/psychological-science/article/inoculating-the-public-against-misinformation', type: 'academic', label: 'van der Linden, S. et al. (2017) Inoculating the Public Against Misinformation — Psychological Science' },
       { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/sns.html', type: 'government', label: '総務省 インターネット上の偽・誤情報対策 — 総務省' },
       { url: 'https://ja.wikipedia.org/wiki/%E8%AA%A4%E6%83%85%E5%A0%B1', type: 'reference', label: 'Wikipedia: 誤情報 — ミスインフォメーションとデジタル情報環境の解説' },
-    ],
-  },
-  {
-    id: 'econ-behavioral-nudge-thaler-sunstein',
-    discipline: 'economics',
-    title: '行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入',
-    statement: 'ナッジ（Nudge）とは、リチャード・セイラーとキャス・サンスティーンが提唱した行動変容の概念であり、禁止や金銭的インセンティブに頼らず、選択の提示方法（選択アーキテクチャ）を工夫することで行動を望ましい方向に誘導する手法である。二人の共著『Nudge』（2008年）は、デフォルト設定の変更——401(k)の自動加入・臓器提供の推定同意——が大きな行動変化をもたらすことを示した。理論的基盤はダニエル・カーネマンの二重過程理論（システム1/2）であり、直感的・自動的思考の偏りを活用してシステム1の誘導を図る。英国は2010年に行動インサイトチーム（BIT、通称「ナッジユニット」）を政府機関として設置し、税収改善・臓器提供・ワクチン接種率向上に成果を上げた。日本でも内閣府の行動ファイナンス研究や経済産業省の「ナッジ×デジタル」プロジェクトが進む。批判としては操作の透明性・民主的正統性・文化的移転可能性が問われており、ハンナ・フリードリクセンらは自律性侵害の倫理問題を指摘する。セイラーは2017年にノーベル経済学賞を受賞した。',
-    keyFigures: 'リチャード・セイラー ／ キャス・サンスティーン ／ ダニエル・カーネマン ／ デイヴィッド・ハルパーン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://yalebooks.yale.edu/book/9780300122237/nudge/', type: 'academic', label: 'Thaler, R.H. & Sunstein, C.R. (2008) Nudge: Improving Decisions About Health, Wealth, and Happiness — Yale University Press' },
-      { url: 'https://www.bi.team/', type: 'government', label: 'Behavioural Insights Team (BIT) — UK Government Nudge Unit' },
-      { url: 'https://ja.wikipedia.org/wiki/%E3%83%8A%E3%83%83%E3%82%B8', type: 'reference', label: 'Wikipedia: ナッジ — 選択アーキテクチャと行動経済学の政策応用' },
     ],
   },
   {

@@ -30,11 +30,11 @@ aliases:
 - [Wikipedia: Nudge theory — choice architecture, libertarian paternalism, BIT, default effects](https://en.wikipedia.org/wiki/Nudge_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 語彙が近い
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 語彙が近い
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 語彙が近い
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家

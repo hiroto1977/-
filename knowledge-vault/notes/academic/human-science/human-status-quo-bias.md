@@ -39,6 +39,7 @@ aliases:
 - [[human-hedonic-adaptation|快楽順応]] — 出典を共有
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
 - [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 同分野の近傍
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

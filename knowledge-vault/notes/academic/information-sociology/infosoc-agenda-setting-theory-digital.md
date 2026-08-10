@@ -34,7 +34,6 @@ Maxwell McCombs ／ Donald Shaw ／ Guy Golan
 ## 関連概念
 - [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同じ思想家
 - [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同分野の近傍
-- [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

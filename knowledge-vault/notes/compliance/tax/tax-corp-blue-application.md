@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
-- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 語彙が近い
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
 - [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 同分野の近傍
 

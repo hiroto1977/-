@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-whistleblower-protection|公益通報者保護法]] — 分野横断
-- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 同分野の近傍
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 同分野の近傍
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

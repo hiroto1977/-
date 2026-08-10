@@ -37,10 +37,10 @@ prefecture
 - [守山商工会議所（中小企業向け補助金支援）](https://www.moriyama-cci.or.jp/) `運営団体`
 
 ## 関連概念
+- [[subsidy-okinawa|沖縄県産業振興基金事業補助金（沖縄県）]] — 語彙が近い
 - [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 語彙が近い
 - [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い
 - [[subsidy-iwate|中小企業者等賃上げ環境整備支援事業費補助金（岩手県）]] — 語彙が近い
-- [[subsidy-okinawa|沖縄県産業振興基金事業補助金（沖縄県）]] — 語彙が近い
 - [[subsidy-mie|三重県経営向上計画・経営革新計画に基づく支援（三重県）]] — 語彙が近い
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
 - [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有

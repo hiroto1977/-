@@ -34,8 +34,8 @@ aliases:
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
-- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 同分野の近傍
 - [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — 同分野の近傍
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 同分野の近傍
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同分野の近傍
 - [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
 - [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍

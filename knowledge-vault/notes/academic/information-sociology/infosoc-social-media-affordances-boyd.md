@@ -38,10 +38,10 @@ danah boyd ／ ニコール・エリソン ／ ジェームズ・ギブソン �
 - [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同じ思想家
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同分野の近傍
+- [[infosoc-temporal-focus-information|時間的焦点理論：情報処理と時間的知覚の組織的影響]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

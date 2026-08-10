@@ -33,7 +33,7 @@ G.H.ミード（源流）／H.ブルーマー（1937命名・1969体系化）／
 ## 関連概念
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 出典を共有
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
-- [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同分野の近傍
+- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

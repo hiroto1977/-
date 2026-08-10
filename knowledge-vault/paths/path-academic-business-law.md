@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 72）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 74）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 48）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
@@ -21,7 +21,7 @@ tags:
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
-- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
+- [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 26）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
@@ -62,6 +62,7 @@ tags:
 - 1876年: [[bizlaw-res-judicata|既判力（Res Judicata）]]
 - 1878年: [[bizlaw-nemo-dat-quod-non-habet|ネモ・ダット原則（Nemo Dat Quod Non Habet）]]
 - 1878年: [[bizlaw-renvoi|反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理]]
+- 1894年: [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]]
 - 1895年: [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]]
 - 1897年: [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]]
 - 1899年: [[bizlaw-commercial-code|商法]]
@@ -335,7 +336,6 @@ tags:
 - [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]]
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]]
 - [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]]
-- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]]
 - [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]]
 - [[bizlaw-bolam-test|ボーラム・テスト——専門家の過失をめぐる注意義務の基準]]
 - [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]]

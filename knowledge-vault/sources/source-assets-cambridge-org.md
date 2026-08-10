@@ -1,20 +1,20 @@
 ---
-title: "bi.team"
+title: "assets.cambridge.org"
 type: source-domain
-host: "bi.team"
+host: "assets.cambridge.org"
 cite_count: 1
 tags:
   - source-domain
   - index
 ---
 
-# bi.team
+# assets.cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（公的 1）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（学術 1）
 
 ## このドメインを出典とする項目
 
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — BehaviouralInsightsTeam(BIT)—UKGovernmentNudgeUnit
+- [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — Stone2004—FromWidgetstoDigits:EmploymentRegulationfortheChangingWorkp…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

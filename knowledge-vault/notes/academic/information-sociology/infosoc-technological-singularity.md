@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-identity|デジタルアイデンティティ]] — 同分野の近傍
-- [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同分野の近傍
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

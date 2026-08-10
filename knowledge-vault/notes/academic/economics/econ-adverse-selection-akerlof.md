@@ -40,8 +40,8 @@ George A. Akerlof ／ A. Michael Spence ／ Joseph E. Stiglitz
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
 - [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
-- [[econ-adverse-selection|逆選択（レモン市場）]] — 同分野の近傍
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同分野の近傍
+- [[econ-adverse-selection|逆選択（レモン市場）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

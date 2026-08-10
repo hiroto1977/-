@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

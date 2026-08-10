@@ -33,6 +33,7 @@ BEPS（税源侵食と利益移転、Base Erosion and Profit Shifting）とは�
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 同じ思想家
 - [[bizlaw-installment-sales-act|割賦販売法]] — 同分野の近傍
 - [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 同分野の近傍
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

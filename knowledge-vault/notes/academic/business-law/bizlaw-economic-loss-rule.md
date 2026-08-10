@@ -34,16 +34,16 @@ William L. Prosser ／ W. Page Keeton ／ Richard A. Posner ／ Guido Calabresi 
 - [Wikipedia — Pure economic loss（Robins Dry Dock / Hedley Byrne を含む概説）](https://en.wikipedia.org/wiki/Pure_economic_loss) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 同じ思想家
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
 - [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 出典を共有
+- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 - [[bizlaw-tortious-interference|契約関係への不法干渉（Tortious Interference with Contract）]] — 出典を共有
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
 - [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]] — 出典を共有
-- [[bizlaw-indemnification-clause-duty-to-defend|補償条項と防御義務・補償義務の区別（Indemnification Clause）]] — 同分野の近傍
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

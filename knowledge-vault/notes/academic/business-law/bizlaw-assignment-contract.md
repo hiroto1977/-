@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Assignment (law) — benefit assignable, burden requires novation, legal/equitable, subject to equities](https://en.wikipedia.org/wiki/Assignment_(law)) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 語彙が近い
 - [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同じ思想家
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同じ思想家
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
 - [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
+- [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
