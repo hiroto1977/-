@@ -31,8 +31,8 @@ aliases:
 - [Optimism bias — Wikipedia（定義・別称・約80%の有病率・神経生理学的基盤）](https://en.wikipedia.org/wiki/Optimism_bias) `リファレンス`
 
 ## 関連概念
-- [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同分野の近傍
+- [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
 - [[human-interpersonal-neurobiology-siegel|対人神経生物学——シーゲルの統合マインド理論と関係性が脳発達に与える神経科学的基盤]] — 同分野の近傍
 
 ## 関連

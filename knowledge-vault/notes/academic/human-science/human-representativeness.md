@@ -34,6 +34,7 @@ aliases:
 - [[human-conjunction-fallacy|連言錯誤]] — 語彙が近い
 - [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同分野の近傍
+- [[human-central-pattern-generator|中枢パターン発生器（CPG）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

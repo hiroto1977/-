@@ -38,8 +38,8 @@ prefecture
 
 ## 関連概念
 - [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 語彙が近い
-- [[subsidy-oita|大分県省力化・生産性向上支援補助金（大分県）]] — 語彙が近い
 - [[subsidy-chiba|千葉県中小企業成長促進補助金]] — 語彙が近い
+- [[subsidy-oita|大分県省力化・生産性向上支援補助金（大分県）]] — 語彙が近い
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有

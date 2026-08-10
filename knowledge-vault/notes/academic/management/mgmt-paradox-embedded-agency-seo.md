@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同分野の近傍
-- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 同分野の近傍
 - [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 同分野の近傍
 
 ## 関連

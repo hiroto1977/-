@@ -35,7 +35,7 @@ aliases:
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 出典を共有
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 出典を共有
 - [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
-- [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — 同分野の近傍
+- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

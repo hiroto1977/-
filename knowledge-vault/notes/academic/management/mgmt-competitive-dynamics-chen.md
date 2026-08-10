@@ -32,6 +32,7 @@ aliases:
 - [Wikipedia: Competitive dynamics — Chen AMC model, action-response dyad, market commonality, resource similarity](https://en.wikipedia.org/wiki/Competitive_dynamics) `リファレンス`
 
 ## 関連概念
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 語彙が近い
 - [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
 - [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
@@ -40,8 +41,6 @@ aliases:
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
-- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

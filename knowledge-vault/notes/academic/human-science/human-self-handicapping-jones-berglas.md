@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-techno-nationalism-digital-sovereignty|テクノナショナリズムとデジタル主権戦略の比較政治経済学]] — 同じ思想家
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
-- [[human-psychomotor-vigilance|精神運動覚醒課題（PVT）]] — 同分野の近傍
+- [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 同分野の近傍
 - [[human-wernicke-aphasia|ウェルニッケ失語]] — 同分野の近傍
 
 ## 関連

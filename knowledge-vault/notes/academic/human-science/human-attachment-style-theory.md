@@ -38,8 +38,8 @@ John Bowlby ／ Mary Ainsworth ／ Cindy Hazan ／ Phillip Shaver ／ Kim Bartho
 - [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 出典を共有
 - [[human-motivational-interviewing-miller-rollnick|動機づけ面接——ミラー＆ロルニックのチェンジトークと行動変容支援]] — 出典を共有
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
-- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 同分野の近傍
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 同分野の近傍
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

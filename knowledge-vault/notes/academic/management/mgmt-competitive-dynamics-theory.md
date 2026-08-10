@@ -32,6 +32,7 @@ Ming-Jer Chen ／ Danny Miller ／ Ken G. Smith
 - [Chen & Miller (2015) Reconceptualizing Competitive Dynamics — Strategic Management Journal 36(5)](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.2245) `学術`
 
 ## 関連概念
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 語彙が近い
 - [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — 同じ思想家
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
@@ -41,7 +42,6 @@ Ming-Jer Chen ／ Danny Miller ／ Ken G. Smith
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
-- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

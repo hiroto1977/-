@@ -35,7 +35,7 @@ aliases:
 - [[bizlaw-doctrine-of-equivalents|均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理]] — 出典を共有
 - [[bizlaw-intellectual-property-trademark|商標法と知的財産保護の法律理論——ブランド価値と識別性基準]] — 出典を共有
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 出典を共有
-- [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 同分野の近傍
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

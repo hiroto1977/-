@@ -33,7 +33,6 @@ aliases:
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 出典を共有
 - [[bizlaw-companies-act|会社法]] — 同分野の近傍
 - [[bizlaw-leniency|課徴金減免制度（リニエンシー）]] — 同分野の近傍
-- [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

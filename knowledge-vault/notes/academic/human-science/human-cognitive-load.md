@@ -34,8 +34,8 @@ aliases:
 ## 関連概念
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 出典を共有
 - [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
-- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同分野の近傍
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

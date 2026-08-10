@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Robert Kegan — 構成的発達理論の概要](https://en.wikipedia.org/wiki/Robert_Kegan) `リファレンス`
 
 ## 関連概念
-- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
 - [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
+- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
 - [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同分野の近傍
 
 ## 関連

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ I.アイゼンが1980年代に提唱／行動は意図が予測し、意図は�
 - [Wikipedia — Theory of planned behavior](https://en.wikipedia.org/wiki/Theory_of_planned_behavior) `リファレンス`
 
 ## 関連概念
-- [[human-optimism-bias|楽観バイアス]] — 同分野の近傍
 - [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
+- [[human-optimism-bias|楽観バイアス]] — 同分野の近傍
 - [[human-moral-licensing|モラル・ライセンシング（道徳的自己許可）]] — 同分野の近傍
 
 ## 関連

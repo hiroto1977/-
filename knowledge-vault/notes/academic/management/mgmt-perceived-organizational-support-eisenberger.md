@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
