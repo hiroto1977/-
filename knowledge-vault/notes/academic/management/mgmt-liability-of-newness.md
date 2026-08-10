@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-red-queen-competition|赤の女王競争理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,7 @@ aliases:
 - [国税庁 令和6年1月からの電子取引データの保存方法](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf) `公的`
 
 ## 関連概念
-- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 分野横断
+- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 同分野の近傍
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 同分野の近傍
 

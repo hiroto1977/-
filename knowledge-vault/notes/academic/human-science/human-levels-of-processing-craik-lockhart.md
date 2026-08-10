@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同じ思想家
 - [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
-- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
 - [[human-serial-position|系列位置効果（初頭効果・新近効果）]] — 同分野の近傍
+- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
 - [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同分野の近傍
 
 ## 関連

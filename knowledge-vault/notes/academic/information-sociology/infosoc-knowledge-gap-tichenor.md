@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同分野の近傍
 - [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — 同分野の近傍
-- [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

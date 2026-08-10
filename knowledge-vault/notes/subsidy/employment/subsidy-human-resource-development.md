@@ -38,7 +38,7 @@ national
 
 ## 関連概念
 - [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
-- [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

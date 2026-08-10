@@ -34,8 +34,8 @@ aliases:
 - [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
 - [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
-- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同分野の近傍
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同分野の近傍
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同分野の近傍
 - [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同分野の近傍
 - [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同分野の近傍

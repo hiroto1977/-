@@ -33,13 +33,14 @@ aliases:
 
 ## 関連概念
 - [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 語彙が近い
-- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 語彙が近い
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
 - [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
 - [[econ-stagflation|スタグフレーション]] — 同分野の近傍
 
 ## 関連

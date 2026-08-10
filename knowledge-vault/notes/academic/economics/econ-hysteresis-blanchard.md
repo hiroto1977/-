@@ -31,7 +31,8 @@ aliases:
 - [Wikipedia: Hysteresis (economics) — 経済学におけるヒステリシスの理論と実証](https://en.wikipedia.org/wiki/Hysteresis_(economics)) `リファレンス`
 
 ## 関連概念
-- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 語彙が近い
+- [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 語彙が近い
+- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
 - [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
 - [[econ-eurosclerosis-giersch|ユーロスクレローシス——欧州経済の構造的硬直性と高失業の持続]] — 同じ思想家
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同じ思想家
-- [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

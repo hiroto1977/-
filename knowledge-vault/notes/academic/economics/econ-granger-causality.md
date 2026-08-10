@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同じ思想家
-- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同分野の近傍
 - [[econ-export-led-growth-model|輸出主導型成長モデル]] — 同分野の近傍
+- [[econ-business-cycles|景気循環とその諸波動]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

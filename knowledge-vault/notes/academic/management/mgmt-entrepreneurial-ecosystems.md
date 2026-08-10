@@ -36,8 +36,8 @@ aliases:
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
 - [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同分野の近傍
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 同分野の近傍
-- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
