@@ -31,8 +31,8 @@ aliases:
 - [公正取引委員会 独占禁止法 法令](https://www.jftc.go.jp/dk/guideline/lawdk.html) `公的`
 
 ## 関連概念
-- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 語彙が近い
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 語彙が近い
+- [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 語彙が近い
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 語彙が近い
 - [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 同分野の近傍
 

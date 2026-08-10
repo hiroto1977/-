@@ -26,8 +26,8 @@ tags:
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]（接続 24）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
-- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -163,7 +163,6 @@ tags:
 - 1975年: [[human-spreading-activation|活性化拡散]]
 - 1975年: [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]]
 - 1976年: [[human-mcgurk-effect|マガーク効果]]
-- 1977年: [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]
 - 1977年: [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]]
 - 1977年: [[human-intermodal-matching|感覚間マッチング（Intermodal Matching）]]
 - 1977年: [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]]
@@ -325,6 +324,7 @@ tags:
 - [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]]
 - [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]]
 - [[human-autobiographical-memory-conway|コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル]]
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]]
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]

@@ -34,13 +34,13 @@ aliases:
 - [[bizlaw-installment-sales-act|割賦販売法]] — 分野横断
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
-- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 分野横断
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
 - [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
@@ -41,7 +42,6 @@ aliases:
 - [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
-- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 語彙が近い
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
-- [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

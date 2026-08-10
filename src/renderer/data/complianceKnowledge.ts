@@ -182,15 +182,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '通信販売の広告表示義務（特定商取引法）',
       statement:
-        '通信販売（EC 含む）では、事業者名（個人事業者は戸籍上の氏名又は登記上の商号。屋号・サイト名のみは不可）・' +
-        '住所・電話番号・販売価格・送料・支払方法・引渡時期・返品特約（無い場合はその旨）等を広告に表示する義務がある。',
+        '通信販売（EC 含む）では、事業者名（個人事業者は戸籍上の氏名または登記上の商号。屋号・サイト名のみは不可）・' +
+        '住所・電話番号・販売価格・送料・支払方法・引渡時期・返品特約（無い場合はその旨）等を広告に表示する義務がある。' +
+        '住所と電話番号は現に活動している場所と、確実に連絡が取れる番号でなければならない。' +
+        '広告スペースが限られる場合に一部を省略できる例外はあるが、その場合は請求があれば遅滞なく' +
+        '記載事項を記した書面または電磁的記録を提供できる旨とその方法を表示しておく必要がある。' +
+        'あわせて誇大広告の禁止がかかり、承諾していない者への電子メール広告の送信も原則禁止される' +
+        '（オプトイン規制。請求・承諾の記録は保存しておく）。' +
+        '返品特約は「表示していなければ8日以内の返品を拒めない」という向きで効くので、広告の側で決まる。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売広告' },
       { url: 'https://www.no-trouble.caa.go.jp/qa/advertising.html', type: 'government', label: '消費者庁 通信販売広告 Q&A' },
-      { url: 'https://biz.moneyforward.com/tax_return/basic/79606/', type: 'media', label: 'マネーフォワード 特商法に基づく表記' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売' },
     ],
   },
   {
@@ -724,13 +730,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'クーリング・オフ（特定商取引法）',
       statement:
         '訪問販売・電話勧誘販売・特定継続的役務提供・訪問購入は8日間、連鎖販売取引・業務提供誘引販売取引は20日間、' +
-        '法定書面の受領日から無条件で契約解除（クーリング・オフ）できる。通信販売にはクーリング・オフ制度はない。',
+        '正しく記載された法定書面（申込書面または契約書面）を受け取った日から起算して無条件で契約解除できる。' +
+        '通信販売にはクーリング・オフ制度がない（返品の可否は広告の返品特約による）。' +
+        '起算日は書面の受領日なので、書面の記載に不備があればいつまでも期間が始まらない。' +
+        '2022年6月1日からは書面だけでなく電磁的記録（電子メール・事業者サイトの専用フォーム等）でも通知できる。' +
+        '効果として、既に商品を受け取っていても引取り費用は事業者の負担になり、支払済みの代金は返還される。' +
+        '適用除外もあり、使うと価値がほとんどなくなる消耗品（健康食品・化粧品等）を使ってしまった場合や、' +
+        '現金取引で代金の総額が3,000円未満の場合には適用されない。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁 特定商取引法ガイド' },
       { url: 'https://www.no-trouble.caa.go.jp/what/doortodoorsales/', type: 'government', label: '消費者庁 訪問販売' },
+      { url: 'https://www.caa.go.jp/publication/pamphlet/assets/consumer_transaction_cms101_230608_01.pdf', type: 'government', label: '消費者庁 クーリング・オフの期間と方法（電磁的記録による通知）' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ（適用除外を含む）' },
       { url: 'https://www.pref.shiga.lg.jp/shohi/105947.html', type: 'municipality', label: '滋賀県 クーリング・オフ' },
     ],
   },
@@ -1692,15 +1706,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '連鎖販売取引（マルチ商法）',
       statement:
-        '個人を販売員として勧誘し、その個人がさらに別の個人を販売員として勧誘する形で連鎖的に拡大する' +
-        '取引は連鎖販売取引として特定商取引法の規制を受け、概要書面・契約書面の交付や20日間のクーリングオフが義務付けられる。',
+        '個人を販売員として勧誘し、その個人がさらに別の個人を販売員として勧誘する形で連鎖的に拡大する取引は' +
+        '連鎖販売取引として特定商取引法の規制を受ける（33条）。禁止されている商法ではないが、規制は重い。' +
+        '契約に先立って概要書面を、契約後に契約書面を交付する義務があり、クーリング・オフは契約書面を受け取った日' +
+        '（商品の引渡しがそれより後なら引渡日）から20日間と長く取られている。' +
+        'クーリング・オフ期間を過ぎた後でも、将来に向かって契約を解除する中途解約ができ、' +
+        '一定の要件を満たす未使用の商品については返品も認められる。' +
+        '広告の表示義務と誇大広告の禁止もかかる。「必ず儲かる」といった勧誘は不実告知として禁止され、' +
+        '違反には業務停止命令等の行政処分と罰則がある。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/chainsales/', type: 'government', label: '消費者庁 特定商取引法ガイド 連鎖販売取引' },
       { url: 'https://www.shouhiseikatu.metro.tokyo.lg.jp/keiyaku/torihiki/rensa.html', type: 'municipality', label: '東京くらしWEB 連鎖販売取引' },
-      { url: 'https://www.kokusen.go.jp/soudan_now/data/multi.html', type: 'media', label: '国民生活センター マルチ取引' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/multilevelmarketing/', type: 'government', label: '消費者庁 特定商取引法ガイド 連鎖販売取引' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/multi.html', type: 'government', label: '国民生活センター マルチ取引' },
     ],
   },
   {
@@ -2113,14 +2134,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '訪問販売とクーリング・オフ（特定商取引法）',
       statement:
-        '訪問販売（事業者が消費者の自宅等を訪問して契約を勧誘する取引等）では、事業者に氏名等の明示義務（特商法3条）および' +
-        '契約書面等の交付義務があり、消費者は法定の契約書面を受け取った日から8日間は無条件でクーリング・オフ（契約解除）ができる。',
+        '訪問販売は自宅等への訪問だけを指すのではなく、勧誘目的を告げずに誘い出して営業所等以外の場所で契約させる' +
+        'キャッチセールスやアポイントメントセールスも含む。対象は原則としてすべての商品・役務と特定権利である。' +
+        '事業者には、勧誘に先立って氏名（名称）・販売しようとする商品等の種類・勧誘目的であることを告げる義務（3条）、' +
+        '申込みを受けたときまたは契約を締結したときに事業者の氏名・住所・電話番号・代表者名・担当者名等を記載した' +
+        '書面を交付する義務（4条・5条）がある。消費者が契約しない意思を示したら、その場で勧誘を続けることも' +
+        '日を改めて勧誘することも禁止される（3条の2・再勧誘の禁止）。' +
+        'クーリング・オフは書面受領日から8日間で、日常生活で通常必要とされる分量を著しく超える契約は' +
+        '契約締結から1年以内であれば解除できる（過量販売解除）。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/doortodoorsales/', type: 'government', label: '消費者庁 特定商取引法ガイド 訪問販売' },
       { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2012/pdf/130220legal_4.pdf', type: 'government', label: '消費者庁 特定商取引法第3条の2等の運用指針（再勧誘禁止規定に関する指針）' },
       { url: 'https://www.kansai.meti.go.jp/4syokei/soudan/co.html', type: 'government', label: '近畿経済産業局 クーリング・オフとは' },
     ],
   },

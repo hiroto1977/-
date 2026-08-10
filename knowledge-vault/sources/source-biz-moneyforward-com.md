@@ -2,7 +2,7 @@
 title: "biz.moneyforward.com"
 type: source-domain
 host: "biz.moneyforward.com"
-cite_count: 20
+cite_count: 19
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # biz.moneyforward.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **20 件**（メディア 20）
+> [!info] 出典ドメイン索引 ・ 引用 **19 件**（メディア 19）
 
 ## このドメインを出典とする項目
 
@@ -23,7 +23,6 @@ tags:
 - [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 契約不適合責任（民法566条）解説
 - [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — 取締役の善管注意義務解説
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 決算公告の期限・方法・罰則解説
-- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — マネーフォワード特商法に基づく表記
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 特定求職者雇用開発助成金各コース・申請解説
 - [[tax-corp-interim-return|法人税の中間申告]] — マネーフォワード法人税の中間納付
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 法人税の申告期限解説

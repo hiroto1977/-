@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 同分野の近傍
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

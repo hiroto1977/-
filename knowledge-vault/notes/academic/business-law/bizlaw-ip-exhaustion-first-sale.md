@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-intellectual-property-exhaustion|知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力]] — 語彙が近い
+- [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 語彙が近い
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 出典を共有
-- [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

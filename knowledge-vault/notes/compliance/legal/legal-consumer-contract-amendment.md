@@ -38,6 +38,7 @@ aliases:
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 出典を共有
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 出典を共有
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-consumer-contract-act|消費者契約法]] — 同分野の近傍
 

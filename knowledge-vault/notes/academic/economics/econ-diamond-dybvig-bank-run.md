@@ -31,7 +31,7 @@ Douglas W. Diamond／Philip H. Dybvig
 
 ## 関連概念
 - [[econ-diamond-dybvig-bank-runs|銀行取付モデル（ダイヤモンド＆ディブビッグ）]] — 語彙が近い
-- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同分野の近傍
+- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 語彙が近い
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
 
 ## 関連

@@ -37,7 +37,6 @@ aliases:
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
 - [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — 同分野の近傍
-- [[bizlaw-simultaneous-performance|同時履行の抗弁権（民法533条）]] — 同分野の近傍
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]] — 同分野の近傍
 - [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同分野の近傍
 

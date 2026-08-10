@@ -33,11 +33,11 @@ aliases:
 ## 関連概念
 - [[labor-collective-bargaining|団体交渉拒否の禁止（労働組合法7条）]] — 語彙が近い
 - [[bizlaw-labor-union-act|労働組合法]] — 語彙が近い
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 出典を共有
 - [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 出典を共有
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 同分野の近傍
 
 ## 関連

@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 語彙が近い
 - [[bizlaw-payment-services-act|資金決済法]] — 分野横断
-- [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
+- [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

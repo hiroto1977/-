@@ -33,15 +33,15 @@ aliases:
 
 ## 関連概念
 - [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 語彙が近い
-- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 語彙が近い
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
