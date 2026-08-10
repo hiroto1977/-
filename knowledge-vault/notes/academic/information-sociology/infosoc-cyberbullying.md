@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 出典を共有
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同分野の近傍
-- [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同分野の近傍
+- [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,9 +33,9 @@ E. Tory Higgins ／ Nira Liberman ／ Klodiana Lanaj
 
 ## 関連概念
 - [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 語彙が近い
-- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同分野の近傍
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同分野の近傍
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同分野の近傍
-- [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 同分野の近傍
+- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-compensatory-control-kay|補償的制御理論（コンペンサトリー・コントロール理論）]] — 同分野の近傍
-- [[human-self-categorization-theory|自己カテゴリー化理論]] — 同分野の近傍
+- [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

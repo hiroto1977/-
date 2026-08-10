@@ -31,8 +31,8 @@ aliases:
 - [UQAM — Say, Traité d’économie politique (1803) 原典（大学アーカイブ）](https://classiques.uqam.ca/classiques/say_jean_baptiste/traite_eco_pol/traite_eco_pol.html) `学術`
 
 ## 関連概念
-- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
 - [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同分野の近傍
+- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

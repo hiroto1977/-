@@ -37,7 +37,6 @@ John C. Turner ／ Penelope J. Oakes ／ Michael A. Hogg ／ Stephen D. Reicher 
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同じ思想家
 - [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同分野の近傍
 - [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
-- [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — 同分野の近傍
 - [[human-chunking|チャンク化（チャンキング）]] — 同分野の近傍
 
 ## 関連

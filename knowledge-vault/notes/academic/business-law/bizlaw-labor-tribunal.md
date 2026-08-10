@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia — 労働審判法](https://ja.wikipedia.org/wiki/%E5%8A%B4%E5%83%8D%E5%AF%A9%E5%88%A4%E6%B3%95) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 語彙が近い
 - [[labor-tribunal|労働審判制度（労働審判法）]] — 分野横断
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
 - [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
 - [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
-- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

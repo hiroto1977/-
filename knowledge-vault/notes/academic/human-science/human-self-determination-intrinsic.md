@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-self-determination|自己決定理論（SDT）]] — 語彙が近い
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 語彙が近い
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家

@@ -26,8 +26,8 @@ tags:
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]]（接続 17）
 - [[subsidy-patent-fee-reduction|特許料等の減免制度]]（接続 17）
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]]（接続 17）
+- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]]（接続 15）
 - [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]]（接続 14）
-- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2025年: [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]]
@@ -83,6 +83,7 @@ tags:
 - [[subsidy-okayama|岡山市創業者支援事業補助金]]
 - [[subsidy-okayama-pref|中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）]]
 - [[subsidy-okinawa|沖縄県産業振興基金事業補助金（沖縄県）]]
+- [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]]
 - [[subsidy-osaka-startup|大阪起業家グローイングアップ補助金（大阪府）]]
 - [[subsidy-productivity-revolution|中小企業生産性革命推進事業]]
 - [[subsidy-regional-public-transport|地域公共交通確保維持改善事業]]
@@ -111,7 +112,6 @@ tags:
 - [[subsidy-yamagata|山形県中小企業まるっとサポート補助金（山形県）]]
 - [[subsidy-yamaguchi|山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）]]
 - [[subsidy-yamanashi|中小企業等生産性向上設備整備等支援補助金（山梨県）]]
-- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]]
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]]
 
 ## 関連

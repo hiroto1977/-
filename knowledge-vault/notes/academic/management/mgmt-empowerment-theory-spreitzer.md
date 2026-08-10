@@ -32,10 +32,9 @@ Gretchen M. Spreitzer ／ Kenneth W. Thomas ／ Betty A. Velthouse
 - [Spreitzer — Psychological Empowerment Instrument（公式スケール、ミシガン大学）](https://webuser.bus.umich.edu/spreitze/Pdfs/EmpowerInstrument.pdf) `リファレンス`
 
 ## 関連概念
-- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 語彙が近い
-- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 語彙が近い
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

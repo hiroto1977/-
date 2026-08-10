@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同分野の近傍
-- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
 - [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
 - [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
 - [[mgmt-parkinsons-law|パーキンソンの法則]] — 同分野の近傍

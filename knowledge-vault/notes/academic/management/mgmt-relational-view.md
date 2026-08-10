@@ -31,8 +31,8 @@ aliases:
 - [Dyer and Singh: The Relational View — Future of Sourcing](https://futureofsourcing.com/dyer-and-singh-the-relational-view-for-alliances-and-alignment/) `リファレンス`
 
 ## 関連概念
+- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
 - [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
-- [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
 - [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
 
 ## 関連

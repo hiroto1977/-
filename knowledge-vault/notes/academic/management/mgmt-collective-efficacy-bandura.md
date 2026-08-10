@@ -37,7 +37,7 @@ Albert Bandura（1997 『Self-Efficacy: The Exercise of Control』で集合的�
 - [[human-social-learning-theory|社会的学習理論]] — 同じ思想家
 - [[human-self-efficacy-theory|自己効力感理論]] — 同じ思想家
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同じ思想家
-- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連

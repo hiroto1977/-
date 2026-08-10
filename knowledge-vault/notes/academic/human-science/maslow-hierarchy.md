@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
-- [[human-psychobiological-model-personality|人格の精神生物学モデル]] — 同分野の近傍
 - [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — 同分野の近傍
 
 ## 関連

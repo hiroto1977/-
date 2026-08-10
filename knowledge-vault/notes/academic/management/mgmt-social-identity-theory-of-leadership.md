@@ -36,7 +36,7 @@ Michael A. Hogg ／ Henri Tajfel ／ John C. Turner ／ Michael J. Platow ／ Da
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同じ思想家
 - [[human-self-categorization-theory|自己カテゴリー化理論]] — 同じ思想家
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同分野の近傍
-- [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — 同分野の近傍
+- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,6 @@ J. Richard Hackman ／ Greg R. Oldham ／ Sharon K. Parker
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 出典を共有
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
 - [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同分野の近傍
-- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

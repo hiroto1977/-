@@ -38,7 +38,6 @@ national
 
 ## 関連概念
 - [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 語彙が近い
-- [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
 - [[subsidy-jizokuka|小規模事業者持続化補助金]] — 同分野の近傍
 
 ## 関連
