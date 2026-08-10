@@ -39,7 +39,6 @@ aliases:
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

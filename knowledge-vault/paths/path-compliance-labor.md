@@ -14,7 +14,7 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 25）
-- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 24）
+- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 20）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 20）
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 20）

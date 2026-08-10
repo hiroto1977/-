@@ -41,8 +41,8 @@ James G. March ／ Michael L. Tushman ／ Charles A. O'Reilly III ／ Cristina B
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

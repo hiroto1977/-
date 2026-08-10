@@ -2,7 +2,7 @@
 title: "エリック・ジョンソン"
 type: thinker
 person_key: "ジョンソン|エ"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,11 +10,10 @@ tags:
 
 # エリック・ジョンソン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（2件）
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 選択を求められる際、あらかじめ設定された初期選択肢（デフォルト・オプション＝何もしなければ自動的に適用される選択）が最…
-- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 組織が業績・資源基盤・適応能力の持続的悪化を経験する過程の理論。
 - [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 組織衰退の段階モデル（stagesoforganizationaldecline）は、ウェイツェルとジョンソンが198…
 
 ## 関連

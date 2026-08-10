@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 657
+entry_count: 654
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（657件）
+# 学習パス — 学術概念／経営学（654件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 60）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 61）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 31）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
@@ -21,13 +21,13 @@ tags:
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 24）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
-- [[mgmt-managerial-cognition|経営者認知理論]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
+- [[mgmt-managerial-cognition|経営者認知理論]]（接続 23）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]（接続 22）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
-- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -164,7 +164,6 @@ tags:
 - 1986年: [[mgmt-technology-s-curve|技術のSカーブ]]
 - 1987年: [[mgmt-mass-customization|マス・カスタマイゼーション]]
 - 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
-- 1987年: [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]]
 - 1987年: [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]]
 - 1987年: [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]]
 - 1988年: [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]]
@@ -242,6 +241,7 @@ tags:
 - 1999年: [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]]
 - 2000年: [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]]
 - 2000年: [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]]
+- 2000年: [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]]
 - 2000年: [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]]
 - 2001年: [[mgmt-effectuation|エフェクチュエーション]]
 - 2001年: [[mgmt-flywheel|フライホイール効果（弾み車の法則）]]
@@ -271,7 +271,6 @@ tags:
 - 2007年: [[mgmt-subscription-model|サブスクリプション・モデル]]
 - 2007年: [[mgmt-theory-u|セオリーU（プレゼンシング）]]
 - 2009年: [[mgmt-customer-journey|カスタマージャーニー]]
-- 2009年: [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]]
 - 2010年: [[mgmt-social-impact-bond|社会的インパクト・ボンド（SIB）]]
 - 2011年: [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]]
 - 2011年: [[mgmt-shared-value|共有価値の創造（CSV）]]
@@ -326,7 +325,6 @@ tags:
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]]
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]]
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]]
-- [[mgmt-bricolage-theory|ブリコラージュ理論]]
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]]
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]]
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]]
@@ -511,7 +509,7 @@ tags:
 - [[mgmt-organizational-improvisation-theory|組織即興理論]]
 - [[mgmt-organizational-improvisation-weick|組織的即興——計画と実行が時間的に融合する行為としての組織化]]
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]]
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]]
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]]
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]]
 - [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]]
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]]
@@ -622,7 +620,6 @@ tags:
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]]
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]]
 - [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]]
-- [[mgmt-strategic-renewal-theory|戦略的再生理論]]
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]]
 - [[mgmt-strategic-silence|組織における戦略的沈黙]]
 - [[mgmt-strategic-types-miles-snow|マイルズ＆スノーの戦略類型——環境適応の様式による四つの組織類型]]

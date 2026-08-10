@@ -5690,7 +5690,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'マインドセット理論（ドゥエック）',
     statement:
       'スタンフォード大学の心理学者キャロル・ドゥエックが提唱した、知能や能力の性質に関する暗黙の信念（implicit theories of intelligence）の理論。能力は努力・学習・戦略で伸ばせると信じる「成長マインドセット（growth mindset／増分理論 incremental theory）」と、能力は生まれつき固定的だと信じる「硬直マインドセット（fixed mindset／実体理論 entity theory）」を対比する。' +
-      '成長マインドセットの人は困難や失敗を学習の機会と捉え、努力を価値あるものとみなし、挫折から立ち直りやすく高い達成につながりやすい一方、硬直マインドセットは失敗を能力欠如の証と捉え挑戦を回避させやすい。能力ではなく努力・プロセスを褒めることが子のマインドセットに影響する。2006年の著書『Mindset』で普及。近年は教育介入の効果量や再現性をめぐる議論（National Study of Learning Mindsets 2019 等）もある。',
+      '成長マインドセットの人は困難や失敗を学習の機会と捉え、努力を価値あるものとみなし、挫折から立ち直りやすく高い達成につながりやすい一方、硬直マインドセットは失敗を能力欠如の証と捉え挑戦を回避させやすい。能力ではなく努力・プロセスを褒めることが子のマインドセットに影響する。2006年の著書『Mindset』で普及。近年は教育介入の効果量や再現性をめぐる議論（National Study of Learning Mindsets 2019 等）もある。介入研究では「脳は訓練で変化する」という神経可塑性の知識を伝える短時間の介入が学業成績や学習持続性を改善することが示され、教師のフィードバック様式（能力の固定的評価がfixed mindsetを誘発する）の研究とあわせて教育実践に影響している。',
     keyFigures:
       'キャロル・ドゥエック（Carol S. Dweck）／クラウディア・ミューラー（Claudia M. Mueller, 1998年称賛研究の共著者）／デイヴィッド・イェーガー（David S. Yeager, 2019年大規模研究の主導者）',
     asOf: '2026-06',
@@ -9661,11 +9661,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '定量化された自己（Quantified Self）とは、ウェアラブル端末やスマートフォン、各種センサーを用いて、歩数・心拍・睡眠・食事・気分・生産性など自分の生体・行動・環境データを継続的に記録し数値化することで、自己を理解・改善しようとする実践および運動を指す。2007年に雑誌『Wired』の編集者ゲイリー・ウルフとケヴィン・ケリーが提唱し、「数値による自己認識（self-knowledge through numbers）」を標語とする国際的コミュニティへと発展した。' +
       '自己追跡（セルフトラッキング）やライフログの潮流、フィットネス系ウェアラブルの普及と密接に結びつく。一方、社会学者デボラ・ラプトンの『The Quantified Self』（Polity、2016年）に代表される監視・データ化（データフィケーション）研究は、身体や自己のデータ化、プライバシー、自己規律や生政治（バイオポリティクス）、データの商品化といった権力の問題を批判的に論じている。',
-    keyFigures: 'ゲイリー・ウルフ／ケヴィン・ケリー（2007, Wired）／デボラ・ラプトン（批判的研究）',
+    keyFigures: 'ゲイリー・ウルフ／ケヴィン・ケリー（2007, Wired）／デボラ・ラプトン（批判的研究）／ブティハジ・アジャナ（生政治の批判研究）／ドーン・ネイファス（自己追跡の民族誌）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.wiley.com/en-us/The+Quantified+Self-p-9781509500598', type: 'academic', label: 'Deborah Lupton, The Quantified Self: A Sociology of Self-Tracking, Polity/Wiley, 2016（出版社公式ページ）' },
       { url: 'https://onlinelibrary.wiley.com/doi/10.1111/1467-9566.12495', type: 'academic', label: '査読誌 Sociology of Health & Illness 書評（Petrakaki, 2017）— ラプトン2016年著作' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6001256/', type: 'academic', label: 'Ajana — Digital health and the biopolitics of the Quantified Self（PMC）' },
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8896409/', type: 'academic', label: 'PMC/NIH 査読論文 — ウルフ&ケリーの「self-knowledge through numbers」定義' },
     ],
   },
@@ -18623,7 +18624,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       'アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）とは、アントレプレナーシップ研究における概念で、手元にある資源の組合せを新たな問題や機会に適用することで「無から有を創出する」資源構築プロセスを指す。テッド・ベイカー＝リード・E・ネルソン（Ted Baker & Reed E. Nelson, 2005, "Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage," Administrative Science Quarterly, Vol.50, No.3, pp.329-366, DOI: 10.2189/asqu.2005.50.3.329）は資源制約下の29企業のフィールドスタディに基づき、ブリコラージュを「手元にある資源の組合せを新たな問題や機会に適用してやりくりすること（making do by applying combinations of the resources at hand to new problems and opportunities）」と定義した。' +
       '三つの中核的次元として、(1)やりくり（making do）——実行可能な成果を創出できるかの問い掛けに留まらず行動と能動的関与への偏向、(2)手元資源の組合せ・再利用（combination/reuse of resources at hand）——他者が無用と見なすものを潜在的資源として扱う、(3)制約の拒絶（refusal to enact limitations）——素材投入・実践・定義・基準の一般的に受容された限界を無視し解決策を試行する、を識別した。5つの資源領域（物理的投入・労働・技能・顧客/市場・制度/規制環境）にわたるブリコラージュが観察され、選択的ブリコラージュ（focused, temporary）は企業成長に関連する一方、並行的ブリコラージュ（multiple ongoing projects）は相互強化的性質により企業を罠に陥れ成長を阻害しうる。本概念はレヴィ＝ストロース（Claude Lévi-Strauss, 1966, The Savage Mind, University of Chicago Press, 原著1962年 La Pensée sauvage）のブリコルール概念——理論的計画から作業する技師と対比される、手元にあるもので逸脱的方法を用い新たな組合せを行う実践者——を経営学に適用したものである。',
-    keyFigures: 'Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブリコラージュ概念の提唱）／Claude Lévi-Strauss（1962/1966, The Savage Mind — ブリコラージュ概念の人類学的源泉）',
+    keyFigures: 'Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブリコラージュ概念の提唱）／Claude Lévi-Strauss（1962/1966, The Savage Mind — ブリコラージュ概念の人類学的源泉）／カール・E・ワイク（組織化とブリコラージュ/即興）',
     asOf: '2026-06',
     sources: [
       { url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker & Nelson (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — ASQ 50(3), pp.329-366' },
@@ -20341,11 +20342,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: '戦略的刷新（Strategic Renewal）',
     statement:
       '戦略的刷新（Strategic Renewal）とは、組織の長期的展望に実質的影響を及ぼしうる属性の再生（refreshment）または置換（replacement）のプロセス・内容・成果を包括する概念である。ラジシュリー・アガーワル（Rajshree Agarwal）とコンスタンス・ヘルファット（Constance Helfat）が2009年にOrganization Scienceで「Strategic Renewal of Organizations」として体系化した。' +
-      '不連続的な戦略転換（strategic transformation）と漸進的刷新（incremental renewal）を区別し、コダックのデジタルカメラ対応等を事例として論じた。戦略的刷新はコンピテンスの定義（competence definition）・展開（deployment）・修正（modification）の三つのサブプロセスからなり、各プロセスにおいてトップ・ミドル・現場管理者の役割が時間軸・情報要件・中核的価値観において異なる。ダイナミック・ケイパビリティが組織刷新の推進力として位置づけられる。',
-    keyFigures: 'ラジシュリー・アガーワル＆コンスタンス・ヘルファット（2009 Organization Science）',
+      '不連続的な戦略転換（strategic transformation）と漸進的刷新（incremental renewal）を区別し、コダックのデジタルカメラ対応等を事例として論じた。研究系譜としては、Floyd & Lane（2000）が複数階層の管理者役割の葛藤として、Volberda らが共進化フレームワークとして、Crossan らが組織学習の 4I モデルと連結して定式化しており（各論は strategic-renewal-volberda / -crossan の項）、Agarwal & Helfat の統合が現在の標準的定義になっている。戦略的刷新はコンピテンスの定義（competence definition）・展開（deployment）・修正（modification）の三つのサブプロセスからなり、各プロセスにおいてトップ・ミドル・現場管理者の役割が時間軸・情報要件・中核的価値観において異なる。ダイナミック・ケイパビリティが組織刷新の推進力として位置づけられる。',
+    keyFigures: 'ラジシュリー・アガーワル＆コンスタンス・ヘルファット（2009 Organization Science）／スティーヴン・フロイド & ピーター・レーン（2000 役割葛藤）',
     asOf: '2026-06',
     sources: [
       { url: 'https://terpconnect.umd.edu/~rajshree/research/32%20Agarwal,%20Helfat%20-%202009.pdf', type: 'academic', label: 'Agarwal & Helfat (2009) Strategic Renewal of Organizations — UMD / Organization Science' },
+      { url: 'https://doi.org/10.5465/amr.2000.2791608', type: 'academic', label: 'Floyd & Lane (2000) Strategizing Throughout the Organization — Academy of Management Review 25(1)' },
       { url: 'https://onlinelibrary.wiley.com/doi/full/10.1111/ijmr.12117', type: 'academic', label: 'Schmitt et al. (2018) Strategic Renewal: Past Research, Theoretical Tensions — Intl J Management Reviews (Wiley)' },
       { url: 'https://www.emerald.com/insight/content/doi/10.1108/cemj-01-2023-0003/full/html', type: 'academic', label: 'What Do We Talk About When We Talk About Strategic Renewal — Central European Management Journal (Emerald)' },
     ],
@@ -20885,20 +20887,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-decline',
-    discipline: 'management',
-    title: '組織衰退論（Organizational Decline）',
-    statement:
-      '組織が業績・資源基盤・適応能力の持続的悪化を経験する過程の理論。ウェイツェル＆ジョンソン（1989）は盲目（衰退の不認識）→不作為→誤った行動→危機→解散の五段階モデルを提唱し、各段階で逆転がより困難になることを示した。キャメロン＆ウェッテン（1987）は衰退と環境乱流を実証的に区別し、組織の自己認識能力の重要性を強調した。',
-    keyFigures: 'ウィリアム・ウェイツェル＆エレン・ジョンソン（1989 Academy of Management Review）／キム・S・キャメロン＆デイヴィッド・A・ウェッテン（1987）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/258039', type: 'academic', label: 'Weitzel & Jonsson (1989) Decline in Organizations — Academy of Management Review / JSTOR' },
-      { url: 'https://www.semanticscholar.org/paper/Decline-in-Organizations%3A-A-Literature-Integration-Weitzel-Jonsson/9cfb40cf00d98b0ea9ec3c8e7b2e4ae87c1faabc', type: 'academic', label: 'Weitzel & Jonsson (1989) — Semantic Scholar' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_life_cycle', type: 'reference', label: 'Organizational Life Cycle — Wikipedia' },
-    ],
-  },
-  {
     id: 'human-perceptual-fluency',
     discipline: 'human-science',
     title: '知覚的流暢性（Perceptual Fluency）',
@@ -21267,22 +21255,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/0022-3514.87.2.157', type: 'academic', label: 'Barrett, L.F. (2004) Feelings or words? JPSP 87(2):157-171' },
       { url: 'https://doi.org/10.1037/0022-3514.86.2.320', type: 'academic', label: 'Tugade, M.M., Fredrickson, B.L. & Barrett, L.F. (2004) Psychological resilience and positive emotional granularity' },
       { url: 'https://doi.org/10.1177/0963721415580294', type: 'academic', label: 'Kashdan, T.B., Barrett, L.F. & McKnight, P.E. (2015) Unpacking emotion differentiation, Current Directions in Psychological Science' },
-    ],
-  },
-  {
-    id: 'mgmt-bricolage-theory',
-    discipline: 'management',
-    title: 'ブリコラージュ理論',
-    statement:
-      'ブリコラージュ理論とは、既存の手持ち資源を創造的に再結合・転用することで新たな価値を生み出すプロセスを説明する理論である。' +
-      '文化人類学者レヴィ＝ストロースが『野生の思考』（1962年）で提唱した概念を経営学に応用し、Baker & Nelson（2005年, ASQ 50(3):329-366）が起業家的ブリコラージュとして体系化した。' +
-      '特に資源制約下の起業やソーシャル・アントレプレナーシップにおいて、「あり合わせのもので何とかする」行動原理として重要な説明力を持つ。',
-    keyFigures: 'Claude Lévi-Strauss／Ted Baker／Reed E. Nelson／Karl E. Weick',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing, ASQ 50(3):329-366' },
-      { url: 'https://doi.org/10.1016/j.respol.2013.10.004', type: 'academic', label: 'Desa, G. & Basu, S. (2013) Optimization or Bricolage? Strategic Entrepreneurship Journal' },
-      { url: 'https://en.wikipedia.org/wiki/Bricolage#In_business_and_management', type: 'reference', label: 'Wikipedia — Bricolage in business and management' },
     ],
   },
   {
@@ -24170,7 +24142,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-organizational-decline-theory',
     discipline: 'management',
     title: '組織衰退理論',
-    statement: 'Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段階で適切な介入がなければ衰退が進行すると論じた。Cameron・Whetten・Kim（1987）は衰退を「停滞（資源縮小）」と「削減（意図的なコスト削減）」に区別し、それぞれが組織行動に異なる影響を与えることを明らかにした。Staw・Sandelands・Dutton（1981）の脅威―硬直効果（threat-rigidity effect）は、外部脅威にさらされた組織が情報処理を制限し、既存の行動レパートリーに固執することを示した。Hambrick & D\'Aveni（1988）は経営資源の消耗と経営陣の交代が悪循環を形成する「下降螺旋（downward spiral）」を提示し、衰退の自己強化的メカニズムを強調した。組織衰退研究はターンアラウンド研究と表裏一体であり、衰退の深刻さ・原因・段階を診断することが回復戦略の設計前提となる。',
+    statement: 'Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段階で適切な介入がなければ衰退が進行し、段階が進むほど逆転は困難になると論じた。衰退の早期段階は外形的な業績にまだ表れないため、組織の自己認識能力がモデル全体の要になる。Cameron・Whetten・Kim（1987）は衰退を「停滞（資源縮小）」と「削減（意図的なコスト削減）」に区別し、それぞれが組織行動に異なる影響を与えることを明らかにした。Staw・Sandelands・Dutton（1981）の脅威―硬直効果（threat-rigidity effect）は、外部脅威にさらされた組織が情報処理を制限し、既存の行動レパートリーに固執することを示した。Hambrick & D\'Aveni（1988）は経営資源の消耗と経営陣の交代が悪循環を形成する「下降螺旋（downward spiral）」を提示し、衰退の自己強化的メカニズムを強調した。組織衰退研究はターンアラウンド研究と表裏一体であり、衰退の深刻さ・原因・段階を診断することが回復戦略の設計前提となる。',
     keyFigures: 'William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ Myung Un Kim ／ Barry M. Staw ／ Lance E. Sandelands ／ Jane E. Dutton ／ Donald C. Hambrick ／ Richard A. D\'Aveni',
     asOf: '2026-06',
     sources: [
@@ -24269,20 +24241,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1097/01.alc.0000031946.72965.45', type: 'academic', label: 'Halberg chronobiology foundations' },
       { url: 'https://doi.org/10.1038/nrn2950', type: 'academic', label: 'SCN master clock — Dibner et al. (2010)' },
       { url: 'https://doi.org/10.1038/s41573-019-0048-6', type: 'academic', label: 'Chronopharmacology review (2019)' },
-    ],
-  },
-  {
-    id: 'mgmt-strategic-renewal-theory',
-    discipline: 'management',
-    title: '戦略的再生理論',
-    statement: '確立した組織が経路依存的な戦略を根本的に刷新し環境変化に再適応するプロセスを説明する理論。Floyd & Laneは複数階層にわたる役割葛藤として、Agarwal & Helfatは戦略的変化との概念区別として定式化し、Volberdaらは共進化フレームワーク、Crossan & Berdrowは組織学習の4Iモデルと連結した。',
-    keyFigures: 'Steven W. Floyd ／ Peter J. Lane ／ Rajshree Agarwal ／ Constance E. Helfat ／ Henk W. Volberda ／ Charles Baden-Fuller ／ Mary M. Crossan',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2000.2791608', type: 'academic', label: 'Floyd & Lane 2000 AMR' },
-      { url: 'https://doi.org/10.1287/orsc.1090.0423', type: 'academic', label: 'Agarwal & Helfat 2009 Org Sci' },
-      { url: 'https://doi.org/10.1016/S0024-6301(01)00032-2', type: 'academic', label: 'Volberda et al. 2001 LRP' },
-      { url: 'https://doi.org/10.1002/smj.342', type: 'academic', label: 'Crossan & Berdrow 2003 SMJ' },
     ],
   },
   {
@@ -25533,20 +25491,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-quantified-self-movement',
-    discipline: 'information-sociology',
-    title: '定量化自己運動（クオンティファイド・セルフ）',
-    statement: 'ウルフとケリーが2007年に提唱したクオンティファイド・セルフ運動は、ウェアラブル端末やデジタルツールで健康・行動・環境データを自己追跡し「数値による自己認識」を促進する。社会学的には監視・データ所有権・生政治をめぐる権力関係が問われる。',
-    keyFigures: 'Deborah Lupton ／ Btihaj Ajana ／ Dawn Nafus',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Quantified_self', type: 'reference', label: 'Quantified self — Wikipedia' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6001256/', type: 'academic', label: 'Btihaj Ajana, "Digital health and the biopolitics of the Quantified Self," Digital Health, 2017 (PMC全文)' },
-      { url: 'https://researchprofiles.canberra.edu.au/en/publications/the-quantified-self-a-sociology-of-self-tracking/', type: 'academic', label: 'Deborah Lupton, The Quantified Self: A Sociology of Self-Tracking (Polity, 2016) — UC Research Portal' },
-      { url: 'https://www.researchgate.net/publication/301481639_Self-Tracking_for_Health_and_the_Quantified_Self_Re-Articulating_Autonomy_Solidarity_and_Authenticity_in_an_Age_of_Personalized_Healthcare', type: 'academic', label: 'Lupton, "Self-Tracking for Health and the Quantified Self: Re-Articulating Autonomy, Solidarity, and Authenticity" — ResearchGate' },
-    ],
-  },
-  {
     id: 'human-central-pattern-generator',
     discipline: 'human-science',
     title: '中枢パターン発生器（CPG）',
@@ -26391,7 +26335,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-growth-mindset',
     discipline: 'management',
     title: '成長マインドセット（Growth Mindset）',
-    statement: 'Carol S. Dweck が提唱する理論。知性や能力は固定的ではなく努力と学習によって伸ばせると信じる「成長マインドセット」は、固定的と捉える「固定マインドセット」と対比され、個人・組織双方の学習・回復力・革新行動を高める一方、再現性研究では効果量の小ささも指摘されている。',
+    statement: 'Carol S. Dweck の成長マインドセット理論の組織・経営への応用レーン。個人レベルの理論と測定は human-growth-mindset に譲り、本項は組織マインドセットを扱う。' +
+      'マーフィーとドゥエックらの組織マインドセット研究は、企業が「才能は生まれつき」という天才文化（culture of genius）を示すか「能力は開発できる」という成長文化を示すかが、従業員の信頼・コミットメント・協働とリスクテイクに影響することを示した。' +
+      '実務では、失敗を学習機会として扱う心理的安全性の設計、プロセスを評価する人事評価、育成前提の採用メッセージングとして展開され、マイクロソフトの文化変革（learn-it-all）が代表例として語られる。' +
+      '一方で教育介入の再現性研究では効果量の小ささや条件依存性（低学力層・支援的環境で効果が出やすい）が指摘されており、組織施策としても万能薬ではなく文脈設計とセットで効く点に留意が要る。',
     keyFigures: 'Carol S. Dweck（Stanford University）、Ellen L. Leggett、David S. Yeager',
     asOf: '2026-06',
     sources: [
@@ -26465,9 +26412,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-organizational-learning',
     discipline: 'management',
-    title: '組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。',
+    title: '組織学習（オーガニゼーショナル・ラーニング）',
     statement:
-      'ピーター・センゲ、クリス・アージリス、ドナルド・ショーンらの研究により、組織学習は組織の適応力と競争力を高める根本的なメカニズムとして認識されてきた。特に日本企業では、カイゼンや知識創造（野中郁次郎とタケウチの SECI モデル）として実践化されている。',
+      '組織学習とは、組織全体が経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスの総称であり、複数の研究系譜を束ねる傘概念である。' +
+      'アージリス＆ショーンのシングル／ダブルループ学習（詳細は organizational-learning-argyris の項）、マーチの探索と活用（exploration/exploitation）のトレードオフ、ヒューバーの4過程（知識獲得・情報分配・情報解釈・組織記憶）、クロッサンらの 4I（直観・解釈・統合・制度化）などが主要な理論的支柱をなす。' +
+      'ピーター・センゲ『学習する組織』（1990）は5つのディシプリン（自己マスタリー・メンタルモデル・共有ビジョン・チーム学習・システム思考）として実務へ翻訳し、日本企業ではカイゼンや野中郁次郎＝竹内弘高の SECI モデル（共同化・表出化・連結化・内面化）として知識創造の実践に接続された。' +
+      '学習が起きる単位（個人・集団・組織）と、学習を妨げる構造（防衛的ルーティン・成功の罠・迷信的学習）を区別することが、制度設計に効く分析の入口になる。',
     keyFigures: 'ピーター・センゲ ／ クリス・アージリス ／ ドナルド・ショーン',
     asOf: '2026-06-24',
     sources: [
@@ -46471,18 +46421,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2393339', type: 'academic', label: 'Weick (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — ASQ 38(4)' },
       { url: 'https://en.wikipedia.org/wiki/High_reliability_organization', type: 'reference', label: 'Wikipedia: High reliability organization — Weick, Sutcliffe, HRO principles, sensemaking, resilience' },
-    ],
-  },
-  {
-    id: 'human-growth-mindset-dweck',
-    discipline: 'human-science',
-    title: '成長マインドセット理論と知能の可変性信念（ドゥエック）',
-    statement: '成長マインドセット（growth mindset）とは、キャロル・ドゥエックが提唱した概念で、知能・能力が努力・学習・経験によって変化・向上しうるという信念体系を指し、固定マインドセット（fixed mindset）——能力は先天的で不変とみなす信念——と対比される。ドゥエックは数十年にわたる実験的・縦断的研究を通じ、成長マインドセットを持つ学習者が挑戦を回避せず失敗から学び学業・スポーツ・職業領域で高い達成を示すことを実証した。マインドセットの介入研究（mindset intervention）では、「脳は訓練で変化する」という神経可塑性の知識を伝えることが数週間の介入で学業成績・学習持続性・ウェルビーイングを改善することが示された。教育政策への応用では学校文化・教師フィードバック・評価方法がマインドセット形成に与える影響が検討されており、「プロセス・フィードバック」よりも能力の固定的評価がfixed mindsetを誘発するというドゥエックのフィードバック研究が教育実践に広く影響している。',
-    keyFigures: 'キャロル・ドゥエック ／ クロードスティール ／ アンジェラ・ダックワース ／ デイビッド・ヤーガー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1146/annurev.psych.54.101601.145237', type: 'academic', label: 'Dweck (2000) Self-Theories: Their Role in Motivation, Personality, and Development — Psychology Press' },
-      { url: 'https://en.wikipedia.org/wiki/Mindset#Fixed_and_growth_mindset', type: 'reference', label: 'Wikipedia: Mindset — Dweck, growth vs fixed, neuroplasticity, educational interventions' },
     ],
   },
   {

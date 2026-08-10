@@ -31,13 +31,12 @@ aliases:
 - [Serra, F. A. R., Pinto, R., Guerrazzi, L. & Ferreira, M. P. (2017) Organizational Decline Research Review: Challenges and Issues for a Future Research Agenda — Brazilian Administration Review 14(2), e160110（組織衰退研究のレビュー）](https://doi.org/10.1590/1807-7692bar2017160110) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 同じ思想家
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 同じ思想家
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同じ思想家
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
+- [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

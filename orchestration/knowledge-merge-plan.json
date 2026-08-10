@@ -589,5 +589,56 @@
         "action": "human-emotional-intelligence（概念・測定の学術レーン）と分業し、mgmt 側をゴールマンの6リーダーシップ・スタイル、採用/研修/360度への実装、メタ分析の効果量と選抜への慎重論という職場応用レーンへ書き換え。DISTINCT 登録。"
       }
     ]
+  },
+  "pass18": {
+    "appliedAt": "2026-08-10",
+    "note": "EQUAL 衝突の第6弾 — 6 統合 + 2 レーン矯正で、名前スキャンで検出した未裁定 EQUAL ペアの主要クラスタを完了。mgmt-organizational-learning は **title フィールドに定義文が丸ごと入っている整形不良**を併発しており、修正して傘概念レーン（Argyris 各論と分業）へ矯正した。",
+    "merges": [
+      {
+        "keep": "mgmt-bricolage",
+        "drop": "mgmt-bricolage-theory",
+        "reason": "同一 discipline 内の同一概念（Baker & Nelson 2005）。文化理論レーンの infosoc-bricolage は DISTINCT 維持。",
+        "migrate": "Weick（組織化/即興）を keyFigures へ。B&N の DOI は keep が本文中に保有。",
+        "provenanceDelta": "減少なし。"
+      },
+      {
+        "keep": "human-growth-mindset",
+        "drop": "human-growth-mindset-dweck",
+        "reason": "同一 discipline 内の同一理論。",
+        "migrate": "神経可塑性メッセージの介入研究とフィードバック様式研究の句を本文へ。",
+        "provenanceDelta": "本文 +約120字。減少なし。"
+      },
+      {
+        "keep": "infosoc-quantified-self",
+        "drop": "infosoc-quantified-self-movement",
+        "reason": "同一の運動/実践（Wolf & Kelly 2007）。",
+        "migrate": "Ajana の生政治論文（PMC）を出典へ、Ajana/Nafus を keyFigures へ。",
+        "provenanceDelta": "keep src 3→4。減少なし。"
+      },
+      {
+        "keep": "mgmt-organizational-decline-theory",
+        "drop": "mgmt-organizational-decline",
+        "reason": "同一理論。keep は脅威硬直・下降螺旋・ターンアラウンド接続まで持つ超集合。",
+        "migrate": "「段階が進むほど逆転困難」「自己認識能力が要」の句を本文へ。drop の JSTOR 258039（ASQ 論文に AMR 帯の id）は実体不整合の疑いで移送しない。",
+        "provenanceDelta": "本文 +約80字。減少なし。"
+      },
+      {
+        "keep": "mgmt-strategic-renewal",
+        "drop": "mgmt-strategic-renewal-theory",
+        "reason": "同一概念。Volberda/Crossan の各論は専用エントリが別在。",
+        "migrate": "研究系譜の整理句（Floyd&Lane/Volberda/Crossan → A&H 統合）を本文へ、Floyd & Lane 2000 AMR の DOI を出典へ。",
+        "provenanceDelta": "keep src 3→4 / 本文 +約130字。減少なし。"
+      }
+    ],
+    "steers": [
+      {
+        "id": "mgmt-organizational-learning",
+        "action": "title に定義文が入る整形不良を修正し、傘概念レーンへ書き換え（Argyris/March/Huber/Crossan/Senge/SECI の系譜整理）。organizational-learning-argyris と DISTINCT 登録。"
+      },
+      {
+        "id": "mgmt-growth-mindset",
+        "action": "組織マインドセット（culture of genius vs growth culture・人事実装・効果量の限界）レーンへ書き換え。human 側とは既裁定 DISTINCT。"
+      }
+    ]
   }
 }

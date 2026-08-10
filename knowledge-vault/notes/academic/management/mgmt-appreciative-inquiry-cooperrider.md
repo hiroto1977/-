@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 語彙が近い
-- [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同分野の近傍
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 612
+entry_count: 611
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（612件）
+# 学習パス — 学術概念／情報社会学（611件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -555,7 +555,6 @@ tags:
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]]
 - [[infosoc-quantified-self-lifelogging|数値化される自己（クワンティファイド・セルフ）と自己追跡の社会学]]
 - [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]]
-- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]]
 - [[infosoc-quantum-computing-social-implications|量子コンピューティングの社会的含意——暗号の危機・科学革命・デジタル格差の新次元]]
 - [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]]
 - [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]]

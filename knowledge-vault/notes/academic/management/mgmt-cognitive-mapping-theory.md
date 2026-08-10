@@ -38,11 +38,11 @@ Robert Axelrod ／ Colin Eden ／ Anne Sigismund Huff ／ Fran Ackermann ／ Kar
 - [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

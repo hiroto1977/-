@@ -36,11 +36,11 @@ aliases:
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
 - [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
 - [[human-recognition-heuristic|再認ヒューリスティック]] — 同じ思想家
-- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

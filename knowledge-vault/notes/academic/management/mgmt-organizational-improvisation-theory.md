@@ -36,12 +36,12 @@ Christine Moorman ／ Anne S. Miner ／ Karl E. Weick ／ Miguel Pina e Cunha
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 170
+cite_count: 169
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **170 件**（学術 169 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **169 件**（学術 168 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -109,7 +109,6 @@ tags:
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — Barley,S.R.&Tolbert,P.S.(1997)InstitutionalizationandStructuration:St…
 - [[mgmt-brand-equity|ブランド・エクイティ]] — Keller,K.L.(1993)“Conceptualizing,Measuring,andManagingCustomer-Based…
 - [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]] — Baker&Nelson(2005)CreatingSomethingfromNothing:ResourceConstructionth…
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — Baker,T.&Nelson,R.E.(2005)CreatingSomethingfromNothing,ASQ50(3):329-3…
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Hsu(2006)JacksofAllTradesandMastersofNone—ASQ51(3)
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Hsu,Hannan&Kocak(2009)MultipleCategoryMembershipsinMarkets—ASR74(1)
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Pontikes(2012)TwoSidesoftheSameCoin:HowAmbiguousClassificationAffects…

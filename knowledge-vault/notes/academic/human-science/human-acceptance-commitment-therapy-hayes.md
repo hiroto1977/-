@@ -35,7 +35,6 @@ aliases:
 - [[human-relational-frame-theory|関係フレーム理論（RFT）]] — 同分野の近傍
 - [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
 - [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
-- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

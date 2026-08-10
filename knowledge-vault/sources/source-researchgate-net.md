@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 51
+cite_count: 50
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **51 件**（学術 44 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 43 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -37,7 +37,6 @@ tags:
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate
 - [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate
-- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]] — Lupton,"Self-TrackingforHealthandtheQuantifiedSelf:Re-ArticulatingAut…
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — AnApplicationofDavidA.Aaker'sBrandIdentityPlanningModel（査読付ケーススタディ）
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Cohen&Levinthal(1990)fulltext&citations
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Zahra&George(2002)fulltext&citations

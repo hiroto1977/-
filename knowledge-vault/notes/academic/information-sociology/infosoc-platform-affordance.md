@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
 - [[infosoc-information-justice|情報正義]] — 同分野の近傍
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同分野の近傍
+- [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

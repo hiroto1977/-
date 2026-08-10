@@ -32,7 +32,7 @@ Seers, Anson （1989 Team-Member Exchange Quality: A New Construct for Role-Maki
 
 ## 関連概念
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 語彙が近い
-- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

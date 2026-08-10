@@ -2,7 +2,7 @@
 title: "semanticscholar.org"
 type: source-domain
 host: "semanticscholar.org"
-cite_count: 87
+cite_count: 86
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # semanticscholar.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 78 ・ リファレンス 9）
+> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 77 ・ リファレンス 9）
 
 ## このドメインを出典とする項目
 
@@ -80,7 +80,6 @@ tags:
 - [[mgmt-middle-up-down-management-nonaka|ミドル・アップダウン・マネジメント（野中郁次郎）]] — Nonaka,I.&Takeuchi,H.(1995)TheKnowledge-CreatingCompany—OxfordUnivers…
 - [[mgmt-organizational-culture-theory|組織文化理論]] — Martin,J.(1992).CulturesinOrganizations:ThreePerspectives.OxfordUnive…
 - [[mgmt-organizational-death-theory|組織死亡理論]] — SemanticScholar—Freeman,Carroll&Hannan(1983)TheLiabilityofNewness(cit…
-- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — Weitzel&Jonsson(1989)—SemanticScholar
 - [[mgmt-organizational-silence-morrison|組織的沈黙（モリソン＆ミリケン）]] — Milliken,F.J.,Morrison,E.W.&Hewlin,P.F.(2003)AnExploratoryStudyofEmpl…
 - [[mgmt-organizational-silence-morrison|組織的沈黙（モリソン＆ミリケン）]] — Morrison,E.W.&Milliken,F.J.(2000)OrganizationalSilence:ABarriertoChan…
 - [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — Miron-Spektoretal.(2018)—SemanticScholar

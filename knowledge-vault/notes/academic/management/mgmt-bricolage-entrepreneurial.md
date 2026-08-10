@@ -31,7 +31,6 @@ aliases:
 - [Garud, R. & Karnoe, P. (2003) Bricolage versus Breakthrough: Distributed and Embedded Agency in Technology Entrepreneurship — Research Policy](https://doi.org/10.1016/S0048-7333(02)00062-8) `学術`
 
 ## 関連概念
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 語彙が近い
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 語彙が近い
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[mgmt-transaction-cost|取引費用理論]] — 同分野の近傍
 
 ## 関連

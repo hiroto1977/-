@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 141
+cite_count: 140
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **141 件**（学術 140 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **140 件**（学術 139 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -140,7 +140,6 @@ tags:
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Orton&Weick(1990)LooselyCoupledSystems:AReconceptualization—AMR
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Weick,K.E.(1976).EducationalOrganizationsasLooselyCoupledSystems.Admi…
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — Weick,K.E.(1976)"EducationalOrganizationsasLooselyCoupledSystems,"Adm…
-- [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — Weitzel&Jonsson(1989)DeclineinOrganizations—AcademyofManagementReview…
 - [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — Hannan&Freeman(1984)StructuralInertiaandOrganizationalChange—ASR49(2)…
 - [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — Ashforth&Mael(1989)AMR—JSTOR
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — Bruderl&Schussler(1990)OrganizationalMortality—AdministrativeScienceQ…

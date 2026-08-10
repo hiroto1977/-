@@ -32,13 +32,12 @@ aliases:
 - [Wikipedia: The Fifth Discipline — Senge, five disciplines, systems thinking, double-loop learning](https://en.wikipedia.org/wiki/The_Fifth_Discipline) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同じ思想家
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 語彙が近い
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
-- [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — 同分野の近傍
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
 - [[mgmt-flywheel|フライホイール効果（弾み車の法則）]] — 同分野の近傍
 

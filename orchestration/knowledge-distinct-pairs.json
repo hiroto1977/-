@@ -290,10 +290,6 @@
       "mgmt-bricolage"
     ],
     [
-      "infosoc-bricolage",
-      "mgmt-bricolage-theory"
-    ],
-    [
       "infosoc-cultivation-theory",
       "infosoc-cultivation-theory-digital"
     ],
@@ -500,6 +496,14 @@
     [
       "mgmt-positive-organizational-behavior-luthans",
       "mgmt-psychological-capital-theory"
+    ],
+    [
+      "mgmt-institutional-theory",
+      "mgmt-institutional-work"
+    ],
+    [
+      "mgmt-organizational-learning",
+      "mgmt-organizational-learning-argyris"
     ]
   ]
 }

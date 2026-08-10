@@ -37,7 +37,6 @@ aliases:
 - [[human-emotional-labor|感情労働（ホックシールド）]] — 出典を共有
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
-- [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同分野の近傍
 - [[human-stroop-effect|ストループ効果]] — 同分野の近傍
 - [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同分野の近傍
 

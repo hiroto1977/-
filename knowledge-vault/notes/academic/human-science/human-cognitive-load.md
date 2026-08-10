@@ -35,7 +35,7 @@ aliases:
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 出典を共有
 - [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同分野の近傍
-- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

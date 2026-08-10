@@ -31,11 +31,12 @@ aliases:
 
 ## 関連概念
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 語彙が近い
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同分野の近傍
 - [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同分野の近傍
 - [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — 同分野の近傍
 - [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 - [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 同分野の近傍
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

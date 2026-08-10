@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同じ思想家
 - [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
-- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]] — 同分野の近傍
+- [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

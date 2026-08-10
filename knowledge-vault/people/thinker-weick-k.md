@@ -2,7 +2,7 @@
 title: "Karl Weick"
 type: thinker
 person_key: "weick|k"
-concept_count: 10
+concept_count: 9
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # Karl Weick
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **10 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **9 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（10件）
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — ブリコラージュ理論とは、既存の手持ち資源を創造的に再結合・転用することで新たな価値を生み出すプロセスを説明する理論であ…
+## 学術概念（9件）
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 認知マッピング理論とは、組織の意思決定者がもつ信念体系や因果関係の認識を有向グラフとして視覚化する手法であり、Axel…
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 制定的センスメイキング理論とは、Weick（1988）が提唱した組織理論の中心概念であり、行為者は客観的に存在する環境…
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 高信頼性組織（HRO:HighReliabilityOrganization）理論は、1984年にカリフォルニア大学バ…

@@ -42,7 +42,7 @@ Richard R. Nelson ／ Sidney G. Winter ／ Martha S. Feldman ／ Brian T. Pentla
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 - [Wikipedia: Middle-up-down management — Nonaka model, comparison with top-down and bottom-up](https://en.wikipedia.org/wiki/Middle-up-down_management) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同分野の近傍
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同分野の近傍
+- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

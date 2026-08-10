@@ -42,7 +42,7 @@ Albert Bandura ／ Julian B. Rotter
 - [[human-stroop-effect|ストループ効果]] — 出典を共有
 - [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 出典を共有
 - [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
-- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同分野の近傍
+- [[human-premack-principle|プレマックの原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

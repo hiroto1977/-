@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
 - [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 分野横断
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有
-- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

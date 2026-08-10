@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
 - [[mgmt-perceived-organizational-support-eisenberger|組織的支援知覚——組織が自分を尊重し配慮していると従業員が感じる程度]] — 同分野の近傍
+- [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

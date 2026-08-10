@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 641
+entry_count: 640
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（641件）
+# 学習パス — 学術概念／人間科学（640件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 108）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 109）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 71）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
@@ -450,7 +450,6 @@ tags:
 - [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]]
 - [[human-glymphatic-system|グリンパティック系]]
 - [[human-group-polarization-myers|集団極化——討議が集団の立場を当初の傾きの方向へ先鋭化させる]]
-- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]]
 - [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]]
 - [[human-health-belief-model|ヘルス・ビリーフ・モデル：予防的健康行動の心理的予測理論]]
 - [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]]

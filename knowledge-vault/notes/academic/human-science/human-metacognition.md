@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 出典を共有
 - [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 出典を共有
 - [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
-- [[human-growth-mindset-dweck|成長マインドセット理論と知能の可変性信念（ドゥエック）]] — 同分野の近傍
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
