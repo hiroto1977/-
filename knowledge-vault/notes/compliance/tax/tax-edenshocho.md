@@ -34,8 +34,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 分野横断
-- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 同分野の近傍
-- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 同分野の近傍
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 同分野の近傍
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

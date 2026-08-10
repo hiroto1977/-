@@ -33,7 +33,6 @@ aliases:
 - [[human-mindfulness-based-stress-reduction|マインドフルネスに基づくストレス低減法（MBSR）とその臨床的展開]] — 語彙が近い
 - [[human-mindfulness|マインドフルネス（MBSR）]] — 同じ思想家
 - [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]] — 同じ思想家
-- [[human-sensory-deprivation|感覚遮断（感覚剥奪）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

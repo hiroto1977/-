@@ -31,13 +31,16 @@ OECD（2004 FET基準の体系的分析）／クリストフ・シュロイア�
 - [OECD — Fair and Equitable Treatment Standard in International Investment Law (2004)](https://www.oecd.org/content/dam/oecd/en/publications/reports/2004/09/fair-and-equitable-treatment-standard-in-international-investment-law_g17a166b/675702255435.pdf) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
-- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
-- [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
-- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
-- [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同分野の近傍
-- [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同分野の近傍
-- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
+- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
+- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
+- [[econ-transfer-pricing|移転価格税制]] — 出典を共有
+- [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 出典を共有
+- [[eh-1964|1964年（昭和39年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,6 +31,7 @@ aliases:
 - [経済産業省 移転価格税制の基礎知識](https://www.meti.go.jp/policy/external_economy/toshi/kokusaisozei/itaxseminar2023/02.itenkakaku.pdf) `公的`
 
 ## 関連概念
+- [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 語彙が近い
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 出典を共有
-- [[tax-income-tax-progressive|所得税の超過累進税率]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

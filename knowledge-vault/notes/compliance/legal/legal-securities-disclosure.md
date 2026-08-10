@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
 - [[bizlaw-tob|公開買付け（TOB）]] — 出典を共有
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
-- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

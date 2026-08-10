@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 136）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 96）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 138）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 99）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 30）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 28）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-attribution-theory|帰属理論]]（接続 27）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 26）
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 25）
-- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
+- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 24）
+- [[human-affordance-theory|アフォーダンス理論]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -303,7 +303,6 @@ tags:
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]]
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]]
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]]
-- [[human-affordance-theory|アフォーダンス理論]]
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]]
 - [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]]
 - [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]]
@@ -547,6 +546,7 @@ tags:
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]]
 - [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]]
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]]
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]
 - [[human-positive-youth-development-lerner|ポジティブ青少年発達——ラーナーの5C理論と強みに基づく青年期研究]]
 - [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]]
 - [[human-predictive-processing-theory|予測処理理論]]

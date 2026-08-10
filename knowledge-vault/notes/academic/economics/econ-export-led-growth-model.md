@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[eh-1952|1952年（昭和27年）]] — 出典を共有
-- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同分野の近傍
 - [[econ-granger-causality|グレンジャー因果性]] — 同分野の近傍
+- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

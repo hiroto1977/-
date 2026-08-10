@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 941
+entry_count: 940
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（941件）
+# 学習パス — 学術概念／経済学（940件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -22,12 +22,12 @@ tags:
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 39）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 32）
-- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -77,7 +77,6 @@ tags:
 - 1899年: [[econ-marginal-productivity-distribution|限界生産力説]]
 - 1899年: [[econ-veblen-good|ヴェブレン財と顕示的消費]]
 - 1900年: [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]]
-- 1904年: [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]
 - 1904年: [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]]
 - 1905年: [[econ-gini-coefficient|ジニ係数とローレンツ曲線]]
 - 1905年: [[econ-input-output-analysis|産業連関分析（投入産出分析）]]
@@ -128,6 +127,7 @@ tags:
 - 1931年: [[econ-gibrat-law|ジブラの法則]]
 - 1931年: [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]]
 - 1931年: [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]]
+- 1933年: [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
 - 1933年: [[econ-monopolistic-competition|独占的競争]]
 - 1933年: [[econ-pigou-effect|ピグー効果（実質残高効果）]]
@@ -918,7 +918,6 @@ tags:
 - [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]]
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]]
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]]
-- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]]
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]]
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]]
 - [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]]

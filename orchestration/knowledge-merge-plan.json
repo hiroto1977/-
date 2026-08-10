@@ -1081,5 +1081,44 @@
         }
       }
     ]
+  },
+  "pass32": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupeGraph（term-overlap 3289）",
+    "merges": [
+      {
+        "keep": "econ-transfer-pricing",
+        "drop": "econ-transfer-pricing-multinational",
+        "reason": "同一分野（economics）・同一概念（移転価格と独立企業原則・OECD ガイドライン・BEPS）。keeper は措法66条の4 と国税庁・OECD の制度出典を持つ制度側エントリで、経済分析側の固有内容（利益移転の実証・ALP の限界・二本柱）を吸収して一本化。",
+        "migrate": [
+          "https://en.wikipedia.org/wiki/Transfer_pricing"
+        ],
+        "notMigrated": [
+          {
+            "url": "https://doi.org/10.1016/S0047-2727(02)00005-2",
+            "why": "ラベルは Hines & Rice (1994) QJE だが DOI プレフィックス 0047-2727 は Journal of Public Economics（2002 年記事）— 誤実体のため移管しない。keyFigures の人名転記（ヒルシェイ等）も不正確で継承せず"
+          },
+          {
+            "url": "https://www.oecd.org/en/topics/policy-issues/transfer-pricing.html",
+            "why": "keeper が OECD ガイドライン公式ページを保有済み（同趣旨の重複）"
+          }
+        ],
+        "absorbed": "算定方法群と相互協議・APA、タックスヘイブンへの報告利益集中の実証、無形資産評価困難と ALP の限界、BEPS 行動計画8-10 から二本柱合意への展開",
+        "provenanceDelta": {
+          "chars": [
+            389,
+            664
+          ],
+          "sources": [
+            2,
+            3
+          ],
+          "government": [
+            2,
+            2
+          ]
+        }
+      }
+    ]
   }
 }

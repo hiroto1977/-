@@ -34,9 +34,9 @@ AAPL事件仲裁廷（1990）／CME v. Czech Republic（2003）／UNCTAD投資�
 ## 関連概念
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同じ思想家
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
-- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有

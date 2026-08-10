@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 同分野の近傍
 - [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 同分野の近傍
-- [[human-wernicke-aphasia|ウェルニッケ失語]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

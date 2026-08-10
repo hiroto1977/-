@@ -36,9 +36,9 @@ aliases:
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同じ思想家
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
 - [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 出典を共有
-- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 出典を共有
 - [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 出典を共有
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
 

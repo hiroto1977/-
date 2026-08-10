@@ -38,7 +38,7 @@ aliases:
 - [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
 - [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 同じ思想家
-- [[econ-price-elasticity-demand|需要の価格弾力性]] — 同分野の近傍
+- [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

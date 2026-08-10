@@ -36,10 +36,10 @@ aliases:
 - [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 出典を共有
 - [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 出典を共有
 - [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 出典を共有
-- [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 出典を共有
-- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
-- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同分野の近傍
-- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同分野の近傍
+- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
+- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

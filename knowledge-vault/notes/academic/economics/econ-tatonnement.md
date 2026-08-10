@@ -36,7 +36,6 @@ aliases:
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
 - [[econ-walras-law|ワルラスの法則]] — 同じ思想家
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同分野の近傍
-- [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同分野の近傍
 - [[econ-pigouvian-tax|ピグー税]] — 同分野の近傍
 
 ## 関連

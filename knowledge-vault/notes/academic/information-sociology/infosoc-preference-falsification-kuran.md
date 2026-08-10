@@ -40,7 +40,7 @@ aliases:
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
 - [[econ-financialization|金融化——経済の金融部門支配]] — 出典を共有
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 出典を共有
-- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 出典を共有
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

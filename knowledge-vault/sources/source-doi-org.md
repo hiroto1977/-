@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2187
+cite_count: 2186
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（学術 2179 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2186 件**（学術 2178 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -751,7 +751,6 @@ tags:
 - [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — Head&Mayer2014—GravityEquations:Workhorse,Toolkit,andCookbook,Handboo…
 - [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — Kraus,A.&Litzenberger,R.H.(1973)AState-PreferenceModelofOptimalFinanc…
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — Eden,L.(1998)TaxingMultinationals:TransferPricingandCorporateIncomeTa…
-- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — Hines&Rice(1994)FiscalParadise:ForeignTaxHavensandAmericanBusiness—Qu…
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — Jones,R.W.&Neary,J.P.(1984)ThePositiveTheoryofInternationalTrade—Hand…
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — Keynes,J.M.(1929)TheGermanTransferProblem—EconomicJournal39(153)
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — Samuelson,P.A.(1952)TheTransferProblemandTransportCosts:TheTermsofTra…

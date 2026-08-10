@@ -39,8 +39,8 @@ aliases:
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
 - [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 出典を共有
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
 - [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 出典を共有
 
 ## 関連

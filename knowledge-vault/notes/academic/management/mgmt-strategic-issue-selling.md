@@ -31,8 +31,8 @@ aliases:
 - [Dutton et al. (2001) Moves That Matter: Issue Selling and Organizational Change — ResearchGate](https://www.researchgate.net/publication/237828497_Moves_That_Matter_Issue_Selling_and_Organizational_Change) `学術`
 
 ## 関連概念
-- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 語彙が近い
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 語彙が近い
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 語彙が近い
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家

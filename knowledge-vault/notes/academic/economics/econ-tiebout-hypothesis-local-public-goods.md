@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Tiebout model — ティブーモデルの概要](https://en.wikipedia.org/wiki/Tiebout_model) `リファレンス`
 
 ## 関連概念
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
 - [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — 同じ思想家
 - [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同じ思想家

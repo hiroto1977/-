@@ -35,7 +35,7 @@ aliases:
 - [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同じ思想家
 - [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同じ思想家
 - [[human-predictive-processing-theory|予測処理理論]] — 同分野の近傍
-- [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 - [[human-memory-reconsolidation-nader-schiller|記憶再固定化——想起時の記憶可塑性とトラウマ治療への応用]] — 同分野の近傍
 
 ## 関連

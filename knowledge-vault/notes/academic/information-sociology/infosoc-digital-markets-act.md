@@ -39,9 +39,9 @@ aliases:
 - [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 出典を共有
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 出典を共有
 - [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
-- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 出典を共有
 - [[eh-2015|2015年（平成27年）]] — 出典を共有
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

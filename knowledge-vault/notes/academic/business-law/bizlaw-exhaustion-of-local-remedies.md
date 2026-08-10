@@ -35,8 +35,8 @@ ICSID条約（1965 第26条での逆転規定）／国際法委員会（ILC外�
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 同じ思想家
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同じ思想家
-- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 出典を共有
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
 - [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有

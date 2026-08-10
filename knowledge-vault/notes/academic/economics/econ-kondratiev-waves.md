@@ -33,6 +33,7 @@ N.コンドラチェフが1920年代に提唱／約40〜60年(約50年)周期の
 ## 関連概念
 - [[econ-business-cycles|景気循環とその諸波動]] — 語彙が近い
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 語彙が近い
+- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 語彙が近い
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
 
 ## 関連

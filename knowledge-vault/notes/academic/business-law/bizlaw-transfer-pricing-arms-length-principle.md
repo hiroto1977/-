@@ -31,8 +31,15 @@ OECD租税委員会 ／ 国税庁（日本） ／ 欧州委員会 ／ ミヒャ�
 
 ## 関連概念
 - [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 同じ思想家
-- [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — 同分野の近傍
-- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同分野の近傍
+- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
+- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
+- [[econ-transfer-pricing|移転価格税制]] — 出典を共有
+- [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 出典を共有
+- [[eh-1964|1964年（昭和39年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

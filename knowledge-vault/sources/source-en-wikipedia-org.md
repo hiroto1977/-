@@ -967,8 +967,8 @@ tags:
 - [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — Wikipedia:Tradecreation—貿易創出・貿易転換の概念と応用
 - [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — Wikipedia:Trade-offtheory—taxshieldvsfinancialdistresscosts,Modiglian…
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — Wikipedia:Tragedyoftheanticommons—Heller,fragmentedexclusionrights,un…
+- [[econ-transfer-pricing|移転価格税制]] — Wikipedia:Transferpricing—移転価格の定義と国際的規制動向の概説
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — Wikipedia:Transferpricing—移転価格制度の概要と国際動向
-- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — Wikipedia:Transferpricing—移転価格の定義と国際的規制動向の概説
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — Wikipedia:TransferProblem—Keynes–Ohlindebateoverview
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — Wikipedia:Tremblinghandperfectequilibrium—Selten,Nashrefinement,weakl…
 - [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — Wikipedia:GlobalizationParadox—Rodrikpoliticaltrilemmaofworldeconomy

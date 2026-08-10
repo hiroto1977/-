@@ -36,7 +36,6 @@ aliases:
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同分野の近傍
 - [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同分野の近傍
 - [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同分野の近傍
-- [[human-microaggression|マイクロアグレッション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同分野の近傍
-- [[human-stereotype-threat|ステレオタイプ脅威]] — 同分野の近傍
+- [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
