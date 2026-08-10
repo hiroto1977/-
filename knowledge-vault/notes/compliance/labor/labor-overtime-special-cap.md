@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
-- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
 - [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 同分野の近傍
 - [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 同分野の近傍
 

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 語彙が近い
-- [[bizlaw-electronic-consumer-contract|電子消費者契約法]] — 同分野の近傍
+- [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

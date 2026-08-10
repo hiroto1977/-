@@ -2,7 +2,7 @@
 title: "bunka.go.jp"
 type: source-domain
 host: "bunka.go.jp"
-cite_count: 13
+cite_count: 14
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # bunka.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **13 件**（公的 13）
+> [!info] 出典ドメイン索引 ・ 引用 **14 件**（公的 14）
 
 ## このドメインを出典とする項目
 
@@ -24,6 +24,7 @@ tags:
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 文化庁著作権制度の概要（引用の要件）
 - [[legal-copyright-term|著作権の保護期間と私的複製]] — 文化庁保護期間延長Q&A
 - [[legal-copyright-term|著作権の保護期間と私的複製]] — 文化庁私的複製の権利制限
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 文化庁著作権テキスト（令和7年度版）—保護期間の計算・私的複製の限界
 - [[legal-moral-rights|著作者人格権]] — 文化庁著作権テキスト
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 文化庁著作権テキスト（職務著作）
 - [[subsidy-culture-arts|文化芸術振興費補助金（文化芸術創造活動への支援）]] — 文化庁公募一覧（文化芸術振興費補助金）

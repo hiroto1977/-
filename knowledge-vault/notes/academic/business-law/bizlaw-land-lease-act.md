@@ -34,7 +34,7 @@ aliases:
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 分野横断
 - [[legal-land-lease-right|借地借家法における借地権]] — 分野横断
 - [[bizlaw-freedom-of-contract|契約自由の原則]] — 同分野の近傍
-- [[bizlaw-change-of-circumstances|事情変更の原則]] — 同分野の近傍
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

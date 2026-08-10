@@ -39,8 +39,8 @@ aliases:
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
-- [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 出典を共有
-- [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 出典を共有
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 出典を共有
+- [[tax-light-vehicle-tax|軽自動車税（種別割）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

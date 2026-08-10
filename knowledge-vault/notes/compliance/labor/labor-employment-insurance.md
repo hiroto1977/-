@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 同分野の近傍
-- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

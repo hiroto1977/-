@@ -37,6 +37,7 @@ aliases:
 - [[tax-furusato-point-ban|ふるさと納税 ポイント付与する仲介サイト経由の募集禁止（2025年10月〜）]] — 同分野の近傍
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 同分野の近傍
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 同分野の近傍
+- [[tax-reduced-rate|消費税の軽減税率制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

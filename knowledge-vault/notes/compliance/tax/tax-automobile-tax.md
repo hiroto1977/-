@@ -40,7 +40,7 @@ aliases:
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
 - [[tax-city-planning-tax|都市計画税]] — 出典を共有
-- [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 出典を共有
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,8 +31,8 @@ aliases:
 - [国税庁 No.6201 非課税となる取引](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6201.htm) `公的`
 
 ## 関連概念
-- [[tax-export-exemption|消費税の輸出免税]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 同分野の近傍
+- [[tax-export-exemption|消費税の輸出免税]] — 同分野の近傍
 - [[tax-liquor-tax|酒税の概要]] — 同分野の近傍
 
 ## 関連

@@ -2,7 +2,7 @@
 title: "zeimo.jp"
 type: source-domain
 host: "zeimo.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # zeimo.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
 - [[tax-income-categories|所得税における所得の10種類の区分]] — 10種類の所得と計算方法解説
-- [[tax-reduced-rate|消費税の軽減税率制度]] — 軽減税率の対象解説
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

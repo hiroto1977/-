@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-loss-offsetting|所得税の損益通算]] — 語彙が近い
 - [[bizlaw-income-tax-act|所得税法]] — 語彙が近い
-- [[tax-reduced-rate|消費税の軽減税率制度]] — 出典を共有
 - [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 同分野の近傍
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
 - [[tax-transfer-pricing|移転価格税制]] — 同分野の近傍

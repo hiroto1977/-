@@ -2,7 +2,7 @@
 title: "tax.metro.tokyo.lg.jp"
 type: source-domain
 host: "tax.metro.tokyo.lg.jp"
-cite_count: 12
+cite_count: 13
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tax.metro.tokyo.lg.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **12 件**（自治体 12）
+> [!info] 出典ドメイン索引 ・ 引用 **13 件**（自治体 13）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 東京都主税局外形標準課税の対象法人の見直し
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 東京都主税局法人事業税に係る外形標準課税の概要
 - [[tax-city-planning-tax|都市計画税]] — 東京都主税局固定資産税・都市計画税
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 東京都主税局固定資産税（償却資産）—少額資産の取扱い
 - [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 東京都主税局固定資産税・都市計画税
 - [[tax-individual-business-tax|個人事業税]] — 東京都主税局個人事業税
 - [[tax-real-estate-acquisition|不動産取得税]] — 東京都主税局不動産取得税（課税標準・軽減措置）

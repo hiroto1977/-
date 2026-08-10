@@ -35,7 +35,7 @@ Maiken Nedergaard ／ Jeffrey Iliff ／ Lulu Xie
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 出典を共有
 - [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同分野の近傍
-- [[human-operant-conditioning|オペラント条件づけ]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

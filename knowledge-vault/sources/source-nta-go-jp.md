@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 287
+cite_count: 288
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **287 件**（公的 287）
+> [!info] 出典ドメイン索引 ・ 引用 **288 件**（公的 288）
 
 ## このドメインを出典とする項目
 
@@ -231,6 +231,7 @@ tags:
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁クレジット販売の領収書
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁消費税額等が区分記載された受取書
 - [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁No.6102軽減税率制度
+- [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁軽減税率制度に関するQ&A（個別事例編）
 - [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁軽減税率制度の概要
 - [[tax-registration-license-tax|登録免許税の概要]] — 国税庁No.7191登録免許税の税額表
 - [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 国税庁特定同族会社の特別税率（留保金課税）

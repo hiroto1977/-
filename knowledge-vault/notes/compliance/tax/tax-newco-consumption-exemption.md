@@ -34,7 +34,6 @@ aliases:
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 同分野の近傍
-- [[tax-export-exemption|消費税の輸出免税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

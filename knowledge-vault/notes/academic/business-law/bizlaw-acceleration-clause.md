@@ -41,7 +41,7 @@ Grant Gilmore ／ E. Allan Farnsworth ／ Darlene M. Nowak
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
-- [[bizlaw-minimum-wage-act|最低賃金法]] — 同分野の近傍
+- [[bizlaw-land-lease-act|借地借家法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
