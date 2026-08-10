@@ -30,8 +30,8 @@ aliases:
 - [Mackinac Center for Public Policy — The Overton Window (originating institution; Joseph P. Overton attribution)](https://www.mackinac.org/OvertonWindow) `リファレンス`
 
 ## 関連概念
-- [[infosoc-critical-discourse-analysis|批判的談話分析（CDA）]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

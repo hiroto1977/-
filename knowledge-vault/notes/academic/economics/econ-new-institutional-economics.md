@@ -35,7 +35,7 @@ Ronald H. Coase／Oliver E. Williamson／Douglass C. North／Elinor Ostrom／Dar
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同じ思想家
 - [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同分野の近傍
-- [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同分野の近傍
+- [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

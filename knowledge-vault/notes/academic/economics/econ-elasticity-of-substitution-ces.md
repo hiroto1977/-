@@ -34,6 +34,7 @@ Kenneth J. Arrow／Hollis B. Chenery／Bagicha S. Minhas／Robert M. Solow／Joh
 ## 関連概念
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 語彙が近い
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同分野の近傍
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同分野の近傍
 - [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同分野の近傍
 
 ## 関連

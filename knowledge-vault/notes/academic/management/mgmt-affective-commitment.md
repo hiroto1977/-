@@ -33,8 +33,8 @@ John P. Meyer ／ Natalie J. Allen ／ Zachary A. Mercurio
 
 ## 関連概念
 - [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同じ思想家
+- [[mgmt-organizational-commitment|組織コミットメント]] — 同分野の近傍
 - [[mgmt-social-exchange-theory|社会的交換理論]] — 同分野の近傍
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

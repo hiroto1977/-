@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 分野横断
 - [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 同分野の近傍
-- [[bizlaw-antitrust-digital-platforms|デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制]] — 同分野の近傍
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

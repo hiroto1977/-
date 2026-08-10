@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Mincer earnings function](https://en.wikipedia.org/wiki/Mincer_earnings_function) `リファレンス`
 
 ## 関連概念
-- [[econ-human-capital|人的資本論]] — 同じ思想家
+- [[econ-human-capital|人的資本論]] — 語彙が近い
 - [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 出典を共有
 - [[econ-gibrat-law|ジブラの法則]] — 出典を共有
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有

@@ -37,7 +37,6 @@ aliases:
 - [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
 - [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同じ思想家
-- [[econ-salop-model|サロップの円環都市モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

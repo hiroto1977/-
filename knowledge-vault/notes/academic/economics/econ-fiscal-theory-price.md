@@ -31,7 +31,7 @@ aliases:
 - [Inflation and the Fiscal Theory of the Price Level — Richmond Fed Economic Brief 2022](https://www.richmondfed.org/publications/research/economic_brief/2022/eb_22-39) `公的`
 
 ## 関連概念
-- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 語彙が近い
+- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家

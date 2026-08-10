@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 同分野の近傍
-- [[infosoc-computational-social-science|計算社会科学]] — 同分野の近傍
 - [[infosoc-media-equation|メディアの等式（メディア・イクエーション）]] — 同分野の近傍
 
 ## 関連

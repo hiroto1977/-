@@ -32,6 +32,7 @@ aliases:
 - [Wikipedia — Hypodermic needle model](https://en.wikipedia.org/wiki/Hypodermic_needle_model) `リファレンス`
 
 ## 関連概念
+- [[infosoc-limited-effects|限定効果論]] — 語彙が近い
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
 - [[econ-bilateral-monopoly|双方独占]] — 出典を共有
 - [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
 - [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
-- [[infosoc-limited-effects|限定効果論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,7 +35,6 @@ aliases:
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
 - [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 同分野の近傍
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同分野の近傍
-- [[econ-informal-economy|インフォーマル経済]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 29）
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 29）
+- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 28）
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 24）
 - [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 24）
@@ -27,7 +27,7 @@ tags:
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 17）
 - [[tax-city-planning-tax|都市計画税]]（接続 16）
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 16）
-- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 16）
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 16）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]]
@@ -90,7 +90,6 @@ tags:
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]]
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]]
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]]
-- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]]
 - [[tax-life-insurance-deduction|生命保険料控除]]
 - [[tax-light-vehicle-tax|軽自動車税（種別割）]]
@@ -138,6 +137,7 @@ tags:
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]]
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]]
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]]
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]]
 - [[tax-transfer-pricing|移転価格税制]]
 - [[tax-vehicle-weight-tax|自動車重量税]]
