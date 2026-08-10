@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
-- [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-apparent-agency|表見代理]] — 出典を共有
 - [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
 - [[labor-work-interval|勤務間インターバル制度]] — 出典を共有
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

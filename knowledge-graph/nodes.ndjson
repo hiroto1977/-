@@ -1,4 +1,4 @@
-{"id":"agile-development","collection":"academic","category":"management","categoryLabel":"経営学","title":"アジャイルソフトウェア開発","year":2001,"authors":["サザーランド|ジ","シュウェイバー|ケ","ファウラー|マ","ベック|ケ"],"degree":58}
+{"id":"agile-development","collection":"academic","category":"management","categoryLabel":"経営学","title":"アジャイルソフトウェア開発","year":2001,"authors":["サザーランド|ジ","シュウェイバー|ケ","ファウラー|マ","ベック|ケ"],"degree":59}
 {"id":"antimonopoly-surcharge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"課徴金制度（独占禁止法）","year":1977,"authors":[],"degree":70}
 {"id":"bizlaw-abuse-of-dominant-position-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU競争法における支配的地位の濫用（第102条）","year":null,"authors":["コワーヒ|ウ","フォックス|エ","ベスタゲル|マ","ラング|ジ"],"degree":49}
 {"id":"bizlaw-abuse-of-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"権利濫用の禁止（民法1条3項）","year":1965,"authors":[],"degree":3}
@@ -38,13 +38,13 @@
 {"id":"bizlaw-antimonopoly","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"独占禁止法","year":1947,"authors":[],"degree":2}
 {"id":"bizlaw-antitrust-competition-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開","year":null,"authors":["アリーダ|フ","カーン|リ","ボーク|ロ"],"degree":16}
 {"id":"bizlaw-antitrust-digital-platforms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制","year":null,"authors":["ウー|テ","カーン|リ","ベステアー|マ"],"degree":11}
-{"id":"bizlaw-antitrust-essential-facility-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス","year":null,"authors":["アリーダ|フ"],"degree":10}
+{"id":"bizlaw-antitrust-essential-facility-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス","year":null,"authors":["アリーダ|フ"],"degree":11}
 {"id":"bizlaw-antitrust-market-definition-ssnip","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"独禁法における市場画定——SSNIPテストと競争政策の分析枠組み","year":null,"authors":["スティグラー|ジ"],"degree":11}
 {"id":"bizlaw-antitrust-merger-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認","year":null,"authors":[],"degree":7}
 {"id":"bizlaw-antitrust-predatory-pricing","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制","year":null,"authors":["イースターブルック|フ"],"degree":10}
 {"id":"bizlaw-antitrust-tying-bundling","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行","year":null,"authors":["スタンフォード|ド"],"degree":7}
 {"id":"bizlaw-anton-piller-order","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令","year":null,"authors":["オームロッド|ロ","ゲー|ス","ショー|セ","デニング|ロ"],"degree":5}
-{"id":"bizlaw-apparent-agency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表見代理","year":null,"authors":[],"degree":15}
+{"id":"bizlaw-apparent-agency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表見代理","year":null,"authors":[],"degree":14}
 {"id":"bizlaw-appi","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"個人情報保護法（個人情報の保護に関する法律）","year":null,"authors":[],"degree":20}
 {"id":"bizlaw-appraisal-rights-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株式買取請求権の法理","year":null,"authors":["black|b","gilson|r","kanda|h","manning|b"],"degree":18}
 {"id":"bizlaw-appraisal-rights-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株式買取請求権（反対株主の公正価値救済）","year":null,"authors":["hamermesh|l","manning|b","wachter|m"],"degree":10}
@@ -71,7 +71,7 @@
 {"id":"bizlaw-benefit-corporation-legislation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ベネフィット・コーポレーション法——利益と公益の二重目的法人","year":null,"authors":["ギルバート|ジ","クラーク|ウ","スタウト|リ","マイヤー|コ","モンゴメリー|ジ"],"degree":4}
 {"id":"bizlaw-benefit-of-time","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"期限の利益（民法136条）","year":null,"authors":["law|e"],"degree":28}
 {"id":"bizlaw-berle-means-thesis","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る","year":1932,"authors":["berle|a","demsetz|h","means|g","property|t"],"degree":2}
-{"id":"bizlaw-best-efforts-obligation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"最善努力義務","year":null,"authors":["burton|s","goetz|c","kostritsky|j","scott|r"],"degree":14}
+{"id":"bizlaw-best-efforts-obligation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"最善努力義務","year":null,"authors":["burton|s","goetz|c","kostritsky|j","scott|r"],"degree":13}
 {"id":"bizlaw-bilateral-investment-treaty","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"二国間投資条約（Bilateral Investment Treaty / BIT）","year":1959,"authors":["icsid|"],"degree":9}
 {"id":"bizlaw-bill-of-exchange","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"為替手形——流通可能な信用証券としての無条件の支払指図","year":null,"authors":["エイムズ|ジ","チャルマーズ|マ","ルウェリン|カ"],"degree":10}
 {"id":"bizlaw-bill-of-exchange-uncitral-convention","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み","year":null,"authors":["uncitral|","シュミットホフ|ク","シュレッサー|ル"],"degree":19}
@@ -137,7 +137,7 @@
 {"id":"bizlaw-competition-law-abuse-dominance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制","year":null,"authors":["competition|","ニコルソン|ヴ","フォックス|エ"],"degree":6}
 {"id":"bizlaw-competition-law-abuse-dominant-position","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"市場支配的地位の濫用——EU競争法102条の規制枠組み","year":null,"authors":["ウィッシュ|リ","コラー|ヴ","ベイリー|デ","モンティ|ジ","ヴェステアー|マ"],"degree":8}
 {"id":"bizlaw-competition-law-digital-markets","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"デジタル市場競争法と市場支配的地位の濫用規制","year":null,"authors":["ウー|テ","カーン|リ","クレーマー|ジ","ヴォゲル|ダ"],"degree":12}
-{"id":"bizlaw-competition-law-leniency-program","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カルテル規制とリニエンシー制度——自主申告に基づく独禁法エンフォースメントの革新","year":null,"authors":["ハリントン|ジ"],"degree":3}
+{"id":"bizlaw-competition-law-leniency-program","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"カルテル規制とリニエンシー制度——自主申告に基づく独禁法エンフォースメントの革新","year":null,"authors":["ハリントン|ジ"],"degree":4}
 {"id":"bizlaw-competition-law-market-definition","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競争法における市場画定とHHI集中度分析の法的枠組み","year":null,"authors":["アレダ|フ","ティロール|ジ","フォックス|エ","リビングストン|ロ"],"degree":16}
 {"id":"bizlaw-competition-law-merger-control","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"企業結合規制と競争法——独占禁止法における合併審査の基準と実務","year":null,"authors":["オルテガ|レ","シャピロ|カ","ホーベンカンプ|ハ"],"degree":15}
 {"id":"bizlaw-competition-law-merger-control-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU競争法における企業結合規制——欧州委員会の合併審査とSIECテスト","year":null,"authors":["ウィッシュ|リ","モンティ|マ","ヴェスタガー|マ"],"degree":5}
@@ -147,13 +147,13 @@
 {"id":"bizlaw-condominium-ownership","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"区分所有（区分所有法）","year":null,"authors":[],"degree":15}
 {"id":"bizlaw-consideration-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約因の法理——約束が拘束力を持つために要する交換的対価","year":null,"authors":["ウィリストン|サ","コービン|ア","フラー|ロ","ホームズ|オ"],"degree":22}
 {"id":"bizlaw-constructive-trust-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"擬制信託——不当利得防止のための衡平法上の救済手段","year":null,"authors":["カードーゾ|ベ","スコット|オ","バロウズ|ア","ボガート|ジ"],"degree":11}
-{"id":"bizlaw-consumer-basic-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者基本法","year":1968,"authors":[],"degree":5}
+{"id":"bizlaw-consumer-basic-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者基本法","year":1968,"authors":[],"degree":6}
 {"id":"bizlaw-consumer-collective-redress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者裁判手続特例法（消費者団体訴訟制度）","year":2013,"authors":[],"degree":4}
 {"id":"bizlaw-consumer-contract-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者契約法","year":2001,"authors":[],"degree":7}
 {"id":"bizlaw-consumer-contract-unfair-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正","year":null,"authors":["オニタン|オ","ロスタイン|リ"],"degree":3}
 {"id":"bizlaw-consumer-credit-regulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者信用規制と過剰貸付防止の比較法制","year":null,"authors":["ウォーレン|エ","ゲルブ|ロ","サリバン|テ"],"degree":7}
 {"id":"bizlaw-consumer-protection-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者保護法の国際的展開と日本における法体系の形成","year":null,"authors":["ネーダー|ラ"],"degree":4}
-{"id":"bizlaw-consumer-protection-unfair-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応","year":null,"authors":["コリンズ|ヒ","ランドー|オ"],"degree":11}
+{"id":"bizlaw-consumer-protection-unfair-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応","year":null,"authors":["コリンズ|ヒ","ランドー|オ"],"degree":10}
 {"id":"bizlaw-consumer-protection-unfair-trade","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者保護法制と不公正取引慣行規制の法体系","year":null,"authors":["ペイン|ジ","ボルトリンク|ウ","ライクホルト|ナ"],"degree":3}
 {"id":"bizlaw-consumption-tax","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費税法","year":1988,"authors":[],"degree":24}
 {"id":"bizlaw-contra-proferentem","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）","year":1981,"authors":["art|u","restatement|"],"degree":11}
@@ -260,8 +260,8 @@
 {"id":"bizlaw-employment-discrimination-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策","year":null,"authors":["ギンズバーグ|ル"],"degree":4}
 {"id":"bizlaw-employment-insurance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"雇用保険法","year":1974,"authors":[],"degree":4}
 {"id":"bizlaw-employment-law-dismissal","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理","year":null,"authors":["ハイドン|ア","フリードマン|バ","ヴィートホルツ|ヴ"],"degree":5}
-{"id":"bizlaw-employment-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"職業安定法","year":1947,"authors":[],"degree":4}
-{"id":"bizlaw-enterprise-combination","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"企業結合規制（独占禁止法）","year":2004,"authors":[],"degree":6}
+{"id":"bizlaw-employment-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"職業安定法","year":1947,"authors":[],"degree":5}
+{"id":"bizlaw-enterprise-combination","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"企業結合規制（独占禁止法）","year":2004,"authors":[],"degree":4}
 {"id":"bizlaw-entire-agreement-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察","year":null,"authors":["ビール|ヒ","ファーンズワース|ア","マッケンドリック|ユ"],"degree":13}
 {"id":"bizlaw-entire-fairness","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"完全公正基準（Entire Fairness Doctrine）","year":1983,"authors":["corp|w","kahn|"],"degree":11}
 {"id":"bizlaw-entrenchment-doctrine-unocal","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"防衛策の正当性審査——ユノカル基準と取締役の合理性テスト","year":null,"authors":["ギルソン|ロ","ベブチャック|ル","ムーア|ア","リプトン|マ"],"degree":22}
@@ -470,7 +470,7 @@
 {"id":"bizlaw-national-treatment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内国民待遇原則（National Treatment）","year":1947,"authors":["gatt|"],"degree":12}
 {"id":"bizlaw-negative-pledge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"担保提供制限条項——他の債権者に担保を与えない約束","year":null,"authors":["ウッド|フ","グード|ロ","ベンジャミン|ジ","ホフマン|ロ"],"degree":8}
 {"id":"bizlaw-negligence-duty-of-care","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任","year":null,"authors":["カードーゾ|ベ","プロッサー|ウ"],"degree":19}
-{"id":"bizlaw-negligence-per-se","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法定過失（Negligence Per Se）","year":null,"authors":["キートン|ウ","プロッサー|ウ","ホームズ|オ"],"degree":17}
+{"id":"bizlaw-negligence-per-se","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法定過失（Negligence Per Se）","year":null,"authors":["キートン|ウ","プロッサー|ウ","ホームズ|オ"],"degree":16}
 {"id":"bizlaw-negotiable-instruments-act-boia","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"有価証券法——手形・小切手の流通と善意取得者保護","year":null,"authors":["チャルマーズ|チ","ロジャーズ|ジ"],"degree":16}
 {"id":"bizlaw-negotiorum-gestio","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事務管理（民法697条）","year":null,"authors":["law|e"],"degree":11}
 {"id":"bizlaw-nemo-dat-quod-non-habet","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ネモ・ダット原則（Nemo Dat Quod Non Habet）","year":1878,"authors":["act|s","ukhl|c","ulpian|"],"degree":5}
@@ -515,7 +515,7 @@
 {"id":"bizlaw-privacy-law-gdpr-compliance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制","year":null,"authors":["シュレムス|マ","シュワルツ|ポ","ホフマン|ヴ"],"degree":9}
 {"id":"bizlaw-private-detective-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"探偵業法（探偵業の業務の適正化に関する法律）","year":null,"authors":[],"degree":8}
 {"id":"bizlaw-private-international-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際私法（法の適用に関する通則法）","year":1779,"authors":["サヴィニー|フ"],"degree":4}
-{"id":"bizlaw-privity-of-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の相対効の原則（プリビティ・オブ・コントラクト）","year":null,"authors":["コービン|ア","ジェンクス|エ","トイブナー|ギ"],"degree":23}
+{"id":"bizlaw-privity-of-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の相対効の原則（プリビティ・オブ・コントラクト）","year":null,"authors":["コービン|ア","ジェンクス|エ","トイブナー|ギ"],"degree":24}
 {"id":"bizlaw-prize-advertisement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"懸賞広告（民法529条）","year":2017,"authors":["law|e"],"degree":10}
 {"id":"bizlaw-product-liability-directive-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU製造物責任指令と無過失責任——欠陥製品による損害と生産者の厳格責任","year":null,"authors":["ゲステル|マ","スタプルトン|ジ","ワグナー|ガ"],"degree":6}
 {"id":"bizlaw-product-liability-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任法（製品不具合と製造業者の厳格責任）","year":null,"authors":["posner|r","priest|g","wade|j"],"degree":13}
@@ -530,7 +530,7 @@
 {"id":"bizlaw-promissory-note","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約束手形——一定金額の支払を約する二当事者間の流通証券","year":null,"authors":["エイムズ|ジ","チャルマーズ|マ","ルウェリン|カ"],"degree":10}
 {"id":"bizlaw-proper-purpose-howard-smith","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取締役の権限濫用と適正目的の法理——ハワード・スミス対アンポル事件（Howard Smith v Ampol 1974）","year":1974,"authors":["ltd|h","wilberforce|l"],"degree":2}
 {"id":"bizlaw-property-liability-rules","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）","year":1932,"authors":["calabresi|","melamed|","カラブレシ|グ","メラメッド|ダ"],"degree":2}
-{"id":"bizlaw-property-transfer","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"物権変動と対抗要件（民法177条）","year":null,"authors":[],"degree":15}
+{"id":"bizlaw-property-transfer","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"物権変動と対抗要件（民法177条）","year":null,"authors":[],"degree":19}
 {"id":"bizlaw-proportionality-principle","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"比例原則（行政法・EU法）","year":2009,"authors":[],"degree":10}
 {"id":"bizlaw-proprietary-estoppel","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"財産的禁反言——約束への信頼が財産上の権利を生む","year":null,"authors":["ウェイド|ウ","ウォーカー|ロ","マクファーレン|ベ","メグリー|ロ"],"degree":11}
 {"id":"bizlaw-provider-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"プロバイダ責任制限法","year":2001,"authors":[],"degree":3}
@@ -640,9 +640,9 @@
 {"id":"bizlaw-tort-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法行為責任（民法709条）","year":null,"authors":[],"degree":14}
 {"id":"bizlaw-tortfeasor-contribution-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"共同不法行為者間の求償——寄与過失に基づく損害分担の法理","year":null,"authors":["シュワルツ|ヴ","ドブス|ダ","フレミング|ジ","プロッサー|ウ"],"degree":12}
 {"id":"bizlaw-tortious-interference","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約関係への不法干渉（Tortious Interference with Contract）","year":1853,"authors":["crompton|","institute|a"],"degree":2}
-{"id":"bizlaw-tortious-interference-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法干渉法理","year":null,"authors":["dobbs|d","farnsworth|w","james|f","prosser|w"],"degree":12}
+{"id":"bizlaw-tortious-interference-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法干渉法理","year":null,"authors":["dobbs|d","farnsworth|w","james|f","prosser|w"],"degree":11}
 {"id":"bizlaw-tortious-interference-lumley","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理","year":null,"authors":["キャンベル|チ","プロッサー|ウ","ペルマン|ハ"],"degree":14}
-{"id":"bizlaw-tortious-interference-restatement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法行為責任（営業妨害と契約干渉）","year":null,"authors":["fleming|j","keeton|w","restatement|"],"degree":13}
+{"id":"bizlaw-tortious-interference-restatement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法行為責任（営業妨害と契約干渉）","year":null,"authors":["fleming|j","keeton|w","restatement|"],"degree":14}
 {"id":"bizlaw-toushiho","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"出資法","year":1954,"authors":[],"degree":25}
 {"id":"bizlaw-tracing-equity","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"エクイティ上の追及——価値を新たな財産へと追いかける","year":null,"authors":["スミス|ラ","チェンバース|ロ","バークス|ピ","ミレット|ロ"],"degree":9}
 {"id":"bizlaw-trade-secret","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密（不正競争防止法2条6項）","year":2018,"authors":[],"degree":3}
@@ -650,7 +650,7 @@
 {"id":"bizlaw-trade-secret-misappropriation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密の不正取得（トレード・シークレット法）","year":null,"authors":["ゴールドスタイン|ポ","サイモン|ウ","タイマン|デ"],"degree":15}
 {"id":"bizlaw-trade-secret-misappropriation-dtsa","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立","year":null,"authors":["アルマセー|ロ","クーンズ|ク","ハッチ|オ","レムリー|マ"],"degree":6}
 {"id":"bizlaw-trade-secret-protection-trips","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密保護法——不正競争防止と国際的調和の法的枠組み","year":null,"authors":["オーリー|ア","メルゲス|ロ","レムリー|マ","ロウ|エ"],"degree":19}
-{"id":"bizlaw-trade-secret-protection-utsa","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護","year":null,"authors":["ミルグリム|ロ","メルジェス|ロ"],"degree":5}
+{"id":"bizlaw-trade-secret-protection-utsa","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護","year":null,"authors":["ミルグリム|ロ","メルジェス|ロ"],"degree":6}
 {"id":"bizlaw-trademark","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"商標法","year":1959,"authors":[],"degree":12}
 {"id":"bizlaw-trail-smelter-principle","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"トレイル・スメルター原則（Trail Smelter Principle）","year":1935,"authors":["スメルター|ト"],"degree":7}
 {"id":"bizlaw-transfer-pricing-arm-length","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"移転価格税制と独立企業間価格原則","year":null,"authors":["アーノルド|ブ","ヘルムズ|ウ","ラング|ミ"],"degree":4}
@@ -671,7 +671,7 @@
 {"id":"bizlaw-unfair-competition","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不正競争防止法","year":1934,"authors":[],"degree":13}
 {"id":"bizlaw-unfair-competition-trade-secret","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不正競争防止と営業秘密保護の比較法制","year":null,"authors":["トルマン|リ","レミュー|マ","ロスノット|ク"],"degree":8}
 {"id":"bizlaw-unfair-contract-terms-directive-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU不公正契約条項指令——消費者契約の実質的公正","year":null,"authors":["セントレッラ|マ","ビール|ヒ","プフライファー|ト","ミカロウスキ|ウ","ライヒ|ノ"],"degree":7}
-{"id":"bizlaw-unfair-prejudice-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不公正な侵害の救済（アンフェア・プレジュディス法理）","year":null,"authors":["davies|p","hoffmann|l","worthington|s"],"degree":10}
+{"id":"bizlaw-unfair-prejudice-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不公正な侵害の救済（アンフェア・プレジュディス法理）","year":null,"authors":["davies|p","hoffmann|l","worthington|s"],"degree":9}
 {"id":"bizlaw-ungps-business-human-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ビジネスと人権に関する指導原則（UNGPs）","year":1944,"authors":["ラギー|ジ"],"degree":8}
 {"id":"bizlaw-unjust-enrichment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不当利得（民法703条・704条）","year":null,"authors":[],"degree":3}
 {"id":"bizlaw-unreasonable-restraint-of-trade","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不当な取引制限（カルテル・入札談合）の禁止","year":2006,"authors":[],"degree":23}
@@ -1088,7 +1088,7 @@
 {"id":"econ-harberger-excess-burden-taxation","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハーバーガーの超過負担——課税の厚生損失と最適税制設計","year":null,"authors":["ダイアモンド|ピ","ハーバーガー|ア","ミーリーズ|ジ","ラムゼー|フ"],"degree":17}
 {"id":"econ-harberger-triangle","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハーバーガーの三角形（独占の死荷重損失計測）","year":1954,"authors":["harberger|a","leibenstein|h","tullock|g"],"degree":4}
 {"id":"econ-harberger-triangle-deadweight-loss","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析","year":null,"authors":["タロック|ゴ","ハーバーガー|ア","フェルドシュタイン|マ","マーシャル|ア"],"degree":20}
-{"id":"econ-harberger-triangle-incidence","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハーバーガーの法人税帰着モデル（Harberger Tax Incidence Model）","year":1962,"authors":[],"degree":5}
+{"id":"econ-harberger-triangle-incidence","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハーバーガーの法人税帰着モデル（Harberger Tax Incidence Model）","year":1962,"authors":[],"degree":6}
 {"id":"econ-harris-todaro","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハリス＝トダロ・モデル","year":1970,"authors":["トダロ|マ","ハリス|ジ"],"degree":4}
 {"id":"econ-harrod-domar","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハロッド＝ドーマー成長モデル","year":1939,"authors":[],"degree":2}
 {"id":"econ-harrod-neutral-technical-change","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩","year":null,"authors":["ソロー|ロ","ハロッド|ロ","ヒックス|ジ"],"degree":25}
@@ -1339,7 +1339,7 @@
 {"id":"econ-optimal-tariff-terms-of-trade","collection":"academic","category":"economics","categoryLabel":"経済学","title":"最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠","year":null,"authors":["クルーグマン|ポ","ジョンソン|ハ","スペンサー|バ","ブランダー|ジ"],"degree":13}
 {"id":"econ-optimal-tax-theory-diamond-mirrlees","collection":"academic","category":"economics","categoryLabel":"経済学","title":"最適税制論（ダイアモンド＆マーリース）","year":null,"authors":["サエズ|エ","ダイアモンド|ピ","マーリース|ジ","ラムゼー|フ"],"degree":14}
 {"id":"econ-optimal-taxation-mirrlees","collection":"academic","category":"economics","categoryLabel":"経済学","title":"最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ","year":null,"authors":["サエズ|エ","ダイアモンド|ピ","ミルリーズ|ジ","ラムゼー|フ"],"degree":12}
-{"id":"econ-optimal-taxation-mirrlees-diamond","collection":"academic","category":"economics","categoryLabel":"経済学","title":"最適課税論——効率性と公平性のトレードオフにおける税制設計","year":null,"authors":["アトキンソン|ア","サーズ|エ","ダイアモンド|ピ","ピケティ|ト","ミアリーズ|ジ"],"degree":13}
+{"id":"econ-optimal-taxation-mirrlees-diamond","collection":"academic","category":"economics","categoryLabel":"経済学","title":"最適課税論——効率性と公平性のトレードオフにおける税制設計","year":null,"authors":["アトキンソン|ア","サーズ|エ","ダイアモンド|ピ","ピケティ|ト","ミアリーズ|ジ"],"degree":12}
 {"id":"econ-optimal-taxation-theory","collection":"academic","category":"economics","categoryLabel":"経済学","title":"最適課税理論","year":null,"authors":["atkinson|a","diamond|p","mirrlees|j","ramsey|f","saez|e","stiglitz|j"],"degree":17}
 {"id":"econ-option-pricing-black-scholes","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学","year":null,"authors":["ウィルモット|ポ","ショールズ|マ","ブラック|フ","マートン|ロ"],"degree":12}
 {"id":"econ-original-sin-eichengreen","collection":"academic","category":"economics","categoryLabel":"経済学","title":"原罪仮説——新興国の自国通貨建て対外借入の構造的不能","year":null,"authors":["アイケングリーン|バ","カルボ|ギ","ハウスマン|リ","パニッツァ|ウ"],"degree":12}
@@ -1734,8 +1734,8 @@
 {"id":"eh-2023","collection":"econ-history","category":"2020年代","categoryLabel":"2020年代","title":"2023年（令和5年）","year":1989,"authors":[],"degree":10}
 {"id":"eh-2024","collection":"econ-history","category":"2020年代","categoryLabel":"2020年代","title":"2024年（令和6年）","year":2024,"authors":["etf|n","サービス|コ"],"degree":12}
 {"id":"eh-2025","collection":"econ-history","category":"2020年代","categoryLabel":"2020年代","title":"2025年（令和7年）","year":2025,"authors":["day|l"],"degree":6}
-{"id":"human-above-average-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"平均以上効果（優越の錯覚）","year":1981,"authors":["スヴェンソン|オ"],"degree":108}
-{"id":"human-acceptance-commitment-therapy","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ダール|ヨ","ヘイズ|ス"],"degree":71}
+{"id":"human-above-average-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"平均以上効果（優越の錯覚）","year":1981,"authors":["スヴェンソン|オ"],"degree":107}
+{"id":"human-acceptance-commitment-therapy","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ダール|ヨ","ヘイズ|ス"],"degree":70}
 {"id":"human-acceptance-commitment-therapy-hayes","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ダール|ジ","ヘイズ|ス"],"degree":10}
 {"id":"human-achievement-motivation","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"達成動機理論（マクレランドの3欲求）","year":1961,"authors":[],"degree":12}
 {"id":"human-acquired-needs-theory","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"獲得欲求理論","year":null,"authors":["atkinson|j","mcclelland|d","winter|d"],"degree":3}
@@ -1809,7 +1809,7 @@
 {"id":"human-broaden-build-upward-spiral","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化","year":null,"authors":["コーン|マ","ジョイナー|ト","フレデリクソン|バ","リュボミルスキー|ソ"],"degree":5}
 {"id":"human-broken-windows-theory","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"割れ窓理論","year":1969,"authors":["ジンバルドー|フ","ハーコート|バ","ブラットン|ウ"],"degree":4}
 {"id":"human-burnout","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"バーンアウト（燃え尽き症候群）","year":1974,"authors":["icd-|w","フロイデンバーガー|ハ","マスラック|ク"],"degree":16}
-{"id":"human-bystander-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"傍観者効果（bystander effect, 責任の分散）","year":1964,"authors":["ジェノヴィーズ|キ","ダーリー|ジ","ラタネ|ビ"],"degree":7}
+{"id":"human-bystander-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"傍観者効果（bystander effect, 責任の分散）","year":1964,"authors":["ジェノヴィーズ|キ","ダーリー|ジ","ラタネ|ビ"],"degree":8}
 {"id":"human-cafe-wall-illusion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"カフェウォール錯視——平行な線が傾いて見える幾何学的錯視","year":null,"authors":["グレゴリー|リ","ハード|プ","マッハ|エ","ミュンスターベルク|ヒ"],"degree":4}
 {"id":"human-cannon-bard-emotion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる","year":null,"authors":["キャノン|ウ","シャクター|ス","ジェームズ|ウ","バード|フ"],"degree":9}
 {"id":"human-capgras","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"カプグラ妄想（Capgras Delusion）","year":1923,"authors":["ramachandran|w","reboul-lachaux|j","young|h"],"degree":9}
@@ -1819,7 +1819,7 @@
 {"id":"human-cbt","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知行動療法（CBT）","year":1950,"authors":["エリス|ア","ベック|ア"],"degree":3}
 {"id":"human-central-pattern-generator","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"中枢パターン発生器（CPG）","year":null,"authors":["brown|t","grillner|s","marder|e"],"degree":3}
 {"id":"human-chameleon-effect-chartrand","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"カメレオン効果（シャートランド＆バーク）","year":null,"authors":["シャートランド|テ","ダリー|ヤ","バーク|ジ","リッツォラッティ|ジ"],"degree":3}
-{"id":"human-change-blindness-simons","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"変化盲——視覚環境の大規模変化に気づかない知覚的失敗","year":null,"authors":["オレーガン|ケ","サイモンズ|ダ","レンシンク|ロ","レヴィン|ダ"],"degree":5}
+{"id":"human-change-blindness-simons","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"変化盲——視覚環境の大規模変化に気づかない知覚的失敗","year":null,"authors":["オレーガン|ケ","サイモンズ|ダ","レンシンク|ロ","レヴィン|ダ"],"degree":6}
 {"id":"human-charles-bonnet-syndrome","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視","year":null,"authors":["サックス|オ","フィッチ|ド","ボネ|シ","ラマチャンドラン|ヴ"],"degree":7}
 {"id":"human-cheerleader-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"チアリーダー効果（集団魅力効果）","year":2014,"authors":["vul|","ウォーカー|ド","ヴル|エ"],"degree":3}
 {"id":"human-childhood-amnesia","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"幼児期健忘（Childhood Amnesia）","year":1905,"authors":["バウアー|パ","ピレマー|デ","フロイト|ジ"],"degree":23}
@@ -1844,7 +1844,7 @@
 {"id":"human-cognitive-flexibility-theory","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知的柔軟性理論","year":1988,"authors":[],"degree":12}
 {"id":"human-cognitive-load","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知負荷理論","year":1980,"authors":["イグザンプル|ワ","スウェラー|ジ"],"degree":4}
 {"id":"human-cognitive-load-dual-task","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知負荷理論と二重課題パラダイム","year":null,"authors":["kahneman|d","pashler|h","sweller|j"],"degree":20}
-{"id":"human-cognitive-miser","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知的倹約家（cognitive miser）","year":1984,"authors":["ハイダー|フ"],"degree":24}
+{"id":"human-cognitive-miser","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知的倹約家（cognitive miser）","year":1984,"authors":["ハイダー|フ"],"degree":23}
 {"id":"human-cognitive-reflection-test","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知反映テスト（CRT）","year":2005,"authors":["フレデリック|シ"],"degree":5}
 {"id":"human-cognitive-reserve-stern","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知予備力（スターン）","year":null,"authors":["スターン|ヤ","ブレイン|ク","ベネット|デ","ラフライニー|ス"],"degree":5}
 {"id":"human-cognitive-reserve-theory","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知的予備力理論","year":null,"authors":["scarmeas|n","stern|y"],"degree":4}
@@ -2143,7 +2143,7 @@
 {"id":"human-neuroplasticity-theory","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"神経可塑性理論","year":null,"authors":["hebb|d","hubel|d","kandel|e","merzenich|m","pascual-leone|a","wiesel|t"],"degree":18}
 {"id":"human-norm-reciprocity-gouldner","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範","year":null,"authors":["ゴールドナー|ア","チャルディーニ|ロ","ホマンズ|ジ","モース|マ"],"degree":10}
 {"id":"human-normalcy-bias","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"正常性バイアス","year":null,"authors":[],"degree":4}
-{"id":"human-nostalgia-psychology-sedikides","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持","year":null,"authors":["セディキデス|コ","デイヴィス|フ","ラウトレッジ|ク","ワイルドシャット|テ"],"degree":3}
+{"id":"human-nostalgia-psychology-sedikides","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持","year":null,"authors":["セディキデス|コ","デイヴィス|フ","ラウトレッジ|ク","ワイルドシャット|テ"],"degree":4}
 {"id":"human-obedience","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。","year":null,"authors":["アッシュ|ソ","ミルグラム|ス","モスコヴィチ|ソ"],"degree":9}
 {"id":"human-object-permanence","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"対象の永続性（Object Permanence）","year":1987,"authors":["バイヤジョン|ル","ピアジェ|ジ"],"degree":7}
 {"id":"human-observational-learning","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"観察学習（バンデューラ）","year":1925,"authors":["ross|","バンデューラ|ア"],"degree":14}
@@ -2339,7 +2339,7 @@
 {"id":"human-temporal-discounting","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間割引（Temporal Discounting / 遅延割引）","year":1975,"authors":["エインズリー|ジ","ラクリン|ハ"],"degree":7}
 {"id":"human-temporal-discounting-ainslie","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学","year":null,"authors":["エインズリー|ジ","オドノヒュー|テ","セイラー|リ","フレデリック|シ"],"degree":11}
 {"id":"human-temporal-motivation-steel","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間的動機付け理論（スティール＆クーニング）","year":null,"authors":["アリエリー|ダ","クーニング|コ","スティール|ピ","ミシェル|ウ"],"degree":11}
-{"id":"human-temporal-self-appraisal","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間的自己評価理論——過去の自己との比較による現在の自己高揚","year":null,"authors":["ウィルソン|ア","セディキデス|コ","フェスティンガー|レ","ロス|マ"],"degree":11}
+{"id":"human-temporal-self-appraisal","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間的自己評価理論——過去の自己との比較による現在の自己高揚","year":null,"authors":["ウィルソン|ア","セディキデス|コ","フェスティンガー|レ","ロス|マ"],"degree":12}
 {"id":"human-tend-and-befriend","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"思いやり・絆形成反応（テンド・アンド・ビフレンド）","year":2000,"authors":["テイラー|シ"],"degree":17}
 {"id":"human-tend-and-befriend-taylor","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式","year":null,"authors":["クライン|ロ","グルング|リ","テイラー|シ","ルイス|ブ"],"degree":6}
 {"id":"human-terror-management","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"存在脅威管理理論（恐怖管理理論）","year":1986,"authors":["グリーンバーグ|ジ","ソロモン|シ","ピシュチンスキー|ト","ベッカー|ア"],"degree":10}
@@ -2475,7 +2475,7 @@
 {"id":"infosoc-connectivism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コネクティビズム","year":1959,"authors":["シーメンズ|ジ","ダウンズ|ス"],"degree":2}
 {"id":"infosoc-content-moderation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践","year":null,"authors":["ギレスピー|タ","グリメルマン|ジ"],"degree":16}
 {"id":"infosoc-context-collapse","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテキストの崩壊（文脈崩壊）","year":null,"authors":["ゴッフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":18}
-{"id":"infosoc-context-collapse-marwick","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ","year":null,"authors":["ゴフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":13}
+{"id":"infosoc-context-collapse-marwick","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ","year":null,"authors":["ゴフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":14}
 {"id":"infosoc-contextual-integrity","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー","year":2004,"authors":["context|p","integrity|p","nissenbaum|h","principles|t"],"degree":9}
 {"id":"infosoc-control-revolution-beniger","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"制御革命（ベニガー）——情報社会の技術的・経済的起源","year":null,"authors":["ウィーナー|ノ","カステル|マ","ベニガー|ジ","ベル|ダ"],"degree":11}
 {"id":"infosoc-convergence-culture-jenkins","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化","year":null,"authors":["ジェンキンス|ヘ","フィスク|ジ","ブランス|ア","レヴィ|ピ"],"degree":10}
@@ -2527,7 +2527,7 @@
 {"id":"infosoc-datafication-social-life","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論","year":null,"authors":["ウェア|ナ","キッチン|ロ","ボセランク|ア","マイヤー|ビ"],"degree":10}
 {"id":"infosoc-datafication-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データフィケーション理論","year":null,"authors":["couldry|n","cukier|k","dijck|j","mejias|u","nberger|v"],"degree":12}
 {"id":"infosoc-datafication-van-dijck","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）","year":null,"authors":["クキエ|ケ","ダイク|ホ","チャバジー|ダ","マイヤー|ヴ"],"degree":10}
-{"id":"infosoc-dataveillance","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データヴェイランス（データ監視）","year":1988,"authors":["クラーク|ロ"],"degree":18}
+{"id":"infosoc-dataveillance","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データヴェイランス（データ監視）","year":1988,"authors":["クラーク|ロ"],"degree":17}
 {"id":"infosoc-dataveillance-clarke","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ監視（デイタヴェイランス）——個人データを通じた体系的な監視","year":null,"authors":["ガンディ|オ","クラーク|ロ","ハガティ|ケ","ライアン|デ"],"degree":15}
 {"id":"infosoc-dataveillance-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ監視理論","year":null,"authors":["clarke|r","lyon|d"],"degree":13}
 {"id":"infosoc-deceptive-design-gray","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"欺瞞的デザインとダーク・パターン（グレイ他）","year":null,"authors":["グレイ|コ","シュール|ナ","ダシ|ア","ブリニャル|ハ"],"degree":12}
@@ -2551,7 +2551,7 @@
 {"id":"infosoc-digital-divide","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタルディバイド（情報格差）","year":1995,"authors":["deursen|j","divide|d","first-level|","net|n","third-level|h"],"degree":3}
 {"id":"infosoc-digital-divide-age-grey","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題","year":null,"authors":["フロリディ|ル","ヘンシェル|ジ"],"degree":10}
 {"id":"infosoc-digital-divide-second-level-hargittai","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"第二レベルのデジタルデバイド——アクセスからスキル格差へ","year":null,"authors":["セルウィン|ニ","デューセン|ヤ","ノリス|ピ","ハルギッタイ|エ","ロビンソン|ロ"],"degree":5}
-{"id":"infosoc-digital-divide-stratification","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル格差と情報不平等の社会的成層論","year":null,"authors":["ダイク|ジ","ビッカー|モ","ヘルグソン|エ","ペッパ|ノ"],"degree":4}
+{"id":"infosoc-digital-divide-stratification","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル格差と情報不平等の社会的成層論","year":null,"authors":["ダイク|ジ","ビッカー|モ","ヘルグソン|エ","ペッパ|ノ"],"degree":3}
 {"id":"infosoc-digital-divide-warschauer","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタルデバイド（情報アクセス格差）","year":null,"authors":["castells|m","dijk|j","warschauer|m"],"degree":9}
 {"id":"infosoc-digital-dualism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル・デュアリズム","year":2011,"authors":["ユルゲンソン|ネ"],"degree":7}
 {"id":"infosoc-digital-ethnography-hine","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査","year":null,"authors":["コジネッツ|ロ","ハイン|ク","ボエルストルフ|ト","ミラー|ダ"],"degree":13}
@@ -3001,7 +3001,7 @@
 {"id":"infosoc-wikinomics-tapscott","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ウィキノミクス——マス・コラボレーションが変える生産と経済","year":null,"authors":["タプスコット|ド","ヒッペル|エ","ベンクラー|ヨ"],"degree":11}
 {"id":"infosoc-wisdom-of-crowds","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"群衆の叡智","year":1907,"authors":["ゴルトン|フ","スロウィッキー|ジ"],"degree":6}
 {"id":"knowledge-gap-hypothesis","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"知識格差仮説","year":1928,"authors":["オリエン|ク","ティチェナー|フ","ドノヒュー|ジ"],"degree":4}
-{"id":"labor-36-agreement","collection":"compliance","category":"labor","categoryLabel":"労務","title":"36協定（時間外・休日労働に関する労使協定）","year":null,"authors":[],"degree":15}
+{"id":"labor-36-agreement","collection":"compliance","category":"labor","categoryLabel":"労務","title":"36協定（時間外・休日労働に関する労使協定）","year":null,"authors":[],"degree":12}
 {"id":"labor-accident-report","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者死傷病報告（労働安全衛生規則97条）","year":null,"authors":[],"degree":3}
 {"id":"labor-average-wage","collection":"compliance","category":"labor","categoryLabel":"労務","title":"平均賃金（労働基準法12条）","year":null,"authors":[],"degree":3}
 {"id":"labor-break-time","collection":"compliance","category":"labor","categoryLabel":"労務","title":"休憩時間（労働基準法34条）","year":null,"authors":[],"degree":2}
@@ -3014,7 +3014,7 @@
 {"id":"labor-childcare-leave-2025","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児・介護休業法 2025年4月改正","year":2025,"authors":[],"degree":4}
 {"id":"labor-childcare-overtime-exemption","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児のための所定外労働の制限（残業免除）","year":null,"authors":[],"degree":11}
 {"id":"labor-childcare-short-time","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児のための短時間勤務制度（育児・介護休業法23条）","year":null,"authors":[],"degree":5}
-{"id":"labor-childcare-shorttime-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児時短就業給付金（2025年4月1日施行）","year":2025,"authors":[],"degree":16}
+{"id":"labor-childcare-shorttime-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児時短就業給付金（2025年4月1日施行）","year":2025,"authors":[],"degree":15}
 {"id":"labor-collective-agreement","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働協約（労働組合法）","year":null,"authors":[],"degree":15}
 {"id":"labor-collective-bargaining","collection":"compliance","category":"labor","categoryLabel":"労務","title":"団体交渉拒否の禁止（労働組合法7条）","year":null,"authors":[],"degree":4}
 {"id":"labor-commuting-injury","collection":"compliance","category":"labor","categoryLabel":"労務","title":"通勤災害（労災保険）","year":null,"authors":[],"degree":2}
@@ -3022,24 +3022,24 @@
 {"id":"labor-corporate-dc-pension","collection":"compliance","category":"labor","categoryLabel":"労務","title":"企業型確定拠出年金（企業型DC）","year":null,"authors":[],"degree":5}
 {"id":"labor-customer-harassment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"カスタマーハラスメント対策の事業主の措置義務化（2025年改正）","year":2025,"authors":[],"degree":13}
 {"id":"labor-deemed-working-hours","collection":"compliance","category":"labor","categoryLabel":"労務","title":"事業場外労働のみなし労働時間制（労働基準法38条の2）","year":null,"authors":[],"degree":15}
-{"id":"labor-digital-wage-payment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"賃金のデジタル払い（指定資金移動業者口座への賃金支払）","year":null,"authors":[],"degree":11}
+{"id":"labor-digital-wage-payment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"賃金のデジタル払い（指定資金移動業者口座への賃金支払）","year":null,"authors":[],"degree":12}
 {"id":"labor-disability-accommodation-employment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"障害者雇用促進法における差別禁止と合理的配慮","year":null,"authors":[],"degree":11}
 {"id":"labor-disability-employment-levy","collection":"compliance","category":"labor","categoryLabel":"労務","title":"障害者雇用納付金制度（事業主間の経済的負担の調整）","year":null,"authors":[],"degree":10}
 {"id":"labor-disability-employment-rate","collection":"compliance","category":"labor","categoryLabel":"労務","title":"障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）","year":null,"authors":[],"degree":6}
-{"id":"labor-disability-pension","collection":"compliance","category":"labor","categoryLabel":"労務","title":"障害年金（障害基礎年金・障害厚生年金）","year":null,"authors":[],"degree":24}
+{"id":"labor-disability-pension","collection":"compliance","category":"labor","categoryLabel":"労務","title":"障害年金（障害基礎年金・障害厚生年金）","year":null,"authors":[],"degree":25}
 {"id":"labor-discretionary-work","collection":"compliance","category":"labor","categoryLabel":"労務","title":"裁量労働制（専門業務型・企画業務型）","year":null,"authors":[],"degree":2}
-{"id":"labor-disguised-contract","collection":"compliance","category":"labor","categoryLabel":"労務","title":"偽装請負（労働者派遣と請負の区分）","year":null,"authors":[],"degree":4}
+{"id":"labor-disguised-contract","collection":"compliance","category":"labor","categoryLabel":"労務","title":"偽装請負（労働者派遣と請負の区分）","year":null,"authors":[],"degree":2}
 {"id":"labor-dismissal-abuse","collection":"compliance","category":"labor","categoryLabel":"労務","title":"解雇権濫用法理（労働契約法16条）","year":null,"authors":[],"degree":11}
 {"id":"labor-dismissal-notice","collection":"compliance","category":"labor","categoryLabel":"労務","title":"解雇予告と適用除外・除外認定（労働基準法第20条・第21条）","year":null,"authors":[],"degree":13}
-{"id":"labor-dispatch-deemed-offer","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働契約申込みみなし制度（労働者派遣法40条の6）","year":null,"authors":[],"degree":6}
-{"id":"labor-dispatch-equal-treatment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）","year":null,"authors":[],"degree":10}
+{"id":"labor-dispatch-deemed-offer","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働契約申込みみなし制度（労働者派遣法40条の6）","year":null,"authors":[],"degree":8}
+{"id":"labor-dispatch-equal-treatment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）","year":null,"authors":[],"degree":9}
 {"id":"labor-dispatch-license","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣事業の許可制","year":null,"authors":[],"degree":7}
-{"id":"labor-dispatch-period","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の期間制限（3年ルール）","year":null,"authors":[],"degree":6}
+{"id":"labor-dispatch-period","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の期間制限（3年ルール）","year":null,"authors":[],"degree":3}
 {"id":"labor-dispatch-prohibited","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の適用除外業務（派遣禁止業務）","year":null,"authors":[],"degree":7}
-{"id":"labor-elderly-continued-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢雇用継続給付（雇用保険）","year":null,"authors":[],"degree":10}
-{"id":"labor-elderly-employment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢者雇用確保措置","year":null,"authors":[],"degree":18}
+{"id":"labor-elderly-continued-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢雇用継続給付（雇用保険）","year":null,"authors":[],"degree":9}
+{"id":"labor-elderly-employment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢者雇用確保措置","year":null,"authors":[],"degree":3}
 {"id":"labor-employment-adjustment-subsidy","collection":"compliance","category":"labor","categoryLabel":"労務","title":"雇用調整助成金","year":null,"authors":[],"degree":3}
-{"id":"labor-employment-certificate","collection":"compliance","category":"labor","categoryLabel":"労務","title":"退職時等の証明（労働基準法22条）","year":null,"authors":[],"degree":4}
+{"id":"labor-employment-certificate","collection":"compliance","category":"labor","categoryLabel":"労務","title":"退職時等の証明（労働基準法22条）","year":null,"authors":[],"degree":5}
 {"id":"labor-employment-insurance","collection":"compliance","category":"labor","categoryLabel":"労務","title":"雇用保険の被保険者加入要件","year":null,"authors":[],"degree":3}
 {"id":"labor-equal-pay","collection":"compliance","category":"labor","categoryLabel":"労務","title":"同一労働同一賃金（パート・有期雇用労働法）","year":null,"authors":[],"degree":20}
 {"id":"labor-family-care-days","collection":"compliance","category":"labor","categoryLabel":"労務","title":"介護休暇（育児・介護休業法16条の5）","year":null,"authors":[],"degree":5}
@@ -3054,7 +3054,7 @@
 {"id":"labor-health-checkup","collection":"compliance","category":"labor","categoryLabel":"労務","title":"定期健康診断の実施義務","year":null,"authors":[],"degree":7}
 {"id":"labor-heatstroke-prevention-mandatory","collection":"compliance","category":"labor","categoryLabel":"労務","title":"職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）","year":2025,"authors":[],"degree":2}
 {"id":"labor-high-cost-medical","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高額療養費制度（公的医療保険）","year":null,"authors":[],"degree":7}
-{"id":"labor-high-professional","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高度プロフェッショナル制度（労基法41条の2）","year":null,"authors":[],"degree":8}
+{"id":"labor-high-professional","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高度プロフェッショナル制度（労基法41条の2）","year":null,"authors":[],"degree":7}
 {"id":"labor-ideco","collection":"compliance","category":"labor","categoryLabel":"労務","title":"iDeCo（個人型確定拠出年金）の制度概要","year":null,"authors":[],"degree":4}
 {"id":"labor-individual-dispute-mediation","collection":"compliance","category":"labor","categoryLabel":"労務","title":"個別労働紛争解決制度（個別労働関係紛争解決促進法）","year":null,"authors":[],"degree":4}
 {"id":"labor-industrial-physician","collection":"compliance","category":"labor","categoryLabel":"労務","title":"産業医の選任義務（労働安全衛生法13条）","year":null,"authors":[],"degree":3}
@@ -3063,12 +3063,12 @@
 {"id":"labor-legal-holiday","collection":"compliance","category":"labor","categoryLabel":"労務","title":"法定休日（労働基準法35条）","year":null,"authors":[],"degree":3}
 {"id":"labor-long-term-care-insurance","collection":"compliance","category":"labor","categoryLabel":"労務","title":"介護保険制度（保険者・被保険者・自己負担）","year":null,"authors":[],"degree":4}
 {"id":"labor-managerial-supervisor","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働基準法上の管理監督者（労基法41条2号）","year":null,"authors":[],"degree":4}
-{"id":"labor-mandatory-retirement-age","collection":"compliance","category":"labor","categoryLabel":"労務","title":"定年年齢の下限（60歳未満定年の禁止）","year":null,"authors":[],"degree":9}
+{"id":"labor-mandatory-retirement-age","collection":"compliance","category":"labor","categoryLabel":"労務","title":"定年年齢の下限（60歳未満定年の禁止）","year":null,"authors":[],"degree":8}
 {"id":"labor-maternity-allowance","collection":"compliance","category":"labor","categoryLabel":"労務","title":"健康保険の出産手当金","year":null,"authors":[],"degree":13}
 {"id":"labor-maternity-harassment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）","year":null,"authors":[],"degree":20}
 {"id":"labor-maternity-leave","collection":"compliance","category":"labor","categoryLabel":"労務","title":"産前産後休業（労働基準法第65条）","year":null,"authors":[],"degree":13}
 {"id":"labor-medical-interview","collection":"compliance","category":"labor","categoryLabel":"労務","title":"長時間労働者に対する医師による面接指導","year":null,"authors":[],"degree":5}
-{"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":5}
+{"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":7}
 {"id":"labor-minimum-wage","collection":"compliance","category":"labor","categoryLabel":"労務","title":"地域別最低賃金（最低賃金法）","year":null,"authors":[],"degree":4}
 {"id":"labor-minor-protection","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年少者の労働保護（労働基準法 第6章）","year":null,"authors":[],"degree":4}
 {"id":"labor-minwage-reduction-exception","collection":"compliance","category":"labor","categoryLabel":"労務","title":"最低賃金の減額の特例許可制度（最低賃金法7条）","year":null,"authors":[],"degree":6}
@@ -3082,7 +3082,7 @@
 {"id":"labor-overtime-special-cap","collection":"compliance","category":"labor","categoryLabel":"労務","title":"時間外労働の上限（特別条項付き36協定）","year":null,"authors":[],"degree":5}
 {"id":"labor-paid-leave-5days","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年次有給休暇の年5日取得義務","year":null,"authors":[],"degree":13}
 {"id":"labor-paid-leave-grant","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年次有給休暇の付与","year":null,"authors":[],"degree":14}
-{"id":"labor-paid-leave-timing","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）","year":null,"authors":[],"degree":6}
+{"id":"labor-paid-leave-timing","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）","year":null,"authors":[],"degree":5}
 {"id":"labor-payment-on-termination","collection":"compliance","category":"labor","categoryLabel":"労務","title":"金品の返還（労働基準法23条）","year":null,"authors":[],"degree":2}
 {"id":"labor-pension-enrollment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"厚生年金保険・健康保険の適用事業所と加入義務","year":null,"authors":[],"degree":13}
 {"id":"labor-postbirth-support-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"出生後休業支援給付金（2025年4月新設）","year":2025,"authors":[],"degree":8}
@@ -3132,7 +3132,7 @@
 {"id":"legal-anonymized-info","collection":"compliance","category":"legal","categoryLabel":"法務","title":"匿名加工情報（個人情報保護法）","year":null,"authors":[],"degree":19}
 {"id":"legal-anti-money-laundering-act","collection":"compliance","category":"legal","categoryLabel":"法務","title":"犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）","year":null,"authors":[],"degree":8}
 {"id":"legal-anti-spam","collection":"compliance","category":"legal","categoryLabel":"法務","title":"広告メールのオプトイン規制（特定電子メール法）","year":null,"authors":[],"degree":3}
-{"id":"legal-antimonopoly","collection":"compliance","category":"legal","categoryLabel":"法務","title":"独占禁止法","year":null,"authors":[],"degree":6}
+{"id":"legal-antimonopoly","collection":"compliance","category":"legal","categoryLabel":"法務","title":"独占禁止法","year":null,"authors":[],"degree":2}
 {"id":"legal-appi-breach-report","collection":"compliance","category":"legal","categoryLabel":"法務","title":"個人情報の漏えい等報告・本人通知の義務","year":null,"authors":[],"degree":14}
 {"id":"legal-building-energy-compliance","collection":"compliance","category":"legal","categoryLabel":"法務","title":"改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）","year":2025,"authors":[],"degree":17}
 {"id":"legal-business-opportunity-sales","collection":"compliance","category":"legal","categoryLabel":"法務","title":"業務提供誘引販売取引（内職商法・モニター商法）","year":null,"authors":[],"degree":11}
@@ -3143,13 +3143,13 @@
 {"id":"legal-computer-virus","collection":"compliance","category":"legal","categoryLabel":"法務","title":"不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）","year":null,"authors":[],"degree":2}
 {"id":"legal-consumer-collective-litigation","collection":"compliance","category":"legal","categoryLabel":"法務","title":"消費者団体訴訟制度（差止請求・被害回復）","year":null,"authors":[],"degree":12}
 {"id":"legal-consumer-contract-act","collection":"compliance","category":"legal","categoryLabel":"法務","title":"消費者契約法","year":null,"authors":[],"degree":8}
-{"id":"legal-consumer-contract-amendment","collection":"compliance","category":"legal","categoryLabel":"法務","title":"消費者契約法の令和4年改正（2023年6月施行）","year":2023,"authors":[],"degree":10}
+{"id":"legal-consumer-contract-amendment","collection":"compliance","category":"legal","categoryLabel":"法務","title":"消費者契約法の令和4年改正（2023年6月施行）","year":2023,"authors":[],"degree":11}
 {"id":"legal-consumer-dpf","collection":"compliance","category":"legal","categoryLabel":"法務","title":"取引デジタルプラットフォーム消費者保護法","year":null,"authors":[],"degree":12}
 {"id":"legal-consumer-safety-act","collection":"compliance","category":"legal","categoryLabel":"法務","title":"消費者安全法","year":null,"authors":[],"degree":3}
 {"id":"legal-container-recycling","collection":"compliance","category":"legal","categoryLabel":"法務","title":"容器包装リサイクル法における特定事業者の再商品化義務","year":null,"authors":[],"degree":10}
 {"id":"legal-continuous-service","collection":"compliance","category":"legal","categoryLabel":"法務","title":"特定継続的役務提供（特定商取引法）","year":null,"authors":[],"degree":11}
 {"id":"legal-contract-cancellation","collection":"compliance","category":"legal","categoryLabel":"法務","title":"契約の解除（催告解除・無催告解除／改正民法）","year":null,"authors":[],"degree":5}
-{"id":"legal-contract-nonconformity","collection":"compliance","category":"legal","categoryLabel":"法務","title":"契約不適合責任（改正民法）","year":null,"authors":[],"degree":12}
+{"id":"legal-contract-nonconformity","collection":"compliance","category":"legal","categoryLabel":"法務","title":"契約不適合責任（改正民法）","year":null,"authors":[],"degree":13}
 {"id":"legal-contract-types","collection":"compliance","category":"legal","categoryLabel":"法務","title":"請負契約と委任契約（準委任）の区別","year":null,"authors":[],"degree":4}
 {"id":"legal-cooling-off","collection":"compliance","category":"legal","categoryLabel":"法務","title":"クーリング・オフ（特定商取引法）","year":null,"authors":[],"degree":12}
 {"id":"legal-coolingoff-electronic","collection":"compliance","category":"legal","categoryLabel":"法務","title":"電磁的記録によるクーリング・オフ通知（2022年6月施行）","year":2022,"authors":[],"degree":12}
@@ -3167,7 +3167,7 @@
 {"id":"legal-defective-intent","collection":"compliance","category":"legal","categoryLabel":"法務","title":"意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）","year":null,"authors":[],"degree":4}
 {"id":"legal-deposit-transaction","collection":"compliance","category":"legal","categoryLabel":"法務","title":"預託法（販売を伴う預託等取引の原則禁止）","year":null,"authors":[],"degree":2}
 {"id":"legal-design-right","collection":"compliance","category":"legal","categoryLabel":"法務","title":"意匠権（意匠法）","year":null,"authors":[],"degree":14}
-{"id":"legal-digital-platform-transparency","collection":"compliance","category":"legal","categoryLabel":"法務","title":"取引透明化法（特定デジタルプラットフォーム透明化法）","year":null,"authors":[],"degree":4}
+{"id":"legal-digital-platform-transparency","collection":"compliance","category":"legal","categoryLabel":"法務","title":"取引透明化法（特定デジタルプラットフォーム透明化法）","year":null,"authors":[],"degree":3}
 {"id":"legal-director-duty","collection":"compliance","category":"legal","categoryLabel":"法務","title":"取締役の善管注意義務・忠実義務（会社法）","year":null,"authors":[],"degree":11}
 {"id":"legal-disability-accommodation","collection":"compliance","category":"legal","categoryLabel":"法務","title":"障害者差別解消法における合理的配慮の提供義務","year":null,"authors":[],"degree":14}
 {"id":"legal-disability-comprehensive-support","collection":"compliance","category":"legal","categoryLabel":"法務","title":"障害者総合支援法（2013年4月1日施行）","year":2013,"authors":[],"degree":2}
@@ -3200,14 +3200,14 @@
 {"id":"legal-insolvency-procedures","collection":"compliance","category":"legal","categoryLabel":"法務","title":"法的倒産処理手続（破産・民事再生・会社更生・特別清算）","year":null,"authors":[],"degree":11}
 {"id":"legal-installment-sales","collection":"compliance","category":"legal","categoryLabel":"法務","title":"割賦販売法（クレジットカード／包括信用購入あっせん）","year":null,"authors":[],"degree":4}
 {"id":"legal-interest-limit","collection":"compliance","category":"legal","categoryLabel":"法務","title":"利息制限法の上限金利","year":null,"authors":[],"degree":4}
-{"id":"legal-joint-use-data","collection":"compliance","category":"legal","categoryLabel":"法務","title":"個人データの共同利用（個人情報保護法27条5項3号）","year":null,"authors":[],"degree":14}
+{"id":"legal-joint-use-data","collection":"compliance","category":"legal","categoryLabel":"法務","title":"個人データの共同利用（個人情報保護法27条5項3号）","year":null,"authors":[],"degree":15}
 {"id":"legal-keihyo-commitment","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法の確約手続（2024年10月施行）","year":2024,"authors":[],"degree":7}
 {"id":"legal-keihyo-management","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法上の表示等の管理上の措置義務（26条）","year":null,"authors":[],"degree":6}
 {"id":"legal-keihyo-surcharge","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法の課徴金制度","year":null,"authors":[],"degree":5}
 {"id":"legal-land-building-lease","collection":"compliance","category":"legal","categoryLabel":"法務","title":"借地借家法における建物賃貸借（借家）","year":null,"authors":[],"degree":22}
 {"id":"legal-land-lease-right","collection":"compliance","category":"legal","categoryLabel":"法務","title":"借地借家法における借地権","year":null,"authors":[],"degree":21}
 {"id":"legal-land-state-attribution","collection":"compliance","category":"legal","categoryLabel":"法務","title":"相続土地国庫帰属制度（2023年4月施行）","year":2023,"authors":[],"degree":11}
-{"id":"legal-leniency","collection":"compliance","category":"legal","categoryLabel":"法務","title":"課徴金減免制度（リーニエンシー制度）","year":null,"authors":[],"degree":5}
+{"id":"legal-leniency","collection":"compliance","category":"legal","categoryLabel":"法務","title":"課徴金減免制度（リーニエンシー制度）","year":null,"authors":[],"degree":6}
 {"id":"legal-lgbt-understanding-promotion-act","collection":"compliance","category":"legal","categoryLabel":"法務","title":"LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）","year":null,"authors":[],"degree":8}
 {"id":"legal-limited-provision-data","collection":"compliance","category":"legal","categoryLabel":"法務","title":"不正競争防止法における「限定提供データ」の保護","year":null,"authors":[],"degree":7}
 {"id":"legal-logistics-efficiency-act","collection":"compliance","category":"legal","categoryLabel":"法務","title":"改正物流効率化法（物流2法・物流2024年問題への対応）","year":2024,"authors":[],"degree":12}
@@ -3238,13 +3238,13 @@
 {"id":"legal-securities-disclosure","collection":"compliance","category":"legal","categoryLabel":"法務","title":"有価証券報告書等の継続開示（金融商品取引法）","year":null,"authors":[],"degree":15}
 {"id":"legal-sensitive-personal-info","collection":"compliance","category":"legal","categoryLabel":"法務","title":"要配慮個人情報の取扱い","year":null,"authors":[],"degree":10}
 {"id":"legal-set-off","collection":"compliance","category":"legal","categoryLabel":"法務","title":"相殺（民法505条等）","year":null,"authors":[],"degree":14}
-{"id":"legal-share-types","collection":"compliance","category":"legal","categoryLabel":"法務","title":"会社法における種類株式","year":null,"authors":[],"degree":13}
+{"id":"legal-share-types","collection":"compliance","category":"legal","categoryLabel":"法務","title":"会社法における種類株式","year":null,"authors":[],"degree":14}
 {"id":"legal-shareholder-derivative-suit","collection":"compliance","category":"legal","categoryLabel":"法務","title":"株主代表訴訟（責任追及等の訴え・会社法847条）","year":null,"authors":[],"degree":12}
 {"id":"legal-shareholders-meeting","collection":"compliance","category":"legal","categoryLabel":"法務","title":"株式会社の株主総会（会社法）","year":null,"authors":[],"degree":4}
 {"id":"legal-spousal-residence-right","collection":"compliance","category":"legal","categoryLabel":"法務","title":"配偶者居住権（2020年4月1日施行の改正相続法）","year":2020,"authors":[],"degree":2}
 {"id":"legal-standard-terms","collection":"compliance","category":"legal","categoryLabel":"法務","title":"定型約款（改正民法）","year":null,"authors":[],"degree":3}
 {"id":"legal-statutory-interest","collection":"compliance","category":"legal","categoryLabel":"法務","title":"民法の法定利率（変動制）","year":null,"authors":[],"degree":3}
-{"id":"legal-stealth-marketing","collection":"compliance","category":"legal","categoryLabel":"法務","title":"ステルスマーケティング規制（景品表示法）","year":null,"authors":[],"degree":6}
+{"id":"legal-stealth-marketing","collection":"compliance","category":"legal","categoryLabel":"法務","title":"ステルスマーケティング規制（景品表示法）","year":null,"authors":[],"degree":4}
 {"id":"legal-subcontract-act","collection":"compliance","category":"legal","categoryLabel":"法務","title":"委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）","year":null,"authors":[],"degree":22}
 {"id":"legal-subcontract-act-amendment-2026","collection":"compliance","category":"legal","categoryLabel":"法務","title":"下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）","year":2026,"authors":[],"degree":3}
 {"id":"legal-subscription-sales","collection":"compliance","category":"legal","categoryLabel":"法務","title":"通信販売の定期購入の表示規制（令和3年改正特商法）","year":null,"authors":[],"degree":4}
@@ -3719,7 +3719,7 @@
 {"id":"mgmt-psychological-capital-luthans","collection":"academic","category":"management","categoryLabel":"経営学","title":"サイコロジカル・キャピタル（心理的資本）","year":null,"authors":["avolio|b","luthans|f","youssef-morgan|c"],"degree":12}
 {"id":"mgmt-psychological-capital-theory","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的資本理論","year":null,"authors":["avolio|b","luthans|f","youssef-morgan|c"],"degree":8}
 {"id":"mgmt-psychological-contract","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的契約","year":1960,"authors":["morrison|","robinson|","アージリス|ク","シャイン|エ","レビンソン|ハ"],"degree":13}
-{"id":"mgmt-psychological-contract-rousseau","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態","year":null,"authors":["アンダーソン|ニ","モリソン|エ","ルソー|デ","ロビンソン|サ"],"degree":11}
+{"id":"mgmt-psychological-contract-rousseau","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態","year":null,"authors":["アンダーソン|ニ","モリソン|エ","ルソー|デ","ロビンソン|サ"],"degree":10}
 {"id":"mgmt-psychological-detachment-sonnentag","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的距離——仕事から心理的に離れて回復する","year":null,"authors":["ゾンネンターク|ザ","バッカー|ア","フリッツ|シ","ホブフォル|ス"],"degree":8}
 {"id":"mgmt-psychological-empowerment-spreitzer","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的エンパワーメント——仕事への内発的動機を構成する四つの認知","year":null,"authors":["コンガー|ジ","スプライツァー|グ","トマス|ケ","ヴェルトハウス|ベ"],"degree":5}
 {"id":"mgmt-psychological-ownership","collection":"academic","category":"management","categoryLabel":"経営学","title":"心理的所有感","year":2001,"authors":["ikea|","カストロ|タ","ダークス|カ"],"degree":8}
@@ -3948,7 +3948,7 @@
 {"id":"subsidy-disabled-facility","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"障害者作業施設設置等助成金（障害者雇用納付金関係助成金）","year":null,"authors":["jeed|"],"degree":9}
 {"id":"subsidy-education-training-benefit","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"教育訓練給付金（雇用保険）","year":null,"authors":[],"degree":8}
 {"id":"subsidy-ehime","collection":"subsidy","category":"business","categoryLabel":"事業","title":"生産性向上設備等投資支援補助金（愛媛県）","year":null,"authors":[],"degree":2}
-{"id":"subsidy-elderly-employment-promotion","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"65歳超雇用推進助成金","year":null,"authors":["jeed|j"],"degree":10}
+{"id":"subsidy-elderly-employment-promotion","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"65歳超雇用推進助成金","year":null,"authors":["jeed|j"],"degree":9}
 {"id":"subsidy-elderly-jobseeker","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"高年齢求職者給付金（雇用保険）","year":null,"authors":[],"degree":8}
 {"id":"subsidy-employment-adjustment","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"雇用調整助成金","year":null,"authors":[],"degree":12}
 {"id":"subsidy-energy-saving-sii","collection":"subsidy","category":"business","categoryLabel":"事業","title":"省エネ補助金（省エネルギー投資促進・需要構造転換支援事業等）","year":null,"authors":[],"degree":7}
@@ -3969,7 +3969,7 @@
 {"id":"subsidy-hokkaido","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業競争力強化促進事業（北海道）","year":null,"authors":[],"degree":4}
 {"id":"subsidy-housing-safety-net","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"住宅セーフティネット制度","year":null,"authors":[],"degree":11}
 {"id":"subsidy-housing-security","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"住居確保給付金（生活困窮者自立支援制度）","year":null,"authors":[],"degree":6}
-{"id":"subsidy-human-resource-development","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"人材開発支援助成金","year":null,"authors":[],"degree":4}
+{"id":"subsidy-human-resource-development","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"人材開発支援助成金","year":null,"authors":[],"degree":3}
 {"id":"subsidy-hyogo","collection":"subsidy","category":"business","categoryLabel":"事業","title":"起業家支援事業助成金（兵庫県）","year":null,"authors":[],"degree":12}
 {"id":"subsidy-ibaraki","collection":"subsidy","category":"business","categoryLabel":"事業","title":"いばらき業務改善奨励金（茨城県）","year":null,"authors":[],"degree":13}
 {"id":"subsidy-iju-shienkin","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"移住支援金・起業支援金（地方創生）","year":null,"authors":[],"degree":3}
@@ -4002,7 +4002,7 @@
 {"id":"subsidy-mie","collection":"subsidy","category":"business","categoryLabel":"事業","title":"三重県経営向上計画・経営革新計画に基づく支援（三重県）","year":null,"authors":[],"degree":5}
 {"id":"subsidy-miyagi","collection":"subsidy","category":"business","categoryLabel":"事業","title":"ものづくり中小企業生産性向上設備導入補助金（宮城県）","year":null,"authors":[],"degree":7}
 {"id":"subsidy-miyazaki","collection":"subsidy","category":"business","categoryLabel":"事業","title":"事業承継・引継ぎ応援事業補助金（宮崎県）","year":null,"authors":[],"degree":11}
-{"id":"subsidy-monodukuri","collection":"subsidy","category":"business","categoryLabel":"事業","title":"ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）","year":null,"authors":["gbizid|g"],"degree":11}
+{"id":"subsidy-monodukuri","collection":"subsidy","category":"business","categoryLabel":"事業","title":"ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）","year":null,"authors":["gbizid|g"],"degree":10}
 {"id":"subsidy-multifunctional-payment","collection":"subsidy","category":"business","categoryLabel":"事業","title":"多面的機能支払交付金","year":null,"authors":[],"degree":10}
 {"id":"subsidy-nagano","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業賃上げ・生産性向上サポート補助金（長野県）","year":null,"authors":[],"degree":10}
 {"id":"subsidy-nagasaki","collection":"subsidy","category":"business","categoryLabel":"事業","title":"長崎県地域産業雇用創出チャレンジ支援事業（長崎県創業支援事業補助金）（長崎県）","year":null,"authors":[],"degree":4}
@@ -4064,7 +4064,7 @@
 {"id":"subsidy-yamagata","collection":"subsidy","category":"business","categoryLabel":"事業","title":"山形県中小企業まるっとサポート補助金（山形県）","year":null,"authors":[],"degree":12}
 {"id":"subsidy-yamaguchi","collection":"subsidy","category":"business","categoryLabel":"事業","title":"山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）","year":null,"authors":[],"degree":12}
 {"id":"subsidy-yamanashi","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業等生産性向上設備整備等支援補助金（山梨県）","year":null,"authors":[],"degree":5}
-{"id":"subsidy-yokohama","collection":"subsidy","category":"business","categoryLabel":"事業","title":"横浜市特定創業支援等事業（IDEC横浜）","year":null,"authors":["idec|","municipality|"],"degree":15}
+{"id":"subsidy-yokohama","collection":"subsidy","category":"business","categoryLabel":"事業","title":"横浜市特定創業支援等事業（IDEC横浜）","year":null,"authors":["idec|","municipality|"],"degree":14}
 {"id":"subsidy-zeb","collection":"subsidy","category":"business","categoryLabel":"事業","title":"ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業","year":null,"authors":[],"degree":14}
 {"id":"subsidy-zeh","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"ZEH支援事業","year":null,"authors":[],"degree":16}
 {"id":"support-01","collection":"support","category":"resource","categoryLabel":"相談窓口","title":"いのちの電話 (ナビダイヤル)","year":null,"authors":[],"degree":5}
@@ -4092,7 +4092,7 @@
 {"id":"tax-corp-establishment-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人設立後の税務署への届出期限","year":null,"authors":[],"degree":4}
 {"id":"tax-corp-inhabitant-flat","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人住民税の均等割","year":null,"authors":[],"degree":9}
 {"id":"tax-corp-interim-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の中間申告","year":null,"authors":[],"degree":2}
-{"id":"tax-corp-tax-return-deadline","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の確定申告・納付期限","year":null,"authors":[],"degree":15}
+{"id":"tax-corp-tax-return-deadline","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の確定申告・納付期限","year":null,"authors":[],"degree":14}
 {"id":"tax-corporate-tax-rate","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の税率（普通法人・中小法人の軽減税率）","year":null,"authors":[],"degree":24}
 {"id":"tax-crypto-asset-valuation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）","year":null,"authors":[],"degree":3}
 {"id":"tax-customs-duty","collection":"compliance","category":"tax","categoryLabel":"税務","title":"関税（輸入品に課される国税）","year":null,"authors":[],"degree":11}
@@ -4137,9 +4137,9 @@
 {"id":"tax-inheritance-basic-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"相続税の基礎控除額","year":null,"authors":[],"degree":7}
 {"id":"tax-input-credit-method","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の仕入税額控除（個別対応方式・一括比例配分方式）","year":null,"authors":[],"degree":11}
 {"id":"tax-invoice","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度（適格請求書等保存方式）","year":null,"authors":[],"degree":11}
-{"id":"tax-invoice-20percent-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）","year":null,"authors":[],"degree":18}
+{"id":"tax-invoice-20percent-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）","year":null,"authors":[],"degree":17}
 {"id":"tax-invoice-input-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度と仕入税額控除の要件","year":null,"authors":[],"degree":8}
-{"id":"tax-invoice-small-amount-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）","year":null,"authors":[],"degree":16}
+{"id":"tax-invoice-small-amount-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）","year":null,"authors":[],"degree":15}
 {"id":"tax-large-corp-efiling","collection":"compliance","category":"tax","categoryLabel":"税務","title":"大法人の電子申告（e-Tax）義務化","year":null,"authors":[],"degree":8}
 {"id":"tax-life-insurance-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"生命保険料控除","year":null,"authors":[],"degree":2}
 {"id":"tax-light-vehicle-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"軽自動車税（種別割）","year":null,"authors":[],"degree":9}
@@ -4147,7 +4147,7 @@
 {"id":"tax-listed-securities","collection":"compliance","category":"tax","categoryLabel":"税務","title":"上場株式等の譲渡益・配当に対する課税","year":null,"authors":[],"degree":8}
 {"id":"tax-loss-carryback","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の欠損金の繰戻しによる還付","year":null,"authors":[],"degree":24}
 {"id":"tax-loss-carryforward","collection":"compliance","category":"tax","categoryLabel":"税務","title":"青色申告法人の繰越欠損金","year":null,"authors":[],"degree":2}
-{"id":"tax-loss-offsetting","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の損益通算","year":null,"authors":[],"degree":15}
+{"id":"tax-loss-offsetting","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の損益通算","year":null,"authors":[],"degree":14}
 {"id":"tax-lump-sum-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"一括償却資産の損金算入（3年均等償却）","year":null,"authors":[],"degree":14}
 {"id":"tax-medical-expense-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"医療費控除","year":null,"authors":[],"degree":9}
 {"id":"tax-newco-consumption-exemption","collection":"compliance","category":"tax","categoryLabel":"税務","title":"新設法人の消費税納税義務免除の特例","year":null,"authors":[],"degree":6}
@@ -4157,7 +4157,7 @@
 {"id":"tax-overseas-asset-report","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国外財産調書制度（国外財産5,000万円超の保有者の提出義務）","year":null,"authors":[],"degree":2}
 {"id":"tax-payment-grace","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国税の納税の猶予・換価の猶予","year":null,"authors":[],"degree":2}
 {"id":"tax-pension-income-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"公的年金等控除（所得税）","year":null,"authors":[],"degree":7}
-{"id":"tax-platform-taxation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税のプラットフォーム課税（特定プラットフォーム事業者制度）","year":null,"authors":[],"degree":13}
+{"id":"tax-platform-taxation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税のプラットフォーム課税（特定プラットフォーム事業者制度）","year":null,"authors":[],"degree":14}
 {"id":"tax-platform-taxation-digital","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）","year":null,"authors":[],"degree":11}
 {"id":"tax-qualified-invoice-issuer-registration","collection":"compliance","category":"tax","categoryLabel":"税務","title":"適格請求書発行事業者の登録制度（インボイス制度）","year":null,"authors":[],"degree":10}
 {"id":"tax-rd-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"研究開発税制（試験研究費の税額控除）","year":null,"authors":[],"degree":4}
@@ -4180,7 +4180,7 @@
 {"id":"tax-small-residential-land","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模宅地等についての相続税の課税価格の計算の特例","year":null,"authors":[],"degree":12}
 {"id":"tax-sme-investment-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業投資促進税制","year":null,"authors":[],"degree":13}
 {"id":"tax-sme-management-enhancement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）","year":null,"authors":[],"degree":23}
-{"id":"tax-sole-proprietor-notification","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業の開業・廃業等届出書（開業届）","year":null,"authors":[],"degree":12}
+{"id":"tax-sole-proprietor-notification","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業の開業・廃業等届出書（開業届）","year":null,"authors":[],"degree":11}
 {"id":"tax-special-collection-resident","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人住民税の特別徴収（給与天引き）義務","year":null,"authors":[],"degree":12}
 {"id":"tax-special-corporate-business-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特別法人事業税及び特別法人事業譲与税","year":null,"authors":[],"degree":11}
 {"id":"tax-special-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特別償却（租税特別措置法）","year":null,"authors":[],"degree":24}
@@ -4189,7 +4189,7 @@
 {"id":"tax-stamp-duty-electronic","collection":"compliance","category":"tax","categoryLabel":"税務","title":"印紙税の課税文書の判断と電子契約の課税対象外扱い","year":null,"authors":[],"degree":6}
 {"id":"tax-stock-option","collection":"compliance","category":"tax","categoryLabel":"税務","title":"税制適格ストックオプションの課税繰延べ","year":null,"authors":[],"degree":3}
 {"id":"tax-superior-ledger","collection":"compliance","category":"tax","categoryLabel":"税務","title":"優良な電子帳簿の過少申告加算税軽減","year":null,"authors":[],"degree":4}
-{"id":"tax-tax-audit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"税務調査（質問検査権と事前通知）","year":null,"authors":[],"degree":3}
+{"id":"tax-tax-audit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"税務調査（質問検査権と事前通知）","year":null,"authors":[],"degree":2}
 {"id":"tax-tax-free-shop","collection":"compliance","category":"tax","categoryLabel":"税務","title":"輸出物品販売場制度（消費税免税店制度）","year":null,"authors":[],"degree":16}
 {"id":"tax-tax-inclusive-pricing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の総額表示義務（税込価格表示）","year":null,"authors":[],"degree":11}
 {"id":"tax-transfer-pricing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"移転価格税制","year":null,"authors":[],"degree":11}

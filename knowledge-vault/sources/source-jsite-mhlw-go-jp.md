@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 59
+cite_count: 60
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **59 件**（公的 59）
+> [!info] 出典ドメイン索引 ・ 引用 **60 件**（公的 60）
 
 ## このドメインを出典とする項目
 
@@ -29,6 +29,7 @@ tags:
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省栃木労働局解雇の予告（第20条）
 - [[labor-dispatch-license|労働者派遣事業の許可制]] — 兵庫労働局許可制への切替案内
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 厚生労働省愛知労働局派遣の期間制限
+- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 宮城労働局派遣労働者の受け入れルール（例外・クーリング期間）
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 和歌山労働局解雇理由・退職時の証明（22条）
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 栃木労働局退職時の証明（22条）
 - [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 熊本労働局熱中症対策が義務化されます（令和7年6月1日施行）

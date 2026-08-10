@@ -32,10 +32,9 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 語彙が近い
-- [[legal-antimonopoly|独占禁止法]] — 語彙が近い
 - [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
+- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 同分野の近傍
-- [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -37,7 +37,7 @@ aliases:
 - [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同じ思想家
 - [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同じ思想家
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
-- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同分野の近傍
+- [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,6 @@ national
 - [厚生労働省 65歳超雇用推進助成金](https://www.mhlw.go.jp/stf/newpage_54824.html) `公的`
 
 ## 関連概念
-- [[labor-elderly-employment|高年齢者雇用確保措置]] — 分野横断
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 出典を共有
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 出典を共有
 - [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]] — 出典を共有

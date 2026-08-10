@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 同分野の近傍
-- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
+- [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 同分野の近傍
 - [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同分野の近傍
 
 ## 関連

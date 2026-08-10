@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同分野の近傍
-- [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
+- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

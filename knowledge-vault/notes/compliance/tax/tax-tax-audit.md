@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 同分野の近傍
 - [[tax-estimated-prepayment|所得税の予定納税]] — 同分野の近傍
-- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

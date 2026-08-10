@@ -33,6 +33,7 @@ aliases:
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 同分野の近傍
 - [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同分野の近傍
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — 同分野の近傍
+- [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

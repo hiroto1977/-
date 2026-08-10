@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同分野の近傍
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

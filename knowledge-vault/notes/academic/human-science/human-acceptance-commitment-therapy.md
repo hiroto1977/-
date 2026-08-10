@@ -39,7 +39,7 @@ aliases:
 - [[human-anosognosia|病態失認（アノソグノシア / Anosognosia）]] — 同分野の近傍
 - [[human-barnum-effect|バーナム効果（フォアラー効果）]] — 同分野の近傍
 - [[human-baumrind-parenting-styles|バウムリンドの養育スタイル（Parenting Styles／Baumrind 1966）——「要求」と「応答」の組み合わせが子の発達を左右する]] — 同分野の近傍
-- [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]] — 同分野の近傍
+- [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

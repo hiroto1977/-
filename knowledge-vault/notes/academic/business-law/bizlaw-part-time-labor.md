@@ -37,7 +37,7 @@ aliases:
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 分野横断
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 出典を共有
 - [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
-- [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
+- [[bizlaw-employment-security|職業安定法]] — 同分野の近傍
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同分野の近傍
 
 ## 関連

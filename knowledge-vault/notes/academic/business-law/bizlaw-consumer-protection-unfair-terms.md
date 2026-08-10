@@ -36,7 +36,6 @@ aliases:
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
 - [[bizlaw-consumer-contract-unfair-terms|消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正]] — 同分野の近傍
-- [[bizlaw-best-efforts-obligation|最善努力義務]] — 同分野の近傍
 - [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同分野の近傍
 - [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 同分野の近傍
 - [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍

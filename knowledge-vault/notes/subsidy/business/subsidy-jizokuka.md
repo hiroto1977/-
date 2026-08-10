@@ -46,7 +46,6 @@ national
 - [[subsidy-it-introduction|IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）]] — 同分野の近傍
 - [[subsidy-kumamoto|くまもと型小規模事業者経営発展支援事業補助金（熊本県）]] — 同分野の近傍
 - [[subsidy-productivity-revolution|中小企業生産性革命推進事業]] — 同分野の近傍
-- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

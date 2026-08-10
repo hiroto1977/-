@@ -35,6 +35,7 @@ aliases:
 - [[human-synesthesia|共感覚（シナスタジア）]] — 同分野の近傍
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同分野の近傍
 - [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
+- [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同分野の近傍
 - [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同分野の近傍
 
 ## 関連

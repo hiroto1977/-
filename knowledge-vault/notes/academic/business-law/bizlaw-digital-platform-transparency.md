@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 分野横断
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
-- [[bizlaw-franchise-contract|フランチャイズ契約]] — 同分野の近傍
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

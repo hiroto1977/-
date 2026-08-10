@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同じ思想家
 - [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
 - [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — 同分野の近傍
+- [[bizlaw-franchise-contract|フランチャイズ契約]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

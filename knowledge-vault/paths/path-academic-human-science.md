@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 108）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 71）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 107）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 70）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
@@ -25,9 +25,9 @@ tags:
 - [[human-group-polarization|集団極性化]]（接続 25）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
-- [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]（接続 24）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -194,6 +194,7 @@ tags:
 - 1983年: [[human-multiple-intelligences|多重知能理論（ガードナー）]]
 - 1983年: [[human-place-identity|場所アイデンティティ（Place Identity）]]
 - 1984年: [[human-cialdini-influence|チャルディーニの影響力の6原理]]
+- 1984年: [[human-cognitive-miser|認知的倹約家（cognitive miser）]]
 - 1984年: [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]]
 - 1984年: [[human-social-proof|社会的証明]]
 - 1984年: [[human-spontaneous-trait-inference|自発的特性推論]]
@@ -324,7 +325,6 @@ tags:
 - [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]]
 - [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]]
 - [[human-autobiographical-memory-conway|コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル]]
-- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]]
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]

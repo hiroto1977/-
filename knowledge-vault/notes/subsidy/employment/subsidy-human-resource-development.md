@@ -38,7 +38,6 @@ national
 
 ## 関連概念
 - [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
-- [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 出典を共有
 - [[subsidy-career-up|キャリアアップ助成金]] — 同分野の近傍
 
 ## 関連

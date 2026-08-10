@@ -24,10 +24,10 @@ tags:
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 19）
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 19）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 18）
-- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 18）
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 17）
 - [[tax-automobile-tax|自動車税（種別割）]]（接続 16）
-- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 16）
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 16）
+- [[tax-city-planning-tax|都市計画税]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]]
@@ -45,7 +45,6 @@ tags:
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]]
 - [[tax-business-succession|法人版事業承継税制（特例措置）]]
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]]
-- [[tax-city-planning-tax|都市計画税]]
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]]
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]]
 - [[tax-consumption-interim|消費税の中間申告・中間納付]]
@@ -91,6 +90,7 @@ tags:
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]]
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]]
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]]
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]]
 - [[tax-life-insurance-deduction|生命保険料控除]]
 - [[tax-light-vehicle-tax|軽自動車税（種別割）]]

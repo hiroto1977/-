@@ -40,7 +40,7 @@ Richard A. Posner ／ W. Page Keeton
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
-- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同分野の近傍
+- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同分野の近傍
 - [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — 同分野の近傍
 
 ## 関連

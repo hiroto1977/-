@@ -1134,14 +1134,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '高年齢者雇用確保措置',
       statement:
         '定年を65歳未満に定める事業主は、65歳までの定年引上げ・継続雇用制度の導入・定年の廃止のいずれかの雇用確保措置を' +
-        '講じる義務がある。2021年4月施行の改正により、70歳までの就業確保措置が努力義務として加わった。',
+        '講じる義務がある。継続雇用制度は原則として希望者全員が対象で、' +
+        '平成24年度までの労使協定で対象者基準を定めていた企業に認められていた経過措置（年金支給開始年齢以上の者への基準適用）は' +
+        '2025年3月31日で終了し、2025年4月からは希望者全員を65歳まで雇用する体制が全企業に求められる。' +
+        '2021年4月施行の改正では、70歳までの就業確保措置（定年引上げ・継続雇用のほか、業務委託契約や' +
+        '社会貢献事業への従事といった雇用によらない措置も選択肢）が努力義務として加わった。' +
+        '常時21人以上を雇用する事業主は、毎年6月1日現在の高年齢者の雇用状況を' +
+        '「高年齢者雇用状況等報告書」でハローワークへ報告する義務がある。' +
+        '継続雇用後の労働条件は嘱託等への変更が可能だが、業務内容が同じまま賃金だけを大きく下げると' +
+        'パート・有期法の不合理な待遇差の問題になり得る。',
       authority: '所管: 厚生労働省（高年齢者雇用安定法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page09_00001.html', type: 'government', label: '厚生労働省 高年齢者の雇用' },
       { url: 'https://www.mhlw.go.jp/content/11700000/001245647.pdf', type: 'government', label: '厚生労働省 高年齢者雇用安定法の概要' },
-      { url: 'https://biz.moneyforward.com/contract/basic/9357/', type: 'media', label: '高年齢者雇用安定法改正 解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/koureisha/topics/newpage_55003.html', type: 'government', label: '厚生労働省 高年齢者雇用安定法Q&A（経過措置の終了）' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_37431.html', type: 'government', label: '厚生労働省 高年齢者雇用状況等報告' },
     ],
   },
   {
@@ -1247,14 +1256,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '労働者派遣の期間制限（3年ルール）',
       statement:
         '2015年改正により、派遣先の同一事業所での受入れは原則3年が上限（事業所単位）、同一組織単位で同一の派遣労働者を' +
-        '受け入れるのも原則3年が上限（個人単位）。事業所単位は過半数労働組合等への意見聴取で延長できる。',
+        '受け入れるのも原則3年が上限（個人単位）。事業所単位は過半数労働組合等への意見聴取で3年ずつ延長できるが、' +
+        '個人単位の3年は延長できない（課を変えれば同じ人を続けて受け入れられる）。' +
+        '期間制限の例外は、派遣元で無期雇用されている派遣労働者と60歳以上の者などで、この場合は抵触日の通知も不要になる。' +
+        '派遣終了から次の受入れまでの空白（クーリング期間）が3か月を超えないと期間は通算される。' +
+        '派遣先に効くのが労働契約申込みみなし制度で、期間制限違反・無許可事業主からの受入れ・偽装請負等の違法派遣を' +
+        '知りながら受け入れると、その時点の労働条件で派遣先が労働契約を申し込んだものとみなされ、' +
+        '派遣労働者が承諾すれば直接雇用が成立する。受入れ側の管理（抵触日・許可の確認）が直接雇用リスクに直結する。',
       authority: '所管: 厚生労働省（労働者派遣法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/aichi-roudoukyoku/hourei_seido_tetsuzuki/roudousha_haken/hourei_seido/hakensaki_00001.html', type: 'government', label: '厚生労働省 愛知労働局 派遣の期間制限' },
-      { url: 'https://www.manpowergroup.jp/client/manpowerclip/temporary/restriction_period.html', type: 'media', label: '派遣の抵触日 解説' },
-      { url: 'https://www.pasona.co.jp/clients/service/column/jhk/haken3years_rule/', type: 'media', label: '派遣法の3年ルール 解説' },
+      { url: 'https://www.mhlw.go.jp/content/000852557.pdf', type: 'government', label: '厚生労働省 派遣先の皆さまへ（期間制限・みなし制度チェック）' },
+      { url: 'https://jsite.mhlw.go.jp/miyagi-roudoukyoku/2/223/22311.html', type: 'government', label: '宮城労働局 派遣労働者の受け入れルール（例外・クーリング期間）' },
     ],
   },
   {
@@ -2068,7 +2083,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '独占禁止法',
       statement:
         '独占禁止法は、私的独占・不当な取引制限（カルテル・入札談合等）・不公正な取引方法を禁止し、公正かつ自由な競争を促進する' +
-        '法律で、公正取引委員会が運用する。違反に対しては排除措置命令や課徴金納付命令等が行われる。',
+        '法律で、公正取引委員会が運用する。違反に対しては排除措置命令や課徴金納付命令等が行われる。' +
+        'カルテル・入札談合に関与してしまった場合に効くのが課徴金減免制度（リニエンシー）で、' +
+        '自ら公取委に違反を報告すると、調査開始前の1位は全額免除、以降は申請順位に応じて減額される。' +
+        '令和元年改正で申請者数の上限が廃止され、調査への協力度合い（資料の具体性・網羅性・裏付け）に応じた' +
+        '減算率が上乗せされる調査協力減算制度になったため、「何番目か」だけでなく「どれだけ出すか」で結果が変わる。' +
+        '中小企業に身近なのは優越的地位の濫用や下請法・フリーランス法との連続で、発注側として問われる場面が多い。' +
+        'デジタル分野では、令和6年成立のスマホソフトウェア競争促進法が2025年12月に全面施行され、' +
+        '指定されたモバイルOS・アプリストア等の事業者（Apple・iTunes・Google）に他社アプリストアの妨害禁止等の' +
+        '義務を課し、違反の課徴金は対象売上の20%と独禁法（原則10%）より重い。',
       authority: '所管: 公正取引委員会（独占禁止法）',
       asOf: '2026-06',
     },
@@ -2085,14 +2108,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '取引透明化法（特定デジタルプラットフォーム透明化法）',
       statement:
         '規模等により経済産業大臣に指定された特定デジタルプラットフォーム提供者は、取引条件等の情報開示および運営の公正性確保の' +
-        'ための体制整備を行うとともに、毎年度、自己評価を付した運営状況に関する報告書を経済産業大臣へ提出する義務を負う。',
+        'ための体制整備を行うとともに、毎年度、自己評価を付した運営状況に関する報告書を経済産業大臣へ提出する義務を負う。' +
+        '指定されているのは大規模なオンラインモール・アプリストア・デジタル広告の提供者で、規制の名宛人はプラットフォーム側である。' +
+        '中小事業者にとっては出店者・広告主として保護される側の法律で、検索順位を決める主要な事項、' +
+        '取引条件の変更やアカウント停止の事前通知、返品・支払留保の条件などの開示を求められる。' +
+        '取引条件の一方的な変更で不利益を受けたときは、経済産業省の相談窓口へ申し出ると、' +
+        '大臣が公正取引委員会へ独占禁止法（優越的地位の濫用等）に基づく対処を要請する仕組みにつながる。' +
+        '規制のスタイルは罰則で縛る事前規制ではなく、開示と自己評価報告を軸にした共同規制である点が特徴で、' +
+        'モール側の運営状況報告書は毎年度の大臣評価とともに公表され、出店者側の交渉材料になる。',
       authority: '所管: 経済産業省（取引透明化法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/transparency.html', type: 'government', label: '経済産業省 取引透明化法 法律のポイント' },
       { url: 'https://elaws.e-gov.go.jp/document?lawid=502AC0000000038_20220525_504AC0000000048', type: 'government', label: 'e-Gov法令検索 取引透明化法（令和2年法律第38号）' },
-      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html', type: 'media', label: '経済産業省 デジタルプラットフォーム取引 関連情報' },
+      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html', type: 'government', label: '経済産業省 デジタルプラットフォーム取引 関連情報' },
     ],
   },
   {

@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 語彙が近い
-- [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 同分野の近傍
+- [[tax-blue-return-application|所得税の青色申告承認申請]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

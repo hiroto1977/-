@@ -33,16 +33,16 @@ aliases:
 - [優越的地位の濫用 概説](https://ja.wikipedia.org/wiki/%E5%84%AA%E8%B6%8A%E7%9A%84%E5%9C%B0%E4%BD%8D%E3%81%AE%E6%BF%AB%E7%94%A8) `メディア`
 
 ## 関連概念
-- [[legal-antimonopoly|独占禁止法]] — 語彙が近い
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 語彙が近い
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
+- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 同分野の近傍
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍
 - [[legal-agency|民法の代理（代理権・無権代理・表見代理）]] — 同分野の近傍
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍
 - [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 同分野の近傍
+- [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — 同分野の近傍
 - [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 同分野の近傍
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 同分野の近傍
-- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

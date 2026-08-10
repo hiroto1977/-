@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-tax-incidence-theory|租税帰着理論]] — 語彙が近い
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 語彙が近い
 - [[econ-ces-production|CES生産関数]] — 出典を共有
-- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

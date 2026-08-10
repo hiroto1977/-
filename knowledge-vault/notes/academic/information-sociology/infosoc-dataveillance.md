@@ -30,7 +30,6 @@ aliases:
 - [Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590) `リファレンス`
 
 ## 関連概念
-- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 語彙が近い
 - [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

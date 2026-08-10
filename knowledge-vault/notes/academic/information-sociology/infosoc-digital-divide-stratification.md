@@ -33,7 +33,6 @@ aliases:
 - [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
 - [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 同分野の近傍
 - [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同分野の近傍
-- [[infosoc-social-comparison-social-media|ソーシャルメディアにおける社会比較と主観的幸福感]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

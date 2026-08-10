@@ -40,7 +40,6 @@ Lord Hoffmann ／ Paul L. Davies ／ Sarah Worthington
 - [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 同分野の近傍
 - [[bizlaw-eu-general-data-protection-regulation-gdpr|EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制]] — 同分野の近傍
 - [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 同分野の近傍
-- [[bizlaw-corporate-restructuring-m-and-a|M&A法と企業再構築——株主保護・競争法審査・情報開示義務の国際比較]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

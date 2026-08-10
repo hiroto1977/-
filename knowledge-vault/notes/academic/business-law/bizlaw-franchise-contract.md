@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 語彙が近い
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 同分野の近傍
-- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 同分野の近傍
+- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
