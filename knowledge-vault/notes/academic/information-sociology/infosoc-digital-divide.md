@@ -35,7 +35,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-inequality|デジタル格差・デジタル不平等：情報技術へのアクセスと活用における社会的不均衡]] — 同分野の近傍
-- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — 同分野の近傍
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
 - [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同分野の近傍
 
 ## 関連

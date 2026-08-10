@@ -31,8 +31,8 @@ aliases:
 - [国税庁 法人税のあらましと申告の手引（中間申告）](https://www.nta.go.jp/publication/pamph/hojin/aramashi2024/pdf/01.pdf) `公的`
 
 ## 関連概念
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 同分野の近傍
-- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

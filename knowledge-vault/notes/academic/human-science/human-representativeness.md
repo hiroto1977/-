@@ -32,8 +32,15 @@ aliases:
 
 ## 関連概念
 - [[human-conjunction-fallacy|連言錯誤]] — 語彙が近い
-- [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
-- [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
+- [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,8 +33,8 @@ aliases:
 - [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 語彙が近い
 - [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 出典を共有
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
-- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
 - [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
 

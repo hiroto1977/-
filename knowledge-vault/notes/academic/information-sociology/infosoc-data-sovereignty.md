@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-onlife|オンライフ]] — 同じ思想家
 - [[infosoc-open-data|オープンデータ]] — 同じ思想家
 - [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
-- [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — 同分野の近傍
 - [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
 - [[infosoc-informational-self-determination|情報自己決定権]] — 同分野の近傍
 

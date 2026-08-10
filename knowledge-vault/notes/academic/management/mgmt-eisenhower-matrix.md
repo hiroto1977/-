@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
 - [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — 同分野の近傍
+- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 同分野の近傍
 - [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
 
 ## 関連

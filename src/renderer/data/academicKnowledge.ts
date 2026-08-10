@@ -1729,23 +1729,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-information-cascade',
-    discipline: 'information-sociology',
-    title: '情報カスケード',
-    statement:
-      '個人が逐次的に意思決定する状況で、各人が自分自身の私的情報よりも、先行する他者の行動から推測される情報を重視し、自分の私的情報を無視して先行者の選択に追随する現象。' +
-      '各人がベイズ的推論を行う合理的主体であっても生じる点が特徴で、ある段階以降は皆が先行者を模倣するため新たな情報伝達が止まり、誤った選択が集団全体に広がりうる。そのため脆く、わずかな新情報の流入でも崩れやすい。ビクチャンダニ、ハーシュライファー、ウェルチが1992年の論文（Journal of Political Economy）で定式化した。' +
-      '流行・ファッション・口コミ・株式市場のバブル・SNSでのバイラル拡散などを説明し、群衆が必ずしも正しい情報を集約しない「集合知の失敗」の一形態である。社会的承認を求める同調圧力（規範的影響）とは異なり、他者の行動を現実についての証拠とみなす情報的影響に基づく。',
-    keyFigures: 'ビクチャンダニ・ハーシュライファー・ウェルチ 1992（Journal of Political Economy）／私的情報を無視し先行者を模倣する逐次的意思決定／ベイズ的に合理的だが脆い／バブル・流行・バイラル拡散を説明／規範的影響（同調圧力）と区別される情報的影響',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sites.uci.edu/dhirshle/abstracts/a-theory-of-fads-fashion-custom-and-cultural-change-in-informational-cascades/', type: 'academic', label: 'David Hirshleifer (UC Irvine) — 原著論文 BHW 1992 のアブストラクト（著者本人ページ）' },
-      { url: 'https://tamuz.caltech.edu/papers/cascades_survey.pdf', type: 'academic', label: 'Bikhchandani & Hirshleifer, "Information Cascades and Social Learning"（Caltech 配布のサーベイ）' },
-      { url: 'https://en.wikipedia.org/wiki/Information_cascade', type: 'reference', label: 'Wikipedia "Information cascade" — 定義・ハーディングとの区別' },
-      { url: 'https://blogs.cornell.edu/info2040/2017/11/24/informational-cascade-vs-herd-behavior/', type: 'academic', label: 'Cornell INFO 2040 course blog — 情報カスケード対群集行動の区別' },
-    ],
-  },
-  {
     id: 'econ-bertrand-competition',
     discipline: 'economics',
     title: 'ベルトラン競争（価格競争モデル）',
@@ -4935,21 +4918,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Holacracy', type: 'reference', label: 'Wikipedia「Holacracy」— 定義・holon/Koestler語源・Robertson/Ternary 2007・憲法・サークル/役割・Zappos' },
       { url: 'https://www.ebsco.com/research-starters/business-and-management/holacracy', type: 'reference', label: 'EBSCO Research Starters (Business and Management)「Holacracy」' },
       { url: 'https://library.uniteddiversity.coop/Decision_Making_and_Democracy/Holacracy/HolacracyIntro2007-06.pdf', type: 'media', label: 'B. J. Robertson “Organization at the Leading Edge: Introducing Holacracy” (2007) — 提唱者本人による初出論考' },
-    ],
-  },
-  {
-    id: 'human-observational-learning',
-    discipline: 'human-science',
-    title: '観察学習（バンデューラ）',
-    statement:
-      '人は、自分が直接報酬や罰を受けなくても、他者（モデル）の行動とその結果を観察するだけで新しい行動を学習できるとする理論（モデリング・代理学習）。アルバート・バンデューラが提唱し、直接的な条件づけのみで学習を説明する行動主義を、注意・記憶などの認知過程を取り入れて拡張した（後に社会的認知理論へ発展）。有名な実証が1961年の「ボボ人形実験」で、大人が人形に攻撃的に振る舞うのを見た子どもがその攻撃行動を模倣し、攻撃の社会的伝達が示された。' +
-      '観察学習が成立するには4つの過程が必要とされる：(1)注意（モデルに注目する）、(2)保持（観察した行動を記憶する）、(3)運動再生（記憶を再現できる運動能力）、(4)動機づけ（模倣する誘因。モデルが報われるのを見ると模倣されやすい＝代理強化）。自己効力感の概念もバンデューラによる。攻撃・向社会的行動・メディアの影響の理解に応用される。',
-    keyFigures: '提唱者：アルバート・バンデューラ（Albert Bandura, 1925–2021）／初出（ボボ人形実験）：Bandura, Ross & Ross (1961)「Transmission of aggression through imitation of aggressive models」, Journal of Abnormal and Social Psychology, 63(3), 575–582',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/science/observational-learning', type: 'reference', label: 'Encyclopaedia Britannica「Observational learning」' },
-      { url: 'https://wsu.pressbooks.pub/psych105/chapter/6-5-observational-learning-modeling/', type: 'academic', label: 'Washington State University, Introductory Psychology「6.5 Observational Learning (Modeling)」' },
-      { url: 'https://www.simplypsychology.org/bandura.html', type: 'reference', label: 'Simply Psychology「Albert Bandura’s Social Learning Theory」' },
     ],
   },
   {
@@ -20434,7 +20402,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'business-law',
     title: '公正衡平待遇基準（Fair and Equitable Treatment）',
     statement:
-      '二国間投資条約（BIT）等に規定される投資家保護の中核的基準で、ホスト国に対し外国投資家への公正かつ衡平な待遇を義務付ける。1948年ハバナ憲章に淵源を持ち、2,500以上の投資条約に採用されるが、その内容の曖昧さからISDS仲裁における最頻援用条項となっている。',
+      '二国間投資条約（BIT）等に規定される投資家保護の中核的基準で、ホスト国に対し外国投資家への公正かつ衡平な待遇を義務付ける。1948年ハバナ憲章に淵源を持ち、2,500以上の投資条約に採用されるが、条文自体は抽象的で、その内容は仲裁判断の集積を通じて具体化されてきた——正当な期待の保護（規制枠組みの安定性への投資家の信頼。Tecmed 対メキシコ 2003 が広範に定式化）、恣意的・差別的措置の禁止、適正手続の保障と裁判拒否の防止、透明性・誠実義務がその中核要素とされる。最大の理論的争点は、FET を慣習国際法上の外国人待遇最低基準と同視するか（NAFTA 1105条につき 2001年自由貿易委員会解釈覚書が明示的にこの立場を宣言）、それとも条約固有の自律的基準として最低基準を上回る保護を認めるかであり、OECD（2004）はこの対立と仲裁実務を体系的に整理した。内容の曖昧さゆえに ISDS 仲裁における最頻援用・最頻認容条項となり、ホスト国の正当な規制権限を萎縮させるとの批判を受けて、近年の条約実務は FET の内容を閉鎖列挙で法典化し仲裁廷の裁量を制約する方向に転じている。',
     keyFigures: 'OECD（2004 FET基準の体系的分析）／クリストフ・シュロイアー（FET解釈の学術的整理）',
     asOf: '2026-06',
     sources: [
@@ -20812,7 +20780,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'information-sociology',
     title: 'プラットフォームの政治学（Politics of Platforms）',
     statement:
-      'デジタルプラットフォームが「プラットフォーム」という語の計算論的・建築的・比喩的・政治的な多義性を戦略的に活用し、利用者・広告主・政策立案者に対する自己の位置づけを構築する言説政治を分析する枠組み。平坦で開放的な基盤という隠喩がビジネスモデルと権力構造を不可視化する。',
+      'デジタルプラットフォームが「プラットフォーム」という語の多義性を戦略的に活用し、利用者・広告主・政策立案者に対する自己の位置づけを構築する言説政治を分析する枠組み。ギレスピー（2010）は同語の意味領域を、ソフトウェア開発の基盤という計算論的用法、人が立つ平坦な構造物という建築的用法、機会の足場という比喩的用法、演説の壇という政治的用法の4つに腑分けし、これらの含意の重ね合わせから「平等で開放的な中立の場」というイメージが生成されると論じた。事例分析では YouTube が利用者には表現の場、広告主には商業機会、大手権利者には流通経路、規制当局には中立的媒介者と聴衆ごとに語り分けて相互の緊張を糊塗する様を示し、Viacom 訴訟や DMCA セーフハーバーをめぐり編集主体ではなく媒介者としての免責を主張する法廷戦略とこの自己呈示が連動することを指摘した。平坦な基盤の隠喩は、実際には選別・推奨・削除を通じてコンテンツを形作る編集的介入と、そこに埋め込まれたビジネスモデル・権力構造を不可視化する。プラットフォーム研究の基礎文献として、後続のコンテンツ・モデレーション研究や媒介者責任論の出発点となった。',
     keyFigures: 'タールトン・ギレスピー（2010 The Politics of "Platforms" — New Media & Society）',
     asOf: '2026-06',
     sources: [
@@ -20843,7 +20811,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'economics',
     title: 'バックワーデーションとコンタンゴ（Backwardation & Contango）',
     statement:
-      '先物価格が予想将来スポット価格を下回る状態（バックワーデーション）と上回る状態（コンタンゴ）を対比する先物市場の価格構造理論。ケインズ（1930）はヘッジャーがリスクプレミアムを投機家に支払うため先物価格が恒常的に割安になる「正常バックワーデーション」仮説を提唱した。',
+      '先物価格が予想将来スポット価格を下回る状態（バックワーデーション）と上回る状態（コンタンゴ）を対比する先物市場の価格構造理論。観察可能な現在スポット価格に対する期先の高低で語られる市場の順鞘・逆鞘と、観察不能な予想将来スポット価格との比較で定義される理論概念とは区別される。ケインズ（1930）は、在庫の価格リスクを転嫁したい生産者側ヘッジャーが構造的に売り越しとなるため、買い持ちを引き受ける投機家へリスクプレミアムを支払う結果、先物価格が予想スポットを恒常的に下回り満期へ向けて上昇していくとする「正常バックワーデーション」仮説を提唱し、ヒックス（1939）も先物市場の買い方の構造的弱さとしてこれを補強した。一方コンタンゴは保管費用・金利等のキャリーコストが期先価格を押し上げる状態で、現物の即時保有が生む便宜収益が高まる供給逼迫期にはバックワーデーションへ反転する。Kolb（1992）は29商品の先物リターンを検証し、体系的なリスクプレミアムを支持する証拠が乏しいこと——正常バックワーデーションは「正常」ではない——を示して仮説の実証的地位を揺るがせた。コンタンゴ下では限月乗り換えのたびに割高な期先を買い直すロールイールド損失が発生し、原油ETF等の商品指数投資の長期リターンを蝕むという実務的含意を持つ。',
     keyFigures: 'ジョン・メイナード・ケインズ（1930 A Treatise on Money）／ジョン・ヒックス（1939 Value and Capital）',
     asOf: '2026-06',
     sources: [
@@ -23759,7 +23727,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'human-social-learning-theory',
     discipline: 'human-science',
     title: '社会的学習理論',
-    statement: 'Bandura（1977）は、人間の行動が直接的な強化だけでなく、他者の行動を観察することによっても学習されると主張し、社会的学習理論を体系化した。観察学習（observational learning）では、モデルの行動を見るだけで新たな行動パターンを習得でき、モデリング（modeling）と代理強化（vicarious reinforcement）がその中心的メカニズムである。Banduraが1961年に行ったボボ人形実験（Bobo doll experiment）では、攻撃的なモデルを観察した子どもがモデルの攻撃行動を模倣することが実証され、メディアや環境が行動に与える影響の科学的根拠となった。Rotter（1954）は、行動の生起確率が強化の期待と価値に依存するという社会的学習理論の基礎を築き、内的・外的統制の概念（locus of control）を提唱した。Banduraはその後、自己効力感（self-efficacy）の概念を中心に理論を発展させ、1986年に社会的認知理論（social cognitive theory）として再構成した。',
+    statement: 'Bandura（1977）は、人間の行動が直接的な強化だけでなく、他者の行動を観察することによっても学習されると主張し、社会的学習理論を体系化した。観察学習（observational learning）では、モデルの行動を見るだけで新たな行動パターンを習得でき、モデリング（modeling）と代理強化（vicarious reinforcement）がその中心的メカニズムである。観察学習の成立には、注意（モデルへの注目）・保持（観察した行動の記憶）・運動再生（記憶を再現できる運動能力）・動機づけ（模倣する誘因。モデルが報われるのを見ると模倣されやすい＝代理強化）の4過程が必要とされ、直接的な条件づけのみで学習を説明する行動主義を認知過程の導入によって拡張した点に理論史的意義がある。Banduraが1961年に行ったボボ人形実験（Bobo doll experiment）では、攻撃的なモデルを観察した子どもがモデルの攻撃行動を模倣することが実証され、メディアや環境が行動に与える影響の科学的根拠となった。Rotter（1954）は、行動の生起確率が強化の期待と価値に依存するという社会的学習理論の基礎を築き、内的・外的統制の概念（locus of control）を提唱した。Banduraはその後、自己効力感（self-efficacy）の概念を中心に理論を発展させ、1986年に社会的認知理論（social cognitive theory）として再構成した。攻撃行動や向社会的行動の獲得、メディアの影響の理解に広く応用されている。',
     keyFigures: 'Albert Bandura ／ Julian B. Rotter',
     asOf: '2026-06',
     sources: [
@@ -23768,6 +23736,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/10004-000', type: 'academic', label: 'Rotter (1954) Social learning and clinical psychology — Prentice-Hall' },
       { url: 'https://www.simplypsychology.org/bandura.html', type: 'reference', label: 'Simply Psychology — Bandura\'s Social Learning Theory' },
       { url: 'https://psychclassics.yorku.ca/Bandura/bobo.htm', type: 'reference', label: 'Classics in the History of Psychology — Bandura (1961) Bobo Doll Experiment full text' },
+      { url: 'https://www.britannica.com/science/observational-learning', type: 'reference', label: 'Encyclopaedia Britannica「Observational learning」' },
+      { url: 'https://wsu.pressbooks.pub/psych105/chapter/6-5-observational-learning-modeling/', type: 'academic', label: 'Washington State University, Introductory Psychology「6.5 Observational Learning (Modeling)」' },
     ],
   },
   {
@@ -25712,7 +25682,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-work-design-growth-model',
     discipline: 'management',
     title: '職務設計成長モデル',
-    statement: '職務設計成長モデルは、スキルの多様性・タスクの同一性・自律性・フィードバックなど職務特性が内発的動機付けと個人の成長を促す仕組みを説明する理論的枠組みであり、Hackman＆Oldham（1976）の職務特性モデルを基盤に関係的・プロアクティブ視点へと拡張された。',
+    statement: '職務設計成長モデルは、職務特性が内発的動機付けと個人の成長を促す仕組みを説明する理論的枠組み。基盤となる Hackman＆Oldham（1976）の職務特性モデル（JCM）は、スキル多様性・タスク完結性・タスク重要性・自律性・フィードバックの中核5特性が、有意味感・結果への責任の実感・結果の知識という3つの重要心理状態を媒介して内発的動機・満足・成果を高めると定式化し、動機付け潜在得点（MPS＝前3特性の平均×自律性×フィードバック）と、効果の個人差を左右する調整変数としての成長欲求強度（GNS）を組み込んだ——モデル名の「成長」はこの変数に由来する。Grant＆Parker（2009）は職務設計理論の再興を、職務が対人関係の網に埋め込まれているとする関係的視点（受益者との接触が仕事の向社会的インパクトを可視化する関係的職務設計）と、働き手自身が職務の境界を能動的に作り変えるとするプロアクティブ視点（ジョブ・クラフティング等）への二重の転回として整理した。Parker＆Knight（2024）の SMART モデルは、刺激（多様性・挑戦）・熟達（フィードバック・役割明確さ）・自律・関係性・許容可能な要求の高次5因子へ諸特性を統合し、JCM の5特性を超える拡張枠組みを提示している。',
     keyFigures: 'J. Richard Hackman ／ Greg R. Oldham ／ Sharon K. Parker',
     asOf: '2026-06',
     sources: [
@@ -26178,7 +26148,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-lender-liability-doctrine',
     discipline: 'business-law',
     title: '貸手責任法理（レンダー・ライアビリティ）',
-    statement: '貸手が借主や第三者に不当な支配・信義則違反・強迫等によって損害を与えた場合に民事責任を負うとするアメリカ法上の法理。Hynesは支配型責任、FreundはUCCに基づく信義則理論を体系化し、K.M.C. Co. v. Irving Trust（1985）で確立された。',
+    statement: '貸手が借主や第三者に不当な支配・信義則違反・強迫等によって損害を与えた場合に民事責任を負うとするアメリカ法上の法理。リーディングケースの K.M.C. Co. v. Irving Trust（第6巡回区 1985）は、裁量的与信枠からの融資実行を事前通知なく拒絶した銀行につき UCC の黙示の信義誠実義務違反を認め、750万ドルの賠償評決を維持して信義則を貸付契約規律の中核に据えた。責任理論は、契約・信義則違反のほか、継続的取引関係から例外的に生じる信認義務違反、経済的強迫、不実表示、さらに貸手が借主の日常経営を支配した場合の支配理論（インストルメンタリティ法理）へと分岐し、支配型では倒産手続における衡平法的劣後化（連邦倒産法510条(c)）や借主債務への直接責任にまで及ぶ。1980年代に農業危機と信用収縮を背景に訴訟が急増し、法域横断的なサーベイ論文群（フロリダ大 1988・ヴァンダービルト 1989）が理論類型を体系化したが、その後の判例は財務コベナンツによる通常の債権保全と責任を生む支配とを峻別し、拒否権行使や人事介入など日常経営への現実の支配を要求する方向で射程を絞り込んだ。Hynes（1991）は、監視を強めるほど支配認定と責任のリスクが高まるという支配債権者のジレンマを分析している。',
     keyFigures: 'J. Dennis Hynes ／ Frances E. Freund ／ Patricia A. McCoy',
     asOf: '2026-06',
     sources: [
@@ -26782,6 +26752,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       '情報カスケードとは、個人が他者の行動から推測される情報に基づき、自身の私的情報を無視して先行者に追随する現象で、市場全体が集団的に非効率な決定へ収束し得る。' +
       'Bikhchandani, Hirshleifer & Welch (1992) の逐次意思決定モデルでは、先行者の選択が2人分そろっただけで後続の私的シグナルが覆せなくなり、以後全員が同じ行動を採るカスケードが合理的に発生する。各人はベイズ的に合理的でも、集計されるべき私的情報が捨てられるため社会的学習が止まり、しかも土台になった情報は薄いので、わずかな新情報で崩れる脆さを併せ持つ。' +
       'この枠組みは流行・慣習の急変、IPO の初値形成（Welch 1992 の逐次販売モデル）、金融市場のハーディング（Bikhchandani & Sharma 2001）の理論的基礎になり、バブルの形成と崩壊が「皆が愚かだから」ではなく合理的推論の帰結として説明できることを示した。' +
+      '概念の要は、社会的承認を求める同調圧力（規範的影響）と区別される、他者の行動を現実についての証拠として扱う情報的影響に基づく点にあり、SNS でのバイラル拡散や口コミの雪崩のように、群衆が必ずしも正しい情報を集約しない「集合知の失敗」の一形態としても位置づけられる。' +
       '観察可能なのが行動だけで私的情報が見えないという構造が原因なので、情報開示の設計・レビューの表示順・初期評価の重み付けなど、プラットフォーム設計で緩和できる点が実務的含意になる。',
     keyFigures: 'スシル・ビクチャンダニ ／ デイビッド・ハーシュライファー ／ イヴォ・ウェルチ',
     asOf: '2026-06-24',
@@ -26790,6 +26761,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1086/467384', type: 'academic', label: 'Welch 1992 — Sequential Sales, Learning, and Cascades' },
       { url: 'https://doi.org/10.1006/jeth.2001.2971', type: 'academic', label: 'Bikhchandani & Sharma 2001 — Herd Behavior in Financial Markets' },
       { url: 'https://doi.org/10.1016/j.jfineco.2003.08.008', type: 'academic', label: 'Hirshleifer & Teoh 2003 — Limited Attention, Information Disclosure, and Financial Reporting' },
+      { url: 'https://tamuz.caltech.edu/papers/cascades_survey.pdf', type: 'academic', label: 'Bikhchandani & Hirshleifer, "Information Cascades and Social Learning"（Caltech 配布のサーベイ）' },
     ],
   },
   {
@@ -26834,16 +26806,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'デジタル・リテラシー（Digital Literacy）',
     statement:
       'デジタル・リテラシーとは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力であり、読み書き計算に並ぶ現代的な基礎能力と位置づけられる。' +
+      'その概念的初出はポール・ギルスターの1997年の同名著作であり、デジタル環境で情報を見つけ・評価し・活用する能力と定義して、情報の信頼性を見極める批判的思考を単なる操作技能や検索能力よりも核心に置いた。' +
       'バッキンガムはメディア教育の系譜から、機器操作ではなく表象の批判的読解と創造的生産を核とするリテラシー観を提示し、ハルジッタイは「デジタルネイティブ」神話を実証的に否定して、同世代内でもスキル格差が社会経済的地位と結びつくことを示した。' +
       'Van Deursen & Van Dijk (2011) は操作的・形式的・情報的・戦略的の4スキル階層を測定し、アクセス格差（第一水準）が縮んでもスキル格差（第二水準）と成果格差（第三水準）が残る「デジタル・デバイドの重層性」を定式化した。' +
-      '政策枠組みとしては EU の DigComp（情報・コミュニケーション・コンテンツ作成・安全・問題解決の5領域）が国際標準として普及し、偽情報対応のメディア情報リテラシー教育、高齢者・低所得層への包摂施策、生成 AI 時代のリテラシー再定義が現在の焦点になっている。',
-    keyFigures: 'デイビッド・バッキンガム ／ エスター・ハルジッタイ ／ アレクサンダー・ヴァン・デューセン',
+      '政策枠組みとしては EU の DigComp（情報・コミュニケーション・コンテンツ作成・安全・問題解決の5領域）や UNESCO のメディア情報リテラシー（MIL）枠組みが、情報・メディア・ICT の各リテラシーと倫理・安全スキルを束ねる複合概念として国際標準化を進め、偽情報・ディープフェイク対応の教育、学校カリキュラムへの統合、図書館情報学やジャーナリズム教育での実践、高齢者・低所得層・移民への包摂施策、生成 AI 時代のリテラシー再定義が現在の焦点になっている。',
+    keyFigures: 'ポール・ギルスター ／ デイビッド・バッキンガム ／ エスター・ハルジッタイ ／ アレクサンダー・ヴァン・デューセン',
     asOf: '2026-06-24',
     sources: [
       { url: 'https://doi.org/10.4324/9780203864739', type: 'academic', label: 'Buckingham 2003 — Media Education: Literacy, Learning and Contemporary Culture' },
       { url: 'https://doi.org/10.1080/1369118X.2016.1242909', type: 'academic', label: 'Hargittai 2016 — Millennials, Digital Media and Education' },
       { url: 'https://doi.org/10.1177/1461444810386774', type: 'academic', label: 'Van Deursen & Van Dijk 2011 — Internet Skills and the Digital Divide' },
       { url: 'https://publications.jrc.ec.europa.eu/repository/handle/JRC128415', type: 'government', label: 'European Commission JRC 2022 — DigComp 2.2: Digital Competence Framework' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_literacy', type: 'reference', label: 'Wikipedia: Digital literacy — definition and frameworks' },
     ],
   },
   {
@@ -44405,18 +44379,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.oecd.org/employment/emp/oecdindicatorsofemploymentprotection.htm', type: 'government', label: 'OECD (2023) Employment Protection Indicators — OECD雇用保護指標' },
       { url: 'https://en.wikipedia.org/wiki/At-will_employment', type: 'reference', label: 'Wikipedia: At-will employment — US and comparative law' },
-    ],
-  },
-  {
-    id: 'infosoc-digital-literacy-gilster',
-    discipline: 'information-sociology',
-    title: 'デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開',
-    statement: 'デジタルリテラシー（digital literacy）は，ポール・ギルスターが1997年の著作でインターネット時代の情報能力として提唱した概念であり，デジタル環境において情報を見つけ・評価し・活用する能力を指す。ギルスターは批判的思考（critical thinking）をデジタルリテラシーの核心と位置づけ，情報の信頼性評価を一般的な情報検索能力よりも重視した。その後，欧州デジタルコンピタンス枠組み（DigComp）やUNESCOのメディア・情報リテラシー（MIL）フレームワークがデジタルリテラシーを，情報リテラシー・メディアリテラシー・ICTリテラシー・コミュニケーション倫理・安全スキルの複合概念として体系化した。偽情報（disinformation）・フェイクニュース・ディープフェイクの急増により，批判的メディア評価スキルの重要性が再認識されている。学校教育カリキュラムへの統合，図書館情報学，ジャーナリズム教育，高齢者・移民のデジタル包摂において実践的教育プログラムが開発されている。',
-    keyFigures: 'ポール・ギルスター ／ アヴィ・バウアーリン ／ ダグラス・ケルナー ／ ホセ・マニュエル・ペレス・トルネロ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/j.ctt1bmznxg', type: 'academic', label: 'Gilster, P. (1997) Digital Literacy — Wiley' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_literacy', type: 'reference', label: 'Wikipedia: Digital literacy — definition and frameworks' },
     ],
   },
   {

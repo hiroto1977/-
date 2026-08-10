@@ -32,7 +32,6 @@ Lee Ross（リー・ロス, 社会心理学者, スタンフォード大学） �
 
 ## 関連概念
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
-- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
 - [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家

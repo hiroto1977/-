@@ -33,13 +33,15 @@ J.フリードマン&S.フレイザー 1966（Journal of Personality and Social 
 
 ## 関連概念
 - [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 語彙が近い
-- [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 出典を共有
-- [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
-- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 出典を共有
-- [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
-- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 同分野の近傍
-- [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
-- [[human-visual-agnosia|視覚性失認（Visual Agnosia）]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
+- [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

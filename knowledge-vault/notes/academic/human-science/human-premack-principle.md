@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[human-theory-of-mind|心の理論]] — 同じ思想家
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 同じ思想家
-- [[human-social-learning-theory|社会的学習理論]] — 同分野の近傍
 - [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
+- [[human-optimism-bias|楽観バイアス]] — 同分野の近傍
 - [[human-occupational-science-yerxa-clark|作業科学——人間の作業的存在としての健康と参加の学際的探究]] — 同分野の近傍
 
 ## 関連

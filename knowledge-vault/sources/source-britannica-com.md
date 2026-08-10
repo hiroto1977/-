@@ -189,7 +189,6 @@ tags:
 - [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — EncyclopaediaBritannica—Anomie（マートンのストレイン理論・五類型・デュルケームとの関係）
 - [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — EncyclopaediaBritannica—Milgramexperiment
 - [[human-multiple-intelligences|多重知能理論（ガードナー）]] — EncyclopædiaBritannica「Multipleintelligences」（8つの知能と定義）
-- [[human-observational-learning|観察学習（バンデューラ）]] — EncyclopaediaBritannica「Observationallearning」
 - [[human-operant-conditioning|オペラント条件づけ]] — EncyclopaediaBritannica—Operantconditioning
 - [[human-phantom-limb|幻肢（ファントムリム）]] — Britannica—Phantomlimbsyndrome
 - [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — EncyclopaediaBritannica—PhenomenologicalReduction
@@ -200,6 +199,7 @@ tags:
 - [[human-schema|スキーマ理論]] — EncyclopaediaBritannica—Schema(cognition)
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — EncyclopaediaBritannica—Self-regulatedlearning（定義・3フェーズモデル・認知・メタ認知・動機…
 - [[human-social-facilitation|社会的促進と社会的抑制]] — EncyclopaediaBritannica—Socialfacilitation
+- [[human-social-learning-theory|社会的学習理論]] — EncyclopaediaBritannica「Observationallearning」
 - [[human-stanford-prison-experiment|スタンフォード監獄実験]] — EncyclopaediaBritannica—StanfordPrisonExperiment
 - [[human-stockholm-syndrome|ストックホルム症候群]] — EncyclopaediaBritannica—Stockholmsyndrome（定義・1973年事件・Bejerot命名）
 - [[human-survivorship-bias|生存者バイアス]] — EncyclopaediaBritannica—Survivorshipbias:Definition,Meaning,&Examples

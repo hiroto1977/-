@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
-- [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同分野の近傍
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

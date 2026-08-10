@@ -32,6 +32,7 @@ J・リチャード・ハックマン ／ グレッグ・オールダム ／ フ
 
 ## 関連概念
 - [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 語彙が近い
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 語彙が近い
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 語彙が近い
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
@@ -39,7 +40,6 @@ J・リチャード・ハックマン ／ グレッグ・オールダム ／ フ
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
-- [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 
 ## 関連

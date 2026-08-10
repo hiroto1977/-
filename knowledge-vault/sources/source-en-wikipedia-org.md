@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2257
+cite_count: 2256
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2257 件**（リファレンス 2257）
+> [!info] 出典ドメイン索引 ・ 引用 **2256 件**（リファレンス 2256）
 
 ## このドメインを出典とする項目
 
@@ -1612,7 +1612,7 @@ tags:
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — Wikipedia:Platformcooperativism—プラットフォーム協同組合主義の概要
 - [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — Wikipedia:Digitallabor—デジタル労働論の概説
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — Digitallabor—Wikipedia（定義・研究領域の概観）
-- [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — Wikipedia:Digitalliteracy—definitionandframeworks
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — Wikipedia:Digitalliteracy—definitionandframeworks
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — Wikipedia:Digitalmemory—collectivememoryonline
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — Wikipedia:Digitalnative—Prensky,digitalimmigrants,generationaldivide,…
 - [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — Wikipedia:Digitalrightsmanagement—technicalprotectionmeasuresandcriti…
@@ -1669,7 +1669,6 @@ tags:
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — Wikipedia:Informationasymmetry—情報の非対称性の概要
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — Wikipedia:Surveillancecapitalism—監視資本主義と情報の非対称性の社会的分析
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — Wikipedia:Informationbehavior—情報行動の概要
-- [[infosoc-information-cascade|情報カスケード]] — Wikipedia"Informationcascade"—定義・ハーディングとの区別
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — Wikipedia:Knowledgecommons—Hess,Ostrom,secondenclosure,peerproduction
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — Wikipedia:Informationecology—情報エコロジーの概要
 - [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — Wikipedia:Informationecology—Nardi&ODay,systemofpeople/practices/valu…

@@ -39,8 +39,8 @@ aliases:
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
 - [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 同じ思想家
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — 同じ思想家
-- [[infosoc-information-cascade|情報カスケード]] — 同分野の近傍
 - [[infosoc-hacktivism|ハクティビズム]] — 同分野の近傍
+- [[infosoc-symbolic-convergence-bormann|象徴収束理論——共有された幻想が集団の現実を作る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

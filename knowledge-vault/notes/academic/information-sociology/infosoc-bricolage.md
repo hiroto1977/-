@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
 - [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 同分野の近傍
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同分野の近傍
+- [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

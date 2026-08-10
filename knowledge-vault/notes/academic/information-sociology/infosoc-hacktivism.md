@@ -33,7 +33,6 @@ aliases:
 - [[infosoc-hacktivism-anonymous-digital-activism|ハクティビズムとデジタル行動主義——アノニマスが体現するオンライン政治抵抗の倫理と法的問題]] — 同分野の近傍
 - [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 同分野の近傍
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 同分野の近傍
-- [[infosoc-information-cascade|情報カスケード]] — 同分野の近傍
 - [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同分野の近傍
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同分野の近傍
 

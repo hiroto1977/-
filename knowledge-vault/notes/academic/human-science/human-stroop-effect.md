@@ -34,8 +34,8 @@ aliases:
 - [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 出典を共有
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
-- [[human-social-learning-theory|社会的学習理論]] — 出典を共有
 - [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 出典を共有
+- [[human-social-learning-theory|社会的学習理論]] — 出典を共有
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
 - [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 同分野の近傍
 - [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍

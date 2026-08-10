@@ -33,8 +33,8 @@ aliases:
 - [国税庁 D1-2 消費税申告期限延長届出手続](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shohi/annai/0020003-179_01.htm) `公的`
 
 ## 関連概念
+- [[tax-corp-interim-return|法人税の中間申告]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 同分野の近傍
-- [[tax-corp-interim-return|法人税の中間申告]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

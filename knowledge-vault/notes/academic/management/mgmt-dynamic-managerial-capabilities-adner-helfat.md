@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 同分野の近傍
+- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

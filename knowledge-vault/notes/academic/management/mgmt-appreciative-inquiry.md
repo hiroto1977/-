@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
-- [[mgmt-open-innovation|オープン・イノベーション]] — 同分野の近傍
+- [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

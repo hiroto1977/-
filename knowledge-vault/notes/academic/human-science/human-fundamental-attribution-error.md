@@ -37,10 +37,10 @@ aliases:
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
-- [[human-self-serving-bias|自己奉仕バイアス]] — 同分野の近傍
-- [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 同分野の近傍
-- [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同分野の近傍
-- [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

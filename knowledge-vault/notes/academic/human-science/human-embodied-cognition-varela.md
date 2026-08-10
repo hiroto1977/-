@@ -37,7 +37,6 @@ aliases:
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
-- [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

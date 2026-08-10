@@ -31,8 +31,16 @@ aliases:
 - [Simply Psychology: Opponent Process Theory of Emotion](https://www.simplypsychology.org/opponent-process-theory.html) `リファレンス`
 
 ## 関連概念
-- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同分野の近傍
-- [[human-attachment-theory-bowlby|アタッチメント理論]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
+- [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
+- [[human-planned-behavior|計画的行動理論（TPB）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

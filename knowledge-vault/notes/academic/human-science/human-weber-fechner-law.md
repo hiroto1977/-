@@ -34,8 +34,8 @@ aliases:
 - [[human-stevens-power-law|スティーヴンスのべき法則（Stevens' power law）——感覚の大きさは刺激強度のべき関数で増える]] — 同じ思想家
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 出典を共有
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
-- [[human-social-learning-theory|社会的学習理論]] — 出典を共有
 - [[human-stroop-effect|ストループ効果]] — 出典を共有
+- [[human-social-learning-theory|社会的学習理論]] — 出典を共有
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
 
 ## 関連

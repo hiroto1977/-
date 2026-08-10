@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

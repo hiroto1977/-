@@ -752,5 +752,99 @@
         "provenanceDelta": "上記に合算 / 本文 +約320字。減少なし。"
       }
     ]
+  },
+  "pass24": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupe（タイトルコア一致）2 件 — title-malformation 修正で正規化されたコアが照合可能になり顕在化",
+    "merges": [
+      {
+        "keep": "econ-information-cascades",
+        "drop": "infosoc-information-cascade",
+        "reason": "同一 BHW 1992 モデルの再記述。infosoc 側は SNS バイラル 1 文以外に分野固有の角度がなく（cultivation-digital 型の「デジタル拡張」エントリではない）、出典も著者ページ・講義ブログ中心で keeper の DOI 4 本に劣後。discipline-lane 例外（各分野の角度に操舵済みなら別建て）に該当しない。",
+        "migrate": [
+          "https://tamuz.caltech.edu/papers/cascades_survey.pdf"
+        ],
+        "absorbed": "情報的影響（他者の行動を証拠として扱う）と規範的影響（同調圧力）の区別・集合知の失敗としての位置づけ・SNS バイラル拡散への適用",
+        "provenanceDelta": {
+          "chars": [
+            537,
+            681
+          ],
+          "sources": [
+            4,
+            5
+          ],
+          "academic": [
+            4,
+            5
+          ]
+        }
+      },
+      {
+        "keep": "infosoc-digital-literacy",
+        "drop": "infosoc-digital-literacy-gilster",
+        "reason": "同一分野（infosoc）内の重複 — 規則どおり常に統合。keeper が出典 4 本（DOI 3 + JRC 政府系）で最厚。",
+        "migrate": [
+          "https://en.wikipedia.org/wiki/Digital_literacy"
+        ],
+        "notMigrated": [
+          {
+            "url": "https://doi.org/10.2307/j.ctt1bmznxg",
+            "why": "JSTOR ブック DOI プレフィックス（10.2307/j.ctt）なのにラベルは Gilster 1997 Wiley 刊 — 誤実体疑い。推測で直さない規則により未検証のまま移管しない。"
+          }
+        ],
+        "absorbed": "Gilster 1997 の概念的初出と批判的思考コア・UNESCO MIL 枠組み・偽情報/ディープフェイク教育・図書館情報学/ジャーナリズム教育/移民包摂への実践展開",
+        "provenanceDelta": {
+          "chars": [
+            499,
+            713
+          ],
+          "sources": [
+            4,
+            5
+          ],
+          "academic": [
+            3,
+            3
+          ]
+        }
+      }
+    ]
+  },
+  "pass25": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupeGraph（term-overlap 3351）— pass24 再生成後に顕在化",
+    "merges": [
+      {
+        "keep": "human-social-learning-theory",
+        "drop": "human-observational-learning",
+        "reason": "同一分野（human-science）の相互再記述 — 双方が Bandura・ボボ人形 1961・モデリング・代理強化・社会的認知理論への発展を記述し、どちらも理論と過程の両方を扱っていて lane 分担がない。keeper は上位概念かつ DOI 3 本（Bandura 1977・BRR 1961・Rotter 1954）+ York 原典全文で最厚。",
+        "migrate": [
+          "https://www.britannica.com/science/observational-learning",
+          "https://wsu.pressbooks.pub/psych105/chapter/6-5-observational-learning-modeling/"
+        ],
+        "notMigrated": [
+          {
+            "url": "https://www.simplypsychology.org/bandura.html",
+            "why": "keeper に同一 URL が既存（重複回避）"
+          }
+        ],
+        "absorbed": "観察学習の4過程（注意・保持・運動再生・動機づけ）・行動主義を認知過程で拡張した理論史的意義・攻撃/向社会的行動とメディア影響への応用",
+        "provenanceDelta": {
+          "chars": [
+            486,
+            676
+          ],
+          "sources": [
+            5,
+            7
+          ],
+          "academic": [
+            3,
+            4
+          ]
+        }
+      }
+    ]
   }
 }

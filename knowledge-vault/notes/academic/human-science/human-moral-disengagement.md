@@ -31,7 +31,6 @@ aliases:
 - [Albert Bandura Official Site — Moral Disengagement（著作・論文一覧）](https://albertbandura.com/albert-bandura-moral-disengagement.html) `リファレンス`
 
 ## 関連概念
-- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家

@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2189
+cite_count: 2188
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2189 件**（学術 2181 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2188 件**（学術 2180 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1436,7 +1436,6 @@ tags:
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — Buckingham2003—MediaEducation:Literacy,LearningandContemporaryCulture
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — Hargittai2016—Millennials,DigitalMediaandEducation
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — VanDeursen&VanDijk2011—InternetSkillsandtheDigitalDivide
-- [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — Gilster,P.(1997)DigitalLiteracy—Wiley
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — Mayer-Schönberger,V.(2009).Delete:TheVirtueofForgetting—PrincetonUP
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — Prensky,M.(2001)DigitalNatives,DigitalImmigrants—OntheHorizon9(5)
 - [[infosoc-digital-phenotyping-theory|デジタル表現型理論]] — Barnettetal.(2020)"Relapsepredictioninschizophreniathroughdigitalphen…

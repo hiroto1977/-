@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 608
+entry_count: 606
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（608件）
+# 学習パス — 学術概念／情報社会学（606件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 69）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 41）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 70）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 40）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
@@ -145,7 +145,6 @@ tags:
 - 1991年: [[infosoc-technical-code|技術的コード——技術設計に埋め込まれ中立を装う支配的社会利害]]
 - 1992年: [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]]
 - 1992年: [[infosoc-epistemic-communities|エピステミック・コミュニティと専門知の流通構造]]
-- 1992年: [[infosoc-information-cascade|情報カスケード]]
 - 1992年: [[infosoc-media-events|メディア・イベント]]
 - 1992年: [[infosoc-metaverse|メタバース]]
 - 1993年: [[infosoc-mcdonaldization|マクドナルド化]]
@@ -390,7 +389,6 @@ tags:
 - [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]]
 - [[infosoc-digital-labor-theory|デジタル労働理論]]
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]]
-- [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]]
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]]
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]]
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]]

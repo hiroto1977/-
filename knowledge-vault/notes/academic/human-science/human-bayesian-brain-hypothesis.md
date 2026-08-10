@@ -38,10 +38,10 @@ Karl Friston ／ David Knill ／ Alexandre Pouget
 - [[human-defense-mechanisms|防衛機制]] — 出典を共有
 - [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
-- [[human-group-polarization|集団極性化]] — 出典を共有
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
 - [[human-mcgurk-effect|マガーク効果]] — 出典を共有
 - [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
+- [[human-neuroplasticity-theory|神経可塑性理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

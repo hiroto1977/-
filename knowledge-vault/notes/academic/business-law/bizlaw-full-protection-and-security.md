@@ -38,6 +38,7 @@ AAPL事件仲裁廷（1990）／CME v. Czech Republic（2003）／UNCTAD投資�
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 同分野の近傍
+- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
 - [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]] — 同分野の近傍
 
 ## 関連

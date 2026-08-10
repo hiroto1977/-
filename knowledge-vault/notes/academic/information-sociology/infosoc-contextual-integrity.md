@@ -40,6 +40,7 @@ Helen Nissenbaum（ヘレン・ニッセンバウム, 理論提唱者） ／ Pri
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
+- [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

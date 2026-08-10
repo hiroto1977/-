@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同分野の近傍
 - [[infosoc-speech-act-theory|言語行為論]] — 同分野の近傍
 
 ## 関連
