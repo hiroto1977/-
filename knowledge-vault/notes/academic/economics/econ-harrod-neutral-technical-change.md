@@ -38,7 +38,7 @@ aliases:
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
 
 ## 関連

@@ -39,7 +39,7 @@ aliases:
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 出典を共有
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 出典を共有
-- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[eh-2005|2005年（平成17年）]] — 出典を共有
 - [[eh-2021|2021年（令和3年）]] — 出典を共有
 

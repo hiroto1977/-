@@ -36,7 +36,7 @@ Pelle Ehn／Douglas Schuler／Aki Namioka／Morten Kyng／Joan Greenbaum
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
-- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 - [[infosoc-smart-mob|スマートモブ]] — 出典を共有

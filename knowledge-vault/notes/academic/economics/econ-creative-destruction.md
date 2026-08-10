@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 語彙が近い
-- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同分野の近傍
 - [[econ-regulatory-capture-stigler|規制の虜——規制が被規制産業の利益のために運営される現象]] — 同分野の近傍
+- [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

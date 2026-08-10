@@ -35,8 +35,8 @@ aliases:
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
 - [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
 - [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
-- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
 
 ## 関連

@@ -32,9 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同分野の近傍
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同分野の近傍
 - [[econ-allais-paradox|アレのパラドックス]] — 同分野の近傍
-- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同分野の近傍
 - [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
 
 ## 関連

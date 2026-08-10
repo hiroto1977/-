@@ -32,6 +32,7 @@ aliases:
 - [咲くやこの花法律事務所「著作者人格権とは？」（著作財産権との区別・不行使特約の実務）](https://kigyobengo.com/media/useful/837.html) `メディア`
 
 ## 関連概念
+- [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 語彙が近い
 - [[legal-moral-rights|著作者人格権]] — 分野横断
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
 - [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
@@ -41,7 +42,6 @@ aliases:
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
 - [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — 同じ思想家
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
-- [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-retention-lien|留置権（民法295条）]] — 同分野の近傍
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — 同分野の近傍
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
 - [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 同分野の近傍
 - [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 同分野の近傍

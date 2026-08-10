@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 942
+entry_count: 941
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（942件）
+# 学習パス — 学術概念／経済学（941件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 39）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 32）
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
-- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）
-- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 31）
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 32）
+- [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -66,6 +66,7 @@ tags:
 - 1881年: [[econ-edgeworth-box|エッジワース・ボックス]]
 - 1883年: [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]]
 - 1883年: [[econ-bertrand-paradox|ベルトランのパラドックス]]
+- 1885年: [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]
 - 1887年: [[econ-is-lm|IS-LMモデル]]
 - 1889年: [[econ-roundabout-production|迂回生産]]
 - 1889年: [[econ-time-preference|時間選好]]
@@ -127,6 +128,7 @@ tags:
 - 1931年: [[econ-gibrat-law|ジブラの法則]]
 - 1931年: [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]]
 - 1931年: [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]]
+- 1933年: [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
 - 1933年: [[econ-monopolistic-competition|独占的競争]]
 - 1933年: [[econ-pigou-effect|ピグー効果（実質残高効果）]]
@@ -188,7 +190,6 @@ tags:
 - 1955年: [[econ-rybczynski|リブチンスキー定理]]
 - 1955年: [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]]
 - 1956年: [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]]
-- 1956年: [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]
 - 1957年: [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]]
 - 1957年: [[econ-bop-stages|国際収支の発展段階説]]
 - 1957年: [[econ-merit-goods|メリット財（価値財）]]
@@ -816,7 +817,6 @@ tags:
 - [[econ-principal-agent-problem|プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析]]
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]]
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]]
-- [[econ-productivity-paradox|生産性パラドックス]]
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]]
 - [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]]
 - [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]]
@@ -949,7 +949,6 @@ tags:
 - [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]]
 - [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]]
 - [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]]
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]
 - [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]]
 - [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]]
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]]

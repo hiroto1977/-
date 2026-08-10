@@ -30,9 +30,9 @@ aliases:
 - [Wikipedia: Long tail — Anderson, niche aggregation, low distribution costs, Amazon/Netflix, Elberse critique](https://en.wikipedia.org/wiki/Long_tail) `リファレンス`
 
 ## 関連概念
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[econ-technological-unemployment|技術的失業]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家

@@ -31,9 +31,9 @@ aliases:
 - [Encyclopaedia Britannica — Fiscal Federalism](https://www.britannica.com/topic/fiscal-federalism) `リファレンス`
 
 ## 関連概念
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 語彙が近い
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 語彙が近い
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同じ思想家
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
 - [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — 同じ思想家
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 同じ思想家
 - [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家

@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
 - [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
-- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 - [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有

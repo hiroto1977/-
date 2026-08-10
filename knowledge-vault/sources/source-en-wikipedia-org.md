@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2255
+cite_count: 2254
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2255 件**（リファレンス 2255）
+> [!info] 出典ドメイン索引 ・ 引用 **2254 件**（リファレンス 2254）
 
 ## このドメインを出典とする項目
 
@@ -842,7 +842,6 @@ tags:
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]] — Wikipedia:Probabilistic-serialprocedure—randomassignment,ordinaleffic…
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]] — Wikipedia:Proceduralutility—processvsoutcome,autonomy,proceduraljusti…
 - [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — Productlife-cycletheory—Wikipedia
-- [[econ-productivity-paradox|生産性パラドックス]] — Productivityparadox—Wikipedia
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — Wikipedia:HaroldDemsetz—theoryofpropertyrights,internalizingexternali…
 - [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — Wikipedia:Publicchoice—公共選択論の概要
 - [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — Wikipedia:Publicchoice—Buchanan,Tullock,governmentfailure,rent-seekin…

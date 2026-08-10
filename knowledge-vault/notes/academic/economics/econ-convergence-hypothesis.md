@@ -37,9 +37,9 @@ aliases:
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同じ思想家
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

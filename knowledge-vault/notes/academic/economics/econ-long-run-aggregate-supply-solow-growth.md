@@ -39,7 +39,7 @@ aliases:
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-conditional-convergence|条件付き収束]] — 同分野の近傍
 
 ## 関連

@@ -37,7 +37,6 @@ Ashbury Railway Carriage & Iron Co v Riche [1875] LR 7 HL 653（英国貴族院�
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 同分野の近傍
 - [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同分野の近傍
-- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

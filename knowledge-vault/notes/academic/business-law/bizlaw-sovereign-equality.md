@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同分野の近傍
-- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 同分野の近傍
+- [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -995,5 +995,48 @@
         }
       }
     ]
+  },
+  "pass30": {
+    "date": "2026-08-10",
+    "trigger": "enrich キュー先頭で同一概念の薄い重複を検出（thin-entry が dedupe 検出器を逃れる既知パターン — タイトルコア相違・増強前 term-overlap 不足）",
+    "merges": [
+      {
+        "keep": "econ-solow-paradox",
+        "drop": "econ-productivity-paradox",
+        "reason": "同一分野（economics）・同一概念（Solow 1987 の quip・Brynjolfsson 1993 の四仮説・1990年代後半の解消論）。keeper は増強済みで最厚。",
+        "migrate": [
+          "https://dl.acm.org/doi/10.1145/163298.163309",
+          "https://www.frbsf.org/wp-content/uploads/resurgence.pdf"
+        ],
+        "replaced": [
+          {
+            "old": "https://www.nber.org/papers/w3891",
+            "new": "https://dl.acm.org/doi/10.1145/163298.163309",
+            "why": "NBER WP 3891 の実体は未検証の疑義リンクだった。Brynjolfsson 1993 の正規掲載誌は CACM 36(12):67-77 で、drop エントリの独立 attestation と一致するため正規 DOI へ置換（出典数は減少なし）"
+          }
+        ],
+        "notMigrated": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Productivity_paradox",
+            "why": "keeper が Britannica の同主題 reference を保有済み"
+          }
+        ],
+        "absorbed": "Oliner & Sichel (2000) の成長会計による IT 資本深化・半導体 TFP 寄与の定量化",
+        "provenanceDelta": {
+          "chars": [
+            620,
+            672
+          ],
+          "sources": [
+            2,
+            3
+          ],
+          "academic": [
+            1,
+            2
+          ]
+        }
+      }
+    ]
   }
 }

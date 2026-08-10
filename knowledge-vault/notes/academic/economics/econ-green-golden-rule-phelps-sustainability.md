@@ -40,7 +40,7 @@ aliases:
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
 - [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

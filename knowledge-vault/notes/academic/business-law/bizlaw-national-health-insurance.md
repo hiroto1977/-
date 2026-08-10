@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[labor-national-health-insurance|国民健康保険（国保）]] — 語彙が近い
 - [[bizlaw-health-insurance|健康保険法]] — 語彙が近い
-- [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
 - [[bizlaw-administrative-procedure-act|行政手続法]] — 同分野の近傍
+- [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
 - [[bizlaw-long-term-care-insurance|介護保険法]] — 同分野の近傍
 
 ## 関連

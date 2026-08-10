@@ -38,7 +38,7 @@ Thomas H. Davenport ／ Laurence Prusak ／ Bonnie A. Nardi ／ Vicki L. O'Day
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
-- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 出典を共有

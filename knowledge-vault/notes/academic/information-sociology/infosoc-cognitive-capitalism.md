@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同分野の近傍
-- [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同分野の近傍
 - [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]] — 同分野の近傍
 
 ## 関連

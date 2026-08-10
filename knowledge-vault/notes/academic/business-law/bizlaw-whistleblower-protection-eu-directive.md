@@ -32,6 +32,7 @@ EU通報者保護指令（Directive (EU) 2019/1937）は2019年に採択され�
 
 ## 関連概念
 - [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 同分野の近傍
 - [[bizlaw-cartel-regulation-antitrust-eu|カルテル規制——競争法における水平的共謀の禁止と制裁]] — 同分野の近傍
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 同分野の近傍
 

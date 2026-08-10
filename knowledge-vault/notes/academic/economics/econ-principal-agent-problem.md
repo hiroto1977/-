@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同分野の近傍
-- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 同分野の近傍
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

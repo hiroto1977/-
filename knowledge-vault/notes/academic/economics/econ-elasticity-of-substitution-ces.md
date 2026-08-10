@@ -33,7 +33,6 @@ Kenneth J. Arrow／Hollis B. Chenery／Bagicha S. Minhas／Robert M. Solow／Joh
 
 ## 関連概念
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 語彙が近い
-- [[econ-productivity-paradox|生産性パラドックス]] — 同じ思想家
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同分野の近傍
 
 ## 関連

@@ -36,11 +36,11 @@ aliases:
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 同じ思想家
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-solow-residual-total-factor-productivity|ソロー残差と全要素生産性——技術進歩の計測とその解釈を巡る論争]] — 同じ思想家
 - [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

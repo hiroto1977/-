@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Exorbitant privilege — 基軸通貨の法外な特権の概説](https://en.wikipedia.org/wiki/Exorbitant_privilege) `リファレンス`
 
 ## 関連概念
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 語彙が近い
 - [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
 - [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
 - [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]] — 同じ思想家
 - [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — 同じ思想家
-- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
