@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 694
+entry_count: 693
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（694件）
+# 学習パス — 学術概念／ビジネス法務（693件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -16,11 +16,11 @@ tags:
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 72）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 50）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
-- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 29）
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
-- [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
@@ -483,7 +483,6 @@ tags:
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]]
 - [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]]
 - [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]]
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]]
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]]
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]]
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]]

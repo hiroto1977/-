@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 141
+cite_count: 140
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **141 件**（リファレンス 139 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **140 件**（リファレンス 138 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -80,7 +80,6 @@ tags:
 - [[econ-difference-in-differences|差の差分析（DID）]] — ウィキペディア日本語版「差分の差分法」
 - [[econ-fei-ranis|フェイ＝ラニス・モデル]] — ウィキペディア日本語版:フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
-- [[econ-fiscal-multiplier-theory|財政乗数理論]] — Wikipedia日本語版—乗数効果
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — Wikipedia:全要素生産性—ソロー残差と技術進歩の計測の解説
 - [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — Wikipedia:ヘリコプターマネー—財政金融統合政策と中央銀行論の解説
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — Wikipedia:ケース＝シラー指数—住宅市場バブルと行動経済学の解説

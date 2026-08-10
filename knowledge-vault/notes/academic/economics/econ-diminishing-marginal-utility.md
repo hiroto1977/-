@@ -33,7 +33,6 @@ H.H.ゴッセン（1854、第一法則）／限界革命: ジェヴォンズ(187
 ## 関連概念
 - [[econ-diamond-water-paradox|価値の逆説（ダイヤモンドと水のパラドックス）]] — 語彙が近い
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 語彙が近い
-- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同分野の近傍
 - [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同分野の近傍
 - [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
 

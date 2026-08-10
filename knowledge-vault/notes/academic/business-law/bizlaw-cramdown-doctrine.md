@@ -33,7 +33,6 @@ Douglas G. Baird ／ Bruce A. Markell ／ Elizabeth Warren ／ Jay Lawrence West
 - [LoPucki & Whitford, "Bargaining Over Equity's Share in the Bankruptcy Reorganization of Large, Publicly Held Companies", University of Pennsylvania Law Review (1990)](https://doi.org/10.2307/1229439) `学術`
 
 ## 関連概念
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同じ思想家
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同じ思想家
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同じ思想家
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 同じ思想家

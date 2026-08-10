@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 644
+card_count: 643
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（644枚）
+# フラッシュカード — 学術概念／人間科学（643枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -218,8 +218,6 @@ tags:
   - **A:** 認知的徒弟制（cognitive apprenticeship）は、コリンズ・ブラウン・ニューマンが1989年に提唱した学習・教授理論で、伝統的な職人の徒弟制をモデルに、通常は不可視な認知的・メタ認知的プロセスを可視化しながら複雑なスキルを習得させる枠組みである。（→ [[human-cognitive-apprenticeship]]）
 - **Q:** 認知的不協和（cognitive dissonance）
   - **A:** 認知的不協和とは、人が矛盾する2つ以上の認知（信念・態度・行動等）を同時に抱えたときに生じる不快な心理的緊張であり、レオン・フェスティンガーが1957年の著書『A Theory of Cognitive Dissonance』で提唱した。人はこの不快感を低減するため、矛盾する認知の一方を変える、新たな整合的認知を加える、矛盾情報の重要性を下げる等の方法で整合化を図る。（→ [[human-cognitive-dissonance]]）
-- **Q:** 認知的不協和理論（フェスティンガー）
-  - **A:** レオン・フェスティンガーが1957年の著書『認知的不協和の理論』（Stanford University Press）で提唱した社会心理学の基礎理論。個人が矛盾する認知（信念・態度・行動の知識）を同時に保持すると心理的不快感（不協和）が生じ、その低減に向けて態度変容・行動変容・認知の追加や重要性の変更といった方略が動機づけられると説く。（→ [[human-cognitive-dissonance-festinger]]）
 - **Q:** 認知的不協和低減
   - **A:** Festinger（1957）が提唱した認知的不協和理論は、個人が矛盾する二つ以上の認知を同時に保持すると心理的不快感（不協和）を経験し、態度変更・協和的認知の追加・不協和要素の重要性低減のいずれかによって不協和を低減しようと動機づけられると主張する。（→ [[human-cognitive-dissonance-reduction]]）
 - **Q:** 認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論

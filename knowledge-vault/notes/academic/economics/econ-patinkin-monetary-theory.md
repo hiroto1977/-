@@ -33,7 +33,6 @@ Don Patinkin ／ Arthur Cecil Pigou ／ John Maynard Keynes
 
 ## 関連概念
 - [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 語彙が近い
-- [[econ-fiscal-multiplier-theory|財政乗数理論]] — 同じ思想家
 - [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 同分野の近傍
 - [[econ-wage-price-spiral|賃金・物価スパイラル]] — 同分野の近傍
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同分野の近傍

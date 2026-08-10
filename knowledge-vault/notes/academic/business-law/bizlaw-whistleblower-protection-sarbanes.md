@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Whistleblower protection — 内部告発者保護の国際比較](https://en.wikipedia.org/wiki/Whistleblower_protection_in_the_United_States) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — 語彙が近い
 - [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — 語彙が近い
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
 - [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
 - [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 出典を共有

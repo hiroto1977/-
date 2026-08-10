@@ -30,16 +30,16 @@ aliases:
 - [Oxford Handbook of Political Communication — Selective Exposure（査読ハンドブック）](https://www.oxfordhandbooks.com/view/10.1093/oxfordhb/9780199793471.001.0001/oxfordhb-9780199793471-e-009) `学術`
 
 ## 関連概念
-- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家
 - [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同じ思想家
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
+- [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

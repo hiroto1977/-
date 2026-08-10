@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 949
+entry_count: 946
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（949件）
+# 学習パス — 学術概念／経済学（946件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 83）
-- [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
+- [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 46）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
@@ -26,8 +26,8 @@ tags:
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 33）
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 32）
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]（接続 31）
-- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -66,7 +66,6 @@ tags:
 - 1881年: [[econ-edgeworth-box|エッジワース・ボックス]]
 - 1883年: [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]]
 - 1883年: [[econ-bertrand-paradox|ベルトランのパラドックス]]
-- 1885年: [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]
 - 1887年: [[econ-is-lm|IS-LMモデル]]
 - 1889年: [[econ-roundabout-production|迂回生産]]
 - 1889年: [[econ-time-preference|時間選好]]
@@ -450,7 +449,6 @@ tags:
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]
 - [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]]
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]]
-- [[econ-behavioral-finance-kahneman|行動ファイナンス理論（認知バイアスと意思決定）]]
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]]
 - [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]]
 - [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]]
@@ -609,7 +607,6 @@ tags:
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]]
 - [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]]
 - [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]]
-- [[econ-fiscal-multiplier-theory|財政乗数理論]]
 - [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]]
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]]
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]]
@@ -698,6 +695,7 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]]
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]]
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]]
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]]
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]]
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]]
@@ -720,7 +718,6 @@ tags:
 - [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]]
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]]
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]]
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]]
 - [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]]
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]]
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]]

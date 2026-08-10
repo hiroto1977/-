@@ -5,7 +5,7 @@ category: "economics"
 category_ja: "経済学"
 title: "行動ファイナンス"
 as_of: "2026-06"
-source_count: 4
+source_count: 7
 authoritative: true
 tags:
   - collection/academic
@@ -17,7 +17,7 @@ aliases:
 
 # 行動ファイナンス
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 7件（うち権威ある出典 ✓）
 
 ## 概要
 投資家や市場参加者は完全には合理的でなく、心理的バイアスや感情に影響されるという前提に立ち、認知心理学・行動経済学の知見を用いて金融市場を分析する分野。伝統的ファイナンス理論（合理的期待・効率的市場仮説 EMH）では説明しにくいアノマリー、バブル、過剰反応・過小反応、ホームバイアスなどの現象を説明しようとする。応用される概念として、カーネマン＆トヴェルスキーのプロスペクト理論（損失回避＝損失の痛みを同額の利得の喜びより強く感じる）、ヒューリスティックとバイアス（自信過剰、代表性、アンカリング、群集行動 herding）、メンタル・アカウンティングなどがある。市場の非効率性や予測可能性をめぐっては効率的市場仮説の支持者との間で論争があり、両者の評価は定まっていない。
@@ -27,6 +27,9 @@ aliases:
 
 ## 出典
 - [Robert J. Shiller, “Speculative Asset Prices” (Nobel Prize Lecture, 2013) — Nobelprize.org](https://www.nobelprize.org/uploads/2018/06/shiller-lecture.pdf) `公的`
+- [Kahneman & Tversky (1979) Prospect Theory: An Analysis of Decision under Risk — Econometrica 47(2), 263-291](https://www.jstor.org/stable/1914185) `学術`
+- [Kahneman (2002) Maps of Bounded Rationality — Nobel Prize Lecture](https://www.nobelprize.org/prizes/economic-sciences/2002/kahneman/lecture/) `リファレンス`
+- [Thaler (2017) From Cashews to Nudges — Nobel Prize Lecture](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/lecture/) `リファレンス`
 - [UBS Nobel Perspectives — Robert Shiller: Behavioral Finance & Economics](https://www.ubs.com/microsites/nobel-perspectives/en/laureates/robert-shiller.html) `リファレンス`
 - [EBSCO Research Starters (Economics) — Behavioral Finance](https://www.ebsco.com/research-starters/economics/behavioral-finance) `リファレンス`
 - [Wikipedia — Behavioural finance](https://en.wikipedia.org/wiki/Behavioural_finance) `リファレンス`

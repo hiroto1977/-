@@ -31,6 +31,7 @@ aliases:
 - [Executive Attention — Wikipedia](https://en.wikipedia.org/wiki/Attention#Executive_attention) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 語彙が近い
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-glymphatic-system|グリンパティック系]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
-- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

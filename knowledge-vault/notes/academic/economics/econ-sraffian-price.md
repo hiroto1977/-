@@ -35,8 +35,8 @@ aliases:
 - [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
 - [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — 出典を共有
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 出典を共有
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

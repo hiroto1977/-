@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 644
+entry_count: 643
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（644件）
+# 学習パス — 学術概念／人間科学（643件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -16,7 +16,7 @@ tags:
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 108）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 70）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
@@ -26,8 +26,8 @@ tags:
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]（接続 24）
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
-- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）
+- [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 23）
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -52,7 +52,6 @@ tags:
 - 1904年: [[human-classical-conditioning|古典的条件づけ（パブロフ）]]
 - 1904年: [[human-double-bind|ダブルバインド（二重拘束）]]
 - 1904年: [[human-sensory-deprivation|感覚遮断（感覚剥奪）]]
-- 1905年: [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]
 - 1906年: [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]]
 - 1907年: [[human-semantic-satiation|意味飽和（セマンティック・サティエイション）]]
 - 1908年: [[maslow-hierarchy|マズローの欲求階層説]]
@@ -194,7 +193,6 @@ tags:
 - 1983年: [[human-multiple-intelligences|多重知能理論（ガードナー）]]
 - 1983年: [[human-place-identity|場所アイデンティティ（Place Identity）]]
 - 1984年: [[human-cialdini-influence|チャルディーニの影響力の6原理]]
-- 1984年: [[human-cognitive-miser|認知的倹約家（cognitive miser）]]
 - 1984年: [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]]
 - 1984年: [[human-social-proof|社会的証明]]
 - 1984年: [[human-spontaneous-trait-inference|自発的特性推論]]
@@ -325,6 +323,7 @@ tags:
 - [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]]
 - [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]]
 - [[human-autobiographical-memory-conway|コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル]]
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]]
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]
@@ -351,7 +350,6 @@ tags:
 - [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]]
 - [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]]
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]]
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]]
 - [[human-cognitive-dissonance-reduction|認知的不協和低減]]
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]]
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]]
@@ -608,6 +606,7 @@ tags:
 - [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]]
 - [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]]
 - [[human-social-brain-hypothesis|社会脳仮説]]
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]]
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]]
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]]

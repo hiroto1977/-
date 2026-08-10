@@ -32,7 +32,6 @@ Douglas G. Baird ／ Thomas H. Jackson ／ Stephen J. Lubben
 - [EU Directive 2019/1023 on Preventive Restructuring Frameworks (EUR-Lex)](https://eur-lex.europa.eu/eli/dir/2019/1023/oj/eng) `公的`
 
 ## 関連概念
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同じ思想家
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同じ思想家
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 同じ思想家
 - [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同じ思想家
@@ -42,6 +41,7 @@ Douglas G. Baird ／ Thomas H. Jackson ／ Stephen J. Lubben
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 - [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 659
+entry_count: 658
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（659件）
+# 学習パス — 学術概念／経営学（658件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -608,7 +608,6 @@ tags:
 - [[mgmt-strategic-choice-theory|戦略的選択理論]]
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]]
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]]
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]]
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]]
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]]
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]]

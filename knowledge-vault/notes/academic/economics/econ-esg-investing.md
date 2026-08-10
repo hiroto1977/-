@@ -32,7 +32,7 @@ ESG投資とは、企業への投資判断に財務指標だけでなく環境�
 ## 関連概念
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 語彙が近い
 - [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

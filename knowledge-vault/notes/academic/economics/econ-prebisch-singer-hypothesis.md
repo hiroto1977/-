@@ -35,7 +35,6 @@ aliases:
 - [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同じ思想家
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同じ思想家
 - [[econ-immiserizing-growth|窮乏化成長]] — 同分野の近傍
-- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

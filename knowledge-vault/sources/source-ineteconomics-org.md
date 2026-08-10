@@ -15,7 +15,7 @@ tags:
 ## このドメインを出典とする項目
 
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — InstituteforNewEconomicThinking—ValueCreationandtheEntrepreneurialSta…
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — INETEconomics—Naturalinterestrateandloanablefundsmacromodels
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — INET—TheNaturalInterestRateandSecularStagnation（貸付資金モデルの実証批判）
 - [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — Sraffa'sRevolutioninEconomicTheory—InstituteforNewEconomicThinking
 
 ## 関連

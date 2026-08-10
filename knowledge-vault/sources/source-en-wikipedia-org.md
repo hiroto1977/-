@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2274
+cite_count: 2273
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2274 件**（リファレンス 2274）
+> [!info] 出典ドメイン索引 ・ 引用 **2273 件**（リファレンス 2273）
 
 ## このドメインを出典とする項目
 
@@ -725,7 +725,6 @@ tags:
 - [[econ-liquidity-trap|流動性のわな]] — Wikipedia—Liquiditytrap(Keynes1936/HicksIS-LM)
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — Wikipedia:Liquiditytrap—Keynes,zerolowerbound,monetarypolicyineffecti…
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — Wikipedia—Loanablefunds（起源：ヴィクセル／ロバートソン／オリーン、流動性選好説との対比）
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — Wikipedia—Loanablefunds
 - [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — Wikipedia:Tieboutmodel—votingwithfeet,localpublicgoods,preferencereve…
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — Wikipedia:Switchingcosts/lock-in—Shapiro&Varian,installedbase,marketp…
 - [[econ-logrolling|ログローリング（票の取引）]] — Wikipedia—Logrolling(votetrading,porkbarrel,CalculusofConsent)
@@ -2221,8 +2220,8 @@ tags:
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — StrategicManagement(cognitiveschool)—Wikipedia
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — Wikipedia:Strategicconsensus—Bourgeois,TMTagreement,dominantlogic,Eis…
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — Wikipedia:Strategicentrepreneurship—戦略的アントレプレナーシップの概説
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — Wikipedia:Strategicfactormarket
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — Wikipedia:Resource-basedview—資源ベース理論と戦略的要素市場の概説
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — Wikipedia:Strategicfactormarket
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — Wikipedia:Strategicflexibility—Volberda,operationalvsstrategic,hyperc…
 - [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — Wikipedia:Strategicgroup—mobilitybarriers,industrystructure,competiti…
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — Wikipedia「Humanresourcemanagement」—HRMの戦略的・統合的アプローチ

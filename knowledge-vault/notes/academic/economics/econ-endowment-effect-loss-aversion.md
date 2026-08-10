@@ -32,11 +32,11 @@ Richard Thaler ／ Daniel Kahneman ／ Amos Tversky
 - [Nobel Prize 2017 — Richard Thaler: Behavioural Economics](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `リファレンス`
 
 ## 関連概念
-- [[econ-behavioral-finance-kahneman|行動ファイナンス理論（認知バイアスと意思決定）]] — 語彙が近い
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
 - [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

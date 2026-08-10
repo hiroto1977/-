@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 50
+cite_count: 49
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 50）
+> [!info] 出典ドメイン索引 ・ 引用 **49 件**（学術 49）
 
 ## このドメインを出典とする項目
 
@@ -19,7 +19,6 @@ tags:
 - [[econ-j-curve-effect|Jカーブ効果（J-Curve Effect）]] — Bahmani-Oskooee&Ratha(2004)TheJ-Curve:ALiteratureReview—AppliedEconom…
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — Chandra&Sandilands(2021)NicholasKaldor,increasingreturnsandVerdoorn's…
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — EuropeanJournaloftheHistoryofEconomicThought—流動性選好説対貸付資金説（1936–1956）論争
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — Tandfonline—Liquiditypreferencevsloanablefundsdebate
 - [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]] — Barth&Landsman(2010)HowDidFinancialReportingContributetotheFinancialC…
 - [[econ-schelling-segregation|シェリングの分居モデル]] — Schelling,T.C.(1971)“DynamicModelsofSegregation,”JournalofMathematica…
 - [[econ-synthetic-control-method|合成コントロール法（synthetic control method）]] — Abadie,A.,Diamond,A.&Hainmueller,J.(2010)"SyntheticControlMethodsforC…

@@ -37,7 +37,7 @@ William P. Barnett ／ Morten T. Hansen ／ Leigh Van Valen
 - [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有

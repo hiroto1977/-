@@ -180,12 +180,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: '認知的不協和（cognitive dissonance）',
     statement:
       '認知的不協和とは、人が矛盾する2つ以上の認知（信念・態度・行動等）を同時に抱えたときに生じる不快な心理的緊張であり、レオン・フェスティンガーが1957年の著書『A Theory of Cognitive Dissonance』で提唱した。人はこの不快感を低減するため、矛盾する認知の一方を変える、' +
-      '新たな整合的認知を加える、矛盾情報の重要性を下げる等の方法で整合化を図る。喫煙者が健康リスクを過小評価する例が典型である。フェスティンガー&カールスミス(1959)の強制的服従実験では、退屈な作業を「面白かった」と偽るよう求められた被験者のうち報酬が少額（1ドル）の群の方が、高額（20ドル）の群より作業を楽しかったと評価した（外的正当化が乏しいほど強い不協和が生じ態度が内面的に変容する）。',
-    keyFigures: 'レオン・フェスティンガー（1957）／カールスミス（1959 共同実験）',
+      '新たな整合的認知を加える、矛盾情報の重要性を下げる等の方法で整合化を図る。喫煙者が健康リスクを過小評価する例が典型である。フェスティンガー&カールスミス(1959)の強制的服従実験では、退屈な作業を「面白かった」と偽るよう求められた被験者のうち報酬が少額（1ドル）の群の方が、高額（20ドル）の群より作業を楽しかったと評価した（外的正当化が乏しいほど強い不協和が生じ態度が内面的に変容する）。理論はその後も発展し、アロンソンは不協和の核心を自己概念との不一致に置く自己一貫性モデルへ精緻化し、クーパーとファジオ（1984）は生理的覚醒とその帰属が態度変容の必要条件だとする New Look モデルを提示した。',
+    keyFigures: 'レオン・フェスティンガー（1957）／カールスミス（1959 共同実験）／エリオット・アロンソン（自己一貫性モデル）／ジョエル・クーパー & ラッセル・ファジオ（New Look, 1984）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/biography/Leon-Festinger/Cognitive-dissonance', type: 'reference', label: 'Encyclopaedia Britannica — Leon Festinger: Cognitive dissonance' },
       { url: 'https://psychclassics.yorku.ca/Festinger/', type: 'academic', label: 'York University Classics — Festinger & Carlsmith (1959) 原典全文' },
+      { url: 'https://psycnet.apa.org/record/1993-97948-000', type: 'academic', label: 'Festinger (1957) A Theory of Cognitive Dissonance — Stanford University Press（APA PsycNet 書誌）' },
+      { url: 'https://psycnet.apa.org/doi/10.1037/h0042519', type: 'academic', label: 'Festinger & Carlsmith (1959) Cognitive Consequences of Forced Compliance — JASP 58(2), 203-210' },
+      { url: 'https://doi.org/10.1016/S0065-2601(08)60121-5', type: 'academic', label: 'Cooper & Fazio (1984) A New Look at Dissonance Theory — Advances in Experimental Social Psychology 17, 229-266' },
       { url: 'https://en.wikipedia.org/wiki/Cognitive_dissonance', type: 'reference', label: 'Wikipedia — Cognitive dissonance' },
     ],
   },
@@ -1991,12 +1994,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '政府支出や投資など独立支出の増加が、それと同額以上に国民所得（GDP）を増加させる波及効果。最初の支出が誰かの所得となり、その一部が消費に回って別の人の所得を生む、という連鎖が繰り返されることで、当初の支出を上回る総需要・所得の増加が生じる。' +
       'ケインズ経済学の中核概念で、単純なモデルでは政府支出乗数＝1/(1−限界消費性向(MPC))と表され、MPCが大きいほど乗数は大きい（例：MPC=0.8なら乗数=5）。概念の起源はリチャード・カーンの雇用乗数(1931年, Economic Journal)にあり、ケインズが投資乗数として発展させた（『一般理論』1936年）。' +
-      '租税・輸入(漏出)・貨幣的要因（政府借入に伴う金利上昇によるクラウディングアウト）等は乗数を小さくする。乗数の大きさは景気局面に依存し（不況期や金融緩和下・ゼロ金利制約下では大きくなる）、実証的な推定値をめぐっては論争がある。',
+      '租税・輸入(漏出)・貨幣的要因（政府借入に伴う金利上昇によるクラウディングアウト）等は乗数を小さくする。乗数の大きさは景気局面に依存し（不況期や金融緩和下・ゼロ金利制約下では大きくなる）、実証的な推定値をめぐっては論争がある。ブランシャールとレイ（IMF WP/13/1, 2013）は、ユーロ圏の緊縮期には乗数が事前想定（約0.5）を大幅に上回る1.5前後だったことを予測誤差の分析から示し、不況下の財政緊縮のコストを過小評価していたと論じた。',
     keyFigures: '独立支出増→所得増→消費増の連鎖で総需要が当初支出以上に増加／単純乗数＝1/(1−MPC)／R.カーンの雇用乗数(1931)に起源・ケインズが投資乗数として発展(一般理論1936)／クラウディングアウト等で縮小・推定値は論争的',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.imf.org/external/pubs/ft/tnm/2014/tnm1404.pdf', type: 'government', label: 'IMF Technical Notes and Manuals: Fiscal Multipliers — Size, Determinants, and Use in Macroeconomic Projections (2014)' },
       { url: 'https://www.imf.org/external/pubs/ft/wp/2012/wp12286.pdf', type: 'government', label: 'IMF Working Paper WP/12/286: Fiscal Multipliers and the State of the Economy (2012)' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2013/wp1301.pdf', type: 'government', label: 'Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers — IMF WP/13/1' },
+      { url: 'https://www.jstor.org/stable/2223697', type: 'academic', label: 'Kahn (1931) The Relation of Home Investment to Unemployment — Economic Journal 41(162), 173-198' },
       { url: 'https://en.wikipedia.org/wiki/Fiscal_multiplier', type: 'reference', label: 'Wikipedia: Fiscal multiplier（mechanism, formula, Kahn 1931 origin）' },
       { url: 'https://www.jec.senate.gov/public/_cache/files/aa63e97b-ad62-4910-884f-54ff1aa67c6f/keynesiantaxandspendingmultipliers.pdf', type: 'government', label: 'U.S. Congress Joint Economic Committee: Keynesian Tax and Spending Multipliers (2009)' },
     ],
@@ -4903,6 +4908,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.nobelprize.org/uploads/2018/06/shiller-lecture.pdf', type: 'government', label: 'Robert J. Shiller, “Speculative Asset Prices” (Nobel Prize Lecture, 2013) — Nobelprize.org' },
+      { url: 'https://www.jstor.org/stable/1914185', type: 'academic', label: 'Kahneman & Tversky (1979) Prospect Theory: An Analysis of Decision under Risk — Econometrica 47(2), 263-291' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2002/kahneman/lecture/', type: 'reference', label: 'Kahneman (2002) Maps of Bounded Rationality — Nobel Prize Lecture' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/lecture/', type: 'reference', label: 'Thaler (2017) From Cashews to Nudges — Nobel Prize Lecture' },
       { url: 'https://www.ubs.com/microsites/nobel-perspectives/en/laureates/robert-shiller.html', type: 'reference', label: 'UBS Nobel Perspectives — Robert Shiller: Behavioral Finance & Economics' },
       { url: 'https://www.ebsco.com/research-starters/economics/behavioral-finance', type: 'reference', label: 'EBSCO Research Starters (Economics) — Behavioral Finance' },
       { url: 'https://en.wikipedia.org/wiki/Behavioural_finance', type: 'reference', label: 'Wikipedia — Behavioural finance' },
@@ -11932,13 +11940,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: '貸付資金説（可貸資金市場）',
     statement:
       '貸付資金説（可貸資金市場の理論）は、（実質）利子率が「貸付資金（可貸資金）」の需要と供給によって決まるとする利子論である。資金の供給は主に貯蓄（家計・企業・政府の貯蓄）から生じ、貯蓄は利子率の上昇とともに増加する。資金の需要は投資のための借入から生じ、投資は利子率が上がると減少する。均衡実質利子率は、望ましい貯蓄と望ましい投資を一致させる水準に決まる。これはクヌート・ヴィクセル、アーヴィング・フィッシャー、デニス・ロバートソン、ベルティル・オリーンらに連なる古典派・' +
-      '新古典派の利子論であり、財政赤字（公的・国民貯蓄の減少）が実質金利を押し上げて民間投資を締め出す「クラウディングアウト」を分析する標準的枠組みの基礎をなす。利子を貨幣市場で決まる貨幣的現象とみなすケインズの流動性選好説とは対照的で、両説の優劣をめぐる有名な論争が展開された。通常、縦軸に実質利子率・横軸に貸付資金量をとる需給図で表される。',
+      '新古典派の利子論であり、財政赤字（公的・国民貯蓄の減少）が実質金利を押し上げて民間投資を締め出す「クラウディングアウト」を分析する標準的枠組みの基礎をなす。利子を貨幣市場で決まる貨幣的現象とみなすケインズの流動性選好説とは対照的で、両説の優劣をめぐる有名な論争が展開された。ヴィクセルの自然利子率（貯蓄と投資を一致させ物価を安定させる利子率）の概念はこの系譜の中核にあり、現代の中立金利論や長期停滞論にまで引き継がれている。通常、縦軸に実質利子率・横軸に貸付資金量をとる需給図で表される。',
     keyFigures: '貸付資金説（クヌート・ヴィクセル／アーヴィング・フィッシャー／デニス・ロバートソン／ベルティル・オリーン）',
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Loanable_funds', type: 'reference', label: 'Wikipedia — Loanable funds（起源：ヴィクセル／ロバートソン／オリーン、流動性選好説との対比）' },
       { url: 'https://ecampusontario.pressbooks.pub/principlesofmacroeconomicscdn/chapter/7-5-shifts-in-demand-and-supply-for-loanable-funds/', type: 'academic', label: 'Principles of Macroeconomics (eCampusOntario/Pressbooks) — 貯蓄供給・投資需要と均衡実質金利' },
       { url: 'https://www.tandfonline.com/doi/full/10.1080/09672567.2021.1893778', type: 'academic', label: 'European Journal of the History of Economic Thought — 流動性選好説 対 貸付資金説（1936–1956）論争' },
+      { url: 'https://www.ineteconomics.org/research/research-papers/the-natural-interest-rate-and-secular-stagnation-loanable-funds-macro-models-dont-fit-the-data', type: 'academic', label: 'INET — The Natural Interest Rate and Secular Stagnation（貸付資金モデルの実証批判）' },
     ],
   },
   {
@@ -21569,22 +21578,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-fiscal-multiplier-theory',
-    discipline: 'economics',
-    title: '財政乗数理論',
-    statement:
-      '財政乗数理論とは、政府支出の増加が限界消費性向に基づく再消費の連鎖を通じて総需要に対し初期支出の数倍に及ぶ波及効果（乗数 = 1/(1−MPC)）をもたらすとする経済理論である。' +
-      'リチャード・カーンが1931年に Economic Journal 誌で雇用乗数の概念を示し、ケインズが1936年の『一般理論』で投資乗数として定式化した。' +
-      '乗数の実証的大きさには論争があり、ブランシャールとレイは2013年のIMFワーキングペーパー（WP/13/1）でユーロ圏緊縮期の乗数が従来想定（約0.5）を大幅に上回る1.5前後であったことを示した。',
-    keyFigures: 'Richard F. Kahn／John Maynard Keynes／Olivier Blanchard／Daniel Leigh',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/2223697', type: 'academic', label: 'Kahn (1931) The Relation of Home Investment to Unemployment, Economic Journal 41(162):173-198' },
-      { url: 'https://www.imf.org/external/pubs/ft/wp/2013/wp1301.pdf', type: 'government', label: 'Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers, IMF WP/13/1' },
-      { url: 'https://ja.wikipedia.org/wiki/%E4%B9%97%E6%95%B0%E5%8A%B9%E6%9E%9C', type: 'reference', label: 'Wikipedia 日本語版 — 乗数効果' },
-    ],
-  },
-  {
     id: 'mgmt-strategic-alignment-model',
     discipline: 'management',
     title: '戦略的アラインメント・モデル',
@@ -24093,6 +24086,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.uniformlaws.org/committees/community-home?CommunityKey=1d09a1de-c069-4016-9b7c-ce0e95e27297', type: 'reference', label: 'Uniform Law Commission — Uniform Voidable Transactions Act (UVTA)' },
       { url: 'https://doi.org/10.2307/1228739', type: 'academic', label: 'Robert Charles Clark, "The Duties of the Corporate Debtor to Its Creditors" (1977) 90 Harvard Law Review 505' },
       { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 — 民法（債権関係）の改正に関する説明資料（詐害行為取消権）' },
+      { url: 'https://www.law.cornell.edu/uscode/text/11/548', type: 'government', label: '11 U.S.C. § 548 — Bankruptcy Code fraudulent transfers（連邦破産法548条）' },
+      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol38/iss4/4/', type: 'academic', label: 'Baird & Jackson (1985) Fraudulent Conveyance Law and Its Proper Domain — Vanderbilt Law Review 38(4)（リポジトリ本文）' },
       { url: 'https://doi.org/10.2307/3481524', type: 'academic', label: 'Elizabeth Warren, "Bankruptcy Policy" (1987) 54 University of Chicago Law Review 775' },
     ],
   },
@@ -24452,20 +24447,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/0021886314553101', type: 'academic', label: 'Papachroni, Heracleous & Paroutis (2015) Organizational Ambidexterity Through Paradox — JABS 51(1)' },
       { url: 'https://journals.aom.org/doi/10.5465/19416520.2016.1162422', type: 'academic', label: 'Schad, Lewis, Raisch & Tushman (2016) Paradox Research in Management Science — AMA 10(1)' },
       { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1080.0406', type: 'academic', label: 'Andriopoulos & Lewis (2009) Exploitation-Exploration Tensions — Organization Science 20(4)' },
-    ],
-  },
-  {
-    id: 'mgmt-strategic-factor-markets',
-    discipline: 'management',
-    title: '戦略的要素市場理論',
-    statement: 'Barneyが提唱。戦略的資源の要素市場が競争的であれば取得コストが将来価値を反映し、超過利潤は生じない。情報の非対称性または幸運のみが持続的優位の源泉となるとし、RBVの理論基盤を確立した。',
-    keyFigures: 'Jay B. Barney ／ Birger Wernerfelt',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250070306', type: 'academic', label: 'Barney (1986) Strategic Factor Markets — Strategic Management Journal 7(5)' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/014920639101700108', type: 'academic', label: 'Barney (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)' },
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250050207', type: 'academic', label: 'Wernerfelt (1984) A Resource-Based View of the Firm — Strategic Management Journal 5(2)' },
-      { url: 'https://en.wikipedia.org/wiki/Strategic_factor_market', type: 'reference', label: 'Wikipedia: Strategic factor market' },
     ],
   },
   {
@@ -25053,20 +25034,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1080/03014460902960289', type: 'academic', label: 'Dunbar 2009 — implications for social evolution' },
       { url: 'https://pubmed.ncbi.nlm.nih.gov/19575315/', type: 'reference', label: 'PubMed entry PMID 19575315' },
       { url: 'https://en.wikipedia.org/wiki/Social_brain_hypothesis', type: 'reference', label: 'Wikipedia — Social brain hypothesis' },
-    ],
-  },
-  {
-    id: 'bizlaw-fraudulent-conveyance',
-    discipline: 'business-law',
-    title: '詐害的譲渡（詐害行為取消権）',
-    statement: '債務者が債権者を害する意図で財産を移転する行為は取消可能とする法理。1571年エリザベス詐欺的譲渡法に起源を持ち、Baird・Jacksonらの分析を経て米国UVTA及び連邦破産法548条に体系化された。',
-    keyFigures: 'Douglas G. Baird ／ Thomas H. Jackson',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/fraudulent_conveyance', type: 'reference', label: 'Cornell LII: Fraudulent Conveyance definition' },
-      { url: 'https://www.law.cornell.edu/uscode/text/11/548', type: 'government', label: '11 U.S.C. § 548 — Bankruptcy Code fraudulent transfers' },
-      { url: 'https://www.uniformlaws.org/committees/community-home?CommunityKey=64ee1ccc-a3ae-4a5e-a18f-a5ba8206bf49', type: 'government', label: 'Uniform Law Commission: Voidable Transactions Act' },
-      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol38/iss4/4/', type: 'academic', label: 'Baird & Jackson, Fraudulent Conveyance Law (1985)' },
     ],
   },
   {
@@ -26339,20 +26306,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-loanable-funds-theory',
-    discipline: 'economics',
-    title: '貸付可能資金理論（ネオクラシカル利子率理論）',
-    statement: '貸付可能資金の需給均衡によって利子率が決定されるという新古典派理論。Wicksellが自然利子率概念を提唱しRobertsonやOhlinが精緻化した。Keynesの流動性選好理論と対立する主要な利子率決定理論。',
-    keyFigures: 'Knut Wicksell ／ Dennis Robertson ／ Bertil Ohlin',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Loanable_funds', type: 'reference', label: 'Wikipedia — Loanable funds' },
-      { url: 'https://www.tandfonline.com/doi/full/10.1080/09672567.2021.1893778', type: 'academic', label: 'Tandfonline — Liquidity preference vs loanable funds debate' },
-      { url: 'https://www.researchgate.net/publication/229793117_Wicksell_on_the_Classical_Theories_of_Money_Credit_Interest_and_the_Price_Level', type: 'academic', label: 'ResearchGate — Wicksell on classical theories of money, credit, and interest' },
-      { url: 'https://www.ineteconomics.org/research/research-papers/the-natural-interest-rate-and-secular-stagnation-loanable-funds-macro-models-dont-fit-the-data', type: 'academic', label: 'INET Economics — Natural interest rate and loanable funds macro models' },
-    ],
-  },
-  {
     id: 'bizlaw-fiduciary-duty-standard',
     discipline: 'business-law',
     title: '信認義務基準（取締役の善管注意義務と忠実義務）',
@@ -26524,20 +26477,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oecd.org/en/publications/closing-broadband-connectivity-divides-for-all_d5ea99b2-en.html', type: 'government', label: 'OECD. Closing Broadband Connectivity Divides for All: Policy Framework and Implementation' },
       { url: 'https://www.unesco.org/en/right-education/digitalization', type: 'government', label: 'UNESCO. Bridging the Digital Divide and Ensuring Online Protection' },
       { url: 'https://plato.stanford.edu/entries/it-moral-values/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy: Information Technology and Moral Values' },
-    ],
-  },
-  {
-    id: 'econ-behavioral-finance-kahneman',
-    discipline: 'economics',
-    title: '行動ファイナンス理論（認知バイアスと意思決定）',
-    statement: 'Daniel KahnemanとAmos Tverskyが1979年に提唱したプロスペクト理論は、伝統的な期待効用理論の限界を示し、損失回避・フレーミング効果・代表性ヒューリスティックなど認知バイアスが経済的意思決定に与える影響を解明した。Richard Thalerはナッジ理論と心理的会計でこの分野を拡張し、2002年と2017年にそれぞれノーベル経済学賞が授与された。',
-    keyFigures: 'Daniel Kahneman ／ Amos Tversky ／ Richard Thaler',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/1914185', type: 'academic', label: 'Kahneman, D. & Tversky, A. (1979). Prospect Theory: An Analysis of Decision under Risk. Econometrica, 47(2), 263–291.' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2002/kahneman/lecture/', type: 'reference', label: 'Kahneman, D. (2002). Maps of Bounded Rationality: A Perspective on Intuitive Judgment and Choice. Nobel Prize Lecture.' },
-      { url: 'https://doi.org/10.1287/mnsc.1070.0843', type: 'academic', label: 'Thaler, R. H. (2008). Mental Accounting and Consumer Choice. Marketing Science, 27(1), 15–25.' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/lecture/', type: 'reference', label: 'Thaler, R. H. (2017). From Cashews to Nudges: The Evolution of Behavioral Economics. Nobel Prize Lecture.' },
     ],
   },
   {
@@ -28970,25 +28909,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/1907353', type: 'academic', label: 'Arrow, K.J. & Debreu, G. 1954. Existence of an Equilibrium for a Competitive Economy. Econometrica, 22(3), 265-290.' },
       { url: 'https://en.wikipedia.org/wiki/General_equilibrium_theory', type: 'reference', label: 'Wikipedia: General equilibrium theory.' },
       { url: 'https://en.wikipedia.org/wiki/Sonnenschein%E2%80%93Mantel%E2%80%93Debreu_theorem', type: 'reference', label: 'Wikipedia: Sonnenschein-Mantel-Debreu theorem.' },
-    ],
-  },
-  {
-    id: 'human-cognitive-dissonance-festinger',
-    discipline: 'human-science',
-    title: '認知的不協和理論（フェスティンガー）',
-    statement: 'レオン・フェスティンガーが1957年の著書『認知的不協和の理論』（Stanford ' +
-      'University Press）で提唱した社会心理学の基礎理論。個人が矛盾する認知（信念・' +
-      '態度・行動の知識）を同時に保持すると心理的不快感（不協和）が生じ、その低減に' +
-      '向けて態度変容・行動変容・認知の追加や重要性の変更といった方略が動機づけられると' +
-      '説く。1959年のフェスティンガー&カールスミスの実験（1ドル対20ドル条件）は、不十分' +
-      'な正当化が態度変容を促すことを実証した古典的研究である。アロンソンは自己一貫性' +
-      'モデルへと理論を発展させ、クーパー&ファジオは覚醒の役割を精緻化した。',
-    keyFigures: 'レオン・フェスティンガー ／ ジェームズ・カールスミス ／ エリオット・アロンソン ／ ジョエル・クーパー',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://psycnet.apa.org/record/1993-97948-000', type: 'academic', label: 'Festinger, L. 1957. A Theory of Cognitive Dissonance. Stanford University Press.' },
-      { url: 'https://psycnet.apa.org/doi/10.1037/h0042519', type: 'academic', label: 'Festinger, L. & Carlsmith, J.M. 1959. Cognitive Consequences of Forced Compliance. Journal of Abnormal and Social Psychology, 58(2), 203-210.' },
-      { url: 'https://doi.org/10.1016/S0065-2601(08)60121-5', type: 'academic', label: 'Cooper, J. & Fazio, R.H. 1984. A New Look at Dissonance Theory. Advances in Experimental Social Psychology, 17, 229-266.' },
     ],
   },
   {
@@ -39911,12 +39831,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'management',
     title: '戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性',
     statement: '戦略的要素市場（Strategic Factor Markets）理論は、バーニーが1986年に提唱した概念であり、企業が戦略の実行に必要な資源を獲得する市場（要素市場）の特性が、当該戦略から正常以上のリターン（レント）を獲得できるかどうかを決定するという理論である。もし要素市場が完全競争的であれば、資源の価格はその戦略的価値を正確に反映するため、資源の獲得から超過リターンを得ることは不可能となる。企業が持続的な競争優位を獲得できるのは、要素市場が不完全な場合——すなわち、一部の企業が資源の真の価値についてより正確な情報（期待）を持つか、幸運（luck）によって資源を過小評価された価格で獲得できた場合——に限られる。この分析は資源ベース理論（RBV）の理論的基盤を提供し、ディエリクスとクールの「資源蓄積」論と並んで、模倣困難性と持続的競争優位の関係を明確化した。',
-    keyFigures: 'ジェイ・バーニー ／ イングマー・ディエリクス ／ カレル・クール ／ リチャード・ルメルト',
+    keyFigures: 'ジェイ・バーニー ／ バーガー・ワーナーフェルト ／ イングマー・ディエリクス ／ カレル・クール ／ リチャード・ルメルト',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1287/mnsc.32.10.1231', type: 'academic', label: 'Barney (1986) Strategic Factor Markets: Expectations, Luck, and Business Strategy — Management Science' },
       { url: 'https://doi.org/10.1287/mnsc.35.12.1504', type: 'academic', label: 'Dierickx & Cool (1989) Asset Stock Accumulation and Sustainability of Competitive Advantage — Management Science' },
       { url: 'https://en.wikipedia.org/wiki/Resource-based_view', type: 'reference', label: 'Wikipedia: Resource-based view — 資源ベース理論と戦略的要素市場の概説' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/014920639101700108', type: 'academic', label: 'Barney (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250050207', type: 'academic', label: 'Wernerfelt (1984) A Resource-Based View of the Firm — Strategic Management Journal 5(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_factor_market', type: 'reference', label: 'Wikipedia: Strategic factor market' },
     ],
   },
   {

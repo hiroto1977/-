@@ -34,7 +34,7 @@ Owen Roberts ／ Asa S. Herzog ／ Joel B. Zweibel ／ Rafael I. Pardo ／ Steve
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 語彙が近い
 - [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有

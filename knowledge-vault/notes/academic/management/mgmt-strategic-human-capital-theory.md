@@ -33,9 +33,9 @@ Russell W. Coff ／ Robert E. Ployhart ／ Timothy R. Moliterno ／ Patrick M. W
 - [Barney & Wright (1998) On becoming a strategic partner — Human Resource Management](https://doi.org/10.1002/smj.4250171109) `学術`
 
 ## 関連概念
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 同じ思想家
 - [[mgmt-strategic-human-capital|戦略的人的資本論]] — 同じ思想家
 - [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]] — 同分野の近傍
+- [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — 同分野の近傍
 - [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
 
 ## 関連

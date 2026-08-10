@@ -37,7 +37,7 @@ Sampsell v. Imperial Paper & Color Corp. (1941) ／ In re Augie/Restivo Baking C
 - [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
 - [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有

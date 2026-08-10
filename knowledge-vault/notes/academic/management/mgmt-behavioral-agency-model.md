@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 
 ## 関連

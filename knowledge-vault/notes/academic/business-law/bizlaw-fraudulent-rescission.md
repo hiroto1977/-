@@ -34,7 +34,7 @@ aliases:
 - [[bizlaw-creditor-subrogation|債権者代位権（民法423条）]] — 語彙が近い
 - [[bizlaw-pledge|質権（民法342条）]] — 出典を共有
 - [[bizlaw-set-off|相殺（民法505条）]] — 出典を共有
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同分野の近傍
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同分野の近傍
 - [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]] — 同分野の近傍
 
 ## 関連

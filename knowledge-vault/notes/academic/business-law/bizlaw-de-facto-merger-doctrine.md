@@ -33,8 +33,8 @@ Jan G. Deutsch／Walter Rand III／W. B. Davis
 ## 関連概念
 - [[mgmt-matrix-organization|マトリックス組織]] — 同じ思想家
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 同分野の近傍
 - [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同分野の近傍
+- [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 同分野の近傍
 - [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 同分野の近傍
 
 ## 関連

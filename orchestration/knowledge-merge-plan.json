@@ -352,5 +352,53 @@
         "action": "本文を Pentland & Rueter (1994) の文法モデル固有のレーンへ書き換え（F&P 2003 の要約の重複を解消し、94年論文の実証と Routine Dynamics への系譜として位置づけ）。routines-theory / feldman-pentland との 3 ペアを DISTINCT 登録。"
       }
     ]
+  },
+  "pass14": {
+    "appliedAt": "2026-08-10",
+    "note": "パス13 に続く EQUAL 衝突の第2弾 6 統合。今回も薄い側で誤実体 DOI を 2 件検出（Barney 1986 SFM に SMJ の DOI＝実体は Management Science 32(10) で keep 側が正 / Thaler の Mental Accounting に mnsc（Management Science）の DOI＝Marketing Science は mksc）。いずれも移送せず drop ごと落とした。適用時の教訓: 同一の Wikipedia 出典行が姉妹エントリにも存在して 3 行ブロックのアンカーが多重一致 → **一意な出典行（York classics 等）をアンカーにする**。スクリプトは原子的（最後に書く）なので途中 assert 失敗時は全ロールバック＝再適用は先頭から。",
+    "merges": [
+      {
+        "keep": "bizlaw-fraudulent-conveyance-doctrine",
+        "drop": "bizlaw-fraudulent-conveyance",
+        "reason": "同一法理（1571年エリザベス法起源・UVTA・Baird&Jackson）。keep は actual/constructive の二類型・LBO・日本法424条まで持つ充実版。",
+        "migrate": "11 U.S.C. §548 の LII 条文リンク（government）と Baird&Jackson 1985 の Vanderbilt リポジトリ本文リンクを出典へ（keep の JSTOR DOI 724036 は実体未確定のため並置で補強）。LII Wex と ULC の重複 URL は移送しない。",
+        "provenanceDelta": "keep src 5→7 / gov 1→2。減少なし。"
+      },
+      {
+        "keep": "econ-loanable-funds",
+        "drop": "econ-loanable-funds-theory",
+        "reason": "同一の利子論（ヴィクセル系譜・流動性選好との対立）。keep は需給メカニズムとクラウディングアウトの詳説を持つ。",
+        "migrate": "ヴィクセルの自然利子率の概念句を本文へ、INET の実証批判ペーパーを出典へ。ResearchGate ホスティングは移送しない。",
+        "provenanceDelta": "keep src 3→4 / 本文 +約80字。減少なし。"
+      },
+      {
+        "keep": "mgmt-strategic-factor-markets-barney",
+        "drop": "mgmt-strategic-factor-markets",
+        "reason": "同一理論。keep は Barney 1986 の正しい Management Science DOI（mnsc.32.10.1231）と Dierickx&Cool を持つ。drop の Barney 1986 は SMJ の DOI（smj.4250070306）で実体不一致。",
+        "migrate": "Barney 1991 JoM・Wernerfelt 1984 SMJ・Wikipedia: Strategic factor market を出典へ、Wernerfelt を keyFigures へ。誤実体の smj.4250070306 は移送しない。",
+        "provenanceDelta": "keep src 3→6。減少なし。"
+      },
+      {
+        "keep": "econ-behavioral-finance",
+        "drop": "econ-behavioral-finance-kahneman",
+        "reason": "フィールド総論と基礎理論紹介の同一レーン重複（プロスペクト理論は human-prospect-theory が専用エントリとして別在）。",
+        "migrate": "K&T 1979 Econometrica の JSTOR・Kahneman 2002 / Thaler 2017 の Nobel Lecture を出典へ。Thaler Mental Accounting の mnsc DOI（Marketing Science は mksc のはず）は実体未確定で移送しない。",
+        "provenanceDelta": "keep src 4→7。減少なし。"
+      },
+      {
+        "keep": "econ-fiscal-multiplier",
+        "drop": "econ-fiscal-multiplier-theory",
+        "reason": "総論同士の重複（Kahn 1931 → Keynes 1936・1/(1−MPC)・実証論争を共有）。fiscal-multiplier-* の各論ファミリー（keynes/AG/crowding-out 等）は既存レーンとして維持。",
+        "migrate": "Blanchard&Leigh 2013 の予測誤差の知見を本文へ、IMF WP/13/1 と Kahn 1931 JSTOR（書誌が完全一致）を出典へ。日本語版 Wikipedia は keep が英語版を保有するため移送しない。",
+        "provenanceDelta": "keep src 4→6 / 本文 +約120字。減少なし。"
+      },
+      {
+        "keep": "human-cognitive-dissonance",
+        "drop": "human-cognitive-dissonance-festinger",
+        "reason": "同一理論の総論同士（1957・F&C 1959 を共有）。",
+        "migrate": "アロンソン自己一貫性・Cooper&Fazio 1984 New Look の展開を本文へ、PsycNet の 1957 書誌 / h0042519 / AESP 17 の DOI を出典へ、Aronson・Cooper&Fazio を keyFigures へ。",
+        "provenanceDelta": "keep src 3→6 / 本文 +約110字。減少なし。"
+      }
+    ]
   }
 }

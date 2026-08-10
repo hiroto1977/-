@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Fiscal multiplier — 財政乗数の理論と実証的推定](https://en.wikipedia.org/wiki/Fiscal_multiplier) `リファレンス`
 
 ## 関連概念
+- [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]] — 語彙が近い
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
@@ -38,7 +39,6 @@ aliases:
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同じ思想家
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
 - [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同じ思想家
-- [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]] — 同じ思想家
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
 

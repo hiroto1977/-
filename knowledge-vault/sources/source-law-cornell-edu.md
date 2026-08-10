@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 149
+cite_count: 148
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **149 件**（リファレンス 125 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **148 件**（リファレンス 124 ・ 公的 23 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -82,8 +82,7 @@ tags:
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — CornellLIIWex:Forcemajeure—superiorforce,contractualclause,ActofGod
 - [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — CornellLawSchoolLII—ForumNonConveniens(Wexlegalencyclopedia)
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — CornellLII—ForumSelectionClause(WexLegalEncyclopedia)
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 11U.S.C.§548—BankruptcyCodefraudulenttransfers
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — CornellLII:FraudulentConveyancedefinition
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 11U.S.C.§548—BankruptcyCodefraudulenttransfers（連邦破産法548条）
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — CornellLIIWex:Frustrationofpurpose—superveningevent,Restatement(Secon…
 - [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — CornellLIIWex:Breachofcontract—material/fundamentalbreach,termination…
 - [[bizlaw-general-average|共同海損——共通の危険を逃れるための犠牲を全関係者で分担する海法]] — CornellLIIWex:Generalaverage—maritimelaw,sacrificeforcommonsafety,pro…
