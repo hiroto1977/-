@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同分野の近傍
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
-- [[infosoc-echo-chamber-polarization|エコーチェンバーと政治的分極化：選択的情報接触とアルゴリズム的フィルタリングが招く自己強化的意見分断]] — 同分野の近傍
 - [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
+- [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

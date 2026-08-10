@@ -40,7 +40,6 @@ ICSID条約（1965 第26条での逆転規定）／国際法委員会（ILC外�
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
 - [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有
-- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

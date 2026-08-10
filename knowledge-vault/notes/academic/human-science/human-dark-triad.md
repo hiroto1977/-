@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 同分野の近傍
-- [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]] — 同分野の近傍
 - [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同分野の近傍
 
 ## 関連

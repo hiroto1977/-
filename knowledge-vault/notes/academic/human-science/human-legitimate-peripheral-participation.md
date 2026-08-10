@@ -31,7 +31,7 @@ aliases:
 - [Jean Lave, Etienne Wenger and communities of practice — infed.org（成人教育系の解説リファレンス）](https://infed.org/dir/welcome/jean-lave-etienne-wenger-and-communities-of-practice/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 語彙が近い
+- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同じ思想家
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同じ思想家
 - [[mgmt-tuckman-stages|タックマンのチーム発達段階モデル]] — 出典を共有

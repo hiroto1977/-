@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Commons-based peer production — CBPPの概要](https://en.wikipedia.org/wiki/Commons-based_peer_production) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 語彙が近い
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
 - [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
+- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

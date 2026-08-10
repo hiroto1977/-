@@ -33,8 +33,8 @@ Cory Doctorow（Pluralistic / Wired, 2022-2023, 造語者）／American Dialect 
 - [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 出典を共有
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 出典を共有
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
-- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同分野の近傍
+- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

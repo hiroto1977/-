@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
 - [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
-- [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 同分野の近傍
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
 
 ## 関連

@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同分野の近傍
+- [[bizlaw-caparo-v-dickman|カパロ対ディックマン——過失責任における「注意義務」の三段階テスト]] — 同分野の近傍
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
 
 ## 関連

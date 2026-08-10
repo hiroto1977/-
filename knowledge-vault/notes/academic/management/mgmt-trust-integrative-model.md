@@ -32,7 +32,7 @@ Mayer, Roger C.（1995年 An Integrative Model of Organizational Trust）／Davi
 
 ## 関連概念
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同分野の近傍
-- [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
+- [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

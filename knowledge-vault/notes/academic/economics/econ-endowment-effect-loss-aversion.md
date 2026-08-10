@@ -34,7 +34,7 @@ Richard Thaler ／ Daniel Kahneman ／ Amos Tversky
 ## 関連概念
 - [[human-endowment-effect|保有効果（授かり効果）]] — 語彙が近い
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 語彙が近い
-- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 語彙が近い
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
 - [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同分野の近傍

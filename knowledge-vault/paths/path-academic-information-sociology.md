@@ -13,14 +13,13 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 71）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 39）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 72）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 40）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 24）
-- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
-- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 23）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 23）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
@@ -28,6 +27,7 @@ tags:
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -88,7 +88,6 @@ tags:
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
-- 1964年: [[infosoc-information-overload|情報過多（情報オーバーロード）]]
 - 1964年: [[infosoc-technological-sublime|テクノロジカル・サブライム（技術的崇高）]]
 - 1965年: [[infosoc-moores-law|ムーアの法則]]
 - 1965年: [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]]
@@ -372,6 +371,7 @@ tags:
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]]
 - [[infosoc-digital-citizenship|デジタル・シティズンシップ]]
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]]
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]
 - [[infosoc-digital-detox-syvertsen|デジタルデトックス論——テクノロジーからの意図的離脱の社会学]]
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]]
 - [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]]

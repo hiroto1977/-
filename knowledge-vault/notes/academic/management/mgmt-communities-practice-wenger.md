@@ -33,7 +33,6 @@ aliases:
 - [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 語彙が近い
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
-- [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 同分野の近傍
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同分野の近傍
 - [[mgmt-middle-up-down-management-nonaka|ミドル・アップダウン・マネジメント（野中郁次郎）]] — 同分野の近傍
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 同分野の近傍

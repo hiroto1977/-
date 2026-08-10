@@ -41,6 +41,7 @@ Elinor Ostrom ／ Charlotte Hess ／ Yochai Benkler ／ Lawrence Lessig
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
 - [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同分野の近傍
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同分野の近傍
 - [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同分野の近傍
 
 ## 関連

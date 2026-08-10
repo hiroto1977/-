@@ -17,17 +17,17 @@ tags:
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 48）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 30）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
-- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 - [[bizlaw-toushiho|出資法]]（接続 25）
+- [[bizlaw-agency|代理（民法99条）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -296,7 +296,6 @@ tags:
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]]
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]]
-- [[bizlaw-agency|代理（民法99条）]]
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]]
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]]
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]
@@ -496,6 +495,7 @@ tags:
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]]
 - [[bizlaw-implied-terms|黙示の契約条項——当事者が明示せずとも契約に読み込まれる条項]]
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]]
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]]
 - [[bizlaw-incoterms|インコタームズ——国際売買における売主と買主の責任を定める定型取引条件]]

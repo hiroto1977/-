@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
-- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同分野の近傍
+- [[mgmt-talent-management-strategy|タレントマネジメント戦略と人材の識別・開発・維持の組織論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

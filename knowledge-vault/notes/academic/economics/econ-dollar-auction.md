@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[econ-auction-theory|オークション理論]] — 同分野の近傍
 - [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同分野の近傍
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

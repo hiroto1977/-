@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 46）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
@@ -26,8 +26,8 @@ tags:
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 31）
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -127,7 +127,6 @@ tags:
 - 1931年: [[econ-gibrat-law|ジブラの法則]]
 - 1931年: [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]]
 - 1931年: [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]]
-- 1933年: [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
 - 1933年: [[econ-monopolistic-competition|独占的競争]]
 - 1933年: [[econ-pigou-effect|ピグー効果（実質残高効果）]]
@@ -952,6 +951,7 @@ tags:
 - [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]]
 - [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]]
 - [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]]
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]
 - [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]]
 - [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]]
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]]

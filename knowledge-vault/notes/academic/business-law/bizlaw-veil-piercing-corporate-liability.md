@@ -35,7 +35,7 @@ aliases:
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
-- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
+- [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

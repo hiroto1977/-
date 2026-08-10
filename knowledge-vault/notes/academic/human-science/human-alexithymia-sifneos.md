@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]] — 語彙が近い
 - [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]] — 語彙が近い
-- [[human-dark-triad|ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
