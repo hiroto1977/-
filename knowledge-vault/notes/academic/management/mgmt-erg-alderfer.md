@@ -36,7 +36,7 @@ ERG理論は、心理学者クレイトン・アルダーファーが1969年の�
 - [[mgmt-competency|コンピテンシー]] — 同じ思想家
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
 - [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

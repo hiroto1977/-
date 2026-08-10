@@ -35,7 +35,6 @@ aliases:
 - [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — 語彙が近い
 - [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 語彙が近い
 - [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同じ思想家
-- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

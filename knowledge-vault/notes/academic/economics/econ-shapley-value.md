@@ -32,6 +32,7 @@ aliases:
 - [ScienceDirect Topics — Shapley Value overview](https://www.sciencedirect.com/topics/economics-econometrics-and-finance/shapley-value) `学術`
 
 ## 関連概念
+- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 語彙が近い
 - [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
 - [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
@@ -39,9 +40,7 @@ aliases:
 - [[econ-shapley-folkman-lemma|シャプリー＝フォルクマンの補題——多数の和は近似的に凸になる]] — 同じ思想家
 - [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
 - [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 出典を共有
-- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同分野の近傍
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
-- [[econ-financial-repression|金融抑圧]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

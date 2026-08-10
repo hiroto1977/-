@@ -32,11 +32,10 @@ Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca
 
 ## 関連概念
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 語彙が近い
+- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 語彙が近い
 - [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
 - [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
-- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同分野の近傍
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — 同分野の近傍
-- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

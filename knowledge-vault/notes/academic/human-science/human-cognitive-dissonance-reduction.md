@@ -31,7 +31,7 @@ Leon Festinger ／ James M. Carlsmith ／ Elliot Aronson ／ Joel Cooper ／ Rus
 - [Wikipedia — Cognitive dissonance](https://en.wikipedia.org/wiki/Cognitive_dissonance) `リファレンス`
 
 ## 関連概念
-- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同分野の近傍
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 語彙が近い
 - [[human-effort-justification|努力の正当化]] — 同分野の近傍
 - [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同分野の近傍
 

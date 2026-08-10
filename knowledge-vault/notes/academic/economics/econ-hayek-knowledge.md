@@ -31,8 +31,8 @@ F.ハイエク「社会における知識の利用」1945(American Economic Revi
 - [Econlib — 原文「The Use of Knowledge in Society」(1945) 全文](https://www.econlib.org/library/Essays/hykKnw.html) `リファレンス`
 
 ## 関連概念
-- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同分野の近傍
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

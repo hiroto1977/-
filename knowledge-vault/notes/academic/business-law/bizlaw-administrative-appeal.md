@@ -31,8 +31,8 @@ aliases:
 - [総務省 行政不服審査会](https://www.soumu.go.jp/main_sosiki/singi/fufukushinsa/index.html) `公的`
 
 ## 関連概念
-- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
 - [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
