@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * 財務系ページのレンダー回帰テスト。
  *
@@ -16,7 +15,7 @@ import { SERVICES } from '../../services';
 
 beforeAll(() => {
   // render 中は触れないが、念のため window.serviceHub を最小スタブしておく。
-  (window as unknown as { serviceHub: unknown }).serviceHub = {
+  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
     getVersion: () => Promise.resolve('0.1.0-web'),
     listConfigured: () => Promise.resolve([]),
     fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),

@@ -408,6 +408,24 @@ Stryker は「どのテストも落ちなかった」＝**生存**として数�
 
 ## 未解決 follow-up (優先度順)
 
+### ⚡ jsdom は要るファイルだけに（2026-08・テスト 57.5 → 49 秒）
+`@vitest-environment jsdom` は **1 ファイルあたり約 0.65 秒**の環境生成を払う。
+`pool: 'forks'` + `isolate: true` なのでファイルごとに毎回かかり、共有されない。
+
+ところが `.render.test.ts` の多くは `renderToStaticMarkup` で文字列を作るだけで
+DOM を触っていなかった。28 ファイル中 **12 ファイル**が該当（`webauthn.test.ts` は
+`vi.stubGlobal('window', …)` で自前のグローバルを作っていたので最初から不要だった）。
+外した結果 `npm test` が **57.5 → 49 秒**、環境生成 19.0 → 10.5 秒。
+
+ブリッジのスタブが要るだけなら `window` ではなく **`globalThis`** に置けば DOM 環境は要らない
+（`renderToStaticMarkup` は effect を走らせないので、そもそも保険でしかない）。
+
+**戻り防止**: `lint:test-coverage` に `needless-jsdom` 検査を足した。
+文字列とコメントを落としたうえで DOM グローバルの出現を見るので、
+`vi.stubGlobal('window', …)` のように名前が文字列の中にしか無いものも検出できる。
+新しいレンダーテストは既存ファイルのコピーで作られ pragma も一緒に写経されるため、
+機械で見張らないと必ず戻る。
+
 ### 🖱 Cursor 連携で決めたこと（2026-08）
 `cursor` をサービス #73 として追加した（`src/main/clients/cursor.ts`）。設計判断を残す。
 

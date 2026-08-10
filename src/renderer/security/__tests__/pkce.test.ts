@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 import { describe, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {

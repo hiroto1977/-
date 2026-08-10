@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * StatusBar / Section コンポーネントのレンダー回帰・props 分岐テスト。
  *
@@ -14,7 +13,7 @@ import { StatusBar, Section } from '../StatusBar';
 
 beforeAll(() => {
   // renderToStaticMarkup では useEffect は動かないが、型整合のために最小スタブを設定。
-  (window as unknown as { serviceHub: unknown }).serviceHub = {
+  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
     oauthSupported: () => Promise.resolve(false),
     setToken: () => Promise.resolve(),
     clearToken: () => Promise.resolve(),

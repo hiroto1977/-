@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * FinancialAnalysis の税カード内「消費税の概算」ブロックのレンダー検証。
  *

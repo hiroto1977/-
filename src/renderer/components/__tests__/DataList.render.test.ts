@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * DataList コンポーネントのレンダー回帰テスト。
  *

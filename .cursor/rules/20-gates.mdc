@@ -28,6 +28,14 @@ renderer や起動性能を触ったら手元で回す。
 ユニットテスト数などの指標は `verify:arch` が実測と突き合わせる。
 アーキテクチャを変えたら `ARCHITECTURE.md` も直す。数字がずれたまま出せない。
 
+## テストの環境
+
+`@vitest-environment jsdom` は 1 ファイルあたり約 0.65 秒の環境生成を払う
+（`pool: 'forks'` + `isolate: true` なのでファイルごとに毎回）。
+`renderToStaticMarkup` で文字列を作るだけのレンダーテストには要らない。
+ブリッジのスタブが要るだけなら `window` ではなく `globalThis` に置く。
+`lint:test-coverage` の `needless-jsdom` が、宣言しているのに DOM を触らないファイルを落とす。
+
 ## mutation testing
 
 `stryker.config.json` の `mutate` に載っているモジュールは **100%** を維持する
