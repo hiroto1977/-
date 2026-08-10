@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同分野の近傍
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
 - [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 同分野の近傍
+- [[mgmt-institutional-isomorphism|制度的同型化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

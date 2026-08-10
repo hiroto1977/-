@@ -38,9 +38,9 @@ aliases:
 - [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同じ思想家
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
+- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 同じ思想家
 - [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同じ思想家
 - [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
-- [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

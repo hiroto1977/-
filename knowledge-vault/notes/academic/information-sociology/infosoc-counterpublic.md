@@ -37,8 +37,8 @@ aliases:
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同分野の近傍
-- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 同分野の近傍
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同分野の近傍
+- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 同分野の近傍
 - [[infosoc-third-place|サードプレイス]] — 同分野の近傍
 
 ## 関連

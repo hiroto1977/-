@@ -34,8 +34,8 @@ aliases:
 - [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
 - [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 出典を共有
-- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同分野の近傍
 - [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 同分野の近傍
+- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同じ思想家
 - [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 出典を共有
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 出典を共有
-- [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 同分野の近傍
+- [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

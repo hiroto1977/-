@@ -40,7 +40,7 @@ aliases:
 - [[human-microaggression|マイクロアグレッション]] — 出典を共有
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
 - [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
-- [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]] — 同分野の近傍
+- [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

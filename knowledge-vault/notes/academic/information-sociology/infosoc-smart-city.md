@@ -36,11 +36,11 @@ aliases:
 - [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — 出典を共有
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
 - [[human-narrative-therapy|ナラティブ・セラピー]] — 出典を共有
+- [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 出典を共有
 - [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 出典を共有
 - [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — 出典を共有
 - [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 出典を共有
 - [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 出典を共有
-- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2188
+cite_count: 2187
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2188 件**（学術 2180 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（学術 2179 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1573,7 +1573,6 @@ tags:
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — Scholz&Schneider(2017)OurstoHackandtoOwn:TheRiseofPlatformCooperativi…
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — Parker&VanAlstyne2005—Two-SidedNetworkEffects:ATheoryofInformationPro…
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — Rochet&Tirole2003—PlatformCompetitioninTwo-SidedMarkets,JournaloftheE…
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — Rochet&Tirole2003—PlatformCompetitioninTwo-SidedMarkets,JournaloftheE…
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — Eisenmann,T.,Parker,G.&VanAlstyne,M.(2006)StrategiesforTwo-SidedMarke…
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — Eisenmann,T.,Parker,G.&VanAlstyne,M.(2011)PlatformEnvelopment—Strateg…
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — Gillespie,T.(2010)Thepoliticsof"platforms"—NewMedia&Society12(3),347–…

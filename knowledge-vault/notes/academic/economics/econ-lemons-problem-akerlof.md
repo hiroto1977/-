@@ -33,7 +33,6 @@ George A. Akerlof ／ Michael Spence ／ Joseph E. Stiglitz
 ## 関連概念
 - [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 語彙が近い
 - [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
-- [[infosoc-information-asymmetry|情報の非対称性（逆選択・モラルハザード）]] — 分野横断
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家

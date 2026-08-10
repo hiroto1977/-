@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-digital-humanities-mccarty|デジタル・ヒューマニティーズ——マッカーシーの計算的モデリングと人文知の変容]] — 同分野の近傍
 - [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同分野の近傍
+- [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

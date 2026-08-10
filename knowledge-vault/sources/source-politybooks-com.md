@@ -15,7 +15,7 @@ tags:
 ## このドメインを出典とする項目
 
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — PolityPress—PlatformCapitalism（原著出版社・書誌）
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — Srnicek2016—PlatformCapitalism,PolityPress
+- [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — Srnicek2016—PlatformCapitalism,PolityPress
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — PolityBooks—Srnicek,PlatformCapitalism(2017)
 
 ## 関連

@@ -31,8 +31,8 @@ aliases:
 - [Abernathy, W.J. (1978). The Productivity Dilemma: Roadblock to Innovation in the Automobile Industry. Johns Hopkins University Press.](https://jhupbooks.press.jhu.edu/title/productivity-dilemma) `リファレンス`
 
 ## 関連概念
-- [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同分野の近傍
 - [[mgmt-stage-gate|ステージゲート法]] — 同分野の近傍
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
 - [[mgmt-lead-user|リードユーザー法]] — 同分野の近傍
 - [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同分野の近傍
 
