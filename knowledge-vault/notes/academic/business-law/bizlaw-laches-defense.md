@@ -39,7 +39,6 @@ Samuel L. Bray ／ John Norton Pomeroy ／ Dan B. Dobbs
 - [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 出典を共有
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 出典を共有
 - [[bizlaw-disgorgement-remedy|吐出し命令——不正利得の剥奪的救済と抑止機能]] — 同分野の近傍
-- [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

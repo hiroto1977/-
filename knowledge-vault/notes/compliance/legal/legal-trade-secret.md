@@ -37,6 +37,7 @@ aliases:
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 同分野の近傍
 - [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 同分野の近傍
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

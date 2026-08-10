@@ -19,6 +19,8 @@
  * ネットワーク / ファイル / Date.now / 乱数は一切使わない純粋関数のみ。
  */
 
+import { floorHundred } from './num';
+
 // --- 自動車税種別割: 排気量の階段表 (令和元年10月1日以降 新規登録の自家用乗用車) -----
 
 /** 自動車税種別割の階段表の 1 ブラケット (排気量上限 cc と年税額 円)。 */
@@ -221,6 +223,3 @@ export function monthlyProratedAutomobileTax(annualTax: number, registeredMonth:
 // --- 内部ヘルパ ----------------------------------------------------------
 
 /** 税額の 100 円未満を切り捨てる (地方税の端数処理)。 */
-function floorHundred(tax: number): number {
-  return Math.floor(tax / 100) * 100;
-}

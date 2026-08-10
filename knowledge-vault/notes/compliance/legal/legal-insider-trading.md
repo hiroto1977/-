@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
 - [[eh-1978|1978年（昭和53年）]] — 出典を共有
-- [[legal-external-transmission|電気通信事業法の外部送信規律]] — 同分野の近傍
-- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 同分野の近傍
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 同分野の近傍
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -34,7 +34,6 @@ aliases:
 - [[eh-1996|1996年（平成8年）]] — 出典を共有
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 同分野の近傍
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 同分野の近傍
-- [[tax-crypto-asset-valuation|法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

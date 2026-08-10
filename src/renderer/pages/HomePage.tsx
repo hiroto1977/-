@@ -1,3 +1,4 @@
+import { navigateTo } from '../navigate';
 import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { useServiceData } from '../hooks/useServiceData';
@@ -123,10 +124,6 @@ type Status =
   | { kind: 'busy' }
   | { kind: 'done'; path: string }
   | { kind: 'error'; message: string };
-
-function navigateTo(serviceId: ServiceId) {
-  window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
-}
 
 function basename(p: string): string {
   const m = p.match(/[^/\\]+$/);

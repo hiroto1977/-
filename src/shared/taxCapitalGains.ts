@@ -14,11 +14,8 @@
  *   税額 = 課税譲渡所得 × (所得税率 × 1.021 + 住民税率)
  */
 
+import { yen } from './num';
 import { RECONSTRUCTION_SURTAX_RATE } from './taxCalc';
-
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /** 譲渡資産の区分。 */
 export type CapitalAssetKind =

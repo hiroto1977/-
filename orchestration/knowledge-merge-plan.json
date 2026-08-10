@@ -196,5 +196,32 @@
     "note": "「残作業は無いか徹底的に解析して」で実施した全体監査で発見した 1 ペアを統合。**既存の 2 系列の検出器がともにすり抜けていた** — titleCore は「データ化」vs「データフィケーション」で不一致 (同義語だが文字列が違う)、term-overlap も閾値 3000 未満。id を正規化すれば一発で並ぶので、恒久対策として idDedupeSuspects (人名の翻字ゆれ検出) を autopilot に新設した。負のコントロール (統合前の状態を模した入力で検出・裁定済み台帳で除外) を確認済み。",
     "provenanceDelta": "keep は src 4→4 / auth 4→4 / academic 2→2 / 本文 434→621 字。減少なし。",
     "newFindingOutsideGates": "10.2307/j.ctt1hj9w84 (Mayer-Schönberger & Cukier 2013 と誤記) の実体は Schonfeld, Bowen & Varian \"JSTOR: A History\"。**1 回しか引かれていない DOI は lint:citations では検出できない** (年の矛盾が生じないため)。単発誤 DOI は 2,449 件の引用の大半を占めるので、構造的な残作業として記録する。"
+  },
+  "pass8": {
+    "appliedAt": "2026-08-09",
+    "note": "enrich キューを消化した副作用で浮上した 1 ペアを統合。labor-working-conditions-disclosure の本文を 90 → 328 字へ増強したところ term-overlap が 3782 に上がり dedupeGraph が検出した。統合前は titleCore が「労働条件明示のルール（就業場所・業務の変更の範囲）」vs「労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）」で不一致、term-overlap も閾値未満ですり抜けていた。**薄い記述は重複検出そのものを鈍らせる** — 増強は情報量を増やすだけでなく、検出器の感度を上げる働きがある。",
+    "keep": "labor-working-conditions-disclosure",
+    "drop": "labor-working-condition-disclosure-2024",
+    "migrate": "drop 固有だった滋賀労働局の様式ページを keep の出典へ取り込み、それを支える 1 文（改正前の様式では追加された明示事項を満たせない旨）を本文に追加。タイトルは drop 側が持っていた施行日を取り込んで「労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）」に広げた。authority も drop 側の「労働基準局」を併記。",
+    "provenanceDelta": "keep は src 4→5 / government 4→5 / 本文 328→382 字。drop の 3 出典はすべて keep に含まれる（2 件は元から共通、1 件を移送）。減少なし。",
+    "verified": "2026-08-09 に mhlw.go.jp ドメインへ限定した検索で一次情報を再確認（労基則5条1項1号の3・更新上限・無期転換申込機会・職業安定法施行規則の改正）。"
+  },
+  "pass9": {
+    "appliedAt": "2026-08-09",
+    "note": "enrich 消化の副作用で浮上した 2 組目。tax-edenshocho を 83 → 401 字に増強したところ term-overlap が 3274 に上がり、tax-electronic-bookkeeping-etransaction と同一概念であることが露見した。どちらも「電子取引データの電子保存義務」で、片方が電帳法全体を指す曖昧な id、もう片方が概念どおりの id を持っていた。**薄い記述は重複検出を鈍らせる**（pass8 と同じ構図）。",
+    "keep": "tax-edenshocho",
+    "drop": "tax-electronic-bookkeeping-etransaction",
+    "migrate": "drop 側が持っていた精度を keep へ移送: タイトルを「電子取引データの電子保存義務（2024年1月〜）」に、authority を電子帳簿保存法第7条に、保存義務者の範囲（所得税・法人税に係る保存義務者が電子メールやEC等の電子取引で授受した場合）と「出力書面のみの保存は認められない」旨を本文へ。出典は国税庁「令和6年1月からの電子取引データの保存方法」を移送（drop 側のもう 1 件の一問一答は keep 側に同内容の現行 URL があるため、media 1 件とあわせて採らない）。",
+    "provenanceDelta": "keep は src 4→5 / government 4→5 / 本文 401→433 字。drop の government 2 件のうち 1 件を移送、1 件は keep の現行 URL と同内容、media 1 件は government で置き換え済み。減少なし。",
+    "verified": "2026-08-09 に nta.go.jp 限定の検索で一次情報を再確認（宥恕措置の終了と猶予措置への置換・真実性と可視性の要件・相当の理由とダウンロードの求め）。"
+  },
+  "pass10": {
+    "appliedAt": "2026-08-09",
+    "note": "enrich 消化で浮上した 3 組目（pass8・pass9 と同じ構図）。labor-dismissal-notice を 94 → 476 字に増強して20条・21条・除外認定を書き切ったところ、labor-dismissal-notice-exception を完全に包含し term-overlap 3868 で衝突した。**この3件で共通するのは「薄い記述どうしは語彙が少なすぎて重ならない」という性質**で、enrich キューの消化は増強と同時に重複検出の感度を上げる作業でもある。残りの enrich を進めるとさらに出てくると考えてよい。",
+    "keep": "labor-dismissal-notice",
+    "drop": "labor-dismissal-notice-exception",
+    "migrate": "タイトルを「解雇予告と適用除外・除外認定（労働基準法第20条・第21条）」へ広げ、drop 固有の出典 2 件（e-Gov電子申請の解雇予告除外認定申請・厚労省法令データの労基法20条21条）を keep へ移送。本文は keep が 21条の各類型（日雇い1か月・期間の定めはその期間・試用期間14日）まで具体的に書いており、drop 側に keep が持たない事実はない。",
+    "provenanceDelta": "keep は src 4→6 / government 4→6 / 本文 476→476 字。drop の 3 出典のうち 1 件は元から共通、2 件を移送。減少なし。",
+    "verified": "2026-08-09 に mhlw.go.jp 限定の検索で一次情報を再確認（20条1項の予告と手当・予告日は日数に不算入・除外認定の2事由と様式第3号・21条の4類型とそれぞれの継続使用要件・12条の平均賃金）。"
   }
 }

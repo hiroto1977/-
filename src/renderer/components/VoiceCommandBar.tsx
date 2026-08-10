@@ -11,6 +11,7 @@
  * 担い、判断ロジックは全て純粋核に委譲する。Web Speech 非対応環境では
  * graceful に「非対応」表示にフォールバックする。
  */
+import { navigateTo } from '../navigate';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
   INITIAL_VOICE_SESSION,
@@ -19,7 +20,7 @@ import {
   type VoiceSessionState,
 } from '../data/voiceSession';
 import type { AvailableCapabilities, VoiceIntent } from '../data/voiceCommand';
-import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
+import { SERVICE_IDS } from '../../shared/serviceId';
 import {
   isSpeechRecognitionSupported,
   startSpeechRecognition,
@@ -57,11 +58,6 @@ function describeIntent(intent: VoiceIntent): string {
     default:
       return '解釈できません';
   }
-}
-
-/** serviceId へ画面遷移する (App.tsx が listen している CustomEvent)。 */
-function navigateTo(serviceId: ServiceId): void {
-  window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
 /**

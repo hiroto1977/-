@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * VillagePage のレンダー回帰テスト。setInterval / window.serviceHub / 音声 API を
  * 使う複雑なページなので、render 時のクラッシュ（TDZ・undefined 参照）を SSR で捕捉する。

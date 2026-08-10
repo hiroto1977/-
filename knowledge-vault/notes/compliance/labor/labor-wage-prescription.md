@@ -32,9 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 語彙が近い
-- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 同分野の近傍
-- [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 同分野の近傍
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍
+- [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

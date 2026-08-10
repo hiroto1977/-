@@ -138,6 +138,13 @@ const FACTS = [
         pattern: /\*\*(\d+) 種類のサービス\*\*/,
         parse: (m) => Number(m[1]),
       },
+      {
+        // Cursor AI 向けのルール。CLAUDE.md と同じ前提を読ませるので、
+        // 数字がずれると 2 つのエージェントに違う前提を渡すことになる。
+        file: '.cursor/rules/00-project.mdc',
+        pattern: /\*\*(\d+) サービス\*\*/,
+        parse: (m) => Number(m[1]),
+      },
     ],
   },
   {

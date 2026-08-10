@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 48
+cite_count: 53
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **48 件**（公的 48）
+> [!info] 出典ドメイン索引 ・ 引用 **53 件**（公的 53）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,8 @@ tags:
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 栃木労働局事業場外みなし労働時間制（38条の2）
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 厚生労働省専門業務型裁量労働制の解説（令和6年改正対応）
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 栃木労働局裁量労働制（38条の3・38条の4）
-- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 厚生労働省鹿児島労働局解雇予告
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省和歌山労働局解雇の予告（第20条・第21条）
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省栃木労働局解雇の予告（第20条）
 - [[labor-dispatch-license|労働者派遣事業の許可制]] — 兵庫労働局許可制への切替案内
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 厚生労働省愛知労働局派遣の期間制限
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 和歌山労働局解雇理由・退職時の証明（22条）
@@ -44,20 +45,24 @@ tags:
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 青森労働局パワハラ対策義務化
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — 和歌山労働局賠償予定の禁止解説
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — 栃木労働局賠償予定の禁止（16条）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 厚生労働省大阪労働局よくあるご質問（退職・解雇・雇止め）
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 山口労働局安全衛生教育（59条・安衛則35条）
-- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省沖縄労働局法定帳簿
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省新潟労働局安全衛生管理体制のあらまし
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省沖縄労働局法定帳簿を整え保存する
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 厚生労働省東京労働局ストレスチェック制度の概要
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 山梨労働局振替休日と代休
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 石川労働局雇用保険（基本手当）Q&A
 - [[labor-variable-working-hours|変形労働時間制]] — 兵庫労働局労働時間
-- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省神奈川労働局賃金控除協定
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省神奈川労働局賃金控除に関する労使協定
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省福井労働局賃金控除に関する協定書（記載例）
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 宮崎労働局未払賃金の請求期間の延長
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 愛媛労働局女性活躍推進法行動計画・認定
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]] — 東京労働局業務災害について（業務遂行性・業務起因性）
+- [[labor-work-rules|就業規則の作成・届出義務]] — 厚生労働省栃木労働局就業規則の作成・変更・届出の義務（89条・90条・92条）
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 厚生労働省高知労働局各種保険
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 鳥取労働局労災給付の種類
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 神奈川労働局労災保険の特別加入制度
-- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 滋賀労働局令和6年4月から労働条件明示のルールが変わります
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 厚生労働省滋賀労働局令和6年4月からの労働条件通知書の様式
 - [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 静岡労働局労働時間の状況の把握義務
 - [[subsidy-human-resource-development|人材開発支援助成金]] — 新潟労働局職業訓練実施計画届様式
 - [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 大阪労働局就業促進手当（再就職手当）

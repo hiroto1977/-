@@ -39,8 +39,8 @@ aliases:
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
+- [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

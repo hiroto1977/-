@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
 - [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 同分野の近傍
 
 ## 関連

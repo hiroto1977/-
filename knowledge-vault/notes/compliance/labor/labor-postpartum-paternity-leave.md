@@ -35,6 +35,8 @@ aliases:
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 語彙が近い
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 分野横断
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 出典を共有
+- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 同分野の近傍
+- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 同分野の近傍
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 同分野の近傍
 
 ## 関連

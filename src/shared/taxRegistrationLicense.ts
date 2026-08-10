@@ -24,6 +24,8 @@
  * ネットワーク / ファイル / Date.now / 乱数は一切使わない純粋関数のみ。
  */
 
+import { floorHundred } from './num';
+
 // --- 不動産登記の本則税率 ------------------------------------------------
 
 /** 所有権移転 (売買) の本則税率 (登録免許税法 別表第一 一(二)ハ、20/1000)。 */
@@ -116,9 +118,6 @@ const COMPANY_TYPES: readonly CompanyType[] = ['kk', 'gk'];
  * 1,000 円に満たない場合は本来 1,000 円 (最低税額) だが、本モジュールは概算のため
  * 最低税額の補正は行わない (本則税率の切捨てのみを再現)。
  */
-function floorHundred(tax: number): number {
-  return Math.floor(tax / 100) * 100;
-}
 
 /**
  * 課税標準 / 資本金の入力検証。負値・非有限 (NaN / Infinity) は throw。

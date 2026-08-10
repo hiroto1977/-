@@ -36,8 +36,8 @@ aliases:
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
-- [[labor-standard-remuneration|標準報酬月額]] — 同分野の近傍
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 同分野の近傍
+- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

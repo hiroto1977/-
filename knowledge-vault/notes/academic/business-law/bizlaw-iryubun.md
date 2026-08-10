@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[tax-housing-fund-gift|直系尊属からの住宅取得等資金贈与の非課税特例]] — 語彙が近い
 - [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
-- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 241
+cite_count: 258
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **241 件**（公的 241）
+> [!info] 出典ドメイン索引 ・ 引用 **258 件**（公的 258）
 
 ## このドメインを出典とする項目
 
@@ -53,7 +53,9 @@ tags:
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 国税庁令和7年度税制改正による基礎控除の見直し
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 国税庁A1-8青色申告承認申請手続
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 国税庁No.2070青色申告制度
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁青色申告特別控除
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁No.2070青色申告制度
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁No.2072青色申告特別控除
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁青色申告特別控除（パンフレット）
 - [[tax-business-succession|法人版事業承継税制（特例措置）]] — 国税庁No.4148非上場株式等の相続税の納税猶予
 - [[tax-business-succession|法人版事業承継税制（特例措置）]] — 国税庁No.4439非上場株式等の贈与税の納税猶予（事業承継税制）
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 国税庁内国法人の外国関係会社に係る所得の課税の特例（制度の概要）
@@ -88,8 +90,10 @@ tags:
 - [[tax-delinquent-tax|国税の延滞税]] — 国税庁国税通則法基本通達第60条関係
 - [[tax-dependent-deduction|扶養控除]] — 国税庁No.1180扶養控除
 - [[tax-dependent-deduction|扶養控除]] — 国税庁令和7年度税制改正（所得要件の見直し）
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁A1-23減価償却資産の償却方法の変更承認申請手続
 - [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.2100減価償却のあらまし
-- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.5409償却方法の選定手続き
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.2106定額法と定率法による減価償却
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 国税庁No.5409減価償却資産の償却方法の選定手続き
 - [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 国税庁No.2100減価償却のあらまし
 - [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — 国税庁No.5404中古資産の耐用年数
 - [[tax-disability-deduction|所得税の障害者控除]] — 国税庁No.1160障害者控除
@@ -102,9 +106,11 @@ tags:
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1260政党等寄附金特別控除（税額控除）
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1145地震保険料控除
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1146地震保険料控除の対象契約
-- [[tax-edenshocho|電子帳簿保存法（電子取引データ保存）]] — 国税庁電子帳簿等保存制度特設サイト
-- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
-- [[tax-electronic-bookkeeping-etransaction|電子取引データの電子保存義務化（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答（電子取引関係）
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和5年度税制改正による電子帳簿保存法の改正事項
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子取引データを適切に保存できていますか
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答【電子取引関係】
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿等保存制度特設サイト
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁No.1410給与所得控除
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
@@ -114,7 +120,9 @@ tags:
 - [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁予定納税（第2期分）
 - [[tax-export-exemption|消費税の輸出免税]] — 国税庁No.6551輸出取引の免税
 - [[tax-export-exemption|消費税の輸出免税]] — 国税庁質疑応答事例輸出免税の適用者
-- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁主な国税の納期限
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁No.6137課税期間
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁No.6601消費税の申告と納税
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁主な国税の納期限（法定納期限）及び振替日
 - [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 国税庁申告と納税
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.1900給与所得者で確定申告が必要な人
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 国税庁No.1901同族会社役員で確定申告が必要な人
@@ -175,8 +183,10 @@ tags:
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁質疑応答特定新規設立法人の特例
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁No.5211役員に対する給与
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期同額給与
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁No.5211役員に対する給与
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法人税基本通達第7款退職給与
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法令解釈通達役員給与等
-- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁税務大学校論叢
+- [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁税務大学校論叢過大役員給与の損金不算入額算定
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁No.7456国外財産調書の提出義務
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁国外財産調書制度に関するお知らせ
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 国税庁国外財産調書及び財産債務調書の提出（QA）
@@ -224,8 +234,11 @@ tags:
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 国税庁No.5433中小企業投資促進税制（特別償却又は税額控除）
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1191配偶者控除
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1195配偶者特別控除
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁No.7130誤って納付した印紙税の還付
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁No.7131印紙税を納めなかったとき
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙を貼り付けなかった場合の過怠税
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙税不納付事実申出手続
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙税過誤納[確認申請・充当請求]手続
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁タックスアンサーNo.7100課税文書に該当するかどうかの判断
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁文書回答事例電磁的記録に関する印紙税の取扱い
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 福岡国税局注文請書を電子メール送信した場合の印紙税（具体事例）
@@ -243,8 +256,10 @@ tags:
 - [[tax-vehicle-weight-tax|自動車重量税]] — 国税庁No.7192自動車重量税のあらまし
 - [[tax-wage-increase-credit|賃上げ促進税制]] — 国税庁No.5927-2中小企業者等の賃上げ促進税制
 - [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 国税庁No.5927-2中小企業者等における賃上げ促進税制
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2110事業主が納める税金（源泉所得税）
 - [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2502源泉徴収義務者
-- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2505納付期限と納期の特例
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2505源泉所得税及び復興特別所得税の納付期限と納期の特例
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁源泉所得税の納期の特例の承認に関する申請
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2878国内源泉所得の範囲
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2880非居住者等に不動産の賃借料を支払ったとき
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2884非居住者等に対する源泉徴収の税率
@@ -253,8 +268,10 @@ tags:
 - [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 国税庁No.2505源泉所得税の納付期限と納期の特例
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 国税庁No.7411源泉徴収票の提出範囲
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 国税庁質疑応答事例源泉徴収票等の交付義務
+- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2662年末調整のしかた
 - [[tax-year-end-adjustment|年末調整]] — 国税庁No.2665年末調整の対象となる人
-- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2675年末調整の対象となる給与
+- [[tax-year-end-adjustment|年末調整]] — 国税庁No.2668年末調整の対象となる給与
+- [[tax-year-end-adjustment|年末調整]] — 国税庁年末調整とは（年末調整のしかた抜粋）
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

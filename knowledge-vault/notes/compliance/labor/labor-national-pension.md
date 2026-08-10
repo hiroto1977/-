@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-national-pension|国民年金法]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
-- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
+- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

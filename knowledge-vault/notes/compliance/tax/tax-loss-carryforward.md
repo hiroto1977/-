@@ -36,6 +36,7 @@ aliases:
 - [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 出典を共有
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 同分野の近傍
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

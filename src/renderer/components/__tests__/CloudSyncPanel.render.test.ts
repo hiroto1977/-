@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * CloudSyncPanel (round 85) のレンダー回帰テスト。
  *

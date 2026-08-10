@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * 税務試算ページ (TaxPage) のレンダー回帰テスト。
  *
@@ -19,7 +18,7 @@ import { TaxPage } from '../TaxPage';
 
 beforeAll(() => {
   // render 中は触れないが、念のため window.serviceHub を最小スタブしておく。
-  (window as unknown as { serviceHub: unknown }).serviceHub = {
+  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
     getVersion: () => Promise.resolve('0.1.0-web'),
     listConfigured: () => Promise.resolve([]),
     fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),

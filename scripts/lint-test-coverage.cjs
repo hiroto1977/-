@@ -48,6 +48,63 @@ function actionsOf(serviceId) {
   return [...m[1].matchAll(/['"]([a-z][a-z0-9-]*)['"]\s*:/gi)].map((x) => x[1]);
 }
 
+// ---------------------------------------------------------------------------
+// jsdom を宣言しているのに DOM を使っていないテストを検出する
+// ---------------------------------------------------------------------------
+
+/*
+ * `@vitest-environment jsdom` は 1 ファイルあたり約 0.65 秒の環境生成コストを払う。
+ * `pool: 'forks'` + `isolate: true` なのでファイルごとに毎回かかる。
+ *
+ * ところが `.render.test.ts` の多くは `renderToStaticMarkup` で文字列を作るだけで
+ * DOM を一切触らない。実測すると 28 ファイル中 11 ファイルが該当し、外すだけで
+ * `npm test` が 57.5 秒 → 49.5 秒（環境生成 19.0 秒 → 11.3 秒）になった。
+ *
+ * 新しいレンダーテストは既存ファイルをコピーして作られるので、この pragma も一緒に
+ * 写経される。放っておくと必ず戻るため機械で見張る。DOM を使っているなら宣言は正しい。
+ */
+const DOM_GLOBALS = /\b(document|window|localStorage|sessionStorage|indexedDB|navigator|location|HTMLElement|Element|Node|MutationObserver|IntersectionObserver|requestAnimationFrame|createRoot|fireEvent|screen)\b/;
+
+/** 行コメント・ブロックコメント・文字列リテラルを落として実コードだけ残す。 */
+function stripNonCode(text) {
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/\/\/[^\n]*/g, ' ')
+    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
+    .replace(/`(?:[^`\\]|\\.)*`/g, '``');
+}
+
+function walkTests(dir, out) {
+  if (!fs.existsSync(dir)) return out;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) walkTests(full, out);
+    else if (/\.test\.ts$/.test(e.name)) out.push(full);
+  }
+  return out;
+}
+
+function checkJsdomNeed(failures) {
+  const files = walkTests(path.join(REPO_ROOT, 'src'), []);
+  let checked = 0;
+  for (const file of files) {
+    const text = read(file);
+    if (!/@vitest-environment\s+jsdom/.test(text)) continue;
+    checked++;
+    if (DOM_GLOBALS.test(stripNonCode(text))) continue;
+    failures.push({
+      kind: 'needless-jsdom',
+      service: path.relative(REPO_ROOT, file),
+      reason:
+        'declares `@vitest-environment jsdom` but never touches a DOM global. '
+        + 'jsdom costs ~0.65s of environment setup per file (forks + isolate). '
+        + 'Drop the pragma, or stub the bridge on `globalThis` instead of `window`.',
+    });
+  }
+  return checked;
+}
+
 function main() {
   const failures = [];
   const ids = serviceIds();
@@ -86,8 +143,11 @@ function main() {
     }
   }
 
+  const jsdomChecked = checkJsdomNeed(failures);
+
   console.log(
-    `Checked ${ids.length} services for test files + action coverage`,
+    `Checked ${ids.length} services for test files + action coverage`
+      + `, and ${jsdomChecked} jsdom test file(s) for actual DOM use`,
   );
   if (failures.length === 0) {
     console.log('✅ every service has a test file and every action is exercised');

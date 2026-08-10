@@ -31,8 +31,8 @@ aliases:
 - [厚生労働省 労災保険料は全額事業主負担](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/hoken/2024707.html) `公的`
 
 ## 関連概念
-- [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
 - [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 同分野の近傍
+- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

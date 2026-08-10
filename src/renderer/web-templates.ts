@@ -1,3 +1,4 @@
+import { wrapLines } from '../shared/textWrap';
 /**
  * Browser-side template renderers — mirror of the backend templates.ts
  * renderers. Imported by web-shim.ts so the standalone HTML build can
@@ -38,23 +39,6 @@ function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function wrap(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) { out.push(''); continue; }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) { out.push(buf); buf = ''; }
-      buf += ch;
-    }
-    // 非空 para ではループ後 buf は必ず 1 文字以上 (reset 直後に必ず ch を追加するため)。
-    // よって `buf.length > 0` は常に true で、true 固定 / `>= 0` 化はいずれも equivalent。
-    // Stryker disable next-line ConditionalExpression,EqualityOperator
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
-}
-
 export function renderTemplateForWeb(def: TemplateDef, params: Record<string, string>): string {
   const p: TemplateParams = {
     title: typeof params.title === 'string' ? params.title : def.defaults.title,
@@ -69,7 +53,7 @@ export function renderTemplateForWeb(def: TemplateDef, params: Record<string, st
   const H = d.height;
 
   if (d.id === 'presentation-cover') {
-    const lines = wrap(p.title, 24);
+    const lines = wrapLines(p.title, 24);
     const titleY = H / 2 - lines.length * 30;
     const ts = lines.map((l, i) => `<tspan x="${W / 2}" dy="${i === 0 ? 0 : 100}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect width="14" height="${H}" fill="${p.accentColor}"/><rect x="60" y="${H - 80}" width="120" height="6" fill="${p.accentColor}"/><text x="${W / 2}" y="${titleY}" font-size="92" font-weight="800" fill="#fff" text-anchor="middle">${ts}</text><text x="${W / 2}" y="${H / 2 + 100}" font-size="36" fill="#cbd5e1" text-anchor="middle">${esc(p.subtitle)}</text><text x="60" y="${H - 32}" font-size="20" fill="#94a3b8">${esc(p.body)}</text><text x="${W - 60}" y="${H - 32}" font-size="22" font-weight="600" fill="${p.accentColor}" text-anchor="end">${esc(p.brandText)}</text></svg>`;
@@ -78,17 +62,17 @@ export function renderTemplateForWeb(def: TemplateDef, params: Record<string, st
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect width="${W}" height="22" fill="${p.accentColor}"/><text x="60" y="180" font-size="64" font-weight="700" fill="#0f1117">${esc(p.title)}</text><text x="60" y="240" font-size="28" fill="${p.accentColor}">${esc(p.subtitle)}</text><line x1="60" y1="280" x2="${W - 60}" y2="280" stroke="${p.accentColor}" stroke-width="2"/><text x="60" y="340" font-size="22" fill="#475569">${esc(p.body)}</text><text x="${W - 60}" y="${H - 56}" font-size="28" font-weight="700" fill="${p.accentColor}" text-anchor="end">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'social-square') {
-    const lines = wrap(p.title, 14);
+    const lines = wrapLines(p.title, 14);
     const ts = lines.map((l, i) => `<tspan x="${W / 2}" dy="${i === 0 ? 0 : 90}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><circle cx="${W - 100}" cy="100" r="180" fill="${p.accentColor}" opacity="0.18"/><circle cx="80" cy="${H - 80}" r="240" fill="${p.accentColor}" opacity="0.12"/><rect x="60" y="120" width="80" height="6" fill="${p.accentColor}"/><text x="${W / 2}" y="${H / 2 - lines.length * 30}" font-size="80" font-weight="800" fill="#fff" text-anchor="middle">${ts}</text><text x="${W / 2}" y="${H / 2 + 100}" font-size="34" fill="#cbd5e1" text-anchor="middle">${esc(p.subtitle)}</text><text x="${W / 2}" y="${H - 80}" font-size="26" fill="${p.accentColor}" text-anchor="middle">${esc(p.body)}</text><text x="60" y="80" font-size="22" font-weight="600" fill="#fff">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'social-story') {
-    const lines = wrap(p.title, 11);
+    const lines = wrapLines(p.title, 11);
     const ts = lines.map((l, i) => `<tspan x="${W / 2}" dy="${i === 0 ? 0 : 120}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${p.secondaryColor}"/><stop offset="100%" stop-color="${p.accentColor}" stop-opacity="0.4"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#g)"/><rect x="${W / 2 - 60}" y="${H / 2 - 360}" width="120" height="8" fill="${p.accentColor}"/><text x="${W / 2}" y="${H / 2 - 80 - lines.length * 30}" font-size="120" font-weight="900" fill="#fff" text-anchor="middle">${ts}</text><text x="${W / 2}" y="${H / 2 + 200}" font-size="56" fill="#fafafa" text-anchor="middle">${esc(p.subtitle)}</text><rect x="${W / 2 - 200}" y="${H - 280}" width="400" height="80" rx="40" fill="${p.accentColor}"/><text x="${W / 2}" y="${H - 224}" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">${esc(p.body)}</text><text x="${W / 2}" y="${H - 120}" font-size="32" fill="#cbd5e1" text-anchor="middle">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'flyer-a4') {
-    const lines = wrap(p.body, 36);
+    const lines = wrapLines(p.body, 36);
     const ts = lines.map((l, i) => `<tspan x="80" dy="${i === 0 ? 0 : 56}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#fdfbf7"/><rect width="${W}" height="380" fill="${p.accentColor}"/><rect y="380" width="${W}" height="14" fill="${p.secondaryColor}"/><text x="80" y="200" font-size="96" font-weight="800" fill="#fff">${esc(p.title)}</text><text x="80" y="280" font-size="42" fill="#fefefe">${esc(p.subtitle)}</text><text x="80" y="500" font-size="40" fill="#1f2937">${ts}</text><rect x="80" y="${H - 200}" width="${W - 160}" height="100" fill="${p.accentColor}" opacity="0.1"/><text x="${W / 2}" y="${H - 140}" font-size="38" font-weight="700" fill="${p.accentColor}" text-anchor="middle">${esc(p.brandText)}</text></svg>`;
   }

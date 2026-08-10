@@ -1,20 +1,20 @@
 ---
-title: "chukidan.jp"
+title: "kensetsu-roudou-jikan.mhlw.go.jp"
 type: source-domain
-host: "chukidan.jp"
+host: "kensetsu-roudou-jikan.mhlw.go.jp"
 cite_count: 1
 tags:
   - source-domain
   - index
 ---
 
-# chukidan.jp
+# kensetsu-roudou-jikan.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（公的 1）
 
 ## このドメインを出典とする項目
 
-- [[labor-work-rules|就業規則の作成・届出義務]] — 就業規則の作成義務と届出解説
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 厚生労働省建設業にも時間外労働の上限規制が適用されています
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

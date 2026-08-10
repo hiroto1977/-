@@ -22,12 +22,12 @@ tags:
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 19）
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 18）
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 17）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 17）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 17）
 - [[legal-cooling-off|クーリング・オフ（特定商取引法）]]（接続 16）
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 16）
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]

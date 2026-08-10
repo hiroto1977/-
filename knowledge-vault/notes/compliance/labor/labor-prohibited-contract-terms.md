@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-payment-on-termination|金品の返還（労働基準法23条）]] — 同分野の近傍
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -38,8 +38,8 @@ Restatement (Second) of Torts §339／Sioux City & Pacific Railroad Co. v. Stout
 - [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
 - [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同分野の近傍
-- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同分野の近傍
 - [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — 同分野の近傍
+- [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同分野の近傍
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同分野の近傍
 
 ## 関連

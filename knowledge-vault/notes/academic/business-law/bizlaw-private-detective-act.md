@@ -33,8 +33,8 @@ aliases:
 - [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 出典を共有
 - [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 出典を共有
-- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
+- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 同分野の近傍
 - [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 同分野の近傍
 

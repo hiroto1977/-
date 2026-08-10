@@ -34,7 +34,6 @@ aliases:
 - [[legal-pse|電気用品安全法とPSEマーク制度]] — 語彙が近い
 - [[subsidy-gotech|Go-Tech事業（成長型中小企業等研究開発支援事業）]] — 出典を共有
 - [[legal-consumer-safety-act|消費者安全法]] — 同分野の近傍
-- [[legal-product-liability|製造物責任法（PL法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

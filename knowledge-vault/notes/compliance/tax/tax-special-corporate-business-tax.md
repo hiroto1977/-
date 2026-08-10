@@ -40,7 +40,7 @@ aliases:
 - [[tax-real-estate-acquisition|不動産取得税]] — 出典を共有
 - [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 出典を共有
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 出典を共有
-- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 同分野の近傍
+- [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

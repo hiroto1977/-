@@ -31,8 +31,9 @@ aliases:
 
 ## 関連概念
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
-- [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
+- [[mgmt-organizational-slack|組織スラック]] — 同分野の近傍
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同分野の近傍
+- [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

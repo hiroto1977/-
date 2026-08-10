@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 142
+cite_count: 141
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **142 件**（リファレンス 139 ・ メディア 3）
+> [!info] 出典ドメイン索引 ・ 引用 **141 件**（リファレンス 139 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -143,7 +143,6 @@ tags:
 - [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — Wikipedia「情報産業」（内胚葉=農業／中胚葉=工業／外胚葉=情報の発展段階説）
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 雇用調整助成金（雇用安定事業）解説
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 優越的地位の濫用概説
-- [[legal-product-liability|製造物責任法（PL法）]] — 製造物責任法概説
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — Wikipedia:組織文化と統制理論—大内のクラン・官僚制・市場の解説
 - [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — Wikipedia:ファミリービジネス—オーナーシップと継承問題の解説
 - [[mgmt-integrative-social-contracts-theory|統合的社会契約理論（ISCT）——ビジネス倫理の普遍的規範と地域的規範の二層構造]] — Wikipedia:ビジネス倫理—社会契約理論と企業倫理の解説

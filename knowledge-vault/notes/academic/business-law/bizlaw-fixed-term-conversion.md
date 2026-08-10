@@ -34,9 +34,7 @@ aliases:
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 語彙が近い
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 分野横断
-- [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]] — 分野横断
-- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]] — 出典を共有
-- [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 同分野の近傍
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 出典を共有
 - [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同分野の近傍
 
 ## 関連

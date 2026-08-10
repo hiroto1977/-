@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 語彙が近い
-- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 分野横断
+- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有

@@ -1,0 +1,198 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`全区分に残高がある例 > 損益計算書の全行をスナップショットで固定する 1`] = `
+[
+  "section|売上高|9000",
+  "item|売上高|9000",
+  "section|売上原価|3800",
+  "item|期首商品棚卸高|300",
+  "item|当期商品仕入高|4000",
+  "item|期末商品棚卸高|500|△",
+  "subtotal|売上総利益|5200",
+  "section|販売費及び一般管理費|2200",
+  "item|給料手当|2200",
+  "subtotal|営業利益|3000",
+  "section|営業外収益|30",
+  "item|受取利息・受取配当金|30",
+  "section|営業外費用|110",
+  "item|支払利息|110",
+  "subtotal|経常利益|2920",
+  "section|特別利益|70",
+  "item|特別利益|70",
+  "section|特別損失|40",
+  "item|特別損失|40",
+  "subtotal|税引前当期純利益|2950",
+  "section|法人税、住民税及び事業税|250",
+  "total|当期純利益|2700",
+]
+`;
+
+exports[`全区分に残高がある例 > 貸借対照表の全行をスナップショットで固定する 1`] = `
+[
+  "section|流動資産|950",
+  "item|現金及び預金|1000",
+  "item|貸倒引当金|50|△",
+  "section|固定資産|1800",
+  "item|建物|3000",
+  "item|減価償却累計額|1200|△",
+  "section|繰延資産|150",
+  "item|創立費・開業費等|150",
+  "total|資産合計|2900",
+  "section|流動負債|400",
+  "item|買掛金|400",
+  "section|固定負債|900",
+  "item|長期借入金|900",
+  "subtotal|負債合計|1300",
+  "section|資本金|600",
+  "section|資本剰余金|200",
+  "section|利益準備金|80",
+  "section|繰越利益剰余金|2770",
+  "item|（うち 当期純利益）|2700",
+  "subtotal|純資産合計|3650",
+  "total|負債・純資産合計|4950",
+]
+`;
+
+exports[`勘定科目の定義 > 科目一覧をスナップショットで固定する 1`] = `
+[
+  "current-asset|cash|現金及び預金",
+  "current-asset|notesReceivable|受取手形",
+  "current-asset|accountsReceivable|売掛金",
+  "current-asset|inventory|商品及び製品",
+  "current-asset|rawMaterials|原材料及び貯蔵品",
+  "current-asset|prepaid|前払費用",
+  "current-asset|otherCurrentAsset|その他の流動資産",
+  "current-asset|allowanceDoubtful|貸倒引当金|△",
+  "fixed-asset|buildings|建物",
+  "fixed-asset|machinery|機械装置",
+  "fixed-asset|vehicles|車両運搬具",
+  "fixed-asset|tools|工具器具備品",
+  "fixed-asset|land|土地",
+  "fixed-asset|software|ソフトウェア",
+  "fixed-asset|investments|投資有価証券",
+  "fixed-asset|deposits|敷金及び保証金",
+  "fixed-asset|otherFixedAsset|その他の固定資産",
+  "fixed-asset|accumDepreciation|減価償却累計額|△",
+  "deferred-asset|deferredAsset|創立費・開業費等",
+  "current-liability|notesPayable|支払手形",
+  "current-liability|accountsPayable|買掛金",
+  "current-liability|shortTermDebt|短期借入金",
+  "current-liability|accruedExpenses|未払金・未払費用",
+  "current-liability|accruedTax|未払法人税等",
+  "current-liability|depositsReceived|預り金",
+  "current-liability|otherCurrentLiability|その他の流動負債",
+  "fixed-liability|longTermDebt|長期借入金",
+  "fixed-liability|retirementAllowance|退職給付引当金",
+  "fixed-liability|otherFixedLiability|その他の固定負債",
+  "capital|capitalStock|資本金",
+  "capital-surplus|capitalSurplus|資本剰余金",
+  "retained-earnings|legalReserve|利益準備金",
+  "revenue|sales|売上高",
+  "cogs|openingInventory|期首商品棚卸高",
+  "cogs|purchases|当期商品仕入高",
+  "cogs|closingInventory|期末商品棚卸高|△",
+  "sga|officerComp|役員報酬",
+  "sga|salaries|給料手当",
+  "sga|welfare|法定福利費",
+  "sga|depreciation|減価償却費",
+  "sga|rent|地代家賃",
+  "sga|utilities|水道光熱費",
+  "sga|communication|通信費",
+  "sga|travel|旅費交通費",
+  "sga|fees|支払手数料",
+  "sga|advertising|広告宣伝費",
+  "sga|supplies|消耗品費",
+  "sga|taxesDues|租税公課",
+  "sga|insurance|保険料",
+  "sga|entertainment|接待交際費",
+  "sga|miscSga|雑費",
+  "non-op-income|interestIncome|受取利息・受取配当金",
+  "non-op-income|miscIncome|雑収入",
+  "non-op-expense|interestExpense|支払利息",
+  "non-op-expense|miscLoss|雑損失",
+  "extra-income|extraIncome|特別利益",
+  "extra-loss|extraLoss|特別損失",
+  "tax|incomeTax|法人税、住民税及び事業税",
+]
+`;
+
+exports[`損益計算書 > 損益計算書をスナップショットで固定する 1`] = `
+[
+  "section|売上高|1000",
+  "item|売上高|1000",
+  "section|売上原価|600",
+  "item|当期商品仕入高|600",
+  "subtotal|売上総利益|400",
+  "section|販売費及び一般管理費|250",
+  "item|給料手当|250",
+  "subtotal|営業利益|150",
+  "section|営業外収益|0",
+  "section|営業外費用|0",
+  "subtotal|経常利益|150",
+  "section|特別利益|0",
+  "section|特別損失|0",
+  "subtotal|税引前当期純利益|150",
+  "section|法人税、住民税及び事業税|50",
+  "total|当期純利益|100",
+]
+`;
+
+exports[`検算の文面を丸ごと固定する > 債務超過・赤字配当・読み取り不能・マイナス残高が同時に出る例 1`] = `
+[
+  "fatal|-|貸借が一致していません。資産合計と負債・純資産合計の差が 480 円あります（資産 100 円 / 負債・純資産 -380 円）。このままでは貸借対照表として成立しません。|-",
+  "warn|-|純資産合計が -880 円のマイナス（債務超過）です。剰余金の配当はできず、金融機関の与信でも不利に働きます。|会社法461条（分配可能額）",
+  "warn|closingInventory|売上原価が売上高を上回っています（売上総損失）。期末商品棚卸高の計上漏れがないか確認してください。|-",
+  "warn|incomeTax|税引前当期純損失なのに法人税等が計上されています。均等割のみであればこのままで正しいので、内訳を確認してください。|-",
+  "warn|-|当期純損失の期に配当を計上しています。分配可能額の範囲内かを確認してください。|会社法461条",
+  "warn|land|「土地」を数値として読み取れません（入力値: 約100万）。0 円として集計しています。|-",
+  "warn|capitalStock|「資本金」がマイナスです。区分ごとに借方・貸方が決まるので、通常は正の値で入力します。区分の取り違えがないか確認してください。|-",
+  "info|-|計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります。|会社法435条2項・4項",
+  "info|-|定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）を公告する必要があります。官報・日刊新聞紙を公告方法とする会社は要旨で足り、ウェブ開示なら総会終結後5年間の継続開示で代えられます。電子公告を公告方法としている場合は要旨では足りず、全文の掲載が必要です。|会社法440条1項・2項・3項",
+]
+`;
+
+exports[`検算の文面を丸ごと固定する > 繰越利益剰余金を二重に足した例 1`] = `
+[
+  "fatal|-|貸借が一致していません。資産合計と負債・純資産合計の差が 100 円あります（資産 1,000 円 / 負債・純資産 1,100 円）。このままでは貸借対照表として成立しません。|-",
+  "fatal|retainedEarningsOpening|差額が当期純利益と一致しています。繰越利益剰余金の期首残高に当期純利益を二重に足しているか、逆に期首残高として期末の数字を入れている可能性が高いです。当期純利益はこの画面が自動で足すので、期首残高には前期末の繰越利益剰余金をそのまま入れてください。|-",
+  "info|-|計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります。|会社法435条2項・4項",
+  "info|-|定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）を公告する必要があります。官報・日刊新聞紙を公告方法とする会社は要旨で足り、ウェブ開示なら総会終結後5年間の継続開示で代えられます。電子公告を公告方法としている場合は要旨では足りず、全文の掲載が必要です。|会社法440条1項・2項・3項",
+]
+`;
+
+exports[`検算の文面を丸ごと固定する > 貸借がずれた例 1`] = `
+[
+  "fatal|-|貸借が一致していません。資産合計と負債・純資産合計の差が 1,000 円あります（資産 1,000 円 / 負債・純資産 0 円）。このままでは貸借対照表として成立しません。|-",
+  "info|-|計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります。|会社法435条2項・4項",
+  "info|-|定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）を公告する必要があります。官報・日刊新聞紙を公告方法とする会社は要旨で足り、ウェブ開示なら総会終結後5年間の継続開示で代えられます。電子公告を公告方法としている場合は要旨では足りず、全文の掲載が必要です。|会社法440条1項・2項・3項",
+]
+`;
+
+exports[`検算の文面を丸ごと固定する > 貸借が合う例 1`] = `
+[
+  "info|-|計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります。|会社法435条2項・4項",
+  "info|-|定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）を公告する必要があります。官報・日刊新聞紙を公告方法とする会社は要旨で足り、ウェブ開示なら総会終結後5年間の継続開示で代えられます。電子公告を公告方法としている場合は要旨では足りず、全文の掲載が必要です。|会社法440条1項・2項・3項",
+]
+`;
+
+exports[`貸借対照表 > 貸借対照表をスナップショットで固定する 1`] = `
+[
+  "section|流動資産|1000",
+  "item|現金及び預金|600",
+  "item|売掛金|400",
+  "section|固定資産|0",
+  "section|繰延資産|0",
+  "total|資産合計|1000",
+  "section|流動負債|300",
+  "item|買掛金|300",
+  "section|固定負債|0",
+  "subtotal|負債合計|300",
+  "section|資本金|500",
+  "section|資本剰余金|0",
+  "section|利益準備金|0",
+  "section|繰越利益剰余金|200",
+  "item|（うち 当期純利益）|100",
+  "subtotal|純資産合計|700",
+  "total|負債・純資産合計|1000",
+]
+`;

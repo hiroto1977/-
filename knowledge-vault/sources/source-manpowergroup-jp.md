@@ -2,7 +2,7 @@
 title: "manpowergroup.jp"
 type: source-domain
 host: "manpowergroup.jp"
-cite_count: 3
+cite_count: 2
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # manpowergroup.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **3 件**（メディア 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
 
 ## このドメインを出典とする項目
 
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 派遣の抵触日解説
-- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 安全配慮義務解説
 - [[subsidy-human-resource-development|人材開発支援助成金]] — 人材開発支援助成金コース・申請の流れ解説
 
 ## 関連

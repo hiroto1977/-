@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { GuardedNumber } from '../components/GuardedNumber';
+import { readNumberOr0 } from '../data/inputGuards';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
@@ -118,7 +120,7 @@ export function MutualFundsPage() {
   const [simRate, setSimRate] = useState('5');
   const [simYears, setSimYears] = useState('20');
   const sim = useMemo(
-    () => calcCompoundingFutureValue(Number(simMonthly) || 0, Number(simRate) || 0, Number(simYears) || 0),
+    () => calcCompoundingFutureValue(readNumberOr0(simMonthly), readNumberOr0(simRate), readNumberOr0(simYears)),
     [simMonthly, simRate, simYears],
   );
 
@@ -128,30 +130,30 @@ export function MutualFundsPage() {
   const [goalYears, setGoalYears] = useState('10');
   const [monthlyExpense, setMonthlyExpense] = useState('300000');
   const requiredMonthly = useMemo(
-    () => requiredMonthlyContribution(Number(goalTarget) || 0, Number(goalRate) || 0, Number(goalYears) || 0),
+    () => requiredMonthlyContribution(readNumberOr0(goalTarget), readNumberOr0(goalRate), readNumberOr0(goalYears)),
     [goalTarget, goalRate, goalYears],
   );
-  const doubleYears = useMemo(() => yearsToDouble(Number(goalRate) || 0), [goalRate]);
-  const emergency = useMemo(() => emergencyFund(Number(monthlyExpense) || 0, 6), [monthlyExpense]);
+  const doubleYears = useMemo(() => yearsToDouble(readNumberOr0(goalRate)), [goalRate]);
+  const emergency = useMemo(() => emergencyFund(readNumberOr0(monthlyExpense), 6), [monthlyExpense]);
 
   // 追加: 現行積立での目標達成見込み・インフレ調整後の実質価値・実質利回り・予備資金充足率。
   const [currentMonthly, setCurrentMonthly] = useState('30000');
   const [inflationRate, setInflationRate] = useState('2');
   const [cashOnHand, setCashOnHand] = useState('900000');
   const projection = useMemo(
-    () => goalProjection(Number(currentMonthly) || 0, Number(goalTarget) || 0, Number(goalRate) || 0, Number(goalYears) || 0),
+    () => goalProjection(readNumberOr0(currentMonthly), readNumberOr0(goalTarget), readNumberOr0(goalRate), readNumberOr0(goalYears)),
     [currentMonthly, goalTarget, goalRate, goalYears],
   );
   const realTarget = useMemo(
-    () => inflationAdjustedValue(Number(goalTarget) || 0, Number(inflationRate) || 0, Number(goalYears) || 0),
+    () => inflationAdjustedValue(readNumberOr0(goalTarget), readNumberOr0(inflationRate), readNumberOr0(goalYears)),
     [goalTarget, inflationRate, goalYears],
   );
   const realRate = useMemo(
-    () => realRateOfReturn(Number(goalRate) || 0, Number(inflationRate) || 0),
+    () => realRateOfReturn(readNumberOr0(goalRate), readNumberOr0(inflationRate)),
     [goalRate, inflationRate],
   );
   const efCoverage = useMemo(
-    () => emergencyFundCoverage(Number(cashOnHand) || 0, Number(monthlyExpense) || 0, 6),
+    () => emergencyFundCoverage(readNumberOr0(cashOnHand), readNumberOr0(monthlyExpense), 6),
     [cashOnHand, monthlyExpense],
   );
 
@@ -162,7 +164,7 @@ export function MutualFundsPage() {
     [recentDividends],
   );
   const totalReturn = useMemo(
-    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, Number(holdYears) || 0),
+    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, readNumberOr0(holdYears)),
     [portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, holdYears],
   );
   const risk = useMemo(() => calcStdDev(holdings.map((h) => h.ytdReturnPct)), [holdings]);
@@ -172,7 +174,7 @@ export function MutualFundsPage() {
   const [costHidden, setCostHidden] = useState('0.2');
   const [costGross, setCostGross] = useState('5');
   const realCost = useMemo(
-    () => calcRealCost(portfolio.totalValuation, Number(costExpense) || 0, Number(costHidden) || 0, Number(costGross) || 0, Number(holdYears) || 0),
+    () => calcRealCost(portfolio.totalValuation, readNumberOr0(costExpense), readNumberOr0(costHidden), readNumberOr0(costGross), readNumberOr0(holdYears)),
     [portfolio.totalValuation, costExpense, costHidden, costGross, holdYears],
   );
 
@@ -181,27 +183,27 @@ export function MutualFundsPage() {
   const [dcaPrices, setDcaPrices] = useState('10000, 9500, 11000, 10500, 12000');
   const dca = useMemo(() => {
     const prices = dcaPrices.split(',').map((p) => Number(p.trim())).filter((p) => Number.isFinite(p));
-    return calcDcaSimulation(Number(dcaMonthly) || 0, prices);
+    return calcDcaSimulation(readNumberOr0(dcaMonthly), prices);
   }, [dcaMonthly, dcaPrices]);
 
   // 外貨換算・為替損益。
   const [fxAmount, setFxAmount] = useState('10000');
   const [fxAcqRate, setFxAcqRate] = useState('130');
   const [fxCurRate, setFxCurRate] = useState('150');
-  const fxJpy = useMemo(() => convertToJpy(Number(fxAmount) || 0, Number(fxCurRate) || 0), [fxAmount, fxCurRate]);
+  const fxJpy = useMemo(() => convertToJpy(readNumberOr0(fxAmount), readNumberOr0(fxCurRate)), [fxAmount, fxCurRate]);
   const fxPnl = useMemo(
-    () => fxGainLoss({ amountForeign: Number(fxAmount) || 0, acquisitionRate: Number(fxAcqRate) || 0, currentRate: Number(fxCurRate) || 0 }),
+    () => fxGainLoss({ amountForeign: readNumberOr0(fxAmount), acquisitionRate: readNumberOr0(fxAcqRate), currentRate: readNumberOr0(fxCurRate) }),
     [fxAmount, fxAcqRate, fxCurRate],
   );
 
   // TT スプレッド・往復両替コスト (現在レートを TTM=仲値とみなす)。
   const [fxFee, setFxFee] = useState('0.5');
   const fxTt = useMemo(
-    () => ttRates(Number(fxCurRate) || 0, Number(fxFee) || 0),
+    () => ttRates(readNumberOr0(fxCurRate), readNumberOr0(fxFee)),
     [fxCurRate, fxFee],
   );
   const fxRoundTrip = useMemo(
-    () => (fxTt ? roundTripCost(convertToJpy(Number(fxAmount) || 0, fxTt.ttm), fxTt.tts, fxTt.ttb) : null),
+    () => (fxTt ? roundTripCost(convertToJpy(readNumberOr0(fxAmount), fxTt.ttm), fxTt.tts, fxTt.ttb) : null),
     [fxTt, fxAmount],
   );
 
@@ -228,10 +230,7 @@ export function MutualFundsPage() {
 
       <Section title="トータルリターン・リスク (分配金再投資ベース・概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            保有年数
-            <input type="text" inputMode="decimal" value={holdYears} onChange={(e) => setHoldYears(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '保有年数', kind: 'years', allowZero: true, max: 100 }} value={holdYears} onChange={setHoldYears} width={120} />
         </div>
         <div className="stat-grid">
           <Stat
@@ -254,18 +253,9 @@ export function MutualFundsPage() {
 
       <Section title="実質コスト (信託報酬 + 隠れコスト・概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            信託報酬 (年率%)
-            <input type="text" inputMode="decimal" value={costExpense} onChange={(e) => setCostExpense(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            隠れコスト (年率%)
-            <input type="text" inputMode="decimal" value={costHidden} onChange={(e) => setCostHidden(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            想定年率 (%)
-            <input type="text" inputMode="decimal" value={costGross} onChange={(e) => setCostGross(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '信託報酬 (%)', kind: 'percent', allowZero: true, max: 20 }} value={costExpense} onChange={setCostExpense} width={120} />
+          <GuardedNumber spec={{ label: '隠れコスト (%)', kind: 'percent', allowZero: true, max: 20 }} value={costHidden} onChange={setCostHidden} width={120} />
+          <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={costGross} onChange={setCostGross} width={120} />
         </div>
         <div className="stat-grid">
           <Stat label="実質コスト率 (年率)" value={`${realCost.annualCostPct}%`} />
@@ -279,10 +269,7 @@ export function MutualFundsPage() {
 
       <Section title="ドルコスト平均法シミュレーション (概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            毎月の積立額 (円)
-            <input type="text" inputMode="decimal" value={dcaMonthly} onChange={(e) => setDcaMonthly(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '毎月の積立額 (円)', kind: 'money', allowZero: false }} value={dcaMonthly} onChange={setDcaMonthly} width={120} />
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 240 }}>
             各期の基準価額 (カンマ区切り)
             <input type="text" value={dcaPrices} onChange={(e) => setDcaPrices(e.target.value)} style={{ ...simInputStyle, width: '100%' }} />
@@ -446,18 +433,9 @@ export function MutualFundsPage() {
 
       <Section title="積立シミュレーション (複利・概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            月額積立 (円)
-            <input type="text" inputMode="decimal" value={simMonthly} onChange={(e) => setSimMonthly(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            想定年率 (%)
-            <input type="text" inputMode="decimal" value={simRate} onChange={(e) => setSimRate(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            積立年数
-            <input type="text" inputMode="decimal" value={simYears} onChange={(e) => setSimYears(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '毎月の積立額 (円)', kind: 'money', allowZero: false }} value={simMonthly} onChange={setSimMonthly} width={120} />
+          <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={simRate} onChange={setSimRate} width={120} />
+          <GuardedNumber spec={{ label: '積立年数', kind: 'years', allowZero: false, max: 80 }} value={simYears} onChange={setSimYears} width={120} />
         </div>
         <div className="stat-grid">
           <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
@@ -471,34 +449,13 @@ export function MutualFundsPage() {
 
       <Section title="貯蓄計画 (目標達成・緊急予備資金・概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            目標額 (円)
-            <input type="text" inputMode="decimal" value={goalTarget} onChange={(e) => setGoalTarget(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            想定年率 (%)
-            <input type="text" inputMode="decimal" value={goalRate} onChange={(e) => setGoalRate(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            達成年数
-            <input type="text" inputMode="decimal" value={goalYears} onChange={(e) => setGoalYears(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            毎月の生活費 (円)
-            <input type="text" inputMode="decimal" value={monthlyExpense} onChange={(e) => setMonthlyExpense(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            現行の毎月積立 (円)
-            <input type="text" inputMode="decimal" value={currentMonthly} onChange={(e) => setCurrentMonthly(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            想定インフレ率 (%)
-            <input type="text" inputMode="decimal" value={inflationRate} onChange={(e) => setInflationRate(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            現預金 (円)
-            <input type="text" inputMode="decimal" value={cashOnHand} onChange={(e) => setCashOnHand(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '目標額 (円)', kind: 'money', allowZero: false }} value={goalTarget} onChange={setGoalTarget} width={120} />
+          <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={goalRate} onChange={setGoalRate} width={120} />
+          <GuardedNumber spec={{ label: '達成年数', kind: 'years', allowZero: false, max: 80 }} value={goalYears} onChange={setGoalYears} width={120} />
+          <GuardedNumber spec={{ label: '毎月の生活費 (円)', kind: 'money', allowZero: false }} value={monthlyExpense} onChange={setMonthlyExpense} width={120} />
+          <GuardedNumber spec={{ label: '現在の積立額 (円)', kind: 'money', allowZero: true }} value={currentMonthly} onChange={setCurrentMonthly} width={120} />
+          <GuardedNumber spec={{ label: '想定インフレ率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={inflationRate} onChange={setInflationRate} width={120} />
+          <GuardedNumber spec={{ label: '手元資金 (円)', kind: 'money', allowZero: true }} value={cashOnHand} onChange={setCashOnHand} width={120} />
         </div>
         <div className="stat-grid">
           <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
@@ -526,18 +483,9 @@ export function MutualFundsPage() {
 
       <Section title="外貨換算・為替損益 (概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            外貨額
-            <input type="text" inputMode="decimal" value={fxAmount} onChange={(e) => setFxAmount(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            取得時レート
-            <input type="text" inputMode="decimal" value={fxAcqRate} onChange={(e) => setFxAcqRate(e.target.value)} style={simInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            現在レート
-            <input type="text" inputMode="decimal" value={fxCurRate} onChange={(e) => setFxCurRate(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '外貨額', kind: 'ratio', allowZero: false, sane: 1e9 }} value={fxAmount} onChange={setFxAmount} width={120} />
+          <GuardedNumber spec={{ label: '取得時レート', kind: 'ratio', allowZero: false, sane: 10000 }} value={fxAcqRate} onChange={setFxAcqRate} width={120} />
+          <GuardedNumber spec={{ label: '現在レート', kind: 'ratio', allowZero: false, sane: 10000 }} value={fxCurRate} onChange={setFxCurRate} width={120} />
         </div>
         <div className="stat-grid">
           <Stat label="現在の円換算額" value={jpy(fxJpy)} />
@@ -549,10 +497,7 @@ export function MutualFundsPage() {
         </div>
 
         <div className="field-grid" style={{ margin: '16px 0 12px' }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            片道手数料 (円/通貨)
-            <input type="text" inputMode="decimal" value={fxFee} onChange={(e) => setFxFee(e.target.value)} style={simInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '為替手数料 (片道・円)', kind: 'ratio', allowZero: true, sane: 1000 }} value={fxFee} onChange={setFxFee} width={120} />
         </div>
         <div className="stat-grid">
           <Stat label="TTM (仲値)" value={fxTt ? `${fxTt.ttm}` : '—'} />

@@ -68,6 +68,7 @@ import { DockerPage } from './pages/DockerPage';
 import { AssistantPage } from './pages/AssistantPage';
 import { VillagePage } from './pages/VillagePage';
 import { DocstudioPage } from './pages/DocstudioPage';
+import { CursorPage } from './pages/CursorPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -661,9 +662,17 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'docstudio',
     label: '書類スタジオ',
     icon: '🗂',
-    description: '契約・経理・組織・規程 12 書式＋電子定款＋就業規則 — 入力→即プレビュー→印刷/PDF（検証済み法令注記つき）',
+    description: '契約・経理・人事・組織・規程・社内・通知・事業計画 45 書式＋電子定款＋就業規則 — 入力→交付前チェック（無効リスク検出）→印刷/PDF',
     page: DocstudioPage,
     category: 'featured',
+  },
+  {
+    id: 'cursor',
+    label: 'Cursor',
+    icon: 'CU',
+    description: 'AI コードエディタのチーム管理 — メンバー / 利用状況 / 支出',
+    page: CursorPage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

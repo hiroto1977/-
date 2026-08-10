@@ -42,7 +42,6 @@ national
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 同分野の近傍
 - [[subsidy-child-allowance|児童手当]] — 同分野の近傍
 

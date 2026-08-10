@@ -31,7 +31,6 @@ aliases:
 - [労災保険・雇用保険の特徴｜厚生労働省（保険料全額事業主負担）](https://www.mhlw.go.jp/bunya/roudoukijun/roudouhokenpoint/) `公的`
 
 ## 関連概念
-- [[labor-commuting-injury|通勤災害（労災保険）]] — 語彙が近い
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 語彙が近い
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 分野横断
 - [[bizlaw-employment-insurance|雇用保険法]] — 同分野の近傍

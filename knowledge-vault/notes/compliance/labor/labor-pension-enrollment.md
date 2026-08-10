@@ -34,11 +34,11 @@ aliases:
 - [[bizlaw-employees-pension|厚生年金保険法]] — 出典を共有
 - [[bizlaw-national-pension|国民年金法]] — 出典を共有
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
+- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
-- [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 同分野の近傍
 

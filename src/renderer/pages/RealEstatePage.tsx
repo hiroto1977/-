@@ -15,6 +15,8 @@ import {
   type PropertyEntry,
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
+import { GuardedNumber } from '../components/GuardedNumber';
+import { readNumberOr0, type NumSpec } from '../data/inputGuards';
 import {
   calcRealEstateYield,
   calcRealEstateLeverage,
@@ -54,10 +56,9 @@ const reInputStyle: React.CSSProperties = {
   fontSize: 13,
   width: 140,
 };
-const reNum = (s: string): number => {
-  const n = Number(s.replace(/[^\d.-]/g, ''));
-  return Number.isFinite(n) ? n : 0;
-};
+// 読み取りは inputGuards に統一。警告 (GuardedNumber) と計算が同じ関数を使うので、
+// 「警告は出ないのに 0 で計算されていた」が起きない。
+const reNum = readNumberOr0;
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 
@@ -369,26 +370,14 @@ export function RealEstatePage() {
               {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            家賃 (月・円)
-            <input type="text" inputMode="numeric" value={propForm.monthlyRent} placeholder="100000"
-              onChange={(e) => setPropForm((f) => ({ ...f, monthlyRent: e.target.value }))} style={reInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            取得価格 (円)
-            <input type="text" inputMode="numeric" value={propForm.purchasePrice} placeholder="12000000"
-              onChange={(e) => setPropForm((f) => ({ ...f, purchasePrice: e.target.value }))} style={reInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            月次経費 (任意)
-            <input type="text" inputMode="numeric" value={propForm.monthlyExpenses} placeholder="0"
-              onChange={(e) => setPropForm((f) => ({ ...f, monthlyExpenses: e.target.value }))} style={reInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            月次返済 (任意)
-            <input type="text" inputMode="numeric" value={propForm.monthlyLoan} placeholder="0"
-              onChange={(e) => setPropForm((f) => ({ ...f, monthlyLoan: e.target.value }))} style={reInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '家賃 (月・円)', kind: 'money' }} value={propForm.monthlyRent} placeholder="100000"
+            onChange={(v) => setPropForm((f) => ({ ...f, monthlyRent: v }))} />
+          <GuardedNumber spec={{ label: '取得価格 (円)', kind: 'money', allowZero: false }} value={propForm.purchasePrice} placeholder="12000000"
+            onChange={(v) => setPropForm((f) => ({ ...f, purchasePrice: v }))} />
+          <GuardedNumber spec={{ label: '月次経費 (任意)', kind: 'money', allowEmpty: true, allowZero: true }} value={propForm.monthlyExpenses} placeholder="0"
+            onChange={(v) => setPropForm((f) => ({ ...f, monthlyExpenses: v }))} />
+          <GuardedNumber spec={{ label: '月次返済 (任意)', kind: 'money', allowEmpty: true, allowZero: true }} value={propForm.monthlyLoan} placeholder="0"
+            onChange={(v) => setPropForm((f) => ({ ...f, monthlyLoan: v }))} />
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
             <input type="checkbox" checked={propForm.occupied}
               onChange={(e) => setPropForm((f) => ({ ...f, occupied: e.target.checked }))} />
@@ -491,17 +480,14 @@ export function RealEstatePage() {
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
-            ['月額賃料', reRentStr, setReRentStr],
-            ['物件価格', rePriceStr, setRePriceStr],
-            ['年間経費', reExpenseStr, setReExpenseStr],
-            ['自己資金', reEquityStr, setReEquityStr],
-            ['年間返済額', reDebtStr, setReDebtStr],
-            ['ローン金利(%)', reLoanRateStr, setReLoanRateStr],
-          ] as const).map(([label, val, setter]) => (
-            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {label}
-              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={reInputStyle} />
-            </label>
+            [{ label: '月額賃料', kind: 'money' }, reRentStr, setReRentStr],
+            [{ label: '物件価格', kind: 'money', allowZero: false }, rePriceStr, setRePriceStr],
+            [{ label: '年間経費', kind: 'money', allowZero: true }, reExpenseStr, setReExpenseStr],
+            [{ label: '自己資金', kind: 'money', allowZero: true }, reEquityStr, setReEquityStr],
+            [{ label: '年間返済額', kind: 'money', allowZero: true }, reDebtStr, setReDebtStr],
+            [{ label: 'ローン金利(%)', kind: 'percent', allowZero: true, max: 30 }, reLoanRateStr, setReLoanRateStr],
+          ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
+            <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} />
           ))}
         </div>
         <div className="stat-grid">
@@ -520,10 +506,7 @@ export function RealEstatePage() {
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            想定入居率(%)
-            <input type="text" inputMode="decimal" value={reOccStr} onChange={(e) => setReOccStr(e.target.value)} style={reInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '想定入居率 (%)', kind: 'percent', min: 1, max: 100 }} value={reOccStr} onChange={setReOccStr} />
         </div>
         <div className="stat-grid">
           <Stat label="NOI (年)" value={jpy(refined.noiY.noi)} positive={refined.noiY.noi >= 0} />
@@ -546,14 +529,11 @@ export function RealEstatePage() {
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
-            ['割引率(%)', npvDiscountStr, setNpvDiscountStr],
-            ['保有年数', npvYearsStr, setNpvYearsStr],
-            ['売却ネット手取り', npvSaleStr, setNpvSaleStr],
-          ] as const).map(([label, val, setter]) => (
-            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {label}
-              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={reInputStyle} />
-            </label>
+            [{ label: '割引率(%)', kind: 'percent', allowZero: true, max: 30 }, npvDiscountStr, setNpvDiscountStr],
+            [{ label: '保有年数', kind: 'years', allowZero: false, max: 50 }, npvYearsStr, setNpvYearsStr],
+            [{ label: '売却ネット手取り', kind: 'money', allowZero: true }, npvSaleStr, setNpvSaleStr],
+          ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
+            <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} />
           ))}
         </div>
         <div className="stat-grid">
@@ -569,14 +549,8 @@ export function RealEstatePage() {
           減価償却費は会計上の費用で節税に寄与しますが、<strong>※ 概算であり税務助言ではありません。</strong>
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            建物取得価額
-            <input type="text" inputMode="decimal" value={bldgCostStr} onChange={(e) => setBldgCostStr(e.target.value)} style={reInputStyle} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            耐用年数
-            <input type="text" inputMode="decimal" value={bldgLifeStr} onChange={(e) => setBldgLifeStr(e.target.value)} style={reInputStyle} />
-          </label>
+          <GuardedNumber spec={{ label: '建物取得価額 (円)', kind: 'money', allowZero: false }} value={bldgCostStr} onChange={setBldgCostStr} />
+          <GuardedNumber spec={{ label: '耐用年数 (年)', kind: 'years', min: 1, max: 100 }} value={bldgLifeStr} onChange={setBldgLifeStr} />
         </div>
         <div className="stat-grid">
           <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
@@ -599,15 +573,12 @@ export function RealEstatePage() {
             </select>
           </label>
           {([
-            ['敷地面積 (㎡)', zpSiteStr, setZpSiteStr],
-            ['建ぺい率 (%)', zpCovStr, setZpCovStr],
-            ['容積率 (%)', zpFarStr, setZpFarStr],
-            ['前面道路幅員 (m)', zpRoadStr, setZpRoadStr],
-          ] as const).map(([label, val, setter]) => (
-            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {label}
-              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={{ ...reInputStyle, width: 110 }} />
-            </label>
+            [{ label: '敷地面積 (㎡)', kind: 'area' }, zpSiteStr, setZpSiteStr],
+            [{ label: '建ぺい率 (%)', kind: 'percent', min: 1, max: 100 }, zpCovStr, setZpCovStr],
+            [{ label: '容積率 (%)', kind: 'percent', min: 1, max: 1300 }, zpFarStr, setZpFarStr],
+            [{ label: '前面道路幅員 (m)', kind: 'length', max: 100 }, zpRoadStr, setZpRoadStr],
+          ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
+            <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} width={110} />
           ))}
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             道路乗数の区分
@@ -642,18 +613,9 @@ export function RealEstatePage() {
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>📐 高さ制限 (道路斜線・日影規制)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            計画する最高高さ (m)
-            <input type="text" inputMode="decimal" value={zpHeightStr} onChange={(e) => setZpHeightStr(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            道路境界からの後退 (m)
-            <input type="text" inputMode="decimal" value={zpSetbackStr} onChange={(e) => setZpSetbackStr(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            日影規制の対象高さ (m)
-            <input type="text" inputMode="decimal" value={zpShadowThresholdStr} onChange={(e) => setZpShadowThresholdStr(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
-          </label>
+          <GuardedNumber spec={{ label: '計画する最高高さ (m)', kind: 'length', max: 300 }} value={zpHeightStr} onChange={setZpHeightStr} width={130} />
+          <GuardedNumber spec={{ label: '道路境界からの後退 (m)', kind: 'length', allowZero: true, max: 100 }} value={zpSetbackStr} onChange={setZpSetbackStr} width={130} />
+          <GuardedNumber spec={{ label: '日影規制の対象高さ (m)', kind: 'length', max: 300 }} value={zpShadowThresholdStr} onChange={setZpShadowThresholdStr} width={130} />
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             日影規制の対象区域か (条例指定)
             <select value={zpShadowArea} onChange={(e) => setZpShadowArea(e.target.value as 'unknown' | 'yes' | 'no')} style={{ ...reInputStyle, width: 180 }}>
@@ -687,22 +649,10 @@ export function RealEstatePage() {
         )}
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>↔️ 後退と建築面積のトレードオフ</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            敷地の奥行 (m)
-            <input type="text" inputMode="decimal" value={zpSiteDepthStr} onChange={(e) => setZpSiteDepthStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            敷地の間口 (m)
-            <input type="text" inputMode="decimal" value={zpSiteWidthStr} onChange={(e) => setZpSiteWidthStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            背面の後退 (m)
-            <input type="text" inputMode="decimal" value={zpRearStr} onChange={(e) => setZpRearStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            側面の後退 合計 (m)
-            <input type="text" inputMode="decimal" value={zpSideStr} onChange={(e) => setZpSideStr(e.target.value)} style={{ ...reInputStyle, width: 120 }} />
-          </label>
+          <GuardedNumber spec={{ label: '敷地の奥行 (m)', kind: 'length', max: 2000 }} value={zpSiteDepthStr} onChange={setZpSiteDepthStr} width={120} />
+          <GuardedNumber spec={{ label: '敷地の間口 (m)', kind: 'length', max: 2000 }} value={zpSiteWidthStr} onChange={setZpSiteWidthStr} width={120} />
+          <GuardedNumber spec={{ label: '背面の後退 (m)', kind: 'length', allowZero: true, max: 100 }} value={zpRearStr} onChange={setZpRearStr} width={120} />
+          <GuardedNumber spec={{ label: '側面の後退 合計 (m)', kind: 'length', allowZero: true, max: 200 }} value={zpSideStr} onChange={setZpSideStr} width={120} />
         </div>
         <div className="stat-grid" style={{ marginBottom: 10 }}>
           <Stat label="斜線を通す最小後退" value={`${zoning.tradeoff.requiredSetbackM.toLocaleString()} m`} />
@@ -776,21 +726,18 @@ export function RealEstatePage() {
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
-            ['循環量 (L)', wcVolStr, setWcVolStr],
-            ['交換周期 (日)', wcCycleStr, setWcCycleStr],
-            ['RO 回収率 (%)', wcRecoveryStr, setWcRecoveryStr],
-            ['RO 塩除去率 (%)', wcRejectionStr, setWcRejectionStr],
-            ['RO 処理目標 (h)', wcWindowStr, setWcWindowStr],
-            ['RO 機の日産 (L/日・空欄可)', wcRoCapStr, setWcRoCapStr],
-            ['曝気タンク容量 (L)', wcTankStr, setWcTankStr],
-            ['硝化する N 濃度 (mg/L)', wcNStr, setWcNStr],
-            ['濃縮液の全窒素 (mg/L)', wcConcNStr, setWcConcNStr],
-            ['濃縮液の全りん (mg/L)', wcConcPStr, setWcConcPStr],
-          ] as const).map(([label, val, setter]) => (
-            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {label}
-              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={{ ...reInputStyle, width: 130 }} />
-            </label>
+            [{ label: '循環量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 }, wcVolStr, setWcVolStr],
+            [{ label: '交換周期 (日)', kind: 'count', allowZero: false, max: 365 }, wcCycleStr, setWcCycleStr],
+            [{ label: 'RO 回収率 (%)', kind: 'percent', min: 1, max: 99 }, wcRecoveryStr, setWcRecoveryStr],
+            [{ label: 'RO 塩除去率 (%)', kind: 'percent', min: 1, max: 100 }, wcRejectionStr, setWcRejectionStr],
+            [{ label: 'RO 処理目標 (h)', kind: 'count', allowZero: false, max: 24 }, wcWindowStr, setWcWindowStr],
+            [{ label: 'RO 機の日産 (L/日・空欄可)', kind: 'ratio', allowEmpty: true, allowZero: true, sane: 1e6 }, wcRoCapStr, setWcRoCapStr],
+            [{ label: '曝気タンク容量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 }, wcTankStr, setWcTankStr],
+            [{ label: '硝化する N 濃度 (mg/L)', kind: 'ppm', allowZero: true }, wcNStr, setWcNStr],
+            [{ label: '濃縮液の全窒素 (mg/L)', kind: 'ppm', allowZero: true }, wcConcNStr, setWcConcNStr],
+            [{ label: '濃縮液の全りん (mg/L)', kind: 'ppm', allowZero: true }, wcConcPStr, setWcConcPStr],
+          ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
+            <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} width={130} />
           ))}
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
             <input type="checkbox" checked={wcToPublic} onChange={(e) => setWcToPublic(e.target.checked)} />

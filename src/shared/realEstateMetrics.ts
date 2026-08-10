@@ -9,9 +9,7 @@
  *   実質利回り = (年間賃料×入居率 − 年間経費) ÷ (物件価格 + 取得費) × 100
  */
 
-function pct2(n: number): number {
-  return Math.round(n * 100) / 100;
-}
+import { round2 } from './num';
 
 export interface RealEstateYield {
   /** 表面利回り (%)。 */
@@ -52,8 +50,8 @@ export function calcRealEstateYield(
   if (price <= 0) {
     return { grossYieldPct: 0, netYieldPct: 0, annualNetIncome, annualGrossRent };
   }
-  const grossYieldPct = pct2((annualGrossRent / price) * 100);
-  const netYieldPct = pct2((annualNetIncome / (price + acqCost)) * 100);
+  const grossYieldPct = round2((annualGrossRent / price) * 100);
+  const netYieldPct = round2((annualNetIncome / (price + acqCost)) * 100);
   return { grossYieldPct, netYieldPct, annualNetIncome, annualGrossRent };
 }
 
@@ -92,8 +90,8 @@ export function calcRealEstateLeverage(
   const debtService = Math.max(0, annualDebtService);
   const equity = Math.max(0, ownEquity);
   const annualCashflow = Math.round(annualNetIncome - debtService);
-  const cashOnCashReturnPct = equity > 0 ? pct2((annualCashflow / equity) * 100) : 0;
-  const yieldGapPct = pct2(netYieldPct - loanRatePct);
+  const cashOnCashReturnPct = equity > 0 ? round2((annualCashflow / equity) * 100) : 0;
+  const yieldGapPct = round2(netYieldPct - loanRatePct);
   return { annualDebtService: debtService, annualCashflow, cashOnCashReturnPct, yieldGapPct };
 }
 
@@ -153,7 +151,7 @@ export function calcNoiYield(
   if (totalAcquisition <= 0) {
     return { noi, vacancyLoss, totalAcquisition, noiYieldPct: null };
   }
-  return { noi, vacancyLoss, totalAcquisition, noiYieldPct: pct2((noi / totalAcquisition) * 100) };
+  return { noi, vacancyLoss, totalAcquisition, noiYieldPct: round2((noi / totalAcquisition) * 100) };
 }
 
 /** DSCR (返済余裕率) の判定区分。 */
@@ -224,7 +222,7 @@ export function calcBreakEvenOccupancyPct(
   }
   const opex = Math.max(0, annualOperatingExpense);
   const debt = Math.max(0, annualDebtService);
-  return pct2(((opex + debt) / gross) * 100);
+  return round2(((opex + debt) / gross) * 100);
 }
 
 /**

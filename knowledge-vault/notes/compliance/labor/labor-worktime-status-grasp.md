@@ -32,7 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 語彙が近い
-- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 同分野の近傍
+- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 語彙が近い
+- [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

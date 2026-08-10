@@ -2,7 +2,7 @@
 title: "legacy.ne.jp"
 type: source-domain
 host: "legacy.ne.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # legacy.ne.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
 - [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 贈与税の配偶者控除解説
-- [[tax-officer-retirement|役員退職給与の損金算入]] — 役員退職金の計算解説
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

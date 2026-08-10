@@ -1024,12 +1024,49 @@ export const SNAPSHOT = {
 
   docstudio: {
     collections: [
-      { id: 'studio', label: '経営書類（契約・経理・組織・規程）', docCount: 12 },
+      { id: 'studio', label: '経営書類（契約・経理・人事・組織・規程・社内・通知・事業計画）', docCount: 45 },
       { id: 'teikan', label: '電子定款（株式会社・合同会社）', docCount: 2 },
       { id: 'shugyo', label: '就業規則（10章47条）', docCount: 1 },
     ] as { id: string; label: string; docCount: number }[],
     fetchedAt: '2035-05-15T00:00:00.000Z',
     isMock: true,
+  },
+
+  cursor: {
+    members: [
+      { name: '佐藤 健', email: 'sato@example.com', role: 'owner' },
+      { name: '鈴木 彩', email: 'suzuki@example.com', role: 'member' },
+      { name: '田中 悠', email: 'tanaka@example.com', role: 'member' },
+    ] as { name: string; email: string; role: string }[],
+    usage: [
+      { date: '2026-08-04', active: true, linesAdded: 1240, linesAccepted: 812, acceptRate: 65.5, overCounted: false, tabsShown: 430, tabsAccepted: 190, requests: 62, model: 'claude-4.5-sonnet' },
+      { date: '2026-08-05', active: true, linesAdded: 980, linesAccepted: 604, acceptRate: 61.6, overCounted: false, tabsShown: 380, tabsAccepted: 150, requests: 48, model: 'claude-4.5-sonnet' },
+      { date: '2026-08-06', active: false, linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, tabsShown: 0, tabsAccepted: 0, requests: 0, model: '' },
+    ] as {
+      date: string;
+      active: boolean;
+      linesAdded: number;
+      linesAccepted: number;
+      acceptRate: number | null;
+      overCounted: boolean;
+      tabsShown: number;
+      tabsAccepted: number;
+      requests: number;
+      model: string;
+    }[],
+    spend: [
+      { name: '佐藤 健', email: 'sato@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 412, hardLimitUsd: null },
+      { name: '鈴木 彩', email: 'suzuki@example.com', role: 'member', spendUsd: 18.75, fastPremiumRequests: 187, hardLimitUsd: 50 },
+      { name: '田中 悠', email: 'tanaka@example.com', role: 'member', spendUsd: 0, fastPremiumRequests: 0, hardLimitUsd: null },
+    ] as {
+      name: string;
+      email: string;
+      role: string;
+      spendUsd: number;
+      fastPremiumRequests: number;
+      hardLimitUsd: number | null;
+    }[],
+    totals: { members: 3, activeDays: 2, spendUsd: 59.95 },
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

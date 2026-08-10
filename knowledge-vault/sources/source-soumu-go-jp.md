@@ -2,7 +2,7 @@
 title: "soumu.go.jp"
 type: source-domain
 host: "soumu.go.jp"
-cite_count: 59
+cite_count: 60
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # soumu.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **59 件**（公的 59）
+> [!info] 出典ドメイン索引 ・ 引用 **60 件**（公的 60）
 
 ## このドメインを出典とする項目
 
@@ -46,15 +46,16 @@ tags:
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 総務省・消費者庁特定電子メールガイドライン
 - [[legal-computer-virus|不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）]] — 総務省サイバーセキュリティサイト刑法
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 総務省・消費者庁特定電子メール法パンフレット
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 総務省電子署名を用いた電子契約サービスに関する整理
 - [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律FAQ
 - [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律パンフレット
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 総務省マイナンバー制度
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 総務省インターネット上の違法・有害情報への対応
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 総務省大規模特定電気通信役務提供者の指定
-- [[legal-unauthorized-access|不正アクセス禁止法]] — 総務省サイバーセキュリティサイト
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 総務省不正アクセス行為の禁止等に関する法律
 - [[tax-automobile-tax|自動車税（種別割）]] — 総務省地方税制度自動車税・軽自動車税
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 総務省地方税制度事業所税
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 総務省外形標準課税の概要
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 総務省法人事業税における外形標準課税
 - [[tax-city-planning-tax|都市計画税]] — 総務省地方税制度都市計画税
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 総務省法人住民税
 - [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 総務省固定資産税の概要

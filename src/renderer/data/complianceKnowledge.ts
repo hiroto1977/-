@@ -66,16 +66,27 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'tax-edenshocho',
       domain: 'tax',
-      title: '電子帳簿保存法（電子取引データ保存）',
+      title: '電子取引データの電子保存義務（2024年1月〜）',
       statement:
-        '2024年1月1日から電子取引データの電子保存が完全義務化（個人事業主を含む）。' +
-        '原則7年間保存し、真実性（改ざん防止）と可視性（検索・表示）の要件を満たす必要がある。',
-      authority: '所管: 国税庁（電子帳簿保存法）',
-      asOf: '2026-06',
+        '所得税・法人税に係る保存義務者が、注文書・契約書・領収書・請求書などの取引情報を電子メールやEC等の' +
+        '電子取引で授受した場合、そのデータ自体を保存する義務がある（個人事業主も対象。' +
+        '出力した書面だけを保存する扱いは認められない）。原則の保存要件は、' +
+        '真実性の確保としてタイムスタンプの付与・訂正削除の履歴が残るシステムでの授受と保存・' +
+        '改ざん防止のための事務処理規程の策定のいずれか、可視性の確保として日付・金額・取引先での検索と' +
+        'ディスプレイやプリンタ等の備付けである。2023年12月31日で宥恕措置が終わり、2024年1月から猶予措置に' +
+        '置き換わった。猶予措置では、要件に従って保存できないことに相当の理由があると所轄税務署長が認め、' +
+        'ダウンロードの求めと書面の提示・提出の求めの両方に応じられるなら、改ざん防止や検索の要件を満たさずに' +
+        'データをそのまま保存しておくことができる。「相当の理由」の判断は税務署側にあるため、' +
+        '猶予措置を前提に何も整えない運用は勧められない。',
+      authority: '所管: 国税庁（電子帳簿保存法第7条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/index.htm', type: 'government', label: '国税庁 電子帳簿等保存制度特設サイト' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/44331/', type: 'media', label: 'マネーフォワード クラウド会計 解説' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07denshi/index.htm', type: 'government', label: '国税庁 電子帳簿保存法一問一答【電子取引関係】' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0024011-003_01.pdf', type: 'government', label: '国税庁 電子取引データを適切に保存できていますか' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0023003-082.pdf', type: 'government', label: '国税庁 令和5年度税制改正による電子帳簿保存法の改正事項' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf', type: 'government', label: '国税庁 令和6年1月からの電子取引データの保存方法' },
     ],
   },
   {
@@ -84,14 +95,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '時間外労働の上限規制（36協定）',
       statement:
-        '時間外労働の限度は原則「月45時間・年360時間」。特別条項でも、単月100時間未満、' +
-        '複数月（2〜6か月）平均80時間以下等の上限がある。違反は労働基準法違反（罰則あり）。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '時間外労働の限度は原則として月45時間・年360時間。通常予見することのできない業務量の大幅な増加等に' +
+        '限って特別条項付きの36協定を結べるが、その場合も年720時間以内、時間外労働と休日労働の合計が単月100時間未満、' +
+        '2〜6か月のいずれの平均でも80時間以下、月45時間を超えられるのは年6回まで、という上限を守る必要がある。' +
+        '違反には6か月以下の拘禁刑または30万円以下の罰金が科され得る。適用が猶予されていた業種も2024年4月から' +
+        '対象になり、自動車運転の業務は特別条項の年間上限が960時間で単月100時間未満・複数月平均80時間以下の規制は' +
+        '適用されず、医師は特別条項の年間上限が最大1860時間、建設事業は災害時における復旧・復興の事業を除いて' +
+        '原則どおり適用される。',
+      authority: '所管: 厚生労働省（労働基準法第36条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.startup-roudou.mhlw.go.jp/36_pact.html', type: 'government', label: '厚生労働省 時間外労働の上限について' },
-      { url: 'https://www.mhlw.go.jp/content/000463185.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 わかりやすい解説' },
+      { url: 'https://www.mhlw.go.jp/content/001140962.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 わかりやすい解説' },
+      { url: 'https://hatarakikatakaikaku.mhlw.go.jp/overtime.html', type: 'government', label: '厚生労働省 働き方改革特設サイト 時間外労働の上限規制' },
+      { url: 'https://kensetsu-roudou-jikan.mhlw.go.jp/kensetsu_overtime.html', type: 'government', label: '厚生労働省 建設業にも時間外労働の上限規制が適用されています' },
       { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_13.html', type: 'operator', label: '日本労働組合総連合会 労働相談Q&A' },
     ],
   },
@@ -118,15 +136,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '確定申告の期限（所得税・個人事業者の消費税）',
       statement:
-        '所得税の確定申告は原則として翌年2月16日〜3月15日（期限が土日祝の場合は翌平日）。' +
-        '個人事業者の消費税及び地方消費税は翌年3月31日が申告・納付期限。',
-      authority: '所管: 国税庁（所得税法・消費税法）',
-      asOf: '2026-06',
+        '所得税及び復興特別所得税の確定申告は原則として翌年2月16日から3月15日まで（期限が土日祝日に当たる場合は' +
+        '翌開庁日）。個人事業者の消費税及び地方消費税は、12月31日の属する課税期間について翌年3月31日が申告・納付期限で、' +
+        '所得税より2週間ほど遅い。法人の確定申告は事業年度終了の日の翌日から2か月以内である。' +
+        '期限を過ぎて申告した場合や、申告せずに税務署から決定を受けた場合は、本来の税額に加えて無申告加算税' +
+        'または重加算税がかかることがあり、法定納期限の翌日から納付の日までの延滞税も併せて納める。' +
+        '期限後申告では申告書を提出した日がそのまま納期限になるので、遅れるほど延滞税の起算が伸びる点に注意する。',
+      authority: '所管: 国税庁（所得税法・消費税法・国税通則法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/publication/pamph/koho/kurashi/html/06_1.htm', type: 'government', label: '国税庁 申告と納税' },
-      { url: 'https://www.nta.go.jp/taxes/nozei/nofu/24200042/noufu_kigen.htm', type: 'government', label: '国税庁 主な国税の納期限' },
-      { url: 'https://www.freee.co.jp/kb/kb-kakuteishinkoku/deadline/', type: 'media', label: 'freee 確定申告の期限' },
+      { url: 'https://www.nta.go.jp/taxes/nozei/nofu/24200042/noufu_kigen.htm', type: 'government', label: '国税庁 主な国税の納期限（法定納期限）及び振替日' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6137.htm', type: 'government', label: '国税庁 No.6137 課税期間' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6601.htm', type: 'government', label: '国税庁 No.6601 消費税の申告と納税' },
     ],
   },
   {
@@ -208,15 +231,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '電子署名の推定効（電子署名法3条）',
       statement:
-        '本人による電子署名（これを行うために必要な符号・物件を適正に管理し、本人だけが行えるものに限る）が' +
-        '行われた電磁的記録は、真正に成立したものと推定される（紙の押印に相当する推定効）。',
+        '本人（作成名義人）による電子署名（これを行うために必要な符号及び物件を適正に管理することにより' +
+        '本人だけが行うことができるものに限る）が行われた電磁的記録は、真正に成立したものと推定される' +
+        '（電子署名法3条・紙の押印に相当する推定効）。「本人による」とは、電子署名が作成名義人の意思に' +
+        '基づいて行われたことを求める趣旨である。あわせて、暗号化等の措置に用いる符号について他人が容易に' +
+        '同一のものを作成できないと認められること（固有性の要件）が必要で、そのために相応の技術的水準が' +
+        '要求される。利用者の指示に基づきサービス提供事業者自身の署名鍵で暗号化する立会人型（事業者署名型）の' +
+        '電子契約サービスについては、総務省・法務省・経済産業省が2020年9月4日に3条との関係を整理したQ&Aを' +
+        '公表しており、サービスを選ぶ際はこの整理に照らして固有性を満たすかを確認する。',
       authority: '所管: 法務省・総務省・経済産業省（電子署名及び認証業務に関する法律）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.moj.go.jp/MINJI/minji32.html', type: 'government', label: '法務省 電子署名法の概要と認定制度' },
-      { url: 'https://www.cloudsign.jp/media/20180803-denshisyomeihou/', type: 'media', label: 'クラウドサイン 電子署名法 解説' },
-      { url: 'https://biz.moneyforward.com/contract/basic/22406/', type: 'media', label: 'マネーフォワード 電子署名法第3条' },
+      { url: 'https://www.moj.go.jp/content/001327658.pdf', type: 'government', label: '総務省・法務省・経済産業省 電子契約サービスに関するQ&A（電子署名法第3条関係）' },
+      { url: 'https://www.meti.go.jp/covid-19/denshishomei3_qa.html', type: 'government', label: '経済産業省 電子署名法3条に関するQ&A' },
+      { url: 'https://www.soumu.go.jp/main_content/000711458.pdf', type: 'government', label: '総務省 電子署名を用いた電子契約サービスに関する整理' },
     ],
   },
   {
@@ -260,15 +290,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '年次有給休暇の年5日取得義務',
       statement:
-        '2019年4月から、年次有給休暇が年10日以上付与される労働者に対し、使用者は年5日について' +
-        '時季を指定して取得させる義務がある（パート・アルバイトも対象）。違反は労働基準法違反として罰則の対象。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '2019年4月から、法定の年次有給休暇付与日数が10日以上の全ての労働者について、使用者は' +
+        '基準日から1年以内に5日を取得させなければならない（パート・アルバイトも対象）。' +
+        '5日は「労働者自らの請求」「計画年休」「使用者による時季指定」のいずれで消化してもよく、' +
+        'すでに5日以上取得している労働者に改めて時季指定をする必要はない。ただし' +
+        '時間単位で取得した分は5日から差し引けない。使用者が時季指定を行うなら、対象となる労働者の範囲と' +
+        '時季指定の方法を就業規則に記載する必要がある。あわせて、労働者ごとに時季・日数・基準日を明らかにした' +
+        '年次有給休暇管理簿を作成し、当該期間中および満了後3年間保存しなければならない' +
+        '（労働基準法施行規則24条の7）。取得させなかった場合は労働者1人につき30万円以下の罰金の対象となる。',
+      authority: '所管: 厚生労働省（労働基準法第39条第7項・第120条・同法施行規則第24条の7）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/content/000463186.pdf', type: 'government', label: '厚生労働省 年5日の年次有給休暇の確実な取得' },
-      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q9.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 有給休暇' },
-      { url: 'https://www.aig.co.jp/kokokarakaeru/management/human-resource/yuukyu02', type: 'media', label: '有給休暇の年5日取得義務 解説' },
+      { url: 'https://www.mhlw.go.jp/content/001140963.pdf', type: 'government', label: '厚生労働省 年5日の年次有給休暇の確実な取得 わかりやすい解説' },
+      { url: 'https://hatarakikatakaikaku.mhlw.go.jp/salaried.html', type: 'government', label: '厚生労働省 働き方改革特設サイト 年次有給休暇の時季指定' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q9.html', type: 'government', label: '厚生労働省 すでに5日以上取得している労働者への時季指定' },
+      { url: 'https://www.mhlw.go.jp/content/000350327.pdf', type: 'government', label: '厚生労働省 年次有給休暇の時季指定義務' },
     ],
   },
   {
@@ -277,15 +314,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '青色申告特別控除（所得税）',
       statement:
-        '複式簿記・貸借対照表/損益計算書の添付・期限内申告の要件を満たすと55万円。加えて e-Tax による' +
-        '電子申告または優良な電子帳簿の保存を満たすと65万円。簡易な記帳等は10万円の控除。',
-      authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+        '55万円の控除を受けるには、①不動産所得または事業所得を生ずべき事業を営んでいること、' +
+        '②これらの所得に係る取引を正規の簿記の原則（一般には複式簿記）により記帳していること、' +
+        '③その記帳に基づいて作成した貸借対照表と損益計算書を確定申告書に添付し、控除を受ける金額を記載して' +
+        '期限内（翌年3月15日まで）に提出することの3つを満たす必要がある。65万円にするには、' +
+        '55万円の要件に加えて、その事業に係る仕訳帳と総勘定元帳について優良な電子帳簿の保存を行っているか、' +
+        '確定申告書・貸借対照表・損益計算書等をe-Taxで期限内に提出するかのいずれかを満たす。' +
+        'これらを満たさない青色申告者は10万円となる。期限内申告が要件なので、1日遅れるだけで55万円・65万円は' +
+        '使えなくなる点が実務上いちばん響く。',
+      authority: '所管: 国税庁（租税特別措置法第25条の2）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm', type: 'government', label: '国税庁 No.2072 青色申告特別控除' },
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除（パンフレット）' },
       { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/cat2/cat26/cat267/scid1688.html', type: 'government', label: '国税庁 65万円控除の適用要件' },
-      { url: 'https://www.freee.co.jp/kb/kb-blue-return/requirement/', type: 'media', label: 'freee 青色申告特別控除の要件' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2070.htm', type: 'government', label: '国税庁 No.2070 青色申告制度' },
     ],
   },
   {
@@ -310,17 +354,26 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'labor-working-conditions-disclosure',
       domain: 'labor',
-      title: '労働条件明示のルール（就業場所・業務の変更の範囲）',
+      title: '労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）',
       statement:
-        '2024年4月から、労働契約の締結・有期契約の更新時の労働条件明示事項に「就業場所・業務の変更の範囲」が' +
-        '追加され、全ての労働者（有期・パート・派遣等を含む）への明示が必要となった。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '2024年4月から、全ての労働契約の締結時と有期労働契約の更新時に、雇入れ直後の就業場所・業務の内容に加えて' +
+        'それらの「変更の範囲」を明示することが必要になった（労働基準法施行規則5条1項1号の3）。' +
+        '「変更の範囲」とは雇入れ直後にとどまらず、将来の配置転換など今後の見込みも含めた、' +
+        '締結する労働契約の期間中における変更の範囲をいう。有期労働契約ではさらに、' +
+        '更新上限（通算契約期間または更新回数の上限）の有無と内容、無期転換申込権が発生する更新のタイミングごとに' +
+        '無期転換を申し込める旨と転換後の労働条件の明示が加わる。対象は有期・パート・派遣を含む全ての労働者で、' +
+        'あわせて職業安定法施行規則の改正により、募集や求人申込みの段階で明示すべき労働条件も追加された。' +
+        '厚生労働省は改正に対応した労働条件通知書のモデル様式を公開しており、' +
+        '改正前の様式を使い続けると追加された明示事項を満たせない。',
+      authority: '所管: 厚生労働省 労働基準局（労働基準法第15条・労働基準法施行規則第5条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/newpage_32105.html', type: 'government', label: '厚生労働省 2024年4月から労働条件明示のルールが変わります' },
-      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 労働条件明示ルール変更' },
-      { url: 'https://proactive.jp/resources/columns/obligation-to-state-working-conditions/', type: 'media', label: '労働条件明示ルール変更 社労士解説' },
+      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 有期契約労働者の無期転換サイト 労働条件明示ルール変更' },
+      { url: 'https://www.mhlw.go.jp/content/11200000/001298244.pdf', type: 'government', label: '厚生労働省 2024年4月からの備えは大丈夫ですか（明示事項の追加）' },
+      { url: 'https://www.mhlw.go.jp/content/001114110.pdf', type: 'government', label: '厚生労働省 募集・求人申込み時の明示事項の追加' },
+      { url: 'https://jsite.mhlw.go.jp/shiga-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/youshiki_newroudoutuuti.html', type: 'government', label: '厚生労働省 滋賀労働局 令和6年4月からの労働条件通知書の様式' },
     ],
   },
   {
@@ -347,14 +400,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '労災保険（労働者災害補償保険）の加入義務',
       statement:
         '労働者を1人でも雇用する事業は、雇用形態（正社員・パート・アルバイト・契約社員等）を問わず労災保険の' +
-        '加入義務がある。労災保険料は全額を事業主が負担する。',
-      authority: '所管: 厚生労働省（労働者災害補償保険法）',
-      asOf: '2026-06',
+        '加入義務がある。保険料は全額を事業主が負担し、雇用保険と違って労働者に負担させることはできない。' +
+        '給付の対象は事業主に雇用されて賃金を受ける労働者なので、事業主本人・自営業者・家族従業者は' +
+        '原則として対象外であり、業務中に負傷しても給付を受けられない（労働者以外を保護するのは別制度の' +
+        '特別加入で、加入は任意である）。保険料の申告・納付は年度更新として毎年6月1日から7月10日までに行う。' +
+        '手続きを取っていなくても、事業主が故意または重大な過失で保険関係成立届を出していない期間に労災が起きれば、' +
+        '労働者への給付は行われたうえで、最大2年遡った保険料と追徴金10％に加え、費用徴収として給付額の40％' +
+        '（適用事業となってから1年を経過してなお未手続きの重大な過失）または100％（指導を受けてなお未手続きの故意）が' +
+        '事業主から徴収される（労災保険法31条1項）。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法・労働保険徴収法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/kochi-roudoukyoku/riyousha_mokuteki_menu/mokuteki_naiyou/kakushu_hoken.html', type: 'government', label: '厚生労働省 高知労働局 各種保険' },
-      { url: 'https://www.freee.co.jp/kb/kb-payroll/how-to-calculate-labor-insurance-premium/', type: 'media', label: 'freee 労働保険の基礎' },
-      { url: 'https://onehr.jp/column/labor/workers-accident-insurance-who-pays/', type: 'media', label: '労災保険料の負担 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei15.html', type: 'government', label: '厚生労働省 労災保険の対象と特別加入制度' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/kanyu.html', type: 'government', label: '厚生労働省 労災保険への加入' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/neglect/index.html', type: 'government', label: '厚生労働省 成立手続を怠っていた場合は（未手続事業主への費用徴収）' },
     ],
   },
   {
@@ -432,15 +493,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '印紙税の課税文書と過怠税',
       statement:
-        '印紙税法上の課税文書（契約書・領収書等）を作成した者は所定額の収入印紙を貼付・消印する義務を負う。' +
-        '納付すべき印紙税を納めなかった場合は原則として本来の税額の3倍の過怠税（自主申出時は1.1倍）が課される。',
+        '印紙税法上の課税文書（契約書・領収書等）を作成した者は、作成の時までに所定額の収入印紙を貼付し' +
+        '消印する義務を負う。納付しなかった場合は、本来の税額とその2倍の合計、すなわち3倍の過怠税を徴収される。' +
+        'ただし調査による決定を予知せずに自ら所轄税務署長へ不納付の事実を申し出た場合は、' +
+        '本来の税額とその10％の合計、すなわち1.1倍に軽減される。貼付したが所定の方法で消印しなかった場合は、' +
+        '消されていない印紙の額面金額に相当する過怠税が別に徴収される（貼れば済む、ではない）。' +
+        '誤って多く納付したときは自動的には戻らず、「印紙税過誤納確認申請書」を提出して' +
+        '過誤納の事実について所轄税務署長の確認を受ける必要がある。提出先は文書の作成場所を管轄する税務署である。' +
+        'なお、電子的に作成・交付した文書は課税文書に当たらないため、電子契約に切り替えれば印紙税は生じない。',
       authority: '所管: 国税庁・財務省（印紙税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7131.htm', type: 'government', label: '国税庁 No.7131 印紙税を納めなかったとき' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/06/21.htm', type: 'government', label: '国税庁 印紙を貼り付けなかった場合の過怠税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7130.htm', type: 'government', label: '国税庁 No.7130 誤って納付した印紙税の還付' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/kagono.htm', type: 'government', label: '国税庁 印紙税過誤納[確認申請・充当請求]手続' },
       { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/23120080.htm', type: 'government', label: '国税庁 印紙税不納付事実申出手続' },
-      { url: 'https://www.gmosign.com/media/electronic-contract/inshizei-kataizei/', type: 'media', label: 'GMOサイン 印紙税の過怠税' },
     ],
   },
   {
@@ -449,15 +518,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '雇用保険の被保険者加入要件',
       statement:
-        '雇用保険は、1週間の所定労働時間が20時間以上で、かつ31日以上の雇用見込みがある労働者が、雇用形態を' +
-        '問わず原則として被保険者となる。要件を満たせば事業主はハローワークへ資格取得届を提出する。',
+        '雇用保険は、1週間の所定労働時間が20時間以上で、かつ31日以上引き続き雇用されることが見込まれる労働者が、' +
+        '常用・パート・アルバイト・派遣といった名称や雇用形態にかかわらず被保険者となる。' +
+        '被保険者になるかどうかは本人の意思では選べず、要件を満たせば加入する。事業主は、被保険者となった日の' +
+        '属する月の翌月10日までに雇用保険被保険者資格取得届をハローワークへ提出する。' +
+        '昼間学生は原則として適用除外だが、要件を満たす場合に被保険者となることがある。' +
+        '2017年1月1日からは65歳以上の労働者も適用対象になった。さらにマルチジョブホルダー制度により、' +
+        '65歳以上の労働者は、2つの事業所（1事業所あたり週5時間以上20時間未満）の所定労働時間を合計して' +
+        '週20時間以上、かつそれぞれの雇用見込みが31日以上であれば、本人からハローワークへ申し出ることで' +
+        '特例的に被保険者となれる。',
       authority: '所管: 厚生労働省（雇用保険法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/hoken/kakikata/dl/koyou-06.pdf', type: 'government', label: '厚生労働省 雇用保険の被保険者について' },
-      { url: 'https://www.mhlw.go.jp/content/11600000/000637955.pdf', type: 'government', label: '厚生労働省 雇用保険業務取扱要領' },
-      { url: 'https://hataluck.jp/column/store-management/conditions/', type: 'media', label: '雇用保険の加入条件 解説' },
+      { url: 'https://www.mhlw.go.jp/content/11600000/000637955.pdf', type: 'government', label: '厚生労働省 雇用保険業務取扱要領（第4章 被保険者について）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000136389_00001.html', type: 'government', label: '厚生労働省 雇用保険マルチジョブホルダー制度' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page15.html', type: 'government', label: '厚生労働省 事業主の行う雇用保険の手続き' },
     ],
   },
   {
@@ -466,15 +543,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '定期健康診断の実施義務',
       statement:
-        '労働安全衛生法により、事業者は常時使用する労働者に対し1年以内ごとに1回の定期健康診断を、雇入れ時には' +
-        '雇入れ時健康診断を実施する義務があり、その費用は事業者が負担する。',
-      authority: '所管: 厚生労働省（労働安全衛生法・労働安全衛生規則）',
-      asOf: '2026-06',
+        '事業者は、常時使用する労働者に対して雇入れの際に健康診断を行い（労働安全衛生規則43条）、' +
+        'その後は1年以内ごとに1回、定期に医師による健康診断を行わなければならない（同規則44条）。' +
+        '費用は事業者が負担する。「常時使用する労働者」は正社員に限らず、契約期間が1年以上（更新により' +
+        '1年以上になる見込みを含む）で、1週間の所定労働時間が同種の業務に従事する通常の労働者の4分の3以上' +
+        'であればパートタイム労働者も対象になる。実施したら結果の記録（健康診断個人票）を作成して5年間保存し、' +
+        '常時50人以上の労働者を使用する事業場は定期健康診断結果報告書を遅滞なく所轄労働基準監督署長へ提出する。' +
+        '受けさせるだけでは足りず、記録の作成と保存までが義務である点を落としやすい。',
+      authority: '所管: 厚生労働省（労働安全衛生法第66条・労働安全衛生規則第43条・第44条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000103900.pdf', type: 'government', label: '厚生労働省 健康診断を実施しましょう' },
-      { url: 'https://www.mhlw.go.jp/file/05-Shingikai-11201000-Roudoukijunkyoku-Soumuka/0000136750.pdf', type: 'government', label: '厚生労働省 定期健康診断' },
-      { url: 'https://mediment.jp/blog/regular-health-checkup', type: 'media', label: '定期健康診断の解説' },
+      { url: 'https://www.mhlw.go.jp/file/05-Shingikai-11201000-Roudoukijunkyoku-Soumuka/0000136750.pdf', type: 'government', label: '厚生労働省 労働安全衛生法に基づく定期健康診断' },
+      { url: 'https://www.mhlw.go.jp/shingi/2009/01/dl/s0119-4h.pdf', type: 'government', label: '厚生労働省 労働安全衛生法に基づく健康診断の概要' },
+      { url: 'https://anzeninfo.mhlw.go.jp/yougo/yougo51_1.html', type: 'government', label: '厚生労働省 職場のあんぜんサイト 定期健康診断' },
     ],
   },
   {
@@ -568,15 +651,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '景品表示法の課徴金制度',
       statement:
-        '優良誤認表示・有利誤認表示に対し、対象商品・役務の売上額の3%（対象期間は最長3年）が課徴金として' +
-        '賦課される。違反行為を自主申告した事業者は課徴金額が2分の1に減額される。',
-      authority: '所管: 消費者庁（景品表示法）',
-      asOf: '2026-06',
+        '優良誤認表示・有利誤認表示に対しては、対象となる商品・役務の売上額の3％（対象期間は最長3年）が' +
+        '課徴金として賦課される。違反行為を自主申告した事業者は課徴金額が2分の1に減額される。' +
+        '令和5年改正（2024年10月1日施行）で運用が強化され、①過去10年以内に課徴金納付命令を受けたことがある' +
+        '事業者は課徴金額が1.5倍に加算される、②売上額を把握できない期間について推計して課徴金を算定できる、' +
+        '③是正措置計画の認定を受けた事業者は措置命令・課徴金納付命令を受けない確約手続が導入された、' +
+        '④返金措置の手段に電子マネー等が追加された、⑤優良誤認表示・有利誤認表示に対する直罰' +
+        '（100万円以下の罰金）が新設された。繰り返しの違反ほど不利になる建付けになっている。',
+      authority: '所管: 消費者庁（不当景品類及び不当表示防止法第8条）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/violation', type: 'government', label: '消費者庁 景品表示法違反行為の措置' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/violation', type: 'government', label: '消費者庁 景品表示法違反行為を行った場合はどうなるのでしょうか' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/movie_explanation/assets/representation_cms216_240917_02.pdf', type: 'government', label: '消費者庁 【令和6年10月1日施行】改正景品表示法の概要' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/guideline/assets/representation_cms216_240418_03.pdf', type: 'government', label: '消費者庁 景品表示法第8条（課徴金納付命令の基本的要件）に関する考え方' },
       { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/amendment/pdf/141127premiums_1.pdf', type: 'government', label: '消費者庁 課徴金制度の概要' },
-      { url: 'https://www.89ji.com/keihyou-guide/administrative_monetary_penalty.html', type: 'media', label: '景品表示法の課徴金 解説' },
     ],
   },
   {
@@ -602,15 +691,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '源泉徴収義務と納付期限',
       statement:
-        '給与や報酬等の支払者は所得税・復興特別所得税を源泉徴収し、原則として徴収月の翌月10日までに納付する義務がある。' +
-        '給与の支給人員が常時10人未満の場合は納期の特例により年2回にまとめて納付できる。',
+        '給与や報酬等の支払者は所得税及び復興特別所得税を源泉徴収し、原則として徴収した月の翌月10日までに' +
+        '納付する義務がある。給与の支給人員が常時10人未満である源泉徴収義務者は、事前に承認を受ければ' +
+        '納期の特例により年2回にまとめて納付でき、1月から6月までに徴収した分は7月10日、' +
+        '7月から12月までに徴収した分は翌年1月20日が納付期限になる。特例の対象になるのは給与等と' +
+        '一定の報酬・料金（税理士・弁護士・司法書士等への報酬）に係る源泉所得税に限られ、' +
+        'それ以外は特例の承認を受けていても原則どおり翌月10日納付である。' +
+        '納付が期限に遅れると不納付加算税と延滞税の対象になるため、資金繰り上は毎月の固定支出として扱う。',
       authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm', type: 'government', label: '国税庁 No.2505 納付期限と納期の特例' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm', type: 'government', label: '国税庁 No.2505 源泉所得税及び復興特別所得税の納付期限と納期の特例' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2502.htm', type: 'government', label: '国税庁 No.2502 源泉徴収義務者' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/2894/', type: 'media', label: 'マネーフォワード 源泉徴収の解説' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_37.htm', type: 'government', label: '国税庁 源泉所得税の納期の特例の承認に関する申請' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2110.htm', type: 'government', label: '国税庁 No.2110 事業主が納める税金（源泉所得税）' },
     ],
   },
   {
@@ -619,15 +714,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '減価償却の方法と法定償却方法',
       statement:
-        '減価償却には定額法・定率法等があり、選定の届出をしないと法定償却方法（法人は原則定率法、個人は原則定額法）が適用される。' +
-        '建物・建物附属設備・構築物は定額法に限定される。',
+        '減価償却資産の償却方法は、資産の種類ごとに（事業所や船舶ごとの区分により）選定し、' +
+        '「減価償却資産の償却方法の届出書」を確定申告書の提出期限までに納税地の所轄税務署長へ提出する。' +
+        '届け出なかった場合は資産の種類等に応じた法定償却方法が適用され、法人は原則として定率法、' +
+        '個人事業主は原則として定額法になる。ただし平成10年4月1日以後に取得した建物は定額法（平成19年3月31日以前の' +
+        '取得分は旧定額法）に限られ、平成28年4月1日以後に取得した建物附属設備および構築物（鉱業用のものを除く）も' +
+        '定額法に限られる。いったん選定した償却方法を変更するには、変更承認申請書を提出して所轄税務署長の承認を' +
+        '受ける必要があり、届出書を出し直すだけでは変更できない。',
       authority: '所管: 国税庁（所得税法・法人税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm', type: 'government', label: '国税庁 No.2100 減価償却のあらまし' },
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5409.htm', type: 'government', label: '国税庁 No.5409 償却方法の選定手続き' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/65288/', type: 'media', label: 'マネーフォワード 減価償却の方法' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5409.htm', type: 'government', label: '国税庁 No.5409 減価償却資産の償却方法の選定手続き' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2106.htm', type: 'government', label: '国税庁 No.2106 定額法と定率法による減価償却' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/21.htm', type: 'government', label: '国税庁 A1-23 減価償却資産の償却方法の変更承認申請手続' },
     ],
   },
   {
@@ -636,15 +737,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '就業規則の作成・届出義務',
       statement:
-        '常時10人以上の労働者を使用する使用者は就業規則を作成し所轄労働基準監督署へ届け出る義務があり、' +
-        '作成・変更時は労働者代表の意見を聴取し、労働者へ周知しなければならない。',
-      authority: '所管: 厚生労働省（労働基準法第89条・90条）',
-      asOf: '2026-06',
+        '常時10人以上の労働者を使用する使用者は就業規則を作成し、所轄労働基準監督署長へ届け出なければならない' +
+        '（労働基準法89条）。変更したときも同様に届け出る。絶対的必要記載事項は、①始業・終業の時刻、休憩時間、' +
+        '休日、休暇、交替制の場合の就業時転換 ②賃金の決定・計算・支払の方法、賃金の締切り・支払の時期、昇給 ' +
+        '③退職に関する事項（解雇の事由を含む）の3つで、退職手当・臨時の賃金・安全衛生・表彰と制裁などは' +
+        '定めをする場合に記載を要する（相対的必要記載事項）。届出には過半数組合（ない場合は過半数を代表する者）の' +
+        '意見を記し氏名を記載した書面（意見書）を添付する（90条）。就業規則は法令および当該事業場に適用される' +
+        '労働協約に反してはならず、反する場合は所轄労働基準監督署長が変更を命ずることができる（92条）。' +
+        '作成・届出だけでは足りず、労働者への周知が必要である（106条）。',
+      authority: '所管: 厚生労働省（労働基準法第89条・90条・92条・106条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/model/index.html', type: 'government', label: '厚生労働省 モデル就業規則' },
-      { url: 'https://www.chukidan.jp/navi/column/work-rules/11286/', type: 'media', label: '就業規則の作成義務と届出 解説' },
-      { url: 'https://www.authense.jp/authense-sr/column/syugyokisoku/17/', type: 'media', label: '就業規則の届出義務 解説' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article89_90_92.html', type: 'government', label: '厚生労働省 栃木労働局 就業規則の作成・変更・届出の義務（89条・90条・92条）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/syuugyoukisoku/q4.html', type: 'government', label: '厚生労働省 確かめよう労働条件 就業規則の必須記載事項' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/syuugyoukisoku/q2.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 就業規則の記載事項' },
     ],
   },
   {
@@ -738,15 +846,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '安全衛生管理体制（50人以上）',
       statement:
-        '常時50人以上の労働者を使用する事業場は、衛生管理者および産業医を選任し（事由発生から14日以内）、' +
-        '衛生委員会を設置して、所轄労働基準監督署長へ選任を報告する義務がある。',
-      authority: '所管: 厚生労働省（労働安全衛生法）',
-      asOf: '2026-06',
+        '安全衛生管理体制は会社単位ではなく事業場を適用単位として、業種と規模に応じて組み立てる' +
+        '（本社・工場・支店をそれぞれ 1 事業場として数える）。常時50人以上の労働者を使用する事業場は' +
+        '衛生管理者と産業医を選任し、衛生委員会を設置する。選任は事由が発生した日から14日以内に行い、' +
+        '様式第3号「総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告」を遅滞なく所轄労働基準監督署長へ' +
+        '提出する。常時10人以上50人未満の事業場は、衛生管理者等の選任に代えて安全衛生推進者等を選任する' +
+        '（規模が50人に満たなければ何もしなくてよい、ではない）。委員会は開催の都度、議事の概要を' +
+        '労働者へ遅滞なく周知しなければならない。常時3,000人を超える事業場は産業医を2人以上選任する。',
+      authority: '所管: 厚生労働省（労働安全衛生法第10条〜第19条の2）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html', type: 'government', label: '厚生労働省 選任報告' },
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html', type: 'government', label: '厚生労働省 衛生委員会FAQ' },
-      { url: 'https://doctor-trust.co.jp/law/law.html', type: 'media', label: '安全衛生管理体制 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html', type: 'government', label: '厚生労働省 総括安全衛生管理者・安全管理者・衛生管理者・産業医選任報告' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_09979.html', type: 'government', label: '厚生労働省 選任の期限と報告先' },
+      { url: 'https://jsite.mhlw.go.jp/niigata-roudoukyoku/library/niigata-roudoukyoku/jigyounushi/anzen/pdf/251007kanritaisei_aramashi_.pdf', type: 'government', label: '厚生労働省 新潟労働局 安全衛生管理体制のあらまし' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html', type: 'government', label: '厚生労働省 衛生委員会 FAQ' },
     ],
   },
   {
@@ -838,17 +952,28 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'labor-dismissal-notice',
       domain: 'labor',
-      title: '解雇予告（労働基準法第20条）',
+      title: '解雇予告と適用除外・除外認定（労働基準法第20条・第21条）',
       statement:
-        '使用者が労働者を解雇しようとする場合は、少なくとも30日前に予告するか、30日分以上の平均賃金（解雇予告手当）を' +
-        '支払わなければならない。予告日数は解雇予告手当を支払った日数だけ短縮できる。',
-      authority: '所管: 厚生労働省（労働基準法第20条）',
-      asOf: '2026-06',
+        '使用者が労働者を解雇しようとする場合は、少なくとも30日前に予告するか、30日分以上の平均賃金' +
+        '（解雇予告手当）を支払わなければならない（労働基準法20条1項）。予告日数は手当を支払った日数だけ' +
+        '短縮でき、予告をした日は日数に算入しない。手続きを踏まずに即時解雇できるのは、天災事変その他' +
+        'やむを得ない事由により事業の継続が不可能となった場合と、労働者の責に帰すべき事由による場合だけで、' +
+        'いずれも所轄労働基準監督署長の解雇予告除外認定（様式第3号）を受ける必要がある。' +
+        'また、日日雇い入れられる者、2か月以内の期間を定めて使用される者、季節的業務に4か月以内の期間を' +
+        '定めて使用される者、試の使用期間中の者には予告の規定が適用されないが、日雇いは1か月、' +
+        '期間を定めた者はその期間、試用期間中の者は14日を超えて引き続き使用されると適用される（同法21条）。' +
+        '予告手当の算定基礎になる平均賃金は直前3か月の賃金から求める（同法12条）。' +
+        '手続きを守っても解雇が有効になるとは限らず、客観的合理性と社会通念上の相当性は別に問われる。',
+      authority: '所管: 厚生労働省（労働基準法第12条・第20条・第21条）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://jsite.mhlw.go.jp/kagoshima-roudoukyoku/yokuaru_goshitsumon/qa07/0703.html', type: 'government', label: '厚生労働省 鹿児島労働局 解雇予告' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/88061/', type: 'media', label: 'マネーフォワード 解雇予告手当' },
-      { url: 'https://www.komon-lawyer.jp/qa/teate/', type: 'media', label: 'デイライト法律事務所 解雇予告' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article20.html', type: 'government', label: '厚生労働省 栃木労働局 解雇の予告（第20条）' },
+      { url: 'https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00485.html', type: 'government', label: '厚生労働省 和歌山労働局 解雇の予告（第20条・第21条）' },
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/dl/140811-1.pdf', type: 'government', label: '厚生労働省 解雇する際の手続き（リーフレットシリーズ労基法20条）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/kaiko/q2.html', type: 'government', label: '厚生労働省 解雇予告や予告手当の不要な場合' },
+      { url: 'https://shinsei.e-gov.go.jp/recept/procedure/lists/procedureInformation?gtaTetCd=4950013309636', type: 'government', label: 'e-Gov電子申請 解雇予告除外認定申請' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73022000&dataType=0', type: 'government', label: '厚生労働省 法令データ 労働基準法（第20条・第21条）' },
     ],
   },
   {
@@ -874,15 +999,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '景品表示法の景品規制',
       statement:
-        '景品表示法は過大な景品類の提供を制限し、一般懸賞・共同懸賞・総付景品の類型ごとに取引価額に応じた景品の' +
-        '最高額と総額の上限を定めている。違反は措置命令等の対象となる。',
-      authority: '所管: 消費者庁（景品表示法）',
-      asOf: '2026-06',
+        '景品表示法は過大な景品類の提供を制限し、一般懸賞・共同懸賞・総付景品の3類型ごとに上限を定めている。' +
+        '一般懸賞（抽選など偶然性で提供先を定めるもの）は、取引価額5,000円未満なら景品類の最高額が取引価額の20倍、' +
+        '5,000円以上なら10万円で、総額は懸賞に係る売上予定総額の2％以内。共同懸賞（商店街や同業者が共同で行うもの）は' +
+        '取引価額にかかわらず最高額30万円、総額は売上予定総額の3％以内。総付景品（申込み順や来店順など懸賞によらず' +
+        '提供するもの）は、取引価額1,000円未満なら最高額200円、1,000円以上なら取引価額の20％。' +
+        '最高額だけを見て総額の枠を外すと超過しやすいので、企画時に両方を確認する。違反は措置命令等の対象となる。',
+      authority: '所管: 消費者庁（不当景品類及び不当表示防止法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/premium_regulation', type: 'government', label: '消費者庁 景品規制の概要' },
       { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/lotteries', type: 'government', label: '消費者庁 一般懸賞について' },
-      { url: 'https://ueno.law/topics/keihyouhou-keihin-kisei/', type: 'media', label: '景品規制 解説' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/joint', type: 'government', label: '消費者庁 共同懸賞について' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/not_lotteries', type: 'government', label: '消費者庁 総付景品について' },
     ],
   },
   {
@@ -891,15 +1021,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '製造物責任法（PL法）',
       statement:
-        '製造物の欠陥により他人の生命・身体・財産に損害が生じた場合、製造業者等は過失の有無を問わず損害賠償責任を負う（無過失責任）。' +
-        'ただし製造物自体のみの損害は対象外。',
+        '製造物の欠陥により他人の生命・身体・財産に損害が生じた場合、製造業者等は過失の有無を問わず' +
+        '損害賠償責任を負う（無過失責任）。「欠陥」とは、引渡し時の技術水準等を考慮して当該製造物が' +
+        '通常有すべき安全性を欠いていることをいう。ただし損害が製造物自体にとどまる場合は対象外で、' +
+        'その場合は契約不適合責任などの一般の規律による。免責事由は2つで、引き渡した時点の科学・技術に関する知見では' +
+        '欠陥を認識できなかったこと（開発危険の抗弁）と、部品・原材料の欠陥がもっぱら組み込んだ側の製造業者の' +
+        '設計に関する指示に起因し欠陥の発生につき過失がないこと（同法4条）。期間制限は、損害及び賠償義務者を' +
+        '知った時から3年（人の生命または身体を侵害した場合は5年）、製造業者等が引き渡した時から10年で、' +
+        '長期側の起算点は消費者の手に渡った時ではなく流通させた時である（同法5条）。',
       authority: '所管: 消費者庁（製造物責任法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/pl_qa.html', type: 'government', label: '消費者庁 製造物責任法の概要Q&A' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/product_liability_act_annotations/', type: 'government', label: '消費者庁 製造物責任(PL)法の逐条解説' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/product_liability_act_amendment', type: 'government', label: '消費者庁 民法改正に伴う製造物責任法の一部改正' },
       { url: 'https://laws.e-gov.go.jp/law/406AC0000000085', type: 'government', label: 'e-Gov 製造物責任法' },
-      { url: 'https://ja.wikipedia.org/wiki/%E8%A3%BD%E9%80%A0%E7%89%A9%E8%B2%AC%E4%BB%BB%E6%B3%95', type: 'media', label: '製造物責任法 概説' },
     ],
   },
   {
@@ -1027,15 +1164,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '法定三帳簿の作成・保存義務',
       statement:
-        '使用者は労働者名簿・賃金台帳を各事業場ごとに調製し、出勤簿等の労働関係に関する重要書類とあわせて法定の期間' +
-        '保存しなければならない（労働基準法第107〜109条。第109条の保存期間は5年だが当分の間3年）。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '使用者は労働者名簿（労働基準法107条）と賃金台帳（同108条）を各事業場ごとに調製し、' +
+        '出勤簿等の労働関係に関する重要な書類とあわせて保存しなければならない（同109条）。' +
+        'この3つが法定三帳簿と呼ばれ、労働基準監督署の調査でまず確認される。日雇労働者を含む全ての労働者が' +
+        '対象で、パート・アルバイトも含む（規模による免除はない）。保存期間は、賃金請求権の消滅時効が' +
+        '5年に延びたことに合わせて5年とされたが、経過措置により当分の間は3年である（同143条1項）。' +
+        '起算日は書類ごとに異なり、労働者名簿は死亡・退職・解雇の日、賃金台帳は最後の記入をした日、' +
+        '賃金その他労働関係に関する重要な書類はその完結の日だが、記録の完結日より賃金の支払期日が後に来る場合は' +
+        '支払期日が起算日になる。パソコンで作成・保存することも、必要なときに直ちに表示・印刷でき、' +
+        '改ざん防止と保存期間の担保がされていれば差し支えない。',
+      authority: '所管: 厚生労働省（労働基準法第107条・第108条・第109条・第143条）',
+      asOf: '2026-08',
     },
     sources: [
+      { url: 'https://jsite.mhlw.go.jp/okinawa-roudoukyoku/library/okinawa-roudoukyoku/04rouki/houteichoubo.pdf', type: 'government', label: '厚生労働省 沖縄労働局 法定帳簿を整え保存する' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/syuugyoukisoku/q6.html', type: 'government', label: '厚生労働省 賃金台帳等の労働契約関係の書類の保存期間' },
+      { url: 'https://www.mhlw.go.jp/content/000617980.pdf', type: 'government', label: '厚生労働省 改正労働基準法等に関するQ&A（記録の保存）' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_33.html', type: 'government', label: '厚生労働省 労務関係書類をパソコンで作成して保存する場合' },
       { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov 労働基準法' },
-      { url: 'https://jsite.mhlw.go.jp/okinawa-roudoukyoku/library/okinawa-roudoukyoku/04rouki/houteichoubo.pdf', type: 'government', label: '厚生労働省 沖縄労働局 法定帳簿' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/87661/', type: 'media', label: '法定三帳簿 解説' },
     ],
   },
   {
@@ -1129,15 +1275,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '賃金からの控除と労使協定（24協定）',
       statement:
-        '賃金は全額払いが原則だが、所得税・社会保険料等の法令で定めるもの以外を賃金から控除するには、' +
-        '過半数代表との書面による労使協定（賃金控除協定）が必要である。',
-      authority: '所管: 厚生労働省（労働基準法第24条）',
-      asOf: '2026-06',
+        '賃金は通貨で、直接労働者に、その全額を支払わなければならない（労働基準法24条1項）。' +
+        '全額払いの例外は、所得税・住民税の源泉徴収や健康保険・厚生年金保険・雇用保険の保険料など' +
+        '法令に定めのあるものと、過半数組合（ない場合は過半数を代表する者）との書面による労使協定' +
+        '（賃金控除協定）を結んだものに限られる。協定さえあれば何でも控除できるわけではなく、' +
+        '購買代金・社宅や寮その他の福利厚生施設の費用・社内預金・組合費など、控除の対象が事理明白なものに限られる。' +
+        'この協定は36協定と違って労働基準監督署長への届出を要しないが、締結して終わりではなく、' +
+        '労働者に周知し事業場に備え置く必要がある。',
+      authority: '所管: 厚生労働省（労働基準法第24条第1項但書）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002230320.pdf', type: 'government', label: '厚生労働省 神奈川労働局 賃金控除協定' },
+      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002230320.pdf', type: 'government', label: '厚生労働省 神奈川労働局 賃金控除に関する労使協定' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei05.html', type: 'government', label: '厚生労働省 賃金の支払方法 FAQ' },
-      { url: 'https://www.nakagrps.co.jp/blog/11189/', type: 'media', label: '24協定 解説' },
+      { url: 'https://jsite.mhlw.go.jp/fukui-roudoukyoku/content/contents/001714404.pdf', type: 'government', label: '厚生労働省 福井労働局 賃金控除に関する協定書（記載例）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/chingin/q12.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 貸付金と賃金の相殺' },
     ],
   },
   {
@@ -1146,15 +1298,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '安全配慮義務（労働契約法第5条）',
       statement:
-        '使用者は労働契約に伴い、労働者がその生命・身体等の安全を確保しつつ労働できるよう必要な配慮をする義務を負う。' +
-        '違反は債務不履行等として損害賠償責任を生じうる。',
+        '使用者は労働契約に伴い、労働者がその生命・身体等の安全を確保しつつ労働することができるよう、' +
+        '必要な配慮をするものとされている（労働契約法5条）。この義務は同条が新設される前から判例で認められており、' +
+        '陸上自衛隊八戸車両整備工場事件（最三小判 昭和50年2月25日）が国の公務員に対する安全配慮義務を認め、' +
+        '川義事件（最三小判 昭和59年4月10日）が、労務提供のために設置した場所・設備・器具等を使用させ、' +
+        'または指揮下で労務を提供させる過程において労働者の生命及び身体等を危険から保護するよう配慮すべき義務が' +
+        'あるとした。電通事件（最二小判 平成12年3月24日）は長時間労働によるうつ病発症と自死との相当因果関係を認めており、' +
+        '対象は物理的な危険にとどまらない。労災保険給付は損害の全部を填補するものではないため、' +
+        '給付を超える部分について民事上の損害賠償を請求されることがある。',
       authority: '所管: 厚生労働省（労働契約法第5条）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://laws.e-gov.go.jp/law/419AC0000000128/', type: 'government', label: 'e-Gov 労働契約法' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/13.pdf', type: 'government', label: '厚生労働省 労働契約法第5条 解説' },
-      { url: 'https://www.manpowergroup.jp/client/manpowerclip/hrconsulting/labor_contracts_act_ch1alt5.html', type: 'media', label: '安全配慮義務 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/12.pdf', type: 'government', label: '厚生労働省 労働契約法第5条に関する裁判例' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei14/dl/081001-1b_0006.pdf', type: 'government', label: '厚生労働省 労働災害の発生と企業の責任' },
     ],
   },
   {
@@ -1214,15 +1373,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '役員退職給与の損金算入',
       statement:
-        '適正な役員退職給与は損金算入できるが、不相当に高額な部分の金額は損金不算入となる。適正額は功績倍率法等により、' +
-        '勤続期間・退職事情・同業類似法人の支給状況等に照らして判断される。',
-      authority: '所管: 国税庁（法人税法第34条）',
-      asOf: '2026-06',
+        '役員退職給与のうち不相当に高額な部分の金額は損金の額に算入されない（法人税法34条2項）。' +
+        '適正額の判断には功績倍率法が用いられることが多く、退職の直前に支給した給与の額を基礎に、' +
+        '業務に従事した期間と職責に応じた倍率を乗じて算定する。勤続期間・退職の事情・同業類似法人の' +
+        '支給状況等に照らして判断される点は変わらない。損金算入の時期は、株主総会の決議等により金額が' +
+        '具体的に確定した日の属する事業年度が原則で、支払った日の属する事業年度に損金経理した場合は' +
+        'それも認められる（法人税基本通達9-2-28）。役員が引き続き在職する場合でも、分掌変更等により' +
+        '実質的に退職したと同様の事情にあると認められるときは、打切り支給した臨時の給与を退職給与として' +
+        '扱う余地がある（同9-2-32）。金額も時期も税務調査で最も見られる論点なので、決議の記録を必ず残す。',
+      authority: '所管: 国税庁（法人税法第34条2項・法人税基本通達9-2-27の2以下）',
+      asOf: '2026-08',
     },
     sources: [
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/09/09_02_07.htm', type: 'government', label: '国税庁 法人税基本通達 第7款 退職給与' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5211.htm', type: 'government', label: '国税庁 No.5211 役員に対する給与' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/070313/10.htm', type: 'government', label: '国税庁 法令解釈通達 役員給与等' },
-      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/111/04/index.htm', type: 'government', label: '国税庁 税務大学校 論叢' },
-      { url: 'https://legacy.ne.jp/legacy-cloud/tax_practice/001-yakuin-taishokukin-keisanhouhou-kougaku/', type: 'media', label: '役員退職金の計算 解説' },
+      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/111/04/index.htm', type: 'government', label: '国税庁 税務大学校論叢 過大役員給与の損金不算入額算定' },
     ],
   },
   {
@@ -1265,15 +1431,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '不正アクセス禁止法',
       statement:
-        '他人の識別符号（ID・パスワード）の無断入力による不正ログインやセキュリティホールを突いた不正アクセスを禁止し、' +
-        '識別符号の不正取得・保管・フィッシング等の不正な要求も罰則付きで禁止する。',
-      authority: '所管: 警察庁・総務省・経済産業省（不正アクセス禁止法）',
-      asOf: '2026-06',
+        '他人の識別符号（ID・パスワード）を無断で入力する不正ログインや、セキュリティホールを突いた侵入を' +
+        '不正アクセス行為として禁止する（3条）。違反は3年以下の拘禁刑または100万円以下の罰金。' +
+        '周辺行為も罰則付きで禁止されており、不正アクセスの用に供する目的での識別符号の不正取得（4条）、' +
+        '第三者への提供による助長（5条）、不正に取得した識別符号の保管（6条）、アクセス管理者になりすまして' +
+        '識別符号の入力を求めるフィッシング（7条）は、いずれも1年以下の拘禁刑または50万円以下の罰金にあたる。' +
+        '規制の前提はアクセス制御機能があることなので、そもそも認証を設けていないシステムは本法では守られない。' +
+        'アクセス管理者には防御措置を講ずる努力義務が課されている。',
+      authority: '所管: 警察庁・総務省・経済産業省（不正アクセス行為の禁止等に関する法律）',
+      asOf: '2026-08',
     },
     sources: [
+      { url: 'https://www.npa.go.jp/bureau/cyber/pdf/1_kaisetsu.pdf', type: 'government', label: '警察庁 不正アクセス行為の禁止等に関する法律の解説' },
       { url: 'https://www.npa.go.jp/bureau/cyber/countermeasures/unauthorized-access.html', type: 'government', label: '警察庁 不正アクセス対策' },
-      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/09/', type: 'government', label: '総務省 サイバーセキュリティサイト' },
-      { url: 'https://www.fortinet.com/jp/resources/cyberglossary/unauthorized-computer-access-law', type: 'media', label: '不正アクセス禁止法 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/09/', type: 'government', label: '総務省 不正アクセス行為の禁止等に関する法律' },
+      { url: 'https://www.npa.go.jp/bureau/cyber/pdf/6_QA.pdf', type: 'government', label: '警察庁 不正アクセス禁止法改正Q&A' },
     ],
   },
   {
@@ -1299,15 +1471,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人事業税の外形標準課税',
       statement:
-        '資本金1億円超の普通法人には法人事業税の外形標準課税（付加価値割・資本割）が適用され、' +
-        '所得が赤字でも付加価値割・資本割が課される。',
+        '法人事業税の外形標準課税（付加価値割・資本割）は、所得が赤字でも課税されるため、' +
+        '対象になるかどうかで税負担の性質が変わる。従来の対象は事業年度終了の日の資本金が1億円超の普通法人だったが、' +
+        '令和6年度税制改正で対象が広がった。①減資への対応（令和7年4月1日以後開始事業年度）— 前事業年度に' +
+        '外形標準課税の対象だった法人は、期末資本金が1億円以下でも資本金と資本剰余金の合計額が10億円を超えれば対象。' +
+        '②100％子法人等への対応（令和8年4月1日以後開始事業年度）— 資本金と資本剰余金の合計額が50億円を超える' +
+        '特定法人の100％子法人等は、期末資本金が1億円以下でも同合計額が2億円を超えれば対象。' +
+        '減資だけで対象外にする組立てが通らなくなったので、資本政策を動かす前に判定し直す必要がある。',
       authority: '所管: 総務省・各都道府県（地方税法／法人事業税）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.soumu.go.jp/main_content/000149767.pdf', type: 'government', label: '総務省 外形標準課税の概要' },
-      { url: 'https://www.tax.metro.tokyo.lg.jp/shitsumon/work/a1/index.html#gaikei-faq', type: 'municipality', label: '東京都主税局 外形標準課税 FAQ' },
-      { url: 'https://www.pwc.com/jp/ja/knowledge/column/assurance-knowledge/pro-forma-standard-taxation.html', type: 'media', label: '外形標準課税 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_05.html', type: 'government', label: '総務省 法人事業税における外形標準課税' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/houjinji/gaikei_kaisei', type: 'municipality', label: '東京都主税局 外形標準課税の対象法人の見直し' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/houjinji/gaikei/gaikei-01', type: 'municipality', label: '東京都主税局 法人事業税に係る外形標準課税の概要' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2024/06taikou_gaiyou.htm', type: 'government', label: '財務省 令和6年度税制改正の大綱の概要' },
     ],
   },
   {
@@ -1316,15 +1494,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '年末調整',
       statement:
-        '給与の支払者は、その年最後の給与支払時に、源泉徴収した所得税等の合計額と本来納めるべき年税額との' +
-        '過不足を精算する年末調整を行う。給与総額が2,000万円を超える者等は対象外となる。',
+        '給与の支払者は、その年最後の給与を支払うときに、毎月源泉徴収した所得税等の合計額と本来納めるべき' +
+        '年税額との過不足を精算する（年末調整）。対象になるのは「給与所得者の扶養控除等（異動）申告書」を' +
+        '年末調整を行う日までに提出している人で、その年の給与総額が2,000万円を超える人と、' +
+        '災害減免法により源泉徴収の猶予や還付を受けた人は対象外となり、確定申告で精算する。' +
+        '対象となる給与はその年の1月1日から12月31日までに支払が確定したもので、未払いのものも含める一方、' +
+        '翌年1月10日払いのように支給日が規定で定まっているものは翌年分になる。年の中途で入社した人は、' +
+        '前職に扶養控除等申告書を提出していた場合、前職の源泉徴収票で金額を確認して合算する。',
       authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2665.htm', type: 'government', label: '国税庁 No.2665 年末調整の対象となる人' },
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2675.htm', type: 'government', label: '国税庁 No.2675 年末調整の対象となる給与' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/53611/', type: 'media', label: '年末調整 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2668.htm', type: 'government', label: '国税庁 No.2668 年末調整の対象となる給与' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2662.htm', type: 'government', label: '国税庁 No.2662 年末調整のしかた' },
+      { url: 'https://www.nta.go.jp/publication/pamph/gensen/nencho2021/pdf/06-07.pdf', type: 'government', label: '国税庁 年末調整とは（年末調整のしかた 抜粋）' },
     ],
   },
   {
@@ -1333,15 +1517,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '労働時間の適正な把握義務',
       statement:
-        '使用者は労働時間を適正に把握する責務を負い、始業・終業時刻の確認・記録は、使用者の現認または' +
-        'タイムカード・ICカード等の客観的な記録を基礎とすることが原則とされている。',
-      authority: '所管: 厚生労働省（労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン）',
-      asOf: '2026-06',
+        '労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン（2017年1月20日策定）は、' +
+        '始業・終業時刻の確認と記録を、使用者が自ら現認するか、タイムカード・ICカード・パソコンの使用時間の記録等の' +
+        '客観的な記録を基礎として行うことを原則とする。自己申告制による場合は、労働者本人と労働時間を管理する者への' +
+        '十分な説明、自己申告した時間と実際の労働時間が合致しているかの実態調査、必要な補正が求められる。' +
+        'ガイドラインの対象労働者は労働基準法41条に定める者（管理監督者）とみなし労働時間制が適用される労働者を' +
+        '除く全ての者だが、これらの者も労働安全衛生法66条の8の3による「労働時間の状況」の把握義務の対象であり、' +
+        'タイムカードやパソコンの使用時間の記録等の客観的な方法で把握し、その記録を3年間保存する' +
+        '（労働安全衛生規則52条の7の3）。割増賃金の要否と、時間そのものを把握する義務は別物である。',
+      authority: '所管: 厚生労働省（労働時間適正把握ガイドライン・労働安全衛生法66条の8の3）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000148322.html', type: 'government', label: '厚労省 労働時間の適正把握ガイドライン' },
-      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000149439.pdf', type: 'government', label: '厚労省 ガイドライン本文(PDF)' },
-      { url: 'https://www.obc.co.jp/360/list/post191', type: 'media', label: '労働時間の適正把握 解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/070614-2.html', type: 'government', label: '厚生労働省 労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000149439.pdf', type: 'government', label: '厚生労働省 ガイドライン本文(PDF)' },
+      { url: 'https://www.mhlw.go.jp/content/000497962.pdf', type: 'government', label: '厚生労働省 働き方改革関連法解説（労働安全衛生法・労働時間の状況の把握）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/roudoujikan/q5.html', type: 'government', label: '厚生労働省 確かめよう労働条件 労働時間の適正な把握方法' },
     ],
   },
   {
@@ -1351,14 +1542,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '標準報酬月額',
       statement:
         '健康保険・厚生年金保険の保険料や保険給付は、被保険者の報酬月額を区切りのよい幅で区分した' +
-        '標準報酬月額に基づいて算定される。原則として毎年7月の定時決定で1年間の標準報酬月額が決まる。',
+        '標準報酬月額に基づいて算定される。決まり方は3通りある。①定時決定 — 7月1日時点の被保険者について' +
+        '4月・5月・6月に支払った報酬を算定基礎届で届け出（提出期間は7月1日から7月10日）、' +
+        'その年の9月から翌年8月までの標準報酬月額が決まる。②資格取得時決定 — 入社時に見込みで決める。' +
+        '③随時改定 — 昇給・降給等で固定的賃金が変わり、変動後3か月の平均で標準報酬月額に2等級以上の差が' +
+        '生じたときに月額変更届で改定する。定時決定を待たずに直さなければならないのはこの③で、' +
+        '出し忘れると実際の報酬と保険料が長期間ずれたままになる。4月から6月の報酬が業務の性質上' +
+        '例年高くなる場合は、年間報酬の平均で算定する申立ての余地がある。',
       authority: '所管: 日本年金機構・厚生労働省（健康保険法・厚生年金保険法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120907.html', type: 'government', label: '日本年金機構 標準報酬月額・標準賞与額とは' },
-      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120822.html', type: 'government', label: '日本年金機構 定時決定（算定基礎届）' },
-      { url: 'https://www.freee.co.jp/kb/kb-payroll/standard-monthly-remuneration/', type: 'media', label: '標準報酬月額 解説' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/hoshu/20121017.html', type: 'government', label: '日本年金機構 定時決定（算定基礎届）' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/hoshu/20140527.html', type: 'government', label: '日本年金機構 報酬月額の届出（算定基礎届・月額変更届等）' },
+      { url: 'https://www.nenkin.go.jp/shinsei/kounen/tekiyo/hoshu/20141002.html', type: 'government', label: '日本年金機構 年間報酬の平均で算定するとき' },
     ],
   },
   {
@@ -1560,14 +1758,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '期間の定めのない労働契約の退職申入れ（民法627条）',
       statement:
         '期間の定めのない雇用契約では、労働者はいつでも解約（退職）の申入れができ、使用者の承諾がなくても、' +
-        '申入れの日から2週間を経過することによって雇用は終了する（民法627条1項）。',
+        '申入れの日から2週間を経過することによって雇用は終了する（民法627条1項）。' +
+        '2020年4月1日施行の改正民法により、月給制などで解約の申入れ時期を制限していた同条2項・3項は' +
+        '労働者からの申入れには適用されないことが整理された。したがって、労働基準法の適用がある雇用契約では、' +
+        '使用者からの解約に労働基準法20条（30日前の予告または予告手当）が、労働者からの解約に民法627条1項が' +
+        '適用される。就業規則に「退職は1か月前までに申し出ること」と書いてあっても、それは円滑な引継ぎを' +
+        '求める定めであって、2週間で終了する労働者の権利を奪うものではない。' +
+        '合意退職・辞職・解雇は法的な組立てが別なので、離職票の離職理由も含めて取り違えないこと。',
       authority: '所管: 法務省（民法）・厚生労働省（労働行政）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q7.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 Q&A（民法627条）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q7.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 解雇と合意退職・辞職の違い' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/yokuaru_goshitsumon/jigyounushi/taisyoku.html', type: 'government', label: '厚生労働省 大阪労働局 よくあるご質問（退職・解雇・雇止め）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_taisyoku.html', type: 'government', label: '厚生労働省 確かめよう労働条件 退職・解雇・雇止め' },
       { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（第627条）' },
-      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_22.html', type: 'media', label: '連合 退職の自由 Q&A' },
     ],
   },
   {
@@ -1680,15 +1885,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '商標権の発生・存続期間と更新',
       statement:
-        '商標を独占的に使用する権利（商標権）は、特許庁に出願し設定登録を受けることで発生する。商標権の存続期間は設定登録の日から' +
-        '10年であり、更新登録の申請により10年ごとに何度でも更新できる。',
+        '商標を独占的に使用する権利（商標権）は、特許庁に出願し設定登録を受けることで発生する。' +
+        '日本は先願主義を採っており、同一または類似の商標について出願が競合した場合は、先に使用していたかどうかに' +
+        'かかわらず先に出願した者に登録が認められる。存続期間は設定登録の日から10年で、更新登録の申請により' +
+        '10年ごとに何度でも更新できるが、申請できるのは存続期間の満了前6か月から満了の日までで、' +
+        'この期間を過ぎた場合も満了後6か月以内なら更新料を倍額納付して申請できる。' +
+        'また、日本国内で継続して3年以上、指定商品・指定役務について登録商標を使用していないときは、' +
+        '誰でも不使用取消審判を請求できる。登録して放置すれば安泰、という権利ではない。',
       authority: '所管: 特許庁（商標法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/seidogaiyo/chizai08.html', type: 'government', label: '特許庁 商標制度の概要' },
+      { url: 'https://www.jpo.go.jp/system/process/toroku/document/index/koshinkikan-chui.pdf', type: 'government', label: '特許庁 商標権の更新 更新登録申請期間開始日にご注意ください' },
+      { url: 'https://www.jpo.go.jp/system/trial_appeal/shubetu-shohyo_torikeshi/index.html', type: 'government', label: '特許庁 商標登録取消審判' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000204.html', type: 'government', label: 'INPIT 商標権を更新する場合の手続期間' },
       { url: 'https://laws.e-gov.go.jp/law/334AC0000000127', type: 'government', label: 'e-Gov法令検索 商標法（昭和34年法律第127号）' },
-      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000204.html', type: 'government', label: 'INPIT 商標権更新手続 FAQ' },
     ],
   },
   {
@@ -6053,24 +6265,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'labor-dismissal-notice-exception',
-      domain: 'labor',
-      title: '解雇予告の適用除外と除外認定（労基法20条・21条）',
-      statement:
-        '使用者が労働者を解雇する場合は原則として少なくとも30日前の予告又は30日分以上の平均賃金（解雇予告手当）の支払が必要だが（労基法20条1項）、天災事変その他' +
-        'やむを得ない事由のため事業の継続が不可能となった場合、又は労働者の責に帰すべき事由に基づいて解雇する場合は、所轄労働基準監督署長の認定（解雇予告除外認定）を' +
-        '受ければ予告・予告手当なしに即時解雇できる。また日々雇い入れられる者、2か月以内の期間を定めて使用される者、試の使用期間中で14日以内の者等には解雇予告の規定が適用されない（労基法21条）。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/kaiko/q2.html', type: 'government', label: '厚生労働省 即時解雇・解雇予告除外認定 Q&A' },
-      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73022000&dataType=0', type: 'government', label: '厚生労働省 法令データ 労働基準法（20条・21条）' },
-      { url: 'https://shinsei.e-gov.go.jp/recept/procedure/lists/procedureInformation?gtaTetCd=4950013309636', type: 'government', label: 'e-Gov電子申請 解雇予告除外認定申請' },
-    ],
-  },
-  {
-    value: {
       id: 'legal-consumer-contract-amendment',
       domain: 'legal',
       title: '消費者契約法の令和4年改正（2023年6月施行）',
@@ -6235,42 +6429,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nenkin.go.jp/service/kounen/tekiyo/jigyosho/tanjikan.html', type: 'government', label: '日本年金機構 短時間労働者に対する適用の拡大' },
       { url: 'https://www.mhlw.go.jp/tekiyoukakudai/', type: 'government', label: '厚生労働省 社会保険適用拡大特設サイト' },
       { url: 'https://www.gov-online.go.jp/article/202209/entry-10068.html', type: 'government', label: '政府広報オンライン 社会保険の適用が拡大 従業員51人以上' },
-    ],
-  },
-  {
-    value: {
-      id: 'tax-electronic-bookkeeping-etransaction',
-      domain: 'tax',
-      title: '電子取引データの電子保存義務化（2024年1月〜）',
-      statement:
-        '電子帳簿保存法上、所得税・法人税に係る保存義務者が注文書・契約書・請求書・領収書等の取引情報を電子メールやEC等の電子取引で授受した場合、2024年（令和6年）1月1日以後は原則としてその電子データのまま保存することが' +
-        '義務付けられ、出力書面のみの保存は認められなくなった（宥恕措置の終了）。保存には改ざん防止措置（タイムスタンプ・訂正削除の記録が残るシステム・事務処理規程の整備運用のいずれか）と、ディスプレイ等の備付け、' +
-        '「日付・金額・取引先」での検索要件を満たす必要がある。ただし税務署長が「相当の理由」を認め、調査時にデータと出力書面の提示提出に応じられる場合は検索要件等を満たさなくてよい猶予措置がある。基準額・細目は改正で変動するため要確認。',
-      authority: '所管: 国税庁（電子帳簿保存法第7条等）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf', type: 'government', label: '国税庁 令和6年1月からの電子取引データの保存方法' },
-      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/03-6.pdf', type: 'government', label: '国税庁 電子帳簿保存法一問一答（電子取引関係）' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/44331/', type: 'media', label: 'マネーフォワード 電子帳簿保存法 2024年改正点・保存要件の解説' },
-    ],
-  },
-  {
-    value: {
-      id: 'labor-working-condition-disclosure-2024',
-      domain: 'labor',
-      title: '労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）',
-      statement:
-        '2024年（令和6年）4月1日施行の労働基準法施行規則等の改正により、労働条件の明示事項が追加された。すべての労働者に対し、契約締結時及び有期労働契約の更新時に「就業場所・業務の変更の範囲」の明示が義務化された。' +
-        '有期契約労働者に対しては、更新上限（通算契約期間又は更新回数の上限）の有無と内容の明示が、また無期転換申込権が発生する更新時ごとに「無期転換を申し込むことができる旨（申込機会）」及び「無期転換後の労働条件」の明示が、' +
-        'それぞれ新たに義務付けられた。',
-      authority: '所管: 厚生労働省（労働基準局）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.mhlw.go.jp/stf/newpage_32105.html', type: 'government', label: '厚生労働省 2024年4月から労働条件明示のルールが変わります' },
-      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 無期転換サイト 労働条件明示ルールの変更' },
-      { url: 'https://jsite.mhlw.go.jp/shiga-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/youshiki_newroudoutuuti.html', type: 'government', label: '滋賀労働局 令和6年4月から労働条件明示のルールが変わります' },
     ],
   },
   {

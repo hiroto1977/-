@@ -36,7 +36,7 @@ aliases:
 - [[labor-maternity-allowance|健康保険の出産手当金]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-national-health-insurance|国民健康保険（国保）]] — 同分野の近傍
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+- [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

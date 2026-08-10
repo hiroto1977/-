@@ -1,3 +1,4 @@
+import { seededNoise } from '../../shared/seededNoise';
 import type { FetchContext, ActionContext, ActionMap } from './types';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
@@ -652,16 +653,6 @@ export interface StocksDataSource {
   fetchHistory(symbol: string, periods: number): Promise<Candle[]>;
 }
 
-/** xorshift32 — deterministic noise for reproducible mock prices. */
-function noise(seed: number): number {
-  // Stryker disable next-line ConditionalExpression,LogicalOperator
-  let x = seed | 0 || 1;
-  x ^= x << 13;
-  x ^= x >>> 17;
-  x ^= x << 5;
-  return (x >>> 0) / 4294967296;
-}
-
 /** Universe of mock tickers — covers 日本株 (TSE .T suffix) and 米国株. */
 export const MOCK_TICKERS: readonly { symbol: string; label: string; basePrice: number; driftDaily: number }[] = [
   { symbol: '7203.T', label: 'トヨタ自動車', basePrice: 3200, driftDaily: 0.0008 },
@@ -690,7 +681,7 @@ function mockCandle(
   // attribution occasionally mis-credits this; pragma the
   // ArithmeticOperator just on the seed expression.
   // Stryker disable next-line ArithmeticOperator
-  const driftRand = (noise(symbolSeed + i) - 0.5) * 0.04; // ±2%
+  const driftRand = (seededNoise(symbolSeed + i) - 0.5) * 0.04; // ±2%
   const close = prevClose * (1 + def.driftDaily + driftRand);
   const open = prevClose;
   // The +7777/+8888/+9999 stream-decorrelation seeds and the 0.01 / 500_000
@@ -699,11 +690,11 @@ function mockCandle(
   // separately. Any arithmetic mutation here that still satisfies the
   // invariants is observationally equivalent.
   // Stryker disable next-line ArithmeticOperator
-  const high = Math.max(open, close) * (1 + noise(symbolSeed + i + 7777) * 0.01);
+  const high = Math.max(open, close) * (1 + seededNoise(symbolSeed + i + 7777) * 0.01);
   // Stryker disable next-line ArithmeticOperator
-  const low = Math.min(open, close) * (1 - noise(symbolSeed + i + 8888) * 0.01);
+  const low = Math.min(open, close) * (1 - seededNoise(symbolSeed + i + 8888) * 0.01);
   // Stryker disable next-line ArithmeticOperator
-  const volume = Math.round(1_000_000 + noise(symbolSeed + i + 9999) * 500_000);
+  const volume = Math.round(1_000_000 + seededNoise(symbolSeed + i + 9999) * 500_000);
   return { open, high, low, close, volume };
 }
 
@@ -1666,7 +1657,6 @@ export async function removeWatchlistEntry(symbol: string, deps: StateDeps = {})
   await saveStocksState(next, deps);
   return next;
 }
-
 
 /** Default Markdown path — sibling to the HTML, .md extension. */
 export function defaultDashboardMdPath(): string {

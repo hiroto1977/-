@@ -31,8 +31,8 @@ aliases:
 - [釜石市 職場における熱中症対策強化（令和7年6月1日施行）](https://www.city.kamaishi.iwate.jp/docs/2025052100056/) `自治体`
 
 ## 関連概念
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
-- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

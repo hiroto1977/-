@@ -31,8 +31,8 @@ aliases:
 - [財務省 加算税制度の概要](https://www.mof.go.jp/tax_policy/summary/tins/n04_3.pdf) `公的`
 
 ## 関連概念
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 語彙が近い
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 語彙が近い
-- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有

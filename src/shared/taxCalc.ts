@@ -9,10 +9,9 @@
  * UI から切り離して単体テスト可能にするため、計算はすべてここに集約する。
  */
 
+import { yen } from './num';
+
 /** 円未満を四捨五入。 */
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /**
  * 課税される所得金額の 1,000 円未満を切り捨てる (国税庁の所得税額計算の前処理)。

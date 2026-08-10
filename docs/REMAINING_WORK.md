@@ -22,8 +22,8 @@
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
       — AppImage / `.deb` / arm64 `.dmg` / Windows `.exe`
 - [x] GitHub Pages 配信（landing + デモ 3 種 + lite）
-- [x] 知識コーパス **4,208 項目**（学術 3,583 / 法令実務 396 / 補助金 140 / 経済史 86 / 相談窓口 3）
-      + Obsidian vault 7,671 ノート + knowledge-graph（nodes 4,208 / edges 21,085）
+- [x] 知識コーパス **4,205 項目**（学術 3,583 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
+      + Obsidian vault 7,657 ノート + knowledge-graph（nodes 4,205 / edges 21,084）
 - [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**
 
 未完了の主要タスク（優先度順）:
@@ -32,8 +32,10 @@
 - [ ] **単発誤 DOI の掃討** — `lint:citations` は同一 DOI に年の矛盾があるときだけ落ちるので、
       **1 回しか引かれていない DOI の誤りは原理的に検出できない**（2,449 引用の大半が単発）。
       接頭辞と誌名/出版社の整合は機械判定できるので、そこを検査するゲートが次の恒久対策
-- [ ] **dev 依存の脆弱性 29 件**（critical 2 / high 21）— 本番依存は 0 件。
-      electron-builder 系と vitest 系。**リリース成果物を作る鎖なのでサプライチェーン上は無視できない**
+- [ ] **dev 依存の脆弱性 13 件**（critical 2 / high 5 / moderate 5 / low 1・2026-07-31 実測）— **本番依存は 0 件**。
+      内訳は vitest / vite / postcss / undici / brace-expansion / fast-uri で、
+      **テストランナーと dev サーバの鎖**。リリース成果物（electron-builder）側は現時点で検出なし。
+      `npm audit` は最新のアドバイザリを都度取得するため件数は変動する — 数える前に実行すること
 - [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ
 - [ ] OAuth: 他プロバイダ（Notion / Slack / Canva / WordPress / Atlassian）の config 追加
 - [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）

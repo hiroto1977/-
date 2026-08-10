@@ -31,8 +31,8 @@ aliases:
 - [企業年金連合会 年金Q&A 確定拠出年金のしくみ（企業型・個人型iDeCo）](https://www.pfa.or.jp/qa/kyoshutsu/kyoshutsu01.html) `リファレンス`
 
 ## 関連概念
-- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 語彙が近い
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
 - [[labor-ideco|iDeCo（個人型確定拠出年金）の制度概要]] — 分野横断
 - [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同分野の近傍
 - [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — 同分野の近傍

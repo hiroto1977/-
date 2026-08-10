@@ -14,6 +14,8 @@
  * UI から切り離して単体テスト可能にするため、計算はすべてここに集約する。
  */
 
+import { assertNonNegativeFinite } from './num';
+
 /**
  * 個人事業税の法定業種区分 (ホワイトリスト)。税率が区分により異なる。
  *
@@ -139,11 +141,6 @@ export interface IndividualBusinessTaxResult {
  * @param value 検証対象
  * @param label エラーメッセージに使うラベル
  */
-function assertNonNegativeFinite(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
-  }
-}
 
 /**
  * 個人事業税額を概算する。

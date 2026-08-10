@@ -6,6 +6,21 @@ import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
+import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
+import {
+  MAX_RATE,
+  buildSchedule,
+  type ScheduleInput,
+} from '../../shared/taxConsumptionSchedule';
+import {
+  VAT_REFERENCE,
+  VAT_REFERENCE_AS_OF,
+  calcExport,
+  calcJapanImport,
+  lookupVat,
+  type CustomsBasis,
+} from '../../shared/tradeTax';
+import { guardAll, readNumber } from '../data/inputGuards';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
   CONSUMPTION_TAX_REDUCED,
@@ -43,7 +58,7 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
-import { type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import { DEEMED_PURCHASE_RATES, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { compareBusinessTaxMethods, isTaxExempt } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
@@ -124,9 +139,11 @@ export function TaxPage() {
   const [bonusCountStr, setBonusCountStr] = useState('2');
   // 文字列入力を数値に変換する純粋ヘルパ。下の useMemo 群がレンダー時に
   // 即時実行されるため、それより前に宣言しておく必要がある (TDZ 回避)。
+  // 読み取りは inputGuards に統一し、下の GuardSummary と同じ関数で判定する。
+  // （従来の parseAmountInput は「500円」のような単位付きを 0 に落としていた）
   const num = (s: string): number => {
-    const p = parseAmountInput(s);
-    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
+    const v = readNumber(s);
+    return v !== null && v > 0 ? v : 0;
   };
   const socialInsurancePrecise = useMemo(() => {
     const bonusPer = num(bonusPerStr);
@@ -331,6 +348,96 @@ export function TaxPage() {
       ),
     [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType],
   );
+  // ⑩-2 納付/還付スケジュール — 税率 0%〜50% を範囲に、金額と時期を出す。
+  const [csRateStr, setCsRateStr] = useState('10');
+  const [csFiler, setCsFiler] = useState<'individual' | 'corporate'>('individual');
+  const [csEndMonth, setCsEndMonth] = useState('12');
+  const [csEndYear, setCsEndYear] = useState('2026');
+  const [csExtended, setCsExtended] = useState(false);
+  const [csMethod, setCsMethod] = useState<'standard' | 'simplified' | 'twenty-percent'>('standard');
+  const [csPriorStr, setCsPriorStr] = useState('0');
+  const [csETax, setCsETax] = useState(true);
+
+  const csInput = useMemo<ScheduleInput>(
+    () => ({
+      filer: csFiler,
+      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.min(12, Math.max(1, Math.round(num(csEndMonth)) || 12)),
+      fiscalEndYear: Math.round(num(csEndYear)) || 2026,
+      extendedDeadline: csFiler === 'corporate' && csExtended,
+      method: csMethod,
+      taxableSales: num(ctSalesStr) + num(ctReducedSalesStr),
+      taxablePurchases: num(ctPurchaseStr),
+      deemedPurchaseRate: DEEMED_PURCHASE_RATES[ctBizType],
+      priorNationalTax: num(csPriorStr),
+      eTax: csETax,
+    }),
+    [csFiler, csEndMonth, csEndYear, csExtended, csMethod, ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, csPriorStr, csETax],
+  );
+  const csRate = useMemo(() => Math.min(MAX_RATE, Math.max(0, num(csRateStr) / 100)), [csRateStr]);
+  const schedule = useMemo(() => buildSchedule(csInput, csRate), [csInput, csRate]);
+
+  // ⑫ 貿易にかかる税 — 輸入（関税＋輸入消費税）／輸出（輸出税＋仕向国の関税・付加価値税）
+  const [imGoodsStr, setImGoodsStr] = useState('500000');
+  const [imFreightStr, setImFreightStr] = useState('30000');
+  const [imInsuranceStr, setImInsuranceStr] = useState('5000');
+  const [imDutyStr, setImDutyStr] = useState('4.5');
+  const [imExciseStr, setImExciseStr] = useState('0');
+  const [imReduced, setImReduced] = useState(false);
+  const [imPersonal, setImPersonal] = useState(false);
+  const [imExcluded, setImExcluded] = useState(false);
+
+  const importTax = useMemo(
+    () =>
+      calcJapanImport({
+        goodsValue: num(imGoodsStr),
+        freight: num(imFreightStr),
+        insurance: num(imInsuranceStr),
+        dutyRate: num(imDutyStr) / 100,
+        otherExcise: num(imExciseStr),
+        reducedRate: imReduced,
+        personalUse: imPersonal,
+        exemptionExcluded: imExcluded,
+      }),
+    [imGoodsStr, imFreightStr, imInsuranceStr, imDutyStr, imExciseStr, imReduced, imPersonal, imExcluded],
+  );
+
+  const [exGoodsStr, setExGoodsStr] = useState('1000000');
+  const [exFreightStr, setExFreightStr] = useState('80000');
+  const [exInsuranceStr, setExInsuranceStr] = useState('10000');
+  const [exExportDutyStr, setExExportDutyStr] = useState('0');
+  const [exBasis, setExBasis] = useState<CustomsBasis>('CIF');
+  const [exDestDutyStr, setExDestDutyStr] = useState('5');
+  const [exCountry, setExCountry] = useState('FR');
+  const [exVatStr, setExVatStr] = useState('20');
+  const [exVatIncludesDuty, setExVatIncludesDuty] = useState(true);
+  const [exBearer, setExBearer] = useState<'seller' | 'buyer'>('buyer');
+
+  const exportTax = useMemo(
+    () =>
+      calcExport({
+        goodsValue: num(exGoodsStr),
+        freight: num(exFreightStr),
+        insurance: num(exInsuranceStr),
+        exportDutyRate: num(exExportDutyStr) / 100,
+        destBasis: exBasis,
+        destDutyRate: num(exDestDutyStr) / 100,
+        destVatRate: num(exVatStr) / 100,
+        vatIncludesDuty: exVatIncludesDuty,
+        bearer: exBearer,
+      }),
+    [exGoodsStr, exFreightStr, exInsuranceStr, exExportDutyStr, exBasis, exDestDutyStr, exVatStr, exVatIncludesDuty, exBearer],
+  );
+
+  /** 参考税率を選ぶと税率欄と課税価格の基準を埋める（値は入力欄で上書きできる）。 */
+  function applyVatReference(code: string) {
+    setExCountry(code);
+    const ref = lookupVat(code);
+    if (!ref) return;
+    if (ref.standard !== null) setExVatStr(String(Number((ref.standard * 100).toFixed(2))));
+    if (code === 'US') { setExVatStr('0'); setExBasis('FOB'); }
+    else setExBasis('CIF');
+  }
+
   const ctExempt = useMemo(
     () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr)),
     [ctSalesStr, ctReducedSalesStr],
@@ -442,6 +549,96 @@ export function TaxPage() {
     void window.serviceHub.openExternal(url);
   };
 
+
+  // 入力の読み取り不能・範囲外をまとめて検査する。読めなかった欄は 0 として
+  // 計算されるため、その事実を数字の手前で必ず見せる。
+  const inputIssues = useMemo(() => guardAll([
+      [incomeStr, { label: '課税所得 (年・円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [grossStr, { label: '額面年収 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [netStr, { label: '目標手取り (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [bonusPerStr, { label: '賞与1回あたり (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [bonusCountStr, { label: '賞与の回数', kind: 'count', allowEmpty: true, allowZero: true, max: 12 }],
+      [dGrossStr, { label: '給与収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dSocialStr, { label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dIdecoStr, { label: 'iDeCo 掛金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dSmallBizStr, { label: '小規模企業共済 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dLifeStr, { label: '生命保険料 (新制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dLifeOldStr, { label: '生命保険料 (旧制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dQuakeStr, { label: '地震保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dMedicalStr, { label: '医療費 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dSelfMedStr, { label: 'セルフメディケーション (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dDonationStr, { label: '寄附金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [spouseIncomeStr, { label: '配偶者の合計所得 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [generalDeps, { label: '一般扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],
+      [specificDeps, { label: '特定扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],
+      [mortgageBalanceStr, { label: '住宅ローン年末残高 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [dividendStr, { label: '配当所得 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [severanceStr, { label: '退職金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [yearsStr, { label: '勤続年数', kind: 'years', allowEmpty: true, allowZero: true, max: 60 }],
+      [casualGrossStr, { label: '一時所得の総収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [casualExpStr, { label: '一時所得の支出 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [cgProceedsStr, { label: '譲渡価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [cgCostStr, { label: '取得費 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [cgFeeStr, { label: '譲渡費用 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [fsDonationStr, { label: 'ふるさと納税額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [fsMunicipalitiesStr, { label: '寄附先の自治体数', kind: 'count', allowEmpty: true, allowZero: true, max: 100 }],
+      [divIncomeStr, { label: '配当収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [pensionIncomeStr, { label: '公的年金等の収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctSalesStr, { label: '課税売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctReducedSalesStr, { label: '軽減税率の売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctPurchaseStr, { label: '課税仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [faAssessedStr, { label: '固定資産税評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [faAreaStr, { label: '敷地面積 (㎡)', kind: 'area', allowEmpty: true, allowZero: true }],
+      [faDwellingsStr, { label: '住戸数', kind: 'count', allowEmpty: true, allowZero: true, max: 1000 }],
+      [acqAssessedStr, { label: '不動産取得税の評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [regTaxableStr, { label: '登録免許税の課税標準 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [stampAmountStr, { label: '契約金額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [costAssessedStr, { label: '評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [costContractStr, { label: '契約金額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+  ] as const), [
+    incomeStr,
+    grossStr,
+    netStr,
+    bonusPerStr,
+    bonusCountStr,
+    dGrossStr,
+    dSocialStr,
+    dIdecoStr,
+    dSmallBizStr,
+    dLifeStr,
+    dLifeOldStr,
+    dQuakeStr,
+    dMedicalStr,
+    dSelfMedStr,
+    dDonationStr,
+    spouseIncomeStr,
+    generalDeps,
+    specificDeps,
+    mortgageBalanceStr,
+    dividendStr,
+    severanceStr,
+    yearsStr,
+    casualGrossStr,
+    casualExpStr,
+    cgProceedsStr,
+    cgCostStr,
+    cgFeeStr,
+    fsDonationStr,
+    fsMunicipalitiesStr,
+    divIncomeStr,
+    pensionIncomeStr,
+    ctSalesStr,
+    ctReducedSalesStr,
+    ctPurchaseStr,
+    faAssessedStr,
+    faAreaStr,
+    faDwellingsStr,
+    acqAssessedStr,
+    regTaxableStr,
+    stampAmountStr,
+    costAssessedStr,
+    costContractStr,
+  ]);
   return (
     <div>
       <StatusBar
@@ -472,6 +669,8 @@ export function TaxPage() {
         下部の公式ツール (国税庁 / e-Tax / 会計ソフト) で確定してください。
         <strong>本アプリが自動で納付・申告を行うことはありません。</strong>
       </div>
+
+      <GuardSummary issues={inputIssues} title="入力の確認 (試算の前提)" />
 
       <Section title="① 課税所得から所得税・住民税を試算" count={2}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
@@ -993,6 +1192,201 @@ export function TaxPage() {
         </div>
       </Section>
 
+      <Section title="⑩-2 納付/還付の金額と時期 (税率 0%〜50%)" count={4}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          消費税率を <strong>0%〜50%</strong> の範囲で動かし、年税額（国税＋地方消費税）、中間申告の回数と各回の納付額・期限、
+          確定申告のときに実際に動く金額（納付か還付か）と、その期限・還付の入金目安を出します。
+          金額は <strong>国税は100円未満切捨て</strong>（国税通則法119条1項）、<strong>地方消費税は「切捨て後の国税額」× 22/78</strong> で計算します。
+          売上・仕入・事業区分は上の ⑩ の入力を使います。
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            事業者の区分
+            <select value={csFiler} onChange={(e) => setCsFiler(e.target.value as 'individual' | 'corporate')} style={{ ...inputStyle, width: 150 }}>
+              <option value="individual">個人事業者</option>
+              <option value="corporate">法人</option>
+            </select>
+          </label>
+          {csFiler === 'corporate' && (
+            <GuardedNumber spec={{ label: '決算月 (1-12)', kind: 'count', min: 1, max: 12 }} value={csEndMonth} onChange={setCsEndMonth} width={110} />
+          )}
+          <GuardedNumber spec={{ label: '課税期間の終了年 (西暦)', kind: 'count', min: 2000, max: 2100 }} value={csEndYear} onChange={setCsEndYear} width={150} />
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            納付方式
+            <select value={csMethod} onChange={(e) => setCsMethod(e.target.value as typeof csMethod)} style={{ ...inputStyle, width: 170 }}>
+              <option value="standard">本則課税</option>
+              <option value="simplified">簡易課税</option>
+              <option value="twenty-percent">2割特例</option>
+            </select>
+          </label>
+          <GuardedNumber
+            spec={{ label: '前課税期間の確定消費税額（国税分・円）', kind: 'money', allowZero: true }}
+            value={csPriorStr}
+            onChange={setCsPriorStr}
+            width={200}
+          />
+          {csFiler === 'corporate' && (
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={csExtended} onChange={(e) => setCsExtended(e.target.checked)} />
+              申告期限延長の特例あり
+            </label>
+          )}
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+            <input type="checkbox" checked={csETax} onChange={(e) => setCsETax(e.target.checked)} />
+            e-Tax で申告する
+          </label>
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2, flex: '1 1 260px', minWidth: 220 }}>
+            消費税率 {(csRate * 100).toFixed(1)}%
+            <input
+              type="range"
+              min={0}
+              max={MAX_RATE * 100}
+              step={0.1}
+              value={Math.min(MAX_RATE * 100, Math.max(0, num(csRateStr)))}
+              onChange={(e) => setCsRateStr(e.target.value)}
+              aria-label="消費税率"
+              data-cs-rate-slider
+              style={{ width: '100%' }}
+            />
+          </label>
+          <GuardedNumber spec={{ label: '税率 (%) 直接入力', kind: 'percent', allowZero: true, max: MAX_RATE * 100 }} value={csRateStr} onChange={setCsRateStr} width={130} />
+        </div>
+
+        <div
+          data-cs-verdict
+          data-kind={schedule.settlement.kind}
+          style={{
+            border: '1px solid var(--border)',
+            borderLeft: `3px solid ${schedule.settlement.kind === 'refund' ? '#3ec98a' : '#fbbf24'}`,
+            borderRadius: 6,
+            padding: '10px 12px',
+            marginBottom: 12,
+            fontSize: 13,
+            color: 'var(--text)',
+            lineHeight: 1.8,
+          }}
+        >
+          税率 <strong>{(csRate * 100).toFixed(1)}%</strong> のとき — 年税額{' '}
+          <strong>{schedule.annual.isRefund ? `還付 ${jpy(-schedule.annual.total)}` : jpy(schedule.annual.total)}</strong>
+          （国税 {jpy(Math.abs(schedule.annual.national))} ／ 地方 {jpy(Math.abs(schedule.annual.local))}）
+          {schedule.annual.isRefund && <span style={{ color: '#3ec98a' }}>（仕入れが売上を上回る＝控除不足還付）</span>}
+          <div>
+            中間納付 {schedule.interim.count === 0 ? 'なし' : `${schedule.interim.count} 回 合計 ${jpy(schedule.interim.total)}`}
+          </div>
+          <div style={{ fontWeight: 700 }}>
+            {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due}）</>}
+            {schedule.settlement.kind === 'refund' && (
+              <span style={{ color: '#3ec98a' }}>
+                確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due}）
+              </span>
+            )}
+            {schedule.settlement.kind === 'none' && <>確定申告での納付・還付は発生しません（期限 {schedule.settlement.due}）</>}
+          </div>
+          {schedule.settlement.refundWindow && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              入金の目安: {schedule.settlement.refundWindow.from} 〜 {schedule.settlement.refundWindow.to}
+               （{schedule.settlement.refundWindow.note}）
+            </div>
+          )}
+          {schedule.breakEven !== null && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              分岐税率 <strong>{(schedule.breakEven * 100).toFixed(2)}%</strong> — これを下回ると、中間納付のしすぎで確定申告は還付に変わります。
+            </div>
+          )}
+        </div>
+
+        {schedule.interim.count > 0 && (
+          <>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', margin: '12px 0 6px' }}>
+              中間申告 — {schedule.interim.band}
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={tableStyle}>
+                <thead>
+                  <tr>
+                    <th style={thStyle}>回</th>
+                    <th style={thStyle}>対象期間の末日</th>
+                    <th style={thStyle}>申告・納付の期限</th>
+                    <th style={thStyle}>消費税(国税)</th>
+                    <th style={thStyle}>地方消費税</th>
+                    <th style={thStyle}>合計</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {schedule.interim.payments.map((p) => (
+                    <tr key={p.no} data-interim-row={p.no}>
+                      <td style={tdStyle}>第{p.no}回</td>
+                      <td style={tdStyle}>{p.periodEnd}</td>
+                      <td style={tdStyle}>{p.due}</td>
+                      <td style={tdStyle}>{jpy(p.national)}</td>
+                      <td style={tdStyle}>{jpy(p.local)}</td>
+                      <td style={tdStyle}>{jpy(p.total)}</td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td style={tdStyle} colSpan={5}>中間納付 合計</td>
+                    <td style={tdStyle}>{jpy(schedule.interim.total)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', margin: '14px 0 6px' }}>税率別の一覧 (0%〜50%)</div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>税率</th>
+                <th style={thStyle}>年税額 (国税+地方)</th>
+                <th style={thStyle}>中間納付</th>
+                <th style={thStyle}>確定申告で動く額</th>
+                <th style={thStyle}>納付 / 還付</th>
+              </tr>
+            </thead>
+            <tbody>
+              {schedule.sweep.map((row) => (
+                <tr
+                  key={row.rate}
+                  data-sweep-rate={(row.rate * 100).toFixed(1)}
+                  style={Math.abs(row.rate - csRate) < 0.0005 ? { background: 'var(--bg-elev)' } : undefined}
+                >
+                  <td style={tdStyle}>{(row.rate * 100).toFixed(row.rate * 100 % 1 === 0 ? 0 : 1)}%</td>
+                  <td style={{ ...tdStyle, color: row.annual.isRefund ? '#3ec98a' : undefined }}>
+                    {row.annual.isRefund ? `還付 ${jpy(-row.annual.total)}` : jpy(row.annual.total)}
+                  </td>
+                  <td style={tdStyle}>{jpy(schedule.interim.total)}</td>
+                  <td style={tdStyle}>{jpy(Math.abs(row.settlement.amount))}</td>
+                  <td style={{ ...tdStyle, color: row.settlement.kind === 'refund' ? '#3ec98a' : undefined }}>
+                    {row.settlement.kind === 'refund' ? '還付' : row.settlement.kind === 'payment' ? '納付' : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.7 }}>
+          ※ 国税と地方消費税の区分は現行法の <strong>78 : 22</strong>（標準10% = 国税7.8% + 地方2.2%）を仮定しています。
+          税率が変われば法律上の区分も変わり得るため、10% 以外の税率は「その比率が維持された場合」の試算です。<br />
+          ※ 中間申告の回数は<strong>前課税期間の確定消費税額（国税分・地方消費税を含まない）</strong>で決まります
+          — 48万円以下は不要、48万円超400万円以下は年1回、400万円超4,800万円以下は年3回、4,800万円超は年11回。
+          各回の納付額は前期の国税額 × 6/12・3/12・1/12 です。当期の税率を動かしても中間納付額は変わりません
+          （前期の実績で決まるため）。<br />
+          ※ 期限は土日と 12/29〜1/3 を休日として翌開庁日へ送っています。<strong>国民の祝日は考慮していません</strong>。<br />
+          ※ 還付の入金時期は目安です（e-Tax で2〜3週間程度、書面で1か月〜1か月半程度）。<strong>保証された日付ではありません</strong>。
+          期限より早く申告すればその分早まります。<br />
+          ※ 本欄は概算です。課税標準額の1,000円未満切捨て、課税売上割合による仕入税額控除の調整（個別対応方式・一括比例配分方式）、
+          貸倒れ、棚卸資産の調整、免税事業者からの仕入れの経過措置、特定課税仕入れなどは反映していません。
+          申告・納付は税理士・国税庁 / e-Tax で確定してください。
+        </div>
+      </Section>
+
       <Section title="⑪ 不動産・資産にかかる税 (概算)" count={5}>
         <div
           role="note"
@@ -1207,6 +1601,137 @@ export function TaxPage() {
       </Section>
 
       <WelfareSchemeCard />
+
+      <Section title="⑫ 貿易にかかる税 (輸入の関税・消費税 / 輸出と仕向国の付加価値税)" count={2}>
+        <div
+          role="note"
+          style={{
+            margin: '0 0 12px', padding: 10, background: 'rgba(251, 191, 36, 0.08)',
+            border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: '#fbbf24', lineHeight: 1.6,
+          }}
+        >
+          ⚠️ <strong>概算であり通関実務の助言ではありません。</strong>実際の税額は品目の HS コード・原産地・適用する協定
+          (WTO / 特恵 / EPA)・加算要素 (買手が負担する容器包装費・ロイヤルティ等) で変わります。
+          関税率は<strong>実行関税率表</strong>で品目ごとに確認し、申告は<strong>税関・通関業者</strong>にご確認ください。
+        </div>
+
+        {/* (a) 輸入 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 18 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>(a) 日本へ輸入する</div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            課税価格 (CIF＝商品代金＋国際運賃＋保険料) の<strong>1,000円未満を切捨て</strong>→ 関税率を掛けて
+            <strong>100円未満を切捨て</strong>→ 課税価格＋関税＋個別消費税の<strong>1,000円未満を切捨て</strong>て消費税の課税標準とし、
+            国税 7.8% (軽減 6.24%) を掛けて<strong>100円未満を切捨て</strong>、地方消費税はその <strong>22/78</strong>。
+            関税が消費税の課税標準に入るため、関税が高いほど消費税も増えます。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <GuardedNumber spec={{ label: '商品代金 (輸入・円)', kind: 'money', allowZero: false }} value={imGoodsStr} onChange={setImGoodsStr} width={150} />
+            <GuardedNumber spec={{ label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true }} value={imFreightStr} onChange={setImFreightStr} width={130} />
+            <GuardedNumber spec={{ label: '保険料 (輸入・円)', kind: 'money', allowZero: true }} value={imInsuranceStr} onChange={setImInsuranceStr} width={130} />
+            <GuardedNumber spec={{ label: '関税率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={imDutyStr} onChange={setImDutyStr} width={110} />
+            <GuardedNumber spec={{ label: '個別消費税 (酒税・たばこ税等・円)', kind: 'money', allowZero: true }} value={imExciseStr} onChange={setImExciseStr} width={190} />
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={imReduced} onChange={(e) => setImReduced(e.target.checked)} />
+              軽減税率の対象 (飲食料品等)
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={imPersonal} onChange={(e) => setImPersonal(e.target.checked)} />
+              個人的使用 (課税価格を小売価格の60%で計算)
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={imExcluded} onChange={(e) => setImExcluded(e.target.checked)} />
+              革製バッグ・ニット製衣類等 (少額免税の対象外)
+            </label>
+          </div>
+
+          <div className="stat-grid" data-import-stats data-exempted={String(importTax.exempted)}>
+            <Stat label="課税価格 (1,000円未満切捨て)" value={jpy(importTax.customsValue)} />
+            <Stat label="関税 (100円未満切捨て)" value={jpy(importTax.duty)} />
+            <Stat label="消費税の課税標準" value={jpy(importTax.consumptionBase)} />
+            <Stat label="消費税 (国税)" value={jpy(importTax.nationalTax)} />
+            <Stat label="地方消費税" value={jpy(importTax.localTax)} />
+            <Stat label="税の合計" value={jpy(importTax.totalTax)} />
+            <Stat label="通関までの原価" value={jpy(importTax.landedCost)} positive />
+          </div>
+          {importTax.notes.map((n, i) => (
+            <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
+          ))}
+        </div>
+
+        {/* (b) 輸出 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>(b) 日本から輸出する</div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            <strong>日本は輸出に関税を課していません。</strong>輸出取引は消費税も免除されます (消費税法7条)。
+            負担が生じるのは<strong>仕向国の輸入関税と付加価値税</strong>で、DDP なら売手、DAP・FOB なら買手が負担します。
+            課税価格の基準は国で違い、多くの国は CIF ですが<strong>米国は FOB</strong> (運賃・保険料を含まない) です。
+            日本以外から輸出する場合に備え、輸出税の税率も入力できます。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <GuardedNumber spec={{ label: '商品代金 (輸出・円)', kind: 'money', allowZero: false }} value={exGoodsStr} onChange={setExGoodsStr} width={150} />
+            <GuardedNumber spec={{ label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true }} value={exFreightStr} onChange={setExFreightStr} width={130} />
+            <GuardedNumber spec={{ label: '保険料 (輸出・円)', kind: 'money', allowZero: true }} value={exInsuranceStr} onChange={setExInsuranceStr} width={130} />
+            <GuardedNumber spec={{ label: '輸出税率 (%・日本は0)', kind: 'percent', allowZero: true, max: 100 }} value={exExportDutyStr} onChange={setExExportDutyStr} width={150} />
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              仕向国 (参考税率を差し込む)
+              <select value={exCountry} onChange={(e) => applyVatReference(e.target.value)} style={{ ...inputStyle, width: 200 }}>
+                {VAT_REFERENCE.map((v) => (
+                  <option key={v.code} value={v.code}>
+                    {v.name}
+                    {v.standard === null ? '（付加価値税なし）' : `（${Number((v.standard * 100).toFixed(2))}%）`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              課税価格の基準
+              <select value={exBasis} onChange={(e) => setExBasis(e.target.value as CustomsBasis)} style={{ ...inputStyle, width: 220 }}>
+                <option value="CIF">CIF（運賃・保険料を含む・EU ほか）</option>
+                <option value="FOB">FOB（含まない・米国）</option>
+              </select>
+            </label>
+            <GuardedNumber spec={{ label: '仕向国の関税率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={exDestDutyStr} onChange={setExDestDutyStr} width={140} />
+            <GuardedNumber spec={{ label: '仕向国の付加価値税 (%)', kind: 'percent', allowZero: true, max: 100 }} value={exVatStr} onChange={setExVatStr} width={160} />
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
+              <input type="checkbox" checked={exVatIncludesDuty} onChange={(e) => setExVatIncludesDuty(e.target.checked)} />
+              付加価値税の課税標準に関税を含める
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              誰が仕向国の税を負担するか
+              <select value={exBearer} onChange={(e) => setExBearer(e.target.value as 'seller' | 'buyer')} style={{ ...inputStyle, width: 200 }}>
+                <option value="buyer">買手（DAP・FOB ほか）</option>
+                <option value="seller">売手（DDP）</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="stat-grid" data-export-stats>
+            <Stat label="日本の輸出関税" value={jpy(0)} />
+            <Stat label="日本の消費税（輸出免税）" value={jpy(0)} />
+            <Stat label="輸出税（日本以外の場合）" value={jpy(Math.round(exportTax.exportDuty))} />
+            <Stat label="仕向国の課税価格" value={jpy(Math.round(exportTax.destCustomsValue))} />
+            <Stat label="仕向国の関税" value={jpy(Math.round(exportTax.destDuty))} />
+            <Stat label="仕向国の付加価値税" value={jpy(Math.round(exportTax.destVat))} />
+            <Stat label="仕向国の税 合計" value={jpy(Math.round(exportTax.destTotalTax))} />
+            <Stat label="売手の負担" value={jpy(Math.round(exportTax.sellerBurden))} positive={exportTax.sellerBurden === 0} />
+            <Stat label="買手の負担" value={jpy(Math.round(exportTax.buyerBurden))} />
+          </div>
+          {exportTax.notes.map((n, i) => (
+            <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
+          ))}
+          {lookupVat(exCountry)?.note && (
+            <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>・{lookupVat(exCountry)!.note}</div>
+          )}
+        </div>
+
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.7 }}>
+          ※ 付加価値税の参考税率は<strong>{VAT_REFERENCE_AS_OF}時点</strong>で確認できたものだけを載せています。網羅表ではなく、
+          <strong>改正で変わります</strong>。計算には必ず入力欄の値を使うので、最新の税率に書き換えてください。<br />
+          ※ 課税価格が1万円以下の輸入は関税・消費税が免除されます（革製バッグ・ニット製衣類等を除く。酒税・たばこ税等の個別消費税は免除されません）。
+          この免税と、個人的使用の課税価格60%の特例は、<strong>2028年4月1日から廃止・縮小される予定</strong>です。<br />
+          ※ 仕向国側には端数処理を仮定していません（規則が国ごとに違うため）。日本側のみ法定の切捨てを行っています。
+        </div>
+      </Section>
 
       <Section title="節税制度の案内 (一般情報)" count={tips.length}>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.9 }}>

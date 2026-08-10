@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
 - [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]] — 同分野の近傍
-- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — 同分野の近傍
+- [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

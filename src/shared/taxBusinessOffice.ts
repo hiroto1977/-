@@ -15,6 +15,8 @@
  * UI から切り離して単体テスト可能にするため、計算はすべてここに集約する。
  */
 
+import { assertNonNegativeFinite, floorHundred } from './num';
+
 // --- 税率・免税点の法定値 ------------------------------------------------
 
 /** 資産割の税率 (事業所床面積 1㎡ あたり 600 円。地方税法 701 条の42)。 */
@@ -33,9 +35,6 @@ export const EMPLOYEE_COUNT_THRESHOLD = 100;
  * @param tax 切捨前の税額 (円)
  * @returns 100 円未満を切り捨てた税額 (円)
  */
-function floorHundred(tax: number): number {
-  return Math.floor(tax / 100) * 100;
-}
 
 /**
  * 有限な非負数であることを検証する (不正入力は throw)。NaN / Infinity / 負値を弾く。
@@ -43,11 +42,6 @@ function floorHundred(tax: number): number {
  * @param label エラーメッセージに使うラベル
  * @throws value が非有限・負値のとき
  */
-function assertNonNegativeFinite(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
-  }
-}
 
 // --- 免税点判定 ----------------------------------------------------------
 

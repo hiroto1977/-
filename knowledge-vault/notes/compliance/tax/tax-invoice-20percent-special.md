@@ -36,11 +36,11 @@ aliases:
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 語彙が近い
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
 
 ## 関連

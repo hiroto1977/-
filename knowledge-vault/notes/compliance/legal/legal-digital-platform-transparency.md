@@ -31,8 +31,8 @@ aliases:
 - [経済産業省 デジタルプラットフォーム取引 関連情報](https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html) `メディア`
 
 ## 関連概念
-- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 語彙が近い
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 語彙が近い
+- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 分野横断
 - [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 同分野の近傍
 
 ## 関連

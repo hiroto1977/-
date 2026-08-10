@@ -31,14 +31,14 @@ aliases:
 - [クラウドサイン 電子契約と収入印紙](https://www.cloudsign.jp/media/20170224-basics-of-e-contract-02/) `メディア`
 
 ## 関連概念
-- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 語彙が近い
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 分野横断
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 分野横断
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有
 - [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 出典を共有
-- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 出典を共有
 - [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
+- [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -14,11 +14,8 @@
  * 特例分は住民税所得割額の 20% が上限。上限を超えた分は自己負担になる。
  */
 
+import { yen } from './num';
 import { RECONSTRUCTION_SURTAX_RATE } from './taxCalc';
-
-function yen(n: number): number {
-  return Math.round(n);
-}
 
 /** ふるさと納税の自己負担額 (円)。 */
 export const FURUSATO_SELF_PAY = 2_000;

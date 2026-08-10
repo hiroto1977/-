@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 66）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 68）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 49）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
@@ -26,8 +26,8 @@ tags:
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]（接続 26）
+- [[bizlaw-agency|代理（民法99条）]]（接続 25）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
-- [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -238,6 +238,7 @@ tags:
 - 2017年: [[bizlaw-condition-suspensive|停止条件・解除条件]]
 - 2017年: [[bizlaw-contract-termination|契約の解除（民法541条・542条）]]
 - 2017年: [[bizlaw-dation-in-payment|代物弁済（民法482条）]]
+- 2017年: [[bizlaw-earnest-money|手付（民法557条）]]
 - 2017年: [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]]
 - 2017年: [[bizlaw-freedom-of-contract|契約自由の原則]]
 - 2017年: [[bizlaw-guarantee-obligation|保証債務（民法446条）]]
@@ -297,7 +298,6 @@ tags:
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]]
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]]
-- [[bizlaw-agency|代理（民法99条）]]
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]]
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]]
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]

@@ -18,6 +18,8 @@
  * 分解アイソメでは実際の階高ではなく `floorGapPx` で階を離して描く。
  */
 
+import { nonNeg, round1 } from './num';
+
 /** 投影後の画面座標 (px)。 */
 export interface IsoPoint {
   readonly x: number;
@@ -98,13 +100,6 @@ const DEFAULTS = { scale: 11, originX: 250, originY: 320, floorGapPx: 134, slabP
  * `n > 0 ? n : 0` だと `>= 0` との差が出ず区別できない変異が残るため、
  * 大小比較は Math.max に寄せて分岐を持たせない。
  */
-function nn(n: number): number {
-  return Number.isFinite(n) ? Math.max(0, n) : 0;
-}
-
-function round1(n: number): number {
-  return Math.round(n * 10) / 10;
-}
 
 /** 平面座標 (m) を等角投影する。z は px 単位の持ち上げ量。 */
 export function projectIso(xM: number, yM: number, liftPx: number, opts: IsoOptions = {}): IsoPoint {
@@ -132,7 +127,7 @@ export function checkFloorFit(
   const roomsSqm = round1(
     rooms.reduce((sum, r) => sum + Math.abs(r.x2 - r.x1) * Math.abs(r.y2 - r.y1), 0),
   );
-  const outlineSqm = round1(nn(widthM) * nn(depthM));
+  const outlineSqm = round1(nonNeg(widthM) * nonNeg(depthM));
   // 両辺とも round1 済みなので差は 0.1 刻み。許容誤差を挟むと `<` と `<=` の
   // 区別が付かない変異が残るため、厳密一致で判定する。
   return { roomsSqm, outlineSqm, fits: roomsSqm === outlineSqm };
@@ -145,8 +140,8 @@ export function buildIsoModel(
   floors: readonly FloorSpec[],
   opts: IsoOptions = {},
 ): IsoModel {
-  const w = nn(widthM);
-  const baseDepth = nn(depthM);
+  const w = nonNeg(widthM);
+  const baseDepth = nonNeg(depthM);
   const gap = opts.floorGapPx ?? DEFAULTS.floorGapPx;
   const slab = opts.slabPx ?? DEFAULTS.slabPx;
 
@@ -160,7 +155,7 @@ export function buildIsoModel(
   };
 
   floors.forEach((floor, i) => {
-    const d = floor.depthM === undefined ? baseDepth : nn(floor.depthM);
+    const d = floor.depthM === undefined ? baseDepth : nonNeg(floor.depthM);
     const lift = gap * i;
     const at = (x: number, y: number) => track(projectIso(x, y, lift, opts));
     const nw = at(0, 0);
@@ -245,12 +240,12 @@ export interface SchematicInput {
  * 積むと合計で超える。
  */
 export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
-  const w = nn(input.widthM);
-  const d = nn(input.depthM);
+  const w = nonNeg(input.widthM);
+  const d = nonNeg(input.depthM);
   const footprint = w * d;
   if (w <= 0 || d <= 0) return [];
 
-  const workshop = Math.min(nn(input.workshopSqm), footprint);
+  const workshop = Math.min(nonNeg(input.workshopSqm), footprint);
   const workshopDepth = workshop / w;
   const restDepth = Math.max(0, d - workshopDepth);
 
@@ -269,7 +264,7 @@ export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
 
   // 残余は 0.1 ㎡ 単位に丸めてから回す。許容誤差 (> 0.05) で判定すると浮動小数の
   // 残差でちょうど境界に乗ることがなく、`>` と `>=` を区別できない変異が残る。
-  let remaining = round1(nn(input.upperFloorsSqm));
+  let remaining = round1(nonNeg(input.upperFloorsSqm));
   let level = 2;
   // 端数フロアは奥行を縮めて表現する。上限 8 層で打ち切り (それ以上は模式図の
   // 意味が薄く、面積 0 が続いたときの空回りも避ける)。

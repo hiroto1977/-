@@ -31,9 +31,9 @@ aliases:
 - [就業規則の不利益変更 解説](https://hcm-jinjer.com/blog/jinji/labor-contract-law_article-10/) `メディア`
 
 ## 関連概念
-- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]] — 同分野の近傍
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 同分野の近傍
-- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 同分野の近傍
+- [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]] — 同分野の近傍
+- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 同分野の近傍
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
 
 ## 関連

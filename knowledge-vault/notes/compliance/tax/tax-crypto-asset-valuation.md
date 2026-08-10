@@ -32,9 +32,8 @@ aliases:
 
 ## 関連概念
 - [[tax-dividends-received|受取配当等の益金不算入]] — 出典を共有
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 同分野の近傍
-- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 同分野の近傍
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

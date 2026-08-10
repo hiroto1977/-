@@ -2,37 +2,37 @@
 title: "学習パス: 法務・税務・労務／労務"
 type: learning-path
 path_key: "compliance-labor"
-entry_count: 126
+entry_count: 124
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 法務・税務・労務／労務（126件）
+# 学習パス — 法務・税務・労務／労務（124件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 23）
-- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 20）
+- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 26）
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 24）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 19）
-- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 18）
-- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
-- [[labor-variable-working-hours|変形労働時間制]]（接続 18）
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 19）
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 19）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 17）
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 17）
-- [[labor-standard-remuneration|標準報酬月額]]（接続 15）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 17）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 15）
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
-- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]（接続 14）
-- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 13）
-- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 13）
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]（接続 13）
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 14）
+- [[labor-work-rules|就業規則の作成・届出義務]]（接続 14）
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]]（接続 13）
+- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]]（接続 13）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
 - 2024年: [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]]
-- 2024年: [[labor-working-condition-disclosure-2024|労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）]]
+- 2024年: [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]]
 - 2025年: [[labor-childcare-leave-2025|育児・介護休業法 2025年4月改正]]
 - 2025年: [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]
 - 2025年: [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]]
@@ -62,8 +62,7 @@ tags:
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]]
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]]
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]]
-- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]]
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]]
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]]
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]]
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]]
 - [[labor-dispatch-license|労働者派遣事業の許可制]]
@@ -76,7 +75,7 @@ tags:
 - [[labor-employment-insurance|雇用保険の被保険者加入要件]]
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]]
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]]
-- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]
+- [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]
 - [[labor-foreign-employment-report|外国人雇用状況の届出]]
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]]
 - [[labor-gender-equality|男女雇用機会均等法における性別差別の禁止]]
@@ -87,7 +86,6 @@ tags:
 - [[labor-ideco|iDeCo（個人型確定拠出年金）の制度概要]]
 - [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]]
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]]
-- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]]
 - [[labor-leave-allowance|休業手当（労働基準法26条）]]
 - [[labor-legal-holiday|法定休日（労働基準法35条）]]
 - [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]]
@@ -102,24 +100,25 @@ tags:
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]]
 - [[labor-national-health-insurance|国民健康保険（国保）]]
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]]
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]]
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]
 - [[labor-paid-leave-grant|年次有給休暇の付与]]
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]]
 - [[labor-payment-on-termination|金品の返還（労働基準法23条）]]
-- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]]
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]]
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]]
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]]
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]]
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]
 - [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]]
 - [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]]
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]]
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]]
 - [[labor-safety-management|安全衛生管理体制（50人以上）]]
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]]
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]]
 - [[labor-sickness-allowance|健康保険の傷病手当金]]
+- [[labor-standard-remuneration|標準報酬月額]]
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]]
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]]
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]]
@@ -128,18 +127,17 @@ tags:
 - [[labor-tribunal|労働審判制度（労働審判法）]]
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]]
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]]
+- [[labor-variable-working-hours|変形労働時間制]]
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]]
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]]
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]]
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]]
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]]
 - [[labor-work-interval|勤務間インターバル制度]]
-- [[labor-work-rules|就業規則の作成・届出義務]]
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]]
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]]
 - [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]]
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]]
-- [[labor-working-conditions-disclosure|労働条件明示のルール（就業場所・業務の変更の範囲）]]
 - [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]]
 - [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]]
 - [[labor-worktime-tracking|労働時間の適正な把握義務]]

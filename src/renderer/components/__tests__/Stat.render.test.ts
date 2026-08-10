@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * Stat コンポーネントのレンダー回帰・props 分岐テスト。
  *

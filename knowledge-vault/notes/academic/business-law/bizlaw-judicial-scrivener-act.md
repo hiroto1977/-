@@ -30,8 +30,8 @@ aliases:
 - [法務省 — 司法書士の業務](https://www.moj.go.jp/MINJI/minji68.html) `公的`
 
 ## 関連概念
-- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 同分野の近傍
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同分野の近傍
+- [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

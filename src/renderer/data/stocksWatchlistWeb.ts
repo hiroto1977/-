@@ -15,6 +15,8 @@
  * ブラウザ専用依存を持たない) なので単体テストできる。
  */
 
+import { round2 } from '../../shared/num';
+
 export const STOCKS_WATCHLIST_KEY = 'stocks.watchlist';
 
 /** Electron 版 `isSafeSymbol` と同じ規則。1-16 文字の [A-Za-z0-9.-^]。
@@ -187,10 +189,6 @@ function mulberry32(seed: number): () => number {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
-}
-
-function round2(n: number): number {
-  return Math.round(n * 100) / 100;
 }
 
 /** `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。 */

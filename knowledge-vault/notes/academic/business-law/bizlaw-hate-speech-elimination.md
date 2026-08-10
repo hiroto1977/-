@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-equal-employment-opportunity|男女雇用機会均等法]] — 同分野の近傍
-- [[bizlaw-commercial-impracticability-ucc|商事上の履行困難性——UCC第2-615条と予見不能なリスクの配分]] — 同分野の近傍
+- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

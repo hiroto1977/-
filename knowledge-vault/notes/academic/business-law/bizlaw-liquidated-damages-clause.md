@@ -40,6 +40,7 @@ aliases:
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同じ思想家
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同分野の近傍
+- [[bizlaw-indemnification-clause-duty-to-defend|補償条項と防御義務・補償義務の区別（Indemnification Clause）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

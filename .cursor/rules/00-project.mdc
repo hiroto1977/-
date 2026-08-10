@@ -1,0 +1,32 @@
+---
+description: Service Hub — プロジェクトの前提と 2 つのビルド標的
+alwaysApply: true
+---
+
+# Service Hub
+
+日本語で使う業務ダッシュボード。**73 サービス**をカテゴリ別サイドバー
+（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）にまとめている。
+
+**同じコードから 2 つの標的が出る。片方だけ直して満足しないこと。**
+
+1. Electron デスクトップ（`npm run dev` / `npm run build`）— 3 プロセス構成
+2. ブラウザ単体（`npm run build:web` → `dist/standalone.html`）— Node も Electron も無い
+   単一 HTML。`build:web:lite` は約 2.2MB のモバイル版
+
+各サービスのページは `src/renderer/data/snapshot.ts` の静的スナップショットから始まり、
+`useServiceData(serviceId, snapshot)` が `data` / `source`（`'snapshot' | 'live'`）/
+`status` / `errorMessage` / `refresh()` を返す。**トークンを入れるまではスナップショットで動く**
+のが前提で、この二段構えを壊さないこと。
+
+## 応答は日本語で
+
+このリポジトリのコメント・コミットメッセージ・ドキュメントは日本語で書かれている。
+英語に切り替えないこと。**日本語の文中に他言語（キリル文字・ハングル・アラビア文字など）を
+混ぜない** — 過去に `通勤手and当` や `메일` のような混入が実際に起きている。
+
+## 事実を勝手に直さない
+
+`src/renderer/data/*Knowledge.ts` は出典付きの検証済みデータ。
+**推測で出典や条文番号を書き換えない。** 一次情報（所管省庁のサイト）で確認できないものは
+書かず、確認できなかった旨を残す。`verify:knowledge` が出典 2 件以上・権威 1 件以上を強制する。

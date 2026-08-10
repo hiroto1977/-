@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 分野横断
 - [[labor-commuting-injury|通勤災害（労災保険）]] — 同分野の近傍
+- [[labor-sickness-allowance|健康保険の傷病手当金]] — 同分野の近傍
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]] — 同分野の近傍
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 同分野の近傍
 

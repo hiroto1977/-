@@ -31,10 +31,10 @@ aliases:
 - [古物商の本人確認義務 解説](https://hayward-law.com/kobutsusho/archives/5383) `メディア`
 
 ## 関連概念
+- [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 語彙が近い
 - [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 出典を共有
 - [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
 - [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
-- [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 同分野の近傍
 

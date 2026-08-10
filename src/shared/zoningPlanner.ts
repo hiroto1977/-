@@ -17,6 +17,8 @@
  * 斜線/日影/防火規制・条例を含めて自治体の建築指導課と建築確認で決まります。
  */
 
+import { nonNeg, round2 } from './num';
+
 /** 前面道路幅員による容積率乗数の区分 (52条2項): 住居系 4/10・その他 6/10。 */
 export type RoadMultiplierCategory = 'residential' | 'other';
 
@@ -24,9 +26,6 @@ export type RoadMultiplierCategory = 'residential' | 'other';
 export const NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP = 150;
 
 /** 非有限・負を 0 に丸める。 */
-function nonNegative(n: number): number {
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
 
 /** 0.1 ㎡単位に丸める。 */
 function sqm(n: number): number {
@@ -69,10 +68,10 @@ export interface SitePlanResult {
  * 敷地面積と規制値から建築面積・延べ床面積の上限を概算する。
  */
 export function planSite(input: SitePlanInput): SitePlanResult {
-  const site = nonNegative(input.siteArea);
-  const baseCov = Math.min(100, nonNegative(input.coverageRatioPct));
-  const far = nonNegative(input.farPct);
-  const road = nonNegative(input.roadWidthM);
+  const site = nonNeg(input.siteArea);
+  const baseCov = Math.min(100, nonNeg(input.coverageRatioPct));
+  const far = nonNeg(input.farPct);
+  const road = nonNeg(input.roadWidthM);
 
   // 建ぺい率の緩和: 80% 指定 × 防火地域内の耐火建築物等 → 適用除外 (100%)。
   // それ以外は 角地 +10 / 耐火 +10 を加算し 100 で頭打ち。
@@ -139,8 +138,8 @@ export interface FactoryPlanResult {
  * 作業場を 1 階に置き、残りを直売・事務、上階を販売/オフィス等に回す想定。
  */
 export function planFactory(input: FactoryPlanInput): FactoryPlanResult {
-  const footprint = nonNegative(input.maxFootprint);
-  const totalFloor = nonNegative(input.maxTotalFloor);
+  const footprint = nonNeg(input.maxFootprint);
+  const totalFloor = nonNeg(input.maxTotalFloor);
   // Infinity は「作業場の面積制限なし」(準工業地域など) を表す明示値として通す。
   const capRaw = input.workshopCapSqm;
   const cap =
@@ -148,8 +147,8 @@ export function planFactory(input: FactoryPlanInput): FactoryPlanResult {
       ? NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP
       : capRaw === Number.POSITIVE_INFINITY
         ? Number.POSITIVE_INFINITY
-        : nonNegative(capRaw);
-  const desired = input.desiredWorkshopSqm === undefined ? cap : nonNegative(input.desiredWorkshopSqm);
+        : nonNeg(capRaw);
+  const desired = input.desiredWorkshopSqm === undefined ? cap : nonNeg(input.desiredWorkshopSqm);
 
   const workshopArea = sqm(Math.min(desired, cap, footprint, totalFloor));
   const groundFloorOther = sqm(Math.max(0, footprint - workshopArea));
@@ -194,9 +193,6 @@ function ceil2(n: number): number {
 }
 
 /** 0.01 単位に丸める。 */
-function round2(n: number): number {
-  return Math.round(n * 100) / 100;
-}
 
 export interface RoadSlopeInput {
   /** 前面道路の幅員 (m)。 */
@@ -242,9 +238,9 @@ export interface RoadSlopeResult {
  * 逆に解くと必要後退 a = (計画高さ ÷ 勾配 − 幅員) ÷ 2。
  */
 export function planRoadSlope(input: RoadSlopeInput): RoadSlopeResult {
-  const width = nonNegative(input.roadWidthM);
-  const setback = nonNegative(input.setbackM);
-  const height = nonNegative(input.plannedHeightM);
+  const width = nonNeg(input.roadWidthM);
+  const setback = nonNeg(input.setbackM);
+  const height = nonNeg(input.plannedHeightM);
   const slopeFactor = roadSlopeFactor(input.category);
 
   const limitM = round2((width + setback * 2) * slopeFactor);
@@ -253,7 +249,7 @@ export function planRoadSlope(input: RoadSlopeInput): RoadSlopeResult {
   const checked =
     input.applicationDistanceM !== undefined && input.distanceFromOppositeBoundaryM !== undefined;
   const beyond = checked
-    ? nonNegative(input.distanceFromOppositeBoundaryM) > nonNegative(input.applicationDistanceM)
+    ? nonNeg(input.distanceFromOppositeBoundaryM) > nonNeg(input.applicationDistanceM)
     : false;
 
   return {
@@ -309,9 +305,9 @@ export interface ShadowRegulationResult {
  * 「10m を超える」が要件なので、ちょうど 10.0m は対象外になる。
  */
 export function planShadowRegulation(input: ShadowRegulationInput): ShadowRegulationResult {
-  const height = nonNegative(input.plannedHeightM);
+  const height = nonNeg(input.plannedHeightM);
   const thresholdM =
-    input.thresholdM === undefined ? SHADOW_HEIGHT_THRESHOLD_M : nonNegative(input.thresholdM);
+    input.thresholdM === undefined ? SHADOW_HEIGHT_THRESHOLD_M : nonNeg(input.thresholdM);
   const exceedsThreshold = height > thresholdM;
 
   return {
@@ -376,13 +372,13 @@ export function planSetbackTradeoff(input: SetbackTradeoffInput): SetbackTradeof
   const requiredSetbackM = slope.minSetbackM;
 
   const buildableDepthM = round2(
-    Math.max(0, nonNegative(input.siteDepthM) - requiredSetbackM - nonNegative(input.rearSetbackM)),
+    Math.max(0, nonNeg(input.siteDepthM) - requiredSetbackM - nonNeg(input.rearSetbackM)),
   );
   const buildableWidthM = round2(
-    Math.max(0, nonNegative(input.siteWidthM) - nonNegative(input.sideSetbackTotalM)),
+    Math.max(0, nonNeg(input.siteWidthM) - nonNeg(input.sideSetbackTotalM)),
   );
   const geometricFootprint = sqm(buildableDepthM * buildableWidthM);
-  const cap = nonNegative(input.maxFootprint);
+  const cap = nonNeg(input.maxFootprint);
   const footprint = sqm(Math.min(geometricFootprint, cap));
 
   return {

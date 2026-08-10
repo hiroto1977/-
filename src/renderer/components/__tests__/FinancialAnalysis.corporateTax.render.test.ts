@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 /**
  * FinancialAnalysis コンポーネント内の「法人税等の概算」ブロック (CorporateTaxCard) の
  * レンダー検証テスト (round 55)。

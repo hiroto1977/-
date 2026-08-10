@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-ideco|iDeCo（個人型確定拠出年金）の制度概要]] — 語彙が近い
-- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
 - [[bizlaw-defined-contribution-pension|確定拠出年金法]] — 語彙が近い
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
 
 ## 関連

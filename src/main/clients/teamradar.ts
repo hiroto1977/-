@@ -219,14 +219,10 @@ export function colorFor(index: number): { stroke: string; fill: string } {
   return PALETTE[i]!;
 }
 
-export function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
+import { escapeXml } from '../../shared/escape';
+
+export { escapeXml };
 
 export interface RadarChartOptions {
   readonly width?: number;

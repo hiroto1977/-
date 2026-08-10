@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 同分野の近傍
-- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
