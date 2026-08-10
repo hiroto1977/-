@@ -37,6 +37,7 @@ Gretchen M. Spreitzer ／ Kenneth W. Thomas ／ Betty A. Velthouse
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同分野の近傍
 - [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同分野の近傍
+- [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

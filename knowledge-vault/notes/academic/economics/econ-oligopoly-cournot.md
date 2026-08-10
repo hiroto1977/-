@@ -36,6 +36,7 @@ aliases:
 - [[econ-price-discrimination|価格差別（price discrimination）]] — 出典を共有
 - [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]] — 出典を共有
 - [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
 - [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
 
 ## 関連

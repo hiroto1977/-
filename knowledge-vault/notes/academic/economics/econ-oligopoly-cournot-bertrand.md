@@ -31,15 +31,14 @@ aliases:
 
 ## 関連概念
 - [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]] — 語彙が近い
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 語彙が近い
 - [[econ-contract-curve|契約曲線（Contract Curve）]] — 同じ思想家
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 同じ思想家
 - [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 同じ思想家
 - [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
-- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 同じ思想家
 - [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
 - [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
-- [[econ-contestable-markets|コンテスタブル市場]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

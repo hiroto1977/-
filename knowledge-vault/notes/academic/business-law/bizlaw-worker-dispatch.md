@@ -35,7 +35,7 @@ aliases:
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 語彙が近い
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 分野横断
 - [[bizlaw-employment-security|職業安定法]] — 同分野の近傍
-- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,7 +36,6 @@ aliases:
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 語彙が近い
 - [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同じ思想家
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 同分野の近傍
-- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

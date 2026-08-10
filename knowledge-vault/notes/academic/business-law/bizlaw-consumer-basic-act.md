@@ -37,7 +37,6 @@ aliases:
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 同分野の近傍
 - [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 同分野の近傍
 - [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
-- [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

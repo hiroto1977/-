@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同分野の近傍
 - [[human-welfare-state-typology|福祉国家類型論（福祉レジーム論）：エスピン＝アンデルセンの三つの世界]] — 同分野の近傍
-- [[human-availability-cascade|利用可能性カスケード]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

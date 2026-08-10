@@ -31,13 +31,13 @@ aliases:
 
 ## 関連概念
 - [[human-self-efficacy-theory|自己効力感理論]] — 語彙が近い
+- [[human-mindset|マインドセット（成長/固定）]] — 語彙が近い
 - [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同じ思想家
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
-- [[human-mindset|マインドセット（成長/固定）]] — 同分野の近傍
 - [[human-stress-immune-axis|ストレス-免疫軸：HPA軸を介した心理的ストレスと免疫機能の双方向的調節機構]] — 同分野の近傍
 - [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 同分野の近傍
 

@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同分野の近傍
-- [[human-stockholm-syndrome|ストックホルム症候群]] — 同分野の近傍
 - [[human-zeigarnik|ツァイガルニク効果]] — 同分野の近傍
 
 ## 関連

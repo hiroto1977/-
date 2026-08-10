@@ -37,7 +37,7 @@ aliases:
 - [[tax-qualified-invoice-issuer-registration|適格請求書発行事業者の登録制度（インボイス制度）]] — 分野横断
 - [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
 - [[bizlaw-consumption-tax|消費税法]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-international-human-rights-due-diligence|国際人権デューデリジェンス（UNGPs）の法的義務化と企業責任]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 語彙が近い
 - [[mgmt-followership|フォロワーシップ論]] — 同分野の近傍
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
-- [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
