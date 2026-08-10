@@ -31,8 +31,8 @@ aliases:
 - [Backus, Kehoe & Kydland (1994) J-Curve — AER 84(1) IDEAS/RePEc](https://ideas.repec.org/a/aea/aecrev/v84y1994i1p84-103.html) `学術`
 
 ## 関連概念
-- [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]] — 同分野の近傍
 - [[econ-backus-smith|バッカス＝スミス・パズル（Backus-Smith Puzzle）]] — 同分野の近傍
+- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

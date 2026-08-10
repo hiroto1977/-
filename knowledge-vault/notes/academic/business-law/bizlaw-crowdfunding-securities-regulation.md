@@ -38,7 +38,7 @@ aliases:
 - [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同分野の近傍
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
+- [[bizlaw-trust-act|信託法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

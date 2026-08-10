@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Social comparison theory — upward/downward, self-enhancement, SNS, Festinger, body image](https://en.wikipedia.org/wiki/Social_comparison_theory) `リファレンス`
 
 ## 関連概念
+- [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 語彙が近い
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
-- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

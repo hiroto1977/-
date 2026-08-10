@@ -40,6 +40,7 @@ aliases:
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
 - [[legal-moral-rights|著作者人格権]] — 出典を共有
 - [[subsidy-culture-arts|文化芸術振興費補助金（文化芸術創造活動への支援）]] — 出典を共有
+- [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

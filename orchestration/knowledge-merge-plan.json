@@ -732,5 +732,25 @@
         "一般概念（定義・品質尺度・FAIR 分業）と政府政策パラダイム"
       ]
     ]
+  },
+  "pass23": {
+    "appliedAt": "2026-08-10",
+    "note": "queue 先頭に 3 つ目の champerty エントリが現れ、全文読解で 3 重複と判明。バッチ13 で -maintenance-doctrine へ書いた TPLF 分析は keeper へ移送（作業は無駄にならない）。-and-maintenance が持っていた 1967 年英刑事法の条文リンクは、バッチ13 の際に記憶から書いた事実の相互裏付けになった。",
+    "merges": [
+      {
+        "keep": "bizlaw-champerty",
+        "drop": "bizlaw-champerty-and-maintenance",
+        "reason": "同一法理。keep は中世制定法・14条(2)留保・Arkin cap・米州差まで持つ最充実版。",
+        "migrate": "Mulheron (OUP 2023) を出典へ、Winfield/Mulheron を keyFigures へ。Brooks VLR 1916 の JSTOR id は実体未確定で移送しない。1967年法の条文リンクは keep が同一 URL を保有。",
+        "provenanceDelta": "keep src 2→6 / academic 0→3。減少なし。"
+      },
+      {
+        "keep": "bizlaw-champerty",
+        "drop": "bizlaw-champerty-maintenance-doctrine",
+        "reason": "同一法理（バッチ13 で増強した版）。",
+        "migrate": "TPLF 産業の対立軸・Sebok/Steinitz の学説・開示義務の立法論点・日本法未整備の比較法的意味を本文へ、SSRN Sebok・RAND・LII を出典へ。",
+        "provenanceDelta": "上記に合算 / 本文 +約320字。減少なし。"
+      }
+    ]
   }
 }

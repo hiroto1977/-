@@ -35,6 +35,7 @@ Finn E. Kydland／Edward C. Prescott／Robert J. Barro／David B. Gordon／Kenne
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同分野の近傍
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同分野の近傍
 - [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — 同分野の近傍
+- [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — 同分野の近傍
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同分野の近傍
 
 ## 関連

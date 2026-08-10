@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同分野の近傍
 - [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 同分野の近傍
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

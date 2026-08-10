@@ -32,7 +32,7 @@ Underhill v. Hernandez（168 U.S. 250, 1897 — 法理確立判例）／Banco Na
 
 ## 関連概念
 - [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]] — 語彙が近い
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
+- [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

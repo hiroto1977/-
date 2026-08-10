@@ -37,6 +37,7 @@ Douglas G. Baird ／ Bruce A. Markell ／ Elizabeth Warren ／ Jay Lawrence West
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同じ思想家
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 同じ思想家
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

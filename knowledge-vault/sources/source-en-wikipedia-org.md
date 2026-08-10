@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2258
+cite_count: 2257
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2258 件**（リファレンス 2258）
+> [!info] 出典ドメイン索引 ・ 引用 **2257 件**（リファレンス 2257）
 
 ## このドメインを出典とする項目
 
@@ -71,7 +71,6 @@ tags:
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — Wikipedia:Caveatemptor—commonlaw,consumerprotection,merchantability,d…
 - [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — Wikipedia:Caveatemptor—買主注意の原則の歴史と現代的変容の概説
 - [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — Wikipedia—ClassicalSchool(Criminology)
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — Wikipediaoverviewofchampertyandmaintenance
 - [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]] — Wikipedia:Charitableorganization—nonprofitlaw
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — Wikipedia:Choiceoflaw—privateinternationallaw,choiceoflawclause,RomeI…
 - [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — Wikipedia:Conflictoflaws—RomeI/II,mostsignificantrelationship,partyau…

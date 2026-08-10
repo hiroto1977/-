@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 140
+cite_count: 139
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **140 件**（学術 139 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **139 件**（学術 138 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — HarvardLawReview—FiduciaryDutiesinAgencyRelationships
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — Areeda&Turner1975—PredatoryPricingandRelatedPracticesunderSection2oft…
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — Brooks,VirginiaLawReview(1916)
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — Holmström1979—MoralHazardandObservability,BellJournalofEconomics10(1)…
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — Coffee(1986)UnderstandingthePlaintiff'sAttorney,ColumbiaLawReview86(4…
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — Farnsworth(1970)LegalRemediesforBreachofContract—ColumbiaLawReview

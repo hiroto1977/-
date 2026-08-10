@@ -39,7 +39,6 @@ aliases:
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同じ思想家
 - [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同じ思想家
-- [[econ-contestable-markets|コンテスタブル市場]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

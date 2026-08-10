@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 148
+cite_count: 147
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **148 件**（リファレンス 124 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **147 件**（リファレンス 123 ・ 公的 23 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -39,8 +39,7 @@ tags:
 - [[bizlaw-business-purpose-doctrine-gregory-helvering|事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認]] — Gregoryv.Helvering,293U.S.465(1935)—fullopinion,CornellLawSchoolLegal…
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — CornellLIIWex:Capacity—minors,mentalincapacity,intoxication,void/void…
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — CornellLIIWex:Caveatemptor—buyerbeware,impliedwarranties,UCC2-314/2-3…
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — LIICornellWex:Champertydefinition
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — CornellLII—champertyandmaintenancedefinition
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — CornellLII—ChampertyandMaintenance
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — CornellLIIWex:Choiceoflaw—conflictoflaws,partyautonomy,closestconnect…
 - [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — FederalRulesofCivilProcedure,Rule23—クラスアクションの法的枠組み
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — CornellLII—Clean-HandsDoctrine

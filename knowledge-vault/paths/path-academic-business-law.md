@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 685
+entry_count: 683
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（685件）
+# 学習パス — 学術概念／ビジネス法務（683件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 75）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 50）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 73）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 48）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 30）
@@ -352,8 +352,6 @@ tags:
 - [[bizlaw-cartel-regulation-antitrust-eu|カルテル規制——競争法における水平的共謀の禁止と制裁]]
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]]
 - [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]]
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]]
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]]
 - [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]]
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]]
 - [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]]

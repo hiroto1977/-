@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 同分野の近傍
 - [[mgmt-lead-user|リードユーザー法]] — 同分野の近傍
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同分野の近傍
+- [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [Foss & Michailova eds. (2009) Knowledge Governance — Oxford UP](https://link.springer.com/book/10.1093/acprof:oso/9780199235926.001.0001) `学術`
 
 ## 関連概念
-- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 語彙が近い
 - [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同じ思想家
 - [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同分野の近傍
 

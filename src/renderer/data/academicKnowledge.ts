@@ -17662,11 +17662,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）',
     statement:
       'シャンパティ（champerty）とメインテナンス（maintenance）は、中世イングランドのコモン・ローに起源を持つ法理。メインテナンスとは、訴訟の結果に正当な利害関係を持たない第三者が、他人の訴訟を資金面その他で援助する行為をいい、シャンパティはメインテナンスの加重類型で、援助の見返りに訴訟の成果（勝訴判決・和解金等）の一部を分配する合意を伴うものをいう。封建領主による司法の私物化・訴訟投機を防ぐ目的で、Statute of Conspirators（1305年）やMaintenance and Embracery Act 1540（32 Hen. 8 c. 9）等の制定法で繰り返し禁じられた。' +
-      'イングランドでは1967年刑事法（Criminal Law Act 1967）第13条・第14条により犯罪および不法行為としては廃止されたが、第14条(2)の留保規定によりシャンパティ的な合意は依然として公序（public policy）違反として契約の効力を否定される余地がある。現代では第三者訴訟資金提供（third-party litigation funding）産業の急成長に伴い、Arkin v Borchard Lines Ltd [2005] EWCA Civ 655で控訴院が資金提供者の敗訴費用負担を提供額に限定する「Arkin cap」原則を示す等、公序の境界線が判例で再画定されつつある。米国では州ごとに扱いが異なり、多くの州では法理が実質的に廃止または大幅に緩和されている。',
-    keyFigures: 'Statute of Conspirators (1305)／Maintenance and Embracery Act 1540 (32 Hen. 8 c. 9)／Criminal Law Act 1967 §13–14／Arkin v Borchard Lines Ltd [2005] EWCA Civ 655（Arkin cap）',
+      'イングランドでは1967年刑事法（Criminal Law Act 1967）第13条・第14条により犯罪および不法行為としては廃止されたが、第14条(2)の留保規定によりシャンパティ的な合意は依然として公序（public policy）違反として契約の効力を否定される余地がある。現代では第三者訴訟資金提供（third-party litigation funding）産業の急成長に伴い、Arkin v Borchard Lines Ltd [2005] EWCA Civ 655で控訴院が資金提供者の敗訴費用負担を提供額に限定する「Arkin cap」原則を示す等、公序の境界線が判例で再画定されつつある。米国では州ごとに扱いが異なり、多くの州では法理が実質的に廃止または大幅に緩和されている。' +
+      '現代の主戦場は第三者訴訟ファイナンス（TPLF）で、集団訴訟・国際仲裁・特許訴訟を中心に、訴訟費用を投資家が負担し回収金の一部を得る産業が成立した。資力のない原告のアクセス・トゥ・ジャスティスを広げる面と、投資家の利益が和解判断を歪める利益相反の面が対立軸で、Sebok は投資契約の倫理的許容条件を、Steinitz は「訴訟のベンチャーキャピタル」としての契約設計（情報・コントロール権の配分）を論じ、Winfield の歴史研究から Mulheron の現代的体系化（OUP 2023）へ学説が接続する。' +
+      '資金提供者の身元・条件の開示義務の要否が米連邦裁判所規則・EU 指令案の立法論点であり、日本では弁護士法・信託法制との関係で TPLF は未整備のため、比較法的な参照枠として意味を持つ。',
+    keyFigures: 'Statute of Conspirators (1305)／Maintenance and Embracery Act 1540 (32 Hen. 8 c. 9)／Criminal Law Act 1967 §13–14／Arkin v Borchard Lines Ltd [2005] EWCA Civ 655（Arkin cap）／P. H. Winfield（歴史研究）／Rachael Mulheron（現代的体系化）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.legislation.gov.uk/ukpga/1967/58/section/14', type: 'government', label: 'UK Legislation — Criminal Law Act 1967, Section 14（champerty & maintenance の不法行為としての廃止・公序留保規定）' },
+      { url: 'https://global.oup.com/academic/product/the-modern-doctrines-of-champerty-and-maintenance-9780192898739', type: 'academic', label: 'Mulheron — The Modern Doctrines of Champerty and Maintenance (OUP 2023)' },
+      { url: 'https://ssrn.com/abstract=2022301', type: 'academic', label: 'Sebok — Litigation Investment and Legal Ethics (SSRN)' },
+      { url: 'https://www.rand.org/pubs/research_reports/RR630.html', type: 'academic', label: 'RAND — Third-Party Litigation Funding report' },
+      { url: 'https://www.law.cornell.edu/wex/champerty_and_maintenance', type: 'reference', label: 'Cornell LII — Champerty and Maintenance' },
       { url: 'https://www.encyclopedia.com/law/encyclopedias-almanacs-transcripts-and-maps/champerty-and-maintenance', type: 'reference', label: 'Encyclopedia.com — Champerty and Maintenance (West\'s Encyclopedia of American Law)' },
     ],
   },
@@ -24784,23 +24790,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-champerty-maintenance-doctrine',
-    discipline: 'business-law',
-    title: 'シャンパティ・メンテナンス法理',
-    statement: 'コモンロー上のメンテナンス（訴訟援助）およびシャンパティ（訴訟利益分配）法理は第三者による訴訟支援を禁じてきたが、SebokやSteinitzらが論じるように第三者訴訟ファイナンスの台頭により現代的再解釈が進む。' +
-      'メンテナンスは利害関係のない第三者が他人の訴訟を援助すること、シャンパティはその援助の対価として判決金の分配を受ける合意を指し、中世英国で有力者が係争を買い漁り司法を歪めた濫訴への対策として犯罪・不法行為とされた。' +
-      '現代では英国が1967年刑事法で犯罪性を廃止し、豪州・米国多数州も許容へ転じて、訴訟費用を投資家が負担し回収金の一部を得る第三者訴訟ファイナンス（TPLF）産業が成立した——集団訴訟・国際仲裁・特許訴訟が主戦場で、資力のない原告のアクセス・トゥ・ジャスティスを広げる面と、投資家の利益が和解判断を歪める利益相反の面が対立軸になる。' +
-      'Sebok は投資契約の倫理的許容条件を、Steinitz は「訴訟のベンチャーキャピタル」としての契約設計（情報・コントロール権の配分）を論じ、開示義務の要否（資金提供者の身元を裁判所・相手方に明かすか）が米連邦裁判所規則・EU 指令案の現在の立法論点になっている。日本では弁護士法・信託法制との関係で TPLF は未整備であり、比較法的な参照枠として意味を持つ。',
-    keyFigures: 'Anthony J. Sebok ／ Maya Steinitz ／ Joanna Shepherd',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/champerty_and_maintenance', type: 'reference', label: 'Cornell LII — champerty and maintenance definition' },
-      { url: 'https://ssrn.com/abstract=2022301', type: 'academic', label: 'Sebok — Litigation Investment and Legal Ethics' },
-      { url: 'https://www.rand.org/pubs/research_reports/RR630.html', type: 'academic', label: 'RAND report on third-party litigation funding' },
-      { url: 'https://en.wikipedia.org/wiki/Champerty_and_maintenance', type: 'reference', label: 'Wikipedia overview of champerty and maintenance' },
-    ],
-  },
-  {
     id: 'bizlaw-blue-sky-laws',
     discipline: 'business-law',
     title: 'ブルースカイ法（州証券規制）',
@@ -25068,20 +25057,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/j.neuropsychologia.2009.03.004', type: 'academic', label: 'Stern 2009: Cognitive reserve, Neuropsychologia' },
       { url: 'https://www.thelancet.com/article/S1474-4422(12)70191-6/fulltext', type: 'academic', label: 'Stern 2012: Cognitive reserve, Lancet Neurology' },
       { url: 'https://en.wikipedia.org/wiki/Cognitive_reserve', type: 'reference', label: 'Cognitive Reserve — Wikipedia overview' },
-    ],
-  },
-  {
-    id: 'bizlaw-champerty-and-maintenance',
-    discipline: 'business-law',
-    title: 'シャンパティと訴訟支援禁止法理',
-    statement: 'コモン・ロー上の禁止法理。利害関係のない第三者による訴訟援助（Maintenance）と、勝訴利益分配を伴うその加重形態（Champerty）を規制する。Winfieldの歴史研究が基礎を築き、現代の第三者訴訟ファイナンスの適法性判断に直結する。',
-    keyFigures: 'Percy Henry Winfield ／ Rachael Mulheron',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/champerty', type: 'reference', label: 'LII Cornell Wex: Champerty definition' },
-      { url: 'https://www.jstor.org/stable/1064131', type: 'academic', label: 'Brooks, Virginia Law Review (1916)' },
-      { url: 'https://www.legislation.gov.uk/ukpga/1967/58/section/14', type: 'government', label: 'Criminal Law Act 1967 s.14 (UK)' },
-      { url: 'https://global.oup.com/academic/product/the-modern-doctrines-of-champerty-and-maintenance-9780192898739', type: 'academic', label: 'Mulheron, Modern Doctrines (OUP 2023)' },
     ],
   },
   {
@@ -25533,7 +25508,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-mark-to-market-accounting-theory',
     discipline: 'economics',
     title: '時価会計理論（マーク・トゥ・マーケット会計）',
-    statement: '資産・負債を取得原価ではなく現在の市場価格で評価する会計手法。財務透明性を高める一方、2008年金融危機ではFASB ASC 820（旧SFAS 157）に基づく公正価値測定が景気循環増幅（プロシクリカリティ）を招くとして存続論争を巻き起こした。',
+    statement: '資産・負債を取得原価ではなく現在の市場価格で評価する会計手法。財務透明性を高める一方、2008年金融危機ではFASB ASC 820（旧SFAS 157）に基づく公正価値測定が景気循環増幅（プロシクリカリティ)を招くとして存続論争を巻き起こした。' +
+      'SFAS 157 は公正価値を「秩序ある取引で資産を売却して受け取る価格（出口価格）」と定義し、測定インプットをレベル 1（活発な市場の相場）・レベル 2（観察可能な類似指標）・レベル 3（観察不能な内部モデル）の 3 階層に整理した——危機時の争点はこの階層の下方遷移で、市場が凍結すると相場が投げ売り価格しか示さず、評価損→自己資本毀損→追加売却→さらなる価格下落という悪循環（プロシクリカリティ）が主張された。' +
+      'SEC の議会報告 (2008) は「時価会計が危機を引き起こしたのではなく損失を可視化した」と結論して廃止論を退けつつ、非活発市場での測定ガイダンス改善を勧告し、FASB は投げ売り取引の識別を緩めるガイダンスで応じた。Barth & Landsman (2010) も、危機の主因は証券化と不透明性であり会計は伝達者だと整理している。' +
+      '制度上は金融商品の分類（保有目的による償却原価との使い分け・IFRS 9 / 米国基準）・その他の包括利益（OCI）経由の緩衝・銀行規制資本におけるプルーデンシャル・フィルターという形で「情報としての時価」と「規制資本としての時価」を切り分ける設計に落ち着いており、暗号資産や非流動資産の評価で論争が再演され続けている。',
     keyFigures: 'Robert H. Herz ／ Mary E. Barth ／ Wayne R. Landsman',
     asOf: '2026-06',
     sources: [
@@ -25960,7 +25938,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-behavioral-integrity',
     discipline: 'management',
     title: '行動的誠実性（ビヘイビオラル・インテグリティ）',
-    statement: 'Simons（2002）がOrganization Scienceで提唱した概念で、マネジャーの言葉と行動の知覚された一致度を指す。道徳的特性としての誠実さとは異なり、フォロワーが観察する言行一致パターンとして定義され、信頼と業績を予測する。',
+    statement: 'Simons（2002）がOrganization Scienceで提唱した概念で、マネジャーの言葉と行動の知覚された一致度を指す。道徳的特性としての誠実さとは異なり、フォロワーが観察する言行一致パターンとして定義され、信頼と業績を予測する。' +
+      '定義の要点は二つの切断にある——内容の善悪から切断され（悪い価値を一貫して実行しても行動的誠実性は高い）、本人の意図から切断される（守るつもりの約束も、状況変化で破れば知覚は毀損する）。ゆえに測定は常にフォロワー側の知覚で行われ、価値の表明が多いリーダーほど不一致の露出機会も増えるという「語ることのリスク」が導かれる。' +
+      'ホテルチェーンの実証（Simons ら）は、従業員が知覚する上司の言行一致がホテル間の信頼・コミットメント・離職率、さらに利益まで予測することを示し、僅かな知覚差が業績に増幅される経路（信頼→裁量的努力→顧客経験）を裏づけた。人種による知覚差（黒人従業員は言行不一致により敏感）という公正研究への接続も初期から論点になっている。' +
+      '20 年レビュー（Annual Review）は、心理的契約違反・倫理的リーダーシップとの弁別、危機時の「約束の再交渉」（守れない約束を早く言い直すほうが沈黙より知覚を守る）など実務的示唆を整理しており、変革の頻発する組織で「言ったことを守れる範囲でしか語らない」規律の理論的根拠になっている。',
     keyFigures: 'Tony L. Simons ／ Edward C. Tomlinson ／ Quinetta M. Roberson',
     asOf: '2026-06',
     sources: [
@@ -26092,7 +26073,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-cram-down-mechanism',
     discipline: 'business-law',
     title: 'クラムダウン（強制認可）メカニズム',
-    statement: '米国連邦倒産法第11章§1129(b)に基づき、一部の債権者クラスの反対を押し切り裁判所が再建計画を強制認可する手続。BairdとJacksonが理論化した「公正・衡平」基準と絶対的優先原則を軸とし、EU再建指令等を通じ国際的に採用が拡大した。',
+    statement: '米国連邦倒産法第11章§1129(b)に基づき、一部の債権者クラスの反対を押し切り裁判所が再建計画を強制認可する手続。BairdとJacksonが理論化した「公正・衡平」基準と絶対的優先原則を軸とし、EU再建指令等を通じ国際的に採用が拡大した。' +
+      '要件の骨格は、少なくとも 1 つの毀損クラスの同意・不当な差別の不存在・公正衡平性で、公正衡平性の中核が絶対的優先原則（APR: 上位クラスが全額弁済されない限り下位クラスは受け取れない——反対する債権者クラスを飛び越えて株主が残余を保持することの禁止）である。担保債権者へのクラムダウンでは担保価値相当の繰延弁済（適正利率が争点: Till 判決の formula approach）が認められる。' +
+      '理論的には、APR の厳格執行が事前の融資インセンティブを守るという Baird & Jackson 系の債権者交渉モデルと、再建価値の保存には柔軟性（新価値例外・ギフティング）が要るという実務側の緊張が続き、Lubben のように APR の実際の拘束力は誇張されていると論じる実証もある。' +
+      'EU 予防的再建枠組み指令（2019/1023）はクラス横断クラムダウンを加盟国に導入させ、相対的優先原則（RPR: 上位が下位より有利ならよい）という緩い代替を許容して大論争を生んだ。日本の民事再生・会社更生にも組替え・権利保護条項による類似の強制認可構造があり、事業再生 ADR から法的整理への移行判断で機能する。',
     keyFigures: 'Douglas G. Baird ／ Thomas H. Jackson ／ Stephen J. Lubben',
     asOf: '2026-06',
     sources: [
@@ -26307,7 +26291,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-tag-along-drag-along-rights',
     discipline: 'business-law',
     title: 'タグアロング権・ドラッグアロング権',
-    statement: 'ベンチャー投資契約における株主間の権利調整条項。タグアロング権は少数株主が支配株主と同条件で売却参加できる共同売却権、ドラッグアロング権は多数株主がM&A時に少数株主へ売却を強制できる権利。KaplanとStrömbergが実証的に体系化した。',
+    statement: 'ベンチャー投資契約における株主間の権利調整条項。タグアロング権は少数株主が支配株主と同条件で売却参加できる共同売却権、ドラッグアロング権は多数株主がM&A時に少数株主へ売却を強制できる権利。KaplanとStrömbergが実証的に体系化した。' +
+      '機能は対になっている——タグ（共同売却権）は支配株主だけが良い条件で抜けるコントロール・プレミアムの独占を防ぎ、ドラッグは少数株主のホールドアウト（買収者は通常 100% を求めるため、少数の拒否が全体の売却を壊す）を防ぐ。前者は少数保護、後者は流動性・出口の確保で、株式に譲渡制限のある非公開会社でこそ意味を持つ。' +
+      'Kaplan & Strömberg (2003) の VC 契約実証は、キャッシュフロー権と支配権（取締役会・拒否権・強制売却）が状態依存的に配分される実態を金融契約理論と突き合わせた基準文献で、NVCA モデル契約が実務の標準形（ドラッグ発動の閾値・対価種類の制限・表明保証の限定などの交渉ポイント）を提供する。' +
+      '紛争の典型はドラッグ発動時の少数株主の主張（信認義務違反・不当廉売）で、発動条件の明確化と公正価値担保（同一条件・第三者売却限定）が予防設計になる。日本のスタートアップ実務でも株主間契約の定番条項として定着し、種類株式の取得条項（会社法108条）との組合せで実装される。',
     keyFigures: 'Steven N. Kaplan ／ Per Strömberg ／ Michael Ewens',
     asOf: '2026-06',
     sources: [

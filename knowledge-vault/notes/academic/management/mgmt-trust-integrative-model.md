@@ -31,8 +31,8 @@ Mayer, Roger C.（1995年 An Integrative Model of Organizational Trust）／Davi
 - [ResearchGate — "Organizational trust: Mayer, Davis and Schoorman model, a review" (academic literature review summarizing the ability/benevolence/integrity framework)](https://www.researchgate.net/publication/312070306_Organizational_trust_Mayer_Davis_and_Schoorman_model_a_review) `リファレンス`
 
 ## 関連概念
-- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同分野の近傍
+- [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
