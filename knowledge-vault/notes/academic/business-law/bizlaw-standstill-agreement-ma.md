@@ -41,7 +41,6 @@ aliases:
 - [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
-- [[bizlaw-carbon-border-adjustment|炭素国境調整メカニズム（CBAM）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

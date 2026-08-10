@@ -21,13 +21,13 @@ tags:
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]]（接続 22）
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
-- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 19）
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 18）
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 18）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 17）
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 17）
-- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 17）
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]]（接続 17）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 16）
-- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 16）
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]]（接続 16）
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -47,7 +47,6 @@ tags:
 - 2024年: [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]]
 - 2025年: [[legal-family-register-furigana|戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）]]
 - 2025年: [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]]
-- 2026年: [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]
 - 2026年: [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]]
 
 ## 第 3 部 — 年代情報のない項目
@@ -78,8 +77,10 @@ tags:
 - [[legal-corporate-governance|会社法における株式会社の機関設計]]
 - [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]]
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]]
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]]
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]]
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]]
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]]
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]]
 - [[legal-design-right|意匠権（意匠法）]]
@@ -114,7 +115,6 @@ tags:
 - [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]]
 - [[legal-limited-provision-data|不正競争防止法における「限定提供データ」の保護]]
 - [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]]
-- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]]
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]]
 - [[legal-money-lending|貸金業法（登録制と総量規制）]]
 - [[legal-moral-rights|著作者人格権]]

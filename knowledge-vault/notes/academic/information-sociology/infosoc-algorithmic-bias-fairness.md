@@ -30,10 +30,10 @@ aliases:
 - [Wikipedia: Algorithmic bias — fairness in AI systems](https://en.wikipedia.org/wiki/Algorithmic_bias) `リファレンス`
 
 ## 関連概念
+- [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 語彙が近い
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
 - [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同じ思想家
-- [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同分野の近傍
 - [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同分野の近傍
 

@@ -119,14 +119,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '個人情報の漏えい等報告・本人通知の義務',
       statement:
-        '報告対象事態（要配慮個人情報／財産的被害のおそれ／不正目的／1,000人超 等）を知ったときは、' +
-        '個人情報保護委員会へ速やかに報告（速報は概ね3〜5日以内、確報は30日以内、不正目的は60日以内）し、本人へ通知する。',
+        '報告対象事態（要配慮個人情報の漏えい／財産的被害のおそれ／不正の目的によるもの／1,000人を超える漏えい）を' +
+        '知ったときは、個人情報保護委員会へ報告し、本人へも通知する。報告は2段階で、速報は事態を知った時から' +
+        '概ね3〜5日以内、確報は30日以内（不正の目的によるものは60日以内）に行う。' +
+        '委託先で漏えいが起きた場合、報告義務を負うのは原則として委託元であり、' +
+        '委託先は速やかに委託元へ通知することで自らの報告義務を免れる形になる。' +
+        'そのため委託契約には、事故を知ったら直ちに通知する旨を入れておかないと期限に間に合わない。' +
+        '本人への通知は、本人が容易に知り得る内容と方法で行う。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/news/kaiseihou_feature/roueitouhoukoku_gimuka/', type: 'government', label: '個人情報保護委員会 漏えい等報告・本人通知の義務化' },
-      { url: 'https://www.gov-online.go.jp/article/201703/entry-7660.html', type: 'government', label: '政府広報オンライン 個人情報保護法' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/leakAction/leakAction_detail/', type: 'government', label: '個人情報保護委員会 個人データの漏えい等の事案が発生した場合等の対応' },
+      { url: 'https://www.ppc.go.jp/files/pdf/roueihoukoku_leaflet_2023.pdf', type: 'government', label: '個人情報保護委員会 漏えい等報告リーフレット（報告対象事態の例）' },
       { url: 'https://www.ppc.go.jp/personalinfo/legal/leakAction/', type: 'government', label: '個人情報保護委員会 漏えい等の対応' },
     ],
   },
@@ -590,14 +596,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '個人情報の利用目的の特定・通知・目的外利用制限',
       statement:
         '個人情報取扱事業者は利用目的をできる限り特定し、取得時に通知・公表または明示しなければならない。' +
-        'あらかじめ本人の同意を得ずに、特定した利用目的の達成に必要な範囲を超えて取り扱うこと（目的外利用）は原則禁止される。',
+        'あらかじめ本人の同意を得ずに、特定した利用目的の達成に必要な範囲を超えて取り扱うこと（目的外利用）は原則禁止される。' +
+        '「事業活動に用いるため」のように何にでも使えてしまう書き方は特定したことにならず、' +
+        '最終的にどのような事業でどう使われるかが本人に想定できる程度まで具体化する必要がある。' +
+        '一度決めた利用目的を変更できるのは、変更前の目的と関連性を有すると合理的に認められる範囲に限られ' +
+        '（この範囲を超えるなら本人の同意が要る）、変更したときは本人への通知または公表が必要になる。' +
+        'プライバシーポリシーを作って終わりではなく、実際の取扱いが書いた目的の内側に収まっているかを' +
+        '定期的に突き合わせること。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q103/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の特定' },
       { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q102/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の公表' },
-      { url: 'https://storialaw.jp/blog/9609', type: 'media', label: 'STORIA法律事務所 個人情報保護法の整理' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q2-1/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的はどの程度まで特定する必要があるか' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q2-8/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の変更が認められる事例' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編）' },
     ],
   },
   {
@@ -813,15 +827,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '公益通報者保護法（2022年改正）',
       statement:
-        '2022年6月施行の改正公益通報者保護法は、常時使用する労働者が301人以上の事業者に内部公益通報対応体制の整備を義務付け、' +
-        '公益通報者への解雇等の不利益取扱いを禁止し、通報対応従事者に守秘義務（違反時は刑事罰）を課す。',
+        '2022年6月施行の改正公益通報者保護法は、常時使用する労働者が301人以上の事業者に内部公益通報対応体制の整備を' +
+        '義務付け（300人以下は努力義務）、公益通報者への解雇等の不利益取扱いを禁止し、' +
+        '通報を受け付ける従事者を指定したうえでその者に守秘義務を課している（違反は30万円以下の罰金）。' +
+        '保護される通報者の範囲には、労働者のほか役員と退職後1年以内の者が含まれる。' +
+        'さらに 2025年6月11日公布の改正法（令和7年法律第62号）が 2026年12月1日に施行される。' +
+        '体制整備義務違反に対する行政措置（助言・指導・勧告、勧告に従わない場合の公表）などが加わるため、' +
+        '施行前に体制と規程を見直しておく必要がある。最新の内容は消費者庁の改正法概要で確認すること。',
       authority: '所管: 消費者庁（公益通報者保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview', type: 'government', label: '消費者庁 公益通報者保護法と制度の概要' },
       { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview/assets/overview_211013_0001.pdf', type: 'government', label: '消費者庁 指針の解説' },
-      { url: 'https://www.businesslawyers.jp/articles/908', type: 'media', label: '改正公益通報者保護法の要点' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview/assets/consumer_partnerships_cms205_250611_01.pdf', type: 'government', label: '消費者庁 公益通報者保護法の一部を改正する法律（概要・令和7年法律第62号）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/faq/faq_007', type: 'government', label: '消費者庁 内部公益通報対応体制の整備その他の必要な措置に関するQ&A' },
     ],
   },
   {
@@ -1286,14 +1306,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '個人データの第三者提供の制限',
       statement:
         '個人データを第三者に提供するには原則あらかじめ本人の同意が必要で、オプトアウトによる提供は個人情報保護委員会への' +
-        '届出を要し（要配慮個人情報はオプトアウト不可）、第三者提供では確認・記録の作成および保存義務が課される。',
+        '届出を要し（要配慮個人情報はオプトアウト不可）、第三者提供では確認・記録の作成および保存義務が課される。' +
+        '実務で効くのは「第三者に当たらない3類型」で、①利用目的の達成に必要な範囲内の委託、②合併その他の事由による' +
+        '事業の承継、③共同利用は、いずれも第三者提供に当たらないため本人の同意を要しない。' +
+        'ただし共同利用は、共同利用する旨・データの項目・共同利用者の範囲・利用目的・管理責任者の氏名等を' +
+        'あらかじめ本人に通知するか本人が容易に知り得る状態に置くことが条件で、後から範囲を広げることはできない。' +
+        '委託の場合は同意が要らない代わりに委託先の監督義務がかかる。外国にある第三者への提供は別の規律になる。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/personalinfo/legal/optout/', type: 'government', label: '個人情報保護委員会 オプトアウト届出' },
       { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_thirdparty/', type: 'government', label: '個人情報保護委員会 第三者提供時の確認・記録義務' },
-      { url: 'https://www.miyake.gr.jp/', type: 'media', label: '三宅法律事務所 解説' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編・第三者提供の制限）' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_offshore/', type: 'government', label: '個人情報保護委員会 ガイドライン（外国にある第三者への提供編）' },
     ],
   },
   {
@@ -1549,15 +1575,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '保有個人データに関する本人の権利',
       statement:
-        '本人は個人情報取扱事業者に対し、保有個人データの開示・訂正等・利用停止等・第三者提供の停止・第三者提供記録の開示を' +
-        '請求できる。2022年改正法施行により、本人は電磁的記録の提供による方法での開示も請求できる。',
+        '本人は個人情報取扱事業者に対し、保有個人データの開示・訂正等・利用停止等・第三者提供の停止・' +
+        '第三者提供記録の開示を請求できる。2022年施行の改正法により、開示は書面に限らず' +
+        '電磁的記録の提供による方法を本人が指定でき、事業者は原則としてその方法で開示する必要がある。' +
+        'また同改正で利用停止・消去の請求ができる場面が広がり、目的外利用や不正取得といった違反があった場合に加えて、' +
+        '事業者が利用する必要がなくなった場合、重大な漏えい等が生じた場合、本人の権利または正当な利益が害される' +
+        'おそれがある場合にも請求できるようになった。請求に応じる手続き（窓口・本人確認・手数料）を' +
+        'あらかじめ定めて公表しておかないと、請求のたびに場当たりの対応になる。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q9-10/', type: 'government', label: '個人情報保護委員会 開示請求 FAQ' },
       { url: 'https://www.ppc.go.jp/news/kaiseihogohou_checkpoint/', type: 'government', label: '個人情報保護委員会 改正法チェックポイント' },
-      { url: 'https://www.businesslawyers.jp/practices/1426', type: 'media', label: '保有個人データ 解説' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編・保有個人データの開示等）' },
+      { url: 'https://www.ppc.go.jp/files/pdf/r2kaiseihou.pdf', type: 'government', label: '個人情報保護委員会 令和2年改正個人情報保護法について' },
     ],
   },
   {

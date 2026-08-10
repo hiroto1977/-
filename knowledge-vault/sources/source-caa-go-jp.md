@@ -2,7 +2,7 @@
 title: "caa.go.jp"
 type: source-domain
 host: "caa.go.jp"
-cite_count: 61
+cite_count: 63
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # caa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **61 件**（公的 60 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **63 件**（公的 62 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -74,6 +74,8 @@ tags:
 - [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 消費者庁令和3年特定商取引法・預託法の改正
 - [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 消費者庁通販の定期購入トラブル注意・最終確認画面
 - [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁公益通報者保護法と制度の概要
+- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁公益通報者保護法の一部を改正する法律（概要・令和7年法律第62号）
+- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁内部公益通報対応体制の整備その他の必要な措置に関するQ&A
 - [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁指針の解説
 
 ## 関連

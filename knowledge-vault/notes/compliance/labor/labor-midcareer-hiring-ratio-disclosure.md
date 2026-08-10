@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
-- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 語彙が近い
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
+- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 語彙が近い
 - [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 同分野の近傍
 

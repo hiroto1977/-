@@ -37,7 +37,6 @@ aliases:
 - [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 出典を共有
 - [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
 - [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 同分野の近傍
 

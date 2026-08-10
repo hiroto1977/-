@@ -37,6 +37,7 @@ aliases:
 - [[eh-2015|2015年（平成27年）]] — 出典を共有
 - [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同分野の近傍
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同分野の近傍
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — 同分野の近傍
 - [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — 同分野の近傍
 

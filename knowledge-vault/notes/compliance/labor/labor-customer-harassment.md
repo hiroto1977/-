@@ -34,8 +34,8 @@ aliases:
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 語彙が近い
 - [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 語彙が近い
 - [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
-- [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
+- [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有

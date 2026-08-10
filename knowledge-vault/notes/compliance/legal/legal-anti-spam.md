@@ -34,7 +34,6 @@ aliases:
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 語彙が近い
 - [[bizlaw-anti-spam-act|特定電子メール法]] — 分野横断
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 同分野の近傍
-- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

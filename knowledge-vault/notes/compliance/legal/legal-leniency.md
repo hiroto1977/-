@@ -35,7 +35,7 @@ aliases:
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 語彙が近い
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 分野横断
 - [[legal-antimonopoly|独占禁止法]] — 同分野の近傍
-- [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 同分野の近傍
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

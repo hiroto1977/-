@@ -2,7 +2,7 @@
 title: "ppc.go.jp"
 type: source-domain
 host: "ppc.go.jp"
-cite_count: 28
+cite_count: 37
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ppc.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（公的 28）
+> [!info] 出典ドメイン索引 ・ 引用 **37 件**（公的 37）
 
 ## このドメインを出典とする項目
 
@@ -20,12 +20,16 @@ tags:
 - [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 個人情報保護委員会（PPC）—法令・ガイドライン等
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 個人情報保護委員会—個人情報の保護に関する法律についてのガイドライン（通則編）（第27条オプトアウト規定を含む公式解説）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 個人情報保護委員会匿名加工情報
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 個人情報保護委員会個人データの漏えい等の事案が発生した場合等の対応
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 個人情報保護委員会漏えい等の対応
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 個人情報保護委員会漏えい等報告リーフレット（報告対象事態の例）
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 個人情報保護委員会漏えい等報告・本人通知の義務化
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 個人情報保護委員会ガイドライン（外国第三者提供編）
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 個人情報保護委員会外国第三者提供FAQ
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 個人情報保護委員会安全管理措置FAQ（23条）
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 個人情報保護委員会安全管理措置の基本的な考え方
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 個人情報保護委員会ガイドライン（通則編・保有個人データの開示等）
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 個人情報保護委員会令和2年改正個人情報保護法について
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 個人情報保護委員会改正法チェックポイント
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 個人情報保護委員会開示請求FAQ
 - [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 個人情報保護委員会ガイドライン（通則編）
@@ -37,10 +41,15 @@ tags:
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 個人情報保護委員会ガイドライン（仮名加工情報・匿名加工情報編）
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 個人情報保護委員会仮名加工情報の第三者提供FAQ
 - [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 個人情報保護委員会FAQ利用目的の公表
+- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 個人情報保護委員会FAQ利用目的の変更が認められる事例
 - [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 個人情報保護委員会FAQ利用目的の特定
+- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 個人情報保護委員会FAQ利用目的はどの程度まで特定する必要があるか
+- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 個人情報保護委員会ガイドライン（通則編）
 - [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]] — 個人情報保護委員会個人関連情報とはFAQ
 - [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 個人情報保護委員会要配慮個人情報とはFAQ
 - [[legal-third-party-provision|個人データの第三者提供の制限]] — 個人情報保護委員会オプトアウト届出
+- [[legal-third-party-provision|個人データの第三者提供の制限]] — 個人情報保護委員会ガイドライン（外国にある第三者への提供編）
+- [[legal-third-party-provision|個人データの第三者提供の制限]] — 個人情報保護委員会ガイドライン（通則編・第三者提供の制限）
 - [[legal-third-party-provision|個人データの第三者提供の制限]] — 個人情報保護委員会第三者提供時の確認・記録義務
 
 ## 関連

@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同じ思想家
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
 - [[human-mental-rotation-shepard-metzler|心的回転——心的イメージのアナログ的変換を示す実験]] — 同分野の近傍
-- [[human-ventriloquist-effect|腹話術効果——音の位置が視覚に引き寄せられる多感覚統合]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
