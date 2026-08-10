@@ -35,6 +35,7 @@ aliases:
 - [[human-interpersonal-theory-leary|対人関係理論（リアリー／サリヴァン）]] — 同分野の近傍
 - [[human-community-psychology-rappaport-empowerment|コミュニティ心理学——ラパポートのエンパワーメント理論と社会変革]] — 同分野の近傍
 - [[human-negativity-bias|ネガティビティ・バイアス]] — 同分野の近傍
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

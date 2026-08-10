@@ -467,7 +467,10 @@ Stress and Health」だが 10.1177 は SAGE（Stress and Health は Wiley）。�
 pass17 で `mgmt-positive-organizational-behavior-luthans` の同種 2 件（JOB 論文に JLOS の
 DOI・Annual Review 論文に GOM の DOI）をラベル一致の正リンクへ置換済み。未確定で残るのは
 同エントリの 10.1177/0149206307305562（ラベルは Luthans/Avey/Patera 2008 = AMLE のはずが
-JoM の prefix）— 接尾辞照合してから直すこと。
+JoM の prefix）— 接尾辞照合してから直すこと。ほかに `mgmt-sensemaking-enactment-weick` の
+10.5465/amr.2005.16387885（WSO 2005 は Organization Science 16(4) の論文なのに AMR の DOI/表記）と、
+同エントリの springer s10551-011-0888-6（Maitlis & Christianson 2014 AOM Annals と称するが
+s10551 は Journal of Business Ethics・年も 2011）も同様に未確定。
 
 ### ⚖️ 刑名の表記ゆれ — 懲役 / 拘禁刑
 刑法等の一部を改正する法律により **懲役・禁錮は拘禁刑に一本化**された（2025年6月1日施行）。

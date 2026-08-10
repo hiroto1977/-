@@ -37,7 +37,6 @@ aliases:
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
 - [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — 同分野の近傍
-- [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

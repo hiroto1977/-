@@ -39,8 +39,8 @@ Donald C. Hambrick ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 出典を共有
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
-- [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同分野の近傍
+- [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

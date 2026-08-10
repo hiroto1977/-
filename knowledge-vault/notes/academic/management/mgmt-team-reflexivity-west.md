@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
 - [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同分野の近傍
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
 - [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
 - [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同分野の近傍
 

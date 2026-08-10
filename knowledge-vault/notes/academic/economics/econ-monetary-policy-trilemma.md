@@ -39,6 +39,7 @@ Robert A. Mundell ／ J. Marcus Fleming ／ Maurice Obstfeld ／ Alan M. Taylor 
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同じ思想家
 - [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同分野の近傍
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同分野の近傍
+- [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

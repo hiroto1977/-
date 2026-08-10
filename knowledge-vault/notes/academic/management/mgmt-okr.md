@@ -34,7 +34,7 @@ Objective(定性・野心的)＋Key Results(定量2〜5個)／A.グローブ(イ
 ## 関連概念
 - [[mgmt-bpr|ビジネスプロセス・リエンジニアリング（BPR）]] — 出典を共有
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
-- [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

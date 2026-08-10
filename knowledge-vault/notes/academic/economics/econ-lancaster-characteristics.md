@@ -34,6 +34,7 @@ aliases:
 - [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
 - [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]] — 同分野の近傍
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同分野の近傍
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

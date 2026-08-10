@@ -34,9 +34,9 @@ Wendy K. Smith ／ Marianne W. Lewis ／ Charles A. O'Reilly III ／ Michael L. 
 ## 関連概念
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
-- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 語彙が近い
 - [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
 - [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同じ思想家
+- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同じ思想家
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家

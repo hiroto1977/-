@@ -37,7 +37,7 @@ aliases:
 - [[econ-home-bias-puzzle|ホームバイアス・パズル——投資家が自国資産に過度に偏る謎]] — 同じ思想家
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
 - [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
-- [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]] — 同分野の近傍
+- [[econ-lancaster-characteristics|ランカスターの特性アプローチ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

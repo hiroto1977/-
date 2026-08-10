@@ -33,6 +33,7 @@ Thomas S. Bateman ／ J. Michael Crant ／ Adam M. Grant
 
 ## 関連概念
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同分野の近傍
+- [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
 - [[mgmt-stretch-goal|ストレッチ目標（超高難度目標）]] — 同分野の近傍
 

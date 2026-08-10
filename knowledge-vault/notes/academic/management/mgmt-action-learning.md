@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-skunkworks|スカンクワークス]] — 同分野の近傍
 - [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
+- [[mgmt-competitive-positions|競争地位別戦略（リーダー・チャレンジャー・フォロワー・ニッチャー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

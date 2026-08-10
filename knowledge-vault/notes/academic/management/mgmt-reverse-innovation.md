@@ -33,7 +33,7 @@ aliases:
 - [[mgmt-strategic-silence|組織における戦略的沈黙]] — 出典を共有
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 出典を共有
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 同分野の近傍
-- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同分野の近傍
+- [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

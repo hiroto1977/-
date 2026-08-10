@@ -41,6 +41,7 @@ Michael L. Tushman ／ Elaine Romanelli ／ Nicolaj Siggelkow ／ Daniel A. Levi
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

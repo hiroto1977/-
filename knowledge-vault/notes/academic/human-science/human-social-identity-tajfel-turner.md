@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 語彙が近い
 - [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 同じ思想家
-- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
+- [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同分野の近傍
 - [[human-self-categorization-theory|自己カテゴリー化理論]] — 同分野の近傍
 - [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]] — 同分野の近傍
 

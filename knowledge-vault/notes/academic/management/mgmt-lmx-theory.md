@@ -38,6 +38,7 @@ LMX理論（leader–member exchange theory）は、リーダーシップを、�
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 出典を共有
 - [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同分野の近傍
+- [[mgmt-likert-systems|リッカートのシステム4]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

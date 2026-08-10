@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-technopopulism-bickerton|テクノポピュリズム——デジタル技術と反エリート主義の融合する政治変容]] — 同分野の近傍
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同分野の近傍
 - [[infosoc-parasocial-interaction-horton|パラソーシャル相互作用——メディア人物との一方向的疑似関係の形成]] — 同分野の近傍
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
