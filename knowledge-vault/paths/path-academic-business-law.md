@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 73）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 74）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 49）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
@@ -24,8 +24,8 @@ tags:
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-agency|代理（民法99条）]]（接続 25）
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 25）
-- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 25）
 
@@ -343,7 +343,6 @@ tags:
 - [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]]
 - [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]]
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]]
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]]
 - [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]]
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]]
@@ -544,6 +543,7 @@ tags:
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]]
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]]
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]]
+- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]]
 - [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]]
 - [[bizlaw-margin-squeeze-abuse|マージン・スクイーズ（鋏状圧縮）の競争法上の位置づけ]]
 - [[bizlaw-marine-insurance-utmost-good-faith|最大善意の原則——保険契約における重要事実の開示義務]]

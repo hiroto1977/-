@@ -36,7 +36,6 @@ aliases:
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
 - [[bizlaw-condition-suspensive|停止条件・解除条件]] — 同分野の近傍
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
-- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同分野の近傍
 - [[bizlaw-regulatory-sandbox|規制サンドボックス（フィンテック・イノベーション実証制度）]] — 同分野の近傍
 
 ## 関連

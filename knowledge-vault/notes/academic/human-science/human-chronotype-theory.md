@@ -34,7 +34,7 @@ aliases:
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同じ思想家
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 同じ思想家
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 同分野の近傍
-- [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

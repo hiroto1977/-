@@ -36,7 +36,6 @@ Avi Fiegenbaum ／ Stuart L. Hart ／ Dan E. Schendel ／ Daniel Kahneman ／ Am
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
 - [[mgmt-strategic-group-theory|戦略グループ理論]] — 同じ思想家
-- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

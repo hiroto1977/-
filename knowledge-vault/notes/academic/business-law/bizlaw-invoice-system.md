@@ -34,7 +34,6 @@ aliases:
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
-- [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]] — 語彙が近い
 - [[tax-qualified-invoice-issuer-registration|適格請求書発行事業者の登録制度（インボイス制度）]] — 分野横断
 - [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
 - [[bizlaw-consumption-tax|消費税法]] — 同分野の近傍

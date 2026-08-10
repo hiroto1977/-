@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
 - [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — 同分野の近傍
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 同分野の近傍
+- [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

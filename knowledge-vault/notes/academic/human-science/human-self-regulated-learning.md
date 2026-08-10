@@ -36,6 +36,7 @@ aliases:
 - [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
 - [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 同分野の近傍
+- [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

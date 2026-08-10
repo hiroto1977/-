@@ -40,6 +40,7 @@ Elinor Ostrom ／ Charlotte Hess ／ Yochai Benkler ／ Lawrence Lessig
 - [[econ-new-institutional-economics|新制度派経済学]] — 同じ思想家
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
 - [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
+- [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

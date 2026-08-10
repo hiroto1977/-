@@ -31,7 +31,6 @@ aliases:
 - [損害賠償責任の免除条項 解説](https://www.businesslawyers.jp/practices/262) `メディア`
 
 ## 関連概念
-- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 語彙が近い
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 分野横断
 - [[legal-standard-terms|定型約款（改正民法）]] — 同分野の近傍
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 同分野の近傍

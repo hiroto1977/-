@@ -32,8 +32,8 @@ Sonia Roccas／Marilynn B. Brewer
 
 ## 関連概念
 - [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]] — 同じ思想家
-- [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同分野の近傍
 - [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同分野の近傍
+- [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

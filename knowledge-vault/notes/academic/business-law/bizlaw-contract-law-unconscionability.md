@@ -32,7 +32,6 @@ aliases:
 - [McCall 2020 — Demystifying Unconscionability: A Historical and Empirical Analysis, Villanova Law Review 65:773-846](https://digitalcommons.law.villanova.edu/vlr/vol65/iss4/2/) `学術`
 
 ## 関連概念
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 語彙が近い
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 語彙が近い
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同じ思想家
 - [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
 - [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同じ思想家
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 同じ思想家
+- [[bizlaw-promissory-note|約束手形——一定金額の支払を約する二当事者間の流通証券]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ C. K. Prahalad & Richard A. Bettis（SMJ 7(6), 1986, 原提唱）／Bettis & Pra
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 同じ思想家
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
 - [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
-- [[mgmt-benchmarking-camp|ベンチマーキング——最良の実践との体系的な比較による改善]] — 同分野の近傍
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同分野の近傍
 
 ## 関連

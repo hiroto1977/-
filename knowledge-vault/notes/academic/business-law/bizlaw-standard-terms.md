@@ -37,6 +37,7 @@ aliases:
 - [[bizlaw-freedom-of-contract|契約自由の原則]] — 同分野の近傍
 - [[bizlaw-undisclosed-principal-doctrine|非顕名本人の法理——代理人が本人の存在を隠した取引の法的処理]] — 同分野の近傍
 - [[bizlaw-deposit-insurance-act|預金保険法]] — 同分野の近傍
+- [[bizlaw-insurance-act|保険法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

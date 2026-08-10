@@ -33,8 +33,8 @@ George C. Homans ／ Peter M. Blau ／ Richard M. Emerson ／ Alvin W. Gouldner 
 ## 関連概念
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
 - [[mgmt-organizational-neuroscience|組織神経科学]] — 同じ思想家
-- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 同分野の近傍
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

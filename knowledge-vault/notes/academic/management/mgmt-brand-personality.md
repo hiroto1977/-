@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-brand-equity|ブランド・エクイティ]] — 同分野の近傍
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同分野の近傍
+- [[mgmt-organizational-entropy|組織エントロピー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
