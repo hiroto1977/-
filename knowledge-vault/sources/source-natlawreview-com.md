@@ -2,7 +2,7 @@
 title: "natlawreview.com"
 type: source-domain
 host: "natlawreview.com"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # natlawreview.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
 
 ## このドメインを出典とする項目
 
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — NationalLawReview—LachesinPatentLaw(2017)
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — NationalLawReview,"Akorn,Inc.v.FreseniusKabiAG:DelawareChanceryCourtF…
 
 ## 関連

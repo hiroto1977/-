@@ -250,5 +250,39 @@
       ]
     ],
     "alsoFixed": "混入チェックで academicKnowledge.ts のハングル混入 2 件を発見して修正（『엄밀にはPLTではない』→『厳密に』、『섭식障害』→『摂食障害』）。いずれも日本語の同義語の位置にハングルが入っており、Stryker の対象外・テストの対象外で、機械的な文字種スキャンでしか出ない類。"
+  },
+  "pass12": {
+    "appliedAt": "2026-08-10",
+    "note": "enrich キューの学術 415 件に着手する前に、キュー内の id を正規化名で突き合わせたところ 2 組の同名概念（laches ×2 / economic loss ×2）が薄いまま並んでいた。全文読解の結果、laches はキュー外の充実版 2 件（bizlaw-doctrine-of-laches / bizlaw-laches）まで含めて **4 エントリが同一概念**だった。thin エントリは語彙が足りず term-overlap 検出器に掛からない（2026-08 の既知現象）ので、増強前のキューを名前で予備スキャンする手順が有効。過去に DISTINCT 裁定されていた [doctrine-of-laches, laches-doctrine] は、比較対象の削除に伴い台帳から除去した。McClintock (10.2307/1341086)・Spry (10.1017/S0008197300040854)・Oxford Handbook の各 DOI は接尾辞完全一致検索で実体を確定できず移送しない（誤 DOI の教訓の適用）。Bray SSRN 2376080 は索引がページ実体を返し確認済み。",
+    "merges": [
+      {
+        "keep": "bizlaw-doctrine-of-laches",
+        "drop": "bizlaw-laches-doctrine",
+        "reason": "同一概念（エクイティ上の抗弁・不合理な遅延＋不利益・出訴期限との対比）。drop は IP 訴訟での重要性と SCA Hygiene への言及のみが固有。",
+        "migrate": "SCA Hygiene v. First Quality (2017) の判示（特許法286条の6年内はラッチェス不可＝Petrella の特許への拡張）と IP 訴訟への影響を本文へ。出典は supremecourt.gov の判決 PDF を laches-defense 経由で採用。McClintock/Spry/Oxford Handbook の DOI は実体未確定のため移送しない。",
+        "provenanceDelta": "keep は src 2→5 / gov 1→2 / academic 0→1 / 本文 416→約640字。減少なし。"
+      },
+      {
+        "keep": "bizlaw-doctrine-of-laches",
+        "drop": "bizlaw-laches-defense",
+        "reason": "同一概念。drop は Bray の議論と SCA 判決 PDF が固有。",
+        "migrate": "Bray (2014) SSRN 2376080（実体確認済み）と supremecourt.gov の SCA 判決 PDF を出典へ、Bray のエクイティ限定論を本文へ。Laser SSRN と National Law Review は実体未確認・三次資料のため移送しない。",
+        "provenanceDelta": "上記に合算。keyFigures に Samuel L. Bray を追加。"
+      },
+      {
+        "keep": "bizlaw-doctrine-of-laches",
+        "drop": "bizlaw-laches",
+        "reason": "同一概念の概念的充実版だが出典が三次資料 2 件のみで判例出典なし。keep 側が判例＋学術出典を持つため keep を維持。",
+        "migrate": "prejudice の具体例（証拠散逸・証人の死亡/記憶減退・立場変更）と政策根拠（不意打ち防止・早期解決・法的安定）を本文へ、Joseph Story を keyFigures へ、Wikipedia: Laches (equity) を出典へ。LII Wex は keep が同一 URL を保有済み。",
+        "provenanceDelta": "keep は src 5→6。減少なし。"
+      },
+      {
+        "keep": "bizlaw-economic-loss-rule",
+        "drop": "bizlaw-economic-loss-doctrine",
+        "reason": "同一概念（East River を共有）。drop は Posner/Keeton の正当化根拠が固有。",
+        "migrate": "Posner の効率性論と Prosser=Keeton の indeterminate liability 論を本文へ、keyFigures に Keeton/Posner を追加。East River の justia（government）と Wikipedia: Pure economic loss を出典へ。Cornell Law Review の viewcontent URL はどの論文か特定できず移送しない。Britannica は三次資料で keep に同等以上があるため移送しない。",
+        "provenanceDelta": "keep は src 4→6 / gov 0→1 / academic 2→2 / 本文 72→377字。減少なし。"
+      }
+    ]
   }
 }

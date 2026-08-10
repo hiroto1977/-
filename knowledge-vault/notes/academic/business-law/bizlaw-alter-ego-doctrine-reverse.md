@@ -32,6 +32,7 @@ Gregory S. Crespi ／ David Cabrelli
 - [S.C. L. Rev. on Sky Cable v. DirecTV (2018)](https://sclawreview.org/article/the-fourth-circuit-suem-and-reverse-veil-piercing-in-delaware/) `学術`
 
 ## 関連概念
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同分野の近傍
 - [[bizlaw-bankruptcy|破産法]] — 同分野の近傍
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同分野の近傍

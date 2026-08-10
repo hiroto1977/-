@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 699
+entry_count: 695
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（699件）
+# 学習パス — 学術概念／ビジネス法務（695件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 70）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 49）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 72）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 50）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
@@ -24,10 +24,10 @@ tags:
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
-- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]（接続 26）
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 26）
 - [[bizlaw-agency|代理（民法99条）]]（接続 25）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -445,7 +445,6 @@ tags:
 - [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]]
 - [[bizlaw-ebrahimi-westbourne|エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散]]
 - [[bizlaw-economic-duress|経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消]]
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]]
 - [[bizlaw-economic-loss-rule|純粋経済的損失の法理]]
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]]
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]]
@@ -536,9 +535,6 @@ tags:
 - [[bizlaw-labor-collective-bargaining-law|集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較]]
 - [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]]
 - [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]]
-- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]]
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]]
-- [[bizlaw-laches-doctrine|ラッチェス法理]]
 - [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]]
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]]
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]]

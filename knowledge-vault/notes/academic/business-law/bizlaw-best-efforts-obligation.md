@@ -40,9 +40,9 @@ Charles M. Goetz ／ Robert E. Scott ／ Juliet M. Kostritsky ／ Steven J. Burt
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
 - [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

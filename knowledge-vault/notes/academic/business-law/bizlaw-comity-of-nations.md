@@ -30,6 +30,7 @@ Justice Horace Gray（Hilton v. Guyot, 159 U.S. 113, 1895 — 礼譲の古典的
 - [Hartford Fire Insurance Co. v. California, 509 U.S. 764 (1993) — Cornell LII](https://www.law.cornell.edu/supremecourt/text/509/764) `公的`
 
 ## 関連概念
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — 同じ思想家
 - [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — 同じ思想家
 - [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — 同じ思想家
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍

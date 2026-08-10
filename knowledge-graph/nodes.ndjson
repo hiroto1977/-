@@ -1,6 +1,6 @@
 {"id":"agile-development","collection":"academic","category":"management","categoryLabel":"経営学","title":"アジャイルソフトウェア開発","year":2001,"authors":["サザーランド|ジ","シュウェイバー|ケ","ファウラー|マ","ベック|ケ"],"degree":59}
-{"id":"antimonopoly-surcharge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"課徴金制度（独占禁止法）","year":1977,"authors":[],"degree":70}
-{"id":"bizlaw-abuse-of-dominant-position-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU競争法における支配的地位の濫用（第102条）","year":null,"authors":["コワーヒ|ウ","フォックス|エ","ベスタゲル|マ","ラング|ジ"],"degree":49}
+{"id":"antimonopoly-surcharge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"課徴金制度（独占禁止法）","year":1977,"authors":[],"degree":72}
+{"id":"bizlaw-abuse-of-dominant-position-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU競争法における支配的地位の濫用（第102条）","year":null,"authors":["コワーヒ|ウ","フォックス|エ","ベスタゲル|マ","ラング|ジ"],"degree":50}
 {"id":"bizlaw-abuse-of-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"権利濫用の禁止（民法1条3項）","year":1965,"authors":[],"degree":3}
 {"id":"bizlaw-abuse-superior-position","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"優越的地位の濫用（独占禁止法）","year":null,"authors":[],"degree":3}
 {"id":"bizlaw-abusive-dismissal","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"解雇権濫用法理（労働契約法16条）","year":2008,"authors":[],"degree":10}
@@ -20,11 +20,11 @@
 {"id":"bizlaw-adr","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"裁判外紛争解決手続（ADR）","year":2004,"authors":[],"degree":22}
 {"id":"bizlaw-adverse-possession","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"時効取得——長期の占有により非所有者が土地の権原を取得する法理","year":null,"authors":["バランタイン|ヘ","ブラックストン|ウ","ベンサム|ジ","ホームズ|オ"],"degree":13}
 {"id":"bizlaw-agency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"代理（民法99条）","year":null,"authors":["law|e"],"degree":25}
-{"id":"bizlaw-agency-apparent-authority","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える","year":null,"authors":["シーヴィー|ウ","ストーリー|ジ","メチェム|フ"],"degree":16}
+{"id":"bizlaw-agency-apparent-authority","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える","year":null,"authors":["シーヴィー|ウ","ストーリー|ジ","メチェム|フ"],"degree":15}
 {"id":"bizlaw-agency-of-necessity","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"緊急代理——緊急時に権限なくして本人を拘束しうる法理","year":null,"authors":["ガフ|ロ","ジョーンズ|ガ","ボウステッド|ウ","レイノルズ|フ"],"degree":7}
-{"id":"bizlaw-agency-relationship","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"代理人関係（エージェンシー関係）","year":null,"authors":["mechem|f","seavey|h","seavey|w"],"degree":17}
+{"id":"bizlaw-agency-relationship","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"代理人関係（エージェンシー関係）","year":null,"authors":["mechem|f","seavey|h","seavey|w"],"degree":16}
 {"id":"bizlaw-alter-ego-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法人格否認の法理（分身理論）","year":null,"authors":["powell|f","thompson|r"],"degree":7}
-{"id":"bizlaw-alter-ego-doctrine-reverse","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"逆法人格否認（リバース・ピアシング）","year":null,"authors":["cabrelli|d","crespi|g"],"degree":3}
+{"id":"bizlaw-alter-ego-doctrine-reverse","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"逆法人格否認（リバース・ピアシング）","year":null,"authors":["cabrelli|d","crespi|g"],"degree":4}
 {"id":"bizlaw-anchoring-litigation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法的判断におけるアンカリング効果：数値情報による判断の歪み","year":null,"authors":["カーネマン|ダ","グゥスリー|チ","トベルスキー|エ"],"degree":21}
 {"id":"bizlaw-anonymized-info","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"匿名加工情報・仮名加工情報（個人情報保護法）","year":2015,"authors":[],"degree":18}
 {"id":"bizlaw-anti-bribery-fcpa-ukba","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制","year":null,"authors":[],"degree":7}
@@ -51,7 +51,7 @@
 {"id":"bizlaw-arbitration-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"仲裁法","year":2003,"authors":["uncitral|"],"degree":9}
 {"id":"bizlaw-arbitration-adr","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度","year":null,"authors":["サンダー|フ","ボーン|ゲ","ラウ|ア"],"degree":12}
 {"id":"bizlaw-arbitration-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"仲裁条項——紛争を裁判ではなく仲裁で解決する合意","year":null,"authors":["uncitral|","ボーン|ゲ"],"degree":12}
-{"id":"bizlaw-assignment-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債権譲渡——契約上の権利を第三者に移転する仕組み","year":null,"authors":["コービン|ア","ストーリー|ジ","ホールズワース|ウ"],"degree":23}
+{"id":"bizlaw-assignment-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債権譲渡——契約上の権利を第三者に移転する仕組み","year":null,"authors":["コービン|ア","ストーリー|ジ","ホールズワース|ウ"],"degree":22}
 {"id":"bizlaw-assignment-of-claims","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債権譲渡（民法466条）","year":2017,"authors":[],"degree":5}
 {"id":"bizlaw-assignment-of-contracts","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約上の権利の譲渡——債権譲渡の法的要件と制限","year":null,"authors":["ギルモア|グ","ゴエッツ|チ","ファーンズワース|ア"],"degree":14}
 {"id":"bizlaw-assignment-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"譲渡担保","year":2025,"authors":[],"degree":22}
@@ -119,10 +119,10 @@
 {"id":"bizlaw-class-action-collective-redress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"集団訴訟と集合的救済制度の比較法","year":null,"authors":["コーヒー|ジ","シャック|ブ","ショーン|ナ"],"degree":10}
 {"id":"bizlaw-class-action-mechanism","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クラスアクション（集団訴訟）——多数被害者の効率的救済制度","year":null,"authors":["アイゼンバーグ|セ","イッサカロフ|サ","コーヒー|ジ","ヘイガン|デ","ミラー|ア"],"degree":11}
 {"id":"bizlaw-claw-back-executive-comp","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"役員報酬の返還請求権（クローバック）","year":null,"authors":["オクスリー|マ","サーベインズ|ポ","ドッド|ク","フランク|バ"],"degree":11}
-{"id":"bizlaw-clean-hands-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クリーンハンズ法理（不正行為の抗弁）","year":1945,"authors":["chafee|z","murphy|f","pomeroy|j"],"degree":11}
+{"id":"bizlaw-clean-hands-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クリーンハンズ法理（不正行為の抗弁）","year":1945,"authors":["chafee|z","murphy|f","pomeroy|j"],"degree":10}
 {"id":"bizlaw-clog-on-equity-redemption","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"受戻権の阻害禁止——抵当権者は借り手の受戻しを妨げてはならない","year":null,"authors":["ウェイド|ウ","マクナテン|ロ","メグリー|ロ","リンドリー|ロ"],"degree":11}
 {"id":"bizlaw-collateral-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"付随的契約——主契約に併存する補助的な合意","year":null,"authors":["アティヤ|パ","トライテル|ガ","ポロック|フ","モールトン|ロ"],"degree":13}
-{"id":"bizlaw-comity-of-nations","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際礼譲（Comity of Nations）","year":1834,"authors":["comity|a","gray|j","scalia|j","story|j"],"degree":4}
+{"id":"bizlaw-comity-of-nations","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際礼譲（Comity of Nations）","year":1834,"authors":["comity|a","gray|j","scalia|j","story|j"],"degree":5}
 {"id":"bizlaw-commercial-agency-law-eu-directive","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"商事代理法——EU代理商指令と補償請求権の法的枠組み","year":null,"authors":["シュミットケッセル|マ","バル|ク","ビール|ヒ"],"degree":8}
 {"id":"bizlaw-commercial-arbitration-icc","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行","year":null,"authors":["jiac|","ガイヤール|エ","ボーン|ゲ"],"degree":10}
 {"id":"bizlaw-commercial-arbitration-uncitral","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際商事仲裁とUNCITRALモデル法・ニューヨーク条約","year":null,"authors":["バーチ|ル","ホーテン|ヴ","ボーン|ゲ"],"degree":10}
@@ -223,14 +223,14 @@
 {"id":"bizlaw-design-right","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"意匠権（意匠法）","year":2019,"authors":[],"degree":14}
 {"id":"bizlaw-digital-platform-transparency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"デジタルプラットフォーム取引透明化法","year":2020,"authors":[],"degree":3}
 {"id":"bizlaw-director-conflict","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取締役の競業避止義務・利益相反取引（会社法356条）","year":null,"authors":[],"degree":5}
-{"id":"bizlaw-disability-discrimination","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"障害者差別解消法","year":2013,"authors":[],"degree":14}
+{"id":"bizlaw-disability-discrimination","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"障害者差別解消法","year":2013,"authors":[],"degree":15}
 {"id":"bizlaw-disability-employment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"障害者雇用促進法","year":null,"authors":[],"degree":11}
 {"id":"bizlaw-discharge-for-breach","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約違反による債務免除","year":null,"authors":["farnsworth|a","treitel|g"],"degree":11}
 {"id":"bizlaw-disclose-or-abstain-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる","year":1961,"authors":["o'hagan|u","roberts|c","states|c","sulphur|s"],"degree":5}
 {"id":"bizlaw-disgorgement-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"吐出し命令——不正利得の剥奪的救済と抑止機能","year":null,"authors":["カル|ア","スミス|ハ","ラングバイン|ジ","レンドラム|ダ"],"degree":4}
 {"id":"bizlaw-doctrine-of-equivalents","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理","year":1950,"authors":["case|b","davis|w","kogyo|f","products|g"],"degree":5}
 {"id":"bizlaw-doctrine-of-frustration","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的の達成不能法理——予見不能な事情変更による契約消滅","year":null,"authors":["コリンズ|ヒ","トレーテル|ギ","ペール|エ","ミンガン|グ"],"degree":12}
-{"id":"bizlaw-doctrine-of-laches","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ラッチェスの法理（懈怠の抗弁）","year":1767,"authors":["camden|l","ginsburg|r"],"degree":4}
+{"id":"bizlaw-doctrine-of-laches","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ラッチェスの法理（懈怠の抗弁）","year":1767,"authors":["bray|s","camden|l","ginsburg|r","story|j"],"degree":5}
 {"id":"bizlaw-doctrine-of-necessaries","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"必需品の法理","year":null,"authors":["blackstone|w","buckley|h","cozens-hardy|h","moulton|j"],"degree":13}
 {"id":"bizlaw-doctrine-of-necessities","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任","year":null,"authors":["ブラックストン|ウ","マーシャル|ジ"],"degree":12}
 {"id":"bizlaw-donatio-mortis-causa","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与","year":null,"authors":["スウォドリング|ウ","マクギー|ジ","メグリー|ロ"],"degree":14}
@@ -246,12 +246,11 @@
 {"id":"bizlaw-ebrahimi-westbourne","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散","year":null,"authors":["ウィルバーフォース|ロ","エブラヒミ|","クロス|ロ","ナザール|"],"degree":6}
 {"id":"bizlaw-economic-analysis-of-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派","year":null,"authors":["カラブレイジ|グ","コース|ロ","ベッカー|ゲ","ポズナー|リ"],"degree":36}
 {"id":"bizlaw-economic-duress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消","year":null,"authors":["ゴフ|ロ","バークス|ピ"],"degree":7}
-{"id":"bizlaw-economic-loss-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"純粋経済損失法理（エコノミック・ロス・ルール）","year":null,"authors":["keeton|p","posner|r"],"degree":11}
-{"id":"bizlaw-economic-loss-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"純粋経済的損失の法理","year":null,"authors":["calabresi|g","prosser|w","rabin|r"],"degree":11}
+{"id":"bizlaw-economic-loss-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"純粋経済的損失の法理","year":null,"authors":["calabresi|g","keeton|p","posner|r","prosser|w","rabin|r"],"degree":12}
 {"id":"bizlaw-economic-security-promotion-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"経済安全保障推進法","year":2021,"authors":[],"degree":7}
 {"id":"bizlaw-efficient-breach-theory","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"効率的契約違反論","year":null,"authors":["birmingham|r","friedmann|d","goetz|c","posner|r","scott|r"],"degree":11}
 {"id":"bizlaw-elderly-employment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"高年齢者雇用安定法","year":1971,"authors":[],"degree":4}
-{"id":"bizlaw-election-of-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"救済手段の選択法理（エレクション・オブ・レメディーズ）","year":null,"authors":["brill|h","dobbs|d","williston|s"],"degree":13}
+{"id":"bizlaw-election-of-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"救済手段の選択法理（エレクション・オブ・レメディーズ）","year":null,"authors":["brill|h","dobbs|d","williston|s"],"degree":14}
 {"id":"bizlaw-electronic-consumer-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電子消費者契約法","year":2001,"authors":[],"degree":4}
 {"id":"bizlaw-electronically-recorded-claims","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電子記録債権（電子記録債権法）","year":2007,"authors":[],"degree":2}
 {"id":"bizlaw-employees-pension","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"厚生年金保険法","year":1954,"authors":[],"degree":13}
@@ -274,7 +273,7 @@
 {"id":"bizlaw-equitable-estoppel","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"衡平法上の禁反言","year":null,"authors":["atiyah|","bower|g","cooke|e","robertson|a","turner|a"],"degree":8}
 {"id":"bizlaw-equitable-set-off","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"衡平法上の相殺——密接に関連する反対債権による相殺","year":null,"authors":["グード|ロ","ダーラム|ロ","デニング|ロ","ホフマン|ロ"],"degree":11}
 {"id":"bizlaw-equitable-subordination","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"衡平法上の劣後化（エクイタブル・サボーディネーション）","year":null,"authors":["abram|p","denatale|a","epstein|d","king|l","landers|j"],"degree":17}
-{"id":"bizlaw-equity-of-redemption","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利","year":null,"authors":["ストーリー|ジ","メイトランド|フ"],"degree":16}
+{"id":"bizlaw-equity-of-redemption","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利","year":null,"authors":["ストーリー|ジ","メイトランド|フ"],"degree":15}
 {"id":"bizlaw-estoppel","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理","year":null,"authors":["ウィリストン|サ","コーク|エ","コービン|ア"],"degree":22}
 {"id":"bizlaw-estoppel-by-deed","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"証書禁反言（エストッペル・バイ・ディード）","year":null,"authors":["callison|j","swenson|r","tiffany|h"],"degree":10}
 {"id":"bizlaw-estoppel-by-representation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表示による禁反言——信頼の保護と矛盾行為の禁止","year":null,"authors":["カーター|ジ","バロウズ|ア","ペール|エ"],"degree":18}
@@ -286,7 +285,7 @@
 {"id":"bizlaw-exhaustion-of-local-remedies","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国内救済手段の尽尽原則（Exhaustion of Local Remedies）","year":1965,"authors":["icsid|"],"degree":13}
 {"id":"bizlaw-expropriation-compensation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"収用と補償・ハル公式（Expropriation & Hull Formula）","year":1938,"authors":["icsid|","ハル|コ"],"degree":16}
 {"id":"bizlaw-fair-and-equitable-treatment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"公正衡平待遇基準（Fair and Equitable Treatment）","year":2004,"authors":["シュロイアー|ク"],"degree":9}
-{"id":"bizlaw-fair-use-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フェアユース（公正利用）——著作権の例外と四つの判断要素","year":null,"authors":["ストーリー|ジ","ルヴァル|ピ"],"degree":16}
+{"id":"bizlaw-fair-use-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フェアユース（公正利用）——著作権の例外と四つの判断要素","year":null,"authors":["ストーリー|ジ","ルヴァル|ピ"],"degree":15}
 {"id":"bizlaw-fault-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失責任の原則と無過失責任","year":null,"authors":["law|e"],"degree":24}
 {"id":"bizlaw-feist-originality","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ファイスト判決と著作権の創作性要件（Feist v. Rural Telephone 1991）——「額に汗」理論の否定と事実の非保護","year":1991,"authors":["o'connor|s","service|f"],"degree":2}
 {"id":"bizlaw-fictitious-manifestation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"通謀虚偽表示（民法94条）","year":null,"authors":[],"degree":16}
@@ -321,7 +320,7 @@
 {"id":"bizlaw-freedom-of-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約自由の原則","year":2017,"authors":[],"degree":14}
 {"id":"bizlaw-freelance-protection","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フリーランス保護新法（特定受託事業者取引適正化等法）","year":2023,"authors":[],"degree":3}
 {"id":"bizlaw-frustration-of-purpose","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア","フラー|ロ"],"degree":18}
-{"id":"bizlaw-frustration-of-purpose-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的の挫折法理","year":null,"authors":["atiyah|p","treitel|g","williams|v"],"degree":11}
+{"id":"bizlaw-frustration-of-purpose-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的の挫折法理","year":null,"authors":["atiyah|p","treitel|g","williams|v"],"degree":10}
 {"id":"bizlaw-frustration-of-purpose-krell","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的の挫折——履行可能でも目的消滅により免責される法理","year":null,"authors":["クル|ア","コービン|ア","ポロック|フ"],"degree":22}
 {"id":"bizlaw-full-protection-and-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"十分な保護及び安全（Full Protection and Security）","year":1990,"authors":["aapl|","republic|c","unctad|"],"degree":12}
 {"id":"bizlaw-fundamental-breach","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題","year":null,"authors":["トライテル|ギ"],"degree":6}
@@ -332,11 +331,11 @@
 {"id":"bizlaw-golden-share-state-ownership","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"黄金株（特別議決権株）と国家所有権保護の比較法","year":null,"authors":["アーマー|ジ","ゲルバー|エ","デービース|ポ","ブルネリ|ア"],"degree":10}
 {"id":"bizlaw-good-faith","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"信義誠実の原則——契約の履行と行使における誠実・公正な行動義務","year":null,"authors":["サマーズ|ロ","バートン|ス","ルウェリン|カ"],"degree":21}
 {"id":"bizlaw-good-faith-dealing-obligation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"信義誠実の義務——契約履行における善意と公正取引の法的要請","year":null,"authors":["コリンズ|ヒ","サマーズ|ロ","ツィマーマン|ラ","バートン|ス"],"degree":13}
-{"id":"bizlaw-good-faith-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）","year":null,"authors":["burton|s","farnsworth|a","summers|r"],"degree":14}
+{"id":"bizlaw-good-faith-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）","year":null,"authors":["burton|s","farnsworth|a","summers|r"],"degree":15}
 {"id":"bizlaw-greenmail","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"グリーンメール（敵対的買収防衛の株式買戻し）","year":1980,"authors":[],"degree":3}
 {"id":"bizlaw-greenwashing","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"グリーンウォッシング（虚偽・誇大な環境訴求）","year":1986,"authors":["ウェスターベルド|ジ"],"degree":3}
 {"id":"bizlaw-guarantee-obligation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保証債務（民法446条）","year":2017,"authors":["law|e"],"degree":23}
-{"id":"bizlaw-guarantee-suretyship","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保証——他人の債務不履行に備える第三者の従たる責任","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":17}
+{"id":"bizlaw-guarantee-suretyship","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保証——他人の債務不履行に備える第三者の従たる責任","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":16}
 {"id":"bizlaw-hadley-v-baxendale","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール","year":1854,"authors":["alderson|s","baxendale|h","exchequer|c","heron|t","laundry|v","mercator|t"],"degree":5}
 {"id":"bizlaw-haishin-akuisha","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"背信的悪意者（不動産登記の第三者対抗）","year":null,"authors":[],"degree":18}
 {"id":"bizlaw-hardship-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ハードシップ条項（Hardship Clause）","year":1969,"authors":["unidroit|"],"degree":11}
@@ -347,12 +346,12 @@
 {"id":"bizlaw-holder-in-due-course-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"正当所持人の法理","year":null,"authors":["chalmers|m","daniel|j","llewellyn|k","maggs|g","murray|w"],"degree":17}
 {"id":"bizlaw-hoteijichijoken","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法定地上権（民法388条）","year":null,"authors":[],"degree":16}
 {"id":"bizlaw-howey-investment-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準","year":1933,"authors":["act|s","assets|s","enterprises|s","howey|s"],"degree":15}
-{"id":"bizlaw-illegality-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違法な契約——法令や公序に反する契約の執行不能性","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":26}
+{"id":"bizlaw-illegality-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違法な契約——法令や公序に反する契約の執行不能性","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":25}
 {"id":"bizlaw-immigration-control","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"出入国管理及び難民認定法（入管法）","year":2018,"authors":[],"degree":3}
 {"id":"bizlaw-implied-covenant-good-faith","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"誠実義務・公正取引の黙示的誓約","year":null,"authors":["burton|s","dubroff|h","farnsworth|a","houh|e","summers|r"],"degree":10}
 {"id":"bizlaw-implied-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"黙示の契約条項——当事者が明示せずとも契約に読み込まれる条項","year":null,"authors":[],"degree":3}
 {"id":"bizlaw-implied-warranty-merchantability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"黙示の商品性保証（Implied Warranty of Merchantability）","year":null,"authors":["ウィリストン|サ","プロッサー|ウ","ルウェリン|カ"],"degree":26}
-{"id":"bizlaw-implied-warranty-of-merchantability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"商品性の黙示保証","year":null,"authors":["hawkland|w","llewellyn|k","summers|r","white|j"],"degree":17}
+{"id":"bizlaw-implied-warranty-of-merchantability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"商品性の黙示保証","year":null,"authors":["hawkland|w","llewellyn|k","summers|r","white|j"],"degree":16}
 {"id":"bizlaw-in-pari-delicto-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"均等違法原則（インパリ・デリクト）","year":null,"authors":["カードーゾ|ベ","ストーリー|ジ","バーバー|ロ"],"degree":14}
 {"id":"bizlaw-income-tax-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所得税法","year":1965,"authors":[],"degree":4}
 {"id":"bizlaw-incoterms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"インコタームズ——国際売買における売主と買主の責任を定める定型取引条件","year":null,"authors":["シュミットフ|ク","デバティスタ|チ","ラムバーグ|ヤ"],"degree":3}
@@ -371,7 +370,7 @@
 {"id":"bizlaw-insurance-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保険法","year":2008,"authors":[],"degree":5}
 {"id":"bizlaw-insurance-business-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保険業法","year":1995,"authors":[],"degree":15}
 {"id":"bizlaw-insurance-contract-law-utmost-good-faith","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"保険契約法——最大善意義務と告知義務の法的枠組み","year":null,"authors":["クラーク|マ","バーズ|ジ","ヘイス|ヘ"],"degree":4}
-{"id":"bizlaw-intellectual-property","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。","year":null,"authors":["ノーダウス|ウ","ボルドリン|ミ","レビン|デ"],"degree":7}
+{"id":"bizlaw-intellectual-property","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。","year":null,"authors":["ノーダウス|ウ","ボルドリン|ミ","レビン|デ"],"degree":8}
 {"id":"bizlaw-intellectual-property-exhaustion","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力","year":null,"authors":[],"degree":12}
 {"id":"bizlaw-intellectual-property-exhaustion-first-sale","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用","year":null,"authors":["ゴールドスタイン|ポ"],"degree":6}
 {"id":"bizlaw-intellectual-property-trade-secret","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策","year":null,"authors":["ゴールドステイン|ポ","レムリー|マ"],"degree":4}
@@ -399,7 +398,7 @@
 {"id":"bizlaw-keech-v-sandford","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"キーチ対サンドフォード——受託者は地位から利益を得てはならない","year":null,"authors":["キング|ロ","フィン|ポ","マクギー|ジ","メグリー|ロ"],"degree":16}
 {"id":"bizlaw-keihyo-misrepresentation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"景品表示法の優良誤認・有利誤認表示","year":2016,"authors":[],"degree":4}
 {"id":"bizlaw-kelsen-pure-theory-of-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論","year":null,"authors":["ケルゼン|ハ","メルクル|ア"],"degree":21}
-{"id":"bizlaw-knowing-receipt","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"悪意の受領——信託違反で移転された財産を知りつつ受け取る責任","year":null,"authors":["ニコルズ|ロ","バークス|ピ","ミレット|ロ"],"degree":9}
+{"id":"bizlaw-knowing-receipt","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"悪意の受領——信託違反で移転された財産を知りつつ受け取る責任","year":null,"authors":["ニコルズ|ロ","バークス|ピ","ミレット|ロ"],"degree":8}
 {"id":"bizlaw-kyodou-shinken","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"共同親権（2024年民法改正）","year":2022,"authors":[],"degree":2}
 {"id":"bizlaw-labor-collective-bargaining-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較","year":null,"authors":["nlrb|"],"degree":4}
 {"id":"bizlaw-labor-contract-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働契約法","year":2007,"authors":[],"degree":13}
@@ -409,9 +408,6 @@
 {"id":"bizlaw-labor-standards-ilo-conventions","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際労働基準とILO条約体制の国際労働法","year":null,"authors":["ゴッドフリー|ダ","ヘンリー|ダ","マウッパン|フ"],"degree":2}
 {"id":"bizlaw-labor-tribunal","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働審判法（労働審判制度）","year":2004,"authors":[],"degree":16}
 {"id":"bizlaw-labor-union-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"労働組合法","year":1945,"authors":[],"degree":18}
-{"id":"bizlaw-laches","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる","year":null,"authors":["コービン|ア","ストーリー|ジ","メイン|ヘ"],"degree":12}
-{"id":"bizlaw-laches-defense","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"懈怠の抗弁（ラッチズ）","year":null,"authors":["bray|s","dobbs|d","pomeroy|j"],"degree":8}
-{"id":"bizlaw-laches-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ラッチェス法理","year":null,"authors":["camden|l","ginsburg|r","merryman|j"],"degree":4}
 {"id":"bizlaw-land-lease-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"借地借家法","year":1991,"authors":[],"degree":4}
 {"id":"bizlaw-large-shareholding","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"大量保有報告制度（5%ルール）","year":null,"authors":["edinet|"],"degree":9}
 {"id":"bizlaw-lay-judge-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"裁判員法（裁判員の参加する刑事裁判に関する法律）","year":2001,"authors":[],"degree":12}
@@ -442,8 +438,8 @@
 {"id":"bizlaw-maritime-law-hague-visby","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一","year":null,"authors":["uncitral|","テトリー|ウ"],"degree":12}
 {"id":"bizlaw-market-manipulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"相場操縦の禁止","year":null,"authors":[],"degree":11}
 {"id":"bizlaw-marshalling-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"マーシャリングの法理","year":null,"authors":["eldon|l","gilmore|g","williston|s"],"degree":10}
-{"id":"bizlaw-material-adverse-change","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"重大な悪影響条項（MAC条項）","year":null,"authors":["gilson|r","miller|r","schwartz|a"],"degree":10}
-{"id":"bizlaw-material-adverse-change-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"MAC条項法理","year":null,"authors":["gilson|r","schwartz|a","strine|l"],"degree":19}
+{"id":"bizlaw-material-adverse-change","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"重大な悪影響条項（MAC条項）","year":null,"authors":["gilson|r","miller|r","schwartz|a"],"degree":9}
+{"id":"bizlaw-material-adverse-change-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"MAC条項法理","year":null,"authors":["gilson|r","schwartz|a","strine|l"],"degree":20}
 {"id":"bizlaw-material-adverse-change-mac","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"マテリアル・アドバース・チェンジ条項（MAC条項）","year":null,"authors":["ストリン|レ","ファーカス|ダ","リプトン|マ"],"degree":11}
 {"id":"bizlaw-materiality-securities-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"証券法における重要性基準","year":null,"authors":["cox|j","hillman|r","langevoort|d"],"degree":4}
 {"id":"bizlaw-mental-reservation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"心裡留保（民法93条）","year":2017,"authors":[],"degree":9}
@@ -451,10 +447,10 @@
 {"id":"bizlaw-merger-of-obligations","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"混同（民法520条）","year":null,"authors":["law|e"],"degree":24}
 {"id":"bizlaw-minimum-wage-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"最低賃金法","year":1959,"authors":[],"degree":3}
 {"id":"bizlaw-minority-oppression-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理","year":null,"authors":["オニール|ホ","トンプソン|ロ","ヘザリントン|ジ","マイナー|ダ"],"degree":6}
-{"id":"bizlaw-misrepresentation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示（misrepresentation、英米契約法）","year":1967,"authors":[],"degree":7}
+{"id":"bizlaw-misrepresentation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示（misrepresentation、英米契約法）","year":1967,"authors":[],"degree":6}
 {"id":"bizlaw-misrepresentation-contract-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示法理——契約締結前の虚偽表示に対する救済体系","year":null,"authors":["カータライト|ジ","トレーテル|ギ","バロウズ|ア","ペール|エ"],"degree":14}
 {"id":"bizlaw-mistake","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"錯誤（民法95条）","year":2020,"authors":[],"degree":2}
-{"id":"bizlaw-mistake-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":25}
+{"id":"bizlaw-mistake-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":24}
 {"id":"bizlaw-mitigation-of-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":13}
 {"id":"bizlaw-money-lending-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"貸金業法","year":2006,"authors":[],"degree":7}
 {"id":"bizlaw-moral-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"著作者人格権（著作権法18〜20条）","year":null,"authors":["law|e"],"degree":29}
@@ -490,7 +486,7 @@
 {"id":"bizlaw-ordre-public","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国際公序（Ordre Public / Public Policy Exception）","year":1849,"authors":["lalive|p","savigny|f"],"degree":3}
 {"id":"bizlaw-pacta-sunt-servanda","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"合意は拘束する（Pacta Sunt Servanda）","year":1625,"authors":["グロティウス|ヒ"],"degree":10}
 {"id":"bizlaw-parens-patriae","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"パレンス・パトリエ法理（Parens Patriae Doctrine）","year":1765,"authors":["act|h","blackstone|w","oil|h"],"degree":3}
-{"id":"bizlaw-parole-evidence-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"口頭証拠排除法則","year":null,"authors":["corbin|a","llewellyn|k","williston|s"],"degree":21}
+{"id":"bizlaw-parole-evidence-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"口頭証拠排除法則","year":null,"authors":["corbin|a","llewellyn|k","williston|s"],"degree":22}
 {"id":"bizlaw-part-payment-foakes","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債務の一部弁済と約因——フォークス対ビア事件（Foakes v Beer 1884）とピンネル事件の準則","year":1602,"authors":["beer|f","case|p"],"degree":2}
 {"id":"bizlaw-part-time-labor","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"パートタイム・有期雇用労働法","year":1993,"authors":[],"degree":7}
 {"id":"bizlaw-patent-pool","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"パテント・プール（特許プール）","year":1990,"authors":["dvd|d","frand|","mpeg|"],"degree":5}
@@ -518,10 +514,10 @@
 {"id":"bizlaw-privity-of-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の相対効の原則（プリビティ・オブ・コントラクト）","year":null,"authors":["コービン|ア","ジェンクス|エ","トイブナー|ギ"],"degree":24}
 {"id":"bizlaw-prize-advertisement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"懸賞広告（民法529条）","year":2017,"authors":["law|e"],"degree":10}
 {"id":"bizlaw-product-liability-directive-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU製造物責任指令と無過失責任——欠陥製品による損害と生産者の厳格責任","year":null,"authors":["ゲステル|マ","スタプルトン|ジ","ワグナー|ガ"],"degree":6}
-{"id":"bizlaw-product-liability-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任法（製品不具合と製造業者の厳格責任）","year":null,"authors":["posner|r","priest|g","wade|j"],"degree":13}
+{"id":"bizlaw-product-liability-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任法（製品不具合と製造業者の厳格責任）","year":null,"authors":["posner|r","priest|g","wade|j"],"degree":12}
 {"id":"bizlaw-product-liability-strict","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任（PL法）の厳格責任法理と欠陥類型","year":null,"authors":["トレイナー|ロ","ドブス|テ","プロッサー|ウ"],"degree":17}
 {"id":"bizlaw-product-liability-strict-eu-directive","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任法——無過失責任と欠陥製品による損害救済","year":null,"authors":["ステープルトン|ジ","トレイナー|ロ","プロッサー|ウ","ワーグナー|ゲ"],"degree":15}
-{"id":"bizlaw-product-liability-strict-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任と厳格責任——PL法の理論的基盤と消費者保護","year":null,"authors":["カラブレージ|ガ","トレイナー|ロ","プロッサー|ウ"],"degree":16}
+{"id":"bizlaw-product-liability-strict-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任と厳格責任——PL法の理論的基盤と消費者保護","year":null,"authors":["カラブレージ|ガ","トレイナー|ロ","プロッサー|ウ"],"degree":15}
 {"id":"bizlaw-product-liability-strict-tort","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製造物責任と無過失責任——PL法・EU製造物責任指令とグローバルサプライチェーンの法的リスク","year":null,"authors":[],"degree":4}
 {"id":"bizlaw-product-safety-regulations-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"製品安全規制と不法行為責任——PL法・消費者保護法制と欧州製品安全指令","year":null,"authors":["cpsc|","ヴィスカシ|キ"],"degree":2}
 {"id":"bizlaw-promissory-estoppel","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約束的禁反言（プロミッサリー・エストッペル）","year":1947,"authors":["デニング|ア"],"degree":9}
@@ -542,7 +538,7 @@
 {"id":"bizlaw-quasi-contract-unjust-enrichment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不当利得（準契約・不当利得返還請求）","year":null,"authors":["ゴフ|ロ","ジョーンズ|ガ","バークス|ピ"],"degree":14}
 {"id":"bizlaw-quistclose-trust","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る","year":null,"authors":["ウィルバーフォース|ロ","チェンバース|ロ","バークス|ピ","ミレット|ロ"],"degree":12}
 {"id":"bizlaw-radio-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電波法","year":1950,"authors":[],"degree":2}
-{"id":"bizlaw-ratchet-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）","year":1994,"authors":["cptpp|","gats|w","nafta|","unctad|"],"degree":11}
+{"id":"bizlaw-ratchet-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）","year":1994,"authors":["cptpp|","gats|w","nafta|","unctad|"],"degree":12}
 {"id":"bizlaw-real-estate-registration","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不動産登記法","year":2004,"authors":[],"degree":2}
 {"id":"bizlaw-real-estate-transactions-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"宅地建物取引業法（宅建業法）","year":1952,"authors":[],"degree":18}
 {"id":"bizlaw-real-subrogation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"物上代位（民法304条）","year":null,"authors":[],"degree":10}
@@ -554,7 +550,7 @@
 {"id":"bizlaw-renvoi","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理","year":1878,"authors":["annesley|","case|f","lorenzen|e","regulation|r","renvoi|t"],"degree":3}
 {"id":"bizlaw-res-ipsa-loquitur","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み","year":1863,"authors":["boadle|b","docks|k","london|s","pollock|c"],"degree":10}
 {"id":"bizlaw-res-judicata","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"既判力（Res Judicata）","year":1876,"authors":["miller|j","restatement|"],"degree":9}
-{"id":"bizlaw-rescission","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":14}
+{"id":"bizlaw-rescission","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":13}
 {"id":"bizlaw-respondeat-superior","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"使用者責任の法理（Respondeat Superior）","year":1698,"authors":["cir|s","friendly|j","holt|l","restatement|"],"degree":8}
 {"id":"bizlaw-respondeat-superior-scope","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"使用者責任の範囲——代理責任法理と雇用関係における帰責原理","year":null,"authors":["シーヴィー|ウ","プロッサー|ウ","ボーレン|フ","ラスキ|ハ"],"degree":12}
 {"id":"bizlaw-restraint-of-trade","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取引制限の法理——営業の自由を制約する条項の合理性審査","year":null,"authors":["コーク|エ"],"degree":6}
@@ -563,7 +559,7 @@
 {"id":"bizlaw-retention-of-title","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所有権留保","year":2025,"authors":[],"degree":16}
 {"id":"bizlaw-reves-family-resemblance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み","year":1934,"authors":["act|s","ernst|r","marshall|t","test|h","young|"],"degree":5}
 {"id":"bizlaw-revlon-duties","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"レブロン義務（会社売却時の取締役義務）","year":null,"authors":["moore|a"],"degree":16}
-{"id":"bizlaw-revocation-litigation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取消訴訟（行政事件訴訟法）","year":null,"authors":[],"degree":6}
+{"id":"bizlaw-revocation-litigation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取消訴訟（行政事件訴訟法）","year":null,"authors":[],"degree":7}
 {"id":"bizlaw-revolving-mortgage","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"根抵当権（民法398条の2）","year":null,"authors":[],"degree":16}
 {"id":"bizlaw-risk-bearing","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"危険負担（民法536条）","year":2017,"authors":[],"degree":9}
 {"id":"bizlaw-rule-against-perpetuities","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"永久拘束禁止原則","year":1682,"authors":["gray|j","leach|b","nottingham|l","waggoner|l"],"degree":12}
@@ -601,12 +597,12 @@
 {"id":"bizlaw-sovereign-equality","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"主権平等原則（Principle of Sovereign Equality）","year":1648,"authors":[],"degree":9}
 {"id":"bizlaw-sovereign-immunity-waiver","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"主権免除と放棄（ソブリン・イミュニティ）","year":null,"authors":["フォックス|ガ","ライル|ア","ラウターパクト|ハ"],"degree":11}
 {"id":"bizlaw-sovereign-wealth-fund-governance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則","year":null,"authors":["シュライファー|ア","トライマン|エ","ヘラービー|ラ"],"degree":10}
-{"id":"bizlaw-specific-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ","ファーンズワース|ア"],"degree":15}
+{"id":"bizlaw-specific-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ","ファーンズワース|ア"],"degree":14}
 {"id":"bizlaw-specified-commercial-transactions","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定商取引法","year":1976,"authors":[],"degree":19}
 {"id":"bizlaw-squeeze-out","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スクイーズアウト（特別支配株主の株式等売渡請求）","year":2015,"authors":[],"degree":4}
 {"id":"bizlaw-stabilization-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"安定化条項（Stabilization Clause）","year":1803,"authors":["icsid|"],"degree":12}
 {"id":"bizlaw-standard-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"定型約款（民法548条の2）","year":2020,"authors":[],"degree":6}
-{"id":"bizlaw-standstill-agreement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スタンドスティル契約","year":null,"authors":["coates|j","gilson|r","stout|l","subramanian|g"],"degree":14}
+{"id":"bizlaw-standstill-agreement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スタンドスティル契約","year":null,"authors":["coates|j","gilson|r","stout|l","subramanian|g"],"degree":13}
 {"id":"bizlaw-standstill-agreement-ma","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スタンドスティル協定（M&A）","year":null,"authors":["アイズン|イ","クラーク|ロ","リプトン|マ"],"degree":10}
 {"id":"bizlaw-state-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国家賠償（国家賠償法1条・2条）","year":null,"authors":[],"degree":2}
 {"id":"bizlaw-statute-of-frauds","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"詐欺防止法","year":null,"authors":["corbin|a","fuller|l","llewellyn|k","posner|e","williston|s"],"degree":14}
@@ -631,7 +627,7 @@
 {"id":"bizlaw-tax-avoidance-beps-regulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革","year":null,"authors":["クラメン|ゲ","サン|パ","ピルス|マ"],"degree":3}
 {"id":"bizlaw-tcfd","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"気候関連財務情報開示タスクフォース（TCFD）","year":2017,"authors":["ブルームバーグ|マ"],"degree":2}
 {"id":"bizlaw-telecom-business","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電気通信事業法","year":1984,"authors":[],"degree":4}
-{"id":"bizlaw-tender-of-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"弁済の提供（民法492条・493条）","year":null,"authors":["law|e"],"degree":11}
+{"id":"bizlaw-tender-of-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"弁済の提供（民法492条・493条）","year":null,"authors":["law|e"],"degree":12}
 {"id":"bizlaw-third-party-beneficiary-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"第三者のためにする契約——契約当事者以外への権利付与の法理","year":null,"authors":["ウォルトン|ミ","コービン|ア","バロウズ|ア","パーマー|ヴ"],"degree":14}
 {"id":"bizlaw-third-party-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"第三者の弁済（民法474条）","year":null,"authors":[],"degree":16}
 {"id":"bizlaw-three-certainties-trust","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"三つの確実性——明示信託の有効な成立に必要な要件","year":null,"authors":["ウィルバーフォース|ロ","マクギー|ジ","メグリー|ロ","ラングデール|ロ"],"degree":15}
@@ -642,7 +638,7 @@
 {"id":"bizlaw-tortious-interference","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約関係への不法干渉（Tortious Interference with Contract）","year":1853,"authors":["crompton|","institute|a"],"degree":2}
 {"id":"bizlaw-tortious-interference-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法干渉法理","year":null,"authors":["dobbs|d","farnsworth|w","james|f","prosser|w"],"degree":11}
 {"id":"bizlaw-tortious-interference-lumley","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理","year":null,"authors":["キャンベル|チ","プロッサー|ウ","ペルマン|ハ"],"degree":14}
-{"id":"bizlaw-tortious-interference-restatement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法行為責任（営業妨害と契約干渉）","year":null,"authors":["fleming|j","keeton|w","restatement|"],"degree":14}
+{"id":"bizlaw-tortious-interference-restatement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不法行為責任（営業妨害と契約干渉）","year":null,"authors":["fleming|j","keeton|w","restatement|"],"degree":13}
 {"id":"bizlaw-toushiho","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"出資法","year":1954,"authors":[],"degree":25}
 {"id":"bizlaw-tracing-equity","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"エクイティ上の追及——価値を新たな財産へと追いかける","year":null,"authors":["スミス|ラ","チェンバース|ロ","バークス|ピ","ミレット|ロ"],"degree":9}
 {"id":"bizlaw-trade-secret","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"営業秘密（不正競争防止法2条6項）","year":2018,"authors":[],"degree":3}
@@ -657,7 +653,7 @@
 {"id":"bizlaw-transfer-pricing-arms-length-principle","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防","year":null,"authors":["ラング|ミ"],"degree":3}
 {"id":"bizlaw-trespass-to-land","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為","year":null,"authors":["ブラックストン|ウ","プロッサー|ウ","ポロック|フ"],"degree":12}
 {"id":"bizlaw-trust-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"信託法","year":2006,"authors":[],"degree":13}
-{"id":"bizlaw-trust-fund-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理","year":1824,"authors":["capital|l","cas|w","maintenance|c","story|j","transfer|i"],"degree":5}
+{"id":"bizlaw-trust-fund-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理","year":1824,"authors":["capital|l","cas|w","maintenance|c","story|j","transfer|i"],"degree":6}
 {"id":"bizlaw-two-stage-presumption","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"二段の推定（文書の真正成立）","year":null,"authors":[],"degree":2}
 {"id":"bizlaw-ultra-vires","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ウルトラ・ヴァイリーズの法理（権限踰越の法理）","year":1856,"authors":["carriage|a","riche|i","turquand|r"],"degree":9}
 {"id":"bizlaw-ultra-vires-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"権限踰越の法理（Ultra Vires）","year":1875,"authors":["act|c","cairns|l","carriage|a","riche|i"],"degree":9}
@@ -769,7 +765,7 @@
 {"id":"econ-behavioral-finance-kahneman","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動ファイナンス理論（認知バイアスと意思決定）","year":null,"authors":["kahneman|d","thaler|r","tversky|a"],"degree":8}
 {"id":"econ-behavioral-game-theory","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究","year":null,"authors":["カメラー|コ","シュービック|マ","フェール|エ"],"degree":26}
 {"id":"econ-behavioral-nudge-thaler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ナッジと行動経済学的介入設計（セイラー・サンスタイン）","year":null,"authors":["カーネマン|ダ","サンスタイン|キ","スミス|ロ","セイラー|リ"],"degree":14}
-{"id":"econ-behavioral-nudge-thaler-sunstein","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入","year":null,"authors":["カーネマン|ダ","サンスティーン|キ","セイラー|リ","ハルパーン|デ"],"degree":20}
+{"id":"econ-behavioral-nudge-thaler-sunstein","collection":"academic","category":"economics","categoryLabel":"経済学","title":"行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入","year":null,"authors":["カーネマン|ダ","サンスティーン|キ","セイラー|リ","ハルパーン|デ"],"degree":21}
 {"id":"econ-behavioral-theory-firm-cyert","collection":"academic","category":"economics","categoryLabel":"経済学","title":"企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）","year":null,"authors":["ウィリアムソン|オ","サイアート|リ","サイモン|ハ","マーチ|ジ"],"degree":30}
 {"id":"econ-ben-porath-human-capital-lifecycle","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）","year":1967,"authors":["becker|g","ben-porath|y","kuznets|s","mincer|j"],"degree":3}
 {"id":"econ-bergson-welfare-function","collection":"academic","category":"economics","categoryLabel":"経済学","title":"バーグソン＝サムエルソン社会厚生関数","year":1914,"authors":["bergson|","バーグソン|ア"],"degree":3}
@@ -1940,7 +1936,7 @@
 {"id":"human-emotional-regulation","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解","year":null,"authors":["アルダオ|ア","オクスナー|ケ","グロス|ジ"],"degree":23}
 {"id":"human-emotional-regulation-gross","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情調節理論（グロス）と認知的再評価・表現抑制","year":null,"authors":["グロス|ジ","ジョン|オ","バレット|リ","モーズレー|ア"],"degree":10}
 {"id":"human-emotional-stroop-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉","year":null,"authors":["ウィリアムズ|マ","ストループ|ジ","マクラウド|コ","マシューズ|ア"],"degree":6}
-{"id":"human-empathy-gap-loewenstein","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"共感ギャップ（ローウェンスタイン）","year":null,"authors":["セイラー|リ","プレレック|ド","ローウェンスタイン|ジ"],"degree":17}
+{"id":"human-empathy-gap-loewenstein","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"共感ギャップ（ローウェンスタイン）","year":null,"authors":["セイラー|リ","プレレック|ド","ローウェンスタイン|ジ"],"degree":18}
 {"id":"human-enactivism","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論","year":null,"authors":["トンプソン|エ","マトゥラーナ|ウ","ロッシュ|エ","ヴァレラ|フ"],"degree":9}
 {"id":"human-encoding-specificity-tulving","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する","year":null,"authors":["クレイク|フ","シャクター|ダ","タルヴィング|エ","トムソン|ド"],"degree":5}
 {"id":"human-end-of-history-illusion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"歴史の終わり錯覚","year":2013,"authors":["wilson|","ウィルソン|テ","ギルバート|ダ","クオイドバック|ジ"],"degree":10}
@@ -2336,7 +2332,7 @@
 {"id":"human-synesthesia-neuroscience","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"共感覚の神経科学","year":2001,"authors":["hubbard|e","ramachandran|v","rouw|r","scholte|s"],"degree":7}
 {"id":"human-system-justification-jost","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"システム正当化理論——不平等な社会体制を支持する心理的動機","year":null,"authors":["ケイ|ア","ジョスト|ジ","バナージ|マ","メジャー|ブ"],"degree":2}
 {"id":"human-teleological-reasoning","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"目的論的推論（Teleological Reasoning in Infancy）","year":1995,"authors":["sciences|t","ゲルゲイ|ジ","チブラ|ジ"],"degree":4}
-{"id":"human-temporal-discounting","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間割引（Temporal Discounting / 遅延割引）","year":1975,"authors":["エインズリー|ジ","ラクリン|ハ"],"degree":7}
+{"id":"human-temporal-discounting","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間割引（Temporal Discounting / 遅延割引）","year":1975,"authors":["エインズリー|ジ","ラクリン|ハ"],"degree":6}
 {"id":"human-temporal-discounting-ainslie","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学","year":null,"authors":["エインズリー|ジ","オドノヒュー|テ","セイラー|リ","フレデリック|シ"],"degree":11}
 {"id":"human-temporal-motivation-steel","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間的動機付け理論（スティール＆クーニング）","year":null,"authors":["アリエリー|ダ","クーニング|コ","スティール|ピ","ミシェル|ウ"],"degree":11}
 {"id":"human-temporal-self-appraisal","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"時間的自己評価理論——過去の自己との比較による現在の自己高揚","year":null,"authors":["ウィルソン|ア","セディキデス|コ","フェスティンガー|レ","ロス|マ"],"degree":12}
@@ -2473,7 +2469,7 @@
 {"id":"infosoc-connective-action-bennett-segerberg","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"結合的行動の論理——デジタル時代の集合行為の再理論化","year":null,"authors":["オルソン|マ","シャーキー|ク","セゲルベリ|ア","トゥフェクチー|ゼ","ベネット|ラ"],"degree":14}
 {"id":"infosoc-connective-action-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"接続的行為理論","year":null,"authors":["bennett|l","segerberg|a"],"degree":4}
 {"id":"infosoc-connectivism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コネクティビズム","year":1959,"authors":["シーメンズ|ジ","ダウンズ|ス"],"degree":2}
-{"id":"infosoc-content-moderation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践","year":null,"authors":["ギレスピー|タ","グリメルマン|ジ"],"degree":16}
+{"id":"infosoc-content-moderation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践","year":null,"authors":["ギレスピー|タ","グリメルマン|ジ"],"degree":17}
 {"id":"infosoc-context-collapse","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテキストの崩壊（文脈崩壊）","year":null,"authors":["ゴッフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":18}
 {"id":"infosoc-context-collapse-marwick","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ","year":null,"authors":["ゴフマン|ア","ボイド|ダ","マーウィック|ア","メイロウィッツ|ジ"],"degree":14}
 {"id":"infosoc-contextual-integrity","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー","year":2004,"authors":["context|p","integrity|p","nissenbaum|h","principles|t"],"degree":9}

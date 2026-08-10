@@ -17817,12 +17817,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'ラッチェスの法理（懈怠の抗弁）',
     statement:
       'ラッチェスの法理（doctrine of laches）とは、権利者が既知の又は発見可能な権利の主張を不合理に遅延し、かつその遅延が相手方に不利益（prejudice）を生じさせた場合に、衡平法上の救済を否定するエクイティ上の抗弁である。古フランス語 laschesse（怠慢）に由来し、「エクイティは権利の上に眠る者ではなく警戒する者を助ける（vigilantibus non dormientibus aequitas subvenit）」という衡平法の格率を法的に具現化したものである。' +
-      '英国法における基礎判例はSmith v Clay (1767) 3 Brown\'s Chancery Cases 639であり、ロード・カムデン大法官は「衡平法裁判所は常に古くなった請求への救済を拒んできた」と判示した。米国連邦最高裁はPetrella v. Metro-Goldwyn-Mayer, Inc., 572 U.S. 663 (2014)において、ギンズバーグ裁判官執筆の法廷意見で、連邦著作権法の3年の出訴期限内に提起された損害賠償請求に対してはラッチェスの抗弁を適用できないと判示し、制定法上の出訴期限が衡平法上の抗弁に優先する場合を明確にした。ラッチェスは制定法上の出訴期限（statute of limitations）と異なり、固定的な時間制限ではなく裁判所の裁量に基づく衡平的判断であり、遅延の不合理性と相手方への不利益の双方が要件となる。',
-    keyFigures: 'Lord Camden（Smith v Clay (1767) 3 Bro CC 639）／Ruth Bader Ginsburg（Petrella v. MGM, 572 U.S. 663 (2014)）',
+      '英国法における基礎判例はSmith v Clay (1767) 3 Brown\'s Chancery Cases 639であり、ロード・カムデン大法官は「衡平法裁判所は常に古くなった請求への救済を拒んできた」と判示した。米国連邦最高裁はPetrella v. Metro-Goldwyn-Mayer, Inc., 572 U.S. 663 (2014)において、ギンズバーグ裁判官執筆の法廷意見で、連邦著作権法の3年の出訴期限内に提起された損害賠償請求に対してはラッチェスの抗弁を適用できないと判示し、制定法上の出訴期限が衡平法上の抗弁に優先する場合を明確にした。ラッチェスは制定法上の出訴期限（statute of limitations）と異なり、固定的な時間制限ではなく裁判所の裁量に基づく衡平的判断であり、遅延の不合理性と相手方への不利益（prejudice）の双方が要件となる。不利益の典型は、証拠の散逸、証人の死亡や記憶の減退、相手方が権利不行使を前提に立場や投資を変えたことなどであり、放置された古い請求による不意打ちを防いで紛争の早期解決と法的安定を促すのがこの法理の役割である。SCA Hygiene Products v. First Quality Baby Products (2017) はPetrella法理を特許法へ拡張し、特許法286条の6年の損害賠償期間内の請求にはラッチェスで対抗できないと判示した。両判決以降、連邦制定法が明示の出訴期限を置く領域では、ラッチェスは差止め等のエクイティ上の救済の場面へ後退しつつあり、知的財産訴訟における抗弁戦略を大きく変えた。Brayは、ラッチェスをエクイティ上の救済に限定する伝統的理解こそが制定法の出訴期限との整合を保つと論じた。',
+    keyFigures: 'Lord Camden（Smith v Clay (1767) 3 Bro CC 639）／Ruth Bader Ginsburg（Petrella v. MGM, 572 U.S. 663 (2014)）／Joseph Story ／ Samuel L. Bray',
     asOf: '2026-06',
     sources: [
       { url: 'https://supreme.justia.com/cases/federal/us/572/663/', type: 'government', label: 'Petrella v. Metro-Goldwyn-Mayer, Inc., 572 U.S. 663 (2014) — Justia US Supreme Court' },
       { url: 'https://www.law.cornell.edu/wex/laches', type: 'reference', label: 'Cornell Law School LII — Laches (Wex legal encyclopedia)' },
+      { url: 'https://www.supremecourt.gov/opinions/16pdf/15-927_6j37.pdf', type: 'government', label: 'SCA Hygiene Products v. First Quality Baby Products (2017) — Supreme Court Opinion' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2376080', type: 'academic', label: 'Bray (2014) A Little Bit of Laches Goes a Long Way — Vanderbilt Law Review En Banc' },
+      { url: 'https://en.wikipedia.org/wiki/Laches_(equity)', type: 'reference', label: 'Wikipedia: Laches (equity) — delay and prejudice, equity aids the vigilant' },
     ],
   },
   {
@@ -24390,21 +24393,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-laches-doctrine',
-    discipline: 'business-law',
-    title: 'ラッチェス法理',
-    statement: '権利行使の不合理な遅延と相手方への不利益を根拠に、エクイティ上の請求を遮断する衡平法上の抗弁法理。時効とは独立して機能し、知的財産権侵害訴訟で特に重要視される。',
-    keyFigures: 'Lord Camden (Charles Pratt) ／ Ruth Bader Ginsburg ／ John Henry Merryman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/1341086', type: 'academic', label: 'McClintock, Laches & Equitable Defenses' },
-      { url: 'https://supreme.justia.com/cases/federal/us/572/663/', type: 'reference', label: 'Petrella v. MGM, 572 U.S. 663 (2014)' },
-      { url: 'https://supreme.justia.com/cases/federal/us/580/15-927/', type: 'reference', label: 'SCA Hygiene v. First Quality, 580 U.S. (2017)' },
-      { url: 'https://doi.org/10.1093/oxfordhb/9780199673599.013.28', type: 'academic', label: 'Oxford Handbook of Intellectual Property Law' },
-      { url: 'https://doi.org/10.1017/S0008197300040854', type: 'academic', label: 'Spry, Principles of Equitable Remedies' },
-    ],
-  },
-  {
     id: 'mgmt-upper-echelons-refinement',
     discipline: 'management',
     title: '上層部理論精緻化',
@@ -24800,14 +24788,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-economic-loss-rule',
     discipline: 'business-law',
     title: '純粋経済的損失の法理',
-    statement: '人身・物的損害を伴わない純粋経済的損失は不法行為で回復できないとする原則。米最高裁East River判決（1986）が統一基準を示し、契約と不法行為の機能的境界を画する。',
-    keyFigures: 'William L. Prosser ／ Guido Calabresi ／ Robert L. Rabin',
+    statement: '人身・物的損害を伴わない純粋経済的損失（pure economic loss）は、過失による不法行為では原則として賠償されないとする英米不法行為法の原則。米国ではRobins Dry Dock v. Flint (1927) のホームズ判決が古典的定式を与え、East River S.S. Corp. v. Transamerica Delaval, 476 U.S. 858 (1986) は、製品が自らを損傷したにとどまる損害は契約法（保証）の領域であり不法行為では回復できないと判示して、製造物責任における統一基準を示した。契約と不法行為の機能的境界を画す法理であり、正当化根拠として、Posnerは当事者が契約により危険配分できる場面では契約法に委ねるほうが効率的だとし、Prosser=Keetonの体系書は「不確定の範囲・期間・階層に及ぶ責任」（Cardozoが警告した indeterminate liability）への歯止めとして説明した。例外として、専門家の過失による不実表示（会計士・弁護士等）、詐欺、当事者間に特別な関係がある場合には回復が認められ、英国ではHedley Byrne v. Heller (1964) が特別な関係に基づく過失的不実表示について純粋経済損失の賠償への道を開いた。Restatement (Third) of Torts: Liability for Economic Harm (2020) が現代的な体系化を与えている。',
+    keyFigures: 'William L. Prosser ／ W. Page Keeton ／ Richard A. Posner ／ Guido Calabresi ／ Robert L. Rabin',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.law.cornell.edu/supremecourt/text/476/858', type: 'reference', label: 'East River Steamship Corp. v. Transamerica Delaval, 476 U.S. 858 (1986) — Cornell LII' },
       { url: 'https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=3058&context=dlj', type: 'academic', label: 'Rabin, "Tort Recovery for Negligently Inflicted Economic Loss," Duke Law Journal (1985)' },
       { url: 'https://www.jstor.org/stable/1228823', type: 'academic', label: 'Bishop, "Economic Loss in Tort," Oxford Journal of Legal Studies (1982)' },
       { url: 'https://www.ali.org/publications/show/contracts/', type: 'reference', label: 'Restatement (Third) of Torts: Liability for Economic Harm, Section 1' },
+      { url: 'https://supreme.justia.com/cases/federal/us/476/858/', type: 'government', label: 'East River S.S. Corp. v. Transamerica Delaval, 476 U.S. 858 (1986) — Justia' },
+      { url: 'https://en.wikipedia.org/wiki/Pure_economic_loss', type: 'reference', label: 'Wikipedia — Pure economic loss（Robins Dry Dock / Hedley Byrne を含む概説）' },
     ],
   },
   {
@@ -25086,20 +25076,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-laches-defense',
-    discipline: 'business-law',
-    title: '懈怠の抗弁（ラッチズ）',
-    statement: 'エクイティ上の抗弁で、原告が権利行使を不合理に遅延し被告に不利益をもたらした場合に救済を遮断する法理。制定法上の出訴期限とは異なり遅延の合理性と被告の現実的不利益の双方を衡量する。',
-    keyFigures: 'Samuel L. Bray ／ John Norton Pomeroy ／ Dan B. Dobbs',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2376080', type: 'academic', label: 'Bray (2014) A Little Bit of Laches — Vanderbilt Law Review' },
-      { url: 'https://papers.ssrn.com/sol3/Papers.cfm?abstract_id=3686120', type: 'academic', label: 'Laser (2020) Equitable Defenses in Patent Law — SSRN' },
-      { url: 'https://www.supremecourt.gov/opinions/16pdf/15-927_6j37.pdf', type: 'government', label: 'SCA Hygiene v First Quality (2017) — Supreme Court Opinion' },
-      { url: 'https://natlawreview.com/article/us-supreme-court-knocks-out-equitable-defense-laches-patent-law', type: 'reference', label: 'National Law Review — Laches in Patent Law (2017)' },
-    ],
-  },
-  {
     id: 'human-place-cells-okeefe',
     discipline: 'human-science',
     title: '場所細胞と認知地図',
@@ -25372,20 +25348,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Cognitive_flexibility', type: 'reference', label: 'Wikipedia — Cognitive flexibility' },
       { url: 'https://doi.org/10.1007/978-3-662-02840-7_23', type: 'academic', label: 'Cognitive Flexibility Theory and its Implications for Designing CBI (Springer chapter)' },
       { url: 'https://escholarship.org/uc/item/1dr9x302', type: 'academic', label: 'Spiro et al. (1988) CFT — Cognitive Science Society proceedings (UC eScholarship)' },
-    ],
-  },
-  {
-    id: 'bizlaw-economic-loss-doctrine',
-    discipline: 'business-law',
-    title: '純粋経済損失法理（エコノミック・ロス・ルール）',
-    statement: '契約関係のない第三者への純粋経済損失について不法行為法上の賠償を原則否定する法理。Posnerは効率性の観点から、Keetonらは損害賠償範囲の合理的限界として正当化した。',
-    keyFigures: 'Richard A. Posner ／ W. Page Keeton',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://supreme.justia.com/cases/federal/us/476/858/', type: 'government', label: 'East River S.S. Corp. v. Transamerica Delaval (1986)' },
-      { url: 'https://scholarship.law.cornell.edu/cgi/viewcontent.cgi?article=4084&context=clr', type: 'academic', label: 'Cornell Law Review — Economic loss doctrine' },
-      { url: 'https://en.wikipedia.org/wiki/Pure_economic_loss', type: 'reference', label: 'Wikipedia — Pure economic loss' },
-      { url: 'https://www.britannica.com/topic/tort-law', type: 'reference', label: 'Britannica — Tort law' },
     ],
   },
   {
@@ -38213,18 +38175,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0033-295X.107.3.411', type: 'academic', label: 'Taylor, S.E. et al. (2000) Biobehavioral Responses to Stress in Females: Tend-and-Befriend — Psychological Review 107(3)' },
       { url: 'https://en.wikipedia.org/wiki/Tend_and_befriend', type: 'reference', label: 'Wikipedia: Tend and befriend — Taylor, stress response, oxytocin, parental investment' },
-    ],
-  },
-  {
-    id: 'bizlaw-laches',
-    discipline: 'business-law',
-    title: '懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる',
-    statement: '懈怠の法理（laches、レイチェス）は、英米法の衡平法（equity）上の抗弁で、権利者が自らの権利を主張するのを不当に長く怠り（遅延し）、その遅延によって相手方が不利益を被った場合に、衡平裁判所が権利者の救済請求を退けることを認める法理である。その根底には「衡平は権利の上に眠る者ではなく、勤勉な者を助ける（vigilantibus non dormientibus aequitas subvenit）」という格言がある。懈怠が成立するには二つの要素が必要とされる。第一に、権利者が権利の存在を知りながら、あるいは知りうべきでありながら、合理的な理由なく権利行使を遅延したこと。第二に、その遅延の結果として相手方が不利益（prejudice）を被ったこと——たとえば証拠の散逸、証人の死亡や記憶の減退、相手方が権利不行使を前提に立場や投資を変えたことなどである。懈怠は、議会が定めた固定的な期間の経過によって機械的に請求を時間的に遮断する「出訴期限（statute of limitations）」とは区別される。出訴期限が硬直的な法律上の期間制限であるのに対し、懈怠は遅延の合理性と相手方の被った不利益を個別に衡量する柔軟で裁量的な衡平法上の判断であり、時に出訴期限の満了前であっても請求を妨げ、逆に期限が問題にならない衡平的救済の場面で機能する。懈怠は、放置された古い請求が相手方に不意打ちの不正義をもたらすことを防ぎ、紛争の早期解決と法的安定を促す役割を担う。',
-    keyFigures: 'ジョセフ・ストーリー ／ カムデン卿 ／ ヘンリー・メイン ／ アーサー・コービン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/laches', type: 'reference', label: 'Cornell LII Wex: Laches — equitable defense, unreasonable delay, prejudice, vs statute of limitations' },
-      { url: 'https://en.wikipedia.org/wiki/Laches_(equity)', type: 'reference', label: 'Wikipedia: Laches (equity) — delay and prejudice, equity aids the vigilant, discretionary bar' },
     ],
   },
   {

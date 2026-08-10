@@ -36,12 +36,12 @@ William Lloyd Prosser ／ Dan B. Dobbs ／ Fleming James Jr. ／ Ward Farnsworth
 - [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 語彙が近い
 - [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]] — 語彙が近い
 - [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — 同じ思想家
-- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 同じ思想家
 - [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
 - [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 出典を共有
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
 
 ## 関連

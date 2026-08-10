@@ -33,7 +33,7 @@ Percy Henry Winfield ／ Rachael Mulheron
 
 ## 関連概念
 - [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 語彙が近い
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 同分野の近傍
+- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

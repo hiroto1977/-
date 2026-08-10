@@ -37,7 +37,6 @@ Ronald J. Gilson ／ Alan Schwartz ／ Robert T. Miller
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,6 @@ aliases:
 - [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 同分野の近傍
-- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

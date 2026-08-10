@@ -32,10 +32,11 @@ Joseph Story（ジョセフ・ストーリー連邦最高裁判事、巡回裁�
 
 ## 関連概念
 - [[bizlaw-comity-of-nations|国際礼譲（Comity of Nations）]] — 同じ思想家
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — 同じ思想家
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 出典を共有
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
-- [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 同分野の近傍
 - [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 同分野の近傍
+- [[bizlaw-tender-of-performance|弁済の提供（民法492条・493条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

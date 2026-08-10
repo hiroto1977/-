@@ -39,6 +39,7 @@ aliases:
 - [[bizlaw-three-certainties-trust|三つの確実性——明示信託の有効な成立に必要な要件]] — 同分野の近傍
 - [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同分野の近傍
 - [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
+- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

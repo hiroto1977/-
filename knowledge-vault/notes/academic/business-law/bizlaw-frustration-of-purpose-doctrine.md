@@ -41,7 +41,6 @@ Vaughan Williams ／ Guenter H. Treitel ／ Patrick S. Atiyah
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有
 - [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — 出典を共有
-- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

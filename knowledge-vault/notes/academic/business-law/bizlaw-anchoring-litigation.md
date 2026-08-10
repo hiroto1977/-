@@ -38,9 +38,9 @@ aliases:
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同じ思想家
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
 - [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
+- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

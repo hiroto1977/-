@@ -33,11 +33,10 @@ Francis Clerke Nordenfelt ／ Richard A. Posner ／ Matthew W. Finkin
 - [Rubin & Shedd, Human Capital and Covenants Not to Compete (1981)](https://doi.org/10.2307/3312787) `学術`
 
 ## 関連概念
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 同じ思想家
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
 - [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 出典を共有
-- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 出典を共有
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 出典を共有
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有

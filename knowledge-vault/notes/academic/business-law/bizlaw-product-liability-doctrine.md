@@ -36,8 +36,8 @@ John W. Wade（リスク・ユーティリティ・テスト開発者） ／ Geo
 - [Ramseyer, J.M. (2013). Liability for Defective Products: Comparative Hypotheses and Evidence from Japan. American Journal of Comparative Law, 61(3), 617–656.](https://academic.oup.com/ajcl/article-abstract/61/3/617/2572025) `学術`
 
 ## 関連概念
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 同じ思想家
 - [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 同じ思想家
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
 - [[econ-priest-klein-selection-hypothesis|プリースト＝クラインの紛争選択仮説（Priest-Klein selection hypothesis、訴訟選択効果と「勝訴率50%命題」）——裁判に至る紛争は無作為標本ではない]] — 同じ思想家
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有

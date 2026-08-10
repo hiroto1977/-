@@ -14,8 +14,8 @@ tags:
 
 ## このドメインを出典とする項目
 
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — SCAHygieneProductsv.FirstQualityBabyProducts(2017)—SupremeCourtOpinion
 - [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — USSupremeCourt(2017)ImpressionProductsv.Lexmark—Patentexhaustion
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — SCAHygienevFirstQuality(2017)—SupremeCourtOpinion
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

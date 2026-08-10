@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 151
+cite_count: 150
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **151 件**（リファレンス 127 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **150 件**（リファレンス 126 ・ 公的 23 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -107,7 +107,6 @@ tags:
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — CTSCorp.v.DynamicsCorp.ofAmerica,481U.S.69(1987)（合衆国最高裁判決一次資料、LegalIn…
 - [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 17U.S.C.§109—CornellLII（著作権のファースト・セール・ドクトリンの法文）
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 11U.S.C.§365(e)(1)—prohibitiononipsofactoterminationinbankruptcy
-- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]] — CornellLIIWex:Laches—equitabledefense,unreasonabledelay,prejudice,vss…
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — CornellLII(Wex):Negligence—reasonablecare/breachstandardandtheLearned…
 - [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — CornellLIIWex:Letterofcredit—bankundertaking,documentsagainstpayment,…
 - [[bizlaw-letters-rogatory|嘱託書（Letters Rogatory）]] — 28U.S.C.§1781—Transmittalofletterrogatoryorrequest(CornellLII)

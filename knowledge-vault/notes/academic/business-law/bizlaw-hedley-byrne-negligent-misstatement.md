@@ -30,6 +30,7 @@ Hedley Byrne & Co Ltd v Heller & Partners Ltd（[1964] AC 465・貴族院・指�
 - [Hedley Byrne & Co Ltd v Heller & Partners Ltd [1963] UKHL 4（BAILII 収録の貴族院判決全文）](https://www.bailii.org/uk/cases/UKHL/1963/4.html) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 語彙が近い
 - [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有
@@ -39,7 +40,6 @@ Hedley Byrne & Co Ltd v Heller & Partners Ltd（[1964] AC 465・貴族院・指�
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
 - [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
-- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

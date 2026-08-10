@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2229
+cite_count: 2226
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2229 件**（学術 2221 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2226 件**（学術 2218 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -107,9 +107,6 @@ tags:
 - [[bizlaw-international-human-rights-due-diligence|国際人権デューデリジェンス（UNGPs）の法的義務化と企業責任]] — Ruggie,J.(2013).JustBusiness—W.W.Norton
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — Jackson,T.H.(1986)TheLogicandLimitsofBankruptcyLaw—HarvardUPch.5
 - [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]] — Vosko,L.(2010).ManagingtheMargins—OxfordUP
-- [[bizlaw-laches-doctrine|ラッチェス法理]] — McClintock,Laches&EquitableDefenses
-- [[bizlaw-laches-doctrine|ラッチェス法理]] — OxfordHandbookofIntellectualPropertyLaw
-- [[bizlaw-laches-doctrine|ラッチェス法理]] — Spry,PrinciplesofEquitableRemedies
 - [[bizlaw-lex-mercatoria|レックス・メルカトーリア（Lex Mercatoria）]] — Lando(1985)TheLexMercatoriainInternationalCommercialArbitration—ICLQ3…
 - [[bizlaw-lex-mercatoria|レックス・メルカトーリア（Lex Mercatoria）]] — Schmitthoff(1961)InternationalBusinessLaw:ANewLawMerchant—CurrentLawa…
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — Goetz,C.J.&Scott,R.E.(1977)LiquidatedDamages,PenaltiesandtheJustCompe…

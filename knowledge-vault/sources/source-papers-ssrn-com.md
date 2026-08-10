@@ -2,7 +2,7 @@
 title: "papers.ssrn.com"
 type: source-domain
 host: "papers.ssrn.com"
-cite_count: 35
+cite_count: 34
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # papers.ssrn.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 34 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **34 件**（学術 33 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -20,10 +20,9 @@ tags:
 - [[bizlaw-business-purpose-doctrine-gregory-helvering|事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認]] — Elkins,D.(2024)"Gregoryv.Helvering:ARedHerringthatShapedTaxJurisprude…
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — Schwarcz,"TheInequitiesofEquitableSubordination,"96Am.Bankr.L.J.1(202…
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — Thompson&Thomas(2004)TheNewLookofShareholderLitigation,VanderbiltLawR…
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — Bray(2014)ALittleBitofLachesGoesaLongWay—VanderbiltLawReviewEnBanc
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — OutsideDirectorLiability—BernardS.Black,BrianR.Cheffins&MichaelKlausn…
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — GregoryE.Maggs—TheHolderinDueCourseDoctrineasaDefaultRule(GeorgiaLawR…
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — Bray(2014)ALittleBitofLaches—VanderbiltLawReview
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — Laser(2020)EquitableDefensesinPatentLaw—SSRN
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — Miller,"PandemicRiskandtheInterpretationofExceptionsinMAEClauses,"J.C…
 - [[bizlaw-materiality-securities-law|証券法における重要性基準]] — Langevoort(2009)BasicatTwenty:RethinkingFraud-on-the-Market,2009Wis.L…
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — Watanabe(2020)PiercingtheCorporateVeilundertheJapaneseCompaniesAct—SS…
