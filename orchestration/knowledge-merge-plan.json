@@ -958,5 +958,42 @@
         }
       }
     ]
+  },
+  "pass29": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupeGraph（term-overlap 3274）",
+    "merges": [
+      {
+        "keep": "bizlaw-guarantee-obligation",
+        "drop": "bizlaw-suretyship",
+        "reason": "同一分野（business-law）・同一制度（民法446条の保証・連帯保証）。双方が要式性・付従性・催告/検索の抗弁・454条・2017年改正を重複記述。keeper は三性質（付従・随伴・補充）＋情報提供義務＋求償まで含み最厚。タイトルを「保証債務・連帯保証（民法446条）」へ拡張して検索性を保持。",
+        "migrate": [],
+        "notMigrated": [
+          {
+            "url": "https://www.moj.go.jp/content/001399956.pdf",
+            "why": "keeper が同一趣旨の法務省リーフレット（001254262.pdf）を保有済み"
+          },
+          {
+            "url": "https://ja.wikibooks.org/wiki/民法第446条",
+            "why": "吸収した 456条・465条の2 は keeper の e-Gov 出典（第446条〜465条の10）の範囲内で裏付け済み"
+          }
+        ],
+        "absorbed": "分別の利益（456条）と連帯保証におけるその喪失・個人根保証契約の極度額要求（465条の2）",
+        "provenanceDelta": {
+          "chars": [
+            574,
+            673
+          ],
+          "sources": [
+            3,
+            3
+          ],
+          "government": [
+            2,
+            2
+          ]
+        }
+      }
+    ]
   }
 }

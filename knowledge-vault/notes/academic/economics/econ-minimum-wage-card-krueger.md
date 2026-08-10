@@ -32,7 +32,7 @@ aliases:
 - [Wikipedia: Minimum wage in the United States — Card-Krueger debate, monopsony model, and state-level evidence](https://en.wikipedia.org/wiki/Minimum_wage_in_the_United_States) `リファレンス`
 
 ## 関連概念
-- [[econ-difference-in-differences|差の差分析（DID）]] — 語彙が近い
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
 - [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
@@ -41,6 +41,7 @@ aliases:
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

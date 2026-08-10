@@ -38,6 +38,7 @@ EU機能条約（TFEU）102条は、域内市場またはその実質的部分�
 - [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同分野の近傍
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 同分野の近傍
 - [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — 同分野の近傍
+- [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

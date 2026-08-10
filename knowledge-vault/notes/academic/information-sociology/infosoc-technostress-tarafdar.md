@@ -33,7 +33,6 @@ aliases:
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同分野の近傍
 - [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]] — 同分野の近傍
 - [[infosoc-technostress-theory|テクノストレス理論]] — 同分野の近傍
-- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

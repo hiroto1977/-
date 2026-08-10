@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-technological-determinism|技術決定論]] — 出典を共有
 - [[econ-division-of-labour|分業]] — 出典を共有
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同分野の近傍
-- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 同分野の近傍
+- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

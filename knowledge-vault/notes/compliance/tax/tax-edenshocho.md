@@ -33,7 +33,7 @@ aliases:
 - [国税庁 令和6年1月からの電子取引データの保存方法](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf) `公的`
 
 ## 関連概念
-- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 語彙が近い
+- [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 分野横断
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 同分野の近傍
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 同分野の近傍
 

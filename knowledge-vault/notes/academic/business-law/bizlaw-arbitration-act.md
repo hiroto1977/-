@@ -40,7 +40,6 @@ aliases:
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同分野の近傍
 - [[bizlaw-indirect-expropriation|間接収用（Indirect Expropriation）]] — 同分野の近傍
-- [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -41,6 +41,7 @@ Ronald Gilson ／ Brian Broughman ／ Jesse Fried ／ D. Gordon Smith ／ Albert
 - [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 出典を共有
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同分野の近傍
 - [[bizlaw-joint-venture-law|合弁事業の法的構造——ジョイント・ベンチャーの契約設計と独禁法上の問題]] — 同分野の近傍
+- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

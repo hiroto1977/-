@@ -36,7 +36,6 @@ aliases:
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
 - [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同分野の近傍
 - [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同分野の近傍
-- [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
 - [[mgmt-open-innovation|オープン・イノベーション]] — 同分野の近傍
-- [[mgmt-strategic-human-capital-coff-kryscynski|戦略的人的資本——知識労働者の獲得・保持と持続的競争優位]] — 同分野の近傍
 - [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同分野の近傍
 
 ## 関連

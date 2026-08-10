@@ -35,8 +35,8 @@ aliases:
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同じ思想家
 - [[mgmt-tuckman-stages|タックマンのチーム発達段階モデル]] — 出典を共有
-- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
 - [[human-affect-heuristic-slovic|感情ヒューリスティック——良い悪いの感じが判断と意思決定を導く近道]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

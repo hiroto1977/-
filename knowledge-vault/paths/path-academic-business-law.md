@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 683
+entry_count: 682
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（683件）
+# 学習パス — 学術概念／ビジネス法務（682件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -23,10 +23,10 @@ tags:
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 27）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 27）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
+- [[bizlaw-toushiho|出資法]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 25）
-- [[bizlaw-toushiho|出資法]]（接続 25）
 - [[bizlaw-agency|代理（民法99条）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
@@ -240,7 +240,7 @@ tags:
 - 2017年: [[bizlaw-dation-in-payment|代物弁済（民法482条）]]
 - 2017年: [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]]
 - 2017年: [[bizlaw-freedom-of-contract|契約自由の原則]]
-- 2017年: [[bizlaw-guarantee-obligation|保証債務（民法446条）]]
+- 2017年: [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]]
 - 2017年: [[bizlaw-joint-several-obligation|連帯債務（民法436条）]]
 - 2017年: [[bizlaw-mental-reservation|心裡留保（民法93条）]]
 - 2017年: [[bizlaw-novation|更改（民法513条）]]
@@ -253,7 +253,6 @@ tags:
 - 2017年: [[bizlaw-set-off|相殺（民法505条）]]
 - 2017年: [[bizlaw-simultaneous-performance|同時履行の抗弁権（民法533条）]]
 - 2017年: [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]]
-- 2017年: [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]]
 - 2017年: [[bizlaw-tcfd|気候関連財務情報開示タスクフォース（TCFD）]]
 - 2018年: [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]]
 - 2018年: [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]]

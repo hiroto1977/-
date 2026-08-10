@@ -31,7 +31,7 @@ Gulf Oil Corp. v. Gilbert, 330 U.S. 501 (1947)／Piper Aircraft Co. v. Reyno, 45
 
 ## 関連概念
 - [[bizlaw-forum-shopping|フォーラム・ショッピング（訴訟地戦略的選択）]] — 同じ思想家
-- [[bizlaw-arbitration-act|仲裁法]] — 同分野の近傍
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — 同分野の近傍
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連

@@ -2,7 +2,7 @@
 title: "laws.e-gov.go.jp"
 type: source-domain
 host: "laws.e-gov.go.jp"
-cite_count: 210
+cite_count: 209
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # laws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **210 件**（公的 209 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **209 件**（公的 208 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -80,7 +80,7 @@ tags:
 - [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第96条
 - [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第424条詐害行為取消請求
 - [[bizlaw-freedom-of-contract|契約自由の原則]] — e-Gov法令検索—民法（521条・522条・90条・548条の2等）
-- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — e-Gov法令検索民法（lawid129AC0000000089、第446条〜465条の10）
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — e-Gov法令検索民法（lawid129AC0000000089、第446条〜465条の10）
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — e-Gov法令検索—民法（明治29年法律第89号）第177条（不動産物権変動の対抗要件・登記）
 - [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — e-Gov法令検索—本邦外出身者に対する不当な差別的言動の解消に向けた取組の推進に関する法律（平成28年法律第68号）
 - [[bizlaw-health-insurance|健康保険法]] — e-Gov法令検索「健康保険法（大正十一年法律第七十号）」第1条（目的・対象・給付）
@@ -152,7 +152,6 @@ tags:
 - [[bizlaw-structure-liability|工作物責任（民法717条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第717条
 - [[bizlaw-subcontract-act|下請法（下請代金支払遅延等防止法）]] — e-Gov法令検索—下請代金支払遅延等防止法（法令ID331AC0000000120）
 - [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]] — e-Gov法令検索民法（明治29年法律第89号、第499条〜第501条）
-- [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号、lawid129AC0000000089）446条以下
 - [[bizlaw-tender-of-performance|弁済の提供（民法492条・493条）]] — e-Gov法令検索民法（明治29年法律第89号）492条・493条
 - [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第474条
 - [[bizlaw-tob|公開買付け（TOB）]] — e-Gov法令検索「金融商品取引法」（27条の2以下公開買付けに関する規定）

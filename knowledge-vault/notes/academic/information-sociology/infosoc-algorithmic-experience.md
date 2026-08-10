@@ -37,6 +37,7 @@ Taina Bucher／Motahhare Eslami／Emilee Rader／Tarleton Gillespie
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
 - [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同分野の近傍
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
+- [[infosoc-dark-patterns-ui-deceptive|ダーク・パターンと欺瞞的UXデザインの規制論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

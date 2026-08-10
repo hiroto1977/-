@@ -34,7 +34,7 @@ Steven N. Kaplan ／ Per Strömberg ／ Michael Ewens
 ## 関連概念
 - [[bizlaw-anti-dilution-venture|アンチダイリューション条項（ベンチャー投資）]] — 出典を共有
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 出典を共有
-- [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]] — 同分野の近傍
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

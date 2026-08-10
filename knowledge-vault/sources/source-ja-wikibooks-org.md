@@ -2,7 +2,7 @@
 title: "ja.wikibooks.org"
 type: source-domain
 host: "ja.wikibooks.org"
-cite_count: 38
+cite_count: 37
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikibooks.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **38 件**（リファレンス 34 ・ メディア 4）
+> [!info] 出典ドメイン索引 ・ 引用 **37 件**（リファレンス 33 ・ メディア 4）
 
 ## このドメインを出典とする項目
 
@@ -45,7 +45,6 @@ tags:
 - [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — Wikibooks「国家賠償法第1条」（条文・公務員個人責任・求償の解説）
 - [[bizlaw-structure-liability|工作物責任（民法717条）]] — Wikibooks民法第717条（条文・解説）
 - [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]] — Wikibooks民法第501条（弁済による代位の効果・代位割合）
-- [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]] — Wikibooks民法第446条（条文・コンメンタール）
 - [[bizlaw-tender-of-performance|弁済の提供（民法492条・493条）]] — Wikibooks民法第493条（弁済の提供の方法：現実の提供・口頭の提供）
 - [[bizlaw-unjust-enrichment|不当利得（民法703条・704条）]] — Wikibooks民法第703条（不当利得の返還義務）条文
 - [[legal-agency|民法の代理（代理権・無権代理・表見代理）]] — 民法113条（無権代理）条文

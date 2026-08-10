@@ -34,8 +34,8 @@ aliases:
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 出典を共有
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 出典を共有
 - [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 出典を共有
-- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

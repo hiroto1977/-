@@ -37,7 +37,7 @@ aliases:
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
 - [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
-- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — 同じ思想家
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
 - [[bizlaw-negotiorum-gestio|事務管理（民法697条）]] — 同じ思想家

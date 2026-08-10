@@ -39,6 +39,7 @@ aliases:
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
 - [[econ-inflation-targeting|インフレ・ターゲティング]] — 同分野の近傍
 - [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同分野の近傍
+- [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,8 +39,8 @@ Kimberlé Williams Crenshaw／Patricia Hill Collins／bell hooks／Leslie McCall
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
-- [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
 - [[human-spreading-activation|活性化拡散]] — 同分野の近傍
+- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

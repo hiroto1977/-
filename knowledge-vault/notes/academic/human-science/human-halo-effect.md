@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
 - [[human-anchoring|アンカリング効果（係留と調整）]] — 同分野の近傍
-- [[human-serial-position|系列位置効果（初頭効果・新近効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

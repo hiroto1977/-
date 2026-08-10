@@ -38,7 +38,6 @@ Bryan Pfaffenberger ／ Victor Turner ／ Wiebe Bijker
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
 - [[infosoc-phenomenological-technology|技術の現象学]] — 出典を共有
-- [[infosoc-post-truth-theory|ポスト真実論]] — 同分野の近傍
 - [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 同分野の近傍
 - [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 同分野の近傍
 

@@ -2,7 +2,7 @@
 title: "moj.go.jp"
 type: source-domain
 host: "moj.go.jp"
-cite_count: 84
+cite_count: 83
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # moj.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **84 件**（公的 84）
+> [!info] 出典ドメイン索引 ・ 引用 **83 件**（公的 83）
 
 ## このドメインを出典とする項目
 
@@ -32,7 +32,7 @@ tags:
 - [[bizlaw-e-signature|電子署名法]] — 法務省「電子署名法の概要と認定制度について」
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 法務省—民法（債権関係）の改正に関する説明資料（詐害行為取消権）
 - [[bizlaw-general-incorporated-associations|一般社団・財団法人法]] — 法務省「一般社団法人及び一般財団法人制度Q&A」
-- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 法務省「保証に関する民法のルールが大きく変わります」（2020年4月1日施行）
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — 法務省「保証に関する民法のルールが大きく変わります」（2020年4月1日施行）
 - [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — 法務省人権擁護局—ヘイトスピーチ、許さない。
 - [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]] — 出入国在留管理庁—新たな外国人材の受入れ（2018年改正の概要）
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 法務省—民事再生法・破産法の解説
@@ -53,7 +53,6 @@ tags:
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 法務省「雇用に関する危険負担（民法536条2項）について」
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 法務省会社法改正の概要（株主総会・取締役会）—法務省
 - [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]] — 法務省民法（債権関係）部会資料任意代位・法定代位（499条・500条関係）
-- [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]] — 法務省「2020年４月１日から保証に関する民法のルールが大きく変わります」
 - [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 法務省民法（債権関係）改正新法の内容（第三者の弁済・474条関係）
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 出入国在留管理庁特定技能制度
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 法務省住所等変更登記の義務化

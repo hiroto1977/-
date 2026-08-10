@@ -13,9 +13,9 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 78）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 47）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 46）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
@@ -23,7 +23,7 @@ tags:
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 36）
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 32）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）

@@ -37,7 +37,7 @@ aliases:
 - [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
 - [[infosoc-pseudo-event-boorstin|疑似イベント（ブーアスティン）——報道されるために作られる出来事]] — 同じ思想家
 - [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
-- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
+- [[infosoc-simulacra|シミュラークルとハイパーリアリティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

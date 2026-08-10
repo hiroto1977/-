@@ -36,7 +36,6 @@ Elisabeth Noelle-Neumann ／ Keith N. Hampton ／ Wenhong Chen
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
-- [[infosoc-spiral-of-silence-noelle-neumann|沈黙の螺旋——孤立の恐れが少数意見を沈黙させ多数意見を増幅する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

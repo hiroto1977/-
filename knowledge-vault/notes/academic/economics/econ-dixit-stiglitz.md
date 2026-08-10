@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: New trade theory (Dixit–Stiglitz–Krugman model)](https://en.wikipedia.org/wiki/New_trade_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-ces-production|CES生産関数]] — 語彙が近い
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同じ思想家
 - [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
+- [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

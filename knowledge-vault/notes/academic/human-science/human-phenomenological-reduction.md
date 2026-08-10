@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 語彙が近い
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
-- [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]] — 同分野の近傍
+- [[maslow-hierarchy|マズローの欲求階層説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

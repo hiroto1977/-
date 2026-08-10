@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 語彙が近い
 - [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]] — 同分野の近傍
-- [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
