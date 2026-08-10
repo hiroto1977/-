@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-compassion-fatigue-figley|共感疲労（フィグリー）]] — 語彙が近い
-- [[human-humanistic-psychology-rogers-person-centered|ロジャーズの人間中心アプローチ——無条件の積極的関心・共感・自己一致による人格成長]] — 同分野の近傍
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

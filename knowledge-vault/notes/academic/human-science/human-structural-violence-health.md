@@ -35,6 +35,7 @@ aliases:
 - [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]] — 同じ思想家
 - [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同じ思想家
 - [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
+- [[human-functional-fixedness-duncker|機能的固着——対象の既知用途への認知的固定が問題解決を阻害する現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

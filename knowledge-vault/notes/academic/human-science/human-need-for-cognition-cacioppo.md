@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Need for cognition — Cacioppo, Petty, NCS scale, elaboration likelihood model](https://en.wikipedia.org/wiki/Need_for_cognition) `リファレンス`
 
 ## 関連概念
-- [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 語彙が近い
+- [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同じ思想家
 - [[human-emotional-contagion|情動感染]] — 同じ思想家
 - [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家

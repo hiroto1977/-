@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
 - [[infosoc-infodemic|インフォデミック]] — 出典を共有
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
-- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同分野の近傍
 - [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
 

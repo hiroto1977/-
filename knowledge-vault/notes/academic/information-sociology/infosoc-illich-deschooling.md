@@ -34,6 +34,7 @@ aliases:
 - [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同じ思想家
 - [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 出典を共有
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 出典を共有
+- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 同分野の近傍
 - [[infosoc-orientalism-said|オリエンタリズム（エドワード・サイード）]] — 同分野の近傍
 
 ## 関連

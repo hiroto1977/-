@@ -38,7 +38,6 @@ aliases:
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[human-body-schema|身体図式（ボディスキーマ）]] — 同分野の近傍
-- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

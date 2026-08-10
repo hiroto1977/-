@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-heuristic-systematic-chaiken|ヒューリスティック＝システマティックモデル——説得情報処理の二過程理論]] — 語彙が近い
-- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 語彙が近い
+- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同じ思想家
 - [[human-emotional-contagion|情動感染]] — 同じ思想家
 - [[human-dual-process-theory-kahneman-stanovich|二重過程理論——システム1・システム2の認知的二元構造]] — 同分野の近傍
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 同分野の近傍

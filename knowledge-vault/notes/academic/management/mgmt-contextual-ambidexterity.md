@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — 同分野の近傍
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同分野の近傍
 - [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同分野の近傍
+- [[mgmt-strategic-alliances|戦略的提携・アライアンス：企業間協力による競争優位・知識学習・社会ネットワークの組織間関係論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

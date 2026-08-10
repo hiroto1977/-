@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Quantity theory of money — Fisher equation, velocity, monetarism, M targeting](https://en.wikipedia.org/wiki/Quantity_theory_of_money) `リファレンス`
 
 ## 関連概念
-- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 語彙が近い
 - [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 語彙が近い
+- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 語彙が近い
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
 - [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 同じ思想家

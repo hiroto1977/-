@@ -39,7 +39,7 @@ aliases:
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 - [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同分野の近傍
-- [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 同分野の近傍
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

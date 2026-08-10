@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 語彙が近い
-- [[tax-dependent-deduction|扶養控除]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-dependent-deduction|扶養控除]] — 語彙が近い
 - [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有

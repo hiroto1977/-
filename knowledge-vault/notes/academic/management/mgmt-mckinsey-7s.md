@@ -32,10 +32,10 @@ aliases:
 
 ## 関連概念
 - [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同じ思想家
+- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同分野の近傍
 - [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 同分野の近傍
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — 同分野の近傍
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同分野の近傍
-- [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

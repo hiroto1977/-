@@ -35,6 +35,7 @@ aliases:
 - [[human-rumination|反芻思考]] — 語彙が近い
 - [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 語彙が近い
 - [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
+- [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
 - [[human-cognitive-reserve-theory|認知的予備力理論]] — 同分野の近傍
 - [[human-compassion-focused-therapy-gilbert|コンパッション焦点化療法——ギルバートの三情動制御システムと自己批判への介入]] — 同分野の近傍
 

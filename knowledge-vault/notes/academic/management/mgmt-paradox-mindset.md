@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同分野の近傍
+- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同分野の近傍
 - [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同分野の近傍
 
 ## 関連

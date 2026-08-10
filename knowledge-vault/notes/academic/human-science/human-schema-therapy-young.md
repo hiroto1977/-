@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]] — 語彙が近い
 - [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 同分野の近傍
-- [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

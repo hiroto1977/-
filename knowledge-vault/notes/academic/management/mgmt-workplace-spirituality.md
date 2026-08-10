@@ -36,7 +36,7 @@ Ian I. Mitroff ／ Elizabeth A. Denton ／ Judi Neal
 - [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 出典を共有
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 出典を共有
 - [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
-- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
+- [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
