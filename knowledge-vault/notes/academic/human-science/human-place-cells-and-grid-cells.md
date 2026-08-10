@@ -31,7 +31,7 @@ John O'Keefe／May-Britt Moser／Edvard I. Moser／Jonathan Dostrovsky
 - [Nobel Prize 2014 — The brain's positioning system (O'Keefe, Moser & Moser)](https://www.nobelprize.org/prizes/medicine/2014/summary/) `リファレンス`
 
 ## 関連概念
-- [[human-place-cells-okeefe|場所細胞と認知地図]] — 同じ思想家
+- [[human-place-cells-okeefe|場所細胞と認知地図]] — 語彙が近い
 - [[human-place-cells|場所細胞（Place Cells）]] — 同じ思想家
 - [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 同分野の近傍
 

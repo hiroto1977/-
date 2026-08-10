@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-labor-union-act|労働組合法]] — 語彙が近い
 - [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — 同分野の近傍
 - [[bizlaw-e-signature|電子署名法]] — 同分野の近傍
+- [[bizlaw-labor-relations-adjustment|労働関係調整法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

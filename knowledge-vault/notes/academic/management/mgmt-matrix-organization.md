@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 同分野の近傍
 - [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — 同分野の近傍
+- [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

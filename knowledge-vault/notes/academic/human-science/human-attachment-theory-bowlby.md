@@ -35,6 +35,7 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 - [[human-attachment-theory-adult|成人愛着理論]] — 同分野の近傍
 - [[human-negativity-bias|ネガティビティ・バイアス]] — 同分野の近傍
 - [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 同分野の近傍
+- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

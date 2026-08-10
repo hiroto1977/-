@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: International labour law — ILO conventions](https://en.wikipedia.org/wiki/International_labour_law) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同分野の近傍
 - [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 同分野の近傍
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

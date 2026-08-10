@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]] — 語彙が近い
-- [[econ-search-matching|サーチ理論／マッチング理論]] — 語彙が近い
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 語彙が近い
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 語彙が近い
 - [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
 - [[econ-hosios-condition|ホシオス条件——サーチ市場が効率的になる分配のルール]] — 同じ思想家
 - [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家

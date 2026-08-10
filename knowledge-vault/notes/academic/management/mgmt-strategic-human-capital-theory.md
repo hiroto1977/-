@@ -35,6 +35,7 @@ Russell W. Coff ／ Robert E. Ployhart ／ Timothy R. Moliterno ／ Patrick M. W
 ## 関連概念
 - [[mgmt-strategic-human-capital|戦略的人的資本論]] — 同じ思想家
 - [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]] — 同分野の近傍
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

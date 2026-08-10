@@ -31,7 +31,7 @@ John O'Keefe ／ May-Britt Moser ／ Edvard I. Moser
 - [O'Keefe & Nadel (1978) The Hippocampus as a Cognitive Map — OUP](https://psycnet.apa.org/record/1978-06699-000) `学術`
 
 ## 関連概念
-- [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 同じ思想家
+- [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 語彙が近い
 - [[human-place-cells|場所細胞（Place Cells）]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 

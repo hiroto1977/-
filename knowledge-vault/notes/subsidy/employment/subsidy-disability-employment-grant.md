@@ -37,6 +37,7 @@ national
 - [厚生労働省 障害者雇用納付金制度について](https://www.mhlw.go.jp/content/11704000/001462468.pdf) `公的`
 
 ## 関連概念
+- [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 語彙が近い
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 分野横断
 - [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 出典を共有

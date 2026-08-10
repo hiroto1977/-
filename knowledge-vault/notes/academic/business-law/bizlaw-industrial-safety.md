@@ -31,7 +31,7 @@ aliases:
 - [厚生労働省「ストレスチェック制度・メンタルヘルス対策」](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/index.html) `公的`
 
 ## 関連概念
-- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 分野横断
 - [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
 - [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 同分野の近傍
 - [[bizlaw-food-labeling|食品表示法]] — 同分野の近傍

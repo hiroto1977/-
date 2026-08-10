@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-labor-collective-bargaining-law|集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較]] — 語彙が近い
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 語彙が近い
+- [[bizlaw-labor-relations-adjustment|労働関係調整法]] — 語彙が近い
 - [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
 - [[bizlaw-banking-act|銀行法]] — 出典を共有
 - [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-whistleblower-protection|公益通報者保護法]] — 出典を共有
 - [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
-- [[bizlaw-bankruptcy|破産法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

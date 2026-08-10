@@ -21,7 +21,7 @@ tags:
 - [[subsidy-trial-employment|トライアル雇用助成金]]（接続 19）
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]]（接続 15）
 - [[subsidy-employment-adjustment|雇用調整助成金]]（接続 12）
-- [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]]（接続 9）
+- [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]]（接続 10）
 - [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]]（接続 9）
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]]（接続 9）
 - [[subsidy-work-improvement|業務改善助成金]]（接続 7）
