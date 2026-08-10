@@ -8916,11 +8916,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'データ化（データ化現象）',
     statement:
       'データ化（datafication）は、ビクター・マイヤー＝ショーンベルガーとケネス・クキエが2013年の著書『ビッグデータの正体』で広めた概念で、位置情報（GPS）、人間関係（ソーシャルグラフ）、感情（テキスト分析）など、これまで定量化されてこなかった社会生活や人間行動の側面を、計算・分析可能な機械可読データへと変換する過程を指す。' +
-      'これはアナログ情報をデジタル形式に変換するデジタル化（digitization）とは区別され、現象を構造化・定量化して追跡・分析・予測を可能にする点に特徴がある。ビッグデータを支える基盤的営みであり、ホセ・ファン・ダイク（2014）は、データの客観性を無批判に信奉しデータ収集と解釈を新たなパラダイムとみなす態度を「データイズム（dataism）」と呼び、監視やデータ植民地主義との関連から批判的に論じた。',
-    keyFigures: 'ビクター・マイヤー＝ショーンベルガー／ケネス・クキエ（2013）／ホセ・ファン・ダイク（2014, dataism）',
+      'これはアナログ情報をデジタル形式に変換するデジタル化（digitization）とは区別され、現象を構造化・定量化して追跡・分析・予測を可能にする点に特徴がある。ビッグデータを支える基盤的営みであり、ホセ・ファン・ダイク（2014）は、データの客観性を無批判に信奉しデータ収集と解釈を新たなパラダイムとみなす態度を「データイズム（dataism）」と呼び、監視との関連から批判的に論じた。さらにニック・クドリーとウリセス・メヒアスは、生活のデータ化を通じた人間生活の収奪を植民地主義の継続と捉える「データ植民地主義（data colonialism）」論を提示し、データ化の政治経済学的批判を体系化した。',
+    keyFigures: 'ビクター・マイヤー＝ショーンベルガー／ケネス・クキエ（2013）／ホセ・ファン・ダイク（2014, dataism）／ニック・クドリー & ウリセス・メヒアス（2019, data colonialism）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/datafication', type: 'academic', label: 'José van Dijck (2014) "Datafication, dataism and dataveillance," Surveillance & Society 12(2)' },
+      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'José van Dijck (2014) "Datafication, dataism and dataveillance," Surveillance & Society 12(2)' },
+      { url: 'https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data', type: 'media', label: 'Mayer-Schönberger & Cukier (2013) The Rise of Big Data — Foreign Affairs' },
+      { url: 'https://www.sup.org/books/sociology/costs-connection', type: 'academic', label: 'Couldry & Mejias (2019) The Costs of Connection — Stanford University Press' },
+      { url: 'https://doi.org/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias (2019) Data Colonialism — Television & New Media 20(4)' },
       { url: 'https://policyreview.info/concepts/datafication', type: 'reference', label: 'Internet Policy Review — concept entry "Datafication"' },
       { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia — Datafication' },
     ],
@@ -11139,7 +11142,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'つながりの行為論理（コネクティブ・アクション）',
     statement:
       'W・ランス・ベネットとアレクサンドラ・セガーバーグが2012年の論文（Information, Communication & Society誌）および2013年の著書（ケンブリッジ大学出版）で提唱した概念。従来の集合行為論（マンサー・オルソン）が、フォーマルな組織・集合的アイデンティティ・資源動員・ただ乗り問題の克服を前提とするのに対し、デジタル/ソーシャルメディアが可能にする「つながりの行為論理」を対置する。' +
-      'これは、個人化された大規模な技術媒介型の異議申し立てネットワークであり、参加は個別化された「パーソナル・アクション・フレーム」を軸に組織される。個人化されたコンテンツをネットワークで共有する行為そのものが組織化として機能し、コミュニケーション技術（組織が支える／群衆が支えるネットワーク）がフォーマルな組織や集合的アイデンティティを代替しうる。オキュパイ運動、インディグナドス、アラブの春が例とされる。',
+      'これは、個人化された大規模な技術媒介型の異議申し立てネットワークであり、参加は個別化された「パーソナル・アクション・フレーム」を軸に組織される。個人化されたコンテンツをネットワークで共有する行為そのものが組織化として機能し、コミュニケーション技術（組織が支える／群衆が支えるネットワーク）がフォーマルな組織や集合的アイデンティティを代替しうる。オキュパイ運動、インディグナドス、アラブの春が例とされ、群衆が支えるネットワークでは「組織なき組織化（organizing without organizations）」が成立する。ハッシュタグ・アクティビズムやデジタルプラットフォームの政治的役割を分析する基本枠組みとして定着している（原論文は Information, Communication & Society 15(5), 739-768）。',
     keyFigures: 'W・ランス・ベネット／アレクサンドラ・セガーバーグ（2012/2013）',
     asOf: '2026-06',
     sources: [
@@ -11213,11 +11216,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'データヴェイランス（データ監視）',
     statement:
       'データヴェイランスとは、ロジャー・クラークが1988年の論文「Information Technology and Dataveillance」（Communications of the ACM, 31巻5号, 498–512頁）で確立した概念で、「data（データ）」と「surveillance（監視）」を合成した造語である。個人データや情報システム（記録）を体系的に用いて、一人または複数の人々の行動や通信を調査・監視することを指し、従来の物理的・視覚的な監視と対比される。' +
-      'クラークは、特定された個人を対象とする「個人データヴェイランス」と、集団や母集団を対象とする「マス（集団）データヴェイランス」とを区別した。データを介した監視は物理的監視よりはるかに安価かつ大規模に実施でき、日常的で網羅的な監視を可能にする。クラークはこれがプライバシーにもたらす危険を警告し、適切な保護措置と政策枠組みの必要性を訴えた。',
-    keyFigures: 'ロジャー・クラーク（Roger Clarke, 1988）',
+      'クラークは、特定された個人を対象とする「個人データヴェイランス」と、集団や母集団を対象とする「マス（集団）データヴェイランス」とを区別した。データを介した監視は物理的監視よりはるかに安価かつ大規模に実施でき、日常的で網羅的な監視を可能にする。クラークはこれがプライバシーにもたらす危険を警告し、適切な保護措置と政策枠組みの必要性を訴えた。デイヴィッド・ライアン（2001）はこれを監視社会論へ発展させ、データによって人々を社会的・経済的カテゴリへ振り分ける「ソーシャル・ソーティング（社会的選別）」が現代の権力構造と不平等を再生産すると論じた。',
+    keyFigures: 'ロジャー・クラーク（Roger Clarke, 1988）／デイヴィッド・ライアン（David Lyon, 2001 — social sorting）',
     asOf: '2026-06',
     sources: [
       { url: 'https://dl.acm.org/doi/10.1145/42411.42413', type: 'academic', label: 'Roger A. Clarke, "Information Technology and Dataveillance," Communications of the ACM 31(5):498–512 (1988)' },
+      { url: 'https://archive.org/details/surveillancesoci0000lyon', type: 'academic', label: 'Lyon (2001) Surveillance Society: Monitoring Everyday Life — Open University Press' },
       { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590', type: 'reference', label: 'Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）' },
     ],
   },
@@ -13198,6 +13202,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロジャー・シルバーストーン／エリック・ハーシュ／デヴィッド・モーレイ（Silverstone, Hirsch & Morley, 1992）',
     asOf: '2026-06',
     sources: [
+      { url: 'https://www.semanticscholar.org/paper/Information-and-communication-technologies-and-the-Silverstone-Hirsch/dc906d12c5abe3c06d55b5b5e9c1b2f03854e620', type: 'academic', label: 'Silverstone, Hirsch & Morley (1992) ICTs and the Moral Economy of the Household' },
+      { url: 'https://link.springer.com/chapter/10.1057/9780230508538_2', type: 'academic', label: 'Silverstone & Haddon (1996) Design and the Domestication of ICTs — Springer' },
       { url: 'https://eprints.lse.ac.uk/62128/1/Domestication_analysis_.pdf', type: 'academic', label: 'Berker et al., "Domestication Analysis, Objects of Study, and the Centrality of Technologies in Everyday Life" (LSE Research Online / Canadian Journal of Communication)' },
       { url: 'https://communication.iresearchnet.com/technology-and-communication/domestication-of-technology/', type: 'reference', label: 'Domestication of Technology — iResearchNet (Communication research reference)' },
       { url: 'https://en.wikipedia.org/wiki/Domestication_theory', type: 'reference', label: 'Domestication theory — Wikipedia' },
@@ -19454,21 +19460,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-logic-of-connective-action',
-    discipline: 'information-sociology',
-    title: 'コネクティブ・アクションの論理（Logic of Connective Action）',
-    statement:
-      'コネクティブ・アクションの論理（Logic of Connective Action）とは、デジタル・ネットワーク環境において公式組織や集合的アイデンティティの形成を必要とせず、個人化されたコンテンツ共有を通じて大規模な政治的動員が成立するメカニズムを説明する理論である。W・ランス・ベネット（W. Lance Bennett）とアレクサンドラ・セゲルベリ（Alexandra Segerberg）が2012年にInformation, Communication & Society（Vol.15, No.5, pp.739-768）で提唱した。' +
-      'マンサー・オルソンの集合行為論（collective action）がフリーライダー問題・組織的統制・共有アイデンティティの構築を前提とするのに対し、コネクティブ・アクションは流動的ソーシャル・ネットワークを媒介に個人化可能なアクション・フレームが自己組織的に伝播するモデルを提示した。アラブの春、オキュパイ・ウォールストリート、インディグナドスなどの運動を分析事例とした。',
-    keyFigures: 'W・ランス・ベネット＆アレクサンドラ・セゲルベリ（2012 Information, Communication & Society 15(5):739-768）／2013年ケンブリッジ大学出版局書籍版',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett & Segerberg (2012) The Logic of Connective Action — IC&S 15(5)' },
-      { url: 'https://www.cambridge.org/core/books/logic-of-connective-action/6B54DBBEAD1625C2778F8D80A17D58E1', type: 'academic', label: 'Bennett & Segerberg (2013) The Logic of Connective Action — Cambridge UP' },
-      { url: 'https://www.researchgate.net/publication/287393379_The_logic_of_connective_action_Digital_media_and_the_personalization_of_contentious_politics', type: 'academic', label: 'Bennett & Segerberg (2012) — ResearchGate' },
-    ],
-  },
-  {
     id: 'econ-laffont-tirole',
     discipline: 'economics',
     title: 'ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）',
@@ -20872,20 +20863,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://unctad.org/system/files/official-document/iteiit200410v2_en.pdf', type: 'government', label: 'UNCTAD (2004) International Investment Agreements: Key Issues, Vol. II' },
       { url: 'https://www.italaw.com/cases/813', type: 'academic', label: 'Pantechniki v. Albania ICSID Case No. ARB/07/21 — italaw' },
       { url: 'https://jusmundi.com/en/document/publication/en-fork-in-the-road', type: 'reference', label: 'Fork-in-the-Road — Jus Mundi' },
-    ],
-  },
-  {
-    id: 'infosoc-domestication-theory',
-    discipline: 'information-sociology',
-    title: '家庭化理論（Domestication Theory）',
-    statement:
-      '世帯が新技術を日常生活に取り込む過程を、領有（appropriation）・対象化（objectification）・編入（incorporation）・転換（conversion）の四段階で把握する理論的枠組み。シルバーストーン、ハーシュ＆モーリー（1992）が技術決定論的な普及モデルへの代替として提唱し、利用者の主体性と家庭的文脈を強調した。',
-    keyFigures: 'ロジャー・シルバーストーン、エリック・ハーシュ＆デイヴィッド・モーリー（1992 Consuming Technologies）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.semanticscholar.org/paper/Information-and-communication-technologies-and-the-Silverstone-Hirsch/dc906d12c5abe3c06d55b5b5e9c1b2f03854e620', type: 'academic', label: 'Silverstone, Hirsch & Morley (1992) ICTs and the Moral Economy of the Household — Semantic Scholar' },
-      { url: 'https://link.springer.com/chapter/10.1057/9780230508538_2', type: 'academic', label: 'Silverstone & Haddon (1996) Design and the Domestication of ICTs — Springer' },
-      { url: 'https://en.wikipedia.org/wiki/Domestication_theory', type: 'reference', label: 'Domestication Theory — Wikipedia' },
     ],
   },
   {
@@ -22358,21 +22335,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://global.oup.com/academic/product/remedies-for-breach-of-contract-9780198258193', type: 'academic', label: 'Treitel (1988) Remedies for Breach of Contract: A Comparative Account — Clarendon Press, Oxford' },
       { url: 'https://www.jstor.org/stable/1116042', type: 'academic', label: 'Farnsworth (1970) Legal Remedies for Breach of Contract — Columbia Law Review' },
       { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'reference', label: 'e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）' },
-    ],
-  },
-  {
-    id: 'infosoc-dataveillance-theory',
-    discipline: 'information-sociology',
-    title: 'データ監視理論',
-    statement:
-      'データ監視理論（データベイランス）は、Clarke（1988）が提唱した概念であり、個人データシステムを通じた個人または集団の行動・通信の組織的な調査・監視として定義される。Clarkeは個人データ監視（特定個人への適用）と大衆データ監視（集団への適用）を区別し、物理的監視ではなくトランザクション上の「デジタル的影」を追跡する点を強調した。' +
-      'Lyon（2001）はこれを情報社会論として発展させ、データによる人々の社会的・経済的カテゴリへの「ソーシャルソーティング（社会的選別）」が、現代の権力構造と不平等を再生産すると論じた。',
-    keyFigures: 'Roger Clarke ／ David Lyon',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://dl.acm.org/doi/10.1145/42411.42413', type: 'academic', label: 'Clarke (1988) Information Technology and Dataveillance — Communications of the ACM' },
-      { url: 'https://archive.org/details/surveillancesoci0000lyon', type: 'academic', label: 'Lyon (2001) Surveillance Society: Monitoring Everyday Life — Open University Press' },
-      { url: 'https://classic.austlii.edu.au/au/journals/JlLawInfoSci/2017/6.html', type: 'reference', label: 'Clarke & Greenleaf (2017) Dataveillance Regulation: A Research Framework — Journal of Law, Information and Science' },
     ],
   },
   {
@@ -24381,20 +24343,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-connective-action-theory',
-    discipline: 'information-sociology',
-    title: '接続的行為理論',
-    statement: 'Bennett & Segerbergは集合的行為（Olson）と対比し、デジタルメディアによる個人化されたコンテンツ共有が、強固な組織や集合的アイデンティティなしに大規模な政治的動員を可能にする「接続的行為」の論理を提唱した。',
-    keyFigures: 'W. Lance Bennett ／ Alexandra Segerberg',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett & Segerberg (2012) Information, Communication & Society' },
-      { url: 'https://doi.org/10.1017/CBO9781139198608', type: 'academic', label: 'Bennett & Segerberg (2013) The Logic of Connective Action' },
-      { url: 'https://doi.org/10.1111/j.1460-2466.2005.tb02685.x', type: 'academic', label: 'Bimber, Flanagin & Stohl (2005) collective action space' },
-      { url: 'https://doi.org/10.1080/1369118X.2013.808364', type: 'academic', label: 'Bennett & Segerberg (2013) response & extension' },
-    ],
-  },
-  {
     id: 'human-biopsychosocial-model-chronic-pain',
     discipline: 'human-science',
     title: '慢性疼痛の生物心理社会モデル',
@@ -24599,20 +24547,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://academic.oup.com/icc/article-abstract/19/5/1397/780846', type: 'academic', label: 'Negro, Hannan & Rao (2010) Categorical Contrast and Audience Appeal — Industrial and Corporate Change 19(5)' },
       { url: 'https://journals.sagepub.com/doi/10.1177/0001839212446689', type: 'academic', label: 'Pontikes (2012) Two Sides of the Same Coin: How Ambiguous Classification Affects Multiple Audiences\' Evaluations — Administrative Science Quarterly 57(1)' },
       { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/smj.3290', type: 'academic', label: 'Goldfarb & Yan (2021) Revisiting Zuckerman\'s (1999) Categorical Imperative: An Application of Epistemic Maps for Replication — Strategic Management Journal 42(11)' },
-    ],
-  },
-  {
-    id: 'infosoc-datafication-theory',
-    discipline: 'information-sociology',
-    title: 'データフィケーション理論',
-    statement: 'Mayer-Schönberger & Cukierが提唱したデータフィケーションとは、社会的行為を定量データへ変換し追跡・予測可能にする過程を指す。van Dijckはデータイズムへの展開を、Couldry & Mejiasはデータ植民地主義として批判的に分析した。',
-    keyFigures: 'Viktor Mayer-Schönberger ／ Kenneth Cukier ／ Jose van Dijck ／ Nick Couldry ／ Ulises Mejias',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data', type: 'media', label: 'Mayer-Schönberger & Cukier (2013) The Rise of Big Data — Foreign Affairs' },
-      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck (2014) Datafication, dataism and dataveillance — Surveillance & Society 12(2)' },
-      { url: 'https://www.sup.org/books/sociology/costs-connection', type: 'academic', label: 'Couldry & Mejias (2019) The Costs of Connection — Stanford University Press' },
-      { url: 'https://doi.org/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias (2019) Data Colonialism: Rethinking Big Data\'s Relation to the Contemporary Subject — Television & New Media 20(4), 336–349' },
     ],
   },
   {
@@ -24851,8 +24785,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'カール・E・ワイク（1976年 ASQ論文で疎結合システム概念を組織論に導入）／ロバート・B・グラスマン（1973年 Behavioral Science誌で生体システムの疎結合と持続性を分析）／J・ダグラス・オートン（1990年 AMR論文で弁証法的再概念化を主導）／チャールズ・ペロー（1984年 『ノーマル・アクシデント』で結合度と事故リスクの関係を分析）',
     asOf: '2026-07',
     sources: [
-      { url: 'https://doi.org/10.2307/3149527', type: 'academic', label: 'Weick (1976) Educational Organizations as Loosely Coupled Systems — ASQ' },
       { url: 'https://www.jstor.org/stable/2778281', type: 'academic', label: 'Orton & Weick (1990) Loosely Coupled Systems: A Reconceptualization — AMR' },
+      { url: 'https://doi.org/10.1002/bs.3830180202', type: 'academic', label: 'Glassman (1973) Persistence and Loose Coupling in Living Systems — Behavioral Science 18(2)' },
       { url: 'https://en.wikipedia.org/wiki/Loose_coupling', type: 'reference', label: 'Wikipedia: Loose coupling — organizational theory overview' },
       { url: 'https://doi.org/10.1016/S0956-5221(98)00044-3', type: 'academic', label: 'Weick (1998) Introductory essay — improvisation as a mindset' },
       { url: 'https://www.jstor.org/stable/2391875', type: 'academic', label: 'Weick, K.E. (1976). Educational Organizations as Loosely Coupled Systems. Administrative Science Quarterly, 21(1), 1-19.' },
@@ -27367,19 +27301,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/724810', type: 'academic', label: 'Coase 1960 The Problem of Social Cost, Journal of Law and Economics' },
       { url: 'https://www.pnas.org/doi/10.1073/pnas.1609244114', type: 'academic', label: 'Nordhaus 2017 Revisiting the Social Cost of Carbon, PNAS' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2018/nordhaus/facts/', type: 'reference', label: 'Nobel Prize 2018 — William Nordhaus' },
-    ],
-  },
-  {
-    id: 'mgmt-loose-coupling',
-    discipline: 'management',
-    title: 'ルース・カップリング（緩やかな結合）の組織理論',
-    statement: 'カール・ワイク（1976年）は教育組織を題材に、組織内のサブシステムが相互に応答性を保ちながらも各自の独自性と分離性を維持する「ルース・カップリング」概念を提唱した。ロバート・グラスマン（1973年）は構成要素間の結合の緩やかさがシステムの持続性と環境変化への適応力を高めることを論じ、ジェームズ・マーチはゴミ箱モデル（1972年）を通じて組織的意思決定の非合理的側面を明らかにした。オートン＆ワイク（1990年）はこの概念を再構築し、独自性と応答性の弁証法的関係として再定義した。',
-    keyFigures: 'カール・ワイク ／ ロバート・グラスマン ／ ジェームズ・マーチ',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://doi.org/10.2307/2391875', type: 'academic', label: 'Weick, K. E. 1976 Educational Organizations as Loosely Coupled Systems, Administrative Science Quarterly 21(1)' },
-      { url: 'https://doi.org/10.1002/bs.3830180202', type: 'academic', label: 'Glassman, R. B. 1973 Persistence and Loose Coupling in Living Systems, Behavioral Science 18(2)' },
-      { url: 'https://doi.org/10.2307/258154', type: 'academic', label: 'Orton, J. D. & Weick, K. E. 1990 Loosely Coupled Systems: A Reconceptualization, Academy of Management Review 15(2)' },
     ],
   },
   {
@@ -39810,19 +39731,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-connective-action-bennett',
-    discipline: 'information-sociology',
-    title: '接続的行動論——デジタルネットワーク時代の個人化された政治参加',
-    statement: '接続的行動（Connective Action）論は、ベネットとセガバーグが2012年に提唱した理論であり、デジタルネットワーク時代において従来の集合行動（collective action）とは異なる新たな政治参加の論理が出現していることを分析する。伝統的な集合行動論（オルソン）では、共有されたアイデンティティやフレーミング、組織的資源の動員が集団的行動の前提条件とされた。これに対し接続的行動では、個人化された政治的表現（パーソナルアクションフレーム）がソーシャルメディアを通じて共有・拡散されることで、正式な組織的調整なしに大規模な政治行動が組織される。ベネットらはアラブの春、オキュパイ運動、環境運動等の事例分析を通じて、デジタルネットワークが組織的動員に代わる「組織化の論理」として機能するメカニズムを実証した。この理論はソーシャルメディア時代の政治的動員、ハッシュタグアクティビズム、そしてデジタルプラットフォームの政治的役割の理解に重要な分析枠組みを提供している。',
-    keyFigures: 'W・ランス・ベネット ／ アレクサンドラ・セガバーグ ／ マンカー・オルソン ／ シドニー・タロウ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett & Segerberg (2012) The Logic of Connective Action: Digital Media and the Personalization of Contentious Politics — Information, Communication & Society' },
-      { url: 'https://doi.org/10.1017/CBO9781139198752', type: 'academic', label: 'Bennett & Segerberg (2013) The Logic of Connective Action: Digital Media and the Personalization of Contentious Politics — Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Connective_action', type: 'reference', label: 'Wikipedia: Connective action — 接続的行動と集合行動の理論的区別の概説' },
-    ],
-  },
-  {
     id: 'econ-hysteresis-blanchard',
     discipline: 'economics',
     title: '履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響',
@@ -41085,19 +40993,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/eli/dir/2018/843/oj', type: 'government', label: 'Directive (EU) 2018/843 (5th AMLD) — EUR-Lex 公式テキスト' },
       { url: 'https://doi.org/10.1093/law/9780198867036.001.0001', type: 'academic', label: 'Gilmore, W. C. (2011) Dirty Money — Council of Europe Publishing' },
       { url: 'https://en.wikipedia.org/wiki/Anti-Money_Laundering_Directive', type: 'reference', label: 'Wikipedia: Anti-Money Laundering Directives — EU AML法制の発展' },
-    ],
-  },
-  {
-    id: 'infosoc-connective-action-bennett-segerberg',
-    discipline: 'information-sociology',
-    title: '結合的行動の論理——デジタル時代の集合行為の再理論化',
-    statement: 'ランス・ベネットとアレクサンドラ・セゲルベリが2012年に提示した「結合的行動の論理」（logic of connective action）は、オルソンの集合行為論が前提とする組織的動員・フリーライダー問題・選択的誘因の枠組みが、デジタルネットワーク環境下の社会運動を十分に説明できないとし、個人化されたコンテンツの共有を通じた自己組織的な行為連関を理論化した。結合的行動では、参加者は公式組織のフレーミングを受容するのではなく、個人的な行為フレーム（personally expressive action frames）をSNS上で共有・カスタマイズすることで運動に参加し、デジタル・メディアが従来の運動組織の組織的機能を代替する。ベネットらはアラブの春・ウォール街占拠・Indignados運動を事例に、組織媒介型ネットワーク（organizationally brokered networks）と群衆媒介型ネットワーク（crowd-enabled networks）の二類型を識別し、後者では組織なき組織化（organizing without organizations）が可能になることを示した。',
-    keyFigures: 'ランス・ベネット ／ アレクサンドラ・セゲルベリ ／ マンクル・オルソン ／ クレイ・シャーキー ／ ゼイネップ・トゥフェクチー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett, W. L. & Segerberg, A. (2012) "The Logic of Connective Action" — Information, Communication & Society' },
-      { url: 'https://doi.org/10.1017/CBO9781139198752', type: 'academic', label: 'Bennett, W. L. & Segerberg, A. (2013) The Logic of Connective Action — Cambridge Univ Press' },
-      { url: 'https://en.wikipedia.org/wiki/Connective_action', type: 'reference', label: 'Wikipedia: Connective action — デジタル時代の集合行為理論' },
     ],
   },
   {

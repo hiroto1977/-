@@ -2,7 +2,7 @@
 title: "ojs.library.queensu.ca"
 type: source-domain
 host: "ojs.library.queensu.ca"
-cite_count: 4
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # ojs.library.queensu.ca
 
-> [!info] 出典ドメイン索引 ・ 引用 **4 件**（学術 4）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 3）
 
 ## このドメインを出典とする項目
 
-- [[infosoc-datafication|データ化（データ化現象）]] — JosévanDijck(2014)"Datafication,dataismanddataveillance,"Surveillance…
 - [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — Andrejevic,M.(2005).TheWorkofWatchingOneAnother:LateralSurveillance,R…
 - [[infosoc-panopticon|パノプティコンと規律権力]] — Surveillance&Society(Queen'sUniversity)—Surveillance,Panopticism,andS…
 - [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — Mann,Nolan&Wellman,"Sousveillance,"Surveillance&Society1(3):331–355(2…

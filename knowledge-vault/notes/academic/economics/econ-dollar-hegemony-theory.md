@@ -35,7 +35,7 @@ Barry Eichengreen ／ Robert Triffin ／ Michael Hudson
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
 - [[eh-1950|1950年（昭和25年）]] — 出典を共有
 - [[eh-1951|1951年（昭和26年）]] — 出典を共有
-- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 同分野の近傍
 - [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
 

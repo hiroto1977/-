@@ -466,5 +466,74 @@
         "コモン・ローの取引制限法理と日本の独禁法2条6項の不当な取引制限で対象法体系が異なる"
       ]
     ]
+  },
+  "pass16": {
+    "appliedAt": "2026-08-10",
+    "note": "EQUAL 衝突の第4弾 9 統合。**connective action は翻字ゆれ（セガーバーグ/セガバーグ/セゲルベリ）で dedupeId 検出を逃れた 5 重複**で、名前スキャン導入以来最大のクラスタ。datafication では OJS の記事 URL が数値 id でなくスラッグ（article/view/datafication）という不自然なパスだったため、-theory 側の DOI（10.24908/ss.v12i2.4776 — OJS 数値 id と整合）へ差し替え。loose-coupling では **keeper 内部に同一論文（Weick 1976）の矛盾する 2 つの JSTOR id**（3149527 / 2391875）が併存しており、plain 側も 2391875 を持つ 2 独立の一致を根拠に 3149527 を除去した。",
+    "merges": [
+      {
+        "keep": "infosoc-connective-action",
+        "drop": "infosoc-connective-action-theory",
+        "reason": "同一理論（Bennett & Segerberg 2012/2013）。",
+        "migrate": "組織なき組織化・ハッシュタグアクティビズム・正確な誌巻号を本文へ。共有 DOI は keep が同 URL を保有。Bimber 2005 等の未確定 DOI は移送しない。",
+        "provenanceDelta": "本文 +約110字。減少なし。"
+      },
+      {
+        "keep": "infosoc-connective-action",
+        "drop": "infosoc-connective-action-bennett",
+        "reason": "同一理論。",
+        "migrate": "上記に合算。",
+        "provenanceDelta": "—"
+      },
+      {
+        "keep": "infosoc-connective-action",
+        "drop": "infosoc-connective-action-bennett-segerberg",
+        "reason": "同一理論（翻字ゆれ）。",
+        "migrate": "上記に合算。",
+        "provenanceDelta": "—"
+      },
+      {
+        "keep": "infosoc-connective-action",
+        "drop": "infosoc-logic-of-connective-action",
+        "reason": "同一理論（書籍題名を id 化しただけ）。",
+        "migrate": "上記に合算。",
+        "provenanceDelta": "—"
+      },
+      {
+        "keep": "infosoc-datafication",
+        "drop": "infosoc-datafication-theory",
+        "reason": "同一概念（M-S&C 2013・van Dijck dataism）。",
+        "migrate": "Couldry & Mejias のデータ植民地主義論を本文と keyFigures へ、FA 記事・SUP 書籍・TVNM 論文 DOI を出典へ。van Dijck の queensu スラッグ URL を DOI 版へ差し替え。",
+        "provenanceDelta": "keep src 2→5(+置換1) / 本文 +約120字。減少なし。"
+      },
+      {
+        "keep": "infosoc-dataveillance",
+        "drop": "infosoc-dataveillance-theory",
+        "reason": "同一概念（Clarke 1988 個人/マス区別）。",
+        "migrate": "Lyon のソーシャル・ソーティング論を本文と keyFigures へ、Lyon 2001 の archive.org 書誌を出典へ。austlii の参照は掲載論文を特定できず移送しない。",
+        "provenanceDelta": "keep src 2→3 / 本文 +約100字。減少なし。"
+      },
+      {
+        "keep": "infosoc-domestication",
+        "drop": "infosoc-domestication-theory",
+        "reason": "同一理論（Silverstone/Hirsch/Morley 1992・4局面）。",
+        "migrate": "創始文献 2 件（1992 章の Semantic Scholar・S&H 1996 Springer 章）を出典へ。",
+        "provenanceDelta": "keep src 3→5。減少なし。"
+      },
+      {
+        "keep": "mgmt-loose-coupling-weick",
+        "drop": "mgmt-loose-coupling",
+        "reason": "同一概念。keep は逆機能・5つの声・デカップリング/ノーマルアクシデントへの影響まで持つ最充実版。",
+        "migrate": "Glassman 1973 の DOI を出典へ。March のゴミ箱モデルへの言及は別概念（mgmt-garbage-can 系）のため移送しない。同時に keep 内の Weick 1976 に付いていた誤実体 DOI 10.2307/3149527 を、2 独立の一致（keep 自身と drop の双方が 2391875 を保有）を根拠に除去。",
+        "provenanceDelta": "keep src 6→6（誤1除去+検証1追加）。減少なし。"
+      }
+    ],
+    "distinct": [
+      [
+        "bizlaw-administrative-law",
+        "mgmt-administrative-theory-fayol",
+        "行政法（公法）とファヨール管理過程論（経営学）— administrative の同語異義"
+      ]
+    ]
   }
 }

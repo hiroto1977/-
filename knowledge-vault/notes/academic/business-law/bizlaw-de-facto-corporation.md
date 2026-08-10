@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: De facto corporation and corporation by estoppel — defective incorporation, limited liability](https://en.wikipedia.org/wiki/De_facto_corporation_and_corporation_by_estoppel) `リファレンス`
 
 ## 関連概念
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
 - [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家

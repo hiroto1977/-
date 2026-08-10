@@ -52,7 +52,7 @@ tags:
 - [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—SemanticScholar
 - [[infosoc-data-doubles|データ・ダブル]] — Haggerty&Ericson(2000)—SemanticScholar
 - [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]] — McChesney(2013)DigitalDisconnect—SemanticScholar
-- [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]] — Silverstone,Hirsch&Morley(1992)ICTsandtheMoralEconomyoftheHousehold—S…
+- [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — Silverstone,Hirsch&Morley(1992)ICTsandtheMoralEconomyoftheHousehold
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—SemanticScholar
 - [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — SemanticScholar収録の書誌（Andrejevic[2005],Surveillance&Society2(4):479-49…
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — SemanticScholar:Castells,CommunicationPower(2009)

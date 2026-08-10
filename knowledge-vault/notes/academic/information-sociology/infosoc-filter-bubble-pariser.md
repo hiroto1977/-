@@ -39,8 +39,8 @@ Eli Pariser ／ Cass R. Sunstein ／ C. Thi Nguyen
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 
 ## 関連

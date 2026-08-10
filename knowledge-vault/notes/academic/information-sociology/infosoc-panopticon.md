@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 出典を共有
 - [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 同分野の近傍
 - [[infosoc-postdigital-culture-cramer|ポストデジタル文化（クレーマー）]] — 同分野の近傍

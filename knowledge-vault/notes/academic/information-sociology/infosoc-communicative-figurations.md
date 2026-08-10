@@ -31,7 +31,7 @@ aliases:
 - [Hepp (2020) Deep Mediatization — Routledge](https://www.routledge.com/Deep-Mediatization/Hepp/p/book/9781138024991) `学術`
 
 ## 関連概念
-- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 語彙が近い
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同じ思想家
 - [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同じ思想家

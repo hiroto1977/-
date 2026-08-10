@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
 - [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
-- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

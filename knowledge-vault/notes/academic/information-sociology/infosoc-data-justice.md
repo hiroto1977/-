@@ -33,12 +33,11 @@ aliases:
 ## 関連概念
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
-- [[infosoc-datafication-theory|データフィケーション理論]] — 同分野の近傍
 - [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同分野の近傍
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同分野の近傍
 - [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 
 ## 関連

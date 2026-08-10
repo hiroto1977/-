@@ -37,6 +37,7 @@ aliases:
 - [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同じ思想家
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 同分野の近傍
+- [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
 - [[human-phonological-loop|音韻ループ（Phonological Loop）]] — 同分野の近傍
 
 ## 関連

@@ -5,7 +5,7 @@ category: "information-sociology"
 category_ja: "情報社会学"
 title: "データヴェイランス（データ監視）"
 as_of: "2026-06"
-source_count: 2
+source_count: 3
 authoritative: true
 tags:
   - collection/academic
@@ -17,29 +17,30 @@ aliases:
 
 # データヴェイランス（データ監視）
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-データヴェイランスとは、ロジャー・クラークが1988年の論文「Information Technology and Dataveillance」（Communications of the ACM, 31巻5号, 498–512頁）で確立した概念で、「data（データ）」と「surveillance（監視）」を合成した造語である。個人データや情報システム（記録）を体系的に用いて、一人または複数の人々の行動や通信を調査・監視することを指し、従来の物理的・視覚的な監視と対比される。クラークは、特定された個人を対象とする「個人データヴェイランス」と、集団や母集団を対象とする「マス（集団）データヴェイランス」とを区別した。データを介した監視は物理的監視よりはるかに安価かつ大規模に実施でき、日常的で網羅的な監視を可能にする。クラークはこれがプライバシーにもたらす危険を警告し、適切な保護措置と政策枠組みの必要性を訴えた。
+データヴェイランスとは、ロジャー・クラークが1988年の論文「Information Technology and Dataveillance」（Communications of the ACM, 31巻5号, 498–512頁）で確立した概念で、「data（データ）」と「surveillance（監視）」を合成した造語である。個人データや情報システム（記録）を体系的に用いて、一人または複数の人々の行動や通信を調査・監視することを指し、従来の物理的・視覚的な監視と対比される。クラークは、特定された個人を対象とする「個人データヴェイランス」と、集団や母集団を対象とする「マス（集団）データヴェイランス」とを区別した。データを介した監視は物理的監視よりはるかに安価かつ大規模に実施でき、日常的で網羅的な監視を可能にする。クラークはこれがプライバシーにもたらす危険を警告し、適切な保護措置と政策枠組みの必要性を訴えた。デイヴィッド・ライアン（2001）はこれを監視社会論へ発展させ、データによって人々を社会的・経済的カテゴリへ振り分ける「ソーシャル・ソーティング（社会的選別）」が現代の権力構造と不平等を再生産すると論じた。
 
 ## 提唱者・初出
-ロジャー・クラーク（Roger Clarke, 1988）
+ロジャー・クラーク（Roger Clarke, 1988）／デイヴィッド・ライアン（David Lyon, 2001 — social sorting）
 
 ## 出典
 - [Roger A. Clarke, "Information Technology and Dataveillance," Communications of the ACM 31(5):498–512 (1988)](https://dl.acm.org/doi/10.1145/42411.42413) `学術`
+- [Lyon (2001) Surveillance Society: Monitoring Everyday Life — Open University Press](https://archive.org/details/surveillancesoci0000lyon) `学術`
 - [Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590) `リファレンス`
 
 ## 関連概念
+- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 - [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
-- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
-- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
-- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
+- [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+- [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
+- [[infosoc-surveillance-society|監視社会]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,9 +31,8 @@ Nils Brunsson ／ John W. Meyer ／ Brian Rowan ／ Kerstin Sahlin-Andersson ／
 - [Brunsson — Organized Hypocrisy, in The Consequences of Decision-Making — Oxford University Press](https://doi.org/10.1093/oso/9780199206285.003.0007) `学術`
 
 ## 関連概念
+- [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 語彙が近い
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同分野の近傍
-- [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 同分野の近傍
 - [[mgmt-swot-analysis|SWOT分析]] — 同分野の近傍
 
 ## 関連

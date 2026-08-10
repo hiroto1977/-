@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 49
+cite_count: 48
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **49 件**（学術 49）
+> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 48）
 
 ## このドメインを出典とする項目
 
@@ -43,7 +43,6 @@ tags:
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — JournalismStudies—Doomscrolling,MonitoringandAvoiding(COVID-19)
 - [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — Kwok(2025)EpistemicDispossessioninPlatformCapitalism—SocialEpistemolo…
 - [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — W.H.Dutton,"TheFifthEstateEmergingthroughtheNetworkofNetworks,"Promet…
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — Bennett&Segerberg(2012)TheLogicofConnectiveAction—IC&S15(5)
 - [[infosoc-narrative-paradigm|ナラティブ・パラダイム]] — WalterR.Fisher,“NarrationasaHumanCommunicationParadigm,”Communication…
 - [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — Harcup&O'Neill,"WhatisNews?Newsvaluesrevisited(again)",JournalismStud…
 - [[infosoc-online-firestorm|炎上（オンライン・ファイヤーストーム）]] — Pfeffer,Zorbach&Carley(2014)"Understandingonlinefirestorms,"Journalof…

@@ -488,6 +488,10 @@
     [
       "bizlaw-restraint-of-trade",
       "bizlaw-unreasonable-restraint-of-trade"
+    ],
+    [
+      "bizlaw-administrative-law",
+      "mgmt-administrative-theory-fayol"
     ]
   ]
 }

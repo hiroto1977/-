@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Civic technology — Code for America, open data, e-participation, digital exclusion](https://en.wikipedia.org/wiki/Civic_technology) `リファレンス`
 
 ## 関連概念
-- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
 - [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家

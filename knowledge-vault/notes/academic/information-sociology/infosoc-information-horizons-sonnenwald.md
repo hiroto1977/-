@@ -35,7 +35,7 @@ aliases:
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同じ思想家
 - [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
-- [[infosoc-connective-action-theory|接続的行為理論]] — 同分野の近傍
+- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
 - [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同分野の近傍
 
 ## 関連

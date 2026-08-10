@@ -33,7 +33,7 @@ Craig Brod ／ Monideepa Tarafdar ／ T. S. Ragu-Nathan ／ Bhanu S. Ragu-Nathan
 - [Technostress — Wikipedia (概念の概観と文献案内)](https://en.wikipedia.org/wiki/Technostress) `リファレンス`
 
 ## 関連概念
-- [[infosoc-dataveillance-theory|データ監視理論]] — 出典を共有
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有

@@ -18,7 +18,7 @@ tags:
 - [[econ-dollar-hegemony-theory|ドル覇権理論]] — Eichengreen—ExorbitantPrivilegeanddollarhegemonyoverview
 - [[eh-1950|1950年（昭和25年）]] — ForeignAffairs—再軍備が自由世界経済に与えた影響（再軍備ブーム）
 - [[eh-1951|1951年（昭和26年）]] — ForeignAffairs—TheImpactofRearmamentontheFreeWorldEconomy
-- [[infosoc-datafication-theory|データフィケーション理論]] — Mayer-Schönberger&Cukier(2013)TheRiseofBigData—ForeignAffairs
+- [[infosoc-datafication|データ化（データ化現象）]] — Mayer-Schönberger&Cukier(2013)TheRiseofBigData—ForeignAffairs
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

@@ -35,9 +35,9 @@ aliases:
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 - [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同じ思想家
 - [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 同じ思想家
-- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
+- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同じ思想家
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家

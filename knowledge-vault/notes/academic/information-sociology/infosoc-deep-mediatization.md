@@ -31,7 +31,7 @@ aliases:
 - [Necessary Entanglements: Materialist Phenomenology in Researching Deep Mediatization — Sociologica (UniBo)](https://sociologica.unibo.it/article/view/15793) `学術`
 
 ## 関連概念
-- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 語彙が近い
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同じ思想家
 - [[infosoc-data-colonialism|データ植民地主義]] — 同じ思想家
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同じ思想家
@@ -40,7 +40,7 @@ aliases:
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
-- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同分野の近傍
+- [[infosoc-data-justice|データ正義（Data Justice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

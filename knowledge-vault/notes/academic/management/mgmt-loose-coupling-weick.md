@@ -26,8 +26,8 @@ aliases:
 カール・E・ワイク（1976年 ASQ論文で疎結合システム概念を組織論に導入）／ロバート・B・グラスマン（1973年 Behavioral Science誌で生体システムの疎結合と持続性を分析）／J・ダグラス・オートン（1990年 AMR論文で弁証法的再概念化を主導）／チャールズ・ペロー（1984年 『ノーマル・アクシデント』で結合度と事故リスクの関係を分析）
 
 ## 出典
-- [Weick (1976) Educational Organizations as Loosely Coupled Systems — ASQ](https://doi.org/10.2307/3149527) `学術`
 - [Orton & Weick (1990) Loosely Coupled Systems: A Reconceptualization — AMR](https://www.jstor.org/stable/2778281) `学術`
+- [Glassman (1973) Persistence and Loose Coupling in Living Systems — Behavioral Science 18(2)](https://doi.org/10.1002/bs.3830180202) `学術`
 - [Wikipedia: Loose coupling — organizational theory overview](https://en.wikipedia.org/wiki/Loose_coupling) `リファレンス`
 - [Weick (1998) Introductory essay — improvisation as a mindset](https://doi.org/10.1016/S0956-5221(98)00044-3) `学術`
 - [Weick, K.E. (1976). Educational Organizations as Loosely Coupled Systems. Administrative Science Quarterly, 21(1), 1-19.](https://www.jstor.org/stable/2391875) `学術`

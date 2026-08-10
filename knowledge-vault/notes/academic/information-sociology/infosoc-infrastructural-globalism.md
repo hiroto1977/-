@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
 - [[infosoc-media-events|メディア・イベント]] — 出典を共有
 - [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
+- [[infosoc-onlife|オンライフ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

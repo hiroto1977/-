@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 同じ思想家
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同じ思想家
 - [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 同じ思想家
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

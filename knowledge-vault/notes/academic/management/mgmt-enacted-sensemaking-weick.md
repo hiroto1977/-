@@ -38,9 +38,9 @@ aliases:
 - [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — 同じ思想家
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同じ思想家
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

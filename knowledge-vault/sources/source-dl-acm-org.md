@@ -2,7 +2,7 @@
 title: "dl.acm.org"
 type: source-domain
 host: "dl.acm.org"
-cite_count: 13
+cite_count: 12
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # dl.acm.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 12 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **12 件**（学術 11 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[econ-productivity-paradox|生産性パラドックス]] — Brynjolfsson,E.(1993).TheProductivityParadoxofInformationTechnology.C…
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — RogerA.Clarke,"InformationTechnologyandDataveillance,"Communicationso…
-- [[infosoc-dataveillance-theory|データ監視理論]] — Clarke(1988)InformationTechnologyandDataveillance—Communicationsofthe…
 - [[infosoc-information-ecology-theory|情報生態学理論]] — Davenport&Prusak"InformationEcology"—ACMGuidetoComputingLiterature
 - [[infosoc-information-worlds-theory|情報世界理論]] — ACMDigitalLibrarybookrecord
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — Weiser,M.(1991)TheComputerforthe21stCentury—ScientificAmerican

@@ -36,11 +36,11 @@ Robert M. Solow ／ Erik Brynjolfsson ／ Daniel E. Sichel ／ Stephen D. Oliner
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 出典を共有
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 出典を共有
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 出典を共有
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

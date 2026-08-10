@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 58
+cite_count: 57
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **58 件**（学術 56 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **57 件**（学術 55 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -60,7 +60,6 @@ tags:
 - [[infosoc-epistemic-communities|エピステミック・コミュニティと専門知の流通構造]] — Haas,P.M.(1992)Introduction:EpistemicCommunitiesandInternationalPolic…
 - [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — CambridgeCore/InternationalLegalMaterials「Regulation2024/1689ofJune13…
 - [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — CambridgeUniversityPress—McLuhan'sGlobalVillageToday(GlobalImmediacy)
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — Bennett&Segerberg(2013)TheLogicofConnectiveAction—CambridgeUP
 - [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — vanderLinden,S.etal.(2017)InoculatingthePublicAgainstMisinformation—P…
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — Sherif,C.W.,Sherif,M.&Nebergall,R.E.(1965)AttitudeandAttitudeChange:T…
 - [[infosoc-speech-act-theory|言語行為論]] — Searle,J.R.(1969)SpeechActs:AnEssayinthePhilosophyofLanguage,Cambridg…

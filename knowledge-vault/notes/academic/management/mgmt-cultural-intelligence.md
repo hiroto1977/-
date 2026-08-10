@@ -34,8 +34,8 @@ P. Christopher Earley ／ Soon Ang ／ Linn Van Dyne ／ Cultural Intelligence S
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
 - [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
-- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 

@@ -33,10 +33,7 @@ W・ランス・ベネット ／ ダニエル・ハリン ／ エドワード・
 - [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]] — 同じ思想家
 - [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同じ思想家
 - [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
 - [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
-- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — 同じ思想家
-- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
 - [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
 

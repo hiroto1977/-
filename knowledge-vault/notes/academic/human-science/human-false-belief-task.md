@@ -34,7 +34,6 @@ aliases:
 - [[human-theory-of-mind|心の理論]] — 語彙が近い
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 語彙が近い
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同分野の近傍
-- [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

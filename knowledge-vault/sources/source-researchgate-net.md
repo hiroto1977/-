@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 53
+cite_count: 52
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **53 件**（学術 46 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 45 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -35,7 +35,6 @@ tags:
 - [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — Rogers/Bass/Mooreの普及理論比較
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — Wardle&Derakhshan(2017)InformationDisorder—CouncilofEurope/ResearchGa…
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—ResearchGate
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — Bennett&Segerberg(2012)—ResearchGate
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate
 - [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate

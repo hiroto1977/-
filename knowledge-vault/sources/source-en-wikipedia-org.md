@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2270
+cite_count: 2267
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2270 件**（リファレンス 2270）
+> [!info] 出典ドメイン索引 ・ 引用 **2267 件**（リファレンス 2267）
 
 ## このドメインを出典とする項目
 
@@ -1550,8 +1550,6 @@ tags:
 - [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — Wikipedia:Computationalpropaganda—Woolley&Howard,socialbots,astroturf…
 - [[infosoc-computational-social-science|計算社会科学]] — Wikipedia「Computationalsocialscience」（定義・手法・ビッグデータの位置づけ）
 - [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — Wikipedia:Connectedlearning—コネクテッド・ラーニングの概念と実践
-- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — Wikipedia:Connectiveaction—接続的行動と集合行動の理論的区別の概説
-- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — Wikipedia:Connectiveaction—デジタル時代の集合行為理論
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — Wikipedia:Contextcollapse（概念・最低共通分母・ゴッフマンの聴衆分離との関係）
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — Wikipedia:ContextCollapse—audienceflatteningonsocialmediaplatforms
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — Wikipedia:Contextualintegrity—HelenNissenbaum'stheory;actors(sender/r…
@@ -1630,7 +1628,6 @@ tags:
 - [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — Wikipedia:Disneyization—theming,hybridconsumption,performativelabor,M…
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — Domesticationtheory—Wikipedia
 - [[infosoc-domestication-technology-silverstone|技術の家庭化——家庭が新技術を日常生活に馴致し意味づける過程]] — Wikipedia:Domesticationoftechnology—Silverstone/Hirsch/Morley,appropr…
-- [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]] — DomesticationTheory—Wikipedia
 - [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — Wikipedia:ThePresentationofSelfinEverydayLife(1956/1959,front/backsta…
 - [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — Wikipedia:E-government—Estonia,digitalpublicservices,participation,su…
 - [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — Wikipedia:E-government—電子政府の国際動向と理論

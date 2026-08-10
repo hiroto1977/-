@@ -41,6 +41,7 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 同じ思想家
 - [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

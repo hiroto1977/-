@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 623
+entry_count: 616
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（623件）
+# 学習パス — 学術概念／情報社会学（616件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 67）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 66）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 43）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 23）
+- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 23）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 23）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
-- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 22）
-- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
+- [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 20）
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -144,7 +144,6 @@ tags:
 - 1990年: [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]]
 - 1991年: [[infosoc-technical-code|技術的コード——技術設計に埋め込まれ中立を装う支配的社会利害]]
 - 1992年: [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]]
-- 1992年: [[infosoc-domestication-theory|家庭化理論（Domestication Theory）]]
 - 1992年: [[infosoc-epistemic-communities|エピステミック・コミュニティと専門知の流通構造]]
 - 1992年: [[infosoc-information-cascade|情報カスケード]]
 - 1992年: [[infosoc-media-events|メディア・イベント]]
@@ -234,11 +233,9 @@ tags:
 - 2012年: [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]]
 - 2012年: [[infosoc-digital-detox|デジタルデトックス]]
 - 2012年: [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]]
-- 2012年: [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]]
 - 2012年: [[infosoc-polymedia|ポリメディア（Polymedia）]]
 - 2012年: [[infosoc-social-bots|ソーシャルボット]]
 - 2013年: [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]]
-- 2013年: [[infosoc-datafication|データ化（データ化現象）]]
 - 2013年: [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]]
 - 2013年: [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]]
 - 2013年: [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]]
@@ -336,9 +333,6 @@ tags:
 - [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]]
 - [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]]
 - [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]]
-- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]]
-- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]]
-- [[infosoc-connective-action-theory|接続的行為理論]]
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]]
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]]
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]]
@@ -369,10 +363,8 @@ tags:
 - [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]]
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]]
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]]
-- [[infosoc-datafication-theory|データフィケーション理論]]
 - [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]]
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]]
-- [[infosoc-dataveillance-theory|データ監視理論]]
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]]
 - [[infosoc-deepfake-synthetic-media-ethics|ディープフェイクと合成メディア倫理——生成AI時代の真正性の危機と規制の展望]]
 - [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]]
@@ -535,6 +527,7 @@ tags:
 - [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]]
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]]
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]]
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]]
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]]
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]]

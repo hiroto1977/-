@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — 同分野の近傍
 - [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 同分野の近傍
 - [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同分野の近傍
+- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

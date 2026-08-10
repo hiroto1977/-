@@ -31,12 +31,12 @@ aliases:
 - [Loftus, E.F. (2005) Planting Misinformation in the Human Mind — Learning & Memory 12(4)](https://doi.org/10.1037/0278-7393.31.4.555) `学術`
 
 ## 関連概念
+- [[human-false-memory|虚記憶（フォールス・メモリ）]] — 語彙が近い
 - [[human-weapon-focus-effect|凶器注目効果——武器の存在が目撃者の顔識別を低下させる注意バイアス]] — 同じ思想家
 - [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — 同じ思想家
 - [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 同じ思想家
 - [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同じ思想家
 - [[human-spreading-activation|活性化拡散]] — 同じ思想家
-- [[human-false-memory|虚記憶（フォールス・メモリ）]] — 同じ思想家
 - [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同じ思想家
 - [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同じ思想家
 - [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同じ思想家
