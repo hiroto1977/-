@@ -35,11 +35,11 @@ aliases:
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
 - [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
 - [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
 - [[bizlaw-equitable-estoppel|衡平法上の禁反言]] — 出典を共有
 - [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 出典を共有
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 出典を共有
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

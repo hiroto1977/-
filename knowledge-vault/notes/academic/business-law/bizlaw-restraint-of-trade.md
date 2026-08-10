@@ -5,7 +5,7 @@ category: "business-law"
 category_ja: "ビジネス法務"
 title: "取引制限の法理——営業の自由を制約する条項の合理性審査"
 as_of: "2026-06-26"
-source_count: 2
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
@@ -17,16 +17,19 @@ aliases:
 
 # 取引制限の法理——営業の自由を制約する条項の合理性審査
 
-> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06-26 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
 取引制限の法理（restraint of trade）は、英米法のコモン・ロー上の準則で、人が自らの職業や事業を営む自由を制約する契約条項——競業避止条項、独占的取引条項、事業譲渡に伴う制限的誓約など——は、公序（public policy）に反するものとして原則的に無効（prima facie void）であるが、それが「合理的（reasonable）」である場合には有効として執行されるとする。この法理の根底には、個人の経済活動の自由と競争の維持という公共の利益がある。エドワード・コークがダイヤー事件以来発展させ、合理性の基準を確立した指導的判例が1894年のノルデンフェルト対マキシム・ノルデンフェルト事件である。マクナハテン卿はこの事件で、取引制限の合理性を二つの観点から審査する枠組みを示した。第一に、当事者間において合理的であること。すなわち、制限が保護に値する正当な利益（営業秘密、顧客関係、のれんなど）を守るためのものであり、その範囲・地域・期間において、その利益の保護に必要な限度を超えていないこと。過度に広範な制限は、たとえ当事者が合意していても執行されない。第二に、公共の利益において合理的であること。すなわち、その制限が社会全体の競争や公衆の利益を不当に害さないことである。たとえば、事業を売却した者が一定の合理的な範囲・期間で競業しない誓約は、買主が取得したのれんの価値を保護するために必要かつ合理的なものとして有効とされやすい。この法理は、契約自由と競争維持・職業選択の自由との緊張を、合理性の比例的な審査によって調整する役割を担い、現代の雇用契約における競業避止義務の有効性判断の基礎をなしている。
 
 ## 提唱者・初出
-マクナハテン卿 ／ エドワード・コーク ／ アトキンソン卿 ／ J・D・ヘイドン
+マクナハテン卿 ／ エドワード・コーク ／ アトキンソン卿 ／ パーカー卿 ／ J・D・ヘイドン
 
 ## 出典
 - [Cornell LII Wex: Restraint of trade — non-compete, reasonableness, legitimate interest, public policy](https://www.law.cornell.edu/wex/restraint_of_trade) `リファレンス`
+- [Esso Petroleum v Harper's Garage [1967] UKHL 1 — BAILII](https://www.bailii.org/uk/cases/UKHL/1967/1.html) `公的`
+- [Tillman v Egon Zehnder Ltd [2019] UKSC 32 — BAILII（競業避止条項の分離可能性）](https://www.bailii.org/uk/cases/UKSC/2019/32.html) `公的`
+- [Wikipedia — Nordenfelt v Maxim Nordenfelt [1894] AC 535](https://en.wikipedia.org/wiki/Nordenfelt_v_Maxim_Nordenfelt_Guns_and_Ammunition_Co_Ltd) `リファレンス`
 - [Wikipedia: Restraint of trade — Nordenfelt, reasonableness between parties and public interest](https://en.wikipedia.org/wiki/Restraint_of_trade) `リファレンス`
 
 ## 関連概念
@@ -34,7 +37,12 @@ aliases:
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
 - [[bizlaw-covenant-running-with-land|土地に伴う約款——後続の所有者を拘束する土地に関する約束]] — 同じ思想家
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
-- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — 同分野の近傍
+- [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
+- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有
+- [[bizlaw-rule-in-claytons-case|クレイトン事件の準則（Rule in Clayton's Case／Devaynes v Noble）——混合口座の追及で引き出しを入金順に充当する先入先出の推定]] — 出典を共有
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

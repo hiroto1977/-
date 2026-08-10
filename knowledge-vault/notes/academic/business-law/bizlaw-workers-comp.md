@@ -34,6 +34,7 @@ aliases:
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 分野横断
 - [[bizlaw-employment-insurance|雇用保険法]] — 同分野の近傍
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同分野の近傍
+- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,11 +37,11 @@ Dan B. Dobbs ／ Howard W. Brill ／ Samuel Williston
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
-- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

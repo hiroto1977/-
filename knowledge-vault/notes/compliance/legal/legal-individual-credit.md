@@ -31,6 +31,7 @@ aliases:
 - [消費者庁 特商法・割賦販売法改正（個別クレジット規制）](https://www.no-trouble.caa.go.jp/pdf/20120401ra07.pdf) `公的`
 
 ## 関連概念
+- [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]] — 語彙が近い
 - [[bizlaw-installment-sales-act|割賦販売法]] — 分野横断
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
-- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -35,7 +35,6 @@ Justice Samuel Freeman Miller（Cromwell v. County of Sac, 94 U.S. 351 (1876)）
 - [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同じ思想家
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
 - [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 同じ思想家
 - [[human-relational-cultural-theory|関係文化理論（RCT）]] — 同じ思想家
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍

@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2273
+cite_count: 2270
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2273 件**（リファレンス 2273）
+> [!info] 出典ドメイン索引 ・ 引用 **2270 件**（リファレンス 2270）
 
 ## このドメインを出典とする項目
 
@@ -166,7 +166,6 @@ tags:
 - [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]] — Wikipedia:Franchise—disclosureregulationcomparativelaw
 - [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]] — Wikipedia:Franchising—フランチャイズの法的枠組みと各国規制の概説
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — Wikipedia:Frustrationofpurpose—Krellv.Henry,coronationcases,impossibi…
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — Wikipedia:Frustrationofpurpose—契約目的の挫折法理の歴史と適用範囲の概説
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — FullProtectionandSecurity—Wikipedia
 - [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — Wikipedia:Fundamentalbreach—PhotoProductionvSecuricor,constructionnot…
 - [[bizlaw-general-average|共同海損——共通の危険を逃れるための犠牲を全関係者で分担する海法]] — Wikipedia:Generalaverage—LexRhodia,jettison,commonperil,proportionals…
@@ -282,9 +281,8 @@ tags:
 - [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — Wikipedia,“ByrnevBoadle”（1863・小麦粉樽の落下・resipsaloquitur確立・PollockC.B.・事…
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — Wikipedia:Rescission(contractlaw)—restitutioinintegrum,grounds,barsto…
 - [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — Wikipedia:RespondeatSuperior—scopeofemploymentandvicariousliability
+- [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — Wikipedia—NordenfeltvMaximNordenfelt[1894]AC535
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — Wikipedia:Restraintoftrade—Nordenfelt,reasonablenessbetweenpartiesand…
-- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — Wikipedia—NordenfeltvMaximNordenfeltGunsandAmmunitionCoLtd[1894]AC535
-- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — Wikipedia—Restraintoftrade(法理概説)
 - [[bizlaw-reves-family-resemblance|リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み]] — Wikipedia:Revesv.Ernst&Young,494U.S.56(1990)—familyresemblancetest,fo…
 - [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — DukeofNorfolk'sCase(1682)—Wikipedia
 - [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — Ruleagainstperpetuities—Wikipedia
@@ -328,7 +326,6 @@ tags:
 - [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — Wikipedia:Contribution—jointtortfeasordamageallocationdoctrine
 - [[bizlaw-tortious-interference|契約関係への不法干渉（Tortious Interference with Contract）]] — LumleyvGye[1853]—Wikipedia（契約干渉の不法行為法理の起源判決）
 - [[bizlaw-tortious-interference|契約関係への不法干渉（Tortious Interference with Contract）]] — Tortiousinterference—Wikipedia（LumleyvGye・Restatement§766・要件と抗弁の包括的解説）
-- [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]] — Wikipedia:Tortiousinterference—契約関係への不法干渉の法理の概説
 - [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — Wikipedia:Englishtrustslaw—tracing,proprietaryclaims,constructivetrus…
 - [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — Wikipedia:Tracing(law)—equitabletracing,mixedfunds,FoskettvMcKeown,fo…
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — Wikipedia:EUTradeSecretsDirective—指令の背景と主要規定

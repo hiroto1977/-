@@ -35,12 +35,12 @@ aliases:
 - [[bizlaw-product-liability-strict-tort|製造物責任と無過失責任——PL法・EU製造物責任指令とグローバルサプライチェーンの法的リスク]] — 語彙が近い
 - [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 語彙が近い
 - [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 語彙が近い
-- [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 語彙が近い
 - [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 同じ思想家
+- [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
-- [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]] — 同じ思想家
-- [[bizlaw-product-safety-regulations-liability|製品安全規制と不法行為責任——PL法・消費者保護法制と欧州製品安全指令]] — 同分野の近傍
+- [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,10 +36,10 @@ Guenter Treitel ／ E. Allan Farnsworth
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
 - [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 同じ思想家
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同分野の近傍
+- [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同分野の近傍
 - [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍
 
 ## 関連

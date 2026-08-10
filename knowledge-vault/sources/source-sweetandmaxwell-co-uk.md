@@ -15,7 +15,7 @@ tags:
 ## このドメインを出典とする項目
 
 - [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — Treitel,TheLawofContract(15thed.,Sweet&Maxwell2023),Ch.19Frustration
-- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — Treitel,TheLawofContract(15thed.,Sweet&Maxwell2023),Ch.19Frustration
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — Treitel,TheLawofContract(Sweet&Maxwell),Ch.19Frustration
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

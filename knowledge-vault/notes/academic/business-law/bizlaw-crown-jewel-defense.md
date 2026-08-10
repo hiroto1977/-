@@ -38,9 +38,9 @@ Mills Acquisition Co. v. MacMillan, Inc., 559 A.2d 1261（1989年　デラウェ
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
 - [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — 出典を共有
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 出典を共有
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

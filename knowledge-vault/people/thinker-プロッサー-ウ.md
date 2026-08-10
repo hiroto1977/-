@@ -2,7 +2,7 @@
 title: "ウィリアム・プロッサー"
 type: thinker
 person_key: "プロッサー|ウ"
-concept_count: 14
+concept_count: 13
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ウィリアム・プロッサー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **14 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **13 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（14件）
+## 学術概念（13件）
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 動産侵奪（conversion、コンバージョン）は、英米不法行為法において、動産（personalproperty/c…
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 統一商事法典（UCC）第2-314条は、商人たる売主による物品売買契約に商品性の黙示保証が自動的に付随すると規定する。
 - [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 過失（negligence）は、英米不法行為法の中核をなす類型で、合理的で慎重な人（reasonableperson）…
@@ -25,7 +25,6 @@ tags:
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 製造物厳格責任（strictproductliability）は、欠陥のある製品によって生じた損害について、被害者が製…
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 不法行為法は、違法行為によって他者に損害を与えた場合の民事責任を規律する法体系である。
 - [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — 共同不法行為者間の求償（contributionamongtortfeasors）は、複数の不法行為者が共同して損害を…
-- [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]] — 契約関係への不法な干渉（TortiousInterferencewithContractualRelations）とは…
 - [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 土地不法侵入（trespasstoland）は、英米不法行為法において、他者が占有する土地への権原なき直接的な侵入を保…
 
 ## 関連

@@ -35,7 +35,6 @@ Ewan McKendrick ／ Gerhard Treitel ／ Arthur Linton Corbin ／ Hein Kötz ／ 
 ## 関連概念
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 語彙が近い
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 同じ思想家
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
@@ -43,6 +42,7 @@ Ewan McKendrick ／ Gerhard Treitel ／ Arthur Linton Corbin ／ Hein Kötz ／ 
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
 - [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 出典を共有
 - [[bizlaw-equitable-estoppel|衡平法上の禁反言]] — 出典を共有
+- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

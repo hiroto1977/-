@@ -18072,6 +18072,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Tortious_interference', type: 'reference', label: 'Tortious interference — Wikipedia（Lumley v Gye・Restatement §766・要件と抗弁の包括的解説）' },
       { url: 'https://en.wikipedia.org/wiki/Lumley_v_Gye', type: 'reference', label: 'Lumley v Gye [1853] — Wikipedia（契約干渉の不法行為法理の起源判決）' },
+      { url: 'https://www.bailii.org/ew/cases/EWHC/QB/1853/J73.html', type: 'government', label: 'Lumley v Gye [1853] EWHC QB J73 — BAILII judgment text' },
+      { url: 'https://www.law.cornell.edu/wex/tortious_interference', type: 'reference', label: 'Cornell LII Wex — Tortious Interference' },
+      { url: 'https://www.ali.org/publications/show/restatement-law-torts-second/', type: 'academic', label: 'Restatement (Second) of Torts §§766-766B (ALI 1979)' },
     ],
   },
   {
@@ -24302,21 +24305,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-tortious-interference-doctrine',
-    discipline: 'business-law',
-    title: '不法干渉法理',
-    statement: 'Lumley v Gye（1853）を起源とするコモンロー上の不法行為法理。Prosser・Dobbsらが体系化し、既存契約関係への故意の干渉（Restatement §766）と将来的取引機会への干渉（§766B）を区別。有効な関係・被告の認識・故意の妨害・損害の4要件を満たすと成立し、競争上の正当化は抗弁となる。',
-    keyFigures: 'William Lloyd Prosser ／ Dan B. Dobbs ／ Fleming James Jr. ／ Ward Farnsworth',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/1120458', type: 'academic', label: 'Prosser, Intentional Interference with Contractual Relations (1953)' },
-      { url: 'https://doi.org/10.2307/1340407', type: 'academic', label: 'Harper & James, Law of Torts §6.11 (1956)' },
-      { url: 'https://doi.org/10.2307/796703', type: 'academic', label: 'Perlman, Interference with Contract and Other Economic Expectancies (1982)' },
-      { url: 'https://www.ali.org/publications/show/restatement-law-torts-second/', type: 'academic', label: 'Restatement (Second) of Torts §§766-766B (ALI 1979)' },
-      { url: 'https://doi.org/10.2307/1229320', type: 'academic', label: 'Dobbs, Tortious Interference with Contractual Relationships (1980)' },
-    ],
-  },
-  {
     id: 'mgmt-strategic-renewal-theory',
     discipline: 'management',
     title: '戦略的再生理論',
@@ -24668,20 +24656,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.levyinstitute.org/pubs/wp74.pdf', type: 'academic', label: 'Minsky, "The Financial Instability Hypothesis," Levy Economics Institute WP 74, 1992' },
       { url: 'https://www.bis.org/publ/work176.pdf', type: 'government', label: 'BIS Working Paper No. 176 — Debt-deflation: concepts and a stylised model' },
       { url: 'https://en.wikipedia.org/wiki/Debt_deflation', type: 'reference', label: 'Wikipedia — Debt deflation' },
-    ],
-  },
-  {
-    id: 'bizlaw-frustration-of-purpose-doctrine',
-    discipline: 'business-law',
-    title: '契約目的の挫折法理',
-    statement: 'Krell v. Henry（1903）で確立。履行は可能でも契約の主要目的が予見不能な事由により実現不能となった場合、当事者は義務を免れる。Treitelが体系化し、不能・履行困難とは区別される英米契約法の独自法理。',
-    keyFigures: 'Vaughan Williams ／ Guenter H. Treitel ／ Patrick S. Atiyah',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html', type: 'academic', label: 'Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text' },
-      { url: 'https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677', type: 'reference', label: 'Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration' },
-      { url: 'https://www.bloomsbury.com/uk/casebook-on-contract-9781509945498/', type: 'academic', label: 'Burrows, A Casebook on Contract (5th ed., Hart 2021) — Frustration and Force Majeure' },
-      { url: 'https://www.ali.org/publications/show/contracts/', type: 'reference', label: 'Restatement (Second) of Contracts, Section 265 — Discharge by Supervening Frustration (ALI 1981)' },
     ],
   },
   {
@@ -25470,20 +25444,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Mark-to-market_accounting', type: 'reference', label: 'Wikipedia — Mark-to-market accounting' },
       { url: 'https://www.fasb.org/page/PageContent?pageId=%2Freference-library%2Fsuperseded-standards%2Fsummary-of-statement-no-157.html&bcpath=tff', type: 'reference', label: 'FASB — Summary of Statement No. 157 (SFAS 157 / ASC 820)' },
       { url: 'https://www.tandfonline.com/doi/abs/10.1080/09638180.2010.498619', type: 'academic', label: 'Barth & Landsman (2010) How Did Financial Reporting Contribute to the Financial Crisis? — European Accounting Review' },
-    ],
-  },
-  {
-    id: 'bizlaw-restraint-of-trade-doctrine',
-    discipline: 'business-law',
-    title: '取引制限法理（レストレイント・オブ・トレード）',
-    statement: '取引の自由を制限する契約条項は原則として無効であるが、当事者間および公益の双方について合理的な範囲・期間に限り有効とされる（Nordenfelt v Maxim Nordenfelt [1894] AC 535）。',
-    keyFigures: 'Lord Macnaghten ／ Lord Parker of Waddington',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Nordenfelt_v_Maxim_Nordenfelt_Guns_and_Ammunition_Co_Ltd', type: 'reference', label: 'Wikipedia — Nordenfelt v Maxim Nordenfelt Guns and Ammunition Co Ltd [1894] AC 535' },
-      { url: 'https://www.bailii.org/uk/cases/UKHL/1967/1.html', type: 'reference', label: 'BAILII — Esso Petroleum Co Ltd v Harper\'s Garage [1967] UKHL 1' },
-      { url: 'https://www.bailii.org/uk/cases/UKSC/2019/32.html', type: 'reference', label: 'BAILII — Tillman v Egon Zehnder Ltd [2019] UKSC 32' },
-      { url: 'https://en.wikipedia.org/wiki/Restraint_of_trade', type: 'reference', label: 'Wikipedia — Restraint of trade (法理概説)' },
     ],
   },
   {
@@ -26492,18 +26452,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.hup.harvard.edu/books/9780674518582', type: 'reference', label: 'Heifetz, R.A. (1994). Leadership Without Easy Answers. Harvard University Press. ISBN: 978-0-674-51858-2' },
       { url: 'https://www.hks.harvard.edu/publications/leadership-line-staying-alive-through-dangers-change', type: 'reference', label: 'Heifetz, R.A., & Linsky, M. (2002). Leadership on the Line: Staying Alive through the Dangers of Leading. Harvard Business School Press.' },
       { url: 'https://www.hks.harvard.edu/publications/practice-adaptive-leadership-tools-and-tactics-changing-your-organization-and-world', type: 'reference', label: 'Heifetz, R.A., Grashow, A., & Linsky, M. (2009). The Practice of Adaptive Leadership: Tools and Tactics for Changing Your Organization and the World. Harvard Business Press.' },
-    ],
-  },
-  {
-    id: 'bizlaw-tortious-interference-restatement',
-    discipline: 'business-law',
-    title: '不法行為責任（営業妨害と契約干渉）',
-    statement: '不法行為（Tortious Interference）とは、第三者が他者の契約関係や経済的取引関係に故意に干渉し損害を与える行為を指す。Restatement (Second) of Torts §766は契約干渉を、§766Bは将来の経済的関係への干渉を規定する。James FlemingおよびWilliam P. Keetonによる体系化を経て、Pennzoil v. Texaco（1987年）でその法理が確立された。',
-    keyFigures: 'James Fleming ／ William P. Keeton ／ Restatement (Second) of Torts',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/tortious_interference', type: 'reference', label: 'Cornell Law School Legal Information Institute, "Tortious Interference", Wex Legal Dictionary' },
-      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/481/1988/367413/', type: 'government', label: 'Pennzoil Co. v. Texaco Inc., 481 U.S. 1 (1987), U.S. Supreme Court — landmark tortious interference with contract case' },
     ],
   },
   {
@@ -37560,10 +37508,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'business-law',
     title: '取引制限の法理——営業の自由を制約する条項の合理性審査',
     statement: '取引制限の法理（restraint of trade）は、英米法のコモン・ロー上の準則で、人が自らの職業や事業を営む自由を制約する契約条項——競業避止条項、独占的取引条項、事業譲渡に伴う制限的誓約など——は、公序（public policy）に反するものとして原則的に無効（prima facie void）であるが、それが「合理的（reasonable）」である場合には有効として執行されるとする。この法理の根底には、個人の経済活動の自由と競争の維持という公共の利益がある。エドワード・コークがダイヤー事件以来発展させ、合理性の基準を確立した指導的判例が1894年のノルデンフェルト対マキシム・ノルデンフェルト事件である。マクナハテン卿はこの事件で、取引制限の合理性を二つの観点から審査する枠組みを示した。第一に、当事者間において合理的であること。すなわち、制限が保護に値する正当な利益（営業秘密、顧客関係、のれんなど）を守るためのものであり、その範囲・地域・期間において、その利益の保護に必要な限度を超えていないこと。過度に広範な制限は、たとえ当事者が合意していても執行されない。第二に、公共の利益において合理的であること。すなわち、その制限が社会全体の競争や公衆の利益を不当に害さないことである。たとえば、事業を売却した者が一定の合理的な範囲・期間で競業しない誓約は、買主が取得したのれんの価値を保護するために必要かつ合理的なものとして有効とされやすい。この法理は、契約自由と競争維持・職業選択の自由との緊張を、合理性の比例的な審査によって調整する役割を担い、現代の雇用契約における競業避止義務の有効性判断の基礎をなしている。',
-    keyFigures: 'マクナハテン卿 ／ エドワード・コーク ／ アトキンソン卿 ／ J・D・ヘイドン',
+    keyFigures: 'マクナハテン卿 ／ エドワード・コーク ／ アトキンソン卿 ／ パーカー卿 ／ J・D・ヘイドン',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.law.cornell.edu/wex/restraint_of_trade', type: 'reference', label: 'Cornell LII Wex: Restraint of trade — non-compete, reasonableness, legitimate interest, public policy' },
+      { url: 'https://www.bailii.org/uk/cases/UKHL/1967/1.html', type: 'government', label: 'Esso Petroleum v Harper\'s Garage [1967] UKHL 1 — BAILII' },
+      { url: 'https://www.bailii.org/uk/cases/UKSC/2019/32.html', type: 'government', label: 'Tillman v Egon Zehnder Ltd [2019] UKSC 32 — BAILII（競業避止条項の分離可能性）' },
+      { url: 'https://en.wikipedia.org/wiki/Nordenfelt_v_Maxim_Nordenfelt_Guns_and_Ammunition_Co_Ltd', type: 'reference', label: 'Wikipedia — Nordenfelt v Maxim Nordenfelt [1894] AC 535' },
       { url: 'https://en.wikipedia.org/wiki/Restraint_of_trade', type: 'reference', label: 'Wikipedia: Restraint of trade — Nordenfelt, reasonableness between parties and public interest' },
     ],
   },
@@ -38723,12 +38674,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-frustration-of-purpose',
     discipline: 'business-law',
     title: '契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責',
-    statement: '契約目的達成不能（frustration of purpose）の法理は、契約締結後に当事者の支配を超えた予見不能な事態が生じ、履行は物理的に依然可能であるにもかかわらず、その履行が当事者にとって持つ根本的な価値・目的が完全に失われた場合に、契約上の義務を免除しうるとするコモン・ロー上の準則である。先導的判例は1903年イギリスのクレル対ヘンリー事件で、エドワード七世の戴冠行進を観覧するために沿道の部屋を賃借した契約が、国王の病気で行進が中止された結果、部屋の使用自体は可能でも契約の唯一の目的が消滅したとして免責された。この法理は、履行そのものが不可能・非現実的となる「履行不能（impossibility）」や「履行非現実性（impracticability）」とは区別され、目的の挫折が双方に共有された前提であったことを要件とする。アメリカでは第二次契約法リステイトメント265条が要件を整理し、リスクが契約で当事者に割り当てられていないことなどを免責の条件とする。',
+    statement: '契約目的達成不能（frustration of purpose）の法理は、契約締結後に当事者の支配を超えた予見不能な事態が生じ、履行は物理的に依然可能であるにもかかわらず、その履行が当事者にとって持つ根本的な価値・目的が完全に失われた場合に、契約上の義務を免除しうるとするコモン・ロー上の準則である。先導的判例は1903年イギリスのクレル対ヘンリー事件で、エドワード七世の戴冠行進を観覧するために沿道の部屋を賃借した契約が、国王の病気で行進が中止された結果、部屋の使用自体は可能でも契約の唯一の目的が消滅したとして免責された。この法理は、履行そのものが不可能・非現実的となる「履行不能（impossibility）」や「履行非現実性（impracticability）」とは区別され、目的の挫折が双方に共有された前提であったことを要件とする。アメリカでは第二次契約法リステイトメント265条が要件を整理し、リスクが契約で当事者に割り当てられていないことなどを免責の条件とする。UCC 2-615条（商事実行不能）も隣接規定として機能する。COVID-19 パンデミックでは店舗賃貸借やイベント契約をめぐりこの法理の適用を争う訴訟が大量に生じ、射程と限界が改めて試された。',
     keyFigures: 'サミュエル・ウィリストン ／ アーサー・コービン ／ E・アラン・ファーンズワース ／ ロン・フラー',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.law.cornell.edu/wex/frustration_of_purpose', type: 'reference', label: 'Cornell LII Wex: Frustration of purpose — supervening event, Restatement (Second) §265' },
       { url: 'https://en.wikipedia.org/wiki/Frustration_of_purpose', type: 'reference', label: 'Wikipedia: Frustration of purpose — Krell v. Henry, coronation cases, impossibility distinction' },
+      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html', type: 'government', label: 'Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text' },
+      { url: 'https://www.ali.org/publications/show/contracts/', type: 'reference', label: 'Restatement (Second) of Contracts §265 — Discharge by Supervening Frustration (ALI 1981)' },
+      { url: 'https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677', type: 'reference', label: 'Treitel, The Law of Contract (Sweet & Maxwell), Ch. 19 Frustration' },
     ],
   },
   {
@@ -39541,19 +39495,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-tortious-interference-lumley',
-    discipline: 'business-law',
-    title: '契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理',
-    statement: '契約関係への不法な干渉（Tortious Interference with Contractual Relations）とは、第三者が既存の契約関係を認識しつつ、意図的にその履行を妨害し、契約当事者に損害を与える行為を不法行為として認める法理である。この法理の嚆矢は1853年のラムリー対ガイ事件（Lumley v Gye）であり、オペラ歌手との独占出演契約を有する原告に対し、被告がその歌手を引き抜いたケースで、第三者による契約関係への意図的干渉が独立の不法行為を構成すると判示された。アメリカ法では第二次不法行為法リステイトメント§766が要件を整理し、（1）有効な契約の存在、（2）被告の契約の認識、（3）被告の意図的な干渉行為、（4）因果関係と損害の四つを要件とする。正当化事由（justification）として、公正な競争行為や善意の助言は免責される。現代ではビジネス上の期待関係（prospective business advantage）への干渉にも法理が拡張されている。',
-    keyFigures: 'チャールズ・キャンベル ／ ウィリアム・プロッサー ／ ハーヴェイ・ペルマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.bailii.org/ew/cases/EWHC/QB/1853/2.html', type: 'government', label: 'Lumley v Gye [1853] EWHC QB J73 — 契約関係への不法干渉法理を確立した先例' },
-      { url: 'https://doi.org/10.2307/1340543', type: 'academic', label: 'Perlman (1982) Interference with Contract and Other Economic Expectancies — University of Chicago Law Review' },
-      { url: 'https://en.wikipedia.org/wiki/Tortious_interference', type: 'reference', label: 'Wikipedia: Tortious interference — 契約関係への不法干渉の法理の概説' },
-    ],
-  },
-  {
     id: 'infosoc-platform-labor-regulation',
     discipline: 'information-sociology',
     title: 'プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護',
@@ -39983,19 +39924,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1111/1468-0297.00099', type: 'academic', label: 'Miller, Weller & Zhang (2002) Moral Hazard and the US Stock Market: Analysing the Greenspan Put — Economic Journal' },
       { url: 'https://doi.org/10.1257/aer.20140205', type: 'academic', label: 'Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance' },
       { url: 'https://en.wikipedia.org/wiki/Greenspan_put', type: 'reference', label: 'Wikipedia: Greenspan put — 中央銀行プットの概念と金融政策への含意' },
-    ],
-  },
-  {
-    id: 'bizlaw-frustration-of-purpose-krell',
-    discipline: 'business-law',
-    title: '契約目的の挫折——履行可能でも目的消滅により免責される法理',
-    statement: '契約目的の挫折（Frustration of Purpose）とは、契約の履行が物理的に可能であるにもかかわらず、双方が認識していた契約の主要な目的が予見不可能な事情の変化により消滅した場合に、当事者が契約上の義務から免責されるとする法理である。この法理の嚆矢は1903年のクレル対ヘンリー事件（Krell v Henry）であり、エドワード7世の戴冠式行列を観覧するために賃借された部屋が、国王の病気による行列の中止により目的を喪失したケースで確立された。契約目的の挫折は、不可能（impossibility）や実行不能（impracticability）とは区別され、履行そのものは依然として可能だが、契約の実質的価値が失われた状況に適用される。アメリカ法では第二次契約法リステイトメント§265がこの法理を採用し、UCC第2編§2-615も関連規定を含む。COVID-19パンデミックは契約目的の挫折の現代的適用に関する大量の訴訟を生じさせ、この法理の射程と限界が改めて試されている。',
-    keyFigures: 'フレデリック・ポロック ／ アーサー・コービン ／ アンドリュー・クル',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.bailii.org/ew/cases/EWHC/KB/1903/2.html', type: 'government', label: 'Krell v Henry [1903] 2 KB 740 — 契約目的の挫折法理を確立した先例' },
-      { url: 'https://doi.org/10.2307/1096649', type: 'academic', label: 'Kull (1991) Mistake, Frustration, and the Windfall Principle of Contract Remedies — Hastings Law Journal' },
-      { url: 'https://en.wikipedia.org/wiki/Frustration_of_purpose', type: 'reference', label: 'Wikipedia: Frustration of purpose — 契約目的の挫折法理の歴史と適用範囲の概説' },
     ],
   },
   {
@@ -40907,7 +40835,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'グオ・ミンガン ／ エドウィン・ペール ／ ギュンター・トレーテル ／ ヒュー・コリンズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.bailii.org/uk/cases/UKHL/1903/2.html', type: 'government', label: 'Krell v Henry [1903] 2 KB 740 — Court of Appeal frustration of purpose landmark' },
+      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html', type: 'government', label: 'Krell v Henry [1903] 2 KB 740 — Court of Appeal frustration of purpose landmark' },
       { url: 'https://www.wildy.com/isbn/9780414028531/frustration-and-force-majeure-3rd-ed-hardback-sweet-maxwell-ltd', type: 'academic', label: 'Treitel, G. H. (2014) Frustration and Force Majeure — 3rd ed., Sweet & Maxwell, ISBN 9780414028531' },
       { url: 'https://en.wikipedia.org/wiki/Frustration_of_purpose', type: 'reference', label: 'Wikipedia: Frustration of purpose — supervening impossibility doctrine overview' },
     ],

@@ -130,10 +130,6 @@
       "bizlaw-unjust-enrichment"
     ],
     [
-      "bizlaw-tort-liability",
-      "bizlaw-tortious-interference-restatement"
-    ],
-    [
       "bizlaw-trade-secret-protection-trips",
       "bizlaw-trade-secret-protection-utsa"
     ],
@@ -484,6 +480,14 @@
     [
       "human-psychological-capital-luthans",
       "mgmt-psychological-capital-theory"
+    ],
+    [
+      "bizlaw-doctrine-of-frustration",
+      "bizlaw-frustration-of-purpose"
+    ],
+    [
+      "bizlaw-restraint-of-trade",
+      "bizlaw-unreasonable-restraint-of-trade"
     ]
   ]
 }

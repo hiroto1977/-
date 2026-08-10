@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 28
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（リファレンス 21 ・ 公的 7）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（リファレンス 21 ・ 公的 6）
 
 ## このドメインを出典とする項目
 
@@ -40,7 +40,6 @@ tags:
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — Dodgev.FordMotorCo.,204Mich.459,170N.W.668(1919)
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — ColoradoRevisedStatutes§4-3-203—TransferofInstrument;RightsAcquiredby…
 - [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — Rayv.AladCorp.,19Cal.3d22(Cal.1977)—Justia
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — PennzoilCo.v.TexacoInc.,481U.S.1(1987),U.S.SupremeCourt—landmarktorti…
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — Williamsv.Walker-ThomasFurnitureCo.,350F.2d445(D.C.Cir.1965)—Justia
 
 ## 関連

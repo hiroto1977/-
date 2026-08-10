@@ -33,7 +33,6 @@ aliases:
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 語彙が近い
 - [[bizlaw-estoppel-by-deed|証書禁反言（エストッペル・バイ・ディード）]] — 同分野の近傍
 - [[bizlaw-tob|公開買付け（TOB）]] — 同分野の近傍
-- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同分野の近傍
 - [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 同分野の近傍
 
 ## 関連

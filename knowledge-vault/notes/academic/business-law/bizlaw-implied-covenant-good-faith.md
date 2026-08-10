@@ -39,7 +39,7 @@ Robert S. Summers／Steven J. Burton／E. Allan Farnsworth／Harold Dubroff／Em
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
 - [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 出典を共有
 - [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
-- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 出典を共有
+- [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

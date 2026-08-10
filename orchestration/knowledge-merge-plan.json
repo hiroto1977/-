@@ -400,5 +400,71 @@
         "provenanceDelta": "keep src 3→6 / 本文 +約110字。減少なし。"
       }
     ]
+  },
+  "pass15": {
+    "appliedAt": "2026-08-10",
+    "note": "EQUAL/SUBSET 衝突の第3弾 — frustration ×4 / tortious interference ×4 / restraint ×3 の 3 ファミリーを全文読解で裁定。**判例リンクの『裁判所違い』を新パターンとして 3 件検出**: Krell v Henry [1903] 2 KB 740 は控訴院（CA）判決なのに UKHL / EWHC KB のパスを持つ BAILII リンクが 2 エントリに存在（正: ew/cases/EWCA/Civ/1903/1.html）。Lumley v Gye の /1853/2.html も誤パスで、正典パス J73.html を接尾辞検索で確定してから採用。Pennzoil の justia リンクはラベル『481 U.S. 1 (1987) SCOTUS landmark tortious interference』に対し URL が F.2d 481 (1988) の控訴審で、しかも SCOTUS 判決の実体は abstention 論点 — まるごと移送しない。",
+    "merges": [
+      {
+        "keep": "bizlaw-frustration-of-purpose",
+        "drop": "bizlaw-frustration-of-purpose-doctrine",
+        "reason": "同一法理（Krell・§265・impossibility との区別）。",
+        "migrate": "BAILII の Krell 判決全文（EWCA/Civ パス）・ALI §265・Treitel の章参照を出典へ。Burrows の出版社カタログページは三次的で移送しない。",
+        "provenanceDelta": "keep src 2→5 / gov 0→1。減少なし。"
+      },
+      {
+        "keep": "bizlaw-frustration-of-purpose",
+        "drop": "bizlaw-frustration-of-purpose-krell",
+        "reason": "同一法理のもう 1 つの総論（Krell 物語・§265 を共有）。",
+        "migrate": "UCC 2-615 の隣接規定と COVID-19 訴訟波の現代的適用を本文へ。drop の BAILII は EWHC/KB パス（裁判所違い）のため移送せず、上記 EWCA パスに統一。10.2307/1096649 は実体未確定で移送しない。",
+        "provenanceDelta": "本文 +約90字。減少なし。"
+      },
+      {
+        "keep": "bizlaw-tortious-interference",
+        "drop": "bizlaw-tortious-interference-doctrine",
+        "reason": "同一法理の thin 版。",
+        "migrate": "ALI Restatement (Second) of Torts §§766-766B のページを出典へ。Prosser 1953 / Harper&James / Perlman / Dobbs の 10.2307 DOI 4 件は実体未確定のため移送しない。",
+        "provenanceDelta": "keep src 2→5（Wikipedia 2 件のみだった keep に BAILII 判決全文 + LII + ALI が入り、権威 0→1）。"
+      },
+      {
+        "keep": "bizlaw-tortious-interference",
+        "drop": "bizlaw-tortious-interference-restatement",
+        "reason": "§766/766B と Texaco/Pennzoil の要約で keep の完全下位互換。keyFigures の人名（James Fleming／William P. Keeton）は語順・イニシャルが崩れていた。",
+        "migrate": "LII Wex のみ。Pennzoil の justia リンクはラベルと URL の実体が不一致（SCOTUS 1987 と称して F.2d 1988）のため移送しない。",
+        "provenanceDelta": "上記に合算。"
+      },
+      {
+        "keep": "bizlaw-tortious-interference",
+        "drop": "bizlaw-tortious-interference-lumley",
+        "reason": "Lumley 物語 + §766 4要件で keep と同一レーン。",
+        "migrate": "BAILII の Lumley 判決全文 — ただし drop の /1853/2.html は誤パスのため、接尾辞検索で確定した正典パス /1853/J73.html に置き換えて採用。10.2307/1340543 は実体未確定で移送しない。",
+        "provenanceDelta": "上記に合算。"
+      },
+      {
+        "keep": "bizlaw-restraint-of-trade",
+        "drop": "bizlaw-restraint-of-trade-doctrine",
+        "reason": "同一法理（Nordenfelt 合理性審査）の thin 版。",
+        "migrate": "Esso v Harper's Garage [1967] UKHL 1 と Tillman v Egon Zehnder [2019] UKSC 32 の BAILII、Nordenfelt の Wikipedia を出典へ、パーカー卿を keyFigures へ。",
+        "provenanceDelta": "keep src 3→6 / gov 0→2。減少なし。"
+      }
+    ],
+    "fixes": [
+      {
+        "id": "bizlaw-doctrine-of-frustration",
+        "action": "Krell の BAILII リンクが UKHL パス（ラベルは Court of Appeal）だったため、姉妹エントリの EWCA/Civ パスへ差し替え（ラベルと整合）。"
+      }
+    ],
+    "distinct": [
+      [
+        "bizlaw-doctrine-of-frustration",
+        "bizlaw-frustration-of-purpose",
+        "英国法のフラストレーション法理全体（Taylor v Caldwell・1943年法・事情変更の原則）と米国側の目的挫折（§265）でレーンが異なる"
+      ],
+      [
+        "bizlaw-restraint-of-trade",
+        "bizlaw-unreasonable-restraint-of-trade",
+        "コモン・ローの取引制限法理と日本の独禁法2条6項の不当な取引制限で対象法体系が異なる"
+      ]
+    ]
   }
 }

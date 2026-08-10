@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
 - [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
-- [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同分野の近傍
+- [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍
 - [[infosoc-gemeinschaft-gesellschaft|ゲマインシャフトとゲゼルシャフト]] — 同分野の近傍
 
 ## 関連

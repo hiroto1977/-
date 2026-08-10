@@ -43,8 +43,8 @@ John W. Wade（リスク・ユーティリティ・テスト開発者） ／ Geo
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 出典を共有
-- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 出典を共有
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
 
 ## 関連
