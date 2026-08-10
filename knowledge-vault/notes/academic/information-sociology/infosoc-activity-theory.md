@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-technological-determinism|技術決定論]] — 出典を共有
 - [[econ-division-of-labour|分業]] — 出典を共有
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同分野の近傍
-- [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同分野の近傍
+- [[infosoc-appadurai-scapes|アパデュライのスケープ（グローバルな文化フローの5次元）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

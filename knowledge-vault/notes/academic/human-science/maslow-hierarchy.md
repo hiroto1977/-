@@ -30,9 +30,9 @@ aliases:
 - [Simply Psychology — Maslow's Hierarchy of Needs（査読済み教育心理学リファレンス）](https://www.simplypsychology.org/maslow.html) `リファレンス`
 
 ## 関連概念
-- [[human-transpersonal-psychology-maslow|トランスパーソナル心理学と至高体験——マズローの欲求段階論を超えた存在レベルの探求]] — 語彙が近い
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
+- [[human-transpersonal-psychology-maslow|トランスパーソナル心理学と至高体験——マズローの欲求段階論を超えた存在レベルの探求]] — 同分野の近傍
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
 - [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — 同分野の近傍
 

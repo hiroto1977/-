@@ -21,8 +21,8 @@ tags:
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-defense-mechanisms|防衛機制]]（接続 26）
+- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 26）
 - [[human-group-polarization|集団極性化]]（接続 25）
-- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 23）
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 23）

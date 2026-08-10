@@ -34,8 +34,7 @@ aliases:
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 同じ思想家
 - [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同じ思想家
 - [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
-- [[human-neuroplasticity-theory|神経可塑性理論]] — 同分野の近傍
-- [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — 同分野の近傍
+- [[human-learned-optimism|学習性楽観主義]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ Alfred Marshall ／ Lionel Robbins ／ Mark R. Killingsworth ／ John Pencavel
 ## 関連概念
 - [[econ-giffen-good-theory|ギッフェン財理論]] — 同じ思想家
 - [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
-- [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — 同分野の近傍
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 同分野の近傍
 
 ## 関連

@@ -38,8 +38,8 @@ aliases:
 - [[econ-experience-goods-nelson|探索財・経験財・信用財——品質評価の時点による財の三分類]] — 同じ思想家
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
 - [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — 同じ思想家
+- [[econ-precautionary-saving|予備的貯蓄]] — 同分野の近傍
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

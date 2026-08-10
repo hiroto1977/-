@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同分野の近傍
-- [[infosoc-privacy-paradox|プライバシー・パラドックス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

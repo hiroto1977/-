@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-Ader & Cohen（1975）の条件性免疫抑制発見を端緒に、Kiecolt-Glaserらがストレスと免疫機能の低下を実証。HPA軸・サイトカイン経路を介し、創傷治癒・ワクチン反応・心理社会的介入の臨床応用が進む。
+Ader & Cohen（1975）の条件性免疫抑制発見を端緒に、Kiecolt-Glaserらがストレスと免疫機能の低下を実証。HPA軸・サイトカイン経路を介し、創傷治癒・ワクチン反応・心理社会的介入の臨床応用が進む。Ader & Cohen の実験は、サッカリン水と免疫抑制剤を対提示されたラットが、後にサッカリン水だけで免疫応答の低下を示すという条件づけを発見し、「免疫系は自律的な閉鎖系」という当時の前提を覆して神経系-免疫系の双方向連絡を実証した。ヒトでは Kiecolt-Glaser らが、試験期の医学生の NK 細胞活性低下、アルツハイマー介護者の創傷治癒の遅延（対照より約24%長い）、夫婦喧嘩後の炎症性サイトカイン上昇を示し、Segerstrom & Miller (2004) の300研究メタ分析は、急性ストレスが自然免疫を一過性に亢進させる一方、慢性ストレスは細胞性・液性免疫を広く抑制するという時間構造を整理した。機序は HPA 軸のコルチゾールと交感神経系を介した免疫細胞への信号、および Maier & Watkins が定式化した「サイトカインから脳へ」の逆方向経路（炎症が疲労・抑うつ様の疾病行動を引き起こす）で、うつ病の炎症仮説・ワクチン応答の心理的予測・マインドフルネス介入の免疫指標評価など、心身相関の分子的基盤として臨床応用が広がっている。
 
 ## 提唱者・初出
 Robert Ader ／ Nicholas Cohen ／ Janice Kiecolt-Glaser ／ George Solomon ／ Steve Maier
@@ -33,8 +33,8 @@ Robert Ader ／ Nicholas Cohen ／ Janice Kiecolt-Glaser ／ George Solomon ／ 
 - [Glaser & Kiecolt-Glaser 2009 wound healing review](https://doi.org/10.1016/j.psyneuen.2008.09.016) `学術`
 
 ## 関連概念
-- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
-- [[human-psychoneuroimmunology-ader-cohen|精神神経免疫学——心理・神経・免疫系の双方向的相互作用]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

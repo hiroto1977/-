@@ -34,6 +34,7 @@ aliases:
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
 - [[human-memory-reconsolidation|記憶の再固定化]] — 同分野の近傍
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同分野の近傍
+- [[human-psychoneuroimmunology-ader-cohen|精神神経免疫学——心理・神経・免疫系の双方向的相互作用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

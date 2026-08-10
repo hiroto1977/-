@@ -41,7 +41,7 @@ EU競争法の第102条（旧EC条約82条）は「域内市場または相当�
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同分野の近傍
 - [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 同分野の近傍
 - [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 同分野の近傍
-- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同分野の近傍
+- [[bizlaw-berle-means-thesis|バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

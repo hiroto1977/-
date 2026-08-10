@@ -34,6 +34,7 @@ aliases:
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同分野の近傍
+- [[human-neuroplasticity-theory|神経可塑性理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

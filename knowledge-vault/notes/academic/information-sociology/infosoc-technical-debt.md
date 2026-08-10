@@ -35,7 +35,7 @@ aliases:
 - [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
 - [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — 同分野の近傍
-- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

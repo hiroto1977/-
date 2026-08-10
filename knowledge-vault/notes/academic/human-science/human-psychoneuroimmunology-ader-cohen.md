@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Psychoneuroimmunology — 精神神経免疫学の歴史と主要知見の概説](https://en.wikipedia.org/wiki/Psychoneuroimmunology) `リファレンス`
 
 ## 関連概念
-- [[human-psychoneuroimmunology|精神神経免疫学]] — 同分野の近傍
-- [[human-ecopsychology-roszak-nature-wellbeing|エコサイコロジーと自然体験——ロザックの「地球の声」論と人間-自然の心理的相互作用]] — 同分野の近傍
+- [[human-stress-immune-axis|ストレス-免疫軸：HPA軸を介した心理的ストレスと免疫機能の双方向的調節機構]] — 同分野の近傍
+- [[human-memory-reconsolidation-nader-schiller|記憶再固定化——想起時の記憶可塑性とトラウマ治療への応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

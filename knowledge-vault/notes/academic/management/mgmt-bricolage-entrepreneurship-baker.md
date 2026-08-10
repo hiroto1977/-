@@ -40,7 +40,6 @@ aliases:
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[mgmt-effectuation|エフェクチュエーション]] — 同分野の近傍
 - [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同分野の近傍
-- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

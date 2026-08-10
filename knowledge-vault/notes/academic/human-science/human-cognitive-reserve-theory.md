@@ -32,8 +32,8 @@ Yaakov Stern ／ Nikolaos Scarmeas
 - [Cognitive Reserve — Wikipedia overview](https://en.wikipedia.org/wiki/Cognitive_reserve) `リファレンス`
 
 ## 関連概念
+- [[human-cognitive-reserve-stern|認知予備力（スターン）]] — 語彙が近い
 - [[infosoc-digital-phenotyping-theory|デジタル表現型理論]] — 出典を共有
-- [[human-cognitive-reserve-stern|認知予備力（スターン）]] — 同分野の近傍
 - [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 同分野の近傍
 
 ## 関連

@@ -37,7 +37,6 @@ Henri Tajfel ／ John C. Turner ／ Michael Billig ／ Claude Flament
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 語彙が近い
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同じ思想家
 - [[human-self-categorization-theory|自己カテゴリー化理論]] — 同じ思想家
-- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

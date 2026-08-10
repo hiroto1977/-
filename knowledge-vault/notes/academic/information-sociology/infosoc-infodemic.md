@@ -37,8 +37,8 @@ aliases:
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 出典を共有
 - [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
-- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同分野の近傍
 - [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
+- [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
