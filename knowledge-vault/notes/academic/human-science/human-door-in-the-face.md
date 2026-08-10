@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia — Door-in-the-face technique（実験数値）](https://en.wikipedia.org/wiki/Door-in-the-face_technique) `リファレンス`
 
 ## 関連概念
+- [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 語彙が近い
 - [[human-endowment-effect|保有効果（授かり効果）]] — 出典を共有
 - [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
 - [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 出典を共有
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
 - [[mgmt-lead-user|リードユーザー法]] — 出典を共有
-- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

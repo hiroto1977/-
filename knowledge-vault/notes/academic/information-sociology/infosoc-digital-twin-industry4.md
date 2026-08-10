@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同じ思想家
-- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

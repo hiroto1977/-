@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[mgmt-organizational-slack|組織スラック]] — 同分野の近傍
 - [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
-- [[mgmt-organizational-neuroscience|組織神経科学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

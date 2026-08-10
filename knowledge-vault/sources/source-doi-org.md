@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2188
+cite_count: 2187
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2188 件**（学術 2180 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（学術 2179 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1670,7 +1670,6 @@ tags:
 - [[infosoc-techno-orientalism-morley|テクノ・オリエンタリズム——東アジアの技術的他者化と西洋の想像力]] — Morley,D.&Robins,K.(1995)SpacesofIdentity:GlobalMedia,ElectronicLands…
 - [[infosoc-techno-orientalism-morley|テクノ・オリエンタリズム——東アジアの技術的他者化と西洋の想像力]] — Roh,D.S.,Huang,B.&Niu,G.A.(2015)Techno-Orientalism:ImaginingAsiainSpe…
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — Morozov,E.(2013)ToSaveEverything,ClickHere:TheFollyofTechnologicalSol…
-- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — Haraway1985—ACyborgManifesto:Science,Technology,andSocialist-Feminism…
 - [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — Winner1980—DoArtifactsHavePolitics?,Daedalus109(1):121-136
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — Evans,Pearce,Vitak&Treem(2017)ExplicatingAffordances,JCMC22(1):35-52
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — Treem&Leonardi(2013)SocialMediaUseinOrganizations,AnnalsoftheInternat…

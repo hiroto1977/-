@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Dialogical self — polyphonic identity theory](https://en.wikipedia.org/wiki/Dialogical_self) `リファレンス`
 
 ## 関連概念
+- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,9 +34,9 @@ Henri Tajfel ／ John C. Turner ／ Michael Billig ／ Claude Flament
 
 ## 関連概念
 - [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 語彙が近い
-- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 語彙が近い
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同じ思想家
 - [[human-self-categorization-theory|自己カテゴリー化理論]] — 同じ思想家
+- [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

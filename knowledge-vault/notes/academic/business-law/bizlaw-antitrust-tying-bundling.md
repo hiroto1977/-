@@ -37,7 +37,7 @@ aliases:
 - [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同分野の近傍
-- [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 同分野の近傍
+- [[bizlaw-competition-law-abuse-dominance|競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

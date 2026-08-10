@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 90
+cite_count: 91
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **90 件**（学術 74 ・ リファレンス 16）
+> [!info] 出典ドメイン索引 ・ 引用 **91 件**（学術 75 ・ リファレンス 16）
 
 ## このドメインを出典とする項目
 
@@ -55,6 +55,7 @@ tags:
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — Spears,"SocialIdentityModelofDeindividuationEffects",WileyInternation…
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — Wiley-BlackwellEncyclopediaofSociology—SpacesofFlows/SpacesofPlaces(B…
 - [[infosoc-surveillance-society|監視社会]] — Haggerty&Ericson,“Thesurveillantassemblage”,BritishJournalofSociology…
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — Glazier—CyborgManifesto(Haraway1985/1991),WileyBlackwellEncyclopediao…
 - [[infosoc-technostress-theory|テクノストレス理論]] — Tarafdaretal.(2015)—Technostress:NegativeEffectonPerformanceandPossib…
 - [[infosoc-temporal-focus-information|時間的焦点理論：情報処理と時間的知覚の組織的影響]] — Levasseur,R.E.2020.OrganizationalTimeandTemporalCapital.JournalofOrga…
 - [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — Seibel,M.,Kaufman,E.K.,Cletzer,D.A.,&Elliott-Engel,J.(2023).Advancing…

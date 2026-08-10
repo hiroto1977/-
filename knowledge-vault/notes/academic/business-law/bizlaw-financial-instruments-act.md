@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 語彙が近い
-- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — 同分野の近傍
+- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — 語彙が近い
 - [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 同分野の近傍
 
 ## 関連

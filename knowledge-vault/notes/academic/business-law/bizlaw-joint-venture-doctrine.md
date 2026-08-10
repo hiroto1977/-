@@ -40,7 +40,6 @@ aliases:
 - [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 出典を共有
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同分野の近傍
-- [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

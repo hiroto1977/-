@@ -39,7 +39,7 @@ aliases:
 - [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
 - [[human-social-proof|社会的証明]] — 出典を共有
 - [[human-grit|グリット（やり抜く力）]] — 同分野の近傍
-- [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
+- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

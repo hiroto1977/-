@@ -32,8 +32,8 @@ E. Tory Higgins ／ Nira Liberman ／ Klodiana Lanaj
 - [Wikipedia — Regulatory focus theory](https://en.wikipedia.org/wiki/Regulatory_focus_theory) `リファレンス`
 
 ## 関連概念
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ aliases:
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同じ思想家
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同分野の近傍
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同分野の近傍
-- [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

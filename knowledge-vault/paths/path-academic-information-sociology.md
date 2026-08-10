@@ -25,9 +25,9 @@ tags:
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
-- [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -88,6 +88,7 @@ tags:
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
+- 1964年: [[infosoc-information-overload|情報過多（情報オーバーロード）]]
 - 1964年: [[infosoc-technological-sublime|テクノロジカル・サブライム（技術的崇高）]]
 - 1965年: [[infosoc-moores-law|ムーアの法則]]
 - 1965年: [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]]
@@ -308,7 +309,6 @@ tags:
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]]
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]]
 - [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]]
-- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]
 - [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]]
 - [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]]
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]]

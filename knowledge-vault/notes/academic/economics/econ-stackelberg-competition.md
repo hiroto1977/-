@@ -39,7 +39,7 @@ aliases:
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 同分野の近傍
 - [[econ-rational-addiction|合理的依存]] — 同分野の近傍
-- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
+- [[econ-principal-agent-problem|プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

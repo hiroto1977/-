@@ -38,6 +38,7 @@ aliases:
 - [[human-heuristic-systematic-chaiken|ヒューリスティック＝システマティックモデル——説得情報処理の二過程理論]] — 同分野の近傍
 - [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
 - [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同分野の近傍
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

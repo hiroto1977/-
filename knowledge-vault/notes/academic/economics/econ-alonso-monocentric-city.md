@@ -34,8 +34,8 @@ aliases:
 - [[econ-von-thunen-location|チューネンの孤立国——農業立地と土地利用の同心円]] — 同じ思想家
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 出典を共有
 - [[econ-inflation-targeting|インフレ・ターゲティング]] — 出典を共有
+- [[econ-engels-law|エンゲルの法則]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

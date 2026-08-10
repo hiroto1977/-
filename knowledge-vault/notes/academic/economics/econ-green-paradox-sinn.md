@@ -35,6 +35,7 @@ aliases:
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 - [[econ-greenfield-paradox|グリーンフィールド・パラドックス]] — 同分野の近傍
 - [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同分野の近傍
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Broadbents filter model — early selection, dichotic listening, bottleneck, Treisman attenuation](https://en.wikipedia.org/wiki/Broadbent%27s_filter_model_of_attention) `リファレンス`
 
 ## 関連概念
-- [[human-cocktail-party-effect|カクテルパーティー効果]] — 語彙が近い
 - [[human-late-selection-deutsch-norman|後期選択理論——すべての刺激が意味処理された後で注意が選択する]] — 語彙が近い
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 語彙が近い
 - [[human-feature-integration-treisman|特徴統合理論——注意が分離した特徴を統合し対象を知覚する]] — 同じ思想家
 - [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同じ思想家
 - [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家

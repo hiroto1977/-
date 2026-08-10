@@ -16,10 +16,10 @@ tags:
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 25）
 - [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 24）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 20）
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 20）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 19）
-- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 19）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 19）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 18）
+- [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 15）
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 15）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）

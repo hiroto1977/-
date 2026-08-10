@@ -40,7 +40,6 @@ aliases:
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同じ思想家
 - [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同分野の近傍
-- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 同分野の近傍
 
 ## 関連

@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-inheritance-tax|相続税法]] — 同分野の近傍
 - [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同分野の近傍
+- [[bizlaw-trademark|商標法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

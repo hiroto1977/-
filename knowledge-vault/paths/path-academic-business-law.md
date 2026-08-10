@@ -16,7 +16,7 @@ tags:
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 74）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 48）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
-- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 35）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
@@ -26,8 +26,8 @@ tags:
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 25）
 - [[bizlaw-toushiho|出資法]]（接続 25）
-- [[bizlaw-agency|代理（民法99条）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -250,7 +250,6 @@ tags:
 - 2017年: [[bizlaw-public-order|公序良俗（民法90条）]]
 - 2017年: [[bizlaw-release-of-debt|免除（民法519条）]]
 - 2017年: [[bizlaw-risk-bearing|危険負担（民法536条）]]
-- 2017年: [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]
 - 2017年: [[bizlaw-set-off|相殺（民法505条）]]
 - 2017年: [[bizlaw-simultaneous-performance|同時履行の抗弁権（民法533条）]]
 - 2017年: [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]]
@@ -296,6 +295,7 @@ tags:
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]]
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]]
+- [[bizlaw-agency|代理（民法99条）]]
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]]
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]]
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]

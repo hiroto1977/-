@@ -32,7 +32,7 @@ Forsythe・Horowitz・Savin・Sefton（1994・標準実験）／Hoffman ら（19
 
 ## 関連概念
 - [[econ-ultimatum-game|最後通牒ゲーム]] — 同分野の近傍
-- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同分野の近傍
+- [[econ-inequity-aversion|不公平回避：利他的懲罰と互恵的公正選好の行動経済学的モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
