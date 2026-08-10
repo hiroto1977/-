@@ -38,8 +38,8 @@ aliases:
 - [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
 - [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
 - [[human-social-proof|社会的証明]] — 出典を共有
-- [[human-joint-action|共同行為（Joint Action）]] — 同分野の近傍
 - [[human-grit|グリット（やり抜く力）]] — 同分野の近傍
+- [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

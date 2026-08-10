@@ -40,7 +40,7 @@ aliases:
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
 - [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
-- [[human-resilience-adversity-luthar|レジリエンスと逆境適応の発達心理学——リスク・保護因子の動態モデル（ルサール）]] — 同分野の近傍
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

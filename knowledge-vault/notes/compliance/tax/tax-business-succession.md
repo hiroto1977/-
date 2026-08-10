@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 同分野の近傍
-- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 同分野の近傍
+- [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

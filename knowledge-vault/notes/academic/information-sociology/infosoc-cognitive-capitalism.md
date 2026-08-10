@@ -30,8 +30,8 @@ aliases:
 - [OECD (1996) "The Knowledge-Based Economy"（知識・認知が経済の中心となる変容を分析した先駆的報告書）](https://www.oecd.org/en/publications/knowledge-based-economy_230700m2nik7.html) `公的`
 
 ## 関連概念
-- [[infosoc-communication-accommodation-theory|コミュニケーション適応理論（Communication Accommodation Theory, CAT）]] — 同分野の近傍
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同分野の近傍
+- [[infosoc-technological-determinism|技術決定論]] — 同分野の近傍
 - [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]] — 同分野の近傍
 
 ## 関連

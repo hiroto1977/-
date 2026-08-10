@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-renvoi|反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理]] — 出典を共有
-- [[bizlaw-promissory-estoppel-reliance|約束的禁反言法理]] — 同分野の近傍
+- [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 同分野の近傍
 - [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 同分野の近傍
 
 ## 関連

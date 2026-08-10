@@ -34,7 +34,6 @@ aliases:
 - [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同じ思想家
 - [[human-cheerleader-effect|チアリーダー効果（集団魅力効果）]] — 同分野の近傍
 - [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — 同分野の近傍
-- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

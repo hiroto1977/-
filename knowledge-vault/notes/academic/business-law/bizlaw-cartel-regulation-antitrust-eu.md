@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 同分野の近傍
 - [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 同分野の近傍
-- [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

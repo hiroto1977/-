@@ -40,7 +40,6 @@ Robert Metcalfe ／ George Gilder ／ Nicholas Economides
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
 - [[infosoc-technical-debt|技術的負債]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同分野の近傍
 - [[infosoc-computational-journalism|計算論的ジャーナリズムとデータ・ドリブン報道の社会学]] — 同分野の近傍
 
 ## 関連

@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同分野の近傍
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同分野の近傍
+- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

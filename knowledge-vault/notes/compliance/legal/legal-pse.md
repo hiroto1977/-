@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-product-safety|消費生活用製品安全法（消安法）]] — 語彙が近い
 - [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 分野横断
-- [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 同分野の近傍
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

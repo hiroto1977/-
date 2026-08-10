@@ -33,7 +33,6 @@ EU一般データ保護規則（Regulation 2016/679, GDPR）は2018年5月に施
 ## 関連概念
 - [[bizlaw-data-protection-gdpr-adequacy|GDPRと十分性認定——個人データの越境移転とプライバシー保護の国際的枠組み]] — 語彙が近い
 - [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 語彙が近い
-- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
 - [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同分野の近傍
 
 ## 関連

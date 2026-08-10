@@ -35,7 +35,6 @@ Lisa Feldman Barrett／James A. Russell／Kristen A. Lindquist／Eliza Bliss-Mor
 - [[human-emotional-granularity|感情粒度]] — 同じ思想家
 - [[human-interoception-theory|内受容感覚理論]] — 同じ思想家
 - [[human-mental-rotation-shepard|メンタル・ローテーション（シェパード＆メッツラー）]] — 同分野の近傍
-- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

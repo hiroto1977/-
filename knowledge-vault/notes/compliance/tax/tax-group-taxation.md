@@ -35,6 +35,7 @@ aliases:
 - [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 同分野の近傍
 - [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
 - [[tax-platform-taxation-digital|国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）]] — 同分野の近傍
+- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

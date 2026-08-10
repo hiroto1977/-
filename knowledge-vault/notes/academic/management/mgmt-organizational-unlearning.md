@@ -40,6 +40,7 @@ aliases:
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
 - [[mgmt-trompenaars-dimensions|トロンペナールスの文化の7次元]] — 同分野の近傍
+- [[mgmt-organizational-forgetting|組織的忘却]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

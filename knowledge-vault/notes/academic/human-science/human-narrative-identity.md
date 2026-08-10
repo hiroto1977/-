@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — 同分野の近傍
-- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
+- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 同分野の近傍
 - [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同分野の近傍
 
 ## 関連

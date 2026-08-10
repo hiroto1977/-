@@ -39,7 +39,6 @@ aliases:
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 同分野の近傍
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 同分野の近傍
-- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

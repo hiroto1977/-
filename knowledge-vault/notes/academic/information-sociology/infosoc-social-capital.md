@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
 - [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同分野の近傍
 - [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 同分野の近傍
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

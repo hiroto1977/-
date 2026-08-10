@@ -35,8 +35,9 @@ aliases:
 - [[mgmt-emotional-intelligence|感情知性（EQ）]] — 語彙が近い
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[human-theory-of-mind|心の理論]] — 同分野の近傍
-- [[human-joint-action|共同行為（Joint Action）]] — 同分野の近傍
+- [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,6 +37,7 @@ aliases:
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 出典を共有
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 同分野の近傍
+- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 同分野の近傍
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 同分野の近傍
 
 ## 関連

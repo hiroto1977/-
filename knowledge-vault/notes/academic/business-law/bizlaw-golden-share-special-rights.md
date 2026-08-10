@@ -37,6 +37,7 @@ aliases:
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同分野の近傍
 - [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同分野の近傍
+- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

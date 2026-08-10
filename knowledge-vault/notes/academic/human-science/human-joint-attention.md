@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-joint-action|共同行為（Joint Action）]] — 同分野の近傍
-- [[human-observational-learning|観察学習（バンデューラ）]] — 同分野の近傍
+- [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 同分野の近傍
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同分野の近傍
 
 ## 関連

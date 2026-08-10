@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 語彙が近い
-- [[human-learned-optimism|学習性楽観主義]] — 語彙が近い
+- [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
 - [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同じ思想家
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家

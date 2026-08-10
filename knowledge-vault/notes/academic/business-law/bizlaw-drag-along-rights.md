@@ -32,7 +32,6 @@ Ronald Gilson ／ Brian Broughman ／ Jesse Fried ／ D. Gordon Smith ／ Albert
 - [Cornell Law School Legal Information Institute, "Drag-Along Rights" (LII Wex)](https://www.law.cornell.edu/wex/drag-along_rights) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 語彙が近い
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — 同じ思想家
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同じ思想家

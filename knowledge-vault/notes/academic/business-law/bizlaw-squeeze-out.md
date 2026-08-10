@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[legal-share-types|会社法における種類株式]] — 語彙が近い
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同分野の近傍
-- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 同分野の近傍
 - [[bizlaw-provider-liability|プロバイダ責任制限法]] — 同分野の近傍
 
 ## 関連

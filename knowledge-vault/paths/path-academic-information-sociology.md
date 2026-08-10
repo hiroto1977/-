@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 69）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 71）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 41）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
@@ -24,10 +24,10 @@ tags:
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
-- [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -93,6 +93,7 @@ tags:
 - 1965年: [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]]
 - 1965年: [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]]
 - 1966年: [[infosoc-social-construction|現実の社会的構成（社会構築主義）]]
+- 1968年: [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]]
 - 1969年: [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]]
 - 1969年: [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]]
 - 1970年: [[infosoc-information-asymmetry-online|オンライン市場における情報の非対称性]]
@@ -523,7 +524,6 @@ tags:
 - [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]]
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]]
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]]
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]]
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]]
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]]

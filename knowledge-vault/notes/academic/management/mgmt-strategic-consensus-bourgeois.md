@@ -40,7 +40,6 @@ aliases:
 - [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
 - [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — 同分野の近傍
 - [[mgmt-zone-of-indifference-barnard|無関心圏——権威の受容理論と命令が受け入れられる範囲]] — 同分野の近傍
-- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同分野の近傍
 - [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]] — 同分野の近傍
 
 ## 関連

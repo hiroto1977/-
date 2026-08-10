@@ -36,7 +36,6 @@ aliases:
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 同分野の近傍
 - [[legal-interest-limit|利息制限法の上限金利]] — 同分野の近傍
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 同分野の近傍
-- [[legal-pse|電気用品安全法とPSEマーク制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

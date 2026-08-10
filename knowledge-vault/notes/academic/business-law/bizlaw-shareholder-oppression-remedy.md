@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 語彙が近い
-- [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 語彙が近い
 - [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 語彙が近い
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
