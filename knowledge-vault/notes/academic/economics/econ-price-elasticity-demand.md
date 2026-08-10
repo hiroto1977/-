@@ -35,8 +35,8 @@ aliases:
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 出典を共有
 - [[econ-opportunity-cost|機会費用（opportunity cost）]] — 出典を共有
 - [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 出典を共有
-- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
 - [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同分野の近傍
+- [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 同分野の近傍
 - [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — 同分野の近傍
 
 ## 関連

@@ -31,6 +31,7 @@ aliases:
 - [LibreTexts, Intermediate Microeconomics — Income and Substitution Effects（Hicks/Slutsky）](https://socialsci.libretexts.org/Bookshelves/Economics/Intermediate_Microeconomics_with_Excel_(Barreto)/04:_Compartive_Statics/4.06:_Income_and_Substitution_Effects) `学術`
 
 ## 関連概念
+- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 語彙が近い
 - [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 同じ思想家
 - [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 出典を共有
 - [[econ-rybczynski|リブチンスキー定理]] — 出典を共有

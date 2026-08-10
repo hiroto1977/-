@@ -23,9 +23,9 @@ tags:
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
-- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 26）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 - [[bizlaw-toushiho|出資法]]（接続 25）
 

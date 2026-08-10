@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
-- [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
 - [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同分野の近傍
 
 ## 関連

@@ -38,7 +38,6 @@ Mark Warschauer ／ Jan van Dijk ／ Manuel Castells
 - [[infosoc-media-literacy|メディア・リテラシー]] — 出典を共有
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 出典を共有
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
-- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — 同分野の近傍
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同分野の近傍
 
 ## 関連

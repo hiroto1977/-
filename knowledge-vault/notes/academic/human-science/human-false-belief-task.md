@@ -31,8 +31,8 @@ aliases:
 - [Sally Anne Test: Understanding False Belief in Children — Arab Psychology Database](https://db.arabpsychology.com/sally-anne-test/) `リファレンス`
 
 ## 関連概念
-- [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — 同分野の近傍
 - [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
+- [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

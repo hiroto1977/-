@@ -40,7 +40,6 @@ prefecture
 - [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 語彙が近い
 - [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 同分野の近傍
-- [[subsidy-fukuoka-pref|福岡県中小企業生産性向上・賃上げ緊急支援補助金]] — 同分野の近傍
 - [[subsidy-kagawa|香川県事業者の未来への投資を応援する総合補助金（未来投資応援補助金）（香川県）]] — 同分野の近傍
 - [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 同分野の近傍
 

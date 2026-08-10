@@ -36,8 +36,8 @@ P. Christopher Earley ／ Soon Ang ／ Linn Van Dyne ／ Cultural Intelligence S
 - [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[mgmt-emotional-intelligence|感情知性（EQ）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

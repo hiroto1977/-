@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同分野の近傍
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 同分野の近傍
-- [[infosoc-reinforcing-spirals-model|強化スパイラルモデル（相互強化スパイラル・モデル／Reinforcing Spirals Model, RSM）——選択的接触と効果が時間とともに互いを強める動的フィードバック・ループ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

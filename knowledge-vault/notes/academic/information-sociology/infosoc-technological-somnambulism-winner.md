@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
 - [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 同分野の近傍
+- [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同分野の近傍
 - [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同分野の近傍
 
 ## 関連

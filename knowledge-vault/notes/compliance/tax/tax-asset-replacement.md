@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 語彙が近い
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 同分野の近傍
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 語彙が近い
 - [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 同分野の近傍
 
 ## 関連
