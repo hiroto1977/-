@@ -39,7 +39,7 @@ aliases:
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
 - [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]] — 同分野の近傍
-- [[bizlaw-competition-law-merger-control-eu|EU競争法における企業結合規制——欧州委員会の合併審査とSIECテスト]] — 同分野の近傍
+- [[bizlaw-competition-law-abuse-dominance|競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

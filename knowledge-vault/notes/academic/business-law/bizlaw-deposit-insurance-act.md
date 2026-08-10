@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-deposit-insurance|預金保険制度（ペイオフ）]] — 分野横断
 - [[bizlaw-toushiho|出資法]] — 同分野の近傍
-- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 同分野の近傍
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

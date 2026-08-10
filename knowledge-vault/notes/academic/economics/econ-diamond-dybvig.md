@@ -30,9 +30,10 @@ aliases:
 - [NobelPrize.org — 2022 Sveriges Riksbank Prize in Economic Sciences (Bernanke, Diamond, Dybvig) press release](https://www.nobelprize.org/prizes/economic-sciences/2022/press-release/) `リファレンス`
 
 ## 関連概念
-- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 語彙が近い
 - [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]] — 同じ思想家
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同分野の近傍
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 同分野の近傍
 - [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]] — 同分野の近傍
 - [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同分野の近傍
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同分野の近傍

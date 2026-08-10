@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同分野の近傍
 - [[bizlaw-financial-instruments-act|金融商品取引法]] — 同分野の近傍
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同分野の近傍
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 同分野の近傍
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同分野の近傍
 

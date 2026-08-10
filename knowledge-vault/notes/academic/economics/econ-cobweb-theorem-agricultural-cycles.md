@@ -34,6 +34,7 @@ Mordecai Ezekiel ／ Jan Tinbergen ／ Umberto Ricci
 ## 関連概念
 - [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同分野の近傍
 - [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 同分野の近傍
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

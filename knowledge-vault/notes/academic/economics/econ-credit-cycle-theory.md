@@ -33,6 +33,7 @@ Nobuhiro Kiyotaki ／ John H. Moore ／ Hyman P. Minsky ／ Ben S. Bernanke ／ 
 - [Kiyotaki & Moore "Credit Cycles" Journal of Political Economy 105(2), 1997 — SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3914) `学術`
 
 ## 関連概念
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 語彙が近い
 - [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
@@ -42,7 +43,6 @@ Nobuhiro Kiyotaki ／ John H. Moore ／ Hyman P. Minsky ／ Ben S. Bernanke ／ 
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 出典を共有
 - [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 出典を共有
-- [[econ-macroprudential-policy|マクロプルーデンス政策]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]
