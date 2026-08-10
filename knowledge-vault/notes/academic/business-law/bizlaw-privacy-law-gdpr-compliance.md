@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 出典を共有
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 出典を共有
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

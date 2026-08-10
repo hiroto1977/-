@@ -39,8 +39,8 @@ GATT（1947 第3条での原則確立）／WTO上級委員会（Japan–Alcoholi
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 出典を共有
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 出典を共有
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 出典を共有
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
 - [[bizlaw-carbon-border-adjustment|炭素国境調整メカニズム（CBAM）]] — 同分野の近傍
-- [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

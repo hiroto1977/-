@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同分野の近傍
-- [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同分野の近傍
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

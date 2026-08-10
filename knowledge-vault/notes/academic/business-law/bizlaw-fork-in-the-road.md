@@ -39,8 +39,8 @@ Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
-- [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同分野の近傍
 - [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
+- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

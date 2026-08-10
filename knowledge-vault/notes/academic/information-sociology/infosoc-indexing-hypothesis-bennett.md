@@ -34,8 +34,8 @@ W・ランス・ベネット ／ ダニエル・ハリン ／ エドワード・
 - [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同じ思想家
 - [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
 - [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
+- [[infosoc-fourth-estate|第四の権力]] — 同分野の近傍
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
-- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

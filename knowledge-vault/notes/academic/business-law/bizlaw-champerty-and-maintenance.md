@@ -32,8 +32,8 @@ Percy Henry Winfield ／ Rachael Mulheron
 - [Mulheron, Modern Doctrines (OUP 2023)](https://global.oup.com/academic/product/the-modern-doctrines-of-champerty-and-maintenance-9780192898739) `学術`
 
 ## 関連概念
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 語彙が近い
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

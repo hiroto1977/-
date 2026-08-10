@@ -281,7 +281,7 @@ tags:
 - **Q:** 創造的破壊と組織革新——シュンペーター的競争の経営学的展開
   - **A:** 創造的破壊（creative destruction）は、シュンペーターが1942年の著書で提示した資本主義のダイナミズムを捉える中核概念であり、革新的な企業家による新結合（neue Kombination）が既存の産業構造を内側から絶えず破壊し再構築するプロセスを指す。（→ [[mgmt-creative-destruction-schumpeter-org]]）
 - **Q:** 創造的自己効力感
-  - **A:** Tierney＆Farmer（2002）が提唱した、自分が創造的な成果を生み出せるという個人の信念。Banduraの自己効力感理論を組織の創造性に特化して応用し、創造的パフォーマンスの重要な予測因子となっている。（→ [[mgmt-creative-self-efficacy]]）
+  - **A:** Tierney＆Farmer（2002）が提唱した、自分が創造的な成果を生み出せるという個人の信念。Banduraの自己効力感理論を組織の創造性に特化して応用し、創造的パフォーマンスの重要な予測因子となっている。一般的自己効力感や職務効力感と区別される領域特定的な信念で、職務効力感を統制してもなお創造的成果を予測することが原論文の実証的貢献である。（→ [[mgmt-creative-self-efficacy]]）
 - **Q:** GLOBEプロジェクト——文化次元とリーダーシップの国際比較
   - **A:** ロバート・ハウスが1991年に構想し62カ国・17,000人以上の中間管理職を調査したGLOBE（Global Leadership and Organizational Behavior Effectiveness）プロジェクトは、文化的価値観・慣行とリーダーシップの有効性の関係を大規模に検証した国際比較研究である。（→ [[mgmt-cross-cultural-leadership-house-globe]]）
 - **Q:** キャズム理論（Crossing the Chasm）

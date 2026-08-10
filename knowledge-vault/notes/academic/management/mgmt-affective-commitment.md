@@ -35,7 +35,6 @@ John P. Meyer ／ Natalie J. Allen ／ Zachary A. Mercurio
 - [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同じ思想家
 - [[mgmt-organizational-commitment|組織コミットメント]] — 同分野の近傍
 - [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
-- [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

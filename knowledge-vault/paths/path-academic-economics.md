@@ -16,7 +16,7 @@ tags:
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 39）

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[human-hyperbolic-discounting|双曲割引]] — 語彙が近い
+- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 語彙が近い
 - [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同じ思想家
-- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同じ思想家
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同分野の近傍
 
 ## 関連

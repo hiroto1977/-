@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
 - [[infosoc-post-normal-science-funtowicz-ravetz|ポストノーマル科学——不確実性と利害が高い問題における科学]] — 同じ思想家
-- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同分野の近傍
 - [[infosoc-small-world|スモールワールド現象（六次の隔たり）]] — 同分野の近傍
 - [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同分野の近傍
 

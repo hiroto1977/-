@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 語彙が近い
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同分野の近傍
+- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同分野の近傍
 - [[infosoc-digital-inequality|デジタル格差・デジタル不平等：情報技術へのアクセスと活用における社会的不均衡]] — 同分野の近傍
 - [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — 同分野の近傍
 - [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同分野の近傍

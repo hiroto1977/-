@@ -17,10 +17,10 @@ tags:
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 42）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
+- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 23）
-- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 23）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 23）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）

@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Decentralized autonomous organization — blockchain governance](https://en.wikipedia.org/wiki/Decentralized_autonomous_organization) `リファレンス`
 
 ## 関連概念
-- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同分野の近傍
 - [[infosoc-web3|Web3]] — 同分野の近傍
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

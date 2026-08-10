@@ -27,7 +27,7 @@ tags:
 - [[subsidy-patent-fee-reduction|特許料等の減免制度]]（接続 17）
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]]（接続 17）
 - [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]]（接続 15）
-- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]]（接続 14）
+- [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2025年: [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]]
@@ -53,13 +53,13 @@ tags:
 - [[subsidy-hiroshima|中小・ベンチャー企業チャレンジ応援事業助成金（広島県）]]
 - [[subsidy-hokkaido|中小企業競争力強化促進事業（北海道）]]
 - [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]]
-- [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]]
 - [[subsidy-ishikawa|小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）]]
 - [[subsidy-iwate|中小企業者等賃上げ環境整備支援事業費補助金（岩手県）]]
 - [[subsidy-jfc-loan|日本政策金融公庫の中小企業・小規模事業者向け融資]]
 - [[subsidy-jizokuka|小規模事業者持続化補助金]]
 - [[subsidy-jstartup|J-Startup]]
 - [[subsidy-kagawa|香川県事業者の未来への投資を応援する総合補助金（未来投資応援補助金）（香川県）]]
+- [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]]
 - [[subsidy-kanagawa|中小企業生産性向上促進事業費補助金（神奈川県）]]
 - [[subsidy-kochi|高知県戦略的製品開発推進事業費補助金（高知県）]]
 - [[subsidy-kumamoto|くまもと型小規模事業者経営発展支援事業補助金（熊本県）]]

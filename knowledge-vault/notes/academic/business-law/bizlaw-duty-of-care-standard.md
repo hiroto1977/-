@@ -37,7 +37,6 @@ William T. Allen ／ Melvin A. Eisenberg ／ Bernard S. Black
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 同じ思想家
-- [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同分野の近傍
 - [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]] — 同分野の近傍
 
 ## 関連

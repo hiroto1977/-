@@ -33,6 +33,7 @@ aliases:
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
 - [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
 - [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 同分野の近傍
+- [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

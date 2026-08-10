@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-国際慣習法上、ホスト国の司法制度が外国投資家に対し司法アクセスの拒絶・差別的扱い・判決の不執行等の司法運営の不全を行うことを禁止する原則。公正衡平待遇（FET）基準に包摂されるとする解釈が投資仲裁で一般化している。
+国際慣習法上、ホスト国の司法制度が外国投資家に対し司法アクセスの拒絶・差別的扱い・判決の不執行等の司法運営の不全を行うことを禁止する原則。公正衡平待遇（FET）基準に包摂されるとする解釈が投資仲裁で一般化している。対象になるのは司法の「結果の誤り」ではなく「制度としての機能不全」であり、裁判の不当な遅延・審理拒否・手続保障の欠如・明白に恣意的な判決・判決執行の妨害などが典型となる。単なる誤判は含まれないため、仲裁廷が国内裁判所の上訴審化することへの歯止め（ショッキングで恣意的といえる程度の閾値）が常に争点になる。パウリソンの体系書は、国内救済を尽くしたことが実体要件に組み込まれる（司法制度全体に是正の機会を与えて初めて国家責任が完成する）という特徴を整理し、ICJ の ELSI 事件が示した「恣意性＝法の支配への意図的無視」の定式が援用の基準線になっている。投資仲裁では Loewen 事件（米国の陪審評決と上訴保証金）や Chevron 対エクアドルなどが著名で、FET 条項経由で主張されるのが実務の通例。国家側からは司法主権への介入という批判が根強く、条約起草では denial of justice を FET の限定列挙に含める（CPTPP 型）ことで射程を絞る技法が広がっている。
 
 ## 提唱者・初出
 ヤン・パウリソン（裁判拒否の体系的分析）／エルシ事件（ICJ 1989）
@@ -31,12 +31,9 @@ aliases:
 - [Investment Tribunals as Courts of Appeal? Denial of Justice — British Yearbook of International Law / Oxford](https://academic.oup.com/bybil/advance-article/doi/10.1093/bybil/brad013/7319194) `学術`
 
 ## 関連概念
-- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 語彙が近い
-- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 語彙が近い
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
-- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 同分野の近傍
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

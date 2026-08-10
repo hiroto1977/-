@@ -32,13 +32,14 @@ ICSID条約（1965 第26条での逆転規定）／国際法委員会（ILC外�
 
 ## 関連概念
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 語彙が近い
-- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 語彙が近い
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同じ思想家
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 同じ思想家
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同じ思想家
 - [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
+- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有
+- [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 同分野の近傍
 - [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 同分野の近傍
 
 ## 関連
