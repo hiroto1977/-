@@ -38,7 +38,7 @@ aliases:
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 出典を共有
 - [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-credit-cycle-theory|信用循環理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

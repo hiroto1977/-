@@ -34,7 +34,6 @@ aliases:
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同分野の近傍
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同分野の近傍
-- [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

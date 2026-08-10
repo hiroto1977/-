@@ -35,7 +35,6 @@ Taina Bucher／Motahhare Eslami／Emilee Rader／Tarleton Gillespie
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
-- [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 同分野の近傍
 - [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同分野の近傍
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
 

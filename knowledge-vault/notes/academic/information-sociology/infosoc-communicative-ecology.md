@@ -34,8 +34,8 @@ Jo Tacchi ／ Greg Hearn ／ Jerry Watkins
 ## 関連概念
 - [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 出典を共有
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 出典を共有
-- [[infosoc-ai-governance-human-rights|AIガバナンスと人権基盤アプローチの国際政治社会学]] — 同分野の近傍
 - [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — 同分野の近傍
+- [[infosoc-ai-governance-human-rights|AIガバナンスと人権基盤アプローチの国際政治社会学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

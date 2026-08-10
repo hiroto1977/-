@@ -36,7 +36,6 @@ Blake Ashforth ／ Fred Mael ／ Michael Pratt
 - [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同じ思想家
 - [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

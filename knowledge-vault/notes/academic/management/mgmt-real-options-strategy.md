@@ -31,8 +31,8 @@ Edward H. Bowman ／ Dileep Hurry ／ Rita Gunther McGrath ／ Lenos Trigeorgis
 - [Trigeorgis & Reuer (2017) Real Options Theory in Strategic Management — Strategic Management Journal](https://giesbusiness.illinois.edu/josephm/BA549_Fall%202018/Session%207/Trigeorgis%20and%20Reuer%20(2017).pdf) `リファレンス`
 
 ## 関連概念
-- [[mgmt-freemium|フリーミアム]] — 同分野の近傍
 - [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
+- [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同分野の近傍
 - [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同分野の近傍
 - [[mgmt-real-options-theory|リアル・オプション理論]] — 同分野の近傍
 

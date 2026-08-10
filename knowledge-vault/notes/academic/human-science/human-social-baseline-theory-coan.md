@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同分野の近傍
 - [[human-actor-observer-bias|行為者-観察者バイアス]] — 同分野の近傍
-- [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — 同分野の近傍
 - [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 同分野の近傍
 
 ## 関連
