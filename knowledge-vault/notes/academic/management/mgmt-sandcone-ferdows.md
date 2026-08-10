@@ -37,8 +37,8 @@ aliases:
 - [[mgmt-swot-analysis|SWOT分析]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-competency|コンピテンシー]] — 同分野の近傍
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

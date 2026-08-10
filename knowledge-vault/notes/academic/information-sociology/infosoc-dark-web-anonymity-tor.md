@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 同分野の近傍
+- [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

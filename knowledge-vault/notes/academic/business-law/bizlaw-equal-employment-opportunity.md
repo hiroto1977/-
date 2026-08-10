@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — 同分野の近傍
-- [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同分野の近傍
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

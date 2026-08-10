@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia — Sheepskin effect（学位取得時の非連続的賃金プレミアム／シグナリング対人的資本の論点）](https://en.wikipedia.org/wiki/Sheepskin_effect) `リファレンス`
 
 ## 関連概念
+- [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 同分野の近傍
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

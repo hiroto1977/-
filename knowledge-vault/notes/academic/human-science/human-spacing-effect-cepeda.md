@@ -35,7 +35,6 @@ aliases:
 - [[human-forgetting-curve-ebbinghaus|忘却曲線——学習直後に急速に進み次第に緩やかになる忘却]] — 同じ思想家
 - [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同じ思想家
 - [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
-- [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

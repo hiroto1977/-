@@ -32,8 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 同分野の近傍
-- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
-- [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]] — 同分野の近傍
+- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

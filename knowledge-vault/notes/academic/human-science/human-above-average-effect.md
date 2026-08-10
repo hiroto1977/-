@@ -36,11 +36,11 @@ aliases:
 - [[human-acquired-needs-theory|獲得欲求理論]] — 同分野の近傍
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — 同分野の近傍
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]] — 同分野の近傍
+- [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]] — 同分野の近傍
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]] — 同分野の近傍
 - [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — 同分野の近傍
 - [[human-anosognosia|病態失認（アノソグノシア / Anosognosia）]] — 同分野の近傍
-- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同分野の近傍
-- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同分野の近傍
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

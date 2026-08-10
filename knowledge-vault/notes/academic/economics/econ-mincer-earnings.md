@@ -36,6 +36,7 @@ aliases:
 - [[econ-gibrat-law|ジブラの法則]] — 出典を共有
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有
 - [[econ-ben-porath-human-capital-lifecycle|ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）]] — 同分野の近傍
+- [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

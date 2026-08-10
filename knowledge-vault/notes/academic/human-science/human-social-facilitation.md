@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 同分野の近傍
 - [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
+- [[human-social-loafing-latane|社会的手抜き——集団作業で個人の努力が低下する現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

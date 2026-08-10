@@ -41,7 +41,6 @@ Steven J. Jackson ／ Stephen Graham ／ Nigel Thrift
 - [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
-- [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

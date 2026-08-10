@@ -36,7 +36,6 @@ OECD（2004 FET基準の体系的分析）／クリストフ・シュロイア�
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
 - [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
-- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

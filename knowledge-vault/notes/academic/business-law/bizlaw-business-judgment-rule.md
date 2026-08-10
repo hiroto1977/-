@@ -43,7 +43,6 @@ aliases:
 - [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 同分野の近傍
 - [[bizlaw-compliance|コンプライアンス（法令遵守と企業倫理）]] — 同分野の近傍
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 同分野の近傍
-- [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

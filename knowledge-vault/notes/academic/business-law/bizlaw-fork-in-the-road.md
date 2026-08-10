@@ -40,7 +40,7 @@ Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
 - [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
-- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — 同分野の近傍
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

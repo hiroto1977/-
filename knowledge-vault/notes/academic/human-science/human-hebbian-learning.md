@@ -35,7 +35,6 @@ aliases:
 - [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
 - [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
 - [[infosoc-preferential-attachment|優先的選択（スケールフリー・ネットワーク）]] — 出典を共有
-- [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 同分野の近傍
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
 - [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 同分野の近傍
 

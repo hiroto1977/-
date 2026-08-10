@@ -35,8 +35,8 @@ aliases:
 - [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同じ思想家
 - [[human-mental-rotation-shepard|メンタル・ローテーション（シェパード＆メッツラー）]] — 同じ思想家
 - [[human-mental-rotation-shepard-metzler|心的回転——心的イメージのアナログ的変換を示す実験]] — 同じ思想家
+- [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]] — 同分野の近傍
 - [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

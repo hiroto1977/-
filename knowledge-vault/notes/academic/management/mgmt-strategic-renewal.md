@@ -41,6 +41,7 @@ aliases:
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 同分野の近傍
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同分野の近傍
+- [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
