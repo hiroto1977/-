@@ -2,7 +2,7 @@
 title: "biz.moneyforward.com"
 type: source-domain
 host: "biz.moneyforward.com"
-cite_count: 17
+cite_count: 16
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # biz.moneyforward.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **17 件**（メディア 17）
+> [!info] 出典ドメイン索引 ・ 引用 **16 件**（メディア 16）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,6 @@ tags:
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 決算公告の期限・方法・罰則解説
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 特定求職者雇用開発助成金各コース・申請解説
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 法人税の申告期限解説
-- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — マネーフォワードワンストップ特例
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — マネーフォワードインボイス制度における軽減措置の解説
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — マネーフォワード少額特例の解説
 - [[tax-loss-offsetting|所得税の損益通算]] — 損益通算解説

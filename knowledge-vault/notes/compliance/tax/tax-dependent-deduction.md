@@ -36,6 +36,7 @@ aliases:
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 語彙が近い
 - [[tax-medical-expense-deduction|医療費控除]] — 出典を共有
 - [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
+- [[tax-year-end-adjustment|年末調整]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

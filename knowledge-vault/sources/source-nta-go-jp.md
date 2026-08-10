@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 283
+cite_count: 287
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **283 件**（公的 283）
+> [!info] 出典ドメイン索引 ・ 引用 **287 件**（公的 287）
 
 ## このドメインを出典とする項目
 
@@ -107,11 +107,13 @@ tags:
 - [[tax-dividends-received|受取配当等の益金不算入]] — 国税庁受取配当等の益金不算入（株式区分と不算入割合）
 - [[tax-dividends-received|受取配当等の益金不算入]] — 国税庁法人税基本通達受取配当等の益金不算入
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 国税庁No.5281寄附金の損金不算入
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 国税庁No.5283特定公益増進法人に対する寄附金
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1150寄附金控除
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1155ふるさと納税（寄附金控除）
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1260政党等寄附金特別控除（税額控除）
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1145地震保険料控除
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1146地震保険料控除の対象契約
+- [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁地震保険料控除に関する経過措置
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和5年度税制改正による電子帳簿保存法の改正事項
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子取引データを適切に保存できていますか
@@ -142,8 +144,10 @@ tags:
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 国税庁ふるさと納税をされた方へ
 - [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 国税庁No.4452夫婦間の居住用不動産贈与の配偶者控除
 - [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 国税庁贈与税の配偶者控除の特例（概要・要件）
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4161贈与財産の加算と税額控除（暦年課税・7年加算）
 - [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4402贈与税がかかる場合
 - [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4408贈与税の計算と税率（暦年課税）
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁相続税及び贈与税の税制改正のあらまし（令和5年6月）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 国税庁グローバル・ミニマム課税関係
 - [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 国税庁グループ法人税制質疑応答事例
 - [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 国税庁法人税基本通達完全支配関係がある法人間の寄附金

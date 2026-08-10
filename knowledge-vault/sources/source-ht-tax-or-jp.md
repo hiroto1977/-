@@ -2,7 +2,7 @@
 title: "ht-tax.or.jp"
 type: source-domain
 host: "ht-tax.or.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # ht-tax.or.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
-- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 寄附金の損金算入解説
 - [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 辻・本郷令和6年改正中小企業向け賃上げ促進税制の留意点
 
 ## 関連

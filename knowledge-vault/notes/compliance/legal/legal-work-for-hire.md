@@ -36,11 +36,11 @@ aliases:
 - [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 分野横断
 - [[bizlaw-copyright|著作権法]] — 出典を共有
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 出典を共有
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
 - [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 出典を共有
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 出典を共有
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
-- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

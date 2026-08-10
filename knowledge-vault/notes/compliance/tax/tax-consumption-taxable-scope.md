@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-export-exemption|消費税の輸出免税]] — 語彙が近い
-- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 同分野の近傍
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 同分野の近傍
 - [[tax-liquor-tax|酒税の概要]] — 同分野の近傍
 
 ## 関連

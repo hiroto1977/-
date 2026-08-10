@@ -36,8 +36,8 @@ aliases:
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
-- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
 - [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
 
 ## 関連

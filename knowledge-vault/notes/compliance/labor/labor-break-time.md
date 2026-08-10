@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 同分野の近傍
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

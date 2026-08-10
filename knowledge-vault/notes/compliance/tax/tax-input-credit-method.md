@@ -34,6 +34,7 @@ aliases:
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 出典を共有
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有

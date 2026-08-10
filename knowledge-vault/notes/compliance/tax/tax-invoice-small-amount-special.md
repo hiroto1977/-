@@ -40,7 +40,7 @@ aliases:
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
-- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

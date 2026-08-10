@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]] — 同じ思想家
 - [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
-- [[human-neuroplasticity-theory|神経可塑性理論]] — 同分野の近傍
+- [[human-critical-period-plasticity|神経発達の臨界期：視覚野可塑性と経験依存的回路形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

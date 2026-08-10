@@ -31,8 +31,8 @@ aliases:
 - [贈与税の配偶者控除 解説](https://legacy.ne.jp/knowledge/before/zouyo-zei/240-haiguushakoujyo-kyojyuuyoufudousan-tokurei/) `メディア`
 
 ## 関連概念
-- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-disability-deduction|所得税の障害者控除]] — 同分野の近傍
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 同分野の近傍
 
 ## 関連

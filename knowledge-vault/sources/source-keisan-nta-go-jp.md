@@ -2,7 +2,7 @@
 title: "keisan.nta.go.jp"
 type: source-domain
 host: "keisan.nta.go.jp"
-cite_count: 9
+cite_count: 10
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # keisan.nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **9 件**（公的 9）
+> [!info] 出典ドメイン索引 ・ 引用 **10 件**（公的 10）
 
 ## このドメインを出典とする項目
 
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 国税庁65万円控除の適用要件
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁更正の請求はいつまで行えるか
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 国税庁確定申告するとワンストップ特例は無効になる
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 国税庁一括比例配分方式とは
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁確定申告書等作成コーナー2割特例
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 国税庁一括償却資産とは

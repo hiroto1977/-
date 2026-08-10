@@ -43,10 +43,10 @@ national
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
-- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
 - [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
 - [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 出典を共有
+- [[bizlaw-apparent-agency|表見代理]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

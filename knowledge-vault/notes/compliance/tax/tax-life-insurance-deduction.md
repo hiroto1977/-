@@ -31,8 +31,8 @@ aliases:
 - [生命保険協会 生命保険料控除制度の改正](https://www.seiho.or.jp/data/billboard/deduction/pdf/01.pdf) `メディア`
 
 ## 関連概念
-- [[tax-earthquake-insurance-deduction|地震保険料控除]] — 語彙が近い
 - [[tax-individual-business-tax|個人事業税]] — 同分野の近傍
+- [[tax-medical-expense-deduction|医療費控除]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -466,14 +466,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'ふるさと納税のワンストップ特例',
       statement:
         '確定申告が不要な給与所得者等で、寄付先が年間5自治体以内であれば、各自治体へワンストップ特例の' +
-        '申請（期限は翌年1月10日）を行うことで確定申告なしに控除を受けられる。6自治体以上は確定申告が必要。',
+        '申請（期限は翌年1月10日）を行うことで確定申告なしに控除を受けられる。6自治体以上は確定申告が必要。' +
+        '特例が適用されると所得税からの控除は行われず、全額が翌年度の住民税から控除される（控除総額は原則同じ）。' +
+        '落とし穴は確定申告との関係で、医療費控除などのために確定申告をすると' +
+        'ワンストップ特例の申請はすべて無効になるため、ふるさと納税分も寄附金控除に含めて申告し直さなければならない。' +
+        'これを忘れて申告すると寄附分の控除が丸ごと落ちる。誤って含めずに申告した場合は更正の請求で救済できるが、' +
+        '所得税額に異動がないときは更正の請求ができず、住民税側の控除は市区町村への相談になる。' +
+        '申請後に住所が変わったときは翌年1月10日までに変更届出書を出す。',
       authority: '所管: 総務省・国税庁（地方税法・所得税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/procedure.html', type: 'government', label: '総務省 ふるさと納税の流れ' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/keisubetsu/furusato.htm', type: 'government', label: '国税庁 ふるさと納税をされた方へ' },
-      { url: 'https://biz.moneyforward.com/tax_return/basic/48272/', type: 'media', label: 'マネーフォワード ワンストップ特例' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru/cat2/cat22/cat226/cid218.html', type: 'government', label: '国税庁 確定申告するとワンストップ特例は無効になる' },
     ],
   },
   {
@@ -1446,14 +1452,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '法人の寄附金の損金算入限度',
       statement:
         '国・地方公共団体への寄附金および指定寄附金は全額損金算入され、特定公益増進法人等への寄附金は一般の寄附金とは' +
-        '別枠の特別損金算入限度額まで、一般の寄附金は資本金等の額と所得金額を基礎に計算した限度額までが損金算入される。',
+        '別枠の特別損金算入限度額まで、一般の寄附金は資本金等の額と所得金額を基礎に計算した限度額までが損金算入される。' +
+        '普通法人の一般の寄附金の限度額は（資本金等の額×0.25%＋所得金額×2.5%）×1/4、' +
+        '特定公益増進法人等への特別限度額は（資本金等の額×0.375%＋所得金額×6.25%）×1/2 で、' +
+        '所得が赤字だと枠も小さくなる。' +
+        'タイミングの罠が一つあり、寄附金は実際に支払った日の損金で、未払計上や手形払いでは損金にならない。' +
+        '期末に寄附を決議しただけでは当期の損金に入らないので、決算対策なら期中に支払いまで済ませる。' +
+        '取引先への支援や子会社への無利息貸付など、対価性のない経済的利益の供与も寄附金と認定され得るので、' +
+        '寄附金勘定に載っていない支出が税務調査で寄附金にされる形でも効いてくる。',
       authority: '所管: 国税庁（法人税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5281.htm', type: 'government', label: '国税庁 No.5281 寄附金の損金不算入' },
       { url: 'https://www.mext.go.jp/donation_portal-site/corporate-preferential.html', type: 'government', label: '文部科学省 法人寄附の税制優遇' },
-      { url: 'https://www.ht-tax.or.jp/topics/kifukin-keihi/', type: 'media', label: '寄附金の損金算入 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5283.htm', type: 'government', label: '国税庁 No.5283 特定公益増進法人に対する寄附金' },
     ],
   },
   {
@@ -1858,14 +1871,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '贈与税の暦年課税（基礎控除110万円）',
       statement:
         '暦年課税の贈与税では、1月1日から12月31日までの1年間に同一の受贈者が取得した財産の合計額から基礎控除額110万円を' +
-        '差し引いて課税価格を計算する。1年間の合計が110万円以下であれば贈与税はかからず、申告も不要である。',
+        '差し引いて課税価格を計算する。1年間の合計が110万円以下であれば贈与税はかからず、申告も不要である。' +
+        'ただし相続との関係では110万円以下でも消えない。令和5年度改正により、令和6年1月1日以後の贈与から' +
+        '相続開始前の贈与加算の対象期間が3年から7年へ段階的に延長され（延長された4年分は総額100万円まで加算除外）、' +
+        '基礎控除以下で贈与税がかからなかった財産も、相続等で財産を取得した者への贈与であれば相続財産に加算される。' +
+        '相続人でない孫などへの贈与は原則として加算対象にならないため、長期の生前贈与は相手の選び方で効果が変わる。' +
+        '同じ改正で相続時精算課税にも年110万円の基礎控除が創設され、精算課税を選択していても年110万円以下なら' +
+        '申告不要かつ相続財産への加算もないので、暦年課税と精算課税の使い分けの前提が大きく変わっている。',
       authority: '所管: 国税庁（相続税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4402.htm', type: 'government', label: '国税庁 No.4402 贈与税がかかる場合' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4408.htm', type: 'government', label: '国税庁 No.4408 贈与税の計算と税率（暦年課税）' },
-      { url: 'https://chester-tax.com/encyclopedia/9307.html', type: 'media', label: '暦年贈与の非課税枠 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4161.htm', type: 'government', label: '国税庁 No.4161 贈与財産の加算と税額控除（暦年課税・7年加算）' },
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0023006-004.pdf', type: 'government', label: '国税庁 相続税及び贈与税の税制改正のあらまし（令和5年6月）' },
     ],
   },
   {
@@ -2943,7 +2963,14 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '小規模企業共済等掛金控除',
       statement:
         '小規模企業共済の掛金、確定拠出年金（企業型・個人型iDeCo）の加入者掛金、地方公共団体が実施する心身障害者扶養共済制度の掛金などを' +
-        '支払った場合、その年に支払った掛金の全額が小規模企業共済等掛金控除として所得控除の対象となる。',
+        '支払った場合、その年に支払った掛金の全額が小規模企業共済等掛金控除として所得控除の対象となる。' +
+        '生命保険料控除のような上限圧縮がなく全額控除である点が強く、掛金の枠も別々に使える。' +
+        '小規模企業共済は月1,000円〜7万円（500円単位・年最大84万円）で、加入できるのは小規模企業の個人事業主・共同経営者・' +
+        '会社等の役員に限られ、従業員数の上限（建設業・製造業等は20人以下、商業・サービス業は5人以下等）がある。' +
+        '事業が大きくなってからは入れないので、要件を満たすうちに加入しておく制度である。iDeCoとは併用でき、枠は別に数える。' +
+        'iDeCoの拠出限度額は2024年12月に公務員・確定給付型併用者が月2万円へ引き上げられ、' +
+        'さらに2026年12月からは第2号被保険者が月6万2千円、第1号被保険者が国民年金基金と共通で月7万5千円へ引き上げられる。' +
+        '1年以内の前納掛金はその年の控除に含められるため、年末の前納で当年の控除額を積み増せる。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
@@ -3068,14 +3095,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '地震保険料控除',
       statement:
         '納税者がその年に地震保険契約等に係る地震保険料を支払った場合、一定額の所得控除（地震保険料控除）を受けられる。' +
-        '所得税では、その年に支払った地震保険料の全額（最高5万円。5万円を超える場合は一律5万円）が課税所得から控除される。',
+        '所得税では、その年に支払った地震保険料の全額（最高5万円）が課税所得から控除され、住民税では半額（最高2万5千円）となる。' +
+        '対象は地震保険部分の保険料だけで、セット契約の火災保険部分は平成18年の損害保険料控除廃止以降は対象にならない。' +
+        '経過措置として、平成18年12月31日までに締結した満期返戻金のある保険期間10年以上の長期損害保険契約' +
+        '（平成19年1月1日以後に契約変更をしていないもの）の保険料は旧長期損害保険料として最高1万5千円まで控除でき、' +
+        '地震保険料と合わせた控除上限は5万円である。' +
+        '一つの契約が地震保険料と旧長期損害保険料の両方に該当する場合は、いずれか一方を選択して適用する。' +
+        '給与所得者は保険会社の控除証明書を添えて年末調整で控除でき、確定申告は不要である。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1145.htm', type: 'government', label: '国税庁 No.1145 地震保険料控除' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1146.htm', type: 'government', label: '国税庁 No.1146 地震保険料控除の対象契約' },
-      { url: 'https://www.sonysonpo.co.jp/fire/earthquake_005.html', type: 'media', label: '地震保険料控除 控除額 解説' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shotoku/05/68.htm', type: 'government', label: '国税庁 地震保険料控除に関する経過措置' },
     ],
   },
   {

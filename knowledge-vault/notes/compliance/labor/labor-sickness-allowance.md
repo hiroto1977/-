@@ -39,7 +39,6 @@ aliases:
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 同分野の近傍
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
-- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

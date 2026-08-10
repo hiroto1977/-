@@ -31,11 +31,11 @@ aliases:
 - [中小機構 小規模企業共済とは](https://www.smrj.go.jp/kyosai/skyosai/) `運営団体`
 
 ## 関連概念
-- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 語彙が近い
 - [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
 - [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
 - [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
 - [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 出典を共有
+- [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

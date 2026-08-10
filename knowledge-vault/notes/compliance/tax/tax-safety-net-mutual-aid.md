@@ -38,8 +38,8 @@ aliases:
 - [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
-- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
 - [[tax-small-business-mutual-aid|小規模企業共済制度]] — 出典を共有
 
 ## 関連

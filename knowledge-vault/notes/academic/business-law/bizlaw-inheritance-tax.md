@@ -31,9 +31,9 @@ aliases:
 - [国税庁 No.4102 相続税がかかる場合（基礎控除）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4102.htm) `公的`
 
 ## 関連概念
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 語彙が近い
 - [[bizlaw-income-tax-act|所得税法]] — 同分野の近傍
 - [[bizlaw-local-tax-act|地方税法]] — 同分野の近傍
-- [[bizlaw-strong-v-bird|ストロング対バードの準則——不完全な贈与が遺言執行者就任で完成する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

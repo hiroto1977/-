@@ -36,7 +36,6 @@ aliases:
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 同分野の近傍
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 同分野の近傍
 - [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 同分野の近傍
-- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -37,10 +37,10 @@ aliases:
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 出典を共有
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 出典を共有
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 出典を共有
-- [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
