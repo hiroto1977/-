@@ -2,7 +2,7 @@
 title: "fsa.go.jp"
 type: source-domain
 host: "fsa.go.jp"
-cite_count: 44
+cite_count: 46
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # fsa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **44 件**（公的 44）
+> [!info] 出典ドメイン索引 ・ 引用 **46 件**（公的 46）
 
 ## このドメインを出典とする項目
 
@@ -48,12 +48,14 @@ tags:
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 金融庁疑わしい取引の届出手続き
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 金融庁暗号資産関連事業を行うみなさまへ
 - [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 金融庁金融サービス仲介業者向け監督指針
+- [[legal-funds-transfer|資金移動業]] — 金融庁事務ガイドライン（資金移動業者関係）
 - [[legal-funds-transfer|資金移動業]] — 金融庁資金決済法関連
 - [[legal-funds-transfer|資金移動業]] — 金融庁資金移動業者関係
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 証券取引等監視委員会インサイダー取引とは
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 金融庁インサイダー取引規制に関するQ&A
 - [[legal-interest-limit|利息制限法の上限金利]] — 金融庁貸金業法のキホン（利息制限法と出資法）
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 金融庁貸金業法のキホン
+- [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 金融庁事務ガイドライン（前払式支払手段発行者関係）
 - [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 金融庁前払式支払手段の各種様式
 - [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 金融庁前払式支払手段発行保証金規則
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 金融庁EDINETについて

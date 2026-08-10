@@ -2,7 +2,7 @@
 title: "soumu.go.jp"
 type: source-domain
 host: "soumu.go.jp"
-cite_count: 61
+cite_count: 63
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # soumu.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **61 件**（公的 61）
+> [!info] 出典ドメイン索引 ・ 引用 **63 件**（公的 63）
 
 ## このドメインを出典とする項目
 
@@ -43,12 +43,14 @@ tags:
 - [[infosoc-sharing-economy|シェアリングエコノミー]] — 総務省平成29年版情報通信白書「シェアリング・エコノミー（CtoCサービス）」
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 総務省労働者派遣と請負の区分基準（37号告示）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 総務省匿名加工情報について
+- [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 総務省特定電子メール法パンフレット（オプトインの例外・記録保存）
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 総務省・消費者庁特定電子メールガイドライン
 - [[legal-computer-virus|不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）]] — 総務省サイバーセキュリティサイト刑法
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 総務省・消費者庁特定電子メール法パンフレット
 - [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 総務省電子署名を用いた電子契約サービスに関する整理
 - [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律FAQ
 - [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律パンフレット
+- [[legal-external-transmission|電気通信事業法の外部送信規律]] — 総務省外部送信規律（概要ページ）
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 総務省マイナンバー制度
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 総務省インターネット上の違法・有害情報への対応
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 総務省大規模特定電気通信役務提供者の指定

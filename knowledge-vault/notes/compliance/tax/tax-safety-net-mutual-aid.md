@@ -31,7 +31,6 @@ aliases:
 - [経営セーフティ共済とは 解説](https://biz.moneyforward.com/accounting/basic/45216/) `メディア`
 
 ## 関連概念
-- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 語彙が近い
 - [[subsidy-bankruptcy-prevention-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 分野横断
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
@@ -40,7 +39,8 @@ aliases:
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
-- [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-small-business-mutual-aid|小規模企業共済制度]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

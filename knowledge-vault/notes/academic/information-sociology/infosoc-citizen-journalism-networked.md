@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
 - [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
-- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 同分野の近傍
+- [[infosoc-participatory-culture|参加型文化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

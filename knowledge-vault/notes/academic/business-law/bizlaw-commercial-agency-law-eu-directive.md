@@ -37,7 +37,7 @@ aliases:
 - [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
 - [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同じ思想家
-- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 同分野の近傍
+- [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

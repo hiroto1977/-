@@ -40,7 +40,7 @@ Joseph E. Stiglitz／Andrew Weiss
 - [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同分野の近傍
-- [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同分野の近傍
+- [[econ-financial-repression|金融抑圧]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ Foss v Harbottle (1843) 2 Hare 461は、会社への不正行為を訴追でき�
 ## 関連概念
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 語彙が近い
 - [[bizlaw-apparent-agency|表見代理]] — 同分野の近傍
-- [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]] — 同分野の近傍
 - [[bizlaw-proper-purpose-howard-smith|取締役の権限濫用と適正目的の法理——ハワード・スミス対アンポル事件（Howard Smith v Ampol 1974）]] — 同分野の近傍
 
 ## 関連

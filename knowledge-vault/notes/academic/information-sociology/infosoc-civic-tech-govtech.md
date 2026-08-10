@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 - [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
 - [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同分野の近傍
-- [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同分野の近傍
+- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

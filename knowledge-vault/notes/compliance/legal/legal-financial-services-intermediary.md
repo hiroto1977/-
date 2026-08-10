@@ -31,9 +31,9 @@ aliases:
 - [金融サービス仲介業 態勢整備 解説](https://www.businesslawyers.jp/articles/1030) `メディア`
 
 ## 関連概念
-- [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 語彙が近い
 - [[bizlaw-financial-services-act|金融サービス提供法]] — 語彙が近い
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 同分野の近傍
 - [[legal-land-state-attribution|相続土地国庫帰属制度（2023年4月施行）]] — 同分野の近傍
 
 ## 関連

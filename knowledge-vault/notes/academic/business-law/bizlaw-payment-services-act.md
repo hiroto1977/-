@@ -31,7 +31,7 @@ aliases:
 - [コトバンク「資金決済法」](https://kotobank.jp/word/%E8%B3%87%E9%87%91%E6%B1%BA%E6%B8%88%E6%B3%95-518149) `リファレンス`
 
 ## 関連概念
-- [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 分野横断
+- [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 語彙が近い
 - [[legal-funds-transfer|資金移動業]] — 分野横断
 - [[bizlaw-radio-act|電波法]] — 同分野の近傍
 - [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]] — 同分野の近傍

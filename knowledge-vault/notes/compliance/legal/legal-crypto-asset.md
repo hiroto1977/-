@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 語彙が近い
-- [[legal-funds-transfer|資金移動業]] — 語彙が近い
+- [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

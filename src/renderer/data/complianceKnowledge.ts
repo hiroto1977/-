@@ -417,14 +417,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '広告メールのオプトイン規制（特定電子メール法）',
       statement:
         '広告・宣伝を目的とする電子メール（特定電子メール）の送信は、原則として受信者の事前同意（オプトイン）が必要。' +
-        '送信時は送信者の氏名・名称、受信拒否の通知先と方法、住所・苦情等の連絡先の表示が義務付けられる。',
+        '送信時は送信者の氏名・名称、受信拒否の通知先と方法、住所・苦情等の連絡先の表示が義務付けられる。' +
+        '同意なしに送れる例外は、取引関係にある者、名刺等の書面で自己のメールアドレスを通知した者、' +
+        'アドレスをウェブサイト等で公表している法人・営業を営む個人（受信拒否の旨を併せて公表している場合を除く）などに限られる。' +
+        '同意を証する記録の保存も義務で、いつどの画面でどう同意を取ったかを残しておかないと立証できない。' +
+        '受信拒否（オプトアウト）の通知を受けたら以後の送信は禁止される。' +
+        '違反には総務大臣・内閣総理大臣の措置命令があり、送信者情報を偽った送信や措置命令違反には' +
+        '1年以下の拘禁刑または100万円以下の罰金、法人には3,000万円以下の罰金が科され得る。' +
+        'EC の広告メールには特定商取引法のオプトイン規制も重ねてかかるため、両方の表示義務を満たす必要がある。',
       authority: '所管: 総務省・消費者庁（特定電子メール法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/specifed_email/', type: 'government', label: '消費者庁 特定電子メール法' },
       { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_081114_1.pdf', type: 'government', label: '総務省・消費者庁 特定電子メールガイドライン' },
-      { url: 'https://emberpoint.com/blog/column/240606-002.html', type: 'media', label: '特定電子メール法 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_pamphlet.pdf', type: 'government', label: '総務省 特定電子メール法パンフレット（オプトインの例外・記録保存）' },
     ],
   },
   {
@@ -1276,14 +1283,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '前払式支払手段の発行保証金供託義務',
       statement:
         '商品券・プリペイドカード・電子マネー等の前払式支払手段の発行者は、基準日（3月末・9月末）の未使用残高が1,000万円を' +
-        '超える場合、その2分の1以上の額を発行保証金として供託等で保全し、財務局へ届出・登録する義務を負う。',
+        '超える場合、その2分の1以上の額を発行保証金として供託等（供託・発行保証金保全契約・信託契約）で保全する義務を負う。' +
+        '参入規制は型で違い、発行者自身にのみ使える自家型は基準日未使用残高が1,000万円を超えたときの届出制、' +
+        '加盟店でも使える第三者型は発行前の登録制で、登録を受けた法人でなければ発行できない。' +
+        '前払式支払手段は原則として払戻しが禁止されており（資金決済法20条）、' +
+        '払戻しできるのは業務の全部・一部の廃止時や保有者のやむを得ない事情等に限られる。' +
+        '逆に自由に現金化できる設計にするなら、それは為替取引として資金移動業の登録が必要になる。' +
+        '残高はサーバー型（IDに記録される電子マネー）でも対象で、社内ポイントでも対価を得て発行し' +
+        '商品・サービスの支払いに使えるなら該当し得る。無償で付与するポイントは対価性がなく対象外。',
       authority: '所管: 金融庁（資金決済法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.fsa.go.jp/news/28/20161228-3/23.pdf', type: 'government', label: '金融庁 前払式支払手段発行保証金規則' },
       { url: 'https://www.fsa.go.jp/common/shinsei/maebaraishiki.html', type: 'government', label: '金融庁 前払式支払手段の各種様式' },
-      { url: 'https://www.s-kessai.jp/businesses/issue_deposit.html', type: 'media', label: '日本資金決済業協会 発行保証金' },
+      { url: 'https://www.fsa.go.jp/common/law/guide/kaisya/05.pdf', type: 'government', label: '金融庁 事務ガイドライン（前払式支払手段発行者関係）' },
+      { url: 'https://www.s-kessai.jp/businesses/issue_deposit.html', type: 'operator', label: '日本資金決済業協会 発行保証金' },
     ],
   },
   {
@@ -1407,14 +1422,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '電気通信事業法の外部送信規律',
       statement:
         '電気通信事業者等は、利用者の端末に記録された Cookie 等の情報を外部に送信させる際、送信される情報の内容・送信先等を' +
-        '利用者に通知し、又は容易に知り得る状態に置く（公表等）義務を負う（2023年6月施行）。',
+        '利用者に通知し、又は容易に知り得る状態に置く（公表等）か、同意取得またはオプトアウト措置のいずれかを講じる義務を負う' +
+        '（2023年6月施行）。Cookie 規制と呼ばれるが Cookie に限らず、解析タグ・広告タグ・SDK による端末情報の送信全般が対象になる。' +
+        '対象となるのは利用者の利益に及ぼす影響が少なくない電気通信役務で、メッセージ媒介、SNS・電子掲示板・動画共有・' +
+        'オンラインショッピングモール等の場の提供、オンライン検索、ニュース・気象・動画・地図等の情報のオンライン提供が該当する。' +
+        '一方、小売業者が自社商品を自社サイトで販売するだけなら本来業務の遂行手段にすぎず対象外である。' +
+        'ただし対象外の会社でも、オウンドメディアでニュースや情報の配信を始めると第4号の役務として対象に入り得るので、' +
+        'サイトの性格が変わったときに再判定する。実務上はプライバシーポリシーとは別に、' +
+        '送信先ごとに情報の内容・利用目的を一覧化した公表ページを置く対応が広がっている。',
       authority: '所管: 総務省（電気通信事業法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/gaibusoushin_kiritsu_00002.html', type: 'government', label: '総務省 外部送信規律FAQ' },
       { url: 'https://www.soumu.go.jp/main_content/000862755.pdf', type: 'government', label: '総務省 外部送信規律パンフレット' },
-      { url: 'https://privtech.co.jp/blog/law/revised-telecommunications-business-law-cookie.html', type: 'media', label: '外部送信規律 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/gaibusoushin_kiritsu.html', type: 'government', label: '総務省 外部送信規律（概要ページ）' },
     ],
   },
   {
@@ -1811,14 +1833,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '資金移動業',
       statement:
         '銀行等以外の者が為替取引（送金）を業として営む場合は資金移動業として内閣総理大臣の登録が必要であり、' +
-        '送金額の上限に応じて第一種・第二種・第三種の類型に区分され、利用者資金の保全等の義務を負う。',
+        '送金額の上限に応じて第一種・第二種・第三種の類型に区分され、利用者資金の保全等の義務を負う。' +
+        '第二種が従来型で1件100万円以下・登録制、第一種は100万円超の高額送金を扱える代わりに認可制で、' +
+        '具体的な送金指図のある資金しか受け入れられず滞留が禁止される。第三種は1件5万円以下の少額に限られる。' +
+        '利用者資金の保全は供託・保証・信託の方式があり、類型ごとに区分して行う。' +
+        '事業設計で効くのが前払式支払手段との境界で、チャージ残高を現金で払い戻せる設計にすると' +
+        '為替取引に当たり資金移動業の登録が必要になる。ポイントやプリペイドのつもりで払戻し機能を付けると' +
+        '無登録営業になりかねないので、現金化の可否は最初に決める。' +
+        '給与のデジタル払い（資金移動業者の口座への賃金支払）は、このうち厚生労働大臣の指定を受けた' +
+        '指定資金移動業者に限って認められる。',
       authority: '所管: 金融庁（資金決済に関する法律）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.fsa.go.jp/policy/kessai_seido/index.html', type: 'government', label: '金融庁 資金決済法関連' },
       { url: 'https://www.fsa.go.jp/common/law/kessai/index.html', type: 'government', label: '金融庁 資金移動業者関係' },
-      { url: 'https://www.smbc.co.jp/hojin/businessjoho/keiei/fund-transfer.html', type: 'media', label: '資金移動業 解説' },
+      { url: 'https://www.fsa.go.jp/common/law/guide/kaisya/14.pdf', type: 'government', label: '金融庁 事務ガイドライン（資金移動業者関係）' },
     ],
   },
   {

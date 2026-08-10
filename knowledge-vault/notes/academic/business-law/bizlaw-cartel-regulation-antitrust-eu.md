@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Cartel — カルテルの定義・歴史・各国規制制度の概説](https://en.wikipedia.org/wiki/Cartel) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 同分野の近傍
 - [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同分野の近傍
-- [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 同分野の近傍
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 同分野の近傍
 
 ## 関連

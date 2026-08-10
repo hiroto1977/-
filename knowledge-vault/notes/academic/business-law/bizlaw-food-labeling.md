@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 語彙が近い
-- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
 - [[bizlaw-tcfd|気候関連財務情報開示タスクフォース（TCFD）]] — 同分野の近傍
+- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

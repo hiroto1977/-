@@ -472,6 +472,10 @@
     [
       "tax-withholding",
       "tax-withholding-payment-special"
+    ],
+    [
+      "bizlaw-whistleblower-protection-eu-directive",
+      "bizlaw-whistleblower-protection-legislation"
     ]
   ]
 }

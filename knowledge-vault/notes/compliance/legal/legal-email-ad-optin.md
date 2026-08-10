@@ -31,7 +31,6 @@ aliases:
 - [総務省・消費者庁 特定電子メール法パンフレット](https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_pamphlet.pdf) `公的`
 
 ## 関連概念
-- [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]] — 語彙が近い
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 出典を共有
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
+- [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

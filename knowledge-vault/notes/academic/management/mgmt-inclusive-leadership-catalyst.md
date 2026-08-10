@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
+- [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
 - [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
 
 ## 関連
