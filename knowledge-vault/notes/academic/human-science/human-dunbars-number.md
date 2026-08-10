@@ -32,7 +32,6 @@ aliases:
 - [Scientific American: Social Network Size Linked to Brain Size（社会脳仮説の解説）](https://www.scientificamerican.com/article/social-network-size-linked-brain-size/) `メディア`
 
 ## 関連概念
-- [[human-social-brain-hypothesis|社会脳仮説]] — 語彙が近い
 - [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 出典を共有
 - [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 出典を共有
 - [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
@@ -42,6 +41,7 @@ aliases:
 - [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
+- [[human-cognitive-reserve-stern|認知予備力（スターン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

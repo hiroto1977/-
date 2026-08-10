@@ -33,13 +33,13 @@ aliases:
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 語彙が近い
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 語彙が近い
 - [[human-relational-frame-theory|関係フレーム理論（RFT）]] — 同分野の近傍
+- [[human-predictive-processing-theory|予測処理理論]] — 同分野の近傍
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — 同分野の近傍
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]] — 同分野の近傍
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]] — 同分野の近傍
 - [[human-anosognosia|病態失認（アノソグノシア / Anosognosia）]] — 同分野の近傍
 - [[human-barnum-effect|バーナム効果（フォアラー効果）]] — 同分野の近傍
 - [[human-baumrind-parenting-styles|バウムリンドの養育スタイル（Parenting Styles／Baumrind 1966）——「要求」と「応答」の組み合わせが子の発達を左右する]] — 同分野の近傍
-- [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

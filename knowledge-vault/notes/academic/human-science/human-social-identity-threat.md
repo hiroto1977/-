@@ -37,6 +37,7 @@ Claude M. Steele／Joshua Aronson／Naomi Ellemers／Nyla R. Branscombe／Russel
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 同分野の近傍
 - [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同分野の近傍
 - [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同分野の近傍
+- [[human-sociometer-theory|ソシオメーター理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

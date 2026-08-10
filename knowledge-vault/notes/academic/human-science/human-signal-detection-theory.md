@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同じ思想家
-- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同分野の近傍
 - [[human-observational-learning|観察学習（バンデューラ）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

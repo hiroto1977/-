@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-reciprocal-altruism|互恵的利他主義]] — 語彙が近い
-- [[human-social-brain-hypothesis|社会脳仮説]] — 同分野の近傍
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同分野の近傍
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
 

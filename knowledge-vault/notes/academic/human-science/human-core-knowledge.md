@@ -39,8 +39,8 @@ aliases:
 - [[econ-contract-curve|契約曲線（Contract Curve）]] — 出典を共有
 - [[econ-optimal-tariff|最適関税論]] — 出典を共有
 - [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 出典を共有
-- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
 - [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 同分野の近傍
+- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

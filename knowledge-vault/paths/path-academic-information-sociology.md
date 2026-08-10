@@ -27,7 +27,7 @@ tags:
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
-- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 20）
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -87,7 +87,6 @@ tags:
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
-- 1964年: [[infosoc-information-overload|情報過多（情報オーバーロード）]]
 - 1964年: [[infosoc-technological-sublime|テクノロジカル・サブライム（技術的崇高）]]
 - 1965年: [[infosoc-moores-law|ムーアの法則]]
 - 1965年: [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]]
@@ -514,6 +513,7 @@ tags:
 - [[infosoc-phenomenological-technology|技術の現象学]]
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]]
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]]
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]]
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]]
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]]

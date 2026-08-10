@@ -36,7 +36,7 @@ aliases:
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
-- [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同分野の近傍
+- [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

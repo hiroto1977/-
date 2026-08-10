@@ -41,7 +41,6 @@ Amy Wrzesniewski ／ Jane E. Dutton ／ Justin M. Berg
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同分野の近傍
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 同分野の近傍
-- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

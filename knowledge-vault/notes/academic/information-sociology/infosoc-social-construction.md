@@ -36,9 +36,9 @@ aliases:
 - [[infosoc-collective-memory|集合的記憶]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[infosoc-networked-publics|ネットワーク化された公衆]] — 同分野の近傍
-- [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同分野の近傍
-- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
+- [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 同分野の近傍
 - [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]] — 同分野の近傍
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

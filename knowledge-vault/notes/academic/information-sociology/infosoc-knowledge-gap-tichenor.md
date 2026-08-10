@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[knowledge-gap-hypothesis|知識格差仮説]] — 語彙が近い
 - [[infosoc-third-person-effect-davison|第三者効果——メディアの影響を他者により強く帰属する知覚的偏向]] — 同分野の近傍
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同分野の近傍
 - [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — 同分野の近傍
 

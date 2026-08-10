@@ -35,6 +35,7 @@ aliases:
 - [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
 - [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
 - [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
+- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

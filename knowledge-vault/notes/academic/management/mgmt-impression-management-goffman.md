@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-techno-nationalism-digital-sovereignty|テクノナショナリズムとデジタル主権戦略の比較政治経済学]] — 同じ思想家
 - [[infosoc-warranting-walther|ワランティング理論（ウォルサー）——オンラインの印象形成と「操作されにくい情報」]] — 同じ思想家
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家
-- [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同分野の近傍
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同分野の近傍
 
 ## 関連

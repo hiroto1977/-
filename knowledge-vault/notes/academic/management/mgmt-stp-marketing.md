@@ -35,6 +35,7 @@ P.コトラー（STPの体系化・普及）／ポジショニング：アル・
 - [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]] — 出典を共有
 - [[mgmt-marketing-myopia|マーケティング近視眼]] — 同分野の近傍
 - [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
+- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

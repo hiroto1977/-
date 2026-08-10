@@ -35,6 +35,7 @@ G.アカロフ／M.スペンス／J.スティグリッツ（2001年ノーベル�
 - [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
 - [[econ-lemons-problem-akerlof|レモン市場]] — 分野横断
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
+- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

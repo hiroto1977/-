@@ -39,7 +39,6 @@ Sorelle A. Friedler ／ Alexandra Chouldechova ／ Andrew D. Selbst
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同分野の近傍
 - [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同分野の近傍
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — 同分野の近傍
-- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 同分野の近傍
 - [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 同分野の近傍
 
 ## 関連

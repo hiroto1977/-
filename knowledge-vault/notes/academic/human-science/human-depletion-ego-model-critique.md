@@ -40,7 +40,6 @@ aliases:
 - [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
 - [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同分野の近傍
-- [[human-cultural-cognition|文化的認知と世界観による動機付けられた推論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

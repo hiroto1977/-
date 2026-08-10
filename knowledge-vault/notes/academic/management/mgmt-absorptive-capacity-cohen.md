@@ -40,8 +40,8 @@ aliases:
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
-- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同分野の近傍
+- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

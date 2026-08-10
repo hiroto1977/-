@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同じ思想家
 - [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — 同分野の近傍
 - [[infosoc-smart-mob|スマートモブ]] — 同分野の近傍
-- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

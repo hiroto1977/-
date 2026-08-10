@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
 - [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
+- [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

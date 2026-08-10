@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Laffer curve — supply-side economics, optimal tax rate, Reagan tax cuts](https://en.wikipedia.org/wiki/Laffer_curve) `リファレンス`
 
 ## 関連概念
+- [[econ-laffer-curve-theory|ラッファー曲線理論]] — 語彙が近い
 - [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同じ思想家
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
 - [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同じ思想家
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
-- [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
