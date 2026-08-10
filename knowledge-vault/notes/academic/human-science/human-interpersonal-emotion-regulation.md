@@ -37,7 +37,6 @@ aliases:
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 - [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
-- [[human-sapir-whorf|サピア・ウォーフ仮説（言語相対性仮説）]] — 同分野の近傍
 - [[human-self-fulfilling-prophecy|自己成就的予言（マートン）]] — 同分野の近傍
 
 ## 関連

@@ -36,8 +36,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同分野の近傍
-- [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 - [[infosoc-postdigital-culture-cramer|ポストデジタル文化（クレーマー）]] — 同分野の近傍
+- [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

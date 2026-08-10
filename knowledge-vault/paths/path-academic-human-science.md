@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 138）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 137）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 99）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 28）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
-- [[human-attribution-theory|帰属理論]]（接続 27）
+- [[human-attribution-theory|帰属理論]]（接続 26）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
-- [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 24）
 - [[human-affordance-theory|アフォーダンス理論]]（接続 23）
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -178,6 +178,7 @@ tags:
 - 1979年: [[human-prospect-theory|プロスペクト理論（行動経済学）]]
 - 1979年: [[human-salutogenesis-theory|サルトジェネシス理論]]
 - 1979年: [[human-synaptic-pruning|シナプスの刈り込み（synaptic pruning／シナプス・プルーニング）——脳が過剰なシナプスを除去し神経回路を最適化する発達過程]]
+- 1979年: [[human-ultimate-attribution-error|究極的帰属錯誤]]
 - 1980年: [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]]
 - 1980年: [[human-cognitive-load|認知負荷理論]]
 - 1980年: [[human-endowment-effect|保有効果（授かり効果）]]
@@ -327,7 +328,6 @@ tags:
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]]
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]]
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]

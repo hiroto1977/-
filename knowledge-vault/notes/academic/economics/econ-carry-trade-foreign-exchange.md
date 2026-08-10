@@ -32,8 +32,8 @@ aliases:
 - [Wikipedia: Carry (investment) — UIP puzzle, carry crash, yen carry trade, risk-off dynamics](https://en.wikipedia.org/wiki/Carry_(investment)) `リファレンス`
 
 ## 関連概念
-- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同分野の近傍
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同分野の近傍
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

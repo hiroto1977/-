@@ -30,8 +30,8 @@ Paul J. DiMaggio（1988, Institutional Patterns and Organizations — 制度的�
 - [Seo & Creed (2002) Institutional Contradictions, Praxis, and Institutional Change — AMR 27(2), pp.222-247](https://journals.aom.org/doi/abs/10.5465/amr.2002.6588004) `学術`
 
 ## 関連概念
-- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

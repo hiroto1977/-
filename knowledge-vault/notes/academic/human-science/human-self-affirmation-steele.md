@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同分野の近傍
+- [[human-groupthink|集団思考（グループシンク, groupthink）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

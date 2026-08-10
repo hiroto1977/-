@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同じ思想家
 - [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同じ思想家
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
 - [[mgmt-six-sigma|シックス・シグマ]] — 同分野の近傍
 
 ## 関連

@@ -39,7 +39,7 @@ aliases:
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
 - [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[eh-1978|1978年（昭和53年）]] — 出典を共有
-- [[bizlaw-financial-instruments-act|金融商品取引法]] — 同分野の近傍
+- [[bizlaw-competition-law-leniency-program|カルテル規制とリニエンシー制度——自主申告に基づく独禁法エンフォースメントの革新]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

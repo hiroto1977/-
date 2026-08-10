@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[human-social-learning-theory|社会的学習理論]] — 同分野の近傍
-- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
 - [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 同分野の近傍
 - [[human-actor-observer-bias|行為者-観察者バイアス]] — 同分野の近傍
 

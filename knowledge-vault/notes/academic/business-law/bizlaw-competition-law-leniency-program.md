@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 同分野の近傍
 - [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 同分野の近傍
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

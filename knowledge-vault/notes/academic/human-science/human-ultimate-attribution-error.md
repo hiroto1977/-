@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Ultimate attribution error](https://en.wikipedia.org/wiki/Ultimate_attribution_error) `リファレンス`
 
 ## 関連概念
-- [[human-attribution-theory|帰属理論]] — 語彙が近い
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
 - [[econ-becker-crime|犯罪の経済学]] — 出典を共有
 - [[human-microaggression|マイクロアグレッション]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
 - [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
 - [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 出典を共有
+- [[mgmt-simmelian-ties-krackhardt|ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,6 +40,7 @@ aliases:
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

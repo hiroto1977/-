@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
 - [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
 - [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

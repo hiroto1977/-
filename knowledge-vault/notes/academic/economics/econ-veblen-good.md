@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — 同分野の近傍
-- [[econ-austrian-business-cycle-theory|オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）]] — 同分野の近傍
+- [[econ-engels-law|エンゲルの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

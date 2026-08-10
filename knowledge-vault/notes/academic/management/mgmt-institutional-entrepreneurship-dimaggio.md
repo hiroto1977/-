@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Institutional entrepreneurship — 制度的起業家精神の概説](https://en.wikipedia.org/wiki/Institutional_entrepreneurship) `リファレンス`
 
 ## 関連概念
-- [[mgmt-institutional-work|制度的ワーク]] — 語彙が近い
 - [[mgmt-institutional-isomorphism|制度的同型化]] — 同じ思想家
 - [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家

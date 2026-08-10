@@ -32,7 +32,6 @@ aliases:
 - [Heider (1958): The Psychology of Interpersonal Relations — Springer Nature](https://link.springer.com/chapter/10.1007/978-3-658-21742-6_59) `学術`
 
 ## 関連概念
-- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 語彙が近い
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
+- [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

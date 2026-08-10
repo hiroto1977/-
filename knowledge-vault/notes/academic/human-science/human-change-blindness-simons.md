@@ -34,7 +34,6 @@ aliases:
 - [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同じ思想家
 - [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
 - [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同分野の近傍
-- [[human-synesthesia|共感覚（シナスタジア）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
