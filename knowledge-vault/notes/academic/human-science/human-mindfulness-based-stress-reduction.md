@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Mindfulness-based stress reduction — clinical applications](https://en.wikipedia.org/wiki/Mindfulness-based_stress_reduction) `リファレンス`
 
 ## 関連概念
-- [[human-mindfulness-based-stress-reduction-kabat-zinn|マインドフルネスストレス低減法——カバットジンのMBSRと世俗的瞑想の医療・心理応用]] — 語彙が近い
 - [[human-mindfulness|マインドフルネス（MBSR）]] — 語彙が近い
+- [[human-mindfulness-based-stress-reduction-kabat-zinn|マインドフルネスストレス低減法——カバットジンのMBSRと世俗的瞑想の医療・心理応用]] — 語彙が近い
 - [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]] — 同じ思想家
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
 

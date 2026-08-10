@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Civic epistemology — public knowledge, political culture, Jasanoff, co-production](https://en.wikipedia.org/wiki/Civic_epistemology) `リファレンス`
 
 ## 関連概念
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 語彙が近い
 - [[infosoc-lay-expertise-epstein|素人専門知——資格なき人々が科学に参加し知を変える]] — 同じ思想家
-- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
 - [[infosoc-participatory-culture|参加型文化]] — 同分野の近傍
 - [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同分野の近傍
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 同分野の近傍

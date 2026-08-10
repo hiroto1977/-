@@ -31,7 +31,6 @@ aliases:
 - [Liquidity, the Mundell–Tobin Effect, and the Friedman Rule — Journal of Money, Credit and Banking (Wiley, 2024)](https://onlinelibrary.wiley.com/doi/10.1111/jmcb.12994) `学術`
 
 ## 関連概念
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 語彙が近い
 - [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
 - [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
 - [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
 - [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
 - [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

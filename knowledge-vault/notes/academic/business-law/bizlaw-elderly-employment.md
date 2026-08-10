@@ -34,7 +34,6 @@ aliases:
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 分野横断
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同分野の近傍
 - [[bizlaw-patent-system|特許制度（特許法）]] — 同分野の近傍
-- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

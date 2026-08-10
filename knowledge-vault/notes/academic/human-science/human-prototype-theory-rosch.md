@@ -33,7 +33,7 @@ Rosch, Eleanor（1973 "Natural Categories"／1975 "Cognitive Representations of 
 ## 関連概念
 - [[human-embodied-cognition-theory|身体化された認知]] — 同じ思想家
 - [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
-- [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

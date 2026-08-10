@@ -31,8 +31,8 @@ aliases:
 - [Deese–Roediger–McDermott paradigm — Wikipedia（DRMによる虚記憶誘発）](https://en.wikipedia.org/wiki/Deese%E2%80%93Roediger%E2%80%93McDermott_paradigm) `リファレンス`
 
 ## 関連概念
-- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 語彙が近い
 - [[human-spreading-activation|活性化拡散]] — 同じ思想家
+- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同じ思想家
 - [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
 - [[human-weapon-focus-effect|凶器注目効果——武器の存在が目撃者の顔識別を低下させる注意バイアス]] — 同じ思想家
 - [[human-schema|スキーマ理論]] — 同分野の近傍

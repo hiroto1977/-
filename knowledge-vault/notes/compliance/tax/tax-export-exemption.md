@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 出典を共有
-- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 同分野の近傍
 - [[tax-consumption-taxable-scope|消費税の課税対象（課税・非課税・不課税）]] — 同分野の近傍
 - [[tax-customs-duty|関税（輸入品に課される国税）]] — 同分野の近傍
 

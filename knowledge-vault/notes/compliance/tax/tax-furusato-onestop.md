@@ -40,7 +40,6 @@ aliases:
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
 - [[tax-securities-account|上場株式等の特定口座制度]] — 出典を共有
-- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

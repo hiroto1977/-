@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同分野の近傍
-- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
 - [[bizlaw-insurance-business-act|保険業法]] — 同分野の近傍
+- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
 - [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同分野の近傍
 
 ## 関連

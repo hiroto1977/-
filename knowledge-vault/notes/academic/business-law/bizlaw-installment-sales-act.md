@@ -35,6 +35,7 @@ aliases:
 - [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]] — 分野横断
 - [[bizlaw-money-lending-act|貸金業法]] — 同分野の近傍
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同分野の近傍
+- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 同分野の近傍
 - [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同分野の近傍
 
 ## 関連

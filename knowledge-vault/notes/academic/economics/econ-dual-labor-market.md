@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-technology-s-curve|技術のSカーブ]] — 出典を共有
 - [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同分野の近傍
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
-- [[econ-marginal-productivity-distribution|限界生産力説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

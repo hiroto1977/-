@@ -34,7 +34,7 @@ aliases:
 - [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 出典を共有
 - [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
 - [[infosoc-deepfake|ディープフェイク]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

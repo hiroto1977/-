@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同分野の近傍
 - [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — 同分野の近傍
-- [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同分野の近傍
 - [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同分野の近傍
 - [[infosoc-technological-momentum|技術的モメンタム]] — 同分野の近傍
 

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-gender-equality|男女雇用機会均等法における性別差別の禁止]] — 語彙が近い
-- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
+- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有

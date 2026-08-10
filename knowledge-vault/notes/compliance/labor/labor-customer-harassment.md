@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 語彙が近い
-- [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

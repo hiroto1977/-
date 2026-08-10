@@ -38,7 +38,6 @@ aliases:
 - [[human-social-learning-theory|社会的学習理論]] — 出典を共有
 - [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
 - [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同分野の近傍
-- [[human-interference-theory|干渉理論：記憶の忘却メカニズムにおける順向・逆向干渉]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

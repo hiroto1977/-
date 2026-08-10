@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: New institutional economics — North, Coase, path dependence, transaction costs, governance](https://en.wikipedia.org/wiki/New_institutional_economics) `リファレンス`
 
 ## 関連概念
-- [[econ-new-institutional-economics|新制度派経済学]] — 語彙が近い
 - [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同じ思想家
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
