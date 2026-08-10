@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Piercing the corporate veil — limited liability exception, alter ego, undercapitalization](https://en.wikipedia.org/wiki/Piercing_the_corporate_veil) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-limited-liability|株主有限責任の原則]] — 語彙が近い
 - [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 語彙が近い
+- [[bizlaw-limited-liability|株主有限責任の原則]] — 語彙が近い
 - [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 同じ思想家

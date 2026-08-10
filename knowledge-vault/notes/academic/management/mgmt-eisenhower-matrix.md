@@ -30,8 +30,8 @@ aliases:
 - [FranklinCovey — The 7 Habits of Highly Effective People（コヴィーによる第3の習慣・緊急/重要マトリクスの公式解説）](https://www.franklincovey.com/the-7-habits/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
 - [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — 同分野の近傍
+- [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

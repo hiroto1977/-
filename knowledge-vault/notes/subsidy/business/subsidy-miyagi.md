@@ -38,7 +38,7 @@ prefecture
 
 ## 関連概念
 - [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 語彙が近い
-- [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 語彙が近い
+- [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 同分野の近傍
 - [[subsidy-fukuoka-pref|福岡県中小企業生産性向上・賃上げ緊急支援補助金]] — 同分野の近傍
 - [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]] — 同分野の近傍
 - [[subsidy-yamanashi|中小企業等生産性向上設備整備等支援補助金（山梨県）]] — 同分野の近傍

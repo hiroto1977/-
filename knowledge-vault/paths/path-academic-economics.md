@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 83）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
@@ -24,9 +24,9 @@ tags:
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 32）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
 
 ## 第 2 部 — 年代順の展開

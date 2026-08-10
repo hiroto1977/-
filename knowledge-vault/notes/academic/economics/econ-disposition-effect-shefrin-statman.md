@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[human-loss-aversion|損失回避]] — 同じ思想家
 - [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 同じ思想家
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同分野の近傍
 - [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
-- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

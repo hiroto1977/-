@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
 - [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 同じ思想家
+- [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同分野の近傍
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同分野の近傍
 
 ## 関連

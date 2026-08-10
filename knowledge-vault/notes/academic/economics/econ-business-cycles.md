@@ -34,7 +34,6 @@ aliases:
 - [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 語彙が近い
 - [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 出典を共有
 - [[eh-1986|1986年（昭和61年）]] — 出典を共有
-- [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同分野の近傍
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同分野の近傍
 
 ## 関連

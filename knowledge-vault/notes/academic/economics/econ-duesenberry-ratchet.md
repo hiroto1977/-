@@ -33,7 +33,6 @@ aliases:
 - [[econ-demonstration-effect|デモンストレーション効果]] — 同じ思想家
 - [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同分野の近傍
 - [[econ-natural-monopoly|自然独占（natural monopoly）]] — 同分野の近傍
-- [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

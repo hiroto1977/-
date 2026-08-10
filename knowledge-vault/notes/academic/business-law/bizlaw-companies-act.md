@@ -39,6 +39,7 @@ aliases:
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 同分野の近傍
 - [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

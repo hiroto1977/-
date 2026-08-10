@@ -34,8 +34,8 @@ Frederick J. Powell／Robert B. Thompson
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同じ思想家
 - [[human-habituation|馴化（habituation）——単一刺激の反復による反応減弱と非連合学習]] — 同じ思想家
-- [[bizlaw-limited-liability|株主有限責任の原則]] — 同分野の近傍
 - [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

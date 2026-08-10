@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 同分野の近傍
 - [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同分野の近傍
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]] — 同分野の近傍
+- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,7 +40,7 @@ Ghatak, Maitreesh （2000）Screening by the Company You Keep: Joint Liability L
 - [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-real-bills-doctrine|真正手形主義（リアルビルズ・ドクトリン）]] — 同分野の近傍
-- [[econ-microfinance|マイクロファイナンス]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

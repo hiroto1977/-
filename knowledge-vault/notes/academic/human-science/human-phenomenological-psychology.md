@@ -34,7 +34,7 @@ Edmund Husserl ／ Amedeo Giorgi ／ Max van Manen ／ Clark Moustakas ／ Mauri
 
 ## 関連概念
 - [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 語彙が近い
-- [[human-narrative-therapy|ナラティブ・セラピー]] — 同分野の近傍
+- [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

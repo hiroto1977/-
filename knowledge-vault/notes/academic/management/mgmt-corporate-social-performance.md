@@ -34,7 +34,6 @@ Archie B. Carroll ／ Donna J. Wood
 - [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]] — 同じ思想家
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
 - [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
-- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

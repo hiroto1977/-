@@ -32,9 +32,10 @@ Gregory S. Crespi ／ David Cabrelli
 - [S.C. L. Rev. on Sky Cable v. DirecTV (2018)](https://sclawreview.org/article/the-fourth-circuit-suem-and-reverse-veil-piercing-in-delaware/) `学術`
 
 ## 関連概念
-- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同分野の近傍
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同分野の近傍
+- [[bizlaw-companies-act|会社法]] — 同分野の近傍
 - [[bizlaw-bankruptcy|破産法]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

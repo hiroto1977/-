@@ -39,6 +39,7 @@ aliases:
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
 - [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 同分野の近傍
+- [[econ-walras-law|ワルラスの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

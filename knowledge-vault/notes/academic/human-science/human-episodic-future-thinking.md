@@ -34,7 +34,6 @@ aliases:
 - [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — 同じ思想家
 - [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 同分野の近傍
 - [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同分野の近傍
-- [[human-dopamine-reward-prediction-error|ドーパミン報酬予測誤差仮説：強化学習の神経基盤と意思決定の計算論的モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

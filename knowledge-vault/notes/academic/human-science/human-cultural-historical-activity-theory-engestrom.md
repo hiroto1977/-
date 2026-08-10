@@ -35,6 +35,7 @@ aliases:
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
+- [[human-defense-mechanisms|防衛機制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

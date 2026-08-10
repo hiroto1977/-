@@ -38,7 +38,7 @@ Albert Bandura（1997 『Self-Efficacy: The Exercise of Control』で集合的�
 - [[human-self-efficacy-theory|自己効力感理論]] — 同じ思想家
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同じ思想家
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — 同分野の近傍
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
+- [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

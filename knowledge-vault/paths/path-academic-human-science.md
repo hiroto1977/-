@@ -27,7 +27,7 @@ tags:
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
+- [[human-defense-mechanisms|防衛機制]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -74,7 +74,6 @@ tags:
 - 1933年: [[human-stanford-prison-experiment|スタンフォード監獄実験]]
 - 1933年: [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]]
 - 1934年: [[human-flynn-effect|フリン効果]]
-- 1936年: [[human-defense-mechanisms|防衛機制]]
 - 1936年: [[human-reciprocal-altruism|互恵的利他主義]]
 - 1938年: [[human-impostor-syndrome|インポスター症候群（インポスター現象）]]
 - 1939年: [[human-frustration-aggression|フラストレーション＝攻撃仮説]]
@@ -603,6 +602,7 @@ tags:
 - [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]]
 - [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]]
 - [[human-social-brain-hypothesis|社会脳仮説]]
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]]
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]]
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]]

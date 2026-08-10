@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同じ思想家
 - [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
 - [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
+- [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
 - [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — 同分野の近傍
 
 ## 関連
