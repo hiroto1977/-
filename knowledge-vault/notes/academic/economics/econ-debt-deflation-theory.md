@@ -32,8 +32,8 @@ Irving Fisher ／ Hyman Philip Minsky ／ Ben Shalom Bernanke
 - [IMF World Economic Outlook (April 2012). Dealing with Household Debt. Chapter 3.](https://www.imf.org/external/pubs/ft/weo/2012/01/pdf/c3.pdf) `公的`
 
 ## 関連概念
-- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 語彙が近い
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 語彙が近い
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
 - [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家

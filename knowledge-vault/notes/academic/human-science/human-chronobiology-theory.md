@@ -35,6 +35,7 @@ Franz Halberg ／ Jeffrey C. Hall ／ Michael Rosbash ／ Michael W. Young ／ T
 ## 関連概念
 - [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 同分野の近傍
 - [[human-circadian-rhythm|概日リズム（サーカディアンリズム）]] — 同分野の近傍
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

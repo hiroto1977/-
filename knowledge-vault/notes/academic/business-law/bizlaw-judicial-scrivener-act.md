@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同分野の近傍
-- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
+- [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

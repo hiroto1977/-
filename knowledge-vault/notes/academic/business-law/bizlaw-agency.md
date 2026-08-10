@@ -31,7 +31,6 @@ aliases:
 - [Wikibooks 民法第99条（代理行為の要件及び効果・顕名）](https://ja.wikibooks.org/wiki/民法第99条) `リファレンス`
 
 ## 関連概念
-- [[legal-agency|民法の代理（代理権・無権代理・表見代理）]] — 語彙が近い
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同じ思想家
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 同じ思想家
 - [[bizlaw-mortgage|抵当権（民法369条）]] — 同じ思想家
+- [[bizlaw-negotiorum-gestio|事務管理（民法697条）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

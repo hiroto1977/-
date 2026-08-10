@@ -171,7 +171,7 @@ tags:
 - **Q:** コミュニケーション適応理論（Communication Accommodation Theory, CAT）
   - **A:** コミュニケーション適応理論（Communication Accommodation Theory, CAT）は、対人・異集団間の会話において話者が相手に応じて話し方や非言語行動を調整する心理過程を説明する社会言語学・社会心理学の理論である。（→ [[infosoc-communication-accommodation-theory]]）
 - **Q:** コミュニケーション・プライバシー管理理論（CPM）
-  - **A:** Petronioが提唱する理論。人々が「プライバシー境界」のルールを通じて私的情報の開示・共有・タービュランスを管理するプロセスを説明する。Altmanの弁証法的プライバシー概念を基盤とし、健康・SNS・組織コミュニケーション研究に広く応用される。（→ [[infosoc-communication-privacy-management]]）
+  - **A:** Petronioが提唱する理論。人々が「プライバシー境界」のルールを通じて私的情報の開示・共有・タービュランスを管理するプロセスを説明する。Altmanの弁証法的プライバシー概念を基盤とし、健康・SNS・組織コミュニケーション研究に広く応用される。基本前提は、人は私的情報を「所有」しており、開示は所有権の共有だという比喩にある。（→ [[infosoc-communication-privacy-management]]）
 - **Q:** コミュニケーション的行為（ハーバーマス）
   - **A:** ドイツの社会哲学者ユルゲン・ハーバーマスが『コミュニケーション的行為の理論』（Theorie des kommunikativen Handelns, 1981）で展開した概念。彼は人間の社会的行為を、自分の目的達成のために他者や事物を手段として操作する「目的合理的行為（戦略的行為＝成功志向）」と、対話を通じて相互の理解と合意の形成を目指す「コミュニケーション的行為（了解志向）」に区別した。（→ [[infosoc-communicative-action]]）
 - **Q:** コミュニカティブ・キャピタリズム（Communicative Capitalism）

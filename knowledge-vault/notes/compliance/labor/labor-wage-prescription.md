@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍
 - [[labor-average-wage|平均賃金（労働基準法12条）]] — 同分野の近傍
-- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

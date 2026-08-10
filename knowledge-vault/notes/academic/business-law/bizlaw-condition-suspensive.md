@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 語彙が近い
-- [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 同分野の近傍
 - [[bizlaw-commercial-code|商法]] — 同分野の近傍
 - [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同分野の近傍
 

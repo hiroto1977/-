@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同じ思想家
 - [[bizlaw-compliance|コンプライアンス（法令遵守と企業倫理）]] — 同分野の近傍
-- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 同分野の近傍
+- [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

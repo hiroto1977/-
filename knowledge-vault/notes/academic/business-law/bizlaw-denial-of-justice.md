@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

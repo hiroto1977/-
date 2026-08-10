@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 語彙が近い
+- [[mgmt-sensemaking|センスメイキング]] — 語彙が近い
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 同じ思想家
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
-- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

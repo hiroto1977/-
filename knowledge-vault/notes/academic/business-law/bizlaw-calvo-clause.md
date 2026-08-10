@@ -31,9 +31,10 @@ aliases:
 - [Colombian Cases and the Current Position of Latin American States — Georgetown J Intl Law (2023)](https://www.law.georgetown.edu/international-law-journal/wp-content/uploads/sites/21/2023/02/GT-GJIL230004.pdf) `学術`
 
 ## 関連概念
-- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 語彙が近い
 - [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — 同じ思想家
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
 - [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有
+- [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 同分野の近傍
 - [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 同分野の近傍
 
 ## 関連

@@ -37,7 +37,7 @@ Lord Chief Justice Sir John Holt（Jones v. Hart, 1698 — 使用者責任の司
 - [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
 - [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同分野の近傍
-- [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同分野の近傍
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

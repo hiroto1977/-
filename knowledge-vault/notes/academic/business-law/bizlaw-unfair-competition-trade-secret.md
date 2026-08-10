@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 語彙が近い
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 語彙が近い
+- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 語彙が近い
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同分野の近傍
-- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
 - [[bizlaw-data-governance-data-act|データガバナンス法制——EU Data Act・データ利活用促進法とデータ共有の権利・義務]] — 同分野の近傍
 
 ## 関連

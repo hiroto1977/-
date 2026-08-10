@@ -37,7 +37,7 @@ M&Aの競争法審査で問題が見込まれる場合、審査当局（欧州�
 - [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[bizlaw-corporate-restructuring-m-and-a|M&A法と企業再構築——株主保護・競争法審査・情報開示義務の国際比較]] — 同分野の近傍
-- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 同分野の近傍
+- [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

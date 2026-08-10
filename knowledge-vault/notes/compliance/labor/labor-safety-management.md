@@ -35,6 +35,7 @@ aliases:
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 語彙が近い
 - [[bizlaw-industrial-safety|労働安全衛生法]] — 分野横断
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 同分野の近傍
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

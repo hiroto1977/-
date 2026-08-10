@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 119）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 80）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 118）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 81）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
@@ -23,11 +23,11 @@ tags:
 - [[human-defense-mechanisms|防衛機制]]（接続 26）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 26）
 - [[human-group-polarization|集団極性化]]（接続 25）
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
 - [[human-affordance-theory|アフォーダンス理論]]（接続 23）
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 23）
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 23）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -102,6 +102,7 @@ tags:
 - 1959年: [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]]
 - 1959年: [[human-latent-inhibition|潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象]]
 - 1959年: [[human-premack-principle|プレマックの原理]]
+- 1960年: [[human-cognitive-appraisal|認知的評価理論（感情）]]
 - 1960年: [[human-confirmation-bias|確証バイアス（confirmation bias）]]
 - 1960年: [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]]
 - 1960年: [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]]
@@ -603,7 +604,6 @@ tags:
 - [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]]
 - [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]]
 - [[human-social-brain-hypothesis|社会脳仮説]]
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]]
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]]
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]]

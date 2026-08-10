@@ -33,6 +33,7 @@ T.ピケティ『21世紀の資本』2013(仏)/2014(英訳)／資本収益率r>�
 
 ## 関連概念
 - [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同分野の近傍
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同分野の近傍
 - [[econ-double-marginalization|二重マージン（二重限界化）]] — 同分野の近傍
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同分野の近傍
 

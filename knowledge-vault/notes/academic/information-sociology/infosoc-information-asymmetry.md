@@ -34,7 +34,6 @@ G.アカロフ／M.スペンス／J.スティグリッツ（2001年ノーベル�
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 語彙が近い
 - [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
 - [[econ-lemons-problem-akerlof|レモン市場]] — 分野横断
-- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
 
 ## 関連

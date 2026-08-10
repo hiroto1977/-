@@ -14,7 +14,7 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[agile-development|アジャイルソフトウェア開発]]（接続 69）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 37）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 36）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 27）

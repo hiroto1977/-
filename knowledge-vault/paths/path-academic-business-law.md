@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 73）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 71）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 48）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
@@ -24,10 +24,10 @@ tags:
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 26）
-- [[bizlaw-agency|代理（民法99条）]]（接続 25）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
-- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 25）
+- [[bizlaw-toushiho|出資法]]（接続 25）
+- [[bizlaw-agency|代理（民法99条）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -104,7 +104,6 @@ tags:
 - 1952年: [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]]
 - 1954年: [[bizlaw-employees-pension|厚生年金保険法]]
 - 1954年: [[bizlaw-interest-rate-restriction|利息制限法]]
-- 1954年: [[bizlaw-toushiho|出資法]]
 - 1955年: [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]]
 - 1958年: [[bizlaw-national-health-insurance|国民健康保険法]]
 - 1959年: [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]]
@@ -634,6 +633,7 @@ tags:
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]]
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]]
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]]
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]]
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]]
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]]

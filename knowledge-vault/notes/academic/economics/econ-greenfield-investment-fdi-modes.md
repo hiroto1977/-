@@ -37,6 +37,7 @@ aliases:
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
+- [[econ-tariff-jumping-fdi|関税回避型直接投資——貿易障壁が誘発する海外直接投資の理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
