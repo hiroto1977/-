@@ -40,6 +40,7 @@ Brian R. Cheffins ／ Jeffrey G. MacIntosh ／ Daniel D. Prentice
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
 - [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 同分野の近傍
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同分野の近傍
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同分野の近傍
 
 ## 関連

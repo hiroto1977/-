@@ -35,8 +35,8 @@ Cristina B. Gibson／Julian Birkinshaw／Michael L. Tushman／Charles A. O'Reill
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 語彙が近い
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 語彙が近い
-- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
 - [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同分野の近傍
 

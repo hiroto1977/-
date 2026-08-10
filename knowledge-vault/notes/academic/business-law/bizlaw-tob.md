@@ -34,7 +34,7 @@ aliases:
 - [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — 出典を共有
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
-- [[bizlaw-misrepresentation|不実表示（misrepresentation、英米契約法）]] — 同分野の近傍
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

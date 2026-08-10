@@ -37,6 +37,7 @@ Egashira Kenjiro ／ Hiroyuki Watanabe
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 - [[bizlaw-limited-liability|株主有限責任の原則]] — 同分野の近傍
+- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 同分野の近傍
 - [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 
 ## 関連

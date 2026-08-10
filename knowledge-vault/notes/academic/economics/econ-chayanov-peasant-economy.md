@@ -31,8 +31,8 @@ Aleksandr V. Chayanov（アレクサンドル・チャヤノフ） ／ 消費者
 - [Review of A. V. Chayanov, The Theory of Peasant Economy, eds. D. Thorner, B. Kerblay & R. E. F. Smith (R. D. Irwin for the American Economic Association, Homewood, Illinois, 1966), in The Economic Journal 78(310): 469 (1968)](https://academic.oup.com/ej/article-abstract/78/310/469/5235893) `学術`
 
 ## 関連概念
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

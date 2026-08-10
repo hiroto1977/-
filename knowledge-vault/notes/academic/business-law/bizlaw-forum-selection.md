@@ -40,7 +40,7 @@ M/S Bremen v. Zapata Off-Shore Co.（407 U.S. 1, 1972）／Carnival Cruise Lines
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
 - [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同分野の近傍
-- [[bizlaw-statute-of-frauds|詐欺防止法]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

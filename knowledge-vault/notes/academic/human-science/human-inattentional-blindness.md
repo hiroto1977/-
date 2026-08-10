@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 語彙が近い
-- [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 同じ思想家
+- [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 語彙が近い
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
@@ -40,7 +40,7 @@ aliases:
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
 - [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 出典を共有
-- [[human-illusory-correlation|錯誤相関]] — 出典を共有
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

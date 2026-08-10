@@ -34,8 +34,9 @@ Wendy K. Smith ／ Marianne W. Lewis
 ## 関連概念
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同じ思想家
-- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同分野の近傍
 - [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
+- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同分野の近傍
 
 ## 関連

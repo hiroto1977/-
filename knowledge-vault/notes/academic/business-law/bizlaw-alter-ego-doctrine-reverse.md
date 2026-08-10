@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-株主の個人債権者が法人格を逆方向に否認し、法人資産から個人債務の弁済を受ける衡平法上の救済手段。Crespiが1990年に基礎理論を整備し、Cabrelliがアウトサイダー型の危険性を批判した。
+株主の個人債権者が法人格を逆方向に否認し、法人資産から個人債務の弁済を受ける衡平法上の救済手段。Crespiが1990年に基礎理論を整備し、Cabrelliがアウトサイダー型の危険性を批判した。通常の法人格否認（債権者→株主の個人資産）と向きが逆で、インサイダー型（株主自身が法人格の無視を主張して法人の権利を利用する）とアウトサイダー型（第三者債権者が株主の債務を法人資産に追及する）に分かれる。争点はアウトサイダー型に集中し、無関係の少数株主や法人の正規債権者を害する・会社財産の優先順位を迂回するという批判があり、Cabrelli はこの型を否定すべきと論じた。一方で一人会社や資産隠匿の道具になった LLC への適用を認める判例も現れ、Sky Cable v. DirecTV (4th Cir. 2018) はデラウェア法の下で一人 LLC への外部者逆否認を認めて注目された。要件論としては、支配の一体性（alter ego）に加えて、他の救済手段の不存在と無辜の第三者への不利益の不存在を求める定式が有力で、詐害的資産移転の否認（UVTA）や差押命令（charging order）との選択関係が実務の分岐点になる。
 
 ## 提唱者・初出
 Gregory S. Crespi ／ David Cabrelli
@@ -32,10 +32,9 @@ Gregory S. Crespi ／ David Cabrelli
 - [S.C. L. Rev. on Sky Cable v. DirecTV (2018)](https://sclawreview.org/article/the-fourth-circuit-suem-and-reverse-veil-piercing-in-delaware/) `学術`
 
 ## 関連概念
-- [[bizlaw-bankruptcy|破産法]] — 同分野の近傍
-- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同分野の近傍
-- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同分野の近傍
+- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

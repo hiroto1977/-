@@ -37,7 +37,6 @@ Maxwell McCombs ／ Donald Shaw ／ Guy Golan
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
 - [[infosoc-mode-2-knowledge-gibbons|モード2知識生産——応用の文脈で生まれる学際的な知]] — 同分野の近傍
 - [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]] — 同分野の近傍
-- [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

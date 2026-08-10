@@ -31,11 +31,11 @@ aliases:
 - [Wikipedia: Gravity model of trade — 重力方程式の理論的導出と推定](https://en.wikipedia.org/wiki/Gravity_model_of_trade) `リファレンス`
 
 ## 関連概念
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 語彙が近い
 - [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 語彙が近い
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
 - [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
 - [[econ-cobweb|クモの巣理論]] — 同じ思想家
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

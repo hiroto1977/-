@@ -33,8 +33,8 @@ Philip P. Frickey（McGill Law Journal 1999 & Colorado Law Review 2006 — フ�
 - [[human-metacognition|メタ認知（Metacognition）]] — 出典を共有
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 出典を共有
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 出典を共有
-- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同分野の近傍
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 同分野の近傍
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

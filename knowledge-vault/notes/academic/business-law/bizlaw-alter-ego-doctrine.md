@@ -36,6 +36,7 @@ Frederick J. Powell／Robert B. Thompson
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同じ思想家
 - [[human-habituation|馴化（habituation）——単一刺激の反復による反応減弱と非連合学習]] — 同じ思想家
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同分野の近傍
 
 ## 関連

@@ -25,8 +25,8 @@ tags:
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 19）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 18）
 - [[tax-automobile-tax|自動車税（種別割）]]（接続 17）
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 17）
 - [[tax-city-planning-tax|都市計画税]]（接続 16）
-- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 16）
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 16）
 
 ## 第 2 部 — 年代順の展開

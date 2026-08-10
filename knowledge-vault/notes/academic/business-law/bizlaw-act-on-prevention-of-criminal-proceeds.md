@@ -38,6 +38,7 @@ aliases:
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
 - [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 同分野の近傍
+- [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

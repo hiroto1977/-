@@ -35,6 +35,7 @@ Colin R. Moore ／ Brenda Hannigan ／ Nobuo Nakamura
 - [[mgmt-target-costing|原価企画（目標原価計算）]] — 出典を共有
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 同分野の近傍
 - [[bizlaw-banking-act|銀行法]] — 同分野の近傍
+- [[bizlaw-bankruptcy|破産法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

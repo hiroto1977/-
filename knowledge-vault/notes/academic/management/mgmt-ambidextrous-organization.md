@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 語彙が近い
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 語彙が近い
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家

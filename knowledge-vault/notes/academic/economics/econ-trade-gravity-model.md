@@ -32,6 +32,7 @@ aliases:
 - [Tinbergen 1962 — Shaping the World Economy: Suggestions for an International Economic Policy, Twentieth Century Fund](https://archive.org/details/shapingworldecon0000tinb) `リファレンス`
 
 ## 関連概念
+- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 語彙が近い
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
 - [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
-- [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,6 +35,7 @@ aliases:
 - [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — 同分野の近傍
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

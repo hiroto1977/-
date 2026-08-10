@@ -17,7 +17,7 @@ tags:
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 71）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-defense-mechanisms|防衛機制]]（接続 26）

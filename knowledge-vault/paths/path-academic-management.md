@@ -18,16 +18,16 @@ tags:
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
+- [[mgmt-csr|企業の社会的責任（CSR）]]（接続 25）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 24）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
-- [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
-- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]（接続 22）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -339,7 +339,6 @@ tags:
 - [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]]
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]]
 - [[mgmt-cognitive-evaluation-theory|認知的評価理論]]
-- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]]
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]]
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]]
@@ -365,6 +364,7 @@ tags:
 - [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]]
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]]
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]]
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]]
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]]
