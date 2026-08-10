@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 645
+card_count: 644
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（645枚）
+# フラッシュカード — 学術概念／人間科学（644枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -142,8 +142,6 @@ tags:
   - **A:** Engelが提唱した生物心理社会モデルを慢性疼痛に適用したGatchel・Turk・Waddellらの研究により、疼痛と障害は生物学的・心理的・社会的要因の相互作用によって規定され、純粋な組織損傷だけでは説明できないことが確立された。（→ [[human-biopsychosocial-model-chronic-pain]]）
 - **Q:** ブラインドサイト（Blindsight）
   - **A:** ブラインドサイト（Blindsight）とは、一次視覚野（V1/有線皮質）の損傷により皮質盲となった視野領域において、主観的視覚経験の報告なしに視覚弁別（検出・定位・方位・運動・色彩・単純形状）がチャンスレベルを超えて遂行される現象である。（→ [[human-blindsight]]）
-- **Q:** 盲視（ブラインドサイト）
-  - **A:** 一次視覚野（V1）に損傷を持つ人が、意識的に知覚できない視覚刺激に反応できる現象。Weiskrantzが1970〜80年代に体系的に研究し、意識と視覚的気づきの関係に根本的な疑問を投げかけた。（→ [[human-blindsight-weiskrantz]]）
 - **Q:** 身体図式（ボディスキーマ）
   - **A:** 身体図式とは、姿勢・運動の制御を支える前反省的・感覚運動的な身体表象であり、意識的な注意を向けずとも空間内での行為を導く神経機能的枠組みをいう。神経学者ヘンリー・ヘッドとゴードン・ホームズが1911年のBrain誌論文「Sensory disturbances from cerebral lesions」で、大脳皮質が姿勢変化の入力を統合し身体の空間的モデルを維持する機構として提唱した。（→ [[human-body-schema]]）
 - **Q:** ボアアウト（退屈燃え尽き症候群）

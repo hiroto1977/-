@@ -2,7 +2,7 @@
 title: "papers.ssrn.com"
 type: source-domain
 host: "papers.ssrn.com"
-cite_count: 34
+cite_count: 33
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # papers.ssrn.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **34 件**（学術 33 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **33 件**（学術 32 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -47,7 +47,6 @@ tags:
 - [[mgmt-freemium|フリーミアム]] — NicolasPujol,“Freemium:AttributesofanEmergingBusinessModel”（SSRN）
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — DiMaggio&Powell,TheIronCageRevisited,AmericanSociologicalReview48(198…
 - [[mgmt-organizational-culture-theory|組織文化理論]] — Schein,E.H.(1985).OrganizationalCultureandLeadership.Jossey-Bass.
-- [[mgmt-organizational-routines|組織ルーチン]] — Nelson&Winter(1982),AnEvolutionaryTheoryofEconomicChange(SSRN)
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

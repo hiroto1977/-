@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経済学"
 type: flashcard-deck
 deck_key: "academic-economics"
-card_count: 950
+card_count: 949
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経済学（950枚）
+# フラッシュカード — 学術概念／経済学（949枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -870,8 +870,6 @@ tags:
   - **A:** マクロ経済学的ヒステリシスとは、一時的な経済ショックが産出量・雇用・成長経路に恒久的な影響を及ぼすという理論である。ブランシャール&サマーズ（1986）はNBER Macroeconomics Annualでインサイダー・アウトサイダー・モデルを用いて欧州の高失業持続を説明し、失業率の単位根検定によりヒステリシス仮説を実証的に示した。（→ [[econ-hysteresis-macroeconomics]]）
 - **Q:** 失業のヒステリシス（Hysteresis in Unemployment）
   - **A:** 失業のヒステリシス（Hysteresis in Unemployment）とは、一時的な景気後退や需要ショックが均衡失業率（NAIRU）を恒久的に引き上げる現象を指すマクロ経済学概念である。物理学における磁気ヒステリシス（Ewing 1881）からの借用語で、一時的な外的衝撃が除去された後もシステムが元の状態に復帰しないことを意味する。（→ [[econ-hysteresis-unemployment]]）
-- **Q:** ヒステリシス失業理論
-  - **A:** 一時的な需要ショックが失業率の自然水準に永続的な影響を与える現象。インサイダー・アウトサイダー機構と人的資本の劣化が、景気後退後も高失業が持続する欧州型硬直性を説明する。（→ [[econ-hysteresis-unemployment-theory]]）
 - **Q:** アイデンティティ経済学
   - **A:** アイデンティティ経済学は、社会的アイデンティティ（人種・性別・職業・社会階層など自己を定義するカテゴリー）を個人の効用関数に組み込み経済行動への影響を分析する理論枠組みである。アカロフとクラントンが2000年のQuarterly Journal of Economics論文「Economics and Identity」で提唱した。（→ [[econ-identity-economics]]）
 - **Q:** 窮乏化成長

@@ -35,12 +35,12 @@ Robert L. Birmingham ／ Richard A. Posner ／ Charles J. Goetz ／ Robert E. Sc
 - [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 同じ思想家
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
 - [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同じ思想家
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — 出典を共有
 - [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 - [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

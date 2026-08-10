@@ -39,9 +39,9 @@ James G. March ／ Michael L. Tushman ／ Charles A. O'Reilly III ／ Cristina B
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 
 ## 関連

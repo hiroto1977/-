@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 137
+cite_count: 136
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **137 件**（学術 116 ・ リファレンス 21）
+> [!info] 出典ドメイン索引 ・ 引用 **136 件**（学術 116 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -143,7 +143,6 @@ tags:
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — ProductArchitecture—SpringerNaturereferenceworkentry
 - [[mgmt-product-life-cycle|プロダクト・ライフサイクル（製品ライフサイクル）]] — SpringerLink（ThePalgraveEncyclopediaofStrategicManagement）"ProductLif…
 - [[mgmt-psychological-contract|心理的契約]] — Rousseau,D.M.(1989).Psychologicalandimpliedcontractsinorganizations.E…
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — Besson&Rowe(2012)-PunctuatedEquilibriumTheoryinISResearch,Springer
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — MotivationalMechanismsofSelf-ConcordanceTheory—JournalofBusinessandPs…
 - [[mgmt-sensemaking|センスメイキング]] — SenseMaking,Organizational—SpringerNatureリファレンス
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — Maitlis&Christianson,"SensemakinginOrganizations:TakingStock,"Academy…

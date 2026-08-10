@@ -284,5 +284,73 @@
         "provenanceDelta": "keep は src 4→6 / gov 0→1 / academic 2→2 / 本文 72→377字。減少なし。"
       }
     ]
+  },
+  "pass13": {
+    "appliedAt": "2026-08-10",
+    "note": "パス12 の教訓を一般化し、enrich キュー 411 件 × コーパス全体の id 正規化衝突を事前スキャン → EQUAL 46 組（うち台帳未裁定 37 組）を検出。今回はその第1弾 8 統合 + 1 レーン矯正。**薄い側の出典に誤実体 DOI が繰り返し見つかった**（Blanchard&Wolfers 2000 に JEP 1998 の DOI / Weiskrantz 1974 原著の誌名を Brain Research と誤記＝正しくは Brain / F&P 2003 ASQ に Organization Studies の DOI / job.583 の実体は Avey et al. 2009 Psychological ownership で Personnel Psychology のラベルは誤り＝接尾辞検索で確定）。**未確定 DOI は移送せず drop ごと落とす**を通した。同一概念でも discipline が異なるペア（human× mgmt 等）は既裁定例（growth-mindset / sociotechnical 等）に合わせて DISTINCT レーン維持。",
+    "merges": [
+      {
+        "keep": "bizlaw-attractive-nuisance",
+        "drop": "bizlaw-attractive-nuisance-doctrine",
+        "reason": "同一法理（Restatement §339・Stout 1873）。keep は5要件の詳説を持つ充実版。",
+        "migrate": "LII の Stout 判決全文リンクと Bohlen / Prosser を keyFigures へ。Indiana LJ / Marquette LR の viewcontent URL は掲載論文を特定できず移送しない。",
+        "provenanceDelta": "keep src 3→4。減少なし。"
+      },
+      {
+        "keep": "econ-hysteresis-unemployment",
+        "drop": "econ-hysteresis-unemployment-theory",
+        "reason": "同一概念（Blanchard&Summers 1986・インサイダー/アウトサイダー・人的資本減価）。keep は3伝達経路の詳説を持つ。",
+        "migrate": "Laurence Ball を keyFigures へ。drop の 5 DOI は Blanchard&Wolfers(2000) ラベルに JEP 12(1)=1998 の DOI が付くなど実体不一致を含むため全て移送しない。",
+        "provenanceDelta": "keep src 3（不変・全て健全）。減少なし。"
+      },
+      {
+        "keep": "human-blindsight",
+        "drop": "human-blindsight-weiskrantz",
+        "reason": "同一現象。keep は Brain 97(1) の正確な書誌 + PMID を持つ。drop は原著の誌名を Brain Research と誤記。",
+        "migrate": "Cowey / Humphrey を keyFigures へ、SEP: Neuroscience of Consciousness を出典へ。誌名誤りの ScienceDirect リンクと年不整合の Nature/Current Biology リンクは移送しない。",
+        "provenanceDelta": "keep src 2→3。減少なし。"
+      },
+      {
+        "keep": "mgmt-organizational-routines-feldman-pentland",
+        "drop": "mgmt-organizational-routines-feldman",
+        "reason": "同一の F&P 動態ルーティン論。",
+        "migrate": "Cambridge Handbook of Routine Dynamics を出典へ。同時に keep の F&P 2003 の DOI が 10.1177/0170840603024003001（Organization Studies）と誤実体だったため、姉妹エントリ3件が持つ正しい ASQ リンク（10.2307/3556620）へ差し替え。",
+        "provenanceDelta": "keep src 3→4 + 誤DOI 1 件修正。減少なし。"
+      },
+      {
+        "keep": "mgmt-organizational-routines-theory",
+        "drop": "mgmt-organizational-routines",
+        "reason": "N&W 1982 + F&P を語る同一の総論エントリ同士。keep が Feldman 2000 遂行モデルと DC 接続まで持つ。",
+        "migrate": "遺伝子アナロジー（変異-選択-保持の選択単位）と安定/調整/意思決定節約/慣性の対句を本文へ。SSRN 1496211 は実体未確定のため移送しない。",
+        "provenanceDelta": "keep 本文 +約110字。減少なし。"
+      },
+      {
+        "keep": "mgmt-psychological-capital-theory",
+        "drop": "mgmt-psychological-capital-luthans",
+        "reason": "同一 discipline（management）内の同一概念（HERO・PCQ-24・POB）。human 側の human-psychological-capital-luthans は discipline レーン慣例により DISTINCT 維持（台帳登録）。",
+        "migrate": "Luthans (2002) AME の POB 創始論文と Annual Review of Organizational Psychology の総説を出典へ。同時に keep の 10.1002/job.583（ラベルは Personnel Psychology 2007）は接尾辞検索で実体が Avey et al. (2009) Psychological ownership と確定したため削除。10.1177/1548051814534492（Stress and Health と称する SAGE DOI）と 10.1037/a0016998（HRDQ と思われる Avey 2011 に APA DOI）は実体未確定のため現状維持とし、SESSION_HANDOFF の残作業に記録。",
+        "provenanceDelta": "keep src 5→6（誤実体 1 除去 + 検証済み 2 追加）。減少なし。"
+      },
+      {
+        "keep": "mgmt-punctuated-equilibrium",
+        "drop": "mgmt-punctuated-equilibrium-theory",
+        "reason": "同一理論の総論同士（T&R 1985・Gersick 1991・R&T 1994 を共有）。keep は書誌詳細と Eldredge&Gould 系譜を持つ。",
+        "migrate": "深層構造のフィードバック抑制と CEO 交代トリガー・実践的示唆の段落を本文へ、W.H. Newman を keyFigures へ、T&R 1985 Semantic Scholar / TNR 1986 CMR / Wikipedia (social theory) を出典へ。Besson & Rowe の Springer 章は三次的で移送しない。",
+        "provenanceDelta": "keep src 2→5 / 本文 +約180字。減少なし。"
+      },
+      {
+        "keep": "mgmt-punctuated-equilibrium",
+        "drop": "mgmt-punctuated-equilibrium-org-change",
+        "reason": "同一理論の thin 版（85字）。",
+        "migrate": "Wikipedia: Punctuated equilibrium in social theory（上記で採用）。Semantic Scholar の Gersick 重複エントリは移送しない。",
+        "provenanceDelta": "上記に合算。"
+      }
+    ],
+    "steers": [
+      {
+        "id": "mgmt-organizational-routines-as-grammars",
+        "action": "本文を Pentland & Rueter (1994) の文法モデル固有のレーンへ書き換え（F&P 2003 の要約の重複を解消し、94年論文の実証と Routine Dynamics への系譜として位置づけ）。routines-theory / feldman-pentland との 3 ペアを DISTINCT 登録。"
+      }
+    ]
   }
 }

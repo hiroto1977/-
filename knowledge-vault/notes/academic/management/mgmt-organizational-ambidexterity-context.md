@@ -38,8 +38,6 @@ Cristina B. Gibson／Julian Birkinshaw／Michael L. Tushman／Charles A. O'Reill
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同分野の近傍
 
 ## 関連

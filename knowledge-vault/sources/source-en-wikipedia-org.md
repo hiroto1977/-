@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2277
+cite_count: 2274
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2277 件**（リファレンス 2277）
+> [!info] 出典ドメイン索引 ・ 引用 **2274 件**（リファレンス 2274）
 
 ## このドメインを出典とする項目
 
@@ -2137,8 +2137,6 @@ tags:
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — Wikipedia:Highreliabilityorganization—organizationalresilience
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — Wikipedia—Organizationalresilience(概念の概観と主要文献案内)
 - [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — Wikipedia:Highreliabilityorganization—Weick,Sutcliffe,HROprinciples,s…
-- [[mgmt-organizational-routines|組織ルーチン]] — Wikipedia:Organisationalroutines(definition,Nelson&Winter,ostensive/p…
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — Wikipedia—MarthaS.Feldman
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — Wikipedia:Organizationalroutines—組織ルーティンの概要
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — OrganisationalRoutines-Wikipedia
 - [[mgmt-organizational-silence-morrison|組織的沈黙（モリソン＆ミリケン）]] — Wikipedia:Organizationalsilence—antecedents,typology,andconsequencesf…
@@ -2165,14 +2163,13 @@ tags:
 - [[mgmt-profit-pool|プロフィットプール分析（Profit Pool／利益プール・マッピング）——産業の利益はバリューチェーン上で偏在し、売上シェアと一致しない]] — "Profitpools",Wikipedia—conceptintroducedbyOritGadieshandJamesL.Gilbe…
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — Wikipedia「Complementaryassets」—PFI枠組み・三構成要素・統合/ライセンス
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — Wikipedia:Prosocialmotivation—organizationalbehavior
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — Wikipedia-PositivePsychologicalCapital(PsyCap)
 - [[mgmt-psychological-contract|心理的契約]] — Psychologicalcontract—Wikipedia
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — Wikipedia:Recoveryexperiences—psychologicaldetachment,relaxation,mast…
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — Wikipedia:Empowerment—Spreitzer,meaning/competence/self-determination…
 - [[mgmt-psychological-ownership|心理的所有感]] — Wikipedia「Ownership(psychology)」—定義・3ルート・自己アイデンティティ・テリトリアリティ・IKEA効果
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — Wikipedia:Psychologicalownership—心理的所有権の概説
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — Wikipedia:Psychologicalsafety—Edmondson,ProjectAristotle,fearlessorga…
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — Punctuatedequilibriuminsocialtheory—Wikipedia
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Wikipedia—Punctuatedequilibriuminsocialtheory
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — Wikipedia:RayDalio—BridgewaterAssociates,principles,ideameritocracy,r…
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — Wikipedia:Realoptionsvaluation—リアル・オプション評価の概要
 - [[mgmt-real-options-theory|リアル・オプション理論]] — Wikipedia—Realoptionsvaluation

@@ -35,9 +35,9 @@ William L. Prosser ／ W. Page Keeton ／ Richard A. Posner ／ Guido Calabresi 
 
 ## 関連概念
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 語彙が近い
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — 同じ思想家
 - [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 同じ思想家
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 同じ思想家
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
 - [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 出典を共有

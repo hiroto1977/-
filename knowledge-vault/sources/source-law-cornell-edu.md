@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 150
+cite_count: 149
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **150 件**（リファレンス 126 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **149 件**（リファレンス 125 ・ 公的 23 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -27,8 +27,7 @@ tags:
 - [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — CornellLIIWex:Assignment—transferofcontractualrights,assignor/assigne…
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — UCC§2-210DelegationofPerformance;AssignmentofRights—LegalInformationI…
 - [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — CornellLII—AttractiveNuisanceDoctrine
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — CornellLIIWex—AttractiveNuisanceDoctrine
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — RailroadCompanyv.Stout,84U.S.657(1873)—CornellLII
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — RailroadCompanyv.Stout,84U.S.657(1873)—CornellLII
 - [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — CornellLIIWex:Bailment—possessionnotownership,bailor/bailee,dutyofcar…
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — UCC§2-207—AdditionalTermsinAcceptanceorConfirmation(CornellLII)
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — UCC§2-306—Output,RequirementsandExclusiveDealings(CornellLII)

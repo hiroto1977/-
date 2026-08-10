@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 645
+entry_count: 644
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（645件）
+# 学習パス — 学術概念／人間科学（644件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -16,8 +16,8 @@ tags:
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 108）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 70）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-defense-mechanisms|防衛機制]]（接続 26）
@@ -335,7 +335,6 @@ tags:
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]]
 - [[human-biopsychosocial-model|生物心理社会モデル]]
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]]
-- [[human-blindsight-weiskrantz|盲視（ブラインドサイト）]]
 - [[human-body-schema|身体図式（ボディスキーマ）]]
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]]
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]]

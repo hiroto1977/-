@@ -39,7 +39,6 @@ John C. Henderson／N. Venkatraman
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
-- [[mgmt-value-co-creation|価値共創]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

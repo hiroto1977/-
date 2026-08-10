@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[subsidy-child-allowance|児童手当]]（接続 35）
+- [[subsidy-child-allowance|児童手当]]（接続 34）
 - [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]]（接続 30）
 - [[subsidy-high-cost-care|高額介護（予防）サービス費]]（接続 25）
 - [[subsidy-zeh|ZEH支援事業]]（接続 16）
@@ -26,12 +26,12 @@ tags:
 - [[subsidy-single-parent-allowance|児童扶養手当]]（接続 11）
 - [[subsidy-special-disability-allowance|特別障害者手当]]（接続 11）
 - [[subsidy-single-parent-welfare-loan|母子父子寡婦福祉資金貸付金]]（接続 10）
-- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]]（接続 8）
 - [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]]（接続 8）
+- [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]]（接続 8）
 
 ## 第 3 部 — 年代情報のない項目
 - [[subsidy-chutaikyo|中小企業退職金共済制度（中退共）・新規加入等掛金助成]]
-- [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]]
+- [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]]
 - [[subsidy-highschool-tuition|高等学校等就学支援金]]
 - [[subsidy-housing-security|住居確保給付金（生活困窮者自立支援制度）]]
 - [[subsidy-iju-shienkin|移住支援金・起業支援金（地方創生）]]

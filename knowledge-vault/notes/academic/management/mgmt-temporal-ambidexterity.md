@@ -34,14 +34,13 @@ Michael L. Tushman ／ Elaine Romanelli ／ Nicolaj Siggelkow ／ Daniel A. Levi
 ## 関連概念
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 語彙が近い
-- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
 - [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同じ思想家
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 同じ思想家
+- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
+- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

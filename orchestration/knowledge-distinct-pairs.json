@@ -414,10 +414,6 @@
       "mgmt-escalation-of-commitment-theory"
     ],
     [
-      "mgmt-organizational-routines-as-grammars",
-      "mgmt-organizational-routines-feldman"
-    ],
-    [
       "mgmt-organizational-slack-bourgeois",
       "mgmt-slack-resources-bourgeois"
     ],
@@ -472,6 +468,22 @@
     [
       "bizlaw-whistleblower-protection-eu-directive",
       "bizlaw-whistleblower-protection-legislation"
+    ],
+    [
+      "mgmt-organizational-routines-feldman-pentland",
+      "mgmt-organizational-routines-theory"
+    ],
+    [
+      "mgmt-organizational-routines-as-grammars",
+      "mgmt-organizational-routines-theory"
+    ],
+    [
+      "mgmt-organizational-routines-as-grammars",
+      "mgmt-organizational-routines-feldman-pentland"
+    ],
+    [
+      "human-psychological-capital-luthans",
+      "mgmt-psychological-capital-theory"
     ]
   ]
 }

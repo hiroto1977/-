@@ -2,7 +2,7 @@
 title: "nature.com"
 type: source-domain
 host: "nature.com"
-cite_count: 35
+cite_count: 34
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nature.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 35）
+> [!info] 出典ドメイン索引 ・ 引用 **34 件**（学術 34）
 
 ## このドメインを出典とする項目
 
@@ -18,7 +18,6 @@ tags:
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — Bosbachetal.(2005)InferringAnother'sExpectationfromAction:TheRoleofPe…
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — Friston(2010)Free-energyprinciple,NatureRevNeurosci
 - [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — Blake&Logothetis(2002)VisualCompetition—NatureReviewsNeuroscience
-- [[human-blindsight-weiskrantz|盲視（ブラインドサイト）]] — Weiskrantz(1992)blindsightreviewinNature
 - [[human-cultural-cognition|文化的認知と世界観による動機付けられた推論]] — Kahan,D.M.,Peters,E.,Wittlin,M.,Slovic,P.,Ouellette,L.L.,Braman,D.,&M…
 - [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — Horvath&Raj2018NatureReviewsGeneticsreview
 - [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — Criticalviewontransgenerationalepigeneticinheritance—NatureCommunicat…

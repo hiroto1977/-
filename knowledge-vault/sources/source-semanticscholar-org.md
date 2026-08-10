@@ -2,7 +2,7 @@
 title: "semanticscholar.org"
 type: source-domain
 host: "semanticscholar.org"
-cite_count: 88
+cite_count: 87
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # semanticscholar.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **88 件**（学術 79 ・ リファレンス 9）
+> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 78 ・ リファレンス 9）
 
 ## このドメインを出典とする項目
 
@@ -87,8 +87,7 @@ tags:
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — Weick(1979)TheSocialPsychologyofOrganizing,2nded.—SemanticScholar
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — Bluedornetal.(1999)—PolychronicityandtheInventoryofPolychronicValues(…
 - [[mgmt-population-ecology-organization|組織の個体群生態学]] — Hannan&Freeman(1984).StructuralInertiaandOrganizationalChange.America…
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — Gersick1991—SemanticScholarentry
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — Tushman&Romanelli(1985)-OrganizationalEvolution:AMetamorphosisModelof…
+- [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Tushman&Romanelli(1985)OrganizationalEvolution:AMetamorphosisModel—Re…
 - [[mgmt-real-options-strategy|リアル・オプション戦略論]] — Bowman&Hurry(1993)StrategythroughtheOptionLens—AcademyofManagementRev…
 - [[mgmt-real-options-strategy|リアル・オプション戦略論]] — McGrath(1997)ARealOptionsLogicforInitiatingTechnologyPositioningInves…
 - [[mgmt-relational-view|関係的視座（Relational View）]] — Dyer&Singh(1998)TheRelationalView:CooperativeStrategyandSourcesofInte…

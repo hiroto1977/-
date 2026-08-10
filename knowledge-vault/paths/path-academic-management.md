@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 664
+entry_count: 659
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（664件）
+# 学習パス — 学術概念／経営学（659件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -19,10 +19,10 @@ tags:
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
-- [[mgmt-managerial-cognition|経営者認知理論]]（接続 25）
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 25）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
+- [[mgmt-managerial-cognition|経営者認知理論]]（接続 24）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]（接続 22）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 22）
@@ -141,7 +141,6 @@ tags:
 - 1981年: [[mgmt-organizational-unlearning|組織的アンラーニング]]
 - 1981年: [[mgmt-theory-z|セオリーZ]]
 - 1981年: [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]]
-- 1982年: [[mgmt-organizational-routines|組織ルーチン]]
 - 1983年: [[mgmt-competing-values|競合価値フレームワーク（CVF）]]
 - 1983年: [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]]
 - 1983年: [[mgmt-institutional-isomorphism|制度的同型化]]
@@ -522,7 +521,6 @@ tags:
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]]
 - [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]]
 - [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]]
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]]
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]]
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]]
 - [[mgmt-organizational-silence-morrison|組織的沈黙（モリソン＆ミリケン）]]
@@ -550,15 +548,12 @@ tags:
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]]
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]]
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]]
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]]
 - [[mgmt-psychological-capital-theory|心理的資本理論]]
 - [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]]
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]]
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]]
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]]
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]]
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]]
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]]
 - [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]]
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]]
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]]

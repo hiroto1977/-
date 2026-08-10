@@ -11508,21 +11508,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-routines',
-    discipline: 'management',
-    title: '組織ルーチン',
-    statement:
-      '組織ルーチンとは、複数の主体が担う、反復的で認識可能な相互依存的行動のパターンであり、企業の規則的で予測可能な行動様式を指す。リチャード・ネルソンとシドニー・ウィンターは『経済変動の進化理論』（1982）で、ルーチンを組織の業務知識（その多くは暗黙知）の主要な貯蔵庫と位置づけた。' +
-      'ルーチンは生物の遺伝子の組織版であり、継承・複製され、変異-選択-保持の進化プロセスにおける選択の単位として機能する。ルーチンは安定と調整をもたらし意思決定を節約する一方、慣性も生む。後にフェルドマンとペントランドは、ルーチンを構造を表すオステンシブ（ostensive）側面と、具体的な実演であるパフォーマティブ（performative）側面に区別し、変化の源泉でもあると論じた。',
-    keyFigures: 'リチャード・ネルソン／シドニー・ウィンター（1982）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.2307/3556620', type: 'academic', label: 'Feldman & Pentland (2003), Administrative Science Quarterly: Reconceptualizing Organizational Routines as a Source of Flexibility and Change' },
-      { url: 'https://en.wikipedia.org/wiki/Organisational_routines', type: 'reference', label: 'Wikipedia: Organisational routines (definition, Nelson & Winter, ostensive/performative)' },
-      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1496211', type: 'academic', label: 'Nelson & Winter (1982), An Evolutionary Theory of Economic Change (SSRN)' },
-    ],
-  },
-  {
     id: 'human-counterfactual-thinking',
     discipline: 'human-science',
     title: '反実仮想思考（反事実的思考）',
@@ -18358,12 +18343,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'パンクチュエイテッド・エクイリブリアム（組織の断続平衡）',
     statement:
       'パンクチュエイテッド・エクイリブリアム（Punctuated Equilibrium）とは、組織変化が段階的・漸進的でなく、長期の収束期（equilibrium period）が革命的・フレーム破壊的変化（revolutionary reorientation）の短期集中期によって断続的に遮断される非連続的パターンに従うという理論的命題である。マイケル・L・タッシュマン（Michael L. Tushman）とエレナ・ロマネリ（Elenna Romanelli）は1985年の著作『Organizational Evolution: A Metamorphosis Model of Convergence and Reorientation』（Research in Organizational Behavior, Vol.7, pp.171-222）において、組織進化が生物進化のパンクチュエイテッド・エクイリブリアム（Eldredge & Gould 1972）と同型の構造を持つことを論じた。' +
-      '収束期（convergence period）では、組織は既存の戦略的志向・構造・権力分布との一貫性を保持するマイナーな増分調整を行い、深層構造（deep structure）は不変である。他方、革命的再志向期（reorientation period）では、戦略・構造・人事・統制システムがほぼ同時にフレーム破壊的に変換される。コンティア・ジェルシック（Connie J. G. Gersick）は1991年の論文「Revolutionary Change Theories: A Multilevel Exploration of the Punctuated Equilibrium Paradigm」（Academy of Management Review, Vol.16, No.1, pp.10-36, DOI: 10.5465/AMR.1991.4278988）において、この非連続性パターンが個人の成人発達・グループ発達・組織発達・科学史（クーンのパラダイム転換）・生物進化・物理学（プリゴジンの散逸構造）の6つのレベルで一般的に観察されることを実証した。タッシュマン＝ロマネリ（1994）の実証研究は、小さな増分変化は累積しても根本的フレーム転換をもたらさず、根本的変化には全体的・急速な変換が必須であることを確認した。',
-    keyFigures: 'Michael L. Tushman & Elenna Romanelli（Research in Organizational Behavior 7, 1985, パンクチュエイテッド・エクイリブリアムの提唱）／Connie J. G. Gersick（Academy of Management Review 16(1), 1991, マルチレベル実証と般化）',
+      '収束期（convergence period）では、組織は既存の戦略的志向・構造・権力分布との一貫性を保持するマイナーな増分調整を行い、深層構造（deep structure）は不変である。他方、革命的再志向期（reorientation period）では、戦略・構造・人事・統制システムがほぼ同時にフレーム破壊的に変換される。コンティア・ジェルシック（Connie J. G. Gersick）は1991年の論文「Revolutionary Change Theories: A Multilevel Exploration of the Punctuated Equilibrium Paradigm」（Academy of Management Review, Vol.16, No.1, pp.10-36, DOI: 10.5465/AMR.1991.4278988）において、この非連続性パターンが個人の成人発達・グループ発達・組織発達・科学史（クーンのパラダイム転換）・生物進化・物理学（プリゴジンの散逸構造）の6つのレベルで一般的に観察されることを実証した。タッシュマン＝ロマネリ（1994）の実証研究は、小さな増分変化は累積しても根本的フレーム転換をもたらさず、根本的変化には全体的・急速な変換が必須であることを確認した。深層構造の変革は過去の意思決定や組織内フィードバック・ループによって強力に抑制されるため、CEO の交代や重大な環境変化といった外的衝撃が革命的変化の引き金となりやすい。この理論は、安定期と変革期を意図的に設計し、変革のタイミング・規模・スコープを経営者が戦略的に制御することの重要性を示す点で実践的示唆を持つ。',
+    keyFigures: 'Michael L. Tushman & Elenna Romanelli（Research in Organizational Behavior 7, 1985, パンクチュエイテッド・エクイリブリアムの提唱）／Connie J. G. Gersick（Academy of Management Review 16(1), 1991, マルチレベル実証と般化）／William H. Newman（Tushman, Newman & Romanelli 1986 — Convergence and Upheaval）',
     asOf: '2026-06',
     sources: [
       { url: 'https://journals.aom.org/doi/10.5465/amr.1991.4278988', type: 'academic', label: 'Gersick (1991) Revolutionary Change Theories — Academy of Management Review 16(1), pp.10-36' },
       { url: 'https://journals.aom.org/doi/abs/10.5465/256669', type: 'academic', label: 'Romanelli & Tushman (1994) Organizational Transformation as Punctuated Equilibrium — Academy of Management Journal 37(5), pp.1141-1166' },
+      { url: 'https://www.semanticscholar.org/paper/Organizational-Evolution:-A-Metamorphosis-Model-of-Tushman-Romanelli/6035d7ad435cc7e3ea6094b7b413596637a6c2f6', type: 'academic', label: 'Tushman & Romanelli (1985) Organizational Evolution: A Metamorphosis Model — Research in Organizational Behavior 7' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/41165225', type: 'academic', label: 'Tushman, Newman & Romanelli (1986) Convergence and Upheaval — California Management Review' },
+      { url: 'https://en.wikipedia.org/wiki/Punctuated_equilibrium_in_social_theory', type: 'reference', label: 'Wikipedia — Punctuated equilibrium in social theory' },
     ],
   },
   {
@@ -18401,11 +18389,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       'ブラインドサイト（Blindsight）とは、一次視覚野（V1/有線皮質）の損傷により皮質盲となった視野領域において、主観的視覚経験の報告なしに視覚弁別（検出・定位・方位・運動・色彩・単純形状）がチャンスレベルを超えて遂行される現象である。ローレンス・ワイスクランツ（Lawrence Weiskrantz, 1926-2018）らは1974年の論文「Visual Capacity in the Hemianopic Field Following a Restricted Occipital Ablation」（Brain, Vol.97, No.1, pp.709-728, DOI: 10.1093/brain/97.1.709, PMID: 4434190）において、右後頭葉切除後に左半盲を呈した患者DB（1940年生、1973年手術）を対象とした強制選択課題で、盲視野内での手動定位・サッケード定位・方位弁別・運動検出能力を系統的に実証した。' +
       'ワイスクランツは1986年の著書『Blindsight: A Case Study and Implications』（Oxford University Press, Oxford Psychology Series No.12, ISBN: 0198521294）でブラインドサイト研究を体系化し、1998年の『Consciousness Lost and Found』（OUP）においてType 1（主観的気づきの完全な不在——古典的ブラインドサイト）とType 2（事象発生の漠然とした「感覚」や「知っている」感が伴う——リドック症候群とも関連）の区別を導入した。残存視覚能力の神経基盤は、網膜から上丘・視床枕核を経て線条体外視覚領域（V2, V4, V5/MT）へ至る皮質下経路——損傷V1をバイパスする——によって媒介されると考えられている。ブラインドサイトは意識の神経相関（NCC）研究において、知覚処理と意識的経験の解離を示す決定的証拠として位置づけられる。',
-    keyFigures: 'Lawrence Weiskrantz（Oxford, 1974/1986/1998 — ブラインドサイト概念の確立・Type 1/2 分類）／Elizabeth K. Warrington, M.D. Sanders & J. Marshall（Brain 97(1), 1974 — 患者DB の原報告共著者）',
+    keyFigures: 'Lawrence Weiskrantz（Oxford, 1974/1986/1998 — ブラインドサイト概念の確立・Type 1/2 分類）／Elizabeth K. Warrington, M.D. Sanders & J. Marshall（Brain 97(1), 1974 — 患者DB の原報告共著者）／Alan Cowey（サルの盲視研究）／Nicholas Humphrey（V1切除サル Helen の残存視覚）',
     asOf: '2026-06',
     sources: [
       { url: 'https://academic.oup.com/brain/article-abstract/97/1/709/315495', type: 'academic', label: 'Weiskrantz, Warrington, Sanders & Marshall (1974) Visual Capacity in the Hemianopic Field — Brain 97(1), pp.709-728' },
       { url: 'https://pubmed.ncbi.nlm.nih.gov/4434190/', type: 'academic', label: 'PubMed: Weiskrantz et al. (1974) PMID 4434190' },
+      { url: 'https://plato.stanford.edu/entries/consciousness-neuroscience/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy: The Neuroscience of Consciousness' },
     ],
   },
   {
@@ -19069,7 +19058,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '失業のヒステリシス（Hysteresis in Unemployment）とは、一時的な景気後退や需要ショックが均衡失業率（NAIRU）を恒久的に引き上げる現象を指すマクロ経済学概念である。物理学における磁気ヒステリシス（Ewing 1881）からの借用語で、一時的な外的衝撃が除去された後もシステムが元の状態に復帰しないことを意味する。オリヴィエ・ブランシャール（Olivier Blanchard）とローレンス・サマーズ（Lawrence Summers）が1986年にNBER Macroeconomics Annualで「ヒステリシスとヨーロッパの失業問題」を発表し、1970-80年代の欧州における高失業の持続を本概念で説明した。' +
       '主要な伝達メカニズムは三つある：（1）インサイダー＝アウトサイダー理論（Lindbeck & Snower）：既存雇用者（インサイダー）が賃金交渉力を持ち、失業者（アウトサイダー）の再雇用を阻害する；（2）人的資本の減価：長期失業により職業技能・労働習慣が劣化し再就職が困難になる；（3）期間依存性（duration dependence）：失業期間が長いほど就職確率が低下するスティグマ効果。本概念はCOVID-19パンデミック後の労働市場分析でも注目を集め、一時的ショックが構造的失業に転化するリスクが改めて認識されている。',
-    keyFigures: 'オリヴィエ・ブランシャール＆ローレンス・サマーズ（1986 NBER Macroeconomics Annual — ヒステリシスとヨーロッパの失業問題）／リンドベック＆スノーワー（インサイダー＝アウトサイダー理論）',
+    keyFigures: 'オリヴィエ・ブランシャール＆ローレンス・サマーズ（1986 NBER Macroeconomics Annual — ヒステリシスとヨーロッパの失業問題）／リンドベック＆スノーワー（インサイダー＝アウトサイダー理論）／ローレンス・ボール（長期失業とディスインフレの実証）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.nber.org/system/files/chapters/c4245/c4245.pdf', type: 'academic', label: 'Blanchard & Summers (1986) Hysteresis and the European Unemployment Problem — NBER Macroeconomics Annual' },
@@ -19714,12 +19703,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '誘引的妨害物の法理（Attractive Nuisance Doctrine）とは、米国不法行為法において、土地所有者が人工的な危険な状態を維持し、その状態が幼い子供を誘引しうることを知りまたは知りうべき場合に、不法侵入した子供に生じた身体的損害について土地所有者に注意義務を課す法理である。第二次リステイトメント（Restatement (Second) of Torts）§339に成文化されている。' +
       '責任成立の5要件として、(a)子供の不法侵入の蓋然性の認識、(b)死亡・重大な身体的傷害の不合理な危険の認識、(c)子供が年齢ゆえに危険を認識しないこと、(d)状態維持の効用と危険除去の負担が子供へのリスクに比して僅少であること、(e)危険除去のための合理的注意の懈怠が規定される。不法侵入者に対して注意義務を負わないという伝統的原則の例外であり、子供の判断能力の未成熟を考慮した保護法理である。',
-    keyFigures: 'Restatement (Second) of Torts §339／Sioux City & Pacific Railroad Co. v. Stout（1873 初期判例）',
+    keyFigures: 'Restatement (Second) of Torts §339／Sioux City & Pacific Railroad Co. v. Stout（1873 初期判例）／Francis H. Bohlen ／ William L. Prosser',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.law.cornell.edu/wex/attractive_nuisance_doctrine', type: 'reference', label: 'Cornell LII — Attractive Nuisance Doctrine' },
       { url: 'https://en.wikipedia.org/wiki/Attractive_nuisance_doctrine', type: 'reference', label: 'Wikipedia: Attractive Nuisance Doctrine' },
       { url: 'https://kb.osu.edu/bitstreams/047e2c00-8942-5119-acb4-ebbc2bb6cd49/download', type: 'academic', label: 'Restatement\'s Attractive Nuisance Doctrine — Ohio State Knowledge Bank' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/84/657', type: 'reference', label: 'Railroad Company v. Stout, 84 U.S. 657 (1873) — Cornell LII' },
     ],
   },
   {
@@ -23135,25 +23125,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-punctuated-equilibrium-theory',
-    discipline: 'management',
-    title: '組織の断続平衡理論',
-    statement: 'Tushman and Romanelli（1985）は、組織が長期にわたる漸進的変化（収束期）と短期かつ急激な革命的変化（革命期）を交互に繰り返しながら進化するという「断続平衡モデル」を提唱し、生物進化論の知見を組織変革論に応用した。Gersick（1991）はこの枠組みを個人・集団・組織・科学史など複数の分析レベルに拡張し、各システムが選択してきた基本的な構成単位と活動パターンの総体である「深層構造（deep structure）」が収束期を安定させる一方、環境の急激な変化によって深層構造自体が崩壊するとき革命的変化が生じると定式化した。Romanelli and Tushman（1994）の実証研究は、組織変革の大半が戦略・構造・権力配分の全領域にわたる急激かつ非連続的変化として達成されており、小さな変化の累積が根本的変革をもたらすことはほとんどないことを示した。深層構造の変革は過去の意思決定や組織内フィードバック・ループによって強力に抑制されるため、CEOの交代や重大な環境変化といった外的衝撃が革命的変化の引き金となる。この理論は戦略的マネジメントに対して、安定期と変革期を意図的に設計し、変革のタイミング・規模・スコープを経営者が戦略的に制御することの重要性を示す点で高い実践的示唆を持つ。',
-    keyFigures: 'Michael L. Tushman ／ Elaine Romanelli ／ Connie J.G. Gersick ／ William H. Newman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.semanticscholar.org/paper/Organizational-Evolution:-A-Metamorphosis-Model-of-Tushman-Romanelli/6035d7ad435cc7e3ea6094b7b413596637a6c2f6', type: 'academic', label: 'Tushman & Romanelli (1985) - Organizational Evolution: A Metamorphosis Model of Convergence and Reorientation' },
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.1991.4278988', type: 'academic', label: 'Gersick (1991) - Revolutionary Change Theories: A Multilevel Exploration of the Punctuated Equilibrium Paradigm, Academy of Management Review' },
-      { url: 'https://journals.aom.org/doi/abs/10.5465/256669', type: 'academic', label: 'Romanelli & Tushman (1994) - Organizational Transformation as Punctuated Equilibrium: An Empirical Test, Academy of Management Journal' },
-      { url: 'https://journals.sagepub.com/doi/10.2307/41165225', type: 'academic', label: 'Tushman, Newman & Romanelli (1986) - Convergence and Upheaval: Managing the Unsteady Pace of Organizational Evolution, California Management Review' },
-      { url: 'https://link.springer.com/chapter/10.1007/978-1-4419-6108-2_17', type: 'reference', label: 'Besson & Rowe (2012) - Punctuated Equilibrium Theory in IS Research, Springer' },
-    ],
-  },
-  {
     id: 'mgmt-organizational-routines-theory',
     discipline: 'management',
     title: '組織ルーティン理論',
-    statement: 'Nelson and Winter（1982）は進化経済学の観点から、組織ルーティンを「企業の規則的・予測可能な行動パターン」と定義し、生物の遺伝子に相当する組織知識の担い手として位置づけた。Feldman and Pentland（2003）はこの概念を精緻化し、ルーティンを抽象的な規範的スクリプトとしての「顕示的側面（ostensive aspect）」と、特定の時間・場所において具体的な行為者が実際に遂行する「遂行的側面（performative aspect）」に区別した。この二側面の相互作用により、ルーティンは組織の安定性を支える一方で、参加者の解釈と応答を通じて継続的変化の源泉ともなり得る。Feldman（2000）は、参加者が前回の遂行結果に応答することでルーティンが自律的に変化する「遂行モデル」を提示し、ルーティンが変化を内包する動態的現象であることを示した。組織ルーティン理論は戦略論・組織能力論・イノベーション研究と接合し、ダイナミック・ケイパビリティ概念の基盤として現代経営学の中核的フレームワークを形成している。',
+    statement: 'Nelson and Winter（1982）は進化経済学の観点から、組織ルーティンを「企業の規則的・予測可能な行動パターン」と定義し、生物の遺伝子に相当する組織知識の担い手として位置づけた。Feldman and Pentland（2003）はこの概念を精緻化し、ルーティンを抽象的な規範的スクリプトとしての「顕示的側面（ostensive aspect）」と、特定の時間・場所において具体的な行為者が実際に遂行する「遂行的側面（performative aspect）」に区別した。この二側面の相互作用により、ルーティンは組織の安定性を支える一方で、参加者の解釈と応答を通じて継続的変化の源泉ともなり得る。進化経済学の枠組みでは、ルーティンは生物の遺伝子の組織版として継承・複製され、変異-選択-保持の進化プロセスにおける選択の単位として機能する。ルーティンは安定と調整をもたらし意思決定を節約する一方、慣性の源泉ともなる。Feldman（2000）は、参加者が前回の遂行結果に応答することでルーティンが自律的に変化する「遂行モデル」を提示し、ルーティンが変化を内包する動態的現象であることを示した。組織ルーティン理論は戦略論・組織能力論・イノベーション研究と接合し、ダイナミック・ケイパビリティ概念の基盤として現代経営学の中核的フレームワークを形成している。',
     keyFigures: 'Richard R. Nelson ／ Sidney G. Winter ／ Martha S. Feldman ／ Brian T. Pentland ／ Richard M. Cyert ／ James G. March',
     asOf: '2026-06',
     sources: [
@@ -23806,7 +23781,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://global.oup.com/academic/product/psychological-capital-9780195187526', type: 'reference', label: 'Luthans, Youssef & Avolio (2007) Psychological Capital: Developing the Human Competitive Edge — Oxford University Press' },
-      { url: 'https://doi.org/10.1002/job.583', type: 'academic', label: 'Luthans, Avolio, Avey & Norman (2007) Positive psychological capital: Measurement and relationship with performance and satisfaction — Personnel Psychology' },
+      { url: 'https://journals.aom.org/doi/10.5465/AME.2002.6640181', type: 'academic', label: 'Luthans (2002) Positive Organizational Behavior — Academy of Management Executive 16(1)' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-032516-113324', type: 'academic', label: 'Luthans & Youssef-Morgan — Psychological Capital, Annual Review of Organizational Psychology and Organizational Behavior' },
       { url: 'https://doi.org/10.1177/1548051814534492', type: 'academic', label: 'Youssef-Morgan & Luthans (2015) Psychological capital and well-being — Stress and Health' },
       { url: 'https://doi.org/10.1037/a0016998', type: 'academic', label: 'Avey, Reichard, Luthans & Mhatre (2011) Meta-analysis of the impact of positive psychological capital — Human Resource Development Quarterly' },
     ],
@@ -24360,21 +24336,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-hysteresis-unemployment-theory',
-    discipline: 'economics',
-    title: 'ヒステリシス失業理論',
-    statement: '一時的な需要ショックが失業率の自然水準に永続的な影響を与える現象。インサイダー・アウトサイダー機構と人的資本の劣化が、景気後退後も高失業が持続する欧州型硬直性を説明する。',
-    keyFigures: 'Olivier Blanchard ／ Lawrence Summers ／ Assar Lindbeck ／ Dennis Snower ／ Laurence Ball',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1353/eca.1986.0027', type: 'academic', label: 'Blanchard & Summers (1986)' },
-      { url: 'https://doi.org/10.2307/2534312', type: 'academic', label: 'Lindbeck & Snower (1986)' },
-      { url: 'https://doi.org/10.1162/003355399556133', type: 'academic', label: 'Ball (1999)' },
-      { url: 'https://doi.org/10.1111/j.1538-4616.2009.00235.x', type: 'academic', label: 'Ball (2009)' },
-      { url: 'https://doi.org/10.1257/jep.12.1.157', type: 'academic', label: 'Blanchard & Wolfers (2000)' },
-    ],
-  },
-  {
     id: 'human-salutogenesis-theory',
     discipline: 'human-science',
     title: 'サルトジェネシス理論',
@@ -24644,7 +24605,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-organizational-routines-as-grammars',
     discipline: 'management',
     title: '組織ルーティンの生成文法モデル',
-    statement: 'Feldman & Pentlandは組織ルーティンを「表象的側面（ostensive）」と「遂行的側面（performative）」に区分し、生成文法のように安定した深層構造から多様な実践を産出する動的システムとして再概念化した。',
+    statement: 'Pentland & Rueter (1994) が提示した、組織ルーティンを「行為の文法（grammars of action）」として捉えるモデル。ルーティンは単一の固定された行為系列ではなく、文法が無数の文を生成するように、状況に応じた多様な遂行のレパートリーを産出する構造だと再定義した。ソフトウェア・サポート窓口の通話データを用い、実際の行為系列が文法的規則性を持つことを実証している。この文法メタファーは、ルーティン＝硬直という従来観を退け、後の Feldman & Pentland (2003) の表象的／遂行的側面の二元論と、Pentland & Feldman (2005) の分析単位論へつながる Routine Dynamics 研究プログラムの起点となった。',
     keyFigures: 'Martha S. Feldman ／ Brian T. Pentland ／ Henry H. Rueter',
     asOf: '2026-06',
     sources: [
@@ -24815,20 +24776,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-attractive-nuisance-doctrine',
-    discipline: 'business-law',
-    title: '魅力的危険物法理',
-    statement: '土地占有者は児童を引き寄せる蓋然性のある人工的危険状態に対し、不法侵入児童にも合理的注意義務を負う。Stout判決（1873）が礎判例でRestatement §339が要件を体系化。',
-    keyFigures: 'William Strong ／ Francis H. Bohlen ／ William L. Prosser',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/attractive_nuisance_doctrine', type: 'reference', label: 'Cornell LII Wex — Attractive Nuisance Doctrine' },
-      { url: 'https://www.law.cornell.edu/supremecourt/text/84/657', type: 'reference', label: 'Railroad Company v. Stout, 84 U.S. 657 (1873) — Cornell LII' },
-      { url: 'https://www.repository.law.indiana.edu/cgi/viewcontent.cgi?article=2759&context=ilj', type: 'academic', label: 'Indiana Law Journal Vol. 32 — The Attractive Nuisance Doctrine (1956)' },
-      { url: 'https://scholarship.law.marquette.edu/cgi/viewcontent.cgi?article=3290&context=mulr', type: 'academic', label: 'Marquette University Law Review — Elements of Attractive Nuisance' },
-    ],
-  },
-  {
     id: 'mgmt-sensemaking-enactment-weick',
     discipline: 'management',
     title: 'センスメイキングとイナクトメント',
@@ -24882,34 +24829,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ssrn.com/abstract=2022301', type: 'academic', label: 'Sebok — Litigation Investment and Legal Ethics' },
       { url: 'https://www.rand.org/pubs/research_reports/RR630.html', type: 'academic', label: 'RAND report on third-party litigation funding' },
       { url: 'https://en.wikipedia.org/wiki/Champerty_and_maintenance', type: 'reference', label: 'Wikipedia overview of champerty and maintenance' },
-    ],
-  },
-  {
-    id: 'mgmt-punctuated-equilibrium-org-change',
-    discipline: 'management',
-    title: '断続平衡理論（組織変革）',
-    statement: 'GersickおよびTushman・Romanelliが発展させた組織変革理論。組織は長期の安定（均衡）期と、深層構造を刷新する短期の革命的変革期を交互に繰り返すと説く。',
-    keyFigures: 'Connie J.G. Gersick ／ Michael L. Tushman ／ Elaine Romanelli',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.1991.4278988', type: 'academic', label: 'Gersick 1991 — Academy of Management Review' },
-      { url: 'https://journals.aom.org/doi/abs/10.5465/256669', type: 'academic', label: 'Romanelli & Tushman 1994 — Academy of Management Journal' },
-      { url: 'https://www.semanticscholar.org/paper/REVOLUTIONARY-CHANGE-THEORIES:-A-MULTILEVEL-OF-THE-Gersick/52524271c3298b5541c4346b18f5e07ac6c4590e', type: 'academic', label: 'Gersick 1991 — Semantic Scholar entry' },
-      { url: 'https://en.wikipedia.org/wiki/Punctuated_equilibrium_in_social_theory', type: 'reference', label: 'Punctuated equilibrium in social theory — Wikipedia' },
-    ],
-  },
-  {
-    id: 'human-blindsight-weiskrantz',
-    discipline: 'human-science',
-    title: '盲視（ブラインドサイト）',
-    statement: '一次視覚野（V1）に損傷を持つ人が、意識的に知覚できない視覚刺激に反応できる現象。Weiskrantzが1970〜80年代に体系的に研究し、意識と視覚的気づきの関係に根本的な疑問を投げかけた。',
-    keyFigures: 'Lawrence Weiskrantz ／ Alan Cowey ／ Nicholas Humphrey',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0006899374902791', type: 'academic', label: 'Weiskrantz et al. (1974) original blindsight study in Brain Research' },
-      { url: 'https://www.nature.com/articles/356400a0', type: 'academic', label: 'Weiskrantz (1992) blindsight review in Nature' },
-      { url: 'https://plato.stanford.edu/entries/consciousness-neuroscience/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy: Neuroscience of Consciousness' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0960982298701394', type: 'academic', label: 'Cowey & Stoerig (1997) blindsight in monkeys, Current Biology' },
     ],
   },
   {
@@ -26266,20 +26185,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-routines-feldman',
-    discipline: 'management',
-    title: '動態的組織ルーティン論',
-    statement: 'FeldmanとPentlandは組織ルーティンを静的な慣習ではなく、「表象的側面」と「遂行的側面」の相互作用による動態的達成として再概念化し、安定性と変化の双方の源泉であることを示した。',
-    keyFigures: 'Martha S. Feldman ／ Brian T. Pentland',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.2307/3556620', type: 'academic', label: 'Feldman & Pentland (2003) — Reconceptualizing Organizational Routines, ASQ' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.11.6.611.12529', type: 'academic', label: 'Feldman (2000) — Organizational Routines as Source of Continuous Change, Organization Science' },
-      { url: 'https://en.wikipedia.org/wiki/Martha_S._Feldman', type: 'reference', label: 'Wikipedia — Martha S. Feldman' },
-      { url: 'https://www.cambridge.org/core/books/cambridge-handbook-of-routine-dynamics/0CF438298D1E99FA62A763D1CF9313B0', type: 'academic', label: 'Cambridge Handbook of Routine Dynamics (Feldman, Pentland et al., eds.)' },
-    ],
-  },
-  {
     id: 'mgmt-cognitive-crafting',
     discipline: 'management',
     title: '認知的クラフティング（仕事の意味の再解釈）',
@@ -26619,21 +26524,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oecd.org/en/publications/closing-broadband-connectivity-divides-for-all_d5ea99b2-en.html', type: 'government', label: 'OECD. Closing Broadband Connectivity Divides for All: Policy Framework and Implementation' },
       { url: 'https://www.unesco.org/en/right-education/digitalization', type: 'government', label: 'UNESCO. Bridging the Digital Divide and Ensuring Online Protection' },
       { url: 'https://plato.stanford.edu/entries/it-moral-values/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy: Information Technology and Moral Values' },
-    ],
-  },
-  {
-    id: 'mgmt-psychological-capital-luthans',
-    discipline: 'management',
-    title: 'サイコロジカル・キャピタル（心理的資本）',
-    statement: 'ルターンス と同僚らが2002年に創設した積極的組織行動の理論。Hope・Efficacy・Resilience・Optimism（HERO）の4つの心理的資源から構成される、開発可能な個人の強み。',
-    keyFigures: 'Fred Luthans ／ Carolyn Youssef-Morgan ／ Bruce J. Avolio',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.aom.org/doi/10.5465/AME.2002.6640181', type: 'academic', label: 'Luthans (2002) - Positive Organizational Behavior. Academy of Management Executive, 16(1).' },
-      { url: 'https://academic.oup.com/book/26255', type: 'academic', label: 'Luthans, Youssef, & Avolio (2007) - Psychological Capital: Developing the Human Competitive Edge. Oxford University Press' },
-      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1548051813518073', type: 'academic', label: 'Luthans & Avolio (2014) - Journal of Leadership & Organizational Studies' },
-      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-032516-113324', type: 'reference', label: 'Annual Review of Organizational Psychology — Psychological Capital' },
-      { url: 'https://en.wikipedia.org/wiki/Positive_psychological_capital', type: 'reference', label: 'Wikipedia - Positive Psychological Capital (PsyCap)' },
     ],
   },
   {
@@ -42676,9 +42566,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マーサ・フェルドマン ／ ブライアン・ペントランド ／ リチャード・ネルソン ／ シドニー・ウィンター',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/0170840603024003001', type: 'academic', label: 'Feldman, M. & Pentland, B. (2003) Reconceptualizing Organizational Routines — Administrative Science Quarterly' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/3556620', type: 'academic', label: 'Feldman, M. & Pentland, B. (2003) Reconceptualizing Organizational Routines — Administrative Science Quarterly 48(1)' },
       { url: 'https://doi.org/10.1287/orsc.11.6.611.12529', type: 'academic', label: 'Feldman, M. (2000) Organizational Routines as a Source of Continuous Change — Organization Science' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_routines', type: 'reference', label: 'Wikipedia: Organizational routines — 組織ルーティンの概要' },
+      { url: 'https://www.cambridge.org/core/books/cambridge-handbook-of-routine-dynamics/0CF438298D1E99FA62A763D1CF9313B0', type: 'academic', label: 'Cambridge Handbook of Routine Dynamics (Feldman, Pentland et al., eds., 2021)' },
     ],
   },
   {

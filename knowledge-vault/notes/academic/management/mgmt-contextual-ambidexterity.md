@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 語彙が近い
-- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
 

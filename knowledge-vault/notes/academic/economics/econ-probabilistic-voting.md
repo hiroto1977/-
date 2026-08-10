@@ -31,7 +31,6 @@ Assar Lindbeck（アサール・リンドベック） ／ Jörgen W. Weibull（�
 - [Coughlin, Peter & Nitzan, Shmuel (1981) "Electoral outcomes with probabilistic voting and Nash social welfare maxima," Journal of Public Economics 15(1): 113–121](https://ideas.repec.org/a/eee/pubeco/v15y1981i1p113-121.html) `学術`
 
 ## 関連概念
-- [[econ-hysteresis-unemployment-theory|ヒステリシス失業理論]] — 同じ思想家
 - [[econ-double-auction|連続ダブルオークション]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 

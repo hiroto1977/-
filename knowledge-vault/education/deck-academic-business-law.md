@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／ビジネス法務"
 type: flashcard-deck
 deck_key: "academic-business-law"
-card_count: 695
+card_count: 694
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／ビジネス法務（695枚）
+# フラッシュカード — 学術概念／ビジネス法務（694枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -130,8 +130,6 @@ tags:
   - **A:** 危険の引受（assumption of risk）とは、原告が特定の危険を現実に認識・理解した上で任意にこれを引き受けた場合、その危険の現実化により生じた損害について被告の不法行為責任を否定するコモンロー上の積極的抗弁であり、「承諾する者に不法行為は成立しない（volenti non fit injuria）」とのローマ法起源の法諺に淵源する。成立には①当該危険の現実的な認識・評価と②その自発的な引受という二要件を要する。（→ [[bizlaw-assumption-of-risk]]）
 - **Q:** 誘引的妨害物の法理（Attractive Nuisance Doctrine）
   - **A:** 誘引的妨害物の法理（Attractive Nuisance Doctrine）とは、米国不法行為法において、土地所有者が人工的な危険な状態を維持し、その状態が幼い子供を誘引しうることを知りまたは知りうべき場合に、不法侵入した子供に生じた身体的損害について土地所有者に注意義務を課す法理である。第二次リステイトメント（Restatement (Second) of Torts）§339に成文化されている。（→ [[bizlaw-attractive-nuisance]]）
-- **Q:** 魅力的危険物法理
-  - **A:** 土地占有者は児童を引き寄せる蓋然性のある人工的危険状態に対し、不法侵入児童にも合理的注意義務を負う。Stout判決（1873）が礎判例でRestatement §339が要件を体系化。（→ [[bizlaw-attractive-nuisance-doctrine]]）
 - **Q:** 自動車損害賠償保障法（自賠法）
   - **A:** 自動車事故の被害者を保護するため、人身損害の賠償を確保することを目的とする法律（昭和30年／1955年法律第97号、国土交通省所管）。自賠責保険（強制保険）への加入を義務づけ、未加入での運行を禁止する。（→ [[bizlaw-auto-liability-act]]）
 - **Q:** 寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係

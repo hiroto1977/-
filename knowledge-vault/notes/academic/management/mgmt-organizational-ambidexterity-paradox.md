@@ -40,8 +40,8 @@ Wendy K. Smith ／ Marianne W. Lewis ／ Charles A. O'Reilly III ／ Michael L. 
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

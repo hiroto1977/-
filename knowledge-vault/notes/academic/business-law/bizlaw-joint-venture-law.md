@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同分野の近傍
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

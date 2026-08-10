@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 117
+cite_count: 116
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **117 件**（学術 115 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **116 件**（学術 114 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -128,7 +128,6 @@ tags:
 - [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — Pentland&Feldman(2005)OrganizationalRoutinesasaUnitofAnalysis—Industr…
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — OrganizationalRoutines:BetweenChangeandStability-IndustrialandCorpora…
 - [[mgmt-peter-principle|ピーターの法則]] — Benson,Li&Shue(2019)"PromotionsandthePeterPrinciple"QuarterlyJournalo…
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — Luthans,Youssef,&Avolio(2007)-PsychologicalCapital:DevelopingtheHuman…
 - [[mgmt-role-exit-theory|役割退出理論]] — SociologyofReligion—Bookreviewof"BecominganEx"(OxfordAcademic,1989)
 - [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — Finkelstein,Hambrick&Cannella(2009)StrategicLeadership
 

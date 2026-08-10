@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 664
+card_count: 659
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（664枚）
+# フラッシュカード — 学術概念／経営学（659枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -820,12 +820,8 @@ tags:
   - **A:** 組織レジリエンス理論は、組織が混乱・危機・予期しない衝撃を吸収し、適応し、回復する能力を体系的に説明する理論的枠組みである。Weick & Sutcliffeは高信頼性組織（HRO）研究を通じて、失敗への予防的関心・操業感度・専門知識への敬意など五つの行動原則がマインドフルネスを醸成し、組織の回復力を支えると論じた。（→ [[mgmt-organizational-resilience-theory]]）
 - **Q:** 組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）
   - **A:** 組織的レジリエンス（organizational resilience）とは、予期しない混乱・危機から組織が回復し適応する能力を指し、カール・ワイクのセンスメイキング理論および高信頼性組織（HRO）研究が中心的な理論基盤を形成する。ワイクは1993年の「マン・ガルチ山火事」の組織崩壊分析を通じ、危機下での役割構造の崩壊がセンスメイキングを失わせ集合的行動能力を損なうことを示した。（→ [[mgmt-organizational-resilience-weick]]）
-- **Q:** 組織ルーチン
-  - **A:** 組織ルーチンとは、複数の主体が担う、反復的で認識可能な相互依存的行動のパターンであり、企業の規則的で予測可能な行動様式を指す。リチャード・ネルソンとシドニー・ウィンターは『経済変動の進化理論』（1982）で、ルーチンを組織の業務知識（その多くは暗黙知）の主要な貯蔵庫と位置づけた。（→ [[mgmt-organizational-routines]]）
 - **Q:** 組織ルーティンの生成文法モデル
-  - **A:** Feldman & Pentlandは組織ルーティンを「表象的側面（ostensive）」と「遂行的側面（performative）」に区分し、生成文法のように安定した深層構造から多様な実践を産出する動的システムとして再概念化した。（→ [[mgmt-organizational-routines-as-grammars]]）
-- **Q:** 動態的組織ルーティン論
-  - **A:** FeldmanとPentlandは組織ルーティンを静的な慣習ではなく、「表象的側面」と「遂行的側面」の相互作用による動態的達成として再概念化し、安定性と変化の双方の源泉であることを示した。（→ [[mgmt-organizational-routines-feldman]]）
+  - **A:** Pentland & Rueter (1994) が提示した、組織ルーティンを「行為の文法（grammars of action）」として捉えるモデル。ルーティンは単一の固定された行為系列ではなく、文法が無数の文を生成するように、状況に応じた多様な遂行のレパートリーを産出する構造だと再定義した。（→ [[mgmt-organizational-routines-as-grammars]]）
 - **Q:** 組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論
   - **A:** 組織ルーティン論は、マーサ・フェルドマンとブライアン・ペントランドが2003年に体系化した、組織ルーティンを静的なプログラムではなく動的な生成的システムとして分析する理論的枠組みである。（→ [[mgmt-organizational-routines-feldman-pentland]]）
 - **Q:** 組織ルーティン理論
@@ -918,8 +914,6 @@ tags:
   - **A:** デイビッド・ティースが1986年にResearch Policy誌の論文「Profiting from technological innovation」で提示した枠組みで、革新者がしばしば自らの技術革新から利益を得られず、模倣者や補完的資産の保有者がその利益を獲得するのはなぜかを論じる。三つの構成要素からなる。（→ [[mgmt-profiting-from-innovation]]）
 - **Q:** 向社会的動機付けと他者指向的動機の組織行動論（グラント）
   - **A:** 向社会的動機付け（prosocial motivation）とは、他者や社会全体の利益になることへの動機付けであり、アダム・グラントが組織行動論の文脈で体系化した。グラントは研究者の独自性として、カリセンターの職員研究（奨学金受益者との接触がパフォーマンスを大幅に向上させる）・消防士・医師・研究者など対人援助職の実験から、仕事の「社会的価値」を実感させるだけで生産性が向上することを示した。（→ [[mgmt-prosocial-motivation-grant]]）
-- **Q:** サイコロジカル・キャピタル（心理的資本）
-  - **A:** ルターンス と同僚らが2002年に創設した積極的組織行動の理論。Hope・Efficacy・Resilience・Optimism（HERO）の4つの心理的資源から構成される、開発可能な個人の強み。（→ [[mgmt-psychological-capital-luthans]]）
 - **Q:** 心理的資本理論
   - **A:** Luthansが提唱した心理的資本（PsyCap）理論は、ポジティブ組織行動論（POB）の枠組みに基づき、個人の心理的資源を測定・開発・管理することで職務パフォーマンスとwell-beingの向上を目指す。（→ [[mgmt-psychological-capital-theory]]）
 - **Q:** 心理的契約
@@ -938,10 +932,6 @@ tags:
   - **A:** 心理的安全性（psychological safety）は、エイミー・エドモンドソン（1999）が提唱した、チームメンバーが対人リスク（interpersonal risk）——批判・拒否・嘲笑・罰則——を恐れず発言・質問・アイデア・懸念・誤りを共有できるという「チームの共有信念（shared belief held by members of a team）」を指す概念である。（→ [[mgmt-psychological-safety-edmondson]]）
 - **Q:** パンクチュエイテッド・エクイリブリアム（組織の断続平衡）
   - **A:** パンクチュエイテッド・エクイリブリアム（Punctuated Equilibrium）とは、組織変化が段階的・漸進的でなく、長期の収束期（equilibrium period）が革命的・フレーム破壊的変化（revolutionary reorientation）の短期集中期によって断続的に遮断される非連続的パターンに従うという理論的命題である。（→ [[mgmt-punctuated-equilibrium]]）
-- **Q:** 断続平衡理論（組織変革）
-  - **A:** GersickおよびTushman・Romanelliが発展させた組織変革理論。組織は長期の安定（均衡）期と、深層構造を刷新する短期の革命的変革期を交互に繰り返すと説く。（→ [[mgmt-punctuated-equilibrium-org-change]]）
-- **Q:** 組織の断続平衡理論
-  - **A:** Tushman and Romanelli（1985）は、組織が長期にわたる漸進的変化（収束期）と短期かつ急激な革命的変化（革命期）を交互に繰り返しながら進化するという「断続平衡モデル」を提唱し、生物進化論の知見を組織変革論に応用した。（→ [[mgmt-punctuated-equilibrium-theory]]）
 - **Q:** 品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法
   - **A:** 品質機能展開（QFD：Quality Function Deployment）は、顧客の声（要求品質）を、製品やサービスの技術特性・設計・工程・生産管理へ体系的に翻訳していく品質計画の手法である。1966年ごろの日本で赤尾洋二と水野滋らによって考案され、初期はブリヂストンタイヤ久留米工場や三菱重工業神戸造船所での品質保証活動の中で実務化された。（→ [[mgmt-quality-function-deployment]]）
 - **Q:** ラジカル・トランスパレンシー（ダリオ）

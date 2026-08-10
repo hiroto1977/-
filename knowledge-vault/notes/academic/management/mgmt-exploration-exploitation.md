@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
 - [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 出典を共有
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — 出典を共有
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

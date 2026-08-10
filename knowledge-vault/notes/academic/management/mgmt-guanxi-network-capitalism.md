@@ -33,7 +33,6 @@ Boisot, Max ／Child, John （1996 Administrative Science Quarterly）／Yeung, 
 ## 関連概念
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 同分野の近傍
-- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同分野の近傍
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 同分野の近傍
 
 ## 関連

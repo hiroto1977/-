@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — 語彙が近い
 - [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 語彙が近い
 - [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 分野横断
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
+- [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
 - [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
 
 ## 関連

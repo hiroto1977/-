@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Feldman & Pentlandは組織ルーティンを「表象的側面（ostensive）」と「遂行的側面（performative）」に区分し、生成文法のように安定した深層構造から多様な実践を産出する動的システムとして再概念化した。
+Pentland & Rueter (1994) が提示した、組織ルーティンを「行為の文法（grammars of action）」として捉えるモデル。ルーティンは単一の固定された行為系列ではなく、文法が無数の文を生成するように、状況に応じた多様な遂行のレパートリーを産出する構造だと再定義した。ソフトウェア・サポート窓口の通話データを用い、実際の行為系列が文法的規則性を持つことを実証している。この文法メタファーは、ルーティン＝硬直という従来観を退け、後の Feldman & Pentland (2003) の表象的／遂行的側面の二元論と、Pentland & Feldman (2005) の分析単位論へつながる Routine Dynamics 研究プログラムの起点となった。
 
 ## 提唱者・初出
 Martha S. Feldman ／ Brian T. Pentland ／ Henry H. Rueter
@@ -32,12 +32,9 @@ Martha S. Feldman ／ Brian T. Pentland ／ Henry H. Rueter
 - [Feldman & Pentland (2022) Routine Dynamics — Strategic Organization 20](https://journals.sagepub.com/doi/10.1177/14761270221130876) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — 語彙が近い
-- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 語彙が近い
-- [[mgmt-organizational-routines|組織ルーチン]] — 語彙が近い
-- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 語彙が近い
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 同分野の近傍
 - [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 同分野の近傍
-- [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

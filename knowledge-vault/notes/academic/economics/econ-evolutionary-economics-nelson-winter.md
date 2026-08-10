@@ -31,7 +31,6 @@ aliases:
 - [Evolutionary Economics — Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/evolutionary-economics/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
+- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
