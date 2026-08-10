@@ -32,6 +32,7 @@ John Sweller ／ Harold Pashler ／ Daniel Kahneman
 - [Kahneman, Attention and Effort (Prentice-Hall, 1973)](https://archive.org/details/attentioneffort00kahn) `リファレンス`
 
 ## 関連概念
+- [[human-cognitive-load|認知負荷理論]] — 語彙が近い
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
@@ -41,7 +42,6 @@ John Sweller ／ Harold Pashler ／ Daniel Kahneman
 - [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
 - [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

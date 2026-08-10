@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 語彙が近い
 - [[mgmt-cynefin|クネビン・フレームワーク]] — 同じ思想家
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍
-- [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同分野の近傍
 - [[mgmt-strategic-human-capital-theory|戦略的人的資本理論]] — 同分野の近傍
 
 ## 関連

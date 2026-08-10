@@ -38,7 +38,6 @@ Ronald K. Mitchell ／ Bradley R. Agle ／ Donna J. Wood
 - [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同分野の近傍
 - [[mgmt-rfm-analysis|RFM分析]] — 同分野の近傍
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同分野の近傍
-- [[mgmt-social-exchange-theory|社会的交換理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

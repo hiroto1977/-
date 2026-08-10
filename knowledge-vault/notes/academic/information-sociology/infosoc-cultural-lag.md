@@ -30,8 +30,8 @@ aliases:
 - [American Sociological Association — William F. Ogburn (ASA Past Presidents)](https://www.asanet.org/william-f-ogburn/) `学術`
 
 ## 関連概念
-- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 同分野の近傍
 - [[infosoc-privacy-by-design-cavoukian|プライバシー・バイ・デザインと個人情報保護の設計原則（カブキアン）]] — 同分野の近傍
+- [[infosoc-cognitive-capitalism|認知資本主義]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

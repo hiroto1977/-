@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同じ思想家
 - [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
-- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 同分野の近傍
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
 - [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 同分野の近傍
 
 ## 関連

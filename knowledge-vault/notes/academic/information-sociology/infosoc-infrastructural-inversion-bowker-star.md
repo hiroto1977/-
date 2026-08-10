@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
 - [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 同分野の近傍
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

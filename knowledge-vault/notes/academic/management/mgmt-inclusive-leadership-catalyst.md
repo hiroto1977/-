@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Inclusive leadership — インクルーシブ・リーダーシップの理論と実践](https://en.wikipedia.org/wiki/Inclusive_leadership) `リファレンス`
 
 ## 関連概念
-- [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
 - [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
+- [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -41,7 +41,7 @@ aliases:
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
-- [[mgmt-organizational-energy-bruch|組織エネルギー理論——集団的活力の質と強度による組織診断]] — 同分野の近傍
+- [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

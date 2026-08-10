@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Attachment in adults — Hazan, Shaver, ECR, four types, anxious, avoidant, secure](https://en.wikipedia.org/wiki/Attachment_in_adults) `リファレンス`
 
 ## 関連概念
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 語彙が近い
 - [[human-attachment-theory-adult|成人愛着理論]] — 語彙が近い
+- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 語彙が近い
 - [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 語彙が近い
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同分野の近傍
 

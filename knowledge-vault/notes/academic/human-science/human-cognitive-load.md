@@ -32,9 +32,9 @@ aliases:
 - [Chandler & Sweller, "The split-attention effect…", British Journal of Educational Psychology（Wiley 査読誌）](https://bpspsychub.onlinelibrary.wiley.com/doi/abs/10.1111/j.2044-8279.1992.tb01017.x) `学術`
 
 ## 関連概念
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 語彙が近い
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 出典を共有
 - [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
-- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同分野の近傍
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 
 ## 関連

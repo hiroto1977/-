@@ -14,7 +14,7 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 69）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 42）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 41）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]]（接続 26）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
@@ -24,8 +24,8 @@ tags:
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 23）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
+- [[infosoc-datafication|データ化（データ化現象）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
-- [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 20）
 

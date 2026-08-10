@@ -33,7 +33,6 @@ M.フラッド&M.ドレッシャー（1950 RAND考案）／A.W.タッカー（�
 ## 関連概念
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
-- [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同分野の近傍
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 同分野の近傍
 
 ## 関連

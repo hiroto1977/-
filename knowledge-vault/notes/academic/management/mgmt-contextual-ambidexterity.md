@@ -31,9 +31,10 @@ aliases:
 - [O'Reilly, C.A. & Tushman, M.L. (2004) The Ambidextrous Organization — Harvard Business Review, 82(4), 74-81](https://doi.org/10.1287/orsc.1050.0134) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 語彙が近い
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]] — 同分野の近傍
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
 
 ## 関連

@@ -36,7 +36,6 @@ Henry W. Chesbrough／Wim Vanhaverbeke／Joel West
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
 - [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
 - [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
-- [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
 - [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同分野の近傍
-- [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

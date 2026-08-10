@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Harawayが「サイボーグ宣言」（1985）と「状況的知識」（1988）で提唱した立場。人間／機械・自然／文化の境界を問い直し、知識は常に部分的・状況的視点から生まれると主張するSTSとフェミニズムの交差的理論枠組み。
+Harawayが「サイボーグ宣言」（1985）と「状況的知識」（1988）で提唱した立場。人間／機械・自然／文化の境界を問い直し、知識は常に部分的・状況的視点から生まれると主張するSTSとフェミニズムの交差的理論枠組み。サイボーグ宣言は、人間と機械・生物の境界が既に崩れている状況を嘆くのではなく政治的資源として引き受ける皮肉のフィギュール（サイボーグ）を提示し、本質主義的な女性性への回帰と技術決定論の双方を拒否した。状況的知識論は、どこからでもない眺め（god trick）としての客観性を批判し、位置づけられた部分的視点の接合こそがより良い客観性（強い客観性論と共鳴）を生むと論じて、フェミニスト認識論の基準文献になった。Barad の行為的実在論（agential realism）は量子力学の観測問題を資源に、観察装置と対象が内的作用（intra-action）で相互構成されると定式化してこの系譜を存在論へ深化させ、Harding のスタンドポイント理論と併せて三つの柱をなす。情報社会論では、アルゴリズムの中立性神話の批判、データ・フェミニズム、ケア労働とプラットフォームのジェンダー分析、AI の「視点なき視点」批判の理論的基盤として機能し、『伴侶種宣言』以降のマルチスピーシーズ研究へも展開している。
 
 ## 提唱者・初出
 Donna Haraway ／ Sandra Harding ／ Karen Barad
@@ -32,8 +32,6 @@ Donna Haraway ／ Sandra Harding ／ Karen Barad
 - [Stanford Encyclopedia of Philosophy — Feminist Social Epistemology](https://plato.stanford.edu/entries/feminist-social-epistemology/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 語彙が近い
-- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 語彙が近い
 - [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 同じ思想家
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
@@ -42,6 +40,8 @@ Donna Haraway ／ Sandra Harding ／ Karen Barad
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
 - [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

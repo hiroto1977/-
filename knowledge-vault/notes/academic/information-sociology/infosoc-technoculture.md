@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 語彙が近い
-- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 語彙が近い
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
 - [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
 - [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
+- [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

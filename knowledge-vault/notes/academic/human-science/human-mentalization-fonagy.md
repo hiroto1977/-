@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同分野の近傍
-- [[human-theory-of-mind|心の理論]] — 同分野の近傍
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
