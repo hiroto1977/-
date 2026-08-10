@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 語彙が近い
-- [[labor-care-leave|介護休業と介護休業給付金]] — 同分野の近傍
-- [[labor-childcare-leave-2025|育児・介護休業法 2025年4月改正]] — 同分野の近傍
+- [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 同分野の近傍
+- [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 同分野の近傍
 - [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 同分野の近傍
 
 ## 関連

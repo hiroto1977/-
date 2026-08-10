@@ -194,14 +194,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '地域別最低賃金（最低賃金法）',
       statement:
         '地域別最低賃金は都道府県ごとに定められ、原則として毎年（10月頃）改定される。産業や雇用形態を問わず' +
-        '当該地域で働く全ての労働者に適用され、事業者は所在地の地域別最低賃金以上を支払う義務がある（最新額は厚労省で要確認）。',
+        '当該地域で働く全ての労働者に適用される（最新額は厚生労働省の全国一覧で要確認）。' +
+        '特定の産業には特定（産業別）最低賃金があり、両方が適用される労働者には高い方を支払う。' +
+        '判定は支給総額ではなく最低賃金の対象となる賃金で行い、割増賃金・精皆勤手当・通勤手当・家族手当・' +
+        '臨時に支払われる賃金・1か月を超える期間ごとに支払われる賃金は除いて比較する。' +
+        '月給制なら「月給 ÷ 1か月平均所定労働時間」で時間額に換算して比べる。' +
+        '手当を厚くして基本給を抑える設計にしていると、支給総額では上回っていても違反になることがある。',
       authority: '所管: 厚生労働省（最低賃金法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/minimumichiran/index.html', type: 'government', label: '厚生労働省 地域別最低賃金の全国一覧' },
       { url: 'https://saiteichingin.mhlw.go.jp/', type: 'government', label: '厚生労働省 最低賃金制度 特設サイト' },
-      { url: 'https://www.rshd.co.jp/news/saiyou-kaitei.html', type: 'media', label: '最低賃金ランキング解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/chingin/newpage_43899.html', type: 'government', label: '厚生労働省 最低賃金額以上かどうかを確認する方法' },
+      { url: 'https://www.mhlw.go.jp/www2/topics/seido/kijunkyoku/minimum/minimum-12.htm', type: 'government', label: '厚生労働省 最低賃金の対象となる賃金' },
+      { url: 'https://saiteichingin.mhlw.go.jp/point/page_point_class.html', type: 'government', label: '厚生労働省 地域別最低賃金と特定最低賃金' },
     ],
   },
   {
@@ -656,15 +663,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '割増賃金率（時間外・休日・深夜）',
       statement:
-        '労働基準法上、時間外労働は25%以上、深夜労働(22時〜翌5時)は25%以上、法定休日労働は35%以上の割増賃金率。' +
-        '1か月60時間を超える時間外労働には50%以上が適用される（中小企業も2023年4月から適用）。',
-      authority: '所管: 厚生労働省（労働基準法）',
+        '割増賃金率は、時間外労働が25％以上、深夜労働（22時〜翌5時）が25％以上、法定休日労働が35％以上。' +
+        '1か月60時間を超える時間外労働には50％以上が適用される（中小企業も2023年4月から適用）。' +
+        '重なったときは足し合わせる — 時間外かつ深夜は50％、法定休日かつ深夜は60％、' +
+        '月60時間超の時間外かつ深夜は75％になる。一方で時間外と法定休日は重ならず、法定休日の労働は' +
+        '35％で、60時間の集計にも算入しない（法定外休日の労働は算入する）。' +
+        '法定労働時間（1日8時間・週40時間）の内側で所定時間を超えただけの「法定内残業」には' +
+        '法律上の割増は要らない。月60時間超の割増分は、労使協定を結べば有給の代替休暇に振り替えられる。',
+      authority: '所管: 厚生労働省（労働基準法第37条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/content/000930914.pdf', type: 'government', label: '厚生労働省 月60時間超の割増賃金率引上げ' },
       { url: 'https://www.mhlw.go.jp/content/11200000/tp1216-1l-02.pdf', type: 'government', label: '厚生労働省 法定割増賃金率の引上げ' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/82774/', type: 'media', label: 'マネーフォワード 残業代の割増率' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article37.html', type: 'government', label: '厚生労働省 栃木労働局 時間外、休日及び深夜の割増賃金（第37条）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_jikangai.html', type: 'government', label: '厚生労働省 確かめよう労働条件 時間外・休日労働と割増賃金' },
     ],
   },
   {
@@ -834,15 +847,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '賃金支払の5原則とデジタル払い',
       statement:
-        '労働基準法は賃金を通貨・直接・全額・毎月1回以上・一定期日に支払うよう定める（賃金支払の5原則）。' +
-        '2023年4月の省令改正により、労働者の同意を条件に厚生労働大臣の指定する資金移動業者口座へのデジタル払いも可能となった。',
+        '労働基準法24条は、賃金を①通貨で②直接労働者に③全額④毎月1回以上⑤一定の期日を定めて' +
+        '支払うよう定める（賃金支払の5原則）。2023年4月の省令改正により、厚生労働大臣が指定した' +
+        '資金移動業者の口座への支払（デジタル払い）も可能になったが、条件は軽くない。' +
+        '事業場の過半数組合（ない場合は過半数代表者）と、対象となる労働者の範囲や取扱指定資金移動業者の範囲等を' +
+        '定めた労使協定を締結したうえで、労働者本人の同意が要る。' +
+        '希望しない労働者に強制すれば労働基準法違反として罰則の対象になり得る。' +
+        '現金化できないポイントや暗号資産での支払は認められない。',
       authority: '所管: 厚生労働省（労働基準法第24条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/03_00028.html', type: 'government', label: '厚生労働省 賃金のデジタル払いについて' },
       { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'government', label: '労働政策研究・研修機構 解説' },
-      { url: 'https://keiyaku-watch.jp/media/hourei/digital-payroll/', type: 'media', label: '賃金デジタル払いの解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/newpage_55437.html', type: 'government', label: '厚生労働省 使用者の方向け 賃金のデジタル払いについて' },
+      { url: 'https://www.mhlw.go.jp/content/11200000/001065931.pdf', type: 'government', label: '厚生労働省 現金化できないポイントや仮想通貨での賃金支払いは認められません' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei05.html', type: 'government', label: '厚生労働省 賃金の支払方法に関する法律上の定め' },
     ],
   },
   {
@@ -851,15 +871,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '交際費等の損金不算入と中小法人特例',
       statement:
-        '法人の交際費等は原則として損金不算入だが、資本金1億円以下の中小法人は年800万円までの定額控除限度額か' +
-        '接待飲食費の50%相当額のいずれかを選択して損金算入できる。1人当たり一定額以下の飲食費は交際費等から除外される。',
+        '法人の交際費等は原則として損金不算入だが、資本金1億円以下の中小法人は、年800万円までの定額控除限度額' +
+        '（事業年度が12か月に満たない場合は月数按分）か接待飲食費の50％相当額のいずれかを選択して損金算入できる。' +
+        'この特例の適用期限は令和9年3月31日までに開始する事業年度である。' +
+        'また、1人当たりの飲食費が一定額以下のものは交際費等から除かれるが、' +
+        'この基準額は令和6年度改正で5,000円以下から1万円以下に引き上げられた' +
+        '（令和6年4月1日以後に支出する飲食費に適用。それ以前の支出は5,000円以下で判定する）。' +
+        'なお資本金1億円以下でも、資本金5億円以上の大法人の100％子法人等は中小企業向け特例の対象外になる。',
       authority: '所管: 国税庁（租税特別措置法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5265.htm', type: 'government', label: '国税庁 No.5265 交際費等の損金不算入' },
       { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/kousai.html', type: 'government', label: '中小企業庁 交際費課税の特例' },
-      { url: 'https://www.nta.go.jp/publication/pamph/hojin/settai_faq/01.htm', type: 'government', label: '国税庁 接待飲食費FAQ' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/settai_faq/01.htm', type: 'government', label: '国税庁 接待飲食費に関するFAQ' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2024/pdf/J.pdf', type: 'government', label: '国税庁 令和6年度税制改正 交際費等の損金不算入制度の見直し' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5800.htm', type: 'government', label: '国税庁 No.5800 大法人の100％子法人等における中小企業向け特例措置の不適用' },
     ],
   },
   {
@@ -1476,15 +1503,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '年次有給休暇の付与',
       statement:
-        '雇入れの日から6か月継続勤務し全労働日の8割以上出勤した労働者には年次有給休暇が10日付与され、以後継続勤務年数に応じて' +
-        '逓増し6年6か月以降は最大20日となる。所定労働日数の少ないパート等には比例付与が適用される。',
+        '雇入れの日から6か月継続勤務し全労働日の8割以上出勤した労働者には年次有給休暇が10日付与される。' +
+        '以後は継続勤務2年6か月までは1年ごとに1日、3年6か月以後は1年ごとに2日を加算し、' +
+        '6年6か月以降は20日で頭打ちになる（各回とも前年の出勤率8割以上が条件）。' +
+        '所定労働日数の少ない労働者には比例付与が適用され、対象は週の所定労働時間が30時間未満で、' +
+        'かつ週の所定労働日数が4日以下の者である。この2つは「かつ」なので、' +
+        '週3日勤務でも1日10時間で週30時間以上なら通常どおりの付与になる。' +
+        '年次有給休暇は発生の日から2年で時効消滅するため、未使用分の繰越は翌年度分までである。',
       authority: '所管: 厚生労働省（労働基準法第39条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/content/000350327.pdf', type: 'government', label: '厚生労働省 年次有給休暇' },
       { url: 'https://www.kantei.go.jp/jp/singi/katsuryoku_kojyo/choujikan_wg/dai5/sankou3.pdf', type: 'government', label: '内閣官房 長時間労働WG 参考資料' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/83032/', type: 'media', label: '年次有給休暇の付与 解説' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_yukyu.html', type: 'government', label: '厚生労働省 確かめよう労働条件 年次有給休暇' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q1.html', type: 'government', label: '厚生労働省 年次有給休暇は何日与えるか（比例付与を含む）' },
     ],
   },
   {
@@ -2647,15 +2680,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '法定休日（労働基準法35条）',
       statement:
-        '使用者は、労働者に対して毎週少なくとも1回の休日を与えなければならない（労働基準法35条1項）。ただし、4週間を通じ4日以上の' +
-        '休日を与える場合（変形休日制）はこの限りでない（同条2項）。この法律上の休日を法定休日という。',
+        '使用者は、労働者に対して毎週少なくとも1回の休日を与えなければならない（労働基準法35条1項）。' +
+        'ただし4週間を通じ4日以上の休日を与える場合（変形休日制）はこの限りでなく、' +
+        'その場合は就業規則等に変形期間の起算日を定めておく必要がある（同条2項）。' +
+        '法令上、どの日を法定休日にするかを事前に特定する義務まではないが、' +
+        '「毎週◯曜日」と就業規則で特定しておくことが望ましいとされる。' +
+        '特定していないと、週休二日のうちどちらに出勤したかで割増賃金率が35％か25％かに割れるため、' +
+        '賃金台帳の記載も揺れる。法定休日を超える休み（法定外休日）の労働は休日割増ではなく' +
+        '時間外労働として扱い、月60時間の集計にも算入する。',
       authority: '所管: 厚生労働省（労働基準法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/gunma-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/jyouken03_2.html', type: 'government', label: '群馬労働局 労働条件・休日' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html', type: 'government', label: '厚生労働省 労働時間・休日' },
-      { url: 'https://www.komon-lawyer.jp/qa/holiday/', type: 'media', label: '労働基準法上の休日とは 解説' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article35.html', type: 'government', label: '厚生労働省 栃木労働局 休日（第35条）' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/yokuaru_goshitsumon/jigyounushi/jikan.html', type: 'government', label: '厚生労働省 大阪労働局 よくあるご質問（労働時間・休日）' },
     ],
   },
   {

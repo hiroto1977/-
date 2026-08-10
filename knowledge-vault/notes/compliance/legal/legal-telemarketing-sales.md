@@ -38,6 +38,7 @@ aliases:
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
+- [[legal-consumer-contract-act|消費者契約法]] — 同分野の近傍
 - [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 同分野の近傍
 - [[legal-computer-virus|不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）]] — 同分野の近傍
 

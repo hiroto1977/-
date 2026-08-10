@@ -37,7 +37,7 @@ aliases:
 - [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
 - [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同分野の近傍
-- [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 同分野の近傍
+- [[econ-resource-curse-sachs-warner|資源の呪い——天然資源の豊富さが経済発展を阻害する逆説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

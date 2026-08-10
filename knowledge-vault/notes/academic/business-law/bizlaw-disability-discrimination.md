@@ -36,11 +36,11 @@ aliases:
 - [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 出典を共有
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
 - [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — 出典を共有
 - [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 出典を共有
 - [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 出典を共有
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ aliases:
 - [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 同分野の近傍
-- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,6 +31,7 @@ aliases:
 - [厚生労働省 — 時間外労働の上限規制 わかりやすい解説（年720h以下・複数月平均80h・単月100h未満）](https://www.mhlw.go.jp/content/000463185.pdf) `公的`
 
 ## 関連概念
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 分野横断
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
-- [[bizlaw-childcare-leave|育児・介護休業法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

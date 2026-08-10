@@ -31,8 +31,8 @@ W・エドワーズ・デミング ／ ジョセフ・ジュラン ／ フィリ
 
 ## 関連概念
 - [[mgmt-total-quality-management-deming-juran|総合的品質管理——デミングとジュランの継続的改善と全社的品質経営]] — 語彙が近い
+- [[mgmt-pdca-cycle|PDCAサイクル]] — 語彙が近い
 - [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同じ思想家
-- [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
 - [[mgmt-juran-trilogy|ジュランの品質トリロジー——計画・管理・改善からなる品質マネジメント]] — 同じ思想家
 - [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同分野の近傍

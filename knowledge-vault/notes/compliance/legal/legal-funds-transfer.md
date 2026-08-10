@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 語彙が近い
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 語彙が近い
 - [[bizlaw-payment-services-act|資金決済法]] — 分野横断
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 同分野の近傍
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍

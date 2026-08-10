@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-third-party-provision|個人データの第三者提供の制限]] — 語彙が近い
-- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 語彙が近い
 - [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 語彙が近い
+- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 語彙が近い
 - [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 語彙が近い
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 語彙が近い
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い

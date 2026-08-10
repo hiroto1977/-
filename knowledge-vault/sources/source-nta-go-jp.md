@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 269
+cite_count: 271
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **269 件**（公的 269）
+> [!info] 出典ドメイン索引 ・ 引用 **271 件**（公的 271）
 
 ## このドメインを出典とする項目
 
@@ -118,7 +118,9 @@ tags:
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁令和7年度税制改正（基礎控除・給与所得控除・特定親族特別控除）
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁給与所得控除後の給与等の金額の表
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
-- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5800大法人の100％子法人等における中小企業向け特例措置の不適用
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁令和6年度税制改正交際費等の損金不算入制度の見直し
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費に関するFAQ
 - [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 国税庁タックスアンサーNo.5265交際費等の範囲と損金不算入額の計算
 - [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁No.2040予定納税
 - [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁予定納税（第1期分）

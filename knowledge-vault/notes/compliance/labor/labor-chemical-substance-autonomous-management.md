@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍

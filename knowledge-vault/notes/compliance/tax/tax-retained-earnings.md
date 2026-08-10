@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-worker-cooperative|労働者協同組合法]] — 出典を共有
 - [[tax-group-taxation|法人税のグループ通算制度]] — 同分野の近傍
-- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 同分野の近傍
+- [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

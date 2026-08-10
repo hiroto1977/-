@@ -38,8 +38,8 @@ aliases:
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
-- [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
+- [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 
 ## 関連

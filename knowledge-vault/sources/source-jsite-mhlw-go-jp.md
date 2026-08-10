@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 53
+cite_count: 56
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **53 件**（公的 53）
+> [!info] 出典ドメイン索引 ・ 引用 **56 件**（公的 56）
 
 ## このドメインを出典とする項目
 
@@ -33,6 +33,8 @@ tags:
 - [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 熊本労働局熱中症対策が義務化されます（令和7年6月1日施行）
 - [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]] — 東京労働局個別労働紛争解決制度
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 栃木労働局労働基準法26条（休業手当）
+- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 厚生労働省大阪労働局よくあるご質問（労働時間・休日）
+- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 厚生労働省栃木労働局休日（第35条）
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 群馬労働局労働条件・休日
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 大阪労働局管理監督者の範囲
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 青森労働局中途採用比率の公表義務化（令和3年4月1日）
@@ -40,6 +42,7 @@ tags:
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 鳥取労働局最低賃金の減額の特例許可制度
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 山口労働局月60時間超の割増賃金率は50%以上
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 青森労働局中小企業の月60時間超割増率引上げ
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 厚生労働省栃木労働局時間外、休日及び深夜の割増賃金（第37条）
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — ハローワーク渋谷（東京労働局）出生後休業支援給付金の創設（令和7年4月1日）
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 神奈川労働局出生後休業支援給付金リーフレット
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 青森労働局パワハラ対策義務化

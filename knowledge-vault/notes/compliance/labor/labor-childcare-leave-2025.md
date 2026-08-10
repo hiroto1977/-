@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]] — 語彙が近い
 - [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 語彙が近い
-- [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

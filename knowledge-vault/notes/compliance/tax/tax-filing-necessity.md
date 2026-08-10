@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 同分野の近傍
 - [[tax-income-categories|所得税における所得の10種類の区分]] — 同分野の近傍
+- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
 
 ## 関連

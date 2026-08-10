@@ -31,9 +31,10 @@ aliases:
 - [基発0901第3号 労働時間通算の解釈 通達](https://joshrc.net/archives/6441) `メディア`
 
 ## 関連概念
-- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 語彙が近い
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
+- [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
 - [[labor-worktime-tracking|労働時間の適正な把握義務]] — 出典を共有
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 出典を共有

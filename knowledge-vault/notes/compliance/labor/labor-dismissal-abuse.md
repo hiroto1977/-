@@ -36,8 +36,10 @@ aliases:
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 分野横断
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 同分野の近傍
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
+- [[labor-worktime-aggregation|副業・兼業における労働時間の通算（労基法38条1項）]] — 同分野の近傍
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 同分野の近傍
+- [[labor-average-wage|平均賃金（労働基準法12条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 語彙が近い
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 同分野の近傍
-- [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

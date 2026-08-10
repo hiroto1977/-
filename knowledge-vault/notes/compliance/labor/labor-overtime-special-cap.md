@@ -31,9 +31,9 @@ aliases:
 - [36協定の特別条項 解説](https://jp.indeed.com/career-advice/career-development/labor-law-36-agreement-rules) `メディア`
 
 ## 関連概念
-- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 語彙が近い
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 分野横断
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 同分野の近傍
 
 ## 関連
