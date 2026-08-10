@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Behavioral economics — bounded rationality and decision-making overview](https://en.wikipedia.org/wiki/Behavioral_economics) `リファレンス`
 
 ## 関連概念
-- [[human-bounded-rationality|限定合理性]] — 語彙が近い
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
 - [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同じ思想家
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)](https://doi.org/10.1080/17439760.2011.558684) `学術`
 
 ## 関連概念
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 語彙が近い
 - [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — 分野横断
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 分野横断
 - [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家

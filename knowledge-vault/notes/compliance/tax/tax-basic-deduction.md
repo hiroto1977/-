@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 語彙が近い
 - [[tax-dependent-deduction|扶養控除]] — 語彙が近い
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 出典を共有
-- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

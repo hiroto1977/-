@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Welfare economics — 厚生経済学の基本定理と社会的評価基準の概説](https://en.wikipedia.org/wiki/Welfare_economics) `リファレンス`
 
 ## 関連概念
-- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 語彙が近い
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 語彙が近い
+- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 語彙が近い
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同じ思想家
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家

@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]] — 語彙が近い
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 語彙が近い
 - [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 語彙が近い
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
@@ -40,7 +41,6 @@ aliases:
 - [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 語彙が近い
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 語彙が近い
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
-- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

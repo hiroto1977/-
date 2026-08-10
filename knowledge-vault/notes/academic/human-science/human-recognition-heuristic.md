@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
-- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 同分野の近傍
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同分野の近傍
+- [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

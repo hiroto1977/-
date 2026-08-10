@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia — Reciprocal altruism](https://en.wikipedia.org/wiki/Reciprocal_altruism) `リファレンス`
 
 ## 関連概念
-- [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 語彙が近い
 - [[human-cocktail-party-effect|カクテルパーティー効果]] — 同分野の近傍
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

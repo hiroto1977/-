@@ -24,10 +24,10 @@ tags:
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 31）
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]

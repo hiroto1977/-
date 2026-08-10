@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 同分野の近傍
-- [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — 同分野の近傍
 - [[human-solution-focused-brief-therapy-deshazer|解決志向ブリーフセラピー——ド・シェイザーの例外探しとミラクル・クエスチョン]] — 同分野の近傍
 - [[human-strengths-perspective|ストレングス視点：ソーシャルワークにおける当事者の強みに基づく支援モデル]] — 同分野の近傍
 

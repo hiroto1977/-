@@ -36,7 +36,6 @@ aliases:
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同じ思想家
 - [[econ-shapley-value|シャープレー値]] — 出典を共有
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同分野の近傍
-- [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

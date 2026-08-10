@@ -32,8 +32,6 @@ aliases:
 - [Herbert A. Simon — Nobel Prize Lecture（一次資料・本人講演）](https://www.nobelprize.org/uploads/2018/06/simon-lecture.pdf) `公的`
 
 ## 関連概念
-- [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 語彙が近い
-- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 語彙が近い
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 同分野の近傍
 - [[human-flynn-effect|フリン効果]] — 同分野の近傍
 - [[human-goal-gradient|目標勾配効果]] — 同分野の近傍

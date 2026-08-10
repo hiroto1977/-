@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]] — 同分野の近傍
+- [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

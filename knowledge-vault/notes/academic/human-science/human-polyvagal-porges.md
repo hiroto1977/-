@@ -35,7 +35,6 @@ aliases:
 - [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同じ思想家
 - [[human-just-world-hypothesis-lerner|公正世界仮説——人は相応しい結果を得るという信念とその社会的帰結]] — 同分野の近傍
 - [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 同分野の近傍
-- [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

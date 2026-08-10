@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
 - [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同分野の近傍
+- [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同分野の近傍
 - [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同分野の近傍
 
 ## 関連

@@ -27,7 +27,7 @@ tags:
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 16）
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
-- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 15）
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -54,7 +54,6 @@ tags:
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]]
 - [[legal-antimonopoly|独占禁止法]]
-- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]]
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]]
 - [[legal-civil-procedure-digitalization|民事訴訟手続のIT化（改正民事訴訟法・段階施行）]]
@@ -77,6 +76,7 @@ tags:
 - [[legal-corporate-governance|会社法における株式会社の機関設計]]
 - [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]]
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]]
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]]
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]]
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]]
