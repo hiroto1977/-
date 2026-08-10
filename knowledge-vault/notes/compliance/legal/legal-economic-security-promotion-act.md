@@ -31,8 +31,9 @@ aliases:
 - [KEIYAKU-WATCH 経済安全保障推進法の4制度と施行日 解説](https://keiyaku-watch.jp/media/hourei/202405-keizaianzenhosyo/) `メディア`
 
 ## 関連概念
-- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 分野横断
+- [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 語彙が近い
 - [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
+- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 出典を共有
 - [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 出典を共有
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 出典を共有
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
 - [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
-- [[legal-unauthorized-access|不正アクセス禁止法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

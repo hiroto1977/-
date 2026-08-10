@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 語彙が近い
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同分野の近傍
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,8 +37,8 @@ aliases:
 - [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 分野横断
-- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 同分野の近傍
 - [[bizlaw-elderly-employment|高年齢者雇用安定法]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,8 +30,8 @@ aliases:
 - [Arndt & Kierzkowski eds. (2001) "Fragmentation: New Production Patterns in the World Economy," Oxford University Press](https://academic.oup.com/book/6523) `学術`
 
 ## 関連概念
+- [[econ-global-value-chain|グローバル・バリューチェーン（GVC）]] — 語彙が近い
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 同分野の近傍
-- [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Ambidextrous organization — structural, contextual, exploration-exploitation](https://en.wikipedia.org/wiki/Ambidextrous_organization) `リファレンス`
 
 ## 関連概念
-- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 語彙が近い
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同じ思想家
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同分野の近傍

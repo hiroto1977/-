@@ -40,7 +40,7 @@ aliases:
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
 - [[econ-becker-crime|犯罪の経済学]] — 出典を共有
 - [[mgmt-double-jeopardy-law|ダブル・ジョパディの法則（Double Jeopardy Law／Ehrenberg 1990）——市場シェアの小さいブランドは買い手が少なく、しかもその買い手の忠誠度も低い]] — 同分野の近傍
-- [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]] — 同分野の近傍
+- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

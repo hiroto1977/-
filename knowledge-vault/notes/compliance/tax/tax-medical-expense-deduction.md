@@ -38,6 +38,7 @@ aliases:
 - [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
 - [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 同分野の近傍
 - [[tax-life-insurance-deduction|生命保険料控除]] — 同分野の近傍
+- [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

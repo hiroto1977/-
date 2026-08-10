@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
 - [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 同分野の近傍
-- [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
+- [[mgmt-trompenaars-dimensions|トロンペナールスの文化の7次元]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,6 @@ aliases:
 - [事業者による合理的配慮の提供の義務化（2024年4月施行）解説](https://keiyaku-watch.jp/media/hourei/goritekihairyo-2024/) `リファレンス`
 
 ## 関連概念
-- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 語彙が近い
 - [[legal-disability-accommodation|障害者差別解消法における合理的配慮の提供義務]] — 分野横断
 - [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 出典を共有
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
+- [[subsidy-nedo-startup|NEDO 研究開発型スタートアップ支援事業]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

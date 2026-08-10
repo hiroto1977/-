@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
 - [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 同分野の近傍
+- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

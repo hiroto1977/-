@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 語彙が近い
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
 - [[infosoc-open-data|オープンデータ]] — 同分野の近傍
+- [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

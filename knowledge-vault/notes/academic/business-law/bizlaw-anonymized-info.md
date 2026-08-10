@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 語彙が近い
-- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 分野横断
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 分野横断
+- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 分野横断
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 出典を共有
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有

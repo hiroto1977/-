@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — 出典を共有
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 同分野の近傍
-- [[tax-safety-net-mutual-aid|経営セーフティ共済（中小企業倒産防止共済制度）]] — 同分野の近傍
+- [[tax-medical-expense-deduction|医療費控除]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

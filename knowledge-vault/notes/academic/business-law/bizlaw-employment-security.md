@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-employment-insurance|雇用保険法]] — 語彙が近い
 - [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
 - [[bizlaw-national-pension|国民年金法]] — 同分野の近傍
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 同分野の近傍
 - [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 同分野の近傍
 
 ## 関連

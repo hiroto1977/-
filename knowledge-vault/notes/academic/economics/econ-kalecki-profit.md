@@ -34,7 +34,7 @@ aliases:
 - [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
 - [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
 - [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 同分野の近傍
-- [[econ-demonstration-effect|デモンストレーション効果]] — 同分野の近傍
+- [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

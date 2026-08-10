@@ -32,6 +32,7 @@ aliases:
 - [Wikipedia: Global value chain — Gereffi, buyer/producer-driven, upgrading, COVID reshoring](https://en.wikipedia.org/wiki/Global_value_chain) `リファレンス`
 
 ## 関連概念
+- [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 語彙が近い
 - [[econ-global-value-chain|グローバル・バリューチェーン（GVC）]] — 同じ思想家
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同分野の近傍
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍

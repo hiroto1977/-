@@ -32,7 +32,7 @@ J.ボードリヤール『シミュラークルとシミュレーション』198
 
 ## 関連概念
 - [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同分野の近傍
-- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+- [[infosoc-data-doubles|データ・ダブル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同分野の近傍
-- [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]] — 同分野の近傍
+- [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

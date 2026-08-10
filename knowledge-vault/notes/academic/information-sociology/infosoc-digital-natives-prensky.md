@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
 - [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
 - [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同じ思想家
-- [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]] — 同分野の近傍
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

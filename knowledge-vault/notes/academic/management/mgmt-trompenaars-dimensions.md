@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
 - [[mgmt-strategic-types-miles-snow|マイルズ＆スノーの戦略類型——環境適応の様式による四つの組織類型]] — 同分野の近傍
+- [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

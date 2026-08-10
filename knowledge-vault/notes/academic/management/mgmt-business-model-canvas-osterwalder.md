@@ -38,8 +38,8 @@ aliases:
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
 - [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
-- [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — 同分野の近傍
 - [[mgmt-blue-ocean-strategy|ブルー・オーシャン戦略]] — 同分野の近傍
+- [[mgmt-effectuation|エフェクチュエーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

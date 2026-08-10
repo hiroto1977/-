@@ -37,7 +37,7 @@ aliases:
 - [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
 - [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-just-in-time-ohno|ジャストインタイム——必要なものを必要なときに必要なだけ生産する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
