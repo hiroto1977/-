@@ -35,8 +35,8 @@ Tim Wu ／ Lawrence Lessig ／ Barbara van Schewick
 ## 関連概念
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
-- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

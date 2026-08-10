@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同分野の近傍
 - [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
 - [[mgmt-followership|フォロワーシップ論]] — 同分野の近傍
-- [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

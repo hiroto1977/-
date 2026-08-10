@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[econ-agglomeration-economies|集積の経済]] — 同分野の近傍
 - [[econ-gibson-paradox|ギブソンのパラドックス]] — 同分野の近傍
-- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

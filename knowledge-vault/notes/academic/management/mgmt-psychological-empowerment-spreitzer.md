@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同じ思想家
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍
+- [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 同分野の近傍
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
 - [[mgmt-perceived-organizational-support-eisenberger|組織的支援知覚——組織が自分を尊重し配慮していると従業員が感じる程度]] — 同分野の近傍
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 同分野の近傍

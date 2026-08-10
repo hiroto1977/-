@@ -33,6 +33,7 @@ aliases:
 - [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同じ思想家
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連

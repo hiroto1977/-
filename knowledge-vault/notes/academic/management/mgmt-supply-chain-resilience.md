@@ -37,6 +37,7 @@ aliases:
 - [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
 - [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同分野の近傍
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
+- [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

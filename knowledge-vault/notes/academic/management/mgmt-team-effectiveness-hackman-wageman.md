@@ -40,6 +40,7 @@ J・リチャード・ハックマン ／ ルス・ワゲマン ／ スティー
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同じ思想家
 - [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同じ思想家
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同じ思想家
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

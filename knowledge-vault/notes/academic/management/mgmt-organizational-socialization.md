@@ -36,7 +36,6 @@ aliases:
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 出典を共有
 - [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 出典を共有
 - [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
-- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同分野の近傍
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — 同分野の近傍
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍

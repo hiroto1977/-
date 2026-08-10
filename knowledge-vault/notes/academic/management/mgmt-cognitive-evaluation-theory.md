@@ -36,7 +36,6 @@ Edward L. Deci ／ Richard M. Ryan ／ Richard Koestner
 - [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同じ思想家
 - [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同じ思想家
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
-- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

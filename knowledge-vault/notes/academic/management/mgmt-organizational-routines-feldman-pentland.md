@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
 - [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
-- [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — 同分野の近傍
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-脊髄・脳幹に存在する神経回路網で、感覚入力や上位中枢からのリズム入力なしに歩行・呼吸・咀嚼などのリズム運動を自律生成する。Graham Brownの半中枢モデル（1911）を起点にGrillner、Marderらが細胞・回路機構を解明した。
+脊髄・脳幹に存在する神経回路網で、感覚入力や上位中枢からのリズム入力なしに歩行・呼吸・咀嚼などのリズム運動を自律生成する。Graham Brownの半中枢モデル（1911）を起点にGrillner、Marderらが細胞・回路機構を解明した。Graham Brown は感覚神経を切断した脊髄ネコが歩行様リズムを生成することを示し、屈筋・伸筋の中枢が相互抑制で交互発火する半中枢（half-center）モデルを提唱した——「リズムは反射の連鎖」というシェリントン的通説への反証である。Grillner はヤツメウナギの遊泳 CPG で細胞から行動までを貫通する解析を達成し、Marder らの甲殻類胃腸神経節研究は、同一回路が神経修飾物質によって多様なリズムへ再構成されること（回路の縮重と可塑性）を示して「配線図だけでは機能は決まらない」という原理を確立した。ヒトでも脊髄損傷者の歩行様活動や新生児のステッピングが CPG の存在を支持し、感覚フィードバックと上位中枢はリズムの生成ではなく開始・調整・適応を担うという分業として理解される。応用は脊髄損傷リハビリ（体重支持トレッドミル・硬膜外電気刺激による歩行再建）、呼吸 CPG（preBötzinger 複合体）の睡眠時無呼吸・オピオイド呼吸抑制研究、ロボット工学の CPG 制御（振動子ネットワークによる歩行生成）に及び、リズム運動の神経科学の基盤概念になっている。
 
 ## 提唱者・初出
 Thomas Graham Brown ／ Sten Grillner ／ Eve Marder
@@ -32,9 +32,8 @@ Thomas Graham Brown ／ Sten Grillner ／ Eve Marder
 - [Central pattern generator — Wikipedia](https://en.wikipedia.org/wiki/Central_pattern_generator) `リファレンス`
 
 ## 関連概念
-- [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同分野の近傍
-- [[human-representativeness|代表性ヒューリスティック]] — 同分野の近傍
-- [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

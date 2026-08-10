@@ -30,7 +30,7 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Social Norms（規範・アノミー・逸脱の学術的位置づけ）](https://plato.stanford.edu/entries/social-norms/) `学術`
 
 ## 関連概念
-- [[human-stockholm-syndrome|ストックホルム症候群]] — 同分野の近傍
+- [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同分野の近傍
 - [[human-zeigarnik|ツァイガルニク効果]] — 同分野の近傍
 
 ## 関連

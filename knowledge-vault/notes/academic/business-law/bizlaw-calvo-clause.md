@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 語彙が近い
 - [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — 同じ思想家
 - [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

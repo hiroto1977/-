@@ -35,6 +35,7 @@ I・A・リチャーズ（I. A. Richards, 1893–1979）／マーシャル・ゴ
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
 - [[mgmt-action-learning|アクションラーニング]] — 同分野の近傍
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同分野の近傍
+- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
