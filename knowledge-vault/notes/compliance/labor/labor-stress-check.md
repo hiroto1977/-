@@ -32,8 +32,8 @@ aliases:
 - [厚生労働省 ストレスチェック制度 実施マニュアル](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/pdf/150507-1.pdf) `公的`
 
 ## 関連概念
-- [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
+- [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 275
+cite_count: 277
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **275 件**（公的 275）
+> [!info] 出典ドメイン索引 ・ 引用 **277 件**（公的 277）
 
 ## このドメインを出典とする項目
 
@@ -57,6 +57,7 @@ tags:
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 厚生労働省労働者死傷病報告
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 厚生労働省労災かくしは犯罪です
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 厚生労働省死傷病報告の電子申請義務化
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 厚生労働省休憩時間を分割する場合の注意
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 厚生労働省労働基準法FAQ休憩時間
 - [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省介護休業制度特設サイト介護休業
 - [[labor-care-leave|介護休業と介護休業給付金]] — 厚生労働省介護休業制度特設サイト法改正のポイント
@@ -206,6 +207,7 @@ tags:
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 中央労働委員会試用期間終了後の本採用拒否あっせん事例
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 厚生労働省基本手当・再就職手当Q&A
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 厚生労働省中央労働委員会不当労働行為救済制度
+- [[labor-variable-working-hours|変形労働時間制]] — 厚生労働省1年単位の変形労働時間制（労働日数の限度・連続労働日数）
 - [[labor-variable-working-hours|変形労働時間制]] — 厚生労働省変形労働時間制の概要
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省賃金の支払方法FAQ
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 厚生労働省使用者の方向け賃金のデジタル払いについて

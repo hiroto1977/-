@@ -36,6 +36,7 @@ aliases:
 - [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 語彙が近い
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
+- [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 同分野の近傍
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
 - [[labor-average-wage|平均賃金（労働基準法12条）]] — 同分野の近傍
 

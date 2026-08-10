@@ -40,6 +40,7 @@ prefecture
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 出典を共有
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 同分野の近傍
 - [[subsidy-okinawa|沖縄県産業振興基金事業補助金（沖縄県）]] — 同分野の近傍
+- [[subsidy-saigai-nariwai|なりわい再建支援補助金（中小企業等グループ補助金）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

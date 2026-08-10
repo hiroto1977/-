@@ -2,7 +2,7 @@
 title: "freee.co.jp"
 type: source-domain
 host: "freee.co.jp"
-cite_count: 7
+cite_count: 6
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # freee.co.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **7 件**（メディア 7）
+> [!info] 出典ドメイン索引 ・ 引用 **6 件**（メディア 6）
 
 ## このドメインを出典とする項目
 
-- [[labor-variable-working-hours|変形労働時間制]] — 変形労働時間制解説
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 青色申告承認申請書提出期限解説
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — freee課税事業者と免税事業者
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — freee防衛特別法人税とは2026年から適用される新税制の概要

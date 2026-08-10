@@ -31,7 +31,6 @@ aliases:
 - [マネーフォワード 育児時短就業給付金の解説（支給率・対象・申請）](https://biz.moneyforward.com/payroll/basic/97314/) `メディア`
 
 ## 関連概念
-- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
 - [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 出典を共有
 - [[bizlaw-apparent-agency|表見代理]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]]（接続 26）
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]]（接続 25）
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]]（接続 25）
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]]（接続 23）
 - [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]]（接続 22）
@@ -23,8 +23,8 @@ tags:
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 19）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 18）
-- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 18）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 17）
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 17）
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 15）

@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 出典を共有
 - [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
-- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,8 +31,8 @@ aliases:
 - [厚生労働省 専門業務型裁量労働制の解説（令和6年改正対応）](https://jsite.mhlw.go.jp/fukui-roudoukyoku/content/contents/001661796.pdf) `公的`
 
 ## 関連概念
-- [[labor-variable-working-hours|変形労働時間制]] — 同分野の近傍
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

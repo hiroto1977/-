@@ -31,7 +31,6 @@ aliases:
 - [厚生労働省 フレックスタイム制 導入の手引き](https://www.mhlw.go.jp/content/001140964.pdf) `公的`
 
 ## 関連概念
-- [[labor-variable-working-hours|変形労働時間制]] — 語彙が近い
 - [[labor-flexible-work-measures|育児・介護休業法「柔軟な働き方を実現するための措置」（2025年10月施行）]] — 語彙が近い
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 出典を共有
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

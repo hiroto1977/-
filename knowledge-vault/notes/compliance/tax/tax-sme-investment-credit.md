@@ -35,12 +35,12 @@ aliases:
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 語彙が近い
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 語彙が近い
 - [[tax-wage-increase-credit|賃上げ促進税制]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

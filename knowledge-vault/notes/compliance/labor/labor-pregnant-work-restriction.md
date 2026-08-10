@@ -36,8 +36,8 @@ aliases:
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 同分野の近傍
 - [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 同分野の近傍
-- [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

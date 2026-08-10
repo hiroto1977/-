@@ -35,7 +35,6 @@ aliases:
 - [[labor-health-checkup|定期健康診断の実施義務]] — 出典を共有
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 出典を共有
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
-- [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 同分野の近傍
 
 ## 関連

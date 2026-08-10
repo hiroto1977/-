@@ -1359,14 +1359,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '変形労働時間制',
       statement:
         '一定期間を平均し1週間あたりの労働時間が法定労働時間（原則週40時間）の範囲内であれば、特定の日・週に法定労働時間を' +
-        '超えて労働させられる制度（1か月単位・1年単位・1週間単位等）。導入には労使協定の締結・届出または就業規則の定めが必要。',
+        '超えて労働させられる制度（1か月単位・1年単位・1週間単位等）。' +
+        '1か月単位は労使協定または就業規則のいずれでも導入でき（特例措置対象事業場は週44時間で計算できる）、' +
+        '1年単位は労使協定の締結と労働基準監督署への届出が必須で、対象期間が3か月を超える場合は' +
+        '労働日数の限度が年280日、連続労働日数は原則6日（特定期間でも週1日の休日確保）という縛りがかかる。' +
+        'いずれも、各日・各週の労働時間をあらかじめ特定しておくことが要件で、' +
+        '繁閑に応じて後からシフトを自由に動かせる制度ではない。' +
+        '時間外労働は、あらかじめ定めたその日・その週の所定を超えた分と、対象期間の法定総枠を超えた分について発生し、' +
+        '割増賃金の支払いが必要になる。平均して40時間以内なら割増が一切要らなくなる制度ではない。',
       authority: '所管: 厚生労働省（労働基準法第32条の2等）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/henkei.html', type: 'government', label: '厚生労働省 変形労働時間制の概要' },
       { url: 'https://jsite.mhlw.go.jp/hyogo-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/_79872/roudoujikan.html', type: 'government', label: '兵庫労働局 労働時間' },
-      { url: 'https://www.freee.co.jp/kb/kb-attendance/variable-working-hours-systems/', type: 'media', label: '変形労働時間制 解説' },
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/dl/140811-2.pdf', type: 'government', label: '厚生労働省 1年単位の変形労働時間制（労働日数の限度・連続労働日数）' },
+      { url: 'https://jsite.mhlw.go.jp/shizuoka-roudoukyoku/var/rev0/0123/3919/2017111615407.pdf', type: 'government', label: '静岡労働局 1か月単位の変形労働時間制の時間外労働の考え方' },
     ],
   },
   {
@@ -1591,15 +1599,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '時間外労働の上限（特別条項付き36協定）',
       statement:
-        '特別条項付き36協定でも、時間外労働は年720時間以内、休日労働を含め単月100時間未満かつ複数月（2〜6か月）平均80時間以内に' +
-        '収めねばならず、月45時間を超えられるのは年6か月までである。違反には罰則が科され得る。',
+        '原則の上限は月45時間・年360時間で、臨時的な特別の事情がある場合に限り特別条項付き36協定を結べる。' +
+        'その特別条項でも、時間外労働は年720時間以内、休日労働を含め単月100時間未満かつ複数月（2〜6か月）平均80時間以内に' +
+        '収めねばならず、月45時間を超えられるのは年6か月までである。違反には罰則（6か月以下の拘禁刑または30万円以下の罰金）が科され得る。' +
+        '見落としやすいのは単月100時間と複数月平均80時間には休日労働が含まれる点で、時間外だけ数えていると超える。' +
+        '5年間適用が猶予されていた建設・自動車運転・医師にも2024年4月から上限規制が適用された。' +
+        'ただし内容は業種ごとに違い、建設は災害復旧・復興を除き一般則どおり、' +
+        '自動車運転の業務は特別条項の上限が年960時間で単月100時間・複数月80時間・月45時間超は年6回までの規制は適用されない。' +
+        '医師は特例水準で年最大1,860時間まで認められる。' +
+        'ドライバーには上限規制とは別に改善基準告示（拘束時間・休息期間）も並行して適用される。',
       authority: '所管: 厚生労働省（労働基準法第36条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/content/000463185.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 解説' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/gyosyu/topics/01.html', type: 'government', label: '厚生労働省 時間外労働の上限規制' },
-      { url: 'https://jp.indeed.com/career-advice/career-development/labor-law-36-agreement-rules', type: 'media', label: '36協定の特別条項 解説' },
+      { url: 'https://jsite.mhlw.go.jp/chiba-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/jougenkisei_2024.html', type: 'government', label: '千葉労働局 建設事業・自動車運転業務の上限規制の適用（2024年4月〜）' },
     ],
   },
   {
@@ -2174,14 +2189,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '休憩時間（労働基準法34条）',
       statement:
         '使用者は、労働時間が6時間を超える場合は少なくとも45分、8時間を超える場合は少なくとも1時間の休憩を、労働時間の途中に' +
-        '与えなければならない。休憩は原則として一斉に付与し（労使協定があれば例外可）、労働者に自由に利用させなければならない。',
+        '与えなければならない。「超える場合」なので、6時間ちょうどなら休憩なしでよく、8時間ちょうどなら45分で足りる。' +
+        '所定7時間30分の職場で1時間残業させると8時間を超えるため、残業前に15分の追加休憩が必要になる、という形で効いてくる。' +
+        '休憩とは権利として労働から離れることを保障されている時間をいい、作業に従事していないだけの手待時間は含まれない。' +
+        '昼休みに電話番や来客対応を命じられていれば、それは休憩ではなく労働時間であり、別に休憩を与える必要がある。' +
+        '原則として一斉に付与し（労使協定があれば交替制にできるほか、運輸交通業・商業等には特例がある）、' +
+        '自由に利用させなければならない。分割付与も可能だが、細切れにしすぎると自由利用が実質的に妨げられる。',
       authority: '所管: 厚生労働省（労働基準法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_13.html', type: 'government', label: '厚生労働省 労働基準法FAQ 休憩時間' },
       { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article34.html', type: 'government', label: '栃木労働局 休憩（労基法34条）' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/87993/', type: 'media', label: '労働基準法34条 休憩の3原則 解説' },
+      { url: 'https://jsite.mhlw.go.jp/yamanashi-roudoukyoku/kantoku/roudoukijun/26.html', type: 'government', label: '山梨労働局 休憩？手待ち時間？？' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_14.html', type: 'government', label: '厚生労働省 休憩時間を分割する場合の注意' },
     ],
   },
   {
@@ -4221,7 +4242,13 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '賃金請求権の消滅時効（労働基準法115条）',
       statement:
         '2020年4月1日施行の改正労働基準法により、賃金（退職手当を除く）の請求権の消滅時効期間は2年から原則5年に延長されたが、' +
-        '附則（労働基準法143条3項）の経過措置により当分の間は3年とされている。退職手当の請求権の消滅時効は5年である。',
+        '附則（労働基準法143条3項）の経過措置により当分の間は3年とされている。退職手当の請求権の消滅時効は従来どおり5年、' +
+        '年次有給休暇の請求権・帰郷旅費・災害補償等の請求権は2年のまま維持されている。' +
+        '適用されるのは2020年4月1日以後に支払期日が到来する賃金からで、それより前の分は旧法の2年のままである。' +
+        '使用者側で連動するのが記録の保存期間（労基法109条）で、賃金台帳や労働関係の重要書類の保存期間も' +
+        '5年（当分の間3年）に延長された。時効が延びた分だけ、さかのぼって請求される可能性のある期間の記録が要るという対応関係にある。' +
+        '「当分の間3年」は経過措置なので、将来の見直しで5年に一本化される可能性を織り込み、' +
+        '実務では最初から5年保存に合わせておくと切替えの手戻りがない。',
       authority: '所管: 厚生労働省（労働基準法）',
       asOf: '2026-06',
     },

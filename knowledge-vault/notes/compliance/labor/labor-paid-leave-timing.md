@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 語彙が近い
 - [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 語彙が近い
-- [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 語彙が近い
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
 - [[labor-paid-leave-grant|年次有給休暇の付与]] — 同分野の近傍
 
 ## 関連

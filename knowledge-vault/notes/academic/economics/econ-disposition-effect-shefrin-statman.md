@@ -33,7 +33,7 @@ aliases:
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-loss-aversion|損失回避]] — 同じ思想家
 - [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
-- [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

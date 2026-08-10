@@ -34,8 +34,7 @@ aliases:
 ## 関連概念
 - [[legal-limited-provision-data|不正競争防止法における「限定提供データ」の保護]] — 語彙が近い
 - [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 語彙が近い
-- [[legal-unauthorized-access|不正アクセス禁止法]] — 語彙が近い
-- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 同分野の近傍
+- [[legal-unauthorized-access|不正アクセス禁止法]] — 同分野の近傍
 - [[legal-pse|電気用品安全法とPSEマーク制度]] — 同分野の近傍
 
 ## 関連

@@ -35,6 +35,7 @@ aliases:
 - [[labor-childcare-overtime-exemption|育児のための所定外労働の制限（残業免除）]] — 同分野の近傍
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]] — 同分野の近傍
 - [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 同分野の近傍
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

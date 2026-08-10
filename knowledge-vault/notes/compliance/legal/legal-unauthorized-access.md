@@ -32,13 +32,13 @@ aliases:
 - [警察庁 不正アクセス禁止法改正Q&A](https://www.npa.go.jp/bureau/cyber/pdf/6_QA.pdf) `公的`
 
 ## 関連概念
-- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 語彙が近い
 - [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 分野横断
 - [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 出典を共有
 - [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 出典を共有
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 同分野の近傍
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

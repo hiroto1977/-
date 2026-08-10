@@ -35,12 +35,12 @@ aliases:
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
-- [[labor-break-time|休憩時間（労働基準法34条）]] — 出典を共有
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
+- [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

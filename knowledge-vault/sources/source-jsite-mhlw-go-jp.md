@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 56
+cite_count: 59
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **56 件**（公的 56）
+> [!info] 出典ドメイン索引 ・ 引用 **59 件**（公的 59）
 
 ## このドメインを出典とする項目
 
 - [[labor-average-wage|平均賃金（労働基準法12条）]] — 千葉労働局平均賃金（労基法12条）
 - [[labor-average-wage|平均賃金（労働基準法12条）]] — 神奈川労働局平均賃金について
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 山梨労働局休憩？手待ち時間？？
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 栃木労働局休憩（労基法34条）
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 京都労働局令和6年4月1日から新たな化学物質規制が全面施行
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — ハローワーク渋谷（東京労働局）出生後休業支援給付金・育児時短就業給付金の創設
@@ -43,6 +44,7 @@ tags:
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 山口労働局月60時間超の割増賃金率は50%以上
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 青森労働局中小企業の月60時間超割増率引上げ
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 厚生労働省栃木労働局時間外、休日及び深夜の割増賃金（第37条）
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 千葉労働局建設事業・自動車運転業務の上限規制の適用（2024年4月〜）
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — ハローワーク渋谷（東京労働局）出生後休業支援給付金の創設（令和7年4月1日）
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 神奈川労働局出生後休業支援給付金リーフレット
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 青森労働局パワハラ対策義務化
@@ -56,6 +58,7 @@ tags:
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 山梨労働局振替休日と代休
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 石川労働局雇用保険（基本手当）Q&A
 - [[labor-variable-working-hours|変形労働時間制]] — 兵庫労働局労働時間
+- [[labor-variable-working-hours|変形労働時間制]] — 静岡労働局1か月単位の変形労働時間制の時間外労働の考え方
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省神奈川労働局賃金控除に関する労使協定
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 厚生労働省福井労働局賃金控除に関する協定書（記載例）
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 宮崎労働局未払賃金の請求期間の延長

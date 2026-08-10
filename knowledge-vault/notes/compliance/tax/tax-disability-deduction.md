@@ -35,7 +35,6 @@ aliases:
 - [[tax-dependent-deduction|扶養控除]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
 - [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有

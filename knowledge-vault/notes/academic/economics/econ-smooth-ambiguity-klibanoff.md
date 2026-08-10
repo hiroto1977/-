@@ -33,7 +33,6 @@ aliases:
 - [[econ-expected-utility|期待効用理論]] — 同分野の近傍
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同分野の近傍
 - [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同分野の近傍
-- [[econ-disposition-effect-shefrin-statman|ディスポジション効果——値上がり株を早く売り値下がり株を持ち続ける傾向]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,13 +34,13 @@ aliases:
 - [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
 - [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
-- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
 - [[eh-1992|1992年（平成4年）]] — 出典を共有
 - [[tax-amended-return|修正申告・期限後申告と加算税]] — 出典を共有
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 出典を共有
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

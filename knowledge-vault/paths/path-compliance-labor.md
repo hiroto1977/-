@@ -15,19 +15,19 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 24）
 - [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
-- [[labor-elderly-employment|高年齢者雇用確保措置]]（接続 20）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 20）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 20）
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 20）
+- [[labor-elderly-employment|高年齢者雇用確保措置]]（接続 19）
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 19）
-- [[labor-break-time|休憩時間（労働基準法34条）]]（接続 18）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 18）
-- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 16）
-- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 16）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 15）
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 17）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 16）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 15）
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 15）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
+- [[labor-work-rules|就業規則の作成・届出義務]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -42,6 +42,7 @@ tags:
 ## 第 3 部 — 年代情報のない項目
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]]
 - [[labor-average-wage|平均賃金（労働基準法12条）]]
+- [[labor-break-time|休憩時間（労働基準法34条）]]
 - [[labor-care-leave|介護休業と介護休業給付金]]
 - [[labor-child-nursing-leave|子の看護等休暇（育児・介護休業法）]]
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]]
@@ -52,7 +53,6 @@ tags:
 - [[labor-commuting-injury|通勤災害（労災保険）]]
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]]
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]]
-- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]]
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]]
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]]
@@ -73,6 +73,7 @@ tags:
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]]
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]]
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]]
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]
 - [[labor-foreign-employment-report|外国人雇用状況の届出]]
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]]
 - [[labor-gender-equality|男女雇用機会均等法における性別差別の禁止]]
@@ -133,7 +134,6 @@ tags:
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]]
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]]
 - [[labor-work-interval|勤務間インターバル制度]]
-- [[labor-work-rules|就業規則の作成・届出義務]]
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]]
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]]
 - [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]]

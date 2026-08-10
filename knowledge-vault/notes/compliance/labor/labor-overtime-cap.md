@@ -34,7 +34,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 語彙が近い
-- [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 語彙が近い
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 語彙が近い
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有

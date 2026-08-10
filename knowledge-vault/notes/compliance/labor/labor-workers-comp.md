@@ -32,7 +32,6 @@ aliases:
 - [厚生労働省 成立手続を怠っていた場合は（未手続事業主への費用徴収）](https://www.mhlw.go.jp/bunya/roudoukijun/neglect/index.html) `公的`
 
 ## 関連概念
-- [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 語彙が近い
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍

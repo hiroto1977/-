@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 出典を共有
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 同分野の近傍
-- [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
+- [[labor-care-leave|介護休業と介護休業給付金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,7 +31,6 @@ aliases:
 - [山口労働局 月60時間超の割増賃金率は50%以上](https://jsite.mhlw.go.jp/yamaguchi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/warihikiage_01.html) `公的`
 
 ## 関連概念
-- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 語彙が近い
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
+- [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

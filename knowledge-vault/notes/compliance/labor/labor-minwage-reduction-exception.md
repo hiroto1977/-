@@ -35,6 +35,7 @@ aliases:
 - [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]] — 語彙が近い
 - [[labor-dispatch-license|労働者派遣事業の許可制]] — 同分野の近傍
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]] — 同分野の近傍
+- [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,9 +31,9 @@ aliases:
 - [国税庁 予定納税（第2期分）](https://www.nta.go.jp/publication/pamph/koho/campaign/r7/Nov/02.htm) `公的`
 
 ## 関連概念
-- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
 - [[tax-income-tax-progressive|所得税の超過累進税率]] — 語彙が近い
 - [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 語彙が近い
+- [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 語彙が近い
 - [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 語彙が近い
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 同分野の近傍
