@@ -34,6 +34,7 @@ aliases:
 - [[econ-pigouvian-tax|ピグー税]] — 出典を共有
 - [[econ-monetarism|マネタリズム]] — 同分野の近傍
 - [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 同分野の近傍
+- [[econ-double-dividend|二重の配当（環境税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

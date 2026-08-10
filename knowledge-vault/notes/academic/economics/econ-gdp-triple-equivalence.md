@@ -35,6 +35,7 @@ aliases:
 - [[eh-1986|1986年（昭和61年）]] — 出典を共有
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同分野の近傍
 - [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同分野の近傍
+- [[econ-fei-ranis|フェイ＝ラニス・モデル]] — 同分野の近傍
 - [[econ-wagner-law|ワグナーの法則]] — 同分野の近傍
 
 ## 関連

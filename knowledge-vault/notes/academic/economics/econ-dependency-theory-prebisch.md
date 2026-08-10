@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同じ思想家
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同じ思想家
-- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同分野の近傍
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
+- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同分野の近傍
 - [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同分野の近傍
 
 ## 関連

@@ -35,6 +35,7 @@ aliases:
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[econ-auction-theory|オークション理論]] — 同分野の近傍
+- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同分野の近傍
 - [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同分野の近傍
 
 ## 関連

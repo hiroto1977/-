@@ -37,8 +37,8 @@ Brooke Erin Duffy（アスピレーショナル労働の提唱者、コーネル
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 出典を共有
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 出典を共有
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 出典を共有
+- [[infosoc-prosumption-theory|プロシューマー理論]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

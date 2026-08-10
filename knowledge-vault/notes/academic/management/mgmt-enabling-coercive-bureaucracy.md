@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-stp-marketing|STPマーケティング]] — 出典を共有
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同分野の近傍
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同分野の近傍
+- [[mgmt-institutional-isomorphism|制度的同型化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [Schöb, "The Double Dividend Hypothesis of Environmental Taxes: A Survey" (Freie Universität Berlin)](https://www.wiwiss.fu-berlin.de/fachbereich/vwl/schoeb/forschung/forschung_dateien/taxation02.pdf) `リファレンス`
 
 ## 関連概念
-- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 同分野の近傍
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同分野の近傍
+- [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

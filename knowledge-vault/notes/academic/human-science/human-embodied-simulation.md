@@ -38,6 +38,7 @@ aliases:
 - [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同分野の近傍
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同分野の近傍
+- [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

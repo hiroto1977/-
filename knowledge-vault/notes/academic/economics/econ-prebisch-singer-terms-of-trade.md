@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Prebisch-Singer hypothesis — terms of trade, primary commodities, ISI](https://en.wikipedia.org/wiki/Prebisch%E2%80%93Singer_hypothesis) `リファレンス`
 
 ## 関連概念
-- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同じ思想家
+- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 語彙が近い
 - [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同じ思想家
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
 

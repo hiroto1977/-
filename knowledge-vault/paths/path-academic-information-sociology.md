@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 74）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 43）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 25）
@@ -23,11 +23,11 @@ tags:
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]]（接続 20）
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
-- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -40,6 +40,7 @@ tags:
 - 1907年: [[infosoc-wisdom-of-crowds|群衆の叡智]]
 - 1908年: [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]]
 - 1910年: [[infosoc-social-exchange-theory|社会交換理論]]
+- 1911年: [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]]
 - 1911年: [[infosoc-speech-act-theory|言語行為論]]
 - 1919年: [[infosoc-selective-exposure|選択的接触理論]]
 - 1920年: [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]]
@@ -318,7 +319,6 @@ tags:
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]]
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]]
 - [[infosoc-clickbait|クリックベイト（釣り見出し）]]
-- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]]
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]]
 - [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]]
 - [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]]
