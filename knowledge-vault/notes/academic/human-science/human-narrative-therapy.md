@@ -37,6 +37,7 @@ aliases:
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同分野の近傍
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 同分野の近傍
 - [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
 
 ## 関連

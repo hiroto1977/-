@@ -40,6 +40,7 @@ aliases:
 - [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 - [[mgmt-stockdale-paradox|ストックデールの逆説]] — 同分野の近傍
 - [[mgmt-skunkworks|スカンクワークス]] — 同分野の近傍
+- [[mgmt-poka-yoke|ポカヨケ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

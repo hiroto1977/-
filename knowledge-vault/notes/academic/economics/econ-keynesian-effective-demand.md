@@ -34,6 +34,7 @@ J.M.ケインズ（1936『一般理論』）
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 語彙が近い
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 語彙が近い
 - [[econ-fiscal-multiplier|乗数効果（財政乗数）]] — 同分野の近傍
+- [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 同分野の近傍
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 同分野の近傍
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同分野の近傍
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同分野の近傍

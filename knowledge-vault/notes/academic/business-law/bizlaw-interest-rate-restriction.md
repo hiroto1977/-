@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-money-lending-act|貸金業法]] — 語彙が近い
-- [[legal-interest-limit|利息制限法の上限金利]] — 語彙が近い
+- [[legal-interest-limit|利息制限法の上限金利]] — 分野横断
 - [[bizlaw-toushiho|出資法]] — 同分野の近傍
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同分野の近傍
 

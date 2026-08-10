@@ -39,7 +39,7 @@ aliases:
 - [[econ-taylor-rule|テイラールール]] — 出典を共有
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
 - [[eh-2013|2013年（平成25年）]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同分野の近傍
+- [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 同分野の近傍
 - [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — 同分野の近傍
 
 ## 関連

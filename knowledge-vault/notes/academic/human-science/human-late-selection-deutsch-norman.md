@@ -30,8 +30,8 @@ J・アンソニー・ドイチュ ／ ダイアナ・ドイチュ ／ ドナル
 - [Wikipedia: Late selection — Deutsch & Deutsch, Norman, full semantic processing, vs early selection, Lavie load theory](https://en.wikipedia.org/wiki/Attention#Early_versus_late_selection) `リファレンス`
 
 ## 関連概念
-- [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 語彙が近い
 - [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 語彙が近い
+- [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 語彙が近い
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同じ思想家
 - [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 同分野の近傍
 

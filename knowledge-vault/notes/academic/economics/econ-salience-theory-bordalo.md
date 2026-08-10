@@ -37,9 +37,9 @@ aliases:
 - [[econ-limits-to-arbitrage-shleifer-vishny|裁定の限界——リスクと制約ゆえに価格の歪みが持続する]] — 同じ思想家
 - [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
 - [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
 - [[econ-yardstick-competition-shleifer|ヤードスティック競争——他社の費用を基準とする規制が費用削減を誘発する]] — 同じ思想家
 - [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同じ思想家
-- [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

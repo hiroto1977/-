@@ -26,8 +26,8 @@ tags:
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 16）
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 16）
-- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]（接続 16）
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]（接続 15）
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -77,7 +77,6 @@ tags:
 - [[legal-corporate-governance|会社法における株式会社の機関設計]]
 - [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]]
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]]
-- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]]
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]]
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]]
@@ -103,6 +102,7 @@ tags:
 - [[legal-funds-transfer|資金移動業]]
 - [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]]
 - [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]]
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]]
 - [[legal-insolvency-procedures|法的倒産処理手続（破産・民事再生・会社更生・特別清算）]]
 - [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]]

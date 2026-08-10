@@ -32,8 +32,8 @@ UNCITRAL ／ ピーター・サンダース ／ ICSID ／ ゲイリー・ボー�
 ## 関連概念
 - [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 語彙が近い
 - [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 語彙が近い
-- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 語彙が近い
 - [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 語彙が近い
+- [[bizlaw-commercial-arbitration-uncitral|国際商事仲裁とUNCITRALモデル法・ニューヨーク条約]] — 語彙が近い
 - [[bizlaw-arbitration-act|仲裁法]] — 同じ思想家
 - [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同じ思想家

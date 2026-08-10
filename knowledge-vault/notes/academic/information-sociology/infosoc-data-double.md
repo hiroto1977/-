@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-surveillance-society|監視社会]] — 語彙が近い
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 - [[infosoc-data-doubles|データ・ダブル]] — 同分野の近傍
-- [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

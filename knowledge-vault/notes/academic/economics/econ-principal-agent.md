@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同分野の近傍
 - [[econ-moral-hazard|モラルハザード（道徳的危険）]] — 同分野の近傍
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同分野の近傍
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同分野の近傍
 
 ## 関連

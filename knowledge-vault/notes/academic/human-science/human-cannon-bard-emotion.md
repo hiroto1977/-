@@ -37,7 +37,6 @@ aliases:
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 同分野の近傍
-- [[human-social-referencing|社会的参照（Social Referencing）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

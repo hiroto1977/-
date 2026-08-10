@@ -13,12 +13,12 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 135）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 94）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 136）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 96）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 30）
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 29）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 28）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-attribution-theory|帰属理論]]（接続 27）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 26）

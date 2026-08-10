@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同じ思想家
 - [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 同じ思想家
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 出典を共有
 - [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 出典を共有
-- [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -13,9 +13,9 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 84）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 85）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 46）
 - [[econ-agglomeration-economies|集積の経済]]（接続 44）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
@@ -27,7 +27,7 @@ tags:
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 32）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -128,7 +128,6 @@ tags:
 - 1931年: [[econ-gibrat-law|ジブラの法則]]
 - 1931年: [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]]
 - 1931年: [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]]
-- 1933年: [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
 - 1933年: [[econ-monopolistic-competition|独占的競争]]
 - 1933年: [[econ-pigou-effect|ピグー効果（実質残高効果）]]
@@ -292,6 +291,7 @@ tags:
 - 1977年: [[econ-debt-overhang|デット・オーバーハング]]
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
 - 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
+- 1979年: [[econ-behavioral-finance|行動ファイナンス]]
 - 1979年: [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]]
 - 1979年: [[econ-costly-state-verification|コストのかかる状態検証（Costly State Verification／Townsend 1979）——なぜ「標準的な負債契約」が最適になるのか]]
 - 1979年: [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]]

@@ -41,7 +41,7 @@ aliases:
 - [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
 - [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
 - [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 出典を共有
-- [[bizlaw-statutory-lien|先取特権（民法303条）]] — 同分野の近傍
+- [[bizlaw-mortgage|抵当権（民法369条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

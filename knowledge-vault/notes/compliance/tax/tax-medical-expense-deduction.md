@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 語彙が近い
 - [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 語彙が近い
 - [[tax-disability-deduction|所得税の障害者控除]] — 語彙が近い
 - [[tax-dependent-deduction|扶養控除]] — 出典を共有

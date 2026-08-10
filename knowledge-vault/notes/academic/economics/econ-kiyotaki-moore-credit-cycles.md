@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Financial accelerator — Kiyotaki–Moore, collateral constraints, credit cycles, amplification](https://en.wikipedia.org/wiki/Financial_accelerator) `リファレンス`
 
 ## 関連概念
-- [[econ-credit-cycle-theory|信用循環理論]] — 語彙が近い
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-time-preference|時間選好]] — 同じ思想家
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

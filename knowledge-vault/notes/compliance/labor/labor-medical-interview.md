@@ -35,6 +35,7 @@ aliases:
 - [[labor-health-checkup|定期健康診断の実施義務]] — 出典を共有
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 出典を共有
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
+- [[labor-work-rules|就業規則の作成・届出義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

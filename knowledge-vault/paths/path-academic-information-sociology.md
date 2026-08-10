@@ -20,8 +20,8 @@ tags:
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
-- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]（接続 20）

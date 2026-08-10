@@ -6,6 +6,10 @@
       "bizlaw-hickenlooper-amendment"
     ],
     [
+      "bizlaw-administrative-law",
+      "mgmt-administrative-theory-fayol"
+    ],
+    [
       "bizlaw-agency-apparent-authority",
       "bizlaw-apparent-agency"
     ],
@@ -28,6 +32,14 @@
     [
       "bizlaw-bill-of-exchange",
       "bizlaw-promissory-note"
+    ],
+    [
+      "bizlaw-business-judgment-rule",
+      "bizlaw-business-judgment-rule-delaware"
+    ],
+    [
+      "bizlaw-business-judgment-rule-delaware",
+      "bizlaw-business-judgment-rule-enhanced"
     ],
     [
       "bizlaw-carbon-border-adjustment",
@@ -82,6 +94,10 @@
       "bizlaw-shareholders-derivative-suit"
     ],
     [
+      "bizlaw-doctrine-of-frustration",
+      "bizlaw-frustration-of-purpose"
+    ],
+    [
       "bizlaw-fraudulent-rescission",
       "bizlaw-fraudulent-transfer-avoidance"
     ],
@@ -122,8 +138,16 @@
       "bizlaw-unjust-enrichment"
     ],
     [
+      "bizlaw-restraint-of-trade",
+      "bizlaw-unreasonable-restraint-of-trade"
+    ],
+    [
       "bizlaw-trade-secret-protection-trips",
       "bizlaw-trade-secret-protection-utsa"
+    ],
+    [
+      "bizlaw-whistleblower-protection-eu-directive",
+      "bizlaw-whistleblower-protection-legislation"
     ],
     [
       "econ-asset-bubble",
@@ -222,6 +246,10 @@
       "human-embodied-cognition-lakoff"
     ],
     [
+      "human-emotional-intelligence",
+      "mgmt-emotional-intelligence"
+    ],
+    [
       "human-erikson-psychosocial",
       "human-psychosocial-development-erikson"
     ],
@@ -248,6 +276,10 @@
     [
       "human-place-attachment-theory",
       "human-place-attachment-theory-scannell"
+    ],
+    [
+      "human-psychological-capital-luthans",
+      "mgmt-psychological-capital-theory"
     ],
     [
       "human-psychoneuroimmunology",
@@ -308,6 +340,10 @@
     [
       "infosoc-network-effects",
       "infosoc-network-effects-metcalfe"
+    ],
+    [
+      "infosoc-open-data",
+      "infosoc-open-government-data"
     ],
     [
       "infosoc-platform-temporality",
@@ -394,8 +430,32 @@
       "mgmt-escalation-of-commitment-theory"
     ],
     [
+      "mgmt-institutional-theory",
+      "mgmt-institutional-work"
+    ],
+    [
+      "mgmt-organizational-learning",
+      "mgmt-organizational-learning-argyris"
+    ],
+    [
+      "mgmt-organizational-routines-as-grammars",
+      "mgmt-organizational-routines-feldman-pentland"
+    ],
+    [
+      "mgmt-organizational-routines-as-grammars",
+      "mgmt-organizational-routines-theory"
+    ],
+    [
+      "mgmt-organizational-routines-feldman-pentland",
+      "mgmt-organizational-routines-theory"
+    ],
+    [
       "mgmt-organizational-slack-bourgeois",
       "mgmt-slack-resources-bourgeois"
+    ],
+    [
+      "mgmt-positive-organizational-behavior-luthans",
+      "mgmt-psychological-capital-theory"
     ],
     [
       "mgmt-regulatory-focus-theory-higgins",
@@ -412,6 +472,10 @@
     [
       "mgmt-strategic-human-capital",
       "mgmt-strategic-human-capital-theory"
+    ],
+    [
+      "tax-basic-deduction",
+      "tax-spouse-deduction"
     ],
     [
       "tax-consumption-final-return",
@@ -444,66 +508,6 @@
     [
       "tax-withholding",
       "tax-withholding-payment-special"
-    ],
-    [
-      "bizlaw-whistleblower-protection-eu-directive",
-      "bizlaw-whistleblower-protection-legislation"
-    ],
-    [
-      "mgmt-organizational-routines-feldman-pentland",
-      "mgmt-organizational-routines-theory"
-    ],
-    [
-      "mgmt-organizational-routines-as-grammars",
-      "mgmt-organizational-routines-theory"
-    ],
-    [
-      "mgmt-organizational-routines-as-grammars",
-      "mgmt-organizational-routines-feldman-pentland"
-    ],
-    [
-      "human-psychological-capital-luthans",
-      "mgmt-psychological-capital-theory"
-    ],
-    [
-      "bizlaw-doctrine-of-frustration",
-      "bizlaw-frustration-of-purpose"
-    ],
-    [
-      "bizlaw-restraint-of-trade",
-      "bizlaw-unreasonable-restraint-of-trade"
-    ],
-    [
-      "bizlaw-administrative-law",
-      "mgmt-administrative-theory-fayol"
-    ],
-    [
-      "human-emotional-intelligence",
-      "mgmt-emotional-intelligence"
-    ],
-    [
-      "mgmt-positive-organizational-behavior-luthans",
-      "mgmt-psychological-capital-theory"
-    ],
-    [
-      "mgmt-institutional-theory",
-      "mgmt-institutional-work"
-    ],
-    [
-      "mgmt-organizational-learning",
-      "mgmt-organizational-learning-argyris"
-    ],
-    [
-      "bizlaw-business-judgment-rule",
-      "bizlaw-business-judgment-rule-delaware"
-    ],
-    [
-      "bizlaw-business-judgment-rule-delaware",
-      "bizlaw-business-judgment-rule-enhanced"
-    ],
-    [
-      "infosoc-open-data",
-      "infosoc-open-government-data"
     ]
   ]
 }
