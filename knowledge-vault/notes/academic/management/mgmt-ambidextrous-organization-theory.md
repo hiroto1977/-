@@ -36,8 +36,8 @@ James Gardner March ／ Robert B. Duncan ／ Michael L. Tushman ／ Charles A. O
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 語彙が近い
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 語彙が近い
+- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家

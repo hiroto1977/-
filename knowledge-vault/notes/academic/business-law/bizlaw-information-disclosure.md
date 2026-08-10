@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-public-records-management|公文書管理法]] — 語彙が近い
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

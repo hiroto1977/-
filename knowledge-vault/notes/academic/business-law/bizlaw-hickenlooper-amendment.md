@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]] — 語彙が近い
-- [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 同分野の近傍
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]] — 語彙が近い
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 語彙が近い
 - [[bizlaw-banking-act|銀行法]] — 出典を共有
 - [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
 - [[bizlaw-insurance-business-act|保険業法]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
 - [[bizlaw-bankruptcy|破産法]] — 出典を共有
+- [[bizlaw-broadcast-act|放送法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,6 +31,7 @@ aliases:
 - [金融庁 事務ガイドライン（資金移動業者関係）](https://www.fsa.go.jp/common/law/guide/kaisya/14.pdf) `公的`
 
 ## 関連概念
+- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 語彙が近い
 - [[bizlaw-payment-services-act|資金決済法]] — 分野横断
 - [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 同分野の近傍
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍

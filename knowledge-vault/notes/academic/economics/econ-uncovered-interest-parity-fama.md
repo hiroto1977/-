@@ -36,14 +36,13 @@ aliases:
 ## 関連概念
 - [[econ-interest-rate-parity-covered|カバー付き金利平価——先渡為替レートと内外金利差の裁定均衡]] — 語彙が近い
 - [[econ-interest-rate-parity|金利平価説]] — 語彙が近い
-- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 同じ思想家
+- [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 語彙が近い
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
 - [[econ-random-walk-prices|ランダムウォーク仮説——株価変動は予測不可能であるとする命題]] — 同じ思想家
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
-- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

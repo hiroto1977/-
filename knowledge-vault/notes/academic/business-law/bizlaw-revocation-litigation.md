@@ -31,10 +31,9 @@ aliases:
 - [Wikipedia「行政事件訴訟法」（制度全体の概観）](https://ja.wikipedia.org/wiki/行政事件訴訟法) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 語彙が近い
+- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
 - [[bizlaw-administrative-litigation|行政事件訴訟法]] — 同分野の近傍
 - [[bizlaw-disgorgement-remedy|吐出し命令——不正利得の剥奪的救済と抑止機能]] — 同分野の近傍
-- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
 - [[bizlaw-corporate-manslaughter|法人の業務上過失致死（コーポレート・マンスローター）]] — 同分野の近傍
 - [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同分野の近傍
 

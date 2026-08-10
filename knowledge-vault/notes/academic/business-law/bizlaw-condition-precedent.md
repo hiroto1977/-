@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Condition precedent — express/constructive conditions, forfeiture, burden of proof](https://en.wikipedia.org/wiki/Condition_precedent) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-condition-suspensive|停止条件・解除条件]] — 語彙が近い
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
 - [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 同じ思想家
 - [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 同じ思想家
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同じ思想家
+- [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

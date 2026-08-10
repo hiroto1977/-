@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — 同じ思想家
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
 
 ## 関連

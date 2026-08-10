@@ -31,6 +31,7 @@ aliases:
 - [Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590) `リファレンス`
 
 ## 関連概念
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 語彙が近い
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 - [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
 - [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
-- [[infosoc-surveillance-society|監視社会]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,7 @@ aliases:
 - [特許庁 デッドコピー商品への対策（形態模倣）](https://www.jpo.go.jp/support/ipr/qanda/q09.html) `公的`
 
 ## 関連概念
-- [[bizlaw-unfair-competition|不正競争防止法]] — 分野横断
+- [[bizlaw-unfair-competition|不正競争防止法]] — 語彙が近い
 - [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
 - [[bizlaw-trademark|商標法]] — 出典を共有
 - [[bizlaw-utility-model|実用新案法]] — 出典を共有

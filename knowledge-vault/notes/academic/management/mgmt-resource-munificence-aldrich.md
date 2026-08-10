@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同じ思想家
 - [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

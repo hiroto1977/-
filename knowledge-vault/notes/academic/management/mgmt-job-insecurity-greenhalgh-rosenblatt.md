@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同分野の近傍
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同分野の近傍
-- [[mgmt-peter-principle|ピーターの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

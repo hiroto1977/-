@@ -41,6 +41,7 @@ aliases:
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-discovery-driven-planning|発見志向計画法（ディスカバリー・ドリブン・プランニング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

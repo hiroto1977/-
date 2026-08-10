@@ -31,9 +31,9 @@ aliases:
 - [政府広報オンライン 合理的配慮の提供が義務化](https://www.gov-online.go.jp/article/202402/entry-5611.html) `メディア`
 
 ## 関連概念
-- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 語彙が近い
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 分野横断
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 分野横断
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有

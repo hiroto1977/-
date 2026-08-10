@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 72）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 40）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
@@ -27,7 +27,7 @@ tags:
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
-- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -132,7 +132,6 @@ tags:
 - 1986年: [[infosoc-risk-society|リスク社会（ベック）]]
 - 1987年: [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]]
 - 1988年: [[infosoc-cypherpunk-movement|サイファーパンク運動]]
-- 1988年: [[infosoc-dataveillance|データヴェイランス（データ監視）]]
 - 1988年: [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]]
 - 1988年: [[infosoc-participatory-design|参加型デザイン（Participatory Design）]]
 - 1989年: [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]]
@@ -439,6 +438,7 @@ tags:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]]
 - [[infosoc-information-avoidance-theory|情報回避理論]]
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]]
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]
 - [[infosoc-information-commons-theory|情報コモンズ理論]]
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]]
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]]

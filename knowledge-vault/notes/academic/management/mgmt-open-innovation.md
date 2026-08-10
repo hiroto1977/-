@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
 - [[mgmt-resource-dependence|資源依存理論]] — 同分野の近傍
+- [[mgmt-talent-management-strategy|タレントマネジメント戦略と人材の識別・開発・維持の組織論]] — 同分野の近傍
 - [[mgmt-woodward-technology|ウッドワードの技術類型]] — 同分野の近傍
 
 ## 関連

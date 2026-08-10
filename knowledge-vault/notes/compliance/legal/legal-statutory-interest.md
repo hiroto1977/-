@@ -31,7 +31,6 @@ aliases:
 - [法務省 令和8年4月1日以降の法定利率について](https://www.moj.go.jp/MINJI/minji07_00366.html) `公的`
 
 ## 関連概念
-- [[legal-risk-bearing|危険負担（改正民法536条）]] — 同分野の近傍
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 同分野の近傍
 - [[legal-interest-limit|利息制限法の上限金利]] — 同分野の近傍
 

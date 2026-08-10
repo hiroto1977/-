@@ -31,8 +31,8 @@ aliases:
 - [Prospective Memory — ScienceDirect Topics](https://www.sciencedirect.com/topics/neuroscience/prospective-memory) `リファレンス`
 
 ## 関連概念
-- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同分野の近傍
 - [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

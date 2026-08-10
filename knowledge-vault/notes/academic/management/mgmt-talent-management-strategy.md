@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[mgmt-value-proposition|バリュープロポジション]] — 同じ思想家
 - [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
-- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同分野の近傍
 - [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — 同分野の近傍
+- [[mgmt-open-innovation|オープン・イノベーション]] — 同分野の近傍
 - [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 同分野の近傍
 
 ## 関連

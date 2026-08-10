@@ -34,13 +34,13 @@ aliases:
 
 ## 関連概念
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 語彙が近い
+- [[legal-funds-transfer|資金移動業]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
 - [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
-- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

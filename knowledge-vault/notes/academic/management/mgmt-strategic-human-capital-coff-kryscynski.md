@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同分野の近傍
 - [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
 - [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
 

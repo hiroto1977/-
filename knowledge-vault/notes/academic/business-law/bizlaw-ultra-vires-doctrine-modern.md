@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
-- [[bizlaw-caparo-v-dickman|カパロ対ディックマン——過失責任における「注意義務」の三段階テスト]] — 同分野の近傍
+- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 同分野の近傍
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
 
 ## 関連

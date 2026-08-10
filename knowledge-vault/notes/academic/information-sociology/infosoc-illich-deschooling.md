@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 出典を共有
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 出典を共有
 - [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 同分野の近傍
-- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

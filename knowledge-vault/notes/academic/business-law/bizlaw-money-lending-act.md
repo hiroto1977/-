@@ -36,6 +36,7 @@ aliases:
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 語彙が近い
 - [[bizlaw-installment-sales-act|割賦販売法]] — 同分野の近傍
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 同分野の近傍
+- [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同分野の近傍
 - [[bizlaw-anti-spam-act|特定電子メール法]] — 同分野の近傍
 
 ## 関連

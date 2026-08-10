@@ -38,7 +38,7 @@ George Spencer Bower ／ Alexander Turner ／ Elizabeth Cooke ／ Andrew Roberts
 - [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 出典を共有
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 出典を共有
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 同分野の近傍
+- [[bizlaw-proprietary-estoppel|財産的禁反言——約束への信頼が財産上の権利を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
