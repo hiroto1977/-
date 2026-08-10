@@ -32,7 +32,7 @@ Ben-Porath, Yoram （1967 The Production of Human Capital and the Life Cycle of 
 
 ## 関連概念
 - [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 同分野の近傍
-- [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 同分野の近傍
+- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
 - [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — 同分野の近傍
 
 ## 関連

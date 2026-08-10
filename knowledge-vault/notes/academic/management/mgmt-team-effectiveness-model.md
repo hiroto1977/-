@@ -41,8 +41,8 @@ Joseph Edward McGrath ／ J. Richard Hackman ／ Daniel R. Ilgen ／ John R. Hol
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
-- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

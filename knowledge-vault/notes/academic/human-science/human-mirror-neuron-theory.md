@@ -34,13 +34,13 @@ Giacomo Rizzolatti ／ Vittorio Gallese ／ Leonardo Fogassi ／ Marco Iacoboni 
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同じ思想家
 - [[human-synesthesia-neuroscience|共感覚の神経科学]] — 同じ思想家
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
-- [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

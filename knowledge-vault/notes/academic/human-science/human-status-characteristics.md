@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
 - [[infosoc-political-polarization|政治的分極化]] — 出典を共有
-- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

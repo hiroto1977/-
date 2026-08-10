@@ -35,7 +35,7 @@ Nora A. Draper ／ Joseph Turow ／ Ari Ezra Waldman
 - [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
 - [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 出典を共有
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

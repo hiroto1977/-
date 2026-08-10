@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 語彙が近い
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 語彙が近い
-- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 語彙が近い
 - [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
 - [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-regulatory-capture-stigler|規制の虜——規制が被規制産業の利益のために運営される現象]] — 同じ思想家
 - [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

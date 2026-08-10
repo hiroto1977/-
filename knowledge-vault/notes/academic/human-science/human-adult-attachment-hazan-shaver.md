@@ -33,6 +33,7 @@ aliases:
 - [[human-attachment-theory-adult|成人愛着理論]] — 語彙が近い
 - [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 語彙が近い
 - [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 語彙が近い
+- [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]] — 同分野の近傍
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同分野の近傍
 
 ## 関連

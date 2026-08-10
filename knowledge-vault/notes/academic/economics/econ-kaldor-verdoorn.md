@@ -31,7 +31,7 @@ P.J.ヴェルドゥーン（1949 "Fattori che regolano lo sviluppo della produtt
 
 ## 関連概念
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 語彙が近い
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同分野の近傍
 - [[econ-new-new-trade-theory-melitz|「新」新貿易理論（メリッツ・モデル）]] — 同分野の近傍
 
 ## 関連

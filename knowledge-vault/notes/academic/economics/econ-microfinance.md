@@ -37,6 +37,7 @@ aliases:
 - [[eh-1944|1944年（昭和19年）]] — 出典を共有
 - [[econ-price-level-targeting|物価水準目標政策]] — 同分野の近傍
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
+- [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]] — 同分野の近傍
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同分野の近傍
 
 ## 関連

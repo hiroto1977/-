@@ -32,7 +32,6 @@ aliases:
 - [Fama 1980 — Agency Problems and the Theory of the Firm, Journal of Political Economy 88(2):288-307](https://doi.org/10.1086/260866) `学術`
 
 ## 関連概念
-- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 語彙が近い
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — 語彙が近い
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同分野の近傍
 

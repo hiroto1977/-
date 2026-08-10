@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2187
+cite_count: 2188
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（学術 2179 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2188 件**（学術 2180 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -989,6 +989,7 @@ tags:
 - [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — Schacter&Addis(2007)Thecognitiveneuroscienceofconstructivememory,Phil…
 - [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — Szpunar(2010)Episodicfuturethought:Anemergingconcept,PerspectivesonPs…
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — Frese,M.&Keith,N.(2015)ActionErrors,ErrorManagement,andLearninginOrga…
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — Fanetal.(2002)TestingtheEfficiencyandIndependenceofAttentionalNetwork…
 - [[human-executive-function-development|実行機能の発達と前頭前野の神経科学的基盤]] — Diamond(2013)ExecutiveFunctions—AnnualReviewofPsychology64
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — Bond,F.etal.(2011)PreliminaryPsychometricPropertiesoftheAAQ-II—Behavi…
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — Hayes,S.etal.(1996)ExperientialAvoidanceandBehavioralDisorders—Behavi…

@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 同分野の近傍
 - [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]] — 同分野の近傍
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
+- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

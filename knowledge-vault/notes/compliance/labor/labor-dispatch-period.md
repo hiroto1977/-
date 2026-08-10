@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 語彙が近い
+- [[bizlaw-worker-dispatch|労働者派遣法]] — 語彙が近い
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 同分野の近傍
 
 ## 関連

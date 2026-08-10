@@ -40,7 +40,6 @@ Guenter Treitel ／ E. Allan Farnsworth
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同分野の近傍
 - [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
-- [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

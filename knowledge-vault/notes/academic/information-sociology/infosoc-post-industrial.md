@@ -34,8 +34,8 @@ aliases:
 ## 関連概念
 - [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — 出典を共有
 - [[mgmt-value-co-creation|価値共創]] — 出典を共有
-- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
 - [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同分野の近傍
+- [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

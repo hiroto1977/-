@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
-- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
 - [[infosoc-fourth-industrial-revolution|第四次産業革命]] — 同分野の近傍
+- [[infosoc-infodemic|インフォデミック]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

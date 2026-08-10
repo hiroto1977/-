@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 語彙が近い
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 語彙が近い
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
+- [[infosoc-splinternet|スプリンターネット（インターネットの分断）]] — 同分野の近傍
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同分野の近傍
 
 ## 関連

@@ -22,12 +22,12 @@ tags:
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 23）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 23）
-- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
-- [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -88,6 +88,7 @@ tags:
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
+- 1964年: [[infosoc-information-overload|情報過多（情報オーバーロード）]]
 - 1964年: [[infosoc-technological-sublime|テクノロジカル・サブライム（技術的崇高）]]
 - 1965年: [[infosoc-moores-law|ムーアの法則]]
 - 1965年: [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]]
@@ -438,7 +439,6 @@ tags:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]]
 - [[infosoc-information-avoidance-theory|情報回避理論]]
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]]
-- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]
 - [[infosoc-information-commons-theory|情報コモンズ理論]]
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]]
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]]

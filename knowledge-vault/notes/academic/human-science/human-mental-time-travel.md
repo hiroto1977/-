@@ -33,6 +33,7 @@ Endel Tulving（エピソード記憶・意識1972-2002）; Thomas Suddendorf & 
 
 ## 関連概念
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
@@ -41,7 +42,6 @@ Endel Tulving（エピソード記憶・意識1972-2002）; Thomas Suddendorf & 
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
 - [[infosoc-political-polarization|政治的分極化]] — 出典を共有
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 出典を共有
-- [[mgmt-psychological-capital-theory|心理的資本理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]
