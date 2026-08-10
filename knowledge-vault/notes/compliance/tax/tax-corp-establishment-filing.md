@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

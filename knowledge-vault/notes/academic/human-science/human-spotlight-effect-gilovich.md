@@ -35,7 +35,6 @@ aliases:
 - [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同じ思想家
 - [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同分野の近傍
 - [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同分野の近傍
-- [[human-executive-function|実行機能（遂行機能）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

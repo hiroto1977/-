@@ -2,7 +2,7 @@
 title: "tax.metro.tokyo.lg.jp"
 type: source-domain
 host: "tax.metro.tokyo.lg.jp"
-cite_count: 11
+cite_count: 12
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tax.metro.tokyo.lg.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **11 件**（自治体 11）
+> [!info] 出典ドメイン索引 ・ 引用 **12 件**（自治体 12）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[tax-individual-business-tax|個人事業税]] — 東京都主税局個人事業税
 - [[tax-real-estate-acquisition|不動産取得税]] — 東京都主税局不動産取得税（課税標準・軽減措置）
 - [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 東京都主税局個人住民税
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 東京都主税局事業を始めたとき（事業開始等申告書）
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 東京都主税局個人住民税の特別徴収
 - [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 東京都主税局特別法人事業税
 

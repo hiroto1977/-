@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
 - [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
+- [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

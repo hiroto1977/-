@@ -39,6 +39,7 @@ aliases:
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 出典を共有
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 同分野の近傍
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 同分野の近傍
+- [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 同分野の近傍
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 同分野の近傍
 
 ## 関連

@@ -44,7 +44,7 @@
 {"id":"bizlaw-antitrust-predatory-pricing","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制","year":null,"authors":["イースターブルック|フ"],"degree":10}
 {"id":"bizlaw-antitrust-tying-bundling","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行","year":null,"authors":["スタンフォード|ド"],"degree":7}
 {"id":"bizlaw-anton-piller-order","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令","year":null,"authors":["オームロッド|ロ","ゲー|ス","ショー|セ","デニング|ロ"],"degree":5}
-{"id":"bizlaw-apparent-agency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表見代理","year":null,"authors":[],"degree":11}
+{"id":"bizlaw-apparent-agency","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"表見代理","year":null,"authors":[],"degree":12}
 {"id":"bizlaw-appi","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"個人情報保護法（個人情報の保護に関する法律）","year":null,"authors":[],"degree":20}
 {"id":"bizlaw-appraisal-rights-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株式買取請求権の法理","year":null,"authors":["black|b","gilson|r","kanda|h","manning|b"],"degree":18}
 {"id":"bizlaw-appraisal-rights-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株式買取請求権（反対株主の公正価値救済）","year":null,"authors":["hamermesh|l","manning|b","wachter|m"],"degree":10}
@@ -148,7 +148,7 @@
 {"id":"bizlaw-consideration-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約因の法理——約束が拘束力を持つために要する交換的対価","year":null,"authors":["ウィリストン|サ","コービン|ア","フラー|ロ","ホームズ|オ"],"degree":22}
 {"id":"bizlaw-constructive-trust-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"擬制信託——不当利得防止のための衡平法上の救済手段","year":null,"authors":["カードーゾ|ベ","スコット|オ","バロウズ|ア","ボガート|ジ"],"degree":11}
 {"id":"bizlaw-consumer-basic-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者基本法","year":1968,"authors":[],"degree":5}
-{"id":"bizlaw-consumer-collective-redress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者裁判手続特例法（消費者団体訴訟制度）","year":2013,"authors":[],"degree":3}
+{"id":"bizlaw-consumer-collective-redress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者裁判手続特例法（消費者団体訴訟制度）","year":2013,"authors":[],"degree":4}
 {"id":"bizlaw-consumer-contract-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者契約法","year":2001,"authors":[],"degree":7}
 {"id":"bizlaw-consumer-contract-unfair-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正","year":null,"authors":["オニタン|オ","ロスタイン|リ"],"degree":3}
 {"id":"bizlaw-consumer-credit-regulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者信用規制と過剰貸付防止の比較法制","year":null,"authors":["ウォーレン|エ","ゲルブ|ロ","サリバン|テ"],"degree":7}
@@ -184,7 +184,7 @@
 {"id":"bizlaw-corporate-social-responsibility-directive","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"企業持続可能性デューディリジェンス指令——サプライチェーンにおける人権・環境配慮義務","year":null,"authors":["カライトジディス|マ","マッコーコデール|ロ","ラギー|ジ","リヴィエール|ヴ"],"degree":9}
 {"id":"bizlaw-corporate-social-responsibility-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"CSRの法的規制——企業の社会的責任の自主規制から強制開示・デューデリジェンス義務への展開","year":null,"authors":["コンパクト|グ","ラギー|ジ"],"degree":8}
 {"id":"bizlaw-corporate-veil-piercing-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法人格否認の法理——親子会社間の責任追及と株主有限責任の例外","year":null,"authors":["イースターブルック|フ","トンプソン|ロ","フィシェル|ダ"],"degree":31}
-{"id":"bizlaw-corporation-tax","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法人税法","year":1965,"authors":[],"degree":4}
+{"id":"bizlaw-corporation-tax","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法人税法","year":1965,"authors":[],"degree":5}
 {"id":"bizlaw-covenant-not-to-compete","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整","year":null,"authors":["ギルソン|ロ","スアリス|オ","ビシャラ|ノ","マルクス|マ"],"degree":6}
 {"id":"bizlaw-covenant-running-with-land","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"土地に伴う約款——後続の所有者を拘束する土地に関する約束","year":null,"authors":["クリベット|ジ","コーク|エ","ハープム|チ"],"degree":7}
 {"id":"bizlaw-cram-down-mechanism","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"クラムダウン（強制認可）メカニズム","year":null,"authors":["baird|d","jackson|t","lubben|s"],"degree":11}
@@ -208,7 +208,7 @@
 {"id":"bizlaw-de-facto-corporation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事実上の会社——設立手続きに瑕疵があっても会社として扱う法理","year":null,"authors":["アイゼンバーグ|メ","クラーク|ロ","ケアリー|ウ","バーリ|ア"],"degree":11}
 {"id":"bizlaw-de-facto-merger-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事実上の合併の法理（デ・ファクト・マージャー法理）","year":null,"authors":["davis|","deutsch|j","iii|w"],"degree":5}
 {"id":"bizlaw-deep-rock-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ディープ・ロック法理","year":null,"authors":["herzog|a","pardo|r","roberts|o","schwarcz|s","zweibel|j"],"degree":12}
-{"id":"bizlaw-defamation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"名誉毀損（刑法230条・民法709条/723条）","year":null,"authors":["e-gov|"],"degree":18}
+{"id":"bizlaw-defamation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"名誉毀損（刑法230条・民法709条/723条）","year":null,"authors":["e-gov|"],"degree":19}
 {"id":"bizlaw-default-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"債務不履行と損害賠償（民法415条）","year":2020,"authors":[],"degree":10}
 {"id":"bizlaw-defined-contribution-pension","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"確定拠出年金法","year":2001,"authors":[],"degree":6}
 {"id":"bizlaw-del-credere-agent","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"デル・クレデレ代理商——買主の支払を保証する代理人","year":null,"authors":["アンソン|ウ","ストーリー|ジ","ボウステッド|ウ","レイノルズ|フ"],"degree":15}
@@ -241,7 +241,7 @@
 {"id":"bizlaw-duty-of-loyalty","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取締役の忠実義務（会社法355条）","year":null,"authors":[],"degree":5}
 {"id":"bizlaw-e-bookkeeping","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電子帳簿保存法","year":1998,"authors":[],"degree":3}
 {"id":"bizlaw-e-signature","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電子署名法","year":2000,"authors":[],"degree":3}
-{"id":"bizlaw-earnest-money","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"手付（民法557条）","year":2017,"authors":["law|e"],"degree":25}
+{"id":"bizlaw-earnest-money","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"手付（民法557条）","year":2017,"authors":["law|e"],"degree":24}
 {"id":"bizlaw-easement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"地役権——他人の土地を特定の目的で利用する非占有的な権利","year":null,"authors":["エヴァシェッド|ロ","クリベット|ジ","ハープム|チ","ブラックストン|ウ"],"degree":10}
 {"id":"bizlaw-ebrahimi-westbourne","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散","year":null,"authors":["ウィルバーフォース|ロ","エブラヒミ|","クロス|ロ","ナザール|"],"degree":6}
 {"id":"bizlaw-economic-analysis-of-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派","year":null,"authors":["カラブレイジ|グ","コース|ロ","ベッカー|ゲ","ポズナー|リ"],"degree":36}
@@ -354,7 +354,7 @@
 {"id":"bizlaw-implied-warranty-merchantability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"黙示の商品性保証（Implied Warranty of Merchantability）","year":null,"authors":["ウィリストン|サ","プロッサー|ウ","ルウェリン|カ"],"degree":27}
 {"id":"bizlaw-implied-warranty-of-merchantability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"商品性の黙示保証","year":null,"authors":["hawkland|w","llewellyn|k","summers|r","white|j"],"degree":17}
 {"id":"bizlaw-in-pari-delicto-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"均等違法原則（インパリ・デリクト）","year":null,"authors":["カードーゾ|ベ","ストーリー|ジ","バーバー|ロ"],"degree":14}
-{"id":"bizlaw-income-tax-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所得税法","year":1965,"authors":[],"degree":3}
+{"id":"bizlaw-income-tax-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所得税法","year":1965,"authors":[],"degree":4}
 {"id":"bizlaw-incoterms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"インコタームズ——国際売買における売主と買主の責任を定める定型取引条件","year":null,"authors":["シュミットフ|ク","デバティスタ|チ","ラムバーグ|ヤ"],"degree":3}
 {"id":"bizlaw-indemnification-clause-duty-to-defend","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"補償条項と防御義務・補償義務の区別（Indemnification Clause）","year":1999,"authors":["mgmt|q","peters|h"],"degree":2}
 {"id":"bizlaw-indirect-expropriation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"間接収用（Indirect Expropriation）","year":2000,"authors":["metalclad|","nafta|"],"degree":5}
@@ -429,7 +429,7 @@
 {"id":"bizlaw-liquidated-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定——違約金条項の有効性と違約罰との区別","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":14}
 {"id":"bizlaw-liquidated-damages-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定条項（清算損害賠償条項）","year":null,"authors":["サムナー|ア","ホームズ|オ","ルース|マ"],"degree":10}
 {"id":"bizlaw-local-autonomy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"地方自治法","year":1947,"authors":[],"degree":11}
-{"id":"bizlaw-local-tax-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"地方税法","year":1950,"authors":[],"degree":3}
+{"id":"bizlaw-local-tax-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"地方税法","year":1950,"authors":[],"degree":2}
 {"id":"bizlaw-long-term-care-insurance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"介護保険法","year":1997,"authors":[],"degree":4}
 {"id":"bizlaw-mailbox-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"発信主義（郵便箱の法則）","year":null,"authors":["corbin|a","ellenborough|l","pollock|s","williston|s"],"degree":16}
 {"id":"bizlaw-mailbox-rule-acceptance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"郵便箱ルール（発信主義）","year":null,"authors":["corbin|a","treitel|","williston|s"],"degree":10}
@@ -453,7 +453,7 @@
 {"id":"bizlaw-minority-oppression-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理","year":null,"authors":["オニール|ホ","トンプソン|ロ","ヘザリントン|ジ","マイナー|ダ"],"degree":6}
 {"id":"bizlaw-misrepresentation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示（misrepresentation、英米契約法）","year":1967,"authors":[],"degree":7}
 {"id":"bizlaw-misrepresentation-contract-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示法理——契約締結前の虚偽表示に対する救済体系","year":null,"authors":["カータライト|ジ","トレーテル|ギ","バロウズ|ア","ペール|エ"],"degree":14}
-{"id":"bizlaw-mistake","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"錯誤（民法95条）","year":2020,"authors":[],"degree":3}
+{"id":"bizlaw-mistake","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"錯誤（民法95条）","year":2020,"authors":[],"degree":2}
 {"id":"bizlaw-mistake-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":25}
 {"id":"bizlaw-mitigation-of-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":13}
 {"id":"bizlaw-money-lending-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"貸金業法","year":2006,"authors":[],"degree":7}
@@ -554,13 +554,13 @@
 {"id":"bizlaw-renvoi","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理","year":1878,"authors":["annesley|","case|f","lorenzen|e","regulation|r","renvoi|t"],"degree":3}
 {"id":"bizlaw-res-ipsa-loquitur","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み","year":1863,"authors":["boadle|b","docks|k","london|s","pollock|c"],"degree":10}
 {"id":"bizlaw-res-judicata","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"既判力（Res Judicata）","year":1876,"authors":["miller|j","restatement|"],"degree":9}
-{"id":"bizlaw-rescission","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":15}
+{"id":"bizlaw-rescission","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ"],"degree":14}
 {"id":"bizlaw-respondeat-superior","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"使用者責任の法理（Respondeat Superior）","year":1698,"authors":["cir|s","friendly|j","holt|l","restatement|"],"degree":8}
 {"id":"bizlaw-respondeat-superior-scope","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"使用者責任の範囲——代理責任法理と雇用関係における帰責原理","year":null,"authors":["シーヴィー|ウ","プロッサー|ウ","ボーレン|フ","ラスキ|ハ"],"degree":12}
 {"id":"bizlaw-restraint-of-trade","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取引制限の法理——営業の自由を制約する条項の合理性審査","year":null,"authors":["コーク|エ"],"degree":6}
 {"id":"bizlaw-restraint-of-trade-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取引制限法理（レストレイント・オブ・トレード）","year":null,"authors":["macnaghten|l","waddington|l"],"degree":13}
 {"id":"bizlaw-retention-lien","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"留置権（民法295条）","year":null,"authors":["law|e"],"degree":25}
-{"id":"bizlaw-retention-of-title","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所有権留保","year":2025,"authors":[],"degree":15}
+{"id":"bizlaw-retention-of-title","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"所有権留保","year":2025,"authors":[],"degree":16}
 {"id":"bizlaw-reves-family-resemblance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"リーヴス基準（family resemblance test／ファミリー・リゼンブランス・テスト）——約束手形が連邦証券法上の「証券」に当たるかを判定する米国最高裁の枠組み","year":1934,"authors":["act|s","ernst|r","marshall|t","test|h","young|"],"degree":5}
 {"id":"bizlaw-revlon-duties","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"レブロン義務（会社売却時の取締役義務）","year":null,"authors":["moore|a"],"degree":16}
 {"id":"bizlaw-revocation-litigation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"取消訴訟（行政事件訴訟法）","year":null,"authors":[],"degree":6}
@@ -827,7 +827,7 @@
 {"id":"econ-cobweb","collection":"academic","category":"economics","categoryLabel":"経済学","title":"クモの巣理論","year":1934,"authors":["エゼキエル|モ","カルドア|ニ","シュルツ|ヘ","ティンバーゲン|ヤ","リッチ|ウ"],"degree":14}
 {"id":"econ-cobweb-model-agricultural-cycles","collection":"academic","category":"economics","categoryLabel":"経済学","title":"くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析","year":null,"authors":["エゼキエル|モ","カルドア|ニ","ネルロヴ|マ","ムース|ジ"],"degree":14}
 {"id":"econ-cobweb-model-ezekiel-nerlove","collection":"academic","category":"economics","categoryLabel":"経済学","title":"くもの巣モデル——農産物価格の動学的変動と適応的期待形成","year":null,"authors":["エゼキエル|モ","ネルローヴ|マ","ブロック|ウ","ホンメス|カ","ムス|ジ"],"degree":7}
-{"id":"econ-cobweb-theorem-agricultural-cycles","collection":"academic","category":"economics","categoryLabel":"経済学","title":"蜘蛛の巣理論（農業価格循環）","year":null,"authors":["ezekiel|m","ricci|u","tinbergen|j"],"degree":4}
+{"id":"econ-cobweb-theorem-agricultural-cycles","collection":"academic","category":"economics","categoryLabel":"経済学","title":"蜘蛛の巣理論（農業価格循環）","year":null,"authors":["ezekiel|m","ricci|u","tinbergen|j"],"degree":3}
 {"id":"econ-cobweb-theorem-ezekiel","collection":"academic","category":"economics","categoryLabel":"経済学","title":"コブウェブ定理（エゼキエル）","year":null,"authors":["エゼキエル|モ","ティネベルゲン|ヨ","ムース|ジ","レイターレ|ハ"],"degree":6}
 {"id":"econ-colonel-blotto-game","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争","year":null,"authors":["ノイマン|ジ","ボレル|エ","モルゲンシュテルン|オ","ロバーソン|ブ"],"degree":9}
 {"id":"econ-commons-tragedy-hardin","collection":"academic","category":"economics","categoryLabel":"経済学","title":"コモンズの悲劇とオストロムの集合行為論","year":null,"authors":["オストロム|エ","オストロム|ヴ","オルソン|マ","ハーディン|ギ"],"degree":18}
@@ -992,7 +992,7 @@
 {"id":"econ-export-led-growth-model","collection":"academic","category":"economics","categoryLabel":"経済学","title":"輸出主導型成長モデル","year":null,"authors":["クワン|ダ","バルサ|ガ","フォックス|ジ","マドック|ブ"],"degree":3}
 {"id":"econ-externality-market-failure","collection":"academic","category":"economics","categoryLabel":"経済学","title":"外部性と市場の失敗","year":1920,"authors":[],"degree":6}
 {"id":"econ-externality-pigou-coase-theorem","collection":"academic","category":"economics","categoryLabel":"経済学","title":"外部性とピグー税——コースの定理と市場による外部性内部化の比較","year":null,"authors":["コース|ロ","スターン|ニ","ノードハウス|ウ","ピグー|ア"],"degree":14}
-{"id":"econ-factor-price-equalization","collection":"academic","category":"economics","categoryLabel":"経済学","title":"要素価格均等化定理","year":1948,"authors":["サミュエルソン|ポ"],"degree":12}
+{"id":"econ-factor-price-equalization","collection":"academic","category":"economics","categoryLabel":"経済学","title":"要素価格均等化定理","year":1948,"authors":["サミュエルソン|ポ"],"degree":11}
 {"id":"econ-fair-wage-effort","collection":"academic","category":"economics","categoryLabel":"経済学","title":"公正賃金・努力仮説","year":1990,"authors":["yellen|","アカロフ|ジ","イエレン|ジ"],"degree":12}
 {"id":"econ-fallacy-composition-samuelson","collection":"academic","category":"economics","categoryLabel":"経済学","title":"合成の誤謬——個別的合理性と集合的帰結の乖離","year":null,"authors":["ケインズ|ジ","サミュエルソン|ポ","シェリング|ト","ミル|ジ"],"degree":19}
 {"id":"econ-fama-french-factor-model","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ファーマ＝フレンチ・ファクターモデル","year":null,"authors":["fama|e","french|k"],"degree":5}
@@ -1004,7 +1004,7 @@
 {"id":"econ-financial-accelerator-bernanke-gertler","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム","year":null,"authors":["ガートラー|マ","ギルクリスト|サ","バーナンキ|ベ","ムーア|ジ"],"degree":16}
 {"id":"econ-financial-contagion","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融コンタジオン：銀行間ネットワークのトポロジーとシステミックリスクの連鎖波及メカニズム","year":null,"authors":["アレン|フ","ゲール|ダ","ブルナーマイヤー|マ"],"degree":2}
 {"id":"econ-financial-repression","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融抑圧","year":1973,"authors":["shaw|","ショー|エ","マッキノン|ロ"],"degree":13}
-{"id":"econ-financial-repression-mckinnon-shaw","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化","year":null,"authors":["ショウ|エ","スティグリッツ|ジ","マッキノン|ロ","ラインハート|カ"],"degree":13}
+{"id":"econ-financial-repression-mckinnon-shaw","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化","year":null,"authors":["ショウ|エ","スティグリッツ|ジ","マッキノン|ロ","ラインハート|カ"],"degree":14}
 {"id":"econ-financialization","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融化——経済の金融部門支配","year":null,"authors":["epstein|g","krippner|g","minsky|h"],"degree":11}
 {"id":"econ-financialization-lazonick-shareholder","collection":"academic","category":"economics","categoryLabel":"経済学","title":"金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換","year":null,"authors":["クリップナー|グ","ジェンセン|マ","デービス|ジ","ラゾニック|ウ"],"degree":10}
 {"id":"econ-fiscal-decentralization-tiebout","collection":"academic","category":"economics","categoryLabel":"経済学","title":"財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争","year":null,"authors":["ウィンガスト|バ","オーツ|ウ","ティブー|チ","ピーターソン|ポ"],"degree":11}
@@ -1376,7 +1376,7 @@
 {"id":"econ-poverty-trap-multiple-equilibria","collection":"academic","category":"economics","categoryLabel":"経済学","title":"貧困の罠と複数均衡理論——開発経済学の構造的困窮分析","year":null,"authors":["アジェモグル|ダ","サックス|ジ","デュフロ|エ","バナジー|ア"],"degree":13}
 {"id":"econ-ppp","collection":"academic","category":"economics","categoryLabel":"経済学","title":"購買力平価（PPP）","year":1918,"authors":["ppp|g"],"degree":5}
 {"id":"econ-prebisch-singer-hypothesis","collection":"academic","category":"economics","categoryLabel":"経済学","title":"プレビッシュ＝シンガー仮説","year":1950,"authors":["シンガー|ハ","プレビッシュ|ラ"],"degree":8}
-{"id":"econ-prebisch-singer-terms-of-trade","collection":"academic","category":"economics","categoryLabel":"経済学","title":"プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学","year":null,"authors":["オカンポ|ホ","シンガー|ハ","フルタード|セ","プレビッシュ|ラ"],"degree":5}
+{"id":"econ-prebisch-singer-terms-of-trade","collection":"academic","category":"economics","categoryLabel":"経済学","title":"プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学","year":null,"authors":["オカンポ|ホ","シンガー|ハ","フルタード|セ","プレビッシュ|ラ"],"degree":4}
 {"id":"econ-prebisch-singer-thesis","collection":"academic","category":"economics","categoryLabel":"経済学","title":"プレビッシュ＝シンガー命題","year":null,"authors":["grilli|e","harvey|d","prebisch|","singer|h","yang|m"],"degree":6}
 {"id":"econ-precautionary-saving","collection":"academic","category":"economics","categoryLabel":"経済学","title":"予備的貯蓄","year":1968,"authors":["キンボール|マ","サンドモ|ア","リーランド|ヘ"],"degree":6}
 {"id":"econ-predatory-pricing","collection":"academic","category":"economics","categoryLabel":"経済学","title":"略奪的価格設定","year":1958,"authors":["turner|","アリーダ|","マッギー|ジ"],"degree":12}
@@ -1955,7 +1955,7 @@
 {"id":"human-error-management-theory-frese","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"エラー管理理論（フレゼ）","year":null,"authors":["キース|ニ","フレゼ|マ","リーズン|ジ","ワイク|カ"],"degree":19}
 {"id":"human-excitation-transfer","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"興奮転移理論——残った興奮が次の感情を強める","year":null,"authors":["アロン|ア","シャクター|ス","ジルマン|ド","ダットン|ド"],"degree":8}
 {"id":"human-executive-attention","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行注意ネットワーク（Executive Attention Network）","year":1990,"authors":[],"degree":13}
-{"id":"human-executive-function","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能（遂行機能）","year":null,"authors":["アキラ|ミ","ダイアモンド|ア","フリードマン|ナ"],"degree":21}
+{"id":"human-executive-function","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能（遂行機能）","year":null,"authors":["アキラ|ミ","ダイアモンド|ア","フリードマン|ナ"],"degree":20}
 {"id":"human-executive-function-baddeley","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御","year":null,"authors":["ダイアモンド|ア","バッデレー|ア","ヒッチ|グ","フスター|ジ"],"degree":20}
 {"id":"human-executive-function-development","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能の発達と前頭前野の神経科学的基盤","year":null,"authors":["ゴールドマン|パ","ダイアモンド|ア","フスター|ジ","ミヤケ|ユ"],"degree":4}
 {"id":"human-existential-therapy-yalom","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実存療法——ヤーロムの四つの究極的関心と治療的対峙","year":null,"authors":["ビンスワンガー|ル","フランクル|ヴ","メイ|ロ","ヤーロム|ア"],"degree":3}
@@ -2311,7 +2311,7 @@
 {"id":"human-spiritual-wellbeing","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル","year":null,"authors":[],"degree":2}
 {"id":"human-split-brain-sperry-gazzaniga","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"分離脳研究","year":null,"authors":["bogen|j","gazzaniga|m","sperry|r"],"degree":5}
 {"id":"human-spontaneous-trait-inference","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"自発的特性推論","year":1984,"authors":["uleman|","ウィンター|ロ","ユルマン|ジ"],"degree":6}
-{"id":"human-spotlight-effect-gilovich","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"スポットライト効果——自己の顕著性に対する過大推定バイアス","year":null,"authors":["ギロヴィッチ|ト","クルーガー|ジ","サヴィツキー|ケ","メドヴェック|ヴ"],"degree":5}
+{"id":"human-spotlight-effect-gilovich","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"スポットライト効果——自己の顕著性に対する過大推定バイアス","year":null,"authors":["ギロヴィッチ|ト","クルーガー|ジ","サヴィツキー|ケ","メドヴェック|ヴ"],"degree":4}
 {"id":"human-spreading-activation","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"活性化拡散","year":1975,"authors":["loftus|","コリンズ|ア","ロフタス|エ"],"degree":15}
 {"id":"human-stanford-prison-experiment","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"スタンフォード監獄実験","year":1933,"authors":["ジンバルドー|フ","ハニー|ク"],"degree":4}
 {"id":"human-statistical-learning","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"統計的学習（Statistical Learning）","year":1996,"authors":["アスリン|リ","サフラン|ジ","ニューポート|エ"],"degree":12}
@@ -2517,7 +2517,7 @@
 {"id":"infosoc-data-ethics","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ倫理とアルゴリズム公正性の学際的枠組み","year":null,"authors":["オニール|キ","フロリディ|ル","ユーバンクス|ヴ"],"degree":18}
 {"id":"infosoc-data-feminism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データフェミニズム（Data Feminism）","year":2020,"authors":["d'ignazio|c","klein|l"],"degree":2}
 {"id":"infosoc-data-justice","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ正義（Data Justice）","year":2016,"authors":["society|","テイラー|リ","デンチック|リ","ヒンツ|ア"],"degree":9}
-{"id":"infosoc-data-portability","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データポータビリティの権利（GDPR20条）","year":2016,"authors":["gdpr|"],"degree":9}
+{"id":"infosoc-data-portability","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データポータビリティの権利（GDPR20条）","year":2016,"authors":["gdpr|"],"degree":10}
 {"id":"infosoc-data-sovereignty","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ主権","year":1964,"authors":["ファウンデーション|オ","フロリディ|ル"],"degree":9}
 {"id":"infosoc-data-sovereignty-digital-rights","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ主権とデジタル自決権の国際政治経済学","year":null,"authors":["カルドルス|ニ","ズボフ|シ","ベンシャハル|エ","メイヤー|ヴ"],"degree":11}
 {"id":"infosoc-database-aesthetics-manovich","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ニューメディアの言語——データベースと物語という二つの文化形式","year":null,"authors":["パノフスキー|エ","ヘイルズ|キ","マクルーハン|マ","マノヴィッチ|レ"],"degree":13}
@@ -2788,7 +2788,7 @@
 {"id":"infosoc-online-firestorm","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"炎上（オンライン・ファイヤーストーム）","year":2014,"authors":["carley|","プフェファー|ユ"],"degree":2}
 {"id":"infosoc-online-radicalization","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オンライン過激化（ラジカリゼーション）","year":2021,"authors":["terreg|","セイジマン|マ"],"degree":11}
 {"id":"infosoc-open-access-movement-budapest","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オープンアクセス運動（ブダペスト宣言）","year":null,"authors":["ウィルバンクス|ジ","スバー|ピ","チャン|レ","ハーナッド|ス"],"degree":2}
-{"id":"infosoc-open-data","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オープンデータ","year":1955,"authors":["バーナーズ|テ","ファウンデーション|オ"],"degree":12}
+{"id":"infosoc-open-data","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オープンデータ","year":1955,"authors":["バーナーズ|テ","ファウンデーション|オ"],"degree":13}
 {"id":"infosoc-open-data-government-transparency","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オープンデータと政府透明性の情報社会論","year":null,"authors":["オドノヴァン|ラ","ノーウィック|ベ","バーナーズ|テ","ユーバーノワ|キ"],"degree":10}
 {"id":"infosoc-open-data-movement-sunlight","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化","year":null,"authors":["オバマ|バ","バーナーズ|テ","ポロック|ル","ミラー|エ"],"degree":11}
 {"id":"infosoc-open-government-data","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム","year":null,"authors":["バーナーズ|テ","メイヤー|ア","ヤンセン|マ"],"degree":10}
@@ -3004,7 +3004,7 @@
 {"id":"labor-36-agreement","collection":"compliance","category":"labor","categoryLabel":"労務","title":"36協定（時間外・休日労働に関する労使協定）","year":null,"authors":[],"degree":14}
 {"id":"labor-accident-report","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者死傷病報告（労働安全衛生規則97条）","year":null,"authors":[],"degree":3}
 {"id":"labor-average-wage","collection":"compliance","category":"labor","categoryLabel":"労務","title":"平均賃金（労働基準法12条）","year":null,"authors":[],"degree":2}
-{"id":"labor-break-time","collection":"compliance","category":"labor","categoryLabel":"労務","title":"休憩時間（労働基準法34条）","year":null,"authors":[],"degree":19}
+{"id":"labor-break-time","collection":"compliance","category":"labor","categoryLabel":"労務","title":"休憩時間（労働基準法34条）","year":null,"authors":[],"degree":18}
 {"id":"labor-care-leave","collection":"compliance","category":"labor","categoryLabel":"労務","title":"介護休業と介護休業給付金","year":null,"authors":[],"degree":3}
 {"id":"labor-chemical-substance-autonomous-management","collection":"compliance","category":"labor","categoryLabel":"労務","title":"化学物質の自律的な管理への移行（2024年4月 規制強化）","year":2024,"authors":[],"degree":7}
 {"id":"labor-child-nursing-leave","collection":"compliance","category":"labor","categoryLabel":"労務","title":"子の看護等休暇（育児・介護休業法）","year":null,"authors":[],"degree":3}
@@ -3014,7 +3014,7 @@
 {"id":"labor-childcare-leave-2025","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児・介護休業法 2025年4月改正","year":2025,"authors":[],"degree":4}
 {"id":"labor-childcare-overtime-exemption","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児のための所定外労働の制限（残業免除）","year":null,"authors":[],"degree":11}
 {"id":"labor-childcare-short-time","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児のための短時間勤務制度（育児・介護休業法23条）","year":null,"authors":[],"degree":5}
-{"id":"labor-childcare-shorttime-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児時短就業給付金（2025年4月1日施行）","year":2025,"authors":[],"degree":17}
+{"id":"labor-childcare-shorttime-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"育児時短就業給付金（2025年4月1日施行）","year":2025,"authors":[],"degree":16}
 {"id":"labor-collective-agreement","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働協約（労働組合法）","year":null,"authors":[],"degree":15}
 {"id":"labor-collective-bargaining","collection":"compliance","category":"labor","categoryLabel":"労務","title":"団体交渉拒否の禁止（労働組合法7条）","year":null,"authors":[],"degree":4}
 {"id":"labor-commuting-injury","collection":"compliance","category":"labor","categoryLabel":"労務","title":"通勤災害（労災保険）","year":null,"authors":[],"degree":2}
@@ -3036,8 +3036,8 @@
 {"id":"labor-dispatch-license","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣事業の許可制","year":null,"authors":[],"degree":7}
 {"id":"labor-dispatch-period","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の期間制限（3年ルール）","year":null,"authors":[],"degree":6}
 {"id":"labor-dispatch-prohibited","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働者派遣の適用除外業務（派遣禁止業務）","year":null,"authors":[],"degree":8}
-{"id":"labor-elderly-continued-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢雇用継続給付（雇用保険）","year":null,"authors":[],"degree":9}
-{"id":"labor-elderly-employment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢者雇用確保措置","year":null,"authors":[],"degree":20}
+{"id":"labor-elderly-continued-benefit","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢雇用継続給付（雇用保険）","year":null,"authors":[],"degree":10}
+{"id":"labor-elderly-employment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"高年齢者雇用確保措置","year":null,"authors":[],"degree":19}
 {"id":"labor-employment-adjustment-subsidy","collection":"compliance","category":"labor","categoryLabel":"労務","title":"雇用調整助成金","year":null,"authors":[],"degree":3}
 {"id":"labor-employment-certificate","collection":"compliance","category":"labor","categoryLabel":"労務","title":"退職時等の証明（労働基準法22条）","year":null,"authors":[],"degree":5}
 {"id":"labor-employment-insurance","collection":"compliance","category":"labor","categoryLabel":"労務","title":"雇用保険の被保険者加入要件","year":null,"authors":[],"degree":2}
@@ -3068,7 +3068,7 @@
 {"id":"labor-maternity-harassment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）","year":null,"authors":[],"degree":19}
 {"id":"labor-maternity-leave","collection":"compliance","category":"labor","categoryLabel":"労務","title":"産前産後休業（労働基準法第65条）","year":null,"authors":[],"degree":13}
 {"id":"labor-medical-interview","collection":"compliance","category":"labor","categoryLabel":"労務","title":"長時間労働者に対する医師による面接指導","year":null,"authors":[],"degree":8}
-{"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":7}
+{"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":6}
 {"id":"labor-minimum-wage","collection":"compliance","category":"labor","categoryLabel":"労務","title":"地域別最低賃金（最低賃金法）","year":null,"authors":[],"degree":3}
 {"id":"labor-minor-protection","collection":"compliance","category":"labor","categoryLabel":"労務","title":"年少者の労働保護（労働基準法 第6章）","year":null,"authors":[],"degree":4}
 {"id":"labor-minwage-reduction-exception","collection":"compliance","category":"labor","categoryLabel":"労務","title":"最低賃金の減額の特例許可制度（最低賃金法7条）","year":null,"authors":[],"degree":5}
@@ -3166,7 +3166,7 @@
 {"id":"legal-data-subject-rights","collection":"compliance","category":"legal","categoryLabel":"法務","title":"保有個人データに関する本人の権利","year":null,"authors":[],"degree":15}
 {"id":"legal-defective-intent","collection":"compliance","category":"legal","categoryLabel":"法務","title":"意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）","year":null,"authors":[],"degree":4}
 {"id":"legal-deposit-transaction","collection":"compliance","category":"legal","categoryLabel":"法務","title":"預託法（販売を伴う預託等取引の原則禁止）","year":null,"authors":[],"degree":2}
-{"id":"legal-design-right","collection":"compliance","category":"legal","categoryLabel":"法務","title":"意匠権（意匠法）","year":null,"authors":[],"degree":15}
+{"id":"legal-design-right","collection":"compliance","category":"legal","categoryLabel":"法務","title":"意匠権（意匠法）","year":null,"authors":[],"degree":14}
 {"id":"legal-digital-platform-transparency","collection":"compliance","category":"legal","categoryLabel":"法務","title":"取引透明化法（特定デジタルプラットフォーム透明化法）","year":null,"authors":[],"degree":4}
 {"id":"legal-director-duty","collection":"compliance","category":"legal","categoryLabel":"法務","title":"取締役の善管注意義務・忠実義務（会社法）","year":null,"authors":[],"degree":11}
 {"id":"legal-disability-accommodation","collection":"compliance","category":"legal","categoryLabel":"法務","title":"障害者差別解消法における合理的配慮の提供義務","year":null,"authors":[],"degree":14}
@@ -3183,7 +3183,7 @@
 {"id":"legal-external-transmission","collection":"compliance","category":"legal","categoryLabel":"法務","title":"電気通信事業法の外部送信規律","year":null,"authors":[],"degree":4}
 {"id":"legal-family-register-furigana","collection":"compliance","category":"legal","categoryLabel":"法務","title":"戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）","year":2025,"authors":[],"degree":10}
 {"id":"legal-financial-services-intermediary","collection":"compliance","category":"legal","categoryLabel":"法務","title":"金融サービス仲介業（金融サービス提供法）","year":null,"authors":[],"degree":5}
-{"id":"legal-financial-statements-disclosure","collection":"compliance","category":"legal","categoryLabel":"法務","title":"株式会社の計算書類の公告（決算公告）義務","year":null,"authors":[],"degree":16}
+{"id":"legal-financial-statements-disclosure","collection":"compliance","category":"legal","categoryLabel":"法務","title":"株式会社の計算書類の公告（決算公告）義務","year":null,"authors":[],"degree":15}
 {"id":"legal-fit-fip-renewable-energy","collection":"compliance","category":"legal","categoryLabel":"法務","title":"再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）","year":2012,"authors":[],"degree":6}
 {"id":"legal-food-labeling","collection":"compliance","category":"legal","categoryLabel":"法務","title":"食品表示法・食品表示基準（加工食品の表示・アレルゲン）","year":null,"authors":[],"degree":4}
 {"id":"legal-food-sanitation","collection":"compliance","category":"legal","categoryLabel":"法務","title":"食品衛生法の営業許可・届出とHACCPに沿った衛生管理","year":null,"authors":[],"degree":5}
@@ -3202,7 +3202,7 @@
 {"id":"legal-interest-limit","collection":"compliance","category":"legal","categoryLabel":"法務","title":"利息制限法の上限金利","year":null,"authors":[],"degree":4}
 {"id":"legal-joint-use-data","collection":"compliance","category":"legal","categoryLabel":"法務","title":"個人データの共同利用（個人情報保護法27条5項3号）","year":null,"authors":[],"degree":14}
 {"id":"legal-keihyo-commitment","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法の確約手続（2024年10月施行）","year":2024,"authors":[],"degree":7}
-{"id":"legal-keihyo-management","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法上の表示等の管理上の措置義務（26条）","year":null,"authors":[],"degree":6}
+{"id":"legal-keihyo-management","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法上の表示等の管理上の措置義務（26条）","year":null,"authors":[],"degree":7}
 {"id":"legal-keihyo-surcharge","collection":"compliance","category":"legal","categoryLabel":"法務","title":"景品表示法の課徴金制度","year":null,"authors":[],"degree":5}
 {"id":"legal-land-building-lease","collection":"compliance","category":"legal","categoryLabel":"法務","title":"借地借家法における建物賃貸借（借家）","year":null,"authors":[],"degree":22}
 {"id":"legal-land-lease-right","collection":"compliance","category":"legal","categoryLabel":"法務","title":"借地借家法における借地権","year":null,"authors":[],"degree":21}
@@ -4004,7 +4004,7 @@
 {"id":"subsidy-miyazaki","collection":"subsidy","category":"business","categoryLabel":"事業","title":"事業承継・引継ぎ応援事業補助金（宮崎県）","year":null,"authors":[],"degree":11}
 {"id":"subsidy-monodukuri","collection":"subsidy","category":"business","categoryLabel":"事業","title":"ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）","year":null,"authors":["gbizid|g"],"degree":11}
 {"id":"subsidy-multifunctional-payment","collection":"subsidy","category":"business","categoryLabel":"事業","title":"多面的機能支払交付金","year":null,"authors":[],"degree":10}
-{"id":"subsidy-nagano","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業賃上げ・生産性向上サポート補助金（長野県）","year":null,"authors":[],"degree":10}
+{"id":"subsidy-nagano","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業賃上げ・生産性向上サポート補助金（長野県）","year":null,"authors":[],"degree":9}
 {"id":"subsidy-nagasaki","collection":"subsidy","category":"business","categoryLabel":"事業","title":"長崎県地域産業雇用創出チャレンジ支援事業（長崎県創業支援事業補助金）（長崎県）","year":null,"authors":[],"degree":4}
 {"id":"subsidy-nagoya","collection":"subsidy","category":"business","categoryLabel":"事業","title":"名古屋市スタートアップ企業支援補助金","year":null,"authors":["municipality|"],"degree":24}
 {"id":"subsidy-nara","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業省力化・生産性向上設備投資支援補助金（奈良県）","year":null,"authors":[],"degree":12}
@@ -4013,7 +4013,7 @@
 {"id":"subsidy-niigata","collection":"subsidy","category":"business","categoryLabel":"事業","title":"稼ぐ力強化支援事業 補助金（新潟県）","year":null,"authors":[],"degree":7}
 {"id":"subsidy-niigata-city","collection":"subsidy","category":"business","categoryLabel":"事業","title":"創業サポート事業補助金（新潟市）","year":null,"authors":["municipality|"],"degree":23}
 {"id":"subsidy-occupational-health","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"産業保健関係助成金（団体経由産業保健活動推進助成金 等）","year":null,"authors":[],"degree":4}
-{"id":"subsidy-oita","collection":"subsidy","category":"business","categoryLabel":"事業","title":"大分県省力化・生産性向上支援補助金（大分県）","year":null,"authors":[],"degree":4}
+{"id":"subsidy-oita","collection":"subsidy","category":"business","categoryLabel":"事業","title":"大分県省力化・生産性向上支援補助金（大分県）","year":null,"authors":[],"degree":5}
 {"id":"subsidy-okayama","collection":"subsidy","category":"business","categoryLabel":"事業","title":"岡山市創業者支援事業補助金","year":null,"authors":["municipality|"],"degree":12}
 {"id":"subsidy-okayama-pref","collection":"subsidy","category":"business","categoryLabel":"事業","title":"中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）","year":null,"authors":[],"degree":3}
 {"id":"subsidy-okinawa","collection":"subsidy","category":"business","categoryLabel":"事業","title":"沖縄県産業振興基金事業補助金（沖縄県）","year":null,"authors":[],"degree":12}
@@ -4046,7 +4046,7 @@
 {"id":"subsidy-small-business-mutual-aid","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"小規模企業共済","year":null,"authors":[],"degree":6}
 {"id":"subsidy-special-child-allowance","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"特別児童扶養手当","year":null,"authors":["municipality|"],"degree":12}
 {"id":"subsidy-special-disability-allowance","collection":"subsidy","category":"welfare","categoryLabel":"福祉","title":"特別障害者手当","year":null,"authors":["municipality|"],"degree":11}
-{"id":"subsidy-specific-jobseeker","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"特定求職者雇用開発助成金","year":null,"authors":[],"degree":18}
+{"id":"subsidy-specific-jobseeker","collection":"subsidy","category":"employment","categoryLabel":"雇用","title":"特定求職者雇用開発助成金","year":null,"authors":[],"degree":17}
 {"id":"subsidy-strong-agriculture","collection":"subsidy","category":"business","categoryLabel":"事業","title":"強い農業づくり総合支援交付金","year":null,"authors":[],"degree":10}
 {"id":"subsidy-tochigi","collection":"subsidy","category":"business","categoryLabel":"事業","title":"地域課題解決型創業支援補助金（栃木県）","year":null,"authors":[],"degree":12}
 {"id":"subsidy-tokushima","collection":"subsidy","category":"business","categoryLabel":"事業","title":"徳島県生産性向上・成長力強化支援事業費補助金（徳島県）","year":null,"authors":[],"degree":3}
@@ -4072,35 +4072,35 @@
 {"id":"support-03","collection":"support","category":"resource","categoryLabel":"相談窓口","title":"こころの健康相談統一ダイヤル","year":null,"authors":[],"degree":8}
 {"id":"tax-amended-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"修正申告・期限後申告と加算税","year":null,"authors":[],"degree":28}
 {"id":"tax-angel-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"エンジェル税制（ベンチャー企業投資促進税制）","year":null,"authors":[],"degree":6}
-{"id":"tax-asset-replacement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特定の事業用資産の買換えの場合の譲渡所得の課税の特例","year":null,"authors":[],"degree":3}
-{"id":"tax-automobile-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"自動車税（種別割）","year":null,"authors":[],"degree":15}
+{"id":"tax-asset-replacement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特定の事業用資産の買換えの場合の譲渡所得の課税の特例","year":null,"authors":[],"degree":4}
+{"id":"tax-automobile-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"自動車税（種別割）","year":null,"authors":[],"degree":16}
 {"id":"tax-bad-debt","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の貸倒損失と貸倒引当金","year":null,"authors":[],"degree":3}
 {"id":"tax-basic-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の基礎控除（令和7年改正反映）","year":null,"authors":[],"degree":25}
-{"id":"tax-blue-return-application","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の青色申告承認申請","year":null,"authors":[],"degree":15}
+{"id":"tax-blue-return-application","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の青色申告承認申請","year":null,"authors":[],"degree":13}
 {"id":"tax-blue-return-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"青色申告特別控除（所得税）","year":null,"authors":[],"degree":11}
-{"id":"tax-business-premise-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"事業所税（地方税・目的税）","year":null,"authors":[],"degree":12}
+{"id":"tax-business-premise-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"事業所税（地方税・目的税）","year":null,"authors":[],"degree":13}
 {"id":"tax-business-succession","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人版事業承継税制（特例措置）","year":null,"authors":[],"degree":2}
-{"id":"tax-business-tax-pro-forma","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人事業税の外形標準課税","year":null,"authors":[],"degree":17}
+{"id":"tax-business-tax-pro-forma","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人事業税の外形標準課税","year":null,"authors":[],"degree":19}
 {"id":"tax-cfc-taxation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"外国子会社合算税制（タックスヘイブン対策税制／CFC税制）","year":null,"authors":[],"degree":10}
-{"id":"tax-city-planning-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"都市計画税","year":null,"authors":[],"degree":13}
+{"id":"tax-city-planning-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"都市計画税","year":null,"authors":[],"degree":14}
 {"id":"tax-claim-for-correction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"更正の請求（払い過ぎた税金の是正）","year":null,"authors":[],"degree":10}
-{"id":"tax-consumption-final-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の確定申告・納付期限","year":null,"authors":[],"degree":11}
-{"id":"tax-consumption-interim","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の中間申告・中間納付","year":null,"authors":[],"degree":11}
+{"id":"tax-consumption-final-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の確定申告・納付期限","year":null,"authors":[],"degree":2}
+{"id":"tax-consumption-interim","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の中間申告・中間納付","year":null,"authors":[],"degree":12}
 {"id":"tax-consumption-taxable-scope","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の課税対象（課税・非課税・不課税）","year":null,"authors":[],"degree":4}
 {"id":"tax-consumption-taxpayer","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の納税義務者の判定","year":null,"authors":[],"degree":14}
 {"id":"tax-corp-blue-application","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の青色申告の承認申請","year":null,"authors":[],"degree":5}
-{"id":"tax-corp-establishment-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人設立後の税務署への届出期限","year":null,"authors":[],"degree":3}
-{"id":"tax-corp-inhabitant-flat","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人住民税の均等割","year":null,"authors":[],"degree":10}
-{"id":"tax-corp-interim-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の中間申告","year":null,"authors":[],"degree":16}
-{"id":"tax-corp-tax-return-deadline","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の確定申告・納付期限","year":null,"authors":[],"degree":16}
-{"id":"tax-corporate-tax-rate","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の税率（普通法人・中小法人の軽減税率）","year":null,"authors":[],"degree":24}
+{"id":"tax-corp-establishment-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人設立後の税務署への届出期限","year":null,"authors":[],"degree":4}
+{"id":"tax-corp-inhabitant-flat","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人住民税の均等割","year":null,"authors":[],"degree":9}
+{"id":"tax-corp-interim-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の中間申告","year":null,"authors":[],"degree":2}
+{"id":"tax-corp-tax-return-deadline","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の確定申告・納付期限","year":null,"authors":[],"degree":15}
+{"id":"tax-corporate-tax-rate","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の税率（普通法人・中小法人の軽減税率）","year":null,"authors":[],"degree":25}
 {"id":"tax-crypto-asset-valuation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）","year":null,"authors":[],"degree":3}
-{"id":"tax-customs-duty","collection":"compliance","category":"tax","categoryLabel":"税務","title":"関税（輸入品に課される国税）","year":null,"authors":[],"degree":12}
+{"id":"tax-customs-duty","collection":"compliance","category":"tax","categoryLabel":"税務","title":"関税（輸入品に課される国税）","year":null,"authors":[],"degree":11}
 {"id":"tax-defense-special-corporate","collection":"compliance","category":"tax","categoryLabel":"税務","title":"防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）","year":2026,"authors":[],"degree":12}
 {"id":"tax-deferred-asset","collection":"compliance","category":"tax","categoryLabel":"税務","title":"繰延資産の償却（法人税・所得税）","year":null,"authors":[],"degree":4}
-{"id":"tax-delinquent-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国税の延滞税","year":null,"authors":[],"degree":3}
+{"id":"tax-delinquent-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国税の延滞税","year":null,"authors":[],"degree":2}
 {"id":"tax-dependent-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"扶養控除","year":null,"authors":[],"degree":8}
-{"id":"tax-depreciable-asset-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"固定資産税（償却資産）の申告","year":null,"authors":[],"degree":4}
+{"id":"tax-depreciable-asset-filing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"固定資産税（償却資産）の申告","year":null,"authors":[],"degree":5}
 {"id":"tax-depreciation-method","collection":"compliance","category":"tax","categoryLabel":"税務","title":"減価償却の方法と法定償却方法","year":null,"authors":[],"degree":3}
 {"id":"tax-depreciation-useful-life","collection":"compliance","category":"tax","categoryLabel":"税務","title":"減価償却資産の法定耐用年数","year":null,"authors":[],"degree":4}
 {"id":"tax-disability-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の障害者控除","year":null,"authors":[],"degree":11}
@@ -4112,11 +4112,11 @@
 {"id":"tax-employment-income-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"給与所得控除","year":null,"authors":[],"degree":3}
 {"id":"tax-entertainment-expense","collection":"compliance","category":"tax","categoryLabel":"税務","title":"交際費等の損金不算入と中小法人特例","year":null,"authors":[],"degree":4}
 {"id":"tax-entertainment-expense-meal-threshold","collection":"compliance","category":"tax","categoryLabel":"税務","title":"交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）","year":2024,"authors":[],"degree":3}
-{"id":"tax-estimated-prepayment","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の予定納税","year":null,"authors":[],"degree":9}
+{"id":"tax-estimated-prepayment","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の予定納税","year":null,"authors":[],"degree":10}
 {"id":"tax-export-exemption","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の輸出免税","year":null,"authors":[],"degree":5}
 {"id":"tax-filing-deadline","collection":"compliance","category":"tax","categoryLabel":"税務","title":"確定申告の期限（所得税・個人事業者の消費税）","year":null,"authors":[],"degree":3}
 {"id":"tax-filing-necessity","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の確定申告が必要な人・不要な人","year":null,"authors":[],"degree":4}
-{"id":"tax-fixed-asset-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"固定資産税（土地・家屋）","year":null,"authors":[],"degree":12}
+{"id":"tax-fixed-asset-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"固定資産税（土地・家屋）","year":null,"authors":[],"degree":13}
 {"id":"tax-flat-amount-reduction-2024","collection":"compliance","category":"tax","categoryLabel":"税務","title":"令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）","year":2024,"authors":[],"degree":19}
 {"id":"tax-forest-environment-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）","year":2024,"authors":[],"degree":8}
 {"id":"tax-furusato-designation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"ふるさと納税の指定制度（返礼品の基準）","year":null,"authors":[],"degree":4}
@@ -4127,27 +4127,27 @@
 {"id":"tax-global-minimum-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）","year":null,"authors":[],"degree":19}
 {"id":"tax-group-corporate","collection":"compliance","category":"tax","categoryLabel":"税務","title":"グループ法人税制（完全支配関係への強制適用）","year":null,"authors":[],"degree":3}
 {"id":"tax-group-taxation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税のグループ通算制度","year":null,"authors":[],"degree":5}
-{"id":"tax-hotei-chosho-etax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法定調書の e-Tax 等による提出義務","year":null,"authors":[],"degree":4}
+{"id":"tax-hotei-chosho-etax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法定調書の e-Tax 等による提出義務","year":null,"authors":[],"degree":3}
 {"id":"tax-housing-fund-gift","collection":"compliance","category":"tax","categoryLabel":"税務","title":"直系尊属からの住宅取得等資金贈与の非課税特例","year":null,"authors":[],"degree":10}
 {"id":"tax-housing-loan-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"住宅借入金等特別控除（住宅ローン控除）","year":null,"authors":[],"degree":18}
-{"id":"tax-income-categories","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税における所得の10種類の区分","year":null,"authors":[],"degree":8}
+{"id":"tax-income-categories","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税における所得の10種類の区分","year":null,"authors":[],"degree":7}
 {"id":"tax-income-tax-progressive","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の超過累進税率","year":null,"authors":[],"degree":20}
-{"id":"tax-individual-business-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業税","year":null,"authors":[],"degree":12}
-{"id":"tax-individual-loss-carryover","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税 純損失の繰越控除（青色申告者）","year":null,"authors":[],"degree":5}
-{"id":"tax-inheritance-basic-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"相続税の基礎控除額","year":null,"authors":[],"degree":7}
+{"id":"tax-individual-business-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業税","year":null,"authors":[],"degree":13}
+{"id":"tax-individual-loss-carryover","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税 純損失の繰越控除（青色申告者）","year":null,"authors":[],"degree":2}
+{"id":"tax-inheritance-basic-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"相続税の基礎控除額","year":null,"authors":[],"degree":8}
 {"id":"tax-input-credit-method","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の仕入税額控除（個別対応方式・一括比例配分方式）","year":null,"authors":[],"degree":10}
 {"id":"tax-invoice","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度（適格請求書等保存方式）","year":null,"authors":[],"degree":11}
 {"id":"tax-invoice-20percent-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）","year":null,"authors":[],"degree":16}
 {"id":"tax-invoice-input-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度と仕入税額控除の要件","year":null,"authors":[],"degree":8}
-{"id":"tax-invoice-small-amount-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）","year":null,"authors":[],"degree":16}
-{"id":"tax-large-corp-efiling","collection":"compliance","category":"tax","categoryLabel":"税務","title":"大法人の電子申告（e-Tax）義務化","year":null,"authors":[],"degree":10}
+{"id":"tax-invoice-small-amount-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）","year":null,"authors":[],"degree":17}
+{"id":"tax-large-corp-efiling","collection":"compliance","category":"tax","categoryLabel":"税務","title":"大法人の電子申告（e-Tax）義務化","year":null,"authors":[],"degree":7}
 {"id":"tax-life-insurance-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"生命保険料控除","year":null,"authors":[],"degree":3}
 {"id":"tax-light-vehicle-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"軽自動車税（種別割）","year":null,"authors":[],"degree":9}
 {"id":"tax-liquor-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"酒税の概要","year":null,"authors":[],"degree":12}
 {"id":"tax-listed-securities","collection":"compliance","category":"tax","categoryLabel":"税務","title":"上場株式等の譲渡益・配当に対する課税","year":null,"authors":[],"degree":10}
-{"id":"tax-loss-carryback","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の欠損金の繰戻しによる還付","year":null,"authors":[],"degree":22}
+{"id":"tax-loss-carryback","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の欠損金の繰戻しによる還付","year":null,"authors":[],"degree":23}
 {"id":"tax-loss-carryforward","collection":"compliance","category":"tax","categoryLabel":"税務","title":"青色申告法人の繰越欠損金","year":null,"authors":[],"degree":2}
-{"id":"tax-loss-offsetting","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の損益通算","year":null,"authors":[],"degree":12}
+{"id":"tax-loss-offsetting","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の損益通算","year":null,"authors":[],"degree":14}
 {"id":"tax-lump-sum-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"一括償却資産の損金算入（3年均等償却）","year":null,"authors":[],"degree":13}
 {"id":"tax-medical-expense-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"医療費控除","year":null,"authors":[],"degree":10}
 {"id":"tax-newco-consumption-exemption","collection":"compliance","category":"tax","categoryLabel":"税務","title":"新設法人の消費税納税義務免除の特例","year":null,"authors":[],"degree":6}
@@ -4156,21 +4156,21 @@
 {"id":"tax-officer-retirement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"役員退職給与の損金算入","year":null,"authors":[],"degree":2}
 {"id":"tax-overseas-asset-report","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国外財産調書制度（国外財産5,000万円超の保有者の提出義務）","year":null,"authors":[],"degree":3}
 {"id":"tax-payment-grace","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国税の納税の猶予・換価の猶予","year":null,"authors":[],"degree":2}
-{"id":"tax-pension-income-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"公的年金等控除（所得税）","year":null,"authors":[],"degree":6}
-{"id":"tax-platform-taxation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税のプラットフォーム課税（特定プラットフォーム事業者制度）","year":null,"authors":[],"degree":11}
+{"id":"tax-pension-income-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"公的年金等控除（所得税）","year":null,"authors":[],"degree":7}
+{"id":"tax-platform-taxation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税のプラットフォーム課税（特定プラットフォーム事業者制度）","year":null,"authors":[],"degree":12}
 {"id":"tax-platform-taxation-digital","collection":"compliance","category":"tax","categoryLabel":"税務","title":"国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）","year":null,"authors":[],"degree":11}
 {"id":"tax-qualified-invoice-issuer-registration","collection":"compliance","category":"tax","categoryLabel":"税務","title":"適格請求書発行事業者の登録制度（インボイス制度）","year":null,"authors":[],"degree":10}
-{"id":"tax-rd-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"研究開発税制（試験研究費の税額控除）","year":null,"authors":[],"degree":5}
-{"id":"tax-real-estate-acquisition","collection":"compliance","category":"tax","categoryLabel":"税務","title":"不動産取得税","year":null,"authors":[],"degree":12}
-{"id":"tax-real-estate-capital-gains","collection":"compliance","category":"tax","categoryLabel":"税務","title":"土地・建物等の譲渡所得の課税","year":null,"authors":[],"degree":5}
+{"id":"tax-rd-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"研究開発税制（試験研究費の税額控除）","year":null,"authors":[],"degree":4}
+{"id":"tax-real-estate-acquisition","collection":"compliance","category":"tax","categoryLabel":"税務","title":"不動産取得税","year":null,"authors":[],"degree":13}
+{"id":"tax-real-estate-capital-gains","collection":"compliance","category":"tax","categoryLabel":"税務","title":"土地・建物等の譲渡所得の課税","year":null,"authors":[],"degree":6}
 {"id":"tax-receipt-stamp","collection":"compliance","category":"tax","categoryLabel":"税務","title":"領収書の印紙税と非課税範囲","year":null,"authors":[],"degree":3}
 {"id":"tax-reduced-rate","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の軽減税率制度","year":null,"authors":[],"degree":5}
 {"id":"tax-registration-license-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"登録免許税の概要","year":null,"authors":[],"degree":8}
-{"id":"tax-resident-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人住民税（道府県民税・市町村民税）","year":null,"authors":[],"degree":11}
+{"id":"tax-resident-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人住民税（道府県民税・市町村民税）","year":null,"authors":[],"degree":12}
 {"id":"tax-retained-earnings","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特定同族会社の留保金課税（特別税率）","year":null,"authors":[],"degree":3}
 {"id":"tax-retirement-income","collection":"compliance","category":"tax","categoryLabel":"税務","title":"退職所得の課税（退職金にかかる所得税）","year":null,"authors":[],"degree":5}
 {"id":"tax-safety-net-mutual-aid","collection":"compliance","category":"tax","categoryLabel":"税務","title":"経営セーフティ共済（中小企業倒産防止共済制度）","year":null,"authors":[],"degree":14}
-{"id":"tax-scanner-storage","collection":"compliance","category":"tax","categoryLabel":"税務","title":"電子帳簿保存法のスキャナ保存制度","year":null,"authors":[],"degree":6}
+{"id":"tax-scanner-storage","collection":"compliance","category":"tax","categoryLabel":"税務","title":"電子帳簿保存法のスキャナ保存制度","year":null,"authors":[],"degree":5}
 {"id":"tax-securities-account","collection":"compliance","category":"tax","categoryLabel":"税務","title":"上場株式等の特定口座制度","year":null,"authors":[],"degree":10}
 {"id":"tax-self-medication","collection":"compliance","category":"tax","categoryLabel":"税務","title":"セルフメディケーション税制（医療費控除の特例）","year":null,"authors":[],"degree":2}
 {"id":"tax-simplified-consumption","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の簡易課税制度","year":null,"authors":[],"degree":10}
@@ -4178,26 +4178,26 @@
 {"id":"tax-small-business-mutual-aid","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模企業共済制度","year":null,"authors":[],"degree":8}
 {"id":"tax-small-enterprise-mutual-aid","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模企業共済等掛金控除","year":null,"authors":[],"degree":14}
 {"id":"tax-small-residential-land","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模宅地等についての相続税の課税価格の計算の特例","year":null,"authors":[],"degree":11}
-{"id":"tax-sme-investment-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業投資促進税制","year":null,"authors":[],"degree":11}
+{"id":"tax-sme-investment-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業投資促進税制","year":null,"authors":[],"degree":13}
 {"id":"tax-sme-management-enhancement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）","year":null,"authors":[],"degree":23}
-{"id":"tax-sole-proprietor-notification","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業の開業・廃業等届出書（開業届）","year":null,"authors":[],"degree":5}
-{"id":"tax-special-collection-resident","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人住民税の特別徴収（給与天引き）義務","year":null,"authors":[],"degree":11}
-{"id":"tax-special-corporate-business-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特別法人事業税及び特別法人事業譲与税","year":null,"authors":[],"degree":10}
+{"id":"tax-sole-proprietor-notification","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業の開業・廃業等届出書（開業届）","year":null,"authors":[],"degree":11}
+{"id":"tax-special-collection-resident","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人住民税の特別徴収（給与天引き）義務","year":null,"authors":[],"degree":10}
+{"id":"tax-special-corporate-business-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特別法人事業税及び特別法人事業譲与税","year":null,"authors":[],"degree":11}
 {"id":"tax-special-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特別償却（租税特別措置法）","year":null,"authors":[],"degree":24}
-{"id":"tax-spouse-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"配偶者控除・配偶者特別控除","year":null,"authors":[],"degree":16}
+{"id":"tax-spouse-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"配偶者控除・配偶者特別控除","year":null,"authors":[],"degree":15}
 {"id":"tax-stamp-duty-doc","collection":"compliance","category":"tax","categoryLabel":"税務","title":"印紙税の課税文書と過怠税","year":null,"authors":[],"degree":2}
 {"id":"tax-stamp-duty-electronic","collection":"compliance","category":"tax","categoryLabel":"税務","title":"印紙税の課税文書の判断と電子契約の課税対象外扱い","year":null,"authors":[],"degree":6}
 {"id":"tax-stock-option","collection":"compliance","category":"tax","categoryLabel":"税務","title":"税制適格ストックオプションの課税繰延べ","year":null,"authors":[],"degree":3}
 {"id":"tax-superior-ledger","collection":"compliance","category":"tax","categoryLabel":"税務","title":"優良な電子帳簿の過少申告加算税軽減","year":null,"authors":[],"degree":8}
 {"id":"tax-tax-audit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"税務調査（質問検査権と事前通知）","year":null,"authors":[],"degree":3}
 {"id":"tax-tax-free-shop","collection":"compliance","category":"tax","categoryLabel":"税務","title":"輸出物品販売場制度（消費税免税店制度）","year":null,"authors":[],"degree":16}
-{"id":"tax-tax-inclusive-pricing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の総額表示義務（税込価格表示）","year":null,"authors":[],"degree":10}
+{"id":"tax-tax-inclusive-pricing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の総額表示義務（税込価格表示）","year":null,"authors":[],"degree":11}
 {"id":"tax-transfer-pricing","collection":"compliance","category":"tax","categoryLabel":"税務","title":"移転価格税制","year":null,"authors":[],"degree":11}
 {"id":"tax-vehicle-weight-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"自動車重量税","year":null,"authors":[],"degree":10}
-{"id":"tax-wage-increase-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"賃上げ促進税制","year":null,"authors":[],"degree":7}
-{"id":"tax-wage-increase-promotion-sme","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）","year":null,"authors":[],"degree":5}
-{"id":"tax-withholding","collection":"compliance","category":"tax","categoryLabel":"税務","title":"源泉徴収義務と納付期限","year":null,"authors":[],"degree":6}
+{"id":"tax-wage-increase-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"賃上げ促進税制","year":null,"authors":[],"degree":6}
+{"id":"tax-wage-increase-promotion-sme","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）","year":null,"authors":[],"degree":6}
+{"id":"tax-withholding","collection":"compliance","category":"tax","categoryLabel":"税務","title":"源泉徴収義務と納付期限","year":null,"authors":[],"degree":4}
 {"id":"tax-withholding-nonresident","collection":"compliance","category":"tax","categoryLabel":"税務","title":"非居住者・外国法人への源泉徴収","year":null,"authors":[],"degree":6}
-{"id":"tax-withholding-payment-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"源泉所得税の納期の特例","year":null,"authors":[],"degree":6}
+{"id":"tax-withholding-payment-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"源泉所得税の納期の特例","year":null,"authors":[],"degree":7}
 {"id":"tax-withholding-slip","collection":"compliance","category":"tax","categoryLabel":"税務","title":"給与所得の源泉徴収票の交付義務（所得税法226条）","year":null,"authors":[],"degree":3}
 {"id":"tax-year-end-adjustment","collection":"compliance","category":"tax","categoryLabel":"税務","title":"年末調整","year":null,"authors":[],"degree":2}

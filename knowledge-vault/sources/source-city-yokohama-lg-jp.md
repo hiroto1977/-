@@ -2,7 +2,7 @@
 title: "city.yokohama.lg.jp"
 type: source-domain
 host: "city.yokohama.lg.jp"
-cite_count: 8
+cite_count: 9
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # city.yokohama.lg.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（自治体 8）
+> [!info] 出典ドメイン索引 ・ 引用 **9 件**（自治体 9）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[subsidy-single-parent-welfare-loan|母子父子寡婦福祉資金貸付金]] — 横浜市母子父子寡婦福祉資金
 - [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 横浜市ワンストップ経営相談窓口（IDEC横浜）
 - [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 横浜市特定創業支援等事業証明書
+- [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 横浜市均等割の月割計算（事務所を新設した場合）
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 横浜市法人市民税
 - [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 横浜市森林環境税（国税）について
 - [[tax-light-vehicle-tax|軽自動車税（種別割）]] — 横浜市軽自動車税について

@@ -25,9 +25,9 @@ tags:
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 18）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 17）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 16）
-- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]]（接続 16）
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 15）
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -79,7 +79,6 @@ tags:
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]]
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]]
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]]
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]]
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]]
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]]
 - [[legal-design-right|意匠権（意匠法）]]
@@ -95,6 +94,7 @@ tags:
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]]
 - [[legal-external-transmission|電気通信事業法の外部送信規律]]
 - [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]]
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]]
 - [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]]
 - [[legal-food-sanitation|食品衛生法の営業許可・届出とHACCPに沿った衛生管理]]
 - [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]]

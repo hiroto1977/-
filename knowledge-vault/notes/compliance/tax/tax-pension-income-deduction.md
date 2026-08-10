@@ -35,6 +35,7 @@ aliases:
 - [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 語彙が近い
 - [[bizlaw-insurance-act|保険法]] — 出典を共有
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

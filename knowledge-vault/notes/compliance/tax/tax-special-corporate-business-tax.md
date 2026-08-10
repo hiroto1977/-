@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[tax-real-estate-acquisition|不動産取得税]] — 出典を共有
 - [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 出典を共有
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 出典を共有
-- [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

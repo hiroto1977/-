@@ -37,6 +37,7 @@ aliases:
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 語彙が近い
 - [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 語彙が近い
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 同分野の近傍
+- [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

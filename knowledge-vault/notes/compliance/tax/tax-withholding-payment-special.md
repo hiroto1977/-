@@ -35,6 +35,7 @@ aliases:
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 語彙が近い
 - [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
 - [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
+- [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

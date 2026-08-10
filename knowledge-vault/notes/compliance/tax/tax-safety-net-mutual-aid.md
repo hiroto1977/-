@@ -39,7 +39,7 @@ aliases:
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
-- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
 - [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
 
 ## 関連

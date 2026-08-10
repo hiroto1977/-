@@ -15,19 +15,19 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 28）
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 25）
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 25）
 - [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 24）
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 23）
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 23）
-- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 22）
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 20）
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 19）
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 19）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 19）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 18）
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 17）
-- [[tax-corp-interim-return|法人税の中間申告]]（接続 16）
-- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]]（接続 16）
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 17）
+- [[tax-automobile-tax|自動車税（種別割）]]（接続 16）
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 16）
-- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 16）
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 16）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]]
@@ -39,7 +39,6 @@ tags:
 ## 第 3 部 — 年代情報のない項目
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
-- [[tax-automobile-tax|自動車税（種別割）]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
 - [[tax-blue-return-application|所得税の青色申告承認申請]]
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]]
@@ -55,6 +54,8 @@ tags:
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]]
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]]
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]]
+- [[tax-corp-interim-return|法人税の中間申告]]
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]]
 - [[tax-crypto-asset-valuation|法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）]]
 - [[tax-customs-duty|関税（輸入品に課される国税）]]
 - [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]]
@@ -137,7 +138,6 @@ tags:
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]]
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]]
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]]
-- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]]
 - [[tax-transfer-pricing|移転価格税制]]
 - [[tax-vehicle-weight-tax|自動車重量税]]

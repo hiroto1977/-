@@ -34,6 +34,7 @@ aliases:
 - [[tax-wage-increase-credit|賃上げ促進税制]] — 語彙が近い
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 語彙が近い
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
+- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

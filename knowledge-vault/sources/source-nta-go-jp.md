@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 271
+cite_count: 276
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **271 件**（公的 271）
+> [!info] 出典ドメイン索引 ・ 引用 **276 件**（公的 276）
 
 ## このドメインを出典とする項目
 
@@ -62,8 +62,10 @@ tags:
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 国税庁外国子会社合算税制に関するQ&A
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁No.2026確定申告を間違えたとき
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁更正の請求期間の延長等について
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁D1-2消費税申告期限延長届出手続
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6137課税期間（個人事業者）
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6601申告と納税
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6609中間申告の方法（回数とみなし申告）
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6610法人の消費税確定申告書の提出期限
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 国税庁No.6609中間申告の方法
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 国税庁消費税の中間申告制度
@@ -81,6 +83,7 @@ tags:
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁青色申告の承認申請
 - [[tax-corp-interim-return|法人税の中間申告]] — 国税庁中間（予定）税額の算出
 - [[tax-corp-interim-return|法人税の中間申告]] — 国税庁予定申告及び納税の義務
+- [[tax-corp-interim-return|法人税の中間申告]] — 国税庁法人税のあらましと申告の手引（中間申告）
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 国税庁C1-1法人税の申告
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 国税庁C1-17申告期限の延長の特例
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 国税庁No.5759法人税の税率
@@ -243,6 +246,8 @@ tags:
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 国税庁No.5433中小企業投資促進税制
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 国税庁No.5434中小企業経営強化税制
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A1-5個人事業の開業・廃業等届出手続
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A1-8所得税の青色申告承認申請手続
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A2-7給与支払事務所等の開設・移転・廃止の届出
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁No.2090新たに事業を始めたときの届出
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 国税庁No.5433中小企業投資促進税制（特別償却又は税額控除）
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1191配偶者控除

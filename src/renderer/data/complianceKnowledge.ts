@@ -1027,15 +1027,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人住民税の均等割',
       statement:
-        '法人住民税は法人税割と均等割からなり、均等割は資本金等の額・従業者数に応じて定額で課され、所得が赤字でも' +
-        '納税義務が生じる。法人税割は法人税額に応じて課されるため、黒字法人のみが負担する点で均等割と異なる。',
+        '法人住民税は法人税割と均等割からなり、均等割は所得が赤字でも納税義務が生じる。' +
+        '法人税割は法人税額に応じて課されるため黒字法人のみが負担する点で均等割と異なる。' +
+        '均等割の区分は道府県民税と市町村民税で違い、道府県民税は資本金等の額だけで区分されて標準税率は2万〜80万円、' +
+        '市町村民税は資本金等の額と従業者数（50人超か50人以下か）の組合せで区分されて標準税率は5万〜300万円である。' +
+        '実務で効くのは、均等割が事務所等の所在する自治体ごとにかかる点で、' +
+        '支店や営業所を別の市町村へ出せばその自治体にも均等割が発生する。' +
+        '事業年度の中途で事務所等を開設・廃止した場合は、事務所等を有していた月数で月割計算する' +
+        '（暦に従って数え、1か月未満の端数は切り捨てる）。' +
+        '税率は条例で標準税率と異なることがあるので、進出先ごとに確認する。',
       authority: '所管: 総務省・地方自治体（地方税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_08.html', type: 'government', label: '総務省 法人住民税' },
       { url: 'https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/jigyosya/shizei/hojin/houjin.html', type: 'municipality', label: '横浜市 法人市民税' },
-      { url: 'https://www.yayoi-kk.co.jp/kaikei/oyakudachi/corporate-inhabitant-tax/', type: 'media', label: '弥生 法人住民税' },
+      { url: 'https://www.soumu.go.jp/main_content/001032861.pdf', type: 'government', label: '総務省 令和7年度 法人住民税・法人事業税 税率一覧表' },
+      { url: 'https://www.city.yokohama.lg.jp/faq/kukyoku/somu/hojin-kazei/2024040501.html', type: 'municipality', label: '横浜市 均等割の月割計算（事務所を新設した場合）' },
     ],
   },
   {
@@ -1160,15 +1168,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人税の中間申告',
       statement:
-        '前事業年度の確定法人税額が20万円を超える普通法人は、事業年度開始の日以後6か月を経過した日から2か月以内に' +
-        '中間申告・納付を行う。前年度実績による予定申告か、仮決算に基づく中間申告のいずれかを選択できる。',
+        '普通法人は、事業年度開始の日以後6か月を経過した日から2か月以内に中間申告・納付を行う。' +
+        '判定は「前事業年度の確定法人税額 ÷ 前事業年度の月数 × 6」で、この額が10万円以下またはゼロなら中間申告は要らない。' +
+        '前事業年度が12か月なら、確定法人税額が20万円を超えるかどうかという言い換えになる。' +
+        '設立第1期は前事業年度がないため対象外で、事業年度が6か月以下の場合も中間申告は不要である。' +
+        '前年度実績による予定申告か、仮決算に基づく中間申告のいずれかを選択できるが、' +
+        '仮決算による中間申告は、その法人税額が前期実績基準額を超えるときは提出できない（法人税法72条）。' +
+        '業績が前年より良いときに仮決算で減らす、という使い方はできないということである。' +
+        '期限までに中間申告書を提出しなかった場合は前期実績による申告書の提出があったものとみなされるため、' +
+        '出し忘れても税額は確定し、納付が遅れた分だけ延滞税がかかる。' +
+        '中間納付額は確定申告で精算され、納めすぎた分は還付される。',
       authority: '所管: 国税庁（法人税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/nozei/oshirase/pdf/01.pdf', type: 'government', label: '国税庁 予定申告及び納税の義務' },
       { url: 'https://www.nta.go.jp/law/shitsugi/hojin/24/04.htm', type: 'government', label: '国税庁 中間（予定）税額の算出' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/17300/', type: 'media', label: 'マネーフォワード 法人税の中間納付' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/aramashi2024/pdf/01.pdf', type: 'government', label: '国税庁 法人税のあらましと申告の手引（中間申告）' },
     ],
   },
   {
@@ -2176,7 +2192,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '消費税の確定申告・納付期限',
       statement:
         '法人の消費税及び地方消費税の確定申告・納付期限は、原則として課税期間の末日の翌日から2か月以内である。' +
-        '個人事業者の消費税及び地方消費税の確定申告・納付期限は、原則として翌年3月31日である。',
+        '個人事業者は翌年3月31日で、所得税の3月15日とは半月ずれるため別々に管理する必要がある。' +
+        '法人税と違って消費税には申告期限の延長がもともと用意されていなかったが、' +
+        '法人税の申告期限の延長の特例の適用を受けている法人に限り、適用を受けようとする事業年度終了の日の属する' +
+        '課税期間の末日までに「消費税申告期限延長届出書」を提出すれば1か月延長できる。' +
+        'ただし延びるのは申告期限だけで、延長された期間に係る利子税を併せて納付することになる。' +
+        '直前の課税期間の確定消費税額（国税分）が48万円を超えると中間申告義務が生じ、' +
+        '48万円超で年1回、400万円超で年3回、4,800万円超で年11回となる。' +
+        '中間申告書を期限までに提出しなくても前期実績による申告があったものとみなされて税額は確定するので、' +
+        '出し忘れは申告漏れではなく納付漏れとなり、遅れた分だけ延滞税がかかる。',
       authority: '所管: 国税庁（消費税法）',
       asOf: '2026-06',
     },
@@ -2184,6 +2208,8 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6601.htm', type: 'government', label: '国税庁 No.6601 申告と納税' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6610.htm', type: 'government', label: '国税庁 No.6610 法人の消費税確定申告書の提出期限' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6137.htm', type: 'government', label: '国税庁 No.6137 課税期間（個人事業者）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6609.htm', type: 'government', label: '国税庁 No.6609 中間申告の方法（回数とみなし申告）' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shohi/annai/0020003-179_01.htm', type: 'government', label: '国税庁 D1-2 消費税申告期限延長届出手続' },
     ],
   },
   {
@@ -3332,7 +3358,16 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '個人事業の開業・廃業等届出書（開業届）',
       statement:
         '新たに事業所得・不動産所得・山林所得を生ずべき事業を開始した個人は、その事実があった日から1か月以内に' +
-        '「個人事業の開業・廃業等届出書」を納税地の所轄税務署長に提出しなければならない（所得税法229条）。提出はe-Taxまたは書面で行う。',
+        '「個人事業の開業・廃業等届出書」を納税地の所轄税務署長に提出しなければならない（所得税法229条）。' +
+        '提出はe-Taxまたは書面で行い、廃業のときも同じ様式を使う。' +
+        '開業届そのものに罰則はなく、期限で損をするのは併せて出す書類のほうである。' +
+        '所得税の青色申告承認申請書は、青色申告をしようとする年の3月15日まで' +
+        '（その年の1月16日以後に開業した場合は開業の日から2か月以内）に提出する必要があり、' +
+        'これを逃すと初年度は白色となって最高65万円の青色申告特別控除も純損失の3年繰越しも使えない。' +
+        '従業員や青色事業専従者に給与を支払うなら「給与支払事務所等の開設・移転・廃止届出書」を開設から1か月以内に提出し' +
+        '（所得税法230条）、源泉所得税を毎月ではなく年2回にまとめたいときは納期の特例の承認に関する申請書も検討する。' +
+        'なお個人事業税の事業開始等申告書は都道府県への別の届出で、税務署への開業届では代替できない' +
+        '（東京都の場合は事業開始の日から15日以内）。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
@@ -3340,6 +3375,9 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/04.htm', type: 'government', label: '国税庁 A1-5 個人事業の開業・廃業等届出手続' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2090.htm', type: 'government', label: '国税庁 No.2090 新たに事業を始めたときの届出' },
       { url: 'https://laws.e-gov.go.jp/law/340AC0000000033', type: 'government', label: 'e-Gov法令検索 所得税法（229条）' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/09.htm', type: 'government', label: '国税庁 A1-8 所得税の青色申告承認申請手続' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_11.htm', type: 'government', label: '国税庁 A2-7 給与支払事務所等の開設・移転・廃止の届出' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/scene/business', type: 'municipality', label: '東京都主税局 事業を始めたとき（事業開始等申告書）' },
     ],
   },
   {
@@ -3879,8 +3917,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '所得税 純損失の繰越控除（青色申告者）',
       statement:
-        '青色申告者について、損益通算をしてもなお控除しきれない損失（純損失）の金額が生じた場合、その純損失の金額を翌年以後3年間にわたり' +
-        '繰り越して、各年分の所得金額から控除することができる（純損失の繰越控除）。',
+        '青色申告者について、損益通算をしてもなお控除しきれない損失（純損失）の金額が生じた場合、' +
+        'その金額を翌年以後3年間にわたり繰り越して各年分の所得金額から控除できる（純損失の繰越控除）。' +
+        '実務で落ちやすいのは要件のほうで、損失が生じた年分の確定申告書（損失申告用の第四表を付ける）を提出し、' +
+        'かつその後も連続して確定申告書を提出していることが必要になる。' +
+        '所得が少なく納税額が出ない年に申告を省くと、そこで繰越しが切れてしまう。' +
+        '前年も青色申告をしていれば、繰り越す代わりに前年分へ繰り戻して所得税の還付を受けることもできる（選択）。' +
+        '青色申告でなくても、変動所得の損失と被災事業用資産の損失は3年間繰り越せる。' +
+        'また令和5年4月1日以後に発生した特定非常災害・東日本大震災による純損失は、' +
+        '特定被災事業用資産の損失の割合が10%以上であるなど一定の場合に繰越期間が5年へ延長される。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },

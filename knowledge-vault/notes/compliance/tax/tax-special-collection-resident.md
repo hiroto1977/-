@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 語彙が近い
-- [[tax-withholding|源泉徴収義務と納付期限]] — 語彙が近い
 - [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 出典を共有
 - [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 出典を共有
 - [[labor-national-health-insurance|国民健康保険（国保）]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有

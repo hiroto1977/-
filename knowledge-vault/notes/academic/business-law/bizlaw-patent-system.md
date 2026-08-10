@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 語彙が近い
-- [[legal-trademark|商標権の発生・存続期間と更新]] — 語彙が近い
 - [[bizlaw-utility-model|実用新案法]] — 語彙が近い
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 語彙が近い
 - [[legal-design-right|意匠権（意匠法）]] — 出典を共有
 - [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 出典を共有
 - [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有

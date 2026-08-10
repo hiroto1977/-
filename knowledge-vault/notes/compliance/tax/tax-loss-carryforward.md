@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 同分野の近傍
-- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

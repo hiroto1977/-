@@ -19,7 +19,7 @@ tags:
 - [[subsidy-jinzai-kakuho|人材確保等支援助成金]]（接続 21）
 - [[subsidy-industrial-employment-stability|産業雇用安定助成金]]（接続 20）
 - [[subsidy-trial-employment|トライアル雇用助成金]]（接続 19）
-- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]]（接続 18）
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]]（接続 17）
 - [[subsidy-employment-adjustment|雇用調整助成金]]（接続 12）
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]]（接続 10）
 - [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]]（接続 9）

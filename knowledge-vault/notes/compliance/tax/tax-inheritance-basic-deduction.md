@@ -35,6 +35,7 @@ aliases:
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 語彙が近い
 - [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
 - [[tax-business-succession|法人版事業承継税制（特例措置）]] — 同分野の近傍
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

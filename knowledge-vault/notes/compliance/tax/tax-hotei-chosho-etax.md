@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 出典を共有
-- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 同分野の近傍
 - [[tax-overseas-asset-report|国外財産調書制度（国外財産5,000万円超の保有者の提出義務）]] — 同分野の近傍
 

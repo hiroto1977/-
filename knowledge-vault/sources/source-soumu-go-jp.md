@@ -2,7 +2,7 @@
 title: "soumu.go.jp"
 type: source-domain
 host: "soumu.go.jp"
-cite_count: 60
+cite_count: 61
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # soumu.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **60 件**（公的 60）
+> [!info] 出典ドメイン索引 ・ 引用 **61 件**（公的 61）
 
 ## このドメインを出典とする項目
 
@@ -57,6 +57,7 @@ tags:
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 総務省地方税制度事業所税
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 総務省法人事業税における外形標準課税
 - [[tax-city-planning-tax|都市計画税]] — 総務省地方税制度都市計画税
+- [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 総務省令和7年度法人住民税・法人事業税税率一覧表
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 総務省法人住民税
 - [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 総務省固定資産税の概要
 - [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 総務省地方税制度固定資産税の概要

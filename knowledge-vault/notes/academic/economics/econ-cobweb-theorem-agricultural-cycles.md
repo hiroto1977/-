@@ -34,7 +34,6 @@ Mordecai Ezekiel ／ Jan Tinbergen ／ Umberto Ricci
 ## 関連概念
 - [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 語彙が近い
 - [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同分野の近傍
-- [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

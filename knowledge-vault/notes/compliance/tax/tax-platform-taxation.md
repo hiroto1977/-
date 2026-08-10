@@ -38,9 +38,9 @@ aliases:
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
-- [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

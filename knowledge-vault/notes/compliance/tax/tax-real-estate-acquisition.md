@@ -37,10 +37,10 @@ aliases:
 - [[tax-city-planning-tax|都市計画税]] — 語彙が近い
 - [[subsidy-regional-employment|地域雇用開発助成金]] — 出典を共有
 - [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 出典を共有
 - [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 出典を共有
 - [[subsidy-hokkaido|中小企業競争力強化促進事業（北海道）]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
-- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

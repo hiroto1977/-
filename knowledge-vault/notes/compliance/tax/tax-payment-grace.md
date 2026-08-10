@@ -31,8 +31,8 @@ aliases:
 - [国税庁 納税の猶予制度 FAQ](https://www.nta.go.jp/taxes/nozei/nofu_konnan/pdf/0021001-141_05.pdf) `公的`
 
 ## 関連概念
-- [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 同分野の近傍
+- [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
