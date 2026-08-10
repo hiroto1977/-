@@ -32,9 +32,10 @@ aliases:
 - [MIT Science Impact Collaborative — Scenario Planning（単一予測でなく複数の妥当な未来）](https://scienceimpact.mit.edu/node/1243) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同分野の近傍
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同分野の近傍
 - [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
+- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同分野の近傍
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同分野の近傍
 - [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 同分野の近傍
 
 ## 関連

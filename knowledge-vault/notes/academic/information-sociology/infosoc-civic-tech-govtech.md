@@ -36,8 +36,8 @@ aliases:
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 - [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
-- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同分野の近傍
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同分野の近傍
+- [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

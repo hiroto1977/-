@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同じ思想家
-- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 同じ思想家
 - [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 出典を共有
 - [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 同分野の近傍
 - [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 同分野の近傍

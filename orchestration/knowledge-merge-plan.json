@@ -698,5 +698,39 @@
         "provenanceDelta": "keep src +1 / 本文 +約60字。減少なし。"
       }
     ]
+  },
+  "pass22": {
+    "appliedAt": "2026-08-10",
+    "note": "enrich 感度で dedupeGraph 1 組 → 全文読解で OGD の 5 重複クラスタ（connective-action と同型）と判明。一般概念レーン（open-data: オープン定義・5スター・FAIR との分業）と政府政策レーン（open-government-data: Janssen/Meijer の実証研究・Sunlight 10 原則）の 2 本へ整理。",
+    "merges": [
+      {
+        "keep": "infosoc-open-government-data",
+        "drop": "infosoc-open-government-data-sunlight",
+        "reason": "同一の OGD 政策概念。",
+        "migrate": "Sunlight 10 原則の内訳を本文へ、原典 URL と Wikipedia を出典へ（財団は NGO のため type は reference）。",
+        "provenanceDelta": "keep src 4→6 / 本文 +約230字。減少なし。"
+      },
+      {
+        "keep": "infosoc-open-government-data",
+        "drop": "infosoc-open-data-government-transparency",
+        "reason": "同一概念（queue 項目）。",
+        "migrate": "G8 憲章・ポータル群・課題均衡の句を本文へ吸収。OECD Working Paper と称する 10.1017（Cambridge）DOI は発行元不一致で移送しない。",
+        "provenanceDelta": "上記に合算。"
+      },
+      {
+        "keep": "infosoc-open-government-data",
+        "drop": "infosoc-open-data-movement-sunlight",
+        "reason": "運動フレーミングの同一概念。",
+        "migrate": "シビックテックによる実装側の句を本文へ。ポロックは open-data 側の keyFigures へ。",
+        "provenanceDelta": "上記に合算。"
+      }
+    ],
+    "distinct": [
+      [
+        "infosoc-open-data",
+        "infosoc-open-government-data",
+        "一般概念（定義・品質尺度・FAIR 分業）と政府政策パラダイム"
+      ]
+    ]
   }
 }

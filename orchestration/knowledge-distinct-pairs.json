@@ -314,10 +314,6 @@
       "infosoc-network-effects-metcalfe"
     ],
     [
-      "infosoc-open-government-data",
-      "infosoc-open-government-data-sunlight"
-    ],
-    [
       "infosoc-platform-temporality",
       "infosoc-platform-temporality-helmond"
     ],
@@ -508,6 +504,10 @@
     [
       "bizlaw-business-judgment-rule-delaware",
       "bizlaw-business-judgment-rule-enhanced"
+    ],
+    [
+      "infosoc-open-data",
+      "infosoc-open-government-data"
     ]
   ]
 }

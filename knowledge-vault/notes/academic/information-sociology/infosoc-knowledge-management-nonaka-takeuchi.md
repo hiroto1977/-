@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 語彙が近い
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 語彙が近い
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 分野横断
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 分野横断
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 分野横断
@@ -41,7 +42,6 @@ aliases:
 - [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
 - [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
 - [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
-- [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

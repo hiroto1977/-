@@ -37,7 +37,7 @@ aliases:
 - [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 出典を共有
 - [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 出典を共有
 - [[human-change-blindness-simons|変化盲——視覚環境の大規模変化に気づかない知覚的失敗]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-psychobiological-model-personality|人格の精神生物学モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-fogg-behavior-model|フォッグ行動モデル（FBM）]] — 同分野の近傍
 - [[mgmt-aida|AIDAモデル（購買行動モデル）]] — 同分野の近傍
-- [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

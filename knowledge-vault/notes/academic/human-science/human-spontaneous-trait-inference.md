@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同分野の近傍
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同分野の近傍
+- [[human-presenteeism|プレゼンティーイズム：疾病就業による労働生産性損失の概念と測定]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

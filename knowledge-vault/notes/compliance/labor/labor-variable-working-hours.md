@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
-- [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 同分野の近傍
 - [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 同分野の近傍
 
 ## 関連

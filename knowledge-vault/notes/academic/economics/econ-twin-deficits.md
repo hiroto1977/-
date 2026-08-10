@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — 同分野の近傍
 - [[econ-wagner-law|ワグナーの法則]] — 同分野の近傍
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同分野の近傍
+- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
 - [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]] — 同分野の近傍
 
 ## 関連

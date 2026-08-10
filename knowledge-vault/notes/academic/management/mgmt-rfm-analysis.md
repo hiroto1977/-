@@ -31,8 +31,8 @@ RFM分析（Recency／Frequency／Monetary）／データベースマーケテ�
 - [シナジーマーケティング マーケティング用語集 — RFM分析](https://www.synergy-marketing.co.jp/glossary/rfm-analysis/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同分野の近傍
 - [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]] — 同分野の近傍
+- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

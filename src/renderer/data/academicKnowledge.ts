@@ -15390,8 +15390,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'オープンデータ',
     statement:
       'オープンデータとは、誰でも自由に利用・再配布できる形で公開されたデータを指し、機械可読性・オープンフォーマット・自由なライセンスを原則とする。2009年のオバマ大統領オープンガバメント指令や英国data.gov.ukの開設を契機に国際的に普及し、ティム・バーナーズ＝リーは2010年に5スターオープンデータ・スキームを提唱した。' +
-      '日本では2012年の「電子行政オープンデータ戦略」により政府データの公開が推進され、data.go.jpが開設された。行政の透明性向上・イノベーション促進・市民参加の基盤として情報社会学における重要な政策概念となっている。',
-    keyFigures: 'ティム・バーナーズ＝リー（Tim Berners-Lee, 1955–）／オープン・ナレッジ・ファウンデーション（2004年設立）',
+      '日本では2012年の「電子行政オープンデータ戦略」により政府データの公開が推進され、data.go.jpが開設された。行政の透明性向上・イノベーション促進・市民参加の基盤として情報社会学における重要な政策概念となっている。' +
+      'オープン・ナレッジ・ファウンデーション（ルーファス・ポロックら）の「オープン定義」は、アクセス・再利用・再配布の自由と、せいぜい出典表示・継承の条件までしか課さないライセンスを要件として、「オープンウォッシング」（名ばかり公開）を判定する基準線を与えた。バーナーズ＝リーの 5 スターは、オープンライセンス（★）から構造化・非独占フォーマット・URI・リンクトデータ（★★★★★）への段階的品質尺度である。' +
+      '政府データに限らず、研究データ（FAIR 原則: 発見可能・アクセス可能・相互運用可能・再利用可能との分業）、企業のデータ共有、コミュニティ製地図（OpenStreetMap）まで対象は広く、政府文脈の政策論は open-government-data の項が扱う。',
+    keyFigures: 'ティム・バーナーズ＝リー（Tim Berners-Lee, 1955–）／オープン・ナレッジ・ファウンデーション（2004年設立）／ルーファス・ポロック（OKF 創設）',
     asOf: '2026-06',
     sources: [
       { url: 'https://opendefinition.org/', type: 'academic', label: 'Open Knowledge Foundation — Open Definition' },
@@ -20646,7 +20648,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'economics',
     title: '労働塊の誤謬（Lump of Labour Fallacy）',
     statement:
-      '経済における労働の総量が固定されているという誤った前提に基づく推論。移民・女性の労働参加・技術革新が既存労働者の雇用を奪うとする主張の論拠となるが、実際には労働需要は内生的に変動し、生産性向上と消費拡大を通じて新たな雇用が創出される。',
+      '経済における労働の総量が固定されているという誤った前提に基づく推論。移民・女性の労働参加・技術革新が既存労働者の雇用を奪うとする主張の論拠となるが、実際には労働需要は内生的に変動し、生産性向上と消費拡大を通じて新たな雇用が創出される。' +
+      'Schloss (1891) の命名は、出来高を抑える労働者の「仕事の量は決まっている」という信念への批判が原義で、以後、移民排斥（「移民が職を奪う」）、定年強制やワークシェアリング（「高齢者が引退すれば若者に職が回る」）、技術失業論の三つの文脈で繰り返し再登場してきた。' +
+      '誤謬とされる理由は、労働供給の増加が同時に需要（消費・住宅・サービス）を増やし、賃金・価格の調整が新しい均衡を生むからで、移民の実証研究（Card のマリエル難民流入研究等）は在来労働者の賃金・雇用への影響が小さいことを繰り返し示してきた。' +
+      'ただし「常に誤謬」と切り捨てられない限定も研究は付す——短期・特定地域・代替性の高い技能では調整コストが集中し得るし、フランスの週35時間制やワークシェア政策の評価は分配と生産性の設計次第で分かれる。AI 時代の技術失業論争でも、総量固定の誤謬と、移行期の摩擦・分配問題の混同を切り分けることがこの概念の使いどころになっている。',
     keyFigures: 'D・F・シュロス（1891 労働塊の誤謬の命名）／セントルイス連銀（2020 簡易モデルによる反駁の体系的説明）',
     asOf: '2026-06',
     sources: [
@@ -24368,7 +24373,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'human-biopsychosocial-model-chronic-pain',
     discipline: 'human-science',
     title: '慢性疼痛の生物心理社会モデル',
-    statement: 'Engelが提唱した生物心理社会モデルを慢性疼痛に適用したGatchel・Turk・Waddellらの研究により、疼痛と障害は生物学的・心理的・社会的要因の相互作用によって規定され、純粋な組織損傷だけでは説明できないことが確立された。',
+    statement: 'Engelが提唱した生物心理社会モデルを慢性疼痛に適用したGatchel・Turk・Waddellらの研究により、疼痛と障害は生物学的・心理的・社会的要因の相互作用によって規定され、純粋な組織損傷だけでは説明できないことが確立された。' +
+      '転換の核心は「損傷＝痛み」という生物医学モデルの破綻にある——画像所見と症状の乖離（無症状者の椎間板変性は普通にあり、逆に所見なき激痛もある）が積み重なり、Waddell (1987) は腰痛医療について、安静と手術に偏る従来モデルが障害をむしろ増やしたと批判して活動維持への転換を導いた。' +
+      '心理的要因では、破局的思考（痛みの反芻・拡大視・無力感）と恐怖回避モデル（痛み→恐怖→回避→廃用→さらなる痛みの悪循環）が障害への移行を予測する中核変数で、Turk らの認知行動的疼痛管理はここへ介入する。社会的要因は労災補償・職場要因・家族の応答（過保護が疼痛行動を強化）を含む。' +
+      '臨床実装は学際的疼痛プログラム（医師・心理士・理学療法士の協働、機能回復を主目標に）で、Gatchel ら (2007) のレビューが費用対効果を含めて有効性を整理した。ICD-11 の慢性疼痛分類（慢性一次性疼痛＝痛み自体が疾患）と IASP の疼痛定義改訂（2020: 組織損傷「類似の」経験を含む）に、このモデルの制度的定着が読み取れる。',
     keyFigures: 'George L. Engel ／ Robert J. Gatchel ／ Dennis C. Turk ／ Gordon Waddell',
     asOf: '2026-06',
     sources: [
@@ -25478,7 +25486,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-thriving-at-work-spreitzer',
     discipline: 'management',
     title: '職場スライビング理論（活力ある成長モデル）',
-    statement: 'Spreitzerらが提唱した職場スライビング理論は、活力（vitality）と学習（learning）の二次元の共同経験として「成長繁栄」を定義し、社会的埋め込みを通じて個人の適応行動・職務遂行・健康を促進する組織行動モデルである。',
+    statement: 'Spreitzerらが提唱した職場スライビング理論は、活力（vitality）と学習（learning）の二次元の共同経験として「成長繁栄」を定義し、社会的埋め込みを通じて個人の適応行動・職務遂行・健康を促進する組織行動モデルである。' +
+      '二次元の同時性が定義の要で、活力だけ（楽しいが成長しない）でも学習だけ（成長するが消耗する）でもスライビングではない——人が自分の成長の方向を感知する内的なゲージとして概念化されており、快楽的（hedonic）と自己実現的（eudaimonic）ウェルビーイングを束ねる。' +
+      '2005 年の社会的埋め込みモデルは、裁量・情報共有・信頼と敬意の風土という文脈が、主体的な仕事の仕方（タスク焦点・探索・つながり形成）を促し、それが資源（知識・ポジティブ感情・関係）を生んでスライビングへ至り、資源が再び文脈を豊かにする自己強化ループを描いた。' +
+      'メタ分析はスライビングが職務遂行・健康・バーンアウトの低さと関連することを確認し、Porath らの尺度が測定標準になっている。実務では「エンゲージメント（没入）より持続可能性を捉える指標」として、キャリア停滞の早期警戒、ハイブリッドワークでの成長実感の設計、Spreitzer 自身のサステナブル・ワーク研究（働き方が人を消耗させない設計）へ展開している。',
     keyFigures: 'Gretchen Spreitzer ／ Kathleen Sutcliffe ／ Christine Porath',
     asOf: '2026-06',
     sources: [
@@ -25939,7 +25950,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-data-doubles',
     discipline: 'information-sociology',
     title: 'データ・ダブル',
-    statement: 'Haggerty＆Ericson（2000）が「監視的アッサンブラージュ」論文で提示した概念。個人の離散的データフローから構築されるデジタル上の分身であり、Deleuze＆Guattariのアッサンブラージュ論を監視社会学に応用した。',
+    statement: 'Haggerty＆Ericson（2000）が「監視的アッサンブラージュ」論文で提示した概念。個人の離散的データフローから構築されるデジタル上の分身であり、Deleuze＆Guattariのアッサンブラージュ論を監視社会学に応用した。' +
+      '論文の要点は監視論のモデル転換にある——オーウェル的な単一の中央（ビッグブラザー）でもフーコー的な一望監視でもなく、監視は無数の異種システム（決済・通信・医療・移動・娯楽）が離散的に増殖し臨機に接続される「アッサンブラージュ」として働く。身体はいったんデータフローへ分解され、別の場所でデータ・ダブルとして再組成される。' +
+      'データ・ダブルは本人の写像ではなく、介入のために最適化された機能的分身である——信用スコア・広告プロファイル・リスク分類はそれぞれの目的で別の分身を作り、本人が知らない分身が融資・保険・雇用の決定を左右する。監視の階層性が崩れ、誰もが監視に捕捉される「監視の民主化」（要人ほど濃い痕跡を残す）と、逃れる場所の消滅（disappearance of disappearance）という帰結も導かれた。' +
+      'プロファイリング規制（GDPR の自動決定への異議権）・信用スコア社会論・デジタルツインの倫理など、「データ上の私」と「私」の乖離を扱うほぼすべての議論の理論的起点として、監視資本主義論（Zuboff）以前の基礎文献に位置づけられる。',
     keyFigures: 'Kevin D. Haggerty ／ Richard V. Ericson ／ Gilles Deleuze',
     asOf: '2026-06',
     sources: [
@@ -26348,7 +26362,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-workplace-spirituality',
     discipline: 'management',
     title: '職場のスピリチュアリティ（意味・目的・共同体意識）',
-    statement: '職場における「内なる生」・意味ある仕事・共同体意識を扱う経営学領域。MitroffとDenton（1999）の実証研究、AshmosとDuchon（2000）の概念化・尺度開発、Nealによる制度化が基盤を形成し、宗教とは区別される。',
+    statement: '職場における「内なる生」・意味ある仕事・共同体意識を扱う経営学領域。MitroffとDenton（1999）の実証研究、AshmosとDuchon（2000）の概念化・尺度開発、Nealによる制度化が基盤を形成し、宗教とは区別される。' +
+      'Mitroff & Denton の管理職調査は、回答者の多くが自分をスピリチュアルだが宗教的ではないと認識し、職場で全人的に存在できないこと（魂を駐車場に置いて出勤する）への渇望を抱えることを示して、タブー視されてきた主題を実証研究の対象に引き上げた。Ashmos & Duchon (2000) は内なる生・意味ある仕事・共同体の 3 次元で概念化し測定尺度を与えた。' +
+      '研究プログラムとしては、意味ある仕事・コーリング研究、スピリチュアル・リーダーシップ（Fry の希望/信念・利他的愛によるモチベーション理論）、マインドフルネス実践の組織導入と隣接し、Academy of Management の MSR（Management, Spirituality and Religion）部会の設立（Neal らの制度化）で学術的正統性を得た。' +
+      '批判軸も定着している——宗教との境界管理（多元的職場での強制・排除リスク）、業績向上の道具としてのスピリチュアリティ動員（意味の経営主義的簒奪）への警戒、測定の妥当性である。実務では EAP・DEI と交差する「全人的に働ける職場」設計、燃え尽き対策としての意味の回復が接点になり、世俗化の進む知識労働で需要が続く領域になっている。',
     keyFigures: 'Ian I. Mitroff ／ Elizabeth A. Denton ／ Judi Neal',
     asOf: '2026-06',
     sources: [
@@ -26971,13 +26988,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'information-sociology',
     title: 'オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム',
     statement:
-      'オープンガバメントデータとは、政府・自治体が保有するデータセットを機械可読形式で無償公開し、自由な再利用・再配布を認める政策パラダイムである。2009年のオバマ大統領「透明性とオープンガバメントに関する覚書」が国際的な推進力となり、透明性・説明責任・市民参加の三原則が確立された。バーナーズ=リーは段階的な品質指標として「5スター・オープンデータ」モデルを提唱し、Linked Dataによる相互接続を最高水準と位置づけた。ヤンセン・カララビディス・ザウデルワイクは便益・採用障壁・神話の三軸で開放効果を実証分析し、制度的慣性と品質保証の課題を指摘した。メイヤー・カーティン・ヒレブラントはビジョンと市民の声の乖離問題を論じ、参加型ガバナンスへの接続を強調した。',
+      'オープンガバメントデータとは、政府・自治体が保有するデータセットを機械可読形式で無償公開し、自由な再利用・再配布を認める政策パラダイムである。2009年のオバマ大統領「透明性とオープンガバメントに関する覚書」が国際的な推進力となり、透明性・説明責任・市民参加の三原則が確立された。バーナーズ=リーは段階的な品質指標として「5スター・オープンデータ」モデルを提唱し、Linked Dataによる相互接続を最高水準と位置づけた。ヤンセン・カララビディス・ザウデルワイクは便益・採用障壁・神話の三軸で開放効果を実証分析し、制度的慣性と品質保証の課題を指摘した。メイヤー・カーティン・ヒレブラントはビジョンと市民の声の乖離問題を論じ、参加型ガバナンスへの接続を強調した。サンライト財団の「オープンデータ 10 原則」（完全性・一次性・適時性・アクセス可能性・機械可読性・非差別性・非独占的フォーマット・オープンライセンス・永続性・利用コストゼロ）が公開品質の国際的なチェックリストとして機能し、G8 オープンデータ憲章（2013）と各国ポータル（data.gov / data.gov.uk / 日本の data.go.jp）が制度化を担った。シビックテック運動が OGD を市民参加型サービスへ変換する実装側を受け持ち、行政の透明性・腐敗防止・公共サービス改善という期待と、データ品質・持続的メンテナンス・プライバシー・デジタルデバイドという課題の均衡が実証研究の主戦場である。',
     keyFigures: 'ティム・バーナーズ=リー ／ マリレン・ヤンセン ／ アルバート・メイヤー',
     asOf: '2026-06-24',
     sources: [
       { url: 'https://doi.org/10.1080/10580530.2012.716740', type: 'academic', label: 'Janssen, Charalabidis & Zuiderwijk 2012 — Benefits, Adoption Barriers and Myths of Open Data and Open Government, Information Systems Management 29(4):258-268' },
       { url: 'https://doi.org/10.1177/0020852311429533', type: 'academic', label: 'Meijer, Curtin & Hillebrandt 2012 — Open Government: Connecting Vision and Voice, International Review of Administrative Sciences 78(1):10-29' },
       { url: 'https://obamawhitehouse.archives.gov/the-press-office/transparency-and-open-government', type: 'government', label: 'Obama 2009 — Memorandum on Transparency and Open Government, White House Press Office' },
+      { url: 'https://sunlightfoundation.com/policy/documents/ten-open-data-principles/', type: 'reference', label: 'Sunlight Foundation (2010) Ten Principles for Opening Up Government Information' },
+      { url: 'https://en.wikipedia.org/wiki/Open_government_data', type: 'reference', label: 'Wikipedia: Open government data' },
       { url: 'https://opendefinition.org/', type: 'reference', label: 'Open Knowledge Foundation 2006– — Open Definition, Open Knowledge Foundation' },
     ],
   },
@@ -44014,18 +44033,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-open-government-data-sunlight',
-    discipline: 'information-sociology',
-    title: 'オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果',
-    statement: 'オープンガバメントデータ（Open Government Data: OGD）とは，政府が保有するデータを機械可読形式で無償・無制限に公開し，市民・研究者・企業の利活用を促進する政策的取り組みである。サンライト財団が2010年に提唱した「オープンデータの10原則」（完全性・一次性・適時性・アクセス可能性・機械可読性・非差別性・非独占的フォーマット・ライセンス・永続性・利用コストゼロ）が国際的な標準として機能した。オバマ政権の「オープンガバメント指令」（2009年）・英国の data.gov.uk・EUオープンデータポータル・日本のe-Govデータが主要な実装例である。OGDは行政の透明性・腐敗防止・公共サービス改善・民間セクターのデータ活用（地図・気象・交通）を促進する一方，データ品質・永続性・プライバシー・デジタルデバイドが課題として指摘される。シビックテック運動（Code for Japan等）がOGDを活用した市民参加型サービス開発を担う。',
-    keyFigures: 'ティム・バーナーズ＝リー ／ サンライト財団 ／ ティム・オライリー ／ ベス・シモン・ノベック',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://sunlightfoundation.com/policy/documents/ten-open-data-principles/', type: 'government', label: 'Sunlight Foundation (2010) Ten Principles for Opening Up Government Information' },
-      { url: 'https://en.wikipedia.org/wiki/Open_government_data', type: 'reference', label: 'Wikipedia: Open government data — transparency and civic tech' },
-    ],
-  },
-  {
     id: 'econ-real-options-dixit-pindyck',
     discipline: 'economics',
     title: '実物オプション——ディキシット＆ピンダイクの不可逆投資と「待機価値」',
@@ -45127,19 +45134,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/product_liability_act.html', type: 'government', label: '消費者庁 (1994/2024) 製造物責任法（PL法）の概要' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024L2853', type: 'government', label: 'EU (2024) Directive 2024/2853 on Liability for Defective Products' },
       { url: 'https://en.wikipedia.org/wiki/Product_liability', type: 'reference', label: 'Wikipedia: Product liability — 製造物責任の国際比較' },
-    ],
-  },
-  {
-    id: 'infosoc-open-data-movement-sunlight',
-    discipline: 'information-sociology',
-    title: 'オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化',
-    statement: 'オープンデータ運動は、政府・研究機関・企業が保有するデータを機械可読形式で自由に再利用・再配布できるライセンスで公開する活動を指す。2009年のオバマ政権による「透明性・オープン政府覚書」やG8オープンデータ憲章（2013年）を契機に国際的に普及し、data.gov・data.gov.uk・e-Stat（日本）などの公共ポータルが整備された。サンライト財団やオープン・ナレッジ・ファウンデーションが定義した「オープン定義」（アクセス・再利用・再配布の自由）が標準となり、LOD（Linked Open Data）技術と組み合わせることでデータ間の意味的連結が可能となった。行政透明性の向上・市民参加型ガバナンス・スタートアップ創出（交通・気象・地図データ活用）などの正の外部性が期待される一方、プライバシー保護・データ品質・持続可能なメンテナンス体制の整備が課題とされる。',
-    keyFigures: 'ティム・バーナーズ＝リー ／ バラク・オバマ ／ エレン・ミラー ／ ルーファス・ポロック',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://opendefinition.org/', type: 'reference', label: 'Open Knowledge Foundation (2006/2015) The Open Definition v2.1' },
-      { url: 'https://www.data.gov/', type: 'government', label: 'US Government (2009) Data.gov — Open Government Data Portal' },
-      { url: 'https://en.wikipedia.org/wiki/Open_data', type: 'reference', label: 'Wikipedia: Open data — オープンデータ運動の歴史と実践' },
     ],
   },
   {
@@ -47384,18 +47378,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.4337/9781782540298', type: 'academic', label: 'Faure, M.G. (2016). Environmental Liability and Ecological Damage — Edward Elgar' },
       { url: 'https://en.wikipedia.org/wiki/Polluter_pays_principle', type: 'reference', label: 'Wikipedia: Polluter pays principle — environmental liability law' },
-    ],
-  },
-  {
-    id: 'infosoc-open-data-government-transparency',
-    discipline: 'information-sociology',
-    title: 'オープンデータと政府透明性の情報社会論',
-    statement: 'オープンデータ（open data）とは、誰もが自由に利用・再配布・加工できる形式で公開されたデータであり、特に政府・公共機関のデータを市民・企業・研究者に開放するオープン・ガバメント・データ（OGD）が社会的注目を集めてきた。2009年のオバマ政権による「オープン・ガバメント指令」とその後のG8オープンデータ憲章（2013年）は、透明性・参加・協働を原則として政府データの標準化公開を加盟国に促した。世界銀行・OECD・EUのData.gov.ukなどが先駆例として機能し、日本でもe-GOVオープンデータポータルが整備された。オープンデータの価値実現には、データ品質・機械可読性・ライセンス明確化・プライバシー保護との均衡が不可欠であり、「オープン・デファクト」状態の多くのデータが実際には再利用困難であることも批判される。公共データ産業化と市民監視リスクの均衡が現代的課題である。',
-    keyFigures: 'ティム・バーナーズ＝リー ／ ベス・シモン・ノーウィック ／ キャスリーン・ユーバーノワ ／ ラウリー・オドノヴァン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/9781316160282', type: 'academic', label: 'Ubaldi, B. (2013). Open Government Data — OECD Working Papers' },
-      { url: 'https://en.wikipedia.org/wiki/Open_government_data', type: 'reference', label: 'Wikipedia: Open government data — transparency and civic use' },
     ],
   },
   {

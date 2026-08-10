@@ -31,7 +31,7 @@ George Libman Engel ／ John Romano ／ Adolph Meyer
 - [Biopsychosocial model — Wikipedia](https://en.wikipedia.org/wiki/Biopsychosocial_model) `リファレンス`
 
 ## 関連概念
-- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 語彙が近い
+- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 同じ思想家
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同分野の近傍
 - [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
 - [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]] — 同分野の近傍

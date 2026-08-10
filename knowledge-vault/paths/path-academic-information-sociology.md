@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 611
+entry_count: 608
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（611件）
+# 学習パス — 学術概念／情報社会学（608件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -499,10 +499,7 @@ tags:
 - [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]]
 - [[infosoc-obligatory-passage-point-callon|義務的通過点——ネットワークに不可欠な存在になること]]
 - [[infosoc-open-access-movement-budapest|オープンアクセス運動（ブダペスト宣言）]]
-- [[infosoc-open-data-government-transparency|オープンデータと政府透明性の情報社会論]]
-- [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]]
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]]
-- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]]
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]]
 - [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]]
 - [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]]

@@ -32,7 +32,7 @@ J.ボードリヤール『シミュラークルとシミュレーション』198
 
 ## 関連概念
 - [[infosoc-narrative-paradigm|ナラティブ・パラダイム]] — 同分野の近傍
-- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 語彙が近い
 - [[infosoc-gig-economy|ギグ・エコノミー]] — 語彙が近い
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
+- [[infosoc-open-data|オープンデータ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

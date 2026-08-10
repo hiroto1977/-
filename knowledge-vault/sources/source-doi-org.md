@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2190
+cite_count: 2189
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2190 件**（学術 2182 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2189 件**（学術 2181 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1559,7 +1559,6 @@ tags:
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — Benkler,Y.(2006).TheNetworkedPublicSphere—YaleUP
 - [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — Marwick,A.E.&boyd,d.(2011)ITweetHonestly,ITweetPassionately—NewMedia&…
 - [[infosoc-obligatory-passage-point-callon|義務的通過点——ネットワークに不可欠な存在になること]] — Callon,M.(1986)Someelementsofasociologyoftranslation—inPower,Actionan…
-- [[infosoc-open-data-government-transparency|オープンデータと政府透明性の情報社会論]] — Ubaldi,B.(2013).OpenGovernmentData—OECDWorkingPapers
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — Janssen,Charalabidis&Zuiderwijk2012—Benefits,AdoptionBarriersandMyths…
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — Meijer,Curtin&Hillebrandt2012—OpenGovernment:ConnectingVisionandVoice…
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — Ostrom,E.(1990)GoverningtheCommons—CambridgeUP

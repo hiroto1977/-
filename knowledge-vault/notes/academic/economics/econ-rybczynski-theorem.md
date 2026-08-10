@@ -37,6 +37,7 @@ aliases:
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 出典を共有
 - [[econ-monopolistic-competition|独占的競争]] — 出典を共有
+- [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]] — 同分野の近傍
 - [[econ-dual-labor-market|二重労働市場論]] — 同分野の近傍
 - [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
 - [[econ-rostow-stages|ロストウの経済成長段階説]] — 同分野の近傍

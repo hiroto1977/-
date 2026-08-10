@@ -33,6 +33,7 @@ Raúl Prebisch／Hans W. Singer／Enzo Grilli／Maw Cheng Yang／David Harvey
 ## 関連概念
 - [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 語彙が近い
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同分野の近傍
+- [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]] — 同分野の近傍
 - [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 同分野の近傍
 
 ## 関連

@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
 - [[infosoc-media-events|メディア・イベント]] — 出典を共有
 - [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
-- [[infosoc-onlife|オンライフ]] — 同分野の近傍
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

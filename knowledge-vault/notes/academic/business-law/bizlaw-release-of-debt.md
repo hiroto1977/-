@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 語彙が近い
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 語彙が近い
 - [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — 語彙が近い
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
 - [[bizlaw-agency|代理（民法99条）]] — 同じ思想家

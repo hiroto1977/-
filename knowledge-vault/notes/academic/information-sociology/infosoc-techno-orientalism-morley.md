@@ -31,8 +31,8 @@ aliases:
 - [Roh, D.S., Huang, B. & Niu, G.A. (2015) Techno-Orientalism: Imagining Asia in Speculative Fiction — Rutgers UP](https://doi.org/10.1215/9780822376002) `学術`
 
 ## 関連概念
-- [[infosoc-metaverse|メタバース]] — 同分野の近傍
 - [[infosoc-post-truth-theory|ポスト真実論]] — 同分野の近傍
+- [[infosoc-metaverse|メタバース]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2260
+cite_count: 2258
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2260 件**（リファレンス 2260）
+> [!info] 出典ドメイン索引 ・ 引用 **2258 件**（リファレンス 2258）
 
 ## このドメインを出典とする項目
 
@@ -1743,9 +1743,7 @@ tags:
 - [[infosoc-onlife|オンライフ]] — Wikipedia:Onlife
 - [[infosoc-online-disinhibition|オンライン脱抑制効果]] — Wikipedia「Onlinedisinhibitioneffect」（良性/有害の区別・6要因）
 - [[infosoc-open-access-movement-budapest|オープンアクセス運動（ブダペスト宣言）]] — Wikipedia:Openaccess—BOAI,green/goldOA,APCmodel,PlanS,andcritiqueofac…
-- [[infosoc-open-data-government-transparency|オープンデータと政府透明性の情報社会論]] — Wikipedia:Opengovernmentdata—transparencyandcivicuse
-- [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — Wikipedia:Opendata—オープンデータ運動の歴史と実践
-- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — Wikipedia:Opengovernmentdata—transparencyandcivictech
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — Wikipedia:Opengovernmentdata
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — Wikipedia:Digitalcommons—governanceandopensource
 - [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — Wikipedia:Open-sourcemovement—Stallman,FSF,Linux,commons-basedpeerpro…
 - [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — Wikipedia:Open-source-softwaremovement—OSS運動の歴史と思想の概説

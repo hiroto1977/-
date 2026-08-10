@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 語彙が近い
 - [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同分野の近傍
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同分野の近傍
+- [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

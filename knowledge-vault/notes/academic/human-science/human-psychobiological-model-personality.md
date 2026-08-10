@@ -32,7 +32,7 @@ C. Robert Cloninger ／ Dragan M. Svrakic ／ Thomas R. Przybeck
 - [Cloninger, Svrakic & Przybeck (1994) TCI: Temperament and Character Inventory](https://pubmed.ncbi.nlm.nih.gov/8545957/) `リファレンス`
 
 ## 関連概念
-- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同分野の近傍
+- [[human-synesthesia|共感覚（シナスタジア）]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連

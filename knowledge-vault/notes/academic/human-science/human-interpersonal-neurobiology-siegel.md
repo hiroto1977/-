@@ -35,7 +35,6 @@ aliases:
 - [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
 - [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同分野の近傍
 - [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
-- [[human-compassion-fatigue-burnout-stamm|共感疲労とバーンアウト・二次的外傷性ストレス（スタム）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

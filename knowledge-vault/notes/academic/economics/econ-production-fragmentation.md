@@ -34,6 +34,7 @@ aliases:
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同分野の近傍
 - [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同分野の近傍
 - [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍
+- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,6 +36,7 @@ aliases:
 - [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]] — 同分野の近傍
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同分野の近傍
 - [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同分野の近傍
+- [[human-relational-cultural-theory|関係文化理論（RCT）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

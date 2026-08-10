@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同分野の近傍
 - [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 同分野の近傍
+- [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

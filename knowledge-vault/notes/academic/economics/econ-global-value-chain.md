@@ -36,6 +36,7 @@ aliases:
 - [[econ-microfinance|マイクロファイナンス]] — 出典を共有
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 出典を共有
 - [[eh-1944|1944年（昭和19年）]] — 出典を共有
+- [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 同分野の近傍
 - [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同分野の近傍
 
 ## 関連
