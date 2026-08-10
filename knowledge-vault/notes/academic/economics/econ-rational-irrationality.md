@@ -36,8 +36,8 @@ aliases:
 - [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — 同じ思想家
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
-- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
 - [[econ-technological-unemployment|技術的失業]] — 同分野の近傍
+- [[econ-backus-smith|バッカス＝スミス・パズル（Backus-Smith Puzzle）]] — 同分野の近傍
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同分野の近傍
 
 ## 関連

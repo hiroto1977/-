@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 語彙が近い
+- [[bizlaw-money-lending-act|貸金業法]] — 語彙が近い
 - [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
 - [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 同分野の近傍

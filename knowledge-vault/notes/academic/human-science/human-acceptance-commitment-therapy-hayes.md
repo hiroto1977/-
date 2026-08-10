@@ -33,7 +33,7 @@ aliases:
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 語彙が近い
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 語彙が近い
 - [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
-- [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

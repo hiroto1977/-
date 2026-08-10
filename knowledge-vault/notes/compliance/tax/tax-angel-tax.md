@@ -31,7 +31,7 @@ aliases:
 - [国税庁 No.1533 特定投資株式の譲渡損失の繰越（エンジェル税制）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1533.htm) `公的`
 
 ## 関連概念
-- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 同分野の近傍
+- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 語彙が近い
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 同分野の近傍
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 同分野の近傍
 - [[tax-furusato-point-ban|ふるさと納税 ポイント付与する仲介サイト経由の募集禁止（2025年10月〜）]] — 同分野の近傍

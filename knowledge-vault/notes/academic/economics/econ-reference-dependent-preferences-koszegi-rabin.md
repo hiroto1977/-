@@ -32,7 +32,7 @@ Botond Kőszegi（ボツォンド・コーセギ・2006年論文の共著者） 
 ## 関連概念
 - [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
 - [[econ-revealed-preference|顕示選好]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

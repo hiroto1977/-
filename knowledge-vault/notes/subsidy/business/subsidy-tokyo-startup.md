@@ -40,7 +40,6 @@ prefecture
 - [[subsidy-tokyo-equipment|躍進的な事業推進のための設備投資支援事業（東京都）]] — 語彙が近い
 - [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 出典を共有
 - [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 同分野の近傍
-- [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]] — 同分野の近傍
 - [[subsidy-kyoto-city|京都市伝統産業設備改修等補助制度]] — 同分野の近傍
 
 ## 関連

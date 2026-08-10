@@ -40,6 +40,7 @@ aliases:
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 同分野の近傍
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
+- [[human-gestalt-principles|ゲシュタルト知覚の法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

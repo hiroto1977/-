@@ -890,5 +890,40 @@
         }
       }
     ]
+  },
+  "pass27": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupe（タイトルコア一致）— econ-greenfield-paradox の誤称タイトル（グリーンフィールド）を実体どおりグリーン・パラドックスへ訂正した結果、隠れていた真正重複が顕在化",
+    "merges": [
+      {
+        "keep": "econ-green-paradox-sinn",
+        "drop": "econ-greenfield-paradox",
+        "reason": "同一分野（economics）・同一概念（Sinn の green paradox）。keeper は Sinn の正 DOI（10.1007/s10797-008-9082-z, Int Tax Public Finance）を持ち機構記述が最厚。drop の Sinn URL は 10.1007/s10640-007-9181-8（= Environmental and Resource Economics 誌のプレフィックス）で誤実体。",
+        "migrate": [
+          "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2037694"
+        ],
+        "notMigrated": [
+          {
+            "url": "https://link.springer.com/article/10.1007/s10640-007-9181-8",
+            "why": "ラベルは ITPF 15:360-394 だが DOI プレフィックス s10640 は別誌（ERE）— 誤実体のため移管しない（keeper が正しい DOI を保有済み）"
+          }
+        ],
+        "absorbed": "成立条件の腑分け（抽出費用逓増・バックストップ価格）・弱い/強いパラドックスの区別・炭素リーケージとの相互作用・Gerlagh/van der Werf/Di Maria の研究系譜",
+        "provenanceDelta": {
+          "chars": [
+            619,
+            817
+          ],
+          "sources": [
+            2,
+            3
+          ],
+          "academic": [
+            1,
+            2
+          ]
+        }
+      }
+    ]
   }
 }

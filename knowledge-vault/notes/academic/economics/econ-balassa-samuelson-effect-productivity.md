@@ -38,6 +38,7 @@ aliases:
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同分野の近傍
 - [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同分野の近傍
+- [[econ-roy-model|ロイ・モデル——比較優位による職業の自己選択]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

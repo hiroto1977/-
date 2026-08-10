@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 944
+entry_count: 943
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（944件）
+# 学習パス — 学術概念／経済学（943件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 79）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
@@ -24,8 +24,8 @@ tags:
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 36）
+- [[econ-behavioral-finance|行動ファイナンス]]（接続 32）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 31）
 
@@ -633,7 +633,6 @@ tags:
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]]
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]]
 - [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]]
-- [[econ-greenfield-paradox|グリーンフィールド・パラドックス]]
 - [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]]
 - [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]]
 - [[econ-greshams-law|グレシャムの法則]]

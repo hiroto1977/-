@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-gig-economy|ギグ・エコノミー]] — 語彙が近い
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
 - [[infosoc-open-data|オープンデータ]] — 同分野の近傍
+- [[infosoc-technical-debt|技術的負債]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

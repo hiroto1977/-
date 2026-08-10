@@ -32,8 +32,8 @@ aliases:
 - [国税庁 スキャナ保存関係（特設サイト）](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/03.htm) `公的`
 
 ## 関連概念
+- [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 同分野の近傍
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 同分野の近傍
-- [[tax-amended-return|修正申告・期限後申告と加算税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[human-nostalgia-psychology-sedikides|ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持]] — 同分野の近傍
 - [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 同分野の近傍
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

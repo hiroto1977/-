@@ -34,8 +34,8 @@ aliases:
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
 - [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
-- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 同分野の近傍
+- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
+- [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

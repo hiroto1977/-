@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2256
+cite_count: 2255
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2256 件**（リファレンス 2256）
+> [!info] 出典ドメイン索引 ・ 引用 **2255 件**（リファレンス 2255）
 
 ## このドメインを出典とする項目
 
@@ -619,7 +619,6 @@ tags:
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — Wikipedia:Greenparadox—Sinn,intertemporalextraction,supply-side,fossi…
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — Wikipedia:Greenfieldinvestment—定義と形態別FDI比較
 - [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — Wikipedia:Foreigndirectinvestment—greenfield,brownfield,OLIparadigm
-- [[econ-greenfield-paradox|グリーンフィールド・パラドックス]] — Wikipedia—Greenparadox
 - [[econ-greenspan-put|グリーンスパン・プット]] — Wikipedia—Greenspanput
 - [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]] — Wikipedia:Greenspanput—中央銀行プットの概念と金融政策への含意
 - [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — Wikipedia:Free-riderproblem—takeovers,Grossman–Hart,corporatecontrol,…

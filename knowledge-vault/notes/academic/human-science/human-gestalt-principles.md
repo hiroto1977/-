@@ -34,7 +34,7 @@ aliases:
 - [[human-kanizsa-triangle|カニッツァの三角形——存在しない輪郭を見る主観的輪郭]] — 同じ思想家
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
 - [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 同分野の近傍
-- [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
+- [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

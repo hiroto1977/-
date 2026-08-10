@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 30）
+- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 29）
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 27）
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 24）
@@ -25,9 +25,9 @@ tags:
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 19）
 - [[tax-automobile-tax|自動車税（種別割）]]（接続 17）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 17）
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 17）
 - [[tax-city-planning-tax|都市計画税]]（接続 16）
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 16）
-- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 16）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]]

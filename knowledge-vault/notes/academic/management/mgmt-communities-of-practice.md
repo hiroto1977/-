@@ -35,7 +35,7 @@ aliases:
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
 - [[mgmt-tuckman-stages|タックマンのチーム発達段階モデル]] — 出典を共有
-- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
+- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

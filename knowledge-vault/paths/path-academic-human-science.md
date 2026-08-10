@@ -18,10 +18,10 @@ tags:
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 30）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 29）
+- [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 27）
 - [[human-attribution-theory|帰属理論]]（接続 27）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
-- [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）

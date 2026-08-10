@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 136
+cite_count: 135
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **136 件**（学術 116 ・ リファレンス 20）
+> [!info] 出典ドメイン索引 ・ 引用 **135 件**（学術 115 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -30,7 +30,6 @@ tags:
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — OntheEllsbergandMachinaparadoxes,TheoryandDecision（査読誌：曖昧性回避とGilboa–S…
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — BiophysicalEconomicsandSustainability(Springer)—IsThereaKuznetsCurvef…
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — Sims(1994)ASimpleModelforStudyoftheDeterminationofthePriceLevel—Econo…
-- [[econ-greenfield-paradox|グリーンフィールド・パラドックス]] — Sinn,H.-W.(2008).Publicpoliciesagainstglobalwarming:asupplysideapproa…
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — Springer(TheNewPalgrave)“PrimaryandSecondaryLabourMarkets”—一次/二次労働市場と…
 - [[econ-kaldor-verdoorn|ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）]] — TheNewPalgraveDictionaryofEconomics—Verdoorn'sLaw
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — Verdoorn(1949/2002)Fattoricheregolanolosviluppodellaproduttivitàdella…

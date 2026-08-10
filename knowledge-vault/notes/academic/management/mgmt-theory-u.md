@@ -35,8 +35,8 @@ C・オットー・シャーマー（C. Otto Scharmer, MIT上級講師）／主�
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 出典を共有
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 - [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同分野の近傍
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
-- [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
