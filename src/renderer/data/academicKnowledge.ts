@@ -20667,7 +20667,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'business-law',
     title: '収用と補償・ハル公式（Expropriation & Hull Formula）',
     statement:
-      '国際投資法において国家が外国投資を収用する際に求められる「迅速・十分・実効的（prompt, adequate and effective）」な補償基準。1938年メキシコ土地改革に際し米国務長官ハルが定式化し、現在2,500以上の投資条約に採用される標準的補償規範となっている。',
+      '国際投資法において国家が外国投資を収用する際に求められる「迅速・十分・実効的（prompt, adequate and effective）」な補償基準。1938年、メキシコの土地改革と石油国有化をめぐる往復書簡で米国務長官コーデル・ハルが定式化し、外国人にも国内法上の待遇で足りるとするカルボ・ドクトリン的立場と鋭く対立した。脱植民地化期には、天然資源に対する恒久主権を宣言して「適当な補償」にとどめた国連総会決議1803（1962）や新国際経済秩序（NIEO）関連文書が基準を相対化したが、1990年代以降の投資条約網の拡大によりハル公式型の基準が2,500以上の条約に採用される標準へ回帰した。各要素は仲裁実務で、迅速＝不当な遅延のない支払いと利息、十分＝収用直前（又は収用計画の公知化前）の公正市場価値、実効的＝自由に交換・移転可能な通貨での支払いへと具体化されている。適法な収用には公共目的・無差別・適正手続・補償の4要件が求められ、補償を欠くなど違法な収用にはホルジョウ工場事件の完全賠償原則（原状回復又は逸失利益を含む賠償）が適用されて算定の基準時と範囲が変わる。権原を移転せずに投資の価値・支配を実質的に奪う間接収用・忍び寄る収用の認定と、補償を要しない正当な規制権限（ポリス・パワー）との線引きが現代の主要争点である。',
     keyFigures: 'コーデル・ハル（1938 ハル公式の定式化）／世界銀行ICSID（収用補償基準の仲裁実務での発展）',
     asOf: '2026-06',
     sources: [
@@ -20928,7 +20928,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'human-science',
     title: '両眼視野闘争（Binocular Rivalry）',
     statement:
-      '左右の眼に異なる像を同時提示すると、知覚が二つの像の間で数秒周期で交替し融合しない現象。ポルタ（1593）以来知られ、ウィートストン（1838）が体系的に記述した。物理的刺激が一定でも知覚が変動するため、視覚的意識の神経基盤を探る実験パラダイムとして神経科学で広く用いられる。',
+      '左右の眼に異なる像を同時提示すると、知覚が二つの像の間で数秒周期で交替し融合しない現象。ポルタ（1593）以来知られ、ウィートストン（1838）が体系的に記述した。優勢期間は確率的に変動して分布はガンマ型に近く、交替は意志では完全に制御できない。一方の刺激の強度（コントラストや動き）を上げると主に他方の優勢期間が短くなるというレベルトの法則群が交替力学の基準則とされ、大きな刺激では像全体ではなく斑状に入り混じるピースミール闘争や、優勢が波のように広がる伝播現象も観察される。競合が眼の間で起きるのか像の表象の間で起きるのかをめぐっては、左右の像を高速で入れ替えても知覚が安定するフリッカー・スワップ実験が単純な眼間競合説を退け、処理階層の複数段階に分散した競合とみる見方が主流となった。サルの単一細胞記録では V1 の活動は知覚交替と弱くしか連動せず下側頭皮質など高次領野ほど報告知覚に追随する一方、ヒト fMRI では V1 や外側膝状体にも変調が見られ、競合の座は階層的に分布する。抑制された像も順応や残効を生み無意識的に処理され続けるため、物理的刺激を一定に保ったまま意識内容だけが交替する状況を作れる本現象は、視覚的意識の神経相関（NCC）研究の中核パラダイムであり、連続フラッシュ抑制などの派生手法も生んだ。',
     keyFigures: 'ランドルフ・ブレイク＆ニコス・ロゴセティス（2002 Nature Reviews Neuroscience レビュー）',
     asOf: '2026-06',
     sources: [
@@ -24273,15 +24273,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-information-commons-theory',
     discipline: 'information-sociology',
     title: '情報コモンズ理論',
-    statement: 'OstromのIADフレームワークを知識・情報財に応用し、HessとOstromは「知識コモンズ」の自律的ガバナンスを論じた。Benklerのコモンズ基盤型ピア生産、LessigのCreative Commons運動と対峙するIP拡張による「囲い込み」との緊張関係を包含する。',
+    statement: 'Ostrom の IAD（制度分析・開発）フレームワークを知識・情報財に応用する理論枠組み。Hess と Ostrom は『Understanding Knowledge as a Commons』（2007）で、図書館・学術リポジトリ・オープンアクセスなどの知識コモンズが直面する囲い込み・劣化・持続可能性の課題と自律的ガバナンスを論じた。情報そのものは消費が競合しない一方、それを支えるインフラやアーカイブには伝統的な共有資源と同型の集合行為問題が生じるという資源特性の腑分けが出発点にある。Benkler は「Coase\'s Penguin」（2002）で、Linux に代表されるフリーソフトウェア開発や分散協働プロジェクトに見られるコモンズ基盤型ピア生産を、企業のヒエラルキーとも市場の価格シグナルとも異なる第三の生産様式として定式化し、課題のモジュール性・粒度の細かさ・統合コストの低さを成立条件に挙げた。Lessig はインターネットのエンド・ツー・エンド原則が形成するイノベーション・コモンズを論じ、Creative Commons のライセンス運動として法的に構築されるコモンズを実装した。これらは著作権・特許の拡張による知的財産の「囲い込み」への対抗理論として展開され、Hess の「Mapping the New Commons」（2008）は知識・文化・近隣・インフラ等へ拡散する新しいコモンズ研究群を体系的に地図化した。『Governing the Commons』（1990）が示した長期持続する自主管理の設計原理——境界の明確化・現地条件への適合・集合的選択・監視・段階的制裁・紛争解決・自治の承認・入れ子構造——が理論的背骨を提供している。',
     keyFigures: 'Elinor Ostrom ／ Charlotte Hess ／ Yochai Benkler ／ Lawrence Lessig',
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/7471.001.0001', type: 'academic', label: 'Hess & Ostrom, Understanding Knowledge as a Commons (2007)' },
       { url: 'https://doi.org/10.2307/3312618', type: 'academic', label: 'Benkler, Coase\'s Penguin, or Linux and the Nature of the Firm (2002)' },
       { url: 'https://doi.org/10.2307/1229009', type: 'academic', label: 'Lessig, The Architecture of Innovation (2002)' },
-      { url: 'https://doi.org/10.1017/CBO9781107415324.004', type: 'academic', label: 'Ostrom, Governing the Commons (1990)' },
-      { url: 'https://doi.org/10.1093/oxfordhb/9780195305760.013.0009', type: 'academic', label: 'Hess, Mapping the New Commons (2008)' },
+      { url: 'https://doi.org/10.1017/CBO9780511807763', type: 'academic', label: 'Ostrom, Governing the Commons (1990)' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1356835', type: 'academic', label: 'Hess, Mapping the New Commons (2008) — SSRN' },
     ],
   },
   {
@@ -26470,7 +26470,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-good-faith-performance',
     discipline: 'business-law',
     title: '契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）',
-    statement: 'すべての契約は、その履行・執行において誠実かつ公正な取引を行う義務を各当事者に課す（Restatement § 205；UCC § 1-304）。Summersは同義務を「悪意類型の排除規則」として定式化し、Burtonは「契約時に放棄した利益の奪還を禁じる裁量制約」と論じた。',
+    statement: 'すべての契約は、その履行・執行において誠実かつ公正な取引を行う義務を各当事者に課す（第2次契約法リステイトメント205条・UCC 1-304条）。判例上の淵源とされるニューヨーク州の Kirke La Shelle 判決（1933）は、相手方が契約の果実を受け取る権利を破壊し又は損なう行為をしない黙示の約款があらゆる契約に含まれると宣言した。UCC 1-304条の義務は履行と執行の段階に適用されて交渉段階には及ばず、義務違反はそれ自体が独立の訴権を生むのではなく当該契約の違反として扱われる。理論的には、Summers が誠実義務を積極的定義を持たない「排除概念」——取引の趣旨の潜脱、注意の懈怠、故意の不完全履行、条件指定権や裁量の濫用、相手方の履行妨害といった異質な悪意類型を場面ごとに排除する規則——として定式化したのに対し、Burton は契約締結時に放棄した機会を履行段階の裁量行使で取り戻そうとすることが悪意に当たるとする機会費用モデルによる一元的説明を試み、両説が学説の二大潮流をなす。Farnsworth は UCC 起草の文脈で、商業的合理性と結びついた黙示条項として義務を基礎づけた。数量を裁量で決める需要契約・産出契約、満足条項、裁量的価格設定、解約権の行使が典型的適用場面で、機能的には大陸法・日本法の信義則（民法1条2項）に対応する英米法上の履行規律である。',
     keyFigures: 'Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth',
     asOf: '2026-06',
     sources: [
@@ -26571,7 +26571,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-digital-divide-warschauer',
     discipline: 'information-sociology',
     title: 'デジタルデバイド（情報アクセス格差）',
-    statement: 'Mark Warschauer、Jan van Dijk、Manuel Castellsらが指摘する情報通信技術（ICT）へのアクセスと利用能力の不平等。単なる物理的接続から、スキル・動機付け・目的といった多層的な格差へと概念が進化。社会的包摂と経済的機会を左右する重要な課題。',
+    statement: 'Mark Warschauer、Jan van Dijk、Manuel Castells らが論じた情報通信技術（ICT）へのアクセスと利用能力の不平等。Warschauer は『Technology and Social Inclusion』（2003）で、機器の有無という二分法的な「デバイド」の比喩自体を批判し、技術投入だけのプロジェクトが失敗する事例の分析を通じて、物理的資源（機器・接続）、デジタル資源（言語・現地に適合したコンテンツ）、人的資源（識字・教育）、社会的資源（コミュニティ・制度）の4資源が揃って初めて有効な利用が成立するとする社会的包摂の枠組みへ問題を再定義した。van Dijk は『The Deepening Divide』（2005）で、動機づけ→物理的アクセス→スキル（操作・形式・情報・戦略の階層）→利用という逐次的アクセス・モデルを提示し、接続が普及しても利用の質と成果の格差はむしろ深まるとする「深化するデバイド」論を展開した。物理的接続（第一水準）・スキルと利用（第二水準）・便益の帰結（第三水準）という重層構造の整理は政策論の共通基盤となり、OECD はブロードバンドの地域・料金・品質の格差を閉じる政策枠組みを、UNESCO は教育を受ける権利とデジタル化の観点から包摂とオンライン保護を課題化している。技術世代が交代するたびに新しい水準の格差が再生産される点が現代的論点である。',
     keyFigures: 'Mark Warschauer ／ Jan van Dijk ／ Manuel Castells',
     asOf: '2026-06',
     sources: [

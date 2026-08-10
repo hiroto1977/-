@@ -34,6 +34,7 @@ MPEG LA（MPEG・H.264等の主要パテント・プール管理機関）／DVD6
 - [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]] — 出典を共有
 - [[bizlaw-intellectual-property-trademark|商標法と知的財産保護の法律理論——ブランド価値と識別性基準]] — 出典を共有
 - [[bizlaw-promissory-estoppel-reliance|約束的禁反言法理]] — 同分野の近傍
+- [[bizlaw-radio-act|電波法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,7 @@ FSB（金融安定理事会）設置／マイケル・ブルームバーグ（�
 
 ## 関連概念
 - [[bizlaw-food-labeling|食品表示法]] — 同分野の近傍
-- [[bizlaw-product-liability-strict-tort|製造物責任と無過失責任——PL法・EU製造物責任指令とグローバルサプライチェーンの法的リスク]] — 同分野の近傍
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

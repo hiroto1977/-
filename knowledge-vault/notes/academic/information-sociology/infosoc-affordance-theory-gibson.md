@@ -35,7 +35,6 @@ aliases:
 - [[human-late-selection-deutsch-norman|後期選択理論——すべての刺激が意味処理された後で注意が選択する]] — 同じ思想家
 - [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
-- [[infosoc-information-commons-theory|情報コモンズ理論]] — 同分野の近傍
 - [[infosoc-connectivism|コネクティビズム]] — 同分野の近傍
 
 ## 関連

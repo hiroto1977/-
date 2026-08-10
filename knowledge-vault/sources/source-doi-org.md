@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2188
+cite_count: 2187
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2188 件**（学術 2180 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（学術 2179 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1501,7 +1501,6 @@ tags:
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — Hess,C.&Ostrom,E.(2007)UnderstandingKnowledgeasaCommons—MITPress
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — Benkler,Coase'sPenguin,orLinuxandtheNatureoftheFirm(2002)
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — Hess&Ostrom,UnderstandingKnowledgeasaCommons(2007)
-- [[infosoc-information-commons-theory|情報コモンズ理論]] — Hess,MappingtheNewCommons(2008)
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — Lessig,TheArchitectureofInnovation(2002)
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — Ostrom,GoverningtheCommons(1990)
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — Nardi,B.&O'Day,V.(1999)InformationEcologies—MITPress

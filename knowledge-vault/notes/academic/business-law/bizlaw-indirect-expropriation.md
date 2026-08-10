@@ -34,7 +34,7 @@ Metalclad v. メキシコ事件（2000 ICSID/NAFTA 画期的判断）／規制�
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 語彙が近い
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
 - [[eh-1994|1994年（平成6年）]] — 同じ思想家
-- [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 同分野の近傍
+- [[bizlaw-arbitration-act|仲裁法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

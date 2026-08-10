@@ -2,7 +2,7 @@
 title: "papers.ssrn.com"
 type: source-domain
 host: "papers.ssrn.com"
-cite_count: 33
+cite_count: 34
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # papers.ssrn.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **33 件**（学術 32 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **34 件**（学術 33 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -41,6 +41,7 @@ tags:
 - [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — Selbstetal.(2019)—FairnessandAbstractioninSociotechnicalSystems,FAT*
 - [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — Zittrain,J.L.(2006)TheGenerativeInternet—HarvardLawReview,119,1974–20…
 - [[infosoc-information-avoidance-theory|情報回避理論]] — Golman,Hagmann&Loewenstein—"InformationAvoidance"SSRNpreprint(working…
+- [[infosoc-information-commons-theory|情報コモンズ理論]] — Hess,MappingtheNewCommons(2008)—SSRN
 - [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — Wu,Tim—"NetworkNeutrality,BroadbandDiscrimination"(2003),JournalofTel…
 - [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — boyd,d.(2008)TakenOutofContext:AmericanTeenSocialityinNetworkedPublic…
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)ThePoliticsof"Platforms"—SSRN

@@ -35,8 +35,8 @@ aliases:
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 同じ思想家
 - [[bizlaw-disclose-or-abstain-rule|開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる]] — 出典を共有
 - [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有
+- [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同分野の近傍
 - [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
-- [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同分野の近傍
 - [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同分野の近傍
 
 ## 関連

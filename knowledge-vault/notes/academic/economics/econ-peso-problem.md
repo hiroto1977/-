@@ -32,7 +32,7 @@ Milton Friedman（1970年代 — ペソ先物ディスカウントの非公式�
 ## 関連概念
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同じ思想家
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
-- [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
+- [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

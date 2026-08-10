@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-leniency|課徴金減免制度（リニエンシー）]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 語彙が近い
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 分野横断
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 分野横断
 - [[legal-antimonopoly|独占禁止法]] — 同分野の近傍
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 同分野の近傍

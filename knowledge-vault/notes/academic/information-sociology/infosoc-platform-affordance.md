@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
-- [[infosoc-tam-healthcare|医療情報技術の受容モデル：TAM・UTAUTのヘルスケア領域への適用と拡張]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

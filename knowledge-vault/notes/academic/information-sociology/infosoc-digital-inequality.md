@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
 - [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
 - [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍
-- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
 - [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同分野の近傍
 
 ## 関連

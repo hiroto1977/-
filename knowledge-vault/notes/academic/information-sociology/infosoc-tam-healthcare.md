@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-technology-acceptance-model|技術受容モデル（TAM）——情報システム採用の知覚有用性と知覚容易性]] — 分野横断
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
-- [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — 同分野の近傍
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
 - [[infosoc-telemedicine|遠隔医療（テレメディシン）：エビデンスと政策的枠組みの体系化]] — 同分野の近傍
 
 ## 関連

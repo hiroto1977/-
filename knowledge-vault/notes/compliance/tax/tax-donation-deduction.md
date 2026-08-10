@@ -36,6 +36,7 @@ aliases:
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
 - [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 同分野の近傍
+- [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

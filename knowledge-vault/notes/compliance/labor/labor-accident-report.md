@@ -34,6 +34,7 @@ aliases:
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
 - [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
 - [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 同分野の近傍
+- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 語彙が近い
-- [[mgmt-value-co-creation|価値共創]] — 同分野の近傍
+- [[mgmt-value-co-creation|価値共創]] — 語彙が近い
 - [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
 
 ## 関連

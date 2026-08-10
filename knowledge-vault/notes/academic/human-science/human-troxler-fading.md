@@ -38,6 +38,7 @@ aliases:
 - [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]] — 同じ思想家
 - [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
 - [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

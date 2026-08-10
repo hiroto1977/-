@@ -21,11 +21,11 @@ tags:
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 19）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 18）
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 15）
-- [[labor-collective-agreement|労働協約（労働組合法）]]（接続 15）
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 15）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
 - [[labor-work-rules|就業規則の作成・届出義務]]（接続 15）
+- [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
 - [[labor-paid-leave-grant|年次有給休暇の付与]]（接続 14）
 

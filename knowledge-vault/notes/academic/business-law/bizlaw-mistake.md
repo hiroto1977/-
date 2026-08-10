@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]] — 同分野の近傍
 - [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
+- [[bizlaw-earnest-money|手付（民法557条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

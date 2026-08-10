@@ -31,7 +31,6 @@ aliases:
 - [Infant Visual Habituation — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2758574/) `学術`
 
 ## 関連概念
-- [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — 同分野の近傍
 - [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — 同分野の近傍
 - [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]] — 同分野の近傍
 

@@ -41,7 +41,6 @@ aliases:
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同分野の近傍
-- [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

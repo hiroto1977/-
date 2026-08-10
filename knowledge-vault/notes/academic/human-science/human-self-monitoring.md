@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-metcalfe-law|メトカーフの法則]] — 出典を共有
 - [[human-stroop-effect|ストループ効果]] — 同分野の近傍
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同分野の近傍
-- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

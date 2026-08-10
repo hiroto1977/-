@@ -30,8 +30,8 @@ aliases:
 - [立命館大学 — 独禁法における課徴金制度の見直しについて（学術論文）](https://www.ritsumei.ac.jp/acd/cg/law/lex/hosei-5/asoda.pdf) `学術`
 
 ## 関連概念
-- [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 語彙が近い
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 語彙が近い
+- [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 分野横断
 - [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有

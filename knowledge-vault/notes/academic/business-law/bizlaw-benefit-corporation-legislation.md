@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
-- [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 同分野の近傍
 - [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 同分野の近傍
 - [[bizlaw-karoshi-prevention|過労死等防止対策推進法]] — 同分野の近傍
 

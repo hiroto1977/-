@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Good faith — contractual duty of fair dealing overview](https://en.wikipedia.org/wiki/Good_faith_(law)) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 語彙が近い
 - [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 語彙が近い
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同じ思想家
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
 - [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

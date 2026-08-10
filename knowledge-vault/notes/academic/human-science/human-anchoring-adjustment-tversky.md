@@ -39,7 +39,6 @@ aliases:
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
 - [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同分野の近傍
-- [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

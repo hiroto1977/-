@@ -37,7 +37,6 @@ Ronald H. Coase／Oliver E. Williamson／Douglass C. North／Elinor Ostrom／Dar
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同じ思想家
 - [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同分野の近傍
 - [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 同分野の近傍
-- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同分野の近傍
 - [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 同分野の近傍
 
 ## 関連

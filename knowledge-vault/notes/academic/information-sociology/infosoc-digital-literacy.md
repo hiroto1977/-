@@ -34,8 +34,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-media-literacy|メディア・リテラシー]] — 同じ思想家
-- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
 - [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同分野の近傍
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

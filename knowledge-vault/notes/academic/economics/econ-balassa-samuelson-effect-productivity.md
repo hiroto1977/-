@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — 同じ思想家
 - [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同じ思想家
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
 - [[econ-secular-stagnation-hansen|長期停滞論（ハンセン＆サマーズ）]] — 同分野の近傍

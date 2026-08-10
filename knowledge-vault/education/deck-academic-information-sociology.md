@@ -349,7 +349,7 @@ tags:
 - **Q:** デジタル格差と情報不平等の社会的成層論
   - **A:** デジタル格差（digital divide）とは、情報通信技術へのアクセス・スキル・利用機会における個人・集団・地域間の不平等を指す概念であり、初期の「物理的アクセス格差（第一の格差）」から「スキル格差（第二の格差）」「便益格差（第三の格差）」へと概念的深化が進んだ。ジャン・ファン・ダイクは情報格差を多次元的に捉え、動機・物理的アクセス・スキル・利用の四段階モデルを提示した。（→ [[infosoc-digital-divide-stratification]]）
 - **Q:** デジタルデバイド（情報アクセス格差）
-  - **A:** Mark Warschauer、Jan van Dijk、Manuel Castellsらが指摘する情報通信技術（ICT）へのアクセスと利用能力の不平等。単なる物理的接続から、スキル・動機付け・目的といった多層的な格差へと概念が進化。社会的包摂と経済的機会を左右する重要な課題。（→ [[infosoc-digital-divide-warschauer]]）
+  - **A:** Mark Warschauer、Jan van Dijk、Manuel Castells らが論じた情報通信技術（ICT）へのアクセスと利用能力の不平等。（→ [[infosoc-digital-divide-warschauer]]）
 - **Q:** デジタル・デュアリズム
   - **A:** 社会学者ネイサン・ユルゲンソンが2011年にCyborgologyブログで提示した概念。デジタル・デュアリズムとは、オンライン／仮想とオフライン／物理を別個に切り離された現実とみなす見方、すなわち「デジタルは仮想で物理こそが現実」と捉え、サイバースペースを「リアルな生活（IRL）」とは異なる空間として扱う考え方を指す。（→ [[infosoc-digital-dualism]]）
 - **Q:** デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査
@@ -575,7 +575,7 @@ tags:
 - **Q:** 情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗
   - **A:** シャーロット・ヘスとエリナー・オストロムは2007年の著作『知識のコモンズの理解（Understanding Knowledge as a Commons）』において，デジタル情報・学術知識・オープンソースソフトウェアなどの知識資源を「情報コモンズ（information commons / knowledge commons）」として概念化し，オストロムの共有資源（CPR）管理の制度分析枠組み（IADフレームワーク）をデジタル領域に…（→ [[infosoc-information-commons-hess-ostrom]]）
 - **Q:** 情報コモンズ理論
-  - **A:** OstromのIADフレームワークを知識・情報財に応用し、HessとOstromは「知識コモンズ」の自律的ガバナンスを論じた。Benklerのコモンズ基盤型ピア生産、LessigのCreative Commons運動と対峙するIP拡張による「囲い込み」との緊張関係を包含する。（→ [[infosoc-information-commons-theory]]）
+  - **A:** Ostrom の IAD（制度分析・開発）フレームワークを知識・情報財に応用する理論枠組み。Hess と Ostrom は『Understanding Knowledge as a Commons』（2007）で、図書館・学術リポジトリ・オープンアクセスなどの知識コモンズが直面する囲い込み・劣化・持続可能性の課題と自律的ガバナンスを論じた。（→ [[infosoc-information-commons-theory]]）
 - **Q:** 情報障害（Information Disorder）
   - **A:** 情報障害（Information Disorder）とは、偽情報・誤情報・悪意情報の三類型を包括的に分析するための学際的枠組みである。（→ [[infosoc-information-disorder]]）
 - **Q:** 情報障害の分類体系（ワードル＆デラクシャン）
