@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Frustration of purpose — supervening impossibility doctrine overview](https://en.wikipedia.org/wiki/Frustration_of_purpose) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 語彙が近い
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
 - [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
-- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

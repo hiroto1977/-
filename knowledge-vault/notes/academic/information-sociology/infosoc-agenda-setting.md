@@ -31,7 +31,6 @@ aliases:
 - [Springer Nature, Communication and Change (2025) — agenda-setting研究の系譜 1972-2025](https://link.springer.com/article/10.1007/s44382-025-00016-x) `学術`
 
 ## 関連概念
-- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 語彙が近い
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同じ思想家
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
 - [[human-hedonic-adaptation|快楽順応]] — 出典を共有
 - [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
+- [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

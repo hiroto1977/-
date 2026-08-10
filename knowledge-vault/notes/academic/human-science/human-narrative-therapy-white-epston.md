@@ -33,7 +33,6 @@ aliases:
 - [[human-narrative-therapy|ナラティブ・セラピー]] — 同じ思想家
 - [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
 - [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
-- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
 - [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — 同分野の近傍
 
 ## 関連

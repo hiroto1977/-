@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 語彙が近い
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 同じ思想家
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
-- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

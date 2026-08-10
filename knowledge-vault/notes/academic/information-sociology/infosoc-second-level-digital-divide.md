@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
 - [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

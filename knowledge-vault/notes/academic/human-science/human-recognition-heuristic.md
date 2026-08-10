@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同分野の近傍
-- [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

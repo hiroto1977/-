@@ -34,7 +34,6 @@ aliases:
 - [[econ-financial-repression|金融抑圧]] — 同じ思想家
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
 - [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 出典を共有
-- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
 - [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
 - [[infosoc-splinternet|スプリンターネット（インターネットの分断）]] — 同分野の近傍

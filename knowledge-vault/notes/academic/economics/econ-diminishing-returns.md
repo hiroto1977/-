@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同分野の近傍
-- [[econ-malthusian-trap|マルサスの罠]] — 同分野の近傍
 - [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同分野の近傍
 
 ## 関連

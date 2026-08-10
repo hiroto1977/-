@@ -23,11 +23,11 @@ tags:
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -40,7 +40,6 @@ tags:
 - 1907年: [[infosoc-wisdom-of-crowds|群衆の叡智]]
 - 1908年: [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]]
 - 1910年: [[infosoc-social-exchange-theory|社会交換理論]]
-- 1911年: [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]]
 - 1911年: [[infosoc-speech-act-theory|言語行為論]]
 - 1919年: [[infosoc-selective-exposure|選択的接触理論]]
 - 1920年: [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]]
@@ -86,6 +85,7 @@ tags:
 - 1962年: [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]]
 - 1962年: [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]]
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
+- 1963年: [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
 - 1964年: [[infosoc-technological-sublime|テクノロジカル・サブライム（技術的崇高）]]

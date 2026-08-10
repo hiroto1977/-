@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
 - [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
-- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

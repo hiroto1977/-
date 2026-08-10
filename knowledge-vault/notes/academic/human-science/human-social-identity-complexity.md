@@ -35,6 +35,7 @@ Sonia Roccas／Marilynn B. Brewer
 - [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同分野の近傍
 - [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同分野の近傍
 - [[human-dialogical-self-theory|対話的自己理論（ハーマンス）と内的ポリフォニー]] — 同分野の近傍
+- [[human-impostor-syndrome|インポスター症候群（インポスター現象）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

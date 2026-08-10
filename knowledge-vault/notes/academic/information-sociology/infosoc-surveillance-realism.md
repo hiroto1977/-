@@ -31,8 +31,8 @@ aliases:
 - [The Advent of Surveillance Realism — Cardiff University ORCA](https://orca.cardiff.ac.uk/id/eprint/97855/) `学術`
 
 ## 関連概念
+- [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 語彙が近い
 - [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
-- [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同分野の近傍
 - [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 同分野の近傍

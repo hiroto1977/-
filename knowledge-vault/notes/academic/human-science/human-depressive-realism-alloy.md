@@ -40,6 +40,7 @@ aliases:
 - [[human-tend-and-befriend-taylor|思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式]] — 同じ思想家
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
 - [[human-compensatory-control-kay|補償的制御理論（コンペンサトリー・コントロール理論）]] — 同分野の近傍
+- [[human-recognition-heuristic|再認ヒューリスティック]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

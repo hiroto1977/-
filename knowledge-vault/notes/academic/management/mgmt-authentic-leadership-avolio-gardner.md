@@ -36,9 +36,9 @@ aliases:
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家
 - [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 同じ思想家
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同じ思想家
-- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
 - [[mgmt-realistic-job-preview-wanous|現実的職務予告——入社前の率直な情報提供が定着と満足を高める]] — 同分野の近傍
+- [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

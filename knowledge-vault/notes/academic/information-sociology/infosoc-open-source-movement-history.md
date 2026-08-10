@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
 - [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同分野の近傍
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
