@@ -34,8 +34,8 @@ aliases:
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — 語彙が近い
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 語彙が近い
 - [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同じ思想家
-- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同分野の近傍
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

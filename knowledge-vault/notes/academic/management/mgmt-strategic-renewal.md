@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 同分野の近傍
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
+- [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

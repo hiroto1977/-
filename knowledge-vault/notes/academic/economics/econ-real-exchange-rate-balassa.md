@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同じ思想家
 - [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — 同じ思想家
-- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同じ思想家
 - [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — 同じ思想家
 - [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
 - [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
 - [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
 - [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 同じ思想家
+- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

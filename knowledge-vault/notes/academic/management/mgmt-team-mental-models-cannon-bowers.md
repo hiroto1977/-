@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 語彙が近い
-- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 語彙が近い
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同分野の近傍

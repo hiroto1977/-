@@ -40,6 +40,7 @@ aliases:
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同じ思想家
 - [[econ-present-bias|現在バイアス：先延ばし行動と自己制御の行動経済学的分析]] — 同じ思想家
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

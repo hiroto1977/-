@@ -34,7 +34,6 @@ M.アレ1953提示（"Le Comportement de l'Homme Rationnel devant le Risque", Ec
 ## 関連概念
 - [[econ-expected-utility|期待効用理論]] — 同分野の近傍
 - [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同分野の近傍
-- [[econ-implicit-contract-theory|暗黙的契約理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

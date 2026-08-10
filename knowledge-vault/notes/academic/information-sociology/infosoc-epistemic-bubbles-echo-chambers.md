@@ -32,6 +32,7 @@ C. Thi Nguyen／Cass R. Sunstein／Eli Pariser／Kathleen Hall Jamieson／Joseph
 
 ## 関連概念
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同分野の近傍
 - [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
 
 ## 関連

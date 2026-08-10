@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同分野の近傍
 - [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
+- [[human-emerging-adulthood|新興成人期（エマージング・アダルトフッド）]] — 同分野の近傍
 - [[human-interpersonal-neurobiology-siegel|対人神経生物学——シーゲルの統合マインド理論と関係性が脳発達に与える神経科学的基盤]] — 同分野の近傍
 
 ## 関連

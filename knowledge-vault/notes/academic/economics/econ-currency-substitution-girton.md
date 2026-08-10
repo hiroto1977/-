@@ -34,7 +34,7 @@ aliases:
 - [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
 - [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 同じ思想家
 - [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同分野の近傍
-- [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同分野の近傍
+- [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

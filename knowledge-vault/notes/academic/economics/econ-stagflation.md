@@ -38,10 +38,10 @@ aliases:
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
+- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 同分野の近傍
 - [[econ-phillips-curve-friedman|フィリップス曲線とフリードマン・ペルプス批判]] — 同分野の近傍
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
 - [[econ-secular-stagnation-hansen|長期停滞論（ハンセン＆サマーズ）]] — 同分野の近傍
-- [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

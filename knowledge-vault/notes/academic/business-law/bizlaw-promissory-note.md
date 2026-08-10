@@ -39,6 +39,7 @@ aliases:
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 同じ思想家
 - [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-bills-act|手形法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

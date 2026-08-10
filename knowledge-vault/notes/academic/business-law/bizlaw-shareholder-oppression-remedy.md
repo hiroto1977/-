@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 語彙が近い
-- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 語彙が近い
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
 - [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

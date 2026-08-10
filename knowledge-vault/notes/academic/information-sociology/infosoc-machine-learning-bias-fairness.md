@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
 - [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同じ思想家
 - [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
+- [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

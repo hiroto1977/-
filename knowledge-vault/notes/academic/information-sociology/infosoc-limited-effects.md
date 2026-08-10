@@ -40,7 +40,7 @@ aliases:
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
 - [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
-- [[mgmt-simmelian-ties-krackhardt|ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯]] — 出典を共有
+- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

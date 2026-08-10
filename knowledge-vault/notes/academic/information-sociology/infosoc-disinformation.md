@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
 - [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]] — 出典を共有
 - [[infosoc-digital-citizenship|デジタル・シティズンシップ]] — 同分野の近傍
-- [[infosoc-infodemic|インフォデミック]] — 同分野の近傍
+- [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

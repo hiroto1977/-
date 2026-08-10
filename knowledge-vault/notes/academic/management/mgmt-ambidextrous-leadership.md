@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
+- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ T.P.ライト（1936 学習曲線・航空機で約20%低下）／BCG・B.ヘン
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 出典を共有
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 出典を共有
 - [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 出典を共有
-- [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — 同分野の近傍
 - [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 同分野の近傍
 - [[mgmt-first-mover-advantage|先発者優位]] — 同分野の近傍
 

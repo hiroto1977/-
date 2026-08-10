@@ -36,7 +36,7 @@ aliases:
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同じ思想家
 - [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 出典を共有
 - [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同分野の近傍
-- [[human-golem-effect|ゴーレム効果]] — 同分野の近傍
+- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

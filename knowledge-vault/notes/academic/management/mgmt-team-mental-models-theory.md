@@ -33,7 +33,7 @@ Janis A. Cannon-Bowers ／ Eduardo Salas ／ Sharolyn A. Converse ／ Richard Kl
 - [DeChurch & Mesmer-Magnus (2010) — Measuring Shared Team Mental Models: A Meta-Analysis (Group Dynamics)](https://www.researchgate.net/publication/232489779_Measuring_Shared_Team_Mental_Models_A_Meta-Analysis) `学術`
 
 ## 関連概念
-- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 語彙が近い
+- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 同じ思想家
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
@@ -42,6 +42,7 @@ Janis A. Cannon-Bowers ／ Eduardo Salas ／ Sharolyn A. Converse ／ Richard Kl
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
 - [[human-hedonic-adaptation|快楽順応]] — 出典を共有
 - [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
+- [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 - [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同分野の近傍
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

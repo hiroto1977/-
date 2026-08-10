@@ -41,7 +41,7 @@ aliases:
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
 - [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
+- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

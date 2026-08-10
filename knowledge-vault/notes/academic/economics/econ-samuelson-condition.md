@@ -34,7 +34,6 @@ aliases:
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
 - [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
-- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — 同じ思想家
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 出典を共有
 - [[econ-median-voter|中位投票者定理]] — 出典を共有
 - [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 出典を共有

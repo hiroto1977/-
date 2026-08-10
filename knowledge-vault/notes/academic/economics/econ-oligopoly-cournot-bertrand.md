@@ -39,7 +39,6 @@ aliases:
 - [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
 - [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
-- [[econ-turnpike-theorem|ターンパイク定理（Turnpike Theorem）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

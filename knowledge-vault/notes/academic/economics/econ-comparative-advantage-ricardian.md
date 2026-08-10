@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Comparative advantage — Ricardo, H-O model, new trade theory, Krugman, intra-industry trade](https://en.wikipedia.org/wiki/Comparative_advantage) `リファレンス`
 
 ## 関連概念
-- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 語彙が近い
 - [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 語彙が近い
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 語彙が近い
 - [[econ-ricardian-rent|リカードの地代論（差額地代）]] — 同じ思想家
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家

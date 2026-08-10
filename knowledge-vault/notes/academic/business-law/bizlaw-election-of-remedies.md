@@ -41,7 +41,7 @@ Dan B. Dobbs ／ Howard W. Brill ／ Samuel Williston
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
-- [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 同分野の近傍
+- [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

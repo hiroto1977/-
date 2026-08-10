@@ -33,6 +33,7 @@ aliases:
 - [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — 語彙が近い
 - [[econ-credit-channel-theory|信用チャネル理論]] — 出典を共有
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同分野の近傍
+- [[econ-quantitative-easing|量的緩和（QE）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
