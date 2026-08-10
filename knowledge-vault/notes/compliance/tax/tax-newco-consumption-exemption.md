@@ -31,8 +31,9 @@ aliases:
 - [国税庁 質疑応答 特定新規設立法人の特例](https://www.nta.go.jp/law/shitsugi/shohi/22/15.htm) `公的`
 
 ## 関連概念
-- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
+- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
+- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

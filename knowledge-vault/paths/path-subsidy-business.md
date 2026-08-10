@@ -14,7 +14,7 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[subsidy-chiba-city|千葉市創業支援補助金]]（接続 43）
-- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]]（接続 38）
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]]（接続 39）
 - [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]]（接続 29）
 - [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]]（接続 28）
 - [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]]（接続 25）

@@ -34,6 +34,7 @@ aliases:
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 語彙が近い
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 語彙が近い
 - [[bizlaw-tob|公開買付け（TOB）]] — 出典を共有
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

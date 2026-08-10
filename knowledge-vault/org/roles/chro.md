@@ -37,14 +37,14 @@ aliases:
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
 - …ほか 639 件 → [[学術概念]]
 
-### 法務・税務・労務 / 労務（全125件）
+### 法務・税務・労務 / 労務（全124件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]]
 - [[labor-average-wage|平均賃金（労働基準法12条）]]
 - [[labor-break-time|休憩時間（労働基準法34条）]]
 - [[labor-care-leave|介護休業と介護休業給付金]]
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
-- …ほか 119 件 → [[法務・税務・労務]]
+- …ほか 118 件 → [[法務・税務・労務]]
 
 ### 補助金・助成金 / 雇用（全17件）
 - [[subsidy-age-friendly|エイジフレンドリー補助金]]

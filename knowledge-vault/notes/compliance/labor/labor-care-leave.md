@@ -35,6 +35,8 @@ aliases:
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 語彙が近い
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 語彙が近い
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 語彙が近い
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
+- [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

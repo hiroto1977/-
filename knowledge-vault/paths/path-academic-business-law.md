@@ -26,8 +26,8 @@ tags:
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]（接続 26）
+- [[bizlaw-agency|代理（民法99条）]]（接続 25）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
-- [[bizlaw-consumption-tax|消費税法]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -152,6 +152,7 @@ tags:
 - 1985年: [[bizlaw-worker-dispatch|労働者派遣法]]
 - 1986年: [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]]
 - 1986年: [[bizlaw-greenwashing|グリーンウォッシング（虚偽・誇大な環境訴求）]]
+- 1988年: [[bizlaw-consumption-tax|消費税法]]
 - 1989年: [[bizlaw-civil-preservation|民事保全法]]
 - 1989年: [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]]
 - 1990年: [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]]
@@ -297,7 +298,6 @@ tags:
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]]
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]]
-- [[bizlaw-agency|代理（民法99条）]]
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]]
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]]
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]

@@ -1163,6 +1163,9 @@ describe('法定帳簿の検算', () => {
       expect(hit.field).toBeUndefined();
       expect(hit.basis).toBe('労働基準法施行規則24条の7');
       expect(hit.message).toContain('労働者ごとに');
+      // 保存期間の根拠を取り違えないこと — 109条の「5年・当分の間3年」ではなく規則が直接3年
+      expect(hit.message).toContain('満了後3年間保存');
+      expect(hit.message).toContain('労働基準法109条の帳簿とは根拠が別');
     });
   });
 });

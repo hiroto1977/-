@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 語彙が近い
-- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
+- [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

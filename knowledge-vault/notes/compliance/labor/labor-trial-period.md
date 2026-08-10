@@ -31,10 +31,11 @@ aliases:
 - [試用期間の解雇・本採用拒否 解説](https://www.komon-lawyer.jp/qa/qa4_6/) `メディア`
 
 ## 関連概念
-- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 語彙が近い
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
-- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 出典を共有
+- [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 語彙が近い
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 出典を共有
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 同分野の近傍
+- [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

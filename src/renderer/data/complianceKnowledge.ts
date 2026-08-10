@@ -290,15 +290,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '年次有給休暇の年5日取得義務',
       statement:
-        '2019年4月から、年次有給休暇が年10日以上付与される労働者に対し、使用者は年5日について' +
-        '時季を指定して取得させる義務がある（パート・アルバイトも対象）。違反は労働基準法違反として罰則の対象。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '2019年4月から、法定の年次有給休暇付与日数が10日以上の全ての労働者について、使用者は' +
+        '基準日から1年以内に5日を取得させなければならない（パート・アルバイトも対象）。' +
+        '5日は「労働者自らの請求」「計画年休」「使用者による時季指定」のいずれで消化してもよく、' +
+        'すでに5日以上取得している労働者に改めて時季指定をする必要はない。ただし' +
+        '時間単位で取得した分は5日から差し引けない。使用者が時季指定を行うなら、対象となる労働者の範囲と' +
+        '時季指定の方法を就業規則に記載する必要がある。あわせて、労働者ごとに時季・日数・基準日を明らかにした' +
+        '年次有給休暇管理簿を作成し、当該期間中および満了後3年間保存しなければならない' +
+        '（労働基準法施行規則24条の7）。取得させなかった場合は労働者1人につき30万円以下の罰金の対象となる。',
+      authority: '所管: 厚生労働省（労働基準法第39条第7項・第120条・同法施行規則第24条の7）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/content/000463186.pdf', type: 'government', label: '厚生労働省 年5日の年次有給休暇の確実な取得' },
-      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q9.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 有給休暇' },
-      { url: 'https://www.aig.co.jp/kokokarakaeru/management/human-resource/yuukyu02', type: 'media', label: '有給休暇の年5日取得義務 解説' },
+      { url: 'https://www.mhlw.go.jp/content/001140963.pdf', type: 'government', label: '厚生労働省 年5日の年次有給休暇の確実な取得 わかりやすい解説' },
+      { url: 'https://hatarakikatakaikaku.mhlw.go.jp/salaried.html', type: 'government', label: '厚生労働省 働き方改革特設サイト 年次有給休暇の時季指定' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q9.html', type: 'government', label: '厚生労働省 すでに5日以上取得している労働者への時季指定' },
+      { url: 'https://www.mhlw.go.jp/content/000350327.pdf', type: 'government', label: '厚生労働省 年次有給休暇の時季指定義務' },
     ],
   },
   {
@@ -486,15 +493,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '印紙税の課税文書と過怠税',
       statement:
-        '印紙税法上の課税文書（契約書・領収書等）を作成した者は所定額の収入印紙を貼付・消印する義務を負う。' +
-        '納付すべき印紙税を納めなかった場合は原則として本来の税額の3倍の過怠税（自主申出時は1.1倍）が課される。',
+        '印紙税法上の課税文書（契約書・領収書等）を作成した者は、作成の時までに所定額の収入印紙を貼付し' +
+        '消印する義務を負う。納付しなかった場合は、本来の税額とその2倍の合計、すなわち3倍の過怠税を徴収される。' +
+        'ただし調査による決定を予知せずに自ら所轄税務署長へ不納付の事実を申し出た場合は、' +
+        '本来の税額とその10％の合計、すなわち1.1倍に軽減される。貼付したが所定の方法で消印しなかった場合は、' +
+        '消されていない印紙の額面金額に相当する過怠税が別に徴収される（貼れば済む、ではない）。' +
+        '誤って多く納付したときは自動的には戻らず、「印紙税過誤納確認申請書」を提出して' +
+        '過誤納の事実について所轄税務署長の確認を受ける必要がある。提出先は文書の作成場所を管轄する税務署である。' +
+        'なお、電子的に作成・交付した文書は課税文書に当たらないため、電子契約に切り替えれば印紙税は生じない。',
       authority: '所管: 国税庁・財務省（印紙税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7131.htm', type: 'government', label: '国税庁 No.7131 印紙税を納めなかったとき' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/06/21.htm', type: 'government', label: '国税庁 印紙を貼り付けなかった場合の過怠税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7130.htm', type: 'government', label: '国税庁 No.7130 誤って納付した印紙税の還付' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/kagono.htm', type: 'government', label: '国税庁 印紙税過誤納[確認申請・充当請求]手続' },
       { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/23120080.htm', type: 'government', label: '国税庁 印紙税不納付事実申出手続' },
-      { url: 'https://www.gmosign.com/media/electronic-contract/inshizei-kataizei/', type: 'media', label: 'GMOサイン 印紙税の過怠税' },
     ],
   },
   {
@@ -503,15 +518,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '雇用保険の被保険者加入要件',
       statement:
-        '雇用保険は、1週間の所定労働時間が20時間以上で、かつ31日以上の雇用見込みがある労働者が、雇用形態を' +
-        '問わず原則として被保険者となる。要件を満たせば事業主はハローワークへ資格取得届を提出する。',
+        '雇用保険は、1週間の所定労働時間が20時間以上で、かつ31日以上引き続き雇用されることが見込まれる労働者が、' +
+        '常用・パート・アルバイト・派遣といった名称や雇用形態にかかわらず被保険者となる。' +
+        '被保険者になるかどうかは本人の意思では選べず、要件を満たせば加入する。事業主は、被保険者となった日の' +
+        '属する月の翌月10日までに雇用保険被保険者資格取得届をハローワークへ提出する。' +
+        '昼間学生は原則として適用除外だが、要件を満たす場合に被保険者となることがある。' +
+        '2017年1月1日からは65歳以上の労働者も適用対象になった。さらにマルチジョブホルダー制度により、' +
+        '65歳以上の労働者は、2つの事業所（1事業所あたり週5時間以上20時間未満）の所定労働時間を合計して' +
+        '週20時間以上、かつそれぞれの雇用見込みが31日以上であれば、本人からハローワークへ申し出ることで' +
+        '特例的に被保険者となれる。',
       authority: '所管: 厚生労働省（雇用保険法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/hoken/kakikata/dl/koyou-06.pdf', type: 'government', label: '厚生労働省 雇用保険の被保険者について' },
-      { url: 'https://www.mhlw.go.jp/content/11600000/000637955.pdf', type: 'government', label: '厚生労働省 雇用保険業務取扱要領' },
-      { url: 'https://hataluck.jp/column/store-management/conditions/', type: 'media', label: '雇用保険の加入条件 解説' },
+      { url: 'https://www.mhlw.go.jp/content/11600000/000637955.pdf', type: 'government', label: '厚生労働省 雇用保険業務取扱要領（第4章 被保険者について）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000136389_00001.html', type: 'government', label: '厚生労働省 雇用保険マルチジョブホルダー制度' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page15.html', type: 'government', label: '厚生労働省 事業主の行う雇用保険の手続き' },
     ],
   },
   {
@@ -668,15 +691,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '源泉徴収義務と納付期限',
       statement:
-        '給与や報酬等の支払者は所得税・復興特別所得税を源泉徴収し、原則として徴収月の翌月10日までに納付する義務がある。' +
-        '給与の支給人員が常時10人未満の場合は納期の特例により年2回にまとめて納付できる。',
+        '給与や報酬等の支払者は所得税及び復興特別所得税を源泉徴収し、原則として徴収した月の翌月10日までに' +
+        '納付する義務がある。給与の支給人員が常時10人未満である源泉徴収義務者は、事前に承認を受ければ' +
+        '納期の特例により年2回にまとめて納付でき、1月から6月までに徴収した分は7月10日、' +
+        '7月から12月までに徴収した分は翌年1月20日が納付期限になる。特例の対象になるのは給与等と' +
+        '一定の報酬・料金（税理士・弁護士・司法書士等への報酬）に係る源泉所得税に限られ、' +
+        'それ以外は特例の承認を受けていても原則どおり翌月10日納付である。' +
+        '納付が期限に遅れると不納付加算税と延滞税の対象になるため、資金繰り上は毎月の固定支出として扱う。',
       authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm', type: 'government', label: '国税庁 No.2505 納付期限と納期の特例' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm', type: 'government', label: '国税庁 No.2505 源泉所得税及び復興特別所得税の納付期限と納期の特例' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2502.htm', type: 'government', label: '国税庁 No.2502 源泉徴収義務者' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/2894/', type: 'media', label: 'マネーフォワード 源泉徴収の解説' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_37.htm', type: 'government', label: '国税庁 源泉所得税の納期の特例の承認に関する申請' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2110.htm', type: 'government', label: '国税庁 No.2110 事業主が納める税金（源泉所得税）' },
     ],
   },
   {
@@ -923,17 +952,28 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     value: {
       id: 'labor-dismissal-notice',
       domain: 'labor',
-      title: '解雇予告（労働基準法第20条）',
+      title: '解雇予告と適用除外・除外認定（労働基準法第20条・第21条）',
       statement:
-        '使用者が労働者を解雇しようとする場合は、少なくとも30日前に予告するか、30日分以上の平均賃金（解雇予告手当）を' +
-        '支払わなければならない。予告日数は解雇予告手当を支払った日数だけ短縮できる。',
-      authority: '所管: 厚生労働省（労働基準法第20条）',
-      asOf: '2026-06',
+        '使用者が労働者を解雇しようとする場合は、少なくとも30日前に予告するか、30日分以上の平均賃金' +
+        '（解雇予告手当）を支払わなければならない（労働基準法20条1項）。予告日数は手当を支払った日数だけ' +
+        '短縮でき、予告をした日は日数に算入しない。手続きを踏まずに即時解雇できるのは、天災事変その他' +
+        'やむを得ない事由により事業の継続が不可能となった場合と、労働者の責に帰すべき事由による場合だけで、' +
+        'いずれも所轄労働基準監督署長の解雇予告除外認定（様式第3号）を受ける必要がある。' +
+        'また、日日雇い入れられる者、2か月以内の期間を定めて使用される者、季節的業務に4か月以内の期間を' +
+        '定めて使用される者、試の使用期間中の者には予告の規定が適用されないが、日雇いは1か月、' +
+        '期間を定めた者はその期間、試用期間中の者は14日を超えて引き続き使用されると適用される（同法21条）。' +
+        '予告手当の算定基礎になる平均賃金は直前3か月の賃金から求める（同法12条）。' +
+        '手続きを守っても解雇が有効になるとは限らず、客観的合理性と社会通念上の相当性は別に問われる。',
+      authority: '所管: 厚生労働省（労働基準法第12条・第20条・第21条）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://jsite.mhlw.go.jp/kagoshima-roudoukyoku/yokuaru_goshitsumon/qa07/0703.html', type: 'government', label: '厚生労働省 鹿児島労働局 解雇予告' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/88061/', type: 'media', label: 'マネーフォワード 解雇予告手当' },
-      { url: 'https://www.komon-lawyer.jp/qa/teate/', type: 'media', label: 'デイライト法律事務所 解雇予告' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article20.html', type: 'government', label: '厚生労働省 栃木労働局 解雇の予告（第20条）' },
+      { url: 'https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00485.html', type: 'government', label: '厚生労働省 和歌山労働局 解雇の予告（第20条・第21条）' },
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/dl/140811-1.pdf', type: 'government', label: '厚生労働省 解雇する際の手続き（リーフレットシリーズ労基法20条）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/kaiko/q2.html', type: 'government', label: '厚生労働省 解雇予告や予告手当の不要な場合' },
+      { url: 'https://shinsei.e-gov.go.jp/recept/procedure/lists/procedureInformation?gtaTetCd=4950013309636', type: 'government', label: 'e-Gov電子申請 解雇予告除外認定申請' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73022000&dataType=0', type: 'government', label: '厚生労働省 法令データ 労働基準法（第20条・第21条）' },
     ],
   },
   {
@@ -1124,15 +1164,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '法定三帳簿の作成・保存義務',
       statement:
-        '使用者は労働者名簿・賃金台帳を各事業場ごとに調製し、出勤簿等の労働関係に関する重要書類とあわせて法定の期間' +
-        '保存しなければならない（労働基準法第107〜109条。第109条の保存期間は5年だが当分の間3年）。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
+        '使用者は労働者名簿（労働基準法107条）と賃金台帳（同108条）を各事業場ごとに調製し、' +
+        '出勤簿等の労働関係に関する重要な書類とあわせて保存しなければならない（同109条）。' +
+        'この3つが法定三帳簿と呼ばれ、労働基準監督署の調査でまず確認される。日雇労働者を含む全ての労働者が' +
+        '対象で、パート・アルバイトも含む（規模による免除はない）。保存期間は、賃金請求権の消滅時効が' +
+        '5年に延びたことに合わせて5年とされたが、経過措置により当分の間は3年である（同143条1項）。' +
+        '起算日は書類ごとに異なり、労働者名簿は死亡・退職・解雇の日、賃金台帳は最後の記入をした日、' +
+        '賃金その他労働関係に関する重要な書類はその完結の日だが、記録の完結日より賃金の支払期日が後に来る場合は' +
+        '支払期日が起算日になる。パソコンで作成・保存することも、必要なときに直ちに表示・印刷でき、' +
+        '改ざん防止と保存期間の担保がされていれば差し支えない。',
+      authority: '所管: 厚生労働省（労働基準法第107条・第108条・第109条・第143条）',
+      asOf: '2026-08',
     },
     sources: [
+      { url: 'https://jsite.mhlw.go.jp/okinawa-roudoukyoku/library/okinawa-roudoukyoku/04rouki/houteichoubo.pdf', type: 'government', label: '厚生労働省 沖縄労働局 法定帳簿を整え保存する' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/syuugyoukisoku/q6.html', type: 'government', label: '厚生労働省 賃金台帳等の労働契約関係の書類の保存期間' },
+      { url: 'https://www.mhlw.go.jp/content/000617980.pdf', type: 'government', label: '厚生労働省 改正労働基準法等に関するQ&A（記録の保存）' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_33.html', type: 'government', label: '厚生労働省 労務関係書類をパソコンで作成して保存する場合' },
       { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov 労働基準法' },
-      { url: 'https://jsite.mhlw.go.jp/okinawa-roudoukyoku/library/okinawa-roudoukyoku/04rouki/houteichoubo.pdf', type: 'government', label: '厚生労働省 沖縄労働局 法定帳簿' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/87661/', type: 'media', label: '法定三帳簿 解説' },
     ],
   },
   {
@@ -6212,24 +6261,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/haken-shoukai/hakenhourei.html', type: 'government', label: '厚生労働省 労働者派遣事業に係る法令' },
       { url: 'https://www.mhlw.go.jp/general/seido/anteikyoku/jukyu/haken/youryou_2020/index.html', type: 'government', label: '厚生労働省 労働者派遣事業関係業務取扱要領' },
       { url: 'https://www.rodo.co.jp/laws/117588/', type: 'media', label: '労働者派遣法 4条 適用除外業務 条文' },
-    ],
-  },
-  {
-    value: {
-      id: 'labor-dismissal-notice-exception',
-      domain: 'labor',
-      title: '解雇予告の適用除外と除外認定（労基法20条・21条）',
-      statement:
-        '使用者が労働者を解雇する場合は原則として少なくとも30日前の予告又は30日分以上の平均賃金（解雇予告手当）の支払が必要だが（労基法20条1項）、天災事変その他' +
-        'やむを得ない事由のため事業の継続が不可能となった場合、又は労働者の責に帰すべき事由に基づいて解雇する場合は、所轄労働基準監督署長の認定（解雇予告除外認定）を' +
-        '受ければ予告・予告手当なしに即時解雇できる。また日々雇い入れられる者、2か月以内の期間を定めて使用される者、試の使用期間中で14日以内の者等には解雇予告の規定が適用されない（労基法21条）。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/kaiko/q2.html', type: 'government', label: '厚生労働省 即時解雇・解雇予告除外認定 Q&A' },
-      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73022000&dataType=0', type: 'government', label: '厚生労働省 法令データ 労働基準法（20条・21条）' },
-      { url: 'https://shinsei.e-gov.go.jp/recept/procedure/lists/procedureInformation?gtaTetCd=4950013309636', type: 'government', label: 'e-Gov電子申請 解雇予告除外認定申請' },
     ],
   },
   {

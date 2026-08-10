@@ -38,7 +38,6 @@ Sherwin Rosen（1974 JPE 差別化財のヘドニック価格モデル定式化�
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同分野の近傍
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同分野の近傍
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]] — 同分野の近傍
-- [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,12 +35,12 @@ aliases:
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 出典を共有
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

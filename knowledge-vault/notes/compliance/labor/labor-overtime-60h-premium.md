@@ -38,7 +38,7 @@ aliases:
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
 - [[labor-worktime-tracking|労働時間の適正な把握義務]] — 出典を共有
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 出典を共有
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 出典を共有
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 出典を共有
 

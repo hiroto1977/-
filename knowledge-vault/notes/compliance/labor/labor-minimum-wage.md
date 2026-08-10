@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
 - [[labor-legal-holiday|法定休日（労働基準法35条）]] — 同分野の近傍
-- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "jsite.mhlw.go.jp"
 type: source-domain
 host: "jsite.mhlw.go.jp"
-cite_count: 52
+cite_count: 53
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jsite.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **52 件**（公的 52）
+> [!info] 出典ドメイン索引 ・ 引用 **53 件**（公的 53）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,8 @@ tags:
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 栃木労働局事業場外みなし労働時間制（38条の2）
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 厚生労働省専門業務型裁量労働制の解説（令和6年改正対応）
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 栃木労働局裁量労働制（38条の3・38条の4）
-- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]] — 厚生労働省鹿児島労働局解雇予告
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省和歌山労働局解雇の予告（第20条・第21条）
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省栃木労働局解雇の予告（第20条）
 - [[labor-dispatch-license|労働者派遣事業の許可制]] — 兵庫労働局許可制への切替案内
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 厚生労働省愛知労働局派遣の期間制限
 - [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 和歌山労働局解雇理由・退職時の証明（22条）
@@ -47,7 +48,7 @@ tags:
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 厚生労働省大阪労働局よくあるご質問（退職・解雇・雇止め）
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 山口労働局安全衛生教育（59条・安衛則35条）
 - [[labor-safety-management|安全衛生管理体制（50人以上）]] — 厚生労働省新潟労働局安全衛生管理体制のあらまし
-- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省沖縄労働局法定帳簿
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省沖縄労働局法定帳簿を整え保存する
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 厚生労働省東京労働局ストレスチェック制度の概要
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 山梨労働局振替休日と代休
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 石川労働局雇用保険（基本手当）Q&A

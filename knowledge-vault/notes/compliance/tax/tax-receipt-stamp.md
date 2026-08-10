@@ -31,9 +31,9 @@ aliases:
 - [領収書と収入印紙 解説](https://www.keihi.com/column/22359/) `メディア`
 
 ## 関連概念
-- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 語彙が近い
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 分野横断
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
+- [[tax-medical-expense-deduction|医療費控除]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 253
+cite_count: 258
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **253 件**（公的 253）
+> [!info] 出典ドメイン索引 ・ 引用 **258 件**（公的 258）
 
 ## このドメインを出典とする項目
 
@@ -234,8 +234,11 @@ tags:
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 国税庁No.5433中小企業投資促進税制（特別償却又は税額控除）
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1191配偶者控除
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1195配偶者特別控除
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁No.7130誤って納付した印紙税の還付
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁No.7131印紙税を納めなかったとき
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙を貼り付けなかった場合の過怠税
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙税不納付事実申出手続
+- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 国税庁印紙税過誤納[確認申請・充当請求]手続
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁タックスアンサーNo.7100課税文書に該当するかどうかの判断
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 国税庁文書回答事例電磁的記録に関する印紙税の取扱い
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 福岡国税局注文請書を電子メール送信した場合の印紙税（具体事例）
@@ -253,8 +256,10 @@ tags:
 - [[tax-vehicle-weight-tax|自動車重量税]] — 国税庁No.7192自動車重量税のあらまし
 - [[tax-wage-increase-credit|賃上げ促進税制]] — 国税庁No.5927-2中小企業者等の賃上げ促進税制
 - [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 国税庁No.5927-2中小企業者等における賃上げ促進税制
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2110事業主が納める税金（源泉所得税）
 - [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2502源泉徴収義務者
-- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2505納付期限と納期の特例
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁No.2505源泉所得税及び復興特別所得税の納付期限と納期の特例
+- [[tax-withholding|源泉徴収義務と納付期限]] — 国税庁源泉所得税の納期の特例の承認に関する申請
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2878国内源泉所得の範囲
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2880非居住者等に不動産の賃借料を支払ったとき
 - [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 国税庁No.2884非居住者等に対する源泉徴収の税率

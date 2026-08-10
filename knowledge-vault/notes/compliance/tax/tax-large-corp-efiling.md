@@ -38,7 +38,6 @@ aliases:
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 出典を共有
-- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
 - [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同分野の近傍
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同分野の近傍
+- [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

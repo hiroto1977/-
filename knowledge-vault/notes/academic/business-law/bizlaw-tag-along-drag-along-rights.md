@@ -36,6 +36,7 @@ Steven N. Kaplan ／ Per Strömberg ／ Michael Ewens
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 出典を共有
 - [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]] — 同分野の近傍
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
+- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 同分野の近傍
 - [[bizlaw-squeeze-out|スクイーズアウト（特別支配株主の株式等売渡請求）]] — 同分野の近傍
 
 ## 関連

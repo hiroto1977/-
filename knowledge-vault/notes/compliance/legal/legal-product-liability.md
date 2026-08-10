@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 同分野の近傍
 - [[legal-tort-liability|不法行為による損害賠償責任（民法709条等）]] — 同分野の近傍
-- [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

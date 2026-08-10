@@ -31,7 +31,6 @@ aliases:
 - [年次有給休暇の付与 解説](https://biz.moneyforward.com/payroll/basic/83032/) `メディア`
 
 ## 関連概念
-- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 語彙が近い
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 出典を共有
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 同分野の近傍
 - [[labor-average-wage|平均賃金（労働基準法12条）]] — 同分野の近傍

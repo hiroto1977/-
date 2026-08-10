@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 255
+cite_count: 261
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **255 件**（公的 255）
+> [!info] 出典ドメイン索引 ・ 引用 **261 件**（公的 261）
 
 ## このドメインを出典とする項目
 
@@ -96,7 +96,8 @@ tags:
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 厚生労働省請負を適正に行うために（37号告示）
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 厚生労働省労働契約法16条権利濫用に該当する解雇
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 厚生労働省法令データベース労働契約法
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]] — 厚生労働省法令データ労働基準法（20条・21条）
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省法令データ労働基準法（第20条・第21条）
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省解雇する際の手続き（リーフレットシリーズ労基法20条）
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 厚生労働省労働契約申込みみなし制度とは
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 厚生労働省労働契約申込みみなし制度について（通達）
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 厚生労働省労働者派遣法改正の概要（同一労働同一賃金）
@@ -111,8 +112,10 @@ tags:
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 厚生労働省高年齢者雇用安定法の概要
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 厚生労働省雇用調整助成金
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 厚生労働省雇用関係助成金一覧
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 厚生労働省事業主の行う雇用保険の手続き
 - [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 厚生労働省雇用保険の被保険者について
-- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 厚生労働省雇用保険業務取扱要領
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 厚生労働省雇用保険マルチジョブホルダー制度
+- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 厚生労働省雇用保険業務取扱要領（第4章被保険者について）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 厚生労働省同一労働同一賃金特集ページ
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 厚生労働省介護休業制度特設サイト介護休暇
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 厚生労働省育児・介護休業法のあらまし
@@ -157,7 +160,8 @@ tags:
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 厚生労働省法定割増賃金率の引上げ
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 厚生労働省時間外労働の上限規制
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 厚生労働省時間外労働の上限規制解説
-- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 厚生労働省年5日の年次有給休暇の確実な取得
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 厚生労働省年5日の年次有給休暇の確実な取得わかりやすい解説
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 厚生労働省年次有給休暇の時季指定義務
 - [[labor-paid-leave-grant|年次有給休暇の付与]] — 厚生労働省年次有給休暇
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 厚生労働省年次有給休暇リーフレット
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 厚生労働省法令データベース労働基準法
@@ -183,6 +187,8 @@ tags:
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 厚生労働省職場におけるハラスメントの防止のために
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 厚生労働省傷病手当金の支給期間の通算化
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 厚生労働省社会保険適用拡大特設サイト
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省労務関係書類をパソコンで作成して保存する場合
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省改正労働基準法等に関するQ&A（記録の保存）
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 厚生労働省FAQ振替休日と代休の違い
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 厚生労働省遺族年金
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 中央労働委員会試用期間中の解雇あっせん事例

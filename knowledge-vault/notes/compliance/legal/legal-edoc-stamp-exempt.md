@@ -31,7 +31,6 @@ aliases:
 - [クラウドサイン 電子契約と収入印紙](https://www.cloudsign.jp/media/20170224-basics-of-e-contract-02/) `メディア`
 
 ## 関連概念
-- [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 語彙が近い
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 分野横断
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 分野横断
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有

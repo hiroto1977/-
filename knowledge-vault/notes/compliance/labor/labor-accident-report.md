@@ -31,8 +31,8 @@ aliases:
 - [厚生労働省 労働者死傷病報告](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/17.html) `公的`
 
 ## 関連概念
-- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
 - [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 同分野の近傍
 
 ## 関連

@@ -31,6 +31,7 @@ aliases:
 - [民法113条（無権代理）条文](https://ja.wikibooks.org/wiki/民法第113条) `メディア`
 
 ## 関連概念
+- [[bizlaw-agency|代理（民法99条）]] — 語彙が近い
 - [[bizlaw-apparent-agency|表見代理]] — 分野横断
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍

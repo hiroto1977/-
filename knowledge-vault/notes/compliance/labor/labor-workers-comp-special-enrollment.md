@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
-- [[labor-employment-insurance|雇用保険の被保険者加入要件]] — 同分野の近傍
+- [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

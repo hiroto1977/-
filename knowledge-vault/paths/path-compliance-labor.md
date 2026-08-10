@@ -2,18 +2,18 @@
 title: "学習パス: 法務・税務・労務／労務"
 type: learning-path
 path_key: "compliance-labor"
-entry_count: 125
+entry_count: 124
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 法務・税務・労務／労務（125件）
+# 学習パス — 法務・税務・労務／労務（124件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 25）
+- [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 26）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 24）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 19）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 19）
@@ -24,10 +24,10 @@ tags:
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
-- [[labor-dismissal-notice-exception|解雇予告の適用除外と除外認定（労基法20条・21条）]]（接続 13）
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 14）
+- [[labor-work-rules|就業規則の作成・届出義務]]（接続 14）
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]]（接続 13）
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 13）
-- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]（接続 13）
+- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]]（接続 13）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -62,7 +62,7 @@ tags:
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]]
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]]
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]]
-- [[labor-dismissal-notice|解雇予告（労働基準法第20条）]]
+- [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]]
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]]
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]]
 - [[labor-dispatch-license|労働者派遣事業の許可制]]
@@ -102,10 +102,10 @@ tags:
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]]
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]]
+- [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]
 - [[labor-paid-leave-grant|年次有給休暇の付与]]
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]]
 - [[labor-payment-on-termination|金品の返還（労働基準法23条）]]
-- [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]]
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]]
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]]
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]]
@@ -134,7 +134,6 @@ tags:
 - [[labor-women-advancement|女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）]]
 - [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]]
 - [[labor-work-interval|勤務間インターバル制度]]
-- [[labor-work-rules|就業規則の作成・届出義務]]
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]]
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]]
 - [[labor-workers-comp-rate|労災保険率（業種別・全額事業主負担）]]
