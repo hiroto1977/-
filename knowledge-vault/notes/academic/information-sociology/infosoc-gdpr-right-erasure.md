@@ -37,6 +37,7 @@ GDPR=Regulation (EU) 2016/679（2018/5/25適用）・第17条消去権／Google 
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 出典を共有
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
+- [[infosoc-technical-debt|技術的負債]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 - [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — 語彙が近い
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同分野の近傍
-- [[mgmt-paradox-of-success|成功のパラドクス]] — 同分野の近傍
 - [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同分野の近傍
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍

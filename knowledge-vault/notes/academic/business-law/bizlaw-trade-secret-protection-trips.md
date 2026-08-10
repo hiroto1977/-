@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 語彙が近い
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 語彙が近い
-- [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 語彙が近い
 - [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 語彙が近い
 - [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — 同じ思想家
 - [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 出典を共有
 - [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 出典を共有
 - [[eh-1955|1955年（昭和30年）]] — 出典を共有
+- [[eh-1995|1995年（平成7年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

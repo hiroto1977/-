@@ -37,6 +37,7 @@ municipality
 - [仙台商工会議所 補助金・助成金情報](https://www.sendaicci.or.jp/news/support-measures/) `運営団体`
 
 ## 関連概念
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 語彙が近い
 - [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
 - [[subsidy-child-allowance|児童手当]] — 同じ思想家
 - [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
@@ -46,7 +47,6 @@ municipality
 - [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 同じ思想家
 - [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同じ思想家
-- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 同じ思想家
 
 ## 関連
 - コレクション: [[補助金・助成金]]

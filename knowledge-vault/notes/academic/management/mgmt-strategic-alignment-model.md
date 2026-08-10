@@ -39,7 +39,6 @@ John C. Henderson／N. Venkatraman
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
-- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

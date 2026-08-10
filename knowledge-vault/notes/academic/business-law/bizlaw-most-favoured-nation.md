@@ -31,11 +31,11 @@ GATT第1条（1947）／WTO無差別原則／マフェジーニ対スペイン�
 - [ILC Draft Articles on Most-Favoured-Nation Clauses (1978) — UN](https://legal.un.org/ilc/texts/instruments/english/draft_articles/1_3_1978.pdf) `公的`
 
 ## 関連概念
-- [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — 語彙が近い
 - [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 同じ思想家
 - [[eh-1947|1947年（昭和22年）]] — 同じ思想家
 - [[eh-1955|1955年（昭和30年）]] — 同じ思想家
 - [[eh-1963|1963年（昭和38年）]] — 同じ思想家
+- [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — 出典を共有
 - [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 出典を共有
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 出典を共有
 - [[bizlaw-trail-smelter-principle|トレイル・スメルター原則（Trail Smelter Principle）]] — 出典を共有

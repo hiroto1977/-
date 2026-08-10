@@ -37,7 +37,6 @@ J.M.ケインズ（1936『一般理論』）
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 同分野の近傍
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同分野の近傍
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同分野の近傍
-- [[econ-inflation-deflation|インフレーションとデフレーション（物価変動と金融政策）]] — 同分野の近傍
 - [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — 同分野の近傍
 
 ## 関連

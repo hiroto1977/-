@@ -40,8 +40,8 @@ aliases:
 - [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — 出典を共有
 - [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
-- [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 同分野の近傍
 - [[bizlaw-compliance|コンプライアンス（法令遵守と企業倫理）]] — 同分野の近傍
+- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 同分野の近傍
 
 ## 関連

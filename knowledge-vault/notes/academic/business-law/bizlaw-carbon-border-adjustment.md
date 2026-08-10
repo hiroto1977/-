@@ -31,8 +31,8 @@ EU規則（Regulation (EU) 2023/956, 2023年発効）／欧州委員会提案（
 
 ## 関連概念
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — 分野横断
+- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 同分野の近傍
 - [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

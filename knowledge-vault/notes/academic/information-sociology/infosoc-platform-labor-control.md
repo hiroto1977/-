@@ -40,7 +40,6 @@ UberやAmazon Mechanical Turk等のデジタルプラットフォームは、従
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 同分野の近傍
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同分野の近傍
-- [[infosoc-technical-debt|技術的負債]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

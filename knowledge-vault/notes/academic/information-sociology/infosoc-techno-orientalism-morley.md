@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-post-truth-theory|ポスト真実論]] — 同分野の近傍
-- [[infosoc-metaverse|メタバース]] — 同分野の近傍
+- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

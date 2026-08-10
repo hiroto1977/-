@@ -35,8 +35,9 @@ SECIモデルは、野中郁次郎＆竹内弘高（1995）が『知識創造企
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 語彙が近い
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 語彙が近い
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同じ思想家
-- [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 同分野の近傍
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 - [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]] — 同分野の近傍
+- [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

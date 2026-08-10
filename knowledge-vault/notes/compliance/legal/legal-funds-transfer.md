@@ -34,7 +34,7 @@ aliases:
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 語彙が近い
 - [[bizlaw-payment-services-act|資金決済法]] — 分野横断
 - [[legal-prepaid-payment|前払式支払手段の発行保証金供託義務]] — 同分野の近傍
-- [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
