@@ -38,7 +38,6 @@ Donald C. Hambrick ／ Phyllis A. Mason ／ Mason A. Carpenter ／ Marta A. Gele
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
-- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -41,7 +41,7 @@ aliases:
 - [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
-- [[human-cognitive-reserve-stern|認知予備力（スターン）]] — 同分野の近傍
+- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "plato.stanford.edu"
 type: source-domain
 host: "plato.stanford.edu"
-cite_count: 66
+cite_count: 65
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # plato.stanford.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **66 件**（リファレンス 41 ・ 学術 25）
+> [!info] 出典ドメイン索引 ・ 引用 **65 件**（リファレンス 40 ・ 学術 25）
 
 ## このドメインを出典とする項目
 
@@ -44,7 +44,6 @@ tags:
 - [[human-blindsight|ブラインドサイト（Blindsight）]] — StanfordEncyclopediaofPhilosophy:TheNeuroscienceofConsciousness
 - [[human-bounded-rationality|限定合理性]] — BoundedRationality—StanfordEncyclopediaofPhilosophy（査読済み哲学百科事典）
 - [[human-embodied-cognition-theory|身体化された認知]] — EmbodiedCognition—StanfordEncyclopediaofPhilosophy(Shapiro&Spaulding,…
-- [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — Ward,D.,Silverman,D.,&Villalobos,M.(2017).Introduction:TheVarietiesof…
 - [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — StanfordEncyclopediaofPhilosophy—SocialNorms（規範・アノミー・逸脱の学術的位置づけ）
 - [[human-phenomenological-psychology|現象学的心理学]] — StanfordEncyclopediaofPhilosophy:Phenomenology(WoodruffSmith,2018)
 - [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — StanfordEncyclopediaofPhilosophy—EdmundHusserl

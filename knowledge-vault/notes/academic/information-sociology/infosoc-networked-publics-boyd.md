@@ -31,8 +31,8 @@ aliases:
 - [boyd, d. (2008) Taken Out of Context: American Teen Sociality in Networked Publics — PhD dissertation, UC Berkeley](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1344756) `学術`
 
 ## 関連概念
-- [[infosoc-networked-publics|ネットワーク化された公衆]] — 語彙が近い
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 語彙が近い
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 語彙が近い
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
 - [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家

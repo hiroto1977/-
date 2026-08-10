@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
+- [[bizlaw-lex-loci-delicti|不法行為地法主義（Lex Loci Delicti）]] — 同分野の近傍
 - [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]] — 同分野の近傍
-- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

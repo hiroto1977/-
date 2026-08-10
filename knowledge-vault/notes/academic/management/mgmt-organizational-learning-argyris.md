@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

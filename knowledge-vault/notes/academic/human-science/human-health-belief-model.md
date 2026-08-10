@@ -35,7 +35,6 @@ aliases:
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同分野の近傍
 - [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
-- [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

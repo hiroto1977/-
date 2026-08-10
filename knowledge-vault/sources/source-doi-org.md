@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2187
+cite_count: 2188
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（学術 2179 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2188 件**（学術 2180 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -982,6 +982,7 @@ tags:
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — Loewenstein,G.,O'Donoghue,T.&Rabin,M.(2003)ProjectionBiasinPredicting…
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — VanBoven,L.&Loewenstein,G.(2003)SocialProjectionofTransientDriveState…
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — Varela,F.J.,Thompson,E.,&Rosch,E.(1991).TheEmbodiedMind:CognitiveScie…
+- [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — Ward,D.,Silverman,D.,&Villalobos,M.(2017).Introduction:TheVarietiesof…
 - [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — Tulving,E.&Thomson,D.M.(1973)EncodingSpecificityandRetrievalProcesses…
 - [[human-epigenetics-behavioral-meaney|行動エピジェネティクス——養育環境とDNAメチル化の世代間伝達]] — McGowan,P.O.etal.(2009)"EpigeneticRegulationoftheGlucocorticoidRecept…
 - [[human-epigenetics-behavioral-meaney|行動エピジェネティクス——養育環境とDNAメチル化の世代間伝達]] — Weaver,I.C.G.etal.(2004)"EpigeneticProgrammingbyMaternalBehavior"—Nat…

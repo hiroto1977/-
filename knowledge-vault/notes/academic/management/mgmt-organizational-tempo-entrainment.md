@@ -39,7 +39,7 @@ aliases:
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 出典を共有
 - [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同分野の近傍
-- [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
 - [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
 
 ## 関連

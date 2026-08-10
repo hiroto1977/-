@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 出典を共有
 - [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
+- [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連

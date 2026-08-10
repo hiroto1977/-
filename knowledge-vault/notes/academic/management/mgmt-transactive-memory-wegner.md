@@ -32,7 +32,7 @@ aliases:
 - [Wikipedia: Transactive memory — Wegner, differentiation, credibility, coordination, remote work](https://en.wikipedia.org/wiki/Transactive_memory) `リファレンス`
 
 ## 関連概念
-- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 分野横断
+- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 語彙が近い
 - [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 同じ思想家
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家

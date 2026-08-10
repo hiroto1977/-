@@ -39,6 +39,7 @@ aliases:
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同分野の近傍
+- [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

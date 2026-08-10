@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 語彙が近い
 - [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 語彙が近い
 - [[bizlaw-private-international-law|国際私法（法の適用に関する通則法）]] — 同分野の近傍
+- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

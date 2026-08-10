@@ -31,8 +31,8 @@ aliases:
 - [Wardle, C. (2020) Understanding Information Disorder — First Draft](https://firstdraftnews.org/long-form-article/understanding-information-disorder/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 語彙が近い
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — 語彙が近い
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 語彙が近い
 - [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 語彙が近い
 - [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家

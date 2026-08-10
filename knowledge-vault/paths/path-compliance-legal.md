@@ -19,9 +19,9 @@ tags:
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]]（接続 23）
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]]（接続 23）
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]]（接続 22）
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 21）
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 20）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 18）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 17）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 16）

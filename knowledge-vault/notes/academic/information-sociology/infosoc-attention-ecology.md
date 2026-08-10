@@ -36,8 +36,8 @@ aliases:
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
-- [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同分野の近傍
 - [[infosoc-digital-detox-syvertsen|デジタルデトックス論——テクノロジーからの意図的離脱の社会学]] — 同分野の近傍
+- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

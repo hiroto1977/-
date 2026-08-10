@@ -39,7 +39,6 @@ aliases:
 - [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
-- [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同分野の近傍
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同分野の近傍
 
 ## 関連

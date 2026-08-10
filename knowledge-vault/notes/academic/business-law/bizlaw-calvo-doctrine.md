@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同じ思想家
-- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

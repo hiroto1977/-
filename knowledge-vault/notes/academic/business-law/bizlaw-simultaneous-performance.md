@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-retention-lien|留置権（民法295条）]] — 同分野の近傍
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
+- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

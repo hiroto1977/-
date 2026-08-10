@@ -33,8 +33,8 @@ aliases:
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 出典を共有
 - [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — 出典を共有
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
-- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
 - [[econ-kuznets-curve|クズネッツ曲線]] — 同分野の近傍
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
 - [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同分野の近傍
 
 ## 関連
