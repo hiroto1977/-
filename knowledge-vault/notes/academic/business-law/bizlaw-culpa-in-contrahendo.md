@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-renvoi|反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理]] — 出典を共有
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 同分野の近傍
 - [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 同分野の近傍
+- [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

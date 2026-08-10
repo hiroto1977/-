@@ -41,6 +41,7 @@ aliases:
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
 - [[bizlaw-ordre-public|国際公序（Ordre Public / Public Policy Exception）]] — 出典を共有
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
+- [[bizlaw-arbitration-act|仲裁法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

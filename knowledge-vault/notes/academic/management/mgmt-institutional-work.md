@@ -35,7 +35,6 @@ Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca
 - [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同分野の近傍
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
-- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同分野の近傍
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — 同分野の近傍
 
 ## 関連

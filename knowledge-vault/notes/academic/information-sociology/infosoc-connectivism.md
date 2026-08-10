@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同分野の近傍
 - [[infosoc-cognitive-capitalism|認知資本主義]] — 同分野の近傍
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

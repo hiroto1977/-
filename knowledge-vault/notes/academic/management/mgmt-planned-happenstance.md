@@ -31,6 +31,7 @@ aliases:
 - [NACADA（Kansas State University）— 理論概要と5つのスキルの解説](https://nacada.ksu.edu/Resources/Academic-Advising-Today/View-Articles/Planned-Happenstance-Preparing-Liberal-Arts-and-Social-Science-Students-to-Follow-Their-Hearts-to-Career-Success.aspx) `学術`
 
 ## 関連概念
+- [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — 同分野の近傍
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同分野の近傍
 - [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同分野の近傍
 

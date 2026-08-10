@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同分野の近傍
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同分野の近傍
 - [[mgmt-teal-organization|ティール組織]] — 同分野の近傍
+- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

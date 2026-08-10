@@ -37,6 +37,7 @@ aliases:
 - [[human-theory-of-mind|心の理論]] — 同分野の近傍
 - [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

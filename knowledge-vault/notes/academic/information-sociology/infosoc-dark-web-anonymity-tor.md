@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
 - [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
-- [[infosoc-hacktivism-anonymous-digital-activism|ハクティビズムとデジタル行動主義——アノニマスが体現するオンライン政治抵抗の倫理と法的問題]] — 同分野の近傍
 - [[infosoc-social-penetration-altman-taylor|社会的浸透理論（アルトマン＝テイラー）——自己開示と関係の深化]] — 同分野の近傍
 
 ## 関連

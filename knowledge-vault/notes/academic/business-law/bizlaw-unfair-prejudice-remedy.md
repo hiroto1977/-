@@ -35,8 +35,8 @@ Lord Hoffmann ／ Paul L. Davies ／ Sarah Worthington
 - [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
 - [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
 - [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 出典を共有
+- [[bizlaw-retention-lien|留置権（民法295条）]] — 同分野の近傍
 - [[bizlaw-minority-oppression-remedy|少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理]] — 同分野の近傍
-- [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

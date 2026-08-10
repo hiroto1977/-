@@ -37,9 +37,10 @@ aliases:
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
 - [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 同じ思想家
 - [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
-- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同分野の近傍
 - [[bizlaw-indirect-expropriation|間接収用（Indirect Expropriation）]] — 同分野の近傍
+- [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同分野の近傍
+- [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -729,7 +729,7 @@ tags:
 - **Q:** 受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける
   - **A:** 受注獲得基準（order winners）と受注資格基準（order qualifiers）は、製造戦略論の研究者テリー・ヒルが1985年の著作『製造戦略（Manufacturing Strategy）』で提示した概念で、企業の生産・オペレーション能力を、顧客が実際に購買を決める基準と結びつけて考えるための枠組みである。ヒルの問題意識は、製造（オペレーション）と市場（マーケティング）のあいだの断絶にあった。（→ [[mgmt-order-winners-hill]]）
 - **Q:** 組織美学
-  - **A:** 組織美学（Organizational Aesthetics）は、美・感覚・身体的経験といった審美的知識が組織生活・実践・理論をいかに形成するかを探究する学際的領域である。Stratiは1999年の著書 "Organization and Aesthetics" において、論理合理主義的パラダイムが看過してきた感情・象徴・文化の審美的次元を前景化し、組織分析の新たな認識論的基盤を提示した。（→ [[mgmt-organizational-aesthetics]]）
+  - **A:** 組織美学（Organizational Aesthetics）は、美・感覚・身体的経験といった審美的知識が組織生活・実践・理論をいかに形成するかを探究する学際的領域である。（→ [[mgmt-organizational-aesthetics]]）
 - **Q:** 組織的両利き経営（Organizational Ambidexterity）
   - **A:** 組織的両利き経営（Organizational Ambidexterity）とは、組織が既存事業の深化（exploitation）と新規事業の探索（exploration）を同時に追求する能力を指す。（→ [[mgmt-organizational-ambidexterity]]）
 - **Q:** 文脈的両利き経営

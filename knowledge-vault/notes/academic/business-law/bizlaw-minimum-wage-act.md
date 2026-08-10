@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 語彙が近い
-- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同分野の近傍
+- [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

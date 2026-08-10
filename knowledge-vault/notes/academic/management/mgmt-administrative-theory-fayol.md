@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同じ思想家
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
+- [[mgmt-planned-happenstance|計画された偶発性理論]] — 同分野の近傍
 - [[mgmt-matrix-organization|マトリックス組織]] — 同分野の近傍
 
 ## 関連

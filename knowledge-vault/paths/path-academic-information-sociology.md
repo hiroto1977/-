@@ -14,11 +14,11 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 74）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 45）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 25）
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
-- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
@@ -27,7 +27,7 @@ tags:
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
-- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]]（接続 20）
+- [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -40,7 +40,6 @@ tags:
 - 1907年: [[infosoc-wisdom-of-crowds|群衆の叡智]]
 - 1908年: [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]]
 - 1910年: [[infosoc-social-exchange-theory|社会交換理論]]
-- 1911年: [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]]
 - 1911年: [[infosoc-speech-act-theory|言語行為論]]
 - 1919年: [[infosoc-selective-exposure|選択的接触理論]]
 - 1920年: [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]]
@@ -452,6 +451,7 @@ tags:
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]]
 - [[infosoc-information-overload-theory|情報過負荷理論]]
 - [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]]
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]]
 - [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]]
 - [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]]
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]]

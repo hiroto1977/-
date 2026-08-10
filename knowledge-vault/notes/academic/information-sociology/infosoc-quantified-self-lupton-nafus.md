@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 同分野の近傍
 - [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同分野の近傍
+- [[infosoc-dark-patterns-ui-deceptive|ダーク・パターンと欺瞞的UXデザインの規制論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,7 @@ Boisot, Max ／Child, John （1996 Administrative Science Quarterly）／Yeung, 
 ## 関連概念
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 同分野の近傍
-- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 同分野の近傍
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

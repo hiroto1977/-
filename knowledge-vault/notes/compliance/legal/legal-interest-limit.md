@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 語彙が近い
-- [[bizlaw-interest-rate-restriction|利息制限法]] — 分野横断
+- [[bizlaw-interest-rate-restriction|利息制限法]] — 語彙が近い
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 同分野の近傍
 - [[legal-statutory-interest|民法の法定利率（変動制）]] — 同分野の近傍
 

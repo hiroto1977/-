@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 同じ思想家
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同分野の近傍
-- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同分野の近傍
+- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

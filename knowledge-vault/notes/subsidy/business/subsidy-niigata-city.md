@@ -37,6 +37,7 @@ municipality
 - [J-Net21 新潟市 創業サポート事業補助金](https://j-net21.smrj.go.jp/snavi/articles/44683) `公的`
 
 ## 関連概念
+- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 語彙が近い
 - [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
 - [[subsidy-child-allowance|児童手当]] — 同じ思想家
 - [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
@@ -44,9 +45,8 @@ municipality
 - [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]] — 同じ思想家
 - [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
 - [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]] — 同じ思想家
-- [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同じ思想家
-- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 同じ思想家
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同分野の近傍
-- [[infosoc-dark-web-anonymity-tor|ダークウェブと匿名性技術の社会学——Tor・I2P・暗号通貨の重層的分析]] — 同分野の近傍
+- [[infosoc-technological-determinism|技術決定論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

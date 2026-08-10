@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同分野の近傍
 - [[infosoc-datafication|データ化（データ化現象）]] — 同分野の近傍
+- [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同分野の近傍
 
 ## 関連

@@ -34,7 +34,6 @@ aliases:
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
 - [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同じ思想家
-- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同分野の近傍
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
 - [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同分野の近傍
 - [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]] — 同分野の近傍
