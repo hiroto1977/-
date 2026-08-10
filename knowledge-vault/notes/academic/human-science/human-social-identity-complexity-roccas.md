@@ -30,10 +30,10 @@ aliases:
 - [Wikipedia: Social identity complexity — intergroup relations](https://en.wikipedia.org/wiki/Social_identity_complexity) `リファレンス`
 
 ## 関連概念
-- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 語彙が近い
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同じ思想家
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
-- [[human-dialogical-self-theory|対話的自己理論（ハーマンス）と内的ポリフォニー]] — 同分野の近傍
+- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 同分野の近傍
+- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

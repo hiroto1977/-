@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 語彙が近い
-- [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 同分野の近傍
+- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
 - [[econ-veblen-good|ヴェブレン財と顕示的消費]] — 同分野の近傍
 
 ## 関連

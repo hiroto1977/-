@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同じ思想家
 - [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — 同じ思想家
 - [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — 同じ思想家
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍

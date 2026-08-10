@@ -41,7 +41,7 @@ aliases:
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
-- [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 同分野の近傍
+- [[human-presenteeism|プレゼンティーイズム：疾病就業による労働生産性損失の概念と測定]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

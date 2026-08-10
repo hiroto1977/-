@@ -41,6 +41,7 @@ aliases:
 - [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 出典を共有
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同分野の近傍
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
+- [[econ-financial-repression|金融抑圧]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

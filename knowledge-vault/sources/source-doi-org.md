@@ -508,10 +508,10 @@ tags:
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — Thaler,R.(1981)Someempiricalevidenceondynamicinconsistency—EconomicsL…
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — Howey,R.S.(1960)TheRiseoftheMarginalUtilitySchool—DukeUniversityPress
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — Roth,A.E.&Sotomayor,M.(1990).Two-sidedmatching—Econometrica
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — Demsetz1968—TheCostofTransacting
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — Hasbrouck2007—EmpiricalMarketMicrostructure
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — Kyle1985—ContinuousAuctionsandInsiderTrading
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — O'Hara2003—LiquidityandPriceDiscovery
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — Demsetz1968—TheCostofTransacting
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — Hasbrouck2007—EmpiricalMarketMicrostructure
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — Kyle1985—ContinuousAuctionsandInsiderTrading
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — O'Hara2003—LiquidityandPriceDiscovery
 - [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — Glosten&Milgrom(1985)Bid,Ask,andTransactionPricesinaSpecialistMarket—…
 - [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — Kyle(1985)ContinuousAuctionsandInsiderTrading—Econometrica
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — Maskin,E.(1999)NashEquilibriumandWelfareOptimality—TheReviewofEconomi…

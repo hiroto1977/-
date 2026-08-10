@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
 - [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同分野の近傍
-- [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同分野の近傍
+- [[econ-random-walk-prices|ランダムウォーク仮説——株価変動は予測不可能であるとする命題]] — 同分野の近傍
 - [[econ-january-effect|1月効果——株価が1月に異常な高収益を示す季節的アノマリー]] — 同分野の近傍
 
 ## 関連

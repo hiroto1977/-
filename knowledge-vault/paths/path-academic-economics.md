@@ -15,8 +15,8 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 39）
@@ -725,7 +725,7 @@ tags:
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]]
 - [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]]
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]]
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]]
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]]
 - [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]]
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]]
 - [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]]

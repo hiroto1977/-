@@ -14,7 +14,7 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[agile-development|アジャイルソフトウェア開発]]（接続 62）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 30）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 31）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
@@ -23,8 +23,8 @@ tags:
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 24）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
-- [[mgmt-mbo|目標による管理（MBO）]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
+- [[mgmt-mbo|目標による管理（MBO）]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 21）
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]（接続 21）

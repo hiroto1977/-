@@ -32,7 +32,7 @@ Jay Belsky ／ Bruce J. Ellis ／ W. Thomas Boyce
 
 ## 関連概念
 - [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]] — 同分野の近傍
-- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

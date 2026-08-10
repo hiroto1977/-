@@ -36,6 +36,7 @@ William J. Baumol／John C. Panzar／Robert D. Willig（1982）／サンクコ�
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 出典を共有
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
 - [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
+- [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同分野の近傍
 - [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 同分野の近傍
 - [[econ-hartwick-rule|ハートウィックの規則——枯渇性資源レントの投資と世代間の公平]] — 同分野の近傍
 

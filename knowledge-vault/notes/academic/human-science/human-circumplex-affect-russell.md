@@ -32,6 +32,7 @@ James A. Russell（1980年論文・モデルの提唱者） ／ 二次元の直�
 ## 関連概念
 - [[human-theory-of-constructed-emotion|情動の構成理論]] — 同じ思想家
 - [[human-spreading-activation|活性化拡散]] — 同分野の近傍
+- [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同分野の近傍
 - [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同分野の近傍
 
 ## 関連

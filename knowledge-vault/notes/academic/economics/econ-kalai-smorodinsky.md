@@ -38,7 +38,6 @@ aliases:
 - [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同じ思想家
 - [[econ-salop-model|サロップの円環都市モデル]] — 同分野の近傍
-- [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

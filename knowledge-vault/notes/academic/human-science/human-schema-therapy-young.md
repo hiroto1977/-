@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]] — 語彙が近い
-- [[human-resilience|レジリエンス（心理的回復力）]] — 同分野の近傍
+- [[human-hyperbolic-discounting|双曲割引]] — 同分野の近傍
 - [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同分野の近傍
 
 ## 関連

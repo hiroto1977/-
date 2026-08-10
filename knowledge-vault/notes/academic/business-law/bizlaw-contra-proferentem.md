@@ -39,7 +39,7 @@ aliases:
 - [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 出典を共有
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 出典を共有
-- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

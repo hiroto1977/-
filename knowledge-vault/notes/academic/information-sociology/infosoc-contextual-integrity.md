@@ -39,7 +39,7 @@ Helen Nissenbaum（ヘレン・ニッセンバウム, 理論提唱者） ／ Pri
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
-- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

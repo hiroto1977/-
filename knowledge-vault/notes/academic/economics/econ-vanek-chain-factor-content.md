@@ -37,7 +37,7 @@ aliases:
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
 - [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
 - [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同分野の近傍
-- [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同分野の近傍
+- [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

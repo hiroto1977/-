@@ -32,7 +32,6 @@ aliases:
 - [Wikipedia: Emotional granularity — Barrett, constructed emotion, allostasis, emotion vocabulary](https://en.wikipedia.org/wiki/Emotional_granularity) `リファレンス`
 
 ## 関連概念
-- [[human-emotional-granularity|感情粒度]] — 語彙が近い
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]] — 同じ思想家
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
 - [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同じ思想家
+- [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
