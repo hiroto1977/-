@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同じ思想家
 - [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 同分野の近傍
+- [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同分野の近傍
 - [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 同分野の近傍
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 同分野の近傍
 

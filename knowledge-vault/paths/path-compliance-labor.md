@@ -20,7 +20,7 @@ tags:
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 18）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 18）
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
-- [[labor-work-rules|就業規則の作成・届出義務]]（接続 17）
+- [[labor-work-rules|就業規則の作成・届出義務]]（接続 16）
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 15）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）

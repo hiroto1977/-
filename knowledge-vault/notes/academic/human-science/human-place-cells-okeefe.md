@@ -33,8 +33,8 @@ John O'Keefe ／ May-Britt Moser ／ Edvard I. Moser
 ## 関連概念
 - [[human-place-cells-and-grid-cells|場所細胞とグリッド細胞]] — 同じ思想家
 - [[human-place-cells|場所細胞（Place Cells）]] — 同じ思想家
-- [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

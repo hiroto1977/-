@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
 - [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同じ思想家
-- [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 同分野の近傍
+- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

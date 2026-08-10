@@ -39,9 +39,9 @@ aliases:
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同じ思想家
-- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
+- [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 語彙が近い
-- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 語彙が近い
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家

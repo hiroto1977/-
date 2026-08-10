@@ -42,7 +42,6 @@ aliases:
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[bizlaw-compliance|コンプライアンス（法令遵守と企業倫理）]] — 同分野の近傍
 - [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
-- [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

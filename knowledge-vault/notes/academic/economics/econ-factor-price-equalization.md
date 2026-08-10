@@ -34,13 +34,13 @@ aliases:
 - [[econ-intra-industry-trade-grubel-lloyd|産業内貿易——グルーベル＝ロイド指数と差別化財の相互輸出]] — 語彙が近い
 - [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
-- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 出典を共有
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 出典を共有
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 出典を共有
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
 - [[econ-monopolistic-competition|独占的競争]] — 出典を共有
+- [[econ-unbalanced-growth-hirschman|不均衡成長論——戦略的部門への投資が連関を通じて発展を牽引する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

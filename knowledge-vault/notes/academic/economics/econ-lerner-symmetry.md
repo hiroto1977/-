@@ -31,7 +31,7 @@ Abba P. Lerner（Economica, New Series, 3(11), 1936, 原証明）／Ronald I. Mc
 
 ## 関連概念
 - [[econ-dutch-disease-theory|オランダ病理論]] — 同分野の近傍
-- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

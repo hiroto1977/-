@@ -35,6 +35,7 @@ aliases:
 - [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同分野の近傍
 - [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
+- [[human-golem-effect|ゴーレム効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

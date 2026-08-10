@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-expected-utility|期待効用理論]] — 同分野の近傍
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同分野の近傍
+- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同分野の近傍
 - [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同分野の近傍
 
 ## 関連

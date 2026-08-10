@@ -24,9 +24,9 @@ tags:
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 24）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
-- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 21）
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]（接続 21）
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]（接続 21）
 
 ## 第 2 部 — 年代順の展開

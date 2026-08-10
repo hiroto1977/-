@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-optimal-taxation-theory|最適課税理論]] — 同分野の近傍
-- [[econ-tobins-q|トービンのq]] — 同分野の近傍
+- [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

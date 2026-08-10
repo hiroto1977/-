@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-pledge|質権（民法342条）]] — 出典を共有
 - [[bizlaw-set-off|相殺（民法505条）]] — 出典を共有
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同分野の近傍
-- [[bizlaw-condition-suspensive|停止条件・解除条件]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

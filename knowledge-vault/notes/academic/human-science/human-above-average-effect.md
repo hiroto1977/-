@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 語彙が近い
-- [[human-self-serving-bias|自己奉仕バイアス]] — 同分野の近傍
+- [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
 - [[human-acquired-needs-theory|獲得欲求理論]] — 同分野の近傍
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — 同分野の近傍
 - [[human-affordance-theory|アフォーダンス理論]] — 同分野の近傍

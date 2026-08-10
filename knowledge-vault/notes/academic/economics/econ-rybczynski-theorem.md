@@ -39,7 +39,6 @@ aliases:
 - [[econ-monopolistic-competition|独占的競争]] — 出典を共有
 - [[econ-dual-labor-market|二重労働市場論]] — 同分野の近傍
 - [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
-- [[econ-lerner-symmetry|ラーナー対称性定理（Lerner Symmetry Theorem）]] — 同分野の近傍
 - [[econ-rostow-stages|ロストウの経済成長段階説]] — 同分野の近傍
 
 ## 関連

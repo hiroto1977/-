@@ -41,7 +41,7 @@ aliases:
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
-- [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

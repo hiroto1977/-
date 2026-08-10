@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同じ思想家
 - [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同分野の近傍
-- [[human-dopamine-reward-prediction-error|ドーパミン報酬予測誤差仮説：強化学習の神経基盤と意思決定の計算論的モデル]] — 同分野の近傍
+- [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

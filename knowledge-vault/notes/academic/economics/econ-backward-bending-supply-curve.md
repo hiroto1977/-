@@ -35,6 +35,7 @@ Alfred Marshall ／ Lionel Robbins ／ Mark R. Killingsworth ／ John Pencavel
 - [[econ-giffen-good-theory|ギッフェン財理論]] — 同じ思想家
 - [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 同分野の近傍
+- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

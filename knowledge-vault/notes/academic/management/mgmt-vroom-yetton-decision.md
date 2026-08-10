@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]] — 語彙が近い
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 同じ思想家
-- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同分野の近傍
+- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

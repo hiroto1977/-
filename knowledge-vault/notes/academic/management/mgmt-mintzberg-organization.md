@@ -38,7 +38,6 @@ H.ミンツバーグ『組織の構造化』1979／組織の5つの基本部分�
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同分野の近傍
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同分野の近傍
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同分野の近傍
-- [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
