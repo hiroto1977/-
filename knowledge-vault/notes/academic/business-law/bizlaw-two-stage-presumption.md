@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-e-signature|電子署名法]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

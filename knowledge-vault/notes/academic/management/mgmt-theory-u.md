@@ -36,7 +36,7 @@ C・オットー・シャーマー（C. Otto Scharmer, MIT上級講師）／主�
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 - [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同分野の近傍
-- [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
+- [[mgmt-paradox-of-success|成功のパラドクス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

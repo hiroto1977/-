@@ -38,6 +38,7 @@ national
 
 ## 関連概念
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 語彙が近い
+- [[subsidy-mado-renovation|先進的窓リノベ事業]] — 語彙が近い
 - [[subsidy-yamaguchi|山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）]] — 分野横断
 - [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — 出典を共有
 - [[bizlaw-building-standards|建築基準法]] — 出典を共有
@@ -45,7 +46,6 @@ national
 - [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 出典を共有
 - [[legal-land-lease-right|借地借家法における借地権]] — 出典を共有
-- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]] — 出典を共有
 - [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
 
 ## 関連

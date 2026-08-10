@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 同分野の近傍
+- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

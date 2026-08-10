@@ -1,14 +1,14 @@
 ---
-title: "イーヴォ・ウェルチ"
+title: "スシル・ビクチャンダニ"
 type: thinker
-person_key: "ウェルチ|イ"
+person_key: "ビクチャンダニ|ス"
 concept_count: 2
 tags:
   - person
   - index
 ---
 
-# イーヴォ・ウェルチ
+# スシル・ビクチャンダニ
 
 > [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 

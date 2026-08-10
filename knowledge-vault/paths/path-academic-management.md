@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 654
+entry_count: 653
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（654件）
+# 学習パス — 学術概念／経営学（653件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -21,8 +21,8 @@ tags:
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 25）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 25）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 24）
-- [[mgmt-managerial-cognition|経営者認知理論]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
+- [[mgmt-managerial-cognition|経営者認知理論]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
@@ -652,7 +652,6 @@ tags:
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]]
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]]
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]]
-- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]]
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]]
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]]
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]]

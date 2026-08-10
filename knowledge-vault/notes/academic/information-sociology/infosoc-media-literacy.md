@@ -32,7 +32,7 @@ aliases:
 - [Wikipedia「Media literacy」— 概念・歴史・主要論者の概観](https://en.wikipedia.org/wiki/Media_literacy) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。]] — 同じ思想家
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — 同じ思想家
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
 - [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 同分野の近傍
 - [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]] — 同分野の近傍

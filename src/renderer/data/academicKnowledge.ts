@@ -2406,7 +2406,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       'リーダーがビジョンや理念を示してフォロワーの価値観・動機を高め、組織や個人を変革へと導くリーダーシップ。報酬と業績を交換する「交換型（取引型）リーダーシップ（transactional leadership）」と対比される。' +
       '政治学者ジェームズ・マクレガー・バーンズが1978年の著書『リーダーシップ論（Leadership）』で変革型と取引型を区別し、組織心理学者バーナード・バスがこれを発展させて測定可能なモデル（MLQ＝多因子リーダーシップ質問票、バス／アボリオ）を構築した。' +
-      'バスは変革型リーダーシップの構成要素を「4つのI」として整理した：理想化された影響（idealized influence＝ロールモデル・信頼）、鼓舞的動機づけ（inspirational motivation＝魅力的なビジョン提示）、知的刺激（intellectual stimulation＝既存前提への問い直しと創造的問題解決を促す）、個別配慮（individualized consideration＝一人ひとりの成長支援）。フォロワーの満足度・努力・業績を高めるとされ、多くの実証研究の対象となっている。',
+      'バスは変革型リーダーシップの構成要素を「4つのI」として整理した：理想化された影響（idealized influence＝ロールモデル・信頼）、鼓舞的動機づけ（inspirational motivation＝魅力的なビジョン提示）、知的刺激（intellectual stimulation＝既存前提への問い直しと創造的問題解決を促す）、個別配慮（individualized consideration＝一人ひとりの成長支援）。フォロワーの満足度・努力・業績を高めるとされ、多くの実証研究の対象となっている。近年は心理的安全性の醸成・共有型リーダーシップとの接合・ヴァーチャルチームへの適用（e-リーダーシップ）が研究の新たな方向になっている。',
     keyFigures: 'J.M.バーンズ1978(著書Leadership)が変革型/取引型を区別／B.バスが発展・測定モデル化(MLQ、バス/アボリオ)／変革型の4つのI：理想化された影響・鼓舞的動機づけ・知的刺激・個別配慮／取引型(交換型)と対比',
     asOf: '2026-06',
     sources: [
@@ -2414,6 +2414,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://crummer.rollins.edu/news/the-four-essential-components-of-transformational-leadership/', type: 'academic', label: 'Rollins College, Crummer School of Business — The Four Essential Components of Transformational Leadership（4つのI）' },
       { url: 'https://www.michiganstateuniversityonline.com/resources/leadership/4-is-of-transformational-leadership/', type: 'academic', label: 'Michigan State University — The 4 "I\'s" of Transformational Leadership' },
       { url: 'https://pressbooks.lib.jmu.edu/sslsleadershipinstrumentslibrary/chapter/4-8-multifactor-leadership-questionnaire-mlq-mlq-5x/', type: 'academic', label: 'James Madison University — Multifactor Leadership Questionnaire (MLQ)（バス／アボリオ構築）' },
+      { url: 'https://en.wikipedia.org/wiki/Transformational_leadership', type: 'reference', label: 'Wikipedia: Transformational leadership — Bass, Burns, 4Is, MLQ' },
     ],
   },
   {
@@ -26520,10 +26521,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-information-cascades',
     discipline: 'economics',
-    title: '情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。',
+    title: '情報カスケード（インフォメーション・カスケード）',
     statement:
-      'サンジョイ・ビハリ・チャンドニ、デイビッド・ハーシュライファー、イヴォ・ウェルチらの研究により、情報カスケードは金融市場のバブル形成、ハーディング行動、および羊群効果の理論的基礎として認識されている。この現象は個人合理性と集団的非効率性の矛盾を示す重要な事例である。',
-    keyFigures: 'サンジョイ・ビハリ・チャンドニ ／ デイビッド・ハーシュライファー ／ イヴォ・ウェルチ',
+      '情報カスケードとは、個人が他者の行動から推測される情報に基づき、自身の私的情報を無視して先行者に追随する現象で、市場全体が集団的に非効率な決定へ収束し得る。' +
+      'Bikhchandani, Hirshleifer & Welch (1992) の逐次意思決定モデルでは、先行者の選択が2人分そろっただけで後続の私的シグナルが覆せなくなり、以後全員が同じ行動を採るカスケードが合理的に発生する。各人はベイズ的に合理的でも、集計されるべき私的情報が捨てられるため社会的学習が止まり、しかも土台になった情報は薄いので、わずかな新情報で崩れる脆さを併せ持つ。' +
+      'この枠組みは流行・慣習の急変、IPO の初値形成（Welch 1992 の逐次販売モデル）、金融市場のハーディング（Bikhchandani & Sharma 2001）の理論的基礎になり、バブルの形成と崩壊が「皆が愚かだから」ではなく合理的推論の帰結として説明できることを示した。' +
+      '観察可能なのが行動だけで私的情報が見えないという構造が原因なので、情報開示の設計・レビューの表示順・初期評価の重み付けなど、プラットフォーム設計で緩和できる点が実務的含意になる。',
+    keyFigures: 'スシル・ビクチャンダニ ／ デイビッド・ハーシュライファー ／ イヴォ・ウェルチ',
     asOf: '2026-06-24',
     sources: [
       { url: 'https://doi.org/10.1093/rfs/5.4.469', type: 'academic', label: 'Bikhchandani, Hirshleifer & Welch 1992 — A Theory of Fads, Fashion, Custom, and Cultural Change' },
@@ -26535,10 +26539,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-obedience',
     discipline: 'human-science',
-    title: '権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。',
+    title: '権威への服従（オベディエンス）',
     statement:
-      'スタンリー・ミルグラムとソロモン・アッシュの古典的実験により、個人は権威者の命令に従い、また同調圧力の下で不正な行動に至ることが実証された。これらの知見は社会心理学、倫理学、および組織行動の理解に根本的な影響を与えている。ソロモン・モスコヴィチの少数派影響理論も、権威に対する抵抗メカニズムを明らかにしている。',
-    keyFigures: 'スタンリー・ミルグラム ／ ソロモン・アッシュ ／ ソロモン・モスコヴィチ',
+      '権威への服従とは、権威ある人物や機関の指示に従う個人の傾向を指し、ミルグラムとアッシュの古典的実験により、社会的影響がいかに強く個人の行動を規定するかが実証された。' +
+      'ミルグラム (1963) の実験では、実験者の指示のもとで参加者の約65%が最大電圧（450V 表示）まで「学習者」への電気ショックを続けた。要点は参加者がサディストだったことではなく、責任が権威に移譲される代理状態で普通の人が命令に従う点にあり、被害者との距離・権威の近接・反抗する仲間の存在で服従率が系統的に変わることも示された。' +
+      'アッシュ (1951/1956) の線分課題は、明白に誤った多数派の前で約3分の1の試行で参加者が同調することを示し、全員一致が崩れると同調が激減することも明らかにした。逆方向の影響として、モスコヴィシ (1969) は一貫した少数派が多数派の判断を変え得ることを示し、服従・同調・少数派影響を包含する社会的影響研究の枠組みを作った。' +
+      'Haslam ら (2014) のメタ・ミルグラム統合や倫理批判・再解釈（同一化に基づく followership 説）を経て、組織不正・内部通報の抑制・監査の独立性など、権威勾配が働く実務場面の理解に接続されている。',
+    keyFigures: 'スタンリー・ミルグラム ／ ソロモン・アッシュ ／ セルジュ・モスコヴィシ',
     asOf: '2026-06-24',
     sources: [
       { url: 'https://doi.org/10.1037/h0040525', type: 'academic', label: 'Milgram 1963 — Behavioral Study of Obedience' },
@@ -26550,9 +26557,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'bizlaw-intellectual-property',
     discipline: 'business-law',
-    title: '知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。',
+    title: '知的財産権と独占のバランス（IP の経済学）',
     statement:
-      'ミケーレ・ボルドリンとデイビッド・レビンの研究により、伝統的な特許制度が必ずしもイノベーションを促進するとは限らず、むしろオープンイノベーションやコモンズモデルが経済成長に貢献する可能性が指摘されている。知的財産の最適な保護水準は、創作インセンティブと社会全体の便益のバランスに依存する。',
+      '知的財産権とは、発明・著作物・商標・意匠などの無体財産に対する法的保護であり、特許権・著作権・商標権・営業秘密による独占的権利と、経済成長・イノベーションのバランスが中心的な論点になる領域である。' +
+      '標準的正当化は「模倣が容易な情報財は独占の見返りがなければ過少供給される」という誘因論だが、Boldrin & Levine は『Against Intellectual Monopoly』(2008) と "The Case Against Patents" で、特許の実証的なイノベーション促進効果は弱く、ライセンス交渉費用・特許藪・防衛的特許化・訴訟がむしろ後続イノベーションを阻害すると論じ、廃止を含む急進的縮小を提案した。' +
+      'Nordhaus の古典的分析は、イノベーターが生む社会的余剰のうち発明者が取得できるのはごく一部という推定で保護強化論を相対化し、産業別の異質性（医薬のように固定費が巨大で模倣が安価な分野では特許が効き、ソフトウェアでは秘匿・先行者利益・ネットワーク効果が主な専有手段になる）が実証研究の共通の結論になっている。' +
+      '政策設計は保護の強度・期間・範囲の三次元で、オープンイノベーション・特許プール・FRAND 誓約・強制実施権など、独占と拡散を組み合わせる制度が現実の均衡点として機能している。各制度の法的各論は特許・著作権等の個別エントリが扱う。',
     keyFigures: 'ミケーレ・ボルドリン ／ デイビッド・レビン ／ ウィリアム・ノーダウス',
     asOf: '2026-06-24',
     sources: [
@@ -26565,9 +26575,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-digital-literacy',
     discipline: 'information-sociology',
-    title: 'デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。',
+    title: 'デジタル・リテラシー（Digital Literacy）',
     statement:
-      'デイビッド・バッキンガム、エスター・ハルジッタイらの研究により、デジタル・リテラシーは単なる技術スキルではなく、情報の信頼性判定、メディア理解、批判的思考を含む統合的能力として定義されている。デジタル・デバイドは経済格差、地域差、世代差を反映し、情報社会への包摂的参加を阻害する重要な課題である。',
+      'デジタル・リテラシーとは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力であり、読み書き計算に並ぶ現代的な基礎能力と位置づけられる。' +
+      'バッキンガムはメディア教育の系譜から、機器操作ではなく表象の批判的読解と創造的生産を核とするリテラシー観を提示し、ハルジッタイは「デジタルネイティブ」神話を実証的に否定して、同世代内でもスキル格差が社会経済的地位と結びつくことを示した。' +
+      'Van Deursen & Van Dijk (2011) は操作的・形式的・情報的・戦略的の4スキル階層を測定し、アクセス格差（第一水準）が縮んでもスキル格差（第二水準）と成果格差（第三水準）が残る「デジタル・デバイドの重層性」を定式化した。' +
+      '政策枠組みとしては EU の DigComp（情報・コミュニケーション・コンテンツ作成・安全・問題解決の5領域）が国際標準として普及し、偽情報対応のメディア情報リテラシー教育、高齢者・低所得層への包摂施策、生成 AI 時代のリテラシー再定義が現在の焦点になっている。',
     keyFigures: 'デイビッド・バッキンガム ／ エスター・ハルジッタイ ／ アレクサンダー・ヴァン・デューセン',
     asOf: '2026-06-24',
     sources: [
@@ -45975,18 +45988,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1086/260062', type: 'academic', label: 'Black & Scholes (1973) The Pricing of Options and Corporate Liabilities — Journal of Political Economy 81(3)' },
       { url: 'https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model', type: 'reference', label: 'Wikipedia: Black-Scholes model — option pricing, risk-neutral measure, volatility smile, Greeks' },
-    ],
-  },
-  {
-    id: 'mgmt-transformational-leadership-bass',
-    discipline: 'management',
-    title: '変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）',
-    statement: '変革型リーダーシップ（transformational leadership）とは、ジェームズ・マクレガー・バーンズが1978年に提唱し、バーナード・バスとブルース・アボリオが1980〜90年代に実証的に発展させた理論で、リーダーが部下の価値観・動機・自己実現欲求に働きかけて期待を超えた業績を生み出す「変革的」な影響プロセスを記述する。バスは変革型リーダーシップを①理想化された影響力（Idealized Influence / Charisma）②インスピレーション的動機付け③知的刺激④個別配慮の四次元（4Is）で測定する「多因子リーダーシップ質問票（MLQ）」を開発した。交流型リーダーシップ（transactional leadership）——条件付き報酬・例外管理——との対比で、変革型はより高次の動機付け（自律・成長・社会貢献）に訴え長期的な組織変革を促進するとされる。デジタル変革時代においては、心理的安全性の醸成・多様性の包摂・共有型リーダーシップとの接合が変革型リーダーシップ研究の新たな方向性となっており、ヴァーチャルチームへの適用と「e-リーダーシップ」が注目される。',
-    keyFigures: 'バーナード・バス ／ ジェームズ・マクレガー・バーンズ ／ ブルース・アボリオ ／ フランシス・ホガン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/256939', type: 'academic', label: 'Bass (1985) Leadership and Performance Beyond Expectations — Free Press (cited in AMR 2004)' },
-      { url: 'https://en.wikipedia.org/wiki/Transformational_leadership', type: 'reference', label: 'Wikipedia: Transformational leadership — Bass, Burns, 4Is, MLQ, transactional, charisma' },
     ],
   },
   {

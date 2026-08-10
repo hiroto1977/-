@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-transformational-leadership|変革型リーダーシップ]] — 語彙が近い
-- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]] — 同じ思想家
 - [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同じ思想家
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
 - [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同じ思想家

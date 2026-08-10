@@ -16,7 +16,7 @@ tags:
 - [[subsidy-child-allowance|児童手当]]（接続 34）
 - [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]]（接続 30）
 - [[subsidy-high-cost-care|高額介護（予防）サービス費]]（接続 25）
-- [[subsidy-zeh|ZEH支援事業]]（接続 16）
+- [[subsidy-zeh|ZEH支援事業]]（接続 15）
 - [[subsidy-livelihood-welfare-loan|生活福祉資金貸付制度]]（接続 12）
 - [[subsidy-special-child-allowance|特別児童扶養手当]]（接続 12）
 - [[subsidy-housing-safety-net|住宅セーフティネット制度]]（接続 11）

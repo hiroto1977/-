@@ -685,5 +685,18 @@
         "provenanceDelta": "keep src 3→4。減少なし。"
       }
     ]
+  },
+  "pass21": {
+    "appliedAt": "2026-08-10",
+    "note": "title フィールドに定義文が丸ごと入る整形不良を正規表現（60字超 + とは、/のこと。/を指す）で系統検出し 4 件を修正（information-cascades / obedience / intellectual-property / digital-literacy — organizational-learning・market-microstructure と同型）。うち 2 件で keyFigures の人名崩れも修正（『サンジョイ・ビハリ・チャンドニ』→スシル・ビクチャンダニ、『ソロモン・モスコヴィチ』→セルジュ・モスコヴィシ）。enrich 感度で dedupeGraph 1 組 → 統合。",
+    "merges": [
+      {
+        "keep": "mgmt-transformational-leadership",
+        "drop": "mgmt-transformational-leadership-bass",
+        "reason": "同一 discipline の同一理論（Burns 1978・Bass 4Is・MLQ・取引型対比）。レーン分化なし。drop の keyFigures に実在を確認できない人名（フランシス・ホガン）。",
+        "migrate": "現代的方向（心理的安全性・共有型・e-リーダーシップ）の句を本文へ、Wikipedia を出典へ。書籍に JSTOR 論文 id を付した Bass 1985 の出典は実体未確定で移送しない。",
+        "provenanceDelta": "keep src +1 / 本文 +約60字。減少なし。"
+      }
+    ]
   }
 }

@@ -673,7 +673,7 @@ tags:
 - [[econ-inequity-aversion|不公平回避：利他的懲罰と互恵的公正選好の行動経済学的モデル]]
 - [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]]
 - [[econ-inflation-deflation|インフレーションとデフレーション（物価変動と金融政策）]]
-- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]]
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）]]
 - [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]]
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]]
 - [[econ-input-output-analysis-leontief|投入産出分析——レオンチェフ・マトリクスと産業連関の定量的分析]]

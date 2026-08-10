@@ -523,7 +523,7 @@ tags:
 - [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]]
 - [[human-normalcy-bias|正常性バイアス]]
 - [[human-nostalgia-psychology-sedikides|ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持]]
-- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]]
+- [[human-obedience|権威への服従（オベディエンス）]]
 - [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]]
 - [[human-occupational-science-yerxa-clark|作業科学——人間の作業的存在としての健康と参加の学際的探究]]
 - [[human-operant-conditioning|オペラント条件づけ]]

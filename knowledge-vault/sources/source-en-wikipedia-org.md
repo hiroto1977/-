@@ -1339,7 +1339,7 @@ tags:
 - [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — PreferentialLooking—Wikipedia
 - [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — Wikipedia:Normofreciprocity—Gouldner(1960),universalnorm,startingmech…
 - [[human-nostalgia-psychology-sedikides|ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持]] — Wikipedia:Nostalgia—sentimentallongingandpsychologicalfunctionsovervi…
-- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — Asch1951,1956—EffectsofGroupPressureupontheModificationofJudgments
+- [[human-obedience|権威への服従（オベディエンス）]] — Asch1951,1956—EffectsofGroupPressureupontheModificationofJudgments
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — Wikipedia:A-not-BError
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — Wikipedia:ObjectPermanence
 - [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — Wikipedia:Occupationalburnout—職業性バーンアウトの診断・要因・対策の概説
@@ -2251,7 +2251,7 @@ tags:
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — Wikipedia:Toxicleader—toxictriangle,destructiveleaders,susceptiblefol…
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — Wikipedia—ToyotaProductionSystem（7つのムダ・かんばん・歴史）
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — Wikipedia:Transactivememory—Wegner,differentiation,credibility,coordi…
-- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]] — Wikipedia:Transformationalleadership—Bass,Burns,4Is,MLQ,transactional…
+- [[mgmt-transformational-leadership|変革型リーダーシップ]] — Wikipedia:Transformationalleadership—Bass,Burns,4Is,MLQ
 - [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]] — Wikipedia—JohnElkington（提唱者・初出・1997年著書・2018年リコール）
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — Wikipedia:Triplebottomline—TBLの概念と企業サステナビリティ
 - [[mgmt-trompenaars-dimensions|トロンペナールスの文化の7次元]] — Wikipedia:Trompenaars'smodelofnationalculturedifferences（7次元・出典・帰属）

@@ -34,7 +34,7 @@ Gretchen M. Spreitzer ／ Kenneth W. Thomas ／ Betty A. Velthouse
 ## 関連概念
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

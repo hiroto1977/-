@@ -389,7 +389,7 @@ tags:
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]
 - [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]]
 - [[infosoc-digital-labor-theory|デジタル労働理論]]
-- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。]]
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]]
 - [[infosoc-digital-literacy-gilster|デジタルリテラシー——ギルスターの概念と情報評価・メディアリテラシー教育への展開]]
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]]
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]]

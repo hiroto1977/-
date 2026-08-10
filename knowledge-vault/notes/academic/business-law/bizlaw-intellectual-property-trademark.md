@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同じ思想家
 - [[bizlaw-doctrine-of-equivalents|均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理]] — 出典を共有
-- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 出典を共有
+- [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]] — 出典を共有
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 出典を共有
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍

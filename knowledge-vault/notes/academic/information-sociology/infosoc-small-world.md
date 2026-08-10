@@ -36,7 +36,7 @@ aliases:
 - [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 同じ思想家
 - [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
 - [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同じ思想家
-- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — 同じ思想家
+- [[human-obedience|権威への服従（オベディエンス）]] — 同じ思想家
 - [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]] — 同じ思想家
 - [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同じ思想家

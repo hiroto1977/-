@@ -35,8 +35,8 @@ John C. Turner ／ Penelope J. Oakes ／ Michael A. Hogg ／ Stephen D. Reicher 
 ## 関連概念
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同じ思想家
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同じ思想家
+- [[human-obedience|権威への服従（オベディエンス）]] — 同分野の近傍
 - [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同分野の近傍
-- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
 - [[human-chunking|チャンク化（チャンキング）]] — 同分野の近傍
 
 ## 関連

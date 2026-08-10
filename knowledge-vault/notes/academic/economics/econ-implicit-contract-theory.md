@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-okuns-law|オーカンの法則]] — 同分野の近傍
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
+- [[econ-allais-paradox|アレのパラドックス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

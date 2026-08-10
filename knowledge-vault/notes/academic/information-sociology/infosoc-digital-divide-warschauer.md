@@ -39,7 +39,6 @@ Mark Warschauer ／ Jan van Dijk ／ Manuel Castells
 - [[infosoc-media-literacy|メディア・リテラシー]] — 出典を共有
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 出典を共有
 - [[infosoc-digital-inequality|デジタル格差・デジタル不平等：情報技術へのアクセスと活用における社会的不均衡]] — 同分野の近傍
-- [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
 - [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — 同分野の近傍
 
 ## 関連

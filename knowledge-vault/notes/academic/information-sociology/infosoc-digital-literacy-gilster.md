@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Digital literacy — definition and frameworks](https://en.wikipedia.org/wiki/Digital_literacy) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。]] — 同分野の近傍
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — 同分野の近傍
 - [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
 - [[infosoc-media-literacy|メディア・リテラシー]] — 同分野の近傍
 

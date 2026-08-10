@@ -40,6 +40,7 @@ aliases:
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同分野の近傍
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — 同分野の近傍
+- [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 654
+card_count: 653
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（654枚）
+# フラッシュカード — 学術概念／経営学（653枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1252,8 +1252,6 @@ tags:
   - **A:** トランザクティブ記憶システム（transactive memory system; TMS）は、ダニエル・ウェグナー（1987）が提唱した、グループが共有する「誰が何を知っているか」に関するメタ知識（知識のディレクトリ）であり、個人の認知能力の限界を超えた集合的記憶・知識システムを形成する過程を説明する概念である。（→ [[mgmt-transactive-memory-wegner]]）
 - **Q:** 変革型リーダーシップ
   - **A:** リーダーがビジョンや理念を示してフォロワーの価値観・動機を高め、組織や個人を変革へと導くリーダーシップ。報酬と業績を交換する「交換型（取引型）リーダーシップ（transactional leadership）」と対比される。（→ [[mgmt-transformational-leadership]]）
-- **Q:** 変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）
-  - **A:** 変革型リーダーシップ（transformational leadership）とは、ジェームズ・マクレガー・バーンズが1978年に提唱し、バーナード・バスとブルース・アボリオが1980〜90年代に実証的に発展させた理論で、リーダーが部下の価値観・動機・自己実現欲求に働きかけて期待を超えた業績を生み出す「変革的」な影響プロセスを記述する。（→ [[mgmt-transformational-leadership-bass]]）
 - **Q:** 一時的競争優位（トランジェント・アドバンテージ）
   - **A:** リタ・ガンター・マグレイス2013年（HBR論文「Transient Advantage」・著書『競争優位の終焉』）は、変化の速い高速度産業では長く保たれる持続的競争優位の達成という従来の戦略目標が非現実的になり、優位は一時的（transient）で素早く享受・侵食され、絶えず置き換えねばならないと論じた。（→ [[mgmt-transient-advantage]]）
 - **Q:** トリプルボトムライン（TBL）

@@ -37,6 +37,7 @@ Edward L. Deci ／ Richard M. Ryan ／ Marylène Gagné
 - [[infosoc-fomo|FOMO（取り残されることへの恐れ）]] — 出典を共有
 - [[human-self-determination|自己決定理論（SDT）]] — 出典を共有
 - [[mgmt-regulatory-focus-theory-work|制御焦点理論（職場応用）]] — 同分野の近傍
+- [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

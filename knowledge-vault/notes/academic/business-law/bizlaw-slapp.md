@@ -31,7 +31,7 @@ SLAPP訴訟（Strategic Lawsuit Against Public Participation）とは、企業�
 
 ## 関連概念
 - [[bizlaw-corporate-manslaughter|法人の業務上過失致死（コーポレート・マンスローター）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-two-stage-presumption|二段の推定（文書の真正成立）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

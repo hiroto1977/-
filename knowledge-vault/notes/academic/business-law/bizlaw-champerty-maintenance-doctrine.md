@@ -41,7 +41,7 @@ Anthony J. Sebok ／ Maya Steinitz ／ Joanna Shepherd
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 出典を共有
 - [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 出典を共有
 - [[mgmt-delphi-method|デルファイ法]] — 出典を共有
-- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 同分野の近傍
+- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

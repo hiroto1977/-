@@ -38,8 +38,8 @@ aliases:
 - [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
 - [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
-- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]] — 同分野の近傍
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
+- [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

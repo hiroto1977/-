@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 72）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 71）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 48）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
@@ -509,7 +509,7 @@ tags:
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]]
 - [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]]
 - [[bizlaw-insurance-contract-law-utmost-good-faith|保険契約法——最大善意義務と告知義務の法的枠組み]]
-- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]]
+- [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]]
 - [[bizlaw-intellectual-property-exhaustion|知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力]]
 - [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]]
 - [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]]
