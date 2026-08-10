@@ -27,9 +27,13 @@ const BASE = 'https://api.cursor.com';
 /** 日次利用データの取得可能期間（Cursor 側の制限）。 */
 export const MAX_USAGE_DAYS = 90;
 
-interface MembersResponse {
-  teamMembers?: { name?: string; email?: string; role?: string }[];
+interface MembersRow {
+  name?: string;
+  email?: string;
+  role?: string;
 }
+
+type MembersResponse = { teamMembers?: MembersRow[] } | MembersRow[];
 
 interface DailyUsageRow {
   date?: number;
@@ -113,12 +117,12 @@ export interface CursorSnapshot {
   };
 }
 
-const num = (v: number | undefined): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+const num = (v: number | undefined): number => (Number.isFinite(v) ? (v as number) : 0);
 
 /** epoch ミリ秒 → YYYY-MM-DD（UTC）。読めない値は空文字にして日付欄を詐称しない。 */
 export function toIsoDate(epochMs: number | undefined): string {
-  if (typeof epochMs !== 'number' || !Number.isFinite(epochMs)) return '';
-  return new Date(epochMs).toISOString().slice(0, 10);
+  if (!Number.isFinite(epochMs)) return '';
+  return new Date(epochMs as number).toISOString().slice(0, 10);
 }
 
 /**
@@ -131,6 +135,17 @@ export function acceptRateOf(accepted: number, total: number): number | null {
 }
 
 /**
+ * 採用行が総追加行を上回っているか。Cursor 側の集計が噛み合っていない印。
+ *
+ * 率から判定すると「率が null のとき比較が常に false になる」という
+ * JS のセマンティクスに寄りかかることになり、条件の片方が観測できなくなる。
+ * 行数そのもので判定すれば、分母 0 のときも上回りのときも別々に確かめられる。
+ */
+export function isOverCounted(accepted: number, total: number): boolean {
+  return total > 0 && accepted > total;
+}
+
+/**
  * 配列そのものか、キーで包まれた配列かのどちらでも取り出す。
  *
  * body が null や配列でないものでも落とさない — 相手の API が形を変えたときに
@@ -138,7 +153,7 @@ export function acceptRateOf(accepted: number, total: number): number | null {
  */
 function rowsOf<T>(body: unknown, key: string): T[] {
   if (Array.isArray(body)) return body as T[];
-  if (body === null || typeof body !== 'object') return [];
+  if (body === null || body === undefined) return [];
   const v = (body as Record<string, unknown>)[key];
   return Array.isArray(v) ? (v as T[]) : [];
 }
@@ -170,7 +185,9 @@ export async function fetchCursorSnapshot(ctx: FetchContext): Promise<CursorSnap
     fetchCtx,
   );
 
-  const members: CursorMember[] = (membersBody.teamMembers ?? []).map((m) => ({
+  // members だけ直接キーを引いていたので、null や undefined が返ると落ちていた。
+  // 3 つとも rowsOf を通して同じ耐性にする。
+  const members: CursorMember[] = rowsOf<MembersRow>(membersBody, 'teamMembers').map((m) => ({
     name: m.name ?? '',
     email: m.email ?? '',
     role: m.role ?? '',
@@ -179,14 +196,13 @@ export async function fetchCursorSnapshot(ctx: FetchContext): Promise<CursorSnap
   const usage: CursorUsageDay[] = rowsOf<DailyUsageRow>(usageBody, 'data').map((d) => {
     const linesAdded = num(d.totalLinesAdded);
     const linesAccepted = num(d.acceptedLinesAdded);
-    const rate = acceptRateOf(linesAccepted, linesAdded);
     return {
       date: toIsoDate(d.date),
       active: d.isActive === true,
       linesAdded,
       linesAccepted,
-      acceptRate: rate,
-      overCounted: rate !== null && rate > 100,
+      acceptRate: acceptRateOf(linesAccepted, linesAdded),
+      overCounted: isOverCounted(linesAccepted, linesAdded),
       tabsShown: num(d.totalTabsShown),
       tabsAccepted: num(d.totalTabsAccepted),
       requests: num(d.composerRequests) + num(d.chatRequests) + num(d.agentRequests) + num(d.cmdkUsages),

@@ -3,6 +3,7 @@ import {
   MAX_USAGE_DAYS,
   acceptRateOf,
   fetchCursorSnapshot,
+  isOverCounted,
   toIsoDate,
   usageWindow,
 } from '../cursor';
@@ -57,6 +58,7 @@ describe('日付とレート', () => {
   it('epoch ミリ秒を UTC の YYYY-MM-DD にする', () => {
     expect(toIsoDate(1_754_265_600_000)).toBe('2025-08-04');
     expect(toIsoDate(0)).toBe('1970-01-01');
+    expect(toIsoDate(-86_400_000)).toBe('1969-12-31');
   });
 
   it('読めない日付は空文字にする（それらしい日付を作らない）', () => {
@@ -80,6 +82,17 @@ describe('日付とレート', () => {
 
   it('Cursor 側の集計が噛み合わないと 100% を超えることがある', () => {
     expect(acceptRateOf(300, 200)).toBe(150);
+  });
+
+  it('上回りは率ではなく行数そのもので判定する', () => {
+    expect(isOverCounted(300, 200)).toBe(true);
+    // ちょうど一致は上回りではない
+    expect(isOverCounted(200, 200)).toBe(false);
+    expect(isOverCounted(199, 200)).toBe(false);
+    // 分母が 0 なら率が出ない以上、上回りようがない（採用行があっても false）
+    expect(isOverCounted(5, 0)).toBe(false);
+    expect(isOverCounted(0, 0)).toBe(false);
+    expect(isOverCounted(5, -1)).toBe(false);
   });
 });
 
@@ -137,8 +150,18 @@ describe('スナップショットの取得', () => {
     await fetchCursorSnapshot({ token: 'secret-key', fetch: f });
     const calls = f.mock.calls;
     expect(calls).toHaveLength(3);
+    // 接続先そのものを固定する。endsWith だけで見ると、ベース URL が空文字に
+    // なっても素通りしてしまう（相対 URL で叩きに行く）。
+    expect(calls.map(([u]) => String(u))).toEqual([
+      'https://api.cursor.com/teams/members',
+      'https://api.cursor.com/teams/daily-usage-data',
+      'https://api.cursor.com/teams/spend',
+    ]);
     for (const [, init] of calls) {
-      expect((init?.headers as Record<string, string>).Authorization).toBe('Bearer secret-key');
+      const h = init?.headers as Record<string, string>;
+      expect(h.Authorization).toBe('Bearer secret-key');
+      // POST でボディを JSON にするので Content-Type は必須
+      expect(h['Content-Type']).toBe('application/json');
     }
     expect(calls[0]![1]?.method).toBeUndefined(); // members は GET
     expect(calls[1]![1]?.method).toBe('POST');
@@ -172,6 +195,39 @@ describe('スナップショットの取得', () => {
       linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false,
       tabsShown: 0, tabsAccepted: 0, requests: 0, model: '',
     });
+  });
+
+  it('メンバーの欄が欠けていても空文字で埋める（"undefined" と出さない）', async () => {
+    const f = stub({ members: { teamMembers: [{}, { name: 'Only' }, { email: 'only@example.com' }] } });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
+    expect(snap.members).toEqual([
+      { name: '', email: '', role: '' },
+      { name: 'Only', email: '', role: '' },
+      { name: '', email: 'only@example.com', role: '' },
+    ]);
+  });
+
+  it('支出の欄が欠けていても空文字と 0 で埋める', async () => {
+    const f = stub({ spend: { teamMemberSpend: [{}] } });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
+    expect(snap.spend).toEqual([
+      { name: '', email: '', role: '', spendUsd: 0, fastPremiumRequests: 0, hardLimitUsd: null },
+    ]);
+  });
+
+  it('body が undefined でも落ちない', async () => {
+    const f = stub({ members: undefined, usage: undefined, spend: undefined });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
+    expect(snap.usage).toEqual([]);
+    expect(snap.spend).toEqual([]);
+    expect(snap.members).toEqual([]);
+  });
+
+  it('数値や文字列が返ってきても空として扱う（オブジェクト以外）', async () => {
+    const f = stub({ usage: 42, spend: 'nope' });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
+    expect(snap.usage).toEqual([]);
+    expect(snap.spend).toEqual([]);
   });
 
   it('受入行が総追加行を上回ったら印を付ける（率は隠さない）', async () => {
