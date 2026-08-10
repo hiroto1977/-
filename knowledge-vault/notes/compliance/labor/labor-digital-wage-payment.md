@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
-- [[labor-childcare-short-time|育児のための短時間勤務制度（育児・介護休業法23条）]] — 同分野の近傍
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
 - [[labor-collective-bargaining|団体交渉拒否の禁止（労働組合法7条）]] — 同分野の近傍
 
 ## 関連

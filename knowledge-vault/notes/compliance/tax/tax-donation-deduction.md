@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 語彙が近い
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 出典を共有
-- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 出典を共有
 - [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 出典を共有
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
 - [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有

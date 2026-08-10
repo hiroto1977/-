@@ -38,7 +38,7 @@ aliases:
 - [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
 - [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
-- [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同分野の近傍
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

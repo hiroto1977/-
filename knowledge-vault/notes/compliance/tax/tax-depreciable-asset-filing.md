@@ -33,9 +33,8 @@ aliases:
 ## 関連概念
 - [[tax-real-estate-acquisition|不動産取得税]] — 語彙が近い
 - [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 語彙が近い
-- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 同分野の近傍
+- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 語彙が近い
 - [[tax-deferred-asset|繰延資産の償却（法人税・所得税）]] — 同分野の近傍
-- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-life-insurance-deduction|生命保険料控除]] — 語彙が近い
-- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
+- [[tax-medical-expense-deduction|医療費控除]] — 同分野の近傍
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 同分野の近傍
 
 ## 関連

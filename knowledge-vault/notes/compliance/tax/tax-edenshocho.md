@@ -35,7 +35,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-e-bookkeeping|電子帳簿保存法]] — 分野横断
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 同分野の近傍
-- [[tax-amended-return|修正申告・期限後申告と加算税]] — 同分野の近傍
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
-- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
 - [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 語彙が近い
+- [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 語彙が近い
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
 - [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有

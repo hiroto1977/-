@@ -40,7 +40,7 @@ aliases:
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 同じ思想家
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

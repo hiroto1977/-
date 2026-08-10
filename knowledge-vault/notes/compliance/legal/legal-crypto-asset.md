@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 語彙が近い
 - [[legal-funds-transfer|資金移動業]] — 同分野の近傍
-- [[legal-secondhand-dealer|古物営業法と古物商許可]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]] — 同じ思想家
 - [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
 - [[infosoc-narrative-transportation|ナラティブ・トランスポーテーション理論（narrative transportation／物語移入）——物語世界に没入した受け手の信念が物語の含意へ傾く説得メカニズム]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,9 +32,9 @@ aliases:
 
 ## 関連概念
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 語彙が近い
+- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 語彙が近い
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
-- [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
 - [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有

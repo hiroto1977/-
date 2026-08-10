@@ -2,7 +2,7 @@
 title: "サラス・サラスバシー"
 type: thinker
 person_key: "サラスバシー|サ"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # サラス・サラスバシー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（2件）
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — アントレプレナーシップのブリコラージュ（entrepreneurialbricolage）は、ベーカーとネルソンが20…
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 組織的ブリコラージュ（organizationalbricolage）は、ベイカー＆ネルソン（2005）がレヴィ＝スト…
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — サラス・サラスバシーは2001年の論文「CausationandEffectuation:TowardaTheoret…
 
 ## 関連
 - 索引: [[人物索引]]

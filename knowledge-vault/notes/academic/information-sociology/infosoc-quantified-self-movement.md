@@ -34,6 +34,7 @@ Deborah Lupton ／ Btihaj Ajana ／ Dawn Nafus
 ## 関連概念
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 語彙が近い
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同分野の近傍
+- [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — 同分野の近傍
 - [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
 
 ## 関連

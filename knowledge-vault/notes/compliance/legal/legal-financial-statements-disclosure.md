@@ -36,11 +36,11 @@ aliases:
 - [[labor-elderly-employment|高年齢者雇用確保措置]] — 出典を共有
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
 - [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
-- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 出典を共有
 - [[tax-corp-interim-return|法人税の中間申告]] — 出典を共有
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

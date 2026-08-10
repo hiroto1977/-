@@ -2,7 +2,7 @@
 title: "カール・ワイク"
 type: thinker
 person_key: "ワイク|カ"
-concept_count: 20
+concept_count: 19
 tags:
   - person
   - index
@@ -10,13 +10,12 @@ tags:
 
 # カール・ワイク
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **20 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **19 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（20件）
+## 学術概念（19件）
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — フレゼ（MichaelFrese）とキース（NeilKeith）は2015年に，組織におけるエラーへの対応を「エラー回…
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — コリン・エデンとファン・アッカーマンが1992年に体系化した認知地図（cognitivemapping）手法は、意思決…
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — シングルループ学習とダブルループ学習は、クリス・アージリスとドナルド・ショーンが1970年代に組織学習の理論として展開…
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — サラス・サラスバシーは2001年の論文「CausationandEffectuation:TowardaTheoret…
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — イナクトメント（enactment）は、カール・ワイクが1979年の著書で体系化した組織論の中核概念であり、組織メンバ…
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — イナクトメント（enactment、環境の主体的構成）は、カール・ワイクが1979年の著作『組織化の社会心理学』で提唱…
 - [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — カール・ワイク（1976年）は教育組織を題材に、組織内のサブシステムが相互に応答性を保ちながらも各自の独自性と分離性を…

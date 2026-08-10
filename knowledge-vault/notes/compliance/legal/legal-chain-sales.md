@@ -32,9 +32,9 @@ aliases:
 
 ## 関連概念
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有

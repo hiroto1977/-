@@ -31,7 +31,6 @@ aliases:
 - [派遣法の3年ルール 解説](https://www.pasona.co.jp/clients/service/column/jhk/haken3years_rule/) `メディア`
 
 ## 関連概念
-- [[bizlaw-worker-dispatch|労働者派遣法]] — 語彙が近い
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 語彙が近い
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 語彙が近い
 - [[subsidy-human-resource-development|人材開発支援助成金]] — 出典を共有

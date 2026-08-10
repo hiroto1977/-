@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 語彙が近い
-- [[infosoc-technological-determinism|技術決定論]] — 同分野の近傍
+- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]] — 同分野の近傍
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同分野の近傍
 
 ## 関連

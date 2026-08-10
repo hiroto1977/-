@@ -2,7 +2,7 @@
 title: "kyoukaikenpo.or.jp"
 type: source-domain
 host: "kyoukaikenpo.or.jp"
-cite_count: 8
+cite_count: 9
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # kyoukaikenpo.or.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（運営団体 8）
+> [!info] 出典ドメイン索引 ・ 引用 **9 件**（運営団体 9）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 協会けんぽ限度額適用認定証
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 協会けんぽ高額な医療費を支払ったとき
 - [[labor-maternity-allowance|健康保険の出産手当金]] — 協会けんぽ出産手当金
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 全国健康保険協会出産で会社を休んだとき（出産手当金）
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 協会けんぽ傷病手当金
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 協会けんぽ病気やケガで会社を休んだとき（傷病手当金）
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 協会けんぽ埋葬料（費）

@@ -40,7 +40,7 @@ aliases:
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 出典を共有
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
-- [[bizlaw-health-insurance|健康保険法]] — 同分野の近傍
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

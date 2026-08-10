@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Flow (psychology) — フロー状態と最適経験の概念](https://en.wikipedia.org/wiki/Flow_(psychology)) `リファレンス`
 
 ## 関連概念
-- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 語彙が近い
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 語彙が近い
+- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 語彙が近い
 - [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家

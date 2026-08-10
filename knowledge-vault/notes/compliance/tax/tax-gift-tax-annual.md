@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 語彙が近い
 - [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 語彙が近い
+- [[tax-business-succession|法人版事業承継税制（特例措置）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-health-insurance|健康保険法]] — 語彙が近い
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 同分野の近傍
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍

@@ -32,11 +32,11 @@ aliases:
 
 ## 関連概念
 - [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
+- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 語彙が近い
 - [[bizlaw-employees-pension|厚生年金保険法]] — 出典を共有
 - [[bizlaw-national-pension|国民年金法]] — 出典を共有
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
 - [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
-- [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 出典を共有
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有

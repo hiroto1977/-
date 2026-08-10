@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 語彙が近い
-- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 語彙が近い
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 語彙が近い
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 語彙が近い
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 

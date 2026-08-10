@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2278
+cite_count: 2277
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2278 件**（リファレンス 2278）
+> [!info] 出典ドメイン索引 ・ 引用 **2277 件**（リファレンス 2277）
 
 ## このドメインを出典とする項目
 
@@ -1998,7 +1998,6 @@ tags:
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — Wikipedia—Dynamicpricing
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — Wikipedia—EconomicOrderQuantity
 - [[mgmt-effectuation|エフェクチュエーション]] — Wikipedia—SarasSarasvathy（経歴・研究背景）
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — Wikipedia:Effectuation—Sarasvathy,entrepreneurialdecision-making,five…
 - [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — Wikipedia:Effort-rewardimbalance—effort,reward,overcommitment,recipro…
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — Wikipedia:Employeeengagement—Kahn,psychologicalsafety,GallupQ12,UWES,…
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — Wikipedia:Empowerment—empoweringleadership,psychologicalempowerment,a…

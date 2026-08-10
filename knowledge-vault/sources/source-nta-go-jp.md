@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 262
+cite_count: 269
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **262 件**（公的 262）
+> [!info] 出典ドメイン索引 ・ 引用 **269 件**（公的 269）
 
 ## このドメインを出典とする項目
 
@@ -75,7 +75,9 @@ tags:
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁C1-19青色申告書の承認の申請
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁No.5100新設法人の届出書類
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁No.5762青色申告と欠損金の繰越控除
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁C1-33減価償却資産の償却方法の届出
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁No.5100新設法人の届出書類
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁源泉所得税の納期の特例の承認に関する申請
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁青色申告の承認申請
 - [[tax-corp-interim-return|法人税の中間申告]] — 国税庁中間（予定）税額の算出
 - [[tax-corp-interim-return|法人税の中間申告]] — 国税庁予定申告及び納税の義務
@@ -175,7 +177,9 @@ tags:
 - [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 国税庁No.1463株式等を譲渡したときの課税
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 国税庁C1-52欠損金の繰戻し還付の請求
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 国税庁No.5763欠損金の繰戻しによる還付
-- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5762欠損金の繰越控除
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5100新設法人の届出書類（青色申告の承認）
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5762青色申告書を提出した事業年度の欠損金の繰越控除
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5763欠損金の繰戻しによる還付
 - [[tax-loss-offsetting|所得税の損益通算]] — 国税庁No.1391不動産所得が赤字のときの通算
 - [[tax-loss-offsetting|所得税の損益通算]] — 国税庁No.2250損益通算
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 国税庁No.5403少額の減価償却資産の判定
@@ -185,7 +189,10 @@ tags:
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁No.6531新規設立法人の届出
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁質疑応答特定新規設立法人の特例
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁No.5211役員に対する給与
-- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期同額給与
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁役員給与に関するQ&A（業績悪化改定事由等）
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁法人税基本通達第3款定期同額給与
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期給与の額を改定した場合の損金不算入額
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例届出書の記載額と異なる支給をした場合
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁No.5211役員に対する給与
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法人税基本通達第7款退職給与
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法令解釈通達役員給与等

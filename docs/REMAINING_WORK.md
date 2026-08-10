@@ -22,8 +22,8 @@
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
       — AppImage / `.deb` / arm64 `.dmg` / Windows `.exe`
 - [x] GitHub Pages 配信（landing + デモ 3 種 + lite）
-- [x] 知識コーパス **4,205 項目**（学術 3,583 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
-      + Obsidian vault 7,656 ノート + knowledge-graph（nodes 4,205 / edges 21,206）
+- [x] 知識コーパス **4,203 項目**（学術 3,581 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
+      + Obsidian vault 7,653 ノート + knowledge-graph（nodes 4,203 / edges 21,174）
 - [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**
 
 未完了の主要タスク（優先度順）:

@@ -34,6 +34,7 @@ aliases:
 - [[labor-maternity-allowance|健康保険の出産手当金]] — 語彙が近い
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
 

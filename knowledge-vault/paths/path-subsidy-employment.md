@@ -14,11 +14,11 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]]（接続 24）
-- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]]（接続 23）
-- [[subsidy-career-up|キャリアアップ助成金]]（接続 22）
+- [[subsidy-career-up|キャリアアップ助成金]]（接続 23）
 - [[subsidy-age-friendly|エイジフレンドリー補助金]]（接続 21）
 - [[subsidy-jinzai-kakuho|人材確保等支援助成金]]（接続 21）
 - [[subsidy-industrial-employment-stability|産業雇用安定助成金]]（接続 20）
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]]（接続 20）
 - [[subsidy-trial-employment|トライアル雇用助成金]]（接続 19）
 - [[subsidy-employment-adjustment|雇用調整助成金]]（接続 12）
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]]（接続 10）

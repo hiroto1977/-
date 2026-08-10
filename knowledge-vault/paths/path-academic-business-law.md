@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 700
+entry_count: 699
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（700件）
+# 学習パス — 学術概念／ビジネス法務（699件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -270,7 +270,6 @@ tags:
 - 2020年: [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]]
 - 2020年: [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]]
 - 2020年: [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]]
-- 2020年: [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]]
 - 2020年: [[bizlaw-financial-services-act|金融サービス提供法]]
 - 2020年: [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]]
 - 2020年: [[bizlaw-mistake|錯誤（民法95条）]]

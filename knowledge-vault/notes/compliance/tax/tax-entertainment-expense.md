@@ -32,8 +32,9 @@ aliases:
 
 ## 関連概念
 - [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 語彙が近い
-- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 同分野の近傍
 - [[tax-dividends-received|受取配当等の益金不算入]] — 同分野の近傍
+- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

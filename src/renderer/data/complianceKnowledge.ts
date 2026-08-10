@@ -483,14 +483,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '役員給与の損金算入（3類型）',
       statement:
         '法人が役員に支給する給与は、定期同額給与・事前確定届出給与・業績連動給与のいずれかに該当しなければ' +
-        '原則として損金に算入されない。業績連動給与は同族会社に該当しない法人等の業務執行役員への支給に限られる。',
-      authority: '所管: 国税庁（法人税法第34条）',
-      asOf: '2026-06',
+        '原則として損金に算入されない（業績連動給与は同族会社に該当しない法人等の業務執行役員への支給に限られる）。' +
+        '実務で効くのは変えられる時期である。定期同額給与の改定は、原則として事業年度開始の日から' +
+        '3か月を経過する日までに行う必要があり、期の途中で自由に増減はできない。' +
+        'これ以外に改定が認められるのは、役職の変更など臨時改定事由がある場合と、' +
+        '経営の状況が著しく悪化したことなどの業績悪化改定事由がある場合に限られる' +
+        '（単に資金繰りが苦しい、業績目標に届かない、という程度では業績悪化改定事由に当たらない）。' +
+        '事前確定届出給与は届出どおりの時期に届出どおりの額を支給しなければならず、' +
+        '1 円でも違えば、その支給額の全部が損金不算入になる扱いになる。' +
+        '賞与を出したいなら、期首に決めて届け出るところまでを設計に含めること。',
+      authority: '所管: 国税庁（法人税法第34条・法人税法施行令第69条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5211.htm', type: 'government', label: '国税庁 No.5211 役員に対する給与' },
-      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/03.htm', type: 'government', label: '国税庁 質疑応答事例 定期同額給与' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/73615/', type: 'media', label: 'マネーフォワード 事前確定届出給与' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/03.htm', type: 'government', label: '国税庁 質疑応答事例 定期給与の額を改定した場合の損金不算入額' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/13.htm', type: 'government', label: '国税庁 質疑応答事例 届出書の記載額と異なる支給をした場合' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/qa.pdf', type: 'government', label: '国税庁 役員給与に関するQ&A（業績悪化改定事由等）' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/09/09_02_03.htm', type: 'government', label: '国税庁 法人税基本通達 第3款 定期同額給与' },
     ],
   },
   {
@@ -881,15 +891,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人設立後の税務署への届出期限',
       statement:
-        '内国普通法人の設立後、法人設立届出書は設立の日以後2か月以内に所轄税務署長へ提出する。青色申告の承認申請書は' +
-        '設立の日以後3か月を経過した日と設立第1期の事業年度終了日のいずれか早い日の前日までに提出する。',
-      authority: '所管: 国税庁（法人税法）',
-      asOf: '2026-06',
+        '内国普通法人の設立後、法人設立届出書は設立の日以後2か月以内に所轄税務署長へ提出する。' +
+        '青色申告の承認申請書は、設立の日以後3か月を経過した日と設立第1期の事業年度終了の日との' +
+        'いずれか早い日の前日までに提出する。この期限を逃すと第1期は白色申告になり、' +
+        '初年度の赤字を繰り越せない（設立初年度は赤字になりやすいので影響が大きい）。' +
+        '給与を支払うなら給与支払事務所等の開設届出書を開設の日から1か月以内に、' +
+        '源泉所得税の納期の特例を使うなら承認申請書を出す。棚卸資産の評価方法や減価償却資産の' +
+        '償却方法を法定以外にしたい場合の届出は、いずれも第1期の確定申告書の提出期限までである。' +
+        '税務署のほかに都道府県税事務所と市町村への法人設立届も必要で、こちらは提出先ごとに期限が異なる。',
+      authority: '所管: 国税庁（法人税法）・都道府県・市町村（地方税法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm', type: 'government', label: '国税庁 No.5100 新設法人の届出書類' },
       { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_14.htm', type: 'government', label: '国税庁 青色申告の承認申請' },
-      { url: 'https://biz.moneyforward.com/establish/basic/683/', type: 'media', label: 'マネーフォワード 会社設立の届出' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_37.htm', type: 'government', label: '国税庁 源泉所得税の納期の特例の承認に関する申請' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_21.htm', type: 'government', label: '国税庁 C1-33 減価償却資産の償却方法の届出' },
     ],
   },
   {
@@ -1116,15 +1133,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '産前産後休業（労働基準法第65条）',
       statement:
-        '産前6週間（多胎妊娠は14週間）以内に出産予定の女性は本人の請求により休業でき、産後8週間は原則就業させてはならない。' +
-        'ただし産後6週間経過後は、本人が請求し医師が支障ないと認めた業務には就かせることができる。',
-      authority: '所管: 厚生労働省（労働基準法第65条）',
-      asOf: '2026-06',
+        '産前6週間（多胎妊娠は14週間）以内に出産予定の女性は本人の請求により休業でき、' +
+        '産後8週間は本人が請求しなくても就業させてはならない（産前は請求が要るが、産後は請求の有無を問わない）。' +
+        'ただし産後6週間を経過した後は、本人が請求し医師が支障ないと認めた業務に就かせることができる。' +
+        '出産日当日は産前休業に含まれ、産後休業は出産日の翌日から数える。' +
+        '休業中は無給でも構わないが、健康保険から出産手当金が支給される（出産予定日以前42日・多胎は98日から' +
+        '出産後56日までのうち休業した期間）。あわせて、事業主が年金事務所等へ産前産後休業取得者申出書を出せば' +
+        '健康保険・厚生年金保険の保険料が事業主負担分も含めて免除される（申出は休業期間中または' +
+        '終了後1か月以内）。産前産後休業の期間とその後30日間は解雇が禁止され（労働基準法19条）、' +
+        '休業を理由とする不利益取扱いも禁止されている。',
+      authority: '所管: 厚生労働省（労働基準法第65条・第19条／健康保険法・厚生年金保険法）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.bosei-navi.mhlw.go.jp/glossary/provide01.html', type: 'government', label: '厚生労働省 母性健康管理ナビ' },
-      { url: 'https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05i_0011.pdf', type: 'government', label: '厚生労働省 母性保護規定' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/87784/', type: 'media', label: '産前産後休業 解説' },
+      { url: 'https://www.bosei-navi.mhlw.go.jp/ninshin/sanzen_sango.html', type: 'government', label: '厚生労働省 産前・産後休業を取るときは' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/000796040.pdf', type: 'government', label: '厚生労働省 労働基準法のあらまし（妊産婦等）' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/menjo/sankyu-menjo/20140509-02.html', type: 'government', label: '日本年金機構 産前産後休業を取得したときの手続き（保険料免除）' },
+      { url: 'https://www.kyoukaikenpo.or.jp/g3/sb3290/r148/', type: 'operator', label: '全国健康保険協会 出産で会社を休んだとき（出産手当金）' },
     ],
   },
   {
@@ -1150,15 +1175,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '青色申告法人の繰越欠損金',
       statement:
-        '青色申告書を提出した事業年度に生じた欠損金は、平成30年4月1日以後開始事業年度発生分につき翌期以後10年間' +
-        '繰り越して所得から控除できる。控除限度は大法人が所得の50%、中小法人等は全額控除可。',
-      authority: '所管: 国税庁（法人税法）',
-      asOf: '2026-06',
+        '青色申告書を提出した事業年度に生じた欠損金は、平成30年4月1日以後に開始した事業年度に生じた分について' +
+        '翌期以後10年間繰り越し、その後の事業年度の所得から控除できる。控除限度は大法人が所得の50％、' +
+        '中小法人等は所得の全額まで。繰り越すには、欠損が生じた事業年度に青色申告書を提出していることに加えて、' +
+        'その後の各事業年度について連続して確定申告書を提出していることと、帳簿書類を保存していることが要る。' +
+        '黒字になってから遡って直せる話ではないので、赤字の期こそ期限内申告を落とさないこと。' +
+        'なお中小企業者等には、欠損金を前期の所得に繰り戻して法人税の還付を受ける繰戻し還付の選択肢もあり、' +
+        '繰り越すか戻すかは資金繰りを見て決める。',
+      authority: '所管: 国税庁（法人税法第57条）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm', type: 'government', label: '国税庁 No.5762 欠損金の繰越控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm', type: 'government', label: '国税庁 No.5762 青色申告書を提出した事業年度の欠損金の繰越控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5763.htm', type: 'government', label: '国税庁 No.5763 欠損金の繰戻しによる還付' },
       { url: 'https://www.meti.go.jp/policy/economy/kyosoryoku_kyoka/kurikoshi.pdf', type: 'government', label: '経済産業省 繰越欠損金の控除上限特例' },
-      { url: 'https://www.ht-tax.or.jp/topics/kurikoshi-kessonkin/', type: 'media', label: '繰越欠損金 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm', type: 'government', label: '国税庁 No.5100 新設法人の届出書類（青色申告の承認）' },
     ],
   },
   {
@@ -1363,15 +1394,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '古物営業法と古物商許可',
       statement:
-        '中古品（古物）を売買・交換する古物商を営むには、営業所所在地の都道府県公安委員会の許可が必要。盗品の流通防止を' +
-        '目的に、取引相手の本人確認と取引記録（帳簿）の備付けが義務付けられている。',
+        '中古品（古物）を売買・交換する古物商を営むには、営業所が所在する都道府県ごとに公安委員会の許可が要る。' +
+        '制度の目的は盗品の流通防止なので、義務も相手の特定と記録に集まっている。' +
+        '買受け等における相手方の確認は、対価の総額が1万円未満の取引では不要とされるが、' +
+        '一部の商品（盗品として流通しやすいもの）は金額にかかわらず確認が必要である。' +
+        '古物の受取り・引渡しの際は帳簿への記載と保管が義務づけられる。' +
+        '警察から品触れ（盗品の手配書）を受け取ったときは、その書面に到達の日付を記載して6か月間保存し、' +
+        '該当品を取り扱っていれば届け出る。監督手段として売買の差止め・立入り・調査があり、' +
+        '違反には指示・営業停止・許可の取消しがある。',
       authority: '所管: 警察庁・都道府県公安委員会（古物営業法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/index.html', type: 'government', label: '警察庁 古物営業について' },
-      { url: 'https://elaws.e-gov.go.jp/search/elawsSearch/elaws_search/lsg0500/detail?lawId=407M50400000010', type: 'government', label: 'e-Gov 古物営業法施行規則' },
-      { url: 'https://hayward-law.com/kobutsusho/archives/5383', type: 'media', label: '古物商の本人確認義務 解説' },
+      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/index.html', type: 'government', label: '警察庁 古物営業・質屋営業について' },
+      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/1shiryo1.pdf', type: 'government', label: '警察庁 古物営業の現状と課題（義務・監督手段の整理）' },
+      { url: 'https://www.npa.go.jp/policies/application/form/12/index.html', type: 'government', label: '警察庁 古物営業法 手続・様式' },
+      { url: 'https://www.npa.go.jp/pdc/model/shobun/data/02-04b.pdf', type: 'government', label: '警察庁 古物営業法に基づく指示・営業停止命令・許可の取消しの基準' },
     ],
   },
   {

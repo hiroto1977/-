@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 263
+cite_count: 262
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **263 件**（公的 263）
+> [!info] 出典ドメイン索引 ・ 引用 **262 件**（公的 262）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,6 @@ tags:
 - [[bizlaw-employment-insurance|雇用保険法]] — 厚生労働省雇用保険法法令本文
 - [[bizlaw-employment-security|職業安定法]] — 厚生労働省法令データベース「職業安定法（昭和22年11月30日法律第141号）」
 - [[bizlaw-equal-employment-opportunity|男女雇用機会均等法]] — 厚生労働省「雇用における男女の均等な機会と待遇の確保のために」
-- [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]] — 厚生労働省「同一労働同一賃金特集ページ」
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 厚生労働省「無期転換ルールについて」
 - [[bizlaw-health-insurance|健康保険法]] — 厚生労働省健康保険法（大正11年4月22日法律第70号）法令本文
 - [[bizlaw-industrial-safety|労働安全衛生法]] — 厚生労働省「ストレスチェック制度・メンタルヘルス対策」
@@ -150,7 +149,7 @@ tags:
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 厚生労働省高年齢者雇用安定法の概要
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 厚生労働省高年齢者雇用安定法の概要（PDF）
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 厚生労働省職場におけるハラスメントの防止
-- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 厚生労働省母性保護規定
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 厚生労働省労働基準法のあらまし（妊産婦等）
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 厚生労働省正規雇用労働者の中途採用比率の公表
 - [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 厚生労働省地域別最低賃金の全国一覧
 - [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 厚生労働省最低賃金の減額の特例許可申請

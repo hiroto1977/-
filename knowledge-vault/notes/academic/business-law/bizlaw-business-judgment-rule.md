@@ -36,9 +36,9 @@ aliases:
 - [[econ-rostow-stages|ロストウの経済成長段階説]] — 出典を共有
 - [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — 同分野の近傍
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 同分野の近傍
 - [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
+- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — 同分野の近傍
+- [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

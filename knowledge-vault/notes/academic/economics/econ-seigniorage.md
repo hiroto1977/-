@@ -30,8 +30,8 @@ aliases:
 - [みずほ証券 ファイナンス用語集「通貨発行益」](https://glossary.mizuho-sc.com/faq/show/2294) `リファレンス`
 
 ## 関連概念
+- [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — 語彙が近い
 - [[econ-credit-channel-theory|信用チャネル理論]] — 出典を共有
-- [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — 同分野の近傍
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同分野の近傍
 
 ## 関連

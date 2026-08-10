@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 665
+card_count: 664
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（665枚）
+# フラッシュカード — 学術概念／経営学（664枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -356,8 +356,6 @@ tags:
   - **A:** 経済的発注量（Economic Order Quantity, EOQ）モデルとは、在庫管理において発注コストと在庫保管コストの合計を最小化する最適な1回当たりの発注量を求める数理モデルである。（→ [[mgmt-economic-order-quantity]]）
 - **Q:** エフェクチュエーション
   - **A:** エフェクチュエーション（Effectuation）は、サラス・サラスバシー（ヴァージニア大学ダーデン経営大学院）が熟達した連続起業家の意思決定を実証研究して見出した、高不確実性下の起業家的思考様式・論理であり、2001年の論文「Causation and Effectuation」（Academy of Management Review）で提示された。（→ [[mgmt-effectuation]]）
-- **Q:** エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理
-  - **A:** サラス・サラスバシーは2001年の論文「Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency」において，熟達した起業家が従来の因果論理（causation）——目標を先に設定し，その達成手段を選択する——とは異なる意思決定論理「エフェクチュエーション（effect…（→ [[mgmt-effectuation-theory-sarasvathy]]）
 - **Q:** 努力－報酬不均衡モデル——払った努力に見合う報酬がないとき
   - **A:** 努力－報酬不均衡モデル（effort-reward imbalance model、ERI）は、ヨハネス・シーグリストが1996年に提示した、職業性ストレス研究の主要なモデルで、カラセックの要求度－コントロールモデルを補完するものである。（→ [[mgmt-effort-reward-imbalance-siegrist]]）
 - **Q:** アイゼンハワーマトリクス（緊急・重要マトリクス）

@@ -39,6 +39,7 @@ aliases:
 - [[tax-filing-deadline|確定申告の期限（所得税・個人事業者の消費税）]] — 同分野の近傍
 - [[tax-delinquent-tax|国税の延滞税]] — 同分野の近傍
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 同分野の近傍
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

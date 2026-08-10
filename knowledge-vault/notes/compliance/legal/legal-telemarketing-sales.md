@@ -34,7 +34,6 @@ aliases:
 - [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 語彙が近い
 - [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有

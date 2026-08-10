@@ -2,21 +2,21 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 665
+entry_count: 664
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（665件）
+# 学習パス — 学術概念／経営学（664件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[agile-development|アジャイルソフトウェア開発]]（接続 58）
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]]（接続 34）
+- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]]（接続 33）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 31）
-- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 31）
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
@@ -389,7 +389,6 @@ tags:
 - [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]]
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]]
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]]
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]]
 - [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]]
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]]
 - [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]]

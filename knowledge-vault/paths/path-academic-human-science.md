@@ -21,10 +21,10 @@ tags:
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-defense-mechanisms|防衛機制]]（接続 26）
+- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 25）
 - [[human-group-polarization|集団極性化]]（接続 25）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 24）
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]]（接続 23）

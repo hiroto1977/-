@@ -37,7 +37,7 @@ aliases:
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 出典を共有
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 出典を共有
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 出典を共有
-- [[tax-corp-interim-return|法人税の中間申告]] — 同分野の近傍
+- [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 同分野の近傍
 - [[tax-year-end-adjustment|年末調整]] — 同分野の近傍
 
 ## 関連

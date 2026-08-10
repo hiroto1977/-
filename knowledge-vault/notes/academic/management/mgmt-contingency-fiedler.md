@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同じ思想家
 - [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同分野の近傍
-- [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
+- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 - [Wikipedia：上場企業会計改革および投資家保護法（米国SOX法 2002年）](https://ja.wikipedia.org/wiki/上場企業会計改革および投資家保護法) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 語彙が近い
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同分野の近傍
 - [[bizlaw-financial-instruments-act|金融商品取引法]] — 同分野の近傍
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 同分野の近傍
 

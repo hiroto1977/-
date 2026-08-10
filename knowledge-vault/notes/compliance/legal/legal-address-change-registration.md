@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 語彙が近い
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 語彙が近い
 - [[bizlaw-companies-act|会社法]] — 出典を共有
-- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — 出典を共有
 - [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
 - [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有

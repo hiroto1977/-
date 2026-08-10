@@ -5850,14 +5850,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'エフェクチュエーション',
     statement:
       'エフェクチュエーション（Effectuation）は、サラス・サラスバシー（ヴァージニア大学ダーデン経営大学院）が熟達した連続起業家の意思決定を実証研究して見出した、高不確実性下の起業家的思考様式・論理であり、2001年の論文「Causation and Effectuation」（Academy of Management Review）で提示された。' +
-      'あらかじめ定めた目的に最適な手段を選ぶ「コーゼーション（予測の論理）」と対比され、予測できない未来はコントロールで対処できるという前提に立つ「コントロールの論理」をとる。手元の手段（自分は誰か・何を知るか・誰を知るか）から出発し目的を創発させる。5原則は、手中の鳥・許容可能な損失・クレイジーキルト・レモネード・飛行機のパイロットであり、リーン・スタートアップとも親和的である。',
+      'あらかじめ定めた目的に最適な手段を選ぶ「コーゼーション（予測の論理）」と対比され、予測できない未来はコントロールで対処できるという前提に立つ「コントロールの論理」をとる。手元の手段（自分は誰か・何を知るか・誰を知るか）から出発し目的を創発させる。5原則は、手中の鳥（bird in hand＝自分は誰か・何を知るか・誰を知るかという手持ちから始める）、許容可能な損失（affordable loss＝期待利益の最大化ではなく許容できる損失の範囲で動く）、クレイジーキルト（crazy quilt＝競合分析ではなく利害関係者との協働で提携を作る）、レモネード（lemonade＝偶発事象を脅威ではなく機会として使う）、飛行機のパイロット（pilot in the plane＝予測ではなく制御可能な側面に集中する）であり、リーン・スタートアップとも親和的である。ナイトの不確実性下の起業行動を説明する枠組みとして、起業教育と実務に広く影響している。',
     keyFigures:
-      'サラス・D・サラスバシー（Saras D. Sarasvathy、ヴァージニア大学ダーデン経営大学院、2001 Academy of Management Review）／対比概念＝コーゼーション（予測の論理）／5原則＝手中の鳥・許容可能な損失・クレイジーキルト・レモネード・飛行機のパイロット',
+      'サラス・D・サラスバシー（Saras D. Sarasvathy、ヴァージニア大学ダーデン経営大学院、2001 Academy of Management Review）／対比概念＝コーゼーション（予測の論理）／5原則＝手中の鳥・許容可能な損失・クレイジーキルト・レモネード・飛行機のパイロット／知的系譜＝フランク・ナイト（不確実性）・ハーバート・サイモン（限定合理性）・カール・ワイク（センスメイキング）',
     asOf: '2026-06',
     sources: [
       { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S. D. (2001) “Causation and Effectuation,” Academy of Management Review 26(2): 243-263（査読学術誌・原典）' },
       { url: 'https://www.darden.virginia.edu/effectuation', type: 'academic', label: 'University of Virginia, Darden School of Business — Effectuation Overview（提唱者所属大学の公式解説）' },
       { url: 'https://effectuation.org/the-five-principles-of-effectuation-detail', type: 'reference', label: 'Effectuation.org — The Five Principles of Effectuation（5原則の一次的リファレンス）' },
+      { url: 'https://doi.org/10.2307/259121', type: 'academic', label: 'Sarasvathy, S. D. (2001) “Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency”（同論文・JSTOR 経由の DOI）' },
       { url: 'https://en.wikipedia.org/wiki/Saras_Sarasvathy', type: 'reference', label: 'Wikipedia — Saras Sarasvathy（経歴・研究背景）' },
     ],
   },
@@ -10144,21 +10145,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-equal-pay-equal-work',
-    discipline: 'business-law',
-    title: '同一労働同一賃金（パートタイム・有期雇用労働法）',
-    statement:
-      '働き方改革の柱の一つで、同一企業内の正社員（無期フルタイム）と非正規労働者（パートタイム・有期雇用）との間の不合理な待遇差を是正する制度。中心となるパートタイム・有期雇用労働法は、基本給・賞与・各種手当・福利厚生などあらゆる待遇について、合理性のない格差を禁じる。第8条の均衡待遇は、職務の内容、職務内容・配置の変更範囲、その他の事情に照らして不合理な待遇差を禁止し、' +
-      '第9条の均等待遇は、職務の内容と変更範囲が正社員と同一の場合に差別的取扱いを禁止する。あわせて、労働者から求めがあれば事業主が待遇差の内容・理由を説明する義務も強化された。大企業は2020年4月1日、中小企業は2021年4月1日から施行。派遣労働者については労働者派遣法の改正で同様の措置が手当てされ、制度全体は厚生労働省が所管する。',
-    keyFigures: 'パートタイム・有期雇用労働法（働き方改革関連法、大企業2020年4月・中小2021年4月施行）／厚生労働省',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000144972.html', type: 'government', label: '厚生労働省「同一労働同一賃金特集ページ」' },
-      { url: 'https://part-tanjikan.mhlw.go.jp/reform/', type: 'government', label: '厚生労働省「パートタイム・有期雇用労働法とは」' },
-      { url: 'https://cs-lawyer.tokyo/column/2023/03/02.html', type: 'reference', label: '東京弁護士会 中小企業法律支援センター「パート有期法8条・9条の解説」' },
-    ],
-  },
-  {
     id: 'infosoc-web3',
     discipline: 'information-sociology',
     title: 'Web3',
@@ -12658,12 +12644,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'パートタイム・有期雇用労働法',
     statement:
       '正式名称は「短時間労働者及び有期雇用労働者の雇用管理の改善等に関する法律」で、厚生労働省が所管する労働法。1993年制定のパートタイム労働法（短時間労働者の雇用管理の改善等に関する法律）を働き方改革の一環で改正し、新たに有期雇用労働者も対象に拡大、大企業は2020年4月1日、中小企業は2021年4月1日に施行された。核心は同一労働同一賃金で、' +
-      '通常の労働者（正社員）と短時間・有期雇用労働者との間の不合理な待遇差を禁止する。具体的には、職務内容・変更範囲・その他の事情を考慮した不合理な待遇差を禁じる均衡待遇（第8条）と、職務内容と変更範囲が通常の労働者と同一の者への差別的取扱いを禁じる均等待遇（第9条）を定める。さらに事業主には、労働者からの求めに応じて待遇差の内容と理由を説明する義務が課されている。',
+      '通常の労働者（正社員）と短時間・有期雇用労働者との間の不合理な待遇差を禁止する。具体的には、職務内容・変更範囲・その他の事情を考慮した不合理な待遇差を禁じる均衡待遇（第8条）と、職務内容と変更範囲が通常の労働者と同一の者への差別的取扱いを禁じる均等待遇（第9条）を定める。さらに事業主には、労働者からの求めに応じて待遇差の内容と理由を説明する義務が課されている。派遣労働者については、労働者派遣法の改正により派遣先均等・均衡方式または労使協定方式で同様の措置が手当てされている。',
     keyFigures: '短時間労働者及び有期雇用労働者の雇用管理の改善等に関する法律（パートタイム・有期雇用労働法、1993年制定・2020年改正施行）／厚生労働省',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.mhlw.go.jp/content/11650000/000815524.pdf', type: 'government', label: '厚生労働省「パートタイム・有期雇用労働法の概要」（2021年4月1日全面施行）' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000144972.html', type: 'government', label: '厚生労働省「同一労働同一賃金特集ページ」' },
+      { url: 'https://part-tanjikan.mhlw.go.jp/reform/', type: 'government', label: '厚生労働省「パートタイム・有期雇用労働法とは」' },
+      { url: 'https://cs-lawyer.tokyo/column/2023/03/02.html', type: 'reference', label: '東京弁護士会 中小企業法律支援センター「パート有期法8条・9条の解説」' },
       { url: 'https://jinjibu.jp/keyword/detl/1391/', type: 'reference', label: '日本の人事部「パートタイム・有期雇用労働法とは」（第8条・第9条・説明義務の解説）' },
     ],
   },
@@ -30205,7 +30193,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-price-level-targeting',
     discipline: 'economics',
     title: '物価水準目標政策',
-    statement: '物価水準目標政策（price-level targeting; PLT）は、インフレ率（水準の変化率）でなく物価水準そのものを特定の経路（目標経路）に回帰させることを約束する金融政策レジームであり、インフレ目標（inflation targeting; IT）との主な差異は「過去の偏差を取り戻す（make-up strategy）」約束にある。IT下では過去の低インフレは忘却（letting bygones be bygones）されるが、PLT下では低インフレ期の後には高インフレが約束され、これが将来インフレ期待を安定化させデフレスパイラルを防ぐ。ウッドフォード（1999）はDSGEモデルで、PLTがITより社会厚生損失を小さくする条件を示した。日銀のイールドカーブ・コントロール（YCC）は「水準ではなく金利経路の管理」であり엄밀にはPLTではないが、期待へのコミットメント構造が類似する。フレキシブル平均インフレ目標（FAIT）——2020年FRBが採用——はPLTの穏健版で過去の低インフレの部分的メイクアップを目指す。',
+    statement: '物価水準目標政策（price-level targeting; PLT）は、インフレ率（水準の変化率）でなく物価水準そのものを特定の経路（目標経路）に回帰させることを約束する金融政策レジームであり、インフレ目標（inflation targeting; IT）との主な差異は「過去の偏差を取り戻す（make-up strategy）」約束にある。IT下では過去の低インフレは忘却（letting bygones be bygones）されるが、PLT下では低インフレ期の後には高インフレが約束され、これが将来インフレ期待を安定化させデフレスパイラルを防ぐ。ウッドフォード（1999）はDSGEモデルで、PLTがITより社会厚生損失を小さくする条件を示した。日銀のイールドカーブ・コントロール（YCC）は「水準ではなく金利経路の管理」であり厳密にはPLTではないが、期待へのコミットメント構造が類似する。フレキシブル平均インフレ目標（FAIT）——2020年FRBが採用——はPLTの穏健版で過去の低インフレの部分的メイクアップを目指す。',
     keyFigures: 'マイケル・ウッドフォード ／ ラース・スベンソン ／ ベン・バーナンキ ／ カール・ウォルシュ',
     asOf: '2026-06-26',
     sources: [
@@ -43409,18 +43397,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-effectuation-theory-sarasvathy',
-    discipline: 'management',
-    title: 'エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理',
-    statement: 'サラス・サラスバシーは2001年の論文「Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency」において，熟達した起業家が従来の因果論理（causation）——目標を先に設定し，その達成手段を選択する——とは異なる意思決定論理「エフェクチュエーション（effectuation）」を用いることを実証的に示した。エフェクチュエーションは5つの原則から構成される：①手中の鳥（bird in hand）——利用可能な手段（自分は誰か・何を知っているか・誰を知っているか）から出発する，②許容可能な損失（affordable loss）——期待利益の最大化ではなく許容できる損失の範囲内で行動する，③クレイジーキルト（crazy quilt）——利害関係者との対話と協働を通じてパートナーシップを構築する，④レモネード（lemonade）——偶発的事象を脅威ではなく機会として活用する，⑤飛行機のパイロット（pilot in the plane）——予測不可能な未来を予測するのではなく制御可能な側面に焦点を当てる。この理論はナイトの不確実性のもとでの起業行動を説明する枠組みとして，起業教育とベンチャー実務に広く影響を与えている。',
-    keyFigures: 'サラス・サラスバシー ／ フランク・ナイト ／ ハーバート・サイモン ／ カール・ワイク',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/259121', type: 'academic', label: 'Sarasvathy, S. D. (2001) Causation and Effectuation — Academy of Management Review' },
-      { url: 'https://en.wikipedia.org/wiki/Effectuation', type: 'reference', label: 'Wikipedia: Effectuation — Sarasvathy, entrepreneurial decision-making, five principles' },
-    ],
-  },
-  {
     id: 'human-existential-therapy-yalom',
     discipline: 'human-science',
     title: '実存療法——ヤーロムの四つの究極的関心と治療的対峙',
@@ -45249,7 +45225,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'human-interpersonal-psychotherapy-klerman',
     discipline: 'human-science',
     title: '対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入',
-    statement: '対人関係療法（Interpersonal Psychotherapy: IPT）はジェラルド・クラーマンとミルナ・ワイスマンが1970〜80年代に開発した短期構造化心理療法で、うつ病症状を「対人関係上の問題」との関連で捉え、治療焦点として①悲嘆（complicated grief）・②役割移行・③対人関係葛藤・④対人スキル不足の四領域を設定する。認知行動療法（CBT）と並びうつ病治療の「第一線エビデンス療法」としてWHOや各国ガイドラインに収載され、青年期・産後うつ・섭식障害・双極性障害への適用拡大が進んでいる。IPTはうつ病が生物学的素因と心理社会的ストレスの相互作用で生じるという「バイオサイコソーシャルモデル」に立脚し、薬物療法との組み合わせが特に重篤例では推奨される。',
+    statement: '対人関係療法（Interpersonal Psychotherapy: IPT）はジェラルド・クラーマンとミルナ・ワイスマンが1970〜80年代に開発した短期構造化心理療法で、うつ病症状を「対人関係上の問題」との関連で捉え、治療焦点として①悲嘆（complicated grief）・②役割移行・③対人関係葛藤・④対人スキル不足の四領域を設定する。認知行動療法（CBT）と並びうつ病治療の「第一線エビデンス療法」としてWHOや各国ガイドラインに収載され、青年期・産後うつ・摂食障害・双極性障害への適用拡大が進んでいる。IPTはうつ病が生物学的素因と心理社会的ストレスの相互作用で生じるという「バイオサイコソーシャルモデル」に立脚し、薬物療法との組み合わせが特に重篤例では推奨される。',
     keyFigures: 'ジェラルド・クラーマン ／ ミルナ・ワイスマン ／ エレン・フランク ／ ジョン・マーコウィッツ',
     asOf: '2026-06-26',
     sources: [

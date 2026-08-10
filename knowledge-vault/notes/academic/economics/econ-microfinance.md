@@ -35,8 +35,8 @@ aliases:
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 出典を共有
 - [[eh-1944|1944年（昭和19年）]] — 出典を共有
-- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
 - [[econ-price-level-targeting|物価水準目標政策]] — 同分野の近傍
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同分野の近傍
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同分野の近傍
 
 ## 関連

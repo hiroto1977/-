@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 語彙が近い
+- [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
 - [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 分野横断
-- [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]] — 分野横断
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有

@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 同分野の近傍
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -40,8 +40,8 @@ aliases:
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 同じ思想家
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
