@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 語彙が近い
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同分野の近傍
+- [[bizlaw-tob|公開買付け（TOB）]] — 同分野の近傍
 - [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 同分野の近傍
 
 ## 関連

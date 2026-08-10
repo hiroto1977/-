@@ -37,8 +37,8 @@ prefecture
 - [新潟県の中小企業向け補助金 解説](https://hojokin-agent.jp/audience/sme/niigata) `メディア`
 
 ## 関連概念
-- [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 語彙が近い
 - [[subsidy-hilly-mountainous-payment|中山間地域等直接支払制度]] — 出典を共有
+- [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 同分野の近傍
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 同分野の近傍
 - [[subsidy-kagawa|香川県事業者の未来への投資を応援する総合補助金（未来投資応援補助金）（香川県）]] — 同分野の近傍
 - [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]] — 同分野の近傍

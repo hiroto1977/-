@@ -31,7 +31,7 @@ William T. Allen ／ Melvin A. Eisenberg ／ Bernard S. Black
 - [Outside Director Liability — Bernard S. Black, Brian R. Cheffins & Michael Klausner, Stanford Law Review (2006), SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=894921) `学術`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同じ思想家
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家

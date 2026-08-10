@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia「行政手続法」（条文構成・2014年改正の概観）](https://ja.wikipedia.org/wiki/行政手続法) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-administrative-procedure-act|行政手続法]] — 語彙が近い
+- [[bizlaw-administrative-procedure-act|行政手続法]] — 同分野の近傍
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同分野の近傍
 
 ## 関連

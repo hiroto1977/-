@@ -31,9 +31,9 @@ aliases:
 - [消費者庁 — 景品表示法への課徴金制度導入について（2016/4/1施行）](https://www.caa.go.jp/policies/policy/representation/fair_labeling/pdf/fair_labeling_181225_0002.pdf) `公的`
 
 ## 関連概念
-- [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 語彙が近い
 - [[legal-keihyo-surcharge|景品表示法の課徴金制度]] — 語彙が近い
 - [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]] — 分野横断
+- [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 同分野の近傍
 - [[bizlaw-greenwashing|グリーンウォッシング（虚偽・誇大な環境訴求）]] — 同分野の近傍
 
 ## 関連

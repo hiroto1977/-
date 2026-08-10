@@ -39,8 +39,8 @@ aliases:
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同分野の近傍
-- [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同分野の近傍
+- [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 同分野の近傍
 

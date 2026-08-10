@@ -36,7 +36,6 @@ aliases:
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 同分野の近傍
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 同分野の近傍
-- [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 同分野の近傍
 - [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 同分野の近傍
 
 ## 関連

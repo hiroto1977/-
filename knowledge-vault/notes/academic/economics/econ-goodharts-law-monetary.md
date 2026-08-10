@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Goodhart's law — グッドハートの法則の定義と応用例の概説](https://en.wikipedia.org/wiki/Goodhart%27s_law) `リファレンス`
 
 ## 関連概念
-- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 語彙が近い
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
+- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家

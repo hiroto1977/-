@@ -21,7 +21,7 @@ tags:
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]]（接続 22）
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 20）
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 19）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 18）
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 16）
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）

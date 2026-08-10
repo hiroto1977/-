@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
 - [[econ-kuznets-curve|クズネッツ曲線]] — 同分野の近傍
-- [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
