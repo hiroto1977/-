@@ -31,8 +31,8 @@ Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブ�
 
 ## 関連概念
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

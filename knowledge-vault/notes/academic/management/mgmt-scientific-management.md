@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — 同じ思想家
-- [[mgmt-dominant-design-utterback|支配的デザイン理論（Dominant Design）：アバナシー＆アターバックの技術進化モデル]] — 同分野の近傍
 - [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

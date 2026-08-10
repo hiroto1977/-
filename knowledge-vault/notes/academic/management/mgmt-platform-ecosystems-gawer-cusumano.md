@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 - [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
-- [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 同分野の近傍
+- [[mgmt-dominant-design-utterback|支配的デザイン理論（Dominant Design）：アバナシー＆アターバックの技術進化モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

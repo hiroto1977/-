@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同分野の近傍
 - [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — 同分野の近傍
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 同分野の近傍
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同分野の近傍
 - [[bizlaw-iryubun|遺留分（民法1042条）]] — 同分野の近傍
 
 ## 関連

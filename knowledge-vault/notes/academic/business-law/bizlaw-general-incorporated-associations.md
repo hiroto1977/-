@@ -32,9 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]] — 語彙が近い
-- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同分野の近傍
-- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同分野の近傍
 - [[bizlaw-worker-cooperative|労働者協同組合法]] — 同分野の近傍
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

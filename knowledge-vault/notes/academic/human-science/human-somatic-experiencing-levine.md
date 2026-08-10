@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Somatic experiencing — trauma therapy](https://en.wikipedia.org/wiki/Somatic_experiencing) `リファレンス`
 
 ## 関連概念
+- [[human-somatic-experiencing-levine-trauma|ソマティック・エクスペリエンシング——レヴィンの身体的トラウマ解放と神経系の自己調整]] — 語彙が近い
 - [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同じ思想家
-- [[human-somatic-experiencing-levine-trauma|ソマティック・エクスペリエンシング——レヴィンの身体的トラウマ解放と神経系の自己調整]] — 同じ思想家
 - [[human-interpersonal-neurobiology-siegel|対人神経生物学——シーゲルの統合マインド理論と関係性が脳発達に与える神経科学的基盤]] — 同分野の近傍
 - [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
 - [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]] — 同分野の近傍

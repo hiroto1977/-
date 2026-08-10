@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同分野の近傍
-- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
+- [[mgmt-dominant-design-utterback|支配的デザイン理論（Dominant Design）：アバナシー＆アターバックの技術進化モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

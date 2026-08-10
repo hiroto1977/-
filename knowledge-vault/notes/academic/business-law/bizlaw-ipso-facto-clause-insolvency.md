@@ -38,6 +38,7 @@ aliases:
 - [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同じ思想家
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
 - [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 同分野の近傍
+- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

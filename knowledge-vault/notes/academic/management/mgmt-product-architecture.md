@@ -39,8 +39,8 @@ aliases:
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
-- [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同分野の近傍
 - [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 同分野の近傍
+- [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

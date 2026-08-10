@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 語彙が近い
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 語彙が近い
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
 - [[econ-phillips-curve-friedman|フィリップス曲線とフリードマン・ペルプス批判]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
 - [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
-- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

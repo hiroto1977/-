@@ -41,8 +41,8 @@ national
 - [[subsidy-small-business-mutual-aid|小規模企業共済]] — 出典を共有
 - [[tax-small-business-mutual-aid|小規模企業共済制度]] — 出典を共有
 - [[subsidy-revitalization-council|中小企業活性化協議会]] — 出典を共有
+- [[subsidy-productivity-revolution|中小企業生産性革命推進事業]] — 同分野の近傍
 - [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 同分野の近傍
-- [[subsidy-akita|あきた農商工応援ファンド事業（助成金）（秋田県）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

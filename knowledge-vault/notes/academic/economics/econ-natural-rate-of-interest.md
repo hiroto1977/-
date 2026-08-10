@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]] — 語彙が近い
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 語彙が近い
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家
 - [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 同じ思想家
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]] — 同じ思想家
-- [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
 - [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 
 ## 関連
