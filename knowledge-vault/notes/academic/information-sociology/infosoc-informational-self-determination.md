@@ -32,7 +32,7 @@ aliases:
 - [総務省『情報通信政策研究』（自己情報コントロール権論を扱う論文）](https://www.soumu.go.jp/main_content/000656383.pdf) `公的`
 
 ## 関連概念
-- [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
+- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同分野の近傍
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同分野の近傍
 
 ## 関連

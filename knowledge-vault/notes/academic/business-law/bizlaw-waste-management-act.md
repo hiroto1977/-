@@ -39,7 +39,6 @@ aliases:
 - [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
 - [[subsidy-zeh|ZEH支援事業]] — 出典を共有
-- [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

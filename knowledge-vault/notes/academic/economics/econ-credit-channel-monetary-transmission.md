@@ -38,7 +38,6 @@ Ben S. Bernanke／Mark Gertler／Simon Gilchrist／Anil K. Kashyap／Jeremy C. S
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同分野の近傍
-- [[econ-cantillon-effect|カンティロン効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

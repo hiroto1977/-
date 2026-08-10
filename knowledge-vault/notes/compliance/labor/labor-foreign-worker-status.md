@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
-- [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]] — 語彙が近い
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 同分野の近傍
 
 ## 関連

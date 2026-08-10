@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: デジタルデバイド — 高齢者と情報格差の解説](https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%83%87%E3%83%90%E3%82%A4%E3%83%89) `リファレンス`
 
 ## 関連概念
-- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
 - [[infosoc-onlife|オンライフ]] — 同じ思想家

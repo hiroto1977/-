@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Onlife](https://en.wikipedia.org/wiki/Onlife) `リファレンス`
 
 ## 関連概念
-- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同じ思想家
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家

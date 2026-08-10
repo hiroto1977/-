@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia — Code-switching](https://en.wikipedia.org/wiki/Code-switching) `リファレンス`
 
 ## 関連概念
-- [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
 - [[infosoc-speech-act-theory|言語行為論]] — 同分野の近傍
+- [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

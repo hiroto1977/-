@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

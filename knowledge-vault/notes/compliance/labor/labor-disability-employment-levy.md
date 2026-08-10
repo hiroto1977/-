@@ -31,9 +31,9 @@ aliases:
 - [JEED 障害者雇用納付金制度 Q&A](https://www.jeed.go.jp/disability/about_levy_grant_Q_A.html) `公的`
 
 ## 関連概念
-- [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
 - [[labor-disability-employment-rate|障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）]] — 語彙が近い
 - [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]] — 分野横断
+- [[bizlaw-disability-employment|障害者雇用促進法]] — 分野横断
 - [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 出典を共有
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]] — 出典を共有
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 出典を共有

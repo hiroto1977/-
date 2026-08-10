@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
-- [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
+- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

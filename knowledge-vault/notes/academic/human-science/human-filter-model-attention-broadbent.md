@@ -36,7 +36,6 @@ aliases:
 - [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同じ思想家
 - [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
 - [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
-- [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

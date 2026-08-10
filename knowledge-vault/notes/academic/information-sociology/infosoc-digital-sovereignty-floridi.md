@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Digital sovereignty — EU strategy, data governance, cyber sovereignty, DMA/DSA](https://en.wikipedia.org/wiki/Digital_sovereignty) `リファレンス`
 
 ## 関連概念
-- [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同じ思想家
 - [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同じ思想家
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同じ思想家
 - [[infosoc-onlife|オンライフ]] — 同じ思想家
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家

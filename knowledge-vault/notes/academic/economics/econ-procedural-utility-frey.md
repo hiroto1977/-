@@ -33,7 +33,6 @@ aliases:
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 語彙が近い
 - [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同分野の近傍
 - [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
-- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

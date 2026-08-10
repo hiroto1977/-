@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — 語彙が近い
-- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
 - [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同じ思想家
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 同じ思想家
 - [[infosoc-onlife|オンライフ]] — 同じ思想家

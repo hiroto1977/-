@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
 - [[econ-kuznets-curve|クズネッツ曲線]] — 同分野の近傍
-- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
 - [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — 同分野の近傍
 
 ## 関連

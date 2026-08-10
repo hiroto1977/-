@@ -32,7 +32,7 @@ Geoffrey C. Bowker & Susan Leigh Star（MIT Press, 1999, Sorting Things Out — 
 ## 関連概念
 - [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同じ思想家
 - [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

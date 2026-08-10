@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Subrogation — subrogee/subrogor, insurance, legal/conventional/equitable subrogation](https://en.wikipedia.org/wiki/Subrogation) `リファレンス`
 
 ## 関連概念
-- [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 語彙が近い
 - [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家
 - [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同じ思想家
 - [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 同じ思想家
 - [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
+- [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
