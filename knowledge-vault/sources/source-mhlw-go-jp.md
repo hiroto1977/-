@@ -2,7 +2,7 @@
 title: "mhlw.go.jp"
 type: source-domain
 host: "mhlw.go.jp"
-cite_count: 267
+cite_count: 275
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **267 件**（公的 267）
+> [!info] 出典ドメイン索引 ・ 引用 **275 件**（公的 275）
 
 ## このドメインを出典とする項目
 
@@ -95,6 +95,7 @@ tags:
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 厚生労働省専門業務型裁量労働制
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 厚生労働省37号告示疑義応答集
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 厚生労働省請負を適正に行うために（37号告示）
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 厚生労働省労働契約の終了に関するルール（整理解雇・有期契約の期間途中の解雇）
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 厚生労働省労働契約法16条権利濫用に該当する解雇
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 厚生労働省法令データベース労働契約法
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 厚生労働省法令データ労働基準法（第20条・第21条）
@@ -173,6 +174,8 @@ tags:
 - [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]] — 厚生労働省育児休業等給付について
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 厚生労働省産後パパ育休特設サイト
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 厚生労働省産後パパ育休の施行
+- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 厚生労働省パワーハラスメントの3要素と6類型
+- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 厚生労働省令和8年10月1日からハラスメント対策が強化されます（カスハラ対策の義務化）
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 厚生労働省労働基準法の母性保護規定
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 厚生労働省女性労働者の母性健康管理
 - [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]] — 厚生労働省中小企業退職金共済制度
@@ -187,11 +190,16 @@ tags:
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 厚生労働省労働契約法第5条に関する裁判例
 - [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — 厚生労働省労働災害の発生と企業の責任
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 厚生労働省セクハラ対策パンフレット（均等法11条）
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 厚生労働省事業主の対策が義務となっているハラスメント
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 厚生労働省令和8年10月1日からハラスメント対策が強化されます（求職者等へのセクハラ）
 - [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 厚生労働省職場におけるハラスメントの防止のために
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 厚生労働省傷病手当金の支給期間の通算化
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 厚生労働省社会保険適用拡大特設サイト
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省労務関係書類をパソコンで作成して保存する場合
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 厚生労働省改正労働基準法等に関するQ&A（記録の保存）
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 厚生労働省ストレスチェック制度実施マニュアル
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 厚生労働省小規模事業場ストレスチェック制度実施マニュアルを公表します
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 厚生労働省心理的な負担の程度を把握するための検査結果等報告書（様式第6号の2）
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 厚生労働省FAQ振替休日と代休の違い
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 厚生労働省遺族年金
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 中央労働委員会試用期間中の解雇あっせん事例

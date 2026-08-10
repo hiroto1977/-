@@ -31,11 +31,10 @@ aliases:
 - [日本の人事部 労働契約申込みみなし制度 解説](https://jinjibu.jp/keyword/detl/765/) `メディア`
 
 ## 関連概念
+- [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 語彙が近い
 - [[bizlaw-worker-dispatch|労働者派遣法]] — 分野横断
 - [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
 - [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 出典を共有
-- [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 同分野の近傍
-- [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 同分野の近傍
 - [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 同分野の近傍
 
 ## 関連

@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 出典を共有
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有

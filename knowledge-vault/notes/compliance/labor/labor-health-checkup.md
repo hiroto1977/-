@@ -35,7 +35,9 @@ aliases:
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 出典を共有
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 同分野の近傍
+- [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 同分野の近傍
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
+- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 同分野の近傍
 
 ## 関連

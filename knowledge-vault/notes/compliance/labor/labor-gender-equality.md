@@ -31,8 +31,7 @@ aliases:
 - [東京都 働く女性と労働法（均等法）](https://www.hataraku.metro.tokyo.lg.jp/shiryo/hatarakujosei2022.05-2bubyoudou.pdf) `自治体`
 
 ## 関連概念
-- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 同分野の近傍
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 語彙が近い
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 同分野の近傍
 
 ## 関連

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
-- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
+- [[labor-maternity-allowance|健康保険の出産手当金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

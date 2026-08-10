@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-technical-code|技術的コード——技術設計に埋め込まれ中立を装う支配的社会利害]] — 同じ思想家
+- [[infosoc-astroturfing|アストロターフィング]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

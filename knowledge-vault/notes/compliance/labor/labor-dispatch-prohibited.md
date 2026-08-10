@@ -38,6 +38,7 @@ aliases:
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
+- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 同分野の近傍
 - [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 同分野の近傍
 
 ## 関連

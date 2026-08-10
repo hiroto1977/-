@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 同分野の近傍
 - [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
+- [[labor-commuting-injury|通勤災害（労災保険）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

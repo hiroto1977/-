@@ -35,9 +35,8 @@ aliases:
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
-- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
-- [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 同分野の近傍
+- [[labor-disability-employment-rate|障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

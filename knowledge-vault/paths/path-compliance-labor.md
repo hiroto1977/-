@@ -15,19 +15,19 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]]（接続 24）
 - [[labor-national-pension|国民年金の加入と被保険者の種別]]（接続 23）
+- [[labor-elderly-employment|高年齢者雇用確保措置]]（接続 20）
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]]（接続 20）
-- [[labor-elderly-employment|高年齢者雇用確保措置]]（接続 19）
-- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 19）
-- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 19）
+- [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]]（接続 20）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 20）
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 19）
 - [[labor-break-time|休憩時間（労働基準法34条）]]（接続 18）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 18）
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 16）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 16）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 15）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]

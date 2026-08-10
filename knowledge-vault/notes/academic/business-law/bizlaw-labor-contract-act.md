@@ -31,7 +31,6 @@ aliases:
 - [労働政策研究・研修機構(JILPT)「労働契約法の制定」](https://www.jil.go.jp/institute/zassi/backnumber/2008/07/pdf/004-016.pdf) `学術`
 
 ## 関連概念
-- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 語彙が近い
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 語彙が近い
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

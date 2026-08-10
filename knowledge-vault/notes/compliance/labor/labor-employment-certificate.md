@@ -31,7 +31,6 @@ aliases:
 - [和歌山労働局 解雇理由・退職時の証明（22条）](https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00486.html) `公的`
 
 ## 関連概念
-- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 同分野の近傍
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 同分野の近傍
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍

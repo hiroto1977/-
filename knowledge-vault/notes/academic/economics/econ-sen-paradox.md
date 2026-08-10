@@ -30,7 +30,6 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Social Choice Theory (Sen's liberal paradox / Lady Chatterley illustration)](https://plato.stanford.edu/entries/social-choice/) `リファレンス`
 
 ## 関連概念
-- [[econ-arrow-impossibility|アローの不可能性定理]] — 語彙が近い
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
 - [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同じ思想家
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

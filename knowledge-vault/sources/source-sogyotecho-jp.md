@@ -2,7 +2,7 @@
 title: "sogyotecho.jp"
 type: source-domain
 host: "sogyotecho.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # sogyotecho.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
-- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — パワハラ防止法義務化解説
 - [[subsidy-kobe|神戸市中小企業投資促進等助成制度]] — 神戸市中小企業投資促進等助成制度解説
 
 ## 関連

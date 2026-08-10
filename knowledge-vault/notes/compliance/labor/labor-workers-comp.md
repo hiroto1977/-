@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 語彙が近い
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]] — 同分野の近傍
 - [[labor-workers-comp-special-enrollment|労災保険の特別加入制度]] — 同分野の近傍
+- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

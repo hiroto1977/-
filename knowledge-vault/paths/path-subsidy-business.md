@@ -22,7 +22,7 @@ tags:
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]]（接続 23）
 - [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]]（接続 23）
 - [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]]（接続 21）
-- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]]（接続 18）
+- [[subsidy-kobe|神戸市中小企業投資促進等助成制度]]（接続 17）
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]]（接続 17）
 - [[subsidy-patent-fee-reduction|特許料等の減免制度]]（接続 17）
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]]（接続 17）

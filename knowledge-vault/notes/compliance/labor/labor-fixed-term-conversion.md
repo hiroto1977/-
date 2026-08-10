@@ -35,11 +35,11 @@ aliases:
 - [[bizlaw-labor-contract-act|労働契約法]] — 語彙が近い
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 分野横断
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
 - [[labor-working-conditions-disclosure|労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）]] — 出典を共有
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
+- [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

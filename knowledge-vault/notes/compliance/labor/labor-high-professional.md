@@ -37,6 +37,7 @@ aliases:
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 同分野の近傍
 - [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍
+- [[labor-elderly-employment|高年齢者雇用確保措置]] — 同分野の近傍
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 同分野の近傍
 
 ## 関連

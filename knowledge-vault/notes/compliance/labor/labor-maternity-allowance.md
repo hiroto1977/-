@@ -37,6 +37,7 @@ aliases:
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
+- [[labor-average-wage|平均賃金（労働基準法12条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

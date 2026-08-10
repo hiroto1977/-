@@ -275,15 +275,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'ストレスチェック制度（労働安全衛生法）',
       statement:
         '常時50人以上の労働者を使用する事業場は、年1回、医師・保健師等によるストレスチェック' +
-        '（心理的な負担の程度を把握する検査）の実施が義務（2015年12月〜）。結果は本人に通知し、' +
-        '高ストレス者は申出により医師の面接指導につなげる。',
+        '（心理的な負担の程度を把握する検査）の実施が義務である（2015年12月〜）。' +
+        '制度の核心は情報の遮断にあり、検査結果は実施者から本人へ直接通知され、' +
+        '本人の同意なく事業者へ提供してはならない。高ストレス者は申出により医師の面接指導につなげ、' +
+        '申出をしたことを理由とする不利益な取扱いは禁止される。' +
+        '事業者は面接指導の結果に基づき医師の意見を聴き、必要に応じて就業上の措置を講じる。' +
+        '50人以上の事業場は、実施しなかった場合を含めて1年以内ごとに1回、様式第6号の2「心理的な負担の程度を把握するための' +
+        '検査結果等報告書」を所轄労働基準監督署長へ提出する義務があり、事業場ごとに別々に出す。' +
+        '2025年5月公布の改正労働安全衛生法により、当分の間の努力義務にとどまっていた50人未満の事業場にも' +
+        '実施が義務化される（施行は公布後3年以内で政令で定める日）。' +
+        '厚生労働省は2026年2月に小規模事業場向けの実施マニュアルを公表しているので、施行を待たずに体制を組める。',
       authority: '所管: 厚生労働省（労働安全衛生法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/anzen_eisei/stress_check.html', type: 'government', label: '厚生労働省 東京労働局 ストレスチェック制度の概要' },
-      { url: 'https://www.armg.jp/journal/404-2/', type: 'media', label: 'アドバンテッジ ストレスチェック義務化 解説' },
-      { url: 'https://www.sompo-hs.co.jp/useful/2025/10/000873/', type: 'media', label: 'SOMPO ヘルスサポート 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/24.html', type: 'government', label: '厚生労働省 心理的な負担の程度を把握するための検査結果等報告書（様式第6号の2）' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_69680.html', type: 'government', label: '厚生労働省 小規模事業場ストレスチェック制度実施マニュアルを公表します' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/pdf/150507-1.pdf', type: 'government', label: '厚生労働省 ストレスチェック制度 実施マニュアル' },
     ],
   },
   {
@@ -825,14 +834,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'パワハラ防止措置の事業主義務',
       statement:
         '労働施策総合推進法により、職場のパワーハラスメント防止のための雇用管理上の措置（方針の明確化・周知、相談体制の整備、' +
-        '事後の迅速適切な対応等）が事業主に義務付けられた。大企業は2020年6月、中小を含む全事業主は2022年4月から義務化。',
+        '事後の迅速適切な対応、プライバシー保護と不利益取扱いの禁止の周知等）が事業主に義務付けられた。' +
+        '大企業は2020年6月、中小を含む全事業主は2022年4月から義務化されている。' +
+        '該当するのは、優越的な関係を背景とした言動であって、業務上必要かつ相当な範囲を超え、就業環境が害されるものという' +
+        '3要素をすべて満たす行為で、身体的な攻撃・精神的な攻撃・人間関係からの切り離し・過大な要求・過小な要求・個の侵害の6類型が示されている。' +
+        '措置義務そのものに罰則はないが、助言・指導・勧告の対象となり、勧告に従わないときはその旨を公表することができる。' +
+        '報告をせず、または虚偽の報告をした場合は20万円以下の過料に処せられる。' +
+        'さらに2025年6月11日公布の改正法により、2026年10月1日からはカスタマーハラスメント' +
+        '（顧客等の言動であって、業務の性質等に照らして社会通念上許容される範囲を超え、就業環境が害されるもの）についても' +
+        '雇用管理上の措置が義務となる。防止指針は2026年2月26日に公布済みなので、施行前に方針の明確化と対処内容の周知を済ませておく。',
       authority: '所管: 厚生労働省（労働施策総合推進法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-harassment.mhlw.go.jp/law-measure', type: 'government', label: '厚生労働省 あかるい職場応援団 法律と措置' },
       { url: 'https://jsite.mhlw.go.jp/aomori-roudoukyoku/newpage_00306.html', type: 'government', label: '青森労働局 パワハラ対策義務化' },
-      { url: 'https://sogyotecho.jp/power-harassment-low/', type: 'media', label: 'パワハラ防止法 義務化 解説' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001662576.pdf', type: 'government', label: '厚生労働省 令和8年10月1日からハラスメント対策が強化されます（カスハラ対策の義務化）' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/000855268.pdf', type: 'government', label: '厚生労働省 パワーハラスメントの3要素と6類型' },
     ],
   },
   {
@@ -1905,14 +1923,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '職場のセクシュアルハラスメント防止措置義務',
       statement:
         '事業主は、職場におけるセクシュアルハラスメント（性的な言動に起因する問題）を防止するため、相談に応じ適切に対応する' +
-        'ための体制の整備、事後の迅速・適切な対応、再発防止等、雇用管理上必要な措置を講じる義務を負う（男女雇用機会均等法11条）。',
+        'ための体制の整備、事後の迅速・適切な対応、再発防止等、雇用管理上必要な措置を講じる義務を負う（男女雇用機会均等法11条）。' +
+        '対価型（拒否したことを理由に不利益な取扱いをする）と環境型（就業環境が害される）の双方が対象で、' +
+        '相手が同性である場合や、性的指向・性自認に関する言動も含まれる。' +
+        '守るべき労働者は正社員に限らずパート・契約社員・派遣労働者を含み、派遣先も派遣労働者について事業主とみなされる。' +
+        '他社の労働者からセクハラを受けた場合に他社から必要な協力を求められたときは、これに応ずるよう努めることとされている。' +
+        '措置義務違反は助言・指導・勧告の対象で、勧告に従わないときは公表されることがある。' +
+        'さらに2025年6月11日公布の改正法により、2026年10月1日からは求職者等（就職活動中の学生やインターンシップ参加者等）に対する' +
+        'セクシュアルハラスメントの防止措置も事業主の義務となる。採用面接や説明会の担当者まで周知の範囲を広げる必要がある。',
       authority: '所管: 厚生労働省（男女雇用機会均等法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/seisaku06/index.html', type: 'government', label: '厚生労働省 職場におけるハラスメントの防止のために' },
       { url: 'https://www.mhlw.go.jp/general/seido/koyou/danjokintou/dl/kigyou01b_0002.pdf', type: 'government', label: '厚生労働省 セクハラ対策パンフレット（均等法11条）' },
-      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_41.html', type: 'media', label: '連合 セクシュアルハラスメント Q&A' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001662576.pdf', type: 'government', label: '厚生労働省 令和8年10月1日からハラスメント対策が強化されます（求職者等へのセクハラ）' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001338359.pdf', type: 'government', label: '厚生労働省 事業主の対策が義務となっているハラスメント' },
     ],
   },
   {
@@ -2361,14 +2387,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '解雇権濫用法理（労働契約法16条）',
       statement:
         '解雇は、客観的に合理的な理由を欠き、社会通念上相当であると認められない場合は、その権利を濫用したものとして無効となる' +
-        '（労働契約法16条）。これは解雇全般に及ぶ法理であり、解雇予告（30日前予告・労基法20条）とは別個の規制である。',
+        '（労働契約法16条）。これは解雇全般に及ぶ法理であり、解雇予告（30日前予告・労基法20条）とは別個の規制である。' +
+        '予告手当を払えば自由に解雇できるわけではない、というのがこの条文の実務上の意味になる。' +
+        '経営上の理由による整理解雇は、人員削減の必要性・解雇回避の努力・人選の合理性・手続の妥当性の4点に照らして' +
+        '厳しく判断される。かつては1つでも欠ければ無効とする4要件説が有力だったが、近年は考慮すべき視点とみる4要素説が有力である。' +
+        '有期労働契約は期間を合意して結んでいるため、期間途中の解雇には「やむを得ない事由」が必要で、無期契約より厳しい' +
+        '（労働契約法17条1項）。' +
+        '解雇が無効と判断されると労働契約は解雇日にさかのぼって続いていたことになるので、' +
+        '争っていた期間の賃金を支払う義務が生じる。争いが長引くほど支払額が膨らむ構造である。',
       authority: '所管: 厚生労働省（労働契約法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73aa9536', type: 'government', label: '厚生労働省 法令データベース 労働契約法' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/11_0003.pdf', type: 'government', label: '厚生労働省 労働契約法16条 権利濫用に該当する解雇' },
-      { url: 'https://www.konishilaw.jp/column/7862/', type: 'media', label: '解雇権濫用の法理 解説' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/roudouseisaku/chushoukigyou/keiyakushuryo_rule.html', type: 'government', label: '厚生労働省 労働契約の終了に関するルール（整理解雇・有期契約の期間途中の解雇）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q6.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 整理解雇の4要素' },
     ],
   },
   {

@@ -31,10 +31,10 @@ aliases:
 - [Ramsey Pricing — ScienceDirect Topics（マークアップと需要弾力性の反比例）](https://www.sciencedirect.com/topics/economics-econometrics-and-finance/ramsey-pricing) `学術`
 
 ## 関連概念
+- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 語彙が近い
 - [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 同じ思想家
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同じ思想家
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 同じ思想家
-- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 同じ思想家
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
 - [[econ-social-discount-rate|社会的割引率——将来の費用と便益を現在価値に換算する公共の割引率]] — 同じ思想家
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家

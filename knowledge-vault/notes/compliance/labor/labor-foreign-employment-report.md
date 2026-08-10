@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 語彙が近い
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 語彙が近い
-- [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 語彙が近い
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 語彙が近い
 - [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 同分野の近傍
