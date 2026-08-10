@@ -31,7 +31,6 @@ T.P.ライト（1936 学習曲線・航空機で約20%低下）／BCG・B.ヘン
 - [Wikipedia — Theodore Paul Wright（1936論文・Curtiss-Wright）](https://en.wikipedia.org/wiki/Theodore_Paul_Wright) `リファレンス`
 
 ## 関連概念
-- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 語彙が近い
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 出典を共有
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 出典を共有
 - [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 出典を共有

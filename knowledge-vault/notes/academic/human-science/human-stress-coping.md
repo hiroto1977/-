@@ -33,7 +33,7 @@ aliases:
 - [Folkman, S. & Moskowitz, J. T. (2000) Positive Affect and the Other Side of Coping — American Psychologist](https://doi.org/10.1037/0003-066X.55.6.647) `学術`
 
 ## 関連概念
-- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 語彙が近い
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同じ思想家
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有

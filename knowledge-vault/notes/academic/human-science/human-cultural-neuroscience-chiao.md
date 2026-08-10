@@ -35,6 +35,7 @@ aliases:
 - [[human-interpersonal-neurobiology-siegel|対人神経生物学——シーゲルの統合マインド理論と関係性が脳発達に与える神経科学的基盤]] — 同分野の近傍
 - [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同分野の近傍
 - [[human-obedience|権威への服従（オベディエンス）]] — 同分野の近傍
+- [[human-developmental-psychopathology-cicchetti|発達精神病理学——正常と異常の発達的連続性と多重決定性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

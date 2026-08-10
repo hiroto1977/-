@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-glocalization-robertson|グローカリゼーション——グローバルとローカルの相互浸透と普遍／特殊の弁証法]] — 同じ思想家
 - [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
 - [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 同分野の近傍
+- [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同分野の近傍
 - [[infosoc-political-polarization|政治的分極化]] — 同分野の近傍
 - [[infosoc-appadurai-scapes|アパデュライのスケープ（グローバルな文化フローの5次元）]] — 同分野の近傍
 

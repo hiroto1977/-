@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 語彙が近い
 - [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 語彙が近い
-- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 同分野の近傍
 - [[tax-registration-license-tax|登録免許税の概要]] — 同分野の近傍
 
 ## 関連

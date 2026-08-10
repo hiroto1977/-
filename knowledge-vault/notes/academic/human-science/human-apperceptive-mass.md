@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[human-cognitive-apprenticeship|認知的徒弟制]] — 同分野の近傍
+- [[human-affordance-theory|アフォーダンス理論]] — 同分野の近傍
 - [[human-social-proof|社会的証明]] — 同分野の近傍
 
 ## 関連

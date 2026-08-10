@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-social-penetration-altman-taylor|社会的浸透理論（アルトマン＝テイラー）——自己開示と関係の深化]] — 同じ思想家
 - [[human-place-attachment-theory|場所愛着理論]] — 同分野の近傍
 - [[human-place-identity|場所アイデンティティ（Place Identity）]] — 同分野の近傍
+- [[human-stockholm-syndrome|ストックホルム症候群]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

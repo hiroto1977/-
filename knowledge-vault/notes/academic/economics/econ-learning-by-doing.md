@@ -31,7 +31,6 @@ aliases:
 - [Our World in Data — Learning curves / Wright's Law](https://ourworldindata.org/learning-curve) `リファレンス`
 
 ## 関連概念
-- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 語彙が近い
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
 - [[econ-contingent-valuation|仮想評価法——表明選好により非市場財の価値を計測する手法]] — 同じ思想家
 - [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

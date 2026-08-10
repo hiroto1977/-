@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-corporate-social-responsibility-directive|企業持続可能性デューディリジェンス指令——サプライチェーンにおける人権・環境配慮義務]] — 同じ思想家
 - [[bizlaw-corporate-social-responsibility-law|CSRの法的規制——企業の社会的責任の自主規制から強制開示・デューデリジェンス義務への展開]] — 同じ思想家
 - [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 出典を共有
-- [[bizlaw-antimonopoly|独占禁止法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

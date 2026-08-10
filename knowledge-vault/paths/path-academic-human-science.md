@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 112）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 74）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 113）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 76）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
-- [[human-defense-mechanisms|防衛機制]]（接続 26）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 26）
+- [[human-defense-mechanisms|防衛機制]]（接続 25）
 - [[human-group-polarization|集団極性化]]（接続 25）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
+- [[human-affordance-theory|アフォーダンス理論]]（接続 23）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 23）
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 23）
+- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 23）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 23）
-- [[human-compromise-effect|妥協効果（極端回避性）]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -211,6 +211,7 @@ tags:
 - 1988年: [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]]
 - 1988年: [[human-status-quo-bias|現状維持バイアス]]
 - 1989年: [[human-cognitive-apprenticeship|認知的徒弟制]]
+- 1989年: [[human-compromise-effect|妥協効果（極端回避性）]]
 - 1989年: [[human-curse-of-knowledge|知識の呪縛]]
 - 1989年: [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]]
 - 1990年: [[human-emotional-intelligence|情動知能（EQ）]]
@@ -301,7 +302,6 @@ tags:
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]]
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]]
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]]
-- [[human-affordance-theory|アフォーダンス理論]]
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]]
 - [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]]
 - [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]]

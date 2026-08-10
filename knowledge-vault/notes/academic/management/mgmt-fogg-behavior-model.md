@@ -31,7 +31,7 @@ B・J・フォッグ（B. J. Fogg, Brian Jeffrey Fogg）／スタンフォード
 
 ## 関連概念
 - [[mgmt-adkar|ADKARモデル]] — 同分野の近傍
-- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同分野の近傍
+- [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

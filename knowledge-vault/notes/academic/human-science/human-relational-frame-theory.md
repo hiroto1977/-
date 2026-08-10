@@ -33,7 +33,6 @@ Steven C. Hayes／Dermot Barnes-Holmes／Bryan Roche
 ## 関連概念
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
-- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,7 +36,6 @@ aliases:
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 出典を共有
 - [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
 - [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — 同分野の近傍
-- [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

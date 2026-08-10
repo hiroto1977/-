@@ -35,6 +35,7 @@ aliases:
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 同じ思想家
 - [[human-joint-action|共同行為（Joint Action）]] — 同分野の近傍
 - [[human-constructive-developmental-kegan|構成的発達理論——意味構成の段階的変容と主体-客体均衡]] — 同分野の近傍
+- [[human-spiritual-wellbeing|スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

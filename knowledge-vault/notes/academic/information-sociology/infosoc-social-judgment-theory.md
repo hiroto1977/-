@@ -40,6 +40,7 @@ Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール�
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 出典を共有
 - [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同分野の近傍
 - [[infosoc-strong-programme|ストロング・プログラム（Strong Programme／Bloor 1976）——科学的知識の社会学（SSK）の綱領、真偽を問わず信念の原因を対称的に説明する]] — 同分野の近傍
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

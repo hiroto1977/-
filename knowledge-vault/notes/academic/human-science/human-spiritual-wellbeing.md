@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同分野の近傍
-- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
+- [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

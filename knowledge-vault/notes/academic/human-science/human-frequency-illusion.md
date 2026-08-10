@@ -34,7 +34,7 @@ aliases:
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 出典を共有
 - [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 出典を共有
 - [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
-- [[human-base-rate-fallacy|基準率の無視]] — 同分野の近傍
+- [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

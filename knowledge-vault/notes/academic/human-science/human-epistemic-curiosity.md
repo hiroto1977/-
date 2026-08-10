@@ -39,8 +39,8 @@ aliases:
 - [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同じ思想家
 - [[human-cognitive-load|認知負荷理論]] — 出典を共有
 - [[human-yerkes-dodson-law|ヤーキーズ＝ドッドソンの法則——覚醒水準とパフォーマンスの逆U字関係]] — 同分野の近傍
-- [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
 - [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]] — 同分野の近傍
+- [[human-sensory-deprivation|感覚遮断（感覚剥奪）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

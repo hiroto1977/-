@@ -35,6 +35,7 @@ aliases:
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 分野横断
 - [[bizlaw-offsetting-benefits|損益相殺]] — 同分野の近傍
 - [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — 同分野の近傍
+- [[bizlaw-antimonopoly|独占禁止法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
