@@ -38,7 +38,7 @@ aliases:
 - [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 出典を共有
-- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同分野の近傍
+- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

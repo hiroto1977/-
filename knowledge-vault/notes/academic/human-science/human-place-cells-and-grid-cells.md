@@ -33,7 +33,7 @@ John O'Keefe／May-Britt Moser／Edvard I. Moser／Jonathan Dostrovsky
 ## 関連概念
 - [[human-place-cells-okeefe|場所細胞と認知地図]] — 語彙が近い
 - [[human-place-cells|場所細胞（Place Cells）]] — 同じ思想家
-- [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

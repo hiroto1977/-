@@ -38,7 +38,6 @@ aliases:
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同分野の近傍
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
-- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
 - [[mgmt-trompenaars-dimensions|トロンペナールスの文化の7次元]] — 同分野の近傍
 - [[mgmt-organizational-forgetting|組織的忘却]] — 同分野の近傍
 

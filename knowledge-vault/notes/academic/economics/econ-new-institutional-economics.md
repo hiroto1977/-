@@ -37,7 +37,6 @@ Ronald H. Coase／Oliver E. Williamson／Douglass C. North／Elinor Ostrom／Dar
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同じ思想家
 - [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 同分野の近傍
-- [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

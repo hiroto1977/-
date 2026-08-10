@@ -40,6 +40,7 @@ Petrus Johannes Verdoorn／Nicholas Kaldor／John McCombie／Anthony P. Thirlwal
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 出典を共有
+- [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

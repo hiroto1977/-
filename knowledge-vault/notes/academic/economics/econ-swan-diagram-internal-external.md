@@ -39,8 +39,8 @@ aliases:
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
 - [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 同じ思想家
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
 - [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
+- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

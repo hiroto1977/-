@@ -38,7 +38,6 @@ Robert A. Mundell ／ J. Marcus Fleming ／ Maurice Obstfeld ／ Alan M. Taylor 
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 語彙が近い
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同じ思想家
 - [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同分野の近傍
-- [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — 同分野の近傍
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同分野の近傍
 - [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]] — 同分野の近傍
 

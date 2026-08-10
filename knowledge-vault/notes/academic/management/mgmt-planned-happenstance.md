@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同分野の近傍
-- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同分野の近傍
+- [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

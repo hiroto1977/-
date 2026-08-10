@@ -33,12 +33,12 @@ aliases:
 ## 関連概念
 - [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 語彙が近い
 - [[legal-design-right|意匠権（意匠法）]] — 語彙が近い
+- [[subsidy-okayama-pref|中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）]] — 語彙が近い
 - [[bizlaw-utility-model|実用新案法]] — 分野横断
 - [[bizlaw-patent-system|特許制度（特許法）]] — 出典を共有
 - [[legal-trademark|商標権の発生・存続期間と更新]] — 出典を共有
 - [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
 - [[bizlaw-trademark|商標法]] — 出典を共有
-- [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
 - [[legal-worker-cooperative|労働者協同組合法の施行（2022年10月1日・準則主義による新法人制度）]] — 同分野の近傍
 
 ## 関連

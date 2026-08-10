@@ -37,6 +37,7 @@ aliases:
 - [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 同じ思想家
 - [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同分野の近傍
 - [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]] — 同分野の近傍
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
 - [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同じ思想家
 - [[econ-currency-crisis-speculative-attack-krugman|通貨危機の世代別モデル——クルーグマン・第二世代・第三世代の投機的攻撃理論]] — 同じ思想家
-- [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
+- [[econ-intra-industry-trade-grubel-lloyd|産業内貿易——グルーベル＝ロイド指数と差別化財の相互輸出]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

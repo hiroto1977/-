@@ -31,7 +31,7 @@ aliases:
 - [商法（明治32年法律第48号）海商編 — e-Gov法令検索](https://laws.e-gov.go.jp/law/132AC0000000048) `公的`
 
 ## 関連概念
-- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 同じ思想家
+- [[bizlaw-maritime-law-hague-visby|海上運送法とヘーグ・ヴィスビー・ルール——船荷証券と運送人責任の国際的統一]] — 語彙が近い
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 出典を共有
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 出典を共有
 - [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 出典を共有
@@ -39,7 +39,6 @@ aliases:
 - [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 出典を共有
 - [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 出典を共有
 - [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
-- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 出典を共有
 - [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同分野の近傍
 
 ## 関連

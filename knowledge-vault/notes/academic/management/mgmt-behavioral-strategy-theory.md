@@ -34,8 +34,8 @@ Thomas C. Powell ／ Dan Lovallo ／ Craig G. Fox ／ Giovanni Gavetti ／ Danie
 
 ## 関連概念
 - [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]] — 語彙が近い
-- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 語彙が近い
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 語彙が近い
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 語彙が近い
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家

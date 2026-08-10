@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Dani Rodrik — globalization trilemma](https://en.wikipedia.org/wiki/Dani_Rodrik) `リファレンス`
 
 ## 関連概念
+- [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — 語彙が近い
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
 - [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
-- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

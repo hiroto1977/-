@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
+- [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 語彙が近い
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 語彙が近い
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 分野横断
@@ -40,7 +41,6 @@ aliases:
 - [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 出典を共有
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 出典を共有
-- [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

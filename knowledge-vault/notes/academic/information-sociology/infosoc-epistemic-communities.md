@@ -32,7 +32,7 @@ Haas, Peter M. （1992 International Organization）／Dunlop, Claire A. ／Rada
 
 ## 関連概念
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同分野の近傍
-- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
+- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-bowen-leamer-sveikauskas-hov|HOV定理の実証検証——要素含有量貿易理論の計量的テスト]] — 語彙が近い
-- [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 語彙が近い
 - [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 語彙が近い
+- [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 語彙が近い
 - [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — 同じ思想家
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
 - [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家

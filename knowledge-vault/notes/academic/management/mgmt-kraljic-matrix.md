@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
-- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同分野の近傍
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
 - [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 同分野の近傍
 
 ## 関連

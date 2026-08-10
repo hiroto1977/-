@@ -31,8 +31,8 @@ aliases:
 - [Neely et al. (2020) Metacritiques of Upper Echelons Theory — Journal of Management 46(6)](https://journals.sagepub.com/doi/abs/10.1177/0149206320908640) `学術`
 
 ## 関連概念
-- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 語彙が近い
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 語彙が近い
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 語彙が近い
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
 - [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家

@@ -26,8 +26,8 @@ tags:
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 32）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 32）
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]（接続 31）
-- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]]（接続 31）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]

@@ -31,7 +31,7 @@ aliases:
 - [strategy+business: Rita Gunther McGrath on the End of Competitive Advantage (lifecycle stages)](https://www.strategy-business.com/article/00239) `メディア`
 
 ## 関連概念
-- [[mgmt-hypercompetition|ハイパーコンペティション]] — 語彙が近い
+- [[mgmt-hypercompetition|ハイパーコンペティション]] — 同じ思想家
 - [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
