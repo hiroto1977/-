@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-worker-cooperative|労働者協同組合法]] — 出典を共有
 - [[tax-group-taxation|法人税のグループ通算制度]] — 同分野の近傍
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
+- [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

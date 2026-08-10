@@ -24,7 +24,7 @@ tags:
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 34）
+- [[econ-behavioral-finance|行動ファイナンス]]（接続 33）
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]（接続 31）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 31）

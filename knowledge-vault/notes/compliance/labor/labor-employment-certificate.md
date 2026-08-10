@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 同分野の近傍
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 同分野の近傍
-- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍
 - [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]] — 同分野の近傍
 
 ## 関連

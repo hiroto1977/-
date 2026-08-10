@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 語彙が近い
-- [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

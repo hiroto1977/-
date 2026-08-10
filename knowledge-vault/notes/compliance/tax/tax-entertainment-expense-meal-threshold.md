@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 語彙が近い
-- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
+- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

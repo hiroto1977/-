@@ -36,7 +36,7 @@ aliases:
 - [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 出典を共有
 - [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
-- [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
 - [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — 同分野の近傍
 
 ## 関連

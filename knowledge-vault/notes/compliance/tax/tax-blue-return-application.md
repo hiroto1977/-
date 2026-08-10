@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
-- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
-- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 語彙が近い
 - [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 同分野の近傍
 - [[tax-reduced-rate|消費税の軽減税率制度]] — 同分野の近傍
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

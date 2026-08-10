@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-consumption-tax|消費税法]] — 分野横断
 - [[tax-income-categories|所得税における所得の10種類の区分]] — 出典を共有
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 同分野の近傍
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 同分野の近傍
 - [[tax-liquor-tax|酒税の概要]] — 同分野の近傍
 
 ## 関連

@@ -636,14 +636,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '優良な電子帳簿の過少申告加算税軽減',
       statement:
         '訂正削除履歴の確保・帳簿間の相互関連性・検索機能の確保の要件を満たす「優良な電子帳簿」を備付け保存し、' +
-        '適用を受ける旨の届出書をあらかじめ所轄税務署長に提出すると、その帳簿に係る申告漏れの過少申告加算税が5%軽減される。',
+        '適用を受ける旨の届出書をあらかじめ所轄税務署長に提出すると、その帳簿に係る申告漏れの過少申告加算税が5%軽減される。' +
+        '軽減の対象になるのは届出書を出した帳簿に係る部分だけで、隠蔽・仮装があった部分には適用されない。' +
+        'もう一つの効き目が所得税側にあり、個人事業者の青色申告特別控除65万円は、55万円の要件' +
+        '（正規の簿記の原則による記帳・貸借対照表と損益計算書の添付・期限内提出）に加えて、' +
+        '仕訳帳と総勘定元帳を優良な電子帳簿の要件で保存して届出書を出すか、' +
+        'e-Taxで期限内に申告するかのいずれかを満たすことが条件になる。' +
+        'つまり優良な電子帳簿は、加算税の軽減という将来の保険と、控除10万円という毎年の実利の両方につながる。',
       authority: '所管: 国税庁（電子帳簿保存法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/05.htm', type: 'government', label: '国税庁 優良な電子帳簿の要件' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/02.htm', type: 'government', label: '国税庁 電子帳簿保存法の概要' },
-      { url: 'https://www.zeiken.co.jp/yougo/', type: 'media', label: '税研 用語解説' },
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除（65万円控除の要件）' },
     ],
   },
   {
@@ -883,14 +889,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '電子契約・電子文書には印紙税が課されない',
       statement:
         '印紙税は課税物件表に掲げる「文書（紙）」の作成に課税され、電磁的記録（電子データ）による契約締結は課税文書の作成に' +
-        '当たらないため印紙税は課されない。国税庁の取扱いおよび国会答弁書でこの政府見解が示されている。',
+        '当たらないため印紙税は課されない。国税庁の取扱いおよび国会答弁書でこの政府見解が示されている。' +
+        '課税されるのは文書の作成と交付であって契約の成立ではない、というのがこの結論の理由である。' +
+        'したがって同じ契約でも、電子データのまま完結すれば非課税、後から出力して署名押印した紙を相手に交付すれば' +
+        'その紙が課税文書になる。控えを紙で保管するだけなら交付がないので課税されない。' +
+        '請負契約書や不動産譲渡契約書のように税額の大きい文書ほど電子化の効果が出るが、' +
+        '電子化すると今度は電子帳簿保存法の電子取引データ保存義務がかかるので、' +
+        '印紙代だけを見て切り替えると保存要件で詰まる。両方をセットで設計する。',
       authority: '所管: 国税庁・財務省（印紙税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 電磁的記録の印紙税の取扱い' },
       { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 印紙税に関する答弁書' },
-      { url: 'https://www.cloudsign.jp/media/20170224-basics-of-e-contract-02/', type: 'media', label: 'クラウドサイン 電子契約と収入印紙' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7100.htm', type: 'government', label: '国税庁 No.7100 課税文書に該当するかどうかの判断' },
     ],
   },
   {
@@ -1011,15 +1023,25 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '電子帳簿保存法のスキャナ保存制度',
       statement:
-        '紙で受領・作成した請求書・領収書等の国税関係書類を、解像度等の要件を満たしてスキャンし電子保存できる制度。' +
-        'タイムスタンプ付与等による真実性の確保と、取引年月日・金額・取引先による検索機能等の可視性要件を満たす必要がある。',
+        '紙で受領・作成した請求書・領収書等の国税関係書類を、解像度等の要件を満たしてスキャンし電子保存できる制度で、' +
+        '要件を満たせばスキャン後の紙原本は廃棄できる。' +
+        '真実性の確保（タイムスタンプ等）と、取引年月日・取引金額・取引先による検索機能等の可視性要件を満たす必要がある。' +
+        '入力期間には制限があり、受領等後おおむね7営業日以内の早期入力方式か、' +
+        '業務処理サイクル（最長2か月）を経過した後おおむね7営業日以内の業務処理サイクル方式のいずれかによる。' +
+        '訂正・削除の事実と内容を確認できるクラウド等に入力期間内に保存したことを確認できる場合は、タイムスタンプの付与に代えられる。' +
+        '令和5年度改正（令和6年1月1日以後の保存分）で要件が大きく緩み、' +
+        '解像度・階調・大きさに関する情報の保存が不要になり、入力者等に関する情報の確認要件が廃止され、' +
+        '帳簿との相互関連性の確保は契約書・領収書等の重要書類に限定された。' +
+        '検索要件も取引年月日・取引金額・取引先の3項目でよく、税務職員のダウンロードの求めに応じるなら' +
+        '範囲指定検索と項目の組合せ検索は不要になる。',
       authority: '所管: 国税庁（電子帳簿保存法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07scan/02.htm', type: 'government', label: '国税庁 スキャナ保存の適用要件' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07scan/index.htm', type: 'government', label: '国税庁 スキャナ保存一問一答' },
-      { url: 'https://www.yayoi-kk.co.jp/seikyusho/oyakudachi/scanner_hozon/', type: 'media', label: '弥生 スキャナ保存制度' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0023003-082.pdf', type: 'government', label: '国税庁 電子帳簿保存法の内容が改正されました（令和5年度改正）' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/03.htm', type: 'government', label: '国税庁 スキャナ保存関係（特設サイト）' },
     ],
   },
   {
@@ -1520,14 +1542,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '領収書の印紙税と非課税範囲',
       statement:
         '売上代金に係る金銭の受取書（領収書）は印紙税の課税文書で記載金額に応じて課税されるが、記載受取金額が5万円未満の' +
-        'ものは非課税。クレジットカード払いは信用取引で金銭の受領がないため、その旨を記載した領収書は金銭の受取書に当たらず非課税。',
+        'ものは非課税。クレジットカード払いは信用取引で金銭の受領がないため、その旨を記載した領収書は金銭の受取書に当たらず非課税。' +
+        '5万円の判定で効くのが消費税額等の扱いで、課税事業者が消費税額等を区分記載していればその金額は記載金額に含めない' +
+        '（第1号・第2号・第17号文書に限る）。48,000円と消費税4,800円を分けて書けば記載金額は48,000円で非課税だが、' +
+        '52,800円とだけ書けば課税文書になる。' +
+        'また受け取った金銭が受取人にとって営業に関しないものであれば非課税で、' +
+        '医師・弁護士・公認会計士等や、店舗等の設備を持たない農林漁業者が自分の生産物を売る行為はこれに当たる。' +
+        '貼り忘れると本来の印紙税額とその2倍に相当する合計3倍の過怠税がかかるが、' +
+        '調査を予知しないで自主的に不納付を申し出れば1.1倍に軽減される。消印を忘れた場合は印紙の額面と同額の過怠税となる。',
       authority: '所管: 国税庁（印紙税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7105.htm', type: 'government', label: '国税庁 No.7105 金銭の受取書・領収書' },
       { url: 'https://www.nta.go.jp/law/shitsugi/inshi/19/37.htm', type: 'government', label: '国税庁 クレジット販売の領収書' },
-      { url: 'https://www.keihi.com/column/22359/', type: 'media', label: '領収書と収入印紙 解説' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/03/06.htm', type: 'government', label: '国税庁 消費税額等が区分記載された受取書' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7125.htm', type: 'government', label: '国税庁 No.7125 営業に関しない受取書' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7131.htm', type: 'government', label: '国税庁 No.7131 印紙税を納めなかったとき（過怠税）' },
     ],
   },
   {

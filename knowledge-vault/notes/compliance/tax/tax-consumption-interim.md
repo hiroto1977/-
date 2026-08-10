@@ -34,7 +34,6 @@ aliases:
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 語彙が近い
-- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 出典を共有
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 出典を共有
 - [[tax-corp-interim-return|法人税の中間申告]] — 同分野の近傍
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 同分野の近傍

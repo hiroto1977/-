@@ -31,7 +31,6 @@ aliases:
 - [法人税法施行令134条 少額繰延資産の損金算入](https://www.zeiken.co.jp/hourei/HHHOU000010/134.html) `メディア`
 
 ## 関連概念
-- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 出典を共有
 - [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — 出典を共有
 - [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 同分野の近傍
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 同分野の近傍

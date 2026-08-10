@@ -2,7 +2,7 @@
 title: "yayoi-kk.co.jp"
 type: source-domain
 host: "yayoi-kk.co.jp"
-cite_count: 3
+cite_count: 2
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # yayoi-kk.co.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **3 件**（メディア 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
 
 ## このドメインを出典とする項目
 
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 消費税の中間申告解説
-- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 弥生スキャナ保存制度
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 配偶者（特別）控除と年収解説（令和7年改正）
 
 ## 関連

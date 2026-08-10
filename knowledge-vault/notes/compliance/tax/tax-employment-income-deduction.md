@@ -32,7 +32,7 @@ aliases:
 - [国税庁 給与所得控除後の給与等の金額の表](https://www.nta.go.jp/publication/pamph/gensen/nencho2025/pdf/114.pdf) `公的`
 
 ## 関連概念
-- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 同分野の近傍
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 同分野の近傍
 
 ## 関連

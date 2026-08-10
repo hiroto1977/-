@@ -35,8 +35,8 @@ aliases:
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 同分野の近傍
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 同分野の近傍
 - [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 同分野の近傍
-- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

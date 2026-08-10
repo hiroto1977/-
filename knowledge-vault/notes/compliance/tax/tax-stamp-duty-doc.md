@@ -33,8 +33,8 @@ aliases:
 - [国税庁 印紙税不納付事実申出手続](https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/23120080.htm) `公的`
 
 ## 関連概念
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 語彙が近い
 - [[tax-withholding|源泉徴収義務と納付期限]] — 同分野の近傍
-- [[tax-amended-return|修正申告・期限後申告と加算税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

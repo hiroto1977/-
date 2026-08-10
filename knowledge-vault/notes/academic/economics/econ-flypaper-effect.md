@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
-- [[econ-menu-costs|メニューコスト]] — 同分野の近傍
+- [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — 同分野の近傍
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同分野の近傍
 
 ## 関連

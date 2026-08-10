@@ -37,12 +37,12 @@ aliases:
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 語彙が近い
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍
+- [[legal-agency|民法の代理（代理権・無権代理・表見代理）]] — 同分野の近傍
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 同分野の近傍
 - [[legal-disability-comprehensive-support|障害者総合支援法（2013年4月1日施行）]] — 同分野の近傍
-- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 同分野の近傍
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 同分野の近傍
+- [[legal-esignature-presumption|電子署名の推定効（電子署名法3条）]] — 同分野の近傍
 - [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]] — 同分野の近傍
-- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 同分野の近傍
-- [[legal-handwritten-will-storage|自筆証書遺言書保管制度（法務局、2020年7月10日施行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,8 +31,8 @@ aliases:
 - [国税庁 No.5927-2 中小企業者等の賃上げ促進税制](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5927-2.htm) `公的`
 
 ## 関連概念
-- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 語彙が近い
 - [[tax-rd-credit|研究開発税制（試験研究費の税額控除）]] — 語彙が近い
+- [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 語彙が近い
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 語彙が近い
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 同分野の近傍
 
