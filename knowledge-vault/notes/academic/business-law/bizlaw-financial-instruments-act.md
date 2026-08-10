@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 語彙が近い
-- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 語彙が近い
 - [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — 同分野の近傍
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

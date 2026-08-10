@@ -2,7 +2,7 @@
 title: "laws.e-gov.go.jp"
 type: source-domain
 host: "laws.e-gov.go.jp"
-cite_count: 211
+cite_count: 210
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # laws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **211 件**（公的 210 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **210 件**（公的 209 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -37,7 +37,6 @@ tags:
 - [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — e-Gov法令検索民法（明治29年法律第89号）第192条・第193条
 - [[bizlaw-building-standards|建築基準法]] — e-Gov法令検索—建築基準法（昭和二十五年法律第二百一号）
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — e-Gov法令検索会社法（330条・355条）
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 会社法（平成17年法律第86号）330条・355条。
 - [[bizlaw-cheque-act|小切手法]] — e-Gov法令検索小切手法（昭和8年法律第57号）
 - [[bizlaw-civil-procedure|民事訴訟法]] — e-Gov法令検索民事訴訟法（平成8年法律第109号）
 - [[bizlaw-commorientes-rule|同時死亡の推定（コモリエンテス法理）]] — 民法（明治29年法律第89号）—e-Gov法令検索第32条の2「同時死亡の推定」

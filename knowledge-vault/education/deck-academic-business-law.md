@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／ビジネス法務"
 type: flashcard-deck
 deck_key: "academic-business-law"
-card_count: 687
+card_count: 685
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／ビジネス法務（687枚）
+# フラッシュカード — 学術概念／ビジネス法務（685枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -188,10 +188,6 @@ tags:
   - **A:** 経営判断の原則（Business Judgment Rule）とは、米国デラウェア州の判例法上確立された司法審査基準であり、取締役が十分な情報に基づき誠実に会社の最善の利益のために行動したと信じてなされた判断には、裁判所は自らの判断を代置しないという推定を与える法理である。（→ [[bizlaw-business-judgment-rule-delaware]]）
 - **Q:** 経営判断原則の拡張理論
   - **A:** デラウェア州会社法における「拡張された経営判断原則」とは、取締役会が会社支配権の変動を伴う取引を承認する局面で適用される中間的（強化）審査基準（enhanced scrutiny）である。通常の経営判断原則が取締役の判断を広く尊重するのに対し、1985年のUnocal判決は敵対的買収への防衛措置につき「合理的根拠のある脅威の認識」と「対応措置の均衡性」の二段階審査を要求した。（→ [[bizlaw-business-judgment-rule-enhanced]]）
-- **Q:** 経営判断の原則の歴史的発展（Business Judgment Rule）
-  - **A:** 経営判断の原則（BJR）は、取締役の経営判断が誠実・情報収集・合理的信念に基づく限り裁判所が事後的に介入しないという法理である。1829年のPercy v. Millaudon判決に端を発し、デラウェア州のAronson v. Lewis（1984）で現代的定式化を確立した。（→ [[bizlaw-business-judgment-rule-evolution]]）
-- **Q:** 経営判断の原則（日本会社法）
-  - **A:** 取締役の経営判断につき、判断前提の事実認識に不注意な誤りがなく意思決定過程・内容に著しい不合理がない限り善管注意義務違反を認めない原則。EgashiraとKandaが学説を牽引し、最高裁平成22年判決で確立された。（→ [[bizlaw-business-judgment-rule-japan]]）
 - **Q:** 事業上の必要性の抗弁
   - **A:** Griggs v. Duke Power（1971）で確立。人種等に中立な採用基準が保護集団に不均衡な影響を与える場合、使用者は職務関連性と事業上の必要性を立証しなければならない。1991年公民権法で法定化された。（→ [[bizlaw-business-necessity-defense]]）
 - **Q:** 事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認

@@ -30,10 +30,6 @@
       "bizlaw-promissory-note"
     ],
     [
-      "bizlaw-business-judgment-rule-delaware",
-      "bizlaw-business-judgment-rule-japan"
-    ],
-    [
       "bizlaw-carbon-border-adjustment",
       "econ-carbon-border-adjustment-mechanism"
     ],
@@ -504,6 +500,14 @@
     [
       "mgmt-organizational-learning",
       "mgmt-organizational-learning-argyris"
+    ],
+    [
+      "bizlaw-business-judgment-rule",
+      "bizlaw-business-judgment-rule-delaware"
+    ],
+    [
+      "bizlaw-business-judgment-rule-delaware",
+      "bizlaw-business-judgment-rule-enhanced"
     ]
   ]
 }

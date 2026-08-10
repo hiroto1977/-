@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — 分野横断
-- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 同分野の近傍
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — 同分野の近傍
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 同分野の近傍
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 同分野の近傍
 - [[bizlaw-iryubun|遺留分（民法1042条）]] — 同分野の近傍
 

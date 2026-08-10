@@ -121,12 +121,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       '日本の会社法上、株式会社と取締役の関係は委任に関する規定に従い（会社法330条）、取締役は受任者として善良な管理者の注意義務（民法644条）を負うとともに、法令・定款・株主総会決議を遵守し会社のため忠実に職務を行う忠実義務（会社法355条）を負う。' +
       '「経営判断の原則」とは、取締役の経営上の判断について、判断の前提となった事実認識に不注意な誤りがなく、意思決定の過程・内容が著しく不合理でない限り、結果的に会社に損害が生じても善管注意義務違反（任務懈怠）には問われないとする考え方である。' +
       '最高裁平成22年7月15日判決（アパマンショップ株主代表訴訟事件）も、決定の過程・内容に著しく不合理な点がない限り善管注意義務違反とならないとし同様の枠組みを示した。',
-    keyFigures: '会社法330・355条／民法644条／最判平成22年7月15日（アパマンショップ事件）',
+    keyFigures: '会社法330・355条／民法644条／最判平成22年7月15日（アパマンショップ事件）／江頭憲治郎・神田秀樹（学説の展開）',
     asOf: '2026-06',
     sources: [
       { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（330条・355条）' },
       { url: 'https://cir.nii.ac.jp/crid/1522262180687718656', type: 'academic', label: 'CiNii Research 経営判断原則と取締役の任務懈怠（最判平成22.7.15 解説）' },
       { url: 'https://www.businesslawyers.jp/practices/41', type: 'media', label: 'BUSINESS LAWYERS 経営判断の原則とは' },
+      { url: 'https://www.oike-law.gr.jp/wp-content/uploads/oike33-01.pdf', type: 'academic', label: 'OIKE LIBRARY — アパマンショップ最高裁判決と経営判断の原則' },
+      { url: 'https://papers.ssrn.com/sol3/Papers.cfm?abstract_id=2257827', type: 'academic', label: 'Puchniak & Nakahigashi (2012) — 日本の経営判断原則の比較法研究（SSRN）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%B5%8C%E5%96%B6%E5%88%A4%E6%96%AD%E3%81%AE%E5%8E%9F%E5%89%87', type: 'reference', label: 'Wikipedia — 経営判断の原則' },
     ],
   },
   {
@@ -21465,8 +21468,11 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: '経営判断の原則（デラウェア州法）',
     statement:
       '経営判断の原則（Business Judgment Rule）とは、米国デラウェア州の判例法上確立された司法審査基準であり、取締役が十分な情報に基づき誠実に会社の最善の利益のために行動したと信じてなされた判断には、裁判所は自らの判断を代置しないという推定を与える法理である。' +
-      'Aronson v. Lewis事件（Del. 1984）で定式化され、Smith v. Van Gorkom事件（Del. 1985）では重大な過失により十分な情報を得ずに判断した場合にはこの推定が覆されることが示された。',
-    keyFigures: 'William T. Allen（元デラウェア衡平法裁判所長官）',
+      'Aronson v. Lewis事件（Del. 1984）で現代的に定式化されたが、法理の淵源は1829年のPercy v. Millaudon判決（ルイジアナ州）まで遡る。' +
+      'Smith v. Van Gorkom事件（Del. 1985）では重大な過失により十分な情報を得ずに判断した場合には推定が覆されることが示され、取締役の責任拡大への懸念からデラウェア州会社法102条(b)(7)の責任免除条項の立法（注意義務違反の金銭責任を定款で免除可能）につながった。' +
+      '理論的位置づけをめぐっては、ベインブリッジがBJRを裁判所の introspection を控える不介入（abstention）原則として再構成したのに対し、アイゼンバーグは行為規範（standard of conduct）と審査基準（standard of review）の乖離として説明しており、司法審査の設計論として読むかどうかが対立軸になっている。' +
+      '支配権変動局面では通常のBJRではなくUnocal/Revlonの強化審査（enhanced scrutiny）が適用される（各論は business-judgment-rule-enhanced の項）。',
+    keyFigures: 'William T. Allen（元デラウェア衡平法裁判所長官）／Stephen M. Bainbridge（abstention 説）／Melvin A. Eisenberg（行為規範と審査基準の乖離）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.law.cornell.edu/wex/business_judgment_rule', type: 'reference', label: 'Cornell LII Wex — Business Judgment Rule' },
@@ -25939,20 +25945,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-business-judgment-rule-japan',
-    discipline: 'business-law',
-    title: '経営判断の原則（日本会社法）',
-    statement: '取締役の経営判断につき、判断前提の事実認識に不注意な誤りがなく意思決定過程・内容に著しい不合理がない限り善管注意義務違反を認めない原則。EgashiraとKandaが学説を牽引し、最高裁平成22年判決で確立された。',
-    keyFigures: 'Egashira Kenjiro ／ Kanda Hideki ／ Nakahigashi Masafumi',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://ja.wikipedia.org/wiki/%E7%B5%8C%E5%96%B6%E5%88%A4%E6%96%AD%E3%81%AE%E5%8E%9F%E5%89%87', type: 'reference', label: 'Wikipedia — 経営判断の原則' },
-      { url: 'https://www.businesslawyers.jp/practices/41', type: 'reference', label: 'Business Lawyers — 経営判断の原則の要件と判例解説' },
-      { url: 'https://papers.ssrn.com/sol3/Papers.cfm?abstract_id=2257827', type: 'academic', label: 'Puchniak & Nakahigashi (2012) — A New Era for the Business Judgment Rule in Japan?, SSRN' },
-      { url: 'https://www.oike-law.gr.jp/wp-content/uploads/oike33-01.pdf', type: 'academic', label: 'OIKE LIBRARY — アパマンショップ最高裁判決と経営判断の原則' },
-    ],
-  },
-  {
     id: 'mgmt-cognitive-crafting',
     discipline: 'management',
     title: '認知的クラフティング（仕事の意味の再解釈）',
@@ -28625,26 +28617,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://direct.mit.edu/grey/article/doi/10.1162/1526381042464572/10432/Protocol-Control-and-Networks', type: 'academic', label: 'Galloway, A.R. & Thacker, E. 2004. Protocol, Control, and Networks. Grey Room, 17, 6-29.' },
       { url: 'https://journals.sagepub.com/doi/10.1177/026327640602300241', type: 'academic', label: 'Galloway, A.R. 2006. Protocol. Theory, Culture & Society, 23(2-3).' },
       { url: 'https://hls.harvard.edu/bibliography/code-and-other-laws-of-cyberspace/', type: 'reference', label: 'Lessig, L. 1999. Code and Other Laws of Cyberspace. Basic Books. Harvard Law School bibliography.' },
-    ],
-  },
-  {
-    id: 'bizlaw-business-judgment-rule-evolution',
-    discipline: 'business-law',
-    title: '経営判断の原則の歴史的発展（Business Judgment Rule）',
-    statement: '経営判断の原則（BJR）は、取締役の経営判断が誠実・情報収集・合理的信念に' +
-      '基づく限り裁判所が事後的に介入しないという法理である。1829年のPercy v. Millaudon' +
-      '判決に端を発し、デラウェア州のAronson v. Lewis（1984）で現代的定式化を確立した。' +
-      'ベインブリッジはBJRを取締役会の権限保護原則として再構成し、アイゼンバーグは' +
-      '合理的注意基準としての解釈を精緻化した。Smith v. Van Gorkom（1985）はBJRの' +
-      '適用が否定された画期的判例であり、十分な情報収集義務の重要性を示した。日本では' +
-      '会社法330条・355条の善管注意義務・忠実義務の解釈を通じて類似の法理が展開され、' +
-      'アパマンショップ事件最高裁決定（2010年）が経営判断原則の実質的適用を示している。',
-    keyFigures: 'スティーブン・ベインブリッジ ／ メルヴィン・アイゼンバーグ ／ ウィリアム・アレン',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol55/iss1/3/', type: 'academic', label: 'Bainbridge, S.M. 2004. The Business Judgment Rule as Abstention Doctrine. Vanderbilt Law Review, 57(1), 83-130.' },
-      { url: 'https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-4.html', type: 'government', label: 'Aronson v. Lewis, 473 A.2d 805 (Del. 1984). デラウェア州最高裁によるBJR現代的定式化。' },
-      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: '会社法（平成17年法律第86号）330条・355条。善管注意義務・忠実義務規定。' },
     ],
   },
   {

@@ -640,5 +640,37 @@
         "action": "組織マインドセット（culture of genius vs growth culture・人事実装・効果量の限界）レーンへ書き換え。human 側とは既裁定 DISTINCT。"
       }
     ]
+  },
+  "pass19": {
+    "appliedAt": "2026-08-10",
+    "note": "名前スキャン起点の EQUAL 未裁定ペアを完走（37→0）。BJR ファミリー 5 エントリを日本法レーン / デラウェア・レーン / 強化審査レーンの 3 本へ整理。",
+    "merges": [
+      {
+        "keep": "bizlaw-business-judgment-rule",
+        "drop": "bizlaw-business-judgment-rule-japan",
+        "reason": "どちらも日本法レーン（善管注意義務・アパマンショップ）で完全重複。",
+        "migrate": "江頭・神田を keyFigures へ、OIKE LIBRARY のアパマンショップ解説・Puchniak & Nakahigashi (2012) SSRN・Wikipedia を出典へ。",
+        "provenanceDelta": "keep src 3→6 / academic 1→3。減少なし。"
+      },
+      {
+        "keep": "bizlaw-business-judgment-rule-delaware",
+        "drop": "bizlaw-business-judgment-rule-evolution",
+        "reason": "evolution は米法史＋日本法の混載で、米法部分は delaware レーンの、日本法部分は plain の下位互換。",
+        "migrate": "Percy v. Millaudon (1829) の淵源・102条(b)(7) 立法応答・Bainbridge abstention 説 vs Eisenberg 行為規範/審査基準乖離説を delaware 本文へ吸収し、enhanced レーンへの参照を追記。Bainbridge 2004 の Vanderbilt リポジトリ URL はラベル（2004=57巻）と URL（vol55=2002）の巻号不一致で移送しない。Aronson justia と e-Gov は keep 側が同一 URL を保有。",
+        "provenanceDelta": "delaware 本文 249→約520字 / keyFigures +2。減少なし。"
+      }
+    ],
+    "distinct": [
+      [
+        "bizlaw-business-judgment-rule",
+        "bizlaw-business-judgment-rule-delaware",
+        "日本会社法レーンとデラウェア判例法レーン"
+      ],
+      [
+        "bizlaw-business-judgment-rule-delaware",
+        "bizlaw-business-judgment-rule-enhanced",
+        "通常審査（BJR推定）と支配権変動局面の強化審査（Unocal/Revlon）"
+      ]
+    ]
   }
 }

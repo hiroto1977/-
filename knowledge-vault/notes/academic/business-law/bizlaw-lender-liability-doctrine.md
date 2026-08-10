@@ -32,7 +32,6 @@ J. Dennis Hynes ／ Frances E. Freund ／ Patricia A. McCoy
 - [The Doctrine of Lender Liability, 40 Fla. L. Rev. (1988)](https://scholarship.law.ufl.edu/cgi/viewcontent.cgi?article=2487&context=flr) `学術`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 出典を共有
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
@@ -42,6 +41,7 @@ J. Dennis Hynes ／ Frances E. Freund ／ Patricia A. McCoy
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

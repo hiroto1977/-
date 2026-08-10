@@ -24,7 +24,7 @@ tags:
 - [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — Wikipedia:デジタル市場法—DMAとプラットフォーム規制の解説
 - [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — Wikipedia「債務引受」
 - [[bizlaw-bills-act|手形法]] — Wikipedia「手形法」（ジュネーヴ統一手形法の国内法化・1932制定）
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — Wikipedia—経営判断の原則
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — Wikipedia—経営判断の原則
 - [[bizlaw-civil-preservation|民事保全法]] — ウィキペディア「民事保全法」
 - [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — ウィキペディア「会社更生法」（会社更生との対比・対象法人）
 - [[bizlaw-companies-act|会社法]] — Wikipedia「会社法」

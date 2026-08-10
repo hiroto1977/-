@@ -2,7 +2,7 @@
 title: "businesslawyers.jp"
 type: source-domain
 host: "businesslawyers.jp"
-cite_count: 32
+cite_count: 31
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # businesslawyers.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **32 件**（メディア 25 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **31 件**（メディア 25 ・ リファレンス 6）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — BUSINESSLAWYERS「民法改正で債権譲渡はどう変わった？譲渡禁止特約の効力は？」
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — BUSINESSLAWYERS経営判断の原則とは
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — BusinessLawyers—経営判断の原則の要件と判例解説
 - [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — BUSINESSLAWYERS—令和4年改正・消費者裁判手続特例法のポイント解説
 - [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — BUSINESSLAWYERS—民法改正と契約不適合責任条項
 - [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — BUSINESSLAWYERS「組織再編に伴う株主保護手続の概要」—株式買取請求権・債権者保護手続

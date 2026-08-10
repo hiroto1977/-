@@ -33,9 +33,9 @@ aliases:
 ## 関連概念
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 語彙が近い
 - [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 語彙が近い
-- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 - [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 出典を共有
 - [[econ-rostow-stages|ロストウの経済成長段階説]] — 出典を共有
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同分野の近傍
 

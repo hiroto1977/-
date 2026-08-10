@@ -2,7 +2,7 @@
 title: "scholarship.law.vanderbilt.edu"
 type: source-domain
 host: "scholarship.law.vanderbilt.edu"
-cite_count: 12
+cite_count: 11
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # scholarship.law.vanderbilt.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **12 件**（学術 12）
+> [!info] 出典ドメイン索引 ・ 引用 **11 件**（学術 11）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — JohnE.MurrayJr.,"TheChaosoftheBattleoftheForms:Solutions,"39Vanderbil…
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — Bainbridge,S.M.2004.TheBusinessJudgmentRuleasAbstentionDoctrine.Vande…
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — Herzog&Zweibel,"TheEquitableSubordinationofClaimsinBankruptcy,"15Vand…
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — VanderbiltLawReview—HistoricalPerspectiveonDutyofCare,Loyalty
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — TheBremenandtheModelChoiceofForumAct—VanderbiltJournalofTransnational…

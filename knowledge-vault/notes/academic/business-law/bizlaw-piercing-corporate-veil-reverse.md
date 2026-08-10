@@ -31,13 +31,13 @@ Egashira Kenjiro ／ Hiroyuki Watanabe
 - [井上「法人格否認の法理の現状と将来」高岡法学 6巻1号（1994年）](https://www.jstage.jst.go.jp/article/takahogaku/6/1/6_KJ00004262048/_article/-char/ja/) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — 同じ思想家
 - [[econ-time-preference|時間選好]] — 出典を共有
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
 - [[mgmt-psychological-ownership|心理的所有感]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 - [[bizlaw-limited-liability|株主有限責任の原則]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
