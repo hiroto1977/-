@@ -32,7 +32,6 @@ R・ダンカン・ルース（R. Duncan Luce）／ハワード・ライファ�
 
 ## 関連概念
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 語彙が近い
-- [[econ-implicit-contract-theory|暗黙的契約理論]] — 同分野の近傍
 - [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同分野の近傍
 
 ## 関連

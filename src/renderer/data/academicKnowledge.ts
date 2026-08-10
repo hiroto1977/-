@@ -7292,6 +7292,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Stackelberg_competition', type: 'reference', label: 'Wikipedia — Stackelberg competition（定義・1934年Stackelberg著作・逐次手番・反応関数・先行者利益）' },
       { url: 'https://people.bath.ac.uk/sm2446/Oligopoly.pdf', type: 'academic', label: 'University of Bath 講義ノート Oligopoly — クールノーとの比較・先導者の高生産/高利潤' },
       { url: 'https://open.oregonstate.education/intermediatemicroeconomics/chapter/module-18/', type: 'academic', label: 'Oregon State University 公開教科書 Intermediate Microeconomics — Cournot/Bertrand/Stackelberg・バックワード・インダクション解' },
+      { url: 'https://www.jstor.org/stable/1819460', type: 'academic', label: 'Gal-Or (1985) First Mover and Second Mover Advantages — Review of Economic Studies 52(4)' },
     ],
   },
   {
@@ -21374,21 +21375,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-duopoly-stackelberg-model',
-    discipline: 'economics',
-    title: 'シュタッケルベルク複占モデル',
-    statement:
-      'シュタッケルベルク複占モデルは、先導者（リーダー）企業がまず生産量を決定し、追随者（フォロワー）企業がその生産量を観察した上で自らの最適生産量を選択する逐次手番の寡占モデルである。' +
-      'クールノー均衡とは異なり、先導者は追随企業の最適反応関数を織り込んで意思決定するため非対称な均衡が生じ、先行者利益が発生する。',
-    keyFigures: 'Heinrich von Stackelberg',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Stackelberg_competition', type: 'reference', label: 'Wikipedia — Stackelberg competition' },
-      { url: 'https://www.econlib.org/library/Enc/GameTheory.html', type: 'reference', label: 'EconLib — Game Theory (Library of Economics and Liberty)' },
-      { url: 'https://www.jstor.org/stable/1819460', type: 'academic', label: 'Gal-Or, E. (1985) First Mover and Second Mover Advantages, Review of Economic Studies 52(4)' },
-    ],
-  },
-  {
     id: 'econ-sargent-wallace-unpleasant-arithmetic',
     discipline: 'economics',
     title: 'サージェント＝ウォレスの不愉快な貨幣主義の算術',
@@ -24685,7 +24671,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-greenspan-put-moral-hazard',
     discipline: 'economics',
     title: 'グリーンスパン・プットとモラルハザード',
-    statement: 'グリーンスパン・プットとは、FRBが市場下落時に積極利下げで暗黙の保険を提供するという期待を指す。MillerとWellerがこの政策によるモラルハザードを分析し、Rajanは金融システムの脆弱性拡大を警告した。',
+    statement: 'グリーンスパン・プットとは、FRBが市場下落時に積極利下げで暗黙の保険を提供するという期待を指す。MillerとWellerがこの政策によるモラルハザードを分析し、Rajanは金融システムの脆弱性拡大を警告した。' +
+      '起点は1987年のブラックマンデー後の急速な流動性供給で、以後「下落には利下げで応じるが、上昇（バブル）には事前に立ち向かわない」という非対称な反応関数が市場に学習された。プット・オプションを只で持つのと同等の保険が下値を限定するため、投資家はレバレッジとリスクテイクを積み増す——これがモラルハザード経路である。' +
+      'Miller, Weller & Zhang (2002) は 1990年代後半の株価がこの暗黙の保険を織り込んでいた可能性を定量化し、Rajan (2005) のジャクソンホール論文は、報酬構造がテールリスクの売りを促す金融システムでは緩和的な安全網が脆弱性を蓄積すると警告して、2008年危機で再評価された。' +
+      '危機後は「バブルには事後処理で足りる」というグリーンスパン・ドクトリンと、事前に金融的不均衡へ傾斜すべきだとする lean-against-the-wind 論（BIS 系）の対立として整理され、マクロプルーデンス政策の整備と「Fed プット」（バーナンキ・パウエル各期の類似期待）の持続という形で現在も続く論点になっている。',
     keyFigures: 'Marcus H. Miller ／ Paul A. Weller ／ Raghuram G. Rajan',
     asOf: '2026-06',
     sources: [
@@ -24789,7 +24778,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-cobweb-theorem-agricultural-cycles',
     discipline: 'economics',
     title: '蜘蛛の巣理論（農業価格循環）',
-    statement: '農業市場において生産者が過去の価格を基に供給量を決定するため、需給の価格弾力性の比率によって価格が収束・発散・持続的振動のいずれかを示す動学的均衡モデル。EzekielおよびTinbergenが独立に定式化した。',
+    statement: '農業市場において生産者が過去の価格を基に供給量を決定するため、需給の価格弾力性の比率によって価格が収束・発散・持続的振動のいずれかを示す動学的均衡モデル。EzekielおよびTinbergenが独立に定式化した。' +
+      '生産に時間がかかる財では、今期の作付けが前期の価格に基づく素朴な期待で決まる。高価格→増産→翌期の供給過剰→価格暴落→減産→翌期の供給不足→高騰、という対角線の軌跡が需給図上で蜘蛛の巣状を描く。' +
+      '収束条件は弾力性の比較で決まり、供給の傾きが需要より急（供給が非弾力的）なら振動は減衰して均衡へ収束し、等しければ永続振動、供給がより弾力的なら発散する。豚サイクル（ホグ・サイクル）やコーヒー・カカオの複数年周期が古典的な適用例である。' +
+      '理論史上の重要性は、Muth (1961) の合理的期待仮説がまさにこのモデルの「素朴な期待」批判として提出された点にあり、期待形成の定式化が動学の帰結を決めるという論点の原風景になった。現代でも畜産・穀物のコブウェブ的循環は実証対象であり、適応的学習・限定合理性の実験研究の標準教材でもある。',
     keyFigures: 'Mordecai Ezekiel ／ Jan Tinbergen ／ Umberto Ricci',
     asOf: '2026-06',
     sources: [
@@ -25704,7 +25696,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-backwash-spread-effects-myrdal',
     discipline: 'economics',
     title: 'ミュルダールの逆流・波及効果',
-    statement: 'Myrdal（1957）が提唱した循環的累積因果関係論における地域格差メカニズム。資本・労働が先進地域へ流出する逆流効果と先進地域から後進地域へ正の外部性が及ぶ波及効果の相互作用を分析し、Hirschmanの極化・滴下効果と対比される。',
+    statement: 'Myrdal（1957）が提唱した循環的累積因果関係論における地域格差メカニズム。資本・労働が先進地域へ流出する逆流効果と先進地域から後進地域へ正の外部性が及ぶ波及効果の相互作用を分析し、Hirschmanの極化・滴下効果と対比される。' +
+      '基底にあるのは、市場の力は放置すれば格差を「均す」のではなく「累積させる」という均衡理論批判である。初期の優位（港・産業集積）は資本と若年熟練労働を引き寄せ、税基盤と公共サービスの差を広げ、さらに人と資本を引き寄せる——この自己強化ループの負の側面が逆流効果（backwash: 後進地域からの資本流出・選別的人口流出・競合産業の淘汰）で、正の側面が波及効果（spread: 後進地域産品への需要・技術の伝播）である。' +
+      'Myrdal は低所得国ほど波及が弱く逆流が勝つため、格差是正には国家の意図的な介入が必要だと結論づけ、同時期の Hirschman (1958) の極化・trickle-down 概念と並んで開発経済学の不均衡発展論を形づくった。' +
+      'この直観は後に Krugman らの新経済地理学（中心－周辺モデル）が収穫逓増と輸送費で定式化し、EU 結束政策や地方創生など地域政策の理論的参照点であり続けている。',
     keyFigures: 'Gunnar Myrdal ／ Albert O. Hirschman ／ Nicholas Kaldor',
     asOf: '2026-06',
     sources: [
@@ -26208,7 +26203,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-adverse-selection-akerlof',
     discipline: 'economics',
     title: '逆選択理論（レモンの市場）',
-    statement: 'Akerlofが1970年に提唱した情報非対称性下での市場メカニズム。買い手が売り手よりも商品品質を把握できない場合、低品質商品が高品質商品を淘汰し市場全体が崩壊する「レモンの市場」現象を説明。2001年ノーベル経済学賞の基盤理論。',
+    statement: 'Akerlofが1970年に提唱した情報非対称性下での市場メカニズム。買い手が売り手よりも商品品質を把握できない場合、低品質商品が高品質商品を淘汰し市場全体が崩壊する「レモンの市場」現象を説明。2001年ノーベル経済学賞の基盤理論。' +
+      'メカニズムの核心は価格が平均品質にしか付かないことにある。買い手が品質を見分けられなければ支払意思額は市場の平均品質を反映し、平均を上回る品質の売り手は割に合わず退出する。すると平均品質がさらに下がり、価格も下がり、また上位が退出する——この unraveling が極端な場合には取引が消滅する。' +
+      '中古車が原型だが、保険（リスクの高い人ほど加入したがるため料率が上がり健常者が抜ける）、信用市場（金利を上げると安全な借り手から抜ける）、労働市場に同型の構造がある。' +
+      '対処は情報の非対称そのものを緩める設計で、保証・返品条項、ブランドと評判、第三者認証・検査、開示規制、そして保険では強制加入によるプール維持が典型である。売り手側の対処はシグナリング、買い手側の設計はスクリーニングとして独立の理論に発展した（各論は signaling-screening の項）。',
     keyFigures: 'George A. Akerlof ／ A. Michael Spence ／ Joseph E. Stiglitz',
     asOf: '2026-06',
     sources: [
@@ -26253,13 +26251,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-signaling-screening-spence',
     discipline: 'economics',
     title: 'シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）',
-    statement: '情報非対称下で高能力者が教育等のコストのかかるシグナルを発信し低能力者と自己選別するとSpenceが1973年に定式化。Stiglitzはスクリーニングとして補完的に体系化し、Akerlofのレモンモデルとともに2001年ノーベル経済学賞の基盤となった。',
+    statement: '情報非対称下で高能力者が教育等のコストのかかるシグナルを発信し低能力者と自己選別するとSpenceが1973年に定式化。Stiglitzはスクリーニングとして補完的に体系化し、Akerlofのレモンモデルとともに2001年ノーベル経済学賞の基盤となった。' +
+      'シグナルが機能する条件は、シグナル取得のコストがタイプによって異なること（シングル・クロッシング）にある。教育の生産性効果がゼロでも、高能力者にとって取得コストが十分低ければ、教育水準だけで賃金が分離する分離均衡が成立し得る——教育の私的収益と社会的収益が乖離するという含意が論争を呼んだ。' +
+      '情報を持つ側が先に動くのがシグナリング、持たない側が契約メニューを設計して自己選択させるのがスクリーニングで、免責金額の異なる保険メニュー（Rothschild & Stiglitz）や賃金・昇進体系がその典型である。' +
+      '応用は保証・配当・IPO の過小値付け・広告支出（燃やして見せる資金力）など広く、「観察可能でコストのかかる行動が私的情報を伝える」という設計原理として、資本構成論やプラットフォームの評価制度設計にまで及ぶ。',
     keyFigures: 'A. Michael Spence ／ Joseph E. Stiglitz ／ George A. Akerlof',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.jstor.org/stable/1882010', type: 'academic', label: 'Spence (1973) Job Market Signaling, QJE 87(3) 355-374' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/press-release/', type: 'reference', label: 'Nobel Prize press release (2001) — Akerlof, Spence, Stiglitz: markets with asymmetric information' },
-      { url: 'https://www.jstor.org/stable/1829559', type: 'academic', label: 'Akerlof (1970) The Market for Lemons, QJE 84(3) 488-500' },
+      { url: 'https://www.jstor.org/stable/1879431', type: 'academic', label: 'Akerlof (1970) The Market for Lemons, QJE 84(3) 488-500' },
     ],
   },
   {

@@ -32,7 +32,7 @@ F.ハイエク「社会における知識の利用」1945(American Economic Revi
 
 ## 関連概念
 - [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同分野の近傍
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同分野の近傍
+- [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

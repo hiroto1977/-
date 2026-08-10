@@ -40,6 +40,7 @@ aliases:
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同じ思想家
 - [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
+- [[econ-business-cycles|景気循環とその諸波動]] — 同分野の近傍
 - [[econ-poole-instrument-choice|プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる]] — 同分野の近傍
 
 ## 関連

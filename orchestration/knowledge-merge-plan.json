@@ -672,5 +672,18 @@
         "通常審査（BJR推定）と支配権変動局面の強化審査（Unocal/Revlon）"
       ]
     ]
+  },
+  "pass20": {
+    "appliedAt": "2026-08-10",
+    "note": "enrich 感度上昇で dedupeGraph が 1 組検出（既知現象の再現）。全文読解で同一概念と裁定。",
+    "merges": [
+      {
+        "keep": "econ-stackelberg-competition",
+        "drop": "econ-duopoly-stackelberg-model",
+        "reason": "同一の逐次手番数量競争モデル。keep が 1934 年書誌・後方帰納・厚生比較・SPE 位置づけまで持つ超集合。",
+        "migrate": "Gal-Or (1985) REStud の先行者/後行者優位論文を出典へ。EconLib のゲーム理論総説は三次的で移送しない。",
+        "provenanceDelta": "keep src 3→4。減少なし。"
+      }
+    ]
   }
 }

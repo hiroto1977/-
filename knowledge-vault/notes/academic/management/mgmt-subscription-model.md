@@ -32,11 +32,11 @@ aliases:
 - [Index Ventures — Tien Tzuo and the Subscription Economy (coined 2007)](https://www.indexventures.com/perspectives/this-man-created-the-subscription-economy/) `メディア`
 
 ## 関連概念
-- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 語彙が近い
 - [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 出典を共有
 - [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
 - [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
+- [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同分野の近傍
 - [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
 
 ## 関連

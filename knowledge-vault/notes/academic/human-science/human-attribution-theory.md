@@ -32,12 +32,12 @@ aliases:
 - [Heider (1958): The Psychology of Interpersonal Relations — Springer Nature](https://link.springer.com/chapter/10.1007/978-3-658-21742-6_59) `学術`
 
 ## 関連概念
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 語彙が近い
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
 - [[human-just-world-hypothesis-lerner|公正世界仮説——人は相応しい結果を得るという信念とその社会的帰結]] — 同分野の近傍
-- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

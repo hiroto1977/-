@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家
 - [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同分野の近傍
-- [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

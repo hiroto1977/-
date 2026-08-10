@@ -33,7 +33,7 @@ aliases:
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
 - [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
-- [[bizlaw-assignment-security|譲渡担保]] — 同分野の近傍
+- [[bizlaw-employment-insurance|雇用保険法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

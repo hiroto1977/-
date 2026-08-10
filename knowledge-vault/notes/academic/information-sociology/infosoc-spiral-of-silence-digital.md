@@ -35,7 +35,6 @@ Elisabeth Noelle-Neumann ／ Keith N. Hampton ／ Wenhong Chen
 - [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — 出典を共有
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
-- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 同分野の近傍
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
 
 ## 関連

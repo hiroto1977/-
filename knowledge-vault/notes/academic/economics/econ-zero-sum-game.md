@@ -39,8 +39,8 @@ aliases:
 - [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
 - [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
 - [[econ-condorcet-jury-theorem|コンドルセの陪審定理（Condorcet Jury Theorem）]] — 出典を共有
-- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
 - [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 同分野の近傍
+- [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,6 +34,7 @@ aliases:
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 語彙が近い
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

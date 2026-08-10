@@ -36,6 +36,7 @@ aliases:
 - [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 同じ思想家
 - [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
 - [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同分野の近傍
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同分野の近傍
 - [[econ-resource-curse-sachs-warner|資源の呪い——天然資源の豊富さが経済発展を阻害する逆説]] — 同分野の近傍
 

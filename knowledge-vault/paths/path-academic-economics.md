@@ -2,26 +2,26 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 946
+entry_count: 945
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（946件）
+# 学習パス — 学術概念／経済学（945件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 83）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
 - [[econ-agglomeration-economies|集積の経済]]（接続 45）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 39）
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 33）
@@ -550,7 +550,6 @@ tags:
 - [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]]
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]]
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]]
-- [[econ-duopoly-stackelberg-model|シュタッケルベルク複占モデル]]
 - [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]]
 - [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]]
 - [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]]

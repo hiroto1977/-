@@ -39,7 +39,7 @@ aliases:
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
 - [[econ-chartalism-modern-money|シャルタリズムと現代貨幣理論（MMT）]] — 同じ思想家
-- [[econ-cobweb|クモの巣理論]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

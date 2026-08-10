@@ -35,6 +35,7 @@ aliases:
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
 - [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同分野の近傍
 - [[econ-bilateral-monopoly|双方独占]] — 同分野の近傍
+- [[econ-hayek-knowledge|ハイエクの知識の分散と価格メカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

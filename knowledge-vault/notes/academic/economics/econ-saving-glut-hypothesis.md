@@ -37,9 +37,8 @@ Ben Shalom Bernanke ／ Ricardo J. Caballero ／ Emmanuel Farhi ／ Pierre-Olivi
 - [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
 - [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
 - [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
-- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 同分野の近傍
 - [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同分野の近傍
-- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 同分野の近傍
+- [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

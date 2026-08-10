@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2261
+cite_count: 2260
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2261 件**（リファレンス 2261）
+> [!info] 出典ドメイン索引 ・ 引用 **2260 件**（リファレンス 2260）
 
 ## このドメインを出典とする項目
 
@@ -516,7 +516,6 @@ tags:
 - [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]] — Wikipedia:Downs–Thomsonparadox—roadcapacity,publictransport,Mohringef…
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — Wikipedia:Dynamicstochasticgeneralequilibrium—overview,variants,criti…
 - [[econ-dual-labor-market|二重労働市場論]] — Duallabourmarket—Wikipedia（一次/二次部門への分断とDLMの定義）
-- [[econ-duopoly-stackelberg-model|シュタッケルベルク複占モデル]] — Wikipedia—Stackelbergcompetition
 - [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — Wikipedia:Coaseconjecture—durablegoodsmonopoly,competingwithfuturesel…
 - [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]] — Wikipedia:Dutchdisease—Corden&Nearymodel,spendingeffect,resourcemovem…
 - [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — Wikipedia:Dutchdisease—オランダ病と資源の呪い
