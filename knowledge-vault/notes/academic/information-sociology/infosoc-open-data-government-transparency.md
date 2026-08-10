@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — 語彙が近い
-- [[infosoc-open-data|オープンデータ]] — 語彙が近い
 - [[infosoc-open-data-movement-sunlight|オープンデータ運動と政府透明性——公共情報の解放・再利用と民主的説明責任の強化]] — 語彙が近い
+- [[infosoc-open-data|オープンデータ]] — 語彙が近い
 - [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家

@@ -31,7 +31,8 @@ AI（人工知能）ガバナンスとは、AIシステムの開発・展開・�
 
 ## 関連概念
 - [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 同分野の近傍
-- [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同分野の近傍
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
+- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
 - [[infosoc-critical-discourse-analysis|批判的談話分析（CDA）]] — 同分野の近傍
 
 ## 関連

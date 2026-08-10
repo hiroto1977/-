@@ -36,7 +36,6 @@ aliases:
 ## 関連概念
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
 - [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 語彙が近い
-- [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 語彙が近い
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 同じ思想家
@@ -44,6 +43,7 @@ aliases:
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
+- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

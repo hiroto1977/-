@@ -34,11 +34,10 @@ H.ミンツバーグ『組織の構造化』1979／組織の5つの基本部分�
 - [[econ-dual-labor-market|二重労働市場論]] — 出典を共有
 - [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 出典を共有
 - [[mgmt-technology-s-curve|技術のSカーブ]] — 出典を共有
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同分野の近傍
-- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同分野の近傍
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同分野の近傍
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同分野の近傍
-- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

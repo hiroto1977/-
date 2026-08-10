@@ -31,8 +31,8 @@ aliases:
 - [McChesney (2013) Digital Disconnect — Semantic Scholar](https://www.semanticscholar.org/paper/Digital-Disconnect%3A-How-Capitalism-is-Turning-the-McChesney/8e9b7d6a5c8d6a9f7b0e3c2a1d4f5e6b7c8a9d0e) `学術`
 
 ## 関連概念
-- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 同分野の近傍
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同分野の近傍
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,6 +40,7 @@ David J. Teece ／ Gary Pisano ／ Amy Shuen
 - [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
 - [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
+- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

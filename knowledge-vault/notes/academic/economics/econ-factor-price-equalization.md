@@ -36,11 +36,11 @@ aliases:
 - [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
 - [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
-- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 出典を共有
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 出典を共有
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 出典を共有
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
+- [[econ-monopolistic-competition|独占的競争]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

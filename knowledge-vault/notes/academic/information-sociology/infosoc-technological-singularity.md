@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-identity|デジタルアイデンティティ]] — 同分野の近傍
-- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同分野の近傍
 - [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同分野の近傍
 
 ## 関連

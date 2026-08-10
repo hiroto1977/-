@@ -33,6 +33,7 @@ aliases:
 - [[human-resilience|レジリエンス（心理的回復力）]] — 語彙が近い
 - [[human-developmental-psychopathology-cicchetti|発達精神病理学——正常と異常の発達的連続性と多重決定性]] — 同じ思想家
 - [[human-resilience-adversity-luthar|レジリエンスと逆境適応の発達心理学——リスク・保護因子の動態モデル（ルサール）]] — 同じ思想家
+- [[human-allostasis|アロスタシス（Allostasis）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

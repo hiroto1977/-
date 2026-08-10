@@ -24406,7 +24406,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'human-developmental-origins-of-health-disease',
     discipline: 'human-science',
     title: '健康と疾病の発達起源説（DOHaD）',
-    statement: 'Barkerが提唱。胎児期・乳児期の低栄養や有害環境への曝露が代謝・内分泌系を恒久的に再プログラムし、成人後の心血管疾患・糖尿病リスクを高める。HalesとBarkerが「節約表現型仮説」として定式化した。',
+    statement: 'Barkerが提唱。胎児期・乳児期の低栄養や有害環境への曝露が代謝・内分泌系を恒久的に再プログラムし、成人後の心血管疾患・糖尿病リスクを高める。HalesとBarkerが「節約表現型仮説」として定式化した。' +
+      '出発点は英国ハートフォードシャーの出生記録と成人死亡の照合（Barker 1989, Lancet）で、出生体重が低いほど虚血性心疾患死が多いという勾配を示した。節約表現型仮説 (1992) は、子宮内の低栄養に対して胎児が脳を優先し膵・筋を犠牲にする適応を行い、その省エネ型の代謝設定が出生後の豊富な栄養環境と不一致（ミスマッチ）を起こすと2型糖尿病・メタボリックシンドロームに至る、と機序を定式化した。' +
+      'オランダ飢餓の冬（1944-45）コホートは、妊娠初期の飢餓曝露が成人後の肥満・統合失調症リスク上昇と関連することを示す自然実験として仮説を支え、Gluckman & Hanson は予測適応反応（PAR）として進化生物学的に一般化した。' +
+      'メカニズムとしては DNA メチル化などのエピジェネティックな刻印が想定され、介入の焦点を成人の生活習慣から妊娠期・生後1000日の栄養と環境へ前倒しする根拠として、母子保健政策・先制医療の国際的枠組み（DOHaD 学会）に結実している。',
     keyFigures: 'David J. P. Barker ／ Charles N. Hales ／ Peter D. Gluckman ／ Mark A. Hanson',
     asOf: '2026-06',
     sources: [
@@ -25132,7 +25135,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-communicative-ecology',
     discipline: 'information-sociology',
     title: 'コミュニケーション生態系理論',
-    statement: '個人・世帯・コミュニティが使用するメディアの全体を相互接続されたシステムとして捉える分析枠組み。Tacchi・Hearnらが技術層・社会層・言説層の三層構造を提唱し、ICT4D研究に広く援用されている。',
+    statement: '個人・世帯・コミュニティが使用するメディアの全体を相互接続されたシステムとして捉える分析枠組み。Tacchi・Hearnらが技術層・社会層・言説層の三層構造を提唱し、ICT4D研究に広く援用されている。' +
+      '三層は、技術層（機器・接続・アプリの布置）、社会層（人間関係・組織・利用の場）、言説層（やり取りされる内容・意味・物語）からなり、新しい技術の導入を単体の採用ではなく既存の生態系への挿入として分析する。ラジオと携帯と口コミが併存する途上国コミュニティで「どの回路が誰に届くか」を描くのに向く。' +
+      '方法論的には Tacchi らが UNESCO のためにまとめた EAR（エスノグラフィック・アクション・リサーチ）ハンドブック (2003) が実践の型で、現地の生態系を記述してから介入を設計し、介入の効果を生態系の変化として評価する循環を採る。' +
+      'Foth らはこの枠組みを都市インフォマティクスへ持ち込み、近年は難民のコミュニケーション生態（Bau 2025）やプラットフォーム移行期の情報弱者分析に使われる。メディアを個別に数える利用調査では見えない「組合せとしてのメディア環境」を対象化した点が理論的貢献である。',
     keyFigures: 'Jo Tacchi ／ Greg Hearn ／ Jerry Watkins',
     asOf: '2026-06',
     sources: [
@@ -25636,7 +25642,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-role-exit-theory',
     discipline: 'management',
     title: '役割退出理論',
-    statement: 'Ebaughが1988年に提唱した理論で、個人がアイデンティティの核となる役割から離脱する過程を「最初の疑念・代替探索・転換点・元役割の確立」の4段階で説明する。Ashforthは組織行動論に応用した。',
+    statement: 'Ebaughが1988年に提唱した理論で、個人がアイデンティティの核となる役割から離脱する過程を「最初の疑念・代替探索・転換点・元役割の確立」の4段階で説明する。Ashforthは組織行動論に応用した。' +
+      'Ebaugh 自身が修道女を辞めた経験を持つ社会学者で、元修道女・離婚者・転職者・性転換者など 185 人への聞き取りから、離脱後も残る「元（ex）」という独特の地位——過去の役割が現在の自己定義に残り続け、周囲もその人を「元○○」として扱う——を発見した点に独自性がある。' +
+      '4段階は直線的ではなく、疑念の段階では周囲の反応（気づき・後押し・引き留め）が進行を左右し、転換点は劇的な出来事だけでなく「最後の藁」の蓄積でも訪れる。離脱の後には役割残余（role residual）の管理と新旧アイデンティティの橋渡しが課題になる。' +
+      'Ashforth の役割移行論はこれをミクロ組織論へ翻訳し、退職・転職・昇進・非正規への移行における境界通過の儀式や、Wacquant の理論的批判（役割概念そのものの限界）とあわせて、キャリア論・退職研究・アイデンティティ・ワーク研究の基礎文献群を形成している。定年退職者の再就職支援や聖職者・軍人の民間移行プログラムが実務的接点になる。',
     keyFigures: 'Helen Rose Fuchs Ebaugh ／ Blake E. Ashforth ／ Loic J. D. Wacquant',
     asOf: '2026-06',
     sources: [
@@ -25650,7 +25659,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-civic-technology-movement',
     discipline: 'information-sociology',
     title: 'シビックテクノロジー運動',
-    statement: '市民と政府の関係を技術で強化する運動。Pahlkaが設立したCode for Americaや、O\'Reillyの「政府プラットフォーム論」を核に、Sifryらが開かれた民主主義の実践として体系化した。',
+    statement: '市民と政府の関係を技術で強化する運動。Pahlkaが設立したCode for Americaや、O\'Reillyの「政府プラットフォーム論」を核に、Sifryらが開かれた民主主義の実践として体系化した。' +
+      'O\'Reilly (2011) の政府プラットフォーム論は、政府を完成品サービスの提供者ではなく、オープンデータと API の上に市民・企業がサービスを組み立てる基盤の運営者として再定義した。Code for America はフェローシップ方式で技術者を行政に送り込み、フードスタンプ申請の簡素化（GetCalFresh）のような「利用者側から作り直す」プロジェクトで行政のデジタルサービス設計を変えた。' +
+      '運動の系譜には、オープンガバメント・データ運動、市民参加型予算、Ushahidi 型のクライシスマッピング、台湾の g0v・vTaiwan のような市民ハッカーコミュニティが含まれ、Knight 財団の 2013 年報告が分野の見取り図を与えた。' +
+      'Pahlka の『Recoding America』(2023) は、政策と実装の断絶——法律は書けてもデジタルで執行できない政府——を米国行政の構造問題として分析し、調達改革・内製人材・政策の実装可能性テストという処方箋を提示して、シビックテックを一過性のボランティア運動から国家能力（state capacity）の議論へ接続した。',
     keyFigures: 'Jennifer Pahlka ／ Tim O\'Reilly ／ Micah L. Sifry',
     asOf: '2026-06',
     sources: [
@@ -25841,7 +25853,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-positive-organizational-scholarship',
     discipline: 'management',
     title: 'ポジティブ組織学（POS）',
-    statement: 'Cameron・Dutton・Quinnが2003年にミシガン大学で提唱した経営学の研究動向。組織と構成員の繁栄・美徳・レジリエンス・ポジティブ逸脱などを科学的に探求し、人間の潜在能力の最善を理解する。',
+    statement: 'Cameron・Dutton・Quinnが2003年にミシガン大学で提唱した経営学の研究動向。組織と構成員の繁栄・美徳・レジリエンス・ポジティブ逸脱などを科学的に探求し、人間の潜在能力の最善を理解する。' +
+      '問題解決・欠陥修正に偏ってきた組織研究に対し、「何がうまくいくときに起きているか」を問う視角の転換であり、ポジティブ逸脱（規範を上回る卓越）・高質のつながり（high-quality connections）・ジョブ・クラフティング・思いやり（compassion）の組織化などが代表的な研究対象になった。' +
+      'ルーサンスのポジティブ組織行動（POB）が個人の状態的強み（PsyCap）の測定・開発に焦点を当てるのに対し、POS は組織・集合レベルの美徳や繁栄の条件を広く扱い、必ずしも測定可能性を参入条件にしない点で守備範囲が異なる（両者は相補的とされる）。' +
+      'Caza & Caza (2008) は「ポジティブの定義が曖昧」「暗黒面を無視する」という批判に応答して研究プログラムとしての要件を整理し、ミシガン大学ロス校の Center for Positive Organizations が研究と実務移転（Positive Links 等）のハブとして機能している。エンゲージメント施策・強み基盤のマネジメント・組織のレジリエンス設計の理論的サポートとして実務にも浸透した。',
     keyFigures: 'Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn',
     asOf: '2026-06',
     sources: [

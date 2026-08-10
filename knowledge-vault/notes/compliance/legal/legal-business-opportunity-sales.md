@@ -40,6 +40,7 @@ aliases:
 - [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 出典を共有
 - [[subsidy-okayama-pref|中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）]] — 出典を共有
+- [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -36,7 +36,6 @@ aliases:
 - [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 同じ思想家
 - [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 出典を共有
 - [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 出典を共有
-- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
 - [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — 同分野の近傍
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — 同分野の近傍
 

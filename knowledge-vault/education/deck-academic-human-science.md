@@ -329,7 +329,7 @@ tags:
 - **Q:** 発達的ニッチ理論（Super & Harkness）
   - **A:** 発達的ニッチ理論とは、子どもの発達を文化との接面で捉える枠組みであり、スーパーとハークネスが1986年にInternational Journal of Behavioral Development誌（9巻4号545-569頁）の論文「The Developmental Niche: A Conceptualization at the Interface of Child and Culture」で提唱した。（→ [[human-developmental-niche-theory]]）
 - **Q:** 健康と疾病の発達起源説（DOHaD）
-  - **A:** Barkerが提唱。胎児期・乳児期の低栄養や有害環境への曝露が代謝・内分泌系を恒久的に再プログラムし、成人後の心血管疾患・糖尿病リスクを高める。HalesとBarkerが「節約表現型仮説」として定式化した。（→ [[human-developmental-origins-of-health-disease]]）
+  - **A:** Barkerが提唱。胎児期・乳児期の低栄養や有害環境への曝露が代謝・内分泌系を恒久的に再プログラムし、成人後の心血管疾患・糖尿病リスクを高める。HalesとBarkerが「節約表現型仮説」として定式化した。出発点は英国ハートフォードシャーの出生記録と成人死亡の照合（Barker 1989, Lancet）で、出生体重が低いほど虚血性心疾患死が多いという勾配を示した。（→ [[human-developmental-origins-of-health-disease]]）
 - **Q:** 文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学
   - **A:** レフ・ヴィゴツキーはソビエト時代の心理学者として、ピアジェの認知発達論への批判的応答として「文化歴史的発達理論（Cultural-Historical Activity Theory）」を構築した。（→ [[human-developmental-psychology-vygotsky]]）
 - **Q:** 発達精神病理学——正常と異常の発達的連続性と多重決定性

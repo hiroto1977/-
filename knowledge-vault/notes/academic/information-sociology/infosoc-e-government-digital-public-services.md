@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-digital-identity|デジタルアイデンティティ]] — 出典を共有
 - [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 出典を共有
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
-- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

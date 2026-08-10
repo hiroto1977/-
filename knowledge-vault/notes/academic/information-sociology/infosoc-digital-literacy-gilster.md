@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — 同分野の近傍
 - [[infosoc-data-sovereignty|データ主権]] — 同分野の近傍
 - [[infosoc-media-literacy|メディア・リテラシー]] — 同分野の近傍
+- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

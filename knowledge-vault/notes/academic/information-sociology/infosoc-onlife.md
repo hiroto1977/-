@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同分野の近傍
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
 - [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同分野の近傍
+- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

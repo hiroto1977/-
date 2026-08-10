@@ -30,8 +30,8 @@ aliases:
 - [University of Arkansas Open Textbook — Connectivism（大学教科書）](https://uark.pressbooks.pub/edtech/chapter/elearnspace-connectivism-a-learning-theory-for-the-digital-age/) `学術`
 
 ## 関連概念
-- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同分野の近傍
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同分野の近傍
+- [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

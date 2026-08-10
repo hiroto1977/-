@@ -33,7 +33,6 @@ Steve Horvath ／ Morgan Levine
 
 ## 関連概念
 - [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — 語彙が近い
-- [[human-developmental-origins-of-health-disease|健康と疾病の発達起源説（DOHaD）]] — 同分野の近傍
 - [[human-central-pattern-generator|中枢パターン発生器（CPG）]] — 同分野の近傍
 - [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 同分野の近傍
 

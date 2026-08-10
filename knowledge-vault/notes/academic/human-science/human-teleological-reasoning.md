@@ -31,7 +31,6 @@ aliases:
 - [Gergely & Csibra (1997) Naive Theory of Rational Action — CEU](https://energy.ceu.edu/sites/default/files/publications/gergelycsibra1997.pdf) `学術`
 
 ## 関連概念
-- [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同分野の近傍
 - [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
 - [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
 - [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍

@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同じ思想家
 - [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同じ思想家
-- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
 - [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
+- [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

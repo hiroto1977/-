@@ -35,6 +35,7 @@ aliases:
 - [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 語彙が近い
 - [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
 - [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
+- [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 出典を共有
 - [[econ-price-elasticity-demand|需要の価格弾力性]] — 出典を共有
 - [[econ-optimal-tariff|最適関税論]] — 同分野の近傍
-- [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — 同分野の近傍
+- [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

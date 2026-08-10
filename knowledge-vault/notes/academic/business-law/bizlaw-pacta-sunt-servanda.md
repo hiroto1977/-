@@ -38,6 +38,7 @@ aliases:
 - [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 出典を共有
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
+- [[bizlaw-cartel-regulation-antitrust-eu|カルテル規制——競争法における水平的共謀の禁止と制裁]] — 同分野の近傍
 - [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — 同分野の近傍
 
 ## 関連
