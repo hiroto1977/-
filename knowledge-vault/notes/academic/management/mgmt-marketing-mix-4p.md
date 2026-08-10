@@ -32,6 +32,7 @@ N.ボーデン（マーケティング・ミックス命名・1950年代）／E.
 
 ## 関連概念
 - [[mgmt-stp-marketing|STPマーケティング]] — 同分野の近傍
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 同分野の近傍
 - [[mgmt-customer-journey|カスタマージャーニー]] — 同分野の近傍
 - [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — 同分野の近傍
 

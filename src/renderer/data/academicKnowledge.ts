@@ -20496,7 +20496,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'business-law',
     title: '内国民待遇原則（National Treatment）',
     statement:
-      'GATT第3条に規定される内外無差別原則で、輸入品に対し国内産品と同等の課税・規制上の待遇を義務付ける。最恵国待遇（MFN）と並ぶWTO多角的貿易体制の二大無差別原則であり、GATS・TRIPS・TRIMsにも拡張されている。',
+      'GATT第3条に規定される内外無差別原則で、輸入品に対し国内産品と同等の課税・規制上の待遇を義務付ける。最恵国待遇（MFN）と並ぶWTO多角的貿易体制の二大無差別原則であり、GATS・TRIPS・TRIMsにも拡張されている。' +
+      '国境で関税を払って入った後の「内側の差別」を封じる原則で、MFN（外国産品同士の無差別）と対で市場アクセスの約束を実効化する。適用の中心争点は「同種の産品（like products）」の判定で、Japan–Alcoholic Beverages (1996) の上級委員会は、焼酎とウォッカ等の類似性を物理的特性・最終用途・消費者の嗜好・関税分類から総合判断し、「直接競争・代替可能な産品」への異なる課税が国内生産保護として機能するかを問う分析枠組みを確立した。' +
+      '規制目的をどう扱うかが理論的対立軸で、目的を同種性判定に読み込む aims-and-effects 論は退けられ、正当な規制目的は GATT 20 条の一般例外（健康・環境等）で吟味する構造が判例法として定着した——環境規制・健康表示が保護主義と紛争になる EC–Asbestos などがその適用例である。' +
+      '投資協定では設立後の外国投資家への NT として現れ（ISDS の主要請求原因）、デジタル貿易ではデータ・ローカライゼーション要求が NT・GATS 約束違反かという新しい戦線が開いている。',
     keyFigures: 'GATT（1947 第3条での原則確立）／WTO上級委員会（Japan–Alcoholic Beverages 1996等での解釈発展）',
     asOf: '2026-06',
     sources: [
@@ -20606,7 +20609,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'information-sociology',
     title: 'プラットフォーム・アフォーダンス（Platform Affordances）',
     statement:
-      'デジタルプラットフォームの技術的設計が利用者に提供する行為可能性の概念。ギブソンの生態学的アフォーダンス論をソーシャルメディア研究に適用し、プラットフォームの機能・構造がユーザー行動を可能にし制約する関係性を分析する枠組み。',
+      'デジタルプラットフォームの技術的設計が利用者に提供する行為可能性の概念。ギブソンの生態学的アフォーダンス論をソーシャルメディア研究に適用し、プラットフォームの機能・構造がユーザー行動を可能にし制約する関係性を分析する枠組み。' +
+      'Bucher & Helmond (2018) は、アフォーダンスを機能の一覧（いいねボタンがある）ではなく関係概念として立て直した——同じ機能でも誰にとってのアフォーダンスかで異なり（エンドユーザー・広告主・開発者・研究者）、プラットフォームはユーザーに対してだけでなく API を通じて外部開発者・データ経済に対してもアフォードする、という多層性（platform-sensitive approach）が理論的貢献である。' +
+      '分析語彙としては、高次アフォーダンス（可視性・持続性・編集可能性・関連づけ: Treem & Leonardi）と低次の機能特徴を区別し、想像されたアフォーダンス（imagined affordance: ユーザーの期待とアルゴリズムの実際の乖離）や vernacular affordance（転用: ハッシュタグの運動的使用）が派生概念として使われる。' +
+      'いいね・シェア・匿名性・エフェメラリティ（消える投稿）が行動と規範に与える影響、アフォーダンスの変更（引用RTの仕様変更等）による統治、健康介入の設計（PMC 論文）など、機能追加を「設計による統治」として読む研究群の共通枠組みになっている。',
     keyFigures: 'タイナ・ブッシャー＆アンネ・ヘルモント（2018 プラットフォーム・アフォーダンスの体系化）',
     asOf: '2026-06',
     sources: [
@@ -24498,11 +24504,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'econ-dollar-hegemony-theory',
     discipline: 'economics',
     title: 'ドル覇権理論',
-    statement: 'Triffinのジレンマにより基軸通貨国は国内均衡と国際流動性供給の矛盾に直面する。Eichengreenはドルの基軸通貨地位が米国に「法外な特権」を付与すると論じ、石油ドル循環がこの構造を補強するとHudsonは指摘した。',
+    statement: 'Triffinのジレンマにより基軸通貨国は国内均衡と国際流動性供給の矛盾に直面する。Eichengreenはドルの基軸通貨地位が米国に「法外な特権」を付与すると論じ、石油ドル循環がこの構造を補強するとHudsonは指摘した。' +
+      'Triffin のジレンマは、金・ドル本位制下で世界が求めるドル流動性の供給（米国の経常赤字）が、ドルの金兌換への信認を掘り崩すという自己矛盾の指摘で、1971 年のニクソン・ショックを予言した形になった。変動相場制後もドルは決済・準備・建値通貨の圧倒的シェアを保ち、「法外な特権」（元はジスカール・デスタンの言葉）は、自国通貨で借り安全資産を売って高利回り資産を買う「世界の銀行家」としての収益と、危機時にむしろドルが買われる安全逃避の特権として再定式化された。' +
+      '特権には義務が伴い（危機時のスワップライン供給・最後の貸し手）、金融制裁の武器化（SWIFT 排除・準備凍結）は脱ドル化の誘因を強める——それでもネットワーク外部性と代替通貨の制度的未成熟（ユーロの財政統合欠如・人民元の資本規制）が現状維持を支える、というのが実証研究の大勢である。' +
+      'Hudson の『超帝国主義』は米国債への準備蓄積が米国の赤字を自動ファイナンスする構造を従属論的に描き、BRICS 決済構想・CBDC・地政学的分断（フラグメンテーション）下の準備多様化が現在の論点になっている。',
     keyFigures: 'Barry Eichengreen ／ Robert Triffin ／ Michael Hudson',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data', type: 'media', label: 'Eichengreen — Exorbitant Privilege and dollar hegemony overview' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780199747474.001.0001', type: 'academic', label: 'Eichengreen (2008) Globalizing Capital: A History of the International Monetary System — OUP' },
       { url: 'https://en.wikipedia.org/wiki/Triffin_dilemma', type: 'reference', label: 'Wikipedia: Triffin dilemma' },
       { url: 'https://en.wikipedia.org/wiki/Exorbitant_privilege', type: 'reference', label: 'Wikipedia: Exorbitant privilege' },
@@ -25378,7 +25386,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-career-construction-theory-savickas',
     discipline: 'management',
     title: 'キャリア構築理論（サビカス理論）',
-    statement: 'Savickasが提唱するキャリア構築理論は、Superのライフスパン理論を構成主義で拡張し、個人がナラティブを通じてアイデンティティを形成し職業人格・キャリア適応力・ライフテーマの三柱でキャリアを主体的に構築すると論じる。',
+    statement: 'Savickasが提唱するキャリア構築理論は、Superのライフスパン理論を構成主義で拡張し、個人がナラティブを通じてアイデンティティを形成し職業人格・キャリア適応力・ライフテーマの三柱でキャリアを主体的に構築すると論じる。' +
+      '三柱のうち理論の心臓部はキャリア・アダプタビリティで、関心（未来への志向）・統制（自分のキャリアへの責任）・好奇心（可能な自己の探索）・自信の 4C からなる自己制御資源として測定される（CAAS 尺度は 10 か国以上で妥当化）。職業人格は「何に向くか」（Holland 的マッチング）を、ライフテーマは「なぜ働くか」（人生の物語が仕事に与える意味）を扱い、マッチング理論と物語論を一つの実践体系に束ねた点が特徴である。' +
+      '実践はキャリア構築インタビュー（ロールモデル・好きな雑誌・幼少期の記憶などを尋ね、クライアント自身の物語からライフテーマを共同編集する）で、診断してマッチングする専門家からナラティブの共同編集者へとカウンセラーの役割を再定義した。' +
+      'Savickas ら (2009) のライフデザイン国際共同声明は、無境界・プロティアン化した労働市場では「安定した職業への一回きりの適合」が成立しないという診断からこの理論を 21 世紀の標準枠組みとして位置づけ、転職支援・大学キャリア教育・リストラ後の再構築支援に広く実装されている。',
     keyFigures: 'Mark L. Savickas ／ Donald E. Super ／ Jean Guichard',
     asOf: '2026-06',
     sources: [
@@ -26320,7 +26331,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-fiduciary-duty-standard',
     discipline: 'business-law',
     title: '信認義務基準（取締役の善管注意義務と忠実義務）',
-    statement: '取締役・受任者が受益者の最善の利益のために行動することを求める法原則。Eisenbergが注意義務・忠実義務・経営判断原則の三層構造を整理し、Smith v. Van Gorkom（1985年）により重過失基準が確立された。',
+    statement: '取締役・受任者が受益者の最善の利益のために行動することを求める法原則。Eisenbergが注意義務・忠実義務・経営判断原則の三層構造を整理し、Smith v. Van Gorkom（1985年）により重過失基準が確立された。' +
+      '中核は二つの義務で、注意義務（duty of care: 十分な情報に基づく誠実な判断）は経営判断原則が違反認定の閾値を重過失まで引き上げて保護し、忠実義務（duty of loyalty: 利益相反の禁止）には経営判断原則の保護が及ばず、自己取引は「完全な公正」（entire fairness: 公正な手続と公正な価格）の審査に服する——どちらの義務の問題かで審査基準が切り替わるのが実務の入口である。' +
+      'Van Gorkom は 2 時間の審議で会社売却を承認した取締役会に重過失を認めて注意義務違反の賠償を命じ、D&O 保険危機を招いてデラウェア州 102 条(b)(7)（注意義務違反の金銭責任の定款免除）の立法を生んだ。以後、金銭責任の主戦場は免除できない忠実義務・誠実義務（good faith: Disney 事件・Caremark 型の監視義務）へ移った。' +
+      'Eisenberg の行為規範と審査基準の乖離論（規範としては高く要求し、審査では緩く裁く）と、Easterbrook & Fischel の契約主義（信認義務は当事者が書き切れない契約の補充既定）という理論的対立軸が、義務の強行法規性・免除条項の許容範囲という立法論を今も規定している。',
     keyFigures: 'Melvin A. Eisenberg ／ Frank H. Easterbrook ／ Daniel R. Fischel',
     asOf: '2026-06',
     sources: [

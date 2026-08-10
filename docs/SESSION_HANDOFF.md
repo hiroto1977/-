@@ -471,6 +471,10 @@ JoM の prefix）— 接尾辞照合してから直すこと。ほかに `mgmt-s
 10.5465/amr.2005.16387885（WSO 2005 は Organization Science 16(4) の論文なのに AMR の DOI/表記）と、
 同エントリの springer s10551-011-0888-6（Maitlis & Christianson 2014 AOM Annals と称するが
 s10551 は Journal of Business Ethics・年も 2011）も同様に未確定。
+`econ-dollar-hegemony-theory` の acprof:oso/9780199747474（ラベルは「Globalizing Capital — OUP」
+だが同書は Princeton 刊。OUP の別書（Exorbitant Privilege?）の可能性）も実体未確定。
+同エントリの FA 誤出典（URL 実体は Rise of Big Data — datafication 側の正ラベルで二重付証）は
+除去済み。
 
 ### ⚖️ 刑名の表記ゆれ — 懲役 / 拘禁刑
 刑法等の一部を改正する法律により **懲役・禁錮は拘禁刑に一本化**された（2025年6月1日施行）。

@@ -40,7 +40,6 @@ aliases:
 - [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
-- [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

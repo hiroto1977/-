@@ -36,7 +36,6 @@ aliases:
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 同じ思想家
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 同じ思想家
 - [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同じ思想家
-- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 同分野の近傍
 - [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同分野の近傍
 - [[bizlaw-provider-liability|プロバイダ責任制限法]] — 同分野の近傍
 

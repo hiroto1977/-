@@ -39,6 +39,7 @@ aliases:
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — 同じ思想家
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同分野の近傍
 - [[econ-duverger-law|デュヴェルジェの法則]] — 同分野の近傍
+- [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

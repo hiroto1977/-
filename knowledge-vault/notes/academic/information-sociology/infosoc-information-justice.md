@@ -34,7 +34,7 @@ Alistair S. Duff／Safiya Umoja Noble／Virginia Eubanks／Tressie McMillan Cott
 - [[infosoc-digital-redlining|デジタル・レッドライニング（Digital Redlining）]] — 同じ思想家
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 出典を共有
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同分野の近傍
-- [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — 同分野の近傍
+- [[infosoc-citizen-journalism-participatory-media|市民ジャーナリズムと参加型メディア——ウェブ2.0が変えた報道の担い手と情報権力の分散]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

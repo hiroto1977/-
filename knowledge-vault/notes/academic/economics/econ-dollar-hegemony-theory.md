@@ -5,7 +5,7 @@ category: "economics"
 category_ja: "経済学"
 title: "ドル覇権理論"
 as_of: "2026-06"
-source_count: 4
+source_count: 3
 authoritative: true
 tags:
   - collection/academic
@@ -17,27 +17,22 @@ aliases:
 
 # ドル覇権理論
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-Triffinのジレンマにより基軸通貨国は国内均衡と国際流動性供給の矛盾に直面する。Eichengreenはドルの基軸通貨地位が米国に「法外な特権」を付与すると論じ、石油ドル循環がこの構造を補強するとHudsonは指摘した。
+Triffinのジレンマにより基軸通貨国は国内均衡と国際流動性供給の矛盾に直面する。Eichengreenはドルの基軸通貨地位が米国に「法外な特権」を付与すると論じ、石油ドル循環がこの構造を補強するとHudsonは指摘した。Triffin のジレンマは、金・ドル本位制下で世界が求めるドル流動性の供給（米国の経常赤字）が、ドルの金兌換への信認を掘り崩すという自己矛盾の指摘で、1971 年のニクソン・ショックを予言した形になった。変動相場制後もドルは決済・準備・建値通貨の圧倒的シェアを保ち、「法外な特権」（元はジスカール・デスタンの言葉）は、自国通貨で借り安全資産を売って高利回り資産を買う「世界の銀行家」としての収益と、危機時にむしろドルが買われる安全逃避の特権として再定式化された。特権には義務が伴い（危機時のスワップライン供給・最後の貸し手）、金融制裁の武器化（SWIFT 排除・準備凍結）は脱ドル化の誘因を強める——それでもネットワーク外部性と代替通貨の制度的未成熟（ユーロの財政統合欠如・人民元の資本規制）が現状維持を支える、というのが実証研究の大勢である。Hudson の『超帝国主義』は米国債への準備蓄積が米国の赤字を自動ファイナンスする構造を従属論的に描き、BRICS 決済構想・CBDC・地政学的分断（フラグメンテーション）下の準備多様化が現在の論点になっている。
 
 ## 提唱者・初出
 Barry Eichengreen ／ Robert Triffin ／ Michael Hudson
 
 ## 出典
-- [Eichengreen — Exorbitant Privilege and dollar hegemony overview](https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data) `メディア`
 - [Eichengreen (2008) Globalizing Capital: A History of the International Monetary System — OUP](https://doi.org/10.1093/acprof:oso/9780199747474.001.0001) `学術`
 - [Wikipedia: Triffin dilemma](https://en.wikipedia.org/wiki/Triffin_dilemma) `リファレンス`
 - [Wikipedia: Exorbitant privilege](https://en.wikipedia.org/wiki/Exorbitant_privilege) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — 出典を共有
-- [[eh-1950|1950年（昭和25年）]] — 出典を共有
-- [[eh-1951|1951年（昭和26年）]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
-- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 同分野の近傍
-- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

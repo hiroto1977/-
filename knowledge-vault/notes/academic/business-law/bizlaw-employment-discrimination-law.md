@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-preemption-doctrine-federal|連邦優先権原則（プリエンプション・ドクトリン）]] — 同じ思想家
 - [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 出典を共有
-- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 同分野の近傍
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
 
 ## 関連

@@ -32,12 +32,12 @@ aliases:
 - [Van den Bossche & Zdouc 2021 The Law and Policy of the World Trade Organization (4th ed.)](https://www.cambridge.org/core/books/law-and-policy-of-the-world-trade-organization/E52A862D68B07E34E57F13EB764A30B1) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 語彙が近い
 - [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 語彙が近い
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 出典を共有
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 出典を共有
 - [[eh-1955|1955年（昭和30年）]] — 出典を共有
 - [[eh-1995|1995年（平成7年）]] — 出典を共有
+- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 出典を共有
 - [[eh-1947|1947年（昭和22年）]] — 出典を共有
 - [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 同分野の近傍

@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同分野の近傍
 - [[infosoc-web3|Web3]] — 同分野の近傍
-- [[infosoc-network-externality|ネットワーク外部性]] — 同分野の近傍
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

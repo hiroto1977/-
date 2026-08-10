@@ -31,7 +31,6 @@ aliases:
 - [Kydland, F.E. & Prescott, E.C. (1977) Rules Rather Than Discretion — JPE 85(3)](https://doi.org/10.1086/260580) `学術`
 
 ## 関連概念
-- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 語彙が近い
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
 - [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
 - [[econ-nominal-anchor-inflation-targeting|インフレ目標政策（ノミナル・アンカー）]] — 同じ思想家
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同じ思想家
+- [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

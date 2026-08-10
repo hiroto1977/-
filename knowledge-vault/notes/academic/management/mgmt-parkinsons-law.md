@@ -32,7 +32,7 @@ C・ノースコート・パーキンソン（C. Northcote Parkinson, 1909–199
 ## 関連概念
 - [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 語彙が近い
 - [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同分野の近傍
-- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

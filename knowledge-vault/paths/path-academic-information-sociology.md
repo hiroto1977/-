@@ -21,11 +21,11 @@ tags:
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 24）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 23）
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]]（接続 23）
-- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 23）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 22）
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
-- [[infosoc-datafication|データ化（データ化現象）]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
+- [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]]（接続 20）
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]]（接続 20）
 

@@ -33,8 +33,8 @@ Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O'Neil ／ Frank P
 - [Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.](https://doi.org/10.1145/2702123.2702556) `学術`
 
 ## 関連概念
-- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 語彙が近い
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 語彙が近い
+- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 語彙が近い
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
