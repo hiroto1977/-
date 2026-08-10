@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同分野の近傍
-- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

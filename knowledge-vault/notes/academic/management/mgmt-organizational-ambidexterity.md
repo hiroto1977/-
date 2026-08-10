@@ -34,9 +34,9 @@ aliases:
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 語彙が近い
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 語彙が近い
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 語彙が近い
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家

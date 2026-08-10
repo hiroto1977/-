@@ -35,8 +35,8 @@ aliases:
 - [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同じ思想家
+- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

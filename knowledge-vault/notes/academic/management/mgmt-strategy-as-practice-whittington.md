@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 同じ思想家
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同分野の近傍
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — 同分野の近傍
-- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

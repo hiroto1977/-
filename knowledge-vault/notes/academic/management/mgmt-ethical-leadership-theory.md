@@ -32,8 +32,8 @@ Michael E. Brown ／ Linda K. Treviño ／ David A. Harrison
 - [Treviño, Hartman & Brown (2000) Moral Person — CMR](https://journals.sagepub.com/doi/10.2307/41166057) `学術`
 
 ## 関連概念
-- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同分野の近傍
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

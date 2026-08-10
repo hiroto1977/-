@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 同分野の近傍
 - [[infosoc-information-cascade|情報カスケード]] — 同分野の近傍
 - [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同分野の近傍
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

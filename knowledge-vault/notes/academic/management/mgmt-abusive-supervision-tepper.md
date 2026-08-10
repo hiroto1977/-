@@ -33,8 +33,8 @@ aliases:
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同じ思想家
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同じ思想家
-- [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同分野の近傍
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同分野の近傍
+- [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

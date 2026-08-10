@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
-- [[mgmt-ringi|稟議制]] — 同分野の近傍
+- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

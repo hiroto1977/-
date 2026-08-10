@@ -33,6 +33,7 @@ Michael M. Lombardo ／ Robert W. Eichinger ／ W. Warner Burke
 
 ## 関連概念
 - [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
+- [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 同分野の近傍
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
 
 ## 関連

@@ -36,8 +36,8 @@ aliases:
 - [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同じ思想家
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — 同じ思想家
 - [[mgmt-organizational-citizenship-organ|組織市民行動——報酬制度に明示されない自発的貢献が組織を機能させる]] — 同じ思想家
-- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同分野の近傍
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
 
 ## 関連

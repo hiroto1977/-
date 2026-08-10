@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 語彙が近い
 - [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 語彙が近い
-- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 語彙が近い
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家

@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
 - [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
 - [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
-- [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 同分野の近傍
 - [[mgmt-conways-law|コンウェイの法則（組織構造とシステム設計の同型性）]] — 同分野の近傍
 
 ## 関連

@@ -40,7 +40,6 @@ Donald C. Hambrick ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同分野の近傍
-- [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 同じ思想家
 - [[econ-diminishing-returns|収穫逓減の法則（限界生産力逓減）]] — 同分野の近傍
-- [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — 同分野の近傍
+- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

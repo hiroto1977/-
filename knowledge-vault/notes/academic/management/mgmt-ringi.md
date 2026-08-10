@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同分野の近傍
-- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
 - [[mgmt-johari-window|ジョハリの窓]] — 同分野の近傍
 
 ## 関連
