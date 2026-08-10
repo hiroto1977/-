@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 出典を共有
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 

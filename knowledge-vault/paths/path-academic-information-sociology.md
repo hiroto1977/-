@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 616
+entry_count: 612
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（616件）
+# 学習パス — 学術概念／情報社会学（612件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -369,7 +369,6 @@ tags:
 - [[infosoc-deepfake-synthetic-media-ethics|ディープフェイクと合成メディア倫理——生成AI時代の真正性の危機と規制の展望]]
 - [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]]
 - [[infosoc-deliberative-democracy|熟議民主主義]]
-- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]]
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]]
 - [[infosoc-digital-citizenship|デジタル・シティズンシップ]]
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]]
@@ -413,11 +412,8 @@ tags:
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]]
 - [[infosoc-epistemic-bubbles-echo-chambers|認識論的バブルとエコーチェンバー]]
 - [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]]
-- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]]
 - [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]]
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]]
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]]
-- [[infosoc-filter-bubble-theory|フィルターバブル理論]]
 - [[infosoc-fourth-estate|第四の権力]]
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]]
 - [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]]

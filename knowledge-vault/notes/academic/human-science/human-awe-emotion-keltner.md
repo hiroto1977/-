@@ -36,7 +36,6 @@ aliases:
 - [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 同じ思想家
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
 - [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
-- [[infosoc-filter-bubble-theory|フィルターバブル理論]] — 出典を共有
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 同分野の近傍

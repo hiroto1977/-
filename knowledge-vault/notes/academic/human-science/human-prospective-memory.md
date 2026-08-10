@@ -34,6 +34,7 @@ aliases:
 - [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同分野の近傍
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同分野の近傍
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 同分野の近傍
+- [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同分野の近傍
 
 ## 関連

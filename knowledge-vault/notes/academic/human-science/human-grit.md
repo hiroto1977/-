@@ -32,6 +32,7 @@ Angela Duckworth（提唱者・グリット概念とGrit Scaleの開発者）／
 
 ## 関連概念
 - [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同分野の近傍
+- [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同分野の近傍
 - [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 同分野の近傍
 
 ## 関連

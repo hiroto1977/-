@@ -40,7 +40,7 @@ Antoinette Rouvroy ／ Thomas Berns ／ Tarleton Gillespie ／ Frank Pasquale �
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 出典を共有
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "amazon.com"
 type: source-domain
 host: "amazon.com"
-cite_count: 6
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # amazon.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（リファレンス 6）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（リファレンス 5）
 
 ## このドメインを出典とする項目
 
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — Leijonhufvud(1981)InformationandCoordination—OxfordUniversityPress
-- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — Fricker(2007)EpistemicInjustice:PowerandtheEthicsofKnowing—OxfordUniv…
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — Shapiro&Varian,InformationRules(HarvardBusinessSchoolPress,1998)書誌
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — Varoufakis,Y.(2023).Technofeudalism:WhatKilledCapitalism.BodleyHead.
 - [[mgmt-collective-genius|集合的天才（Collective Genius）]] — CollectiveGenius—Amazon

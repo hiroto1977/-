@@ -31,7 +31,6 @@ Frank M. Bass（提唱者, 1969年） ／ Management Science 15(5):215-227（初
 - [INFORMS, Biographical Profile: Frank M. Bass (1926–2006) — 1969年論文を Management Science 50年史の最重要論文10件に選出（2004年）](https://www.informs.org/Explore/History-of-O.R.-Excellence/Biographical-Profiles/Bass-Frank-M) `リファレンス`
 
 ## 関連概念
-- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — 同じ思想家
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 

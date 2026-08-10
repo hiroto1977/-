@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
-- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
 - [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+- [[human-garcia-taste-aversion|ガルシア効果（味覚嫌悪学習）——学習の生物学的制約]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

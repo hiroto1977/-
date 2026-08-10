@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 出典を共有
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 
 ## 関連

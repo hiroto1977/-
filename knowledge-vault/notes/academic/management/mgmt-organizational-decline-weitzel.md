@@ -32,10 +32,10 @@ aliases:
 
 ## 関連概念
 - [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]] — 同じ思想家
-- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 同じ思想家
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 同じ思想家
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
 

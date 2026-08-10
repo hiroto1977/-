@@ -394,11 +394,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       'フィルターバブル（filter bubble）は活動家イーライ・パリサーが2011年の著書『The Filter Bubble』で提唱・普及させた概念で、検索エンジンやSNSのパーソナライズ・アルゴリズムが利用者の履歴等に基づき各人に好みに合う情報を選択的に提示し、結果として異なる視点から知的に隔離される現象を指す。' +
       'エコーチェンバー（echo chamber、起点はカス・サンスティーン2001年頃の議論）は、同質な意見が閉じた集団内で反響・反復され外部からの反証から遮断されて既存の信念が増幅・強化される環境を指す。フィルターバブルがアルゴリズム由来の選択的曝露であるのに対し、エコーチェンバーは集団内のコミュニケーションによる反響増幅であり外部の意見を能動的に排除・不信視する点で区別される。両者は世論の分極化や誤情報拡散との関連で論じられるが、実証研究では効果の大きさや存在範囲について証拠が一致しておらず（フィルターバブル仮説への支持は限定的との指摘あり）、評価は依然として議論が分かれている。',
-    keyFigures: 'イーライ・パリサー（2011 フィルターバブル提唱）／カス・サンスティーン（2001 エコーチェンバー概念の起点）',
+    keyFigures: 'イーライ・パリサー（2011 フィルターバブル提唱）／カス・サンスティーン（2001 エコーチェンバー概念の起点）／セス・フラックスマン（2016 実証）／C・ティ・グエン（エコーチェンバーと認識的バブルの哲学的区別）',
     asOf: '2026-06',
     sources: [
       { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'academic', label: 'Reuters Institute（Oxford）— Echo chambers, filter bubbles, and polarisation: a literature review' },
       { url: 'https://en.wikipedia.org/wiki/Filter_bubble', type: 'reference', label: 'Wikipedia — Filter bubble' },
+      { url: 'https://academic.oup.com/poq/article/80/S1/298/2223402', type: 'academic', label: 'Flaxman, Goel & Rao (2016) Filter Bubbles, Echo Chambers, and Online News Consumption — Public Opinion Quarterly 80(S1)' },
+      { url: 'https://policyreview.info/concepts/filter-bubble', type: 'academic', label: 'Internet Policy Review — Filter bubble（概念定義）' },
       { url: 'https://en.wikipedia.org/wiki/Echo_chamber_(media)', type: 'reference', label: 'Wikipedia — Echo chamber (media)' },
     ],
   },
@@ -4689,8 +4691,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'イノベーションの普及理論（ロジャーズ）',
     statement:
       '新しいアイデア・技術・製品（イノベーション）が、社会システムの成員の間に、コミュニケーション・チャネルを通じて時間とともに伝播・採用されていく過程を説明する理論。エベレット・ロジャーズが1962年の著書『Diffusion of Innovations』で体系化した。採用の早さによって採用者を、イノベーター（革新者、約2.5%）、アーリーアダプター（初期採用者、約13.5%）、アーリーマジョリティ（前期多数派、約34%）、レイトマジョリティ（後期多数派、約34%）、ラガード（遅滞者、約16%）の5カテゴリーに分類する（割合は正規分布＝ベル型曲線の標準偏差区分に基づく）。' +
-      '累積採用率は時間とともにS字曲線を描く。普及速度を左右するイノベーションの属性として、相対的優位性・適合性・複雑性・試行可能性・観察可能性の5つを挙げ、オピニオンリーダー（アーリーアダプターが担う）の役割を重視する。ジェフリー・ムーアの「キャズム」はこの理論を基にした派生概念である。',
-    keyFigures: 'エベレット・M・ロジャーズ（Everett M. Rogers, 提唱者）／初出『Diffusion of Innovations』(1962年)／5採用者カテゴリー・S字曲線・5つの普及属性',
+      '累積採用率は時間とともにS字曲線を描く。普及速度を左右するイノベーションの属性として、相対的優位性・適合性・複雑性・試行可能性・観察可能性の5つを挙げ、オピニオンリーダー（アーリーアダプターが担う）の役割を重視する。ジェフリー・ムーアの「キャズム」やフランク・バスの普及モデル（Bass model）はこの理論を基にした派生・数理化である。デジタル環境では SNS のバイラル拡散やプラットフォームのネットワーク効果が普及の速度と形状を変えることが論じられている。',
+    keyFigures: 'エベレット・M・ロジャーズ（Everett M. Rogers, 提唱者）／初出『Diffusion of Innovations』(1962年)／ジェフリー・ムーア（キャズム）／フランク・M・バス（Bass model）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/topic/diffusion-of-innovations', type: 'reference', label: 'Encyclopaedia Britannica「Diffusion of innovations」' },
@@ -14818,8 +14820,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'management',
     title: '感情知性（EQ）',
     statement:
-      '感情知性（EI／EQ）とは、自他の感情を知覚・識別し、その情報を思考や行動の指針として用いる能力を指す。ピーター・サロベイとジョン・メイヤーが1990年の論文で学術概念として定義し、のちに感情の知覚・利用・理解・調整という4枝からなる能力モデルへ発展させた。' +
-      'ダニエル・ゴールマンは1995年の著書『EQ こころの知能指数』で、自己認識・自己制御・動機づけ・共感・社会的スキルという枠組み（混合モデル）を示し、ビジネスや教育の文脈で広く普及させた。リーダーシップや職務成果との関連が論じられる一方、自己報告式と能力テストの測定法の差、予測妥当性、混合モデルの構成概念をめぐる学術的論争も続いている。',
+      '職場における感情知性（EI／EQ）の応用論。概念の学術的定義と能力モデルの詳細は情動知能（human-emotional-intelligence）に譲り、本項は経営・組織文脈での展開を扱う。' +
+      'ダニエル・ゴールマンは1995年の著書『EQ こころの知能指数』と HBR 論文で、自己認識・自己制御・動機づけ・共感・社会的スキルの枠組み（混合モデル）を管理職の要件として提示し、さらにビジョン型・コーチ型・関係重視型・民主型・ペースセッター型・強制型の6つのリーダーシップ・スタイルを感情知性の発現形として整理した。' +
+      '実務では採用・昇進アセスメント、管理職研修、360度フィードバックに組み込まれる一方、効果を示すメタ分析は職務成果との相関が中程度にとどまることも示しており、選抜への単独使用には慎重論がある。自己報告式（EQ-i 等）と能力テスト（MSCEIT）の測定法の差、予測妥当性、混合モデルの構成概念をめぐる学術的論争は経営実務への導入判断にも直結する。',
     keyFigures: 'サロベイ&メイヤー（1990）／ダニエル・ゴールマン（1995）',
     asOf: '2026-06',
     sources: [
@@ -15577,11 +15580,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: '道徳的離脱（モラル・ディスエンゲージメント）',
     statement:
       '道徳的離脱とは、バンデューラが社会的認知理論の枠組みで提唱した、人が自らの道徳基準から選択的に離脱し有害行為を正当化する8つの認知メカニズムの総称である。道徳的正当化・婉曲的命名・有利な比較・責任の転嫁・責任の分散・結果の無視や歪曲・非人間化・被害者への帰責の8機構が、行為・行為者・結果・被害者の各段階で道徳的自己制御を不活性化させる。' +
-      '1999年のPersonality and Social Psychology Review論文で体系的に整理され、2016年の著書『Moral Disengagement』で集大成された。企業不正・戦争犯罪・いじめ等の説明に広く応用されている。',
+      '1999年のPersonality and Social Psychology Review論文で体系的に整理され、2016年の著書『Moral Disengagement』で集大成された。企業不正・戦争犯罪・いじめ等の説明に広く応用されている。組織環境では集合的レベルの道徳的離脱が観察され、制度的規範や組織文化が個人の離脱を促進も抑制もする文脈として機能するため、倫理教育と組織設計の双方が予防論の柱になる。',
     keyFigures: 'アルバート・バンデューラ（Albert Bandura, 1925–2021）',
     asOf: '2026-06',
     sources: [
       { url: 'https://journals.sagepub.com/doi/10.1207/s15327957pspr0303_3', type: 'academic', label: 'Bandura (1999) "Moral Disengagement in the Perpetration of Inhumanities," Personality and Social Psychology Review 3(3): 193-209' },
+      { url: 'https://en.wikipedia.org/wiki/Moral_disengagement', type: 'reference', label: 'Wikipedia: Moral disengagement — 8機構の概説' },
       { url: 'https://albertbandura.com/albert-bandura-moral-disengagement.html', type: 'reference', label: 'Albert Bandura Official Site — Moral Disengagement（著作・論文一覧）' },
     ],
   },
@@ -17622,10 +17626,11 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '認識的不正義（epistemic injustice）とは、知識の伝達・共有・解釈の過程において、話し手の社会的アイデンティティに対する偏見が原因で認識主体としての能力が不当に貶められる構造的な不正義を指す。ミランダ・フリッカーが2007年の著書『Epistemic Injustice: Power and the Ethics of Knowing』（Oxford University Press）で体系化し、2類型を提示した。「証言的不正義（testimonial injustice）」は、人種・性別・階層等への偏見により聞き手が話し手の証言に不当に低い信頼性を付与する現象であり、「解釈的不正義（hermeneutical injustice）」は、社会の集合的解釈資源に構造的な空白があるため、被抑圧者が自身の経験を適切に意味づけ・伝達できない状態を指す。' +
       '情報社会論の文脈では、アルゴリズムによるプロファイリング・コンテンツモデレーション・生成AIが認識的不正義を再生産・増幅する回路として注目される。検索エンジンの表示順位やSNSの可視性アルゴリズムが特定の集団の声を構造的に周縁化する「アルゴリズム的証言的不正義」、またAI学習データの偏りがマイノリティの経験概念を欠落させる「アルゴリズム的解釈的不正義」が論じられている。ホセ・メディナは『The Epistemology of Resistance』（2013, Oxford University Press）で抵抗的想像力による是正を論じ、フリッカーの枠組みを社会的抑圧の交差性へ拡張した。',
-    keyFigures: 'ミランダ・フリッカー（Miranda Fricker、2007年『Epistemic Injustice: Power and the Ethics of Knowing』Oxford University Press、証言的不正義・解釈的不正義の2類型を体系化）／ホセ・メディナ（José Medina、2013年『The Epistemology of Resistance』Oxford University Press、抵抗的認識論・交差性への拡張）',
+    keyFigures: 'ミランダ・フリッカー（Miranda Fricker、2007年『Epistemic Injustice: Power and the Ethics of Knowing』Oxford University Press、証言的不正義・解釈的不正義の2類型を体系化）／ホセ・メディナ（José Medina、2013年『The Epistemology of Resistance』Oxford University Press、抵抗的認識論・交差性への拡張）／サフィヤ・ノーブル（検索アルゴリズムの抑圧）／シルヴィア・ミラノ（アルゴリズム的解釈的不正義）',
     asOf: '2026-06',
     sources: [
       { url: 'https://academic.oup.com/book/32817', type: 'academic', label: 'Fricker (2007) "Epistemic Injustice: Power and the Ethics of Knowing," Oxford University Press（認識的不正義の原典）' },
+      { url: 'https://link.springer.com/article/10.1007/s11098-023-02095-2', type: 'academic', label: 'Milano & Prunkl (2024) Algorithmic profiling as a source of hermeneutical injustice — Philosophical Studies' },
       { url: 'https://iep.utm.edu/epistemic-injustice/', type: 'reference', label: 'Internet Encyclopedia of Philosophy — Epistemic Injustice（概念の定義・類型・批判・発展の包括的解説）' },
     ],
   },
@@ -24607,20 +24612,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-filter-bubble-theory',
-    discipline: 'information-sociology',
-    title: 'フィルターバブル理論',
-    statement: 'Pariser（2011）が提唱。アルゴリズム的パーソナライゼーションによりユーザーが確証的情報のみに囲まれた孤立環境に閉じ込められる。Sunsteinのエコーチェンバー論と関連し、Flaxmanらの実証研究では効果規模をめぐる議論が継続。',
-    keyFigures: 'Eli Pariser ／ Cass Sunstein ／ Seth Flaxman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'reference', label: 'Pariser, The Filter Bubble: What the Internet Is Hiding from You (Penguin, 2011)' },
-      { url: 'https://academic.oup.com/poq/article/80/S1/298/2223402', type: 'academic', label: 'Flaxman, Goel & Rao, "Filter Bubbles, Echo Chambers, and Online News Consumption," POQ 80(S1), 2016' },
-      { url: 'https://press.princeton.edu/books/hardcover/9780691175423/republic', type: 'academic', label: 'Sunstein, #Republic: Divided Democracy in the Age of Social Media (Princeton UP, 2017)' },
-      { url: 'https://www.ted.com/talks/eli_pariser_beware_online_filter_bubbles', type: 'media', label: 'Pariser, "Beware online filter bubbles" — TED Talk (2011)' },
-    ],
-  },
-  {
     id: 'econ-endowment-effect-loss-aversion',
     discipline: 'economics',
     title: '保有効果と損失回避',
@@ -24867,20 +24858,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.researchgate.net/publication/228208956_Beyond_Chafee_A_Process-Based_Theory_of_Unclean_Hands', type: 'academic', label: 'Beyond Chafee: A Process-Based Theory of Unclean Hands' },
       { url: 'https://www.loc.gov/item/usrep324806/', type: 'government', label: 'U.S. Reports: Precision Instrument Mfg. Co. v. Automotive Maintenance Machinery Co., 324 U.S. 806 (1945) — Library of Congress' },
       { url: 'https://www.loc.gov/item/usrep290240/', type: 'government', label: 'U.S. Reports: Keystone Driller Co. v. General Excavator Co., 290 U.S. 240 (1933) — Library of Congress' },
-    ],
-  },
-  {
-    id: 'infosoc-diffusion-of-innovations-digital',
-    discipline: 'information-sociology',
-    title: 'イノベーション普及理論（デジタル拡張）',
-    statement: 'Rogersが1962年に提唱した理論で、革新が採用者5類型を経てS字曲線で社会に拡散するモデルを示す。デジタル時代にはSNSのバイラル拡散やプラットフォームのネットワーク効果が普及速度を加速させている。',
-    keyFigures: 'Everett M. Rogers ／ Geoffrey A. Moore ／ Frank M. Bass',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.4324/9781315262741', type: 'academic', label: 'Rogers, Diffusion of Innovations 第5版 (2003, Routledge)' },
-      { url: 'https://en.wikipedia.org/wiki/Diffusion_of_innovations', type: 'reference', label: 'Wikipedia — Diffusion of innovations' },
-      { url: 'https://www.researchgate.net/publication/235250288_Can_You_See_the_Chasm_Innovation_Diffusion_According_to_Rogers_Bass_and_Moore', type: 'academic', label: 'Rogers / Bass / Moore の普及理論比較' },
-      { url: 'https://hbr.org/2002/08/crossing-the-chasm-in-the-digital-age', type: 'media', label: 'HBR — デジタル時代のイノベーション普及とキャズム' },
     ],
   },
   {
@@ -25395,20 +25372,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.1007/s10869-016-9444-y', type: 'academic', label: 'Motivational Mechanisms of Self-Concordance Theory — Journal of Business and Psychology' },
       { url: 'https://psycnet.apa.org/record/2003-10805-002', type: 'academic', label: 'Bono & Judge (2003) Self-Concordance at Work: Toward Understanding the Motivational Effects of Transformational Leaders — Academy of Management Journal 46(5), 554-571（APA PsycNet）' },
       { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2024.1382345/full', type: 'academic', label: 'Establishing self-concordant goals: a longitudinal study on the influence of ego identity on goal self-concordance — Frontiers in Psychology (2024)' },
-    ],
-  },
-  {
-    id: 'infosoc-epistemic-injustice-digital',
-    discipline: 'information-sociology',
-    title: 'デジタル認識的不正義論',
-    statement: 'Frickerの認識的不正義（証言的・解釈的不正義）をデジタル環境に拡張し、アルゴリズムの推薦・モデレーションが周縁化された知り手の認識的信頼性を組織的に毀損する構造を批判的に分析する理論。',
-    keyFigures: 'Miranda Fricker ／ Safiya Umoja Noble ／ Silvia Milano',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.amazon.com/Epistemic-Injustice-Power-Ethics-Knowing/dp/0199570523', type: 'reference', label: 'Fricker (2007) Epistemic Injustice: Power and the Ethics of Knowing — Oxford University Press' },
-      { url: 'https://link.springer.com/article/10.1007/s11098-023-02095-2', type: 'academic', label: 'Milano & Prunkl (2024) Algorithmic profiling as a source of hermeneutical injustice — Philosophical Studies' },
-      { url: 'https://www.tandfonline.com/doi/full/10.1080/02691728.2025.2585445', type: 'academic', label: 'Kwok (2025) Epistemic Dispossession in Platform Capitalism — Social Epistemology' },
-      { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'reference', label: 'Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism — NYU Press' },
     ],
   },
   {
@@ -26239,20 +26202,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/1534484315603612', type: 'academic', label: 'Mercurio (2015) — affective commitment as core essence, Human Resource Development Review' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_commitment', type: 'reference', label: 'Wikipedia — organizational commitment' },
       { url: 'https://onlinelibrary.wiley.com/doi/10.1002/job.2081', type: 'academic', label: 'Kim (2016) — POS moderates affective commitment, J. of Organizational Behavior' },
-    ],
-  },
-  {
-    id: 'infosoc-filter-bubble-pariser',
-    discipline: 'information-sociology',
-    title: 'フィルターバブル（情報の個人化と知的孤立）',
-    statement: 'Pariserが2011年に提唱した概念。パーソナライゼーションアルゴリズムが各ユーザー固有の情報圏を形成し、多様な視点への接触を阻害することで、政治的分極化やエコーチェンバーを招くとされる。Sunsteinも民主主義への影響を警告。',
-    keyFigures: 'Eli Pariser ／ Cass R. Sunstein ／ C. Thi Nguyen',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Filter_bubble', type: 'reference', label: 'Wikipedia — Filter bubble' },
-      { url: 'https://policyreview.info/concepts/filter-bubble', type: 'academic', label: 'Internet Policy Review — Filter bubble concept definition' },
-      { url: 'https://www.ted.com/talks/eli_pariser_beware_online_filter_bubbles', type: 'media', label: 'TED Talk — Eli Pariser "Beware online filter bubbles" (2011)' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8923337/', type: 'academic', label: 'PMC — Through the Newsfeed Glass: Rethinking Filter Bubbles and Echo Chambers' },
     ],
   },
   {
@@ -27221,19 +27170,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.rand.org/pubs/papers/P295.html', type: 'academic', label: 'Shapley 1953 — A Value for n-Person Games, RAND Corporation / Annals of Mathematics Studies 28' },
       { url: 'https://doi.org/10.2307/1907266', type: 'academic', label: 'Nash 1950 — The Bargaining Problem, Econometrica 18(2):155-162' },
       { url: 'https://press.princeton.edu/books/paperback/9780691130613/theory-of-games-and-economic-behavior', type: 'reference', label: 'von Neumann & Morgenstern 1944 — Theory of Games and Economic Behavior, Princeton University Press' },
-    ],
-  },
-  {
-    id: 'human-positive-organizational-behavior',
-    discipline: 'human-science',
-    title: 'ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践',
-    statement: 'ポジティブ組織行動（POB）は、フレッド・ルーサンスが2002年に提唱した概念で、測定・開発・管理可能なポジティブな人的資源の強みを研究対象とする。中核構成概念である心理的資本（PsyCap）は、自己効力感・希望・楽観性・レジリエンスの4要素から成り、組織パフォーマンス向上に寄与することが実証されている。キム・キャメロンによるポジティブ組織研究（POS）とともに、ポジティブ心理学の組織応用として注目される。',
-    keyFigures: 'フレッド・ルーサンス ／ キム・キャメロン ／ マーティン・セリグマン',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://doi.org/10.1002/job.165', type: 'academic', label: 'Luthans 2002 — The need for and meaning of positive organizational behavior, Journal of Organizational Behavior 23(6):695-706' },
-      { url: 'https://doi.org/10.1093/acprof:oso/9780195187526.001.0001', type: 'academic', label: 'Luthans, Youssef & Avolio 2007 — Psychological Capital: Developing the Human Competitive Edge, Oxford University Press' },
-      { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Seligman & Csikszentmihalyi 2000 — Positive psychology: An introduction, American Psychologist 55(1):5-14' },
     ],
   },
   {
@@ -46670,18 +46606,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-moral-disengagement-bandura',
-    discipline: 'human-science',
-    title: '道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）',
-    statement: '道徳的離脱（moral disengagement）とは、アルバート・バンデューラが社会認知理論の枠組みで提唱した概念で、個人が有害・非倫理的行為を行う際に道徳的自己制御を無効化するために用いる認知的・自己正当化メカニズムの総称である。道義的正当化（moral justification）・婉曲的ラベリング（euphemistic labeling）・有利な比較（advantageous comparison）・責任の転嫁（diffusion of responsibility）・非人間化（dehumanization）・帰結の最小化（distortion of consequences）など8つの主要メカニズムが特定されている。組織環境では、企業不正・軍事行動・職場のいじめなど集合的レベルでの道徳的離脱が観察され、制度的規範や組織文化が個人の道徳的離脱を促進または抑制する文脈として機能する。バンデューラは2016年の著作でテロリズム・戦争・企業の不正を道徳的離脱の集合的発動として分析し、倫理教育と組織設計による予防論を展開した。',
-    keyFigures: 'アルバート・バンデューラ ／ マッシモ・マカロ ／ ルシア・エスポジト ／ クレア・ムーア',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.4324/9781315680163', type: 'academic', label: 'Bandura (2016) Moral Disengagement: How People Do Harm and Live with Themselves — Worth Publishers' },
-      { url: 'https://en.wikipedia.org/wiki/Moral_disengagement', type: 'reference', label: 'Wikipedia: Moral disengagement — Bandura, mechanisms, organizational ethics, social cognitive theory' },
-    ],
-  },
-  {
     id: 'bizlaw-international-commercial-arbitration',
     discipline: 'business-law',
     title: '国際商事仲裁とニューヨーク条約の執行規範',
@@ -48542,13 +48466,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-positive-organizational-behavior-luthans',
     discipline: 'management',
     title: 'ポジティブ組織行動論（ルーサンズ）',
-    statement: 'ポジティブ組織行動論（Positive Organizational Behavior; POB）は、フレッド・ルーサンズ（2002）が提唱した、職場における測定可能・開発可能な心理的強みと能力を組織パフォーマンス向上に活かすアプローチである。POBはポジティブ心理学（セリグマン＆チクセントミハイ, 2000）の職場応用として位置付けられ、「心理的資本（PsyCap）」——①自己効力感（self-efficacy）、②希望（hope）、③楽観主義（optimism）、④レジリエンス（resilience）——のHERO複合体を中核概念とした。ルーサンズら（2007）はPsyCapが態度・行動・パフォーマンスの有意な予測因子であることを複数の組織研究で実証し、「PsyCap介入（PCI）」——2〜3時間のマイクロ・インターベンション——が組織レベルで統計的に有意なパフォーマンス向上をもたらすことを示した。POBはリーダーシップ開発・従業員ウェルビーイング・エンゲージメント研究に接続し、マーティン・セリグマンのPERMAモデル・エドワード・デシの自己決定理論と相互補完的に研究されている。批判として、POBの「状態（state）」vs「特性（trait）」論争と開発可能性の程度をめぐる方法論的議論が続く。',
-    keyFigures: 'フレッド・ルーサンズ ／ マーティン・セリグマン ／ ブルース・アヴォリオ ／ カロリン・イェウセフ',
+    statement: 'ポジティブ組織行動論（Positive Organizational Behavior; POB）は、フレッド・ルーサンズ（2002）が提唱した、職場における測定可能・開発可能な心理的強みと能力を組織パフォーマンス向上に活かすアプローチである。POBはポジティブ心理学（セリグマン＆チクセントミハイ, 2000）の職場応用として位置付けられ、「心理的資本（PsyCap）」——①自己効力感（self-efficacy）、②希望（hope）、③楽観主義（optimism）、④レジリエンス（resilience）——のHERO複合体を中核概念とした。ルーサンズら（2007）はPsyCapが態度・行動・パフォーマンスの有意な予測因子であることを複数の組織研究で実証し、「PsyCap介入（PCI）」——2〜3時間のマイクロ・インターベンション——が組織レベルで統計的に有意なパフォーマンス向上をもたらすことを示した。キム・キャメロンらのポジティブ組織研究（POS）が組織レベルの美徳・繁栄を扱うのに対し、POBは個人の状態的強みに焦点を当てる点で区別される。POBはリーダーシップ開発・従業員ウェルビーイング・エンゲージメント研究に接続し、マーティン・セリグマンのPERMAモデル・エドワード・デシの自己決定理論と相互補完的に研究されている。批判として、POBの「状態（state）」vs「特性（trait）」論争と開発可能性の程度をめぐる方法論的議論が続く。',
+    keyFigures: 'フレッド・ルーサンズ ／ マーティン・セリグマン ／ ブルース・アヴォリオ ／ カロリン・イェウセフ／キム・キャメロン（ポジティブ組織研究 POS との対比）',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/1548051802001002003', type: 'academic', label: 'Luthans, F. (2002) The Need for and Meaning of Positive Organizational Behavior — Journal of Organizational Behavior, 23(6), 695–706（POB原典）' },
+      { url: 'https://doi.org/10.1002/job.165', type: 'academic', label: 'Luthans (2002) The Need for and Meaning of Positive Organizational Behavior — Journal of Organizational Behavior 23(6), 695-706' },
       { url: 'https://doi.org/10.1177/0149206307305562', type: 'academic', label: 'Luthans, F., Avey, J. B. & Patera, J. L. (2008) Experimental Analysis of a Web-Based Training Intervention to Develop Positive Psychological Capital — Academy of Management Learning & Education, 7(2), 209–221（PsyCap介入の実証）' },
-      { url: 'https://doi.org/10.1177/1059601117718524', type: 'academic', label: 'Luthans, F. & Youssef-Morgan, C. M. (2017) Psychological Capital: An Evidence-Based Positive Approach — Annual Review of Organizational Psychology, 4, 339–366（PsyCap研究総括）' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-032516-113324', type: 'academic', label: 'Luthans & Youssef-Morgan (2017) Psychological Capital: An Evidence-Based Positive Approach — Annual Review of Organizational Psychology and Organizational Behavior' },
+      { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Seligman & Csikszentmihalyi (2000) Positive Psychology: An Introduction — American Psychologist 55(1)' },
+      { url: 'https://doi.org/10.1093/acprof:oso/9780195187526.001.0001', type: 'academic', label: 'Luthans, Youssef & Avolio (2007) Psychological Capital — Oxford University Press' },
       { url: 'https://en.wikipedia.org/wiki/Positive_organizational_behavior', type: 'reference', label: 'Wikipedia: Positive organizational behavior — Luthans, PsyCap, HERO, POB vs PERMA' },
     ],
   },

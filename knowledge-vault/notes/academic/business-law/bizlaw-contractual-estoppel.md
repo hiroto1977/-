@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
 - [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同じ思想家
 - [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同じ思想家
 - [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
 - [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
 - [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同じ思想家
-- [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 643
+entry_count: 641
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（643件）
+# 学習パス — 学術概念／人間科学（641件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -25,9 +25,9 @@ tags:
 - [[human-group-polarization|集団極性化]]（接続 25）
 - [[human-ultimate-attribution-error|究極的帰属錯誤]]（接続 25）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
-- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]（接続 24）
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]（接続 23）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 23）
+- [[human-compromise-effect|妥協効果（極端回避性）]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -162,6 +162,7 @@ tags:
 - 1975年: [[human-spreading-activation|活性化拡散]]
 - 1975年: [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]]
 - 1976年: [[human-mcgurk-effect|マガーク効果]]
+- 1977年: [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]
 - 1977年: [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]]
 - 1977年: [[human-intermodal-matching|感覚間マッチング（Intermodal Matching）]]
 - 1977年: [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]]
@@ -210,7 +211,6 @@ tags:
 - 1988年: [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]]
 - 1988年: [[human-status-quo-bias|現状維持バイアス]]
 - 1989年: [[human-cognitive-apprenticeship|認知的徒弟制]]
-- 1989年: [[human-compromise-effect|妥協効果（極端回避性）]]
 - 1989年: [[human-curse-of-knowledge|知識の呪縛]]
 - 1989年: [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]]
 - 1990年: [[human-emotional-intelligence|情動知能（EQ）]]
@@ -509,7 +509,6 @@ tags:
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]]
 - [[human-mirror-neuron-theory|ミラーニューロン理論]]
 - [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]]
-- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]]
 - [[human-moral-foundations-haidt|道徳基盤理論——多元的道徳直観の進化的・文化的基盤]]
 - [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]]
 - [[human-motion-aftereffect-waterfall|運動残効（滝の錯視）——一方向の運動を見続けた後に逆向きの運動が見える]]
@@ -547,7 +546,6 @@ tags:
 - [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]]
 - [[human-ponzo-illusion|ポンゾ錯視——奥行き手がかりが生む大きさの錯覚]]
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]]
-- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]]
 - [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]]
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]]
 - [[human-positive-youth-development-lerner|ポジティブ青少年発達——ラーナーの5C理論と強みに基づく青年期研究]]

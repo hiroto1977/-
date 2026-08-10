@@ -35,7 +35,7 @@ aliases:
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 出典を共有
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同分野の近傍

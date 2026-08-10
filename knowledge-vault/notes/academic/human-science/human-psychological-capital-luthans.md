@@ -33,10 +33,10 @@ aliases:
 ## 関連概念
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 語彙が近い
-- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
 - [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
 - [[human-grit|グリット（やり抜く力）]] — 同分野の近傍
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

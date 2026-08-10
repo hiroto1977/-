@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 48
+cite_count: 47
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 48）
+> [!info] 出典ドメイン索引 ・ 引用 **47 件**（学術 47）
 
 ## このドメインを出典とする項目
 
@@ -41,7 +41,6 @@ tags:
 - [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — TheMachineSystemofDigitalLaborPlatformsandtheAlgorithm—Science&Societ…
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — Couldry&Mejias—TheCostsofConnection:DataColonialism(Information,Commu…
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — JournalismStudies—Doomscrolling,MonitoringandAvoiding(COVID-19)
-- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — Kwok(2025)EpistemicDispossessioninPlatformCapitalism—SocialEpistemolo…
 - [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — W.H.Dutton,"TheFifthEstateEmergingthroughtheNetworkofNetworks,"Promet…
 - [[infosoc-narrative-paradigm|ナラティブ・パラダイム]] — WalterR.Fisher,“NarrationasaHumanCommunicationParadigm,”Communication…
 - [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — Harcup&O'Neill,"WhatisNews?Newsvaluesrevisited(again)",JournalismStud…

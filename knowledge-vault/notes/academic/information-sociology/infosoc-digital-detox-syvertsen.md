@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-digital-detox|デジタルデトックス]] — 同分野の近傍
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,10 +34,10 @@ aliases:
 - [[human-learned-optimism|学習性楽観主義]] — 語彙が近い
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
 - [[human-positive-psychology|ポジティブ心理学]] — 同じ思想家
-- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[human-garcia-taste-aversion|ガルシア効果（味覚嫌悪学習）——学習の生物学的制約]] — 同じ思想家
 - [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同じ思想家
 

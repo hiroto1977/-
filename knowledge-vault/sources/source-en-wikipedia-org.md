@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2267
+cite_count: 2265
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2267 件**（リファレンス 2267）
+> [!info] 出典ドメイン索引 ・ 引用 **2265 件**（リファレンス 2265）
 
 ## このドメインを出典とする項目
 
@@ -1323,7 +1323,7 @@ tags:
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — Wikipedia:Misattributionofarousal（Dutton&Aron1974,JPSP30(4):510-517を引…
 - [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — Wikipedia:MisinformationEffect—Loftuspost-eventinformationmemorydisto…
 - [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]] — Wikipedia—“Moodcongruence”（バウアー連合ネットワーク理論・状態依存との区別）
-- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — Wikipedia:Moraldisengagement—Bandura,mechanisms,organizationalethics,…
+- [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — Wikipedia:Moraldisengagement—8機構の概説
 - [[human-moral-foundations-haidt|道徳基盤理論——多元的道徳直観の進化的・文化的基盤]] — Wikipedia:Moralfoundationstheory—evolvedmoralintuitionsandpoliticalid…
 - [[human-moral-licensing|モラル・ライセンシング（道徳的自己許可）]] — Self-licensing（モラル・ライセンシングの定義・自己イメージ機構・応用領域）
 - [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — Wikipedia:Terrormanagementtheory—socialpsychology
@@ -1595,7 +1595,6 @@ tags:
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — Wikipedia:Darkpattern—Brignull,Graytypology,DSAArt.25,FTC,roachmotel,…
 - [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — Wikipedia:Thomastheorem—definitionofthesituation,socialconstruction,s…
 - [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — Wikipedia「Diffusionofinnovations」
-- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — Wikipedia—Diffusionofinnovations
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — Wikipedia:Googleeffect—Sparrowetal.experiment,cognitiveoffloading,and…
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — Wikipedia:Commons-basedpeerproduction—CBPPの概要
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — Wikipedia—Digitalcommons(economics)
@@ -1638,7 +1637,6 @@ tags:
 - [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — Wikipedia:Misinformation—Wardle&Derakhshantypology,disinformation,mal…
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — Wikipedia—Echochamber(media)
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — Wikipedia—Filterbubble
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — Wikipedia—Filterbubble
 - [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — InternetCensorship—Wikipedia
 - [[infosoc-fomo|FOMO（取り残されることへの恐れ）]] — Wikipedia“Fearofmissingout”（語源・McGinnis2004・FOBO/JOMO・Oxford2013）
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — Wikipedia:Framing(socialsciences)—Entman,selectionandsalience,Goffman…

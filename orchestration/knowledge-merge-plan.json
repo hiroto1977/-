@@ -535,5 +535,59 @@
         "行政法（公法）とファヨール管理過程論（経営学）— administrative の同語異義"
       ]
     ]
+  },
+  "pass17": {
+    "appliedAt": "2026-08-10",
+    "note": "EQUAL 衝突の第5弾 — 7 統合 + 1 レーン矯正。POB keeper の DOI 4 本中 3 本が発行元不一致で、うち 2 本はラベルと完全一致する正リンク（drop 側の job.165 / pass13 検証済みの annualreviews）で置換、1 本は SESSION_HANDOFF の未確定リストへ。moral-disengagement の drop 側 keyFigures に実在を確認できない人名 3 件（マッシモ・マカロ等）— 幻覚の疑いがあるためまるごと落とした。",
+    "merges": [
+      {
+        "keep": "infosoc-diffusion-of-innovations",
+        "drop": "infosoc-diffusion-of-innovations-digital",
+        "reason": "中身の9割が古典ロジャーズの要約で digital レーンとして立っていない。",
+        "migrate": "Bass model と SNS バイラル/ネットワーク効果の句を本文へ、ムーア/バスを keyFigures へ。Routledge と称する 5 版の DOI（実際の5版は Free Press 刊）は実体不一致の疑いで移送しない。",
+        "provenanceDelta": "本文 +約90字。減少なし。"
+      },
+      {
+        "keep": "infosoc-epistemic-injustice",
+        "drop": "infosoc-epistemic-injustice-digital",
+        "reason": "keep が既にアルゴリズム的証言的/解釈的不正義まで詳述しており完全下位互換。",
+        "migrate": "Milano & Prunkl (2024) Philosophical Studies を出典へ、Noble/Milano を keyFigures へ。Amazon の販売ページは移送しない。",
+        "provenanceDelta": "keep src 2→3。減少なし。"
+      },
+      {
+        "keep": "infosoc-filter-bubble",
+        "drop": "infosoc-filter-bubble-theory",
+        "reason": "同一概念（Pariser 2011・実証論争）。",
+        "migrate": "Flaxman, Goel & Rao (2016) POQ を出典へ、Flaxman/Nguyen を keyFigures へ。",
+        "provenanceDelta": "keep src 3→5。減少なし。"
+      },
+      {
+        "keep": "infosoc-filter-bubble",
+        "drop": "infosoc-filter-bubble-pariser",
+        "reason": "同一概念。",
+        "migrate": "Internet Policy Review の概念定義を出典へ。TED 動画は三次的で移送しない。",
+        "provenanceDelta": "上記に合算。"
+      },
+      {
+        "keep": "human-moral-disengagement",
+        "drop": "human-moral-disengagement-bandura",
+        "reason": "同一 discipline 内の同一概念（8機構）。drop の keyFigures に実在未確認の人名 3 件。",
+        "migrate": "組織環境での集合的離脱と組織文化の文脈の句を本文へ、Wikipedia を出典へ。Routledge と称する 2016 書籍 DOI（実際は Worth Publishers 刊）は実体不一致の疑いで移送しない。",
+        "provenanceDelta": "keep src +1 / 本文 +約90字。減少なし。"
+      },
+      {
+        "keep": "mgmt-positive-organizational-behavior-luthans",
+        "drop": "human-positive-organizational-behavior",
+        "reason": "経営学の主題が human-science 側に重複配置されていた（discipline レーンとして機能していない）。",
+        "migrate": "job.165（正しい JOB 書誌）で keep の誤 DOI を置換、Seligman & Csikszentmihalyi 2000 と PsyCap 書籍 DOI を出典へ、POS との対比句と Kim Cameron を本文/keyFigures へ。",
+        "provenanceDelta": "keep src 4→6 + 誤DOI 2 置換。減少なし。"
+      }
+    ],
+    "steers": [
+      {
+        "id": "mgmt-emotional-intelligence",
+        "action": "human-emotional-intelligence（概念・測定の学術レーン）と分業し、mgmt 側をゴールマンの6リーダーシップ・スタイル、採用/研修/360度への実装、メタ分析の効果量と選抜への慎重論という職場応用レーンへ書き換え。DISTINCT 登録。"
+      }
+    ]
   }
 }

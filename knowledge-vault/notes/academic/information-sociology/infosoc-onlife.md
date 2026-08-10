@@ -37,9 +37,8 @@ aliases:
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同分野の近傍
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — 同分野の近傍
+- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
 - [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同分野の近傍
-- [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

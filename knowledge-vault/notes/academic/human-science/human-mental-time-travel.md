@@ -40,8 +40,8 @@ Endel Tulving（エピソード記憶・意識1972-2002）; Thomas Suddendorf & 
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
 - [[infosoc-political-polarization|政治的分極化]] — 出典を共有
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 出典を共有
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — 出典を共有
-- [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

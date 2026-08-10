@@ -32,13 +32,13 @@ Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn
 - [Cameron, Dutton & Quinn — Foundations of POS](https://positiveorgs.bus.umich.edu/articles/foundations-of-positive-organizational-scholarship/) `学術`
 
 ## 関連概念
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 語彙が近い
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同じ思想家
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
-- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

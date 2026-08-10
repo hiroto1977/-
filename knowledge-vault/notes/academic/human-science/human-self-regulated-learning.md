@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
 - [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
-- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — 同じ思想家
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍

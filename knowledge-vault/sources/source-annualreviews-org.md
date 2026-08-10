@@ -2,7 +2,7 @@
 title: "annualreviews.org"
 type: source-domain
 host: "annualreviews.org"
-cite_count: 22
+cite_count: 23
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # annualreviews.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
 
 ## このドメインを出典とする項目
 
@@ -32,6 +32,7 @@ tags:
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — O'Reilly&Tushman(2021)"OrganizationalAmbidexterity:Past,PresentandFut…
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — RevisitingBehavioralIntegrity:ProgressandNewDirectionsAfter20Years—An…
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — Holtom&Darabi2018,AnnualReviewwhywestay
+- [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — Luthans&Youssef-Morgan(2017)PsychologicalCapital:AnEvidence-BasedPosi…
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — Luthans&Youssef-Morgan—PsychologicalCapital,AnnualReviewofOrganizatio…
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — Ilgen,D.R.etal.(2005)TeamsinOrganizations:FromIPOtoIMOIModels,AnnualR…
 - [[mgmt-team-effectiveness-model|チーム有効性モデル]] — Kozlowski&Ilgen(2006)EnhancingtheEffectivenessofWorkGroupsandTeams

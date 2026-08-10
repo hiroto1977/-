@@ -35,12 +35,12 @@ aliases:
 - [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
-- [[human-moral-disengagement-bandura|道徳的離脱理論と倫理的行動の自己規制機制（バンデューラ）]] — 同じ思想家
 - [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同じ思想家
 - [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
+- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

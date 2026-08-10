@@ -2,7 +2,7 @@
 title: "hbr.org"
 type: source-domain
 host: "hbr.org"
-cite_count: 69
+cite_count: 68
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **69 件**（学術 42 ・ メディア 25 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **68 件**（学術 42 ・ メディア 24 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -18,7 +18,6 @@ tags:
 - [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — Shapiro,C.&Varian,H.R.(1998)Versioning:TheSmartWaytoSellInformation—H…
 - [[human-acquired-needs-theory|獲得欲求理論]] — McClelland,D.C.(1962).BusinessDriveandNationalAchievement.HarvardBusi…
 - [[human-presenteeism|プレゼンティーイズム：疾病就業による労働生産性損失の概念と測定]] — Hemp,P.2004Presenteeism:AtWork—ButOutofIt.HarvardBusinessReview82(10)…
-- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — HBR—デジタル時代のイノベーション普及とキャズム
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — O'Reilly&Tushman(2004)TheAmbidextrousOrganization—HarvardBusinessRevi…
 - [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — Kaplan&Norton(1992)TheBalancedScorecard—HarvardBusinessReview
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — Lovallo&Sibony,"TheCaseforBehavioralStrategy",HarvardBusinessReview(2…

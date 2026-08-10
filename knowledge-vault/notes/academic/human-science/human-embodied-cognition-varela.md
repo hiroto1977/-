@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Embodied cognition — 身体化認知の概説](https://en.wikipedia.org/wiki/Embodied_cognition) `リファレンス`
 
 ## 関連概念
-- [[human-embodied-cognition-theory|身体化された認知]] — 語彙が近い
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 語彙が近い
+- [[human-embodied-cognition-theory|身体化された認知]] — 語彙が近い
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家

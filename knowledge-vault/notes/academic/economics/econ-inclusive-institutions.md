@@ -32,13 +32,13 @@ aliases:
 - [Why Nations Fail (Acemoglu & Robinson, 2012) — Harvard WCFIA publication record](https://www.wcfia.harvard.edu/publications/why-nations-fail) `学術`
 
 ## 関連概念
-- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 語彙が近い
 - [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 語彙が近い
 - [[econ-reversal-of-fortune-acemoglu|運命の逆転——制度が長期の発展を分ける]] — 同じ思想家
 - [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
 - [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 出典を共有
+- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -45,23 +45,23 @@ aliases:
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
 - …ほか 940 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全643件）
+### 学術概念 / 人間科学（全641件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 637 件 → [[学術概念]]
+- …ほか 635 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全616件）
+### 学術概念 / 情報社会学（全612件）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- …ほか 610 件 → [[学術概念]]
+- …ほか 606 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全124件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]

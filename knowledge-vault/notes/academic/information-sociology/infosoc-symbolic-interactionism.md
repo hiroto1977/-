@@ -32,8 +32,8 @@ G.H.ミード（源流）／H.ブルーマー（1937命名・1969体系化）／
 
 ## 関連概念
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 出典を共有
-- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同分野の近傍
 - [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同分野の近傍
+- [[infosoc-hermeneutic-injustice-crerar|解釈的不正義——社会的経験を理解するための概念的資源の不均等配分]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

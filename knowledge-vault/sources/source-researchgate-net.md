@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 52
+cite_count: 51
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 45 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **51 件**（学術 44 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -32,7 +32,6 @@ tags:
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2005)CommunicativeCapitalism—ResearchGate
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — MichaelWarner,"PublicsandCounterpublics"(2002)
 - [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—ResearchGate
-- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — Rogers/Bass/Mooreの普及理論比較
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — Wardle&Derakhshan(2017)InformationDisorder—CouncilofEurope/ResearchGa…
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—ResearchGate
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate

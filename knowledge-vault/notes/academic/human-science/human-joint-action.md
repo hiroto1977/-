@@ -33,6 +33,8 @@ aliases:
 ## 関連概念
 - [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
 - [[human-joint-attention|共同注意（Joint Attention）]] — 同分野の近傍
+- [[human-cialdini-influence|チャルディーニの影響力の6原理]] — 同分野の近傍
+- [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

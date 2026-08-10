@@ -38,8 +38,8 @@ aliases:
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
-- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
+- [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同じ思想家
 
 ## 関連
