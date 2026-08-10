@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
 - [[infosoc-wisdom-of-crowds|群衆の叡智]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-technological-singularity|技術的特異点（シンギュラリティ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

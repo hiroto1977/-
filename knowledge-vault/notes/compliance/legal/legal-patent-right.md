@@ -38,9 +38,9 @@ aliases:
 - [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
 - [[bizlaw-trademark|商標法]] — 出典を共有
 - [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[bizlaw-utility-model|実用新案法]] — 出典を共有
 - [[legal-employee-invention|職務発明（特許法35条）]] — 出典を共有
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 出典を共有
-- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

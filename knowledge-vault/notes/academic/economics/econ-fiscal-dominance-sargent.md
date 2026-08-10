@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快な貨幣主義の算術]] — 語彙が近い
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 語彙が近い
-- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 語彙が近い
 - [[econ-policy-ineffectiveness|政策無効命題]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家

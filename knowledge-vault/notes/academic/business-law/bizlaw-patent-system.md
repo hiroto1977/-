@@ -32,13 +32,13 @@ aliases:
 
 ## 関連概念
 - [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 語彙が近い
-- [[bizlaw-utility-model|実用新案法]] — 語彙が近い
-- [[legal-trademark|商標権の発生・存続期間と更新]] — 語彙が近い
 - [[legal-design-right|意匠権（意匠法）]] — 出典を共有
+- [[legal-trademark|商標権の発生・存続期間と更新]] — 出典を共有
 - [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 出典を共有
 - [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
 - [[bizlaw-trademark|商標法]] — 出典を共有
 - [[bizlaw-unfair-competition|不正競争防止法]] — 出典を共有
+- [[bizlaw-utility-model|実用新案法]] — 出典を共有
 - [[legal-employee-invention|職務発明（特許法35条）]] — 出典を共有
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 出典を共有
 

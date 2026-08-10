@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同分野の近傍
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
+- [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

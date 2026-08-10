@@ -41,6 +41,7 @@ aliases:
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同じ思想家
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
+- [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

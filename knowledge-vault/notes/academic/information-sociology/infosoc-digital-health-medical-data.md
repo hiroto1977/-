@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Digital health — EHR, wearables, AI bias, algorithmic discrimination, data governance](https://en.wikipedia.org/wiki/Digital_health) `リファレンス`
 
 ## 関連概念
+- [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

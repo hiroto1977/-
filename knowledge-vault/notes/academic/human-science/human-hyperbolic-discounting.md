@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — 語彙が近い
-- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 語彙が近い
 - [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 出典を共有
 - [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 出典を共有
 - [[econ-menu-costs|メニューコスト]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
+- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 - [[bizlaw-corporate-social-responsibility-law|CSRの法的規制——企業の社会的責任の自主規制から強制開示・デューデリジェンス義務への展開]] — 語彙が近い
 - [[bizlaw-corporate-social-responsibility-directive|企業持続可能性デューディリジェンス指令——サプライチェーンにおける人権・環境配慮義務]] — 語彙が近い
 - [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 同じ思想家
-- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[legal-limited-provision-data|不正競争防止法における「限定提供データ」の保護]] — 語彙が近い
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 同分野の近傍
-- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
 - [[bizlaw-copyright|著作権法]] — 同分野の近傍
 
 ## 関連

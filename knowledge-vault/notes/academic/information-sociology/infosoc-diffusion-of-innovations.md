@@ -40,7 +40,7 @@ aliases:
 - [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 同じ思想家
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — 同じ思想家
 - [[infosoc-symbolic-convergence-bormann|象徴収束理論——共有された幻想が集団の現実を作る]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-limited-effects|限定効果論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

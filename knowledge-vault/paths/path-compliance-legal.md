@@ -27,7 +27,7 @@ tags:
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 16）
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]（接続 16）
-- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]（接続 15）
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -47,7 +47,6 @@ tags:
 - 2024年: [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]]
 - 2025年: [[legal-family-register-furigana|戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）]]
 - 2025年: [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]]
-- 2026年: [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]
 - 2026年: [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]]
 
 ## 第 3 部 — 年代情報のない項目
@@ -55,6 +54,7 @@ tags:
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]]
 - [[legal-antimonopoly|独占禁止法]]
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]]
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]]
 - [[legal-civil-procedure-digitalization|民事訴訟手続のIT化（改正民事訴訟法・段階施行）]]

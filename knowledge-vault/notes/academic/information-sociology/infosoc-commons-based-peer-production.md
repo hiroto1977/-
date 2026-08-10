@@ -37,9 +37,9 @@ Yochai Benkler／Aaron Shaw／Benjamin Mako Hill／Clay Shirky／Siobhan O'Mahon
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 出典を共有
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 出典を共有
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同分野の近傍
 - [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同分野の近傍
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同分野の近傍
-- [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

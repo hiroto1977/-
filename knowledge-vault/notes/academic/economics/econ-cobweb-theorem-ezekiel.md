@@ -34,7 +34,6 @@ aliases:
 - [[econ-cobweb|クモの巣理論]] — 同じ思想家
 - [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 同じ思想家
 - [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 同分野の近傍
-- [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

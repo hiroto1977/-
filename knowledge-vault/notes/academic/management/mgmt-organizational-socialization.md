@@ -40,6 +40,7 @@ aliases:
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — 同分野の近傍
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
+- [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

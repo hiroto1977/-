@@ -34,7 +34,6 @@ Colin R. Moore ／ Brenda Hannigan ／ Nobuo Nakamura
 ## 関連概念
 - [[mgmt-target-costing|原価企画（目標原価計算）]] — 出典を共有
 - [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同分野の近傍
-- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
 - [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同分野の近傍
 
 ## 関連
