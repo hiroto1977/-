@@ -38,7 +38,6 @@ aliases:
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
-- [[human-stress-immune-axis|ストレス-免疫軸：HPA軸を介した心理的ストレスと免疫機能の双方向的調節機構]] — 同分野の近傍
 - [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 同分野の近傍
 
 ## 関連

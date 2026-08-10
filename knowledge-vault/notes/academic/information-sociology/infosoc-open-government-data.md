@@ -34,8 +34,8 @@ aliases:
 - [Open Knowledge Foundation 2006– — Open Definition, Open Knowledge Foundation](https://opendefinition.org/) `リファレンス`
 
 ## 関連概念
+- [[infosoc-open-data|オープンデータ]] — 語彙が近い
 - [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
-- [[infosoc-open-data|オープンデータ]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
 - [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 同じ思想家
 

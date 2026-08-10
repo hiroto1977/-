@@ -31,8 +31,8 @@ aliases:
 - [Simons & Chabris (1999) “Gorillas in our midst...”, Perception 28(9):1059–1074](https://journals.sagepub.com/doi/10.1068/p281059) `学術`
 
 ## 関連概念
-- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 語彙が近い
 - [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 語彙が近い
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 語彙が近い
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有

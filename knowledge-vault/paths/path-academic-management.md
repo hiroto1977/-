@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 67）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 66）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 36）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
@@ -112,6 +112,7 @@ tags:
 - 1972年: [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]]
 - 1972年: [[mgmt-greiner-growth|グレイナーの企業成長モデル]]
 - 1973年: [[mgmt-competency|コンピテンシー]]
+- 1973年: [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]]
 - 1973年: [[mgmt-loose-coupling-weick|疎結合システム（組織論）]]
 - 1973年: [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]]
 - 1973年: [[mgmt-real-options-theory|リアル・オプション理論]]
@@ -354,7 +355,6 @@ tags:
 - [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]]
 - [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]]
 - [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]]
-- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]]
 - [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]]
 - [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]]
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]]

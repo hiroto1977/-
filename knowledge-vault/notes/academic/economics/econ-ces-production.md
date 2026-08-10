@@ -31,6 +31,7 @@ CES生産関数（Constant Elasticity of Substitution、固定代替弾力性生
 - [The Origins of the CES Production Function（Arrow-Chenery-Minhas-Solow 1961 の出自と特殊ケース）](https://www.researchgate.net/publication/342612626_The_Origins_of_the_CES_Production_Function) `学術`
 
 ## 関連概念
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 語彙が近い
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
@@ -40,7 +41,6 @@ CES生産関数（Constant Elasticity of Substitution、固定代替弾力性生
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

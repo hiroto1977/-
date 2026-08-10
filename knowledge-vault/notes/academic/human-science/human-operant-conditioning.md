@@ -40,7 +40,7 @@ B.F.スキナー（B. F. Skinner）／エドワード・ソーンダイク（効
 - [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
 - [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
-- [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
+- [[human-premack-principle|プレマックの原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

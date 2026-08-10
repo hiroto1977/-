@@ -30,8 +30,8 @@ aliases:
 - [UNESCO "Rethinking Education: Towards a Global Common Good?"（非形式・自律的学習をめぐる国際政策論。イリイチの学習観の系譜）](https://unesdoc.unesco.org/ark:/48223/pf0000232555) `公的`
 
 ## 関連概念
+- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — 語彙が近い
 - [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同じ思想家
-- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — 同じ思想家
 - [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 出典を共有
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 出典を共有
 - [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]] — 同分野の近傍

@@ -24,9 +24,9 @@ tags:
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 32）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 31）
 
 ## 第 2 部 — 年代順の展開

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 語彙が近い
 - [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 語彙が近い
-- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — 語彙が近い
 - [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同じ思想家
 - [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 同じ思想家
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
 - [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — 同じ思想家
+- [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

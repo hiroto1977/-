@@ -33,7 +33,6 @@ I・A・リチャーズ（I. A. Richards, 1893–1979）／マーシャル・ゴ
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同分野の近傍
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
-- [[mgmt-action-learning|アクションラーニング]] — 同分野の近傍
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同分野の近傍
 - [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
 

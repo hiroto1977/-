@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
 - [[mgmt-competency|コンピテンシー]] — 同分野の近傍
+- [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 同分野の近傍
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同分野の近傍
 
 ## 関連

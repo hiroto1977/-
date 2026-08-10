@@ -38,7 +38,6 @@ aliases:
 - [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 同分野の近傍
-- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

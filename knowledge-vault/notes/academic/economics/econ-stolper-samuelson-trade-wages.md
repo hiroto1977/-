@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
+- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 語彙が近い
 - [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
-- [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
 
 ## 関連

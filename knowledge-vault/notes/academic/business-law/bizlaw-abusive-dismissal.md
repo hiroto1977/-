@@ -39,7 +39,6 @@ aliases:
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
 - [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 同分野の近傍
-- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

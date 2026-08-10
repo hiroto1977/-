@@ -35,8 +35,8 @@ aliases:
 - [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
 - [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
 - [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同じ思想家
+- [[bizlaw-fiduciary-duty|信認義務（受託者責任）]] — 同分野の近傍
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同分野の近傍
-- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

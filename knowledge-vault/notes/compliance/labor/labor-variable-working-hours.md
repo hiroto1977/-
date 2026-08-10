@@ -32,8 +32,8 @@ aliases:
 - [静岡労働局 1か月単位の変形労働時間制の時間外労働の考え方](https://jsite.mhlw.go.jp/shizuoka-roudoukyoku/var/rev0/0123/3919/2017111615407.pdf) `公的`
 
 ## 関連概念
-- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
 - [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 同分野の近傍
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

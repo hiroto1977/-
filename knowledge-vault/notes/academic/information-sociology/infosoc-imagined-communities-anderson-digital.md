@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 同じ思想家
 - [[infosoc-imagined-communities|想像の共同体（アンダーソン）]] — 同分野の近傍
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
-- [[infosoc-telemedicine|遠隔医療（テレメディシン）：エビデンスと政策的枠組みの体系化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

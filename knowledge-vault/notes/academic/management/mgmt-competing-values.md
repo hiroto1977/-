@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
-- [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 同分野の近傍
+- [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
