@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 語彙が近い
+- [[bizlaw-employment-insurance|雇用保険法]] — 語彙が近い
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 語彙が近い
 - [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 分野横断
 - [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 出典を共有

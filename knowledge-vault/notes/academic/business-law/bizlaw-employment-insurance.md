@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 語彙が近い
+- [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 語彙が近い
 - [[bizlaw-employment-security|職業安定法]] — 語彙が近い
 - [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 同分野の近傍
 - [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 同分野の近傍

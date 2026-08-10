@@ -14,7 +14,7 @@ tags:
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 40）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 41）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）

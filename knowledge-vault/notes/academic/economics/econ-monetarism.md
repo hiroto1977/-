@@ -32,6 +32,7 @@ aliases:
 - [Federal Reserve History — The Great Depression（貨幣供給の急減）](https://www.federalreservehistory.org/essays/great-depression) `公的`
 
 ## 関連概念
+- [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 語彙が近い
 - [[eh-1989|1989年（昭和64/平成元年）]] — 出典を共有
 - [[eh-1990|1990年（平成2年）]] — 出典を共有
 - [[eh-2009|2009年（平成21年）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[eh-1987|1987年（昭和62年）]] — 出典を共有
 - [[eh-1999|1999年（平成11年）]] — 出典を共有
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
-- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

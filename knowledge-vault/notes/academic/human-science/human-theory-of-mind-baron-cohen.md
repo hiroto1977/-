@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[human-theory-of-mind|心の理論]] — 語彙が近い
+- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 語彙が近い
 - [[human-premack-principle|プレマックの原理]] — 同じ思想家
-- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

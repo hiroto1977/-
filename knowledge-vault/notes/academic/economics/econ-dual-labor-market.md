@@ -36,6 +36,7 @@ aliases:
 - [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 出典を共有
 - [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]] — 出典を共有
 - [[mgmt-technology-s-curve|技術のSカーブ]] — 出典を共有
+- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同分野の近傍
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
 
 ## 関連

@@ -35,8 +35,8 @@ aliases:
 - [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同じ思想家
 - [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
-- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

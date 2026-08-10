@@ -33,13 +33,13 @@ aliases:
 ## 関連概念
 - [[econ-velocity-of-money-fisher-equation|貨幣数量説とフィッシャーの交換方程式——MV=PTから現代金融政策への展開]] — 語彙が近い
 - [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 語彙が近い
+- [[econ-monetarism|マネタリズム]] — 語彙が近い
 - [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
 - [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
-- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 同じ思想家
 
 ## 関連

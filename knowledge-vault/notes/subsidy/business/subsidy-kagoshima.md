@@ -37,8 +37,8 @@ prefecture
 - [鹿児島県企業立地ガイド 中小企業経営革新支援事業](https://kagoshima-kigyouricchi-guide.jp/kagoshima-prefecture-support/management-innovation/) `運営団体`
 
 ## 関連概念
-- [[subsidy-mie|三重県経営向上計画・経営革新計画に基づく支援（三重県）]] — 語彙が近い
 - [[subsidy-iwate|中小企業者等賃上げ環境整備支援事業費補助金（岩手県）]] — 語彙が近い
+- [[subsidy-mie|三重県経営向上計画・経営革新計画に基づく支援（三重県）]] — 語彙が近い
 - [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 語彙が近い
 - [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 語彙が近い
 - [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い

@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
 - [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
 
 ## 関連

@@ -33,6 +33,7 @@ aliases:
 - [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
 - [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
 - [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
+- [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 同分野の近傍
 - [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 同分野の近傍
 
 ## 関連

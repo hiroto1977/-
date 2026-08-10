@@ -30,8 +30,8 @@ aliases:
 - [ウィキペディア日本語版「差分の差分法」](https://ja.wikipedia.org/wiki/%E5%B7%AE%E5%88%86%E3%81%AE%E5%B7%AE%E5%88%86%E6%B3%95) `リファレンス`
 
 ## 関連概念
-- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 語彙が近い
 - [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 語彙が近い
+- [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 語彙が近い
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家

@@ -33,8 +33,8 @@ A.C.ピグー『厚生経済学』(1920)／負の外部性に外部費用分を�
 
 ## 関連概念
 - [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — 出典を共有
-- [[econ-externality-market-failure|外部性と市場の失敗]] — 同分野の近傍
 - [[econ-tatonnement|タトヌマン（模索過程）]] — 同分野の近傍
+- [[econ-externality-market-failure|外部性と市場の失敗]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

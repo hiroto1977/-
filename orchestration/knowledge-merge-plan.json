@@ -925,5 +925,38 @@
         }
       }
     ]
+  },
+  "pass28": {
+    "date": "2026-08-10",
+    "trigger": "knowledge:auto dedupeGraph（term-overlap 3000）",
+    "merges": [
+      {
+        "keep": "econ-greenfield-investment",
+        "drop": "econ-greenfield-investment-fdi-modes",
+        "reason": "同一分野（economics）・同一概念（FDI 参入モードの greenfield/brownfield 二分・Dunning OLI・UNCTAD WIR の受入国効果）。keeper は Nocke&Yeaple JIE/REStud + Dunning JIBS の DOI 3 本で最厚。drop は UNCTAD（重複）+ Wikipedia のみで全角カンマの表記も混在。",
+        "migrate": [
+          "https://en.wikipedia.org/wiki/Foreign_direct_investment"
+        ],
+        "absorbed": "モード選択の決定因（制度環境・産業特性）・機能的分担（内部化/迅速獲得）・M&A の雇用再編と市場集中リスク・新興国の優遇政策と規制選好",
+        "provenanceDelta": {
+          "chars": [
+            278,
+            477
+          ],
+          "sources": [
+            4,
+            5
+          ],
+          "academic": [
+            3,
+            3
+          ],
+          "government": [
+            1,
+            1
+          ]
+        }
+      }
+    ]
   }
 }

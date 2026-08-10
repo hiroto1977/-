@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同分野の近傍
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同分野の近傍
 - [[bizlaw-data-protection-gdpr-principles|データ保護法とGDPR原則——EU一般データ保護規則の七原則と越境データ流通]] — 同分野の近傍
-- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同分野の近傍
 - [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 同分野の近傍
 
 ## 関連

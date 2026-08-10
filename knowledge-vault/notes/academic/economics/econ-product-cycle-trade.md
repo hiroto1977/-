@@ -30,8 +30,8 @@ aliases:
 - [Product life-cycle theory — Wikipedia](https://en.wikipedia.org/wiki/Product_life-cycle_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 同分野の近傍
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 同分野の近傍
+- [[econ-tariff-jumping-fdi|関税回避型直接投資——貿易障壁が誘発する海外直接投資の理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
