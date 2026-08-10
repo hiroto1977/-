@@ -15,7 +15,7 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 77）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 52）
-- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 39）
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 38）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 35）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）

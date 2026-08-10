@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
 - [[econ-double-coincidence-of-wants|欲望の二重の一致]] — 同分野の近傍
-- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同分野の近傍
+- [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ Fletcher, Paul C.／Frith, Christopher D.（2009 Nature Reviews Neuroscience）�
 - [Powers, A. R., Mathys, C. & Corlett, P. R. (2017). Pavlovian conditioning–induced hallucinations result from overweighting of perceptual priors. Science, 357(6351), 596–600](https://pmc.ncbi.nlm.nih.gov/articles/PMC5802347/) `学術`
 
 ## 関連概念
+- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同分野の近傍
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

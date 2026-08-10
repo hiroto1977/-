@@ -39,7 +39,7 @@ aliases:
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
 - [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
-- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同分野の近傍
+- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

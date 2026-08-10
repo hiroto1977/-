@@ -33,16 +33,16 @@ aliases:
 - [滋賀県 クーリング・オフ](https://www.pref.shiga.lg.jp/shohi/105947.html) `自治体`
 
 ## 関連概念
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 語彙が近い
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 分野横断
 - [[legal-negative-option|送り付け商法（ネガティブオプション）]] — 出典を共有
 - [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 出典を共有
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 出典を共有
 - [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 出典を共有
-- [[bizlaw-specified-commercial-transactions|特定商取引法]] — 出典を共有
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 出典を共有
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 出典を共有
-- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]] — 出典を共有
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
+- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

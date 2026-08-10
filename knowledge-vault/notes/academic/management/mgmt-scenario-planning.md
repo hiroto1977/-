@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
 - [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同分野の近傍
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同分野の近傍
-- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

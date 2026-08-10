@@ -39,7 +39,7 @@ aliases:
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
 - [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
 - [[human-inattentional-blindness-mack-rock|非注意性盲——注意を向けないと明白なものを見落とす現象]] — 同分野の近傍
-- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同分野の近傍
+- [[human-weapon-focus-effect|凶器注目効果——武器の存在が目撃者の顔識別を低下させる注意バイアス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

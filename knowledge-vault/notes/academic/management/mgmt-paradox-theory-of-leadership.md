@@ -38,6 +38,7 @@ Wendy K. Smith ／ Marianne W. Lewis
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同分野の近傍
 - [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 同分野の近傍
+- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

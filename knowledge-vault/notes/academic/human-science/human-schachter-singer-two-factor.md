@@ -38,7 +38,6 @@ aliases:
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

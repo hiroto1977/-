@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
 - [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — 同分野の近傍
-- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同分野の近傍
+- [[econ-fiscal-illusion-buchanan|財政錯覚——政府支出の費用を過小評価させる課税構造の不透明性]] — 同分野の近傍
 - [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同分野の近傍
 
 ## 関連

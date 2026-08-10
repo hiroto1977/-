@@ -31,6 +31,7 @@ aliases:
 - [Springer / Palgrave — Bilateral Monopoly](https://link.springer.com/content/pdf/10.1007/978-1-349-20181-5_4.pdf) `学術`
 
 ## 関連概念
+- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 語彙が近い
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
 - [[econ-optimal-tariff|最適関税論]] — 同じ思想家
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 出典を共有
 - [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
 - [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
-- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

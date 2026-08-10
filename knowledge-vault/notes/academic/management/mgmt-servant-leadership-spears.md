@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 同じ思想家
 - [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同分野の近傍
-- [[mgmt-transformational-leadership|変革型リーダーシップ]] — 同分野の近傍
+- [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
