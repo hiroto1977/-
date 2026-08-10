@@ -3,7 +3,7 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (72)
+## サービス一覧 (73)
 
 | カテゴリ | サービス |
 |---|---|
@@ -12,7 +12,7 @@
 | **分析・ツール** (18) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 / 資金調達レーダー / コネクター / Linux / コンプライアンス / Obsidian / Docker |
 | **外部サービス連携** (32) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok / freee 会計 |
 
-ほかに Uber Eats / 出前館 (サイドバー非表示 — 事業ダッシュボードのフードデリバリー欄へ統合) を含め全 72 サービス。
+ほかに Uber Eats / 出前館 (サイドバー非表示 — 事業ダッシュボードのフードデリバリー欄へ統合) を含め全 73 サービス。
 
 ## 2 通りの動かし方
 

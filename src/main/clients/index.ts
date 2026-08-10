@@ -70,6 +70,7 @@ import { fetchObsidianSnapshot } from './obsidian';
 import { fetchDockerSnapshot } from './docker';
 import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistant';
 import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
+import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -149,6 +150,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   docker: fetchDockerSnapshot,
   assistant: fetchAssistantSnapshot,
   docstudio: fetchDocstudioSnapshot,
+  cursor: fetchCursorSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -275,6 +277,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'microsoft-365': MICROSOFT365_ACTIONS,
   assistant: ASSISTANT_ACTIONS,
   docstudio: DOCSTUDIO_ACTIONS,
+  cursor: CURSOR_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

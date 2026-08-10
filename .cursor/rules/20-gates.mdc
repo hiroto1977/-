@@ -1,0 +1,40 @@
+---
+description: 変更を出す前に通すゲート（CI と同じもの）
+alwaysApply: true
+---
+
+# 出す前に通すもの
+
+```bash
+npm run typecheck      # tsc -b --noEmit --force
+npm test               # vitest（src/**/__tests__/）
+npm run lint           # eslint（flat config）
+npm run verify:all     # 13 ゲート全部
+```
+
+CI（`.github/workflows/ci.yml`）は単一ジョブでこの全部と `build:web` を走らせる。
+**`verify:all` にゲートを足したら `ci.yml` にも足すこと** — `lint:docs` が
+「verify:all の全ゲートが ci.yml に現れるか」を検査していて、これを怠ると
+ゲートは存在するのに何も守っていない状態になる（実際に 3 つ起きていた）。
+
+## CI に載らない検証（手元で回す）
+
+`e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザか Electron が要る。
+renderer や起動性能を触ったら手元で回す。
+
+## ドキュメントの数字は自己検証される
+
+`docs/ARCHITECTURE.md` の `file:line` 参照と、サービス数・IPC ハンドラ数・
+ユニットテスト数などの指標は `verify:arch` が実測と突き合わせる。
+アーキテクチャを変えたら `ARCHITECTURE.md` も直す。数字がずれたまま出せない。
+
+## mutation testing
+
+`stryker.config.json` の `mutate` に載っているモジュールは **100%** を維持する
+（`thresholds.break = 99.8`）。新しい純ロジックのモジュールを足したら scope に加える。
+
+- 測定前に `.stryker-incremental.json` を消す（古い結果が残ると survived を取り逃がす）
+- `--mutate` を複数回渡すと**最後の 1 つしか効かない**。カンマ区切りで 1 引数にする
+- 生き残ったら pragma で黙らせる前に**コードを単純化できないか**先に疑う
+- テスト対象の生成を `describe` 直下に書かない。例外を投げる変異体が
+  「テスト 0 件」になって生存扱いになる。生成は `it` の中で

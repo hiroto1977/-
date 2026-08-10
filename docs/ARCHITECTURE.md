@@ -18,12 +18,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 72 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 73 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 12 | `src/main/main.ts:111-296` |
-| client モジュール (fetcher + actions) | 72 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 73 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **6585** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 6726) |
+| ユニットテスト | **6602** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 6743) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 1000000** | 自己検証（`git ls-files` 全ファイルの改行数合算。柱 B Phase 3 完了で 100 万行を突破 — 現在 ~1,037k） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -463,6 +463,7 @@ union を参照する。
 | `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
 | `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
 | `salesforce` | Salesforce CRM (snapshot) | Bearer (将来) | | | (read-only — 商談 / リード / パイプライン) |
+| `cursor` | Cursor (AI コードエディタのチーム管理) | Bearer (Cursor Admin API) | ✅ | | (read-only — メンバー / 日次利用状況 / 当月支出。書き込みは行わない〔席の増減・上限変更は課金に直結するため〕。取れるのはチーム全体の集計で個人の作業内容ではない。受入率が 100% を超える日は Cursor 側の集計が噛み合っていないので `overCounted` で印を付けてそのまま出す。金額は請求通貨の米ドルのまま — 為替を当てて円換算するといつのレートか画面から追えなくなる) |
 | `discord` | Discord (snapshot) | Bearer (将来) | | | (read-only — サーバー / チャンネル / メッセージ) |
 | `asana` | Asana PM (snapshot) | Bearer (将来) | | | (read-only — タスク / プロジェクト / 進捗) |
 | `linear` | Linear (snapshot) | Bearer (将来) | | | (read-only — issue / cycle / project) |
