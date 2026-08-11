@@ -36,6 +36,7 @@ jobs:
       - run: npm run lint:docs
       - run: npm run lint:citations
       - run: npm run lint:doi-prefix
+      - run: npm run lint:charset
       - run: npm run lint:knowledge-refs
       - run: npm run lint:test-coverage
       - run: npm run lint:shell

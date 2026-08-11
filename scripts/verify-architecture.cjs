@@ -26,10 +26,35 @@
  */
 'use strict';
 
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
+
+/**
+ * git が追跡しているファイルの集合。CI の fresh checkout に存在するのは
+ * これだけなので、参照先がここに無ければ「手元だけ通る」参照になる。
+ * git が使えない環境では判定を諦める (null) — 検査できないことを理由に
+ * 誤って落とすほうが害が大きい。
+ */
+const TRACKED = (() => {
+  try {
+    const out = execFileSync('git', ['-C', REPO_ROOT, 'ls-files', '-z'], {
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+    });
+    return new Set(out.split('\0').filter(Boolean));
+  } catch {
+    return null;
+  }
+})();
+
+function isTracked(absPath) {
+  if (TRACKED === null) return true; // 判定不能なら通す
+  const rel = path.relative(REPO_ROOT, absPath).split(path.sep).join('/');
+  return TRACKED.has(rel);
+}
 const ARCH_FILE = path.join(REPO_ROOT, 'docs/ARCHITECTURE.md');
 
 // Lines of source context to allow around each cited line / range.
@@ -160,6 +185,24 @@ function verifyReferences(archText) {
           archLine: lineNo,
           ref: fullRef,
           reason: `file not found: ${path.relative(REPO_ROOT, refPath)}`,
+        });
+        continue;
+      }
+
+      // 手元にあっても **git 管理外なら CI の fresh checkout には無い**。
+      // つまり「ローカルは green・CI は file not found で落ちる」を作る。
+      // 2026-08-11 に実際に踏んだ: dist/standalone.html を追跡から外した直後、
+      // ARCHITECTURE.md にバッククォート付きで書いたため、作業ツリーには
+      // 生成物が残っていてローカルだけ通った。存在確認では検出できないので
+      // **追跡されているか**を見る。
+      if (!isTracked(refPath)) {
+        failures.push({
+          archLine: lineNo,
+          ref: fullRef,
+          reason:
+            `git 管理外のパスを参照しています (${path.relative(REPO_ROOT, refPath)})。` +
+            ' 手元にはあっても CI の fresh checkout には存在せず、CI だけが落ちます。' +
+            ' 生成物を指すならバッククォートを外して文章で書いてください。',
         });
         continue;
       }
