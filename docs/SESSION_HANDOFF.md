@@ -441,6 +441,21 @@ Stryker は「どのテストも落ちなかった」＝**生存**として数�
 ### 罠 4: verify:arch のテスト数 drift
 `ARCHITECTURE.md` のテスト件数は `grep -rE "^\s*it\(" src/` の実数と一致必須。新規テスト追加 / scaffold 出力で **常に drift する** ので、毎 commit 後に `npm run verify:arch` で確認。
 
+### 罠 6: perf の絶対値は機械依存 — 別マシンの数値と比べない（2026-08 実測）
+
+`npm run perf` が出す DCL やバンドルサイズを、過去のセッションが記録した数値と
+直接比べて「劣化した」と判断してはいけない。CI にも入っていない実測値で、
+走らせたコンテナの速さがそのまま乗る。
+
+実例: コーパス増加後に DCL が悪化したように見えたので、**同一マシン上で A/B を取った**。
+`git show <commit>:dist/standalone.html` で当時の 10.00 MiB バンドルを取り出して
+測ると 377〜420ms（記録は 349ms）— つまりマシン側が約 14% 遅い。
+同条件で比べたコーパス起因の差は **+15ms (+3.8%)**、バンドルは +6.8% 増。
+`bigParses` はどの条件でも **0** で、起動時の巨大 JSON.parse は発生していない。
+
+**再測定するときは必ず `git show <commit>:dist/standalone.html` で当時の成果物を
+取り出し、同じマシンで並べて測ること。** 記録された絶対値は出発点にならない。
+
 ### 罠 5: literal type narrowing in snapshot.ts
 `monthlyFee: 22_000` 等が `22000` literal type に narrow される問題。`as number` cast は anti-pattern 指摘あり (PR #7 R1)。将来は親 object に `satisfies` 句または `as const` 戦略統一を推奨。
 

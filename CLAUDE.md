@@ -23,7 +23,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (~10 MB full / ~2.2 MB `build:web:lite` mobile variant) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 10.7 MiB full / 2.6 MiB `build:web:lite` mobile variant — 2026-08-11 計測) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
