@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Weiser (1991) The Computer for the 21st Century — Scientific American](https://doi.org/10.1145/329124.329126) `学術`
-- [Abowd & Mynatt (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM TOCHI](https://doi.org/10.1016/j.pmcj.2013.12.009) `学術`
+- [Abowd & Mynatt (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM TOCHI](https://doi.org/10.1145/344949.344988) `学術`
 - [Wikipedia: Ubiquitous computing — ユビキタスコンピューティングの概念と実現](https://en.wikipedia.org/wiki/Ubiquitous_computing) `リファレンス`
 
 ## 関連概念

@@ -41,6 +41,7 @@ aliases:
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同じ思想家
 - [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同分野の近傍
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 同分野の近傍
+- [[infosoc-digital-health-medical-data|デジタルヘルスと医療データの権力・プライバシー・アルゴリズム的不平等]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

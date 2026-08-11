@@ -25,7 +25,7 @@
 {"id":"bizlaw-agency-relationship","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"代理人関係（エージェンシー関係）","year":null,"authors":["mechem|f","seavey|h","seavey|w"],"degree":16}
 {"id":"bizlaw-alter-ego-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法人格否認の法理（分身理論）","year":null,"authors":["powell|f","thompson|r"],"degree":5}
 {"id":"bizlaw-alter-ego-doctrine-reverse","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"逆法人格否認（リバース・ピアシング）","year":null,"authors":["cabrelli|d","crespi|g"],"degree":4}
-{"id":"bizlaw-anchoring-litigation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法的判断におけるアンカリング効果：数値情報による判断の歪み","year":null,"authors":["カーネマン|ダ","グゥスリー|チ","トベルスキー|エ"],"degree":21}
+{"id":"bizlaw-anchoring-litigation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法的判断におけるアンカリング効果：数値情報による判断の歪み","year":null,"authors":["カーネマン|ダ","グゥスリー|チ","トベルスキー|エ"],"degree":22}
 {"id":"bizlaw-anonymized-info","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"匿名加工情報・仮名加工情報（個人情報保護法）","year":2015,"authors":[],"degree":18}
 {"id":"bizlaw-anti-bribery-fcpa-ukba","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制","year":null,"authors":[],"degree":7}
 {"id":"bizlaw-anti-dilution-venture","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"アンチダイリューション条項（ベンチャー投資）","year":null,"authors":["ファイルド|ブ","マグナッタ|ジ","ロスクロップ|ジ"],"degree":4}
@@ -700,7 +700,7 @@
 {"id":"econ-allingham-sandmo-tax-evasion","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス","year":1972,"authors":["アリンガム|マ","アンドレオーニ|ジ","イツハキ|シ","サンドモ|ア"],"degree":7}
 {"id":"econ-allison-models","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）","year":1962,"authors":["アリソン|グ","ゼリコウ|フ"],"degree":3}
 {"id":"econ-alonso-monocentric-city","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める","year":1964,"authors":["アロンソ|ウ","チューネン|ヨ","マス|リ","ミルズ|エ"],"degree":5}
-{"id":"econ-anticommons","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アンチコモンズの悲劇","year":1998,"authors":["アイゼンバーグ|レ","ヘラー|マ"],"degree":17}
+{"id":"econ-anticommons","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アンチコモンズの悲劇","year":1998,"authors":["アイゼンバーグ|レ","ヘラー|マ"],"degree":19}
 {"id":"econ-arbitrage","collection":"academic","category":"economics","categoryLabel":"経済学","title":"裁定取引（アービトラージ）と一物一価の法則","year":null,"authors":[],"degree":11}
 {"id":"econ-arbitrage-pricing-theory-ross","collection":"academic","category":"economics","categoryLabel":"経済学","title":"裁定価格理論（APT）——複数のリスク要因による資産価格の決定","year":null,"authors":["ファマ|ユ","フレンチ|ケ","ロス|ス","ロール|リ"],"degree":17}
 {"id":"econ-arrow-impossibility","collection":"academic","category":"economics","categoryLabel":"経済学","title":"アローの不可能性定理","year":1951,"authors":[],"degree":5}
@@ -1728,7 +1728,7 @@
 {"id":"human-alien-hand-syndrome","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"エイリアンハンド症候群——手が自分の意志とは無関係に動く","year":null,"authors":["ゴールドシュタイン|ク","サラ|セ","スペリー|ロ","ハガード|パ"],"degree":3}
 {"id":"human-allostasis","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アロスタシス（Allostasis）","year":1988,"authors":["eyer|j","mcewen|b","sterling|p"],"degree":10}
 {"id":"human-allostatic-load-model","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アロスタティック負荷モデル（McEwen・Stellar）","year":1988,"authors":["mcewen|b","seeman|t","stellar|e","sterling|p"],"degree":12}
-{"id":"human-anchoring","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アンカリング効果（係留と調整）","year":1974,"authors":["カーネマン|ダ","トベルスキー|エ"],"degree":27}
+{"id":"human-anchoring","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アンカリング効果（係留と調整）","year":1974,"authors":["カーネマン|ダ","トベルスキー|エ"],"degree":26}
 {"id":"human-anchoring-adjustment-tversky","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アンカリングと調整——初期値への不十分な修正による判断バイアス","year":null,"authors":["エプリー|ニ","カーネマン|ダ","トベルスキー|エ","ムスワイラー|ト"],"degree":11}
 {"id":"human-anosognosia","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"病態失認（アノソグノシア / Anosognosia）","year":1914,"authors":["babinski|j","ramachandran|","rogers-ramachandran|"],"degree":2}
 {"id":"human-anton-syndrome","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"アントン症候群——皮質盲なのに見えないことを否認する","year":null,"authors":["アントン|ガ","ダマシオ|ア","バビンスキー|ジ","ラマチャンドラン|ヴ"],"degree":13}
@@ -1770,7 +1770,7 @@
 {"id":"human-binocular-rivalry","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"両眼視野闘争（Binocular Rivalry）","year":2002,"authors":["ブレイク|ラ","ロゴセティス|ニ"],"degree":3}
 {"id":"human-biological-motion-johansson","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象","year":1973,"authors":["カッティング|ジ","コズロウスキー|リ","シフラー|マ","シミオン|フ","ブレイク|ラ","ヨハンソン|グ"],"degree":3}
 {"id":"human-biopsychosocial-model","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"生物心理社会モデル","year":null,"authors":["engel|g","meyer|a","romano|j"],"degree":3}
-{"id":"human-biopsychosocial-model-chronic-pain","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"慢性疼痛の生物心理社会モデル","year":null,"authors":["engel|g","gatchel|r","turk|d","waddell|g"],"degree":12}
+{"id":"human-biopsychosocial-model-chronic-pain","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"慢性疼痛の生物心理社会モデル","year":null,"authors":["engel|g","gatchel|r","turk|d","waddell|g"],"degree":13}
 {"id":"human-blindsight","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ブラインドサイト（Blindsight）","year":1974,"authors":["cowey|a","humphrey|n","marshall|","sanders|e","type|","weiskrantz|l"],"degree":2}
 {"id":"human-body-schema","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"身体図式（ボディスキーマ）","year":null,"authors":["ギャラガー|シ","ヘッド|ヘ","ホームズ|ゴ"],"degree":4}
 {"id":"human-boreout","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ボアアウト（退屈燃え尽き症候群）","year":2007,"authors":["boreout|","ロスリン|フ","ヴェルダー|ペ"],"degree":16}
@@ -1853,7 +1853,7 @@
 {"id":"human-dark-triad","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合","year":1957,"authors":["zettler|","ナルシシズム|","マキャヴェリアニズム|","モシャーゲン|モ"],"degree":2}
 {"id":"human-decision-fatigue","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"決定疲労（decision fatigue）","year":2011,"authors":["avnaim-pesso|s","hagger|m","バウマイスター|ロ"],"degree":18}
 {"id":"human-decoy-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"おとり効果（非対称的優位性効果）","year":1982,"authors":["アリエリー|ダ","フーバー|ジ","プット|ク","ペイン|ジ"],"degree":12}
-{"id":"human-default-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"デフォルト効果（初期設定効果）","year":2003,"authors":["オプトアウト|","オプトイン|","ゴールドスタイン|ダ","サンスティーン|キ","ジョンソン|エ","セイラー|リ"],"degree":19}
+{"id":"human-default-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"デフォルト効果（初期設定効果）","year":2003,"authors":["オプトアウト|","オプトイン|","ゴールドスタイン|ダ","サンスティーン|キ","ジョンソン|エ","セイラー|リ"],"degree":21}
 {"id":"human-default-mode-network-raichle","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理","year":null,"authors":["シュルマン|ゴ","スプレング|ダ","バックナー|ラ","フォックス|マ","レイクル|マ"],"degree":14}
 {"id":"human-defense-mechanisms","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"防衛機制","year":1936,"authors":["フロイト|ア","フロイト|ジ","ヴェイラント|ジ"],"degree":23}
 {"id":"human-defensive-attribution-hypothesis","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説","year":1966,"authors":["burger|j","effect|r","hatfield|","shaver|k","similarity|s","walster|e"],"degree":2}
@@ -1902,7 +1902,7 @@
 {"id":"human-embodied-simulation-rizzolatti","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"身体的シミュレーションと鏡像ニューロン（リゾラッティ）","year":null,"authors":["イアコボーニ|マ","ガレーゼ|ヴ","ヒコック|グ","リゾラッティ|ジ"],"degree":9}
 {"id":"human-emerging-adulthood","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"新興成人期（エマージング・アダルトフッド）","year":2000,"authors":["arnett|"],"degree":2}
 {"id":"human-emotion-appraisal-lazarus","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情の評価理論と一次・二次評価プロセス（ラザルス）","year":null,"authors":["シェラー|ク","ニーデンタール|ポ","フォルクマン|バ","ラザルス|リ"],"degree":5}
-{"id":"human-emotion-regulation-gross-reappraisal","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル","year":null,"authors":["ウィリアムス|キ","グロス|ジ","ジョン|ア","レベンソン|ロ"],"degree":10}
+{"id":"human-emotion-regulation-gross-reappraisal","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル","year":null,"authors":["ウィリアムス|キ","グロス|ジ","ジョン|ア","レベンソン|ロ"],"degree":11}
 {"id":"human-emotional-contagion","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"情動感染","year":1993,"authors":["rapson|","カシオッポ|ジ","ハットフィールド|エ","ラプソン|リ"],"degree":16}
 {"id":"human-emotional-granularity","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情粒度","year":null,"authors":["barrett|l","fredrickson|b","kashdan|t","tugade|m"],"degree":4}
 {"id":"human-emotional-granularity-barrett","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"感情粒度と構成主義的感情論（バレット）","year":null,"authors":["エクマン|ポ","グロス|ジ","ダマシオ|ア","バレット|リ"],"degree":14}
@@ -1927,7 +1927,7 @@
 {"id":"human-excitation-transfer","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"興奮転移理論——残った興奮が次の感情を強める","year":null,"authors":["アロン|ア","シャクター|ス","ジルマン|ド","ダットン|ド"],"degree":8}
 {"id":"human-executive-attention","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行注意ネットワーク（Executive Attention Network）","year":1990,"authors":[],"degree":19}
 {"id":"human-executive-function","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能（遂行機能）","year":null,"authors":["アキラ|ミ","ダイアモンド|ア","フリードマン|ナ"],"degree":21}
-{"id":"human-executive-function-baddeley","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御","year":null,"authors":["ダイアモンド|ア","バッデレー|ア","ヒッチ|グ","フスター|ジ"],"degree":20}
+{"id":"human-executive-function-baddeley","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御","year":null,"authors":["ダイアモンド|ア","バッデレー|ア","ヒッチ|グ","フスター|ジ"],"degree":6}
 {"id":"human-executive-function-development","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実行機能の発達と前頭前野の神経科学的基盤","year":null,"authors":["ゴールドマン|パ","ダイアモンド|ア","フスター|ジ","ミヤケ|ユ"],"degree":4}
 {"id":"human-existential-therapy-yalom","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"実存療法——ヤーロムの四つの究極的関心と治療的対峙","year":null,"authors":["ビンスワンガー|ル","フランクル|ヴ","メイ|ロ","ヤーロム|ア"],"degree":5}
 {"id":"human-experiential-avoidance-hayes","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス","year":null,"authors":["ウィルソン|ケ","ストローサル|カ","ヘイズ|ス","ボンド|フ"],"degree":9}
@@ -1944,7 +1944,7 @@
 {"id":"human-filter-model-attention-broadbent","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論","year":null,"authors":["チェリー|コ","トライスマン|ア","ブロードベント|ド"],"degree":9}
 {"id":"human-fitts-law","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"フィッツの法則——速さと正確さのトレードオフ","year":null,"authors":["カード|ス","シャノン|ク","フィッツ|ポ","マッケンジー|ス"],"degree":9}
 {"id":"human-fixed-action-pattern-lorenz","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"固定的動作パターン——生得的解発機構が標識刺激により誘発する本能行動","year":null,"authors":["ソープ|ウ","ティンバーゲン|ニ","フリッシュ|カ","ローレンツ|コ"],"degree":2}
-{"id":"human-flash-lag","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"フラッシュラグ効果（Flash-Lag Effect）","year":1994,"authors":["イーグルマン|デ","セジュノスキー|テ","ニジャワン|ラ"],"degree":16}
+{"id":"human-flash-lag","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"フラッシュラグ効果（Flash-Lag Effect）","year":1994,"authors":["イーグルマン|デ","セジュノスキー|テ","ニジャワン|ラ"],"degree":15}
 {"id":"human-flashbulb-memory-brown-kulik","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶","year":null,"authors":["キューリック|ジ","ナイサー|ウ","ハースト|ウ","ブラウン|ロ"],"degree":7}
 {"id":"human-flow-optimal-experience-csikszentmihalyi","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"フロー理論と最適経験の積極心理学（チクセントミハイ）","year":null,"authors":["セリグマン|マ","チクセントミハイ|イ","チクセントミハイ|ミ","ナカムラ|ジ"],"degree":20}
 {"id":"human-flow-psychology-csikszentmihalyi","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学","year":null,"authors":["アランコーラ|エ","スコット|ジ","セリグマン|マ","チクセントミハイ|ミ"],"degree":21}
@@ -2136,7 +2136,7 @@
 {"id":"human-phenomenological-reduction","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"現象学的還元（エポケー）と意識の本質構造","year":null,"authors":["ハイデガー|マ","フッサール|エ","メルロ|モ"],"degree":4}
 {"id":"human-phenomenology-lived-body-merleau","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学","year":null,"authors":["アイディー|ド","クラーク|ア","メルロ|モ","ヴァレラ|フ"],"degree":22}
 {"id":"human-phi-phenomenon-wertheimer","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点","year":null,"authors":["エーレンフェルス|ク","ケーラー|ヴ","コフカ|ク","ヴェルトハイマー|マ"],"degree":5}
-{"id":"human-phoneme-restoration","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚","year":1970,"authors":["legislatures|","warren|r"],"degree":16}
+{"id":"human-phoneme-restoration","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚","year":1970,"authors":["legislatures|","warren|r"],"degree":15}
 {"id":"human-phonological-loop","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"音韻ループ（Phonological Loop）","year":1974,"authors":["バデリー|","バデリー|ア","ヒッチ|"],"degree":3}
 {"id":"human-piaget-cognitive-development","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ピアジェの認知発達段階説","year":null,"authors":["ピアジェ|ジ"],"degree":12}
 {"id":"human-place-attachment","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"プレイス・アタッチメント（場所愛着）","year":1930,"authors":["アルトマン|ア","ギフォード|ロ","スキャネル|レ"],"degree":8}
@@ -2345,7 +2345,7 @@
 {"id":"human-yerkes-dodson-law","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ヤーキーズ＝ドッドソンの法則——覚醒水準とパフォーマンスの逆U字関係","year":null,"authors":["アイゼンク|マ","ドッドソン|ジ","ハニン|ユ","ヤーキーズ|ロ"],"degree":4}
 {"id":"human-zeigarnik","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"ツァイガルニク効果","year":1920,"authors":["マーケティング|ク"],"degree":11}
 {"id":"human-zone-of-proximal-development","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"発達の最近接領域（ZPD）","year":1930,"authors":["ross|","ロス|ウ","ヴィゴツキー|レ"],"degree":12}
-{"id":"infosoc-activity-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論","year":null,"authors":["エンゲストローム|ユ","レオンチェフ|ア","ヴィゴツキー|レ"],"degree":76}
+{"id":"infosoc-activity-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論","year":null,"authors":["エンゲストローム|ユ","レオンチェフ|ア","ヴィゴツキー|レ"],"degree":75}
 {"id":"infosoc-actor-network-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アクターネットワーク理論","year":1980,"authors":["カロン|ミ","ラトゥール|ブ","ロー|ジ"],"degree":47}
 {"id":"infosoc-affective-computing-picard","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題","year":null,"authors":["エクマン|ポ","グルーバー|ジ","ジャン|テ","ピカード|ロ"],"degree":4}
 {"id":"infosoc-affective-publics-papacharissi","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"感情的公衆——デジタルメディアにおける情動的ネットワーク形成","year":null,"authors":["アーメッド|サ","ハーバーマス|ユ","パパチャリッシ|ジ","マスミ|ブ"],"degree":10}
@@ -2489,7 +2489,7 @@
 {"id":"infosoc-datafication-mayer-schoenberger","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ化（ダタフィケーション）とビッグデータ社会","year":null,"authors":["クキエ|ケ","クロフォード|ケ","ダイク|ジ","マイヤー|ヴ"],"degree":11}
 {"id":"infosoc-datafication-quantified-self","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論","year":null,"authors":["ウルフ|ゲ","ケリー|ケ","ラプトン|デ","ローズ|ニ"],"degree":14}
 {"id":"infosoc-datafication-social-life","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論","year":null,"authors":["ウェア|ナ","キッチン|ロ","ボセランク|ア","マイヤー|ビ"],"degree":10}
-{"id":"infosoc-datafication-van-dijck","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）","year":null,"authors":["クキエ|ケ","ダイク|ホ","チャバジー|ダ","マイヤー|ヴ"],"degree":9}
+{"id":"infosoc-datafication-van-dijck","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）","year":null,"authors":["クキエ|ケ","ダイク|ホ","チャバジー|ダ","マイヤー|ヴ"],"degree":10}
 {"id":"infosoc-dataveillance","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データヴェイランス（データ監視）","year":1988,"authors":["クラーク|ロ","ライアン|デ"],"degree":19}
 {"id":"infosoc-dataveillance-clarke","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"データ監視（デイタヴェイランス）——個人データを通じた体系的な監視","year":null,"authors":["ガンディ|オ","クラーク|ロ","ハガティ|ケ","ライアン|デ"],"degree":14}
 {"id":"infosoc-deceptive-design-gray","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"欺瞞的デザインとダーク・パターン（グレイ他）","year":null,"authors":["グレイ|コ","シュール|ナ","ダシ|ア","ブリニャル|ハ"],"degree":11}

@@ -26,7 +26,7 @@ aliases:
 ベラ・バラッサ ／ ポール・サミュエルソン ／ ラドミール・ルゴジャン ／ イルヴィング・クラヴィス
 
 ## 出典
-- [Balassa, B. (1964) The Purchasing-Power Parity Doctrine — Journal of Political Economy](https://doi.org/10.1016/0022-1996(64)90025-0) `学術`
+- [Balassa, B. (1964) The Purchasing-Power Parity Doctrine — Journal of Political Economy](https://doi.org/10.1086/258965) `学術`
 - [Samuelson, P. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics](https://doi.org/10.2307/2296638) `学術`
 - [Wikipedia: Balassa–Samuelson effect — 効果の概要](https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect) `リファレンス`
 

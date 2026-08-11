@@ -28,7 +28,7 @@ Karl E. Weick ／ Kathleen M. Sutcliffe ／ David Obstfeld
 ## 出典
 - [Weick, Sensemaking in Organizations (Sage, 1995) — JSTOR review](https://www.jstor.org/stable/258550) `学術`
 - [Weick, Sutcliffe & Obstfeld, "Organizing and the Process of Sensemaking," AMR 30(4), 2005](https://doi.org/10.5465/amr.2005.16387885) `学術`
-- [Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)](https://link.springer.com/article/10.1007/s10551-011-0888-6) `学術`
+- [Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)](https://doi.org/10.5465/19416520.2014.873177) `学術`
 - [Oxford Bibliographies — Sensemaking in Organizations](https://www.oxfordbibliographies.com/display/document/obo-9780199846740/obo-9780199846740-0090.xml) `リファレンス`
 
 ## 関連概念

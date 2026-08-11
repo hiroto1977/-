@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Ricardo, D. (1817) On the Principles of Political Economy and Taxation — John Murray（比較優位の原典、Chapter 7）](https://oll.libertyfund.org/title/mcculloch-the-works-of-david-ricardo) `学術`
 - [Dornbusch, R., Fischer, S. & Samuelson, P. A. (1977) Comparative Advantage, Trade, and Payments in a Ricardian Model with a Continuum of Goods — American Economic Review, 67(5), 823–839（連続財モデルへの拡張）](https://doi.org/10.2307/2228631) `学術`
-- [Costinot, A. & Donaldson, D. (2012) Ricardo's Theory of Comparative Advantage: Old Idea, New Evidence — American Economic Review, 102(3), 453–458（実証的検証）](https://doi.org/10.1093/qje/qjs047) `学術`
+- [Costinot, A. & Donaldson, D. (2012) Ricardo's Theory of Comparative Advantage: Old Idea, New Evidence — American Economic Review, 102(3), 453–458（実証的検証）](https://doi.org/10.1257/aer.102.3.453) `学術`
 - [Wikipedia: Comparative advantage — Ricardo, H-O model, new trade theory, gains from trade empirics](https://en.wikipedia.org/wiki/Comparative_advantage) `リファレンス`
 
 ## 関連概念

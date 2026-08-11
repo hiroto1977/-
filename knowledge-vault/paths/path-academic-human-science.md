@@ -18,9 +18,9 @@ tags:
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-attribution-theory|帰属理論]]（接続 28）
-- [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
+- [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）

@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [O'Donoghue & Rabin 1999 Doing It Now or Later. American Economic Review 89(1) 103-124](https://doi.org/10.1257/aer.89.1.103) `学術`
 - [Laibson 1997 Golden Eggs and Hyperbolic Discounting. Quarterly Journal of Economics 112(2) 443-478](https://doi.org/10.1162/003355397555253) `学術`
-- [O'Donoghue & Rabin 2001 Choice and Procrastination. Quarterly Journal of Economics 116(1) 121-160](https://doi.org/10.1257/0002828053828482) `学術`
+- [O'Donoghue & Rabin 2001 Choice and Procrastination. Quarterly Journal of Economics 116(1) 121-160](https://doi.org/10.1162/003355301556365) `学術`
 
 ## 関連概念
 - [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同じ思想家

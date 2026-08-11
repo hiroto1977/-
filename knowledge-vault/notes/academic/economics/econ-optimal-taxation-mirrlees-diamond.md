@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Mirrlees (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies](https://doi.org/10.2307/2296779) `学術`
-- [Diamond & Saez (2011) The Case for a Progressive Tax — Journal of Economic Perspectives](https://doi.org/10.1111/j.1467-937X.2010.00601.x) `学術`
+- [Diamond & Saez (2011) The Case for a Progressive Tax — Journal of Economic Perspectives](https://doi.org/10.1257/jep.25.4.165) `学術`
 - [Wikipedia: Optimal tax — 最適課税理論の歴史と主要結果の概説](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 
 ## 関連概念

@@ -274,30 +274,52 @@ compliance / subsidy / counselor / econ-history のデータ（LITE は
 
 ---
 
-## 出典の DOI プレフィックス照合 — 未確認 134 件
+## 出典の DOI プレフィックス照合 — 残り 100 件（134 件から着手済み）
 
-`npm run lint:doi-prefix` (verify:all / CI に配線済み) を新設。DOI プレフィックスは
-登録機関＝出版社に紐づくので、`10.1017` (Cambridge UP) なのにラベルが
-「Oxford University Press」と名乗っていれば **どちらかの書誌が必ず誤り**。
-948 件の DOI 出典 (ラベルが出版社を名乗るもの) を照合し、134 件の矛盾を検出した。
+`npm run lint:doi-prefix`（verify:all / CI に配線済み）が 949 件の DOI 出典を照合し、
+当初 134 件の矛盾を検出した。**うち 34 件を処理済み**（DOI 差し替え 33 件 ＋
+ルール修正 1 件）。残り 100 件は台帳 `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
+「未確認」として退避してある。台帳は双方向なので、直したら消すことが強制される。
 
-134 件は全て `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
-`id::DOI` + 「ラベルの主張 / DOI の出版社」つきで退避してある。**まだ直していない**のは
-一次資料に当たっておらず、ラベルと DOI のどちらが誤りか判定していないため
-(推測で出典を直さない規則)。台帳は `lint:citations` と同じく双方向で、
-矛盾が解消されたのに台帳へ残っていると落ちる = 直したら消すことが強制される。
+### 処理済みの内訳
 
-残作業: 134 件を一次資料で照合し、誤っている側を差し替えて台帳から消す。
-多い順に「Psychological Science 系 → APA」7 件、「Journal of Management → AOM」6 件、
-「Academy of Management → Wiley」6 件。代表例:
+**DOI 差し替え 33 件** — いずれも出版社／索引ページで**実体を確認してから**差し替えた。
+確認できなかった候補は、もっともらしくても投入していない（推測で出典を直さない）。
+例: Gioia &amp; Chittipeddi (1991) に付いていた `10.5465/amr.1991.4279513` の実体は
+**AMR に載った別書（Flow）の書評**で、正しい SMJ の DOI へ差し替えた。
 
-- `bizlaw-administrative-law-proportionality` — ラベル Oxford UP / DOI `10.1017` (Cambridge)
-- `econ-backwash-spread-myrdal` — ラベル Cambridge UP / DOI `10.1016` (Elsevier)
-- `infosoc-affective-computing-picard` — ラベル MIT Press / DOI `10.1145` (ACM)
+**偽陽性 1 件はルール側で除外** — `econ-dorfman-steiner-theorem` は URL が
+Wiley Encyclopedia of Management の項目で、ラベルにもそう明記してあるのに、
+ラベル中の "American Economic Review"（原典）を見て誤検出していた。
+百科事典・ハンドブックは「原典を紹介する二次文献」なので、ラベルが原典の掲載誌と
+収録先の両方を名乗るのが正常。**台帳に隠さずルールを直した**（隠すと将来も誤検出が続く）。
 
-中立プレフィックス (JSTOR `10.2307` / SSRN `10.2139` / NBER `10.3386` 等) と
-版元が移った誌 (QJE、Review of Economic Studies、Econometrica、Journal of Management 等)
-はルール側で除外済み。
+### 判明した構造 — 個別の誤りではなくパターン
+
+1. **書籍に後付けされた DOI** が最多。実在するが**まったく無関係な文献**を指す。
+   最も明白な例は `infosoc-digital-rights-management-theory` で、Gillespie *Wired Shut*
+   （MIT Press）に付いた `10.1017/CBO9780511813696` の実体は
+   **Cambridge の熱流体工学の物性表小冊子**だった。
+   → **書籍は DOI を持たせず ISBN / 出版社書誌 URL に統一する**のが再発防止になる。
+2. **実在しない DOI（捏造の疑い）**。`10.1007/978-0-387-29907-7` は
+   **ISBN-13 のチェックディジットが不正**（正しくは末尾 5）。
+   `10.1016/0749-596X(78)90043-4` は ISSN 0749-596X の誌が **1985 年創刊**なので
+   1978 年の PII は成立しない。
+3. **本物の論文の開始頁を、別出版社の DOI 体系に流し込んだ**痕跡。
+   Psychological Science 13:172 に対し `10.1037/0022-3514.82.1.172`（APA の JPSP）など。
+4. **同一 DOI に複数の主張がぶつかっていても「どれかが正しい」とは限らない。**
+   今回も全主張者が誤りのケースが複数あった。必ず DOI の実体を先に確定すること。
+
+### 残り 100 件を進めるときの制約
+
+**WebSearch がセッション共有で 200 回上限**、`WebFetch` と `curl` は
+doi.org / Crossref / OpenAlex / 主要出版社すべてで egress ブロック。
+つまり照合手段は実質 WebSearch のみで、これが律速になる。
+並列エージェントを増やしても検索予算を食い合うだけなので、
+**1 セッションあたり 30〜40 件が現実的な上限**。
+
+手順は「DOI 接尾辞の完全一致検索（例: `"CBO9780511777141"`）→ 索引が返す
+出版社ページの実体を証拠にする」。検索要約の主張を証拠にしないこと。
 
 ---
 

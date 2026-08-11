@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Fredrickson, B. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist](https://doi.org/10.1037/0003-066X.56.3.218) `学術`
-- [Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science](https://doi.org/10.1037/0022-3514.84.2.365) `学術`
+- [Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science](https://doi.org/10.1111/1467-9280.00431) `学術`
 - [Wikipedia: Broaden-and-build — 拡張＝形成理論の概要](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
 
 ## 関連概念

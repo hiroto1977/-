@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 135
+cite_count: 134
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **135 件**（学術 115 ・ リファレンス 20）
+> [!info] 出典ドメイン索引 ・ 引用 **134 件**（学術 114 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -144,7 +144,6 @@ tags:
 - [[mgmt-psychological-contract|心理的契約]] — Rousseau,D.M.(1989).Psychologicalandimpliedcontractsinorganizations.E…
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — MotivationalMechanismsofSelf-ConcordanceTheory—JournalofBusinessandPs…
 - [[mgmt-sensemaking|センスメイキング]] — SenseMaking,Organizational—SpringerNatureリファレンス
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — Maitlis&Christianson,"SensemakinginOrganizations:TakingStock,"Academy…
 - [[mgmt-team-faultlines|フォルトライン（断層線）——集団を下位集団に割る見えない亀裂]] — GroupDecisionandNegotiation:CracksinDiversityResearch—TheEffectsofDiv…
 - [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — Stalk,G.Jr."Time—TheNextSourceofCompetitiveAdvantage"—SpringerLink（原論…
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — Schaufelietal.(2002)TheMeasurementofEngagementandBurnout,JournalofHap…

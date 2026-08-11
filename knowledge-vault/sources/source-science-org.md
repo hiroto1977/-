@@ -2,7 +2,7 @@
 title: "science.org"
 type: source-domain
 host: "science.org"
-cite_count: 19
+cite_count: 18
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # science.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **19 件**（学術 19）
+> [!info] 出典ドメイン索引 ・ 引用 **18 件**（学術 18）
 
 ## このドメインを出典とする項目
 
@@ -20,7 +20,6 @@ tags:
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — Engel(1977)Theneedforanewmedicalmodel—Science196(4286)
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — Johnson&Goldstein,“DoDefaultsSaveLives?”Science302:1338–1339(2003)
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — Quoidbach,Gilbert&Wilson,"TheEndofHistoryIllusion,"Science339:96–98(2…
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — Diamond,A.(2013)ExecutiveFunctions—AnnualReviewofPsychology
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — Eagleman&Sejnowski(2000)MotionIntegrationandPostdiction—Science
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — Kahnemanetal.(2006)“WouldYouBeHappierIfYouWereRicher?AFocusingIllusio…
 - [[human-framing-effect|フレーミング効果（framing effect）]] — Tversky&Kahneman(1981)TheFramingofDecisionsandthePsychologyofChoice,S…

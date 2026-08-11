@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Mitchell, R. K., Agle, B. R. & Wood, D. J. (1997) Toward a Theory of Stakeholder Identification and Salience: Defining the Principle of Who and What Really Counts — Academy of Management Review, 22(4), 853–886（サリエンス理論の原典）](https://doi.org/10.5465/amr.1997.9711022105) `学術`
 - [Neville, B. A., Bell, S. J. & Whitwell, G. J. (2011) Stakeholder Salience Revisited: Refining, Redefining, and Refueling an Underdeveloped Conceptual Tool — Journal of Business Ethics, 102(3), 357–378（理論の精緻化）](https://doi.org/10.5465/amr.2007.24345536) `学術`
-- [Agle, B. R., Mitchell, R. K. & Sonnenfeld, J. A. (1999) Who Matters to CEOs? An Investigation of Stakeholder Attributes and Salience, Corporate Performance, and CEO Values — Academy of Management Journal, 42(5), 507–525（実証研究）](https://doi.org/10.1007/s10551-018-3892-8) `学術`
+- [Agle, B. R., Mitchell, R. K. & Sonnenfeld, J. A. (1999) Who Matters to CEOs? An Investigation of Stakeholder Attributes and Salience, Corporate Performance, and CEO Values — Academy of Management Journal, 42(5), 507–525（実証研究）](https://doi.org/10.5465/256973) `学術`
 - [Wikipedia: Stakeholder theory — Mitchell, Agle & Wood, three attributes, salience typology, ESG materiality](https://en.wikipedia.org/wiki/Stakeholder_theory) `リファレンス`
 
 ## 関連概念

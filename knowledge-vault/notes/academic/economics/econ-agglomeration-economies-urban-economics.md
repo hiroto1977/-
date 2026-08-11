@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Glaeser & Gottlieb (2009) The Wealth of Cities — Quarterly Journal of Economics](https://doi.org/10.1093/qje/qju025) `学術`
-- [Glaeser et al. (1992) Growth in Cities — Journal of Political Economy](https://doi.org/10.1016/0094-1190(91)90002-C) `学術`
+- [Glaeser et al. (1992) Growth in Cities — Journal of Political Economy](https://doi.org/10.1086/261856) `学術`
 - [Wikipedia: Economies of agglomeration — 集積経済の理論と実証](https://en.wikipedia.org/wiki/Economies_of_agglomeration) `リファレンス`
 
 ## 関連概念

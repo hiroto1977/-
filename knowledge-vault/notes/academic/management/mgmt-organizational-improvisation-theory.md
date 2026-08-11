@@ -26,7 +26,7 @@ aliases:
 Christine Moorman ／ Anne S. Miner ／ Karl E. Weick ／ Miguel Pina e Cunha
 
 ## 出典
-- [Moorman & Miner (1998) "Organizational Improvisation and Organizational Memory" — Academy of Management Review](https://doi.org/10.1177/014920639802400602) `学術`
+- [Moorman & Miner (1998) "Organizational Improvisation and Organizational Memory" — Academy of Management Review](https://doi.org/10.5465/amr.1998.1255634) `学術`
 - [Moorman & Miner (1998) "The Convergence of Planning and Execution: Improvisation in New Product Development" — Journal of Marketing](https://doi.org/10.1177/014920639802400601) `学術`
 - [Cunha, Cunha & Kamoche (1999) "Organizational Improvisation: What, When, How and Why" — International Journal of Management Reviews](https://doi.org/10.1111/1468-2370.00017) `学術`
 - [Weick (1998) "Improvisation as a Mindset for Organizational Analysis" — Organization Science](https://doi.org/10.2307/256636) `学術`

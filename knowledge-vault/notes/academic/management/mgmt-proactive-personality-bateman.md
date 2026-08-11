@@ -27,8 +27,8 @@ aliases:
 
 ## 出典
 - [Bateman, T. S. & Crant, J. M. (1993) The Proactive Component of Organizational Behavior: A Measure and Correlates — Journal of Organizational Behavior, 14(2), 103–118（原典）](https://doi.org/10.1037/0021-9010.78.4.538) `学術`
-- [Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management, 26(3), 435–462（プロアクティブ行動のレビュー）](https://doi.org/10.1037/0021-9010.85.3.407) `学術`
-- [Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management, 36(4), 827–856（プロアクティブ動機づけモデル）](https://doi.org/10.5465/amr.2010.0003) `学術`
+- [Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management, 26(3), 435–462（プロアクティブ行動のレビュー）](https://doi.org/10.1177/014920630002600304) `学術`
+- [Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management, 36(4), 827–856（プロアクティブ動機づけモデル）](https://doi.org/10.1177/0149206310363732) `学術`
 - [Wikipedia: Proactivity — Bateman & Crant, proactive personality scale, proactive behavior, career initiative](https://en.wikipedia.org/wiki/Proactivity) `リファレンス`
 
 ## 関連概念

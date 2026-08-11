@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Lengnick-Hall, Beck & Lengnick-Hall (2011) Developing a Capacity for Organizational Resilience — Human Resource Management Review](https://doi.org/10.1016/j.jm.2010.04.006) `学術`
-- [Linnenluecke (2017) Resilience in Business and Management Research — International Journal of Management Reviews](https://doi.org/10.1016/j.ijmr.2013.09.003) `学術`
+- [Linnenluecke (2017) Resilience in Business and Management Research — International Journal of Management Reviews](https://doi.org/10.1111/ijmr.12076) `学術`
 - [Wikipedia: Organizational resilience — 組織レジリエンスの概説](https://en.wikipedia.org/wiki/Organizational_resilience) `リファレンス`
 
 ## 関連概念

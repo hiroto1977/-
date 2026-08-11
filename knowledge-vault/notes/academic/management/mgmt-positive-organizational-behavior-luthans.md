@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Luthans (2002) The Need for and Meaning of Positive Organizational Behavior — Journal of Organizational Behavior 23(6), 695-706](https://doi.org/10.1002/job.165) `学術`
-- [Luthans, F., Avey, J. B. & Patera, J. L. (2008) Experimental Analysis of a Web-Based Training Intervention to Develop Positive Psychological Capital — Academy of Management Learning & Education, 7(2), 209–221（PsyCap介入の実証）](https://doi.org/10.1177/0149206307305562) `学術`
+- [Luthans, F., Avey, J. B. & Patera, J. L. (2008) Experimental Analysis of a Web-Based Training Intervention to Develop Positive Psychological Capital — Academy of Management Learning & Education, 7(2), 209–221（PsyCap介入の実証）](https://doi.org/10.5465/amle.2008.32712618) `学術`
 - [Luthans & Youssef-Morgan (2017) Psychological Capital: An Evidence-Based Positive Approach — Annual Review of Organizational Psychology and Organizational Behavior](https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-032516-113324) `学術`
 - [Seligman & Csikszentmihalyi (2000) Positive Psychology: An Introduction — American Psychologist 55(1)](https://doi.org/10.1037/0003-066X.55.1.5) `学術`
 - [Luthans, Youssef & Avolio (2007) Psychological Capital — Oxford University Press](https://doi.org/10.1093/acprof:oso/9780195187526.001.0001) `学術`

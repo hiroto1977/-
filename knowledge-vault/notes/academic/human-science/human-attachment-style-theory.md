@@ -27,7 +27,7 @@ John Bowlby ／ Mary Ainsworth ／ Cindy Hazan ／ Phillip Shaver ／ Kim Bartho
 
 ## 出典
 - [Hazan & Shaver (1987) — Romantic love conceptualized as an attachment process, Journal of Personality and Social Psychology](https://doi.org/10.1037/0022-3514.52.3.511) `学術`
-- [Bartholomew & Horowitz (1991) — Attachment styles among young adults: A test of a four-category model, Journal of Personality and Social Psychology](https://doi.org/10.1177/0146167291174009) `学術`
+- [Bartholomew & Horowitz (1991) — Attachment styles among young adults: A test of a four-category model, Journal of Personality and Social Psychology](https://doi.org/10.1037/0022-3514.61.2.226) `学術`
 - [Brennan, Clark & Shaver (1998) — Self-report measurement of adult attachment: An integrative overview, in Attachment Theory and Close Relationships](https://doi.org/10.1037/0022-3514.74.5.1150) `学術`
 - [Feeney & Noller (1996) — Adult attachment review, Psychological Bulletin](https://doi.org/10.1037/0033-2909.117.3.387) `学術`
 - [Cassidy & Shaver (Eds.) (2016) — Handbook of Attachment: Theory, Research, and Clinical Applications (3rd ed.), Guilford Press](https://www.guilford.com/books/Handbook-of-Attachment/Cassidy-Shaver/9781462538683) `リファレンス`

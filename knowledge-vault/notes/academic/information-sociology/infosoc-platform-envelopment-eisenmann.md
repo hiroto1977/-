@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Eisenmann, T., Parker, G. & Van Alstyne, M. (2006) Strategies for Two-Sided Markets — Harvard Business Review, 84(10), 92–101（二面市場戦略の原典）](https://doi.org/10.1287/mnsc.1060.0550) `学術`
-- [Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal, 32(12), 1270–1285（包囲戦略の体系化）](https://doi.org/10.1287/mnsc.1100.1185) `学術`
+- [Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal, 32(12), 1270–1285（包囲戦略の体系化）](https://doi.org/10.1002/smj.935) `学術`
 - [European Parliament (2022) Regulation (EU) 2022/1925 — Digital Markets Act（ゲートキーパー規制・バンドル禁止）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1925) `公的`
 - [Wikipedia: Platform envelopment — Eisenmann, bundling, gatekeeper, DMA, multi-homing](https://en.wikipedia.org/wiki/Platform_envelopment) `リファレンス`
 

@@ -26,7 +26,7 @@ aliases:
 アラン・バッデレー ／ グラハム・ヒッチ ／ アドリール・ダイアモンド ／ ジョアキム・フスター
 
 ## 出典
-- [Diamond, A. (2013) Executive Functions — Annual Review of Psychology](https://www.science.org/doi/10.1126/science.1127161) `学術`
+- [Diamond, A. (2013) Executive Functions — Annual Review of Psychology](https://doi.org/10.1146/annurev-psych-113011-143750) `学術`
 - [Baddeley, A. & Hitch, G.J. (1974) Working Memory — Psychology of Learning and Motivation](https://www.cambridge.org/core/journals/quarterly-journal-of-experimental-psychology) `学術`
 - [Wikipedia: 実行機能 — 作動記憶と認知制御の解説](https://ja.wikipedia.org/wiki/%E5%AE%9F%E8%A1%8C%E6%A9%9F%E8%83%BD) `リファレンス`
 
@@ -34,13 +34,8 @@ aliases:
 - [[human-executive-function-development|実行機能の発達と前頭前野の神経科学的基盤]] — 同じ思想家
 - [[human-executive-function|実行機能（遂行機能）]] — 同じ思想家
 - [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同じ思想家
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
-- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
-- [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
-- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
-- [[human-trolley-problem|トロッコ問題]] — 出典を共有
-- [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
-- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同分野の近傍
+- [[human-stroop-effect|ストループ効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -21689,7 +21689,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.1111/1468-0262.00467', type: 'academic', label: 'Melitz (2003) The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity, Econometrica 71(6):1695-1725' },
-      { url: 'https://doi.org/10.1162/0033553041382139', type: 'academic', label: 'Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316' },
+      { url: 'https://doi.org/10.1257/000282804322970814', type: 'academic', label: 'Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316' },
       { url: 'https://doi.org/10.1257/jel.45.1.39', type: 'academic', label: 'Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130' },
     ],
   },
@@ -23578,7 +23578,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'Christine Moorman ／ Anne S. Miner ／ Karl E. Weick ／ Miguel Pina e Cunha',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1177/014920639802400602', type: 'academic', label: 'Moorman & Miner (1998) "Organizational Improvisation and Organizational Memory" — Academy of Management Review' },
+      { url: 'https://doi.org/10.5465/amr.1998.1255634', type: 'academic', label: 'Moorman & Miner (1998) "Organizational Improvisation and Organizational Memory" — Academy of Management Review' },
       { url: 'https://doi.org/10.1177/014920639802400601', type: 'academic', label: 'Moorman & Miner (1998) "The Convergence of Planning and Execution: Improvisation in New Product Development" — Journal of Marketing' },
       { url: 'https://doi.org/10.1111/1468-2370.00017', type: 'academic', label: 'Cunha, Cunha & Kamoche (1999) "Organizational Improvisation: What, When, How and Why" — International Journal of Management Reviews' },
       { url: 'https://doi.org/10.2307/256636', type: 'academic', label: 'Weick (1998) "Improvisation as a Mindset for Organizational Analysis" — Organization Science' },
@@ -23742,7 +23742,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1002/smj.4250160307', type: 'academic', label: 'Sanchez (1995) Strategic flexibility in product competition — Strategic Management Journal' },
       { url: 'https://doi.org/10.1287/orsc.7.4.359', type: 'academic', label: 'Volberda (1996) Toward the flexible firm: How to remain vital in hypercompetitive environments — Organization Science' },
-      { url: 'https://doi.org/10.1002/smj.349', type: 'academic', label: 'Shimizu & Hitt (2004) Strategic flexibility: Organizational preparedness to reverse ineffective strategic decisions — Academy of Management Executive' },
+      { url: 'https://doi.org/10.5465/ame.2004.15268683', type: 'academic', label: 'Shimizu & Hitt (2004) Strategic flexibility: Organizational preparedness to reverse ineffective strategic decisions — Academy of Management Executive' },
       { url: 'https://doi.org/10.1002/smj.4250141010', type: 'academic', label: 'Sanchez (1993) Strategic flexibility, firm organization, and managerial work in dynamic markets — Advances in Strategic Management' },
       { url: 'https://doi.org/10.1111/j.1467-6486.1998.00078.x', type: 'academic', label: 'Volberda (1998) Building the Flexible Firm — Oxford University Press' },
     ],
@@ -23858,7 +23858,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan & Shaver (1987) — Romantic love conceptualized as an attachment process, Journal of Personality and Social Psychology' },
-      { url: 'https://doi.org/10.1177/0146167291174009', type: 'academic', label: 'Bartholomew & Horowitz (1991) — Attachment styles among young adults: A test of a four-category model, Journal of Personality and Social Psychology' },
+      { url: 'https://doi.org/10.1037/0022-3514.61.2.226', type: 'academic', label: 'Bartholomew & Horowitz (1991) — Attachment styles among young adults: A test of a four-category model, Journal of Personality and Social Psychology' },
       { url: 'https://doi.org/10.1037/0022-3514.74.5.1150', type: 'academic', label: 'Brennan, Clark & Shaver (1998) — Self-report measurement of adult attachment: An integrative overview, in Attachment Theory and Close Relationships' },
       { url: 'https://doi.org/10.1037/0033-2909.117.3.387', type: 'academic', label: 'Feeney & Noller (1996) — Adult attachment review, Psychological Bulletin' },
       { url: 'https://www.guilford.com/books/Handbook-of-Attachment/Cassidy-Shaver/9781462538683', type: 'reference', label: 'Cassidy & Shaver (Eds.) (2016) — Handbook of Attachment: Theory, Research, and Clinical Applications (3rd ed.), Guilford Press' },
@@ -24537,7 +24537,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.jstor.org/stable/258550', type: 'academic', label: 'Weick, Sensemaking in Organizations (Sage, 1995) — JSTOR review' },
       { url: 'https://doi.org/10.5465/amr.2005.16387885', type: 'academic', label: 'Weick, Sutcliffe & Obstfeld, "Organizing and the Process of Sensemaking," AMR 30(4), 2005' },
-      { url: 'https://link.springer.com/article/10.1007/s10551-011-0888-6', type: 'academic', label: 'Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)' },
+      { url: 'https://doi.org/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)' },
       { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199846740/obo-9780199846740-0090.xml', type: 'reference', label: 'Oxford Bibliographies — Sensemaking in Organizations' },
     ],
   },
@@ -27570,7 +27570,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1257/aer.89.1.103', type: 'academic', label: 'O\'Donoghue & Rabin 1999 Doing It Now or Later. American Economic Review 89(1) 103-124' },
       { url: 'https://doi.org/10.1162/003355397555253', type: 'academic', label: 'Laibson 1997 Golden Eggs and Hyperbolic Discounting. Quarterly Journal of Economics 112(2) 443-478' },
-      { url: 'https://doi.org/10.1257/0002828053828482', type: 'academic', label: 'O\'Donoghue & Rabin 2001 Choice and Procrastination. Quarterly Journal of Economics 116(1) 121-160' },
+      { url: 'https://doi.org/10.1162/003355301556365', type: 'academic', label: 'O\'Donoghue & Rabin 2001 Choice and Procrastination. Quarterly Journal of Economics 116(1) 121-160' },
     ],
   },
   {
@@ -29453,7 +29453,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アクセル・ブランズ ／ ドン・タプスコット ／ ヨハイ・ベンクラー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1080/15405700701633008', type: 'academic', label: 'Bruns, A. (2007) Produsage: Towards a Broader Framework for User-Led Content Creation — Proceedings of Creativity & Cognition, ACM Press（produsageの原典）' },
+      { url: 'https://doi.org/10.1145/1254960.1254975', type: 'academic', label: 'Bruns, A. (2007) Produsage: Towards a Broader Framework for User-Led Content Creation — Proceedings of Creativity & Cognition, ACM Press（produsageの原典）' },
       { url: 'https://www.sup.org/books/title/?id=1511', type: 'academic', label: 'Benkler, Y. (2006) The Wealth of Networks — Yale University Press（commons-based peer productionとの接合）' },
       { url: 'https://doi.org/10.1177/0163443709336542', type: 'academic', label: 'Bruns, A. & Jacobs, J. eds. (2006) Uses of Blogs — Peter Lang（ブログにおけるprodusageの実例研究）' },
       { url: 'https://en.wikipedia.org/wiki/Produsage', type: 'reference', label: 'Wikipedia: Produsage — Bruns, characteristics, examples (Wikipedia, OSS, fan wikis), critique' },
@@ -29469,7 +29469,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.simonandschuster.com/books/Principles/Ray-Dalio/9781501124020', type: 'reference', label: 'Dalio, R. (2017) Principles: Life & Work — Simon & Schuster（ラジカル・トランスパレンシーの原典）' },
       { url: 'https://doi.org/10.1177/01492063221115285', type: 'academic', label: 'Nealy, C. et al. (2022) Radical Transparency and Psychological Safety: A Review — Journal of Management, 48(7), 1831–1860' },
-      { url: 'https://doi.org/10.1287/orsc.1100.0617', type: 'academic', label: 'Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（透明性と心理的安全の交差）' },
+      { url: 'https://doi.org/10.1146/annurev-orgpsych-031413-091305', type: 'academic', label: 'Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（透明性と心理的安全の交差）' },
       { url: 'https://en.wikipedia.org/wiki/Ray_Dalio', type: 'reference', label: 'Wikipedia: Ray Dalio — Bridgewater Associates, principles, idea meritocracy, radical transparency' },
     ],
   },
@@ -30000,7 +30000,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2393628', type: 'academic', label: 'Volberda, H. W. (1996) Toward the Flexible Form: How to Remain Vital in Hypercompetitive Environments — Organization Science, 7(4), 359–374（戦略的柔軟性の原典）' },
-      { url: 'https://doi.org/10.1016/S0024-6301(00)00105-6', type: 'academic', label: 'Nadkarni, S. & Narayanan, V. K. (2007) Strategic Schemas, Strategic Flexibility, and Firm Performance: The Moderating Role of Industry Clockspeed — Strategic Management Journal, 28(3), 243–270（実証研究）' },
+      { url: 'https://doi.org/10.1002/smj.576', type: 'academic', label: 'Nadkarni, S. & Narayanan, V. K. (2007) Strategic Schemas, Strategic Flexibility, and Firm Performance: The Moderating Role of Industry Clockspeed — Strategic Management Journal, 28(3), 243–270（実証研究）' },
       { url: 'https://doi.org/10.5465/amr.1999.1580457', type: 'academic', label: 'Hitt, M. A., Keats, B. W. & DeMarie, S. M. (1998) Navigating in the New Competitive Landscape — Academy of Management Executive, 12(4), 22–42（超競争環境と柔軟性）' },
       { url: 'https://en.wikipedia.org/wiki/Strategic_flexibility', type: 'reference', label: 'Wikipedia: Strategic flexibility — Volberda, operational vs strategic, hypercompetition, dynamic capabilities connection' },
     ],
@@ -30015,7 +30015,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2296458', type: 'academic', label: 'Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）' },
       { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208（所得税の最適設計）' },
-      { url: 'https://doi.org/10.1162/003355301556339', type: 'academic', label: 'Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）' },
+      { url: 'https://doi.org/10.1111/1467-937X.00166', type: 'academic', label: 'Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）' },
       { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — Diamond-Mirrlees, Ramsey rule, Mirrlees zero-top-rate theorem, Saez analysis' },
     ],
   },
@@ -30085,7 +30085,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.5465/amr.1997.9711022105', type: 'academic', label: 'Mitchell, R. K., Agle, B. R. & Wood, D. J. (1997) Toward a Theory of Stakeholder Identification and Salience: Defining the Principle of Who and What Really Counts — Academy of Management Review, 22(4), 853–886（サリエンス理論の原典）' },
       { url: 'https://doi.org/10.5465/amr.2007.24345536', type: 'academic', label: 'Neville, B. A., Bell, S. J. & Whitwell, G. J. (2011) Stakeholder Salience Revisited: Refining, Redefining, and Refueling an Underdeveloped Conceptual Tool — Journal of Business Ethics, 102(3), 357–378（理論の精緻化）' },
-      { url: 'https://doi.org/10.1007/s10551-018-3892-8', type: 'academic', label: 'Agle, B. R., Mitchell, R. K. & Sonnenfeld, J. A. (1999) Who Matters to CEOs? An Investigation of Stakeholder Attributes and Salience, Corporate Performance, and CEO Values — Academy of Management Journal, 42(5), 507–525（実証研究）' },
+      { url: 'https://doi.org/10.5465/256973', type: 'academic', label: 'Agle, B. R., Mitchell, R. K. & Sonnenfeld, J. A. (1999) Who Matters to CEOs? An Investigation of Stakeholder Attributes and Salience, Corporate Performance, and CEO Values — Academy of Management Journal, 42(5), 507–525（実証研究）' },
       { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — Mitchell, Agle & Wood, three attributes, salience typology, ESG materiality' },
     ],
   },
@@ -30099,7 +30099,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://oll.libertyfund.org/title/mcculloch-the-works-of-david-ricardo', type: 'academic', label: 'Ricardo, D. (1817) On the Principles of Political Economy and Taxation — John Murray（比較優位の原典、Chapter 7）' },
       { url: 'https://doi.org/10.2307/2228631', type: 'academic', label: 'Dornbusch, R., Fischer, S. & Samuelson, P. A. (1977) Comparative Advantage, Trade, and Payments in a Ricardian Model with a Continuum of Goods — American Economic Review, 67(5), 823–839（連続財モデルへの拡張）' },
-      { url: 'https://doi.org/10.1093/qje/qjs047', type: 'academic', label: 'Costinot, A. & Donaldson, D. (2012) Ricardo\'s Theory of Comparative Advantage: Old Idea, New Evidence — American Economic Review, 102(3), 453–458（実証的検証）' },
+      { url: 'https://doi.org/10.1257/aer.102.3.453', type: 'academic', label: 'Costinot, A. & Donaldson, D. (2012) Ricardo\'s Theory of Comparative Advantage: Old Idea, New Evidence — American Economic Review, 102(3), 453–458（実証的検証）' },
       { url: 'https://en.wikipedia.org/wiki/Comparative_advantage', type: 'reference', label: 'Wikipedia: Comparative advantage — Ricardo, H-O model, new trade theory, gains from trade empirics' },
     ],
   },
@@ -30363,9 +30363,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デニス・ジョイア ／ クマール・チッタンパリー ／ カール・ワイク ／ デービッド・ウィーバー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.5465/amr.1991.4279513', type: 'academic', label: 'Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）' },
+      { url: 'https://doi.org/10.1002/smj.4250120604', type: 'academic', label: 'Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）' },
       { url: 'https://doi.org/10.1002/smj.4250130807', type: 'academic', label: 'Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）' },
-      { url: 'https://doi.org/10.1177/0170840606062431', type: 'academic', label: 'Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）' },
+      { url: 'https://doi.org/10.5465/amj.2007.24160971', type: 'academic', label: 'Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）' },
       { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — Weick, Gioia sensegiving, strategic ambiguity, organizational change' },
     ],
   },
@@ -30406,7 +30406,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1287/mnsc.1060.0550', type: 'academic', label: 'Eisenmann, T., Parker, G. & Van Alstyne, M. (2006) Strategies for Two-Sided Markets — Harvard Business Review, 84(10), 92–101（二面市場戦略の原典）' },
-      { url: 'https://doi.org/10.1287/mnsc.1100.1185', type: 'academic', label: 'Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal, 32(12), 1270–1285（包囲戦略の体系化）' },
+      { url: 'https://doi.org/10.1002/smj.935', type: 'academic', label: 'Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal, 32(12), 1270–1285（包囲戦略の体系化）' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1925', type: 'government', label: 'European Parliament (2022) Regulation (EU) 2022/1925 — Digital Markets Act（ゲートキーパー規制・バンドル禁止）' },
       { url: 'https://en.wikipedia.org/wiki/Platform_envelopment', type: 'reference', label: 'Wikipedia: Platform envelopment — Eisenmann, bundling, gatekeeper, DMA, multi-homing' },
     ],
@@ -39949,7 +39949,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'バーバラ・フレデリクソン ／ トーマス・ジョイナー ／ ソニア・リュボミルスキー ／ マイケル・コーン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.82.1.172', type: 'academic', label: 'Fredrickson, B. L. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science' },
+      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson, B. L. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science' },
       { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B. L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist' },
       { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — positive emotions and upward spiral dynamics overview' },
     ],
@@ -40135,7 +40135,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2937838', type: 'academic', label: 'Krugman, P. R. (1991) Target Zones and Exchange Rate Dynamics — Quarterly Journal of Economics' },
-      { url: 'https://doi.org/10.1016/0022-1996(92)90064-R', type: 'academic', label: 'Svensson, L. E. O. (1992) An Interpretation of Recent Research on Exchange Rate Target Zones — Journal of Economic Perspectives' },
+      { url: 'https://doi.org/10.1257/jep.6.4.119', type: 'academic', label: 'Svensson, L. E. O. (1992) An Interpretation of Recent Research on Exchange Rate Target Zones — Journal of Economic Perspectives' },
       { url: 'https://en.wikipedia.org/wiki/Target_zone_model', type: 'reference', label: 'Wikipedia: Target zone model — exchange rate band and stabilization overview' },
     ],
   },
@@ -41458,7 +41458,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/j.jm.2010.04.006', type: 'academic', label: 'Lengnick-Hall, Beck & Lengnick-Hall (2011) Developing a Capacity for Organizational Resilience — Human Resource Management Review' },
-      { url: 'https://doi.org/10.1016/j.ijmr.2013.09.003', type: 'academic', label: 'Linnenluecke (2017) Resilience in Business and Management Research — International Journal of Management Reviews' },
+      { url: 'https://doi.org/10.1111/ijmr.12076', type: 'academic', label: 'Linnenluecke (2017) Resilience in Business and Management Research — International Journal of Management Reviews' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_resilience', type: 'reference', label: 'Wikipedia: Organizational resilience — 組織レジリエンスの概説' },
     ],
   },
@@ -41926,7 +41926,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1002/smj.263', type: 'academic', label: 'Hitt et al. (2001) Strategic Entrepreneurship: Entrepreneurial Strategies for Wealth Creation — Strategic Management Journal' },
-      { url: 'https://doi.org/10.1002/smj.557', type: 'academic', label: 'Ireland, Hitt & Sirmon (2003) A Model of Strategic Entrepreneurship — Journal of Management' },
+      { url: 'https://doi.org/10.1016/S0149-2063(03)00086-2', type: 'academic', label: 'Ireland, Hitt & Sirmon (2003) A Model of Strategic Entrepreneurship — Journal of Management' },
       { url: 'https://en.wikipedia.org/wiki/Strategic_entrepreneurship', type: 'reference', label: 'Wikipedia: Strategic entrepreneurship — 戦略的アントレプレナーシップの概説' },
     ],
   },
@@ -42056,7 +42056,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies' },
-      { url: 'https://doi.org/10.1111/j.1467-937X.2010.00601.x', type: 'academic', label: 'Diamond & Saez (2011) The Case for a Progressive Tax — Journal of Economic Perspectives' },
+      { url: 'https://doi.org/10.1257/jep.25.4.165', type: 'academic', label: 'Diamond & Saez (2011) The Case for a Progressive Tax — Journal of Economic Perspectives' },
       { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — 最適課税理論の歴史と主要結果の概説' },
     ],
   },
@@ -42186,7 +42186,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist' },
-      { url: 'https://doi.org/10.1037/0022-3514.84.2.365', type: 'academic', label: 'Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science' },
+      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science' },
       { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — 拡張＝形成理論の概要' },
     ],
   },
@@ -42461,7 +42461,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1017/CBO9780511819346', type: 'academic', label: 'Anderson, B. (1983) Imagined Communities — Verso' },
-      { url: 'https://doi.org/10.4324/9781315226767', type: 'academic', label: 'Schneider, F. (2018) China\'s Digital Nationalism — Oxford University Press' },
+      { url: 'https://doi.org/10.1093/oso/9780190876791.001.0001', type: 'academic', label: 'Schneider, F. (2018) China\'s Digital Nationalism — Oxford University Press' },
       { url: 'https://en.wikipedia.org/wiki/Imagined_community', type: 'reference', label: 'Wikipedia: Imagined community — 想像の共同体の概要' },
     ],
   },
@@ -42473,7 +42473,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ベラ・バラッサ ／ ポール・サミュエルソン ／ ラドミール・ルゴジャン ／ イルヴィング・クラヴィス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1016/0022-1996(64)90025-0', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine — Journal of Political Economy' },
+      { url: 'https://doi.org/10.1086/258965', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine — Journal of Political Economy' },
       { url: 'https://doi.org/10.2307/2296638', type: 'academic', label: 'Samuelson, P. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics' },
       { url: 'https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect', type: 'reference', label: 'Wikipedia: Balassa–Samuelson effect — 効果の概要' },
     ],
@@ -44433,7 +44433,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1093/qje/qju025', type: 'academic', label: 'Glaeser & Gottlieb (2009) The Wealth of Cities — Quarterly Journal of Economics' },
-      { url: 'https://doi.org/10.1016/0094-1190(91)90002-C', type: 'academic', label: 'Glaeser et al. (1992) Growth in Cities — Journal of Political Economy' },
+      { url: 'https://doi.org/10.1086/261856', type: 'academic', label: 'Glaeser et al. (1992) Growth in Cities — Journal of Political Economy' },
       { url: 'https://en.wikipedia.org/wiki/Economies_of_agglomeration', type: 'reference', label: 'Wikipedia: Economies of agglomeration — 集積経済の理論と実証' },
     ],
   },
@@ -44537,7 +44537,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1145/329124.329126', type: 'academic', label: 'Weiser (1991) The Computer for the 21st Century — Scientific American' },
-      { url: 'https://doi.org/10.1016/j.pmcj.2013.12.009', type: 'academic', label: 'Abowd & Mynatt (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM TOCHI' },
+      { url: 'https://doi.org/10.1145/344949.344988', type: 'academic', label: 'Abowd & Mynatt (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM TOCHI' },
       { url: 'https://en.wikipedia.org/wiki/Ubiquitous_computing', type: 'reference', label: 'Wikipedia: Ubiquitous computing — ユビキタスコンピューティングの概念と実現' },
     ],
   },
@@ -44692,7 +44692,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニコラス・カルドア ／ ジョン・ヒックス ／ ダニ・ロドリック ／ ポール・クルーグマン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/restud/rdw055', type: 'academic', label: 'Autor, Dorn & Hanson (2016) The China Shock — Annual Review of Economics' },
+      { url: 'https://doi.org/10.1146/annurev-economics-080315-015041', type: 'academic', label: 'Autor, Dorn & Hanson (2016) The China Shock — Annual Review of Economics' },
       { url: 'https://doi.org/10.3386/w7864', type: 'academic', label: 'Rodrik (2000) How Far Will International Economic Integration Go? — Journal of Economic Perspectives' },
       { url: 'https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency', type: 'reference', label: 'Wikipedia: Kaldor–Hicks efficiency — カルドア＝ヒックス効率性基準' },
     ],
@@ -45541,7 +45541,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アラン・バッデレー ／ グラハム・ヒッチ ／ アドリール・ダイアモンド ／ ジョアキム・フスター',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.science.org/doi/10.1126/science.1127161', type: 'academic', label: 'Diamond, A. (2013) Executive Functions — Annual Review of Psychology' },
+      { url: 'https://doi.org/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013) Executive Functions — Annual Review of Psychology' },
       { url: 'https://www.cambridge.org/core/journals/quarterly-journal-of-experimental-psychology', type: 'academic', label: 'Baddeley, A. & Hitch, G.J. (1974) Working Memory — Psychology of Learning and Motivation' },
       { url: 'https://ja.wikipedia.org/wiki/%E5%AE%9F%E8%A1%8C%E6%A9%9F%E8%83%BD', type: 'reference', label: 'Wikipedia: 実行機能 — 作動記憶と認知制御の解説' },
     ],
@@ -46056,7 +46056,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-digital-health-medical-data',
     discipline: 'information-sociology',
     title: 'デジタルヘルスと医療データの権力・プライバシー・アルゴリズム的不平等',
-    statement: 'デジタルヘルス（digital health）は、ウェアラブルデバイス・電子健康記録（EHR）・遠隔医療・健康アプリ・ゲノミクスが生成する医療・健康データの収集・分析・活用を通じて医療の質と効率性を向上させる技術的・制度的変革を指す。ニコラス・ドッジソンらは「監視医療（surveillance medicine）」概念でデジタルヘルスが患者をデータ点として定義しリスク管理の対象とする权力の変容を分析した。アルゴリズム的意思決定の医療適用においては、米国で黒人患者への治療推薦が過小評価されるバイアスのある商業アルゴリズム（Optum社のケア管理システム）が実証的に暴露され（サイエンス誌、2019年）、医療AIの公平性・透明性が社会的課題となっている。日本の次世代医療基盤法（2018年）・EUの欧州医療データ空間（EHDS）規則案（2022年）が健康データの二次利用と主権をめぐる法制度の整備を進め、患者データ所有権・インフォームドコンセント・企業の商業的利用の境界が問われている。',
+    statement: 'デジタルヘルス（digital health）は、ウェアラブルデバイス・電子健康記録（EHR）・遠隔医療・健康アプリ・ゲノミクスが生成する医療・健康データの収集・分析・活用を通じて医療の質と効率性を向上させる技術的・制度的変革を指す。ニコラス・ドッジソンらは「監視医療（surveillance medicine）」概念でデジタルヘルスが患者をデータ点として定義しリスク管理の対象とする権力の変容を分析した。アルゴリズム的意思決定の医療適用においては、米国で黒人患者への治療推薦が過小評価されるバイアスのある商業アルゴリズム（Optum社のケア管理システム）が実証的に暴露され（サイエンス誌、2019年）、医療AIの公平性・透明性が社会的課題となっている。日本の次世代医療基盤法（2018年）・EUの欧州医療データ空間（EHDS）規則案（2022年）が健康データの二次利用と主権をめぐる法制度の整備を進め、患者データ所有権・インフォームドコンセント・企業の商業的利用の境界が問われている。',
     keyFigures: 'エリック・トポル ／ ズィネップ・バシト ／ ロバート・コーフ ／ ニコラス・ドッジソン',
     asOf: '2026-06-26',
     sources: [
@@ -48026,7 +48026,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2666999', type: 'academic', label: 'Edmondson, A. (1999) Psychological Safety and Learning Behavior in Work Teams — Administrative Science Quarterly, 44(2), 350–383（原典）' },
-      { url: 'https://doi.org/10.1016/j.obhdp.2013.12.003', type: 'academic', label: 'Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（概念の展望）' },
+      { url: 'https://doi.org/10.1146/annurev-orgpsych-031413-091305', type: 'academic', label: 'Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（概念の展望）' },
       { url: 'https://doi.org/10.1111/joom.12130', type: 'academic', label: 'Newman, A. et al. (2017) Psychological Safety: A Systematic Review of the Literature — Human Resource Management Review, 27(3), 521–535（体系的レビュー）' },
       { url: 'https://en.wikipedia.org/wiki/Psychological_safety', type: 'reference', label: 'Wikipedia: Psychological safety — Edmondson, Project Aristotle, fearless organization, speaking up' },
     ],
@@ -48138,7 +48138,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/0883-9026(91)90028-7', type: 'academic', label: 'Zahra, S. A. (1991) Predictors and Financial Outcomes of Corporate Entrepreneurship — Journal of Business Venturing, 6(4), 259–285（CEと財務業績の実証）' },
-      { url: 'https://doi.org/10.1002/smj.4250030104', type: 'academic', label: 'Burgelman, R. A. (1983) A Process Model of Internal Corporate Venturing in the Diversified Major Firm — Administrative Science Quarterly, 28(2), 223–244（内部ベンチャー過程モデル）' },
+      { url: 'https://doi.org/10.2307/2392619', type: 'academic', label: 'Burgelman, R. A. (1983) A Process Model of Internal Corporate Venturing in the Diversified Major Firm — Administrative Science Quarterly, 28(2), 223–244（内部ベンチャー過程モデル）' },
       { url: 'https://doi.org/10.1002/(SICI)1097-0266(199601)17:1<135::AID-SMJ2>3.0.CO;2-N', type: 'academic', label: 'Lumpkin, G. T. & Dess, G. G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance — Academy of Management Review, 21(1), 135–172（EO概念の体系化）' },
       { url: 'https://en.wikipedia.org/wiki/Corporate_entrepreneurship', type: 'reference', label: 'Wikipedia: Corporate entrepreneurship — Zahra, Burgelman, entrepreneurial orientation, intrapreneurship' },
     ],
@@ -48180,7 +48180,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society, MIT Press, pp.167–194（アルゴリズム的文化仲介の原典）' },
-      { url: 'https://doi.org/10.1126/science.abf1511', type: 'academic', label: 'Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS, 119(1), e2025334119（アルゴリズム増幅の実証）' },
+      { url: 'https://doi.org/10.1073/pnas.2025334119', type: 'academic', label: 'Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS, 119(1), e2025334119（アルゴリズム増幅の実証）' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2065', type: 'government', label: 'European Parliament (2022) Digital Services Act — Regulation (EU) 2022/2065（アルゴリズム透明性・システミックリスク規制）' },
       { url: 'https://en.wikipedia.org/wiki/Algorithmic_amplification', type: 'reference', label: 'Wikipedia: Algorithmic amplification — Gillespie, engagement optimization, DSA, systemic risk, platform governance' },
     ],
@@ -48278,8 +48278,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1037/0021-9010.78.4.538', type: 'academic', label: 'Bateman, T. S. & Crant, J. M. (1993) The Proactive Component of Organizational Behavior: A Measure and Correlates — Journal of Organizational Behavior, 14(2), 103–118（原典）' },
-      { url: 'https://doi.org/10.1037/0021-9010.85.3.407', type: 'academic', label: 'Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management, 26(3), 435–462（プロアクティブ行動のレビュー）' },
-      { url: 'https://doi.org/10.5465/amr.2010.0003', type: 'academic', label: 'Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management, 36(4), 827–856（プロアクティブ動機づけモデル）' },
+      { url: 'https://doi.org/10.1177/014920630002600304', type: 'academic', label: 'Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management, 26(3), 435–462（プロアクティブ行動のレビュー）' },
+      { url: 'https://doi.org/10.1177/0149206310363732', type: 'academic', label: 'Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management, 36(4), 827–856（プロアクティブ動機づけモデル）' },
       { url: 'https://en.wikipedia.org/wiki/Proactivity', type: 'reference', label: 'Wikipedia: Proactivity — Bateman & Crant, proactive personality scale, proactive behavior, career initiative' },
     ],
   },
@@ -48362,7 +48362,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1002/job.165', type: 'academic', label: 'Luthans (2002) The Need for and Meaning of Positive Organizational Behavior — Journal of Organizational Behavior 23(6), 695-706' },
-      { url: 'https://doi.org/10.1177/0149206307305562', type: 'academic', label: 'Luthans, F., Avey, J. B. & Patera, J. L. (2008) Experimental Analysis of a Web-Based Training Intervention to Develop Positive Psychological Capital — Academy of Management Learning & Education, 7(2), 209–221（PsyCap介入の実証）' },
+      { url: 'https://doi.org/10.5465/amle.2008.32712618', type: 'academic', label: 'Luthans, F., Avey, J. B. & Patera, J. L. (2008) Experimental Analysis of a Web-Based Training Intervention to Develop Positive Psychological Capital — Academy of Management Learning & Education, 7(2), 209–221（PsyCap介入の実証）' },
       { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-032516-113324', type: 'academic', label: 'Luthans & Youssef-Morgan (2017) Psychological Capital: An Evidence-Based Positive Approach — Annual Review of Organizational Psychology and Organizational Behavior' },
       { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Seligman & Csikszentmihalyi (2000) Positive Psychology: An Introduction — American Psychologist 55(1)' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780195187526.001.0001', type: 'academic', label: 'Luthans, Youssef & Avolio (2007) Psychological Capital — Oxford University Press' },

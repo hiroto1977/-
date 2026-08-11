@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Edmondson, A. (1999) Psychological Safety and Learning Behavior in Work Teams — Administrative Science Quarterly, 44(2), 350–383（原典）](https://doi.org/10.2307/2666999) `学術`
-- [Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（概念の展望）](https://doi.org/10.1016/j.obhdp.2013.12.003) `学術`
+- [Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（概念の展望）](https://doi.org/10.1146/annurev-orgpsych-031413-091305) `学術`
 - [Newman, A. et al. (2017) Psychological Safety: A Systematic Review of the Literature — Human Resource Management Review, 27(3), 521–535（体系的レビュー）](https://doi.org/10.1111/joom.12130) `学術`
 - [Wikipedia: Psychological safety — Edmondson, Project Aristotle, fearless organization, speaking up](https://en.wikipedia.org/wiki/Psychological_safety) `リファレンス`
 

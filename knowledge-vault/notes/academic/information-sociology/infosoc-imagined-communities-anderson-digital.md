@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Anderson, B. (1983) Imagined Communities — Verso](https://doi.org/10.1017/CBO9780511819346) `学術`
-- [Schneider, F. (2018) China's Digital Nationalism — Oxford University Press](https://doi.org/10.4324/9781315226767) `学術`
+- [Schneider, F. (2018) China's Digital Nationalism — Oxford University Press](https://doi.org/10.1093/oso/9780190876791.001.0001) `学術`
 - [Wikipedia: Imagined community — 想像の共同体の概要](https://en.wikipedia.org/wiki/Imagined_community) `リファレンス`
 
 ## 関連概念
