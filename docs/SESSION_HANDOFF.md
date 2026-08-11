@@ -373,6 +373,30 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 で CI と同じ状態を再現すること。ARCHITECTURE.md を触ったら常にこれを行うのが安全。
 
 
+### 罠 0-b: smoke の「クリックできなくても黙って通る」（2026-08 修正）
+
+`npm run smoke` は 2026-08 まで **22 件の手書きリスト**しか撮っておらず、しかも
+`if (target) target.click();` で**見つからなければ黙って何もしない**実装だった。
+`App.tsx` の `COLLAPSED_BY_DEFAULT` で `tools` / `integrations` は既定で畳まれており、
+畳まれたカテゴリの項目はそもそも DOM に無い。結果 **22 枚中 16 枚が home.png と
+バイト単位で同一**のまま「smoke green」になっていた（実質 6 ページしか見ていない）。
+
+修正で入れた 3 つの砦。どれか 1 つでも欠けると同じ穴が開く:
+
+1. 撮影対象を `src/renderer/services.ts` から**導出**（71 件）。手書きリストは
+   scaffold した新サービスが網に入らない。`SERVICE_IDS`（73 件）ではないのは
+   uber-eats / demae-can が**サイドバー項目を持たない** snapshot 専用だから。
+2. 全カテゴリを `button[aria-expanded="false"]` で開いてからクリックする。
+3. **黙って通さない**。クリック対象が無い / 選択が切り替わらない / 別サービスと
+   バイト一致、のいずれかで `app.exit(1)`。
+
+特に 3 の「バイト一致で落とす」が効く。撮り漏らしの実体は必ず
+「前のページの画がもう一度出る」なので、md5 の重複が唯一の直接的な証拠になる。
+
+なお `waitForActivePaint` の等値比較は `JSON.stringify(id)` を **1 回**だけ通すこと。
+CSS 属性セレクタ側は引用符ごと埋めるため 2 回通すので、コピペで取り違えると
+`'"slack"'` と比較して**全件 STUCK** になる（実際にやらかした）。
+
 ### 罠 1: scaffold ハイフン + 数字 ID で camelCase collapse (修正済)
 旧 `scaffold-service.cjs` は `microsoft-365` → `microsoft365` (camelCase で hyphen 消失) で LIVE_FETCHERS / LIVE_ACTIONS のキーを生成していた。これは ServiceId (`'microsoft-365'`) と mismatch して typecheck で気付くが、修正に時間を取られた。
 
