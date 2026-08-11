@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 語彙が近い
+- [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 語彙が近い
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
 - [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
 - [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
 - [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
-- [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

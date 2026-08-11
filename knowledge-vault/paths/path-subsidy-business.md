@@ -19,7 +19,7 @@ tags:
 - [[subsidy-hiroshima-city|広島市中小企業支援センターの創業・中小企業支援]]（接続 28）
 - [[subsidy-hamamatsu|浜松市ファンドサポート事業（スタートアップ支援）]]（接続 25）
 - [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]]（接続 24）
-- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]]（接続 21）
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]]（接続 22）
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]]（接続 21）
 - [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]]（接続 21）
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]]（接続 16）

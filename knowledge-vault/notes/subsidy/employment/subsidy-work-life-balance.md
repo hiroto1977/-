@@ -37,7 +37,7 @@ national
 - [両立支援等助成金 各コースの要点 解説](https://hrzine.jp/article/detail/6540) `メディア`
 
 ## 関連概念
-- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 語彙が近い
+- [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 同分野の近傍
 - [[subsidy-career-up|キャリアアップ助成金]] — 同分野の近傍
 - [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]] — 同分野の近傍
 - [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 同分野の近傍

@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-general-incorporated-associations|一般社団・財団法人法]] — 語彙が近い
 - [[bizlaw-npo-act|NPO法（特定非営利活動促進法）]] — 同分野の近傍
+- [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

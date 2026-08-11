@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — 同じ思想家
 - [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
-- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

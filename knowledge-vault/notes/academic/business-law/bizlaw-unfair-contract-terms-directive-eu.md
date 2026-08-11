@@ -38,6 +38,7 @@ EU不公正契約条項指令（Directive 93/13/EEC）は、事業者と消費�
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
 - [[bizlaw-eu-general-data-protection-regulation-gdpr|EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制]] — 同分野の近傍
+- [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

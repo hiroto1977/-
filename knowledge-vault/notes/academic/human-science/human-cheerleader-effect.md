@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Cheerleader effect (mechanism, findings, HIMYM naming origin)](https://en.wikipedia.org/wiki/Cheerleader_effect) `リファレンス`
 
 ## 関連概念
-- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
 - [[human-endowment-effect|保有効果（授かり効果）]] — 同分野の近傍
+- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同分野の近傍
 - [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同分野の近傍
 - [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同分野の近傍
 

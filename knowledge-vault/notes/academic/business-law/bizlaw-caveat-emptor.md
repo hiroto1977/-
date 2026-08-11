@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Caveat emptor — common law, consumer protection, merchantability, disclosure](https://en.wikipedia.org/wiki/Caveat_emptor) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 語彙が近い
 - [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 語彙が近い
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 語彙が近い
 - [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 同じ思想家
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 同じ思想家

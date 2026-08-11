@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-provider-liability|発信者情報開示制度（情報流通プラットフォーム対処法）]] — 分野横断
 - [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 同分野の近傍
-- [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

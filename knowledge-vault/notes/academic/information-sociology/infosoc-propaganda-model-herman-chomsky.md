@@ -36,7 +36,6 @@ aliases:
 - [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
 - [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同分野の近傍
-- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同分野の近傍
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
 
 ## 関連

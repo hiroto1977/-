@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
 - [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — 同分野の近傍
 - [[mgmt-open-innovation|オープン・イノベーション]] — 同分野の近傍
-- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

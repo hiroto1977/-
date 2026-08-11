@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 語彙が近い
 - [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同分野の近傍
+- [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Optimal tax — 最適課税理論の歴史と主要結果の概説](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 
 ## 関連概念
-- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 語彙が近い
 - [[econ-optimal-taxation-theory|最適課税理論]] — 語彙が近い
+- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 語彙が近い
 - [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 語彙が近い
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同じ思想家
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同じ思想家

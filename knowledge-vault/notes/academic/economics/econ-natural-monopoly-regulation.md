@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-contestable-markets|コンテスタブル市場]] — 語彙が近い
+- [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 語彙が近い
 - [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
 - [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家
 - [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
 - [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
-- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

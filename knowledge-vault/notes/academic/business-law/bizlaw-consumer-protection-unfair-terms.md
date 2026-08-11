@@ -38,6 +38,7 @@ aliases:
 - [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同分野の近傍
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 同分野の近傍
 - [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

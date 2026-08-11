@@ -40,7 +40,7 @@ aliases:
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
 - [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 出典を共有
-- [[infosoc-epistemic-communities|エピステミック・コミュニティと専門知の流通構造]] — 同分野の近傍
+- [[infosoc-misinformation-correction-backfire|誤情報訂正とバックファイア効果の実証研究]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

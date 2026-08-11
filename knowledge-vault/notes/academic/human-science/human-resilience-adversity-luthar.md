@@ -33,6 +33,7 @@ aliases:
 - [[human-resilience-theory-masten|レジリエンス理論——逆境からの回復力と「普通の魔法」]] — 語彙が近い
 - [[human-developmental-psychopathology-cicchetti|発達精神病理学——正常と異常の発達的連続性と多重決定性]] — 同じ思想家
 - [[human-resilience|レジリエンス（心理的回復力）]] — 同じ思想家
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 同分野の近傍
 - [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 同分野の近傍
 
 ## 関連

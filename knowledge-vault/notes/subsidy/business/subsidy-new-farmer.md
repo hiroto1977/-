@@ -46,6 +46,7 @@ national
 - [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
 - [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
 - [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
+- [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

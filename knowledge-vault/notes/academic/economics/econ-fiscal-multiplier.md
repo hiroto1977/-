@@ -35,8 +35,8 @@ aliases:
 
 ## 関連概念
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 語彙が近い
+- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 語彙が近い
 - [[eh-2015|2015年（平成27年）]] — 出典を共有
-- [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

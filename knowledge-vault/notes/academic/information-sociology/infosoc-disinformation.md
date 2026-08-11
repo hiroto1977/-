@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 同じ思想家
 - [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
 - [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]] — 出典を共有
+- [[infosoc-ai-governance-human-rights|AIガバナンスと人権基盤アプローチの国際政治社会学]] — 同分野の近傍
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
-- [[infosoc-infodemic|インフォデミック]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

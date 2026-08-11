@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-misinformation-cognitive-science|誤情報の認知科学と信念訂正研究の情報行動論]] — 語彙が近い
 - [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — 同じ思想家
 - [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — 同じ思想家
+- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

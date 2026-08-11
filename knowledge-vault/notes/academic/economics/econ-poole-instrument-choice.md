@@ -33,7 +33,6 @@ William Poole（ウィリアム・プール, 1970） ／ Quarterly Journal of Ec
 ## 関連概念
 - [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同分野の近傍
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同分野の近傍
-- [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — 同分野の近傍
 - [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 同分野の近傍
 
 ## 関連

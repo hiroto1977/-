@@ -31,12 +31,12 @@ aliases:
 - [BehavioralEconomics.com Mini-Encyclopedia: Overconfidence effect](https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/overconfidence-effect/) `リファレンス`
 
 ## 関連概念
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 語彙が近い
 - [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 出典を共有
 - [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 出典を共有
 - [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 出典を共有
 - [[human-hedonic-adaptation|快楽順応]] — 出典を共有
 - [[human-status-quo-bias|現状維持バイアス]] — 出典を共有
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 同分野の近傍
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍

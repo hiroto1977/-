@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 語彙が近い
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]] — 語彙が近い
 - [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
-- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

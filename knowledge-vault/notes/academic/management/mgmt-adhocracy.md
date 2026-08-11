@@ -31,7 +31,6 @@ aliases:
 - [EBSCO Research Starter — Toffler『Future Shock』とアドホクラシー概念](https://www.ebsco.com/research-starters/literature-and-writing/future-shock-explores-impact-change) `リファレンス`
 
 ## 関連概念
-- [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 語彙が近い
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
 - [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

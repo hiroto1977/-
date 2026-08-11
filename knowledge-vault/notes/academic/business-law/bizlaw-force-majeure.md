@@ -36,7 +36,6 @@ aliases:
 - [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同じ思想家
 - [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同じ思想家
 - [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 同分野の近傍
-- [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — 同分野の近傍
 - [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同分野の近傍
 
 ## 関連

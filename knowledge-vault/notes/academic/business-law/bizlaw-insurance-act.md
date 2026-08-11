@@ -34,7 +34,6 @@ aliases:
 - [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 出典を共有
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
 - [[bizlaw-insurance-contract-law-utmost-good-faith|保険契約法——最大善意義務と告知義務の法的枠組み]] — 同分野の近傍
-- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 同分野の近傍
 - [[bizlaw-insurable-interest|被保険利益——損をする立場にある者だけが保険をかけられる]] — 同分野の近傍
 - [[bizlaw-cheque-act|小切手法]] — 同分野の近傍
 

@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Piercing the corporate veil — limited liability exception, alter ego, undercapitalization](https://en.wikipedia.org/wiki/Piercing_the_corporate_veil) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-limited-liability|株主有限責任の原則]] — 語彙が近い
 - [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 語彙が近い
 - [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
 - [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
-- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

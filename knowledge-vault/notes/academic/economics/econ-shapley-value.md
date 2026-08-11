@@ -41,6 +41,7 @@ aliases:
 - [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
 - [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 出典を共有
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
+- [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
