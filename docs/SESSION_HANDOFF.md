@@ -704,6 +704,15 @@ npm run build:web   # dist/standalone.html 生成
 
 すべて green なら作業開始 OK。1 つでも fail なら、まず原因を調査してから新規作業に入る。
 
+> ⚠️ **`npm run lint` は `verify:all` に含まれていない。** CI は別ステップとして
+> `npm run lint` を回すので、`verify:all` が 14 ゲート green でも eslint 単独で
+> 落ちて CI が赤くなる。**push 前は必ず `npm run typecheck && npm test &&
+> npm run verify:all && npm run lint` の 4 点セットを回すこと。**
+> 実例: 2026-08-11、テンプレートリテラル内に書いたコメントの `\"` が
+> `no-useless-escape` に当たり、verify:all 14 ゲート全 green のまま CI が落ちた
+> (executeJavaScript に渡す文字列の中はコメントであってもコードとして解釈される。
+> そもそも注釈は renderer へ送らずテンプレートの外に置くのが正しい)。
+
 ## 参考: 主要ドキュメント
 
 - `CLAUDE.md` — プロジェクト概要 + Claude Code 用ガイダンス

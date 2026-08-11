@@ -97,11 +97,11 @@ async function waitForActivePaint(win, id, timeoutMs = 5000) {
   const deadline = Date.now() + timeoutMs;
   let switched = false;
   while (Date.now() < deadline) {
+    // 注: 下の埋め込みは **等値比較** なので stringify は 1 回。CSS 属性セレクタ側
+    // (クリック処理) は引用符ごと埋める必要があるため 2 回通す。取り違えると
+    // 引用符つきの文字列と比較することになり、常に false = 全件 STUCK に見える。
     switched = await win.webContents.executeJavaScript(`
       (() => {
-        // 注: ここは **等値比較** なので stringify は 1 回。CSS 属性セレクタ側
-        // (下のクリック処理) は引用符ごと埋める必要があるため 2 回。取り違えると
-        // '\"slack\"' と比較して常に false になり、全件 STUCK に見える。
         const active = document.querySelector('.sidebar-item.active');
         return !!active && active.getAttribute('data-service-id') === ${JSON.stringify(id)};
       })();
