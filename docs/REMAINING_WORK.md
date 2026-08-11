@@ -40,9 +40,17 @@
 - [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ
 - [ ] OAuth: 他プロバイダ（Notion / Slack / Canva / WordPress / Atlassian）の config 追加
 - [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）
-- [ ] **リポジトリ肥大**: `dist/standalone.html`（10 MB）を追跡しているため `.git` が 488 MB。
-      blob 342 版で論理 2.7 GB 相当。知識コーパスを触るたびに 10 MB が増える。
-      Release 資産か Pages 配信に寄せて追跡を外すかの判断が必要
+- [x] **リポジトリ肥大の増加を停止**（追跡除外・非破壊）— `.git` の実測内訳は
+      `dist/standalone.html` 362MB（327 版）/ `academicKnowledge.ts` 306MB（本体ソース・不可避）/
+      `dist-chunks/part-*` 106MB / knowledge-graph の education 176MB。
+      このうち **ビルド生成物の 2 つを追跡から外した**（`git rm --cached`・作業ツリーは保持）:
+      `dist/standalone.html` は CI と Pages が `build:web` で毎回作り直すため追跡版は未使用、
+      `dist-chunks/` は v0.1.0 Release が AppImage を直接配布するため冗長。
+      knowledge-graph / knowledge-vault は `vault:check` / `verify:graph` が
+      本体データとの byte 一致を検査する**検証対象の成果物**なので追跡を維持する
+- [ ] **`.git` 1.3 GB 自体の縮小は未実施**（履歴書き換えが必要なため別判断）。
+      `git filter-repo` / BFG で上記 blob を履歴から削れば約 470MB 減る見込みだが、
+      全コミット SHA が変わり force-push で既存クローンと PR が壊れる。破壊的なので保留
 - [ ] `e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザ・Electron が要るため **CI 外**。
       renderer や起動性能を触ったらローカルで回すこと
 
@@ -52,20 +60,37 @@
 
 ### Linux x86-64
 
+AppImage は **GitHub Release から直接ダウンロード**する（リポジトリを clone する必要はない）:
+
 ```bash
-git fetch origin
-git checkout claude/add-claude-documentation-F7HIa
-git pull
-bash scripts/assemble-appimage.sh
-./release/Service\ Hub-0.1.0.AppImage
+# v0.1.0 の資産一覧: https://github.com/hiroto1977/-/releases/tag/v0.1.0
+curl -L -o ServiceHub.AppImage \
+  "https://github.com/hiroto1977/-/releases/download/v0.1.0/Service.Hub-0.1.0.AppImage"
+chmod +x ServiceHub.AppImage
+./ServiceHub.AppImage
 ```
 
 ファイラから AppImage をダブルクリックでも可。FUSE が無い環境では:
 
 ```bash
-"./release/Service Hub-0.1.0.AppImage" --appimage-extract
+./ServiceHub.AppImage --appimage-extract
 ./squashfs-root/AppRun
 ```
+
+> **注**: 以前は `dist-chunks/part-*` を git に載せて `scripts/assemble-appimage.sh` で
+> 再結合していたが、Release が AppImage を直接配布するようになったため
+> `dist-chunks/`（106MB）は追跡対象から外した。過去のコミットを checkout すれば
+> 従来手順も使える。
+
+### ブラウザ版（インストール不要・最速）
+
+```
+https://hiroto1977.github.io/-/app.html      # フル版
+https://hiroto1977.github.io/-/lite.html     # モバイル用ライト版（約 2MB）
+```
+
+ローカルで作る場合は `npm run build:web` → `dist/standalone.html`
+（生成物のため git では追跡していない）。
 
 ### Mac / Windows / その他
 

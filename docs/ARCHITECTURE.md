@@ -24,13 +24,13 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
 | ユニットテスト | **6607** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 6748) |
-| 追跡行数（リポジトリ全体・下限） | **≥ 1000000** | 自己検証（`git ls-files` 全ファイルの改行数合算。柱 B Phase 3 完了で 100 万行を突破 — 現在 ~1,037k） |
+| 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。ビルド生成物 `dist/standalone.html`（インライン化で約 39 万行）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 199 | 自己検証 |
+| `file:line` 参照数 | 200 | 自己検証 |
 
 ### 統合フロー図
 
