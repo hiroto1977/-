@@ -359,6 +359,20 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 
 ## 既知の罠
 
+### 罠 0: verify:arch の参照解決は「ローカル成功・CI 失敗」を作る（2026-08 実測）
+`verify:arch` は ARCHITECTURE.md 内のバッククォート付きパス
+（`` `foo/bar.ts` `` 形式・拡張子 ts/tsx/cjs/sh/json/html/md）を実ファイルとして
+解決する。したがって **gitignore 済みのビルド生成物へのパスを書くと、手元では
+ファイルが存在するので通り、CI の fresh checkout で `file not found` で落ちる**。
+
+実例: `dist/standalone.html` を追跡から外した際、ARCHITECTURE.md の説明文に
+その名前をバッククォートで書いたところ、ローカル 13 ゲート green のまま CI だけ赤になった。
+
+**対策:** 生成物に言及するときはバッククォートで囲まない（日本語で「ブラウザ版 HTML」等と書く）。
+検証は生成物を一時退避して `mv dist/standalone.html /tmp/ && node scripts/verify-architecture.cjs`
+で CI と同じ状態を再現すること。ARCHITECTURE.md を触ったら常にこれを行うのが安全。
+
+
 ### 罠 1: scaffold ハイフン + 数字 ID で camelCase collapse (修正済)
 旧 `scaffold-service.cjs` は `microsoft-365` → `microsoft365` (camelCase で hyphen 消失) で LIVE_FETCHERS / LIVE_ACTIONS のキーを生成していた。これは ServiceId (`'microsoft-365'`) と mismatch して typecheck で気付くが、修正に時間を取られた。
 
