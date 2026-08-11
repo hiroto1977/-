@@ -43,6 +43,41 @@ export interface OAuthConfig {
   /** Extra query params for the authorize URL (e.g. Google's
    *  `access_type=offline` + `prompt=consent` to get refresh tokens). */
   extraAuthParams?: Record<string, string>;
+  /** RFC 7636 PKCE. Defaults to **true** — that is the only mode a public
+   *  client should ever use. Set to `false` ONLY for providers whose own
+   *  documentation does not describe `code_challenge` (Notion,
+   *  WordPress.com, Atlassian 3LO). Sending a challenge such a server
+   *  never recorded, and then a `code_verifier` it cannot validate, is a
+   *  good way to get an opaque `invalid_request` back. */
+  pkce?: boolean;
+  /** Confidential-client secret, for the providers that flatly refuse a
+   *  token exchange without one (Notion / Canva / WordPress.com /
+   *  Atlassian). Read from the environment exactly like `clientId` —
+   *  never hardcoded, and never reachable from the renderer: the
+   *  `oauth:authorize` IPC handler only lets the UI override `clientId`.
+   *
+   *  RFC 8252 §8.5 is right that a secret shipped inside a desktop
+   *  binary is not a secret. It is nonetheless the only credential these
+   *  four providers accept, so we let the *operator* supply their own
+   *  registered app's secret via env rather than embedding one. */
+  clientSecret?: string;
+  /** How client credentials reach the token endpoint. RFC 6749 §2.3.1:
+   *  a client MUST NOT use more than one authentication method, hence
+   *  the three-way choice rather than "always send both".
+   *   - `'none'` (default) — public client; only `client_id` in the body.
+   *   - `'basic'` — HTTP Basic `base64(client_id:client_secret)` header,
+   *     nothing in the body (Notion, Canva).
+   *   - `'body'`  — `client_id` + `client_secret` as form fields
+   *     (WordPress.com, Atlassian). */
+  clientAuth?: 'none' | 'basic' | 'body';
+  /** Wire format of the token-endpoint request body. Defaults to
+   *  `'form'` (`application/x-www-form-urlencoded`, what RFC 6749 §4.1.3
+   *  mandates). Notion is the outlier: its `/v1/oauth/token` documents a
+   *  JSON body. */
+  tokenBodyFormat?: 'form' | 'json';
+  /** Extra headers for the token request (Notion wants its API-version
+   *  header). Merged after `Content-Type` / `Authorization`. */
+  extraTokenHeaders?: Record<string, string>;
 }
 
 export interface TokenSet {
@@ -120,11 +155,125 @@ export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
       'offline_access',
     ],
   },
+  // Slack — OAuth V2 + PKCE。Slack アプリの設定で PKCE を有効化すると
+  // *public client* 扱いになり、トークン交換で client_secret を送らない
+  // (むしろ送ってはいけない) 構成になる。SLACK_OAUTH_CLIENT_ID を env に設定。
+  // 出典: https://docs.slack.dev/authentication/using-pkce/
+  //       https://docs.slack.dev/authentication/installing-with-oauth/
+  // 注意: PKCE を有効化すると refresh token の寿命が 30 日になり、この操作は
+  //       Slack サポート経由でしか取り消せない (一方通行)。
+  slack: {
+    authorizeUrl: 'https://slack.com/oauth/v2/authorize',
+    // oauth.v2.access は Web API メソッドなので https://slack.com/api/ 配下。
+    tokenUrl: 'https://slack.com/api/oauth.v2.access',
+    clientId: process.env.SLACK_OAUTH_CLIENT_ID ?? '',
+    // Slack はスコープを **カンマ区切り** で受け取る (公式 SDK の
+    // AuthorizeUrlGenerator も ",".join している)。
+    scopeDelimiter: ',',
+    // `scope` = **bot** スコープ。ここで要求した権限が bot トークン (xoxb-) に
+    // 付き、oauth.v2.access レスポンスの *トップレベル* access_token として
+    // 返る = tokenResponseToSet がそのまま読める形。読み取り
+    // (conversations.list / team.info) + chat.postMessage アクション分。
+    scopes: ['channels:read', 'groups:read', 'team:read', 'chat:write'],
+    // `user_scope` は **user** トークン (xoxp-) 用の別枠で、そちらは
+    // レスポンスの authed_user.access_token に入る。本アプリは bot トークン
+    // だけを使うので明示的に空で要求する (公式 SDK と同じ挙動)。
+    extraAuthParams: { user_scope: '' },
+  },
+  // Notion — 公開インテグレーションの OAuth 2.0。
+  // 出典: https://developers.notion.com/guides/get-started/authorization
+  //       https://developers.notion.com/reference/create-a-token
+  // 固有の作法が 3 つある:
+  //   1. PKCE 非対応 (公式ドキュメントに code_challenge の記載が無い)
+  //   2. トークン交換は client_id:client_secret の HTTP Basic 認証
+  //   3. トークンエンドポイントのボディは **JSON**
+  // スコープの概念は無く、権限はインテグレーション側の capabilities と
+  // 認可時にユーザーが選んだページで決まる。
+  notion: {
+    authorizeUrl: 'https://api.notion.com/v1/oauth/authorize',
+    tokenUrl: 'https://api.notion.com/v1/oauth/token',
+    clientId: process.env.NOTION_OAUTH_CLIENT_ID ?? '',
+    clientSecret: process.env.NOTION_OAUTH_CLIENT_SECRET ?? '',
+    clientAuth: 'basic',
+    tokenBodyFormat: 'json',
+    pkce: false,
+    scopes: [],
+    // owner=user は必須。ユーザーがワークスペースとページを選んで認可する。
+    extraAuthParams: { owner: 'user' },
+    // clients/notion.ts が固定している API バージョンと揃える。
+    extraTokenHeaders: { 'Notion-Version': '2022-06-28' },
+  },
+  // Canva Connect API — Authorization Code + PKCE (S256 必須)。ただし
+  // トークンエンドポイントは client_id / client_secret によるクライアント
+  // 認証も必須で (Basic 認証が推奨)、ブラウザから直接は叩けない。
+  // 出典: https://www.canva.dev/docs/connect/authentication/
+  //       https://www.canva.dev/docs/connect/api-reference/authentication/generate-access-token/
+  //       スコープ名は Canva 公式 OpenAPI spec の oauthAuthCode securityScheme
+  //       (canva-sdks/canva-connect-api-starter-kit openapi/spec.yml) で確認。
+  canva: {
+    authorizeUrl: 'https://www.canva.com/api/oauth/authorize',
+    tokenUrl: 'https://api.canva.com/rest/v1/oauth/token',
+    clientId: process.env.CANVA_OAUTH_CLIENT_ID ?? '',
+    clientSecret: process.env.CANVA_OAUTH_CLIENT_SECRET ?? '',
+    clientAuth: 'basic',
+    // GET /v1/designs = design:meta:read、POST /v1/folders = folder:write
+    // (create-folder アクション用)。/v1/brand-kits は公開 spec に無く必要な
+    // スコープを確定できないため要求しない — clients/canva.ts 側が 403/404 を
+    // 握り潰して縮退する設計になっている。
+    scopes: ['design:meta:read', 'folder:write'],
+  },
+  // WordPress.com — OAuth 2.0 Authorization Code。PKCE の記載は無く、
+  // トークン交換に client_secret が必須。`global` スコープで /me/sites を
+  // 含む全サイトにアクセスできる (`auth` は /me/ のみの限定スコープ)。
+  // 出典: https://developer.wordpress.com/docs/api/oauth2/
+  wordpress: {
+    authorizeUrl: 'https://public-api.wordpress.com/oauth2/authorize',
+    tokenUrl: 'https://public-api.wordpress.com/oauth2/token',
+    clientId: process.env.WPCOM_OAUTH_CLIENT_ID ?? '',
+    clientSecret: process.env.WPCOM_OAUTH_CLIENT_SECRET ?? '',
+    clientAuth: 'body',
+    pkce: false,
+    scopes: ['global'],
+  },
+  // Atlassian (Jira / Confluence Cloud) — OAuth 2.0 (3LO)。PKCE 非対応で
+  // client_secret 必須。authorize URL の audience=api.atlassian.com と
+  // prompt=consent は **必須クエリ**、offline_access を要求すると
+  // refresh_token (ローテーション式) が返る。
+  // 出典: https://developer.atlassian.com/cloud/oauth/getting-started/implementing-oauth-3lo/
+  //       https://developer.atlassian.com/cloud/jira/platform/scopes-for-oauth-2-3LO-and-forge-apps/
+  atlassian: {
+    authorizeUrl: 'https://auth.atlassian.com/authorize',
+    tokenUrl: 'https://auth.atlassian.com/oauth/token',
+    clientId: process.env.ATLASSIAN_OAUTH_CLIENT_ID ?? '',
+    clientSecret: process.env.ATLASSIAN_OAUTH_CLIENT_SECRET ?? '',
+    clientAuth: 'body',
+    pkce: false,
+    // read:jira-work = Jira の課題/プロジェクト読み取り (classic scope)。
+    scopes: ['read:jira-work', 'offline_access'],
+    extraAuthParams: { audience: 'api.atlassian.com', prompt: 'consent' },
+  },
 };
+
+/** True when the provider will not exchange a code without a client
+ *  secret. Derived from `clientAuth` rather than from "is clientSecret
+ *  set", so a half-configured provider fails loudly instead of silently
+ *  posting an empty secret. */
+export function requiresClientSecret(config: OAuthConfig): boolean {
+  return config.clientAuth === 'basic' || config.clientAuth === 'body';
+}
+
+/** PKCE is on unless a config explicitly opts out. */
+export function usesPkce(config: OAuthConfig): boolean {
+  return config.pkce !== false;
+}
 
 export function isOAuthSupported(serviceId: ServiceId): boolean {
   const cfg = OAUTH_CONFIGS[serviceId];
-  return Boolean(cfg && cfg.clientId);
+  if (!cfg || !cfg.clientId) return false;
+  // A confidential-client provider with no secret configured is not
+  // "supported" — offering the button would only produce a token-endpoint
+  // 401 after the user has already granted consent in the browser.
+  return !requiresClientSecret(cfg) || Boolean(cfg.clientSecret);
 }
 
 // --- pure helpers (unit-testable) ---------------------------------------
@@ -152,13 +301,28 @@ export function buildAuthorizeUrl(
     response_type: 'code',
     client_id: config.clientId,
     redirect_uri: redirectUri,
-    scope: config.scopes.join(config.scopeDelimiter ?? ' '),
+    // Notion has no scope concept at all; sending `scope=` to a provider
+    // that never defined the parameter is noise at best.
+    ...(config.scopes.length > 0
+      ? { scope: config.scopes.join(config.scopeDelimiter ?? ' ') }
+      : {}),
     state,
-    code_challenge: challenge,
-    code_challenge_method: 'S256',
+    ...(usesPkce(config) ? { code_challenge: challenge, code_challenge_method: 'S256' } : {}),
     ...(config.extraAuthParams ?? {}),
   });
   return `${config.authorizeUrl}?${params.toString()}`;
+}
+
+/** Which client credentials belong in the token-request *body*, given the
+ *  provider's authentication method. Basic-auth providers get nothing
+ *  here — their credentials ride in the Authorization header, and
+ *  duplicating them is exactly what RFC 6749 §2.3.1 forbids. */
+function clientCredentialParams(config: OAuthConfig): Record<string, string> {
+  if (config.clientAuth === 'basic') return {};
+  if (config.clientAuth === 'body') {
+    return { client_id: config.clientId, client_secret: config.clientSecret ?? '' };
+  }
+  return { client_id: config.clientId };
 }
 
 export function buildTokenExchangeBody(
@@ -171,8 +335,8 @@ export function buildTokenExchangeBody(
     grant_type: 'authorization_code',
     code,
     redirect_uri: redirectUri,
-    client_id: config.clientId,
-    code_verifier: verifier,
+    ...clientCredentialParams(config),
+    ...(usesPkce(config) ? { code_verifier: verifier } : {}),
   });
 }
 
@@ -180,8 +344,34 @@ export function buildRefreshBody(config: OAuthConfig, refreshToken: string): URL
   return new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    client_id: config.clientId,
+    ...clientCredentialParams(config),
   });
+}
+
+/** Headers for a token-endpoint POST: the body's content type, plus HTTP
+ *  Basic client authentication when the provider requires it. */
+export function buildTokenRequestHeaders(config: OAuthConfig): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type':
+      config.tokenBodyFormat === 'json'
+        ? 'application/json'
+        : 'application/x-www-form-urlencoded',
+  };
+  if (config.clientAuth === 'basic') {
+    const credentials = `${config.clientId}:${config.clientSecret ?? ''}`;
+    headers.Authorization = `Basic ${Buffer.from(credentials, 'utf8').toString('base64')}`;
+  }
+  return { ...headers, ...(config.extraTokenHeaders ?? {}) };
+}
+
+/** Serialize a token-request parameter bag to the wire format the
+ *  provider expects. Form-encoded per RFC 6749 §4.1.3 unless the config
+ *  opts into JSON (Notion). */
+export function serializeTokenBody(config: OAuthConfig, params: URLSearchParams): string {
+  if (config.tokenBodyFormat === 'json') {
+    return JSON.stringify(Object.fromEntries(params));
+  }
+  return params.toString();
 }
 
 export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string): TokenSet {
@@ -422,6 +612,11 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   if (!config.clientId) {
     throw new Error('OAuth client ID is not configured for this service');
   }
+  // Fail before opening the browser: without the secret the exchange is
+  // guaranteed to 401 *after* the user has already granted consent.
+  if (requiresClientSecret(config) && !config.clientSecret) {
+    throw new Error('OAuth client secret is not configured for this service');
+  }
   assertHttpsTokenUrl(config.tokenUrl);
   const { verifier, challenge } = generatePkce();
   const state = base64url(randomBytes(16));
@@ -437,8 +632,8 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
 
   const res = await fetchFn(config.tokenUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: buildTokenExchangeBody(config, redirectUri, code, verifier).toString(),
+    headers: buildTokenRequestHeaders(config),
+    body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
@@ -462,8 +657,8 @@ export async function refresh(
   assertHttpsTokenUrl(config.tokenUrl);
   const res = await fetchFn(config.tokenUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: buildRefreshBody(config, current.refreshToken).toString(),
+    headers: buildTokenRequestHeaders(config),
+    body: serializeTokenBody(config, buildRefreshBody(config, current.refreshToken)),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');

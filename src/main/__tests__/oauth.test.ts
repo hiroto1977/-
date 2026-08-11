@@ -13,6 +13,7 @@ const {
   buildAuthorizeUrl,
   buildRefreshBody,
   buildTokenExchangeBody,
+  buildTokenRequestHeaders,
   classifyCallback,
   generatePkce,
   isLoopbackHost,
@@ -20,8 +21,11 @@ const {
   listenForCallback,
   OAUTH_CONFIGS,
   refresh,
+  requiresClientSecret,
   safeStateEquals,
+  serializeTokenBody,
   tokenResponseToSet,
+  usesPkce,
 } = await import('../oauth');
 type OAuthConfig = import('../oauth').OAuthConfig;
 
@@ -102,6 +106,295 @@ describe('buildRefreshBody', () => {
     expect(body.get('grant_type')).toBe('refresh_token');
     expect(body.get('refresh_token')).toBe('rt-1');
     expect(body.get('client_id')).toBe('client-abc');
+  });
+});
+
+// --- provider-shaped fixtures for the newly added OAuth configs -----------
+// Each mirrors the wire contract of one real provider so the pure builders
+// can be checked without touching the network or the env.
+
+/** Slack: public client — PKCE, comma scopes, no secret. */
+const SLACK_CFG: OAuthConfig = {
+  authorizeUrl: 'https://slack.com/oauth/v2/authorize',
+  tokenUrl: 'https://slack.com/api/oauth.v2.access',
+  clientId: 'slack-client',
+  scopes: ['channels:read', 'chat:write'],
+  scopeDelimiter: ',',
+  extraAuthParams: { user_scope: '' },
+};
+
+/** Notion: no PKCE, Basic client auth, JSON token body, owner=user. */
+const NOTION_CFG: OAuthConfig = {
+  authorizeUrl: 'https://api.notion.com/v1/oauth/authorize',
+  tokenUrl: 'https://api.notion.com/v1/oauth/token',
+  clientId: 'notion-client',
+  clientSecret: 'notion-secret',
+  clientAuth: 'basic',
+  tokenBodyFormat: 'json',
+  pkce: false,
+  scopes: [],
+  extraAuthParams: { owner: 'user' },
+  extraTokenHeaders: { 'Notion-Version': '2022-06-28' },
+};
+
+/** Atlassian: no PKCE, secret in the body, audience + prompt required. */
+const ATLASSIAN_CFG: OAuthConfig = {
+  authorizeUrl: 'https://auth.atlassian.com/authorize',
+  tokenUrl: 'https://auth.atlassian.com/oauth/token',
+  clientId: 'atlassian-client',
+  clientSecret: 'atlassian-secret',
+  clientAuth: 'body',
+  pkce: false,
+  scopes: ['read:jira-work', 'offline_access'],
+  extraAuthParams: { audience: 'api.atlassian.com', prompt: 'consent' },
+};
+
+/** Canva: PKCE *and* Basic client auth, form-encoded body. */
+const CANVA_CFG: OAuthConfig = {
+  authorizeUrl: 'https://www.canva.com/api/oauth/authorize',
+  tokenUrl: 'https://api.canva.com/rest/v1/oauth/token',
+  clientId: 'canva-client',
+  clientSecret: 'canva-secret',
+  clientAuth: 'basic',
+  scopes: ['design:meta:read', 'folder:write'],
+};
+
+describe('usesPkce', () => {
+  it('defaults to true when the config says nothing', () => {
+    expect(usesPkce(CFG)).toBe(true);
+    expect(usesPkce(SLACK_CFG)).toBe(true);
+    expect(usesPkce(CANVA_CFG)).toBe(true);
+  });
+
+  it('is false only when explicitly opted out', () => {
+    expect(usesPkce(NOTION_CFG)).toBe(false);
+    expect(usesPkce(ATLASSIAN_CFG)).toBe(false);
+    // `pkce: true` is the same as omitting it.
+    expect(usesPkce({ ...NOTION_CFG, pkce: true })).toBe(true);
+  });
+});
+
+describe('requiresClientSecret', () => {
+  it('is true for both confidential client-auth modes', () => {
+    expect(requiresClientSecret(NOTION_CFG)).toBe(true); // basic
+    expect(requiresClientSecret(ATLASSIAN_CFG)).toBe(true); // body
+    expect(requiresClientSecret(CANVA_CFG)).toBe(true); // basic + PKCE
+  });
+
+  it('is false for public clients (no clientAuth, or an explicit none)', () => {
+    expect(requiresClientSecret(CFG)).toBe(false);
+    expect(requiresClientSecret(SLACK_CFG)).toBe(false);
+    expect(requiresClientSecret({ ...NOTION_CFG, clientAuth: 'none' })).toBe(false);
+  });
+
+  it('does NOT key off whether a secret happens to be present', () => {
+    // A stray secret on a public-client config must not flip the mode —
+    // that is what keeps a half-edited config from silently posting
+    // credentials to a provider that rejects them (Slack + PKCE).
+    expect(requiresClientSecret({ ...SLACK_CFG, clientSecret: 'oops' })).toBe(false);
+    // ...and a missing secret must not downgrade a confidential provider
+    // to "no secret needed" (that is what authorize()'s guard is for).
+    expect(requiresClientSecret({ ...NOTION_CFG, clientSecret: undefined })).toBe(true);
+  });
+});
+
+describe('buildAuthorizeUrl — provider-specific shapes', () => {
+  it('omits the PKCE params entirely for non-PKCE providers', () => {
+    const url = new URL(
+      buildAuthorizeUrl(NOTION_CFG, 'http://127.0.0.1:1/oauth/callback', 'st', 'chal'),
+    );
+    expect(url.searchParams.get('code_challenge')).toBeNull();
+    expect(url.searchParams.get('code_challenge_method')).toBeNull();
+    // Everything else is still there.
+    expect(url.searchParams.get('response_type')).toBe('code');
+    expect(url.searchParams.get('client_id')).toBe('notion-client');
+    expect(url.searchParams.get('state')).toBe('st');
+  });
+
+  it('omits the scope param when the provider has no scope concept (Notion)', () => {
+    const url = new URL(
+      buildAuthorizeUrl(NOTION_CFG, 'http://127.0.0.1:1/oauth/callback', 'st', 'chal'),
+    );
+    expect(url.searchParams.has('scope')).toBe(false);
+    // owner=user is REQUIRED by Notion, so it must survive.
+    expect(url.searchParams.get('owner')).toBe('user');
+  });
+
+  it('joins Slack scopes with commas and requests an empty user_scope', () => {
+    const url = new URL(
+      buildAuthorizeUrl(SLACK_CFG, 'http://127.0.0.1:1/oauth/callback', 'st', 'chal'),
+    );
+    expect(url.origin + url.pathname).toBe('https://slack.com/oauth/v2/authorize');
+    expect(url.searchParams.get('scope')).toBe('channels:read,chat:write');
+    // Present-but-empty: bot scopes only, no user token requested.
+    expect(url.searchParams.has('user_scope')).toBe(true);
+    expect(url.searchParams.get('user_scope')).toBe('');
+    // Slack is a public client → PKCE stays on.
+    expect(url.searchParams.get('code_challenge')).toBe('chal');
+    expect(url.searchParams.get('code_challenge_method')).toBe('S256');
+  });
+
+  it('carries Atlassian audience + prompt and space-joined scopes', () => {
+    const url = new URL(
+      buildAuthorizeUrl(ATLASSIAN_CFG, 'http://127.0.0.1:1/oauth/callback', 'st', 'chal'),
+    );
+    expect(url.origin + url.pathname).toBe('https://auth.atlassian.com/authorize');
+    expect(url.searchParams.get('audience')).toBe('api.atlassian.com');
+    expect(url.searchParams.get('prompt')).toBe('consent');
+    expect(url.searchParams.get('scope')).toBe('read:jira-work offline_access');
+    expect(url.searchParams.get('code_challenge')).toBeNull();
+  });
+
+  it('keeps PKCE for Canva even though it also uses client authentication', () => {
+    const url = new URL(
+      buildAuthorizeUrl(CANVA_CFG, 'http://127.0.0.1:1/oauth/callback', 'st', 'chal-xyz'),
+    );
+    expect(url.origin + url.pathname).toBe('https://www.canva.com/api/oauth/authorize');
+    expect(url.searchParams.get('code_challenge')).toBe('chal-xyz');
+    expect(url.searchParams.get('code_challenge_method')).toBe('S256');
+    expect(url.searchParams.get('scope')).toBe('design:meta:read folder:write');
+    // The secret NEVER appears in a URL that gets handed to the browser.
+    expect(url.search).not.toContain('canva-secret');
+    expect(url.searchParams.has('client_secret')).toBe(false);
+  });
+});
+
+describe('buildTokenExchangeBody — client authentication modes', () => {
+  it('basic mode puts NO credentials in the body (RFC 6749 §2.3.1)', () => {
+    const body = buildTokenExchangeBody(NOTION_CFG, 'http://127.0.0.1:1/cb', 'code-1', 'ver');
+    expect(body.get('grant_type')).toBe('authorization_code');
+    expect(body.get('code')).toBe('code-1');
+    expect(body.get('redirect_uri')).toBe('http://127.0.0.1:1/cb');
+    // Credentials ride in the Authorization header instead.
+    expect(body.has('client_id')).toBe(false);
+    expect(body.has('client_secret')).toBe(false);
+    // Non-PKCE provider → no verifier it never issued a challenge for.
+    expect(body.has('code_verifier')).toBe(false);
+  });
+
+  it('body mode sends client_id AND client_secret as form fields', () => {
+    const body = buildTokenExchangeBody(ATLASSIAN_CFG, 'http://127.0.0.1:1/cb', 'code-2', 'ver');
+    expect(body.get('client_id')).toBe('atlassian-client');
+    expect(body.get('client_secret')).toBe('atlassian-secret');
+    expect(body.has('code_verifier')).toBe(false);
+  });
+
+  it('public mode sends client_id + code_verifier and never a secret', () => {
+    const body = buildTokenExchangeBody(SLACK_CFG, 'http://127.0.0.1:1/cb', 'code-3', 'ver-3');
+    expect(body.get('client_id')).toBe('slack-client');
+    expect(body.has('client_secret')).toBe(false);
+    // Slack with PKCE explicitly forbids client_secret here.
+    expect(body.get('code_verifier')).toBe('ver-3');
+  });
+
+  it('Canva keeps the verifier (PKCE) while dropping body credentials (basic)', () => {
+    const body = buildTokenExchangeBody(CANVA_CFG, 'http://127.0.0.1:1/cb', 'code-4', 'ver-4');
+    expect(body.get('code_verifier')).toBe('ver-4');
+    expect(body.has('client_id')).toBe(false);
+    expect(body.has('client_secret')).toBe(false);
+  });
+
+  it('falls back to an empty secret string rather than "undefined" in body mode', () => {
+    // Kills `config.clientSecret ?? ''` → `config.clientSecret`, which
+    // would serialize the literal text "undefined" as the secret.
+    const body = buildTokenExchangeBody(
+      { ...ATLASSIAN_CFG, clientSecret: undefined },
+      'http://127.0.0.1:1/cb',
+      'c',
+      'v',
+    );
+    expect(body.get('client_secret')).toBe('');
+  });
+});
+
+describe('buildRefreshBody — client authentication modes', () => {
+  it('basic mode omits credentials from the refresh body too', () => {
+    const body = buildRefreshBody(NOTION_CFG, 'rt-notion');
+    expect(body.get('grant_type')).toBe('refresh_token');
+    expect(body.get('refresh_token')).toBe('rt-notion');
+    expect(body.has('client_id')).toBe(false);
+    expect(body.has('client_secret')).toBe(false);
+  });
+
+  it('body mode repeats both credentials on refresh', () => {
+    const body = buildRefreshBody(ATLASSIAN_CFG, 'rt-atl');
+    expect(body.get('client_id')).toBe('atlassian-client');
+    expect(body.get('client_secret')).toBe('atlassian-secret');
+  });
+
+  it('public mode sends only client_id on refresh', () => {
+    const body = buildRefreshBody(SLACK_CFG, 'rt-slack');
+    expect(body.get('client_id')).toBe('slack-client');
+    expect(body.has('client_secret')).toBe(false);
+  });
+});
+
+describe('buildTokenRequestHeaders', () => {
+  it('defaults to form encoding with no Authorization header', () => {
+    expect(buildTokenRequestHeaders(CFG)).toEqual({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+    expect(buildTokenRequestHeaders(SLACK_CFG)).toEqual({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+  });
+
+  it('emits base64(client_id:client_secret) Basic auth for basic mode', () => {
+    const headers = buildTokenRequestHeaders(CANVA_CFG);
+    expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+    const expected = Buffer.from('canva-client:canva-secret', 'utf8').toString('base64');
+    expect(headers.Authorization).toBe(`Basic ${expected}`);
+    // Round-trip so a wrong separator / encoding can't slip through.
+    expect(Buffer.from(expected, 'base64').toString('utf8')).toBe('canva-client:canva-secret');
+  });
+
+  it('switches Content-Type to application/json for Notion and merges extra headers', () => {
+    const headers = buildTokenRequestHeaders(NOTION_CFG);
+    expect(headers['Content-Type']).toBe('application/json');
+    expect(headers['Notion-Version']).toBe('2022-06-28');
+    expect(headers.Authorization).toBe(
+      `Basic ${Buffer.from('notion-client:notion-secret', 'utf8').toString('base64')}`,
+    );
+  });
+
+  it('never adds Authorization for body-mode providers (secret goes in the body)', () => {
+    const headers = buildTokenRequestHeaders(ATLASSIAN_CFG);
+    expect(headers.Authorization).toBeUndefined();
+  });
+
+  it('encodes an empty secret rather than the string "undefined"', () => {
+    const headers = buildTokenRequestHeaders({ ...CANVA_CFG, clientSecret: undefined });
+    expect(Buffer.from(headers.Authorization!.slice('Basic '.length), 'base64').toString()).toBe(
+      'canva-client:',
+    );
+  });
+});
+
+describe('serializeTokenBody', () => {
+  it('form-encodes by default', () => {
+    const params = new URLSearchParams({ grant_type: 'authorization_code', code: 'a b' });
+    expect(serializeTokenBody(CFG, params)).toBe('grant_type=authorization_code&code=a+b');
+  });
+
+  it('JSON-encodes when the provider asks for it (Notion)', () => {
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: 'c-1',
+      redirect_uri: 'http://127.0.0.1:1/cb',
+    });
+    const body = serializeTokenBody(NOTION_CFG, params);
+    expect(JSON.parse(body)).toEqual({
+      grant_type: 'authorization_code',
+      code: 'c-1',
+      redirect_uri: 'http://127.0.0.1:1/cb',
+    });
+    // Really JSON, not a query string.
+    expect(body.startsWith('{')).toBe(true);
+  });
+
+  it('round-trips an empty parameter bag in both formats', () => {
+    expect(serializeTokenBody(CFG, new URLSearchParams())).toBe('');
+    expect(serializeTokenBody(NOTION_CFG, new URLSearchParams())).toBe('{}');
   });
 });
 
@@ -379,14 +672,152 @@ describe('OAUTH_CONFIGS shape', () => {
     expect(cfg?.clientId).toBe('');
   });
 
-  it('does not register OAuth configs for non-Google services', () => {
+  it('registers exactly the ten OAuth-capable services and nothing else', () => {
     // Kills the outer OBJECT_LITERAL mutation that would replace the
     // whole OAUTH_CONFIGS with {} — by inversion the assertion checks
-    // we DO have the three known entries.
+    // we DO have every known entry. Also pins the count that
+    // `verify:arch` cross-checks against docs/ARCHITECTURE.md.
     const keys = Object.keys(OAUTH_CONFIGS);
-    expect(keys).toEqual(expect.arrayContaining(['drive', 'calendar', 'gmail']));
+    expect(keys.sort()).toEqual(
+      [
+        'atlassian',
+        'calendar',
+        'canva',
+        'drive',
+        'freee',
+        'gmail',
+        'microsoft-365',
+        'notion',
+        'slack',
+        'wordpress',
+      ].sort(),
+    );
+    // GitHub / Cloudflare stay PAT-only — no OAuth app to register against.
     expect(keys).not.toContain('github');
-    expect(keys).not.toContain('notion');
+    expect(keys).not.toContain('cloudflare');
+  });
+
+  it('slack uses Slack OAuth V2 endpoints, comma-joined bot scopes and PKCE', () => {
+    // Slack is the only newly added provider that can run as a true
+    // public client: enabling PKCE on the app makes client_secret
+    // forbidden rather than required.
+    const cfg = OAUTH_CONFIGS.slack;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://slack.com/oauth/v2/authorize');
+    expect(cfg?.tokenUrl).toBe('https://slack.com/api/oauth.v2.access');
+    expect(cfg?.scopes).toEqual(['channels:read', 'groups:read', 'team:read', 'chat:write']);
+    // Slack joins scopes with commas, not spaces.
+    expect(cfg?.scopeDelimiter).toBe(',');
+    // Bot scopes only: the user-token bucket is explicitly requested empty
+    // so the token lands in the response's TOP-LEVEL access_token.
+    expect(cfg?.extraAuthParams).toEqual({ user_scope: '' });
+    // Public client — PKCE on (default), no secret, no Basic auth.
+    expect(usesPkce(cfg!)).toBe(true);
+    expect(requiresClientSecret(cfg!)).toBe(false);
+    expect(cfg?.clientAuth).toBeUndefined();
+    expect(cfg?.clientSecret).toBeUndefined();
+    expect(typeof cfg?.clientId).toBe('string');
+    expect(cfg?.clientId).toBe('');
+  });
+
+  it('notion uses Basic auth + a JSON body + owner=user and no PKCE', () => {
+    const cfg = OAUTH_CONFIGS.notion;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://api.notion.com/v1/oauth/authorize');
+    expect(cfg?.tokenUrl).toBe('https://api.notion.com/v1/oauth/token');
+    // Notion has no scope concept — permissions come from the
+    // integration's capabilities and the pages the user picks.
+    expect(cfg?.scopes).toEqual([]);
+    expect(cfg?.clientAuth).toBe('basic');
+    expect(cfg?.tokenBodyFormat).toBe('json');
+    expect(usesPkce(cfg!)).toBe(false);
+    expect(requiresClientSecret(cfg!)).toBe(true);
+    // owner=user is a REQUIRED authorize param for Notion.
+    expect(cfg?.extraAuthParams).toEqual({ owner: 'user' });
+    expect(cfg?.extraTokenHeaders).toEqual({ 'Notion-Version': '2022-06-28' });
+    // Both halves of the credential are env-sourced strings, empty in CI.
+    expect(typeof cfg?.clientId).toBe('string');
+    expect(typeof cfg?.clientSecret).toBe('string');
+    expect(cfg?.clientId).toBe('');
+    expect(cfg?.clientSecret).toBe('');
+  });
+
+  it('canva uses Connect API endpoints with PKCE *and* Basic client auth', () => {
+    // Canva is the awkward middle case: PKCE is mandatory yet the token
+    // endpoint still demands client authentication.
+    const cfg = OAUTH_CONFIGS.canva;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://www.canva.com/api/oauth/authorize');
+    expect(cfg?.tokenUrl).toBe('https://api.canva.com/rest/v1/oauth/token');
+    expect(cfg?.scopes).toEqual(['design:meta:read', 'folder:write']);
+    expect(usesPkce(cfg!)).toBe(true);
+    expect(cfg?.clientAuth).toBe('basic');
+    expect(requiresClientSecret(cfg!)).toBe(true);
+    // Form-encoded body (only Notion opts into JSON).
+    expect(cfg?.tokenBodyFormat).toBeUndefined();
+    expect(typeof cfg?.clientId).toBe('string');
+    expect(typeof cfg?.clientSecret).toBe('string');
+    expect(cfg?.clientId).toBe('');
+    expect(cfg?.clientSecret).toBe('');
+  });
+
+  it('wordpress uses public-api.wordpress.com endpoints with the global scope and no PKCE', () => {
+    const cfg = OAUTH_CONFIGS.wordpress;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://public-api.wordpress.com/oauth2/authorize');
+    expect(cfg?.tokenUrl).toBe('https://public-api.wordpress.com/oauth2/token');
+    // `global` reaches /me/sites across every site; `auth` would only
+    // reach /me/.
+    expect(cfg?.scopes).toEqual(['global']);
+    expect(usesPkce(cfg!)).toBe(false);
+    expect(cfg?.clientAuth).toBe('body');
+    expect(requiresClientSecret(cfg!)).toBe(true);
+    expect(cfg?.extraAuthParams).toBeUndefined();
+    expect(typeof cfg?.clientId).toBe('string');
+    expect(typeof cfg?.clientSecret).toBe('string');
+    expect(cfg?.clientId).toBe('');
+    expect(cfg?.clientSecret).toBe('');
+  });
+
+  it('atlassian uses 3LO endpoints with the required audience + prompt params', () => {
+    const cfg = OAUTH_CONFIGS.atlassian;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://auth.atlassian.com/authorize');
+    expect(cfg?.tokenUrl).toBe('https://auth.atlassian.com/oauth/token');
+    // read:jira-work is the classic read scope; offline_access is what
+    // makes Atlassian issue a refresh token at all.
+    expect(cfg?.scopes).toEqual(['read:jira-work', 'offline_access']);
+    // audience AND prompt=consent are both required by Atlassian.
+    expect(cfg?.extraAuthParams).toEqual({
+      audience: 'api.atlassian.com',
+      prompt: 'consent',
+    });
+    expect(usesPkce(cfg!)).toBe(false);
+    expect(cfg?.clientAuth).toBe('body');
+    expect(requiresClientSecret(cfg!)).toBe(true);
+    expect(typeof cfg?.clientId).toBe('string');
+    expect(typeof cfg?.clientSecret).toBe('string');
+    expect(cfg?.clientId).toBe('');
+    expect(cfg?.clientSecret).toBe('');
+  });
+
+  it('pins every token endpoint to https (assertHttpsTokenUrl can never fire in prod)', () => {
+    for (const [id, cfg] of Object.entries(OAUTH_CONFIGS)) {
+      expect(cfg, id).toBeDefined();
+      expect(cfg!.tokenUrl.startsWith('https://'), id).toBe(true);
+      expect(cfg!.authorizeUrl.startsWith('https://'), id).toBe(true);
+    }
+  });
+
+  it('never hardcodes a client secret — every credential comes from the env', () => {
+    // The whole point of the clientSecret field: it is operator-supplied.
+    // With no env vars set (CI default) every one must be the empty string.
+    for (const [id, cfg] of Object.entries(OAUTH_CONFIGS)) {
+      if (cfg?.clientSecret !== undefined) {
+        expect(cfg.clientSecret, id).toBe('');
+      }
+      expect(cfg?.clientId, id).toBe('');
+    }
   });
 });
 
@@ -397,9 +828,72 @@ describe('isOAuthSupported', () => {
   // services without an entry return false unconditionally.
   it('returns false for services without an OAUTH_CONFIGS entry', () => {
     expect(isOAuthSupported('github')).toBe(false);
+    expect(isOAuthSupported('cloudflare')).toBe(false);
+  });
+
+  it('returns false for registered providers whose client ID is unset', () => {
+    // These DO have an OAUTH_CONFIGS entry now, but no env credentials in
+    // CI — the `cfg.clientId` half of the guard must still reject them.
     expect(isOAuthSupported('notion')).toBe(false);
     expect(isOAuthSupported('slack')).toBe(false);
-    expect(isOAuthSupported('cloudflare')).toBe(false);
+    expect(isOAuthSupported('canva')).toBe(false);
+    expect(isOAuthSupported('wordpress')).toBe(false);
+    expect(isOAuthSupported('atlassian')).toBe(false);
+  });
+
+  it('returns false for a confidential provider that has a client ID but no secret', async () => {
+    // Notion/Canva/WordPress/Atlassian cannot complete a token exchange
+    // without a secret, so a half-configured install must NOT advertise
+    // the "authenticate in browser" button. Exercises the
+    // `requiresClientSecret(cfg) && !cfg.clientSecret` branch, which the
+    // all-empty CI env can never reach.
+    const prev = process.env.NOTION_OAUTH_CLIENT_ID;
+    process.env.NOTION_OAUTH_CLIENT_ID = 'notion-client-id-12345';
+    try {
+      vi.resetModules();
+      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      expect(fresh.isOAuthSupported('notion')).toBe(false);
+    } finally {
+      if (prev === undefined) delete process.env.NOTION_OAUTH_CLIENT_ID;
+      else process.env.NOTION_OAUTH_CLIENT_ID = prev;
+      vi.resetModules();
+    }
+  });
+
+  it('returns true for a confidential provider once BOTH id and secret are set', async () => {
+    const prevId = process.env.NOTION_OAUTH_CLIENT_ID;
+    const prevSecret = process.env.NOTION_OAUTH_CLIENT_SECRET;
+    process.env.NOTION_OAUTH_CLIENT_ID = 'notion-client-id-12345';
+    process.env.NOTION_OAUTH_CLIENT_SECRET = 'notion-client-secret-abcde';
+    try {
+      vi.resetModules();
+      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      expect(fresh.isOAuthSupported('notion')).toBe(true);
+      // Sibling providers stay unsupported — the env var is per-provider.
+      expect(fresh.isOAuthSupported('canva')).toBe(false);
+    } finally {
+      if (prevId === undefined) delete process.env.NOTION_OAUTH_CLIENT_ID;
+      else process.env.NOTION_OAUTH_CLIENT_ID = prevId;
+      if (prevSecret === undefined) delete process.env.NOTION_OAUTH_CLIENT_SECRET;
+      else process.env.NOTION_OAUTH_CLIENT_SECRET = prevSecret;
+      vi.resetModules();
+    }
+  });
+
+  it('returns true for a public (PKCE) provider with only a client ID set', async () => {
+    // Slack is a public client: no secret is needed, so a client ID alone
+    // must be enough. Kills a `requiresClientSecret` → always-true mutant.
+    const prev = process.env.SLACK_OAUTH_CLIENT_ID;
+    process.env.SLACK_OAUTH_CLIENT_ID = '123456789012.987654321098';
+    try {
+      vi.resetModules();
+      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      expect(fresh.isOAuthSupported('slack')).toBe(true);
+    } finally {
+      if (prev === undefined) delete process.env.SLACK_OAUTH_CLIENT_ID;
+      else process.env.SLACK_OAUTH_CLIENT_ID = prev;
+      vi.resetModules();
+    }
   });
 
   it('returns false for Google services when GOOGLE_OAUTH_CLIENT_ID is empty', () => {
@@ -793,6 +1287,137 @@ describe('authorize (end-to-end flow with real loopback + mocked electron + mock
     const result = (await authorizePromise) as Error;
     expect(result.message).toBe('Token exchange failed (502): ');
   });
+
+  it('rejects a confidential provider with no client secret BEFORE opening the browser', async () => {
+    // Ordering matters as much as the rejection: it would be hostile to
+    // send the user through a consent screen and only then discover the
+    // exchange can never succeed.
+    openExternalMock.mockClear();
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      authorize({ ...NOTION_CFG, clientSecret: '' }, fetchMock),
+    ).rejects.toThrow(/OAuth client secret is not configured/);
+    expect(openExternalMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('does NOT demand a secret from a public (PKCE) provider like Slack', async () => {
+    // Inverse of the guard above — kills a `requiresClientSecret` →
+    // always-true mutant, which would break every public client.
+    openExternalMock.mockClear();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          access_token: 'xoxb-bot-token',
+          token_type: 'bot',
+          scope: 'channels:read,chat:write',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const authorizePromise = authorize({ ...SLACK_CFG, clientSecret: undefined }, fetchMock);
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    await fireCallback(port, { code: 'slack-code', state: parsed.searchParams.get('state')! });
+    const tokens = await authorizePromise;
+
+    // Slack returns the BOT token at the top level of oauth.v2.access.
+    expect(tokens.accessToken).toBe('xoxb-bot-token');
+    expect(tokens.tokenType).toBe('bot');
+
+    const [tokenUrl, init] = fetchMock.mock.calls[0]!;
+    expect(tokenUrl).toBe('https://slack.com/api/oauth.v2.access');
+    expect((init as RequestInit).headers).toEqual({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+    const body = new URLSearchParams((init as RequestInit).body as string);
+    expect(body.get('client_id')).toBe('slack-client');
+    // With PKCE enabled Slack requires the verifier and forbids the secret.
+    expect(body.get('code_verifier')).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(body.has('client_secret')).toBe(false);
+  });
+
+  it('exchanges a Notion code as JSON with a Basic auth header and no PKCE', async () => {
+    openExternalMock.mockClear();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          access_token: 'ntn_access',
+          refresh_token: 'nrt_refresh',
+          token_type: 'bearer',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const authorizePromise = authorize(NOTION_CFG, fetchMock);
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    // owner=user is required, and no PKCE challenge is offered.
+    expect(parsed.searchParams.get('owner')).toBe('user');
+    expect(parsed.searchParams.has('code_challenge')).toBe(false);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    const redirectUri = `http://127.0.0.1:${port}/oauth/callback`;
+    await fireCallback(port, { code: 'notion-code', state: parsed.searchParams.get('state')! });
+    const tokens = await authorizePromise;
+
+    expect(tokens.accessToken).toBe('ntn_access');
+    expect(tokens.refreshToken).toBe('nrt_refresh');
+
+    const [tokenUrl, init] = fetchMock.mock.calls[0]!;
+    expect(tokenUrl).toBe('https://api.notion.com/v1/oauth/token');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers['Content-Type']).toBe('application/json');
+    expect(headers['Notion-Version']).toBe('2022-06-28');
+    expect(headers.Authorization).toBe(
+      `Basic ${Buffer.from('notion-client:notion-secret', 'utf8').toString('base64')}`,
+    );
+    // Body is JSON, carries no credentials and no verifier.
+    expect(JSON.parse((init as RequestInit).body as string)).toEqual({
+      grant_type: 'authorization_code',
+      code: 'notion-code',
+      redirect_uri: redirectUri,
+    });
+  });
+
+  it('exchanges an Atlassian code with the secret in the form body', async () => {
+    openExternalMock.mockClear();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          access_token: 'atl-access',
+          refresh_token: 'atl-refresh',
+          expires_in: 3600,
+          scope: 'read:jira-work offline_access',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const authorizePromise = authorize(ATLASSIAN_CFG, fetchMock);
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    expect(parsed.searchParams.get('audience')).toBe('api.atlassian.com');
+    expect(parsed.searchParams.get('prompt')).toBe('consent');
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    await fireCallback(port, { code: 'atl-code', state: parsed.searchParams.get('state')! });
+    const tokens = await authorizePromise;
+
+    expect(tokens.accessToken).toBe('atl-access');
+    expect(tokens.refreshToken).toBe('atl-refresh');
+
+    const [, init] = fetchMock.mock.calls[0]!;
+    expect((init as RequestInit).headers).toEqual({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+    const body = new URLSearchParams((init as RequestInit).body as string);
+    expect(body.get('client_id')).toBe('atlassian-client');
+    expect(body.get('client_secret')).toBe('atlassian-secret');
+    expect(body.has('code_verifier')).toBe(false);
+  });
 });
 
 describe('refresh', () => {
@@ -824,6 +1449,57 @@ describe('refresh', () => {
     const body = new URLSearchParams((init as RequestInit).body as string);
     expect(body.get('grant_type')).toBe('refresh_token');
     expect(body.get('refresh_token')).toBe('rt');
+  });
+
+  it('refreshes a Notion token as JSON over Basic auth', async () => {
+    // Notion rotates the refresh token on every use, so the response's
+    // new refresh_token must win over the carried-over one.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ access_token: 'ntn_new', refresh_token: 'nrt_rotated' }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const result = await refresh(
+      NOTION_CFG,
+      { accessToken: 'ntn_old', refreshToken: 'nrt_old' },
+      fetchMock,
+    );
+    expect(result.accessToken).toBe('ntn_new');
+    expect(result.refreshToken).toBe('nrt_rotated');
+
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://api.notion.com/v1/oauth/token');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers['Content-Type']).toBe('application/json');
+    expect(headers.Authorization).toBe(
+      `Basic ${Buffer.from('notion-client:notion-secret', 'utf8').toString('base64')}`,
+    );
+    expect(JSON.parse((init as RequestInit).body as string)).toEqual({
+      grant_type: 'refresh_token',
+      refresh_token: 'nrt_old',
+    });
+  });
+
+  it('refreshes an Atlassian token with the secret in the form body', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ access_token: 'atl-new', expires_in: 3600 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+
+    await refresh(ATLASSIAN_CFG, { accessToken: 'old', refreshToken: 'atl-rt' }, fetchMock);
+
+    const [, init] = fetchMock.mock.calls[0]!;
+    expect((init as RequestInit).headers).toEqual({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+    const body = new URLSearchParams((init as RequestInit).body as string);
+    expect(body.get('grant_type')).toBe('refresh_token');
+    expect(body.get('refresh_token')).toBe('atl-rt');
+    expect(body.get('client_secret')).toBe('atlassian-secret');
   });
 
   it('throws a descriptive error on non-2xx', async () => {
