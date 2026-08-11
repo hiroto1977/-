@@ -217,11 +217,54 @@ gh release create v0.1.0 "release/Service Hub-0.1.0.AppImage" \
 
 PKCE-based Authorization Code (RFC 7636 + RFC 8252) を main プロセスに実装。
 ループバックサーバ・state 検証・token refresh まで含む完全フロー。
-Google プロバイダ (Drive / Calendar / Gmail) は配線済み — 単一の OAuth client ID で
-3 サービスをカバー。詳細は `docs/OAUTH_SETUP.md`。
+**10 プロバイダ配線済み** — Google 3 種 (Drive / Calendar / Gmail、単一 client ID で
+3 サービスをカバー) + freee / Microsoft 365 / Slack / Notion / Canva / WordPress.com /
+Atlassian。詳細は `docs/OAUTH_SETUP.md`。
 
-残作業: 他プロバイダ (Notion / Slack / Canva / WordPress / Atlassian) の `OAUTH_CONFIGS`
-エントリ追加 — 各 1 ファイル数行 + client ID 取得作業のみ。
+うち Notion / Canva / WordPress.com / Atlassian は **機密クライアント**で、
+公式ドキュメント上 token 交換に client_secret が要る。`OAuthConfig` に
+`pkce` / `clientSecret` / `clientAuth` (`none`|`basic`|`body`) / `tokenBodyFormat`
+(`form`|`json`) を足して表現した。既存 5 件は既定値のままなので**通信内容は不変**。
+
+残作業: 各プロバイダの開発者コンソールで client ID / secret を取得し環境変数へ渡す
+(`*_OAUTH_CLIENT_ID` / `*_OAUTH_CLIENT_SECRET`)。**実 API での疎通確認は未実施** —
+エンドポイントとスコープは公式ドキュメントと各社公開の OpenAPI / SDK ソースで
+裏取りしたが、実際に認可画面まで通したわけではない。
+
+未確定のまま入れなかったもの:
+- Canva の `brand-kits` スコープ — `GET /v1/brand-kits` は Canva 公開 OpenAPI に
+  存在せず必要スコープを確定できない。`clients/canva.ts` は 403/404 を握って
+  デグレードするので実害なし。
+- WordPress.com の `oauth2-1/token` (PKCE・secret 不要) — 検索結果には出るが
+  REST API 一般に使えるのか確証が取れず、確認済みの `/oauth2/*` + secret を採用。
+  もし一般に使えるなら WordPress も公開クライアントにできる。
+
+---
+
+## 出典の DOI プレフィックス照合 — 未確認 134 件
+
+`npm run lint:doi-prefix` (verify:all / CI に配線済み) を新設。DOI プレフィックスは
+登録機関＝出版社に紐づくので、`10.1017` (Cambridge UP) なのにラベルが
+「Oxford University Press」と名乗っていれば **どちらかの書誌が必ず誤り**。
+948 件の DOI 出典 (ラベルが出版社を名乗るもの) を照合し、134 件の矛盾を検出した。
+
+134 件は全て `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
+`id::DOI` + 「ラベルの主張 / DOI の出版社」つきで退避してある。**まだ直していない**のは
+一次資料に当たっておらず、ラベルと DOI のどちらが誤りか判定していないため
+(推測で出典を直さない規則)。台帳は `lint:citations` と同じく双方向で、
+矛盾が解消されたのに台帳へ残っていると落ちる = 直したら消すことが強制される。
+
+残作業: 134 件を一次資料で照合し、誤っている側を差し替えて台帳から消す。
+多い順に「Psychological Science 系 → APA」7 件、「Journal of Management → AOM」6 件、
+「Academy of Management → Wiley」6 件。代表例:
+
+- `bizlaw-administrative-law-proportionality` — ラベル Oxford UP / DOI `10.1017` (Cambridge)
+- `econ-backwash-spread-myrdal` — ラベル Cambridge UP / DOI `10.1016` (Elsevier)
+- `infosoc-affective-computing-picard` — ラベル MIT Press / DOI `10.1145` (ACM)
+
+中立プレフィックス (JSTOR `10.2307` / SSRN `10.2139` / NBER `10.3386` 等) と
+版元が移った誌 (QJE、Review of Economic Studies、Econometrica、Journal of Management 等)
+はルール側で除外済み。
 
 ---
 
