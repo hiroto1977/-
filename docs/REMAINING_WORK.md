@@ -33,10 +33,22 @@
 - [ ] **単発誤 DOI の掃討** — `lint:citations` は同一 DOI に年の矛盾があるときだけ落ちるので、
       **1 回しか引かれていない DOI の誤りは原理的に検出できない**（2,449 引用の大半が単発）。
       接頭辞と誌名/出版社の整合は機械判定できるので、そこを検査するゲートが次の恒久対策
-- [ ] **dev 依存の脆弱性 13 件**（critical 2 / high 5 / moderate 5 / low 1・2026-07-31 実測）— **本番依存は 0 件**。
-      内訳は vitest / vite / postcss / undici / brace-expansion / fast-uri で、
-      **テストランナーと dev サーバの鎖**。リリース成果物（electron-builder）側は現時点で検出なし。
-      `npm audit` は最新のアドバイザリを都度取得するため件数は変動する — 数える前に実行すること
+- [x] **dev 依存の脆弱性を 15 件 → 2 件へ削減**（2026-08-11 実測。**本番依存は従来どおり 0 件**）。
+      二段で処理した:
+      1. `npm audit fix`（非破壊・semver 互換のみ）で 7 件解消 —
+         postcss / undici / brace-expansion / fast-uri / js-yaml / nanoid / @babel/core
+      2. **vitest 2.1.9 → 4.1.10 のメジャー更新**で残る 6 件（critical 2 含む）を解消。
+         vitest / @vitest/coverage-v8 / vite / vite-node / esbuild / @vitest/mocker の鎖は
+         メジャー更新でしか塞げなかった。`vitest.config.ts` は environment / include /
+         isolate / pool / timeout / retry しか使っておらず、v3・v4 の破壊的変更
+         （workspace・environmentMatchGlobs 等）に触れていないため無改修で通った
+      検証: 270 ファイル 6,748 テスト green（実行時間 **86 秒 → 42 秒**に半減）/
+      `test:cov` のカバレッジ取得 OK / Stryker（peer は `vitest >=2.0.0`）も
+      dry-run で 27,618 mutant の計装と 6,286 テストの初回実行に成功
+- [ ] **残る 2 件は上流待ち**（moderate 2）— いずれも
+      `@stryker-mutator/core` → `typed-rest-client` → `qs` の推移依存で、
+      Stryker 側がリリースするまで手元では塞げない。`npm audit` は最新の
+      アドバイザリを都度取得するため件数は変動する — 数える前に実行すること
 - [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ
 - [ ] OAuth: 他プロバイダ（Notion / Slack / Canva / WordPress / Atlassian）の config 追加
 - [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）
