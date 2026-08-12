@@ -74,6 +74,13 @@ describe('EligibilityChecker — レンダー', () => {
     expect(render()).toContain('性別を要件にしているものはありません');
   });
 
+  it('判定に効かない入力は、効かないと画面に書く', () => {
+    // 入力欄があるのに何も書かないと「考慮されている」と読まれる。
+    // 事業形態は受け取るが収録範囲では判定を変えない。
+    const html = render();
+    expect(html).toContain('事業形態（個人／法人）も判定には効いていません');
+  });
+
   it('「要件を満たす」が採否の保証でないことを画面上で断っている', () => {
     const html = render();
     expect(html).toContain('採択・審査の結果ではありません');
