@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 84
+cite_count: 85
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **84 件**（学術 70 ・ リファレンス 14）
+> [!info] 出典ドメイン索引 ・ 引用 **85 件**（学術 71 ・ リファレンス 14）
 
 ## このドメインを出典とする項目
 
@@ -85,6 +85,7 @@ tags:
 - [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — Galor,Oded&Weil,DavidN.(2000),AmericanEconomicReview90(4):806–828—IDE…
 - [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]] — Weitzman,M.L.(2009)"OnModelingandInterpretingtheEconomicsofCatastroph…
 - [[econ-weitzman-prices-vs-quantities|ワイツマンの「価格か数量か」（Prices vs. Quantities／Weitzman 1974）——不確実性下では限界費用と限界便益の傾きが規制手段の優劣を決める]] — IDEAS/RePEc収録の書誌（Weitzman[1974],RES41(4):477-491・費用不確実性下での価格手段と数量手段の比…
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — Loewenstein,G.,O'Donoghue,T.&Rabin,M.(2003)ProjectionBiasinPredicting…
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)StepsTowardanEcologyofInfrastructure—ISR7(1)/IDEAS…
 - [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — Katz&Shapiro(1985)NetworkExternalities,Competition,andCompatibility—A…
 - [[infosoc-network-externality|ネットワーク外部性]] — Katz&Shapiro(1985)"NetworkExternalities,Competition,andCompatibility"…

@@ -2,7 +2,7 @@
 title: "hup.harvard.edu"
 type: source-domain
 host: "hup.harvard.edu"
-cite_count: 19
+cite_count: 20
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # hup.harvard.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **19 件**（学術 17 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 18 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — Bebchuk,L.A.&Fried,J.M.(2004)PayWithoutPerformance:TheUnfulfilledProm…
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — Easterbrook,F.H.&Fischel,D.R.(1991)TheEconomicStructureofCorporateLaw…
 - [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — Georgescu-Roegen,N.(1971)TheEntropyLawandtheEconomicProcess—HarvardUn…
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — Polanyi,K.(1944)TheGreatTransformation—BeaconPress（埋め込みの原典）

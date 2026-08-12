@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Lerner (1980) The Belief in a Just World: A Fundamental Delusion — Plenum Press](https://doi.org/10.1007/978-1-4757-6418-5) `学術`
-- [Hafer & Begue (2005) Experimental Research on Just-World Theory — Psychological Bulletin](https://doi.org/10.1016/S0065-2601(01)80007-1) `学術`
+- [Hafer & Begue (2005) Experimental Research on Just-World Theory — Psychological Bulletin](https://doi.org/10.1037/0033-2909.131.1.128) `学術`
 - [Wikipedia: Just-world hypothesis — 公正世界仮説の理論と社会的含意の概説](https://en.wikipedia.org/wiki/Just-world_hypothesis) `リファレンス`
 
 ## 関連概念

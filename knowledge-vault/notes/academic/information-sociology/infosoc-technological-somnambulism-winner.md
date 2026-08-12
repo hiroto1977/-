@@ -26,7 +26,7 @@ aliases:
 ラングドン・ウィナー ／ ルイス・マンフォード ／ ジャック・エリュール ／ アンドリュー・フィーンバーグ
 
 ## 出典
-- [Winner, L. (1986) The Whale and the Reactor — University of Chicago Press ch.1](https://doi.org/10.1162/DAED_a_00611) `学術`
+- [Winner, L. (1986) The Whale and the Reactor — University of Chicago Press ch.1](https://press.uchicago.edu/ucp/books/book/chicago/W/bo49911830.html) `学術`
 - [Wikipedia: Langdon Winner — technological somnambulism and politics of artifacts](https://en.wikipedia.org/wiki/Langdon_Winner) `リファレンス`
 - [Winner, L. (1980) Do Artifacts Have Politics? — Daedalus 109(1)](https://doi.org/10.1162/DAED_a_00142) `学術`
 
@@ -36,9 +36,11 @@ aliases:
 - [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
-- [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 同分野の近傍
-- [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同分野の近傍
-- [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同分野の近傍
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
+- [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

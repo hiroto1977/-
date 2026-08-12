@@ -40,7 +40,7 @@ aliases:
 - [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
 - [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — 出典を共有
-- [[econ-financialization|金融化——経済の金融部門支配]] — 出典を共有
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

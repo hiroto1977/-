@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Nolen-Hoeksema, S. (1991) Responses to Depression and Their Effects on the Duration of Depressive Episodes — Journal of Abnormal Psychology, 100(4), 569–582（ルミネーション理論の原典）](https://doi.org/10.1037/0033-295X.98.3.569) `学術`
 - [Treynor, W., Gonzalez, R. & Nolen-Hoeksema, S. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research, 27(3), 247–259（改訂RRS・二因子モデル）](https://doi.org/10.1037/0021-843X.112.4.558) `学術`
-- [Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）](https://doi.org/10.1016/j.brat.2007.01.013) `学術`
+- [Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）](https://doi.org/10.1037/0033-2909.134.2.163) `学術`
 - [Wikipedia: Rumination (psychology) — Nolen-Hoeksema, brooding vs reflection, depression sex differences, RFCBT](https://en.wikipedia.org/wiki/Rumination_(psychology)) `リファレンス`
 
 ## 関連概念

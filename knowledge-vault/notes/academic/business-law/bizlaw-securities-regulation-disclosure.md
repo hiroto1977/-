@@ -39,7 +39,7 @@ aliases:
 - [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
-- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
+- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

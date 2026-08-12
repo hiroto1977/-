@@ -26,7 +26,7 @@ aliases:
 アルビン・ロス ／ ロイド・シャプレー ／ ポール・ミルグロム ／ デービッド・オーター
 
 ## 出典
-- [Roth, A.E. & Sotomayor, M. (1990). Two-sided matching — Econometrica](https://doi.org/10.1257/jep.2.3.99) `学術`
+- [Roth, A.E. & Sotomayor, M. (1990). Two-Sided Matching: A Study in Game-Theoretic Modeling and Analysis — Cambridge University Press (Econometric Society Monographs 18)](https://www.cambridge.org/0521437881) `学術`
 - [Wikipedia: Market design — matching theory economics](https://en.wikipedia.org/wiki/Market_design) `リファレンス`
 
 ## 関連概念

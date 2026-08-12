@@ -26,7 +26,7 @@ aliases:
 ヴィタリク・ブテリン ／ パリスラン・ドヴォルカン ／ プリマヴェラ・デ・フィリッピ ／ アーロン・ライト
 
 ## 出典
-- [De Filippi, P. & Wright, A. (2018). Blockchain and the Law — Harvard UP](https://doi.org/10.1017/9781108673174) `学術`
+- [De Filippi, P. & Wright, A. (2018). Blockchain and the Law — Harvard UP](https://doi.org/10.4159/9780674985933) `学術`
 - [Wikipedia: Decentralized autonomous organization — blockchain governance](https://en.wikipedia.org/wiki/Decentralized_autonomous_organization) `リファレンス`
 
 ## 関連概念

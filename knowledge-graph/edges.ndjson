@@ -977,7 +977,7 @@
 {"a":"bizlaw-blue-pencil-doctrine","b":"bizlaw-product-liability-doctrine","type":"shares-source","score":2500}
 {"a":"bizlaw-blue-pencil-doctrine","b":"bizlaw-restraint-of-trade","type":"same-category","score":436}
 {"a":"bizlaw-blue-pencil-doctrine","b":"bizlaw-tortious-interference","type":"shares-source","score":5000}
-{"a":"bizlaw-blue-sky-laws","b":"bizlaw-claw-back-executive-comp","type":"shares-source","score":3333}
+{"a":"bizlaw-blue-sky-laws","b":"bizlaw-claw-back-executive-comp","type":"shares-source","score":2500}
 {"a":"bizlaw-blue-sky-laws","b":"bizlaw-economic-loss-rule","type":"shares-source","score":2500}
 {"a":"bizlaw-blue-sky-laws","b":"bizlaw-howey-investment-contract","type":"shares-source","score":3333}
 {"a":"bizlaw-blue-sky-laws","b":"bizlaw-insider-trading-regulation","type":"shares-source","score":3333}
@@ -1306,17 +1306,21 @@
 {"a":"bizlaw-class-action-mechanism","b":"bizlaw-securities-regulation-disclosure","type":"shares-thinker","score":3333}
 {"a":"bizlaw-class-action-mechanism","b":"bizlaw-shareholder-activism-hedge-fund","type":"shares-thinker","score":2500}
 {"a":"bizlaw-class-action-mechanism","b":"bizlaw-shareholders-derivative-suit","type":"shares-thinker","score":3333}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-howey-investment-contract","type":"shares-source","score":10000}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-insider-trading-regulation","type":"shares-source","score":10000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-derivative-action-shareholder","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-howey-investment-contract","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-insider-trading-regulation","type":"shares-source","score":5000}
 {"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-internal-control","type":"same-category","score":435}
 {"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-money-lending-act","type":"same-category","score":422}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-say-on-pay","type":"shares-source","score":10000}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-securities-class-action-litigation","type":"shares-source","score":10000}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-securities-regulation","type":"shares-source","score":5000}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-securities-regulation-disclosure","type":"shares-source","score":10000}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-shareholder-activism-proxy-fight","type":"shares-source","score":10000}
-{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-whistleblower-protection-sarbanes","type":"shares-source","score":10000}
-{"a":"bizlaw-claw-back-executive-comp","b":"econ-mark-to-market-accounting-theory","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-say-on-pay","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-securities-class-action-litigation","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-securities-regulation-disclosure","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-shareholder-activism-proxy-fight","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"bizlaw-whistleblower-protection-sarbanes","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"econ-economic-sociology-granovetter","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"econ-evolutionary-economics-nelson-winter","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"econ-exit-voice-loyalty","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"econ-gerschenkron-backwardness","type":"shares-source","score":5000}
+{"a":"bizlaw-claw-back-executive-comp","b":"econ-mark-to-market-accounting-theory","type":"shares-source","score":3333}
 {"a":"bizlaw-clean-hands-doctrine","b":"bizlaw-doctrine-of-necessaries","type":"shares-source","score":2500}
 {"a":"bizlaw-clean-hands-doctrine","b":"bizlaw-doctrine-of-necessities","type":"shares-source","score":2500}
 {"a":"bizlaw-clean-hands-doctrine","b":"bizlaw-environmental-law","type":"shares-source","score":3333}
@@ -2331,6 +2335,7 @@
 {"a":"bizlaw-economic-analysis-of-law","b":"infosoc-sociotechnical-imaginaries","type":"shares-source","score":10000}
 {"a":"bizlaw-economic-analysis-of-law","b":"infosoc-techno-moral-change","type":"shares-source","score":10000}
 {"a":"bizlaw-economic-analysis-of-law","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
+{"a":"bizlaw-economic-analysis-of-law","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"bizlaw-economic-analysis-of-law","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"bizlaw-economic-analysis-of-law","b":"mgmt-role-exit-theory","type":"shares-source","score":10000}
 {"a":"bizlaw-economic-analysis-of-law","b":"mgmt-transaction-cost-economics","type":"shares-thinker","score":10000}
@@ -9158,6 +9163,7 @@
 {"a":"econ-monetary-history-friedman-schwartz","b":"infosoc-sociotechnical-imaginaries","type":"shares-source","score":10000}
 {"a":"econ-monetary-history-friedman-schwartz","b":"infosoc-techno-moral-change","type":"shares-source","score":10000}
 {"a":"econ-monetary-history-friedman-schwartz","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
+{"a":"econ-monetary-history-friedman-schwartz","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"econ-monetary-history-friedman-schwartz","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"econ-monetary-history-friedman-schwartz","b":"mgmt-csr","type":"shares-thinker","score":10000}
 {"a":"econ-monetary-history-friedman-schwartz","b":"mgmt-role-exit-theory","type":"shares-source","score":10000}
@@ -9467,7 +9473,7 @@
 {"a":"econ-nominal-gdp-targeting","b":"infosoc-sociotechnical-imaginaries","type":"shares-source","score":5000}
 {"a":"econ-nominal-gdp-targeting","b":"infosoc-techno-moral-change","type":"shares-source","score":5000}
 {"a":"econ-nominal-gdp-targeting","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":5000}
-{"a":"econ-nominal-gdp-targeting","b":"infosoc-trading-zones","type":"shares-source","score":5000}
+{"a":"econ-nominal-gdp-targeting","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":5000}
 {"a":"econ-north-institutions-economic-history","b":"econ-path-dependence-david","type":"shares-thinker","score":2500}
 {"a":"econ-north-institutions-economic-history","b":"econ-reversal-of-fortune-acemoglu","type":"shares-thinker","score":5000}
 {"a":"econ-north-institutions-economic-history","b":"econ-sraffa-commodities","type":"shares-thinker","score":3333}
@@ -12311,6 +12317,7 @@
 {"a":"human-durkheim-suicide","b":"infosoc-sociotechnical-imaginaries","type":"shares-source","score":10000}
 {"a":"human-durkheim-suicide","b":"infosoc-techno-moral-change","type":"shares-source","score":10000}
 {"a":"human-durkheim-suicide","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
+{"a":"human-durkheim-suicide","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"human-durkheim-suicide","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"human-durkheim-suicide","b":"mgmt-role-exit-theory","type":"shares-source","score":10000}
 {"a":"human-ecological-systems-theory-bronfenbrenner","b":"human-social-referencing","type":"same-category","score":438}
@@ -12376,6 +12383,7 @@
 {"a":"human-embodied-cognition-lakoff","b":"infosoc-sociotechnical-imaginaries","type":"shares-source","score":10000}
 {"a":"human-embodied-cognition-lakoff","b":"infosoc-techno-moral-change","type":"shares-source","score":10000}
 {"a":"human-embodied-cognition-lakoff","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
+{"a":"human-embodied-cognition-lakoff","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"human-embodied-cognition-lakoff","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"human-embodied-cognition-lakoff","b":"mgmt-role-exit-theory","type":"shares-source","score":10000}
 {"a":"human-embodied-cognition-theory","b":"human-embodied-cognition-varela","type":"term-overlap","score":2449}
@@ -14612,6 +14620,7 @@
 {"a":"infosoc-collective-memory","b":"infosoc-symbolic-convergence-bormann","type":"same-category","score":426}
 {"a":"infosoc-collective-memory","b":"infosoc-techno-moral-change","type":"shares-source","score":10000}
 {"a":"infosoc-collective-memory","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
+{"a":"infosoc-collective-memory","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"infosoc-collective-memory","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"infosoc-collective-memory","b":"mgmt-role-exit-theory","type":"shares-source","score":10000}
 {"a":"infosoc-collingridge-dilemma","b":"infosoc-digital-markets-act","type":"shares-source","score":3333}
@@ -14686,7 +14695,6 @@
 {"a":"infosoc-complex-contagion","b":"infosoc-social-network-analysis","type":"shares-thinker","score":3333}
 {"a":"infosoc-complex-contagion","b":"infosoc-strength-weak-ties-granovetter","type":"shares-thinker","score":2500}
 {"a":"infosoc-complex-contagion","b":"infosoc-structural-holes-burt","type":"shares-thinker","score":2500}
-{"a":"infosoc-complex-contagion","b":"infosoc-technological-somnambulism-winner","type":"same-category","score":403}
 {"a":"infosoc-computational-journalism","b":"infosoc-computational-propaganda-woolley","type":"same-category","score":432}
 {"a":"infosoc-computational-journalism","b":"infosoc-digital-minimalism","type":"same-category","score":420}
 {"a":"infosoc-computational-propaganda-bots","b":"infosoc-computational-propaganda-woolley","type":"shares-thinker","score":2500}
@@ -15870,7 +15878,7 @@
 {"a":"infosoc-media-equation","b":"infosoc-sociotechnical-imaginaries","type":"shares-source","score":5000}
 {"a":"infosoc-media-equation","b":"infosoc-techno-moral-change","type":"shares-source","score":5000}
 {"a":"infosoc-media-equation","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":5000}
-{"a":"infosoc-media-equation","b":"infosoc-trading-zones","type":"shares-source","score":5000}
+{"a":"infosoc-media-equation","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":5000}
 {"a":"infosoc-media-events","b":"infosoc-media-logic","type":"shares-source","score":2000}
 {"a":"infosoc-media-framing","b":"infosoc-medium-theory-meyrowitz","type":"shares-thinker","score":5000}
 {"a":"infosoc-media-framing","b":"infosoc-self-presentation","type":"shares-thinker","score":5000}
@@ -16380,6 +16388,7 @@
 {"a":"infosoc-sociomateriality","b":"mgmt-sociomaterial-assemblage","type":"shares-thinker","score":6667}
 {"a":"infosoc-sociotechnical-imaginaries","b":"infosoc-techno-moral-change","type":"shares-source","score":10000}
 {"a":"infosoc-sociotechnical-imaginaries","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
+{"a":"infosoc-sociotechnical-imaginaries","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"infosoc-sociotechnical-imaginaries","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"infosoc-sociotechnical-imaginaries","b":"mgmt-role-exit-theory","type":"shares-source","score":10000}
 {"a":"infosoc-sociotechnical-systems","b":"mgmt-katz-kahn-open-systems","type":"shares-thinker","score":3333}
@@ -16424,6 +16433,7 @@
 {"a":"infosoc-techno-feudalism-theory","b":"mgmt-organizational-resilience-theory","type":"shares-source","score":2500}
 {"a":"infosoc-techno-moral-change","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
 {"a":"infosoc-techno-moral-change","b":"infosoc-technological-mediation-theory","type":"shares-thinker","score":2500}
+{"a":"infosoc-techno-moral-change","b":"infosoc-technological-somnambulism-winner","type":"shares-source","score":10000}
 {"a":"infosoc-techno-moral-change","b":"infosoc-trading-zones","type":"shares-source","score":10000}
 {"a":"infosoc-techno-moral-change-verbeek","b":"infosoc-technological-mediation-theory","type":"same-category","score":733}
 {"a":"infosoc-techno-nationalism","b":"mgmt-high-performance-work-systems","type":"shares-source","score":5000}
@@ -16432,7 +16442,6 @@
 {"a":"infosoc-technoculture","b":"infosoc-technological-determinism-mcluhan","type":"shares-thinker","score":3333}
 {"a":"infosoc-technoculture","b":"infosoc-technological-frames-orlikowski","type":"same-category","score":435}
 {"a":"infosoc-technoculture","b":"infosoc-technological-somnambulism-winner","type":"shares-thinker","score":3333}
-{"a":"infosoc-technoculture","b":"infosoc-technological-somnambulism-winner","type":"same-category","score":417}
 {"a":"infosoc-technological-determinism","b":"infosoc-technological-determinism-mcluhan","type":"shares-thinker","score":5000}
 {"a":"infosoc-technological-determinism","b":"infosoc-time-space-compression-harvey","type":"shares-thinker","score":2500}
 {"a":"infosoc-technological-determinism-mcluhan","b":"infosoc-technological-somnambulism-winner","type":"shares-thinker","score":2500}

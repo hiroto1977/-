@@ -21707,7 +21707,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1016/j.neubiorev.2017.05.015', type: 'academic', label: 'Barrett (2017) The theory of constructed emotion, Neuroscience & Biobehavioral Reviews 76:3-14' },
       { url: 'https://doi.org/10.1037/0033-295X.110.1.145', type: 'academic', label: 'Russell (2003) Core affect and the psychological construction of emotion, Psychological Review 110(1):145-172' },
-      { url: 'https://doi.org/10.1037/a0029485', type: 'academic', label: 'Lindquist et al. (2012) The brain basis of emotion: A meta-analytic review, Behavioral and Brain Sciences 35(3):121-143' },
+      { url: 'https://doi.org/10.1017/S0140525X11000446', type: 'academic', label: 'Lindquist et al. (2012) The brain basis of emotion: A meta-analytic review, Behavioral and Brain Sciences 35(3):121-143' },
     ],
   },
   {
@@ -23594,7 +23594,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1229537', type: 'academic', label: 'Samuelson (1999) "Intellectual Property and the Digital Economy: Why the Anti-Circumvention Regulations Need to Be Revised"' },
       { url: 'https://doi.org/10.7551/mitpress/1790.001.0001', type: 'academic', label: 'Lessig (1999) "Code and Other Laws of Cyberspace" — MIT Press' },
-      { url: 'https://doi.org/10.1017/CBO9780511813696', type: 'academic', label: 'Gillespie (2007) "Wired Shut: Copyright and the Shape of Digital Culture" — MIT Press' },
+      { url: 'https://doi.org/10.7551/mitpress/7253.001.0001', type: 'academic', label: 'Gillespie (2007) "Wired Shut: Copyright and the Shape of Digital Culture" — MIT Press' },
       { url: 'https://www.copyright.gov/dmca/', type: 'government', label: 'U.S. Copyright Office — Digital Millennium Copyright Act (DMCA) overview' },
       { url: 'https://doi.org/10.2307/j.ctt5hjjtq', type: 'academic', label: 'Benkler (2006) "The Wealth of Networks: How Social Production Transforms Markets and Freedom" — Yale University Press' },
     ],
@@ -29427,7 +29427,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0033-2909.131.5.799', type: 'academic', label: 'Loewenstein, G. (2005) Hot-Cold Empathy Gaps and Medical Decision Making — Health Psychology, 24(4), S49–S56' },
       { url: 'https://doi.org/10.1016/S0749-5978(03)00042-7', type: 'academic', label: 'Van Boven, L. & Loewenstein, G. (2003) Social Projection of Transient Drive States — Personality and Social Psychology Bulletin, 29(9), 1159–1168' },
-      { url: 'https://doi.org/10.1007/BF00055525', type: 'academic', label: 'Loewenstein, G., O\'Donoghue, T. & Rabin, M. (2003) Projection Bias in Predicting Future Utility — Quarterly Journal of Economics, 118(4), 1209–1248' },
+      { url: 'https://ideas.repec.org/a/oup/qjecon/v118y2003i4p1209-1248..html', type: 'academic', label: 'Loewenstein, G., O\'Donoghue, T. & Rabin, M. (2003) Projection Bias in Predicting Future Utility — Quarterly Journal of Economics, 118(4), 1209–1248' },
       { url: 'https://en.wikipedia.org/wiki/Empathy_gap', type: 'reference', label: 'Wikipedia: Empathy gap — hot-cold states, commitment devices, behavioral economics applications' },
     ],
   },
@@ -29509,7 +29509,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーサー・アーロン ／ エレイン・アーロン ／ ゲアリー・レモン ／ バーバラ・フレドリクソン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/0146167200266009', type: 'academic', label: 'Aron, A., Norman, C. C., Aron, E. N., McKenna, C. & Heyman, R. E. (2000) Couples\' Shared Participation in Novel and Arousing Activities and Experienced Relationship Quality — Journal of Personality and Social Psychology, 78(2), 273–284' },
+      { url: 'https://doi.org/10.1037/0022-3514.78.2.273', type: 'academic', label: 'Aron, A., Norman, C. C., Aron, E. N., McKenna, C. & Heyman, R. E. (2000) Couples\' Shared Participation in Novel and Arousing Activities and Experienced Relationship Quality — Journal of Personality and Social Psychology, 78(2), 273–284' },
       { url: 'https://doi.org/10.1177/0265407508090878', type: 'academic', label: 'Aron, A. & Aron, E. N. (1986) Love and the Expansion of Self: Understanding Attraction and Satisfaction — Hemisphere Publishing（自己拡張モデルの原典）' },
       { url: 'https://doi.org/10.1111/j.1467-6494.1991.tb00204.x', type: 'academic', label: 'Aron, A., Aron, E. N. & Smollan, D. (1992) Inclusion of Other in the Self Scale and the Structure of Interpersonal Closeness — Journal of Personality and Social Psychology, 63(4), 596–612' },
       { url: 'https://en.wikipedia.org/wiki/Self-expansion_model', type: 'reference', label: 'Wikipedia: Self-expansion model — Aron & Aron, including other in self, relationship boredom, novel activities' },
@@ -29525,7 +29525,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.sec.gov/rules/final/2022/33-11126.pdf', type: 'government', label: 'SEC (2023) Final Rule: Listing Standards for Recovery of Erroneously Awarded Compensation (Dodd-Frank Act § 954) — 33-11126' },
       { url: 'https://doi.org/10.1016/j.jacceco.2018.11.003', type: 'academic', label: 'Chan, L. H., Chen, K. C. W., Chen, T. Y. & Yu, Y. (2012) The Effects of Firm-Initiated Clawback Provisions on Earnings Quality and Auditor Behavior — Journal of Accounting and Economics, 54(2–3), 180–196' },
-      { url: 'https://doi.org/10.1111/j.1540-6261.2009.01528.x', type: 'academic', label: 'Bebchuk, L. A. & Fried, J. M. (2004) Pay Without Performance: The Unfulfilled Promise of Executive Compensation — Harvard University Press（役員報酬と代理人問題の古典）' },
+      { url: 'https://www.hup.harvard.edu/books/9780674022287', type: 'academic', label: 'Bebchuk, L. A. & Fried, J. M. (2004) Pay Without Performance: The Unfulfilled Promise of Executive Compensation — Harvard University Press（役員報酬と代理人問題の古典）' },
       { url: 'https://en.wikipedia.org/wiki/Clawback', type: 'reference', label: 'Wikipedia: Clawback — SOX § 304, Dodd-Frank § 954, SEC final rule 2023, corporate governance effects' },
     ],
   },
@@ -29609,7 +29609,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1177/0163443708098201', type: 'academic', label: 'Hjarvard, S. (2008) The Mediatization of Society: A Theory of the Media as Agents of Social and Cultural Change — Nordicom Review, 29(2), 105–134（メディア化理論の原典）' },
       { url: 'https://doi.org/10.1177/0267323114521426', type: 'academic', label: 'Couldry, N. & Hepp, A. (2013) Conceptualizing Mediatization: Contexts, Traditions, Arguments — Communication Theory, 23(3), 191–202（概念整理と批判）' },
-      { url: 'https://doi.org/10.1080/21670811.2014.926833', type: 'academic', label: 'Hepp, A. & Hjarvard, S. (2014) Mediatized Worlds: Culture and Society in a Media Age — Palgrave Macmillan（社会・文化への応用）' },
+      { url: 'https://doi.org/10.1057/9781137300355', type: 'academic', label: 'Hepp, A. & Krotz, F. (eds.) (2014) Mediatized Worlds: Culture and Society in a Media Age — Palgrave Macmillan（社会・文化への応用）' },
       { url: 'https://en.wikipedia.org/wiki/Mediatization_(media)', type: 'reference', label: 'Wikipedia: Mediatization (media) — Hjarvard, media logic, institutional vs. social mediatization, critique' },
     ],
   },
@@ -29665,7 +29665,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0033-295X.98.3.569', type: 'academic', label: 'Nolen-Hoeksema, S. (1991) Responses to Depression and Their Effects on the Duration of Depressive Episodes — Journal of Abnormal Psychology, 100(4), 569–582（ルミネーション理論の原典）' },
       { url: 'https://doi.org/10.1037/0021-843X.112.4.558', type: 'academic', label: 'Treynor, W., Gonzalez, R. & Nolen-Hoeksema, S. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research, 27(3), 247–259（改訂RRS・二因子モデル）' },
-      { url: 'https://doi.org/10.1016/j.brat.2007.01.013', type: 'academic', label: 'Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）' },
+      { url: 'https://doi.org/10.1037/0033-2909.134.2.163', type: 'academic', label: 'Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）' },
       { url: 'https://en.wikipedia.org/wiki/Rumination_(psychology)', type: 'reference', label: 'Wikipedia: Rumination (psychology) — Nolen-Hoeksema, brooding vs reflection, depression sex differences, RFCBT' },
     ],
   },
@@ -29818,7 +29818,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1037/0033-295X.100.2.204', type: 'academic', label: 'Buss, D. M. & Schmitt, D. P. (1993) Sexual Strategies Theory: An Evolutionary Perspective on Human Mating — Psychological Review, 100(2), 204–232（SSTの原典）' },
-      { url: 'https://doi.org/10.1037/0022-3514.56.1.6', type: 'academic', label: 'Buss, D. M. et al. (1989) Sex Differences in Human Mate Preferences: Evolutionary Hypotheses Tested in 37 Cultures — Behavioral and Brain Sciences, 12(1), 1–14（37文化横断研究）' },
+      { url: 'https://doi.org/10.1017/S0140525X00023992', type: 'academic', label: 'Buss, D. M. et al. (1989) Sex Differences in Human Mate Preferences: Evolutionary Hypotheses Tested in 37 Cultures — Behavioral and Brain Sciences, 12(1), 1–14（37文化横断研究）' },
       { url: 'https://doi.org/10.1017/S0140525X01003939', type: 'academic', label: 'Eagly, A. H. & Wood, W. (1999) The Origins of Sex Differences in Human Behavior — American Psychologist, 54(6), 408–423（SST批判：社会構造モデル）' },
       { url: 'https://en.wikipedia.org/wiki/Sexual_strategies_theory', type: 'reference', label: 'Wikipedia: Sexual strategies theory — Buss & Schmitt, short/long-term mating, cross-cultural evidence, critique' },
     ],
@@ -30043,7 +30043,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1006/nimg.2001.0980', type: 'academic', label: 'McAdams, D. P. (2001) The Psychology of Life Stories — Review of General Psychology, 5(2), 100–122（ナラティブ・アイデンティティの体系的解説）' },
       { url: 'https://doi.org/10.1037/0022-3514.74.3.728', type: 'academic', label: 'McAdams, D. P., Reynolds, J., Lewis, M., Patten, A. H. & Bowman, P. J. (2001) When Bad Things Turn Good and Good Things Turn Bad — Journal of Personality and Social Psychology, 80(3), 472–484（汚染・贖罪テーマの実証）' },
-      { url: 'https://doi.org/10.1037/a0038469', type: 'academic', label: 'McAdams, D. P. & Guo, J. (2015) Narrating the Generative Life — Psychological Science, 26(4), 475–483（ライフ・ストーリーと世代的ケアの関係）' },
+      { url: 'https://doi.org/10.1177/0956797614568318', type: 'academic', label: 'McAdams, D. P. & Guo, J. (2015) Narrating the Generative Life — Psychological Science, 26(4), 475–483（ライフ・ストーリーと世代的ケアの関係）' },
       { url: 'https://en.wikipedia.org/wiki/Dan_P._McAdams', type: 'reference', label: 'Wikipedia: Dan P. McAdams — narrative identity, redemption sequences, contamination sequences, life story model' },
     ],
   },
@@ -38959,7 +38959,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0033-2909.127.6.806', type: 'academic', label: 'Meissner, C.A. & Brigham, J.C. (2001) Thirty Years of Investigating the Own-Race Bias — Psychology, Public Policy, and Law 7(1)' },
       { url: 'https://en.wikipedia.org/wiki/Cross-race_effect', type: 'reference', label: 'Wikipedia: Cross-Race Effect — own-race bias in face recognition' },
-      { url: 'https://doi.org/10.1016/j.tics.2010.12.001', type: 'academic', label: 'Hugenberg, K., Young, S.G., Bernstein, M.J. & Sacco, D.F. (2010) The Categorization–Individuation Model — Psychological Review 117(4)' },
+      { url: 'https://doi.org/10.1037/a0020463', type: 'academic', label: 'Hugenberg, K., Young, S.G., Bernstein, M.J. & Sacco, D.F. (2010) The Categorization–Individuation Model — Psychological Review 117(4)' },
     ],
   },
   {
@@ -39074,7 +39074,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ノーマン・スラメッカ ／ ピーター・グラフ ／ ジェフリー・カーピック ／ ヘンリー・ロディガー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1016/0749-596X(78)90043-4', type: 'academic', label: 'Slamecka, N.J. & Graf, P. (1978) The Generation Effect — Journal of Experimental Psychology: Human Learning and Memory 4(6)' },
+      { url: 'https://doi.org/10.1037/0278-7393.4.6.592', type: 'academic', label: 'Slamecka, N.J. & Graf, P. (1978) The Generation Effect — Journal of Experimental Psychology: Human Learning and Memory 4(6)' },
       { url: 'https://en.wikipedia.org/wiki/Generation_effect', type: 'reference', label: 'Wikipedia: Generation Effect — self-generated information memory advantage' },
       { url: 'https://doi.org/10.1037/0278-7393.14.3.521', type: 'academic', label: 'McDaniel, M.A., Waddill, P.J. & Einstein, G.O. (1988) A Contextual Account of the Generation Effect — Journal of Memory and Language 27(5)' },
     ],
@@ -39152,7 +39152,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ラングドン・ウィナー ／ ルイス・マンフォード ／ ジャック・エリュール ／ アンドリュー・フィーンバーグ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1162/DAED_a_00611', type: 'academic', label: 'Winner, L. (1986) The Whale and the Reactor — University of Chicago Press ch.1' },
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/W/bo49911830.html', type: 'academic', label: 'Winner, L. (1986) The Whale and the Reactor — University of Chicago Press ch.1' },
       { url: 'https://en.wikipedia.org/wiki/Langdon_Winner', type: 'reference', label: 'Wikipedia: Langdon Winner — technological somnambulism and politics of artifacts' },
       { url: 'https://doi.org/10.1162/DAED_a_00142', type: 'academic', label: 'Winner, L. (1980) Do Artifacts Have Politics? — Daedalus 109(1)' },
     ],
@@ -39245,7 +39245,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2228381', type: 'academic', label: 'Myrdal, G. (1957) Economic Theory and Under-Developed Regions — Duckworth' },
       { url: 'https://en.wikipedia.org/wiki/Circular_cumulative_causation', type: 'reference', label: 'Wikipedia: Circular Cumulative Causation — overview of Myrdal backwash/spread framework' },
-      { url: 'https://doi.org/10.1016/S1574-0684(05)01058-7', type: 'academic', label: 'Fujita, M. & Thisse, J.-F. (2002) Economics of Agglomeration — Cambridge UP ch.12' },
+      { url: 'https://www.cambridge.org/core/books/economics-of-agglomeration/508B838198BF4709A7522D20652D70D5', type: 'academic', label: 'Fujita, M. & Thisse, J.-F. (2002) Economics of Agglomeration — Cambridge UP ch.12' },
     ],
   },
   {
@@ -39335,7 +39335,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'チェン・ミンジャー ／ ダニー・ミラー ／ ウェンピン・ツァイ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.5465/amp.2008.34587994', type: 'academic', label: 'Chen (2008) Reconceptualizing the Competition-Cooperation Relationship: A Transparadox Perspective — Journal of Management Inquiry' },
+      { url: 'https://doi.org/10.1177/1056492607312577', type: 'academic', label: 'Chen (2008) Reconceptualizing the Competition-Cooperation Relationship: A Transparadox Perspective — Journal of Management Inquiry' },
       { url: 'https://doi.org/10.5465/amr.2014.0044', type: 'academic', label: 'Chen & Miller (2015) Reconceptualizing Competitive Dynamics: A Multidimensional Framework — Strategic Management Journal' },
       { url: 'https://en.wikipedia.org/wiki/Competitive_dynamics', type: 'reference', label: 'Wikipedia: Competitive dynamics — 競争ダイナミクスと両面文化主義の概説' },
     ],
@@ -39453,7 +39453,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1007/978-1-4757-6418-5', type: 'academic', label: 'Lerner (1980) The Belief in a Just World: A Fundamental Delusion — Plenum Press' },
-      { url: 'https://doi.org/10.1016/S0065-2601(01)80007-1', type: 'academic', label: 'Hafer & Begue (2005) Experimental Research on Just-World Theory — Psychological Bulletin' },
+      { url: 'https://doi.org/10.1037/0033-2909.131.1.128', type: 'academic', label: 'Hafer & Begue (2005) Experimental Research on Just-World Theory — Psychological Bulletin' },
       { url: 'https://en.wikipedia.org/wiki/Just-world_hypothesis', type: 'reference', label: 'Wikipedia: Just-world hypothesis — 公正世界仮説の理論と社会的含意の概説' },
     ],
   },
@@ -40187,7 +40187,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1093/law/9780199664917.001.0001', type: 'academic', label: 'Collins, H. (2014) Good Faith in European Contract Law — Oxford Journal of Legal Studies' },
-      { url: 'https://doi.org/10.1093/acprof:oso/9780198701194.001.0001', type: 'academic', label: 'Zimmermann, R. & Whittaker, S. (2000) Good Faith in European Contract Law — Cambridge University Press' },
+      { url: 'https://www.cambridge.org/us/academic/subjects/law/european-law/good-faith-european-contract-law', type: 'academic', label: 'Zimmermann, R. & Whittaker, S. (2000) Good Faith in European Contract Law — Cambridge University Press' },
       { url: 'https://en.wikipedia.org/wiki/Good_faith_(law)', type: 'reference', label: 'Wikipedia: Good faith — contractual duty of fair dealing overview' },
     ],
   },
@@ -40239,7 +40239,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1037/a0015141', type: 'academic', label: 'Graham, J., Haidt, J. & Nosek, B. A. (2009) Liberals and Conservatives Rely on Different Sets of Moral Foundations — Journal of Personality and Social Psychology' },
-      { url: 'https://doi.org/10.1016/S0065-2601(08)60024-7', type: 'academic', label: 'Haidt, J. (2001) The Emotional Dog and Its Rational Tail — Psychological Review' },
+      { url: 'https://doi.org/10.1037/0033-295X.108.4.814', type: 'academic', label: 'Haidt, J. (2001) The Emotional Dog and Its Rational Tail — Psychological Review' },
       { url: 'https://en.wikipedia.org/wiki/Moral_foundations_theory', type: 'reference', label: 'Wikipedia: Moral foundations theory — evolved moral intuitions and political ideology overview' },
     ],
   },
@@ -41406,7 +41406,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1177/0963721411414560', type: 'academic', label: 'Coan, J. A. & Sbarra, D. A. (2015) "Social Baseline Theory" — Current Directions in Psychological Science' },
-      { url: 'https://doi.org/10.1037/a0014546', type: 'academic', label: 'Coan, J. A. et al. (2006) "Lending a Hand: Social Regulation of the Neural Response to Threat" — Psychological Science' },
+      { url: 'https://doi.org/10.1111/j.1467-9280.2006.01832.x', type: 'academic', label: 'Coan, J. A. et al. (2006) "Lending a Hand: Social Regulation of the Neural Response to Threat" — Psychological Science' },
       { url: 'https://en.wikipedia.org/wiki/Social_baseline_theory', type: 'reference', label: 'Wikipedia: Social baseline theory — 社会的近接性の神経生理的基盤' },
     ],
   },
@@ -42095,7 +42095,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1177/2053951714541861', type: 'academic', label: 'Sandvig et al. (2014) Auditing Algorithms: Research Methods for Detecting Discrimination on Internet Platforms — ICA Preconference' },
-      { url: 'https://doi.org/10.1177/2053951716679679', type: 'academic', label: 'Diakopoulos (2016) Accountability in Algorithmic Decision Making — Communications of the ACM' },
+      { url: 'https://doi.org/10.1145/2844110', type: 'academic', label: 'Diakopoulos (2016) Accountability in Algorithmic Decision Making — Communications of the ACM' },
       { url: 'https://en.wikipedia.org/wiki/Algorithmic_accountability', type: 'reference', label: 'Wikipedia: Algorithmic accountability — アルゴリズムの説明責任と監査の概説' },
     ],
   },
@@ -44276,7 +44276,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロザリンド・ピカード ／ ポール・エクマン ／ ジョナサン・グルーバー ／ テイ・ジャン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1145/2494091', type: 'academic', label: 'Picard (1997) Affective Computing — MIT Press' },
+      { url: 'https://doi.org/10.7551/mitpress/1140.001.0001', type: 'academic', label: 'Picard (1997) Affective Computing — MIT Press' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689', type: 'government', label: 'EU (2024) AI Act — Regulation 2024/1689' },
       { url: 'https://en.wikipedia.org/wiki/Affective_computing', type: 'reference', label: 'Wikipedia: Affective computing — 感情認識AIの技術と倫理' },
     ],
@@ -46216,7 +46216,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ユージン・ファーマ ／ ロバート・シラー ／ ラース・ハンセン ／ マイケル・ジェンセン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1086/294743', type: 'academic', label: 'Fama (1970) Efficient Capital Markets: A Review of Theory and Empirical Work — Journal of Finance 25(2)' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.1970.tb00518.x', type: 'academic', label: 'Fama (1970) Efficient Capital Markets: A Review of Theory and Empirical Work — Journal of Finance 25(2)' },
       { url: 'https://en.wikipedia.org/wiki/Efficient-market_hypothesis', type: 'reference', label: 'Wikipedia: Efficient-market hypothesis — weak/semi-strong/strong form, anomalies, behavioral critique' },
     ],
   },
@@ -46600,7 +46600,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヴィタリク・ブテリン ／ パリスラン・ドヴォルカン ／ プリマヴェラ・デ・フィリッピ ／ アーロン・ライト',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/9781108673174', type: 'academic', label: 'De Filippi, P. & Wright, A. (2018). Blockchain and the Law — Harvard UP' },
+      { url: 'https://doi.org/10.4159/9780674985933', type: 'academic', label: 'De Filippi, P. & Wright, A. (2018). Blockchain and the Law — Harvard UP' },
       { url: 'https://en.wikipedia.org/wiki/Decentralized_autonomous_organization', type: 'reference', label: 'Wikipedia: Decentralized autonomous organization — blockchain governance' },
     ],
   },
@@ -46684,7 +46684,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アルビン・ロス ／ ロイド・シャプレー ／ ポール・ミルグロム ／ デービッド・オーター',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1257/jep.2.3.99', type: 'academic', label: 'Roth, A.E. & Sotomayor, M. (1990). Two-sided matching — Econometrica' },
+      { url: 'https://www.cambridge.org/0521437881', type: 'academic', label: 'Roth, A.E. & Sotomayor, M. (1990). Two-Sided Matching: A Study in Game-Theoretic Modeling and Analysis — Cambridge University Press (Econometric Society Monographs 18)' },
       { url: 'https://en.wikipedia.org/wiki/Market_design', type: 'reference', label: 'Wikipedia: Market design — matching theory economics' },
     ],
   },
@@ -46972,7 +46972,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ソーニャ・バロカス ／ モリッツ・ハート ／ ジョイ・ブオランウィニ ／ ティムニット・ゲブル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1145/3442188.3445924', type: 'academic', label: 'Barocas, S. et al. (2019). Fairness and Machine Learning — MIT Press' },
+      { url: 'https://fairmlbook.org/', type: 'academic', label: 'Barocas, S., Hardt, M. & Narayanan, A. (2023). Fairness and Machine Learning: Limitations and Opportunities — MIT Press（2019 年はオンライン草稿。MIT Press 版は 2023 年）' },
       { url: 'https://en.wikipedia.org/wiki/Algorithmic_bias', type: 'reference', label: 'Wikipedia: Algorithmic bias — fairness in AI systems' },
     ],
   },
@@ -47513,7 +47513,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・フレゼ ／ ニール・キース ／ カール・ワイク ／ ジェームズ・リーズン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/0149206314547523', type: 'academic', label: 'Frese, M. & Keith, N. (2015) Action Errors, Error Management, and Learning in Organizations — Annual Review of Psychology 66, 661–687（エラー管理理論の主要レビュー）' },
+      { url: 'https://doi.org/10.1146/annurev-psych-010814-015205', type: 'academic', label: 'Frese, M. & Keith, N. (2015) Action Errors, Error Management, and Learning in Organizations — Annual Review of Psychology 66, 661–687（エラー管理理論の主要レビュー）' },
       { url: 'https://en.wikipedia.org/wiki/Error_management_theory', type: 'reference', label: 'Wikipedia: Error management theory — エラー管理理論の概説' },
     ],
   },
@@ -48521,7 +48521,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen, W. M. & Levinthal, D. A. (1990) Absorptive Capacity: A New Perspective on Learning and Innovation — Administrative Science Quarterly, 35(1), 128–152（原典）' },
       { url: 'https://doi.org/10.5465/amr.2002.5922314', type: 'academic', label: 'Zahra, S. A. & George, G. (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension — Academy of Management Review, 27(2), 185–203（PACAP/RACAP分類）' },
-      { url: 'https://doi.org/10.1111/j.1467-6486.2008.00790.x', type: 'academic', label: 'Lane, P. J., Koka, B. R. & Pathak, S. (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review, 31(4), 833–863（概念的批判と再整備）' },
+      { url: 'https://doi.org/10.5465/amr.2006.22527456', type: 'academic', label: 'Lane, P. J., Koka, B. R. & Pathak, S. (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review, 31(4), 833–863（概念的批判と再整備）' },
       { url: 'https://en.wikipedia.org/wiki/Absorptive_capacity', type: 'reference', label: 'Wikipedia: Absorptive capacity — Cohen & Levinthal, PACAP/RACAP, prior knowledge, open innovation' },
     ],
   },

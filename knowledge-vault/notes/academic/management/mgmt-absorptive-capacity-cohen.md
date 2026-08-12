@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Cohen, W. M. & Levinthal, D. A. (1990) Absorptive Capacity: A New Perspective on Learning and Innovation — Administrative Science Quarterly, 35(1), 128–152（原典）](https://doi.org/10.2307/2393553) `学術`
 - [Zahra, S. A. & George, G. (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension — Academy of Management Review, 27(2), 185–203（PACAP/RACAP分類）](https://doi.org/10.5465/amr.2002.5922314) `学術`
-- [Lane, P. J., Koka, B. R. & Pathak, S. (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review, 31(4), 833–863（概念的批判と再整備）](https://doi.org/10.1111/j.1467-6486.2008.00790.x) `学術`
+- [Lane, P. J., Koka, B. R. & Pathak, S. (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review, 31(4), 833–863（概念的批判と再整備）](https://doi.org/10.5465/amr.2006.22527456) `学術`
 - [Wikipedia: Absorptive capacity — Cohen & Levinthal, PACAP/RACAP, prior knowledge, open innovation](https://en.wikipedia.org/wiki/Absorptive_capacity) `リファレンス`
 
 ## 関連概念

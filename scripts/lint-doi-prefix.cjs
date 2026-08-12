@@ -201,6 +201,12 @@ const JOURNAL_RULES = [
   // APS の刊行誌 (Psychological Science / Perspectives on… / Current Directions in…)
   // は 2008 年に Blackwell から SAGE へ移った。
   { pubs: ['sage', 'wiley'], re: /\bPsychological Science\b/i },
+  // Negotiation Journal は Plenum → Kluwer/Blackwell(Wiley) → **MIT Press** と
+  // 版元が移っている。したがって Wiley のレガシー DOI に「MIT Press」表記が
+  // 付いているのは**矛盾ではない**。実測で偽陽性を 1 件出したので許容する
+  // (direct.mit.edu/ngtn が当該論文をホストしており、PDF 名は Wiley 時代の
+  //  j.1571-9979.1991.tb00634.x のまま)。
+  { pubs: ['wiley', 'mitpress'], re: /\bNegotiation Journal\b/i },
   { pubs: ['aea'], re: /\b(?:American Economic Review|Journal of Economic Perspectives|Journal of Economic Literature|American Economic Journal)\b/i },
   { pubs: ['oup', 'mitpress'], re: /\bQuarterly Journal of Economics\b/i },
   { pubs: ['oup', 'wiley'], re: /\bReview of Economic Studies\b/i },
@@ -368,40 +374,13 @@ const ALLOWLIST = new Map([
   // 照合できたものから DOI もしくはラベルを直し、この行を消すこと。
   ['bizlaw-anti-money-laundering-fatf::10.4337/9781781952641', '未確認: ラベル=Taylor & Francis (Routledge) / DOI=Edward Elgar'],
   ['bizlaw-charitable-trust-fiduciary::10.1093/acprof:oso/9780199589395.001.0001', '未確認: ラベル=Taylor & Francis (Routledge) / DOI=Oxford University Press'],
-  ['bizlaw-claw-back-executive-comp::10.1111/j.1540-6261.2009.01528.x', '未確認: ラベル=Harvard University Press / DOI=Wiley (Blackwell)'],
-  ['bizlaw-good-faith-dealing-obligation::10.1093/acprof:oso/9780198701194.001.0001', '未確認: ラベル=Cambridge University Press / DOI=Oxford University Press'],
   ['bizlaw-nachfrist-notice-cure::10.1017/CBO9780511814792', '未確認: ラベル=Oxford University Press / DOI=Cambridge University Press'],
   ['bizlaw-product-liability-strict::10.4337/9781849809337', '未確認: ラベル=Taylor & Francis (Routledge) / DOI=Edward Elgar'],
-  ['econ-backwash-spread-myrdal::10.1016/S1574-0684(05)01058-7', '未確認: ラベル=Cambridge University Press / DOI=Elsevier'],
-  ['econ-efficient-market-hypothesis-fama::10.1086/294743', '未確認: ラベル=Wiley (Blackwell) / DOI=University of Chicago Press'],
-  ['econ-market-design-roth::10.1257/jep.2.3.99', '未確認: ラベル=Wiley (Blackwell) / The Econometric Society / DOI=American Economic Association'],
   ['human-affective-forecasting-wilson::10.1023/A:1008012424582', '未確認: ラベル=American Economic Association / DOI=Springer Nature'],
-  ['human-empathy-gap-loewenstein::10.1007/BF00055525', '未確認: ラベル=Oxford University Press / MIT Press / DOI=Springer Nature'],
-  ['human-error-management-theory-frese::10.1177/0149206314547523', '未確認: ラベル=Annual Reviews / DOI=SAGE'],
-  ['human-generation-effect-slamecka::10.1016/0749-596X(78)90043-4', '未確認: ラベル=American Psychological Association / DOI=Elsevier'],
-  ['human-just-world-hypothesis-lerner::10.1016/S0065-2601(01)80007-1', '未確認: ラベル=American Psychological Association / DOI=Elsevier'],
-  ['human-moral-foundations-haidt::10.1016/S0065-2601(08)60024-7', '未確認: ラベル=American Psychological Association / DOI=Elsevier'],
-  ['human-own-race-bias-meissner::10.1016/j.tics.2010.12.001', '未確認: ラベル=American Psychological Association / DOI=Elsevier'],
-  ['human-reactive-devaluation::10.1111/j.1571-9979.1991.tb00634.x', '未確認: ラベル=MIT Press / DOI=Wiley (Blackwell)'],
-  ['human-rumination-nolen-hoeksema::10.1016/j.brat.2007.01.013', '未確認: ラベル=American Psychological Association / DOI=Elsevier'],
   ['human-self-expansion-aron::10.1111/j.1467-6494.1991.tb00204.x', '未確認: ラベル=American Psychological Association / DOI=Wiley (Blackwell)'],
-  ['human-self-expansion-aron::10.1177/0146167200266009', '未確認: ラベル=American Psychological Association / DOI=SAGE'],
   ['human-sexual-strategies-theory-buss::10.1017/S0140525X01003939', '未確認: ラベル=American Psychological Association / DOI=Cambridge University Press'],
-  ['human-sexual-strategies-theory-buss::10.1037/0022-3514.56.1.6', '未確認: ラベル=Cambridge University Press / DOI=American Psychological Association'],
-  ['human-social-baseline-theory-coan::10.1037/a0014546', '未確認: ラベル=SAGE / Wiley (Blackwell) / DOI=American Psychological Association'],
-  ['human-story-of-self-mcadams::10.1037/a0038469', '未確認: ラベル=SAGE / Wiley (Blackwell) / DOI=American Psychological Association'],
-  ['human-theory-of-constructed-emotion::10.1037/a0029485', '未確認: ラベル=Cambridge University Press / DOI=American Psychological Association'],
   ['human-transactive-memory::10.1287/orsc.14.5.587.16475', '未確認: ラベル=American Psychological Association / DOI=INFORMS'],
-  ['infosoc-affective-computing-picard::10.1145/2494091', '未確認: ラベル=MIT Press / DOI=ACM'],
-  ['infosoc-algorithmic-accountability-sandvig::10.1177/2053951716679679', '未確認: ラベル=ACM / DOI=SAGE'],
-  ['infosoc-algorithmic-bias-fairness::10.1145/3442188.3445924', '未確認: ラベル=MIT Press / DOI=ACM'],
-  ['infosoc-blockchain-governance-decentralized::10.1017/9781108673174', '未確認: ラベル=Harvard University Press / DOI=Cambridge University Press'],
   ['infosoc-digital-humanities-mccarty::10.1093/llc/fqp036', '未確認: ラベル=Springer Nature / DOI=Oxford University Press'],
-  ['infosoc-digital-rights-management-theory::10.1017/CBO9780511813696', '未確認: ラベル=MIT Press / DOI=Cambridge University Press'],
-  ['infosoc-mediatization-theory-hjarvard::10.1080/21670811.2014.926833', '未確認: ラベル=Springer Nature / DOI=Taylor & Francis (Routledge)'],
-  ['infosoc-technological-somnambulism-winner::10.1162/DAED_a_00611', '未確認: ラベル=University of Chicago Press / DOI=MIT Press'],
-  ['mgmt-absorptive-capacity-cohen::10.1111/j.1467-6486.2008.00790.x', '未確認: ラベル=Academy of Management / DOI=Wiley (Blackwell)'],
-  ['mgmt-ambiculturalism-chen::10.5465/amp.2008.34587994', '未確認: ラベル=SAGE / Elsevier / DOI=Academy of Management'],
   ['mgmt-ambiculturalism-chen::10.5465/amr.2014.0044', '未確認: ラベル=Wiley (Blackwell) / DOI=Academy of Management'],
   ['mgmt-ambidextrous-leadership::10.5465/amr.2013.0255', '未確認: ラベル=American Psychological Association / DOI=Academy of Management'],
   ['mgmt-behavioral-decision-theory-march::10.1002/9781118785317.weom040149', '未確認: ラベル=INFORMS / DOI=Wiley (Blackwell)'],

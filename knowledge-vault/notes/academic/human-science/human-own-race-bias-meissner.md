@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Meissner, C.A. & Brigham, J.C. (2001) Thirty Years of Investigating the Own-Race Bias — Psychology, Public Policy, and Law 7(1)](https://doi.org/10.1037/0033-2909.127.6.806) `学術`
 - [Wikipedia: Cross-Race Effect — own-race bias in face recognition](https://en.wikipedia.org/wiki/Cross-race_effect) `リファレンス`
-- [Hugenberg, K., Young, S.G., Bernstein, M.J. & Sacco, D.F. (2010) The Categorization–Individuation Model — Psychological Review 117(4)](https://doi.org/10.1016/j.tics.2010.12.001) `学術`
+- [Hugenberg, K., Young, S.G., Bernstein, M.J. & Sacco, D.F. (2010) The Categorization–Individuation Model — Psychological Review 117(4)](https://doi.org/10.1037/a0020463) `学術`
 
 ## 関連概念
 - [[human-change-blindness-simons|変化盲——視覚環境の大規模変化に気づかない知覚的失敗]] — 同じ思想家

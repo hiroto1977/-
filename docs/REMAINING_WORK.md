@@ -274,11 +274,11 @@ compliance / subsidy / counselor / econ-history のデータ（LITE は
 
 ---
 
-## 出典の DOI プレフィックス照合 — 残り 74 件（134 件から着手済み）
+## 出典の DOI プレフィックス照合 — 残り 47 件（134 件から着手済み）
 
 `npm run lint:doi-prefix`（verify:all / CI に配線済み）が 949 件の DOI 出典を照合し、
-当初 134 件の矛盾を検出した。**うち 60 件を処理済み**（DOI 差し替え・書誌 URL 化 59 件
-＋ ルール修正 1 件）。残り 74 件は台帳 `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
+当初 134 件の矛盾を検出した。**うち 87 件を処理済み**（DOI 差し替え・書誌 URL 化 85 件
+＋ ルール修正 2 件）。残り 47 件は台帳 `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
 「未確認」として退避してある。台帳は双方向なので、直したら消すことが強制される。
 ISBN 台帳のほうは 24 → 21 件（プレフィックス修正と重なった分が解消）。
 
@@ -291,6 +291,15 @@ ISBN 台帳のほうは 24 → 21 件（プレフィックス修正と重なっ�
 `10.1057/9781137539922` を一方は「検証済み」、他方は「未検証だから使うな」と報告）。
 同一文献なので親が SpringerLink を直接確認して決着させた（Palgrave Macmillan
 2015 年刊の第 2 版で正しい）。**報告が割れたら親が一次確認する**、が正しい扱い。
+
+**ルール側で解決した偽陽性 2 件。** 台帳に隠すと将来も誤検出し続けるので、
+真の偽陽性はルールを直す。
+1. `econ-dorfman-steiner-theorem` — URL が Wiley Encyclopedia of Management の項目で
+   ラベルにもそう明記してあるのに、原典の掲載誌（AER）を見て誤検出していた。
+2. `human-reactive-devaluation` — *Negotiation Journal* は Plenum → Kluwer/Blackwell
+   (Wiley) → **MIT Press** と版元が移っている。Wiley のレガシー DOI に「MIT Press」
+   表記が付いているのは**矛盾ではない**（MIT Press が当該論文をホストしており、
+   PDF 名は Wiley 時代のまま）。版元移動を許容する誌の一覧に追加した。
 
 ### 処理済みの内訳
 

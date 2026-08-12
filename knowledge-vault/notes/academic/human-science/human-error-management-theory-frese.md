@@ -26,7 +26,7 @@ aliases:
 マイケル・フレゼ ／ ニール・キース ／ カール・ワイク ／ ジェームズ・リーズン
 
 ## 出典
-- [Frese, M. & Keith, N. (2015) Action Errors, Error Management, and Learning in Organizations — Annual Review of Psychology 66, 661–687（エラー管理理論の主要レビュー）](https://doi.org/10.1177/0149206314547523) `学術`
+- [Frese, M. & Keith, N. (2015) Action Errors, Error Management, and Learning in Organizations — Annual Review of Psychology 66, 661–687（エラー管理理論の主要レビュー）](https://doi.org/10.1146/annurev-psych-010814-015205) `学術`
 - [Wikipedia: Error management theory — エラー管理理論の概説](https://en.wikipedia.org/wiki/Error_management_theory) `リファレンス`
 
 ## 関連概念

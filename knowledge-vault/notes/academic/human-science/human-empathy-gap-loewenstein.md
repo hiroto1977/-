@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Loewenstein, G. (2005) Hot-Cold Empathy Gaps and Medical Decision Making — Health Psychology, 24(4), S49–S56](https://doi.org/10.1037/0033-2909.131.5.799) `学術`
 - [Van Boven, L. & Loewenstein, G. (2003) Social Projection of Transient Drive States — Personality and Social Psychology Bulletin, 29(9), 1159–1168](https://doi.org/10.1016/S0749-5978(03)00042-7) `学術`
-- [Loewenstein, G., O'Donoghue, T. & Rabin, M. (2003) Projection Bias in Predicting Future Utility — Quarterly Journal of Economics, 118(4), 1209–1248](https://doi.org/10.1007/BF00055525) `学術`
+- [Loewenstein, G., O'Donoghue, T. & Rabin, M. (2003) Projection Bias in Predicting Future Utility — Quarterly Journal of Economics, 118(4), 1209–1248](https://ideas.repec.org/a/oup/qjecon/v118y2003i4p1209-1248..html) `学術`
 - [Wikipedia: Empathy gap — hot-cold states, commitment devices, behavioral economics applications](https://en.wikipedia.org/wiki/Empathy_gap) `リファレンス`
 
 ## 関連概念

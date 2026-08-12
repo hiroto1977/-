@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Collins, H. (2014) Good Faith in European Contract Law — Oxford Journal of Legal Studies](https://doi.org/10.1093/law/9780199664917.001.0001) `学術`
-- [Zimmermann, R. & Whittaker, S. (2000) Good Faith in European Contract Law — Cambridge University Press](https://doi.org/10.1093/acprof:oso/9780198701194.001.0001) `学術`
+- [Zimmermann, R. & Whittaker, S. (2000) Good Faith in European Contract Law — Cambridge University Press](https://www.cambridge.org/us/academic/subjects/law/european-law/good-faith-european-contract-law) `学術`
 - [Wikipedia: Good faith — contractual duty of fair dealing overview](https://en.wikipedia.org/wiki/Good_faith_(law)) `リファレンス`
 
 ## 関連概念

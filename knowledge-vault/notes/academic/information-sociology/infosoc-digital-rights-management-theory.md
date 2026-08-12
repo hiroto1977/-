@@ -28,7 +28,7 @@ Lawrence Lessig ／ Pamela Samuelson ／ Tarleton Gillespie ／ Yochai Benkler �
 ## 出典
 - [Samuelson (1999) "Intellectual Property and the Digital Economy: Why the Anti-Circumvention Regulations Need to Be Revised"](https://doi.org/10.2307/1229537) `学術`
 - [Lessig (1999) "Code and Other Laws of Cyberspace" — MIT Press](https://doi.org/10.7551/mitpress/1790.001.0001) `学術`
-- [Gillespie (2007) "Wired Shut: Copyright and the Shape of Digital Culture" — MIT Press](https://doi.org/10.1017/CBO9780511813696) `学術`
+- [Gillespie (2007) "Wired Shut: Copyright and the Shape of Digital Culture" — MIT Press](https://doi.org/10.7551/mitpress/7253.001.0001) `学術`
 - [U.S. Copyright Office — Digital Millennium Copyright Act (DMCA) overview](https://www.copyright.gov/dmca/) `公的`
 - [Benkler (2006) "The Wealth of Networks: How Social Production Transforms Markets and Freedom" — Yale University Press](https://doi.org/10.2307/j.ctt5hjjtq) `学術`
 

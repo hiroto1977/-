@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Hjarvard, S. (2008) The Mediatization of Society: A Theory of the Media as Agents of Social and Cultural Change — Nordicom Review, 29(2), 105–134（メディア化理論の原典）](https://doi.org/10.1177/0163443708098201) `学術`
 - [Couldry, N. & Hepp, A. (2013) Conceptualizing Mediatization: Contexts, Traditions, Arguments — Communication Theory, 23(3), 191–202（概念整理と批判）](https://doi.org/10.1177/0267323114521426) `学術`
-- [Hepp, A. & Hjarvard, S. (2014) Mediatized Worlds: Culture and Society in a Media Age — Palgrave Macmillan（社会・文化への応用）](https://doi.org/10.1080/21670811.2014.926833) `学術`
+- [Hepp, A. & Krotz, F. (eds.) (2014) Mediatized Worlds: Culture and Society in a Media Age — Palgrave Macmillan（社会・文化への応用）](https://doi.org/10.1057/9781137300355) `学術`
 - [Wikipedia: Mediatization (media) — Hjarvard, media logic, institutional vs. social mediatization, critique](https://en.wikipedia.org/wiki/Mediatization_(media)) `リファレンス`
 
 ## 関連概念

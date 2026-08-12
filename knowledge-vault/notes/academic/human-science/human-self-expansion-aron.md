@@ -26,7 +26,7 @@ aliases:
 アーサー・アーロン ／ エレイン・アーロン ／ ゲアリー・レモン ／ バーバラ・フレドリクソン
 
 ## 出典
-- [Aron, A., Norman, C. C., Aron, E. N., McKenna, C. & Heyman, R. E. (2000) Couples' Shared Participation in Novel and Arousing Activities and Experienced Relationship Quality — Journal of Personality and Social Psychology, 78(2), 273–284](https://doi.org/10.1177/0146167200266009) `学術`
+- [Aron, A., Norman, C. C., Aron, E. N., McKenna, C. & Heyman, R. E. (2000) Couples' Shared Participation in Novel and Arousing Activities and Experienced Relationship Quality — Journal of Personality and Social Psychology, 78(2), 273–284](https://doi.org/10.1037/0022-3514.78.2.273) `学術`
 - [Aron, A. & Aron, E. N. (1986) Love and the Expansion of Self: Understanding Attraction and Satisfaction — Hemisphere Publishing（自己拡張モデルの原典）](https://doi.org/10.1177/0265407508090878) `学術`
 - [Aron, A., Aron, E. N. & Smollan, D. (1992) Inclusion of Other in the Self Scale and the Structure of Interpersonal Closeness — Journal of Personality and Social Psychology, 63(4), 596–612](https://doi.org/10.1111/j.1467-6494.1991.tb00204.x) `学術`
 - [Wikipedia: Self-expansion model — Aron & Aron, including other in self, relationship boredom, novel activities](https://en.wikipedia.org/wiki/Self-expansion_model) `リファレンス`

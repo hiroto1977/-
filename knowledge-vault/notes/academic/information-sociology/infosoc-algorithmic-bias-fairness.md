@@ -26,7 +26,7 @@ aliases:
 ソーニャ・バロカス ／ モリッツ・ハート ／ ジョイ・ブオランウィニ ／ ティムニット・ゲブル
 
 ## 出典
-- [Barocas, S. et al. (2019). Fairness and Machine Learning — MIT Press](https://doi.org/10.1145/3442188.3445924) `学術`
+- [Barocas, S., Hardt, M. & Narayanan, A. (2023). Fairness and Machine Learning: Limitations and Opportunities — MIT Press（2019 年はオンライン草稿。MIT Press 版は 2023 年）](https://fairmlbook.org/) `学術`
 - [Wikipedia: Algorithmic bias — fairness in AI systems](https://en.wikipedia.org/wiki/Algorithmic_bias) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ユージン・ファーマ ／ ロバート・シラー ／ ラース・ハンセン ／ マイケル・ジェンセン
 
 ## 出典
-- [Fama (1970) Efficient Capital Markets: A Review of Theory and Empirical Work — Journal of Finance 25(2)](https://doi.org/10.1086/294743) `学術`
+- [Fama (1970) Efficient Capital Markets: A Review of Theory and Empirical Work — Journal of Finance 25(2)](https://doi.org/10.1111/j.1540-6261.1970.tb00518.x) `学術`
 - [Wikipedia: Efficient-market hypothesis — weak/semi-strong/strong form, anomalies, behavioral critique](https://en.wikipedia.org/wiki/Efficient-market_hypothesis) `リファレンス`
 
 ## 関連概念
