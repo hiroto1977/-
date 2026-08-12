@@ -423,6 +423,14 @@ export const SNAPSHOT = {
     ] as { code: string; amount: number; paidAt: string }[],
   },
 
+  charts: {
+    // 可視化サービスのメタ情報。実際の系列は data/chartFixtures.ts の
+    // 仮想データで、座標計算は data/charts.ts の純関数が行う。
+    chartTypes: ['line', 'pie', 'radar'] as const,
+    datasetCount: 4,
+    note: '折れ線・円・レーダーを仮想データで検証できる (自己検査つき)',
+  },
+
   quality: {
     // Snapshot-only. Future iteration will pull values from
     // `npm run quality:report` (scripts/quality-report.cjs).

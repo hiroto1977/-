@@ -80,6 +80,7 @@ export const SERVICE_IDS = [
   'village',
   'docstudio',
   'cursor',
+  'charts',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
