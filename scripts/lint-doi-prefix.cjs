@@ -218,6 +218,93 @@ const JOURNAL_RULES = [
  * エラー = 直したら消す、が強制される。
  * key = `${entry.id}::${doi}`
  */
+/**
+ * DOI に埋め込まれた ISBN-13 のチェックディジットを検算する。
+ *
+ * Springer の書籍 DOI は `10.1007/<ISBN-13>`、Elsevier の書籍章は
+ * `10.1016/B<ISBN-13>.<章>` の形で **ISBN をそのまま含む**。ISBN-13 は
+ * 末尾 1 桁が検査数字なので、**外部に問い合わせずに実在性を否定できる**。
+ * チェックディジットが合わない DOI は、書誌が何であれ解決しない。
+ *
+ * これはプレフィックス照合とは独立の検査で、出版社が一致していても
+ * 引っかかる。実測で 351 件の書籍 DOI 中 24 件が不正だった。
+ * アルゴリズムは既知の正しい ISBN（MIT Press / HUP / OUP）で検算済み。
+ */
+function isbn13IsValid(raw) {
+  const ds = raw.replace(/[^0-9]/g, '');
+  if (ds.length !== 13) return null; // ISBN-13 でないなら判定しない
+  let sum = 0;
+  for (let i = 0; i < 12; i += 1) sum += Number(ds[i]) * (i % 2 === 0 ? 1 : 3);
+  return (10 - (sum % 10)) % 10 === Number(ds[12]);
+}
+
+/** DOI から ISBN-13 らしき並びを取り出す（ハイフン込みを許す）。 */
+function extractIsbn13(doi) {
+  const m = doi.match(/97[89][-\d]{10,17}/);
+  if (m === null) return null;
+  const ds = m[0].replace(/[^0-9]/g, '');
+  return ds.length >= 13 ? m[0] : null;
+}
+
+/**
+ * チェックディジットが不正と分かっている DOI の台帳。
+ * ALLOWLIST と同じく **双方向** — 直したのに残っていたら落ちる。
+ *
+ * 全件に共通する事実: **この DOI は解決しない**（ISBN として成立しない）。
+ * 未確認なのは「正しい ISBN が何か」のほうで、それは一次資料に当たらないと
+ * 決められないため保留している。
+ */
+const ISBN_ALLOWLIST = new Map([
+  ['bizlaw-veil-piercing-corporate-liability::10.1007/978-94-015-8015-0',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford '],
+  ['bizlaw-whistleblower-protection-directive-eu::10.1007/978-3-030-26946-0',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Vandekerckhove, W. et al. (2014) Whistleblowing and Democratic Values '],
+  ['bizlaw-whistleblower-protection-eu-directive::10.1007/978-3-030-78706-8',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Bachmann & De Stefano (2022) Whistleblower Protection in the EU — Spri'],
+  ['econ-behavioral-theory-firm-cyert::10.1007/978-3-642-48748-8',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Cyert & March (1963) A Behavioral Theory of the Firm — Prentice-Hall ('],
+  ['econ-dollar-auction::10.1007/978-1-4612-5988-9',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Teger, A.I. (1980) Too Much Invested to Quit — Pergamon Press'],
+  ['econ-global-value-chains-gereffi::10.1007/978-3-319-41247-1',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Baldwin, R. (2016) The Great Convergence: Information Technology and t'],
+  ['econ-intra-industry-trade-grubel-lloyd::10.1007/978-1-349-01959-2',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade — Macmillan'],
+  ['econ-oligopoly-cournot-bertrand::10.1007/978-3-642-48748-8_1',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Cournot (1838) Researches into the Mathematical Principles of the Theo'],
+  ['econ-public-choice-buchanan-tullock::10.1007/978-0-387-29907-7',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Mueller, D. (2003) Public Choice III — Cambridge University Press'],
+  ['econ-tullock-paradox::10.1007/978-94-009-3324-3_3',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Tullock, G. (1967) The welfare costs of tariffs, monopolies, and theft'],
+  ['human-relational-frame-theory::10.1007/978-1-4757-3357-4',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Hayes, Barnes-Holmes & Roche (2001) Relational Frame Theory, Springer'],
+  ['human-salutogenesis-theory::10.1007/978-1-4612-4146-0',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Antonovsky (1979) Health, Stress & Coping'],
+  ['human-salutogenesis-theory::10.1007/978-1-4612-4660-1',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Antonovsky (1987) Unraveling the Mystery of Health'],
+  ['human-self-determination-theory-mini::10.1007/978-94-007-7644-4',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Vansteenkiste, Niemiec & Soenens (2010) — The Development of the Five '],
+  ['human-somatic-experiencing-levine::10.1007/978-1-58394-451-9',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Levine, P.A. (1997). Waking the Tiger — North Atlantic Books'],
+  ['infosoc-digital-labor-scholz-platform-cooperativism::10.1007/978-3-319-74562-0',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Scholz, T. (2017) Uberworked and Underpaid — Polity Press'],
+  ['infosoc-post-truth-society::10.1007/978-3-319-72424-3',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Fuller (2018) Post-Truth: Knowledge as a Power Game — Anthem Press'],
+  ['infosoc-postdigital-culture-cramer::10.1007/978-3-030-00173-4',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Jandrić, P. et al. (2018) Postdigital Science and Education — Educatio'],
+  ['infosoc-privacy-by-design-cavoukian::10.1007/978-3-642-31778-9',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Cavoukian, A. (1995). Privacy by Design — IPC Ontario'],
+  ['infosoc-smart-city-critique-greenfield::10.1007/978-1-137-27866-0',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Greenfield, A. (2013) Against the Smart City — Do Projects'],
+  ['infosoc-sociotechnical-systems::10.1016/B978-0-08-009228-6.50014-0',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Mod'],
+  ['mgmt-corporate-social-responsibility-csr::10.1007/978-94-007-4098-0_244',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Freeman (1984) Strategic Management: A Stakeholder Approach — Pitman ('],
+  ['mgmt-lean-startup-ries-build-measure-learn::10.1007/978-1-4302-4463-4',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Ries, E. (2011) The Lean Startup — Crown Business'],
+  ['mgmt-organizational-learning-cycles-levinthal::10.1007/978-1-4612-3670-6_1',
+    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, '],
+]);
+
 const ALLOWLIST = new Map([
   // 以下は本ゲート導入時 (2026-08) に検出された分。いずれも一次資料に当たって
   // おらず、ラベルと DOI のどちらが誤りか未判定なので「未確認」として退避する。
@@ -372,7 +459,9 @@ function expectedPublishers(label) {
 function main() {
   const entries = kc.loadEntries();
   const findings = [];
+  const isbnFindings = [];
   let checked = 0;
+  let isbnChecked = 0;
 
   for (const entry of entries) {
     const sources = Array.isArray(entry.sources) ? entry.sources : [];
@@ -381,6 +470,23 @@ function main() {
       if (typeof source.url !== 'string') continue;
       const parsed = extractDoi(source.url.trim());
       if (parsed === null) continue;
+
+      // ISBN 検算はプレフィックス照合とは独立。中立プレフィックスの除外より
+      // 前に置く（JSTOR 等でも書籍 DOI は成立しないため）。
+      const isbn = extractIsbn13(parsed.doi);
+      if (isbn !== null) {
+        isbnChecked += 1;
+        if (isbn13IsValid(isbn) === false) {
+          isbnFindings.push({
+            key: `${entry.id}::${parsed.doi}`,
+            id: entry.id,
+            doi: parsed.doi,
+            isbn,
+            label: typeof source.label === 'string' ? source.label.trim() : '',
+          });
+        }
+      }
+
       if (NEUTRAL_PREFIXES.has(parsed.prefix)) continue;
       const actual = PREFIX_TO_PUB.get(parsed.prefix);
       if (actual === undefined) continue; // 未知プレフィックスは判定しない
@@ -402,6 +508,38 @@ function main() {
   }
 
   findings.sort((a, b) => a.key.localeCompare(b.key));
+  isbnFindings.sort((a, b) => a.key.localeCompare(b.key));
+
+  const isbnSeen = new Set(isbnFindings.map((f) => f.key));
+  const isbnFresh = isbnFindings.filter((f) => !ISBN_ALLOWLIST.has(f.key));
+  const isbnStale = [...ISBN_ALLOWLIST.keys()].filter((k) => !isbnSeen.has(k)).sort();
+
+  console.log(
+    `Checked ${isbnChecked} book DOI(s) の ISBN-13 チェックディジット` +
+      `（既知 ${ISBN_ALLOWLIST.size} 件は台帳で除外）`,
+  );
+
+  if (isbnFresh.length > 0) {
+    console.error(`\n❌ ${isbnFresh.length} 件の DOI は ISBN として成立しません (新規)`);
+    console.error('   (チェックディジットが合わない＝この DOI は解決しません。捏造か転記ミスです)');
+    for (const f of isbnFresh) {
+      console.error('');
+      console.error(`  [${f.id}] ${f.doi}`);
+      console.error(`    ISBN   : ${f.isbn}`);
+      console.error(`    ラベル : ${f.label.slice(0, 110)}`);
+    }
+    console.error('');
+    console.error('直し方: 一次資料で正しい ISBN を確認してください。');
+    console.error('        書籍に DOI が無いのが普通なので、出版社の書誌 URL でも構いません。');
+  }
+
+  if (isbnStale.length > 0) {
+    console.error(`\n❌ ISBN 台帳に載っているのに不正でなくなった項目が ${isbnStale.length} 件あります`);
+    for (const k of isbnStale) console.error(`  ${k}`);
+    console.error('直ったなら ISBN_ALLOWLIST から削除してください（台帳は双方向です）。');
+  }
+
+  const isbnFailed = isbnFresh.length > 0 || isbnStale.length > 0;
 
   const seen = new Set(findings.map((f) => f.key));
   const fresh = findings.filter((f) => !ALLOWLIST.has(f.key));
@@ -418,6 +556,9 @@ function main() {
         ? '✅ DOI プレフィックスとラベルの出版社が矛盾する出典はありません'
         : `✅ 新規の矛盾はありません (既知 ${ALLOWLIST.size} 件は未確認のまま)`,
     );
+    // プレフィックス照合が綺麗でも **ISBN 検査は独立** なので、ここで
+    // 素通りさせてはいけない。早期 return で握り潰していたのを修正した。
+    if (isbnFailed) process.exit(1);
     return;
   }
 
