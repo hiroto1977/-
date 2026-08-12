@@ -299,6 +299,69 @@ const ISBN_ALLOWLIST = new Map([
     '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, '],
 ]);
 
+/**
+ * 誌コードが DOI 接尾辞に直接書かれている出版社の対照表。
+ *
+ * ## なぜ要るのか — プレフィックス照合には**構造的に見えない**穴
+ *
+ * プレフィックス照合は「出版社が違う」ことしか見ない。だが AOM は
+ * `10.5465/amr.` `10.5465/amj.` のように**誌そのもの**を接尾辞に持ち、
+ * AEA も `10.1257/jep.` `10.1257/jel.` を使い分ける。したがって
+ * 「AMJ の DOI に AMR のラベル」は**同一出版社なので素通り**していた。
+ * 実測で 246 件中 12 件がこれに該当した（Rogoff 1996 は実際には JEL 論文
+ * なのに JEP の DOI、Sarasvathy 2001 は実際には AMR なのに AMJ の DOI など）。
+ *
+ * ## 年・巻を使わない理由（実測して**採用を取り下げた**）
+ *
+ * 最初は DOI に埋まった年とラベルの年を突き合わせようとしたが、
+ * **AOM の現行 DOI は投稿年を使う**。Smith &amp; Lewis (2011) の実 DOI は
+ * `10.5465/amr.2009.0223` で、2 年ずれているのが正常。この検査を入れると
+ * 19 件が挙がり、その大半が正しい書誌だった（コーパス内の別々の 2 エントリが
+ * 同じ DOI を挙げていることが傍証になった）。**誤検出を出すゲートは
+ * 無いより悪い**ので、年と巻は使わず誌コードだけを見る。
+ */
+const JOURNAL_CODES = [
+  { re: /^10\.5465\/amr\./i, name: 'Academy of Management Review', label: /Academy of Management Review/i },
+  { re: /^10\.5465\/amj\./i, name: 'Academy of Management Journal', label: /Academy of Management Journal/i },
+  { re: /^10\.5465\/amle\./i, name: 'Academy of Management Learning & Education', label: /Academy of Management Learning/i },
+  { re: /^10\.5465\/amp\./i, name: 'Academy of Management Perspectives', label: /Academy of Management Perspectives/i },
+  { re: /^10\.5465\/ame\./i, name: 'Academy of Management Executive', label: /Academy of Management Executive/i },
+  { re: /^10\.1257\/jep\./i, name: 'Journal of Economic Perspectives', label: /Journal of Economic Perspectives/i },
+  { re: /^10\.1257\/jel\./i, name: 'Journal of Economic Literature', label: /Journal of Economic Literature/i },
+  { re: /^10\.1257\/aer\./i, name: 'American Economic Review', label: /American Economic Review/i },
+];
+
+/**
+ * 誌コードとラベルが食い違うと分かっている出典の台帳。**双方向**。
+ * 共通する事実: **DOI が別の誌を指している**。未確認なのは正しい DOI のほう。
+ */
+const JOURNAL_ALLOWLIST = new Map([
+  ['econ-fiscal-federalism-oates::10.1257/jep.13.2.131',
+    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
+  ['econ-fiscal-multiplier-keynesian-debate::10.1257/jep.26.3.69',
+    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
+  ['econ-monetary-policy-transmission::10.1257/jel.37.4.1661',
+    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
+  ['econ-new-new-trade-theory-melitz::10.1257/jel.45.1.39',
+    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
+  ['econ-optimal-income-taxation-mirrlees::10.1257/jel.49.1.3',
+    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
+  ['econ-poverty-trap-multiple-equilibria::10.1257/jel.48.2.424',
+    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
+  ['econ-purchasing-power-parity-cassel::10.1257/jep.10.4.97',
+    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
+  ['econ-real-exchange-rate-balassa::10.1257/jep.10.4.97',
+    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
+  ['mgmt-bricolage-organizational-baker::10.5465/amj.2001.4428801',
+    '未確認: DOI=Academy of Management Journal / ラベル=Academy of Management Review'],
+  ['mgmt-ceo-succession-planning::10.5465/amr.1994.9410210752',
+    '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Journal'],
+  ['mgmt-evidence-based-management::10.5465/amr.2009.35713336',
+    '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Perspectives'],
+  ['mgmt-strategic-flexibility-volberda::10.5465/amr.1999.1580457',
+    '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Executive'],
+]);
+
 const ALLOWLIST = new Map([
   // 以下は本ゲート導入時 (2026-08) に検出された分。いずれも一次資料に当たって
   // おらず、ラベルと DOI のどちらが誤りか未判定なので「未確認」として退避する。
@@ -428,8 +491,10 @@ function main() {
   const entries = kc.loadEntries();
   const findings = [];
   const isbnFindings = [];
+  const journalFindings = [];
   let checked = 0;
   let isbnChecked = 0;
+  let journalChecked = 0;
 
   for (const entry of entries) {
     const sources = Array.isArray(entry.sources) ? entry.sources : [];
@@ -441,6 +506,21 @@ function main() {
 
       // ISBN 検算はプレフィックス照合とは独立。中立プレフィックスの除外より
       // 前に置く（JSTOR 等でも書籍 DOI は成立しないため）。
+      // 誌コード照合 (同一出版社内の誌違い)。プレフィックス照合では見えない。
+      const own = JOURNAL_CODES.find((j) => j.re.test(parsed.doi));
+      if (own !== undefined) {
+        journalChecked += 1;
+        const lab = typeof source.label === 'string' ? source.label : '';
+        const named = JOURNAL_CODES.filter((j) => j.label.test(lab)).map((j) => j.name);
+        if (named.length > 0 && !named.includes(own.name)) {
+          journalFindings.push({
+            key: `${entry.id}::${parsed.doi}`,
+            id: entry.id, doi: parsed.doi, own: own.name, named,
+            label: lab.trim(),
+          });
+        }
+      }
+
       const isbn = extractIsbn13(parsed.doi);
       if (isbn !== null) {
         isbnChecked += 1;
@@ -509,6 +589,36 @@ function main() {
 
   const isbnFailed = isbnFresh.length > 0 || isbnStale.length > 0;
 
+  journalFindings.sort((a, b) => a.key.localeCompare(b.key));
+  const jSeen = new Set(journalFindings.map((f) => f.key));
+  const jFresh = journalFindings.filter((f) => !JOURNAL_ALLOWLIST.has(f.key));
+  const jStale = [...JOURNAL_ALLOWLIST.keys()].filter((k) => !jSeen.has(k)).sort();
+
+  console.log(
+    `Checked ${journalChecked} DOI(s) の誌コード（同一出版社内の誌違い。` +
+      `既知 ${JOURNAL_ALLOWLIST.size} 件は台帳で除外）`,
+  );
+
+  if (jFresh.length > 0) {
+    console.error(`\n❌ ${jFresh.length} 件の DOI が別の誌を指しています (新規)`);
+    console.error('   (AOM の amr/amj/amle/amp/ame、AEA の jep/jel/aer は DOI に誌が書かれています)');
+    for (const f of jFresh) {
+      console.error('');
+      console.error(`  [${f.id}] ${f.doi}`);
+      console.error(`    DOI の誌   : ${f.own}`);
+      console.error(`    ラベルの誌 : ${f.named.join(' / ')}`);
+      console.error(`    ラベル     : ${f.label.slice(0, 110)}`);
+    }
+  }
+
+  if (jStale.length > 0) {
+    console.error(`\n❌ 誌コード台帳に載っているのに矛盾しなくなった項目が ${jStale.length} 件あります`);
+    for (const k of jStale) console.error(`  ${k}`);
+    console.error('直ったなら JOURNAL_ALLOWLIST から削除してください（台帳は双方向です）。');
+  }
+
+  const journalFailed = jFresh.length > 0 || jStale.length > 0;
+
   const seen = new Set(findings.map((f) => f.key));
   const fresh = findings.filter((f) => !ALLOWLIST.has(f.key));
   const stale = [...ALLOWLIST.keys()].filter((k) => !seen.has(k)).sort();
@@ -526,7 +636,7 @@ function main() {
     );
     // プレフィックス照合が綺麗でも **ISBN 検査は独立** なので、ここで
     // 素通りさせてはいけない。早期 return で握り潰していたのを修正した。
-    if (isbnFailed) process.exit(1);
+    if (isbnFailed || journalFailed) process.exit(1);
     return;
   }
 
