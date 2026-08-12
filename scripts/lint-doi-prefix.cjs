@@ -368,6 +368,173 @@ const JOURNAL_ALLOWLIST = new Map([
     '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Executive'],
 ]);
 
+/**
+ * 同一文献が **別々の識別子** で引かれていないかを検査する。
+ *
+ * ## lint:citations との違い
+ *
+ * `lint:citations` は「同じ DOI が別々の出版年で引かれていないか」を見る。
+ * こちらはその**逆方向**で、「同じ文献が別々の DOI で引かれていないか」。
+ * 逆方向は検査されていなかったので、並列照合のエージェントが毎回
+ * 「担当外だが」と手で報告してきていた。
+ *
+ * ## 正常な冗長は除外する
+ *
+ * JSTOR ID と出版社 DOI が同じ論文を指すのは**正常**（別レジストリの
+ * 識別子が並存しているだけ）。実測でこれを除外しないと 136 群が挙がり、
+ * その多くが正当だった。除外後は 61 群。
+ *
+ * **異常と見なすのはこの 2 つだけ**:
+ *   1. 出版社 DOI が 2 つ以上（別々の出版社を指している）
+ *   2. 同じ中立レジストリに別 ID が 2 つ（**同一論文に 2 つの JSTOR ID は
+ *      あり得ない** — 必ず一方が誤り）
+ *
+ * ## 突合キー
+ *
+ * 著者姓 + 年 + 表題の先頭 4 語。実測サンプル 6 件を目視したところ、
+ * 「書籍とその書評」を取り違えるような誤検出は起きていなかった
+ * （ラベルがほぼ同一の同一文献ばかりだった）。
+ */
+function citationKey(label) {
+  const y = label.match(/\((?:19|20)\d\d\)|\b(?:19|20)\d\d\b/);
+  if (y === null) return null;
+  const year = y[0].match(/(?:19|20)\d\d/)[0];
+  const au = label.match(/^\s*([A-Z][A-Za-zÀ-ÿ'-]+)/);
+  if (au === null) return null;
+  const words = label.slice(y.index + y[0].length).match(/[A-Za-z]{4,}/g);
+  if (words === null || words.length < 3) return null;
+  return `${au[1].toLowerCase()}|${year}|${words.slice(0, 4).map((w) => w.toLowerCase()).join(' ')}`;
+}
+
+/**
+ * 同一文献に矛盾する識別子が付いていると分かっている群の台帳。**双方向**。
+ * 共通する事実: **少なくとも一方の識別子が誤り**。どちらが誤りかは未確認。
+ */
+const DUPLICATE_ID_ALLOWLIST = new Map([
+  ['akerlof|1985|near rational model business',
+    '未確認: 少なくとも一方の識別子が誤り — econ-money-illusion-fisher / econ-near-rationality-akerlof-yellen'],
+  ['arrow|1954|existence equilibrium competitive economy',
+    '未確認: 少なくとも一方の識別子が誤り — econ-edgeworth-box-exchange-efficiency / econ-second-welfare-theorem'],
+  ['arrow|1961|capital labor substitution economic',
+    '未確認: 少なくとも一方の識別子が誤り — econ-elasticity-substitution-allen-uzawa / econ-elasticity-substitutio'],
+  ['baker|2005|creating something from nothing',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-bricolage / mgmt-bricolage-entrepreneurial / mgmt-bricolage-entre'],
+  ['bakshy|2015|exposure ideologically diverse news',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-algorithmic-curation-theory / infosoc-echo-chamber-polarizatio'],
+  ['bateman|1993|proactive component organizational behavior',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-proactive-personality / mgmt-proactive-personality-bateman'],
+  ['benkler|2006|wealth networks social production',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-commons-based-peer-production-benkler / infosoc-digital-rights'],
+  ['bernanke|1989|agency costs worth business',
+    '未確認: 少なくとも一方の識別子が誤り — econ-credit-channel-bernanke / econ-credit-rationing-stiglitz'],
+  ['bernanke|1999|financial accelerator quantitative business',
+    '未確認: 少なくとも一方の識別子が誤り — econ-debt-deflation-fisher / econ-financial-accelerator-bernanke-gertl'],
+  ['buchanan|1962|calculus consent university michigan',
+    '未確認: 少なくとも一方の識別子が誤り — econ-public-choice-buchanan-tullock / econ-public-choice-theory-buchan'],
+  ['bucher|2017|algorithmic imaginary exploring ordinary',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-algorithmic-curation-theory / infosoc-algorithmic-imaginaries-'],
+  ['cannon-bowers|1993|shared mental models expert',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-team-mental-models-cannon-bowers / mgmt-team-mental-models-theory'],
+  ['carpenter|2004|upper echelons research revisited',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-strategic-leadership-theory / mgmt-upper-echelons-hambrick'],
+  ['cascone|2000|aesthetics failure post digital',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-post-digital-aesthetics-cramer / infosoc-postdigital-culture-c'],
+  ['citton|2017|ecology attention polity press',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-attention-economy-citton / infosoc-attention-economy-goldhaber'],
+  ['diamond|1971|optimal taxation public production',
+    '未確認: 少なくとも一方の識別子が誤り — econ-optimal-tax-theory-diamond-mirrlees / econ-value-added-tax-theory'],
+  ['ezekiel|1938|cobweb theorem quarterly journal',
+    '未確認: 少なくとも一方の識別子が誤り — econ-cobweb-model-agricultural-cycles / econ-cobweb-theorem-ezekiel'],
+  ['felin|2015|microfoundations movement strategy organization',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-micro-foundations-movement-felin-foss / mgmt-microfoundations-mov'],
+  ['freeman|1984|strategic management stakeholder approach',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-corporate-purpose-stakeholder / mgmt-corporate-social-responsibil'],
+  ['gereffi|2005|governance global value chains',
+    '未確認: 少なくとも一方の識別子が誤り — econ-global-value-chain / econ-global-value-chains-gereffi'],
+  ['gibson|2004|antecedents consequences mediating role',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-ambidexterity-tushman / mgmt-contextual-ambidexterity / mgmt-orga'],
+  ['gorton|2012|securitized banking repo journal',
+    '未確認: 少なくとも一方の識別子が誤り — econ-shadow-banking-fsb / econ-shadow-banking-pozsar'],
+  ['haggerty|2000|surveillant assemblage british journal',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-data-double-haggerty-ericson / infosoc-data-doubles'],
+  ['hambrick|1988|large corporate failures downward',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-organizational-decline-theory / mgmt-organizational-decline-weitz'],
+  ['head|2014|gravity equations workhorse toolkit',
+    '未確認: 少なくとも一方の識別子が誤り — econ-gravity-equation-structural-estimation / econ-trade-gravity-model'],
+  ['huff|1990|mapping strategic thought wiley',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-cognitive-map-strategic-decision / mgmt-cognitive-mapping-theory'],
+  ['kitchin|2014|real time city data',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-smart-city-critique-greenfield / infosoc-smart-city-governance'],
+  ['kozlowski|2006|enhancing effectiveness work groups',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-team-effectiveness-hackman-wageman / mgmt-team-effectiveness-mode'],
+  ['kyle|1985|continuous auctions insider trading',
+    '未確認: 少なくとも一方の識別子が誤り — econ-market-microstructure / econ-market-microstructure-kyle-glosten'],
+  ['leijonhufvud|1973|effective demand failures swedish',
+    '未確認: 少なくとも一方の識別子が誤り — econ-corridor-of-stability-leijonhufvud / econ-corridor-of-stability-t'],
+  ['lessig|2008|remix making commerce thrive',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-remix-copyright-digital-culture / infosoc-remix-culture-lessig'],
+  ['lewicka|2011|place attachment have come',
+    '未確認: 少なくとも一方の識別子が誤り — human-place-attachment-low-altman / human-place-attachment-theory-scan'],
+  ['lumpkin|1996|clarifying entrepreneurial orientation construct',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-corporate-entrepreneurship-zahra / mgmt-entrepreneurial-orientati'],
+  ['maitlis|2014|sensemaking organizations taking stock',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-enacted-sensemaking-theory / mgmt-sensemaking-weick'],
+  ['meyerson|1995|tempered radicalism politics ambivalence',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-tempered-radical / mgmt-tempered-radicalism-meyerson'],
+  ['moreland|1999|transactive memory learning knows',
+    '未確認: 少なくとも一方の識別子が誤り — human-transactive-memory / mgmt-transactive-memory-wegner'],
+  ['obstfeld|2000|major puzzles international macroeconomics',
+    '未確認: 少なくとも一方の識別子が誤り — econ-exchange-rate-disconnect-meese-rogoff / econ-trade-balance-j-curv'],
+  ['ocasio|1997|towards attention based view',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-attention-based-view / mgmt-organizational-attention-theory'],
+  ['phillips|1958|relation between unemployment rate',
+    '未確認: 少なくとも一方の識別子が誤り — econ-phillips-curve-friedman / econ-phillips-curve-inflation-unemploym'],
+  ['ramsey|1927|contribution theory taxation economic',
+    '未確認: 少なくとも一方の識別子が誤り — econ-ramsey-optimal-taxation / econ-value-added-tax-theory'],
+  ['ries|2011|lean startup crown business',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-lean-startup-ries-build-measure-learn'],
+  ['robinson|1953|production function theory capital',
+    '未確認: 少なくとも一方の識別子が誤り — econ-capital-controversy / econ-sraffa-commodities'],
+  ['rousseau|1989|psychological implied contracts organizations',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-psychological-contract / mgmt-psychological-contract-rousseau'],
+  ['sachs|1995|natural resource abundance economic',
+    '未確認: 少なくとも一方の識別子が誤り — econ-dutch-disease-corden / econ-dutch-disease-resource-curse / econ-d'],
+  ['samuelson|1964|theoretical notes trade problems',
+    '未確認: 少なくとも一方の識別子が誤り — econ-balassa-samuelson-effect-productivity / econ-real-exchange-rate-b'],
+  ['sargent|1981|some unpleasant monetarist arithmetic',
+    '未確認: 少なくとも一方の識別子が誤り — econ-sargent-wallace-unpleasant-arithmetic / econ-seigniorage-hyperinf'],
+  ['sen|1970|collective choice social welfare',
+    '未確認: 少なくとも一方の識別子が誤り — econ-condorcet-paradox-cycling / econ-welfare-economics-pigou-kaldor-h'],
+  ['sifneos|1973|prevalence alexithymic characteristics psychosomatic',
+    '未確認: 少なくとも一方の識別子が誤り — human-alexithymia-emotional-regulation / human-alexithymia-sifneos'],
+  ['srnicek|2017|platform capitalism polity press',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-digital-labor-scholz-platform-cooperativism / infosoc-gig-econ'],
+  ['szulanski|1996|exploring internal stickiness strategic',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-knowledge-transfer / mgmt-knowledge-transfer-multinational'],
+  ['tarafdar|2007|impact technostress role stress',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-technostress-tarafdar / infosoc-technostress-theory'],
+  ['terranova|2000|free labor producing culture',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-digital-labor-exploitation / infosoc-digital-labor-fuchs / inf'],
+  ['tullock|1967|welfare costs tariffs monopolies',
+    '未確認: 少なくとも一方の識別子が誤り — econ-harberger-triangle / econ-tullock-paradox'],
+  ['tushman|1996|ambidextrous organizations california management',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-ambidextrous-organization-theory / mgmt-organizational-ambidexter'],
+  ['tushman|1996|ambidextrous organizations managing evolutionary',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-ambidexterity-tushman / mgmt-organizational-ambidexterity-theory'],
+  ['viner|1950|customs union issue carnegie',
+    '未確認: 少なくとも一方の識別子が誤り — econ-customs-union-theory-viner / econ-trade-creation-diversion-viner'],
+  ['wajcman|2004|technofeminism polity press',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-techno-feminism-wajcman / infosoc-techno-feminist-theory'],
+  ['walsh|1995|managerial organizational cognition notes',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-managerial-cognition-daft / mgmt-managerial-cognition-walsh'],
+  ['weick|1993|collapse sensemaking organizations mann',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-enacted-sensemaking-weick / mgmt-organizational-resilience-weick'],
+  ['weitzel|1989|decline organizations literature integration',
+    '未確認: 少なくとも一方の識別子が誤り — mgmt-organizational-decline-theory / mgmt-organizational-decline-weitz'],
+  ['zuboff|2019|surveillance capitalism publicaffairs',
+    '未確認: 少なくとも一方の識別子が誤り — infosoc-data-sovereignty-digital-rights / infosoc-information-asymmetr'],
+]);
+
 const ALLOWLIST = new Map([
   // 以下は本ゲート導入時 (2026-08) に検出された分。いずれも一次資料に当たって
   // おらず、ラベルと DOI のどちらが誤りか未判定なので「未確認」として退避する。
@@ -471,9 +638,39 @@ function main() {
   const findings = [];
   const isbnFindings = [];
   const journalFindings = [];
+  const dupFindings = [];
   let checked = 0;
   let isbnChecked = 0;
   let journalChecked = 0;
+
+  // 同一文献の識別子衝突を見るため、先に全 source を舐めて群を作る。
+  const byWork = new Map();
+  for (const entry of entries) {
+    for (const source of Array.isArray(entry.sources) ? entry.sources : []) {
+      if (source === null || typeof source !== 'object') continue;
+      if (typeof source.url !== 'string' || typeof source.label !== 'string') continue;
+      const parsed = extractDoi(source.url.trim());
+      if (parsed === null) continue;
+      const k = citationKey(source.label.trim());
+      if (k === null) continue;
+      if (!byWork.has(k)) byWork.set(k, new Map());
+      byWork.get(k).set(parsed.doi, entry.id);
+    }
+  }
+  for (const [work, dois] of byWork) {
+    if (dois.size < 2) continue;
+    const all = [...dois.keys()];
+    const neutral = all.filter((d) => NEUTRAL_PREFIXES.has(d.split('/')[0]));
+    const publisher = all.filter((d) => !NEUTRAL_PREFIXES.has(d.split('/')[0]));
+    // 中立 1 + 出版社 1 は同一論文の別レジストリ表現なので正常。
+    if (neutral.length <= 1 && publisher.length <= 1) continue;
+    const distinctPubs = new Set(publisher.map((d) => d.split('/')[0]));
+    if (distinctPubs.size <= 1 && neutral.length <= 1) continue;
+    dupFindings.push({
+      key: work,
+      entries: all.map((d) => ({ id: dois.get(d), doi: d })),
+    });
+  }
 
   for (const entry of entries) {
     const sources = Array.isArray(entry.sources) ? entry.sources : [];
@@ -598,6 +795,36 @@ function main() {
 
   const journalFailed = jFresh.length > 0 || jStale.length > 0;
 
+  dupFindings.sort((a, b) => a.key.localeCompare(b.key));
+  const dSeen = new Set(dupFindings.map((f) => f.key));
+  const dFresh = dupFindings.filter((f) => !DUPLICATE_ID_ALLOWLIST.has(f.key));
+  const dStale = [...DUPLICATE_ID_ALLOWLIST.keys()].filter((k) => !dSeen.has(k)).sort();
+
+  console.log(
+    `Checked ${byWork.size} 文献の識別子衝突（同一文献に別 DOI。` +
+      `既知 ${DUPLICATE_ID_ALLOWLIST.size} 件は台帳で除外）`,
+  );
+
+  if (dFresh.length > 0) {
+    console.error(`\n❌ ${dFresh.length} 件の文献に矛盾する識別子が付いています (新規)`);
+    console.error('   (同一論文に 2 つの JSTOR ID や別々の出版社 DOI は成立しません)');
+    for (const f of dFresh) {
+      console.error('');
+      console.error(`  ${f.key}`);
+      for (const e of f.entries) console.error(`    [${e.id}] ${e.doi}`);
+    }
+    console.error('');
+    console.error('直し方: 一次資料で正しい識別子を確認し、誤っている側を差し替えてください。');
+  }
+
+  if (dStale.length > 0) {
+    console.error(`\n❌ 識別子台帳に載っているのに衝突しなくなった項目が ${dStale.length} 件あります`);
+    for (const k of dStale) console.error(`  ${k}`);
+    console.error('直ったなら DUPLICATE_ID_ALLOWLIST から削除してください（台帳は双方向です）。');
+  }
+
+  const dupFailed = dFresh.length > 0 || dStale.length > 0;
+
   const seen = new Set(findings.map((f) => f.key));
   const fresh = findings.filter((f) => !ALLOWLIST.has(f.key));
   const stale = [...ALLOWLIST.keys()].filter((k) => !seen.has(k)).sort();
@@ -615,7 +842,7 @@ function main() {
     );
     // プレフィックス照合が綺麗でも **ISBN 検査は独立** なので、ここで
     // 素通りさせてはいけない。早期 return で握り潰していたのを修正した。
-    if (isbnFailed || journalFailed) process.exit(1);
+    if (isbnFailed || journalFailed || dupFailed) process.exit(1);
     return;
   }
 
