@@ -28,6 +28,7 @@ import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChe
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import { EligibilityChecker } from '../components/EligibilityChecker';
 import {
   PLAN_ITEMS,
   PLAN_MONTHS,
@@ -1220,6 +1221,12 @@ export function DocstudioPage() {
               </div>
             )}
           </Section>
+
+          {collection === 'studio' && docId === 'plantfactory-plan' && (
+            <Section title="使える制度の判定">
+              <EligibilityChecker />
+            </Section>
+          )}
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
           {collection === 'kessan' && <KessanCheckPanel values={filled} />}

@@ -17,7 +17,7 @@ const path = require('node:path');
 // 手書きの固定リストだった頃は 22 件しか対象にしておらず、新規サービスを
 // scaffold しても smoke の網に入らなかった。
 //
-// SERVICE_IDS（73 件）ではなく services.ts（71 件）を使うのは、
+// SERVICE_IDS（74 件）ではなく services.ts（72 件）を使うのは、
 // uber-eats / demae-can のように **サイドバー項目を持たない** サービスが
 // あるため。この 2 つは BusinessPage が内部で消費する snapshot 専用で、
 // 独立したページが無い（＝スクリーンショットの対象になりえない）。
