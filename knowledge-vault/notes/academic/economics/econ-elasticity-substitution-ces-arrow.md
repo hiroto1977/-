@@ -27,7 +27,7 @@ CES（Constant Elasticity of Substitution）生産関数は、ケネス・アロ
 
 ## 出典
 - [Arrow, K. et al. (1961) Capital-Labor Substitution and Economic Efficiency — REStat](https://doi.org/10.2307/1927286) `学術`
-- [Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica](https://doi.org/10.1257/aer.104.6.1667) `学術`
+- [Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica](https://doi.org/10.3982/ECTA12807) `学術`
 - [Wikipedia: CES — CES生産関数の概要](https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution) `リファレンス`
 
 ## 関連概念

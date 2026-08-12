@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wilson, T. D. & Gilbert, D. T. (2003) Affective Forecasting — Advances in Experimental Social Psychology, 35, 345–411（情動予測研究の体系的レビュー）](https://doi.org/10.1016/S0065-2601(03)01006-2) `学術`
-- [Gilbert, D. T. et al. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science, 15(1), 14–19（免疫無視の実証）](https://doi.org/10.1037/0022-3514.79.5.821) `学術`
+- [Gilbert, D. T. et al. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science, 15(1), 14–19（免疫無視の実証）](https://doi.org/10.1111/j.0963-7214.2004.01501003.x) `学術`
 - [Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility — Journal of Economic Perspectives, 5(2), 193–206（情動予測と経済学）](https://doi.org/10.1023/A:1008012424582) `学術`
 - [Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect, duration bias](https://en.wikipedia.org/wiki/Affective_forecasting) `リファレンス`
 

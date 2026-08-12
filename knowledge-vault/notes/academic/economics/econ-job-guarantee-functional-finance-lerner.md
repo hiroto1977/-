@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Lerner (1943) Functional Finance and the Federal Debt — Social Research](https://doi.org/10.2307/2549973) `学術`
-- [Wray (2015) Modern Money Theory — Palgrave Macmillan](https://doi.org/10.4337/9781800882560) `学術`
+- [Wray (2015) Modern Money Theory — Palgrave Macmillan](https://doi.org/10.1057/9781137539922) `学術`
 - [Wikipedia: Functional finance — 機能的財政論とMMTの系譜](https://en.wikipedia.org/wiki/Functional_finance) `リファレンス`
 
 ## 関連概念

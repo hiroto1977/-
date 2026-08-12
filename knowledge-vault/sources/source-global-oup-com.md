@@ -2,7 +2,7 @@
 title: "global.oup.com"
 type: source-domain
 host: "global.oup.com"
-cite_count: 27
+cite_count: 28
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # global.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 19 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **28 件**（学術 20 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
+- [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — Alexy,R.(2002).ATheoryofConstitutionalRights—OxfordUP
 - [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — Mulheron—TheModernDoctrinesofChampertyandMaintenance(OUP2023)
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — Treitel(1988)RemediesforBreachofContract:AComparativeAccount—Clarendo…
 - [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — McKendrick,E.ContractLaw:Text,Cases,andMaterials.OxfordUniversityPres…

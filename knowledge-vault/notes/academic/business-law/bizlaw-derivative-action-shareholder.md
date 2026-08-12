@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [日本法務省 (2005) 会社法第847条（株主代表訴訟）e-Gov法令検索](https://elaws.e-gov.go.jp/document?lawid=417AC0000000086) `公的`
-- [Easterbrook, F. H. & Fischel, D. R. (1991) The Economic Structure of Corporate Law — Harvard University Press（代表訴訟の経済分析）](https://doi.org/10.1086/702079) `学術`
+- [Easterbrook, F. H. & Fischel, D. R. (1991) The Economic Structure of Corporate Law — Harvard University Press（代表訴訟の経済分析）](https://www.hup.harvard.edu/books/9780674235397) `学術`
 - [Romano, R. (1991) The Shareholder Suit: Litigation Without Foundation? — Journal of Law, Economics, & Organization, 7(1), 55–87（代表訴訟の実証的批判）](https://doi.org/10.2307/3480688) `学術`
 - [Wikipedia: Derivative suit — Foss v Harbottle, business judgment rule, Japan 847, multi-derivative action](https://en.wikipedia.org/wiki/Derivative_suit) `リファレンス`
 

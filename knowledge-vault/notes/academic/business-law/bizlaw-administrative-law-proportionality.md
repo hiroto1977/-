@@ -26,7 +26,7 @@ aliases:
 ロバート・アレクシー ／ ジュリアン・ヴァーテン ／ ポール・ライニッシュ ／ 佐藤幸治
 
 ## 出典
-- [Alexy, R. (2002). A Theory of Constitutional Rights — Oxford UP](https://doi.org/10.1017/CBO9780511777141) `学術`
+- [Alexy, R. (2002). A Theory of Constitutional Rights — Oxford UP](https://global.oup.com/academic/product/a-theory-of-constitutional-rights-9780198258216) `学術`
 - [Wikipedia: Proportionality in law — administrative rights limitation](https://en.wikipedia.org/wiki/Proportionality_(law)) `リファレンス`
 
 ## 関連概念

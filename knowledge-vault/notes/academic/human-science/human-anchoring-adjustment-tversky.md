@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Tversky, A. & Kahneman, D. (1974) Judgment Under Uncertainty: Heuristics and Biases — Science 185(4157)](https://doi.org/10.1126/science.185.4157.1124) `学術`
 - [Wikipedia: Anchoring — Tversky & Kahneman cognitive bias and insufficient adjustment](https://en.wikipedia.org/wiki/Anchoring_(cognitive_bias)) `リファレンス`
-- [Epley, N. & Gilovich, T. (2001) Putting Adjustment Back in the Anchoring and Adjustment Heuristic — Psychological Science 12(5)](https://doi.org/10.1037/0022-3514.81.3.391) `学術`
+- [Epley, N. & Gilovich, T. (2001) Putting Adjustment Back in the Anchoring and Adjustment Heuristic — Psychological Science 12(5)](https://doi.org/10.1111/1467-9280.00372) `学術`
 
 ## 関連概念
 - [[human-anchoring|アンカリング効果（係留と調整）]] — 語彙が近い

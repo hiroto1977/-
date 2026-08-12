@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Miller, Weller & Zhang (2002) Moral Hazard and the US Stock Market: Analysing the Greenspan Put — Economic Journal](https://doi.org/10.1111/1468-0297.00099) `学術`
-- [Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance](https://doi.org/10.1257/aer.20140205) `学術`
+- [Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance](https://doi.org/10.1111/jofi.12818) `学術`
 - [Wikipedia: Greenspan put — 中央銀行プットの概念と金融政策への含意](https://en.wikipedia.org/wiki/Greenspan_put) `リファレンス`
 
 ## 関連概念

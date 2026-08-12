@@ -28300,7 +28300,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://www.hup.harvard.edu/books/9780674272286', type: 'academic', label: 'Nelson, R.R. & Winter, S.G., An Evolutionary Theory of Economic Change, Harvard University Press (1982)' },
-      { url: 'https://doi.org/10.1093/0199248540.001.0001', type: 'academic', label: 'Nelson, R.R., The Sources of Economic Growth, Harvard University Press (1996)' },
+      { url: 'https://www.hup.harvard.edu/books/9780674001725', type: 'academic', label: 'Nelson, R.R., The Sources of Economic Growth, Harvard University Press (1996)' },
       { url: 'https://plato.stanford.edu/entries/evolutionary-economics/', type: 'reference', label: 'Evolutionary Economics — Stanford Encyclopedia of Philosophy' },
     ],
   },
@@ -29006,7 +29006,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.jstor.org/stable/1913386', type: 'academic', label: 'Kydland, F. E. & Prescott, E. C. (1982) Time to Build and Aggregate Fluctuations — Econometrica, 50(6), 1345–1370（RBCモデルの起点）' },
-      { url: 'https://doi.org/10.1162/154247605774270514', type: 'academic', label: 'Christiano, L. J., Eichenbaum, M. & Evans, C. L. (2005) Nominal Rigidities and the Dynamic Effects of a Shock to Monetary Policy — Journal of Political Economy, 113(1), 1–45' },
+      { url: 'https://doi.org/10.1086/426038', type: 'academic', label: 'Christiano, L. J., Eichenbaum, M. & Evans, C. L. (2005) Nominal Rigidities and the Dynamic Effects of a Shock to Monetary Policy — Journal of Political Economy, 113(1), 1–45' },
       { url: 'https://doi.org/10.1162/154247603770383415', type: 'academic', label: 'Smets, F. & Wouters, R. (2003) An Estimated Dynamic Stochastic General Equilibrium Model of the Euro Area — Journal of the European Economic Association, 1(5), 1123–1175' },
       { url: 'https://en.wikipedia.org/wiki/Dynamic_stochastic_general_equilibrium', type: 'reference', label: 'Wikipedia: Dynamic stochastic general equilibrium — overview, variants, criticism, and central bank adoption' },
     ],
@@ -29553,7 +29553,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1111/j.1540-6261.2008.01327.x', type: 'academic', label: 'Brunnermeier, M. K., Nagel, S. & Pedersen, L. H. (2008) Carry Trades and Currency Crashes — NBER Macroeconomics Annual, 23, 313–347（キャリー崩壊の実証）' },
       { url: 'https://doi.org/10.1093/qje/qjr014', type: 'academic', label: 'Lustig, H., Roussanov, N. & Verdelhan, A. (2011) Common Risk Factors in Currency Markets — Review of Financial Studies, 24(11), 3731–3777（FX共通リスクファクター）' },
-      { url: 'https://doi.org/10.1016/j.jinteco.2015.01.002', type: 'academic', label: 'Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2012.01728.x', type: 'academic', label: 'Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）' },
       { url: 'https://en.wikipedia.org/wiki/Carry_(investment)', type: 'reference', label: 'Wikipedia: Carry (investment) — UIP puzzle, carry crash, yen carry trade, risk-off dynamics' },
     ],
   },
@@ -29859,7 +29859,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ゲオルク・クナップ ／ ランダル・レイ ／ ウォーレン・モズラー ／ ステファニー・ケルトン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.4337/9781785364464', type: 'academic', label: 'Wray, L. R. (2015) Modern Money Theory: A Primer on Macroeconomics for Sovereign Monetary Systems, 2nd ed. — Palgrave Macmillan（MMTの体系書）' },
+      { url: 'https://doi.org/10.1057/9781137539922', type: 'academic', label: 'Wray, L. R. (2015) Modern Money Theory: A Primer on Macroeconomics for Sovereign Monetary Systems, 2nd ed. — Palgrave Macmillan（MMTの体系書）' },
       { url: 'https://www.stpaulspublishing.com/978-1-250-17699-4', type: 'reference', label: 'Kelton, S. (2020) The Deficit Myth: Modern Monetary Theory and the Birth of the People\'s Economy — PublicAffairs（一般向け解説）' },
       { url: 'https://doi.org/10.1257/jep.33.3.141', type: 'academic', label: 'Mankiw, N. G. (2019) A Skeptic\'s Guide to Modern Monetary Theory — AEA Papers & Proceedings, 110, 141–144（代表的批判論文）' },
       { url: 'https://en.wikipedia.org/wiki/Modern_monetary_theory', type: 'reference', label: 'Wikipedia: Modern monetary theory — chartalism, Knapp, Wray, Kelton, JGP, Mankiw critique' },
@@ -29972,7 +29972,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/3310491', type: 'academic', label: 'Note (1971) In Pari Delicto as a Defense in Securities Cases — Harvard Law Review, 84(7), 1551–1570（証券訴訟への適用の古典論文）' },
-      { url: 'https://doi.org/10.1086/467938', type: 'academic', label: 'Landes, W. M. & Posner, R. A. (1987) The Economic Structure of Tort Law — Harvard University Press（衡平法的法理の経済分析）' },
+      { url: 'https://doi.org/10.4159/harvard.9780674864030', type: 'academic', label: 'Landes, W. M. & Posner, R. A. (1987) The Economic Structure of Tort Law — Harvard University Press（衡平法的法理の経済分析）' },
       { url: 'https://www.law.cornell.edu/wex/in_pari_delicto', type: 'reference', label: 'Cornell Legal Information Institute: In Pari Delicto — definition, elements, exceptions, US case law' },
       { url: 'https://en.wikipedia.org/wiki/In_pari_delicto', type: 'reference', label: 'Wikipedia: In pari delicto — ex turpi causa, equity doctrine, exceptions, Japan Civil Code 708' },
     ],
@@ -30266,8 +30266,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1017/S0003055402004392', type: 'academic', label: 'Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）' },
-      { url: 'https://doi.org/10.1007/978-3-319-41247-1', type: 'academic', label: 'Baldwin, R. (2016) The Great Convergence: Information Technology and the New Globalization — Harvard University Press（GVCとデジタル化の接続）' },
-      { url: 'https://doi.org/10.1257/jep.33.2.163', type: 'academic', label: 'Antràs, P. & Chor, D. (2013) Organizing the Global Value Chain — Econometrica, 81(6), 2127–2204（GVCと国際貿易理論の統合）' },
+      { url: 'https://www.hup.harvard.edu/catalog.php?isbn=9780674660489', type: 'academic', label: 'Baldwin, R. (2016) The Great Convergence: Information Technology and the New Globalization — Harvard University Press（GVCとデジタル化の接続）' },
+      { url: 'https://doi.org/10.3982/ECTA10813', type: 'academic', label: 'Antràs, P. & Chor, D. (2013) Organizing the Global Value Chain — Econometrica, 81(6), 2127–2204（GVCと国際貿易理論の統合）' },
       { url: 'https://en.wikipedia.org/wiki/Global_value_chain', type: 'reference', label: 'Wikipedia: Global value chain — Gereffi, buyer/producer-driven, upgrading, COVID reshoring' },
     ],
   },
@@ -30391,7 +30391,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・ブラフ ／ エドワード・コーヒー ／ ルシアン・ベブチャック ／ マーティン・リプトン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/S0022109009990524', type: 'academic', label: 'Brav, A. et al. (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance — Journal of Finance, 63(4), 1729–1775（株主アクティビズムと企業業績の大規模実証）' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2008.01373.x', type: 'academic', label: 'Brav, A. et al. (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance — Journal of Finance, 63(4), 1729–1775（株主アクティビズムと企業業績の大規模実証）' },
       { url: 'https://doi.org/10.1093/jlb/lsv032', type: 'academic', label: 'Coffee, J. C. & Petzold, D. (2015) The Wolf at the Door: The Impact of Hedge Fund Activism on Corporate Governance — Annals of Corporate Governance, 1(1), 1–94（長期的影響論）' },
       { url: 'https://www.fsa.go.jp/singi/corporategovernance/siryou/20230331/01.pdf', type: 'government', label: '金融庁 (2023) コーポレートガバナンス・コード改訂版（スチュワードシップ責任・アクティビスト対応）' },
       { url: 'https://en.wikipedia.org/wiki/Shareholder_activism', type: 'reference', label: 'Wikipedia: Shareholder activism — hedge fund campaigns, SEC 13D, short-termism, CGC Japan' },
@@ -39128,7 +39128,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1126/science.185.4157.1124', type: 'academic', label: 'Tversky, A. & Kahneman, D. (1974) Judgment Under Uncertainty: Heuristics and Biases — Science 185(4157)' },
       { url: 'https://en.wikipedia.org/wiki/Anchoring_(cognitive_bias)', type: 'reference', label: 'Wikipedia: Anchoring — Tversky & Kahneman cognitive bias and insufficient adjustment' },
-      { url: 'https://doi.org/10.1037/0022-3514.81.3.391', type: 'academic', label: 'Epley, N. & Gilovich, T. (2001) Putting Adjustment Back in the Anchoring and Adjustment Heuristic — Psychological Science 12(5)' },
+      { url: 'https://doi.org/10.1111/1467-9280.00372', type: 'academic', label: 'Epley, N. & Gilovich, T. (2001) Putting Adjustment Back in the Anchoring and Adjustment Heuristic — Psychological Science 12(5)' },
     ],
   },
   {
@@ -39388,7 +39388,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1257/aer.90.3.407', type: 'academic', label: 'Kashyap & Stein (2000) What Do a Million Observations on Banks Say About the Transmission of Monetary Policy? — American Economic Review' },
-      { url: 'https://doi.org/10.1016/S0304-3932(97)00072-2', type: 'academic', label: 'Kashyap, Stein & Wilcox (1993) Monetary Policy and Credit Conditions: Evidence from the Composition of External Finance — American Economic Review' },
+      { url: 'https://econpapers.repec.org/RePEc:aea:aecrev:v:83:y:1993:i:1:p:78-98', type: 'academic', label: 'Kashyap, Stein & Wilcox (1993) Monetary Policy and Credit Conditions: Evidence from the Composition of External Finance — American Economic Review' },
       { url: 'https://en.wikipedia.org/wiki/Credit_channel', type: 'reference', label: 'Wikipedia: Credit channel — 銀行貸出チャネルと信用チャネルの理論的概説' },
     ],
   },
@@ -39755,7 +39755,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1111/1468-0297.00099', type: 'academic', label: 'Miller, Weller & Zhang (2002) Moral Hazard and the US Stock Market: Analysing the Greenspan Put — Economic Journal' },
-      { url: 'https://doi.org/10.1257/aer.20140205', type: 'academic', label: 'Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance' },
+      { url: 'https://doi.org/10.1111/jofi.12818', type: 'academic', label: 'Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance' },
       { url: 'https://en.wikipedia.org/wiki/Greenspan_put', type: 'reference', label: 'Wikipedia: Greenspan put — 中央銀行プットの概念と金融政策への含意' },
     ],
   },
@@ -39845,8 +39845,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ランス・ガートン ／ ドン・ローパー ／ マーク・マイルズ ／ ギジェルモ・カルヴォ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1016/0022-1996(77)90028-0', type: 'academic', label: 'Girton & Roper (1977) A Monetary Model of Exchange Market Pressure Applied to the Postwar Canadian Experience — American Economic Review' },
-      { url: 'https://doi.org/10.1016/S0304-3932(96)01273-X', type: 'academic', label: 'Calvo & Vegh (1996) From Currency Substitution to Dollarization and Beyond — in Money, Exchange Rates, and Output, MIT Press' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v67y1977i4p537-48.html', type: 'academic', label: 'Girton & Roper (1977) A Monetary Model of Exchange Market Pressure Applied to the Postwar Canadian Experience — American Economic Review' },
+      { url: 'https://direct.mit.edu/books/monograph/2432/chapter/64514/From-Currency-Substitution-to-Dollarization-and', type: 'academic', label: 'Calvo & Vegh (1996) From Currency Substitution to Dollarization and Beyond — in Money, Exchange Rates, and Output, MIT Press' },
       { url: 'https://en.wikipedia.org/wiki/Currency_substitution', type: 'reference', label: 'Wikipedia: Currency substitution — 通貨代替・ドル化の定義と各国事例の概説' },
     ],
   },
@@ -40213,7 +40213,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2228226', type: 'academic', label: 'Swan, T. W. (1963) Longer-Run Problems of the Balance of Payments — Economic Record' },
-      { url: 'https://doi.org/10.1057/9781137377548', type: 'academic', label: 'Corden, W. M. (2002) Too Sensational: On the Choice of Exchange Rate Regimes — MIT Press' },
+      { url: 'https://direct.mit.edu/books/book/2465/Too-SensationalOn-the-Choice-of-Exchange-Rate', type: 'academic', label: 'Corden, W. M. (2002) Too Sensational: On the Choice of Exchange Rate Regimes — MIT Press' },
       { url: 'https://en.wikipedia.org/wiki/Swan_diagram', type: 'reference', label: 'Wikipedia: Swan diagram — internal-external balance policy framework overview' },
     ],
   },
@@ -41913,7 +41913,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/0022-1996(79)90017-5', type: 'academic', label: 'Krugman (1979) Increasing Returns, Monopolistic Competition, and International Trade — Journal of International Economics' },
-      { url: 'https://doi.org/10.1111/j.1467-9396.2009.00871.x', type: 'academic', label: 'Helpman (2011) Understanding Global Trade — Harvard University Press' },
+      { url: 'https://www.hup.harvard.edu/books/9780674060784', type: 'academic', label: 'Helpman (2011) Understanding Global Trade — Harvard University Press' },
       { url: 'https://en.wikipedia.org/wiki/New_trade_theory', type: 'reference', label: 'Wikipedia: New trade theory — 新貿易理論の概説' },
     ],
   },
@@ -42422,7 +42422,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj', type: 'government', label: 'European Parliament (2016) Regulation 2016/679 (GDPR) — EUR-Lex' },
-      { url: 'https://doi.org/10.1017/9781108292825', type: 'academic', label: 'Kuner, C. (2020) Transborder Data Flows and Data Privacy Law — Oxford University Press' },
+      { url: 'https://academic.oup.com/book/5440', type: 'academic', label: 'Kuner, C. (2013) Transborder Data Flows and Data Privacy Law — Oxford University Press' },
       { url: 'https://en.wikipedia.org/wiki/General_Data_Protection_Regulation', type: 'reference', label: 'Wikipedia: GDPR — 一般データ保護規則の概要' },
     ],
   },
@@ -42591,7 +42591,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, K. et al. (1961) Capital-Labor Substitution and Economic Efficiency — REStat' },
-      { url: 'https://doi.org/10.1257/aer.104.6.1667', type: 'academic', label: 'Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica' },
+      { url: 'https://doi.org/10.3982/ECTA12807', type: 'academic', label: 'Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica' },
       { url: 'https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution', type: 'reference', label: 'Wikipedia: CES — CES生産関数の概要' },
     ],
   },
@@ -42656,7 +42656,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.3998/mpub.7687', type: 'academic', label: 'Buchanan, J. & Tullock, G. (1962) The Calculus of Consent — University of Michigan Press' },
-      { url: 'https://doi.org/10.1007/978-0-387-29907-7', type: 'academic', label: 'Mueller, D. (2003) Public Choice III — Cambridge University Press' },
+      { url: 'https://www.cambridge.org/highereducation/books/public-choice-iii/32B490B6DAE290EC773E4F4ACB7BB451', type: 'academic', label: 'Mueller, D. (2003) Public Choice III — Cambridge University Press' },
       { url: 'https://en.wikipedia.org/wiki/Public_choice', type: 'reference', label: 'Wikipedia: Public choice — 公共選択論の概要' },
     ],
   },
@@ -44290,7 +44290,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1257/pol.20130481', type: 'academic', label: 'Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers — American Economic Review' },
-      { url: 'https://doi.org/10.1016/j.jmoneco.2011.05.005', type: 'academic', label: 'Christiano et al. (2011) When Is the Government Spending Multiplier Large? — Journal of Political Economy' },
+      { url: 'https://doi.org/10.1086/659312', type: 'academic', label: 'Christiano et al. (2011) When Is the Government Spending Multiplier Large? — Journal of Political Economy' },
       { url: 'https://en.wikipedia.org/wiki/Fiscal_multiplier', type: 'reference', label: 'Wikipedia: Fiscal multiplier — 財政乗数の理論と実証的推定' },
     ],
   },
@@ -44498,7 +44498,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2549973', type: 'academic', label: 'Lerner (1943) Functional Finance and the Federal Debt — Social Research' },
-      { url: 'https://doi.org/10.4337/9781800882560', type: 'academic', label: 'Wray (2015) Modern Money Theory — Palgrave Macmillan' },
+      { url: 'https://doi.org/10.1057/9781137539922', type: 'academic', label: 'Wray (2015) Modern Money Theory — Palgrave Macmillan' },
       { url: 'https://en.wikipedia.org/wiki/Functional_finance', type: 'reference', label: 'Wikipedia: Functional finance — 機能的財政論とMMTの系譜' },
     ],
   },
@@ -46552,7 +46552,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・アレクシー ／ ジュリアン・ヴァーテン ／ ポール・ライニッシュ ／ 佐藤幸治',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511777141', type: 'academic', label: 'Alexy, R. (2002). A Theory of Constitutional Rights — Oxford UP' },
+      { url: 'https://global.oup.com/academic/product/a-theory-of-constitutional-rights-9780198258216', type: 'academic', label: 'Alexy, R. (2002). A Theory of Constitutional Rights — Oxford UP' },
       { url: 'https://en.wikipedia.org/wiki/Proportionality_(law)', type: 'reference', label: 'Wikipedia: Proportionality in law — administrative rights limitation' },
     ],
   },
@@ -46804,7 +46804,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フランシス・マウッパン ／ ダニエル・ヘンリー ／ 荒木尚志 ／ ダフニー・ゴッドフリー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/9781108595872', type: 'academic', label: 'Vosko, L. (2010). Managing the Margins — Oxford UP' },
+      { url: 'https://academic.oup.com/book/26113', type: 'academic', label: 'Vosko, L. (2010). Managing the Margins — Oxford UP' },
       { url: 'https://en.wikipedia.org/wiki/International_labour_law', type: 'reference', label: 'Wikipedia: International labour law — ILO conventions' },
     ],
   },
@@ -47236,7 +47236,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ポール・ウォームザー ／ スティーブン・バインブリッジ ／ フランク・イースターブルック ／ 江頭憲治郎',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-94-015-8015-0', type: 'academic', label: 'Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford UP' },
+      { url: 'https://ideas.repec.org/b/oxp/obooks/9780199227969.html', type: 'academic', label: 'Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford UP' },
       { url: 'https://en.wikipedia.org/wiki/Piercing_the_corporate_veil', type: 'reference', label: 'Wikipedia: Piercing the corporate veil — corporate liability' },
     ],
   },
@@ -47525,7 +47525,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/S0022109009990469', type: 'academic', label: 'Klein, A. & Zur, E. (2009) Entrepreneurial Shareholder Activism: Hedge Funds and Other Private Investors — Journal of Finance 64(1), 187–229（ヘッジファンド・アクティビズムの実証研究）' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2008.01432.x', type: 'academic', label: 'Klein, A. & Zur, E. (2009) Entrepreneurial Shareholder Activism: Hedge Funds and Other Private Investors — Journal of Finance 64(1), 187–229（ヘッジファンド・アクティビズムの実証研究）' },
       { url: 'https://en.wikipedia.org/wiki/Shareholder_activism', type: 'reference', label: 'Wikipedia: Shareholder activism — 株主アクティビズムの概説' },
     ],
   },
@@ -47914,7 +47914,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/S0065-2601(03)01006-2', type: 'academic', label: 'Wilson, T. D. & Gilbert, D. T. (2003) Affective Forecasting — Advances in Experimental Social Psychology, 35, 345–411（情動予測研究の体系的レビュー）' },
-      { url: 'https://doi.org/10.1037/0022-3514.79.5.821', type: 'academic', label: 'Gilbert, D. T. et al. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science, 15(1), 14–19（免疫無視の実証）' },
+      { url: 'https://doi.org/10.1111/j.0963-7214.2004.01501003.x', type: 'academic', label: 'Gilbert, D. T. et al. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science, 15(1), 14–19（免疫無視の実証）' },
       { url: 'https://doi.org/10.1023/A:1008012424582', type: 'academic', label: 'Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility — Journal of Economic Perspectives, 5(2), 193–206（情動予測と経済学）' },
       { url: 'https://en.wikipedia.org/wiki/Affective_forecasting', type: 'reference', label: 'Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect, duration bias' },
     ],
@@ -48548,7 +48548,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://elaws.e-gov.go.jp/document?lawid=417AC0000000086', type: 'government', label: '日本法務省 (2005) 会社法第847条（株主代表訴訟）e-Gov法令検索' },
-      { url: 'https://doi.org/10.1086/702079', type: 'academic', label: 'Easterbrook, F. H. & Fischel, D. R. (1991) The Economic Structure of Corporate Law — Harvard University Press（代表訴訟の経済分析）' },
+      { url: 'https://www.hup.harvard.edu/books/9780674235397', type: 'academic', label: 'Easterbrook, F. H. & Fischel, D. R. (1991) The Economic Structure of Corporate Law — Harvard University Press（代表訴訟の経済分析）' },
       { url: 'https://doi.org/10.2307/3480688', type: 'academic', label: 'Romano, R. (1991) The Shareholder Suit: Litigation Without Foundation? — Journal of Law, Economics, & Organization, 7(1), 55–87（代表訴訟の実証的批判）' },
       { url: 'https://en.wikipedia.org/wiki/Derivative_suit', type: 'reference', label: 'Wikipedia: Derivative suit — Foss v Harbottle, business judgment rule, Japan 847, multi-derivative action' },
     ],

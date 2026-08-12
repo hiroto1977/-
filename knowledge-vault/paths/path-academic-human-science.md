@@ -26,8 +26,8 @@ tags:
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
-- [[human-affordance-theory|アフォーダンス理論]]（接続 23）
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 23）
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]]（接続 23）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -304,6 +304,7 @@ tags:
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]]
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]]
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]]
+- [[human-affordance-theory|アフォーダンス理論]]
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]]
 - [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]]
 - [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]]
@@ -331,7 +332,6 @@ tags:
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]]
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]
-- [[human-big-five|ビッグファイブ（5因子性格モデル）]]
 - [[human-biopsychosocial-model|生物心理社会モデル]]
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]]
 - [[human-body-schema|身体図式（ボディスキーマ）]]

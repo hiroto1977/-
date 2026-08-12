@@ -36,11 +36,11 @@ Francisco J. Varela ／ Evan Thompson ／ Eleanor Rosch ／ George Lakoff ／ Ma
 - [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同じ思想家
 - [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同じ思想家
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
-- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

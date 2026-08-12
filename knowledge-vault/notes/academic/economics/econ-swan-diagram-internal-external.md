@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Swan, T. W. (1963) Longer-Run Problems of the Balance of Payments — Economic Record](https://doi.org/10.2307/2228226) `学術`
-- [Corden, W. M. (2002) Too Sensational: On the Choice of Exchange Rate Regimes — MIT Press](https://doi.org/10.1057/9781137377548) `学術`
+- [Corden, W. M. (2002) Too Sensational: On the Choice of Exchange Rate Regimes — MIT Press](https://direct.mit.edu/books/book/2465/Too-SensationalOn-the-Choice-of-Exchange-Rate) `学術`
 - [Wikipedia: Swan diagram — internal-external balance policy framework overview](https://en.wikipedia.org/wiki/Swan_diagram) `リファレンス`
 
 ## 関連概念

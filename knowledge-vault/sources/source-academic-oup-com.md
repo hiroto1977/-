@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 116
+cite_count: 118
 tags:
   - source-domain
   - index
@@ -10,15 +10,17 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **116 件**（学術 114 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **118 件**（学術 116 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — OxfordAcademic—CleanHandsDoctrineunderGeneralInternationalLaw
+- [[bizlaw-data-protection-gdpr-adequacy|GDPRと十分性認定——個人データの越境移転とプライバシー保護の国際的枠組み]] — Kuner,C.(2013)TransborderDataFlowsandDataPrivacyLaw—OxfordUniversityP…
 - [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — AccesstoJustice,DenialofJusticeandInternationalInvestmentLaw—European…
 - [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — InvestmentTribunalsasCourtsofAppeal?DenialofJustice—BritishYearbookof…
 - [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — Tudor—FairandEquitableTreatmentStandard—EuropeanJournalofInternationa…
 - [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — VictorP.Goldberg,'TheAchilleas:ForsakingForeseeability',CurrentLegalP…
+- [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]] — Vosko,L.(2010).ManagingtheMargins—OxfordUP
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — OxfordJournalofLegalStudies—Electroniccommunicationsandcontractformat…
 - [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]] — MarginofAppreciationandIncrementalisminECtHRCaseLaw—HumanRightsLawRev…
 - [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — Article26—TheViennaConventionsontheLawofTreaties:ACommentary(Oxford)

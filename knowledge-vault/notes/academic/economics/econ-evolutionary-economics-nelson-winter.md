@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Nelson, R.R. & Winter, S.G., An Evolutionary Theory of Economic Change, Harvard University Press (1982)](https://www.hup.harvard.edu/books/9780674272286) `学術`
-- [Nelson, R.R., The Sources of Economic Growth, Harvard University Press (1996)](https://doi.org/10.1093/0199248540.001.0001) `学術`
+- [Nelson, R.R., The Sources of Economic Growth, Harvard University Press (1996)](https://www.hup.harvard.edu/books/9780674001725) `学術`
 - [Evolutionary Economics — Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/evolutionary-economics/) `リファレンス`
 
 ## 関連概念

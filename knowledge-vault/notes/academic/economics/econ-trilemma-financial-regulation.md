@@ -31,6 +31,7 @@ Dirk Schoenmaker ／ Charles Goodhart
 - [EconPapers / RePEc — "The financial trilemma," Economics Letters v.111 y.2011 i.1 p.57-59.](https://econpapers.repec.org/RePEc:eee:ecolet:v:111:y:2011:i:1:p:57-59) `リファレンス`
 
 ## 関連概念
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 出典を共有
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
@@ -40,7 +41,6 @@ Dirk Schoenmaker ／ Charles Goodhart
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
 - [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

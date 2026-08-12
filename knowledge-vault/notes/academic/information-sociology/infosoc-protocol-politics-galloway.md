@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-surveillance-society|監視社会]] — 同じ思想家
-- [[human-theory-of-mind|心の理論]] — 出典を共有
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

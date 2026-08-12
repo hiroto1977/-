@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Buchanan, J. & Tullock, G. (1962) The Calculus of Consent — University of Michigan Press](https://doi.org/10.3998/mpub.7687) `学術`
-- [Mueller, D. (2003) Public Choice III — Cambridge University Press](https://doi.org/10.1007/978-0-387-29907-7) `学術`
+- [Mueller, D. (2003) Public Choice III — Cambridge University Press](https://www.cambridge.org/highereducation/books/public-choice-iii/32B490B6DAE290EC773E4F4ACB7BB451) `学術`
 - [Wikipedia: Public choice — 公共選択論の概要](https://en.wikipedia.org/wiki/Public_choice) `リファレンス`
 
 ## 関連概念

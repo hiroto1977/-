@@ -26,7 +26,7 @@ aliases:
 ポール・ウォームザー ／ スティーブン・バインブリッジ ／ フランク・イースターブルック ／ 江頭憲治郎
 
 ## 出典
-- [Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford UP](https://doi.org/10.1007/978-94-015-8015-0) `学術`
+- [Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford UP](https://ideas.repec.org/b/oxp/obooks/9780199227969.html) `学術`
 - [Wikipedia: Piercing the corporate veil — corporate liability](https://en.wikipedia.org/wiki/Piercing_the_corporate_veil) `リファレンス`
 
 ## 関連概念

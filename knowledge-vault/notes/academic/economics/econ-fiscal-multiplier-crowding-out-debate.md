@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers — American Economic Review](https://doi.org/10.1257/pol.20130481) `学術`
-- [Christiano et al. (2011) When Is the Government Spending Multiplier Large? — Journal of Political Economy](https://doi.org/10.1016/j.jmoneco.2011.05.005) `学術`
+- [Christiano et al. (2011) When Is the Government Spending Multiplier Large? — Journal of Political Economy](https://doi.org/10.1086/659312) `学術`
 - [Wikipedia: Fiscal multiplier — 財政乗数の理論と実証的推定](https://en.wikipedia.org/wiki/Fiscal_multiplier) `リファレンス`
 
 ## 関連概念

@@ -20,6 +20,7 @@ tags:
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
@@ -27,7 +28,6 @@ tags:
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 25）
-- [[bizlaw-toushiho|出資法]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -105,6 +105,7 @@ tags:
 - 1952年: [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]]
 - 1954年: [[bizlaw-employees-pension|厚生年金保険法]]
 - 1954年: [[bizlaw-interest-rate-restriction|利息制限法]]
+- 1954年: [[bizlaw-toushiho|出資法]]
 - 1955年: [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]]
 - 1958年: [[bizlaw-national-health-insurance|国民健康保険法]]
 - 1959年: [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]]
@@ -420,7 +421,6 @@ tags:
 - [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]]
 - [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]]
 - [[bizlaw-derivative-action-foss-harbottle|株主代表訴訟とフォス対ハーボトル原則]]
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]]
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]]
 - [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]]

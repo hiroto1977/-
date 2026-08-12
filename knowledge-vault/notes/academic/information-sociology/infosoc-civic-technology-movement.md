@@ -33,6 +33,8 @@ Jennifer Pahlka ／ Tim O'Reilly ／ Micah L. Sifry
 
 ## 関連概念
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 出典を共有
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
@@ -40,8 +42,6 @@ Jennifer Pahlka ／ Tim O'Reilly ／ Micah L. Sifry
 - [[infosoc-web3|Web3]] — 出典を共有
 - [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
-- [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
-- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

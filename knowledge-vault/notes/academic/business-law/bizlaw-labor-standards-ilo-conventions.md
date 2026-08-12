@@ -26,7 +26,7 @@ aliases:
 フランシス・マウッパン ／ ダニエル・ヘンリー ／ 荒木尚志 ／ ダフニー・ゴッドフリー
 
 ## 出典
-- [Vosko, L. (2010). Managing the Margins — Oxford UP](https://doi.org/10.1017/9781108595872) `学術`
+- [Vosko, L. (2010). Managing the Margins — Oxford UP](https://academic.oup.com/book/26113) `学術`
 - [Wikipedia: International labour law — ILO conventions](https://en.wikipedia.org/wiki/International_labour_law) `リファレンス`
 
 ## 関連概念

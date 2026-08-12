@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 55
+cite_count: 56
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **55 件**（学術 53 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **56 件**（学術 54 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -29,6 +29,7 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — Kahn,R.F.(1931)TheRelationofHomeInvestmenttoUnemployment—EconomicJour…
 - [[econ-path-dependence|経路依存]] — CambridgeUniversityPress—P.David,“Pathdependenceineconomicprocesses”
 - [[econ-probabilistic-voting|確率的投票モデル（probabilistic voting model）——有権者の選択が政策に確率的に反応すると仮定し、多次元でも均衡を与える選挙競争理論]] — Coughlin,PeterJ.(1992)ProbabilisticVotingTheory.CambridgeUniversityPr…
+- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — Mueller,D.(2003)PublicChoiceIII—CambridgeUniversityPress
 - [[econ-public-goods|公共財（非競合性・非排除性）]] — JournaloftheHistoryofEconomicThought(CambridgeUP)—サミュエルソン1954論文の評価
 - [[econ-rand-health-insurance-experiment|RAND医療保険実験（The RAND Health Insurance Experiment, HIE）——自己負担率を無作為に変え、医療需要の費用分担効果（モラルハザード）を実証した大規模社会実験]] — Newhouse,J.P.andtheInsuranceExperimentGroup(1993)FreeforAll?Lessonsfr…
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Blaug(1980/1992)TheMethodologyofEconomics,CambridgeUP

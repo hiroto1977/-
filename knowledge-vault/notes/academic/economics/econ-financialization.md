@@ -37,13 +37,13 @@ Greta R. Krippner / Gerald A. Epstein / Hyman P. Minsky
 - [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 出典を共有
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
 - [[econ-exit-voice-loyalty|離脱・発言・忠誠（ハーシュマン）]] — 出典を共有
 - [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
 - [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 出典を共有
-- [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

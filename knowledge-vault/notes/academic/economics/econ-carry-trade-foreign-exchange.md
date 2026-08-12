@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Brunnermeier, M. K., Nagel, S. & Pedersen, L. H. (2008) Carry Trades and Currency Crashes — NBER Macroeconomics Annual, 23, 313–347（キャリー崩壊の実証）](https://doi.org/10.1111/j.1540-6261.2008.01327.x) `学術`
 - [Lustig, H., Roussanov, N. & Verdelhan, A. (2011) Common Risk Factors in Currency Markets — Review of Financial Studies, 24(11), 3731–3777（FX共通リスクファクター）](https://doi.org/10.1093/qje/qjr014) `学術`
-- [Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）](https://doi.org/10.1016/j.jinteco.2015.01.002) `学術`
+- [Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）](https://doi.org/10.1111/j.1540-6261.2012.01728.x) `学術`
 - [Wikipedia: Carry (investment) — UIP puzzle, carry crash, yen carry trade, risk-off dynamics](https://en.wikipedia.org/wiki/Carry_(investment)) `リファレンス`
 
 ## 関連概念

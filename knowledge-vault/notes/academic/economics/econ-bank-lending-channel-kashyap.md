@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Kashyap & Stein (2000) What Do a Million Observations on Banks Say About the Transmission of Monetary Policy? — American Economic Review](https://doi.org/10.1257/aer.90.3.407) `学術`
-- [Kashyap, Stein & Wilcox (1993) Monetary Policy and Credit Conditions: Evidence from the Composition of External Finance — American Economic Review](https://doi.org/10.1016/S0304-3932(97)00072-2) `学術`
+- [Kashyap, Stein & Wilcox (1993) Monetary Policy and Credit Conditions: Evidence from the Composition of External Finance — American Economic Review](https://econpapers.repec.org/RePEc:aea:aecrev:v:83:y:1993:i:1:p:78-98) `学術`
 - [Wikipedia: Credit channel — 銀行貸出チャネルと信用チャネルの理論的概説](https://en.wikipedia.org/wiki/Credit_channel) `リファレンス`
 
 ## 関連概念

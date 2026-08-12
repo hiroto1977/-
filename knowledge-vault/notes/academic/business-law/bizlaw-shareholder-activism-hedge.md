@@ -26,7 +26,7 @@ aliases:
 マイケル・ブラフ ／ エドワード・コーヒー ／ ルシアン・ベブチャック ／ マーティン・リプトン
 
 ## 出典
-- [Brav, A. et al. (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance — Journal of Finance, 63(4), 1729–1775（株主アクティビズムと企業業績の大規模実証）](https://doi.org/10.1017/S0022109009990524) `学術`
+- [Brav, A. et al. (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance — Journal of Finance, 63(4), 1729–1775（株主アクティビズムと企業業績の大規模実証）](https://doi.org/10.1111/j.1540-6261.2008.01373.x) `学術`
 - [Coffee, J. C. & Petzold, D. (2015) The Wolf at the Door: The Impact of Hedge Fund Activism on Corporate Governance — Annals of Corporate Governance, 1(1), 1–94（長期的影響論）](https://doi.org/10.1093/jlb/lsv032) `学術`
 - [金融庁 (2023) コーポレートガバナンス・コード改訂版（スチュワードシップ責任・アクティビスト対応）](https://www.fsa.go.jp/singi/corporategovernance/siryou/20230331/01.pdf) `公的`
 - [Wikipedia: Shareholder activism — hedge fund campaigns, SEC 13D, short-termism, CGC Japan](https://en.wikipedia.org/wiki/Shareholder_activism) `リファレンス`

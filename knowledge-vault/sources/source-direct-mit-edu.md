@@ -2,7 +2,7 @@
 title: "direct.mit.edu"
 type: source-domain
 host: "direct.mit.edu"
-cite_count: 10
+cite_count: 12
 tags:
   - source-domain
   - index
@@ -10,10 +10,12 @@ tags:
 
 # direct.mit.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **10 件**（学術 10）
+> [!info] 出典ドメイン索引 ・ 引用 **12 件**（学術 12）
 
 ## このドメインを出典とする項目
 
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — Calvo&Vegh(1996)FromCurrencySubstitutiontoDollarizationandBeyond—inMo…
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — Corden,W.M.(2002)TooSensational:OntheChoiceofExchangeRateRegimes—MITP…
 - [[human-embodied-cognition-theory|身体化された認知]] — Varela,Thompson&Rosch—TheEmbodiedMind:CognitiveScienceandHumanExperie…
 - [[human-theory-of-mind|心の理論]] — MITPress—Baron-Cohen“Mindblindness:AnEssayonAutismandTheoryofMind”
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — Jackson(2014)—RethinkingRepair,MITPress

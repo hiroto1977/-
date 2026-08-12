@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Krugman (1979) Increasing Returns, Monopolistic Competition, and International Trade — Journal of International Economics](https://doi.org/10.1016/0022-1996(79)90017-5) `学術`
-- [Helpman (2011) Understanding Global Trade — Harvard University Press](https://doi.org/10.1111/j.1467-9396.2009.00871.x) `学術`
+- [Helpman (2011) Understanding Global Trade — Harvard University Press](https://www.hup.harvard.edu/books/9780674060784) `学術`
 - [Wikipedia: New trade theory — 新貿易理論の概説](https://en.wikipedia.org/wiki/New_trade_theory) `リファレンス`
 
 ## 関連概念
