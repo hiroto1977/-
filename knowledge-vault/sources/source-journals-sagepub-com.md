@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 169
+cite_count: 168
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **169 件**（学術 168 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **168 件**（学術 167 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -126,7 +126,6 @@ tags:
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — Roberts,K.H.(1989).NewChallengesinOrganizationalResearch:HighReliabil…
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — Roberts,K.H.(1990).ManagingHighReliabilityOrganizations.CaliforniaMan…
 - [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — Foss(2007)TheEmergingKnowledgeGovernanceApproach—OrganizationStudies2…
-- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — Szulanski,G.(1996)ExploringInternalStickiness—StrategicManagementJour…
 - [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — MarkHughes,“Leadingchanges:Whytransformationexplanationsfail,”Leaders…
 - [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — Cummings,Bridgman&Brown(2016),“Unfreezingchangeasthreesteps…”,HumanRe…
 - [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — Freeman,Carroll&Hannan(1983)LiabilityofNewness—ASQ/SAGE

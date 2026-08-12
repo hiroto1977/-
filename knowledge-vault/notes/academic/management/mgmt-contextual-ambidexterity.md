@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Gibson, C.B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209-226](https://doi.org/10.2307/20159573) `学術`
-- [Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management, 34(3), 375-409](https://doi.org/10.5465/amr.2009.0078) `学術`
+- [Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management, 34(3), 375-409](https://doi.org/10.1177/0149206308316058) `学術`
 - [O'Reilly, C.A. & Tushman, M.L. (2004) The Ambidextrous Organization — Harvard Business Review, 82(4), 74-81](https://doi.org/10.1287/orsc.1050.0134) `学術`
 
 ## 関連概念

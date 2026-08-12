@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 118
+cite_count: 119
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **118 件**（学術 116 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **119 件**（学術 117 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -123,6 +123,7 @@ tags:
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Negro,Hannan&Rao(2010)CategoricalContrastandAudienceAppeal—Industrial…
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — Grusky(1960)AdministrativeSuccessioninFormalOrganizations—SocialForce…
 - [[mgmt-glass-ceiling|ガラスの天井（グラス・シーリング）]] — Cotteretal.(2001)"TheGlassCeilingEffect"SocialForces80(2)
+- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — Thornton,P.H.,Ocasio,W.&Lounsbury,M.(2012)TheInstitutionalLogicsPersp…
 - [[mgmt-mbo|目標による管理（MBO）]] — OxfordAcademic—"PeterF.Drucker'sManagementbyObjectivesandSelf-Control…
 - [[mgmt-modularity|モジュール化]] — Thepowerofmodularitytoday:20yearsof"DesignRules"—IndustrialandCorpora…
 - [[mgmt-open-innovation|オープン・イノベーション]] — OpenInnovation—OxfordResearchEncyclopediaofBusinessandManagement(Oxfo…

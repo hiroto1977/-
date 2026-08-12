@@ -26,7 +26,7 @@ aliases:
 トーマス・ドナルドソン ／ トーマス・ダンフィ ／ リン・シャープ・ペイン ／ デニス・モーバーグ
 
 ## 出典
-- [Donaldson, T. & Dunfee, T.W. (1994) Toward a Unified Conception of Business Ethics — Academy of Management Review](https://link.springer.com/article/10.1007/BF01383757) `学術`
+- [Donaldson, T. & Dunfee, T.W. (1994) Toward a Unified Conception of Business Ethics — Academy of Management Review](https://doi.org/10.5465/amr.1994.9410210749) `学術`
 - [UN Global Compact Ten Principles — Universal Ethical Standards for Business](https://www.unglobalcompact.org/what-is-gc/mission/principles) `公的`
 - [Wikipedia: ビジネス倫理 — 社会契約理論と企業倫理の解説](https://ja.wikipedia.org/wiki/%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E5%80%AB%E7%90%86) `リファレンス`
 

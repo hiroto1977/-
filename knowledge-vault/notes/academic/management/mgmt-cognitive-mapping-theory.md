@@ -29,7 +29,7 @@ Robert Axelrod ／ Colin Eden ／ Anne Sigismund Huff ／ Fran Ackermann ／ Kar
 - [Axelrod (1976) Structure of Decision: The Cognitive Maps of Political Elites — Princeton University Press](https://doi.org/10.2307/2391519) `学術`
 - [Eden (1992) On the nature of cognitive maps — Journal of Management Studies](https://doi.org/10.1002/smj.4250130802) `学術`
 - [Huff (1990) Mapping Strategic Thought — Wiley](https://doi.org/10.5465/amr.1990.4308388) `学術`
-- [Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies](https://doi.org/10.1016/0024-6301(92)90172-W) `学術`
+- [Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies](https://doi.org/10.1111/j.1467-6486.1992.tb00667.x) `学術`
 - [Gary & Wood (2011) Mental models, decision rules, and performance heterogeneity — Strategic Management Journal](https://www.sciencedirect.com/science/article/pii/S0149206310001382) `学術`
 
 ## 関連概念

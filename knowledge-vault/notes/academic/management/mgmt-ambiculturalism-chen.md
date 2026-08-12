@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Chen (2008) Reconceptualizing the Competition-Cooperation Relationship: A Transparadox Perspective — Journal of Management Inquiry](https://doi.org/10.1177/1056492607312577) `学術`
-- [Chen & Miller (2015) Reconceptualizing Competitive Dynamics: A Multidimensional Framework — Strategic Management Journal](https://doi.org/10.5465/amr.2014.0044) `学術`
+- [Chen & Miller (2015) Reconceptualizing Competitive Dynamics: A Multidimensional Framework — Strategic Management Journal](https://doi.org/10.1002/smj.2245) `学術`
 - [Wikipedia: Competitive dynamics — 競争ダイナミクスと両面文化主義の概説](https://en.wikipedia.org/wiki/Competitive_dynamics) `リファレンス`
 
 ## 関連概念

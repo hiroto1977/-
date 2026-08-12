@@ -23669,7 +23669,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2391519', type: 'academic', label: 'Axelrod (1976) Structure of Decision: The Cognitive Maps of Political Elites — Princeton University Press' },
       { url: 'https://doi.org/10.1002/smj.4250130802', type: 'academic', label: 'Eden (1992) On the nature of cognitive maps — Journal of Management Studies' },
       { url: 'https://doi.org/10.5465/amr.1990.4308388', type: 'academic', label: 'Huff (1990) Mapping Strategic Thought — Wiley' },
-      { url: 'https://doi.org/10.1016/0024-6301(92)90172-W', type: 'academic', label: 'Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies' },
+      { url: 'https://doi.org/10.1111/j.1467-6486.1992.tb00667.x', type: 'academic', label: 'Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies' },
       { url: 'https://www.sciencedirect.com/science/article/pii/S0149206310001382', type: 'academic', label: 'Gary & Wood (2011) Mental models, decision rules, and performance heterogeneity — Strategic Management Journal' },
     ],
   },
@@ -23744,7 +23744,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1287/orsc.7.4.359', type: 'academic', label: 'Volberda (1996) Toward the flexible firm: How to remain vital in hypercompetitive environments — Organization Science' },
       { url: 'https://doi.org/10.5465/ame.2004.15268683', type: 'academic', label: 'Shimizu & Hitt (2004) Strategic flexibility: Organizational preparedness to reverse ineffective strategic decisions — Academy of Management Executive' },
       { url: 'https://doi.org/10.1002/smj.4250141010', type: 'academic', label: 'Sanchez (1993) Strategic flexibility, firm organization, and managerial work in dynamic markets — Advances in Strategic Management' },
-      { url: 'https://doi.org/10.1111/j.1467-6486.1998.00078.x', type: 'academic', label: 'Volberda (1998) Building the Flexible Firm — Oxford University Press' },
+      { url: 'https://global.oup.com/academic/product/building-the-flexible-firm-9780198295952', type: 'academic', label: 'Volberda (1998) Building the Flexible Firm — Oxford University Press' },
     ],
   },
   {
@@ -23906,8 +23906,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2634396', type: 'academic', label: 'March, J.G. (1991). Exploration and Exploitation in Organizational Learning. Organization Science, 2(1), 71-87.' },
       { url: 'https://doi.org/10.2307/41165933', type: 'academic', label: 'Tushman, M.L. & O\'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.' },
       { url: 'https://doi.org/10.2307/30040758', type: 'academic', label: 'Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.' },
-      { url: 'https://doi.org/10.5465/amr.2008.31193540', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.' },
-      { url: 'https://doi.org/10.1111/j.1467-8551.2009.00665.x', type: 'academic', label: 'O\'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.' },
+      { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.' },
+      { url: 'https://doi.org/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.' },
     ],
   },
   {
@@ -27544,7 +27544,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1007/978-1-4612-4634-3_9', type: 'academic', label: 'Wegner, D.M. 1987 Transactive memory: A contemporary analysis of the group mind. In Theories of Group Behavior, Springer 185-208' },
       { url: 'https://doi.org/10.1037/0021-9010.84.6.925', type: 'academic', label: 'Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Journal of Applied Psychology 84(6) 925-937' },
-      { url: 'https://doi.org/10.1287/orsc.14.5.587.16475', type: 'academic', label: 'Lewis, K. 2003 Measuring transactive memory systems in the field. Journal of Applied Psychology 88(4) 587-604' },
+      { url: 'https://doi.org/10.1037/0021-9010.88.4.587', type: 'academic', label: 'Lewis, K. 2003 Measuring transactive memory systems in the field. Journal of Applied Psychology 88(4) 587-604' },
     ],
   },
   {
@@ -28041,7 +28041,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://doi.org/10.2307/20159573', type: 'academic', label: 'Gibson, C.B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209-226' },
-      { url: 'https://doi.org/10.5465/amr.2009.0078', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management, 34(3), 375-409' },
+      { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management, 34(3), 375-409' },
       { url: 'https://doi.org/10.1287/orsc.1050.0134', type: 'academic', label: 'O\'Reilly, C.A. & Tushman, M.L. (2004) The Ambidextrous Organization — Harvard Business Review, 82(4), 74-81' },
     ],
   },
@@ -29034,7 +29034,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.semanticscholar.org/paper/Organizational-Silence%3A-A-Barrier-to-Change-and-in-Morrison-Milliken/5f80c0d72c5c5ef7be7bbd7c3527a90a29c7aa41', type: 'academic', label: 'Morrison, E. W. & Milliken, F. J. (2000) Organizational Silence: A Barrier to Change and Development in a Pluralistic World — Academy of Management Review, 25(4), 706–725' },
-      { url: 'https://doi.org/10.5465/AMR.2003.10196792', type: 'academic', label: 'Dyne, L. V., Ang, S. & Botero, I. C. (2003) Conceptualizing Employee Silence and Employee Voice as Multidimensional Constructs — Journal of Management Studies, 40(6), 1359–1392' },
+      { url: 'https://doi.org/10.1111/1467-6486.00384', type: 'academic', label: 'Dyne, L. V., Ang, S. & Botero, I. C. (2003) Conceptualizing Employee Silence and Employee Voice as Multidimensional Constructs — Journal of Management Studies, 40(6), 1359–1392' },
       { url: 'https://www.semanticscholar.org/paper/Voice%2C-Silence%2C-and-Diversity-in-21st-Century-Milliken-Morrison/11b02aacd0cf8bb54d1fd8b3e0a4b26ed91f2fc5', type: 'academic', label: 'Milliken, F. J., Morrison, E. W. & Hewlin, P. F. (2003) An Exploratory Study of Employee Silence — Journal of Management Studies, 40(6), 1453–1476' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_silence', type: 'reference', label: 'Wikipedia: Organizational silence — antecedents, typology, and consequences for organizational learning' },
     ],
@@ -29146,7 +29146,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1086/261111', type: 'academic', label: 'Fama, E. F. & Jensen, M. C. (1983) Separation of Ownership and Control — Journal of Law and Economics, 26(2), 301–325（ガバナンス理論の基礎）' },
-      { url: 'https://doi.org/10.1177/0149206306293759', type: 'academic', label: 'Zhang, Y. & Rajagopalan, N. (2010) Once an Outsider, Always an Outsider? CEO Origin, Strategic Change, and Firm Performance — Strategic Management Journal, 31(3), 334–346' },
+      { url: 'https://doi.org/10.1002/smj.812', type: 'academic', label: 'Zhang, Y. & Rajagopalan, N. (2010) Once an Outsider, Always an Outsider? CEO Origin, Strategic Change, and Firm Performance — Strategic Management Journal, 31(3), 334–346' },
       { url: 'https://doi.org/10.5465/amr.1994.9410210752', type: 'academic', label: 'Shen, W. & Cannella, A. A. (2002) Power Dynamics Within Top Management and Their Impacts on CEO Dismissal Followed by Inside Succession — Academy of Management Journal, 45(6), 1195–1206' },
       { url: 'https://en.wikipedia.org/wiki/Succession_planning', type: 'reference', label: 'Wikipedia: Succession planning — CEO succession types, board oversight, and empirical evidence on performance' },
     ],
@@ -29511,7 +29511,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0022-3514.78.2.273', type: 'academic', label: 'Aron, A., Norman, C. C., Aron, E. N., McKenna, C. & Heyman, R. E. (2000) Couples\' Shared Participation in Novel and Arousing Activities and Experienced Relationship Quality — Journal of Personality and Social Psychology, 78(2), 273–284' },
       { url: 'https://doi.org/10.1177/0265407508090878', type: 'academic', label: 'Aron, A. & Aron, E. N. (1986) Love and the Expansion of Self: Understanding Attraction and Satisfaction — Hemisphere Publishing（自己拡張モデルの原典）' },
-      { url: 'https://doi.org/10.1111/j.1467-6494.1991.tb00204.x', type: 'academic', label: 'Aron, A., Aron, E. N. & Smollan, D. (1992) Inclusion of Other in the Self Scale and the Structure of Interpersonal Closeness — Journal of Personality and Social Psychology, 63(4), 596–612' },
+      { url: 'https://doi.org/10.1037/0022-3514.63.4.596', type: 'academic', label: 'Aron, A., Aron, E. N. & Smollan, D. (1992) Inclusion of Other in the Self Scale and the Structure of Interpersonal Closeness — Journal of Personality and Social Psychology, 63(4), 596–612' },
       { url: 'https://en.wikipedia.org/wiki/Self-expansion_model', type: 'reference', label: 'Wikipedia: Self-expansion model — Aron & Aron, including other in self, relationship boredom, novel activities' },
     ],
   },
@@ -29819,7 +29819,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0033-295X.100.2.204', type: 'academic', label: 'Buss, D. M. & Schmitt, D. P. (1993) Sexual Strategies Theory: An Evolutionary Perspective on Human Mating — Psychological Review, 100(2), 204–232（SSTの原典）' },
       { url: 'https://doi.org/10.1017/S0140525X00023992', type: 'academic', label: 'Buss, D. M. et al. (1989) Sex Differences in Human Mate Preferences: Evolutionary Hypotheses Tested in 37 Cultures — Behavioral and Brain Sciences, 12(1), 1–14（37文化横断研究）' },
-      { url: 'https://doi.org/10.1017/S0140525X01003939', type: 'academic', label: 'Eagly, A. H. & Wood, W. (1999) The Origins of Sex Differences in Human Behavior — American Psychologist, 54(6), 408–423（SST批判：社会構造モデル）' },
+      { url: 'https://doi.org/10.1037/0003-066X.54.6.408', type: 'academic', label: 'Eagly, A. H. & Wood, W. (1999) The Origins of Sex Differences in Human Behavior — American Psychologist, 54(6), 408–423（SST批判：社会構造モデル）' },
       { url: 'https://en.wikipedia.org/wiki/Sexual_strategies_theory', type: 'reference', label: 'Wikipedia: Sexual strategies theory — Buss & Schmitt, short/long-term mating, cross-cultural evidence, critique' },
     ],
   },
@@ -29916,7 +29916,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.5465/amr.1984.4277608', type: 'academic', label: 'Daft, R. L. & Weick, K. E. (1984) Toward a Model of Organizations as Interpretation Systems — Academy of Management Review, 9(2), 284–295（エナクトメントと解釈システムの原典）' },
-      { url: 'https://doi.org/10.5465/amr.1995.9512280024', type: 'academic', label: 'Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science, 6(3), 280–321（文献レビュー）' },
+      { url: 'https://doi.org/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science, 6(3), 280–321（文献レビュー）' },
       { url: 'https://doi.org/10.2307/259373', type: 'academic', label: 'Prahalad, C. K. & Bettis, R. A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — Strategic Management Journal, 7(6), 485–501（ドミナント・ロジック）' },
       { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — schemas, enactment, sensemaking, cognitive biases, TMT diversity' },
     ],
@@ -30168,7 +30168,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=8827', type: 'reference', label: 'Gersick, K. E. et al. (1997) Generation to Generation: Life Cycles of the Family Business — Harvard Business School Press（三円モデルの体系書）' },
-      { url: 'https://doi.org/10.1111/j.1741-6248.2007.00080.x', type: 'academic', label: 'Gomez-Mejia, L. R. et al. (2007) Socioemotional Wealth and Business Risks in Family-Controlled Firms — Administrative Science Quarterly, 52(1), 106–137（SEW理論の原典）' },
+      { url: 'https://doi.org/10.2189/asqu.52.1.106', type: 'academic', label: 'Gomez-Mejia, L. R. et al. (2007) Socioemotional Wealth and Business Risks in Family-Controlled Firms — Administrative Science Quarterly, 52(1), 106–137（SEW理論の原典）' },
       { url: 'https://doi.org/10.1111/j.1540-6520.2010.00407.x', type: 'academic', label: 'Miller, D. & Le Breton-Miller, I. (2005) Managing for the Long Run: Lessons in Competitive Advantage from Great Family Businesses — Harvard Business Review Press（ファミリービジネスの長期志向）' },
       { url: 'https://en.wikipedia.org/wiki/Family_business', type: 'reference', label: 'Wikipedia: Family business — three-circle model, Gersick, succession, SEW, governance structures' },
     ],
@@ -30280,7 +30280,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1525/california/9780520076105.003.0005', type: 'academic', label: 'Friedland, R. & Alford, R. R. (1991) Bringing Society Back In: Symbols, Practices and Institutional Contradictions — in Powell & DiMaggio eds., The New Institutionalism in Organizational Analysis（原典）' },
-      { url: 'https://doi.org/10.1177/0730888409335053', type: 'academic', label: 'Thornton, P. H., Ocasio, W. & Lounsbury, M. (2012) The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process — Oxford University Press（制度的ロジック観点の体系書）' },
+      { url: 'https://academic.oup.com/book/35363', type: 'academic', label: 'Thornton, P. H., Ocasio, W. & Lounsbury, M. (2012) The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process — Oxford University Press（制度的ロジック観点の体系書）' },
       { url: 'https://doi.org/10.5465/amj.2013.0670', type: 'academic', label: 'Greenwood, R. et al. (2011) Theorizing Change: The Role of Professional Associations in the Transformation of Institutionalized Fields — Academy of Management Journal, 45(1), 58–80（ロジック変化の制度論）' },
       { url: 'https://en.wikipedia.org/wiki/Institutional_logic', type: 'reference', label: 'Wikipedia: Institutional logic — Friedland & Alford, Thornton, plurality, hybrid organizations, translation' },
     ],
@@ -30364,7 +30364,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1002/smj.4250120604', type: 'academic', label: 'Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）' },
-      { url: 'https://doi.org/10.1002/smj.4250130807', type: 'academic', label: 'Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）' },
+      { url: 'https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988', type: 'academic', label: 'Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）' },
       { url: 'https://doi.org/10.5465/amj.2007.24160971', type: 'academic', label: 'Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）' },
       { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — Weick, Gioia sensegiving, strategic ambiguity, organizational change' },
     ],
@@ -39272,7 +39272,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B.L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist 56(3)' },
       { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-Build — Fredrickson positive emotions theory overview' },
-      { url: 'https://doi.org/10.1080/17439760.2011.558684', type: 'academic', label: 'Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)' },
+      { url: 'https://doi.org/10.1037/a0033584', type: 'academic', label: 'Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)' },
     ],
   },
   {
@@ -39336,7 +39336,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1177/1056492607312577', type: 'academic', label: 'Chen (2008) Reconceptualizing the Competition-Cooperation Relationship: A Transparadox Perspective — Journal of Management Inquiry' },
-      { url: 'https://doi.org/10.5465/amr.2014.0044', type: 'academic', label: 'Chen & Miller (2015) Reconceptualizing Competitive Dynamics: A Multidimensional Framework — Strategic Management Journal' },
+      { url: 'https://doi.org/10.1002/smj.2245', type: 'academic', label: 'Chen & Miller (2015) Reconceptualizing Competitive Dynamics: A Multidimensional Framework — Strategic Management Journal' },
       { url: 'https://en.wikipedia.org/wiki/Competitive_dynamics', type: 'reference', label: 'Wikipedia: Competitive dynamics — 競争ダイナミクスと両面文化主義の概説' },
     ],
   },
@@ -40591,7 +40591,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1287/orsc.2.1.1', type: 'academic', label: 'March, J. G. (1994) A Primer on Decision Making — Free Press' },
-      { url: 'https://doi.org/10.1002/9781118785317.weom040149', type: 'academic', label: 'Gavetti, G. et al. (2012) The Behavioral Theory of the Firm — Organization Science' },
+      { url: 'https://doi.org/10.1080/19416520.2012.656841', type: 'academic', label: 'Gavetti, G. et al. (2012) The Behavioral Theory of the Firm — Academy of Management Annals 6(1), 1–40' },
       { url: 'https://en.wikipedia.org/wiki/Behavioral_economics', type: 'reference', label: 'Wikipedia: Behavioral economics — bounded rationality and decision-making overview' },
     ],
   },
@@ -41860,8 +41860,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テプポ・フェリン ／ ニコライ・フォス ／ ジェイ・バーニー ／ マーサ・フェルドマン ／ シドニー・ウィンター',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/0149206311427514', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
-      { url: 'https://doi.org/10.1002/smj.2148', type: 'academic', label: 'Barney & Felin (2013) What Are Microfoundations? — Academy of Management Perspectives' },
+      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
+      { url: 'https://doi.org/10.5465/amp.2012.0107', type: 'academic', label: 'Barney & Felin (2013) What Are Microfoundations? — Academy of Management Perspectives' },
       { url: 'https://en.wikipedia.org/wiki/Microfoundations', type: 'reference', label: 'Wikipedia: Microfoundations — ミクロ的基礎の経済学・経営学における議論の概説' },
     ],
   },
@@ -41991,7 +41991,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — Academy of Management Review' },
-      { url: 'https://doi.org/10.5465/19416520.2013.795155', type: 'academic', label: 'Jarzabkowski, Lê & Van de Ven (2013) Responding to Competing Strategic Demands — Organization Science' },
+      { url: 'https://doi.org/10.1177/1476127013481016', type: 'academic', label: 'Jarzabkowski, Lê & Van de Ven (2013) Responding to Competing Strategic Demands — Strategic Organization 11(3), 245–280' },
       { url: 'https://en.wikipedia.org/wiki/Paradox_theory', type: 'reference', label: 'Wikipedia: Paradox theory — 組織パラドックス理論の概説' },
     ],
   },
@@ -42173,7 +42173,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1002/smj.331', type: 'academic', label: 'Adner, R. & Helfat, C. (2003) Corporate Effects and Dynamic Managerial Capabilities — SMJ' },
-      { url: 'https://doi.org/10.1287/orsc.1060.0253', type: 'academic', label: 'Helfat, C. & Martin, J. (2015) Dynamic Managerial Capabilities — Journal of Management' },
+      { url: 'https://doi.org/10.1177/0149206314561301', type: 'academic', label: 'Helfat, C. & Martin, J. (2015) Dynamic Managerial Capabilities — Journal of Management' },
       { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities — ダイナミック・ケイパビリティの概要' },
     ],
   },
@@ -43834,7 +43834,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ウィラード・マッカーシー ／ スーザン・ホッキー ／ アラン・リウ ／ マシュー・ジョッカーズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/llc/fqp036', type: 'academic', label: 'McCarty, W. (2005) Humanities Computing — Palgrave Macmillan' },
+      { url: 'https://link.springer.com/book/9781403935045', type: 'academic', label: 'McCarty, W. (2005) Humanities Computing — Palgrave Macmillan' },
       { url: 'https://en.wikipedia.org/wiki/Digital_humanities', type: 'reference', label: 'Wikipedia: Digital humanities — computational methods in arts' },
     ],
   },
@@ -45099,7 +45099,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ガブリエル・シルガドー ／ ウルフ・ハンソン ／ ビルゲル・ウィリアム ／ スジット・クマー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/014920639602200302', type: 'academic', label: 'Szulanski, G. (1996) Exploring Internal Stickiness — Strategic Management Journal' },
+      { url: 'https://doi.org/10.1002/smj.4250171105', type: 'academic', label: 'Szulanski, G. (1996) Exploring Internal Stickiness — Strategic Management Journal' },
       { url: 'https://hbr.org/2009/10/reverse-innovation', type: 'media', label: 'Govindarajan, V. & Ramamurti, R. (2011) Reverse Innovation — Harvard Business Review' },
       { url: 'https://ja.wikipedia.org/wiki/%E7%9F%A5%E8%AD%98%E7%A7%BB%E8%BB%A2', type: 'reference', label: 'Wikipedia: 知識移転 — 多国籍企業における知識管理の解説' },
     ],
@@ -45177,7 +45177,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'トーマス・ドナルドソン ／ トーマス・ダンフィ ／ リン・シャープ・ペイン ／ デニス・モーバーグ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://link.springer.com/article/10.1007/BF01383757', type: 'academic', label: 'Donaldson, T. & Dunfee, T.W. (1994) Toward a Unified Conception of Business Ethics — Academy of Management Review' },
+      { url: 'https://doi.org/10.5465/amr.1994.9410210749', type: 'academic', label: 'Donaldson, T. & Dunfee, T.W. (1994) Toward a Unified Conception of Business Ethics — Academy of Management Review' },
       { url: 'https://www.unglobalcompact.org/what-is-gc/mission/principles', type: 'government', label: 'UN Global Compact Ten Principles — Universal Ethical Standards for Business' },
       { url: 'https://ja.wikipedia.org/wiki/%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E5%80%AB%E7%90%86', type: 'reference', label: 'Wikipedia: ビジネス倫理 — 社会契約理論と企業倫理の解説' },
     ],
@@ -47140,7 +47140,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・タシュマン ／ チャールズ・オライリー ／ ウェンディ・スミス ／ マリアン・レウィス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.5465/amr.2013.0255', type: 'academic', label: 'Rosing, K. et al. (2011). Ambidextrous leadership — Journal of Applied Psychology' },
+      { url: 'https://doi.org/10.1016/j.leaqua.2011.07.014', type: 'academic', label: 'Rosing, K. et al. (2011). Ambidextrous leadership — The Leadership Quarterly 22(5), 956–974' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — ambidextrous leadership' },
     ],
   },
@@ -47573,7 +47573,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・ウォルシュ ／ チャールズ・ファーブ ／ ウィリアム・オカジオ ／ ウィリアム・ストーブナー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/0149206395021006002', type: 'academic', label: 'Walsh, J.P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3), 280–321（経営者認知論の包括的レビュー）' },
+      { url: 'https://doi.org/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J.P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3), 280–321（経営者認知論の包括的レビュー）' },
       { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — 経営者認知論の概説' },
     ],
   },
@@ -47957,7 +47957,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2666937', type: 'academic', label: 'Pratt, M. G. & Foreman, P. O. (2000) Classifying Managerial Responses to Multiple Organizational Identities — Academy of Management Review, 25(1), 18–42（アイデンティティ管理類型）' },
       { url: 'https://doi.org/10.5465/amr.2000.2791609', type: 'academic', label: 'Ashforth, B. E. & Mael, F. (2004) Social Identity Theory and the Organization — Academy of Management Review, 14(1), 20–39（組織アイデンティティの社会的アイデンティティ理論との統合）' },
-      { url: 'https://doi.org/10.1002/job.2064', type: 'academic', label: 'Ibarra, H. & Barbulescu, R. (2010) Identity as Narrative: Prevalence, Effectiveness, and Consequences of Narrative Identity Work in Macro Work Role Transitions — Academy of Management Review, 35(1), 135–154（物語的アイデンティティ・ワーク）' },
+      { url: 'https://doi.org/10.5465/amr.35.1.zok135', type: 'academic', label: 'Ibarra, H. & Barbulescu, R. (2010) Identity as Narrative: Prevalence, Effectiveness, and Consequences of Narrative Identity Work in Macro Work Role Transitions — Academy of Management Review, 35(1), 135–154（物語的アイデンティティ・ワーク）' },
       { url: 'https://en.wikipedia.org/wiki/Identity_work', type: 'reference', label: 'Wikipedia: Identity work — Pratt, Ashforth, identity threat, compartmentalization, socialization' },
     ],
   },
@@ -48111,7 +48111,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1093/oso/9780195092691.001.0001', type: 'academic', label: 'Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company: How Japanese Companies Create the Dynamics of Innovation — Oxford University Press（SECIモデルの原典）' },
       { url: 'https://doi.org/10.2307/259056', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science, 5(1), 14–37（SECIの先行論文）' },
-      { url: 'https://doi.org/10.1016/j.riob.2008.06.001', type: 'academic', label: 'Nonaka, I. & von Krogh, G. (2009) Tacit Knowledge and Knowledge Conversion: Controversy and Advancement in Organizational Knowledge Creation Theory — Organization Science, 20(3), 635–652（理論の精緻化・批判への応答）' },
+      { url: 'https://doi.org/10.1287/orsc.1080.0412', type: 'academic', label: 'Nonaka, I. & von Krogh, G. (2009) Tacit Knowledge and Knowledge Conversion: Controversy and Advancement in Organizational Knowledge Creation Theory — Organization Science, 20(3), 635–652（理論の精緻化・批判への応答）' },
       { url: 'https://en.wikipedia.org/wiki/SECI_model', type: 'reference', label: 'Wikipedia: SECI model — Nonaka & Takeuchi, tacit/explicit knowledge, Ba, knowledge conversion' },
     ],
   },
@@ -48139,7 +48139,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1016/0883-9026(91)90028-7', type: 'academic', label: 'Zahra, S. A. (1991) Predictors and Financial Outcomes of Corporate Entrepreneurship — Journal of Business Venturing, 6(4), 259–285（CEと財務業績の実証）' },
       { url: 'https://doi.org/10.2307/2392619', type: 'academic', label: 'Burgelman, R. A. (1983) A Process Model of Internal Corporate Venturing in the Diversified Major Firm — Administrative Science Quarterly, 28(2), 223–244（内部ベンチャー過程モデル）' },
-      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199601)17:1<135::AID-SMJ2>3.0.CO;2-N', type: 'academic', label: 'Lumpkin, G. T. & Dess, G. G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance — Academy of Management Review, 21(1), 135–172（EO概念の体系化）' },
+      { url: 'https://doi.org/10.5465/amr.1996.9602161568', type: 'academic', label: 'Lumpkin, G. T. & Dess, G. G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance — Academy of Management Review, 21(1), 135–172（EO概念の体系化）' },
       { url: 'https://en.wikipedia.org/wiki/Corporate_entrepreneurship', type: 'reference', label: 'Wikipedia: Corporate entrepreneurship — Zahra, Burgelman, entrepreneurial orientation, intrapreneurship' },
     ],
   },

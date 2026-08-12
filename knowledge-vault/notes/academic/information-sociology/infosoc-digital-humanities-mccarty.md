@@ -26,7 +26,7 @@ aliases:
 ウィラード・マッカーシー ／ スーザン・ホッキー ／ アラン・リウ ／ マシュー・ジョッカーズ
 
 ## 出典
-- [McCarty, W. (2005) Humanities Computing — Palgrave Macmillan](https://doi.org/10.1093/llc/fqp036) `学術`
+- [McCarty, W. (2005) Humanities Computing — Palgrave Macmillan](https://link.springer.com/book/9781403935045) `学術`
 - [Wikipedia: Digital humanities — computational methods in arts](https://en.wikipedia.org/wiki/Digital_humanities) `リファレンス`
 
 ## 関連概念

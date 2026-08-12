@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Friedland, R. & Alford, R. R. (1991) Bringing Society Back In: Symbols, Practices and Institutional Contradictions — in Powell & DiMaggio eds., The New Institutionalism in Organizational Analysis（原典）](https://doi.org/10.1525/california/9780520076105.003.0005) `学術`
-- [Thornton, P. H., Ocasio, W. & Lounsbury, M. (2012) The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process — Oxford University Press（制度的ロジック観点の体系書）](https://doi.org/10.1177/0730888409335053) `学術`
+- [Thornton, P. H., Ocasio, W. & Lounsbury, M. (2012) The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process — Oxford University Press（制度的ロジック観点の体系書）](https://academic.oup.com/book/35363) `学術`
 - [Greenwood, R. et al. (2011) Theorizing Change: The Role of Professional Associations in the Transformation of Institutionalized Fields — Academy of Management Journal, 45(1), 58–80（ロジック変化の制度論）](https://doi.org/10.5465/amj.2013.0670) `学術`
 - [Wikipedia: Institutional logic — Friedland & Alford, Thornton, plurality, hybrid organizations, translation](https://en.wikipedia.org/wiki/Institutional_logic) `リファレンス`
 

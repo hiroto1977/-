@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）](https://doi.org/10.1002/smj.4250120604) `学術`
-- [Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）](https://doi.org/10.1002/smj.4250130807) `学術`
+- [Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）](https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988) `学術`
 - [Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）](https://doi.org/10.5465/amj.2007.24160971) `学術`
 - [Wikipedia: Sensemaking — Weick, Gioia sensegiving, strategic ambiguity, organizational change](https://en.wikipedia.org/wiki/Sensemaking) `リファレンス`
 

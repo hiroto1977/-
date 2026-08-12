@@ -15124,7 +15124,6 @@
 {"a":"infosoc-digital-divide-warschauer","b":"infosoc-media-literacy","type":"shares-source","score":2000}
 {"a":"infosoc-digital-divide-warschauer","b":"infosoc-second-level-digital-divide","type":"same-category","score":412}
 {"a":"infosoc-digital-divide-warschauer","b":"mgmt-lmx-theory","type":"shares-source","score":2500}
-{"a":"infosoc-digital-divide-warschauer","b":"mgmt-paradox-of-organizing","type":"shares-source","score":3333}
 {"a":"infosoc-digital-dualism","b":"infosoc-digital-sovereignty-floridi","type":"same-category","score":435}
 {"a":"infosoc-digital-dualism","b":"infosoc-information-ecology-theory","type":"shares-source","score":2000}
 {"a":"infosoc-digital-dualism","b":"infosoc-media-ecology","type":"shares-source","score":2500}
@@ -19164,6 +19163,7 @@
 {"a":"mgmt-lmx-theory","b":"mgmt-organizational-commitment","type":"shares-source","score":5000}
 {"a":"mgmt-lmx-theory","b":"mgmt-paradox-of-organizing","type":"shares-source","score":5000}
 {"a":"mgmt-lmx-theory","b":"mgmt-relational-leadership","type":"shares-source","score":5000}
+{"a":"mgmt-lmx-theory","b":"mgmt-sensegiving-gioia","type":"shares-source","score":5000}
 {"a":"mgmt-lmx-theory","b":"mgmt-sensemaking-weick","type":"shares-source","score":2500}
 {"a":"mgmt-lmx-theory-graen","b":"mgmt-strategic-consensus-bourgeois","type":"same-category","score":432}
 {"a":"mgmt-logical-incrementalism-quinn","b":"mgmt-mintzberg-5p","type":"shares-thinker","score":10000}
@@ -19487,6 +19487,7 @@
 {"a":"mgmt-organizational-virtuousness","b":"mgmt-regulatory-focus-theory-higgins","type":"same-category","score":422}
 {"a":"mgmt-organizational-virtuousness","b":"mgmt-thriving-at-work-spreitzer","type":"shares-source","score":3333}
 {"a":"mgmt-paradox-mindset","b":"mgmt-paradox-theory-of-leadership","type":"same-category","score":436}
+{"a":"mgmt-paradox-of-organizing","b":"mgmt-sensegiving-gioia","type":"shares-source","score":10000}
 {"a":"mgmt-paradox-of-organizing","b":"mgmt-sensemaking-enactment-weick","type":"shares-thinker","score":10000}
 {"a":"mgmt-paradox-of-organizing","b":"mgmt-strategic-alignment-model","type":"same-category","score":410}
 {"a":"mgmt-paradox-of-success","b":"mgmt-strategic-choice-theory","type":"shares-thinker","score":3333}

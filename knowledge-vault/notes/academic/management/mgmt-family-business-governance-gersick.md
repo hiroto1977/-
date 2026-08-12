@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Gersick, K. E. et al. (1997) Generation to Generation: Life Cycles of the Family Business — Harvard Business School Press（三円モデルの体系書）](https://www.hbs.edu/faculty/Pages/item.aspx?num=8827) `リファレンス`
-- [Gomez-Mejia, L. R. et al. (2007) Socioemotional Wealth and Business Risks in Family-Controlled Firms — Administrative Science Quarterly, 52(1), 106–137（SEW理論の原典）](https://doi.org/10.1111/j.1741-6248.2007.00080.x) `学術`
+- [Gomez-Mejia, L. R. et al. (2007) Socioemotional Wealth and Business Risks in Family-Controlled Firms — Administrative Science Quarterly, 52(1), 106–137（SEW理論の原典）](https://doi.org/10.2189/asqu.52.1.106) `学術`
 - [Miller, D. & Le Breton-Miller, I. (2005) Managing for the Long Run: Lessons in Competitive Advantage from Great Family Businesses — Harvard Business Review Press（ファミリービジネスの長期志向）](https://doi.org/10.1111/j.1540-6520.2010.00407.x) `学術`
 - [Wikipedia: Family business — three-circle model, Gersick, succession, SEW, governance structures](https://en.wikipedia.org/wiki/Family_business) `リファレンス`
 

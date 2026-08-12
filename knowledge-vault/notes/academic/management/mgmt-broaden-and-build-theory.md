@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Fredrickson, B.L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist 56(3)](https://doi.org/10.1037/0003-066X.56.3.218) `学術`
 - [Wikipedia: Broaden-and-Build — Fredrickson positive emotions theory overview](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
-- [Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)](https://doi.org/10.1080/17439760.2011.558684) `学術`
+- [Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)](https://doi.org/10.1037/a0033584) `学術`
 
 ## 関連概念
 - [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — 分野横断

@@ -26,8 +26,8 @@ aliases:
 テプポ・フェリン ／ ニコライ・フォス ／ ジェイ・バーニー ／ マーサ・フェルドマン ／ シドニー・ウィンター
 
 ## 出典
-- [Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals](https://doi.org/10.1177/0149206311427514) `学術`
-- [Barney & Felin (2013) What Are Microfoundations? — Academy of Management Perspectives](https://doi.org/10.1002/smj.2148) `学術`
+- [Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals](https://doi.org/10.5465/19416520.2015.1007651) `学術`
+- [Barney & Felin (2013) What Are Microfoundations? — Academy of Management Perspectives](https://doi.org/10.5465/amp.2012.0107) `学術`
 - [Wikipedia: Microfoundations — ミクロ的基礎の経済学・経営学における議論の概説](https://en.wikipedia.org/wiki/Microfoundations) `リファレンス`
 
 ## 関連概念

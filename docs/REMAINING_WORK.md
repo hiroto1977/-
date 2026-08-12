@@ -274,13 +274,20 @@ compliance / subsidy / counselor / econ-history のデータ（LITE は
 
 ---
 
-## 出典の DOI プレフィックス照合 — 残り 47 件（134 件から着手済み）
+## 出典の DOI プレフィックス照合 — 残り 18 件（134 件から着手済み）
 
 `npm run lint:doi-prefix`（verify:all / CI に配線済み）が 949 件の DOI 出典を照合し、
-当初 134 件の矛盾を検出した。**うち 87 件を処理済み**（DOI 差し替え・書誌 URL 化 85 件
-＋ ルール修正 2 件）。残り 47 件は台帳 `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
+当初 134 件の矛盾を検出した。**うち 116 件を処理済み**（DOI 差し替え・書誌 URL 化 114 件
+＋ ルール修正 2 件）。残り 18 件は台帳 `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
 「未確認」として退避してある。台帳は双方向なので、直したら消すことが強制される。
-ISBN 台帳のほうは 24 → 21 件（プレフィックス修正と重なった分が解消）。
+ISBN 台帳は 24 → 21 件、識別子衝突台帳は 61 → 58 件（いずれもプレフィックス修正と
+重なった分が解消）。
+
+**残り 18 件はいずれも「ラベルの文献そのものが疑わしい」型**で、DOI の差し替えでは
+直らない。例: `bizlaw-anti-money-laundering-fatf` のラベル
+「Broome, A. (2009) The Global Economic Crisis and FATF — Routledge」は**その書籍自体が
+実在を確認できない**（André Broome の Routledge 危機本は *Global Governance in Crisis*
+で書名も年も違う）。出典ごと差し替える判断が要るので、機械的には進められない。
 
 **照合は 3 並列 × 12 件で回した。** 前回 4 並列 × 34 件では全員が検索予算切れで
 打ち切られたので、実測した上限（1 セッション 30〜40 件）に合わせて絞ったところ、

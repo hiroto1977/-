@@ -26,7 +26,7 @@ aliases:
 ガブリエル・シルガドー ／ ウルフ・ハンソン ／ ビルゲル・ウィリアム ／ スジット・クマー
 
 ## 出典
-- [Szulanski, G. (1996) Exploring Internal Stickiness — Strategic Management Journal](https://journals.sagepub.com/doi/10.1177/014920639602200302) `学術`
+- [Szulanski, G. (1996) Exploring Internal Stickiness — Strategic Management Journal](https://doi.org/10.1002/smj.4250171105) `学術`
 - [Govindarajan, V. & Ramamurti, R. (2011) Reverse Innovation — Harvard Business Review](https://hbr.org/2009/10/reverse-innovation) `メディア`
 - [Wikipedia: 知識移転 — 多国籍企業における知識管理の解説](https://ja.wikipedia.org/wiki/%E7%9F%A5%E8%AD%98%E7%A7%BB%E8%BB%A2) `リファレンス`
 

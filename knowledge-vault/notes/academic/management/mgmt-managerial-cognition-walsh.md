@@ -26,7 +26,7 @@ aliases:
 ジェームズ・ウォルシュ ／ チャールズ・ファーブ ／ ウィリアム・オカジオ ／ ウィリアム・ストーブナー
 
 ## 出典
-- [Walsh, J.P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3), 280–321（経営者認知論の包括的レビュー）](https://doi.org/10.1177/0149206395021006002) `学術`
+- [Walsh, J.P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3), 280–321（経営者認知論の包括的レビュー）](https://doi.org/10.1287/orsc.6.3.280) `学術`
 - [Wikipedia: Managerial cognition — 経営者認知論の概説](https://en.wikipedia.org/wiki/Managerial_cognition) `リファレンス`
 
 ## 関連概念

@@ -2,7 +2,7 @@
 title: "global.oup.com"
 type: source-domain
 host: "global.oup.com"
-cite_count: 28
+cite_count: 29
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # global.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（学術 20 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **29 件**（学術 21 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -41,6 +41,7 @@ tags:
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — Nonaka,I.&Takeuchi,H.(1995)TheKnowledge-CreatingCompany—OxfordUnivers…
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — Nonaka&Takeuchi1995—TheKnowledge-CreatingCompany
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — Luthans,Youssef&Avolio(2007)PsychologicalCapital:DevelopingtheHumanCo…
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — Volberda(1998)BuildingtheFlexibleFirm—OxfordUniversityPress
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — Gabriel,Y.(2000)StorytellinginOrganizations:Facts,Fictions,andFantasi…
 
 ## 関連

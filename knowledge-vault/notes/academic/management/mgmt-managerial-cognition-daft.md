@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Daft, R. L. & Weick, K. E. (1984) Toward a Model of Organizations as Interpretation Systems — Academy of Management Review, 9(2), 284–295（エナクトメントと解釈システムの原典）](https://doi.org/10.5465/amr.1984.4277608) `学術`
-- [Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science, 6(3), 280–321（文献レビュー）](https://doi.org/10.5465/amr.1995.9512280024) `学術`
+- [Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science, 6(3), 280–321（文献レビュー）](https://doi.org/10.1287/orsc.6.3.280) `学術`
 - [Prahalad, C. K. & Bettis, R. A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — Strategic Management Journal, 7(6), 485–501（ドミナント・ロジック）](https://doi.org/10.2307/259373) `学術`
 - [Wikipedia: Managerial cognition — schemas, enactment, sensemaking, cognitive biases, TMT diversity](https://en.wikipedia.org/wiki/Managerial_cognition) `リファレンス`
 

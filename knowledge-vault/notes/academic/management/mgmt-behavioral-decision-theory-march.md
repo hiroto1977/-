@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [March, J. G. (1994) A Primer on Decision Making — Free Press](https://doi.org/10.1287/orsc.2.1.1) `学術`
-- [Gavetti, G. et al. (2012) The Behavioral Theory of the Firm — Organization Science](https://doi.org/10.1002/9781118785317.weom040149) `学術`
+- [Gavetti, G. et al. (2012) The Behavioral Theory of the Firm — Academy of Management Annals 6(1), 1–40](https://doi.org/10.1080/19416520.2012.656841) `学術`
 - [Wikipedia: Behavioral economics — bounded rationality and decision-making overview](https://en.wikipedia.org/wiki/Behavioral_economics) `リファレンス`
 
 ## 関連概念

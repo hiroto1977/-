@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Adner, R. & Helfat, C. (2003) Corporate Effects and Dynamic Managerial Capabilities — SMJ](https://doi.org/10.1002/smj.331) `学術`
-- [Helfat, C. & Martin, J. (2015) Dynamic Managerial Capabilities — Journal of Management](https://doi.org/10.1287/orsc.1060.0253) `学術`
+- [Helfat, C. & Martin, J. (2015) Dynamic Managerial Capabilities — Journal of Management](https://doi.org/10.1177/0149206314561301) `学術`
 - [Wikipedia: Dynamic capabilities — ダイナミック・ケイパビリティの概要](https://en.wikipedia.org/wiki/Dynamic_capabilities) `リファレンス`
 
 ## 関連概念

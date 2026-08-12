@@ -28,7 +28,7 @@ SECIモデルは、野中郁次郎＆竹内弘高（1995）が『知識創造企
 ## 出典
 - [Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company: How Japanese Companies Create the Dynamics of Innovation — Oxford University Press（SECIモデルの原典）](https://doi.org/10.1093/oso/9780195092691.001.0001) `学術`
 - [Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science, 5(1), 14–37（SECIの先行論文）](https://doi.org/10.2307/259056) `学術`
-- [Nonaka, I. & von Krogh, G. (2009) Tacit Knowledge and Knowledge Conversion: Controversy and Advancement in Organizational Knowledge Creation Theory — Organization Science, 20(3), 635–652（理論の精緻化・批判への応答）](https://doi.org/10.1016/j.riob.2008.06.001) `学術`
+- [Nonaka, I. & von Krogh, G. (2009) Tacit Knowledge and Knowledge Conversion: Controversy and Advancement in Organizational Knowledge Creation Theory — Organization Science, 20(3), 635–652（理論の精緻化・批判への応答）](https://doi.org/10.1287/orsc.1080.0412) `学術`
 - [Wikipedia: SECI model — Nonaka & Takeuchi, tacit/explicit knowledge, Ba, knowledge conversion](https://en.wikipedia.org/wiki/SECI_model) `リファレンス`
 
 ## 関連概念
