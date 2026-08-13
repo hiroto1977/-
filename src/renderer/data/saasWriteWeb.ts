@@ -10,6 +10,10 @@
  * サービスを追加するたびにこのモジュールに関数を増やしていく。
  */
 import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+import {
+  normalizeAtlassianSiteResult,
+  type AtlassianSiteFailure,
+} from '../../shared/atlassianSite';
 import { redactSecrets } from '../../shared/redact';
 
 export type FetchFn = typeof fetch;
@@ -192,15 +196,27 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
   if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
     throw new Error('Atlassian の email / token に制御文字を含めることはできません');
   }
-  let site: URL;
-  try {
-    site = new URL(obj.site);
-  } catch {
-    throw new Error('Atlassian の site は https URL で指定してください');
-  }
-  if (site.protocol !== 'https:') throw new Error('Atlassian の site は https のみ対応');
-  return { email: obj.email, token: obj.token, site: obj.site.replace(/\/+$/, '') };
+  // **ホスト名まで絞る。** ここは `Authorization: Basic btoa(email:token)` を
+  // 付けて `${site}/rest/api/3/issue` へ POST する経路で、以前は
+  // `https:` かどうかしか見ていなかった。つまり site を差し替えるだけで
+  // Atlassian のメールアドレスと API トークンが任意の相手へ届いた。
+  //
+  // main (`clients/atlassian.ts`) は最初からこの検査を持っており、
+  // 「ホスト名を絞らないと、書き換えられた保存内容が email+token を任意の
+  // HTTPS 先へ向けられる」と理由まで書いてあった。**同じ検証の 3 つ目の
+  // 写しであるここだけが、その一行を持っていなかった。**
+  // 実体は `src/shared/atlassianSite.ts` に 1 つだけ置いてある。
+  const site = normalizeAtlassianSiteResult(obj.site);
+  if (!site.ok) throw new Error(ATLASSIAN_SITE_MESSAGES[site.reason]);
+  return { email: obj.email, token: obj.token, site: site.site };
 }
+
+const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
+  'control-char': 'Atlassian の site に制御文字を含めることはできません',
+  'not-a-url': 'Atlassian の site は https URL で指定してください',
+  'not-https': 'Atlassian の site は https のみ対応',
+  'not-atlassian': 'Atlassian の site は *.atlassian.net である必要があります',
+};
 
 export interface CreateAtlassianIssueInput {
   projectKey?: unknown;

@@ -2,18 +2,27 @@ import { describe, expect, it } from 'vitest';
 import { parseAtlassianToken } from '../atlassian';
 import { normalizeAtlassianSite } from '../../../shared/api/atlassian';
 import { normalizeAtlassianSiteResult } from '../../../shared/atlassianSite';
+import { parseAtlassianToken as parseAtlassianTokenWeb } from '../../../renderer/data/saasWriteWeb';
 
 /**
- * main と shared の Atlassian site 検証が**同じ**であることを固定する。
+ * Atlassian の site 検証は**3 か所**に写されている。それが同じであることを
+ * 固定する (main の資格情報パーサ / shared の API クライアント /
+ * ブラウザ版の書き込み経路)。
  *
  * shared 側の説明文には「`src/main/clients/atlassian.ts` と同じ防御を張って
  * いる」と書いてあったが、事実ではなかった。main 側は元の文字列から末尾の
  * `/` を落とすだけで、パス・クエリ・フラグメント・ポート・userinfo を
  * 残していた。実装を 1 か所に寄せたので、次は説明ではなくテストで固定する。
  *
- * (試した範囲では、その差から資格情報を外へ逃がす経路は作れなかった。
- *  CR/LF は `new URL` が弾き、タブはホスト名を壊して許可判定で落ちる。
- *  穴ではなく、説明が嘘だったのと貼り付け事故が壊れた要求になる話。)
+ * main と shared の差は穴ではなかった (CR/LF は `new URL` が弾き、タブは
+ * ホスト名を壊して許可判定で落ちる)。**3 つ目のブラウザ版は違った** —
+ * ホスト名の許可判定そのものが無く、`https:` かどうかしか見ていなかった。
+ * そこは `Authorization: Basic btoa(email:token)` を付けて
+ * `${site}/rest/api/3/issue` へ POST する経路なので、site を差し替えるだけで
+ * Atlassian のメールアドレスと API トークンが任意の相手へ届いた。
+ *
+ * 3 つとも同じ実装を指すようにしたうえで、ここで固定する。4 つ目が生えたら
+ * このテストに足すこと。
  */
 
 const ACCEPTED = [
@@ -44,22 +53,29 @@ function mainSite(site: string): string {
   return parseAtlassianToken(JSON.stringify({ email: 'a@b.c', token: 't', site })).site;
 }
 
+function webSite(site: string): string {
+  return parseAtlassianTokenWeb(JSON.stringify({ email: 'a@b.c', token: 't', site })).site;
+}
+
 describe('Atlassian site 検証 — main と shared が同じであること', () => {
-  it.each(ACCEPTED)('%s を両方が %s に正規化する', (input, expected) => {
+  it.each(ACCEPTED)('%s を 3 つとも %s に正規化する', (input, expected) => {
     expect(normalizeAtlassianSiteResult(input)).toEqual({ ok: true, site: expected });
     expect(normalizeAtlassianSite(input)).toBe(expected);
     expect(mainSite(input)).toBe(expected);
+    expect(webSite(input)).toBe(expected);
   });
 
-  it.each(REJECTED)('%s を両方が拒否する', (input) => {
+  it.each(REJECTED)('%s を 3 つとも拒否する', (input) => {
     expect(normalizeAtlassianSiteResult(input).ok).toBe(false);
     expect(() => normalizeAtlassianSite(input)).toThrow();
     expect(() => mainSite(input)).toThrow();
+    expect(() => webSite(input)).toThrow();
   });
 
   // ネガティブコントロール: 「全部拒否する」実装になっていないこと。
   it('正規の site は通る', () => {
     expect(mainSite('https://acme.atlassian.net')).toBe('https://acme.atlassian.net');
+    expect(webSite('https://acme.atlassian.net')).toBe('https://acme.atlassian.net');
   });
 
   // 文言は呼び出し側ごとに違ってよい (main は「token の site」、shared は
@@ -67,6 +83,7 @@ describe('Atlassian site 検証 — main と shared が同じであること', (
   it('拒否の文言は呼び出し側ごとの言い回しを保つ', () => {
     expect(() => mainSite('http://x.atlassian.net')).toThrow(/token の site/);
     expect(() => normalizeAtlassianSite('http://x.atlassian.net')).toThrow(/baseUrl/);
+    expect(() => webSite('http://x.atlassian.net')).toThrow(/https のみ/);
   });
 
   // どの理由で断ったかまで見る。理由が 4 つあるのに文言が 1 つに潰れていても

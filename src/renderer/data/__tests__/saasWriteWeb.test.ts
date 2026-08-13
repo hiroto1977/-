@@ -217,6 +217,47 @@ describe('sendSlackMessage', () => {
 
 const TOK = JSON.stringify({ email: 'me@x.com', token: 'apitok', site: 'https://acme.atlassian.net/' });
 
+describe('parseAtlassianToken — 送り先ホストの許可 (資格情報の流出経路)', () => {
+  // ここは `Authorization: Basic btoa(email:token)` を付けて
+  // `${site}/rest/api/3/issue` へ POST する。ホスト名を絞らないと、
+  // site を差し替えるだけで Atlassian のメールアドレスと API トークンが
+  // 任意の相手へ届く。main の同じ関数は最初からこの検査を持っていて、
+  // 理由まで書いてあった — 3 つ目の写しであるここだけが持っていなかった。
+  it.each([
+    'https://attacker.example',
+    'https://atlassian.net.evil.example',
+    'https://acme.atlassian.net.evil.example',
+    'https://notatlassian.net',
+    'https://atlassian.net',
+  ])('%s を拒否する', (site) => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b', token: 't', site }))).toThrow(
+      /atlassian\.net/,
+    );
+  });
+
+  // ネガティブコントロール: 「全部拒否」ではないこと。
+  it.each([
+    'https://acme.atlassian.net',
+    'https://acme.atlassian.net/',
+    'https://a-b-c.atlassian.net',
+  ])('%s は通す', (site) => {
+    expect(parseAtlassianToken(JSON.stringify({ email: 'a@b', token: 't', site })).site).toBe(
+      'https://' + new URL(site).hostname,
+    );
+  });
+
+  // main / shared と同じ正規化になったことも見る (パス・クエリ・ポート・
+  // userinfo を落として hostname から組み直す)。
+  it.each([
+    ['https://acme.atlassian.net/wiki', 'https://acme.atlassian.net'],
+    ['https://acme.atlassian.net?q=1', 'https://acme.atlassian.net'],
+    ['https://acme.atlassian.net:8443', 'https://acme.atlassian.net'],
+    ['https://evil.com@acme.atlassian.net', 'https://acme.atlassian.net'],
+  ])('%s を %s に正規化する', (site, expected) => {
+    expect(parseAtlassianToken(JSON.stringify({ email: 'a@b', token: 't', site })).site).toBe(expected);
+  });
+});
+
 describe('parseAtlassianToken', () => {
   it('parses and trims the site trailing slash', () => {
     expect(parseAtlassianToken(TOK)).toEqual({ email: 'me@x.com', token: 'apitok', site: 'https://acme.atlassian.net' });
