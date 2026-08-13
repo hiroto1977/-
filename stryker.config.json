@@ -201,7 +201,8 @@
     "src/shared/escape.ts",
     "src/shared/issueLevel.ts",
     "src/shared/textWrap.ts",
-    "src/shared/seededNoise.ts"
+    "src/shared/seededNoise.ts",
+    "src/shared/scanTarget.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

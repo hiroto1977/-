@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7013** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7210) |
+| ユニットテスト | **7031** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7269) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -523,8 +523,8 @@ union を参照する。
 | slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81-117` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79-115` |
 | skills | `run-skill` | `{ name, prompt, model?, maxTokens? }` | **`isSafeSkillName(name)`** + path containment | `skills.ts:112-191` |
-| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:178-299` |
-| security | `scan-url` | `{ url }` | base64url(url) → VT id | `security.ts:256-300` |
+| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:185-317` |
+| security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:270-314` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl? }` | zoneId encodeURIComponent | `cloudflare.ts:127-207` |
 | cloudflare | `purge-cache` | `{ zoneId, files?: string[] }` | zoneId encodeURIComponent | `cloudflare.ts:172-208` |
 | emotions | `log-mood` | `{ text, mood, source? }` | text 32KB clamp | `emotions.ts:100-261` |

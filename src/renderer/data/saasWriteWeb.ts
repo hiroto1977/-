@@ -9,6 +9,7 @@
  * ここは fetch を注入できる純粋ロジックに保ち、単体テスト可能にする。
  * サービスを追加するたびにこのモジュールに関数を増やしていく。
  */
+import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
 import { redactSecrets } from '../../shared/redact';
 
 export type FetchFn = typeof fetch;
@@ -569,13 +570,23 @@ export interface ScanUrlInput {
   url?: unknown;
 }
 
+const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
+  empty: 'url は必須です',
+  'too-long': 'url が長すぎます',
+  'not-a-url': 'url を URL として解釈できません',
+  'not-web': 'url は http:// または https:// で始まる必要があります',
+};
+
 export async function scanUrlVirusTotal(
   input: ScanUrlInput,
   vtKey: string,
   transport: Transport,
 ): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
-  const url = typeof input.url === 'string' ? input.url.trim() : '';
-  if (!url) throw new Error('url は必須です');
+  // main 側 (`clients/security.ts`) と同じ検証を同じ実装で通す。
+  // 以前はどちらも任意の文字列をそのまま投入していた。
+  const checked = validateScanUrl(input.url);
+  if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);
+  const url = checked.url;
 
   // 解析を投入 (レポートを最新化)。
   const submit = await transport('https://www.virustotal.com/api/v3/urls', {

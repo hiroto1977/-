@@ -24,6 +24,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
 import {
   jsonFetch,
   FetchError,
@@ -259,11 +260,22 @@ function vtBase64(input: string): string {
 }
 // Stryker restore Regex
 
+const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
+  empty: 'url は必須です',
+  'too-long': 'url が長すぎます',
+  'not-a-url': 'url を URL として解釈できません',
+  'not-web': 'url は http:// または https:// で始まる必要があります',
+};
+
 async function scanUrl(
   ctx: ActionContext,
 ): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
-  const { url } = ctx.payload as unknown as ScanUrlPayload;
-  if (!url) throw new Error('url is required');
+  const { url: rawUrl } = ctx.payload as unknown as ScanUrlPayload;
+  // payload は renderer から来る任意の値。ここは**第三者へ送る**入口なので、
+  // 送ってよい形かを先に確かめる (`src/shared/scanTarget.ts`)。
+  const checked = validateScanUrl(rawUrl);
+  if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);
+  const url = checked.url;
   const keys = parseSecurityKeys(ctx.token);
   if (!keys.vt) throw new Error('VirusTotal API key not configured');
 

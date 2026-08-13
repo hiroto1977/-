@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { describeScanUrlRisk } from '../../shared/scanTarget';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -121,6 +122,8 @@ export function SecurityPage() {
     [pwStrength.entropyBits],
   );
   const [scanError, setScanError] = useState<string>();
+  // 入力中に出す。送ってしまってからでは遅い。
+  const scanRisk = describeScanUrlRisk(urlInput);
 
   const scanUrl = async () => {
     if (!window.serviceHub) return;
@@ -253,12 +256,45 @@ export function SecurityPage() {
         ) : null}
         {showScan && keysConfigured.vt ? (
           <div className="card" style={{ gap: 10 }}>
+            {/*
+              送信は取り消せないので、説明は必ず入力欄より前に置く。
+              VirusTotal への投入は「調べる」より「公開する」に近く、
+              投入した URL は VT の有料利用者が検索できる。
+            */}
+            <div
+              style={{
+                fontSize: 12,
+                lineHeight: 1.7,
+                padding: '8px 10px',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text-mute)',
+              }}
+            >
+              入力した URL は <strong style={{ color: 'var(--text)' }}>VirusTotal に送信され、
+              他の VirusTotal 利用者が検索できる状態で残ります</strong>。取り消せません。
+              署名付きリンク・招待リンク・社内のホスト名など、人に見られて困る URL は入れないでください。
+            </div>
             <input
               placeholder="https://example.com/suspicious"
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               style={inputStyle}
             />
+            {scanRisk ? (
+              <div
+                style={{
+                  fontSize: 12,
+                  lineHeight: 1.7,
+                  padding: '8px 10px',
+                  borderRadius: 6,
+                  background: 'rgba(248,113,113,0.12)',
+                  color: 'var(--danger)',
+                }}
+              >
+                {scanRisk}
+              </div>
+            ) : null}
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="primary" onClick={scanUrl} disabled={scanBusy || !urlInput.trim()}>
                 {scanBusy ? 'スキャン中…' : '実行'}
