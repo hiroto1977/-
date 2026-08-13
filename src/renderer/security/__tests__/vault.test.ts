@@ -280,12 +280,17 @@ describe('Vault — recoverWithMnemonic', () => {
 
   it('rejects mnemonic with bad checksum (typo)', async () => {
     const v = getVault();
-    const { mnemonic } = await v.initialize('original-password-12345');
+    await v.initialize('original-password-12345');
     _resetVaultForTests();
     const v2 = getVault();
 
-    const words = mnemonic.split(' ');
-    words[10] = words[10] === 'ability' ? 'zoo' : 'ability'; // swap
+    // **生成した mnemonic を書き換える形にしない。** チェックサムは 8 bit なので、
+    // 1 語を差し替えても 1/256 で偶然通ってしまい、その回だけテストが落ちる
+    // (実測 8/3000 = 0.27%)。乱数に依存しない固定ベクタを使う。
+    // 24 語・全ゼロエントロピーの公式 BIP-39 ベクタ (abandon ×23 + art) の
+    // 11 語目を ability に替えると、エントロピーが変わるので art が合わなくなる。
+    const words = `${'abandon '.repeat(23)}art`.trim().split(' ');
+    words[10] = 'ability';
     await expect(v2.recoverWithMnemonic(words.join(' '), 'new-password-1234')).rejects.toThrow(
       /checksum invalid/,
     );
