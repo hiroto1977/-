@@ -16134,7 +16134,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://cmr.berkeley.edu/2006/01/48-3-evidence-based-management/', type: 'academic', label: 'Pfeffer & Sutton (2006) "Evidence-Based Management," California Management Review 48(3)（査読学術誌・分野確立論文）' },
-      { url: 'https://journals.aom.org/doi/10.5465/amr.2009.35713336', type: 'academic', label: 'Briner, Denyer & Rousseau (2009) "Evidence-Based Management: Concept Cleanup Time?", Academy of Management Perspectives（定義精緻化・査読誌）' },
+      { url: 'https://doi.org/10.5465/amp.23.4.19', type: 'academic', label: 'Briner, Denyer & Rousseau (2009) "Evidence-Based Management: Concept Cleanup Time?", Academy of Management Perspectives（定義精緻化・査読誌）' },
     ],
   },
   {
@@ -21690,7 +21690,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1111/1468-0262.00467', type: 'academic', label: 'Melitz (2003) The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity, Econometrica 71(6):1695-1725' },
       { url: 'https://doi.org/10.1257/000282804322970814', type: 'academic', label: 'Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316' },
-      { url: 'https://doi.org/10.1257/jel.45.1.39', type: 'academic', label: 'Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130' },
+      { url: 'https://doi.org/10.1257/jep.21.3.105', type: 'academic', label: 'Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130' },
     ],
   },
   {
@@ -29020,7 +29020,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208' },
-      { url: 'https://doi.org/10.1257/jel.49.1.3', type: 'academic', label: 'Diamond, P. & Saez, E. (2011) The Case for a Progressive Tax: From Basic Research to Policy Recommendations — Journal of Economic Perspectives, 25(4), 165–190' },
+      { url: 'https://doi.org/10.1257/jep.25.4.165', type: 'academic', label: 'Diamond, P. & Saez, E. (2011) The Case for a Progressive Tax: From Basic Research to Policy Recommendations — Journal of Economic Perspectives, 25(4), 165–190' },
       { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — Ramsey rule, Mirrlees model, and Diamond-Saez extension' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/1996/mirrlees/facts/', type: 'reference', label: 'Nobel Prize 1996: James Mirrlees — prize motivation and scientific background on optimal taxation' },
     ],
@@ -29147,7 +29147,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1086/261111', type: 'academic', label: 'Fama, E. F. & Jensen, M. C. (1983) Separation of Ownership and Control — Journal of Law and Economics, 26(2), 301–325（ガバナンス理論の基礎）' },
       { url: 'https://doi.org/10.1002/smj.812', type: 'academic', label: 'Zhang, Y. & Rajagopalan, N. (2010) Once an Outsider, Always an Outsider? CEO Origin, Strategic Change, and Firm Performance — Strategic Management Journal, 31(3), 334–346' },
-      { url: 'https://doi.org/10.5465/amr.1994.9410210752', type: 'academic', label: 'Shen, W. & Cannella, A. A. (2002) Power Dynamics Within Top Management and Their Impacts on CEO Dismissal Followed by Inside Succession — Academy of Management Journal, 45(6), 1195–1206' },
+      { url: 'https://doi.org/10.5465/3069434', type: 'academic', label: 'Shen, W. & Cannella, A. A. (2002) Power Dynamics Within Top Management and Their Impacts on CEO Dismissal Followed by Inside Succession — Academy of Management Journal, 45(6), 1195–1206' },
       { url: 'https://en.wikipedia.org/wiki/Succession_planning', type: 'reference', label: 'Wikipedia: Succession planning — CEO succession types, board oversight, and empirical evidence on performance' },
     ],
   },
@@ -29945,7 +29945,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/20159704', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly, 50(3), 329–366（原典）' },
       { url: 'https://doi.org/10.1177/0149206313501181', type: 'academic', label: 'Davidsson, P., Baker, T. & Senyard, J. M. (2017) A Theory of Bricolage for Entrepreneurship Research — Journal of Business Venturing, 32(6), 674–694（理論の発展）' },
-      { url: 'https://doi.org/10.5465/amj.2001.4428801', type: 'academic', label: 'Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review, 26(2), 243–263（エフェクチュエーションとの比較）' },
+      { url: 'https://doi.org/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review, 26(2), 243–263（エフェクチュエーションとの比較）' },
       { url: 'https://en.wikipedia.org/wiki/Bricolage', type: 'reference', label: 'Wikipedia: Bricolage — Lévi-Strauss, Baker & Nelson, resource constraint, effectuation, lean startup connection' },
     ],
   },
@@ -30001,7 +30001,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2393628', type: 'academic', label: 'Volberda, H. W. (1996) Toward the Flexible Form: How to Remain Vital in Hypercompetitive Environments — Organization Science, 7(4), 359–374（戦略的柔軟性の原典）' },
       { url: 'https://doi.org/10.1002/smj.576', type: 'academic', label: 'Nadkarni, S. & Narayanan, V. K. (2007) Strategic Schemas, Strategic Flexibility, and Firm Performance: The Moderating Role of Industry Clockspeed — Strategic Management Journal, 28(3), 243–270（実証研究）' },
-      { url: 'https://doi.org/10.5465/amr.1999.1580457', type: 'academic', label: 'Hitt, M. A., Keats, B. W. & DeMarie, S. M. (1998) Navigating in the New Competitive Landscape — Academy of Management Executive, 12(4), 22–42（超競争環境と柔軟性）' },
+      { url: 'https://doi.org/10.5465/ame.1998.1333922', type: 'academic', label: 'Hitt, M. A., Keats, B. W. & DeMarie, S. M. (1998) Navigating in the New Competitive Landscape — Academy of Management Executive, 12(4), 22–42（超競争環境と柔軟性）' },
       { url: 'https://en.wikipedia.org/wiki/Strategic_flexibility', type: 'reference', label: 'Wikipedia: Strategic flexibility — Volberda, operational vs strategic, hypercompetition, dynamic capabilities connection' },
     ],
   },
@@ -30183,7 +30183,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://press.princeton.edu/books/paperback/9780691000084/fiscal-federalism', type: 'academic', label: 'Oates, W. E. (1972) Fiscal Federalism — Harcourt Brace Jovanovich（財政的連邦主義の原典）' },
       { url: 'https://doi.org/10.1086/257839', type: 'academic', label: 'Tiebout, C. M. (1956) A Pure Theory of Local Expenditures — Journal of Political Economy, 64(5), 416–424（足で投票モデルの原典）' },
-      { url: 'https://doi.org/10.1257/jep.13.2.131', type: 'academic', label: 'Oates, W. E. (1999) An Essay on Fiscal Federalism — Journal of Economic Literature, 37(3), 1120–1149（第二世代との接続を含む回顧論文）' },
+      { url: 'https://doi.org/10.1257/jel.37.3.1120', type: 'academic', label: 'Oates, W. E. (1999) An Essay on Fiscal Federalism — Journal of Economic Literature, 37(3), 1120–1149（第二世代との接続を含む回顧論文）' },
       { url: 'https://en.wikipedia.org/wiki/Fiscal_federalism', type: 'reference', label: 'Wikipedia: Fiscal federalism — Oates theorem, Tiebout, race to the bottom, fiscal equalization' },
     ],
   },
@@ -39375,7 +39375,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1257/jep.9.4.3', type: 'academic', label: 'Mishkin (1995) Symposium on the Monetary Transmission Mechanism — Journal of Economic Perspectives' },
-      { url: 'https://doi.org/10.1257/jel.37.4.1661', type: 'academic', label: 'Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives' },
+      { url: 'https://doi.org/10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives' },
       { url: 'https://en.wikipedia.org/wiki/Monetary_policy#Transmission_mechanism', type: 'reference', label: 'Wikipedia: Monetary policy transmission mechanism — 金融政策の波及経路の概説' },
     ],
   },
@@ -42720,7 +42720,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・メイナード・ケインズ ／ ロバート・バロー ／ クリスティーナ・ローマー ／ アラン・オーエルバッハ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1257/jep.26.3.69', type: 'academic', label: 'Ramey, V. (2011) Can Government Purchases Stimulate the Economy? — Journal of Economic Literature' },
+      { url: 'https://doi.org/10.1257/jel.49.3.673', type: 'academic', label: 'Ramey, V. (2011) Can Government Purchases Stimulate the Economy? — Journal of Economic Literature' },
       { url: 'https://doi.org/10.1257/aer.102.3.1446', type: 'academic', label: 'Auerbach, A. & Gorodnichenko, Y. (2012) Measuring the Output Responses to Fiscal Policy — AEJ' },
       { url: 'https://en.wikipedia.org/wiki/Fiscal_multiplier', type: 'reference', label: 'Wikipedia: Fiscal multiplier — 財政乗数の理論と実証概観' },
     ],
@@ -46300,7 +46300,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アビジット・バナジー ／ エステル・デュフロ ／ ジェフリー・サックス ／ ダロン・アジェモグル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1257/jel.48.2.424', type: 'academic', label: 'Banerjee & Duflo (2007) The Economic Lives of the Poor — Journal of Economic Perspectives 21(1)' },
+      { url: 'https://doi.org/10.1257/jep.21.1.141', type: 'academic', label: 'Banerjee & Duflo (2007) The Economic Lives of the Poor — Journal of Economic Perspectives 21(1)' },
       { url: 'https://en.wikipedia.org/wiki/Poverty_trap', type: 'reference', label: 'Wikipedia: Poverty trap — multiple equilibria, Big Push, RCT, coordination failure, institutions' },
     ],
   },
@@ -48041,7 +48041,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1925975', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal — Journal of Political Economy, 72(6), 584–596（バラッサ効果原典）' },
       { url: 'https://doi.org/10.2307/1927330', type: 'academic', label: 'Samuelson, P. A. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics, 46(2), 145–154（サミュエルソン側の独立提唱）' },
-      { url: 'https://doi.org/10.1257/jep.10.4.97', type: 'academic', label: 'Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（B-S効果とPPPパズルの統合論考）' },
+      { url: 'https://rogoff.scholars.harvard.edu/publications/purchasing-power-parity-puzzle', type: 'academic', label: 'Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（B-S効果とPPPパズルの統合論考）' },
       { url: 'https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect', type: 'reference', label: 'Wikipedia: Balassa–Samuelson effect — Penn effect, non-traded goods, real exchange rate, IMF' },
     ],
   },
@@ -48506,7 +48506,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2223329', type: 'academic', label: 'Cassel, G. (1922) Money and Foreign Exchange After 1914 — Constable（PPP原典の英訳）' },
-      { url: 'https://doi.org/10.1257/jep.10.4.97', type: 'academic', label: 'Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（PPPパズルのサーベイ）' },
+      { url: 'https://rogoff.scholars.harvard.edu/publications/purchasing-power-parity-puzzle', type: 'academic', label: 'Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（PPPパズルのサーベイ）' },
       { url: 'https://doi.org/10.2307/1925975', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal — Journal of Political Economy, 72(6), 584–596（バラッサ＝サミュエルソン効果）' },
       { url: 'https://en.wikipedia.org/wiki/Purchasing_power_parity', type: 'reference', label: 'Wikipedia: Purchasing power parity — Cassel, law of one price, Balassa-Samuelson, Penn effect, ICP' },
     ],

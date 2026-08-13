@@ -342,30 +342,9 @@ const JOURNAL_CODES = [
  * 共通する事実: **DOI が別の誌を指している**。未確認なのは正しい DOI のほう。
  */
 const JOURNAL_ALLOWLIST = new Map([
-  ['econ-fiscal-federalism-oates::10.1257/jep.13.2.131',
-    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
-  ['econ-fiscal-multiplier-keynesian-debate::10.1257/jep.26.3.69',
-    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
-  ['econ-monetary-policy-transmission::10.1257/jel.37.4.1661',
-    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
-  ['econ-new-new-trade-theory-melitz::10.1257/jel.45.1.39',
-    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
-  ['econ-optimal-income-taxation-mirrlees::10.1257/jel.49.1.3',
-    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
-  ['econ-poverty-trap-multiple-equilibria::10.1257/jel.48.2.424',
-    '未確認: DOI=Journal of Economic Literature / ラベル=Journal of Economic Perspectives'],
-  ['econ-purchasing-power-parity-cassel::10.1257/jep.10.4.97',
-    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
-  ['econ-real-exchange-rate-balassa::10.1257/jep.10.4.97',
-    '未確認: DOI=Journal of Economic Perspectives / ラベル=Journal of Economic Literature'],
-  ['mgmt-bricolage-organizational-baker::10.5465/amj.2001.4428801',
-    '未確認: DOI=Academy of Management Journal / ラベル=Academy of Management Review'],
-  ['mgmt-ceo-succession-planning::10.5465/amr.1994.9410210752',
-    '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Journal'],
-  ['mgmt-evidence-based-management::10.5465/amr.2009.35713336',
-    '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Perspectives'],
-  ['mgmt-strategic-flexibility-volberda::10.5465/amr.1999.1580457',
-    '未確認: DOI=Academy of Management Review / ラベル=Academy of Management Executive'],
+  // 2026-08-13: 12 件すべてを一次照合で確定し、DOI を差し替えたので空。
+  // 台帳は双方向なので、直したらここから消さないと
+  // 「載っているのに矛盾しなくなった」で落ちる。
 ]);
 
 /**

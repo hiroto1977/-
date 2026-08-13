@@ -28,7 +28,7 @@ CEOサクセッション・プランニング（CEO succession planning）は、
 ## 出典
 - [Fama, E. F. & Jensen, M. C. (1983) Separation of Ownership and Control — Journal of Law and Economics, 26(2), 301–325（ガバナンス理論の基礎）](https://doi.org/10.1086/261111) `学術`
 - [Zhang, Y. & Rajagopalan, N. (2010) Once an Outsider, Always an Outsider? CEO Origin, Strategic Change, and Firm Performance — Strategic Management Journal, 31(3), 334–346](https://doi.org/10.1002/smj.812) `学術`
-- [Shen, W. & Cannella, A. A. (2002) Power Dynamics Within Top Management and Their Impacts on CEO Dismissal Followed by Inside Succession — Academy of Management Journal, 45(6), 1195–1206](https://doi.org/10.5465/amr.1994.9410210752) `学術`
+- [Shen, W. & Cannella, A. A. (2002) Power Dynamics Within Top Management and Their Impacts on CEO Dismissal Followed by Inside Succession — Academy of Management Journal, 45(6), 1195–1206](https://doi.org/10.5465/3069434) `学術`
 - [Wikipedia: Succession planning — CEO succession types, board oversight, and empirical evidence on performance](https://en.wikipedia.org/wiki/Succession_planning) `リファレンス`
 
 ## 関連概念

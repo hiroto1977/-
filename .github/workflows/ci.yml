@@ -101,3 +101,10 @@ jobs:
             echo "standalone-lite.html exceeds 4MB — 学術コーパス除去 (SERVICE_HUB_LITE) が効いていない可能性" >&2
             exit 1
           fi
+          # 天井に当たってから気づくと、その PR は「無関係な変更なのに落ちた」
+          # ように見える。85% (3.4MB) を超えたら警告を出し、余裕が減っている
+          # ことを先に知らせる。**落とさない** — 警告で落とすと結局同じ事故になる。
+          if [ "$SIZE" -gt 3400000 ]; then
+            PCT=$((SIZE * 100 / 4000000))
+            echo "::warning::standalone-lite.html が上限 4MB の ${PCT}% ($SIZE B) に達しています。LITE はスマホ回線向けなので、次の増加で天井に当たる前に何を積んでいるか確認してください。"
+          fi

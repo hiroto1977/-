@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Mishkin (1995) Symposium on the Monetary Transmission Mechanism — Journal of Economic Perspectives](https://doi.org/10.1257/jep.9.4.3) `学術`
-- [Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives](https://doi.org/10.1257/jel.37.4.1661) `学術`
+- [Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives](https://doi.org/10.1257/jep.9.4.27) `学術`
 - [Wikipedia: Monetary policy transmission mechanism — 金融政策の波及経路の概説](https://en.wikipedia.org/wiki/Monetary_policy#Transmission_mechanism) `リファレンス`
 
 ## 関連概念

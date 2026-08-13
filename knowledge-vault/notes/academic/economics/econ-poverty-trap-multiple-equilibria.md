@@ -26,7 +26,7 @@ aliases:
 アビジット・バナジー ／ エステル・デュフロ ／ ジェフリー・サックス ／ ダロン・アジェモグル
 
 ## 出典
-- [Banerjee & Duflo (2007) The Economic Lives of the Poor — Journal of Economic Perspectives 21(1)](https://doi.org/10.1257/jel.48.2.424) `学術`
+- [Banerjee & Duflo (2007) The Economic Lives of the Poor — Journal of Economic Perspectives 21(1)](https://doi.org/10.1257/jep.21.1.141) `学術`
 - [Wikipedia: Poverty trap — multiple equilibria, Big Push, RCT, coordination failure, institutions](https://en.wikipedia.org/wiki/Poverty_trap) `リファレンス`
 
 ## 関連概念

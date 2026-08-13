@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly, 50(3), 329–366（原典）](https://doi.org/10.2307/20159704) `学術`
 - [Davidsson, P., Baker, T. & Senyard, J. M. (2017) A Theory of Bricolage for Entrepreneurship Research — Journal of Business Venturing, 32(6), 674–694（理論の発展）](https://doi.org/10.1177/0149206313501181) `学術`
-- [Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review, 26(2), 243–263（エフェクチュエーションとの比較）](https://doi.org/10.5465/amj.2001.4428801) `学術`
+- [Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review, 26(2), 243–263（エフェクチュエーションとの比較）](https://doi.org/10.5465/amr.2001.4378020) `学術`
 - [Wikipedia: Bricolage — Lévi-Strauss, Baker & Nelson, resource constraint, effectuation, lean startup connection](https://en.wikipedia.org/wiki/Bricolage) `リファレンス`
 
 ## 関連概念

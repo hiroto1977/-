@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2166
+cite_count: 2165
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2166 件**（学術 2158 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2165 件**（学術 2157 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -616,7 +616,6 @@ tags:
 - [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — Samuelson,P.A.(1954)ThePureTheoryofPublicExpenditure—RES
 - [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — Balassa,B.(1964)ThePurchasing-PowerParityDoctrine:AReappraisal—Journa…
 - [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — Cassel,G.(1922)MoneyandForeignExchangeAfter1914—Constable（PPP原典の英訳）
-- [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]] — Rogoff,K.(1996)ThePurchasingPowerParityPuzzle—JournalofEconomicLitera…
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — Cassel(1918)AbnormalDeviationsinInternationalExchanges—EconomicJournal
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — Rogoff(1996)ThePurchasingPowerParityPuzzle—JournalofEconomicLiterature
 - [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — Akerlof1970—TheMarketforLemons:QualityUncertaintyandtheMarketMechanis…
@@ -638,7 +637,6 @@ tags:
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — Kydland,F.E.&Prescott,E.C.(1982)TimetoBuildandAggregateFluctuations—E…
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — Rebelo,S.(2005)RealBusinessCycleModels:Past,PresentandFuture—Scandina…
 - [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — Balassa,B.(1964)ThePurchasing-PowerParityDoctrine:AReappraisal—Journa…
-- [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — Rogoff,K.(1996)ThePurchasingPowerParityPuzzle—JournalofEconomicLitera…
 - [[econ-real-exchange-rate-balassa|バラッサ＝サミュエルソン効果と実質為替レート]] — Samuelson,P.A.(1964)TheoreticalNotesonTradeProblems—ReviewofEconomics…
 - [[econ-real-options-dixit-pindyck|実物オプション——ディキシット＆ピンダイクの不可逆投資と「待機価値」]] — Dixit,A.K.&Pindyck,R.S.(1994)InvestmentunderUncertainty—PrincetonUP
 - [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — McDonald&Siegel(1986)TheValueofWaitingtoInvest—QJE
@@ -1842,6 +1840,7 @@ tags:
 - [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — Staw&Ross1987—comprehensivemodel
 - [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — Staw1976—knee-deepexperiment
 - [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — Whyte1986—prospecttheorylink
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — Briner,Denyer&Rousseau(2009)"Evidence-BasedManagement:ConceptCleanupT…
 - [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — Pfeffer,J.&Sutton,R.I.(2006).Evidence-basedmanagement—HarvardBusiness…
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — Pfeffer&Sutton(2006)HardFacts,DangerousHalf-Truths—HarvardBusinessSch…
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — Rousseau(2006)IsThereSuchaThingasEvidence-BasedManagement?—AcademyofM…
