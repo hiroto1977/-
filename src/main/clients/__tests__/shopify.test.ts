@@ -539,7 +539,7 @@ describe('ACTIONS["sync-to-salesforce"]', () => {
     await ACTIONS['sync-to-salesforce']!({
       token: 's',
       fetch: fetchMock,
-      payload: { order: { ...ORDER, customer: '' }, token: 'sf', instanceUrl: 'https://x.com' },
+      payload: { order: { ...ORDER, customer: '' }, token: 'sf', instanceUrl: 'https://my.my.salesforce.com' },
     });
     expect(jsonBody(fetchMock).LastName).toBe('#1001');
   });
@@ -551,9 +551,48 @@ describe('ACTIONS["sync-to-salesforce"]', () => {
     await expect(
       ACTIONS['sync-to-salesforce']!({
         token: 's',
-        payload: { order: ORDER, instanceUrl: 'https://x.com' },
+        payload: { order: ORDER, instanceUrl: 'https://my.my.salesforce.com' },
       }),
     ).rejects.toThrow(/token \(Salesforce\) and instanceUrl are required/);
+  });
+
+  // 送り先を renderer 由来の値で決めている唯一の同期先で、しかも
+  // `Authorization: Bearer <Salesforce のアクセストークン>` を付けて送る。
+  // ホスト名を絞らないと、`instanceUrl` を差し替えるだけでトークンと
+  // 顧客の氏名・メールが任意の相手に届く。
+  it.each([
+    'https://attacker.example',
+    'https://salesforce.com.evil.example',
+    'https://notsalesforce.com',
+    'https://my.force.com',
+  ])('%s へはトークンを送らない', async (instanceUrl) => {
+    const fetchMock = okJson({ id: 'c', success: true });
+    await expect(
+      ACTIONS['sync-to-salesforce']!({
+        token: 's',
+        fetch: fetchMock,
+        payload: { order: ORDER, token: 'sf', instanceUrl },
+      }),
+    ).rejects.toThrow(/salesforce\.com/);
+    // 断ったなら 1 度も外へ出ていないこと。「送ってから throw する」実装でも
+    // 通ってしまわないように。
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  // ネガティブコントロール: 「全部拒否」ではないこと。正規の形は通す。
+  it.each([
+    'https://my.my.salesforce.com',
+    'https://acme--dev.sandbox.my.salesforce.com',
+    'https://na139.salesforce.com',
+    'https://salesforce.com',
+  ])('%s は通す', async (instanceUrl) => {
+    const fetchMock = okJson({ id: 'c', success: true });
+    await ACTIONS['sync-to-salesforce']!({
+      token: 's',
+      fetch: fetchMock,
+      payload: { order: ORDER, token: 'sf', instanceUrl },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('rejects a non-https instanceUrl', async () => {
@@ -688,7 +727,7 @@ describe('connector HTTP method + serviceId tagging', () => {
     {
       action: 'sync-to-salesforce',
       serviceId: 'shopify→salesforce',
-      payload: { order: ORDER, token: 'x', instanceUrl: 'https://x.com' },
+      payload: { order: ORDER, token: 'x', instanceUrl: 'https://my.my.salesforce.com' },
     },
     {
       action: 'sync-to-stripe',
