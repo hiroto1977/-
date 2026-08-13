@@ -31,7 +31,6 @@ R.コース1937「企業の本質」（理論の起源・1991年ノーベル賞�
 - [Britannica Money — Transaction cost（限定合理性・資産特殊性・ガバナンス構造）](https://www.britannica.com/money/transaction-cost) `リファレンス`
 
 ## 関連概念
-- [[econ-new-institutional-economics|新制度派経済学]] — 分野横断
 - [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同分野の近傍
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同分野の近傍
 

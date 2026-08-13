@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Information cascade — Banerjee, Bikhchandani-Hirshleifer-Welch, herd behavior, fragility](https://en.wikipedia.org/wiki/Information_cascade) `リファレンス`
 
 ## 関連概念
-- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]] — 同じ思想家
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）]] — 同じ思想家
 - [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
 - [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同分野の近傍

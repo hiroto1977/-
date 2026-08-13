@@ -2,7 +2,7 @@
 title: "global.oup.com"
 type: source-domain
 host: "global.oup.com"
-cite_count: 27
+cite_count: 29
 tags:
   - source-domain
   - index
@@ -10,11 +10,12 @@ tags:
 
 # global.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 19 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **29 件**（学術 21 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — Mulheron,ModernDoctrines(OUP2023)
+- [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — Alexy,R.(2002).ATheoryofConstitutionalRights—OxfordUP
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — Mulheron—TheModernDoctrinesofChampertyandMaintenance(OUP2023)
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — Treitel(1988)RemediesforBreachofContract:AComparativeAccount—Clarendo…
 - [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — McKendrick,E.ContractLaw:Text,Cases,andMaterials.OxfordUniversityPres…
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — Birks,P.(2005)UnjustEnrichment(2nded.)—OxfordUniversityPress（不当利得法の学術…
@@ -38,8 +39,9 @@ tags:
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — Nonaka&Takeuchi(1995)TheKnowledge-CreatingCompany,OxfordUniversityPre…
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — Nonaka&Takeuchi1995—TheKnowledge-CreatingCompany,OxfordUniversityPres…
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — Nonaka,I.&Takeuchi,H.(1995)TheKnowledge-CreatingCompany—OxfordUnivers…
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — Nonaka&Takeuchi1995—TheKnowledge-CreatingCompany
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — Nonaka&Takeuchi1995—TheKnowledge-CreatingCompany
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — Luthans,Youssef&Avolio(2007)PsychologicalCapital:DevelopingtheHumanCo…
+- [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — Volberda(1998)BuildingtheFlexibleFirm—OxfordUniversityPress
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — Gabriel,Y.(2000)StorytellinginOrganizations:Facts,Fictions,andFantasi…
 
 ## 関連

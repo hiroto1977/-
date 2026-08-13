@@ -30,10 +30,11 @@ aliases:
 - [Wikipedia: First-sale doctrine — IP exhaustion law](https://en.wikipedia.org/wiki/First-sale_doctrine) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-intellectual-property-exhaustion|知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力]] — 語彙が近い
+- [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 語彙が近い
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 同じ思想家
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 出典を共有
-- [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 同分野の近傍
-- [[bizlaw-intellectual-property-exhaustion|知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力]] — 同分野の近傍
+- [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — 出典を共有
+- [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

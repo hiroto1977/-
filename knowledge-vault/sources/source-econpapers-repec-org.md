@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 9
+cite_count: 10
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **9 件**（学術 8 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **10 件**（学術 9 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — Kashyap,Stein&Wilcox(1993)MonetaryPolicyandCreditConditions:Evidencef…
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — EconPapers/RePEc—原論文の書誌情報（掲載誌・巻号・頁）
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Tcherneva(2006)ChartalismandtheTax-DrivenApproachtoMoney,inHandbookof…
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — Angrist,J.D.(1990)LifetimeEarningsandtheVietnamEraDraftLottery:Eviden…

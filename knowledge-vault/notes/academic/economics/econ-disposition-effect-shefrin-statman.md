@@ -30,10 +30,11 @@ aliases:
 - [Wikipedia: Disposition effect — Shefrin & Statman, prospect theory, sell winners/hold losers, Odean](https://en.wikipedia.org/wiki/Disposition_effect) `リファレンス`
 
 ## 関連概念
-- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-loss-aversion|損失回避]] — 同じ思想家
-- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
-- [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
+- [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 同じ思想家
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

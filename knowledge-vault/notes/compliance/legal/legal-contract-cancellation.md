@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 語彙が近い
-- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 語彙が近い
 - [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 分野横断
 - [[legal-risk-bearing|危険負担（改正民法536条）]] — 同分野の近傍
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 同分野の近傍

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
-- [[human-biopsychosocial-model|生物心理社会モデル]] — 同分野の近傍
 - [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 同分野の近傍
 - [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同分野の近傍
 

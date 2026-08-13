@@ -31,10 +31,16 @@ aliases:
 - [Wikipedia: Transfer pricing — 移転価格制度の概要と国際動向](https://en.wikipedia.org/wiki/Transfer_pricing) `リファレンス`
 
 ## 関連概念
-- [[econ-transfer-pricing|移転価格税制]] — 語彙が近い
-- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — 語彙が近い
+- [[tax-transfer-pricing|移転価格税制]] — 語彙が近い
+- [[bizlaw-transfer-pricing-arm-length|移転価格税制と独立企業間価格原則]] — 語彙が近い
 - [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 同じ思想家
-- [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同分野の近傍
+- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
+- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
+- [[econ-transfer-pricing|移転価格税制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,8 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-marketing-myopia|マーケティング近視眼]] — 同分野の近傍
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同分野の近傍
-- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 同分野の近傍
-- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

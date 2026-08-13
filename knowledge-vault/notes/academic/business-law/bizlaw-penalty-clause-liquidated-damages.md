@@ -31,16 +31,16 @@ aliases:
 - [Wikipedia: Penalty clause — liquidated damages and judicial control overview](https://en.wikipedia.org/wiki/Penalty_clause) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 語彙が近い
 - [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 語彙が近い
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 同じ思想家
 - [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 同じ思想家
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
+- [[bizlaw-rule-in-claytons-case|クレイトン事件の準則（Rule in Clayton's Case／Devaynes v Noble）——混合口座の追及で引き出しを入金順に充当する先入先出の推定]] — 出典を共有
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
-- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,6 +34,8 @@ aliases:
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同分野の近傍
 - [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — 同分野の近傍
+- [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同分野の近傍
+- [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

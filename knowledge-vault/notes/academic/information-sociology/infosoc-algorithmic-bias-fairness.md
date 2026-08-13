@@ -26,7 +26,7 @@ aliases:
 ソーニャ・バロカス ／ モリッツ・ハート ／ ジョイ・ブオランウィニ ／ ティムニット・ゲブル
 
 ## 出典
-- [Barocas, S. et al. (2019). Fairness and Machine Learning — MIT Press](https://doi.org/10.1145/3442188.3445924) `学術`
+- [Barocas, S., Hardt, M. & Narayanan, A. (2023). Fairness and Machine Learning: Limitations and Opportunities — MIT Press（2019 年はオンライン草稿。MIT Press 版は 2023 年）](https://fairmlbook.org/) `学術`
 - [Wikipedia: Algorithmic bias — fairness in AI systems](https://en.wikipedia.org/wiki/Algorithmic_bias) `リファレンス`
 
 ## 関連概念
@@ -35,7 +35,7 @@ aliases:
 - [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同じ思想家
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同分野の近傍
-- [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同分野の近傍
+- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

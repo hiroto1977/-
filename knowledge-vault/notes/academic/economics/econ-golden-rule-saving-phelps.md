@@ -38,9 +38,9 @@ aliases:
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
+- [[econ-hosios-condition|ホシオス条件——サーチ市場が効率的になる分配のルール]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

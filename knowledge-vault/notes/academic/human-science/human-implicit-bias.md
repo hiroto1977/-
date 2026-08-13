@@ -38,8 +38,8 @@ aliases:
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
 - [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 出典を共有
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
 - [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 出典を共有
 
 ## 関連

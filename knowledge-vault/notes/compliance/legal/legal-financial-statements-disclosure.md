@@ -31,8 +31,16 @@ aliases:
 - [決算公告の期限・方法・罰則 解説](https://biz.moneyforward.com/erp/basic/2193/) `メディア`
 
 ## 関連概念
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
-- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 同分野の近傍
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
+- [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 出典を共有
+- [[bizlaw-apparent-agency|表見代理]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+- [[labor-work-interval|勤務間インターバル制度]] — 出典を共有
+- [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

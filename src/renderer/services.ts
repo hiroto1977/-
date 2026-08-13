@@ -69,6 +69,7 @@ import { AssistantPage } from './pages/AssistantPage';
 import { VillagePage } from './pages/VillagePage';
 import { DocstudioPage } from './pages/DocstudioPage';
 import { CursorPage } from './pages/CursorPage';
+import { ChartsPage } from './pages/ChartsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -673,6 +674,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'AI コードエディタのチーム管理 — メンバー / 利用状況 / 支出',
     page: CursorPage,
     category: 'integrations',
+  },
+  {
+    id: 'charts',
+    label: '可視化',
+    icon: 'CH',
+    description: '折れ線・円・レーダーで数値を可視化 (仮想データ + 自己検査つき)',
+    page: ChartsPage,
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

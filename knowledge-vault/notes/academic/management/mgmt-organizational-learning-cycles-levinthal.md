@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 語彙が近い
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

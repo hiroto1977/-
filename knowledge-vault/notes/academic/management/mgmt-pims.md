@@ -32,6 +32,7 @@ PIMS（GE→マーケティング・サイエンス研究所/ハーバード→�
 ## 関連概念
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 同分野の近傍
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同分野の近傍
+- [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 同分野の近傍
 - [[mgmt-kirkpatrick-evaluation|カークパトリックの4段階評価モデル（Kirkpatrick Model）——研修の効果を反応・学習・行動・結果の4層で測る]] — 同分野の近傍
 - [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同分野の近傍
 

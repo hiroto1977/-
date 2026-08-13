@@ -37,8 +37,8 @@ David G. Sirmon／Michael A. Hitt／R. Duane Ireland／Brett A. Gilbert
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
 - [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
-- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
 - [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]] — 同分野の近傍
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

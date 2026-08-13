@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-compassion-fatigue-figley|共感疲労（フィグリー）]] — 語彙が近い
-- [[human-interpersonal-neurobiology-siegel|対人神経生物学——シーゲルの統合マインド理論と関係性が脳発達に与える神経科学的基盤]] — 同分野の近傍
+- [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

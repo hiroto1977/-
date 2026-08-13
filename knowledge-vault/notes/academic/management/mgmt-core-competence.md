@@ -36,7 +36,7 @@ C.K.プラハラード／ゲイリー・ハメル（1990 HBR）
 - [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 出典を共有
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同分野の近傍
-- [[mgmt-strategic-human-capital|戦略的人的資本論]] — 同分野の近傍
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

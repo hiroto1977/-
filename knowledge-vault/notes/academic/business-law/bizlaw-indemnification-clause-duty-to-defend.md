@@ -31,8 +31,8 @@ Queen Villas Homeowners Assn v. TCB Prop. Mgmt.（2007・カリフォルニア�
 - [Saxe Doernberger & Vita, P.C. — Construction Anti-Indemnity Statutes（50州調査・建設契約における反補償法の概観）](https://www.sdvlaw.com/surveys/construction-anti-indemnity-statutes/) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]] — 同分野の近傍
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同分野の近傍
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -28,15 +28,14 @@ Ron Sanchez ／ Henk W. Volberda ／ Katsuhiko Shimizu ／ Michael A. Hitt ／ R
 ## 出典
 - [Sanchez (1995) Strategic flexibility in product competition — Strategic Management Journal](https://doi.org/10.1002/smj.4250160307) `学術`
 - [Volberda (1996) Toward the flexible firm: How to remain vital in hypercompetitive environments — Organization Science](https://doi.org/10.1287/orsc.7.4.359) `学術`
-- [Shimizu & Hitt (2004) Strategic flexibility: Organizational preparedness to reverse ineffective strategic decisions — Academy of Management Executive](https://doi.org/10.1002/smj.349) `学術`
+- [Shimizu & Hitt (2004) Strategic flexibility: Organizational preparedness to reverse ineffective strategic decisions — Academy of Management Executive](https://doi.org/10.5465/ame.2004.15268683) `学術`
 - [Sanchez (1993) Strategic flexibility, firm organization, and managerial work in dynamic markets — Advances in Strategic Management](https://doi.org/10.1002/smj.4250141010) `学術`
-- [Volberda (1998) Building the Flexible Firm — Oxford University Press](https://doi.org/10.1111/j.1467-6486.1998.00078.x) `学術`
+- [Volberda (1998) Building the Flexible Firm — Oxford University Press](https://global.oup.com/academic/product/building-the-flexible-firm-9780198295952) `学術`
 
 ## 関連概念
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同じ思想家
 - [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
-- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
 

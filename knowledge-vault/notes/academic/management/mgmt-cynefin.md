@@ -32,8 +32,9 @@ aliases:
 
 ## 関連概念
 - [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — 同じ思想家
-- [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
 - [[mgmt-iron-law-oligarchy|寡頭制の鉄則（Iron Law of Oligarchy）]] — 同分野の近傍
+- [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — 同分野の近傍
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

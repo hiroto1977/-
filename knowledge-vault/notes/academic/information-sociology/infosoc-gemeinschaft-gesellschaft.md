@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
-- [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

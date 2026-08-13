@@ -27,12 +27,12 @@ aliases:
 
 ## 出典
 - [Fredrickson, B. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist](https://doi.org/10.1037/0003-066X.56.3.218) `学術`
-- [Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science](https://doi.org/10.1037/0022-3514.84.2.365) `学術`
+- [Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science](https://doi.org/10.1111/1467-9280.00431) `学術`
 - [Wikipedia: Broaden-and-build — 拡張＝形成理論の概要](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
 
 ## 関連概念
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 語彙が近い
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 語彙が近い
+- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 分野横断
 - [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家

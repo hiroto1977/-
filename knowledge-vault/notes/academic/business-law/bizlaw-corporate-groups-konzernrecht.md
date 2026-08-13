@@ -39,7 +39,7 @@ aliases:
 - [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
 - [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
 - [[bizlaw-commercial-code|商法]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

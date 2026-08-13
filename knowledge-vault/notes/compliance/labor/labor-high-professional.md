@@ -36,6 +36,7 @@ aliases:
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 同分野の近傍
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 同分野の近傍
 - [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍
+- [[labor-variable-working-hours|変形労働時間制]] — 同分野の近傍
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 同分野の近傍
 
 ## 関連

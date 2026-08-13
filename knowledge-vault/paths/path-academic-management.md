@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 665
+entry_count: 653
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（665件）
+# 学習パス — 学術概念／経営学（653件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 58）
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]]（接続 34）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 31）
-- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 31）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 64）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 34）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
-- [[mgmt-managerial-cognition|経営者認知理論]]（接続 25）
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 27）
+- [[mgmt-csr|企業の社会的責任（CSR）]]（接続 25）
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 24）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
-- [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
-- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
-- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]（接続 22）
-- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 22）
-- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]（接続 22）
-- [[mgmt-mbo|目標による管理（MBO）]]（接続 22）
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
+- [[mgmt-mbo|目標による管理（MBO）]]（接続 24）
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
+- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]（接続 21）
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -112,6 +112,7 @@ tags:
 - 1972年: [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]]
 - 1972年: [[mgmt-greiner-growth|グレイナーの企業成長モデル]]
 - 1973年: [[mgmt-competency|コンピテンシー]]
+- 1973年: [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]]
 - 1973年: [[mgmt-loose-coupling-weick|疎結合システム（組織論）]]
 - 1973年: [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]]
 - 1973年: [[mgmt-real-options-theory|リアル・オプション理論]]
@@ -141,7 +142,6 @@ tags:
 - 1981年: [[mgmt-organizational-unlearning|組織的アンラーニング]]
 - 1981年: [[mgmt-theory-z|セオリーZ]]
 - 1981年: [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]]
-- 1982年: [[mgmt-organizational-routines|組織ルーチン]]
 - 1983年: [[mgmt-competing-values|競合価値フレームワーク（CVF）]]
 - 1983年: [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]]
 - 1983年: [[mgmt-institutional-isomorphism|制度的同型化]]
@@ -165,7 +165,6 @@ tags:
 - 1986年: [[mgmt-technology-s-curve|技術のSカーブ]]
 - 1987年: [[mgmt-mass-customization|マス・カスタマイゼーション]]
 - 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
-- 1987年: [[mgmt-organizational-decline|組織衰退論（Organizational Decline）]]
 - 1987年: [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]]
 - 1987年: [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]]
 - 1988年: [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]]
@@ -243,6 +242,7 @@ tags:
 - 1999年: [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]]
 - 2000年: [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]]
 - 2000年: [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]]
+- 2000年: [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]]
 - 2000年: [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]]
 - 2001年: [[mgmt-effectuation|エフェクチュエーション]]
 - 2001年: [[mgmt-flywheel|フライホイール効果（弾み車の法則）]]
@@ -272,7 +272,6 @@ tags:
 - 2007年: [[mgmt-subscription-model|サブスクリプション・モデル]]
 - 2007年: [[mgmt-theory-u|セオリーU（プレゼンシング）]]
 - 2009年: [[mgmt-customer-journey|カスタマージャーニー]]
-- 2009年: [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]]
 - 2010年: [[mgmt-social-impact-bond|社会的インパクト・ボンド（SIB）]]
 - 2011年: [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]]
 - 2011年: [[mgmt-shared-value|共有価値の創造（CSV）]]
@@ -301,7 +300,6 @@ tags:
 - [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]]
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]]
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]]
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]]
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]]
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]]
@@ -328,7 +326,6 @@ tags:
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]]
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]]
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]]
-- [[mgmt-bricolage-theory|ブリコラージュ理論]]
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]]
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]]
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]]
@@ -343,7 +340,6 @@ tags:
 - [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]]
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]]
 - [[mgmt-cognitive-evaluation-theory|認知的評価理論]]
-- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]]
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]]
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]]
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]]
@@ -359,7 +355,6 @@ tags:
 - [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]]
 - [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]]
 - [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]]
-- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]]
 - [[mgmt-cooptation-selznick|コオプテーション——脅威を回避するための外部要素の指導構造への取り込み]]
 - [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]]
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]]
@@ -367,8 +362,8 @@ tags:
 - [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]]
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]]
 - [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]]
-- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]]
+- [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]]
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]]
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]]
@@ -389,7 +384,6 @@ tags:
 - [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]]
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]]
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]]
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]]
 - [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]]
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]]
 - [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]]
@@ -468,6 +462,8 @@ tags:
 - [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]]
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]]
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]]
+- [[mgmt-managerial-cognition|経営者認知理論]]
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]
 - [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]]
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]]
 - [[mgmt-means-end-chain|手段-目的連鎖モデル（Means-End Chain／ミーンズ・エンド・チェーンとラダリング法）——製品の属性が結果を介して個人の価値観へとつながる階層を解明する]]
@@ -513,7 +509,7 @@ tags:
 - [[mgmt-organizational-improvisation-theory|組織即興理論]]
 - [[mgmt-organizational-improvisation-weick|組織的即興——計画と実行が時間的に融合する行為としての組織化]]
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]]
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]]
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]]
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]]
 - [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]]
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]]
@@ -523,7 +519,6 @@ tags:
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]]
 - [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]]
 - [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]]
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]]
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]]
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]]
 - [[mgmt-organizational-silence-morrison|組織的沈黙（モリソン＆ミリケン）]]
@@ -545,21 +540,17 @@ tags:
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]]
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]]
 - [[mgmt-population-ecology-organization|組織の個体群生態学]]
-- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]]
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]]
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]]
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]]
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]]
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]]
 - [[mgmt-psychological-capital-theory|心理的資本理論]]
 - [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]]
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]]
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]]
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]]
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]]
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]]
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]]
 - [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]]
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]]
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]]
@@ -614,7 +605,6 @@ tags:
 - [[mgmt-strategic-choice-theory|戦略的選択理論]]
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]]
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]]
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]]
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]]
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]]
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]]
@@ -630,7 +620,6 @@ tags:
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]]
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]]
 - [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]]
-- [[mgmt-strategic-renewal-theory|戦略的再生理論]]
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]]
 - [[mgmt-strategic-silence|組織における戦略的沈黙]]
 - [[mgmt-strategic-types-miles-snow|マイルズ＆スノーの戦略類型——環境適応の様式による四つの組織類型]]
@@ -663,7 +652,6 @@ tags:
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]]
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]]
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]]
-- [[mgmt-transformational-leadership-bass|変革型リーダーシップ理論——ビジョン・インスピレーション・知的刺激による組織変革（バス）]]
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]]
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]]
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]]

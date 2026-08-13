@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[tax-amended-return|修正申告・期限後申告と加算税]] — 語彙が近い
-- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-estimated-prepayment|所得税の予定納税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

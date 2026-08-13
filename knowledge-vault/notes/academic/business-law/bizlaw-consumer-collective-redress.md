@@ -33,7 +33,9 @@ aliases:
 ## 関連概念
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 分野横断
 - [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 同分野の近傍
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
 - [[bizlaw-consumer-contract-unfair-terms|消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正]] — 同分野の近傍
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

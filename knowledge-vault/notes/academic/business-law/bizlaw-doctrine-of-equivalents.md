@@ -31,7 +31,7 @@ Graver Tank v. Linde Air Products (1950, 339 U.S. 605 / 三要素同一テスト
 - [WIPO Patent Judicial Guide, Japan §7.5.2 — Patent Infringement under the Doctrine of Equivalents（Ball Spline Bearing Case／ツバキモト精工対THK、最高裁平成10年〔1998年〕2月24日判決の五要件テスト）](https://www.wipo.int/patent-judicial-guide/en/full-guide/japan/7.5.2) `公的`
 
 ## 関連概念
-- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 出典を共有
+- [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]] — 出典を共有
 - [[bizlaw-intellectual-property-trademark|商標法と知的財産保護の法律理論——ブランド価値と識別性基準]] — 出典を共有
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 出典を共有
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍

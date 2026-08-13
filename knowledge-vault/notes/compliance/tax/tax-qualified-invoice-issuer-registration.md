@@ -31,9 +31,16 @@ aliases:
 - [マネーフォワード 適格請求書発行事業者の登録 解説](https://biz.moneyforward.com/invoice/basic/55222/) `メディア`
 
 ## 関連概念
-- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 分野横断
-- [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 同分野の近傍
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 同分野の近傍
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
+- [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 出典を共有
+- [[bizlaw-apparent-agency|表見代理]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
+- [[labor-work-interval|勤務間インターバル制度]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

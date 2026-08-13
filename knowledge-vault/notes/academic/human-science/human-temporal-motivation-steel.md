@@ -38,8 +38,8 @@ aliases:
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同じ思想家
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
-- [[human-phantom-limb|幻肢（ファントムリム）]] — 同分野の近傍
 - [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同分野の近傍
+- [[human-ultimate-attribution-error|究極的帰属錯誤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

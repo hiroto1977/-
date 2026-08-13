@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[human-observational-learning|観察学習（バンデューラ）]] — WashingtonStateUniversity,IntroductoryPsychology「6.5ObservationalLear…
+- [[human-social-learning-theory|社会的学習理論]] — WashingtonStateUniversity,IntroductoryPsychology「6.5ObservationalLear…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

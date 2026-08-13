@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同分野の近傍
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
-- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

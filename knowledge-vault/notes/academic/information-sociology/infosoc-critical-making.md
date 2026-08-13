@@ -30,8 +30,8 @@ Matt Ratto（The Information Society 27(4), 2011, クリティカル・メイキ
 - [Ratto & Boler eds. (2014) DIY Citizenship: Critical Making and Social Media — MIT Press](https://mitpress.mit.edu/9780262525527/diy-citizenship/) `学術`
 
 ## 関連概念
+- [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

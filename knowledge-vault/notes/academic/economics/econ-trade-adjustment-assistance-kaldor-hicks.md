@@ -26,7 +26,7 @@ aliases:
 ニコラス・カルドア ／ ジョン・ヒックス ／ ダニ・ロドリック ／ ポール・クルーグマン
 
 ## 出典
-- [Autor, Dorn & Hanson (2016) The China Shock — Annual Review of Economics](https://doi.org/10.1093/restud/rdw055) `学術`
+- [Autor, Dorn & Hanson (2016) The China Shock — Annual Review of Economics](https://doi.org/10.1146/annurev-economics-080315-015041) `学術`
 - [Rodrik (2000) How Far Will International Economic Integration Go? — Journal of Economic Perspectives](https://doi.org/10.3386/w7864) `学術`
 - [Wikipedia: Kaldor–Hicks efficiency — カルドア＝ヒックス効率性基準](https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency) `リファレンス`
 

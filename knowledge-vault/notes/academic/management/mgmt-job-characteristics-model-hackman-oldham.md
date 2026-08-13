@@ -32,7 +32,7 @@ J・リチャード・ハックマン ／ グレッグ・オールダム ／ フ
 
 ## 関連概念
 - [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 語彙が近い
-- [[mgmt-job-enrichment|職務拡大と職務充実]] — 語彙が近い
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 語彙が近い
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家

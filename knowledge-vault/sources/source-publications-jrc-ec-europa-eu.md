@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。]] — EuropeanCommissionJRC2022—DigComp2.2:DigitalCompetenceFramework
+- [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — EuropeanCommissionJRC2022—DigComp2.2:DigitalCompetenceFramework
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

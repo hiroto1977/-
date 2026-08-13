@@ -33,10 +33,10 @@ aliases:
 ## 関連概念
 - [[bizlaw-copyright|著作権法]] — 語彙が近い
 - [[legal-moral-rights|著作者人格権]] — 語彙が近い
-- [[legal-copyright-term|著作権の保護期間と私的複製]] — 分野横断
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 語彙が近い
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
 - [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 出典を共有
-- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 出典を共有
 - [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 出典を共有
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有

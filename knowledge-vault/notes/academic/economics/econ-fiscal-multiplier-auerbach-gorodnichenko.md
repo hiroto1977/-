@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 語彙が近い
+- [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]] — 語彙が近い
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
 - [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — 同じ思想家
@@ -38,7 +39,6 @@ aliases:
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
-- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 - [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
 
 ## 関連

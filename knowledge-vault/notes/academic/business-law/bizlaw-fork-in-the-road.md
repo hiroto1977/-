@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-二国間投資協定（BIT）において投資家が紛争解決の場として国内裁判所と国際仲裁のいずれかを不可逆的に選択すべきことを定める条項。一方の紛争処理機関への付託後は他方が排除され、並行手続を防止する。契約上の請求と条約上の請求が「同一の紛争」か否かの解釈が仲裁実務上の争点となる。
+二国間投資協定（BIT）において投資家が紛争解決の場として国内裁判所と国際仲裁のいずれかを不可逆的に選択すべきことを定める条項。一方の紛争処理機関への付託後は他方が排除され、並行手続と救済の二重取りを防止してホスト国の手続的負担を軽減する。実務上の最大の争点は契約上の請求と条約上の請求が「同一の紛争」か否かの判定で、初期の仲裁判断が当事者・訴訟物・請求原因の三重同一性テストを厳格に適用した結果、国内裁判所での契約請求と仲裁での条約請求はほぼ常に別個とされ、条項が現実に発動するのは稀で空文化しているとの評価が定着した。Pantechniki 対アルバニア（2009）はこの形式的基準を退け、両請求が「同一の基本的基礎」を共有し、それが国内裁判所へ真の選択として付託されたかで判断する実質基準を提示し、Toto 対レバノン（2012）等の後続判断に影響を与えた。UNCTAD は起草例を、選択の不可逆性を明示する型と黙示にとどめる型に整理し、仲裁付託の条件として国内手続の放棄を要求する NAFTA 型のウェイバー（ノー・ユーターン）条項との設計上の対比を示している。
 
 ## 提唱者・初出
 Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（2012）／UNCTAD投資協定条項シリーズ
@@ -33,14 +33,12 @@ Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（
 ## 関連概念
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同じ思想家
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
-- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — 同じ思想家
-- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
-- [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 同分野の近傍
-- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
+- [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [日本科学技術連盟（JUSE）方針管理研究会](https://www.juse.jp/houshin_kanri/) `学術`
 
 ## 関連概念
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

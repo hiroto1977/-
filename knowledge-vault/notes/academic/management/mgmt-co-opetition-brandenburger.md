@@ -34,9 +34,8 @@ aliases:
 ## 関連概念
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — 同じ思想家
 - [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
-- [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — 同分野の近傍
-- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
-- [[mgmt-effectuation|エフェクチュエーション]] — 同分野の近傍
+- [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同分野の近傍
+- [[mgmt-freemium|フリーミアム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

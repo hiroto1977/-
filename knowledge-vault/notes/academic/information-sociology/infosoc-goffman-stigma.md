@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
 - [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
-- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

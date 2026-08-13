@@ -39,7 +39,7 @@ C・K・プラハラード ／ リチャード・ベティス ／ ゲイリー�
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同じ思想家
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
-- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
+- [[mgmt-adhocracy|アドホクラシー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

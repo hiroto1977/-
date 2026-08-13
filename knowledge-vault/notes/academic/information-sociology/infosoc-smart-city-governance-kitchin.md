@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同じ思想家
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 同分野の近傍
+- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

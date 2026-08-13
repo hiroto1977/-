@@ -2,7 +2,7 @@
 title: "legislation.gov.uk"
 type: source-domain
 host: "legislation.gov.uk"
-cite_count: 31
+cite_count: 30
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # legislation.gov.uk
 
-> [!info] 出典ドメイン索引 ・ 引用 **31 件**（公的 31）
+> [!info] 出典ドメイン索引 ・ 引用 **30 件**（公的 30）
 
 ## このドメインを出典とする項目
 
@@ -18,7 +18,6 @@ tags:
 - [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — UKBriberyAct2010—UKLegislation
 - [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — UKGovernment(2006)CompaniesAct2006Part17Ch.10s.641—ReductionofShareCa…
 - [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — UKLegislation—CriminalLawAct1967,Section14（champerty&maintenanceの不法行為…
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — CriminalLawAct1967s.14(UK)
 - [[bizlaw-commorientes-rule|同時死亡の推定（コモリエンテス法理）]] — UKLegislation—LawofPropertyAct1925,Section184（年長者先死・年少者生存推定の原典）
 - [[bizlaw-corporate-manslaughter|法人の業務上過失致死（コーポレート・マンスローター）]] — CorporateManslaughterandCorporateHomicideAct2007(UK)—legislation.gov.…
 - [[bizlaw-cy-pres|サイプレ原則（近接原則／Cy-près doctrine）]] — UKLegislation—CharitiesAct2011,Section67:Cy-prèsschemes（英国制定法におけるcy-p…

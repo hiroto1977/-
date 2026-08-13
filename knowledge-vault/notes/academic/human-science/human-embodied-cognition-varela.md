@@ -32,11 +32,11 @@ aliases:
 ## 関連概念
 - [[human-embodied-cognition-theory|身体化された認知]] — 語彙が近い
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 語彙が近い
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 語彙が近い
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
-- [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

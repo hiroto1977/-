@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-pdca-cycle|PDCAサイクル]] — 同じ思想家
 - [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同じ思想家
-- [[mgmt-fogg-behavior-model|フォッグ行動モデル（FBM）]] — 同分野の近傍
+- [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

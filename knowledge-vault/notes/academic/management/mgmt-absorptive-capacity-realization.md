@@ -37,7 +37,6 @@ Shaker A. Zahra／Gerard George／Wesley M. Cohen／Daniel A. Levinthal／Henk W
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同じ思想家
-- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 同じ思想家
 - [[mgmt-team-cohesion-carron|チーム凝集性（キャロン）]] — 同分野の近傍
 
 ## 関連

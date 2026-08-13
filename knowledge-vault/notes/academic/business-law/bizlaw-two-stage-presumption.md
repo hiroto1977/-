@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-e-signature|電子署名法]] — 同分野の近傍
+- [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同分野の近傍
 - [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]] — 同分野の近傍
 
 ## 関連

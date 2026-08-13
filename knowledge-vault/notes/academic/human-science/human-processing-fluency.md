@@ -34,7 +34,6 @@ aliases:
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
 - [[human-mere-exposure-zajonc|単純接触効果——反復的接触が対象への好意を増大させる現象]] — 同じ思想家
 - [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — 同じ思想家
-- [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 同分野の近傍
 - [[human-mcgurk-effect|マガーク効果]] — 同分野の近傍
 
 ## 関連

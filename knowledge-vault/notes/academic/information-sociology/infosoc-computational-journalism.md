@@ -31,8 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — 同分野の近傍
-- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 同分野の近傍
-- [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同分野の近傍
+- [[infosoc-digital-minimalism|デジタル・ミニマリズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

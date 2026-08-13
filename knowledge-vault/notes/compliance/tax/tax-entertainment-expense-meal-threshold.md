@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 語彙が近い
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 同分野の近傍
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 同分野の近傍
 
 ## 関連

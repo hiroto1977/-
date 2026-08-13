@@ -31,9 +31,9 @@ aliases:
 - [国立国会図書館 日本法令索引 地方税法（昭和25年法律第226号）](https://hourei.ndl.go.jp/simple/detail?lawId=0000042780) `リファレンス`
 
 ## 関連概念
-- [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 語彙が近い
 - [[bizlaw-inheritance-tax|相続税法]] — 同分野の近傍
-- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同分野の近傍
+- [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — 同分野の近傍
+- [[bizlaw-trademark|商標法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

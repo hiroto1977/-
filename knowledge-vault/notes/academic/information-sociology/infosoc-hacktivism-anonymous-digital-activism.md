@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Hacktivism — ハクティビズムの歴史と倫理的議論](https://en.wikipedia.org/wiki/Hacktivism) `リファレンス`
 
 ## 関連概念
-- [[infosoc-hacktivism|ハクティビズム]] — 同分野の近傍
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同分野の近傍
+- [[infosoc-technological-determinism|技術決定論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

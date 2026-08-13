@@ -33,7 +33,8 @@ aliases:
 ## 関連概念
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 出典を共有
-- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同分野の近傍
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 同分野の近傍
+- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

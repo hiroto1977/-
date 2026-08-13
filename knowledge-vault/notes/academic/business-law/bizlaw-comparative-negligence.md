@@ -31,9 +31,8 @@ aliases:
 - [法務省 民法（債権関係）部会資料（改正検討事項・過失相殺）](https://www.moj.go.jp/content/000059836.pdf) `公的`
 
 ## 関連概念
-- [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
-- [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 同分野の近傍
 - [[bizlaw-set-off|相殺（民法505条）]] — 同分野の近傍
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 - [Rice University, Kinder Institute — Why Do Consumers Hate Uber’s Surge Pricing?（公平感の問題）](https://kinder.rice.edu/urbanedge/why-do-consumers-hate-ubers-surge-pricing) `学術`
 
 ## 関連概念
-- [[mgmt-learning-agility|学習敏捷性（ラーニング・アジリティ）]] — 同分野の近傍
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 同分野の近傍
+- [[mgmt-matrix-organization|マトリックス組織]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

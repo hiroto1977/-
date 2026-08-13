@@ -32,8 +32,8 @@ aliases:
 - [All About Psychology — Forer Effect Explained](https://www.all-about-psychology.com/forer-effect-psychology.html) `リファレンス`
 
 ## 関連概念
+- [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

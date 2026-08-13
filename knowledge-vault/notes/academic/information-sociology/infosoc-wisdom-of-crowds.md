@@ -35,8 +35,7 @@ aliases:
 - [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同じ思想家
 - [[human-synesthesia|共感覚（シナスタジア）]] — 同じ思想家
 - [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -42,6 +42,7 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 同じ思想家
 - [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同分野の近傍
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

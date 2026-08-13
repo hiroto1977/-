@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Dynamic inconsistency — Kydland-Prescott, inflation bias, commitment, central bank independence](https://en.wikipedia.org/wiki/Dynamic_inconsistency) `リファレンス`
 
 ## 関連概念
+- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 語彙が近い
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 語彙が近い
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
 - [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同じ思想家
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同じ思想家
-- [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

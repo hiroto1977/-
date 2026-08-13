@@ -31,16 +31,14 @@ aliases:
 - [証券取引等監視委員会 インサイダー取引とは](https://www.fsa.go.jp/sesc/actions/kokuhatu/02/shiryou.pdf) `公的`
 
 ## 関連概念
+- [[bizlaw-insider-trading|インサイダー取引規制]] — 語彙が近い
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
-- [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
-- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[eh-1978|1978年（昭和53年）]] — 出典を共有
-- [[legal-unauthorized-access|不正アクセス禁止法]] — 同分野の近傍
-- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

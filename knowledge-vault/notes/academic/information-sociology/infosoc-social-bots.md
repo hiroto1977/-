@@ -33,13 +33,13 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 出典を共有
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[infosoc-technological-momentum|技術的モメンタム]] — 出典を共有
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
-- [[econ-productivity-paradox|生産性パラドックス]] — 出典を共有
+- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 

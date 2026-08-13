@@ -31,8 +31,8 @@ aliases:
 - [Stockhammer, E. (2013) Why Have Wage Shares Fallen? — ILO Conditions of Work and Employment Series 35](https://doi.org/10.1017/S0266267112000132) `学術`
 
 ## 関連概念
-- [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 同分野の近傍
 - [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — 同分野の近傍
+- [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

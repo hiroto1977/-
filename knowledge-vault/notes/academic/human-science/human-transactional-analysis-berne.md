@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同じ思想家
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
-- [[human-inattentional-blindness|非注意性盲目（不注意盲）]] — 同分野の近傍
+- [[human-self-serving-bias|自己奉仕バイアス]] — 同分野の近傍
+- [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

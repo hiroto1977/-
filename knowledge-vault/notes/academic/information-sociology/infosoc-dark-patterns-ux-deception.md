@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
 - [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 出典を共有
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+- [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

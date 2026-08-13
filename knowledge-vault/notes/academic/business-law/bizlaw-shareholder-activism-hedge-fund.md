@@ -26,7 +26,7 @@ aliases:
 アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック
 
 ## 出典
-- [Klein, A. & Zur, E. (2009) Entrepreneurial Shareholder Activism: Hedge Funds and Other Private Investors — Journal of Finance 64(1), 187–229（ヘッジファンド・アクティビズムの実証研究）](https://doi.org/10.1017/S0022109009990469) `学術`
+- [Klein, A. & Zur, E. (2009) Entrepreneurial Shareholder Activism: Hedge Funds and Other Private Investors — Journal of Finance 64(1), 187–229（ヘッジファンド・アクティビズムの実証研究）](https://doi.org/10.1111/j.1540-6261.2008.01432.x) `学術`
 - [Wikipedia: Shareholder activism — 株主アクティビズムの概説](https://en.wikipedia.org/wiki/Shareholder_activism) `リファレンス`
 
 ## 関連概念

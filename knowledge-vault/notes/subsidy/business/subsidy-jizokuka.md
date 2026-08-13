@@ -37,6 +37,7 @@ national
 - [全国商工会連合会 持続化補助金事務局](https://www.jizokukanb.com/) `運営団体`
 
 ## 関連概念
+- [[subsidy-productivity-revolution|中小企業生産性革命推進事業]] — 語彙が近い
 - [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 同じ思想家
 - [[subsidy-shizuoka|中小企業等収益力向上事業費補助金（静岡県）]] — 同じ思想家
 - [[subsidy-gotech|Go-Tech事業（成長型中小企業等研究開発支援事業）]] — 出典を共有
@@ -44,8 +45,6 @@ national
 - [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 出典を共有
 - [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]] — 出典を共有
 - [[subsidy-it-introduction|IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）]] — 同分野の近傍
-- [[subsidy-productivity-revolution|中小企業生産性革命推進事業]] — 同分野の近傍
-- [[subsidy-yokohama|横浜市特定創業支援等事業（IDEC横浜）]] — 同分野の近傍
 - [[subsidy-kumamoto|くまもと型小規模事業者経営発展支援事業補助金（熊本県）]] — 同分野の近傍
 
 ## 関連

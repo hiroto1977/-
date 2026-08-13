@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 語彙が近い
-- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — 語彙が近い
+- [[bizlaw-corporate-governance-structures|コーポレート・ガバナンス構造の比較制度分析]] — 語彙が近い
 - [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
 - [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
 - [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家

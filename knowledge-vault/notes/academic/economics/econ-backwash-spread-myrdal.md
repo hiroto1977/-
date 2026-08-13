@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Myrdal, G. (1957) Economic Theory and Under-Developed Regions — Duckworth](https://doi.org/10.2307/2228381) `学術`
 - [Wikipedia: Circular Cumulative Causation — overview of Myrdal backwash/spread framework](https://en.wikipedia.org/wiki/Circular_cumulative_causation) `リファレンス`
-- [Fujita, M. & Thisse, J.-F. (2002) Economics of Agglomeration — Cambridge UP ch.12](https://doi.org/10.1016/S1574-0684(05)01058-7) `学術`
+- [Fujita, M. & Thisse, J.-F. (2002) Economics of Agglomeration — Cambridge UP ch.12](https://www.cambridge.org/core/books/economics-of-agglomeration/508B838198BF4709A7522D20652D70D5) `学術`
 
 ## 関連概念
 - [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家

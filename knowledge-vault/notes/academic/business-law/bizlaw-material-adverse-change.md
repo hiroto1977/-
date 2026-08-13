@@ -31,13 +31,12 @@ Ronald J. Gilson ／ Alan Schwartz ／ Robert T. Miller
 - [National Law Review, "Akorn, Inc. v. Fresenius Kabi AG: Delaware Chancery Court Finds a Material Adverse Effect for the First Time" (2018)](https://natlawreview.com/article/ma-update-akorn-falls-far-tree-delaware-chancery-court-finds-material-adverse-effect) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 語彙が近い
 - [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 語彙が近い
+- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 同じ思想家
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,15 +31,14 @@ aliases:
 - [安全衛生委員会 開催・保存 解説](https://www.rodo.co.jp/laws/117010/) `メディア`
 
 ## 関連概念
-- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
 - [[labor-dispatch-license|労働者派遣事業の許可制]] — 出典を共有
 - [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 出典を共有
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
+- [[labor-safety-management|安全衛生管理体制（50人以上）]] — 同分野の近傍
 - [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — 同分野の近傍
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 同分野の近傍
-- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 同分野の近傍
+- [[labor-tribunal|労働審判制度（労働審判法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

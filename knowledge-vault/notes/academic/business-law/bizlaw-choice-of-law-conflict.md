@@ -32,11 +32,10 @@ aliases:
 - [Wikipedia: Conflict of laws — Rome I/II, most significant relationship, party autonomy, public policy exception](https://en.wikipedia.org/wiki/Conflict_of_laws) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-lex-loci-delicti|不法行為地法主義（Lex Loci Delicti）]] — 語彙が近い
 - [[bizlaw-private-international-law|国際私法（法の適用に関する通則法）]] — 同じ思想家
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
 - [[econ-ecological-footprint-biocapacity|生態足跡とバイオキャパシティ]] — 同じ思想家
-- [[bizlaw-lex-loci-delicti|不法行為地法主義（Lex Loci Delicti）]] — 同分野の近傍
-- [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

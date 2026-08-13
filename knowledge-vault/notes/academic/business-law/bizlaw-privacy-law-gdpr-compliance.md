@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-data-protection-gdpr-adequacy|GDPRと十分性認定——個人データの越境移転とプライバシー保護の国際的枠組み]] — 語彙が近い
+- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 語彙が近い
 - [[bizlaw-data-protection-gdpr-principles|データ保護法とGDPR原則——EU一般データ保護規則の七原則と越境データ流通]] — 同じ思想家
-- [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 出典を共有
 - [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 出典を共有
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 出典を共有
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有

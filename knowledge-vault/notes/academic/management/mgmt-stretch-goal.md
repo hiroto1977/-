@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
-- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同分野の近傍
 
 ## 関連

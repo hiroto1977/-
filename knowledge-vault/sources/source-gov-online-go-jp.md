@@ -2,7 +2,7 @@
 title: "gov-online.go.jp"
 type: source-domain
 host: "gov-online.go.jp"
-cite_count: 22
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # gov-online.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（公的 17 ・ メディア 5）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（公的 16 ・ メディア 5）
 
 ## このドメインを出典とする項目
 
@@ -22,7 +22,6 @@ tags:
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 政府広報オンライン国民年金の第3号被保険者
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 政府広報オンライン社会保険の適用が拡大従業員51人以上
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 政府広報オンライン18歳から大人に成年年齢引下げ
-- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 政府広報オンライン個人情報保護法
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 政府広報オンライン消費者団体訴訟制度
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 政府広報オンライン取引DPF消費者保護法
 - [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 政府広報オンライン海賊版ダウンロードは違法

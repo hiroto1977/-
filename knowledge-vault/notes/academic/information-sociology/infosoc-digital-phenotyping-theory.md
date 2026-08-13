@@ -35,7 +35,6 @@ John Torous ／ Jukka-Pekka Onnela ／ Matcheri Keshavan ／ Sherry Chou ／ Ian
 ## 関連概念
 - [[human-cognitive-reserve-theory|認知的予備力理論]] — 出典を共有
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同分野の近傍
-- [[infosoc-political-polarization|政治的分極化]] — 同分野の近傍
 - [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]] — 同分野の近傍
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]] — 同分野の近傍
 

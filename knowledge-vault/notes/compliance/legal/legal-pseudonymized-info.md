@@ -37,7 +37,7 @@ aliases:
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 分野横断
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
-- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 出典を共有
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有

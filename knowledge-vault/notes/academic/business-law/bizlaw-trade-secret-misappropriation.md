@@ -36,12 +36,12 @@ aliases:
 - [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 語彙が近い
 - [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]] — 同じ思想家
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 - [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
 - [[eh-1959|1959年（昭和34年）]] — 出典を共有
 - [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 出典を共有
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]] — 出典を共有
+- [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

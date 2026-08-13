@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — 語彙が近い
-- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]] — 語彙が近い
 - [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同じ思想家
 - [[mgmt-stakeholder-salience-mitchell-agle-wood|ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位]] — 同じ思想家
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同じ思想家
@@ -39,6 +38,7 @@ aliases:
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同じ思想家
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
 - [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
+- [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — 同じ思想家
 - [[mgmt-temporal-leadership|テンポラル・リーダーシップ（Temporal Leadership）]] — 同分野の近傍
 
 ## 関連

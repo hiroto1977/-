@@ -30,8 +30,8 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Philosophy of Economics（名目硬直性・契約理論を含む労働市場分析の文脈）](https://plato.stanford.edu/entries/economics/) `リファレンス`
 
 ## 関連概念
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
 - [[econ-okuns-law|オーカンの法則]] — 同分野の近傍
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-特定CpGサイトのDNAメチル化パターンが生物学的年齢を正確に予測できるという理論。Horvathが353箇所のCpG部位を用いた汎組織時計を2013年に発表し、暦年齢との乖離が健康・疾病リスクの指標となることを示した。
+特定CpGサイトのDNAメチル化パターンが生物学的年齢を正確に予測できるという理論。Horvathが353箇所のCpG部位を用いた汎組織時計を2013年に発表し、暦年齢との乖離が健康・疾病リスクの指標となることを示した。Horvath 時計は 51 組織・細胞型で暦年齢と高い相関（誤差中央値約 3.6 年）を示す汎組織性が衝撃だった第 1 世代で、メチル化年齢が暦年齢を上回る「加速」が死亡率・がん・アルツハイマー病リスクと関連する。第 2 世代は暦年齢ではなく表現型・リスクを直接教師にする設計へ転換し、Levine らの PhenoAge（臨床マーカー複合を教師）と GrimAge（喫煙・血漿タンパクの代理メチル化を束ねる）が死亡・疾病予測で第 1 世代を上回った。第 3 世代の DunedinPACE は「老化の速度」そのものを縦断コホートから学習する。課題は機構の不透明さ（時計 CpG が老化の原因か随伴か）、集団間の較正、介入試験での可逆性の解釈（カロリー制限・運動・若返り因子で時計が巻き戻るか）で、老化研究のサロゲート・エンドポイントとして抗老化介入の臨床試験設計を変えつつある。
 
 ## 提唱者・初出
 Steve Horvath ／ Morgan Levine
@@ -32,10 +32,8 @@ Steve Horvath ／ Morgan Levine
 - [DNA methylation aging clocks challenges review](https://link.springer.com/article/10.1186/s13059-019-1824-y) `学術`
 
 ## 関連概念
-- [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — 語彙が近い
-- [[human-developmental-origins-of-health-disease|健康と疾病の発達起源説（DOHaD）]] — 同分野の近傍
-- [[human-central-pattern-generator|中枢パターン発生器（CPG）]] — 同分野の近傍
-- [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

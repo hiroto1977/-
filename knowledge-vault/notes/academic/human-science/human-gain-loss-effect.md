@@ -31,7 +31,7 @@ aliases:
 - [Oxford Reference — Gain-loss effect](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095840471) `リファレンス`
 
 ## 関連概念
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-effort-justification|努力の正当化]] — 同じ思想家
 - [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有

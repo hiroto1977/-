@@ -40,8 +40,8 @@ aliases:
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同じ思想家
 - [[bizlaw-antitrust-digital-platforms|デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制]] — 同じ思想家
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
-- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 同じ思想家
+- [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
+- [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

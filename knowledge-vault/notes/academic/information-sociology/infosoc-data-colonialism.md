@@ -32,16 +32,16 @@ aliases:
 - [Wikipedia: Data colonialism（概観リファレンス）](https://en.wikipedia.org/wiki/Data_colonialism) `リファレンス`
 
 ## 関連概念
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 語彙が近い
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 出典を共有
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
 - [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 出典を共有
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
-- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
-- [[infosoc-media-events|メディア・イベント]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

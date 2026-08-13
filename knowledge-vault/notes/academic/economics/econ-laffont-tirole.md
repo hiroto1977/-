@@ -39,8 +39,8 @@ aliases:
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同じ思想家
 - [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
+- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

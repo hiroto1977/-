@@ -2,7 +2,7 @@
 title: "econlib.org"
 type: source-domain
 host: "econlib.org"
-cite_count: 47
+cite_count: 46
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econlib.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **47 件**（リファレンス 42 ・ 学術 5）
+> [!info] 出典ドメイン索引 ・ 引用 **46 件**（リファレンス 41 ・ 学術 5）
 
 ## このドメインを出典とする項目
 
@@ -25,7 +25,6 @@ tags:
 - [[econ-double-auction|連続ダブルオークション]] — Econlib—VernonL.Smith（連続ダブルオークションと競争均衡への急速な収束）
 - [[econ-double-coincidence-of-wants|欲望の二重の一致]] — EconLibConciseEncyclopediaofEconomics—Money（doublecoincidenceofwants・…
 - [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — LibraryofEconomicsandLiberty(Econlib)—RelativeIncomeHypothesis（デューゼンベ…
-- [[econ-duopoly-stackelberg-model|シュタッケルベルク複占モデル]] — EconLib—GameTheory(LibraryofEconomicsandLiberty)
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — Pigou1920TheEconomicsofWelfare
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — EconLibEncyclopedia—BalanceofPayments
 - [[econ-externality-market-failure|外部性と市場の失敗]] — Econlib(ConciseEncyclopediaofEconomics)—Externalities

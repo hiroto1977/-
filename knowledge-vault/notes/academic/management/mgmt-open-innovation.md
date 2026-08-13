@@ -32,14 +32,15 @@ aliases:
 - [Henry Chesbrough — Wikipedia（UCバークレー所属・2003年著書）](https://en.wikipedia.org/wiki/Henry_Chesbrough) `リファレンス`
 
 ## 関連概念
-- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 語彙が近い
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同じ思想家
+- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 出典を共有
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 出典を共有
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
 - [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
 - [[mgmt-resource-dependence|資源依存理論]] — 同分野の近傍
-- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 同分野の近傍
+- [[mgmt-talent-management-strategy|タレントマネジメント戦略と人材の識別・開発・維持の組織論]] — 同分野の近傍
+- [[mgmt-woodward-technology|ウッドワードの技術類型]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,6 @@ aliases:
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
 - [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
-- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,8 +38,6 @@ aliases:
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 出典を共有
 - [[econ-median-voter|中位投票者定理]] — 出典を共有
 - [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 出典を共有
-- [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]] — 同分野の近傍
-- [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

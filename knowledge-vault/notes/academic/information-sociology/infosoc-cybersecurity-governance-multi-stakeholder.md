@@ -34,7 +34,8 @@ aliases:
 - [[infosoc-noopolitik-arquilla-ronfeldt|ヌーポリティーク——理念とソフトパワーにもとづく情報時代の外交]] — 同じ思想家
 - [[infosoc-techno-nationalism-digital-sovereignty|テクノナショナリズムとデジタル主権戦略の比較政治経済学]] — 同じ思想家
 - [[infosoc-internet-governance|インターネット・ガバナンス]] — 同分野の近傍
-- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 同分野の近傍
+- [[infosoc-explainable-ai|説明可能なAI（XAI）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

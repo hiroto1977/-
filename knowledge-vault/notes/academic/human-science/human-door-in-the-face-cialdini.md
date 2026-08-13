@@ -38,7 +38,7 @@ aliases:
 - [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 同じ思想家
 - [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-change-blindness-simons|変化盲——視覚環境の大規模変化に気づかない知覚的失敗]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

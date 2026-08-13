@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 同分野の近傍
 - [[infosoc-collective-memory|集合的記憶]] — 同分野の近傍
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

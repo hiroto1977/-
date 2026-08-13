@@ -37,7 +37,7 @@ aliases:
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 - [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]] — 同分野の近傍
-- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
+- [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

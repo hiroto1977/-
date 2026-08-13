@@ -31,8 +31,8 @@ Sutherland, George （1935 Gregory v. Helvering, 293 U.S. 465, majority opinion�
 - [Elkins, D. (2024) "Gregory v. Helvering: A Red Herring that Shaped Tax Jurisprudence," Berkeley Business Law Journal, Vol. 21, p. 171](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4575780) `学術`
 
 ## 関連概念
+- [[bizlaw-benefit-corporation-legislation|ベネフィット・コーポレーション法——利益と公益の二重目的法人]] — 同分野の近傍
 - [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同分野の近傍
-- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

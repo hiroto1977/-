@@ -39,7 +39,7 @@ aliases:
 - [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-time-preference|時間選好]] — 同じ思想家
-- [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

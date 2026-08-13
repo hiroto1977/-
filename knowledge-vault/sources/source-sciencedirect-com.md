@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 109
+cite_count: 107
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **109 件**（学術 97 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **107 件**（学術 95 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -49,8 +49,6 @@ tags:
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — Bar-Elietal.(2007)"Actionbiasamongelitesoccergoalkeepers:Thecaseofpen…
 - [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — Skitka,Mosier&Burdick(1999)"Doesautomationbiasdecision-making?"Intern…
 - [[human-bias-blind-spot|バイアスの盲点]] — Pronin&Kugler(2007)Introspectionillusionasasourceofthebiasblindspot,J…
-- [[human-blindsight-weiskrantz|盲視（ブラインドサイト）]] — Cowey&Stoerig(1997)blindsightinmonkeys,CurrentBiology
-- [[human-blindsight-weiskrantz|盲視（ブラインドサイト）]] — Weiskrantzetal.(1974)originalblindsightstudyinBrainResearch
 - [[human-cognitive-dissonance-reduction|認知的不協和低減]] — Cooper&Fazio(1984)ANewLookatDissonanceTheory.AdvancesinExperimentalSo…
 - [[human-conservatism-bias|保守性バイアス（信念更新）]] — Amodelofinvestorsentiment,JournalofFinancialEconomics49(3),307–343（決算…
 - [[human-context-dependent-memory|文脈依存記憶]] — ScienceDirectTopics：Context-DependentMemory概説

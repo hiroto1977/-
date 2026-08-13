@@ -31,15 +31,14 @@ aliases:
 - [契約ウォッチ「民法改正（2020年4月施行）に対応 契約解除とは」](https://keiyaku-watch.jp/media/hourei/minpo202004_kaijyo/) `メディア`
 
 ## 関連概念
-- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 語彙が近い
 - [[legal-contract-cancellation|契約の解除（催告解除・無催告解除／改正民法）]] — 分野横断
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 出典を共有
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
-- [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 同分野の近傍
-- [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — 同分野の近傍
+- [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同分野の近傍
+- [[bizlaw-civil-procedure|民事訴訟法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

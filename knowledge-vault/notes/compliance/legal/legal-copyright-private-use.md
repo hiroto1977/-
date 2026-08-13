@@ -31,13 +31,13 @@ aliases:
 - [著作権情報センター 私的使用のための複製](https://www.cric.or.jp/qa/hajime/hajime7.html) `メディア`
 
 ## 関連概念
-- [[legal-copyright-term|著作権の保護期間と私的複製]] — 語彙が近い
 - [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 出典を共有
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
 - [[legal-moral-rights|著作者人格権]] — 出典を共有
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[bizlaw-copyright|著作権法]] — 出典を共有
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 出典を共有
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 出典を共有

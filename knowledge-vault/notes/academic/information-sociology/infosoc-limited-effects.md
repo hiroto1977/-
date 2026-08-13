@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 語彙が近い
+- [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 語彙が近い
 - [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
 - [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
 - [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
-- [[mgmt-simmelian-ties-krackhardt|ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

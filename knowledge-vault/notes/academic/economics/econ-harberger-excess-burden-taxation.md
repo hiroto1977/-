@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-tax-incidence-theory|租税帰着理論]] — 語彙が近い
+- [[econ-harberger-triangle-incidence|ハーバーガーの法人税帰着モデル（Harberger Tax Incidence Model）]] — 語彙が近い
 - [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
 - [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
 - [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 同じ思想家
 - [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
-- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,8 +30,8 @@ aliases:
 - [NIST — "Four Principles of Explainable Artificial Intelligence"（NISTIR 8312、説明可能性の4原則）](https://www.nist.gov/publications/four-principles-explainable-artificial-intelligence) `公的`
 
 ## 関連概念
-- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 同分野の近傍
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
+- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

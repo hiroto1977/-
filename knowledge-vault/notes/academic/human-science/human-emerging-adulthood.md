@@ -30,8 +30,8 @@ aliases:
 - [Encyclopaedia Britannica — Emerging Adulthood（発達段階の定義・5特性・文化的検討の概説）](https://www.britannica.com/science/emerging-adulthood) `リファレンス`
 
 ## 関連概念
-- [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同分野の近傍
-- [[human-stanford-prison-experiment|スタンフォード監獄実験]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

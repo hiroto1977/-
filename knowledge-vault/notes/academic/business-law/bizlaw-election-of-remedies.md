@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-相互に矛盾する複数の救済手段（例：契約解除と損害賠償）が存在する場合、権利者は一つを選択して追求しなければならず、一度選択した救済は撤回できず他の矛盾する手段が禁じられる法理。
+相互に矛盾する複数の救済手段（例：契約解除と損害賠償）が存在する場合、権利者は一つを選択して追求しなければならず、一度選択した救済は撤回できず他の矛盾する手段が禁じられる法理。二重の回復（double recovery）の防止と、矛盾する立場を使い分ける不公正の抑止を趣旨とし、成立には（1）複数の救済が現に併存すること、（2）それらが理論的に矛盾すること、（3）権利者が事実を知って決定的な選択行為をしたこと、が要件とされる。もっとも20世紀初頭から「不注意な当事者への罠」として批判が強く、Minnesota Law Review (1922) や Columbia Law Review の改革提案が早くから限定を説いた。現代では UCC が救済の累積を原則として選択法理を退け（買主・売主の救済は cumulative）、多くの州が禁反言（estoppel）や既判力（res judicata）で足りるとして法理を廃止・縮小している。実務では、撤回不能な「選択」と評価されない訴答方法（予備的・択一的請求の併記）を用いることが防御になり、法理が残る州かどうかの確認が訴訟戦略の入口になる。
 
 ## 提唱者・初出
 Dan B. Dobbs ／ Howard W. Brill ／ Samuel Williston
@@ -32,16 +32,16 @@ Dan B. Dobbs ／ Howard W. Brill ／ Samuel Williston
 - [Remedy for Election of Remedies: A Proposed Act — Columbia Law Review](https://scholarship.law.cornell.edu/cgi/viewcontent.cgi?article=1278&context=clr) `学術`
 
 ## 関連概念
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 同じ思想家
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
-- [[bizlaw-tortious-interference-doctrine|不法干渉法理]] — 同じ思想家
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 語彙が近い
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同分野の近傍
+- [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

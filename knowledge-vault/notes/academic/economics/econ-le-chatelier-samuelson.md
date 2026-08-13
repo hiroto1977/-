@@ -33,13 +33,13 @@ aliases:
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 語彙が近い
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
-- [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

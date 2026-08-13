@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
-- [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 同分野の近傍
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,9 +37,16 @@ national
 - [特定求職者雇用開発助成金 各コース・申請 解説](https://biz.moneyforward.com/payroll/basic/67167/) `メディア`
 
 ## 関連概念
-- [[subsidy-regional-employment|地域雇用開発助成金]] — 語彙が近い
 - [[subsidy-career-up|キャリアアップ助成金]] — 語彙が近い
-- [[subsidy-trial-employment|トライアル雇用助成金]] — 同分野の近傍
+- [[subsidy-regional-employment|地域雇用開発助成金]] — 語彙が近い
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
+- [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 出典を共有
+- [[bizlaw-apparent-agency|表見代理]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

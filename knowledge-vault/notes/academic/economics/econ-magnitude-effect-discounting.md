@@ -34,9 +34,9 @@ aliases:
 - [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家

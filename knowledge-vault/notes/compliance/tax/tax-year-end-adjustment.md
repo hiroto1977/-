@@ -32,8 +32,8 @@ aliases:
 - [国税庁 年末調整とは（年末調整のしかた 抜粋）](https://www.nta.go.jp/publication/pamph/gensen/nencho2021/pdf/06-07.pdf) `公的`
 
 ## 関連概念
+- [[tax-dependent-deduction|扶養控除]] — 同分野の近傍
 - [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — 同分野の近傍
-- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

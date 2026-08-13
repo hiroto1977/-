@@ -34,8 +34,8 @@ aliases:
 ## 関連概念
 - [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
 - [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — 同じ思想家
+- [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同分野の近傍
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

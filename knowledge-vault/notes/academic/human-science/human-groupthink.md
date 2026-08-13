@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
 - [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

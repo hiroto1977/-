@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
-- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同分野の近傍
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

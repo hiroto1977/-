@@ -33,9 +33,9 @@ Ewan McKendrick ／ Gerhard Treitel ／ Arthur Linton Corbin ／ Hein Kötz ／ 
 - [UNCITRAL — United Nations Convention on Contracts for the International Sale of Goods (CISG)](https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg) `公的`
 
 ## 関連概念
+- [[bizlaw-commercial-impracticability-ucc|商事上の履行困難性——UCC第2-615条と予見不能なリスクの配分]] — 語彙が近い
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 語彙が近い
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 同じ思想家
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 同じ思想家
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同じ思想家

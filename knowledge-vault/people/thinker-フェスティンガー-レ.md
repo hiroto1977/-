@@ -2,7 +2,7 @@
 title: "レオン・フェスティンガー"
 type: thinker
 person_key: "フェスティンガー|レ"
-concept_count: 12
+concept_count: 11
 tags:
   - person
   - index
@@ -10,13 +10,12 @@ tags:
 
 # レオン・フェスティンガー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **12 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（12件）
+## 学術概念（11件）
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 自動運動効果（autokineticeffect、オートキネシス）は、視覚の現象で、真っ暗な部屋の中で、静止した小さな…
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 認知的バランス理論（balancetheory）は、心理学者フリッツ・ハイダーが1946年・1958年に提唱した社会心…
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 認知的不協和とは、人が矛盾する2つ以上の認知（信念・態度・行動等）を同時に抱えたときに生じる不快な心理的緊張であり、レ…
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — レオン・フェスティンガーが1957年の著書『認知的不協和の理論』（StanfordUniversityPress）で提…
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 認知的不協和理論の現代的改訂は、フェスティンガーの1957年の古典的理論を現代の社会認知研究の知見に基づいて再構成する…
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 没個性化（deindividuation）は、集団や群衆の状況において個人の自己意識と自己評価が低下し、社会的評価への…
 - [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 自己知覚理論（self-perceptiontheory）は、ダリル・ベムが1967年から1972年にかけて提唱した社…

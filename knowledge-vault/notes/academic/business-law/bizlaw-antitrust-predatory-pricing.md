@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 出典を共有
 - [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 出典を共有
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 出典を共有
-- [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
+- [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

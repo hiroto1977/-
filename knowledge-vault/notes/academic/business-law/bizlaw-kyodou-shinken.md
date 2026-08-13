@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
-- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同分野の近傍
+- [[bizlaw-civil-execution|民事執行法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

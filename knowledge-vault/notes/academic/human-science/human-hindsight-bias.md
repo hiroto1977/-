@@ -39,9 +39,9 @@ aliases:
 - [[human-effort-justification|努力の正当化]] — 出典を共有
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 出典を共有
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 出典を共有
-- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
 - [[mgmt-lead-user|リードユーザー法]] — 出典を共有
+- [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

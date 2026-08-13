@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同じ思想家
 - [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 同じ思想家
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同じ思想家
-- [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]] — 同じ思想家
 - [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同じ思想家
+- [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

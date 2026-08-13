@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 950
+entry_count: 940
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（950件）
+# 学習パス — 学術概念／経済学（940件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
-- [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 47）
-- [[econ-agglomeration-economies|集積の経済]]（接続 45）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 86）
+- [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 46）
+- [[econ-agglomeration-economies|集積の経済]]（接続 44）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 39）
-- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 38）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 37）
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 40）
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]（接続 37）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 35）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 34）
-- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 33）
-- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 31）
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]（接続 31）
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
+- [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]（接続 32）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -77,7 +77,6 @@ tags:
 - 1899年: [[econ-marginal-productivity-distribution|限界生産力説]]
 - 1899年: [[econ-veblen-good|ヴェブレン財と顕示的消費]]
 - 1900年: [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]]
-- 1904年: [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]
 - 1904年: [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]]
 - 1905年: [[econ-gini-coefficient|ジニ係数とローレンツ曲線]]
 - 1905年: [[econ-input-output-analysis|産業連関分析（投入産出分析）]]
@@ -190,7 +189,6 @@ tags:
 - 1955年: [[econ-rybczynski|リブチンスキー定理]]
 - 1955年: [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]]
 - 1956年: [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]]
-- 1956年: [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]
 - 1957年: [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]]
 - 1957年: [[econ-bop-stages|国際収支の発展段階説]]
 - 1957年: [[econ-merit-goods|メリット財（価値財）]]
@@ -293,6 +291,7 @@ tags:
 - 1977年: [[econ-debt-overhang|デット・オーバーハング]]
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
 - 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
+- 1979年: [[econ-behavioral-finance|行動ファイナンス]]
 - 1979年: [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]]
 - 1979年: [[econ-costly-state-verification|コストのかかる状態検証（Costly State Verification／Townsend 1979）——なぜ「標準的な負債契約」が最適になるのか]]
 - 1979年: [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]]
@@ -450,10 +449,9 @@ tags:
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]
 - [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]]
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]]
-- [[econ-behavioral-finance-kahneman|行動ファイナンス理論（認知バイアスと意思決定）]]
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]]
 - [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]]
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]]
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]
 - [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]]
 - [[econ-bilateral-monopoly|双方独占]]
 - [[econ-bowen-leamer-sveikauskas-hov|HOV定理の実証検証——要素含有量貿易理論の計量的テスト]]
@@ -468,6 +466,7 @@ tags:
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]]
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]]
 - [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]]
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]]
 - [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]]
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]]
@@ -550,7 +549,6 @@ tags:
 - [[econ-downs-thomson-paradox|ダウンズ＝トムソンのパラドックス——道路拡張が公共交通を弱め渋滞を悪化させる]]
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]]
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]]
-- [[econ-duopoly-stackelberg-model|シュタッケルベルク複占モデル]]
 - [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]]
 - [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]]
 - [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]]
@@ -608,7 +606,6 @@ tags:
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]]
 - [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]]
 - [[econ-fiscal-multiplier-keynesian-debate|財政乗数論争——ケインズ的乗数効果の実証的評価と政策インプリケーション]]
-- [[econ-fiscal-multiplier-theory|財政乗数理論]]
 - [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]]
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]]
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]]
@@ -636,8 +633,6 @@ tags:
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]]
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]]
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]]
-- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]]
-- [[econ-greenfield-paradox|グリーンフィールド・パラドックス]]
 - [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]]
 - [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]]
 - [[econ-greshams-law|グレシャムの法則]]
@@ -666,7 +661,6 @@ tags:
 - [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]]
 - [[econ-hysteresis-blanchard-summers|ヒステリシス仮説——景気循環の永続的効果]]
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]]
-- [[econ-hysteresis-unemployment-theory|ヒステリシス失業理論]]
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]]
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]]
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]]
@@ -676,7 +670,7 @@ tags:
 - [[econ-inequity-aversion|不公平回避：利他的懲罰と互恵的公正選好の行動経済学的モデル]]
 - [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]]
 - [[econ-inflation-deflation|インフレーションとデフレーション（物価変動と金融政策）]]
-- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。]]
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）]]
 - [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]]
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]]
 - [[econ-input-output-analysis-leontief|投入産出分析——レオンチェフ・マトリクスと産業連関の定量的分析]]
@@ -698,7 +692,6 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]]
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]]
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]]
-- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]]
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]]
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]]
@@ -721,7 +714,6 @@ tags:
 - [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]]
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]]
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]]
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]]
 - [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]]
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]]
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]]
@@ -730,7 +722,7 @@ tags:
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]]
 - [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]]
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]]
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]]
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]]
 - [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]]
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]]
 - [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]]
@@ -825,7 +817,6 @@ tags:
 - [[econ-principal-agent-problem|プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析]]
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]]
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]]
-- [[econ-productivity-paradox|生産性パラドックス]]
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]]
 - [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]]
 - [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]]
@@ -927,7 +918,6 @@ tags:
 - [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]]
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]]
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]]
-- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]]
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]]
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]]
 - [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]]

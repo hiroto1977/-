@@ -28,13 +28,12 @@ aliases:
 ## 出典
 - [Brunnermeier, M. K., Nagel, S. & Pedersen, L. H. (2008) Carry Trades and Currency Crashes — NBER Macroeconomics Annual, 23, 313–347（キャリー崩壊の実証）](https://doi.org/10.1111/j.1540-6261.2008.01327.x) `学術`
 - [Lustig, H., Roussanov, N. & Verdelhan, A. (2011) Common Risk Factors in Currency Markets — Review of Financial Studies, 24(11), 3731–3777（FX共通リスクファクター）](https://doi.org/10.1093/qje/qjr014) `学術`
-- [Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）](https://doi.org/10.1016/j.jinteco.2015.01.002) `学術`
+- [Menkhoff, L. et al. (2012) Carry Trades and Global Foreign Exchange Volatility — Journal of Finance, 67(2), 681–718（ボラティリティとの関係）](https://doi.org/10.1111/j.1540-6261.2012.01728.x) `学術`
 - [Wikipedia: Carry (investment) — UIP puzzle, carry crash, yen carry trade, risk-off dynamics](https://en.wikipedia.org/wiki/Carry_(investment)) `リファレンス`
 
 ## 関連概念
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]] — 同分野の近傍
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同分野の近傍
-- [[econ-shadow-banking-fsb|シャドーバンキング（金融安定理事会定義）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

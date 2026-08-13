@@ -10,11 +10,11 @@ tags:
 
 # sunlightfoundation.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（公的 1）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
 
 ## このドメインを出典とする項目
 
-- [[infosoc-open-government-data-sunlight|オープンガバメントデータ——サンライト財団の透明性原則と公共データ公開の民主化効果]] — SunlightFoundation(2010)TenPrinciplesforOpeningUpGovernmentInformation
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — SunlightFoundation(2010)TenPrinciplesforOpeningUpGovernmentInformation
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

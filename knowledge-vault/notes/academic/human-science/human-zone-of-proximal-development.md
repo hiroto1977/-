@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
-- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
 - [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
 - [[human-cultural-historical-activity-theory-engestrom|文化歴史的活動理論——エンゲストロームの拡張的学習と活動システム分析]] — 同じ思想家
@@ -40,7 +39,8 @@ aliases:
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
 - [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同じ思想家
-- [[human-object-permanence|対象の永続性（Object Permanence）]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

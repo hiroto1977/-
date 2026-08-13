@@ -2,7 +2,7 @@
 title: "check-roudou.mhlw.go.jp"
 type: source-domain
 host: "check-roudou.mhlw.go.jp"
-cite_count: 11
+cite_count: 13
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # check-roudou.mhlw.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **11 件**（公的 11）
+> [!info] 出典ドメイン索引 ・ 引用 **13 件**（公的 13）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,8 @@ tags:
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 厚生労働省確かめよう労働条件フレックスタイム制
 - [[labor-job-offer-rescind|採用内定の取消（労働法上の取扱い）]] — 厚生労働省確かめよう労働条件採用内定の取消
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 厚生労働省時間外・休日労働と割増賃金
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 厚生労働省確かめよう労働条件時間外・休日労働と割増賃金
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 厚生労働省確かめよう労働条件年次有給休暇
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 厚生労働省確かめよう労働条件退職・解雇・雇止め
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 厚生労働省確かめよう労働条件振替休日
 - [[labor-work-rules|就業規則の作成・届出義務]] — 厚生労働省確かめよう労働条件就業規則の必須記載事項

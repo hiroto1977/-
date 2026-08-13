@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
 - [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
-- [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同分野の近傍
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

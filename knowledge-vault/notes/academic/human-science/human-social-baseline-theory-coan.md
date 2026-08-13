@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Coan, J. A. & Sbarra, D. A. (2015) "Social Baseline Theory" — Current Directions in Psychological Science](https://doi.org/10.1177/0963721411414560) `学術`
-- [Coan, J. A. et al. (2006) "Lending a Hand: Social Regulation of the Neural Response to Threat" — Psychological Science](https://doi.org/10.1037/a0014546) `学術`
+- [Coan, J. A. et al. (2006) "Lending a Hand: Social Regulation of the Neural Response to Threat" — Psychological Science](https://doi.org/10.1111/j.1467-9280.2006.01832.x) `学術`
 - [Wikipedia: Social baseline theory — 社会的近接性の神経生理的基盤](https://en.wikipedia.org/wiki/Social_baseline_theory) `リファレンス`
 
 ## 関連概念

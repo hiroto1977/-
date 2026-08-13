@@ -33,8 +33,8 @@ W. Max Corden ／ J. Peter Neary ／ Jeffrey D. Sachs ／ Andrew M. Warner
 - [Sala-i-Martin & Subramanian (2003) "Addressing the Natural Resource Curse" — Journal of Development Economics](https://doi.org/10.1016/j.jdeveco.2003.12.006) `学術`
 
 ## 関連概念
-- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 語彙が近い
-- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同分野の近傍
+- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同分野の近傍
+- [[econ-lerner-symmetry|ラーナー対称性定理（Lerner Symmetry Theorem）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

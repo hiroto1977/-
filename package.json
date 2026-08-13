@@ -39,6 +39,8 @@
     "lint": "eslint .",
     "lint:docs": "node scripts/cross-doc-consistency.cjs",
     "lint:citations": "node scripts/lint-citations.cjs",
+    "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
+    "lint:charset": "node scripts/lint-charset.cjs",
     "lint:knowledge-refs": "node scripts/lint-knowledge-refs.cjs",
     "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs",
     "lint:imports": "node scripts/check-import-boundaries.cjs",
@@ -70,7 +72,7 @@
     "typecheck": "tsc -b --noEmit --force",
     "vault:build": "node scripts/build-knowledge-vault.cjs",
     "vault:check": "node scripts/build-knowledge-vault.cjs --check",
-    "verify:all": "npm run verify:arch && npm run lint:forbidden && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:knowledge-refs && npm run lint:test-coverage && npm run lint:shell && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify",
+    "verify:all": "npm run verify:arch && npm run lint:forbidden && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:test-coverage && npm run lint:shell && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
     "verify:arch": "node scripts/verify-architecture.cjs",
     "verify:graph": "node scripts/verify-graph.cjs",
     "verify:knowledge": "node scripts/verify-knowledge-provenance.cjs",
@@ -84,7 +86,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
     "eslint": "^10.3.0",
@@ -97,7 +99,7 @@
     "vite": "^6.0.3",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
-    "vitest": "^2.1.8"
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "react": "^18.3.1",

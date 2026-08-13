@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-twin-grieves|デジタルツイン（グリーブス）]] — 同じ思想家
-- [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
+- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

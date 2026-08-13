@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Edgeworth box — エッジワース・ボックスの概要](https://en.wikipedia.org/wiki/Edgeworth_box) `リファレンス`
 
 ## 関連概念
-- [[econ-contract-curve|契約曲線（Contract Curve）]] — 語彙が近い
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 語彙が近い
+- [[econ-contract-curve|契約曲線（Contract Curve）]] — 同じ思想家
 - [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同じ思想家
 - [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家

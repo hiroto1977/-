@@ -2,7 +2,7 @@
 title: "elaws.e-gov.go.jp"
 type: source-domain
 host: "elaws.e-gov.go.jp"
-cite_count: 27
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # elaws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **27 件**（公的 27）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（公的 26）
 
 ## このドメインを出典とする項目
 
@@ -38,7 +38,6 @@ tags:
 - [[labor-prohibited-contract-terms|賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）]] — e-Gov法令検索労働基準法（16条・17条・18条）
 - [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — e-Gov法令検索労働基準法（115条・143条3項）
 - [[legal-digital-platform-transparency|取引透明化法（特定デジタルプラットフォーム透明化法）]] — e-Gov法令検索取引透明化法（令和2年法律第38号）
-- [[legal-secondhand-dealer|古物営業法と古物商許可]] — e-Gov古物営業法施行規則
 - [[tax-registration-license-tax|登録免許税の概要]] — e-Gov法令検索登録免許税法
 - [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — e-Gov法令検索法人税法（67条）
 

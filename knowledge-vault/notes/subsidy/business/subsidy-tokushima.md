@@ -37,8 +37,8 @@ prefecture
 - [徳島商工会議所 制度案内](https://www.tokushimacci.or.jp/latest_information/2026013062064/) `運営団体`
 
 ## 関連概念
-- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 同分野の近傍
 - [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 同分野の近傍
+- [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 同分野の近傍
 - [[subsidy-hiroshima|中小・ベンチャー企業チャレンジ応援事業助成金（広島県）]] — 同分野の近傍
 
 ## 関連

@@ -36,7 +36,7 @@ aliases:
 - [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 - [[econ-conditional-convergence|条件付き収束]] — 同分野の近傍
-- [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同分野の近傍
+- [[econ-user-cost-of-capital|資本の使用者費用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

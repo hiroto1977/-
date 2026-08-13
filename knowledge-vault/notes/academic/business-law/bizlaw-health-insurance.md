@@ -31,8 +31,8 @@ aliases:
 - [ウィキペディア「健康保険法」（1922年制定・日本初の社会保険・保険者）](https://ja.wikipedia.org/wiki/%E5%81%A5%E5%BA%B7%E4%BF%9D%E9%99%BA%E6%B3%95) `リファレンス`
 
 ## 関連概念
-- [[labor-sickness-allowance|健康保険の傷病手当金]] — 語彙が近い
 - [[bizlaw-national-health-insurance|国民健康保険法]] — 語彙が近い
+- [[labor-sickness-allowance|健康保険の傷病手当金]] — 語彙が近い
 - [[bizlaw-employees-pension|厚生年金保険法]] — 同分野の近傍
 
 ## 関連

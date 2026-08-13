@@ -119,14 +119,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '個人情報の漏えい等報告・本人通知の義務',
       statement:
-        '報告対象事態（要配慮個人情報／財産的被害のおそれ／不正目的／1,000人超 等）を知ったときは、' +
-        '個人情報保護委員会へ速やかに報告（速報は概ね3〜5日以内、確報は30日以内、不正目的は60日以内）し、本人へ通知する。',
+        '報告対象事態（要配慮個人情報の漏えい／財産的被害のおそれ／不正の目的によるもの／1,000人を超える漏えい）を' +
+        '知ったときは、個人情報保護委員会へ報告し、本人へも通知する。報告は2段階で、速報は事態を知った時から' +
+        '概ね3〜5日以内、確報は30日以内（不正の目的によるものは60日以内）に行う。' +
+        '委託先で漏えいが起きた場合、報告義務を負うのは原則として委託元であり、' +
+        '委託先は速やかに委託元へ通知することで自らの報告義務を免れる形になる。' +
+        'そのため委託契約には、事故を知ったら直ちに通知する旨を入れておかないと期限に間に合わない。' +
+        '本人への通知は、本人が容易に知り得る内容と方法で行う。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/news/kaiseihou_feature/roueitouhoukoku_gimuka/', type: 'government', label: '個人情報保護委員会 漏えい等報告・本人通知の義務化' },
-      { url: 'https://www.gov-online.go.jp/article/201703/entry-7660.html', type: 'government', label: '政府広報オンライン 個人情報保護法' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/leakAction/leakAction_detail/', type: 'government', label: '個人情報保護委員会 個人データの漏えい等の事案が発生した場合等の対応' },
+      { url: 'https://www.ppc.go.jp/files/pdf/roueihoukoku_leaflet_2023.pdf', type: 'government', label: '個人情報保護委員会 漏えい等報告リーフレット（報告対象事態の例）' },
       { url: 'https://www.ppc.go.jp/personalinfo/legal/leakAction/', type: 'government', label: '個人情報保護委員会 漏えい等の対応' },
     ],
   },
@@ -176,15 +182,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '通信販売の広告表示義務（特定商取引法）',
       statement:
-        '通信販売（EC 含む）では、事業者名（個人事業者は戸籍上の氏名又は登記上の商号。屋号・サイト名のみは不可）・' +
-        '住所・電話番号・販売価格・送料・支払方法・引渡時期・返品特約（無い場合はその旨）等を広告に表示する義務がある。',
+        '通信販売（EC 含む）では、事業者名（個人事業者は戸籍上の氏名または登記上の商号。屋号・サイト名のみは不可）・' +
+        '住所・電話番号・販売価格・送料・支払方法・引渡時期・返品特約（無い場合はその旨）等を広告に表示する義務がある。' +
+        '住所と電話番号は現に活動している場所と、確実に連絡が取れる番号でなければならない。' +
+        '広告スペースが限られる場合に一部を省略できる例外はあるが、その場合は請求があれば遅滞なく' +
+        '記載事項を記した書面または電磁的記録を提供できる旨とその方法を表示しておく必要がある。' +
+        'あわせて誇大広告の禁止がかかり、承諾していない者への電子メール広告の送信も原則禁止される' +
+        '（オプトイン規制。請求・承諾の記録は保存しておく）。' +
+        '返品特約は「表示していなければ8日以内の返品を拒めない」という向きで効くので、広告の側で決まる。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売広告' },
       { url: 'https://www.no-trouble.caa.go.jp/qa/advertising.html', type: 'government', label: '消費者庁 通信販売広告 Q&A' },
-      { url: 'https://biz.moneyforward.com/tax_return/basic/79606/', type: 'media', label: 'マネーフォワード 特商法に基づく表記' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売' },
     ],
   },
   {
@@ -194,14 +206,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '地域別最低賃金（最低賃金法）',
       statement:
         '地域別最低賃金は都道府県ごとに定められ、原則として毎年（10月頃）改定される。産業や雇用形態を問わず' +
-        '当該地域で働く全ての労働者に適用され、事業者は所在地の地域別最低賃金以上を支払う義務がある（最新額は厚労省で要確認）。',
+        '当該地域で働く全ての労働者に適用される（最新額は厚生労働省の全国一覧で要確認）。' +
+        '特定の産業には特定（産業別）最低賃金があり、両方が適用される労働者には高い方を支払う。' +
+        '判定は支給総額ではなく最低賃金の対象となる賃金で行い、割増賃金・精皆勤手当・通勤手当・家族手当・' +
+        '臨時に支払われる賃金・1か月を超える期間ごとに支払われる賃金は除いて比較する。' +
+        '月給制なら「月給 ÷ 1か月平均所定労働時間」で時間額に換算して比べる。' +
+        '手当を厚くして基本給を抑える設計にしていると、支給総額では上回っていても違反になることがある。',
       authority: '所管: 厚生労働省（最低賃金法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/minimumichiran/index.html', type: 'government', label: '厚生労働省 地域別最低賃金の全国一覧' },
       { url: 'https://saiteichingin.mhlw.go.jp/', type: 'government', label: '厚生労働省 最低賃金制度 特設サイト' },
-      { url: 'https://www.rshd.co.jp/news/saiyou-kaitei.html', type: 'media', label: '最低賃金ランキング解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/chingin/newpage_43899.html', type: 'government', label: '厚生労働省 最低賃金額以上かどうかを確認する方法' },
+      { url: 'https://www.mhlw.go.jp/www2/topics/seido/kijunkyoku/minimum/minimum-12.htm', type: 'government', label: '厚生労働省 最低賃金の対象となる賃金' },
+      { url: 'https://saiteichingin.mhlw.go.jp/point/page_point_class.html', type: 'government', label: '厚生労働省 地域別最低賃金と特定最低賃金' },
     ],
   },
   {
@@ -256,15 +275,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'ストレスチェック制度（労働安全衛生法）',
       statement:
         '常時50人以上の労働者を使用する事業場は、年1回、医師・保健師等によるストレスチェック' +
-        '（心理的な負担の程度を把握する検査）の実施が義務（2015年12月〜）。結果は本人に通知し、' +
-        '高ストレス者は申出により医師の面接指導につなげる。',
+        '（心理的な負担の程度を把握する検査）の実施が義務である（2015年12月〜）。' +
+        '制度の核心は情報の遮断にあり、検査結果は実施者から本人へ直接通知され、' +
+        '本人の同意なく事業者へ提供してはならない。高ストレス者は申出により医師の面接指導につなげ、' +
+        '申出をしたことを理由とする不利益な取扱いは禁止される。' +
+        '事業者は面接指導の結果に基づき医師の意見を聴き、必要に応じて就業上の措置を講じる。' +
+        '50人以上の事業場は、実施しなかった場合を含めて1年以内ごとに1回、様式第6号の2「心理的な負担の程度を把握するための' +
+        '検査結果等報告書」を所轄労働基準監督署長へ提出する義務があり、事業場ごとに別々に出す。' +
+        '2025年5月公布の改正労働安全衛生法により、当分の間の努力義務にとどまっていた50人未満の事業場にも' +
+        '実施が義務化される（施行は公布後3年以内で政令で定める日）。' +
+        '厚生労働省は2026年2月に小規模事業場向けの実施マニュアルを公表しているので、施行を待たずに体制を組める。',
       authority: '所管: 厚生労働省（労働安全衛生法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/anzen_eisei/stress_check.html', type: 'government', label: '厚生労働省 東京労働局 ストレスチェック制度の概要' },
-      { url: 'https://www.armg.jp/journal/404-2/', type: 'media', label: 'アドバンテッジ ストレスチェック義務化 解説' },
-      { url: 'https://www.sompo-hs.co.jp/useful/2025/10/000873/', type: 'media', label: 'SOMPO ヘルスサポート 解説' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/24.html', type: 'government', label: '厚生労働省 心理的な負担の程度を把握するための検査結果等報告書（様式第6号の2）' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_69680.html', type: 'government', label: '厚生労働省 小規模事業場ストレスチェック制度実施マニュアルを公表します' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/pdf/150507-1.pdf', type: 'government', label: '厚生労働省 ストレスチェック制度 実施マニュアル' },
     ],
   },
   {
@@ -273,15 +301,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '消費税の簡易課税制度',
       statement:
-        '基準期間の課税売上高が5,000万円以下の事業者は、「消費税簡易課税制度選択届出書」を提出することで' +
-        '簡易課税を選択でき、事業区分ごとの「みなし仕入率」で仕入控除税額を計算する（原則2年間継続）。',
-      authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-06',
+        '基準期間の課税売上高が5,000万円以下の事業者は「消費税簡易課税制度選択届出書」を提出することで' +
+        '簡易課税を選択でき、実際の仕入れを集計せず事業区分ごとの「みなし仕入率」で仕入控除税額を計算する。' +
+        'みなし仕入率は第一種（卸売業）90％・第二種（小売業）80％・第三種（製造業等）70％・' +
+        '第四種（その他）60％・第五種（サービス業等）50％・第六種（不動産業）40％の6区分。' +
+        '注意すべきはやめるときの縛りで、選択届出書の効力が生じた課税期間の初日から2年を経過する日の属する' +
+        '課税期間の初日以後でなければ選択不適用届出書を出せず、しかも適用をやめようとする課税期間の初日の前日までに' +
+        '提出する必要がある。設備投資が見込まれる期に本則へ戻れず還付を取り逃がす、というのが典型的な失敗である。',
+      authority: '所管: 国税庁（消費税法第37条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6505.htm', type: 'government', label: '国税庁 No.6505 簡易課税制度' },
-      { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r5/Nov/02.htm', type: 'government', label: '国税庁 消費税の届出' },
-      { url: 'https://support.freee.co.jp/hc/ja/articles/23391692865177', type: 'media', label: 'freee 消費税の簡易課税制度' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shohi/annai/1461_13.htm', type: 'government', label: '国税庁 D1-22 消費税簡易課税制度選択届出手続' },
+      { url: 'https://www.keisan.nta.go.jp/r5yokuaru/shohizei/kanikazei/kanikazeiseido/kanikazeiseido1.html', type: 'government', label: '国税庁 確定申告書等作成コーナー 簡易課税制度とは' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6629.htm', type: 'government', label: '国税庁 No.6629 消費税の各種届出書' },
     ],
   },
   {
@@ -383,14 +417,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '広告メールのオプトイン規制（特定電子メール法）',
       statement:
         '広告・宣伝を目的とする電子メール（特定電子メール）の送信は、原則として受信者の事前同意（オプトイン）が必要。' +
-        '送信時は送信者の氏名・名称、受信拒否の通知先と方法、住所・苦情等の連絡先の表示が義務付けられる。',
+        '送信時は送信者の氏名・名称、受信拒否の通知先と方法、住所・苦情等の連絡先の表示が義務付けられる。' +
+        '同意なしに送れる例外は、取引関係にある者、名刺等の書面で自己のメールアドレスを通知した者、' +
+        'アドレスをウェブサイト等で公表している法人・営業を営む個人（受信拒否の旨を併せて公表している場合を除く）などに限られる。' +
+        '同意を証する記録の保存も義務で、いつどの画面でどう同意を取ったかを残しておかないと立証できない。' +
+        '受信拒否（オプトアウト）の通知を受けたら以後の送信は禁止される。' +
+        '違反には総務大臣・内閣総理大臣の措置命令があり、送信者情報を偽った送信や措置命令違反には' +
+        '1年以下の拘禁刑または100万円以下の罰金、法人には3,000万円以下の罰金が科され得る。' +
+        'EC の広告メールには特定商取引法のオプトイン規制も重ねてかかるため、両方の表示義務を満たす必要がある。',
       authority: '所管: 総務省・消費者庁（特定電子メール法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/specifed_email/', type: 'government', label: '消費者庁 特定電子メール法' },
       { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_081114_1.pdf', type: 'government', label: '総務省・消費者庁 特定電子メールガイドライン' },
-      { url: 'https://emberpoint.com/blog/column/240606-002.html', type: 'media', label: '特定電子メール法 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_pamphlet.pdf', type: 'government', label: '総務省 特定電子メール法パンフレット（オプトインの例外・記録保存）' },
     ],
   },
   {
@@ -425,14 +466,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'ふるさと納税のワンストップ特例',
       statement:
         '確定申告が不要な給与所得者等で、寄付先が年間5自治体以内であれば、各自治体へワンストップ特例の' +
-        '申請（期限は翌年1月10日）を行うことで確定申告なしに控除を受けられる。6自治体以上は確定申告が必要。',
+        '申請（期限は翌年1月10日）を行うことで確定申告なしに控除を受けられる。6自治体以上は確定申告が必要。' +
+        '特例が適用されると所得税からの控除は行われず、全額が翌年度の住民税から控除される（控除総額は原則同じ）。' +
+        '落とし穴は確定申告との関係で、医療費控除などのために確定申告をすると' +
+        'ワンストップ特例の申請はすべて無効になるため、ふるさと納税分も寄附金控除に含めて申告し直さなければならない。' +
+        'これを忘れて申告すると寄附分の控除が丸ごと落ちる。誤って含めずに申告した場合は更正の請求で救済できるが、' +
+        '所得税額に異動がないときは更正の請求ができず、住民税側の控除は市区町村への相談になる。' +
+        '申請後に住所が変わったときは翌年1月10日までに変更届出書を出す。',
       authority: '所管: 総務省・国税庁（地方税法・所得税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/procedure.html', type: 'government', label: '総務省 ふるさと納税の流れ' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/keisubetsu/furusato.htm', type: 'government', label: '国税庁 ふるさと納税をされた方へ' },
-      { url: 'https://biz.moneyforward.com/tax_return/basic/48272/', type: 'media', label: 'マネーフォワード ワンストップ特例' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru/cat2/cat22/cat226/cid218.html', type: 'government', label: '国税庁 確定申告するとワンストップ特例は無効になる' },
     ],
   },
   {
@@ -477,14 +524,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '役員給与の損金算入（3類型）',
       statement:
         '法人が役員に支給する給与は、定期同額給与・事前確定届出給与・業績連動給与のいずれかに該当しなければ' +
-        '原則として損金に算入されない。業績連動給与は同族会社に該当しない法人等の業務執行役員への支給に限られる。',
-      authority: '所管: 国税庁（法人税法第34条）',
-      asOf: '2026-06',
+        '原則として損金に算入されない（業績連動給与は同族会社に該当しない法人等の業務執行役員への支給に限られる）。' +
+        '実務で効くのは変えられる時期である。定期同額給与の改定は、原則として事業年度開始の日から' +
+        '3か月を経過する日までに行う必要があり、期の途中で自由に増減はできない。' +
+        'これ以外に改定が認められるのは、役職の変更など臨時改定事由がある場合と、' +
+        '経営の状況が著しく悪化したことなどの業績悪化改定事由がある場合に限られる' +
+        '（単に資金繰りが苦しい、業績目標に届かない、という程度では業績悪化改定事由に当たらない）。' +
+        '事前確定届出給与は届出どおりの時期に届出どおりの額を支給しなければならず、' +
+        '1 円でも違えば、その支給額の全部が損金不算入になる扱いになる。' +
+        '賞与を出したいなら、期首に決めて届け出るところまでを設計に含めること。',
+      authority: '所管: 国税庁（法人税法第34条・法人税法施行令第69条）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5211.htm', type: 'government', label: '国税庁 No.5211 役員に対する給与' },
-      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/03.htm', type: 'government', label: '国税庁 質疑応答事例 定期同額給与' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/73615/', type: 'media', label: 'マネーフォワード 事前確定届出給与' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/03.htm', type: 'government', label: '国税庁 質疑応答事例 定期給与の額を改定した場合の損金不算入額' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/13.htm', type: 'government', label: '国税庁 質疑応答事例 届出書の記載額と異なる支給をした場合' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/qa.pdf', type: 'government', label: '国税庁 役員給与に関するQ&A（業績悪化改定事由等）' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/09/09_02_03.htm', type: 'government', label: '国税庁 法人税基本通達 第3款 定期同額給与' },
     ],
   },
   {
@@ -567,14 +624,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '個人情報の利用目的の特定・通知・目的外利用制限',
       statement:
         '個人情報取扱事業者は利用目的をできる限り特定し、取得時に通知・公表または明示しなければならない。' +
-        'あらかじめ本人の同意を得ずに、特定した利用目的の達成に必要な範囲を超えて取り扱うこと（目的外利用）は原則禁止される。',
+        'あらかじめ本人の同意を得ずに、特定した利用目的の達成に必要な範囲を超えて取り扱うこと（目的外利用）は原則禁止される。' +
+        '「事業活動に用いるため」のように何にでも使えてしまう書き方は特定したことにならず、' +
+        '最終的にどのような事業でどう使われるかが本人に想定できる程度まで具体化する必要がある。' +
+        '一度決めた利用目的を変更できるのは、変更前の目的と関連性を有すると合理的に認められる範囲に限られ' +
+        '（この範囲を超えるなら本人の同意が要る）、変更したときは本人への通知または公表が必要になる。' +
+        'プライバシーポリシーを作って終わりではなく、実際の取扱いが書いた目的の内側に収まっているかを' +
+        '定期的に突き合わせること。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q103/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の特定' },
       { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q102/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の公表' },
-      { url: 'https://storialaw.jp/blog/9609', type: 'media', label: 'STORIA法律事務所 個人情報保護法の整理' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q2-1/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的はどの程度まで特定する必要があるか' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q2-8/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の変更が認められる事例' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編）' },
     ],
   },
   {
@@ -584,14 +649,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '優良な電子帳簿の過少申告加算税軽減',
       statement:
         '訂正削除履歴の確保・帳簿間の相互関連性・検索機能の確保の要件を満たす「優良な電子帳簿」を備付け保存し、' +
-        '適用を受ける旨の届出書をあらかじめ所轄税務署長に提出すると、その帳簿に係る申告漏れの過少申告加算税が5%軽減される。',
+        '適用を受ける旨の届出書をあらかじめ所轄税務署長に提出すると、その帳簿に係る申告漏れの過少申告加算税が5%軽減される。' +
+        '軽減の対象になるのは届出書を出した帳簿に係る部分だけで、隠蔽・仮装があった部分には適用されない。' +
+        'もう一つの効き目が所得税側にあり、個人事業者の青色申告特別控除65万円は、55万円の要件' +
+        '（正規の簿記の原則による記帳・貸借対照表と損益計算書の添付・期限内提出）に加えて、' +
+        '仕訳帳と総勘定元帳を優良な電子帳簿の要件で保存して届出書を出すか、' +
+        'e-Taxで期限内に申告するかのいずれかを満たすことが条件になる。' +
+        'つまり優良な電子帳簿は、加算税の軽減という将来の保険と、控除10万円という毎年の実利の両方につながる。',
       authority: '所管: 国税庁（電子帳簿保存法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/05.htm', type: 'government', label: '国税庁 優良な電子帳簿の要件' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/02.htm', type: 'government', label: '国税庁 電子帳簿保存法の概要' },
-      { url: 'https://www.zeiken.co.jp/yougo/', type: 'media', label: '税研 用語解説' },
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除（65万円控除の要件）' },
     ],
   },
   {
@@ -617,15 +688,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '給与所得控除',
       statement:
-        '給与所得控除は給与収入に対し概算経費として差し引かれる控除で、控除額は収入に応じて段階的に逓増する。' +
-        '一定の最低保証額がある一方、高額収入には上限額が設定され、それ以上は控除額が増えない。',
+        '給与所得控除は給与収入に対して概算経費として差し引かれる控除で、控除額は収入に応じて段階的に逓増するが、' +
+        '低い側には最低保障額があり、高い側には上限がある。令和2年分以後は控除額が一律10万円引き下げられ、' +
+        '上限が適用される給与収入が850万円超、その上限額が195万円に引き下げられた。' +
+        'さらに令和7年度税制改正により、令和7年分以後は最低保障額が55万円から65万円に引き上げられた' +
+        '（基礎控除の見直しと特定親族特別控除の創設もあわせて行われている）。' +
+        '実額の経費を差し引く仕組みではないので、通勤費や書籍代を別に足し引きすることはできない。' +
+        '個別の金額は毎年の税制改正で動くため、年分ごとに国税庁の速算表で確認すること。',
       authority: '所管: 国税庁（所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm', type: 'government', label: '国税庁 No.1410 給与所得控除' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/2894/', type: 'media', label: 'マネーフォワード 給与所得控除' },
-      { url: 'https://www.freee.co.jp/kb/kb-payroll/the-deduction-for-employment-income/', type: 'media', label: 'freee 給与所得控除' },
+      { url: 'https://www.nta.go.jp/users/gensen/2025kiso/index.htm', type: 'government', label: '国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について' },
+      { url: 'https://www.nta.go.jp/publication/pamph/gensen/0025004-025.pdf', type: 'government', label: '国税庁 令和7年度税制改正（基礎控除・給与所得控除・特定親族特別控除）' },
+      { url: 'https://www.nta.go.jp/publication/pamph/gensen/nencho2025/pdf/114.pdf', type: 'government', label: '国税庁 給与所得控除後の給与等の金額の表' },
     ],
   },
   {
@@ -634,15 +711,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '割増賃金率（時間外・休日・深夜）',
       statement:
-        '労働基準法上、時間外労働は25%以上、深夜労働(22時〜翌5時)は25%以上、法定休日労働は35%以上の割増賃金率。' +
-        '1か月60時間を超える時間外労働には50%以上が適用される（中小企業も2023年4月から適用）。',
-      authority: '所管: 厚生労働省（労働基準法）',
+        '割増賃金率は、時間外労働が25％以上、深夜労働（22時〜翌5時）が25％以上、法定休日労働が35％以上。' +
+        '1か月60時間を超える時間外労働には50％以上が適用される（中小企業も2023年4月から適用）。' +
+        '重なったときは足し合わせる — 時間外かつ深夜は50％、法定休日かつ深夜は60％、' +
+        '月60時間超の時間外かつ深夜は75％になる。一方で時間外と法定休日は重ならず、法定休日の労働は' +
+        '35％で、60時間の集計にも算入しない（法定外休日の労働は算入する）。' +
+        '法定労働時間（1日8時間・週40時間）の内側で所定時間を超えただけの「法定内残業」には' +
+        '法律上の割増は要らない。月60時間超の割増分は、労使協定を結べば有給の代替休暇に振り替えられる。',
+      authority: '所管: 厚生労働省（労働基準法第37条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/content/000930914.pdf', type: 'government', label: '厚生労働省 月60時間超の割増賃金率引上げ' },
       { url: 'https://www.mhlw.go.jp/content/11200000/tp1216-1l-02.pdf', type: 'government', label: '厚生労働省 法定割増賃金率の引上げ' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/82774/', type: 'media', label: 'マネーフォワード 残業代の割増率' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article37.html', type: 'government', label: '厚生労働省 栃木労働局 時間外、休日及び深夜の割増賃金（第37条）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_jikangai.html', type: 'government', label: '厚生労働省 確かめよう労働条件 時間外・休日労働と割増賃金' },
     ],
   },
   {
@@ -675,13 +758,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'クーリング・オフ（特定商取引法）',
       statement:
         '訪問販売・電話勧誘販売・特定継続的役務提供・訪問購入は8日間、連鎖販売取引・業務提供誘引販売取引は20日間、' +
-        '法定書面の受領日から無条件で契約解除（クーリング・オフ）できる。通信販売にはクーリング・オフ制度はない。',
+        '正しく記載された法定書面（申込書面または契約書面）を受け取った日から起算して無条件で契約解除できる。' +
+        '通信販売にはクーリング・オフ制度がない（返品の可否は広告の返品特約による）。' +
+        '起算日は書面の受領日なので、書面の記載に不備があればいつまでも期間が始まらない。' +
+        '2022年6月1日からは書面だけでなく電磁的記録（電子メール・事業者サイトの専用フォーム等）でも通知できる。' +
+        '効果として、既に商品を受け取っていても引取り費用は事業者の負担になり、支払済みの代金は返還される。' +
+        '適用除外もあり、使うと価値がほとんどなくなる消耗品（健康食品・化粧品等）を使ってしまった場合や、' +
+        '現金取引で代金の総額が3,000円未満の場合には適用されない。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁 特定商取引法ガイド' },
       { url: 'https://www.no-trouble.caa.go.jp/what/doortodoorsales/', type: 'government', label: '消費者庁 訪問販売' },
+      { url: 'https://www.caa.go.jp/publication/pamphlet/assets/consumer_transaction_cms101_230608_01.pdf', type: 'government', label: '消費者庁 クーリング・オフの期間と方法（電磁的記録による通知）' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ（適用除外を含む）' },
       { url: 'https://www.pref.shiga.lg.jp/shohi/105947.html', type: 'municipality', label: '滋賀県 クーリング・オフ' },
     ],
   },
@@ -762,14 +853,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'パワハラ防止措置の事業主義務',
       statement:
         '労働施策総合推進法により、職場のパワーハラスメント防止のための雇用管理上の措置（方針の明確化・周知、相談体制の整備、' +
-        '事後の迅速適切な対応等）が事業主に義務付けられた。大企業は2020年6月、中小を含む全事業主は2022年4月から義務化。',
+        '事後の迅速適切な対応、プライバシー保護と不利益取扱いの禁止の周知等）が事業主に義務付けられた。' +
+        '大企業は2020年6月、中小を含む全事業主は2022年4月から義務化されている。' +
+        '該当するのは、優越的な関係を背景とした言動であって、業務上必要かつ相当な範囲を超え、就業環境が害されるものという' +
+        '3要素をすべて満たす行為で、身体的な攻撃・精神的な攻撃・人間関係からの切り離し・過大な要求・過小な要求・個の侵害の6類型が示されている。' +
+        '措置義務そのものに罰則はないが、助言・指導・勧告の対象となり、勧告に従わないときはその旨を公表することができる。' +
+        '報告をせず、または虚偽の報告をした場合は20万円以下の過料に処せられる。' +
+        'さらに2025年6月11日公布の改正法により、2026年10月1日からはカスタマーハラスメント' +
+        '（顧客等の言動であって、業務の性質等に照らして社会通念上許容される範囲を超え、就業環境が害されるもの）についても' +
+        '雇用管理上の措置が義務となる。防止指針は2026年2月26日に公布済みなので、施行前に方針の明確化と対処内容の周知を済ませておく。',
       authority: '所管: 厚生労働省（労働施策総合推進法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-harassment.mhlw.go.jp/law-measure', type: 'government', label: '厚生労働省 あかるい職場応援団 法律と措置' },
       { url: 'https://jsite.mhlw.go.jp/aomori-roudoukyoku/newpage_00306.html', type: 'government', label: '青森労働局 パワハラ対策義務化' },
-      { url: 'https://sogyotecho.jp/power-harassment-low/', type: 'media', label: 'パワハラ防止法 義務化 解説' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001662576.pdf', type: 'government', label: '厚生労働省 令和8年10月1日からハラスメント対策が強化されます（カスハラ対策の義務化）' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/000855268.pdf', type: 'government', label: '厚生労働省 パワーハラスメントの3要素と6類型' },
     ],
   },
   {
@@ -778,15 +878,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '公益通報者保護法（2022年改正）',
       statement:
-        '2022年6月施行の改正公益通報者保護法は、常時使用する労働者が301人以上の事業者に内部公益通報対応体制の整備を義務付け、' +
-        '公益通報者への解雇等の不利益取扱いを禁止し、通報対応従事者に守秘義務（違反時は刑事罰）を課す。',
+        '2022年6月施行の改正公益通報者保護法は、常時使用する労働者が301人以上の事業者に内部公益通報対応体制の整備を' +
+        '義務付け（300人以下は努力義務）、公益通報者への解雇等の不利益取扱いを禁止し、' +
+        '通報を受け付ける従事者を指定したうえでその者に守秘義務を課している（違反は30万円以下の罰金）。' +
+        '保護される通報者の範囲には、労働者のほか役員と退職後1年以内の者が含まれる。' +
+        'さらに 2025年6月11日公布の改正法（令和7年法律第62号）が 2026年12月1日に施行される。' +
+        '体制整備義務違反に対する行政措置（助言・指導・勧告、勧告に従わない場合の公表）などが加わるため、' +
+        '施行前に体制と規程を見直しておく必要がある。最新の内容は消費者庁の改正法概要で確認すること。',
       authority: '所管: 消費者庁（公益通報者保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview', type: 'government', label: '消費者庁 公益通報者保護法と制度の概要' },
       { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview/assets/overview_211013_0001.pdf', type: 'government', label: '消費者庁 指針の解説' },
-      { url: 'https://www.businesslawyers.jp/articles/908', type: 'media', label: '改正公益通報者保護法の要点' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview/assets/consumer_partnerships_cms205_250611_01.pdf', type: 'government', label: '消費者庁 公益通報者保護法の一部を改正する法律（概要・令和7年法律第62号）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/faq/faq_007', type: 'government', label: '消費者庁 内部公益通報対応体制の整備その他の必要な措置に関するQ&A' },
     ],
   },
   {
@@ -796,14 +902,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '電子契約・電子文書には印紙税が課されない',
       statement:
         '印紙税は課税物件表に掲げる「文書（紙）」の作成に課税され、電磁的記録（電子データ）による契約締結は課税文書の作成に' +
-        '当たらないため印紙税は課されない。国税庁の取扱いおよび国会答弁書でこの政府見解が示されている。',
+        '当たらないため印紙税は課されない。国税庁の取扱いおよび国会答弁書でこの政府見解が示されている。' +
+        '課税されるのは文書の作成と交付であって契約の成立ではない、というのがこの結論の理由である。' +
+        'したがって同じ契約でも、電子データのまま完結すれば非課税、後から出力して署名押印した紙を相手に交付すれば' +
+        'その紙が課税文書になる。控えを紙で保管するだけなら交付がないので課税されない。' +
+        '請負契約書や不動産譲渡契約書のように税額の大きい文書ほど電子化の効果が出るが、' +
+        '電子化すると今度は電子帳簿保存法の電子取引データ保存義務がかかるので、' +
+        '印紙代だけを見て切り替えると保存要件で詰まる。両方をセットで設計する。',
       authority: '所管: 国税庁・財務省（印紙税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 電磁的記録の印紙税の取扱い' },
       { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 印紙税に関する答弁書' },
-      { url: 'https://www.cloudsign.jp/media/20170224-basics-of-e-contract-02/', type: 'media', label: 'クラウドサイン 電子契約と収入印紙' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7100.htm', type: 'government', label: '国税庁 No.7100 課税文書に該当するかどうかの判断' },
     ],
   },
   {
@@ -812,15 +924,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '賃金支払の5原則とデジタル払い',
       statement:
-        '労働基準法は賃金を通貨・直接・全額・毎月1回以上・一定期日に支払うよう定める（賃金支払の5原則）。' +
-        '2023年4月の省令改正により、労働者の同意を条件に厚生労働大臣の指定する資金移動業者口座へのデジタル払いも可能となった。',
+        '労働基準法24条は、賃金を①通貨で②直接労働者に③全額④毎月1回以上⑤一定の期日を定めて' +
+        '支払うよう定める（賃金支払の5原則）。2023年4月の省令改正により、厚生労働大臣が指定した' +
+        '資金移動業者の口座への支払（デジタル払い）も可能になったが、条件は軽くない。' +
+        '事業場の過半数組合（ない場合は過半数代表者）と、対象となる労働者の範囲や取扱指定資金移動業者の範囲等を' +
+        '定めた労使協定を締結したうえで、労働者本人の同意が要る。' +
+        '希望しない労働者に強制すれば労働基準法違反として罰則の対象になり得る。' +
+        '現金化できないポイントや暗号資産での支払は認められない。',
       authority: '所管: 厚生労働省（労働基準法第24条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/03_00028.html', type: 'government', label: '厚生労働省 賃金のデジタル払いについて' },
       { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'government', label: '労働政策研究・研修機構 解説' },
-      { url: 'https://keiyaku-watch.jp/media/hourei/digital-payroll/', type: 'media', label: '賃金デジタル払いの解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/newpage_55437.html', type: 'government', label: '厚生労働省 使用者の方向け 賃金のデジタル払いについて' },
+      { url: 'https://www.mhlw.go.jp/content/11200000/001065931.pdf', type: 'government', label: '厚生労働省 現金化できないポイントや仮想通貨での賃金支払いは認められません' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei05.html', type: 'government', label: '厚生労働省 賃金の支払方法に関する法律上の定め' },
     ],
   },
   {
@@ -829,15 +948,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '交際費等の損金不算入と中小法人特例',
       statement:
-        '法人の交際費等は原則として損金不算入だが、資本金1億円以下の中小法人は年800万円までの定額控除限度額か' +
-        '接待飲食費の50%相当額のいずれかを選択して損金算入できる。1人当たり一定額以下の飲食費は交際費等から除外される。',
+        '法人の交際費等は原則として損金不算入だが、資本金1億円以下の中小法人は、年800万円までの定額控除限度額' +
+        '（事業年度が12か月に満たない場合は月数按分）か接待飲食費の50％相当額のいずれかを選択して損金算入できる。' +
+        'この特例の適用期限は令和9年3月31日までに開始する事業年度である。' +
+        'また、1人当たりの飲食費が一定額以下のものは交際費等から除かれるが、' +
+        'この基準額は令和6年度改正で5,000円以下から1万円以下に引き上げられた' +
+        '（令和6年4月1日以後に支出する飲食費に適用。それ以前の支出は5,000円以下で判定する）。' +
+        'なお資本金1億円以下でも、資本金5億円以上の大法人の100％子法人等は中小企業向け特例の対象外になる。',
       authority: '所管: 国税庁（租税特別措置法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5265.htm', type: 'government', label: '国税庁 No.5265 交際費等の損金不算入' },
       { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/kousai.html', type: 'government', label: '中小企業庁 交際費課税の特例' },
-      { url: 'https://www.nta.go.jp/publication/pamph/hojin/settai_faq/01.htm', type: 'government', label: '国税庁 接待飲食費FAQ' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/settai_faq/01.htm', type: 'government', label: '国税庁 接待飲食費に関するFAQ' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2024/pdf/J.pdf', type: 'government', label: '国税庁 令和6年度税制改正 交際費等の損金不算入制度の見直し' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5800.htm', type: 'government', label: '国税庁 No.5800 大法人の100％子法人等における中小企業向け特例措置の不適用' },
     ],
   },
   {
@@ -869,15 +995,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人設立後の税務署への届出期限',
       statement:
-        '内国普通法人の設立後、法人設立届出書は設立の日以後2か月以内に所轄税務署長へ提出する。青色申告の承認申請書は' +
-        '設立の日以後3か月を経過した日と設立第1期の事業年度終了日のいずれか早い日の前日までに提出する。',
-      authority: '所管: 国税庁（法人税法）',
-      asOf: '2026-06',
+        '内国普通法人の設立後、法人設立届出書は設立の日以後2か月以内に所轄税務署長へ提出する。' +
+        '青色申告の承認申請書は、設立の日以後3か月を経過した日と設立第1期の事業年度終了の日との' +
+        'いずれか早い日の前日までに提出する。この期限を逃すと第1期は白色申告になり、' +
+        '初年度の赤字を繰り越せない（設立初年度は赤字になりやすいので影響が大きい）。' +
+        '給与を支払うなら給与支払事務所等の開設届出書を開設の日から1か月以内に、' +
+        '源泉所得税の納期の特例を使うなら承認申請書を出す。棚卸資産の評価方法や減価償却資産の' +
+        '償却方法を法定以外にしたい場合の届出は、いずれも第1期の確定申告書の提出期限までである。' +
+        '税務署のほかに都道府県税事務所と市町村への法人設立届も必要で、こちらは提出先ごとに期限が異なる。',
+      authority: '所管: 国税庁（法人税法）・都道府県・市町村（地方税法）',
+      asOf: '2026-08',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm', type: 'government', label: '国税庁 No.5100 新設法人の届出書類' },
       { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_14.htm', type: 'government', label: '国税庁 青色申告の承認申請' },
-      { url: 'https://biz.moneyforward.com/establish/basic/683/', type: 'media', label: 'マネーフォワード 会社設立の届出' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_37.htm', type: 'government', label: '国税庁 源泉所得税の納期の特例の承認に関する申請' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_21.htm', type: 'government', label: '国税庁 C1-33 減価償却資産の償却方法の届出' },
     ],
   },
   {
@@ -886,15 +1019,24 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '著作権の保護期間と私的複製',
       statement:
-        '著作権の保護期間は原則として著作者の死後70年、法人著作物・映画は公表後70年であり、2018年のTPP整備法施行で' +
-        '50年から70年へ延長された。著作権法第30条により、個人的・家庭内など限られた範囲での私的使用目的の複製は認められる。',
+        '著作権の保護期間は原則として著作者の死後70年、法人著作物・映画は公表後70年であり、2018年12月30日のTPP整備法施行で' +
+        '50年から70年へ延長された。期間の計算はすべて死亡・公表・創作した年の翌年1月1日から起算する（57条）ので、' +
+        '「没年＋71年の前日まで」と数えると間違えない。' +
+        '延長は施行日に保護が残っていた著作物にだけ適用され、1967年以前に死亡した著作者の作品のように' +
+        'すでに満了していたものは復活しない。' +
+        '戦前・戦中に取得された連合国民の著作権には戦時加算（開戦から平和条約発効前日までの約10年分）が上乗せされるため、' +
+        '海外作品はさらに長く保護されている場合がある。' +
+        '著作権法30条により個人的・家庭内など限られた範囲での私的使用目的の複製は認められるが、' +
+        'この例外は業務利用には及ばず、社内会議用のコピーは私的複製にならない。' +
+        'また技術的保護手段の回避を伴う複製や、違法にアップロードされた著作物と知りながらのダウンロードは' +
+        '私的使用目的でも認められない。',
       authority: '所管: 文化庁（著作権法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.bunka.go.jp/seisaku/chosakuken/hokaisei/kantaiheiyo_chosakuken/1411890.html', type: 'government', label: '文化庁 保護期間延長Q&A' },
       { url: 'https://www.bunka.go.jp/seisaku/bunkashingikai/chosakuken/hoki/h30_06/pdf/r1411529_06.pdf', type: 'government', label: '文化庁 私的複製の権利制限' },
-      { url: 'https://www.watch.impress.co.jp/docs/news/1152314.html', type: 'media', label: '著作権保護期間70年化 解説' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf', type: 'government', label: '文化庁 著作権テキスト（令和7年度版）— 保護期間の計算・私的複製の限界' },
     ],
   },
   {
@@ -903,15 +1045,25 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '電子帳簿保存法のスキャナ保存制度',
       statement:
-        '紙で受領・作成した請求書・領収書等の国税関係書類を、解像度等の要件を満たしてスキャンし電子保存できる制度。' +
-        'タイムスタンプ付与等による真実性の確保と、取引年月日・金額・取引先による検索機能等の可視性要件を満たす必要がある。',
+        '紙で受領・作成した請求書・領収書等の国税関係書類を、解像度等の要件を満たしてスキャンし電子保存できる制度で、' +
+        '要件を満たせばスキャン後の紙原本は廃棄できる。' +
+        '真実性の確保（タイムスタンプ等）と、取引年月日・取引金額・取引先による検索機能等の可視性要件を満たす必要がある。' +
+        '入力期間には制限があり、受領等後おおむね7営業日以内の早期入力方式か、' +
+        '業務処理サイクル（最長2か月）を経過した後おおむね7営業日以内の業務処理サイクル方式のいずれかによる。' +
+        '訂正・削除の事実と内容を確認できるクラウド等に入力期間内に保存したことを確認できる場合は、タイムスタンプの付与に代えられる。' +
+        '令和5年度改正（令和6年1月1日以後の保存分）で要件が大きく緩み、' +
+        '解像度・階調・大きさに関する情報の保存が不要になり、入力者等に関する情報の確認要件が廃止され、' +
+        '帳簿との相互関連性の確保は契約書・領収書等の重要書類に限定された。' +
+        '検索要件も取引年月日・取引金額・取引先の3項目でよく、税務職員のダウンロードの求めに応じるなら' +
+        '範囲指定検索と項目の組合せ検索は不要になる。',
       authority: '所管: 国税庁（電子帳簿保存法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07scan/02.htm', type: 'government', label: '国税庁 スキャナ保存の適用要件' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07scan/index.htm', type: 'government', label: '国税庁 スキャナ保存一問一答' },
-      { url: 'https://www.yayoi-kk.co.jp/seikyusho/oyakudachi/scanner_hozon/', type: 'media', label: '弥生 スキャナ保存制度' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0023003-082.pdf', type: 'government', label: '国税庁 電子帳簿保存法の内容が改正されました（令和5年度改正）' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/03.htm', type: 'government', label: '国税庁 スキャナ保存関係（特設サイト）' },
     ],
   },
   {
@@ -921,14 +1073,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '消費税の軽減税率制度',
       statement:
         '2019年10月の消費税率10%への引上げと同時に軽減税率8%が導入された。対象は酒類・外食を除く飲食料品と、' +
-        '週2回以上発行され定期購読契約に基づく新聞。事業者は税率の異なる取引を区分して記帳・記載する必要がある。',
+        '週2回以上発行され定期購読契約に基づく新聞。事業者は税率の異なる取引を区分して記帳・記載する必要がある。' +
+        '境界の判定は「提供の時点」で行う。店内飲食（標準10%）か持ち帰り（軽減8%）かは、' +
+        '販売時に意思確認等で判定し、その後客がどこで食べたかでは変わらない。' +
+        'テーブル・椅子等の飲食設備のある場所で飲食させる役務が「外食」なので、コンビニのイートインも' +
+        '店内飲食と申し出があれば10%になる。相手の指定場所で調理・給仕を行うケータリングは10%だが、' +
+        '有料老人ホームの入居者への飲食料品の提供や学校給食は例外的に8%である。' +
+        '食品とおもちゃのように食品と食品以外があらかじめ一体になっている「一体資産」は、' +
+        '税抜1万円以下かつ食品部分の価額が3分の2以上の場合に限り全体が8%になる。' +
+        '酒類は対象外だがノンアルコールビール・甘酒（アルコール1度未満）は飲食料品として8%、' +
+        'みりんは酒類なので10%という切り分けになる。',
       authority: '所管: 国税庁（消費税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6102.htm', type: 'government', label: '国税庁 No.6102 軽減税率制度' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/01.htm', type: 'government', label: '国税庁 軽減税率制度の概要' },
-      { url: 'https://zeimo.jp/article/18393', type: 'media', label: '軽減税率の対象 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/qa_mokuji.htm', type: 'government', label: '国税庁 軽減税率制度に関するQ&A（個別事例編）' },
     ],
   },
   {
@@ -937,15 +1098,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人住民税の均等割',
       statement:
-        '法人住民税は法人税割と均等割からなり、均等割は資本金等の額・従業者数に応じて定額で課され、所得が赤字でも' +
-        '納税義務が生じる。法人税割は法人税額に応じて課されるため、黒字法人のみが負担する点で均等割と異なる。',
+        '法人住民税は法人税割と均等割からなり、均等割は所得が赤字でも納税義務が生じる。' +
+        '法人税割は法人税額に応じて課されるため黒字法人のみが負担する点で均等割と異なる。' +
+        '均等割の区分は道府県民税と市町村民税で違い、道府県民税は資本金等の額だけで区分されて標準税率は2万〜80万円、' +
+        '市町村民税は資本金等の額と従業者数（50人超か50人以下か）の組合せで区分されて標準税率は5万〜300万円である。' +
+        '実務で効くのは、均等割が事務所等の所在する自治体ごとにかかる点で、' +
+        '支店や営業所を別の市町村へ出せばその自治体にも均等割が発生する。' +
+        '事業年度の中途で事務所等を開設・廃止した場合は、事務所等を有していた月数で月割計算する' +
+        '（暦に従って数え、1か月未満の端数は切り捨てる）。' +
+        '税率は条例で標準税率と異なることがあるので、進出先ごとに確認する。',
       authority: '所管: 総務省・地方自治体（地方税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_08.html', type: 'government', label: '総務省 法人住民税' },
       { url: 'https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/jigyosya/shizei/hojin/houjin.html', type: 'municipality', label: '横浜市 法人市民税' },
-      { url: 'https://www.yayoi-kk.co.jp/kaikei/oyakudachi/corporate-inhabitant-tax/', type: 'media', label: '弥生 法人住民税' },
+      { url: 'https://www.soumu.go.jp/main_content/001032861.pdf', type: 'government', label: '総務省 令和7年度 法人住民税・法人事業税 税率一覧表' },
+      { url: 'https://www.city.yokohama.lg.jp/faq/kukyoku/somu/hojin-kazei/2024040501.html', type: 'municipality', label: '横浜市 均等割の月割計算（事務所を新設した場合）' },
     ],
   },
   {
@@ -983,14 +1152,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '高年齢者雇用確保措置',
       statement:
         '定年を65歳未満に定める事業主は、65歳までの定年引上げ・継続雇用制度の導入・定年の廃止のいずれかの雇用確保措置を' +
-        '講じる義務がある。2021年4月施行の改正により、70歳までの就業確保措置が努力義務として加わった。',
+        '講じる義務がある。継続雇用制度は原則として希望者全員が対象で、' +
+        '平成24年度までの労使協定で対象者基準を定めていた企業に認められていた経過措置（年金支給開始年齢以上の者への基準適用）は' +
+        '2025年3月31日で終了し、2025年4月からは希望者全員を65歳まで雇用する体制が全企業に求められる。' +
+        '2021年4月施行の改正では、70歳までの就業確保措置（定年引上げ・継続雇用のほか、業務委託契約や' +
+        '社会貢献事業への従事といった雇用によらない措置も選択肢）が努力義務として加わった。' +
+        '常時21人以上を雇用する事業主は、毎年6月1日現在の高年齢者の雇用状況を' +
+        '「高年齢者雇用状況等報告書」でハローワークへ報告する義務がある。' +
+        '継続雇用後の労働条件は嘱託等への変更が可能だが、業務内容が同じまま賃金だけを大きく下げると' +
+        'パート・有期法の不合理な待遇差の問題になり得る。',
       authority: '所管: 厚生労働省（高年齢者雇用安定法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page09_00001.html', type: 'government', label: '厚生労働省 高年齢者の雇用' },
       { url: 'https://www.mhlw.go.jp/content/11700000/001245647.pdf', type: 'government', label: '厚生労働省 高年齢者雇用安定法の概要' },
-      { url: 'https://biz.moneyforward.com/contract/basic/9357/', type: 'media', label: '高年齢者雇用安定法改正 解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/koureisha/topics/newpage_55003.html', type: 'government', label: '厚生労働省 高年齢者雇用安定法Q&A（経過措置の終了）' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_37431.html', type: 'government', label: '厚生労働省 高年齢者雇用状況等報告' },
     ],
   },
   {
@@ -1045,15 +1223,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '営業秘密の保護（不正競争防止法）',
       statement:
-        '秘密管理性・有用性・非公知性の3要件をすべて満たす情報は不正競争防止法上の営業秘密として保護され、' +
-        '不正な取得・使用・開示は差止請求・損害賠償の対象となり、刑事罰（営業秘密侵害罪）も科され得る。',
+        '秘密管理性・有用性・非公知性の3要件をすべて満たす情報が不正競争防止法上の営業秘密として保護される。' +
+        '実務でいちばん落ちるのは秘密管理性で、従業員が「これは秘密だ」と認識できる程度の管理措置' +
+        '（アクセス制限、マル秘表示など）が現に取られている必要がある。持っているだけでは保護されない。' +
+        '有用性は事業活動に有用な技術上・営業上の情報であることを指し、脱税や有害物質の不法投棄のように' +
+        '公序良俗に反する情報は除かれる。非公知性は保有者の管理下以外では一般に入手できないことをいう。' +
+        '不正な取得・使用・開示は差止請求・損害賠償の対象になり、営業秘密侵害罪として' +
+        '個人は10年以下の拘禁刑または2,000万円以下の罰金（国外での使用等は3,000万円以下）、' +
+        '法人は5億円以下の罰金（同10億円以下）が科され得る。' +
+        '3要件を満たさない電子データでも、限定提供データとして別枠で保護される場合がある。',
       authority: '所管: 経済産業省（不正競争防止法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省 営業秘密' },
-      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/r7ts.pdf', type: 'government', label: '経済産業省 営業秘密管理指針' },
-      { url: 'https://kigyobengo.com/media/useful/1461.html', type: 'media', label: '営業秘密の3要件 解説' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省 営業秘密〜営業秘密を守り活用する〜' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/r7ts.pdf', type: 'government', label: '経済産業省 営業秘密管理指針（令和7年3月改訂）' },
+      { url: 'https://www.meti.go.jp/policy/anpo/seminer/shiryo/eigyohimitsu.pdf', type: 'government', label: '経済産業省 秘密情報は大切な財産です' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/data.html', type: 'government', label: '経済産業省 限定提供データと利活用' },
     ],
   },
   {
@@ -1062,15 +1248,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '法人税の中間申告',
       statement:
-        '前事業年度の確定法人税額が20万円を超える普通法人は、事業年度開始の日以後6か月を経過した日から2か月以内に' +
-        '中間申告・納付を行う。前年度実績による予定申告か、仮決算に基づく中間申告のいずれかを選択できる。',
+        '普通法人は、事業年度開始の日以後6か月を経過した日から2か月以内に中間申告・納付を行う。' +
+        '判定は「前事業年度の確定法人税額 ÷ 前事業年度の月数 × 6」で、この額が10万円以下またはゼロなら中間申告は要らない。' +
+        '前事業年度が12か月なら、確定法人税額が20万円を超えるかどうかという言い換えになる。' +
+        '設立第1期は前事業年度がないため対象外で、事業年度が6か月以下の場合も中間申告は不要である。' +
+        '前年度実績による予定申告か、仮決算に基づく中間申告のいずれかを選択できるが、' +
+        '仮決算による中間申告は、その法人税額が前期実績基準額を超えるときは提出できない（法人税法72条）。' +
+        '業績が前年より良いときに仮決算で減らす、という使い方はできないということである。' +
+        '期限までに中間申告書を提出しなかった場合は前期実績による申告書の提出があったものとみなされるため、' +
+        '出し忘れても税額は確定し、納付が遅れた分だけ延滞税がかかる。' +
+        '中間納付額は確定申告で精算され、納めすぎた分は還付される。',
       authority: '所管: 国税庁（法人税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/nozei/oshirase/pdf/01.pdf', type: 'government', label: '国税庁 予定申告及び納税の義務' },
       { url: 'https://www.nta.go.jp/law/shitsugi/hojin/24/04.htm', type: 'government', label: '国税庁 中間（予定）税額の算出' },
-      { url: 'https://biz.moneyforward.com/accounting/basic/17300/', type: 'media', label: 'マネーフォワード 法人税の中間納付' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/aramashi2024/pdf/01.pdf', type: 'government', label: '国税庁 法人税のあらましと申告の手引（中間申告）' },
     ],
   },
   {
@@ -1080,14 +1274,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '労働者派遣の期間制限（3年ルール）',
       statement:
         '2015年改正により、派遣先の同一事業所での受入れは原則3年が上限（事業所単位）、同一組織単位で同一の派遣労働者を' +
-        '受け入れるのも原則3年が上限（個人単位）。事業所単位は過半数労働組合等への意見聴取で延長できる。',
+        '受け入れるのも原則3年が上限（個人単位）。事業所単位は過半数労働組合等への意見聴取で3年ずつ延長できるが、' +
+        '個人単位の3年は延長できない（課を変えれば同じ人を続けて受け入れられる）。' +
+        '期間制限の例外は、派遣元で無期雇用されている派遣労働者と60歳以上の者などで、この場合は抵触日の通知も不要になる。' +
+        '派遣終了から次の受入れまでの空白（クーリング期間）が3か月を超えないと期間は通算される。' +
+        '派遣先に効くのが労働契約申込みみなし制度で、期間制限違反・無許可事業主からの受入れ・偽装請負等の違法派遣を' +
+        '知りながら受け入れると、その時点の労働条件で派遣先が労働契約を申し込んだものとみなされ、' +
+        '派遣労働者が承諾すれば直接雇用が成立する。受入れ側の管理（抵触日・許可の確認）が直接雇用リスクに直結する。',
       authority: '所管: 厚生労働省（労働者派遣法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/aichi-roudoukyoku/hourei_seido_tetsuzuki/roudousha_haken/hourei_seido/hakensaki_00001.html', type: 'government', label: '厚生労働省 愛知労働局 派遣の期間制限' },
-      { url: 'https://www.manpowergroup.jp/client/manpowerclip/temporary/restriction_period.html', type: 'media', label: '派遣の抵触日 解説' },
-      { url: 'https://www.pasona.co.jp/clients/service/column/jhk/haken3years_rule/', type: 'media', label: '派遣法の3年ルール 解説' },
+      { url: 'https://www.mhlw.go.jp/content/000852557.pdf', type: 'government', label: '厚生労働省 派遣先の皆さまへ（期間制限・みなし制度チェック）' },
+      { url: 'https://jsite.mhlw.go.jp/miyagi-roudoukyoku/2/223/22311.html', type: 'government', label: '宮城労働局 派遣労働者の受け入れルール（例外・クーリング期間）' },
     ],
   },
   {
@@ -1096,15 +1296,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '産前産後休業（労働基準法第65条）',
       statement:
-        '産前6週間（多胎妊娠は14週間）以内に出産予定の女性は本人の請求により休業でき、産後8週間は原則就業させてはならない。' +
-        'ただし産後6週間経過後は、本人が請求し医師が支障ないと認めた業務には就かせることができる。',
-      authority: '所管: 厚生労働省（労働基準法第65条）',
-      asOf: '2026-06',
+        '産前6週間（多胎妊娠は14週間）以内に出産予定の女性は本人の請求により休業でき、' +
+        '産後8週間は本人が請求しなくても就業させてはならない（産前は請求が要るが、産後は請求の有無を問わない）。' +
+        'ただし産後6週間を経過した後は、本人が請求し医師が支障ないと認めた業務に就かせることができる。' +
+        '出産日当日は産前休業に含まれ、産後休業は出産日の翌日から数える。' +
+        '休業中は無給でも構わないが、健康保険から出産手当金が支給される（出産予定日以前42日・多胎は98日から' +
+        '出産後56日までのうち休業した期間）。あわせて、事業主が年金事務所等へ産前産後休業取得者申出書を出せば' +
+        '健康保険・厚生年金保険の保険料が事業主負担分も含めて免除される（申出は休業期間中または' +
+        '終了後1か月以内）。産前産後休業の期間とその後30日間は解雇が禁止され（労働基準法19条）、' +
+        '休業を理由とする不利益取扱いも禁止されている。',
+      authority: '所管: 厚生労働省（労働基準法第65条・第19条／健康保険法・厚生年金保険法）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.bosei-navi.mhlw.go.jp/glossary/provide01.html', type: 'government', label: '厚生労働省 母性健康管理ナビ' },
-      { url: 'https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05i_0011.pdf', type: 'government', label: '厚生労働省 母性保護規定' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/87784/', type: 'media', label: '産前産後休業 解説' },
+      { url: 'https://www.bosei-navi.mhlw.go.jp/ninshin/sanzen_sango.html', type: 'government', label: '厚生労働省 産前・産後休業を取るときは' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/000796040.pdf', type: 'government', label: '厚生労働省 労働基準法のあらまし（妊産婦等）' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/menjo/sankyu-menjo/20140509-02.html', type: 'government', label: '日本年金機構 産前産後休業を取得したときの手続き（保険料免除）' },
+      { url: 'https://www.kyoukaikenpo.or.jp/g3/sb3290/r148/', type: 'operator', label: '全国健康保険協会 出産で会社を休んだとき（出産手当金）' },
     ],
   },
   {
@@ -1114,14 +1322,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '前払式支払手段の発行保証金供託義務',
       statement:
         '商品券・プリペイドカード・電子マネー等の前払式支払手段の発行者は、基準日（3月末・9月末）の未使用残高が1,000万円を' +
-        '超える場合、その2分の1以上の額を発行保証金として供託等で保全し、財務局へ届出・登録する義務を負う。',
+        '超える場合、その2分の1以上の額を発行保証金として供託等（供託・発行保証金保全契約・信託契約）で保全する義務を負う。' +
+        '参入規制は型で違い、発行者自身にのみ使える自家型は基準日未使用残高が1,000万円を超えたときの届出制、' +
+        '加盟店でも使える第三者型は発行前の登録制で、登録を受けた法人でなければ発行できない。' +
+        '前払式支払手段は原則として払戻しが禁止されており（資金決済法20条）、' +
+        '払戻しできるのは業務の全部・一部の廃止時や保有者のやむを得ない事情等に限られる。' +
+        '逆に自由に現金化できる設計にするなら、それは為替取引として資金移動業の登録が必要になる。' +
+        '残高はサーバー型（IDに記録される電子マネー）でも対象で、社内ポイントでも対価を得て発行し' +
+        '商品・サービスの支払いに使えるなら該当し得る。無償で付与するポイントは対価性がなく対象外。',
       authority: '所管: 金融庁（資金決済法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.fsa.go.jp/news/28/20161228-3/23.pdf', type: 'government', label: '金融庁 前払式支払手段発行保証金規則' },
       { url: 'https://www.fsa.go.jp/common/shinsei/maebaraishiki.html', type: 'government', label: '金融庁 前払式支払手段の各種様式' },
-      { url: 'https://www.s-kessai.jp/businesses/issue_deposit.html', type: 'media', label: '日本資金決済業協会 発行保証金' },
+      { url: 'https://www.fsa.go.jp/common/law/guide/kaisya/05.pdf', type: 'government', label: '金融庁 事務ガイドライン（前払式支払手段発行者関係）' },
+      { url: 'https://www.s-kessai.jp/businesses/issue_deposit.html', type: 'operator', label: '日本資金決済業協会 発行保証金' },
     ],
   },
   {
@@ -1130,15 +1346,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '青色申告法人の繰越欠損金',
       statement:
-        '青色申告書を提出した事業年度に生じた欠損金は、平成30年4月1日以後開始事業年度発生分につき翌期以後10年間' +
-        '繰り越して所得から控除できる。控除限度は大法人が所得の50%、中小法人等は全額控除可。',
-      authority: '所管: 国税庁（法人税法）',
-      asOf: '2026-06',
+        '青色申告書を提出した事業年度に生じた欠損金は、平成30年4月1日以後に開始した事業年度に生じた分について' +
+        '翌期以後10年間繰り越し、その後の事業年度の所得から控除できる。控除限度は大法人が所得の50％、' +
+        '中小法人等は所得の全額まで。繰り越すには、欠損が生じた事業年度に青色申告書を提出していることに加えて、' +
+        'その後の各事業年度について連続して確定申告書を提出していることと、帳簿書類を保存していることが要る。' +
+        '黒字になってから遡って直せる話ではないので、赤字の期こそ期限内申告を落とさないこと。' +
+        'なお中小企業者等には、欠損金を前期の所得に繰り戻して法人税の還付を受ける繰戻し還付の選択肢もあり、' +
+        '繰り越すか戻すかは資金繰りを見て決める。',
+      authority: '所管: 国税庁（法人税法第57条）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm', type: 'government', label: '国税庁 No.5762 欠損金の繰越控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm', type: 'government', label: '国税庁 No.5762 青色申告書を提出した事業年度の欠損金の繰越控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5763.htm', type: 'government', label: '国税庁 No.5763 欠損金の繰戻しによる還付' },
       { url: 'https://www.meti.go.jp/policy/economy/kyosoryoku_kyoka/kurikoshi.pdf', type: 'government', label: '経済産業省 繰越欠損金の控除上限特例' },
-      { url: 'https://www.ht-tax.or.jp/topics/kurikoshi-kessonkin/', type: 'media', label: '繰越欠損金 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm', type: 'government', label: '国税庁 No.5100 新設法人の届出書類（青色申告の承認）' },
     ],
   },
   {
@@ -1148,14 +1370,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '固定資産税（償却資産）の申告',
       statement:
         '1月1日時点で事業用の機械・器具備品等の償却資産を所有する者は、毎年1月31日までに資産所在地の市町村へ申告する' +
-        '義務がある。課税標準額の合計が150万円未満の場合は免税点に達せず課税されないが、申告自体は必要。',
+        '義務がある。課税標準額の合計が150万円未満の場合は免税点に達せず課税されないが、申告自体は必要。' +
+        '対象になるかどうかは国税側でどの償却方法を選んだかと連動する。' +
+        '取得価額10万円未満で一時に損金算入した資産と、20万円未満で3年一括償却を選んだ資産は申告対象から外れる。' +
+        'ところが中小企業者の少額減価償却資産の特例（30万円未満を即時償却）で損金算入した資産は、' +
+        '租税特別措置法による特例のため償却資産では対象のままで、申告が必要になる。' +
+        '同じ「即時に経費化した資産」でも根拠条文の違いで固定資産税の扱いが分かれるのがこの申告の罠で、' +
+        '30万円特例を多用するほど償却資産の申告漏れが起きやすい。' +
+        '少額でも個別に減価償却を選択した資産は対象になる。税額は課税標準額×1.4%（標準税率）。',
       authority: '所管: 総務省・市町村（地方税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_08.html', type: 'government', label: '総務省 固定資産税の概要' },
       { url: 'https://www.city.funabashi.lg.jp/kurashi/zei/003/04/p000859.html', type: 'municipality', label: '船橋市 償却資産の概要' },
-      { url: 'https://www.tkc.jp/consolidate/webcolumn/023880/', type: 'media', label: '償却資産申告の留意点' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/shokyak_sis', type: 'municipality', label: '東京都主税局 固定資産税（償却資産）— 少額資産の取扱い' },
     ],
   },
   {
@@ -1191,14 +1420,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '変形労働時間制',
       statement:
         '一定期間を平均し1週間あたりの労働時間が法定労働時間（原則週40時間）の範囲内であれば、特定の日・週に法定労働時間を' +
-        '超えて労働させられる制度（1か月単位・1年単位・1週間単位等）。導入には労使協定の締結・届出または就業規則の定めが必要。',
+        '超えて労働させられる制度（1か月単位・1年単位・1週間単位等）。' +
+        '1か月単位は労使協定または就業規則のいずれでも導入でき（特例措置対象事業場は週44時間で計算できる）、' +
+        '1年単位は労使協定の締結と労働基準監督署への届出が必須で、対象期間が3か月を超える場合は' +
+        '労働日数の限度が年280日、連続労働日数は原則6日（特定期間でも週1日の休日確保）という縛りがかかる。' +
+        'いずれも、各日・各週の労働時間をあらかじめ特定しておくことが要件で、' +
+        '繁閑に応じて後からシフトを自由に動かせる制度ではない。' +
+        '時間外労働は、あらかじめ定めたその日・その週の所定を超えた分と、対象期間の法定総枠を超えた分について発生し、' +
+        '割増賃金の支払いが必要になる。平均して40時間以内なら割増が一切要らなくなる制度ではない。',
       authority: '所管: 厚生労働省（労働基準法第32条の2等）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/henkei.html', type: 'government', label: '厚生労働省 変形労働時間制の概要' },
       { url: 'https://jsite.mhlw.go.jp/hyogo-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/_79872/roudoujikan.html', type: 'government', label: '兵庫労働局 労働時間' },
-      { url: 'https://www.freee.co.jp/kb/kb-attendance/variable-working-hours-systems/', type: 'media', label: '変形労働時間制 解説' },
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/dl/140811-2.pdf', type: 'government', label: '厚生労働省 1年単位の変形労働時間制（労働日数の限度・連続労働日数）' },
+      { url: 'https://jsite.mhlw.go.jp/shizuoka-roudoukyoku/var/rev0/0123/3919/2017111615407.pdf', type: 'government', label: '静岡労働局 1か月単位の変形労働時間制の時間外労働の考え方' },
     ],
   },
   {
@@ -1208,14 +1445,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '個人データの第三者提供の制限',
       statement:
         '個人データを第三者に提供するには原則あらかじめ本人の同意が必要で、オプトアウトによる提供は個人情報保護委員会への' +
-        '届出を要し（要配慮個人情報はオプトアウト不可）、第三者提供では確認・記録の作成および保存義務が課される。',
+        '届出を要し（要配慮個人情報はオプトアウト不可）、第三者提供では確認・記録の作成および保存義務が課される。' +
+        '実務で効くのは「第三者に当たらない3類型」で、①利用目的の達成に必要な範囲内の委託、②合併その他の事由による' +
+        '事業の承継、③共同利用は、いずれも第三者提供に当たらないため本人の同意を要しない。' +
+        'ただし共同利用は、共同利用する旨・データの項目・共同利用者の範囲・利用目的・管理責任者の氏名等を' +
+        'あらかじめ本人に通知するか本人が容易に知り得る状態に置くことが条件で、後から範囲を広げることはできない。' +
+        '委託の場合は同意が要らない代わりに委託先の監督義務がかかる。外国にある第三者への提供は別の規律になる。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/personalinfo/legal/optout/', type: 'government', label: '個人情報保護委員会 オプトアウト届出' },
       { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_thirdparty/', type: 'government', label: '個人情報保護委員会 第三者提供時の確認・記録義務' },
-      { url: 'https://www.miyake.gr.jp/', type: 'media', label: '三宅法律事務所 解説' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編・第三者提供の制限）' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_offshore/', type: 'government', label: '個人情報保護委員会 ガイドライン（外国にある第三者への提供編）' },
     ],
   },
   {
@@ -1225,14 +1468,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '電気通信事業法の外部送信規律',
       statement:
         '電気通信事業者等は、利用者の端末に記録された Cookie 等の情報を外部に送信させる際、送信される情報の内容・送信先等を' +
-        '利用者に通知し、又は容易に知り得る状態に置く（公表等）義務を負う（2023年6月施行）。',
+        '利用者に通知し、又は容易に知り得る状態に置く（公表等）か、同意取得またはオプトアウト措置のいずれかを講じる義務を負う' +
+        '（2023年6月施行）。Cookie 規制と呼ばれるが Cookie に限らず、解析タグ・広告タグ・SDK による端末情報の送信全般が対象になる。' +
+        '対象となるのは利用者の利益に及ぼす影響が少なくない電気通信役務で、メッセージ媒介、SNS・電子掲示板・動画共有・' +
+        'オンラインショッピングモール等の場の提供、オンライン検索、ニュース・気象・動画・地図等の情報のオンライン提供が該当する。' +
+        '一方、小売業者が自社商品を自社サイトで販売するだけなら本来業務の遂行手段にすぎず対象外である。' +
+        'ただし対象外の会社でも、オウンドメディアでニュースや情報の配信を始めると第4号の役務として対象に入り得るので、' +
+        'サイトの性格が変わったときに再判定する。実務上はプライバシーポリシーとは別に、' +
+        '送信先ごとに情報の内容・利用目的を一覧化した公表ページを置く対応が広がっている。',
       authority: '所管: 総務省（電気通信事業法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/gaibusoushin_kiritsu_00002.html', type: 'government', label: '総務省 外部送信規律FAQ' },
       { url: 'https://www.soumu.go.jp/main_content/000862755.pdf', type: 'government', label: '総務省 外部送信規律パンフレット' },
-      { url: 'https://privtech.co.jp/blog/law/revised-telecommunications-business-law-cookie.html', type: 'media', label: '外部送信規律 解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/gaibusoushin_kiritsu.html', type: 'government', label: '総務省 外部送信規律（概要ページ）' },
     ],
   },
   {
@@ -1242,14 +1492,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '法人の寄附金の損金算入限度',
       statement:
         '国・地方公共団体への寄附金および指定寄附金は全額損金算入され、特定公益増進法人等への寄附金は一般の寄附金とは' +
-        '別枠の特別損金算入限度額まで、一般の寄附金は資本金等の額と所得金額を基礎に計算した限度額までが損金算入される。',
+        '別枠の特別損金算入限度額まで、一般の寄附金は資本金等の額と所得金額を基礎に計算した限度額までが損金算入される。' +
+        '普通法人の一般の寄附金の限度額は（資本金等の額×0.25%＋所得金額×2.5%）×1/4、' +
+        '特定公益増進法人等への特別限度額は（資本金等の額×0.375%＋所得金額×6.25%）×1/2 で、' +
+        '所得が赤字だと枠も小さくなる。' +
+        'タイミングの罠が一つあり、寄附金は実際に支払った日の損金で、未払計上や手形払いでは損金にならない。' +
+        '期末に寄附を決議しただけでは当期の損金に入らないので、決算対策なら期中に支払いまで済ませる。' +
+        '取引先への支援や子会社への無利息貸付など、対価性のない経済的利益の供与も寄附金と認定され得るので、' +
+        '寄附金勘定に載っていない支出が税務調査で寄附金にされる形でも効いてくる。',
       authority: '所管: 国税庁（法人税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5281.htm', type: 'government', label: '国税庁 No.5281 寄附金の損金不算入' },
       { url: 'https://www.mext.go.jp/donation_portal-site/corporate-preferential.html', type: 'government', label: '文部科学省 法人寄附の税制優遇' },
-      { url: 'https://www.ht-tax.or.jp/topics/kifukin-keihi/', type: 'media', label: '寄附金の損金算入 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5283.htm', type: 'government', label: '国税庁 No.5283 特定公益増進法人に対する寄附金' },
     ],
   },
   {
@@ -1322,15 +1579,19 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '通信販売の返品ルール（特定商取引法）',
       statement:
-        '通信販売にクーリング・オフ制度はないが、広告に返品特約の表示がない場合、購入者は商品到着日から起算して8日以内であれば' +
-        '送料自己負担で返品（契約解除）できる。返品特約が表示されていればその内容に従う。',
-      authority: '所管: 消費者庁（特定商取引法）',
-      asOf: '2026-06',
+        '通信販売にクーリング・オフ制度はない。広告に返品特約の表示がない場合、購入者は商品の引渡しを受けた日から' +
+        '8日以内であれば、送料を自己負担して契約の申込みの撤回・解除ができる。' +
+        '返品特約を広告に表示していればその内容に従うので、「返品不可」とするなら広告に表示しておく必要がある' +
+        '（表示の仕方は消費者庁の返品特約の表示についてのガイドラインに従う）。' +
+        '返品の可否とは別に、申込みの最終確認画面の表示義務が令和3年改正で加わっている（定期購入の表示規制を参照）。',
+      authority: '所管: 消費者庁（特定商取引法第15条の3）',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特商法ガイド 通信販売' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売' },
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20200331ra05.pdf', type: 'government', label: '消費者庁 通信販売における返品特約の表示についてのガイドライン' },
       { url: 'https://www.no-trouble.caa.go.jp/case/mailorder/case01.html', type: 'government', label: '消費者庁 通信販売の事例' },
-      { url: 'https://kigyobengo.com/blog/1678', type: 'media', label: '通信販売の返品 解説' },
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20080601sp04.pdf', type: 'government', label: '消費者庁 広告に返品特約がない場合は8日間以内であれば返品も可能に' },
     ],
   },
   {
@@ -1339,15 +1600,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '古物営業法と古物商許可',
       statement:
-        '中古品（古物）を売買・交換する古物商を営むには、営業所所在地の都道府県公安委員会の許可が必要。盗品の流通防止を' +
-        '目的に、取引相手の本人確認と取引記録（帳簿）の備付けが義務付けられている。',
+        '中古品（古物）を売買・交換する古物商を営むには、営業所が所在する都道府県ごとに公安委員会の許可が要る。' +
+        '制度の目的は盗品の流通防止なので、義務も相手の特定と記録に集まっている。' +
+        '買受け等における相手方の確認は、対価の総額が1万円未満の取引では不要とされるが、' +
+        '一部の商品（盗品として流通しやすいもの）は金額にかかわらず確認が必要である。' +
+        '古物の受取り・引渡しの際は帳簿への記載と保管が義務づけられる。' +
+        '警察から品触れ（盗品の手配書）を受け取ったときは、その書面に到達の日付を記載して6か月間保存し、' +
+        '該当品を取り扱っていれば届け出る。監督手段として売買の差止め・立入り・調査があり、' +
+        '違反には指示・営業停止・許可の取消しがある。',
       authority: '所管: 警察庁・都道府県公安委員会（古物営業法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/index.html', type: 'government', label: '警察庁 古物営業について' },
-      { url: 'https://elaws.e-gov.go.jp/search/elawsSearch/elaws_search/lsg0500/detail?lawId=407M50400000010', type: 'government', label: 'e-Gov 古物営業法施行規則' },
-      { url: 'https://hayward-law.com/kobutsusho/archives/5383', type: 'media', label: '古物商の本人確認義務 解説' },
+      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/index.html', type: 'government', label: '警察庁 古物営業・質屋営業について' },
+      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/1shiryo1.pdf', type: 'government', label: '警察庁 古物営業の現状と課題（義務・監督手段の整理）' },
+      { url: 'https://www.npa.go.jp/policies/application/form/12/index.html', type: 'government', label: '警察庁 古物営業法 手続・様式' },
+      { url: 'https://www.npa.go.jp/pdc/model/shobun/data/02-04b.pdf', type: 'government', label: '警察庁 古物営業法に基づく指示・営業停止命令・許可の取消しの基準' },
     ],
   },
   {
@@ -1357,14 +1625,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '領収書の印紙税と非課税範囲',
       statement:
         '売上代金に係る金銭の受取書（領収書）は印紙税の課税文書で記載金額に応じて課税されるが、記載受取金額が5万円未満の' +
-        'ものは非課税。クレジットカード払いは信用取引で金銭の受領がないため、その旨を記載した領収書は金銭の受取書に当たらず非課税。',
+        'ものは非課税。クレジットカード払いは信用取引で金銭の受領がないため、その旨を記載した領収書は金銭の受取書に当たらず非課税。' +
+        '5万円の判定で効くのが消費税額等の扱いで、課税事業者が消費税額等を区分記載していればその金額は記載金額に含めない' +
+        '（第1号・第2号・第17号文書に限る）。48,000円と消費税4,800円を分けて書けば記載金額は48,000円で非課税だが、' +
+        '52,800円とだけ書けば課税文書になる。' +
+        'また受け取った金銭が受取人にとって営業に関しないものであれば非課税で、' +
+        '医師・弁護士・公認会計士等や、店舗等の設備を持たない農林漁業者が自分の生産物を売る行為はこれに当たる。' +
+        '貼り忘れると本来の印紙税額とその2倍に相当する合計3倍の過怠税がかかるが、' +
+        '調査を予知しないで自主的に不納付を申し出れば1.1倍に軽減される。消印を忘れた場合は印紙の額面と同額の過怠税となる。',
       authority: '所管: 国税庁（印紙税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7105.htm', type: 'government', label: '国税庁 No.7105 金銭の受取書・領収書' },
       { url: 'https://www.nta.go.jp/law/shitsugi/inshi/19/37.htm', type: 'government', label: '国税庁 クレジット販売の領収書' },
-      { url: 'https://www.keihi.com/column/22359/', type: 'media', label: '領収書と収入印紙 解説' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/03/06.htm', type: 'government', label: '国税庁 消費税額等が区分記載された受取書' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7125.htm', type: 'government', label: '国税庁 No.7125 営業に関しない受取書' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7131.htm', type: 'government', label: '国税庁 No.7131 印紙税を納めなかったとき（過怠税）' },
     ],
   },
   {
@@ -1397,15 +1674,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '時間外労働の上限（特別条項付き36協定）',
       statement:
-        '特別条項付き36協定でも、時間外労働は年720時間以内、休日労働を含め単月100時間未満かつ複数月（2〜6か月）平均80時間以内に' +
-        '収めねばならず、月45時間を超えられるのは年6か月までである。違反には罰則が科され得る。',
+        '原則の上限は月45時間・年360時間で、臨時的な特別の事情がある場合に限り特別条項付き36協定を結べる。' +
+        'その特別条項でも、時間外労働は年720時間以内、休日労働を含め単月100時間未満かつ複数月（2〜6か月）平均80時間以内に' +
+        '収めねばならず、月45時間を超えられるのは年6か月までである。違反には罰則（6か月以下の拘禁刑または30万円以下の罰金）が科され得る。' +
+        '見落としやすいのは単月100時間と複数月平均80時間には休日労働が含まれる点で、時間外だけ数えていると超える。' +
+        '5年間適用が猶予されていた建設・自動車運転・医師にも2024年4月から上限規制が適用された。' +
+        'ただし内容は業種ごとに違い、建設は災害復旧・復興を除き一般則どおり、' +
+        '自動車運転の業務は特別条項の上限が年960時間で単月100時間・複数月80時間・月45時間超は年6回までの規制は適用されない。' +
+        '医師は特例水準で年最大1,860時間まで認められる。' +
+        'ドライバーには上限規制とは別に改善基準告示（拘束時間・休息期間）も並行して適用される。',
       authority: '所管: 厚生労働省（労働基準法第36条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/content/000463185.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 解説' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/gyosyu/topics/01.html', type: 'government', label: '厚生労働省 時間外労働の上限規制' },
-      { url: 'https://jp.indeed.com/career-advice/career-development/labor-law-36-agreement-rules', type: 'media', label: '36協定の特別条項 解説' },
+      { url: 'https://jsite.mhlw.go.jp/chiba-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/jougenkisei_2024.html', type: 'government', label: '千葉労働局 建設事業・自動車運転業務の上限規制の適用（2024年4月〜）' },
     ],
   },
   {
@@ -1414,15 +1698,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '年次有給休暇の付与',
       statement:
-        '雇入れの日から6か月継続勤務し全労働日の8割以上出勤した労働者には年次有給休暇が10日付与され、以後継続勤務年数に応じて' +
-        '逓増し6年6か月以降は最大20日となる。所定労働日数の少ないパート等には比例付与が適用される。',
+        '雇入れの日から6か月継続勤務し全労働日の8割以上出勤した労働者には年次有給休暇が10日付与される。' +
+        '以後は継続勤務2年6か月までは1年ごとに1日、3年6か月以後は1年ごとに2日を加算し、' +
+        '6年6か月以降は20日で頭打ちになる（各回とも前年の出勤率8割以上が条件）。' +
+        '所定労働日数の少ない労働者には比例付与が適用され、対象は週の所定労働時間が30時間未満で、' +
+        'かつ週の所定労働日数が4日以下の者である。この2つは「かつ」なので、' +
+        '週3日勤務でも1日10時間で週30時間以上なら通常どおりの付与になる。' +
+        '年次有給休暇は発生の日から2年で時効消滅するため、未使用分の繰越は翌年度分までである。',
       authority: '所管: 厚生労働省（労働基準法第39条）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/content/000350327.pdf', type: 'government', label: '厚生労働省 年次有給休暇' },
       { url: 'https://www.kantei.go.jp/jp/singi/katsuryoku_kojyo/choujikan_wg/dai5/sankou3.pdf', type: 'government', label: '内閣官房 長時間労働WG 参考資料' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/83032/', type: 'media', label: '年次有給休暇の付与 解説' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_yukyu.html', type: 'government', label: '厚生労働省 確かめよう労働条件 年次有給休暇' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q1.html', type: 'government', label: '厚生労働省 年次有給休暇は何日与えるか（比例付与を含む）' },
     ],
   },
   {
@@ -1454,15 +1744,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '保有個人データに関する本人の権利',
       statement:
-        '本人は個人情報取扱事業者に対し、保有個人データの開示・訂正等・利用停止等・第三者提供の停止・第三者提供記録の開示を' +
-        '請求できる。2022年改正法施行により、本人は電磁的記録の提供による方法での開示も請求できる。',
+        '本人は個人情報取扱事業者に対し、保有個人データの開示・訂正等・利用停止等・第三者提供の停止・' +
+        '第三者提供記録の開示を請求できる。2022年施行の改正法により、開示は書面に限らず' +
+        '電磁的記録の提供による方法を本人が指定でき、事業者は原則としてその方法で開示する必要がある。' +
+        'また同改正で利用停止・消去の請求ができる場面が広がり、目的外利用や不正取得といった違反があった場合に加えて、' +
+        '事業者が利用する必要がなくなった場合、重大な漏えい等が生じた場合、本人の権利または正当な利益が害される' +
+        'おそれがある場合にも請求できるようになった。請求に応じる手続き（窓口・本人確認・手数料）を' +
+        'あらかじめ定めて公表しておかないと、請求のたびに場当たりの対応になる。',
       authority: '所管: 個人情報保護委員会（個人情報保護法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q9-10/', type: 'government', label: '個人情報保護委員会 開示請求 FAQ' },
       { url: 'https://www.ppc.go.jp/news/kaiseihogohou_checkpoint/', type: 'government', label: '個人情報保護委員会 改正法チェックポイント' },
-      { url: 'https://www.businesslawyers.jp/practices/1426', type: 'media', label: '保有個人データ 解説' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編・保有個人データの開示等）' },
+      { url: 'https://www.ppc.go.jp/files/pdf/r2kaiseihou.pdf', type: 'government', label: '個人情報保護委員会 令和2年改正個人情報保護法について' },
     ],
   },
   {
@@ -1565,15 +1861,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '連鎖販売取引（マルチ商法）',
       statement:
-        '個人を販売員として勧誘し、その個人がさらに別の個人を販売員として勧誘する形で連鎖的に拡大する' +
-        '取引は連鎖販売取引として特定商取引法の規制を受け、概要書面・契約書面の交付や20日間のクーリングオフが義務付けられる。',
+        '個人を販売員として勧誘し、その個人がさらに別の個人を販売員として勧誘する形で連鎖的に拡大する取引は' +
+        '連鎖販売取引として特定商取引法の規制を受ける（33条）。禁止されている商法ではないが、規制は重い。' +
+        '契約に先立って概要書面を、契約後に契約書面を交付する義務があり、クーリング・オフは契約書面を受け取った日' +
+        '（商品の引渡しがそれより後なら引渡日）から20日間と長く取られている。' +
+        'クーリング・オフ期間を過ぎた後でも、将来に向かって契約を解除する中途解約ができ、' +
+        '一定の要件を満たす未使用の商品については返品も認められる。' +
+        '広告の表示義務と誇大広告の禁止もかかる。「必ず儲かる」といった勧誘は不実告知として禁止され、' +
+        '違反には業務停止命令等の行政処分と罰則がある。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/chainsales/', type: 'government', label: '消費者庁 特定商取引法ガイド 連鎖販売取引' },
       { url: 'https://www.shouhiseikatu.metro.tokyo.lg.jp/keiyaku/torihiki/rensa.html', type: 'municipality', label: '東京くらしWEB 連鎖販売取引' },
-      { url: 'https://www.kokusen.go.jp/soudan_now/data/multi.html', type: 'media', label: '国民生活センター マルチ取引' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/multilevelmarketing/', type: 'government', label: '消費者庁 特定商取引法ガイド 連鎖販売取引' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/multi.html', type: 'government', label: '国民生活センター マルチ取引' },
     ],
   },
   {
@@ -1583,14 +1886,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '資金移動業',
       statement:
         '銀行等以外の者が為替取引（送金）を業として営む場合は資金移動業として内閣総理大臣の登録が必要であり、' +
-        '送金額の上限に応じて第一種・第二種・第三種の類型に区分され、利用者資金の保全等の義務を負う。',
+        '送金額の上限に応じて第一種・第二種・第三種の類型に区分され、利用者資金の保全等の義務を負う。' +
+        '第二種が従来型で1件100万円以下・登録制、第一種は100万円超の高額送金を扱える代わりに認可制で、' +
+        '具体的な送金指図のある資金しか受け入れられず滞留が禁止される。第三種は1件5万円以下の少額に限られる。' +
+        '利用者資金の保全は供託・保証・信託の方式があり、類型ごとに区分して行う。' +
+        '事業設計で効くのが前払式支払手段との境界で、チャージ残高を現金で払い戻せる設計にすると' +
+        '為替取引に当たり資金移動業の登録が必要になる。ポイントやプリペイドのつもりで払戻し機能を付けると' +
+        '無登録営業になりかねないので、現金化の可否は最初に決める。' +
+        '給与のデジタル払い（資金移動業者の口座への賃金支払）は、このうち厚生労働大臣の指定を受けた' +
+        '指定資金移動業者に限って認められる。',
       authority: '所管: 金融庁（資金決済に関する法律）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.fsa.go.jp/policy/kessai_seido/index.html', type: 'government', label: '金融庁 資金決済法関連' },
       { url: 'https://www.fsa.go.jp/common/law/kessai/index.html', type: 'government', label: '金融庁 資金移動業者関係' },
-      { url: 'https://www.smbc.co.jp/hojin/businessjoho/keiei/fund-transfer.html', type: 'media', label: '資金移動業 解説' },
+      { url: 'https://www.fsa.go.jp/common/law/guide/kaisya/14.pdf', type: 'government', label: '金融庁 事務ガイドライン（資金移動業者関係）' },
     ],
   },
   {
@@ -1600,14 +1911,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '贈与税の暦年課税（基礎控除110万円）',
       statement:
         '暦年課税の贈与税では、1月1日から12月31日までの1年間に同一の受贈者が取得した財産の合計額から基礎控除額110万円を' +
-        '差し引いて課税価格を計算する。1年間の合計が110万円以下であれば贈与税はかからず、申告も不要である。',
+        '差し引いて課税価格を計算する。1年間の合計が110万円以下であれば贈与税はかからず、申告も不要である。' +
+        'ただし相続との関係では110万円以下でも消えない。令和5年度改正により、令和6年1月1日以後の贈与から' +
+        '相続開始前の贈与加算の対象期間が3年から7年へ段階的に延長され（延長された4年分は総額100万円まで加算除外）、' +
+        '基礎控除以下で贈与税がかからなかった財産も、相続等で財産を取得した者への贈与であれば相続財産に加算される。' +
+        '相続人でない孫などへの贈与は原則として加算対象にならないため、長期の生前贈与は相手の選び方で効果が変わる。' +
+        '同じ改正で相続時精算課税にも年110万円の基礎控除が創設され、精算課税を選択していても年110万円以下なら' +
+        '申告不要かつ相続財産への加算もないので、暦年課税と精算課税の使い分けの前提が大きく変わっている。',
       authority: '所管: 国税庁（相続税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4402.htm', type: 'government', label: '国税庁 No.4402 贈与税がかかる場合' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4408.htm', type: 'government', label: '国税庁 No.4408 贈与税の計算と税率（暦年課税）' },
-      { url: 'https://chester-tax.com/encyclopedia/9307.html', type: 'media', label: '暦年贈与の非課税枠 解説' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4161.htm', type: 'government', label: '国税庁 No.4161 贈与財産の加算と税額控除（暦年課税・7年加算）' },
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0023006-004.pdf', type: 'government', label: '国税庁 相続税及び贈与税の税制改正のあらまし（令和5年6月）' },
     ],
   },
   {
@@ -1724,7 +2042,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '消費税の輸出免税',
       statement:
         '事業者が国内から国外への資産の譲渡・貸付け等の輸出取引等を行った場合、その取引は消費税が免除される（免税取引）。' +
-        '免税の適用を受けるには、輸出許可書・税関長の証明書等の証明書類を整理し原則7年間保存することが要件とされる。',
+        '免税の適用を受けるには、輸出許可書・税関長の証明書等の証明書類を整理し原則7年間保存することが要件とされる。' +
+        '免税と非課税は仕入側で決定的に違う。輸出免税は0%課税なので、輸出売上に対応する仕入れ' +
+        '（商品仕入だけでなく広告費・事務用品等も含む）に含まれる消費税は仕入税額控除の対象になり、' +
+        '控除しきれない分は申告により還付される。輸出主体の事業者では恒常的に還付になるため、' +
+        '免税事業者のままでは還付を受けられず、課税事業者を選択して申告する必要がある。' +
+        '対象は物品の輸出に限らず、国際輸送・国際通信、非居住者への無形資産（特許権等）の譲渡・貸付け、' +
+        '非居住者への役務提供にも及ぶ。ただし非居住者向けでも、国内にある資産の運送・保管や国内での飲食・宿泊のように' +
+        '国内で直接便益を受けるものは免税にならない。還付申告は国税当局の確認対象になりやすく、' +
+        '輸出証明書類の保存がそのまま防御資料になる。',
       authority: '所管: 国税庁（消費税法）',
       asOf: '2026-06',
     },
@@ -1741,14 +2067,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '職場のセクシュアルハラスメント防止措置義務',
       statement:
         '事業主は、職場におけるセクシュアルハラスメント（性的な言動に起因する問題）を防止するため、相談に応じ適切に対応する' +
-        'ための体制の整備、事後の迅速・適切な対応、再発防止等、雇用管理上必要な措置を講じる義務を負う（男女雇用機会均等法11条）。',
+        'ための体制の整備、事後の迅速・適切な対応、再発防止等、雇用管理上必要な措置を講じる義務を負う（男女雇用機会均等法11条）。' +
+        '対価型（拒否したことを理由に不利益な取扱いをする）と環境型（就業環境が害される）の双方が対象で、' +
+        '相手が同性である場合や、性的指向・性自認に関する言動も含まれる。' +
+        '守るべき労働者は正社員に限らずパート・契約社員・派遣労働者を含み、派遣先も派遣労働者について事業主とみなされる。' +
+        '他社の労働者からセクハラを受けた場合に他社から必要な協力を求められたときは、これに応ずるよう努めることとされている。' +
+        '措置義務違反は助言・指導・勧告の対象で、勧告に従わないときは公表されることがある。' +
+        'さらに2025年6月11日公布の改正法により、2026年10月1日からは求職者等（就職活動中の学生やインターンシップ参加者等）に対する' +
+        'セクシュアルハラスメントの防止措置も事業主の義務となる。採用面接や説明会の担当者まで周知の範囲を広げる必要がある。',
       authority: '所管: 厚生労働省（男女雇用機会均等法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/seisaku06/index.html', type: 'government', label: '厚生労働省 職場におけるハラスメントの防止のために' },
       { url: 'https://www.mhlw.go.jp/general/seido/koyou/danjokintou/dl/kigyou01b_0002.pdf', type: 'government', label: '厚生労働省 セクハラ対策パンフレット（均等法11条）' },
-      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_41.html', type: 'media', label: '連合 セクシュアルハラスメント Q&A' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001662576.pdf', type: 'government', label: '厚生労働省 令和8年10月1日からハラスメント対策が強化されます（求職者等へのセクハラ）' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001338359.pdf', type: 'government', label: '厚生労働省 事業主の対策が義務となっているハラスメント' },
     ],
   },
   {
@@ -1782,7 +2116,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '独占禁止法',
       statement:
         '独占禁止法は、私的独占・不当な取引制限（カルテル・入札談合等）・不公正な取引方法を禁止し、公正かつ自由な競争を促進する' +
-        '法律で、公正取引委員会が運用する。違反に対しては排除措置命令や課徴金納付命令等が行われる。',
+        '法律で、公正取引委員会が運用する。違反に対しては排除措置命令や課徴金納付命令等が行われる。' +
+        'カルテル・入札談合に関与してしまった場合に効くのが課徴金減免制度（リニエンシー）で、' +
+        '自ら公取委に違反を報告すると、調査開始前の1位は全額免除、以降は申請順位に応じて減額される。' +
+        '令和元年改正で申請者数の上限が廃止され、調査への協力度合い（資料の具体性・網羅性・裏付け）に応じた' +
+        '減算率が上乗せされる調査協力減算制度になったため、「何番目か」だけでなく「どれだけ出すか」で結果が変わる。' +
+        '中小企業に身近なのは優越的地位の濫用や下請法・フリーランス法との連続で、発注側として問われる場面が多い。' +
+        'デジタル分野では、令和6年成立のスマホソフトウェア競争促進法が2025年12月に全面施行され、' +
+        '指定されたモバイルOS・アプリストア等の事業者（Apple・iTunes・Google）に他社アプリストアの妨害禁止等の' +
+        '義務を課し、違反の課徴金は対象売上の20%と独禁法（原則10%）より重い。',
       authority: '所管: 公正取引委員会（独占禁止法）',
       asOf: '2026-06',
     },
@@ -1799,14 +2141,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '取引透明化法（特定デジタルプラットフォーム透明化法）',
       statement:
         '規模等により経済産業大臣に指定された特定デジタルプラットフォーム提供者は、取引条件等の情報開示および運営の公正性確保の' +
-        'ための体制整備を行うとともに、毎年度、自己評価を付した運営状況に関する報告書を経済産業大臣へ提出する義務を負う。',
+        'ための体制整備を行うとともに、毎年度、自己評価を付した運営状況に関する報告書を経済産業大臣へ提出する義務を負う。' +
+        '指定されているのは大規模なオンラインモール・アプリストア・デジタル広告の提供者で、規制の名宛人はプラットフォーム側である。' +
+        '中小事業者にとっては出店者・広告主として保護される側の法律で、検索順位を決める主要な事項、' +
+        '取引条件の変更やアカウント停止の事前通知、返品・支払留保の条件などの開示を求められる。' +
+        '取引条件の一方的な変更で不利益を受けたときは、経済産業省の相談窓口へ申し出ると、' +
+        '大臣が公正取引委員会へ独占禁止法（優越的地位の濫用等）に基づく対処を要請する仕組みにつながる。' +
+        '規制のスタイルは罰則で縛る事前規制ではなく、開示と自己評価報告を軸にした共同規制である点が特徴で、' +
+        'モール側の運営状況報告書は毎年度の大臣評価とともに公表され、出店者側の交渉材料になる。',
       authority: '所管: 経済産業省（取引透明化法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/transparency.html', type: 'government', label: '経済産業省 取引透明化法 法律のポイント' },
       { url: 'https://elaws.e-gov.go.jp/document?lawid=502AC0000000038_20220525_504AC0000000048', type: 'government', label: 'e-Gov法令検索 取引透明化法（令和2年法律第38号）' },
-      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html', type: 'media', label: '経済産業省 デジタルプラットフォーム取引 関連情報' },
+      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html', type: 'government', label: '経済産業省 デジタルプラットフォーム取引 関連情報' },
     ],
   },
   {
@@ -1869,14 +2218,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '介護休業と介護休業給付金',
       statement:
         '労働者は、要介護状態にある対象家族1人につき通算93日まで、3回を上限に分割して介護休業を取得できる。' +
-        '一定要件を満たす雇用保険被保険者には、休業開始時賃金日額の67%相当額の介護休業給付金が支給される。',
+        '対象家族は配偶者（事実婚を含む）・父母・子・祖父母・兄弟姉妹・孫・配偶者の父母。' +
+        '一定要件を満たす雇用保険被保険者には、休業開始時賃金日額の67％相当額の介護休業給付金が支給される。' +
+        'これとは別に介護休暇があり、年5日（対象家族が2人以上なら10日）まで時間単位でも取得できる。' +
+        '労使協定で対象から外せるのは、入社1年未満の者・申出の日から93日以内に雇用関係が終了する者・' +
+        '1週間の所定労働日数が2日以下の者に限られる。' +
+        '2025年4月1日からは介護離職防止のための個別の周知・意向確認と雇用環境整備が事業主の義務になった。' +
+        '継続雇用期間6か月未満を介護休暇の対象から外す労使協定を結んでいた場合は締結し直す必要がある' +
+        '（同改正でこの除外ができなくなったため、古い協定のままだと運用が法に合わない）。',
       authority: '所管: 厚生労働省（育児・介護休業法／雇用保険法）',
-      asOf: '2026-06',
+      asOf: '2026-08',
     },
     sources: [
-      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト' },
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html', type: 'government', label: '厚生労働省 Q&A 介護休業給付（67%）' },
-      { url: 'https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-2/w-2-12/', type: 'municipality', label: '東京都 両立支援ポータル 介護休業中の給与' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト 介護休業' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/law-amendment/', type: 'government', label: '厚生労働省 介護休業制度特設サイト 法改正のポイント' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001407488.pdf', type: 'government', label: '厚生労働省 育児・介護休業法 令和6年改正内容の解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html', type: 'government', label: '厚生労働省 介護休業給付に関するQ&A' },
     ],
   },
   {
@@ -1945,14 +2302,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '休憩時間（労働基準法34条）',
       statement:
         '使用者は、労働時間が6時間を超える場合は少なくとも45分、8時間を超える場合は少なくとも1時間の休憩を、労働時間の途中に' +
-        '与えなければならない。休憩は原則として一斉に付与し（労使協定があれば例外可）、労働者に自由に利用させなければならない。',
+        '与えなければならない。「超える場合」なので、6時間ちょうどなら休憩なしでよく、8時間ちょうどなら45分で足りる。' +
+        '所定7時間30分の職場で1時間残業させると8時間を超えるため、残業前に15分の追加休憩が必要になる、という形で効いてくる。' +
+        '休憩とは権利として労働から離れることを保障されている時間をいい、作業に従事していないだけの手待時間は含まれない。' +
+        '昼休みに電話番や来客対応を命じられていれば、それは休憩ではなく労働時間であり、別に休憩を与える必要がある。' +
+        '原則として一斉に付与し（労使協定があれば交替制にできるほか、運輸交通業・商業等には特例がある）、' +
+        '自由に利用させなければならない。分割付与も可能だが、細切れにしすぎると自由利用が実質的に妨げられる。',
       authority: '所管: 厚生労働省（労働基準法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_13.html', type: 'government', label: '厚生労働省 労働基準法FAQ 休憩時間' },
       { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article34.html', type: 'government', label: '栃木労働局 休憩（労基法34条）' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/87993/', type: 'media', label: '労働基準法34条 休憩の3原則 解説' },
+      { url: 'https://jsite.mhlw.go.jp/yamanashi-roudoukyoku/kantoku/roudoukijun/26.html', type: 'government', label: '山梨労働局 休憩？手待ち時間？？' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_14.html', type: 'government', label: '厚生労働省 休憩時間を分割する場合の注意' },
     ],
   },
   {
@@ -1978,14 +2341,21 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'legal',
       title: '訪問販売とクーリング・オフ（特定商取引法）',
       statement:
-        '訪問販売（事業者が消費者の自宅等を訪問して契約を勧誘する取引等）では、事業者に氏名等の明示義務（特商法3条）および' +
-        '契約書面等の交付義務があり、消費者は法定の契約書面を受け取った日から8日間は無条件でクーリング・オフ（契約解除）ができる。',
+        '訪問販売は自宅等への訪問だけを指すのではなく、勧誘目的を告げずに誘い出して営業所等以外の場所で契約させる' +
+        'キャッチセールスやアポイントメントセールスも含む。対象は原則としてすべての商品・役務と特定権利である。' +
+        '事業者には、勧誘に先立って氏名（名称）・販売しようとする商品等の種類・勧誘目的であることを告げる義務（3条）、' +
+        '申込みを受けたときまたは契約を締結したときに事業者の氏名・住所・電話番号・代表者名・担当者名等を記載した' +
+        '書面を交付する義務（4条・5条）がある。消費者が契約しない意思を示したら、その場で勧誘を続けることも' +
+        '日を改めて勧誘することも禁止される（3条の2・再勧誘の禁止）。' +
+        'クーリング・オフは書面受領日から8日間で、日常生活で通常必要とされる分量を著しく超える契約は' +
+        '契約締結から1年以内であれば解除できる（過量販売解除）。',
       authority: '所管: 消費者庁（特定商取引法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/doortodoorsales/', type: 'government', label: '消費者庁 特定商取引法ガイド 訪問販売' },
       { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2012/pdf/130220legal_4.pdf', type: 'government', label: '消費者庁 特定商取引法第3条の2等の運用指針（再勧誘禁止規定に関する指針）' },
       { url: 'https://www.kansai.meti.go.jp/4syokei/soudan/co.html', type: 'government', label: '近畿経済産業局 クーリング・オフとは' },
     ],
   },
@@ -2013,7 +2383,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '消費税の確定申告・納付期限',
       statement:
         '法人の消費税及び地方消費税の確定申告・納付期限は、原則として課税期間の末日の翌日から2か月以内である。' +
-        '個人事業者の消費税及び地方消費税の確定申告・納付期限は、原則として翌年3月31日である。',
+        '個人事業者は翌年3月31日で、所得税の3月15日とは半月ずれるため別々に管理する必要がある。' +
+        '法人税と違って消費税には申告期限の延長がもともと用意されていなかったが、' +
+        '法人税の申告期限の延長の特例の適用を受けている法人に限り、適用を受けようとする事業年度終了の日の属する' +
+        '課税期間の末日までに「消費税申告期限延長届出書」を提出すれば1か月延長できる。' +
+        'ただし延びるのは申告期限だけで、延長された期間に係る利子税を併せて納付することになる。' +
+        '直前の課税期間の確定消費税額（国税分）が48万円を超えると中間申告義務が生じ、' +
+        '48万円超で年1回、400万円超で年3回、4,800万円超で年11回となる。' +
+        '中間申告書を期限までに提出しなくても前期実績による申告があったものとみなされて税額は確定するので、' +
+        '出し忘れは申告漏れではなく納付漏れとなり、遅れた分だけ延滞税がかかる。',
       authority: '所管: 国税庁（消費税法）',
       asOf: '2026-06',
     },
@@ -2021,6 +2399,8 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6601.htm', type: 'government', label: '国税庁 No.6601 申告と納税' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6610.htm', type: 'government', label: '国税庁 No.6610 法人の消費税確定申告書の提出期限' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6137.htm', type: 'government', label: '国税庁 No.6137 課税期間（個人事業者）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6609.htm', type: 'government', label: '国税庁 No.6609 中間申告の方法（回数とみなし申告）' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shohi/annai/0020003-179_01.htm', type: 'government', label: '国税庁 D1-2 消費税申告期限延長届出手続' },
     ],
   },
   {
@@ -2172,14 +2552,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '解雇権濫用法理（労働契約法16条）',
       statement:
         '解雇は、客観的に合理的な理由を欠き、社会通念上相当であると認められない場合は、その権利を濫用したものとして無効となる' +
-        '（労働契約法16条）。これは解雇全般に及ぶ法理であり、解雇予告（30日前予告・労基法20条）とは別個の規制である。',
+        '（労働契約法16条）。これは解雇全般に及ぶ法理であり、解雇予告（30日前予告・労基法20条）とは別個の規制である。' +
+        '予告手当を払えば自由に解雇できるわけではない、というのがこの条文の実務上の意味になる。' +
+        '経営上の理由による整理解雇は、人員削減の必要性・解雇回避の努力・人選の合理性・手続の妥当性の4点に照らして' +
+        '厳しく判断される。かつては1つでも欠ければ無効とする4要件説が有力だったが、近年は考慮すべき視点とみる4要素説が有力である。' +
+        '有期労働契約は期間を合意して結んでいるため、期間途中の解雇には「やむを得ない事由」が必要で、無期契約より厳しい' +
+        '（労働契約法17条1項）。' +
+        '解雇が無効と判断されると労働契約は解雇日にさかのぼって続いていたことになるので、' +
+        '争っていた期間の賃金を支払う義務が生じる。争いが長引くほど支払額が膨らむ構造である。',
       authority: '所管: 厚生労働省（労働契約法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73aa9536', type: 'government', label: '厚生労働省 法令データベース 労働契約法' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/11_0003.pdf', type: 'government', label: '厚生労働省 労働契約法16条 権利濫用に該当する解雇' },
-      { url: 'https://www.konishilaw.jp/column/7862/', type: 'media', label: '解雇権濫用の法理 解説' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/roudouseisaku/chushoukigyou/keiyakushuryo_rule.html', type: 'government', label: '厚生労働省 労働契約の終了に関するルール（整理解雇・有期契約の期間途中の解雇）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q6.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 整理解雇の4要素' },
     ],
   },
   {
@@ -2577,15 +2965,22 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'labor',
       title: '法定休日（労働基準法35条）',
       statement:
-        '使用者は、労働者に対して毎週少なくとも1回の休日を与えなければならない（労働基準法35条1項）。ただし、4週間を通じ4日以上の' +
-        '休日を与える場合（変形休日制）はこの限りでない（同条2項）。この法律上の休日を法定休日という。',
+        '使用者は、労働者に対して毎週少なくとも1回の休日を与えなければならない（労働基準法35条1項）。' +
+        'ただし4週間を通じ4日以上の休日を与える場合（変形休日制）はこの限りでなく、' +
+        'その場合は就業規則等に変形期間の起算日を定めておく必要がある（同条2項）。' +
+        '法令上、どの日を法定休日にするかを事前に特定する義務まではないが、' +
+        '「毎週◯曜日」と就業規則で特定しておくことが望ましいとされる。' +
+        '特定していないと、週休二日のうちどちらに出勤したかで割増賃金率が35％か25％かに割れるため、' +
+        '賃金台帳の記載も揺れる。法定休日を超える休み（法定外休日）の労働は休日割増ではなく' +
+        '時間外労働として扱い、月60時間の集計にも算入する。',
       authority: '所管: 厚生労働省（労働基準法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://jsite.mhlw.go.jp/gunma-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/jyouken03_2.html', type: 'government', label: '群馬労働局 労働条件・休日' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html', type: 'government', label: '厚生労働省 労働時間・休日' },
-      { url: 'https://www.komon-lawyer.jp/qa/holiday/', type: 'media', label: '労働基準法上の休日とは 解説' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article35.html', type: 'government', label: '厚生労働省 栃木労働局 休日（第35条）' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/yokuaru_goshitsumon/jigyounushi/jikan.html', type: 'government', label: '厚生労働省 大阪労働局 よくあるご質問（労働時間・休日）' },
     ],
   },
   {
@@ -2631,7 +3026,14 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '小規模企業共済等掛金控除',
       statement:
         '小規模企業共済の掛金、確定拠出年金（企業型・個人型iDeCo）の加入者掛金、地方公共団体が実施する心身障害者扶養共済制度の掛金などを' +
-        '支払った場合、その年に支払った掛金の全額が小規模企業共済等掛金控除として所得控除の対象となる。',
+        '支払った場合、その年に支払った掛金の全額が小規模企業共済等掛金控除として所得控除の対象となる。' +
+        '生命保険料控除のような上限圧縮がなく全額控除である点が強く、掛金の枠も別々に使える。' +
+        '小規模企業共済は月1,000円〜7万円（500円単位・年最大84万円）で、加入できるのは小規模企業の個人事業主・共同経営者・' +
+        '会社等の役員に限られ、従業員数の上限（建設業・製造業等は20人以下、商業・サービス業は5人以下等）がある。' +
+        '事業が大きくなってからは入れないので、要件を満たすうちに加入しておく制度である。iDeCoとは併用でき、枠は別に数える。' +
+        'iDeCoの拠出限度額は2024年12月に公務員・確定給付型併用者が月2万円へ引き上げられ、' +
+        'さらに2026年12月からは第2号被保険者が月6万2千円、第1号被保険者が国民年金基金と共通で月7万5千円へ引き上げられる。' +
+        '1年以内の前納掛金はその年の控除に含められるため、年末の前納で当年の控除額を積み増せる。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
@@ -2756,14 +3158,20 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '地震保険料控除',
       statement:
         '納税者がその年に地震保険契約等に係る地震保険料を支払った場合、一定額の所得控除（地震保険料控除）を受けられる。' +
-        '所得税では、その年に支払った地震保険料の全額（最高5万円。5万円を超える場合は一律5万円）が課税所得から控除される。',
+        '所得税では、その年に支払った地震保険料の全額（最高5万円）が課税所得から控除され、住民税では半額（最高2万5千円）となる。' +
+        '対象は地震保険部分の保険料だけで、セット契約の火災保険部分は平成18年の損害保険料控除廃止以降は対象にならない。' +
+        '経過措置として、平成18年12月31日までに締結した満期返戻金のある保険期間10年以上の長期損害保険契約' +
+        '（平成19年1月1日以後に契約変更をしていないもの）の保険料は旧長期損害保険料として最高1万5千円まで控除でき、' +
+        '地震保険料と合わせた控除上限は5万円である。' +
+        '一つの契約が地震保険料と旧長期損害保険料の両方に該当する場合は、いずれか一方を選択して適用する。' +
+        '給与所得者は保険会社の控除証明書を添えて年末調整で控除でき、確定申告は不要である。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1145.htm', type: 'government', label: '国税庁 No.1145 地震保険料控除' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1146.htm', type: 'government', label: '国税庁 No.1146 地震保険料控除の対象契約' },
-      { url: 'https://www.sonysonpo.co.jp/fire/earthquake_005.html', type: 'media', label: '地震保険料控除 控除額 解説' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shotoku/05/68.htm', type: 'government', label: '国税庁 地震保険料控除に関する経過措置' },
     ],
   },
   {
@@ -3162,7 +3570,16 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '個人事業の開業・廃業等届出書（開業届）',
       statement:
         '新たに事業所得・不動産所得・山林所得を生ずべき事業を開始した個人は、その事実があった日から1か月以内に' +
-        '「個人事業の開業・廃業等届出書」を納税地の所轄税務署長に提出しなければならない（所得税法229条）。提出はe-Taxまたは書面で行う。',
+        '「個人事業の開業・廃業等届出書」を納税地の所轄税務署長に提出しなければならない（所得税法229条）。' +
+        '提出はe-Taxまたは書面で行い、廃業のときも同じ様式を使う。' +
+        '開業届そのものに罰則はなく、期限で損をするのは併せて出す書類のほうである。' +
+        '所得税の青色申告承認申請書は、青色申告をしようとする年の3月15日まで' +
+        '（その年の1月16日以後に開業した場合は開業の日から2か月以内）に提出する必要があり、' +
+        'これを逃すと初年度は白色となって最高65万円の青色申告特別控除も純損失の3年繰越しも使えない。' +
+        '従業員や青色事業専従者に給与を支払うなら「給与支払事務所等の開設・移転・廃止届出書」を開設から1か月以内に提出し' +
+        '（所得税法230条）、源泉所得税を毎月ではなく年2回にまとめたいときは納期の特例の承認に関する申請書も検討する。' +
+        'なお個人事業税の事業開始等申告書は都道府県への別の届出で、税務署への開業届では代替できない' +
+        '（東京都の場合は事業開始の日から15日以内）。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
@@ -3170,6 +3587,9 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/04.htm', type: 'government', label: '国税庁 A1-5 個人事業の開業・廃業等届出手続' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2090.htm', type: 'government', label: '国税庁 No.2090 新たに事業を始めたときの届出' },
       { url: 'https://laws.e-gov.go.jp/law/340AC0000000033', type: 'government', label: 'e-Gov法令検索 所得税法（229条）' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/09.htm', type: 'government', label: '国税庁 A1-8 所得税の青色申告承認申請手続' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_11.htm', type: 'government', label: '国税庁 A2-7 給与支払事務所等の開設・移転・廃止の届出' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/scene/business', type: 'municipality', label: '東京都主税局 事業を始めたとき（事業開始等申告書）' },
     ],
   },
   {
@@ -3709,8 +4129,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       domain: 'tax',
       title: '所得税 純損失の繰越控除（青色申告者）',
       statement:
-        '青色申告者について、損益通算をしてもなお控除しきれない損失（純損失）の金額が生じた場合、その純損失の金額を翌年以後3年間にわたり' +
-        '繰り越して、各年分の所得金額から控除することができる（純損失の繰越控除）。',
+        '青色申告者について、損益通算をしてもなお控除しきれない損失（純損失）の金額が生じた場合、' +
+        'その金額を翌年以後3年間にわたり繰り越して各年分の所得金額から控除できる（純損失の繰越控除）。' +
+        '実務で落ちやすいのは要件のほうで、損失が生じた年分の確定申告書（損失申告用の第四表を付ける）を提出し、' +
+        'かつその後も連続して確定申告書を提出していることが必要になる。' +
+        '所得が少なく納税額が出ない年に申告を省くと、そこで繰越しが切れてしまう。' +
+        '前年も青色申告をしていれば、繰り越す代わりに前年分へ繰り戻して所得税の還付を受けることもできる（選択）。' +
+        '青色申告でなくても、変動所得の損失と被災事業用資産の損失は3年間繰り越せる。' +
+        'また令和5年4月1日以後に発生した特定非常災害・東日本大震災による純損失は、' +
+        '特定被災事業用資産の損失の割合が10%以上であるなど一定の場合に繰越期間が5年へ延長される。',
       authority: '所管: 国税庁（所得税法）',
       asOf: '2026-06',
     },
@@ -3941,7 +4368,13 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: '賃金請求権の消滅時効（労働基準法115条）',
       statement:
         '2020年4月1日施行の改正労働基準法により、賃金（退職手当を除く）の請求権の消滅時効期間は2年から原則5年に延長されたが、' +
-        '附則（労働基準法143条3項）の経過措置により当分の間は3年とされている。退職手当の請求権の消滅時効は5年である。',
+        '附則（労働基準法143条3項）の経過措置により当分の間は3年とされている。退職手当の請求権の消滅時効は従来どおり5年、' +
+        '年次有給休暇の請求権・帰郷旅費・災害補償等の請求権は2年のまま維持されている。' +
+        '適用されるのは2020年4月1日以後に支払期日が到来する賃金からで、それより前の分は旧法の2年のままである。' +
+        '使用者側で連動するのが記録の保存期間（労基法109条）で、賃金台帳や労働関係の重要書類の保存期間も' +
+        '5年（当分の間3年）に延長された。時効が延びた分だけ、さかのぼって請求される可能性のある期間の記録が要るという対応関係にある。' +
+        '「当分の間3年」は経過措置なので、将来の見直しで5年に一本化される可能性を織り込み、' +
+        '実務では最初から5年保存に合わせておくと切替えの手戻りがない。',
       authority: '所管: 厚生労働省（労働基準法）',
       asOf: '2026-06',
     },

@@ -32,8 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]] — 語彙が近い
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 同じ思想家
-- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
-- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同分野の近傍
+- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

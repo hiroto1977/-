@@ -2,7 +2,7 @@
 title: "meti.go.jp"
 type: source-domain
 host: "meti.go.jp"
-cite_count: 64
+cite_count: 66
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # meti.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **64 件**（公的 63 ・ メディア 1）
+> [!info] 出典ドメイン索引 ・ 引用 **66 件**（公的 66）
 
 ## このドメインを出典とする項目
 
@@ -59,8 +59,10 @@ tags:
 - [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]] — 経済産業省・公正取引委員会中小受託取引適正化法（下請法改正法）
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 経済産業省不正競争防止法の概要
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 経済産業省逐条解説不正競争防止法
-- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 経済産業省営業秘密
-- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 経済産業省営業秘密管理指針
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 経済産業省営業秘密〜営業秘密を守り活用する〜
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 経済産業省営業秘密管理指針（令和7年3月改訂）
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 経済産業省秘密情報は大切な財産です
+- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 経済産業省限定提供データと利活用
 - [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 経済産業省不正競争防止法の概要
 - [[mgmt-csr|企業の社会的責任（CSR）]] — 経済産業省—CSR（企業の社会的責任）政策・関連ガイドラインの概要
 - [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 経済産業省「DXレポート～ITシステム『2025年の崖』克服とDXの本格的な展開～」（2018年9月）

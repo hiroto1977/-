@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { STUDIO_CATEGORIES, STUDIO_TEMPLATES, type StudioDoc } from '../data/docStudioData';
+import { DEFAULT_SHAREHOLDERS } from '../data/shareholders';
 import { checkDoc, countBlank, interestCap, isRegistrationNo, parseJpDate, toNum, ruleDocIds, type DocIssue } from '../data/docStudioChecks';
 
 const doc = (id: string): StudioDoc => {
@@ -12,6 +13,12 @@ const filled = (id: string, over: Record<string, string> = {}): Record<string, s
   const out: Record<string, string> = {};
   for (const f of doc(id).fields) {
     out[f.k] = f.options ? f.options[0]! : (f.ph || (f.num ? '0' : '—'));
+  }
+  // 株主名簿の株主欄は可変行になり `doc.fields` に無い。「全部埋めた」状態を
+  // 作るのがこのヘルパの役目なので、既定の行数ぶんは名前を入れておく
+  // (入れないと、埋めたはずなのに「株主が1名も記載されていません」が出る)。
+  if (id === 'kabunushi-meibo') {
+    for (let i = 1; i <= DEFAULT_SHAREHOLDERS; i++) out[`s${i}name`] = `株主${i}`;
   }
   return { ...out, ...over };
 };

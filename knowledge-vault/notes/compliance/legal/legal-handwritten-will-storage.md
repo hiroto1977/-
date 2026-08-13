@@ -36,7 +36,7 @@ aliases:
 - [[tax-registration-license-tax|登録免許税の概要]] — 出典を共有
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 出典を共有
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 出典を共有
-- [[legal-design-right|意匠権（意匠法）]] — 同分野の近傍
+- [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
 
 ## 関連

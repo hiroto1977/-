@@ -31,6 +31,7 @@ Erich von Holst & Horst Mittelstaedt（Naturwissenschaften 37, 1950 — 再求�
 
 ## 関連概念
 - [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 同じ思想家
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
@@ -39,7 +40,6 @@ Erich von Holst & Horst Mittelstaedt（Naturwissenschaften 37, 1950 — 再求�
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
 - [[infosoc-political-polarization|政治的分極化]] — 出典を共有
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

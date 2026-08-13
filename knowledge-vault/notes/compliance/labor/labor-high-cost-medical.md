@@ -34,6 +34,7 @@ aliases:
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
 - [[labor-maternity-allowance|健康保険の出産手当金]] — 出典を共有
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 - [[subsidy-funeral-benefit|埋葬料・葬祭費（公的医療保険）]] — 出典を共有
 - [[labor-national-health-insurance|国民健康保険（国保）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍

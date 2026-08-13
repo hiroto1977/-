@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 出典を共有
 - [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 出典を共有
-- [[econ-opportunity-cost|機会費用（opportunity cost）]] — 同分野の近傍
 - [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同分野の近傍
 - [[econ-output-gap|GDPギャップ（需給ギャップ）]] — 同分野の近傍
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同分野の近傍

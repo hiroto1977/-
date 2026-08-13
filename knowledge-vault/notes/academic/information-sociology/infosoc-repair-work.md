@@ -33,13 +33,13 @@ Stephen Graham & Nigel Thrift（Theory, Culture & Society 24(3), 2007 — 保守
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — 同じ思想家
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
+- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
-- [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

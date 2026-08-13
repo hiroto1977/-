@@ -31,9 +31,9 @@ aliases:
 - [Wikipedia「食品表示法」](https://ja.wikipedia.org/wiki/%E9%A3%9F%E5%93%81%E8%A1%A8%E7%A4%BA%E6%B3%95) `リファレンス`
 
 ## 関連概念
-- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 語彙が近い
-- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
+- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 分野横断
 - [[bizlaw-tcfd|気候関連財務情報開示タスクフォース（TCFD）]] — 同分野の近傍
+- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

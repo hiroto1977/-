@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Bullwhip effect — Forrester, demand signal, order batching, shortage gaming](https://en.wikipedia.org/wiki/Bullwhip_effect) `リファレンス`
 
 ## 関連概念
-- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
 - [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同分野の近傍
+- [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 語彙が近い
-- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 同分野の近傍
+- [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同分野の近傍
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同分野の近傍
 
 ## 関連

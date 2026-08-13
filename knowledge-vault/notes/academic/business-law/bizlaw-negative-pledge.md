@@ -36,7 +36,7 @@ aliases:
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
 - [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
-- [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同分野の近傍
+- [[bizlaw-unjust-enrichment|不当利得（民法703条・704条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

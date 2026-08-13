@@ -34,8 +34,8 @@ aliases:
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 出典を共有
 - [[econ-financialization|金融化——経済の金融部門支配]] — 出典を共有
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
-- [[econ-fiscal-multiplier-theory|財政乗数理論]] — 同分野の近傍
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同分野の近傍
+- [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

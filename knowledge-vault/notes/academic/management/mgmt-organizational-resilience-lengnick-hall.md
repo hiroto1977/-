@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Lengnick-Hall, Beck & Lengnick-Hall (2011) Developing a Capacity for Organizational Resilience — Human Resource Management Review](https://doi.org/10.1016/j.jm.2010.04.006) `学術`
-- [Linnenluecke (2017) Resilience in Business and Management Research — International Journal of Management Reviews](https://doi.org/10.1016/j.ijmr.2013.09.003) `学術`
+- [Linnenluecke (2017) Resilience in Business and Management Research — International Journal of Management Reviews](https://doi.org/10.1111/ijmr.12076) `学術`
 - [Wikipedia: Organizational resilience — 組織レジリエンスの概説](https://en.wikipedia.org/wiki/Organizational_resilience) `リファレンス`
 
 ## 関連概念
@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同じ思想家
 - [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — 同じ思想家
 - [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
-- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同分野の近傍
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

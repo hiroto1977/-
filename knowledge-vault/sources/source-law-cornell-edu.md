@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 151
+cite_count: 147
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **151 件**（リファレンス 127 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **147 件**（リファレンス 123 ・ 公的 23 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -27,8 +27,7 @@ tags:
 - [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — CornellLIIWex:Assignment—transferofcontractualrights,assignor/assigne…
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — UCC§2-210DelegationofPerformance;AssignmentofRights—LegalInformationI…
 - [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — CornellLII—AttractiveNuisanceDoctrine
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — CornellLIIWex—AttractiveNuisanceDoctrine
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — RailroadCompanyv.Stout,84U.S.657(1873)—CornellLII
+- [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — RailroadCompanyv.Stout,84U.S.657(1873)—CornellLII
 - [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — CornellLIIWex:Bailment—possessionnotownership,bailor/bailee,dutyofcar…
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — UCC§2-207—AdditionalTermsinAcceptanceorConfirmation(CornellLII)
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — UCC§2-306—Output,RequirementsandExclusiveDealings(CornellLII)
@@ -40,8 +39,7 @@ tags:
 - [[bizlaw-business-purpose-doctrine-gregory-helvering|事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認]] — Gregoryv.Helvering,293U.S.465(1935)—fullopinion,CornellLawSchoolLegal…
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — CornellLIIWex:Capacity—minors,mentalincapacity,intoxication,void/void…
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — CornellLIIWex:Caveatemptor—buyerbeware,impliedwarranties,UCC2-314/2-3…
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]] — LIICornellWex:Champertydefinition
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — CornellLII—champertyandmaintenancedefinition
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — CornellLII—ChampertyandMaintenance
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — CornellLIIWex:Choiceoflaw—conflictoflaws,partyautonomy,closestconnect…
 - [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — FederalRulesofCivilProcedure,Rule23—クラスアクションの法的枠組み
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — CornellLII—Clean-HandsDoctrine
@@ -83,8 +81,7 @@ tags:
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — CornellLIIWex:Forcemajeure—superiorforce,contractualclause,ActofGod
 - [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — CornellLawSchoolLII—ForumNonConveniens(Wexlegalencyclopedia)
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — CornellLII—ForumSelectionClause(WexLegalEncyclopedia)
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 11U.S.C.§548—BankruptcyCodefraudulenttransfers
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — CornellLII:FraudulentConveyancedefinition
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 11U.S.C.§548—BankruptcyCodefraudulenttransfers（連邦破産法548条）
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — CornellLIIWex:Frustrationofpurpose—superveningevent,Restatement(Secon…
 - [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — CornellLIIWex:Breachofcontract—material/fundamentalbreach,termination…
 - [[bizlaw-general-average|共同海損——共通の危険を逃れるための犠牲を全関係者で分担する海法]] — CornellLIIWex:Generalaverage—maritimelaw,sacrificeforcommonsafety,pro…
@@ -107,7 +104,6 @@ tags:
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — CTSCorp.v.DynamicsCorp.ofAmerica,481U.S.69(1987)（合衆国最高裁判決一次資料、LegalIn…
 - [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 17U.S.C.§109—CornellLII（著作権のファースト・セール・ドクトリンの法文）
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 11U.S.C.§365(e)(1)—prohibitiononipsofactoterminationinbankruptcy
-- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]] — CornellLIIWex:Laches—equitabledefense,unreasonabledelay,prejudice,vss…
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — CornellLII(Wex):Negligence—reasonablecare/breachstandardandtheLearned…
 - [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — CornellLIIWex:Letterofcredit—bankundertaking,documentsagainstpayment,…
 - [[bizlaw-letters-rogatory|嘱託書（Letters Rogatory）]] — 28U.S.C.§1781—Transmittalofletterrogatoryorrequest(CornellLII)
@@ -156,7 +152,7 @@ tags:
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — CornellLIIWex:Productliability—strictliability,manufacturing/design/w…
 - [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — CornellLIIWex:Subrogation—stepintotheshoes,insurerrecovery,doublereco…
 - [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — CornellLII:Contribution—rightoftortfeasortorecoverproportionalsharefr…
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — CornellLawSchoolLegalInformationInstitute,"TortiousInterference",WexL…
+- [[bizlaw-tortious-interference|契約関係への不法干渉（Tortious Interference with Contract）]] — CornellLIIWex—TortiousInterference
 - [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — CornellLIIWex:Trespasstoland—directphysicalentry,actionableperse,excl…
 - [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — UltraVires—CornellLawSchoolLegalInformationInstitute
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — CornellLII—UCC§2-302UnconscionableContractorClause

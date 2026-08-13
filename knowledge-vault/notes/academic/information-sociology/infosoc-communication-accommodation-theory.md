@@ -31,8 +31,8 @@ aliases:
 - [Giles, H. (1973) "Accent Mobility: A Model and Some Data", Anthropological Linguistics 15(2), 87–105（原著論文が収録された巻号・JSTOR）](https://www.jstor.org/stable/i30029505) `学術`
 
 ## 関連概念
-- [[infosoc-cognitive-capitalism|認知資本主義]] — 同分野の近傍
 - [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

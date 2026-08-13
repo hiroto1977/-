@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
 - [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
 - [[infosoc-synopticon|シノプティコン]] — 同じ思想家
 - [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同じ思想家
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

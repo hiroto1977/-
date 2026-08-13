@@ -32,13 +32,13 @@ Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論�
 - [Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration](https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 語彙が近い
 - [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]] — 同じ思想家
 - [[bizlaw-warranty-condition-distinction|条件と担保条項の区別——契約条項の重要性に応じた救済の差異]] — 同じ思想家
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]] — 出典を共有
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 出典を共有
 - [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有

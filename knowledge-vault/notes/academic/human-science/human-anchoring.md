@@ -37,8 +37,8 @@ aliases:
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
 

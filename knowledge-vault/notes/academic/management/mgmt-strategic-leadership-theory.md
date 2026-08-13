@@ -40,7 +40,6 @@ Donald C. Hambrick／Sydney Finkelstein／Albert A. Cannella Jr.／Mason A. Carp
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
 - [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同分野の近傍
-- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

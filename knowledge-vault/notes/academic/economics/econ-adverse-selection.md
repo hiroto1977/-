@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 語彙が近い
 - [[econ-lemons-problem-akerlof|レモン市場]] — 語彙が近い
-- [[infosoc-information-asymmetry|情報の非対称性（逆選択・モラルハザード）]] — 語彙が近い
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
 - [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同じ思想家
 - [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同じ思想家
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
+- [[econ-signaling|シグナリング]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

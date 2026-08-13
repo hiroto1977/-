@@ -31,9 +31,9 @@ aliases:
 - [コトバンク 介護保険法](https://kotobank.jp/word/%E4%BB%8B%E8%AD%B7%E4%BF%9D%E9%99%BA%E6%B3%95-224690) `リファレンス`
 
 ## 関連概念
-- [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 出典を共有
+- [[labor-long-term-care-insurance|介護保険制度（保険者・被保険者・自己負担）]] — 語彙が近い
 - [[bizlaw-national-health-insurance|国民健康保険法]] — 同分野の近傍
-- [[bizlaw-consumption-tax|消費税法]] — 同分野の近傍
+- [[bizlaw-employees-pension|厚生年金保険法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "Melvin Eisenberg"
 type: thinker
 person_key: "eisenberg|m"
-concept_count: 2
+concept_count: 3
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # Melvin Eisenberg
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（2件）
+## 学術概念（3件）
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 経営判断の原則（BusinessJudgmentRule）とは、米国デラウェア州の判例法上確立された司法審査基準であり…
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — 取締役の注意義務の基準とは、合理的に思慮分別のある人物が同様の立場・状況において通常払うであろう注意・勤勉さをもって職…
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 取締役・受任者が受益者の最善の利益のために行動することを求める法原則。
 

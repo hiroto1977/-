@@ -31,7 +31,6 @@ aliases:
 - [Summary of Aaker (1996) Building Strong Brands](https://www.alexmurrell.co.uk/summaries/david-a-aaker-building-strong-brands) `メディア`
 
 ## 関連概念
-- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同分野の近傍
 - [[mgmt-diversification|多角化戦略]] — 同分野の近傍
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
 

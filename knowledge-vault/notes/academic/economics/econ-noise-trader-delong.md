@@ -39,7 +39,7 @@ J・ブラッドフォード・デロング ／ アンドレイ・シュライ�
 - [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
-- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

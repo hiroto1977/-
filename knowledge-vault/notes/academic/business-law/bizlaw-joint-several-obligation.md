@@ -32,6 +32,7 @@ aliases:
 - [Wikibooks 民法第436条（条文と注釈）](https://ja.wikibooks.org/wiki/民法第436条) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-release-of-debt|免除（民法519条）]] — 語彙が近い
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
 - [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
 - [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 出典を共有
-- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

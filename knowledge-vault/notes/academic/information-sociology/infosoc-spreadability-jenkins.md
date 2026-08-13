@@ -36,11 +36,11 @@ aliases:
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
 - [[infosoc-citizen-journalism-participatory-media|市民ジャーナリズムと参加型メディア——ウェブ2.0が変えた報道の担い手と情報権力の分散]] — 同じ思想家
 - [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同じ思想家
-- [[infosoc-connective-action-bennett-segerberg|結合的行動の論理——デジタル時代の集合行為の再理論化]] — 同じ思想家
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
 - [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[mgmt-action-learning|アクションラーニング]] — 同分野の近傍
-- [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

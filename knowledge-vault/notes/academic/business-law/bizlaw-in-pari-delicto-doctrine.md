@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Note (1971) In Pari Delicto as a Defense in Securities Cases — Harvard Law Review, 84(7), 1551–1570（証券訴訟への適用の古典論文）](https://doi.org/10.2307/3310491) `学術`
-- [Landes, W. M. & Posner, R. A. (1987) The Economic Structure of Tort Law — Harvard University Press（衡平法的法理の経済分析）](https://doi.org/10.1086/467938) `学術`
+- [Landes, W. M. & Posner, R. A. (1987) The Economic Structure of Tort Law — Harvard University Press（衡平法的法理の経済分析）](https://doi.org/10.4159/harvard.9780674864030) `学術`
 - [Cornell Legal Information Institute: In Pari Delicto — definition, elements, exceptions, US case law](https://www.law.cornell.edu/wex/in_pari_delicto) `リファレンス`
 - [Wikipedia: In pari delicto — ex turpi causa, equity doctrine, exceptions, Japan Civil Code 708](https://en.wikipedia.org/wiki/In_pari_delicto) `リファレンス`
 

@@ -40,8 +40,8 @@ Clay Shirky（2010『Cognitive Surplus』Penguin Press；2008『Here Comes Every
 - [[infosoc-slacktivism|スラックティビズム]] — 同じ思想家
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同じ思想家
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+- [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,12 +31,11 @@ aliases:
 - [Richard Musgrave (economist) — Wikipedia（提唱者と『The Theory of Public Finance』1959）](https://en.wikipedia.org/wiki/Richard_Musgrave_(economist)) `リファレンス`
 
 ## 関連概念
+- [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 語彙が近い
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
 - [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
-- [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
 - [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
-- [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,8 +39,8 @@ Peter Sterling & Joseph Eyer（1988, Handbook of Life Stress — アロスタシ
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 出典を共有
+- [[human-resilience-theory-masten|レジリエンス理論——逆境からの回復力と「普通の魔法」]] — 同分野の近傍
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

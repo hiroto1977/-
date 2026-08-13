@@ -35,7 +35,6 @@ aliases:
 ## 関連概念
 - [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同じ思想家
 - [[infosoc-digital-twin-industry4|デジタルツインと第4次産業革命——サイバーフィジカルシステムが変える製造・都市・医療の未来]] — 同じ思想家
-- [[infosoc-technological-singularity|技術的特異点（シンギュラリティ）]] — 同分野の近傍
 - [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同分野の近傍
 
 ## 関連

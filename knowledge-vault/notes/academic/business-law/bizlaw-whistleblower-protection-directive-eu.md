@@ -33,6 +33,7 @@ EU公益通報者保護指令（Directive 2019/1937）は、EU法違反を通報
 ## 関連概念
 - [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 語彙が近い
 - [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 語彙が近い
 
 ## 関連
 - コレクション: [[学術概念]]

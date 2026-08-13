@@ -34,7 +34,7 @@ aliases:
 - [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 語彙が近い
 - [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 分野横断
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同じ思想家
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同じ思想家
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家

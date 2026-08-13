@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: New economic geography — 新経済地理学の概説](https://en.wikipedia.org/wiki/New_economic_geography) `リファレンス`
 
 ## 関連概念
-- [[econ-agglomeration-economies|集積の経済]] — 語彙が近い
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
 - [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
@@ -39,7 +39,7 @@ aliases:
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
 - [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同じ思想家
 - [[econ-currency-crisis-speculative-attack-krugman|通貨危機の世代別モデル——クルーグマン・第二世代・第三世代の投機的攻撃理論]] — 同じ思想家
-- [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

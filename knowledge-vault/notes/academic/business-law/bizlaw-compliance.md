@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 同分野の近傍
 - [[bizlaw-whistleblower-protection|公益通報者保護法]] — 同分野の近傍
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 同分野の近傍
 - [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — 同分野の近傍
 
 ## 関連

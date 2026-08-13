@@ -35,7 +35,7 @@ aliases:
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家
-- [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 同分野の近傍
+- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

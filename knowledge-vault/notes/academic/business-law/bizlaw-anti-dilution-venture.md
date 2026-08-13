@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 出典を共有
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 出典を共有
-- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同分野の近傍
+- [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,7 @@ Andrew S. C. Ehrenberg（エーレンバーグ・1990年論文・法則の実証
 
 ## 関連概念
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-brand-equity|ブランド・エクイティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

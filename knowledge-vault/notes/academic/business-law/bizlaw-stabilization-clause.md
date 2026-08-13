@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
-- [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同分野の近傍
+- [[bizlaw-estoppel-by-deed|証書禁反言（エストッペル・バイ・ディード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

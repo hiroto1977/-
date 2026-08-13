@@ -34,8 +34,8 @@ aliases:
 - [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 同じ思想家
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家
-- [[mgmt-theory-z|セオリーZ]] — 同分野の近傍
 - [[mgmt-middle-status-conformity-phillips|中位地位同調性——組織階層における地位と逸脱の非線形的関係]] — 同分野の近傍
+- [[mgmt-theory-z|セオリーZ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

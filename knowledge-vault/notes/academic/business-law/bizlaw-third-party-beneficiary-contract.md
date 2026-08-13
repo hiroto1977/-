@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 同じ思想家
+- [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

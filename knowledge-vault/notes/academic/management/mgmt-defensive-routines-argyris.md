@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Chris Argyris — defensive routines, single/double-loop learning, theory-in-use](https://en.wikipedia.org/wiki/Chris_Argyris) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同じ思想家
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家

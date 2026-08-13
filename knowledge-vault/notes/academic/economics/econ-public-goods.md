@@ -35,6 +35,7 @@ aliases:
 - [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 語彙が近い
 - [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同分野の近傍
+- [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

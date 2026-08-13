@@ -37,6 +37,7 @@ aliases:
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
 - [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同じ思想家
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
+- [[bizlaw-covenant-running-with-land|土地に伴う約款——後続の所有者を拘束する土地に関する約束]] — 同分野の近傍
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 同分野の近傍
 
 ## 関連

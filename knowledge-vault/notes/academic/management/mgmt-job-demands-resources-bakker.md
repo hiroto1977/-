@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 語彙が近い
-- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 語彙が近い
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
 - [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
 - [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — 同じ思想家

@@ -31,8 +31,9 @@ aliases:
 
 ## 関連概念
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同じ思想家
+- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
 - [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
-- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

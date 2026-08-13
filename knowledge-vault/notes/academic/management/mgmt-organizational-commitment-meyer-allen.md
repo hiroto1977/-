@@ -33,7 +33,7 @@ aliases:
 - [[mgmt-organizational-commitment|組織コミットメント]] — 語彙が近い
 - [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
 - [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
-- [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
+- [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

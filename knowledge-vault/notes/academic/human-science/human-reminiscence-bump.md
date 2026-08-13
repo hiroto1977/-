@@ -36,7 +36,7 @@ aliases:
 - [[human-priming|プライミング効果]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
-- [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
+- [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

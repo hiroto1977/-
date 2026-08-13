@@ -32,16 +32,16 @@ D.ダヤーン&E.カッツ『メディア・イベント』1992／テレビ生�
 - [LSE Research Online — Couldry & Hepp, Introduction: Media Events in Globalized Media Cultures](https://eprints.lse.ac.uk/52468/1/__libfile_REPOSITORY_Content_Couldry,%20N_Introduction%20media%20events_Couldry_Introduction%20media%20events_2013.pdf) `学術`
 
 ## 関連概念
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
 - [[econ-exit-voice-loyalty|離脱・発言・忠誠（ハーシュマン）]] — 出典を共有
 - [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
+- [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 出典を共有
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 出典を共有
 - [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 出典を共有
-- [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 出典を共有
-- [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — 出典を共有
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

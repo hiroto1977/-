@@ -2,7 +2,7 @@
 title: "katei-ryouritsu.metro.tokyo.lg.jp"
 type: source-domain
 host: "katei-ryouritsu.metro.tokyo.lg.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # katei-ryouritsu.metro.tokyo.lg.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（自治体 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（自治体 1）
 
 ## このドメインを出典とする項目
 
-- [[labor-care-leave|介護休業と介護休業給付金]] — 東京都両立支援ポータル介護休業中の給与
 - [[labor-family-care-days|介護休暇（育児・介護休業法16条の5）]] — 東京都育児・介護休業法の概要
 
 ## 関連

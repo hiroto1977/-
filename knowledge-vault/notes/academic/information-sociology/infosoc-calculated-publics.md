@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-ghost-work|ゴーストワーク（AI背後の不可視労働）]] — 出典を共有
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同分野の近傍
-- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同分野の近傍
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

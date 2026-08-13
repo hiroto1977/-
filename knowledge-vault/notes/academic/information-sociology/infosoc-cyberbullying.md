@@ -33,7 +33,6 @@ aliases:
 - [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — 出典を共有
 - [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — 出典を共有
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
-- [[infosoc-dataveillance-theory|データ監視理論]] — 同分野の近傍
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同分野の近傍
 
 ## 関連

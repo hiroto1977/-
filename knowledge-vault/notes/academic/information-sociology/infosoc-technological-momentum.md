@@ -35,8 +35,8 @@ aliases:
 - [[infosoc-technical-debt|技術的負債]] — 出典を共有
 - [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同分野の近傍
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

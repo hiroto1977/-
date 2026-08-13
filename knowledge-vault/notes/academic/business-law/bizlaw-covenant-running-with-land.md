@@ -35,8 +35,8 @@ aliases:
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
 - [[bizlaw-fixtures-property|定着物（フィクスチャー）——土地に付着して不動産の一部となった動産]] — 同じ思想家
-- [[bizlaw-estoppel-by-deed|証書禁反言（エストッペル・バイ・ディード）]] — 同分野の近傍
 - [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — 同分野の近傍
+- [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

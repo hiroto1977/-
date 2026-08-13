@@ -36,6 +36,7 @@ Cindy Hazan ／ Phillip R. Shaver ／ Kim Bartholomew ／ Leonard M. Horowitz �
 - [[human-attachment-style-theory|愛着スタイル理論]] — 語彙が近い
 - [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — 語彙が近い
 - [[human-attachment-theory-bowlby|アタッチメント理論]] — 同分野の近傍
+- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

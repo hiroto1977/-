@@ -28,13 +28,15 @@ aliases:
 ## 出典
 - [Nolen-Hoeksema, S. (1991) Responses to Depression and Their Effects on the Duration of Depressive Episodes — Journal of Abnormal Psychology, 100(4), 569–582（ルミネーション理論の原典）](https://doi.org/10.1037/0033-295X.98.3.569) `学術`
 - [Treynor, W., Gonzalez, R. & Nolen-Hoeksema, S. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research, 27(3), 247–259（改訂RRS・二因子モデル）](https://doi.org/10.1037/0021-843X.112.4.558) `学術`
-- [Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）](https://doi.org/10.1016/j.brat.2007.01.013) `学術`
+- [Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）](https://doi.org/10.1037/0033-2909.134.2.163) `学術`
 - [Wikipedia: Rumination (psychology) — Nolen-Hoeksema, brooding vs reflection, depression sex differences, RFCBT](https://en.wikipedia.org/wiki/Rumination_(psychology)) `リファレンス`
 
 ## 関連概念
 - [[human-rumination|反芻思考]] — 語彙が近い
 - [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 語彙が近い
 - [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
+- [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
+- [[human-cognitive-reserve-theory|認知的予備力理論]] — 同分野の近傍
 - [[human-compassion-focused-therapy-gilbert|コンパッション焦点化療法——ギルバートの三情動制御システムと自己批判への介入]] — 同分野の近傍
 
 ## 関連

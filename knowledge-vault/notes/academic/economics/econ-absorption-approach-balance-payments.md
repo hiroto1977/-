@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Absorption approach — Alexander, income minus absorption, devaluation, vs elasticities approach](https://en.wikipedia.org/wiki/Balance_of_payments) `リファレンス`
 
 ## 関連概念
+- [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 語彙が近い
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-optimal-tariff|最適関税論]] — 同じ思想家
 - [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同じ思想家
 - [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
-- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

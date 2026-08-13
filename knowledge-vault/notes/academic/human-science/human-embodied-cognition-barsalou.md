@@ -36,7 +36,6 @@ aliases:
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
 - [[human-embodied-cognition-theory|身体化された認知]] — 同分野の近傍
-- [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同分野の近傍
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 同分野の近傍
 
 ## 関連

@@ -36,7 +36,7 @@ aliases:
 - [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — 同じ思想家
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍
-- [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同分野の近傍
+- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

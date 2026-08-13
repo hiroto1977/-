@@ -157,6 +157,104 @@ async function desktopSuite(browser) {
   await gotoService(page, '#lawyer', 'text=根拠法: 弁護士法');
   ok(!(await has('E2E会計士')), 'shigyo: 他士業ページへは非漏出 (serviceId 分離)');
 
+  // 制度判定: 入力 → 判定が実際に変わるところ。単体テストは純関数と初期描画しか見て
+  // いないので、入力の state が判定へ繋がっているかは実ブラウザでしか分からない。
+  await gotoService(page, '#funding', 'text=使える制度の判定');
+  const age = page.locator('input[aria-label="年齢"]');
+  await age.fill('30');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('年齢 30 歳は要件（18歳以上45歳未満）を満たす'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 30歳で青年枠が「要件を満たす」に変わる');
+  await age.fill('66');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('年齢 66 歳は要件（18歳以上45歳未満）を満たさない'),
+    undefined,
+    { timeout: 15000 },
+  );
+  // 前提の認定が年齢で取れないことまで伝わるか (青年等就農資金は年齢要件を持たない)。
+  ok(
+    await has('前提の認定新規就農者は18歳以上65歳未満が要件のため、66 歳では取得できない'),
+    'eligibility: 前提の認定の年齢まで辿って対象外にする',
+  );
+  // IME の全角数字。ここで弾くと「入れたのに判定が動かない」ように見える。
+  await age.fill('７０');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('年齢 70 歳は要件（18歳以上45歳未満）を満たさない'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 全角数字の年齢でも判定が動く');
+  // 認定農業者は年齢要件が無いので、70歳でも落ちない。
+  ok(await has('年齢の要件はない（上限なし）'), 'eligibility: 認定農業者は年齢で落ちない');
+  await page.locator('select[aria-label="認定農業者か"]').selectOption('no');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('認定農業者でない（先に農業経営改善計画の認定が要る）'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 前提の認定を「いいえ」にすると対象外の理由が出る');
+
+  // 株主名簿: 人数の増減。単体テストは差分計算だけを見ているので、
+  // 「増やした行が書面に出るか」「削除で繰り上がるか」は実ブラウザで確かめる。
+  await gotoService(page, '#docstudio', '[data-doc-id="kabunushi-meibo"]');
+  await page.locator('[data-doc-id="kabunushi-meibo"]').click();
+  await page.waitForSelector('[data-shareholder-inputs]', { timeout: 15000 });
+  const shCount = () =>
+    page.locator('[data-shareholder-inputs]').getAttribute('data-shareholder-inputs');
+  ok((await shCount()) === '3', 'shareholders: 既定は 3 行（従来の書式と同じ）');
+  for (let i = 1; i <= 3; i++) {
+    await page.getByLabel(`株主${i} 氏名・名称`).fill(`E2E株主${i}`);
+    await page.getByLabel(`株主${i} 株式数`).fill(String(i * 10));
+  }
+  await page.getByRole('button', { name: '＋ 株主を追加' }).click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '4',
+    undefined,
+    { timeout: 15000 },
+  );
+  await page.getByLabel('株主4 氏名・名称').fill('E2E株主4');
+  await page.getByLabel('株主4 株式数').fill('40');
+  await page.waitForFunction(
+    () => document.querySelector('.ds-paper')?.textContent?.includes('E2E株主4') === true,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'shareholders: 追加した 4 人目が書面に出る');
+  ok(
+    (await page.locator('[data-shareholders]').getAttribute('data-shareholders')) === '4',
+    'shareholders: 書面の行数が入力に追従する',
+  );
+  ok(await has('100'), 'shareholders: 書面の合計が 10+20+30+40 = 100');
+
+  await page.getByLabel('株主2 を削除').click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '3',
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    (await page.getByLabel('株主2 氏名・名称').inputValue()) === 'E2E株主3',
+    'shareholders: 削除で以降の行が繰り上がる（途中に空行を残さない）',
+  );
+  ok(!(await has('E2E株主2')), 'shareholders: 消した株主は書面からも消える');
+
+  await page.getByLabel('株主3 を削除').click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '2',
+    undefined,
+    { timeout: 15000 },
+  );
+  await page.getByLabel('株主2 を削除').click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '1',
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(await page.getByLabel('株主1 を削除').isDisabled(), 'shareholders: 残り 1 行では削除できない');
+
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(realErrs.length === 0, `desktop: console エラーゼロ (${realErrs.length})`);
   if (realErrs.length) console.log(realErrs.join('\n'));

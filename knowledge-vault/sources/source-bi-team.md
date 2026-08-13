@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — BehaviouralInsightsTeam(BIT)—UKGovernmentNudgeUnit
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — BehaviouralInsightsTeam(BIT)—UKGovernmentNudgeUnit
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

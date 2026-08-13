@@ -39,6 +39,7 @@ CMI（万国海法会） ／ UNCITRAL ／ ウィリアム・テトリー ／ IMO
 - [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
 - [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 出典を共有
 - [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]] — 出典を共有
+- [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

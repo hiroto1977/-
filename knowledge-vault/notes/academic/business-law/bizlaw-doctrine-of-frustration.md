@@ -26,11 +26,12 @@ aliases:
 グオ・ミンガン ／ エドウィン・ペール ／ ギュンター・トレーテル ／ ヒュー・コリンズ
 
 ## 出典
-- [Krell v Henry [1903] 2 KB 740 — Court of Appeal frustration of purpose landmark](https://www.bailii.org/uk/cases/UKHL/1903/2.html) `公的`
+- [Krell v Henry [1903] 2 KB 740 — Court of Appeal frustration of purpose landmark](https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html) `公的`
 - [Treitel, G. H. (2014) Frustration and Force Majeure — 3rd ed., Sweet & Maxwell, ISBN 9780414028531](https://www.wildy.com/isbn/9780414028531/frustration-and-force-majeure-3rd-ed-hardback-sweet-maxwell-ltd) `学術`
 - [Wikipedia: Frustration of purpose — supervening impossibility doctrine overview](https://en.wikipedia.org/wiki/Frustration_of_purpose) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 語彙が近い
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
 - [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 出典を共有
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 
 ## 関連

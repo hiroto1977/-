@@ -30,16 +30,16 @@ Hedley Byrne & Co Ltd v Heller & Partners Ltd（[1964] AC 465・貴族院・指�
 - [Hedley Byrne & Co Ltd v Heller & Partners Ltd [1963] UKHL 4（BAILII 収録の貴族院判決全文）](https://www.bailii.org/uk/cases/UKHL/1963/4.html) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有
-- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]] — 出典を共有
+- [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 出典を共有
 - [[bizlaw-rule-in-claytons-case|クレイトン事件の準則（Rule in Clayton's Case／Devaynes v Noble）——混合口座の追及で引き出しを入金順に充当する先入先出の推定]] — 出典を共有
-- [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]] — 出典を共有
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
 - [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 出典を共有
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
 - [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
+- [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 出典を共有
+- [[bizlaw-tortious-interference|契約関係への不法干渉（Tortious Interference with Contract）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

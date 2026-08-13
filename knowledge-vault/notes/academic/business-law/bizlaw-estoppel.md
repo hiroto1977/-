@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 語彙が近い
-- [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 語彙が近い
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 語彙が近い
+- [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 語彙が近い
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
 - [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
 - [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家

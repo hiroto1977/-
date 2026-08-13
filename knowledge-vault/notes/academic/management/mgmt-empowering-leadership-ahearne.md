@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同じ思想家
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同じ思想家
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同分野の近傍
-- [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
+- [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

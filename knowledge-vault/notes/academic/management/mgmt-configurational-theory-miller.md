@@ -32,7 +32,7 @@ aliases:
 - [Wikipedia: Configuration theory — gestalt archetypes, profile deviation, and QCA applications](https://en.wikipedia.org/wiki/Configuration_theory) `リファレンス`
 
 ## 関連概念
-- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 語彙が近い
 - [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
@@ -41,7 +41,7 @@ aliases:
 - [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同じ思想家
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同じ思想家
 - [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — 同じ思想家
-- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
+- [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,10 +31,10 @@ aliases:
 - [Strategic Management (cognitive school) — Wikipedia](https://en.wikipedia.org/wiki/Strategic_management) `リファレンス`
 
 ## 関連概念
-- [[mgmt-managerial-cognition|経営者認知理論]] — 語彙が近い
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 語彙が近い
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
+- [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
 - [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 同分野の近傍
-- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,9 +31,9 @@ aliases:
 - [錯思コレクション100（十文字学園女子大学・池田研究室）「ナイーブ・リアリズム」](https://www.jumonji-u.ac.jp/sscs/ikeda/cognitive_bias/cate_s/s_15.html) `リファレンス`
 
 ## 関連概念
-- [[human-bias-blind-spot|バイアスの盲点]] — 語彙が近い
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 同じ思想家
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同じ思想家
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家

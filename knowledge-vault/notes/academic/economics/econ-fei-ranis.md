@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同じ思想家
-- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同分野の近傍
+- [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

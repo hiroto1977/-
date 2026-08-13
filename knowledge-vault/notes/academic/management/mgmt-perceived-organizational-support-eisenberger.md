@@ -30,9 +30,11 @@ aliases:
 - [Wikipedia: Perceived organizational support — Eisenberger, social exchange, reciprocity, commitment](https://en.wikipedia.org/wiki/Perceived_organizational_support) `リファレンス`
 
 ## 関連概念
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
+- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 同分野の近傍
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
+- [[mgmt-technology-acceptance-model|技術受容モデル（TAM）——情報システム採用の知覚有用性と知覚容易性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

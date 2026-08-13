@@ -32,9 +32,8 @@ aliases:
 ## 関連概念
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 語彙が近い
 - [[mgmt-followership|フォロワーシップ論]] — 同分野の近傍
-- [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
-- [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 同分野の近傍
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
+- [[mgmt-cynefin|クネビン・フレームワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

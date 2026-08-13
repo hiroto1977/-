@@ -2,7 +2,7 @@
 title: "caa.go.jp"
 type: source-domain
 host: "caa.go.jp"
-cite_count: 61
+cite_count: 65
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # caa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **61 件**（公的 60 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **65 件**（公的 64 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -43,11 +43,13 @@ tags:
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 消費者庁取引デジタルプラットフォーム消費者保護法
 - [[legal-consumer-safety-act|消費者安全法]] — 消費者庁消費者安全
 - [[legal-consumer-safety-act|消費者安全法]] — 消費者庁消費者安全調査委員会の概要
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 消費者庁クーリング・オフの期間と方法（電磁的記録による通知）
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 消費者庁令和3年特定商取引法の改正
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 消費者庁販売預託は原則禁止
 - [[legal-deposit-transaction|預託法（販売を伴う預託等取引の原則禁止）]] — 消費者庁預託等取引に関する法律（預託法）
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 消費者庁令和3年特定商取引法の改正
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 消費者庁契約書面等の電磁的提供ガイドライン
+- [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 消費者庁特定商取引法第3条の2等の運用指針（再勧誘禁止規定に関する指針）
 - [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 消費者庁食品表示基準Q&A加工食品の義務表示
 - [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 消費者庁食物アレルギー表示
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 消費者庁改正景品表示法の概要（2024/10施行）
@@ -74,6 +76,8 @@ tags:
 - [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 消費者庁令和3年特定商取引法・預託法の改正
 - [[legal-subscription-sales|通信販売の定期購入の表示規制（令和3年改正特商法）]] — 消費者庁通販の定期購入トラブル注意・最終確認画面
 - [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁公益通報者保護法と制度の概要
+- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁公益通報者保護法の一部を改正する法律（概要・令和7年法律第62号）
+- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁内部公益通報対応体制の整備その他の必要な措置に関するQ&A
 - [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 消費者庁指針の解説
 
 ## 関連

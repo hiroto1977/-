@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — 語彙が近い
 - [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 語彙が近い
-- [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]] — 同分野の近傍
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

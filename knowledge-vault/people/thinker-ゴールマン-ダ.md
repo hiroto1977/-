@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（3件）
 - [[human-emotional-intelligence|情動知能（EQ）]] — 情動知能（EI／EQ）とは、自己および他者の感情を正確に知覚・理解し、感情を用いて思考を促進し、感情を適切に調整・管理…
-- [[mgmt-emotional-intelligence|感情知性（EQ）]] — 感情知性（EI／EQ）とは、自他の感情を知覚・識別し、その情報を思考や行動の指針として用いる能力を指す。
+- [[mgmt-emotional-intelligence|感情知性（EQ）]] — 職場における感情知性（EI／EQ）の応用論。
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 政治的スキル（politicalskill）は、ジェラルド・フェリスらが2005年に（ジェフリー・フェファーやヘンリー…
 
 ## 関連

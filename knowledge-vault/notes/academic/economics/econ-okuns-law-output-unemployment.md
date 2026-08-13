@@ -34,12 +34,12 @@ aliases:
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
 - [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
 - [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
+- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 - [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — 同じ思想家
 - [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]] — 同じ思想家
 - [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同じ思想家
 - [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
-- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

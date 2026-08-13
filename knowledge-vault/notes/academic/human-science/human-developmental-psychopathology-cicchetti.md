@@ -34,8 +34,9 @@ aliases:
 - [[human-resilience-theory-masten|レジリエンス理論——逆境からの回復力と「普通の魔法」]] — 同じ思想家
 - [[human-resilience|レジリエンス（心理的回復力）]] — 同じ思想家
 - [[human-resilience-adversity-luthar|レジリエンスと逆境適応の発達心理学——リスク・保護因子の動態モデル（ルサール）]] — 同じ思想家
-- [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同分野の近傍
 - [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 同分野の近傍
+- [[human-normalcy-bias|正常性バイアス]] — 同分野の近傍
+- [[human-diathesis-stress-model|素因ストレスモデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

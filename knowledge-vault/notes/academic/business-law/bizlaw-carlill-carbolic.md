@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Offer and acceptance — unilateral contract, offer to the world (Carlill), acceptance by performance](https://en.wikipedia.org/wiki/Offer_and_acceptance) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同分野の近傍
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

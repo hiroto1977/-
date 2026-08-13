@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-個人の能力・価値観・ニードと職場環境の要求・供給との一致度が、従業員の満足・業績・ウェルビーイングを規定する理論。FrenchとCaplanが体系化し、Kristofがパーソン・オーガニゼーション適合を精緻化した。
+個人の能力・価値観・ニードと職場環境の要求・供給との一致度が、従業員の満足・業績・ウェルビーイングを規定する理論。FrenchとCaplanが体系化し、Kristofがパーソン・オーガニゼーション適合を精緻化した。起源はミシガン大学のストレス研究で、French と Caplan は「要求-能力」の不一致と「ニード-供給」の不一致がストレインを生むという2経路を定式化した。Kristof (1996) の統合レビューは適合の対象を階層化し、組織との適合（P-O: 価値観の一致）・職務との適合（P-J: 能力と要求）・集団との適合（P-G）・上司との適合（P-S）を区別したうえで、補完的適合（自分にないものを環境が持つ）と類似的適合（同質性）という適合の2様式を整理した。メタ分析では P-O 適合が組織コミットメント・定着を、P-J 適合が職務満足・業績を強く予測するという対象別の使い分けが確立しており、採用（RJP・価値観面接）・オンボーディング・配置転換の設計に直結する。批判的論点としては、適合の測り方（直接知覚か、個人と環境の別測定の差分か）で結果が変わる方法問題と、過剰な同質化がダイバーシティと革新を損なう「魅力-選抜-淘汰（ASA）の暗面」があり、適合と多様性のバランス設計が現代の実務課題になっている。
 
 ## 提唱者・初出
 John R. P. French Jr. ／ Robert D. Caplan ／ Amy L. Kristof-Brown
@@ -32,12 +32,8 @@ John R. P. French Jr. ／ Robert D. Caplan ／ Amy L. Kristof-Brown
 - [ILO Encyclopaedia — Person-environment fit entry](https://www.iloencyclopaedia.org/part-v-77965/psychosocial-and-organizational-factors/factors-intrinsic-to-the-job/item/14-person-environment-fit) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 同分野の近傍
-- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
-- [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同分野の近傍
-- [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — 同分野の近傍
-- [[mgmt-affective-events-theory-weiss|感情的出来事理論（ワイス＆クロパンザーノ）]] — 同分野の近傍
-- [[mgmt-romance-of-leadership-meindl|リーダーシップの幻想——成果をリーダーに帰属させる認知的傾向]] — 同分野の近傍
+- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 同分野の近傍
+- [[mgmt-realistic-job-preview-wanous|現実的職務予告——入社前の率直な情報提供が定着と満足を高める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

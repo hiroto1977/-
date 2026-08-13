@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Kydland, F. E. & Prescott, E. C. (1982) Time to Build and Aggregate Fluctuations — Econometrica, 50(6), 1345–1370（RBCモデルの起点）](https://www.jstor.org/stable/1913386) `学術`
-- [Christiano, L. J., Eichenbaum, M. & Evans, C. L. (2005) Nominal Rigidities and the Dynamic Effects of a Shock to Monetary Policy — Journal of Political Economy, 113(1), 1–45](https://doi.org/10.1162/154247605774270514) `学術`
+- [Christiano, L. J., Eichenbaum, M. & Evans, C. L. (2005) Nominal Rigidities and the Dynamic Effects of a Shock to Monetary Policy — Journal of Political Economy, 113(1), 1–45](https://doi.org/10.1086/426038) `学術`
 - [Smets, F. & Wouters, R. (2003) An Estimated Dynamic Stochastic General Equilibrium Model of the Euro Area — Journal of the European Economic Association, 1(5), 1123–1175](https://doi.org/10.1162/154247603770383415) `学術`
 - [Wikipedia: Dynamic stochastic general equilibrium — overview, variants, criticism, and central bank adoption](https://en.wikipedia.org/wiki/Dynamic_stochastic_general_equilibrium) `リファレンス`
 

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同分野の近傍
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 同分野の近傍
-- [[infosoc-simulacra|シミュラークルとハイパーリアリティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

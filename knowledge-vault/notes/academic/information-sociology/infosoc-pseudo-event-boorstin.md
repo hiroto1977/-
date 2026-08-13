@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同じ思想家
 - [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

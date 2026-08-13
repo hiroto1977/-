@@ -26,7 +26,7 @@ aliases:
 アクセル・ブランズ ／ ドン・タプスコット ／ ヨハイ・ベンクラー
 
 ## 出典
-- [Bruns, A. (2007) Produsage: Towards a Broader Framework for User-Led Content Creation — Proceedings of Creativity & Cognition, ACM Press（produsageの原典）](https://doi.org/10.1080/15405700701633008) `学術`
+- [Bruns, A. (2007) Produsage: Towards a Broader Framework for User-Led Content Creation — Proceedings of Creativity & Cognition, ACM Press（produsageの原典）](https://doi.org/10.1145/1254960.1254975) `学術`
 - [Benkler, Y. (2006) The Wealth of Networks — Yale University Press（commons-based peer productionとの接合）](https://www.sup.org/books/title/?id=1511) `学術`
 - [Bruns, A. & Jacobs, J. eds. (2006) Uses of Blogs — Peter Lang（ブログにおけるprodusageの実例研究）](https://doi.org/10.1177/0163443709336542) `学術`
 - [Wikipedia: Produsage — Bruns, characteristics, examples (Wikipedia, OSS, fan wikis), critique](https://en.wikipedia.org/wiki/Produsage) `リファレンス`

@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 同じ思想家
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 同じ思想家
 - [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 同じ思想家
 - [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同じ思想家
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
 - [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
 - [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
+- [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

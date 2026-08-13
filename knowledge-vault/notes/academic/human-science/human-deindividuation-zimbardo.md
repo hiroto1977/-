@@ -30,16 +30,16 @@ aliases:
 - [Wikipedia: Deindividuation — Zimbardo, anonymity, diffusion of responsibility, SIDE model](https://en.wikipedia.org/wiki/Deindividuation) `リファレンス`
 
 ## 関連概念
-- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-stanford-prison-experiment|スタンフォード監獄実験]] — 同じ思想家
 - [[human-broken-windows-theory|割れ窓理論]] — 同じ思想家
 - [[human-hedonic-treadmill|快楽の踏み車（快楽適応）]] — 同じ思想家
 - [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
 - [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — 同じ思想家
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

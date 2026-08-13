@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同分野の近傍
 - [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同分野の近傍
-- [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

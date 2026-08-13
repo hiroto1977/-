@@ -32,8 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
-- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
-- [[infosoc-post-normal-science-funtowicz-ravetz|ポストノーマル科学——不確実性と利害が高い問題における科学]] — 同分野の近傍
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

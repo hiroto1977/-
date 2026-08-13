@@ -31,11 +31,12 @@ aliases:
 - [公的年金の所得税の計算 解説](https://www.jili.or.jp/lifeplan/lifesecurity/1125.html) `メディア`
 
 ## 関連概念
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
 - [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 語彙が近い
-- [[labor-national-pension|国民年金の加入と被保険者の種別]] — 語彙が近い
 - [[bizlaw-insurance-act|保険法]] — 出典を共有
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

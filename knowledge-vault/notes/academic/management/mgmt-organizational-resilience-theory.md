@@ -37,11 +37,11 @@ Karl E. Weick ／ Kathleen M. Sutcliffe ／ Timothy J. Vogus ／ Cynthia A. Leng
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
 - [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

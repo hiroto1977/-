@@ -33,8 +33,8 @@ Shoshana Zuboff ／ Erik Brattberg ／ Milton Mueller ／ Nick Couldry ／ Mikke
 - [Encyclopaedia Britannica — Digital Sovereignty (overview)](https://www.britannica.com/topic/digital-sovereignty) `リファレンス`
 
 ## 関連概念
+- [[infosoc-data-colonialism|データ植民地主義]] — 語彙が近い
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
-- [[infosoc-datafication-theory|データフィケーション理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
 - [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 出典を共有

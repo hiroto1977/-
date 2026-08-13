@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: プラットフォーム経済 — 多面市場とネットワーク外部性の解説](https://ja.wikipedia.org/wiki/%E3%83%97%E3%83%A9%E3%83%83%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E7%B5%8C%E6%B8%88) `リファレンス`
 
 ## 関連概念
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 同じ思想家
+- [[econ-two-sided-markets|両面市場（two-sided markets）]] — 語彙が近い
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同じ思想家

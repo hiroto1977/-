@@ -34,14 +34,14 @@ Karl E. Weick ／ Sally Maitlis ／ Marlys Christianson
 ## 関連概念
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 語彙が近い
 - [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — 語彙が近い
-- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 語彙が近い
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { EligibilityChecker } from '../components/EligibilityChecker';
 import { useServiceData } from '../hooks/useServiceData';
 
 // 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/クラウドファンディングを
@@ -431,6 +432,10 @@ export function FundingPage() {
             ※ 概算であり、使途特定/不特定の区分・課税売上割合等で変わります。正確な金額は税理士へご確認ください。
           </div>
         )}
+      </Section>
+
+      <Section title="使える制度の判定 — 年齢・事業形態から絞り込む">
+        <EligibilityChecker />
       </Section>
 
       {!hasData && (

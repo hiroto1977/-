@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Hallが提唱した時間志向の文化的次元を起点に、Bluedorn・Kaufman-Scarborough・Lindquistが組織行動論へと展開した概念。複数の課題を同時進行することを好む傾向と一度に一つに集中する傾向の個人・組織差を測定し業務遂行や文化的適合性を説明する。
+Hall が提唱した時間志向の文化的次元——複数の事柄を同時並行で進め人間関係を優先する P タイムと、一度に一つを順番に処理しスケジュールを優先する M タイム——を起点に、Bluedorn・Kaufman-Scarborough・Lindquist らが組織行動論・消費者行動論へ展開した概念。複数の課題や関与を同時に進めることを好む傾向（ポリクロニック）と一つに集中してから次へ移ることを好む傾向（モノクロニック）の連続体上の個人差・組織差を指し、Bluedorn らの IPV（Inventory of Polychronic Values、1999）が組織・集団レベルの時間文化を、Lindquist と Kaufman-Scarborough の PMTS（2007）が個人レベルの傾向を測定する尺度として整備された。概念上の要点は、これが選好・志向であって同時処理の能力ではなく、実際にマルチタスクが上手いことを意味しない点、および個人の時間志向と職務・組織の時間文化との適合が満足度や成果を左右するとされる点にある。文化比較（P タイム優位の地中海・中南米圏と M タイム優位の北欧・北米圏）、小売・サービスの待ち時間や買物行動の研究、マルチタスキングと業務スケジューリングの設計に応用されている。
 
 ## 提唱者・初出
 Edward T. Hall ／ Allen C. Bluedorn ／ Carol Kaufman-Scarborough
@@ -32,8 +32,8 @@ Edward T. Hall ／ Allen C. Bluedorn ／ Carol Kaufman-Scarborough
 - [Kaufman-Scarborough — Polychronicity Research Overview, Rutgers University](https://crab.rutgers.edu/users/ckaufman/polychronicity.html) `学術`
 
 ## 関連概念
-- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同分野の近傍
-- [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — 同分野の近傍
+- [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同分野の近傍
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

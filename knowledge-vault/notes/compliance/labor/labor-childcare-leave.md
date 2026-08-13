@@ -31,9 +31,9 @@ aliases:
 - [厚生労働省 育児休業給付金（支給率67%/50%）](https://www.mhlw.go.jp/file/06-Seisakujouhou-11600000-Shokugyouanteikyoku/0000042797.pdf) `公的`
 
 ## 関連概念
-- [[labor-care-leave|介護休業と介護休業給付金]] — 語彙が近い
 - [[labor-postpartum-paternity-leave|出生時育児休業（産後パパ育休）]] — 出典を共有
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 同分野の近傍
+- [[labor-care-leave|介護休業と介護休業給付金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

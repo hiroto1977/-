@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Absorption approach — current account theory](https://en.wikipedia.org/wiki/Absorption_approach) `リファレンス`
 
 ## 関連概念
-- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 語彙が近い
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
@@ -39,7 +39,7 @@ aliases:
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
 - [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

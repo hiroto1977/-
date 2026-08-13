@@ -33,7 +33,6 @@ Claude M. Steele（クロード・スティール）／Joshua Aronson（ジョ�
 ## 関連概念
 - [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 語彙が近い
 - [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同じ思想家
-- [[human-dual-process-theory-kahneman-stanovich|二重過程理論——システム1・システム2の認知的二元構造]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

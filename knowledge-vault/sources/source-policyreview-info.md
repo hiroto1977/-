@@ -20,7 +20,7 @@ tags:
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — Cypherpunk—InternetPolicyReview(glossary)
 - [[infosoc-datafication|データ化（データ化現象）]] — InternetPolicyReview—conceptentry"Datafication"
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — InternetPolicyReview—Digitalcommons(peer-reviewedconceptarticle)
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — InternetPolicyReview—Filterbubbleconceptdefinition
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — InternetPolicyReview—Filterbubble（概念定義）
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — Poell,Nieborg&vanDijck(2019)Platformisation—InternetPolicyReview8(4)
 
 ## 関連

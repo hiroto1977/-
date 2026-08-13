@@ -34,10 +34,10 @@ aliases:
 - [[bizlaw-insider-trading|インサイダー取引規制]] — 語彙が近い
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
-- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[eh-1978|1978年（昭和53年）]] — 出典を共有
 - [[bizlaw-competition-law-leniency-program|カルテル規制とリニエンシー制度——自主申告に基づく独禁法エンフォースメントの革新]] — 同分野の近傍
 

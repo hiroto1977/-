@@ -32,7 +32,6 @@ aliases:
 - [Wegner 1987 — Transactive Memory: A Contemporary Analysis of the Group Mind, in Mullen & Goethals (eds.) Theories of Group Behavior pp.185-208](https://psycnet.apa.org/record/1987-98053-009) `リファレンス`
 
 ## 関連概念
-- [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — 語彙が近い
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 語彙が近い
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家

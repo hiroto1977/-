@@ -39,7 +39,6 @@ aliases:
 - [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
 - [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同じ思想家
 - [[human-mcgurk-effect|マガーク効果]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

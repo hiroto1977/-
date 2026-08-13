@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Volberda, H. W. (1996) Toward the Flexible Form: How to Remain Vital in Hypercompetitive Environments — Organization Science, 7(4), 359–374（戦略的柔軟性の原典）](https://doi.org/10.2307/2393628) `学術`
-- [Nadkarni, S. & Narayanan, V. K. (2007) Strategic Schemas, Strategic Flexibility, and Firm Performance: The Moderating Role of Industry Clockspeed — Strategic Management Journal, 28(3), 243–270（実証研究）](https://doi.org/10.1016/S0024-6301(00)00105-6) `学術`
+- [Nadkarni, S. & Narayanan, V. K. (2007) Strategic Schemas, Strategic Flexibility, and Firm Performance: The Moderating Role of Industry Clockspeed — Strategic Management Journal, 28(3), 243–270（実証研究）](https://doi.org/10.1002/smj.576) `学術`
 - [Hitt, M. A., Keats, B. W. & DeMarie, S. M. (1998) Navigating in the New Competitive Landscape — Academy of Management Executive, 12(4), 22–42（超競争環境と柔軟性）](https://doi.org/10.5465/amr.1999.1580457) `学術`
 - [Wikipedia: Strategic flexibility — Volberda, operational vs strategic, hypercompetition, dynamic capabilities connection](https://en.wikipedia.org/wiki/Strategic_flexibility) `リファレンス`
 

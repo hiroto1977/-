@@ -37,7 +37,7 @@ aliases:
 - [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家
 - [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同じ思想家
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
-- [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
+- [[infosoc-time-geography-hagerstrand|時間地理学——個人の時空間軌跡と行動を制約する三つの拘束]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

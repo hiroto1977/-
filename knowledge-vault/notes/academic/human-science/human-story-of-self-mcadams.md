@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [McAdams, D. P. (2001) The Psychology of Life Stories — Review of General Psychology, 5(2), 100–122（ナラティブ・アイデンティティの体系的解説）](https://doi.org/10.1006/nimg.2001.0980) `学術`
 - [McAdams, D. P., Reynolds, J., Lewis, M., Patten, A. H. & Bowman, P. J. (2001) When Bad Things Turn Good and Good Things Turn Bad — Journal of Personality and Social Psychology, 80(3), 472–484（汚染・贖罪テーマの実証）](https://doi.org/10.1037/0022-3514.74.3.728) `学術`
-- [McAdams, D. P. & Guo, J. (2015) Narrating the Generative Life — Psychological Science, 26(4), 475–483（ライフ・ストーリーと世代的ケアの関係）](https://doi.org/10.1037/a0038469) `学術`
+- [McAdams, D. P. & Guo, J. (2015) Narrating the Generative Life — Psychological Science, 26(4), 475–483（ライフ・ストーリーと世代的ケアの関係）](https://doi.org/10.1177/0956797614568318) `学術`
 - [Wikipedia: Dan P. McAdams — narrative identity, redemption sequences, contamination sequences, life story model](https://en.wikipedia.org/wiki/Dan_P._McAdams) `リファレンス`
 
 ## 関連概念

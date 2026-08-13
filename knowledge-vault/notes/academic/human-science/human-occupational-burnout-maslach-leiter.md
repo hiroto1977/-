@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 語彙が近い
-- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 語彙が近い
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
 - [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同じ思想家
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同じ思想家
@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同じ思想家
-- [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

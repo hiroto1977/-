@@ -35,13 +35,13 @@ aliases:
 - [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同じ思想家
 - [[human-executive-function-development|実行機能の発達と前頭前野の神経科学的基盤]] — 同じ思想家
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 - [[infosoc-homophily|ホモフィリー（同類性）]] — 出典を共有
-- [[infosoc-political-polarization|政治的分極化]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 語彙が近い
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 語彙が近い
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 出典を共有
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 出典を共有
 - [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 出典を共有
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 出典を共有
 - [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 出典を共有
-- [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

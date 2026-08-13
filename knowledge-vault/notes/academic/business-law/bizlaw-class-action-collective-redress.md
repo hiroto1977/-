@@ -37,7 +37,7 @@ aliases:
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
-- [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — 同分野の近傍
+- [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

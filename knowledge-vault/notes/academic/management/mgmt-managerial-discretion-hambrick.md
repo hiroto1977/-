@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
 - [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
-- [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

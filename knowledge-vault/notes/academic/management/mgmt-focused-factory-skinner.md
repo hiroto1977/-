@@ -33,8 +33,8 @@ aliases:
 - [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 同じ思想家
 - [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 同じ思想家
 - [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — 出典を共有
-- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同分野の近傍
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

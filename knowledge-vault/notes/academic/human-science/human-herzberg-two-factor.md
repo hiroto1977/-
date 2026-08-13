@@ -33,8 +33,14 @@ aliases:
 ## 関連概念
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
-- [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]] — 同分野の近傍
-- [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
+- [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
+- [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **73 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **74 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
@@ -23,7 +23,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (~10 MB full / ~2.2 MB `build:web:lite` mobile variant) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 10.7 MiB full / 2.6 MiB `build:web:lite` mobile variant — 2026-08-11 計測) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -72,10 +72,12 @@ npm run lint:imports       # main / preload / renderer import-boundary enforceme
 npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
 npm run lint:docs          # cross-document consistency
 npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
+npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾
+npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
-npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/citations/knowledge-refs/test-coverage/shell)
+npm run verify:all         # all of the above + eslint (16 ゲート)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
@@ -84,7 +86,7 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 13 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 16 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in

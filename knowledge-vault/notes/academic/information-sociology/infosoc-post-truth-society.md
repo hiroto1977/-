@@ -35,11 +35,11 @@ aliases:
 - [[infosoc-post-truth-politics-mcintyre|ポスト真実政治と認識論的民主主義の危機（マッキンタイア）]] — 語彙が近い
 - [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 語彙が近い
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
-- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
+- [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同じ思想家
 
 ## 関連

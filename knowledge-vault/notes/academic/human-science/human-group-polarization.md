@@ -35,13 +35,13 @@ aliases:
 - [[human-group-polarization-myers|集団極化——討議が集団の立場を当初の傾きの方向へ先鋭化させる]] — 語彙が近い
 - [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 同じ思想家
 - [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同じ思想家
+- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 出典を共有
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
-- [[human-defense-mechanisms|防衛機制]] — 出典を共有
-- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
-- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
-- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
-- [[human-mcgurk-effect|マガーク効果]] — 出典を共有
-- [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
+- [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

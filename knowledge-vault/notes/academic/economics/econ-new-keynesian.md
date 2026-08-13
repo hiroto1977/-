@@ -38,10 +38,10 @@ aliases:
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
-- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
 - [[econ-sticky-information|粘着情報モデル]] — 同じ思想家
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

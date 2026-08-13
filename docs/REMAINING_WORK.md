@@ -22,26 +22,47 @@
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
       — AppImage / `.deb` / arm64 `.dmg` / Windows `.exe`
 - [x] GitHub Pages 配信（landing + デモ 3 種 + lite）
-- [x] 知識コーパス **4,205 項目**（学術 3,583 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
-      + Obsidian vault 7,657 ノート + knowledge-graph（nodes 4,205 / edges 21,084）
+- [x] 知識コーパス **4,141 項目**（学術 3,519 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
+      + Obsidian vault 7,535 ノート + knowledge-graph（nodes 4,141 / edges 20,925）
 - [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**
 
 未完了の主要タスク（優先度順）:
-- [ ] **知識コーパスの増強バックログ 504 件**（学術 415 / 法令実務 89）
-      — 法令実務側は 65〜80 字の税・労務カードで、**条文番号と政府一次資料の裏取りが 1 件ずつ必要**
+- [x] **知識コーパスの増強バックログ 0 件 — 完走**（学術 0 / 法令実務 0）
+      — `npm run knowledge:auto` が「✅ 全て最新 — LLM 作業なし」を出力。増強・再検証・asOf・重複疑い 3 系列・
+      出典衛生・リンク切れの **8 キューすべて 0 件**。以後は監査で新規に積まれた分だけを消化すればよい
 - [ ] **単発誤 DOI の掃討** — `lint:citations` は同一 DOI に年の矛盾があるときだけ落ちるので、
       **1 回しか引かれていない DOI の誤りは原理的に検出できない**（2,449 引用の大半が単発）。
       接頭辞と誌名/出版社の整合は機械判定できるので、そこを検査するゲートが次の恒久対策
-- [ ] **dev 依存の脆弱性 13 件**（critical 2 / high 5 / moderate 5 / low 1・2026-07-31 実測）— **本番依存は 0 件**。
-      内訳は vitest / vite / postcss / undici / brace-expansion / fast-uri で、
-      **テストランナーと dev サーバの鎖**。リリース成果物（electron-builder）側は現時点で検出なし。
-      `npm audit` は最新のアドバイザリを都度取得するため件数は変動する — 数える前に実行すること
+- [x] **dev 依存の脆弱性を 15 件 → 2 件へ削減**（2026-08-11 実測。**本番依存は従来どおり 0 件**）。
+      二段で処理した:
+      1. `npm audit fix`（非破壊・semver 互換のみ）で 7 件解消 —
+         postcss / undici / brace-expansion / fast-uri / js-yaml / nanoid / @babel/core
+      2. **vitest 2.1.9 → 4.1.10 のメジャー更新**で残る 6 件（critical 2 含む）を解消。
+         vitest / @vitest/coverage-v8 / vite / vite-node / esbuild / @vitest/mocker の鎖は
+         メジャー更新でしか塞げなかった。`vitest.config.ts` は environment / include /
+         isolate / pool / timeout / retry しか使っておらず、v3・v4 の破壊的変更
+         （workspace・environmentMatchGlobs 等）に触れていないため無改修で通った
+      検証: 270 ファイル 6,748 テスト green（実行時間 **86 秒 → 42 秒**に半減）/
+      `test:cov` のカバレッジ取得 OK / Stryker（peer は `vitest >=2.0.0`）も
+      dry-run で 27,618 mutant の計装と 6,286 テストの初回実行に成功
+- [ ] **残る 2 件は上流待ち**（moderate 2）— いずれも
+      `@stryker-mutator/core` → `typed-rest-client` → `qs` の推移依存で、
+      Stryker 側がリリースするまで手元では塞げない。`npm audit` は最新の
+      アドバイザリを都度取得するため件数は変動する — 数える前に実行すること
 - [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ
 - [ ] OAuth: 他プロバイダ（Notion / Slack / Canva / WordPress / Atlassian）の config 追加
 - [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）
-- [ ] **リポジトリ肥大**: `dist/standalone.html`（10 MB）を追跡しているため `.git` が 488 MB。
-      blob 342 版で論理 2.7 GB 相当。知識コーパスを触るたびに 10 MB が増える。
-      Release 資産か Pages 配信に寄せて追跡を外すかの判断が必要
+- [x] **リポジトリ肥大の増加を停止**（追跡除外・非破壊）— `.git` の実測内訳は
+      `dist/standalone.html` 362MB（327 版）/ `academicKnowledge.ts` 306MB（本体ソース・不可避）/
+      `dist-chunks/part-*` 106MB / knowledge-graph の education 176MB。
+      このうち **ビルド生成物の 2 つを追跡から外した**（`git rm --cached`・作業ツリーは保持）:
+      `dist/standalone.html` は CI と Pages が `build:web` で毎回作り直すため追跡版は未使用、
+      `dist-chunks/` は v0.1.0 Release が AppImage を直接配布するため冗長。
+      knowledge-graph / knowledge-vault は `vault:check` / `verify:graph` が
+      本体データとの byte 一致を検査する**検証対象の成果物**なので追跡を維持する
+- [ ] **`.git` 1.3 GB 自体の縮小は未実施**（履歴書き換えが必要なため別判断）。
+      `git filter-repo` / BFG で上記 blob を履歴から削れば約 470MB 減る見込みだが、
+      全コミット SHA が変わり force-push で既存クローンと PR が壊れる。破壊的なので保留
 - [ ] `e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザ・Electron が要るため **CI 外**。
       renderer や起動性能を触ったらローカルで回すこと
 
@@ -51,20 +72,37 @@
 
 ### Linux x86-64
 
+AppImage は **GitHub Release から直接ダウンロード**する（リポジトリを clone する必要はない）:
+
 ```bash
-git fetch origin
-git checkout claude/add-claude-documentation-F7HIa
-git pull
-bash scripts/assemble-appimage.sh
-./release/Service\ Hub-0.1.0.AppImage
+# v0.1.0 の資産一覧: https://github.com/hiroto1977/-/releases/tag/v0.1.0
+curl -L -o ServiceHub.AppImage \
+  "https://github.com/hiroto1977/-/releases/download/v0.1.0/Service.Hub-0.1.0.AppImage"
+chmod +x ServiceHub.AppImage
+./ServiceHub.AppImage
 ```
 
 ファイラから AppImage をダブルクリックでも可。FUSE が無い環境では:
 
 ```bash
-"./release/Service Hub-0.1.0.AppImage" --appimage-extract
+./ServiceHub.AppImage --appimage-extract
 ./squashfs-root/AppRun
 ```
+
+> **注**: 以前は `dist-chunks/part-*` を git に載せて `scripts/assemble-appimage.sh` で
+> 再結合していたが、Release が AppImage を直接配布するようになったため
+> `dist-chunks/`（106MB）は追跡対象から外した。過去のコミットを checkout すれば
+> 従来手順も使える。
+
+### ブラウザ版（インストール不要・最速）
+
+```
+https://hiroto1977.github.io/-/app.html      # フル版
+https://hiroto1977.github.io/-/lite.html     # モバイル用ライト版（約 2MB）
+```
+
+ローカルで作る場合は `npm run build:web` → `dist/standalone.html`
+（生成物のため git では追跡していない）。
 
 ### Mac / Windows / その他
 
@@ -179,11 +217,209 @@ gh release create v0.1.0 "release/Service Hub-0.1.0.AppImage" \
 
 PKCE-based Authorization Code (RFC 7636 + RFC 8252) を main プロセスに実装。
 ループバックサーバ・state 検証・token refresh まで含む完全フロー。
-Google プロバイダ (Drive / Calendar / Gmail) は配線済み — 単一の OAuth client ID で
-3 サービスをカバー。詳細は `docs/OAUTH_SETUP.md`。
+**10 プロバイダ配線済み** — Google 3 種 (Drive / Calendar / Gmail、単一 client ID で
+3 サービスをカバー) + freee / Microsoft 365 / Slack / Notion / Canva / WordPress.com /
+Atlassian。詳細は `docs/OAUTH_SETUP.md`。
 
-残作業: 他プロバイダ (Notion / Slack / Canva / WordPress / Atlassian) の `OAUTH_CONFIGS`
-エントリ追加 — 各 1 ファイル数行 + client ID 取得作業のみ。
+うち Notion / Canva / WordPress.com / Atlassian は **機密クライアント**で、
+公式ドキュメント上 token 交換に client_secret が要る。`OAuthConfig` に
+`pkce` / `clientSecret` / `clientAuth` (`none`|`basic`|`body`) / `tokenBodyFormat`
+(`form`|`json`) を足して表現した。既存 5 件は既定値のままなので**通信内容は不変**。
+
+残作業: 各プロバイダの開発者コンソールで client ID / secret を取得し環境変数へ渡す
+(`*_OAUTH_CLIENT_ID` / `*_OAUTH_CLIENT_SECRET`)。**実 API での疎通確認は未実施** —
+エンドポイントとスコープは公式ドキュメントと各社公開の OpenAPI / SDK ソースで
+裏取りしたが、実際に認可画面まで通したわけではない。
+
+未確定のまま入れなかったもの:
+- Canva の `brand-kits` スコープ — `GET /v1/brand-kits` は Canva 公開 OpenAPI に
+  存在せず必要スコープを確定できない。`clients/canva.ts` は 403/404 を握って
+  デグレードするので実害なし。
+- WordPress.com の `oauth2-1/token` (PKCE・secret 不要) — 検索結果には出るが
+  REST API 一般に使えるのか確証が取れず、確認済みの `/oauth2/*` + secret を採用。
+  もし一般に使えるなら WordPress も公開クライアントにできる。
+
+---
+
+## バンドルサイズの実測と上限方針の不在
+
+2026-08-11 実測（同一マシン・同一コミット）:
+
+| ビルド | 実測 | ドキュメント記載（当時） |
+|---|---|---|
+| `build:web` | **10.68 MiB** (11,200,073 B) | 「~10 MB」 |
+| `build:web:lite` | **2.59 MiB** (2,719,547 B) | 「~2.2 MB」 |
+
+LITE が想定より **+18%** 育っている。増分は学術コーパスではなく
+compliance / subsidy / counselor / econ-history のデータ（LITE は
+学術コーパスを積んでいない）。CLAUDE.md の記載を実測値へ更新した。
+
+**上限の現況（2026-08-11 に確認して訂正）。** 当初「上限が無い」と書いたが
+**それは誤りだった** — `ci.yml` の size 検証は LITE に以前から
+**4,000,000 B の天井**を置いている（実測 2,719,547 B ＝ 予算の 68%）。
+青天井だったのは**フル版**のほうで、下限 100,000 B しか無かった。
+そこでフル版にも 16,000,000 B の天井を追加した（実測比 約 43% の余裕。
+通常のコーパス増加では当たらず、巨大アセットの誤同梱や遅延ロードの
+解除といった桁違いの増加でだけ落ちる位置）。
+
+残る課題は**天井に近づいたことを事前に知る手段が無い**こと。今は
+「通る／落ちる」の二値で、LITE が 4MB へ寄っていく過程が見えない。
+予算消費率を出して 80% 超で警告するのが素直だが、警告を CI のどこに
+出すか（step summary か、独立ゲートか）を決めていないので未着手。
+なお `perf` ゲートは起動時の巨大 JSON.parse (`bigParses`) を見るもので
+サイズとは別軸、かつ CI では走らない（実ブラウザが要るため）。
+
+なお `perf` の DCL などの絶対値は**機械依存**で、別マシンの記録と
+比較してはいけない（SESSION_HANDOFF の罠 6 参照）。
+
+---
+
+## 出典の DOI プレフィックス照合 — 残り 18 件（134 件から着手済み）
+
+`npm run lint:doi-prefix`（verify:all / CI に配線済み）が 949 件の DOI 出典を照合し、
+当初 134 件の矛盾を検出した。**うち 116 件を処理済み**（DOI 差し替え・書誌 URL 化 114 件
+＋ ルール修正 2 件）。残り 18 件は台帳 `scripts/lint-doi-prefix.cjs` の `ALLOWLIST` に
+「未確認」として退避してある。台帳は双方向なので、直したら消すことが強制される。
+ISBN 台帳は 24 → 21 件、識別子衝突台帳は 61 → 58 件（いずれもプレフィックス修正と
+重なった分が解消）。
+
+**残り 18 件はいずれも「ラベルの文献そのものが疑わしい」型**で、DOI の差し替えでは
+直らない。例: `bizlaw-anti-money-laundering-fatf` のラベル
+「Broome, A. (2009) The Global Economic Crisis and FATF — Routledge」は**その書籍自体が
+実在を確認できない**（André Broome の Routledge 危機本は *Global Governance in Crisis*
+で書名も年も違う）。出典ごと差し替える判断が要るので、機械的には進められない。
+
+**照合は 3 並列 × 12 件で回した。** 前回 4 並列 × 34 件では全員が検索予算切れで
+打ち切られたので、実測した上限（1 セッション 30〜40 件）に合わせて絞ったところ、
+**36 件すべてが判定完了・偽陽性ゼロ**になった。並列度ではなく 1 人あたりの
+件数が効く。
+
+**エージェント同士が 1 件で食い違った**（Wray 『Modern Money Theory』の
+`10.1057/9781137539922` を一方は「検証済み」、他方は「未検証だから使うな」と報告）。
+同一文献なので親が SpringerLink を直接確認して決着させた（Palgrave Macmillan
+2015 年刊の第 2 版で正しい）。**報告が割れたら親が一次確認する**、が正しい扱い。
+
+**ルール側で解決した偽陽性 2 件。** 台帳に隠すと将来も誤検出し続けるので、
+真の偽陽性はルールを直す。
+1. `econ-dorfman-steiner-theorem` — URL が Wiley Encyclopedia of Management の項目で
+   ラベルにもそう明記してあるのに、原典の掲載誌（AER）を見て誤検出していた。
+2. `human-reactive-devaluation` — *Negotiation Journal* は Plenum → Kluwer/Blackwell
+   (Wiley) → **MIT Press** と版元が移っている。Wiley のレガシー DOI に「MIT Press」
+   表記が付いているのは**矛盾ではない**（MIT Press が当該論文をホストしており、
+   PDF 名は Wiley 時代のまま）。版元移動を許容する誌の一覧に追加した。
+
+### 処理済みの内訳
+
+**DOI 差し替え 33 件** — いずれも出版社／索引ページで**実体を確認してから**差し替えた。
+確認できなかった候補は、もっともらしくても投入していない（推測で出典を直さない）。
+例: Gioia &amp; Chittipeddi (1991) に付いていた `10.5465/amr.1991.4279513` の実体は
+**AMR に載った別書（Flow）の書評**で、正しい SMJ の DOI へ差し替えた。
+
+**偽陽性 1 件はルール側で除外** — `econ-dorfman-steiner-theorem` は URL が
+Wiley Encyclopedia of Management の項目で、ラベルにもそう明記してあるのに、
+ラベル中の "American Economic Review"（原典）を見て誤検出していた。
+百科事典・ハンドブックは「原典を紹介する二次文献」なので、ラベルが原典の掲載誌と
+収録先の両方を名乗るのが正常。**台帳に隠さずルールを直した**（隠すと将来も誤検出が続く）。
+
+### ISBN チェックディジット検査 — 新設・24 件が「解決しない DOI」
+
+Springer の書籍 DOI は `10.1007/<ISBN-13>`、Elsevier の書籍章は
+`10.1016/B<ISBN-13>.<章>` の形で **ISBN をそのまま含む**。ISBN-13 は
+末尾 1 桁が検査数字なので、**外部に問い合わせずに実在性を否定できる**。
+`lint:doi-prefix` にこの検算を足した（プレフィックス照合とは独立の検査で、
+出版社が一致していても引っかかる。**検索予算を一切使わない**のが利点）。
+
+実測: 書籍 DOI 350 件中 **24 件がチェックディジット不正**＝解決しない DOI。
+アルゴリズムは既知の正しい ISBN（MIT Press / HUP / OUP）で検算済み。
+24 件は `ISBN_ALLOWLIST` へ退避（双方向）。**「この DOI は解決しない」ことは
+数学的に確定**していて、未確認なのは「正しい ISBN が何か」のほうだけ。
+つまりプレフィックス側の 100 件より**確度の高い作業キュー**になっている。
+
+該当例: `econ-public-choice-buchanan-tullock` の `10.1007/978-0-387-29907-7`
+（正しい末尾は 5。しかも `…-5` の実体は Springer の性科学百科事典で
+公共選択論とは無関係）、`mgmt-lean-startup-ries-build-measure-learn` の
+`10.1007/978-1-4302-4463-4`（Ries『The Lean Startup』は Crown Business 刊で
+Springer ではない）など。
+
+**この検査を書いていて自分のバグを 1 件踏んだ**: プレフィックス照合が
+クリーンなときの早期 return が ISBN の失敗を握り潰していた。負のコントロールで
+「プレフィックスは綺麗・ISBN だけ不正」を作って exit 1 を確認している。
+
+### 誌コード照合 — 新設・12 件（プレフィックス照合には**見えない**穴）
+
+プレフィックス照合は「出版社が違う」ことしか見ない。だが AOM は
+`10.5465/amr.` `10.5465/amj.` のように**誌そのもの**を DOI 接尾辞に持ち、
+AEA も `jep` / `jel` / `aer` を使い分ける。つまり
+**「AMJ の DOI に AMR のラベル」は同一出版社なので素通り**していた。
+
+実測: 誌コードを持つ DOI 246 件中 **12 件が不一致**。例:
+- Rogoff (1996)『The Purchasing Power Parity Puzzle』は実際には **JEL** 34(2)
+  だが `10.1257/jep.10.4.97`（JEP）が付いている（2 エントリで同じ誤り）
+- Sarasvathy (2001)『Causation and Effectuation』は実際には **AMR** 26(2)
+  だが `10.5465/amj.2001.4428801`（AMJ）
+- Bernanke &amp; Gertler (1995)『Inside the Black Box』は実際には **JEP** 9(4)
+  だが `10.1257/jel.37.4.1661`（JEL）
+
+**年と巻は使わない（実測して採用を取り下げた）。** 最初は DOI に埋まった年と
+ラベルの年を突き合わせようとしたが、**AOM の現行 DOI は投稿年**を使う。
+Smith &amp; Lewis (2011) の実 DOI は `10.5465/amr.2009.0223` で 2 年ずれるのが正常。
+この検査では 19 件が挙がり大半が正しい書誌だった（コーパス内の別々の
+2 エントリが同じ DOI を挙げていたのが傍証）。**誤検出を出すゲートは無いより
+悪い**ので誌コードだけを見る。
+
+### 識別子衝突の検査 — 新設・61 群（`lint:citations` の逆方向）
+
+`lint:citations` は「同じ DOI が別々の出版年で引かれていないか」を見る。
+その**逆方向**（同じ文献が別々の DOI で引かれていないか）は検査されておらず、
+並列照合のエージェントが毎回「担当外だが」と手で報告してきていた。
+
+**正常な冗長を除外するのが肝。** JSTOR ID と出版社 DOI が同じ論文を指すのは
+正常（別レジストリの識別子が並存しているだけ）。除外しないと 136 群が挙がり
+その多くが正当だった。異常と見なすのは 2 つだけ:
+1. 出版社 DOI が 2 つ以上（別々の出版社を指している）
+2. **同じ中立レジストリに別 ID が 2 つ** — 同一論文に 2 つの JSTOR ID は
+   あり得ないので、必ず一方が誤り
+
+実測 **61 群**。サンプル 6 件を目視して「書籍とその書評」型の誤検出が
+起きていないことを確認した（ラベルがほぼ同一の同一文献ばかりだった）。例:
+Bernanke &amp; Gertler (1989) AER 79(1) 14–31 が `10.2307/2937927` と
+`10.2307/1804770` の**2 つの JSTOR ID**で引かれている。
+
+### Elsevier PII のチェック文字検査は**採用しなかった**（実測して撤退）
+
+ISBN 検算と同じ発想で PII の検査文字も計算できるはずだったが、
+**アルゴリズムを同定できなかった**。コーパスの実 PII 111 件に対し
+重み・法・向き・補数の組合せを総当たりしたが、最良で 20/111（18%）＝偶然の域。
+推測で入れれば**正しい PII の 8 割を誤検出**するので入れていない。
+一方 **ISSN のチェックディジットは 137/137 = 100%** で検算できることを確認した
+（ただし不正は 0 件なので、今日は何も見つけない検査になる）。
+
+### 判明した構造 — 個別の誤りではなくパターン
+
+1. **書籍に後付けされた DOI** が最多。実在するが**まったく無関係な文献**を指す。
+   最も明白な例は `infosoc-digital-rights-management-theory` で、Gillespie *Wired Shut*
+   （MIT Press）に付いた `10.1017/CBO9780511813696` の実体は
+   **Cambridge の熱流体工学の物性表小冊子**だった。
+   → **書籍は DOI を持たせず ISBN / 出版社書誌 URL に統一する**のが再発防止になる。
+2. **実在しない DOI（捏造の疑い）**。`10.1007/978-0-387-29907-7` は
+   **ISBN-13 のチェックディジットが不正**（正しくは末尾 5）。
+   `10.1016/0749-596X(78)90043-4` は ISSN 0749-596X の誌が **1985 年創刊**なので
+   1978 年の PII は成立しない。
+3. **本物の論文の開始頁を、別出版社の DOI 体系に流し込んだ**痕跡。
+   Psychological Science 13:172 に対し `10.1037/0022-3514.82.1.172`（APA の JPSP）など。
+4. **同一 DOI に複数の主張がぶつかっていても「どれかが正しい」とは限らない。**
+   今回も全主張者が誤りのケースが複数あった。必ず DOI の実体を先に確定すること。
+
+### 残り 100 件を進めるときの制約
+
+**WebSearch がセッション共有で 200 回上限**、`WebFetch` と `curl` は
+doi.org / Crossref / OpenAlex / 主要出版社すべてで egress ブロック。
+つまり照合手段は実質 WebSearch のみで、これが律速になる。
+並列エージェントを増やしても検索予算を食い合うだけなので、
+**1 セッションあたり 30〜40 件が現実的な上限**。
+
+手順は「DOI 接尾辞の完全一致検索（例: `"CBO9780511777141"`）→ 索引が返す
+出版社ページの実体を証拠にする」。検索要約の主張を証拠にしないこと。
 
 ---
 

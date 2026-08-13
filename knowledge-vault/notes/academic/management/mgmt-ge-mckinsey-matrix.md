@@ -37,8 +37,9 @@ GE・マッキンゼー・マトリクス（ビジネス・スクリーン）は
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 出典を共有
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
 - [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]] — 同分野の近傍
-- [[mgmt-five-forces|ファイブフォース分析（5つの競争要因）]] — 同分野の近傍
 - [[mgmt-hypercompetition|ハイパーコンペティション]] — 同分野の近傍
+- [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同分野の近傍
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

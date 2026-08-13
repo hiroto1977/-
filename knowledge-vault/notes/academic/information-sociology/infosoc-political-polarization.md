@@ -37,10 +37,10 @@ aliases:
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
 - [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
-- [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

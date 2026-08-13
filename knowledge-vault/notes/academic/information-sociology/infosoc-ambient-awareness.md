@@ -31,7 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同分野の近傍
+- [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同分野の近傍
+- [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
 - [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同分野の近傍
 
 ## 関連

@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
-- [[infosoc-quantified-self-lupton-nafus|自己の数量化——ウェアラブル技術と自己追跡の社会学的分析]] — 同分野の近傍
+- [[infosoc-online-firestorm|炎上（オンライン・ファイヤーストーム）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

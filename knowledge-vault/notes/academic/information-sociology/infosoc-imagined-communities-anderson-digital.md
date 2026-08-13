@@ -27,16 +27,14 @@ aliases:
 
 ## 出典
 - [Anderson, B. (1983) Imagined Communities — Verso](https://doi.org/10.1017/CBO9780511819346) `学術`
-- [Schneider, F. (2018) China's Digital Nationalism — Oxford University Press](https://doi.org/10.4324/9781315226767) `学術`
+- [Schneider, F. (2018) China's Digital Nationalism — Oxford University Press](https://doi.org/10.1093/oso/9780190876791.001.0001) `学術`
 - [Wikipedia: Imagined community — 想像の共同体の概要](https://en.wikipedia.org/wiki/Imagined_community) `リファレンス`
 
 ## 関連概念
 - [[infosoc-appadurai-scapes|アパデュライのスケープ（グローバルな文化フローの5次元）]] — 同じ思想家
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 同じ思想家
 - [[infosoc-imagined-communities|想像の共同体（アンダーソン）]] — 同分野の近傍
-- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同分野の近傍
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
-- [[infosoc-telemedicine|遠隔医療（テレメディシン）：エビデンスと政策的枠組みの体系化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ aliases:
 - [Wikipedia: Job characteristics model — Hackman & Oldham, five core dimensions, MPS formula, meta-analysis](https://en.wikipedia.org/wiki/Job_characteristics_model) `リファレンス`
 
 ## 関連概念
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 語彙が近い
 - [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 語彙が近い
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 - [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — 同じ思想家
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同じ思想家
-- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

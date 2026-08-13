@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 語彙が近い
 - [[infosoc-digital-identity-self-sovereign|デジタルアイデンティティと自己主権——SSIの分散管理と個人情報支配の再設計]] — 同分野の近傍
-- [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

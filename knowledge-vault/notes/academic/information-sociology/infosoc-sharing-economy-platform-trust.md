@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同じ思想家
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

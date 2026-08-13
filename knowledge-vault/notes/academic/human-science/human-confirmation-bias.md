@@ -32,9 +32,8 @@ aliases:
 
 ## 関連概念
 - [[human-group-polarization|集団極性化]] — 同分野の近傍
-- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 同分野の近傍
-- [[human-prospective-memory|展望的記憶（Prospective Memory）]] — 同分野の近傍
 - [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

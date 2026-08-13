@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Cannon-Bowers・Salas・Converseが提唱したチーム認知理論。チームメンバーがタスク・役割・装置について類似した知識構造を共有することで、明示的コミュニケーションなしに暗黙的協調が実現しパフォーマンスが向上する。
+Cannon-Bowers・Salas・Converseが提唱したチーム認知理論。チームメンバーがタスク・役割・装置について類似した知識構造を共有することで、明示的コミュニケーションなしに暗黙的協調が実現しパフォーマンスが向上する。起源は海軍の戦闘情報センター研究（ヴィンセンス誤射事件後のチーム意思決定研究）にあり、高負荷・時間切迫下では発話による調整が破綻するため、「誰が何を知り何をするか」の共有された予測が調整を肩代わりするという観察から出発した。モデルは内容別に、装置（機器の挙動）・タスク（手順と偶発事象）・チーム相互作用（役割と情報の流れ）・チームメイト（各人の技能と傾向）の 4 種に分けられ、測定では類似性（メンバー間の一致）と正確性（専門家基準との一致）を区別する——類似していても間違っている共有モデルは危険という含意が重要である。メタ分析は類似性・正確性の両方がチーム・プロセスと成果を予測することを確認し、AMR のチーム暗黙的調整論はコミュニケーション量が減っても成果が落ちない機構として SMM を位置づけた。育成手段としてはクロストレーニング（他役割の体験）・チームでの振り返り（デブリーフィング）・事前ブリーフィングが有効とされ、航空 CRM・手術チーム・管制の訓練設計、さらに人間-AI チーミング（AI の能力についての正確な共有モデル）へ拡張されている。
 
 ## 提唱者・初出
 Janis A. Cannon-Bowers ／ Eduardo Salas ／ Richard Klimoski
@@ -32,16 +32,16 @@ Janis A. Cannon-Bowers ／ Eduardo Salas ／ Richard Klimoski
 - [Sage Encyclopedia of Group Processes — Shared Mental Models](https://sk.sagepub.com/ency/edvol/processes/chpt/shared-mental-models) `リファレンス`
 
 ## 関連概念
-- [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 語彙が近い
-- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — 語彙が近い
-- [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 語彙が近い
+- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — 同じ思想家
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
 - [[econ-becker-crime|犯罪の経済学]] — 出典を共有
 - [[human-microaggression|マイクロアグレッション]] — 出典を共有
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 出典を共有
 - [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
-- [[mgmt-simmelian-ties-krackhardt|ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
+- [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
+- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

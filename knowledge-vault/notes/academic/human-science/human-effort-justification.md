@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同じ思想家
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有

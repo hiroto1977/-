@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 6件（うち権威ある出典 ✓）
 
 ## 概要
-Carol S. Dweck が提唱する理論。知性や能力は固定的ではなく努力と学習によって伸ばせると信じる「成長マインドセット」は、固定的と捉える「固定マインドセット」と対比され、個人・組織双方の学習・回復力・革新行動を高める一方、再現性研究では効果量の小ささも指摘されている。
+Carol S. Dweck の成長マインドセット理論の組織・経営への応用レーン。個人レベルの理論と測定は human-growth-mindset に譲り、本項は組織マインドセットを扱う。マーフィーとドゥエックらの組織マインドセット研究は、企業が「才能は生まれつき」という天才文化（culture of genius）を示すか「能力は開発できる」という成長文化を示すかが、従業員の信頼・コミットメント・協働とリスクテイクに影響することを示した。実務では、失敗を学習機会として扱う心理的安全性の設計、プロセスを評価する人事評価、育成前提の採用メッセージングとして展開され、マイクロソフトの文化変革（learn-it-all）が代表例として語られる。一方で教育介入の再現性研究では効果量の小ささや条件依存性（低学力層・支援的環境で効果が出やすい）が指摘されており、組織施策としても万能薬ではなく文脈設計とセットで効く点に留意が要る。
 
 ## 提唱者・初出
 Carol S. Dweck（Stanford University）、Ellen L. Leggett、David S. Yeager
@@ -34,7 +34,7 @@ Carol S. Dweck（Stanford University）、Ellen L. Leggett、David S. Yeager
 - [Macnamara & Burgoyne (2023) — Do Growth Mindset Interventions Impact Students' Academic Achievement? A Systematic Review and Meta-Analysis. Psychological Bulletin, 149(3–4), 133–173.](https://doi.org/10.1037/bul0000352) `学術`
 
 ## 関連概念
-- [[human-mindset|マインドセット（成長/固定）]] — 分野横断
+- [[human-mindset|マインドセット（成長/固定）]] — 語彙が近い
 - [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有

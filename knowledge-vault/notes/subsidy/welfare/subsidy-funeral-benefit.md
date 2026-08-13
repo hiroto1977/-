@@ -42,6 +42,7 @@ national
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
 - [[labor-maternity-allowance|健康保険の出産手当金]] — 出典を共有
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 - [[subsidy-child-allowance|児童手当]] — 同分野の近傍
 - [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同分野の近傍
 

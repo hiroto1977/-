@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: ポジティブ心理学 — PERMAモデルと幸福科学の解説](https://ja.wikipedia.org/wiki/%E3%83%9D%E3%82%B8%E3%83%86%E3%82%A3%E3%83%96%E5%BF%83%E7%90%86%E5%AD%A6) `リファレンス`
 
 ## 関連概念
-- [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 語彙が近い
 - [[human-positive-psychology|ポジティブ心理学]] — 語彙が近い
+- [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 語彙が近い
 - [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家

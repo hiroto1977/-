@@ -33,7 +33,7 @@ aliases:
 - [e-Gov法令検索 商標法（昭和34年法律第127号）](https://laws.e-gov.go.jp/law/334AC0000000127) `公的`
 
 ## 関連概念
-- [[bizlaw-patent-system|特許制度（特許法）]] — 語彙が近い
+- [[bizlaw-patent-system|特許制度（特許法）]] — 出典を共有
 - [[legal-design-right|意匠権（意匠法）]] — 出典を共有
 - [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — 出典を共有
 - [[legal-utility-model|実用新案権（無審査・存続期間・技術評価書）]] — 出典を共有

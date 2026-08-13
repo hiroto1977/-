@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同分野の近傍
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
+- [[infosoc-computational-journalism|計算論的ジャーナリズムとデータ・ドリブン報道の社会学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

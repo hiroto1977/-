@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]] — 語彙が近い
 - [[bizlaw-cheque-act|小切手法]] — 同分野の近傍
+- [[bizlaw-promissory-note|約束手形——一定金額の支払を約する二当事者間の流通証券]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

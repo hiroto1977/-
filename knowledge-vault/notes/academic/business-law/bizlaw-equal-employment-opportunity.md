@@ -30,7 +30,7 @@ aliases:
 - [厚生労働省「雇用における男女の均等な機会と待遇の確保のために」](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/danjokintou/index.html) `公的`
 
 ## 関連概念
-- [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — 同分野の近傍
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同分野の近傍
 
 ## 関連

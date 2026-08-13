@@ -2,7 +2,7 @@
 title: "キャス・サンスティーン"
 type: thinker
 person_key: "サンスティーン|キ"
-concept_count: 11
+concept_count: 10
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # キャス・サンスティーン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **10 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（11件）
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — ナッジ（Nudge）とは、リチャード・セイラーとキャス・サンスティーンが提唱した行動変容の概念であり、禁止や金銭的イン…
+## 学術概念（10件）
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 価値財（meritgoods）は、リチャード・マスグレイブが1957年から1959年にかけての公共財政の理論で導入した…
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 選択の自由を保持しつつ、選択肢の提示方法（選択アーキテクチャ）を工夫することで、人々の行動を予測可能な形でより良い方向…
 - [[human-availability-cascade|利用可能性カスケード]] — ティムール・クラン&キャス・サンスティーンが1999年「AvailabilityCascadesandRiskRegu…

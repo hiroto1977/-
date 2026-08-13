@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

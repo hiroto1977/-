@@ -32,7 +32,7 @@ Orit Gadiesh ／ James L. Gilbert ／ Harvard Business Review (1998) ／ Anheuse
 
 ## 関連概念
 - [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 同分野の近傍
-- [[mgmt-organizational-forgetting|組織的忘却]] — 同分野の近傍
+- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

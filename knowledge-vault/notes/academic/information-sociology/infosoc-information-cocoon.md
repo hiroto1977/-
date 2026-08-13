@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 語彙が近い
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 語彙が近い
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家

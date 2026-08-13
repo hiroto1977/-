@@ -34,6 +34,7 @@ aliases:
 - [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 語彙が近い
 - [[tax-income-tax-progressive|所得税の超過累進税率]] — 語彙が近い
 - [[tax-estimated-prepayment|所得税の予定納税]] — 語彙が近い
+- [[tax-income-categories|所得税における所得の10種類の区分]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

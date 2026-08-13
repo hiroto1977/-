@@ -35,12 +35,12 @@ aliases:
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

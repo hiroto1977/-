@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Poverty trap — multiple equilibria, Big Push, RCT, coordination failure, institutions](https://en.wikipedia.org/wiki/Poverty_trap) `リファレンス`
 
 ## 関連概念
-- [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 語彙が近い
 - [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
 - [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
 - [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]] — 同じ思想家
 - [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
+- [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

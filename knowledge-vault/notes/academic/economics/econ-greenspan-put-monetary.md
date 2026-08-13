@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Miller, Weller & Zhang (2002) Moral Hazard and the US Stock Market: Analysing the Greenspan Put — Economic Journal](https://doi.org/10.1111/1468-0297.00099) `学術`
-- [Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance](https://doi.org/10.1257/aer.20140205) `学術`
+- [Cieslak, Morse & Vissing-Jorgensen (2019) Stock Returns over the FOMC Cycle — Journal of Finance](https://doi.org/10.1111/jofi.12818) `学術`
 - [Wikipedia: Greenspan put — 中央銀行プットの概念と金融政策への含意](https://en.wikipedia.org/wiki/Greenspan_put) `リファレンス`
 
 ## 関連概念
@@ -40,7 +40,6 @@ aliases:
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同じ思想家
 - [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同じ思想家
-- [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

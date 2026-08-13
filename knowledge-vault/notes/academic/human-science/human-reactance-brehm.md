@@ -36,7 +36,7 @@ aliases:
 - [[human-door-in-the-face-cialdini|ドア・イン・ザ・フェイス——過大な要請の拒否後に本命の要請を通す互恵的譲歩]] — 同じ思想家
 - [[human-foot-in-the-door-freedman|フット・イン・ザ・ドア——小さな承諾が大きな要請への応諾を高める]] — 同じ思想家
 - [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
-- [[human-emerging-adulthood|新興成人期（エマージング・アダルトフッド）]] — 同分野の近傍
+- [[human-cheerleader-effect|チアリーダー効果（集団魅力効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

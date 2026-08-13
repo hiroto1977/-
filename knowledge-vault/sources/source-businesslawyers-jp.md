@@ -2,7 +2,7 @@
 title: "businesslawyers.jp"
 type: source-domain
 host: "businesslawyers.jp"
-cite_count: 34
+cite_count: 31
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # businesslawyers.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **34 件**（メディア 27 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **31 件**（メディア 25 ・ リファレンス 6）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — BUSINESSLAWYERS「民法改正で債権譲渡はどう変わった？譲渡禁止特約の効力は？」
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — BUSINESSLAWYERS経営判断の原則とは
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — BusinessLawyers—経営判断の原則の要件と判例解説
 - [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — BUSINESSLAWYERS—令和4年改正・消費者裁判手続特例法のポイント解説
 - [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — BUSINESSLAWYERS—民法改正と契約不適合責任条項
 - [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — BUSINESSLAWYERS「組織再編に伴う株主保護手続の概要」—株式買取請求権・債権者保護手続
@@ -39,7 +38,6 @@ tags:
 - [[legal-contract-cancellation|契約の解除（催告解除・無催告解除／改正民法）]] — 契約解除と帰責事由の関係解説
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 外国にある第三者への提供と本人同意解説
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 暗号資産交換業の登録解説
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 保有個人データ解説
 - [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 金融サービス仲介業態勢整備解説
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 独占禁止法の企業結合規制解説
 - [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — オプトアウトによる第三者提供解説
@@ -47,7 +45,6 @@ tags:
 - [[legal-prescription-renewal|消滅時効の完成猶予・更新（改正民法）]] — 消滅時効の民法改正の概要解説
 - [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 要配慮個人情報・オプトアウト解説
 - [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — 株主総会の決議方法（普通決議・特別決議）解説
-- [[legal-whistleblower|公益通報者保護法（2022年改正）]] — 改正公益通報者保護法の要点
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

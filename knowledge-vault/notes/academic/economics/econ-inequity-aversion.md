@@ -31,9 +31,10 @@ aliases:
 - [Fehr & Fischbacher 2003 The Nature of Human Altruism. Nature 425(6960) 785-791](https://doi.org/10.1126/science.1070564) `学術`
 
 ## 関連概念
-- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 語彙が近い
+- [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同じ思想家
 - [[econ-ultimatum-game|最後通牒ゲーム]] — 同分野の近傍
-- [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 同分野の近傍
+- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 同分野の近傍
+- [[econ-dictator-game|独裁者ゲーム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

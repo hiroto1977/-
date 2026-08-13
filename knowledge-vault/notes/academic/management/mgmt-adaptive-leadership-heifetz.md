@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-Ronald A. Heifetzが提唱する適応的リーダーシップは、既存の知識で解決できる「技術的問題」と、価値観・行動変容を要する「適応的課題」を峻別し、権限ではなくリーダーシップによって人々を動員し集合的学習を促す理論。Marty LinskyおよびAlexander Grashowとともに実践的枠組みを発展させた。
+Ronald A. Heifetz が『Leadership Without Easy Answers』（1994）で提唱した適応的リーダーシップは、既存の知識・専門技術で解決できる「技術的問題」と、当事者自身の価値観・優先順位・行動の変容を要する「適応的課題」を峻別し、適応的課題に技術的解決を当てはめることをリーダーシップ失敗の最大類型とみなす理論。リーダーシップを地位や権限（オーソリティ）から切り離して「人々を適応の作業へ動員する活動」と定義し、答えを与えるのではなく作業を当事者に返すこと、変化に伴う喪失に直面させつつ耐えられる範囲に苦痛を保つ生産的不均衡の調律、そのための安全な器（ホールディング環境）の設計を中核技法とする。Linsky との『Leadership on the Line』（2002）は、ダンスフロアからバルコニーに上がって全体を観るという診断の比喩と、適応の作業を迫るリーダーが周縁化・攻撃にさらされる政治的危険への生存術を体系化し、Grashow を加えた『The Practice of Adaptive Leadership』（2009）が観察→解釈→介入の反復からなる実践ツール群として完成させた。医療の患者中心ケアにおける適用（患者・家族と専門職が担う適応の作業の再配分）や、認知スタイルの適応・革新理論と接続する研究など、公共・医療・組織変革の領域で発展が続いている。
 
 ## 提唱者・初出
 Ronald A. Heifetz ／ Marty Linsky ／ Alexander Grashow
@@ -33,16 +33,16 @@ Ronald A. Heifetz ／ Marty Linsky ／ Alexander Grashow
 - [Heifetz, R.A., Grashow, A., & Linsky, M. (2009). The Practice of Adaptive Leadership: Tools and Tactics for Changing Your Organization and the World. Harvard Business Press.](https://www.hks.harvard.edu/publications/practice-adaptive-leadership-tools-and-tactics-changing-your-organization-and-world) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
 - [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — 出典を共有
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
 - [[econ-exit-voice-loyalty|離脱・発言・忠誠（ハーシュマン）]] — 出典を共有
 - [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
+- [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 出典を共有
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 出典を共有
 - [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
-- [[human-defense-mechanisms|防衛機制]] — 出典を共有
-- [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
-- [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 141
+cite_count: 139
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **141 件**（リファレンス 139 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **139 件**（リファレンス 137 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,7 @@ tags:
 - [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — Wikipedia:デジタル市場法—DMAとプラットフォーム規制の解説
 - [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — Wikipedia「債務引受」
 - [[bizlaw-bills-act|手形法]] — Wikipedia「手形法」（ジュネーヴ統一手形法の国内法化・1932制定）
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — Wikipedia—経営判断の原則
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — Wikipedia—経営判断の原則
 - [[bizlaw-civil-preservation|民事保全法]] — ウィキペディア「民事保全法」
 - [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — ウィキペディア「会社更生法」（会社更生との対比・対象法人）
 - [[bizlaw-companies-act|会社法]] — Wikipedia「会社法」
@@ -71,7 +71,6 @@ tags:
 - [[bizlaw-utility-model|実用新案法]] — Wikipedia「実用新案法」（小発明・無審査登録制度・沿革）
 - [[bizlaw-women-empowerment-act|女性活躍推進法]] — Wikipedia「女性の職業生活における活躍の推進に関する法律」
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — Wikipedia:エージェンシー理論—所有経営分離とインセンティブ設計の解説
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — Wikipedia:ナッジ—選択アーキテクチャと行動経済学の政策応用
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — Wikipedia:炭素国境調整—CBAMとカーボンリーケージの解説
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — Wikipedia:大推進論—協調の失敗と発展経済学の解説
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — Wikipedia:通貨危機—第一・第二・第三世代モデルの解説
@@ -80,7 +79,6 @@ tags:
 - [[econ-difference-in-differences|差の差分析（DID）]] — ウィキペディア日本語版「差分の差分法」
 - [[econ-fei-ranis|フェイ＝ラニス・モデル]] — ウィキペディア日本語版:フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
-- [[econ-fiscal-multiplier-theory|財政乗数理論]] — Wikipedia日本語版—乗数効果
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — Wikipedia:全要素生産性—ソロー残差と技術進歩の計測の解説
 - [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — Wikipedia:ヘリコプターマネー—財政金融統合政策と中央銀行論の解説
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — Wikipedia:ケース＝シラー指数—住宅市場バブルと行動経済学の解説

@@ -39,7 +39,7 @@ aliases:
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
 - [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 同じ思想家
 - [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同分野の近傍
-- [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同分野の近傍
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

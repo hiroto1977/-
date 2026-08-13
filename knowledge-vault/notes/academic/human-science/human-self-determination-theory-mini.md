@@ -39,6 +39,7 @@ Edward L. Deci ／ Richard M. Ryan ／ Maarten Vansteenkiste ／ Christopher P. 
 - [[human-self-determination|自己決定理論（SDT）]] — 出典を共有
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
+- [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

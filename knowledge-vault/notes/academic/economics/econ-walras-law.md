@@ -31,11 +31,12 @@ aliases:
 - [ワルラスの法則 — Wikipedia 日本語版（超過需要総和ゼロ・均衡か否かによらず成立）](https://ja.wikipedia.org/wiki/%E3%83%AF%E3%83%AB%E3%83%A9%E3%82%B9%E3%81%AE%E6%B3%95%E5%89%87) `リファレンス`
 
 ## 関連概念
-- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 語彙が近い
 - [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
+- [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同分野の近傍
 - [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — 同分野の近傍
 
 ## 関連

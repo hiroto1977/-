@@ -36,8 +36,9 @@ EU不公正契約条項指令（Directive 93/13/EEC）は、事業者と消費�
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
 - [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
-- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]] — 同分野の近傍
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
 - [[bizlaw-eu-general-data-protection-regulation-gdpr|EU一般データ保護規則（GDPR）——個人データ保護の域内統一法制]] — 同分野の近傍
+- [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

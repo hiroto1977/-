@@ -37,7 +37,7 @@ aliases:
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同分野の近傍
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同分野の近傍
+- [[econ-cantillon-effect|カンティロン効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

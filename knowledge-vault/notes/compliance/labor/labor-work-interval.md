@@ -32,9 +32,15 @@ aliases:
 
 ## 関連概念
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 語彙が近い
-- [[labor-worktime-status-grasp|労働時間の状況の把握義務（労働安全衛生法66条の8の3）]] — 同分野の近傍
-- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
-- [[labor-standard-remuneration|標準報酬月額]] — 同分野の近傍
+- [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有
+- [[subsidy-specific-jobseeker|特定求職者雇用開発助成金]] — 出典を共有
+- [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 出典を共有
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 出典を共有
+- [[tax-loss-offsetting|所得税の損益通算]] — 出典を共有
+- [[tax-platform-taxation|消費税のプラットフォーム課税（特定プラットフォーム事業者制度）]] — 出典を共有
+- [[bizlaw-apparent-agency|表見代理]] — 出典を共有
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

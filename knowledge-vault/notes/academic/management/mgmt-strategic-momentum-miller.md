@@ -36,11 +36,11 @@ aliases:
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

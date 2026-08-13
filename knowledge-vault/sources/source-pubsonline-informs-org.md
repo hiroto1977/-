@@ -2,7 +2,7 @@
 title: "pubsonline.informs.org"
 type: source-domain
 host: "pubsonline.informs.org"
-cite_count: 23
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubsonline.informs.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
 
 ## このドメインを出典とする項目
 
@@ -32,7 +32,6 @@ tags:
 - [[mgmt-managerial-cognition|経営者認知理論]] — Walsh(1995)ManagerialandOrganizationalCognition—OrganizationScience
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — Andriopoulos&Lewis(2009)Exploitation-ExplorationTensions—Organization…
 - [[mgmt-organizational-forgetting|組織的忘却]] — deHolan&Phillips—RemembranceofThingsPast?TheDynamicsofOrganizationalF…
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — Feldman(2000)—OrganizationalRoutinesasSourceofContinuousChange,Organi…
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — Feldman(2000)-OrganizationalRoutinesasaSourceofContinuousChange,Organ…
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — Weick,K.E.,Sutcliffe,K.M.,&Obstfeld,D.(2005).OrganizingandtheProcesso…
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — Siggelkow&Levinthal(2003)TemporarilyDividetoConquer—OrganizationScien…

@@ -33,10 +33,10 @@ aliases:
 ## 関連概念
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 語彙が近い
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 同分野の近傍
-- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
+- [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — 同分野の近傍
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 同分野の近傍
 - [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 同分野の近傍
-- [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
+- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

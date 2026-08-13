@@ -39,6 +39,7 @@ aliases:
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 - [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同分野の近傍
 
 ## 関連

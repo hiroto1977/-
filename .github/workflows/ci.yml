@@ -35,6 +35,8 @@ jobs:
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:citations
+      - run: npm run lint:doi-prefix
+      - run: npm run lint:charset
       - run: npm run lint:knowledge-refs
       - run: npm run lint:test-coverage
       - run: npm run lint:shell
@@ -62,6 +64,15 @@ jobs:
           echo "standalone.html size: $SIZE bytes"
           if [ "$SIZE" -lt 100000 ]; then
             echo "standalone.html is suspiciously small" >&2
+            exit 1
+          fi
+          # 上限。LITE 側には以前から 4MB の天井があったが、フル版は下限だけで
+          # **青天井**だった。知識コーパスは増え続けるので、暴走的な増加
+          # (巨大アセットの誤同梱・遅延ロードの解除など) を検知できる位置に
+          # 天井を置く。2026-08-11 実測 11,200,073 B に対し約 43% の余裕。
+          # 通常のコーパス増加では当たらず、桁違いの増加でだけ落ちる。
+          if [ "$SIZE" -gt 16000000 ]; then
+            echo "standalone.html exceeds 16MB — 巨大アセットの誤同梱か遅延ロードの解除を疑う" >&2
             exit 1
           fi
 

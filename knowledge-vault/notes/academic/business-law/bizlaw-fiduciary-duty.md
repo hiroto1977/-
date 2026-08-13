@@ -31,9 +31,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
-- [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同分野の近傍
 - [[bizlaw-financial-services-act|金融サービス提供法]] — 同分野の近傍
-- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 同分野の近傍
+- [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

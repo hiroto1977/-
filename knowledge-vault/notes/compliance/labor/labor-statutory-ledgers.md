@@ -34,15 +34,15 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 出典を共有
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
 - [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 出典を共有
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
-- [[labor-wage-prescription|賃金請求権の消滅時効（労働基準法115条）]] — 同分野の近傍
-- [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -33,8 +33,8 @@ aliases:
 - [[econ-demographic-dividend-bloom-williamson|人口ボーナスと人口転換——ブルーム＝ウィリアムソンの経済成長への人口学的寄与の分析]] — 同じ思想家
 - [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
 - [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 出典を共有
-- [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同分野の近傍
 - [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同分野の近傍
+- [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,8 +33,8 @@ aliases:
 - [[infosoc-post-truth-politics-mcintyre|ポスト真実政治と認識論的民主主義の危機（マッキンタイア）]] — 語彙が近い
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 語彙が近い
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 語彙が近い
-- [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 語彙が近い
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同じ思想家
+- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
 - [[infosoc-ai-governance-human-rights|AIガバナンスと人権基盤アプローチの国際政治社会学]] — 同分野の近傍
 - [[infosoc-information-asymmetry-online|オンライン市場における情報の非対称性]] — 同分野の近傍
 

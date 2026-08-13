@@ -34,7 +34,7 @@ aliases:
 - [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同じ思想家
 - [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同じ思想家
 - [[bizlaw-subordination-agreement|劣後契約——債権の弁済順位を合意で後順位に置く]] — 同じ思想家
-- [[bizlaw-tag-along-drag-along-rights|タグアロング権・ドラッグアロング権]] — 同分野の近傍
+- [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
 - [[bizlaw-payment-services-act|資金決済法]] — 同分野の近傍
 
 ## 関連

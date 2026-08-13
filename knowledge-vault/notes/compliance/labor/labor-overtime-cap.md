@@ -33,13 +33,13 @@ aliases:
 - [日本労働組合総連合会 労働相談Q&A](https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_13.html) `運営団体`
 
 ## 関連概念
-- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 語彙が近い
-- [[legal-unauthorized-access|不正アクセス禁止法]] — 語彙が近い
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 語彙が近い
+- [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 分野横断
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 出典を共有
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 出典を共有
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 出典を共有
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 出典を共有
 - [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有

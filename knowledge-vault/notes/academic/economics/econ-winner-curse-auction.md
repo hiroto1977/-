@@ -34,9 +34,9 @@ aliases:
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家

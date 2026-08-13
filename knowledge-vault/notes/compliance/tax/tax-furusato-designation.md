@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 語彙が近い
 - [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 出典を共有
-- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 同分野の近傍
+- [[tax-city-planning-tax|都市計画税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

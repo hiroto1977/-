@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
 - [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同分野の近傍
-- [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
 - [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 
 ## 関連

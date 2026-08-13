@@ -31,9 +31,9 @@ aliases:
 - [国税庁「電子帳簿等保存制度特設サイト」](https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/index.htm) `公的`
 
 ## 関連概念
-- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 分野横断
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 語彙が近い
 - [[bizlaw-design-right|意匠権（意匠法）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -26,7 +26,7 @@ aliases:
 マイケル・タシュマン ／ チャールズ・オライリー ／ ウェンディ・スミス ／ マリアン・レウィス
 
 ## 出典
-- [Rosing, K. et al. (2011). Ambidextrous leadership — Journal of Applied Psychology](https://doi.org/10.5465/amr.2013.0255) `学術`
+- [Rosing, K. et al. (2011). Ambidextrous leadership — The Leadership Quarterly 22(5), 956–974](https://doi.org/10.1016/j.leaqua.2011.07.014) `学術`
 - [Wikipedia: Organizational ambidexterity — ambidextrous leadership](https://en.wikipedia.org/wiki/Organizational_ambidexterity) `リファレンス`
 
 ## 関連概念

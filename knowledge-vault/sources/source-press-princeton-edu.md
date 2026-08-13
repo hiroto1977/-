@@ -2,7 +2,7 @@
 title: "press.princeton.edu"
 type: source-domain
 host: "press.princeton.edu"
-cite_count: 25
+cite_count: 24
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # press.princeton.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 17 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 16 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -32,7 +32,6 @@ tags:
 - [[human-welfare-state-typology|福祉国家類型論（福祉レジーム論）：エスピン＝アンデルセンの三つの世界]] — Esping-Andersen,G.1990TheThreeWorldsofWelfareCapitalism.PrincetonUniv…
 - [[infosoc-cyber-cascade|サイバーカスケード]] — PrincetonUniversityPress—CassR.Sunstein,#Republic:DividedDemocracyint…
 - [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — CassR.Sunstein,"#Republic:DividedDemocracyintheAgeofSocialMedia",Prin…
-- [[infosoc-filter-bubble-theory|フィルターバブル理論]] — Sunstein,#Republic:DividedDemocracyintheAgeofSocialMedia(PrincetonUP,…
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — PrincetonUniversityPress—CassR.Sunstein,#Republic:informationcocoons,…
 - [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — Mayer-Schönberger,V.2009.Delete:TheVirtueofForgettingintheDigitalAge.…
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — Cohen1963—ThePressandForeignPolicy,PrincetonUniversityPress

@@ -34,6 +34,7 @@ aliases:
 - [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同じ思想家
 - [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同じ思想家
 - [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
+- [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,7 +40,7 @@ Bayless Manning ／ Ronald J. Gilson ／ Bernard S. Black ／ Hideki Kanda
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
-- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 出典を共有
+- [[bizlaw-civil-execution|民事執行法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

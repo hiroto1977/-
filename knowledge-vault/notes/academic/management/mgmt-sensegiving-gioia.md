@@ -26,9 +26,9 @@ aliases:
 デニス・ジョイア ／ クマール・チッタンパリー ／ カール・ワイク ／ デービッド・ウィーバー
 
 ## 出典
-- [Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）](https://doi.org/10.5465/amr.1991.4279513) `学術`
-- [Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）](https://doi.org/10.1002/smj.4250130807) `学術`
-- [Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）](https://doi.org/10.1177/0170840606062431) `学術`
+- [Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）](https://doi.org/10.1002/smj.4250120604) `学術`
+- [Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）](https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988) `学術`
+- [Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）](https://doi.org/10.5465/amj.2007.24160971) `学術`
 - [Wikipedia: Sensemaking — Weick, Gioia sensegiving, strategic ambiguity, organizational change](https://en.wikipedia.org/wiki/Sensemaking) `リファレンス`
 
 ## 関連概念
@@ -36,12 +36,12 @@ aliases:
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 語彙が近い
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

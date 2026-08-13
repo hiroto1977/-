@@ -5,7 +5,7 @@ category: "information-sociology"
 category_ja: "情報社会学"
 title: "フィルターバブルとエコーチェンバー"
 as_of: "2026-06"
-source_count: 3
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
@@ -17,26 +17,32 @@ aliases:
 
 # フィルターバブルとエコーチェンバー
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
 フィルターバブル（filter bubble）は活動家イーライ・パリサーが2011年の著書『The Filter Bubble』で提唱・普及させた概念で、検索エンジンやSNSのパーソナライズ・アルゴリズムが利用者の履歴等に基づき各人に好みに合う情報を選択的に提示し、結果として異なる視点から知的に隔離される現象を指す。エコーチェンバー（echo chamber、起点はカス・サンスティーン2001年頃の議論）は、同質な意見が閉じた集団内で反響・反復され外部からの反証から遮断されて既存の信念が増幅・強化される環境を指す。フィルターバブルがアルゴリズム由来の選択的曝露であるのに対し、エコーチェンバーは集団内のコミュニケーションによる反響増幅であり外部の意見を能動的に排除・不信視する点で区別される。両者は世論の分極化や誤情報拡散との関連で論じられるが、実証研究では効果の大きさや存在範囲について証拠が一致しておらず（フィルターバブル仮説への支持は限定的との指摘あり）、評価は依然として議論が分かれている。
 
 ## 提唱者・初出
-イーライ・パリサー（2011 フィルターバブル提唱）／カス・サンスティーン（2001 エコーチェンバー概念の起点）
+イーライ・パリサー（2011 フィルターバブル提唱）／カス・サンスティーン（2001 エコーチェンバー概念の起点）／セス・フラックスマン（2016 実証）／C・ティ・グエン（エコーチェンバーと認識的バブルの哲学的区別）
 
 ## 出典
 - [Reuters Institute（Oxford）— Echo chambers, filter bubbles, and polarisation: a literature review](https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review) `学術`
 - [Wikipedia — Filter bubble](https://en.wikipedia.org/wiki/Filter_bubble) `リファレンス`
+- [Flaxman, Goel & Rao (2016) Filter Bubbles, Echo Chambers, and Online News Consumption — Public Opinion Quarterly 80(S1)](https://academic.oup.com/poq/article/80/S1/298/2223402) `学術`
+- [Internet Policy Review — Filter bubble（概念定義）](https://policyreview.info/concepts/filter-bubble) `学術`
 - [Wikipedia — Echo chamber (media)](https://en.wikipedia.org/wiki/Echo_chamber_(media)) `リファレンス`
 
 ## 関連概念
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
+- [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
+- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
+- [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — 出典を共有
-- [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — 同分野の近傍
-- [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — 同分野の近傍
+- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,7 @@ prefecture
 - [福岡県で使える補助金まとめ](https://biz.ncbank.co.jp/posts/subsidies-available-in-fukuoka/) `メディア`
 
 ## 関連概念
-- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 同分野の近傍
+- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 語彙が近い
 - [[subsidy-miyagi|ものづくり中小企業生産性向上設備導入補助金（宮城県）]] — 同分野の近傍
 - [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同分野の近傍
 

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 語彙が近い
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

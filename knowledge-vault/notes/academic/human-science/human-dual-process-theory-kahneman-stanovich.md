@@ -31,9 +31,8 @@ aliases:
 - [Wikipedia: Dual process theory — 二重過程理論の歴史・類型・批判の概説](https://en.wikipedia.org/wiki/Dual_process_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同分野の近傍
-- [[human-stereotype-threat|ステレオタイプ脅威]] — 同分野の近傍
+- [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

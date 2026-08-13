@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同分野の近傍
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

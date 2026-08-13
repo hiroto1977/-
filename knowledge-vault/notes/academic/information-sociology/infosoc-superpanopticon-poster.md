@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
 - [[infosoc-synopticon|シノプティコン]] — 同じ思想家
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
-- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -25,6 +25,7 @@ import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats
 import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can';
 import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
 import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
+import { fetchChartsSnapshot } from './charts';
 import { fetchQualitySnapshot } from './quality';
 import { fetchMicrosoft365Snapshot, ACTIONS as MICROSOFT365_ACTIONS } from './microsoft-365';
 import { fetchDropboxSnapshot } from './dropbox';
@@ -105,6 +106,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'demae-can': fetchDemaeCanSnapshot,
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
+  charts: fetchChartsSnapshot,
   quality: fetchQualitySnapshot,
   'microsoft-365': fetchMicrosoft365Snapshot,
   dropbox: fetchDropboxSnapshot,
@@ -200,6 +202,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'demae-can',
   'real-estate',
   'mutual-funds',
+  'charts',
   'quality',
   'storage',
   // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。

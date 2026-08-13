@@ -31,7 +31,6 @@ Chris Gilliard & Hugh Culik（Common Sense Education, 2016 — デジタル・�
 
 ## 関連概念
 - [[infosoc-information-justice|情報正義]] — 同じ思想家
-- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同じ思想家
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 出典を共有
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍

@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

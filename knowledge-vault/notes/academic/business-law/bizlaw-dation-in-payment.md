@@ -32,16 +32,16 @@ aliases:
 - [クレアール司法書士講座 民法第482条【代物弁済】](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0482-00/) `メディア`
 
 ## 関連概念
-- [[bizlaw-release-of-debt|免除（民法519条）]] — 語彙が近い
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — 出典を共有
 - [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
 - [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
-- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 出典を共有
 - [[bizlaw-public-order|公序良俗（民法90条）]] — 出典を共有
 - [[bizlaw-retention-lien|留置権（民法295条）]] — 出典を共有
 - [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — 出典を共有
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 出典を共有
 - [[bizlaw-statutory-lien|先取特権（民法303条）]] — 出典を共有
+- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 出典を共有
+- [[legal-set-off|相殺（民法505条等）]] — 出典を共有
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

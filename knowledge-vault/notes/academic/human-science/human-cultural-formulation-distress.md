@@ -33,7 +33,6 @@ DSM-5（精神疾患の診断・統計マニュアル第5版、2013年）は「�
 - [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 同じ思想家
 - [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
-- [[human-presenteeism|プレゼンティーイズム：疾病就業による労働生産性損失の概念と測定]] — 同分野の近傍
 - [[human-dsm-classification|DSM分類体系：精神疾患の診断・統計マニュアルと操作的診断基準の確立]] — 同分野の近傍
 
 ## 関連

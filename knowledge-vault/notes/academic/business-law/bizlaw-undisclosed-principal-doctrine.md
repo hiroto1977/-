@@ -37,8 +37,8 @@ aliases:
 - [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 同分野の近傍
 - [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 同分野の近傍
 - [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 同分野の近傍
-- [[bizlaw-guarantee-suretyship|保証——他人の債務不履行に備える第三者の従たる責任]] — 同分野の近傍
 - [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — 同分野の近傍
+- [[bizlaw-labor-collective-bargaining-law|集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

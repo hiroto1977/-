@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]]（接続 26）
-- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]]（接続 25）
-- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]]（接続 24）
-- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]]（接続 22）
-- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]]（接続 22）
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]]（接続 25）
+- [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]]（接続 24）
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]]（接続 23）
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]]（接続 23）
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]]（接続 22）
+- [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]]（接続 21）
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]]（接続 21）
 - [[legal-land-lease-right|借地借家法における借地権]]（接続 21）
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 19）
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]（接続 19）
-- [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 18）
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 17）
-- [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 17）
-- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 17）
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]]（接続 16）
-- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]（接続 16）
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
+- [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 16）
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]（接続 16）
+- [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -45,9 +45,9 @@ tags:
 - 2024年: [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]]
 - 2024年: [[legal-logistics-efficiency-act|改正物流効率化法（物流2法・物流2024年問題への対応）]]
 - 2024年: [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]]
+- 2025年: [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]
 - 2025年: [[legal-family-register-furigana|戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）]]
 - 2025年: [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]]
-- 2026年: [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]
 - 2026年: [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]]
 
 ## 第 3 部 — 年代情報のない項目
@@ -55,7 +55,6 @@ tags:
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
 - [[legal-anti-spam|広告メールのオプトイン規制（特定電子メール法）]]
 - [[legal-antimonopoly|独占禁止法]]
-- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]]
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]]
 - [[legal-civil-procedure-digitalization|民事訴訟手続のIT化（改正民事訴訟法・段階施行）]]
@@ -71,12 +70,14 @@ tags:
 - [[legal-contract-cancellation|契約の解除（催告解除・無催告解除／改正民法）]]
 - [[legal-contract-nonconformity|契約不適合責任（改正民法）]]
 - [[legal-contract-types|請負契約と委任契約（準委任）の区別]]
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]]
 - [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]]
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]]
 - [[legal-copyright-term|著作権の保護期間と私的複製]]
 - [[legal-corporate-governance|会社法における株式会社の機関設計]]
 - [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]]
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]]
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]]
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]]
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]]
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]]
@@ -102,7 +103,6 @@ tags:
 - [[legal-funds-transfer|資金移動業]]
 - [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]]
 - [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]]
-- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]]
 - [[legal-insolvency-procedures|法的倒産処理手続（破産・民事再生・会社更生・特別清算）]]
 - [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]]

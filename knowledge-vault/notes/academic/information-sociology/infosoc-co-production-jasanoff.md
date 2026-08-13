@@ -30,9 +30,9 @@ aliases:
 - [Wikipedia: Sheila Jasanoff — co-production, civic epistemology, sociotechnical imaginaries, STS](https://en.wikipedia.org/wiki/Sheila_Jasanoff) `リファレンス`
 
 ## 関連概念
+- [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 語彙が近い
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
 - [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
-- [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同じ思想家
 - [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
 - [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
 - [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家

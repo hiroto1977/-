@@ -2,7 +2,7 @@
 title: "supreme.justia.com"
 type: source-domain
 host: "supreme.justia.com"
-cite_count: 38
+cite_count: 36
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # supreme.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **38 件**（公的 25 ・ リファレンス 13）
+> [!info] 出典ドメイン索引 ・ 引用 **36 件**（公的 25 ・ リファレンス 11）
 
 ## このドメインを出典とする項目
 
@@ -30,7 +30,7 @@ tags:
 - [[bizlaw-disgorgement-remedy|吐出し命令——不正利得の剥奪的救済と抑止機能]] — Liuv.SEC,591U.S.___(2020)—limitsonSECdisgorgementauthority
 - [[bizlaw-doctrine-of-equivalents|均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理]] — FestoCorp.v.ShoketsuKinzokuKogyoKabushikiCo.,535U.S.722(2002),decided…
 - [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — Petrellav.Metro-Goldwyn-Mayer,Inc.,572U.S.663(2014)—JustiaUSSupremeCo…
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — EastRiverS.S.Corp.v.TransamericaDelaval(1986)
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — EastRiverS.S.Corp.v.TransamericaDelaval,476U.S.858(1986)—Justia
 - [[bizlaw-feist-originality|ファイスト判決と著作権の創作性要件（Feist v. Rural Telephone 1991）——「額に汗」理論の否定と事実の非保護]] — FeistPublications,Inc.v.RuralTelephoneServiceCo.,499U.S.340(1991)（Jus…
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — TheBremenv.ZapataOff-ShoreCo.407U.S.1(1972)—JustiaUSSupremeCourt
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — CarnivalCruiseLines,Inc.v.Shute,499U.S.585(1991)
@@ -39,8 +39,6 @@ tags:
 - [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — Kirtsaengv.JohnWiley&Sons,Inc.,568U.S.519(2013)—Justia（米国最高裁：国際消尽の採用）
 - [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — BroadcastMusic,Inc.v.CBS,441U.S.1(1979)
 - [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — TexacoInc.v.Dagher,547U.S.1(2006)
-- [[bizlaw-laches-doctrine|ラッチェス法理]] — Petrellav.MGM,572U.S.663(2014)
-- [[bizlaw-laches-doctrine|ラッチェス法理]] — SCAHygienev.FirstQuality,580U.S.(2017)
 - [[bizlaw-letters-rogatory|嘱託書（Letters Rogatory）]] — Aerospatialev.USDistrictCourt,482U.S.522(1987)—Justia
 - [[bizlaw-margin-squeeze-abuse|マージン・スクイーズ（鋏状圧縮）の競争法上の位置づけ]] — linkLineCommunications,Inc.v.AT&TInc.,555U.S.438(2009)—U.S.SupremeCou…
 - [[bizlaw-materiality-securities-law|証券法における重要性基準]] — BasicInc.v.Levinson,485U.S.224(1988)—JustiaU.S.SupremeCourt

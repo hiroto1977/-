@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Deleuze & Guattariのアセンブラージュ概念を組織研究に応用。OrlikowskiとScottが提唱し、人間・技術・実践が切り離し不可能に絡み合い共構成される動的配置として組織を捉える。
+Deleuze & Guattariのアセンブラージュ概念を組織研究に応用。OrlikowskiとScottが提唱し、人間・技術・実践が切り離し不可能に絡み合い共構成される動的配置として組織を捉える。Orlikowski (2007) の出発点は、組織研究が技術を「文脈の一部」として脇に置くか、独立変数として切り出すかのどちらかで、日常業務が物質と不可分に成り立っている事実を扱えていないという診断にある。社会物質性（sociomateriality）の視角では、検索アルゴリズムと評価実務、モバイル端末と応答規範のように、社会的なものと物質的なものは分析的にも切り離せない「絡み合い（entanglement）」として研究単位になる。理論的資源はバラッドの行為的実在論（agential realism: 境界は実践の中で引かれる）とアセンブラージュ思考（異質な要素の一時的な配置と再配置）で、Müller (2015) はアクターネットワーク理論との異同（ANT の翻訳・ネットワークに対し、アセンブラージュは欲望・領土化を語彙に持つ）を整理した。IS 研究では TripAdvisor の評価装置がホテル実務を再構成した Scott & Orlikowski の分析が範例で、アルゴリズム管理・ハイブリッドワーク・AI 導入の研究に、道具主義（技術は手段）とも技術決定論とも違う第三の語り方を提供している。批判としては「絡み合い」概念の経験的操作化の難しさ（Mutch らの実在論からの批判）が定番の論点である。
 
 ## 提唱者・初出
 Wanda J. Orlikowski ／ Susan V. Scott ／ Gilles Deleuze
@@ -35,8 +35,8 @@ Wanda J. Orlikowski ／ Susan V. Scott ／ Gilles Deleuze
 - [[infosoc-data-doubles|データ・ダブル]] — 語彙が近い
 - [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]] — 同じ思想家
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同分野の近傍
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同分野の近傍
+- [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

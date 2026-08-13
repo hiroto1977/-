@@ -36,10 +36,11 @@ Helen Nissenbaum（ヘレン・ニッセンバウム, 理論提唱者） ／ Pri
 - [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 出典を共有
 - [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — 出典を共有
 - [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
-- [[infosoc-datafication-theory|データフィケーション理論]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
-- [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同分野の近傍
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
+- [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

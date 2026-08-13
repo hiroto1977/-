@@ -38,6 +38,7 @@ national
 
 ## 関連概念
 - [[subsidy-kyuto-shoene|給湯省エネ事業]] — 語彙が近い
+- [[subsidy-zeh|ZEH支援事業]] — 語彙が近い
 - [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
@@ -46,7 +47,6 @@ national
 - [[legal-waste-management|廃棄物処理法の排出事業者責任とマニフェスト制度]] — 出典を共有
 - [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
-- [[subsidy-zeh|ZEH支援事業]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

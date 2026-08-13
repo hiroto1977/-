@@ -35,7 +35,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 出典を共有
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
-- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

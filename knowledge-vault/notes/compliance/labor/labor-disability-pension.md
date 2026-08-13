@@ -31,6 +31,7 @@ aliases:
 - [政府広報オンライン 障害年金の制度](https://www.gov-online.go.jp/article/201201/entry-7663.html) `メディア`
 
 ## 関連概念
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 語彙が近い
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
 - [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
-- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有
 
 ## 関連

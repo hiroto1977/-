@@ -35,6 +35,7 @@ aliases:
 - [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 出典を共有
 - [[eh-1986|1986年（昭和61年）]] — 出典を共有
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同分野の近傍
+- [[econ-granger-causality|グレンジャー因果性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

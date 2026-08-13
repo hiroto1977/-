@@ -26,7 +26,7 @@ aliases:
 ノーマン・スラメッカ ／ ピーター・グラフ ／ ジェフリー・カーピック ／ ヘンリー・ロディガー
 
 ## 出典
-- [Slamecka, N.J. & Graf, P. (1978) The Generation Effect — Journal of Experimental Psychology: Human Learning and Memory 4(6)](https://doi.org/10.1016/0749-596X(78)90043-4) `学術`
+- [Slamecka, N.J. & Graf, P. (1978) The Generation Effect — Journal of Experimental Psychology: Human Learning and Memory 4(6)](https://doi.org/10.1037/0278-7393.4.6.592) `学術`
 - [Wikipedia: Generation Effect — self-generated information memory advantage](https://en.wikipedia.org/wiki/Generation_effect) `リファレンス`
 - [McDaniel, M.A., Waddill, P.J. & Einstein, G.O. (1988) A Contextual Account of the Generation Effect — Journal of Memory and Language 27(5)](https://doi.org/10.1037/0278-7393.14.3.521) `学術`
 

@@ -34,7 +34,6 @@ John Norton Pomeroy（『衡平法学』で不正の抗弁を体系化）／Zech
 - [U.S. Reports: Keystone Driller Co. v. General Excavator Co., 290 U.S. 240 (1933) — Library of Congress](https://www.loc.gov/item/usrep290240/) `公的`
 
 ## 関連概念
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]] — 同じ思想家
 - [[bizlaw-materiality-securities-law|証券法における重要性基準]] — 出典を共有
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 出典を共有
@@ -44,6 +43,7 @@ John Norton Pomeroy（『衡平法学』で不正の抗弁を体系化）／Zech
 - [[bizlaw-estoppel-by-deed|証書禁反言（エストッペル・バイ・ディード）]] — 出典を共有
 - [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — 出典を共有
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
+- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

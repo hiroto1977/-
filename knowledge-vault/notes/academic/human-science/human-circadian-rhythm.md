@@ -30,8 +30,8 @@ aliases:
 - [NIH National Institute of General Medical Sciences — Circadian Rhythms（概日リズムの基礎・健康影響・研究の意義）](https://www.nigms.nih.gov/education/fact-sheets/Pages/circadian-rhythms.aspx) `公的`
 
 ## 関連概念
-- [[human-chronobiology-theory|時間生物学理論]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

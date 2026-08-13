@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同分野の近傍
-- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

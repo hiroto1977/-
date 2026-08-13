@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 出典を共有
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 出典を共有
 - [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
-- [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同分野の近傍
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 同分野の近傍
 - [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
 

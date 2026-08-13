@@ -31,7 +31,6 @@ aliases:
 - [会社法108条 種類株式 解説](https://ja.wikibooks.org/wiki/会社法第108条) `メディア`
 
 ## 関連概念
-- [[bizlaw-squeeze-out|スクイーズアウト（特別支配株主の株式等売渡請求）]] — 語彙が近い
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 出典を共有
 - [[bizlaw-civil-execution|民事執行法]] — 出典を共有
 - [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
 - [[labor-collective-agreement|労働協約（労働組合法）]] — 出典を共有
+- [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

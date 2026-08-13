@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — 同分野の近傍
-- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — 同分野の近傍
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

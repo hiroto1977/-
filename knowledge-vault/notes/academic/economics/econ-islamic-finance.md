@@ -34,7 +34,7 @@ Iqbal, Zamir （2011 An Introduction to Islamic Finance, Wiley）／Mirakhor, Ab
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 出典を共有
 - [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]] — 出典を共有
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 出典を共有
-- [[econ-velocity-of-money|貨幣の流通速度——交換方程式における貨幣回転率と物価の関係]] — 同分野の近傍
+- [[econ-backus-smith|バッカス＝スミス・パズル（Backus-Smith Puzzle）]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連

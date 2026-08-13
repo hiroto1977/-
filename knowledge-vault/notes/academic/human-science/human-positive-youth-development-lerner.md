@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Positive youth development — developmental framework](https://en.wikipedia.org/wiki/Positive_youth_development) `リファレンス`
 
 ## 関連概念
-- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同分野の近傍
 - [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同分野の近傍
 - [[human-emotional-labor|感情労働（ホックシールド）]] — 同分野の近傍
 

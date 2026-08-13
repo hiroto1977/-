@@ -18,19 +18,19 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 73 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 74 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 12 | `src/main/main.ts:111-296` |
-| client モジュール (fetcher + actions) | 73 | `src/main/clients/index.ts:44-83` |
-| OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
+| client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
+| OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **6607** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 6748) |
-| 追跡行数（リポジトリ全体・下限） | **≥ 1000000** | 自己検証（`git ls-files` 全ファイルの改行数合算。柱 B Phase 3 完了で 100 万行を突破 — 現在 ~1,037k） |
+| ユニットテスト | **6914** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7094) |
+| 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 199 | 自己検証 |
+| `file:line` 参照数 | 202 | 自己検証 |
 
 ### 統合フロー図
 
@@ -463,6 +463,7 @@ union を参照する。
 | `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
 | `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
 | `salesforce` | Salesforce CRM (snapshot) | Bearer (将来) | | | (read-only — 商談 / リード / パイプライン) |
+| `charts` | 可視化 (折れ線 / 円 / レーダー) | none | ✅ | | (read-only — 座標計算は `data/charts.ts` の純関数、仮想データは `data/chartFixtures.ts`。外部ライブラリを入れず SVG を自前で組む〔ブラウザ版は CSP が厳しく外部ホストへ取りに行けない単一 HTML のため〕。図は壊れていても『それらしい図』が出るので、`data/chartSelfCheck.ts` の自己検査を画面にも出す — テストと同じ関数を呼ぶので画面とテストで判定がずれない) |
 | `cursor` | Cursor (AI コードエディタのチーム管理) | Bearer (Cursor Admin API) | ✅ | | (read-only — メンバー / 日次利用状況 / 当月支出。書き込みは行わない〔席の増減・上限変更は課金に直結するため〕。取れるのはチーム全体の集計で個人の作業内容ではない。受入率が 100% を超える日は Cursor 側の集計が噛み合っていないので `overCounted` で印を付けてそのまま出す。金額は請求通貨の米ドルのまま — 為替を当てて円換算するといつのレートか画面から追えなくなる) |
 | `discord` | Discord (snapshot) | Bearer (将来) | | | (read-only — サーバー / チャンネル / メッセージ) |
 | `asana` | Asana PM (snapshot) | Bearer (将来) | | | (read-only — タスク / プロジェクト / 進捗) |
@@ -506,7 +507,7 @@ union を参照する。
 | `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `body.ds-printing`) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:145-183`)。トークン未設定でも snapshot OK。
-- **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。
+- **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:103-255`)。各プロバイダの `*_OAUTH_CLIENT_ID` 環境変数で有効化。Notion / Canva / WordPress.com / Atlassian は**機密クライアント**なので `*_OAUTH_CLIENT_SECRET` も必須 (未設定なら `isOAuthSupported()` が false を返し、押しても 401 にしかならない ボタンを出さない)。Slack だけは PKCE 対応の公開クライアントで secret 不要。
 
 ### 3.2 Action payload スキーマ (19 actions)
 

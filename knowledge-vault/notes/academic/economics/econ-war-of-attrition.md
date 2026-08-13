@@ -35,11 +35,11 @@ aliases:
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同じ思想家
 - [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 同じ思想家
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同じ思想家
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — 同じ思想家
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 - [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
+- [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

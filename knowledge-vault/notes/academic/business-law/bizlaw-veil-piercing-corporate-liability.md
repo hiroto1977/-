@@ -26,18 +26,16 @@ aliases:
 ポール・ウォームザー ／ スティーブン・バインブリッジ ／ フランク・イースターブルック ／ 江頭憲治郎
 
 ## 出典
-- [Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford UP](https://doi.org/10.1007/978-94-015-8015-0) `学術`
+- [Muchlinski, P. (2007). Multinational Enterprises and the Law — Oxford UP](https://ideas.repec.org/b/oxp/obooks/9780199227969.html) `学術`
 - [Wikipedia: Piercing the corporate veil — corporate liability](https://en.wikipedia.org/wiki/Piercing_the_corporate_veil) `リファレンス`
 
 ## 関連概念
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 語彙が近い
-- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 語彙が近い
 - [[bizlaw-antitrust-predatory-pricing|略奪的価格設定と競争法——シャーマン法・EU競争法における市場支配的企業の価格濫用規制]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
-- [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — 同分野の近傍
-- [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 同分野の近傍
+- [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

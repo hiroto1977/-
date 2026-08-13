@@ -33,7 +33,6 @@ aliases:
 - [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同分野の近傍
 - [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
-- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

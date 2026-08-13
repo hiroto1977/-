@@ -18,7 +18,7 @@ tags:
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — White&Epston1990—NarrativeMeanstoTherapeuticEnds,W.W.Norton
 - [[human-narrative-therapy|ナラティブ・セラピー]] — White,M.&Epston,D.(1990)NarrativeMeanstoTherapeuticEnds,W.W.Norton
 - [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — Erikson,E.H.(1950)ChildhoodandSociety—W.W.Norton
-- [[infosoc-platform-economy|プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造]] — Parker,VanAlstyne&Choudary2016—PlatformRevolution,W.W.Norton&Company
+- [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — Parker,VanAlstyne&Choudary2016—PlatformRevolution,W.W.Norton&Company
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — Townsend2013—SmartCities:BigData,CivicHackers,andtheQuestforaNewUtopi…
 
 ## 関連

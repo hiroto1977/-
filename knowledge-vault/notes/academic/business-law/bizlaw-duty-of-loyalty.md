@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 語彙が近い
 - [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 語彙が近い
 - [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

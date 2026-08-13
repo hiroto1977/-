@@ -39,7 +39,7 @@ aliases:
 - [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
 - [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同分野の近傍
-- [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同分野の近傍
+- [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

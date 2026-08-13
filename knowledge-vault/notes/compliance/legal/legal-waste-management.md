@@ -31,8 +31,8 @@ aliases:
 - [東京都環境局 排出事業者の責務](https://www.kankyo.metro.tokyo.lg.jp/resource/industrial_waste/on_waste/sekimu) `自治体`
 
 ## 関連概念
-- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 語彙が近い
 - [[legal-food-sanitation|食品衛生法の営業許可・届出とHACCPに沿った衛生管理]] — 語彙が近い
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — 出典を共有
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]] — 出典を共有
 - [[legal-container-recycling|容器包装リサイクル法における特定事業者の再商品化義務]] — 出典を共有
@@ -40,7 +40,7 @@ aliases:
 - [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 出典を共有
 - [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
-- [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
+- [[subsidy-zeh|ZEH支援事業]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

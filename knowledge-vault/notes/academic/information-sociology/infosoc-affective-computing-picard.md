@@ -26,7 +26,7 @@ aliases:
 ロザリンド・ピカード ／ ポール・エクマン ／ ジョナサン・グルーバー ／ テイ・ジャン
 
 ## 出典
-- [Picard (1997) Affective Computing — MIT Press](https://doi.org/10.1145/2494091) `学術`
+- [Picard (1997) Affective Computing — MIT Press](https://doi.org/10.7551/mitpress/1140.001.0001) `学術`
 - [EU (2024) AI Act — Regulation 2024/1689](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689) `公的`
 - [Wikipedia: Affective computing — 感情認識AIの技術と倫理](https://en.wikipedia.org/wiki/Affective_computing) `リファレンス`
 

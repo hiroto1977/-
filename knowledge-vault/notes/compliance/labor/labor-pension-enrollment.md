@@ -40,7 +40,7 @@ aliases:
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]] — 出典を共有
 - [[subsidy-pension-support-benefit|年金生活者支援給付金]] — 出典を共有
-- [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 同分野の近傍
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 258
+cite_count: 288
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **258 件**（公的 258）
+> [!info] 出典ドメイン索引 ・ 引用 **288 件**（公的 288）
 
 ## このドメインを出典とする項目
 
@@ -35,6 +35,7 @@ tags:
 - [[eh-1989|1989年（昭和64/平成元年）]] — 国税庁—消費税の沿革（1989/4/1税率3%で導入）
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]] — 国税庁No.5231確定給付企業年金等に係る課税関係
 - [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 国税庁質疑応答事例請負の意義
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 国税庁No.7100課税文書に該当するかどうかの判断
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 国税庁電磁的記録の印紙税の取扱い
 - [[legal-employee-invention|職務発明（特許法35条）]] — 名古屋国税局職務発明の相当の利益の税務上の取扱い
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 国税庁社会保障・税番号制度の概要
@@ -62,8 +63,10 @@ tags:
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]] — 国税庁外国子会社合算税制に関するQ&A
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁No.2026確定申告を間違えたとき
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 国税庁更正の請求期間の延長等について
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁D1-2消費税申告期限延長届出手続
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6137課税期間（個人事業者）
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6601申告と納税
+- [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6609中間申告の方法（回数とみなし申告）
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 国税庁No.6610法人の消費税確定申告書の提出期限
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 国税庁No.6609中間申告の方法
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 国税庁消費税の中間申告制度
@@ -75,10 +78,13 @@ tags:
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁C1-19青色申告書の承認の申請
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁No.5100新設法人の届出書類
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 国税庁No.5762青色申告と欠損金の繰越控除
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁C1-33減価償却資産の償却方法の届出
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁No.5100新設法人の届出書類
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁源泉所得税の納期の特例の承認に関する申請
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 国税庁青色申告の承認申請
 - [[tax-corp-interim-return|法人税の中間申告]] — 国税庁中間（予定）税額の算出
 - [[tax-corp-interim-return|法人税の中間申告]] — 国税庁予定申告及び納税の義務
+- [[tax-corp-interim-return|法人税の中間申告]] — 国税庁法人税のあらましと申告の手引（中間申告）
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 国税庁C1-1法人税の申告
 - [[tax-corp-tax-return-deadline|法人税の確定申告・納付期限]] — 国税庁C1-17申告期限の延長の特例
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 国税庁No.5759法人税の税率
@@ -101,19 +107,26 @@ tags:
 - [[tax-dividends-received|受取配当等の益金不算入]] — 国税庁受取配当等の益金不算入（株式区分と不算入割合）
 - [[tax-dividends-received|受取配当等の益金不算入]] — 国税庁法人税基本通達受取配当等の益金不算入
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 国税庁No.5281寄附金の損金不算入
+- [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 国税庁No.5283特定公益増進法人に対する寄附金
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1150寄附金控除
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1155ふるさと納税（寄附金控除）
 - [[tax-donation-deduction-individual|所得税の寄附金控除（個人）]] — 国税庁No.1260政党等寄附金特別控除（税額控除）
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1145地震保険料控除
 - [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁No.1146地震保険料控除の対象契約
+- [[tax-earthquake-insurance-deduction|地震保険料控除]] — 国税庁地震保険料控除に関する経過措置
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和5年度税制改正による電子帳簿保存法の改正事項
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁令和6年1月からの電子取引データの保存方法
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子取引データを適切に保存できていますか
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿保存法一問一答【電子取引関係】
 - [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 国税庁電子帳簿等保存制度特設サイト
 - [[tax-employment-income-deduction|給与所得控除]] — 国税庁No.1410給与所得控除
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁令和7年度税制改正による所得税の基礎控除の見直し等について
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁令和7年度税制改正（基礎控除・給与所得控除・特定親族特別控除）
+- [[tax-employment-income-deduction|給与所得控除]] — 国税庁給与所得控除後の給与等の金額の表
 - [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5265交際費等の損金不算入
-- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費FAQ
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁No.5800大法人の100％子法人等における中小企業向け特例措置の不適用
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁令和6年度税制改正交際費等の損金不算入制度の見直し
+- [[tax-entertainment-expense|交際費等の損金不算入と中小法人特例]] — 国税庁接待飲食費に関するFAQ
 - [[tax-entertainment-expense-meal-threshold|交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）]] — 国税庁タックスアンサーNo.5265交際費等の範囲と損金不算入額の計算
 - [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁No.2040予定納税
 - [[tax-estimated-prepayment|所得税の予定納税]] — 国税庁予定納税（第1期分）
@@ -131,8 +144,10 @@ tags:
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 国税庁ふるさと納税をされた方へ
 - [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 国税庁No.4452夫婦間の居住用不動産贈与の配偶者控除
 - [[tax-gift-spouse-deduction|贈与税の配偶者控除（おしどり贈与）]] — 国税庁贈与税の配偶者控除の特例（概要・要件）
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4161贈与財産の加算と税額控除（暦年課税・7年加算）
 - [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4402贈与税がかかる場合
 - [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁No.4408贈与税の計算と税率（暦年課税）
+- [[tax-gift-tax-annual|贈与税の暦年課税（基礎控除110万円）]] — 国税庁相続税及び贈与税の税制改正のあらまし（令和5年6月）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 国税庁グローバル・ミニマム課税関係
 - [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 国税庁グループ法人税制質疑応答事例
 - [[tax-group-corporate|グループ法人税制（完全支配関係への強制適用）]] — 国税庁法人税基本通達完全支配関係がある法人間の寄附金
@@ -172,7 +187,9 @@ tags:
 - [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]] — 国税庁No.1463株式等を譲渡したときの課税
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 国税庁C1-52欠損金の繰戻し還付の請求
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 国税庁No.5763欠損金の繰戻しによる還付
-- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5762欠損金の繰越控除
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5100新設法人の届出書類（青色申告の承認）
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5762青色申告書を提出した事業年度の欠損金の繰越控除
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 国税庁No.5763欠損金の繰戻しによる還付
 - [[tax-loss-offsetting|所得税の損益通算]] — 国税庁No.1391不動産所得が赤字のときの通算
 - [[tax-loss-offsetting|所得税の損益通算]] — 国税庁No.2250損益通算
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 国税庁No.5403少額の減価償却資産の判定
@@ -182,7 +199,10 @@ tags:
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁No.6531新規設立法人の届出
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 国税庁質疑応答特定新規設立法人の特例
 - [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁No.5211役員に対する給与
-- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期同額給与
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁役員給与に関するQ&A（業績悪化改定事由等）
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁法人税基本通達第3款定期同額給与
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例定期給与の額を改定した場合の損金不算入額
+- [[tax-officer-remuneration|役員給与の損金算入（3類型）]] — 国税庁質疑応答事例届出書の記載額と異なる支給をした場合
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁No.5211役員に対する給与
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法人税基本通達第7款退職給与
 - [[tax-officer-retirement|役員退職給与の損金算入]] — 国税庁法令解釈通達役員給与等
@@ -206,8 +226,12 @@ tags:
 - [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 国税庁No.3208長期譲渡所得の税額の計算
 - [[tax-real-estate-capital-gains|土地・建物等の譲渡所得の課税]] — 国税庁No.3211短期譲渡所得の税額の計算
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁No.7105金銭の受取書・領収書
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁No.7125営業に関しない受取書
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁No.7131印紙税を納めなかったとき（過怠税）
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁クレジット販売の領収書
+- [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 国税庁消費税額等が区分記載された受取書
 - [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁No.6102軽減税率制度
+- [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁軽減税率制度に関するQ&A（個別事例編）
 - [[tax-reduced-rate|消費税の軽減税率制度]] — 国税庁軽減税率制度の概要
 - [[tax-registration-license-tax|登録免許税の概要]] — 国税庁No.7191登録免許税の税額表
 - [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 国税庁特定同族会社の特別税率（留保金課税）
@@ -216,11 +240,14 @@ tags:
 - [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 国税庁暮らしの税情報退職金と税
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 国税庁スキャナ保存の適用要件
 - [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 国税庁スキャナ保存一問一答
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 国税庁スキャナ保存関係（特設サイト）
+- [[tax-scanner-storage|電子帳簿保存法のスキャナ保存制度]] — 国税庁電子帳簿保存法の内容が改正されました（令和5年度改正）
 - [[tax-securities-account|上場株式等の特定口座制度]] — 国税庁No.1476特定口座制度
 - [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 国税庁No.1129セルフメディケーション税制
 - [[tax-self-medication|セルフメディケーション税制（医療費控除の特例）]] — 国税庁No.1131通常の医療費控除との選択適用
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁D1-22消費税簡易課税制度選択届出手続
 - [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁No.6505簡易課税制度
-- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁消費税の届出
+- [[tax-simplified-consumption|消費税の簡易課税制度]] — 国税庁No.6629消費税の各種届出書
 - [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 国税庁No.5408中小企業者等の少額減価償却資産の特例
 - [[tax-small-business-mutual-aid|小規模企業共済制度]] — 国税庁No.1135小規模企業共済等掛金控除
 - [[tax-small-enterprise-mutual-aid|小規模企業共済等掛金控除]] — 国税庁No.1135小規模企業共済等掛金控除
@@ -230,6 +257,8 @@ tags:
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 国税庁No.5433中小企業投資促進税制
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 国税庁No.5434中小企業経営強化税制
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A1-5個人事業の開業・廃業等届出手続
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A1-8所得税の青色申告承認申請手続
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁A2-7給与支払事務所等の開設・移転・廃止の届出
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 国税庁No.2090新たに事業を始めたときの届出
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 国税庁No.5433中小企業投資促進税制（特別償却又は税額控除）
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 国税庁No.1191配偶者控除
@@ -246,6 +275,7 @@ tags:
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]] — 国税庁No.1543税制非適格ストックオプションの課税
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 国税庁優良な電子帳簿の要件
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 国税庁電子帳簿保存法の概要
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 国税庁青色申告特別控除（65万円控除の要件）
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 国税庁法令解釈通達事前通知（74条の9〜11）
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 国税庁法令解釈通達質問検査権（74条の2〜6）
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]] — 国税庁税務調査手続に関するFAQ

@@ -27,14 +27,15 @@ aliases:
 
 ## 出典
 - [Morrison, E. W. & Milliken, F. J. (2000) Organizational Silence: A Barrier to Change and Development in a Pluralistic World — Academy of Management Review, 25(4), 706–725](https://www.semanticscholar.org/paper/Organizational-Silence%3A-A-Barrier-to-Change-and-in-Morrison-Milliken/5f80c0d72c5c5ef7be7bbd7c3527a90a29c7aa41) `学術`
-- [Dyne, L. V., Ang, S. & Botero, I. C. (2003) Conceptualizing Employee Silence and Employee Voice as Multidimensional Constructs — Journal of Management Studies, 40(6), 1359–1392](https://doi.org/10.5465/AMR.2003.10196792) `学術`
+- [Dyne, L. V., Ang, S. & Botero, I. C. (2003) Conceptualizing Employee Silence and Employee Voice as Multidimensional Constructs — Journal of Management Studies, 40(6), 1359–1392](https://doi.org/10.1111/1467-6486.00384) `学術`
 - [Milliken, F. J., Morrison, E. W. & Hewlin, P. F. (2003) An Exploratory Study of Employee Silence — Journal of Management Studies, 40(6), 1453–1476](https://www.semanticscholar.org/paper/Voice%2C-Silence%2C-and-Diversity-in-21st-Century-Milliken-Morrison/11b02aacd0cf8bb54d1fd8b3e0a4b26ed91f2fc5) `学術`
 - [Wikipedia: Organizational silence — antecedents, typology, and consequences for organizational learning](https://en.wikipedia.org/wiki/Organizational_silence) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-silence|組織における戦略的沈黙]] — 同分野の近傍
 - [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]] — 同分野の近傍
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同分野の近傍
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同分野の近傍
+- [[mgmt-strategic-silence|組織における戦略的沈黙]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

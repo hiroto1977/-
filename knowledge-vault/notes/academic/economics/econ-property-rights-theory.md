@@ -33,12 +33,12 @@ aliases:
 - [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]] — 語彙が近い
 - [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同じ思想家
 - [[econ-hold-up-problem-williamson|ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く]] — 同じ思想家
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同じ思想家
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — 同じ思想家
 
 ## 関連

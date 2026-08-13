@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
 - [[econ-time-preference|時間選好]] — 出典を共有
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
-- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
+- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

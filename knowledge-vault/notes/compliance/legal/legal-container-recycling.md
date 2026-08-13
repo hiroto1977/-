@@ -40,7 +40,7 @@ aliases:
 - [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
 - [[subsidy-zeh|ZEH支援事業]] — 出典を共有
-- [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 同分野の近傍
+- [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

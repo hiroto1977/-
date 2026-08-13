@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 同分野の近傍
-- [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
+- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同分野の近傍
 - [[mgmt-just-in-time-ohno|ジャストインタイム——必要なものを必要なときに必要なだけ生産する]] — 同分野の近傍
 
 ## 関連

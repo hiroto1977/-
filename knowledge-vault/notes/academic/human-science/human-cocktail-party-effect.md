@@ -35,7 +35,6 @@ aliases:
 - [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同じ思想家
 - [[human-navon-global-precedence|大域優先性（ナヴォン）——「木を見る前に森を見る」知覚]] — 同じ思想家
 - [[human-reciprocal-altruism|互恵的利他主義]] — 同分野の近傍
-- [[human-interference-theory|干渉理論：記憶の忘却メカニズムにおける順向・逆向干渉]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

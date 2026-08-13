@@ -30,15 +30,16 @@ aliases:
 - [Wikipedia: General equilibrium theory — welfare theorems](https://en.wikipedia.org/wiki/General_equilibrium_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 語彙が近い
 - [[econ-general-equilibrium|一般均衡理論]] — 語彙が近い
 - [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
 - [[econ-walras-law|ワルラスの法則]] — 同じ思想家
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-ces-production|CES生産関数]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

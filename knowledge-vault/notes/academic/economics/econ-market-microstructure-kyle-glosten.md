@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Market microstructure — 市場マイクロストラクチャーの概説](https://en.wikipedia.org/wiki/Market_microstructure) `リファレンス`
 
 ## 関連概念
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — 同じ思想家
 - [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家

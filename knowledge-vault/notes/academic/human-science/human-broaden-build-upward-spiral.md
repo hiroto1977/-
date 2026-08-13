@@ -26,7 +26,7 @@ aliases:
 バーバラ・フレデリクソン ／ トーマス・ジョイナー ／ ソニア・リュボミルスキー ／ マイケル・コーン
 
 ## 出典
-- [Fredrickson, B. L. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science](https://doi.org/10.1037/0022-3514.82.1.172) `学術`
+- [Fredrickson, B. L. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science](https://doi.org/10.1111/1467-9280.00431) `学術`
 - [Fredrickson, B. L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist](https://doi.org/10.1037/0003-066X.56.3.218) `学術`
 - [Wikipedia: Broaden-and-build — positive emotions and upward spiral dynamics overview](https://en.wikipedia.org/wiki/Broaden-and-build) `リファレンス`
 

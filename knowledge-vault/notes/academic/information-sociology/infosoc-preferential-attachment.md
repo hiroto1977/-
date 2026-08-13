@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
+- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

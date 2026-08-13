@@ -39,6 +39,7 @@ Wesley M. Cohen ／ Daniel A. Levinthal ／ Shaker A. Zahra ／ Gerard George
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 語彙が近い
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

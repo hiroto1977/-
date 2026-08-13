@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同分野の近傍
-- [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 同分野の近傍
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [Springer, Global Encyclopedia of Public Administration — Garbage-Can Model of Organizations](https://link.springer.com/referenceworkentry/10.1007/978-3-030-66252-3_62) `リファレンス`
 
 ## 関連概念
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同分野の近傍
-- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同分野の近傍
+- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 語彙が近い
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

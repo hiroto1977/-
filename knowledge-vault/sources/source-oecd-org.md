@@ -2,7 +2,7 @@
 title: "oecd.org"
 type: source-domain
 host: "oecd.org"
-cite_count: 26
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # oecd.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（公的 23 ・ リファレンス 3）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（公的 22 ・ リファレンス 3）
 
 ## このドメインを出典とする項目
 
@@ -27,7 +27,6 @@ tags:
 - [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — OECD(1998)"Technology,ProductivityandJobCreation"（スキルバイアス型技術変化と雇用・賃金格…
 - [[econ-transfer-pricing|移転価格税制]] — OECD—TransferPricingGuidelinesforMultinationalEnterprisesandTaxAdmini…
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — OECDTransferPricingGuidelines—独立企業間価格原則の公式ガイドライン
-- [[econ-transfer-pricing-multinational|移転価格と多国籍企業——国際的利益移転と課税管轄の経済分析]] — OECDTransferPricingGuidelinesforMultinationalEnterprisesandTaxAdminis…
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — OECDPolicyRoundtable,“Two-SidedMarkets”(2009)
 - [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — OECD(2017)"BasicIncomeasaPolicyOption:CanitAddUp?"（制度類型・財政影響・労働供給効果の国…
 - [[eh-1964|1964年（昭和39年）]] — OECDEconomicSurveys:Japan1964

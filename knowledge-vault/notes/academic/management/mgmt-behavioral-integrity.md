@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Simons（2002）がOrganization Scienceで提唱した概念で、マネジャーの言葉と行動の知覚された一致度を指す。道徳的特性としての誠実さとは異なり、フォロワーが観察する言行一致パターンとして定義され、信頼と業績を予測する。
+Simons（2002）がOrganization Scienceで提唱した概念で、マネジャーの言葉と行動の知覚された一致度を指す。道徳的特性としての誠実さとは異なり、フォロワーが観察する言行一致パターンとして定義され、信頼と業績を予測する。定義の要点は二つの切断にある——内容の善悪から切断され（悪い価値を一貫して実行しても行動的誠実性は高い）、本人の意図から切断される（守るつもりの約束も、状況変化で破れば知覚は毀損する）。ゆえに測定は常にフォロワー側の知覚で行われ、価値の表明が多いリーダーほど不一致の露出機会も増えるという「語ることのリスク」が導かれる。ホテルチェーンの実証（Simons ら）は、従業員が知覚する上司の言行一致がホテル間の信頼・コミットメント・離職率、さらに利益まで予測することを示し、僅かな知覚差が業績に増幅される経路（信頼→裁量的努力→顧客経験）を裏づけた。人種による知覚差（黒人従業員は言行不一致により敏感）という公正研究への接続も初期から論点になっている。20 年レビュー（Annual Review）は、心理的契約違反・倫理的リーダーシップとの弁別、危機時の「約束の再交渉」（守れない約束を早く言い直すほうが沈黙より知覚を守る）など実務的示唆を整理しており、変革の頻発する組織で「言ったことを守れる範囲でしか語らない」規律の理論的根拠になっている。
 
 ## 提唱者・初出
 Tony L. Simons ／ Edward C. Tomlinson ／ Quinetta M. Roberson
@@ -36,12 +36,12 @@ Tony L. Simons ／ Edward C. Tomlinson ／ Quinetta M. Roberson
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
-- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

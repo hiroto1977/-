@@ -2,7 +2,7 @@
 title: "komon-lawyer.jp"
 type: source-domain
 host: "komon-lawyer.jp"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # komon-lawyer.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（メディア 1）
 
 ## このドメインを出典とする項目
 
-- [[labor-legal-holiday|法定休日（労働基準法35条）]] — 労働基準法上の休日とは解説
 - [[labor-trial-period|試用期間の労働法上の取扱い]] — 試用期間の解雇・本採用拒否解説
 
 ## 関連

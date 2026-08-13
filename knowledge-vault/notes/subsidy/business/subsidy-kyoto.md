@@ -39,7 +39,7 @@ prefecture
 ## 関連概念
 - [[labor-collective-bargaining|団体交渉拒否の禁止（労働組合法7条）]] — 出典を共有
 - [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]] — 同分野の近傍
-- [[subsidy-kanagawa|中小企業生産性向上促進事業費補助金（神奈川県）]] — 同分野の近傍
+- [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 同分野の近傍
 - [[subsidy-tourism-revitalization|地域一体となった観光地・観光産業の再生・高付加価値化事業（観光庁）]] — 同分野の近傍
 
 ## 関連

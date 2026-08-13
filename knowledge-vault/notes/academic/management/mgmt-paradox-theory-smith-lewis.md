@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Smith & Lewis (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — Academy of Management Review](https://doi.org/10.5465/amr.2009.0223) `学術`
-- [Jarzabkowski, Lê & Van de Ven (2013) Responding to Competing Strategic Demands — Organization Science](https://doi.org/10.5465/19416520.2013.795155) `学術`
+- [Jarzabkowski, Lê & Van de Ven (2013) Responding to Competing Strategic Demands — Strategic Organization 11(3), 245–280](https://doi.org/10.1177/1476127013481016) `学術`
 - [Wikipedia: Paradox theory — 組織パラドックス理論の概説](https://en.wikipedia.org/wiki/Paradox_theory) `リファレンス`
 
 ## 関連概念
@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
 - [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
-- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

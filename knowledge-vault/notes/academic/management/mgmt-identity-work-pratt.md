@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Pratt, M. G. & Foreman, P. O. (2000) Classifying Managerial Responses to Multiple Organizational Identities — Academy of Management Review, 25(1), 18–42（アイデンティティ管理類型）](https://doi.org/10.2307/2666937) `学術`
 - [Ashforth, B. E. & Mael, F. (2004) Social Identity Theory and the Organization — Academy of Management Review, 14(1), 20–39（組織アイデンティティの社会的アイデンティティ理論との統合）](https://doi.org/10.5465/amr.2000.2791609) `学術`
-- [Ibarra, H. & Barbulescu, R. (2010) Identity as Narrative: Prevalence, Effectiveness, and Consequences of Narrative Identity Work in Macro Work Role Transitions — Academy of Management Review, 35(1), 135–154（物語的アイデンティティ・ワーク）](https://doi.org/10.1002/job.2064) `学術`
+- [Ibarra, H. & Barbulescu, R. (2010) Identity as Narrative: Prevalence, Effectiveness, and Consequences of Narrative Identity Work in Macro Work Role Transitions — Academy of Management Review, 35(1), 135–154（物語的アイデンティティ・ワーク）](https://doi.org/10.5465/amr.35.1.zok135) `学術`
 - [Wikipedia: Identity work — Pratt, Ashforth, identity threat, compartmentalization, socialization](https://en.wikipedia.org/wiki/Identity_work) `リファレンス`
 
 ## 関連概念
@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同じ思想家
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同じ思想家
 - [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
-- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,8 @@ Michael T. Hannan・John H. Freeman（AJS 82(5), 1977; ASR 49(2), 1984）／Arth
 ## 関連概念
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 同じ思想家
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同じ思想家
+- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同分野の近傍
+- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-paradox-of-embeddedness|埋め込みのパラドックス（Paradox of Embeddedness）]] — 同分野の近傍
 
 ## 関連

@@ -41,7 +41,7 @@ EU AI規制法（AI Act、規則(EU)2024/1689）は、人工知能システム�
 - [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 出典を共有
 - [[eh-2015|2015年（平成27年）]] — 出典を共有
 - [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
-- [[infosoc-explainable-ai|説明可能なAI（XAI）]] — 同分野の近傍
+- [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

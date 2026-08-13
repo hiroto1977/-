@@ -38,10 +38,10 @@ aliases:
 - [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
 - [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

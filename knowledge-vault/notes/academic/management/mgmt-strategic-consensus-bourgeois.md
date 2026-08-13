@@ -36,10 +36,9 @@ aliases:
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 同じ思想家
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同じ思想家
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同じ思想家
-- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
 - [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — 同分野の近傍
 - [[mgmt-zone-of-indifference-barnard|無関心圏——権威の受容理論と命令が受け入れられる範囲]] — 同分野の近傍
-- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同分野の近傍
 - [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]] — 同分野の近傍
 
 ## 関連

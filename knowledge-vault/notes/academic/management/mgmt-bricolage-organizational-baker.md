@@ -35,11 +35,9 @@ aliases:
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 語彙が近い
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同じ思想家
-- [[mgmt-organizational-routines|組織ルーチン]] — 同じ思想家
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
-- [[mgmt-effectuation-theory-sarasvathy|エフェクチュエーション理論——サラスバシーの熟達起業家の意思決定論理]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 
 ## 関連

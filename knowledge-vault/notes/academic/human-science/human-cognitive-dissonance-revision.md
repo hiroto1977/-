@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
 - [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同じ思想家
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
 - [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同じ思想家
+- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

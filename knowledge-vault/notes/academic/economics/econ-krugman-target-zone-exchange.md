@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Krugman, P. R. (1991) Target Zones and Exchange Rate Dynamics — Quarterly Journal of Economics](https://doi.org/10.2307/2937838) `学術`
-- [Svensson, L. E. O. (1992) An Interpretation of Recent Research on Exchange Rate Target Zones — Journal of Economic Perspectives](https://doi.org/10.1016/0022-1996(92)90064-R) `学術`
+- [Svensson, L. E. O. (1992) An Interpretation of Recent Research on Exchange Rate Target Zones — Journal of Economic Perspectives](https://doi.org/10.1257/jep.6.4.119) `学術`
 - [Wikipedia: Target zone model — exchange rate band and stabilization overview](https://en.wikipedia.org/wiki/Target_zone_model) `リファレンス`
 
 ## 関連概念

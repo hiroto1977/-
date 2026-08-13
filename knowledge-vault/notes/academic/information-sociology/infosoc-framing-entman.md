@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Framing (social sciences) — Entman, selection and salience, Goffman, vs agenda-setting](https://en.wikipedia.org/wiki/Framing_(social_sciences)) `リファレンス`
 
 ## 関連概念
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 語彙が近い
 - [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 同じ思想家
-- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
 - [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
 - [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家

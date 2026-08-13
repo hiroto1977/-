@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-07 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-エピステミック・コミュニティ（epistemic communities）は、共有された信念体系、因果性の理解、政策目標を持つ専門家ネットワークであり、知識の構築と社会への影響を媒介する。Haas（1992）の国際政治研究における概念から、Dunlop & Radaelli（2013）による政策分析への拡張により、エピステミック・コミュニティは、メディア、ガバナンス、組織内での情報流通と専門的権威の構築を説明する。専門家集団がいかに知識を共有し、集合的信念を形成し、組織・セクター間の境界を越えて専門知を流通させるかを明らかにする理論であり、デジタル時代の知識権力を理解する上で不可欠である。
+エピステミック・コミュニティ（epistemic communities）は、共有された規範的信念、因果関係の理解、妥当性の判断基準、そして共通の政策事業を持つ、承認された専門知を備えた専門家のネットワークである。Haas（1992）は、政策決定者が複雑で不確実な争点に直面したとき、何が問題で何が有効かの解釈枠組みを供給するのは誰かを問い、地中海行動計画の環境科学者群のように、専門家共同体が各国政府の内部に浸透して利益の再定義と国際的な政策協調を導く経路を示した——利益を所与とみる合理主義にも、権力配置に還元する現実主義にも解けない、知識を媒介とする影響力の理論化である。実践共同体（実践の共有）や擁護連合（価値の共有）とは、因果的信念と妥当性基準の共有によって区別される。Dunlop と Radaelli は政策学習の体系化の中で、専門家の教示による学習を他の学習様式と並置してその条件と限界を位置づけ、Cross（2013）は20年後の再検討として、コミュニティの内的凝集性・専門的権威・非公式ネットワークの度合いを変数として、EU 官僚や外交実務家など科学者以外の職業集団へ概念を拡張した。批判は、専門知の政治性と説明責任、コンセンサスが持つ排除機能、影響力の測定困難に向けられ、気候変動の IPCC やパンデミック下の専門家助言をめぐる分析、そしてデジタル環境で誰の知識が権威を得るかを問う情報社会学の視角へ引き継がれている。
 
 ## 提唱者・初出
 Haas, Peter M. （1992 International Organization）／Dunlop, Claire A. ／Radaelli, Claudio M. ／Adler, Emanuel
@@ -31,8 +31,8 @@ Haas, Peter M. （1992 International Organization）／Dunlop, Claire A. ／Rada
 - [Cross, M. K. D. (2013) Rethinking Epistemic Communities Twenty Years Later, Review of International Studies 39(1): 137–160](https://www.cambridge.org/core/journals/review-of-international-studies/article/abs/rethinking-epistemic-communities-twenty-years-later/C7057E942EAFAED773470752746F8454) `学術`
 
 ## 関連概念
-- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同分野の近傍
-- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

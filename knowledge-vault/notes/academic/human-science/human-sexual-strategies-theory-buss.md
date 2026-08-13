@@ -27,13 +27,13 @@ aliases:
 
 ## 出典
 - [Buss, D. M. & Schmitt, D. P. (1993) Sexual Strategies Theory: An Evolutionary Perspective on Human Mating — Psychological Review, 100(2), 204–232（SSTの原典）](https://doi.org/10.1037/0033-295X.100.2.204) `学術`
-- [Buss, D. M. et al. (1989) Sex Differences in Human Mate Preferences: Evolutionary Hypotheses Tested in 37 Cultures — Behavioral and Brain Sciences, 12(1), 1–14（37文化横断研究）](https://doi.org/10.1037/0022-3514.56.1.6) `学術`
-- [Eagly, A. H. & Wood, W. (1999) The Origins of Sex Differences in Human Behavior — American Psychologist, 54(6), 408–423（SST批判：社会構造モデル）](https://doi.org/10.1017/S0140525X01003939) `学術`
+- [Buss, D. M. et al. (1989) Sex Differences in Human Mate Preferences: Evolutionary Hypotheses Tested in 37 Cultures — Behavioral and Brain Sciences, 12(1), 1–14（37文化横断研究）](https://doi.org/10.1017/S0140525X00023992) `学術`
+- [Eagly, A. H. & Wood, W. (1999) The Origins of Sex Differences in Human Behavior — American Psychologist, 54(6), 408–423（SST批判：社会構造モデル）](https://doi.org/10.1037/0003-066X.54.6.408) `学術`
 - [Wikipedia: Sexual strategies theory — Buss & Schmitt, short/long-term mating, cross-cultural evidence, critique](https://en.wikipedia.org/wiki/Sexual_strategies_theory) `リファレンス`
 
 ## 関連概念
+- [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]] — 同分野の近傍
 - [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
-- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

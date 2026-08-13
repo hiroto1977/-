@@ -38,9 +38,9 @@ aliases:
 - [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]] — 同じ思想家
 - [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
-- [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
-- [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 同分野の近傍
+- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,6 +34,7 @@ aliases:
 - [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
+- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

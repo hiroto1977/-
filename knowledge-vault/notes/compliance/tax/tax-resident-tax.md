@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 語彙が近い
 - [[tax-corp-inhabitant-flat|法人住民税の均等割]] — 語彙が近い
-- [[bizlaw-local-tax-act|地方税法]] — 語彙が近い
 - [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 出典を共有
 - [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]] — 出典を共有
 - [[tax-city-planning-tax|都市計画税]] — 出典を共有
-- [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 出典を共有
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "journals.aom.org"
 type: source-domain
 host: "journals.aom.org"
-cite_count: 70
+cite_count: 66
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.aom.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **70 件**（学術 70）
+> [!info] 出典ドメイン索引 ・ 引用 **66 件**（学術 66）
 
 ## このドメインを出典とする項目
 
@@ -52,14 +52,10 @@ tags:
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — Miron-Spektor,Ingram,Keller,Smith&Lewis(2018)MicrofoundationsofOrgani…
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — Smith&Lewis(2011)TowardatheoryofparadoxAMR
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — Gehmanetal.(2014)—PositiveInstitutionalWork,AMR
-- [[mgmt-psychological-capital-luthans|サイコロジカル・キャピタル（心理的資本）]] — Luthans(2002)-PositiveOrganizationalBehavior.AcademyofManagementExecu…
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — Luthans(2002)PositiveOrganizationalBehavior—AcademyofManagementExecut…
 - [[mgmt-psychological-ownership|心理的所有感]] — Pierce,Kostova&Dirks(2001)“TowardaTheoryofPsychologicalOwnershipinOrg…
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Gersick(1991)RevolutionaryChangeTheories—AcademyofManagementReview16(…
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Romanelli&Tushman(1994)OrganizationalTransformationasPunctuatedEquili…
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — Gersick1991—AcademyofManagementReview
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — Romanelli&Tushman1994—AcademyofManagementJournal
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — Gersick(1991)-RevolutionaryChangeTheories:AMultilevelExplorationofthe…
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — Romanelli&Tushman(1994)-OrganizationalTransformationasPunctuatedEquil…
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — Sirmon,Hitt&Ireland(2007)ManagingFirmResourcesinDynamicEnvironments,A…
 - [[mgmt-sensemaking|センスメイキング]] — TheSocialProcessesofOrganizationalSensemaking—AcademyofManagementJour…
 - [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — AcademyofManagementReview—TeamImplicitCoordination&SMM

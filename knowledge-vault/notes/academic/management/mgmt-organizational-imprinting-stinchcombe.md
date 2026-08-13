@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 語彙が近い
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同じ思想家
-- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
+- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

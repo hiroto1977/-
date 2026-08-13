@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同分野の近傍
-- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同分野の近傍
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

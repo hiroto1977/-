@@ -35,7 +35,7 @@ Cameron, Kim S. （2004 Exploring the Relationships between Organizational Virtu
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同分野の近傍
-- [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — 同分野の近傍
+- [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

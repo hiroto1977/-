@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Diamond–Dybvig model — 銀行取付モデルの概説](https://en.wikipedia.org/wiki/Diamond%E2%80%93Dybvig_model) `リファレンス`
 
 ## 関連概念
-- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 語彙が近い
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同じ思想家
 - [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

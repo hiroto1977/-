@@ -2,7 +2,7 @@
 title: "repository.law.indiana.edu"
 type: source-domain
 host: "repository.law.indiana.edu"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # repository.law.indiana.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（学術 1）
 
 ## このドメインを出典とする項目
 
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]] — IndianaLawJournalVol.32—TheAttractiveNuisanceDoctrine(1956)
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — Birmingham,RobertL."BreachofContract,DamageMeasures,andEconomicEffici…
 
 ## 関連

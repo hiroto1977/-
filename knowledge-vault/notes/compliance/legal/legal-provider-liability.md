@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-provider-liability|プロバイダ責任制限法]] — 分野横断
 - [[labor-paid-leave-grant|年次有給休暇の付与]] — 出典を共有
 - [[legal-consumer-dpf|取引デジタルプラットフォーム消費者保護法]] — 同分野の近傍
-- [[legal-external-transmission|電気通信事業法の外部送信規律]] — 同分野の近傍
 - [[legal-interest-limit|利息制限法の上限金利]] — 同分野の近傍
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 同分野の近傍
 

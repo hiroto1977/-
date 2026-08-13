@@ -2,7 +2,7 @@
 title: "keiyaku-watch.jp"
 type: source-domain
 host: "keiyaku-watch.jp"
-cite_count: 6
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # keiyaku-watch.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（メディア 5 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（メディア 4 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -18,7 +18,6 @@ tags:
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 事業者による合理的配慮の提供の義務化（2024年4月施行）解説
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 契約ウォッチ「危険負担とは？2020年4月施行改正ポイント解説」
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — KEIYAKU-WATCH化学物質管理者選任義務の解説
-- [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 賃金デジタル払いの解説
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — KEIYAKU-WATCH経済安全保障推進法の4制度と施行日解説
 
 ## 関連

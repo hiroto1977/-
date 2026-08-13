@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 出典を共有
 - [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 同分野の近傍
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
+- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

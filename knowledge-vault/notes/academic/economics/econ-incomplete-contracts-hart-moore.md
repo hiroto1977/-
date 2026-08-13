@@ -35,10 +35,10 @@ aliases:
 - [[econ-grossman-hart-takeover-free-rider|グロスマン＝ハートのフリーライダー問題——企業買収を阻む小株主の便乗]] — 同じ思想家
 - [[econ-hold-up-problem-williamson|ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く]] — 同じ思想家
 - [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 同じ思想家
+- [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]] — 同じ思想家
-- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
 
 ## 関連

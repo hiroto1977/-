@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 語彙が近い
-- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
+- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 語彙が近い
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
 - [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家

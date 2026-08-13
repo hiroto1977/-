@@ -41,7 +41,6 @@ IS-LM分析：政府支出増→IS右シフト→利子率上昇→民間投資�
 - [[econ-price-elasticity-demand|需要の価格弾力性]] — 出典を共有
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同分野の近傍
 - [[econ-stagflation|スタグフレーション]] — 同分野の近傍
-- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

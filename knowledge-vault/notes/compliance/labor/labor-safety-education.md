@@ -36,7 +36,8 @@ aliases:
 - [[labor-mandatory-retirement-age|定年年齢の下限（60歳未満定年の禁止）]] — 出典を共有
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
-- [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
+- [[labor-foreign-employment-report|外国人雇用状況の届出]] — 同分野の近傍
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 同分野の近傍
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
 - [[labor-retirement-mutual-aid|中小企業退職金共済制度（中退共）]] — 同分野の近傍
 

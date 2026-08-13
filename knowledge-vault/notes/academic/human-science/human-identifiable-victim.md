@@ -33,9 +33,10 @@ Thomas Schelling（1968 "The Life You Save May Be Your Own"）／Deborah Small &
 - [[human-cultural-cognition|文化的認知と世界観による動機付けられた推論]] — 同じ思想家
 - [[human-hedonic-adaptation|快楽順応]] — 同じ思想家
 - [[infosoc-information-avoidance-theory|情報回避理論]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同分野の近傍
 - [[human-just-world-hypothesis-lerner|公正世界仮説——人は相応しい結果を得るという信念とその社会的帰結]] — 同分野の近傍
-- [[human-groupthink|集団思考（グループシンク, groupthink）]] — 同分野の近傍
 - [[human-cheerleader-effect|チアリーダー効果（集団魅力効果）]] — 同分野の近傍
+- [[human-groupthink|集団思考（グループシンク, groupthink）]] — 同分野の近傍
 - [[human-size-weight-illusion-charpentier|大きさ重さ錯覚（シャルパンティエ錯覚）——小さいほうが重く感じる]] — 同分野の近傍
 
 ## 関連

@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 出典を共有
 - [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 出典を共有
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同分野の近傍
-- [[infosoc-semantic-web|セマンティック・ウェブ]] — 同分野の近傍
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

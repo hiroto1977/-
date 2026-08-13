@@ -39,7 +39,7 @@ aliases:
 - [[eh-2007|2007年（平成19年）]] — 出典を共有
 - [[eh-2014|2014年（平成26年）]] — 出典を共有
 - [[econ-financial-contagion|金融コンタジオン：銀行間ネットワークのトポロジーとシステミックリスクの連鎖波及メカニズム]] — 同分野の近傍
-- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同分野の近傍
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同分野の近傍
-- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
+- [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

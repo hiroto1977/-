@@ -31,8 +31,8 @@ aliases:
 - [政府広報オンライン 社会保険の適用が拡大 従業員51人以上](https://www.gov-online.go.jp/article/202209/entry-10068.html) `公的`
 
 ## 関連概念
-- [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
 - [[labor-disability-employment-rate|障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）]] — 語彙が近い
+- [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有

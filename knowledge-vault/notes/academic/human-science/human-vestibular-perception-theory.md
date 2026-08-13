@@ -38,9 +38,9 @@ Robert Bárány（1914 ノーベル生理学・医学賞／カロリック検査
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
 - [[human-defense-mechanisms|防衛機制]] — 出典を共有
 - [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
+- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
 - [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
-- [[human-group-polarization|集団極性化]] — 出典を共有
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
 - [[human-mcgurk-effect|マガーク効果]] — 出典を共有
 - [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有

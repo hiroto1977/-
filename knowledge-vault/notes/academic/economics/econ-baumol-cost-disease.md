@@ -36,7 +36,6 @@ aliases:
 - [[econ-conditional-convergence|条件付き収束]] — 出典を共有
 - [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同分野の近傍
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同分野の近傍
-- [[econ-job-polarization|雇用の二極化とタスク・アプローチ（Job Polarization／Autor-Levy-Murnane 2003）——コンピュータ化は中位のルーティン職を掘り崩す]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

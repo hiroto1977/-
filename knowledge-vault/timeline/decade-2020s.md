@@ -2,14 +2,14 @@
 title: "2020年代"
 type: timeline-decade
 decade: 2020
-entry_count: 75
+entry_count: 74
 tags:
   - timeline
 ---
 
-# 2020年代 — 75 件
+# 2020年代 — 74 件
 
-- [[year-2020|2020年]]（23件）
+- [[year-2020|2020年]]（22件）
 - [[year-2021|2021年]]（4件）
 - [[year-2022|2022年]]（8件）
 - [[year-2023|2023年]]（7件）

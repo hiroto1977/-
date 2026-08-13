@@ -31,7 +31,7 @@ aliases:
 - [国税庁 国外財産調書及び財産債務調書の提出（QA）](https://www.nta.go.jp/taxes/shiraberu/shinkoku/qa/12.htm) `公的`
 
 ## 関連概念
-- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 同分野の近傍
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 同分野の近傍
 
 ## 関連

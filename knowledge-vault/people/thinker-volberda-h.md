@@ -2,7 +2,7 @@
 title: "Henk Volberda"
 type: thinker
 person_key: "volberda|h"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # Henk Volberda
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（2件）
 - [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — Cohen&Levinthal（1990）は、組織が外部知識を認識・同化・活用する能力として「吸収能力（absorpt…
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 戦略的柔軟性理論は、企業が環境の急激な変化に迅速かつ効果的に適応する組織能力を中心的な分析単位として捉える経営戦略論の…
-- [[mgmt-strategic-renewal-theory|戦略的再生理論]] — 確立した組織が経路依存的な戦略を根本的に刷新し環境変化に再適応するプロセスを説明する理論。
 
 ## 関連
 - 索引: [[人物索引]]

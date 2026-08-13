@@ -31,12 +31,12 @@ aliases:
 - [損害賠償責任の免除条項 解説](https://www.businesslawyers.jp/practices/262) `メディア`
 
 ## 関連概念
-- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 語彙が近い
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 分野横断
 - [[legal-standard-terms|定型約款（改正民法）]] — 同分野の近傍
+- [[legal-telemarketing-sales|電話勧誘販売（特定商取引法）]] — 同分野の近傍
+- [[legal-door-to-door-sales|訪問販売とクーリング・オフ（特定商取引法）]] — 同分野の近傍
 - [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]] — 同分野の近傍
 - [[legal-exaggerated-ad|通信販売における誇大広告等の禁止（特定商取引法）]] — 同分野の近傍
-- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 同分野の近傍
 - [[legal-consumer-contract-amendment|消費者契約法の令和4年改正（2023年6月施行）]] — 同分野の近傍
 
 ## 関連

@@ -31,16 +31,16 @@ aliases:
 - [Harvard University Press — Exit, Voice, and Loyalty (book page)](https://www.hup.harvard.edu/books/9780674276604) `学術`
 
 ## 関連概念
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
 - [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
+- [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 出典を共有
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 出典を共有
 - [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
 - [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — 出典を共有
-- [[econ-financialization|金融化——経済の金融部門支配]] — 出典を共有
-- [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 出典を共有
-- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 出典を共有
-- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 出典を共有
+- [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

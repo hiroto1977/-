@@ -31,9 +31,10 @@ aliases:
 - [Herzberg, F. (1968) “One More Time: How Do You Motivate Employees?” Harvard Business Review 46:53–62（原典, PubMed）](https://pubmed.ncbi.nlm.nih.gov/12545925/) `学術`
 
 ## 関連概念
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 語彙が近い
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同じ思想家
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同分野の近傍
+- [[mgmt-work-design-growth-model|職務設計成長モデル]] — 同分野の近傍
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 同分野の近傍
 
 ## 関連

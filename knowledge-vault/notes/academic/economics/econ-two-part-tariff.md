@@ -40,7 +40,7 @@ aliases:
 - [[human-core-knowledge|コア知識理論（Core Knowledge Theory）]] — 出典を共有
 - [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — 出典を共有
 - [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 同分野の近傍
-- [[econ-oi-quasi-fixed-labor|労働の準固定的生産要素（Oi の quasi-fixed factor）——雇用・訓練の固定費が労働を「半固定」にする]] — 同分野の近傍
+- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

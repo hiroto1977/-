@@ -34,9 +34,10 @@ aliases:
 - [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 同じ思想家
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
 - [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 同分野の近傍
-- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 同分野の近傍
+- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同分野の近傍
 - [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同分野の近傍
 - [[bizlaw-local-autonomy|地方自治法]] — 同分野の近傍
+- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

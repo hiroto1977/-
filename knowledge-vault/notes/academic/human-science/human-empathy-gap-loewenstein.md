@@ -28,20 +28,20 @@ aliases:
 ## 出典
 - [Loewenstein, G. (2005) Hot-Cold Empathy Gaps and Medical Decision Making — Health Psychology, 24(4), S49–S56](https://doi.org/10.1037/0033-2909.131.5.799) `学術`
 - [Van Boven, L. & Loewenstein, G. (2003) Social Projection of Transient Drive States — Personality and Social Psychology Bulletin, 29(9), 1159–1168](https://doi.org/10.1016/S0749-5978(03)00042-7) `学術`
-- [Loewenstein, G., O'Donoghue, T. & Rabin, M. (2003) Projection Bias in Predicting Future Utility — Quarterly Journal of Economics, 118(4), 1209–1248](https://doi.org/10.1007/BF00055525) `学術`
+- [Loewenstein, G., O'Donoghue, T. & Rabin, M. (2003) Projection Bias in Predicting Future Utility — Quarterly Journal of Economics, 118(4), 1209–1248](https://ideas.repec.org/a/oup/qjecon/v118y2003i4p1209-1248..html) `学術`
 - [Wikipedia: Empathy gap — hot-cold states, commitment devices, behavioral economics applications](https://en.wikipedia.org/wiki/Empathy_gap) `リファレンス`
 
 ## 関連概念
 - [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 語彙が近い
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
-- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
-- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — 同じ思想家
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[econ-january-effect|1月効果——株価が1月に異常な高収益を示す季節的アノマリー]] — 同じ思想家
+- [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

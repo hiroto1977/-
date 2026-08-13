@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同じ思想家
+- [[infosoc-moores-law|ムーアの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

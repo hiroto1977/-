@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-stakeholder-salience-mitchell-agle|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル]] — 同分野の近傍
+- [[mgmt-peter-principle|ピーターの法則]] — 同分野の近傍
 - [[mgmt-social-impact-bond|社会的インパクト・ボンド（SIB）]] — 同分野の近傍
 - [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同分野の近傍
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同分野の近傍

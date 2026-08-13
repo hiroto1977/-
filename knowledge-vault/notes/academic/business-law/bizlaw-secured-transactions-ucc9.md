@@ -39,9 +39,9 @@ aliases:
 - [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同じ思想家
 - [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同じ思想家
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]] — 出典を共有
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
+- [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

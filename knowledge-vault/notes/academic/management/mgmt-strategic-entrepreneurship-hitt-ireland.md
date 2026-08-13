@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Hitt et al. (2001) Strategic Entrepreneurship: Entrepreneurial Strategies for Wealth Creation — Strategic Management Journal](https://doi.org/10.1002/smj.263) `学術`
-- [Ireland, Hitt & Sirmon (2003) A Model of Strategic Entrepreneurship — Journal of Management](https://doi.org/10.1002/smj.557) `学術`
+- [Ireland, Hitt & Sirmon (2003) A Model of Strategic Entrepreneurship — Journal of Management](https://doi.org/10.1016/S0149-2063(03)00086-2) `学術`
 - [Wikipedia: Strategic entrepreneurship — 戦略的アントレプレナーシップの概説](https://en.wikipedia.org/wiki/Strategic_entrepreneurship) `リファレンス`
 
 ## 関連概念

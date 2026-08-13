@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
 - [[infosoc-glocalization-robertson|グローカリゼーション——グローバルとローカルの相互浸透と普遍／特殊の弁証法]] — 同じ思想家
 - [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
-- [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 同分野の近傍
+- [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

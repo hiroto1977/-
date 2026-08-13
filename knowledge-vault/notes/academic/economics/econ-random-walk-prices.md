@@ -39,7 +39,7 @@ aliases:
 - [[econ-uncovered-interest-parity-fama|カバーなし金利平価とフォワード・プレミアム・パズル]] — 同じ思想家
 - [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
-- [[econ-pecking-order-theory-myers|ペッキングオーダー理論——情報の非対称が規定する資金調達の優先順位]] — 同分野の近傍
+- [[econ-momentum-jegadeesh-titman|モメンタム効果——過去の勝者が勝ち続ける市場の異常現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

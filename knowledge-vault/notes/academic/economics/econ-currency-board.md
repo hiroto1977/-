@@ -31,10 +31,9 @@ aliases:
 - [Wikipedia — Currency board](https://en.wikipedia.org/wiki/Currency_board) `リファレンス`
 
 ## 関連概念
-- [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同分野の近傍
 - [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
+- [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同分野の近傍
 - [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — 同分野の近傍
-- [[econ-target-zone|ターゲット・ゾーン（為替レート目標帯モデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

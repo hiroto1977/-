@@ -37,9 +37,9 @@ Byrne v. Boadle（1863・2 H&C 722／159 ER 299・法理確立の記念碑的判
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 出典を共有
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

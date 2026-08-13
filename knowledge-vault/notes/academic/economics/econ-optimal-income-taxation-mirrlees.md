@@ -32,8 +32,6 @@ aliases:
 - [Nobel Prize 1996: James Mirrlees — prize motivation and scientific background on optimal taxation](https://www.nobelprize.org/prizes/economic-sciences/1996/mirrlees/facts/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-paradox-of-success|成功のパラドクス]] — 語彙が近い
-- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 語彙が近い
 - [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
 - [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
@@ -42,6 +40,8 @@ aliases:
 - [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
 - [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+- [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

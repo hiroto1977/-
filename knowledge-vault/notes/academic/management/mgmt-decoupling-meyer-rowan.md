@@ -30,14 +30,15 @@ aliases:
 - [Wikipedia: Institutional theory — Meyer & Rowan, rational myths, decoupling, legitimacy, loose coupling](https://en.wikipedia.org/wiki/Institutional_theory) `リファレンス`
 
 ## 関連概念
+- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 語彙が近い
 - [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 同じ思想家
-- [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同じ思想家
 - [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同じ思想家
 - [[mgmt-institutional-isomorphism|制度的同型化]] — 同じ思想家
 - [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
 - [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同分野の近傍
+- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

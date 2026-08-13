@@ -38,7 +38,7 @@ aliases:
 - [[human-psychological-reactance-brehm|心理的リアクタンス理論——自由の脅威に対する動機づけ的反発]] — 同じ思想家
 - [[human-reactance-brehm|心理的リアクタンス——自由の脅威が回復への動機づけと反発を喚起する]] — 同じ思想家
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

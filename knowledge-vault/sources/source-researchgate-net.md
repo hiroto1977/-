@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 54
+cite_count: 50
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **54 件**（学術 47 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 43 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -19,7 +19,6 @@ tags:
 - [[econ-ces-production|CES生産関数]] — TheOriginsoftheCESProductionFunction（Arrow-Chenery-Minhas-Solow1961の出…
 - [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — ResearchGaterecordofEaton&Lipsey(1975)—fullpapermetadataandabstract,p…
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — LeGrand&Hagemann—BusinessCyclesinJuglarandSchumpeter—ResearchGate
-- [[econ-loanable-funds-theory|貸付可能資金理論（ネオクラシカル利子率理論）]] — ResearchGate—Wicksellonclassicaltheoriesofmoney,credit,andinterest
 - [[econ-user-cost-of-capital|資本の使用者費用]] — Jorgenson,"CapitalTheoryandInvestmentBehavior,"AmericanEconomicReview…
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — Bosbachetal.(2005)Full-TextPDF—ResearchGate
 - [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — Conway&Pleydell-Pearce(2000)TheConstructionofAutobiographicalMemories…
@@ -33,14 +32,11 @@ tags:
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2005)CommunicativeCapitalism—ResearchGate
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — MichaelWarner,"PublicsandCounterpublics"(2002)
 - [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—ResearchGate
-- [[infosoc-diffusion-of-innovations-digital|イノベーション普及理論（デジタル拡張）]] — Rogers/Bass/Mooreの普及理論比較
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — Wardle&Derakhshan(2017)InformationDisorder—CouncilofEurope/ResearchGa…
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—ResearchGate
-- [[infosoc-logic-of-connective-action|コネクティブ・アクションの論理（Logic of Connective Action）]] — Bennett&Segerberg(2012)—ResearchGate
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate
 - [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate
-- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]] — Lupton,"Self-TrackingforHealthandtheQuantifiedSelf:Re-ArticulatingAut…
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — AnApplicationofDavidA.Aaker'sBrandIdentityPlanningModel（査読付ケーススタディ）
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Cohen&Levinthal(1990)fulltext&citations
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Zahra&George(2002)fulltext&citations

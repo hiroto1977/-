@@ -35,12 +35,12 @@ aliases:
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
 - [[human-defense-mechanisms|防衛機制]] — 出典を共有
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
-- [[human-group-polarization|集団極性化]] — 出典を共有
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
 - [[human-mcgurk-effect|マガーク効果]] — 出典を共有
 - [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
 - [[human-neuroplasticity-theory|神経可塑性理論]] — 出典を共有
-- [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 出典を共有
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 出典を共有
+- [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

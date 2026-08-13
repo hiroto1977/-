@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 出典を共有
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 出典を共有
 - [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同分野の近傍
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同分野の近傍
 
 ## 関連

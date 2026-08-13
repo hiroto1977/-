@@ -27,7 +27,7 @@ EU一般データ保護規則（GDPR、2016年制定、2018年施行）は、個
 
 ## 出典
 - [European Parliament (2016) Regulation 2016/679 (GDPR) — EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj) `公的`
-- [Kuner, C. (2020) Transborder Data Flows and Data Privacy Law — Oxford University Press](https://doi.org/10.1017/9781108292825) `学術`
+- [Kuner, C. (2013) Transborder Data Flows and Data Privacy Law — Oxford University Press](https://academic.oup.com/book/5440) `学術`
 - [Wikipedia: GDPR — 一般データ保護規則の概要](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation) `リファレンス`
 
 ## 関連概念

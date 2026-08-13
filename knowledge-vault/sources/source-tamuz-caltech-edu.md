@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[infosoc-information-cascade|情報カスケード]] — Bikhchandani&Hirshleifer,"InformationCascadesandSocialLearning"（Calte…
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）]] — Bikhchandani&Hirshleifer,"InformationCascadesandSocialLearning"（Calte…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

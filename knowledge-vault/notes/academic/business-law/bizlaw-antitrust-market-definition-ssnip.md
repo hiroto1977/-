@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Hypothetical monopolist test (SSNIP) — market definition, antitrust analysis](https://en.wikipedia.org/wiki/Hypothetical_monopolist_test) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 語彙が近い
 - [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同じ思想家
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
 - [[econ-experience-goods-nelson|探索財・経験財・信用財——品質評価の時点による財の三分類]] — 同じ思想家
@@ -38,6 +37,7 @@ aliases:
 - [[econ-peltzman-effect-risk-compensation|ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺]] — 同じ思想家
 - [[econ-regulatory-capture-stigler|規制の虜——規制が被規制産業の利益のために運営される現象]] — 同じ思想家
 - [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — 同じ思想家
+- [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同分野の近傍
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同分野の近傍
 - [[bizlaw-defined-contribution-pension|確定拠出年金法]] — 同分野の近傍
 

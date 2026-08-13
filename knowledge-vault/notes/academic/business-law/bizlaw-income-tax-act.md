@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-income-categories|所得税における所得の10種類の区分]] — 語彙が近い
-- [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
+- [[bizlaw-corporation-tax|法人税法]] — 語彙が近い
 - [[bizlaw-inheritance-tax|相続税法]] — 同分野の近傍
 
 ## 関連

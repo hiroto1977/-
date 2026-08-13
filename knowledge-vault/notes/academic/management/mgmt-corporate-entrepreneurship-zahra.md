@@ -27,17 +27,18 @@ aliases:
 
 ## 出典
 - [Zahra, S. A. (1991) Predictors and Financial Outcomes of Corporate Entrepreneurship — Journal of Business Venturing, 6(4), 259–285（CEと財務業績の実証）](https://doi.org/10.1016/0883-9026(91)90028-7) `学術`
-- [Burgelman, R. A. (1983) A Process Model of Internal Corporate Venturing in the Diversified Major Firm — Administrative Science Quarterly, 28(2), 223–244（内部ベンチャー過程モデル）](https://doi.org/10.1002/smj.4250030104) `学術`
-- [Lumpkin, G. T. & Dess, G. G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance — Academy of Management Review, 21(1), 135–172（EO概念の体系化）](https://doi.org/10.1002/(SICI)1097-0266(199601)17:1<135::AID-SMJ2>3.0.CO;2-N) `学術`
+- [Burgelman, R. A. (1983) A Process Model of Internal Corporate Venturing in the Diversified Major Firm — Administrative Science Quarterly, 28(2), 223–244（内部ベンチャー過程モデル）](https://doi.org/10.2307/2392619) `学術`
+- [Lumpkin, G. T. & Dess, G. G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance — Academy of Management Review, 21(1), 135–172（EO概念の体系化）](https://doi.org/10.5465/amr.1996.9602161568) `学術`
 - [Wikipedia: Corporate entrepreneurship — Zahra, Burgelman, entrepreneurial orientation, intrapreneurship](https://en.wikipedia.org/wiki/Corporate_entrepreneurship) `リファレンス`
 
 ## 関連概念
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 語彙が近い
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 語彙が近い
-- [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 語彙が近い
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
 - [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
+- [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同分野の近傍
+- [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

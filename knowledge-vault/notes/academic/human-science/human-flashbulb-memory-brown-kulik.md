@@ -34,7 +34,6 @@ aliases:
 - [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同じ思想家
 - [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
 - [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同じ思想家
-- [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同分野の近傍
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同分野の近傍
 
 ## 関連

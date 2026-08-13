@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 語彙が近い
 - [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]] — 同じ思想家
-- [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 同分野の近傍
+- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

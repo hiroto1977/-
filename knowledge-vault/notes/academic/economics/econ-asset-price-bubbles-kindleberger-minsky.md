@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Minsky moment — financial instability hypothesis](https://en.wikipedia.org/wiki/Minsky_moment) `リファレンス`
 
 ## 関連概念
-- [[econ-asset-bubble|資産価格バブル]] — 語彙が近い
 - [[econ-speculative-bubbles-kindleberger|投機的バブルの解剖——キンドルバーガーのマニア＝パニック＝崩壊モデル]] — 語彙が近い
+- [[econ-asset-bubble|資産価格バブル]] — 語彙が近い
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同じ思想家
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同じ思想家
 - [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同じ思想家

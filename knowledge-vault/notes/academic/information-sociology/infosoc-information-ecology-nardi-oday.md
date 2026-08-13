@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
 - [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同じ思想家
-- [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]] — 同じ思想家
+- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

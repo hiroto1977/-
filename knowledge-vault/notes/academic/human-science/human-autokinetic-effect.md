@@ -31,15 +31,15 @@ aliases:
 
 ## 関連概念
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同じ思想家
-- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
-- [[human-obedience|権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。]] — 同じ思想家
+- [[human-obedience|権威への服従（オベディエンス）]] — 同じ思想家
 - [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
 - [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家
-- [[human-cognitive-dissonance-festinger|認知的不協和理論（フェスティンガー）]] — 同じ思想家
+- [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同じ思想家
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
+- [[human-mccollough-effect|マッカロー効果——方位に依存する持続的な色残効]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

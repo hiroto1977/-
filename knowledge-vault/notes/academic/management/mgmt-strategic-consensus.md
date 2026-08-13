@@ -38,7 +38,8 @@ aliases:
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 出典を共有
 - [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
-- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同分野の近傍
+- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同分野の近傍
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
 
 ## 関連

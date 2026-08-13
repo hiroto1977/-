@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Affective publics — emotional networks and digital mobilization overview](https://en.wikipedia.org/wiki/Affective_publics) `リファレンス`
 
 ## 関連概念
-- [[infosoc-connective-action-bennett|接続的行動論——デジタルネットワーク時代の個人化された政治参加]] — 語彙が近い
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 語彙が近い
 - [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同じ思想家
 - [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同じ思想家
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家

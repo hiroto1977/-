@@ -40,7 +40,6 @@ aliases:
 - [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
 - [[human-memory-reconsolidation-nader-schiller|記憶再固定化——想起時の記憶可塑性とトラウマ治療への応用]] — 同じ思想家
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 同分野の近傍
-- [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

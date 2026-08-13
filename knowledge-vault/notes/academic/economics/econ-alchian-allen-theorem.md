@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同じ思想家
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — 同じ思想家
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同分野の近傍

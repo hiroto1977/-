@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — 出典を共有
 - [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
-- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同分野の近傍
+- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
 - [[infosoc-explainable-ai|説明可能なAI（XAI）]] — 同分野の近傍
 
 ## 関連

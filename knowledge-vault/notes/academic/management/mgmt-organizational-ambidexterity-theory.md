@@ -29,8 +29,8 @@ James G. March ／ Michael L. Tushman ／ Charles A. O'Reilly III ／ Cristina B
 - [March, J.G. (1991). Exploration and Exploitation in Organizational Learning. Organization Science, 2(1), 71-87.](https://doi.org/10.2307/2634396) `学術`
 - [Tushman, M.L. & O'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.](https://doi.org/10.2307/41165933) `学術`
 - [Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.](https://doi.org/10.2307/30040758) `学術`
-- [Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.](https://doi.org/10.5465/amr.2008.31193540) `学術`
-- [O'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.](https://doi.org/10.1111/j.1467-8551.2009.00665.x) `学術`
+- [Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.](https://doi.org/10.1177/0149206308316058) `学術`
+- [O'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.](https://doi.org/10.5465/amp.2013.0025) `学術`
 
 ## 関連概念
 - [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 語彙が近い
@@ -39,10 +39,10 @@ James G. March ／ Michael L. Tushman ／ Charles A. O'Reilly III ／ Cristina B
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-org-change|断続平衡理論（組織変革）]] — 同じ思想家
-- [[mgmt-punctuated-equilibrium-theory|組織の断続平衡理論]] — 同じ思想家
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

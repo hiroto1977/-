@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — OIKELIBRARY—アパマンショップ最高裁判決と経営判断の原則
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — OIKELIBRARY—アパマンショップ最高裁判決と経営判断の原則
 - [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — OikeLibraryNo.47民法改正解説～弁済～（上里美登利弁護士）
 
 ## 関連

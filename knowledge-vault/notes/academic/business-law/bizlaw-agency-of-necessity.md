@@ -35,8 +35,7 @@ aliases:
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 同じ思想家
 - [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同じ思想家
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 同分野の近傍
-- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同分野の近傍
-- [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同分野の近傍
+- [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

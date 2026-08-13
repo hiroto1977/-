@@ -27,12 +27,10 @@ aliases:
 
 ## 出典
 - [Buchanan, J. & Tullock, G. (1962) The Calculus of Consent — University of Michigan Press](https://doi.org/10.3998/mpub.7687) `学術`
-- [Mueller, D. (2003) Public Choice III — Cambridge University Press](https://doi.org/10.1007/978-0-387-29907-7) `学術`
+- [Mueller, D. (2003) Public Choice III — Cambridge University Press](https://www.cambridge.org/highereducation/books/public-choice-iii/32B490B6DAE290EC773E4F4ACB7BB451) `学術`
 - [Wikipedia: Public choice — 公共選択論の概要](https://en.wikipedia.org/wiki/Public_choice) `リファレンス`
 
 ## 関連概念
-- [[mgmt-parkinsons-law|パーキンソンの法則]] — 語彙が近い
-- [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — 語彙が近い
 - [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
 - [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同じ思想家
 - [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
@@ -41,6 +39,8 @@ aliases:
 - [[econ-rent-seeking|レントシーキング]] — 同じ思想家
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
+- [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

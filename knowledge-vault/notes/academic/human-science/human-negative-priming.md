@@ -33,7 +33,6 @@ aliases:
 - [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
 - [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
 - [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
-- [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — 同分野の近傍
 - [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]] — 同分野の近傍
 - [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同分野の近傍
 

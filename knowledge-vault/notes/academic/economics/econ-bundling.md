@@ -31,7 +31,6 @@ William Adams & Janet Yellen（1976, QJE）／Yannis Bakos & Erik Brynjolfsson�
 - [Tying (commerce) — バンドリングと抱き合わせ（tying）・反トラスト法の区別](https://en.wikipedia.org/wiki/Tying_(commerce)) `リファレンス`
 
 ## 関連概念
-- [[econ-productivity-paradox|生産性パラドックス]] — 同じ思想家
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
@@ -39,8 +38,9 @@ William Adams & Janet Yellen（1976, QJE）／Yannis Bakos & Erik Brynjolfsson�
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
 - [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 出典を共有
-- [[mgmt-organizational-routines-feldman|動態的組織ルーティン論]] — 出典を共有
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 出典を共有
+- [[human-fresh-start-effect|フレッシュスタート効果]] — 出典を共有
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[eh-1977|1977年（昭和52年）]] — 出典を共有
-- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
 - [[infosoc-web3|Web3]] — 同分野の近傍
+- [[infosoc-playbour-kucklich|プレイバー——遊びと労働の境界が溶解しゲーム文化で価値を生む無償活動]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

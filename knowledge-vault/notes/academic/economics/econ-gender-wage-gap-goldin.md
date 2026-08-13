@@ -31,9 +31,8 @@ aliases:
 
 ## 関連概念
 - [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 同じ思想家
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
 - [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同分野の近傍
-- [[econ-cobra-effect|コブラ効果（意図せざる結果の法則）]] — 同分野の近傍
+- [[econ-okuns-law|オーカンの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

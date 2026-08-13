@@ -46,7 +46,7 @@ municipality
 - [[subsidy-high-cost-care|高額介護（予防）サービス費]] — 同じ思想家
 - [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 同じ思想家
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同じ思想家
-- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
+- [[subsidy-hiroshima|中小・ベンチャー企業チャレンジ応援事業助成金（広島県）]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

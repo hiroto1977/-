@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,9 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 出典を共有
-- [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 同分野の近傍
-- [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 同分野の近傍
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

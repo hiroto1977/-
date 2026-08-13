@@ -30,8 +30,9 @@ B・J・フォッグ（B. J. Fogg, Brian Jeffrey Fogg）／スタンフォード
 - [Stanford University Persuasive Technology Lab（Captology）— フォッグが創設した説得技術研究機関の公式サイト](https://captology.stanford.edu/) `学術`
 
 ## 関連概念
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 語彙が近い
 - [[mgmt-adkar|ADKARモデル]] — 同分野の近傍
-- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同分野の近傍
+- [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

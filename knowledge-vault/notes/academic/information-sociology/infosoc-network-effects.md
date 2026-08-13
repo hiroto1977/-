@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同分野の近傍
 - [[infosoc-metcalfe-law|メトカーフの法則]] — 同分野の近傍
+- [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

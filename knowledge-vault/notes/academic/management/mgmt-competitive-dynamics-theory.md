@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-企業は競合他社の行動に対し、その行動を認識し（Awareness）、対応する動機を持ち（Motivation）、実行能力を備える（Capability）場合に反応するとChenのAMCフレームワークは説明する。
+企業は競合他社の行動に対し、その行動を認識し（Awareness）、対応する動機を持ち（Motivation）、実行能力を備える（Capability）場合に反応するとChenのAMCフレームワークは説明する。Chen (1996) は競合分析の2概念——市場共通性（market commonality: どれだけ同じ市場で重なるか）と資源類似性（resource similarity）——を提示し、攻撃と応酬の起こりやすさが両者の組合せで予測できることを示した。市場の重なりが大きい相手には攻撃を自制する相互自制（mutual forbearance）が働きやすい。分析単位を企業ではなく個々の行動（action）と応酬（response）に置くのがこの理論の特徴で、行動の量・速さ・多様性・可視性が応酬の確率と遅delayを規定するという実証プログラムを生んだ。Chen, Su & Tsai (2007) は競争緊張（competitive tension）を AMC で測定し、Chen & Miller (2012, 2015) は競争を関係的・文化的文脈まで広げた relational view へ再概念化している。実務では、競合レスポンス予測（誰がいつ反撃してくるか）、多市場接触下の価格行動、スピードを競う攻撃設計（エアライン・小売の値付け戦争分析が古典例）に応用される。
 
 ## 提唱者・初出
 Ming-Jer Chen ／ Danny Miller ／ Ken G. Smith
@@ -32,6 +32,7 @@ Ming-Jer Chen ／ Danny Miller ／ Ken G. Smith
 - [Chen & Miller (2015) Reconceptualizing Competitive Dynamics — Strategic Management Journal 36(5)](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.2245) `学術`
 
 ## 関連概念
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 語彙が近い
 - [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — 同じ思想家
 - [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
@@ -40,8 +41,7 @@ Ming-Jer Chen ／ Danny Miller ／ Ken G. Smith
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
-- [[mgmt-strategic-factor-markets|戦略的要素市場理論]] — 出典を共有
-- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

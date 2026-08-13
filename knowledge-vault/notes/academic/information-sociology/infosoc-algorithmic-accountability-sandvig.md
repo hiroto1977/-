@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Sandvig et al. (2014) Auditing Algorithms: Research Methods for Detecting Discrimination on Internet Platforms — ICA Preconference](https://doi.org/10.1177/2053951714541861) `学術`
-- [Diakopoulos (2016) Accountability in Algorithmic Decision Making — Communications of the ACM](https://doi.org/10.1177/2053951716679679) `学術`
+- [Diakopoulos (2016) Accountability in Algorithmic Decision Making — Communications of the ACM](https://doi.org/10.1145/2844110) `学術`
 - [Wikipedia: Algorithmic accountability — アルゴリズムの説明責任と監査の概説](https://en.wikipedia.org/wiki/Algorithmic_accountability) `リファレンス`
 
 ## 関連概念

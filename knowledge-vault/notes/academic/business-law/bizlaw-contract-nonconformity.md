@@ -32,11 +32,9 @@ aliases:
 
 ## 関連概念
 - [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 分野横断
-- [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 出典を共有
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
-- [[legal-mailorder-return|通信販売の返品ルール（特定商取引法）]] — 出典を共有
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 同分野の近傍
 - [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — 同分野の近傍
-- [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 同分野の近傍
 - [[bizlaw-trust-act|信託法]] — 同分野の近傍
 
 ## 関連

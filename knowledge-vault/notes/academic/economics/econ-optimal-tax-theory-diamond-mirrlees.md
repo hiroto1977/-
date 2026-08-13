@@ -28,12 +28,13 @@ aliases:
 ## 出典
 - [Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）](https://doi.org/10.2307/2296458) `学術`
 - [Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208（所得税の最適設計）](https://doi.org/10.2307/2296779) `学術`
-- [Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）](https://doi.org/10.1162/003355301556339) `学術`
+- [Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）](https://doi.org/10.1111/1467-937X.00166) `学術`
 - [Wikipedia: Optimal tax — Diamond-Mirrlees, Ramsey rule, Mirrlees zero-top-rate theorem, Saez analysis](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 
 ## 関連概念
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 語彙が近い
 - [[econ-optimal-taxation-theory|最適課税理論]] — 語彙が近い
+- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 語彙が近い
 - [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
 - [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
 - [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
@@ -41,7 +42,6 @@ aliases:
 - [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
 - [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同じ思想家
-- [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

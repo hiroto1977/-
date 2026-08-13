@@ -39,6 +39,8 @@ prefecture
 ## 関連概念
 - [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 語彙が近い
+- [[subsidy-productivity-revolution|中小企業生産性革命推進事業]] — 語彙が近い
+- [[subsidy-ishikawa|小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

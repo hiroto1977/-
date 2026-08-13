@@ -39,7 +39,6 @@ aliases:
 - [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
 - [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]] — 同じ思想家
 - [[econ-trilemma-rodrik-globalization|グローバリゼーションの政治的トリレンマ——民主主義・国家主権・経済統合の不可能な三位一体]] — 同じ思想家
-- [[econ-dollar-hegemony-theory|ドル覇権理論]] — 同分野の近傍
 - [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
 
 ## 関連

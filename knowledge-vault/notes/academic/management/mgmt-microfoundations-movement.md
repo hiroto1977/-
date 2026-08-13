@@ -31,6 +31,7 @@ Teppo Felin & Nicolai J. Foss（Strategic Organization 3(4), 2005, ミクロ基�
 
 ## 関連概念
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同分野の近傍
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
 - [[mgmt-strategic-human-capital-theory|戦略的人的資本理論]] — 同分野の近傍
 
 ## 関連

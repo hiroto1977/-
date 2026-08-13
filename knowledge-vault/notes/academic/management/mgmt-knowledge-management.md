@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 語彙が近い
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 語彙が近い
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。]] — 語彙が近い
 - [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 語彙が近い
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
 

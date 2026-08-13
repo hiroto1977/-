@@ -32,8 +32,8 @@ aliases:
 - [厚生労働省 労働災害の発生と企業の責任](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei14/dl/081001-1b_0006.pdf) `公的`
 
 ## 関連概念
-- [[labor-collective-agreement|労働協約（労働組合法）]] — 同分野の近傍
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+- [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

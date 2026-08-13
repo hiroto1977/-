@@ -35,6 +35,9 @@ aliases:
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-algorithmic-governance-yeung|アルゴリズム統治——自動化された意思決定の社会的制御と民主的正統性]] — 同じ思想家
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — 同分野の近傍
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
+- [[infosoc-information-justice|情報正義]] — 同分野の近傍
+- [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

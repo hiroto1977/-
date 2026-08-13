@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Cameron・Dutton・Quinnが2003年にミシガン大学で提唱した経営学の研究動向。組織と構成員の繁栄・美徳・レジリエンス・ポジティブ逸脱などを科学的に探求し、人間の潜在能力の最善を理解する。
+Cameron・Dutton・Quinnが2003年にミシガン大学で提唱した経営学の研究動向。組織と構成員の繁栄・美徳・レジリエンス・ポジティブ逸脱などを科学的に探求し、人間の潜在能力の最善を理解する。問題解決・欠陥修正に偏ってきた組織研究に対し、「何がうまくいくときに起きているか」を問う視角の転換であり、ポジティブ逸脱（規範を上回る卓越）・高質のつながり（high-quality connections）・ジョブ・クラフティング・思いやり（compassion）の組織化などが代表的な研究対象になった。ルーサンスのポジティブ組織行動（POB）が個人の状態的強み（PsyCap）の測定・開発に焦点を当てるのに対し、POS は組織・集合レベルの美徳や繁栄の条件を広く扱い、必ずしも測定可能性を参入条件にしない点で守備範囲が異なる（両者は相補的とされる）。Caza & Caza (2008) は「ポジティブの定義が曖昧」「暗黒面を無視する」という批判に応答して研究プログラムとしての要件を整理し、ミシガン大学ロス校の Center for Positive Organizations が研究と実務移転（Positive Links 等）のハブとして機能している。エンゲージメント施策・強み基盤のマネジメント・組織のレジリエンス設計の理論的サポートとして実務にも浸透した。
 
 ## 提唱者・初出
 Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn
@@ -38,6 +38,8 @@ Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
+- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

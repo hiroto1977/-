@@ -33,8 +33,6 @@ aliases:
 ## 関連概念
 - [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
 - [[human-emotional-contagion|情動感染]] — 同分野の近傍
-- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同分野の近傍
-- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

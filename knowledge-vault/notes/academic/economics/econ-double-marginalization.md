@@ -32,8 +32,9 @@ aliases:
 
 ## 関連概念
 - [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
-- [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同分野の近傍
+- [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同分野の近傍
+- [[econ-piketty|ピケティの r>g（資本収益率と格差）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

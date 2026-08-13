@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 700
+entry_count: 682
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（700件）
+# 学習パス — 学術概念／ビジネス法務（682件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 68）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 49）
-- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 80）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 57）
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 38）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
-- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 31）
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 28）
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
-- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 27）
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
-- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]（接続 26）
-- [[bizlaw-agency|代理（民法99条）]]（接続 25）
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 25）
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 25）
+- [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
+- [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -62,6 +62,7 @@ tags:
 - 1876年: [[bizlaw-res-judicata|既判力（Res Judicata）]]
 - 1878年: [[bizlaw-nemo-dat-quod-non-habet|ネモ・ダット原則（Nemo Dat Quod Non Habet）]]
 - 1878年: [[bizlaw-renvoi|反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理]]
+- 1894年: [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]]
 - 1895年: [[bizlaw-exequatur|エクセクアトゥル（Exequatur）]]
 - 1897年: [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]]
 - 1899年: [[bizlaw-commercial-code|商法]]
@@ -238,10 +239,9 @@ tags:
 - 2017年: [[bizlaw-condition-suspensive|停止条件・解除条件]]
 - 2017年: [[bizlaw-contract-termination|契約の解除（民法541条・542条）]]
 - 2017年: [[bizlaw-dation-in-payment|代物弁済（民法482条）]]
-- 2017年: [[bizlaw-earnest-money|手付（民法557条）]]
 - 2017年: [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]]
 - 2017年: [[bizlaw-freedom-of-contract|契約自由の原則]]
-- 2017年: [[bizlaw-guarantee-obligation|保証債務（民法446条）]]
+- 2017年: [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]]
 - 2017年: [[bizlaw-joint-several-obligation|連帯債務（民法436条）]]
 - 2017年: [[bizlaw-mental-reservation|心裡留保（民法93条）]]
 - 2017年: [[bizlaw-novation|更改（民法513条）]]
@@ -251,11 +251,9 @@ tags:
 - 2017年: [[bizlaw-public-order|公序良俗（民法90条）]]
 - 2017年: [[bizlaw-release-of-debt|免除（民法519条）]]
 - 2017年: [[bizlaw-risk-bearing|危険負担（民法536条）]]
-- 2017年: [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]
 - 2017年: [[bizlaw-set-off|相殺（民法505条）]]
 - 2017年: [[bizlaw-simultaneous-performance|同時履行の抗弁権（民法533条）]]
 - 2017年: [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]]
-- 2017年: [[bizlaw-suretyship|保証契約・連帯保証（民法446条）]]
 - 2017年: [[bizlaw-tcfd|気候関連財務情報開示タスクフォース（TCFD）]]
 - 2018年: [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]]
 - 2018年: [[bizlaw-immigration-control|出入国管理及び難民認定法（入管法）]]
@@ -270,7 +268,6 @@ tags:
 - 2020年: [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]]
 - 2020年: [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]]
 - 2020年: [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]]
-- 2020年: [[bizlaw-equal-pay-equal-work|同一労働同一賃金（パートタイム・有期雇用労働法）]]
 - 2020年: [[bizlaw-financial-services-act|金融サービス提供法]]
 - 2020年: [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]]
 - 2020年: [[bizlaw-mistake|錯誤（民法95条）]]
@@ -298,6 +295,7 @@ tags:
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]]
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]]
+- [[bizlaw-agency|代理（民法99条）]]
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]]
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]]
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]
@@ -326,7 +324,6 @@ tags:
 - [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]]
 - [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]]
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]]
-- [[bizlaw-attractive-nuisance-doctrine|魅力的危険物法理]]
 - [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]]
 - [[bizlaw-balfour-v-balfour|バルフォア対バルフォア——「法的関係を創設する意思」と家庭内合意]]
 - [[bizlaw-banker-lien|銀行の留置権——一般残高を担保し売却権をともなう特別なリーエン]]
@@ -338,16 +335,14 @@ tags:
 - [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]]
 - [[bizlaw-bill-of-exchange-uncitral-convention|国際為替手形及び国際約束手形に関する条約——手形法の国際的統一の試み]]
 - [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]]
-- [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]]
 - [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]]
 - [[bizlaw-bolam-test|ボーラム・テスト——専門家の過失をめぐる注意義務の基準]]
 - [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]]
 - [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]]
 - [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]]
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]]
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]]
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]]
-- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]]
 - [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]]
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]]
 - [[bizlaw-caparo-v-dickman|カパロ対ディックマン——過失責任における「注意義務」の三段階テスト]]
@@ -356,8 +351,6 @@ tags:
 - [[bizlaw-cartel-regulation-antitrust-eu|カルテル規制——競争法における水平的共謀の禁止と制裁]]
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]]
 - [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]]
-- [[bizlaw-champerty-and-maintenance|シャンパティと訴訟支援禁止法理]]
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]]
 - [[bizlaw-charitable-trust-fiduciary|慈善法人・公益信託における受託者義務と公益性要件]]
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]]
 - [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]]
@@ -393,6 +386,7 @@ tags:
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]]
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]]
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]]
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]]
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]]
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]]
@@ -427,7 +421,6 @@ tags:
 - [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]]
 - [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]]
 - [[bizlaw-derivative-action-foss-harbottle|株主代表訴訟とフォス対ハーボトル原則]]
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]]
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]]
 - [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]]
@@ -446,7 +439,6 @@ tags:
 - [[bizlaw-easement|地役権——他人の土地を特定の目的で利用する非占有的な権利]]
 - [[bizlaw-ebrahimi-westbourne|エブラヒミ対ウェストボーン・ギャラリーズ——「準組合」と公正衡平の解散]]
 - [[bizlaw-economic-duress|経済的強迫——不当な経済的圧力による合意の瑕疵と契約の取消]]
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]]
 - [[bizlaw-economic-loss-rule|純粋経済的損失の法理]]
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]]
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]]
@@ -486,12 +478,9 @@ tags:
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]]
 - [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]]
 - [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]]
-- [[bizlaw-fraudulent-conveyance|詐害的譲渡（詐害行為取消権）]]
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]]
 - [[bizlaw-fraudulent-transfer-avoidance|詐害行為取消権（詐欺的譲渡回避）]]
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]]
-- [[bizlaw-frustration-of-purpose-doctrine|契約目的の挫折法理]]
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]]
 - [[bizlaw-fundamental-breach|根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題]]
 - [[bizlaw-general-average|共同海損——共通の危険を逃れるための犠牲を全関係者で分担する海法]]
 - [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]]
@@ -503,8 +492,10 @@ tags:
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]]
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]]
 - [[bizlaw-hoteijichijoken|法定地上権（民法388条）]]
+- [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]]
 - [[bizlaw-implied-terms|黙示の契約条項——当事者が明示せずとも契約に読み込まれる条項]]
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]]
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]]
 - [[bizlaw-incoterms|インコタームズ——国際売買における売主と買主の責任を定める定型取引条件]]
@@ -514,7 +505,7 @@ tags:
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]]
 - [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]]
 - [[bizlaw-insurance-contract-law-utmost-good-faith|保険契約法——最大善意義務と告知義務の法的枠組み]]
-- [[bizlaw-intellectual-property|知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。]]
+- [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]]
 - [[bizlaw-intellectual-property-exhaustion|知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力]]
 - [[bizlaw-intellectual-property-exhaustion-first-sale|知的財産権の消尽原則——ファースト・セール・ドクトリンとデジタルコンテンツへの適用]]
 - [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]]
@@ -537,9 +528,6 @@ tags:
 - [[bizlaw-labor-collective-bargaining-law|集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較]]
 - [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]]
 - [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]]
-- [[bizlaw-laches|懈怠の法理（レイチェス）——権利行使の不当な遅延が衡平上の救済を妨げる]]
-- [[bizlaw-laches-defense|懈怠の抗弁（ラッチズ）]]
-- [[bizlaw-laches-doctrine|ラッチェス法理]]
 - [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]]
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]]
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]]
@@ -624,8 +612,6 @@ tags:
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]]
 - [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]]
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]]
-- [[bizlaw-restraint-of-trade-doctrine|取引制限法理（レストレイント・オブ・トレード）]]
-- [[bizlaw-retention-lien|留置権（民法295条）]]
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]]
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]]
 - [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]]
@@ -647,7 +633,6 @@ tags:
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]]
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]]
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]]
-- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]]
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]]
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]]
@@ -679,9 +664,6 @@ tags:
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]]
 - [[bizlaw-tort-liability|不法行為責任（民法709条）]]
 - [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]]
-- [[bizlaw-tortious-interference-doctrine|不法干渉法理]]
-- [[bizlaw-tortious-interference-lumley|契約関係への不法な干渉——第三者による契約履行妨害の不法行為法理]]
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]]
 - [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]]
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]]
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]]

@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 語彙が近い
-- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 分野横断
 - [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 出典を共有
+- [[bizlaw-economic-security-promotion-act|経済安全保障推進法]] — 出典を共有
 - [[bizlaw-my-number|マイナンバー制度（社会保障・税番号制度）]] — 出典を共有
 - [[bizlaw-risk-bearing|危険負担（民法536条）]] — 出典を共有
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 出典を共有

@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Phenomenological psychology — 現象学的心理学の歴史と方法論の概説](https://en.wikipedia.org/wiki/Phenomenological_psychology) `リファレンス`
 
 ## 関連概念
-- [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — 語彙が近い
 - [[human-phenomenological-psychology|現象学的心理学]] — 語彙が近い
+- [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — 同じ思想家
 - [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]] — 同じ思想家
 - [[econ-evolutionarily-stable-strategy|進化的に安定な戦略（ESS）]] — 同じ思想家
 - [[econ-evolutionary-game-theory|進化ゲーム理論（ESS）]] — 同じ思想家

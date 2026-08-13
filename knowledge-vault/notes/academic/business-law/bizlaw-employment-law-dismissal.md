@@ -33,7 +33,13 @@ aliases:
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
 - [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
-- [[bizlaw-assignment-security|譲渡担保]] — 同分野の近傍
+- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
+- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
+- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
+- [[econ-transfer-pricing|移転価格税制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

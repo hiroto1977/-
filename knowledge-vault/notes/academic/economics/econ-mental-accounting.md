@@ -39,9 +39,9 @@ aliases:
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
-- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

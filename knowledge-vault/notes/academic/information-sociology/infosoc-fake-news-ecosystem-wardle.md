@@ -40,6 +40,7 @@ aliases:
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 出典を共有
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — 同分野の近傍
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

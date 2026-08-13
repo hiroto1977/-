@@ -38,8 +38,8 @@ aliases:
 - [[mgmt-modularity|モジュール化]] — 同じ思想家
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
 - [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
-- [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — 同分野の近傍
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
+- [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

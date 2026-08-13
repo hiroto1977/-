@@ -28,6 +28,19 @@ import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChe
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import { EligibilityChecker } from '../components/EligibilityChecker';
+import {
+  MAX_SHAREHOLDERS,
+  addShareholder,
+  canAddShareholder,
+  canRemoveShareholder,
+  listShareholders,
+  readShareholderCount,
+  removeShareholder,
+  shareholderKey,
+  totalHeldShares,
+  type ShareholderField,
+} from '../data/shareholders';
 import {
   PLAN_ITEMS,
   PLAN_MONTHS,
@@ -357,6 +370,7 @@ function Blocks({ blocks, fields, values }: { blocks: readonly DocBlock[]; field
         if (b.taxItems) return <TaxItemsTable key={i} values={values} />;
         if (b.table) return <FillTable key={i} spec={b.table} fields={fields} values={values} />;
         if (b.cashPlan) return <CashPlanTable key={i} values={values} />;
+        if (b.shareholders) return <ShareholderTable key={i} values={values} />;
         if (b.sign) return <SignBlock key={i} values={values} />;
         if (b.bigAmount) {
           const n = toNum(values['amount']);
@@ -696,6 +710,144 @@ function CashPlanTable({ values }: { values: Values }) {
   );
 }
 
+/** 株主名簿の本文テーブル（行数は入力に追従する）。 */
+function ShareholderTable({ values }: { values: Values }) {
+  const rows = listShareholders(values);
+  const sum = totalHeldShares(values);
+  return (
+    <table className="ds-table" data-shareholders={rows.length}>
+      <thead>
+        <tr>
+          <th>株主の氏名又は名称</th><th>住所</th><th className="ds-num">株式数（株）</th><th>取得日</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.index}>
+            <td>{r.name}</td>
+            <td>{r.addr}</td>
+            <td className="ds-num">{r.shares}</td>
+            <td>{r.date}</td>
+          </tr>
+        ))}
+        <tr>
+          <td colSpan={2}>合計</td>
+          <td className="ds-num">{sum > 0 ? fmt(sum) : ''}</td>
+          <td />
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+/**
+ * 株主名簿の株主欄（人数を任意に増減できる）。
+ *
+ * **表ではなく 1 名 1 枚のカードで並べる。** 差込フォームは横幅の狭い
+ * 側パネルにあり、4 列の表にすると氏名・住所の欄が潰れて入力できなく
+ * なる（実ブラウザの撮影で確認）。カードなら狭い幅でも縦に伸びるだけで、
+ * スマホ幅でも横スクロールが出ない。
+ */
+function ShareholderInputs({
+  values,
+  onPatch,
+  onChange,
+}: {
+  values: Values;
+  onPatch: (patch: Record<string, string>) => void;
+  onChange: (k: string, v: string) => void;
+}) {
+  const rows = listShareholders(values);
+  const count = readShareholderCount(values);
+  const canAdd = canAddShareholder(values);
+  const canRemove = canRemoveShareholder(values);
+  const total = totalHeldShares(values);
+  const cols: readonly { f: ShareholderField; label: string; ph: string; num?: true; wide?: true }[] = [
+    { f: 'name', label: '氏名・名称', ph: '山田 太郎' },
+    { f: 'shares', label: '株式数', ph: '60', num: true },
+    { f: 'addr', label: '住所', ph: '東京都千代田区…', wide: true },
+    { f: 'date', label: '取得日', ph: '2020年4月1日' },
+  ];
+  return (
+    <div style={{ marginTop: 12 }} data-shareholder-inputs={count}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+        <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+          株主（{count} 名）{total > 0 && ` ／ 記載株式数 計 ${fmt(total)} 株`}
+        </span>
+        <button type="button" onClick={() => onPatch(addShareholder(values))} disabled={!canAdd}>
+          ＋ 株主を追加
+        </button>
+        {!canAdd && (
+          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+            上限 {MAX_SHAREHOLDERS} 名に達しました
+          </span>
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gap: 8 }}>
+        {rows.map((r) => (
+          <div
+            key={r.index}
+            style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 10 }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-mute)' }}>株主 {r.index}</span>
+              <button
+                type="button"
+                aria-label={`株主${r.index} を削除`}
+                onClick={() => onPatch(removeShareholder(values, r.index))}
+                disabled={!canRemove}
+                style={{ fontSize: 11, padding: '3px 10px', whiteSpace: 'nowrap' }}
+              >
+                削除
+              </button>
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))',
+                gap: 8,
+              }}
+            >
+              {cols.map((c) => {
+                const k = shareholderKey(r.index, c.f);
+                return (
+                  <label
+                    key={c.f}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 3,
+                      fontSize: 11,
+                      color: 'var(--text-mute)',
+                      gridColumn: c.wide ? '1 / -1' : undefined,
+                    }}
+                  >
+                    <span>{c.label}</span>
+                    <input
+                      aria-label={`株主${r.index} ${c.label}`}
+                      inputMode={c.num ? 'numeric' : undefined}
+                      value={values[k] ?? ''}
+                      placeholder={c.ph}
+                      onChange={(e) => onChange(k, e.target.value)}
+                      style={{ width: '100%' }}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+        ※ 削除すると以降の行が繰り上がります（名簿の途中に空行を残さないため）。
+        株主名簿は<strong>株主全員</strong>の記載が要ります（会社法121条）。
+      </div>
+    </div>
+  );
+}
+
 /** 資金繰り表の月次入力（12 か月 × 項目）。 */
 function CashPlanInputs({ values, onChange }: { values: Values; onChange: (k: string, v: string) => void }) {
   return (
@@ -985,19 +1137,30 @@ export function DocstudioPage() {
           ? store.kessan ?? {}
           : store.shugyo ?? {};
 
-  function setValue(k: string, v: string) {
+  /**
+   * 複数のキーをまとめて書き込む。
+   *
+   * 株主名簿の行削除のように**一度に何十キーも動かす**操作があるため、
+   * 1 キーずつ setValue を呼ぶのではなくまとめて 1 回で当てる。
+   */
+  function setValues(patch: Record<string, string>) {
+    if (Object.keys(patch).length === 0) return;
     setStore((prev) => {
       if (collection === 'studio') {
-        return { ...prev, studio: { ...prev.studio, [studioDoc.id]: { ...prev.studio?.[studioDoc.id], [k]: v } } };
+        return { ...prev, studio: { ...prev.studio, [studioDoc.id]: { ...prev.studio?.[studioDoc.id], ...patch } } };
       }
       if (collection === 'teikan') {
-        return { ...prev, teikan: { ...prev.teikan, [teikanType]: { ...prev.teikan?.[teikanType], [k]: v } } };
+        return { ...prev, teikan: { ...prev.teikan, [teikanType]: { ...prev.teikan?.[teikanType], ...patch } } };
       }
       // 決算書と就業規則は別の入れ物に入れる。どちらも company を持つので、
       // 同じ袋に入れると会社名が混線し、決算書の科目残高が就業規則側にも溜まる。
-      if (collection === 'kessan') return { ...prev, kessan: { ...prev.kessan, [k]: v } };
-      return { ...prev, shugyo: { ...prev.shugyo, [k]: v } };
+      if (collection === 'kessan') return { ...prev, kessan: { ...prev.kessan, ...patch } };
+      return { ...prev, shugyo: { ...prev.shugyo, ...patch } };
     });
+  }
+
+  function setValue(k: string, v: string) {
+    setValues({ [k]: v });
   }
 
   const fields: readonly DocField[] =
@@ -1211,6 +1374,9 @@ export function DocstudioPage() {
               </div>
             )}
             <FieldInputs fields={fields} values={filled} onChange={setValue} flagged={flagged} />
+            {collection === 'studio' && docId === 'kabunushi-meibo' && (
+              <ShareholderInputs values={values} onPatch={setValues} onChange={setValue} />
+            )}
             {collection === 'studio' && docId === 'shikin-guri' && (
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>
@@ -1220,6 +1386,12 @@ export function DocstudioPage() {
               </div>
             )}
           </Section>
+
+          {collection === 'studio' && docId === 'plantfactory-plan' && (
+            <Section title="使える制度の判定">
+              <EligibilityChecker />
+            </Section>
+          )}
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
           {collection === 'kessan' && <KessanCheckPanel values={filled} />}

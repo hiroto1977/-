@@ -32,14 +32,14 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 語彙が近い
-- [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — 語彙が近い
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 語彙が近い
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
 - [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 同じ思想家
 - [[bizlaw-earnest-money|手付（民法557条）]] — 同じ思想家
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同じ思想家
-- [[bizlaw-guarantee-obligation|保証債務（民法446条）]] — 同じ思想家
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

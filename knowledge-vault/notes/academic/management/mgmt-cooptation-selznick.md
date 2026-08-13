@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同じ思想家
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[mgmt-zone-of-indifference-barnard|無関心圏——権威の受容理論と命令が受け入れられる範囲]] — 同じ思想家
-- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
+- [[mgmt-competency|コンピテンシー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

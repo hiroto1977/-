@@ -37,7 +37,7 @@ aliases:
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-cultural-industry-adorno-horkheimer|文化産業論——標準化された大量生産文化による大衆欺瞞]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

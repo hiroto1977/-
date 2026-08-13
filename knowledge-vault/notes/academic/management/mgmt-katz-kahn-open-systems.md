@@ -32,11 +32,10 @@ aliases:
 ## 関連概念
 - [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 同じ思想家
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — 同じ思想家
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同分野の近傍
+- [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同分野の近傍
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同分野の近傍
-- [[mgmt-organizational-entropy|組織エントロピー]] — 同分野の近傍
-- [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
 - [[mgmt-teal-organization|ティール組織]] — 同分野の近傍
+- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

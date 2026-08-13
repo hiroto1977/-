@@ -2,7 +2,7 @@
 title: "nenkin.go.jp"
 type: source-domain
 host: "nenkin.go.jp"
-cite_count: 17
+cite_count: 18
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nenkin.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **17 件**（公的 17）
+> [!info] 出典ドメイン索引 ・ 引用 **18 件**（公的 18）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[bizlaw-national-pension|国民年金法]] — 日本年金機構国民年金の被保険者区分（第1号・第2号・第3号）
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 日本年金機構障害厚生年金
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 日本年金機構障害年金（受給要件）
+- [[labor-maternity-leave|産前産後休業（労働基準法第65条）]] — 日本年金機構産前産後休業を取得したときの手続き（保険料免除）
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 日本年金機構公的年金制度の種類と加入する制度
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 日本年金機構年金の繰上げ・繰下げ受給
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 日本年金機構老齢年金（受給要件・支給開始）

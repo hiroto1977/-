@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段階で適切な介入がなければ衰退が進行すると論じた。Cameron・Whetten・Kim（1987）は衰退を「停滞（資源縮小）」と「削減（意図的なコスト削減）」に区別し、それぞれが組織行動に異なる影響を与えることを明らかにした。Staw・Sandelands・Dutton（1981）の脅威―硬直効果（threat-rigidity effect）は、外部脅威にさらされた組織が情報処理を制限し、既存の行動レパートリーに固執することを示した。Hambrick & D'Aveni（1988）は経営資源の消耗と経営陣の交代が悪循環を形成する「下降螺旋（downward spiral）」を提示し、衰退の自己強化的メカニズムを強調した。組織衰退研究はターンアラウンド研究と表裏一体であり、衰退の深刻さ・原因・段階を診断することが回復戦略の設計前提となる。
+Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段階で適切な介入がなければ衰退が進行し、段階が進むほど逆転は困難になると論じた。衰退の早期段階は外形的な業績にまだ表れないため、組織の自己認識能力がモデル全体の要になる。Cameron・Whetten・Kim（1987）は衰退を「停滞（資源縮小）」と「削減（意図的なコスト削減）」に区別し、それぞれが組織行動に異なる影響を与えることを明らかにした。Staw・Sandelands・Dutton（1981）の脅威―硬直効果（threat-rigidity effect）は、外部脅威にさらされた組織が情報処理を制限し、既存の行動レパートリーに固執することを示した。Hambrick & D'Aveni（1988）は経営資源の消耗と経営陣の交代が悪循環を形成する「下降螺旋（downward spiral）」を提示し、衰退の自己強化的メカニズムを強調した。組織衰退研究はターンアラウンド研究と表裏一体であり、衰退の深刻さ・原因・段階を診断することが回復戦略の設計前提となる。
 
 ## 提唱者・初出
 William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ Myung Un Kim ／ Barry M. Staw ／ Lance E. Sandelands ／ Jane E. Dutton ／ Donald C. Hambrick ／ Richard A. D'Aveni
@@ -33,8 +33,8 @@ William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ My
 - [Schendel, Patton & Riggs (1976) "Corporate Turnaround Strategies" — Strategic Management Journal](https://doi.org/10.1002/smj.4250050104) `学術`
 
 ## 関連概念
-- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 語彙が近い
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同じ思想家
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家

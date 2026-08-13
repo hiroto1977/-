@@ -2,7 +2,7 @@
 title: "unctad.org"
 type: source-domain
 host: "unctad.org"
-cite_count: 7
+cite_count: 6
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # unctad.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **7 件**（公的 7）
+> [!info] 出典ドメイン索引 ・ 引用 **6 件**（公的 6）
 
 ## このドメインを出典とする項目
 
@@ -20,7 +20,6 @@ tags:
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — UNCTAD(2005)PreservingFlexibilityinIIAs:TheUseofReservations(UNCTAD/I…
 - [[econ-flying-geese|雁行形態論]] — UNCTADG-24DiscussionPaper"TheFlyingGeeseParadigm"
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — UNCTADWorldInvestmentReportseries
-- [[econ-greenfield-investment-fdi-modes|グリーンフィールド投資とFDI参入モード——直接投資の形態選択と受入国への影響]] — UNCTAD—WorldInvestmentReport:FDItrends,greenfieldvsM&A
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

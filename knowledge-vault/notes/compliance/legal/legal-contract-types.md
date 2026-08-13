@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-freedom-of-contract|契約自由の原則]] — 出典を共有
-- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
+- [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 同分野の近傍
 - [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — 同分野の近傍
 - [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]] — 同分野の近傍
 

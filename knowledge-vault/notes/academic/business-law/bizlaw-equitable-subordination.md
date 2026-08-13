@@ -39,8 +39,8 @@ Andrew DeNatale／Prudence B. Abram／David G. Epstein／Jonathan Landers／Lawr
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
 - [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — 出典を共有
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — 出典を共有
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
+- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

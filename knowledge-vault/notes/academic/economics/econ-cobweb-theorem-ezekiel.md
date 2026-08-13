@@ -34,7 +34,6 @@ aliases:
 - [[econ-cobweb|クモの巣理論]] — 同じ思想家
 - [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 同じ思想家
 - [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — 同分野の近傍
-- [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

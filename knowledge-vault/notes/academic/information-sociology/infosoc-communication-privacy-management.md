@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Petronioが提唱する理論。人々が「プライバシー境界」のルールを通じて私的情報の開示・共有・タービュランスを管理するプロセスを説明する。Altmanの弁証法的プライバシー概念を基盤とし、健康・SNS・組織コミュニケーション研究に広く応用される。
+Petronioが提唱する理論。人々が「プライバシー境界」のルールを通じて私的情報の開示・共有・タービュランスを管理するプロセスを説明する。Altmanの弁証法的プライバシー概念を基盤とし、健康・SNS・組織コミュニケーション研究に広く応用される。基本前提は、人は私的情報を「所有」しており、開示は所有権の共有だという比喩にある。開示された相手は共同所有者（co-owner）となり、境界の透過性・連結・所有権をめぐる暗黙または明示のルール調整が必要になる——このルール調整が失敗すると境界タービュランス（意図せぬ拡散・暴露・裏切りの知覚）が生じる。ルールの形成基準は文化・ジェンダー・動機・文脈・リスク便益計算の 5 つで、開示か秘匿かの一回きりの選択ではなく、開放と閉鎖の弁証法的緊張を継続的に管理する過程として描かれる点が Altman 由来の核である。応用領域は、健康情報（HIV・遺伝子検査結果を家族の誰にどこまで）、SNS（親が子の写真を投稿するシェアレンティング・タグ付けによる境界侵害・プラットフォームとの強制的共同所有）、組織（上司への私生活開示・守秘の連鎖）で、GDPR 的な個人データ規制が扱いにくい「人間関係の中のプライバシー」を概念化できる点が情報社会論での価値になっている。
 
 ## 提唱者・初出
 Sandra Petronio ／ Irwin Altman ／ Leslie A. Baxter
@@ -40,8 +40,8 @@ Sandra Petronio ／ Irwin Altman ／ Leslie A. Baxter
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
 - [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
-- [[infosoc-cybernetics|サイバネティクス]] — 同分野の近傍
-- [[infosoc-information-asymmetry|情報の非対称性（逆選択・モラルハザード）]] — 同分野の近傍
+- [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 同分野の近傍
+- [[infosoc-data-justice|データ正義（Data Justice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "pmc.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pmc.ncbi.nlm.nih.gov"
-cite_count: 68
+cite_count: 67
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pmc.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **68 件**（学術 65 ・ 公的 2 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **67 件**（学術 64 ・ 公的 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -68,10 +68,9 @@ tags:
 - [[infosoc-data-sovereignty|データ主権]] — PMC(NIH)—Data,BigTech,andtheNewConceptofSovereignty（査読付き）
 - [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — Grahametal.(2017)DigitalLabourandDevelopment:ImpactsofGlobalDigitalLa…
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — Sharmaetal.,DoomscrollingScale(PMC)
-- [[infosoc-filter-bubble-pariser|フィルターバブル（情報の個人化と知的孤立）]] — PMC—ThroughtheNewsfeedGlass:RethinkingFilterBubblesandEchoChambers
 - [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — SocialMediaInterventionDesign:ApplyinganAffordancesFramework—PMC
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — Ajana—DigitalhealthandthebiopoliticsoftheQuantifiedSelf（PMC）
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — PMC/NIH査読論文—ウルフ&ケリーの「self-knowledgethroughnumbers」定義
-- [[infosoc-quantified-self-movement|定量化自己運動（クオンティファイド・セルフ）]] — BtihajAjana,"DigitalhealthandthebiopoliticsoftheQuantifiedSelf,"Digit…
 - [[infosoc-reinforcing-spirals-model|強化スパイラルモデル（相互強化スパイラル・モデル／Reinforcing Spirals Model, RSM）——選択的接触と効果が時間とともに互いを強める動的フィードバック・ループ]] — Slater,M.D.(2015).ReinforcingSpiralsModel:ConceptualizingtheRelations…
 - [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — ExaminingFirst-andSecond-LevelDigitalDivide（NIH/PMC査読）
 - [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — Wang&Li(2024)Careerconstructiontheory—FrontiersinPsychology(PMC)

@@ -37,10 +37,10 @@ aliases:
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同じ思想家
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — 出典を共有
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

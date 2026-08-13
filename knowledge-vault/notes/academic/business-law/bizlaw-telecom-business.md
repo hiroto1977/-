@@ -32,8 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
-- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同分野の近傍
-- [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — 同分野の近傍
+- [[bizlaw-employment-insurance|雇用保険法]] — 同分野の近傍
 - [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — 同分野の近傍
 
 ## 関連

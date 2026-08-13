@@ -35,7 +35,7 @@ aliases:
 - [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同じ思想家
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
 - [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同分野の近傍
-- [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]] — 同分野の近傍
+- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 同分野の近傍
 - [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 同分野の近傍
 
 ## 関連

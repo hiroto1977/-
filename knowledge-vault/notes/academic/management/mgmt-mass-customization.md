@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — 同じ思想家
-- [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
 - [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

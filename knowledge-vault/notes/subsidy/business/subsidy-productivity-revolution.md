@@ -37,6 +37,8 @@ national
 - [J-Net21 支援情報（生産性革命推進事業の各補助金）](https://j-net21.smrj.go.jp/snavi/) `公的`
 
 ## 関連概念
+- [[subsidy-jizokuka|小規模事業者持続化補助金]] — 語彙が近い
+- [[subsidy-oita|大分県省力化・生産性向上支援補助金（大分県）]] — 語彙が近い
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 出典を共有
@@ -45,8 +47,6 @@ national
 - [[legal-coowned-property-reform|所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）]] — 出典を共有
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 出典を共有
 - [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 出典を共有
-- [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]] — 出典を共有
-- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

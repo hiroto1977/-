@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 30）
-- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 25）
-- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 23）
-- [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 23）
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 22）
-- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 22）
-- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 19）
+- [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 29）
+- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 28）
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 24）
+- [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 24）
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 21）
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 20）
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 20）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 19）
-- [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 19）
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 18）
+- [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 18）
+- [[tax-automobile-tax|自動車税（種別割）]]（接続 17）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 17）
-- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]]（接続 17）
-- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]（接続 17）
-- [[tax-blue-return-application|所得税の青色申告承認申請]]（接続 16）
-- [[tax-automobile-tax|自動車税（種別割）]]（接続 15）
+- [[tax-city-planning-tax|都市計画税]]（接続 16）
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 16）
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 16）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]]
@@ -40,11 +40,11 @@ tags:
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
+- [[tax-blue-return-application|所得税の青色申告承認申請]]
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]]
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]]
 - [[tax-business-succession|法人版事業承継税制（特例措置）]]
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]]
-- [[tax-city-planning-tax|都市計画税]]
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]]
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]]
 - [[tax-consumption-interim|消費税の中間申告・中間納付]]
@@ -89,9 +89,7 @@ tags:
 - [[tax-inheritance-basic-deduction|相続税の基礎控除額]]
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]]
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]]
-- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]]
-- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]]
 - [[tax-life-insurance-deduction|生命保険料控除]]
 - [[tax-light-vehicle-tax|軽自動車税（種別割）]]
@@ -133,11 +131,13 @@ tags:
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]]
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]]
 - [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]]
+- [[tax-spouse-deduction|配偶者控除・配偶者特別控除]]
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]]
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]]
 - [[tax-stock-option|税制適格ストックオプションの課税繰延べ]]
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]]
 - [[tax-tax-audit|税務調査（質問検査権と事前通知）]]
+- [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]]
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]]
 - [[tax-transfer-pricing|移転価格税制]]
 - [[tax-vehicle-weight-tax|自動車重量税]]

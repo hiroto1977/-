@@ -31,8 +31,9 @@ aliases:
 - [Miron-Spektor et al. (2018) — City Research Online (Open Access)](https://openaccess.city.ac.uk/id/eprint/17049/) `学術`
 
 ## 関連概念
-- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
-- [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同分野の近傍
+- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
+- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同分野の近傍
+- [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同分野の近傍
 - [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同分野の近傍
 
 ## 関連

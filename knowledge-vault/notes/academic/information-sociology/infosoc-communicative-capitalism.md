@@ -37,7 +37,6 @@ aliases:
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同分野の近傍
 - [[infosoc-information-theory|情報理論（シャノン）]] — 同分野の近傍
-- [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

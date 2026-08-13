@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-経営者認知理論は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデルを通じて環境を解釈・構築するという前提に立つ。Walsh（1995）は、注意・符号化・貯蔵・推論という四つの次元から知識構造が意思決定を規定すると体系的に論じた。Porac・Thomas・Baden-Fuller（1989）は、同一産業の経営者が共有する「競合認知コミュニティ」が競争構造そのものを形成することを実証し、認知が個人と集団の両レベルで戦略行動を媒介することを示した。
+経営者認知理論は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデルを通じて環境を解釈・構築するという前提に立つ。Walsh（1995）の体系的レビューは、知識構造が注意の配分・情報の符号化・貯蔵・検索という情報処理の各段階を規定することを整理し、スキーマが認知資源を節約して迅速な判断を可能にする便益と、盲点や時代遅れの地図が変化の兆候を見落とさせる負債の両面を持つこと、そして分析水準が個人・集団・組織・産業へ入れ子状に広がることを示して分野の見取り図を与えた。Porac・Thomas・Baden-Fuller（1989）はスコットランドのニット業者の研究で、経営者が共有する「誰が競争相手か」の心的モデル——競合認知コミュニティ——が取引ネットワークと模倣を通じて再生産され、客観的な代替可能性ではなく認知された競争構造が実際の競争行動を規定することを実証した（認知的寡占）。Fiol と Huff は因果マップなどの認知地図法を経営研究の方法として整備し、経営者の注意と解釈を測定可能にした。上位階層理論（経営者の濾過された知覚）、支配的論理、戦略転換を遅らせる認知慣性・競争上の盲点の研究と接続し、注意の配分を組織構造に結びつける後続理論の基礎となって、戦略の微視的基礎（マイクロファウンデーション）研究の中核領域を形成している。
 
 ## 提唱者・初出
 James P. Walsh ／ Karl E. Weick ／ Anne Sigismund Huff ／ Joseph F. Porac ／ Howard Thomas
@@ -31,16 +31,16 @@ James P. Walsh ／ Karl E. Weick ／ Anne Sigismund Huff ／ Joseph F. Porac ／
 - [Fiol & Huff (1992) Maps for Managers — Journal of Management Studies](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1992.tb00665.x) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 語彙が近い
-- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 語彙が近い
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
-- [[mgmt-bricolage-theory|ブリコラージュ理論]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+- [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
+- [[mgmt-strategic-group-theory|戦略グループ理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

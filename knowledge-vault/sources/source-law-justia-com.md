@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 28
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,14 +10,13 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（リファレンス 21 ・ 公的 7）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（リファレンス 21 ・ 公的 5）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — Justia—Knightv.Jewett,3Cal.4th296,834P.2d696(Cal.1992)(primaryvs.seco…
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — Bloorv.FalstaffBrewingCorp.,601F.2d609(2dCir.1979)
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — Justia—Aronsonv.Lewis,473A.2d805(Del.1984)
-- [[bizlaw-business-judgment-rule-evolution|経営判断の原則の歴史的発展（Business Judgment Rule）]] — Aronsonv.Lewis,473A.2d805(Del.1984).デラウェア州最高裁によるBJR現代的定式化。
 - [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — TransatlanticFinancingCorp.v.UnitedStates,363F.2d312(D.C.Cir.1966)
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — Williamsv.Walker-ThomasFurnitureCo.350F.2d445D.C.Cir.1965—Procedurala…
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — Williamsv.Walker-ThomasFurnitureCo.,350F.2d445(D.C.Cir.1965)
@@ -40,7 +39,6 @@ tags:
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — Dodgev.FordMotorCo.,204Mich.459,170N.W.668(1919)
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — ColoradoRevisedStatutes§4-3-203—TransferofInstrument;RightsAcquiredby…
 - [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — Rayv.AladCorp.,19Cal.3d22(Cal.1977)—Justia
-- [[bizlaw-tortious-interference-restatement|不法行為責任（営業妨害と契約干渉）]] — PennzoilCo.v.TexacoInc.,481U.S.1(1987),U.S.SupremeCourt—landmarktorti…
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — Williamsv.Walker-ThomasFurnitureCo.,350F.2d445(D.C.Cir.1965)—Justia
 
 ## 関連

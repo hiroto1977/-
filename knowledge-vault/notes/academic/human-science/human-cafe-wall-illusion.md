@@ -33,7 +33,6 @@ aliases:
 - [[human-mach-bands|マッハバンド——輪郭を強調する明るさの錯視と側抑制]] — 同じ思想家
 - [[human-ponzo-illusion|ポンゾ錯視——奥行き手がかりが生む大きさの錯覚]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

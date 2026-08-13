@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 同じ思想家
 - [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
+- [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
 - [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家

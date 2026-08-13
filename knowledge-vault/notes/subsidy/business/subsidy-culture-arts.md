@@ -38,12 +38,12 @@ national
 
 ## 関連概念
 - [[bizlaw-copyright|著作権法]] — 出典を共有
+- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
 - [[bizlaw-copyright-basics|著作権法の基礎（無方式主義・二元的権利構成・保護期間）]] — 出典を共有
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — 出典を共有
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]] — 出典を共有
 - [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — 出典を共有
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 出典を共有
-- [[legal-copyright-term|著作権の保護期間と私的複製]] — 出典を共有
 - [[legal-moral-rights|著作者人格権]] — 出典を共有
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
 - [[legal-copyright-private-use|私的使用のための複製（著作権法30条）]] — 出典を共有

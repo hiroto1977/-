@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 出典を共有
 - [[infosoc-infodemic|インフォデミック]] — 出典を共有
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
-- [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]] — 同分野の近傍
 - [[human-loss-aversion|損失回避]] — 同分野の近傍
+- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 語彙が近い
-- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
-- [[tax-simplified-consumption|消費税の簡易課税制度]] — 語彙が近い
-- [[bizlaw-invoice-system|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
+- [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
-- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
+- [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

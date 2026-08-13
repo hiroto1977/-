@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[bizlaw-champerty-maintenance-doctrine|シャンパティ・メンテナンス法理]] — Sebok—LitigationInvestmentandLegalEthics
+- [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — Sebok—LitigationInvestmentandLegalEthics(SSRN)
 - [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — Schwartz&Solove2011—ThePIIProblem:PrivacyandaNewConceptofPersonallyId…
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — Smith,"TheExitStructureofVentureCapital,"53UCLALawReview315(2005)
 

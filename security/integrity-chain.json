@@ -74,16 +74,40 @@
       "leafCount": 15,
       "note": "update ci.yml",
       "hash": "8e44b1433fa4c9b11dff65f59565cb0ceaa70f519870018e4345f7f3c71390a4"
+    },
+    {
+      "index": 7,
+      "prevHash": "8e44b1433fa4c9b11dff65f59565cb0ceaa70f519870018e4345f7f3c71390a4",
+      "merkleRoot": "7ced0e0cf1093e164f45aea538adff6f1878bd7ce8fe68324ff90e126b3d89e8",
+      "leafCount": 15,
+      "note": "update ci.yml,oauth.ts",
+      "hash": "780b337043df5bbeb7d768aa3750fbf74e9ad20ad3779265c89caab9c1b1e153"
+    },
+    {
+      "index": 8,
+      "prevHash": "780b337043df5bbeb7d768aa3750fbf74e9ad20ad3779265c89caab9c1b1e153",
+      "merkleRoot": "fbbaa6ae22b707759c1acf5b2e939277c8614aef7a1aa13449ca4c61102d299b",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "050c3396099b4a7f36d95db1487dbfa6a02db9e4c136c43e778c4494554dde5e"
+    },
+    {
+      "index": 9,
+      "prevHash": "050c3396099b4a7f36d95db1487dbfa6a02db9e4c136c43e778c4494554dde5e",
+      "merkleRoot": "7b28671af35624fc1677d259ced8952c1f74a28db9717c48a59bc18d7765835c",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "1af7a1bdf6d2f3e2ff95b51a70fcc49e75bc108be8d505b17bc05e1da7891eb2"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "cc5b8850d0545ac2c68a85cdeb3cccd106660290cae04e30a9ddb595d1ec0750",
+    ".github/workflows/ci.yml": "86ee72b8487547cade41f3e90c599371fdabc21eaecccdc5398577547c37d93e",
     "docs/SECURITY_CHAIN.md": "83e6827788ec41c4980111f2129b9234b9b40266c0daa3d62fdc204d5e660e3b",
     "scripts/integrity-chain.cjs": "4bf5dcba4528d6607f348a6aed6c03d506c126fef7a26eced145bf7928911ada",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
-    "src/main/oauth.ts": "42d4a99f49be0141c44315f2189a838bafc23101aad71d721faf3550cea2b785",
+    "src/main/oauth.ts": "fd0e3fb9d581982953f08d2e57570a060d3a34815580ea73fa776a56a187d91f",
     "src/main/secrets.ts": "57872e52b0023ca2ac952d99a69b284ba443f401f6ae22b14e21ee6a4bfbdc39",
     "src/preload/preload.ts": "b81c01219c598067e1590fad52cc0789f5014403c2013f5d176d809016dbd01f",
     "src/renderer/security/LockScreen.tsx": "1fdf41fd002d9a8ee6bf3e505250775f5a80d1671e3915480e62295d855289f7",

@@ -31,8 +31,8 @@ aliases:
 - [通勤災害の逸脱・中断 解説](https://www.rouki.jp/itsudatsu) `メディア`
 
 ## 関連概念
-- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 同分野の近傍
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
+- [[labor-workers-comp-benefits|労災保険の保険給付の種類]] — 語彙が近い
+- [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

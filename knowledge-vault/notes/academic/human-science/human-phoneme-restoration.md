@@ -31,7 +31,6 @@ Richard M. Warren（リチャード・ウォレン・1970年論文・効果の�
 
 ## 関連概念
 - [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-trolley-problem|トロッコ問題]] — 出典を共有
@@ -40,6 +39,7 @@ Richard M. Warren（リチャード・ウォレン・1970年論文・効果の�
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 出典を共有
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

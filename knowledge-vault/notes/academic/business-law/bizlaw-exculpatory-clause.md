@@ -31,13 +31,13 @@ aliases:
 - [Tunkl v. Regents of University of California, 60 Cal.2d 92 (1963) — California Supreme Court](https://law.justia.com/cases/california/supreme-court/2d/60/92.html) `公的`
 
 ## 関連概念
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 語彙が近い
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
 - [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-frustration-of-purpose-krell|契約目的の挫折——履行可能でも目的消滅により免責される法理]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有

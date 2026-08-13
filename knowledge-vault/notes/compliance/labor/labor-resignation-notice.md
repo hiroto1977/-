@@ -33,15 +33,15 @@ aliases:
 
 ## 関連概念
 - [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
+- [[labor-paid-leave-grant|年次有給休暇の付与]] — 出典を共有
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 出典を共有
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
+- [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 出典を共有
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
+- [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]] — 出典を共有
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — 出典を共有
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]] — 出典を共有
-- [[labor-wage-deduction|賃金からの控除と労使協定（24協定）]] — 出典を共有
-- [[labor-worktime-tracking|労働時間の適正な把握義務]] — 出典を共有
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

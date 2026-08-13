@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同分野の近傍
 - [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同分野の近傍
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

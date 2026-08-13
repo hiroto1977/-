@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-emergent-strategy|創発戦略]] — 同分野の近傍
-- [[mgmt-organizational-forgetting|組織的忘却]] — 同分野の近傍
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
 
 ## 関連

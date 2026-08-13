@@ -33,7 +33,6 @@ D.カーネマン&A.トベルスキー1979提唱（「Intuitive Prediction」）
 
 ## 関連概念
 - [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
-- [[human-observational-learning|観察学習（バンデューラ）]] — 同じ思想家
 - [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
 - [[human-self-serving-bias|自己奉仕バイアス]] — 同じ思想家
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
@@ -42,6 +41,7 @@ D.カーネマン&A.トベルスキー1979提唱（「Intuitive Prediction」）
 - [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
 - [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
 - [[econ-liquidity-trap|流動性のわな]] — 出典を共有
+- [[human-effort-justification|努力の正当化]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

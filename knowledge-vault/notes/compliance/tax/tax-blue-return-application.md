@@ -31,16 +31,16 @@ aliases:
 - [青色申告承認申請書 提出期限 解説](https://www.freee.co.jp/kb/kb-kaigyou/blue-return-approval-application/) `メディア`
 
 ## 関連概念
-- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 語彙が近い
 - [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
-- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 語彙が近い
-- [[tax-individual-loss-carryover|所得税 純損失の繰越控除（青色申告者）]] — 語彙が近い
-- [[labor-variable-working-hours|変形労働時間制]] — 出典を共有
+- [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
-- [[tax-employment-income-deduction|給与所得控除]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 同分野の近傍
+- [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 同分野の近傍
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

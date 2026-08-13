@@ -2,7 +2,7 @@
 title: "simplypsychology.org"
 type: source-domain
 host: "simplypsychology.org"
-cite_count: 28
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # simplypsychology.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（リファレンス 26 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（リファレンス 25 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
@@ -28,7 +28,6 @@ tags:
 - [[human-hawthorne-effect|ホーソン効果]] — SimplyPsychology—HawthorneEffect(Landsberger1958命名,illuminationstudie…
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — SimplyPsychology—Herzberg’sTwo-FactorTheory
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — ObjectPermanence—SimplyPsychology
-- [[human-observational-learning|観察学習（バンデューラ）]] — SimplyPsychology「AlbertBandura’sSocialLearningTheory」
 - [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — SimplyPsychology:OpponentProcessTheoryofEmotion
 - [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — SimplyPsychology:Piaget'sTheoryandStagesofCognitiveDevelopment
 - [[human-planned-behavior|計画的行動理論（TPB）]] — SimplyPsychology—TheoryofPlannedBehavior

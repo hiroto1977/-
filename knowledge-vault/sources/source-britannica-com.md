@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 279
+cite_count: 278
 tags:
   - source-domain
   - index
@@ -10,14 +10,13 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **279 件**（リファレンス 279）
+> [!info] 出典ドメイン索引 ・ 引用 **278 件**（リファレンス 278）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — EncyclopaediaBritannica—AgencyandtheLawofAgency
 - [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — CalvoDoctrine—Britannica
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — EncyclopaediaBritannica—Unconscionability
-- [[bizlaw-economic-loss-doctrine|純粋経済損失法理（エコノミック・ロス・ルール）]] — Britannica—Tortlaw
 - [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]] — EncyclopaediaBritannicaMoney—Greenmail（定義・歴史・規制の概要）
 - [[bizlaw-mortgage-pursuit|抵当権の追及効]] — EncyclopaediaBritannica—Mortgage（抵当権の物権的効力・第三取得者に対する追及力の一般法理）
 - [[bizlaw-parens-patriae|パレンス・パトリエ法理（Parens Patriae Doctrine）]] — EncyclopaediaBritannica—Parenspatriae（定義・英国法起源・米国法における展開）
@@ -190,7 +189,6 @@ tags:
 - [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — EncyclopaediaBritannica—Anomie（マートンのストレイン理論・五類型・デュルケームとの関係）
 - [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — EncyclopaediaBritannica—Milgramexperiment
 - [[human-multiple-intelligences|多重知能理論（ガードナー）]] — EncyclopædiaBritannica「Multipleintelligences」（8つの知能と定義）
-- [[human-observational-learning|観察学習（バンデューラ）]] — EncyclopaediaBritannica「Observationallearning」
 - [[human-operant-conditioning|オペラント条件づけ]] — EncyclopaediaBritannica—Operantconditioning
 - [[human-phantom-limb|幻肢（ファントムリム）]] — Britannica—Phantomlimbsyndrome
 - [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — EncyclopaediaBritannica—PhenomenologicalReduction
@@ -201,6 +199,7 @@ tags:
 - [[human-schema|スキーマ理論]] — EncyclopaediaBritannica—Schema(cognition)
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — EncyclopaediaBritannica—Self-regulatedlearning（定義・3フェーズモデル・認知・メタ認知・動機…
 - [[human-social-facilitation|社会的促進と社会的抑制]] — EncyclopaediaBritannica—Socialfacilitation
+- [[human-social-learning-theory|社会的学習理論]] — EncyclopaediaBritannica「Observationallearning」
 - [[human-stanford-prison-experiment|スタンフォード監獄実験]] — EncyclopaediaBritannica—StanfordPrisonExperiment
 - [[human-stockholm-syndrome|ストックホルム症候群]] — EncyclopaediaBritannica—Stockholmsyndrome（定義・1973年事件・Bejerot命名）
 - [[human-survivorship-bias|生存者バイアス]] — EncyclopaediaBritannica—Survivorshipbias:Definition,Meaning,&Examples

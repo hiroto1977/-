@@ -37,7 +37,6 @@ aliases:
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
 - [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同分野の近傍
-- [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

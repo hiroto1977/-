@@ -31,8 +31,8 @@ J.ボードリヤール『シミュラークルとシミュレーション』198
 - [MIT Press — Baudrillard 著作の刊行情報（出版社一次情報）](https://mitpress.mit.edu/9780936756028/simulations/) `学術`
 
 ## 関連概念
-- [[infosoc-narrative-paradigm|ナラティブ・パラダイム]] — 同分野の近傍
-- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同分野の近傍
+- [[infosoc-data-doubles|データ・ダブル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "press.uchicago.edu"
 type: source-domain
 host: "press.uchicago.edu"
-cite_count: 15
+cite_count: 16
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # press.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 13 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **16 件**（学術 14 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -26,6 +26,7 @@ tags:
 - [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — Jasanoff&Kimeds.(2015)DreamscapesofModernity—UChicagoPress
 - [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — Verbeek,MoralizingTechnology(UChicagoPress2011)
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — Turner(2006)FromCounterculturetoCyberculture,UniversityofChicagoPress
+- [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — Winner,L.(1986)TheWhaleandtheReactor—UniversityofChicagoPressch.1
 - [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — Galison(1997)ImageandLogic:AMaterialCultureofMicrophysics—Universityo…
 - [[mgmt-role-exit-theory|役割退出理論]] — Ebaugh,H.R.F."BecominganEx:TheProcessofRoleExit"—UniversityofChicagoP…
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — Czarniawska,B.(1997)NarratingtheOrganization:DramasofInstitutionalIde…

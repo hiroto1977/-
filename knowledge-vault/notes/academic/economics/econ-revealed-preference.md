@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 語彙が近い
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同分野の近傍
 - [[econ-reference-dependent-preferences-koszegi-rabin|期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる]] — 同分野の近傍
 
 ## 関連

@@ -31,10 +31,10 @@ aliases:
 - [Wikipedia: Qualitative Comparative Analysis — Ragin set-theoretic methods in social science](https://en.wikipedia.org/wiki/Qualitative_comparative_analysis) `リファレンス`
 
 ## 関連概念
+- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 語彙が近い
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
-- [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
 - [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
 - [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家

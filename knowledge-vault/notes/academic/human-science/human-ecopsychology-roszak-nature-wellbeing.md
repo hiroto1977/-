@@ -33,8 +33,7 @@ aliases:
 ## 関連概念
 - [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]] — 同じ思想家
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 同分野の近傍
-- [[human-sensory-deprivation|感覚遮断（感覚剥奪）]] — 同分野の近傍
-- [[human-psychoneuroimmunology-ader-cohen|精神神経免疫学——心理・神経・免疫系の双方向的相互作用]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

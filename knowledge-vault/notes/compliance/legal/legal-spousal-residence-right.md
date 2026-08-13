@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

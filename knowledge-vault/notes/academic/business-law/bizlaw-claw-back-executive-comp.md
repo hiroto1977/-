@@ -28,10 +28,11 @@ aliases:
 ## 出典
 - [SEC (2023) Final Rule: Listing Standards for Recovery of Erroneously Awarded Compensation (Dodd-Frank Act § 954) — 33-11126](https://www.sec.gov/rules/final/2022/33-11126.pdf) `公的`
 - [Chan, L. H., Chen, K. C. W., Chen, T. Y. & Yu, Y. (2012) The Effects of Firm-Initiated Clawback Provisions on Earnings Quality and Auditor Behavior — Journal of Accounting and Economics, 54(2–3), 180–196](https://doi.org/10.1016/j.jacceco.2018.11.003) `学術`
-- [Bebchuk, L. A. & Fried, J. M. (2004) Pay Without Performance: The Unfulfilled Promise of Executive Compensation — Harvard University Press（役員報酬と代理人問題の古典）](https://doi.org/10.1111/j.1540-6261.2009.01528.x) `学術`
+- [Bebchuk, L. A. & Fried, J. M. (2004) Pay Without Performance: The Unfulfilled Promise of Executive Compensation — Harvard University Press（役員報酬と代理人問題の古典）](https://www.hup.harvard.edu/books/9780674022287) `学術`
 - [Wikipedia: Clawback — SOX § 304, Dodd-Frank § 954, SEC final rule 2023, corporate governance effects](https://en.wikipedia.org/wiki/Clawback) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
 - [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
 - [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 出典を共有
 - [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]] — 出典を共有
@@ -39,9 +40,8 @@ aliases:
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 出典を共有
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 出典を共有
 - [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 出典を共有
-- [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 出典を共有
-- [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]] — 出典を共有
-- [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]] — 出典を共有
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

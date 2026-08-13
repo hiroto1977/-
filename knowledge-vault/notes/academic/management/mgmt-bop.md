@@ -39,7 +39,6 @@ C・K・プラハラード／スチュアート・ハート（Prahalad & Hart, 2
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 出典を共有
 - [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 出典を共有
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

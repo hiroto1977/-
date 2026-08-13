@@ -31,9 +31,9 @@ William T. Allen／Kathaleen St. J. McCormick／Robert B. Thompson
 - [Thompson, R.B. & Thomas, R.S. (2004) The Public and Private Faces of Derivative Lawsuits, 57 Vand. L. Rev. 1747](https://scholarship.law.georgetown.edu/facpub/373/) `学術`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同じ思想家
 - [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同じ思想家
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 同じ思想家
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家

@@ -35,7 +35,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 同分野の近傍
-- [[bizlaw-public-records-management|公文書管理法]] — 同分野の近傍
 - [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 同分野の近傍
 
 ## 関連

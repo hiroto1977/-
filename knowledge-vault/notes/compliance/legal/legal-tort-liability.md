@@ -36,6 +36,7 @@ aliases:
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 同分野の近傍
 - [[legal-contract-nonconformity|契約不適合責任（改正民法）]] — 同分野の近傍
 - [[legal-product-liability|製造物責任法（PL法）]] — 同分野の近傍
+- [[legal-prescription-renewal|消滅時効の完成猶予・更新（改正民法）]] — 同分野の近傍
 - [[legal-set-off|相殺（民法505条等）]] — 同分野の近傍
 
 ## 関連

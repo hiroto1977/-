@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Graham, J., Haidt, J. & Nosek, B. A. (2009) Liberals and Conservatives Rely on Different Sets of Moral Foundations — Journal of Personality and Social Psychology](https://doi.org/10.1037/a0015141) `学術`
-- [Haidt, J. (2001) The Emotional Dog and Its Rational Tail — Psychological Review](https://doi.org/10.1016/S0065-2601(08)60024-7) `学術`
+- [Haidt, J. (2001) The Emotional Dog and Its Rational Tail — Psychological Review](https://doi.org/10.1037/0033-295X.108.4.814) `学術`
 - [Wikipedia: Moral foundations theory — evolved moral intuitions and political ideology overview](https://en.wikipedia.org/wiki/Moral_foundations_theory) `リファレンス`
 
 ## 関連概念

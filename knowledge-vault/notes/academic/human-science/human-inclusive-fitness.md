@@ -33,7 +33,7 @@ W・D・ハミルトン（William D. Hamilton, 1964年の論文で包括適応�
 
 ## 関連概念
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

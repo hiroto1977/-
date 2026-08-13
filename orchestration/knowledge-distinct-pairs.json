@@ -6,6 +6,10 @@
       "bizlaw-hickenlooper-amendment"
     ],
     [
+      "bizlaw-administrative-law",
+      "mgmt-administrative-theory-fayol"
+    ],
+    [
       "bizlaw-agency-apparent-authority",
       "bizlaw-apparent-agency"
     ],
@@ -30,8 +34,12 @@
       "bizlaw-promissory-note"
     ],
     [
+      "bizlaw-business-judgment-rule",
+      "bizlaw-business-judgment-rule-delaware"
+    ],
+    [
       "bizlaw-business-judgment-rule-delaware",
-      "bizlaw-business-judgment-rule-japan"
+      "bizlaw-business-judgment-rule-enhanced"
     ],
     [
       "bizlaw-carbon-border-adjustment",
@@ -40,10 +48,6 @@
     [
       "bizlaw-caveat-emptor",
       "bizlaw-caveat-emptor-laidlaw"
-    ],
-    [
-      "bizlaw-champerty-and-maintenance",
-      "bizlaw-champerty-maintenance-doctrine"
     ],
     [
       "bizlaw-corporate-governance-code",
@@ -90,8 +94,8 @@
       "bizlaw-shareholders-derivative-suit"
     ],
     [
-      "bizlaw-doctrine-of-laches",
-      "bizlaw-laches-doctrine"
+      "bizlaw-doctrine-of-frustration",
+      "bizlaw-frustration-of-purpose"
     ],
     [
       "bizlaw-fraudulent-rescission",
@@ -134,12 +138,16 @@
       "bizlaw-unjust-enrichment"
     ],
     [
-      "bizlaw-tort-liability",
-      "bizlaw-tortious-interference-restatement"
+      "bizlaw-restraint-of-trade",
+      "bizlaw-unreasonable-restraint-of-trade"
     ],
     [
       "bizlaw-trade-secret-protection-trips",
       "bizlaw-trade-secret-protection-utsa"
+    ],
+    [
+      "bizlaw-whistleblower-protection-eu-directive",
+      "bizlaw-whistleblower-protection-legislation"
     ],
     [
       "econ-asset-bubble",
@@ -238,6 +246,10 @@
       "human-embodied-cognition-lakoff"
     ],
     [
+      "human-emotional-intelligence",
+      "mgmt-emotional-intelligence"
+    ],
+    [
       "human-erikson-psychosocial",
       "human-psychosocial-development-erikson"
     ],
@@ -264,6 +276,10 @@
     [
       "human-place-attachment-theory",
       "human-place-attachment-theory-scannell"
+    ],
+    [
+      "human-psychological-capital-luthans",
+      "mgmt-psychological-capital-theory"
     ],
     [
       "human-psychoneuroimmunology",
@@ -298,10 +314,6 @@
       "mgmt-bricolage"
     ],
     [
-      "infosoc-bricolage",
-      "mgmt-bricolage-theory"
-    ],
-    [
       "infosoc-cultivation-theory",
       "infosoc-cultivation-theory-digital"
     ],
@@ -330,8 +342,8 @@
       "infosoc-network-effects-metcalfe"
     ],
     [
-      "infosoc-open-government-data",
-      "infosoc-open-government-data-sunlight"
+      "infosoc-open-data",
+      "infosoc-open-government-data"
     ],
     [
       "infosoc-platform-temporality",
@@ -356,6 +368,10 @@
     [
       "labor-collective-bargaining",
       "labor-unfair-labor-practice"
+    ],
+    [
+      "labor-contract-period-cap",
+      "labor-fixed-term-conversion"
     ],
     [
       "labor-dispatch-equal-treatment",
@@ -386,6 +402,10 @@
       "legal-personal-guarantee-reform"
     ],
     [
+      "legal-mailorder-return",
+      "legal-subscription-sales"
+    ],
+    [
       "legal-patent-right",
       "legal-trademark"
     ],
@@ -410,12 +430,32 @@
       "mgmt-escalation-of-commitment-theory"
     ],
     [
+      "mgmt-institutional-theory",
+      "mgmt-institutional-work"
+    ],
+    [
+      "mgmt-organizational-learning",
+      "mgmt-organizational-learning-argyris"
+    ],
+    [
       "mgmt-organizational-routines-as-grammars",
-      "mgmt-organizational-routines-feldman"
+      "mgmt-organizational-routines-feldman-pentland"
+    ],
+    [
+      "mgmt-organizational-routines-as-grammars",
+      "mgmt-organizational-routines-theory"
+    ],
+    [
+      "mgmt-organizational-routines-feldman-pentland",
+      "mgmt-organizational-routines-theory"
     ],
     [
       "mgmt-organizational-slack-bourgeois",
       "mgmt-slack-resources-bourgeois"
+    ],
+    [
+      "mgmt-positive-organizational-behavior-luthans",
+      "mgmt-psychological-capital-theory"
     ],
     [
       "mgmt-regulatory-focus-theory-higgins",
@@ -434,6 +474,10 @@
       "mgmt-strategic-human-capital-theory"
     ],
     [
+      "tax-basic-deduction",
+      "tax-spouse-deduction"
+    ],
+    [
       "tax-consumption-final-return",
       "tax-filing-deadline"
     ],
@@ -448,6 +492,14 @@
     [
       "tax-income-categories",
       "tax-loss-offsetting"
+    ],
+    [
+      "tax-invoice-input-credit",
+      "tax-invoice-small-amount-special"
+    ],
+    [
+      "tax-listed-securities",
+      "tax-real-estate-capital-gains"
     ],
     [
       "tax-platform-taxation",

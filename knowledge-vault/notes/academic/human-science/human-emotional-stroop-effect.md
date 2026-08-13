@@ -36,7 +36,7 @@ aliases:
 - [[human-mindfulness-based-stress-reduction-kabat-zinn|マインドフルネスストレス低減法——カバットジンのMBSRと世俗的瞑想の医療・心理応用]] — 同じ思想家
 - [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
 - [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-synesthesia|共感覚（シナスタジア）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

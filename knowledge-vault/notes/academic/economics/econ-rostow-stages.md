@@ -31,8 +31,8 @@ aliases:
 - [CiNii Research — ロストウ『経済成長の諸段階』](https://cir.nii.ac.jp/crid/1051130853490142208) `学術`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 - [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — 出典を共有
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 - [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — 同分野の近傍

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-serial-position|系列位置効果（初頭効果・新近効果）]] — 語彙が近い
 - [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同じ思想家
-- [[human-differential-susceptibility|差次感受性仮説]] — 同分野の近傍
 - [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同分野の近傍
 
 ## 関連

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Edmondson, A. (1999) Psychological Safety and Learning Behavior in Work Teams — Administrative Science Quarterly, 44(2), 350–383（原典）](https://doi.org/10.2307/2666999) `学術`
-- [Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（概念の展望）](https://doi.org/10.1016/j.obhdp.2013.12.003) `学術`
+- [Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（概念の展望）](https://doi.org/10.1146/annurev-orgpsych-031413-091305) `学術`
 - [Newman, A. et al. (2017) Psychological Safety: A Systematic Review of the Literature — Human Resource Management Review, 27(3), 521–535（体系的レビュー）](https://doi.org/10.1111/joom.12130) `学術`
 - [Wikipedia: Psychological safety — Edmondson, Project Aristotle, fearless organization, speaking up](https://en.wikipedia.org/wiki/Psychological_safety) `リファレンス`
 
@@ -35,13 +35,13 @@ aliases:
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
-- [[mgmt-loose-coupling|ルース・カップリング（緩やかな結合）の組織理論]] — 同じ思想家
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

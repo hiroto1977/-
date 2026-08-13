@@ -34,6 +34,7 @@ aliases:
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
 - [[tax-pension-income-deduction|公的年金等控除（所得税）]] — 語彙が近い
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
+- [[tax-customs-duty|関税（輸入品に課される国税）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -31,8 +31,8 @@ Heckman, James J.（1979 "Sample Selection Bias as a Specification Error", Econo
 - [Heckman, J.J. (1977/1979) Sample Selection Bias As a Specification Error (with an Application to the Estimation of Labor Supply Functions) — NBER Working Paper 172](https://www.nber.org/papers/w0172) `学術`
 
 ## 関連概念
-- [[econ-lancaster-characteristics|ランカスターの特性アプローチ]] — 同分野の近傍
 - [[econ-rational-inattention-sims|合理的不注意理論——情報処理コストに基づく意思決定と価格硬直性]] — 同分野の近傍
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

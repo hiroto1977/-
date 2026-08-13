@@ -27,7 +27,7 @@ Marc J. Melitz／Elhanan Helpman／Andrew B. Bernard／Thierry Mayer／Marc-Andr
 
 ## 出典
 - [Melitz (2003) The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity, Econometrica 71(6):1695-1725](https://doi.org/10.1111/1468-0262.00467) `学術`
-- [Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316](https://doi.org/10.1162/0033553041382139) `学術`
+- [Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316](https://doi.org/10.1257/000282804322970814) `学術`
 - [Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130](https://doi.org/10.1257/jel.45.1.39) `学術`
 
 ## 関連概念

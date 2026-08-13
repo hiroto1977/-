@@ -35,12 +35,12 @@ aliases:
 - [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 語彙が近い
 - [[subsidy-osaka-city|大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）]] — 出典を共有
 - [[tax-individual-business-tax|個人事業税]] — 出典を共有
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 出典を共有
 - [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 出典を共有
 - [[legal-electronic-consumer-contract|電子消費者契約法における操作ミス（錯誤）の特例]] — 出典を共有
 - [[subsidy-housing-security|住居確保給付金（生活困窮者自立支援制度）]] — 出典を共有
 - [[support-03|こころの健康相談統一ダイヤル]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
-- [[tax-business-premise-tax|事業所税（地方税・目的税）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

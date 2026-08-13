@@ -33,8 +33,6 @@ aliases:
 - [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — 語彙が近い
 - [[infosoc-misinformation-cognitive-science|誤情報の認知科学と信念訂正研究の情報行動論]] — 同じ思想家
 - [[infosoc-misinformation-correction-backfire|誤情報訂正とバックファイア効果の実証研究]] — 同じ思想家
-- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 同分野の近傍
-- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 同分野の近傍
 - [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同分野の近傍
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同分野の近傍
-- [[mgmt-reverse-innovation|リバース・イノベーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

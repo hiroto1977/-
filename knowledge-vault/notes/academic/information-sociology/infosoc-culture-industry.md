@@ -32,8 +32,8 @@ T.アドルノ&M.ホルクハイマー『啓蒙の弁証法』1947／フラン�
 - [Wikipedia — "Culture industry"（『啓蒙の弁証法』1947、規格化・統制の概要）](https://en.wikipedia.org/wiki/Culture_industry) `リファレンス`
 
 ## 関連概念
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同分野の近傍
 - [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 同分野の近傍
-- [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

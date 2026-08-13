@@ -30,9 +30,9 @@ aliases:
 - [Wikipedia: Ramsey problem — Ramsey-Boiteux pricing, inverse elasticity rule, break-even, second-best](https://en.wikipedia.org/wiki/Ramsey_problem) `リファレンス`
 
 ## 関連概念
+- [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 語彙が近い
 - [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同じ思想家
-- [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家

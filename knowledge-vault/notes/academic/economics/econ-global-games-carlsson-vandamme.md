@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 同じ思想家
 - [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 同分野の近傍
-- [[econ-merit-goods|メリット財（価値財）]] — 同分野の近傍
+- [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 - [Joseph Wolpe — Wikipedia](https://en.wikipedia.org/wiki/Joseph_Wolpe) `リファレンス`
 
 ## 関連概念
+- [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

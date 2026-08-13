@@ -35,8 +35,12 @@ aliases:
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 同じ思想家
 - [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 同じ思想家
 - [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
-- [[human-defense-mechanisms|防衛機制]] — 同分野の近傍
-- [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同分野の近傍
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
+- [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
+- [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

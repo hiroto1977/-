@@ -32,8 +32,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
-- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 同分野の近傍
-- [[infosoc-epistemic-injustice-digital|デジタル認識的不正義論]] — 同分野の近傍
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同分野の近傍
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同分野の近傍
 

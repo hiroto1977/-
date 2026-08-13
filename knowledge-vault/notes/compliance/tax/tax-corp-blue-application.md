@@ -31,8 +31,11 @@ aliases:
 - [国税庁 No.5762 青色申告と欠損金の繰越控除](https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm) `公的`
 
 ## 関連概念
-- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 語彙が近い
+- [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
+- [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 同分野の近傍
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

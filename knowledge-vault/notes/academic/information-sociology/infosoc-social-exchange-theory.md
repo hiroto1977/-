@@ -30,8 +30,8 @@ aliases:
 - [Encyclopaedia Britannica — Social exchange theory（報酬・コスト・互恵性の規範・ホーマンズとブラウの貢献）](https://www.britannica.com/topic/social-exchange-theory) `リファレンス`
 
 ## 関連概念
-- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同分野の近傍
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同分野の近傍
+- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

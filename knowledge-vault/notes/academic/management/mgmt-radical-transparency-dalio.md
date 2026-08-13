@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Dalio, R. (2017) Principles: Life & Work — Simon & Schuster（ラジカル・トランスパレンシーの原典）](https://www.simonandschuster.com/books/Principles/Ray-Dalio/9781501124020) `リファレンス`
 - [Nealy, C. et al. (2022) Radical Transparency and Psychological Safety: A Review — Journal of Management, 48(7), 1831–1860](https://doi.org/10.1177/01492063221115285) `学術`
-- [Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（透明性と心理的安全の交差）](https://doi.org/10.1287/orsc.1100.0617) `学術`
+- [Edmondson, A. C. & Lei, Z. (2014) Psychological Safety: The History, Renaissance, and Future of an Interpersonal Construct — Annual Review of Organizational Psychology, 1, 23–43（透明性と心理的安全の交差）](https://doi.org/10.1146/annurev-orgpsych-031413-091305) `学術`
 - [Wikipedia: Ray Dalio — Bridgewater Associates, principles, idea meritocracy, radical transparency](https://en.wikipedia.org/wiki/Ray_Dalio) `リファレンス`
 
 ## 関連概念
