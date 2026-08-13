@@ -43794,7 +43794,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エリック・リース ／ スティーブ・ブランク ／ アッシュ・モーリャ ／ デービッド・ランドール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.penguinrandomhouse.com/books/210088/the-lean-startup-by-eric-ries/', type: 'book', label: 'Ries, E. (2011) The Lean Startup — Crown Business, ISBN 978-0-307-88789-4（DOI は付与されていない）' },
+      { url: 'https://www.penguinrandomhouse.com/books/210088/the-lean-startup-by-eric-ries/', type: 'academic', label: 'Ries, E. (2011) The Lean Startup — Crown Business, ISBN 978-0-307-88789-4（DOI は付与されていない）' },
       { url: 'https://en.wikipedia.org/wiki/Lean_startup', type: 'reference', label: 'Wikipedia: Lean startup — build-measure-learn methodology' },
       { url: 'https://hbr.org/2013/05/why-the-lean-start-up-changes-everything', type: 'media', label: 'Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）' },
       { url: 'https://www.lean.org/lexicon-terms/lean-startup/', type: 'academic', label: 'Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）' },

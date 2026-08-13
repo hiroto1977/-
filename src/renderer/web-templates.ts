@@ -1,4 +1,5 @@
 import { wrapLines } from '../shared/textWrap';
+import { escapeXml, safeColor } from '../shared/escape';
 /**
  * Browser-side template renderers — mirror of the backend templates.ts
  * renderers. Imported by web-shim.ts so the standalone HTML build can
@@ -35,17 +36,18 @@ export const TEMPLATE_CATALOG_FOR_WEB: readonly TemplateDef[] = [
   { id: 'resume-header', width: 1240, height: 600, defaults: { title: '山田 太郎', subtitle: '営業部 / Sales Lead · 7年', body: 'Tokyo, Japan · taro.yamada@example.com', accentColor: '#43c3b8', secondaryColor: '#0f1117', brandText: '' } },
 ];
 
-function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+// エスケープは shared/escape.ts の 1 実装だけを使う（写経すると片方だけ
+// 文字を足し忘れて、その画面だけ漏れる状態になる）。
+const esc = escapeXml;
 
 export function renderTemplateForWeb(def: TemplateDef, params: Record<string, string>): string {
   const p: TemplateParams = {
     title: typeof params.title === 'string' ? params.title : def.defaults.title,
     subtitle: typeof params.subtitle === 'string' ? params.subtitle : def.defaults.subtitle,
     body: typeof params.body === 'string' ? params.body : def.defaults.body,
-    accentColor: typeof params.accentColor === 'string' ? params.accentColor : def.defaults.accentColor,
-    secondaryColor: typeof params.secondaryColor === 'string' ? params.secondaryColor : def.defaults.secondaryColor,
+    // 色は属性値に素で入るので、入口で検証して既定値に落とす。
+    accentColor: safeColor(String(params.accentColor ?? ''), def.defaults.accentColor),
+    secondaryColor: safeColor(String(params.secondaryColor ?? ''), def.defaults.secondaryColor),
     brandText: typeof params.brandText === 'string' ? params.brandText : def.defaults.brandText,
   };
   const d = def;

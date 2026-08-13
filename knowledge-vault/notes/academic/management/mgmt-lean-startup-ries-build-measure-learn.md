@@ -26,7 +26,7 @@ aliases:
 エリック・リース ／ スティーブ・ブランク ／ アッシュ・モーリャ ／ デービッド・ランドール
 
 ## 出典
-- [Ries, E. (2011) The Lean Startup — Crown Business, ISBN 978-0-307-88789-4（DOI は付与されていない）](https://www.penguinrandomhouse.com/books/210088/the-lean-startup-by-eric-ries/) `book`
+- [Ries, E. (2011) The Lean Startup — Crown Business, ISBN 978-0-307-88789-4（DOI は付与されていない）](https://www.penguinrandomhouse.com/books/210088/the-lean-startup-by-eric-ries/) `学術`
 - [Wikipedia: Lean startup — build-measure-learn methodology](https://en.wikipedia.org/wiki/Lean_startup) `リファレンス`
 - [Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）](https://hbr.org/2013/05/why-the-lean-start-up-changes-everything) `メディア`
 - [Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）](https://www.lean.org/lexicon-terms/lean-startup/) `学術`

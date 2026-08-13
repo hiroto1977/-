@@ -211,3 +211,51 @@ describe('renderTemplateForWeb — esc / wrap edge behaviour', () => {
     expect((svg.match(/<tspan/g) ?? []).length).toBe(3);
   });
 });
+
+describe('色の属性値からの脱出を防ぐ（ブラウザ版の書き出し）', () => {
+  const def = TEMPLATE_CATALOG_FOR_WEB[0]!;
+
+  /**
+   * 画面は `<input type="color">` なので `#rrggbb` しか作れないが、
+   * `serviceHub.invoke()` は任意の文字列を受ける。書き出した SVG は
+   * ライブラリに保存されダウンロードされるので、開いた人の環境で走る。
+   */
+  const ATTACKS = [
+    '"/><script>alert(1)</script><rect fill="#000',
+    '" onload="alert(1)',
+    "' onload='alert(1)",
+    '#000" onmouseover="alert(1)',
+    'url(javascript:alert(1))',
+    'red;background:url(javascript:alert(1))',
+    '<script>alert(1)</script>',
+  ];
+
+  it('壊れた色は既定値に落ち、属性を抜ける文字を残さない', () => {
+    for (const bad of ATTACKS) {
+      const svg = renderTemplateForWeb(def, { accentColor: bad, secondaryColor: bad });
+      expect(svg, bad).not.toContain('<script');
+      expect(svg, bad).not.toContain('onload');
+      expect(svg, bad).not.toContain('onmouseover');
+      expect(svg, bad).not.toContain('javascript:');
+      // 既定値に落ちていること。
+      expect(svg, bad).toContain(def.defaults.accentColor);
+    }
+  });
+
+  it('正しい色はそのまま通す（機能を壊さない）', () => {
+    for (const good of ['#fff', '#0f5fac', '#0f5facff', 'rebeccapurple', 'red']) {
+      const svg = renderTemplateForWeb(def, { accentColor: good, secondaryColor: '#111111' });
+      expect(svg, good).toContain(good);
+    }
+  });
+
+  it('本文・タイトルのマークアップも従来どおりエスケープされる', () => {
+    const svg = renderTemplateForWeb(def, {
+      title: '<script>alert(1)</script>',
+      brandText: '" onload="x',
+    });
+    expect(svg).not.toContain('<script>');
+    expect(svg).toContain('&lt;script&gt;');
+    expect(svg).toContain('&quot;');
+  });
+});
