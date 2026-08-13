@@ -261,6 +261,17 @@ function extractIsbn13(doi) {
  * 決められないため保留している。
  */
 const ISBN_ALLOWLIST = new Map([
+  // 2026-08-13 の調査で分かったこと（次に着手する人向け）:
+  // **これらの多くは「ISBN の打ち間違い」ではなく、DOI そのものが実在しない。**
+  // ラベルが Prentice-Hall / Pergamon / Macmillan / Polity / Crown Business など
+  // **Springer 以外の出版社**を名乗っているのに、DOI が 10.1007（Springer）の
+  // 形をしている。ISBN のチェックディジットが合わないのは、実在の ISBN を
+  // 写したのではなく形式を真似て作られた結果とみられる。
+  // したがって直し方は「正しい Springer DOI を探す」ではなく、
+  // **その本に DOI があるなら実 DOI、無いなら出版社の書誌ページに差し替える**。
+  // 例: Ries (2011) The Lean Startup は Crown Business 刊で DOI が無いため、
+  // 版元（Penguin Random House）の書誌ページに差し替えて台帳から外した。
+
   ['bizlaw-whistleblower-protection-directive-eu::10.1007/978-3-030-26946-0',
     '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Vandekerckhove, W. et al. (2014) Whistleblowing and Democratic Values '],
   ['bizlaw-whistleblower-protection-eu-directive::10.1007/978-3-030-78706-8',
@@ -299,8 +310,6 @@ const ISBN_ALLOWLIST = new Map([
     '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Mod'],
   ['mgmt-corporate-social-responsibility-csr::10.1007/978-94-007-4098-0_244',
     '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Freeman (1984) Strategic Management: A Stakeholder Approach — Pitman ('],
-  ['mgmt-lean-startup-ries-build-measure-learn::10.1007/978-1-4302-4463-4',
-    '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Ries, E. (2011) The Lean Startup — Crown Business'],
   ['mgmt-organizational-learning-cycles-levinthal::10.1007/978-1-4612-3670-6_1',
     '未確認: ISBN のチェックディジット不正＝この DOI は解決しない / Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, '],
 ]);
@@ -468,8 +477,6 @@ const DUPLICATE_ID_ALLOWLIST = new Map([
     '未確認: 少なくとも一方の識別子が誤り — econ-phillips-curve-friedman / econ-phillips-curve-inflation-unemploym'],
   ['ramsey|1927|contribution theory taxation economic',
     '未確認: 少なくとも一方の識別子が誤り — econ-ramsey-optimal-taxation / econ-value-added-tax-theory'],
-  ['ries|2011|lean startup crown business',
-    '未確認: 少なくとも一方の識別子が誤り — mgmt-lean-startup-ries-build-measure-learn'],
   ['robinson|1953|production function theory capital',
     '未確認: 少なくとも一方の識別子が誤り — econ-capital-controversy / econ-sraffa-commodities'],
   ['rousseau|1989|psychological implied contracts organizations',

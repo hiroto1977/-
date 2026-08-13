@@ -9696,6 +9696,7 @@
 {"a":"econ-poverty-trap","b":"infosoc-algorithmic-curation-theory","type":"shares-source","score":5000}
 {"a":"econ-poverty-trap","b":"infosoc-hacker-culture-levy","type":"shares-source","score":2500}
 {"a":"econ-poverty-trap","b":"infosoc-techno-feudalism-theory","type":"shares-source","score":2000}
+{"a":"econ-poverty-trap","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":2500}
 {"a":"econ-poverty-trap-multiple-equilibria","b":"econ-rct-development","type":"shares-thinker","score":3333}
 {"a":"econ-poverty-trap-multiple-equilibria","b":"econ-resource-curse-sachs-warner","type":"shares-thinker","score":2500}
 {"a":"econ-ppp","b":"econ-purchasing-power-parity-uip-fisher","type":"term-overlap","score":1215}
@@ -11416,6 +11417,7 @@
 {"a":"human-awe-emotion-keltner","b":"infosoc-hacker-culture-levy","type":"shares-source","score":3333}
 {"a":"human-awe-emotion-keltner","b":"infosoc-social-media-mental-health-youth","type":"shares-thinker","score":2500}
 {"a":"human-awe-emotion-keltner","b":"infosoc-techno-feudalism-theory","type":"shares-source","score":2500}
+{"a":"human-awe-emotion-keltner","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":3333}
 {"a":"human-balance-theory-heider","b":"human-cognitive-dissonance","type":"shares-thinker","score":2500}
 {"a":"human-balance-theory-heider","b":"human-cognitive-dissonance-revision","type":"shares-thinker","score":2500}
 {"a":"human-balance-theory-heider","b":"human-cognitive-miser","type":"shares-thinker","score":10000}
@@ -14182,6 +14184,7 @@
 {"a":"infosoc-algorithmic-curation-theory","b":"infosoc-information-cocoon","type":"term-overlap","score":1271}
 {"a":"infosoc-algorithmic-curation-theory","b":"infosoc-media-repertoire-theory","type":"same-category","score":458}
 {"a":"infosoc-algorithmic-curation-theory","b":"infosoc-techno-feudalism-theory","type":"shares-source","score":2500}
+{"a":"infosoc-algorithmic-curation-theory","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":3333}
 {"a":"infosoc-algorithmic-experience","b":"infosoc-algorithmic-governance-theory","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-experience","b":"infosoc-digital-rights-management-theory","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-experience","b":"infosoc-produsage-bruns","type":"same-category","score":418}
@@ -15515,6 +15518,7 @@
 {"a":"infosoc-hacker-culture-levy","b":"infosoc-second-level-digital-divide","type":"shares-source","score":2500}
 {"a":"infosoc-hacker-culture-levy","b":"infosoc-sharing-economy","type":"same-category","score":431}
 {"a":"infosoc-hacker-culture-levy","b":"infosoc-techno-feudalism-theory","type":"shares-source","score":1667}
+{"a":"infosoc-hacker-culture-levy","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":2000}
 {"a":"infosoc-hacktivism-anonymous-digital-activism","b":"infosoc-technological-determinism","type":"same-category","score":422}
 {"a":"infosoc-hashtag-activism","b":"infosoc-post-truth","type":"shares-source","score":2500}
 {"a":"infosoc-hashtag-activism","b":"infosoc-protocol-politics-galloway","type":"shares-source","score":3333}
@@ -16429,6 +16433,7 @@
 {"a":"infosoc-techno-feminist-theory","b":"infosoc-techno-utopianism-critique","type":"same-category","score":788}
 {"a":"infosoc-techno-feudalism-theory","b":"infosoc-techno-utopianism-critique","type":"shares-thinker","score":3333}
 {"a":"infosoc-techno-feudalism-theory","b":"infosoc-technofeudalism","type":"shares-source","score":1429}
+{"a":"infosoc-techno-feudalism-theory","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":1667}
 {"a":"infosoc-techno-feudalism-theory","b":"mgmt-organizational-resilience-theory","type":"shares-source","score":2500}
 {"a":"infosoc-techno-moral-change","b":"infosoc-techno-utopianism-critique","type":"shares-source","score":10000}
 {"a":"infosoc-techno-moral-change","b":"infosoc-technological-mediation-theory","type":"shares-thinker","score":2500}
@@ -18992,7 +18997,7 @@
 {"a":"mgmt-issue-selling-dutton","b":"mgmt-strategic-issue-selling","type":"same-category","score":1239}
 {"a":"mgmt-issue-selling-dutton","b":"mgmt-threat-rigidity-staw","type":"shares-thinker","score":2500}
 {"a":"mgmt-issue-selling-dutton","b":"mgmt-trust-integrative-model","type":"same-category","score":434}
-{"a":"mgmt-jidoka","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":3333}
+{"a":"mgmt-jidoka","b":"mgmt-lean-startup-ries-build-measure-learn","type":"shares-source","score":2500}
 {"a":"mgmt-jidoka","b":"mgmt-six-sigma","type":"shares-source","score":3333}
 {"a":"mgmt-jidoka","b":"mgmt-toyota-production","type":"shares-source","score":3333}
 {"a":"mgmt-job-based-employment","b":"mgmt-job-demands-resources","type":"shares-source","score":2500}
@@ -19129,10 +19134,9 @@
 {"a":"mgmt-leadership-substitutes-kerr-jermier","b":"mgmt-strategic-choice-child","type":"same-category","score":421}
 {"a":"mgmt-leadership-substitutes-kerr-jermier","b":"mgmt-substitutes-leadership","type":"shares-thinker","score":5000}
 {"a":"mgmt-leadership-substitutes-kerr-jermier","b":"mgmt-substitutes-leadership","type":"same-category","score":882}
-{"a":"mgmt-lean-startup-ries-build-measure-learn","b":"mgmt-requisite-variety-ashby","type":"same-category","score":430}
-{"a":"mgmt-lean-startup-ries-build-measure-learn","b":"mgmt-six-sigma","type":"shares-source","score":3333}
+{"a":"mgmt-lean-startup-ries-build-measure-learn","b":"mgmt-six-sigma","type":"shares-source","score":2500}
 {"a":"mgmt-lean-startup-ries-build-measure-learn","b":"mgmt-theory-x-y-mcgregor","type":"same-category","score":414}
-{"a":"mgmt-lean-startup-ries-build-measure-learn","b":"mgmt-toyota-production","type":"shares-source","score":3333}
+{"a":"mgmt-lean-startup-ries-build-measure-learn","b":"mgmt-toyota-production","type":"shares-source","score":2500}
 {"a":"mgmt-learning-organization-senge","b":"mgmt-organizational-learning","type":"term-overlap","score":1246}
 {"a":"mgmt-learning-organization-senge","b":"mgmt-organizational-learning","type":"shares-thinker","score":10000}
 {"a":"mgmt-learning-organization-senge","b":"mgmt-organizational-learning","type":"same-category","score":1246}

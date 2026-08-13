@@ -1347,7 +1347,7 @@
 {"id":"econ-poole-instrument-choice","collection":"academic","category":"economics","categoryLabel":"経済学","title":"プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる","year":1970,"authors":["economics|q","poole|w","shock|"],"degree":3}
 {"id":"econ-population-growth-technological-change-kremer","collection":"academic","category":"economics","categoryLabel":"経済学","title":"クレマーの人口成長と技術変化——紀元前100万年からの超長期データが示すアイデア駆動型成長","year":1965,"authors":["boserup|e","growth|d","jones|c","kremer|m","romer|p"],"degree":3}
 {"id":"econ-porter-hypothesis","collection":"academic","category":"economics","categoryLabel":"経済学","title":"ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める","year":null,"authors":["アンベック|ス","ポーター|マ","ラノワ|ポ","リンデ|ク"],"degree":10}
-{"id":"econ-poverty-trap","collection":"academic","category":"economics","categoryLabel":"経済学","title":"貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析","year":null,"authors":["サックス|ジ","デュフロ|エ","バナジー|ア"],"degree":18}
+{"id":"econ-poverty-trap","collection":"academic","category":"economics","categoryLabel":"経済学","title":"貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析","year":null,"authors":["サックス|ジ","デュフロ|エ","バナジー|ア"],"degree":19}
 {"id":"econ-poverty-trap-multiple-equilibria","collection":"academic","category":"economics","categoryLabel":"経済学","title":"貧困の罠と複数均衡理論——開発経済学の構造的困窮分析","year":null,"authors":["アジェモグル|ダ","サックス|ジ","デュフロ|エ","バナジー|ア"],"degree":11}
 {"id":"econ-ppp","collection":"academic","category":"economics","categoryLabel":"経済学","title":"購買力平価（PPP）","year":1918,"authors":["ppp|g"],"degree":5}
 {"id":"econ-prebisch-singer-hypothesis","collection":"academic","category":"economics","categoryLabel":"経済学","title":"プレビッシュ＝シンガー仮説","year":1950,"authors":["シンガー|ハ","プレビッシュ|ラ"],"degree":7}
@@ -1753,7 +1753,7 @@
 {"id":"human-automation-bias","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"オートメーション・バイアス（自動化バイアス）","year":1997,"authors":["burdick|","skitka|m","スキトカ|リ","モージャー|キ"],"degree":18}
 {"id":"human-availability-cascade","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"利用可能性カスケード","year":1999,"authors":["sunstein|","クラン|テ","サンスティーン|キ"],"degree":10}
 {"id":"human-availability-heuristic-tversky","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道","year":null,"authors":["カーネマン|ダ","シュワルツ|ノ","スロヴィック|ポ","トヴェルスキー|エ"],"degree":16}
-{"id":"human-awe-emotion-keltner","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"畏敬（オー）の感情（ケルトナー＆ハイト）","year":null,"authors":["ケルトナー|ダ","ハイト|ジ","ピフ|ポ","ルーニー|マ"],"degree":8}
+{"id":"human-awe-emotion-keltner","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"畏敬（オー）の感情（ケルトナー＆ハイト）","year":null,"authors":["ケルトナー|ダ","ハイト|ジ","ピフ|ポ","ルーニー|マ"],"degree":9}
 {"id":"human-balance-theory-heider","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"認知的バランス理論（ハイダー）——P-O-X三者関係の均衡","year":null,"authors":["カートライト|ド","ハイダー|フ","ハラリー|フ","フェスティンガー|レ"],"degree":12}
 {"id":"human-barnum-effect","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"バーナム効果（フォアラー効果）","year":1948,"authors":[],"degree":2}
 {"id":"human-baroreceptor-reflex","collection":"academic","category":"human-science","categoryLabel":"人間科学","title":"圧受容器反射（バロレフレックス）","year":null,"authors":["castro|f","hering|h","heymans|c"],"degree":21}
@@ -2361,7 +2361,7 @@
 {"id":"infosoc-algorithmic-bias","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズムバイアス","year":1982,"authors":["ゲブル|テ","ノーブル|サ","フリードマン|バ","ブオラムウィニ|ジ"],"degree":11}
 {"id":"infosoc-algorithmic-bias-fairness","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズムの偏りと公平性（アルゴリズム的公正性）","year":null,"authors":["ゲブル|テ","ハート|モ","バロカス|ソ","ブオランウィニ|ジ"],"degree":7}
 {"id":"infosoc-algorithmic-culture","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズム文化論","year":null,"authors":["galloway|a","gillespie|t","striphas|t"],"degree":6}
-{"id":"infosoc-algorithmic-curation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズムキュレーション理論","year":null,"authors":["bucher|t","gillespie|t","o'neil|c","pariser|e","pasquale|f"],"degree":14}
+{"id":"infosoc-algorithmic-curation-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズムキュレーション理論","year":null,"authors":["bucher|t","gillespie|t","o'neil|c","pariser|e","pasquale|f"],"degree":15}
 {"id":"infosoc-algorithmic-experience","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズム経験","year":null,"authors":["bucher|t","eslami|m","gillespie|t","rader|e"],"degree":6}
 {"id":"infosoc-algorithmic-fairness","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズム公正性（機械学習の公平性理論）","year":null,"authors":["chouldechova|a","friedler|s","selbst|a"],"degree":7}
 {"id":"infosoc-algorithmic-gatekeeping","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）","year":2014,"authors":["society|","ナポリ|フ","ユスト|ナ","ラッツァー|ミ"],"degree":14}
@@ -2595,7 +2595,7 @@
 {"id":"infosoc-goffman-stigma","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"スティグマ論（ゴッフマン）","year":1922,"authors":["identity|s","ゴッフマン|ア","フェラン|ジ","リンク|ブ"],"degree":22}
 {"id":"infosoc-granovetter-threshold","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"グラノヴェッターの閾値モデル（集合行動と社会変動）","year":1943,"authors":["sociology|t","グラノヴェッター|マ"],"degree":12}
 {"id":"infosoc-grobalization-ritzer","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"グロウバリゼーション——画一的な「無」が世界を覆う","year":null,"authors":["オジェ|マ","バーバー|ベ","リッツァ|ジ","ロバートソン|ロ"],"degree":6}
-{"id":"infosoc-hacker-culture-levy","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ハッカー文化とハッカー倫理（レヴィ）","year":null,"authors":["トーバルズ|リ","ヒマネン|ペ","レイモンド|エ","レシグ|ロ","レヴィ|ス"],"degree":15}
+{"id":"infosoc-hacker-culture-levy","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ハッカー文化とハッカー倫理（レヴィ）","year":null,"authors":["トーバルズ|リ","ヒマネン|ペ","レイモンド|エ","レシグ|ロ","レヴィ|ス"],"degree":16}
 {"id":"infosoc-hacktivism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ハクティビズム","year":1990,"authors":["anonymous|"],"degree":2}
 {"id":"infosoc-hacktivism-anonymous-digital-activism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ハクティビズムとデジタル行動主義——アノニマスが体現するオンライン政治抵抗の倫理と法的問題","year":null,"authors":["スワーツ|ア","セキヤ|ポ","ナシュ|ジ"],"degree":2}
 {"id":"infosoc-hashtag-activism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"ハッシュタグ・アクティビズム","year":2020,"authors":["ウェルズ|フ","トメティ|ガ","バーク|タ","ミラノ|ア"],"degree":12}
@@ -2896,7 +2896,7 @@
 {"id":"infosoc-technical-debt","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"技術的負債","year":1949,"authors":["カニンガム|ウ"],"degree":6}
 {"id":"infosoc-techno-feminism-wajcman","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"テクノフェミニズム——技術とジェンダーの相互構成的関係","year":null,"authors":["コックバーン|シ","チャン|ウ","ノーブル|サ","ハラウェイ|ド","ワイクマン|ジ"],"degree":10}
 {"id":"infosoc-techno-feminist-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"テクノフェミニスト理論","year":null,"authors":["balsamo|a","braidotti|r","cockburn|c","haraway|d","wajcman|j"],"degree":6}
-{"id":"infosoc-techno-feudalism-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"テクノ封建主義論","year":null,"authors":["durand|d","morozov|e","varoufakis|y"],"degree":11}
+{"id":"infosoc-techno-feudalism-theory","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"テクノ封建主義論","year":null,"authors":["durand|d","morozov|e","varoufakis|y"],"degree":12}
 {"id":"infosoc-techno-moral-change","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"テクノモラル・チェンジ","year":2009,"authors":["danaher|j","swierstra|t","tra|h","verbeek|p"],"degree":14}
 {"id":"infosoc-techno-moral-change-verbeek","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成","year":null,"authors":["イーデ|ド","フェルベーク|ポ","フリードマン|バ","ラトゥール|ブ"],"degree":11}
 {"id":"infosoc-techno-nationalism","collection":"academic","category":"information-sociology","categoryLabel":"情報社会学","title":"テクノナショナリズム（Techno-nationalism）","year":1994,"authors":["act|c","samuels|r"],"degree":8}
@@ -3514,7 +3514,7 @@
 {"id":"mgmt-lawrence-lorsch","collection":"academic","category":"management","categoryLabel":"経営学","title":"分化と統合（ローレンス＆ローシュ）","year":1967,"authors":[],"degree":13}
 {"id":"mgmt-lead-user","collection":"academic","category":"management","categoryLabel":"経営学","title":"リードユーザー法","year":1986,"authors":["アーバン|グ","ヒッペル|エ"],"degree":12}
 {"id":"mgmt-leadership-substitutes-kerr-jermier","collection":"academic","category":"management","categoryLabel":"経営学","title":"リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因","year":null,"authors":["カー|ス","ジャーミア|ジ","ハウエル|ジ","ポドサコフ|フ"],"degree":5}
-{"id":"mgmt-lean-startup-ries-build-measure-learn","collection":"academic","category":"management","categoryLabel":"経営学","title":"リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略","year":null,"authors":["ブランク|ス","モーリャ|ア","ランドール|デ","リース|エ"],"degree":9}
+{"id":"mgmt-lean-startup-ries-build-measure-learn","collection":"academic","category":"management","categoryLabel":"経営学","title":"リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略","year":null,"authors":["ブランク|ス","モーリャ|ア","ランドール|デ","リース|エ"],"degree":13}
 {"id":"mgmt-learning-agility","collection":"academic","category":"management","categoryLabel":"経営学","title":"学習敏捷性（ラーニング・アジリティ）","year":null,"authors":["burke|w","eichinger|r","lombardo|m"],"degree":2}
 {"id":"mgmt-learning-organization-senge","collection":"academic","category":"management","categoryLabel":"経営学","title":"学習する組織（センゲ）","year":null,"authors":["アージリス|ク","ゴース|ア","ショーン|ド","センゲ|ピ"],"degree":10}
 {"id":"mgmt-leavitt-diamond","collection":"academic","category":"management","categoryLabel":"経営学","title":"リービットのダイヤモンド","year":1965,"authors":[],"degree":15}
@@ -3683,7 +3683,7 @@
 {"id":"mgmt-relational-coordination-gittell","collection":"academic","category":"management","categoryLabel":"経営学","title":"リレーショナル・コーディネーション（ギッテル）","year":null,"authors":["エドモンドソン|エ","ギッテル|ジ","ギバス|ロ","モンタルバン|カ"],"degree":11}
 {"id":"mgmt-relational-leadership","collection":"academic","category":"management","categoryLabel":"経営学","title":"関係性リーダーシップ理論","year":null,"authors":["graen|g","hosking|d","uhl-bien|m"],"degree":5}
 {"id":"mgmt-relational-view","collection":"academic","category":"management","categoryLabel":"経営学","title":"関係的視座（Relational View）","year":1998,"authors":["シン|ハ","ダイアー|ジ"],"degree":2}
-{"id":"mgmt-requisite-variety-ashby","collection":"academic","category":"management","categoryLabel":"経営学","title":"必要多様性の法則——組織の制御能力と環境複雑性の対応原理","year":null,"authors":["アシュビー|ウ","ビア|ス","ワイク|カ"],"degree":19}
+{"id":"mgmt-requisite-variety-ashby","collection":"academic","category":"management","categoryLabel":"経営学","title":"必要多様性の法則——組織の制御能力と環境複雑性の対応原理","year":null,"authors":["アシュビー|ウ","ビア|ス","ワイク|カ"],"degree":18}
 {"id":"mgmt-resource-based-view","collection":"academic","category":"management","categoryLabel":"経営学","title":"資源ベース理論（Resource-Based View, RBV）とVRIO","year":1959,"authors":["ペンローズ|エ","ワーナーフェルト|バ"],"degree":17}
 {"id":"mgmt-resource-dependence","collection":"academic","category":"management","categoryLabel":"経営学","title":"資源依存理論","year":1978,"authors":["pfeffer|","salancik|","フェファー|ジ"],"degree":16}
 {"id":"mgmt-resource-dependence-pfeffer","collection":"academic","category":"management","categoryLabel":"経営学","title":"資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）","year":null,"authors":["ウェットン|デ","グラノヴェター|マ","サランシク|ジ","ファーファー|ジ"],"degree":5}

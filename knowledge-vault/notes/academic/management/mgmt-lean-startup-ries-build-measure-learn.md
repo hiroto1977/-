@@ -26,7 +26,7 @@ aliases:
 エリック・リース ／ スティーブ・ブランク ／ アッシュ・モーリャ ／ デービッド・ランドール
 
 ## 出典
-- [Ries, E. (2011) The Lean Startup — Crown Business](https://doi.org/10.1007/978-1-4302-4463-4) `学術`
+- [Ries, E. (2011) The Lean Startup — Crown Business, ISBN 978-0-307-88789-4（DOI は付与されていない）](https://www.penguinrandomhouse.com/books/210088/the-lean-startup-by-eric-ries/) `book`
 - [Wikipedia: Lean startup — build-measure-learn methodology](https://en.wikipedia.org/wiki/Lean_startup) `リファレンス`
 - [Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）](https://hbr.org/2013/05/why-the-lean-start-up-changes-everything) `メディア`
 - [Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）](https://www.lean.org/lexicon-terms/lean-startup/) `学術`
@@ -35,14 +35,15 @@ aliases:
 
 ## 関連概念
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同じ思想家
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
+- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
+- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
+- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同分野の近傍
-- [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
-- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2165
+cite_count: 2164
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2165 件**（学術 2157 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2164 件**（学術 2156 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1903,7 +1903,6 @@ tags:
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — Nonaka1994—ADynamicTheoryofOrganizationalKnowledgeCreation,Organizati…
 - [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — Szulanski,G.(1996)ExploringInternalStickiness—StrategicManagementJour…
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — Kerr,S.&Jermier,J.M.(1978)SubstitutesforLeadership:TheirMeaningandMea…
-- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — Ries,E.(2011)TheLeanStartup—CrownBusiness
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — Ries,E.(2011).TheLeanStartup—CrownBusiness
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — Argyris,C.&Schön,D.A.(1978)OrganizationalLearning:ATheoryofActionPers…
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — Senge,P.M.(1990)TheFifthDiscipline:TheArtandPracticeoftheLearningOrga…
