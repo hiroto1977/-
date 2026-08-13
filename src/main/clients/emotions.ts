@@ -25,6 +25,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import {
   jsonFetch,
+  redactSecrets,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -231,7 +232,7 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
   try {
     parsed = JSON.parse(extractJson(body));
   } catch {
-    throw new Error('Anthropic returned a non-JSON response: ' + body.slice(0, 80));
+    throw new Error('Anthropic returned a non-JSON response: ' + redactSecrets(body.slice(0, 80)));
   }
   const normalized = normalizeAnalysis(parsed);
 

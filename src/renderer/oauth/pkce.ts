@@ -13,6 +13,7 @@
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
+import { redactSecrets } from '../../shared/redact';
 
 export interface PkceSecrets {
   /** code_verifier — token exchange までブラウザに保持 */
@@ -175,7 +176,10 @@ export async function exchangeGoogleCode(
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`token exchange ${res.status}: ${body.slice(0, 200)}`);
+    // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
+    // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
+    // 不具合報告に貼られる。
+    throw new Error(`token exchange ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
   }
   const data = (await res.json()) as {
     access_token?: string;

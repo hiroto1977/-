@@ -102,6 +102,22 @@ const FORBIDDEN_PATTERNS = [
       'そこで走るスクリプトが IndexedDB と localStorage に届く',
   },
   {
+    name: 'unredacted response body in an error message',
+    // 「redactSecrets を通していない行で body.slice( を使っている」を捕まえる。
+    // 否定先読みで同一行の redactSecrets を除外している。
+    pattern: /^(?!.*redactSecrets).*\bbody\.slice\(/,
+    // 走査は行単位なので、`const body = await res.text()` → `body.slice(...)`
+    // という**このリポジトリで実際に使われている書き方**しか見ない。
+    // `(await res.text()).slice(...)` のように書けばすり抜ける。網羅ではなく、
+    // 既にある書き方の再発を止めるためのもの。
+    codeOnly: true,
+    rationale:
+      '連携先が応答に資格情報を反射しうる。このエラー文字列は画面にそのまま出て' +
+      '不具合報告にも貼られるので、shared/redact.ts の redactSecrets を通す。' +
+      'jsonFetch / http.ts / oauth.ts / proxy.ts は最初から通していたが、' +
+      '同じ書き方の 8 箇所が素通しだった',
+  },
+  {
     name: 'child_process exec/spawn',
     pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
     // Build/dev scripts are allowed; runtime src is not.

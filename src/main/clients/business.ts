@@ -3,6 +3,7 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { redactSecrets } from './types';
 import { isSafeExportPath } from './exportPaths';
 
 /**
@@ -690,7 +691,7 @@ export async function askBusinessAdvisorImpl(
     // mirrors stocks-advisor pattern for symmetry.
     // Stryker disable next-line ArrowFunction,MethodExpression
     const body = await res.text().catch(() => '');
-    throw new Error(`business-advisor ${res.status}: ${body.slice(0, 200)}`);
+    throw new Error(`business-advisor ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
   }
 
   const parsed = (await res.json()) as AnthropicMessagesResponse;

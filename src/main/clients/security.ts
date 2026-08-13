@@ -27,6 +27,7 @@ import path from 'node:path';
 import {
   jsonFetch,
   FetchError,
+  redactSecrets,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -206,7 +207,7 @@ async function checkEmailBreach(
   if (res.status === 404) return { email, breaches: [] };
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new FetchError(`HIBP ${res.status}: ${body.slice(0, 200)}`, res.status, 'security');
+    throw new FetchError(`HIBP ${res.status}: ${redactSecrets(body.slice(0, 200))}`, res.status, 'security');
   }
   const data = (await res.json()) as HibpBreach[];
   return {

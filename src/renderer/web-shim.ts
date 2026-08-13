@@ -52,6 +52,7 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { getVault } from './security/vault';
+import { redactSecrets } from '../shared/redact';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
@@ -363,7 +364,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
   }
 
   let parsed: { content?: { type: string; text?: string }[] };
@@ -453,7 +454,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
@@ -516,7 +517,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   }
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
@@ -529,7 +530,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   try {
     json = JSON.parse(emotionsExtractJson(body));
   } catch {
-    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + body.slice(0, 80));
+    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactSecrets(body.slice(0, 80)));
   }
   const entry = emotionsRecordAnalysis(text, source, emotionsNormalize(json));
   return ok(entry);

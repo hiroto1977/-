@@ -208,3 +208,52 @@ describe('parseGoogleCallback', () => {
     expect(parseGoogleCallback('http://[invalid')).toBeNull();
   });
 });
+
+describe('exchangeGoogleCode — エラー本文の秘匿', () => {
+  // 連携先がエラー応答に資格情報を反射することがある。この文字列は画面に
+  // そのまま出て不具合報告にも貼られるので、resolve する前に伏せる。
+  // jsonFetch / http.ts / oauth.ts / proxy.ts は最初から通していたのに、
+  // 同じ書き方の 8 箇所 (ここを含む) が素通しだった。
+  function errorResponse(body: string): Response {
+    return {
+      ok: false,
+      status: 400,
+      async text() { return body; },
+      async json() { return {}; },
+    } as Response;
+  }
+
+  const args = {
+    code: 'the-code',
+    verifier: 'the-verifier',
+    expectedState: 'st-xyz',
+    receivedState: 'st-xyz',
+    clientId: 'cid',
+    redirectUri: 'http://x',
+  };
+
+  it('反射された access_token をエラー文へ出さない', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(errorResponse('{"error":"invalid_grant","access_token":"ya29.SUPERSECRETVALUE"}'));
+    await expect(exchangeGoogleCode(args, fetchMock)).rejects.toThrow(/REDACTED/);
+    await expect(exchangeGoogleCode(args, fetchMock)).rejects.not.toThrow(/SUPERSECRETVALUE/);
+  });
+
+  it('reflected bearer token も出さない', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(errorResponse('rejected: ya29.aBcDeFgHiJkLmNoPqRsT'));
+    await expect(exchangeGoogleCode(args, fetchMock)).rejects.not.toThrow(/aBcDeFgHiJkLmNoPqRsT/);
+  });
+
+  // ネガティブコントロール: 秘匿は「全部消す」ではない。原因が分からなく
+  // なっては報告の役に立たないので、資格情報でない部分は残る。
+  it('資格情報でない部分は残す (status と error コード)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(errorResponse('{"error":"invalid_grant","access_token":"ya29.SECRET"}'));
+    await expect(exchangeGoogleCode(args, fetchMock)).rejects.toThrow(/invalid_grant/);
+    await expect(exchangeGoogleCode(args, fetchMock)).rejects.toThrow(/400/);
+  });
+});

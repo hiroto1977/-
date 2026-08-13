@@ -9,6 +9,7 @@
  * ここは fetch を注入できる純粋ロジックに保ち、単体テスト可能にする。
  * サービスを追加するたびにこのモジュールに関数を増やしていく。
  */
+import { redactSecrets } from '../../shared/redact';
 
 export type FetchFn = typeof fetch;
 
@@ -20,7 +21,7 @@ export type Transport = (url: string, init: RequestInit) => Promise<Response>;
 async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
   const body = await res.text().catch(() => '');
-  throw new Error(`${label} ${res.status}: ${body.slice(0, 200)}`);
+  throw new Error(`${label} ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
 }
 
 // --- GitHub: create-issue ------------------------------------------------
