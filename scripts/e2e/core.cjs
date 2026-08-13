@@ -255,6 +255,40 @@ async function desktopSuite(browser) {
   );
   ok(await page.getByLabel('株主1 を削除').isDisabled(), 'shareholders: 残り 1 行では削除できない');
 
+  // 法定 / 条件付き / 任意 の仕分け。単体は表と関数しか見ていないので、
+  // 「バッジが全書式に付くか」「絞り込みが効くか」は実ブラウザで確かめる。
+  await gotoService(page, '#docstudio', '[data-legal-filter="mandatory"]');
+  const badgeCount = await page.locator('[data-doc-id] [data-legal]').count();
+  const docCount = await page.locator('[data-doc-id]').count();
+  ok(badgeCount === docCount && docCount > 0, `legal: 全書式にバッジが付く (${badgeCount}/${docCount})`);
+  ok((await page.locator('[data-legal="unclassified"]').count()) === 0, 'legal: 未分類の書式が無い');
+  await page.locator('[data-legal-filter="mandatory"]').click();
+  await page.waitForFunction(
+    () => {
+      const b = [...document.querySelectorAll('[data-doc-id]')];
+      return b.length > 0 && b.every((x) => x.querySelector('[data-legal="mandatory"]'));
+    },
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'legal: 「法定」で絞ると法定の書式だけになる');
+  ok(
+    (await page.locator('[data-doc-id]').count()) < docCount,
+    'legal: 絞り込みで件数が減る（絞れていない絞り込みを通さない）',
+  );
+  await page.locator('[data-doc-id="roudousha-meibo"]').click();
+  await page.waitForSelector('[data-legal-panel="mandatory"]', { timeout: 15000 });
+  const panel = await page.locator('[data-legal-panel]').innerText();
+  ok(panel.includes('労働基準法107条'), 'legal: 選んだ書式に根拠条文が出る');
+  ok(panel.includes('当分の間3年'), 'legal: 法定帳簿に保存期間が出る');
+  await page.locator('[data-legal-filter="all"]').click();
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-doc-id]').length > 9,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'legal: 「すべて」で絞り込みが解除される');
+
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(realErrs.length === 0, `desktop: console エラーゼロ (${realErrs.length})`);
   if (realErrs.length) console.log(realErrs.join('\n'));

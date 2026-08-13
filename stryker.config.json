@@ -193,6 +193,7 @@
     "src/renderer/data/statementEquity.ts",
     "src/renderer/data/cashPlan.ts",
     "src/renderer/data/shareholders.ts",
+    "src/renderer/data/docLegalStatus.ts",
     "src/renderer/data/eligibility.ts",
     "src/shared/num.ts",
     "src/shared/escape.ts",
