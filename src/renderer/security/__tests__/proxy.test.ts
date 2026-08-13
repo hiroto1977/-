@@ -378,6 +378,40 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://[2001:db8::1]/')).toBe(false); // public documentation range
   });
 
+  // 10 進 / 16 進 / 8 進の IPv4 表記。`isPrivateOrReservedTarget` の v4 判定は
+  // ドット付き 4 組しか見ないので、これらが素通りするかどうかは
+  // **`new URL()` がドット付きに正規化してくれること**に依存している。
+  // 依存しているのに、その前提を固定する検査が無かった。パース方法が
+  // 変わった時 (自前で組み直す・別ランタイムへ載せ替える) に黙って穴が開く。
+  it('10 進 / 16 進 / 8 進で書かれたループバックを弾く (URL 正規化への依存を固定)', () => {
+    expect(pri('http://2130706433/')).toBe(true);   // 127.0.0.1 (10 進)
+    expect(pri('http://0x7f000001/')).toBe(true);   // 127.0.0.1 (16 進)
+    expect(pri('http://0177.0.0.1/')).toBe(true);   // 127.0.0.1 (8 進の第 1 オクテット)
+    expect(pri('http://0x7f.0x0.0x0.0x1/')).toBe(true); // 127.0.0.1 (各オクテット 16 進)
+  });
+
+  it('10 進 / 16 進で書かれたメタデータ・私設アドレスを弾く', () => {
+    expect(pri('http://2852039166/')).toBe(true);   // 169.254.169.254 (AWS IMDS)
+    expect(pri('http://0xa9fea9fe/')).toBe(true);   // 169.254.169.254
+    expect(pri('http://3232235777/')).toBe(true);   // 192.168.1.1
+    expect(pri('http://167772161/')).toBe(true);    // 10.0.0.1
+  });
+
+  // ネガティブコントロール: 10 進表記そのものを弾いているわけではない
+  // (「数字だけのホストは全部拒否」なら公開 IP も落ちて、この検査は
+  //  何も確かめていないことになる)。
+  it('10 進表記でも公開 IP は通す', () => {
+    expect(pri('http://134744072/')).toBe(false);   // 8.8.8.8 (Google DNS)
+    expect(pri('http://0x8080808/')).toBe(false);   // 8.8.8.8
+  });
+
+  // 全角数字は IDNA で ASCII 数字に写像され、URL は数値ホストとして解釈する。
+  // `①②③` は 0.0.0.123 になり 0.0.0.0/8 で落ちる。意図した挙動であることを
+  // 記録しておく (見て驚く形なので、次に読む人が「バグでは」と思わないように)。
+  it('全角・丸数字のホストも数値として解釈され、予約域なら弾かれる', () => {
+    expect(pri('http://\uff12\uff11\uff13\uff10\uff17\uff10\uff16\uff14\uff13\uff13/')).toBe(true); // 2130706433 → 127.0.0.1
+  });
+
   it('rejects IPv4-mapped IPv6 in HEX form for ALL private ranges (Round 2 BLOCKING)', () => {
     // URL normalizes "::ffff:169.254.169.254" → "::ffff:a9fe:a9fe" — earlier
     // regex only matched ::ffff:7f (loopback). These cases verify that hex
