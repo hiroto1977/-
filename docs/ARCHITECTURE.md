@@ -30,7 +30,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 206 | 自己検証 |
+| `file:line` 参照数 | 208 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1039,6 +1039,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 |---|---|---|
 | `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / 未秘匿のエラー本文 / Ollama write-side endpoints) |
+| `scripts/lint-network-targets.cjs` | `lint:network-targets` | **送り先ホストが変数で決まる通信**を双方向台帳で管理 (新規は fail / 直したら消す) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
@@ -1078,6 +1079,31 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 散文で経緯を書けるよう、このパターンだけコメント行を数えない
 (コメント内の呼び出しは実行されないので見逃しにならない)。
 
+#### lint:network-targets (`scripts/lint-network-targets.cjs`)
+
+`src/main/clients` / `src/shared/api` / `src/renderer/data` / `src/renderer/network` の
+通信呼び出しを走査し、**送り先ホストが変数で決まるもの**を双方向台帳
+(`REVIEWED`) で管理する。台帳に無いものが現れたら fail、台帳の項目が実在
+しなくなっても fail (直したら消す)。
+
+置いた理由は 2026-08 の監査で**同じ穴が 3 回**出たこと。送り先が保存内容や
+renderer の payload で決まる経路が 4 つあり、3 つは絞っていて 1 つずつ
+絞り忘れていた:
+
+| 経路 | 送り先 | 当時のホスト検証 |
+|---|---|---|
+| Shopify → Discord | payload の `webhookUrl` | `discord.com` のみ ✅ |
+| Shopify → Salesforce | payload の `instanceUrl` | **プロトコルのみ** ❌ |
+| main の Atlassian | 保存内容の `site` | `*.atlassian.net` ✅ |
+| ブラウザ版の Atlassian | 保存内容の `site` | **判定なし** ❌ |
+
+どれも `Authorization` を付けて送るので、絞り忘れはそのまま資格情報の流出に
+なる。4 つ目を人の目で見つけるのは無理なので機械に見張らせる。
+
+見るのは**ホスト部だけ**。パスやクエリの補間は `encodeURIComponent` の話で
+別の関心事であり、混ぜると無害な経路まで台帳に載って本当に危ない数件が
+埋もれる。現在の台帳は 5 件で、いずれも許可リストを通っている。
+
 #### lint:imports (`scripts/check-import-boundaries.cjs`)
 
 `src/**/*.ts(x)` の 162 import 文を 3 ゾーン (renderer / preload / main) と shared / electron /
@@ -1092,7 +1118,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 206 file:line references + 6 metrics ✅
+# → Verified 208 file:line references + 6 metrics ✅
 # → Scanned 57 files × 10 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

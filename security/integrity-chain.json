@@ -115,10 +115,18 @@
       "leafCount": 16,
       "note": "update sw.js,SECURITY_CHAIN.md,integrity-chain.cjs,dataCrypto.ts,vault.ts",
       "hash": "90a68b497432af2024489d6c63e4567d1303ad5c1b1f65882c7ef5ede7b4b631"
+    },
+    {
+      "index": 12,
+      "prevHash": "90a68b497432af2024489d6c63e4567d1303ad5c1b1f65882c7ef5ede7b4b631",
+      "merkleRoot": "25d80566e373924de4c42da2c8dbaace373da838adbd3293111a61b145176826",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "968b3a29474e976a4e228390f52b98db4fb4d981fc0f1686c1ab2609dbb9511c"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "f895c6f009b742e00caed216fd42e0f1dccf52547538413e28ad7e76f896e0c1",
+    ".github/workflows/ci.yml": "2278f2d86b2ac2314e67f29d50d57427e540512571f573f60de4b9cfb7d811be",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "fe10079d61ec6da8c662e429de0b3153e1c9318280e90931f575cbf6c44a9c14",
     "scripts/integrity-chain.cjs": "0d68254e3864ab3b99313aa897735e4c1c62a80bf32f6af24ff773c11d794079",

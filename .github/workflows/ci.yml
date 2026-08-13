@@ -32,6 +32,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run verify:arch
       - run: npm run lint:forbidden
+      - run: npm run lint:network-targets
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:citations
