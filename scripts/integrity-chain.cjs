@@ -55,6 +55,10 @@ const PROTECTED = [
   'scripts/security-audit.sh',
   '.github/workflows/ci.yml',
   'docs/SECURITY_CHAIN.md',
+  // Service Worker は公開版のオリジンで**全てのページ読み込みに介入**する。
+  // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
+  // 応答を返せる。保護対象として最も効く部類なのに漏れていた。
+  'assets/sw.js',
 ];
 
 const sha256 = (buf) => crypto.createHash(ALGORITHM).update(buf).digest('hex');

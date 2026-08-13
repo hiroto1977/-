@@ -18,11 +18,33 @@ const KDF = 'PBKDF2-SHA256';
 // 2026-07 audit. `iterations` is carried inside each bundle, so bundles written
 // under the old value still decrypt with their own stored count.
 const ITERATIONS = 600_000;
-// Bundles are self-describing, and a hostile/corrupt one could ask for an
-// absurd count to freeze the tab. Lowering is harmless (GCM binds the key, so a
-// wrong key simply fails), only the upper bound needs a cap.
-const MIN_ITERATIONS = 100_000;
-const MAX_ITERATIONS = 4_000_000;
+/**
+ * 保存側から読んだ反復回数の許容範囲。
+ *
+ * 封緘データも Vault のメタも**自分で反復回数を持っている**ので、壊れた/悪意ある
+ * 値が「途方もない回数」を要求できる。PBKDF2 はその回数だけ律儀に回すため、
+ * 上限が無いと復号が事実上終わらない。封緘データなら開けないだけだが、
+ * **Vault のメタでそれが起きると利用者が自分の資格情報から永久に締め出される**。
+ * 下限は防御ではなく健全性の確認 (GCM が鍵を縛るので弱い鍵でも中身は開かない)。
+ *
+ * この 2 つは `security/vault.ts` からも使う。同じ判断を 2 か所に書き写すと
+ * 片方だけ直る — 実際この検査は当初 dataCrypto にしか無く、資格情報そのものを
+ * 持つ Vault 側が素通しだった。
+ */
+export const MIN_KDF_ITERATIONS = 100_000;
+export const MAX_KDF_ITERATIONS = 4_000_000;
+
+/** 保存側から読んだ反復回数を検証する。範囲外なら投げる。 */
+export function assertKdfIterations(iterations: number): void {
+  if (
+    typeof iterations !== 'number' ||
+    !Number.isFinite(iterations) ||
+    iterations < MIN_KDF_ITERATIONS ||
+    iterations > MAX_KDF_ITERATIONS
+  ) {
+    throw new Error('暗号化データの反復回数が許容範囲外です');
+  }
+}
 const SALT_BYTES = 16;
 const IV_BYTES = 12;
 
@@ -104,9 +126,7 @@ export async function decryptString(bundle: EncryptedBundle, password: string): 
   if (!isEncryptedBundle(bundle)) throw new Error('暗号化データの形式が不正です');
   const salt = fromBase64(bundle.salt);
   const iv = fromBase64(bundle.iv);
-  if (bundle.iterations < MIN_ITERATIONS || bundle.iterations > MAX_ITERATIONS) {
-    throw new Error('暗号化データの反復回数が許容範囲外です');
-  }
+  assertKdfIterations(bundle.iterations);
   const key = await deriveKey(password, salt, bundle.iterations);
   let plain: ArrayBuffer;
   try {
