@@ -28,6 +28,14 @@ import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChe
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import {
+  STATUS_DESCRIPTION,
+  STATUS_LABEL,
+  countByStatus,
+  legalStatusOf,
+  statusRank,
+  type LegalStatus,
+} from '../data/docLegalStatus';
 import { EligibilityChecker } from '../components/EligibilityChecker';
 import {
   MAX_SHAREHOLDERS,
@@ -710,6 +718,89 @@ function CashPlanTable({ values }: { values: Values }) {
   );
 }
 
+/**
+ * 法的な位置づけの色。
+ *
+ * 「法定」だけを目立たせ、「条件付き」は中間色にする。**任意を灰色にして
+ * 埋もれさせない** — 任意の書式も普通に使うものなので、区別が付けば十分。
+ */
+const LEGAL_COLOR: Readonly<Record<LegalStatus, string>> = {
+  mandatory: '#e5484d',
+  conditional: '#f5a623',
+  optional: '#8b95a5',
+  unclassified: '#c026d3',
+};
+
+/** 書式名の横に出す小さな区分バッジ。 */
+function LegalBadge({ docId, size = 10 }: { docId: string; size?: number }) {
+  const info = legalStatusOf(docId);
+  const color = LEGAL_COLOR[info.status];
+  const title = [STATUS_DESCRIPTION[info.status], info.basis && `根拠: ${info.basis}`, info.when]
+    .filter(Boolean)
+    .join(' / ');
+  return (
+    <span
+      data-legal={info.status}
+      title={title}
+      style={{
+        fontSize: size,
+        fontWeight: 700,
+        color,
+        border: `1px solid ${color}`,
+        borderRadius: 4,
+        padding: '0 4px',
+        marginLeft: 5,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {STATUS_LABEL[info.status]}
+    </span>
+  );
+}
+
+/** 選択中の書式について、義務の有無と根拠・保存期間を 1 枚で見せる。 */
+function LegalPanel({ docId }: { docId: string }) {
+  const info = legalStatusOf(docId);
+  const color = LEGAL_COLOR[info.status];
+  return (
+    <div
+      data-legal-panel={info.status}
+      style={{
+        border: '1px solid var(--border)',
+        borderLeft: `4px solid ${color}`,
+        borderRadius: 8,
+        padding: 10,
+        marginTop: 12,
+        fontSize: 12,
+        lineHeight: 1.7,
+      }}
+    >
+      <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
+        <span style={{ color, fontWeight: 700 }}>{STATUS_LABEL[info.status]}</span>
+        <span style={{ color: 'var(--text-mute)' }}>{STATUS_DESCRIPTION[info.status]}</span>
+      </div>
+      {info.basis && (
+        <div style={{ marginTop: 4 }}>
+          <strong>根拠</strong>: {info.basis}
+        </div>
+      )}
+      {info.when && (
+        <div style={{ marginTop: 2, color: 'var(--text-mute)' }}>
+          <strong>義務になる場合</strong>: {info.when}
+        </div>
+      )}
+      {info.retention && (
+        <div style={{ marginTop: 2 }}>
+          <strong>保存期間</strong>: {info.retention}
+        </div>
+      )}
+      {info.caveat && (
+        <div style={{ marginTop: 4, color: 'var(--text-mute)' }}>※ {info.caveat}</div>
+      )}
+    </div>
+  );
+}
+
 /** 株主名簿の本文テーブル（行数は入力に追従する）。 */
 function ShareholderTable({ values }: { values: Values }) {
   const rows = listShareholders(values);
@@ -1206,10 +1297,23 @@ export function DocstudioPage() {
     return [...STUDIO_CATEGORIES.filter((c) => seen.includes(c)), ...seen.filter((c) => !STUDIO_CATEGORIES.includes(c))];
   }, []);
 
+  // 法的区分での絞り込み。null は「すべて」。
+  const [legalFilter, setLegalFilter] = useState<LegalStatus | null>(null);
   const hits = useMemo(
-    () => STUDIO_TEMPLATES.filter((d) => (cat === 'すべて' || d.cat === cat) && matches(d, query)),
-    [cat, query],
+    () =>
+      STUDIO_TEMPLATES.filter(
+        (d) =>
+          (cat === 'すべて' || d.cat === cat) &&
+          matches(d, query) &&
+          (legalFilter === null || legalStatusOf(d.id).status === legalFilter),
+      )
+        // 法定 → 条件付き → 任意 の順に並べる。分類したのに並びが元のままだと
+        // 「一目で分かる」にならない。同じ区分の中は元の並びを保つ。
+        .sort((a, b) => statusRank(legalStatusOf(a.id).status) - statusRank(legalStatusOf(b.id).status)),
+    [cat, query, legalFilter],
   );
+  /** 絞り込み前の全書式の内訳（ボタンに件数を出すため）。 */
+  const legalCounts = useMemo(() => countByStatus(STUDIO_TEMPLATES.map((d) => d.id)), []);
   const recent = useMemo(
     () => (store.recent ?? []).map((id) => STUDIO_TEMPLATES.find((d) => d.id === id)).filter((d): d is StudioDoc => !!d),
     [store.recent],
@@ -1302,6 +1406,35 @@ export function DocstudioPage() {
                 ))}
               </div>
 
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8, alignItems: 'center' }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-mute)' }}>法的な位置づけ</span>
+                <button
+                  type="button"
+                  data-legal-filter="all"
+                  className={legalFilter === null ? 'primary' : ''}
+                  onClick={() => setLegalFilter(null)}
+                  style={{ fontSize: 11, padding: '4px 8px' }}
+                >
+                  すべて {STUDIO_TEMPLATES.length}
+                </button>
+                {(['mandatory', 'conditional', 'optional'] as const).map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    data-legal-filter={st}
+                    className={legalFilter === st ? 'primary' : ''}
+                    onClick={() => setLegalFilter(legalFilter === st ? null : st)}
+                    style={{ fontSize: 11, padding: '4px 8px', color: legalFilter === st ? undefined : LEGAL_COLOR[st] }}
+                  >
+                    {STATUS_LABEL[st]} {legalCounts[st]}
+                  </button>
+                ))}
+              </div>
+              <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
+                「条件付き」は一定の場合にだけ義務になるものです（36協定は時間外労働をさせるとき、就業規則は常時10人以上など）。
+                書式を選ぶと根拠条文と保存期間を表示します。
+              </div>
+
               {recent.length > 0 && !query && cat === 'すべて' && (
                 <div style={{ marginTop: 10 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-mute)', margin: '4px 0' }}>最近使った書類</div>
@@ -1316,6 +1449,7 @@ export function DocstudioPage() {
                         style={{ fontSize: 12, padding: '7px 10px' }}
                       >
                         {d.icon} {d.label}
+                        <LegalBadge docId={d.id} />
                       </button>
                     ))}
                   </div>
@@ -1345,6 +1479,7 @@ export function DocstudioPage() {
                             style={{ fontSize: 12, padding: '7px 10px' }}
                           >
                             {d.icon} {d.label}
+                            <LegalBadge docId={d.id} />
                           </button>
                         ))}
                       </div>
@@ -1366,6 +1501,15 @@ export function DocstudioPage() {
               </div>
             </Section>
           )}
+
+          <LegalPanel
+            docId={
+              collection === 'teikan' ? `teikan-${teikanType}`
+                : collection === 'shugyo' ? 'shugyo'
+                  : collection === 'kessan' ? 'kessan'
+                    : docId
+            }
+          />
 
           <Section title="差込フォーム（入力は端末内に自動保存）" count={fields.length}>
             {collection === 'studio' && (
