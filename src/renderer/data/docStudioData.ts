@@ -46,6 +46,7 @@ export interface DocBlock {
   readonly bigAmount?: true; // 領収書の金額枠
   readonly stamp?: true; // 収入印紙枠
   readonly cashPlan?: true; // 12 か月の資金繰り表（前月繰越を自動で連鎖させる）
+  readonly shareholders?: true; // 株主名簿の可変行（人数を任意に増減できる）
 }
 
 export interface StudioDoc {
@@ -1573,33 +1574,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'totalShares', req: true, label: '発行済株式の総数', ph: '100株' },
       { k: 'kindShares', label: '株式の種類', ph: '普通株式' },
       { k: 'shoken', label: '株券発行の有無', options: ['株券を発行しない', '株券を発行する'] },
-      { k: 's1name', req: true, label: '株主1 氏名・名称', ph: '山田 太郎' },
-      { k: 's1addr', label: '株主1 住所', ph: '東京都千代田区…' },
-      { k: 's1shares', req: true, label: '株主1 株式数', ph: '60' },
-      { k: 's1date', label: '株主1 取得日', ph: '2020年4月1日' },
-      { k: 's2name', label: '株主2 氏名・名称', ph: '佐藤 花子' },
-      { k: 's2addr', label: '株主2 住所', ph: '東京都新宿区…' },
-      { k: 's2shares', label: '株主2 株式数', ph: '30' },
-      { k: 's2date', label: '株主2 取得日', ph: '2020年4月1日' },
-      { k: 's3name', label: '株主3 氏名・名称', ph: '' },
-      { k: 's3addr', label: '株主3 住所', ph: '' },
-      { k: 's3shares', label: '株主3 株式数', ph: '' },
-      { k: 's3date', label: '株主3 取得日', ph: '' },
       { k: 'rep', req: true, label: '作成者', ph: '代表取締役 山田 太郎' },
       { k: 'date', label: '作成日', ph: '2026年4月10日' },
     ],
     body: [
       { center: '株 主 名 簿' },
       { p: '会社名: {{company}}　／　基準日: {{baseDate}}　／　発行済株式の総数: {{totalShares}}（{{kindShares}}）　／　{{shoken}}' },
-      { table: {
-        head: ['株主の氏名又は名称', '住所', '株式数（株）', '取得日'],
-        align: ['l', 'l', 'r', 'l'],
-        rows: [
-          ['{{s1name}}', '{{s1addr}}', '{{s1shares}}', '{{s1date}}'],
-          ['{{s2name}}', '{{s2addr}}', '{{s2shares}}', '{{s2date}}'],
-          ['{{s3name}}', '{{s3addr}}', '{{s3shares}}', '{{s3date}}'],
-        ],
-      } },
+      { shareholders: true },
       { p: '上記のとおり相違ないことを証明します。' },
       { right: '{{date}}' },
       { right: '{{company}}' },

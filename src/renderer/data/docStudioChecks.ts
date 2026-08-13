@@ -16,6 +16,7 @@
 
 import type { StudioDoc } from './docStudioData';
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
+import { namedShareholderCount, totalHeldShares } from './shareholders';
 
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。旧名は呼び出し側のために残す。 */
 export type CheckLevel = IssueLevel;
@@ -468,7 +469,10 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
   'kabunushi-meibo'(v) {
     const out: DocIssue[] = [];
     const total = num(v, 'totalShares');
-    const sum = ['s1shares', 's2shares', 's3shares'].reduce((s, k) => s + (toNum(v[k]) ?? 0), 0);
+    // 行数は可変なので、固定の s1..s3 ではなく現在の行数ぶんを合計する。
+    // ここを 3 人固定のままにすると、4 人目以降を書いても合計に入らず
+    // 「総数と一致しません」と誤って警告することになる。
+    const sum = totalHeldShares(v);
     // 総数が読めないと突き合わせようがない。NaN は !== がつねに成立してしまうので明示的に外す。
     if (Number.isFinite(total) && sum > 0 && sum !== total) {
       out.push({
@@ -480,6 +484,16 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     }
     if (Number.isFinite(total) && sum > total) {
       out.push({ level: 'fatal', field: 's1shares', message: '株主の保有株式数の合計が発行済株式の総数を超えています。' });
+    }
+    // 株主の欄は可変行になり、必須フィールドの空欄カウントから外れた。
+    // 名前が 1 つも無ければ名簿として成立しないので、ここで拾う。
+    if (namedShareholderCount(v) === 0) {
+      out.push({
+        level: 'fatal',
+        field: 's1name',
+        message: '株主が 1 名も記載されていません。株主名簿は株主全員を記載する必要があります。',
+        basis: '会社法121条',
+      });
     }
     return out;
   },
