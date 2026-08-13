@@ -49,8 +49,13 @@ describe('parseBackup', () => {
     await expect(parseBackup('null')).rejects.toThrow(/形式が不正/);
   });
 
+  // 文言まで見る。checksum を必須にしてから、どの拒否も「何かで落ちる」点は
+  // 同じになった。何を理由に断ったかが利用者に伝わることがここでの中身なので、
+  // 理由ごとに固定する。
   it('rejects a foreign app envelope', async () => {
-    await expect(parseBackup(JSON.stringify({ app: 'other', version: 1, records: [] }))).rejects.toThrow(/アプリ/);
+    await expect(
+      parseBackup(JSON.stringify({ app: 'other', version: 1, records: [] })),
+    ).rejects.toThrow(/このアプリのバックアップファイルではありません/);
   });
 
   it('rejects a newer version', async () => {
@@ -76,7 +81,7 @@ describe('parseBackup', () => {
     const obj = JSON.parse(json);
     // tamper: change an amount, keep the old checksum
     obj.records[0].data.amount = 999999;
-    await expect(parseBackup(JSON.stringify(obj))).rejects.toThrow(/改ざん|破損|チェックサム/);
+    await expect(parseBackup(JSON.stringify(obj))).rejects.toThrow(/チェックサム不一致/);
   });
 
   it('is robust to reformatting (whitespace-only changes still verify)', async () => {
@@ -85,9 +90,21 @@ describe('parseBackup', () => {
     expect(await parseBackup(reformatted)).toEqual(RECORDS);
   });
 
-  it('accepts a legacy backup without a checksum', async () => {
-    const legacy = JSON.stringify({ app: 'service-hub', version: 1, records: RECORDS });
-    expect(await parseBackup(legacy)).toEqual(RECORDS);
+  // かつては checksum 無しを「旧バックアップ互換」として通していた。
+  // git を辿るとこのファイルの最初のコミットから常に checksum を書いており、
+  // 通す対象が存在しなかった。実際に効いていたのは「改ざんする側が
+  // checksum の行を消せば検知を回避できる」という抜け道だけだった。
+  it('checksum の無いファイルを拒否する (省略による検知回避を塞ぐ)', async () => {
+    const stripped = JSON.stringify({ app: 'service-hub', version: 1, records: RECORDS });
+    await expect(parseBackup(stripped)).rejects.toThrow(/完全性チェックサムがありません/);
+  });
+
+  // 「無い」と「合わない」を別の文言で断る。同じ文言にすると、無い方の
+  // 判定を外しても不一致の側で落ちるので、判定が消えたことに気付けない。
+  it('正規のバックアップから checksum だけ消しても復元できない', async () => {
+    const obj = JSON.parse(await serializeBackup(RECORDS));
+    delete obj.checksum;
+    await expect(parseBackup(JSON.stringify(obj))).rejects.toThrow(/完全性チェックサムがありません/);
   });
 });
 
