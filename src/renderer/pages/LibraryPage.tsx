@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { getLibrary, type LibraryItemMeta } from '../library/library';
+import {
+  MAX_TEXT_PREVIEW_CHARS,
+  previewBlocker,
+  previewKind,
+  truncateForPreview,
+} from '../library/preview';
 
 const SERVICE_ICONS: Record<string, string> = {
   templates: '🎨',
@@ -24,6 +30,7 @@ export function LibraryPage() {
   const [totalBytes, setTotalBytes] = useState(0);
   const [msg, setMsg] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [shown, setShown] = useState<ShownPreview | null>(null);
 
   async function refresh() {
     const lib = getLibrary();
@@ -55,17 +62,52 @@ export function LibraryPage() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  /**
+   * アプリ内で中身を見せる。
+   *
+   * `window.open(blob:)` は使わない。blob: の文書は生成元と同一オリジンに
+   * なるので、書き出した SVG / HTML にスクリプトが残っていればアプリの
+   * オリジンで走り、IndexedDB (ライブラリ本体と保管庫) に手が届く。
+   * ついでにデスクトップ版では `setWindowOpenHandler` が blob: を落として
+   * いたため、この経路は元から無反応だった。詳細は `library/preview.ts`。
+   */
   async function preview(id: string) {
     const item = await getLibrary().get(id);
-    if (!item) return;
-    const url = URL.createObjectURL(item.blob);
-    window.open(url, '_blank', 'noopener,noreferrer');
-    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    if (!item) {
+      setMsg('ファイルが見つかりません (削除済みの可能性)');
+      return;
+    }
+    const blocked = previewBlocker(item.mime, item.size);
+    if (blocked !== null) {
+      setMsg(blocked);
+      return;
+    }
+    setMsg(null);
+    if (previewKind(item.mime) === 'image') {
+      // data: URL の <img> にする。<img> 経由の SVG は secure static mode に
+      // なりスクリプトが動かない。data: は両ビルドの img-src に元から入って
+      // いるので CSP を緩めずに済む (blob: は Electron 版の img-src に無い)。
+      const dataUrl = await blobToDataUrl(item.blob).catch(() => null);
+      if (dataUrl === null) {
+        setMsg('プレビューを生成できませんでした');
+        return;
+      }
+      setShown({ filename: item.filename, mime: item.mime, kind: 'image', body: dataUrl, truncated: false });
+      return;
+    }
+    const raw = await item.blob.text().catch(() => null);
+    if (raw === null) {
+      setMsg('プレビューを生成できませんでした');
+      return;
+    }
+    const { text, truncated } = truncateForPreview(raw);
+    setShown({ filename: item.filename, mime: item.mime, kind: 'text', body: text, truncated });
   }
 
   async function remove(id: string) {
     if (!confirm('このファイルを削除しますか?')) return;
     await getLibrary().remove(id);
+    setShown(null);
     await refresh();
     setMsg('削除しました');
   }
@@ -73,6 +115,7 @@ export function LibraryPage() {
   async function removeAll() {
     if (!confirm('ライブラリの全ファイルを削除しますか? この操作は元に戻せません。')) return;
     await getLibrary().clear();
+    setShown(null);
     await refresh();
     setMsg('全て削除しました');
   }
@@ -212,6 +255,59 @@ export function LibraryPage() {
         </>
       )}
 
+      {shown && (
+        <Section title={`プレビュー — ${shown.filename}`}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{shown.mime}</span>
+              {shown.kind === 'text' && (
+                <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+                  ソース表示です。見た目を確認するにはダウンロードしてブラウザで開いてください。
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setShown(null)}
+                style={{ ...actionBtn(), marginLeft: 'auto' }}
+              >
+                閉じる
+              </button>
+            </div>
+            {shown.kind === 'image' ? (
+              <img
+                src={shown.body}
+                alt={shown.filename}
+                style={{ maxWidth: '100%', background: '#fff', borderRadius: 6, border: '1px solid var(--border)' }}
+              />
+            ) : (
+              <pre
+                style={{
+                  margin: 0,
+                  padding: 12,
+                  maxHeight: 420,
+                  overflow: 'auto',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  fontSize: 11,
+                  lineHeight: 1.5,
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                  color: 'var(--text)',
+                }}
+              >
+                {shown.body}
+              </pre>
+            )}
+            {shown.truncated && (
+              <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+                先頭 {MAX_TEXT_PREVIEW_CHARS.toLocaleString('en-US')} 文字だけ表示しています。全文はダウンロードしてください。
+              </div>
+            )}
+          </div>
+        </Section>
+      )}
+
       {msg && (
         <div
           style={{
@@ -252,4 +348,27 @@ function actionBtn(kind?: 'accent'): React.CSSProperties {
     cursor: 'pointer',
     fontSize: 11,
   };
+}
+
+interface ShownPreview {
+  readonly filename: string;
+  readonly mime: string;
+  readonly kind: 'image' | 'text';
+  /** kind='image' なら data: URL、kind='text' なら本文そのもの。 */
+  readonly body: string;
+  readonly truncated: boolean;
+}
+
+/** Blob を data: URL にする。`<img src>` に入れるためだけに使う。 */
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') resolve(result);
+      else reject(new Error('data URL に変換できませんでした'));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error('読み込みに失敗しました'));
+    reader.readAsDataURL(blob);
+  });
 }

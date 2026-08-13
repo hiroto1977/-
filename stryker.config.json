@@ -105,6 +105,7 @@
     "src/renderer/data/kpiActuals.ts",
     "src/renderer/data/shopifyImport.ts",
     "src/renderer/data/csv.ts",
+    "src/renderer/library/preview.ts",
     "src/renderer/data/foodDelivery.ts",
     "src/renderer/data/backup.ts",
     "src/renderer/data/cloudBackup.ts",

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **6969** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7149) |
+| ユニットテスト | **6989** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7169) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1038,7 +1038,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | Script | コマンド | 役割 |
 |---|---|---|
 | `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
-| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
+| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
@@ -1053,11 +1053,20 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース 57 ファイルを **8 個の禁止パターン** で scan:
+ランタイムソース 57 ファイルを **9 個の禁止パターン** で scan:
 `dangerouslySetInnerHTML` / `eval(` / `new Function` / `.innerHTML =` / `document.write` /
-`shell.openExternal` (main / oauth 以外) / `child_process exec|spawn` (scripts 以外) /
+`shell.openExternal` (main / oauth 以外) / `window.open(` (web-shim.ts 以外) /
+`child_process exec|spawn` (scripts 以外) /
 `/api/(pull|create|push|copy|delete|blobs|upload)` (ollama.ts / renderer 以外)。
 1 件でも検出すれば fail。
+
+`window.open(` は 2 つの理由で禁じている。外部 URL を `serviceHub.openExternal` に
+統一する規約 (invariant #5) と、`blob:` / `data:` を `window.open` すると
+**生成元と同一オリジンの文書**になり、そこで走るスクリプトが IndexedDB
+(ライブラリ本体と保管庫) と localStorage に届くこと。唯一の例外が
+ブラウザ版の `openExternal` 実装本体で、そこは `^https?://` を確かめてから開く。
+散文で経緯を書けるよう、このパターンだけコメント行を数えない
+(コメント内の呼び出しは実行されないので見逃しにならない)。
 
 #### lint:imports (`scripts/check-import-boundaries.cjs`)
 
@@ -1074,7 +1083,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 ```bash
 npm run verify:all
 # → Verified 170 file:line references + 6 metrics  ✅
-# → Scanned 57 files × 8 patterns                  ✅
+# → Scanned 57 files × 9 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅
 ```
