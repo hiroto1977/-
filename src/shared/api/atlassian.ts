@@ -1,5 +1,9 @@
 import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from './types';
 import {
+  normalizeAtlassianSiteResult,
+  type AtlassianSiteFailure,
+} from '../atlassianSite';
+import {
   ApiError,
   NotImplementedError,
   apiFetch,
@@ -33,41 +37,24 @@ interface RawPage {
 /**
  * 利用者が入れた site URL を検証する。
  *
- * `src/main/clients/atlassian.ts` と同じ防御を張っている。**baseUrl は
- * 利用者入力なので、そのまま連結すると社内ホストへ向けさせられる**
- * (SSRF)。Atlassian Cloud は必ず `*.atlassian.net` の https なので、
- * そこまで絞ってから使う。
+ * 実体は `src/shared/atlassianSite.ts`。ここは `ApiError` への言い換えだけを
+ * 持つ。以前はこの関数が検証を丸ごと持っており、説明文には
+ * 「`src/main/clients/atlassian.ts` と同じ防御を張っている」と書いてあったが、
+ * **実際には同じではなかった** (向こうは元の文字列から末尾の `/` を落とすだけ
+ * だった)。同じだと書くなら同じ実装を指すようにする。
  */
-function hasControlChar(s: string): boolean {
-  // 正規表現の文字クラスで書くと eslint の no-control-regex に当たる。
-  // ルールを黙らせるより、走査で同じことをする方が読み手にも明確。
-  for (const ch of s) {
-    const c = ch.charCodeAt(0);
-    if (c < 0x20 || c === 0x7f) return true;
-  }
-  return false;
+export function normalizeAtlassianSite(raw: string): string {
+  const result = normalizeAtlassianSiteResult(raw);
+  if (result.ok) return result.site;
+  throw new ApiError(ATLASSIAN_SITE_MESSAGES[result.reason], 0, 'atlassian');
 }
 
-export function normalizeAtlassianSite(raw: string): string {
-  if (hasControlChar(raw)) {
-    throw new ApiError('Atlassian の baseUrl に制御文字が含まれています', 0, 'atlassian');
-  }
-  let parsed: URL;
-  try {
-    parsed = new URL(raw);
-  } catch {
-    throw new ApiError('Atlassian の baseUrl を URL として解釈できません', 0, 'atlassian');
-  }
-  if (parsed.protocol !== 'https:') {
-    throw new ApiError('Atlassian の baseUrl は https:// で始まる必要があります', 0, 'atlassian');
-  }
-  if (!parsed.hostname.endsWith('.atlassian.net')) {
-    throw new ApiError('Atlassian の baseUrl は *.atlassian.net である必要があります', 0, 'atlassian');
-  }
-  // hostname だけを使って組み直す。貼り付け事故で混ざる末尾の `/` やパス・
-  // クエリを落とすため (`https://x.atlassian.net//` のような形になりやすい)。
-  return `https://${parsed.hostname}`;
-}
+const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
+  'control-char': 'Atlassian の baseUrl に制御文字が含まれています',
+  'not-a-url': 'Atlassian の baseUrl を URL として解釈できません',
+  'not-https': 'Atlassian の baseUrl は https:// で始まる必要があります',
+  'not-atlassian': 'Atlassian の baseUrl は *.atlassian.net である必要があります',
+};
 
 export class AtlassianClient implements ServiceClient {
   readonly id = 'atlassian';
