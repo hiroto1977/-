@@ -33,6 +33,7 @@ aliases:
 - [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]] — 語彙が近い
 - [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 語彙が近い
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 語彙が近い
+- [[bizlaw-franchise-contract|フランチャイズ契約]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,7 +35,7 @@ aliases:
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同じ思想家
 - [[human-thermal-grill-illusion|温度格子錯覚——温と冷を交互に触れると熱い痛みを感じる]] — 同じ思想家
-- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同分野の近傍
+- [[human-predictive-processing-theory|予測処理理論]] — 同分野の近傍
 - [[human-interoception-theory|内受容感覚理論]] — 同分野の近傍
 
 ## 関連

@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia — Greenspan put](https://en.wikipedia.org/wiki/Greenspan_put) `リファレンス`
 
 ## 関連概念
-- [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 語彙が近い
 - [[econ-greenspan-put-monetary|グリーンスパン・プットと中央銀行プット——金融市場への暗黙的保証の帰結]] — 同じ思想家
 - [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
 - [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
@@ -39,6 +38,7 @@ aliases:
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同じ思想家
 - [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]] — 同じ思想家
+- [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 同分野の近傍
 - [[econ-double-auction|連続ダブルオークション]] — 同分野の近傍
 
 ## 関連

@@ -37,6 +37,8 @@ aliases:
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同分野の近傍
 - [[econ-merit-goods|メリット財（価値財）]] — 同分野の近傍
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同分野の近傍
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同分野の近傍
+- [[econ-pigouvian-tax|ピグー税]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,8 +31,8 @@ aliases:
 - [高度プロフェッショナル制度 解説](https://www.tis.amano.co.jp/glossary/1414/) `メディア`
 
 ## 関連概念
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 語彙が近い
 - [[bizlaw-karoshi-prevention|過労死等防止対策推進法]] — 出典を共有
-- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 同分野の近傍
 - [[labor-discretionary-work|裁量労働制（専門業務型・企画業務型）]] — 同分野の近傍
 - [[labor-work-interval|勤務間インターバル制度]] — 同分野の近傍

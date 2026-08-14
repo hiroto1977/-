@@ -41,7 +41,7 @@ Nordenfelt v Maxim Nordenfelt（1894 貴族院）／ Harlan M. Blake（1960 Harv
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

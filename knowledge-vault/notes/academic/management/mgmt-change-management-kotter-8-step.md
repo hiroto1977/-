@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
 - [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同じ思想家
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 同分野の近傍
-- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

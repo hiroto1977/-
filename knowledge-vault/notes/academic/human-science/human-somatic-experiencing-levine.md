@@ -33,8 +33,8 @@ aliases:
 - [[human-somatic-experiencing-levine-trauma|ソマティック・エクスペリエンシング——レヴィンの身体的トラウマ解放と神経系の自己調整]] — 語彙が近い
 - [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同じ思想家
 - [[human-dual-process-theory-kahneman-stanovich|二重過程理論——システム1・システム2の認知的二元構造]] — 同分野の近傍
-- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
 - [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]] — 同分野の近傍
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 同じ思想家
 - [[human-attachment-theory-bowlby|アタッチメント理論]] — 同分野の近傍
-- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

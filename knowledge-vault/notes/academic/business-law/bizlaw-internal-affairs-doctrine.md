@@ -38,8 +38,8 @@ Restatement (Second) of Conflict of Laws §302（内部事項の選択規則） 
 - [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同分野の近傍
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

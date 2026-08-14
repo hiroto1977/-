@@ -30,7 +30,6 @@ aliases:
 - [OECD (1998) "Technology, Productivity and Job Creation"（スキルバイアス型技術変化と雇用・賃金格差への政策的含意）](https://www.oecd.org/en/publications/technology-productivity-and-job-creation_9789264065529-en.html) `公的`
 
 ## 関連概念
-- [[econ-fair-wage-effort|公正賃金・努力仮説]] — 語彙が近い
 - [[econ-gender-wage-gap-goldin|ジェンダー賃金格差と職業分離の経済学——ゴールディンの労働経済分析]] — 同じ思想家
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
 - [[econ-technological-unemployment|技術的失業]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

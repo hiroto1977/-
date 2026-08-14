@@ -37,7 +37,6 @@ Web3（ウェブ3）は、ブロックチェーンやトークン経済・暗号
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同分野の近傍
 - [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]] — 同分野の近傍
-- [[infosoc-moores-law|ムーアの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

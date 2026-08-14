@@ -31,6 +31,7 @@ aliases:
 - [Tzieropoulos, "Trust Games and Beyond," Frontiers in Neuroscience (2019)](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2019.00887/full) `学術`
 
 ## 関連概念
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 語彙が近い
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — 出典を共有
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
 - [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 出典を共有
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

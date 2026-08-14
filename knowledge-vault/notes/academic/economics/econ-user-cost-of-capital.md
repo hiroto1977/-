@@ -40,7 +40,7 @@ aliases:
 - [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 同じ思想家
 - [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同じ思想家
 - [[econ-solow-residual-total-factor-productivity|ソロー残差と全要素生産性——技術進歩の計測とその解釈を巡る論争]] — 同じ思想家
-- [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同分野の近傍
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

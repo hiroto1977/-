@@ -39,7 +39,7 @@ aliases:
 - [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 同じ思想家
 - [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
-- [[econ-precautionary-saving|予備的貯蓄]] — 同分野の近傍
+- [[econ-big-push-rosenstein-rodan|ビッグプッシュ理論——協調された大規模投資による低位均衡からの脱出]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

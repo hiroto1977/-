@@ -31,11 +31,12 @@ aliases:
 - [Nobel Prize 1981 — David Hubel & Torsten Wiesel for discoveries concerning information processing in the visual system](https://www.nobelprize.org/prizes/medicine/1981/summary/) `リファレンス`
 
 ## 関連概念
+- [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 語彙が近い
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 同じ思想家
-- [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同じ思想家
 - [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
 - [[human-learned-optimism|学習性楽観主義]] — 同分野の近傍
 - [[human-neuroplasticity-theory|神経可塑性理論]] — 同分野の近傍
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

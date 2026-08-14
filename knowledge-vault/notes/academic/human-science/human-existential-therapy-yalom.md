@@ -34,7 +34,6 @@ aliases:
 - [[human-logotherapy|ロゴセラピー（意味中心療法）：実存的空虚と意味への意志に基づく心理療法]] — 同分野の近傍
 - [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同分野の近傍
 - [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同分野の近傍
-- [[human-transactional-analysis-berne|交流分析——バーンの自我状態モデルとゲーム理論的対人関係分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

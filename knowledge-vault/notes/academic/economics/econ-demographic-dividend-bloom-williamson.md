@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[econ-demographic-transition-theory|人口転換理論と少子化の経済学——出生率低下の人口学的・経済的メカニズム]] — 語彙が近い
-- [[econ-demography-ageing-dependency-ratio|人口高齢化と従属人口比率——少子高齢化の経済的影響と社会保障持続可能性]] — 語彙が近い
 - [[econ-washington-consensus|ワシントン・コンセンサス]] — 同じ思想家
+- [[econ-demography-ageing-dependency-ratio|人口高齢化と従属人口比率——少子高齢化の経済的影響と社会保障持続可能性]] — 同じ思想家
 - [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
 
 ## 関連

@@ -33,7 +33,7 @@ Maxwell McCombs ／ Donald Shaw ／ Guy Golan
 
 ## 関連概念
 - [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同じ思想家
-- [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同分野の近傍
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

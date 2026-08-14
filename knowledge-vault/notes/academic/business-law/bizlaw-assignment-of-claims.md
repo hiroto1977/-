@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 語彙が近い
 - [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 分野横断
-- [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
+- [[bizlaw-receivables-security|集合債権譲渡担保（将来債権譲渡）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

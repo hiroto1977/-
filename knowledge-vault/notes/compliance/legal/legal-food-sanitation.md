@@ -35,7 +35,6 @@ aliases:
 - [[legal-food-labeling|食品表示法・食品表示基準（加工食品の表示・アレルゲン）]] — 出典を共有
 - [[legal-money-lending|貸金業法（登録制と総量規制）]] — 同分野の近傍
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 同分野の近傍
-- [[legal-foreign-bribery|外国公務員贈賄罪（不正競争防止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

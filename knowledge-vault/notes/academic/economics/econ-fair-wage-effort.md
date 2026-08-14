@@ -30,7 +30,6 @@ aliases:
 - [Wage compression — fair-wage hypothesis, skilled-wage reference point, low-skill unemployment (Wikipedia)](https://en.wikipedia.org/wiki/Wage_compression) `リファレンス`
 
 ## 関連概念
-- [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 語彙が近い
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
 - [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同じ思想家
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-adverse-selection|逆選択（レモン市場）]] — 同じ思想家
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
 - [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同じ思想家
+- [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

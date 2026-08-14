@@ -20,7 +20,7 @@ aliases:
 > [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-Cameron・Dutton・Quinnが2003年にミシガン大学で提唱した経営学の研究動向。組織と構成員の繁栄・美徳・レジリエンス・ポジティブ逸脱などを科学的に探求し、人間の潜在能力の最善を理解する。問題解決・欠陥修正に偏ってきた組織研究に対し、「何がうまくいくときに起きているか」を問う視角の転換であり、ポジティブ逸脱（規範を上回る卓越）・高質のつながり（high-quality connections）・ジョブ・クラフティング・思いやり（compassion）の組織化などが代表的な研究対象になった。ルーサンスのポジティブ組織行動（POB）が個人の状態的強み（PsyCap）の測定・開発に焦点を当てるのに対し、POS は組織・集合レベルの美徳や繁栄の条件を広く扱い、必ずしも測定可能性を参入条件にしない点で守備範囲が異なる（両者は相補的とされる）。Caza & Caza (2008) は「ポジティブの定義が曖昧」「暗黒面を無視する」という批判に応答して研究プログラムとしての要件を整理し、ミシガン大学ロス校の Center for Positive Organizations が研究と実務移転（Positive Links 等）のハブとして機能している。エンゲージメント施策・強み基盤のマネジメント・組織のレジリエンス設計の理論的サポートとして実務にも浸透した。
+Kim S. Cameron、Jane E. Dutton、Robert E. Quinnが2003年に編んだ論文集『Positive Organizational Scholarship: Foundations of a New Discipline』を出発点とする、経営学の研究動向である。ミシガン大学ロス経営大学院のCenter for Positive Organizationsが拠点となり、組織のなかで肯定的で、繁栄をもたらし、生を与えるものを科学的に探求することを掲げる。従来の組織研究が不全や逸脱の是正に関心を集中させてきたのに対し、POSは組織と構成員の繁栄・美徳・レジリエンス・高質な関係・ポジティブエネルギー、そして期待や標準を超える例外的成果であるポジティブ逸脱を正面から研究対象に据え、人間の潜在能力の最善が発現する条件を問う。中核となる機構としてCameronはヘリオトロピック効果を挙げる。あらゆる生命系が光へ向かい闇を避ける傾性を持つように、肯定的な風土・エネルギー・関係が組織にも同様の傾性を解き放ち、通常を超える成果を生むという理路である。Cameronらはこれを規範論にとどめず、人員削減を経た組織において美徳性の水準が高い組織ほど良好な業績を示すことなどを実証的に示してきた。批判もある。Brianna Barker CazaとArran Cazaは2008年のJournal of Management Inquiry誌で、POSの独自性が肯定的な過程への着目、価値前提の透明化、望ましい成果概念の拡張にあることを認めつつ、批判的経営研究の観点から、目的をより明示すること、何を肯定的とみなすかを普遍化しないこと、一見無害な概念選択が持つ含意を自覚することを求めた。近年はGehmanらのように制度論との接合を試みる研究も現れている。
 
 ## 提唱者・初出
 Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn
@@ -38,8 +38,8 @@ Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
-- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
-- [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同分野の近傍
+- [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

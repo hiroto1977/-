@@ -32,7 +32,6 @@ R・ダンカン・ルース（R. Duncan Luce）／ハワード・ライファ�
 
 ## 関連概念
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 語彙が近い
-- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 同分野の近傍
 - [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同分野の近傍
 
 ## 関連

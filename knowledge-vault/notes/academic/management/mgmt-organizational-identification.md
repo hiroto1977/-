@@ -35,7 +35,7 @@ Blake Ashforth ／ Fred Mael ／ Michael Pratt
 - [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同じ思想家
 - [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同じ思想家
-- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同分野の近傍
+- [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
 
 ## 関連

@@ -30,6 +30,7 @@ aliases:
 - [Simply Psychology — Maslow's Hierarchy of Needs（査読済み教育心理学リファレンス）](https://www.simplypsychology.org/maslow.html) `リファレンス`
 
 ## 関連概念
+- [[human-transpersonal-psychology-maslow|トランスパーソナル心理学と至高体験——マズローの欲求段階論を超えた存在レベルの探求]] — 語彙が近い
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
@@ -39,7 +40,6 @@ aliases:
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
 - [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
-- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

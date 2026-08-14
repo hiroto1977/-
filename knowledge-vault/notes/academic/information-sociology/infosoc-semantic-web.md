@@ -34,6 +34,7 @@ aliases:
 - [[infosoc-open-data|オープンデータ]] — 同じ思想家
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
 - [[infosoc-digital-identity|デジタルアイデンティティ]] — 出典を共有
+- [[infosoc-fourth-industrial-revolution|第四次産業革命]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

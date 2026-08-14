@@ -38,7 +38,6 @@ John C. Henderson／N. Venkatraman
 - [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同分野の近傍
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同分野の近傍
 - [[mgmt-hoshin-kanri|方針管理]] — 同分野の近傍
-- [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

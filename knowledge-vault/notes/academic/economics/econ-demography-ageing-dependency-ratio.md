@@ -31,7 +31,8 @@ aliases:
 - [Wikipedia: 従属人口指数 — 少子高齢化と経済的依存比率の解説](https://ja.wikipedia.org/wiki/%E5%BE%93%E5%B1%9E%E4%BA%BA%E5%8F%A3%E6%8C%87%E6%95%B0) `リファレンス`
 
 ## 関連概念
-- [[econ-demographic-dividend-bloom-williamson|人口ボーナスと人口転換——ブルーム＝ウィリアムソンの経済成長への人口学的寄与の分析]] — 語彙が近い
+- [[econ-demographic-dividend-bloom-williamson|人口ボーナスと人口転換——ブルーム＝ウィリアムソンの経済成長への人口学的寄与の分析]] — 同じ思想家
+- [[econ-overlapping-generations-samuelson|世代重複モデル——有限の生涯を生きる世代が共存する動学的一般均衡]] — 同分野の近傍
 - [[econ-demographic-transition-theory|人口転換理論と少子化の経済学——出生率低下の人口学的・経済的メカニズム]] — 同分野の近傍
 
 ## 関連

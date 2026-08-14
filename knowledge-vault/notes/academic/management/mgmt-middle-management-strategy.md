@@ -34,7 +34,6 @@ Steven W. Floyd／Bill Wooldridge／Quy Nguyen Huy／Ikujiro Nonaka／Peter J. L
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 同じ思想家
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同分野の近傍
 - [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 同分野の近傍
-- [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

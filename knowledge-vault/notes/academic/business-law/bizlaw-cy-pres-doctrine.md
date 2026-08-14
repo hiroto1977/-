@@ -36,7 +36,6 @@ Jackson v. Phillips（1867 マサチューセッツ州最高裁・公益信託�
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
 - [[bizlaw-beneficiary-principle|受益者原則——信託には執行できる受益者が必要である]] — 同分野の近傍
-- [[bizlaw-proportionality-principle|比例原則（行政法・EU法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

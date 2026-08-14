@@ -42,6 +42,7 @@ aliases:
 - [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 出典を共有
 - [[infosoc-media-events|メディア・イベント]] — 出典を共有
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 同分野の近傍
+- [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 138）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 100）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 141）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 101）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-attribution-theory|帰属理論]]（接続 28）
@@ -26,8 +26,8 @@ tags:
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 23）
-- [[human-big-five|ビッグファイブ（5因子性格モデル）]]（接続 23）
+- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]]（接続 24）
+- [[human-framing-effect|フレーミング効果（framing effect）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -183,7 +183,6 @@ tags:
 - 1980年: [[human-cognitive-load|認知負荷理論]]
 - 1980年: [[human-endowment-effect|保有効果（授かり効果）]]
 - 1980年: [[human-optimism-bias|楽観バイアス]]
-- 1981年: [[human-framing-effect|フレーミング効果（framing effect）]]
 - 1981年: [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]]
 - 1981年: [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]]
 - 1981年: [[human-social-referencing|社会的参照（Social Referencing）]]
@@ -329,9 +328,11 @@ tags:
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]]
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]]
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]
+- [[human-big-five|ビッグファイブ（5因子性格モデル）]]
 - [[human-biopsychosocial-model|生物心理社会モデル]]
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]]
 - [[human-body-schema|身体図式（ボディスキーマ）]]
@@ -400,7 +401,6 @@ tags:
 - [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]]
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]]
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]]
-- [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]]
 - [[human-embodied-cognition-theory|身体化された認知]]
 - [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]]
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]]

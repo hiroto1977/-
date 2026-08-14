@@ -33,6 +33,7 @@ aliases:
 - [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同じ思想家
 - [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同じ思想家
 - [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — 同分野の近傍
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

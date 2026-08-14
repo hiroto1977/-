@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Natural experiment — Card-Krueger minimum wage, difference-in-differences, credibility revolution](https://en.wikipedia.org/wiki/Natural_experiment) `リファレンス`
 
 ## 関連概念
-- [[econ-difference-in-differences|差の差分析（DID）]] — 語彙が近い
+- [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 同じ思想家
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
@@ -39,6 +39,7 @@ aliases:
 - [[econ-rent-seeking|レントシーキング]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

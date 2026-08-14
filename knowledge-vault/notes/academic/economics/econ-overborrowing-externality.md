@@ -30,8 +30,8 @@ Guido Lorenzoni（Review of Economic Studies 75(3), 2008 — 非効率的信用�
 - [Bianchi (2011) Overborrowing and Systemic Externalities in the Business Cycle — AER 101(7), pp.3400-3426](https://www.aeaweb.org/articles?id=10.1257/aer.101.7.3400) `学術`
 
 ## 関連概念
+- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

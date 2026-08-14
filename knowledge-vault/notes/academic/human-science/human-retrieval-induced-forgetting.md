@@ -32,7 +32,6 @@ Michael C. Anderson ／ Robert A. Bjork ／ Elizabeth L. Bjork ／ Retrieval-Pra
 
 ## 関連概念
 - [[human-schema|スキーマ理論]] — 同分野の近傍
-- [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]] — 同分野の近傍
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 同分野の近傍
 
 ## 関連

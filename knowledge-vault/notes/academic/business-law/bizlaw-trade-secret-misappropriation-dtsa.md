@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同分野の近傍
 - [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
-- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

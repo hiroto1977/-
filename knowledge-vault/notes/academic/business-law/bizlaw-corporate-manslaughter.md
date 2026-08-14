@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
-- [[bizlaw-anton-piller-order|アントン・ピラー命令——証拠の隠滅を防ぐ無予告の捜索命令]] — 同分野の近傍
 - [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]] — 同分野の近傍
 
 ## 関連

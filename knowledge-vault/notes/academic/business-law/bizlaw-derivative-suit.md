@@ -36,8 +36,7 @@ aliases:
 - [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
 - [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
 - [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]] — 同分野の近傍
-- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同分野の近傍
-- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同分野の近傍
+- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同分野の近傍
 - [[bizlaw-utility-model|実用新案法]] — 同分野の近傍
 - [[bizlaw-trust-act|信託法]] — 同分野の近傍
 

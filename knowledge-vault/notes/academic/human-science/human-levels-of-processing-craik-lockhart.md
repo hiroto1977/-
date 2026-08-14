@@ -35,6 +35,7 @@ aliases:
 - [[human-serial-position|系列位置効果（初頭効果・新近効果）]] — 同分野の近傍
 - [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
 - [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同分野の近傍
+- [[human-memory-reconsolidation-nader-schiller|記憶再固定化——想起時の記憶可塑性とトラウマ治療への応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

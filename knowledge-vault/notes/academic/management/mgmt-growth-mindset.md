@@ -34,7 +34,6 @@ Carol S. Dweck（Stanford University）、Ellen L. Leggett、David S. Yeager
 - [Macnamara & Burgoyne (2023) — Do Growth Mindset Interventions Impact Students' Academic Achievement? A Systematic Review and Meta-Analysis. Psychological Bulletin, 149(3–4), 133–173.](https://doi.org/10.1037/bul0000352) `学術`
 
 ## 関連概念
-- [[human-mindset|マインドセット（成長/固定）]] — 語彙が近い
 - [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
@@ -44,6 +43,7 @@ Carol S. Dweck（Stanford University）、Ellen L. Leggett、David S. Yeager
 - [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
+- [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

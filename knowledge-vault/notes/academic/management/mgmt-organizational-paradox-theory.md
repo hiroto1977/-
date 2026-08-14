@@ -33,7 +33,7 @@ Marianne W. Lewis（AMR 25(4), 2000, 概念的基盤）／Wendy K. Smith & Maria
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同じ思想家
 - [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
-- [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
+- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

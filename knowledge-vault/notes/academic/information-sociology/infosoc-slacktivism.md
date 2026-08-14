@@ -35,7 +35,7 @@ Kirk Kristofferson／Katherine White／John Peloza（2014, JCR）／Evgeny Moroz
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同じ思想家
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 同分野の近傍
-- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同分野の近傍
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

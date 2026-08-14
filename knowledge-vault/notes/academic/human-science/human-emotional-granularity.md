@@ -34,6 +34,7 @@ Lisa Feldman Barrett／Todd B. Kashdan／Michele M. Tugade／Barbara L. Fredrick
 - [[human-interoception-theory|内受容感覚理論]] — 同じ思想家
 - [[human-theory-of-constructed-emotion|情動の構成理論]] — 同じ思想家
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同分野の近傍
+- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

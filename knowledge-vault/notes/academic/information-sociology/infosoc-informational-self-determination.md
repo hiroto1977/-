@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同分野の近傍
-- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同分野の近傍
+- [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

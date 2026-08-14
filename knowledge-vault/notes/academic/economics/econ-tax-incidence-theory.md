@@ -34,11 +34,11 @@ Arnold C. Harberger ／ David Ricardo ／ Alfred Marshall ／ Don Fullerton ／ 
 ## 関連概念
 - [[econ-harberger-triangle-incidence|ハーバーガーの法人税帰着モデル（Harberger Tax Incidence Model）]] — 語彙が近い
 - [[econ-tax-incidence|租税の帰着]] — 語彙が近い
-- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 語彙が近い
 - [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]] — 同じ思想家
 - [[econ-backward-bending-supply-curve|後屈労働供給曲線]] — 同じ思想家
 - [[econ-giffen-good-theory|ギッフェン財理論]] — 同じ思想家
 - [[econ-ces-production|CES生産関数]] — 出典を共有
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

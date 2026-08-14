@@ -33,6 +33,7 @@ Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca
 ## 関連概念
 - [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
 - [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同分野の近傍
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — 同分野の近傍

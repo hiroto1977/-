@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-preemption-doctrine-federal|連邦優先権原則（プリエンプション・ドクトリン）]] — 同じ思想家
 - [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 出典を共有
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 同分野の近傍
+- [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — 同分野の近傍
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同分野の近傍
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

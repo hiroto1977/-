@@ -36,6 +36,7 @@ Lisa Feldman Barrett／James A. Russell／Kristen A. Lindquist／Eliza Bliss-Mor
 - [[human-interoception-theory|内受容感覚理論]] — 同じ思想家
 - [[human-desensitization-systematic|系統的脱感作法：不安・恐怖症に対する段階的行動療法の基盤理論]] — 同分野の近傍
 - [[human-mental-rotation-shepard|メンタル・ローテーション（シェパード＆メッツラー）]] — 同分野の近傍
+- [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

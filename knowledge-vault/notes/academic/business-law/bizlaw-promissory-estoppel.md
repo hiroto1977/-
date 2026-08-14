@@ -33,7 +33,6 @@ aliases:
 - [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 語彙が近い
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 語彙が近い
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同分野の近傍
-- [[bizlaw-freedom-of-contract|契約自由の原則]] — 同分野の近傍
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同分野の近傍
 - [[bizlaw-culpa-in-contrahendo|契約締結上の過失]] — 同分野の近傍
 

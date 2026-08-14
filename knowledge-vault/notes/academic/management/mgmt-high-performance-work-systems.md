@@ -34,8 +34,8 @@ Mark A. Huselid ／ Eileen Appelbaum ／ Thomas Bailey ／ Peter Berg ／ Arne L
 
 ## 関連概念
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 語彙が近い
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 語彙が近い
 - [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有
-- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

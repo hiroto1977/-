@@ -38,9 +38,9 @@ national
 
 ## 関連概念
 - [[subsidy-human-resource-development|人材開発支援助成金]] — 語彙が近い
-- [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 語彙が近い
 - [[subsidy-nagano|中小企業賃上げ・生産性向上サポート補助金（長野県）]] — 語彙が近い
 - [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]] — 分野横断
+- [[labor-minimum-wage|地域別最低賃金（最低賃金法）]] — 出典を共有
 - [[subsidy-age-friendly|エイジフレンドリー補助金]] — 同分野の近傍
 
 ## 関連

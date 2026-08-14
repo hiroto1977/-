@@ -34,7 +34,6 @@ Thomas S. Bateman ／ J. Michael Crant ／ Adam M. Grant
 ## 関連概念
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同分野の近傍
 - [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
-- [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

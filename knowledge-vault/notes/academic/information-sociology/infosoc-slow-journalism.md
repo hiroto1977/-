@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
 - [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

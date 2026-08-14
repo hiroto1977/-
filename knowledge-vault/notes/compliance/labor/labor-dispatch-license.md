@@ -36,8 +36,8 @@ aliases:
 - [[labor-pregnant-work-restriction|妊産婦の就業制限（労働基準法の母性保護規定）]] — 出典を共有
 - [[labor-safety-education|雇入れ時等の安全衛生教育（労働安全衛生法59条）]] — 出典を共有
 - [[labor-safety-health-committee|安全委員会・衛生委員会・安全衛生委員会の設置義務]] — 出典を共有
-- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — 同分野の近傍
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 同分野の近傍
+- [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

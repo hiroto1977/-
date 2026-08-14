@@ -31,8 +31,8 @@ aliases:
 - [Dyer and Singh: The Relational View — Future of Sourcing](https://futureofsourcing.com/dyer-and-singh-the-relational-view-for-alliances-and-alignment/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

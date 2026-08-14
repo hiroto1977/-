@@ -30,8 +30,8 @@ aliases:
 - [e-Gov法令検索 — 民法（第819条 離婚後の親権、改正後条文）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 
 ## 関連概念
-- [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
 - [[bizlaw-civil-execution|民事執行法]] — 同分野の近傍
+- [[bizlaw-agency|代理（民法99条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

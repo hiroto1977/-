@@ -60,7 +60,27 @@ npm run knowledge:auto                        # フル（監査+再生成+検証
 npm run knowledge:auto -- --links=100         # 出典 URL 死活も（CI 想定 — 生ネットワークが必要）
 npm run knowledge:auto -- --today=YYYY-MM-DD  # 鮮度判定の基準日を固定（再現・テスト用）
 npm run knowledge:auto -- --skip-regen        # 読み取り専用（監査と報告のみ）
+npm run knowledge:auto -- --check-queue       # 手元のキューが今のコーパスと一致するかだけ見る
 ```
+
+### キューの鮮度 — 消化前に必ず `--check-queue`
+
+キューは gitignore なので `git reset --hard` でもブランチ切替でも消えない。
+コンテナが古い commit へ戻ると、**コーパスは新しいのにキューだけ古い**という状態が起きる。
+古いキューには「統合ですでに消えた項目を増強せよ」といった指示が残っており、
+気付かずに消化すると成果物が丸ごと捨てられる（実際に起きた: 統合済み 40 件を含む
+453 件のキューを消化しかけ、生成された本文のうち 16 件が適用不能だった）。
+
+これを検出するため、キューには生成時点の**コーパス指紋**
+（全項目の `コレクション/id:本文字数` を並べた sha256）が入っている。
+
+```bash
+npm run knowledge:auto -- --check-queue   # 一致 → exit 0 / ずれ → 理由を出して exit 1
+```
+
+ずれていたら消化せず `npm run knowledge:auto` で作り直す。
+このチェックは `verify:all` には入れていない — CI にはキュー自体が存在せず、
+常に緑を返すゲートになってしまうため。守る相手は手元／エージェントのセッションである。
 
 ## ② 週次の無人実行 — `.github/workflows/knowledge-auto.yml`
 
@@ -78,6 +98,7 @@ Claude Code セッション（手動 or 定期起動）への標準プロンプ�
 
 > 知識オートパイロットのキューを消化して。
 > `npm run knowledge:auto -- --skip-regen` でキューを再生成 →
+> `npm run knowledge:auto -- --check-queue` で鮮度を確認 →
 > `orchestration/knowledge-queue.json` を読み、優先度順（dedupe → reverify → enrich 上位 N 件）に
 > 確立済みパイプライン（調査 → 敵対的検証 → 機械ゲート）で処理。
 > DISTINCT 裁定は台帳へ追記。処理後 `npm run knowledge:auto` で再生成・検証し、
@@ -98,6 +119,7 @@ Claude Code セッション（手動 or 定期起動）への標準プロンプ�
 
 - **キューは gitignore**（`orchestration/knowledge-queue.json`）: 実行のたびに変わる報告物で、
   真実はデータ側にあるため。永続すべき裁定だけが台帳（distinct-pairs）としてコミットされる。
+  ただし gitignore は「git 操作で消えない」ことも意味するので、鮮度は指紋で自衛する（上記）。
 - **閾値はコード先頭の定数**（`THIN_CHARS` / `STALE_MONTHS`）。変更したら本書も更新する。
 - **理論⇄実務の同名併存は重複ではない**: 学術（bizlaw-*）と法令実務（tax-*/legal-*/labor-*）で
   同じ制度を扱うのは設計上の意図（観点が違う）。dedupe はコレクション内のみ照合する。

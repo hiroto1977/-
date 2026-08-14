@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同分野の近傍
-- [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

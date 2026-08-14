@@ -42,8 +42,8 @@ national
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
 - [[tax-medical-expense-deduction|医療費控除]] — 出典を共有
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
-- [[subsidy-housing-security|住居確保給付金（生活困窮者自立支援制度）]] — 同分野の近傍
 - [[subsidy-reemployment-allowance|再就職手当（就業促進手当）]] — 同分野の近傍
+- [[subsidy-housing-security|住居確保給付金（生活困窮者自立支援制度）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

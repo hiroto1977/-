@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同じ思想家
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同分野の近傍
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

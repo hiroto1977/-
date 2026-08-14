@@ -32,7 +32,7 @@ Queen Villas Homeowners Assn v. TCB Prop. Mgmt.（2007・カリフォルニア�
 
 ## 関連概念
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同分野の近傍
-- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 同分野の近傍
+- [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

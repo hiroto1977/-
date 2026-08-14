@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（2件）
 - [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]] — ソシオマテリアリティ（sociomateriality）とは、社会的なもの（thesocial）と物質的・技術的なもの…
-- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — Deleuze&Guattariのアセンブラージュ概念を組織研究に応用。
+- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 社会物質的アセンブラージュ論は、組織を人間と技術と実践が分かちがたく絡み合った動的な配置として捉える見方である。
 
 ## 関連
 - 索引: [[人物索引]]

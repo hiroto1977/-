@@ -36,7 +36,6 @@ Kevin D. Haggerty ／ Richard V. Ericson ／ Gilles Deleuze
 - [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 同分野の近傍
 - [[infosoc-surveillance-society|監視社会]] — 同分野の近傍
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
-- [[infosoc-simulacra|シミュラークルとハイパーリアリティ]] — 同分野の近傍
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同分野の近傍
 
 ## 関連

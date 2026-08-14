@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（2件）
 - [[human-embodied-cognition-theory|身体化された認知]] — Varela、Thompson、Rosch（1991）は著書*TheEmbodiedMind*において、認知とはあらか…
-- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 観察者を系に含める自己言及的制御理論。
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 観察者を系に含める自己言及的制御理論である。
 
 ## 関連
 - 索引: [[人物索引]]

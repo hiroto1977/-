@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同じ思想家
+- [[human-psychobiological-model-personality|人格の精神生物学モデル]] — 同分野の近傍
 - [[human-self-serving-bias|自己奉仕バイアス]] — 同分野の近傍
-- [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

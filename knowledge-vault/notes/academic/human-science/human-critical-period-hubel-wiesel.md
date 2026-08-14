@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Critical period — Hubel & Wiesel, ocular dominance, experience-dependent plasticity, monocular deprivation](https://en.wikipedia.org/wiki/Critical_period) `リファレンス`
 
 ## 関連概念
+- [[human-critical-period-plasticity|神経発達の臨界期：視覚野可塑性と経験依存的回路形成]] — 語彙が近い
 - [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]] — 同じ思想家
-- [[human-critical-period-plasticity|神経発達の臨界期：視覚野可塑性と経験依存的回路形成]] — 同じ思想家
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 同じ思想家
 - [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
 - [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍

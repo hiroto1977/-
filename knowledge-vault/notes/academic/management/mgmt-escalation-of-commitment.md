@@ -34,7 +34,7 @@ aliases:
 - [[econ-dollar-auction|ドル・オークション：エスカレーション・トラップのゲーム理論的モデル]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[mgmt-stretch-goal|ストレッチ目標（超高難度目標）]] — 同分野の近傍
-- [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 同分野の近傍
+- [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

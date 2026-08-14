@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[human-endowment-effect|保有効果（授かり効果）]] — 語彙が近い
-- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 語彙が近い
 - [[human-anchoring|アンカリング効果（係留と調整）]] — 同じ思想家
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

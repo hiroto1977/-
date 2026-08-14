@@ -39,6 +39,7 @@ WHO（国際保健機関） ／ マーク・グリフィス ／ ダリウス・�
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
 - [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同分野の近傍
 - [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同分野の近傍
+- [[infosoc-information-worlds-theory|情報世界理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

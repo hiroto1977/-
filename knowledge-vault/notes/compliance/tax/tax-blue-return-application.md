@@ -38,9 +38,9 @@ aliases:
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 同分野の近傍
 - [[tax-depreciation-method|減価償却の方法と法定償却方法]] — 同分野の近傍
 - [[tax-superior-ledger|優良な電子帳簿の過少申告加算税軽減]] — 同分野の近傍
-- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

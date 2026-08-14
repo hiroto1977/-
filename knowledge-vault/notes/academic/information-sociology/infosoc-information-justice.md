@@ -34,6 +34,7 @@ Alistair S. Duff／Safiya Umoja Noble／Virginia Eubanks／Tressie McMillan Cott
 - [[infosoc-digital-redlining|デジタル・レッドライニング（Digital Redlining）]] — 同じ思想家
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 出典を共有
 - [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同分野の近傍
+- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
 - [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同分野の近傍
 
 ## 関連

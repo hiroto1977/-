@@ -38,6 +38,7 @@ aliases:
 - [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
 - [[eh-2007|2007年（平成19年）]] — 出典を共有
 - [[eh-2014|2014年（平成26年）]] — 出典を共有
+- [[econ-tobin-separation|トービンの分離定理（Tobin Separation Theorem）]] — 同分野の近傍
 - [[econ-all-pay-auction|オールペイ・オークション]] — 同分野の近傍
 
 ## 関連

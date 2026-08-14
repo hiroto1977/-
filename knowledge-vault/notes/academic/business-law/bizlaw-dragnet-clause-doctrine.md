@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Dragnet clause — 包括担保条項の定義と法的解釈の概説](https://en.wikipedia.org/wiki/Dragnet_clause) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-receivables-security|集合債権譲渡担保（将来債権譲渡）]] — 語彙が近い
 - [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 同じ思想家
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 同じ思想家
 - [[bizlaw-commercial-impracticability-ucc|商事上の履行困難性——UCC第2-615条と予見不能なリスクの配分]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-promissory-estoppel-central-london|約束的禁反言——対価なき約束の衡平法的拘束力]] — 同じ思想家
 - [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 同じ思想家
 - [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 同じ思想家
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

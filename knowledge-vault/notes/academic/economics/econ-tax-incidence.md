@@ -39,7 +39,7 @@ aliases:
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
-- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同分野の近傍
+- [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

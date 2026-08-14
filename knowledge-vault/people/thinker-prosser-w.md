@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（2件）
 - [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 誘引的妨害物の法理（AttractiveNuisanceDoctrine）とは、米国不法行為法において、土地所有者が人…
-- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 人身・物的損害を伴わない純粋経済的損失（pureeconomicloss）は、過失による不法行為では原則として賠償され…
+- [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 人身・物的損害を伴わない純粋経済的損失は不法行為で回復できないとする原則である。
 
 ## 関連
 - 索引: [[人物索引]]
