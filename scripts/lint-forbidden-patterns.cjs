@@ -118,6 +118,31 @@ const FORBIDDEN_PATTERNS = [
       '同じ書き方の 8 箇所が素通しだった',
   },
   {
+    name: 'markup escaping / color validation reimplemented outside shared/escape.ts',
+    // マークアップ用エスケープの自前実装（実体参照 '&amp;' を自分で書いている行、
+    // または 5 文字クラスをまとめて置換している行）と、色の判定の自前実装
+    // （`#RRGGBB` の正規表現）を捕まえる。どちらも「書き出したファイルが
+    // 他人の環境で開かれる」経路を守る判断で、写経すると必ず片方が緩む。
+    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>)|\[0-9a-fA-F\]\{6\}/,
+    // 出荷コード (src/**) だけを見る。scripts/ の図生成は素の CJS で
+    // TS の共有実装を読めないため対象外にしている — ただし落とす文字は
+    // 揃えてある (2026-08 に gen-econ-asset-chart.cjs だけ " と ' を
+    // 残していたのを合わせた)。
+    allowFile: (rel) => !rel.startsWith('src/') || rel === 'src/shared/escape.ts',
+    codeOnly: true,
+    rationale:
+      'escape.ts の冒頭に「アプリ全体で 1 つだけ持つ」と書いてあるのに、' +
+      '2026-08 時点で main の business.ts / stocks.ts と renderer の ' +
+      'stocksAnalysisWeb.ts に写経が 3 つ残っていた。' +
+      'この種の関数は片方だけ文字を足し忘れても見た目に出ず、' +
+      '「その書き出しだけエスケープが漏れる」状態が静かに残る。' +
+      '実際にビルドスクリプト側では 1 つだけ " と \' を落としていなかった。' +
+      '説明で 1 つだと言うのではなく、増やせないようにする。' +
+      '色の判定 (`#RRGGBB`) も同じ理由で 1 つにした — main の templates.ts と ' +
+      'renderer の TemplatesPage.tsx に同じ正規表現が 1 つずつあり、' +
+      'さらに shared には受け入れ範囲の違う safeColor があって判断が 3 通りに割れていた',
+  },
+  {
     name: 'child_process exec/spawn',
     pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
     // Build/dev scripts are allowed; runtime src is not.

@@ -30,7 +30,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 208 | 自己検証 |
+| `file:line` 参照数 | 219 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1038,7 +1038,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | Script | コマンド | 役割 |
 |---|---|---|
 | `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
-| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / 未秘匿のエラー本文 / Ollama write-side endpoints) |
+| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / 未秘匿のエラー本文 / エスケープの再実装 / Ollama write-side endpoints) |
 | `scripts/lint-network-targets.cjs` | `lint:network-targets` | **送り先ホストが変数で決まる通信**を双方向台帳で管理 (新規は fail / 直したら消す) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
@@ -1054,13 +1054,34 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース 57 ファイルを **10 個の禁止パターン** で scan:
+ランタイムソース 57 ファイルを **11 個の禁止パターン** で scan:
 `dangerouslySetInnerHTML` / `eval(` / `new Function` / `.innerHTML =` / `document.write` /
 `shell.openExternal` (main / oauth 以外) / `window.open(` (web-shim.ts 以外) /
 `redactSecrets` を通さない `body.slice(` /
+マークアップ用エスケープと色の判定の自前実装 (`src/shared/escape.ts` 以外) /
 `child_process exec|spawn` (scripts 以外) /
 `/api/(pull|create|push|copy|delete|blobs|upload)` (ollama.ts / renderer 以外)。
 1 件でも検出すれば fail。
+
+エスケープの再実装を禁じるのは、`src/shared/escape.ts` の冒頭が
+「アプリ全体で 1 つだけ持つ」と書いているのに、**2026-08 時点で写経が 3 つ
+残っていた**ため (`src/main/clients/business.ts` / `src/main/clients/stocks.ts` の
+`escapeHtml`、`src/renderer/data/stocksAnalysisWeb.ts` の `esc`)。実装が同じなら
+実害は出ないが、この種の関数は片方だけ文字を足し忘れても見た目に出ない。
+実際に取りこぼしはビルドスクリプト側で起きており、`scripts/gen-econ-asset-chart.cjs`
+だけが `"` と `'` を落としていなかった。**説明が実装より先に「1 つだけ」と
+言っていた**ので、説明ではなくゲートで固定した。`scripts/` は素の CJS で TS の
+共有実装を読めないため対象外だが、落とす文字は 5 文字に揃えてある。
+
+同じ理由で**色の判定**も 1 つにした。`#RRGGBB` の正規表現が
+`src/main/clients/templates.ts` と `src/renderer/pages/TemplatesPage.tsx` に
+1 つずつあり、さらに `safeColor` (3/6/8 桁 + 名前つきの色) が別にあって、
+「色として妥当」の定義が 3 通りに割れていた。書き出し API の契約は
+`isHexColor`（`#RRGGBB` のみ・main は throw / 画面は送信前に案内）、
+描画時の緩い落とし方は `safeColor` と、役割で分けて `src/shared/escape.ts` に
+両方置いてある。移設に伴い `templates.ts` にあった Stryker の Regex pragma は
+**黙らせずに消えた** — 共有側でアンカー・桁数・文字クラスの変異体を全て殺せている
+(`escape.ts` 28 mutants / 100%)。
 
 `body.slice(` の検査は、連携先の**エラー応答本文をそのままエラー文字列へ**
 入れている箇所を捕まえる。この文字列は画面に出て不具合報告にも貼られるため、
@@ -1118,7 +1139,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 208 file:line references + 6 metrics ✅
+# → Verified 219 file:line references + 6 metrics ✅
 # → Scanned 57 files × 10 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

@@ -13,6 +13,7 @@
  * 免責 (ADVISOR_DISCLAIMER) を必ず付ける。
  */
 
+import { escapeXml } from '../../shared/escape';
 import { mockCandles, type WebCandle, type WebSignal } from './stocksWatchlistWeb';
 
 const HISTORY_LENGTH = 120;
@@ -588,12 +589,6 @@ export function validateAdvisorJson(
 
 // --- ダッシュボード書き出し ----------------------------------------------
 
-function esc(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => (
-    c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '"' ? '&quot;' : '&#39;'
-  ));
-}
-
 export interface DashboardInput {
   watchlist: readonly { symbol: string; label: string; latestClose: number; changePct: number }[];
   strategyComparison?: StrategyComparisonResult | null;
@@ -605,23 +600,23 @@ export function renderDashboardHtml(input: DashboardInput): string {
   const rows = input.watchlist
     .map(
       (w) =>
-        `<tr><td>${esc(w.symbol)}</td><td>${esc(w.label)}</td><td style="text-align:right">${w.latestClose.toFixed(2)}</td><td style="text-align:right;color:${w.changePct >= 0 ? '#22c55e' : '#ef4444'}">${w.changePct >= 0 ? '+' : ''}${w.changePct.toFixed(2)}%</td></tr>`,
+        `<tr><td>${escapeXml(w.symbol)}</td><td>${escapeXml(w.label)}</td><td style="text-align:right">${w.latestClose.toFixed(2)}</td><td style="text-align:right;color:${w.changePct >= 0 ? '#22c55e' : '#ef4444'}">${w.changePct >= 0 ? '+' : ''}${w.changePct.toFixed(2)}%</td></tr>`,
     )
     .join('');
   const cmp = input.strategyComparison
-    ? `<h2>戦略比較 — ${esc(input.strategyComparison.symbol)}</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>戦略</th><th>最終資産</th><th>リターン%</th><th>最大DD%</th><th>勝率</th><th>取引数</th></tr>${input.strategyComparison.rows
+    ? `<h2>戦略比較 — ${escapeXml(input.strategyComparison.symbol)}</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>戦略</th><th>最終資産</th><th>リターン%</th><th>最大DD%</th><th>勝率</th><th>取引数</th></tr>${input.strategyComparison.rows
         .map(
           (r) =>
-            `<tr><td>${esc(r.strategy)}</td><td style="text-align:right">${r.finalEquity.toFixed(0)}</td><td style="text-align:right">${r.totalReturnPct.toFixed(2)}</td><td style="text-align:right">${r.maxDrawdownPct.toFixed(2)}</td><td style="text-align:right">${(r.winRate * 100).toFixed(0)}%</td><td style="text-align:right">${r.tradeCount}</td></tr>`,
+            `<tr><td>${escapeXml(r.strategy)}</td><td style="text-align:right">${r.finalEquity.toFixed(0)}</td><td style="text-align:right">${r.totalReturnPct.toFixed(2)}</td><td style="text-align:right">${r.maxDrawdownPct.toFixed(2)}</td><td style="text-align:right">${(r.winRate * 100).toFixed(0)}%</td><td style="text-align:right">${r.tradeCount}</td></tr>`,
         )
-        .join('')}</table><p>最良 (リターン基準): ${input.strategyComparison.bestByReturn ? esc(input.strategyComparison.bestByReturn) : '差なし'}</p>`
+        .join('')}</table><p>最良 (リターン基準): ${input.strategyComparison.bestByReturn ? escapeXml(input.strategyComparison.bestByReturn) : '差なし'}</p>`
     : '';
   const adv = input.advisor
     ? `<h2>アドバイザー</h2><ol>${input.advisor.recommendations
-        .map((r) => `<li><b>${esc(r.symbol)}</b> — ${esc(r.rationale)} <i>(リスク: ${r.riskFactors.map(esc).join(' / ')})</i></li>`)
-        .join('')}</ol><p style="color:#fbbf24">${esc(input.advisor.disclaimer)}</p>`
+        .map((r) => `<li><b>${escapeXml(r.symbol)}</b> — ${escapeXml(r.rationale)} <i>(リスク: ${r.riskFactors.map(escapeXml).join(' / ')})</i></li>`)
+        .join('')}</ol><p style="color:#fbbf24">${escapeXml(input.advisor.disclaimer)}</p>`
     : '';
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Stocks ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: ${esc(input.generatedAt)}</p><h2>ウォッチリスト</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr>${rows || '<tr><td colspan="4">(登録銘柄なし)</td></tr>'}</table>${cmp}${adv}<p style="margin-top:24px;color:#8a93a6;font-size:12px">${esc(ADVISOR_DISCLAIMER)}</p></body></html>`;
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Stocks ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: ${escapeXml(input.generatedAt)}</p><h2>ウォッチリスト</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr>${rows || '<tr><td colspan="4">(登録銘柄なし)</td></tr>'}</table>${cmp}${adv}<p style="margin-top:24px;color:#8a93a6;font-size:12px">${escapeXml(ADVISOR_DISCLAIMER)}</p></body></html>`;
 }
 
 export function renderDashboardMarkdown(input: DashboardInput): string {

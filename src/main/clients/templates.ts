@@ -53,14 +53,6 @@ export interface TemplateDef {
   readonly defaults: TemplateParams;
 }
 
-// HEX regex pinned via positive (`#abcdef`/`#012345` accepted) + negative
-// (`red`, `#abc`, `#zzzzzz`) tests. Stryker Regex mutants on the anchor
-// or class internals are equivalent up to allowing strings the validator
-// is supposed to reject — but the surviving forms (`?` quantifier mutation
-// on `{6}`) admit shorter strings still matching the 5 rejection cases.
-// Stryker disable next-line Regex
-const HEX = /^#[0-9a-fA-F]{6}$/;
-
 // Catalog string-literals (label / description / default param text) are
 // decorative copy. The TemplateId list is pinned by structural tests
 // (toEqual on TEMPLATE_IDS). Hex defaults are pinned via validation tests.
@@ -246,7 +238,7 @@ export function validateParams(
   for (const k of ['accentColor', 'secondaryColor'] as const) {
     const v = o[k];
     if (typeof v === 'string') {
-      if (!HEX.test(v)) {
+      if (!isHexColor(v)) {
         throw new Error(`${k} must be #RRGGBB hex color`);
       }
       out[k] = v;
@@ -259,7 +251,7 @@ export function validateParams(
 // --- SVG helpers ------------------------------------------------------
 
 /** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, isHexColor } from '../../shared/escape';
 
 export { escapeXml };
 
