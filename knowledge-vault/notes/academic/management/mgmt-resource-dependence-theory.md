@@ -27,10 +27,16 @@ aliases:
 
 ## 出典
 - [Wikipedia — Resource Dependence Theory](https://en.wikipedia.org/wiki/Resource_dependence_theory) `リファレンス`
-- [Pfeffer & Salancik (1995) External Dependence and Organizational Response — Academy of Management Review](https://journals.sagepub.com/doi/10.1177/017084069501100406) `学術`
+- [Pfeffer, J. & Salancik, G. R. (1978 / 2003 復刻) The External Control of Organizations: A Resource Dependence Perspective — Harper & Row / Stanford University Press](https://www.sup.org/books/business/external-control-organizations) `学術`
 - [Davis, Schoorman & Donaldson — Toward a Stewardship Theory — Academy of Management Review (1997)](https://www.jstor.org/stable/2951606) `学術`
 
 ## 関連概念
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
+- [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — 出典を共有
+- [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
+- [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
+- [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
 

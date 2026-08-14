@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 139
+cite_count: 140
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **139 件**（学術 138 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **140 件**（学術 139 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -118,6 +118,7 @@ tags:
 - [[infosoc-communication-accommodation-theory|コミュニケーション適応理論（Communication Accommodation Theory, CAT）]] — Giles,H.(1973)"AccentMobility:AModelandSomeData",AnthropologicalLingu…
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — Haraway(1988)SituatedKnowledges—FeministStudiesVol.14No.3
 - [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — McGuire(1964)"InducingResistancetoPersuasion,"AdvancesinExperimentalS…
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — Fuller(2018)Post-Truth:KnowledgeasaPowerGame—AnthemPress
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — Winner(1980)DoArtifactsHavePolitics?Daedalus109(1):121-136
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — Katz,E.,Blumler,J.G.&Gurevitch,M.(1973)UsesandGratificationsResearch—…
 - [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]] — Zahra&George(2002)—JSTOR全文アーカイブ（AMRVol.27No.2）

@@ -2,7 +2,7 @@
 title: "sup.org"
 type: source-domain
 host: "sup.org"
-cite_count: 6
+cite_count: 7
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sup.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（学術 5 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **7 件**（学術 6 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,7 @@ tags:
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — Benkler,Y.(2006)TheWealthofNetworks—YaleUniversityPress（commons-based…
 - [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — Earley,P.Christopher&Ang,Soon(2003).CulturalIntelligence:IndividualIn…
 - [[mgmt-resource-dependence|資源依存理論]] — TheExternalControlofOrganizations—StanfordUniversityPress（原著の現行版出版元）
+- [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — Pfeffer,J.&Salancik,G.R.(1978/2003復刻)TheExternalControlofOrganization…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Hambrick, D. C. & Mason, P. A. (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers — Academy of Management Review, 9(2), 193–206（原典）](https://doi.org/10.2307/258434) `学術`
 - [Hambrick, D. C. (2007) Upper Echelons Theory: An Update — Academy of Management Review, 32(2), 334–343（理論のアップデート）](https://doi.org/10.5465/amr.2007.23464074) `学術`
-- [Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management, 30(6), 749–778（文献サーベイ）](https://doi.org/10.1002/smj.324) `学術`
+- [Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management, 30(6), 749–778（文献サーベイ）](https://doi.org/10.1016/j.jm.2004.06.001) `学術`
 - [Wikipedia: Upper echelons theory — Hambrick & Mason, TMT diversity, CEO overconfidence, observable characteristics](https://en.wikipedia.org/wiki/Upper_echelons_theory) `リファレンス`
 
 ## 関連概念

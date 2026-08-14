@@ -35,12 +35,12 @@ Georg Friedrich Knapp／L. Randall Wray／Stephanie Kelton／Warren Mosler／Pav
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 出典を共有
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -18718,7 +18718,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Resource_dependence_theory', type: 'reference', label: 'Wikipedia — Resource Dependence Theory' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/017084069501100406', type: 'academic', label: 'Pfeffer & Salancik (1995) External Dependence and Organizational Response — Academy of Management Review' },
+      { url: 'https://www.sup.org/books/business/external-control-organizations', type: 'academic', label: 'Pfeffer, J. & Salancik, G. R. (1978 / 2003 復刻) The External Control of Organizations: A Resource Dependence Perspective — Harper & Row / Stanford University Press' },
       { url: 'https://www.jstor.org/stable/2951606', type: 'academic', label: 'Davis, Schoorman & Donaldson — Toward a Stewardship Theory — Academy of Management Review (1997)' },
     ],
   },
@@ -21392,7 +21392,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Relational_frame_theory', type: 'reference', label: 'Wikipedia — Relational frame theory' },
-      { url: 'https://doi.org/10.1007/978-1-4757-3357-4', type: 'academic', label: 'Hayes, Barnes-Holmes & Roche (2001) Relational Frame Theory, Springer' },
+      { url: 'https://doi.org/10.1007/b108413', type: 'academic', label: 'Hayes, S. C., Barnes-Holmes, D. & Roche, B. (Eds.) (2001) Relational Frame Theory: A Post-Skinnerian Account of Human Language and Cognition — Kluwer Academic/Plenum（現 Springer）' },
       { url: 'https://contextualscience.org/relational_frame_theory', type: 'reference', label: 'Association for Contextual Behavioral Science — RFT' },
     ],
   },
@@ -23652,9 +23652,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.5465/amr.1998.926630', type: 'academic', label: 'Coff (1997) Human assets and management dilemmas — Academy of Management Review' },
-      { url: 'https://doi.org/10.1177/0149206311417113', type: 'academic', label: 'Ployhart & Moliterno (2011) Emergence of the human capital resource — Academy of Management Review' },
+      { url: 'https://doi.org/10.5465/amr.2009.0318', type: 'academic', label: 'Ployhart & Moliterno (2011) Emergence of the human capital resource — Academy of Management Review' },
       { url: 'https://doi.org/10.1177/014920639602200101', type: 'academic', label: 'Wright, McMahan & McWilliams (1994) Human resources and sustained competitive advantage — IJHRM' },
-      { url: 'https://doi.org/10.1177/0149206308330559', type: 'academic', label: 'Cappelli & Keller (2014) Talent management — Annual Review of Organizational Psychology' },
+      { url: 'https://doi.org/10.1146/annurev-orgpsych-031413-091314', type: 'academic', label: 'Cappelli & Keller (2014) Talent Management: Conceptual Approaches and Practical Challenges — Annual Review of Organizational Psychology and Organizational Behavior, 1, 305-331' },
       { url: 'https://doi.org/10.1002/smj.4250171109', type: 'academic', label: 'Barney & Wright (1998) On becoming a strategic partner — Human Resource Management' },
     ],
   },
@@ -23889,7 +23889,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'Michael S. Hunt ／ Michael E. Porter ／ Richard E. Caves ／ Karel Cool ／ Dan E. Schendel ／ John McGee ／ Howard Thomas',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1086/258881', type: 'academic', label: 'Caves & Porter (1977) "From Entry Barriers to Mobility Barriers" — Quarterly Journal of Economics' },
+      { url: 'https://doi.org/10.2307/1885416', type: 'academic', label: 'Caves & Porter (1977) "From Entry Barriers to Mobility Barriers" — Quarterly Journal of Economics' },
       { url: 'https://doi.org/10.1002/smj.4250090103', type: 'academic', label: 'Cool & Schendel (1988) "Performance Differences Among Strategic Group Members" — Strategic Management Journal' },
       { url: 'https://doi.org/10.1002/smj.4250070105', type: 'academic', label: 'McGee & Thomas (1986) "Strategic Groups: Theory, Research and Taxonomy" — Strategic Management Journal' },
       { url: 'https://doi.org/10.1016/0024-6301(80)90041-5', type: 'academic', label: 'Porter (1980) Competitive Strategy — Free Press (mobility barriers & strategic groups)' },
@@ -23953,7 +23953,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1521/jscp.1985.3.4.394', type: 'academic', label: 'Deci & Ryan (1985) — The General Causality Orientations Scale: Self-Determination in Personality (JSCP)' },
       { url: 'https://doi.org/10.1146/annurev.psych.55.090902.141702', type: 'academic', label: 'Deci & Ryan (2000) — The "What" and "Why" of Goal Pursuits: Human Needs and the Self-Determination of Behavior (Psychological Inquiry)' },
       { url: 'https://selfdeterminationtheory.org/theory/', type: 'reference', label: 'Self-Determination Theory — Official SDT Website: Overview of the Six Mini-Theories' },
-      { url: 'https://doi.org/10.1007/978-94-007-7644-4', type: 'academic', label: 'Vansteenkiste, Niemiec & Soenens (2010) — The Development of the Five Mini-Theories of Self-Determination Theory (Advances in Motivation and Achievement)' },
+      { url: 'https://doi.org/10.1108/S0749-7423(2010)000016A007', type: 'academic', label: 'Vansteenkiste, M., Niemiec, C. P. & Soenens, B. (2010) The Development of the Five Mini-Theories of Self-Determination Theory — Advances in Motivation and Achievement, Vol. 16A, pp.105-165, Emerald' },
     ],
   },
   {
@@ -24106,8 +24106,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーロン・アントノフスキー（1979 『Health, Stress and Coping』で健康生成論を提唱、1987 SOC概念を体系化）／モニカ・エリクソン（2006 SOC研究458論文の系統的レビュー）／ベングト・リンドストローム（2006 同レビュー共著）／モーリス・B・ミッテルマーク（2017 『Handbook of Salutogenesis』編集）',
     asOf: '2026-07',
     sources: [
-      { url: 'https://doi.org/10.1007/978-1-4612-4146-0', type: 'academic', label: 'Antonovsky (1979) Health, Stress & Coping' },
-      { url: 'https://doi.org/10.1007/978-1-4612-4660-1', type: 'academic', label: 'Antonovsky (1987) Unraveling the Mystery of Health' },
+      { url: 'https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606', type: 'academic', label: 'Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）' },
+      { url: 'https://search.worldcat.org/title/14904689', type: 'academic', label: 'Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）' },
       { url: 'https://doi.org/10.1093/heapro/dap038', type: 'academic', label: 'Eriksson & Lindström (2010)' },
       { url: 'https://doi.org/10.1007/978-3-319-04600-6', type: 'academic', label: 'Mittelmark et al. (2017) Handbook of Salutogenesis' },
       { url: 'https://doi.org/10.1093/heapro/dah609', type: 'academic', label: 'Eriksson & Lindström (2006)' },
@@ -27333,7 +27333,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-24',
     sources: [
       { url: 'https://doi.org/10.1177/001872675100400101', type: 'academic', label: 'Trist & Bamforth 1951 Some Social and Psychological Consequences of the Longwall Method of Coal-Getting, Human Relations 4(1)' },
-      { url: 'https://doi.org/10.1016/B978-0-08-009228-6.50014-0', type: 'academic', label: 'Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon' },
+      { url: 'https://search.worldcat.org/title/oclc/25724367', type: 'academic', label: 'Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon' },
       { url: 'https://doi.org/10.1177/001872677602900806', type: 'academic', label: 'Cherns 1976 The Principles of Sociotechnical Design, Human Relations 29(8)' },
     ],
   },
@@ -27976,7 +27976,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1177/002200277101500111', type: 'academic', label: 'Shubik, M. (1971) The Dollar Auction Game: A Paradox in Noncooperative Behavior and Escalation — Journal of Conflict Resolution' },
       { url: 'https://doi.org/10.1016/0030-5073(76)90005-2', type: 'academic', label: 'Staw, B.M. (1976) Knee-Deep in the Big Muddy: A Study of Escalating Commitment to a Chosen Course of Action — Organizational Behavior and Human Performance' },
-      { url: 'https://doi.org/10.1007/978-1-4612-5988-9', type: 'academic', label: 'Teger, A.I. (1980) Too Much Invested to Quit — Pergamon Press' },
+      { url: 'https://shop.elsevier.com/books/too-much-invested-to-quit/teger/978-0-08-022995-9', type: 'academic', label: 'Teger, A.I. (1980) Too Much Invested to Quit — Pergamon Press' },
     ],
   },
   {
@@ -29803,7 +29803,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デブラ・メイヤーソン ／ マウリーン・スカリー ／ カール・ワイク ／ ジョーン・ロッチ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.5465/amr.1995.9512280012', type: 'academic', label: 'Meyerson, D. & Scully, M. (1995) Tempered Radicalism and the Politics of Ambivalence and Change — Organization Science, 6(5), 585–600（原典論文）' },
+      { url: 'https://doi.org/10.1287/orsc.6.5.585', type: 'academic', label: 'Meyerson, D. & Scully, M. (1995) Tempered Radicalism and the Politics of Ambivalence and Change — Organization Science, 6(5), 585–600（原典論文）' },
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=10226', type: 'reference', label: 'Meyerson, D. E. (2001) Tempered Radicals: How Everyday Leaders Inspire Change at Work — Harvard Business School Press（体系書）' },
       { url: 'https://doi.org/10.5465/amr.2000.4965960', type: 'academic', label: 'Meyerson, D. E. & Fletcher, J. K. (2000) A Modest Manifesto for Shattering the Glass Ceiling — Harvard Business Review, 78(1), 126–136（小さな勝利戦略の応用）' },
       { url: 'https://en.wikipedia.org/wiki/Tempered_radical', type: 'reference', label: 'Wikipedia: Tempered radical — Meyerson & Scully, everyday resistance, diversity leadership, complicity risk' },
@@ -30238,7 +30238,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.12801/1947-5403.2015.07.03.01', type: 'academic', label: 'Cramer, F. (2015) What is "Post-digital"? — A Peer-reviewed Journal About Post-Digital Research, 3(1)（ポストデジタルの定義論文）' },
-      { url: 'https://doi.org/10.1007/978-3-030-00173-4', type: 'academic', label: 'Jandrić, P. et al. (2018) Postdigital Science and Education — Educational Philosophy and Theory, 50(10), 893–899（教育学への応用）' },
+      { url: 'https://doi.org/10.1080/00131857.2018.1454000', type: 'academic', label: 'Jandrić, P. et al. (2018) Postdigital Science and Education — Educational Philosophy and Theory, 50(10), 893–899（教育学への応用）' },
       { url: 'https://doi.org/10.1080/14626268.2016.1219003', type: 'academic', label: 'Cascone, K. (2000) The Aesthetics of Failure: "Post-Digital" Tendencies in Contemporary Computer Music — Computer Music Journal, 24(4), 12–18（美学的起源）' },
       { url: 'https://en.wikipedia.org/wiki/Post-digital', type: 'reference', label: 'Wikipedia: Post-digital — Cramer, analog revival, post-digital pedagogy, AI content backlash' },
     ],
@@ -30337,7 +30337,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1016/0030-5073(76)90016-7', type: 'academic', label: 'Hackman, J. R. & Oldham, G. R. (1976) Motivation Through the Design of Work: Test of a Theory — Organizational Behavior and Human Performance, 16(2), 250–279（JCMの原典）' },
       { url: 'https://doi.org/10.1037/0021-9010.92.5.1332', type: 'academic', label: 'Humphrey, S. E., Nahrgang, J. D. & Morgeson, F. P. (2007) Integrating Motivational, Social, and Contextual Work Design Features: A Meta-Analytic Summary and Theoretical Extension — Journal of Applied Psychology, 92(5), 1332–1356（メタ分析）' },
-      { url: 'https://doi.org/10.1093/oxfordhb/9780199732760.013.0003', type: 'academic', label: 'Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology, 65, 661–691（JCMの拡張と現代的展望）' },
+      { url: 'https://doi.org/10.1146/annurev-psych-010213-115208', type: 'academic', label: 'Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology, 65, 661–691（JCMの拡張と現代的展望）' },
       { url: 'https://en.wikipedia.org/wiki/Job_characteristics_model', type: 'reference', label: 'Wikipedia: Job characteristics model — Hackman & Oldham, five core dimensions, MPS formula, meta-analysis' },
     ],
   },
@@ -34804,7 +34804,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ゴードン・タロック ／ ジェームズ・ブキャナン ／ アン・クルーガー ／ リチャード・ポズナー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://doi.org/10.1007/978-94-009-3324-3_3', type: 'academic', label: 'Tullock, G. (1967) The welfare costs of tariffs, monopolies, and theft — Western Economic Journal' },
+      { url: 'https://doi.org/10.1111/j.1465-7295.1967.tb01923.x', type: 'academic', label: 'Tullock, G. (1967) The welfare costs of tariffs, monopolies, and theft — Western Economic Journal' },
       { url: 'https://en.wikipedia.org/wiki/Tullock_paradox', type: 'reference', label: 'Wikipedia: Tullock paradox — rent-seeking, lobbying, public choice' },
     ],
   },
@@ -38788,7 +38788,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ダニー・ミラー ／ クレイトン・クリステンセン ／ ジェームズ・マーチ ／ ドロシー・レオナルド＝バートン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1016/0149-2063(93)90053-P', type: 'academic', label: 'Miller, D. (1993) The Architecture of Simplicity — Academy of Management Review 18(1)' },
+      { url: 'https://doi.org/10.5465/amr.1993.3997509', type: 'academic', label: 'Miller, D. (1993) The Architecture of Simplicity — Academy of Management Review 18(1)' },
       { url: 'https://en.wikipedia.org/wiki/Icarus_paradox', type: 'reference', label: 'Wikipedia: Icarus Paradox — Miller success-driven organizational decline' },
       { url: 'https://doi.org/10.1002/smj.4250130307', type: 'academic', label: 'Miller, D. (1992) The Icarus Paradox: How Exceptional Companies Bring About Their Own Downfall — Business Horizons 35(1)' },
     ],
@@ -38970,7 +38970,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ペーター・シュレヒトリーム ／ ジョン・ホノルド ／ インゲボルグ・シュヴェンツァー ／ ウルリッヒ・マグヌス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511814792', type: 'academic', label: 'Schlechtriem, P. & Schwenzer, I. (2010) Commentary on the UN Convention on the International Sale of Goods (CISG) — Oxford UP' },
+      { url: 'https://doi.org/10.1093/law/9780199568970.001.0001', type: 'academic', label: 'Schlechtriem, P. & Schwenzer, I. (2010) Commentary on the UN Convention on the International Sale of Goods (CISG) — Oxford UP' },
       { url: 'https://en.wikipedia.org/wiki/Nachfrist', type: 'reference', label: 'Wikipedia: Nachfrist — additional period for performance in contract law' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780199535491.001.0001', type: 'academic', label: 'Honnold, J.O. (2009) Uniform Law for International Sales Under the 1980 United Nations Convention — Kluwer 4th ed.' },
     ],
@@ -39819,7 +39819,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'スティーブ・フラー ／ リー・マッキンタイア ／ キャス・サンスティーン ／ イーライ・パリサー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-3-319-72424-3', type: 'academic', label: 'Fuller (2018) Post-Truth: Knowledge as a Power Game — Anthem Press' },
+      { url: 'https://www.jstor.org/stable/j.ctvgd30v', type: 'academic', label: 'Fuller (2018) Post-Truth: Knowledge as a Power Game — Anthem Press' },
       { url: 'https://doi.org/10.7551/mitpress/11483.001.0001', type: 'academic', label: 'McIntyre (2018) Post-Truth — MIT Press' },
       { url: 'https://en.wikipedia.org/wiki/Post-truth', type: 'reference', label: 'Wikipedia: Post-truth — ポスト真実の定義と社会的影響の概説' },
     ],
@@ -40538,7 +40538,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1002/9781405164627.ch5', type: 'academic', label: 'West, M. A. (1996) Reflexivity and Work Group Effectiveness — Handbook of Work Group Psychology, Wiley' },
-      { url: 'https://doi.org/10.5465/amj.2010.0583', type: 'academic', label: 'Schippers, M. C. et al. (2013) Reflexivity in Teams — Journal of Management' },
+      { url: 'https://doi.org/10.1177/0149206312441210', type: 'academic', label: 'Schippers, M. C., West, M. A. & Dawson, J. F. (2015) Team Reflexivity and Innovation: The Moderating Role of Team Context — Journal of Management 41(3), 769-788' },
       { url: 'https://en.wikipedia.org/wiki/Team_reflexivity', type: 'reference', label: 'Wikipedia: Team reflexivity — collective reflection and adaptation overview' },
     ],
   },
@@ -40811,7 +40811,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アダム・グリーンフィールド ／ ロブ・キトチン ／ シャノン・マッターン ／ テイラー・シェルトン ／ マシュー・ゾック',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-1-137-27866-0', type: 'academic', label: 'Greenfield, A. (2013) Against the Smart City — Do Projects' },
+      { url: 'https://search.worldcat.org/title/against-the-smart-city/oclc/869266837', type: 'academic', label: 'Greenfield, A. (2013) Against the Smart City — Do Projects' },
       { url: 'https://doi.org/10.1177/2043820614532284', type: 'academic', label: 'Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal' },
       { url: 'https://en.wikipedia.org/wiki/Smart_city', type: 'reference', label: 'Wikipedia: Smart city — スマートシティの概念と批判的議論' },
     ],
@@ -40824,7 +40824,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ハーバート・グルーベル ／ ピーター・ロイド ／ ポール・クルーグマン ／ リオネル・フォンターニェ ／ マイケル・フロイデンベルク',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-1-349-01959-2', type: 'academic', label: 'Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade — Macmillan' },
+      { url: 'https://catalog.hathitrust.org/Record/010552788', type: 'academic', label: 'Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade: The Theory and Measurement of International Trade in Differentiated Products — Macmillan（HathiTrust 目録）' },
       { url: 'https://doi.org/10.1016/0022-1996(79)90017-5', type: 'academic', label: 'Krugman, P. (1979) "Increasing Returns, Monopolistic Competition, and International Trade" — JIE' },
       { url: 'https://en.wikipedia.org/wiki/Intra-industry_trade', type: 'reference', label: 'Wikipedia: Intra-industry trade — 産業内貿易の理論と測定' },
     ],
@@ -41627,7 +41627,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32019L1937', type: 'government', label: 'Directive (EU) 2019/1937 — EU通報者保護指令原文' },
-      { url: 'https://doi.org/10.1007/978-3-030-78706-8', type: 'academic', label: 'Bachmann & De Stefano (2022) Whistleblower Protection in the EU — Springer' },
       { url: 'https://en.wikipedia.org/wiki/Whistleblower_protection_by_country', type: 'reference', label: 'Wikipedia: Whistleblower protection by country — 各国の内部通報者保護制度の概説' },
     ],
   },
@@ -41782,8 +41781,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'J・リチャード・ハックマン ／ ルス・ワゲマン ／ スティーブ・コズロウスキー ／ ダニエル・イルゲン ／ エドゥアルド・サラス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.59.6.500', type: 'academic', label: 'Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams — Psychological Science in the Public Interest' },
-      { url: 'https://doi.org/10.1177/1046496408328821', type: 'academic', label: 'Wageman et al. (2008) Senior Leadership Teams: What It Takes to Make Them Great — Harvard Business Press' },
+      { url: 'https://doi.org/10.1111/j.1529-1006.2006.00030.x', type: 'academic', label: 'Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams — Psychological Science in the Public Interest' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=34413', type: 'academic', label: 'Wageman, R., Nunes, D. A., Burruss, J. A. & Hackman, J. R. (2008) Senior Leadership Teams: What It Takes to Make Them Great — Harvard Business Review Press' },
       { url: 'https://en.wikipedia.org/wiki/Team_effectiveness', type: 'reference', label: 'Wikipedia: Team effectiveness — チーム有効性モデルの概説' },
     ],
   },
@@ -42107,7 +42106,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ラッセル・コフ ／ デイヴィッド・クリシンスキー ／ ベンジャミン・キャンベル ／ エドワード・ラザー ／ ポール・オイヤー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.5465/amr.2011.0088', type: 'academic', label: 'Coff & Kryscynski (2011) Drilling for Micro-Foundations of Human Capital-Based Competitive Advantages — Journal of Management' },
+      { url: 'https://doi.org/10.1177/0149206310397772', type: 'academic', label: 'Coff & Kryscynski (2011) Drilling for Micro-Foundations of Human Capital-Based Competitive Advantages — Journal of Management' },
       { url: 'https://doi.org/10.1002/smj.2116', type: 'academic', label: 'Campbell et al. (2012) Resource Aggregation and Its Implications for Strategic Management — Strategic Management Journal' },
       { url: 'https://en.wikipedia.org/wiki/Human_capital', type: 'reference', label: 'Wikipedia: Human capital — 人的資本理論の経済学・経営学横断的概説' },
     ],
@@ -42304,7 +42303,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://eur-lex.europa.eu/eli/dir/2019/1937/oj', type: 'government', label: 'European Parliament (2019) Directive 2019/1937 on Whistleblower Protection — EUR-Lex' },
-      { url: 'https://doi.org/10.1007/978-3-030-26946-0', type: 'academic', label: 'Vandekerckhove, W. et al. (2014) Whistleblowing and Democratic Values — International Whistleblowing Research Network' },
+      { url: 'https://eprints.mdx.ac.uk/8284/', type: 'academic', label: 'Lewis, D. & Vandekerckhove, W. (eds.) (2011) Whistleblowing and Democratic Values — International Whistleblowing Research Network（ISBN 978-0-9571384-0-7・オープンアクセス）' },
       { url: 'https://en.wikipedia.org/wiki/EU_Whistleblower_Protection_Directive', type: 'reference', label: 'Wikipedia: EU Whistleblower Protection Directive — 指令の概要' },
     ],
   },
@@ -42434,7 +42433,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'トレバー・ショルツ ／ ニック・スルニチェク ／ クリスティアン・フクス ／ アントニオ・カシッリ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-3-319-74562-0', type: 'academic', label: 'Scholz, T. (2017) Uberworked and Underpaid — Polity Press' },
+      { url: 'https://www.wiley.com/en-us/Uberworked+and+Underpaid:+How+Workers+Are+Disrupting+the+Digital+Economy-p-9780745653563', type: 'academic', label: 'Scholz, T. (2016) Uberworked and Underpaid: How Workers Are Disrupting the Digital Economy — Polity Press（ISBN 978-0-7456-5356-3・初版ハードカバー）' },
       { url: 'https://doi.org/10.1509/jppm.15.098', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press' },
       { url: 'https://en.wikipedia.org/wiki/Platform_cooperativism', type: 'reference', label: 'Wikipedia: Platform cooperativism — プラットフォーム協同組合主義の概要' },
     ],
@@ -43120,7 +43119,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・ハント ／ マイケル・ポーター ／ リチャード・ケイブス ／ ジェイ・バーニー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2392455', type: 'academic', label: 'Caves, R. & Porter, M. (1977) From Entry Barriers to Mobility Barriers — Quarterly Journal of Economics' },
+      { url: 'https://doi.org/10.2307/1885416', type: 'academic', label: 'Caves, R. E. & Porter, M. E. (1977) From Entry Barriers to Mobility Barriers — Quarterly Journal of Economics 91(2), 241-261' },
       { url: 'https://en.wikipedia.org/wiki/Strategic_group', type: 'reference', label: 'Wikipedia: Strategic group — mobility barriers, industry structure, competitive dynamics' },
     ],
   },
@@ -43445,7 +43444,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'W・エドワーズ・デミング ／ ジョセフ・ジュラン ／ フィリップ・クロスビー ／ 石川馨',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1002/9781118234013', type: 'academic', label: 'Deming, W.E. (1986) Out of the Crisis — MIT Press' },
+      { url: 'https://doi.org/10.7551/mitpress/11457.001.0001', type: 'academic', label: 'Deming, W. E. (1986) Out of the Crisis — MIT Center for Advanced Engineering Study（2018 年 MIT Press 復刊版の DOI）' },
       { url: 'https://en.wikipedia.org/wiki/Total_quality_management', type: 'reference', label: 'Wikipedia: Total quality management — Deming and PDCA' },
     ],
   },
@@ -44459,7 +44458,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.bcg.com/capabilities/strategy/growth-share-matrix', type: 'reference', label: 'BCG (1970) The Product Portfolio — BCG Perspectives' },
-      { url: 'https://doi.org/10.1287/mnsc.29.9.1068', type: 'academic', label: 'Hambrick et al. (1982) Operationalizing the Concept of Business-Level Strategy — Academy of Management Review' },
+      { url: 'https://doi.org/10.5465/256077', type: 'academic', label: 'Hambrick, D. C., MacMillan, I. C. & Day, D. L. (1982) Strategic Attributes and Performance in the BCG Matrix — Academy of Management Journal 25(3), 510-531' },
       { url: 'https://en.wikipedia.org/wiki/Growth%E2%80%93share_matrix', type: 'reference', label: 'Wikipedia: Growth–share matrix — BCGマトリクスの概念と限界' },
     ],
   },
@@ -45748,7 +45747,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ハワード・ボーウェン ／ エドワード・フリーマン ／ マイケル・ポーター ／ キャロル・アーチー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-94-007-4098-0_244', type: 'academic', label: 'Freeman (1984) Strategic Management: A Stakeholder Approach — Pitman (Springer Encyclopedia version)' },
+      { url: 'https://doi.org/10.1017/CBO9781139192675', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 復刻版の DOI）' },
       { url: 'https://en.wikipedia.org/wiki/Corporate_social_responsibility', type: 'reference', label: 'Wikipedia: CSR — stakeholder theory, ESG, CSRD, Business Roundtable, Friedman doctrine' },
     ],
   },
@@ -45796,7 +45795,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アントワーヌ・オーギュスタン・クールノー ／ ジョセフ・ルイ・フランソワ・ベルトラン ／ フランシス・エッジワース ／ ハインリッヒ・フォン・スタッケルバーグ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-3-642-48748-8_1', type: 'academic', label: 'Cournot (1838) Researches into the Mathematical Principles of the Theory of Wealth — reprint Kelley 1960' },
+      { url: 'https://gallica.bnf.fr/ark:/12148/bpt6k6117257c', type: 'academic', label: 'Cournot, A. A. (1838) Recherches sur les principes mathematiques de la theorie des richesses — Hachette, Paris（BnF Gallica 電子版。英訳 Researches into the Mathematical Principles of the Theory of Wealth, Bacon 訳, Macmillan, 1897）' },
       { url: 'https://en.wikipedia.org/wiki/Cournot_competition', type: 'reference', label: 'Wikipedia: Cournot competition — Nash equilibrium, Bertrand, Stackelberg, quantity vs price, oligopoly' },
     ],
   },
@@ -46084,7 +46083,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'リチャード・サイアート ／ ジェームズ・マーチ ／ ハーバート・サイモン ／ オリバー・ウィリアムソン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-3-642-48748-8', type: 'academic', label: 'Cyert & March (1963) A Behavioral Theory of the Firm — Prentice-Hall (2nd ed. 1992 Blackwell)' },
+      { url: 'https://www.wiley.com/en-us/Behavioral+Theory+of+the+Firm,+2nd+Edition-p-9780631174516', type: 'academic', label: 'Cyert & March (1963) A Behavioral Theory of the Firm — Prentice-Hall (2nd ed. 1992 Blackwell)' },
       { url: 'https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm', type: 'reference', label: 'Wikipedia: Behavioral Theory of the Firm — Cyert, March, satisficing, organizational slack, bounded rationality' },
     ],
   },
@@ -46696,7 +46695,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アン・カブキアン ／ ジョン・フォン・ヘルン ／ マーティン・ランゲバック ／ ルドガー・ヴァイス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-3-642-31778-9', type: 'academic', label: 'Cavoukian, A. (1995). Privacy by Design — IPC Ontario' },
+      { url: 'https://doi.org/10.4018/978-1-61350-501-4.ch007', type: 'academic', label: 'Cavoukian, A. (2012) Privacy by Design: Origins, Meaning, and Prospects for Assuring Privacy and Trust in the Information Era — IGI Global（Privacy Protection Measures and Technologies in Business Organizations 所収, pp.170-208）' },
       { url: 'https://en.wikipedia.org/wiki/Privacy_by_design', type: 'reference', label: 'Wikipedia: Privacy by design — GDPR Article 25' },
     ],
   },
@@ -46744,7 +46743,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ピーター・レバイン ／ アン・フレデリック ／ パット・オグデン ／ ジャネット・ポウルタ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/978-1-58394-451-9', type: 'academic', label: 'Levine, P.A. (1997). Waking the Tiger — North Atlantic Books' },
+      { url: 'https://www.northatlanticbooks.com/shop/waking-the-tiger-healing-trauma/', type: 'academic', label: 'Levine, P. A. with Frederick, A. (1997) Waking the Tiger: Healing Trauma — North Atlantic Books（ISBN 978-1-55643-233-0）' },
       { url: 'https://en.wikipedia.org/wiki/Somatic_experiencing', type: 'reference', label: 'Wikipedia: Somatic experiencing — trauma therapy' },
     ],
   },
@@ -46996,7 +46995,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ポール・アレン・ジョンソン ／ マシュー・ガルセス ／ ジェフ・ストームズ ／ 道垣内弘人',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.4337/9781781952641', type: 'academic', label: 'Broome, A. (2009). The Global Economic Crisis and FATF — Routledge' },
+      { url: 'https://doi.org/10.1007/s10611-017-9747-6', type: 'academic', label: 'Nance, M. T. (2018) The regime that FATF built: an introduction to the Financial Action Task Force — Crime, Law and Social Change 69(2), 109-129' },
       { url: 'https://en.wikipedia.org/wiki/Financial_Action_Task_Force', type: 'reference', label: 'Wikipedia: Financial Action Task Force — AML international standards' },
     ],
   },
@@ -47104,7 +47103,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロジャー・トレイナー ／ ウィリアム・プロッサー ／ テリー・ドブス ／ 升田純',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.4337/9781849809337', type: 'academic', label: 'Howells, G. (2005). Comparative Product Liability — Routledge' },
+      { url: 'https://catalogue.nla.gov.au/Record/2648578', type: 'academic', label: 'Howells, G. G. (1993) Comparative Product Liability — Dartmouth（ISBN 978-1-85521-078-3・NLA 目録）' },
       { url: 'https://en.wikipedia.org/wiki/Product_liability', type: 'reference', label: 'Wikipedia: Product liability — strict liability standard' },
     ],
   },
@@ -47332,7 +47331,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ゲーリー・シングル ／ リビン・チャタジー ／ バーバラ・ブランクフォード ／ 能見善久',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1093/acprof:oso/9780199589395.001.0001', type: 'academic', label: 'Hudson, A. (2013). Equity and Trusts — Routledge' },
+      { url: 'https://doi.org/10.4324/9780203101919', type: 'academic', label: 'Hudson, A. (2012) Equity and Trusts (7th ed.) — Routledge' },
       { url: 'https://en.wikipedia.org/wiki/Charitable_organization', type: 'reference', label: 'Wikipedia: Charitable organization — nonprofit law' },
     ],
   },
@@ -47915,7 +47914,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1016/S0065-2601(03)01006-2', type: 'academic', label: 'Wilson, T. D. & Gilbert, D. T. (2003) Affective Forecasting — Advances in Experimental Social Psychology, 35, 345–411（情動予測研究の体系的レビュー）' },
       { url: 'https://doi.org/10.1111/j.0963-7214.2004.01501003.x', type: 'academic', label: 'Gilbert, D. T. et al. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science, 15(1), 14–19（免疫無視の実証）' },
-      { url: 'https://doi.org/10.1023/A:1008012424582', type: 'academic', label: 'Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility — Journal of Economic Perspectives, 5(2), 193–206（情動予測と経済学）' },
+      { url: 'https://econpapers.repec.org/article/aeaaecrev/v_3a81_3ay_3a1991_3ai_3a2_3ap_3a341-46.htm', type: 'academic', label: 'Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility: Applications to Compensation Policy — American Economic Review 81(2) Papers & Proceedings, 341-346' },
       { url: 'https://en.wikipedia.org/wiki/Affective_forecasting', type: 'reference', label: 'Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect, duration bias' },
     ],
   },
@@ -48055,7 +48054,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science, 2(1), 71–87（探索—深化ジレンマの原典）' },
       { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal, 14(S2), 95–112（学習の近視眼モデル）' },
-      { url: 'https://doi.org/10.1007/978-1-4612-3670-6_1', type: 'academic', label: 'Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, Method, and Practice — Addison-Wesley（コンピタンシー・トラップの組織学習論的文脈）' },
+      { url: 'https://search.worldcat.org/title/organizational-learning-ii-theory-method-and-practice/oclc/35831782', type: 'academic', label: 'Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, Method, and Practice — Addison-Wesley（コンピタンシー・トラップの組織学習論的文脈）' },
       { url: 'https://en.wikipedia.org/wiki/Competency_trap', type: 'reference', label: 'Wikipedia: Competency trap — March, Levinthal, exploration/exploitation, success trap, myopia' },
     ],
   },
@@ -48577,7 +48576,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/258434', type: 'academic', label: 'Hambrick, D. C. & Mason, P. A. (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers — Academy of Management Review, 9(2), 193–206（原典）' },
       { url: 'https://doi.org/10.5465/amr.2007.23464074', type: 'academic', label: 'Hambrick, D. C. (2007) Upper Echelons Theory: An Update — Academy of Management Review, 32(2), 334–343（理論のアップデート）' },
-      { url: 'https://doi.org/10.1002/smj.324', type: 'academic', label: 'Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management, 30(6), 749–778（文献サーベイ）' },
+      { url: 'https://doi.org/10.1016/j.jm.2004.06.001', type: 'academic', label: 'Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management, 30(6), 749–778（文献サーベイ）' },
       { url: 'https://en.wikipedia.org/wiki/Upper_echelons_theory', type: 'reference', label: 'Wikipedia: Upper echelons theory — Hambrick & Mason, TMT diversity, CEO overconfidence, observable characteristics' },
     ],
   },

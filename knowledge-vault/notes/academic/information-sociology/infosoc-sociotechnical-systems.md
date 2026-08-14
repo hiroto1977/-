@@ -27,14 +27,20 @@ aliases:
 
 ## 出典
 - [Trist & Bamforth 1951 Some Social and Psychological Consequences of the Longwall Method of Coal-Getting, Human Relations 4(1)](https://doi.org/10.1177/001872675100400101) `学術`
-- [Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon](https://doi.org/10.1016/B978-0-08-009228-6.50014-0) `学術`
+- [Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon](https://search.worldcat.org/title/oclc/25724367) `学術`
 - [Cherns 1976 The Principles of Sociotechnical Design, Human Relations 29(8)](https://doi.org/10.1177/001872677602900806) `学術`
 
 ## 関連概念
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — 語彙が近い
 - [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同じ思想家
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
+- [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 出典を共有
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 出典を共有
 - [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

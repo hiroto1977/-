@@ -27,7 +27,7 @@ EU公益通報者保護指令（Directive 2019/1937）は、EU法違反を通報
 
 ## 出典
 - [European Parliament (2019) Directive 2019/1937 on Whistleblower Protection — EUR-Lex](https://eur-lex.europa.eu/eli/dir/2019/1937/oj) `公的`
-- [Vandekerckhove, W. et al. (2014) Whistleblowing and Democratic Values — International Whistleblowing Research Network](https://doi.org/10.1007/978-3-030-26946-0) `学術`
+- [Lewis, D. & Vandekerckhove, W. (eds.) (2011) Whistleblowing and Democratic Values — International Whistleblowing Research Network（ISBN 978-0-9571384-0-7・オープンアクセス）](https://eprints.mdx.ac.uk/8284/) `学術`
 - [Wikipedia: EU Whistleblower Protection Directive — 指令の概要](https://en.wikipedia.org/wiki/EU_Whistleblower_Protection_Directive) `リファレンス`
 
 ## 関連概念

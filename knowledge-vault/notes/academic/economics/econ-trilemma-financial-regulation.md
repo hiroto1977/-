@@ -35,12 +35,12 @@ Dirk Schoenmaker ／ Charles Goodhart
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 出典を共有
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
-- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

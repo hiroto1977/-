@@ -26,7 +26,7 @@ aliases:
 ゴードン・タロック ／ ジェームズ・ブキャナン ／ アン・クルーガー ／ リチャード・ポズナー
 
 ## 出典
-- [Tullock, G. (1967) The welfare costs of tariffs, monopolies, and theft — Western Economic Journal](https://doi.org/10.1007/978-94-009-3324-3_3) `学術`
+- [Tullock, G. (1967) The welfare costs of tariffs, monopolies, and theft — Western Economic Journal](https://doi.org/10.1111/j.1465-7295.1967.tb01923.x) `学術`
 - [Wikipedia: Tullock paradox — rent-seeking, lobbying, public choice](https://en.wikipedia.org/wiki/Tullock_paradox) `リファレンス`
 
 ## 関連概念

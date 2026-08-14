@@ -26,7 +26,7 @@ aliases:
 ピーター・レバイン ／ アン・フレデリック ／ パット・オグデン ／ ジャネット・ポウルタ
 
 ## 出典
-- [Levine, P.A. (1997). Waking the Tiger — North Atlantic Books](https://doi.org/10.1007/978-1-58394-451-9) `学術`
+- [Levine, P. A. with Frederick, A. (1997) Waking the Tiger: Healing Trauma — North Atlantic Books（ISBN 978-1-55643-233-0）](https://www.northatlanticbooks.com/shop/waking-the-tiger-healing-trauma/) `学術`
 - [Wikipedia: Somatic experiencing — trauma therapy](https://en.wikipedia.org/wiki/Somatic_experiencing) `リファレンス`
 
 ## 関連概念

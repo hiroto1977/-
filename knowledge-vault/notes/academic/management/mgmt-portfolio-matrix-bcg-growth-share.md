@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [BCG (1970) The Product Portfolio — BCG Perspectives](https://www.bcg.com/capabilities/strategy/growth-share-matrix) `リファレンス`
-- [Hambrick et al. (1982) Operationalizing the Concept of Business-Level Strategy — Academy of Management Review](https://doi.org/10.1287/mnsc.29.9.1068) `学術`
+- [Hambrick, D. C., MacMillan, I. C. & Day, D. L. (1982) Strategic Attributes and Performance in the BCG Matrix — Academy of Management Journal 25(3), 510-531](https://doi.org/10.5465/256077) `学術`
 - [Wikipedia: Growth–share matrix — BCGマトリクスの概念と限界](https://en.wikipedia.org/wiki/Growth%E2%80%93share_matrix) `リファレンス`
 
 ## 関連概念

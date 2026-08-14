@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 168
+cite_count: 167
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **168 件**（学術 167 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **167 件**（学術 166 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -156,7 +156,6 @@ tags:
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Tushman,Newman&Romanelli(1986)ConvergenceandUpheaval—CaliforniaManage…
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — Barnett&McKendrick(2004)"WhyAreSomeOrganizationsMoreCompetitiveThanOt…
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — Barney(1991)FirmResourcesandSustainedCompetitiveAdvantage,J.ofManagem…
-- [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — Pfeffer&Salancik(1995)ExternalDependenceandOrganizationalResponse—Aca…
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — Sirmonetal.(2011)ResourceOrchestrationtoCreateCompetitiveAdvantage,Jo…
 - [[mgmt-role-exit-theory|役割退出理論]] — Wacquant,L.J.D."ExitingRolesorExitingRoleTheory?"—ActaSociologica33(4…
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — Sheldonetal.(2004)Self-ConcordanceandSubjectiveWell-BeinginFourCultur…

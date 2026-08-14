@@ -26,7 +26,7 @@ aliases:
 ポール・アレン・ジョンソン ／ マシュー・ガルセス ／ ジェフ・ストームズ ／ 道垣内弘人
 
 ## 出典
-- [Broome, A. (2009). The Global Economic Crisis and FATF — Routledge](https://doi.org/10.4337/9781781952641) `学術`
+- [Nance, M. T. (2018) The regime that FATF built: an introduction to the Financial Action Task Force — Crime, Law and Social Change 69(2), 109-129](https://doi.org/10.1007/s10611-017-9747-6) `学術`
 - [Wikipedia: Financial Action Task Force — AML international standards](https://en.wikipedia.org/wiki/Financial_Action_Task_Force) `リファレンス`
 
 ## 関連概念

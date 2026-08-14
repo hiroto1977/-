@@ -26,7 +26,7 @@ aliases:
 ハワード・ボーウェン ／ エドワード・フリーマン ／ マイケル・ポーター ／ キャロル・アーチー
 
 ## 出典
-- [Freeman (1984) Strategic Management: A Stakeholder Approach — Pitman (Springer Encyclopedia version)](https://doi.org/10.1007/978-94-007-4098-0_244) `学術`
+- [Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 復刻版の DOI）](https://doi.org/10.1017/CBO9781139192675) `学術`
 - [Wikipedia: CSR — stakeholder theory, ESG, CSRD, Business Roundtable, Friedman doctrine](https://en.wikipedia.org/wiki/Corporate_social_responsibility) `リファレンス`
 
 ## 関連概念

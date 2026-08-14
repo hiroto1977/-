@@ -26,8 +26,8 @@ aliases:
 アーロン・アントノフスキー（1979 『Health, Stress and Coping』で健康生成論を提唱、1987 SOC概念を体系化）／モニカ・エリクソン（2006 SOC研究458論文の系統的レビュー）／ベングト・リンドストローム（2006 同レビュー共著）／モーリス・B・ミッテルマーク（2017 『Handbook of Salutogenesis』編集）
 
 ## 出典
-- [Antonovsky (1979) Health, Stress & Coping](https://doi.org/10.1007/978-1-4612-4146-0) `学術`
-- [Antonovsky (1987) Unraveling the Mystery of Health](https://doi.org/10.1007/978-1-4612-4660-1) `学術`
+- [Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）](https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606) `学術`
+- [Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）](https://search.worldcat.org/title/14904689) `学術`
 - [Eriksson & Lindström (2010)](https://doi.org/10.1093/heapro/dap038) `学術`
 - [Mittelmark et al. (2017) Handbook of Salutogenesis](https://doi.org/10.1007/978-3-319-04600-6) `学術`
 - [Eriksson & Lindström (2006)](https://doi.org/10.1093/heapro/dah609) `学術`
@@ -35,8 +35,16 @@ aliases:
 - [Eriksson & Lindström (2006) JECH — SOC scale and health: systematic review](https://doi.org/10.1136/jech.2005.041616) `学術`
 
 ## 関連概念
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 出典を共有
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 出典を共有
+- [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 出典を共有
+- [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — 出典を共有
+- [[bizlaw-anticipatory-breach-hochster|履行期前の契約違反——ホクスター対デ・ラ・トゥール事件と予防的救済]] — 出典を共有
+- [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

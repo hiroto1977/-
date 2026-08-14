@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science, 2(1), 71–87（探索—深化ジレンマの原典）](https://doi.org/10.1287/orsc.2.1.71) `学術`
 - [Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal, 14(S2), 95–112（学習の近視眼モデル）](https://doi.org/10.1002/smj.4250141009) `学術`
-- [Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, Method, and Practice — Addison-Wesley（コンピタンシー・トラップの組織学習論的文脈）](https://doi.org/10.1007/978-1-4612-3670-6_1) `学術`
+- [Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, Method, and Practice — Addison-Wesley（コンピタンシー・トラップの組織学習論的文脈）](https://search.worldcat.org/title/organizational-learning-ii-theory-method-and-practice/oclc/35831782) `学術`
 - [Wikipedia: Competency trap — March, Levinthal, exploration/exploitation, success trap, myopia](https://en.wikipedia.org/wiki/Competency_trap) `リファレンス`
 
 ## 関連概念

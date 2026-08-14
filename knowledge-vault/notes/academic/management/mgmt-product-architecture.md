@@ -36,11 +36,11 @@ aliases:
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
-- [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

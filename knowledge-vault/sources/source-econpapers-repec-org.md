@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 10
+cite_count: 11
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **10 件**（学術 9 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **11 件**（学術 10 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-rational-addiction|合理的依存]] — EconPapers/RePEcbibliographicrecord—Becker&Murphy,JPE1988
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — EconPapers—ANoteonWelfarePropositions(1941)
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — EconPapers/RePEc—"Thefinancialtrilemma,"EconomicsLettersv.111y.2011i.…
+- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — Kahneman,D.&Thaler,R.H.(1991)EconomicAnalysisandthePsychologyofUtilit…
 - [[infosoc-network-externality|ネットワーク外部性]] — Rohlfs(1974)"ATheoryofInterdependentDemandforaCommunicationsService",…
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — Argote&Ingram(2000)“KnowledgeTransfer:ABasisforCompetitiveAdvantagein…
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — EconPapers/RePEc—Ulrich(1995)ResearchPolicy出典確認

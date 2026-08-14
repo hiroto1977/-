@@ -31,6 +31,8 @@ aliases:
 - [Autio et al. 2014 — Entrepreneurial ecosystems: An introduction and a review of the literature, Research Policy 43(7):1097-1108](https://doi.org/10.1016/j.respol.2014.08.017) `学術`
 
 ## 関連概念
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 出典を共有
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 出典を共有
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有

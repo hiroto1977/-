@@ -26,7 +26,7 @@ aliases:
 アントワーヌ・オーギュスタン・クールノー ／ ジョセフ・ルイ・フランソワ・ベルトラン ／ フランシス・エッジワース ／ ハインリッヒ・フォン・スタッケルバーグ
 
 ## 出典
-- [Cournot (1838) Researches into the Mathematical Principles of the Theory of Wealth — reprint Kelley 1960](https://doi.org/10.1007/978-3-642-48748-8_1) `学術`
+- [Cournot, A. A. (1838) Recherches sur les principes mathematiques de la theorie des richesses — Hachette, Paris（BnF Gallica 電子版。英訳 Researches into the Mathematical Principles of the Theory of Wealth, Bacon 訳, Macmillan, 1897）](https://gallica.bnf.fr/ark:/12148/bpt6k6117257c) `学術`
 - [Wikipedia: Cournot competition — Nash equilibrium, Bertrand, Stackelberg, quantity vs price, oligopoly](https://en.wikipedia.org/wiki/Cournot_competition) `リファレンス`
 
 ## 関連概念

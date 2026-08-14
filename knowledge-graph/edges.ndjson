@@ -529,8 +529,8 @@
 {"a":"bizlaw-anticipatory-breach-hochster","b":"bizlaw-tortious-interference","type":"shares-source","score":3333}
 {"a":"bizlaw-anticipatory-breach-hochster","b":"bizlaw-waiver-doctrine-contract","type":"shares-thinker","score":3333}
 {"a":"bizlaw-anticipatory-breach-hochster","b":"bizlaw-waiver-of-subrogation","type":"same-category","score":418}
-{"a":"bizlaw-anticipatory-breach-hochster","b":"econ-kaldor-verdoorn-law","type":"shares-source","score":5000}
 {"a":"bizlaw-anticipatory-breach-hochster","b":"human-allostasis","type":"shares-source","score":5000}
+{"a":"bizlaw-anticipatory-breach-hochster","b":"human-salutogenesis-theory","type":"shares-source","score":5000}
 {"a":"bizlaw-anticipatory-breach-hochster","b":"infosoc-social-judgment-theory","type":"shares-source","score":5000}
 {"a":"bizlaw-antimonopoly","b":"bizlaw-corporation-tax","type":"same-category","score":420}
 {"a":"bizlaw-antimonopoly","b":"bizlaw-intellectual-property-trade-secret","type":"same-category","score":434}
@@ -2579,8 +2579,7 @@
 {"a":"bizlaw-estoppel-by-representation","b":"bizlaw-rule-in-claytons-case","type":"shares-source","score":5000}
 {"a":"bizlaw-estoppel-by-representation","b":"bizlaw-third-party-beneficiary-contract","type":"shares-thinker","score":3333}
 {"a":"bizlaw-estoppel-by-representation","b":"bizlaw-waiver-doctrine-contract","type":"shares-thinker","score":6667}
-{"a":"bizlaw-estoppel-by-representation","b":"econ-kaldor-verdoorn-law","type":"shares-source","score":5000}
-{"a":"bizlaw-estoppel-by-representation","b":"human-allostasis","type":"shares-source","score":5000}
+{"a":"bizlaw-estoppel-by-representation","b":"human-salutogenesis-theory","type":"shares-source","score":5000}
 {"a":"bizlaw-estoppel-by-representation","b":"infosoc-social-judgment-theory","type":"shares-source","score":5000}
 {"a":"bizlaw-eu-digital-markets-act-dma","b":"bizlaw-eu-digital-services-act-dsa","type":"shares-thinker","score":2000}
 {"a":"bizlaw-eu-digital-services-act-dsa","b":"bizlaw-part-payment-foakes","type":"same-category","score":409}
@@ -3400,7 +3399,10 @@
 {"a":"bizlaw-misrepresentation-contract-law","b":"bizlaw-waiver-doctrine-contract","type":"shares-source","score":10000}
 {"a":"bizlaw-misrepresentation-contract-law","b":"econ-kaldor-verdoorn-law","type":"shares-source","score":10000}
 {"a":"bizlaw-misrepresentation-contract-law","b":"human-allostasis","type":"shares-source","score":10000}
+{"a":"bizlaw-misrepresentation-contract-law","b":"human-salutogenesis-theory","type":"shares-source","score":10000}
+{"a":"bizlaw-misrepresentation-contract-law","b":"infosoc-smart-city-critique-greenfield","type":"shares-source","score":10000}
 {"a":"bizlaw-misrepresentation-contract-law","b":"infosoc-social-judgment-theory","type":"shares-source","score":10000}
+{"a":"bizlaw-misrepresentation-contract-law","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-mitigation-of-damages","type":"shares-thinker","score":10000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-privity-of-contract","type":"shares-thinker","score":5000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-quantum-meruit","type":"shares-thinker","score":10000}
@@ -3629,9 +3631,6 @@
 {"a":"bizlaw-penalty-clause-comparative","b":"infosoc-dataveillance-clarke","type":"shares-thinker","score":3333}
 {"a":"bizlaw-penalty-clause-liquidated-damages","b":"bizlaw-rule-in-claytons-case","type":"shares-source","score":5000}
 {"a":"bizlaw-penalty-clause-liquidated-damages","b":"bizlaw-waiver-doctrine-contract","type":"shares-thinker","score":3333}
-{"a":"bizlaw-penalty-clause-liquidated-damages","b":"econ-kaldor-verdoorn-law","type":"shares-source","score":5000}
-{"a":"bizlaw-penalty-clause-liquidated-damages","b":"human-allostasis","type":"shares-source","score":5000}
-{"a":"bizlaw-penalty-clause-liquidated-damages","b":"infosoc-social-judgment-theory","type":"shares-source","score":5000}
 {"a":"bizlaw-perfect-tender-rule","b":"bizlaw-promissory-note","type":"shares-thinker","score":5000}
 {"a":"bizlaw-perfect-tender-rule","b":"bizlaw-rule-against-perpetuities","type":"shares-source","score":3333}
 {"a":"bizlaw-perfect-tender-rule","b":"bizlaw-tcfd","type":"same-category","score":423}
@@ -4209,7 +4208,10 @@
 {"a":"bizlaw-waiver-doctrine-contract","b":"bizlaw-waiver-of-subrogation","type":"same-category","score":817}
 {"a":"bizlaw-waiver-doctrine-contract","b":"econ-kaldor-verdoorn-law","type":"shares-source","score":10000}
 {"a":"bizlaw-waiver-doctrine-contract","b":"human-allostasis","type":"shares-source","score":10000}
+{"a":"bizlaw-waiver-doctrine-contract","b":"human-salutogenesis-theory","type":"shares-source","score":10000}
+{"a":"bizlaw-waiver-doctrine-contract","b":"infosoc-smart-city-critique-greenfield","type":"shares-source","score":10000}
 {"a":"bizlaw-waiver-doctrine-contract","b":"infosoc-social-judgment-theory","type":"shares-source","score":10000}
+{"a":"bizlaw-waiver-doctrine-contract","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
 {"a":"bizlaw-waste-management-act","b":"econ-circular-economy","type":"shares-source","score":5000}
 {"a":"bizlaw-waste-management-act","b":"legal-container-recycling","type":"shares-source","score":5000}
 {"a":"bizlaw-waste-management-act","b":"legal-home-appliance-recycling","type":"shares-source","score":5000}
@@ -4255,7 +4257,6 @@
 {"a":"econ-absolute-advantage-smith","b":"econ-bootleggers-baptists","type":"shares-thinker","score":5000}
 {"a":"econ-absolute-advantage-smith","b":"econ-broken-window-fallacy-bastiat","type":"shares-thinker","score":2500}
 {"a":"econ-absolute-advantage-smith","b":"econ-buycott","type":"same-category","score":1}
-{"a":"econ-absolute-advantage-smith","b":"econ-chartalism-modern-monetary-theory","type":"same-category","score":1}
 {"a":"econ-absolute-advantage-smith","b":"econ-chayanov-peasant-economy","type":"same-category","score":1}
 {"a":"econ-absolute-advantage-smith","b":"econ-cobra-effect","type":"same-category","score":1}
 {"a":"econ-absolute-advantage-smith","b":"econ-colonel-blotto-game","type":"same-category","score":1}
@@ -5257,19 +5258,24 @@
 {"a":"econ-behavioral-theory-firm-cyert","b":"econ-x-inefficiency-leibenstein","type":"shares-thinker","score":5000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"human-bounded-rationality","type":"term-overlap","score":1213}
 {"a":"econ-behavioral-theory-firm-cyert","b":"human-chunking","type":"shares-thinker","score":2500}
+{"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-attention-ecology","type":"shares-source","score":5000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-attention-economy-citton","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-attention-economy-goldhaber","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-attention-economy-goldhaber-citton","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-clickbait-attention-economy","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-collective-intelligence-levy","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-information-overload-eppler-mengis","type":"shares-thinker","score":2500}
+{"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-media-agenda-setting","type":"shares-source","score":5000}
+{"a":"econ-behavioral-theory-firm-cyert","b":"infosoc-quantified-self","type":"shares-source","score":10000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-ambidexterity-tushman","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-ambidextrous-organization","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-ambidextrous-organization-exploration-exploitation","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-attention-based-view","type":"shares-thinker","score":5000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-behavioral-decision-theory-march","type":"shares-thinker","score":7500}
+{"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-business-model-canvas-osterwalder","type":"shares-source","score":10000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-clan-control-ouchi","type":"shares-thinker","score":3333}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-core-rigidities-leonard-barton","type":"shares-thinker","score":2500}
+{"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-entrepreneurial-ecosystems","type":"shares-source","score":10000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-logical-incrementalism-quinn","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-modularity","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-organizational-ambidexterity","type":"shares-thinker","score":3333}
@@ -5277,6 +5283,7 @@
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-organizational-slack","type":"shares-thinker","score":6667}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-organizational-slack-bourgeois","type":"shares-thinker","score":5000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-prosocial-motivation-grant","type":"shares-thinker","score":2500}
+{"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-resource-orchestration-theory","type":"shares-source","score":10000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-slack-resources-bourgeois","type":"shares-thinker","score":5000}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-strategic-momentum-miller","type":"shares-thinker","score":2500}
 {"a":"econ-behavioral-theory-firm-cyert","b":"mgmt-strategic-renewal-crossan","type":"shares-thinker","score":2500}
@@ -5691,6 +5698,7 @@
 {"a":"econ-chartalism-modern-monetary-theory","b":"econ-rational-addiction","type":"shares-source","score":5000}
 {"a":"econ-chartalism-modern-monetary-theory","b":"econ-scitovsky-paradox","type":"shares-source","score":10000}
 {"a":"econ-chartalism-modern-monetary-theory","b":"econ-trilemma-financial-regulation","type":"shares-source","score":10000}
+{"a":"econ-chartalism-modern-monetary-theory","b":"human-affective-forecasting-wilson","type":"shares-source","score":10000}
 {"a":"econ-chartalism-modern-monetary-theory","b":"infosoc-network-externality","type":"shares-source","score":10000}
 {"a":"econ-chartalism-modern-monetary-theory","b":"mgmt-knowledge-transfer","type":"shares-source","score":5000}
 {"a":"econ-chartalism-modern-monetary-theory","b":"mgmt-product-architecture","type":"shares-source","score":10000}
@@ -8590,7 +8598,11 @@
 {"a":"econ-kaldor-verdoorn","b":"econ-new-new-trade-theory-melitz","type":"same-category","score":408}
 {"a":"econ-kaldor-verdoorn","b":"econ-verdoorn-law","type":"same-category","score":440}
 {"a":"econ-kaldor-verdoorn-law","b":"human-allostasis","type":"shares-source","score":10000}
+{"a":"econ-kaldor-verdoorn-law","b":"human-salutogenesis-theory","type":"shares-source","score":10000}
+{"a":"econ-kaldor-verdoorn-law","b":"infosoc-smart-city-critique-greenfield","type":"shares-source","score":10000}
 {"a":"econ-kaldor-verdoorn-law","b":"infosoc-social-judgment-theory","type":"shares-source","score":10000}
+{"a":"econ-kaldor-verdoorn-law","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
+{"a":"econ-kaldor-verdoorn-law","b":"mgmt-organizational-learning-cycles-levinthal","type":"shares-source","score":10000}
 {"a":"econ-kalecki-profit","b":"econ-lerner-index","type":"same-category","score":510}
 {"a":"econ-kalecki-profit","b":"econ-political-business-cycle-nordhaus","type":"shares-thinker","score":10000}
 {"a":"econ-kemp-wan-customs-union","b":"econ-product-cycle-trade","type":"same-category","score":449}
@@ -9306,7 +9318,7 @@
 {"a":"econ-natural-experiment-angrist","b":"econ-natural-experiments-rdd","type":"shares-thinker","score":10000}
 {"a":"econ-natural-experiment-angrist","b":"econ-scitovsky-paradox","type":"shares-source","score":10000}
 {"a":"econ-natural-experiment-angrist","b":"econ-trilemma-financial-regulation","type":"shares-source","score":10000}
-{"a":"econ-natural-experiment-angrist","b":"infosoc-network-externality","type":"shares-source","score":10000}
+{"a":"econ-natural-experiment-angrist","b":"human-affective-forecasting-wilson","type":"shares-source","score":10000}
 {"a":"econ-natural-experiment-angrist","b":"mgmt-knowledge-transfer","type":"shares-source","score":5000}
 {"a":"econ-natural-experiment-angrist","b":"mgmt-product-architecture","type":"shares-source","score":10000}
 {"a":"econ-natural-experiment-card-krueger","b":"econ-natural-experiments-rdd","type":"shares-thinker","score":10000}
@@ -10312,6 +10324,7 @@
 {"a":"econ-triffin-dilemma","b":"eh-1989","type":"shares-source","score":3333}
 {"a":"econ-triffin-dilemma","b":"eh-1990","type":"shares-source","score":3333}
 {"a":"econ-triffin-dilemma","b":"eh-2009","type":"shares-source","score":3333}
+{"a":"econ-trilemma-financial-regulation","b":"human-affective-forecasting-wilson","type":"shares-source","score":10000}
 {"a":"econ-trilemma-financial-regulation","b":"infosoc-network-externality","type":"shares-source","score":10000}
 {"a":"econ-trilemma-financial-regulation","b":"mgmt-knowledge-transfer","type":"shares-source","score":5000}
 {"a":"econ-trilemma-financial-regulation","b":"mgmt-product-architecture","type":"shares-source","score":10000}
@@ -10340,7 +10353,6 @@
 {"a":"econ-two-sided-markets","b":"mgmt-dynamic-delegation","type":"shares-thinker","score":3333}
 {"a":"econ-two-sided-markets","b":"mgmt-platform-ecosystems-gawer-cusumano","type":"shares-thinker","score":5000}
 {"a":"econ-unified-growth-theory","b":"human-welfare-state-typology","type":"shares-source","score":10000}
-{"a":"econ-unified-growth-theory","b":"infosoc-media-agenda-setting","type":"shares-source","score":5000}
 {"a":"econ-universal-basic-income","b":"mgmt-corporate-purpose-stakeholder","type":"shares-thinker","score":3333}
 {"a":"econ-universal-basic-income","b":"mgmt-corporate-social-responsibility-carroll","type":"shares-thinker","score":3333}
 {"a":"econ-universal-basic-income","b":"mgmt-csr","type":"shares-thinker","score":10000}
@@ -10941,7 +10953,6 @@
 {"a":"human-above-average-effect","b":"human-reactive-devaluation","type":"same-category","score":1}
 {"a":"human-above-average-effect","b":"human-relational-frame-theory","type":"same-category","score":1}
 {"a":"human-above-average-effect","b":"human-repression-sandor-ferenczi","type":"same-category","score":1}
-{"a":"human-above-average-effect","b":"human-salutogenesis-theory","type":"same-category","score":1}
 {"a":"human-above-average-effect","b":"human-semantic-satiation","type":"same-category","score":1}
 {"a":"human-above-average-effect","b":"human-sensory-deprivation","type":"same-category","score":1}
 {"a":"human-above-average-effect","b":"human-signal-detection-theory","type":"same-category","score":1}
@@ -11054,7 +11065,6 @@
 {"a":"human-acceptance-commitment-therapy","b":"human-purkinje-effect","type":"same-category","score":1}
 {"a":"human-acceptance-commitment-therapy","b":"human-reactive-devaluation","type":"same-category","score":1}
 {"a":"human-acceptance-commitment-therapy","b":"human-relational-frame-theory","type":"same-category","score":1}
-{"a":"human-acceptance-commitment-therapy","b":"human-salutogenesis-theory","type":"same-category","score":1}
 {"a":"human-acceptance-commitment-therapy","b":"human-semantic-satiation","type":"same-category","score":1}
 {"a":"human-acceptance-commitment-therapy","b":"human-sensorimotor-psychotherapy-ogden","type":"same-category","score":420}
 {"a":"human-acceptance-commitment-therapy","b":"human-sensory-deprivation","type":"same-category","score":1}
@@ -11121,6 +11131,8 @@
 {"a":"human-affective-forecasting-wilson","b":"infosoc-framing-entman","type":"shares-thinker","score":2500}
 {"a":"human-affective-forecasting-wilson","b":"infosoc-media-priming","type":"shares-thinker","score":5000}
 {"a":"human-affective-forecasting-wilson","b":"infosoc-political-polarization","type":"shares-thinker","score":5000}
+{"a":"human-affective-forecasting-wilson","b":"mgmt-knowledge-transfer","type":"shares-source","score":5000}
+{"a":"human-affective-forecasting-wilson","b":"mgmt-product-architecture","type":"shares-source","score":10000}
 {"a":"human-affective-forecasting-wilson-gilbert","b":"human-anchoring-adjustment-tversky","type":"shares-thinker","score":2500}
 {"a":"human-affective-forecasting-wilson-gilbert","b":"human-curse-of-knowledge","type":"shares-thinker","score":3333}
 {"a":"human-affective-forecasting-wilson-gilbert","b":"human-empathy-gap-loewenstein","type":"shares-thinker","score":3333}
@@ -11174,9 +11186,12 @@
 {"a":"human-alexithymia-emotional-regulation","b":"human-alexithymia-sifneos","type":"same-category","score":1640}
 {"a":"human-alien-hand-syndrome","b":"human-chronostasis-stopped-clock","type":"shares-thinker","score":2500}
 {"a":"human-allostasis","b":"human-allostatic-load-model","type":"shares-thinker","score":6667}
-{"a":"human-allostasis","b":"human-emotional-granularity-barrett","type":"same-category","score":410}
 {"a":"human-allostasis","b":"human-resilience-theory-masten","type":"same-category","score":429}
+{"a":"human-allostasis","b":"human-salutogenesis-theory","type":"shares-source","score":10000}
+{"a":"human-allostasis","b":"infosoc-smart-city-critique-greenfield","type":"shares-source","score":10000}
 {"a":"human-allostasis","b":"infosoc-social-judgment-theory","type":"shares-source","score":10000}
+{"a":"human-allostasis","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
+{"a":"human-allostasis","b":"mgmt-organizational-learning-cycles-levinthal","type":"shares-source","score":10000}
 {"a":"human-allostatic-load-model","b":"human-behavioral-genetics","type":"shares-source","score":5000}
 {"a":"human-allostatic-load-model","b":"human-decision-fatigue","type":"shares-source","score":5000}
 {"a":"human-allostatic-load-model","b":"human-default-mode-network-raichle","type":"shares-source","score":3333}
@@ -13708,6 +13723,10 @@
 {"a":"human-rumination-nolen-hoeksema","b":"human-rumination-response-styles-nolen-hoeksema","type":"same-category","score":1641}
 {"a":"human-rumination-nolen-hoeksema","b":"human-strange-situation-ainsworth","type":"shares-thinker","score":2500}
 {"a":"human-rumination-response-styles-nolen-hoeksema","b":"human-schema-therapy-young","type":"same-category","score":807}
+{"a":"human-salutogenesis-theory","b":"infosoc-smart-city-critique-greenfield","type":"shares-source","score":10000}
+{"a":"human-salutogenesis-theory","b":"infosoc-social-judgment-theory","type":"shares-source","score":10000}
+{"a":"human-salutogenesis-theory","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
+{"a":"human-salutogenesis-theory","b":"mgmt-organizational-learning-cycles-levinthal","type":"shares-source","score":10000}
 {"a":"human-scarcity-mindset","b":"human-trolley-problem","type":"shares-source","score":5000}
 {"a":"human-scarcity-mindset","b":"mgmt-likert-systems","type":"shares-source","score":5000}
 {"a":"human-schachter-singer-two-factor","b":"human-stress-coping","type":"shares-thinker","score":2500}
@@ -14026,7 +14045,6 @@
 {"a":"infosoc-activity-theory","b":"infosoc-reinforcing-spirals-model","type":"same-category","score":1}
 {"a":"infosoc-activity-theory","b":"infosoc-social-penetration-altman-taylor","type":"same-category","score":1}
 {"a":"infosoc-activity-theory","b":"infosoc-sociomateriality","type":"same-category","score":1}
-{"a":"infosoc-activity-theory","b":"infosoc-sociotechnical-systems","type":"same-category","score":1}
 {"a":"infosoc-activity-theory","b":"infosoc-technical-code","type":"same-category","score":1}
 {"a":"infosoc-activity-theory","b":"infosoc-technical-debt","type":"same-category","score":1}
 {"a":"infosoc-activity-theory","b":"infosoc-techno-nationalism","type":"same-category","score":1}
@@ -14235,7 +14253,6 @@
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-platform-economy-multi-sided","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-platform-power","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-privacy-surveillance","type":"shares-thinker","score":3333}
-{"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-smart-city-critique-greenfield","type":"same-category","score":433}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-surveillance-capitalism-zuboff","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-techno-solutionism-morozov","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-governance-theory","b":"infosoc-algorithmic-governmentality","type":"term-overlap","score":1277}
@@ -14327,6 +14344,7 @@
 {"a":"infosoc-astroturfing","b":"infosoc-metaverse","type":"shares-source","score":5000}
 {"a":"infosoc-astroturfing","b":"mgmt-skunkworks","type":"shares-source","score":5000}
 {"a":"infosoc-attention-ecology","b":"infosoc-digital-detox-syvertsen","type":"same-category","score":405}
+{"a":"infosoc-attention-ecology","b":"infosoc-digital-labor-scholz-platform-cooperativism","type":"shares-source","score":5000}
 {"a":"infosoc-attention-ecology","b":"infosoc-media-agenda-setting","type":"shares-source","score":3333}
 {"a":"infosoc-attention-ecology","b":"infosoc-produsage-bruns","type":"same-category","score":403}
 {"a":"infosoc-attention-ecology","b":"infosoc-quantified-self","type":"shares-source","score":5000}
@@ -14763,6 +14781,7 @@
 {"a":"infosoc-contextual-integrity","b":"infosoc-produser-bruns","type":"shares-source","score":5000}
 {"a":"infosoc-contextual-integrity","b":"mgmt-cultural-intelligence","type":"shares-source","score":5000}
 {"a":"infosoc-contextual-integrity","b":"mgmt-resource-dependence","type":"shares-source","score":3333}
+{"a":"infosoc-contextual-integrity","b":"mgmt-resource-dependence-theory","type":"shares-source","score":5000}
 {"a":"infosoc-control-revolution-beniger","b":"infosoc-creative-class-florida","type":"shares-thinker","score":2500}
 {"a":"infosoc-control-revolution-beniger","b":"infosoc-cybernetics","type":"shares-thinker","score":3333}
 {"a":"infosoc-control-revolution-beniger","b":"infosoc-information-society-machlup","type":"shares-thinker","score":2500}
@@ -14923,7 +14942,6 @@
 {"a":"infosoc-dark-web-anonymity-tor","b":"infosoc-panopticon","type":"same-category","score":408}
 {"a":"infosoc-dark-web-anonymity-tor","b":"infosoc-social-penetration-altman-taylor","type":"same-category","score":404}
 {"a":"infosoc-data-colonialism","b":"infosoc-data-justice","type":"same-category","score":815}
-{"a":"infosoc-data-colonialism","b":"infosoc-datafication","type":"shares-source","score":2500}
 {"a":"infosoc-data-colonialism","b":"infosoc-deep-mediatization","type":"shares-thinker","score":5000}
 {"a":"infosoc-data-colonialism","b":"infosoc-digital-sovereignty-theory","type":"term-overlap","score":1228}
 {"a":"infosoc-data-colonialism","b":"infosoc-domestication","type":"shares-source","score":3333}
@@ -14932,6 +14950,7 @@
 {"a":"infosoc-data-colonialism","b":"infosoc-produser-bruns","type":"shares-source","score":5000}
 {"a":"infosoc-data-colonialism","b":"mgmt-cultural-intelligence","type":"shares-source","score":5000}
 {"a":"infosoc-data-colonialism","b":"mgmt-resource-dependence","type":"shares-source","score":3333}
+{"a":"infosoc-data-colonialism","b":"mgmt-resource-dependence-theory","type":"shares-source","score":5000}
 {"a":"infosoc-data-double","b":"infosoc-data-double-haggerty-ericson","type":"term-overlap","score":1639}
 {"a":"infosoc-data-double","b":"infosoc-data-double-haggerty-ericson","type":"shares-thinker","score":6667}
 {"a":"infosoc-data-double","b":"infosoc-data-double-haggerty-ericson","type":"same-category","score":1639}
@@ -15006,6 +15025,7 @@
 {"a":"infosoc-datafication","b":"infosoc-platformization","type":"shares-source","score":3333}
 {"a":"infosoc-datafication","b":"infosoc-produser-bruns","type":"shares-source","score":3333}
 {"a":"infosoc-datafication","b":"mgmt-cultural-intelligence","type":"shares-source","score":3333}
+{"a":"infosoc-datafication","b":"mgmt-resource-dependence-theory","type":"shares-source","score":3333}
 {"a":"infosoc-datafication-mayer-schoenberger","b":"infosoc-datafication-van-dijck","type":"shares-thinker","score":5000}
 {"a":"infosoc-datafication-mayer-schoenberger","b":"infosoc-digital-divide-stratification","type":"shares-thinker","score":2500}
 {"a":"infosoc-datafication-mayer-schoenberger","b":"infosoc-digital-memory-collective","type":"shares-thinker","score":2500}
@@ -15229,8 +15249,12 @@
 {"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"infosoc-platform-urbanism-barns","type":"shares-thinker","score":2500}
 {"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"infosoc-platform-workers-gig-rights","type":"shares-thinker","score":3333}
 {"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"infosoc-playbour-kucklich","type":"shares-thinker","score":2500}
+{"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"infosoc-quantified-self","type":"shares-source","score":10000}
 {"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"infosoc-speech-act-theory","type":"same-category","score":442}
 {"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"infosoc-surveillance-capitalism-zuboff","type":"shares-thinker","score":2500}
+{"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"mgmt-business-model-canvas-osterwalder","type":"shares-source","score":10000}
+{"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"mgmt-entrepreneurial-ecosystems","type":"shares-source","score":10000}
+{"a":"infosoc-digital-labor-scholz-platform-cooperativism","b":"mgmt-resource-orchestration-theory","type":"shares-source","score":10000}
 {"a":"infosoc-digital-labor-terranova","b":"infosoc-digital-labor-theory","type":"same-category","score":864}
 {"a":"infosoc-digital-labor-terranova","b":"infosoc-digital-labour","type":"same-category","score":843}
 {"a":"infosoc-digital-labor-terranova","b":"infosoc-platform-governance-tarleton","type":"shares-thinker","score":2500}
@@ -15447,7 +15471,6 @@
 {"a":"infosoc-generativity-zittrain","b":"infosoc-remix-copyright-digital-culture","type":"shares-thinker","score":5000}
 {"a":"infosoc-generativity-zittrain","b":"infosoc-remix-culture-lessig","type":"shares-thinker","score":5000}
 {"a":"infosoc-generativity-zittrain","b":"infosoc-remix-culture-lessig-jenkins","type":"shares-thinker","score":2500}
-{"a":"infosoc-generativity-zittrain","b":"infosoc-social-judgment-theory","type":"same-category","score":402}
 {"a":"infosoc-generativity-zittrain","b":"infosoc-wikinomics-tapscott","type":"shares-thinker","score":3333}
 {"a":"infosoc-gift-economy","b":"infosoc-gift-economy-mauss","type":"term-overlap","score":2047}
 {"a":"infosoc-gift-economy","b":"infosoc-gift-economy-mauss","type":"shares-thinker","score":10000}
@@ -15862,7 +15885,6 @@
 {"a":"infosoc-mcluhan-tetrad","b":"infosoc-technological-determinism","type":"shares-thinker","score":5000}
 {"a":"infosoc-mcluhan-tetrad","b":"infosoc-technological-determinism-mcluhan","type":"shares-thinker","score":5000}
 {"a":"infosoc-media-agenda-setting","b":"infosoc-proteus-effect","type":"same-category","score":412}
-{"a":"infosoc-media-agenda-setting","b":"infosoc-quantified-self","type":"shares-source","score":5000}
 {"a":"infosoc-media-agenda-setting","b":"mgmt-business-model-canvas-osterwalder","type":"shares-source","score":5000}
 {"a":"infosoc-media-agenda-setting","b":"mgmt-entrepreneurial-ecosystems","type":"shares-source","score":5000}
 {"a":"infosoc-media-agenda-setting","b":"mgmt-resource-orchestration-theory","type":"shares-source","score":5000}
@@ -16273,6 +16295,7 @@
 {"a":"infosoc-produser-bruns","b":"infosoc-wikinomics-tapscott","type":"shares-thinker","score":6667}
 {"a":"infosoc-produser-bruns","b":"mgmt-cultural-intelligence","type":"shares-source","score":10000}
 {"a":"infosoc-produser-bruns","b":"mgmt-resource-dependence","type":"shares-source","score":5000}
+{"a":"infosoc-produser-bruns","b":"mgmt-resource-dependence-theory","type":"shares-source","score":10000}
 {"a":"infosoc-profiling","b":"infosoc-script-akrich","type":"same-category","score":432}
 {"a":"infosoc-propaganda-model-herman-chomsky","b":"infosoc-public-opinion-lippmann","type":"shares-thinker","score":2500}
 {"a":"infosoc-propaganda-model-herman-chomsky","b":"infosoc-troll-farms-howard","type":"same-category","score":420}
@@ -16361,6 +16384,8 @@
 {"a":"infosoc-smart-city-critique-greenfield","b":"infosoc-smart-city-governance-kitchin","type":"shares-thinker","score":5000}
 {"a":"infosoc-smart-city-critique-greenfield","b":"infosoc-smart-city-governance-kitchin","type":"same-category","score":1303}
 {"a":"infosoc-smart-city-critique-greenfield","b":"infosoc-smart-city-urban-informatics","type":"shares-thinker","score":2500}
+{"a":"infosoc-smart-city-critique-greenfield","b":"infosoc-social-judgment-theory","type":"shares-source","score":10000}
+{"a":"infosoc-smart-city-critique-greenfield","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
 {"a":"infosoc-smart-city-governance","b":"infosoc-smart-city-governance-kitchin","type":"shares-thinker","score":5000}
 {"a":"infosoc-smart-city-governance-kitchin","b":"infosoc-smart-city-urban-informatics","type":"shares-thinker","score":2500}
 {"a":"infosoc-smart-mob","b":"infosoc-technological-frames","type":"shares-source","score":5000}
@@ -16379,7 +16404,9 @@
 {"a":"infosoc-social-construction-technology-bijker","b":"infosoc-technological-determinism-mcluhan","type":"same-category","score":421}
 {"a":"infosoc-social-construction-technology-bijker","b":"infosoc-technological-frames-orlikowski","type":"shares-thinker","score":5000}
 {"a":"infosoc-social-construction-technology-bijker","b":"infosoc-technological-frames-orlikowski","type":"same-category","score":889}
+{"a":"infosoc-social-judgment-theory","b":"infosoc-sociotechnical-systems","type":"shares-source","score":10000}
 {"a":"infosoc-social-judgment-theory","b":"infosoc-strong-programme","type":"same-category","score":405}
+{"a":"infosoc-social-judgment-theory","b":"mgmt-organizational-learning-cycles-levinthal","type":"shares-source","score":10000}
 {"a":"infosoc-social-media-affordances-boyd","b":"infosoc-temporal-focus-information","type":"same-category","score":405}
 {"a":"infosoc-social-network-analysis","b":"infosoc-strength-weak-ties-granovetter","type":"shares-thinker","score":6667}
 {"a":"infosoc-social-network-analysis","b":"infosoc-structural-holes-burt","type":"shares-thinker","score":6667}
@@ -17860,7 +17887,6 @@
 {"a":"mgmt-behavioral-agency-model","b":"mgmt-first-mover-advantage","type":"shares-source","score":3333}
 {"a":"mgmt-behavioral-agency-model","b":"mgmt-hypercompetition","type":"shares-source","score":5000}
 {"a":"mgmt-behavioral-agency-model","b":"mgmt-knowledge-based-view","type":"shares-source","score":5000}
-{"a":"mgmt-behavioral-agency-model","b":"mgmt-knowledge-transfer","type":"shares-source","score":5000}
 {"a":"mgmt-behavioral-agency-model","b":"mgmt-multimarket-contact-mutual-forbearance","type":"shares-source","score":10000}
 {"a":"mgmt-behavioral-agency-model","b":"mgmt-organizational-commitment","type":"same-category","score":411}
 {"a":"mgmt-behavioral-agency-model","b":"mgmt-red-queen-competition","type":"shares-source","score":10000}
@@ -18269,6 +18295,7 @@
 {"a":"mgmt-congruence-model-nadler-tushman","b":"mgmt-kanter-tokenism-theory","type":"shares-source","score":10000}
 {"a":"mgmt-congruence-model-nadler-tushman","b":"mgmt-shared-value","type":"shares-source","score":10000}
 {"a":"mgmt-congruence-model-nadler-tushman","b":"mgmt-strategic-alliances-doz-hamel","type":"shares-source","score":10000}
+{"a":"mgmt-congruence-model-nadler-tushman","b":"mgmt-team-effectiveness-hackman-wageman","type":"shares-source","score":10000}
 {"a":"mgmt-congruence-model-nadler-tushman","b":"mgmt-tempered-radical","type":"shares-source","score":10000}
 {"a":"mgmt-congruence-model-nadler-tushman","b":"mgmt-woodward-technology","type":"same-category","score":414}
 {"a":"mgmt-conjoint-analysis","b":"mgmt-freemium","type":"same-category","score":408}
@@ -18423,6 +18450,7 @@
 {"a":"mgmt-cross-cultural-leadership-house-globe","b":"mgmt-team-effectiveness-model","type":"same-category","score":424}
 {"a":"mgmt-crossing-the-chasm","b":"mgmt-innovators-dilemma","type":"same-category","score":426}
 {"a":"mgmt-cultural-intelligence","b":"mgmt-resource-dependence","type":"shares-source","score":5000}
+{"a":"mgmt-cultural-intelligence","b":"mgmt-resource-dependence-theory","type":"shares-source","score":10000}
 {"a":"mgmt-customer-journey","b":"mgmt-customer-lifetime-value","type":"shares-thinker","score":10000}
 {"a":"mgmt-customer-journey","b":"mgmt-ge-mckinsey-matrix","type":"shares-source","score":2500}
 {"a":"mgmt-customer-journey","b":"mgmt-innovators-dilemma","type":"shares-source","score":3333}
@@ -18970,6 +18998,7 @@
 {"a":"mgmt-institutional-void","b":"mgmt-kanter-tokenism-theory","type":"shares-source","score":10000}
 {"a":"mgmt-institutional-void","b":"mgmt-shared-value","type":"shares-source","score":10000}
 {"a":"mgmt-institutional-void","b":"mgmt-strategic-alliances-doz-hamel","type":"shares-source","score":10000}
+{"a":"mgmt-institutional-void","b":"mgmt-team-effectiveness-hackman-wageman","type":"shares-source","score":10000}
 {"a":"mgmt-institutional-void","b":"mgmt-tempered-radical","type":"shares-source","score":10000}
 {"a":"mgmt-institutional-work","b":"mgmt-institutional-work-lawrence","type":"same-category","score":418}
 {"a":"mgmt-institutional-work","b":"mgmt-organizational-forgetting","type":"shares-thinker","score":3333}
@@ -19069,6 +19098,7 @@
 {"a":"mgmt-kano-model","b":"mgmt-psychological-ownership","type":"shares-source","score":5000}
 {"a":"mgmt-kanter-tokenism-theory","b":"mgmt-shared-value","type":"shares-source","score":10000}
 {"a":"mgmt-kanter-tokenism-theory","b":"mgmt-strategic-alliances-doz-hamel","type":"shares-source","score":10000}
+{"a":"mgmt-kanter-tokenism-theory","b":"mgmt-team-effectiveness-hackman-wageman","type":"shares-source","score":10000}
 {"a":"mgmt-kanter-tokenism-theory","b":"mgmt-tempered-radical","type":"shares-source","score":10000}
 {"a":"mgmt-katz-kahn-open-systems","b":"mgmt-network-structural-holes-burt","type":"same-category","score":426}
 {"a":"mgmt-katz-kahn-open-systems","b":"mgmt-relational-leadership","type":"same-category","score":409}
@@ -19619,10 +19649,10 @@
 {"a":"mgmt-resource-based-view","b":"mgmt-vrio-framework-barney","type":"shares-thinker","score":10000}
 {"a":"mgmt-resource-dependence","b":"mgmt-resource-dependence-pfeffer","type":"term-overlap","score":2108}
 {"a":"mgmt-resource-dependence","b":"mgmt-resource-dependence-pfeffer","type":"same-category","score":2108}
+{"a":"mgmt-resource-dependence","b":"mgmt-resource-dependence-theory","type":"shares-source","score":5000}
 {"a":"mgmt-resource-dependence-pfeffer","b":"mgmt-resource-dependence-theory","type":"same-category","score":424}
 {"a":"mgmt-resource-dependence-pfeffer","b":"mgmt-star-model","type":"same-category","score":793}
 {"a":"mgmt-resource-dependence-theory","b":"mgmt-strategic-consensus","type":"same-category","score":426}
-{"a":"mgmt-resource-orchestration-theory","b":"mgmt-strategic-entrepreneurship","type":"same-category","score":436}
 {"a":"mgmt-resource-orchestration-theory","b":"mgmt-strategic-flexibility-theory","type":"shares-thinker","score":2500}
 {"a":"mgmt-resource-orchestration-theory","b":"mgmt-strategic-flexibility-theory","type":"same-category","score":445}
 {"a":"mgmt-reverse-innovation","b":"mgmt-strategic-silence","type":"shares-source","score":5000}
@@ -19651,7 +19681,7 @@
 {"a":"mgmt-shared-mental-models","b":"mgmt-simmelian-ties-krackhardt","type":"shares-source","score":10000}
 {"a":"mgmt-shared-mental-models","b":"mgmt-team-mental-models-theory","type":"shares-thinker","score":10000}
 {"a":"mgmt-shared-value","b":"mgmt-strategic-alliances-doz-hamel","type":"shares-source","score":10000}
-{"a":"mgmt-shared-value","b":"mgmt-tempered-radical","type":"shares-source","score":10000}
+{"a":"mgmt-shared-value","b":"mgmt-team-effectiveness-hackman-wageman","type":"shares-source","score":10000}
 {"a":"mgmt-six-sigma","b":"mgmt-toyota-production","type":"shares-source","score":3333}
 {"a":"mgmt-social-impact-bond","b":"mgmt-temporal-leadership","type":"same-category","score":428}
 {"a":"mgmt-stakeholder-capitalism-freeman","b":"mgmt-stakeholder-mapping-power-interest","type":"shares-thinker","score":2500}

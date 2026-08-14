@@ -26,7 +26,7 @@ aliases:
 アダム・グリーンフィールド ／ ロブ・キトチン ／ シャノン・マッターン ／ テイラー・シェルトン ／ マシュー・ゾック
 
 ## 出典
-- [Greenfield, A. (2013) Against the Smart City — Do Projects](https://doi.org/10.1007/978-1-137-27866-0) `学術`
+- [Greenfield, A. (2013) Against the Smart City — Do Projects](https://search.worldcat.org/title/against-the-smart-city/oclc/869266837) `学術`
 - [Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal](https://doi.org/10.1177/2043820614532284) `学術`
 - [Wikipedia: Smart city — スマートシティの概念と批判的議論](https://en.wikipedia.org/wiki/Smart_city) `リファレンス`
 
@@ -34,8 +34,13 @@ aliases:
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 語彙が近い
 - [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
-- [[infosoc-gamification|ゲーミフィケーション]] — 同分野の近傍
-- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同分野の近傍
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 出典を共有
+- [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

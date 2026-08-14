@@ -26,7 +26,7 @@ aliases:
 ペーター・シュレヒトリーム ／ ジョン・ホノルド ／ インゲボルグ・シュヴェンツァー ／ ウルリッヒ・マグヌス
 
 ## 出典
-- [Schlechtriem, P. & Schwenzer, I. (2010) Commentary on the UN Convention on the International Sale of Goods (CISG) — Oxford UP](https://doi.org/10.1017/CBO9780511814792) `学術`
+- [Schlechtriem, P. & Schwenzer, I. (2010) Commentary on the UN Convention on the International Sale of Goods (CISG) — Oxford UP](https://doi.org/10.1093/law/9780199568970.001.0001) `学術`
 - [Wikipedia: Nachfrist — additional period for performance in contract law](https://en.wikipedia.org/wiki/Nachfrist) `リファレンス`
 - [Honnold, J.O. (2009) Uniform Law for International Sales Under the 1980 United Nations Convention — Kluwer 4th ed.](https://doi.org/10.1093/acprof:oso/9780199535491.001.0001) `学術`
 

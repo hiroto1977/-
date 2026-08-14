@@ -26,7 +26,7 @@ aliases:
 アン・カブキアン ／ ジョン・フォン・ヘルン ／ マーティン・ランゲバック ／ ルドガー・ヴァイス
 
 ## 出典
-- [Cavoukian, A. (1995). Privacy by Design — IPC Ontario](https://doi.org/10.1007/978-3-642-31778-9) `学術`
+- [Cavoukian, A. (2012) Privacy by Design: Origins, Meaning, and Prospects for Assuring Privacy and Trust in the Information Era — IGI Global（Privacy Protection Measures and Technologies in Business Organizations 所収, pp.170-208）](https://doi.org/10.4018/978-1-61350-501-4.ch007) `学術`
 - [Wikipedia: Privacy by design — GDPR Article 25](https://en.wikipedia.org/wiki/Privacy_by_design) `リファレンス`
 
 ## 関連概念

@@ -26,8 +26,8 @@ aliases:
 J・リチャード・ハックマン ／ ルス・ワゲマン ／ スティーブ・コズロウスキー ／ ダニエル・イルゲン ／ エドゥアルド・サラス
 
 ## 出典
-- [Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams — Psychological Science in the Public Interest](https://doi.org/10.1037/0003-066X.59.6.500) `学術`
-- [Wageman et al. (2008) Senior Leadership Teams: What It Takes to Make Them Great — Harvard Business Press](https://doi.org/10.1177/1046496408328821) `学術`
+- [Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams — Psychological Science in the Public Interest](https://doi.org/10.1111/j.1529-1006.2006.00030.x) `学術`
+- [Wageman, R., Nunes, D. A., Burruss, J. A. & Hackman, J. R. (2008) Senior Leadership Teams: What It Takes to Make Them Great — Harvard Business Review Press](https://www.hbs.edu/faculty/Pages/item.aspx?num=34413) `学術`
 - [Wikipedia: Team effectiveness — チーム有効性モデルの概説](https://en.wikipedia.org/wiki/Team_effectiveness) `リファレンス`
 
 ## 関連概念
@@ -40,6 +40,7 @@ J・リチャード・ハックマン ／ ルス・ワゲマン ／ スティー
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同じ思想家
 - [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同じ思想家
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同じ思想家
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

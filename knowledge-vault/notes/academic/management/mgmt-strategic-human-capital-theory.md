@@ -27,9 +27,9 @@ Russell W. Coff ／ Robert E. Ployhart ／ Timothy R. Moliterno ／ Patrick M. W
 
 ## 出典
 - [Coff (1997) Human assets and management dilemmas — Academy of Management Review](https://doi.org/10.5465/amr.1998.926630) `学術`
-- [Ployhart & Moliterno (2011) Emergence of the human capital resource — Academy of Management Review](https://doi.org/10.1177/0149206311417113) `学術`
+- [Ployhart & Moliterno (2011) Emergence of the human capital resource — Academy of Management Review](https://doi.org/10.5465/amr.2009.0318) `学術`
 - [Wright, McMahan & McWilliams (1994) Human resources and sustained competitive advantage — IJHRM](https://doi.org/10.1177/014920639602200101) `学術`
-- [Cappelli & Keller (2014) Talent management — Annual Review of Organizational Psychology](https://doi.org/10.1177/0149206308330559) `学術`
+- [Cappelli & Keller (2014) Talent Management: Conceptual Approaches and Practical Challenges — Annual Review of Organizational Psychology and Organizational Behavior, 1, 305-331](https://doi.org/10.1146/annurev-orgpsych-031413-091314) `学術`
 - [Barney & Wright (1998) On becoming a strategic partner — Human Resource Management](https://doi.org/10.1002/smj.4250171109) `学術`
 
 ## 関連概念
