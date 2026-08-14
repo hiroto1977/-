@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2254
+cite_count: 2253
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2254 件**（リファレンス 2254）
+> [!info] 出典ドメイン索引 ・ 引用 **2253 件**（リファレンス 2253）
 
 ## このドメインを出典とする項目
 
@@ -307,7 +307,6 @@ tags:
 - [[bizlaw-sovereign-wealth-fund-governance|ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則]] — Wikipedia:Sovereignwealthfund—SantiagoPrinciples
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — Wikipedia:Specificperformance—equity,discretion,uniquegoods,personals…
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — Wikipedia:Standstillagreement—M&Acontext,securitieslawthreshold,board…
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — Wikipedia:Statuteoffrauds—詐欺防止法の歴史と現代的展開の概説
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — Wikipedia:Auditcommittee—監査委員会の概説
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — Wikipedia:Productliability—strictliability,GreenmanvYuba,Traynor,defe…
 - [[bizlaw-strong-v-bird|ストロング対バードの準則——不完全な贈与が遺言執行者就任で完成する]] — Wikipedia:GiftsinEnglishlaw—equitywillnotperfectanimperfectgift,Stron…

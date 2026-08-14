@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同じ思想家
 - [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — 同じ思想家
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 同じ思想家
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 同じ思想家
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

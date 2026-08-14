@@ -19,14 +19,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全682件）
+### 学術概念 / ビジネス法務（全681件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
-- …ほか 676 件 → [[学術概念]]
+- …ほか 675 件 → [[学術概念]]
 
 ### 学術概念 / 人間科学（全639件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]

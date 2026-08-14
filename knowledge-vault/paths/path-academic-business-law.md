@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 682
+entry_count: 681
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（682件）
+# 学習パス — 学術概念／ビジネス法務（681件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -642,7 +642,6 @@ tags:
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]]
 - [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]]
 - [[bizlaw-statute-of-frauds|詐欺防止法]]
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]]
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]]
 - [[bizlaw-statutory-lien|先取特権（民法303条）]]
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]]

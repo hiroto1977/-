@@ -23412,11 +23412,12 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'bizlaw-statute-of-frauds',
     discipline: 'business-law',
     title: '詐欺防止法',
-    statement: '詐欺防止法（Statute of Frauds）は1677年にイングランド議会が制定した法律であり、口頭合意のみでは執行不能とされる特定の契約類型に書面による証拠を要求することで詐欺的訴訟を防止することを目的とした。Williston が整理したとおり、同法の適用を受ける契約類型には土地または土地上の権益の売買、保証契約、婚姻を約因とする契約、履行に1年超を要する契約、および一定額以上の動産売買が含まれる。アメリカ法においては Llewellyn が起草した統一商事法典（UCC）第2-201条が500ドルを超える動産売買に書面要件を定め、各州の制定法として広く採用されている。Corbin は詐欺防止法が口頭で真に成立した契約の執行を妨げ、むしろ詐欺を助長するという逆説的効果を批判し、一部履行の法理や約束的禁反言によって衡平法上の修正が不可欠であると論じた。現代では電子署名法（E-SIGN Act）や統一電子取引法（UETA）により電子的書面が書面要件を満たすと認められ、Fuller が論じた信頼利益の保護という観点からも書面主義の実質的意義が変容しつつある。',
+    statement: '詐欺防止法（Statute of Frauds）は1677年にイングランド議会が制定した法律であり、口頭合意のみでは執行不能とされる特定の契約類型に書面による証拠を要求することで詐欺的訴訟を防止することを目的とした。Williston が整理したとおり、同法の適用を受ける契約類型には土地または土地上の権益の売買、保証契約、婚姻を約因とする契約、履行に1年超を要する契約、および一定額以上の動産売買が含まれる。アメリカ法においては Llewellyn が起草した統一商事法典（UCC）第2-201条が500ドルを超える動産売買に書面要件を定め、各州の制定法として広く採用されている。Corbin は詐欺防止法が口頭で真に成立した契約の執行を妨げ、むしろ詐欺を助長するという逆説的効果を批判し、一部履行の法理や約束的禁反言によって衡平法上の修正が不可欠であると論じた。現代では電子署名法（E-SIGN Act）や統一電子取引法（UETA）により電子的書面が書面要件を満たすと認められ、Fuller が論じた信頼利益の保護という観点からも書面主義の実質的意義が変容しつつある。イギリス本国では1954年の Law Reform (Enforcement of Contracts) Act 第1条が1677年法第4条の文言の大半を削除し、遺言執行者の債務引受・婚姻を約因とする契約・1年内に履行し得ない契約についての書面要件は失われた。廃止の対象から外されたのは保証（suretyship）だけで、第4条の書面要件は現在この一点においてのみ生きている。',
     keyFigures: 'Samuel Williston ／ Karl Llewellyn ／ Arthur Corbin ／ Lon Fuller ／ Eric Posner',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.legislation.gov.uk/aep/Cha2/29/3', type: 'government', label: 'Statute of Frauds 1677 — UK Parliament (legislation.gov.uk)' },
+      { url: 'https://www.legislation.gov.uk/aep/Cha2/29/3/section/IV', type: 'government', label: 'Statute of Frauds 1677 s.4 — legislation.gov.uk（Law Reform (Enforcement of Contracts) Act 1954 s.1 による一部廃止の注記あり）' },
       { url: 'https://www.law.cornell.edu/ucc/2/2-201', type: 'reference', label: 'UCC § 2-201: Formal Requirements; Statute of Frauds — Cornell Law School LII' },
       { url: 'https://www.law.cornell.edu/wex/statute_of_frauds', type: 'reference', label: 'Statute of Frauds — Cornell LII Wex Legal Dictionary' },
       { url: 'https://www.jstor.org/stable/792041', type: 'academic', label: 'Fuller & Perdue, "The Reliance Interest in Contract Damages" Yale Law Journal (1936)' },
@@ -39724,19 +39725,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/0021-843X.88.4.441', type: 'academic', label: 'Alloy & Abramson (1979) Judgment of Contingency in Depressed and Nondepressed Students: Sadder but Wiser? — Journal of Experimental Psychology: General' },
       { url: 'https://doi.org/10.1037/0033-2909.103.2.193', type: 'academic', label: 'Taylor & Brown (1988) Illusion and Well-Being: A Social Psychological Perspective on Mental Health — Psychological Bulletin' },
       { url: 'https://en.wikipedia.org/wiki/Depressive_realism', type: 'reference', label: 'Wikipedia: Depressive realism — 抑うつリアリズム仮説の実験的証拠と批判的検討' },
-    ],
-  },
-  {
-    id: 'bizlaw-statute-of-frauds-modern',
-    discipline: 'business-law',
-    title: '詐欺防止法の現代的展開——書面要件と電子契約の適用',
-    statement: '詐欺防止法（Statute of Frauds）は、1677年にイギリスで制定された法律に起源を持ち、特定の類型の契約（不動産売買、1年以上の履行期間を要する契約、保証契約、500ドル以上の物品売買等）について、書面による証拠がなければ法的に執行不能とする要件を課す。この法律の目的は、重要な契約について偽証や虚偽の主張を防止することにある。アメリカ法ではUCC§2-201が物品売買に関する詐欺防止法を規定しているが、2003年のUCC改正ではデジタル時代に対応して書面要件が緩和された。さらに、連邦のE-SIGN法（2000年）と統一電子取引法（UETA）は電子署名と電子記録に法的有効性を付与し、詐欺防止法の書面要件を電子形式でも充足可能とした。イギリスでは法律改革委員会が1953年に詐欺防止法の大部分の廃止を勧告し、1989年財産法（雑則）により不動産取引を除いて書面要件は撤廃されている。',
-    keyFigures: 'サミュエル・ウィリストン ／ アーサー・コービン ／ E・アラン・ファーンズワース',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.law.cornell.edu/ucc/2/2-201', type: 'government', label: 'UCC § 2-201 Formal Requirements; Statute of Frauds — Legal Information Institute, Cornell Law School' },
-      { url: 'https://doi.org/10.2307/1340108', type: 'academic', label: 'Perillo (1998) The Statute of Frauds in the Light of the Functions and Dysfunctions of Form — Fordham Law Review' },
-      { url: 'https://en.wikipedia.org/wiki/Statute_of_frauds', type: 'reference', label: 'Wikipedia: Statute of frauds — 詐欺防止法の歴史と現代的展開の概説' },
     ],
   },
   {

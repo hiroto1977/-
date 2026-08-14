@@ -37,10 +37,10 @@ aliases:
 - [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — 同じ思想家
 - [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同じ思想家
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 同じ思想家
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 同じ思想家
 - [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 同じ思想家
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]] — 同じ思想家
 - [[bizlaw-mistake-contract|契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消]] — 同じ思想家
+- [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

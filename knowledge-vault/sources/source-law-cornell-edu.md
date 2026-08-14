@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 147
+cite_count: 146
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **147 件**（リファレンス 123 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **146 件**（リファレンス 123 ・ 公的 22 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -148,7 +148,6 @@ tags:
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — CornellLIIWex:Specificperformance—equitableremedy,inadequacyofdamages…
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — StatuteofFrauds—CornellLIIWexLegalDictionary
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — UCC§2-201:FormalRequirements;StatuteofFrauds—CornellLawSchoolLII
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — UCC§2-201FormalRequirements;StatuteofFrauds—LegalInformationInstitute…
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — CornellLIIWex:Productliability—strictliability,manufacturing/design/w…
 - [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — CornellLIIWex:Subrogation—stepintotheshoes,insurerrecovery,doublereco…
 - [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — CornellLII:Contribution—rightoftortfeasortorecoverproportionalsharefr…

@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2147
+cite_count: 2146
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2147 件**（学術 2139 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2146 件**（学術 2138 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -144,7 +144,6 @@ tags:
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — Subramanian,"DealProcessDesigninManagementBuyouts"—HarvardLawReview(2…
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — Lipton,M.(1979)TakeoverBidsintheTarget'sBoardroom—BusinessLawyer,35(1…
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — Subramanian,G.(2003)BargainingintheShadowofTakeoverDefenses—YaleLawJo…
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — Perillo(1998)TheStatuteofFraudsintheLightoftheFunctionsandDysfunction…
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — DeFond,M.&Zhang,J.(2014)AReviewofArchivalAuditingResearch—JournalofAc…
 - [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — Palmer(1969)TheContractPriceasaLimitonRestitutionforDefendantsBreach—…
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — Kaplan,S.N.&Strömberg,P.(2003)FinancialContractingTheoryMeetstheRealW…

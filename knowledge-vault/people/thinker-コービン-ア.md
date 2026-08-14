@@ -2,7 +2,7 @@
 title: "アーサー・コービン"
 type: thinker
 person_key: "コービン|ア"
-concept_count: 18
+concept_count: 17
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # アーサー・コービン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **18 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **17 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（18件）
+## 学術概念（17件）
 - [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 債権譲渡（assignment）は、英米契約法において、契約上の権利（benefit、債権ないし訴求可能な権利）を、そ…
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]] — 契約締結能力（capacitytocontract）は、当事者が法的に拘束力のある契約を結ぶための法的な資格・適格性を…
 - [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 停止条件あるいは先行条件（conditionprecedent）は、英米契約法における条件の一類型で、ある当事者の履行…
@@ -29,7 +29,6 @@ tags:
 - [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — クォンタム・メルイット（quantummeruit、「彼が値する分だけ」の意のラテン語）は、当事者間に有効な明示的契約…
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — 契約の取消（rescission、リシジョン）は、契約を遡及的に解消し、当事者をあたかも契約が最初から存在しなかったか…
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 特定履行（specificperformance）は、契約違反に対して金銭賠償を支払わせる代わりに、契約上の義務そのも…
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 詐欺防止法（StatuteofFrauds）は、1677年にイギリスで制定された法律に起源を持ち、特定の類型の契約（不…
 - [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — 第三者のためにする契約（third-partybeneficiarycontract）は、契約の当事者ではない第三者が…
 
 ## 関連

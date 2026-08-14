@@ -2,7 +2,7 @@
 title: "アラン・ファーンズワース"
 type: thinker
 person_key: "ファーンズワース|ア"
-concept_count: 10
+concept_count: 9
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # アラン・ファーンズワース
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **10 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **9 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（10件）
+## 学術概念（9件）
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 和解合意と履行（AccordandSatisfaction）とは、既存の債務や請求権について当事者間で新たな合意（ac…
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 契約上の権利の譲渡（AssignmentofContracts）とは、契約当事者の一方（譲渡人）が契約上有する権利を第…
 - [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 停止条件あるいは先行条件（conditionprecedent）は、英米契約法における条件の一類型で、ある当事者の履行…
@@ -21,7 +21,6 @@ tags:
 - [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — 損害賠償額の予定（liquidateddamages）は、契約違反が生じた場合に支払うべき賠償額をあらかじめ契約で定め…
 - [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 損害軽減義務（mitigationofdamages、回避可能損害の法理とも呼ばれる）は、英米契約法・不法行為法に共通…
 - [[bizlaw-specific-performance|特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済]] — 特定履行（specificperformance）は、契約違反に対して金銭賠償を支払わせる代わりに、契約上の義務そのも…
-- [[bizlaw-statute-of-frauds-modern|詐欺防止法の現代的展開——書面要件と電子契約の適用]] — 詐欺防止法（StatuteofFrauds）は、1677年にイギリスで制定された法律に起源を持ち、特定の類型の契約（不…
 - [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 実質的履行（SubstantialPerformance）の法理とは、契約当事者が契約上の義務を完全にではないが実質的…
 
 ## 関連

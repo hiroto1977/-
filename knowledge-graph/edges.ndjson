@@ -238,7 +238,6 @@
 {"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-mitigation-of-damages","type":"shares-thinker","score":6667}
 {"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-penalty-clause","type":"shares-thinker","score":10000}
 {"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-specific-performance","type":"shares-thinker","score":6667}
-{"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":6667}
 {"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-subrogation-by-payment","type":"same-category","score":438}
 {"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-accord-and-satisfaction","b":"bizlaw-warranty-of-merchantability","type":"shares-thinker","score":3333}
@@ -744,9 +743,9 @@
 {"a":"bizlaw-assignment-security","b":"bizlaw-whistleblower-protection","type":"shares-source","score":5000}
 {"a":"bizlaw-assignment-security","b":"legal-trade-name","type":"shares-source","score":5000}
 {"a":"bizlaw-assumption-of-debt","b":"bizlaw-cheque-act","type":"shares-source","score":10000}
-{"a":"bizlaw-assumption-of-debt","b":"bizlaw-mutual-wills","type":"same-category","score":445}
-{"a":"bizlaw-assumption-of-debt","b":"bizlaw-novation","type":"term-overlap","score":1317}
-{"a":"bizlaw-assumption-of-debt","b":"bizlaw-novation","type":"same-category","score":1317}
+{"a":"bizlaw-assumption-of-debt","b":"bizlaw-mutual-wills","type":"same-category","score":446}
+{"a":"bizlaw-assumption-of-debt","b":"bizlaw-novation","type":"term-overlap","score":1305}
+{"a":"bizlaw-assumption-of-debt","b":"bizlaw-novation","type":"same-category","score":1305}
 {"a":"bizlaw-assumption-of-debt","b":"bizlaw-standard-terms","type":"shares-source","score":10000}
 {"a":"bizlaw-assumption-of-risk","b":"bizlaw-attractive-nuisance","type":"shares-thinker","score":2500}
 {"a":"bizlaw-assumption-of-risk","b":"bizlaw-constructive-trust-remedy","type":"shares-thinker","score":2500}
@@ -941,8 +940,8 @@
 {"a":"bizlaw-bill-of-exchange","b":"bizlaw-perfect-tender-rule","type":"shares-thinker","score":5000}
 {"a":"bizlaw-bill-of-exchange","b":"bizlaw-promissory-note","type":"term-overlap","score":3311}
 {"a":"bizlaw-bill-of-exchange","b":"bizlaw-promissory-note","type":"shares-thinker","score":10000}
-{"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-bills-act","type":"term-overlap","score":1213}
-{"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-bills-act","type":"same-category","score":1213}
+{"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-bills-act","type":"term-overlap","score":1211}
+{"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-bills-act","type":"same-category","score":1211}
 {"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-corporate-insolvency-restructuring","type":"shares-thinker","score":10000}
 {"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-exequatur","type":"shares-source","score":5000}
 {"a":"bizlaw-bill-of-exchange-uncitral-convention","b":"bizlaw-force-majeure-doctrine","type":"shares-source","score":3333}
@@ -970,7 +969,7 @@
 {"a":"bizlaw-bill-of-lading","b":"bizlaw-knowing-receipt","type":"same-category","score":408}
 {"a":"bizlaw-bill-of-lading","b":"bizlaw-lien","type":"shares-thinker","score":3333}
 {"a":"bizlaw-bill-of-lading","b":"bizlaw-quasi-contract","type":"shares-thinker","score":3333}
-{"a":"bizlaw-bills-act","b":"bizlaw-cheque-act","type":"same-category","score":825}
+{"a":"bizlaw-bills-act","b":"bizlaw-cheque-act","type":"same-category","score":824}
 {"a":"bizlaw-bills-act","b":"bizlaw-promissory-note","type":"same-category","score":811}
 {"a":"bizlaw-blue-pencil-doctrine","b":"bizlaw-economic-loss-rule","type":"shares-source","score":5000}
 {"a":"bizlaw-blue-pencil-doctrine","b":"bizlaw-frustration-of-purpose","type":"shares-source","score":3333}
@@ -1168,7 +1167,7 @@
 {"a":"bizlaw-caveat-emptor","b":"bizlaw-promissory-note","type":"shares-thinker","score":3333}
 {"a":"bizlaw-caveat-emptor","b":"bizlaw-restraint-of-trade","type":"shares-thinker","score":10000}
 {"a":"bizlaw-caveat-emptor","b":"bizlaw-trespass-to-land","type":"shares-thinker","score":3333}
-{"a":"bizlaw-caveat-emptor","b":"bizlaw-warranty-of-merchantability","type":"term-overlap","score":1652}
+{"a":"bizlaw-caveat-emptor","b":"bizlaw-warranty-of-merchantability","type":"term-overlap","score":1650}
 {"a":"bizlaw-caveat-emptor","b":"bizlaw-warranty-of-merchantability","type":"shares-thinker","score":6667}
 {"a":"bizlaw-caveat-emptor-laidlaw","b":"bizlaw-contra-proferentem","type":"same-category","score":423}
 {"a":"bizlaw-caveat-emptor-laidlaw","b":"bizlaw-contract-law-unconscionability","type":"shares-thinker","score":3333}
@@ -1354,8 +1353,8 @@
 {"a":"bizlaw-comity-of-nations","b":"bizlaw-rule-against-perpetuities","type":"shares-thinker","score":2500}
 {"a":"bizlaw-comity-of-nations","b":"bizlaw-trust-fund-doctrine","type":"shares-thinker","score":2500}
 {"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-contractual-estoppel","type":"shares-thinker","score":3333}
-{"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-del-credere-agent","type":"term-overlap","score":1259}
-{"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-del-credere-agent","type":"same-category","score":1259}
+{"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-del-credere-agent","type":"term-overlap","score":1261}
+{"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-del-credere-agent","type":"same-category","score":1261}
 {"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-entire-agreement-clause","type":"shares-thinker","score":3333}
 {"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-environmental-liability-directive-eu","type":"same-category","score":420}
 {"a":"bizlaw-commercial-agency-law-eu-directive","b":"bizlaw-no-oral-modification-rock","type":"shares-thinker","score":3333}
@@ -1377,10 +1376,10 @@
 {"a":"bizlaw-commercial-arbitration-uncitral","b":"bizlaw-international-commercial-arbitration","type":"same-category","score":1622}
 {"a":"bizlaw-commercial-arbitration-uncitral","b":"bizlaw-international-commercial-arbitration-born","type":"shares-thinker","score":3333}
 {"a":"bizlaw-commercial-code","b":"bizlaw-corporate-groups-konzernrecht","type":"same-category","score":412}
-{"a":"bizlaw-commercial-code","b":"bizlaw-del-credere-agent","type":"same-category","score":834}
+{"a":"bizlaw-commercial-code","b":"bizlaw-del-credere-agent","type":"same-category","score":835}
 {"a":"bizlaw-commercial-code","b":"bizlaw-insurance-business-act","type":"same-category","score":418}
 {"a":"bizlaw-commercial-code","b":"bizlaw-pledge","type":"same-category","score":419}
-{"a":"bizlaw-commercial-frustration","b":"bizlaw-doctrine-of-frustration","type":"term-overlap","score":1246}
+{"a":"bizlaw-commercial-frustration","b":"bizlaw-doctrine-of-frustration","type":"term-overlap","score":1248}
 {"a":"bizlaw-commercial-frustration","b":"bizlaw-force-majeure","type":"shares-thinker","score":3333}
 {"a":"bizlaw-commercial-frustration","b":"bizlaw-frustration-of-purpose","type":"shares-source","score":5000}
 {"a":"bizlaw-commercial-frustration","b":"bizlaw-fundamental-breach","type":"shares-thinker","score":10000}
@@ -1505,7 +1504,6 @@
 {"a":"bizlaw-condition-precedent","b":"bizlaw-quantum-meruit","type":"shares-thinker","score":6667}
 {"a":"bizlaw-condition-precedent","b":"bizlaw-rescission","type":"shares-thinker","score":6667}
 {"a":"bizlaw-condition-precedent","b":"bizlaw-specific-performance","type":"shares-thinker","score":10000}
-{"a":"bizlaw-condition-precedent","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-condition-precedent","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-condition-precedent","b":"bizlaw-third-party-beneficiary-contract","type":"shares-thinker","score":3333}
 {"a":"bizlaw-condition-suspensive","b":"bizlaw-general-incorporated-associations","type":"same-category","score":424}
@@ -1529,6 +1527,7 @@
 {"a":"bizlaw-consideration-doctrine","b":"bizlaw-liquidated-damages-clause","type":"shares-thinker","score":3333}
 {"a":"bizlaw-consideration-doctrine","b":"bizlaw-mailbox-rule-adams","type":"shares-thinker","score":6667}
 {"a":"bizlaw-consideration-doctrine","b":"bizlaw-mistake-contract","type":"shares-thinker","score":10000}
+{"a":"bizlaw-consideration-doctrine","b":"bizlaw-mitigation-of-damages","type":"shares-thinker","score":6667}
 {"a":"bizlaw-consideration-doctrine","b":"bizlaw-negligence-per-se","type":"shares-thinker","score":3333}
 {"a":"bizlaw-consideration-doctrine","b":"bizlaw-penalty-clause","type":"shares-thinker","score":10000}
 {"a":"bizlaw-consideration-doctrine","b":"bizlaw-privity-of-contract","type":"shares-thinker","score":3333}
@@ -2067,7 +2066,7 @@
 {"a":"bizlaw-denial-of-justice","b":"bizlaw-expropriation-compensation","type":"shares-source","score":3333}
 {"a":"bizlaw-denial-of-justice","b":"bizlaw-nachfrist-notice-cure","type":"same-category","score":404}
 {"a":"bizlaw-denial-of-justice","b":"bizlaw-umbrella-clause","type":"same-category","score":415}
-{"a":"bizlaw-deposit-insurance-act","b":"bizlaw-toushiho","type":"same-category","score":836}
+{"a":"bizlaw-deposit-insurance-act","b":"bizlaw-toushiho","type":"same-category","score":835}
 {"a":"bizlaw-deposit-insurance-act","b":"econ-deposit-insurance","type":"discipline-bridge","score":2488}
 {"a":"bizlaw-deposit-insurance-act","b":"econ-deposit-insurance","type":"shares-source","score":5000}
 {"a":"bizlaw-deposit-kyotaku","b":"bizlaw-duty-of-care","type":"shares-source","score":5000}
@@ -2086,9 +2085,9 @@
 {"a":"bizlaw-deposit-kyotaku","b":"bizlaw-unauthorized-agency","type":"shares-source","score":5000}
 {"a":"bizlaw-deposit-kyotaku","b":"legal-director-duty","type":"shares-source","score":5000}
 {"a":"bizlaw-deposit-kyotaku","b":"legal-set-off","type":"shares-source","score":10000}
-{"a":"bizlaw-derivative-action-foss-harbottle","b":"bizlaw-derivative-action-shareholder","type":"term-overlap","score":1240}
-{"a":"bizlaw-derivative-action-foss-harbottle","b":"bizlaw-derivative-action-shareholder","type":"same-category","score":1240}
-{"a":"bizlaw-derivative-action-foss-harbottle","b":"bizlaw-proper-purpose-howard-smith","type":"same-category","score":419}
+{"a":"bizlaw-derivative-action-foss-harbottle","b":"bizlaw-derivative-action-shareholder","type":"term-overlap","score":1239}
+{"a":"bizlaw-derivative-action-foss-harbottle","b":"bizlaw-derivative-action-shareholder","type":"same-category","score":1239}
+{"a":"bizlaw-derivative-action-foss-harbottle","b":"bizlaw-proper-purpose-howard-smith","type":"same-category","score":418}
 {"a":"bizlaw-derivative-action-shareholder","b":"bizlaw-golden-share-state-ownership","type":"same-category","score":388}
 {"a":"bizlaw-derivative-action-shareholder","b":"bizlaw-nominee-director-conflicts","type":"shares-thinker","score":3333}
 {"a":"bizlaw-derivative-action-shareholder","b":"bizlaw-penalty-clause-comparative","type":"shares-thinker","score":3333}
@@ -2795,7 +2794,7 @@
 {"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-fraudulent-transfer-avoidance","type":"term-overlap","score":2556}
 {"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-fraudulent-transfer-avoidance","type":"shares-thinker","score":4000}
 {"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-fraudulent-transfer-avoidance","type":"shares-source","score":2500}
-{"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-misrepresentation","type":"same-category","score":837}
+{"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-misrepresentation","type":"same-category","score":836}
 {"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-parole-evidence-rule","type":"shares-source","score":3333}
 {"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-secured-transactions-ucc9","type":"shares-source","score":3333}
 {"a":"bizlaw-fraudulent-conveyance-doctrine","b":"bizlaw-shareholder-oppression-remedy","type":"shares-source","score":3333}
@@ -2812,7 +2811,7 @@
 {"a":"bizlaw-freedom-of-contract","b":"bizlaw-land-lease-act","type":"same-category","score":442}
 {"a":"bizlaw-freedom-of-contract","b":"bizlaw-real-subrogation","type":"shares-source","score":3333}
 {"a":"bizlaw-freedom-of-contract","b":"bizlaw-retention-of-title","type":"shares-source","score":3333}
-{"a":"bizlaw-freedom-of-contract","b":"bizlaw-standard-terms","type":"same-category","score":805}
+{"a":"bizlaw-freedom-of-contract","b":"bizlaw-standard-terms","type":"same-category","score":804}
 {"a":"bizlaw-freedom-of-contract","b":"bizlaw-structure-liability","type":"shares-source","score":3333}
 {"a":"bizlaw-freedom-of-contract","b":"bizlaw-tort-liability","type":"shares-source","score":3333}
 {"a":"bizlaw-freedom-of-contract","b":"legal-contract-types","type":"shares-source","score":5000}
@@ -2830,7 +2829,6 @@
 {"a":"bizlaw-frustration-of-purpose","b":"bizlaw-promissory-estoppel-central-london","type":"shares-thinker","score":2500}
 {"a":"bizlaw-frustration-of-purpose","b":"bizlaw-quantum-meruit","type":"shares-thinker","score":6667}
 {"a":"bizlaw-frustration-of-purpose","b":"bizlaw-specific-performance","type":"shares-thinker","score":7500}
-{"a":"bizlaw-frustration-of-purpose","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-frustration-of-purpose","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-frustration-of-purpose","b":"bizlaw-tortious-interference","type":"shares-source","score":6667}
 {"a":"bizlaw-full-protection-and-security","b":"bizlaw-international-investment-bit","type":"shares-source","score":5000}
@@ -2974,7 +2972,6 @@
 {"a":"bizlaw-illegality-contract","b":"bizlaw-quantum-meruit","type":"shares-thinker","score":10000}
 {"a":"bizlaw-illegality-contract","b":"bizlaw-rescission","type":"shares-thinker","score":10000}
 {"a":"bizlaw-illegality-contract","b":"bizlaw-specific-performance","type":"shares-thinker","score":10000}
-{"a":"bizlaw-illegality-contract","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-illegality-contract","b":"bizlaw-subrogation","type":"shares-thinker","score":5000}
 {"a":"bizlaw-illegality-contract","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":5000}
 {"a":"bizlaw-illegality-contract","b":"bizlaw-third-party-beneficiary-contract","type":"shares-thinker","score":5000}
@@ -3292,12 +3289,11 @@
 {"a":"bizlaw-liquidated-damages","b":"bizlaw-penalty-clause","type":"term-overlap","score":3215}
 {"a":"bizlaw-liquidated-damages","b":"bizlaw-penalty-clause","type":"shares-thinker","score":10000}
 {"a":"bizlaw-liquidated-damages","b":"bizlaw-specific-performance","type":"shares-thinker","score":10000}
-{"a":"bizlaw-liquidated-damages","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-liquidated-damages","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-liquidated-damages-clause","b":"bizlaw-negligence-per-se","type":"shares-thinker","score":3333}
 {"a":"bizlaw-liquidated-damages-clause","b":"bizlaw-penalty-clause-comparative","type":"term-overlap","score":1671}
 {"a":"bizlaw-liquidated-damages-clause","b":"bizlaw-penalty-clause-comparative","type":"same-category","score":1671}
-{"a":"bizlaw-liquidated-damages-clause","b":"bizlaw-penalty-clause-liquidated-damages","type":"same-category","score":882}
+{"a":"bizlaw-liquidated-damages-clause","b":"bizlaw-penalty-clause-liquidated-damages","type":"same-category","score":881}
 {"a":"bizlaw-liquidated-damages-clause","b":"bizlaw-vicarious-liability","type":"shares-thinker","score":3333}
 {"a":"bizlaw-local-autonomy","b":"eh-1943","type":"shares-source","score":3333}
 {"a":"bizlaw-local-autonomy","b":"eh-1946","type":"shares-source","score":3333}
@@ -3392,6 +3388,7 @@
 {"a":"bizlaw-minority-oppression-remedy","b":"bizlaw-unfair-prejudice-remedy","type":"same-category","score":421}
 {"a":"bizlaw-misrepresentation","b":"bizlaw-misrepresentation-contract-law","type":"term-overlap","score":2967}
 {"a":"bizlaw-misrepresentation","b":"bizlaw-misrepresentation-contract-law","type":"same-category","score":2967}
+{"a":"bizlaw-misrepresentation","b":"bizlaw-shelter-rule-negotiable-instruments","type":"same-category","score":432}
 {"a":"bizlaw-misrepresentation","b":"bizlaw-tob","type":"same-category","score":432}
 {"a":"bizlaw-misrepresentation-contract-law","b":"bizlaw-penalty-clause-liquidated-damages","type":"shares-thinker","score":3333}
 {"a":"bizlaw-misrepresentation-contract-law","b":"bizlaw-third-party-beneficiary-contract","type":"shares-thinker","score":2500}
@@ -3408,14 +3405,12 @@
 {"a":"bizlaw-mistake-contract","b":"bizlaw-quantum-meruit","type":"shares-thinker","score":10000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-rescission","type":"shares-thinker","score":10000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-specific-performance","type":"shares-thinker","score":10000}
-{"a":"bizlaw-mistake-contract","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-subrogation","type":"shares-thinker","score":5000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":5000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-third-party-beneficiary-contract","type":"shares-thinker","score":5000}
 {"a":"bizlaw-mistake-contract","b":"bizlaw-warranty-of-merchantability","type":"shares-thinker","score":5000}
 {"a":"bizlaw-mitigation-of-damages","b":"bizlaw-penalty-clause","type":"shares-thinker","score":10000}
 {"a":"bizlaw-mitigation-of-damages","b":"bizlaw-specific-performance","type":"shares-thinker","score":10000}
-{"a":"bizlaw-mitigation-of-damages","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-mitigation-of-damages","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-money-lending-act","b":"bizlaw-toushiho","type":"term-overlap","score":1705}
 {"a":"bizlaw-money-lending-act","b":"bizlaw-toushiho","type":"same-category","score":1705}
@@ -3498,6 +3493,7 @@
 {"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-product-liability-strict-liability","type":"shares-thinker","score":5000}
 {"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-respondeat-superior-scope","type":"shares-thinker","score":5000}
 {"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-strict-product-liability","type":"shares-thinker","score":5000}
+{"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":5000}
 {"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-tort-law","type":"shares-thinker","score":5000}
 {"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-tortfeasor-contribution-doctrine","type":"shares-thinker","score":5000}
 {"a":"bizlaw-negligence-duty-of-care","b":"bizlaw-trespass-to-land","type":"shares-thinker","score":5000}
@@ -3615,16 +3611,15 @@
 {"a":"bizlaw-pemsel-charity-heads","b":"bizlaw-strong-v-bird","type":"shares-thinker","score":5000}
 {"a":"bizlaw-pemsel-charity-heads","b":"bizlaw-three-certainties-trust","type":"shares-thinker","score":5000}
 {"a":"bizlaw-pemsel-charity-heads","b":"bizlaw-ultra-vires","type":"same-category","score":411}
-{"a":"bizlaw-penalty-clause","b":"bizlaw-penalty-clause-liquidated-damages","type":"term-overlap","score":1714}
+{"a":"bizlaw-penalty-clause","b":"bizlaw-penalty-clause-liquidated-damages","type":"term-overlap","score":1713}
 {"a":"bizlaw-penalty-clause","b":"bizlaw-quantum-meruit","type":"shares-thinker","score":10000}
 {"a":"bizlaw-penalty-clause","b":"bizlaw-rescission","type":"shares-thinker","score":10000}
 {"a":"bizlaw-penalty-clause","b":"bizlaw-specific-performance","type":"shares-thinker","score":10000}
-{"a":"bizlaw-penalty-clause","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-penalty-clause","b":"bizlaw-subrogation","type":"shares-thinker","score":10000}
 {"a":"bizlaw-penalty-clause","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":10000}
 {"a":"bizlaw-penalty-clause","b":"bizlaw-warranty-of-merchantability","type":"shares-thinker","score":10000}
-{"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-penalty-clause-liquidated-damages","type":"term-overlap","score":1652}
-{"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-penalty-clause-liquidated-damages","type":"same-category","score":1652}
+{"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-penalty-clause-liquidated-damages","type":"term-overlap","score":1651}
+{"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-penalty-clause-liquidated-damages","type":"same-category","score":1651}
 {"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-shareholders-derivative-suit","type":"shares-thinker","score":3333}
 {"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-standstill-agreement-ma","type":"shares-thinker","score":3333}
 {"a":"bizlaw-penalty-clause-comparative","b":"bizlaw-williams-v-roffey","type":"same-category","score":426}
@@ -3990,7 +3985,6 @@
 {"a":"bizlaw-sovereign-wealth-fund-governance","b":"econ-salience-theory-bordalo","type":"shares-thinker","score":3333}
 {"a":"bizlaw-sovereign-wealth-fund-governance","b":"econ-yardstick-competition-shleifer","type":"shares-thinker","score":3333}
 {"a":"bizlaw-sovereign-wealth-fund-governance","b":"mgmt-managerial-entrenchment","type":"shares-thinker","score":3333}
-{"a":"bizlaw-specific-performance","b":"bizlaw-statute-of-frauds-modern","type":"shares-thinker","score":10000}
 {"a":"bizlaw-specific-performance","b":"bizlaw-subrogation","type":"shares-thinker","score":6667}
 {"a":"bizlaw-specific-performance","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-specified-commercial-transactions","b":"legal-business-opportunity-sales","type":"term-overlap","score":1798}
@@ -4018,13 +4012,11 @@
 {"a":"bizlaw-stabilization-clause","b":"mgmt-network-organization","type":"shares-source","score":5000}
 {"a":"bizlaw-stabilization-clause","b":"mgmt-strategic-consensus","type":"shares-source","score":3333}
 {"a":"bizlaw-standard-terms","b":"bizlaw-undisclosed-principal-doctrine","type":"same-category","score":445}
-{"a":"bizlaw-standard-terms","b":"legal-standard-terms","type":"discipline-bridge","score":4551}
+{"a":"bizlaw-standard-terms","b":"legal-standard-terms","type":"discipline-bridge","score":4554}
 {"a":"bizlaw-standstill-agreement-ma","b":"infosoc-dataveillance","type":"shares-thinker","score":5000}
 {"a":"bizlaw-standstill-agreement-ma","b":"infosoc-dataveillance-clarke","type":"shares-thinker","score":3333}
 {"a":"bizlaw-state-liability","b":"bizlaw-tort-law","type":"same-category","score":421}
-{"a":"bizlaw-statute-of-frauds","b":"bizlaw-statute-of-frauds-modern","type":"term-overlap","score":3267}
 {"a":"bizlaw-statute-of-frauds","b":"bizlaw-unconscionability","type":"shares-thinker","score":3333}
-{"a":"bizlaw-statute-of-frauds-modern","b":"bizlaw-substantial-performance-jacob","type":"shares-thinker","score":6667}
 {"a":"bizlaw-statutory-audit-corporate-governance","b":"bizlaw-whitewash-procedure-hk","type":"shares-thinker","score":3333}
 {"a":"bizlaw-statutory-audit-corporate-governance","b":"legal-corporate-governance","type":"term-overlap","score":1652}
 {"a":"bizlaw-statutory-lien","b":"bizlaw-third-party-performance","type":"shares-source","score":10000}
@@ -10393,7 +10385,7 @@
 {"a":"econ-welfare-economics","b":"mgmt-coordination-costs-arrow","type":"shares-thinker","score":3333}
 {"a":"econ-welfare-economics","b":"mgmt-delphi-method","type":"shares-source","score":3333}
 {"a":"econ-welfare-economics","b":"mgmt-newsvendor-model","type":"shares-thinker","score":3333}
-{"a":"econ-welfare-economics-bergson-samuelson","b":"econ-welfare-economics-pigou-kaldor-hicks","type":"term-overlap","score":1245}
+{"a":"econ-welfare-economics-bergson-samuelson","b":"econ-welfare-economics-pigou-kaldor-hicks","type":"term-overlap","score":1244}
 {"a":"econ-welfare-economics-bergson-samuelson","b":"econ-welfare-economics-pigou-kaldor-hicks","type":"shares-thinker","score":5000}
 {"a":"econ-welfare-economics-bergson-samuelson","b":"econ-welfare-theorems","type":"shares-thinker","score":10000}
 {"a":"econ-welfare-economics-pigou-kaldor-hicks","b":"econ-welfare-theorems","type":"term-overlap","score":1242}
@@ -11303,7 +11295,7 @@
 {"a":"human-attachment-style-theory","b":"human-attachment-theory-bowlby","type":"shares-thinker","score":6667}
 {"a":"human-attachment-style-theory","b":"human-attachment-theory-bowlby","type":"same-category","score":841}
 {"a":"human-attachment-style-theory","b":"human-dialectical-behavior-therapy-linehan","type":"shares-source","score":10000}
-{"a":"human-attachment-style-theory","b":"human-durkheim-suicide","type":"same-category","score":428}
+{"a":"human-attachment-style-theory","b":"human-durkheim-suicide","type":"same-category","score":429}
 {"a":"human-attachment-style-theory","b":"human-motivational-interviewing-miller-rollnick","type":"shares-source","score":10000}
 {"a":"human-attachment-style-theory","b":"human-narrative-psychology","type":"shares-source","score":3333}
 {"a":"human-attachment-styles-hazan-shaver","b":"human-attachment-theory-adult","type":"same-category","score":811}
@@ -14237,7 +14229,7 @@
 {"a":"infosoc-algorithmic-governance-danaher","b":"infosoc-solutionism","type":"same-category","score":434}
 {"a":"infosoc-algorithmic-governance-danaher","b":"infosoc-technological-somnambulism-winner","type":"same-category","score":434}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-algorithmic-governance-yeung","type":"shares-thinker","score":2500}
-{"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-algorithmic-governmentality","type":"same-category","score":836}
+{"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-algorithmic-governmentality","type":"same-category","score":834}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-behavioral-surplus-zuboff","type":"shares-thinker","score":2500}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-computational-propaganda-bots","type":"shares-source","score":5000}
 {"a":"infosoc-algorithmic-governance-rouvroy","b":"infosoc-data-sovereignty-digital-rights","type":"shares-thinker","score":2500}
@@ -14264,7 +14256,7 @@
 {"a":"infosoc-algorithmic-governance-yeung","b":"infosoc-data-ethics","type":"shares-thinker","score":6667}
 {"a":"infosoc-algorithmic-governance-yeung","b":"infosoc-data-ethics","type":"same-category","score":2026}
 {"a":"infosoc-algorithmic-governance-yeung","b":"infosoc-protocol-politics-galloway","type":"same-category","score":436}
-{"a":"infosoc-algorithmic-governmentality","b":"infosoc-domestication","type":"same-category","score":836}
+{"a":"infosoc-algorithmic-governmentality","b":"infosoc-domestication","type":"same-category","score":834}
 {"a":"infosoc-algorithmic-governmentality","b":"infosoc-mediatization-theory","type":"shares-source","score":3333}
 {"a":"infosoc-algorithmic-governmentality","b":"infosoc-meme-culture","type":"shares-source","score":5000}
 {"a":"infosoc-algorithmic-governmentality","b":"mgmt-network-organization","type":"shares-source","score":5000}
@@ -16062,7 +16054,7 @@
 {"a":"infosoc-non-places-auge","b":"infosoc-technological-singularity","type":"same-category","score":399}
 {"a":"infosoc-non-places-auge","b":"infosoc-textual-poaching-jenkins","type":"shares-thinker","score":2500}
 {"a":"infosoc-non-places-auge","b":"infosoc-wisdom-of-crowds","type":"same-category","score":401}
-{"a":"infosoc-obfuscation-brunton-nissenbaum","b":"infosoc-post-digital-aesthetics-cramer","type":"same-category","score":407}
+{"a":"infosoc-obfuscation-brunton-nissenbaum","b":"infosoc-post-digital-aesthetics-cramer","type":"same-category","score":406}
 {"a":"infosoc-obfuscation-brunton-nissenbaum","b":"infosoc-privacy-surveillance","type":"shares-thinker","score":3333}
 {"a":"infosoc-obfuscation-brunton-nissenbaum","b":"infosoc-transmedia-storytelling","type":"same-category","score":396}
 {"a":"infosoc-obfuscation-brunton-nissenbaum","b":"mgmt-identity-work-pratt","type":"shares-thinker","score":2500}
@@ -16750,10 +16742,10 @@
 {"a":"labor-flextime","b":"labor-work-rules","type":"shares-source","score":5000}
 {"a":"labor-flextime","b":"labor-worktime-aggregation","type":"shares-source","score":5000}
 {"a":"labor-flextime","b":"labor-worktime-tracking","type":"shares-source","score":10000}
-{"a":"labor-foreign-employment-report","b":"labor-foreign-worker-status","type":"term-overlap","score":1306}
-{"a":"labor-foreign-employment-report","b":"labor-foreign-worker-status","type":"same-category","score":1306}
+{"a":"labor-foreign-employment-report","b":"labor-foreign-worker-status","type":"term-overlap","score":1304}
+{"a":"labor-foreign-employment-report","b":"labor-foreign-worker-status","type":"same-category","score":1304}
 {"a":"labor-foreign-employment-report","b":"labor-safety-education","type":"same-category","score":782}
-{"a":"labor-foreign-employment-report","b":"legal-tokyo-customer-harassment-ordinance","type":"term-overlap","score":1589}
+{"a":"labor-foreign-employment-report","b":"legal-tokyo-customer-harassment-ordinance","type":"term-overlap","score":1586}
 {"a":"labor-foreign-worker-status","b":"labor-postpartum-paternity-leave","type":"same-category","score":459}
 {"a":"labor-gender-equality","b":"labor-maternity-harassment","type":"term-overlap","score":1566}
 {"a":"labor-gender-equality","b":"labor-maternity-harassment","type":"same-category","score":1566}
@@ -16801,7 +16793,7 @@
 {"a":"labor-leave-allowance","b":"subsidy-jobseeker-training-benefit","type":"shares-source","score":5000}
 {"a":"labor-legal-holiday","b":"labor-overtime-premium","type":"term-overlap","score":1288}
 {"a":"labor-legal-holiday","b":"labor-overtime-premium","type":"same-category","score":1288}
-{"a":"labor-long-term-care-insurance","b":"labor-national-pension","type":"same-category","score":833}
+{"a":"labor-long-term-care-insurance","b":"labor-national-pension","type":"same-category","score":834}
 {"a":"labor-managerial-supervisor","b":"labor-medical-interview","type":"shares-source","score":5000}
 {"a":"labor-managerial-supervisor","b":"labor-minor-protection","type":"same-category","score":816}
 {"a":"labor-managerial-supervisor","b":"labor-paid-leave-timing","type":"same-category","score":1185}
@@ -16857,7 +16849,7 @@
 {"a":"labor-national-pension","b":"labor-workers-comp-rate","type":"same-category","score":415}
 {"a":"labor-national-pension","b":"legal-adult-age-18","type":"shares-source","score":3333}
 {"a":"labor-national-pension","b":"legal-family-register-furigana","type":"shares-source","score":3333}
-{"a":"labor-national-pension","b":"legal-foreign-bribery","type":"term-overlap","score":1209}
+{"a":"labor-national-pension","b":"legal-foreign-bribery","type":"term-overlap","score":1210}
 {"a":"labor-national-pension","b":"legal-freelance-protection-act","type":"shares-source","score":5000}
 {"a":"labor-national-pension","b":"legal-inheritance-registration-mandatory","type":"shares-source","score":5000}
 {"a":"labor-national-pension","b":"legal-land-state-attribution","type":"shares-source","score":3333}
@@ -17095,7 +17087,7 @@
 {"a":"legal-companies-act-2019-reform","b":"legal-shareholders-meeting","type":"same-category","score":430}
 {"a":"legal-companies-act-2019-reform","b":"tax-nisa","type":"shares-source","score":5000}
 {"a":"legal-computer-virus","b":"legal-email-ad-optin","type":"same-category","score":421}
-{"a":"legal-computer-virus","b":"legal-telemarketing-sales","type":"same-category","score":445}
+{"a":"legal-computer-virus","b":"legal-telemarketing-sales","type":"same-category","score":444}
 {"a":"legal-consumer-collective-litigation","b":"legal-consumer-contract-amendment","type":"shares-source","score":5000}
 {"a":"legal-consumer-collective-litigation","b":"legal-consumer-dpf","type":"shares-source","score":10000}
 {"a":"legal-consumer-collective-litigation","b":"legal-document-electronic","type":"shares-source","score":5000}
@@ -17244,7 +17236,7 @@
 {"a":"legal-design-right","b":"legal-trade-disparagement","type":"shares-source","score":5000}
 {"a":"legal-design-right","b":"legal-trademark","type":"shares-source","score":10000}
 {"a":"legal-design-right","b":"legal-unfair-competition","type":"shares-source","score":5000}
-{"a":"legal-design-right","b":"legal-utility-model","type":"term-overlap","score":1916}
+{"a":"legal-design-right","b":"legal-utility-model","type":"term-overlap","score":1915}
 {"a":"legal-design-right","b":"legal-utility-model","type":"shares-source","score":10000}
 {"a":"legal-disability-accommodation","b":"legal-freelance-protection-act","type":"shares-source","score":5000}
 {"a":"legal-disability-accommodation","b":"legal-inheritance-registration-mandatory","type":"shares-source","score":5000}
@@ -17263,7 +17255,7 @@
 {"a":"legal-economic-security-promotion-act","b":"legal-unauthorized-access","type":"same-category","score":418}
 {"a":"legal-economic-security-promotion-act","b":"mgmt-supply-chain-resilience-disruption","type":"shares-source","score":3333}
 {"a":"legal-edoc-stamp-exempt","b":"mgmt-penrose-growth","type":"shares-source","score":5000}
-{"a":"legal-edoc-stamp-exempt","b":"tax-stamp-duty-electronic","type":"discipline-bridge","score":2064}
+{"a":"legal-edoc-stamp-exempt","b":"tax-stamp-duty-electronic","type":"discipline-bridge","score":2061}
 {"a":"legal-edoc-stamp-exempt","b":"tax-stamp-duty-electronic","type":"shares-source","score":10000}
 {"a":"legal-electronic-consumer-contract","b":"legal-trade-name","type":"shares-source","score":5000}
 {"a":"legal-electronic-consumer-contract","b":"subsidy-housing-security","type":"shares-source","score":3333}
@@ -17312,7 +17304,7 @@
 {"a":"legal-foreign-bribery","b":"legal-limited-provision-data","type":"same-category","score":744}
 {"a":"legal-foreign-bribery","b":"legal-trade-disparagement","type":"same-category","score":744}
 {"a":"legal-franchise","b":"legal-share-types","type":"same-category","score":396}
-{"a":"legal-franchise","b":"legal-telemarketing-sales","type":"same-category","score":473}
+{"a":"legal-franchise","b":"legal-telemarketing-sales","type":"same-category","score":472}
 {"a":"legal-freelance-protection-act","b":"legal-inheritance-registration-mandatory","type":"shares-source","score":10000}
 {"a":"legal-freelance-protection-act","b":"legal-land-state-attribution","type":"shares-source","score":5000}
 {"a":"legal-freelance-protection-act","b":"legal-subcontract-act","type":"shares-source","score":10000}
@@ -17322,8 +17314,8 @@
 {"a":"legal-freelance-protection-act","b":"tax-nisa","type":"shares-source","score":5000}
 {"a":"legal-funds-transfer","b":"legal-prepaid-payment","type":"same-category","score":791}
 {"a":"legal-guarantee-contract","b":"legal-money-lending","type":"same-category","score":426}
-{"a":"legal-guarantee-contract","b":"legal-personal-guarantee-reform","type":"term-overlap","score":3926}
-{"a":"legal-guarantee-contract","b":"legal-personal-guarantee-reform","type":"same-category","score":3926}
+{"a":"legal-guarantee-contract","b":"legal-personal-guarantee-reform","type":"term-overlap","score":3922}
+{"a":"legal-guarantee-contract","b":"legal-personal-guarantee-reform","type":"same-category","score":3922}
 {"a":"legal-handwritten-will-storage","b":"legal-keihyo-management","type":"same-category","score":514}
 {"a":"legal-handwritten-will-storage","b":"tax-registration-license-tax","type":"shares-source","score":10000}
 {"a":"legal-home-appliance-recycling","b":"legal-waste-management","type":"shares-source","score":3333}
@@ -17360,7 +17352,7 @@
 {"a":"legal-keihyo-commitment","b":"legal-keihyo-surcharge","type":"same-category","score":1750}
 {"a":"legal-keihyo-commitment","b":"legal-premium-labeling-commitment-procedure","type":"term-overlap","score":1796}
 {"a":"legal-keihyo-commitment","b":"legal-premium-labeling-commitment-procedure","type":"same-category","score":1796}
-{"a":"legal-keihyo-commitment","b":"legal-stealth-marketing","type":"same-category","score":1153}
+{"a":"legal-keihyo-commitment","b":"legal-stealth-marketing","type":"same-category","score":1154}
 {"a":"legal-keihyo-management","b":"legal-money-lending","type":"same-category","score":1145}
 {"a":"legal-keihyo-management","b":"legal-stealth-marketing","type":"same-category","score":790}
 {"a":"legal-keihyo-surcharge","b":"legal-land-building-lease","type":"same-category","score":425}
@@ -17452,8 +17444,8 @@
 {"a":"legal-prescription","b":"tax-special-depreciation","type":"shares-source","score":10000}
 {"a":"legal-prescription-renewal","b":"legal-tort-liability","type":"same-category","score":413}
 {"a":"legal-product-liability","b":"legal-tort-liability","type":"same-category","score":495}
-{"a":"legal-product-safety","b":"legal-pse","type":"term-overlap","score":1612}
-{"a":"legal-product-safety","b":"legal-pse","type":"same-category","score":1612}
+{"a":"legal-product-safety","b":"legal-pse","type":"term-overlap","score":1611}
+{"a":"legal-product-safety","b":"legal-pse","type":"same-category","score":1611}
 {"a":"legal-product-safety","b":"subsidy-gotech","type":"shares-source","score":5000}
 {"a":"legal-provider-liability","b":"legal-securities-disclosure","type":"same-category","score":422}
 {"a":"legal-pse","b":"legal-trade-secret","type":"same-category","score":399}
@@ -18820,7 +18812,7 @@
 {"a":"mgmt-focused-factory-skinner","b":"mgmt-sandcone-ferdows","type":"shares-thinker","score":2500}
 {"a":"mgmt-focused-factory-skinner","b":"mgmt-time-based-competition","type":"shares-source","score":10000}
 {"a":"mgmt-focused-factory-skinner","b":"mgmt-value-disciplines-treacy-wiersema","type":"same-category","score":397}
-{"a":"mgmt-fogg-behavior-model","b":"mgmt-organizational-cynicism-dean","type":"same-category","score":418}
+{"a":"mgmt-fogg-behavior-model","b":"mgmt-organizational-cynicism-dean","type":"same-category","score":419}
 {"a":"mgmt-followership","b":"mgmt-toxic-triangle-padilla","type":"same-category","score":425}
 {"a":"mgmt-freemium","b":"mgmt-organizational-cynicism-dean","type":"same-category","score":419}
 {"a":"mgmt-full-range-leadership-bass","b":"mgmt-path-goal-theory-house","type":"shares-thinker","score":2500}
@@ -19987,7 +19979,7 @@
 {"a":"subsidy-child-allowance","b":"subsidy-sapporo","type":"shares-thinker","score":10000}
 {"a":"subsidy-child-allowance","b":"subsidy-sendai","type":"shares-thinker","score":10000}
 {"a":"subsidy-child-allowance","b":"subsidy-shizuoka-city","type":"shares-thinker","score":10000}
-{"a":"subsidy-child-allowance","b":"subsidy-single-parent-allowance","type":"term-overlap","score":1245}
+{"a":"subsidy-child-allowance","b":"subsidy-single-parent-allowance","type":"term-overlap","score":1243}
 {"a":"subsidy-child-allowance","b":"subsidy-single-parent-allowance","type":"shares-thinker","score":10000}
 {"a":"subsidy-child-allowance","b":"subsidy-single-parent-welfare-loan","type":"shares-source","score":5000}
 {"a":"subsidy-child-allowance","b":"subsidy-special-child-allowance","type":"shares-thinker","score":10000}
@@ -20046,7 +20038,7 @@
 {"a":"subsidy-ehime","b":"subsidy-nagoya","type":"same-category","score":455}
 {"a":"subsidy-ehime","b":"subsidy-nara","type":"same-category","score":798}
 {"a":"subsidy-elderly-employment-promotion","b":"subsidy-jinzai-kakuho","type":"same-category","score":392}
-{"a":"subsidy-elderly-employment-promotion","b":"subsidy-occupational-health","type":"same-category","score":444}
+{"a":"subsidy-elderly-employment-promotion","b":"subsidy-occupational-health","type":"same-category","score":443}
 {"a":"subsidy-elderly-employment-promotion","b":"subsidy-work-style-reform-support","type":"same-category","score":887}
 {"a":"subsidy-elderly-jobseeker","b":"subsidy-reemployment-allowance","type":"term-overlap","score":2104}
 {"a":"subsidy-elderly-jobseeker","b":"subsidy-reemployment-allowance","type":"same-category","score":2104}
@@ -20661,7 +20653,7 @@
 {"a":"tax-city-planning-tax","b":"tax-fixed-asset-tax","type":"shares-source","score":3333}
 {"a":"tax-city-planning-tax","b":"tax-furusato-designation","type":"same-category","score":427}
 {"a":"tax-city-planning-tax","b":"tax-individual-business-tax","type":"shares-source","score":5000}
-{"a":"tax-city-planning-tax","b":"tax-real-estate-acquisition","type":"term-overlap","score":1306}
+{"a":"tax-city-planning-tax","b":"tax-real-estate-acquisition","type":"term-overlap","score":1305}
 {"a":"tax-city-planning-tax","b":"tax-resident-tax","type":"shares-source","score":3333}
 {"a":"tax-city-planning-tax","b":"tax-sole-proprietor-notification","type":"shares-source","score":5000}
 {"a":"tax-city-planning-tax","b":"tax-special-collection-resident","type":"shares-source","score":3333}
@@ -20795,7 +20787,7 @@
 {"a":"tax-filing-necessity","b":"tax-retirement-income","type":"same-category","score":870}
 {"a":"tax-fixed-asset-tax","b":"tax-individual-business-tax","type":"shares-source","score":5000}
 {"a":"tax-fixed-asset-tax","b":"tax-light-vehicle-tax","type":"same-category","score":448}
-{"a":"tax-fixed-asset-tax","b":"tax-real-estate-acquisition","type":"term-overlap","score":1713}
+{"a":"tax-fixed-asset-tax","b":"tax-real-estate-acquisition","type":"term-overlap","score":1712}
 {"a":"tax-fixed-asset-tax","b":"tax-sole-proprietor-notification","type":"shares-source","score":5000}
 {"a":"tax-fixed-asset-tax","b":"tax-special-corporate-business-tax","type":"shares-source","score":5000}
 {"a":"tax-flat-amount-reduction-2024","b":"tax-global-minimum-tax","type":"shares-source","score":10000}
@@ -20835,9 +20827,9 @@
 {"a":"tax-hotei-chosho-etax","b":"tax-large-corp-efiling","type":"same-category","score":461}
 {"a":"tax-hotei-chosho-etax","b":"tax-overseas-asset-report","type":"same-category","score":936}
 {"a":"tax-housing-fund-gift","b":"tax-housing-loan-deduction","type":"shares-source","score":5000}
-{"a":"tax-housing-fund-gift","b":"tax-real-estate-acquisition","type":"term-overlap","score":1314}
+{"a":"tax-housing-fund-gift","b":"tax-real-estate-acquisition","type":"term-overlap","score":1313}
 {"a":"tax-housing-fund-gift","b":"tax-tax-free-shop","type":"shares-source","score":5000}
-{"a":"tax-housing-loan-deduction","b":"tax-real-estate-acquisition","type":"term-overlap","score":1314}
+{"a":"tax-housing-loan-deduction","b":"tax-real-estate-acquisition","type":"term-overlap","score":1313}
 {"a":"tax-housing-loan-deduction","b":"tax-tax-free-shop","type":"shares-source","score":10000}
 {"a":"tax-income-categories","b":"tax-loss-offsetting","type":"term-overlap","score":5390}
 {"a":"tax-income-categories","b":"tax-loss-offsetting","type":"same-category","score":5390}
@@ -20937,7 +20929,7 @@
 {"a":"tax-resident-tax","b":"tax-withholding-slip","type":"same-category","score":846}
 {"a":"tax-safety-net-mutual-aid","b":"tax-small-business-mutual-aid","type":"shares-source","score":5000}
 {"a":"tax-safety-net-mutual-aid","b":"tax-small-business-mutual-aid","type":"same-category","score":1154}
-{"a":"tax-scanner-storage","b":"tax-stamp-duty-electronic","type":"same-category","score":413}
+{"a":"tax-scanner-storage","b":"tax-stamp-duty-electronic","type":"same-category","score":412}
 {"a":"tax-securities-account","b":"tax-simplified-consumption","type":"shares-source","score":5000}
 {"a":"tax-securities-account","b":"tax-small-enterprise-mutual-aid","type":"shares-source","score":5000}
 {"a":"tax-securities-account","b":"tax-small-residential-land","type":"shares-source","score":5000}

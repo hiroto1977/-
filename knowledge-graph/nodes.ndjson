@@ -5,7 +5,7 @@
 {"id":"bizlaw-abuse-superior-position","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"優越的地位の濫用（独占禁止法）","year":null,"authors":[],"degree":4}
 {"id":"bizlaw-abusive-dismissal","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"解雇権濫用法理（労働契約法16条）","year":2008,"authors":[],"degree":9}
 {"id":"bizlaw-acceleration-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"加速条項（期限の利益喪失条項）","year":null,"authors":["farnsworth|a","gilmore|g","nowak|d"],"degree":10}
-{"id":"bizlaw-accord-and-satisfaction","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"和解合意と履行——係争中の債務の合意的解決の法理","year":null,"authors":["ウィリストン|サ","ダーソン|ジ","ファーンズワース|ア"],"degree":16}
+{"id":"bizlaw-accord-and-satisfaction","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"和解合意と履行——係争中の債務の合意的解決の法理","year":null,"authors":["ウィリストン|サ","ダーソン|ジ","ファーンズワース|ア"],"degree":15}
 {"id":"bizlaw-act-of-state-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国家行為の法理（Act of State Doctrine）","year":1897,"authors":["hernandez|u","sabbatino|b"],"degree":4}
 {"id":"bizlaw-act-on-electronic-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"電子契約法（電子消費者契約に関する民法の特例法）","year":2001,"authors":[],"degree":4}
 {"id":"bizlaw-act-on-prevention-of-criminal-proceeds","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"犯罪収益移転防止法","year":2007,"authors":[],"degree":10}
@@ -137,10 +137,10 @@
 {"id":"bizlaw-competition-law-merger-control","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"企業結合規制と競争法——独占禁止法における合併審査の基準と実務","year":null,"authors":["オルテガ|レ","シャピロ|カ","ホーベンカンプ|ハ"],"degree":16}
 {"id":"bizlaw-competition-law-merger-control-eu","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU競争法における企業結合規制——欧州委員会の合併審査とSIECテスト","year":null,"authors":["ウィッシュ|リ","モンティ|マ","ヴェスタガー|マ"],"degree":6}
 {"id":"bizlaw-compliance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"コンプライアンス（法令遵守と企業倫理）","year":1991,"authors":[],"degree":4}
-{"id":"bizlaw-condition-precedent","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":22}
+{"id":"bizlaw-condition-precedent","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":21}
 {"id":"bizlaw-condition-suspensive","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"停止条件・解除条件","year":2017,"authors":[],"degree":3}
 {"id":"bizlaw-condominium-ownership","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"区分所有（区分所有法）","year":null,"authors":[],"degree":15}
-{"id":"bizlaw-consideration-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約因の法理——約束が拘束力を持つために要する交換的対価","year":null,"authors":["ウィリストン|サ","コービン|ア","フラー|ロ","ホームズ|オ"],"degree":22}
+{"id":"bizlaw-consideration-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"約因の法理——約束が拘束力を持つために要する交換的対価","year":null,"authors":["ウィリストン|サ","コービン|ア","フラー|ロ","ホームズ|オ"],"degree":23}
 {"id":"bizlaw-constructive-trust-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"擬制信託——不当利得防止のための衡平法上の救済手段","year":null,"authors":["カードーゾ|ベ","スコット|オ","バロウズ|ア","ボガート|ジ"],"degree":11}
 {"id":"bizlaw-consumer-basic-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者基本法","year":1968,"authors":[],"degree":6}
 {"id":"bizlaw-consumer-collective-redress","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"消費者裁判手続特例法（消費者団体訴訟制度）","year":2013,"authors":[],"degree":5}
@@ -313,7 +313,7 @@
 {"id":"bizlaw-fraudulent-transfer-avoidance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"詐害行為取消権（詐欺的譲渡回避）","year":null,"authors":["baird|d","carlson|d","jackson|t","reilly|m","sherwin|e"],"degree":11}
 {"id":"bizlaw-freedom-of-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約自由の原則","year":2017,"authors":[],"degree":14}
 {"id":"bizlaw-freelance-protection","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"フリーランス保護新法（特定受託事業者取引適正化等法）","year":2023,"authors":[],"degree":3}
-{"id":"bizlaw-frustration-of-purpose","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア","フラー|ロ"],"degree":22}
+{"id":"bizlaw-frustration-of-purpose","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア","フラー|ロ"],"degree":21}
 {"id":"bizlaw-full-protection-and-security","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"十分な保護及び安全（Full Protection and Security）","year":1990,"authors":["aapl|","republic|c","unctad|"],"degree":10}
 {"id":"bizlaw-fundamental-breach","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"根本的契約違反——契約の根幹を覆す違反と免責条項解釈の構成問題","year":null,"authors":["トライテル|ギ"],"degree":6}
 {"id":"bizlaw-general-average","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"共同海損——共通の危険を逃れるための犠牲を全関係者で分担する海法","year":null,"authors":["アボット|チ","ユスティニアヌス|"],"degree":2}
@@ -338,7 +338,7 @@
 {"id":"bizlaw-holder-in-due-course-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"正当所持人の法理","year":null,"authors":["chalmers|m","daniel|j","llewellyn|k","maggs|g","murray|w"],"degree":17}
 {"id":"bizlaw-hoteijichijoken","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法定地上権（民法388条）","year":null,"authors":[],"degree":16}
 {"id":"bizlaw-howey-investment-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準","year":1933,"authors":["act|s","assets|s","enterprises|s","howey|s"],"degree":14}
-{"id":"bizlaw-illegality-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違法な契約——法令や公序に反する契約の執行不能性","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":24}
+{"id":"bizlaw-illegality-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違法な契約——法令や公序に反する契約の執行不能性","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":23}
 {"id":"bizlaw-immigration-control","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"出入国管理及び難民認定法（入管法）","year":2018,"authors":[],"degree":2}
 {"id":"bizlaw-implied-covenant-good-faith","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"誠実義務・公正取引の黙示的誓約","year":null,"authors":["burton|s","dubroff|h","farnsworth|a","houh|e","summers|r"],"degree":10}
 {"id":"bizlaw-implied-terms","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"黙示の契約条項——当事者が明示せずとも契約に読み込まれる条項","year":null,"authors":[],"degree":3}
@@ -414,7 +414,7 @@
 {"id":"bizlaw-lien","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"リーエン——債務の弁済まで他人の財産に及ぶ担保的権利","year":null,"authors":["ギルモア|グ","ストーリー|ジ","ブラックストン|ウ"],"degree":15}
 {"id":"bizlaw-lien-priority-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"担保権優先順位の法則","year":null,"authors":["gilmore|g","harris|s","lopucki|l"],"degree":10}
 {"id":"bizlaw-limited-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株主有限責任の原則","year":null,"authors":[],"degree":4}
-{"id":"bizlaw-liquidated-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定——違約金条項の有効性と違約罰との区別","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":16}
+{"id":"bizlaw-liquidated-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定——違約金条項の有効性と違約罰との区別","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":15}
 {"id":"bizlaw-liquidated-damages-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害賠償額の予定条項（清算損害賠償条項）","year":null,"authors":["サムナー|ア","ホームズ|オ","ルース|マ"],"degree":10}
 {"id":"bizlaw-local-autonomy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"地方自治法","year":1947,"authors":[],"degree":11}
 {"id":"bizlaw-local-tax-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"地方税法","year":1950,"authors":[],"degree":3}
@@ -439,10 +439,10 @@
 {"id":"bizlaw-merger-of-obligations","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"混同（民法520条）","year":null,"authors":["law|e"],"degree":22}
 {"id":"bizlaw-minimum-wage-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"最低賃金法","year":1959,"authors":[],"degree":3}
 {"id":"bizlaw-minority-oppression-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理","year":null,"authors":["オニール|ホ","トンプソン|ロ","ヘザリントン|ジ","マイナー|ダ"],"degree":5}
-{"id":"bizlaw-misrepresentation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示（misrepresentation、英米契約法）","year":1967,"authors":[],"degree":5}
+{"id":"bizlaw-misrepresentation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示（misrepresentation、英米契約法）","year":1967,"authors":[],"degree":6}
 {"id":"bizlaw-misrepresentation-contract-law","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"不実表示法理——契約締結前の虚偽表示に対する救済体系","year":null,"authors":["カータライト|ジ","トレーテル|ギ","バロウズ|ア","ペール|エ"],"degree":17}
 {"id":"bizlaw-mistake","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"錯誤（民法95条）","year":2020,"authors":[],"degree":3}
-{"id":"bizlaw-mistake-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":24}
+{"id":"bizlaw-mistake-contract","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"契約の錯誤——合意の基礎をなす事実の誤認による契約の無効・取消","year":null,"authors":["ウィリストン|サ","コービン|ア"],"degree":23}
 {"id":"bizlaw-mitigation-of-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":15}
 {"id":"bizlaw-money-lending-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"貸金業法","year":2006,"authors":[],"degree":9}
 {"id":"bizlaw-moral-rights","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"著作者人格権（著作権法18〜20条）","year":null,"authors":["law|e"],"degree":29}
@@ -457,7 +457,7 @@
 {"id":"bizlaw-national-pension","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国民年金法","year":1959,"authors":[],"degree":12}
 {"id":"bizlaw-national-treatment","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"内国民待遇原則（National Treatment）","year":1947,"authors":["gatt|"],"degree":11}
 {"id":"bizlaw-negative-pledge","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"担保提供制限条項——他の債権者に担保を与えない約束","year":null,"authors":["ウッド|フ","グード|ロ","ベンジャミン|ジ","ホフマン|ロ"],"degree":9}
-{"id":"bizlaw-negligence-duty-of-care","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任","year":null,"authors":["カードーゾ|ベ","プロッサー|ウ"],"degree":18}
+{"id":"bizlaw-negligence-duty-of-care","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任","year":null,"authors":["カードーゾ|ベ","プロッサー|ウ"],"degree":19}
 {"id":"bizlaw-negligence-per-se","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法定過失（Negligence Per Se）","year":null,"authors":["キートン|ウ","プロッサー|ウ","ホームズ|オ"],"degree":17}
 {"id":"bizlaw-negotiable-instruments-act-boia","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"有価証券法——手形・小切手の流通と善意取得者保護","year":null,"authors":["チャルマーズ|チ","ロジャーズ|ジ"],"degree":14}
 {"id":"bizlaw-negotiorum-gestio","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"事務管理（民法697条）","year":null,"authors":["law|e"],"degree":11}
@@ -486,7 +486,7 @@
 {"id":"bizlaw-payment-services-act","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"資金決済法","year":2009,"authors":[],"degree":4}
 {"id":"bizlaw-payment-services-directive-psd2","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"EU決済サービス指令（PSD2）——オープンバンキングと決済市場の自由化","year":null,"authors":["ツィーゲルマイヤー|デ","ハーン|ル"],"degree":2}
 {"id":"bizlaw-pemsel-charity-heads","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ペムゼルの四類型——慈善目的の古典的な分類","year":null,"authors":["ピカルダ|ヒ","マクギー|ジ","マクナテン|ロ","メグリー|ロ"],"degree":15}
-{"id":"bizlaw-penalty-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性","year":null,"authors":["ウィリストン|サ"],"degree":22}
+{"id":"bizlaw-penalty-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性","year":null,"authors":["ウィリストン|サ"],"degree":21}
 {"id":"bizlaw-penalty-clause-comparative","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違約金条項・損害賠償予定と比較契約法","year":null,"authors":["クラーク|ロ","クレイグ|ポ","バセドウ|ユ"],"degree":11}
 {"id":"bizlaw-penalty-clause-liquidated-damages","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制","year":null,"authors":["アンドリュース|ニ","トレビルコック|マ","ペール|エ"],"degree":13}
 {"id":"bizlaw-perfect-tender-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準","year":1952,"authors":["autosport|r","ルウェリン|カ"],"degree":18}
@@ -579,7 +579,7 @@
 {"id":"bizlaw-shareholder-oppression-remedy","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）","year":null,"authors":["トンプソン|ロ","トーマス|ラ","ホフマン|レ","モル|ダ"],"degree":10}
 {"id":"bizlaw-shareholder-primacy-doctrine","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株主優先主義（シェアホルダー・プライマシー）","year":null,"authors":["freeman|e","friedman|m","jensen|m","stout|l"],"degree":10}
 {"id":"bizlaw-shareholders-derivative-suit","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"株主代表訴訟——会社に代わる取締役責任追及の法的仕組み","year":null,"authors":["クラーク|ロ","コーヒー|ジ","シュミット|ラ"],"degree":25}
-{"id":"bizlaw-shelter-rule-negotiable-instruments","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"シェルター・ルール（Shelter Rule／遮蔽の法理）","year":1998,"authors":["gilmore|g","llewellyn|k","maggs|g"],"degree":11}
+{"id":"bizlaw-shelter-rule-negotiable-instruments","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"シェルター・ルール（Shelter Rule／遮蔽の法理）","year":1998,"authors":["gilmore|g","llewellyn|k","maggs|g"],"degree":12}
 {"id":"bizlaw-short-swing-profit-rule","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール","year":1934,"authors":["act|s","corp|k","corp|s","electric|r"],"degree":7}
 {"id":"bizlaw-shozoken-publicity","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"肖像権・パブリシティ権","year":null,"authors":[],"degree":17}
 {"id":"bizlaw-silent-partnership-tokumei-kumiai","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける","year":null,"authors":[],"degree":3}
@@ -588,7 +588,7 @@
 {"id":"bizlaw-sovereign-equality","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"主権平等原則（Principle of Sovereign Equality）","year":1648,"authors":[],"degree":10}
 {"id":"bizlaw-sovereign-immunity-waiver","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"主権免除と放棄（ソブリン・イミュニティ）","year":null,"authors":["フォックス|ガ","ライル|ア","ラウターパクト|ハ"],"degree":10}
 {"id":"bizlaw-sovereign-wealth-fund-governance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ソブリン・ウェルス・ファンドのガバナンスとサンティアゴ原則","year":null,"authors":["シュライファー|ア","トライマン|エ","ヘラービー|ラ"],"degree":10}
-{"id":"bizlaw-specific-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ","ファーンズワース|ア"],"degree":14}
+{"id":"bizlaw-specific-performance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済","year":null,"authors":["ウィリストン|サ","コービン|ア","ストーリー|ジ","ファーンズワース|ア"],"degree":13}
 {"id":"bizlaw-specified-commercial-transactions","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"特定商取引法","year":1976,"authors":[],"degree":19}
 {"id":"bizlaw-squeeze-out","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スクイーズアウト（特別支配株主の株式等売渡請求）","year":2015,"authors":[],"degree":2}
 {"id":"bizlaw-stabilization-clause","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"安定化条項（Stabilization Clause）","year":1803,"authors":["icsid|"],"degree":13}
@@ -596,8 +596,7 @@
 {"id":"bizlaw-standstill-agreement","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スタンドスティル契約","year":null,"authors":["coates|j","gilson|r","stout|l","subramanian|g"],"degree":13}
 {"id":"bizlaw-standstill-agreement-ma","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"スタンドスティル協定（M&A）","year":null,"authors":["アイズン|イ","クラーク|ロ","リプトン|マ"],"degree":10}
 {"id":"bizlaw-state-liability","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"国家賠償（国家賠償法1条・2条）","year":null,"authors":[],"degree":4}
-{"id":"bizlaw-statute-of-frauds","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"詐欺防止法","year":null,"authors":["corbin|a","fuller|l","llewellyn|k","posner|e","williston|s"],"degree":13}
-{"id":"bizlaw-statute-of-frauds-modern","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"詐欺防止法の現代的展開——書面要件と電子契約の適用","year":null,"authors":["ウィリストン|サ","コービン|ア","ファーンズワース|ア"],"degree":11}
+{"id":"bizlaw-statute-of-frauds","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"詐欺防止法","year":null,"authors":["corbin|a","fuller|l","llewellyn|k","posner|e","williston|s"],"degree":12}
 {"id":"bizlaw-statutory-audit-corporate-governance","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"法定監査と企業統治における監査委員会の機能","year":null,"authors":["ウィリアムズ|ゲ","デービース|ポ","フリードマン|マ"],"degree":12}
 {"id":"bizlaw-statutory-lien","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"先取特権（民法303条）","year":null,"authors":[],"degree":15}
 {"id":"bizlaw-stealth-marketing-regulation","collection":"academic","category":"business-law","categoryLabel":"ビジネス法務","title":"ステルスマーケティング規制（景品表示法のステマ告示）","year":2023,"authors":[],"degree":2}
