@@ -78,7 +78,7 @@ npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブ
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
-npm run verify:all         # all of the above + eslint (17 ゲート)
+npm run verify:all         # typecheck + all of the above + eslint (18 ゲート)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)

@@ -12,10 +12,9 @@ const { corpusFingerprint, staleQueueReport } = req('../../../scripts/knowledge-
 };
 
 type Entry = { collection: string; id: string; summary: string };
-const entries: Entry[] = [
-  { collection: 'academic', id: 'a-1', summary: 'あいうえお' },
-  { collection: 'compliance', id: 'c-1', summary: 'かきくけこ' },
-];
+const academic: Entry = { collection: 'academic', id: 'a-1', summary: 'あいうえお' };
+const compliance: Entry = { collection: 'compliance', id: 'c-1', summary: 'かきくけこ' };
+const entries: Entry[] = [academic, compliance];
 const freshQueue = (over: Record<string, unknown> = {}) => ({
   corpusFingerprint: corpusFingerprint(entries),
   queues: { enrich: [{ id: 'a-1', collection: 'academic', chars: 5 }], missingAsOf: [{ collection: 'academic', count: 3 }] },
@@ -32,20 +31,20 @@ describe('corpusFingerprint', () => {
   });
 
   it('本文の長さが変わると指紋も変わる（増強を検出できる）', () => {
-    const grown = [{ ...entries[0], summary: entries[0].summary + 'さ' }, entries[1]];
+    const grown = [{ ...academic, summary: `${academic.summary}さ` }, compliance];
     expect(corpusFingerprint(grown)).not.toBe(corpusFingerprint(entries));
   });
 
   it('項目が消えると指紋も変わる（統合削除を検出できる）', () => {
-    expect(corpusFingerprint([entries[0]])).not.toBe(corpusFingerprint(entries));
+    expect(corpusFingerprint([academic])).not.toBe(corpusFingerprint(entries));
   });
 
   it('id が変わると指紋も変わる', () => {
-    expect(corpusFingerprint([{ ...entries[0], id: 'a-2' }, entries[1]])).not.toBe(corpusFingerprint(entries));
+    expect(corpusFingerprint([{ ...academic, id: 'a-2' }, compliance])).not.toBe(corpusFingerprint(entries));
   });
 
   it('同じ id でもコレクションが違えば別物として数える', () => {
-    expect(corpusFingerprint([{ ...entries[0], collection: 'compliance' }, entries[1]])).not.toBe(
+    expect(corpusFingerprint([{ ...academic, collection: 'compliance' }, compliance])).not.toBe(
       corpusFingerprint(entries),
     );
   });
