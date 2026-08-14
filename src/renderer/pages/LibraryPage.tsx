@@ -212,6 +212,7 @@ export function LibraryPage() {
               {visible.map((it) => (
                 <div
                   key={it.id}
+                  data-library-item={it.mime}
                   style={{
                     background: 'var(--bg-elev)',
                     border: '1px solid var(--border)',
@@ -234,7 +235,7 @@ export function LibraryPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    <button type="button" onClick={() => preview(it.id)} style={actionBtn('accent')}>
+                    <button type="button" data-library-open={it.id} onClick={() => preview(it.id)} style={actionBtn('accent')}>
                       開く
                     </button>
                     <button type="button" onClick={() => download(it.id)} style={actionBtn()}>
@@ -257,7 +258,7 @@ export function LibraryPage() {
 
       {shown && (
         <Section title={`プレビュー — ${shown.filename}`}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div data-preview-panel={shown.kind} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{shown.mime}</span>
               {shown.kind === 'text' && (
@@ -275,12 +276,14 @@ export function LibraryPage() {
             </div>
             {shown.kind === 'image' ? (
               <img
+                data-preview="image"
                 src={shown.body}
                 alt={shown.filename}
                 style={{ maxWidth: '100%', background: '#fff', borderRadius: 6, border: '1px solid var(--border)' }}
               />
             ) : (
               <pre
+                data-preview="text"
                 style={{
                   margin: 0,
                   padding: 12,

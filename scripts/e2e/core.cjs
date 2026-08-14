@@ -289,6 +289,42 @@ async function desktopSuite(browser) {
   );
   ok(true, 'legal: 「すべて」で絞り込みが解除される');
 
+  // ライブラリの「開く」。ここは `window.open(blob:)` をやめてアプリ内表示に
+  // 変えた箇所で、**デスクトップ版では元から無反応**だった (setWindowOpenHandler
+  // が blob: を落とすため)。単体は mime の振り分けしか見ていないので、
+  // 「書き出し → 保存 → 開くと実際に絵が出る」までを実ブラウザで通す。
+  await gotoService(page, '#templates', 'button');
+  // `invoke` は失敗しても throw せず `{ok:false}` を返す。戻り値を見ないと
+  // 書き出しが黙って失敗し、あとの待機がただのタイムアウトになって
+  // 「なぜ落ちたか」が分からなくなる（実際に一度そうなった）。
+  const exported = await page.evaluate(async () => {
+    const res = await window.serviceHub.invoke('templates', 'export-template', {
+      templateId: 'invoice-header',
+      params: {},
+    });
+    return res.ok === true;
+  });
+  ok(exported, 'library: テンプレートの書き出しが成功する');
+  await gotoService(page, '#library', '[data-library-item]');
+  ok(
+    (await page.locator('[data-library-item="image/svg+xml"]').count()) > 0,
+    'library: 書き出した SVG がライブラリに入る',
+  );
+  // 開く前はプレビュー枠が存在しない（負のコントロール: 常に出ている枠を
+  // 「表示できた」と数えないため）。
+  ok((await page.locator('[data-preview-panel]').count()) === 0, 'library: 開く前はプレビューが無い');
+  await page.locator('[data-library-open]').first().click();
+  await page.waitForSelector('[data-preview-panel="image"]', { timeout: 15000 });
+  ok(true, 'library: 「開く」でアプリ内にプレビューが出る（無反応でない）');
+  // data: URL の <img> であること。blob: や新規タブに戻っていたら落ちる。
+  const previewSrc = await page.locator('[data-preview="image"]').getAttribute('src');
+  ok(
+    typeof previewSrc === 'string' && previewSrc.startsWith('data:image/svg+xml'),
+    'library: SVG は data: URL の <img> で描画される（同一オリジン文書にしない）',
+  );
+  // 新しいタブが開いていないこと。window.open へ戻したらここが落ちる。
+  ok(ctx.pages().length === 1, 'library: 新しいタブを開かない');
+
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(realErrs.length === 0, `desktop: console エラーゼロ (${realErrs.length})`);
   if (realErrs.length) console.log(realErrs.join('\n'));
