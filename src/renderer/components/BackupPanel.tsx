@@ -60,7 +60,13 @@ export function BackupPanel() {
       }
       const records = await parseBackup(text, pw);
       const n = await getRecordStore().importAll(records, { replace });
-      setMsg(`${n} 件のレコードを復元しました${replace ? '（既存データは置換）' : '（マージ）'}。再読み込みで反映されます。`);
+      // importAll は形式の合わないレコードを黙って捨てる。捨てた件数を言わないと
+      // 「100 件のファイルを入れたのに 60 件と出た」理由が利用者に分からない。
+      const dropped = records.length - n;
+      const droppedNote = dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
+      setMsg(
+        `${n} 件のレコードを復元しました${replace ? '（既存データは置換）' : '（マージ）'}。${droppedNote}再読み込みで反映されます。`,
+      );
     } catch (e) {
       setErr(e instanceof Error ? e.message : '復元に失敗しました');
     }

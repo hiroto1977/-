@@ -37,7 +37,7 @@ aliases:
 - [[bizlaw-unauthorized-access|不正アクセス禁止法]] — 出典を共有
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
-- [[bizlaw-labor-contract-act|労働契約法]] — 同分野の近傍
+- [[bizlaw-cesare-beccaria-classical-school|セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）]] — 同分野の近傍
 - [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — 同分野の近傍
 
 ## 関連

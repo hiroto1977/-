@@ -32,7 +32,6 @@ R.セイラーが1980年に命名／WTA(受入額)>WTP(支払額)／カーネマ
 
 ## 関連概念
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 語彙が近い
-- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 語彙が近い
 - [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
 - [[human-hindsight-bias|後知恵バイアス]] — 出典を共有
 - [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 出典を共有
@@ -41,6 +40,7 @@ R.セイラーが1980年に命名／WTA(受入額)>WTP(支払額)／カーネマ
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 出典を共有
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 出典を共有
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 出典を共有
+- [[mgmt-lead-user|リードユーザー法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

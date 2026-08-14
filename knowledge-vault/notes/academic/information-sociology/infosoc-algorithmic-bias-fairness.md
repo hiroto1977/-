@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同じ思想家
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同分野の近傍
-- [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

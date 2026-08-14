@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]] — 語彙が近い
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+- [[legal-mailorder-disclosure|通信販売の広告表示義務（特定商取引法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

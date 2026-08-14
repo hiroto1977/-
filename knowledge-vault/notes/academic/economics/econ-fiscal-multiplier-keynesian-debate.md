@@ -26,7 +26,7 @@ aliases:
 ジョン・メイナード・ケインズ ／ ロバート・バロー ／ クリスティーナ・ローマー ／ アラン・オーエルバッハ
 
 ## 出典
-- [Ramey, V. (2011) Can Government Purchases Stimulate the Economy? — Journal of Economic Literature](https://doi.org/10.1257/jep.26.3.69) `学術`
+- [Ramey, V. (2011) Can Government Purchases Stimulate the Economy? — Journal of Economic Literature](https://doi.org/10.1257/jel.49.3.673) `学術`
 - [Auerbach, A. & Gorodnichenko, Y. (2012) Measuring the Output Responses to Fiscal Policy — AEJ](https://doi.org/10.1257/aer.102.3.1446) `学術`
 - [Wikipedia: Fiscal multiplier — 財政乗数の理論と実証概観](https://en.wikipedia.org/wiki/Fiscal_multiplier) `リファレンス`
 

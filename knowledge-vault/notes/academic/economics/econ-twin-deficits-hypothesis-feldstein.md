@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Twin deficits hypothesis — fiscal deficit, current account, Mundell-Fleming](https://en.wikipedia.org/wiki/Twin_deficits_hypothesis) `リファレンス`
 
 ## 関連概念
+- [[econ-global-imbalances-bernanke|グローバル・インバランスと貯蓄過剰仮説——経常収支不均衡のマクロ経済学]] — 語彙が近い
 - [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同じ思想家
 - [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
 - [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
-- [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

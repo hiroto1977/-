@@ -34,8 +34,8 @@ aliases:
 - [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同じ思想家
 - [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同じ思想家
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
-- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同分野の近傍
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同分野の近傍
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

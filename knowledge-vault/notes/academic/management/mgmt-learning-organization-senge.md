@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
 - [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — 同分野の近傍
+- [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

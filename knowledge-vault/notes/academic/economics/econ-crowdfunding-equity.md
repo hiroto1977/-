@@ -30,8 +30,8 @@ Belleflamme, Paul （2014 Journal of Business Venturing）／Lambert, Thomas ／
 - [Mollick, E. (2014) The Dynamics of Crowdfunding: An Exploratory Study, Journal of Business Venturing 29(1): 1–16 (Elsevier)](https://doi.org/10.1016/j.jbusvent.2013.06.005) `学術`
 
 ## 関連概念
+- [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

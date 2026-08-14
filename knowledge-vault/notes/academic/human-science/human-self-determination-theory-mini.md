@@ -30,7 +30,7 @@ Edward L. Deci ／ Richard M. Ryan ／ Maarten Vansteenkiste ／ Christopher P. 
 - [Deci & Ryan (1985) — The General Causality Orientations Scale: Self-Determination in Personality (JSCP)](https://doi.org/10.1521/jscp.1985.3.4.394) `学術`
 - [Deci & Ryan (2000) — The "What" and "Why" of Goal Pursuits: Human Needs and the Self-Determination of Behavior (Psychological Inquiry)](https://doi.org/10.1146/annurev.psych.55.090902.141702) `学術`
 - [Self-Determination Theory — Official SDT Website: Overview of the Six Mini-Theories](https://selfdeterminationtheory.org/theory/) `リファレンス`
-- [Vansteenkiste, Niemiec & Soenens (2010) — The Development of the Five Mini-Theories of Self-Determination Theory (Advances in Motivation and Achievement)](https://doi.org/10.1007/978-94-007-7644-4) `学術`
+- [Vansteenkiste, M., Niemiec, C. P. & Soenens, B. (2010) The Development of the Five Mini-Theories of Self-Determination Theory — Advances in Motivation and Achievement, Vol. 16A, pp.105-165, Emerald](https://doi.org/10.1108/S0749-7423(2010)000016A007) `学術`
 
 ## 関連概念
 - [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同じ思想家

@@ -30,9 +30,9 @@ aliases:
 - [中小企業庁「フランチャイズ関連情報」（中小小売商業振興法に基づく法定開示の概要）](https://www.chusho.meti.go.jp/shogyo/fc/index.html) `公的`
 
 ## 関連概念
-- [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 語彙が近い
+- [[legal-franchise|フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）]] — 分野横断
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 同分野の近傍
-- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
+- [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

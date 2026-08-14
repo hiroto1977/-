@@ -26,7 +26,7 @@ aliases:
 W・エドワーズ・デミング ／ ジョセフ・ジュラン ／ フィリップ・クロスビー ／ 石川馨
 
 ## 出典
-- [Deming, W.E. (1986) Out of the Crisis — MIT Press](https://doi.org/10.1002/9781118234013) `学術`
+- [Deming, W. E. (1986) Out of the Crisis — MIT Center for Advanced Engineering Study（2018 年 MIT Press 復刊版の DOI）](https://doi.org/10.7551/mitpress/11457.001.0001) `学術`
 - [Wikipedia: Total quality management — Deming and PDCA](https://en.wikipedia.org/wiki/Total_quality_management) `リファレンス`
 
 ## 関連概念

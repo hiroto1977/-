@@ -36,6 +36,7 @@ aliases:
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
 - [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同分野の近傍
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同分野の近傍
+- [[human-mental-rotation-shepard|メンタル・ローテーション（シェパード＆メッツラー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -18,6 +18,7 @@
  */
 
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
+import { assertKdfIterations } from './dataCrypto';
 
 // Constants below are pinned by integration behavior (DB name / iterations
 // / byte counts) but the exact string values & default arrows are not
@@ -469,6 +470,11 @@ class BrowserVault implements Vault {
       db.close();
     }
     if (!meta) throw new Error('Vault が未初期化です。初回設定を完了してください');
+    // 反復回数はメタから読む = 保存側の値をそのまま信じることになる。壊れた/
+    // 差し替えられたメタが途方もない回数を要求すると PBKDF2 が返らず、
+    // **利用者が自分の資格情報から永久に締め出される**。dataCrypto は同じ検査を
+    // 最初から持っていたのに、資格情報そのものを持つこちらが素通しだった。
+    assertKdfIterations(meta.iterations);
     const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
     try {
       const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });

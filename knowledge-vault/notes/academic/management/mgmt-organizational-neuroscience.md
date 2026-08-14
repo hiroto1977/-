@@ -35,8 +35,8 @@ William J. Becker ／ Russell Cropanzano ／ Carl Senior ／ Nick Lee ／ Colin 
 ## 関連概念
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
 - [[mgmt-social-exchange-theory|社会的交換理論]] — 同じ思想家
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
 - [[mgmt-affective-events-theory-weiss|感情的出来事理論（ワイス＆クロパンザーノ）]] — 同分野の近傍
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

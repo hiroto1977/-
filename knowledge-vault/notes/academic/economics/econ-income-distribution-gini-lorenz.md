@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: ジニ係数 — 所得不平等の計測とローレンツ曲線の解説](https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%8B%E4%BF%82%E6%95%B0) `リファレンス`
 
 ## 関連概念
+- [[econ-gini-coefficient|ジニ係数とローレンツ曲線]] — 語彙が近い
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同じ思想家
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
 - [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
 - [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
-- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

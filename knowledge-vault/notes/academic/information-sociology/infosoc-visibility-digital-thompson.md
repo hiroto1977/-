@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-protocol-galloway|プロトコル——脱中心化したネットワークに内在する新たな統制の様式]] — 同じ思想家
 - [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
 - [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
-- [[infosoc-digital-detox-syvertsen|デジタルデトックス論——テクノロジーからの意図的離脱の社会学]] — 同分野の近傍
 - [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同分野の近傍
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

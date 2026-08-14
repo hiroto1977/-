@@ -36,7 +36,7 @@ aliases:
 - [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
 - [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同じ思想家
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同分野の近傍
-- [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 同分野の近傍
+- [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同分野の近傍
 - [[econ-harrod-domar|ハロッド＝ドーマー成長モデル]] — 同分野の近傍
 
 ## 関連

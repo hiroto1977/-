@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]] — 同分野の近傍
-- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

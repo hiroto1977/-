@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[tax-withholding-payment-special|源泉所得税の納期の特例]] — 語彙が近い
-- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 語彙が近い
+- [[tax-withholding-nonresident|非居住者・外国法人への源泉徴収]] — 同分野の近傍
 - [[tax-stamp-duty-doc|印紙税の課税文書と過怠税]] — 同分野の近傍
 - [[tax-forest-environment-tax|森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）]] — 同分野の近傍
 - [[tax-receipt-stamp|領収書の印紙税と非課税範囲]] — 同分野の近傍

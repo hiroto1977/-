@@ -1,3 +1,7 @@
+import {
+  normalizeAtlassianSiteResult,
+  type AtlassianSiteFailure,
+} from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface JiraProject {
@@ -65,33 +69,31 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
   if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
     throw new FetchError('Atlassian token に制御文字が含まれています', 0, 'atlassian');
   }
-  // Hard-reject anything that isn't https://. Plain http would put the
-  // Basic auth header on the wire in cleartext; non-URL strings (e.g.
-  // `javascript:`, `file:`) would crash the URL parser later and could
-  // exfiltrate the token via a maliciously-crafted "site" field.
-  let parsedSite: URL;
-  try {
-    parsedSite = new URL(obj.site);
-  } catch {
-    throw new FetchError('Atlassian token の site は URL として解釈可能な文字列にしてください', 0, 'atlassian');
+  // https:// と *.atlassian.net への絞り込みは `src/shared/atlassianSite.ts` に
+  // 1 つだけ持つ。plain http は Basic 認証ヘッダを平文で流し、`javascript:` や
+  // `file:` のような非 URL は後段で URL パーサを壊す。ホスト名を絞らないと、
+  // 書き換えられた secrets.json が email+token を任意の HTTPS 先へ向けられる。
+  //
+  // 以前はこの検証をここに書き写しており、shared 側の説明文が「同じ防御を
+  // 張っている」と書いていたが**同じではなかった**。ここは元の文字列から
+  // 末尾の `/` を落とすだけで、パス・クエリ・フラグメント・ポート・userinfo を
+  // 残していた。試した範囲で資格情報を外へ逃がす経路は作れなかったが
+  // (CR/LF は URL パーサが弾き、タブはホスト名を壊す)、
+  // `https://x.atlassian.net/wiki` を貼ると `/wiki/rest/api/3/search` を叩いて
+  // 404 になる、という壊れ方をしていた。
+  const site = normalizeAtlassianSiteResult(obj.site);
+  if (!site.ok) {
+    throw new FetchError(ATLASSIAN_SITE_MESSAGES[site.reason], 0, 'atlassian');
   }
-  if (parsedSite.protocol !== 'https:') {
-    throw new FetchError('Atlassian token の site は https:// で始まる必要があります', 0, 'atlassian');
-  }
-  // Hostname allowlist: Atlassian Cloud always lives on *.atlassian.net.
-  // Without this check, a tampered secrets.json could redirect the
-  // user's email+token to any HTTPS endpoint (= credential exfiltration).
-  if (!parsedSite.hostname.endsWith('.atlassian.net')) {
-    throw new FetchError(
-      'Atlassian token の site は *.atlassian.net である必要があります',
-      0,
-      'atlassian',
-    );
-  }
-  // Strip *all* trailing slashes — handy for tokens whose `site`
-  // accidentally got "https://x.atlassian.net//" from a copy/paste.
-  return { email: obj.email, token: obj.token, site: obj.site.replace(/\/+$/, '') };
+  return { email: obj.email, token: obj.token, site: site.site };
 }
+
+const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
+  'control-char': 'Atlassian token の site に制御文字が含まれています',
+  'not-a-url': 'Atlassian token の site は URL として解釈可能な文字列にしてください',
+  'not-https': 'Atlassian token の site は https:// で始まる必要があります',
+  'not-atlassian': 'Atlassian token の site は *.atlassian.net である必要があります',
+};
 
 function basicAuth(email: string, token: string): string {
   return 'Basic ' + Buffer.from(`${email}:${token}`).toString('base64');

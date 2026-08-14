@@ -26,7 +26,7 @@ aliases:
 デブラ・メイヤーソン ／ マウリーン・スカリー ／ カール・ワイク ／ ジョーン・ロッチ
 
 ## 出典
-- [Meyerson, D. & Scully, M. (1995) Tempered Radicalism and the Politics of Ambivalence and Change — Organization Science, 6(5), 585–600（原典論文）](https://doi.org/10.5465/amr.1995.9512280012) `学術`
+- [Meyerson, D. & Scully, M. (1995) Tempered Radicalism and the Politics of Ambivalence and Change — Organization Science, 6(5), 585–600（原典論文）](https://doi.org/10.1287/orsc.6.5.585) `学術`
 - [Meyerson, D. E. (2001) Tempered Radicals: How Everyday Leaders Inspire Change at Work — Harvard Business School Press（体系書）](https://www.hbs.edu/faculty/Pages/item.aspx?num=10226) `リファレンス`
 - [Meyerson, D. E. & Fletcher, J. K. (2000) A Modest Manifesto for Shattering the Glass Ceiling — Harvard Business Review, 78(1), 126–136（小さな勝利戦略の応用）](https://doi.org/10.5465/amr.2000.4965960) `学術`
 - [Wikipedia: Tempered radical — Meyerson & Scully, everyday resistance, diversity leadership, complicity risk](https://en.wikipedia.org/wiki/Tempered_radical) `リファレンス`

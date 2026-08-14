@@ -2,7 +2,7 @@
 title: "legislation.gov.uk"
 type: source-domain
 host: "legislation.gov.uk"
-cite_count: 30
+cite_count: 31
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # legislation.gov.uk
 
-> [!info] 出典ドメイン索引 ・ 引用 **30 件**（公的 30）
+> [!info] 出典ドメイン索引 ・ 引用 **31 件**（公的 31）
 
 ## このドメインを出典とする項目
 
@@ -37,6 +37,7 @@ tags:
 - [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — UKCompaniesAct2006s.251—statutorydefinitionofshadowdirector
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — UKCompaniesAct2006s.994—Petitionbycompanymember(legislation.gov.uk).
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — StateImmunityAct1978(UK)—legislation.gov.uk（制限的免除主義を英国法に確立）
+- [[bizlaw-statute-of-frauds|詐欺防止法]] — StatuteofFrauds1677s.4—legislation.gov.uk（LawReform(EnforcementofCont…
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — StatuteofFrauds1677—UKParliament(legislation.gov.uk)
 - [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — UKContracts(RightsofThirdParties)Act1999—statutorythird-partybenefici…
 - [[bizlaw-ultra-vires|ウルトラ・ヴァイリーズの法理（権限踰越の法理）]] — UKLegislation—CompaniesAct2006,Section39:ACompany'sCapacity（ultravire…

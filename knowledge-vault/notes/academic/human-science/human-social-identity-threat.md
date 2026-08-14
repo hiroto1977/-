@@ -34,11 +34,10 @@ Claude M. Steele／Joshua Aronson／Naomi Ellemers／Nyla R. Branscombe／Russel
 - [[human-stereotype-threat|ステレオタイプ脅威]] — 同じ思想家
 - [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同分野の近傍
 - [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 同分野の近傍
-- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同分野の近傍
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 同分野の近傍
 - [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同分野の近傍
 - [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]] — 同分野の近傍
-- [[human-sociometer-theory|ソシオメーター理論]] — 同分野の近傍
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

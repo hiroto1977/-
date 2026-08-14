@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208](https://doi.org/10.2307/2296779) `学術`
-- [Diamond, P. & Saez, E. (2011) The Case for a Progressive Tax: From Basic Research to Policy Recommendations — Journal of Economic Perspectives, 25(4), 165–190](https://doi.org/10.1257/jel.49.1.3) `学術`
+- [Diamond, P. & Saez, E. (2011) The Case for a Progressive Tax: From Basic Research to Policy Recommendations — Journal of Economic Perspectives, 25(4), 165–190](https://doi.org/10.1257/jep.25.4.165) `学術`
 - [Wikipedia: Optimal tax — Ramsey rule, Mirrlees model, and Diamond-Saez extension](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 - [Nobel Prize 1996: James Mirrlees — prize motivation and scientific background on optimal taxation](https://www.nobelprize.org/prizes/economic-sciences/1996/mirrlees/facts/) `リファレンス`
 

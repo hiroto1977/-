@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同じ思想家
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同分野の近傍
 - [[mgmt-realistic-job-preview-wanous|現実的職務予告——入社前の率直な情報提供が定着と満足を高める]] — 同分野の近傍
-- [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

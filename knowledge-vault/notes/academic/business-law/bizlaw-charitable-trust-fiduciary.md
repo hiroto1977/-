@@ -26,7 +26,7 @@ aliases:
 ゲーリー・シングル ／ リビン・チャタジー ／ バーバラ・ブランクフォード ／ 能見善久
 
 ## 出典
-- [Hudson, A. (2013). Equity and Trusts — Routledge](https://doi.org/10.1093/acprof:oso/9780199589395.001.0001) `学術`
+- [Hudson, A. (2012) Equity and Trusts (7th ed.) — Routledge](https://doi.org/10.4324/9780203101919) `学術`
 - [Wikipedia: Charitable organization — nonprofit law](https://en.wikipedia.org/wiki/Charitable_organization) `リファレンス`
 
 ## 関連概念

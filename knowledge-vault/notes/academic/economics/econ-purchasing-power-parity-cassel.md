@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cassel, G. (1922) Money and Foreign Exchange After 1914 — Constable（PPP原典の英訳）](https://doi.org/10.2307/2223329) `学術`
-- [Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（PPPパズルのサーベイ）](https://doi.org/10.1257/jep.10.4.97) `学術`
+- [Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（PPPパズルのサーベイ）](https://rogoff.scholars.harvard.edu/publications/purchasing-power-parity-puzzle) `学術`
 - [Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal — Journal of Political Economy, 72(6), 584–596（バラッサ＝サミュエルソン効果）](https://doi.org/10.2307/1925975) `学術`
 - [Wikipedia: Purchasing power parity — Cassel, law of one price, Balassa-Samuelson, Penn effect, ICP](https://en.wikipedia.org/wiki/Purchasing_power_parity) `リファレンス`
 

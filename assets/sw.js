@@ -49,8 +49,18 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(req)
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy).catch(() => undefined));
+        // 取得できたものを何でも保存すると、5xx や 404 をアプリシェルとして
+        // 焼き付けてしまう。次にオフラインになったとき利用者に返るのはその
+        // 5xx で、アプリが起動しなくなる。上の説明文は最初から
+        // 「取得成功分だけキャッシュへ反映」と書いてあり、実装だけが
+        // それに追いついていなかった。
+        //
+        // 応答自体は成否にかかわらずそのまま返す。ここで握り潰すと、
+        // 404 を期待している呼び出し側が壊れる。
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy).catch(() => undefined));
+        }
         return res;
       })
       .catch(() =>

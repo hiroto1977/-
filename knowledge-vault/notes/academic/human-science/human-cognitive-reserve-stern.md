@@ -32,9 +32,8 @@ aliases:
 - [Wikipedia: Cognitive reserve — Stern, brain reserve, neuroplasticity, education, bilingualism, dementia prevention](https://en.wikipedia.org/wiki/Cognitive_reserve) `リファレンス`
 
 ## 関連概念
-- [[human-cognitive-reserve-theory|認知的予備力理論]] — 語彙が近い
 - [[human-mind-wandering|マインドワンダリング]] — 同分野の近傍
-- [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 同分野の近傍
+- [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-epigenetics-behavioral-meaney|行動エピジェネティクス——養育環境とDNAメチル化の世代間伝達]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

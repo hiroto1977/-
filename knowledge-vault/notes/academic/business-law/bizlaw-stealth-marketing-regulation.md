@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 同分野の近傍
-- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 同分野の近傍
+- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

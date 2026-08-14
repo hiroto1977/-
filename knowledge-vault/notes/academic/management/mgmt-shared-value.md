@@ -40,7 +40,7 @@ M.ポーター&M.クラマー2011 HBR「Creating Shared Value」／社会的価�
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
-- [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 出典を共有
+- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

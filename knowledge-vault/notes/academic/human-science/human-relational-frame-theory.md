@@ -27,7 +27,7 @@ Steven C. Hayes／Dermot Barnes-Holmes／Bryan Roche
 
 ## 出典
 - [Wikipedia — Relational frame theory](https://en.wikipedia.org/wiki/Relational_frame_theory) `リファレンス`
-- [Hayes, Barnes-Holmes & Roche (2001) Relational Frame Theory, Springer](https://doi.org/10.1007/978-1-4757-3357-4) `学術`
+- [Hayes, S. C., Barnes-Holmes, D. & Roche, B. (Eds.) (2001) Relational Frame Theory: A Post-Skinnerian Account of Human Language and Cognition — Kluwer Academic/Plenum（現 Springer）](https://doi.org/10.1007/b108413) `学術`
 - [Association for Contextual Behavioral Science — RFT](https://contextualscience.org/relational_frame_theory) `リファレンス`
 
 ## 関連概念

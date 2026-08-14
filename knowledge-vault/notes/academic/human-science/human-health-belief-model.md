@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — 語彙が近い
-- [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 同分野の近傍
 - [[human-behavioral-genetics|行動遺伝学（双生児研究・遺伝率）]] — 同分野の近傍
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
 

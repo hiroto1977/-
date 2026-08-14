@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 - [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 出典を共有
 - [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
-- [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 同分野の近傍
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同分野の近傍
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 同分野の近傍
 

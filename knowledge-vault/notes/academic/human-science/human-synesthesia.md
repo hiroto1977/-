@@ -37,7 +37,7 @@ aliases:
 - [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]] — 出典を共有
 - [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 出典を共有
 - [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]] — 同分野の近傍
-- [[human-psychobiological-model-personality|人格の精神生物学モデル]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

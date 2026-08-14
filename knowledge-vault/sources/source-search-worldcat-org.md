@@ -2,7 +2,7 @@
 title: "search.worldcat.org"
 type: source-domain
 host: "search.worldcat.org"
-cite_count: 8
+cite_count: 13
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # search.worldcat.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（学術 6 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 11 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -21,7 +21,12 @@ tags:
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — Peel,E.(2015)WaiverandEstoppel—TreitelontheLawofContract,14thed.,Swee…
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — McCombie,Pugno&Soro(eds.)(2002)ProductivityGrowthandEconomicPerforman…
 - [[human-allostasis|アロスタシス（Allostasis）]] — Fisher&Reason(Eds.)(1988)HandbookofLifeStress,CognitionandHealth—Worl…
+- [[human-salutogenesis-theory|サルトジェネシス理論]] — Antonovsky,A.(1979)Health,Stress,andCoping:NewPerspectivesonMentaland…
+- [[human-salutogenesis-theory|サルトジェネシス理論]] — Antonovsky,A.(1987)UnravelingtheMysteryofHealth:HowPeopleManageStress…
+- [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — Greenfield,A.(2013)AgainsttheSmartCity—DoProjects
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — Sherif,M.&Hovland,C.I.(1961)SocialJudgment:AssimilationandContrastEff…
+- [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — Emery&Trist1960Socio-TechnicalSystems,inManagementSciencesModelsandTe…
+- [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — Argyris,C.&Schön,D.A.(1996)OrganizationalLearningII:Theory,Method,and…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

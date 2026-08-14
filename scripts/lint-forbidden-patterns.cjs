@@ -88,6 +88,36 @@ const FORBIDDEN_PATTERNS = [
     rationale: 'invariant #5 — external URLs flow through app:openExternal',
   },
   {
+    name: 'window.open',
+    pattern: /\bwindow\.open\s*\(/,
+    // 唯一の例外がブラウザ版の openExternal 実装そのもの。そこは
+    // `^https?://` を確かめてから開いており、この規約の実体がそれ。
+    allowFile: (rel) => rel === 'src/renderer/web-shim.ts',
+    // 散文で経緯を書けるように、コメント行は数えない。コメントの中の
+    // 呼び出しは実行されないので、見逃しにはならない。
+    codeOnly: true,
+    rationale:
+      '外部 URL は serviceHub.openExternal 経由に統一する (CLAUDE.md の規約)。' +
+      'blob:/data: を window.open すると生成元と同一オリジンの文書になり、' +
+      'そこで走るスクリプトが IndexedDB と localStorage に届く',
+  },
+  {
+    name: 'unredacted response body in an error message',
+    // 「redactSecrets を通していない行で body.slice( を使っている」を捕まえる。
+    // 否定先読みで同一行の redactSecrets を除外している。
+    pattern: /^(?!.*redactSecrets).*\bbody\.slice\(/,
+    // 走査は行単位なので、`const body = await res.text()` → `body.slice(...)`
+    // という**このリポジトリで実際に使われている書き方**しか見ない。
+    // `(await res.text()).slice(...)` のように書けばすり抜ける。網羅ではなく、
+    // 既にある書き方の再発を止めるためのもの。
+    codeOnly: true,
+    rationale:
+      '連携先が応答に資格情報を反射しうる。このエラー文字列は画面にそのまま出て' +
+      '不具合報告にも貼られるので、shared/redact.ts の redactSecrets を通す。' +
+      'jsonFetch / http.ts / oauth.ts / proxy.ts は最初から通していたが、' +
+      '同じ書き方の 8 箇所が素通しだった',
+  },
+  {
     name: 'child_process exec/spawn',
     pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
     // Build/dev scripts are allowed; runtime src is not.
@@ -118,6 +148,18 @@ const FORBIDDEN_PATTERNS = [
     rationale: 'invariants #7-#8 — these endpoints are CVE prone',
   },
 ];
+
+/**
+ * 行コメントか (行頭が `//` / `*` / `/*`)。
+ *
+ * 完全な構文解析ではない。狙いは「なぜこの書き方を禁じたか」を
+ * ソースの散文で説明できるようにすることだけで、コメントの中の呼び出しは
+ * 実行されないので、緩めても見逃しにはならない。
+ */
+function isCommentLine(line) {
+  const t = line.trim();
+  return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
+}
 
 function walk(dir, hit) {
   let entries;
@@ -160,6 +202,7 @@ function main() {
     for (const fp of FORBIDDEN_PATTERNS) {
       if (fp.allowFile && fp.allowFile(rel)) continue;
       for (let i = 0; i < lines.length; i++) {
+        if (fp.codeOnly && isCommentLine(lines[i])) continue;
         if (fp.pattern.test(lines[i])) {
           violations.push({
             file: rel,

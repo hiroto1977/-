@@ -26,7 +26,7 @@ aliases:
 マイケル・ハント ／ マイケル・ポーター ／ リチャード・ケイブス ／ ジェイ・バーニー
 
 ## 出典
-- [Caves, R. & Porter, M. (1977) From Entry Barriers to Mobility Barriers — Quarterly Journal of Economics](https://doi.org/10.2307/2392455) `学術`
+- [Caves, R. E. & Porter, M. E. (1977) From Entry Barriers to Mobility Barriers — Quarterly Journal of Economics 91(2), 241-261](https://doi.org/10.2307/1885416) `学術`
 - [Wikipedia: Strategic group — mobility barriers, industry structure, competitive dynamics](https://en.wikipedia.org/wiki/Strategic_group) `リファレンス`
 
 ## 関連概念

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cramer, F. (2015) What is "Post-digital"? — A Peer-reviewed Journal About Post-Digital Research, 3(1)（ポストデジタルの定義論文）](https://doi.org/10.12801/1947-5403.2015.07.03.01) `学術`
-- [Jandrić, P. et al. (2018) Postdigital Science and Education — Educational Philosophy and Theory, 50(10), 893–899（教育学への応用）](https://doi.org/10.1007/978-3-030-00173-4) `学術`
+- [Jandrić, P. et al. (2018) Postdigital Science and Education — Educational Philosophy and Theory, 50(10), 893–899（教育学への応用）](https://doi.org/10.1080/00131857.2018.1454000) `学術`
 - [Cascone, K. (2000) The Aesthetics of Failure: "Post-Digital" Tendencies in Contemporary Computer Music — Computer Music Journal, 24(4), 12–18（美学的起源）](https://doi.org/10.1080/14626268.2016.1219003) `学術`
 - [Wikipedia: Post-digital — Cramer, analog revival, post-digital pedagogy, AI content backlash](https://en.wikipedia.org/wiki/Post-digital) `リファレンス`
 

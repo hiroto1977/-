@@ -539,6 +539,32 @@ describe('ACTIONS["check-email-breach"]', () => {
 describe('ACTIONS["scan-url"]', () => {
   const goodToken = JSON.stringify({ vt: 'vt-key' });
 
+  // VirusTotal への投入は取り消せない (投入した URL は VT の有料利用者が
+  // 検索できる)。だから「送ってよい形か」は境界で確かめる。純粋関数側は
+  // shared/__tests__/scanTarget.test.ts で網羅しているが、**アクションが
+  // 実際にそれを呼んでいる**ことはここで固定する。
+  it.each([
+    ['file:///etc/passwd', 'file'],
+    ['javascript:alert(1)', 'javascript'],
+    ['ftp://example.com', 'ftp'],
+  ])('%s を送信前に断る', async (url) => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['scan-url']!({ token: goodToken, fetch: fetchMock, payload: { url } }),
+    ).rejects.toThrow(/http/);
+    // 断ったなら 1 度も外へ出ていないこと。ここを見ないと
+    // 「送ってから throw する」実装でもテストが通ってしまう。
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('URL として読めない文字列を送信前に断る', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['scan-url']!({ token: goodToken, fetch: fetchMock, payload: { url: 'not a url' } }),
+    ).rejects.toThrow(/URL/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('encodes the URL as application/x-www-form-urlencoded body, not query string', async () => {
     // Kills MethodExpression mutation that drops .toString() on the
     // URLSearchParams — would otherwise send "[object URLSearchParams]"

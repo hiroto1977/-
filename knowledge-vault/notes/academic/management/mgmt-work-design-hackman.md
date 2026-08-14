@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Hackman, J. R. & Oldham, G. R. (1976) Motivation Through the Design of Work: Test of a Theory — Organizational Behavior and Human Performance, 16(2), 250–279（JCMの原典）](https://doi.org/10.1016/0030-5073(76)90016-7) `学術`
 - [Humphrey, S. E., Nahrgang, J. D. & Morgeson, F. P. (2007) Integrating Motivational, Social, and Contextual Work Design Features: A Meta-Analytic Summary and Theoretical Extension — Journal of Applied Psychology, 92(5), 1332–1356（メタ分析）](https://doi.org/10.1037/0021-9010.92.5.1332) `学術`
-- [Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology, 65, 661–691（JCMの拡張と現代的展望）](https://doi.org/10.1093/oxfordhb/9780199732760.013.0003) `学術`
+- [Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology, 65, 661–691（JCMの拡張と現代的展望）](https://doi.org/10.1146/annurev-psych-010213-115208) `学術`
 - [Wikipedia: Job characteristics model — Hackman & Oldham, five core dimensions, MPS formula, meta-analysis](https://en.wikipedia.org/wiki/Job_characteristics_model) `リファレンス`
 
 ## 関連概念

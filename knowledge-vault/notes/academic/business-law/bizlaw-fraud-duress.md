@@ -31,7 +31,6 @@ aliases:
 - [クレアール司法書士講座 民法第96条【詐欺又は強迫】](https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0096-00/) `メディア`
 
 ## 関連概念
-- [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]] — 語彙が近い
 - [[bizlaw-mental-reservation|心裡留保（民法93条）]] — 語彙が近い
 - [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 同じ思想家
 - [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — 出典を共有
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 出典を共有
 - [[bizlaw-statutory-lien|先取特権（民法303条）]] — 出典を共有
+- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

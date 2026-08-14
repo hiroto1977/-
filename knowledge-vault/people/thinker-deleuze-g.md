@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（2件）
 - [[infosoc-data-doubles|データ・ダブル]] — Haggerty＆Ericson（2000）が「監視的アッサンブラージュ」論文で提示した概念。
-- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — Deleuze&Guattariのアセンブラージュ概念を組織研究に応用。
+- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 社会物質的アセンブラージュ論は、組織を人間と技術と実践が分かちがたく絡み合った動的な配置として捉える見方である。
 
 ## 関連
 - 索引: [[人物索引]]

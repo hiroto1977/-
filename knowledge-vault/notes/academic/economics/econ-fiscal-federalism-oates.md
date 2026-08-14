@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Oates, W. E. (1972) Fiscal Federalism — Harcourt Brace Jovanovich（財政的連邦主義の原典）](https://press.princeton.edu/books/paperback/9780691000084/fiscal-federalism) `学術`
 - [Tiebout, C. M. (1956) A Pure Theory of Local Expenditures — Journal of Political Economy, 64(5), 416–424（足で投票モデルの原典）](https://doi.org/10.1086/257839) `学術`
-- [Oates, W. E. (1999) An Essay on Fiscal Federalism — Journal of Economic Literature, 37(3), 1120–1149（第二世代との接続を含む回顧論文）](https://doi.org/10.1257/jep.13.2.131) `学術`
+- [Oates, W. E. (1999) An Essay on Fiscal Federalism — Journal of Economic Literature, 37(3), 1120–1149（第二世代との接続を含む回顧論文）](https://doi.org/10.1257/jel.37.3.1120) `学術`
 - [Wikipedia: Fiscal federalism — Oates theorem, Tiebout, race to the bottom, fiscal equalization](https://en.wikipedia.org/wiki/Fiscal_federalism) `リファレンス`
 
 ## 関連概念

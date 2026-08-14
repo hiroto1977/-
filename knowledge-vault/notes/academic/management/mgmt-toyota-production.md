@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
-- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
 - [[mgmt-kanban|かんばん方式]] — 同分野の近傍
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]] — 同分野の近傍
 

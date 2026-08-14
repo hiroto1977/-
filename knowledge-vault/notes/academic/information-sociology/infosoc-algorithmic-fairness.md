@@ -32,12 +32,12 @@ Sorelle A. Friedler ／ Alexandra Chouldechova ／ Andrew D. Selbst
 - [Stanford Encyclopedia of Philosophy — Algorithmic Fairness](https://plato.stanford.edu/entries/algorithmic-fairness/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 語彙が近い
 - [[infosoc-web3|Web3]] — 出典を共有
 - [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — 出典を共有
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — 出典を共有
-- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
+- [[infosoc-machine-learning-bias-fairness|アルゴリズムバイアスとAI公平性——機械学習の差別リスクと「公平性（fairness）」の複数定義]] — 同分野の近傍
+- [[infosoc-simulacra|シミュラークルとハイパーリアリティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

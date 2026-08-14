@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
 - [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
-- [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
+- [[human-critical-period-plasticity|神経発達の臨界期：視覚野可塑性と経験依存的回路形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

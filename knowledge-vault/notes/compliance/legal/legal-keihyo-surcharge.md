@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]] — 語彙が近い
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 語彙が近い
-- [[bizlaw-keihyo-misrepresentation|景品表示法の優良誤認・有利誤認表示]] — 語彙が近い
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 同分野の近傍
 
 ## 関連

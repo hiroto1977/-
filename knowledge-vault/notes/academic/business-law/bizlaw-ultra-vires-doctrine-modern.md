@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — 同分野の近傍
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
-- [[bizlaw-stealth-marketing-regulation|ステルスマーケティング規制（景品表示法のステマ告示）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,7 +30,6 @@ Douglas W. Diamond／Philip H. Dybvig
 - [2022年ノーベル経済学賞（Diamond・Dybvig・Bernanke）](https://www.nobelprize.org/prizes/economic-sciences/2022/summary/) `リファレンス`
 
 ## 関連概念
-- [[econ-diamond-dybvig-bank-runs|銀行取付モデル（ダイヤモンド＆ディブビッグ）]] — 同分野の近傍
 - [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同分野の近傍
 - [[econ-financial-repression|金融抑圧]] — 同分野の近傍
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 同分野の近傍

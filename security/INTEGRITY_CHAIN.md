@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 10
+- ブロック数: 13
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `1af7a1bdf6d2f3e2ff95b51a70fcc49e75bc108be8d505b17bc05e1da7891eb2`
-- 保護対象: 15 ファイル
+- 末尾(tip)ハッシュ: `968b3a29474e976a4e228390f52b98db4fb4d981fc0f1686c1ab2609dbb9511c`
+- 保護対象: 16 ファイル
 
 ## ブロック
 
@@ -23,10 +23,14 @@
 | 7 | `7ced0e0cf1093e16` | `8e44b1433fa4c9b1` | `780b337043df5bbe` | update ci.yml,oauth.ts |
 | 8 | `fbbaa6ae22b70775` | `780b337043df5bbe` | `050c3396099b4a7f` | update ci.yml |
 | 9 | `7b28671af35624fc` | `050c3396099b4a7f` | `1af7a1bdf6d2f3e2` | update ci.yml |
+| 10 | `113a5991e5d1c5e8` | `1af7a1bdf6d2f3e2` | `1375df2b085cb15f` | update ci.yml |
+| 11 | `4f974e0ced822a3d` | `1375df2b085cb15f` | `90a68b497432af20` | update sw.js,SECURITY_CHAIN.md,integrity-chain.cjs,dataCrypto.ts,vault.ts |
+| 12 | `25d80566e373924d` | `90a68b497432af20` | `968b3a29474e976a` | update ci.yml |
 
 ## 保護対象ファイル
 
 - `.github/workflows/ci.yml`
+- `assets/sw.js`
 - `docs/SECURITY_CHAIN.md`
 - `scripts/integrity-chain.cjs`
 - `scripts/security-audit.sh`

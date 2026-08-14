@@ -33,6 +33,7 @@ aliases:
 - [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同じ思想家
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
 - [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — 同じ思想家
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同分野の近傍
 - [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]] — 同分野の近傍
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同分野の近傍
 

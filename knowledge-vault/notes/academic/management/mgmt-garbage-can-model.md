@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 語彙が近い
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

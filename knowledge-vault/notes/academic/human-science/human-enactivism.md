@@ -31,7 +31,6 @@ aliases:
 - [Ward, D., Silverman, D., & Villalobos, M. (2017). Introduction: The Varieties of Enactivism. Topoi, 36(3), 365-375.](https://doi.org/10.1007/s11245-017-9484-6) `学術`
 
 ## 関連概念
-- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 語彙が近い
 - [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 語彙が近い
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家

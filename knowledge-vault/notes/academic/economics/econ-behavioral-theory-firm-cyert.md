@@ -26,7 +26,7 @@ aliases:
 リチャード・サイアート ／ ジェームズ・マーチ ／ ハーバート・サイモン ／ オリバー・ウィリアムソン
 
 ## 出典
-- [Cyert & March (1963) A Behavioral Theory of the Firm — Prentice-Hall (2nd ed. 1992 Blackwell)](https://doi.org/10.1007/978-3-642-48748-8) `学術`
+- [Cyert & March (1963) A Behavioral Theory of the Firm — Prentice-Hall (2nd ed. 1992 Blackwell)](https://www.wiley.com/en-us/Behavioral+Theory+of+the+Firm,+2nd+Edition-p-9780631174516) `学術`
 - [Wikipedia: Behavioral Theory of the Firm — Cyert, March, satisficing, organizational slack, bounded rationality](https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm) `リファレンス`
 
 ## 関連概念

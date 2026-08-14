@@ -2,7 +2,7 @@
 title: "journals.aom.org"
 type: source-domain
 host: "journals.aom.org"
-cite_count: 66
+cite_count: 65
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.aom.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **66 件**（学術 66）
+> [!info] 出典ドメイン索引 ・ 引用 **65 件**（学術 65）
 
 ## このドメインを出典とする項目
 
@@ -34,7 +34,6 @@ tags:
 - [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — Thomas&Velthouse(1990)—CognitiveElementsofEmpowerment:AnInterpretiveM…
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — Maitlis&Christianson(2014)Sensemakinginorganizations:Takingstockandmo…
 - [[mgmt-event-system-theory|出来事システム理論（Event System Theory）]] — Morgeson,F.P.,Mitchell,T.R.&Liu,D.(2015)EventSystemTheory:AnEvent-Ori…
-- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — Briner,Denyer&Rousseau(2009)"Evidence-BasedManagement:ConceptCleanupT…
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — Hambrick&Mason(1984)UpperEchelons—AcademyofManagementReview,9(2),193-…
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — Ordóñezetal.(2009)GoalsGoneWild,AcademyofManagementPerspectives23(1):…
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — Battilana,Leca&Boxenbaum(2009)HowActorsChangeInstitutions—AcademyofMa…

@@ -26,7 +26,7 @@ aliases:
 スティーブ・フラー ／ リー・マッキンタイア ／ キャス・サンスティーン ／ イーライ・パリサー
 
 ## 出典
-- [Fuller (2018) Post-Truth: Knowledge as a Power Game — Anthem Press](https://doi.org/10.1007/978-3-319-72424-3) `学術`
+- [Fuller (2018) Post-Truth: Knowledge as a Power Game — Anthem Press](https://www.jstor.org/stable/j.ctvgd30v) `学術`
 - [McIntyre (2018) Post-Truth — MIT Press](https://doi.org/10.7551/mitpress/11483.001.0001) `学術`
 - [Wikipedia: Post-truth — ポスト真実の定義と社会的影響の概説](https://en.wikipedia.org/wiki/Post-truth) `リファレンス`
 

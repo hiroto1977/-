@@ -34,7 +34,7 @@ aliases:
 - [[human-milgram-obedience|ミルグラムの服従実験（Milgram experiment）]] — 同じ思想家
 - [[human-obedience|権威への服従（オベディエンス）]] — 同じ思想家
 - [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
-- [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

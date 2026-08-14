@@ -2,7 +2,7 @@
 title: "hbs.edu"
 type: source-domain
 host: "hbs.edu"
-cite_count: 24
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbs.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 19 ・ リファレンス 5）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 20 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -35,6 +35,7 @@ tags:
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — O'Reilly&Tushman(2013)OrganizationalAmbidexterity:Past,Present,andFut…
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — HarvardBusinessSchoolFaculty&Research—"CreatingSharedValue"（書誌・要旨）
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — Doz,Y.&Hamel,G.(1998)AllianceAdvantage:TheArtofCreatingValuethroughPa…
+- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — Wageman,R.,Nunes,D.A.,Burruss,J.A.&Hackman,J.R.(2008)SeniorLeadership…
 - [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — HarvardBusinessSchool—TemperedRadicals:HowPeopleUseDifferencetoInspir…
 - [[mgmt-tempered-radicalism-meyerson|テンパード・ラジカリズム（メイヤーソン）]] — Meyerson,D.E.(2001)TemperedRadicals:HowEverydayLeadersInspireChangeat…
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — Tushman&Romanelli(1985)OrganizationalEvolution—ResearchinOrganization…

@@ -26,7 +26,7 @@ Huntは1972年のハーバード博士論文において、同一産業内で類
 Michael S. Hunt ／ Michael E. Porter ／ Richard E. Caves ／ Karel Cool ／ Dan E. Schendel ／ John McGee ／ Howard Thomas
 
 ## 出典
-- [Caves & Porter (1977) "From Entry Barriers to Mobility Barriers" — Quarterly Journal of Economics](https://doi.org/10.1086/258881) `学術`
+- [Caves & Porter (1977) "From Entry Barriers to Mobility Barriers" — Quarterly Journal of Economics](https://doi.org/10.2307/1885416) `学術`
 - [Cool & Schendel (1988) "Performance Differences Among Strategic Group Members" — Strategic Management Journal](https://doi.org/10.1002/smj.4250090103) `学術`
 - [McGee & Thomas (1986) "Strategic Groups: Theory, Research and Taxonomy" — Strategic Management Journal](https://doi.org/10.1002/smj.4250070105) `学術`
 - [Porter (1980) Competitive Strategy — Free Press (mobility barriers & strategic groups)](https://doi.org/10.1016/0024-6301(80)90041-5) `学術`

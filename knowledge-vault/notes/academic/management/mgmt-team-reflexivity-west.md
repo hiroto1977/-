@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [West, M. A. (1996) Reflexivity and Work Group Effectiveness — Handbook of Work Group Psychology, Wiley](https://doi.org/10.1002/9781405164627.ch5) `学術`
-- [Schippers, M. C. et al. (2013) Reflexivity in Teams — Journal of Management](https://doi.org/10.5465/amj.2010.0583) `学術`
+- [Schippers, M. C., West, M. A. & Dawson, J. F. (2015) Team Reflexivity and Innovation: The Moderating Role of Team Context — Journal of Management 41(3), 769-788](https://doi.org/10.1177/0149206312441210) `学術`
 - [Wikipedia: Team reflexivity — collective reflection and adaptation overview](https://en.wikipedia.org/wiki/Team_reflexivity) `リファレンス`
 
 ## 関連概念

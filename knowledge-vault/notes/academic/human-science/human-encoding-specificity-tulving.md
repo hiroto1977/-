@@ -34,6 +34,7 @@ aliases:
 - [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
 - [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — 同じ思想家
 - [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]] — 同分野の近傍
+- [[human-self-fulfilling-prophecy|自己成就的予言（マートン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

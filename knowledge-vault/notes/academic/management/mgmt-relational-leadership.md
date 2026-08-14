@@ -36,7 +36,6 @@ Mary Uhl-Bien ／ George B. Graen ／ Dian Marie Hosking
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 同分野の近傍
 - [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — 同分野の近傍
-- [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

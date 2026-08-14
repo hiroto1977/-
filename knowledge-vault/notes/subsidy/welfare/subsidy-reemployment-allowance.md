@@ -40,9 +40,9 @@ national
 - [[subsidy-elderly-jobseeker|高年齢求職者給付金（雇用保険）]] — 語彙が近い
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]] — 語彙が近い
 - [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 語彙が近い
+- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 同分野の近傍
 - [[subsidy-education-training-benefit|教育訓練給付金（雇用保険）]] — 同分野の近傍
 - [[subsidy-livelihood-welfare-loan|生活福祉資金貸付制度]] — 同分野の近傍
-- [[subsidy-highschool-tuition|高等学校等就学支援金]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

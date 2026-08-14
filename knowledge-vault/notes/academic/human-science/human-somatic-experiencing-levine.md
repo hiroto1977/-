@@ -26,15 +26,15 @@ aliases:
 ピーター・レバイン ／ アン・フレデリック ／ パット・オグデン ／ ジャネット・ポウルタ
 
 ## 出典
-- [Levine, P.A. (1997). Waking the Tiger — North Atlantic Books](https://doi.org/10.1007/978-1-58394-451-9) `学術`
+- [Levine, P. A. with Frederick, A. (1997) Waking the Tiger: Healing Trauma — North Atlantic Books（ISBN 978-1-55643-233-0）](https://www.northatlanticbooks.com/shop/waking-the-tiger-healing-trauma/) `学術`
 - [Wikipedia: Somatic experiencing — trauma therapy](https://en.wikipedia.org/wiki/Somatic_experiencing) `リファレンス`
 
 ## 関連概念
 - [[human-somatic-experiencing-levine-trauma|ソマティック・エクスペリエンシング——レヴィンの身体的トラウマ解放と神経系の自己調整]] — 語彙が近い
 - [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同じ思想家
 - [[human-dual-process-theory-kahneman-stanovich|二重過程理論——システム1・システム2の認知的二元構造]] — 同分野の近傍
-- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
 - [[human-circumplex-affect-russell|ラッセルの感情円環モデル（Circumplex Model of Affect／Russell 1980）——あらゆる感情は「快－不快」と「覚醒」の二次元の円環上に配置される]] — 同分野の近傍
+- [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

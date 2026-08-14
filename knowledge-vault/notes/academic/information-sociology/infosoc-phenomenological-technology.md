@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
 - [[infosoc-technological-mediation-theory|技術的媒介理論（ポスト現象学）]] — 同分野の近傍
-- [[infosoc-spiral-of-silence-noelle-neumann|沈黙の螺旋——孤立の恐れが少数意見を沈黙させ多数意見を増幅する]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

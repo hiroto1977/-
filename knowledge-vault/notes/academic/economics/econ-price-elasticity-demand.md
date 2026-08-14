@@ -36,7 +36,7 @@ aliases:
 - [[econ-opportunity-cost|機会費用（opportunity cost）]] — 出典を共有
 - [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 出典を共有
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

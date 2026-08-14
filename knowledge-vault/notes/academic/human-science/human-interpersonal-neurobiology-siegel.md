@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-optimism-bias|楽観バイアス]] — 同分野の近傍
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同分野の近傍
-- [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

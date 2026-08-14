@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
 - [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 同分野の近傍
+- [[infosoc-informational-self-determination|情報自己決定権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

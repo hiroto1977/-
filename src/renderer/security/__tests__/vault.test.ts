@@ -746,3 +746,69 @@ describe('Vault — IndexedDB connection cleanup on error (no leak)', () => {
     closeSpy.mockRestore();
   });
 });
+
+/** メタを直接書き換える (壊れた/差し替えられた保存内容を再現する)。 */
+function tamperMeta(mutate: (meta: Record<string, unknown>) => void): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const open = indexedDB.open('business-hub-vault');
+    open.onsuccess = () => {
+      const db = open.result;
+      const tx = db.transaction('meta', 'readwrite');
+      const store = tx.objectStore('meta');
+      const get = store.get('vault');
+      get.onsuccess = () => {
+        const meta = get.result as Record<string, unknown>;
+        mutate(meta);
+        store.put(meta, 'vault');
+      };
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+      tx.onerror = () => {
+        db.close();
+        reject(tx.error ?? new Error('tamper failed'));
+      };
+    };
+    open.onerror = () => reject(open.error ?? new Error('open failed'));
+  });
+}
+
+describe('Vault — 保存された反復回数の検証', () => {
+  // 反復回数はメタから読む = 保存側の値をそのまま信じる形になっていた。
+  // 途方もない値を書かれると PBKDF2 が返らず、利用者が自分の資格情報から
+  // 永久に締め出される。dataCrypto は同じ検査を最初から持っていたのに、
+  // 資格情報そのものを持つ Vault 側が素通しだった。
+  it('上限を超える反復回数のメタでは解錠せず即座に断る', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await tamperMeta((meta) => {
+      meta.iterations = 1_000_000_000;
+    });
+    await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/反復回数/);
+  });
+
+  it('下限を下回る反復回数も断る', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await tamperMeta((meta) => {
+      meta.iterations = 1;
+    });
+    await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/反復回数/);
+  });
+
+  // ネガティブコントロール: 正規のメタは今までどおり解錠できる
+  // (「常に断る」実装になっていないことの確認)。
+  it('手を加えていないメタは解錠できる', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await getVault().unlock('correct-horse-battery-staple');
+    expect(getVault().isUnlocked()).toBe(true);
+  });
+});

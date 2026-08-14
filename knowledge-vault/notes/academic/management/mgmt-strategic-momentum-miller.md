@@ -26,7 +26,7 @@ aliases:
 ダニー・ミラー ／ クレイトン・クリステンセン ／ ジェームズ・マーチ ／ ドロシー・レオナルド＝バートン
 
 ## 出典
-- [Miller, D. (1993) The Architecture of Simplicity — Academy of Management Review 18(1)](https://doi.org/10.1016/0149-2063(93)90053-P) `学術`
+- [Miller, D. (1993) The Architecture of Simplicity — Academy of Management Review 18(1)](https://doi.org/10.5465/amr.1993.3997509) `学術`
 - [Wikipedia: Icarus Paradox — Miller success-driven organizational decline](https://en.wikipedia.org/wiki/Icarus_paradox) `リファレンス`
 - [Miller, D. (1992) The Icarus Paradox: How Exceptional Companies Bring About Their Own Downfall — Business Horizons 35(1)](https://doi.org/10.1002/smj.4250130307) `学術`
 

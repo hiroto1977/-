@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
 - [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 同分野の近傍
-- [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
+- [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

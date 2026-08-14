@@ -40,7 +40,6 @@ aliases:
 - [[infosoc-microcelebrity|マイクロセレブリティ]] — 同分野の近傍
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同分野の近傍
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
-- [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 同じ思想家
 - [[mgmt-middle-management-strategy|中間管理職の戦略的役割]] — 同分野の近傍
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
-- [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同分野の近傍
+- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — 同分野の近傍
 - [[mgmt-target-costing|原価企画（目標原価計算）]] — 同分野の近傍
 
 ## 関連

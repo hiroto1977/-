@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-assignment-of-contracts|契約上の権利の譲渡——債権譲渡の法的要件と制限]] — 語彙が近い
+- [[bizlaw-receivables-security|集合債権譲渡担保（将来債権譲渡）]] — 語彙が近い
 - [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — 分野横断
 - [[legal-risk-bearing|危険負担（改正民法536条）]] — 同分野の近傍
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍

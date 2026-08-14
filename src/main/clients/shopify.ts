@@ -303,6 +303,22 @@ async function syncToSalesforce(ctx: ActionContext): Promise<{ service: 'salesfo
     throw new Error('instanceUrl is not a valid URL');
   }
   if (base.protocol !== 'https:') throw new Error('instanceUrl must be https');
+  // ホスト名まで絞る。**ここは唯一、送り先を renderer 由来の値で決めている
+  // 同期先**で、しかも `Authorization: Bearer <Salesforce のアクセストークン>`
+  // を付けて送る。以前は https かどうかしか見ておらず、
+  // `instanceUrl: 'https://attacker.example'` を渡せばトークンと顧客の
+  // 氏名・メールがそのまま相手に届いた。同じファイルの Discord 同期は
+  // `hostname !== 'discord.com'` で弾いており、他の 4 つは送り先が定数。
+  // ここだけ抜けていた。
+  //
+  // OAuth が返す instance_url は `*.salesforce.com`
+  // (`MyDomain.my.salesforce.com` / `MyDomain--Sandbox.sandbox.my.salesforce.com`
+  // / 旧来の `na139.salesforce.com`)。`*.force.com` (Salesforce Sites) は
+  // API の送り先ではないので入れない。足りない形が出たら、確かめたうえで
+  // 明示的に足すこと。広げて黙って漏らすより、落ちて気付ける方を採る。
+  if (base.hostname !== 'salesforce.com' && !base.hostname.endsWith('.salesforce.com')) {
+    throw new Error('instanceUrl must be a *.salesforce.com host');
+  }
 
   const res = await jsonFetch<SalesforceCreateResponse>(
     `${base.origin}/services/data/v59.0/sobjects/Contact/`,

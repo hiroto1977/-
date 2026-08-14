@@ -35,7 +35,7 @@ aliases:
 - [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家
 - [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
 - [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同分野の近傍
-- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 同分野の近傍
+- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

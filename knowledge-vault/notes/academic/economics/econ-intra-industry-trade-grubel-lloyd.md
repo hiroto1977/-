@@ -26,7 +26,7 @@ aliases:
 ハーバート・グルーベル ／ ピーター・ロイド ／ ポール・クルーグマン ／ リオネル・フォンターニェ ／ マイケル・フロイデンベルク
 
 ## 出典
-- [Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade — Macmillan](https://doi.org/10.1007/978-1-349-01959-2) `学術`
+- [Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade: The Theory and Measurement of International Trade in Differentiated Products — Macmillan（HathiTrust 目録）](https://catalog.hathitrust.org/Record/010552788) `学術`
 - [Krugman, P. (1979) "Increasing Returns, Monopolistic Competition, and International Trade" — JIE](https://doi.org/10.1016/0022-1996(79)90017-5) `学術`
 - [Wikipedia: Intra-industry trade — 産業内貿易の理論と測定](https://en.wikipedia.org/wiki/Intra-industry_trade) `リファレンス`
 

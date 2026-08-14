@@ -2,7 +2,7 @@
 title: "penguinrandomhouse.com"
 type: source-domain
 host: "penguinrandomhouse.com"
-cite_count: 5
+cite_count: 6
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # penguinrandomhouse.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **5 件**（リファレンス 5）
+> [!info] 出典ドメイン索引 ・ 引用 **6 件**（リファレンス 5 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — Pariser,E.(2011).TheFilterBubble:WhattheInternetIsHidingfromYou.Pengu…
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — Levy,S.(1984)Hackers:HeroesoftheComputerRevolution—AnchorPress/Double…
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — Durand,C.(2024).HowSiliconValleyUnleashedTechno-Feudalism.VersoBooks.
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — Ries,E.(2011)TheLeanStartup—CrownBusiness,ISBN978-0-307-88789-4（DOIは付…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

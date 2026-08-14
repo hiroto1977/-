@@ -26,7 +26,7 @@ aliases:
 ラッセル・コフ ／ デイヴィッド・クリシンスキー ／ ベンジャミン・キャンベル ／ エドワード・ラザー ／ ポール・オイヤー
 
 ## 出典
-- [Coff & Kryscynski (2011) Drilling for Micro-Foundations of Human Capital-Based Competitive Advantages — Journal of Management](https://doi.org/10.5465/amr.2011.0088) `学術`
+- [Coff & Kryscynski (2011) Drilling for Micro-Foundations of Human Capital-Based Competitive Advantages — Journal of Management](https://doi.org/10.1177/0149206310397772) `学術`
 - [Campbell et al. (2012) Resource Aggregation and Its Implications for Strategic Management — Strategic Management Journal](https://doi.org/10.1002/smj.2116) `学術`
 - [Wikipedia: Human capital — 人的資本理論の経済学・経営学横断的概説](https://en.wikipedia.org/wiki/Human_capital) `リファレンス`
 

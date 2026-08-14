@@ -39,6 +39,7 @@ aliases:
 - [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
 - [[human-compassion-fatigue-figley|共感疲労（フィグリー）]] — 同分野の近傍
+- [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

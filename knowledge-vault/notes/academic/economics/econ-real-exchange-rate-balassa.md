@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal — Journal of Political Economy, 72(6), 584–596（バラッサ効果原典）](https://doi.org/10.2307/1925975) `学術`
 - [Samuelson, P. A. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics, 46(2), 145–154（サミュエルソン側の独立提唱）](https://doi.org/10.2307/1927330) `学術`
-- [Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（B-S効果とPPPパズルの統合論考）](https://doi.org/10.1257/jep.10.4.97) `学術`
+- [Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（B-S効果とPPPパズルの統合論考）](https://rogoff.scholars.harvard.edu/publications/purchasing-power-parity-puzzle) `学術`
 - [Wikipedia: Balassa–Samuelson effect — Penn effect, non-traded goods, real exchange rate, IMF](https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect) `リファレンス`
 
 ## 関連概念

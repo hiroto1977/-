@@ -32,7 +32,7 @@ Michael D. Slater（マイケル・D・スレイター, RSM 提唱者, 2007） �
 
 ## 関連概念
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 - [Wikipedia: Sexual strategies theory — Buss & Schmitt, short/long-term mating, cross-cultural evidence, critique](https://en.wikipedia.org/wiki/Sexual_strategies_theory) `リファレンス`
 
 ## 関連概念
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
 - [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]] — 同分野の近傍
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

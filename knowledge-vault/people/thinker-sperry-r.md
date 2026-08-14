@@ -14,7 +14,7 @@ tags:
 
 ## 学術概念（2件）
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 遠心性コピー（EfferenceCopy）／随伴発射（CorollaryDischarge）とは、神経科学における概念…
-- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 脳梁切断患者を対象にSperryとGazzanigaが左右半球の独立した意識・機能を実証した。
+- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 難治性てんかんの治療として左右の大脳半球をつなぐ脳梁を外科的に離断した患者を対象に、RogerW.SperryとMic…
 
 ## 関連
 - 索引: [[人物索引]]

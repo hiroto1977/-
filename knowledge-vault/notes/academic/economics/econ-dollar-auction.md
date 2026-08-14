@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Shubik, M. (1971) The Dollar Auction Game: A Paradox in Noncooperative Behavior and Escalation — Journal of Conflict Resolution](https://doi.org/10.1177/002200277101500111) `学術`
 - [Staw, B.M. (1976) Knee-Deep in the Big Muddy: A Study of Escalating Commitment to a Chosen Course of Action — Organizational Behavior and Human Performance](https://doi.org/10.1016/0030-5073(76)90005-2) `学術`
-- [Teger, A.I. (1980) Too Much Invested to Quit — Pergamon Press](https://doi.org/10.1007/978-1-4612-5988-9) `学術`
+- [Teger, A.I. (1980) Too Much Invested to Quit — Pergamon Press](https://shop.elsevier.com/books/too-much-invested-to-quit/teger/978-0-08-022995-9) `学術`
 
 ## 関連概念
 - [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同じ思想家

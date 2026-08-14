@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
 - [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[labor-disability-employment-rate|障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）]] — 語彙が近い
-- [[labor-gender-wage-gap-disclosure|男女の賃金の差異の公表義務（女性活躍推進法・301人以上）]] — 語彙が近い
 - [[labor-disability-pension|障害年金（障害基礎年金・障害厚生年金）]] — 出典を共有
 - [[labor-national-pension|国民年金の加入と被保険者の種別]] — 出典を共有
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-unreasonable-restraint-of-trade|不当な取引制限（カルテル・入札談合）の禁止]] — 出典を共有
 - [[labor-old-age-pension|老齢年金（老齢基礎年金・老齢厚生年金）の受給]] — 出典を共有
 - [[labor-standard-remuneration|標準報酬月額]] — 出典を共有
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

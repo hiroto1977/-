@@ -26,7 +26,7 @@ aliases:
 ロジャー・トレイナー ／ ウィリアム・プロッサー ／ テリー・ドブス ／ 升田純
 
 ## 出典
-- [Howells, G. (2005). Comparative Product Liability — Routledge](https://doi.org/10.4337/9781849809337) `学術`
+- [Howells, G. G. (1993) Comparative Product Liability — Dartmouth（ISBN 978-1-85521-078-3・NLA 目録）](https://catalogue.nla.gov.au/Record/2648578) `学術`
 - [Wikipedia: Product liability — strict liability standard](https://en.wikipedia.org/wiki/Product_liability) `リファレンス`
 
 ## 関連概念

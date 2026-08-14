@@ -31,7 +31,7 @@ aliases:
 - [BUSINESS LAWYERS「取締役の利益相反取引とは？取締役会の承認が必要な場合は？」](https://www.businesslawyers.jp/practices/30) `メディア`
 
 ## 関連概念
-- [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — 語彙が近い
+- [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — 分野横断
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — 同分野の近傍
 - [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同分野の近傍
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 同分野の近傍

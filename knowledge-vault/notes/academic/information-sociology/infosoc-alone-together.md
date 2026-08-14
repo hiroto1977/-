@@ -35,7 +35,7 @@ aliases:
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 出典を共有
 - [[econ-rotten-kid-theorem|腐った子定理]] — 出典を共有
 - [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同分野の近傍
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

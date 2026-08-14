@@ -31,12 +31,12 @@ aliases:
 - [Wardle, C. (2020) Understanding Information Disorder — First Draft](https://firstdraftnews.org/long-form-article/understanding-information-disorder/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-information-disorder|情報障害（Information Disorder）]] — 語彙が近い
 - [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 語彙が近い
+- [[infosoc-information-disorder|情報障害（Information Disorder）]] — 語彙が近い
+- [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 語彙が近い
 - [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
 - [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 出典を共有
-- [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 出典を共有
 - [[infosoc-digital-citizenship|デジタル・シティズンシップ]] — 同分野の近傍
 - [[infosoc-strong-programme|ストロング・プログラム（Strong Programme／Bloor 1976）——科学的知識の社会学（SSK）の綱領、真偽を問わず信念の原因を対称的に説明する]] — 同分野の近傍
 

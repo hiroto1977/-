@@ -32,6 +32,7 @@ aliases:
 - [Kumkale & Albarracín (2004) Psychological Bulletin 130(1):143-172 メタ分析 (効果の境界条件)](https://socialactionlab.org/wp-content/uploads/2024/01/Kumkale_The-Sleeper-Effect-in-Persuasion-A-Meta-Analytic-Review_2004.pdf) `学術`
 
 ## 関連概念
+- [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 語彙が近い
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 同じ思想家
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同じ思想家
 - [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 出典を共有

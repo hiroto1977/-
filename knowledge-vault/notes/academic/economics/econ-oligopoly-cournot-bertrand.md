@@ -26,16 +26,16 @@ aliases:
 アントワーヌ・オーギュスタン・クールノー ／ ジョセフ・ルイ・フランソワ・ベルトラン ／ フランシス・エッジワース ／ ハインリッヒ・フォン・スタッケルバーグ
 
 ## 出典
-- [Cournot (1838) Researches into the Mathematical Principles of the Theory of Wealth — reprint Kelley 1960](https://doi.org/10.1007/978-3-642-48748-8_1) `学術`
+- [Cournot, A. A. (1838) Recherches sur les principes mathematiques de la theorie des richesses — Hachette, Paris（BnF Gallica 電子版。英訳 Researches into the Mathematical Principles of the Theory of Wealth, Bacon 訳, Macmillan, 1897）](https://gallica.bnf.fr/ark:/12148/bpt6k6117257c) `学術`
 - [Wikipedia: Cournot competition — Nash equilibrium, Bertrand, Stackelberg, quantity vs price, oligopoly](https://en.wikipedia.org/wiki/Cournot_competition) `リファレンス`
 
 ## 関連概念
 - [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]] — 語彙が近い
-- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 語彙が近い
 - [[econ-contract-curve|契約曲線（Contract Curve）]] — 同じ思想家
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 同じ思想家
 - [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 同じ思想家
 - [[econ-bertrand-paradox|ベルトランのパラドックス]] — 同じ思想家
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 同じ思想家
 - [[econ-core|コア（協力ゲーム理論）]] — 同じ思想家
 - [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家

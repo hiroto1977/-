@@ -35,8 +35,8 @@ aliases:
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 同じ思想家
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同じ思想家
+- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
-- [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同分野の近傍
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 同分野の近傍
 
 ## 関連

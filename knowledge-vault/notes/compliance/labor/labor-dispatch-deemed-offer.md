@@ -38,6 +38,7 @@ aliases:
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 同分野の近傍
 - [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 同分野の近傍
 - [[labor-disguised-contract|偽装請負（労働者派遣と請負の区分）]] — 同分野の近傍
+- [[labor-dispatch-license|労働者派遣事業の許可制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

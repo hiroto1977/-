@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -22,11 +22,13 @@
  *   node scripts/knowledge-autopilot.cjs --links=100         # 出典 URL 死活も 100 件（週替わりローテーション）
  *   node scripts/knowledge-autopilot.cjs --today=2026-07-07  # 鮮度判定の基準日を固定（再現用）
  *   node scripts/knowledge-autopilot.cjs --skip-regen        # 監査と報告のみ（読み取り専用）
+ *   node scripts/knowledge-autopilot.cjs --check-queue       # 手元のキューが今のコーパスと一致するかだけ見る
  *   node scripts/knowledge-autopilot.cjs --ci                # CI 向け（GITHUB_STEP_SUMMARY へ要約）
  */
 
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const kc = require('../orchestration/knowledge-context.cjs');
 
@@ -269,9 +271,46 @@ function run(label, file, args = []) {
 }
 
 // ---------------------------------------------------------------------------
+// キューの鮮度
+//
+// knowledge-queue.json は gitignore 済みなので `git reset --hard` でも消えない。
+// そのためコンテナが古い commit へ戻る／別ブランチへ移ると、
+// 「消えた項目に対する作業指示」が入ったキューだけが生き残る。
+// 実際にこれが起き、統合で削除済みの 40 件を含む古いキューを消化しかけた。
+// 生成時のコーパス指紋を刻んでおき、消化前に照合できるようにする。
+// ---------------------------------------------------------------------------
+
+/** コーパスの同一性（どの項目が何字か）を 1 個のハッシュにする。 */
+function corpusFingerprint(entries) {
+  const lines = entries.map((e) => `${e.collection}/${e.id}:${(e.summary || '').length}`).sort();
+  return crypto.createHash('sha256').update(lines.join('\n')).digest('hex');
+}
+
+/** 手元のキューが今のコーパスとずれていないか。ずれていれば理由を返す。 */
+function staleQueueReport(queue, entries) {
+  if (!queue || typeof queue !== 'object') return { stale: true, reasons: ['キューが読めない'], missingIds: [] };
+  const reasons = [];
+  if (queue.corpusFingerprint !== corpusFingerprint(entries)) {
+    reasons.push(queue.corpusFingerprint ? 'コーパス指紋が一致しない' : 'コーパス指紋が無い（旧形式のキュー）');
+  }
+  const ids = new Set(entries.map((e) => e.id));
+  const missing = new Set();
+  for (const list of Object.values(queue.queues || {})) {
+    if (!Array.isArray(list)) continue;
+    for (const item of list) {
+      const id = item && typeof item === 'object' ? item.id : item;
+      if (typeof id === 'string' && !ids.has(id)) missing.add(id);
+    }
+  }
+  const missingIds = [...missing];
+  if (missingIds.length) reasons.push(`コーパスに存在しない id を ${missingIds.length} 件参照している`);
+  return { stale: reasons.length > 0, reasons, missingIds };
+}
+
+// ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
-(async () => {
+async function main() {
   const args = parseArgs(process.argv.slice(2));
   const today = args.today ? new Date(`${args.today}T00:00:00Z`) : new Date();
   if (Number.isNaN(today.getTime())) throw new Error(`--today が不正です: ${args.today}`);
@@ -279,6 +318,31 @@ function run(label, file, args = []) {
   console.log(`📚 知識オートパイロット — 基準日 ${today.toISOString().slice(0, 10)}`);
 
   const entries = kc.loadEntries();
+
+  if (args['check-queue']) {
+    if (!fs.existsSync(QUEUE_PATH)) {
+      console.log('✅ キューは未生成 — 陳腐化の余地なし');
+      return;
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(fs.readFileSync(QUEUE_PATH, 'utf8'));
+    } catch {
+      parsed = null;
+    }
+    const report = staleQueueReport(parsed, entries);
+    if (!report.stale) {
+      console.log('✅ キューは今のコーパスと一致しています');
+      return;
+    }
+    console.error('❌ キューが古い（生成後にコーパスが変わっている）。このまま消化すると作業が捨てられます:');
+    for (const r of report.reasons) console.error(`  - ${r}`);
+    if (report.missingIds.length) console.error(`  例: ${report.missingIds.slice(0, 5).join(', ')}`);
+    console.error('  → node scripts/knowledge-autopilot.cjs で作り直してから消化すること。');
+    process.exitCode = 1;
+    return;
+  }
+
   const byCollection = {};
   for (const e of entries) byCollection[e.collection] = (byCollection[e.collection] || 0) + 1;
   console.log(`  対象: ${entries.length} 項目 (${Object.entries(byCollection).map(([k, v]) => `${k} ${v}`).join(' / ')})`);
@@ -310,6 +374,8 @@ function run(label, file, args = []) {
   // 4. REPORT
   const queue = {
     generatedAt: today.toISOString().slice(0, 10),
+    // 生成時点のコーパス指紋。--check-queue がこれを見て「古いキュー」を弾く。
+    corpusFingerprint: corpusFingerprint(entries),
     totals: { entries: entries.length, byCollection },
     thresholds: { thinChars: THIN_CHARS, staleMonths: STALE_MONTHS },
     queues: {
@@ -378,7 +444,13 @@ function run(label, file, args = []) {
   const actionable =
     s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.sourceHygiene + s.deadLinks;
   console.log(actionable > 0 ? `\n⏳ LLM 作業 ${actionable} 件が待機中` : '\n✅ 全て最新 — LLM 作業なし');
-})().catch((err) => {
-  console.error('\n❌ 知識オートパイロット失敗:', err.message || err);
-  process.exit(1);
-});
+}
+
+if (require.main === module) {
+  main().catch((err) => {
+    console.error('\n❌ 知識オートパイロット失敗:', err.message || err);
+    process.exit(1);
+  });
+}
+
+module.exports = { corpusFingerprint, staleQueueReport };

@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]] — 同分野の近傍
 - [[bizlaw-nachfrist-notice-cure|ナッハフリスト制度——追加履行期間の設定による契約解除手続]] — 同分野の近傍
+- [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

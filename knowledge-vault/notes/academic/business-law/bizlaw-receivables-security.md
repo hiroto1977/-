@@ -31,7 +31,7 @@ aliases:
 - [横浜国立大学 法科大学院 集合債権譲渡担保 解説（最判平11・1・29、平13・11・22）](https://www.ls.ynu.ac.jp/about/program/financial/PDF/kaisetsu.pdf) `学術`
 
 ## 関連概念
-- [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 語彙が近い
+- [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 語彙が近い
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同じ思想家
 - [[bizlaw-agency|代理（民法99条）]] — 同じ思想家
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — 同じ思想家

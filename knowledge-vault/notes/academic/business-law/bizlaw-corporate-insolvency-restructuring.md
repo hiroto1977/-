@@ -39,6 +39,7 @@ aliases:
 - [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
 - [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 出典を共有
 - [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同分野の近傍
+- [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

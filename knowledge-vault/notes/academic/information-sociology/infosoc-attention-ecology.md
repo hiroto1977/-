@@ -31,6 +31,8 @@ aliases:
 - [Beyond the Attention Economy, Towards an Ecology of Attending — AI & Society / Springer](https://link.springer.com/article/10.1007/s00146-025-02405-8) `学術`
 
 ## 関連概念
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 出典を共有
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 出典を共有
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有

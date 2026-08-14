@@ -33,8 +33,8 @@ aliases:
 - [[human-phi-phenomenon-wertheimer|ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点]] — 同じ思想家
 - [[human-kanizsa-triangle|カニッツァの三角形——存在しない輪郭を見る主観的輪郭]] — 同じ思想家
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
-- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 同分野の近傍
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
+- [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

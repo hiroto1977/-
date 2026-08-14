@@ -31,8 +31,8 @@ G.アカロフ／M.スペンス／J.スティグリッツ（2001年ノーベル�
 - [Encyclopaedia Britannica Money — Moral hazard](https://www.britannica.com/money/moral-hazard) `リファレンス`
 
 ## 関連概念
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同分野の近傍
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -19,8 +19,18 @@ export interface BackupFile {
   readonly app: 'service-hub';
   readonly version: number;
   readonly exportedAt: string;
-  /** SHA-256 hex of `JSON.stringify(records)`. 旧バックアップには無い場合がある。 */
-  readonly checksum?: string;
+  /**
+   * SHA-256 hex of `JSON.stringify(records)`。**必須**。
+   *
+   * かつては省略可にしてあり、無ければ照合を飛ばしていた。それは
+   * 「改ざんする人が checksum の行を消すだけで検知を無効化できる」
+   * という意味で、`alg: none` と同じ形をしていた。
+   * 省略を許した理由は「旧バックアップ互換」だったが、git を辿ると
+   * このファイルの最初のコミットから常に checksum を書いており、
+   * **checksum の無いバックアップをこのアプリが作ったことは一度も無い**。
+   * 守る対象が存在しない互換のために検知を捨てていた。
+   */
+  readonly checksum: string;
   readonly records: readonly StoredRecord[];
 }
 
@@ -84,7 +94,7 @@ export function isEncryptedBackup(text: string): boolean {
  * Parse + validate a backup file. Throws a user-facing message if the envelope
  * is wrong or the integrity checksum fails. Returns the records array
  * (record-level validation is done by `store.importAll`, which drops malformed
- * entries). 旧バックアップ (checksum 無し) は警告なしで許容する。
+ * entries). checksum が無いファイルは**拒否する** (理由は BackupFile.checksum)。
  *
  * Encrypted backups require `password`; it is ignored for plaintext files.
  */
@@ -115,12 +125,15 @@ export async function parseBackup(text: string, password?: string): Promise<read
   }
   if (!Array.isArray(file.records)) throw new Error('records 配列がありません');
 
-  // 完全性チェック: checksum があれば records と照合し、破損/改ざんを検知。
-  if (typeof file.checksum === 'string') {
-    const actual = await sha256Hex(JSON.stringify(file.records));
-    if (actual !== file.checksum) {
-      throw new Error('バックアップが破損または改ざんされています (チェックサム不一致)');
-    }
+  // 完全性チェック: records と照合し、破損/改ざんを検知する。
+  // **checksum が無いファイルは受け付けない。** 省略を許すと、改ざんする側は
+  // checksum の行を消すだけで検知を無効化できる。
+  if (typeof file.checksum !== 'string') {
+    throw new Error('完全性チェックサムがありません (このアプリが作ったバックアップではないか、改変されています)');
+  }
+  const actual = await sha256Hex(JSON.stringify(file.records));
+  if (actual !== file.checksum) {
+    throw new Error('バックアップが破損または改ざんされています (チェックサム不一致)');
   }
 
   return file.records as StoredRecord[];

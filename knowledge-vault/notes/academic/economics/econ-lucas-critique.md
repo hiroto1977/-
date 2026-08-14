@@ -32,8 +32,9 @@ aliases:
 - [NBER — Lucas 1995 Nobel for rational expectations](https://www.nber.org/news/robert-e-lucas-jr-won-1995-nobel-prize-rational-expectations-theory) `学術`
 
 ## 関連概念
-- [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 語彙が近い
+- [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 同分野の近傍
 - [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同分野の近傍
+- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同分野の近傍
 - [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同分野の近傍
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同分野の近傍
 

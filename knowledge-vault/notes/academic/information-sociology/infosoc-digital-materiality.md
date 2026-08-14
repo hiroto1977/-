@@ -38,8 +38,8 @@ Jean-François Blanchette ／ Paul Dourish
 - [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同分野の近傍
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
