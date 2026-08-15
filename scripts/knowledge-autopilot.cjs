@@ -19,7 +19,7 @@
  *
  * 使い方:
  *   node scripts/knowledge-autopilot.cjs                     # 監査+再生成+検証+報告
- *   node scripts/knowledge-autopilot.cjs --links=100         # 出典 URL 死活も 100 件（週替わりローテーション）
+ *   node scripts/knowledge-autopilot.cjs --links=400         # 出典 URL 死活も 400 件（通し週で前進するローテーション）
  *   node scripts/knowledge-autopilot.cjs --today=2026-07-07  # 鮮度判定の基準日を固定（再現用）
  *   node scripts/knowledge-autopilot.cjs --skip-regen        # 監査と報告のみ（読み取り専用）
  *   node scripts/knowledge-autopilot.cjs --check-queue       # 手元のキューが今のコーパスと一致するかだけ見る
@@ -76,13 +76,28 @@ function titleCore(title) {
     .toLowerCase();
 }
 
-/** ISO 週番号（リンク死活の週替わりローテーション用・状態ファイル不要）。 */
-function isoWeek(d) {
-  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  const day = t.getUTCDay() || 7;
-  t.setUTCDate(t.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-  return Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+/**
+ * 出典 URL 死活チェックのシャード起点に使う「通し週番号」。
+ *
+ * 以前は ISO 週番号 (1..53) を使っていた。**毎年 1 に戻るため、同じ 53 個の
+ * 窓が永久に繰り返され、残りの URL は一度も検査されない。** 実測すると
+ * 12,229 件中 5,300 件 (43%) しか検査対象になり得ず、**6,929 件は永久に
+ * 検査対象外**だった。「リンク切れ 0 件」はその大半について偽の安全信号に
+ * なっていた (2026-08)。
+ *
+ * 固定の起点からの通し週にすることで、シャードは毎週前へ進み続け、
+ * `ceil(URL数 / シャード幅)` 週で必ず一巡する。`--today` を渡せば
+ * 再現もできる（引数の日付だけで決まる純関数）。
+ */
+function weekIndex(d) {
+  const days = Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 86400000);
+  return Math.floor(days / 7);
+}
+
+/** シャードの開始位置。URL 数より広い幅を渡されても範囲内に収める。 */
+function shardOffset(week, shardSize, total) {
+  if (total <= 0) return 0;
+  return ((week * shardSize) % total + total) % total;
 }
 
 // ---------------------------------------------------------------------------
@@ -227,7 +242,7 @@ async function checkLinks(entries, today, shardSize) {
   }
   const urls = [...byUrl.keys()].sort();
   if (urls.length === 0 || shardSize <= 0) return { checked: 0, totalUrls: urls.length, dead: [], suspect: [] };
-  const offset = (isoWeek(today) * shardSize) % urls.length;
+  const offset = shardOffset(weekIndex(today), shardSize, urls.length);
   const shard = [];
   for (let i = 0; i < Math.min(shardSize, urls.length); i++) shard.push(urls[(offset + i) % urls.length]);
 
@@ -453,4 +468,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport };
+module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset };
