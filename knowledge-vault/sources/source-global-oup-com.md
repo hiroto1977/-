@@ -2,7 +2,7 @@
 title: "global.oup.com"
 type: source-domain
 host: "global.oup.com"
-cite_count: 29
+cite_count: 31
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # global.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **29 件**（学術 21 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **31 件**（学術 23 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,8 @@ tags:
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — Birks,P.(2005)UnjustEnrichment(2nded.)—OxfordUniversityPress（不当利得法の学術…
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — Burrows,A.(2011)TheLawofRestitution(3rded.)—OxfordUniversityPress
 - [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — Langevoort2016—SellingHope,SellingRisk:Corporations,WallStreet,andthe…
+- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — Viner,J.(1950)TheCustomsUnionIssue—CarnegieEndowmentforInternationalP…
+- [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — Viner,J.(1950)TheCustomsUnionIssue—CarnegieEndowmentforInternationalP…
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — Sen1999—DevelopmentasFreedom,OxfordUniversityPress
 - [[human-body-schema|身体図式（ボディスキーマ）]] — Gallagher(2005)HowtheBodyShapestheMind,OxfordUniversityPress
 - [[human-logotherapy|ロゴセラピー（意味中心療法）：実存的空虚と意味への意志に基づく心理療法]] — Breitbart,W.S.2017Meaning-CenteredPsychotherapyintheCancerSetting.Oxf…

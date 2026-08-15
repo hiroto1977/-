@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
 - [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
 - [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
-- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

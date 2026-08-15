@@ -2,7 +2,7 @@
 title: "wiley.com"
 type: source-domain
 host: "wiley.com"
-cite_count: 8
+cite_count: 10
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（学術 5 ・ リファレンス 3）
+> [!info] 出典ドメイン索引 ・ 引用 **10 件**（学術 7 ・ リファレンス 3）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,8 @@ tags:
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — Scholz,T.(2016)UberworkedandUnderpaid:HowWorkersAreDisruptingtheDigit…
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — McCombs2004—SettingtheAgenda:TheMassMediaandPublicOpinion,PolityPress
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — DeborahLupton,TheQuantifiedSelf:ASociologyofSelf-Tracking,Polity/Wile…
+- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — Wajcman(2004)TechnoFeminism—PolityPress（Polity,2004,ISBN978-0-7456-30…
+- [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — Wajcman,J.(2004).TechnoFeminism.PolityPress.（Polity,2004,ISBN978-0-74…
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — Osterwalder,A.&Pigneur,Y.(2010)BusinessModelGeneration—JohnWiley&Sons
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — Feld2012—StartupCommunities:BuildinganEntrepreneurialEcosysteminYourC…
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — Helfatetal.(2007)DynamicCapabilities:UnderstandingStrategicChangeinOr…

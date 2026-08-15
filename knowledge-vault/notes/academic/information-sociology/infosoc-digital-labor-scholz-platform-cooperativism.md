@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Scholz, T. (2016) Uberworked and Underpaid: How Workers Are Disrupting the Digital Economy — Polity Press（ISBN 978-0-7456-5356-3・初版ハードカバー）](https://www.wiley.com/en-us/Uberworked+and+Underpaid:+How+Workers+Are+Disrupting+the+Digital+Economy-p-9780745653563) `学術`
-- [Srnicek, N. (2017) Platform Capitalism — Polity Press](https://doi.org/10.1509/jppm.15.098) `学術`
+- [Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
 - [Wikipedia: Platform cooperativism — プラットフォーム協同組合主義の概要](https://en.wikipedia.org/wiki/Platform_cooperativism) `リファレンス`
 
 ## 関連概念

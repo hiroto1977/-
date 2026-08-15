@@ -26,7 +26,7 @@ aliases:
 ショシャナ・ズボフ ／ ニック・カルドルス ／ エラン・ベンシャハル ／ ヴィクトル・メイヤー＝ショーンベルガー
 
 ## 出典
-- [Zuboff, S. (2019). The Age of Surveillance Capitalism — PublicAffairs](https://doi.org/10.1017/9781108680202) `学術`
+- [Zuboff, S. (2019). The Age of Surveillance Capitalism — PublicAffairs（PublicAffairs, 2019, ISBN 978-1-61039-569-4）](https://www.hachettebookgroup.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/?lens=publicaffairs) `学術`
 - [Wikipedia: Data sovereignty — international governance](https://en.wikipedia.org/wiki/Data_sovereignty) `リファレンス`
 
 ## 関連概念

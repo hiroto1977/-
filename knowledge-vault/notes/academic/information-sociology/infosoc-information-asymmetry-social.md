@@ -26,7 +26,7 @@ aliases:
 ショシャナ・ズボフ ／ フランク・パスクァーレ ／ マー・ヒックス ／ サフィア・ノーブル
 
 ## 出典
-- [Zuboff (2019) The Age of Surveillance Capitalism — PublicAffairs](https://doi.org/10.1515/9781610396196) `学術`
+- [Zuboff (2019) The Age of Surveillance Capitalism — PublicAffairs（PublicAffairs, 2019, ISBN 978-1-61039-569-4）](https://www.hachettebookgroup.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/?lens=publicaffairs) `学術`
 - [Pasquale (2015) The Black Box Society: The Secret Algorithms That Control Money and Information — Harvard University Press](https://doi.org/10.4159/harvard.9780674736061) `学術`
 - [Wikipedia: Surveillance capitalism — 監視資本主義と情報の非対称性の社会的分析](https://en.wikipedia.org/wiki/Surveillance_capitalism) `リファレンス`
 

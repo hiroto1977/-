@@ -27,20 +27,20 @@ aliases:
 
 ## 出典
 - [Johnson, Rethinking Incrementalism, Strategic Management Journal (1988) — Wiley](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090107) `学術`
-- [Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)](https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118785317.weom120213) `リファレンス`
+- [Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）](https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225) `リファレンス`
 - [tutor2u — Strategic Drift 解説（英国教育メディア）](https://www.tutor2u.net/business/reference/strategic-drift) `メディア`
 
 ## 関連概念
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 同じ思想家
 - [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同じ思想家
-- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
-- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
-- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
-- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
-- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
-- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
-- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
-- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
+- [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
+- [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
+- [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

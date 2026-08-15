@@ -2,7 +2,7 @@
 title: "politybooks.com"
 type: source-domain
 host: "politybooks.com"
-cite_count: 3
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,10 +10,12 @@ tags:
 
 # politybooks.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 1 ・ メディア 1 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（学術 3 ・ メディア 1 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
+- [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — Citton(2017)TheEcologyofAttention—PolityPress（Polity,2017,ISBN978-1-5…
+- [[infosoc-attention-economy-goldhaber-citton|アテンション・エコノミー——注意の希少性と経済的価値]] — Citton,Y.(2017)TheEcologyofAttention—PolityPress（Polity,2017,ISBN978-…
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — PolityPress—PlatformCapitalism（原著出版社・書誌）
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — Srnicek2016—PlatformCapitalism,PolityPress
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — PolityBooks—Srnicek,PlatformCapitalism(2017)

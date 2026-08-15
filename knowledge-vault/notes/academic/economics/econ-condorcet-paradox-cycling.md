@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Arrow, K.J. (1950) A Difficulty in the Concept of Social Welfare — Journal of Political Economy 58(4)](https://doi.org/10.2307/1907187) `学術`
 - [Wikipedia: Condorcet Paradox — voting cycle and intransitivity of majority rule](https://en.wikipedia.org/wiki/Condorcet_paradox) `リファレンス`
-- [Sen, A.K. (1970) Collective Choice and Social Welfare — Holden-Day](https://doi.org/10.1017/CBO9780511558726) `学術`
+- [Sen, A.K. (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）](https://search.worldcat.org/title/140528) `学術`
 
 ## 関連概念
 - [[econ-arrow-impossibility|アローの不可能性定理]] — 語彙が近い

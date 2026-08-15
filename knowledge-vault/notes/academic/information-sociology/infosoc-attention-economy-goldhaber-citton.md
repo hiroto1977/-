@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Goldhaber, M. H. (1997) "The Attention Economy and the Net" — First Monday](https://doi.org/10.5210/fm.v2i4.519) `学術`
-- [Citton, Y. (2017) The Ecology of Attention — Polity Press](https://doi.org/10.3917/dec.citto.2014.01) `学術`
+- [Citton, Y. (2017) The Ecology of Attention — Polity Press（Polity, 2017, ISBN 978-1-5095-0372-8）](https://politybooks.com/bookdetail/?isbn=9781509503728) `学術`
 - [Wikipedia: Attention economy — 注意の希少性と経済的論理](https://en.wikipedia.org/wiki/Attention_economy) `リファレンス`
 
 ## 関連概念

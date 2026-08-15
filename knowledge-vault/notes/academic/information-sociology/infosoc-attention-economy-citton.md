@@ -26,7 +26,7 @@ aliases:
 ハーバート・サイモン ／ マイケル・ゴールドハーバー ／ イヴ・シットン ／ ジェームズ・ウィリアムズ
 
 ## 出典
-- [Citton (2017) The Ecology of Attention — Polity Press](https://doi.org/10.4000/books.enseditions.11081) `学術`
+- [Citton (2017) The Ecology of Attention — Polity Press（Polity, 2017, ISBN 978-1-5095-0372-8）](https://politybooks.com/bookdetail/?isbn=9781509503728) `学術`
 - [Williams (2018) Stand Out of Our Light: Freedom and Resistance in the Attention Economy — Cambridge University Press](https://doi.org/10.1017/9781108553056) `学術`
 - [Wikipedia: Attention economy — 注意経済の理論と社会的含意の概説](https://en.wikipedia.org/wiki/Attention_economy) `リファレンス`
 

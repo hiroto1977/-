@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Kaldor (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal](https://doi.org/10.2307/2224835) `学術`
-- [Sen (1970) Collective Choice and Social Welfare — Holden-Day](https://doi.org/10.1093/0198281935.001.0001) `学術`
+- [Sen (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）](https://search.worldcat.org/title/140528) `学術`
 - [Wikipedia: Welfare economics — 厚生経済学の基本定理と社会的評価基準の概説](https://en.wikipedia.org/wiki/Welfare_economics) `リファレンス`
 
 ## 関連概念
