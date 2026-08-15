@@ -13,7 +13,6 @@ import {
   createMockBusinessOpsDataSource,
   defaultBusinessDashboardPath,
   defaultBusinessDashboardMdPath,
-  escapeHtml,
   exportBusinessDashboardImpl,
   exportBusinessDashboardMdImpl,
   fetchBusinessOpsSnapshot,
@@ -1133,22 +1132,6 @@ describe('business advisor boundary pins', () => {
       payload: { question: 'q' },
     });
     expect(result).toMatchObject({ notForRealMoney: true });
-  });
-});
-
-// --- escapeHtml -------------------------------------------------------
-
-describe('escapeHtml', () => {
-  it('escapes all 5 HTML-significant characters', () => {
-    expect(escapeHtml('<script>alert("x")</script>')).toBe(
-      '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;',
-    );
-    expect(escapeHtml("o'reilly")).toBe('o&#39;reilly');
-    expect(escapeHtml('a & b')).toBe('a &amp; b');
-  });
-
-  it('passes through plain text unchanged', () => {
-    expect(escapeHtml('hello world 日本語')).toBe('hello world 日本語');
   });
 });
 

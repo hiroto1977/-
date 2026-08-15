@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cramer, F. (2015) "What Is Post-Digital?" — APRJA (A Peer-Reviewed Journal About)](https://doi.org/10.12801/1947-5403.2014.06.01.02) `学術`
-- [Cascone, K. (2000) "The Aesthetics of Failure: Post-Digital Tendencies" — Computer Music Journal](https://doi.org/10.1162/COMJ_a_00038) `学術`
+- [Cascone, K. (2000) "The Aesthetics of Failure: Post-Digital Tendencies" — Computer Music Journal](https://doi.org/10.1162/014892600559489) `学術`
 - [Wikipedia: Post-digital — デジタル日常化と文化的再考](https://en.wikipedia.org/wiki/Post-digital) `リファレンス`
 - [Cascone (2000) The Aesthetics of Failure — Computer Music Journal, MIT Press](https://doi.org/10.1162/014892600559489) `学術`
 - [Berry & Dieter eds. (2015) Postdigital Aesthetics: Art, Computation and Design — Palgrave Macmillan](https://link.springer.com/book/10.1057/9781137437204) `学術`

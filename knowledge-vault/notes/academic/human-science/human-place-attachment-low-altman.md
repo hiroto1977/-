@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Scannell & Gifford (2010) Defining Place Attachment: A Tripartite Organizing Framework — Journal of Environmental Psychology](https://doi.org/10.1016/j.jenvp.2009.09.006) `学術`
-- [Lewicka (2011) Place Attachment: How Far Have We Come in the Last 40 Years? — Journal of Environmental Psychology](https://doi.org/10.1016/j.jenvp.2010.02.001) `学術`
+- [Lewicka (2011) Place Attachment: How Far Have We Come in the Last 40 Years? — Journal of Environmental Psychology](https://doi.org/10.1016/j.jenvp.2010.10.001) `学術`
 - [Wikipedia: Place attachment — 場所愛着の理論的枠組みと研究動向の概説](https://en.wikipedia.org/wiki/Place_attachment) `リファレンス`
 
 ## 関連概念

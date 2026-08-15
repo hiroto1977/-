@@ -26,7 +26,7 @@ aliases:
 ジョーン・ロビンソン ／ ピエロ・スラッファ ／ ポール・サミュエルソン ／ ルイジ・パシネッティ
 
 ## 出典
-- [Robinson, J. (1953-54) The Production Function and the Theory of Capital — Review of Economic Studies](https://doi.org/10.2307/2296305) `学術`
+- [Robinson, J. (1953-54) The Production Function and the Theory of Capital — Review of Economic Studies](https://doi.org/10.2307/2296002) `学術`
 - [Sraffa, P. (1960) Production of Commodities by Means of Commodities — Cambridge University Press](https://archive.org/details/productionofcomm0000sraf) `学術`
 - [Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics](https://doi.org/10.2307/1882916) `学術`
 

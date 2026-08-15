@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Bernanke, B. S. & Blinder, A. S. (1988) Credit, Money, and Aggregate Demand — American Economic Review, 78(2), 435–439（信用チャンネルの提唱）](https://doi.org/10.1257/aer.78.2.435) `学術`
-- [Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review, 79(1), 14–31（金融加速器の原典）](https://doi.org/10.2307/2937927) `学術`
+- [Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review, 79(1), 14–31（金融加速器の原典）](https://doi.org/10.2307/1804770) `学術`
 - [Bernanke, B. S. & Gertler, M. (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives, 9(4), 27–48（信用チャンネルの体系的解説）](https://doi.org/10.1257/jep.9.4.27) `学術`
 - [Wikipedia: Credit channel — bank lending channel, balance sheet channel, financial accelerator, QE applications](https://en.wikipedia.org/wiki/Credit_channel) `リファレンス`
 

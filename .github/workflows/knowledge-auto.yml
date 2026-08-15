@@ -31,7 +31,9 @@ jobs:
       - run: npm ci
 
       # 監査 + 派生物再生成 + 確証ゲート + 出典 URL 死活（週替わり 100 件ローテーション）
-      - run: node scripts/knowledge-autopilot.cjs --ci --links=100
+      # 出典 URL 12,229 件を 400 件/週で回す (一巡 31 週)。
+      #   100 件のままだと一巡 123 週 = 2.4 年かかる。
+      - run: node scripts/knowledge-autopilot.cjs --ci --links=400
 
       # 派生成果物（knowledge-vault 等）が本体データと完全同期している証明:
       # 再生成後の作業樹に diff が出たら、決定論が壊れているので fail。

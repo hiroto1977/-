@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Benkler, Y. (2002) Coase's Penguin, or, Linux and "The Nature of the Firm" — Yale Law Journal, 112(3), 369–446（CBPPの原典）](https://doi.org/10.2307/1229511) `学術`
-- [Benkler, Y. (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press（社会的生産の体系書）](https://doi.org/10.4159/9780674977075) `学術`
+- [Benkler, Y. (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press（社会的生産の体系書）](https://doi.org/10.2307/j.ctt1njknw) `学術`
 - [Crowston, K. & Howison, J. (2005) The Social Structure of Free and Open Source Software Development — First Monday, 10(2)（オープンソース開発のコミュニティ構造）](https://doi.org/10.1145/1134307.1134387) `学術`
 - [Wikipedia: Commons-based peer production — Benkler, Linux, Wikipedia, copyleft, Creative Commons](https://en.wikipedia.org/wiki/Commons-based_peer_production) `リファレンス`
 

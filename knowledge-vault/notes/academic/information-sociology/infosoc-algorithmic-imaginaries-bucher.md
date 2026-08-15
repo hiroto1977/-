@@ -26,7 +26,7 @@ aliases:
 テイナ・ビュッヒャー ／ タールトン・ギリスピー ／ ニック・シーヴァー ／ マイク・アナニー
 
 ## 出典
-- [Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society](https://doi.org/10.1177/1461444816642311) `学術`
+- [Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society](https://doi.org/10.1080/1369118X.2016.1154086) `学術`
 - [Seaver, N. (2017) Algorithms as Culture: Some Tactics for the Ethnography of Algorithmic Systems — Big Data & Society](https://doi.org/10.1177/2053951718757253) `学術`
 - [Wikipedia: Algorithmic curation — user perception and platform content management overview](https://en.wikipedia.org/wiki/Algorithmic_curation) `リファレンス`
 

@@ -23,7 +23,6 @@ import {
   validateAdvisorJson,
   ADVISOR_DISCLAIMER,
   renderDashboardHtml,
-  escapeHtml,
   defaultDashboardPath,
   isSafeDashboardPath,
   exportDashboardImpl,
@@ -1916,38 +1915,6 @@ describe('advisor edge cases', () => {
       allowed,
     );
     expect(out[0]!.riskFactors[0]).toHaveLength(200);
-  });
-});
-
-// --- escapeHtml ----------------------------------------------------------
-
-describe('escapeHtml', () => {
-  it('escapes &, <, >, ", \'', () => {
-    expect(escapeHtml('<script>')).toBe('&lt;script&gt;');
-    expect(escapeHtml('a & b')).toBe('a &amp; b');
-    expect(escapeHtml('"x"')).toBe('&quot;x&quot;');
-    expect(escapeHtml("it's")).toBe('it&#39;s');
-  });
-
-  it('escapes & FIRST so &lt; cannot decode back to <', () => {
-    // If `<` was escaped before `&`, the result would be `&amp;lt;`
-    // which renders as `&lt;` literally instead of `<`.
-    expect(escapeHtml('&lt;')).toBe('&amp;lt;');
-  });
-
-  it('leaves safe text untouched', () => {
-    expect(escapeHtml('hello world')).toBe('hello world');
-    expect(escapeHtml('')).toBe('');
-  });
-
-  it('handles a XSS-style attempt (kills any drop in the escape chain)', () => {
-    const out = escapeHtml('<img src=x onerror="alert(1)">');
-    expect(out).not.toContain('<');
-    expect(out).not.toContain('>');
-    expect(out).not.toContain('"');
-    expect(out).toContain('&lt;');
-    expect(out).toContain('&gt;');
-    expect(out).toContain('&quot;');
   });
 });
 

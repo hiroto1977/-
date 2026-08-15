@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [FSB (2023) Global Monitoring Report on Non-Bank Financial Intermediation 2023 — Financial Stability Board（年次グローバル監視報告）](https://www.fsb.org/2023/12/global-monitoring-report-on-non-bank-financial-intermediation-2023/) `公的`
-- [Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics, 104(3), 425–451（レポ市場取り付けの実証）](https://doi.org/10.1146/annurev-financial-111914-041938) `学術`
+- [Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics, 104(3), 425–451（レポ市場取り付けの実証）](https://doi.org/10.1016/j.jfineco.2011.03.016) `学術`
 - [Pozsar, Z. et al. (2013) Shadow Banking — Federal Reserve Bank of New York Staff Reports No. 458（体系的整理）](https://doi.org/10.1093/rfs/hhs100) `学術`
 - [Wikipedia: Shadow banking system — definition, components, FSB framework, 2008 crisis role](https://en.wikipedia.org/wiki/Shadow_banking_system) `リファレンス`
 

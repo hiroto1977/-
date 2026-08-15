@@ -21805,7 +21805,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson & Birkinshaw (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity, AMJ 47(2):209-226' },
       { url: 'https://doi.org/10.1287/orsc.1070.0357', type: 'academic', label: 'Raisch & Birkinshaw (2008) Organizational ambidexterity review, Organization Science 19(3):375-392' },
-      { url: 'https://doi.org/10.2307/41165987', type: 'academic', label: 'Tushman & O\'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29' },
+      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman & O\'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29' },
     ],
   },
   {
@@ -23196,7 +23196,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://psycnet.apa.org/record/1965-00452-000', type: 'academic', label: 'McGrath (1964) Social Psychology: A Brief Introduction — IPOモデル原典' },
       { url: 'https://www.jstor.org/stable/256294', type: 'academic', label: 'Hackman (1987) The design of work teams — チーム有効性条件モデル' },
       { url: 'https://doi.org/10.1146/annurev.psych.56.091103.070250', type: 'academic', label: 'Ilgen et al. (2005) Teams in Organizations: From I-P-O Models to IMOI Models' },
-      { url: 'https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-032414-111418', type: 'academic', label: 'Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams' },
+      { url: 'https://doi.org/10.1111/j.1529-1006.2006.00030.x', type: 'academic', label: 'Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams' },
       { url: 'https://www.apa.org/pubs/books/4316012', type: 'reference', label: 'Hackman (2002) Leading Teams: Setting the Stage for Great Performances — APA' },
     ],
   },
@@ -23209,7 +23209,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) "Exploration and Exploitation in Organizational Learning" — Organization Science' },
-      { url: 'https://doi.org/10.2307/41165891', type: 'academic', label: 'Tushman & O\'Reilly (1996) "Ambidextrous Organizations" — California Management Review' },
+      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman & O\'Reilly (1996) "Ambidextrous Organizations" — California Management Review' },
       { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch & Birkinshaw (2008) "Organizational Ambidexterity" — Journal of Management' },
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=9913', type: 'reference', label: 'O\'Reilly & Tushman (2004) "The Ambidextrous Organization" — Harvard Business Review' },
       { url: 'https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-012420-062543', type: 'academic', label: 'O\'Reilly & Tushman (2021) "Organizational Ambidexterity: Past, Present and Future" — Annual Review of Organizational Psychology' },
@@ -23597,7 +23597,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.7551/mitpress/1790.001.0001', type: 'academic', label: 'Lessig (1999) "Code and Other Laws of Cyberspace" — MIT Press' },
       { url: 'https://doi.org/10.7551/mitpress/7253.001.0001', type: 'academic', label: 'Gillespie (2007) "Wired Shut: Copyright and the Shape of Digital Culture" — MIT Press' },
       { url: 'https://www.copyright.gov/dmca/', type: 'government', label: 'U.S. Copyright Office — Digital Millennium Copyright Act (DMCA) overview' },
-      { url: 'https://doi.org/10.2307/j.ctt5hjjtq', type: 'academic', label: 'Benkler (2006) "The Wealth of Networks: How Social Production Transforms Markets and Freedom" — Yale University Press' },
+      { url: 'https://doi.org/10.2307/j.ctt1njknw', type: 'academic', label: 'Benkler (2006) "The Wealth of Networks: How Social Production Transforms Markets and Freedom" — Yale University Press' },
     ],
   },
   {
@@ -23844,10 +23844,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies, MIT Press, pp.167–194' },
-      { url: 'https://doi.org/10.1177/1461444816643163', type: 'academic', label: 'Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.' },
+      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.' },
       { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'reference', label: 'Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.' },
       { url: 'https://doi.org/10.1093/oso/9780190905491.001.0001', type: 'academic', label: 'Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.' },
-      { url: 'https://doi.org/10.1145/2702123.2702556', type: 'academic', label: 'Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.' },
+      { url: 'https://doi.org/10.1126/science.aaa1160', type: 'academic', label: 'Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.' },
     ],
   },
   {
@@ -23905,8 +23905,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.2307/2634396', type: 'academic', label: 'March, J.G. (1991). Exploration and Exploitation in Organizational Learning. Organization Science, 2(1), 71-87.' },
-      { url: 'https://doi.org/10.2307/41165933', type: 'academic', label: 'Tushman, M.L. & O\'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.' },
-      { url: 'https://doi.org/10.2307/30040758', type: 'academic', label: 'Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.' },
+      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman, M.L. & O\'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.' },
+      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.' },
       { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.' },
       { url: 'https://doi.org/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.' },
     ],
@@ -23995,10 +23995,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ Myung Un Kim ／ Barry M. Staw ／ Lance E. Sandelands ／ Jane E. Dutton ／ Donald C. Hambrick ／ Richard A. D\'Aveni',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.2307/258014', type: 'academic', label: 'Weitzel & Jonsson (1989) "Decline in Organizations: A Literature Integration and Extension" — Administrative Science Quarterly' },
+      { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel & Jonsson (1989) "Decline in Organizations: A Literature Integration and Extension" — Administrative Science Quarterly' },
       { url: 'https://doi.org/10.2307/256246', type: 'academic', label: 'Cameron, Whetten & Kim (1987) "Organizational Dysfunctions of Decline" — Academy of Management Journal' },
       { url: 'https://doi.org/10.2307/2392337', type: 'academic', label: 'Staw, Sandelands & Dutton (1981) "Threat-Rigidity Effects in Organizational Behavior" — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.2307/256445', type: 'academic', label: 'Hambrick & D\'Aveni (1988) "Large Corporate Failures as Downward Spirals" — Administrative Science Quarterly' },
+      { url: 'https://doi.org/10.2307/2392853', type: 'academic', label: 'Hambrick & D\'Aveni (1988) "Large Corporate Failures as Downward Spirals" — Administrative Science Quarterly' },
       { url: 'https://doi.org/10.1002/smj.4250050104', type: 'academic', label: 'Schendel, Patton & Riggs (1976) "Corporate Turnaround Strategies" — Strategic Management Journal' },
     ],
   },
@@ -25927,7 +25927,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/The_Surveillant_Assemblage', type: 'reference', label: 'The Surveillant Assemblage — Wikipedia' },
-      { url: 'https://doi.org/10.1093/bjc/40.4.605', type: 'academic', label: 'Haggerty & Ericson (2000) The Surveillant Assemblage — British Journal of Criminology 40(4)' },
+      { url: 'https://doi.org/10.1080/00071310020015280', type: 'academic', label: 'Haggerty & Ericson (2000) The Surveillant Assemblage — British Journal of Criminology 40(4)' },
       { url: 'https://www.semanticscholar.org/paper/The-surveillant-assemblage-Haggerty-Ericson/20a4d08d7b4cebbed5e62bf78949a7b779fe2c5e', type: 'academic', label: 'Haggerty & Ericson (2000) — Semantic Scholar' },
       { url: 'https://en.wikipedia.org/wiki/Kevin_Haggerty', type: 'reference', label: 'Kevin Haggerty — Wikipedia' },
     ],
@@ -26530,7 +26530,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://onlinelibrary.wiley.com/doi/book/10.1002/9781119206453', type: 'academic', label: 'Weick, K.E. (2009). Making Sense of the Organization, Volume 2. Wiley-Blackwell.' },
       { url: 'https://journals.sagepub.com/doi/10.1177/0170840614559259', type: 'academic', label: 'Brown, A.D., Colville, I., & Pye, A. (2015). Making Sense of Sensemaking in Organization Studies. Organization Studies, 36(2).' },
       { url: 'https://openlibrary.org/books/OL1276566M/Sensemaking_in_organizations', type: 'reference', label: 'Open Library — Sensemaking in Organizations' },
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520.2014.873177', type: 'academic', label: 'Maitlis, S. & Christianson, M. (2014). Sensemaking in Organizations: Taking Stock and Moving Forward. Academy of Management Annals, 8(1), 57-125.' },
+      { url: 'https://doi.org/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis, S. & Christianson, M. (2014). Sensemaking in Organizations: Taking Stock and Moving Forward. Academy of Management Annals, 8(1), 57-125.' },
       { url: 'https://www.jstor.org/stable/2393339', type: 'academic', label: 'Weick, K.E. (1993). The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster. Administrative Science Quarterly, 38(4), 628-652.' },
     ],
   },
@@ -27748,7 +27748,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://doi.org/10.1007/978-1-4612-4634-3_9', type: 'academic', label: 'Wegner, D.M. 1987 Transactive memory: A contemporary analysis of the group mind. In Theories of Group Behavior, Springer 185-208' },
-      { url: 'https://doi.org/10.1037/0021-9010.84.6.925', type: 'academic', label: 'Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Journal of Applied Psychology 84(6) 925-937' },
+      { url: 'https://doi.org/10.4324/9781410603227-1', type: 'academic', label: 'Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Shared Cognition in Organizations 所収の書籍章（Lawrence Erlbaum／Routledge）' },
       { url: 'https://doi.org/10.1037/0021-9010.88.4.587', type: 'academic', label: 'Lewis, K. 2003 Measuring transactive memory systems in the field. Journal of Applied Psychology 88(4) 587-604' },
     ],
   },
@@ -28102,7 +28102,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://press.uchicago.edu/ucp/books/book/chicago/P/bo20850870.html', type: 'academic', label: 'Wajcman (2015) Pressed for Time: The Acceleration of Life in Digital Capitalism — University of Chicago Press' },
       { url: 'https://www.versobooks.com/books/1570-24-7', type: 'academic', label: 'Crary (2013) 24/7: Late Capitalism and the Ends of Sleep — Verso Books' },
-      { url: 'https://doi.org/10.1177/1461444816642247', type: 'academic', label: 'Bucher (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society' },
+      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society' },
       { url: 'https://doi.org/10.4135/9781446217696', type: 'academic', label: 'Hassan (2009) Empires of Speed: Time and the Acceleration of Politics and Society — Brill' },
     ],
   },
@@ -28127,7 +28127,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョーン・ロビンソン ／ ピエロ・スラッファ ／ ポール・サミュエルソン ／ ルイジ・パシネッティ',
     asOf: '2026-06-25',
     sources: [
-      { url: 'https://doi.org/10.2307/2296305', type: 'academic', label: 'Robinson, J. (1953-54) The Production Function and the Theory of Capital — Review of Economic Studies' },
+      { url: 'https://doi.org/10.2307/2296002', type: 'academic', label: 'Robinson, J. (1953-54) The Production Function and the Theory of Capital — Review of Economic Studies' },
       { url: 'https://archive.org/details/productionofcomm0000sraf', type: 'academic', label: 'Sraffa, P. (1960) Production of Commodities by Means of Commodities — Cambridge University Press' },
       { url: 'https://doi.org/10.2307/1882916', type: 'academic', label: 'Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics' },
     ],
@@ -28140,7 +28140,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テッド・ベイカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース',
     asOf: '2026-06-25',
     sources: [
-      { url: 'https://doi.org/10.2307/20159255', type: 'academic', label: 'Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Academy of Management Review' },
+      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly' },
       { url: 'https://archive.org/details/savagemindsavoir00levi', type: 'academic', label: 'Levi-Strauss, C. (1962) La Pensee Sauvage (The Savage Mind) — Plon / University of Chicago Press' },
       { url: 'https://doi.org/10.1016/S0048-7333(02)00062-8', type: 'academic', label: 'Garud, R. & Karnoe, P. (2003) Bricolage versus Breakthrough: Distributed and Embedded Agency in Technology Entrepreneurship — Research Policy' },
     ],
@@ -29687,7 +29687,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.fsb.org/2023/12/global-monitoring-report-on-non-bank-financial-intermediation-2023/', type: 'government', label: 'FSB (2023) Global Monitoring Report on Non-Bank Financial Intermediation 2023 — Financial Stability Board（年次グローバル監視報告）' },
-      { url: 'https://doi.org/10.1146/annurev-financial-111914-041938', type: 'academic', label: 'Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics, 104(3), 425–451（レポ市場取り付けの実証）' },
+      { url: 'https://doi.org/10.1016/j.jfineco.2011.03.016', type: 'academic', label: 'Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics, 104(3), 425–451（レポ市場取り付けの実証）' },
       { url: 'https://doi.org/10.1093/rfs/hhs100', type: 'academic', label: 'Pozsar, Z. et al. (2013) Shadow Banking — Federal Reserve Bank of New York Staff Reports No. 458（体系的整理）' },
       { url: 'https://en.wikipedia.org/wiki/Shadow_banking_system', type: 'reference', label: 'Wikipedia: Shadow banking system — definition, components, FSB framework, 2008 crisis role' },
     ],
@@ -29841,7 +29841,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2232670', type: 'academic', label: 'Corden, W. M. & Neary, J. P. (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal, 92(368), 825–848（オランダ病の原典）' },
-      { url: 'https://doi.org/10.2307/2951599', type: 'academic', label: 'Sachs, J. D. & Warner, A. M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398（資源の呪い実証）' },
+      { url: 'https://doi.org/10.3386/w5398', type: 'academic', label: 'Sachs, J. D. & Warner, A. M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398（資源の呪い実証）' },
       { url: 'https://doi.org/10.1093/oxrep/grm030', type: 'academic', label: 'Frankel, J. A. (2012) The Natural Resource Curse: A Survey of Diagnoses and Some Prescriptions — HKS Faculty Research Working Papers（政策的処方箋の概観）' },
       { url: 'https://en.wikipedia.org/wiki/Dutch_disease', type: 'reference', label: 'Wikipedia: Dutch disease — Corden & Neary model, spending effect, resource movement effect, case studies' },
     ],
@@ -29995,7 +29995,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1257/aer.78.2.435', type: 'academic', label: 'Bernanke, B. S. & Blinder, A. S. (1988) Credit, Money, and Aggregate Demand — American Economic Review, 78(2), 435–439（信用チャンネルの提唱）' },
-      { url: 'https://doi.org/10.2307/2937927', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review, 79(1), 14–31（金融加速器の原典）' },
+      { url: 'https://doi.org/10.2307/1804770', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review, 79(1), 14–31（金融加速器の原典）' },
       { url: 'https://doi.org/10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives, 9(4), 27–48（信用チャンネルの体系的解説）' },
       { url: 'https://en.wikipedia.org/wiki/Credit_channel', type: 'reference', label: 'Wikipedia: Credit channel — bank lending channel, balance sheet channel, financial accelerator, QE applications' },
     ],
@@ -30148,7 +30148,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テッド・ベイカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース ／ サラ・サラスバシー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/20159704', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly, 50(3), 329–366（原典）' },
+      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly, 50(3), 329–366（原典）' },
       { url: 'https://doi.org/10.1177/0149206313501181', type: 'academic', label: 'Davidsson, P., Baker, T. & Senyard, J. M. (2017) A Theory of Bricolage for Entrepreneurship Research — Journal of Business Venturing, 32(6), 674–694（理論の発展）' },
       { url: 'https://doi.org/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review, 26(2), 243–263（エフェクチュエーションとの比較）' },
       { url: 'https://en.wikipedia.org/wiki/Bricolage', type: 'reference', label: 'Wikipedia: Bricolage — Lévi-Strauss, Baker & Nelson, resource constraint, effectuation, lean startup connection' },
@@ -30444,7 +30444,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.12801/1947-5403.2015.07.03.01', type: 'academic', label: 'Cramer, F. (2015) What is "Post-digital"? — A Peer-reviewed Journal About Post-Digital Research, 3(1)（ポストデジタルの定義論文）' },
       { url: 'https://doi.org/10.1080/00131857.2018.1454000', type: 'academic', label: 'Jandrić, P. et al. (2018) Postdigital Science and Education — Educational Philosophy and Theory, 50(10), 893–899（教育学への応用）' },
-      { url: 'https://doi.org/10.1080/14626268.2016.1219003', type: 'academic', label: 'Cascone, K. (2000) The Aesthetics of Failure: "Post-Digital" Tendencies in Contemporary Computer Music — Computer Music Journal, 24(4), 12–18（美学的起源）' },
+      { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone, K. (2000) The Aesthetics of Failure: "Post-Digital" Tendencies in Contemporary Computer Music — Computer Music Journal, 24(4), 12–18（美学的起源）' },
       { url: 'https://en.wikipedia.org/wiki/Post-digital', type: 'reference', label: 'Wikipedia: Post-digital — Cramer, analog revival, post-digital pedagogy, AI content backlash' },
     ],
   },
@@ -30555,7 +30555,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/1830652', type: 'academic', label: 'Friedman, M. (1968) The Role of Monetary Policy — American Economic Review, 58(1), 1–17（自然失業率仮説の原典）' },
-      { url: 'https://doi.org/10.2307/1830199', type: 'academic', label: 'Phillips, A. W. (1958) The Relation Between Unemployment and the Rate of Change of Money Wage Rates in the United Kingdom — Economica, 25(100), 283–299（フィリップス曲線原典）' },
+      { url: 'https://doi.org/10.2307/2550759', type: 'academic', label: 'Phillips, A. W. (1958) The Relation Between Unemployment and the Rate of Change of Money Wage Rates in the United Kingdom — Economica, 25(100), 283–299（フィリップス曲線原典）' },
       { url: 'https://doi.org/10.1016/0304-3932(76)90002-1', type: 'academic', label: 'Lucas, R. E. (1976) Econometric Policy Evaluation: A Critique — Carnegie-Rochester Conference Series on Public Policy, 1, 19–46（ルーカス批判原典）' },
       { url: 'https://en.wikipedia.org/wiki/Phillips_curve', type: 'reference', label: 'Wikipedia: Phillips curve — Friedman-Phelps natural rate, stagflation, Lucas critique, NAIRU' },
     ],
@@ -37962,7 +37962,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョージ・アカロフ ／ ジャネット・イエレン ／ N・グレゴリー・マンキュー ／ ローレンス・ボール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/1885666', type: 'academic', label: 'Akerlof, G.A. & Yellen, J.L. (1985) A Near-Rational Model of the Business Cycle — QJE 100(Supplement)' },
+      { url: 'https://doi.org/10.1093/qje/100.Supplement.823', type: 'academic', label: 'Akerlof, G.A. & Yellen, J.L. (1985) A Near-Rational Model of the Business Cycle — QJE 100(Supplement)' },
       { url: 'https://en.wikipedia.org/wiki/Menu_cost', type: 'reference', label: 'Wikipedia: Menu cost — near-rationality, second-order loss, nominal rigidity, New Keynesian' },
     ],
   },
@@ -39084,7 +39084,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アクセル・レイヨンフーヴッド ／ ロバート・クラウアー ／ ハイマン・ミンスキー ／ アーヴィング・フィッシャー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/1816021', type: 'academic', label: 'Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)' },
+      { url: 'https://doi.org/10.2307/3439273', type: 'academic', label: 'Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)' },
       { url: 'https://en.wikipedia.org/wiki/Axel_Leijonhufvud', type: 'reference', label: 'Wikipedia: Axel Leijonhufvud — corridor hypothesis and Keynesian economics reinterpretation' },
       { url: 'https://archive.org/details/onkeynesianecono0000leij', type: 'academic', label: 'Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes: A Study in Monetary Theory — Oxford University Press, New York, ISBN 0195009487 (Internet Archive)' },
     ],
@@ -39960,7 +39960,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.4324/9780415856287', type: 'academic', label: 'Fuchs (2014) Digital Labour and Karl Marx — Routledge' },
-      { url: 'https://doi.org/10.1509/jm.15.0420', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text' },
+      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text' },
       { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — デジタル労働論の定義と批判的分析の概説' },
     ],
   },
@@ -39973,7 +39973,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.newyorkfed.org/research/staff_reports/sr458', type: 'government', label: 'Pozsar, Adrian, Ashcraft & Boesky (2010) Shadow Banking — Federal Reserve Bank of New York Staff Report 458' },
-      { url: 'https://doi.org/10.1257/aer.104.2.425', type: 'academic', label: 'Gorton & Metrick (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics' },
+      { url: 'https://doi.org/10.1016/j.jfineco.2011.03.016', type: 'academic', label: 'Gorton & Metrick (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics' },
       { url: 'https://en.wikipedia.org/wiki/Shadow_banking_system', type: 'reference', label: 'Wikipedia: Shadow banking system — シャドーバンキングの定義と規制動向の概説' },
     ],
   },
@@ -40181,7 +40181,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/0022-1996(83)90017-X', type: 'academic', label: 'Meese, R. A. & Rogoff, K. (1983) Empirical Exchange Rate Models of the Seventies — Journal of International Economics' },
-      { url: 'https://doi.org/10.1086/ma.15.3585426', type: 'academic', label: 'Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics — NBER Macroeconomics Annual' },
+      { url: 'https://doi.org/10.1086/654423', type: 'academic', label: 'Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics — NBER Macroeconomics Annual' },
       { url: 'https://en.wikipedia.org/wiki/Exchange_rate_forecasting', type: 'reference', label: 'Wikipedia: Exchange rate forecasting — Meese-Rogoff puzzle and disconnect overview' },
     ],
   },
@@ -40391,7 +40391,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テイナ・ビュッヒャー ／ タールトン・ギリスピー ／ ニック・シーヴァー ／ マイク・アナニー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/1461444816642311', type: 'academic', label: 'Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society' },
+      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society' },
       { url: 'https://doi.org/10.1177/2053951718757253', type: 'academic', label: 'Seaver, N. (2017) Algorithms as Culture: Some Tactics for the Ethnography of Algorithmic Systems — Big Data & Society' },
       { url: 'https://en.wikipedia.org/wiki/Algorithmic_curation', type: 'reference', label: 'Wikipedia: Algorithmic curation — user perception and platform content management overview' },
     ],
@@ -40418,7 +40418,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2392295', type: 'academic', label: 'Weick, K. E. (1979) The Social Psychology of Organizing — 2nd ed., Random House' },
-      { url: 'https://doi.org/10.2307/3094206', type: 'academic', label: 'Weick, K. E. (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — Administrative Science Quarterly' },
+      { url: 'https://doi.org/10.2307/2393339', type: 'academic', label: 'Weick, K. E. (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — Administrative Science Quarterly' },
       { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — retrospective meaning construction in organizations overview' },
     ],
   },
@@ -40482,7 +40482,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テッド・ベーカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース ／ サラス・サラスバシー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/4131572', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing — Administrative Science Quarterly' },
+      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing — Administrative Science Quarterly' },
       { url: 'https://doi.org/10.5465/amr.2012.0431', type: 'academic', label: 'Fisher, G. (2012) Effectuation, Causation, and Bricolage — Entrepreneurship Theory and Practice' },
       { url: 'https://en.wikipedia.org/wiki/Bricolage', type: 'reference', label: 'Wikipedia: Bricolage — creative recombination of available resources overview' },
     ],
@@ -41004,7 +41004,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://search.worldcat.org/title/against-the-smart-city/oclc/869266837', type: 'academic', label: 'Greenfield, A. (2013) Against the Smart City — Do Projects' },
-      { url: 'https://doi.org/10.1177/2043820614532284', type: 'academic', label: 'Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal' },
+      { url: 'https://doi.org/10.1007/s10708-013-9516-8', type: 'academic', label: 'Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal' },
       { url: 'https://en.wikipedia.org/wiki/Smart_city', type: 'reference', label: 'Wikipedia: Smart city — スマートシティの概念と批判的議論' },
     ],
   },
@@ -41082,7 +41082,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson, J. E. & van Wincoop, E. (2003) "Gravity with Gravitas" — AER' },
-      { url: 'https://doi.org/10.1146/annurev-economics-080213-040435', type: 'academic', label: 'Head, K. & Mayer, T. (2014) "Gravity Equations: Workhorse, Toolkit, and Cookbook" — Annual Review of Economics' },
+      { url: 'https://doi.org/10.1016/B978-0-444-54314-1.00003-3', type: 'academic', label: 'Head, K. & Mayer, T. (2014) "Gravity Equations: Workhorse, Toolkit, and Cookbook" — Handbook of International Economics, Vol. 4（Elsevier）' },
       { url: 'https://en.wikipedia.org/wiki/Gravity_model_of_trade', type: 'reference', label: 'Wikipedia: Gravity model of trade — 重力方程式の理論的導出と推定' },
     ],
   },
@@ -41230,7 +41230,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.12801/1947-5403.2014.06.01.02', type: 'academic', label: 'Cramer, F. (2015) "What Is Post-Digital?" — APRJA (A Peer-Reviewed Journal About)' },
-      { url: 'https://doi.org/10.1162/COMJ_a_00038', type: 'academic', label: 'Cascone, K. (2000) "The Aesthetics of Failure: Post-Digital Tendencies" — Computer Music Journal' },
+      { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone, K. (2000) "The Aesthetics of Failure: Post-Digital Tendencies" — Computer Music Journal' },
       { url: 'https://en.wikipedia.org/wiki/Post-digital', type: 'reference', label: 'Wikipedia: Post-digital — デジタル日常化と文化的再考' },
       { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone (2000) The Aesthetics of Failure — Computer Music Journal, MIT Press' },
       { url: 'https://link.springer.com/book/10.1057/9781137437204', type: 'academic', label: 'Berry & Dieter eds. (2015) Postdigital Aesthetics: Art, Computation and Design — Palgrave Macmillan' },
@@ -41311,7 +41311,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジャニス・キャノン＝バウアーズ ／ エデュアルド・サラス ／ ジョン・マシュー ／ レスリー・デチャーチ ／ ジェシカ・メスマー＝マグナス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1016/S1048-9843(01)00076-X', type: 'academic', label: 'Cannon-Bowers, J. A. et al. (1993) "Shared Mental Models in Expert Team Decision Making" — Individual and Group Decision Making' },
+      { url: 'https://doi.org/10.4324/9780203772744-20', type: 'academic', label: 'Cannon-Bowers, J. A. et al. (1993) "Shared Mental Models in Expert Team Decision Making" — Individual and Group Decision Making' },
       { url: 'https://doi.org/10.1037/0021-9010.85.2.273', type: 'academic', label: 'Mathieu, J. E. et al. (2000) "The Influence of Shared Mental Models on Team Process and Performance" — JAP' },
       { url: 'https://en.wikipedia.org/wiki/Team_mental_model', type: 'reference', label: 'Wikipedia: Team mental model — 共有認知の理論と測定法' },
     ],
@@ -41390,7 +41390,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/j.jenvp.2009.09.006', type: 'academic', label: 'Scannell, L. & Gifford, R. (2010) "Defining Place Attachment" — Journal of Environmental Psychology' },
-      { url: 'https://doi.org/10.1006/jevp.2001.0226', type: 'academic', label: 'Lewicka, M. (2011) "Place Attachment: How Far Have We Come?" — JEP' },
+      { url: 'https://doi.org/10.1016/j.jenvp.2010.10.001', type: 'academic', label: 'Lewicka, M. (2011) "Place Attachment: How Far Have We Come?" — JEP' },
       { url: 'https://en.wikipedia.org/wiki/Place_attachment', type: 'reference', label: 'Wikipedia: Place attachment — 場所愛着の理論と測定法' },
     ],
   },
@@ -41623,7 +41623,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・ヒックス ／ ロイ・アレン ／ ヒロフミ・ウザワ ／ ケネス・アロー ／ ロバート・ソロー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/1907777', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency — Review of Economics and Statistics' },
+      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency — Review of Economics and Statistics' },
       { url: 'https://doi.org/10.1257/aer.104.5.218', type: 'academic', label: 'Karabarbounis & Neiman (2014) The Global Decline of the Labor Share — QJE' },
       { url: 'https://en.wikipedia.org/wiki/Elasticity_of_substitution', type: 'reference', label: 'Wikipedia: Elasticity of substitution — 代替の弾力性の定義と拡張の概説' },
     ],
@@ -42195,7 +42195,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1016/j.jenvp.2009.09.006', type: 'academic', label: 'Scannell & Gifford (2010) Defining Place Attachment: A Tripartite Organizing Framework — Journal of Environmental Psychology' },
-      { url: 'https://doi.org/10.1016/j.jenvp.2010.02.001', type: 'academic', label: 'Lewicka (2011) Place Attachment: How Far Have We Come in the Last 40 Years? — Journal of Environmental Psychology' },
+      { url: 'https://doi.org/10.1016/j.jenvp.2010.10.001', type: 'academic', label: 'Lewicka (2011) Place Attachment: How Far Have We Come in the Last 40 Years? — Journal of Environmental Psychology' },
       { url: 'https://en.wikipedia.org/wiki/Place_attachment', type: 'reference', label: 'Wikipedia: Place attachment — 場所愛着の理論的枠組みと研究動向の概説' },
     ],
   },
@@ -42639,7 +42639,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1093/0198281145.001.0001', type: 'academic', label: 'Edgeworth, F.Y. (1881) Mathematical Psychics — C. Kegan Paul & Co.' },
-      { url: 'https://doi.org/10.2307/1913610', type: 'academic', label: 'Arrow, K. & Debreu, G. (1954) Existence of an Equilibrium for a Competitive Economy — Econometrica' },
+      { url: 'https://doi.org/10.2307/1907353', type: 'academic', label: 'Arrow, K. & Debreu, G. (1954) Existence of an Equilibrium for a Competitive Economy — Econometrica' },
       { url: 'https://en.wikipedia.org/wiki/Edgeworth_box', type: 'reference', label: 'Wikipedia: Edgeworth box — エッジワース・ボックスの概要' },
     ],
   },
@@ -42665,7 +42665,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1086/258965', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine — Journal of Political Economy' },
-      { url: 'https://doi.org/10.2307/2296638', type: 'academic', label: 'Samuelson, P. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics' },
+      { url: 'https://doi.org/10.2307/1928178', type: 'academic', label: 'Samuelson, P. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics' },
       { url: 'https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect', type: 'reference', label: 'Wikipedia: Balassa–Samuelson effect — 効果の概要' },
     ],
   },
@@ -43407,7 +43407,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロブ・キッチン ／ シャノン・マッターン ／ アダム・グリーンフィールド ／ フランチェスカ・ビアンキーニ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/s10708-014-9580-x', type: 'academic', label: 'Kitchin, R. (2014) The Real-Time City? Big Data and Smart Urbanism — GeoJournal' },
+      { url: 'https://doi.org/10.1007/s10708-013-9516-8', type: 'academic', label: 'Kitchin, R. (2014) The Real-Time City? Big Data and Smart Urbanism — GeoJournal' },
       { url: 'https://en.wikipedia.org/wiki/Smart_city', type: 'reference', label: 'Wikipedia: Smart city — IoT, urban analytics, governance, data-driven, citizen participation' },
     ],
   },
@@ -44559,7 +44559,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.3386/w14578', type: 'academic', label: 'Cagan (1956) The Monetary Dynamics of Hyperinflation — Studies in the Quantity Theory of Money (Friedman ed.)' },
-      { url: 'https://doi.org/10.2307/1805521', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Fed Minneapolis QR' },
+      { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Fed Minneapolis QR' },
       { url: 'https://en.wikipedia.org/wiki/Hyperinflation', type: 'reference', label: 'Wikipedia: Hyperinflation — 超インフレの歴史と経済理論' },
     ],
   },
@@ -44701,7 +44701,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・デイフィー ／ バーバラ・マクドゥーガル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1007/BF01173514', type: 'academic', label: 'Sifneos (1973) The Prevalence of Alexithymic Characteristics in Psychosomatic Patients — Psychotherapy & Psychosomatics' },
+      { url: 'https://doi.org/10.1159/000286529', type: 'academic', label: 'Sifneos (1973) The Prevalence of Alexithymic Characteristics in Psychosomatic Patients — Psychotherapy & Psychosomatics' },
       { url: 'https://doi.org/10.1176/appi.ajp.163.2.198', type: 'academic', label: 'Taylor, Bagby & Parker (2000) The 20-Item Toronto Alexithymia Scale — Journal of Psychosomatic Research' },
       { url: 'https://en.wikipedia.org/wiki/Alexithymia', type: 'reference', label: 'Wikipedia: Alexithymia — アレキシサイミアの概念と研究動向' },
     ],
@@ -45066,7 +45066,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2232670', type: 'academic', label: 'Corden & Neary (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal' },
-      { url: 'https://doi.org/10.1016/0014-2921(95)00063-2', type: 'academic', label: 'Sachs & Warner (1995) Natural Resource Abundance and Economic Growth — European Economic Review' },
+      { url: 'https://doi.org/10.3386/w5398', type: 'academic', label: 'Sachs & Warner (1995) Natural Resource Abundance and Economic Growth — European Economic Review' },
       { url: 'https://en.wikipedia.org/wiki/Dutch_disease', type: 'reference', label: 'Wikipedia: Dutch disease — オランダ病と資源の呪い' },
     ],
   },
@@ -45797,7 +45797,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デニス・ルソー ／ ニール・アンダーソン ／ サンドラ・ロビンソン ／ エリック・モリソン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/014920638901500202', type: 'academic', label: 'Rousseau, D.M. (1989) Psychological and Implied Contracts in Organizations — Employee Responsibilities and Rights Journal' },
+      { url: 'https://doi.org/10.1007/BF01384942', type: 'academic', label: 'Rousseau, D.M. (1989) Psychological and Implied Contracts in Organizations — Employee Responsibilities and Rights Journal' },
       { url: 'https://hbr.org/2019/03/rethinking-the-psychological-contract', type: 'media', label: 'Harvard Business Review (2019) Rethinking the Psychological Contract — HBR' },
       { url: 'https://ja.wikipedia.org/wiki/%E5%BF%83%E7%90%86%E7%9A%84%E5%A5%91%E7%B4%84', type: 'reference', label: 'Wikipedia: 心理的契約 — 雇用関係における暗黙の期待の解説' },
     ],
@@ -46131,7 +46131,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・ブキャナン ／ ゴードン・タロック ／ ウィリアム・ニスカネン ／ マンサー・オルソン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511759024', type: 'academic', label: 'Buchanan & Tullock (1962) The Calculus of Consent — University of Michigan Press' },
+      { url: 'https://doi.org/10.3998/mpub.7687', type: 'academic', label: 'Buchanan & Tullock (1962) The Calculus of Consent — University of Michigan Press' },
       { url: 'https://en.wikipedia.org/wiki/Public_choice', type: 'reference', label: 'Wikipedia: Public choice — Buchanan, Tullock, government failure, rent-seeking, constitutional economics' },
     ],
   },
@@ -46179,7 +46179,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャリー・グリシェム',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/9781316519547', type: 'academic', label: 'Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press' },
+      { url: 'https://doi.org/10.5040/9781849662505', type: 'academic', label: 'Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press' },
       { url: 'https://en.wikipedia.org/wiki/Remix_culture', type: 'reference', label: 'Wikipedia: Remix culture — Lessig, Creative Commons, CBPP, DSM Directive, copyright, mash-up' },
     ],
   },
@@ -46719,7 +46719,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テイズ・テラノヴァ ／ クリスチャン・フックス ／ ニック・ダイヤー＝ウィゼフォード ／ ダラス・スマイス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/135485650000600108', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text' },
+      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text' },
       { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — Terranova, Fuchs, prosumer, surveillance capitalism, platform economy' },
     ],
   },
@@ -48004,7 +48004,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ティジアナ・テラノバ ／ ダラス・スマイス ／ クリスチャン・フクス ／ ニック・サーニセック',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1080/01972240050133545', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（デジタル労働論の原論文）' },
+      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（デジタル労働論の原論文）' },
       { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — デジタル労働論の概説' },
     ],
   },
@@ -48091,7 +48091,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1037/0033-2909.118.2.247', type: 'academic', label: 'Wegner, D. M. (1995) A Computer Network Model of Human Transactive Memory — Social Cognition, 13(3), 319–339（TMS理論の発展）' },
-      { url: 'https://doi.org/10.5465/amj.2003.1054', type: 'academic', label: 'Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Shared Cognition in Organizations（組織的TMSの研究）' },
+      { url: 'https://doi.org/10.4324/9781410603227-1', type: 'academic', label: 'Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Shared Cognition in Organizations（組織的TMSの研究）' },
       { url: 'https://doi.org/10.2307/30040696', type: 'academic', label: 'Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy — Journal of Applied Psychology, 88(5), 866–878（TMSの三次元実証）' },
       { url: 'https://en.wikipedia.org/wiki/Transactive_memory', type: 'reference', label: 'Wikipedia: Transactive memory — Wegner, differentiation, credibility, coordination, remote work' },
     ],
@@ -48231,7 +48231,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/1925975', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal — Journal of Political Economy, 72(6), 584–596（バラッサ効果原典）' },
-      { url: 'https://doi.org/10.2307/1927330', type: 'academic', label: 'Samuelson, P. A. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics, 46(2), 145–154（サミュエルソン側の独立提唱）' },
+      { url: 'https://doi.org/10.2307/1928178', type: 'academic', label: 'Samuelson, P. A. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics, 46(2), 145–154（サミュエルソン側の独立提唱）' },
       { url: 'https://rogoff.scholars.harvard.edu/publications/purchasing-power-parity-puzzle', type: 'academic', label: 'Rogoff, K. (1996) The Purchasing Power Parity Puzzle — Journal of Economic Literature, 34(2), 647–668（B-S効果とPPPパズルの統合論考）' },
       { url: 'https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect', type: 'reference', label: 'Wikipedia: Balassa–Samuelson effect — Penn effect, non-traded goods, real exchange rate, IMF' },
     ],
@@ -48258,7 +48258,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・バグビー ／ ジョルジオ・ネムイア',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1097/00005053-197304000-00003', type: 'academic', label: 'Sifneos, P. E. (1973) The Prevalence of "Alexithymic" Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics, 22(2–6), 255–262（アレキシサイミア原典）' },
+      { url: 'https://doi.org/10.1159/000286529', type: 'academic', label: 'Sifneos, P. E. (1973) The Prevalence of "Alexithymic" Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics, 22(2–6), 255–262（アレキシサイミア原典）' },
       { url: 'https://doi.org/10.1037/0022-3514.70.3.525', type: 'academic', label: 'Taylor, G. J., Bagby, R. M. & Parker, J. D. (1991) The Alexithymia Construct: A Potential Paradigm for Psychosomatic Medicine — Psychosomatics, 32(2), 153–164（TAS尺度と理論体系化）' },
       { url: 'https://doi.org/10.1016/j.concog.2010.11.001', type: 'academic', label: 'Bird, G. & Cook, R. (2013) Mixed Emotions: The Contribution of Alexithymia to the Emotional Symptoms of Autism — Translational Psychiatry, 3(7), e285（ASDとアレキシサイミアの関係）' },
       { url: 'https://en.wikipedia.org/wiki/Alexithymia', type: 'reference', label: 'Wikipedia: Alexithymia — Sifneos, TAS-20, emotional regulation, ASD, psychosomatic' },
@@ -48316,7 +48316,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1884728', type: 'academic', label: 'Fisher, I. (1928) The Money Illusion — Adelphi Company（原典）' },
       { url: 'https://doi.org/10.2307/1913820', type: 'academic', label: 'Shafir, E., Diamond, P. & Tversky, A. (1997) Money Illusion — Quarterly Journal of Economics, 112(2), 341–374（行動経済学的実証）' },
-      { url: 'https://doi.org/10.2307/2527349', type: 'academic', label: 'Akerlof, G. A. & Yellen, J. L. (1985) A Near-Rational Model of the Business Cycle, with Wage and Price Inertia — Quarterly Journal of Economics, 100(Suppl), 823–838（貨幣錯覚とニア合理性）' },
+      { url: 'https://doi.org/10.1093/qje/100.Supplement.823', type: 'academic', label: 'Akerlof, G. A. & Yellen, J. L. (1985) A Near-Rational Model of the Business Cycle, with Wage and Price Inertia — Quarterly Journal of Economics, 100(Suppl), 823–838（貨幣錯覚とニア合理性）' },
       { url: 'https://en.wikipedia.org/wiki/Money_illusion', type: 'reference', label: 'Wikipedia: Money illusion — Fisher, framing effect, near-rationality, inflation expectations' },
     ],
   },
@@ -48455,7 +48455,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/1229511', type: 'academic', label: 'Benkler, Y. (2002) Coase\'s Penguin, or, Linux and "The Nature of the Firm" — Yale Law Journal, 112(3), 369–446（CBPPの原典）' },
-      { url: 'https://doi.org/10.4159/9780674977075', type: 'academic', label: 'Benkler, Y. (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press（社会的生産の体系書）' },
+      { url: 'https://doi.org/10.2307/j.ctt1njknw', type: 'academic', label: 'Benkler, Y. (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press（社会的生産の体系書）' },
       { url: 'https://doi.org/10.1145/1134307.1134387', type: 'academic', label: 'Crowston, K. & Howison, J. (2005) The Social Structure of Free and Open Source Software Development — First Monday, 10(2)（オープンソース開発のコミュニティ構造）' },
       { url: 'https://en.wikipedia.org/wiki/Commons-based_peer_production', type: 'reference', label: 'Wikipedia: Commons-based peer production — Benkler, Linux, Wikipedia, copyleft, Creative Commons' },
     ],
@@ -48468,7 +48468,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'トーマス・ベイトマン ／ マイケル・クラント ／ デービッド・バーク ／ シャロン・パーカー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1037/0021-9010.78.4.538', type: 'academic', label: 'Bateman, T. S. & Crant, J. M. (1993) The Proactive Component of Organizational Behavior: A Measure and Correlates — Journal of Organizational Behavior, 14(2), 103–118（原典）' },
+      { url: 'https://doi.org/10.1002/job.4030140202', type: 'academic', label: 'Bateman, T. S. & Crant, J. M. (1993) The Proactive Component of Organizational Behavior: A Measure and Correlates — Journal of Organizational Behavior, 14(2), 103–118（原典）' },
       { url: 'https://doi.org/10.1177/014920630002600304', type: 'academic', label: 'Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management, 26(3), 435–462（プロアクティブ行動のレビュー）' },
       { url: 'https://doi.org/10.1177/0149206310363732', type: 'academic', label: 'Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management, 36(4), 827–856（プロアクティブ動機づけモデル）' },
       { url: 'https://en.wikipedia.org/wiki/Proactivity', type: 'reference', label: 'Wikipedia: Proactivity — Bateman & Crant, proactive personality scale, proactive behavior, career initiative' },
@@ -48538,7 +48538,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ポール・クルーグマン ／ モーリス・オブストフェルト ／ アルフレッド・マーシャル ／ レルナー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1257/jel.20160192', type: 'academic', label: 'Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics: Is There a Common Cause? — NBER Macroeconomics Annual, 15, 339–390（国際収支調整パズルの整理）' },
+      { url: 'https://doi.org/10.1086/654423', type: 'academic', label: 'Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics: Is There a Common Cause? — NBER Macroeconomics Annual, 15, 339–390（国際収支調整パズルの整理）' },
       { url: 'https://doi.org/10.2307/2534591', type: 'academic', label: 'Krugman, P. R. & Baldwin, R. (1987) The Persistence of the U.S. Trade Deficit — Brookings Papers on Economic Activity, 1987(1), 1–43（プラザ合意後のJカーブ分析）' },
       { url: 'https://doi.org/10.1057/imfer.2014.12', type: 'academic', label: 'Bussière, M. et al. (2013) Estimating Trade Elasticities: Demand Composition and the Trade Collapse of 2008–09 — IMF Economic Review, 61(3), 425–457（GVC拡大とJカーブ弱体化）' },
       { url: 'https://en.wikipedia.org/wiki/J_curve_(economics)', type: 'reference', label: 'Wikipedia: J curve (economics) — Marshall-Lerner condition, Plaza Accord, price elasticity, trade adjustment' },
@@ -48780,9 +48780,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・タッシュマン ／ チャールズ・オライリー ／ ジェームズ・マーチ ／ クリスティーナ・ギブソン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/256441', type: 'academic', label: 'Tushman, M. L. & O\'Reilly, C. A. (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review, 38(4), 8–29（両利き組織の原典）' },
+      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman, M. L. & O\'Reilly, C. A. (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review, 38(4), 8–29（両利き組織の原典）' },
       { url: 'https://doi.org/10.2307/41166127', type: 'academic', label: 'O\'Reilly, C. A. & Tushman, M. L. (2013) Organizational Ambidexterity: Past, Present, and Future — Academy of Management Perspectives, 27(4), 324–338（両利き研究の総括）' },
-      { url: 'https://doi.org/10.5465/amj.2004.14586060', type: 'academic', label: 'Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209–226（文脈的両利きの実証）' },
+      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209–226（文脈的両利きの実証）' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — Tushman, exploration/exploitation, structural vs contextual, DX' },
     ],
   },

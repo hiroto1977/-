@@ -15,6 +15,8 @@
  * 「登録漏れプロバイダ」を起動時に大声で検出する。
  */
 
+import { normalizeAiBaseUrl, describeAiEndpointFailure } from '../aiEndpoint';
+
 // Stryker disable all — プロバイダ定義 (URL / ヘッダー名 / 既定モデル等) は
 // 対向 API 仕様の転記であり、golden テスト (providers.test.ts) が完全一致で
 // 固定する。変異は等価 or テストで撃墜済みのため計測ノイズを避ける。
@@ -71,8 +73,19 @@ export interface AiProviderSpec {
 }
 
 /** 末尾スラッシュを除去してベース URL を正規化する。 */
-function trimBase(base: string): string {
-  return base.replace(/\/+$/, '');
+/**
+ * ベース URL を検証して正規化する。**送り先ホストが変数になる唯一の入口**なので、
+ * ここを通らない経路を作らないこと（`lint:network-targets` の台帳がこれを前提にしている）。
+ *
+ * 以前は末尾スラッシュを落とすだけで、`http://` の外部ホストにも
+ * `https://user:pass@…` にも制御文字にも素通しだった（2026-08 監査）。
+ * 弾いたら既定値へ落とさず投げる — 私設プロキシへ向けたつもりの鍵が
+ * 黙って本家へ飛ぶ方が悪い。
+ */
+function resolveBase(label: string, raw: string, credentialed: boolean): string {
+  const r = normalizeAiBaseUrl(raw, { credentialed });
+  if (!r.ok) throw new Error(`${label} のベース URL が不正です: ${describeAiEndpointFailure(r.reason)}`);
+  return r.base;
 }
 
 /** モデル解決: 明示指定 → 資格情報の既定 → プロバイダ既定。 */
@@ -116,7 +129,7 @@ const anthropic: AiProviderSpec = {
   needsApiKey: true,
   browserDirect: true, // 公式に CORS 対応 (anthropic-dangerous-direct-browser-access)
   buildRequest(req, cfg) {
-    const base = trimBase(cfg.baseUrl || this.defaultBaseUrl);
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, true);
     const headers: Record<string, string> = {
       'content-type': 'application/json',
       'x-api-key': cfg.apiKey ?? '',
@@ -154,7 +167,7 @@ const openai: AiProviderSpec = {
   needsApiKey: true,
   browserDirect: false, // api.openai.com は CORS 非対応 → ブラウザは BYO プロキシ経由
   buildRequest(req, cfg) {
-    const base = trimBase(cfg.baseUrl || this.defaultBaseUrl);
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, true);
     return {
       url: `${base}/v1/chat/completions`,
       headers: {
@@ -179,7 +192,7 @@ const gemini: AiProviderSpec = {
   needsApiKey: true,
   browserDirect: true, // Generative Language API はクライアントサイド利用向けに CORS 対応
   buildRequest(req, cfg) {
-    const base = trimBase(cfg.baseUrl || this.defaultBaseUrl);
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, true);
     const model = resolveModel(this, req, cfg);
     return {
       // API キーは URL クエリではなくヘッダーで渡す (ログ・履歴への漏洩防止)。
@@ -221,7 +234,7 @@ const ollama: AiProviderSpec = {
   needsApiKey: false,
   browserDirect: true, // ローカル呼び出し (要 OLLAMA_ORIGINS 設定。UI にヒント表示)
   buildRequest(req, cfg) {
-    const base = trimBase(cfg.baseUrl || this.defaultBaseUrl);
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, false); // Ollama は鍵を送らないので LAN の平文 http も許す
     const messages: Array<{ role: string; content: string }> = [];
     if (req.system) messages.push({ role: 'system', content: req.system });
     for (const m of req.messages) messages.push({ role: m.role, content: m.content });
@@ -254,7 +267,7 @@ const compat: AiProviderSpec = {
     if (!rawBase) {
       throw new Error(`${this.label} のベース URL が未設定です (資格情報 compatUrl を設定してください)`);
     }
-    const base = trimBase(rawBase);
+    const base = resolveBase(this.label, rawBase, Boolean(cfg.apiKey));
     // ユーザー入力は「…/v1」まで含む場合と含まない場合の両方を許容する。
     const url = base.endsWith('/v1') ? `${base}/chat/completions` : `${base}/v1/chat/completions`;
     const headers: Record<string, string> = { 'content-type': 'application/json' };

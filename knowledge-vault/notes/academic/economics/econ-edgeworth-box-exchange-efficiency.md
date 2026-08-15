@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Edgeworth, F.Y. (1881) Mathematical Psychics — C. Kegan Paul & Co.](https://doi.org/10.1093/0198281145.001.0001) `学術`
-- [Arrow, K. & Debreu, G. (1954) Existence of an Equilibrium for a Competitive Economy — Econometrica](https://doi.org/10.2307/1913610) `学術`
+- [Arrow, K. & Debreu, G. (1954) Existence of an Equilibrium for a Competitive Economy — Econometrica](https://doi.org/10.2307/1907353) `学術`
 - [Wikipedia: Edgeworth box — エッジワース・ボックスの概要](https://en.wikipedia.org/wiki/Edgeworth_box) `リファレンス`
 
 ## 関連概念

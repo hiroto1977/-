@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7049** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7307) |
+| ユニットテスト | **7114** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7372) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 208 | 自己検証 |
+| `file:line` 参照数 | 232 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1038,7 +1038,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | Script | コマンド | 役割 |
 |---|---|---|
 | `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
-| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / 未秘匿のエラー本文 / Ollama write-side endpoints) |
+| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / 未秘匿のエラー本文 / エスケープの再実装 / Ollama write-side endpoints) |
 | `scripts/lint-network-targets.cjs` | `lint:network-targets` | **送り先ホストが変数で決まる通信**を双方向台帳で管理 (新規は fail / 直したら消す) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
@@ -1054,13 +1054,60 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース 57 ファイルを **10 個の禁止パターン** で scan:
+ランタイムソース 57 ファイルを **11 個の禁止パターン** で scan:
 `dangerouslySetInnerHTML` / `eval(` / `new Function` / `.innerHTML =` / `document.write` /
 `shell.openExternal` (main / oauth 以外) / `window.open(` (web-shim.ts 以外) /
 `redactSecrets` を通さない `body.slice(` /
+マークアップ用エスケープ・色・制御文字の判定の自前実装 (それぞれの共有モジュール以外) /
 `child_process exec|spawn` (scripts 以外) /
 `/api/(pull|create|push|copy|delete|blobs|upload)` (ollama.ts / renderer 以外)。
 1 件でも検出すれば fail。
+
+エスケープの再実装を禁じるのは、`src/shared/escape.ts` の冒頭が
+「アプリ全体で 1 つだけ持つ」と書いているのに、**2026-08 時点で写経が 3 つ
+残っていた**ため (`src/main/clients/business.ts` / `src/main/clients/stocks.ts` の
+`escapeHtml`、`src/renderer/data/stocksAnalysisWeb.ts` の `esc`)。実装が同じなら
+実害は出ないが、この種の関数は片方だけ文字を足し忘れても見た目に出ない。
+実際に取りこぼしはビルドスクリプト側で起きており、`scripts/gen-econ-asset-chart.cjs`
+だけが `"` と `'` を落としていなかった。**説明が実装より先に「1 つだけ」と
+言っていた**ので、説明ではなくゲートで固定した。`scripts/` は素の CJS で TS の
+共有実装を読めないため対象外だが、落とす文字は 5 文字に揃えてある。
+
+同じ理由で**色の判定**も 1 つにした。`#RRGGBB` の正規表現が
+`src/main/clients/templates.ts` と `src/renderer/pages/TemplatesPage.tsx` に
+1 つずつあり、さらに `safeColor` (3/6/8 桁 + 名前つきの色) が別にあって、
+「色として妥当」の定義が 3 通りに割れていた。書き出し API の契約は
+`isHexColor`（`#RRGGBB` のみ・main は throw / 画面は送信前に案内）、
+描画時の緩い落とし方は `safeColor` と、役割で分けて `src/shared/escape.ts` に
+両方置いてある。移設に伴い `templates.ts` にあった Stryker の Regex pragma は
+**黙らせずに消えた** — 共有側でアンカー・桁数・文字クラスの変異体を全て殺せている
+(`escape.ts` 28 mutants / 100%)。
+
+**暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
+`src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /
+`src/renderer/data/cloudBackup.ts` の 3 モジュールに書き写され、同期は
+コメント（「vault.ts の IV_BYTES と一致させる」）だけが担保していた。
+最も危ういのは `BACKUP_KEY_DERIVATION = 'PBKDF2-SHA-256-600k'` で、
+**反復回数を文字列に焼き込んでいた** — vault 側の強度を上げても、
+バックアップに添える暗号メタは「600k」と言い続ける。復号する側が信じるのは
+このメタデータなので、実装とずれれば「復号できないバックアップ」になる。
+写経は既にずれ始めてもいた（ソルト長が vault 32 / dataCrypto 16）。
+`src/shared/cryptoParams.ts` に「1 つであるべきもの」だけを集め、
+識別子は `kdfLabel()` が定数から組み立てる（8 mutants / 100%）。
+ソルト長は用途で分けてよい判断なので各モジュールに残し、下限だけ共有した。
+
+**制御文字の判定**も同じ形で 2 つ目が生まれかけた。`src/shared/atlassianSite.ts` が
+持っていたものを `src/shared/aiEndpoint.ts` が書き直そうとしたので、
+`src/shared/controlChars.ts` へ寄せた（12 mutants / 100%）。「0x1f まで」か
+「0x20 未満」か、0x7f を入れるかは一見して差が出ないので、片方だけ緩んでも
+気付けない。
+
+ただし `src/renderer/components/serviceActionUtils.ts` の
+`isStrippableControlChar` は**畳んでいない**。あちらはメモの保存前サニタイズで、
+タブ・改行は残し C1 (0x80–0x9f) まで落とす — URL を弾く判定とは保つものが違い、
+1 つにすると片方の意図が壊れる。ゲートは等値比較 (`=== 0x7f`) だけを見て
+範囲比較は通すことで、この 2 つを区別している（**ゲートを足した直後に
+これを誤検出し、畳まない判断をした**）。
 
 `body.slice(` の検査は、連携先の**エラー応答本文をそのままエラー文字列へ**
 入れている箇所を捕まえる。この文字列は画面に出て不具合報告にも貼られるため、
@@ -1081,7 +1128,8 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 #### lint:network-targets (`scripts/lint-network-targets.cjs`)
 
-`src/main/clients` / `src/shared/api` / `src/renderer/data` / `src/renderer/network` の
+`src/main/clients` / `src/shared/api` / **`src/shared/ai`** / `src/renderer/data` /
+`src/renderer/network` の
 通信呼び出しを走査し、**送り先ホストが変数で決まるもの**を双方向台帳
 (`REVIEWED`) で管理する。台帳に無いものが現れたら fail、台帳の項目が実在
 しなくなっても fail (直したら消す)。
@@ -1102,7 +1150,35 @@ renderer の payload で決まる経路が 4 つあり、3 つは絞っていて
 
 見るのは**ホスト部だけ**。パスやクエリの補間は `encodeURIComponent` の話で
 別の関心事であり、混ぜると無害な経路まで台帳に載って本当に危ない数件が
-埋もれる。現在の台帳は 5 件で、いずれも許可リストを通っている。
+埋もれる。現在の台帳は **13 件**で、いずれも通し方が書いてある。
+
+##### 2026-08: ゲート自身に 3 つの穴があった
+
+置いた本人が測り直して見つけたもの。**ゲートは「見ている範囲」を書き忘れると
+静かに空振りする。**
+
+1. **走査対象に `src/shared/ai` が入っていなかった。** AI プロバイダ 5 種は
+   いずれも `` `${base}/v1/messages` `` の形で送り先が変数になり、
+   `x-api-key` / `Authorization: Bearer` を載せる。**1 件も台帳に無かった。**
+2. **組み立てと送信が別モジュールだと素通りした。** `src/shared/ai/providers.ts` の
+   `buildRequest` は `{ url, headers, body }` を返すだけで fetch せず、
+   送信は `src/shared/ai/chat.ts` が `f(httpReq.url, …)` と**変数**で呼ぶ。
+   テンプレートリテラルの前後 3 行に通信呼び出しを探す判定では、
+   どちらの側にも掛からない。組み立て側の見た目 (`url:` / `const url =`) も
+   入口として数えるようにした。
+3. **`const url = new URL(...)` の直後に呼ぶ形も漏れていた。**
+   `src/main/clients/atlassian.ts` のプロジェクト検索は `Authorization` 付きの
+   実送信だが、`jsonFetch` が**次の行**にあるため直前 3 行の判定に掛からず、
+   台帳から漏れていた（ホストは `src/shared/atlassianSite.ts` で絞ってあり実害はない）。
+
+AI だけはホスト名の許可リストを張れない — 利用者が自分でエンドポイントを
+決めるのが機能だからである。代わりに `src/shared/aiEndpoint.ts` で **送り方** を
+絞る: http/https のみ・userinfo 禁止・制御文字禁止・クエリ/断片禁止・
+**鍵が乗るなら loopback 以外の平文 http を禁止**。最後の条件が「鍵が乗るなら」
+なのは、LAN の別マシンで動く Ollama (`http://192.168.1.5:11434`) が
+**鍵を送らない**正当な使い方だからで、これは既存テストが落ちて気付いた。
+`src/renderer/network/proxy.ts` の `isPrivateOrReservedTarget` は**判断の向きが逆**
+(内部ホストへ到達させないのが目的で loopback も塞ぐ) なので流用していない。
 
 #### lint:imports (`scripts/check-import-boundaries.cjs`)
 
@@ -1118,7 +1194,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 208 file:line references + 6 metrics ✅
+# → Verified 232 file:line references + 6 metrics ✅
 # → Scanned 57 files × 10 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

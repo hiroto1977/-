@@ -26,7 +26,7 @@ aliases:
 アクセル・レイヨンフーヴッド ／ ロバート・クラウアー ／ ハイマン・ミンスキー ／ アーヴィング・フィッシャー
 
 ## 出典
-- [Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)](https://doi.org/10.2307/1816021) `学術`
+- [Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)](https://doi.org/10.2307/3439273) `学術`
 - [Wikipedia: Axel Leijonhufvud — corridor hypothesis and Keynesian economics reinterpretation](https://en.wikipedia.org/wiki/Axel_Leijonhufvud) `リファレンス`
 - [Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes: A Study in Monetary Theory — Oxford University Press, New York, ISBN 0195009487 (Internet Archive)](https://archive.org/details/onkeynesianecono0000leij) `学術`
 

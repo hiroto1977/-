@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 167
+cite_count: 166
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **167 件**（学術 166 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **166 件**（学術 165 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -151,7 +151,6 @@ tags:
 - [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — JABS—Paradoxtheoryinorganizationdevelopment
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — Lindquist&Kaufman-Scarborough(2007)—ThePolychronic-MonochronicTendenc…
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — Caza&Caza(2008)—PositiveOrganizationalScholarship,JMI
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — Rousseau,D.M.(1989)PsychologicalandImpliedContractsinOrganizations—Em…
 - [[mgmt-psychological-ownership|心理的所有感]] — Pierce,Kostova&Dirks(2003)“TheStateofPsychologicalOwnership,”Reviewof…
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Tushman,Newman&Romanelli(1986)ConvergenceandUpheaval—CaliforniaManage…
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — Barnett&McKendrick(2004)"WhyAreSomeOrganizationsMoreCompetitiveThanOt…

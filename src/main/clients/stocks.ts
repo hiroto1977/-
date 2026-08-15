@@ -1,4 +1,5 @@
 import { seededNoise } from '../../shared/seededNoise';
+import { escapeXml } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
 import { redactSecrets } from './types';
 import { promises as fs } from 'node:fs';
@@ -1334,14 +1335,6 @@ export interface DashboardInput {
  *  dashboard interpolates user-supplied data (advisor rationale,
  *  watchlist labels) and any of these could carry attacker-controlled
  *  text from a tampered snapshot — never trust the input. */
-export function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 const YEN_FMT = new Intl.NumberFormat('ja-JP', {
   style: 'currency',
@@ -1408,11 +1401,11 @@ export function renderDashboardHtml(input: DashboardInput): string {
       const sigLabel =
         w.signal.action === 'buy' ? '買い' : w.signal.action === 'sell' ? '売り' : '見送り';
       return `<tr>
-  <td><strong>${escapeHtml(w.symbol)}</strong><br/><span class="mute">${escapeHtml(w.label)}</span></td>
+  <td><strong>${escapeXml(w.symbol)}</strong><br/><span class="mute">${escapeXml(w.label)}</span></td>
   <td class="num">${NUM_FMT.format(w.latestClose)}</td>
   <td class="num" style="color:${dir}">${sign}${w.changePct.toFixed(2)}%</td>
   <td>${renderSparkline(w.candles)}</td>
-  <td><span class="chip" style="background:${sigColor}">${sigLabel}</span><br/><span class="mute">${escapeHtml(w.signal.reason)}</span></td>
+  <td><span class="chip" style="background:${sigColor}">${sigLabel}</span><br/><span class="mute">${escapeXml(w.signal.reason)}</span></td>
 </tr>`;
     })
     .join('\n');
@@ -1424,12 +1417,12 @@ export function renderDashboardHtml(input: DashboardInput): string {
       const color = t.action === 'buy' ? '#22c55e' : '#ef4444';
       const label = t.action === 'buy' ? '買い' : '売り';
       return `<tr>
-  <td class="mute">${escapeHtml(t.date)}</td>
-  <td><strong>${escapeHtml(t.ticker)}</strong></td>
+  <td class="mute">${escapeXml(t.date)}</td>
+  <td><strong>${escapeXml(t.ticker)}</strong></td>
   <td style="color:${color}"><strong>${label}</strong></td>
   <td class="num">${t.shares}</td>
   <td class="num">${NUM_FMT.format(t.price)}</td>
-  <td class="mute">${escapeHtml(t.reason)}</td>
+  <td class="mute">${escapeXml(t.reason)}</td>
 </tr>`;
     })
     .join('\n');
@@ -1442,29 +1435,29 @@ export function renderDashboardHtml(input: DashboardInput): string {
       (r) => `<article class="rec">
     <div class="rank">${r.rank}</div>
     <div>
-      <h3>${escapeHtml(r.symbol)}</h3>
-      <p>${escapeHtml(r.rationale)}</p>
-      <ul>${r.riskFactors.map((rf) => `<li>${escapeHtml(rf)}</li>`).join('')}</ul>
+      <h3>${escapeXml(r.symbol)}</h3>
+      <p>${escapeXml(r.rationale)}</p>
+      <ul>${r.riskFactors.map((rf) => `<li>${escapeXml(rf)}</li>`).join('')}</ul>
     </div>
   </article>`,
     )
     .join('\n')}
-  <p class="mute disclaimer">${escapeHtml(advisorResult.disclaimer)}</p>
+  <p class="mute disclaimer">${escapeXml(advisorResult.disclaimer)}</p>
 </section>`
     : '';
 
   const strategyComparison = input.strategyComparison;
   const strategySection = strategyComparison
     ? `<section>
-  <h2>戦略比較 — ${escapeHtml(strategyComparison.symbol)} (初期 ${escapeHtml(YEN_FMT.format(strategyComparison.initialCash))})</h2>
+  <h2>戦略比較 — ${escapeXml(strategyComparison.symbol)} (初期 ${escapeXml(YEN_FMT.format(strategyComparison.initialCash))})</h2>
   <table>
     <thead><tr><th>戦略</th><th class="num">最終資産</th><th class="num">総リターン</th><th class="num">最大DD</th><th class="num">勝率</th><th class="num">取引数</th></tr></thead>
     <tbody>${strategyComparison.rows
       .map((r) => {
         const isBest = r.strategy === strategyComparison.bestByReturn;
         return `<tr${isBest ? ' style="background:rgba(34,197,94,0.08)"' : ''}>
-  <td><strong>${escapeHtml(r.strategy)}</strong>${isBest ? ' <span class="chip" style="background:#22c55e">最良</span>' : ''}</td>
-  <td class="num">${escapeHtml(YEN_FMT.format(r.finalEquity))}</td>
+  <td><strong>${escapeXml(r.strategy)}</strong>${isBest ? ' <span class="chip" style="background:#22c55e">最良</span>' : ''}</td>
+  <td class="num">${escapeXml(YEN_FMT.format(r.finalEquity))}</td>
   <td class="num" style="color:${r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444'}">${r.totalReturnPct >= 0 ? '+' : ''}${r.totalReturnPct.toFixed(2)}%</td>
   <td class="num">${r.maxDrawdownPct.toFixed(2)}%</td>
   <td class="num">${(r.winRate * 100).toFixed(0)}%</td>
@@ -1507,16 +1500,16 @@ footer { margin-top: 32px; color: #64748b; font-size: 11px; }
 </head>
 <body>
 <h1>Service Hub — Stocks ダッシュボード</h1>
-<div class="mute">生成日時: ${escapeHtml(generatedAt)}</div>
+<div class="mute">生成日時: ${escapeXml(generatedAt)}</div>
 <div class="banner"><strong>シミュレーション中:</strong> 実弾発注は行いません。Phase 7 で証券会社 API 連携時に有効化。本ダッシュボードは教育目的の参考情報であり投資助言ではありません。過去パフォーマンスは将来リターンを保証しません。</div>
 
 <section>
   <h2>ペーパー口座</h2>
   <div class="tiles">
-    <div class="tile"><div class="label">現在資産</div><div class="value">${escapeHtml(YEN_FMT.format(equity))}</div></div>
-    <div class="tile"><div class="label">現金残高</div><div class="value">${escapeHtml(YEN_FMT.format(port.cash))}</div></div>
-    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeHtml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
-    <div class="tile"><div class="label">初期入金</div><div class="value">${escapeHtml(YEN_FMT.format(port.initialCash))}</div></div>
+    <div class="tile"><div class="label">現在資産</div><div class="value">${escapeXml(YEN_FMT.format(equity))}</div></div>
+    <div class="tile"><div class="label">現金残高</div><div class="value">${escapeXml(YEN_FMT.format(port.cash))}</div></div>
+    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeXml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
+    <div class="tile"><div class="label">初期入金</div><div class="value">${escapeXml(YEN_FMT.format(port.initialCash))}</div></div>
     <div class="tile"><div class="label">取引履歴</div><div class="value">${port.history.length}</div><div class="sub">paper trades</div></div>
   </div>
 </section>

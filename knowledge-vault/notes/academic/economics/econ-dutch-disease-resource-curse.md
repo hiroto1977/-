@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Corden & Neary (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal](https://doi.org/10.2307/2232670) `学術`
-- [Sachs & Warner (1995) Natural Resource Abundance and Economic Growth — European Economic Review](https://doi.org/10.1016/0014-2921(95)00063-2) `学術`
+- [Sachs & Warner (1995) Natural Resource Abundance and Economic Growth — European Economic Review](https://doi.org/10.3386/w5398) `学術`
 - [Wikipedia: Dutch disease — オランダ病と資源の呪い](https://en.wikipedia.org/wiki/Dutch_disease) `リファレンス`
 
 ## 関連概念

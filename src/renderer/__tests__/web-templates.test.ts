@@ -242,6 +242,18 @@ describe('色の属性値からの脱出を防ぐ（ブラウザ版の書き出�
     }
   });
 
+  it('文字列でない色は safeColor へ渡さず既定値にする', () => {
+    // `params` の型は Record<string, string> だが、invoke() は任意の値を運ぶ。
+    // 数値や配列を String() で正規化してから検証する書き方だと、
+    // 正規化の中身を変えても結果が既定値のままで観測できる差が出ない。
+    for (const bad of [123, null, undefined, {}, [], true] as unknown[]) {
+      const svg = renderTemplateForWeb(def, { accentColor: bad } as unknown as Record<string, string>);
+      expect(svg, String(bad)).toContain(def.defaults.accentColor);
+      expect(svg, String(bad)).not.toContain('object Object');
+      expect(svg, String(bad)).not.toContain('123');
+    }
+  });
+
   it('正しい色はそのまま通す（機能を壊さない）', () => {
     for (const good of ['#fff', '#0f5fac', '#0f5facff', 'rebeccapurple', 'red']) {
       const svg = renderTemplateForWeb(def, { accentColor: good, secondaryColor: '#111111' });

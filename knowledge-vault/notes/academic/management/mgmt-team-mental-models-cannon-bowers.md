@@ -26,7 +26,7 @@ aliases:
 ジャニス・キャノン＝バウアーズ ／ エデュアルド・サラス ／ ジョン・マシュー ／ レスリー・デチャーチ ／ ジェシカ・メスマー＝マグナス
 
 ## 出典
-- [Cannon-Bowers, J. A. et al. (1993) "Shared Mental Models in Expert Team Decision Making" — Individual and Group Decision Making](https://doi.org/10.1016/S1048-9843(01)00076-X) `学術`
+- [Cannon-Bowers, J. A. et al. (1993) "Shared Mental Models in Expert Team Decision Making" — Individual and Group Decision Making](https://doi.org/10.4324/9780203772744-20) `学術`
 - [Mathieu, J. E. et al. (2000) "The Influence of Shared Mental Models on Team Process and Performance" — JAP](https://doi.org/10.1037/0021-9010.85.2.273) `学術`
 - [Wikipedia: Team mental model — 共有認知の理論と測定法](https://en.wikipedia.org/wiki/Team_mental_model) `リファレンス`
 

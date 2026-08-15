@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Pozsar, Adrian, Ashcraft & Boesky (2010) Shadow Banking — Federal Reserve Bank of New York Staff Report 458](https://www.newyorkfed.org/research/staff_reports/sr458) `公的`
-- [Gorton & Metrick (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics](https://doi.org/10.1257/aer.104.2.425) `学術`
+- [Gorton & Metrick (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics](https://doi.org/10.1016/j.jfineco.2011.03.016) `学術`
 - [Wikipedia: Shadow banking system — シャドーバンキングの定義と規制動向の概説](https://en.wikipedia.org/wiki/Shadow_banking_system) `リファレンス`
 
 ## 関連概念

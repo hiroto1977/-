@@ -11401,7 +11401,7 @@
 {"a":"human-automation-bias","b":"human-social-comparison-festinger","type":"shares-source","score":10000}
 {"a":"human-automation-bias","b":"human-tend-and-befriend","type":"shares-source","score":10000}
 {"a":"human-automation-bias","b":"mgmt-360-feedback","type":"shares-source","score":5000}
-{"a":"human-automation-bias","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
+{"a":"human-automation-bias","b":"mgmt-team-effectiveness-model","type":"shares-source","score":10000}
 {"a":"human-availability-cascade","b":"human-default-effect","type":"shares-thinker","score":3333}
 {"a":"human-availability-cascade","b":"infosoc-algorithmic-personalization-critique","type":"shares-thinker","score":3333}
 {"a":"human-availability-cascade","b":"infosoc-cyber-balkanization-sunstein","type":"shares-thinker","score":3333}
@@ -11727,7 +11727,7 @@
 {"a":"human-catharsis-hypothesis","b":"human-terror-management-theory-becker","type":"same-category","score":384}
 {"a":"human-catharsis-hypothesis","b":"human-visual-agnosia","type":"shares-thinker","score":10000}
 {"a":"human-catharsis-hypothesis","b":"mgmt-360-feedback","type":"shares-source","score":5000}
-{"a":"human-catharsis-hypothesis","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
+{"a":"human-catharsis-hypothesis","b":"mgmt-team-effectiveness-model","type":"shares-source","score":10000}
 {"a":"human-cbt","b":"human-conservation-piaget","type":"shares-source","score":5000}
 {"a":"human-cbt","b":"human-dialectical-behavior-therapy-linehan","type":"shares-thinker","score":5000}
 {"a":"human-cbt","b":"human-fundamental-attribution-error","type":"shares-source","score":5000}
@@ -11764,7 +11764,7 @@
 {"a":"human-childhood-amnesia","b":"human-tend-and-befriend","type":"shares-source","score":10000}
 {"a":"human-childhood-amnesia","b":"human-visual-agnosia","type":"shares-thinker","score":3333}
 {"a":"human-childhood-amnesia","b":"mgmt-360-feedback","type":"shares-source","score":5000}
-{"a":"human-childhood-amnesia","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
+{"a":"human-childhood-amnesia","b":"mgmt-team-effectiveness-model","type":"shares-source","score":10000}
 {"a":"human-choice-overload","b":"human-choice-overload-iyengar","type":"term-overlap","score":1265}
 {"a":"human-choice-overload","b":"human-choice-overload-iyengar","type":"shares-thinker","score":7500}
 {"a":"human-choice-overload","b":"human-self-determination-intrinsic","type":"shares-thinker","score":2500}
@@ -11830,10 +11830,9 @@
 {"a":"human-classical-conditioning","b":"human-late-selection-deutsch-norman","type":"same-category","score":423}
 {"a":"human-classical-conditioning","b":"human-mcgurk-effect","type":"shares-source","score":5000}
 {"a":"human-classical-conditioning","b":"human-microexpression-detection-ekman","type":"shares-source","score":3333}
-{"a":"human-classical-conditioning","b":"human-mindfulness","type":"shares-source","score":3333}
 {"a":"human-classical-conditioning","b":"human-relational-cultural-theory","type":"shares-source","score":3333}
-{"a":"human-classical-conditioning","b":"human-tend-and-befriend","type":"shares-source","score":5000}
 {"a":"human-classical-conditioning","b":"mgmt-360-feedback","type":"shares-source","score":3333}
+{"a":"human-classical-conditioning","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-cocktail-party-effect","b":"human-filter-model-attention-broadbent","type":"term-overlap","score":1606}
 {"a":"human-cocktail-party-effect","b":"human-filter-model-attention-broadbent","type":"shares-thinker","score":6667}
 {"a":"human-cocktail-party-effect","b":"human-filter-model-attention-broadbent","type":"same-category","score":1606}
@@ -12040,7 +12039,6 @@
 {"a":"human-corollary-discharge","b":"mgmt-behavioral-integrity","type":"shares-source","score":2500}
 {"a":"human-corollary-discharge","b":"mgmt-job-embeddedness-theory","type":"shares-source","score":5000}
 {"a":"human-corollary-discharge","b":"mgmt-psychological-capital-theory","type":"shares-source","score":10000}
-{"a":"human-corollary-discharge","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-corollary-discharge","b":"mgmt-work-engagement","type":"shares-source","score":5000}
 {"a":"human-cortical-magnification","b":"human-critical-period-hubel-wiesel","type":"shares-thinker","score":2500}
 {"a":"human-cortical-magnification","b":"human-critical-period-plasticity","type":"shares-thinker","score":6667}
@@ -12276,7 +12274,7 @@
 {"a":"human-disenfranchised-grief","b":"human-social-comparison-festinger","type":"shares-source","score":10000}
 {"a":"human-disenfranchised-grief","b":"human-tend-and-befriend","type":"shares-source","score":10000}
 {"a":"human-disenfranchised-grief","b":"mgmt-360-feedback","type":"shares-source","score":5000}
-{"a":"human-disenfranchised-grief","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
+{"a":"human-disenfranchised-grief","b":"mgmt-team-effectiveness-model","type":"shares-source","score":10000}
 {"a":"human-door-in-the-face","b":"human-door-in-the-face-cialdini","type":"same-category","score":418}
 {"a":"human-door-in-the-face","b":"human-effort-justification","type":"shares-source","score":5000}
 {"a":"human-door-in-the-face","b":"human-endowment-effect","type":"shares-source","score":10000}
@@ -12586,7 +12584,6 @@
 {"a":"human-executive-attention","b":"mgmt-job-embeddedness-theory","type":"shares-source","score":5000}
 {"a":"human-executive-attention","b":"mgmt-positive-organizational-behavior-luthans","type":"shares-source","score":10000}
 {"a":"human-executive-attention","b":"mgmt-psychological-capital-theory","type":"shares-source","score":10000}
-{"a":"human-executive-attention","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-executive-attention","b":"mgmt-work-engagement","type":"shares-source","score":5000}
 {"a":"human-executive-function","b":"human-executive-function-baddeley","type":"shares-thinker","score":3333}
 {"a":"human-executive-function","b":"human-executive-function-development","type":"shares-thinker","score":3333}
@@ -12604,7 +12601,6 @@
 {"a":"human-executive-function","b":"mgmt-behavioral-integrity","type":"shares-source","score":2500}
 {"a":"human-executive-function","b":"mgmt-job-embeddedness-theory","type":"shares-source","score":5000}
 {"a":"human-executive-function","b":"mgmt-psychological-capital-theory","type":"shares-source","score":10000}
-{"a":"human-executive-function","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-executive-function","b":"mgmt-work-engagement","type":"shares-source","score":5000}
 {"a":"human-executive-function-baddeley","b":"human-executive-function-development","type":"shares-thinker","score":5000}
 {"a":"human-executive-function-baddeley","b":"human-stroop-effect","type":"same-category","score":426}
@@ -13046,6 +13042,7 @@
 {"a":"human-illusory-truth-effect","b":"human-social-comparison-festinger","type":"shares-source","score":5000}
 {"a":"human-illusory-truth-effect","b":"human-tend-and-befriend","type":"shares-source","score":5000}
 {"a":"human-illusory-truth-effect","b":"mgmt-360-feedback","type":"shares-source","score":3333}
+{"a":"human-illusory-truth-effect","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-impact-bias","b":"human-mind-wandering","type":"shares-thinker","score":3333}
 {"a":"human-implementation-intentions-gollwitzer","b":"human-self-regulation-baumeister","type":"same-category","score":428}
 {"a":"human-implicit-association-test-greenwald","b":"human-implicit-bias","type":"term-overlap","score":1768}
@@ -13054,7 +13051,6 @@
 {"a":"human-implicit-association-test-greenwald","b":"human-sleeper-effect","type":"shares-thinker","score":2000}
 {"a":"human-implicit-association-test-greenwald","b":"human-spontaneous-trait-inference","type":"same-category","score":425}
 {"a":"human-implicit-bias","b":"human-microexpression-detection-ekman","type":"shares-source","score":3333}
-{"a":"human-implicit-bias","b":"human-relational-cultural-theory","type":"shares-source","score":3333}
 {"a":"human-implicit-bias","b":"human-sleeper-effect","type":"shares-thinker","score":3333}
 {"a":"human-implicit-bias","b":"human-sleeper-effect","type":"shares-source","score":3333}
 {"a":"human-implicit-bias","b":"human-social-comparison-festinger","type":"shares-source","score":5000}
@@ -13262,10 +13258,9 @@
 {"a":"human-microaggression","b":"mgmt-simmelian-ties-krackhardt","type":"shares-source","score":10000}
 {"a":"human-microaggression","b":"mgmt-theory-z","type":"shares-source","score":10000}
 {"a":"human-microaggression","b":"mgmt-vroom-yetton","type":"shares-source","score":10000}
-{"a":"human-microexpression-detection-ekman","b":"human-mindfulness","type":"shares-source","score":3333}
 {"a":"human-microexpression-detection-ekman","b":"human-social-comparison-festinger","type":"shares-source","score":5000}
 {"a":"human-microexpression-detection-ekman","b":"human-tend-and-befriend","type":"shares-source","score":5000}
-{"a":"human-microexpression-detection-ekman","b":"mgmt-360-feedback","type":"shares-source","score":3333}
+{"a":"human-microexpression-detection-ekman","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-milgram-obedience","b":"human-misattribution-arousal","type":"same-category","score":404}
 {"a":"human-milgram-obedience","b":"human-obedience","type":"shares-thinker","score":5000}
 {"a":"human-milgram-obedience","b":"human-obedience","type":"same-category","score":412}
@@ -13281,6 +13276,7 @@
 {"a":"human-mindfulness","b":"human-social-comparison-festinger","type":"shares-source","score":5000}
 {"a":"human-mindfulness","b":"human-stress-immune-axis","type":"same-category","score":428}
 {"a":"human-mindfulness","b":"human-tend-and-befriend","type":"shares-source","score":5000}
+{"a":"human-mindfulness","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-mindfulness-based-stress-reduction","b":"human-mindfulness-based-stress-reduction-kabat-zinn","type":"term-overlap","score":2952}
 {"a":"human-mindfulness-based-stress-reduction","b":"human-mindfulness-based-stress-reduction-kabat-zinn","type":"shares-thinker","score":5000}
 {"a":"human-mindfulness-based-stress-reduction","b":"human-mindfulness-based-stress-reduction-kabat-zinn","type":"same-category","score":2952}
@@ -13665,6 +13661,7 @@
 {"a":"human-relational-autonomy-philosophy","b":"mgmt-growth-mindset","type":"shares-source","score":5000}
 {"a":"human-relational-cultural-theory","b":"human-social-comparison-festinger","type":"shares-source","score":5000}
 {"a":"human-relational-cultural-theory","b":"human-tend-and-befriend","type":"shares-source","score":5000}
+{"a":"human-relational-cultural-theory","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"human-reminiscence-bump","b":"human-rubber-hand-illusion","type":"shares-source","score":10000}
 {"a":"human-reminiscence-bump","b":"infosoc-communicative-action","type":"shares-source","score":10000}
 {"a":"human-repression-sandor-ferenczi","b":"human-spacing-effect-ebbinghaus","type":"same-category","score":403}
@@ -13817,6 +13814,7 @@
 {"a":"human-social-comparison-festinger","b":"infosoc-social-comparison-social-media","type":"term-overlap","score":1558}
 {"a":"human-social-comparison-festinger","b":"mgmt-360-feedback","type":"shares-source","score":5000}
 {"a":"human-social-comparison-festinger","b":"mgmt-equity-theory-adams","type":"shares-thinker","score":2500}
+{"a":"human-social-comparison-festinger","b":"mgmt-team-effectiveness-model","type":"shares-source","score":10000}
 {"a":"human-social-comparison-theory-festinger","b":"human-temporal-self-appraisal","type":"term-overlap","score":1308}
 {"a":"human-social-comparison-theory-festinger","b":"infosoc-selective-exposure","type":"shares-thinker","score":3333}
 {"a":"human-social-comparison-theory-festinger","b":"infosoc-social-comparison-social-media","type":"term-overlap","score":1202}
@@ -13906,6 +13904,7 @@
 {"a":"human-tend-and-befriend","b":"human-tend-and-befriend-taylor","type":"shares-thinker","score":10000}
 {"a":"human-tend-and-befriend","b":"human-tend-and-befriend-taylor","type":"same-category","score":834}
 {"a":"human-tend-and-befriend","b":"mgmt-360-feedback","type":"shares-source","score":5000}
+{"a":"human-tend-and-befriend","b":"mgmt-team-effectiveness-model","type":"shares-source","score":10000}
 {"a":"human-terror-management","b":"human-terror-management-greenberg","type":"shares-thinker","score":7500}
 {"a":"human-terror-management","b":"human-terror-management-theory-becker","type":"shares-thinker","score":7500}
 {"a":"human-terror-management","b":"human-terror-management-theory-becker","type":"same-category","score":832}
@@ -17516,6 +17515,7 @@
 {"a":"mgmt-360-feedback","b":"mgmt-sociomaterial-assemblage","type":"same-category","score":1}
 {"a":"mgmt-360-feedback","b":"mgmt-strategic-alliance","type":"same-category","score":1}
 {"a":"mgmt-360-feedback","b":"mgmt-teal-organization","type":"same-category","score":1}
+{"a":"mgmt-360-feedback","b":"mgmt-team-effectiveness-model","type":"shares-source","score":5000}
 {"a":"mgmt-360-feedback","b":"mgmt-team-faultlines","type":"same-category","score":1}
 {"a":"mgmt-360-feedback","b":"mgmt-theory-u","type":"same-category","score":1}
 {"a":"mgmt-360-feedback","b":"mgmt-vuca","type":"same-category","score":1}

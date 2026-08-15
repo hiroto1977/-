@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Scannell, L. & Gifford, R. (2010) "Defining Place Attachment" — Journal of Environmental Psychology](https://doi.org/10.1016/j.jenvp.2009.09.006) `学術`
-- [Lewicka, M. (2011) "Place Attachment: How Far Have We Come?" — JEP](https://doi.org/10.1006/jevp.2001.0226) `学術`
+- [Lewicka, M. (2011) "Place Attachment: How Far Have We Come?" — JEP](https://doi.org/10.1016/j.jenvp.2010.10.001) `学術`
 - [Wikipedia: Place attachment — 場所愛着の理論と測定法](https://en.wikipedia.org/wiki/Place_attachment) `リファレンス`
 
 ## 関連概念

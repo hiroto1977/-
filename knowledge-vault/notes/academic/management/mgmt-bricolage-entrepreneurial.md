@@ -26,7 +26,7 @@ aliases:
 テッド・ベイカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース
 
 ## 出典
-- [Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Academy of Management Review](https://doi.org/10.2307/20159255) `学術`
+- [Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly](https://doi.org/10.2189/asqu.2005.50.3.329) `学術`
 - [Levi-Strauss, C. (1962) La Pensee Sauvage (The Savage Mind) — Plon / University of Chicago Press](https://archive.org/details/savagemindsavoir00levi) `学術`
 - [Garud, R. & Karnoe, P. (2003) Bricolage versus Breakthrough: Distributed and Embedded Agency in Technology Entrepreneurship — Research Policy](https://doi.org/10.1016/S0048-7333(02)00062-8) `学術`
 

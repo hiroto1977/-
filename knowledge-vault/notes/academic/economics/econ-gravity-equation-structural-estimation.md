@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Anderson, J. E. & van Wincoop, E. (2003) "Gravity with Gravitas" — AER](https://doi.org/10.1257/000282803321455214) `学術`
-- [Head, K. & Mayer, T. (2014) "Gravity Equations: Workhorse, Toolkit, and Cookbook" — Annual Review of Economics](https://doi.org/10.1146/annurev-economics-080213-040435) `学術`
+- [Head, K. & Mayer, T. (2014) "Gravity Equations: Workhorse, Toolkit, and Cookbook" — Handbook of International Economics, Vol. 4（Elsevier）](https://doi.org/10.1016/B978-0-444-54314-1.00003-3) `学術`
 - [Wikipedia: Gravity model of trade — 重力方程式の理論的導出と推定](https://en.wikipedia.org/wiki/Gravity_model_of_trade) `リファレンス`
 
 ## 関連概念

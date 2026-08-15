@@ -24,16 +24,24 @@
  * 重複 path を入口でガードし、安全側 (throw か no-op) に倒す。
  */
 
+import { AES_GCM_IV_BYTES, kdfLabel } from '../../shared/cryptoParams';
+
 // --- 暗号エンベロープ (モデルのみ — 実バイト暗号は vault に委譲) ----------
 
 /** クライアント側暗号化のアルゴリズム識別子。vault.ts と同じ AES-GCM-256。 */
 export const BACKUP_CIPHER_ALGO = 'AES-GCM' as const;
 
-/** AES-GCM の IV 長 (バイト)。vault.ts の IV_BYTES と一致させる。 */
-export const BACKUP_IV_LENGTH = 12;
+/** AES-GCM の IV 長 (バイト)。共有の暗号パラメータから取る。 */
+export const BACKUP_IV_LENGTH = AES_GCM_IV_BYTES;
 
-/** 鍵導出方式の参照識別子。実際の派生は vault.ts (PBKDF2-SHA-256 600k) が担う。 */
-export const BACKUP_KEY_DERIVATION = 'PBKDF2-SHA-256-600k' as const;
+/**
+ * 鍵導出方式の参照識別子。実際の派生は vault.ts が担う。
+ *
+ * **文字列に反復回数を焼き込まない** — 以前は 'PBKDF2-SHA-256-600k' という
+ * リテラルで、vault 側の強度を上げてもここは 600k と言い続ける形だった。
+ * 復号する側が信じるのはこのメタデータなので、実装とずれると危ない。
+ */
+export const BACKUP_KEY_DERIVATION = kdfLabel();
 
 /**
  * 暗号化メタデータ (エンベロープ)。クラウドへ送る暗号文に添える非機密ヘッダ。

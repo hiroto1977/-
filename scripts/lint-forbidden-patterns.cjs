@@ -118,6 +118,43 @@ const FORBIDDEN_PATTERNS = [
       '同じ書き方の 8 箇所が素通しだった',
   },
   {
+    name: 'markup escaping / color / control-char check reimplemented outside its shared module',
+    // マークアップ用エスケープの自前実装（実体参照 '&amp;' を自分で書いている行、
+    // または 5 文字クラスをまとめて置換している行）、色の判定の自前実装
+    // （`#RRGGBB` の正規表現）、制御文字の判定の自前実装（`=== 0x7f`）を捕まえる。
+    // いずれも「利用者の入力が、書き出したファイルや通信の宛先になる」経路を
+    // 守る判断で、写経すると必ずどれかが緩む。
+    //
+    // 制御文字を `=== 0x7f` の形に限っているのは、
+    // `components/serviceActionUtils.ts` の `isStrippableControlChar` が
+    // **別の判断**だから。あちらはメモの保存前サニタイズで、タブ・改行は残し
+    // C1 (0x80–0x9f) まで落とす。URL を弾く判定とは保つものが違うので、
+    // 1 つに畳むと片方の意図が壊れる。範囲比較 (`>= 0x7f && <= 0x9f`) は
+    // 通し、等値比較だけを見る。網羅ではなく、既にある書き方の再発を止めるもの。
+    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b/i,
+    // 出荷コード (src/**) だけを見る。scripts/ の図生成は素の CJS で
+    // TS の共有実装を読めないため対象外にしている — ただし落とす文字は
+    // 揃えてある (2026-08 に gen-econ-asset-chart.cjs だけ " と ' を
+    // 残していたのを合わせた)。
+    allowFile: (rel) =>
+      !rel.startsWith('src/') || rel === 'src/shared/escape.ts' || rel === 'src/shared/controlChars.ts',
+    codeOnly: true,
+    rationale:
+      'escape.ts の冒頭に「アプリ全体で 1 つだけ持つ」と書いてあるのに、' +
+      '2026-08 時点で main の business.ts / stocks.ts と renderer の ' +
+      'stocksAnalysisWeb.ts に写経が 3 つ残っていた。' +
+      'この種の関数は片方だけ文字を足し忘れても見た目に出ず、' +
+      '「その書き出しだけエスケープが漏れる」状態が静かに残る。' +
+      '実際にビルドスクリプト側では 1 つだけ " と \' を落としていなかった。' +
+      '説明で 1 つだと言うのではなく、増やせないようにする。' +
+      '色の判定 (`#RRGGBB`) も同じ理由で 1 つにした — main の templates.ts と ' +
+      'renderer の TemplatesPage.tsx に同じ正規表現が 1 つずつあり、' +
+      'さらに shared には受け入れ範囲の違う safeColor があって判断が 3 通りに割れていた。' +
+      '制御文字の判定 (0x7f) も同じで、shared/atlassianSite.ts が持っていたものを ' +
+      'shared/aiEndpoint.ts が書き直しかけたので shared/controlChars.ts へ寄せた — ' +
+      '「0x1f まで」か「0x20 未満」か、0x7f を入れるかは一見して差が出ない',
+  },
+  {
     name: 'child_process exec/spawn',
     pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
     // Build/dev scripts are allowed; runtime src is not.

@@ -1,5 +1,5 @@
 import { wrapLines } from '../../shared/textWrap';
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, isHexColor } from '../../shared/escape';
 import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -29,8 +29,6 @@ interface TemplatesSnapshot {
   readonly fetchedAt: string;
   readonly isMock: boolean;
 }
-
-const HEX = /^#[0-9a-fA-F]{6}$/;
 
 // Mirror of the backend renderers so the renderer can preview without an IPC round-trip.
 function renderPreview(id: string, p: TemplateParams, d: TemplateDef): string {
@@ -203,7 +201,7 @@ export function TemplatesPage() {
     setLastExport(null);
     try {
       // Lightweight client-side validation mirrors backend bounds.
-      if (!HEX.test(params.accentColor) || !HEX.test(params.secondaryColor)) {
+      if (!isHexColor(params.accentColor) || !isHexColor(params.secondaryColor)) {
         setMsg('カラーは #RRGGBB 形式で指定してください');
         return;
       }

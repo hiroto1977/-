@@ -26,7 +26,7 @@ aliases:
 ティジアナ・テラノバ ／ ダラス・スマイス ／ クリスチャン・フクス ／ ニック・サーニセック
 
 ## 出典
-- [Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（デジタル労働論の原論文）](https://doi.org/10.1080/01972240050133545) `学術`
+- [Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（デジタル労働論の原論文）](https://doi.org/10.1215/01642472-18-2_63-33) `学術`
 - [Wikipedia: Digital labor — デジタル労働論の概説](https://en.wikipedia.org/wiki/Digital_labor) `リファレンス`
 
 ## 関連概念

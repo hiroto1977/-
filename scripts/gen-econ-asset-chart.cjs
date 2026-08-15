@@ -63,7 +63,14 @@ const plotW = Math.max(1, (rows.length - 1) * colW);
 const width = x0 + plotW + marginR + 20;
 const height = marginT + plotH + 60 + seriesDefs.length * 18 + 20;
 
-const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// 他のビルドスクリプトと同じ 5 文字を落とす。ここだけ " と ' を残していた。
+const esc = (s) =>
+  String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 const isNum = (v) => v !== null && v !== undefined && !Number.isNaN(v);
 const xFor = (i) => x0 + i * colW;
 const yFor = (norm) => marginT + plotH - norm * plotH;

@@ -26,7 +26,7 @@ aliases:
 テッド・ベーカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース ／ サラス・サラスバシー
 
 ## 出典
-- [Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing — Administrative Science Quarterly](https://doi.org/10.2307/4131572) `学術`
+- [Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing — Administrative Science Quarterly](https://doi.org/10.2189/asqu.2005.50.3.329) `学術`
 - [Fisher, G. (2012) Effectuation, Causation, and Bricolage — Entrepreneurship Theory and Practice](https://doi.org/10.5465/amr.2012.0431) `学術`
 - [Wikipedia: Bricolage — creative recombination of available resources overview](https://en.wikipedia.org/wiki/Bricolage) `リファレンス`
 

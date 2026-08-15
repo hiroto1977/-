@@ -1,4 +1,5 @@
 import { seededNoise } from '../../shared/seededNoise';
+import { escapeXml } from '../../shared/escape';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -760,17 +761,6 @@ export function isSafeBusinessDashboardMdPath(filePath: string, home: string): b
 }
 // Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator
 
-/** Escape `<>&"'` for safe HTML interpolation. Any UI-supplied string
- *  (category label, AI rationale, action item) goes through this. */
-export function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 // Number-format options are decorative; perTest can't link them to a test.
 // Stryker disable next-line ObjectLiteral
 const YEN_FMT = new Intl.NumberFormat('ja-JP', {
@@ -844,7 +834,7 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
       const marginSign = c.profitMargin >= 0 ? '+' : '';
       const spark = renderUnitSparkline(u.history.map((h) => h.revenue));
       return `<tr>
-  <td><strong>${escapeHtml(u.label)}</strong><br/><span class="mute">${escapeHtml(u.id)}</span></td>
+  <td><strong>${escapeXml(u.label)}</strong><br/><span class="mute">${escapeXml(u.id)}</span></td>
   <td class="num">${YEN_FMT.format(c.revenue)}</td>
   <td class="num">${YEN_FMT.format(c.totalCost)}</td>
   <td class="num" style="color:${profitColor}">${YEN_FMT.format(c.profit)}</td>
@@ -862,17 +852,17 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
   const advisorSection = advisorResult
     ? `<section>
   <h2>AI 経営アドバイザー提案</h2>
-  <p class="disclaimer">${escapeHtml(advisorResult.disclaimer)}</p>
+  <p class="disclaimer">${escapeXml(advisorResult.disclaimer)}</p>
   <ol class="recs">
     ${advisorResult.recommendations
       .map(
         (r) => `<li>
-      <h3>${escapeHtml(r.categoryId)} <span class="rank">#${r.rank}</span></h3>
-      <p>${escapeHtml(r.rationale)}</p>
+      <h3>${escapeXml(r.categoryId)} <span class="rank">#${r.rank}</span></h3>
+      <p>${escapeXml(r.rationale)}</p>
       <h4>推奨アクション</h4>
-      <ul>${r.actionItems.map((a) => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+      <ul>${r.actionItems.map((a) => `<li>${escapeXml(a)}</li>`).join('')}</ul>
       <h4>リスク要因</h4>
-      <ul class="risk">${r.riskFactors.map((rf) => `<li>${escapeHtml(rf)}</li>`).join('')}</ul>
+      <ul class="risk">${r.riskFactors.map((rf) => `<li>${escapeXml(rf)}</li>`).join('')}</ul>
     </li>`,
       )
       .join('')}
@@ -884,7 +874,7 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>事業ダッシュボード — ${escapeHtml(generatedAt)}</title>
+<title>事業ダッシュボード — ${escapeXml(generatedAt)}</title>
 <style>
   body { font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif; background: #0f1117; color: #e6e8ec; margin: 0; padding: 24px; }
   h1 { font-size: 20px; margin: 0 0 4px; }
@@ -911,7 +901,7 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
 </head>
 <body>
 <h1>事業ダッシュボード</h1>
-<div class="meta">Generated: ${escapeHtml(generatedAt)} · ${snapshot.units.length} 事業 · ${snapshot.isMock ? 'シミュレーション中 (模擬データ)' : '本番データ'}</div>
+<div class="meta">Generated: ${escapeXml(generatedAt)} · ${snapshot.units.length} 事業 · ${snapshot.isMock ? 'シミュレーション中 (模擬データ)' : '本番データ'}</div>
 ${snapshot.isMock ? '<div class="mock-banner"><strong>シミュレーション中:</strong> Phase 6 で freee / 楽天 SP-API / Shopify / GA4 / YouTube Data API / X API などへ接続予定。本ダッシュボードの数値は模擬値です。</div>' : ''}
 
 <section>

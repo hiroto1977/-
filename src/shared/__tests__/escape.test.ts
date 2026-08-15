@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { escapeXml, safeColor } from '../escape';
+import { escapeXml, safeColor, isHexColor } from '../escape';
 
 describe('escapeXml', () => {
   it('マークアップで意味を持つ 5 文字を落とす', () => {
@@ -13,6 +13,18 @@ describe('escapeXml', () => {
   it('普通の文字列は変えない', () => {
     expect(escapeXml('株式会社サンプル 123')).toBe('株式会社サンプル 123');
     expect(escapeXml('')).toBe('');
+  });
+
+  // 個々の文字ではなく「素通りするマークアップ文字が 1 つも残らない」ことを見る。
+  // 置換が 1 つ落ちたときに、どの文字が落ちたかに依らず落ちる。
+  it('XSS を狙った入力から、素通りするマークアップ文字が 1 つも残らない', () => {
+    const out = escapeXml('<img src=x onerror="alert(1)">');
+    expect(out).not.toContain('<');
+    expect(out).not.toContain('>');
+    expect(out).not.toContain('"');
+    expect(out).toContain('&lt;');
+    expect(out).toContain('&gt;');
+    expect(out).toContain('&quot;');
   });
 });
 
@@ -70,5 +82,42 @@ describe('safeColor', () => {
       const out = safeColor(c, FB);
       expect(/["'<>\s]/.test(out), c).toBe(false);
     }
+  });
+});
+
+describe('isHexColor', () => {
+  it('#RRGGBB を通す（大文字小文字どちらも）', () => {
+    expect(isHexColor('#abcdef')).toBe(true);
+    expect(isHexColor('#012345')).toBe(true);
+    expect(isHexColor('#ABCDEF')).toBe(true);
+    expect(isHexColor('#000000')).toBe(true);
+  });
+
+  it('桁数が 6 でないものは弾く', () => {
+    expect(isHexColor('#abc')).toBe(false);
+    expect(isHexColor('#abcde')).toBe(false);
+    expect(isHexColor('#abcdef0')).toBe(false);
+    expect(isHexColor('#abcdefab')).toBe(false);
+  });
+
+  it('16進でない文字は弾く', () => {
+    expect(isHexColor('#zzzzzz')).toBe(false);
+    expect(isHexColor('#abcdeg')).toBe(false);
+    expect(isHexColor('red')).toBe(false);
+  });
+
+  it('# が無い / 空 は弾く', () => {
+    expect(isHexColor('abcdef')).toBe(false);
+    expect(isHexColor('')).toBe(false);
+    expect(isHexColor('#')).toBe(false);
+  });
+
+  // アンカーが片方でも外れると、属性を抜ける文字列が通る。
+  it('前後に何か付いていれば弾く（属性から抜けられない）', () => {
+    expect(isHexColor(' #abcdef')).toBe(false);
+    expect(isHexColor('#abcdef ')).toBe(false);
+    expect(isHexColor('x#abcdef')).toBe(false);
+    expect(isHexColor('#abcdef" onload="alert(1)')).toBe(false);
+    expect(isHexColor('#abcdef\n<script>alert(1)</script>')).toBe(false);
   });
 });

@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Fisher, I. (1928) The Money Illusion — Adelphi Company（原典）](https://doi.org/10.2307/1884728) `学術`
 - [Shafir, E., Diamond, P. & Tversky, A. (1997) Money Illusion — Quarterly Journal of Economics, 112(2), 341–374（行動経済学的実証）](https://doi.org/10.2307/1913820) `学術`
-- [Akerlof, G. A. & Yellen, J. L. (1985) A Near-Rational Model of the Business Cycle, with Wage and Price Inertia — Quarterly Journal of Economics, 100(Suppl), 823–838（貨幣錯覚とニア合理性）](https://doi.org/10.2307/2527349) `学術`
+- [Akerlof, G. A. & Yellen, J. L. (1985) A Near-Rational Model of the Business Cycle, with Wage and Price Inertia — Quarterly Journal of Economics, 100(Suppl), 823–838（貨幣錯覚とニア合理性）](https://doi.org/10.1093/qje/100.Supplement.823) `学術`
 - [Wikipedia: Money illusion — Fisher, framing effect, near-rationality, inflation expectations](https://en.wikipedia.org/wiki/Money_illusion) `リファレンス`
 
 ## 関連概念

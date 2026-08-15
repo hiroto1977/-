@@ -31,7 +31,7 @@ aliases:
 - [Weick, K.E. (2009). Making Sense of the Organization, Volume 2. Wiley-Blackwell.](https://onlinelibrary.wiley.com/doi/book/10.1002/9781119206453) `学術`
 - [Brown, A.D., Colville, I., & Pye, A. (2015). Making Sense of Sensemaking in Organization Studies. Organization Studies, 36(2).](https://journals.sagepub.com/doi/10.1177/0170840614559259) `学術`
 - [Open Library — Sensemaking in Organizations](https://openlibrary.org/books/OL1276566M/Sensemaking_in_organizations) `リファレンス`
-- [Maitlis, S. & Christianson, M. (2014). Sensemaking in Organizations: Taking Stock and Moving Forward. Academy of Management Annals, 8(1), 57-125.](https://www.tandfonline.com/doi/abs/10.1080/19416520.2014.873177) `学術`
+- [Maitlis, S. & Christianson, M. (2014). Sensemaking in Organizations: Taking Stock and Moving Forward. Academy of Management Annals, 8(1), 57-125.](https://doi.org/10.5465/19416520.2014.873177) `学術`
 - [Weick, K.E. (1993). The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster. Administrative Science Quarterly, 38(4), 628-652.](https://www.jstor.org/stable/2393339) `学術`
 
 ## 関連概念

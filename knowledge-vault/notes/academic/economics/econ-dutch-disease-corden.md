@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Corden, W. M. & Neary, J. P. (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal, 92(368), 825–848（オランダ病の原典）](https://doi.org/10.2307/2232670) `学術`
-- [Sachs, J. D. & Warner, A. M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398（資源の呪い実証）](https://doi.org/10.2307/2951599) `学術`
+- [Sachs, J. D. & Warner, A. M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398（資源の呪い実証）](https://doi.org/10.3386/w5398) `学術`
 - [Frankel, J. A. (2012) The Natural Resource Curse: A Survey of Diagnoses and Some Prescriptions — HKS Faculty Research Working Papers（政策的処方箋の概観）](https://doi.org/10.1093/oxrep/grm030) `学術`
 - [Wikipedia: Dutch disease — Corden & Neary model, spending effect, resource movement effect, case studies](https://en.wikipedia.org/wiki/Dutch_disease) `リファレンス`
 

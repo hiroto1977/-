@@ -19,6 +19,7 @@
 
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations } from './dataCrypto';
+import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
 
 // Constants below are pinned by integration behavior (DB name / iterations
 // / byte counts) but the exact string values & default arrows are not
@@ -29,11 +30,11 @@ const DB_NAME = 'business-hub-vault';
 const DB_VERSION = 1;
 const META_STORE = 'meta';
 const TOKEN_STORE = 'tokens';
-const PBKDF2_ITERATIONS = 600_000;
+const PBKDF2_ITERATIONS = SHARED_ITERATIONS;
 /** Minimum master-password length for new vaults / password resets. */
 export const MIN_PASSWORD_LENGTH = 12;
 const SALT_BYTES = 32;
-const IV_BYTES = 12;
+const IV_BYTES = AES_GCM_IV_BYTES;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
 // Stryker restore StringLiteral
 

@@ -34,9 +34,33 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const ROOTS = ['src/main/clients', 'src/shared/api', 'src/renderer/data', 'src/renderer/network'];
+// 走査対象。**ここに書き忘れると、そのディレクトリは丸ごと見えない。**
+// 2026-08 に実際そうなっていた: `src/shared/ai` が入っておらず、
+// 5 プロバイダ分の「変数ホスト + Authorization」が 1 件も台帳に載っていなかった。
+const ROOTS = [
+  'src/main/clients',
+  'src/shared/api',
+  'src/shared/ai',
+  'src/renderer/data',
+  'src/renderer/network',
+];
 
 const NETWORK_CALL = /\b(jsonFetch|apiFetch|apiFetchOkFlag|transport|postExpectOk|fetchViaProxy)\b/;
+
+/**
+ * 送信そのものではなく「送り先の組み立て」を捕まえるための印。
+ *
+ * `src/shared/ai/providers.ts` の `buildRequest` は `{ url, headers, body }` を
+ * 返すだけで fetch しない。送信は別モジュール (`chat.ts`) が
+ * `f(httpReq.url, …)` と**変数**で呼ぶので、テンプレートリテラルを探す
+ * 検出器はどちらの側にも掛からなかった。**組み立てと送信を別モジュールに
+ * 分けると素通りする**のが 2026-08 に見つかった穴で、
+ * 組み立て側の見た目 (`url:` / `const url =`) も入口として数える。
+ */
+// バッククォートを直後に要求しない。`const url = cond ? `${base}/a` : `${base}/b`;`
+// のように三項で組み立てる形（互換 API がこれ）を取りこぼすため。
+// 行に URL 形のテンプレートリテラルがあることは呼び出し側で既に確認済み。
+const URL_ASSIGNMENT = /\b(url|endpoint|target)\s*[:=]/i;
 
 /**
  * 送り先が変数で決まる通信の台帳。
@@ -70,6 +94,46 @@ const REVIEWED = [
     file: 'src/renderer/data/saasWriteWeb.ts',
     template: '`${creds.site}/rest/api/3/issue`',
     guard: 'parseAtlassianToken → shared/atlassianSite.ts (2026-08 監査で追加)',
+  },
+  {
+    file: 'src/main/clients/atlassian.ts',
+    template: '`${creds.site}/rest/api/3/project/search?maxResults=50`',
+    guard: 'parseAtlassianToken → shared/atlassianSite.ts。2026-08 に検出器を直すまで台帳から漏れていた（jsonFetch が次の行にあり、直前 3 行しか見ない文脈判定に掛からなかった）',
+  },
+  {
+    file: 'src/main/clients/atlassian.ts',
+    template: '`${creds.site}/browse/${res.key}`',
+    guard: '同上のホスト検証済み。これは送信ではなく画面へ返す表示用 URL（openExternal で開く）で、資格情報は乗らない',
+  },
+  {
+    file: 'src/renderer/data/saasWriteWeb.ts',
+    template: '`${creds.site}/browse/${data.key}`',
+    guard: '同上（ブラウザ版の表示用 URL）',
+  },
+  {
+    file: 'src/shared/ai/providers.ts',
+    template: '`${base}/v1/messages`',
+    guard: 'resolveBase → shared/aiEndpoint.ts。AI は利用者が自分でエンドポイントを決めるのが機能なのでホスト名の許可リストは張れない。代わりに送り方を絞る: http/https のみ・userinfo 禁止・制御文字禁止・クエリ/断片禁止・**鍵を送るなら loopback 以外の平文 http を禁止**',
+  },
+  {
+    file: 'src/shared/ai/providers.ts',
+    template: '`${base}/v1/chat/completions`',
+    guard: '同上（OpenAI・Authorization: Bearer が乗る）',
+  },
+  {
+    file: 'src/shared/ai/providers.ts',
+    template: '`${base}/v1beta/models/${encodeURIComponent(model)}:generateContent`',
+    guard: '同上（Gemini・x-goog-api-key が乗る）',
+  },
+  {
+    file: 'src/shared/ai/providers.ts',
+    template: '`${base}/api/chat`',
+    guard: '同上。ただし Ollama は鍵を送らないので credentialed=false で呼び、LAN の平文 http を許す',
+  },
+  {
+    file: 'src/shared/ai/providers.ts',
+    template: '`${base}/chat/completions`',
+    guard: '同上（OpenAI 互換）。鍵があるときだけ credentialed=true になる',
   },
 ];
 
@@ -106,7 +170,7 @@ function collect() {
         const template = m[0];
         // URL 引数らしさ: 同じ行か直前 3 行に通信呼び出しがある。
         const ctx = lines.slice(Math.max(0, i - 3), i + 1).join('\n');
-        if (!NETWORK_CALL.test(ctx)) continue;
+        if (!NETWORK_CALL.test(ctx) && !URL_ASSIGNMENT.test(lines[i])) continue;
         // パスで始まらない (= URL ではない) テンプレートは除く。
         if (!/^`(https?:\/\/|\$\{[^}]*\}\/)/.test(template)) continue;
         if (hasConstantHost(template)) continue;

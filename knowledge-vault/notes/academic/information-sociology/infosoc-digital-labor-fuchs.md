@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Fuchs (2014) Digital Labour and Karl Marx — Routledge](https://doi.org/10.4324/9780415856287) `学術`
-- [Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text](https://doi.org/10.1509/jm.15.0420) `学術`
+- [Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text](https://doi.org/10.1215/01642472-18-2_63-33) `学術`
 - [Wikipedia: Digital labor — デジタル労働論の定義と批判的分析の概説](https://en.wikipedia.org/wiki/Digital_labor) `リファレンス`
 
 ## 関連概念

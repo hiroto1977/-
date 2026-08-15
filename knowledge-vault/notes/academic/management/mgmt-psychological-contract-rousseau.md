@@ -26,7 +26,7 @@ aliases:
 デニス・ルソー ／ ニール・アンダーソン ／ サンドラ・ロビンソン ／ エリック・モリソン
 
 ## 出典
-- [Rousseau, D.M. (1989) Psychological and Implied Contracts in Organizations — Employee Responsibilities and Rights Journal](https://journals.sagepub.com/doi/10.1177/014920638901500202) `学術`
+- [Rousseau, D.M. (1989) Psychological and Implied Contracts in Organizations — Employee Responsibilities and Rights Journal](https://doi.org/10.1007/BF01384942) `学術`
 - [Harvard Business Review (2019) Rethinking the Psychological Contract — HBR](https://hbr.org/2019/03/rethinking-the-psychological-contract) `メディア`
 - [Wikipedia: 心理的契約 — 雇用関係における暗黙の期待の解説](https://ja.wikipedia.org/wiki/%E5%BF%83%E7%90%86%E7%9A%84%E5%A5%91%E7%B4%84) `リファレンス`
 

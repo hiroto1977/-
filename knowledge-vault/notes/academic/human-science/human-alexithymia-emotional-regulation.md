@@ -26,7 +26,7 @@ aliases:
 ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・デイフィー ／ バーバラ・マクドゥーガル
 
 ## 出典
-- [Sifneos (1973) The Prevalence of Alexithymic Characteristics in Psychosomatic Patients — Psychotherapy & Psychosomatics](https://doi.org/10.1007/BF01173514) `学術`
+- [Sifneos (1973) The Prevalence of Alexithymic Characteristics in Psychosomatic Patients — Psychotherapy & Psychosomatics](https://doi.org/10.1159/000286529) `学術`
 - [Taylor, Bagby & Parker (2000) The 20-Item Toronto Alexithymia Scale — Journal of Psychosomatic Research](https://doi.org/10.1176/appi.ajp.163.2.198) `学術`
 - [Wikipedia: Alexithymia — アレキシサイミアの概念と研究動向](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`
 

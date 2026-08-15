@@ -203,3 +203,23 @@ describe('CSV 数式インジェクション (CWE-1236)', () => {
     expect(toCsv([['=evil'], ['x']])).toBe("'=evil\r\nx");
   });
 });
+
+describe('parseCsvRecords — 特殊な列名', () => {
+  it('__proto__ という列名でも値が消えない', () => {
+    const recs = parseCsvRecords('name,__proto__\nalice,evil\n');
+    expect(recs).toHaveLength(1);
+    expect(recs[0]!['__proto__']).toBe('evil');
+    expect(typeof recs[0]!['__proto__']).toBe('string');
+  });
+
+  it('constructor / toString という列名も普通に読める', () => {
+    const recs = parseCsvRecords('constructor,toString\na,b\n');
+    expect(recs[0]!['constructor']).toBe('a');
+    expect(recs[0]!['toString']).toBe('b');
+  });
+
+  it('グローバルのプロトタイプを汚さない', () => {
+    parseCsvRecords('__proto__\n{"polluted":1}\n');
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+});

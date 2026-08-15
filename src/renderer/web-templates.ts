@@ -46,8 +46,17 @@ export function renderTemplateForWeb(def: TemplateDef, params: Record<string, st
     subtitle: typeof params.subtitle === 'string' ? params.subtitle : def.defaults.subtitle,
     body: typeof params.body === 'string' ? params.body : def.defaults.body,
     // 色は属性値に素で入るので、入口で検証して既定値に落とす。
-    accentColor: safeColor(String(params.accentColor ?? ''), def.defaults.accentColor),
-    secondaryColor: safeColor(String(params.secondaryColor ?? ''), def.defaults.secondaryColor),
+    // 他の項目と同じ typeof 判定を先に置く。`String(x ?? '')` で正規化してから
+    // safeColor に渡す書き方だと、`''` を何に変えても結果が既定値のままで
+    // 観測できる差が出ない（殺せない変異体になる）。
+    accentColor:
+      typeof params.accentColor === 'string'
+        ? safeColor(params.accentColor, def.defaults.accentColor)
+        : def.defaults.accentColor,
+    secondaryColor:
+      typeof params.secondaryColor === 'string'
+        ? safeColor(params.secondaryColor, def.defaults.secondaryColor)
+        : def.defaults.secondaryColor,
     brandText: typeof params.brandText === 'string' ? params.brandText : def.defaults.brandText,
   };
   const d = def;

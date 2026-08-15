@@ -27,10 +27,10 @@ Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O'Neil ／ Frank P
 
 ## 出典
 - [Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies, MIT Press, pp.167–194](https://doi.org/10.7551/mitpress/9780262525374.003.0009) `学術`
-- [Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.](https://doi.org/10.1177/1461444816643163) `学術`
+- [Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.](https://doi.org/10.1080/1369118X.2016.1154086) `学術`
 - [Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.](https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/) `リファレンス`
 - [Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.](https://doi.org/10.1093/oso/9780190905491.001.0001) `学術`
-- [Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.](https://doi.org/10.1145/2702123.2702556) `学術`
+- [Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.](https://doi.org/10.1126/science.aaa1160) `学術`
 
 ## 関連概念
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 語彙が近い

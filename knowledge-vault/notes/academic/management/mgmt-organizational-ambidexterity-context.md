@@ -28,7 +28,7 @@ Cristina B. Gibson／Julian Birkinshaw／Michael L. Tushman／Charles A. O'Reill
 ## 出典
 - [Gibson & Birkinshaw (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity, AMJ 47(2):209-226](https://doi.org/10.5465/20159573) `学術`
 - [Raisch & Birkinshaw (2008) Organizational ambidexterity review, Organization Science 19(3):375-392](https://doi.org/10.1287/orsc.1070.0357) `学術`
-- [Tushman & O'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29](https://doi.org/10.2307/41165987) `学術`
+- [Tushman & O'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29](https://doi.org/10.2307/41165852) `学術`
 
 ## 関連概念
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 語彙が近い
