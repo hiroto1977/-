@@ -26,7 +26,7 @@ aliases:
 テッペン・フェリン＆ニコライ・フォス（2005 初期提唱）／フェリン・フォス・ポルマン（2015 Academy of Management Annals レビュー）
 
 ## 出典
-- [Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals](https://www.tandfonline.com/doi/abs/10.1080/19416520.2015.1007651) `学術`
+- [Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals](https://doi.org/10.5465/19416520.2015.1007651) `学術`
 - [Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)](https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001) `学術`
 - [Felin et al. (eds.) Microfoundations — Cambridge University Press](https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1) `学術`
 

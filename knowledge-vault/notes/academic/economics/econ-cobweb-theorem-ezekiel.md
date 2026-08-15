@@ -26,7 +26,7 @@ aliases:
 モーデカイ・エゼキエル ／ ヨハン・ティネベルゲン ／ ジョン・ムース ／ ハンス・レイターレ
 
 ## 出典
-- [Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）](https://doi.org/10.2307/1907330) `学術`
+- [Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）](https://doi.org/10.2307/1881734) `学術`
 - [Wikipedia: Cobweb model — コブウェブモデルの概説](https://en.wikipedia.org/wiki/Cobweb_model) `リファレンス`
 
 ## 関連概念

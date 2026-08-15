@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Diamond & Mirrlees (1971) Optimal Taxation and Public Production — American Economic Review](https://doi.org/10.2307/2296076) `学術`
 - [Keen & Lockwood (2010) The Value-Added Tax: Its Causes and Consequences — Journal of Public Economics](https://doi.org/10.1016/j.jpubeco.2009.11.001) `学術`
-- [Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal](https://doi.org/10.2307/2228016) `学術`
+- [Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal](https://doi.org/10.2307/2222721) `学術`
 - [IMF (2011) Revenue Mobilization in Developing Countries](https://www.imf.org/external/np/pp/eng/2011/041511.pdf) `公的`
 
 ## 関連概念

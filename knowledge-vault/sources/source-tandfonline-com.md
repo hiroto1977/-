@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 46
+cite_count: 45
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **46 件**（学術 46）
+> [!info] 出典ドメイン索引 ・ 引用 **45 件**（学術 45）
 
 ## このドメインを出典とする項目
 
@@ -52,7 +52,6 @@ tags:
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — Barbrook&Cameron(1996)TheCalifornianIdeology,ScienceasCulture6(1):44-…
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — Chen&Miller(2012)CompetitiveDynamics:Themes,Trends—AcademyofManagemen…
 - [[mgmt-means-end-chain|手段-目的連鎖モデル（Means-End Chain／ミーンズ・エンド・チェーンとラダリング法）——製品の属性が結果を介して個人の価値観へとつながる階層を解明する]] — Reynolds,T.J.&Gutman,J.(1988)LadderingTheory,Method,Analysis,andInter…
-- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — Felin,Foss&Ployhart(2015)TheMicrofoundationsMovementinStrategyandOrga…
 - [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — Orlikowski&Scott(2008)—Sociomateriality,AcademyofManagementAnnals
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — Reflections:SociotechnicalSystemsDesignandOrganizationChange—Journalo…
 - [[mgmt-strategic-human-capital|戦略的人的資本論]] — WrightMcMahanMcWilliams1994RBVHR

@@ -26,7 +26,7 @@ aliases:
 ニコラス・カルドア ／ モーデカイ・エゼキエル ／ ジョン・ムース ／ マーク・ネルロヴ
 
 ## 出典
-- [Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics](https://doi.org/10.2307/2967580) `学術`
+- [Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics](https://doi.org/10.2307/1881734) `学術`
 - [Kaldor, N. (1934) A Classificatory Note on the Determinateness of Equilibrium — REStud](https://doi.org/10.2307/2296731) `学術`
 - [Wikipedia: Cobweb model — くもの巣モデルの概要](https://en.wikipedia.org/wiki/Cobweb_model) `リファレンス`
 

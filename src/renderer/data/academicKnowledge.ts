@@ -19773,7 +19773,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テッペン・フェリン＆ニコライ・フォス（2005 初期提唱）／フェリン・フォス・ポルマン（2015 Academy of Management Annals レビュー）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
+      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
       { url: 'https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001', type: 'academic', label: 'Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)' },
       { url: 'https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1', type: 'academic', label: 'Felin et al. (eds.) Microfoundations — Cambridge University Press' },
     ],
@@ -23829,7 +23829,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'William Ocasio ／ Herbert A. Simon ／ James G. March ／ Richard M. Cyert ／ Theresa S. Cho ／ Donald C. Hambrick ／ Joseph L. Bower',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1287/orsc.8.5.477', type: 'academic', label: 'Ocasio (1997) "Towards an Attention-Based View of the Firm" — Organization Science' },
+      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199707)18:1+<187::AID-SMJ936>3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) "Towards an Attention-Based View of the Firm" — Strategic Management Journal, 18(S1), 187–206' },
       { url: 'https://doi.org/10.2307/2393499', type: 'academic', label: 'Cho & Hambrick (2006) "Attention as the Mediator Between Top Management Team Characteristics and Strategic Change" — Academy of Management Journal' },
       { url: 'https://doi.org/10.1111/j.1467-6486.2011.01020.x', type: 'academic', label: 'Ocasio & Joseph (2012) "The Attention-Based View of the Firm: A 15-Year Review" — Journal of Management Studies' },
       { url: 'https://doi.org/10.1093/0195044320.001.0001', type: 'reference', label: 'March & Simon (1958) "Organizations" — Wiley (Carnegie School foundation for bounded rationality)' },
@@ -26727,7 +26727,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1086/466623', type: 'academic', label: 'Demsetz 1968 — The Cost of Transacting' },
       { url: 'https://doi.org/10.1111/j.1540-6261.2003.00616.x', type: 'academic', label: 'O\'Hara 2003 — Liquidity and Price Discovery' },
-      { url: 'https://doi.org/10.2307/1913732', type: 'academic', label: 'Kyle 1985 — Continuous Auctions and Insider Trading' },
+      { url: 'https://doi.org/10.2307/1913210', type: 'academic', label: 'Kyle 1985 — Continuous Auctions and Insider Trading' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780195073683.001.0001', type: 'academic', label: 'Hasbrouck 2007 — Empirical Market Microstructure' },
     ],
   },
@@ -28327,7 +28327,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2296076', type: 'academic', label: 'Diamond & Mirrlees (1971) Optimal Taxation and Public Production — American Economic Review' },
       { url: 'https://doi.org/10.1016/j.jpubeco.2009.11.001', type: 'academic', label: 'Keen & Lockwood (2010) The Value-Added Tax: Its Causes and Consequences — Journal of Public Economics' },
-      { url: 'https://doi.org/10.2307/2228016', type: 'academic', label: 'Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal' },
+      { url: 'https://doi.org/10.2307/2222721', type: 'academic', label: 'Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal' },
       { url: 'https://www.imf.org/external/np/pp/eng/2011/041511.pdf', type: 'government', label: 'IMF (2011) Revenue Mobilization in Developing Countries' },
     ],
   },
@@ -30470,7 +30470,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ゲーリー・ゲレッフィ ／ ミゲル・コーゼニウィッツ ／ ティモシー・スタージョン ／ リチャード・ボールドウィン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/S0003055402004392', type: 'academic', label: 'Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）' },
+      { url: 'https://doi.org/10.1080/09692290500049805', type: 'academic', label: 'Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）' },
       { url: 'https://www.hup.harvard.edu/catalog.php?isbn=9780674660489', type: 'academic', label: 'Baldwin, R. (2016) The Great Convergence: Information Technology and the New Globalization — Harvard University Press（GVCとデジタル化の接続）' },
       { url: 'https://doi.org/10.3982/ECTA10813', type: 'academic', label: 'Antràs, P. & Chor, D. (2013) Organizing the Global Value Chain — Econometrica, 81(6), 2127–2204（GVCと国際貿易理論の統合）' },
       { url: 'https://en.wikipedia.org/wiki/Global_value_chain', type: 'reference', label: 'Wikipedia: Global value chain — Gereffi, buyer/producer-driven, upgrading, COVID reshoring' },
@@ -40025,7 +40025,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/1907327', type: 'academic', label: 'Fisher (1933) The Debt-Deflation Theory of Great Depressions — Econometrica' },
-      { url: 'https://doi.org/10.1257/aer.89.5.1322', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics' },
+      { url: 'https://doi.org/10.1016/S1574-0048(99)10034-X', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics' },
       { url: 'https://en.wikipedia.org/wiki/Debt_deflation', type: 'reference', label: 'Wikipedia: Debt deflation — 負債デフレーション理論の歴史と現代的展開' },
     ],
   },
@@ -42716,7 +42716,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニコラス・カルドア ／ モーデカイ・エゼキエル ／ ジョン・ムース ／ マーク・ネルロヴ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2967580', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics' },
+      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics' },
       { url: 'https://doi.org/10.2307/2296731', type: 'academic', label: 'Kaldor, N. (1934) A Classificatory Note on the Determinateness of Equilibrium — REStud' },
       { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — くもの巣モデルの概要' },
     ],
@@ -43287,7 +43287,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'モニデーパ・タラフダー ／ クレイグ・ブロード ／ チーチャン・ライ ／ クンアー・ラグー・ラマン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1111/j.1540-5915.2007.00161.x', type: 'academic', label: 'Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Decision Sciences' },
+      { url: 'https://doi.org/10.2753/MIS0742-1222240109', type: 'academic', label: 'Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Journal of Management Information Systems, 24(1), 301–328' },
       { url: 'https://en.wikipedia.org/wiki/Technostress', type: 'reference', label: 'Wikipedia: Technostress — ICT overload, invasion, complexity, insecurity, job performance' },
     ],
   },
@@ -47908,7 +47908,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'モーデカイ・エゼキエル ／ ヨハン・ティネベルゲン ／ ジョン・ムース ／ ハンス・レイターレ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/1907330', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）' },
+      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）' },
       { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — コブウェブモデルの概説' },
     ],
   },
