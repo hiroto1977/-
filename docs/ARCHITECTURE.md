@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7100** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7347) |
+| ユニットテスト | **7114** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7372) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 228 | 自己検証 |
+| `file:line` 参照数 | 232 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1083,6 +1083,19 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 **黙らせずに消えた** — 共有側でアンカー・桁数・文字クラスの変異体を全て殺せている
 (`escape.ts` 28 mutants / 100%)。
 
+**暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
+`src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /
+`src/renderer/data/cloudBackup.ts` の 3 モジュールに書き写され、同期は
+コメント（「vault.ts の IV_BYTES と一致させる」）だけが担保していた。
+最も危ういのは `BACKUP_KEY_DERIVATION = 'PBKDF2-SHA-256-600k'` で、
+**反復回数を文字列に焼き込んでいた** — vault 側の強度を上げても、
+バックアップに添える暗号メタは「600k」と言い続ける。復号する側が信じるのは
+このメタデータなので、実装とずれれば「復号できないバックアップ」になる。
+写経は既にずれ始めてもいた（ソルト長が vault 32 / dataCrypto 16）。
+`src/shared/cryptoParams.ts` に「1 つであるべきもの」だけを集め、
+識別子は `kdfLabel()` が定数から組み立てる（8 mutants / 100%）。
+ソルト長は用途で分けてよい判断なので各モジュールに残し、下限だけ共有した。
+
 **制御文字の判定**も同じ形で 2 つ目が生まれかけた。`src/shared/atlassianSite.ts` が
 持っていたものを `src/shared/aiEndpoint.ts` が書き直そうとしたので、
 `src/shared/controlChars.ts` へ寄せた（12 mutants / 100%）。「0x1f まで」か
@@ -1181,7 +1194,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 228 file:line references + 6 metrics ✅
+# → Verified 232 file:line references + 6 metrics ✅
 # → Scanned 57 files × 10 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

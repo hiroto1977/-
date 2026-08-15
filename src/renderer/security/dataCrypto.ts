@@ -11,13 +11,15 @@
  * salt/iv/ciphertext fails decryption (throws) rather than returning garbage.
  */
 
+import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
+
 const KDF = 'PBKDF2-SHA256';
 // OWASP 2023 floor for PBKDF2-**SHA256** is 600,000 (210,000 is the SHA-512
 // row). This module hashes with SHA-256, so 210k ran at ~1/3 of the intended
 // work factor and disagreed with the Vault's own 600k — corrected in the
 // 2026-07 audit. `iterations` is carried inside each bundle, so bundles written
 // under the old value still decrypt with their own stored count.
-const ITERATIONS = 600_000;
+const ITERATIONS = SHARED_ITERATIONS;
 /**
  * 保存側から読んだ反復回数の許容範囲。
  *
@@ -46,7 +48,7 @@ export function assertKdfIterations(iterations: number): void {
   }
 }
 const SALT_BYTES = 16;
-const IV_BYTES = 12;
+const IV_BYTES = AES_GCM_IV_BYTES;
 
 export interface EncryptedBundle {
   readonly v: 1;

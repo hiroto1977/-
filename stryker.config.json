@@ -203,6 +203,7 @@
     "src/shared/textWrap.ts",
     "src/shared/seededNoise.ts",
     "src/shared/scanTarget.ts",
+    "src/shared/cryptoParams.ts",
     "src/shared/controlChars.ts",
     "src/shared/aiEndpoint.ts",
     "src/shared/ai/providers.ts",

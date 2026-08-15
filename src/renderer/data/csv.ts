@@ -182,7 +182,13 @@ export function parseCsvRecords(text: string): Record<string, string>[] {
   if (rows.length < 2) return [];
   const header = rows[0]!;
   return rows.slice(1).map((row) => {
-    const rec: Record<string, string> = {};
+    // プロトタイプを持たない器にする。`{}` だと **列名が `__proto__` のとき
+    // 値が黙って消える** — 文字列を `__proto__` へ代入しても自前プロパティに
+    // ならず、読み出すと Object.prototype が返るためである（実測）。
+    // 値は必ず文字列なのでプロトタイプ汚染そのものは起きないが、
+    // 「取り込んだはずの列が無い」は取り込み処理として壊れている。
+    // 器を null プロトタイプにすれば、どんな列名でも普通の own キーになる。
+    const rec = Object.create(null) as Record<string, string>;
     header.forEach((key, idx) => {
       rec[key] = row[idx] ?? '';
     });
