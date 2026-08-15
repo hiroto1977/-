@@ -26,7 +26,7 @@ aliases:
 ニック・スルニチェク ／ ヴィリ・レヘドンヴィルタ ／ ジュリエット・スコア ／ トレバー・ショルツ
 
 ## 出典
-- [Srnicek, N. (2017) Platform Capitalism — Polity Press](https://doi.org/10.1509/jppm.15.091) `学術`
+- [Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
 - [Wikipedia: Gig economy — platform labor, independent contractors, algorithmic management](https://en.wikipedia.org/wiki/Gig_economy) `リファレンス`
 
 ## 関連概念

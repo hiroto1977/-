@@ -26,17 +26,22 @@ aliases:
 Judy Wajcman ／ Donna Haraway ／ Cynthia Cockburn ／ Anne Balsamo ／ Rosi Braidotti
 
 ## 出典
-- [Wajcman, J. (2004). TechnoFeminism. Polity Press.](https://doi.org/10.1093/0199247269.001.0001) `学術`
+- [Wajcman, J. (2004). TechnoFeminism. Polity Press.（Polity, 2004, ISBN 978-0-7456-3044-1）](https://www.wiley.com/en-us/TechnoFeminism-p-9780745630441) `学術`
 - [Haraway, D. (1985). A Cyborg Manifesto: Science, Technology, and Socialist-Feminism. Socialist Review, 80, 65-108.](https://doi.org/10.2307/3178066) `学術`
 - [Cockburn, C. (1985). Machinery of Dominance: Women, Men and Technical Know-How. Pluto Press.](https://doi.org/10.1093/sf/70.4.1101) `学術`
 - [Wajcman, J. (1998). Feminism Confronts Technology. Penn State University Press.](https://doi.org/10.1177/0306312798028003004) `学術`
 
 ## 関連概念
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 同じ思想家
-- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
-- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同分野の近傍
-- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同分野の近傍
-- [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 出典を共有
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
+- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 出典を共有
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
+- [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
+- [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
+- [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 出典を共有
+- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

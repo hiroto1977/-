@@ -26,7 +26,7 @@ aliases:
 ゲーリー・ゲレッフィ ／ ミゲル・コーゼニウィッツ ／ ティモシー・スタージョン ／ リチャード・ボールドウィン
 
 ## 出典
-- [Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）](https://doi.org/10.1017/S0003055402004392) `学術`
+- [Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）](https://doi.org/10.1080/09692290500049805) `学術`
 - [Baldwin, R. (2016) The Great Convergence: Information Technology and the New Globalization — Harvard University Press（GVCとデジタル化の接続）](https://www.hup.harvard.edu/catalog.php?isbn=9780674660489) `学術`
 - [Antràs, P. & Chor, D. (2013) Organizing the Global Value Chain — Econometrica, 81(6), 2127–2204（GVCと国際貿易理論の統合）](https://doi.org/10.3982/ECTA10813) `学術`
 - [Wikipedia: Global value chain — Gereffi, buyer/producer-driven, upgrading, COVID reshoring](https://en.wikipedia.org/wiki/Global_value_chain) `リファレンス`

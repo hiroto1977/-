@@ -28,7 +28,7 @@ Robert Axelrod ／ Colin Eden ／ Anne Sigismund Huff ／ Fran Ackermann ／ Kar
 ## 出典
 - [Axelrod (1976) Structure of Decision: The Cognitive Maps of Political Elites — Princeton University Press](https://doi.org/10.2307/2391519) `学術`
 - [Eden (1992) On the nature of cognitive maps — Journal of Management Studies](https://doi.org/10.1002/smj.4250130802) `学術`
-- [Huff (1990) Mapping Strategic Thought — Wiley](https://doi.org/10.5465/amr.1990.4308388) `学術`
+- [Huff (1990) Mapping Strategic Thought — Wiley（Wiley, 1990, ISBN 978-0-471-92632-0）](https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225) `学術`
 - [Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies](https://doi.org/10.1111/j.1467-6486.1992.tb00667.x) `学術`
 - [Gary & Wood (2011) Mental models, decision rules, and performance heterogeneity — Strategic Management Journal](https://www.sciencedirect.com/science/article/pii/S0149206310001382) `学術`
 
@@ -42,7 +42,7 @@ Robert Axelrod ／ Colin Eden ／ Anne Sigismund Huff ／ Fran Ackermann ／ Kar
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
-- [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 同分野の近傍
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

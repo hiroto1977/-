@@ -19773,7 +19773,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'テッペン・フェリン＆ニコライ・フォス（2005 初期提唱）／フェリン・フォス・ポルマン（2015 Academy of Management Annals レビュー）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
+      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
       { url: 'https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001', type: 'academic', label: 'Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)' },
       { url: 'https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1', type: 'academic', label: 'Felin et al. (eds.) Microfoundations — Cambridge University Press' },
     ],
@@ -20917,7 +20917,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090107', type: 'academic', label: 'Johnson, Rethinking Incrementalism, Strategic Management Journal (1988) — Wiley' },
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118785317.weom120213', type: 'reference', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)' },
+      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'reference', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）' },
       { url: 'https://www.tutor2u.net/business/reference/strategic-drift', type: 'media', label: 'tutor2u — Strategic Drift 解説（英国教育メディア）' },
     ],
   },
@@ -23669,7 +23669,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2391519', type: 'academic', label: 'Axelrod (1976) Structure of Decision: The Cognitive Maps of Political Elites — Princeton University Press' },
       { url: 'https://doi.org/10.1002/smj.4250130802', type: 'academic', label: 'Eden (1992) On the nature of cognitive maps — Journal of Management Studies' },
-      { url: 'https://doi.org/10.5465/amr.1990.4308388', type: 'academic', label: 'Huff (1990) Mapping Strategic Thought — Wiley' },
+      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'academic', label: 'Huff (1990) Mapping Strategic Thought — Wiley（Wiley, 1990, ISBN 978-0-471-92632-0）' },
       { url: 'https://doi.org/10.1111/j.1467-6486.1992.tb00667.x', type: 'academic', label: 'Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies' },
       { url: 'https://www.sciencedirect.com/science/article/pii/S0149206310001382', type: 'academic', label: 'Gary & Wood (2011) Mental models, decision rules, and performance heterogeneity — Strategic Management Journal' },
     ],
@@ -23829,7 +23829,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'William Ocasio ／ Herbert A. Simon ／ James G. March ／ Richard M. Cyert ／ Theresa S. Cho ／ Donald C. Hambrick ／ Joseph L. Bower',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1287/orsc.8.5.477', type: 'academic', label: 'Ocasio (1997) "Towards an Attention-Based View of the Firm" — Organization Science' },
+      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199707)18:1+<187::AID-SMJ936>3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) "Towards an Attention-Based View of the Firm" — Strategic Management Journal, 18(S1), 187–206' },
       { url: 'https://doi.org/10.2307/2393499', type: 'academic', label: 'Cho & Hambrick (2006) "Attention as the Mediator Between Top Management Team Characteristics and Strategic Change" — Academy of Management Journal' },
       { url: 'https://doi.org/10.1111/j.1467-6486.2011.01020.x', type: 'academic', label: 'Ocasio & Joseph (2012) "The Attention-Based View of the Firm: A 15-Year Review" — Journal of Management Studies' },
       { url: 'https://doi.org/10.1093/0195044320.001.0001', type: 'reference', label: 'March & Simon (1958) "Organizations" — Wiley (Carnegie School foundation for bounded rationality)' },
@@ -23919,7 +23919,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'Judy Wajcman ／ Donna Haraway ／ Cynthia Cockburn ／ Anne Balsamo ／ Rosi Braidotti',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1093/0199247269.001.0001', type: 'academic', label: 'Wajcman, J. (2004). TechnoFeminism. Polity Press.' },
+      { url: 'https://www.wiley.com/en-us/TechnoFeminism-p-9780745630441', type: 'academic', label: 'Wajcman, J. (2004). TechnoFeminism. Polity Press.（Polity, 2004, ISBN 978-0-7456-3044-1）' },
       { url: 'https://doi.org/10.2307/3178066', type: 'academic', label: 'Haraway, D. (1985). A Cyborg Manifesto: Science, Technology, and Socialist-Feminism. Socialist Review, 80, 65-108.' },
       { url: 'https://doi.org/10.1093/sf/70.4.1101', type: 'academic', label: 'Cockburn, C. (1985). Machinery of Dominance: Women, Men and Technical Know-How. Pluto Press.' },
       { url: 'https://doi.org/10.1177/0306312798028003004', type: 'academic', label: 'Wajcman, J. (1998). Feminism Confronts Technology. Penn State University Press.' },
@@ -24014,7 +24014,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/j.ctt1287kz5', type: 'academic', label: 'Pasquale, F. (2015). The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press.' },
       { url: 'https://doi.org/10.1145/355019.355026', type: 'academic', label: 'Resnick, P., Kuwabara, K., Zeckhauser, R., & Friedman, E. (2000). Reputation systems. Communications of the ACM, 43(12), 45-48.' },
       { url: 'https://doi.org/10.1257/aer.104.6.1609', type: 'academic', label: 'Tirole, J. (2014). Market failures and public policy. Nobel Prize Lecture / American Economic Review, 104(6), 1609-1652.' },
-      { url: 'https://doi.org/10.1111/1467-954X.12408', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism. Polity Press.' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）' },
     ],
   },
   {
@@ -26727,7 +26727,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1086/466623', type: 'academic', label: 'Demsetz 1968 — The Cost of Transacting' },
       { url: 'https://doi.org/10.1111/j.1540-6261.2003.00616.x', type: 'academic', label: 'O\'Hara 2003 — Liquidity and Price Discovery' },
-      { url: 'https://doi.org/10.2307/1913732', type: 'academic', label: 'Kyle 1985 — Continuous Auctions and Insider Trading' },
+      { url: 'https://doi.org/10.2307/1913210', type: 'academic', label: 'Kyle 1985 — Continuous Auctions and Insider Trading' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780195073683.001.0001', type: 'academic', label: 'Hasbrouck 2007 — Empirical Market Microstructure' },
     ],
   },
@@ -28327,7 +28327,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2296076', type: 'academic', label: 'Diamond & Mirrlees (1971) Optimal Taxation and Public Production — American Economic Review' },
       { url: 'https://doi.org/10.1016/j.jpubeco.2009.11.001', type: 'academic', label: 'Keen & Lockwood (2010) The Value-Added Tax: Its Causes and Consequences — Journal of Public Economics' },
-      { url: 'https://doi.org/10.2307/2228016', type: 'academic', label: 'Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal' },
+      { url: 'https://doi.org/10.2307/2222721', type: 'academic', label: 'Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal' },
       { url: 'https://www.imf.org/external/np/pp/eng/2011/041511.pdf', type: 'government', label: 'IMF (2011) Revenue Mobilization in Developing Countries' },
     ],
   },
@@ -30470,7 +30470,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ゲーリー・ゲレッフィ ／ ミゲル・コーゼニウィッツ ／ ティモシー・スタージョン ／ リチャード・ボールドウィン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/S0003055402004392', type: 'academic', label: 'Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）' },
+      { url: 'https://doi.org/10.1080/09692290500049805', type: 'academic', label: 'Gereffi, G., Humphrey, J. & Sturgeon, T. (2005) The Governance of Global Value Chains — Review of International Political Economy, 12(1), 78–104（GVCガバナンスの原典）' },
       { url: 'https://www.hup.harvard.edu/catalog.php?isbn=9780674660489', type: 'academic', label: 'Baldwin, R. (2016) The Great Convergence: Information Technology and the New Globalization — Harvard University Press（GVCとデジタル化の接続）' },
       { url: 'https://doi.org/10.3982/ECTA10813', type: 'academic', label: 'Antràs, P. & Chor, D. (2013) Organizing the Global Value Chain — Econometrica, 81(6), 2127–2204（GVCと国際貿易理論の統合）' },
       { url: 'https://en.wikipedia.org/wiki/Global_value_chain', type: 'reference', label: 'Wikipedia: Global value chain — Gereffi, buyer/producer-driven, upgrading, COVID reshoring' },
@@ -38771,7 +38771,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1907187', type: 'academic', label: 'Arrow, K.J. (1950) A Difficulty in the Concept of Social Welfare — Journal of Political Economy 58(4)' },
       { url: 'https://en.wikipedia.org/wiki/Condorcet_paradox', type: 'reference', label: 'Wikipedia: Condorcet Paradox — voting cycle and intransitivity of majority rule' },
-      { url: 'https://doi.org/10.1017/CBO9780511558726', type: 'academic', label: 'Sen, A.K. (1970) Collective Choice and Social Welfare — Holden-Day' },
+      { url: 'https://search.worldcat.org/title/140528', type: 'academic', label: 'Sen, A.K. (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）' },
     ],
   },
   {
@@ -39631,7 +39631,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ハーバート・サイモン ／ マイケル・ゴールドハーバー ／ イヴ・シットン ／ ジェームズ・ウィリアムズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.4000/books.enseditions.11081', type: 'academic', label: 'Citton (2017) The Ecology of Attention — Polity Press' },
+      { url: 'https://politybooks.com/bookdetail/?isbn=9781509503728', type: 'academic', label: 'Citton (2017) The Ecology of Attention — Polity Press（Polity, 2017, ISBN 978-1-5095-0372-8）' },
       { url: 'https://doi.org/10.1017/9781108553056', type: 'academic', label: 'Williams (2018) Stand Out of Our Light: Freedom and Resistance in the Attention Economy — Cambridge University Press' },
       { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Wikipedia: Attention economy — 注意経済の理論と社会的含意の概説' },
     ],
@@ -39933,7 +39933,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ショシャナ・ズボフ ／ フランク・パスクァーレ ／ マー・ヒックス ／ サフィア・ノーブル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1515/9781610396196', type: 'academic', label: 'Zuboff (2019) The Age of Surveillance Capitalism — PublicAffairs' },
+      { url: 'https://www.hachettebookgroup.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/?lens=publicaffairs', type: 'academic', label: 'Zuboff (2019) The Age of Surveillance Capitalism — PublicAffairs（PublicAffairs, 2019, ISBN 978-1-61039-569-4）' },
       { url: 'https://doi.org/10.4159/harvard.9780674736061', type: 'academic', label: 'Pasquale (2015) The Black Box Society: The Secret Algorithms That Control Money and Information — Harvard University Press' },
       { url: 'https://en.wikipedia.org/wiki/Surveillance_capitalism', type: 'reference', label: 'Wikipedia: Surveillance capitalism — 監視資本主義と情報の非対称性の社会的分析' },
     ],
@@ -40025,7 +40025,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/1907327', type: 'academic', label: 'Fisher (1933) The Debt-Deflation Theory of Great Depressions — Econometrica' },
-      { url: 'https://doi.org/10.1257/aer.89.5.1322', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics' },
+      { url: 'https://doi.org/10.1016/S1574-0048(99)10034-X', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics' },
       { url: 'https://en.wikipedia.org/wiki/Debt_deflation', type: 'reference', label: 'Wikipedia: Debt deflation — 負債デフレーション理論の歴史と現代的展開' },
     ],
   },
@@ -40521,7 +40521,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェイコブ・ヴァイナー ／ ジェームズ・ミード ／ リチャード・リプシー ／ ケルヴィン・ランカスター',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2226521', type: 'academic', label: 'Viner, J. (1950) The Customs Union Issue — Carnegie Endowment for International Peace' },
+      { url: 'https://global.oup.com/academic/product/the-customs-union-issue-9780199756124', type: 'academic', label: 'Viner, J. (1950) The Customs Union Issue — Carnegie Endowment for International Peace（Carnegie Endowment for International Peace, 1950 / 引用は Oxford University Press 2014年復刻版（Paul Oslington 編）, ISBN 978-0-19-975612-4）' },
       { url: 'https://doi.org/10.1111/1467-937X.00174', type: 'academic', label: 'Lipsey, R. G. (1957) The Theory of Customs Unions: Trade Diversion and Welfare — Economica' },
       { url: 'https://en.wikipedia.org/wiki/Customs_union', type: 'reference', label: 'Wikipedia: Customs union — trade creation and trade diversion analysis overview' },
     ],
@@ -41120,7 +41120,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェイコブ・ヴァイナー ／ リチャード・リプシー ／ ジェームズ・ミード ／ ジャグディッシュ・バグワティ ／ アルビンド・パナガリヤ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2550651', type: 'academic', label: 'Viner, J. (1950) The Customs Union Issue — Carnegie Endowment for International Peace' },
+      { url: 'https://global.oup.com/academic/product/the-customs-union-issue-9780199756124', type: 'academic', label: 'Viner, J. (1950) The Customs Union Issue — Carnegie Endowment for International Peace（Carnegie Endowment for International Peace, 1950 / 引用は Oxford University Press 2014年復刻版（Paul Oslington 編）, ISBN 978-0-19-975612-4）' },
       { url: 'https://doi.org/10.2307/2228460', type: 'academic', label: 'Lipsey, R. G. (1960) "The Theory of Customs Unions: A General Survey" — EJ' },
       { url: 'https://en.wikipedia.org/wiki/Trade_creation', type: 'reference', label: 'Wikipedia: Trade creation — 貿易創出・貿易転換の概念と応用' },
     ],
@@ -41173,7 +41173,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.5210/fm.v2i4.519', type: 'academic', label: 'Goldhaber, M. H. (1997) "The Attention Economy and the Net" — First Monday' },
-      { url: 'https://doi.org/10.3917/dec.citto.2014.01', type: 'academic', label: 'Citton, Y. (2017) The Ecology of Attention — Polity Press' },
+      { url: 'https://politybooks.com/bookdetail/?isbn=9781509503728', type: 'academic', label: 'Citton, Y. (2017) The Ecology of Attention — Polity Press（Polity, 2017, ISBN 978-1-5095-0372-8）' },
       { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Wikipedia: Attention economy — 注意の希少性と経済的論理' },
     ],
   },
@@ -41780,7 +41780,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.2307/2224835', type: 'academic', label: 'Kaldor (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal' },
-      { url: 'https://doi.org/10.1093/0198281935.001.0001', type: 'academic', label: 'Sen (1970) Collective Choice and Social Welfare — Holden-Day' },
+      { url: 'https://search.worldcat.org/title/140528', type: 'academic', label: 'Sen (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）' },
       { url: 'https://en.wikipedia.org/wiki/Welfare_economics', type: 'reference', label: 'Wikipedia: Welfare economics — 厚生経済学の基本定理と社会的評価基準の概説' },
     ],
   },
@@ -42090,7 +42090,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジュディ・ワイクマン ／ ドナ・ハラウェイ ／ シンシア・コックバーン ／ ウェンディ・チャン ／ サフィヤ・ノーブル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511816208', type: 'academic', label: 'Wajcman (2004) TechnoFeminism — Polity Press' },
+      { url: 'https://www.wiley.com/en-us/TechnoFeminism-p-9780745630441', type: 'academic', label: 'Wajcman (2004) TechnoFeminism — Polity Press（Polity, 2004, ISBN 978-0-7456-3044-1）' },
       { url: 'https://doi.org/10.1215/9780822373049', type: 'academic', label: 'Haraway (1991) Simians, Cyborgs, and Women: The Reinvention of Nature — Routledge' },
       { url: 'https://en.wikipedia.org/wiki/Technofeminism', type: 'reference', label: 'Wikipedia: Technofeminism — テクノフェミニズムの理論的枠組みと展開の概説' },
     ],
@@ -42626,7 +42626,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.wiley.com/en-us/Uberworked+and+Underpaid:+How+Workers+Are+Disrupting+the+Digital+Economy-p-9780745653563', type: 'academic', label: 'Scholz, T. (2016) Uberworked and Underpaid: How Workers Are Disrupting the Digital Economy — Polity Press（ISBN 978-0-7456-5356-3・初版ハードカバー）' },
-      { url: 'https://doi.org/10.1509/jppm.15.098', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
       { url: 'https://en.wikipedia.org/wiki/Platform_cooperativism', type: 'reference', label: 'Wikipedia: Platform cooperativism — プラットフォーム協同組合主義の概要' },
     ],
   },
@@ -42716,7 +42716,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニコラス・カルドア ／ モーデカイ・エゼキエル ／ ジョン・ムース ／ マーク・ネルロヴ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2967580', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics' },
+      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics' },
       { url: 'https://doi.org/10.2307/2296731', type: 'academic', label: 'Kaldor, N. (1934) A Classificatory Note on the Determinateness of Equilibrium — REStud' },
       { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — くもの巣モデルの概要' },
     ],
@@ -43287,7 +43287,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'モニデーパ・タラフダー ／ クレイグ・ブロード ／ チーチャン・ライ ／ クンアー・ラグー・ラマン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1111/j.1540-5915.2007.00161.x', type: 'academic', label: 'Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Decision Sciences' },
+      { url: 'https://doi.org/10.2753/MIS0742-1222240109', type: 'academic', label: 'Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Journal of Management Information Systems, 24(1), 301–328' },
       { url: 'https://en.wikipedia.org/wiki/Technostress', type: 'reference', label: 'Wikipedia: Technostress — ICT overload, invasion, complexity, insecurity, job performance' },
     ],
   },
@@ -43516,7 +43516,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニック・スルニチェク ／ ヴィリ・レヘドンヴィルタ ／ ジュリエット・スコア ／ トレバー・ショルツ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1509/jppm.15.091', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
       { url: 'https://en.wikipedia.org/wiki/Gig_economy', type: 'reference', label: 'Wikipedia: Gig economy — platform labor, independent contractors, algorithmic management' },
     ],
   },
@@ -47415,7 +47415,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニック・スルニセク ／ アレックス・ロスエンブラット ／ アルン・サンドララジャン ／ ジャニス・フィン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/j.ctv5cgbnk', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism — Polity Press' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
       { url: 'https://en.wikipedia.org/wiki/Gig_economy', type: 'reference', label: 'Wikipedia: Gig economy — platform labor and regulation' },
     ],
   },
@@ -47560,7 +47560,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ショシャナ・ズボフ ／ ニック・カルドルス ／ エラン・ベンシャハル ／ ヴィクトル・メイヤー＝ショーンベルガー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1017/9781108680202', type: 'academic', label: 'Zuboff, S. (2019). The Age of Surveillance Capitalism — PublicAffairs' },
+      { url: 'https://www.hachettebookgroup.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/?lens=publicaffairs', type: 'academic', label: 'Zuboff, S. (2019). The Age of Surveillance Capitalism — PublicAffairs（PublicAffairs, 2019, ISBN 978-1-61039-569-4）' },
       { url: 'https://en.wikipedia.org/wiki/Data_sovereignty', type: 'reference', label: 'Wikipedia: Data sovereignty — international governance' },
     ],
   },
@@ -47908,7 +47908,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'モーデカイ・エゼキエル ／ ヨハン・ティネベルゲン ／ ジョン・ムース ／ ハンス・レイターレ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/1907330', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）' },
+      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）' },
       { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — コブウェブモデルの概説' },
     ],
   },

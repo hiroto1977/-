@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Demsetz 1968 — The Cost of Transacting](https://doi.org/10.1086/466623) `学術`
 - [O'Hara 2003 — Liquidity and Price Discovery](https://doi.org/10.1111/j.1540-6261.2003.00616.x) `学術`
-- [Kyle 1985 — Continuous Auctions and Insider Trading](https://doi.org/10.2307/1913732) `学術`
+- [Kyle 1985 — Continuous Auctions and Insider Trading](https://doi.org/10.2307/1913210) `学術`
 - [Hasbrouck 2007 — Empirical Market Microstructure](https://doi.org/10.1093/acprof:oso/9780195073683.001.0001) `学術`
 
 ## 関連概念

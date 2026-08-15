@@ -22,12 +22,12 @@ tags:
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 40）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]（接続 38）
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 35）
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 34）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
-- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -189,6 +189,7 @@ tags:
 - 1955年: [[econ-rybczynski|リブチンスキー定理]]
 - 1955年: [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]]
 - 1956年: [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]]
+- 1956年: [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]
 - 1957年: [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]]
 - 1957年: [[econ-bop-stages|国際収支の発展段階説]]
 - 1957年: [[econ-merit-goods|メリット財（価値財）]]
@@ -494,7 +495,6 @@ tags:
 - [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]]
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]]
 - [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]]
-- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]
 - [[econ-conflict-economics-hirshleifer|紛争の経済学——「力の暗黒面」と奪取の合理的選択]]
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]]
 - [[econ-contingent-valuation|仮想評価法——表明選好により非市場財の価値を計測する手法]]

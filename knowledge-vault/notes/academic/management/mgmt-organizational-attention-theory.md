@@ -26,7 +26,7 @@ Ocasioの注意ベース理論（ABV）は、企業の行動は意思決定者�
 William Ocasio ／ Herbert A. Simon ／ James G. March ／ Richard M. Cyert ／ Theresa S. Cho ／ Donald C. Hambrick ／ Joseph L. Bower
 
 ## 出典
-- [Ocasio (1997) "Towards an Attention-Based View of the Firm" — Organization Science](https://doi.org/10.1287/orsc.8.5.477) `学術`
+- [Ocasio, W. (1997) "Towards an Attention-Based View of the Firm" — Strategic Management Journal, 18(S1), 187–206](https://doi.org/10.1002/(SICI)1097-0266(199707)18:1+<187::AID-SMJ936>3.0.CO;2-K) `学術`
 - [Cho & Hambrick (2006) "Attention as the Mediator Between Top Management Team Characteristics and Strategic Change" — Academy of Management Journal](https://doi.org/10.2307/2393499) `学術`
 - [Ocasio & Joseph (2012) "The Attention-Based View of the Firm: A 15-Year Review" — Journal of Management Studies](https://doi.org/10.1111/j.1467-6486.2011.01020.x) `学術`
 - [March & Simon (1958) "Organizations" — Wiley (Carnegie School foundation for bounded rationality)](https://doi.org/10.1093/0195044320.001.0001) `リファレンス`

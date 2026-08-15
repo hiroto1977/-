@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Fisher (1933) The Debt-Deflation Theory of Great Depressions — Econometrica](https://doi.org/10.2307/1907327) `学術`
-- [Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics](https://doi.org/10.1257/aer.89.5.1322) `学術`
+- [Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics](https://doi.org/10.1016/S1574-0048(99)10034-X) `学術`
 - [Wikipedia: Debt deflation — 負債デフレーション理論の歴史と現代的展開](https://en.wikipedia.org/wiki/Debt_deflation) `リファレンス`
 
 ## 関連概念

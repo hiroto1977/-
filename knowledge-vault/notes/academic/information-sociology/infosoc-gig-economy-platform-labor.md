@@ -26,7 +26,7 @@ aliases:
 ニック・スルニセク ／ アレックス・ロスエンブラット ／ アルン・サンドララジャン ／ ジャニス・フィン
 
 ## 出典
-- [Srnicek, N. (2017). Platform Capitalism — Polity Press](https://doi.org/10.2307/j.ctv5cgbnk) `学術`
+- [Srnicek, N. (2017). Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
 - [Wikipedia: Gig economy — platform labor and regulation](https://en.wikipedia.org/wiki/Gig_economy) `リファレンス`
 
 ## 関連概念
@@ -35,8 +35,11 @@ aliases:
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 語彙が近い
 - [[infosoc-gig-economy|ギグ・エコノミー]] — 語彙が近い
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
-- [[infosoc-open-data|オープンデータ]] — 同分野の近傍
-- [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
+- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -26,7 +26,7 @@ aliases:
 モニデーパ・タラフダー ／ クレイグ・ブロード ／ チーチャン・ライ ／ クンアー・ラグー・ラマン
 
 ## 出典
-- [Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Decision Sciences](https://doi.org/10.1111/j.1540-5915.2007.00161.x) `学術`
+- [Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Journal of Management Information Systems, 24(1), 301–328](https://doi.org/10.2753/MIS0742-1222240109) `学術`
 - [Wikipedia: Technostress — ICT overload, invasion, complexity, insecurity, job performance](https://en.wikipedia.org/wiki/Technostress) `リファレンス`
 
 ## 関連概念

@@ -30,7 +30,7 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [Pasquale, F. (2015). The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press.](https://doi.org/10.2307/j.ctt1287kz5) `学術`
 - [Resnick, P., Kuwabara, K., Zeckhauser, R., & Friedman, E. (2000). Reputation systems. Communications of the ACM, 43(12), 45-48.](https://doi.org/10.1145/355019.355026) `学術`
 - [Tirole, J. (2014). Market failures and public policy. Nobel Prize Lecture / American Economic Review, 104(6), 1609-1652.](https://doi.org/10.1257/aer.104.6.1609) `学術`
-- [Srnicek, N. (2017). Platform Capitalism. Polity Press.](https://doi.org/10.1111/1467-954X.12408) `学術`
+- [Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
 
 ## 関連概念
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 語彙が近い
@@ -40,9 +40,9 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 同じ思想家
-- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
-- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同分野の近傍
-- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同分野の近傍
+- [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
+- [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

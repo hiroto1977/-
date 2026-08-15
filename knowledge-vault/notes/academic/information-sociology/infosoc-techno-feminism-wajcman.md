@@ -26,7 +26,7 @@ aliases:
 ジュディ・ワイクマン ／ ドナ・ハラウェイ ／ シンシア・コックバーン ／ ウェンディ・チャン ／ サフィヤ・ノーブル
 
 ## 出典
-- [Wajcman (2004) TechnoFeminism — Polity Press](https://doi.org/10.1017/CBO9780511816208) `学術`
+- [Wajcman (2004) TechnoFeminism — Polity Press（Polity, 2004, ISBN 978-0-7456-3044-1）](https://www.wiley.com/en-us/TechnoFeminism-p-9780745630441) `学術`
 - [Haraway (1991) Simians, Cyborgs, and Women: The Reinvention of Nature — Routledge](https://doi.org/10.1215/9780822373049) `学術`
 - [Wikipedia: Technofeminism — テクノフェミニズムの理論的枠組みと展開の概説](https://en.wikipedia.org/wiki/Technofeminism) `リファレンス`
 
@@ -37,9 +37,10 @@ aliases:
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同じ思想家
-- [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 同分野の近傍
-- [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 同分野の近傍
-- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 同分野の近傍
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 出典を共有
+- [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
+- [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 出典を共有
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

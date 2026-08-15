@@ -26,7 +26,7 @@ aliases:
 ジェイコブ・ヴァイナー ／ リチャード・リプシー ／ ジェームズ・ミード ／ ジャグディッシュ・バグワティ ／ アルビンド・パナガリヤ
 
 ## 出典
-- [Viner, J. (1950) The Customs Union Issue — Carnegie Endowment for International Peace](https://doi.org/10.2307/2550651) `学術`
+- [Viner, J. (1950) The Customs Union Issue — Carnegie Endowment for International Peace（Carnegie Endowment for International Peace, 1950 / 引用は Oxford University Press 2014年復刻版（Paul Oslington 編）, ISBN 978-0-19-975612-4）](https://global.oup.com/academic/product/the-customs-union-issue-9780199756124) `学術`
 - [Lipsey, R. G. (1960) "The Theory of Customs Unions: A General Survey" — EJ](https://doi.org/10.2307/2228460) `学術`
 - [Wikipedia: Trade creation — 貿易創出・貿易転換の概念と応用](https://en.wikipedia.org/wiki/Trade_creation) `リファレンス`
 

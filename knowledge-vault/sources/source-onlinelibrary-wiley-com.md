@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 91
+cite_count: 90
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **91 件**（学術 75 ・ リファレンス 16）
+> [!info] 出典ドメイン索引 ・ 引用 **90 件**（学術 75 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -99,7 +99,6 @@ tags:
 - [[mgmt-stage-gate|ステージゲート法]] — Cooper,"TheStage-GateIdea-to-LaunchSystem",WileyInternationalEncyclop…
 - [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — Gulati(1998)AlliancesandNetworks—StrategicManagementJournal/Wiley
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — Porac,Thomas&Baden-Fuller(1989)CompetitiveGroupsasCognitiveCommunitie…
-- [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — Sammut-Bonnici,StrategicDrift,WileyEncyclopediaofManagement(2015)
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — Schmittetal.(2018)StrategicRenewal:PastResearch,TheoreticalTensions—I…
 - [[mgmt-strategic-silence|組織における戦略的沈黙]] — Brinsfield(2013)—EmployeeSilenceMotives,J.ofOrganizationalBehavior
 - [[mgmt-value-co-creation|価値共創]] — Prahalad&Ramaswamy(2004)"Co-creationexperiences:Thenextpracticeinvalu…
