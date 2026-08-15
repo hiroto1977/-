@@ -26,9 +26,9 @@ aliases:
 マイケル・タッシュマン ／ チャールズ・オライリー ／ ジェームズ・マーチ ／ クリスティーナ・ギブソン
 
 ## 出典
-- [Tushman, M. L. & O'Reilly, C. A. (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review, 38(4), 8–29（両利き組織の原典）](https://doi.org/10.2307/256441) `学術`
+- [Tushman, M. L. & O'Reilly, C. A. (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review, 38(4), 8–29（両利き組織の原典）](https://doi.org/10.2307/41165852) `学術`
 - [O'Reilly, C. A. & Tushman, M. L. (2013) Organizational Ambidexterity: Past, Present, and Future — Academy of Management Perspectives, 27(4), 324–338（両利き研究の総括）](https://doi.org/10.2307/41166127) `学術`
-- [Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209–226（文脈的両利きの実証）](https://doi.org/10.5465/amj.2004.14586060) `学術`
+- [Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209–226（文脈的両利きの実証）](https://doi.org/10.5465/20159573) `学術`
 - [Wikipedia: Organizational ambidexterity — Tushman, exploration/exploitation, structural vs contextual, DX](https://en.wikipedia.org/wiki/Organizational_ambidexterity) `リファレンス`
 
 ## 関連概念

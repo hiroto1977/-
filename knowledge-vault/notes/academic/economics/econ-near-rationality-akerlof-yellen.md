@@ -26,7 +26,7 @@ aliases:
 ジョージ・アカロフ ／ ジャネット・イエレン ／ N・グレゴリー・マンキュー ／ ローレンス・ボール
 
 ## 出典
-- [Akerlof, G.A. & Yellen, J.L. (1985) A Near-Rational Model of the Business Cycle — QJE 100(Supplement)](https://doi.org/10.2307/1885666) `学術`
+- [Akerlof, G.A. & Yellen, J.L. (1985) A Near-Rational Model of the Business Cycle — QJE 100(Supplement)](https://doi.org/10.1093/qje/100.Supplement.823) `学術`
 - [Wikipedia: Menu cost — near-rationality, second-order loss, nominal rigidity, New Keynesian](https://en.wikipedia.org/wiki/Menu_cost) `リファレンス`
 
 ## 関連概念

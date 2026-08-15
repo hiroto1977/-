@@ -37,10 +37,10 @@ aliases:
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
 - [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 出典を共有
 - [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 出典を共有
 - [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 出典を共有
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 出典を共有
-- [[human-microexpression-detection-ekman|微表情検出（エクマンの表情分析理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

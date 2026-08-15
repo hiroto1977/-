@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wegner, D.M. 1987 Transactive memory: A contemporary analysis of the group mind. In Theories of Group Behavior, Springer 185-208](https://doi.org/10.1007/978-1-4612-4634-3_9) `学術`
-- [Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Journal of Applied Psychology 84(6) 925-937](https://doi.org/10.1037/0021-9010.84.6.925) `学術`
+- [Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Shared Cognition in Organizations 所収の書籍章（Lawrence Erlbaum／Routledge）](https://doi.org/10.4324/9781410603227-1) `学術`
 - [Lewis, K. 2003 Measuring transactive memory systems in the field. Journal of Applied Psychology 88(4) 587-604](https://doi.org/10.1037/0021-9010.88.4.587) `学術`
 
 ## 関連概念

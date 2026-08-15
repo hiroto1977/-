@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cagan (1956) The Monetary Dynamics of Hyperinflation — Studies in the Quantity Theory of Money (Friedman ed.)](https://doi.org/10.3386/w14578) `学術`
-- [Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Fed Minneapolis QR](https://doi.org/10.2307/1805521) `学術`
+- [Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Fed Minneapolis QR](https://doi.org/10.21034/qr.531) `学術`
 - [Wikipedia: Hyperinflation — 超インフレの歴史と経済理論](https://en.wikipedia.org/wiki/Hyperinflation) `リファレンス`
 
 ## 関連概念

@@ -27,7 +27,7 @@ James Gardner March ／ Robert B. Duncan ／ Michael L. Tushman ／ Charles A. O
 
 ## 出典
 - [March (1991) "Exploration and Exploitation in Organizational Learning" — Organization Science](https://doi.org/10.1287/orsc.2.1.71) `学術`
-- [Tushman & O'Reilly (1996) "Ambidextrous Organizations" — California Management Review](https://doi.org/10.2307/41165891) `学術`
+- [Tushman & O'Reilly (1996) "Ambidextrous Organizations" — California Management Review](https://doi.org/10.2307/41165852) `学術`
 - [Raisch & Birkinshaw (2008) "Organizational Ambidexterity" — Journal of Management](https://doi.org/10.1177/0149206308316058) `学術`
 - [O'Reilly & Tushman (2004) "The Ambidextrous Organization" — Harvard Business Review](https://www.hbs.edu/faculty/Pages/item.aspx?num=9913) `リファレンス`
 - [O'Reilly & Tushman (2021) "Organizational Ambidexterity: Past, Present and Future" — Annual Review of Organizational Psychology](https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-012420-062543) `学術`

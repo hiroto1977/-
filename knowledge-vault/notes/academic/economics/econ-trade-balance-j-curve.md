@@ -26,7 +26,7 @@ Jカーブ効果（J-curve effect）は、自国通貨の減価（切り下げ�
 ポール・クルーグマン ／ モーリス・オブストフェルト ／ アルフレッド・マーシャル ／ レルナー
 
 ## 出典
-- [Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics: Is There a Common Cause? — NBER Macroeconomics Annual, 15, 339–390（国際収支調整パズルの整理）](https://doi.org/10.1257/jel.20160192) `学術`
+- [Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics: Is There a Common Cause? — NBER Macroeconomics Annual, 15, 339–390（国際収支調整パズルの整理）](https://doi.org/10.1086/654423) `学術`
 - [Krugman, P. R. & Baldwin, R. (1987) The Persistence of the U.S. Trade Deficit — Brookings Papers on Economic Activity, 1987(1), 1–43（プラザ合意後のJカーブ分析）](https://doi.org/10.2307/2534591) `学術`
 - [Bussière, M. et al. (2013) Estimating Trade Elasticities: Demand Composition and the Trade Collapse of 2008–09 — IMF Economic Review, 61(3), 425–457（GVC拡大とJカーブ弱体化）](https://doi.org/10.1057/imfer.2014.12) `学術`
 - [Wikipedia: J curve (economics) — Marshall-Lerner condition, Plaza Accord, price elasticity, trade adjustment](https://en.wikipedia.org/wiki/J_curve_(economics)) `リファレンス`

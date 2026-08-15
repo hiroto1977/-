@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Friedman, M. (1968) The Role of Monetary Policy — American Economic Review, 58(1), 1–17（自然失業率仮説の原典）](https://doi.org/10.2307/1830652) `学術`
-- [Phillips, A. W. (1958) The Relation Between Unemployment and the Rate of Change of Money Wage Rates in the United Kingdom — Economica, 25(100), 283–299（フィリップス曲線原典）](https://doi.org/10.2307/1830199) `学術`
+- [Phillips, A. W. (1958) The Relation Between Unemployment and the Rate of Change of Money Wage Rates in the United Kingdom — Economica, 25(100), 283–299（フィリップス曲線原典）](https://doi.org/10.2307/2550759) `学術`
 - [Lucas, R. E. (1976) Econometric Policy Evaluation: A Critique — Carnegie-Rochester Conference Series on Public Policy, 1, 19–46（ルーカス批判原典）](https://doi.org/10.1016/0304-3932(76)90002-1) `学術`
 - [Wikipedia: Phillips curve — Friedman-Phelps natural rate, stagflation, Lucas critique, NAIRU](https://en.wikipedia.org/wiki/Phillips_curve) `リファレンス`
 

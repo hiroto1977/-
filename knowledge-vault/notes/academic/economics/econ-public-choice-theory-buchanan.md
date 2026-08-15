@@ -26,7 +26,7 @@ aliases:
 ジェームズ・ブキャナン ／ ゴードン・タロック ／ ウィリアム・ニスカネン ／ マンサー・オルソン
 
 ## 出典
-- [Buchanan & Tullock (1962) The Calculus of Consent — University of Michigan Press](https://doi.org/10.1017/CBO9780511759024) `学術`
+- [Buchanan & Tullock (1962) The Calculus of Consent — University of Michigan Press](https://doi.org/10.3998/mpub.7687) `学術`
 - [Wikipedia: Public choice — Buchanan, Tullock, government failure, rent-seeking, constitutional economics](https://en.wikipedia.org/wiki/Public_choice) `リファレンス`
 
 ## 関連概念

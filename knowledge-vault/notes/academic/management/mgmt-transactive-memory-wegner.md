@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wegner, D. M. (1995) A Computer Network Model of Human Transactive Memory — Social Cognition, 13(3), 319–339（TMS理論の発展）](https://doi.org/10.1037/0033-2909.118.2.247) `学術`
-- [Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Shared Cognition in Organizations（組織的TMSの研究）](https://doi.org/10.5465/amj.2003.1054) `学術`
+- [Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Shared Cognition in Organizations（組織的TMSの研究）](https://doi.org/10.4324/9781410603227-1) `学術`
 - [Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy — Journal of Applied Psychology, 88(5), 866–878（TMSの三次元実証）](https://doi.org/10.2307/30040696) `学術`
 - [Wikipedia: Transactive memory — Wegner, differentiation, credibility, coordination, remote work](https://en.wikipedia.org/wiki/Transactive_memory) `リファレンス`
 

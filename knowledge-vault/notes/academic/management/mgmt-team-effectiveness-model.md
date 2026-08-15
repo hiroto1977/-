@@ -29,7 +29,7 @@ Joseph Edward McGrath ／ J. Richard Hackman ／ Daniel R. Ilgen ／ John R. Hol
 - [McGrath (1964) Social Psychology: A Brief Introduction — IPOモデル原典](https://psycnet.apa.org/record/1965-00452-000) `学術`
 - [Hackman (1987) The design of work teams — チーム有効性条件モデル](https://www.jstor.org/stable/256294) `学術`
 - [Ilgen et al. (2005) Teams in Organizations: From I-P-O Models to IMOI Models](https://doi.org/10.1146/annurev.psych.56.091103.070250) `学術`
-- [Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams](https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-032414-111418) `学術`
+- [Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams](https://doi.org/10.1111/j.1529-1006.2006.00030.x) `学術`
 - [Hackman (2002) Leading Teams: Setting the Stage for Great Performances — APA](https://www.apa.org/pubs/books/4316012) `リファレンス`
 
 ## 関連概念
@@ -39,10 +39,10 @@ Joseph Edward McGrath ／ J. Richard Hackman ／ Daniel R. Ilgen ／ John R. Hol
 - [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — 出典を共有
 - [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
-- [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
-- [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
-- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
+- [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
+- [[human-classical-conditioning|古典的条件づけ（パブロフ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

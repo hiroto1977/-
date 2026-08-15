@@ -27,7 +27,7 @@ Kevin D. Haggerty ／ Richard V. Ericson ／ Gilles Deleuze
 
 ## 出典
 - [The Surveillant Assemblage — Wikipedia](https://en.wikipedia.org/wiki/The_Surveillant_Assemblage) `リファレンス`
-- [Haggerty & Ericson (2000) The Surveillant Assemblage — British Journal of Criminology 40(4)](https://doi.org/10.1093/bjc/40.4.605) `学術`
+- [Haggerty & Ericson (2000) The Surveillant Assemblage — British Journal of Criminology 40(4)](https://doi.org/10.1080/00071310020015280) `学術`
 - [Haggerty & Ericson (2000) — Semantic Scholar](https://www.semanticscholar.org/paper/The-surveillant-assemblage-Haggerty-Ericson/20a4d08d7b4cebbed5e62bf78949a7b779fe2c5e) `学術`
 - [Kevin Haggerty — Wikipedia](https://en.wikipedia.org/wiki/Kevin_Haggerty) `リファレンス`
 

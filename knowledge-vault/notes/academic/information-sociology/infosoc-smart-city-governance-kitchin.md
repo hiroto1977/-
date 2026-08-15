@@ -26,7 +26,7 @@ aliases:
 ロブ・キッチン ／ シャノン・マッターン ／ アダム・グリーンフィールド ／ フランチェスカ・ビアンキーニ
 
 ## 出典
-- [Kitchin, R. (2014) The Real-Time City? Big Data and Smart Urbanism — GeoJournal](https://doi.org/10.1007/s10708-014-9580-x) `学術`
+- [Kitchin, R. (2014) The Real-Time City? Big Data and Smart Urbanism — GeoJournal](https://doi.org/10.1007/s10708-013-9516-8) `学術`
 - [Wikipedia: Smart city — IoT, urban analytics, governance, data-driven, citizen participation](https://en.wikipedia.org/wiki/Smart_city) `リファレンス`
 
 ## 関連概念

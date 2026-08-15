@@ -26,10 +26,10 @@ Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作�
 William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ Myung Un Kim ／ Barry M. Staw ／ Lance E. Sandelands ／ Jane E. Dutton ／ Donald C. Hambrick ／ Richard A. D'Aveni
 
 ## 出典
-- [Weitzel & Jonsson (1989) "Decline in Organizations: A Literature Integration and Extension" — Administrative Science Quarterly](https://doi.org/10.2307/258014) `学術`
+- [Weitzel & Jonsson (1989) "Decline in Organizations: A Literature Integration and Extension" — Administrative Science Quarterly](https://doi.org/10.2307/2392987) `学術`
 - [Cameron, Whetten & Kim (1987) "Organizational Dysfunctions of Decline" — Academy of Management Journal](https://doi.org/10.2307/256246) `学術`
 - [Staw, Sandelands & Dutton (1981) "Threat-Rigidity Effects in Organizational Behavior" — Administrative Science Quarterly](https://doi.org/10.2307/2392337) `学術`
-- [Hambrick & D'Aveni (1988) "Large Corporate Failures as Downward Spirals" — Administrative Science Quarterly](https://doi.org/10.2307/256445) `学術`
+- [Hambrick & D'Aveni (1988) "Large Corporate Failures as Downward Spirals" — Administrative Science Quarterly](https://doi.org/10.2307/2392853) `学術`
 - [Schendel, Patton & Riggs (1976) "Corporate Turnaround Strategies" — Strategic Management Journal](https://doi.org/10.1002/smj.4250050104) `学術`
 
 ## 関連概念

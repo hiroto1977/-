@@ -26,7 +26,7 @@ aliases:
 ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャリー・グリシェム
 
 ## 出典
-- [Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press](https://doi.org/10.1017/9781316519547) `学術`
+- [Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press](https://doi.org/10.5040/9781849662505) `学術`
 - [Wikipedia: Remix culture — Lessig, Creative Commons, CBPP, DSM Directive, copyright, mash-up](https://en.wikipedia.org/wiki/Remix_culture) `リファレンス`
 
 ## 関連概念

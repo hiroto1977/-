@@ -26,7 +26,7 @@ aliases:
 ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・バグビー ／ ジョルジオ・ネムイア
 
 ## 出典
-- [Sifneos, P. E. (1973) The Prevalence of "Alexithymic" Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics, 22(2–6), 255–262（アレキシサイミア原典）](https://doi.org/10.1097/00005053-197304000-00003) `学術`
+- [Sifneos, P. E. (1973) The Prevalence of "Alexithymic" Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics, 22(2–6), 255–262（アレキシサイミア原典）](https://doi.org/10.1159/000286529) `学術`
 - [Taylor, G. J., Bagby, R. M. & Parker, J. D. (1991) The Alexithymia Construct: A Potential Paradigm for Psychosomatic Medicine — Psychosomatics, 32(2), 153–164（TAS尺度と理論体系化）](https://doi.org/10.1037/0022-3514.70.3.525) `学術`
 - [Bird, G. & Cook, R. (2013) Mixed Emotions: The Contribution of Alexithymia to the Emotional Symptoms of Autism — Translational Psychiatry, 3(7), e285（ASDとアレキシサイミアの関係）](https://doi.org/10.1016/j.concog.2010.11.001) `学術`
 - [Wikipedia: Alexithymia — Sifneos, TAS-20, emotional regulation, ASD, psychosomatic](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`

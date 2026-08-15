@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Weick, K. E. (1979) The Social Psychology of Organizing — 2nd ed., Random House](https://doi.org/10.2307/2392295) `学術`
-- [Weick, K. E. (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — Administrative Science Quarterly](https://doi.org/10.2307/3094206) `学術`
+- [Weick, K. E. (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — Administrative Science Quarterly](https://doi.org/10.2307/2393339) `学術`
 - [Wikipedia: Sensemaking — retrospective meaning construction in organizations overview](https://en.wikipedia.org/wiki/Sensemaking) `リファレンス`
 
 ## 関連概念

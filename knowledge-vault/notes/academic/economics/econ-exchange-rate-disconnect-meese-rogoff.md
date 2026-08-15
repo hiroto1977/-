@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Meese, R. A. & Rogoff, K. (1983) Empirical Exchange Rate Models of the Seventies — Journal of International Economics](https://doi.org/10.1016/0022-1996(83)90017-X) `学術`
-- [Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics — NBER Macroeconomics Annual](https://doi.org/10.1086/ma.15.3585426) `学術`
+- [Obstfeld, M. & Rogoff, K. (2000) The Six Major Puzzles in International Macroeconomics — NBER Macroeconomics Annual](https://doi.org/10.1086/654423) `学術`
 - [Wikipedia: Exchange rate forecasting — Meese-Rogoff puzzle and disconnect overview](https://en.wikipedia.org/wiki/Exchange_rate_forecasting) `リファレンス`
 
 ## 関連概念

@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Wajcman (2015) Pressed for Time: The Acceleration of Life in Digital Capitalism — University of Chicago Press](https://press.uchicago.edu/ucp/books/book/chicago/P/bo20850870.html) `学術`
 - [Crary (2013) 24/7: Late Capitalism and the Ends of Sleep — Verso Books](https://www.versobooks.com/books/1570-24-7) `学術`
-- [Bucher (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society](https://doi.org/10.1177/1461444816642247) `学術`
+- [Bucher (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society](https://doi.org/10.1080/1369118X.2016.1154086) `学術`
 - [Hassan (2009) Empires of Speed: Time and the Acceleration of Politics and Society — Brill](https://doi.org/10.4135/9781446217696) `学術`
 
 ## 関連概念

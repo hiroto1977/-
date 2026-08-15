@@ -27,8 +27,8 @@ James G. March ／ Michael L. Tushman ／ Charles A. O'Reilly III ／ Cristina B
 
 ## 出典
 - [March, J.G. (1991). Exploration and Exploitation in Organizational Learning. Organization Science, 2(1), 71-87.](https://doi.org/10.2307/2634396) `学術`
-- [Tushman, M.L. & O'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.](https://doi.org/10.2307/41165933) `学術`
-- [Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.](https://doi.org/10.2307/30040758) `学術`
+- [Tushman, M.L. & O'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.](https://doi.org/10.2307/41165852) `学術`
+- [Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.](https://doi.org/10.5465/20159573) `学術`
 - [Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.](https://doi.org/10.1177/0149206308316058) `学術`
 - [O'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.](https://doi.org/10.5465/amp.2013.0025) `学術`
 
