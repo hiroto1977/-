@@ -23,25 +23,13 @@
  * どちらかに型を寄せることになり、寄せた側の呼び出し規約が変わる。
  */
 
+import { hasControlChar } from './controlChars';
+
 export type AtlassianSiteFailure = 'control-char' | 'not-a-url' | 'not-https' | 'not-atlassian';
 
 export type AtlassianSiteResult =
   | { readonly ok: true; readonly site: string }
   | { readonly ok: false; readonly reason: AtlassianSiteFailure };
-
-/**
- * 制御文字を含むか。
- *
- * 正規表現の文字クラスで書くと eslint の no-control-regex に当たる。
- * ルールを黙らせるより、走査で同じことをする方が読み手にも明確。
- */
-function hasControlChar(s: string): boolean {
-  for (const ch of s) {
-    const c = ch.charCodeAt(0);
-    if (c < 0x20 || c === 0x7f) return true;
-  }
-  return false;
-}
 
 export function normalizeAtlassianSiteResult(raw: string): AtlassianSiteResult {
   // `typeof raw !== 'string'` は置かない。呼び出し側 2 つとも、ここへ渡す前に

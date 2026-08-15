@@ -244,3 +244,32 @@ describe('compat (OpenAI-compatible)', () => {
     expect(r.headers).toEqual({ 'content-type': 'application/json' });
   });
 });
+
+describe('ベース URL の検証が buildRequest まで効く', () => {
+  const req = { messages: [{ role: 'user' as const, content: 'x' }], maxTokens: 16 };
+
+  it('鍵を送るプロバイダは loopback 以外の平文 http を投げて弾く', () => {
+    for (const id of ['anthropic', 'openai', 'gemini'] as const) {
+      const call = () => AI_PROVIDERS[id].buildRequest(req, { apiKey: 'k', baseUrl: 'http://evil.example.com' });
+      expect(call, id).toThrow(/平文/);
+    }
+  });
+
+  it('userinfo で送り先を隠す形はどのプロバイダでも弾く', () => {
+    for (const id of AI_PROVIDER_IDS) {
+      const cfg = { apiKey: 'k', baseUrl: 'https://u:p@evil.example.com', model: 'm' };
+      expect(() => AI_PROVIDERS[id].buildRequest(req, cfg), id).toThrow(/ユーザー名/);
+    }
+  });
+
+  it('Ollama は鍵を送らないので LAN の平文 http を通す', () => {
+    const out = AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://192.168.1.5:11434', model: 'm' });
+    expect(out.url).toBe('http://192.168.1.5:11434/api/chat');
+  });
+
+  it('互換 API は鍵を入れた途端に平文が弾かれる', () => {
+    const cfg = { baseUrl: 'http://box.lan:1234', model: 'm' };
+    expect(AI_PROVIDERS.compat.buildRequest(req, cfg).url).toBe('http://box.lan:1234/v1/chat/completions');
+    expect(() => AI_PROVIDERS.compat.buildRequest(req, { ...cfg, apiKey: 'k' })).toThrow(/平文/);
+  });
+});
