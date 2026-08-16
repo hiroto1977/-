@@ -395,6 +395,22 @@ async function tabletSuite(browser) {
  * 出ないこと」「事業は画面をまたいで共有され、数値は画面ごとに分かれること」
  * の 2 点である。単体テストでは module の境界までしか見えない。
  */
+/**
+ * 手入力欄を**除いた**ページ本文。
+ *
+ * 入力欄は自分で「手入力 7,654,321 円」と出すので、body 全体で数字を探すと
+ * 入力欄を読んで通ってしまい、「欄には印が付くがページの数字は変わらない」
+ * 配線ミスを捕まえられない (2026-08 に実際に踏んだ)。通貨記号は Node と
+ * Chromium の ICU で `\uFFE5` / `\u00A5` が揺れるので、記号は照合に使わない。
+ */
+async function textOutsideManualPanel(page) {
+  return page.evaluate(() => {
+    const clone = document.body.cloneNode(true);
+    for (const el of clone.querySelectorAll('[data-manual-data]')) el.remove();
+    return clone.textContent ?? '';
+  });
+}
+
 async function manualDataSuite(browser) {
   console.log('--- 事業・数値の手入力 (全画面共通) ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -445,7 +461,38 @@ async function manualDataSuite(browser) {
 
   // KPI も一覧を持つ。置き換えた値が画面の数字に出るところまで見る
   // （欄に印が付くだけで、実際の表示に反映されない配線ミスを捕まえる）。
-  await gotoService(page, '#kpi', '[data-manual-data]');
+  //
+  // KPI の集計タイルは実績が 1 件も無いと描画されないので、先に 1 行入れる。
+  // 照合は**ページ側の通貨表記 (￥付き)** で行う。入力欄自身も
+  // 「手入力 7,654,321 円」と出すため、素の数字で照合すると入力欄を読んで
+  // 通ってしまい、配線ミスを捕まえられない (2026-08 に実際に踏んだ)。
+  await gotoService(page, '#kpi', 'input[placeholder="YYYY-MM"]');
+  const kpiForm = [
+    ['YYYY-MM', '2026-01'],
+    ['事業名', 'E2E'],
+    ['売上高', '10000000'],
+    ['売上原価', '4000000'],
+    ['広告費', '500000'],
+    ['販管費', '2000000'],
+    ['減価償却費', '300000'],
+  ];
+  for (const [ph, v] of kpiForm) {
+    await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  }
+  // 「追加」ボタンはページ内に 40 個以上ある。first() だと別のパネルの
+  // ボタンを押してしまい、実績が入らないまま素通りする (2026-08 に実際に踏んだ)。
+  // 入力欄の親要素に絞ってから押す。
+  const kpiFormBox = page
+    .locator('input[placeholder="YYYY-MM"]')
+    .first()
+    .locator('xpath=ancestor::div[1]');
+  ok(
+    (await kpiFormBox.getByRole('button', { name: '追加' }).count()) === 1,
+    'KPI: 実績フォームの「追加」ボタンを一意に絞れている',
+  );
+  await kpiFormBox.getByRole('button', { name: '追加' }).first().click();
+  await page.waitForSelector('table', { timeout: 30000 });
+
   await page.click('[data-manual-data] > button');
   await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
   ok(
@@ -458,8 +505,38 @@ async function manualDataSuite(browser) {
     timeout: 30000,
   });
   ok(
-    (await page.locator('body').innerText()).includes('7,654,321'),
-    'KPI: 置き換えた値が画面の数字に反映される',
+    (await textOutsideManualPanel(page)).includes('7,654,321'),
+    'KPI: 置き換えた値が画面の数字に反映される (入力欄を除いた本文で照合)',
+  );
+
+  // 投資 2 画面も一覧を持つ。置き換えた値が画面の数字に出るところまで見る。
+  await gotoService(page, '#real-estate', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row]').count()) === 5,
+    `不動産の置き換え欄が 5 項目 (実際 ${await page.locator('[data-override-row]').count()})`,
+  );
+  ok(
+    (await page.locator('[data-override-row="occupancyRate"]').count()) === 0,
+    '入居率は置き換え欄に出ない (保存と表示で尺度が違うため)',
+  );
+  await page.fill('[data-override-row="portfolioYield"] input', '9.9');
+  await page.click('[data-override-row="portfolioYield"] button:has-text("保存")');
+  await page.waitForSelector('[data-override-row="portfolioYield"] [data-overridden]', {
+    timeout: 30000,
+  });
+  ok(
+    (await textOutsideManualPanel(page)).includes('9.9%'),
+    '不動産: 置き換えた利回りが画面の数字に反映される (入力欄を除いた本文で照合)',
+  );
+
+  await gotoService(page, '#mutual-funds', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row]').count()) === 4,
+    `投資信託の置き換え欄が 4 項目 (実際 ${await page.locator('[data-override-row]').count()})`,
   );
 
   // 一覧を持たない画面: 足す側だけが出る／事業は共有・数値は画面ごと

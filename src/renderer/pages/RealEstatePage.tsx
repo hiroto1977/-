@@ -1,4 +1,9 @@
 import { useMemo, useState } from 'react';
+import {
+  MANUAL_OVERRIDES_COLLECTION,
+  applyManualOverrides,
+  type ManualOverrideEntry,
+} from '../data/manualData';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
@@ -103,9 +108,19 @@ export function RealEstatePage() {
   );
 
   // ポートフォリオ集計は結合リストから再計算する (追加ゼロなら snapshot と同値)。
-  const portfolio = useMemo(
+  const computedPortfolio = useMemo(
     () => computeRealEstatePortfolio(properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment),
     [properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment],
+  );
+  // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
+  // 読んで適用するだけ。
+  const manualOverrides = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+  const manualRecords = manualOverrides.records;
+  const portfolio = useMemo(
+    () =>
+      applyManualOverrides('real-estate', computedPortfolio, manualRecords.map((r) => r.data))
+        .overview,
+    [computedPortfolio, manualRecords],
   );
 
   async function onSaveProperty() {

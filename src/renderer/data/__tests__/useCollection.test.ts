@@ -4,7 +4,12 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
-import { useCollection, type UseCollection } from '../useCollection';
+import {
+  useCollection,
+  _collectionSubscriberCountForTests,
+  _resetCollectionSubscribersForTests,
+  type UseCollection,
+} from '../useCollection';
 import { _resetRecordStoreForTests } from '../store';
 
 // React 18 の act() が警告を出さないようにする。
@@ -227,5 +232,195 @@ describe('useCollection', () => {
     });
     // 参照が変わっていない = setRecords が呼ばれていない。
     expect(h.ref.current.records).toBe(snapshot);
+  });
+});
+
+/**
+ * 同じ collection を 2 つの component が見ている状況。
+ *
+ * 2026-08 に実際に踏んだ形: 画面共通の手入力欄が値を保存しても、その値を使う
+ * ページ側は古い records のままで、入力欄には「手入力」と印が付くのに画面の
+ * 数字が変わらなかった。単体では両方とも正しく見えるので、2 つ描かないと出ない。
+ */
+describe('useCollection — 同じ collection を見る別インスタンス', () => {
+  function setupPair(col: string) {
+    const a: { current: UseCollection<Row> } = { current: null as unknown as UseCollection<Row> };
+    const b: { current: UseCollection<Row> } = { current: null as unknown as UseCollection<Row> };
+    function Harness({ mounted }: { mounted: boolean }) {
+      a.current = useCollection<Row>(col);
+      const second = useCollection<Row>(col);
+      b.current = second;
+      return mounted ? null : null;
+    }
+    const container = document.createElement('div');
+    let root!: Root;
+    return {
+      a,
+      b,
+      async mount() {
+        await act(async () => {
+          root = createRoot(container);
+          root.render(createElement(Harness, { mounted: true }));
+        });
+        await act(async () => {
+          await a.current.reload();
+          await b.current.reload();
+        });
+      },
+      unmount() {
+        act(() => {
+          root.unmount();
+        });
+      },
+      /**
+       * 他インスタンスへの反映は非同期 (書いた側を待たせないため)。
+       * 保留中のマイクロタスクを数回回して落ち着かせる。
+       */
+      async flush() {
+        for (let i = 0; i < 10; i += 1) {
+          await act(async () => {
+            await Promise.resolve();
+          });
+        }
+      },
+    };
+  }
+
+  beforeEach(() => {
+    _resetCollectionSubscribersForTests();
+  });
+
+  it('片方が追加すると、もう片方にも反映される', async () => {
+    const h = setupPair('shared');
+    await h.mount();
+    expect(h.a.current.records).toHaveLength(0);
+    expect(h.b.current.records).toHaveLength(0);
+
+    await act(async () => {
+      await h.a.current.add({ name: 'from-a' });
+    });
+    await h.flush();
+    expect(h.a.current.records.map((r) => r.data.name)).toEqual(['from-a']);
+    expect(h.b.current.records.map((r) => r.data.name)).toEqual(['from-a']);
+    h.unmount();
+  });
+
+  it('片方が編集・削除しても、もう片方に反映される', async () => {
+    const h = setupPair('shared2');
+    await h.mount();
+    await act(async () => {
+      await h.a.current.add({ name: 'x' });
+    });
+    await h.flush();
+    const id = h.b.current.records[0]?.id ?? '';
+    expect(id).not.toBe('');
+
+    await act(async () => {
+      await h.b.current.edit(id, { name: 'edited' });
+    });
+    await h.flush();
+    expect(h.a.current.records[0]?.data.name).toBe('edited');
+
+    await act(async () => {
+      await h.a.current.remove(id);
+    });
+    await h.flush();
+    expect(h.b.current.records).toHaveLength(0);
+    h.unmount();
+  });
+
+  it('まとめて追加でも反映される', async () => {
+    const h = setupPair('shared3');
+    await h.mount();
+    await act(async () => {
+      await h.a.current.addMany([{ name: 'p' }, { name: 'q' }]);
+    });
+    await h.flush();
+    expect(h.b.current.records).toHaveLength(2);
+    h.unmount();
+  });
+
+  it('別の collection には伝わらない', async () => {
+    const one = setupPair('coll-a');
+    await one.mount();
+    const other = setupPair('coll-b');
+    await other.mount();
+    await act(async () => {
+      await one.a.current.add({ name: 'only-a' });
+    });
+    await one.flush();
+    await other.flush();
+    expect(one.b.current.records).toHaveLength(1);
+    expect(other.a.current.records).toHaveLength(0);
+    one.unmount();
+    other.unmount();
+  });
+
+  // 解除しないと購読者が溜まり続ける。件数で直接見る — 動作だけ見ていると
+  // 「解除しなくても壊れない」ので、漏れに気付けない。
+  it('マウントで購読し、アンマウントで解除する', async () => {
+    expect(_collectionSubscriberCountForTests('counted')).toBe(0);
+    const h = setupPair('counted');
+    await h.mount();
+    expect(_collectionSubscriberCountForTests('counted')).toBe(2);
+    h.unmount();
+    expect(_collectionSubscriberCountForTests('counted')).toBe(0);
+  });
+
+  it('別の collection の購読者数は影響を受けない', async () => {
+    const h = setupPair('counted-a');
+    await h.mount();
+    expect(_collectionSubscriberCountForTests('counted-a')).toBe(2);
+    expect(_collectionSubscriberCountForTests('counted-b')).toBe(0);
+    h.unmount();
+  });
+
+  // 購読者が 0 の collection へ通知が飛ぶ経路。アンマウント後に完了する
+  // 書き込みがこれに当たる (落ちずに素通りすること)。
+  it('購読者が居なくなった後の書き込みでも落ちない', async () => {
+    const h = setupPair('after-unmount');
+    await h.mount();
+    const write = h.a.current;
+    h.unmount();
+    expect(_collectionSubscriberCountForTests('after-unmount')).toBe(0);
+    await act(async () => {
+      await write.add({ name: 'late' });
+    });
+    await h.flush();
+    expect(_collectionSubscriberCountForTests('after-unmount')).toBe(0);
+  });
+
+  it('collection を差し替えると購読先も移る', async () => {
+    const s = setup('from');
+    await s.mount();
+    expect(_collectionSubscriberCountForTests('from')).toBe(1);
+    expect(_collectionSubscriberCountForTests('to')).toBe(0);
+    await s.rerender('to');
+    expect(_collectionSubscriberCountForTests('from')).toBe(0);
+    expect(_collectionSubscriberCountForTests('to')).toBe(1);
+  });
+
+  it('テスト用リセットで購読者が空になる', async () => {
+    const h = setupPair('resettable');
+    await h.mount();
+    expect(_collectionSubscriberCountForTests('resettable')).toBe(2);
+    _resetCollectionSubscribersForTests();
+    expect(_collectionSubscriberCountForTests('resettable')).toBe(0);
+    h.unmount();
+  });
+
+  // 購読を解除しないと、アンマウント済みの component へ通知が飛び続ける。
+  it('アンマウントすると購読が外れる', async () => {
+    const gone = setupPair('shared4');
+    await gone.mount();
+    gone.unmount();
+    const fresh = setupPair('shared4');
+    await fresh.mount();
+    await act(async () => {
+      await fresh.a.current.add({ name: 'after' });
+    });
+    await fresh.flush();
+    expect(fresh.b.current.records).toHaveLength(1);
+    fresh.unmount();
   });
 });

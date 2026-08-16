@@ -1,4 +1,9 @@
 import { useMemo, useState } from 'react';
+import {
+  MANUAL_OVERRIDES_COLLECTION,
+  applyManualOverrides,
+  type ManualOverrideEntry,
+} from '../data/manualData';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0 } from '../data/inputGuards';
 import { SNAPSHOT } from '../data/snapshot';
@@ -77,7 +82,7 @@ export function MutualFundsPage() {
   );
 
   // ポートフォリオ集計は結合リストから再計算 (追加ゼロなら snapshot と同値)。
-  const portfolio = useMemo(
+  const computedPortfolio = useMemo(
     () =>
       computeFundPortfolio(
         holdings,
@@ -85,6 +90,16 @@ export function MutualFundsPage() {
         userHoldings.map((r) => r.data.acquisitionCost),
       ),
     [holdings, data.portfolio.totalCostBasis, userHoldings],
+  );
+  // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
+  // 読んで適用するだけ。
+  const manualOverrides = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+  const manualRecords = manualOverrides.records;
+  const portfolio = useMemo(
+    () =>
+      applyManualOverrides('mutual-funds', computedPortfolio, manualRecords.map((r) => r.data))
+        .overview,
+    [computedPortfolio, manualRecords],
   );
 
   async function onSaveHolding() {
