@@ -443,6 +443,25 @@ async function manualDataSuite(browser) {
     '計算値を手入力で置き換えられる',
   );
 
+  // KPI も一覧を持つ。置き換えた値が画面の数字に出るところまで見る
+  // （欄に印が付くだけで、実際の表示に反映されない配線ミスを捕まえる）。
+  await gotoService(page, '#kpi', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row]').count()) === 8,
+    `KPI の置き換え欄が 8 項目 (実際 ${await page.locator('[data-override-row]').count()})`,
+  );
+  await page.fill('[data-override-row="operatingProfit"] input', '7654321');
+  await page.click('[data-override-row="operatingProfit"] button:has-text("保存")');
+  await page.waitForSelector('[data-override-row="operatingProfit"] [data-overridden]', {
+    timeout: 30000,
+  });
+  ok(
+    (await page.locator('body').innerText()).includes('7,654,321'),
+    'KPI: 置き換えた値が画面の数字に反映される',
+  );
+
   // 一覧を持たない画面: 足す側だけが出る／事業は共有・数値は画面ごと
   await gotoService(page, '#github', '[data-manual-data]');
   ok(

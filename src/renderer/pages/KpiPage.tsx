@@ -15,6 +15,11 @@ import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 import { KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
+  MANUAL_OVERRIDES_COLLECTION,
+  applyManualOverrides,
+  type ManualOverrideEntry,
+} from '../data/manualData';
+import {
   BALANCE_SHEET_COLLECTION,
   parseBalanceSheet,
   computeBalanceSheetMetrics,
@@ -287,10 +292,19 @@ function ActualsPanel() {
   const [error, setError] = useState<string>();
   const [importMonth, setImportMonth] = useState('');
 
-  const summary = useMemo(() => {
+  const computedSummary = useMemo(() => {
     const rows = records.map((r) => r.data);
     return computeKpiMetrics(summarizeFundamentals(rows));
   }, [records]);
+
+  // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
+  // 読んで適用するだけ。上書きが無ければ計算値がそのまま出る。
+  const overridesCol = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+  const overrideRecords = overridesCol.records;
+  const summary = useMemo(
+    () => applyManualOverrides('kpi', computedSummary, overrideRecords.map((r) => r.data)).overview,
+    [computedSummary, overrideRecords],
+  );
 
   // Months available from the sales feature, for the "売上集計から取り込む" link.
   const salesEntries = useMemo(() => salesRecords.map((r) => r.data), [salesRecords]);
