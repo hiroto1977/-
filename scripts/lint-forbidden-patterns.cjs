@@ -69,6 +69,26 @@ const FORBIDDEN_PATTERNS = [
     rationale: 'arbitrary code execution — invariant #9',
   },
   {
+    // setTimeout('code', ms) / setInterval('code', ms) の文字列形は eval と同じ。
+    // 引数が文字列リテラルで始まる呼び出しだけを見る (関数を渡す通常形は素通り)。
+    name: "setTimeout('…') / setInterval('…') の文字列形",
+    pattern: /\b(?:setTimeout|setInterval)\s*\(\s*['"`]/,
+    codeOnly: true,
+    rationale: '文字列を渡す形は eval 相当 — invariant #9。関数を渡すこと',
+  },
+  {
+    // window.postMessage の受け口。origin を確かめない listener は
+    // 任意のページからアプリ内部へ命令を送れる入口になる。2026-08 の監査時点で
+    // 0 件なので allowFile は無い — 足すときは event.origin の確認と一緒に、
+    // なぜ安全かをここに書くこと。
+    name: "addEventListener('message', …)",
+    pattern: /addEventListener\s*\(\s*['"`]message['"`]/,
+    codeOnly: true,
+    rationale:
+      'postMessage の受け口は origin を確認しないと任意のページからの命令を受ける。' +
+      '追加するときは event.origin を検証したうえで、この台帳に例外として登録すること',
+  },
+  {
     name: '.innerHTML =',
     pattern: /\.innerHTML\s*=/,
     rationale: 'DOM XSS sink — banned in renderer; React rendering only',

@@ -1054,8 +1054,10 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース 57 ファイルを **11 個の禁止パターン** で scan:
-`dangerouslySetInnerHTML` / `eval(` / `new Function` / `.innerHTML =` / `document.write` /
+ランタイムソース 57 ファイルを **13 個の禁止パターン** で scan:
+`dangerouslySetInnerHTML` / `eval(` / `new Function` /
+`setTimeout('…')`・`setInterval('…')` の文字列形 /
+`addEventListener('message', …)` / `.innerHTML =` / `document.write` /
 `shell.openExternal` (main / oauth 以外) / `window.open(` (web-shim.ts 以外) /
 `redactSecrets` を通さない `body.slice(` /
 マークアップ用エスケープ・色・制御文字の判定の自前実装 (それぞれの共有モジュール以外) /
@@ -1072,6 +1074,13 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 だけが `"` と `'` を落としていなかった。**説明が実装より先に「1 つだけ」と
 言っていた**ので、説明ではなくゲートで固定した。`scripts/` は素の CJS で TS の
 共有実装を読めないため対象外だが、落とす文字は 5 文字に揃えてある。
+
+`setTimeout('…')` と `addEventListener('message', …)` は 2026-08 の監査で
+**手で grep して 0 件を確認した**ものをそのままゲートにした (「手でやった検査は、
+その場でゲートにする」)。前者は文字列を渡す形が eval 相当であるため、後者は
+`postMessage` の受け口が `event.origin` を確かめないと任意のページから
+アプリ内部へ命令を送れる入口になるため。どちらも現時点で 0 件なので allowFile は
+持たせていない — 足すときは、なぜ安全かをこの台帳に書くことになる。
 
 同じ理由で**色の判定**も 1 つにした。`#RRGGBB` の正規表現が
 `src/main/clients/templates.ts` と `src/renderer/pages/TemplatesPage.tsx` に
@@ -1214,7 +1223,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 ```bash
 npm run verify:all
 # → Verified 235 file:line references + 6 metrics ✅
-# → Scanned 57 files × 10 patterns                 ✅
+# → Scanned 57 files × 13 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅
 ```
