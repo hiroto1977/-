@@ -387,6 +387,84 @@ async function tabletSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 事業・数値の手入力 — 全画面共通の欄。
+ *
+ * この欄は App が 1 か所で描くので、画面ごとに貼り忘れる余地は無い。
+ * ここで確かめるのは「一覧を持つ画面では置き換え欄が出て、持たない画面では
+ * 出ないこと」「事業は画面をまたいで共有され、数値は画面ごとに分かれること」
+ * の 2 点である。単体テストでは module の境界までしか見えない。
+ */
+async function manualDataSuite(browser) {
+  console.log('--- 事業・数値の手入力 (全画面共通) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  await page.goto(FILE + '#overview', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-manual-data]', { timeout: 30000 });
+  ok(
+    (await page.getAttribute('[data-manual-data]', 'data-scope')) === 'overview',
+    '手入力欄が現在の画面 id を持つ',
+  );
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+
+  // 事業を足す
+  await page.fill('input[aria-label="事業名"]', '物販事業');
+  await page.fill('input[aria-label="開始時期"]', '2024-04');
+  await page.click('button:has-text("事業を追加")');
+  await page.waitForSelector('[data-business-unit]', { timeout: 30000 });
+  ok((await page.locator('[data-business-unit]').count()) === 1, '事業を任意に追加できる');
+
+  // 任意の数値を、その事業に紐づけて足す
+  await page.fill('input[aria-label="項目名"]', '想定客単価');
+  await page.fill('input[aria-label="値"]', '4800');
+  await page.selectOption('select[aria-label="紐づける事業"]', { label: '物販事業' });
+  await page.click('button:has-text("数値を追加")');
+  await page.waitForSelector('[data-manual-metric]', { timeout: 30000 });
+  const metricText = await page.locator('[data-manual-metric]').first().innerText();
+  ok(metricText.includes('想定客単価'), '任意の数値を追加できる');
+  ok(metricText.includes('4,800 円'), '追加した数値が単位付きで出る');
+  ok(metricText.includes('物販事業'), '数値を事業に紐づけられる');
+
+  // 計算値の置き換え（一覧を持つ画面）
+  ok((await page.locator('[data-manual-overrides]').count()) > 0, '一覧を持つ画面には置き換え欄が出る');
+  await page.fill('[data-override-row="kpi.revenue"] input', '12345678');
+  await page.click('[data-override-row="kpi.revenue"] button:has-text("保存")');
+  await page.waitForSelector('[data-override-row="kpi.revenue"] [data-overridden]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row="kpi.revenue"] [data-overridden]').innerText()).includes(
+      '12,345,678 円',
+    ),
+    '計算値を手入力で置き換えられる',
+  );
+
+  // 一覧を持たない画面: 足す側だけが出る／事業は共有・数値は画面ごと
+  await gotoService(page, '#github', '[data-manual-data]');
+  ok(
+    (await page.getAttribute('[data-manual-data]', 'data-scope')) === 'github',
+    '別の画面でも手入力欄が出る',
+  );
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-metrics]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-manual-overrides]').count()) === 0,
+    '一覧を持たない画面には置き換え欄を出さない',
+  );
+  ok((await page.locator('[data-business-unit]').count()) === 1, '事業は画面をまたいで共有される');
+  ok(
+    (await page.locator('[data-manual-metric]').count()) === 0,
+    '数値は画面ごとに分かれる (別画面のものは出ない)',
+  );
+
+  ok(errs.length === 0, `手入力欄: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
@@ -394,6 +472,7 @@ async function tabletSuite(browser) {
     args: ['--no-sandbox'],
   });
   await desktopSuite(browser);
+  await manualDataSuite(browser);
   await phoneSuite(browser);
   await tabletSuite(browser);
   await browser.close();

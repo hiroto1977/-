@@ -4,6 +4,7 @@ import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from '
 import { isServiceId } from '../shared/serviceId';
 import { filterServices } from './sidebarFilter';
 import { serviceIdFromHash, hashForService } from './hashRoute';
+import { ManualDataSection } from './components/ManualDataSection';
 import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
@@ -453,7 +454,15 @@ export function App() {
         </header>
         <section className="content">
           {activeUnlocked ? (
-            <PageComponent />
+            <>
+              <PageComponent />
+              {/*
+                手入力欄は**ここ 1 か所**に置く。画面ごとに貼って回ると必ず
+                どれか 1 つが漏れるし、新しいサービスを足すたびに忘れる。
+                置き換えの一覧を持たない画面では「足す」側だけが出る。
+              */}
+              <ManualDataSection scope={active.id} />
+            </>
           ) : (
             <UpgradeNotice
               requiredPlan={requiredPlan}

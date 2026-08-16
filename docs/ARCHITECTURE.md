@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7250** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7508) |
+| ユニットテスト | **7306** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7564) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 235 | 自己検証 |
+| `file:line` 参照数 | 238 | 自己検証 |
 
 ### 統合フロー図
 
@@ -493,7 +493,7 @@ union を参照する。
 | `sales` | 売上集計 — EC チャネル横断 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — record store collection `sales-entries`) |
 | `team` | チーム管理 — メンバー/権限 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — collection `team-members`; RBAC は `src/shared/team.ts`) |
 | `youtube` | YouTube Data API v3 実連携 | API キー (`{apiKey,channelId}`) | | | (read-only — チャンネル統計 / 最近の動画) |
-| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き / 任意項目 (`data/overviewOverrides.ts`) | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約) |
+| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約) |
 | `coconala` | ココナラ スキルマーケット (snapshot のみ) | 公開 API なし | ✅ | | (read-only — 出品/受注/評価) |
 | `tiktok` | TikTok — SNS / 動画運用サマリー (snapshot のみ) | 公開 API なし (将来 OAuth) | ✅ | | (read-only — 投稿/広告/フォロワー) |
 | `tax` | 税務試算 — 所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 | 認証不要 (ローカル計算) | ✅ | | (read-only — 納付/申告は公式ツールで手動。42 の数値入力を `data/inputGuards.ts` の `guardAll` でまとめて検査し、読み取れない欄を `GuardSummary` で試算値の手前に表示。⑩-2 消費税の納付/還付スケジュールは `src/shared/taxConsumptionSchedule.ts` — 税率 0〜50% の掃引・国税/地方の区分と端数処理・中間申告の回数と期限・確定申告額と還付の入金目安。⑫ 貿易の税は `src/shared/tradeTax.ts` — 輸入は CIF 1,000円未満切捨て→関税100円未満切捨て→消費税の課税標準に関税を含める法定順序、少額免税〔1万円以下・革製品等の除外・2028年4月廃止予定〕と個人使用60%特例、輸出は日本に輸出関税なし〔消費税法7条の免税〕＋仕向国の関税と付加価値税〔CIF/FOB 基準の切替・DDP/DAP の負担者〕) |
@@ -1052,6 +1052,34 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
 4. **ライブメトリクス**: doc の数値 (22 services, 11 IPC, 30 mutated modules, ...) を **実コードから再計算** して一致確認
 
+### 事業・数値の手入力 (全画面共通)
+
+自動計算に載らない数字 (会計ソフト未連携・締め前の速報値・事業計画上の目標値) を
+**どの画面でも**足せるようにしてある。入口は `components/ManualDataSection.tsx` 1 つで、
+`App.tsx` が現在の画面の後ろに 1 回だけ描く。**画面ごとに貼らない** — 貼って回ると
+必ずどれか 1 つが漏れるし、サービスを足すたびに忘れるため。
+
+保存先も画面ごとに分けず、レコードが `scope` (サービス id) を持つ (`data/manualData.ts`)。
+
+| 種類 | collection | どの画面で使えるか |
+|---|---|---|
+| 任意項目 | `manual-metrics` | **全 74 画面**。アプリが計算しない数字を足す |
+| 置き換え | `manual-overrides` | 一覧 (allowlist) を持つ画面だけ (`overview` / `sales`) |
+| 事業 | `business-units` | 全画面で共有。任意項目の付け先になる |
+
+外部 API の値を「置き換え」の対象にしないのは、取得元を書き換えたことにすると
+**次の取得で黙って戻る**ため。そういう数字は足す側で表す。置き換えは
+allowlist のパスだけを受ける — 任意のパスを書けると `__proto__` のような区間を
+渡されたときに困る (`catalogFor` も `Object.hasOwn` で確かめてから引く。
+`CATALOGS[scope] ?? []` だとプロトタイプ側の値が一覧として返る)。
+
+上書きは**表示の置き換えであって再計算ではない**。売上を手で置いても営業利益率は
+自動値のままで、`staleDerived` が「手入力から計算されるのに自動値のままの指標」を
+返すので画面が注意を出す。どの派生値をどう直したいかは利用者にしか決められない。
+
+事業を消しても数値は消さない。消えた事業に紐づく数値は「事業の指定なし」として
+表示する — 分類を変えただけで帳簿が消えるのはおかしいため。
+
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
 ランタイムソース 57 ファイルを **13 個の禁止パターン** で scan:
@@ -1222,7 +1250,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 235 file:line references + 6 metrics ✅
+# → Verified 238 file:line references + 6 metrics ✅
 # → Scanned 57 files × 13 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

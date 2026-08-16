@@ -103,25 +103,43 @@ export const OVERRIDABLE_FIELDS: readonly OverridableField[] = [
 ];
 
 /**
- * パスから定義を引く。一覧に無ければ null。
+ * 一覧からパスの定義を引く。無ければ null。
  *
  * 索引の Map をモジュールの初期化で作らないのは、初期化で例外を投げる
  * 壊れ方をしたときにテストが「失敗」ではなく「収集できない」で落ちてしまい、
- * 壊れていることに気付けないため。45 件の線形探索で十分に速い。
+ * 壊れていることに気付けないため。数十件の線形探索で十分に速い。
+ *
+ * 一覧を引数で受けるのは、経営サマリー以外の画面も**それぞれの一覧**を
+ * 持つため (`manualData.ts`)。同じ仕組みを画面ごとに書き写さない。
  */
-export function findOverridableField(path: string): OverridableField | null {
-  return OVERRIDABLE_FIELDS.find((f) => f.path === path) ?? null;
+export function findFieldIn(
+  fields: readonly OverridableField[],
+  path: string,
+): OverridableField | null {
+  return fields.find((f) => f.path === path) ?? null;
 }
 
-/** 画面のまとまりごとに並べ替える（一覧の順序を保つ）。 */
-export function fieldsBySection(): readonly { section: string; fields: readonly OverridableField[] }[] {
+/** 経営サマリーの一覧から引く。 */
+export function findOverridableField(path: string): OverridableField | null {
+  return findFieldIn(OVERRIDABLE_FIELDS, path);
+}
+
+/** 与えた一覧を、画面のまとまりごとに並べ替える（一覧の順序を保つ）。 */
+export function groupFieldsBySection(
+  fields: readonly OverridableField[],
+): readonly { section: string; fields: readonly OverridableField[] }[] {
   const out: { section: string; fields: OverridableField[] }[] = [];
-  for (const f of OVERRIDABLE_FIELDS) {
+  for (const f of fields) {
     const last = out[out.length - 1];
     if (last !== undefined && last.section === f.section) last.fields.push(f);
     else out.push({ section: f.section, fields: [f] });
   }
   return out;
+}
+
+/** 経営サマリーの一覧をまとまりごとに並べ替える。 */
+export function fieldsBySection(): readonly { section: string; fields: readonly OverridableField[] }[] {
+  return groupFieldsBySection(OVERRIDABLE_FIELDS);
 }
 
 /** 単位ごとの入力の範囲。桁を打ち間違えたときに気付けるだけの広さにする。 */
@@ -218,7 +236,8 @@ function setAtPath<T>(root: T, path: string, value: number): T | null {
  * 上書きを適用する。**allowlist に無いパスと不正な値は無視**し、
  * 何を無視したかを返す（黙って捨てない）。
  */
-export function applyOverviewOverrides<T>(
+export function applyOverrides<T>(
+  fields: readonly OverridableField[],
   base: T,
   overrides: readonly OverrideEntry[],
 ): AppliedOverviewOverrides<T> {
@@ -227,7 +246,7 @@ export function applyOverviewOverrides<T>(
   const ignored: string[] = [];
 
   for (const o of overrides) {
-    const field = findOverridableField(String(o.path));
+    const field = findFieldIn(fields, String(o.path));
     if (field === null) {
       ignored.push(String(o.path));
       continue;
@@ -247,7 +266,7 @@ export function applyOverviewOverrides<T>(
   }
 
   const staleDerived: { path: string; label: string; because: readonly string[] }[] = [];
-  for (const f of OVERRIDABLE_FIELDS) {
+  for (const f of fields) {
     if (f.derivedFrom === undefined) continue;
     if (overridden.includes(f.path)) continue;
     const because = f.derivedFrom.filter((src) => overridden.includes(src));
@@ -255,6 +274,14 @@ export function applyOverviewOverrides<T>(
   }
 
   return { overview, overridden, ignored, staleDerived };
+}
+
+/** 経営サマリーの一覧で上書きを適用する。 */
+export function applyOverviewOverrides<T>(
+  base: T,
+  overrides: readonly OverrideEntry[],
+): AppliedOverviewOverrides<T> {
+  return applyOverrides(OVERRIDABLE_FIELDS, base, overrides);
 }
 
 // ---------------------------------------------------------------------------

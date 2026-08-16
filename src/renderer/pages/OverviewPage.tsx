@@ -17,18 +17,10 @@ import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import {
-  OVERVIEW_CUSTOM_METRICS_COLLECTION,
-  OVERVIEW_OVERRIDES_COLLECTION,
-  applyOverviewOverrides,
-  fieldsBySection,
-  formatMetric,
-  parseCustomMetric,
-  parseOverrideValue,
-  type CustomMetricEntry,
-  type CustomMetricInput,
-  type MetricUnit,
-  type OverrideEntry,
-} from '../data/overviewOverrides';
+  MANUAL_OVERRIDES_COLLECTION,
+  applyManualOverrides,
+  type ManualOverrideEntry,
+} from '../data/manualData';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
@@ -55,202 +47,6 @@ const settingsInput: React.CSSProperties = {
   background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
   color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 90,
 };
-
-/**
- * 経営サマリーの数値を手で置く / 任意の項目を足すパネル。
- *
- * 自動計算の値をそのまま見せたうえで、隣に入力欄を置く。置いた数値は
- * 「手入力」と印を付け、そこから計算される指標が自動値のままなら注意を出す
- * （黙って辻褄を合わせないため）。
- */
-function ManualNumbersPanel({
-  computed,
-  overrides,
-  staleDerived,
-  customs,
-  onSaveOverride,
-  onClearOverride,
-  onAddCustom,
-  onRemoveCustom,
-}: {
-  computed: Record<string, unknown>;
-  overrides: readonly { id: string; data: OverrideEntry }[];
-  staleDerived: readonly { path: string; label: string; because: readonly string[] }[];
-  customs: readonly { id: string; data: CustomMetricEntry }[];
-  onSaveOverride: (path: string, value: number) => Promise<void> | void;
-  onClearOverride: (id: string) => Promise<void> | void;
-  onAddCustom: (e: CustomMetricInput) => Promise<void> | void;
-  onRemoveCustom: (id: string) => Promise<void> | void;
-}) {
-  const [draft, setDraft] = useState<Record<string, string>>({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [custom, setCustom] = useState({ label: '', value: '', unit: 'yen' as MetricUnit, note: '' });
-  const [customError, setCustomError] = useState<string>();
-
-  const byPath = new Map(overrides.map((r) => [r.data.path, r]));
-
-  /** 自動計算された値をパスから読む（無ければ null）。 */
-  function autoValue(path: string): number | null {
-    let node: unknown = computed;
-    for (const key of path.split('.')) {
-      if (typeof node !== 'object' || node === null || !Object.hasOwn(node, key)) return null;
-      node = (node as Record<string, unknown>)[key];
-    }
-    return typeof node === 'number' && Number.isFinite(node) ? node : null;
-  }
-
-  async function save(path: string, unit: MetricUnit) {
-    const parsed = parseOverrideValue(draft[path] ?? '', unit);
-    if (!parsed.ok) {
-      setErrors((e) => ({ ...e, [path]: parsed.reason }));
-      return;
-    }
-    setErrors((e) => ({ ...e, [path]: '' }));
-    await onSaveOverride(path, parsed.value);
-    setDraft((d) => ({ ...d, [path]: '' }));
-  }
-
-  async function addCustom() {
-    const parsed = parseCustomMetric(custom);
-    if (!parsed.ok) {
-      setCustomError(parsed.reason);
-      return;
-    }
-    setCustomError(undefined);
-    await onAddCustom(parsed.entry);
-    setCustom({ label: '', value: '', unit: 'yen', note: '' });
-  }
-
-  return (
-    <div data-manual-numbers>
-      <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
-        自動計算の値はそのまま表示しつつ、どの数値も手で置けます。置いた数値は「手入力」と印が付き、
-        経営サマリー・スコアカード・レポートすべてに反映されます。
-        <strong>置いた数値から計算される指標は自動値のまま</strong>なので、必要なものは併せて置いてください。
-      </p>
-
-      {staleDerived.length > 0 && (
-        <div
-          data-stale-derived
-          style={{ border: '1px solid #f59e0b', background: 'rgba(245,158,11,0.08)', borderRadius: 8, padding: '8px 10px', marginBottom: 12, fontSize: 12, lineHeight: 1.6 }}
-        >
-          <strong style={{ color: '#f59e0b' }}>自動値のままの指標があります</strong>
-          <div style={{ color: 'var(--text-mute)', marginTop: 4 }}>
-            {staleDerived.map((d) => d.label).join(' / ')} — 手で置いた数値から計算される指標ですが、再計算はしていません。
-          </div>
-        </div>
-      )}
-
-      {fieldsBySection().map((group) => (
-        <div key={group.section} style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 4 }}>{group.section}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {group.fields.map((f) => {
-              const hit = byPath.get(f.path);
-              const auto = autoValue(f.path);
-              return (
-                <div key={f.path} data-override-row={f.path} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, minWidth: 190 }}>{f.label}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text-mute)', minWidth: 150 }}>
-                    自動: {auto === null ? '—' : formatMetric(auto, f.unit)}
-                  </span>
-                  {hit !== undefined && (
-                    <span data-overridden style={{ fontSize: 11, color: '#22c55e', border: '1px solid #22c55e', borderRadius: 4, padding: '1px 6px' }}>
-                      手入力 {formatMetric(hit.data.value, f.unit)}
-                    </span>
-                  )}
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    aria-label={`${f.label} を手入力`}
-                    placeholder={hit === undefined ? '手入力' : '上書き'}
-                    value={draft[f.path] ?? ''}
-                    onChange={(e) => setDraft((d) => ({ ...d, [f.path]: e.target.value }))}
-                    style={settingsInput}
-                  />
-                  <button type="button" onClick={() => void save(f.path, f.unit)} style={{ fontSize: 12 }}>
-                    保存
-                  </button>
-                  {hit !== undefined && (
-                    <button type="button" onClick={() => void onClearOverride(hit.id)} style={{ fontSize: 12 }}>
-                      自動に戻す
-                    </button>
-                  )}
-                  {(errors[f.path] ?? '') !== '' && (
-                    <span style={{ fontSize: 11, color: '#ef4444' }}>{errors[f.path]}</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-
-      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 4 }}>
-        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>任意の項目を足す</div>
-        {customs.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
-            {customs.map((c) => (
-              <div key={c.id} data-custom-metric style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
-                <span style={{ minWidth: 190 }}>{c.data.label}</span>
-                <strong>{formatMetric(c.data.value, c.data.unit)}</strong>
-                {typeof c.data.note === 'string' && c.data.note !== '' && (
-                  <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{c.data.note}</span>
-                )}
-                <button type="button" onClick={() => void onRemoveCustom(c.id)} style={{ fontSize: 12 }}>
-                  削除
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-          <input
-            type="text"
-            aria-label="項目名"
-            placeholder="項目名"
-            value={custom.label}
-            onChange={(e) => setCustom((c) => ({ ...c, label: e.target.value }))}
-            style={{ ...settingsInput, width: 190 }}
-          />
-          <input
-            type="text"
-            inputMode="decimal"
-            aria-label="値"
-            placeholder="値"
-            value={custom.value}
-            onChange={(e) => setCustom((c) => ({ ...c, value: e.target.value }))}
-            style={settingsInput}
-          />
-          <select
-            aria-label="単位"
-            value={custom.unit}
-            onChange={(e) => setCustom((c) => ({ ...c, unit: e.target.value as MetricUnit }))}
-            style={{ ...settingsInput, width: 90 }}
-          >
-            <option value="yen">円</option>
-            <option value="pct">％</option>
-            <option value="count">件</option>
-            <option value="days">日</option>
-            <option value="months">か月</option>
-          </select>
-          <input
-            type="text"
-            aria-label="メモ"
-            placeholder="メモ (任意)"
-            value={custom.note}
-            onChange={(e) => setCustom((c) => ({ ...c, note: e.target.value }))}
-            style={{ ...settingsInput, width: 190 }}
-          />
-          <button type="button" onClick={() => void addCustom()} style={{ fontSize: 12 }}>
-            追加
-          </button>
-          {customError !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{customError}</span>}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /** 経営ハイライトのしきい値を編集・保存するパネル。 */
 function HighlightSettingsPanel({
@@ -387,8 +183,9 @@ export function OverviewPage() {
     [accountingMonthly, repayments],
   );
 
-  const overridesCol = useCollection<OverrideEntry>(OVERVIEW_OVERRIDES_COLLECTION);
-  const customCol = useCollection<CustomMetricEntry>(OVERVIEW_CUSTOM_METRICS_COLLECTION);
+  // 手入力の保存先は全画面共通 (manual-overrides)。入力欄は App が 1 か所で
+  // 描くので、ここは「読んで適用する」だけを持つ。
+  const overridesCol = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
   const overrideRecords = overridesCol.records;
 
   const computedOverview = useMemo(
@@ -409,7 +206,7 @@ export function OverviewPage() {
   // 手入力の上書きを自動計算の上に重ねる。**ここ 1 か所**で、以降の表示・
   // スコアカード・レポートすべてが手入力後の数値を見る。
   const applied = useMemo(
-    () => applyOverviewOverrides(computedOverview, overrideRecords.map((r) => r.data)),
+    () => applyManualOverrides('overview', computedOverview, overrideRecords.map((r) => r.data)),
     [computedOverview, overrideRecords],
   );
   const overview = applied.overview;
@@ -633,22 +430,23 @@ export function OverviewPage() {
         </Section>
       )}
 
-      <Section title="数値の手入力・任意項目">
-        <ManualNumbersPanel
-          computed={computedOverview as unknown as Record<string, unknown>}
-          overrides={overrideRecords.map((r) => ({ id: r.id, data: r.data }))}
-          staleDerived={applied.staleDerived}
-          customs={customCol.records.map((r) => ({ id: r.id, data: r.data }))}
-          onSaveOverride={async (path, value) => {
-            const existing = overrideRecords.find((r) => r.data.path === path);
-            if (existing !== undefined) await overridesCol.edit(existing.id, { value });
-            else await overridesCol.add({ path, value });
-          }}
-          onClearOverride={(id) => overridesCol.remove(id)}
-          onAddCustom={(e) => customCol.add({ ...e })}
-          onRemoveCustom={(id) => customCol.remove(id)}
-        />
-      </Section>
+      {applied.staleDerived.length > 0 && (
+        <Section title="自動値のままの指標">
+          <div
+            data-stale-derived
+            style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)' }}
+          >
+            <strong style={{ color: '#f59e0b' }}>
+              手で置いた数値から計算される指標が、自動値のままです。
+            </strong>
+            <div style={{ marginTop: 4 }}>{applied.staleDerived.map((d) => d.label).join(' / ')}</div>
+            <div style={{ marginTop: 4 }}>
+              上書きは表示の置き換えであり、再計算はしません。必要なものは画面下の
+              「事業・数値の手入力」から併せて置いてください。
+            </div>
+          </div>
+        </Section>
+      )}
 
       {hasData && (
         <Section title="ハイライトのしきい値設定">
