@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7310** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7568) |
+| ユニットテスト | **7325** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7583) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1064,7 +1064,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | 種類 | collection | どの画面で使えるか |
 |---|---|---|
 | 任意項目 | `manual-metrics` | **全 74 画面**。アプリが計算しない数字を足す |
-| 置き換え | `manual-overrides` | 一覧 (allowlist) を持つ画面だけ (`overview` 45 / `sales` 3 / `kpi` 8 項目) |
+| 置き換え | `manual-overrides` | 一覧 (allowlist) を持つ画面だけ (`overview` 45 / `sales` 3 / `kpi` 8 / `real-estate` 5 / `mutual-funds` 4 項目) |
 | 事業 | `business-units` | 全画面で共有。任意項目の付け先になる |
 
 外部 API の値を「置き換え」の対象にしないのは、取得元を書き換えたことにすると
@@ -1079,6 +1079,17 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 
 事業を消しても数値は消さない。消えた事業に紐づく数値は「事業の指定なし」として
 表示する — 分類を変えただけで帳簿が消えるのはおかしいため。
+
+**保存の尺度と表示の尺度が違う数値は一覧に載せない。** 不動産の入居率は 0〜1 で
+保存し画面には % で出すので、そのまま置き換え欄に出すと利用者は画面の数字 (80) を
+打ち、保存側は 80 倍で受け取る。単位を増やして誤魔化すより、置けないものは
+置けないままにしてある。
+
+`useCollection` は同じ collection を見ている hook 同士へ変更を知らせる
+(`subscriberSet` + `notifyCollection`)。instance ごとに records を持つので、
+これが無いと**画面共通の入力欄が保存しても、その値を使うページは古いまま**になる。
+入力欄には「手入力」と印が付くのに画面の数字が変わらないという、いちばん
+分かりにくい壊れ方をする (2026-08 に実測)。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 

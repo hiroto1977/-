@@ -117,6 +117,41 @@ const CATALOGS: Readonly<Record<string, readonly OverridableField[]>> = {
       derivedFrom: ['bepRatio'],
     },
   ],
+  // 入居率 (occupancyRate) は載せない。**保存している尺度 (0〜1) と画面に出す
+  // 尺度 (%) が違う**ので、そのまま置き換え欄に出すと利用者は画面の数字
+  // (例: 80) を打ち、保存側は 80 倍の値として受け取ってしまう。
+  // 単位を増やして誤魔化すより、置けないものは置けないままにする。
+  'real-estate': [
+    { path: 'grossRent', label: '賃料収入 (月)', section: '収支', unit: 'yen' },
+    { path: 'operatingExpenses', label: '運営費用 (月)', section: '収支', unit: 'yen' },
+    { path: 'mortgagePayment', label: 'ローン返済 (月)', section: '収支', unit: 'yen' },
+    {
+      path: 'netCashflow',
+      label: '手残り (月)',
+      section: '収支',
+      unit: 'yen',
+      derivedFrom: ['grossRent', 'operatingExpenses', 'mortgagePayment'],
+    },
+    { path: 'portfolioYield', label: 'ポートフォリオ利回り', section: '利回り', unit: 'pct' },
+  ],
+  'mutual-funds': [
+    { path: 'totalValuation', label: '評価額', section: '評価', unit: 'yen' },
+    { path: 'totalCostBasis', label: '取得原価', section: '評価', unit: 'yen' },
+    {
+      path: 'unrealizedGain',
+      label: '評価損益',
+      section: '評価',
+      unit: 'yen',
+      derivedFrom: ['totalValuation', 'totalCostBasis'],
+    },
+    {
+      path: 'unrealizedGainPct',
+      label: '評価損益率',
+      section: '評価',
+      unit: 'pct',
+      derivedFrom: ['unrealizedGain', 'totalCostBasis'],
+    },
+  ],
 };
 
 /** 一覧を持たない画面が返すもの。毎回作らず同じ配列を返す。 */

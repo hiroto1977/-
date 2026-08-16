@@ -31,7 +31,7 @@ const mt = (scope: string, label: string, value: number): ManualMetricEntry => (
  * 一覧を持つ画面の期待値。**定義側から組み立てない** — 一覧を空にする変更が
  * 期待値も一緒に消してしまうため（罠 2-c-2）。
  */
-const EXPECTED_SCOPES = ['overview', 'sales', 'kpi'];
+const EXPECTED_SCOPES = ['overview', 'sales', 'kpi', 'real-estate', 'mutual-funds'];
 
 describe('画面ごとの一覧', () => {
   // 宣言順そのものを固定する（並べ替えないので、順序を変えたら落ちる）。
@@ -83,8 +83,34 @@ describe('画面ごとの一覧', () => {
     });
   });
 
-  it('KPI のまとまりは 費用 / 損益 / 分岐点 の順', () => {
-    expect(sectionsFor('kpi').map((g) => g.section)).toEqual(['費用', '損益', '分岐点']);
+  // まとまりは画面の見出しになるので、全ての一覧について名前と件数を固定する。
+  // 1 画面だけ書くと、書いていない画面の見出しを壊しても気付けない。
+  it('全ての一覧のまとまり（名前と件数）が期待どおり', () => {
+    const shape = (scope: string) =>
+      sectionsFor(scope).map((g) => [g.section, g.fields.length]);
+    expect(shape('kpi')).toEqual([
+      ['費用', 2],
+      ['損益', 3],
+      ['分岐点', 3],
+    ]);
+    expect(shape('sales')).toEqual([['売上', 3]]);
+    expect(shape('real-estate')).toEqual([
+      ['収支', 4],
+      ['利回り', 1],
+    ]);
+    expect(shape('mutual-funds')).toEqual([['評価', 4]]);
+    // 経営サマリーは 8 区分 45 項目。
+    expect(shape('overview').map((s) => s[0])).toEqual([
+      '売上',
+      '損益',
+      '比率',
+      '成長',
+      '体制',
+      '財政状態',
+      '運転資金',
+      '資金繰り',
+    ]);
+    expect(shape('overview').reduce((n, s) => n + (s[1] as number), 0)).toBe(45);
   });
 
   it('平均単価は売上合計と受注件数から計算されると宣言している', () => {
@@ -92,6 +118,53 @@ describe('画面ごとの一覧', () => {
       'totalAmount',
       'totalOrders',
     ]);
+  });
+
+  it('不動産の一覧は 5 項目で、パスとラベルが期待どおり', () => {
+    expect(catalogFor('real-estate').map((f) => [f.path, f.label, f.unit])).toEqual([
+      ['grossRent', '賃料収入 (月)', 'yen'],
+      ['operatingExpenses', '運営費用 (月)', 'yen'],
+      ['mortgagePayment', 'ローン返済 (月)', 'yen'],
+      ['netCashflow', '手残り (月)', 'yen'],
+      ['portfolioYield', 'ポートフォリオ利回り', 'pct'],
+    ]);
+  });
+
+  // 入居率は保存 (0〜1) と表示 (%) で尺度が違うので、置き換え欄に出さない。
+  // 出すと利用者は画面の数字 (80) を打ち、保存側は 80 倍で受け取ってしまう。
+  it('入居率は一覧に載せない（保存と表示で尺度が違うため）', () => {
+    expect(catalogFor('real-estate').some((f) => f.path === 'occupancyRate')).toBe(false);
+  });
+
+  it('投資信託の一覧は 4 項目で、パスとラベルが期待どおり', () => {
+    expect(catalogFor('mutual-funds').map((f) => [f.path, f.label, f.unit])).toEqual([
+      ['totalValuation', '評価額', 'yen'],
+      ['totalCostBasis', '取得原価', 'yen'],
+      ['unrealizedGain', '評価損益', 'yen'],
+      ['unrealizedGainPct', '評価損益率', 'pct'],
+    ]);
+  });
+
+  it('投資 2 画面の計算元が期待どおり', () => {
+    const re = Object.fromEntries(
+      catalogFor('real-estate').map((f) => [f.path, f.derivedFrom ?? null]),
+    );
+    expect(re).toEqual({
+      grossRent: null,
+      operatingExpenses: null,
+      mortgagePayment: null,
+      netCashflow: ['grossRent', 'operatingExpenses', 'mortgagePayment'],
+      portfolioYield: null,
+    });
+    const mf = Object.fromEntries(
+      catalogFor('mutual-funds').map((f) => [f.path, f.derivedFrom ?? null]),
+    );
+    expect(mf).toEqual({
+      totalValuation: null,
+      totalCostBasis: null,
+      unrealizedGain: ['totalValuation', 'totalCostBasis'],
+      unrealizedGainPct: ['unrealizedGain', 'totalCostBasis'],
+    });
   });
 
   it('一覧を持たない画面は空', () => {
@@ -210,6 +283,27 @@ describe('applyManualOverrides', () => {
       'bep',
       'contributionRatio',
       'operatingProfit',
+    ]);
+  });
+
+  it('投資 2 画面の上書きも同じ入口で当たる', () => {
+    const re = applyManualOverrides(
+      'real-estate',
+      { grossRent: 1, operatingExpenses: 2, mortgagePayment: 3, netCashflow: 4, portfolioYield: 5 },
+      [ov('real-estate', 'grossRent', 900)],
+    );
+    expect(re.overview.grossRent).toBe(900);
+    expect(re.staleDerived.map((d) => d.path)).toEqual(['netCashflow']);
+
+    const mf = applyManualOverrides(
+      'mutual-funds',
+      { totalValuation: 1, totalCostBasis: 2, unrealizedGain: 3, unrealizedGainPct: 4 },
+      [ov('mutual-funds', 'totalCostBasis', 500)],
+    );
+    expect(mf.overview.totalCostBasis).toBe(500);
+    expect(mf.staleDerived.map((d) => d.path).sort()).toEqual([
+      'unrealizedGain',
+      'unrealizedGainPct',
     ]);
   });
 
