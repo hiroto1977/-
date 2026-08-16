@@ -4,6 +4,7 @@ import 'fake-indexeddb/auto';
 import {
   fetchViaProxy,
   getProxyConfig,
+  inspectStoredProxyConfig,
   setProxyConfig,
   isPrivateOrReservedTarget,
   MAX_PROXY_RESPONSE_BYTES,
@@ -21,6 +22,89 @@ function clearIdb(): Promise<void> {
 
 beforeEach(async () => {
   await clearIdb();
+});
+
+/**
+ * 検証を通さずに IndexedDB へ直に書く。
+ *
+ * 「検証が緩かった頃に保存された値」「別経路で書かれた値」を再現するため。
+ * setProxyConfig 経由では今の規則を通ったものしか入らないので、
+ * 読み出し側の検証はこの入口でしか試せない。
+ */
+function putRawProxyConfig(value: unknown): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const open = indexedDB.open('business-hub-preferences', 1);
+    open.onupgradeneeded = () => {
+      const db = open.result;
+      if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+    };
+    open.onsuccess = () => {
+      const db = open.result;
+      const tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(value, 'proxy');
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+      tx.onerror = () => {
+        db.close();
+        reject(tx.error ?? new Error('put failed'));
+      };
+    };
+    open.onerror = () => reject(open.error ?? new Error('open failed'));
+  });
+}
+
+describe('保存済み設定は読み出しのたびに検証する', () => {
+  // 検証を書き込み側にしか置かないと、緩かった頃の値がそのまま
+  // 資格情報の送り先になる。読み出し側でも同じ規則を通す。
+  it('loopback 以外への平文 http は、保存されていても使わない', async () => {
+    await putRawProxyConfig({ url: 'http://evil.example.com/p' });
+    expect(await getProxyConfig()).toBeNull();
+    const seen = await inspectStoredProxyConfig();
+    expect(seen.config).toBeNull();
+    expect(seen.rejected).toBe('insecure-remote');
+  });
+
+  it('loopback の平文 http は保存されていれば使う', async () => {
+    await putRawProxyConfig({ url: 'http://127.0.0.1:8787/' });
+    expect((await getProxyConfig())?.url).toBe('http://127.0.0.1:8787/');
+  });
+
+  it('userinfo 付き・制御文字入り・非 http は使わない', async () => {
+    for (const [url, reason] of [
+      ['https://u:p@evil.example.com/', 'has-userinfo'],
+      ['https://w.example.com/\u0000', 'control-char'],
+      ['javascript:alert(1)', 'not-http'],
+      ['https://w.example.com/#f', 'has-fragment'],
+    ] as const) {
+      await putRawProxyConfig({ url });
+      const seen = await inspectStoredProxyConfig();
+      expect(seen.config, url).toBeNull();
+      expect(seen.rejected, url).toBe(reason);
+    }
+  });
+
+  it('URL 以外の形が入っていても落ちない', async () => {
+    for (const v of [{}, { url: 42 }, { url: null }, 'nonsense', 7]) {
+      await putRawProxyConfig(v);
+      const seen = await inspectStoredProxyConfig();
+      expect(seen.config, JSON.stringify(v)).toBeNull();
+      expect(seen.rejected, JSON.stringify(v)).not.toBeNull();
+    }
+  });
+
+  it('長すぎる共有秘密が保存されていても使わない', async () => {
+    await putRawProxyConfig({ url: 'https://w.example.com/p', sharedSecret: 'x'.repeat(257) });
+    expect(await getProxyConfig()).toBeNull();
+  });
+
+  it('妥当な設定はそのまま使える（この検証で普通の設定を壊さない）', async () => {
+    await putRawProxyConfig({ url: 'https://w.example.com/p', sharedSecret: 'shh' });
+    const got = await getProxyConfig();
+    expect(got?.url).toBe('https://w.example.com/p');
+    expect(got?.sharedSecret).toBe('shh');
+  });
 });
 
 describe('ProxyConfig persistence', () => {
@@ -61,6 +145,26 @@ describe('ProxyConfig persistence', () => {
 
   it('rejects empty URL', async () => {
     await expect(setProxyConfig({ url: '' })).rejects.toThrow(/不正/);
+  });
+
+  it('正規化した URL を保存する（検証した文字列と保存する文字列を一致させる）', async () => {
+    await setProxyConfig({ url: '  HTTPS://W.EXAMPLE.COM  ' });
+    expect((await getProxyConfig())?.url).toBe('https://w.example.com/');
+  });
+
+  it('loopback 以外への平文 http は保存させない（トークンが乗る宛先のため）', async () => {
+    await expect(setProxyConfig({ url: 'http://evil.example.com/p' })).rejects.toThrow(/平文/);
+    expect(await getProxyConfig()).toBeNull();
+  });
+
+  it('loopback の平文 http は保存できる（wrangler dev）', async () => {
+    await setProxyConfig({ url: 'http://localhost:8787/proxy' });
+    expect((await getProxyConfig())?.url).toBe('http://localhost:8787/proxy');
+  });
+
+  it('userinfo 付き・断片付きは保存させない', async () => {
+    await expect(setProxyConfig({ url: 'https://u:p@w.example.com/' })).rejects.toThrow(/ユーザー名/);
+    await expect(setProxyConfig({ url: 'https://w.example.com/#f' })).rejects.toThrow(/#/);
   });
 
   it('rejects oversize shared secret', async () => {
@@ -136,6 +240,22 @@ describe('fetchViaProxy', () => {
     const init = mockFetch.mock.calls[0]![1]!;
     const headers = init.headers as Record<string, string>;
     expect(headers['x-proxy-auth']).toBe('shh');
+  });
+
+  it('cfg.url も信用しない（保存経路を通らない呼び出しがありうる）', async () => {
+    await expect(
+      fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'http://evil.example.com/p' }),
+    ).rejects.toThrow(/平文/);
+    await expect(
+      fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'javascript:alert(1)' }),
+    ).rejects.toThrow(/http\(s\)/);
+  });
+
+  it('送るのは正規化した proxy URL', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelope({ status: 200, body: '' }));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'HTTPS://W.EXAMPLE.COM' });
+    expect(mockFetch.mock.calls[0]![0]).toBe('https://w.example.com/');
   });
 
   it('rejects bad target URL', async () => {

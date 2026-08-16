@@ -21,6 +21,13 @@
  * redactSecrets による秘匿 — に限られる。
  */
 import { redactSecrets } from '../../shared/redact';
+import {
+  describeProxyEndpointFailure,
+  normalizeProxyEndpoint,
+  reviewStoredProxyConfig,
+  type ProxyCredentials,
+  type ProxyEndpointFailure,
+} from '../../shared/proxyEndpoint';
 
 // Constants + IDB infra below — decorative error strings, default-arrow
 // fallbacks, and the request/response envelope structure are pinned by
@@ -32,12 +39,8 @@ const DB_VERSION = 1;
 const STORE = 'kv';
 const KEY = 'proxy';
 
-export interface ProxyConfig {
-  /** Cloudflare Worker / Vercel Function 等の URL */
-  readonly url: string;
-  /** 任意の共有秘密 (HMAC ヘッダーで送信) */
-  readonly sharedSecret?: string;
-}
+/** 設定の形そのものは shared 側が持つ (保存時・読み出し時で同じ検証を通すため)。 */
+export type ProxyConfig = ProxyCredentials;
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -58,7 +61,26 @@ function txDone(tx: IDBTransaction): Promise<void> {
   });
 }
 
+/**
+ * 保存されている設定を、**読み出しのたびに検証して**返す。
+ *
+ * 検証を保存時にしか置かないと、検証が緩かった頃の値や別経路で書かれた値が
+ * そのまま資格情報の送り先になる。弾いた理由も返すので、設定画面は
+ * 「保存はされているが今の規則では使えない」ことを利用者に言える。
+ */
+export async function inspectStoredProxyConfig(): Promise<{
+  config: ProxyConfig | null;
+  rejected: ProxyEndpointFailure | null;
+}> {
+  return reviewStoredProxyConfig(await readStoredProxyConfig());
+}
+
+/** 使える設定だけを返す。弾かれた理由が要るときは inspectStoredProxyConfig。 */
 export async function getProxyConfig(): Promise<ProxyConfig | null> {
+  return (await inspectStoredProxyConfig()).config;
+}
+
+async function readStoredProxyConfig(): Promise<ProxyConfig | null> {
   let db: IDBDatabase;
   try {
     db = await openDb();
@@ -79,28 +101,23 @@ export async function getProxyConfig(): Promise<ProxyConfig | null> {
 }
 
 export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
+  // 保存するのは**正規化した URL**。検証した文字列と保存する文字列を
+  // 一致させておかないと、読み出し側の再検証が別のものを見ることになる。
+  let toStore: ProxyConfig | null = null;
   if (cfg !== null) {
-    if (typeof cfg.url !== 'string' || cfg.url.length === 0 || cfg.url.length > 1024) {
-      throw new Error('proxy URL が不正です');
+    const review = reviewStoredProxyConfig(cfg);
+    if (review.config === null) {
+      // rejected が null になるのは raw が null/undefined のときだけで、
+      // ここは cfg !== null なので必ず理由が付く。
+      throw new Error(describeProxyEndpointFailure(review.rejected ?? 'not-a-url'));
     }
-    try {
-      const u = new URL(cfg.url);
-      if (u.protocol !== 'https:' && u.protocol !== 'http:') {
-        throw new Error('proxy URL は http(s) スキームのみ対応');
-      }
-    } catch (e) {
-      if (e instanceof Error && /proxy URL/.test(e.message)) throw e;
-      throw new Error('proxy URL の形式が不正です');
-    }
-    if (cfg.sharedSecret !== undefined && (typeof cfg.sharedSecret !== 'string' || cfg.sharedSecret.length > 256)) {
-      throw new Error('共有秘密が不正です (256 字以内)');
-    }
+    toStore = review.config;
   }
   const db = await openDb();
   try {
     const tx = db.transaction(STORE, 'readwrite');
-    if (cfg === null) tx.objectStore(STORE).delete(KEY);
-    else tx.objectStore(STORE).put(cfg, KEY);
+    if (toStore === null) tx.objectStore(STORE).delete(KEY);
+    else tx.objectStore(STORE).put(toStore, KEY);
     await txDone(tx);
   } finally {
     db.close();
@@ -460,12 +477,18 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
     body: typeof init.body === 'string' ? init.body : undefined,
   };
 
+  // 送り先も**呼び出し側から渡されたまま**では使わない。この関数は export
+  // されていて、保存経路を通らない cfg でも呼べる。資格情報が乗る口なので
+  // ここでも同じ規則で確かめ、正規化した URL へ送る。
+  const proxyChecked = normalizeProxyEndpoint(cfg.url);
+  if (!proxyChecked.ok) throw new Error(describeProxyEndpointFailure(proxyChecked.reason));
+
   const proxyHeaders: Record<string, string> = { 'content-type': 'application/json' };
   if (cfg.sharedSecret && cfg.sharedSecret.length > 0) {
     proxyHeaders['x-proxy-auth'] = cfg.sharedSecret;
   }
 
-  const proxyRes = await fetch(cfg.url, {
+  const proxyRes = await fetch(proxyChecked.url, {
     method: 'POST',
     headers: proxyHeaders,
     body: JSON.stringify(envelope),

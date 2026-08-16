@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7188** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7446) |
+| ユニットテスト | **7238** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7496) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 233 | 自己検証 |
+| `file:line` 参照数 | 235 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1180,6 +1180,25 @@ AI だけはホスト名の許可リストを張れない — 利用者が自分
 `src/renderer/network/proxy.ts` の `isPrivateOrReservedTarget` は**判断の向きが逆**
 (内部ホストへ到達させないのが目的で loopback も塞ぐ) なので流用していない。
 
+BYO プロキシの**送り先**も同じ形で絞る (`src/shared/proxyEndpoint.ts`)。
+`fetchViaProxy` は呼び出し側のヘッダをそのまま封筒に入れて worker へ POST するので、
+ここは**アプリが持つ資格情報のほぼ全部が通る 1 本の口**である。2026-08 の監査時点で
+検証は保存時 (`setProxyConfig`) にしか無く、読み出し (`getProxyConfig`) は
+IndexedDB にあるものをそのまま返していた。検証を書き込み側にしか置かないと、
+**検証が緩かった頃に保存された値**がそのまま資格情報の送り先になる
+(vault の反復回数で一度踏んだのと同じ形)。いまは
+`reviewStoredProxyConfig` 1 本を**保存時・読み出し時・送信直前**の 3 か所が通る。
+loopback の判定は `aiEndpoint.ts` の `isLoopbackHostname` を借りていて、
+同じ判断を 2 か所に書かない。`aiEndpoint` と違いクエリは許す — あちらは後ろに
+パスを足す土台、こちらは POST する終点そのもので、`?v=2` のような route が
+正当にありうるためである。
+
+`lint:network-targets` には**送り先が丸ごと変数**の送信を見る 2 つ目の入口を足した。
+1 つ目はテンプレートリテラルを探す設計なので、`fetch(cfg.url, …)` のように
+**一度も組み立てられない送り先**は原理的に掛からず、それが最も価値の高い
+送り先だった。新しい入口は限界も明記してある (ローカル変数へ一度移せば掛からない) —
+完全な検査ではなく、新しい送り先が増えたときに台帳を書かせるための入口である。
+
 #### lint:imports (`scripts/check-import-boundaries.cjs`)
 
 `src/**/*.ts(x)` の 162 import 文を 3 ゾーン (renderer / preload / main) と shared / electron /
@@ -1194,7 +1213,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 233 file:line references + 6 metrics ✅
+# → Verified 235 file:line references + 6 metrics ✅
 # → Scanned 57 files × 10 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

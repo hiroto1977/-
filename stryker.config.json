@@ -207,6 +207,7 @@
     "src/shared/cryptoParams.ts",
     "src/shared/controlChars.ts",
     "src/shared/aiEndpoint.ts",
+    "src/shared/proxyEndpoint.ts",
     "src/shared/ai/providers.ts",
     "src/shared/ai/credentials.ts",
     "src/shared/ai/chat.ts"
