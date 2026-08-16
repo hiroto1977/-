@@ -20,6 +20,7 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,518**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 33 パス+オートパイロット消化で 4,350→3,518・**−832**。パス4/5/7 は全文読解で裁定し、統合先の出典・記述を一切減らさずに 25 件を統合。**重複疑いキューは 3 系列すべて 0 件** — タイトルコア一致 / グラフ term-overlap / **id 正規化 (パス7 で新設)**） |
+| **直近完了作業** | 🧮✅ **経営サマリーの数値をすべて手入力できるようにした + 任意項目の追加** — `data/overviewOverrides.ts` を新設し、売上／損益／比率／成長／体制／財政状態／運転資金／資金繰りの **8 区分 45 項目**を allowlist で列挙して、どれも手で置けるようにした（任意項目の追加も別枠で可能）。**★ 上書きは「表示の置き換え」であって再計算ではない** — 売上を手で置いても営業利益率は自動値のまま。どの派生値をどう直したいかは利用者にしか決められないので、黙って辻褄を合わせず `staleDerived` として「手入力から計算されるのに自動値のままの指標」を返し、画面に注意として出す。**★ パスは allowlist のみ** — 任意パスを書けると `__proto__` を渡されて困る（CSV 取り込みで実際に踏んだ形）。列挙にしておけば「置ける数値の一覧」がそのまま入力欄になる。**★ `OverviewPage` の合流点は 1 か所**（`applyOverviewOverrides(computedOverview, …)`）なので、約 60 か所の表示・スコアカード・レポートがまとめて手入力後の値を見る。**★ mutation 100%（517 変異体・pragma 0 個）** — 到達の過程で 3 つの等価変異をコードの単純化で消した（罠 2-c に追記）。|
 | **直近完了作業** | 🎯✅ **出典の識別子衝突を 0 件にした（95 → 53 → 16 → 1 → 0）— 4 つの出典台帳がすべて空** — 最後に残った `diamond|1971`（Diamond & Mirrlees 1971, AER 61(1) 8–27）は、**DOI が存在しないことを確定**させて片付けた。付いていた 2 つの DOI はどちらも Review of Economic Studies の別論文（Peleg & Yaari 1973 / Johnson 1960）で、正しい DOI は 4 通りの検索でも裏付けが取れなかった。**AEA 自身が公開している論文 PDF**（URL に巻・号・頁が入っている `aeaweb.org/aer/top20/61.1.8-27.pdf`）へ差し替え、ラベルに「1971 年の本論文に DOI は確認できない」と明記した。**★ これで `lint:citations`（同一 DOI の出版年矛盾）・`lint:doi-prefix` の 3 検査（ISBN チェックディジット／誌コード／出版社矛盾）・識別子衝突のすべてが台帳 0 件**になり、除外なしで green になっている。**★ 通底していた形**: 誤り DOI の多くは「別文献」ですらなく、**実在しない DOI が機械的な組み合わせで作られていた** — 出版社プレフィックス + 別書籍の ISBN、正解文献の開始頁からの生成、シリーズ全体の DOI の流用。**★ DOI を直すたびにラベルの誤りが露出した**（掲載誌・媒体種別の取り違えが計 5 件）。**★ 二重登録は誤りではない**（Maitlis 2014 / Felin 2015 — 出版社移管に伴う再登録。台帳に例外を足さず現行出版元へ統一）。 |
 | **直近完了作業** | 🏁✅ **出典の識別子衝突を 1 件まで削減（95 → 53 → 16 → 1）— 残るは `diamond|1971` のみ** — DOI が存在しない書籍 7 群 16 箇所を、**実在確認できた参照 URL** へ差し替えた。**★ 偽 DOI を消すのではなく、正しい参照へ置き換えた** — 出版社ページ（Polity / Wiley / OUP / Hachette）と 図書館目録（WorldCat）を使い分け、ラベルに出版社・年・ISBN を明記した。**URL は創作せず、検索結果のリンク一覧に実在したものだけ**を採用。**★ 版の取り違えを避けた**: Sen 1970 は版元 Holden-Day が消滅企業のため出版社ページが原理的に無く WorldCat へ。Harvard UP 2017 拡張版・North-Holland 1979 改訂版の URL は**別版なので除外**した。Viner 1950 は Carnegie 版に DOI も ISBN も無いため、ラベルで「引用は OUP 2014 年復刻版」と原著と参照実体を分けて書いた。**★ Srnicek は出版社ページを採らなかった** — Polity の slug が 2 種に揺れ、埋め込み ISBN もハードカバー版で不一致だったため WorldCat を選択。**★ 台帳 8 → 1**。残る `diamond|1971` は「文献は AER 61(1):8–27 と確定、JSTOR stable 1910538 まで判明、ただし DOI 登録の裏付けが取れない」ところまで絞れており、note にそう書いてある。 |
 | **直近完了作業** | 🔍✅ **出典の識別子衝突を 16 → 8 件に。「DOI が存在しない」を確定させる判定を新設** — 検索予算が回復したので残りを 4 並列で照合した。**未確定は 1 件だけ**（`diamond|1971`）まで絞れた。**★ 残りの正体は「誤った DOI」ではなく「そもそも DOI が無い書籍」だった** — 7 群がこれで、Sen 1970 / Srnicek 2017 / Wajcman 2004 / Zuboff 2019 / Citton 2017 / Huff 1990 / Viner 1950。ISBN まで特定済み。**「DOI が存在しないことの確定」も成果として扱えるよう `no-doi` 判定を用意した**。**★ 偽 DOI の作られ方が見えた**: Zuboff の `10.1515/9781610396196` は「De Gruyter のプレフィックス + **別書籍**の ISBN」の組み合わせ。Huff の `10.1002/9781118785317` は Wiley Encyclopedia of Management **全体**の DOI だった。**★ DOI を直すとラベルの誤りが露出する**（前回に続き 2 件）: Ocasio 1997 は Organization Science ではなく **Strategic Management Journal**、Tarafdar 2007 は Decision Sciences ではなく **Journal of Management Information Systems**。**★ 二重登録は誤りではない**: Felin 2015 は Annals の出版社移管（vol.9 まで T&F → vol.10 から AOM）で同一サフィックスのまま再登録されたもの。Maitlis 2014 と同じ形なので、台帳に例外を足さず現行出版元へ統一した。**★ CI で回せないテストも実行**: `e2e`（フル/lite とも全項目 pass）・`perf`（lite DCL 198ms / full 644ms・起動時の巨大 JSON.parse ゼロ）・`smoke`（72 ページすべて別画像）。レンダラーを触ったので出荷前に必要なもの。 |
@@ -262,6 +263,12 @@ legalShares 空/合計≠1.0/要素負 は throw。基礎控除式の固定値�
 **同一の `FinancialInputs` に連動**する一気通貫システム。すべて純粋ロジック + ユニットテスト付き。
 **全て「概算であり財務助言ではありません」を明記** (士業法の制約: 試算+一般情報のみ)。
 
+- `data/overviewOverrides.ts` — **自動計算の上に手入力を重ねる層**。8 区分 45 項目の allowlist
+  (`OVERRIDABLE_FIELDS`) と、任意項目の追加 (`parseCustomMetric`)。`applyOverviewOverrides` は
+  `overridden` / `ignored` / `staleDerived` を返す。**上書きは表示の置き換えであって再計算ではない** —
+  派生値は自動値のままにして `staleDerived` で知らせる (黙って辻褄を合わせない)。
+  `OverviewPage` の合流点は 1 か所なので、以降の表示・スコアカード・レポートが全部これを見る。
+  mutation 100% (517 変異体・pragma 0)。
 - `data/businessFinancials.ts` — `deriveBusinessFinancials(月次KPI)` が年次 `FinancialInputs` を概算生成
   (PL×12 / BS は売上スケール + 自己資本比率を収益性で15–65%変動 / CF簡易間接法)。事業別BSデータが
   無いための案A (概算導出)。
@@ -509,6 +516,50 @@ Stryker は「どのテストも落ちなかった」＝**生存**として数�
 **変異体 814 → 695・pragma 0 個**で 100% に届いた。
 「読めない値はどの閾値にも引っかからない」という方針を、ガードの羅列ではなく
 演算そのもので表現できているかを先に疑うこと。
+
+2026-08 の `overviewOverrides` でも **pragma 0 個で 100%** に届いた。消し方は 3 つとも
+「判定を減らす」だった:
+
+1. **`{ changed, next }` の対 → `T | null`**。書けなかったときの `next` は誰も見ないので、
+   その返り値の中身を壊しても差が出ない（`ObjectLiteral → {}` が等価になる）。
+   「書けなかった」を **null 1 つ**で表すと、その変異体ごと消える。
+2. **`typeof v === 'object' && v !== null && !Array.isArray(v)` → `Object.prototype.toString.call(v) === '[object Object]'`**。
+   枝を分けると、どの枝も単独では観測できる差にならない（関数は typeof で落ち、null はその先の
+   `Object.hasOwn` で落ちる）。1 本の判定にすると分岐そのものが無くなり、変異体が 6 → 2 に減って全部死んだ。
+3. **`typeof v === 'string' && UNITS.includes(v)` → `(UNITS as readonly unknown[]).includes(v)`**。
+   非文字列は `includes` が落とすので `typeof` は等価。同じ形が
+   `typeof o.value !== 'number' || !Number.isFinite(o.value)` にもあり、`Number.isFinite` は
+   型変換しないので前半は不要だった。
+
+**索引の Map をモジュール初期化で作るのもやめた**（罠 2-b と同じ理由）。
+`new Map(FIELDS.map((f) => [f.path, f]))` はアロー変異で `new Map([undefined, …])` になり
+**モジュール初期化で throw → テスト収集失敗 → 「生存」扱い**になる。45 件なら
+`FIELDS.find((f) => f.path === path)` で十分速く、変異体はテスト失敗として素直に死ぬ。
+
+### 罠 2-c-2: テストの期待値を「対象そのもの」から組み立てると定義を消す変異が素通りする
+
+データ表を検査するとき、こう書くと**表を空にする変異（`ArrayDeclaration`）が全部生き残る**:
+
+```ts
+// ✗ 期待値を対象から作っている
+for (const f of OVERRIDABLE_FIELDS.filter((f) => (f.derivedFrom ?? []).length > 0)) {
+  for (const src of f.derivedFrom!) { /* src を置くと f が警告に出る */ }
+}
+```
+
+`derivedFrom` を空にする変異は、ループの母集合からその項目を落とすだけなので、
+**期待値も一緒に消えて**テストは通ってしまう。`overviewOverrides` では
+これで 24 個の変異体が残っていた（87.6%）。
+
+直し方は**期待値をテスト側に書き写す**こと。45 項目の path / label / section / unit /
+derivedFrom を丸ごと表にしてテストファイルに置き、
+`expect(OVERRIDABLE_FIELDS.map((f) => f.path)).toEqual(EXPECTED.map((f) => f.path))` と
+1 件ずつの照合、さらに**件数の決め打ち**（`expect(withDeps.length).toBe(26)`）を足したところ
+24 個が一度に死んだ（87.6% → 94.0%）。**逆向き**（表に無い組み合わせは警告に出ない）も
+併せて書くと、定義を「足す」変異も捕まる。
+
+書き写しは冗長に見えるが、これは**「一覧が仕様である」ことをテストに置く**行為で、
+一覧をうっかり触ったときに差分として出る。定義から作った期待値は仕様を検査していない。
 
 ### 罠 2-d: `--mutate` を複数回渡すと最後の 1 つしか効かない
 `npx stryker run --mutate a.ts --mutate b.ts` は **b.ts だけ**を変異させる（上書き）。
