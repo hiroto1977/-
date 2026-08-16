@@ -1,5 +1,6 @@
 import path from 'node:path';
 import vm from 'node:vm';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, transformWithEsbuild, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -93,10 +94,31 @@ function academicJsonParse(): Plugin {
   };
 }
 
+// Vite HMR は 5173 へ WebSocket を張るので、開発時だけ CSP にその origin が要る。
+// index.html には**書かない** — Electron 版はあの meta をそのまま同梱するので、
+// 書いておくと製品版のレンダラが 5173 を握るローカルプロセスへ通信できてしまう
+// (画面遷移側は main.ts の allowNavigation が既に isDev で閉じている)。
+// 「製品で消す」ではなく「開発で足す」向きにしてあるのは、処理が壊れたときに
+// 壊れるのが製品の防御ではなく開発時の HMR になるようにするため。
+function devCspOrigins(): Plugin {
+  const req = createRequire(import.meta.url);
+  const { addDevOriginsToCsp } = req('./scripts/dev-csp.cjs') as {
+    addDevOriginsToCsp: (html: string) => string;
+  };
+  return {
+    name: 'dev-csp-origins',
+    apply: 'serve',
+    transformIndexHtml(html: string) {
+      return addDevOriginsToCsp(html);
+    },
+  };
+}
+
 export default defineConfig({
   root: 'src/renderer',
   plugins: [
     academicJsonParse(),
+    devCspOrigins(),
     react(),
     electron([
       {

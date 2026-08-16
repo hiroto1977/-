@@ -9,7 +9,13 @@ import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault } from '../security/vault';
-import { getProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import {
+  MAX_PROXY_SECRET_LENGTH,
+  MAX_PROXY_URL_LENGTH,
+  describeProxyEndpointFailure,
+  type ProxyEndpointFailure,
+} from '../../shared/proxyEndpoint';
 import {
   isFsaSupported,
   pickFolder,
@@ -831,12 +837,16 @@ function ProxySection() {
   const [editing, setEditing] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  // 「保存はされているが、今の規則では使えない」状態。黙って未設定に見せると
+  // 利用者はプロキシが効かない理由に辿り着けない。
+  const [rejected, setRejected] = useState<ProxyEndpointFailure | null>(null);
 
   async function refresh() {
-    const c = await getProxyConfig();
-    setCfg(c);
-    setUrl(c?.url ?? '');
-    setSecret(c?.sharedSecret ?? '');
+    const { config, rejected: why } = await inspectStoredProxyConfig();
+    setCfg(config);
+    setRejected(why);
+    setUrl(config?.url ?? '');
+    setSecret(config?.sharedSecret ?? '');
   }
   useEffect(() => {
     refresh();
@@ -893,7 +903,7 @@ function ProxySection() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://my-worker.example.com/proxy"
-            maxLength={1024}
+            maxLength={MAX_PROXY_URL_LENGTH}
             style={pwInput}
           />
           <input
@@ -901,7 +911,7 @@ function ProxySection() {
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
             placeholder="共有秘密 (任意・空欄可)"
-            maxLength={256}
+            maxLength={MAX_PROXY_SECRET_LENGTH}
             style={pwInput}
           />
           <div style={{ display: 'flex', gap: 6 }}>
@@ -928,6 +938,15 @@ function ProxySection() {
         </div>
       )}
 
+      {rejected !== null && (
+        <div
+          data-proxy-rejected
+          style={{ fontSize: 11, color: '#f59e0b', marginTop: 6, lineHeight: 1.6, border: '1px solid #f59e0b', borderRadius: 6, padding: '6px 8px' }}
+        >
+          保存されているプロキシ設定は、今の規則では使えないので<strong>無効にしています</strong>。
+          {' '}{describeProxyEndpointFailure(rejected)} 設定し直してください。
+        </div>
+      )}
       {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
       {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
     </div>

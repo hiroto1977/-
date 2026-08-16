@@ -26,7 +26,7 @@ aliases:
 ピーター・ダイアモンド ／ ジェームズ・マーリース ／ フランク・ラムゼー ／ エマニュエル・サエズ
 
 ## 出典
-- [Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）](https://doi.org/10.2307/2296458) `学術`
+- [Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）（American Economic Review 61(1), 8–27。AEA 公開の論文 PDF。1971 年の本論文に DOI は確認できない）](https://www.aeaweb.org/aer/top20/61.1.8-27.pdf) `学術`
 - [Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208（所得税の最適設計）](https://doi.org/10.2307/2296779) `学術`
 - [Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）](https://doi.org/10.1111/1467-937X.00166) `学術`
 - [Wikipedia: Optimal tax — Diamond-Mirrlees, Ramsey rule, Mirrlees zero-top-rate theorem, Saez analysis](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`

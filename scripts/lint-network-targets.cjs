@@ -138,6 +138,41 @@ const REVIEWED = [
 ];
 
 /**
+ * 送り先が**丸ごと変数**の送信。
+ *
+ * 上の検出器はテンプレートリテラルを探す。組み立てを捕まえる設計なので、
+ * **一度も組み立てられない送り先**は原理的に掛からない —
+ * `fetch(cfg.url, …)` のように、URL がまるごと保存済みデータから来る形である。
+ * 2026-08 の監査で、それがこのアプリで**最も価値の高い送り先**
+ * (BYO プロキシ: 全サービスのトークンが封筒に入って通る) だと分かったので、
+ * 別の入口として数える。
+ *
+ * 対象を「プロパティ参照」に絞るのは、`f(url, init)` のような転送ヘルパの
+ * 素の引数まで拾うと台帳が「呼び出し側で検証済み」だらけになり、
+ * **本当に見たい数件が埋もれる**ため。オブジェクトから読み出しているのは
+ * 「どこかに保持されていた URL をここで送っている」印になる。
+ *
+ * **この検出器の限界**: `const u = cfg.url; fetch(u, …)` と一度ローカルへ
+ * 置き換えれば掛からない。完全な検査ではなく、**新しい送り先が増えたときに
+ * 台帳を書かせるための入口**である。限界を書かずに置くと「見張っているつもり」
+ * になるので明記する。
+ */
+const BARE_SEND = /\b(?:fetch|fetchFn|doFetch|f)\s*\(\s*([A-Za-z_$][\w$]*\.[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*,/;
+
+const REVIEWED_VARIABLE_DESTINATIONS = [
+  {
+    file: 'src/shared/ai/chat.ts',
+    dest: 'httpReq.url',
+    guard: 'buildRequest が組み立てた直後の値。各 provider の base は resolveBase → shared/aiEndpoint.ts を通っている (上の providers.ts の 5 件と同じ絞り)',
+  },
+  {
+    file: 'src/renderer/network/proxy.ts',
+    dest: 'proxyChecked.url',
+    guard: 'normalizeProxyEndpoint → shared/proxyEndpoint.ts。保存時・読み出し時・送信直前の 3 か所すべてで通す。http は loopback のみ (全サービスのトークンが乗るため)・userinfo 禁止・制御文字禁止・断片禁止。送るのは検証した正規化 href そのもの',
+  },
+];
+
+/**
  * **ホスト部**が定数か。
  *
  * 見るのはホストだけで、パスやクエリの補間は対象外。ここが見張りたいのは
@@ -181,6 +216,31 @@ function collect() {
   return found;
 }
 
+/** 送り先が丸ごと変数の送信を集める（BARE_SEND の説明を参照）。 */
+function collectBareSends() {
+  const found = [];
+  for (const root of ROOTS) {
+    const abs = path.join(REPO_ROOT, root);
+    if (!fs.existsSync(abs)) continue;
+    for (const file of walk(abs)) {
+      const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
+      const lines = fs.readFileSync(file, 'utf8').split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        // 文字列 / コメントの中の `f(a.b, …)` を拾わない（学術コーパスの
+        // 本文に `f(A,M,O)` のような記法が実在する）。
+        const trimmed = line.trim();
+        if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
+        const m = BARE_SEND.exec(line);
+        if (!m) continue;
+        if (/^\s*['"`]/.test(line) || /['"]\s*$/.test(trimmed)) continue;
+        found.push({ file: rel, line: i + 1, dest: m[1] });
+      }
+    }
+  }
+  return found;
+}
+
 function* walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.name === '__tests__' || e.name === 'node_modules') continue;
@@ -206,6 +266,29 @@ function main() {
     }
   }
 
+  const bare = collectBareSends();
+  for (const f of bare) {
+    const hit = REVIEWED_VARIABLE_DESTINATIONS.find((r) => r.file === f.file && r.dest === f.dest);
+    if (!hit) {
+      problems.push(
+        `${f.file}:${f.line} — 送り先が丸ごと変数の送信が台帳にありません\n` +
+          `    ${f.dest}\n` +
+          `    どこで検証した URL なのかを scripts/lint-network-targets.cjs の\n` +
+          `    REVIEWED_VARIABLE_DESTINATIONS に書いてください。書けないなら絞れていません。`,
+      );
+    }
+  }
+  for (const r of REVIEWED_VARIABLE_DESTINATIONS) {
+    const still = bare.some((f) => f.file === r.file && f.dest === r.dest);
+    if (!still) {
+      problems.push(
+        `${r.file} — 台帳の項目 (送り先が変数) が実在しません (直したか移動した)\n` +
+          `    ${r.dest}\n` +
+          `    REVIEWED_VARIABLE_DESTINATIONS から消してください。`,
+      );
+    }
+  }
+
   for (const r of REVIEWED) {
     const still = found.some((f) => f.file === r.file && f.template === r.template);
     if (!still) {
@@ -218,7 +301,8 @@ function main() {
   }
 
   console.log(
-    `Scanned ${ROOTS.length} directories: ${found.length} network target(s) whose destination comes from a variable`,
+    `Scanned ${ROOTS.length} directories: ${found.length} network target(s) whose destination comes from a variable, ` +
+      `${bare.length} send(s) whose destination is a variable outright`,
   );
   if (problems.length === 0) {
     console.log(`✅ 送り先が変数の通信 ${found.length} 件はすべて台帳にあり、ホスト名を絞っています`);

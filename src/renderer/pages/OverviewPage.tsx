@@ -16,6 +16,11 @@ import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceShee
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
+import {
+  MANUAL_OVERRIDES_COLLECTION,
+  applyManualOverrides,
+  type ManualOverrideEntry,
+} from '../data/manualData';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
@@ -178,7 +183,12 @@ export function OverviewPage() {
     [accountingMonthly, repayments],
   );
 
-  const overview = useMemo(
+  // 手入力の保存先は全画面共通 (manual-overrides)。入力欄は App が 1 か所で
+  // 描くので、ここは「読んで適用する」だけを持つ。
+  const overridesCol = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+  const overrideRecords = overridesCol.records;
+
+  const computedOverview = useMemo(
     () =>
       buildBusinessOverview({
         plan,
@@ -192,6 +202,14 @@ export function OverviewPage() {
       }),
     [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords],
   );
+
+  // 手入力の上書きを自動計算の上に重ねる。**ここ 1 か所**で、以降の表示・
+  // スコアカード・レポートすべてが手入力後の数値を見る。
+  const applied = useMemo(
+    () => applyManualOverrides('overview', computedOverview, overrideRecords.map((r) => r.data)),
+    [computedOverview, overrideRecords],
+  );
+  const overview = applied.overview;
 
   // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
   const scorecard = useMemo(() => {
@@ -407,6 +425,24 @@ export function OverviewPage() {
                   sub={`改善 +${yen.format(c.profitImprovement)}`}
                 />
               ))}
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {applied.staleDerived.length > 0 && (
+        <Section title="自動値のままの指標">
+          <div
+            data-stale-derived
+            style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)' }}
+          >
+            <strong style={{ color: '#f59e0b' }}>
+              手で置いた数値から計算される指標が、自動値のままです。
+            </strong>
+            <div style={{ marginTop: 4 }}>{applied.staleDerived.map((d) => d.label).join(' / ')}</div>
+            <div style={{ marginTop: 4 }}>
+              上書きは表示の置き換えであり、再計算はしません。必要なものは画面下の
+              「事業・数値の手入力」から併せて置いてください。
             </div>
           </div>
         </Section>

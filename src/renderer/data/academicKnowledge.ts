@@ -28325,7 +28325,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'モーリス・ロレ ／ フランク・ラムゼイ ／ ピーター・ダイアモンド ／ ジェームズ・ミールリーズ ／ マイケル・キーン ／ ベン・ロックウッド',
     asOf: '2026-06-25',
     sources: [
-      { url: 'https://doi.org/10.2307/2296076', type: 'academic', label: 'Diamond & Mirrlees (1971) Optimal Taxation and Public Production — American Economic Review' },
+      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond & Mirrlees (1971) Optimal Taxation and Public Production — American Economic Review（American Economic Review 61(1), 8–27。AEA 公開の論文 PDF。1971 年の本論文に DOI は確認できない）' },
       { url: 'https://doi.org/10.1016/j.jpubeco.2009.11.001', type: 'academic', label: 'Keen & Lockwood (2010) The Value-Added Tax: Its Causes and Consequences — Journal of Public Economics' },
       { url: 'https://doi.org/10.2307/2222721', type: 'academic', label: 'Ramsey (1927) A Contribution to the Theory of Taxation — Economic Journal' },
       { url: 'https://www.imf.org/external/np/pp/eng/2011/041511.pdf', type: 'government', label: 'IMF (2011) Revenue Mobilization in Developing Countries' },
@@ -30218,7 +30218,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ピーター・ダイアモンド ／ ジェームズ・マーリース ／ フランク・ラムゼー ／ エマニュエル・サエズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.2307/2296458', type: 'academic', label: 'Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）' },
+      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）（American Economic Review 61(1), 8–27。AEA 公開の論文 PDF。1971 年の本論文に DOI は確認できない）' },
       { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208（所得税の最適設計）' },
       { url: 'https://doi.org/10.1111/1467-937X.00166', type: 'academic', label: 'Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）' },
       { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — Diamond-Mirrlees, Ramsey rule, Mirrlees zero-top-rate theorem, Saez analysis' },

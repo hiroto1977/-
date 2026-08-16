@@ -358,10 +358,7 @@ function citationKey(label) {
  * 同一文献に矛盾する識別子が付いていると分かっている群の台帳。**双方向**。
  * 共通する事実: **少なくとも一方の識別子が誤り**。どちらが誤りかは未確認。
  */
-const DUPLICATE_ID_ALLOWLIST = new Map([
-  ['diamond|1971|optimal taxation public production',
-    '未確定: Diamond, P. A. & Mirrlees, J. A. (1971) “Optimal Taxation and Public Production I: Production Efficiency”, American Economic Review 61(1), 8–27（続編 II: Tax Rules は同 61(3), 261–278）。判明した誤り: 10.2307/2296458 は Peleg, B. & Yaari, M. E. (1973) “On the Existence of a Consistent Course of Action when Tastes are Changing”, The Review of Economic Studies 40(3), 391–401。 / 10.2307/2296076 は Johnson, L. L. (1960) “The Theory of Hedging and Speculation in Commodity Futures”, The Review of Economic Studies 27(3), 139–151。。2つの DOI はいずれも Review of Economic Studies の別論文で、Diamond–Mirrlees とは無関係（高確度）。正しい DOI は未確認。AER の 1999年以前の古い論文は AEA の 10.1257 接頭辞 DOI を持たないため、あるとすれば JSTOR の 10.2307/1910538 だが、これを裏付けるペー'],
-]);
+const DUPLICATE_ID_ALLOWLIST = new Map([]);
 
 const ALLOWLIST = new Map([
   // 以下は本ゲート導入時 (2026-08) に検出された分。いずれも一次資料に当たって
