@@ -366,6 +366,27 @@ async function phoneSuite(browser) {
   await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
   ok(true, 'phone: ドロワー遷移 + 自動クローズ');
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  // 手入力欄はスマホでも使う。入力が横に並ぶので、開いた状態で
+  // 横スクロールが出ないこと・タップで事業を足せることまで見る。
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  ok(await noHScroll(page), 'phone: 手入力欄を開いても横スクロールなし');
+  const manualFontPx = await page
+    .locator('input[aria-label="事業名"]')
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  ok(
+    manualFontPx >= 16,
+    `phone: 手入力欄のフォント ${manualFontPx}px ≥ 16px (自動ズーム防止)`,
+  );
+  await page.locator('input[aria-label="事業名"]').fill('スマホ事業');
+  await page.getByRole('button', { name: '事業を追加' }).tap();
+  await page.waitForSelector('[data-business-unit]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-business-unit]').innerText()).includes('スマホ事業'),
+    'phone: タップ操作で事業を追加できる',
+  );
+  ok(await noHScroll(page), 'phone: 事業を足した後も横スクロールなし');
+
   ok(realErrs.length === 0, `phone: console エラーゼロ (${realErrs.length})`);
   await ctx.close();
 }
