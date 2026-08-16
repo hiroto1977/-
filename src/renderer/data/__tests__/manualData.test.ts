@@ -31,7 +31,7 @@ const mt = (scope: string, label: string, value: number): ManualMetricEntry => (
  * 一覧を持つ画面の期待値。**定義側から組み立てない** — 一覧を空にする変更が
  * 期待値も一緒に消してしまうため（罠 2-c-2）。
  */
-const EXPECTED_SCOPES = ['overview', 'sales'];
+const EXPECTED_SCOPES = ['overview', 'sales', 'kpi'];
 
 describe('画面ごとの一覧', () => {
   // 宣言順そのものを固定する（並べ替えないので、順序を変えたら落ちる）。
@@ -50,6 +50,41 @@ describe('画面ごとの一覧', () => {
       ['totalOrders', '受注件数', 'count'],
       ['aov', '平均単価', 'yen'],
     ]);
+  });
+
+  it('KPI の一覧は 8 項目で、パスとラベルが期待どおり', () => {
+    expect(catalogFor('kpi').map((f) => [f.path, f.label, f.unit])).toEqual([
+      ['variableCost', '変動費', 'yen'],
+      ['fixedCost', '固定費', 'yen'],
+      ['contribution', '限界利益', 'yen'],
+      ['contributionRatio', '限界利益率', 'pct'],
+      ['operatingProfit', '営業利益', 'yen'],
+      ['bep', '損益分岐点 (BEP)', 'yen'],
+      ['bepRatio', 'BEP 比率', 'pct'],
+      ['safetyMargin', '安全余裕率', 'pct'],
+    ]);
+  });
+
+  // 計算の連鎖 (変動費 → 限界利益 → 営業利益 / BEP → 比率 → 安全余裕率) を
+  // 宣言どおりに書き写して固定する。定義側から作ると、消した変更が素通りする。
+  it('KPI の計算元が期待どおり', () => {
+    const deps = Object.fromEntries(
+      catalogFor('kpi').map((f) => [f.path, f.derivedFrom ?? null]),
+    );
+    expect(deps).toEqual({
+      variableCost: null,
+      fixedCost: null,
+      contribution: ['variableCost'],
+      contributionRatio: ['contribution'],
+      operatingProfit: ['contribution', 'fixedCost'],
+      bep: ['fixedCost', 'contribution'],
+      bepRatio: ['bep'],
+      safetyMargin: ['bepRatio'],
+    });
+  });
+
+  it('KPI のまとまりは 費用 / 損益 / 分岐点 の順', () => {
+    expect(sectionsFor('kpi').map((g) => g.section)).toEqual(['費用', '損益', '分岐点']);
   });
 
   it('平均単価は売上合計と受注件数から計算されると宣言している', () => {
@@ -155,6 +190,27 @@ describe('applyManualOverrides', () => {
     const r = applyManualOverrides('sales', base, [ov('sales', 'totalAmount', 999)]);
     expect(r.staleDerived.map((d) => d.path)).toEqual(['aov']);
     expect(r.staleDerived[0]?.because).toEqual(['totalAmount']);
+  });
+
+  it('KPI の上書きも同じ入口で当たり、連鎖する指標が staleDerived に出る', () => {
+    const base = {
+      variableCost: 10,
+      fixedCost: 20,
+      contribution: 30,
+      contributionRatio: 40,
+      operatingProfit: 10,
+      bep: 50,
+      bepRatio: 60,
+      safetyMargin: 40,
+    };
+    const r = applyManualOverrides('kpi', base, [ov('kpi', 'contribution', 999)]);
+    expect(r.overview.contribution).toBe(999);
+    // 限界利益から計算されるのは 限界利益率 / 営業利益 / BEP。
+    expect(r.staleDerived.map((d) => d.path).sort()).toEqual([
+      'bep',
+      'contributionRatio',
+      'operatingProfit',
+    ]);
   });
 
   it('経営サマリーの上書きも同じ入口で当たる', () => {

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7306** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7564) |
+| ユニットテスト | **7310** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7568) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1064,7 +1064,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | 種類 | collection | どの画面で使えるか |
 |---|---|---|
 | 任意項目 | `manual-metrics` | **全 74 画面**。アプリが計算しない数字を足す |
-| 置き換え | `manual-overrides` | 一覧 (allowlist) を持つ画面だけ (`overview` / `sales`) |
+| 置き換え | `manual-overrides` | 一覧 (allowlist) を持つ画面だけ (`overview` 45 / `sales` 3 / `kpi` 8 項目) |
 | 事業 | `business-units` | 全画面で共有。任意項目の付け先になる |
 
 外部 API の値を「置き換え」の対象にしないのは、取得元を書き換えたことにすると

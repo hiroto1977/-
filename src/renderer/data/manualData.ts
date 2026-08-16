@@ -83,6 +83,40 @@ const CATALOGS: Readonly<Record<string, readonly OverridableField[]>> = {
       derivedFrom: ['totalAmount', 'totalOrders'],
     },
   ],
+  kpi: [
+    { path: 'variableCost', label: '変動費', section: '費用', unit: 'yen' },
+    { path: 'fixedCost', label: '固定費', section: '費用', unit: 'yen' },
+    { path: 'contribution', label: '限界利益', section: '損益', unit: 'yen', derivedFrom: ['variableCost'] },
+    {
+      path: 'contributionRatio',
+      label: '限界利益率',
+      section: '損益',
+      unit: 'pct',
+      derivedFrom: ['contribution'],
+    },
+    {
+      path: 'operatingProfit',
+      label: '営業利益',
+      section: '損益',
+      unit: 'yen',
+      derivedFrom: ['contribution', 'fixedCost'],
+    },
+    {
+      path: 'bep',
+      label: '損益分岐点 (BEP)',
+      section: '分岐点',
+      unit: 'yen',
+      derivedFrom: ['fixedCost', 'contribution'],
+    },
+    { path: 'bepRatio', label: 'BEP 比率', section: '分岐点', unit: 'pct', derivedFrom: ['bep'] },
+    {
+      path: 'safetyMargin',
+      label: '安全余裕率',
+      section: '分岐点',
+      unit: 'pct',
+      derivedFrom: ['bepRatio'],
+    },
+  ],
 };
 
 /** 一覧を持たない画面が返すもの。毎回作らず同じ配列を返す。 */
