@@ -66,6 +66,11 @@ export function StatusBar({
   const [token, setToken] = useState('');
   const [oauthSupported, setOauthSupported] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
+  // 資格情報の保存・認証の失敗を出す場所。`errorMessage` は取得側 (親の
+  // useServiceData) の prop なのでここからは書けない — 独立した状態が要る。
+  // 監査前は OAuth 失敗を console.error にだけ出していた (コメントは
+  // 「errorMessage スロットに出す」と書いてあったが、実際には出せない)。
+  const [credentialError, setCredentialError] = useState<string>();
 
   // 読み手のいない資格情報は求めない (`shared/credentialUse.ts`)。判定は 1 か所で
   // 行い、以降は `tokenUi` だけを見る — 入力欄・OAuth ボタン・自動編集開始の
@@ -96,15 +101,17 @@ export function StatusBar({
     () => async () => {
       if (!serviceId || !window.serviceHub) return;
       setAuthorizing(true);
+      setCredentialError(undefined);
       const res = await window.serviceHub.authorize(serviceId);
       setAuthorizing(false);
       if (res.ok) {
         setEditing(false);
         onRefresh?.();
-      } else {
-        // Surface failure inline via the existing errorMessage slot.
-        console.error('OAuth authorize failed:', res.message);
+        return;
       }
+      // 画面に出す。出さないと、同意を拒否した場合と通信が失敗した場合と
+      // 成功した場合が利用者から区別できない。
+      setCredentialError(`認証できませんでした: ${res.message}`);
     },
     [serviceId, onRefresh],
   );
@@ -124,7 +131,14 @@ export function StatusBar({
 
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
-    await window.serviceHub.setToken(serviceId, token.trim());
+    setCredentialError(undefined);
+    // 保存できたかどうかは **戻り値で判断する**。main は上限超えなどを弾いた
+    // ことを返してくるので、成功扱いで入力欄を閉じてはいけない。
+    const res = await window.serviceHub.setToken(serviceId, token.trim());
+    if (!res.ok) {
+      setCredentialError(`保存できませんでした: ${res.message}`);
+      return;
+    }
     setToken('');
     setEditing(false);
     onRefresh?.();
@@ -132,6 +146,7 @@ export function StatusBar({
 
   const clearToken = async () => {
     if (!serviceId || !window.serviceHub) return;
+    setCredentialError(undefined);
     await window.serviceHub.clearToken(serviceId);
     setEditing(false);
   };
@@ -194,6 +209,11 @@ export function StatusBar({
         </span>
       )}
       {right}
+      {credentialError ? (
+        <span data-credential-error role="alert" style={{ color: 'var(--danger)', fontSize: 12 }}>
+          {credentialError}
+        </span>
+      ) : null}
       {errorMessage ? (
         <span style={{ color: 'var(--danger)', fontSize: 12 }}>{errorMessage}</span>
       ) : null}

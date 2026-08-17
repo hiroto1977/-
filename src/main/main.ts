@@ -11,6 +11,8 @@ import {
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { isServiceId } from '../shared/serviceId';
+import { checkTokenInput } from '../shared/tokenInput';
+import type { TokenSaveResult } from '../preload/preload';
 import { redactSecrets } from './clients/types';
 import { exportRoot } from './clients/exportPaths';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
@@ -203,11 +205,27 @@ ipcMain.handle('app:openPath', async (_e, filePath: unknown) => {
   await shell.openPath(target);
 });
 
-ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown) => {
-  if (!isServiceId(serviceId) || typeof token !== 'string') return;
-  const trimmed = token.trim();
-  if (trimmed.length === 0 || trimmed.length > 65536) return;
-  await setToken(serviceId, trimmed);
+// 弾いた理由を **返す**。以前は `return;` で黙って捨てており、renderer からは
+// 保存できた場合と区別が付かなかった (上限超えの貼り付けが「保存した」ように
+// 見えていた)。規則は shared/tokenInput.ts に 1 つだけ置く。
+ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Promise<TokenSaveResult> => {
+  if (!isServiceId(serviceId)) {
+    return { ok: false, code: 'invalid_service', message: 'unknown service id' };
+  }
+  const checked = checkTokenInput(token);
+  if (!checked.ok) {
+    return { ok: false, code: 'invalid_token', message: checked.message };
+  }
+  try {
+    await setToken(serviceId, checked.value);
+  } catch (e) {
+    return {
+      ok: false,
+      code: 'write_failed',
+      message: e instanceof Error ? e.message : '資格情報の保存に失敗しました',
+    };
+  }
+  return { ok: true };
 });
 ipcMain.handle('secrets:clear', async (_e, serviceId: unknown) => {
   if (!isServiceId(serviceId)) return;

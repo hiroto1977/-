@@ -11,6 +11,12 @@ export type ActionResult<T = unknown> =
   | { ok: true; data: T }
   | { ok: false; code: 'action_not_found' | 'not_configured' | 'action_failed'; message: string };
 
+/** 資格情報の保存結果。`void` だと「弾いた」と「保存した」が区別できず、
+ *  renderer が保存できたように振る舞ってしまう (2026-08 監査)。 */
+export type TokenSaveResult =
+  | { ok: true }
+  | { ok: false; code: 'invalid_service' | 'invalid_token' | 'write_failed'; message: string };
+
 export type OAuthResult =
   | { ok: true; data: { scope?: string; expiresAt?: number } }
   | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
@@ -34,7 +40,7 @@ const api = {
   openPath: (filePath: string): Promise<void> =>
     ipcRenderer.invoke('app:openPath', filePath),
 
-  setToken: (serviceId: ServiceId, token: string): Promise<void> =>
+  setToken: (serviceId: ServiceId, token: string): Promise<TokenSaveResult> =>
     ipcRenderer.invoke('secrets:set', serviceId, token),
   clearToken: (serviceId: ServiceId): Promise<void> =>
     ipcRenderer.invoke('secrets:clear', serviceId),

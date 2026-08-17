@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7420** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7678) |
+| ユニットテスト | **7432** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7690) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 248 | 自己検証 |
+| `file:line` 参照数 | 251 | 自己検証 |
 
 ### 統合フロー図
 
@@ -376,6 +376,40 @@ reject が来ないので不動作で、**トークン未設定でも「実行�
 `serviceHub.invoke` で、代入も return もされていない」形を落とす。`const r = await …`
 や `(await …).ok` は素通りする。監査時点で違反 0 件なので allowFile は持たせて
 いない。陰性対照 8 通り (捨てる 4 形 + 使う 4 形) で発火と素通りを確かめている。
+
+#### 資格情報の書き込みも結果を返す (`src/shared/tokenInput.ts`)
+
+同じ「失敗が見えない」形が資格情報の保存にもあった。`secrets:set` は
+
+```ts
+if (!isServiceId(serviceId) || typeof token !== 'string') return;
+const trimmed = token.trim();
+if (trimmed.length === 0 || trimmed.length > 65536) return;
+```
+
+と **弾いたことを黙って捨てて** おり、戻り値は `void`。`StatusBar.saveToken` は
+それを成功として扱い、入力欄を閉じて `onRefresh()` まで呼んでいた。つまり
+**上限を超える貼り付けは保存されないまま「保存した」ように見え**、次の取得で
+認証エラーが出ても原因が画面に出ない。
+
+- `checkTokenInput()` が受理可否と**理由**を返す。上限 (`TOKEN_MAX_LENGTH`) の
+  定義もここ 1 つ — main と renderer に書き写すとずれる。
+- `secrets:set` は `TokenSaveResult` (`invalid_service` / `invalid_token` /
+  `write_failed`) を返す。`secrets.ts` の書き込み失敗も握り潰さない。
+- ブラウザ版 (`web-shim.ts`) の `setToken` も同じ規則・同じ戻り値にした。
+
+OAuth の失敗も同様に見えていなかった。`StatusBar.browserAuth` は
+
+```ts
+// Surface failure inline via the existing errorMessage slot.
+console.error('OAuth authorize failed:', res.message);
+```
+
+と、**コメントは「errorMessage スロットに出す」と書いてあるのに console にしか
+出していなかった** (`errorMessage` は親の `useServiceData` から来る prop なので、
+StatusBar からは書けない)。同意拒否・通信失敗・成功が利用者から区別できない状態
+だった。独立した `credentialError` 状態を持たせ、保存失敗と認証失敗の両方を
+`[data-credential-error]` として画面に出す。対象は OAuth 配線済みの 10 プロバイダ。
 
 ### 2.2 `fetch:snapshot` シーケンス
 
