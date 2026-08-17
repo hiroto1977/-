@@ -156,3 +156,76 @@ describe('encrypted backup', () => {
     expect(isEncryptedBackup(await serializeBackup(RECORDS))).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// 手入力したデータがバックアップで往復すること
+// ---------------------------------------------------------------------------
+
+/**
+ * 事業・任意の数値・置き換えは利用者が手で入れた**帳簿**なので、
+ * バックアップから抜けると気付かないまま失われる。
+ *
+ * `exportAll` は collection を問わず全件を出すので原理的には入るが、
+ * 復元側は `isSafeCollection` (`^[a-z][a-z0-9-]{0,63}$`) を通す。
+ * **collection 名がその形から外れると、黙って捨てられる**。
+ * 名前を変えたときにここで落ちるようにしておく。
+ */
+describe('手入力データのバックアップ往復', () => {
+  const MANUAL_RECORDS: readonly StoredRecord[] = [
+    {
+      id: 'bu-1',
+      collection: 'business-units',
+      createdAt: 3,
+      updatedAt: 3,
+      data: { name: '物販事業', category: '小売', startedOn: '2024-04' },
+    },
+    {
+      id: 'mm-1',
+      collection: 'manual-metrics',
+      createdAt: 2,
+      updatedAt: 2,
+      data: { scope: 'github', label: '想定客単価', value: 4800, unit: 'yen', businessId: 'bu-1' },
+    },
+    {
+      id: 'mo-1',
+      collection: 'manual-overrides',
+      createdAt: 1,
+      updatedAt: 1,
+      data: { scope: 'overview', path: 'kpi.revenue', value: 12345678 },
+    },
+  ];
+
+  it('3 つの collection が中身ごと往復する', async () => {
+    const restored = await parseBackup(await serializeBackup(MANUAL_RECORDS));
+    expect(restored).toEqual(MANUAL_RECORDS);
+  });
+
+  it('collection 名が復元側の規則を満たす（満たさないと黙って捨てられる）', () => {
+    const safe = /^[a-z][a-z0-9-]{0,63}$/;
+    for (const r of MANUAL_RECORDS) {
+      expect(safe.test(r.collection), r.collection).toBe(true);
+    }
+  });
+
+  it('事業と数値の結び付き (businessId) が保たれる', async () => {
+    const restored = await parseBackup(await serializeBackup(MANUAL_RECORDS));
+    const metric = restored.find((r) => r.collection === 'manual-metrics');
+    const unit = restored.find((r) => r.collection === 'business-units');
+    expect(metric?.data['businessId']).toBe(unit?.id);
+  });
+
+  it('置き換えの scope とパスが保たれる', async () => {
+    const restored = await parseBackup(await serializeBackup(MANUAL_RECORDS));
+    const ov = restored.find((r) => r.collection === 'manual-overrides');
+    expect(ov?.data).toEqual({ scope: 'overview', path: 'kpi.revenue', value: 12345678 });
+  });
+
+  it('他のデータと混ざっていても失われない', async () => {
+    const mixed = [...RECORDS, ...MANUAL_RECORDS];
+    const restored = await parseBackup(await serializeBackup(mixed));
+    expect(restored).toHaveLength(mixed.length);
+    for (const c of ['business-units', 'manual-metrics', 'manual-overrides']) {
+      expect(restored.some((r) => r.collection === c), c).toBe(true);
+    }
+  });
+});
