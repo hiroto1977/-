@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7397** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7655) |
+| ユニットテスト | **7420** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7678) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 247 | 自己検証 |
+| `file:line` 参照数 | 248 | 自己検証 |
 
 ### 統合フロー図
 
@@ -344,6 +344,38 @@ stub、`LIVE_ACTIONS` に登録なし、`src/shared/api/` にもクライアン�
 2 つのゲートが同じ読み方をしていることを構造で保証している。見ているのは
 「client モジュールが `token` という名前に触るか」で、データフロー解析ではない —
 「触るが実は使っていない」形は通り、**触りもしないのに預かる**形は落ちる。
+
+#### アクション結果の読み方 (`src/renderer/data/actionOutcome.ts`)
+
+`action:invoke` の IPC ハンドラは **失敗しても reject せず** `{ ok: false, code,
+message }` を返す (未知のサービス・未登録アクション・トークン未設定・アクション内の
+throw をすべて戻り値で表す)。同じアクションを呼ぶ 3 経路が、この事実の扱いを
+別々に持っていた:
+
+| 経路 | `ok:false` | `persisted:false` |
+|---|---|---|
+| `ServiceActionPanel` | 表示していた | 表示していた |
+| `ChatbotWidget` | 表示していた | **見ていなかった** |
+| `VoiceCommandBar` | **戻り値ごと捨てていた** | **見ていなかった** |
+
+音声経路がいちばん重い。`await invoke()` の後ろに `.catch()` を置いていたが
+reject が来ないので不動作で、**トークン未設定でも「実行した」ことになり対象ページへ
+遷移**していた。「GitHub に issue を作って」「Slack に送って」が黙って何もせず、
+しかも遷移が「やった」という合図になる。
+
+`classifyActionResult()` が判別可能ユニオン (`failed` / `accepted-not-saved` /
+`ok`) を返し、`failed` を弾いた後は `data` が narrow される。**分類だけ**を共有し、
+文言は経路ごとに残している (パネルは時刻を添える・チャットは遷移を予告する)。
+失敗時は遷移しない — 対象ページが開くこと自体が主張になるため。
+
+音声セッションの状態機械には `notice` 相を足した。`executed` で `idle` へ戻すと
+パネルが閉じて但し書きが伝わらないので、但し書きがある時だけ `notice` に留まる
+(`timeout` では消さず、`cancel` / 次の発話で閉じる)。
+
+`lint:forbidden` の 14 番目のパターンが「文の先頭が `await` / `void` 付きの
+`serviceHub.invoke` で、代入も return もされていない」形を落とす。`const r = await …`
+や `(await …).ok` は素通りする。監査時点で違反 0 件なので allowFile は持たせて
+いない。陰性対照 8 通り (捨てる 4 形 + 使う 4 形) で発火と素通りを確かめている。
 
 ### 2.2 `fetch:snapshot` シーケンス
 

@@ -13,6 +13,7 @@
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
  */
 import { navigateTo } from '../navigate';
+import { classifyActionResult } from '../data/actionOutcome';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import { replyTo, type ChatReply } from '../data/chatbot';
@@ -180,12 +181,22 @@ export function ChatbotWidget() {
     setBusy(true);
     const res = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
     setBusy(false);
-    if (res.ok) {
-      append({ role: 'bot', text: '✅ 実行しました。対象ページへご案内します。' });
-      navigateTo(intent.serviceId);
-    } else {
-      append({ role: 'bot', text: `⚠ 実行に失敗しました: ${res.message}` });
+    // 分類は `data/actionOutcome.ts` に集約する。ここは文言だけを持つ。
+    // `persisted: false` を見ずに「実行しました」と言うと、保存されないメモを
+    // 保存したことにしてしまう (2026-08 監査)。
+    const classified = classifyActionResult(res);
+    if (classified.verdict === 'failed') {
+      append({ role: 'bot', text: `⚠ 実行に失敗しました: ${classified.message}` });
+      return;
     }
+    append({
+      role: 'bot',
+      text:
+        classified.verdict === 'accepted-not-saved'
+          ? '⚠ 受け付けましたが、まだ保存されません (Phase 6 で対応)。対象ページへご案内します。'
+          : '✅ 実行しました。対象ページへご案内します。',
+    });
+    navigateTo(intent.serviceId);
   };
 
   const send = async (raw: string) => {

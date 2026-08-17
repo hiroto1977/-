@@ -108,6 +108,28 @@ const FORBIDDEN_PATTERNS = [
     rationale: 'invariant #5 — external URLs flow through app:openExternal',
   },
   {
+    // `serviceHub.invoke()` の戻り値を捨てている呼び出し。
+    //
+    // `action:invoke` は失敗しても reject せず `{ ok: false, code, message }` を
+    // 返す (未知のサービス・未登録アクション・トークン未設定・アクション内の
+    // throw をすべて戻り値で表す)。したがって戻り値を捨てると **失敗が成功と
+    // 区別できなくなる**。2026-08 の監査時点で `VoiceCommandBar.performIntent`
+    // が実際にそうなっており、トークン未設定でも「実行した」ことになって
+    // 対象ページへ遷移していた (「GitHub に issue を作って」が黙って何も
+    // 作らない)。
+    //
+    // 見るのは「文の先頭が await/void 付きの invoke で、代入も return も
+    // されていない」形だけ。`const r = await …` / `return await …` /
+    // `(await …).ok` は素通りする。網羅ではなく、この書き方の再発を止めるもの。
+    name: 'serviceHub.invoke の戻り値を捨てている',
+    pattern: /^\s*(?:await|void)\s+window\.serviceHub\??\.invoke\b/,
+    codeOnly: true,
+    rationale:
+      'invoke は失敗を例外ではなく戻り値で返すため、捨てると失敗が成功に見える。' +
+      'classifyActionResult (renderer/data/actionOutcome.ts) を通して、' +
+      'failed なら理由を出し、成功を装う遷移をしないこと',
+  },
+  {
     name: 'window.open',
     pattern: /\bwindow\.open\s*\(/,
     // 唯一の例外がブラウザ版の openExternal 実装そのもの。そこは

@@ -41,6 +41,8 @@ export type VoiceSessionPhase =
   | 'parsed'
   | 'awaiting-confirmation'
   | 'executing'
+  /** 実行は通ったが利用者に伝えるべき但し書きがある (保存されない stub 等)。 */
+  | 'notice'
   | 'error';
 
 /** セッションの完全な状態 (イミュータブル)。 */
@@ -54,6 +56,8 @@ export interface VoiceSessionState {
   readonly needsConfirmation: boolean;
   /** error 状態の理由 (ユーザー向け文言)。 */
   readonly error?: string;
+  /** notice 状態の但し書き (ユーザー向け文言)。 */
+  readonly notice?: string;
 }
 
 /** reducer が受け取るイベント。 */
@@ -68,8 +72,9 @@ export type VoiceSessionEvent =
   | { readonly type: 'confirm' }
   /** ユーザーが取り消した (どの段階からでも idle へ)。 */
   | { readonly type: 'cancel' }
-  /** 実行が完了した (executing → idle)。 */
-  | { readonly type: 'executed' }
+  /** 実行が完了した (executing → idle)。`notice` があれば idle ではなく
+   *  notice へ入り、パネルを開いたまま但し書きを見せる。 */
+  | { readonly type: 'executed'; readonly notice?: string }
   /** 認識・実行中にエラーが発生した。 */
   | { readonly type: 'error'; readonly message: string }
   /** タイムアウト (無音や応答なし)。 */
@@ -187,12 +192,16 @@ export function reduceVoiceSession(
       }
       return { ...state, phase: 'executing' };
 
-    // executed: executing 中のみ受理し idle へ戻す。それ以外は無視。
+    // executed: executing 中のみ受理する。但し書きが無ければ idle へ戻し、
+    // あれば notice に留まる (idle だとパネルが閉じて伝わらない)。
     case 'executed':
       if (state.phase !== 'executing') {
         return state;
       }
-      return INITIAL_VOICE_SESSION;
+      if (event.notice === undefined) {
+        return INITIAL_VOICE_SESSION;
+      }
+      return { phase: 'notice', needsConfirmation: false, notice: event.notice };
 
     // timeout: 承認待ち (listening / parsed / awaiting-confirmation) の無応答を
     // idle へ畳む。既に確定し実行中の操作 (executing) は中断しない。
