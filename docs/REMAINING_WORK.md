@@ -1,6 +1,6 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-07-30
+最終更新: 2026-08-17
 対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 
 このドキュメントは「今の状態から先に何が残っているか」を並べたランブックです。
@@ -10,61 +10,53 @@
 
 ---
 
-## 現状（2026-07-30 実測）
+## 現状（2026-08-17 実測）
 
-- [x] **72 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
-- [x] 全 72 サービスのライブフェッチャー（`LIVE_FETCHERS` は総和型。欠けたら起動時に落ちる）
+- [x] **74 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
+- [x] 全 74 サービスのライブフェッチャー（`LIVE_FETCHERS` は総和型。欠けたら起動時に落ちる）
 - [x] write アクション（`LIVE_ACTIONS`）+ `lint:test-coverage` が全サービスのテストとアクションを強制
-- [x] OAuth 2.0 + PKCE code flow — **5 プロバイダ配線済み**（drive / calendar / gmail / freee / microsoft-365）
+- [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
+      （drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian）
 - [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
-- [x] **テスト 6,064 件合格**・typecheck・`verify:all` 13 ゲート green
-- [x] ブラウザ単体版 `dist/standalone.html`（10.0 MB）と LITE 版 `standalone-lite.html`（2.2 MB）
+- [x] **テスト 7,588 件合格**・typecheck・`verify:all` **18 ゲート** green
+- [x] ブラウザ単体版 `dist/standalone.html`（10.78 MB）と LITE 版 `standalone-lite.html`（2.67 MB）
+      — CI が両方の下限・上限を検査（LITE は 4MB 上限 + 85% 到達で警告）
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
       — AppImage / `.deb` / arm64 `.dmg` / Windows `.exe`
 - [x] GitHub Pages 配信（landing + デモ 3 種 + lite）
-- [x] 知識コーパス **4,141 項目**（学術 3,519 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
-      + Obsidian vault 7,535 ノート + knowledge-graph（nodes 4,141 / edges 20,925）
-- [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**
+- [x] 知識コーパス **4,140 項目**（学術 3,518 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
+      + Obsidian vault 7,543 ノート + knowledge-graph（nodes 4,140 / edges 20,978）
+- [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**（識別子衝突も 0）
+- [x] **全 74 画面で任意の数値・事業を追加できる**（`manual-metrics` / `business-units`）。
+      計算値の置き換えは一覧を持つ 5 画面 65 項目（overview 45 / sales 3 / kpi 8 /
+      real-estate 5 / mutual-funds 4）
 
 未完了の主要タスク（優先度順）:
-- [x] **知識コーパスの増強バックログ 0 件 — 完走**（学術 0 / 法令実務 0）
-      — `npm run knowledge:auto` が「✅ 全て最新 — LLM 作業なし」を出力。増強・再検証・asOf・重複疑い 3 系列・
-      出典衛生・リンク切れの **8 キューすべて 0 件**。以後は監査で新規に積まれた分だけを消化すればよい
-- [ ] **単発誤 DOI の掃討** — `lint:citations` は同一 DOI に年の矛盾があるときだけ落ちるので、
-      **1 回しか引かれていない DOI の誤りは原理的に検出できない**（2,449 引用の大半が単発）。
-      接頭辞と誌名/出版社の整合は機械判定できるので、そこを検査するゲートが次の恒久対策
-- [x] **dev 依存の脆弱性を 15 件 → 2 件へ削減**（2026-08-11 実測。**本番依存は従来どおり 0 件**）。
-      二段で処理した:
-      1. `npm audit fix`（非破壊・semver 互換のみ）で 7 件解消 —
-         postcss / undici / brace-expansion / fast-uri / js-yaml / nanoid / @babel/core
-      2. **vitest 2.1.9 → 4.1.10 のメジャー更新**で残る 6 件（critical 2 含む）を解消。
-         vitest / @vitest/coverage-v8 / vite / vite-node / esbuild / @vitest/mocker の鎖は
-         メジャー更新でしか塞げなかった。`vitest.config.ts` は environment / include /
-         isolate / pool / timeout / retry しか使っておらず、v3・v4 の破壊的変更
-         （workspace・environmentMatchGlobs 等）に触れていないため無改修で通った
-      検証: 270 ファイル 6,748 テスト green（実行時間 **86 秒 → 42 秒**に半減）/
-      `test:cov` のカバレッジ取得 OK / Stryker（peer は `vitest >=2.0.0`）も
-      dry-run で 27,618 mutant の計装と 6,286 テストの初回実行に成功
-- [ ] **残る 2 件は上流待ち**（moderate 2）— いずれも
+
+**2026-08-17 時点で、手元で進められる工学的な残作業は無い。** 下に残っているものは
+いずれも (a) 外部の資格情報や別 OS が要る、(b) 上流の修正待ち、(c) 破壊的なので
+意図的に保留、のいずれかである。「やれるのに放置している項目」は無い。
+
+- [x] **知識コーパスの増強バックログ 0 件 — 完走**
+      — `npm run knowledge:auto` が「✅ 全て最新 — LLM 作業なし」を出力。増強・再検証・asOf・
+      重複疑い 3 系列・出典衛生・リンク切れの **8 キューすべて 0 件**（2026-08-17 再確認）
+- [x] **単発誤 DOI の掃討** — 恒久対策として `lint:doi-prefix` を新設済み。
+      DOI 接頭辞と誌名/出版社の矛盾・埋め込み ISBN のチェックディジット・同一誌コードの矛盾・
+      同一文献の別 DOI（識別子衝突）を機械判定する。**4 つの台帳すべて 0 件・除外リストなし**
+- [x] **OAuth: 他プロバイダの config 追加** — Notion / Slack / Canva / WordPress / Atlassian は
+      配線済み（計 10 プロバイダ）
+- [x] **dev 依存の脆弱性を 15 件 → 2 件へ削減**（本番依存は 0 件のまま）
+- [ ] **残る 2 件は上流待ち**（moderate 2・**本番依存は 0 件**）— いずれも
       `@stryker-mutator/core` → `typed-rest-client` → `qs` の推移依存で、
       Stryker 側がリリースするまで手元では塞げない。`npm audit` は最新の
       アドバイザリを都度取得するため件数は変動する — 数える前に実行すること
-- [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ
-- [ ] OAuth: 他プロバイダ（Notion / Slack / Canva / WordPress / Atlassian）の config 追加
-- [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）
-- [x] **リポジトリ肥大の増加を停止**（追跡除外・非破壊）— `.git` の実測内訳は
-      `dist/standalone.html` 362MB（327 版）/ `academicKnowledge.ts` 306MB（本体ソース・不可避）/
-      `dist-chunks/part-*` 106MB / knowledge-graph の education 176MB。
-      このうち **ビルド生成物の 2 つを追跡から外した**（`git rm --cached`・作業ツリーは保持）:
-      `dist/standalone.html` は CI と Pages が `build:web` で毎回作り直すため追跡版は未使用、
-      `dist-chunks/` は v0.1.0 Release が AppImage を直接配布するため冗長。
-      knowledge-graph / knowledge-vault は `vault:check` / `verify:graph` が
-      本体データとの byte 一致を検査する**検証対象の成果物**なので追跡を維持する
+- [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ。**x64 の macOS ランナーが要る**
+- [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）— **証明書の調達が前提**
 - [ ] **`.git` 1.3 GB 自体の縮小は未実施**（履歴書き換えが必要なため別判断）。
       `git filter-repo` / BFG で上記 blob を履歴から削れば約 470MB 減る見込みだが、
       全コミット SHA が変わり force-push で既存クローンと PR が壊れる。破壊的なので保留
-- [ ] `e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザ・Electron が要るため **CI 外**。
-      renderer や起動性能を触ったらローカルで回すこと
+- [ ] `e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザ・Electron が要るため **CI 外**
+      （Actions 分の節約という意図的な判断）。renderer や起動性能を触ったらローカルで回すこと
 
 ---
 
@@ -98,7 +90,7 @@ chmod +x ServiceHub.AppImage
 
 ```
 https://hiroto1977.github.io/-/app.html      # フル版
-https://hiroto1977.github.io/-/lite.html     # モバイル用ライト版（約 2MB）
+https://hiroto1977.github.io/-/lite.html     # モバイル用ライト版（約 2.7MB）
 ```
 
 ローカルで作る場合は `npm run build:web` → `dist/standalone.html`
@@ -119,7 +111,7 @@ npm run build      # release/ に .dmg / .exe を出力
 ### 動作確認チェックリスト
 
 - [ ] Electron ウィンドウが開く
-- [ ] サイドバーに 72 サービスがカテゴリ別（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）で表示される
+- [ ] サイドバーに 74 サービスがカテゴリ別（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）で表示される
 - [ ] 各タブをクリックしてスナップショットデータが表示される
 - [ ] GitHub タブで「PAT を設定」 → PAT を貼り付け → 「保存」 → バッジが `Live` に変わる
 - [ ] 「更新」ボタンで再フェッチ → 最新の自分の PR が表示される
