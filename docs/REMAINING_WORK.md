@@ -18,7 +18,7 @@
 - [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
       （drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian）
 - [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
-- [x] **テスト 7,710 件合格**・typecheck・`verify:all` **22 ゲート** green
+- [x] **テスト 7,722 件合格**・typecheck・`verify:all` **22 ゲート** green
 - [x] ブラウザ単体版 `dist/standalone.html`（10.78 MB）と LITE 版 `standalone-lite.html`（2.67 MB）
       — CI が両方の下限・上限を検査（LITE は 4MB 上限 + 85% 到達で警告）
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
@@ -290,6 +290,38 @@ fetcher も write アクションも資格情報を読まないのに、トー�
   `none` のサービスに `tokenSetup` を書いたページがあれば落ちる
 
 `shopify` は fetcher が stub だがアクションが実際に通信するため対象外。
+
+---
+
+## セキュリティ診断が「無い」と「確認できない」を区別できない
+
+2026-08-17 に `autoLockEnabled` を実測へ切り替えた（診断が「自動ロック: 未対応」と
+告げていたが、ブラウザ版では実際に動いていた）。残る 2 項目は**まだ観測していない**:
+
+| 項目 | 現状 | なぜ |
+|---|---|---|
+| `integrityVerified` | `false` 固定 | レコードストアの改ざん検知は常時検証が未配線 |
+| `cloudBackup` | 実際に 0 件 | クラウド同期パネルはデモで、構成が永続化されない |
+
+`cloudBackup: []` は**嘘ではない**（構成が存在しない）。問題は
+`integrityVerified` のほうで、`buildDbSecurityReport` の入力が `boolean` しか
+取れないため「確認していない」を「対応していない」として点数から差し引いている。
+利用者から見ると、**手を打っても消えない改善候補**が常に残る。診断が消えない
+指摘を出し続けると、読む側は診断全体を無視するようになる（「常に緑を返すゲートは
+無いより悪い」の裏返し）。
+
+直し方は決めていないので未着手:
+
+- `SecurityCheck` に `status: 'ok' | 'missing' | 'unknown'` を持たせ、`unknown` を
+  改善候補と別枠で出す。点数は「確認できた項目のうち」の比率にするか、`unknown` を
+  減点のまま**表示だけ分ける**かで、意味が変わる。
+  - 比率にすると、観測を増やすほど点が動いて履歴が比較できなくなる。
+  - 減点のままにすると、満点に到達できないままである。
+- どちらを選ぶかは「診断が何を約束するか」の決定なので、実装より先にそこを決める。
+
+`autoLock` の実測は `src/renderer/data/dbPosture.ts` に置いた。次に観測を増やす時も
+画面の中ではなくここへ足すこと（画面の中で組み立てると、実測を定数へ戻しても
+テストが緑のまま通る）。
 
 ---
 

@@ -50,6 +50,30 @@ export interface AutoLockHandle {
   readonly debugState: () => { lastActivity: number; hiddenSince: number | null };
 }
 
+/**
+ * 現に動いている自動ロックの数。
+ *
+ * セキュリティ診断 (`SecurityPage` → `buildDbSecurityReport`) は自動ロックの
+ * 有無を入力に取るが、2026-08 監査の時点で呼び出し元は `false` を**固定で**
+ * 渡していた (「未検出 (要確認)」というコメント付き)。実際にはブラウザ版で
+ * 自動ロックは動いており、**診断が利用者に「未対応」と告げていた**。
+ * 診断の目的は現状を正しく写すことなので、観測できる事実は観測する。
+ *
+ * `startAutoLock` / `dispose` で増減するだけの素朴な計数。多重起動しても
+ * 「1 つ以上動いている」ことが分かれば診断には足りる。
+ */
+let activeCount = 0;
+
+/** 自動ロックが 1 つ以上動いているか。 */
+export function isAutoLockActive(): boolean {
+  return activeCount > 0;
+}
+
+/** テスト用: 計数を 0 に戻す。 */
+export function _resetAutoLockActiveForTests(): void {
+  activeCount = 0;
+}
+
 // 7 integration tests pin the public contract: listeners are installed,
 // idle timer fires, activity resets, dispose cleans up, double-lock is
 // suppressed. Internal arrow-function default deps + string literal event
@@ -64,6 +88,8 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
 
   const hiddenMs = opts.hiddenTimeoutMs ?? DEFAULT_HIDDEN_MS;
   const idleMs = opts.idleTimeoutMs ?? DEFAULT_IDLE_MS;
+
+  activeCount += 1;
 
   let lastActivity = now();
   let hiddenSince: number | null = null;
@@ -119,6 +145,7 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   function dispose(): void {
     if (disposed) return;
     disposed = true;
+    activeCount -= 1;
     if (hiddenTimer !== null) clearTimeoutFn(hiddenTimer);
     if (idleTimer !== null) clearTimeoutFn(idleTimer);
     if (typeof document !== 'undefined') {
