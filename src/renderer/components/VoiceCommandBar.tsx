@@ -21,6 +21,7 @@ import {
 } from '../data/voiceSession';
 import type { AvailableCapabilities, VoiceIntent } from '../data/voiceCommand';
 import { SERVICE_IDS } from '../../shared/serviceId';
+import { classifyActionResult } from '../data/actionOutcome';
 import {
   isSpeechRecognitionSupported,
   startSpeechRecognition,
@@ -60,20 +61,43 @@ function describeIntent(intent: VoiceIntent): string {
   }
 }
 
+/** `performIntent` の結果。空文字は「伝えることは無い」。 */
+interface IntentOutcome {
+  readonly ok: boolean;
+  /** 失敗理由 (ok=false) または但し書き (ok=true)。 */
+  readonly message: string;
+}
+
+const NOTHING_TO_SAY: IntentOutcome = { ok: true, message: '' };
+
 /**
  * executing 状態の intent を実際に実行する。
  * - navigate / query → 画面遷移
- * - action → serviceHub.invoke (失敗は呼び出し側でハンドルできるよう Promise を返す)
+ * - action → serviceHub.invoke
+ *
+ * **`invoke` は失敗しても reject せず `{ ok: false }` を返す** (`action:invoke` は
+ * 未知のサービス・未登録アクション・トークン未設定・アクション内の throw を
+ * すべて戻り値で表す)。2026-08 監査までここは戻り値を捨てていたため、
+ * 「GitHub に issue を作って」がトークン未設定で何も作らなくても
+ * 「実行した」ことになり、対象ページへ遷移していた。**失敗時は遷移しない** —
+ * 対象ページが開くこと自体が「やった」という合図になってしまう。
  */
-async function performIntent(intent: VoiceIntent): Promise<void> {
-  if (intent.serviceId === undefined) return;
+async function performIntent(intent: VoiceIntent): Promise<IntentOutcome> {
+  if (intent.serviceId === undefined) return NOTHING_TO_SAY;
   if (intent.kind === 'action' && intent.action !== undefined) {
-    await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+    const result = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+    const classified = classifyActionResult(result);
+    if (classified.verdict === 'failed') {
+      return { ok: false, message: `実行できませんでした: ${classified.message}` };
+    }
     // 実行後は対象サービスを開いて結果を確認できるようにする。
     navigateTo(intent.serviceId);
-    return;
+    return classified.verdict === 'accepted-not-saved'
+      ? { ok: true, message: '⚠ 受け付けましたが、まだ保存されません (Phase 6 で対応)' }
+      : NOTHING_TO_SAY;
   }
   navigateTo(intent.serviceId);
+  return NOTHING_TO_SAY;
 }
 
 export function VoiceCommandBar() {
@@ -100,8 +124,16 @@ export function VoiceCommandBar() {
     executedKeyRef.current = key;
     let cancelled = false;
     performIntent(state.intent)
-      .then(() => {
-        if (!cancelled) dispatch({ type: 'executed' });
+      .then((outcome) => {
+        if (cancelled) return;
+        if (!outcome.ok) {
+          dispatch({ type: 'error', message: outcome.message });
+          return;
+        }
+        dispatch({
+          type: 'executed',
+          ...(outcome.message === '' ? {} : { notice: outcome.message }),
+        });
       })
       .catch((err: unknown) => {
         if (!cancelled) {
@@ -231,6 +263,12 @@ export function VoiceCommandBar() {
           )}
 
           {state.phase === 'executing' && <span aria-label="実行中">実行中…</span>}
+
+          {state.phase === 'notice' && (
+            <span className="voice-notice" role="status" style={{ color: 'var(--warn, #d97706)' }}>
+              {state.notice}
+            </span>
+          )}
 
           {state.phase === 'error' && (
             <span className="voice-error" role="alert" style={{ color: 'var(--danger, #ef4444)' }}>

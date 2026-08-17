@@ -647,3 +647,66 @@ describe('セレクタ', () => {
     });
   });
 });
+
+describe('reduceVoiceSession — executed の但し書き (notice)', () => {
+  /**
+   * 2026-08 監査の回帰。`performIntent` が `invoke` の戻り値を捨てていたため、
+   * 失敗も「実行した」ことになっていた。失敗は error へ落とす（既存経路）が、
+   * 「受け付けたが保存されない」は失敗ではないので notice を足した。
+   * idle へ戻すとパネルが閉じて伝わらないため、notice に留まる。
+   */
+  const executing = (): VoiceSessionState => {
+    let s = reduceVoiceSession(INITIAL_VOICE_SESSION, { type: 'start' }, CAP);
+    s = reduceVoiceSession(s, { type: 'transcript', text: 'GitHub を開いて' }, CAP);
+    s = reduceVoiceSession(s, { type: 'parsed' }, CAP);
+    return reduceVoiceSession(s, { type: 'confirm' }, CAP);
+  };
+
+  it('notice 無しの executed は今までどおり idle へ戻す', () => {
+    const s = reduceVoiceSession(executing(), { type: 'executed' }, CAP);
+    expect(s).toEqual(INITIAL_VOICE_SESSION);
+    expect(s.notice).toBeUndefined();
+  });
+
+  it('notice 付きの executed は notice 相へ入り、文言を保持する', () => {
+    const s = reduceVoiceSession(executing(), { type: 'executed', notice: '⚠ 保存されません' }, CAP);
+    expect(s.phase).toBe('notice');
+    expect(s.notice).toBe('⚠ 保存されません');
+    expect(s.needsConfirmation).toBe(false);
+  });
+
+  it('空文字の notice も相として扱う (呼び出し側が空を渡さない責務)', () => {
+    const s = reduceVoiceSession(executing(), { type: 'executed', notice: '' }, CAP);
+    expect(s.phase).toBe('notice');
+    expect(s.notice).toBe('');
+  });
+
+  it('executing 以外からの executed は notice 付きでも無視する', () => {
+    const s = reduceVoiceSession(INITIAL_VOICE_SESSION, { type: 'executed', notice: 'x' }, CAP);
+    expect(s).toEqual(INITIAL_VOICE_SESSION);
+  });
+
+  it('notice から cancel で idle に戻る', () => {
+    const noticed = reduceVoiceSession(executing(), { type: 'executed', notice: 'x' }, CAP);
+    expect(reduceVoiceSession(noticed, { type: 'cancel' }, CAP)).toEqual(INITIAL_VOICE_SESSION);
+  });
+
+  it('notice から start で聞き取りを再開できる', () => {
+    const noticed = reduceVoiceSession(executing(), { type: 'executed', notice: 'x' }, CAP);
+    const s = reduceVoiceSession(noticed, { type: 'start' }, CAP);
+    expect(s.phase).toBe('listening');
+    expect(s.notice).toBeUndefined();
+  });
+
+  it('notice は timeout で消えない (利用者が読むまで残す)', () => {
+    const noticed = reduceVoiceSession(executing(), { type: 'executed', notice: 'x' }, CAP);
+    expect(reduceVoiceSession(noticed, { type: 'timeout' }, CAP)).toBe(noticed);
+  });
+
+  it('notice から transcript / parsed / confirm は無視する', () => {
+    const noticed = reduceVoiceSession(executing(), { type: 'executed', notice: 'x' }, CAP);
+    expect(reduceVoiceSession(noticed, { type: 'transcript', text: 'a' }, CAP)).toBe(noticed);
+    expect(reduceVoiceSession(noticed, { type: 'parsed' }, CAP)).toBe(noticed);
+    expect(reduceVoiceSession(noticed, { type: 'confirm' }, CAP)).toBe(noticed);
+  });
+});

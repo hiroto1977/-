@@ -3,6 +3,7 @@ import type { ServiceId } from '../services';
 import type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
 import { Section } from './StatusBar';
 import { parseAmountInput, sanitizeNote } from './serviceActionUtils';
+import { classifyActionResult } from '../data/actionOutcome';
 import {
   actionReducer,
   adviceResult,
@@ -67,18 +68,20 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
     dispatch({ type: 'record/start' });
     try {
       const r = await window.serviceHub.invoke<RecordEntryResponse>(serviceId, 'record-entry', payload);
-      if (!r.ok) {
-        dispatch({ type: 'error', text: `保存に失敗: ${r.message}` });
+      // BLOCKING-3 対応: persisted=false を構造的に表示。
+      // 分類は `data/actionOutcome.ts` に集約 — 音声・チャットと同じ読み方をする。
+      const classified = classifyActionResult(r);
+      if (classified.verdict === 'failed') {
+        dispatch({ type: 'error', text: `保存に失敗: ${classified.message}` });
         return;
       }
-      // BLOCKING-3 対応: persisted=false を構造的に表示
       const note2 =
-        r.data.persisted === false
+        classified.verdict === 'accepted-not-saved'
           ? '⚠ メモを受け付けました (Phase 6 まで保存されません)'
           : '✅ 保存しました';
       dispatch({
         type: 'record/success',
-        text: `${note2} · ${new Date(r.data.recordedAt).toLocaleTimeString()}`,
+        text: `${note2} · ${new Date(classified.data.recordedAt).toLocaleTimeString()}`,
       });
       setNote('');
       setAmount('');

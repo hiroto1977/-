@@ -185,3 +185,92 @@ describe('VoiceCommandBar — インタラクション', () => {
     expect(invoke).not.toHaveBeenCalled();
   });
 });
+
+// ---- invoke の戻り値を読むこと (2026-08 監査の回帰) ------------------------
+
+describe('VoiceCommandBar — invoke の結果を読む', () => {
+  /**
+   * `action:invoke` は失敗しても reject せず `{ ok: false }` を返す。監査前の
+   * `performIntent` は戻り値を捨てていたため、**トークン未設定でも「実行した」
+   * ことになり対象ページへ遷移**していた。「GitHub に issue を作って」が
+   * 黙って何も作らない状態で、しかも遷移が「やった」という合図になっていた。
+   */
+  let container: HTMLDivElement;
+  let root: Root;
+  let invoke: ReturnType<typeof vi.fn>;
+  let dispatched: CustomEvent[];
+
+  beforeEach(() => {
+    installSpeech();
+    MockRecognition.last = null;
+    invoke = vi.fn();
+    (window as unknown as { serviceHub: unknown }).serviceHub = { invoke };
+    dispatched = [];
+    window.addEventListener('servicehub:navigate', (e) => dispatched.push(e as CustomEvent));
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+    uninstallSpeech();
+    vi.restoreAllMocks();
+  });
+
+  /** 破壊的コマンドを承認まで進める。 */
+  async function runCreateIssue() {
+    act(() => {
+      root.render(createElement(VoiceCommandBar));
+    });
+    const mic = container.querySelector('[aria-label="音声コマンドを開始"]') as HTMLButtonElement;
+    act(() => mic.click());
+    await act(async () => {
+      emitFinal('githubにイシューを作って');
+      await Promise.resolve();
+    });
+    const confirmBtn = container.querySelector('[aria-label="実行を承認"]') as HTMLButtonElement;
+    await act(async () => {
+      confirmBtn.click();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+  }
+
+  it('失敗 (ok:false) は理由を表示し、対象ページへ遷移しない', async () => {
+    invoke.mockResolvedValue({ ok: false, code: 'not_configured', message: 'トークン未設定' });
+    await runCreateIssue();
+    expect(invoke).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain('実行できませんでした');
+    expect(container.textContent).toContain('トークン未設定');
+    expect(dispatched.some((e) => e.detail === 'github')).toBe(false);
+  });
+
+  it('成功は但し書き無しで閉じ、対象ページへ遷移する', async () => {
+    invoke.mockResolvedValue({ ok: true, data: { issueUrl: 'https://example.test/1' } });
+    await runCreateIssue();
+    expect(container.textContent).not.toContain('実行できませんでした');
+    expect(container.textContent).not.toContain('保存されません');
+    expect(dispatched.some((e) => e.detail === 'github')).toBe(true);
+  });
+
+  it('persisted:false は「まだ保存されません」を出したまま残る', async () => {
+    invoke.mockResolvedValue({
+      ok: true,
+      data: { ok: true, recordedAt: '2026-08-17T00:00:00.000Z', persisted: false },
+    });
+    await runCreateIssue();
+    expect(container.textContent).toContain('保存されません');
+    // 但し書きは出すが、実行自体は通っているので遷移はする。
+    expect(dispatched.some((e) => e.detail === 'github')).toBe(true);
+  });
+
+  it('invoke が reject した場合も従来どおりエラー表示', async () => {
+    invoke.mockRejectedValue(new Error('bridge が落ちました'));
+    await runCreateIssue();
+    expect(container.textContent).toContain('bridge が落ちました');
+    expect(dispatched.some((e) => e.detail === 'github')).toBe(false);
+  });
+});
