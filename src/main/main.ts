@@ -13,6 +13,7 @@ import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { isServiceId } from '../shared/serviceId';
 import { redactSecrets } from './clients/types';
 import { exportRoot } from './clients/exportPaths';
+import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
 /** All IPC handlers feed user-supplied strings as map keys. Use this
  *  before indexing to defeat prototype-pollution lookups like
@@ -110,6 +111,33 @@ app.on('window-all-closed', () => {
 });
 
 ipcMain.handle('app:getVersion', () => app.getVersion());
+
+/**
+ * 更新の有無を調べる。**取得もインストールもしない。**
+ *
+ * 署名と公証が入るまで自動更新は入れない (署名の無い配布物を自動で取得して
+ * 実行する経路は、トークンを持つこのアプリでは新しいコード実行の入口になる)。
+ * ここでやるのは公開されている最新版の版番号を読むことだけで、
+ * ダウンロードは利用者がリリースページを開いて行う。
+ *
+ * 送り先は定数。応答は `parseLatestRelease` が形と URL のホストまで確かめる
+ * ので、応答を差し替えられても任意の URL を案内先にはできない。
+ */
+ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
+  const current = app.getVersion();
+  try {
+    const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
+      headers: { accept: 'application/vnd.github+json' },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) return evaluateUpdate(current, null);
+    return evaluateUpdate(current, parseLatestRelease(await res.json()));
+  } catch {
+    // 通信できない・応答が JSON でない等はすべて「判定不能」に寄せる。
+    // 更新の確認が失敗してアプリが使えなくなる理由は無い。
+    return evaluateUpdate(current, null);
+  }
+});
 ipcMain.handle('app:openExternal', async (_e, url: string) => {
   // Defense-in-depth: the renderer is sandboxed and contextIsolated,
   // but the IPC channel accepts any string. Restrict to http(s) to
