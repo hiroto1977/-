@@ -243,9 +243,11 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'linux',
   // コンプライアンス: 確証済み知識の表示のみ。実データは renderer。認証不要。
   'compliance',
-  // Obsidian: ローカル Vault (Markdown) の可視化。実 Vault は fs で読む。認証不要。
+  // Obsidian: ローカル Vault (Markdown) の可視化。認証不要。fetcher は現状 stub で、
+  // 実 Vault の fs 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
   'obsidian',
-  // Docker: ローカル Docker Engine の可視化。実 Engine は socket で読む。認証不要。
+  // Docker: ローカル Docker Engine の可視化。認証不要。fetcher は現状 stub で、
+  // 実 Engine の socket 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
   'docker',
   // AI アシスタント: ページ表示は認証不要 (会話は Anthropic キー設定時のみ)。
   'assistant',

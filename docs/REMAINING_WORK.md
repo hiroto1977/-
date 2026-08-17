@@ -18,7 +18,7 @@
 - [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
       （drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian）
 - [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
-- [x] **テスト 7,588 件合格**・typecheck・`verify:all` **18 ゲート** green
+- [x] **テスト 7,638 件合格**・typecheck・`verify:all` **20 ゲート** green
 - [x] ブラウザ単体版 `dist/standalone.html`（10.78 MB）と LITE 版 `standalone-lite.html`（2.67 MB）
       — CI が両方の下限・上限を検査（LITE は 4MB 上限 + 85% 到達で警告）
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
@@ -28,6 +28,9 @@
       + Obsidian vault 7,543 ノート + knowledge-graph（nodes 4,140 / edges 20,978）
 - [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**（識別子衝突も 0）
 - [x] **全 74 画面で任意の数値・事業を追加できる**（`manual-metrics` / `business-units`）。
+- [x] **画面の数字の出どころを宣言**（`shared/dataOrigin.ts`: remote 15 / local 17 / sample 42）。
+      公式 API 未配線の 24 サービスで「更新を押すと画面が空になり緑の『ライブ』が付く」
+      不具合を修正し、`lint:data-origin` が実装と宣言のズレを双方向で落とす。
       計算値の置き換えは一覧を持つ 5 画面 65 項目（overview 45 / sales 3 / kpi 8 /
       real-estate 5 / mutual-funds 4）
 
@@ -266,6 +269,34 @@ Atlassian。詳細は `docs/OAUTH_SETUP.md`。
 - WordPress.com の `oauth2-1/token` (PKCE・secret 不要) — 検索結果には出るが
   REST API 一般に使えるのか確証が取れず、確認済みの `/oauth2/*` + secret を採用。
   もし一般に使えるなら WordPress も公開クライアントにできる。
+
+---
+
+## 使わない資格情報を求めている画面が 8 つある
+
+`dataOrigin` の監査（2026-08-17）で一緒に見つけたが、別軸なので分けて残す。
+
+対象は **dropbox / salesforce / discord / asana / linear / sentry / stripe / line**。
+いずれも
+
+1. fetcher は stub（`SERVICE_DATA_ORIGIN` が `sample`）で通信しない、
+2. `LIVE_ACTIONS` に登録が無く write 側でも使わない、
+3. それなのに `StatusBar` の `tokenSetup` でトークン入力欄を出し、
+   入力すれば `safeStorage` に暗号化して保存する、
+
+という状態になっている。**使い道の無い資格情報を預かるのは、それ自体が
+漏えい面の追加**であり、利用者から見れば「入れれば繋がる」という誤解にもなる。
+`shopify` も fetcher は stub だがアクションが実際に通信するため対象外。
+
+直し方は 2 つあり、決めていないので未着手:
+
+- **入力欄を消す** — `sample` かつアクション無しなら `tokenSetup` を描画しない。
+  renderer 側でアクションの有無を知る必要があるので、`dataOrigin` と同じ形で
+  もう 1 枚宣言を足し、`lint:data-origin` に相乗りさせて実装と照合する。
+- **保存済みトークンの掃除まで含める** — 過去に保存された分が残るので、
+  `secrets:*` に「使われないサービスの資格情報を一覧・削除する」導線が要る。
+
+前者だけだと既に預かっている分が残るため、後者まで込みで 1 件と数えるのが正しい。
 
 ---
 

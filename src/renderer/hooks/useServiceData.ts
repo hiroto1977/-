@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FetchResult, ServiceId } from '../../preload/preload';
+import { isRefreshable, originOf, type DataOrigin } from '../../shared/dataOrigin';
 
 export type Source = 'snapshot' | 'live';
 export type Status = 'idle' | 'loading' | 'error';
@@ -7,6 +8,8 @@ export type ErrorKind = 'auth' | 'rate_limit' | 'network' | 'unknown';
 
 export interface ServiceState<T> {
   data: T;
+  /** この画面の数字がどこから来るか (`shared/dataOrigin.ts` の宣言)。 */
+  origin: DataOrigin;
   source: Source;
   status: Status;
   errorMessage?: string;
@@ -41,9 +44,13 @@ export function useServiceData<T>(
   const [isConfigured, setIsConfigured] = useState(false);
   // Guard against duplicate auto-refresh in React.StrictMode (double-invoke).
   const autoRefreshFired = useRef(false);
+  const origin = originOf(serviceId);
 
   const refresh = useCallback(async () => {
     if (!window.serviceHub) return;
+    // 取得先が無いサービス (`sample`) は呼ばない。呼ぶと stub の空データで
+    // 画面を上書きし、しかも source='live' になって「取得できた」と嘘をつく。
+    if (!isRefreshable(originOf(serviceId))) return;
     setStatus('loading');
     setErrorMessage(undefined);
     setErrorKind(undefined);
@@ -77,6 +84,8 @@ export function useServiceData<T>(
       if (cancelled) return;
       const has = configured.includes(serviceId);
       setIsConfigured(has);
+      // ここで origin を見る必要は無い — `refresh` 側の門番が `sample` を弾き、
+      // state を触る前に return する。二重に置くと観測差の無い分岐が増える。
       if ((has || options.autoFetch === true) && !autoRefreshFired.current) {
         autoRefreshFired.current = true;
         refresh();
@@ -89,5 +98,5 @@ export function useServiceData<T>(
     /* Stryker restore all */
   }, [serviceId, refresh, options.autoFetch]);
 
-  return { data, source, status, errorMessage, errorKind, refresh, isConfigured };
+  return { data, origin, source, status, errorMessage, errorKind, refresh, isConfigured };
 }
