@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
 import { describeOrigin, isRefreshable, originOf } from '../../shared/dataOrigin';
+import { collectsCredential, credentialUseOf } from '../../shared/credentialUse';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
@@ -66,11 +67,19 @@ export function StatusBar({
   const [oauthSupported, setOauthSupported] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
 
+  // 読み手のいない資格情報は求めない (`shared/credentialUse.ts`)。判定は 1 か所で
+  // 行い、以降は `tokenUi` だけを見る — 入力欄・OAuth ボタン・自動編集開始の
+  // 3 か所へ同じ条件を書き写すと、どれか 1 つが必ず残る。
+  // `serviceId` の無い呼び出し元では保存も削除もできない (どちらも早期 return)
+  // ので、入力欄も出さない。
+  const tokenUi =
+    serviceId !== undefined && collectsCredential(credentialUseOf(serviceId)) ? tokenSetup : undefined;
+
   // When the live fetch fails with an auth error, drop straight into
   // the token re-entry mode — the most common recovery action.
   useEffect(() => {
-    if (errorKind === 'auth' && tokenSetup) setEditing(true);
-  }, [errorKind, tokenSetup]);
+    if (errorKind === 'auth' && tokenUi) setEditing(true);
+  }, [errorKind, tokenUi]);
 
   useEffect(() => {
     if (!serviceId) return;
@@ -128,7 +137,7 @@ export function StatusBar({
   };
 
   const editButtonLabel =
-    errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenSetup?.label ?? 'トークン設定';
+    errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
 
   // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外なら
   // `undefined` になり <img> ごと描画しない（`src=""` を出さない）。
@@ -142,19 +151,19 @@ export function StatusBar({
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{who}</span>
       </div>
       <DutyOwner serviceId={serviceId} />
-      {tokenSetup && !editing && oauthSupported ? (
+      {tokenUi && !editing && oauthSupported ? (
         <button onClick={browserAuth} disabled={authorizing}>
           {authorizing ? '認証中…' : isConfigured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
         </button>
       ) : null}
-      {tokenSetup && !editing ? (
+      {tokenUi && !editing ? (
         <button onClick={() => setEditing(true)}>{editButtonLabel}</button>
       ) : null}
-      {tokenSetup && editing ? (
+      {tokenUi && editing ? (
         <span style={{ display: 'flex', gap: 6 }}>
           <input
             type="password"
-            placeholder={tokenSetup.placeholder ?? 'トークン'}
+            placeholder={tokenUi.placeholder ?? 'トークン'}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             style={{
