@@ -1,5 +1,5 @@
 import { navigateTo } from '../navigate';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
@@ -9,6 +9,8 @@ import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault } from '../security/vault';
+import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
+import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
   MAX_PROXY_SECRET_LENGTH,
@@ -668,6 +670,83 @@ function ConnectionHub({ refreshKey }: { refreshKey: number }) {
   );
 }
 
+
+/**
+ * 読み手のいないサービスに保存されている資格情報の掃除。
+ *
+ * 2026-08 監査で、通信もアクションもしない 8 サービス
+ * (asana / discord / dropbox / line / linear / salesforce / sentry / stripe) が
+ * トークン入力欄を出していた。入力欄は消したが、**それだけでは既に保存された
+ * 分が残る** — しかも入力欄と一緒に「削除」ボタンも消えるので、画面から
+ * 消す手段が無くなる。ここがその出口。
+ *
+ * 該当が無ければ何も描かない。「0 件です」を常時出すと、他の警告と混ざって
+ * 読み飛ばされる。
+ */
+function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
+  const [ids, setIds] = useState<readonly ServiceId[] | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const reload = useCallback(async () => {
+    const hub = window.serviceHub;
+    if (!hub) {
+      setIds([]);
+      return;
+    }
+    try {
+      setIds(unusedStoredCredentials(await hub.listConfigured()));
+    } catch {
+      setIds([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    void reload();
+  }, [reload, refreshKey]);
+
+  const forget = async (id: ServiceId) => {
+    const hub = window.serviceHub;
+    if (!hub) return;
+    setBusy(id);
+    try {
+      await hub.clearToken(id);
+      await reload();
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  if (ids === null || ids.length === 0) return null;
+
+  const labelOf = (id: ServiceId) => SERVICES.find((s) => s.id === id)?.label ?? id;
+
+  return (
+    <section data-unused-credentials>
+      <h3 style={{ margin: '0 0 8px', fontSize: 14 }}>使われていない資格情報 {ids.length} 件</h3>
+      <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+        以下のサービスは現在どの経路でも資格情報を読みません（公式 API 未配線）。
+        保存したままにしても接続はされず、預かっているぶんだけ漏えいの面が広がります。
+        削除しても表示中のデータは変わりません。
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {ids.map((id) => (
+          <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+            <span data-unused-credential={id} style={{ minWidth: 160 }}>
+              {labelOf(id)}
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              用途: {credentialUseOf(id) === 'none' ? 'なし' : credentialUseOf(id)}
+            </span>
+            <button type="button" onClick={() => void forget(id)} disabled={busy === id}>
+              {busy === id ? '削除中…' : '削除'}
+            </button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function SettingsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -728,6 +807,8 @@ export function SettingsPage() {
           ))}
         </div>
       </Section>
+
+      <UnusedCredentialSection refreshKey={refreshKey} />
 
       <Section title="ネットワーク (Phase D)" count={2}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }}>

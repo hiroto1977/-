@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7380** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7638) |
+| ユニットテスト | **7397** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7655) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 243 | 自己検証 |
+| `file:line` 参照数 | 247 | 自己検証 |
 
 ### 統合フロー図
 
@@ -307,6 +307,43 @@ discord / asana / linear / sentry / shopify / stripe / line / storage /
 配線して宣言を直し忘れると落ち (「取れるのに取りに行かない画面」)、逆に live 実装を
 stub へ戻して直し忘れても落ちる (元の嘘が戻る)。`--self-test` が規則ごとに
 1 件だけ鳴ることを合成入力で確かめる。
+
+#### 資格情報の用途 (`src/shared/credentialUse.ts`) — 読み手のいない鍵を預からない
+
+取得元を宣言したことで、別の食い違いが見えた。**通信もアクションもしないのに
+トークン入力欄を出しているサービスが 8 つあった** (`asana` / `discord` /
+`dropbox` / `line` / `linear` / `salesforce` / `sentry` / `stripe`)。入力すれば
+`safeStorage` (ブラウザ版は WebCrypto の Vault) で暗号化保存するが、fetcher は
+stub、`LIVE_ACTIONS` に登録なし、`src/shared/api/` にもクライアントなし —
+**どの経路でも読まれない**。Stripe の秘密鍵や LINE のチャネルトークンを
+使う予定が来るまで預かる理由は無く、読み手のいない資格情報は漏えい面の追加に
+しかならない。利用者から見れば「入れれば繋がる」という誤解にもなる。
+
+`SERVICE_CREDENTIAL_USE` (`src/shared/credentialUse.ts:35`) が全 `ServiceId` に
+ついて用途を宣言する:
+
+| 用途 | 意味 | 件数 |
+|---|---|---|
+| `fetch` | `dataOrigin` が `remote` で client が `token` を参照する | 15 |
+| `action` | 取得には要らないが write アクションが `token` を参照する | 8 |
+| `none` | どの経路でも読まれない — **入力欄を出してはいけない** | 51 |
+
+`StatusBar` は `tokenSetup` を直接見ず、`collectsCredential` を通した `tokenUi`
+だけを見る。入力欄・OAuth ボタン・認証エラー時の自動編集開始の 3 か所へ同じ条件を
+書き写すと必ずどれか 1 つ残るため、判定は 1 か所に置いている。該当 8 ページからは
+`tokenSetup` 自体も外した (画面が求めていないことを画面に書く)。
+
+**入力欄を消すだけでは足りない** — 過去に保存された分が残り、入力欄と一緒に
+「削除」ボタンも消えるので画面から消す手段が無くなる。設定画面の
+`UnusedCredentialSection` が `unusedStoredCredentials()` で該当を挙げ、個別に
+削除できる (0 件なら節ごと描かない)。
+
+`scripts/lint-credential-use.cjs` は宣言と実装を双方向に照合し、さらに
+**`none` のサービスに `tokenSetup` を書いたページが無いこと**まで見る。
+判定材料は `lint-data-origin.cjs` から export した解析関数を再利用しており、
+2 つのゲートが同じ読み方をしていることを構造で保証している。見ているのは
+「client モジュールが `token` という名前に触るか」で、データフロー解析ではない —
+「触るが実は使っていない」形は通り、**触りもしないのに預かる**形は落ちる。
 
 ### 2.2 `fetch:snapshot` シーケンス
 

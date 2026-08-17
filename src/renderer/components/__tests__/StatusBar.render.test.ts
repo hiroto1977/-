@@ -263,3 +263,57 @@ describe('Section コンポーネント', () => {
     expect(html).toContain('アクションボタン');
   });
 });
+
+describe('StatusBar — 読み手のいない資格情報は求めない', () => {
+  /**
+   * 2026-08 監査の回帰。asana / discord / dropbox / line / linear / salesforce /
+   * sentry / stripe は fetcher もアクションも token を読まないのに、トークン
+   * 入力欄を出して暗号化保存していた。呼び出し元 8 ページからは `tokenSetup` を
+   * 外したが、**この層でも塞ぐ**（新しいページが同じ形で足されても効くように）。
+   */
+  const setup = { label: 'API トークン', placeholder: 'Bearer token' } as const;
+
+  it("credentialUse が 'none' のサービスでは tokenSetup を無視する", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, { who: 'Dropbox', serviceId: 'dropbox', tokenSetup: setup }),
+    );
+    expect(html).not.toContain('API トークン');
+    expect(html).not.toContain('トークン設定');
+    expect(html).not.toContain('type="password"');
+  });
+
+  it("credentialUse が 'fetch' のサービスでは今までどおり出す", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, { who: 'GitHub', serviceId: 'github', tokenSetup: setup }),
+    );
+    expect(html).toContain('API トークン');
+  });
+
+  it("credentialUse が 'action' のサービスでも出す", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, { who: 'Security', serviceId: 'security', tokenSetup: setup }),
+    );
+    expect(html).toContain('API トークン');
+  });
+
+  it('serviceId が無い呼び出し元では出さない (保存も削除もできないため)', () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, { who: '汎用パネル', tokenSetup: setup }),
+    );
+    expect(html).not.toContain('API トークン');
+  });
+
+  it("'none' のサービスでも認証エラーの再入力へ落ちない", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatusBar, {
+        who: 'Stripe',
+        serviceId: 'stripe',
+        tokenSetup: setup,
+        status: 'error',
+        errorKind: 'auth',
+      }),
+    );
+    expect(html).not.toContain('type="password"');
+    expect(html).not.toContain('再認証');
+  });
+});

@@ -18,7 +18,7 @@
 - [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
       （drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian）
 - [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
-- [x] **テスト 7,638 件合格**・typecheck・`verify:all` **20 ゲート** green
+- [x] **テスト 7,655 件合格**・typecheck・`verify:all` **21 ゲート** green
 - [x] ブラウザ単体版 `dist/standalone.html`（10.78 MB）と LITE 版 `standalone-lite.html`（2.67 MB）
       — CI が両方の下限・上限を検査（LITE は 4MB 上限 + 85% 到達で警告）
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
@@ -272,31 +272,24 @@ Atlassian。詳細は `docs/OAUTH_SETUP.md`。
 
 ---
 
-## 使わない資格情報を求めている画面が 8 つある
+## 使わない資格情報を求めていた画面 8 つ — 対応済み (2026-08-17)
 
-`dataOrigin` の監査（2026-08-17）で一緒に見つけたが、別軸なので分けて残す。
+`dropbox` / `salesforce` / `discord` / `asana` / `linear` / `sentry` / `stripe` / `line` は
+fetcher も write アクションも資格情報を読まないのに、トークン入力欄を出して
+`safeStorage`（ブラウザ版は Vault）で暗号化保存していた。**読み手のいない資格情報を
+預かること自体が漏えい面**であり、利用者からは「入れれば繋がる」という誤解にもなる。
 
-対象は **dropbox / salesforce / discord / asana / linear / sentry / stripe / line**。
-いずれも
+対応:
 
-1. fetcher は stub（`SERVICE_DATA_ORIGIN` が `sample`）で通信しない、
-2. `LIVE_ACTIONS` に登録が無く write 側でも使わない、
-3. それなのに `StatusBar` の `tokenSetup` でトークン入力欄を出し、
-   入力すれば `safeStorage` に暗号化して保存する、
+- `src/shared/credentialUse.ts` で用途を宣言（fetch 15 / action 8 / none 51）
+- `StatusBar` は `none` なら `tokenSetup` を無視する（判定は 1 か所）
+- 該当 8 ページから `tokenSetup` 自体も外した
+- **保存済みの分の掃除**: 設定画面の「使われていない資格情報」節から個別に削除できる
+  （入力欄を消すと「削除」ボタンも消えるため、出口を別に用意する必要があった）
+- `lint:credential-use`（21 ゲート目）が宣言・実装・画面を双方向に照合し、
+  `none` のサービスに `tokenSetup` を書いたページがあれば落ちる
 
-という状態になっている。**使い道の無い資格情報を預かるのは、それ自体が
-漏えい面の追加**であり、利用者から見れば「入れれば繋がる」という誤解にもなる。
-`shopify` も fetcher は stub だがアクションが実際に通信するため対象外。
-
-直し方は 2 つあり、決めていないので未着手:
-
-- **入力欄を消す** — `sample` かつアクション無しなら `tokenSetup` を描画しない。
-  renderer 側でアクションの有無を知る必要があるので、`dataOrigin` と同じ形で
-  もう 1 枚宣言を足し、`lint:data-origin` に相乗りさせて実装と照合する。
-- **保存済みトークンの掃除まで含める** — 過去に保存された分が残るので、
-  `secrets:*` に「使われないサービスの資格情報を一覧・削除する」導線が要る。
-
-前者だけだと既に預かっている分が残るため、後者まで込みで 1 件と数えるのが正しい。
+`shopify` は fetcher が stub だがアクションが実際に通信するため対象外。
 
 ---
 

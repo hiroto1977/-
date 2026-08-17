@@ -645,6 +645,74 @@ async function dataOriginSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 読み手のいない資格情報 (`shared/credentialUse.ts`)。
+ *
+ * 2026-08 監査の回帰: asana / discord / dropbox / line / linear / salesforce /
+ * sentry / stripe は通信もアクションもしないのにトークン入力欄を出し、入力すれば
+ * 暗号化保存していた。実ブラウザで (1) 入力欄が消えていること (2) 使うサービスでは
+ * 残っていること (3) 過去に保存された分を設定画面から消せることを見る。
+ * (3) は単体テストでは確かめられない — 保存の実体 (Vault) と画面の結線だから。
+ */
+async function credentialSuite(browser) {
+  console.log('--- 使われない資格情報を求めない / 掃除できる ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  await page.goto(FILE + '#dropbox', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('.status-bar', { timeout: 30000 });
+  // ラベルは画面ごとに違う (GitHub は「PAT を設定」) ので、文字列ではなく
+  // **押した結果**で見る。dropbox は sample かつ none なので、更新もトークンも
+  // 出ないボタン 0 個が正しい姿。
+  ok(
+    (await page.locator('.status-bar button').count()) === 0,
+    `Dropbox: 状態バーにボタンを出さない (更新もトークンも無い) — 実際 ${JSON.stringify(
+      await page.locator('.status-bar button').allTextContents(),
+    )}`,
+  );
+
+  await gotoService(page, '#github', '.status-bar');
+  const ghLabels = await page.locator('.status-bar button').allTextContents();
+  const ghEdit = ghLabels.filter((b) => !b.includes('更新'));
+  ok(ghEdit.length === 1, `GitHub: 資格情報の設定ボタンが 1 つある — 実際 ${JSON.stringify(ghLabels)}`);
+  await page.locator('.status-bar button', { hasText: ghEdit[0] }).first().click();
+  ok(
+    (await page.locator('.status-bar input[type=password]').count()) === 1,
+    'GitHub: 押すと資格情報の入力欄が出る (取得に要るので残す)',
+  );
+
+  // 過去に保存された分を作ってから設定画面へ。
+  const stored = await page.evaluate(async () => {
+    await window.serviceHub.setToken('dropbox', 'stale-token-from-before-the-audit');
+    return (await window.serviceHub.listConfigured()).includes('dropbox');
+  });
+  ok(stored === true, '設定前提: dropbox のトークンを保存できた');
+
+  await gotoService(page, '#settings', '[data-unused-credentials]');
+  ok(
+    (await page.locator('[data-unused-credential="dropbox"]').count()) === 1,
+    '設定: 使われていない資格情報として dropbox が挙がる',
+  );
+  await page.locator('[data-unused-credentials] button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-unused-credential="dropbox"]').length === 0,
+    { timeout: 15000 },
+  );
+  const gone = await page.evaluate(async () => (await window.serviceHub.listConfigured()).includes('dropbox'));
+  ok(gone === false, '設定: 削除すると保存先からも消える');
+  ok(
+    (await page.locator('[data-unused-credentials]').count()) === 0,
+    '設定: 0 件になったら節そのものを描かない',
+  );
+
+  ok(errs.length === 0, `資格情報の掃除: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
@@ -660,6 +728,7 @@ async function dataOriginSuite(browser) {
   if (run('desktop')) await desktopSuite(browser);
   if (run('manualData')) await manualDataSuite(browser);
   if (run('dataOrigin')) await dataOriginSuite(browser);
+  if (run('credential')) await credentialSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
