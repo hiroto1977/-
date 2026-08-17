@@ -111,12 +111,47 @@ function encode(value: string): string {
   return `plain:${Buffer.from(value, 'utf8').toString('base64')}`;
 }
 
-function decode(value: string): string | null {
+/**
+ * 保存値の読み出し結果。**「無い」と「読めない」を分ける**のが要点。
+ *
+ * 2026-08 監査で見つけた形: `decode` は OS キーチェーンが使えない時に `null` を
+ * 返し、呼び出し側は「未設定」と解釈して画面に「トークン未設定」と出していた。
+ * 実際には値は保存されており、読めないだけである。利用者はその案内に従って
+ * 貼り直すが、キーチェーンが無い状態なので `encode` は `plain:` (base64 の
+ * 難読化だけ) で保存する — **暗号化されていた資格情報が、誤った案内のせいで
+ * 平文相当へ格下げされる**。同時に `listConfiguredServices` は登録済みと答えるので、
+ * 画面は「トークン更新」(設定済み) と「トークン未設定」(取得失敗) を同時に出していた。
+ */
+export type StoredTokenRead =
+  | { readonly ok: true; readonly token: string }
+  /** 保存されていない。 */
+  | { readonly ok: false; readonly reason: 'absent' }
+  /** 保存はされているが今は読めない (キーチェーン不在 / 値の破損 / 鍵の変化)。 */
+  | { readonly ok: false; readonly reason: 'undecryptable'; readonly message: string };
+
+const UNDECRYPTABLE_NO_KEYCHAIN =
+  '保存された資格情報を復号できません。OS キーチェーン (safeStorage) が利用できない状態です。' +
+  'Linux では gnome-keyring / kwallet を導入してから再試行してください。' +
+  'この状態で貼り直すと、暗号化されない形 (base64 の難読化のみ) で保存されます。';
+
+const UNDECRYPTABLE_CORRUPT =
+  '保存された資格情報を復号できません。値が壊れているか、保存時と別の鍵が使われています。' +
+  '設定画面から削除して、もう一度登録してください。';
+
+function decode(value: string): StoredTokenRead {
   if (value.startsWith('plain:')) {
-    return Buffer.from(value.slice('plain:'.length), 'base64').toString('utf8');
+    return { ok: true, token: Buffer.from(value.slice('plain:'.length), 'base64').toString('utf8') };
   }
-  if (!safeStorage.isEncryptionAvailable()) return null;
-  return safeStorage.decryptString(Buffer.from(value, 'base64'));
+  if (!safeStorage.isEncryptionAvailable()) {
+    return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_NO_KEYCHAIN };
+  }
+  try {
+    return { ok: true, token: safeStorage.decryptString(Buffer.from(value, 'base64')) };
+  } catch {
+    // decryptString は壊れた値や別の鍵で throw する。ここで受けないと IPC
+    // ハンドラごと reject し、renderer 側は「読込中…」のまま止まる。
+    return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_CORRUPT };
+  }
 }
 
 /** Finding 5 fix: if any stored value is `plain:`-prefixed AND
@@ -153,11 +188,19 @@ export async function setToken(serviceId: string, token: string): Promise<void> 
   });
 }
 
-export async function getToken(serviceId: string): Promise<string | null> {
+/** 保存値をそのまま読む (OAuth の TokenSet か生トークン文字列)。 */
+export async function readStoredToken(serviceId: string): Promise<StoredTokenRead> {
   const store = await readStore();
-  const value = store[serviceId];
-  if (!value) return null;
+  const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
+  if (!value) return { ok: false, reason: 'absent' };
   return decode(value);
+}
+
+/** 読めた時だけ文字列を返す薄い読み口 (OAuth の TokenSet 復元に使う)。
+ *  「無い」と「読めない」を区別したい呼び出し側は `readStoredToken` を使う。 */
+export async function getToken(serviceId: string): Promise<string | null> {
+  const read = await readStoredToken(serviceId);
+  return read.ok ? read.token : null;
 }
 
 export async function clearToken(serviceId: string): Promise<void> {
@@ -246,20 +289,23 @@ const inflightRefresh = new Map<ServiceId, Promise<string>>();
  *   - If stored as an OAuth TokenSet and within the refresh window,
  *     hit the provider's token endpoint and persist the new tokens.
  *   - Otherwise return the raw stored string.
- *   - Returns null when nothing is configured.
+ *   - 未設定と「保存済みだが復号できない」を区別して返す
+ *     (`StoredTokenRead`)。前者を後者と混同すると、画面が「未設定」と
+ *     案内して利用者に平文相当での貼り直しをさせてしまう。
  */
-export async function getValidToken(serviceId: ServiceId): Promise<string | null> {
-  const raw = await getToken(serviceId);
-  if (!raw) return null;
+export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRead> {
+  const read = await readStoredToken(serviceId);
+  if (!read.ok) return read;
+  const raw = read.token;
 
   let parsed: unknown = null;
   try {
     parsed = JSON.parse(raw);
   } catch {
     // not JSON → raw bearer token, return as-is
-    return raw;
+    return { ok: true, token: raw };
   }
-  if (!isTokenSet(parsed)) return raw;
+  if (!isTokenSet(parsed)) return { ok: true, token: raw };
 
   const tokens: TokenSet = parsed;
   const config = OAUTH_CONFIGS[serviceId];
@@ -268,7 +314,7 @@ export async function getValidToken(serviceId: ServiceId): Promise<string | null
 
   if (expiresSoon && tokens.refreshToken && config) {
     const existing = inflightRefresh.get(serviceId);
-    if (existing) return existing;
+    if (existing) return { ok: true, token: await existing };
 
     const refreshPromise = (async () => {
       try {
@@ -284,7 +330,7 @@ export async function getValidToken(serviceId: ServiceId): Promise<string | null
       }
     })();
     inflightRefresh.set(serviceId, refreshPromise);
-    return refreshPromise;
+    return { ok: true, token: await refreshPromise };
   }
-  return tokens.accessToken;
+  return { ok: true, token: tokens.accessToken };
 }

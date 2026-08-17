@@ -252,15 +252,26 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   // LOCAL_SERVICES (e.g. 'skills', 'security') read primarily from disk
   // and must work without a saved token. We still pass any saved token
   // through — security uses it for opt-in HIBP/VT enrichment.
+  // 資格情報の読み出しは try の**中**で行う。以前は外にあったため、
+  // `safeStorage.decryptString` が壊れた値で throw すると IPC ハンドラごと
+  // reject し、renderer 側 (`useServiceData`) は「読込中…」のまま止まっていた。
   let token = '';
-  if (LOCAL_SERVICES.has(serviceId)) {
-    token = (await getValidToken(serviceId)) ?? '';
-  } else {
-    const t = await getValidToken(serviceId);
-    if (!t) {
-      return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+  try {
+    const read = await getValidToken(serviceId);
+    if (!read.ok) {
+      // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
+      // ただし「保存済みだが復号できない」場合はローカルでも黙らない。
+      if (read.reason === 'undecryptable') {
+        return { ok: false, code: 'not_configured', message: read.message };
+      }
+      if (!LOCAL_SERVICES.has(serviceId)) {
+        return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+      }
+    } else {
+      token = read.token;
     }
-    token = t;
+  } catch (err) {
+    return { ok: false, code: 'fetch_failed', message: safeErrorMessage(err) };
   }
   try {
     const data = await fetcher({ token });
@@ -290,9 +301,20 @@ ipcMain.handle(
         message: `${serviceId} に action "${action}" は登録されていません`,
       };
     }
-    const token = await getValidToken(serviceId);
-    if (!token) {
-      return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+    // fetch:snapshot と同じ理由で try の中に入れる。
+    let token: string;
+    try {
+      const read = await getValidToken(serviceId);
+      if (!read.ok) {
+        return {
+          ok: false,
+          code: 'not_configured',
+          message: read.reason === 'undecryptable' ? read.message : 'トークン未設定',
+        };
+      }
+      token = read.token;
+    } catch (err) {
+      return { ok: false, code: 'action_failed', message: safeErrorMessage(err) };
     }
     // Validate payload is a plain object, not an array / primitive / null
     const safePayload =

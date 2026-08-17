@@ -382,3 +382,57 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
     local.unmount();
   });
 });
+
+describe('useServiceData — IPC が reject した場合', () => {
+  /**
+   * 2026-08 監査の回帰。`fetch:snapshot` は失敗を戻り値で表す約束だが、
+   * `safeStorage.decryptString` は壊れた値で throw し、その呼び出しが
+   * try の外にあったため IPC ハンドラごと reject していた。renderer 側に
+   * 受け皿が無く、status が 'loading' のまま「読込中…」で止まっていた。
+   */
+  it('reject でも loading のまま止まらず error になる', async () => {
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        throw new Error('保存された資格情報を復号できません');
+      },
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('error');
+    expect(h.ref.current.errorMessage).toBe('保存された資格情報を復号できません');
+    expect(h.ref.current.data).toEqual({ v: 1 }); // 表示中のデータは壊さない
+    expect(h.ref.current.source).toBe('snapshot');
+    h.unmount();
+  });
+
+  it('Error でない値を throw されても文字列化して出す', async () => {
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        throw 'ipc channel closed';
+      },
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('error');
+    expect(h.ref.current.errorMessage).toBe('ipc channel closed');
+    h.unmount();
+  });
+
+  it('reject の種別も classifyError で分類する (401 なら auth)', async () => {
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        throw new Error('401 unauthorized');
+      },
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.errorKind).toBe('auth');
+    h.unmount();
+  });
+});
