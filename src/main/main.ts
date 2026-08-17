@@ -12,7 +12,7 @@ import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './c
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
-import type { TokenSaveResult } from '../preload/preload';
+import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { redactSecrets } from './clients/types';
 import { exportRoot } from './clients/exportPaths';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
@@ -188,21 +188,38 @@ async function shellTargetOrNull(filePath: unknown): Promise<string | null> {
   return real;
 }
 
-ipcMain.handle('app:revealInFolder', async (_e, filePath: unknown) => {
+const REJECTED_PATH_MESSAGE =
+  '指定されたパスは開けません。書き出し先の外にあるか、対応していない拡張子です。';
+
+ipcMain.handle('app:revealInFolder', async (_e, filePath: unknown): Promise<OsOpResult> => {
   // Reveal a saved file in the OS file manager (Finder / Explorer / Nautilus).
-  const target = await shellTargetOrNull(filePath);
-  if (target === null) return;
-  shell.showItemInFolder(target);
+  // 弾いた時・失敗した時は理由を返す。黙って `undefined` を返すと、呼び出し側は
+  // 握り潰すしかなく「押しても何も起きない」画面になる。
+  try {
+    const target = await shellTargetOrNull(filePath);
+    if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
+    shell.showItemInFolder(target);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
 });
 
-ipcMain.handle('app:openPath', async (_e, filePath: unknown) => {
+ipcMain.handle('app:openPath', async (_e, filePath: unknown): Promise<OsOpResult> => {
   // Open a file with the OS default application (SVG → image viewer,
   // HTML → browser, MD → text editor, etc.). Same gate as revealInFolder.
-  // Returns empty string on success or an error string on failure
-  // (Electron's shell.openPath contract).
-  const target = await shellTargetOrNull(filePath);
-  if (target === null) return;
-  await shell.openPath(target);
+  //
+  // `shell.openPath` は成功で空文字、失敗でエラー文字列を返す契約。監査前は
+  // その戻り値を捨てていたため (契約はこのコメントに書いてあった)、関連付けの
+  // 無いファイル種別などで開けなくても呼び出し側には成功と見えていた。
+  try {
+    const target = await shellTargetOrNull(filePath);
+    if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
+    const failure = await shell.openPath(target);
+    return failure === '' ? { ok: true } : { ok: false, message: failure };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
 });
 
 // 弾いた理由を **返す**。以前は `return;` で黙って捨てており、renderer からは
@@ -227,9 +244,15 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   }
   return { ok: true };
 });
-ipcMain.handle('secrets:clear', async (_e, serviceId: unknown) => {
-  if (!isServiceId(serviceId)) return;
-  await clearToken(serviceId);
+ipcMain.handle('secrets:clear', async (_e, serviceId: unknown): Promise<OsOpResult> => {
+  if (!isServiceId(serviceId)) return { ok: false, message: 'unknown service id' };
+  // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
+  try {
+    await clearToken(serviceId);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
 });
 ipcMain.handle('secrets:list', () => listConfiguredServices());
 // Read-only report of at-rest protection. Returns no secret material — only

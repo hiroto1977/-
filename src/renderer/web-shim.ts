@@ -75,7 +75,7 @@ import {
   type AdvisorResponse,
 } from './data/stocksAnalysisWeb';
 import { checkTokenInput } from '../shared/tokenInput';
-import type { TokenSaveResult } from '../preload/preload';
+import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import {
   logMood as emotionsLogMood,
   clearHistory as emotionsClearHistory,
@@ -210,12 +210,17 @@ async function saveToLibrary(serviceId: string, filename: string, mime: string, 
   }
 }
 
-function notSupportedAlert(): Promise<void> {
+function notSupportedAlert(): Promise<OsOpResult> {
    
   alert(
     'ブラウザ版では使えません。\nファイルはお使いのブラウザのダウンロードフォルダに保存されています。',
   );
-  return Promise.resolve();
+  // Electron 版と同じ形で「できなかった」ことを返す。呼び出し側が結果を見て
+  // 案内を出せるようにするため (alert だけに頼らない)。
+  return Promise.resolve({
+    ok: false,
+    message: 'ブラウザ版ではファイルを OS で開けません。ダウンロードフォルダをご確認ください。',
+  });
 }
 
 type ActionResult<T> =
@@ -842,8 +847,13 @@ const shim = {
     }
     return { ok: true };
   },
-  clearToken: async (serviceId: string): Promise<void> => {
-    await vault.clearToken(serviceId);
+  clearToken: async (serviceId: string): Promise<OsOpResult> => {
+    try {
+      await vault.clearToken(serviceId);
+    } catch (e) {
+      return { ok: false, message: e instanceof Error ? e.message : '資格情報の削除に失敗しました' };
+    }
+    return { ok: true };
   },
   listConfigured: async (): Promise<string[]> => {
     try {

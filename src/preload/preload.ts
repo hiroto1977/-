@@ -11,6 +11,18 @@ export type ActionResult<T = unknown> =
   | { ok: true; data: T }
   | { ok: false; code: 'action_not_found' | 'not_configured' | 'action_failed'; message: string };
 
+/**
+ * OS へ渡す操作 (ファイルを開く / フォルダで表示 / 資格情報の削除) の結果。
+ *
+ * 2026-08 監査で見つけた形: これらは `Promise<void>` で、
+ * - パスが封じ込めゲートに弾かれた場合は `return;` で黙る
+ * - `shell.openPath` は **失敗時にエラー文字列を返す** 契約なのに、その戻り値を
+ *   捨てていた (ハンドラのコメントには契約が書いてあった)
+ * ため、呼び出し側は `catch {}` で握り潰すしかなく、**書き出した決算書類を
+ * 「開く」で開けなくても、画面には何も出なかった**。
+ */
+export type OsOpResult = { ok: true } | { ok: false; message: string };
+
 /** 資格情報の保存結果。`void` だと「弾いた」と「保存した」が区別できず、
  *  renderer が保存できたように振る舞ってしまう (2026-08 監査)。 */
 export type TokenSaveResult =
@@ -35,14 +47,14 @@ const api = {
   checkUpdate: (): Promise<import('../shared/updateCheck').UpdateVerdict> =>
     ipcRenderer.invoke('app:checkUpdate'),
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
-  revealInFolder: (filePath: string): Promise<void> =>
+  revealInFolder: (filePath: string): Promise<OsOpResult> =>
     ipcRenderer.invoke('app:revealInFolder', filePath),
-  openPath: (filePath: string): Promise<void> =>
+  openPath: (filePath: string): Promise<OsOpResult> =>
     ipcRenderer.invoke('app:openPath', filePath),
 
   setToken: (serviceId: ServiceId, token: string): Promise<TokenSaveResult> =>
     ipcRenderer.invoke('secrets:set', serviceId, token),
-  clearToken: (serviceId: ServiceId): Promise<void> =>
+  clearToken: (serviceId: ServiceId): Promise<OsOpResult> =>
     ipcRenderer.invoke('secrets:clear', serviceId),
   listConfigured: (): Promise<ServiceId[]> => ipcRenderer.invoke('secrets:list'),
   /** 保存時の保護状態 (OS キーチェーンが使えるか / 平文のまま残っている件数)。
