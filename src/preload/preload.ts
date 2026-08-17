@@ -25,6 +25,9 @@ export interface StorageProtection {
 
 const api = {
   getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
+  /** 更新の有無を調べる。取得もインストールもしない（知らせるだけ）。 */
+  checkUpdate: (): Promise<import('../shared/updateCheck').UpdateVerdict> =>
+    ipcRenderer.invoke('app:checkUpdate'),
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
   revealInFolder: (filePath: string): Promise<void> =>
     ipcRenderer.invoke('app:revealInFolder', filePath),

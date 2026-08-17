@@ -1,0 +1,77 @@
+# 実機ブラウザが要る検査 (E2E / 起動性能) — **手動起動と PR ラベルのときだけ**走る。
+#
+# これまで `e2e` / `e2e:lite` / `perf` はローカル専用だった。理由は Actions 分の
+# 節約で、その判断自体は妥当である (毎 PR で chromium を落とすと ci.yml の 3 分が
+# 10 分近くになる)。ただし「CI では一度も走らない」状態だと、**ローカルで回すのを
+# 忘れた変更がそのまま main に入る**。実際 renderer を触る PR は多い。
+#
+# そこで走らせ方を 2 つ用意して、既定は今のまま (走らない) を保つ:
+#   1. `workflow_dispatch` — Actions 画面から任意のブランチで手動実行
+#   2. PR に `run-e2e` ラベルを付けたとき — renderer を触った PR で明示的に回す
+#
+# どちらも「回したい人が回す」形なので、通常の PR の待ち時間と Actions 分は
+# 変わらない。ラベルは付け外しできるので、落ちたら直して再度付ければよい。
+name: e2e
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '検査対象'
+        required: true
+        default: both
+        type: choice
+        options: [both, full, lite]
+  pull_request:
+    types: [labeled, synchronize]
+
+jobs:
+  e2e:
+    # ラベル起動のときは `run-e2e` が付いている PR だけ。手動起動は常に走る。
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'run-e2e')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      # scripts/e2e/core.cjs は playwright が無いと exit 2 で明示的に落ちる
+      # (スキップ扱いにしない設計)。ここで確実に入れる。
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      # フル版 → 退避 → LITE 版 → フル版を戻す。`build:web` は emptyOutDir で
+      # dist/ を掃除するため、この順序でないと片方が消える (pages.yml と同じ罠)。
+      - name: Build both browser targets
+        run: |
+          npm run build:web
+          cp dist/standalone.html /tmp/standalone-full.html
+          npm run build:web:lite
+          cp /tmp/standalone-full.html dist/standalone.html
+          ls -la dist/standalone.html dist/standalone-lite.html
+
+      - name: E2E (full)
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          inputs.target == 'both' || inputs.target == 'full'
+        run: npm run e2e
+
+      - name: E2E (lite)
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          inputs.target == 'both' || inputs.target == 'lite'
+        run: npm run e2e:lite
+
+      # 起動性能。巨大な JSON.parse が起動時に戻っていないかを見る。
+      - name: Startup performance
+        run: npm run perf

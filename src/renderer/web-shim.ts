@@ -110,6 +110,7 @@ import {
   resolveProvider,
 } from '../shared/ai/credentials';
 import { runAiChat } from '../shared/ai/chat';
+import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
 // Electron 版も検証して結果を返すだけで永続化しない)。
@@ -793,6 +794,24 @@ function tryGrabSvgFromPage(): string | null {
 
 const shim = {
   getVersion: (): Promise<string> => Promise.resolve('0.1.0-web'),
+
+  /**
+   * 更新の有無。ブラウザ版は自分自身を更新できないが、**新しい版が出たことは
+   * 伝えられる**（配信されている HTML が古いままの状態に気付ける）。
+   * デスクトップ版と同じ純ロジックで判定する。
+   */
+  checkUpdate: async (): Promise<UpdateVerdict> => {
+    const current = '0.1.0';
+    try {
+      const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
+        headers: { accept: 'application/vnd.github+json' },
+      });
+      if (!res.ok) return evaluateUpdate(current, null);
+      return evaluateUpdate(current, parseLatestRelease(await res.json()));
+    } catch {
+      return evaluateUpdate(current, null);
+    }
+  },
 
   openExternal: (url: string): Promise<void> => {
     if (typeof url === 'string' && /^https?:\/\//i.test(url)) {

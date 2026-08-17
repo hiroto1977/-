@@ -23,6 +23,7 @@ import {
   clearFolderHandle,
   ensurePermission,
 } from '../fs/fsa';
+import { describeUpdate, type UpdateVerdict } from '../../shared/updateCheck';
 import {
   buildGoogleAuthUrl,
   exchangeGoogleCode,
@@ -731,6 +732,7 @@ export function SettingsPage() {
       <Section title="ネットワーク (Phase D)" count={2}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }}>
           <ProxySection />
+          <UpdateSection />
           <FsaSection />
         </div>
       </Section>
@@ -829,6 +831,66 @@ function StorageProtectionNotice() {
 }
 
 // --- Phase D1: BYO Proxy ----------------------------------------------
+
+/**
+ * 更新の確認。**取得もインストールもしない。**
+ *
+ * 署名と公証が入るまで自動更新は入れない方針なので、ここは「新しい版が
+ * あるか」を見て、あればリリースページを開く案内をするだけにしてある。
+ * 開くのは `openExternal` 経由 (http(s) しか通らない) で、案内先の URL は
+ * `parseLatestRelease` が github.com のものだけを通している。
+ */
+function UpdateSection() {
+  const [verdict, setVerdict] = useState<UpdateVerdict | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function check() {
+    setBusy(true);
+    try {
+      const v = await window.serviceHub?.checkUpdate();
+      setVerdict(v ?? null);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      data-update-section
+      style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 8 }}>
+        <div style={{ fontSize: 28 }}>⬆️</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>更新の確認</div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+            新しい版があるかを調べます。<strong>自動でのダウンロードとインストールは行いません</strong>
+            （配布物の署名が入るまで、取得と実行の経路は増やさない方針です）。
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        <button type="button" onClick={() => void check()} disabled={busy} style={btn('accent')}>
+          {busy ? '確認中…' : '更新を確認'}
+        </button>
+        {verdict !== null && verdict.url !== null && verdict.status === 'update-available' && (
+          <button
+            type="button"
+            onClick={() => void window.serviceHub?.openExternal(verdict.url ?? '')}
+            style={btn()}
+          >
+            リリースページを開く
+          </button>
+        )}
+      </div>
+      {verdict !== null && (
+        <div data-update-result style={{ fontSize: 11, marginTop: 6, lineHeight: 1.6, color: 'var(--text-mute)' }}>
+          {describeUpdate(verdict)}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ProxySection() {
   const [cfg, setCfg] = useState<ProxyConfig | null>(null);

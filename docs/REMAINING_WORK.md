@@ -46,17 +46,43 @@
 - [x] **OAuth: 他プロバイダの config 追加** — Notion / Slack / Canva / WordPress / Atlassian は
       配線済み（計 10 プロバイダ）
 - [x] **dev 依存の脆弱性を 15 件 → 2 件へ削減**（本番依存は 0 件のまま）
-- [ ] **残る 2 件は上流待ち**（moderate 2・**本番依存は 0 件**）— いずれも
-      `@stryker-mutator/core` → `typed-rest-client` → `qs` の推移依存で、
-      Stryker 側がリリースするまで手元では塞げない。`npm audit` は最新の
-      アドバイザリを都度取得するため件数は変動する — 数える前に実行すること
-- [ ] **Intel Mac (x64) の `.dmg`** — v0.1.0 は arm64 のみ。**x64 の macOS ランナーが要る**
-- [ ] 配布コード署名（Phase 7-1）/ 自動アップデート（Phase 7-2）— **証明書の調達が前提**
+- [x] **dev 依存の脆弱性も 0 件にした**（2026-08-17）。上流待ちにしていた
+      `qs` の DoS（`@stryker-mutator/core` → `typed-rest-client` → `qs@6.15.1`）は
+      **npm の `overrides` で `qs@^6.15.2` を強制**して解消した。Stryker のリリースを
+      待つ必要は無かった。patch 更新なので `typed-rest-client` の API は変わらず、
+      Stryker の実行（mutation 100% 維持）・typecheck・全テストで確認済み。
+      `npm audit` は最新のアドバイザリを都度取得するため件数は変動する —
+      数える前に実行すること
+- [x] **Intel Mac (x64) の `.dmg` をビルド対象に入れた**（2026-08-17）。
+      `electron-builder.json` の `mac.target` に `arch: ["x64", "arm64"]` を明示した。
+      v0.1.0 が arm64 のみだったのは arch を書いておらず `macos-latest`（arm64）の
+      ホスト arch だけが出ていたため。**次のタグ push で両方の dmg が出る**
+      （成果物そのものは macOS ランナーが作るので、ここでは検証できない）
+- [x] **配布コード署名の配線**（Phase 7-1）を入れた（2026-08-17）。
+      `release.yml` が `CSC_LINK` / `CSC_KEY_PASSWORD` / `APPLE_ID` /
+      `APPLE_APP_SPECIFIC_PASSWORD` / `APPLE_TEAM_ID` を渡す。**secrets が無ければ
+      署名を飛ばしてビルドは通る**ので、証明書が未調達でもリリースは作れる。
+      公証は `APPLE_ID` が入っているときだけ有効化する（未設定で on にすると
+      署名の無い状態で公証を試みて失敗するため）。
+      **残るのは証明書の調達そのもの**（Apple Developer / Windows の OV or EV）
+- [x] **更新の確認**（Phase 7-2 の安全な部分）を実装した（2026-08-17）。
+      `shared/updateCheck.ts` + IPC `app:checkUpdate` + 設定画面。
+      **取得もインストールもしない** — 署名の無い配布物を自動で取得して実行する
+      経路は、トークンを保持するこのアプリでは新しいコード実行の入口になる。
+      新しい版があることを伝え、ダウンロードは利用者がリリースページで行う。
+      応答は形とホスト（github.com のみ）まで検証するので、応答を差し替えられても
+      任意の URL を案内先にはできない。mutation 100%（135 変異体・pragma 0）
+- [ ] **自動ダウンロード・自動インストール**（Phase 7-2 の残り）— **署名が前提**。
+      判定（`evaluateUpdate`）と取得を分けてあるので、証明書が入れば
+      判定はそのまま使って差し替えられる
 - [ ] **`.git` 1.3 GB 自体の縮小は未実施**（履歴書き換えが必要なため別判断）。
       `git filter-repo` / BFG で上記 blob を履歴から削れば約 470MB 減る見込みだが、
       全コミット SHA が変わり force-push で既存クローンと PR が壊れる。破壊的なので保留
-- [ ] `e2e` / `e2e:lite` / `e2e:ollama` / `perf` / `smoke` は実ブラウザ・Electron が要るため **CI 外**
-      （Actions 分の節約という意図的な判断）。renderer や起動性能を触ったらローカルで回すこと
+- [x] **`e2e` / `e2e:lite` / `perf` を CI から回せるようにした**（2026-08-17・`.github/workflows/e2e.yml`）。
+      既定では走らない（Actions 分の節約という判断は維持）。走らせ方は 2 つ:
+      **① Actions 画面から手動実行**（対象を both / full / lite で選べる）、
+      **② PR に `run-e2e` ラベルを付ける**。通常の PR の待ち時間と Actions 分は変わらない。
+      `e2e:ollama` / `smoke` は Ollama スタブと Electron の実描画が要るためローカル専用のまま
 
 ---
 
