@@ -1,11 +1,22 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, vi } from 'vitest';
-import { startAutoLock } from '../autoLock';
+import { _resetAutoLockActiveForTests, isAutoLockActive, startAutoLock } from '../autoLock';
 
 interface ListenerEntry {
   target: EventTarget;
   type: string;
   cb: EventListener;
+}
+
+/** 観測用テストの依存: タイマーもリスナーも実物を触らない。 */
+function stubDeps() {
+  return {
+    now: () => 1_000_000,
+    setTimeoutFn: () => 0,
+    clearTimeoutFn: () => undefined,
+    addListener: () => undefined,
+    removeListener: () => undefined,
+  };
 }
 
 function makeHarness() {
@@ -127,5 +138,54 @@ describe('startAutoLock', () => {
       },
     );
     handle.dispose();
+  });
+});
+
+describe('isAutoLockActive — 診断が観測できる事実', () => {
+  /**
+   * 2026-08 監査の回帰。`SecurityPage` は自動ロックの有無を `false` 固定で
+   * 診断へ渡しており、ブラウザ版で実際に動いているのに「未対応」と表示していた。
+   * 診断の目的は現状を正しく写すことなので、観測できる事実は観測する。
+   */
+  it('起動していなければ false', () => {
+    _resetAutoLockActiveForTests();
+    expect(isAutoLockActive()).toBe(false);
+  });
+
+  it('起動すると true、dispose で false に戻る', () => {
+    _resetAutoLockActiveForTests();
+    const handle = startAutoLock({ onLock: () => undefined }, stubDeps());
+    expect(isAutoLockActive()).toBe(true);
+    handle.dispose();
+    expect(isAutoLockActive()).toBe(false);
+  });
+
+  it('二重 dispose で false を下回らない (次の起動が検出されなくならない)', () => {
+    _resetAutoLockActiveForTests();
+    const handle = startAutoLock({ onLock: () => undefined }, stubDeps());
+    handle.dispose();
+    handle.dispose();
+    expect(isAutoLockActive()).toBe(false);
+    const again = startAutoLock({ onLock: () => undefined }, stubDeps());
+    expect(isAutoLockActive()).toBe(true);
+    again.dispose();
+  });
+
+  it('dispose し忘れた計数を 0 に戻せる (テスト間の漏れを断つ)', () => {
+    _resetAutoLockActiveForTests();
+    startAutoLock({ onLock: () => undefined }, stubDeps()); // 意図的に dispose しない
+    expect(isAutoLockActive()).toBe(true);
+    _resetAutoLockActiveForTests();
+    expect(isAutoLockActive()).toBe(false);
+  });
+
+  it('2 つ動いていれば 1 つ dispose しても true のまま', () => {
+    _resetAutoLockActiveForTests();
+    const a = startAutoLock({ onLock: () => undefined }, stubDeps());
+    const b = startAutoLock({ onLock: () => undefined }, stubDeps());
+    a.dispose();
+    expect(isAutoLockActive()).toBe(true);
+    b.dispose();
+    expect(isAutoLockActive()).toBe(false);
   });
 });

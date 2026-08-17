@@ -16,7 +16,7 @@ import {
   DEFAULT_EVASIONS,
 } from '../../shared/securityRange';
 import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
-import { isEncryptionEnabled } from '../data/recordEncryption';
+import { currentDbSecurityInputs } from '../data/dbPosture';
 
 const GRADE_COLOR: Record<string, string> = {
   A: '#22c55e',
@@ -77,16 +77,9 @@ export function SecurityPage() {
 
   // ローカルDB (IndexedDB レコードストア) のセキュリティ姿勢診断。
   // 検出可能な設定 (レコード暗号化) で評価し、確認できない保護は保守的に改善候補とする。
-  const dbReport = useMemo(() => {
-    const encrypted = isEncryptionEnabled();
-    return buildDbSecurityReport({
-      encryptionEnabled: encrypted,
-      masterPasswordSet: encrypted, // 暗号化有効化にはマスターパスワードが必要
-      integrityVerified: false, // 整合性チェックの常時検証は未配線 (改善候補)
-      autoLockEnabled: false, // 自動ロック状態は未検出 (要確認)
-      cloudBackup: { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false },
-    });
-  }, []);
+  // 入力の組み立ては `data/dbPosture.ts` にある。画面の中で作ると、実測を
+  // 定数へ戻しても誰も気付かない (監査前が実際にそうなっていた)。
+  const dbReport = useMemo(() => buildDbSecurityReport(currentDbSecurityInputs()), []);
 
   // --- breach check form
   const [showBreach, setShowBreach] = useState(false);

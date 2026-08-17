@@ -20,6 +20,7 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,518**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 33 パス+オートパイロット消化で 4,350→3,518・**−832**。パス4/5/7 は全文読解で裁定し、統合先の出典・記述を一切減らさずに 25 件を統合。**重複疑いキューは 3 系列すべて 0 件** — タイトルコア一致 / グラフ term-overlap / **id 正規化 (パス7 で新設)**） |
+| **直近完了作業** | 🩺✅ **セキュリティ診断が「自動ロック: 未対応」と嘘をついていた — 観測できる事実は観測する** — 別系統 (ロック・レコード暗号化・診断) を新しい目で見た結果。**★ `SecurityPage` は診断入力を画面の中で組み立て、`autoLockEnabled` を `false` 固定で渡していた** (「未検出 (要確認)」というコメント付き)。ところがブラウザ版では自動ロックが動いており、診断が利用者に「未対応」と告げ、**手を打っても消えない改善候補**になっていた。`autoLock.ts` に `isAutoLockActive()` を足し、組み立てを `data/dbPosture.ts` へ出して実測を載せた。**★ 画面の中で組み立てていたこと自体が問題だった** — 検出器にテストがあっても、画面がそれを呼んでいるかは誰も見ていない。実際 `SecurityPage` を定数へ戻しても**テストは全部緑のままだった** (罠 3-b と同じ形)。組み立てを出したので、いまは定数へ戻すと 2 件落ちる。**★ Stryker の pragma 領域に新コードを入れてしまい 0 変異体になっていた** — `autoLock.ts` はファイル途中から広い `Stryker disable` が効いており、その下に足すと**測っていないのに緑**になる。pragma の上へ移して 6 変異体・100% にした。**★ 等価変異はテストを足して殺した** — `_resetAutoLockActiveForTests` は「dispose し忘れた計数を戻す」という契約が未検証だった。消すのではなく契約をテストにした (逃げ道としては正当な関数なので)。**★ mutation 100%** (`autoLock` 6 / `dbPosture` 6・pragma 追加なし)。**★ 早合点を 1 つ自分で潰した** — 「クラウドバックアップ構成も固定値だから嘘だ」と考えたが、`CloudSyncPanel` は永続化しないデモなので `configuredSinks: []` は**事実**だった。書く前に確認して取り下げた。**★ 残す判断**: `integrityVerified` は入力が `boolean` しか取れないため「確認していない」が「対応していない」として減点され続ける。点数の意味が変わる決定なので、`unknown` を別枠にする案と判断材料を `REMAINING_WORK.md` に書いて未着手にした。**★ 確認して何も無かった面**: `App.tsx` はロック時に木ごと置き換える (DOM に復号済みデータが残らない・ロックは見せかけではない)、自動ロックは `getVault().lock()` と `setVaultUnlocked(false)` の両方を呼ぶ。|
 | **直近完了作業** | 📂✅ **ハンドラが約束を守っていない残り 3 件を直し、ゲートで固定した (22 ゲート化)** — 「失敗を戻り値で表す」約束を全 13 IPC ハンドラで走査したら 3 件残っていた。**★ `app:openPath` は `shell.openPath` のエラー文字列を捨てていた** — 契約はハンドラ自身のコメントに書いてあったのに、実装は `await shell.openPath(target)` の戻り値を無視。関連付けの無いファイル種別などで開けなくても呼び出し側には成功と見えていた。**★ `app:revealInFolder`** はパスを弾いた時も失敗した時も `undefined`。**★ `secrets:clear`** は削除の失敗を黙る = 消したつもりの資格情報が残る。いずれも呼び出し側は `catch {}` で握り潰すしかなく、**書き出した決算書類が「開く」で開けなくても画面には何も出なかった** (押しても無反応に見える)。3 つとも `OsOpResult` を返し、`ExportActions` / `HomePage` / `StatusBar` が理由を出す。**★ `HomePage` は `done` 状態を保ったまま理由を出す** — 最初 `status` を error に倒す実装にしたが、それだとファイル名と「開く」ボタンごと消え、出来上がった書類に辿れなくなることに気付いて直した。**★ `lint:ipc-handlers` (22 ゲート目)** が「ハンドラ本体で `try {` より前に `await` がある」形を落とす。対照実験 6 通り + **実コードでの陰性対照** (`app:openPath` を監査前の形に戻すと 1 件鳴る) を確認。**★ 単体テスト 5 件** (ExportActions.osOp)。監査前の握り潰す形に戻すと 5 件中 4 件が落ち、成功経路の 1 件は緑のままだった。**★ 何も見つからなかった面も記録する**: advisor が Anthropic へ送るのは同梱の模擬データのみ (`buildBusinessAnalysesForAdvisor` は `SNAPSHOT.business.units` だけを読む) で、免責文の「数値は模擬データに基づくシミュレーションです」は Electron / ブラウザ双方で正しかった。Service Worker は同一オリジンの GET かつ `res.ok` のみキャッシュし、navigate だけアプリシェルへ戻す形で既に締まっていた。書類スタジオは自前の localStorage 入力を使うのでダッシュボードの手入力と矛盾しない (二重入力になるが、書類は作成者が書いた値を載せるべきなので設計として正しい)。|
 | **直近完了作業** | 🗝️✅ **「保存されていない」と「保存されているが読めない」を分けた — 誤診が資格情報の格下げを招く経路だった** — 同じ根の 3 つ目。`decode()` は OS キーチェーンが使えない時に `null` を返し、呼び出し側は**未設定**と解釈して「トークン未設定」と表示していた。実際には値は保存されており読めないだけで、**利用者がその案内どおり貼り直すと `encode()` は `plain:` (base64 の難読化のみ) で保存する** — 暗号化されていた資格情報が誤った案内のせいで平文相当へ格下げされる。同時に `listConfiguredServices()` は登録済みと答えるので、画面は「トークン更新」(設定済み) と「トークン未設定」(取得失敗) を**同時に**出していた (この矛盾が手掛かりだった)。**★ `StoredTokenRead` で `absent` / `undecryptable` を分けた**。`undecryptable` はキーチェーン不在と値の破損で文言を分け、**貼り直すと格下げになること**まで案内に含める。**★ `safeStorage.decryptString` は throw する** — 壊れた値や別の鍵で。その呼び出しが `fetch:snapshot` / `action:invoke` の try の**外**にあったため IPC ハンドラごと reject し、`useServiceData.refresh` に受け皿が無いので**バッジが「読込中…」のまま永久に止まっていた**。3 段で塞いだ: (1) `decode` が throw を受けて `undecryptable` を返す、(2) 両ハンドラが読み出しを try の中で行う、(3) `refresh` が reject を受けて `status='error'` にする — **約束は main 側で守るが、止まらないことは renderer 側でも保証する**。**★ `secrets.ts` は mutation 対象外** (`stryker.config.json` の `_commentScope` に理由あり: Electron ランタイム依存)。代わりに `electron` をモックした単体テスト 12 件で 5 経路を固定した (復号成功 / 未設定 / キーチェーン不在 / `plain:` は読める / throw)。**★ 陰性対照**: 監査前の `decode` に戻すと secrets 側 3 件・renderer 側 3 件が落ちる。**★ ok 系の戻り値を捨てている呼び出しを全走査した** — 11 個の判別ユニオン返し関数 (parseAmountInput / normalizeProxyEndpoint / validateScanUrl 等) について 0 件だった。**★ `secrets.ts` は保護対象**なので新ブロック #19 を採掘。|
 | **直近完了作業** | 🔐✅ **資格情報の保存と OAuth の失敗が画面に出ていなかったのを直した** — 音声の件と同じ「失敗が見えない」形が資格情報の書き込みにもあった。**★ `secrets:set` は弾いたことを黙って捨てていた** — `if (trimmed.length === 0 || trimmed.length > 65536) return;` で戻り値は `void`。`StatusBar.saveToken` はそれを成功として扱い、入力欄を閉じて `onRefresh()` まで呼んでいたので、**上限を超える貼り付けは保存されないまま「保存した」ように見えた**。次の取得で認証エラーが出ても原因は画面に出ない。`checkTokenInput()` が理由を返し、`secrets:set` は `TokenSaveResult` (`invalid_service` / `invalid_token` / `write_failed`) を返す。`secrets.ts` の書き込み失敗も握り潰さない。上限の定義も 1 か所に寄せた。**★ OAuth の失敗はコメントが嘘をついていた** — `// Surface failure inline via the existing errorMessage slot.` と書いてあるのに `console.error` にだけ出していた。`errorMessage` は親の `useServiceData` から来る **prop なので StatusBar からは書けない**。同意拒否・通信失敗・成功が利用者から区別できない状態で、対象は OAuth 配線済みの 10 プロバイダ (Drive/Calendar/Gmail/freee/M365/Slack/Notion/Canva/WordPress/Atlassian)。独立した `credentialError` 状態を足し、保存失敗と認証失敗の両方を `[data-credential-error]` で出す。**★ ブラウザ版も同じ規則・同じ戻り値に揃えた** (`web-shim.ts` の `setToken`)。**★ 等価変異を 1 つ単純化で消した** — 「文字列でない」と「空」で同じ文言を 2 か所に書いていて、片方の文言を空にしても誰も気付かなかった。`typeof raw === 'string' ? raw.trim() : ''` に寄せて 1 か所にした (26 変異体で 100%)。**★ 陰性対照**: 監査前の姿へ戻すと 4 件中 2 件 (保存失敗・OAuth 失敗) が落ち、成功経路の 2 件は緑のままだった。**★ React の制御 input に `input.value = …` は効かない** — プロトタイプ側の setter を使わないと onChange が走らず、保存ボタンが disabled のまま「エラーが出ない」ことになる。最初これで 2 件落ちて原因を誤解しかけた (罠 3-f として記録)。**★ `preload.ts` は integrity-chain の保護対象**なので新ブロックを採掘した。|
@@ -623,6 +624,29 @@ input.dispatchEvent(new Event('input', { bubbles: true }));
 同じ回に**ボタンをラベル文字列で探して外した**のも記録しておく。`editButtonLabel`
 は `tokenSetup.label` を使うので、テストが渡した label と一致させる必要がある
 (GitHub ページの実ラベルは「PAT を設定」で、汎用の「トークン設定」ではない)。
+
+### 罠 3-g: Stryker の pragma 領域に新しいコードを入れると「測っていないのに緑」
+
+`autoLock.ts` はファイル途中から
+
+```
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,…
+```
+
+が効いており、**`restore` が無いので以降ぜんぶ無効**である。2026-08 にその下へ
+新しい判定 (`activeCount > 0`) を足したところ、`--mutate` を回しても
+**変異体 0 個 / score n/a** になった。「100%」ではなく「測っていない」であり、
+出力を斜めに読むと緑と見分けが付かない。
+
+対処は 2 つとも要る:
+1. 新しいコードは **pragma より上**に置く (今回は移動して 6 変異体・100% になった)。
+2. `--mutate` の出力で**変異体の数**を見る。`n/a` や 0 は成功ではない。
+
+同じ回に、等価変異をテストで殺した例も記録する。`_resetAutoLockActiveForTests` は
+本体を空にしても既存テストが通った (どのテストも dispose 済みで計数が 0 だった)。
+**消すのではなく契約をテストにした** — 「dispose し忘れた計数を戻す」ことが
+この関数の存在理由で、それを検証していなかっただけだから。等価変異を見たら
+「不要なコードか、未検証の契約か」をまず分けること。
 
 ### 罠 3-e: 「reject しない API」に `.catch()` を置くと、失敗が成功に見える
 

@@ -50,6 +50,7 @@
     "src/shared/formatters.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/autoLock.ts",
+    "src/renderer/data/dbPosture.ts",
     "src/renderer/security/mnemonic.ts",
     "src/renderer/network/proxy.ts",
     "src/renderer/oauth/pkce.ts",
