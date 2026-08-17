@@ -132,6 +132,8 @@ function basename(p: string): string {
 
 function ActionCard({ action }: { action: QuickAction }) {
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
+  // 「開く」が失敗した理由 (done 状態は保つ)。
+  const [openFailure, setOpenFailure] = useState<string>();
 
   async function run() {
     setStatus({ kind: 'busy' });
@@ -155,12 +157,16 @@ function ActionCard({ action }: { action: QuickAction }) {
     if (action.openUrl) window.serviceHub.openExternal(action.openUrl);
   }
 
+  // 開けなかった理由は **done 状態を保ったまま**出す。status を error に倒すと
+  // ファイル名と「開く」ボタンごと消えてしまい、出来上がった書類に辿れなくなる。
   async function openFile() {
     if (status.kind !== 'done') return;
+    setOpenFailure(undefined);
     try {
-      await window.serviceHub.openPath(status.path);
-    } catch {
-      // ignore
+      const r = await window.serviceHub.openPath(status.path);
+      if (!r.ok) setOpenFailure(r.message);
+    } catch (e) {
+      setOpenFailure(e instanceof Error ? e.message : String(e));
     }
   }
 
@@ -214,6 +220,11 @@ function ActionCard({ action }: { action: QuickAction }) {
           <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
             ファイル名: {basename(status.path)}
           </div>
+          {openFailure ? (
+            <div data-os-op-error role="alert" style={{ fontSize: 10, color: 'var(--danger)' }}>
+              {openFailure}
+            </div>
+          ) : null}
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             <button
               type="button"

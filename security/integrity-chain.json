@@ -179,10 +179,18 @@
       "leafCount": 16,
       "note": "update secrets.ts",
       "hash": "bcdfc5b3865dfb7563e28bf814866a2f680ba3b3d1f975e42eb99228f942315d"
+    },
+    {
+      "index": 20,
+      "prevHash": "bcdfc5b3865dfb7563e28bf814866a2f680ba3b3d1f975e42eb99228f942315d",
+      "merkleRoot": "140373ce2f88f82e69a03b4288c7c06bdf87673bd2463160a1433f704174cab0",
+      "leafCount": 16,
+      "note": "update ci.yml,preload.ts",
+      "hash": "cc30608787e41e983e760f82e077a50ae9fa91c771c08c243691fca37c7b332f"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "41581138bbce05a9092efcb3a5792f71e0725ac1a1467fed93edd674a455b363",
+    ".github/workflows/ci.yml": "63d7482522ee8fe531d9e793a31151bd6c3e867e6ec1c681660ba447aec2dd92",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "fe10079d61ec6da8c662e429de0b3153e1c9318280e90931f575cbf6c44a9c14",
     "scripts/integrity-chain.cjs": "0d68254e3864ab3b99313aa897735e4c1c62a80bf32f6af24ff773c11d794079",
@@ -191,7 +199,7 @@
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "src/main/oauth.ts": "fd0e3fb9d581982953f08d2e57570a060d3a34815580ea73fa776a56a187d91f",
     "src/main/secrets.ts": "02097b2893cba373eeb59d43d68029d6cebb0c2b26628b0bf771d63da8be18a0",
-    "src/preload/preload.ts": "0ad860d2f916ac0ef25d7892b7060a3fccdda8d04dfd816b7d1d8244bcce74c9",
+    "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
     "src/renderer/security/LockScreen.tsx": "1fdf41fd002d9a8ee6bf3e505250775f5a80d1671e3915480e62295d855289f7",
     "src/renderer/security/autoLock.ts": "e1cd5a4fc282d6f32d14e1ae99b5cb0701f5600dbd4dfd8366419938282fbed0",
     "src/renderer/security/dataCrypto.ts": "29e71f4449c9ac62338f8584aa8ca4fd777411fda97d880ec4e777120f52f691",

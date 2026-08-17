@@ -147,7 +147,12 @@ export function StatusBar({
   const clearToken = async () => {
     if (!serviceId || !window.serviceHub) return;
     setCredentialError(undefined);
-    await window.serviceHub.clearToken(serviceId);
+    // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
+    const res = await window.serviceHub.clearToken(serviceId);
+    if (!res.ok) {
+      setCredentialError(`削除できませんでした: ${res.message}`);
+      return;
+    }
     setEditing(false);
   };
 

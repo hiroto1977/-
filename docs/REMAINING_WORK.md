@@ -18,7 +18,7 @@
 - [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
       （drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian）
 - [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
-- [x] **テスト 7,705 件合格**・typecheck・`verify:all` **21 ゲート** green
+- [x] **テスト 7,710 件合格**・typecheck・`verify:all` **22 ゲート** green
 - [x] ブラウザ単体版 `dist/standalone.html`（10.78 MB）と LITE 版 `standalone-lite.html`（2.67 MB）
       — CI が両方の下限・上限を検査（LITE は 4MB 上限 + 85% 到達で警告）
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
