@@ -31,7 +31,7 @@ import {
   calcNpv,
   calcIrr,
 } from '../../shared/realEstateMetrics';
-import { straightLineAnnual, straightLineSchedule } from '../../shared/depreciation';
+import { MAX_SCHEDULE_YEARS, isSchedulableLife, straightLineAnnual } from '../../shared/depreciation';
 import {
   planSite,
   planFactory,
@@ -341,7 +341,14 @@ export function RealEstatePage() {
   const depreciation = useMemo(() => {
     const cost = reNum(bldgCostStr);
     const life = Math.round(reNum(bldgLifeStr));
-    return { annual: straightLineAnnual(cost, life), schedule: straightLineSchedule(cost, life) };
+    // 表は出していないので **スケジュールを組み立てない**。以前は長さを読むためだけに
+    // `straightLineSchedule` を呼んでおり、耐用年数に 99999999 と打つと 1 億行を
+    // `useMemo` の中で作っていた (実測 1,000 万行で 2.4 秒 / ヒープ 777 MB・1 文字ごとに再計算)。
+    // `GuardedNumber` は入力を書き換えない設計なので、上限は計算側で見る。
+    return {
+      annual: straightLineAnnual(cost, life),
+      years: isSchedulableLife(life) ? life : null,
+    };
   }, [bldgCostStr, bldgLifeStr]);
 
   return (
@@ -569,7 +576,14 @@ export function RealEstatePage() {
         </div>
         <div className="stat-grid">
           <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
-          <Stat label="償却年数" value={`${depreciation.schedule.length} 年`} />
+          <Stat
+            label="償却年数"
+            value={
+              depreciation.years === null
+                ? `1〜${MAX_SCHEDULE_YEARS} 年で入力してください`
+                : `${depreciation.years} 年`
+            }
+          />
         </div>
       </Section>
 

@@ -28,11 +28,38 @@ export function straightLineAnnual(acquisitionCost: number, usefulLife: number):
   return yen(acquisitionCost / usefulLife);
 }
 
+/**
+ * スケジュールを組み立てる年数の上限。
+ *
+ * 2026-08 監査で見つけた形: 呼び出し元 (`RealEstatePage` の 耐用年数 欄) は
+ * `GuardedNumber` で `max: 100` を宣言しているが、`GuardedNumber` は**入力を
+ * 書き換えない** (黙って 0 や上限に丸めない、という意図的な設計)。そのため
+ * 利用者が 99999999 と打つと、この関数が 1 億行の配列を `useMemo` の中で
+ * 組み立てていた。**実測 1,000 万行で 2.4 秒 / ヒープ 777 MB** — 描画スレッドが
+ * 固まり、モバイル (LITE 版) では落ちる。しかも 1 文字打つたびに再計算される。
+ *
+ * 日本の法定耐用年数で最長は 50 年 (鉄骨鉄筋コンクリート造の事務所)。100 年は
+ * その倍の余裕で、実在の償却計算では当たらない位置。
+ *
+ * 上限を超えた入力は `[]` を返す — `usefulLife <= 0` と同じ既存の契約に揃えた。
+ * **黙って切り詰めない**のが要点で、途中まで作った表を出すと「100 年で償却し
+ * 終わる」という誤った内容になる。呼び出し元は `guardNumber` の判定を見て、
+ * なぜ表が出ないのかを利用者に説明する責任がある。
+ */
+export const MAX_SCHEDULE_YEARS = 100;
+
+/** 償却スケジュールを組み立てられる年数か (上限は {@link MAX_SCHEDULE_YEARS})。 */
+export function isSchedulableLife(usefulLife: number): boolean {
+  return Number.isFinite(usefulLife) && usefulLife > 0 && usefulLife <= MAX_SCHEDULE_YEARS;
+}
+
 /** 定額法の償却スケジュール (最終年に備忘価額 1 円を残す)。 */
 export function straightLineSchedule(acquisitionCost: number, usefulLife: number): DepreciationYear[] {
   // usefulLife <= 0 はループ条件 (y <= usefulLife) が 1 度も回らず [] を返すため
   // ここでは判定不要 (冗長)。acquisitionCost のみ早期 return する。
   if (acquisitionCost <= 0) return [];
+  // 上限超えは組み立てない (描画スレッドが固まる)。理由は MAX_SCHEDULE_YEARS 参照。
+  if (usefulLife > MAX_SCHEDULE_YEARS) return [];
   const annual = yen(acquisitionCost / usefulLife);
   const rows: DepreciationYear[] = [];
   let book = acquisitionCost;
@@ -67,6 +94,8 @@ export function decliningBalanceSchedule(
 ): DepreciationYear[] {
   // usefulLife <= 0 はループ条件で空配列になるため冗長。acquisitionCost のみ判定。
   if (acquisitionCost <= 0) return [];
+  // 定額法と同じ上限。理由は MAX_SCHEDULE_YEARS 参照。
+  if (usefulLife > MAX_SCHEDULE_YEARS) return [];
   const rate = multiplier / usefulLife;
   const rows: DepreciationYear[] = [];
   let book = acquisitionCost;
