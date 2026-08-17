@@ -214,6 +214,7 @@
     "src/shared/updateCheck.ts",
     "src/shared/dataOrigin.ts",
     "src/shared/credentialUse.ts",
+    "src/shared/tokenInput.ts",
     "src/shared/ai/providers.ts",
     "src/shared/ai/credentials.ts",
     "src/shared/ai/chat.ts"

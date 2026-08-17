@@ -20,6 +20,7 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,518**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 33 パス+オートパイロット消化で 4,350→3,518・**−832**。パス4/5/7 は全文読解で裁定し、統合先の出典・記述を一切減らさずに 25 件を統合。**重複疑いキューは 3 系列すべて 0 件** — タイトルコア一致 / グラフ term-overlap / **id 正規化 (パス7 で新設)**） |
+| **直近完了作業** | 🔐✅ **資格情報の保存と OAuth の失敗が画面に出ていなかったのを直した** — 音声の件と同じ「失敗が見えない」形が資格情報の書き込みにもあった。**★ `secrets:set` は弾いたことを黙って捨てていた** — `if (trimmed.length === 0 || trimmed.length > 65536) return;` で戻り値は `void`。`StatusBar.saveToken` はそれを成功として扱い、入力欄を閉じて `onRefresh()` まで呼んでいたので、**上限を超える貼り付けは保存されないまま「保存した」ように見えた**。次の取得で認証エラーが出ても原因は画面に出ない。`checkTokenInput()` が理由を返し、`secrets:set` は `TokenSaveResult` (`invalid_service` / `invalid_token` / `write_failed`) を返す。`secrets.ts` の書き込み失敗も握り潰さない。上限の定義も 1 か所に寄せた。**★ OAuth の失敗はコメントが嘘をついていた** — `// Surface failure inline via the existing errorMessage slot.` と書いてあるのに `console.error` にだけ出していた。`errorMessage` は親の `useServiceData` から来る **prop なので StatusBar からは書けない**。同意拒否・通信失敗・成功が利用者から区別できない状態で、対象は OAuth 配線済みの 10 プロバイダ (Drive/Calendar/Gmail/freee/M365/Slack/Notion/Canva/WordPress/Atlassian)。独立した `credentialError` 状態を足し、保存失敗と認証失敗の両方を `[data-credential-error]` で出す。**★ ブラウザ版も同じ規則・同じ戻り値に揃えた** (`web-shim.ts` の `setToken`)。**★ 等価変異を 1 つ単純化で消した** — 「文字列でない」と「空」で同じ文言を 2 か所に書いていて、片方の文言を空にしても誰も気付かなかった。`typeof raw === 'string' ? raw.trim() : ''` に寄せて 1 か所にした (26 変異体で 100%)。**★ 陰性対照**: 監査前の姿へ戻すと 4 件中 2 件 (保存失敗・OAuth 失敗) が落ち、成功経路の 2 件は緑のままだった。**★ React の制御 input に `input.value = …` は効かない** — プロトタイプ側の setter を使わないと onChange が走らず、保存ボタンが disabled のまま「エラーが出ない」ことになる。最初これで 2 件落ちて原因を誤解しかけた (罠 3-f として記録)。**★ `preload.ts` は integrity-chain の保護対象**なので新ブロックを採掘した。|
 | **直近完了作業** | 🎙️✅ **音声コマンドが「失敗しても実行した」と言っていたのを直した** — `action:invoke` は**失敗しても reject せず** `{ ok: false }` を返す。`VoiceCommandBar.performIntent` は `await invoke()` の戻り値を**捨てていた**ので、後ろの `.catch()` は不動作で、**トークン未設定でも「実行した」ことになり対象ページへ遷移**していた。「GitHub に issue を作って」「Slack に送って」が黙って何もせず、しかも遷移が「やった」という合図になる。対象は音声から呼べる 7 アクション (github:create-issue / slack:send-message / calendar:create-event / record-entry ×4)。**★ 3 経路で読み方が割れていた**: パネルは `ok` と `persisted` の両方を見て正しく、チャットは `ok` は見るが `persisted` を見ず「✅ 実行しました」と言い、音声は何も見ていなかった。分類を `renderer/data/actionOutcome.ts` に 1 つ置き (`failed` / `accepted-not-saved` / `ok` の判別ユニオン。`failed` を弾くと `data` が narrow されるので呼び出し側が `ok` を再確認しない)、文言だけ経路ごとに残した。**★ 失敗時は遷移しない** — ページが開くこと自体が主張になる。**★ 音声の状態機械に `notice` 相を足した** — `executed` で idle に戻すとパネルが閉じて但し書きが伝わらない。`timeout` では消さず、`cancel`／次の発話で閉じる。**★ 等価変異を 1 つ単純化で消した** — `typeof value === 'boolean' ? value : undefined` は呼び出し側が `=== false` で厳密比較するため観測差が無く、`ownPersistedValue(): unknown` に畳んだ (27 変異体で 100%)。**★ `lint:forbidden` に 14 番目のパターン** —「文の先頭が await/void 付きの invoke で代入も return もされていない」形を落とす。現時点 0 件なので allowFile なし。**陰性対照 8 通り** (捨てる 4 形が発火・使う 4 形が素通り・コメントは無視) を確認。**★ 陰性対照で 2 件落ちた** (監査前の `performIntent` に戻して): 失敗表示と `persisted` の但し書き。成功経路と reject 経路の 2 件は修正前から成り立つので緑のままが正しい。**★ mutation 100%** (`actionOutcome` 27 / `voiceSession` 126・pragma 0)。**★ E2E は追加していない** — 音声は Web Speech API が要るため実ブラウザで駆動できない。jsdom + モック認識の component テストが配線を見ている (そう書いた)。|
 | **直近完了作業** | 🔑✅ **読み手のいない資格情報を求めるのをやめ、既に預かっている分を消せるようにした** — `dataOrigin` の監査から出てきた別軸。**通信もアクションもしないのにトークン入力欄を出しているサービスが 8 つ**あった (asana / discord / dropbox / line / linear / salesforce / sentry / stripe)。入力すれば safeStorage (ブラウザ版は Vault) で暗号化保存するが、fetcher は stub・`LIVE_ACTIONS` に登録なし・`src/shared/api/` にもクライアントなしで、**どの経路でも読まれない**。Stripe の秘密鍵や LINE のチャネルトークンを使う予定が来るまで預かる理由は無い。**★ `src/shared/credentialUse.ts` で宣言** (fetch 15 / action 8 / none 51)。判定規則は「dataOrigin が remote かつ client が `token` を参照 → fetch / アクションがあり `token` を参照 → action / それ以外 → none」で、データフロー解析ではないことを明記した (触るが使わない形は通る・**触りもしないのに預かる**形は落ちる)。**★ 門番は `StatusBar` の 1 か所** — `tokenSetup` を直接見ず `tokenUi` だけを見る。入力欄・OAuth ボタン・認証エラー時の自動編集開始の 3 か所へ同じ条件を書き写すと必ずどれか 1 つ残る。**★ 8 ページから `tokenSetup` 自体も外した** — 画面が求めていないことを画面に書く。**★ 入力欄を消すだけでは足りなかった** — 過去に保存された分が残り、しかも入力欄と一緒に「削除」ボタンも消えるので**画面から消す手段が無くなる**。設定画面に「使われていない資格情報」節を足し、個別に削除できるようにした (0 件なら節ごと描かない)。実ブラウザで保存 → 一覧に出る → 削除 → 保存先からも消える、まで確認。**★ `lint:credential-use` (21 ゲート目)** は宣言と実装を双方向に照合し、さらに **`none` のサービスに `tokenSetup` を書いたページが無いこと**まで見る。解析関数は `lint-data-origin.cjs` から export して再利用し、2 つのゲートが同じ読み方をしていることを構造で保証した。対照実験 9 件。**★ E2E の陰性対照を今度は最初から正しくやった** (罠 3-d): 監査前の姿へ戻す→typecheck と build の出力を見る→dist に差分が入ったことを grep で確認→検査を流す。Dropbox の検査が落ち、設定画面の検査はセレクタ待ちで fatal になった (節が存在しないため) — どちらも機能に依存している証拠。**★ ボタンのラベルで検査して 1 度外した** — GitHub の `tokenSetup.label` は「PAT を設定」で「トークン」を含まない。ラベル文字列ではなく**押した結果** (`input[type=password]` が出るか) で見る形に直した。**★ mutation 100%** (`credentialUse` 89 変異体・pragma 0)。|
 | **直近完了作業** | 🕵️✅ **画面の数字の出どころを宣言し、「更新すると空になり緑の『ライブ』が付く」24 サービスを直した** — `useServiceData` は fetch 成功を**無条件に** `setData` + `source='live'` で受けていた。ところが公式 API 未配線のサービスは `createSnapshotStub` / `createShigyoFetcher` が返す**空の値**を「成功」として返すため、更新を押すと画面が同梱データから空へ置き換わり、**バッジは緑の「ライブ」になった**。士業 8 画面では顧問料・未払請求・連絡先・相談履歴が 0 件になり、それが最新の実データに見える。決算・申告書類へ流れる数字を扱うアプリでは表示崩れでは済まない。**★ 実測で列挙した**（全 74 fetcher を実際に呼び、`SNAPSHOT[id]` と比較する使い捨て検査を書いた）: uber-eats / demae-can / real-estate / mutual-funds / dropbox / salesforce / discord / asana / linear / sentry / shopify / stripe / line / storage / 士業 8 種 / obsidian / docker の **24 件**。**★ ブラウザ版は別の嘘をついていた** — 同じサービスが `not_implemented` を返すので、取得先が無いだけなのに「エラー」と出ていた。**★ 原因は「取得しない」を型として持っていなかったこと**。`shared/dataOrigin.ts` に `SERVICE_DATA_ORIGIN`（remote 15 / local 17 / sample 42）を置き、`sample` は IPC を呼ばず・更新ボタンを出さず・「内蔵サンプル（外部連携なし）」と明示する。**配線は `StatusBar` の 1 か所** — 74 画面に prop を配ると必ずどれか 1 つ漏れる（既に `serviceId` を受け取っていたのでページ変更は 0）。**★ 分類は判断ではなく規則**（stub → sample / `LOCAL_SERVICES` → local / それ以外 → remote）にして、`lint:data-origin` が実装側から同じ規則で導出し**双方向**に照合する（20 ゲート化）。Phase 6 で実 API を配線して宣言を直し忘れれば「取れるのに取りに行かない画面」として落ちる。**対照実験 9 件**で規則ごとに 1 件だけ鳴ることを確認。**★ 自分の門番が 1 つ余計だった** — 自動取得側にも同じ判定を書いたが、`refresh` が先に return するので**外してもテストが通った**。等価な分岐なので削除した（pragma ではなくコードを単純化する）。**★ E2E の陰性対照で 2 度つまずいた**: 1 回目は revert 版の `npm run build:web` が未使用シンボルの typecheck 失敗で**黙って古い dist を残し**、対照が「通ってしまった」。ビルド出力を握り潰していたのが原因。きちんと作り直したら**9 件中 3 件が落ち**、E2E が空振りでないことを確認できた（`SERVICE_HUB_E2E_ONLY` で 1 suite だけ流せるようにした）。**★ 実装より先に古くなるコメントも直した** — `LOCAL_SERVICES` は Docker/Obsidian を「socket で読む」「fs で読む」と書いていたが実体は stub、`uber-eats.ts` は「同等のデータが返る」と書いていたが返るのは空。**★ mutation 100%**（`dataOrigin` 110 変異体・pragma 0）。**★ 併せて見つけた別軸の残課題**: dropbox / salesforce / discord / asana / linear / sentry / stripe / line の 8 画面は、**通信もアクションもしないのにトークン入力欄を出して暗号化保存している**。使い道の無い資格情報を預かること自体が漏えい面なので `REMAINING_WORK.md` に手順ごと残した。|
@@ -594,6 +595,32 @@ return cmp3(a.major, b.major) || cmp3(a.minor, b.minor) || …;  // ✓
 `getByRole('button', {name:'追加'}).first()` は別パネルのボタンを押していて、
 前提のデータが入らないままアサーションだけ通っていた。**セレクタが一意である
 ことをアサートに含める**（`count() === 1`）と、この手の素通りが出せる。
+
+### 罠 3-f: React の制御 input に `input.value = …` だけでは onChange が走らない
+
+jsdom で保存ボタンの経路を試すとき、
+
+```ts
+input.value = 'x';
+input.dispatchEvent(new Event('input', { bubbles: true }));
+```
+
+と書いても **React は値の変化を追跡できず onChange が走らない**。結果として
+`token` state が空のまま `disabled={!token.trim()}` で保存ボタンが押せず、
+「エラーが出ない」という**別の理由で**テストが落ちる。2026-08 に実際にこれで
+2 件落ちて、門番の実装を疑いかけた。
+
+プロトタイプ側の setter を通す:
+
+```ts
+const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+setter?.call(input, value);
+input.dispatchEvent(new Event('input', { bubbles: true }));
+```
+
+同じ回に**ボタンをラベル文字列で探して外した**のも記録しておく。`editButtonLabel`
+は `tokenSetup.label` を使うので、テストが渡した label と一致させる必要がある
+(GitHub ページの実ラベルは「PAT を設定」で、汎用の「トークン設定」ではない)。
 
 ### 罠 3-e: 「reject しない API」に `.catch()` を置くと、失敗が成功に見える
 

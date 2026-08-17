@@ -74,6 +74,8 @@ import {
   type StrategyComparisonResult,
   type AdvisorResponse,
 } from './data/stocksAnalysisWeb';
+import { checkTokenInput } from '../shared/tokenInput';
+import type { TokenSaveResult } from '../preload/preload';
 import {
   logMood as emotionsLogMood,
   clearHistory as emotionsClearHistory,
@@ -823,8 +825,22 @@ const shim = {
   revealInFolder: notSupportedAlert,
   openPath: notSupportedAlert,
 
-  setToken: async (serviceId: string, token: string): Promise<void> => {
-    await vault.setToken(serviceId, token);
+  // Electron 側と同じ規則で弾き、弾いた理由を返す (shared/tokenInput.ts)。
+  // Vault の書き込み失敗も握り潰さない — 黙って捨てると画面は「保存した」と
+  // 表示してしまう。
+  setToken: async (serviceId: string, token: string): Promise<TokenSaveResult> => {
+    const checked = checkTokenInput(token);
+    if (!checked.ok) return { ok: false, code: 'invalid_token', message: checked.message };
+    try {
+      await vault.setToken(serviceId, checked.value);
+    } catch (e) {
+      return {
+        ok: false,
+        code: 'write_failed',
+        message: e instanceof Error ? e.message : '資格情報の保存に失敗しました',
+      };
+    }
+    return { ok: true };
   },
   clearToken: async (serviceId: string): Promise<void> => {
     await vault.clearToken(serviceId);
