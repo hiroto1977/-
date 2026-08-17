@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7464** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7722) |
+| ユニットテスト | **7470** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7728) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 260 | 自己検証 |
+| `file:line` 参照数 | 261 | 自己検証 |
 
 ### 統合フロー図
 
@@ -482,6 +482,32 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 **手を打っても消えない改善候補**は診断全体を無視させるので、`unknown` を別枠に
 する案とその判断材料を `docs/REMAINING_WORK.md` に残した (点数の意味が変わるため、
 実装より先に「診断が何を約束するか」を決める必要がある)。
+
+#### 入力の警告と計算の上限は別物 (`src/shared/depreciation.ts`)
+
+`GuardedNumber` は**入力を書き換えない** — 「黙って 0 や上限に丸めない」という
+意図的な設計で、`guardNumber` が警告文を返し、欄の色と `data-guard` が変わるだけ。
+したがって `max: 100` を宣言しても、`99999999` は state に入り計算へ届く。
+
+2026-08 監査で見つけた実害: `RealEstatePage` の 耐用年数 欄がそれを
+`straightLineSchedule` に渡し、`useMemo` の中で 1 億行の配列を組み立てていた。
+**実測 1,000 万行で 2.4 秒 / ヒープ 777 MB** — 描画スレッドが固まり、モバイル
+(LITE 版) では落ちる。1 文字打つごとに再計算されるので、入力途中で詰まる。
+しかもページは `schedule.length` しか使っておらず、**表を出していない** — 既に
+分かっている数を得るために最大 777 MB を割り当てていた。
+
+2 段で直した:
+
+1. `MAX_SCHEDULE_YEARS = 100` を超える `usefulLife` では組み立てず `[]` を返す
+   (`usefulLife <= 0` と同じ既存の契約に揃えた)。**黙って切り詰めない** —
+   途中まで作った表を出すと「100 年で償却し終わる」という誤った内容になる。
+   法定耐用年数の最長は 50 年 (鉄骨鉄筋コンクリート造の事務所) なので、実在の
+   計算では当たらない位置。
+2. ページは長さを読むためにスケジュールを作らない。`isSchedulableLife()` で
+   判定し、範囲外なら「1〜100 年で入力してください」と出す。
+
+陰性対照は上限を外して単体テストを流すことで取った — **テスト実行そのものが
+2 分で終わらず**、固まることが直接示された (アサーション失敗より強い証拠)。
 
 ### 2.2 `fetch:snapshot` シーケンス
 

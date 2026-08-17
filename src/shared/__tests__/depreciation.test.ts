@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_SCHEDULE_YEARS,
+  isSchedulableLife,
   straightLineAnnual,
   straightLineSchedule,
   decliningBalanceSchedule,
@@ -499,5 +501,51 @@ describe('smeImmediateDeduction (中小企業者等の少額減価償却資産�
     expect(smeImmediateDeduction(-100).eligible).toBe(false);
     expect(smeImmediateDeduction(Infinity).eligible).toBe(false);
     expect(smeImmediateDeduction(NaN).eligible).toBe(false);
+  });
+});
+
+describe('償却スケジュールの年数上限 (描画スレッドを固めない)', () => {
+  /**
+   * 2026-08 監査の回帰。`RealEstatePage` の 耐用年数 欄は `GuardedNumber` で
+   * `max: 100` を宣言しているが、`GuardedNumber` は入力を書き換えない設計なので
+   * 99999999 がそのまま届く。以前はそれで 1 億行を組み立てていた
+   * (実測 1,000 万行で 2.4 秒 / ヒープ 777 MB・1 文字打つごとに再計算)。
+   */
+  it('上限ちょうどは組み立てる (境界)', () => {
+    expect(straightLineSchedule(1_000_000, MAX_SCHEDULE_YEARS)).toHaveLength(MAX_SCHEDULE_YEARS);
+    expect(decliningBalanceSchedule(1_000_000, MAX_SCHEDULE_YEARS)).toHaveLength(MAX_SCHEDULE_YEARS);
+  });
+
+  it('上限 +1 は組み立てない (黙って切り詰めない)', () => {
+    expect(straightLineSchedule(1_000_000, MAX_SCHEDULE_YEARS + 1)).toEqual([]);
+    expect(decliningBalanceSchedule(1_000_000, MAX_SCHEDULE_YEARS + 1)).toEqual([]);
+  });
+
+  it('極端な入力でも即座に空を返す (固まらない)', () => {
+    const started = Date.now();
+    expect(straightLineSchedule(1_000_000, 99_999_999)).toEqual([]);
+    expect(decliningBalanceSchedule(1_000_000, 99_999_999)).toEqual([]);
+    // 上限ガードが無ければ秒単位かかる。境界を跨いだことの証拠として時間も見る。
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
+
+  it('MAX_SCHEDULE_YEARS は法定最長 (50 年) の倍で余裕がある', () => {
+    expect(MAX_SCHEDULE_YEARS).toBe(100);
+    expect(MAX_SCHEDULE_YEARS).toBeGreaterThan(50);
+  });
+});
+
+describe('isSchedulableLife', () => {
+  it('1〜上限 のみ true', () => {
+    expect(isSchedulableLife(1)).toBe(true);
+    expect(isSchedulableLife(47)).toBe(true);
+    expect(isSchedulableLife(MAX_SCHEDULE_YEARS)).toBe(true);
+    expect(isSchedulableLife(MAX_SCHEDULE_YEARS + 1)).toBe(false);
+  });
+
+  it('0 以下と非有限は false', () => {
+    for (const v of [0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(isSchedulableLife(v), String(v)).toBe(false);
+    }
   });
 });
