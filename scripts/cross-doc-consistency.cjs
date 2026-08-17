@@ -87,7 +87,47 @@ function canonicalKnowledgeTotal() {
   }
 }
 
+/**
+ * 出典台帳 (`scripts/lint-doi-prefix.cjs`) に「未確認」として退避されている件数。
+ *
+ * 4 つの台帳 (プレフィックス / ISBN / 誌コード / 識別子衝突) の合計。台帳は
+ * すべて双方向なので、直したら消すことが強制される — つまりこの数は
+ * **まだ一次資料に当たれていない出典の数**そのものである。
+ *
+ * なぜ文書と突き合わせるのか: `docs/REMAINING_WORK.md` は 2026-08-17 時点で
+ * 「残り 18 件」と書いていたが、実際の台帳は 4 つとも空だった。**終わった作業を
+ * 「未完了」として掲げる**のはこのリポジトリで繰り返している事故で、次に読む人が
+ * 済んだ場所を掘り直す。数を書くなら実体と結び付ける。
+ */
+function canonicalCitationLedgerCount() {
+  const src = read(path.join(REPO_ROOT, 'scripts/lint-doi-prefix.cjs'));
+  if (src == null) return null;
+  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST'];
+  let total = 0;
+  for (const name of names) {
+    // `const NAME = new Map([` から対応する `]);` までを粗く切り出し、
+    // 行頭の `['id',` を数える (台帳の記入形式は 1 行 1 件で固定)。
+    const at = src.indexOf(`const ${name} = new Map(`);
+    if (at < 0) return null;
+    const end = src.indexOf(']);', at);
+    if (end < 0) return null;
+    total += [...src.slice(at, end).matchAll(/^\s*\[\s*'/gm)].length;
+  }
+  return total;
+}
+
 const FACTS = [
+  {
+    name: 'citation ledger backlog',
+    canonical: canonicalCitationLedgerCount(),
+    claims: [
+      {
+        file: 'docs/REMAINING_WORK.md',
+        pattern: /出典台帳の未確認件数: \*\*(\d+) 件\*\*/,
+        parse: (m) => Number(m[1]),
+      },
+    ],
+  },
   {
     name: 'academic concept count',
     canonical: canonicalAcademicCount(),
