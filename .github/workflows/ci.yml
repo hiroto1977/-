@@ -41,6 +41,7 @@ jobs:
       - run: npm run lint:knowledge-refs
       - run: npm run lint:test-coverage
       - run: npm run lint:shell
+      - run: npm run lint:repo-size
       - run: npm run verify:orchestration
       - run: npm run vault:check
       - run: npm run verify:graph

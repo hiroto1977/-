@@ -73,11 +73,12 @@
     "typecheck": "tsc -b --noEmit --force",
     "vault:build": "node scripts/build-knowledge-vault.cjs",
     "vault:check": "node scripts/build-knowledge-vault.cjs --check",
-    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:network-targets && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:test-coverage && npm run lint:shell && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
+    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:network-targets && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:test-coverage && npm run lint:shell && npm run lint:repo-size && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
     "verify:arch": "node scripts/verify-architecture.cjs",
     "verify:graph": "node scripts/verify-graph.cjs",
     "verify:knowledge": "node scripts/verify-knowledge-provenance.cjs",
-    "verify:orchestration": "node scripts/verify-orchestration.cjs"
+    "verify:orchestration": "node scripts/verify-orchestration.cjs",
+    "lint:repo-size": "node scripts/lint-repo-size.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

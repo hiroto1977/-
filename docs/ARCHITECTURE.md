@@ -30,7 +30,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 238 | 自己検証 |
+| `file:line` 参照数 | 240 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1043,6 +1043,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
+| `scripts/lint-repo-size.cjs` | `lint:repo-size` | 追跡ファイルの大きさに**天井**を置く (1 ファイル 12MB / 追跡合計 80MB・85% で警告のみ)。`verify:arch` の追跡行数は**下限**なので膨張を捕まえない。履歴に入った blob は後から追跡を外しても消えず、消すには全 SHA の書き換えと GitHub Support の gc 依頼が要る (`docs/GIT_HISTORY_SHRINK.md`) ため、入れる前に止める |
 
 #### verify:arch (`scripts/verify-architecture.cjs`)
 
@@ -1261,7 +1262,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 238 file:line references + 6 metrics ✅
+# → Verified 240 file:line references + 6 metrics ✅
 # → Scanned 57 files × 13 patterns                 ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅
