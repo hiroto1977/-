@@ -54,7 +54,21 @@ export function useServiceData<T>(
     setStatus('loading');
     setErrorMessage(undefined);
     setErrorKind(undefined);
-    const result: FetchResult<T> = await window.serviceHub.fetchSnapshot<T>(serviceId);
+    // IPC が **reject** した場合の受け皿。ハンドラ側は失敗を戻り値で表す約束だが、
+    // 約束の外で throw されると (2026-08 監査では `safeStorage.decryptString` が
+    // 壊れた値で throw した) ここで捕まえないと status が 'loading' のまま残り、
+    // バッジが「読込中…」で永久に止まる。約束は main 側で守るが、止まらない
+    // ことは renderer 側でも保証する。
+    let result: FetchResult<T>;
+    try {
+      result = await window.serviceHub.fetchSnapshot<T>(serviceId);
+    } catch (e) {
+      setStatus('error');
+      const message = e instanceof Error ? e.message : String(e);
+      setErrorMessage(message);
+      setErrorKind(classifyError(message));
+      return;
+    }
     if (result.ok) {
       setData(result.data);
       setSource('live');

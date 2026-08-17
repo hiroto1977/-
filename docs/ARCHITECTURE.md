@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7432** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7690) |
+| ユニットテスト | **7447** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7705) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 251 | 自己検証 |
+| `file:line` 参照数 | 254 | 自己検証 |
 
 ### 統合フロー図
 
@@ -410,6 +410,34 @@ console.error('OAuth authorize failed:', res.message);
 StatusBar からは書けない)。同意拒否・通信失敗・成功が利用者から区別できない状態
 だった。独立した `credentialError` 状態を持たせ、保存失敗と認証失敗の両方を
 `[data-credential-error]` として画面に出す。対象は OAuth 配線済みの 10 プロバイダ。
+
+#### 「無い」と「読めない」を分ける (`src/main/secrets.ts`)
+
+同じ根の 3 つ目。`decode()` は OS キーチェーンが使えない時に `null` を返し、
+呼び出し側は**未設定**と解釈して画面に「トークン未設定」と出していた。実際には
+値は保存されていて、読めないだけである。利用者はその案内どおり貼り直すが、
+キーチェーンが無い状態なので `encode()` は `plain:` (base64 の難読化のみ) で
+保存する — **暗号化されていた資格情報が、誤った案内のせいで平文相当へ格下げ
+される**。同時に `listConfiguredServices()` は登録済みと答えるので、画面は
+「トークン更新」(設定済み) と「トークン未設定」(取得失敗) を同時に出していた。
+
+`StoredTokenRead` が `absent` と `undecryptable` を分ける。`undecryptable` は
+キーチェーン不在と値の破損で文言を分け、**貼り直すと格下げになること**まで
+案内に含める。
+
+さらに `safeStorage.decryptString()` は壊れた値や別の鍵で **throw** する。
+その呼び出しが `fetch:snapshot` / `action:invoke` の `try` の**外**にあったため、
+IPC ハンドラごと reject し、`useServiceData.refresh` に受け皿が無いので
+**バッジが「読込中…」のまま永久に止まっていた**。3 段で塞いだ:
+
+1. `decode()` が `decryptString` の throw を受けて `undecryptable` を返す
+2. 両ハンドラが資格情報の読み出しを `try` の中で行う (約束どおり戻り値で表す)
+3. `refresh()` が `fetchSnapshot` の reject を受けて `status='error'` にする
+   (約束は main 側で守るが、**止まらないことは renderer 側でも保証する**)
+
+`secrets.ts` は Electron ランタイムを要するため mutation の対象外だが
+(`stryker.config.json` の `_commentScope`)、`electron` をモックした単体テストで
+5 経路 (復号成功 / 未設定 / キーチェーン不在 / `plain:` は読める / throw) を固定した。
 
 ### 2.2 `fetch:snapshot` シーケンス
 
