@@ -582,16 +582,86 @@ async function manualDataSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 取得元の表示 (`shared/dataOrigin.ts`)。
+ *
+ * 2026-08 監査の回帰: 公式 API 未配線のサービスは stub が空データを「成功」で
+ * 返すため、「更新」を押すと画面が空になり緑の「ライブ」バッジが付いていた。
+ * 実ブラウザで (1) 更新ボタンが出ていないこと (2) バッジが「内蔵サンプル」で
+ * あること (3) 士業ページの数字が残っていることを見る。単体テストは hook を
+ * 見るだけなので、ページに配線されていることはここでしか確かめられない。
+ */
+async function dataOriginSuite(browser) {
+  console.log('--- 取得元の表示 (内蔵サンプル / ライブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  // sample: 税理士。士業 CRM の数字が残り、更新ボタンが無いこと。
+  await page.goto(FILE + '#tax-accountant', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('.status-bar', { timeout: 30000 });
+  const badge = (await page.textContent('.status-bar .badge')) ?? '';
+  ok(badge.trim() === '内蔵サンプル', `税理士: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
+  ok(
+    (await page.locator('.status-bar .badge.ok').count()) === 0,
+    '税理士: 緑 (ライブ) バッジを出さない',
+  );
+  ok(
+    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 0,
+    '税理士: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
+  );
+  ok(
+    (await page.locator('[data-sample-note]').count()) === 1,
+    '税理士: 「外部連携なし」の断り書きを出す',
+  );
+
+  // local: KPI。更新ボタンは出る (取得先が手元にある)。
+  await gotoService(page, '#kpi', '.status-bar');
+  ok(
+    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 1,
+    'KPI: 更新ボタンを出す (local は取得できる)',
+  );
+  ok(
+    (await page.locator('[data-sample-note]').count()) === 0,
+    'KPI: 「外部連携なし」は出さない',
+  );
+
+  // remote: GitHub。更新ボタンが出て、未取得なら「スナップショット」。
+  await gotoService(page, '#github', '.status-bar');
+  ok(
+    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 1,
+    'GitHub: 更新ボタンを出す',
+  );
+  const ghBadge = (await page.textContent('.status-bar .badge')) ?? '';
+  ok(
+    ghBadge.trim() === 'スナップショット',
+    `GitHub: 未取得は「スナップショット」(実際 "${ghBadge.trim()}")`,
+  );
+
+  ok(errs.length === 0, `取得元の表示: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
     ...(EXEC ? { executablePath: EXEC } : {}),
     args: ['--no-sandbox'],
   });
-  await desktopSuite(browser);
-  await manualDataSuite(browser);
-  await phoneSuite(browser);
-  await tabletSuite(browser);
+  // `SERVICE_HUB_E2E_ONLY=dataOrigin,manualData` で一部だけ流す。
+  // 目的は対照実験 — 「本体を壊したらこの検査が実際に落ちるのか」を確かめる時、
+  // 全 suite (数分) を回さずに済む。既定 (未設定) は全 suite。
+  const only = (process.env.SERVICE_HUB_E2E_ONLY ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  const run = (name) => only.length === 0 || only.includes(name);
+  if (only.length > 0) console.log(`(SERVICE_HUB_E2E_ONLY=${only.join(',')})`);
+  if (run('desktop')) await desktopSuite(browser);
+  if (run('manualData')) await manualDataSuite(browser);
+  if (run('dataOrigin')) await dataOriginSuite(browser);
+  if (run('phone')) await phoneSuite(browser);
+  if (run('tablet')) await tabletSuite(browser);
   await browser.close();
   if (failures.length > 0) {
     console.log(`\nFAILED: ${failures.length} 件`);

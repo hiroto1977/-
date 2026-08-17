@@ -306,3 +306,79 @@ describe('useServiceData — reacts to serviceId prop changes', () => {
     h.unmount();
   });
 });
+
+describe('useServiceData — sample サービス (取得先が無い画面)', () => {
+  /**
+   * 2026-08 監査で見つけた本体不具合の回帰テスト。
+   *
+   * 公式 API 未配線のサービスは stub が「空の成功」を返す。以前の実装は
+   * それを `setData` + `source='live'` で受けたため、更新を押すと画面が
+   * 空になり、しかも緑の「ライブ」バッジが付いた (士業 8 画面・不動産・
+   * 投資信託・Docker・Obsidian ほか計 24 サービス)。
+   */
+  it('refresh しても取得を試みず、データもバッジも変わらない', async () => {
+    let calls = 0;
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        calls += 1;
+        // stub が返していた「空の成功」を再現する。
+        return { ok: true, data: { contacts: [], monthlyFee: 0 } } as FetchResult<unknown>;
+      },
+    });
+    const h = setup('tax-accountant', { contacts: [{ name: '顧問税理士' }], monthlyFee: 33000 });
+    await h.mount();
+    await h.refresh();
+    expect(calls).toBe(0); // IPC そのものを呼ばない
+    expect(h.ref.current.data).toEqual({ contacts: [{ name: '顧問税理士' }], monthlyFee: 33000 });
+    expect(h.ref.current.source).toBe('snapshot');
+    expect(h.ref.current.status).toBe('idle');
+    expect(h.ref.current.origin).toBe('sample');
+    h.unmount();
+  });
+
+  it('トークンが保存済みでも自動取得しない (押さずに画面が空になる経路を塞ぐ)', async () => {
+    let calls = 0;
+    setHub({
+      listConfigured: async () => ['dropbox'],
+      fetchSnapshot: async () => {
+        calls += 1;
+        return { ok: true, data: { files: [] } } as FetchResult<unknown>;
+      },
+    });
+    const h = setup('dropbox', { files: [{ name: '見積書.pdf' }] });
+    await h.mount();
+    expect(calls).toBe(0);
+    expect(h.ref.current.isConfigured).toBe(true); // 資格情報の有無は今までどおり見える
+    expect(h.ref.current.data).toEqual({ files: [{ name: '見積書.pdf' }] });
+    expect(h.ref.current.source).toBe('snapshot');
+    h.unmount();
+  });
+
+  it('ブラウザ版の not_implemented でエラー表示にならない', async () => {
+    setHub(errHub('not_implemented', 'ブラウザ版では live fetch を行いません。'));
+    const h = setup('lawyer', { contacts: [] });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('idle'); // 取得先が無いだけで、異常ではない
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    h.unmount();
+  });
+
+  it('remote / local は従来どおり取得する', async () => {
+    setHub(okHub({ v: 7 }));
+    const remote = setup('github', { v: 1 });
+    await remote.mount();
+    await remote.refresh();
+    expect(remote.ref.current.origin).toBe('remote');
+    expect(remote.ref.current.source).toBe('live');
+    remote.unmount();
+
+    const local = setup('kpi', { v: 1 });
+    await local.mount();
+    await local.refresh();
+    expect(local.ref.current.origin).toBe('local');
+    expect(local.ref.current.source).toBe('live');
+    local.unmount();
+  });
+});

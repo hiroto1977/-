@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7365** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7623) |
+| ユニットテスト | **7380** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7638) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 240 | 自己検証 |
+| `file:line` 参照数 | 243 | 自己検証 |
 
 ### 統合フロー図
 
@@ -236,7 +236,7 @@ type OAuthResult =
 ### 2.1 Renderer 状態機械 (`useServiceData` hook)
 
 各ページは `useServiceData<T>(serviceId, snapshot)` でデータを取得する
-(`src/renderer/hooks/useServiceData.ts:26-75`)。`data / source / status / errorKind` の
+(`src/renderer/hooks/useServiceData.ts:34-102`)。`data / source / status / errorKind` の
 4 軸で UI 状態を表現する:
 
 ```mermaid
@@ -267,10 +267,46 @@ stateDiagram-v2
   Auth --> [*]: StatusBar が再認証 UI 表示
 ```
 
-`classifyError()` (`useServiceData.ts:18-24`) が message の HTTP code / phrase からエラー種別を
+`classifyError()` (`useServiceData.ts:21-27`) が message の HTTP code / phrase からエラー種別を
 4 値 (`auth / rate_limit / network / unknown`) に分類し、UI が auth 時に再認証 CTA を出す。
-`autoRefreshFired` ref (`useServiceData.ts:34`) が React.StrictMode の二重 effect から
+`autoRefreshFired` ref (`useServiceData.ts:46`) が React.StrictMode の二重 effect から
 保護する。
+
+#### 取得元の宣言 (`src/shared/dataOrigin.ts`) — 2026-08 監査で入れた 5 軸目
+
+上の状態機械には長く穴があった。`refresh` は fetch 成功を**無条件に**
+`setData(result.data)` + `setSource('live')` で受けていたが、公式 API 未配線の
+サービスは `createSnapshotStub` / `createShigyoFetcher` が返す**空の値**を
+「成功」として返す。つまり「更新」を押すと画面が同梱 snapshot から空へ置き換わり、
+バッジは緑の「ライブ」になった。士業 8 画面では顧問料・未払請求・連絡先・相談履歴が
+0 件になり、それが最新の実データであるかのように見えた。**該当 24 サービス**
+(uber-eats / demae-can / real-estate / mutual-funds / dropbox / salesforce /
+discord / asana / linear / sentry / shopify / stripe / line / storage /
+士業 8 種 / obsidian / docker)。ブラウザ版では同じサービスが `not_implemented` を
+返すため、取得先が無いだけなのに「エラー」と表示されていた。
+
+原因は「取得しない」という状態を型として持っていなかったこと。
+`SERVICE_DATA_ORIGIN` (`src/shared/dataOrigin.ts:37`) が全 `ServiceId` について
+取得元を宣言する:
+
+| 取得元 | 意味 | バッジ | 件数 |
+|---|---|---|---|
+| `remote` | 資格情報で外部 API を叩く | 取得後「ライブ」(緑) | 15 |
+| `local` | OS / ファイル / レコードストアから導出 | 取得後「ローカル」(緑) | 17 |
+| `sample` | fetcher が stub。I/O 無し | 常に「内蔵サンプル」(灰) | 42 |
+
+`useServiceData` は `sample` なら `refresh` の冒頭で return して IPC 自体を呼ばず、
+`StatusBar` は「更新」ボタンを出さずに「外部連携なし」と明示する。門番は
+**`refresh` の 1 箇所だけ**に置いている — 自動取得側にも同じ判定を書くと、
+`refresh` が先に return するので観測差の無い分岐が増えるだけだった
+(対照実験で「門番を外してもテストが通る」ことを確認して削除した)。
+
+分類は判断ではなく規則で決まる: stub なら `sample`、そうでなく `LOCAL_SERVICES`
+なら `local`、それ以外は `remote`。`scripts/lint-data-origin.cjs` が実装側から
+同じ規則で導出して宣言と**双方向に**照合するため、Phase 6 で stub に実 API を
+配線して宣言を直し忘れると落ち (「取れるのに取りに行かない画面」)、逆に live 実装を
+stub へ戻して直し忘れても落ちる (元の嘘が戻る)。`--self-test` が規則ごとに
+1 件だけ鳴ることを合成入力で確かめる。
 
 ### 2.2 `fetch:snapshot` シーケンス
 

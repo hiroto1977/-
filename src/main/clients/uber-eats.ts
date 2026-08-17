@@ -4,12 +4,14 @@ import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } f
  * Uber Eats — フードデリバリー (snapshot 専用)。
  *
  * Eats Merchants API はパートナー認証が必須で、本プロジェクトでは未配線。
- * このファイルは `LIVE_FETCHERS` invariant (clients/index.ts:33-85 で
+ * このファイルは `LIVE_FETCHERS` invariant (clients/index.ts で
  * すべての ServiceId が登録されている必要がある) を満たすための static
- * stub。実際の業務 KPI ダッシュボードは `SNAPSHOT.uberEats` を直接
- * 描画するため、refresh ボタンを押してもネットワーク呼び出しは発生せず、
- * 同等のデータが返る。パートナー資格を取得して live を有効化する際は、
- * この fetcher 内で fetch を行い同じ shape で返却する。
+ * stub。**返すのは空の値で、`SNAPSHOT.uberEats` とは別物**なので、これを
+ * 画面に流し込むと表示が空になる。そのため `shared/dataOrigin.ts` で
+ * 'sample' と宣言し、renderer 側 (`useServiceData`) は取得自体を行わない。
+ * パートナー資格を取得して live を有効化する際は、この fetcher 内で fetch を
+ * 行い同じ shape で返し、`SERVICE_DATA_ORIGIN` を 'remote' へ直す
+ * (`lint:data-origin` が直し忘れを落とす)。
  */
 
 export interface UberEatsSnapshot {

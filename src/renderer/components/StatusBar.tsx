@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
+import { describeOrigin, isRefreshable, originOf } from '../../shared/dataOrigin';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
@@ -99,13 +100,18 @@ export function StatusBar({
     [serviceId, onRefresh],
   );
 
+  // 取得元は `serviceId` から引く。各ページに新しい prop を配るとどこか 1 つが
+  // 必ず漏れる — 74 画面ぶんの判断を書き写さないための 1 箇所。
+  // `serviceId` を渡さない呼び出し元 (汎用パネル) は従来どおりの表示にする。
+  const origin = serviceId ? originOf(serviceId) : 'remote';
+  const originLabel = describeOrigin(origin, source);
+
   const badge =
     status === 'loading' ? { cls: 'badge', text: '読込中…' }
     : status === 'error' && errorKind === 'auth' ? { cls: 'badge warn', text: '認証エラー' }
     : status === 'error' && errorKind === 'rate_limit' ? { cls: 'badge warn', text: 'レート制限' }
     : status === 'error' ? { cls: 'badge warn', text: 'エラー' }
-    : source === 'live' ? { cls: 'badge ok', text: 'ライブ' }
-    : { cls: 'badge', text: 'スナップショット' };
+    : { cls: originLabel.tone === 'ok' ? 'badge ok' : 'badge', text: originLabel.text };
 
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
@@ -168,11 +174,16 @@ export function StatusBar({
           {isConfigured ? <button onClick={clearToken}>削除</button> : null}
         </span>
       ) : null}
-      {onRefresh ? (
+      {onRefresh && isRefreshable(origin) ? (
         <button onClick={onRefresh} disabled={status === 'loading'}>
           {status === 'loading' ? '更新中…' : '更新'}
         </button>
       ) : null}
+      {isRefreshable(origin) ? null : (
+        <span data-sample-note style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+          この画面は同梱データと手入力を表示します（外部連携なし）
+        </span>
+      )}
       {right}
       {errorMessage ? (
         <span style={{ color: 'var(--danger)', fontSize: 12 }}>{errorMessage}</span>

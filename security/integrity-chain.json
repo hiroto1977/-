@@ -147,10 +147,18 @@
       "leafCount": 16,
       "note": "update ci.yml",
       "hash": "91cc0100bee1934445ed7225f0e6c0e2bc011dc8af689d0b96d35de42bc4acab"
+    },
+    {
+      "index": 16,
+      "prevHash": "91cc0100bee1934445ed7225f0e6c0e2bc011dc8af689d0b96d35de42bc4acab",
+      "merkleRoot": "bd60cea0ba1f06bf02541ae1b5de4c94edcdb8fc33c8baee46bba8c5cb899994",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "ec879526770ae31aa953be1104bb41fd74f78c140e0c1f5d48256c063c0e565b"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "e7f0d2f18beeeacaba90e61f7752f1c5ab6d91156e4833d40d649c99bfb26662",
+    ".github/workflows/ci.yml": "54d80452ee7f65fcb7db049c868f48ee34080bc79f1403060c8d4d61491eb969",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "fe10079d61ec6da8c662e429de0b3153e1c9318280e90931f575cbf6c44a9c14",
     "scripts/integrity-chain.cjs": "0d68254e3864ab3b99313aa897735e4c1c62a80bf32f6af24ff773c11d794079",
