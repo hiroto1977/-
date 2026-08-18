@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7808** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8135) |
+| ユニットテスト | **7822** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8167) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 276 | 自己検証 |
+| `file:line` 参照数 | 278 | 自己検証 |
 
 ### 統合フロー図
 
@@ -640,6 +640,33 @@ dispose 後は施錠しない)。
 
 残る等価変異は DOM の有無による分岐 (`typeof document !== 'undefined'`) で、
 テストが jsdom で走る以上、無い側を再現できない。**49 変異体 100%**。
+
+#### 認可の送り先を決める表が測られていなかった (`src/main/oauth.ts`)
+
+デスクトップ版の OAuth (PKCE + loopback) も 55 行を無効化しており、外して実測すると
+**394 変異体 70.05%**。生存 117 のうち **103 件が `OAUTH_CONFIGS`** — 9 サービスの
+認可 URL / トークン URL / スコープを並べた表だった。既存の検査は主要サービスの
+一部を `toMatchObject` (部分一致) で見ていたため、触れていないサービスや
+フィールドは丸ごと素通りしていた。この表は**利用者の認可がどこへ送られるか**を
+決める。全サービス完全一致の golden にした。
+
+**ここで測定の前提そのものを 1 つ訂正した。** 当初「モジュール読み込み時に一度だけ
+評価される static 変異体は構造的に殺せない」と書いて `ignoreStatic: true` を入れたが、
+不正確だった。`ignoreStatic` が無視するのは**どのテストにも覆われていない** static
+変異体だけで、覆われているものは実行され、モジュールが変異体の有効化より前に
+読み込まれているために「生存」と報告される。
+
+**覆われた static 変異体は、テスト側でモジュールを読み直せば殺せる。**
+`vi.resetModules()` + 動的 `await import()` で毎回評価し直すと、表を書き換える変異体が
+比較で落ちる (`oauth.test.ts` の `freshConfigs` / `freshListen`)。これだけで
+70.05% → 92.13% に上がった。定数表やレジストリは「測れない」のではなく
+**読み直せば測れる**。
+
+**結び先も固定した。** `server.listen(0, '127.0.0.1')` の host 引数が消えると
+全インタフェース (0.0.0.0) で待ち受けることになり、同一ネットワークの別ホストから
+OAuth コールバック口が見える。サーバを外へ出していないので、`listen` に渡した
+**引数を直接観測する**形にした (最初に書いた検査は無条件に通る空検査で、
+陰性対照を取るまで気付かなかった)。**379 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

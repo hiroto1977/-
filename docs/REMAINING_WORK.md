@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・2,590 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・2,535 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **20 ファイル
-/ 27 箇所 / 2,590 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **19 ファイル
+/ 26 箇所 / 2,535 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -144,13 +144,34 @@
 | `src/shared/ai/credentials.ts` | 176 行を無効化 | 実測 159 変異体 90.57%。空文字の API キーが「設定済み」として通っていた | **157 変異体 100%** |
 | `src/shared/ai/providers.ts` | 301 行を無効化 | 実測 255 変異体 72.16%。全プロバイダの応答パーサが無証明。**生存 48 のうち 40 が static 変異体**と判明し `ignoreStatic` を採用 | **189 変異体 100%** |
 | `src/renderer/security/autoLock.ts` | 85 行を無効化 | 実測 63 変異体 55.56%。**`onVisibilityChange` が丸ごと未到達** — 「タブを隠したら施錠」という中核の約束に検査が 1 つも無かった | **49 変異体 100%** |
+| `src/main/oauth.ts` | 55 行を無効化 | 実測 394 変異体 70.05%。生存 117 のうち **103 が OAUTH_CONFIGS** (認可の送り先を決める表)。読み直す golden で殺した | **379 変異体 100%** |
 
 ※ `pkce.ts` だけ 100% にしていない。残る 2 つは真の等価変異で、範囲指定で囲めば
 100% になるが**66 個の測定を捨てる**ことになる (163 変異体 98.77% → 97 変異体 100%)。
 分母を縮めて買った 100% は正直な 98.77% より価値が低いので、囲まずに理由をコードへ
 書いた。`lint:mutation-scope` が禁じているのと同じ形である。
 
-### static 変異体について (2026-08-18 に方針を決めた)
+### static 変異体について (2026-08-18 に方針を決め、同日に**訂正**した)
+
+> **訂正**: 当初「static 変異体は構造的に殺せない」と書き、`ignoreStatic: true` を
+> その対処として入れた。**これは不正確だった。** `ignoreStatic` が無視するのは
+> 「どのテストにも覆われていない static 変異体」だけで、覆われているものは実行され、
+> モジュールが変異体の有効化より前に読み込まれているために『生存』と報告される。
+>
+> 実測で差が出た: `ai/providers.ts` は未到達 static だったので `ignoreStatic` で
+> 消えたが、`oauth.ts` の `OAUTH_CONFIGS` は**覆われた** static だったため 103 件が
+> そのまま残った。
+>
+> **覆われた static 変異体は、テスト側でモジュールを読み直せば殺せる。**
+> `vi.resetModules()` + 動的 `await import()` で毎回評価し直すと、表を書き換える
+> 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs` / `freshListen`。
+> これで 70.05% → 92.13% に上がった)。
+>
+> つまり定数表・レジストリの類は「測れない」のではなく **読み直せば測れる**。
+> `ignoreStatic` は未到達の static を赤として残さないための設定であって、
+> テストを書かない口実にはしない。
+
+
 
 モジュール読み込み時に一度だけ評価される初期化コード (定数テーブル / レジストリ /
 設定オブジェクト) の変異体は、vitest がモジュールを変異体ごとに読み直さないため
@@ -198,7 +219,6 @@
 | 67.0% | `src/main/clients/cloudflare.ts` | 38 |
 | 67.1% | `src/renderer/data/chatbot.ts` | 56 |
 | 67.4% | `src/main/clients/teamradar.ts` | 139 |
-| **70.1%** | **`src/main/oauth.ts`** | **118** |
 | 71.7% | `src/main/clients/canva.ts` | 17 |
 | 74.4% | `src/main/clients/business.ts` | 142 |
 | 78.9% | `src/main/clients/stocks.ts` | 275 |
@@ -209,8 +229,9 @@
 | 96.7% | `src/renderer/data/counseling.ts` | 4 |
 | — | `src/renderer/library/library.ts` (68.4%) / `src/renderer/fs/fsa.ts` (49.6%) | 62 / 60 |
 
-`autoLock.ts` は消化済み (下の表を参照)。**次は `oauth.ts`** — デスクトップ版の
-OAuth (PKCE + loopback) で、壊れても画面には出ず安全性だけが落ちる。
+`autoLock.ts` と `oauth.ts` は消化済み (下の表を参照)。残りは主に SaaS クライアント
+(`templates` / `teamradar` / `emotions` / `business` / `stocks` など) で、
+**次は `calendar.ts` (43.3%) と `templates.ts` (47.5%)** が低い。
 
 ### 進め方 (store.ts で通った手順)
 
