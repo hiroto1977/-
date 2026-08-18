@@ -17,7 +17,6 @@
 
 import { normalizeAiBaseUrl, describeAiEndpointFailure } from '../aiEndpoint';
 
-// Stryker disable all — プロバイダ定義 (URL / ヘッダー名 / 既定モデル等) は
 // 対向 API 仕様の転記であり、golden テスト (providers.test.ts) が完全一致で
 // 固定する。変異は等価 or テストで撃墜済みのため計測ノイズを避ける。
 
@@ -107,6 +106,10 @@ function openAiStyleMessages(req: AiChatRequest): Array<{ role: string; content:
 
 /** 応答 JSON がオブジェクトのときだけ中身を見る (null / 非オブジェクトは空扱い)。 */
 function asObject(json: unknown): Record<string, unknown> | null {
+  // Stryker disable next-line ConditionalExpression,LogicalOperator: どの分岐を潰しても
+  // 観測差が出ない — 各パーサ側が `!obj` の早期 return か `?.` を挟んでおり、
+  // 非オブジェクトを渡しても最終的に '' に落ちる。将来 `?.` 無しのパーサを
+  // 足したときのための門なので残す。
   return json !== null && typeof json === 'object' && !Array.isArray(json)
     ? (json as Record<string, unknown>)
     : null;
@@ -308,14 +311,22 @@ export const AI_PROVIDERS: Record<AiProviderId, AiProviderSpec> = {
 // 追加漏れ・タイポは初回 import で必ず throw する (LIVE_FETCHERS と同じ流儀)。
 for (const id of AI_PROVIDER_IDS) {
   const spec: AiProviderSpec | undefined = AI_PROVIDERS[id];
+  // 起動時の不変条件。壊れたレジストリを作る手段がテストに無いため到達しない
+  // (作れたとしても import 時に throw して全テストが落ちる = 検査にならない)。
+  // Stryker disable next-line StringLiteral
   if (!spec) throw new Error(`AI_PROVIDERS missing spec for provider id: ${id}`);
+  // Stryker disable next-line StringLiteral
   if (spec.id !== id) throw new Error(`AI_PROVIDERS[${id}].id mismatch: ${spec.id}`);
 }
+// 同上 (レジストリ側に余分な項目が無いこと)。
+/* Stryker disable BlockStatement,StringLiteral */
 if (Object.keys(AI_PROVIDERS).length !== AI_PROVIDER_IDS.length) {
   throw new Error('AI_PROVIDERS has entries not listed in AI_PROVIDER_IDS');
 }
+/* Stryker restore BlockStatement,StringLiteral */
 
 export function isAiProviderId(v: unknown): v is AiProviderId {
+  // Stryker disable next-line ConditionalExpression: 型検査を落としても `includes` が
+  // 非文字列を弾くため結果は同じ (等価変異)。意図を示すため残す。
   return typeof v === 'string' && (AI_PROVIDER_IDS as readonly string[]).includes(v);
 }
-// Stryker restore all
