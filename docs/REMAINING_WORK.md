@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・1,923 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・1,540 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **16 ファイル
-/ 21 箇所 / 1,923 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **12 ファイル
+/ 17 箇所 / 1,540 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -156,6 +156,10 @@
 | `src/main/clients/templates.ts` | 290 行を無効化 (3 箇所) | 実測 222 変異体 47.30%。11 箇所の無効化のうち **6 箇所は外しても 100% のまま** — 測れていた場所を隠していただけだった。残りは書き出し既定値 (実 `fs` が 1 度も動いていない) と折り返しの段組み | **136 変異体 100%**（算術のみ 139 行を明示除外） |
 | `src/main/clients/exportPaths.ts` | **`mutate` に載っていない**（実測ゼロ） | 一覧に入れて実測 29 変異体 93.10%。長さ上限 1024 の境界がどちら側かを誰も見ていなかった | **27 変異体 100%** |
 | `src/main/clients/emotions.ts` | 234 行を無効化 | 実測 215 変異体 55.35%。**日記を 0600 で書いていることを誰も見ていなかった**。壊れた記録を「まだ無い」と誤解して空で上書きする経路、消去で巻き添えになる経路も無証明 | **197 変異体 100%** |
+| `src/main/clients/drive.ts` | 70 行を無効化 | 実測 38 変異体 57.89%。送り先・`Authorization`・`orderBy`/`pageSize`/`fields` のどれ 1 つ固定されていなかった | **38 変異体 100%** |
+| `src/main/clients/wordpress.ts` | 110 行を無効化 | 実測 71 変異体 64.79%。**`is_free` と slug のどちらを信じるかの順番**が無証明 (無料プランを有料として出せる)。`free_plan` の判定は `includes('free')` と重複していたので削除 | **66 変異体 100%** |
+| `src/main/clients/notion.ts` | 122 行を無効化 | 実測 77 変異体 65.38%。`Notion-Version` は `toBeDefined()` で見ていたので**空文字でも通っていた**。「最後に編集した順」の指定も無証明 | **78 変異体 100%** |
+| `src/main/clients/canva.ts` | 81 行を無効化 | 実測 60 変異体 71.67%。`ownership`/`sort_by` と 12 件の上限が無証明 | **59 変異体 100%** |
 
 ※ `pkce.ts` だけ 100% にしていない。残る 2 つは真の等価変異で、範囲指定で囲めば
 100% になるが**66 個の測定を捨てる**ことになる (163 変異体 98.77% → 97 変異体 100%)。
@@ -215,19 +219,15 @@
 `taxCorporate.ts` / `taxSocialInsurance.ts`) も同じくテスト追加なしで 100% だった。
 **合計 23 ファイルの無効化が static 隠しだけだった**ことになる。
 
-### 残り 15 ファイルの実測値 (2026-08-18・無効化を外して測った)
+### 残り 11 ファイルの実測値 (2026-08-18・無効化を外して測った)
 
 ここから先はテストを足さないと上がらない。低い順:
 
 | スコア | ファイル | 生存 + 未到達 |
 |---|---|---|
-| 57.9% | `src/main/clients/drive.ts` | 16 |
-| 64.8% | `src/main/clients/wordpress.ts` | 25 |
-| 65.4% | `src/main/clients/notion.ts` | 27 |
 | 67.0% | `src/main/clients/cloudflare.ts` | 38 |
 | 67.1% | `src/renderer/data/chatbot.ts` | 56 |
 | 67.4% | `src/main/clients/teamradar.ts` | 139 |
-| 71.7% | `src/main/clients/canva.ts` | 17 |
 | 74.4% | `src/main/clients/business.ts` | 142 |
 | 78.9% | `src/main/clients/stocks.ts` | 275 |
 | 83.3% | `src/main/clients/funding.ts` | 5 |
@@ -237,10 +237,12 @@
 | 96.7% | `src/renderer/data/counseling.ts` | 4 |
 | 68.4% | `src/renderer/library/library.ts` | 62 |
 
-`autoLock.ts` / `oauth.ts` / `fsa.ts` / `calendar.ts` / `templates.ts` /
-`exportPaths.ts` / `emotions.ts` は消化済み (下の表を参照)。残りは主に SaaS
-クライアント (`teamradar` / `business` / `stocks` など) で、
-**次は `drive.ts` (57.9%) と `wordpress.ts` (64.8%)** が低い。
+SaaS クライアントの薄いもの (`drive` / `wordpress` / `notion` / `canva` /
+`calendar` / `templates`) と security 系はすべて消化済み (下の表を参照)。
+残っているのは**行数の多い 4 つ** (`teamradar` 237 / `library` 217 /
+`business` 199 / `cloudflare` 189) と、`stocks` / `chatbot` / `devEnv` /
+`funding` / `taxCalc` / `chat` / `counseling`。**次は `cloudflare.ts` (67.0%) と
+`chatbot.ts` (67.1%)** が低い。
 
 ### 進め方 (store.ts で通った手順)
 

@@ -1,6 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 
 interface NotionPage {
   id: string;
@@ -122,4 +121,3 @@ async function createPage(ctx: ActionContext): Promise<{ id: string; url: string
 export const ACTIONS: ActionMap = {
   'create-page': createPage,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

@@ -34,7 +34,6 @@ export interface CanvaSnapshot {
   }[];
 }
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'canva' };
   const headers = { Authorization: `Bearer ${ctx.token}` };
@@ -56,6 +55,9 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
       fetchCtx,
     ).catch((err: unknown): CanvaBrandKitsResponse => {
       if (err instanceof FetchError && (err.status === 403 || err.status === 404)) {
+        // 中身は下の `brandKitsRes.items ?? []` が吸うので、ここで空配列を
+        // 入れても入れなくても結果は変わらない (型を満たすために置いている)。
+        // Stryker disable next-line ObjectLiteral: 下流の `?? []` と重なる (単独では観測不能)
         return { items: [] };
       }
       throw err;
@@ -115,4 +117,3 @@ async function createFolder(ctx: ActionContext): Promise<{ id: string; name: str
 export const ACTIONS: ActionMap = {
   'create-folder': createFolder,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

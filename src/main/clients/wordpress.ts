@@ -1,6 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 
 // Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
 interface WpSite {
@@ -37,7 +36,9 @@ function isPaidPlan(plan: WpSite['plan']): boolean {
   if (plan.is_free === true) return false;
   if (plan.is_free === false) return true;
   const slug = (plan.product_slug ?? '').toLowerCase();
-  return slug !== '' && slug !== 'free_plan' && !slug.includes('free');
+  // `free_plan` の判定は要らない — 'free' を含むかどうかで既に弾ける。
+  // 残すと、どちらへ変異させても結果が変わらない検査不能な条件になる。
+  return slug !== '' && !slug.includes('free');
 }
 
 export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPressSnapshot> {
@@ -110,4 +111,3 @@ async function createPostDraft(
 export const ACTIONS: ActionMap = {
   'create-post-draft': createPostDraft,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
