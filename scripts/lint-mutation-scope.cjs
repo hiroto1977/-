@@ -65,7 +65,6 @@ const MAX_SPAN = 30;
 const KNOWN_BROAD = {
   'src/main/clients/business.ts':                { regions: 3, lines:  199 },
   'src/main/clients/stocks.ts':                  { regions: 1, lines:  169 },
-  'src/main/clients/teamradar.ts':               { regions: 4, lines:  237 },
   'src/main/clients/templates.ts':               { regions: 1, lines:  139 },
   'src/renderer/library/library.ts':             { regions: 1, lines:  217 },
 };

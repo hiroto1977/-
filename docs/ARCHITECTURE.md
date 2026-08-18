@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7990** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8350) |
+| ユニットテスト | **8036** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8396) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 293 | 自己検証 |
+| `file:line` 参照数 | 294 | 自己検証 |
 
 ### 統合フロー図
 
@@ -985,6 +985,35 @@ text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します�
 
 残った案内文は **8 つの小さい帯**に分けて除外した (最大 9 行)。ファイル
 全体を黙らせると、この確認の一文も一緒に消える。**115 変異体 100%**。
+
+#### 図は「何本描かれるか」で測る (`src/main/clients/teamradar.ts`)
+
+237 行 (4 箇所) の無効化を外すと **433 変異体 66.74%**。ここは 3 種類の
+穴が同居していた。
+
+1. **保存の実経路が 1 度も動いていなかった。** 保存は tmp へ書いてから
+   rename する形 (途中で落ちても本体が壊れない) だが、検査はすべて
+   `StateDeps` を差し替えて呼ぶので `fs.rename` まで届いていなかった。
+   一時ホームを作って本物を 1 度通し、**tmp が残っていないこと**まで見る。
+2. **入力の長さの境界が無証明。** 部署名 64 / 評価時点 32 / 氏名 64 /
+   メモ 200 / 人数 50 / 題名 120 — すべて「ちょうど」が通るか弾かれるかで
+   決まるのに、どれも固定されていなかった。
+3. **図の構造。** 座標の数値は測らなくてよいが、**何が何本描かれるか**は
+   意味がある。目盛りの輪が 4 本しか無い、軸が 1 本足りない、多角形の
+   頂点が 1 つ欠ける、頂点の丸が中心に集まる — どれも図としては誤りだが
+   SVG は壊れないので目視でしか気付けない。輪の本数・軸の本数・多角形の
+   頂点数・頂点の丸の位置・軸名の寄せ方 (真上は中央・左右 2 本ずつ) を
+   固定した。
+
+`saveTeamRadarStateImpl` が `saveTeamRadarState` と**同じ長さ検査を重ねて
+いた**ので消した。二重にすると、外側を外しても内側が同じ文言で弾くため
+観測できない分岐になる — 規則を決める場所は 1 つでよい。
+
+残したのは座標と書式だけで、**5 つの小さい帯**に分けてある。ここで
+**自分の検査が自分の誤りを捕まえた** — 帯を機械的に挿入したところ、
+`// Stryker disable …` の行が SVG のテンプレートリテラルの内側に入り、
+コメントがそのまま図に描かれた。「図の中に地の文が混ざらない」という
+検査が落ちて気付いた。**288 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 
