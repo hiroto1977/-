@@ -31,7 +31,6 @@ import {
   type FetchContext,
 } from './types';
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 type EmotionKey = (typeof EMOTION_KEYS)[number];
@@ -72,6 +71,9 @@ function storePath(): string {
 
 async function readStore(): Promise<EmotionsStore> {
   try {
+    // encoding を空にすると Buffer が返るが、`JSON.parse` は toString()
+    // 経由で読むため結果は変わらない (実測)。型のために明示している。
+    // Stryker disable next-line StringLiteral: 空文字でも Buffer 経由で同じ結果 (実測)
     const raw = await fs.readFile(storePath(), 'utf8');
     const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
     return {
@@ -129,7 +131,10 @@ async function logMood(ctx: ActionContext): Promise<{ date: string; score: numbe
   if (idx >= 0) store.moods[idx] = entry;
   else store.moods.push(entry);
   store.moods.sort((a, b) => a.date.localeCompare(b.date));
-  if (store.moods.length > MAX_MOODS) store.moods = store.moods.slice(-MAX_MOODS);
+  // `slice(-MAX)` は要素数がそれ以下なら元の配列と同じものを返すので、
+  // 長さの判定は要らない。判定を残すと「常に切る / 常に切らない」の
+  // どちらに変異させても結果が変わらない検査不能な分岐になる。
+  store.moods = store.moods.slice(-MAX_MOODS);
   await writeStore(store);
   return { date: finalDate, score: entry.score };
 }
@@ -162,9 +167,19 @@ Each score is between 0.0 and 1.0. They do not need to sum to 1.`;
 
 /** Strip ```json fences if the model added them. */
 export function extractJson(text: string): string {
-  const fence = text.match(/```(?:json)?\s*\n([\s\S]*?)\n```/);
-  if (fence && fence[1] != null) return fence[1].trim();
+  // `?.[1]` で受けると「一致したか」の判定が 1 つで済む。`fence &&` と
+  // `fence[1] != null` の 2 段だと、後段は一致時に必ず非 null なので
+  // どちらへ変異させても結果が変わらない検査不能な分岐になっていた。
+  const captured = text.match(/```(?:json)?\s*\n([\s\S]*?)\n```/)?.[1];
+  if (captured !== undefined) return captured.trim();
   return text.trim();
+}
+
+/** モデルが申告した代表感情が、こちらの知っている札かどうか。
+ *  `unknown` のまま照合するので `typeof` の前置きは要らない —
+ *  文字列でない値は `includes` の時点で一致しない。 */
+function isDominantLabel(value: unknown): value is string {
+  return (EMOTION_KEYS as readonly unknown[]).concat('mixed').includes(value);
 }
 
 /** Validate + clamp a model-returned object into the canonical shape. */
@@ -182,23 +197,17 @@ export function normalizeAnalysis(raw: unknown): {
   }
   const sentiment: Sentiment =
     r.sentiment === 'positive' || r.sentiment === 'negative' ? r.sentiment : 'neutral';
-  const dominant =
-    typeof r.dominant === 'string' && (EMOTION_KEYS as readonly string[]).concat('mixed').includes(r.dominant)
-      ? r.dominant
-      : pickDominant(scores);
+  const dominant = isDominantLabel(r.dominant) ? r.dominant : pickDominant(scores);
   return { scores, sentiment, dominant };
 }
 
 function pickDominant(scores: EmotionScores): string {
-  let bestKey: EmotionKey = 'joy';
-  let bestVal = -1;
-  for (const k of EMOTION_KEYS) {
-    if (scores[k] > bestVal) {
-      bestVal = scores[k];
-      bestKey = k;
-    }
-  }
-  return bestVal <= 0 ? 'mixed' : bestKey;
+  // 初期値を置かない reduce は先頭要素から始まるので、`'joy'` と `-1` の
+  // 番兵が要らない。番兵は必ず 1 周目で上書きされるため、どんな値へ
+  // 変異させても結果が変わらず、測っても何も分からない場所だった。
+  // 同点のときは先に並んでいるほうを採る (`>` であって `>=` ではない)。
+  const best = EMOTION_KEYS.reduce((a, b) => (scores[b] > scores[a] ? b : a));
+  return scores[best] <= 0 ? 'mixed' : best;
 }
 
 async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
@@ -245,7 +254,8 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
 
   const store = await readStore();
   store.analyses.unshift(entry);
-  if (store.analyses.length > MAX_ANALYSES) store.analyses = store.analyses.slice(0, MAX_ANALYSES);
+  // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
+  store.analyses = store.analyses.slice(0, MAX_ANALYSES);
   await writeStore(store);
   return entry;
 }
@@ -265,4 +275,3 @@ export const ACTIONS: ActionMap = {
   'analyze-text': analyzeText,
   'clear-history': clearHistory,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

@@ -68,7 +68,6 @@ const KNOWN_BROAD = {
   'src/main/clients/cloudflare.ts':              { regions: 1, lines:  189 },
   'src/main/clients/devEnv.ts':                  { regions: 1, lines:   43 },
   'src/main/clients/drive.ts':                   { regions: 1, lines:   70 },
-  'src/main/clients/emotions.ts':                { regions: 1, lines:  234 },
   'src/main/clients/funding.ts':                 { regions: 1, lines:   34 },
   'src/main/clients/notion.ts':                  { regions: 1, lines:  122 },
   'src/main/clients/stocks.ts':                  { regions: 1, lines:  169 },
