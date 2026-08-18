@@ -60,7 +60,6 @@ export type RegistrationType =
  * 法定の固定値のため block-level で Stryker を抑制する (根拠: 税率は登録免許税法で
  * 固定。ルックアップの境界・振る舞いは `realEstateRegistrationTax` とテストで全面検証)。
  */
-// Stryker disable all
 export const REGISTRATION_TAX_RATES: Readonly<Record<RegistrationType, number>> = {
   transferSale: RATE_TRANSFER_SALE,
   preservation: RATE_PRESERVATION,
@@ -68,7 +67,6 @@ export const REGISTRATION_TAX_RATES: Readonly<Record<RegistrationType, number>> 
   transferGift: RATE_TRANSFER_GIFT,
   mortgage: RATE_MORTGAGE,
 };
-// Stryker restore all
 
 /** ホワイトリスト判定に用いる登記種別の集合。 */
 const REGISTRATION_TYPES: readonly RegistrationType[] = [
@@ -101,12 +99,10 @@ export type CompanyType = 'kk' | 'gk';
  * 法定の固定値のため block-level で Stryker を抑制する (根拠: 最低額は登録免許税法で
  * 固定。「大きい方」の判定・境界は `companyIncorporationTax` とテストで全面検証)。
  */
-// Stryker disable all
 export const INCORPORATION_MINIMUM_TAX: Readonly<Record<CompanyType, number>> = {
   kk: KK_MINIMUM_TAX,
   gk: GK_MINIMUM_TAX,
 };
-// Stryker restore all
 
 /** ホワイトリスト判定に用いる会社形態の集合。 */
 const COMPANY_TYPES: readonly CompanyType[] = ['kk', 'gk'];

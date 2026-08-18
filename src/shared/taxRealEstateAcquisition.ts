@@ -23,7 +23,6 @@ import { assertNonNegativeFinite, floorHundred } from './num';
 // 算術・比較ロジックは実テストで全面的に撃墜するため、定数定義のみ block-level で
 // Stryker を抑制する (根拠: 法定の固定値。乗算・切捨・境界比較は各関数のテストで検証)。
 
-// Stryker disable all
 /** 本則税率 (4%、地方税法 73 条の15)。 */
 export const STANDARD_RATE = 0.04;
 /** 土地・住宅の軽減税率 (3%、租税特別措置法 附則による特例)。 */
@@ -35,7 +34,6 @@ export const LAND_THRESHOLD = 100_000;
 export const NEW_BUILDING_THRESHOLD = 230_000;
 /** その他家屋の免税点 (売買等による取得)。12 万円。 */
 export const OTHER_BUILDING_THRESHOLD = 120_000;
-// Stryker restore all
 
 /**
  * 不動産の種別 (ホワイトリスト)。

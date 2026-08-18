@@ -57,7 +57,6 @@ export interface GiftTaxBracket {
   readonly deduction: number;
 }
 
-// Stryker disable all : 以下は贈与税の速算表 (相続税法 21 条の 7 / 租特法 70 条の 2 の 5)
 // の法定リテラル定義。税率・控除額・区分上限はいずれも税法上の固定値であり、
 // リテラル変異は税法の改定であってテストで「正しい値」を pin しても等価変異に
 // なりやすい。どの区分をどの課税価格に当てるか・税額の算式・境界比較は
@@ -110,7 +109,6 @@ export const SPECIAL_GIFT_BRACKETS: readonly GiftTaxBracket[] = [
   { upTo: Infinity, rate: 0.55, deduction: 6_400_000 },
 ];
 
-// Stryker restore all
 
 /**
  * 贈与の種別 (速算表の選択)。

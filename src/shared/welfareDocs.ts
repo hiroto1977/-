@@ -22,7 +22,6 @@ const today = () => new Date().toISOString().slice(0, 10);
 /** 従業員向け説明資料 (Markdown)。 */
 export function employeeExplanationMarkdown(result: WelfareSchemeResult): string {
   const { normal, scheme, diff } = result;
-  // Stryker disable all
   return `# 新しい給与・福利厚生制度のご説明
 
 ## なぜ額面（基本給）が下がるのに、手取りが増えるのか
@@ -59,13 +58,11 @@ export function employeeExplanationMarkdown(result: WelfareSchemeResult): string
 
 _作成日: ${today()}（概算・社内説明用）_
 `;
-  // Stryker restore all
 }
 
 /** 給与変更・天引き 同意書 (Markdown)。 */
 export function consentFormMarkdown(result: WelfareSchemeResult): string {
   const { normal, scheme } = result;
-  // Stryker disable all
   return `# 給与制度変更に関する同意書
 
 私は、会社が導入する福利厚生制度（社宅・食事補助・育児補助・カフェテリアプラン）
@@ -95,13 +92,11 @@ export function consentFormMarkdown(result: WelfareSchemeResult): string {
 
 _本書は労使協定・就業規則の定めと併せて運用してください（${today()} 作成のひな形）。_
 `;
-  // Stryker restore all
 }
 
 /** 福利厚生規程 ひな形 (Markdown)。 */
 export function welfareRegulationMarkdown(input: WelfareSchemeInput): string {
   const rentSelf = Math.max(0, input.rentTotal - input.rentCompanyShare);
-  // Stryker disable all
   return `# 福利厚生規程（ひな形）
 
 ## 第1条（目的）
@@ -141,5 +136,4 @@ export function welfareRegulationMarkdown(input: WelfareSchemeInput): string {
 
 _本書はひな形です。施行前に税理士・社労士・弁護士の確認を受けてください（${today()} 作成）。_
 `;
-  // Stryker restore all
 }

@@ -37,7 +37,6 @@ export interface AutomobileTaxBracket {
  * 法定の固定値のため block-level で Stryker を抑制する (根拠: 税額は地方税法で固定。
  * 階段の境界・ルックアップの振る舞いは `automobileTaxByDisplacement` とテストで全面検証)。
  */
-// Stryker disable all
 export const AUTOMOBILE_TAX_TABLE: readonly AutomobileTaxBracket[] = [
   { upToCc: 1_000, annualTax: 25_000 }, // 1,000cc 以下
   { upToCc: 1_500, annualTax: 30_500 }, // 〜1,500cc
@@ -50,7 +49,6 @@ export const AUTOMOBILE_TAX_TABLE: readonly AutomobileTaxBracket[] = [
   { upToCc: 6_000, annualTax: 87_000 }, // 〜6,000cc
   { upToCc: Infinity, annualTax: 110_000 }, // 6,000cc 超
 ];
-// Stryker restore all
 
 /**
  * 排気量 (cc) から自動車税種別割の年税額を概算する (自家用乗用車)。
@@ -100,7 +98,6 @@ export type EnvironmentalPerformanceCategory =
  * 法定の固定値のため block-level で Stryker を抑制する (根拠: 税率は地方税法で固定。
  * 写像の振る舞い・ホワイトリスト境界は `environmentalPerformanceRate` とテストで全面検証)。
  */
-// Stryker disable all
 export const ENVIRONMENTAL_PERFORMANCE_RATES: Readonly<
   Record<EnvironmentalPerformanceCategory, number>
 > = {
@@ -110,7 +107,6 @@ export const ENVIRONMENTAL_PERFORMANCE_RATES: Readonly<
   gas2030_60: 0.02, // 60% 達成 = 2%
   other: 0.03, // それ以外 = 3%
 };
-// Stryker restore all
 
 /** ホワイトリスト判定に用いる燃費達成度区分の集合。 */
 const ENVIRONMENTAL_PERFORMANCE_CATEGORIES: readonly EnvironmentalPerformanceCategory[] = [

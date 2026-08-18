@@ -26,7 +26,6 @@ export interface SelfCareArticle {
 }
 
 // 記事本文・出典は事実データ (文字列リテラルは表現)。Stryker から除外する。
-// Stryker disable all
 /**
  * 確証済みセルフケア記事 (2026-06 に多媒体照合)。
  * いずれも 公的出典 (厚労省/WHO 系) + 独立出典 2 件以上。
@@ -110,7 +109,6 @@ export const SELF_CARE_LIBRARY: readonly SourcedClaim<SelfCareArticle>[] = [
     ],
   },
 ];
-// Stryker restore all
 
 /** ライブラリの全記事 (value のみ・入力順)。 */
 export function selfCareArticles(): SelfCareArticle[] {

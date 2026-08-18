@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・3,421 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・3,003 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **31 ファイル
-/ 39 箇所 / 3,421 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **26 ファイル
+/ 33 箇所 / 3,003 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -167,6 +167,18 @@
 
 この方針変更で、台帳に残っている行数は**「まだ測っていない実コード」だけ**を
 指すようになった (static 変異体を隠すための無効化と混ざらなくなった)。
+
+**効果は大きかった。** `ignoreStatic` を入れた直後に 18 ファイルの無効化を外して
+実測したところ、**テストを 1 行も足さずに全ファイルが 100%** だった — つまり
+それらの無効化は最初から static 変異体を隠すためだけに存在していた:
+
+| ファイル | 無効化を外した後 |
+|---|---|
+| `connectorCatalog.ts` / `welfareDocs.ts` / `selfCareLibrary.ts` / `counselingResearch.ts` | 100% (台帳から 4 件退場) |
+| `taxGift.ts` | 100% (台帳から 1 件退場) |
+| `taxStampDuty.ts` / `taxRegistrationLicense.ts` / `taxAutomobile.ts` / `taxRealEstateAcquisition.ts` / `taxInheritance.ts` / `taxNationalHealthInsurance.ts` / `taxNationalPension.ts` | 100% (台帳外だが測定対象が増えた) |
+
+残る 26 ファイルは**実際にテストが足りていない**ものである。
 
 ### 進め方 (store.ts で通った手順)
 

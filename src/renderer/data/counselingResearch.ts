@@ -140,7 +140,6 @@ export function runResearch(personas: readonly PatientPersona[]): ResearchReport
 // --- 研究用ペルソナ (人がレビューして育てる・PR で拡張) ----------------------
 //
 // 発話は台本データ (文字列リテラルは表現)。セッションの力学は simulateSession 側で検証。
-// Stryker disable all
 export const RESEARCH_PERSONAS: readonly PatientPersona[] = [
   {
     id: 'burnout',
@@ -218,4 +217,3 @@ export const RESEARCH_PERSONAS: readonly PatientPersona[] = [
     ],
   },
 ];
-// Stryker restore all

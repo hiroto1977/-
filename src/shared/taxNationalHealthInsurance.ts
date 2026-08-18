@@ -27,7 +27,6 @@ import { yen } from './num';
 
 // --- 賦課限度額・基礎控除の固定値 (令和6年度の代表値) ----------------------
 //
-// Stryker disable all : 制度上の固定値 (賦課限度額・基礎控除)。これらの定数
 // リテラル自体を書き換える変異は「別の制度値を表す別関数」であり、本モジュール
 // が表現する令和6年度の制度とは等価でない (テストは min(cap) の発動境界・基礎
 // 控除後の賦課基準額を実値で pin しており、定数を経由した計算結果は撃墜される)。
@@ -41,7 +40,6 @@ export const CARE_CAP = 170_000;
 /** 国民健康保険料の基礎控除額 (賦課基準額の算定に用いる、円)。 */
 export const NHI_BASIC_DEDUCTION = 430_000;
 
-// Stryker restore all
 
 /**
  * 1 区分 (医療分 / 支援金分 / 介護分) の料率設定。
@@ -76,7 +74,6 @@ export interface NhiRates {
  * 市区町村に確認してください。ここでの値はあくまで令和6年度の代表的な一例で、
  * 実際の自治体の値を `nationalHealthInsurance` の `rates` 引数で渡せます。
  */
-// Stryker disable all : 代表料率テーブル (令和6年度の一例)。各リテラルの書き換え
 // 変異は「別の自治体/年度の料率を表す別テーブル」であり制度的に等価でない。
 // 所得割計算・min(cap)・加算・切捨ロジックは独自 rates を渡すテストで撃墜する。
 export const DEFAULT_NHI_RATES: NhiRates = {
@@ -84,7 +81,6 @@ export const DEFAULT_NHI_RATES: NhiRates = {
   support: { incomeRate: 0.0269, perCapita: 15_000, perHousehold: 8_000 },
   care: { incomeRate: 0.0225, perCapita: 16_000, perHousehold: 6_000 },
 };
-// Stryker restore all
 
 /**
  * 賦課基準額を計算する = max(総所得金額等 − 基礎控除 43 万, 0)。
