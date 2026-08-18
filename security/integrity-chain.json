@@ -203,6 +203,14 @@
       "leafCount": 16,
       "note": "update ci.yml",
       "hash": "928eb6b845dc7dbf2989b68700add609378212f22a6a2f3bcde1809208771f48"
+    },
+    {
+      "index": 23,
+      "prevHash": "928eb6b845dc7dbf2989b68700add609378212f22a6a2f3bcde1809208771f48",
+      "merkleRoot": "777484db066f49cac7b6b4d0a2de467edec3f8639b9159bc58e391af255ec64f",
+      "leafCount": 16,
+      "note": "update vault.ts",
+      "hash": "4598c80adc8d1d600e565699c2cc9544fd958442667e08da46c5be2fc83f727f"
     }
   ],
   "tipManifest": {
@@ -220,7 +228,7 @@
     "src/renderer/security/autoLock.ts": "4c9b67a13f5200ec9ba9f271340439d415ec1aa5ab5f820b39a58764669481bb",
     "src/renderer/security/dataCrypto.ts": "29e71f4449c9ac62338f8584aa8ca4fd777411fda97d880ec4e777120f52f691",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "3f362a0004e96ab236c02d9019e6f3ce0fc0d777b4002d8231cafcf20d97eddb",
+    "src/renderer/security/vault.ts": "033f9ce3bc89e45927bfa04ab086533dad8578aee05519e4b8c84b2a7686c89f",
     "src/renderer/security/webauthn.ts": "4ccdd906ce2e880a5b8f47bbcb0af0b055b0b76edf301bc8fb28465c6d40e24f"
   }
 }

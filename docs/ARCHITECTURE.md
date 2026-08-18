@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7619** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7894) |
+| ユニットテスト | **7664** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7943) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 271 | 自己検証 |
+| `file:line` 参照数 | 272 | 自己検証 |
 
 ### 統合フロー図
 
@@ -516,6 +516,38 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 (実測: `new URL('http://256.1.1.1/')` → ERR_INVALID_URL)、変異体 10 個が
 測れないまま残っていた。共有シークレットの `&& length > 0` も `''` が falsy な
 ぶん冗長だった。最終的に **321 変異体 100%**。
+
+#### 金庫の中心の性質に証拠が無かった (`src/renderer/security/vault.ts`)
+
+AES-GCM の金庫も 610 行 (全 788 行のうち 3 箇所) を無効化しており、外して
+実測すると **357 変異体 78.71%**。生存 51 / 未到達 25。
+
+**一番大事な性質が証明されていなかった。** `importKey(..., false, ...)` の
+`false` — マスター鍵を `extractable: false` で作る指定 — を `true` に変えても、
+どのテストも落ちなかった。「鍵は WebCrypto の外へ出ない」は CLAUDE.md にも
+このファイルの冒頭にも書いてあるが、書いてあるだけだった。
+
+鍵オブジェクトは外へ公開していない (公開すればそれ自体が新しい経路になる)。
+そこで **WebCrypto 側を覗いて渡している引数を見る** — `crypto.subtle.deriveKey`
+/ `importKey` を包み、生成されたすべての AES-GCM / PBKDF2 鍵が
+`extractable === false` であることを確かめる。`true` に変えると 3 件落ちる。
+
+同じ形で**メモリ衛生**も証拠を残した。`finally { raw.fill(0) }` は外から
+観測できないので変異体が生存していたが、`Uint8Array.prototype.fill` を数えれば
+「実際に 0 で潰している」ことは観測できる。pragma で黙らせるのではなく検査にした。
+
+他に証明されていなかったガード: パスワード長の境界 (12 / 256)、`serviceId`
+(1-64) と `token` (1-8192) の長さ、**施錠中は読み書きできないこと**、復旧
+ブランチ 5 項目の完全性 (どれか 1 つ欠けても復旧しない)。旧世代の金庫
+(`master-wrap` 無し) と復旧ブランチ欠落は、IndexedDB を直接いじって作った。
+
+最終的に **307 変異体 100%**、テスト 49 件追加。
+
+**この過程でゲート自身が仕事をした。** `} finally {` の行には
+`Stryker disable next-line` が効かないため `try` 全体を範囲指定で囲んだところ、
+`lint:mutation-scope` が「広い無効化が新規に増えました (3 箇所 / 120 行)」で
+落とした。610 行の死角を 120 行の死角に付け替えるところだった。範囲を
+26 行以内に収め直して解決した。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

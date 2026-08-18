@@ -104,17 +104,21 @@ export interface Vault {
 // `||` short-circuit defaults, and the arrow-function bodies are not
 // load-bearing; production tests cover the success + missing-data paths
 // via the public Vault API.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,BooleanLiteral,ConditionalExpression,BlockStatement,MethodExpression
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
+      // DB_VERSION が上がらない限り onupgradeneeded は新規作成時にしか走らず
+      // contains は常に false (等価変異)。将来の版上げに備えて残す。
+      // Stryker disable next-line ConditionalExpression
       if (!db.objectStoreNames.contains(META_STORE)) db.createObjectStore(META_STORE);
+      // Stryker disable next-line ConditionalExpression
       if (!db.objectStoreNames.contains(TOKEN_STORE)) db.createObjectStore(TOKEN_STORE);
     };
     req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('indexedDB open failed'));
   });
 }
@@ -124,6 +128,7 @@ function idbGet<T>(db: IDBDatabase, store: string, key: string): Promise<T | und
     const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).get(key);
     req.onsuccess = () => resolve(req.result as T | undefined);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('idb get failed'));
   });
 }
@@ -133,6 +138,7 @@ function idbPut(db: IDBDatabase, store: string, key: string, value: unknown): Pr
     const tx = db.transaction(store, 'readwrite');
     tx.objectStore(store).put(value, key);
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => reject(tx.error ?? new Error('idb put failed'));
   });
 }
@@ -142,6 +148,7 @@ function idbDelete(db: IDBDatabase, store: string, key: string): Promise<void> {
     const tx = db.transaction(store, 'readwrite');
     tx.objectStore(store).delete(key);
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => reject(tx.error ?? new Error('idb delete failed'));
   });
 }
@@ -150,11 +157,14 @@ function idbKeys(db: IDBDatabase, store: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).getAllKeys();
+    // Stryker disable next-line MethodExpression,ConditionalExpression: この store の鍵は
+    // すべて serviceId (文字列) なので filter は一度も要素を落とさない (等価変異)。
+    // 型を絞るために必要なので残す。
     req.onsuccess = () => resolve((req.result as IDBValidKey[]).filter((k): k is string => typeof k === 'string'));
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('idb keys failed'));
   });
 }
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,BooleanLiteral,ConditionalExpression,BlockStatement,MethodExpression
 
 // --- Crypto primitives ------------------------------------------------
 
@@ -207,7 +217,6 @@ interface EncryptedToken {
 // to BufferSource are dictated by WebCrypto contract; mutating them
 // either breaks at runtime (caught by integration tests) or makes no
 // observable difference (decorative).
-// Stryker disable StringLiteral,ArrowFunction,BooleanLiteral,ObjectLiteral,ArrayDeclaration,MethodExpression
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
   const baseKey = await crypto.subtle.importKey(
     'raw',
@@ -347,24 +356,26 @@ async function unwrapMasterFromRecovery(
 ): Promise<Uint8Array> {
   return decryptBytes(recoveryKey, { iv, ciphertext });
 }
-// Stryker restore StringLiteral,ArrowFunction,BooleanLiteral,ObjectLiteral,ArrayDeclaration,MethodExpression
 
 // --- Vault implementation ---------------------------------------------
 
 // Error messages, default-state boundary literals (length checks), and
 // EqualityOperator on `currentKey !== null` are all behaviorally pinned
 // by the 20 integration tests (init / unlock / token CRUD / lock paths).
-// Stryker disable StringLiteral,EqualityOperator,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,BlockStatement,MethodExpression
 class BrowserVault implements Vault {
   private currentKey: CryptoKey | null = null;
 
   async status(): Promise<VaultStatus> {
     let db: IDBDatabase;
+    // DB を開けない環境 (プライベートモード等) では「未初期化」として扱う。
+    // fake-indexeddb では失敗させられず、この catch には到達しない。
+    /* Stryker disable BlockStatement,StringLiteral */
     try {
       db = await openDb();
     } catch {
       return 'uninitialized';
     }
+    /* Stryker restore BlockStatement,StringLiteral */
     // idbGet が reject すると status() が reject し、呼び出し側 (App) が
     // ハングしてログイン画面が出なくなる。読み取り失敗時は meta 未取得のまま
     // 下の `!meta` 分岐に落とし、uninitialized を返してロック画面に到達させる。
@@ -479,6 +490,10 @@ class BrowserVault implements Vault {
     const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
     try {
       const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
+      // AES-GCM は認証付きなので、鍵が違えば decryptString が先に throw する。
+      // 復号に成功して中身だけ違う状態は作れず到達しない。多重防御として残す
+      // (この throw は下の catch が拾って同じ文言になる)。
+      // Stryker disable next-line ConditionalExpression,StringLiteral
       if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
     } catch {
       throw new Error('パスワードが違います');
@@ -530,6 +545,8 @@ class BrowserVault implements Vault {
     } finally {
       db.close();
     }
+    // Stryker disable next-line ConditionalExpression: 早期 return を外しても
+    // `decryptString(key, undefined)` が throw し、下の catch が null を返すため同じ結果 (等価変異)。
     if (!blob) return null;
     try {
       return await decryptString(this.currentKey, blob);
@@ -608,7 +625,10 @@ class BrowserVault implements Vault {
           iv: meta.recoveryIv,
           ciphertext: meta.recoveryKcv,
         });
-        if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
+        // AES-GCM は認証付きなので鍵が違えば復号側が先に throw する。復号に成功して
+      // 中身だけ違う状態は作れず到達しない。多重防御として残す。
+      // Stryker disable next-line ConditionalExpression,StringLiteral
+      if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
       } catch {
         throw new Error('リカバリーキーが違います');
       }
@@ -652,6 +672,7 @@ class BrowserVault implements Vault {
         // stays usable under v0 — partial writes cannot occur because we
         // compute the full new meta in memory before a single idbPut.
         if (meta.recoveryVersion === undefined) {
+          /* Stryker disable BlockStatement,StringLiteral */
           try {
             const migratedRecoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
             const migratedRecoveryKey = await deriveKeyFromMnemonic(
@@ -670,14 +691,16 @@ class BrowserVault implements Vault {
               recoveryWrappedKey: migratedRecoveryWrap.ciphertext,
               recoveryVersion: 1,
             };
+            // 移行はベストエフォート — 失敗しても復旧自体は成功しており、金庫は
+            // v0 のまま使える。書き込みを失敗させる手段がテストに無く到達しない。
           } catch (err) {
-            // Stryker disable next-line all
             console.warn(
               '[vault] legacy v0 → v1 recovery migration failed; vault remains usable under v0. ' +
                 'Re-run recoverWithMnemonic() to retry the upgrade.',
               err,
             );
           }
+          /* Stryker restore BlockStatement,StringLiteral */
         }
 
         await idbPut(db, META_STORE, 'vault', newMeta);
@@ -736,12 +759,15 @@ class BrowserVault implements Vault {
       req.onsuccess = () => resolve();
       // Stryker disable next-line ArrowFunction
       req.onerror = () => resolve();
-      // Stryker disable next-line ArrowFunction
+      // 他のタブが接続を掴んでいるときだけ発火する。単一プロセスのテストでは
+      // 作れず到達しない。
+      /* Stryker disable BlockStatement,StringLiteral,ArrowFunction */
       req.onblocked = () => {
         console.warn(
           '[vault] wipeAndReset blocked — another tab is still holding the IndexedDB. ' +
             'Close all other tabs of this app and try again.',
         );
+        /* Stryker restore BlockStatement,StringLiteral,ArrowFunction */
         // Best-effort follow-up: check whether the DB is actually gone
         // after a short delay (the other tab might close in the meantime).
         // We don't await this — wipeAndReset() must return promptly so the
@@ -774,7 +800,6 @@ class BrowserVault implements Vault {
     });
   }
 }
-// Stryker restore StringLiteral,EqualityOperator,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,BlockStatement,MethodExpression
 
 let singleton: Vault | null = null;
 export function getVault(): Vault {
