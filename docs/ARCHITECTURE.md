@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7901** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8250) |
+| ユニットテスト | **7945** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8294) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 285 | 自己検証 |
+| `file:line` 参照数 | 287 | 自己検証 |
 
 ### 統合フロー図
 
@@ -815,6 +815,46 @@ await fs.writeFile(storePath(), JSON.stringify(store), { mode: 0o600 });
 残ったのは `readFile` の `'utf8'` だけで、これは**空文字にすると Buffer が
 返るが `JSON.parse` は `toString()` 経由で読むため結果が変わらない**ことを実測
 したうえで、理由を書いた 1 行 pragma にした。**197 変異体 100%**。
+
+#### 「弱い検査」は無い検査と同じ (`drive` / `wordpress` / `notion` / `canva`)
+
+薄い SaaS クライアント 4 つを続けて測った。無効化を外すと 57.89% /
+64.79% / 65.38% / 71.67%。**4 つとも同じ形で穴が開いていた** — 応答の
+整形は検査されているのに、**問い合わせそのもの**が誰にも見られていない。
+送り先 URL を空にしても、`Authorization` を空にしても、クエリが丸ごと
+消えても、検査は全部通る。
+
+クエリが効く例:
+
+| 落ちるもの | 画面はどう見えるか |
+|---|---|
+| Drive の `orderBy=modifiedTime desc` | 「最近さわったファイル」が作成順になる |
+| Notion の `sort: last_edited_time descending` | 「最近のページ」が関連度順になる |
+| Canva の `sort_by=modified_descending` | 「最近の作業」が別の順になる |
+| Drive / WordPress の `fields=…` | 要らないメタデータまで受け取る |
+
+どれも**ページは正しく並んで見える**ので、中身が違うことに気付けない。
+
+`notion.ts` には**弱い検査**の実例があった。
+
+```ts
+expect(headers['Notion-Version']).toBeDefined();   // 空文字でも通る
+```
+
+Notion は版を名乗らないと 400 を返す。`toBeDefined()` は `''` を通すので、
+この検査は「ヘッダの名前がある」ことしか見ていない。値そのものを固定する
+形に直した。**部分一致・存在確認は、変異検査から見ると無い検査と同じ**である
+(同じ理由で `toThrow('...')` の部分一致も 1 か所直した — 末尾に何が付いても
+通ってしまう)。
+
+`wordpress.ts` では**判定の順番**が無証明だった。`isPaidPlan` は
+`is_free` の明示を最優先し、無いときだけ slug を見る。順番が入れ替わると
+無料プランを有料として画面に出す。5 通り (明示 true / 明示 false / slug のみ /
+空オブジェクト / 大文字 slug) を 1 つずつ固定した。同時に
+`slug !== 'free_plan'` を削除している — `!slug.includes('free')` に必ず
+含まれるので、どちらへ変異させても結果が変わらない条件だった。
+
+4 ファイルとも **100%** (38 / 66 / 78 / 59 変異体)。台帳は 1,923 → 1,540 行。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 
