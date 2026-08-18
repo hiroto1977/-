@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・2,675 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・2,590 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **21 ファイル
-/ 28 箇所 / 2,675 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **20 ファイル
+/ 27 箇所 / 2,590 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -143,6 +143,7 @@
 | `src/renderer/oauth/pkce.ts` | 180 行を無効化 | 実測 171 変異体 77.71%。送っている中身 (`code_verifier` / `S256`) を誰も見ていなかった | **163 変異体 98.77%** ※ |
 | `src/shared/ai/credentials.ts` | 176 行を無効化 | 実測 159 変異体 90.57%。空文字の API キーが「設定済み」として通っていた | **157 変異体 100%** |
 | `src/shared/ai/providers.ts` | 301 行を無効化 | 実測 255 変異体 72.16%。全プロバイダの応答パーサが無証明。**生存 48 のうち 40 が static 変異体**と判明し `ignoreStatic` を採用 | **189 変異体 100%** |
+| `src/renderer/security/autoLock.ts` | 85 行を無効化 | 実測 63 変異体 55.56%。**`onVisibilityChange` が丸ごと未到達** — 「タブを隠したら施錠」という中核の約束に検査が 1 つも無かった | **49 変異体 100%** |
 
 ※ `pkce.ts` だけ 100% にしていない。残る 2 つは真の等価変異で、範囲指定で囲めば
 100% になるが**66 個の測定を捨てる**ことになる (163 変異体 98.77% → 97 変異体 100%)。
@@ -191,7 +192,6 @@
 | 43.3% | `src/main/clients/calendar.ts` | 34 |
 | 47.5% | `src/main/clients/templates.ts` | 116 |
 | 55.4% | `src/main/clients/emotions.ts` | 96 |
-| **55.6%** | **`src/renderer/security/autoLock.ts`** | **36** |
 | 57.9% | `src/main/clients/drive.ts` | 16 |
 | 64.8% | `src/main/clients/wordpress.ts` | 25 |
 | 65.4% | `src/main/clients/notion.ts` | 27 |
@@ -209,9 +209,8 @@
 | 96.7% | `src/renderer/data/counseling.ts` | 4 |
 | — | `src/renderer/library/library.ts` (68.4%) / `src/renderer/fs/fsa.ts` (49.6%) | 62 / 60 |
 
-**太字の 2 つが優先**である。`autoLock.ts` は「離席したら施錠する」約束そのもので、
-`oauth.ts` はデスクトップ版の OAuth (PKCE + loopback) — どちらも壊れても画面には
-出ず、安全性だけが落ちる。
+`autoLock.ts` は消化済み (下の表を参照)。**次は `oauth.ts`** — デスクトップ版の
+OAuth (PKCE + loopback) で、壊れても画面には出ず安全性だけが落ちる。
 
 ### 進め方 (store.ts で通った手順)
 

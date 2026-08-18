@@ -65,7 +65,6 @@ const KNOWN_BROAD = {
   'src/renderer/data/counseling.ts':             { regions: 1, lines:  120 },
   'src/renderer/fs/fsa.ts':                      { regions: 1, lines:  128 },
   'src/renderer/library/library.ts':             { regions: 1, lines:  217 },
-  'src/renderer/security/autoLock.ts':           { regions: 1, lines:   85 },
   'src/shared/ai/chat.ts':                       { regions: 1, lines:   57 },
   'src/shared/taxCalc.ts':                       { regions: 1, lines:   53 },
 };
