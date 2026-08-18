@@ -643,6 +643,9 @@ input.dispatchEvent(new Event('input', { bubbles: true }));
 | 入力由来の配列長 / `.repeat` / `.padStart` | 全走査 | 0 件 |
 | `while` の終了条件 | 11 箇所 | すべて有界 (`level <= 8` / 長さ / 増加する id / チャンク) |
 | 入れ子量指定子の正規表現 (ReDoS) | 3 件 | semver は既測・1 件は誤検出・`skills.ts` の `(.+(?:\n[ \t]+.+)*)` を実測し **10万文字 0.23 ms で線形** (`.` が `\n` を含まないため内外が排他で爆発しない) |
+| 経営サマリーの見出し数値にサンプルが混ざるか | `SNAPSHOT.*` の参照 3 箇所を全走査 | `buildBusinessOverview` は利用者レコードのみで組む。混入 0 件 |
+| 未連携時に会計・返済がサンプルへ落ちるか | `SNAPSHOT.freee` / `SNAPSHOT.funding` の実体を確認 | どちらも `monthly: []` (空)。資金繰りスコア・DSCR に架空値は入らない |
+| 事業ダッシュボードの「全社合算」が模擬と名乗るか | `BusinessPage.tsx` を全走査 | 4 箇所で「模擬データ」と明示済み (StatusBar の who / シミュレーション中バナー / 表下の注記 2 件) |
 
 `calcIrr` は 200 回固定反復で収束保証がコメントに証明付きで書かれている (無界ではない)。
 
