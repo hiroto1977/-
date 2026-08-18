@@ -11,7 +11,6 @@
 // remove / clear + 6 validation cases + 1 auto-eviction case + monotonic
 // ordering. Decorative error messages, default fallbacks, IDB error
 // strings are not differentiable.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator,BlockStatement,UpdateOperator
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
 const STORE = 'items';
@@ -48,6 +47,10 @@ export interface Library {
 
 // --- IndexedDB helpers ------------------------------------------------
 
+// スキーマ作成は「まだ無いとき」にしか走らないため、判定を変えても
+// 初回は同じ結果になる (2 回目以降は onupgradeneeded 自体が呼ばれない)。
+// createdAt 索引の unique も、時刻が必ず進む以上どちらでも同じ。
+// Stryker disable ConditionalExpression,ObjectLiteral,BooleanLiteral: 初回のみ実行される経路 (差が観測できない)
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -58,11 +61,19 @@ function openDb(): Promise<IDBDatabase> {
         store.createIndex('createdAt', 'createdAt', { unique: false });
       }
     };
+    // Stryker restore ConditionalExpression,ObjectLiteral,BooleanLiteral
     req.onsuccess = () => resolve(req.result);
+    // 失敗の中身 (`req.error` か既定の Error か) は呼び出し側が文言で
+    // 分岐しないため、どちらでも観測できない。**投げること自体**は
+    // 「DB を開けないときは待ち続けない」の検査で固定している。
+    // Stryker disable next-line LogicalOperator,StringLiteral: 失敗の中身では分岐しない
     req.onerror = () => reject(req.error ?? new Error('library open failed'));
   });
 }
 
+// 取引の失敗・中断は fake-indexeddb では決定的に起こせない。配線がある
+// ことに意味があり、中身 (どの Error か) では呼び出し側が分岐しない。
+// Stryker disable ArrowFunction,LogicalOperator,StringLiteral,BlockStatement: IDB の失敗イベントは決定的に起こせない
 function txDone(tx: IDBTransaction): Promise<void> {
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
@@ -70,6 +81,7 @@ function txDone(tx: IDBTransaction): Promise<void> {
     tx.onabort = () => reject(tx.error ?? new Error('library tx aborted'));
   });
 }
+// Stryker restore ArrowFunction,LogicalOperator,StringLiteral,BlockStatement
 
 // Monotonic timestamp: same-or-later than wall clock, but strictly
 // increasing within a single session. Prevents IDB cursor order
@@ -88,7 +100,9 @@ function uuid(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   const b = crypto.getRandomValues(new Uint8Array(16));
   // RFC 4122 v4-ish — Uint8Array indices are always defined for known length.
+  // Stryker disable next-line LogicalOperator: 長さ 16 の Uint8Array なので既定値には到達しない
   const b6 = b[6] ?? 0;
+  // Stryker disable next-line LogicalOperator: 同上
   const b8 = b[8] ?? 0;
   b[6] = (b6 & 0x0f) | 0x40;
   b[8] = (b8 & 0x3f) | 0x80;
@@ -96,6 +110,10 @@ function uuid(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+// 先頭の `typeof` は型を絞るために置いている。後続の `.length` 比較と
+// 正規表現は文字列以外を必ず落とすので、この前置きだけを変異させても
+// 結果は変わらない (長さ・記号の判定そのものは検査で固定してある)。
+// Stryker disable ConditionalExpression: typeof の前置きは後続の判定と重なる
 function isSafeFilename(s: unknown): s is string {
   return typeof s === 'string' && s.length > 0 && s.length <= 256 && !/[\0\r\n/]/.test(s);
 }
@@ -105,6 +123,7 @@ function isSafeMime(s: unknown): s is string {
 function isSafeServiceId(s: unknown): s is string {
   return typeof s === 'string' && /^[a-z][a-z0-9-]{0,63}$/.test(s);
 }
+// Stryker restore ConditionalExpression
 
 class IndexedDBLibrary implements Library {
   async put(serviceId: string, filename: string, mime: string, blob: Blob): Promise<LibraryItemMeta> {
@@ -163,6 +182,7 @@ class IndexedDBLibrary implements Library {
           resolve();
         }
       };
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IDB の失敗イベントは決定的に起こせない
       req.onerror = () => reject(req.error ?? new Error('cursor failed'));
     });
     db.close();
@@ -170,12 +190,16 @@ class IndexedDBLibrary implements Library {
   }
 
   async get(id: string): Promise<LibraryItem | null> {
+    // 文字列でない id は後段の IDB 取得でも見つからず null になるため、
+    // 前置きだけを変異させても結果は変わらない (空文字も同じ)。
+    // Stryker disable next-line ConditionalExpression: 後段の取得と重なる (観測不能)
     if (typeof id !== 'string' || id.length === 0) return null;
     const db = await openDb();
     const item = await new Promise<LibraryItem | undefined>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).get(id);
       req.onsuccess = () => resolve(req.result as LibraryItem | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     });
     db.close();
@@ -183,6 +207,7 @@ class IndexedDBLibrary implements Library {
   }
 
   async remove(id: string): Promise<void> {
+    // Stryker disable next-line ConditionalExpression: 後段の削除と重なる (観測不能)
     if (typeof id !== 'string' || id.length === 0) return;
     const db = await openDb();
     const tx = db.transaction(STORE, 'readwrite');
@@ -210,6 +235,11 @@ class IndexedDBLibrary implements Library {
     let total = all.reduce((acc, it) => acc + it.size, 0);
     let count = all.length;
     // Iterate from oldest (end of array) and remove until under both limits.
+    // `i >= 0` の下限には届かない — put() が 1 件あたり MAX_BYTES 以下しか
+    // 受け付けないので、最後の 1 件を残せば必ず上限内に収まる。つまり
+    // 「全部消す」状況は作れず、下限側の変異は観測できない。
+    // 上限の判定 (>= と > の別) は検査で固定してある。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator,UpdateOperator: 下限に到達しない (put 側の上限で保証)
     for (let i = all.length - 1; i >= 0 && (count > MAX_ITEMS || total > MAX_BYTES); i--) {
       const it = all[i]!;
       await this.remove(it.id);
@@ -228,4 +258,3 @@ export function getLibrary(): Library {
 export function _resetLibraryForTests(): void {
   singleton = null;
 }
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator

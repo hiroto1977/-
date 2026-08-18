@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8036** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8396) |
+| ユニットテスト | **8054** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8414) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 294 | 自己検証 |
+| `file:line` 参照数 | 295 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1014,6 +1014,36 @@ text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します�
 `// Stryker disable …` の行が SVG のテンプレートリテラルの内側に入り、
 コメントがそのまま図に描かれた。「図の中に地の文が混ざらない」という
 検査が落ちて気付いた。**288 変異体 100%**。
+
+#### 保存済みファイルを消す経路が無証明だった (`src/renderer/library/library.ts`)
+
+ブラウザ版の資料棚は利用者のファイルを IndexedDB に持つ。217 行の無効化を
+外すと **196 変異体 68.88%**。
+
+- **受け付ける値の検査** — ファイル名 256 / MIME 128 / serviceId の形
+  (`^[a-z][a-z0-9-]{0,63}$`) / NUL・改行・スラッシュの排除 / 50 MB の上限。
+  どれも「ちょうど」が通るか弾かれるかで決まるのに固定されていなかった。
+- **間引き** — 上限を超えたとき古いものから消す。これは**保存済みの
+  ファイルを消す唯一の経路**である。合計がちょうど 50 MB のときに消して
+  しまわないか、件数 100 ちょうどで消さないか、を 1 件ずらして固定した。
+- **`randomUUID` が無い環境の id 生成** — 古い WebView や非セキュア
+  コンテキストでは `crypto.randomUUID` が無く、自前で組み立てる。この経路
+  が丸ごと未到達で、**id が衝突すれば保存済みのファイルを上書きする**。
+
+`monotonicNow` で 1 つ学んだ。`Math.max(_lastTs + 1, now)` を `Math.min` に
+しても「増えてはいる」ので、順序だけを見る検査では区別できない — `_lastTs`
+が 0 から始まるため、min は 1, 2, 3… と数える連番になるからである。差が出る
+のは**実時刻でなくなる**ことのほう (画面には 1970 年として出る)。
+`createdAt` が 2020 年より後であることを併せて見る形にして、陰性対照で
+落ちることを確かめた。
+
+`padStart(2, '0')` の検査も一度**乱数任せ**になっていた。0x10 未満のバイトが
+1 つも出なければ通ってしまい、確率は 3 回に 1 回。`getRandomValues` を
+差し替えて必ず 1 桁のバイトを含める形にした。
+
+IndexedDB の失敗イベント (`onerror` / `onabort`) は決定的に起こせないので、
+理由を書いた帯で外してある。**投げること自体**は「DB を開けないときは
+待ち続けない」の検査で固定した。**134 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 
