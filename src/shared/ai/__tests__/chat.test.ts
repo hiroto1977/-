@@ -148,3 +148,50 @@ describe('runAiChat', () => {
     expect((JSON.parse(String((init as RequestInit).body)) as { model: string }).model).toBe('qwen3');
   });
 });
+
+// --- 失敗応答の扱い ----------------------------------------------------
+//
+// ここは相手のサーバが返した本文をそのまま例外メッセージへ載せる唯一の
+// 場所である。長さの上限と伏字が効いていないと、鍵や大量の本文が
+// 画面・ログへ流れる。
+
+describe('runAiChat — 失敗応答', () => {
+  function failing(status: number, text: () => Promise<string>): Response {
+    return { ok: false, status, text, json: () => Promise.reject(new Error('n/a')) } as unknown as Response;
+  }
+
+  const run = (res: Response) =>
+    runAiChat({
+      provider: 'anthropic',
+      cfg: { apiKey: 'sk-ant-x' },
+      request: REQ,
+      fetchFn: vi.fn<typeof fetch>().mockResolvedValue(res),
+    });
+
+  it('本文が読めない失敗応答でも落ちず、状態だけを伝える', async () => {
+    // 接続が切れて `text()` 自体が失敗することがある。ここで諦めると
+    // 「なぜ失敗したか」ではなく別の例外が出て原因が分からなくなる。
+    const err = await run(failing(502, () => Promise.reject(new Error('stream broken')))).then(
+      () => null,
+      (e: Error) => e,
+    );
+    expect((err as Error).message).toBe('Claude (Anthropic) API 502: ');
+  });
+
+  it('失敗本文は 200 文字までにし、鍵らしき文字列は伏せる', async () => {
+    const leak = 'invalid key sk-ant-abcdefghijklmnop; ';
+    const body = leak + 'x'.repeat(500);
+    const err = await run(failing(401, () => Promise.resolve(body))).then(
+      () => null,
+      (e: Error) => e,
+    );
+    const msg = (err as Error).message;
+
+    expect(msg).toContain('Claude (Anthropic) API 401:');
+    expect(msg).toContain('sk-ant-[REDACTED]');
+    expect(msg).not.toContain('sk-ant-abcdefghijklmnop');
+    // 500 文字の 'x' が丸ごと入っていない = 200 文字で切れている
+    expect(msg).not.toContain('x'.repeat(300));
+    expect(msg.length).toBeLessThan(300);
+  });
+});

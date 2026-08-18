@@ -227,3 +227,57 @@ describe('counsel — supportive responses', () => {
     expect(r.isCrisis).toBe(false);
   });
 });
+
+// --- 危機応答の本文そのもの --------------------------------------------
+//
+// トーンと窓口の有無は既に検査してあるが、**本文が消えても気付かない**
+// 状態だった。ここは「つらい」と打ち明けた人が最初に読む文章で、空に
+// なっても画面は壊れず、窓口だけが並ぶ。何を伝えるかを固定する。
+
+describe('危機応答の本文', () => {
+  it('自殺念慮: 打ち明けたことを受け止め、一人で抱えないよう促す', () => {
+    const r = counsel({ note: '死にたい' });
+    expect(r.tone).toBe('crisis');
+    expect(r.isCrisis).toBe(true);
+    expect(r.message).toContain('打ち明けてくれて、ありがとうございます');
+    expect(r.message).toContain('あなたの命と気持ちは何より大切です');
+    expect(r.message).toContain('一人で抱えず');
+    expect(r.suggestion).toContain('まもろうよこころ'); // SNS 相談の逃げ道
+    expect(r.resources.length).toBeGreaterThan(0);
+  });
+
+  it('他害衝動: 責めずに、行動前に場を離れるよう促す', () => {
+    const r = counsel({ note: '誰かを傷つけてしまいそうだ' });
+    expect(r.tone).toBe('harm-other');
+    expect(r.message).toContain('つらい状況なのだと思います');
+    expect(r.message).toContain('行動に移す前に');
+    expect(r.message).toContain('深呼吸できる場所へ移りましょう');
+    expect(r.suggestion).toContain('110'); // 切迫時の連絡先
+    expect(r.resources.length).toBeGreaterThan(0);
+  });
+
+  it('破壊衝動: 本人を責めず、安全な発散に導く', () => {
+    const r = counsel({ note: '物を壊したい' });
+    expect(r.tone).toBe('destructive');
+    expect(r.message).toContain('もう限界だ');
+    expect(r.message).toContain('あなたが悪いわけではありません');
+    expect(r.suggestion).toContain('物や人を傷つけない形で');
+  });
+});
+
+// --- 連続不調の閾値 ----------------------------------------------------
+
+describe('連続して落ち込んでいるときの声かけ', () => {
+  const base = { note: 'つかれた', sentiment: 'negative' as const };
+
+  it('3 日続いたら触れる (境界: 2 日では触れない)', () => {
+    // ここは「専門家に頼ることを勧め始める」側へ寄せる境目なので、
+    // どちらに入るかを 1 日ずらして固定する。
+    const two = counsel({ ...base, profile: profile({ lowStreak: 2, trend: 'stable' }) });
+    expect(two.message).not.toContain('日ほど');
+
+    const three = counsel({ ...base, profile: profile({ lowStreak: 3, trend: 'stable' }) });
+    expect(three.message).toContain('ここ 3 日ほど');
+    expect(three.message).toContain('よく持ちこたえています');
+  });
+});

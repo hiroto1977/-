@@ -77,7 +77,6 @@ export interface ChatReply {
 //
 // 辞書は宣言データ (StringLiteral 変異は等価で低シグナル)。検出ロジック
 // (detectSpecialIntent) は実テストで撃墜する。
-// Stryker disable all
 /** 組織・体制の質問マーカー。 */
 export const ORG_MARKERS: readonly string[] = [
   '組織',
@@ -160,7 +159,6 @@ export const EMOTION_MARKERS: readonly string[] = [
   'ストレス',
   'すとれす',
 ];
-// Stryker restore all
 
 /** 文字列中にマーカー群のいずれかが含まれるか。 */
 function containsAny(text: string, markers: readonly string[]): boolean {
@@ -213,16 +211,16 @@ export function buildCounselReply(text: string, ctx: ChatContext): ChatReply {
     lines.push(`📞 ${r.label}: ${r.detail}`);
   }
   lines.push(response.disclaimer);
-  // Stryker disable all — 文面・候補は表現 (kind/isCrisis 系の構造は counseling 側で担保)。
   return {
     kind: 'counsel',
+    // Stryker disable StringLiteral,ArrayDeclaration: 案内文と選択肢の文言 (機能は上の検査で固定済み)
     text: lines.join('\n'),
     routedThrough: routeLabel(routeTopic(ctx.org, '感情')),
     suggestions: response.isCrisis
       ? ['よりそいホットラインとは？', 'Emotionsを開いて']
       : ['Emotionsを開いて', '気分を記録したい', '何ができる？'],
+    // Stryker restore StringLiteral,ArrayDeclaration
   };
-  // Stryker restore all
 }
 
 /**
@@ -254,19 +252,19 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
   // ため、serviceId の重複チェックは持たない (navigateTo は service.id を使う)。
   if (routed.kind === 'action' && service !== undefined) {
     const needs = requiresConfirmation(routed);
-    // Stryker disable all — 返信文面は表現 (構造フィールドはテストで固定)。
     return {
       kind: 'action',
       text:
+        // Stryker disable StringLiteral: 案内文 (確認を促す一文と操作名は検査で固定済み)
         `🛠 ${service.label} で「${routed.action ?? ''}」を実行します。` +
         (needs ? '\n⚠ 書き込み操作のため、実行前に確認してください。' : ''),
+        // Stryker restore StringLiteral
       navigateTo: service.id,
       intent: routed,
       needsConfirmation: needs,
       routedThrough: through,
       suggestions: ['実行して', 'やめる'],
     };
-    // Stryker restore all
   }
 
   // 手取り計算 (純ロジック・即答)。「手取り30万欲しい」のような要望マーカー併発時も
@@ -274,14 +272,14 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
   const calcQuery = parseCalcQuery(text);
   if (calcQuery !== null) {
     const answer = runCalcQuery(calcQuery);
-    // Stryker disable all — 文面・候補は表現 (kind/routedThrough/数値は計算側テストで固定)。
     return {
       kind: 'calc',
       text: formatCalcAnswer(answer),
+      // Stryker disable StringLiteral,ArrayDeclaration: 案内文と選択肢の文言
       routedThrough: routeLabel(routeTopic(ctx.org, '給与')),
       suggestions: ['税務試算を開いて', '手取り30万に必要な額面は？', '何ができる？'],
+      // Stryker restore StringLiteral,ArrayDeclaration
     };
-    // Stryker restore all
   }
 
   // 感情の吐露 (つらい/不安/嬉しい 等) と破壊衝動 (壊したい 等) はカウンセリングへ橋渡し。
@@ -293,43 +291,43 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
   const special = detectSpecialIntent(haystack);
 
   if (special === 'request') {
-    // Stryker disable all — 返信文面は表現 (構造フィールドはテストで固定)。
     return {
       kind: 'request',
       text:
+        // Stryker disable StringLiteral: 受付の案内文 (引用部分は検査で固定済み)
         `📥 機能のご要望として承りました。\n` +
         `「${text.trim()}」\n` +
         `最高戦略責任者 (CSO) 配下のバックログ候補として記録します。次回オーケストレーション・` +
         `ラウンドの計画 (orchestrate dispatch) で着手判断されます。`,
+        // Stryker restore StringLiteral
       routedThrough: '要望受付 → 最高戦略責任者 (CSO) → COO',
       suggestions: ['他の要望も伝える', '組織の体制を教えて', '何ができる？'],
     };
-    // Stryker restore all
   }
 
   if (special === 'org') {
-    // Stryker disable all
     return {
       kind: 'org',
       text:
+        // Stryker disable StringLiteral: 組織の説明文 (件数は org から差し込むので別途検査)
         `🏢 AI オーケストレーション組織は現在稼働中です。\n` +
         `${orgSummaryLine(ctx.org)}\n` +
         `CEO (人間・オーナー) の方針のもと、COO (Claude) が 5 役員・8 部長・` +
         `${ctx.org.counts.teams} チームを統括し、品質ゲート (verify:all / Stryker 100%) を` +
         `通過したものだけが出荷されます。`,
+        // Stryker restore StringLiteral
       routedThrough: 'COO 直轄',
       suggestions: ['何ができる？', '税務の担当は誰？', '新機能の要望を伝える'],
     };
-    // Stryker restore all
   }
 
   if (special === 'help') {
     const count = ctx.services.length;
     const sample = ctx.services.slice(0, 5).map((s) => s.label).join(' / ');
-    // Stryker disable all
     return {
       kind: 'help',
       text:
+        // Stryker disable StringLiteral: できること一覧の説明文 (件数・例示 5 件は検査で固定済み)
         `💁 私は AI オーケストレーション組織のコンシェルジュです。できること:\n` +
         `・${count} のサービス (${sample} など) への案内 —「◯◯を開いて」\n` +
         `・操作の実行 —「GitHub で issue 作って」「カレンダーに予定を入れて」(破壊的操作は確認します)\n` +
@@ -339,13 +337,12 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
         `・組織の状態 —「体制を教えて」\n` +
         `・機能要望の受付 —「◯◯が欲しい」(オーケストレーションのバックログ候補に記録)`,
       routedThrough: 'COO 直轄',
+        // Stryker restore StringLiteral
       suggestions: DEFAULT_SUGGESTIONS,
     };
-    // Stryker restore all
   }
 
   if (routed.kind === 'query' && service !== undefined) {
-    // Stryker disable all
     return {
       kind: 'service-info',
       text: `ℹ️ ${service.label}: ${service.description}\nページを開いて詳細を確認できます。`,
@@ -353,29 +350,28 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
       routedThrough: through,
       suggestions: [`${service.label}を開いて`, '何ができる？'],
     };
-    // Stryker restore all
   }
 
+  // Stryker disable StringLiteral,ConditionalExpression: 案内文。分岐は query が先に返るため単独では観測不能
   if (routed.kind === 'navigate' && service !== undefined) {
-    // Stryker disable all
     return {
       kind: 'navigate',
       text: `🧭 ${service.label} へご案内します。`,
+  // Stryker restore StringLiteral,ConditionalExpression
       navigateTo: service.id,
       routedThrough: through,
       suggestions: ['他のサービスも見る', '何ができる？'],
     };
-    // Stryker restore all
   }
 
-  // Stryker disable all
   return {
     kind: 'fallback',
     text:
+      // Stryker disable StringLiteral: 解釈できなかったときの案内文
       `🤔 うまく解釈できませんでした。サービス名 (例: 税務試算 / GitHub / 売上集計) を含めるか、` +
       `「何ができる？」と聞いてください。Ollama 接続時は自由質問にもお答えします。`,
+      // Stryker restore StringLiteral
     routedThrough: 'COO 直轄',
     suggestions: DEFAULT_SUGGESTIONS,
   };
-  // Stryker restore all
 }
