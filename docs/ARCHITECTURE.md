@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7864** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8212) |
+| ユニットテスト | **7901** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8250) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 284 | 自己検証 |
+| `file:line` 参照数 | 285 | 自己検証 |
 
 ### 統合フロー図
 
@@ -769,6 +769,52 @@ Google カレンダーの client は 99 行 (全 127 行) を無効化してお�
 `defaultTimeZone()` の `UTC` へのフォールバックも未到達だった。**CI の TZ が
 UTC なので、既存の検査は「常に UTC を返す実装」と見分けが付かない** —
 `Intl` を差し替えて `Asia/Tokyo` を返させて初めて区別できる。**60 変異体 100%**。
+
+#### 私的な記録を 0600 で書いていることを誰も見ていなかった (`src/main/clients/emotions.ts`)
+
+気分の日記と感情解析は、その人の私的な記録そのものである。`userData` 配下に
+平文の JSON で置くので、せめて本人以外が読めない権限で書く。
+
+```ts
+await fs.writeFile(storePath(), JSON.stringify(store), { mode: 0o600 });
+```
+
+234 行 (全 268 行) の無効化を外すと **215 変異体 55.35%**。`{ mode: 0o600 }` を
+`{}` に変えても検査は全部通った — **既定 (0644) に戻れば同じ端末の別ユーザーから
+日記が読めるのに、それを見ている検査が 1 つも無かった**。
+
+もう 1 つ重いのが読み出しである。
+
+```ts
+} catch (err) {
+  if ((err as NodeJS.ErrnoException).code === 'ENOENT') return { moods: [], analyses: [] };
+  throw err;
+}
+```
+
+この判定を「常に真」に変えても検査は通った。つまり **ENOENT 以外の失敗
+(壊れた JSON など) を「まだ無い」と同じ扱いにして、次の書き込みで日記を空に
+置き換えてしまう経路**が無証明だった。壊れた記録を置いてから書き込みを試し、
+**拒むこと**と**ファイルが消えていないこと**の両方を固定した。
+
+消去も同じ形で危うかった。`clear-history` の 26 変異体のうち 16 が生きており、
+「気分だけ消したのに解析まで消える」「知らない `kind` で全部消える」が
+どちらも通ってしまう。取り返しがつかない動作なので、`moods` / `analyses` /
+`all` / 未指定 / 知らない値の 5 通りを 1 つずつ固定した。
+
+**等価変異体は 3 つとも書き方を変えて消した** (pragma で隠さない)。
+
+- 保存件数の上限 `if (len > MAX) x = x.slice(-MAX)` — `slice` は短い配列に
+  対して恒等なので判定が要らない。判定を残すと「常に切る / 常に切らない」の
+  どちらへ変異させても結果が変わらない。
+- `pickDominant` の番兵 (`bestKey = 'joy'` / `bestVal = -1`) — 必ず 1 周目で
+  上書きされる。初期値なしの `reduce` にすると番兵ごと消える。
+- `extractJson` の `fence && fence[1] != null` — 一致時に捕獲群は必ず非 null
+  なので後段は観測不能。`text.match(...)?.[1]` にすると判定が 1 つで済む。
+
+残ったのは `readFile` の `'utf8'` だけで、これは**空文字にすると Buffer が
+返るが `JSON.parse` は `toString()` 経由で読むため結果が変わらない**ことを実測
+したうえで、理由を書いた 1 行 pragma にした。**197 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 
