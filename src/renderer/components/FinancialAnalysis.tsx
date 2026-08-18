@@ -23,6 +23,7 @@ import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/
 import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
 import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
 import { buildFinancialReportMarkdown } from '../data/financialReport';
+import { consolidationScope, consolidationLabel } from '../data/consolidation';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
@@ -30,6 +31,8 @@ export interface FinancialUnit {
   readonly label: string;
   readonly current: MonthlyBusinessKpi;
   readonly history: readonly { readonly revenue: number; readonly profit: number }[];
+  /** 同梱の模擬データなら true。連結の合算対象から外すために要る (出所が違うものを足さない)。 */
+  readonly sample?: boolean;
 }
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
@@ -141,7 +144,7 @@ function BarChart({ rows, unit }: { rows: { label: string; value: number | null 
         const v = r.value ?? 0;
         const w = (Math.abs(v) / max) * 100;
         return (
-          <div key={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
+          <div key={r.label} data-bar-row={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
             <span title={r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
             <div style={{ background: 'var(--bg)', borderRadius: 3, height: 14, position: 'relative' }}>
               <div style={{ width: `${w}%`, height: '100%', background: PALETTE[i % PALETTE.length], borderRadius: 3 }} />
@@ -598,22 +601,25 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
     }),
     [units],
   );
-  const consolidatedFin = useMemo(() => sumFinancialInputs(perUnit.map((p) => p.fin)), [perUnit]);
-  // 連結用の月次履歴: 全事業を月インデックス (末尾揃え) で合算。
+  // 実績とサンプルは足さない。混ぜた合計はどちらの会社の数でもない。
+  const scope = useMemo(() => consolidationScope(perUnit, (p) => p.unit.sample === true), [perUnit]);
+  const consolidatedFin = useMemo(() => sumFinancialInputs(scope.parts.map((p) => p.fin)), [scope]);
+  // 連結用の月次履歴: 合算対象の事業を月インデックス (末尾揃え) で合算。
   const consolidatedHistory = useMemo(() => {
-    const maxLen = Math.max(0, ...units.map((u) => u.history.length));
+    const hists = scope.parts.map((p) => p.unit.history);
+    const maxLen = Math.max(0, ...hists.map((h) => h.length));
     const out: { revenue: number; profit: number }[] = [];
     for (let i = 0; i < maxLen; i++) {
       let revenue = 0;
       let profit = 0;
-      for (const u of units) {
-        const h = u.history[u.history.length - maxLen + i];
+      for (const hist of hists) {
+        const h = hist[hist.length - maxLen + i];
         if (h) { revenue += h.revenue; profit += h.profit; }
       }
       out.push({ revenue, profit });
     }
     return out;
-  }, [units]);
+  }, [scope]);
   const selected = perUnit.find((p) => p.unit.id === selectedId) ?? perUnit[0];
 
   if (!selected) return null;
@@ -621,7 +627,8 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   // 三表ビューは連結トグルで全事業合算に切替。
   const stmtFin = consolidated ? consolidatedFin : fin;
   const stmtHistory = consolidated ? consolidatedHistory : selected.unit.history;
-  const stmtLabel = consolidated ? '連結（全事業合算）' : `${selected.unit.label}・単体`;
+  const scopeLabel = consolidationLabel(scope.parts.length, scope.isSample);
+  const stmtLabel = consolidated ? scopeLabel : `${selected.unit.label}・単体`;
   const axes = radarAxes(selected.ratios);
   const diagnosis = diagnoseFinancials(axes);
   const trend = analyzeMarginTrend(selected.unit.history);
@@ -669,15 +676,16 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
     }
   }
   function onExportStatement() {
-    const scope = consolidated ? 'consolidated' : selected!.unit.id;
-    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${scope}-${new Date().toISOString().slice(0, 10)}.csv`);
+    // 中身がサンプルの合算なら、ファイル名にもそう書く。手元に残った CSV は文脈を失う。
+    const name = consolidated ? (scope.isSample ? 'consolidated-sample' : 'consolidated-own') : selected!.unit.id;
+    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${name}-${new Date().toISOString().slice(0, 10)}.csv`);
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>対象事業:</label>
-        <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '4px 8px', fontSize: 13 }}>
+        <select data-financial-unit-select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '4px 8px', fontSize: 13 }}>
           {units.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
         </select>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
@@ -748,7 +756,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
           ))}
           <label style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
             <input type="checkbox" checked={consolidated} onChange={(e) => setConsolidated(e.target.checked)} />
-            連結（全事業合算）で表示
+            {scopeLabel}で表示
           </label>
           <button onClick={onExportStatement} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
             ⬇ この諸表をCSV

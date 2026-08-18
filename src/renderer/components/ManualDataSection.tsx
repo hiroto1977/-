@@ -164,7 +164,15 @@ function BusinessUnits({
   onAdd: (e: BusinessUnitInput) => Promise<void> | void;
   onRemove: (id: string) => Promise<void> | void;
 }) {
-  const [draft, setDraft] = useState({ name: '', category: '', startedOn: '', note: '' });
+  const [draft, setDraft] = useState({
+    name: '',
+    category: '',
+    startedOn: '',
+    note: '',
+    revenue: '',
+    variableCost: '',
+    fixedCost: '',
+  });
   const [error, setError] = useState<string>();
 
   async function add() {
@@ -175,14 +183,14 @@ function BusinessUnits({
     }
     setError(undefined);
     await onAdd(parsed.entry);
-    setDraft({ name: '', category: '', startedOn: '', note: '' });
+    setDraft({ name: '', category: '', startedOn: '', note: '', revenue: '', variableCost: '', fixedCost: '' });
   }
 
   return (
     <div data-business-units style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
       <Heading
         text="事業"
-        hint="複数の事業を持っている場合はここに登録すると、数値を事業ごとに分けられます。事業を消しても数値は残ります。"
+        hint="複数の事業を持っている場合はここに登録すると、数値を事業ごとに分けられます。事業を消しても数値は残ります。月次の売上高を入れると、経営サマリーの「事業別 財務指標分析」に自分の事業として並びます。"
       />
       {units.map((u) => (
         <div
@@ -199,6 +207,13 @@ function BusinessUnits({
           )}
           {typeof u.data.note === 'string' && (
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{u.data.note}</span>
+          )}
+          {typeof u.data.revenue === 'number' && (
+            <span data-business-amounts style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              月次 売上 {u.data.revenue.toLocaleString()} 円
+              {typeof u.data.variableCost === 'number' && ` / 変動費 ${u.data.variableCost.toLocaleString()} 円`}
+              {typeof u.data.fixedCost === 'number' && ` / 固定費 ${u.data.fixedCost.toLocaleString()} 円`}
+            </span>
           )}
           <button type="button" onClick={() => void onRemove(u.id)} style={{ fontSize: 12 }}>
             削除
@@ -237,6 +252,33 @@ function BusinessUnits({
           value={draft.note}
           onChange={(e) => setDraft((d) => ({ ...d, note: e.target.value }))}
           style={{ ...input, width: 170 }}
+        />
+        <input
+          type="text"
+          inputMode="decimal"
+          aria-label="月次の売上高"
+          placeholder="月次 売上高 (任意)"
+          value={draft.revenue}
+          onChange={(e) => setDraft((d) => ({ ...d, revenue: e.target.value }))}
+          style={{ ...input, width: 150 }}
+        />
+        <input
+          type="text"
+          inputMode="decimal"
+          aria-label="月次の変動費"
+          placeholder="月次 変動費 (任意)"
+          value={draft.variableCost}
+          onChange={(e) => setDraft((d) => ({ ...d, variableCost: e.target.value }))}
+          style={{ ...input, width: 150 }}
+        />
+        <input
+          type="text"
+          inputMode="decimal"
+          aria-label="月次の固定費"
+          placeholder="月次 固定費 (任意)"
+          value={draft.fixedCost}
+          onChange={(e) => setDraft((d) => ({ ...d, fixedCost: e.target.value }))}
+          style={{ ...input, width: 150 }}
         />
         <button type="button" onClick={() => void add()} style={{ fontSize: 12 }}>
           事業を追加

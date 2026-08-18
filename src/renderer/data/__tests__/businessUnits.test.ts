@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  BUSINESS_AMOUNT_MAX,
   BUSINESS_CATEGORY_MAX,
   BUSINESS_NAME_MAX,
   BUSINESS_NOTE_MAX,
   BUSINESS_UNITS_COLLECTION,
+  financialUnitsFromBusinessUnits,
   findBusinessName,
   parseBusinessUnit,
   sortBusinessUnits,
@@ -223,5 +225,144 @@ describe('保存先の名前', () => {
     expect(BUSINESS_NAME_MAX).toBe(60);
     expect(BUSINESS_CATEGORY_MAX).toBe(30);
     expect(BUSINESS_NOTE_MAX).toBe(200);
+  });
+});
+
+describe('parseBusinessUnit — 月次の金額', () => {
+  /**
+   * 事業間比較のグラフは同梱の模擬データ 10 件に固定されていて、利用者が
+   * 登録した事業は金額を持てないため出られなかった。売上を持てるようにして
+   * 合流させる。
+   */
+  it('売上・変動費・固定費を数値として保存する', () => {
+    const r = parseBusinessUnit({ name: '物販', revenue: '1200000', variableCost: '400000', fixedCost: '300000' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error('unreachable');
+    expect(r.entry.revenue).toBe(1_200_000);
+    expect(r.entry.variableCost).toBe(400_000);
+    expect(r.entry.fixedCost).toBe(300_000);
+  });
+
+  it('桁区切りと全角数字を受ける (貼り付けを断らない)', () => {
+    const r = parseBusinessUnit({ name: '受託', revenue: '1,200,000' });
+    expect(r.ok && r.entry.revenue).toBe(1_200_000);
+    const z = parseBusinessUnit({ name: '受託', revenue: '１２００' });
+    expect(z.ok && z.entry.revenue).toBe(1200);
+  });
+
+  it('金額を入れなければ持たせない (未入力と 0 を区別する)', () => {
+    const r = parseBusinessUnit({ name: '名前だけ' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error('unreachable');
+    expect('revenue' in r.entry).toBe(false);
+    expect('variableCost' in r.entry).toBe(false);
+    expect('fixedCost' in r.entry).toBe(false);
+  });
+
+  it('0 は入力として受ける (売上 0 の月はありうる)', () => {
+    const r = parseBusinessUnit({ name: '休止中', revenue: '0' });
+    expect(r.ok && r.entry.revenue).toBe(0);
+  });
+
+  it('費用だけの入力は断る (どの指標にも乗らないため)', () => {
+    const r = parseBusinessUnit({ name: '費用のみ', variableCost: '100' });
+    expect(r.ok).toBe(false);
+    if (r.ok) throw new Error('unreachable');
+    expect(r.reason).toContain('売上高も入力してください');
+  });
+
+  it('空白だけの欄は「未入力」として扱う (0 円と保存しない)', () => {
+    const r = parseBusinessUnit({ name: 'x', revenue: '   ', variableCost: '\t' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error('unreachable');
+    expect('revenue' in r.entry).toBe(false);
+    expect('variableCost' in r.entry).toBe(false);
+  });
+
+  it('固定費の欄も名指しでエラーを返す', () => {
+    const r = parseBusinessUnit({ name: 'x', revenue: '100', fixedCost: 'abc' });
+    expect(r.ok).toBe(false);
+    if (r.ok) throw new Error('unreachable');
+    expect(r.reason).toContain('固定費');
+  });
+
+  it('数値にならない入力を断る', () => {
+    const r = parseBusinessUnit({ name: 'x', revenue: '百万円' });
+    expect(r.ok).toBe(false);
+    if (r.ok) throw new Error('unreachable');
+    expect(r.reason).toContain('売上高');
+  });
+
+  it('マイナスを断る', () => {
+    const r = parseBusinessUnit({ name: 'x', revenue: '100', variableCost: '-1' });
+    expect(r.ok).toBe(false);
+    if (r.ok) throw new Error('unreachable');
+    expect(r.reason).toContain('変動費');
+    expect(r.reason).toContain('マイナス');
+  });
+
+  it('上限ちょうどは受け、超えたら断る (丸めない)', () => {
+    expect(parseBusinessUnit({ name: 'x', revenue: String(BUSINESS_AMOUNT_MAX) }).ok).toBe(true);
+    const over = parseBusinessUnit({ name: 'x', revenue: String(BUSINESS_AMOUNT_MAX + 1) });
+    expect(over.ok).toBe(false);
+    if (over.ok) throw new Error('unreachable');
+    expect(over.reason).toContain('大きすぎます');
+  });
+});
+
+describe('financialUnitsFromBusinessUnits', () => {
+  const rec = (id: string, data: Record<string, unknown>) => ({ id, data: data as never });
+
+  it('売上のある事業だけを出す (未入力を 0% として並べない)', () => {
+    const out = financialUnitsFromBusinessUnits([
+      rec('a', { name: '物販', revenue: 1000, variableCost: 300, fixedCost: 200 }),
+      rec('b', { name: '名前だけ' }),
+    ]);
+    expect(out.map((u) => u.id)).toEqual(['a']);
+  });
+
+  it('利益と利益率を売上・費用から導く', () => {
+    const [u] = financialUnitsFromBusinessUnits([
+      rec('a', { name: '物販', revenue: 1000, variableCost: 300, fixedCost: 200 }),
+    ]);
+    expect(u!.current.profit).toBe(500);
+    expect(u!.current.profitMargin).toBe(50);
+  });
+
+  it('費用の未入力は 0 として扱う (売上があるので比較はできる)', () => {
+    const [u] = financialUnitsFromBusinessUnits([rec('a', { name: '粗利のみ', revenue: 800 })]);
+    expect(u!.current.variableCost).toBe(0);
+    expect(u!.current.fixedCost).toBe(0);
+    expect(u!.current.profit).toBe(800);
+    expect(u!.current.profitMargin).toBe(100);
+  });
+
+  it('赤字は負の利益率として出す (隠さない)', () => {
+    const [u] = financialUnitsFromBusinessUnits([
+      rec('a', { name: '赤字', revenue: 1000, variableCost: 900, fixedCost: 300 }),
+    ]);
+    expect(u!.current.profit).toBe(-200);
+    expect(u!.current.profitMargin).toBe(-20);
+  });
+
+  it('売上 0 は率を 0 にする (0 除算を出さない)', () => {
+    const [u] = financialUnitsFromBusinessUnits([rec('a', { name: '休止', revenue: 0, fixedCost: 50 })]);
+    expect(u!.current.profitMargin).toBe(0);
+    expect(Number.isFinite(u!.current.profitMargin)).toBe(true);
+  });
+
+  it('利益率は小数第 1 位まで', () => {
+    const [u] = financialUnitsFromBusinessUnits([rec('a', { name: 'x', revenue: 3000, variableCost: 1000 })]);
+    expect(u!.current.profitMargin).toBe(66.7);
+  });
+
+  it('履歴は空にする (1 点を横ばいの傾向に見せない)', () => {
+    const [u] = financialUnitsFromBusinessUnits([rec('a', { name: 'x', revenue: 100 })]);
+    expect(u!.history).toEqual([]);
+  });
+
+  it('事業名をラベルにする', () => {
+    const [u] = financialUnitsFromBusinessUnits([rec('a', { name: '店舗A', revenue: 100 })]);
+    expect(u!.label).toBe('店舗A');
   });
 });

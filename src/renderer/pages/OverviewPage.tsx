@@ -2,6 +2,12 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
 import {
+  BUSINESS_UNITS_COLLECTION,
+  financialUnitsFromBusinessUnits,
+  sortBusinessUnits,
+  type BusinessUnitInput,
+} from '../data/businessUnits';
+import {
   HIGHLIGHT_SETTINGS_COLLECTION,
   parseHighlightSettings,
   type HighlightSettings,
@@ -186,6 +192,36 @@ export function OverviewPage() {
   // 手入力の保存先は全画面共通 (manual-overrides)。入力欄は App が 1 か所で
   // 描くので、ここは「読んで適用する」だけを持つ。
   const overridesCol = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+
+  // 登録した事業を事業間比較へ合流させる。同梱の 10 件は**模擬データ**なので、
+  // 実績と並べる以上は見分けが付かないといけない — ラベルに「(サンプル)」を付け、
+  // `sample: true` を立て、利用者の事業を先に置く (既定の選択が自分の事業になる)。
+  // 棒グラフは 1 本ずつラベルが付くので並べてよいが、連結は 1 つの数に潰れる。
+  // そちらは `consolidationScope` が出所ごとに分けて合算する。
+  const { records: businessUnitRecords } = useCollection<BusinessUnitInput>(BUSINESS_UNITS_COLLECTION);
+  const userFinancialUnits = useMemo(
+    () => financialUnitsFromBusinessUnits(sortBusinessUnits(businessUnitRecords)),
+    [businessUnitRecords],
+  );
+  const financialUnits = useMemo(
+    () => [
+      ...userFinancialUnits,
+      ...SNAPSHOT.business.units.map((u) => ({
+        id: u.id,
+        label: `${u.label} (サンプル)`,
+        sample: true,
+        current: {
+          revenue: u.current.revenue,
+          variableCost: u.current.variableCost,
+          fixedCost: u.current.fixedCost,
+          profit: u.current.profit,
+          profitMargin: u.current.profitMargin,
+        },
+        history: u.history.map((h) => ({ revenue: h.revenue, profit: h.profit })),
+      })),
+    ],
+    [userFinancialUnits],
+  );
   const overrideRecords = overridesCol.records;
 
   const computedOverview = useMemo(
@@ -748,20 +784,15 @@ export function OverviewPage() {
       )}
 
       <Section title="事業別 財務指標分析 (15指標 × レーダー/折れ線/円/棒)">
-        <FinancialAnalysis
-          units={SNAPSHOT.business.units.map((u) => ({
-            id: u.id,
-            label: u.label,
-            current: {
-              revenue: u.current.revenue,
-              variableCost: u.current.variableCost,
-              fixedCost: u.current.fixedCost,
-              profit: u.current.profit,
-              profitMargin: u.current.profitMargin,
-            },
-            history: u.history.map((h) => ({ revenue: h.revenue, profit: h.profit })),
-          }))}
-        />
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          下の一覧・グラフには<strong>登録した事業</strong>（画面下の「事業・数値の手入力」で
+          売上高を入れたもの）が先に並びます。続く「(サンプル)」付きの 10 件は
+          <strong>同梱の模擬データ</strong>で、ご自身の実績ではありません。
+          {userFinancialUnits.length === 0 && (
+            <> いまは登録した事業がないため、サンプルのみを表示しています。</>
+          )}
+        </div>
+        <FinancialAnalysis units={financialUnits} />
       </Section>
     </div>
   );
