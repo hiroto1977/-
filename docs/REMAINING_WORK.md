@@ -99,6 +99,59 @@
 
 ---
 
+## 変異検査で測っていない範囲 (2026-08-18 実測・5,189 行)
+
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **36 ファイル
+/ 46 箇所 / 5,189 行**。これは「許した」ではなく「まだ測っていないと
+分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
+(減ったら台帳を実測値へ更新する)。
+
+### なぜ危険か — 実際に起きたこと
+
+`src/renderer/data/store.ts` は先頭で 13 種の mutator を**ファイル全体**に対して
+無効化しており、変異検査は **3 変異体・100%** と報告していた。無効化を外して実測すると
+**256 変異体・71.09%・生存 44 / 未到達 30**。そこには実バグが潜んでいた —
+全 11 箇所で `db.close()` が `await txDone(tx)` の**後ろ**にあり、書き込みが失敗すると
+接続が閉じられず残る。テストを足したところ、この漏れが原因で別のテストが 30 秒
+タイムアウトする形で表面化した。`withDb()` で構造的に閉じるよう直し、**242 変異体・100%**
+になった (真の 100%)。
+
+### 残っている範囲 (行数の多い順・上位 12)
+
+| ファイル | 箇所 | 無効化行数 |
+|---|---|---|
+| `src/renderer/security/vault.ts` | 3 | 610 |
+| `src/renderer/network/proxy.ts` | 1 | 501 |
+| `src/shared/ai/providers.ts` | 1 | 301 |
+| `src/main/clients/templates.ts` | 3 | 290 |
+| `src/main/clients/teamradar.ts` | 4 | 237 |
+| `src/main/clients/emotions.ts` | 1 | 234 |
+| `src/renderer/library/library.ts` | 1 | 217 |
+| `src/main/clients/business.ts` | 3 | 199 |
+| `src/main/clients/cloudflare.ts` | 1 | 189 |
+| `src/renderer/oauth/pkce.ts` | 1 | 180 |
+| `src/shared/ai/credentials.ts` | 1 | 176 |
+| `src/main/clients/stocks.ts` | 1 | 169 |
+
+**security/ と network/ に集中しているのが最も痛い。** `vault.ts` (AES-GCM の鍵導出と
+封緘)、`proxy.ts` (CORS 迂回の送り先決定)、`pkce.ts` (OAuth の code_verifier 生成)、
+`ai/credentials.ts` はいずれも、壊れても画面には出ずに安全性だけが落ちる場所である。
+高い変異スコアはこれらを**分母から外したうえで**出ている。
+
+### 進め方 (store.ts で通った手順)
+
+1. 該当ファイルの範囲指定 disable を外し、`rm -f .stryker-incremental.json && rm -rf .stryker-tmp`
+   してから `npx stryker run --mutate <file>` で**実測**する (キャッシュが残ると誤報が出る)
+2. 生存変異体を「実装されているのに何も証明していない契約」と「本当の等価変異」に仕分ける
+3. 前者は**公開 API 越しに**テストを足す (内部関数を export して直接叩くと
+   「関数は正しいが呼ばれていない」を見逃す)
+4. 後者は**まずコードを単純化できないか**疑う。`store.ts` では uuid の組み立てを
+   添字アクセスから `Array.from` の走査へ変えるだけで、到達しない `?? 0` が 2 つ消えた
+5. どうしても残るものだけ `Stryker disable next-line <Mutator>: <理由>` にする
+   (範囲指定にしない)
+6. `KNOWN_BROAD` から当該行を削除し、`lint:mutation-scope` が緑になることを確認する
+
+
 ## Phase 0: 今すぐ自分のデスクトップで起動する（5 分）
 
 ### Linux x86-64
