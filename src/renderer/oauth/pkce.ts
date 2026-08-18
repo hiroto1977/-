@@ -28,10 +28,11 @@ export interface PkceSecrets {
 // (challenge len / state random / URL params / token exchange happy +
 // error). Decorative error messages, default fallbacks, and Date.now()
 // arithmetic are not differentiable.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,ArithmeticOperator,Regex,UpdateOperator,BlockStatement
 function base64UrlEncode(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]!);
+  // Stryker disable next-line Regex: base64 のパディングは末尾にしか現れないので、
+  // 末尾アンカーを外しても取り除く対象は変わらない (等価変異)。
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
@@ -54,6 +55,9 @@ export function safeStateEquals(a: string, b: string): boolean {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
   if (a.length !== b.length) return false;
   let diff = 0;
+  // Stryker disable next-line EqualityOperator: 長さが等しいことは上で確認済みなので、
+  // 1 つ余分に回っても両側とも `charCodeAt(len)` が NaN になり `NaN ^ NaN === 0` で
+  // diff が変わらない (等価変異)。境界を 1 つ越えても結果は同じ。
   for (let i = 0; i < a.length; i++) {
     diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
@@ -67,6 +71,8 @@ export function safeStateEquals(a: string, b: string): boolean {
 export function parseGoogleCallback(input: string): { code: string; state: string } | null {
   if (typeof input !== 'string') return null;
   const trimmed = input.trim();
+  // Stryker disable next-line ConditionalExpression: 早期 return を外しても、空文字は
+  // URL でも `=` 入りでもないので下の else で null に落ちる (等価変異・速い道として残す)。
   if (trimmed.length === 0) return null;
   // Three accepted forms:
   //   1. full URL: https://localhost:12345/cb?code=...&state=...
@@ -74,11 +80,25 @@ export function parseGoogleCallback(input: string): { code: string; state: strin
   //   3. bare "code=4/..." with no state (rejected — state-less callback)
   let params: URLSearchParams;
   try {
+    // 下の `} else if (trimmed.includes('='))` には**等価変異が 2 つ残る** —
+    // `=` を含まない文字列がその枝へ入っても URLSearchParams が空になり、
+    // 結局 `!code || !state` で null に落ちるため、条件を潰しても差が出ない。
+    //
+    // 黙らせていないのは、それが**割に合わない**と実測したため:
+    //   pragma 無し … 163 変異体 98.77% (生存 2)
+    //   範囲指定で囲む … 97 変異体 100%   (生存 0)
+    // 2 つを消すために 66 個の測定を捨てることになる。分母を縮めて買った 100% は、
+    // 正直な 98.77% より価値が低い (`lint:mutation-scope` が禁じているのと同じ形)。
+    //
+    // なお `} else if (` の行に `Stryker disable next-line` は効かない —
+    // 閉じ括弧で始まる行は直前のコメントと結び付かない (`} catch {` / `} finally {`
+    // も同じ)。囲むなら範囲指定しかないが、上記のとおり囲まない。
     if (/^https?:\/\//i.test(trimmed)) {
       params = new URL(trimmed).searchParams;
     } else if (trimmed.includes('=')) {
-      const qs = trimmed.startsWith('?') ? trimmed.slice(1) : trimmed;
-      params = new URLSearchParams(qs);
+      // 先頭の `?` は URLSearchParams 自身が落とすので、こちらで剥がさない
+      // (剥がす分岐は一度も結果を変えていなかった — 2026-08 変異検査)。
+      params = new URLSearchParams(trimmed);
     } else {
       return null;
     }
@@ -190,6 +210,8 @@ export async function exchangeGoogleCode(
   if (typeof data.access_token !== 'string' || data.access_token.length === 0) {
     throw new Error('token exchange response missing access_token');
   }
+  // Stryker disable next-line ConditionalExpression: 型検査を落としても `Number.isFinite` が
+  // 非数値を弾くため、既定の 3600 に落ちる結果は変わらない (等価変異)。
   const expiresIn = typeof data.expires_in === 'number' && Number.isFinite(data.expires_in) ? data.expires_in : 3600;
   const result: TokenResult = {
     accessToken: data.access_token,
@@ -208,4 +230,3 @@ export const GOOGLE_SCOPES = {
   calendar: ['https://www.googleapis.com/auth/calendar.readonly'],
   gmail: ['https://www.googleapis.com/auth/gmail.readonly'],
 } as const;
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,ArithmeticOperator
