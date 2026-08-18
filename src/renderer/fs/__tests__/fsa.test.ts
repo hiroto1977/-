@@ -167,3 +167,214 @@ describe('writeBlobToFolder', () => {
     ).rejects.toThrow(/権限/);
   });
 });
+
+// ===== IndexedDB への handle 永続化 (2026-08 変異検査) ====================
+//
+// `fsa.ts` は 128 行 (全 145 行) を `Stryker disable` しており、外して実測すると
+// **119 変異体・49.58%・生存 12 / 未到達 48**。未到達の大半が **handle の永続化**
+// (`saveFolderHandle` / `loadFolderHandle` / `clearFolderHandle`) だった。
+//
+// 除外の理由はコメントに書いてあった —「fake-indexeddb が vitest の関数モックを
+// structured-clone できないため」。**これは回避できる**: handle として関数を
+// 持たない素のオブジェクトを使えば clone できる。`queryPermission` は任意
+// メソッドなので、無ければ permission は 'unknown' になる契約である。
+//
+// この経路は「**次にどのフォルダへ書き込むか**」を決める。永続化した handle が
+// 読み戻せなければ、利用者が選んだ場所とは違う場所に書きかねない。
+import 'fake-indexeddb/auto';
+import { clearFolderHandle, loadFolderHandle } from '../fsa';
+
+function clearPrefsDb(): Promise<void> {
+  return new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase('business-hub-preferences');
+    req.onsuccess = () => resolve();
+    req.onerror = () => resolve();
+    req.onblocked = () => resolve();
+  });
+}
+
+/** structured-clone できる handle 代用品 (関数を持たない)。 */
+function plainHandle(name: string): FileSystemDirectoryHandle {
+  return { kind: 'directory', name } as unknown as FileSystemDirectoryHandle;
+}
+
+describe('フォルダ handle の永続化', () => {
+  beforeEach(async () => {
+    await clearPrefsDb();
+    (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker =
+      () => Promise.resolve(plainHandle('picked'));
+  });
+
+  afterEach(() => {
+    delete (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker;
+  });
+
+  it('保存していなければ null', async () => {
+    expect(await loadFolderHandle()).toBeNull();
+  });
+
+  /** picker を差し替えて pickFolder 経由で保存する (保存は pickFolder の中で起きる)。 */
+  async function pickAndSave(name: string): Promise<void> {
+    (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker =
+      () => Promise.resolve(plainHandle(name));
+    await pickFolder();
+  }
+
+  it('選んだ handle を読み戻せる', async () => {
+    await pickAndSave('my-folder');
+    const loaded = await loadFolderHandle();
+    expect(loaded?.handle.name).toBe('my-folder');
+  });
+
+  it('queryPermission を持たない handle は permission unknown', async () => {
+    await pickAndSave('my-folder');
+    expect((await loadFolderHandle())?.permission).toBe('unknown');
+  });
+
+  it('選び直すと新しい handle になる', async () => {
+    await pickAndSave('first');
+    await pickAndSave('second');
+    expect((await loadFolderHandle())?.handle.name).toBe('second');
+  });
+
+  it('clearFolderHandle で消える (連携解除)', async () => {
+    await pickAndSave('my-folder');
+    await clearFolderHandle();
+    expect(await loadFolderHandle()).toBeNull();
+  });
+
+  it('保存していない状態で clearFolderHandle を呼んでも壊れない', async () => {
+    await expect(clearFolderHandle()).resolves.toBeUndefined();
+  });
+
+  // 実ブラウザでは FileSystemDirectoryHandle はメソッドごと structured-clone
+  // されるが、fake-indexeddb は再現できない。読み出し経路だけ差し替えて
+  // 「queryPermission を持つ handle が返る」状況を作る。
+  // ここは再読み込み後に**再度許可を求めるかどうか**を決める分岐なので、
+  // 未到達のままにしない。
+  function stubRead(result: unknown): () => void {
+    const original = indexedDB.open.bind(indexedDB);
+    indexedDB.open = (() => {
+      const req: Record<string, unknown> = {};
+      queueMicrotask(() => {
+        const db = {
+          transaction: () => ({
+            objectStore: () => ({
+              get: () => {
+                const r: Record<string, unknown> = { result };
+                queueMicrotask(() => (r.onsuccess as (() => void) | undefined)?.());
+                return r;
+              },
+            }),
+          }),
+          close: () => undefined,
+        };
+        req.result = db;
+        (req.onsuccess as (() => void) | undefined)?.();
+      });
+      return req;
+    }) as unknown as typeof indexedDB.open;
+    return () => { indexedDB.open = original; };
+  }
+
+  it('queryPermission が granted を返せばそのまま granted', async () => {
+    const restore = stubRead({
+      kind: 'directory',
+      name: 'stored',
+      queryPermission: () => Promise.resolve('granted'),
+    });
+    try {
+      expect((await loadFolderHandle())?.permission).toBe('granted');
+    } finally { restore(); }
+  });
+
+  it('queryPermission が prompt を返せば prompt', async () => {
+    const restore = stubRead({
+      kind: 'directory',
+      name: 'stored',
+      queryPermission: () => Promise.resolve('prompt'),
+    });
+    try {
+      expect((await loadFolderHandle())?.permission).toBe('prompt');
+    } finally { restore(); }
+  });
+
+  it('queryPermission が投げたら unknown に落とす (例外にしない)', async () => {
+    const restore = stubRead({
+      kind: 'directory',
+      name: 'stored',
+      queryPermission: () => Promise.reject(new Error('boom')),
+    });
+    try {
+      expect((await loadFolderHandle())?.permission).toBe('unknown');
+    } finally { restore(); }
+  });
+
+  it('非対応環境では読み込まない (null)', async () => {
+    await pickAndSave('my-folder');
+    delete (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker;
+    expect(await loadFolderHandle()).toBeNull();
+  });
+});
+
+// ===== ファイル名の境界 =================================================
+//
+// `isSafeFilename` は「選んだフォルダの外へ書かせない」ための門。
+// 長さの上限 (256) がちょうどで通ることを固定していなかった。
+
+describe('ファイル名の境界', () => {
+  function handleFor(): MockDirHandle {
+    return makeMockHandle({ initialPermission: 'granted' });
+  }
+
+  it('256 文字ちょうどは通す (上限)', async () => {
+    const h = handleFor();
+    await expect(
+      writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, 'a'.repeat(256), new Blob(['x'])),
+    ).resolves.toBeUndefined();
+  });
+
+  it('257 文字は断る (上限の外)', async () => {
+    const h = handleFor();
+    await expect(
+      writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, 'a'.repeat(257), new Blob(['x'])),
+    ).rejects.toThrow('filename が不正です');
+  });
+
+  it('1 文字は通す (下限)', async () => {
+    const h = handleFor();
+    await expect(
+      writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, 'a', new Blob(['x'])),
+    ).resolves.toBeUndefined();
+  });
+});
+
+// ===== 権限は readwrite で問い合わせる ===================================
+//
+// `{ mode: 'readwrite' }` が落ちると読み取り権限の判定になり、書き込めない
+// 相手を「許可済み」と見なす。問い合わせに渡している引数を直接見る。
+
+describe('権限の問い合わせ方', () => {
+  it('queryPermission に readwrite を渡す', async () => {
+    const h = makeMockHandle({ initialPermission: 'granted' });
+    await ensurePermission(h as unknown as FileSystemDirectoryHandle);
+    expect(h.queryPermission).toHaveBeenCalledWith({ mode: 'readwrite' });
+  });
+
+  it('requestPermission にも readwrite を渡す', async () => {
+    const h = makeMockHandle({ initialPermission: 'prompt' });
+    await ensurePermission(h as unknown as FileSystemDirectoryHandle);
+    expect(h.requestPermission).toHaveBeenCalledWith({ mode: 'readwrite' });
+  });
+
+  it('フォルダ選択も readwrite で要求する', async () => {
+    const picker = vi.fn().mockResolvedValue(plainHandle('picked'));
+    (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker = picker;
+    try {
+      await pickFolder();
+      expect(picker).toHaveBeenCalledWith({ mode: 'readwrite' });
+    } finally {
+      delete (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker;
+    }
+  });
+});
