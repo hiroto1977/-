@@ -367,14 +367,20 @@ describe('Library — id の作り方', () => {
   });
 
   it('randomUUID が使える環境ではそれを使う', async () => {
+    // `crypto.randomUUID` は環境によって**存在しない** (CI の jsdom には
+    // 無い)。`vi.spyOn` は「関数でないものは覗けない」で落ちるので、
+    // 有無を仮定せずこちらで生やす。実行環境に依存する検査は、通る環境で
+    // だけ緑になって別の環境で落ちる。
     const fixed = '11111111-1111-4111-8111-111111111111';
-    const spy = vi.spyOn(crypto, 'randomUUID').mockReturnValue(fixed);
+    const desc = Object.getOwnPropertyDescriptor(crypto, 'randomUUID');
+    Object.defineProperty(crypto, 'randomUUID', { value: () => fixed, configurable: true });
     try {
       const meta = await getLibrary().put('svc', 'a.txt', 'text/plain', new Blob(['x']));
       // 自前の組み立てへ落ちると別の値になる。
       expect(meta.id).toBe(fixed);
     } finally {
-      spy.mockRestore();
+      if (desc) Object.defineProperty(crypto, 'randomUUID', desc);
+      else delete (crypto as { randomUUID?: unknown }).randomUUID;
     }
   });
 });
