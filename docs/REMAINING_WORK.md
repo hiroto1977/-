@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・4,688 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・4,078 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **35 ファイル
-/ 45 箇所 / 4,688 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **34 ファイル
+/ 42 箇所 / 4,078 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -120,7 +120,6 @@
 
 | ファイル | 箇所 | 無効化行数 |
 |---|---|---|
-| `src/renderer/security/vault.ts` | 3 | 610 |
 | `src/shared/ai/providers.ts` | 1 | 301 |
 | `src/main/clients/templates.ts` | 3 | 290 |
 | `src/main/clients/teamradar.ts` | 4 | 237 |
@@ -132,10 +131,10 @@
 | `src/shared/ai/credentials.ts` | 1 | 176 |
 | `src/main/clients/stocks.ts` | 1 | 169 |
 
-**security/ と network/ に集中しているのが最も痛い。** `vault.ts` (AES-GCM の鍵導出と
-封緘)、`proxy.ts` (CORS 迂回の送り先決定)、`pkce.ts` (OAuth の code_verifier 生成)、
-`ai/credentials.ts` はいずれも、壊れても画面には出ずに安全性だけが落ちる場所である。
-高い変異スコアはこれらを**分母から外したうえで**出ている。
+**security/ と oauth/ に残っているものが痛い。** `pkce.ts` (OAuth の code_verifier
+生成)、`ai/credentials.ts`、`ai/providers.ts`、`library.ts` はいずれも、壊れても画面には
+出ずに安全性だけが落ちる場所である。高い変異スコアはこれらを**分母から外したうえで**
+出ている。
 
 ### 消化済み
 
@@ -143,6 +142,7 @@
 |---|---|---|---|
 | `src/renderer/data/store.ts` | 3 変異体「100%」 | 実測 256 変異体 71.09%。接続リーク 11 箇所 | **242 変異体 100%** |
 | `src/renderer/network/proxy.ts` | 501 行を無効化 | 実測 422 変異体 73.70%。SSRF 判定に生存 43・先頭ドット回避を発見 | **321 変異体 100%** |
+| `src/renderer/security/vault.ts` | 610 行を無効化 (3 箇所) | 実測 357 変異体 78.71%。`extractable: false` を証明する検査が無かった | **307 変異体 100%** |
 
 ### 進め方 (store.ts で通った手順)
 
