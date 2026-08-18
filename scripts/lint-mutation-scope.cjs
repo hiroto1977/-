@@ -64,9 +64,6 @@ const MAX_SPAN = 30;
  */
 const KNOWN_BROAD = {
   'src/main/clients/business.ts':                { regions: 3, lines:  199 },
-  'src/main/clients/cloudflare.ts':              { regions: 1, lines:  189 },
-  'src/main/clients/devEnv.ts':                  { regions: 1, lines:   43 },
-  'src/main/clients/funding.ts':                 { regions: 1, lines:   34 },
   'src/main/clients/stocks.ts':                  { regions: 1, lines:  169 },
   'src/main/clients/teamradar.ts':               { regions: 4, lines:  237 },
   'src/main/clients/templates.ts':               { regions: 1, lines:  139 },

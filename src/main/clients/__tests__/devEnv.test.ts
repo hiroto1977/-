@@ -272,3 +272,116 @@ describe('readDevEnv (live host)', () => {
     expect(s.readiness.every((c) => !c.ok)).toBe(true);
   });
 });
+
+// --- 実際に読むファイル ------------------------------------------------
+//
+// `readDevEnv` は「どのファイルを見るか」を決めている層である。
+// 名前を 1 つ間違えても整形側は動くので、上の検査では捕まらない。
+// 一時ディレクトリを作って実際に読ませる。
+
+import * as fsp from 'node:fs/promises';
+import * as os from 'node:os';
+import * as nodePath from 'node:path';
+import { afterEach, beforeEach } from 'vitest';
+
+describe('readDevEnv — 実際のファイルから読む', () => {
+  let dir: string;
+
+  beforeEach(async () => {
+    dir = await fsp.mkdtemp(nodePath.join(os.tmpdir(), 'devenv-'));
+  });
+  afterEach(async () => {
+    await fsp.rm(dir, { recursive: true, force: true });
+  });
+
+  const write = async (rel: string, body: string): Promise<void> => {
+    const full = nodePath.join(dir, rel);
+    await fsp.mkdir(nodePath.dirname(full), { recursive: true });
+    await fsp.writeFile(full, body);
+  };
+
+  it('何も無いディレクトリなら project も git も null', async () => {
+    const snap = readDevEnv(dir);
+    expect(snap.project).toBeNull();
+    expect(snap.git).toBeNull();
+    expect(snap.toolchain).toEqual([]);
+    // 実行中の Node の情報はそのまま入る
+    expect(snap.nodeVersion).toBe(process.versions.node);
+    expect(snap.platform).toBe(process.platform);
+    expect(snap.arch).toBe(process.arch);
+  });
+
+  it('宣言ファイルはそれぞれ決まった名前から読む', async () => {
+    await write('package.json', JSON.stringify({ name: 'p', version: '1.0.0' }));
+    await write('.nvmrc', '20.11.0\n');
+    await write('go.mod', 'module x\n\ngo 1.22\n');
+    await write('.python-version', '3.12.1\n');
+    await write('.tool-versions', 'terraform 1.7.0\n');
+
+    const snap = readDevEnv(dir);
+    expect(snap.project?.name).toBe('p');
+    const by = (tool: string) => snap.toolchain.find((t) => t.tool === tool);
+    // 名前を間違えると、この 1 つだけが静かに消える。
+    expect(by('node')).toMatchObject({ version: '20.11.0', source: '.nvmrc' });
+    expect(by('go')).toMatchObject({ version: '1.22' });
+    expect(by('python')).toMatchObject({ version: '3.12.1' });
+    expect(by('terraform')).toMatchObject({ version: '1.7.0' });
+  });
+
+  it('git は HEAD と参照先の両方を読んで枝と sha を出す', async () => {
+    const sha = 'a'.repeat(40);
+    await write('.git/HEAD', 'ref: refs/heads/main\n');
+    await write('.git/refs/heads/main', `${sha}\n`);
+
+    const snap = readDevEnv(dir);
+    // 参照の解決は `.git/<ref>` を読む。読めないと sha が空になる。
+    expect(snap.git).toEqual({ branch: 'main', sha });
+  });
+
+  it('HEAD はあるが参照先が無ければ sha は空にする（落ちない）', async () => {
+    await write('.git/HEAD', 'ref: refs/heads/missing\n');
+    const snap = readDevEnv(dir);
+    expect(snap.git).toEqual({ branch: 'missing', sha: '' });
+  });
+
+  it('lockfile は npm / yarn / pnpm のどれでも認める', async () => {
+    // 並び順も固定しておく (0=node_modules / 1=lockfile / 2=git)。
+    const lockCheck = (snap: ReturnType<typeof readDevEnv>) => snap.readiness[1]!;
+
+    expect(readDevEnv(dir).readiness.map((r) => r.label)).toEqual([
+      'Node モジュール',
+      'ロックファイル',
+      'Git リポジトリ',
+    ]);
+    expect(lockCheck(readDevEnv(dir)).ok).toBe(false);
+
+    for (const name of ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml']) {
+      const one = await fsp.mkdtemp(nodePath.join(os.tmpdir(), 'devenv-lock-'));
+      try {
+        await fsp.writeFile(nodePath.join(one, name), '');
+        expect(lockCheck(readDevEnv(one)).ok).toBe(true);
+      } finally {
+        await fsp.rm(one, { recursive: true, force: true });
+      }
+    }
+  });
+
+  it('node_modules と .git の有無をそのまま伝える', async () => {
+    const before = readDevEnv(dir);
+    expect(before.readiness[0]!.ok).toBe(false); // node_modules
+    expect(before.readiness[2]!.ok).toBe(false); // .git
+
+    await fsp.mkdir(nodePath.join(dir, 'node_modules'));
+    await fsp.mkdir(nodePath.join(dir, '.git'));
+
+    const after = readDevEnv(dir);
+    expect(after.readiness[0]!.ok).toBe(true);
+    expect(after.readiness[2]!.ok).toBe(true);
+  });
+
+  it('壊れた package.json でも落ちずに project は null にする', async () => {
+    await write('package.json', 'not json');
+    const snap = readDevEnv(dir);
+    expect(snap.project).toBeNull();
+  });
+});

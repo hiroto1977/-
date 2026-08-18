@@ -45,7 +45,6 @@ import {
 // 以下のモックデータは Phase 6 の実 API 差込みまでの再現用プレースホルダ。文字列・数値
 // リテラルの変異はロジックを検証しないため mutation 対象から除外する (overview.ts 等の
 // snapshot stub と同方針)。組み立てロジック (buildFundingSnapshot) はテストで 100% 担保。
-/* Stryker disable all */
 const MOCK_ITEMS: FundingItem[] = [
   { id: 'f-monozukuri', kind: 'subsidy', name: 'ものづくり補助金 (設備取得・圧縮記帳)', amount: 7_500_000, status: 'approved', month: '2026-06', repayable: false, compressedEntry: true },
   { id: 'f-jizokuka', kind: 'subsidy', name: '小規模事業者持続化補助金', amount: 2_000_000, status: 'received', month: '2026-03', repayable: false },
@@ -79,7 +78,6 @@ const MOCK_PORTFOLIO: ReadonlyArray<readonly [string, number]> = [
   ['2026-05', 1_092_000],
   ['2026-06', 1_140_000],
 ];
-/* Stryker restore all */
 
 // --- スナップショット -------------------------------------------------
 
@@ -179,7 +177,6 @@ export async function fetchFundingSnapshot(_ctx: FetchContext): Promise<FundingS
   // Phase 6 の実 API 差込みまでのモック入力値。補助金等以外の総収入 (特定収入割合の分母) と
   // 課税仕入れに係る消費税額を会計連携の営業CF合計から概算する (プレースホルダ)。算術リテラルの
   // 変異はロジック (buildFundingSnapshot 側でテスト済) を検証しないため mutation 対象から除外する。
-  /* Stryker disable all */
   const accountingTotal = MOCK_ACCOUNTING.reduce((s, [, v]) => s + v, 0);
   const fetcherOptions = {
     accounting: new Map(MOCK_ACCOUNTING),
@@ -189,6 +186,5 @@ export async function fetchFundingSnapshot(_ctx: FetchContext): Promise<FundingS
     taxableInputTax: Math.round((accountingTotal * 0.6 * 0.1) / 1.1), // 課税仕入れ60%想定の仕入控除税額
     isMock: true,
   };
-  /* Stryker restore all */
   return buildFundingSnapshot(MOCK_ITEMS, fetcherOptions);
 }

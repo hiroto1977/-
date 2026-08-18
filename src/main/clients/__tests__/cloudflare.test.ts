@@ -262,3 +262,280 @@ describe('ACTIONS["purge-cache"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+// --- 既定でプロキシしない ----------------------------------------------
+//
+// `proxied`（オレンジ雲）は DNS の応答そのものを変える。真にすると
+// 公開 IP が Cloudflare のものに差し替わり、HTTP 以外のプロトコルは
+// 通らなくなる。**利用者が頼んでいないのに勝手に付けてはいけない。**
+
+function cfHeadersOf(call: Parameters<typeof fetch>): Record<string, string> {
+  return (call[1]?.headers ?? {}) as Record<string, string>;
+}
+
+async function createRecord(payload: Record<string, unknown>) {
+  const fetchMock = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'r', name: 'n', type: 'A' })));
+  await ACTIONS['create-dns-record']!({ token: 'cf-secret', fetch: fetchMock, payload });
+  const [url, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+  return { url, init, body: JSON.parse(init.body as string) };
+}
+
+describe('ACTIONS["create-dns-record"] — proxied の既定', () => {
+  it('A / AAAA / CNAME に proxied を渡さなければ false で送る', async () => {
+    for (const type of ['A', 'AAAA', 'CNAME']) {
+      const { body } = await createRecord({
+        zoneId: 'z',
+        type,
+        name: 'n',
+        content: type === 'CNAME' ? 'target.example.com' : '203.0.113.1',
+      });
+      expect(body.proxied).toBe(false);
+    }
+  });
+
+  it('明示的に true を渡したときだけ true になる', async () => {
+    const { body } = await createRecord({
+      zoneId: 'z',
+      type: 'A',
+      name: 'n',
+      content: '203.0.113.1',
+      proxied: true,
+    });
+    expect(body.proxied).toBe(true);
+  });
+
+  it('proxied を付けられない種別には項目ごと送らない', async () => {
+    // TXT / MX に proxied を送ると Cloudflare は 400 を返す。
+    for (const type of ['TXT', 'MX']) {
+      const { body } = await createRecord({ zoneId: 'z', type, name: 'n', content: 'v' });
+      expect(body).not.toHaveProperty('proxied');
+    }
+  });
+
+  it('種別が未知でも proxied は付けない', async () => {
+    const { body } = await createRecord({ zoneId: 'z', type: 'SRV', name: 'n', content: 'v' });
+    expect(body).not.toHaveProperty('proxied');
+  });
+});
+
+describe('ACTIONS["create-dns-record"] — 送り方と入口の検査', () => {
+  it('POST で JSON として送り、トークンは Authorization だけに載る', async () => {
+    const { url, init } = await createRecord({
+      zoneId: 'z',
+      type: 'A',
+      name: 'n',
+      content: '203.0.113.1',
+    });
+    expect(url).toBe('https://api.cloudflare.com/client/v4/zones/z/dns_records');
+    expect(url).not.toContain('cf-secret');
+    expect(init.method).toBe('POST');
+    const headers = init.headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer cf-secret');
+    expect(headers['Content-Type']).toBe('application/json');
+    expect(headers.Accept).toBe('application/json');
+  });
+
+  it('必須項目が 1 つでも欠けたら送らない（4 つとも個別に）', async () => {
+    const full = { zoneId: 'z', type: 'A', name: 'n', content: '203.0.113.1' };
+    for (const key of ['zoneId', 'type', 'name', 'content'] as const) {
+      const payload: Record<string, unknown> = { ...full };
+      delete payload[key];
+      const fetchMock = vi.fn<typeof fetch>();
+      await expect(
+        ACTIONS['create-dns-record']!({ token: 't', fetch: fetchMock, payload }),
+      ).rejects.toThrow('zoneId, type, name, content are required');
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+  });
+});
+
+describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
+  it('zoneId が無ければ送らない', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload: { purgeEverything: true } }),
+    ).rejects.toThrow('zoneId is required');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('purgeEverything も files も無ければ送らない', async () => {
+    for (const payload of [{ zoneId: 'z' }, { zoneId: 'z', files: [] }]) {
+      const fetchMock = vi.fn<typeof fetch>();
+      await expect(
+        ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload }),
+      ).rejects.toThrow('either purgeEverything=true or non-empty files[] is required');
+      // 送ってから断るのでは遅い — キャッシュは消えてしまう。
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+  });
+
+  it('POST で JSON として送り、トークンは Authorization だけに載る', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'p1' })));
+    await ACTIONS['purge-cache']!({
+      token: 'cf-secret',
+      fetch: fetchMock,
+      payload: { zoneId: 'z', purgeEverything: true },
+    });
+    const [url, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+    expect(url).toBe('https://api.cloudflare.com/client/v4/zones/z/purge_cache');
+    expect(url).not.toContain('cf-secret');
+    expect(init.method).toBe('POST');
+    const headers = init.headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer cf-secret');
+    expect(headers['Content-Type']).toBe('application/json');
+  });
+
+  it('ゾーン id は URL に埋める前に符号化する', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'p2' })));
+    await ACTIONS['purge-cache']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { zoneId: 'a/b?c', purgeEverything: true },
+    });
+    const url = String(fetchMock.mock.calls[0]![0]);
+    // 符号化しないと別の経路 (/zones/a/b?c/purge_cache) を叩くことになる。
+    expect(url).toBe('https://api.cloudflare.com/client/v4/zones/a%2Fb%3Fc/purge_cache');
+  });
+});
+
+// --- 応答の読み方 ------------------------------------------------------
+
+describe('unwrap — Cloudflare の封筒', () => {
+  it('success=false で errors が空でも「不明なエラー」として伝える', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ result: null, success: false, errors: [], messages: [] }))
+      .mockResolvedValueOnce(jsonResponse(okWrap([])));
+    const err = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock }).then(
+      () => null,
+      (e: Error) => e,
+    );
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as Error).message).toBe('cloudflare unknown Cloudflare error');
+    expect((err as FetchError).serviceId).toBe('cloudflare');
+  });
+
+  it('errors ごと無い応答でも落ちずに「不明なエラー」にする', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ result: null, success: false }))
+      .mockResolvedValueOnce(jsonResponse(okWrap([])));
+    await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(
+      'cloudflare unknown Cloudflare error',
+    );
+  });
+
+  it('errors はあるが message が無い場合も「不明なエラー」にする', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({ result: null, success: false, errors: [{ code: 1 }], messages: [] }),
+      )
+      .mockResolvedValueOnce(jsonResponse(okWrap([])));
+    await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(
+      'cloudflare unknown Cloudflare error',
+    );
+  });
+});
+
+describe('fetchCloudflareSnapshot — 欠けた項目と送り先', () => {
+  it('plan / account / name_servers が無いゾーンでも落ちない', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'u', email: 'e', username: 'n' })))
+      .mockResolvedValueOnce(
+        jsonResponse(okWrap([{ id: 'z1', name: 'a.example', status: 'active' }])),
+      );
+    const snap = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.zones[0]).toMatchObject({
+      plan: '',
+      accountName: '',
+      nameServers: [],
+      devModeRemainingSec: 0,
+    });
+  });
+
+  it('user と zones を Bearer + Accept で叩く', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'u', email: 'e', username: 'n' })))
+      .mockResolvedValueOnce(jsonResponse(okWrap([])));
+    await fetchCloudflareSnapshot({ token: 'cf-secret', fetch: fetchMock });
+
+    const userCall = fetchMock.mock.calls.find((c) => String(c[0]).endsWith('/user'))!;
+    expect(String(userCall[0])).toBe('https://api.cloudflare.com/client/v4/user');
+    expect(cfHeadersOf(userCall).Authorization).toBe('Bearer cf-secret');
+    // Accept が落ちると Cloudflare は HTML を返すことがある。
+    expect(cfHeadersOf(userCall).Accept).toBe('application/json');
+  });
+
+  it('ページ送りは 20 ページで打ち切る（最大 1000 件）', async () => {
+    // 常に満杯のページを返すので、上限が無ければ止まらない。
+    const fullPage = () => jsonResponse(okWrap(Array.from({ length: 50 }, (_, i) => ({ id: `z${i}` }))));
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) =>
+      Promise.resolve(
+        String(input).includes('/zones')
+          ? fullPage()
+          : jsonResponse(okWrap({ id: 'u', email: 'e', username: 'n' })),
+      ),
+    );
+
+    const snap = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.zones).toHaveLength(1000);
+
+    const zoneCalls = fetchMock.mock.calls.filter((c) => String(c[0]).includes('/zones'));
+    expect(zoneCalls).toHaveLength(20);
+    // 1 ページ目から 20 ページ目まで、50 件ずつ。
+    expect(String(zoneCalls[0]![0])).toContain('per_page=50&page=1');
+    expect(String(zoneCalls[19]![0])).toContain('per_page=50&page=20');
+  });
+});
+
+// --- どのサービスが落ちたか --------------------------------------------
+//
+// `jsonFetch` が投げる `FetchError` には serviceId が乗る。3 つの
+// 呼び出し口それぞれで正しく名乗ることを見る (取得・DNS 作成・purge)。
+
+describe('HTTP レベルの失敗は cloudflare のものとして伝わる', () => {
+  it('取得', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response('unauthorized', { status: 401 }));
+    await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toMatchObject({
+      serviceId: 'cloudflare',
+      status: 401,
+    });
+  });
+
+  it('DNS レコード作成', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('forbidden', { status: 403 }));
+    await expect(
+      ACTIONS['create-dns-record']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { zoneId: 'z', type: 'A', name: 'n', content: '203.0.113.1' },
+      }),
+    ).rejects.toMatchObject({ serviceId: 'cloudflare', status: 403 });
+  });
+
+  it('キャッシュ削除', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('too many requests', { status: 429 }));
+    await expect(
+      ACTIONS['purge-cache']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { zoneId: 'z', purgeEverything: true },
+      }),
+    ).rejects.toMatchObject({ serviceId: 'cloudflare', status: 429 });
+  });
+});
