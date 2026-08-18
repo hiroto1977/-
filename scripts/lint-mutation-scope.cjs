@@ -33,6 +33,22 @@
  *
  * 台帳に載っているのは「許した」ではなく「まだ測っていないと分かっている」。
  * 内訳は docs/REMAINING_WORK.md に、なぜ危険かとあわせて書いてある。
+ *
+ * ## 見つけた事故 その 2 — 台帳をすり抜ける方法があった (2026-08-18)
+ *
+ * 上の検査は `stryker.config.json` の `mutate` に**載っている**ファイルしか
+ * 見ない。裏を返すと、**載せなければ何も言われない**。
+ *
+ * `src/main/clients/exportPaths.ts` がそれだった。ここは 2026-07 監査で
+ * 4 か所に散っていた書き出し先の検査を 1 つにまとめた関数で、
+ * `business` / `stocks` / `templates` / `teamradar` の書き出しは全部ここを
+ * 通る。レンダラーが乗っ取られたときに「どこへ書けるか」を決める最後の壁。
+ * その中身には `Stryker disable ConditionalExpression,...` が掛かっていた
+ * のに、ファイル自体が `mutate` に無いので**変異体が 1 つも作られず**、
+ * この検査も無反応だった。pragma は飾りで、実測値はゼロ。
+ *
+ * そこで `MUST_MEASURE` を足した。**「探して無かったことも記録する」**の
+ * 逆方向 — 測ると決めた壁が黙って一覧から外れたら落ちる。
  */
 const fs = require('fs');
 const path = require('path');
@@ -48,7 +64,6 @@ const MAX_SPAN = 30;
  */
 const KNOWN_BROAD = {
   'src/main/clients/business.ts':                { regions: 3, lines:  199 },
-  'src/main/clients/calendar.ts':                { regions: 1, lines:   99 },
   'src/main/clients/canva.ts':                   { regions: 1, lines:   81 },
   'src/main/clients/cloudflare.ts':              { regions: 1, lines:  189 },
   'src/main/clients/devEnv.ts':                  { regions: 1, lines:   43 },
@@ -58,13 +73,32 @@ const KNOWN_BROAD = {
   'src/main/clients/notion.ts':                  { regions: 1, lines:  122 },
   'src/main/clients/stocks.ts':                  { regions: 1, lines:  169 },
   'src/main/clients/teamradar.ts':               { regions: 4, lines:  237 },
-  'src/main/clients/templates.ts':               { regions: 3, lines:  290 },
+  'src/main/clients/templates.ts':               { regions: 1, lines:  139 },
   'src/main/clients/wordpress.ts':               { regions: 1, lines:  110 },
   'src/renderer/data/chatbot.ts':                { regions: 1, lines:   83 },
   'src/renderer/data/counseling.ts':             { regions: 1, lines:  120 },
   'src/renderer/library/library.ts':             { regions: 1, lines:  217 },
   'src/shared/ai/chat.ts':                       { regions: 1, lines:   57 },
   'src/shared/taxCalc.ts':                       { regions: 1, lines:   53 },
+};
+
+/**
+ * **必ず変異検査に載せるファイル。**
+ *
+ * 権限・資格情報・書き出し先を決める壁。ここが `mutate` から外れると、
+ * 中の pragma も含めて何も測られていない状態が「緑」に見える。
+ * 外すときは、なぜもう壁ではないのかを添えてこの表から消すこと。
+ */
+const MUST_MEASURE = {
+  'src/main/clients/exportPaths.ts': '書き出し先の唯一の関門 (4 サービスが通る)',
+  'src/renderer/network/proxy.ts':   'BYO プロキシの送り先判定 (SSRF の関門)',
+  'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
+  'src/renderer/security/autoLock.ts': '離席時の施錠',
+  'src/renderer/oauth/pkce.ts':      'ブラウザ版 PKCE',
+  'src/main/oauth.ts':               '認可の送り先と PKCE',
+  'src/shared/redact.ts':            'ログに載せる前の伏字',
+  'src/shared/escape.ts':            'マークアップへ差し込む前のエスケープ',
+  'src/renderer/fs/fsa.ts':          '「次にどこへ書くか」の記憶',
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;
@@ -107,6 +141,25 @@ function scanFile(rel) {
 }
 
 /**
+ * `MUST_MEASURE` の壁のうち、変異検査の対象一覧から外れているものを返す。
+ * `files` を引数にしてあるのは、自己検査で偽の一覧を渡せるようにするため。
+ */
+function missingWalls(files, walls = MUST_MEASURE, checkExists = true) {
+  const out = [];
+  for (const [rel, why] of Object.entries(walls)) {
+    if (!files.includes(rel)) {
+      out.push(
+        `${rel}: ${why}。stryker.config.json の mutate に載っていません` +
+        ` — 載せないと変異体が 1 つも作られず、中の pragma ごと「測っていない」が見えなくなります`,
+      );
+    } else if (checkExists && !fs.existsSync(path.join(REPO_ROOT, rel))) {
+      out.push(`${rel}: ${why}。MUST_MEASURE にありますがファイルがありません`);
+    }
+  }
+  return out;
+}
+
+/**
  * 自己検査 — 「常に緑を返すゲートは無いより悪い」。
  * 検出器そのものが壊れていないかを、毎回の実行で確かめる。
  */
@@ -131,6 +184,20 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
   }
+  // MUST_MEASURE 側 — 「載せなければ無反応」を塞げているか
+  const walls = { 'a/guard.ts': '壁 A', 'b/guard.ts': '壁 B' };
+  const wallCases = [
+    ['壁が両方載っていれば 0 件', ['a/guard.ts', 'b/guard.ts', 'c/other.ts'], 0],
+    ['壁が 1 つ外れたら 1 件', ['a/guard.ts'], 1],
+    ['一覧が空なら全部 (2 件)', [], 2],
+  ];
+  for (const [label, files, want] of wallCases) {
+    const got = missingWalls(files, walls, false).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 検出器が壊れています`);
     return 1;
@@ -199,7 +266,11 @@ function main(argv) {
     }
   }
 
+  // 測ると決めた壁が黙って一覧から外れていないか (載せなければ無反応、を塞ぐ)
+  failures.push(...missingWalls(files));
+
   console.log(`Scanned ${scanned} mutate-listed file(s); span limit ${MAX_SPAN} lines`);
+  console.log(`必ず測る壁: ${Object.keys(MUST_MEASURE).length} ファイル (全て mutate に在籍)`);
   console.log(`広い無効化: ${seen.size} ファイル / ${broadRegions} 箇所 / ${broadLines} 行 (台帳: ${Object.keys(KNOWN_BROAD).length} ファイル)`);
 
   if (failures.length === 0) {
@@ -211,7 +282,7 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { scanSource, broadRegionsOf, MAX_SPAN };
+module.exports = { scanSource, broadRegionsOf, missingWalls, MAX_SPAN, MUST_MEASURE };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

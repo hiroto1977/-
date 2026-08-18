@@ -70,6 +70,21 @@ describe('isSafeExportPath', () => {
     expect(isSafeExportPath(inRoot('a'.repeat(1100) + '.html'), HOME, '.html')).toBe(false);
   });
 
+  it('長さの上限はちょうど 1024 文字まで', () => {
+    // 上限がどちら側に付いているか (1024 を含むのか外すのか) を固定する。
+    // 実装は `> 1024` で弾くので、1024 ちょうどは通る。
+    const prefix = `${ROOT}${path.sep}`;
+    const ext = '.html';
+    const fill = 1024 - prefix.length - ext.length;
+    const exact = `${prefix}${'a'.repeat(fill)}${ext}`;
+    expect(exact).toHaveLength(1024);
+    expect(isSafeExportPath(exact, HOME, ext)).toBe(true);
+
+    const oneOver = `${prefix}${'a'.repeat(fill + 1)}${ext}`;
+    expect(oneOver).toHaveLength(1025);
+    expect(isSafeExportPath(oneOver, HOME, ext)).toBe(false);
+  });
+
   it('is not fooled by a sibling directory sharing the root prefix', () => {
     // `…/.local/business-hub-evil/x.html` starts with the root string
     // but is a different directory — the separator check must catch it.

@@ -9,6 +9,7 @@
     "scripts/security-audit.sh",
     "scripts/setup-linux.sh",
     "scripts/setup-obsidian-docker.sh",
+    "src/main/clients/exportPaths.ts",
     "src/main/oauth.ts",
     "src/main/secrets.ts",
     "src/preload/preload.ts",
@@ -227,16 +228,33 @@
       "leafCount": 16,
       "note": "update oauth.ts",
       "hash": "06beca0c2fb5e9d8a448cdd29d9c2fbad8b8719d8198b8050b61c54f221439ff"
+    },
+    {
+      "index": 26,
+      "prevHash": "06beca0c2fb5e9d8a448cdd29d9c2fbad8b8719d8198b8050b61c54f221439ff",
+      "merkleRoot": "5d75a0005ce4ca85421439ce8209fe7d6ae0d77b0b47e7df238671f98c9e269b",
+      "leafCount": 17,
+      "note": "update integrity-chain.cjs,exportPaths.ts",
+      "hash": "2c1decf2e2cd64c332c4dfc914e95710de74d1d099e08e2636a56e73c2ec044b"
+    },
+    {
+      "index": 27,
+      "prevHash": "2c1decf2e2cd64c332c4dfc914e95710de74d1d099e08e2636a56e73c2ec044b",
+      "merkleRoot": "b57bf84f924d641f830dc233de933bedda4616ed4af722f428c1119696a85951",
+      "leafCount": 17,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "a44212309d7e404f72853cee93c444f308ceef5ced2fdbfa46f89d939047bb7d"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "6e42ab0cee00479e851c7568e0d0745db445e264c9a0374300d94eb191d04892",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
-    "docs/SECURITY_CHAIN.md": "fe10079d61ec6da8c662e429de0b3153e1c9318280e90931f575cbf6c44a9c14",
-    "scripts/integrity-chain.cjs": "0d68254e3864ab3b99313aa897735e4c1c62a80bf32f6af24ff773c11d794079",
+    "docs/SECURITY_CHAIN.md": "02be0b9bb847d6018f8d0f4b0c8c04f31d2ae2c6449c8ac22043632d10d57e50",
+    "scripts/integrity-chain.cjs": "c7ab411bbc4697ee917ef78d114e1f2d83302672415b1ba983672e04f73bea6e",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
+    "src/main/clients/exportPaths.ts": "b6798f4a0b9d54b8d6ee4a8df17323163dee857edbeed4dd546292399fd98882",
     "src/main/oauth.ts": "5b8ea8f952b826eb2e39e1902b7534e8e58aabe223c4059c737ea3855576df8e",
     "src/main/secrets.ts": "02097b2893cba373eeb59d43d68029d6cebb0c2b26628b0bf771d63da8be18a0",
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",

@@ -27,6 +27,7 @@
     "src/main/clients/wordpress.ts",
     "src/main/clients/notion.ts",
     "src/main/clients/calendar.ts",
+    "src/main/clients/exportPaths.ts",
     "src/main/clients/emotions.ts",
     "src/main/clients/drive.ts",
     "src/main/clients/canva.ts",

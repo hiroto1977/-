@@ -36,9 +36,15 @@ export function exportRoot(home: string = os.homedir()): string {
  * `home` stays a parameter (not `os.homedir()`) so tests can point it at a
  * temp dir, matching the pre-existing guard signatures.
  */
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 export function isSafeExportPath(filePath: string, home: string, ext: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
+  if (typeof filePath !== 'string') return false;
+  // 空文字はいまの並びだと後段の拡張子検査でも弾かれる (空文字は `.svg` で
+  // 終われない) ため、ここを変異させても観測できる差が出ない。消さずに残すのは
+  // 拡張子検査が将来ゆるくなったときの保険 — ここが「空でないこと」の唯一の
+  // 根拠になる。1 行に分けてあるのは、上の typeof 判定まで巻き添えで
+  // 測定から外れないようにするため (無効化は行単位でしか効かない)。
+  // Stryker disable next-line ConditionalExpression: 後段と重なる保険 (単独では観測不能)
+  if (filePath.length === 0) return false;
   if (filePath.length > 1024) return false;
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
@@ -47,4 +53,3 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   // Strict containment: the root itself is a directory, never a file target.
   return resolved.startsWith(root + path.sep);
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral

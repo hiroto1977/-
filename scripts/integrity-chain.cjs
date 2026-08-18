@@ -50,6 +50,13 @@ const PROTECTED = [
   'src/main/secrets.ts',
   'src/main/oauth.ts',
   'src/preload/preload.ts',
+  // レンダラーが渡してくる書き出し先を検査する唯一の関門。business /
+  // stocks / templates / teamradar の書き出しは全部ここを通る。ここが
+  // ゆるむと、乗っ取られたレンダラーがホーム配下へ任意のファイルを
+  // 置けるようになる (2026-07 監査で 4 つの複製をここへ集約した)。
+  // 保護対象に漏れていたのに気付いたのは 2026-08-18 — 同じファイルが
+  // 変異検査の対象一覧からも漏れていた。
+  'src/main/clients/exportPaths.ts',
   'scripts/setup-linux.sh',
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',
