@@ -65,7 +65,6 @@ export const GRADE_C_MIN = 50;
 
 // 観点のメタ情報 (表示文言・重み)。文字列・重みは表現として Stryker から除外し、
 // ロジック (ok 判定・採点・グレード・findings) を実テストで撃墜する。
-// Stryker disable all
 interface CheckSpec {
   readonly id: string;
   readonly label: string;
@@ -124,7 +123,6 @@ const CHECK_SPECS: Readonly<Record<string, CheckSpec>> = {
     recommendation: 'クラウドへ送るバックアップを暗号化してください (送信先での閲覧を防止)。',
   },
 };
-// Stryker restore all
 
 function check(id: string, ok: boolean): SecurityCheck {
   const spec = CHECK_SPECS[id]!;

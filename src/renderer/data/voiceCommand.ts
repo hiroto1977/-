@@ -53,7 +53,6 @@ function katakanaToHiragana(s: string): string {
 }
 
 /** 文末の敬語・丁寧表現を落とす (「〜してください」「〜して」「〜を」など)。 */
-// Stryker disable all
 const POLITE_SUFFIXES: readonly string[] = [
   'をお願いします',
   'お願いします',
@@ -76,7 +75,6 @@ const POLITE_SUFFIXES: readonly string[] = [
   'でしょうか',
   'なのか',
 ];
-// Stryker restore all
 
 function stripPoliteSuffixes(s: string): string {
   let out = s;
@@ -128,7 +126,6 @@ export function normalizeUtterance(text: string): string {
  * 注: 大量の文字列リテラル辞書のため StringLiteral / ArrayDeclaration mutation は
  * block-level disable する (罠#2)。マッチ「ロジック」自体は実テストで撃墜する。
  */
-// Stryker disable all
 const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   home: ['ほーむ', 'とっぷ', 'top', 'home'],
   charts: ['ぐらふ', 'かしか', 'ちゃーと', 'graph', 'chart', 'おれせん', 'えんぐらふ', 'れーだー'],
@@ -205,7 +202,6 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   docker: ['docker', 'どっかー', 'こんてな', 'container', 'いめーじ', 'image', 'こんてなー'],
   assistant: ['assistant', 'あしすたんと', 'えーあい', 'ai', 'ちゃっと', 'chat', 'ちゃっとぼっと', 'こんしぇるじゅ'],
 };
-// Stryker restore all
 
 // ---------------------------------------------------------------------------
 // 動詞 → action / kind 辞書
@@ -220,7 +216,6 @@ interface ActionRule {
  * 発話動詞から「アクション種別」を推定するためのルール。
  * SaaS の write 系 action 名 (create-issue / send-message / create-event 等) に対応。
  */
-// Stryker disable all
 const ACTION_RULES: readonly ActionRule[] = [
   { verbs: ['イシュー', 'いしゅー', 'issue', '課題作', 'かだいつく'], action: 'create-issue' },
   { verbs: ['メッセージ', 'めっせーじ', '送って', 'おくっ', '送信', 'そうしん', '投稿', 'とうこう'], action: 'send-message' },
@@ -229,20 +224,17 @@ const ACTION_RULES: readonly ActionRule[] = [
   { verbs: ['記録', 'きろく', '入力', 'にゅうりょく', '登録', 'とうろく', 'れこーど'], action: 'record-entry' },
   { verbs: ['削除', 'さくじょ', '消し', 'けし', '消す', 'でりーと', 'delete'], action: 'delete' },
 ];
-// Stryker restore all
 
 /**
  * navigate を示す典型動詞 (正規化後)。これらが含まれれば「表示・移動」の意図。
  * query を示す疑問語 (正規化後)。
  */
-// Stryker disable all
 const NAVIGATE_VERBS: readonly string[] = [
   '見せ', 'みせ', '見たい', 'みたい', '開い', 'ひらい', '開け', 'ひらけ', '行き', 'いき', '表示', 'ひょうじ', '出し', 'だし', 'ちぇっく', '確認', 'かくにん', '見て', 'みて',
 ];
 const QUERY_MARKERS: readonly string[] = [
   'いくら', 'なんぼ', 'どれくらい', 'どのくらい', '何', 'なに', 'なん', '教え', 'おしえ', '知りたい', 'しりたい',
 ];
-// Stryker restore all
 
 // ---------------------------------------------------------------------------
 // 別名マッチ
@@ -469,7 +461,6 @@ function resolveResolved(
 /**
  * 破壊的 / 外部送信 / 課金系 action は確認必須 (安全側 = true)。
  */
-// Stryker disable all
 const CONFIRM_ACTIONS: ReadonlySet<string> = new Set([
   'delete',
   'send-message',
@@ -494,7 +485,6 @@ const DANGEROUS_STEMS: readonly string[] = [
   'destroy',
   'create',
 ];
-// Stryker restore all
 
 /**
  * intent が実行前に確認を要するか。
@@ -528,13 +518,11 @@ export interface DisambiguationResult {
 }
 
 /** 「いちばんめ」「つぎ」等の序数語で候補を選ぶためのルール。 */
-// Stryker disable all
 const ORDINAL_MARKERS: readonly { readonly tokens: readonly string[]; readonly index: number }[] = [
   { tokens: ['一番目', 'いちばんめ', '一つ目', 'ひとつめ', '最初', 'さいしょ', '1番目'], index: 0 },
   { tokens: ['二番目', 'にばんめ', '二つ目', 'ふたつめ', '次', 'つぎ', '2番目'], index: 1 },
   { tokens: ['三番目', 'さんばんめ', '三つ目', 'みっつめ', '3番目'], index: 2 },
 ];
-// Stryker restore all
 
 function pickByOrdinal(normalized: string, candidates: readonly ServiceId[]): ServiceId | null {
   for (const rule of ORDINAL_MARKERS) {
