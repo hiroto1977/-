@@ -70,7 +70,6 @@ const KNOWN_BROAD = {
   'src/renderer/library/library.ts':             { regions: 1, lines:  217 },
   'src/renderer/security/autoLock.ts':           { regions: 1, lines:   85 },
   'src/shared/ai/chat.ts':                       { regions: 1, lines:   57 },
-  'src/shared/ai/providers.ts':                  { regions: 1, lines:  301 },
   'src/shared/connectors/connectorCatalog.ts':   { regions: 1, lines:  126 },
   'src/shared/dbSecurityPosture.ts':             { regions: 1, lines:   59 },
   'src/shared/securityRange.ts':                 { regions: 1, lines:   31 },
