@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7945** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8294) |
+| ユニットテスト | **7972** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8321) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 287 | 自己検証 |
+| `file:line` 参照数 | 290 | 自己検証 |
 
 ### 統合フロー図
 
@@ -855,6 +855,72 @@ Notion は版を名乗らないと 400 を返す。`toBeDefined()` は `''` を�
 含まれるので、どちらへ変異させても結果が変わらない条件だった。
 
 4 ファイルとも **100%** (38 / 66 / 78 / 59 変異体)。台帳は 1,923 → 1,540 行。
+
+#### 既定でプロキシしないことを誰も見ていなかった (`src/main/clients/cloudflare.ts`)
+
+`proxied`（オレンジ雲）は DNS の応答そのものを変える。真にすると公開 IP が
+Cloudflare のものへ差し替わり、HTTP 以外のプロトコルは通らなくなる。
+**利用者が頼んでいないのに付けてはいけない**性質の旗である。
+
+```ts
+if (type === 'A' || type === 'AAAA' || type === 'CNAME') {
+  body.proxied = proxied ?? false;
+}
+```
+
+189 行の無効化を外すと **115 変異体 66.96%**。この `false` を `true` に
+変えても検査は全部通った。A / AAAA / CNAME の 3 種別と、付けてはいけない
+TXT / MX / 未知の種別を 1 つずつ固定した。
+
+同じファイルで他に測れていなかったもの:
+
+- **ページ送りの上限** (`page <= MAX_PAGES`) — 20 ページ 1000 件で打ち切る
+  境界。満杯のページを返し続ける相手で 20 回・1000 件を固定した。
+- **`unwrap` の「不明なエラー」経路** — `success: false` なのに `errors` が
+  空だったり `message` を持たない応答で、`?.` と `??` が効いているか。
+- **`purge_cache` の入口** — `purgeEverything` も `files` も無いときに
+  **送る前に**断ること。送ってから断るのでは遅い (キャッシュは消える)。
+
+**115 変異体 100%**。
+
+#### 「どのファイルを読むか」を決める層が丸ごと未到達だった (`src/main/clients/devEnv.ts`)
+
+`readDevEnv` は `.nvmrc` / `go.mod` / `.python-version` / `.tool-versions` /
+`.git/HEAD` / ロックファイル 3 種を読む。**名前を 1 つ間違えても整形側は
+動く**ので、既存の検査 (整形ロジックに直接入力を渡す形) では捕まらない。
+コメントには「fs からの読み取りはランタイム依存のため除外」と書いてあった
+が、一時ディレクトリを作れば普通に測れる。
+
+`existsSafe` の `try`/`catch` は削除した。`fs.existsSync` は仕様として
+例外を投げず、NUL 入りのパスでも長すぎるパスでも `false` を返すことを実測
+した。到達しない `catch` は、そこで何をしても結果が変わらない — 測っても
+何も分からない場所になる。
+
+文言だけは測らない (「npm install が必要です」を別の言い回しにしても間違い
+ではない)。帯は `readinessChecks` 関数だけに掛け、`ok` の真偽は測る側に
+残した。**197 変異体 100%**。
+
+#### モック表の隣に本物の税計算があった (`src/main/clients/funding.ts`)
+
+`/* Stryker disable all */` が 2 か所、モックデータの表に掛かっていた。
+表そのものはモジュール直下の定数なので変異体は**静的**になり、
+`ignoreStatic` で最初から数に入らない — つまり無効化しても数字は変わらない。
+外して測ると **30 変異体 83.33%**。
+
+生き残った 5 つは表ではなく、**その隣にあった消費税の式**だった。
+
+```ts
+const accountingTotal = MOCK_ACCOUNTING.reduce((s, [, v]) => s + v, 0);
+taxableInputTax: Math.round((accountingTotal * 0.6 * 0.1) / 1.1),
+```
+
+課税仕入れを 60% と見て、税込額から 10% 分を取り出す (×10/110)。仮置きの
+入力値ではあるが、**計算そのものは本物**で、崩れると画面に出る「控除でき
+ない仕入税額」が静かにずれる。導いた値 (8,910,000 / 486,000) を固定した。
+
+途中で自分の検査が 12 円ずれて落ちた。`specifiedIncomeRatio` は**表に出す
+ときだけ 4 桁に丸めて**おり、税額の計算には丸める前を使う。丸めたほうを
+掛けると合わない。**30 変異体 100%**、pragma はゼロになった。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

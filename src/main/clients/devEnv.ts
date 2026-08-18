@@ -175,8 +175,10 @@ function buildToolchain(i: DevEnvInputs, pkg: ParsedPackage | null): DeclaredToo
   return toolchain;
 }
 
-// 準備状況チェックの表示文言は表現。罠#2 に従い Stryker から除外する。
-// Stryker disable all
+// `ok` の真偽は測る。`detail` の文言だけは表現なので測らない —
+// 「npm install が必要です」を別の言い回しにしても間違いではない。
+// 帯はこの関数だけに掛ける (ファイル全体を黙らせない)。
+// Stryker disable StringLiteral
 function readinessChecks(i: DevEnvInputs): ReadinessCheck[] {
   return [
     {
@@ -196,13 +198,17 @@ function readinessChecks(i: DevEnvInputs): ReadinessCheck[] {
     },
   ];
 }
-// Stryker restore all
+// Stryker restore StringLiteral
 
 /** 生の入力から開発環境スナップショットを組み立てる (純粋・決定論的)。 */
 export function buildDevEnv(i: DevEnvInputs): DevEnvSnapshot {
   // 条件を true 化する変異は等価: parsePackageJson(null) は JSON.parse('null')→null で
   // null を返すため、ガードを外して常に呼んでも結果は変わらない。
-  // Stryker disable next-line ConditionalExpression
+  // `parsePackageJson` は null を渡されても null を返す (`JSON.parse(null)` は
+  // "null" と読まれて null になり、続くオブジェクト判定で弾かれる — 実測)。
+  // つまりこの前置きは単独では観測できない。消さずに残すのは、解析側が将来
+  // 変わったときに null がそのまま渡らないようにするため。
+  // Stryker disable next-line ConditionalExpression: 解析側と重なる保険 (単独では観測不能)
   const pkg = i.packageJson !== null ? parsePackageJson(i.packageJson) : null;
   const project: ProjectInfo | null =
     pkg === null
@@ -228,9 +234,9 @@ export function buildDevEnv(i: DevEnvInputs): DevEnvSnapshot {
 
 // --- IO アダプタ (fs/process。サブプロセスは起動しない) -----------------------
 //
-// fs/process からの読み取りはランタイム依存のため、stryker.config.json の方針に従い
-// mutation から除外する (整形ロジックは buildDevEnv 側で 100% カバー)。
-// Stryker disable all
+// fs/process からの読み取り。以前はここを丸ごと変異検査から外していたが、
+// 「どのファイルを読むか」はこの層が決めているので、一時ディレクトリを
+// 作って実際に読ませる形で測る (`__tests__/devEnv.test.ts`)。
 function readFileOrNull(p: string): string | null {
   try {
     return fs.readFileSync(p, 'utf8');
@@ -239,12 +245,12 @@ function readFileOrNull(p: string): string | null {
   }
 }
 
+// `fs.existsSync` は仕様として例外を投げない (エラーは内部で握られ false に
+// なる)。NUL 入りのパス・長すぎるパスでも false が返ることを実測で確かめた
+// うえで try/catch を外した。到達しない catch を残すと、そこは何をしても
+// 結果が変わらない — つまり測っても何も分からない場所になる。
 function existsSafe(p: string): boolean {
-  try {
-    return fs.existsSync(p);
-  } catch {
-    return false;
-  }
+  return fs.existsSync(p);
 }
 
 /** プロジェクトディレクトリ (既定: process.cwd()) から開発環境を読み取る。 */
@@ -273,4 +279,3 @@ export function readDevEnv(cwd: string = process.cwd()): DevEnvSnapshot {
     hasGit: existsSafe(at('.git')),
   });
 }
-// Stryker restore all

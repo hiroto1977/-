@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・1,540 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・1,274 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **12 ファイル
-/ 17 箇所 / 1,540 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **9 ファイル
+/ 14 箇所 / 1,274 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -130,7 +130,6 @@
 | `src/main/clients/teamradar.ts` | 4 | 237 |
 | `src/renderer/library/library.ts` | 1 | 217 |
 | `src/main/clients/business.ts` | 3 | 199 |
-| `src/main/clients/cloudflare.ts` | 1 | 189 |
 | `src/main/clients/stocks.ts` | 1 | 169 |
 | `src/main/clients/templates.ts` | 1 | 139 (座標の算術のみ) |
 
@@ -160,6 +159,9 @@
 | `src/main/clients/wordpress.ts` | 110 行を無効化 | 実測 71 変異体 64.79%。**`is_free` と slug のどちらを信じるかの順番**が無証明 (無料プランを有料として出せる)。`free_plan` の判定は `includes('free')` と重複していたので削除 | **66 変異体 100%** |
 | `src/main/clients/notion.ts` | 122 行を無効化 | 実測 77 変異体 65.38%。`Notion-Version` は `toBeDefined()` で見ていたので**空文字でも通っていた**。「最後に編集した順」の指定も無証明 | **78 変異体 100%** |
 | `src/main/clients/canva.ts` | 81 行を無効化 | 実測 60 変異体 71.67%。`ownership`/`sort_by` と 12 件の上限が無証明 | **59 変異体 100%** |
+| `src/main/clients/cloudflare.ts` | 189 行を無効化 | 実測 115 変異体 66.96%。**DNS レコードが既定でプロキシしないことを誰も見ていなかった** (真になると公開 IP が差し替わる)。ページ送りの上限、`unwrap` の「不明なエラー」経路も無証明 | **115 変異体 100%** |
+| `src/main/clients/devEnv.ts` | 43 行を無効化 | 実測 199 変異体 83.89%。**「どのファイルを読むか」を決める層が丸ごと未到達**。一時ディレクトリを作って実際に読ませる形にした。`existsSafe` の try/catch は `fs.existsSync` が例外を投げない仕様なので削除 | **197 変異体 100%**（文言のみ 19 行を明示除外） |
+| `src/main/clients/funding.ts` | 34 行を無効化 (`disable all` 2 箇所) | 実測 30 変異体 83.33%。モック表そのものは静的変異体なので測っても増えないが、**その隣にあった消費税の式** (課税仕入れ 60%・税込から 10% を取り出す) は本物で無証明だった | **30 変異体 100%**（pragma ゼロ） |
 
 ※ `pkce.ts` だけ 100% にしていない。残る 2 つは真の等価変異で、範囲指定で囲めば
 100% になるが**66 個の測定を捨てる**ことになる (163 変異体 98.77% → 97 変異体 100%)。
@@ -219,19 +221,16 @@
 `taxCorporate.ts` / `taxSocialInsurance.ts`) も同じくテスト追加なしで 100% だった。
 **合計 23 ファイルの無効化が static 隠しだけだった**ことになる。
 
-### 残り 11 ファイルの実測値 (2026-08-18・無効化を外して測った)
+### 残り 8 ファイルの実測値 (2026-08-18・無効化を外して測った)
 
 ここから先はテストを足さないと上がらない。低い順:
 
 | スコア | ファイル | 生存 + 未到達 |
 |---|---|---|
-| 67.0% | `src/main/clients/cloudflare.ts` | 38 |
 | 67.1% | `src/renderer/data/chatbot.ts` | 56 |
 | 67.4% | `src/main/clients/teamradar.ts` | 139 |
 | 74.4% | `src/main/clients/business.ts` | 142 |
 | 78.9% | `src/main/clients/stocks.ts` | 275 |
-| 83.3% | `src/main/clients/funding.ts` | 5 |
-| 84.2% | `src/main/clients/devEnv.ts` | 33 |
 | 86.4% | `src/shared/ai/chat.ts` | 3 |
 | 93.6% | `src/shared/taxCalc.ts` | 28 |
 | 96.7% | `src/renderer/data/counseling.ts` | 4 |
@@ -239,10 +238,9 @@
 
 SaaS クライアントの薄いもの (`drive` / `wordpress` / `notion` / `canva` /
 `calendar` / `templates`) と security 系はすべて消化済み (下の表を参照)。
-残っているのは**行数の多い 4 つ** (`teamradar` 237 / `library` 217 /
-`business` 199 / `cloudflare` 189) と、`stocks` / `chatbot` / `devEnv` /
-`funding` / `taxCalc` / `chat` / `counseling`。**次は `cloudflare.ts` (67.0%) と
-`chatbot.ts` (67.1%)** が低い。
+残っているのは**行数の多い 3 つ** (`teamradar` 237 / `library` 217 /
+`business` 199) と、`stocks` / `chatbot` / `taxCalc` / `chat` / `counseling`。
+**次は `chatbot.ts` (67.1%) と `teamradar.ts` (67.4%)** が低い。
 
 ### 進め方 (store.ts で通った手順)
 

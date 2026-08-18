@@ -957,6 +957,26 @@ describe('fetchFundingSnapshot', () => {
     expect(snap.items.some((it) => it.repayment?.graceInterestHandling === 'compound')).toBe(true);
     expect(snap.specifiedIncome.specifiedIncome).toBeGreaterThan(0);
   });
+
+  it('モックの消費税入力は営業CF合計から導いている', async () => {
+    // ここは Phase 6 で実 API に差し替わるまでの仮置きだが、仮置きでも
+    // 消費税の計算そのものは本物である。導き方が崩れると、画面に出る
+    // 控除できない仕入税額が静かにずれる。
+    const snap = await fetchFundingSnapshot({ token: '' });
+    const si = snap.specifiedIncome;
+
+    // 課税売上等 = 会計連携の営業CF 6 か月分の合計
+    //   1,200,000 + 1,350,000 + 1,580,000 + 1,410,000 + 1,650,000 + 1,720,000
+    expect(si.totalIncome - si.specifiedIncome).toBe(8_910_000);
+
+    // 仕入控除税額 = 課税仕入れを 60% と見て、税込額から 10% 分を取り出す
+    //   (×10/110)。8,910,000 × 0.6 × 10/110 = 486,000
+    expect(si.specifiedIncomeRatio).toBeGreaterThan(0.05); // 調整が要る側にいる
+    // 表に出す割合は 4 桁で丸めてあるが、税額の計算には丸める前を使う。
+    // 丸めたほうを掛けると 12 円ずれる。
+    const rawRatio = si.specifiedIncome / si.totalIncome;
+    expect(si.nonDeductibleInputTax).toBe(Math.round(486_000 * rawRatio));
+  });
 });
 
 describe('fundingQualityScore', () => {
