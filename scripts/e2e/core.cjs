@@ -713,6 +713,85 @@ async function credentialSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 登録した事業が事業間比較グラフに出ること (2026-08 の要望)。
+ *
+ * 比較グラフは同梱の模擬データ 10 件に固定されており、利用者が登録した事業は
+ * 金額を持てないため出られなかった。売上を入れた事業が自分の名前で並び、
+ * 同梱分が「(サンプル)」と明示されることを実ブラウザで見る。
+ */
+async function businessComparisonSuite(browser) {
+  console.log('--- 事業間比較に自分の事業を足す ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  await page.goto(FILE + '#overview', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-manual-data]', { timeout: 30000 });
+
+  // 同梱分がサンプルと明示されている (実績と混同させない)。**ラベルで見る** —
+  // 本文全体で探すと、説明文に書いた「(サンプル)」の語に当たって素通りする。
+  await page.waitForSelector('[data-bar-row]', { timeout: 30000 });
+  const barLabelsBefore = await page.locator('[data-bar-row]').evaluateAll((els) =>
+    els.map((e) => e.getAttribute('data-bar-row') ?? ''),
+  );
+  ok(
+    barLabelsBefore.every((l) => l.endsWith('(サンプル)')),
+    `同梱の 10 件はすべて「(サンプル)」付き — 実際 ${JSON.stringify(barLabelsBefore.slice(0, 2))}`,
+  );
+
+  // 事業を金額つきで登録する。
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  await page.fill('[data-business-units] input[aria-label="事業名"]', '自社EC');
+  await page.fill('[data-business-units] input[aria-label="月次の売上高"]', '2000000');
+  await page.fill('[data-business-units] input[aria-label="月次の変動費"]', '800000');
+  await page.fill('[data-business-units] input[aria-label="月次の固定費"]', '400000');
+  await page.click('[data-business-units] button:has-text("事業を追加")');
+  await page.waitForSelector('[data-business-unit]', { timeout: 15000 });
+
+  ok(
+    ((await page.textContent('[data-business-amounts]')) ?? '').includes('2,000,000'),
+    '一覧に月次の売上が出る',
+  );
+
+  // 比較グラフの対象事業に自分の事業が入る。**この select に限定する** —
+  // ページ上には数値を紐づける用の事業ドロップダウンもあり、そちらは
+  // 売上の無い事業も載るのが正しいので、混ぜて数えると判定にならない。
+  const unitOptions = await page.locator('[data-financial-unit-select] option').allTextContents();
+  ok(unitOptions.includes('自社EC'), `比較の対象に自分の事業が入る — 実際 ${JSON.stringify(unitOptions.slice(0, 3))}`);
+  ok(unitOptions[0] === '自社EC', '自分の事業がサンプルより先に並ぶ (既定の選択になる)');
+
+  // 棒グラフの行として描かれていること。**行のラベルで見る** — 本文全体で
+  // 探すと、入力欄自身が出している事業名に当たって素通りする。
+  const barLabels = await page.locator('[data-bar-row]').evaluateAll((els) =>
+    els.map((e) => e.getAttribute('data-bar-row') ?? ''),
+  );
+  ok(barLabels.includes('自社EC'), `比較グラフの行に自分の事業が出る — 実際 ${JSON.stringify(barLabels.slice(0, 2))}`);
+  // 2,000,000 − 800,000 − 400,000 = 800,000 → 利益率 40.0%。
+  const ecRow = (await page.textContent('[data-bar-row="自社EC"]')) ?? '';
+  ok(ecRow.includes('40'), `入力から導いた利益率が行に出る (期待 40%) — 実際 "${ecRow.trim()}"`);
+
+  // 売上なしの事業は比較に出さない (未入力を 0% として並べない)。
+  await page.fill('[data-business-units] input[aria-label="事業名"]', '名前だけ事業');
+  await page.click('[data-business-units] button:has-text("事業を追加")');
+  await page.waitForTimeout(300);
+  const unitOptionsAfter = await page.locator('[data-financial-unit-select] option').allTextContents();
+  ok(!unitOptionsAfter.includes('名前だけ事業'), '売上の無い事業は比較に出さない (未入力を 0% として並べない)');
+  const barLabelsAfter = await page.locator('[data-bar-row]').evaluateAll((els) =>
+    els.map((e) => e.getAttribute('data-bar-row') ?? ''),
+  );
+  ok(!barLabelsAfter.includes('名前だけ事業'), '売上の無い事業は棒グラフにも出さない');
+  const tagOptions = await page.locator('[data-manual-data] select option').allTextContents();
+  ok(tagOptions.includes('名前だけ事業'), '売上が無くても数値の紐づけ先としては使える');
+
+  ok(errs.length === 0, `事業間比較: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
@@ -729,6 +808,7 @@ async function credentialSuite(browser) {
   if (run('manualData')) await manualDataSuite(browser);
   if (run('dataOrigin')) await dataOriginSuite(browser);
   if (run('credential')) await credentialSuite(browser);
+  if (run('businessComparison')) await businessComparisonSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();

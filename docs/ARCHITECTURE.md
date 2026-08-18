@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7470** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7728) |
+| ユニットテスト | **7488** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7746) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 261 | 自己検証 |
+| `file:line` 参照数 | 262 | 自己検証 |
 
 ### 統合フロー図
 
@@ -508,6 +508,33 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 
 陰性対照は上限を外して単体テストを流すことで取った — **テスト実行そのものが
 2 分で終わらず**、固まることが直接示された (アサーション失敗より強い証拠)。
+
+#### 事業間比較に自分の事業を出す (`src/renderer/data/businessUnits.ts`)
+
+経営サマリーの「事業別 財務指標分析」は `SNAPSHOT.business.units` の **10 件に
+固定**で、利用者が登録した事業 (`business-units`) は `name` / `category` /
+`startedOn` / `note` しか持てず、**金額が無いので比較に出られなかった**。
+
+月次の `revenue` / `variableCost` / `fixedCost` を任意項目として足し、
+`financialUnitsFromBusinessUnits()` が比較用の形へ変換する。判断は 3 つ:
+
+- **売上のある事業だけを出す。** 売上が無い事業を 0 として並べると「利益率 0%
+  の事業」に見えるが、実際は「まだ入力していない」であって 0 ではない。
+  名前だけの登録は数値の紐づけ先としては有効なまま (棒グラフには出ない)。
+- **費用だけの入力は入口で断る。** 比較指標はすべて売上を分母に取るので、
+  費用しか無い事業は保存できても行き場が無く「入れたのに出ない」になる。
+- **履歴は空にする。** 手入力で分かるのは当月の 1 点だけ。1 点を履歴として渡すと
+  折れ線が横ばいに見え、**測っていないものを測ったように見せる**
+  (`analyzeMarginTrend` は 2 点未満で傾向を返さないので、空が正しい表現)。
+
+**同梱の 10 件はラベルに「(サンプル)」を付ける。** これは模擬データで、
+利用者の実績と同じ軸に並ぶ以上、見分けが付かないと自分の数字を
+サンプルと比べて意味のある差だと読んでしまう。利用者の事業を先に置くので、
+登録があれば既定の選択も自分の事業になる。
+
+E2E の陰性対照で**自分の書き方の誤り**を 1 つ潰した。「(サンプル)」を本文全体で
+探すと、説明文に書いた同じ語に当たって素通りする。棒グラフの行に
+`data-bar-row` を付け、**ラベルそのもの**で判定する形に直した (罠 3-b の再発)。
 
 ### 2.2 `fetch:snapshot` シーケンス
 
