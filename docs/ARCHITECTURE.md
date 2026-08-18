@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7822** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8167) |
+| ユニットテスト | **7838** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8183) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 278 | 自己検証 |
+| `file:line` 参照数 | 279 | 自己検証 |
 
 ### 統合フロー図
 
@@ -667,6 +667,25 @@ dispose 後は施錠しない)。
 OAuth コールバック口が見える。サーバを外へ出していないので、`listen` に渡した
 **引数を直接観測する**形にした (最初に書いた検査は無条件に通る空検査で、
 陰性対照を取るまで気付かなかった)。**379 変異体 100%**。
+
+#### 「次にどこへ書くか」を決める経路が丸ごと未到達だった (`src/renderer/fs/fsa.ts`)
+
+実フォルダへの書き出し (File System Access) も 128 行 (全 145 行) を無効化しており、
+外して実測すると **119 変異体 49.58%・未到達 48**。未到達の大半が **handle の永続化**
+(`pickFolder` の保存 / `loadFolderHandle` / `clearFolderHandle`) だった。この経路は
+「**次にどのフォルダへ書き込むか**」を決める。
+
+除外の理由はコメントに書いてあった — 「fake-indexeddb が vitest の関数モックを
+structured-clone できないため」。**これは回避できた**: handle として関数を持たない
+素のオブジェクトを使えば clone できる。`queryPermission` は任意メソッドなので、
+無ければ permission は `'unknown'` になるのが元々の契約である。
+
+再読み込み後に**再度許可を求めるかどうか**を決める `queryPermission` の分岐は、
+読み出し経路だけ差し替えて granted / prompt / 例外の 3 通りを通した。
+
+権限の問い合わせに `{ mode: 'readwrite' }` を渡していることも固定した — これが
+落ちると読み取り権限の判定になり、書き込めない相手を「許可済み」と見なす。
+ファイル名の上限 (256 文字ちょうど) も境界を固定した。**91 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

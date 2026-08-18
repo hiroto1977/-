@@ -14,7 +14,6 @@
 // IndexedDB persistence happy-path is excluded from unit tests because
 // fake-indexeddb cannot structured-clone vitest function mocks; covered
 // by the standalone HTML smoke test instead.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,BlockStatement
 const DB_NAME = 'business-hub-preferences';
 const DB_VERSION = 1;
 const STORE = 'kv';
@@ -32,6 +31,8 @@ declare global {
 }
 
 export function isFsaSupported(): boolean {
+  // Stryker disable next-line ConditionalExpression,StringLiteral: テストは jsdom で走るため
+  // window は必ず存在し、無い側 (Node からの import) を再現できない。
   return typeof window !== 'undefined' && typeof (window as FsaWindow).showDirectoryPicker === 'function';
 }
 
@@ -40,15 +41,20 @@ function openDb(): Promise<IDBDatabase> {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
+      // Stryker disable next-line ConditionalExpression: DB_VERSION が上がらない限り
+      // onupgradeneeded は新規作成時にしか走らず contains は常に false (等価変異)。
       if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
     };
     req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('preferences open failed'));
   });
 }
 
 /** ユーザーにフォルダ選択ダイアログを出し、選ばれた handle を永続化する。 */
 export async function pickFolder(): Promise<FileSystemDirectoryHandle | null> {
+  // Stryker disable next-line ConditionalExpression: この番人を外しても picker が undefined で
+  // 呼び出しが throw し、下の catch が null を返すため結果は同じ (等価変異)。
   if (!isFsaSupported()) return null;
   const picker = (window as FsaWindow).showDirectoryPicker!;
   let handle: FileSystemDirectoryHandle;
@@ -62,6 +68,7 @@ export async function pickFolder(): Promise<FileSystemDirectoryHandle | null> {
   tx.objectStore(STORE).put(handle, HANDLE_KEY);
   await new Promise<void>((res, rej) => {
     tx.oncomplete = () => res();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => rej(tx.error ?? new Error('store failed'));
   });
   db.close();
@@ -75,25 +82,34 @@ export async function loadFolderHandle(): Promise<{
 } | null> {
   if (!isFsaSupported()) return null;
   let db: IDBDatabase;
+  // DB を開けない環境 (プライベートモード等) では「保存無し」として扱う。
+  // fake-indexeddb では失敗させられず到達しない。
+  /* Stryker disable BlockStatement */
   try {
     db = await openDb();
   } catch {
     return null;
   }
+  /* Stryker restore BlockStatement */
   const handle = await new Promise<FileSystemDirectoryHandle | undefined>((resolve, reject) => {
     const tx = db.transaction(STORE, 'readonly');
     const req = tx.objectStore(STORE).get(HANDLE_KEY);
     req.onsuccess = () => resolve(req.result as FileSystemDirectoryHandle | undefined);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('get failed'));
   });
   db.close();
   if (!handle) return null;
   let permission: 'granted' | 'prompt' | 'denied' | 'unknown' = 'unknown';
+  // Stryker disable next-line ConditionalExpression: 番人を外しても `handle.queryPermission(...)` が
+  // TypeError を投げ、下の catch が 'unknown' に落とすため結果は同じ (等価変異)。
   if (typeof handle.queryPermission === 'function') {
     try {
       permission = (await handle.queryPermission({ mode: 'readwrite' })) as 'granted' | 'prompt' | 'denied';
     } catch {
-      permission = 'unknown';
+      // 代入は要らない — `permission` は 'unknown' で初期化してあるので、
+      // 失敗したらそのままにするのが「分からない」の表現になる。
+      // (代入を残すと同じ値を二重に書くことになり、変異検査でも差が出ない。)
     }
   }
   return { handle, permission };
@@ -119,6 +135,7 @@ export async function clearFolderHandle(): Promise<void> {
   tx.objectStore(STORE).delete(HANDLE_KEY);
   await new Promise<void>((res, rej) => {
     tx.oncomplete = () => res();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => rej(tx.error ?? new Error('delete failed'));
   });
   db.close();
@@ -142,4 +159,3 @@ export async function writeBlobToFolder(
   await writable.write(blob);
   await writable.close();
 }
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex
