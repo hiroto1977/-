@@ -195,7 +195,9 @@ export function OverviewPage() {
 
   // 登録した事業を事業間比較へ合流させる。同梱の 10 件は**模擬データ**なので、
   // 実績と並べる以上は見分けが付かないといけない — ラベルに「(サンプル)」を付け、
-  // 利用者の事業を先に置く (既定の選択が自分の事業になる)。
+  // `sample: true` を立て、利用者の事業を先に置く (既定の選択が自分の事業になる)。
+  // 棒グラフは 1 本ずつラベルが付くので並べてよいが、連結は 1 つの数に潰れる。
+  // そちらは `consolidationScope` が出所ごとに分けて合算する。
   const { records: businessUnitRecords } = useCollection<BusinessUnitInput>(BUSINESS_UNITS_COLLECTION);
   const userFinancialUnits = useMemo(
     () => financialUnitsFromBusinessUnits(sortBusinessUnits(businessUnitRecords)),
@@ -207,6 +209,7 @@ export function OverviewPage() {
       ...SNAPSHOT.business.units.map((u) => ({
         id: u.id,
         label: `${u.label} (サンプル)`,
+        sample: true,
         current: {
           revenue: u.current.revenue,
           variableCost: u.current.variableCost,

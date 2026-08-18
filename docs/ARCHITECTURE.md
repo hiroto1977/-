@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7488** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7746) |
+| ユニットテスト | **7510** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7768) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 262 | 自己検証 |
+| `file:line` 参照数 | 263 | 自己検証 |
 
 ### 統合フロー図
 
@@ -535,6 +535,31 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 E2E の陰性対照で**自分の書き方の誤り**を 1 つ潰した。「(サンプル)」を本文全体で
 探すと、説明文に書いた同じ語に当たって素通りする。棒グラフの行に
 `data-bar-row` を付け、**ラベルそのもの**で判定する形に直した (罠 3-b の再発)。
+
+#### 連結は出所を混ぜない (`src/renderer/data/consolidation.ts`)
+
+上の変更で `units` に**利用者の実績と同梱サンプルが同居**するようになった。
+棒グラフは 1 本ずつラベルが付くので並べてよいが、**連結は全部を 1 つの数に
+潰す**。実績 1 件とサンプル 10 件を足した合計はどちらの会社の数でもないのに、
+画面には「連結（全事業合算）」と出ていた — 変更前は全件がサンプルだったので
+成り立っていた前提が、変更で崩れていた (自分で作り込んだ退行)。
+
+`consolidationScope(items, isSample)` が出所で切り分ける:
+
+- 実績が 1 件でもあれば**実績だけ**を合算する (サンプルは足さない)
+- 実績が 1 件も無ければ**全部**を合算する — 空を返して連結ビューごと消すと、
+  サンプルしか無い状態を説明できなくなる
+- `consolidationLabel()` が**合算した集合と件数を必ず見出しに書く**。
+  出所を伏せた「全事業合算」は、読む人が自分の会社の数として受け取る
+- CSV のファイル名も `consolidated-own` / `consolidated-sample` に分ける。
+  手元に残った CSV は文脈を失う
+
+E2E の陰性対照で**もう 1 つ**自分の誤りを潰した。最初「サンプル混入額
+264,000,000 が出ないこと」を書いたが、実際の混入額は **264,276,612** で、
+その検査は常に緑になる (罠 3-b と同型)。損益計算書の「売上高」**行の値**を
+読んで実績 1 件ぶんと一致するかを見る形に直した。加えて対照ビルドが
+`TS6133` で失敗しているのに E2E が**前回の正しいバンドル**を検査して緑を
+返す事故も起きた — ビルド出力を捨てなかったので気付けた (罠 3-d の再発)。
 
 ### 2.2 `fetch:snapshot` シーケンス
 

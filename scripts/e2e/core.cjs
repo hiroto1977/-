@@ -788,6 +788,34 @@ async function businessComparisonSuite(browser) {
   const tagOptions = await page.locator('[data-manual-data] select option').allTextContents();
   ok(tagOptions.includes('名前だけ事業'), '売上が無くても数値の紐づけ先としては使える');
 
+  // 連結（合算）は出所を混ぜない。棒グラフは 1 本ずつラベルが付くので実績と
+  // サンプルを並べてよいが、連結は 1 つの数に潰れる — 混ぜた合計はどちらの
+  // 会社の数でもない。合算した集合を見出しに書いているかを実物で確かめる。
+  const consolidateLabel = (await page.textContent('label:has-text("連結")')) ?? '';
+  ok(consolidateLabel.includes('自分の事業 1 件'),
+    `連結は実績だけを足すと明示する — 実際 "${consolidateLabel.trim()}"`);
+  ok(!consolidateLabel.includes('全事業合算'), '「全事業合算」と称して出所を伏せない');
+
+  await page.click('label:has-text("連結") input[type="checkbox"]');
+  await page.waitForTimeout(200);
+
+  // 連結の損益計算書から「売上高」の行の金額そのものを読む。
+  // 本文全体で数字を探すと、単体表示の年商やサンプルの数字に当たって
+  // 素通りする — 行を特定して値を取る。
+  const consolidatedRevenue = await page.evaluate(() => {
+    for (const tr of Array.from(document.querySelectorAll('tr'))) {
+      const cells = tr.querySelectorAll('td');
+      if (cells.length >= 2 && (cells[0].textContent ?? '').trim() === '売上高') {
+        return (cells[1].textContent ?? '').replace(/[^0-9]/g, '');
+      }
+    }
+    return null;
+  });
+  // 実績は自社EC 1 件だけ。月商 200 万 → 年商 2,400 万。
+  // サンプル 10 件を足していればこの値には絶対にならない。
+  ok(consolidatedRevenue === '24000000',
+    `連結の売上高が実績 1 件ぶんと一致する (期待 24000000) — 実際 ${consolidatedRevenue}`);
+
   ok(errs.length === 0, `事業間比較: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
 }
