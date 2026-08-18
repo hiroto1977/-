@@ -29,7 +29,6 @@ import { yen } from './num';
 // 地方法人税法 (10.3%)、地方税法 (住民税法人税割 標準7.0% / 事業税所得割
 // 標準税率 / 特別法人事業税 所得割の37%)。
 
-// Stryker disable all : 以下は年度税率テーブルのリテラル定義。
 // 数値そのものは税法上の固定値であり、変異 (1->-1, *->/, 値変更) は
 // 「別の税率にしたら結果が変わる」という自明な等価/トートロジー変異になる。
 // 計算ロジック (どの率をどの所得帯に適用するか) は下の関数群で実テスト撃墜する。
@@ -84,7 +83,6 @@ export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
 /** 大法人の繰越欠損金 控除限度割合 (控除前所得の50%)。 */
 export const LARGE_CORP_LOSS_DEDUCTION_RATIO = 0.5;
 
-// Stryker restore all
 
 // --- 法人住民税 均等割の区分テーブル (令和6年度・標準税率) ----------------
 //
@@ -117,7 +115,6 @@ export interface PerCapitaTier {
   readonly levyMany: number;
 }
 
-// Stryker disable all : 均等割区分テーブルは静的なデータ定義 (令和6年度 標準税率)。
 // 各数値リテラルの書き換え変異は境界テストで網羅できない部分が等価になりやすい
 // ため、罠#2 に従いデータ定義ブロックのみ無効化する。資本金・従業者数 →
 // 均等割額の解決ロジック (resolveCorporatePerCapita) は無効化せず実テストで撃墜。
@@ -137,7 +134,6 @@ const PER_CAPITA_TIERS: readonly PerCapitaTier[] = [
   { capitalLowerBound: 5_000_000_001, levyFew: 410_000, levyMany: 3_800_000 }, // 50億円超
 ];
 
-// Stryker restore all
 
 // --- 区分 ---------------------------------------------------------------
 

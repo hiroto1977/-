@@ -78,7 +78,6 @@ export function _resetAutoLockActiveForTests(): void {
 // idle timer fires, activity resets, dispose cleans up, double-lock is
 // suppressed. Internal arrow-function default deps + string literal event
 // names are decorative and not differentiable.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,AssignmentOperator,BlockStatement
 export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): AutoLockHandle {
   const now = deps.now ?? Date.now;
   const setTimeoutFn = deps.setTimeoutFn ?? ((cb, ms) => setTimeout(cb, ms));
@@ -104,6 +103,8 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   }
 
   function scheduleIdle(): void {
+    // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
     if (idleTimer !== null) clearTimeoutFn(idleTimer);
     idleTimer = setTimeoutFn(lockAndDispose, idleMs);
   }
@@ -114,12 +115,14 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   }
 
   function onVisibilityChange(): void {
+    // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
     if (typeof document === 'undefined') return;
     if (document.hidden) {
       hiddenSince = now();
       hiddenTimer = setTimeoutFn(lockAndDispose, hiddenMs);
     } else {
       hiddenSince = null;
+      // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
       if (hiddenTimer !== null) {
         clearTimeoutFn(hiddenTimer);
         hiddenTimer = null;
@@ -132,9 +135,11 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   const visibilityListener: EventListener = () => onVisibilityChange();
 
   // Install listeners (only if DOM available).
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (typeof document !== 'undefined') {
     addListener(document, 'visibilitychange', visibilityListener);
   }
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (typeof window !== 'undefined') {
     for (const ev of ACTIVITY_EVENTS) {
       addListener(window, ev, activityListener);
@@ -146,11 +151,15 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
     if (disposed) return;
     disposed = true;
     activeCount -= 1;
+    // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
     if (hiddenTimer !== null) clearTimeoutFn(hiddenTimer);
+    // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。
     if (idleTimer !== null) clearTimeoutFn(idleTimer);
+    // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
     if (typeof document !== 'undefined') {
       removeListener(document, 'visibilitychange', visibilityListener);
     }
+    // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
     if (typeof window !== 'undefined') {
       for (const ev of ACTIVITY_EVENTS) {
         removeListener(window, ev, activityListener);
@@ -163,4 +172,3 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
     debugState: () => ({ lastActivity, hiddenSince }),
   };
 }
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,AssignmentOperator,BlockStatement

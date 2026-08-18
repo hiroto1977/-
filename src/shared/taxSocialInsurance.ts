@@ -35,7 +35,6 @@ export interface RemunerationGrade {
   readonly standardMonthly: number;
 }
 
-// Stryker disable all : 等級表は静的なデータ定義 (令和6年度 協会けんぽ)。
 // 各数値の書き換え変異は境界テストで網羅できない部分が等価になるため、
 // データ定義ブロックのみ無効化する。解決ロジックは下で実テスト対象。
 
@@ -141,7 +140,6 @@ export const PENSION_MONTHLY_CAP = 650_000;
 /** 健康保険の標準報酬月額の上限 (第50級, 円/月)。 */
 export const HEALTH_MONTHLY_CAP = 1_390_000;
 
-// Stryker restore all
 
 // --- 標準賞与額の上限 (賞与にかかる保険料計算に使う) --------------------
 

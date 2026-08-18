@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7788** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8115) |
+| ユニットテスト | **7808** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8135) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 275 | 自己検証 |
+| `file:line` 参照数 | 276 | 自己検証 |
 
 ### 統合フロー図
 
@@ -614,6 +614,32 @@ AI プロバイダ定義も 301 行 (全 322 行) を無効化しており、外
 実バグではないが、`?.` の 1 つが実際に落ちる形も見つけた — Gemini が安全性ブロックで
 返す `{candidates:[{}]}` (content 無し) で `content?.parts` の `?.` を落とすと例外になる。
 検査を足して固定した。**189 変異体 100%**。
+
+#### 「タブを隠したら施錠」に検査が 1 つも無かった (`src/renderer/security/autoLock.ts`)
+
+このファイルの冒頭は「席を離れた / タブを隠した時に自動ロック」を**脅威モデルの
+中核**と書いている。85 行の無効化を外して実測すると **63 変異体 55.56%**、
+そして **`onVisibilityChange` が丸ごと未到達**だった。中核の約束に、テストが
+1 つも触れていなかった。
+
+pragma には「idle timer fires, activity resets, dispose cleans up, double-lock is
+suppressed をテストが固定する」と書いてあった。idle 側は本当に固定されていたが、
+**hidden 側は 1 行も通っていなかった**。
+
+`document.hidden` を差し替えて、隠す → 戻すの両方向を通した (猶予前後 / 戻れば
+解除 / 隠した時刻の記録 / 戻ったら操作扱い / hidden が idle より先に効く /
+dispose 後は施錠しない)。
+
+**検査が「証拠」になっていない形も 2 つ直した**:
+
+- ハーネスの hidden 猶予が既定と同じ 300,000ms だったため、`?? DEFAULT` を潰しても
+  差が出なかった。既定と**違う**値で確かめる形にした
+- 「dispose 後にタイマーが発火しない」だけでは解除の証拠にならない —
+  `lockAndDispose` が `disposed` で早期 return するので、解除し忘れても
+  `onLock` は呼ばれない。`clearTimeout` の呼び出しを直接観測する形にした
+
+残る等価変異は DOM の有無による分岐 (`typeof document !== 'undefined'`) で、
+テストが jsdom で走る以上、無い側を再現できない。**49 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

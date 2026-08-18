@@ -37,7 +37,6 @@ export interface RangeCase {
 
 // 検知シグネチャ (正規化後の小文字に対する部分一致)。文字列辞書は表現 (罠#2)。
 // 検知「ロジック」(正規化・優先順位・指標) は下の実テストで撃墜する。
-// Stryker disable all
 const XSS_MARKERS: readonly string[] = [
   // 末尾要素は eval + 開き括弧 の検知マーカー。リテラルで書くと lint:forbidden
   // (invariant #9) に当たるため Unicode エスケープで実値を保つ (照合用・実行しない)。
@@ -68,7 +67,6 @@ const EVASION_JA: Readonly<Record<Evasion, string>> = {
   split: 'マーカー分断 (< script)',
   unicode: 'Unicode エスケープ (\\u003c)',
 };
-// Stryker restore all
 
 /** カテゴリの日本語表示名。 */
 export function categoryLabel(c: ThreatCategory): string {
@@ -226,7 +224,6 @@ export const DEFAULT_EVASIONS: readonly Evasion[] = [
 ];
 
 // 演習コーパス (人がレビューして育てる・PR で拡張)。台本データ (文字列は表現)。
-// Stryker disable all
 export const DEFAULT_RANGE_CORPUS: readonly RangeCase[] = [
   // --- 攻撃 (素の状態では全件検知できることが不変条件) ---
   { id: 'xss-1', payload: '<script>alert(1)</script>', category: 'xss', note: '古典的スクリプトタグ' },
@@ -252,4 +249,3 @@ export const DEFAULT_RANGE_CORPUS: readonly RangeCase[] = [
   { id: 'ok-5', payload: 'The cat sat on the mat', category: 'benign', note: 'cat だがコマンドでない' },
   { id: 'ok-6', payload: 'See documents/reports/q1 folder', category: 'benign', note: '正常なパス' },
 ];
-// Stryker restore all

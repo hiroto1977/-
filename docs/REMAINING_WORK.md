@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・3,003 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・2,590 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **26 ファイル
-/ 33 箇所 / 3,003 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **20 ファイル
+/ 27 箇所 / 2,590 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -143,6 +143,7 @@
 | `src/renderer/oauth/pkce.ts` | 180 行を無効化 | 実測 171 変異体 77.71%。送っている中身 (`code_verifier` / `S256`) を誰も見ていなかった | **163 変異体 98.77%** ※ |
 | `src/shared/ai/credentials.ts` | 176 行を無効化 | 実測 159 変異体 90.57%。空文字の API キーが「設定済み」として通っていた | **157 変異体 100%** |
 | `src/shared/ai/providers.ts` | 301 行を無効化 | 実測 255 変異体 72.16%。全プロバイダの応答パーサが無証明。**生存 48 のうち 40 が static 変異体**と判明し `ignoreStatic` を採用 | **189 変異体 100%** |
+| `src/renderer/security/autoLock.ts` | 85 行を無効化 | 実測 63 変異体 55.56%。**`onVisibilityChange` が丸ごと未到達** — 「タブを隠したら施錠」という中核の約束に検査が 1 つも無かった | **49 変異体 100%** |
 
 ※ `pkce.ts` だけ 100% にしていない。残る 2 つは真の等価変異で、範囲指定で囲めば
 100% になるが**66 個の測定を捨てる**ことになる (163 変異体 98.77% → 97 変異体 100%)。
@@ -178,7 +179,38 @@
 | `taxGift.ts` | 100% (台帳から 1 件退場) |
 | `taxStampDuty.ts` / `taxRegistrationLicense.ts` / `taxAutomobile.ts` / `taxRealEstateAcquisition.ts` / `taxInheritance.ts` / `taxNationalHealthInsurance.ts` / `taxNationalPension.ts` | 100% (台帳外だが測定対象が増えた) |
 
-残る 26 ファイルは**実際にテストが足りていない**ものである。
+さらに 5 ファイル (`voiceCommand.ts` / `dbSecurityPosture.ts` / `securityRange.ts` /
+`taxCorporate.ts` / `taxSocialInsurance.ts`) も同じくテスト追加なしで 100% だった。
+**合計 23 ファイルの無効化が static 隠しだけだった**ことになる。
+
+### 残り 21 ファイルの実測値 (2026-08-18・無効化を外して測った)
+
+ここから先はテストを足さないと上がらない。低い順:
+
+| スコア | ファイル | 生存 + 未到達 |
+|---|---|---|
+| 43.3% | `src/main/clients/calendar.ts` | 34 |
+| 47.5% | `src/main/clients/templates.ts` | 116 |
+| 55.4% | `src/main/clients/emotions.ts` | 96 |
+| 57.9% | `src/main/clients/drive.ts` | 16 |
+| 64.8% | `src/main/clients/wordpress.ts` | 25 |
+| 65.4% | `src/main/clients/notion.ts` | 27 |
+| 67.0% | `src/main/clients/cloudflare.ts` | 38 |
+| 67.1% | `src/renderer/data/chatbot.ts` | 56 |
+| 67.4% | `src/main/clients/teamradar.ts` | 139 |
+| **70.1%** | **`src/main/oauth.ts`** | **118** |
+| 71.7% | `src/main/clients/canva.ts` | 17 |
+| 74.4% | `src/main/clients/business.ts` | 142 |
+| 78.9% | `src/main/clients/stocks.ts` | 275 |
+| 83.3% | `src/main/clients/funding.ts` | 5 |
+| 84.2% | `src/main/clients/devEnv.ts` | 33 |
+| 86.4% | `src/shared/ai/chat.ts` | 3 |
+| 93.6% | `src/shared/taxCalc.ts` | 28 |
+| 96.7% | `src/renderer/data/counseling.ts` | 4 |
+| — | `src/renderer/library/library.ts` (68.4%) / `src/renderer/fs/fsa.ts` (49.6%) | 62 / 60 |
+
+`autoLock.ts` は消化済み (下の表を参照)。**次は `oauth.ts`** — デスクトップ版の
+OAuth (PKCE + loopback) で、壊れても画面には出ず安全性だけが落ちる。
 
 ### 進め方 (store.ts で通った手順)
 
