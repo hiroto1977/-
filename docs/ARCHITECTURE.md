@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7838** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8183) |
+| ユニットテスト | **7864** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8212) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 279 | 自己検証 |
+| `file:line` 参照数 | 284 | 自己検証 |
 
 ### 統合フロー図
 
@@ -686,6 +686,89 @@ structured-clone できないため」。**これは回避できた**: handle �
 権限の問い合わせに `{ mode: 'readwrite' }` を渡していることも固定した — これが
 落ちると読み取り権限の判定になり、書き込めない相手を「許可済み」と見なす。
 ファイル名の上限 (256 文字ちょうど) も境界を固定した。**91 変異体 100%**。
+
+#### 台帳をすり抜ける方法があった (`src/main/clients/exportPaths.ts`)
+
+`lint:mutation-scope` は `stryker.config.json` の `mutate` に**載っている**
+ファイルしか見ない。裏を返すと、**載せなければ何も言われない**。
+
+`exportPaths.ts` がそれだった。ここは 2026-07 監査で 4 か所に散っていた
+書き出し先の検査を 1 つにまとめた関数で、`business` / `stocks` / `templates` /
+`teamradar` の書き出しは全部ここを通る。レンダラーが乗っ取られたときに
+「**どこへ書けるか**」を決める最後の壁である。その中には
+`Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral`
+が掛かっていた — しかしファイル自体が `mutate` に無いので**変異体が 1 つも
+作られず**、pragma は飾りで、ゲートも無反応だった。範囲は 11 行しかないので
+`MAX_SPAN` (30 行) にも掛からない。**小さくても致命的な盲点**は、行数では
+捕まえられない。
+
+一覧に入れて pragma を外すと **29 変異体 93.10%**。生き残った 2 つはどちらも
+実際の穴だった。
+
+- **長さ上限 1024 の境界がどちら側か**を誰も見ていなかった (`> 1024` を
+  `>= 1024` にしても検査は全部通る)。ちょうど 1024 文字は通り 1025 は弾く、
+  という形で固定した。
+- **空文字判定は後段の拡張子検査と重なっていて単独では観測できない**。
+  消さずに残す (拡張子検査が将来ゆるくなったときの唯一の根拠になる) 代わりに、
+  `typeof` 判定と**行を分けて**から 1 行 pragma を置いた。同じ行に置くと
+  `typeof` 側の 3 変異体まで巻き添えで測定から外れる — 実測で 29 → 25 に縮んだ。
+  行を分けて **27 変異体 100%**。**分母を縮めて買った 100% は正直な 93% より
+  価値が低い。**
+
+塞ぐために `MUST_MEASURE` (必ず測る壁の一覧) を `lint:mutation-scope` へ足した。
+権限・資格情報・書き出し先を決める 9 ファイルが `mutate` から黙って外れたら
+落ちる。検出器そのものの陰性対照も `--self-test` に 3 件足してある
+(壁が 1 つ外れたら 1 件、一覧が空なら全件)。
+
+#### 無効化の 11 箇所中 6 箇所は、測れていた場所を隠していただけだった (`src/main/clients/templates.ts`)
+
+519 行に 11 箇所の `Stryker disable` が積まれていた。全部外して実測すると
+**222 変異体 47.30%** だが、内訳を見ると話が逆だった — **6 箇所は外しても
+100% のまま**で、既に検査が届いている場所を黙らせていただけである
+(カタログ 123 行、`validateParams` 33 行、`isSafeSvgExportPath` など)。
+無効化は「測れない」ことの説明として書かれていたが、実態は**確かめずに
+書かれた説明**だった。
+
+本当に測れていなかったのは 2 つ。
+
+- **書き出しの既定値が 1 度も動いていなかった。** 検査はすべて `ExportDeps` を
+  差し替えて呼ぶので、`fs.mkdir({recursive:true})` / `fs.writeFile` / `new Date()`
+  も、レンダラーが実際に呼ぶ `ACTIONS['export-template']` 自体も未到達だった。
+  `node:os` の `homedir` だけ一時ディレクトリへ差し替えて、本物のファイル
+  システムを 1 度通す検査を足した。
+  なお最初は `process.env.HOME` を書き換えて通したが、**変異検査の初回実行で
+  落ちた** — libuv の `uv_os_homedir` は OS 側の環境を読むため、worker thread
+  では `process.env` への代入が届かない。Stryker は worker thread で走るので、
+  `npx vitest run` でだけ緑になる検査になっていた。差し替えが効いていることを
+  確かめる陰性対照を検査の 1 件目に置いてある。
+- **折り返した行の段組み。** 1 行目だけ `dy=0` で 2 行目以降が行間ぶん下がる、
+  という分岐 (`i === 0 ? 0 : N`) が 4 つの書式すべてで無証明だった。反転しても
+  SVG は壊れず、見出しが枠から外れるだけなので目視でしか気付けない。
+
+残したのは**座標の算術 139 行だけ**である。`d.height / 2 - 220` のような数値は
+「そこに置くと収まりが良い」以上の意味を持たないので測らない。それ以外
+(折り返し・分岐・エスケープ) は帯の外にある。**136 変異体 100%**。
+
+#### 認可の送り先が 1 つも固定されていなかった (`src/main/clients/calendar.ts`)
+
+Google カレンダーの client は 99 行 (全 127 行) を無効化しており、外すと
+**60 変異体 43.33%**。生き残ったのは**問い合わせの中身そのもの**だった。
+
+- 送り先 URL (`calendarList` / `calendars/primary/events`) を空にしても通る
+- `Authorization: Bearer <token>` を空にしても通る
+- `singleEvents=true` / `orderBy=startTime` / `timeMin=<now>` / `maxResults=10`
+  がまるごと消えても通る
+
+いちばん効くのは 3 つ目である。`singleEvents` が落ちると繰り返しの予定が
+「親」1 件で返り、開始日は初回のもの (何年も前かもしれない) になる。`timeMin`
+が落ちると過去の予定まで全部返る。どちらも画面には「予定が出ている」ので、
+中身が違うことに気付けない。URL とヘッダを固定し、クエリは
+`URL.searchParams` で 1 つずつ見る形にした。トークンが URL 側に出ていないこと
+(クエリはサーバのアクセスログに残る) も併せて固定してある。
+
+`defaultTimeZone()` の `UTC` へのフォールバックも未到達だった。**CI の TZ が
+UTC なので、既存の検査は「常に UTC を返す実装」と見分けが付かない** —
+`Intl` を差し替えて `Asia/Tokyo` を返させて初めて区別できる。**60 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

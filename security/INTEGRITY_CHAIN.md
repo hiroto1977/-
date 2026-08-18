@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 26
+- ブロック数: 28
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `06beca0c2fb5e9d8a448cdd29d9c2fbad8b8719d8198b8050b61c54f221439ff`
-- 保護対象: 16 ファイル
+- 末尾(tip)ハッシュ: `a44212309d7e404f72853cee93c444f308ceef5ced2fdbfa46f89d939047bb7d`
+- 保護対象: 17 ファイル
 
 ## ブロック
 
@@ -39,6 +39,8 @@
 | 23 | `777484db066f49ca` | `928eb6b845dc7dbf` | `4598c80adc8d1d60` | update vault.ts |
 | 24 | `52efefec055e0f0e` | `4598c80adc8d1d60` | `aba70d13aa2578f4` | update autoLock.ts |
 | 25 | `515585da476b85ca` | `aba70d13aa2578f4` | `06beca0c2fb5e9d8` | update oauth.ts |
+| 26 | `5d75a0005ce4ca85` | `06beca0c2fb5e9d8` | `2c1decf2e2cd64c3` | update integrity-chain.cjs,exportPaths.ts |
+| 27 | `b57bf84f924d641f` | `2c1decf2e2cd64c3` | `a44212309d7e404f` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
@@ -49,6 +51,7 @@
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
+- `src/main/clients/exportPaths.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
 - `src/preload/preload.ts`

@@ -25,7 +25,6 @@ export interface CalendarSnapshot {
   events: { id: string; summary: string; startDate: string; allDay: boolean }[];
 }
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 export async function fetchCalendarSnapshot(ctx: FetchContext): Promise<CalendarSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'calendar' };
   const headers = { Authorization: `Bearer ${ctx.token}` };
@@ -124,4 +123,3 @@ async function createEvent(ctx: ActionContext): Promise<{ id: string; htmlLink: 
 export const ACTIONS: ActionMap = {
   'create-event': createEvent,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
