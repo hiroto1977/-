@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7574** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7849) |
+| ユニットテスト | **7619** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7894) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 270 | 自己検証 |
+| `file:line` 参照数 | 271 | 自己検証 |
 
 ### 統合フロー図
 
@@ -488,6 +488,34 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 集中している (`src/renderer/security/vault.ts` 610 行 /
 `src/renderer/network/proxy.ts` 501 行 / `src/renderer/oauth/pkce.ts` 180 行 /
 `src/shared/ai/credentials.ts` 176 行)。内訳と進め方は `docs/REMAINING_WORK.md`。
+
+#### SSRF 判定は「その範囲だけ」に効いていること (`src/renderer/network/proxy.ts`)
+
+この BYO プロキシも 501 行を無効化しており、外して実測すると **422 変異体 73.70%**。
+生存 111 のうち **43 が `isPrivateOrReservedTarget`** — 送り先が私設 / 予約
+アドレスかを決める関数そのものだった。冒頭の pragma には「13 の統合テストで
+固定されている」と書いてあったが、実際のテストは 56 件あってなお足りていない。
+
+内訳は「**遮断側は書いてあるが、遮断しすぎていないことを誰も見ていない**」形が
+大半だった。`a === 169 && b === 254` を `||` に変えても全テストが緑になる —
+「169.254 だけを弾く」ことを何も証明していなかった。片側だけの検査は、規則を
+丸ごと `return true` に潰しても気付けない。
+
+**実際の穴も 1 つ出た。** `URL` は `http://.local/` を hostname `.local` のまま
+通し、`lastIndexOf('.')` が 0 になるため `lastDot > 0` の最終ラベル判定を
+素通りしていた (`..internal` は当たるのに `.internal` は当たらない、という
+非対称)。2026-07 監査で塞いだ**末尾**ドット回避の鏡像である。先頭ドットも
+剥がすようにした。
+
+あわせて、単一ラベルのホスト (`internal` / `local` 単体) も遮断側へ寄せた。
+以前は「裸の TLD は DNS で解決しないから」通していたが、単一ラベル名は
+**検索ドメインの補完で解決する**。通す理由が成り立っていなかった。
+
+到達しないコードは pragma ではなく削除した — オクテット範囲検査
+(`n < 0 || n > 255`) は `URL` が 255 超をパース時に弾くため到達せず
+(実測: `new URL('http://256.1.1.1/')` → ERR_INVALID_URL)、変異体 10 個が
+測れないまま残っていた。共有シークレットの `&& length > 0` も `''` が falsy な
+ぶん冗長だった。最終的に **321 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

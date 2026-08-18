@@ -466,6 +466,276 @@ describe('fetchViaProxy', () => {
   });
 });
 
+// ===== 明言している 3 つの防御が本当に効いているか (2026-08 変異検査) =====
+//
+// proxy.ts の冒頭は防御を 3 つ挙げている:
+//   (a) SSRF 宛先ブロック  (b) レスポンスサイズ上限  (c) redactSecrets による秘匿
+//
+// ファイル全体が `Stryker disable` されていたため測られておらず、実測すると
+// **(b) は丸ごと消しても・(c) は素通しにしても、どのテストも落ちなかった**。
+// 書いてある防御が効いている証拠が無い状態だった。
+describe('明言している防御 — サイズ上限と秘匿 (Round 5)', () => {
+  function envelopeRes(over: Partial<{ ok: boolean; status: number; headers: Headers; text: () => Promise<string> }>): Response {
+    return {
+      ok: true,
+      status: 200,
+      headers: new Headers(),
+      body: null,
+      async text() { return JSON.stringify({ status: 200, body: '{}' }); },
+      ...over,
+    } as unknown as Response;
+  }
+  const CFG = { url: 'https://my-worker.example.com/proxy' };
+  const TARGET = 'https://api.notion.com/v1/x';
+
+  // --- (b) レスポンスサイズ上限 -----------------------------------------
+
+  it('Content-Length が上限を超えたら送信内容を読まずに失敗する', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      headers: new Headers({ 'content-length': String(MAX_PROXY_RESPONSE_BYTES + 1) }),
+    }));
+    await expect(fetchViaProxy(TARGET, {}, CFG)).rejects.toThrow('proxy response too large');
+  });
+
+  it('上限ちょうどは通す (境界)', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      headers: new Headers({ 'content-length': String(MAX_PROXY_RESPONSE_BYTES) }),
+    }));
+    await expect(fetchViaProxy(TARGET, {}, CFG)).resolves.toBeDefined();
+  });
+
+  it('負の Content-Length は無視して読み進む (finite かつ上限以下でも素通りさせない)', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      headers: new Headers({ 'content-length': '-1' }),
+    }));
+    await expect(fetchViaProxy(TARGET, {}, CFG)).resolves.toBeDefined();
+  });
+
+  it('Content-Length が数値でなければ無視して読み進む', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      headers: new Headers({ 'content-length': 'abc' }),
+    }));
+    await expect(fetchViaProxy(TARGET, {}, CFG)).resolves.toBeDefined();
+  });
+
+  // --- (c) エラー本文の秘匿 ---------------------------------------------
+
+  it('プロキシのエラー本文に混ざったトークンを秘匿する', async () => {
+    // 壊れた / 悪意あるプロキシは、転送したリクエストをそのままエラー本文に
+    // 反射しうる。Authorization ヘッダーごと画面やログに出さない。
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      ok: false,
+      status: 500,
+      async text() { return 'upstream said: Authorization: Bearer secret_abcdefghijklmnop'; },
+    }));
+    const err = (await fetchViaProxy(TARGET, {}, CFG).catch((e: unknown) => e)) as Error;
+    expect(err.message).toContain('proxy 500');
+    expect(err.message).not.toContain('secret_abcdefghijklmnop');
+  });
+
+  it('エラー本文が読めなくても投げる (text() の失敗で握り潰さない)', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      ok: false,
+      status: 502,
+      text() { return Promise.reject(new Error('stream broken')); },
+    }));
+    const err = (await fetchViaProxy(TARGET, {}, CFG).catch((e: unknown) => e)) as Error;
+    // 本文が読めなければ空文字を入れる — 読めなかったことを何かの文字列で
+    // 埋めない (プロキシが言っていないことを言ったことにしない)。
+    expect(err.message).toBe('proxy 502: ');
+  });
+
+  // --- 共有シークレット --------------------------------------------------
+
+  it('共有シークレットがあれば x-proxy-auth を付ける', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, { ...CFG, sharedSecret: 's3cret' });
+    const headers = mockFetch.mock.calls[0]![1]!.headers as Record<string, string>;
+    expect(headers['x-proxy-auth']).toBe('s3cret');
+  });
+
+  it('共有シークレットが無ければ x-proxy-auth を付けない', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, CFG);
+    const headers = mockFetch.mock.calls[0]![1]!.headers as Record<string, string>;
+    expect(headers['x-proxy-auth']).toBeUndefined();
+  });
+
+  it('共有シークレットが空文字なら付けない (長さを見ている)', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, { ...CFG, sharedSecret: '' });
+    const headers = mockFetch.mock.calls[0]![1]!.headers as Record<string, string>;
+    expect(headers['x-proxy-auth']).toBeUndefined();
+  });
+
+  it('プロキシへは常に POST + content-type: application/json で送る', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, CFG);
+    const init = mockFetch.mock.calls[0]![1]!;
+    expect(init.method).toBe('POST');
+    expect((init.headers as Record<string, string>)['content-type']).toBe('application/json');
+  });
+
+  // --- 入口の検証 --------------------------------------------------------
+
+  it('target URL が空文字なら送らない', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await expect(fetchViaProxy('', {}, CFG)).rejects.toThrow('target URL is required');
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('target URL が文字列でなければ送らない', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await expect(fetchViaProxy(undefined as unknown as string, {}, CFG)).rejects.toThrow('target URL is required');
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  // --- ヘッダーの 3 形式 -------------------------------------------------
+
+  it('Headers インスタンスのヘッダーを封筒へ移す', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, { headers: new Headers({ 'x-a': '1' }) }, CFG);
+    const env = JSON.parse(mockFetch.mock.calls[0]![1]!.body as string) as { headers: Record<string, string> };
+    expect(env.headers['x-a']).toBe('1');
+  });
+
+  it('配列形式のヘッダーを封筒へ移す', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, { headers: [['x-b', '2']] }, CFG);
+    const env = JSON.parse(mockFetch.mock.calls[0]![1]!.body as string) as { headers: Record<string, string> };
+    expect(env.headers['x-b']).toBe('2');
+  });
+
+  it('ヘッダーを渡さなければ空のまま送る', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, CFG);
+    const env = JSON.parse(mockFetch.mock.calls[0]![1]!.body as string) as { headers: Record<string, string> };
+    expect(env.headers).toEqual({});
+  });
+
+  // --- method / body の既定値 -------------------------------------------
+
+  it('method 未指定は GET・小文字は大文字へ揃える', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, CFG);
+    expect((JSON.parse(mockFetch.mock.calls[0]![1]!.body as string) as { method: string }).method).toBe('GET');
+    await fetchViaProxy(TARGET, { method: 'post' }, CFG);
+    expect((JSON.parse(mockFetch.mock.calls[1]![1]!.body as string) as { method: string }).method).toBe('POST');
+  });
+
+  it('文字列でない body は送らない (undefined にする)', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, { body: new Blob(['x']) }, CFG);
+    const env = JSON.parse(mockFetch.mock.calls[0]![1]!.body as string) as { body?: string };
+    expect(env.body).toBeUndefined();
+    await fetchViaProxy(TARGET, { body: 'plain' }, CFG);
+    expect((JSON.parse(mockFetch.mock.calls[1]![1]!.body as string) as { body?: string }).body).toBe('plain');
+  });
+
+  // --- 応答の組み立て ----------------------------------------------------
+
+  it('本文が空なら 502 として返す (JSON.parse で落とさない)', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      async text() { return ''; },
+    }));
+    const res = await fetchViaProxy(TARGET, {}, CFG);
+    expect(res.status).toBe(502);
+    expect(await res.text()).toBe('');
+  });
+
+  it('status が数値でなければ 502 にする', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      async text() { return JSON.stringify({ status: 'oops', body: 'x' }); },
+    }));
+    expect((await fetchViaProxy(TARGET, {}, CFG)).status).toBe(502);
+  });
+
+  it('封筒の status / headers / body をそのまま返す', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      async text() { return JSON.stringify({ status: 201, headers: { 'x-c': '3' }, body: 'hi' }); },
+    }));
+    const res = await fetchViaProxy(TARGET, {}, CFG);
+    expect(res.status).toBe(201);
+    expect(res.headers.get('x-c')).toBe('3');
+    expect(await res.text()).toBe('hi');
+  });
+});
+
+describe('残りの契約 (Round 5 続き)', () => {
+  function envelopeRes(over: Partial<{ ok: boolean; status: number; headers: Headers; text: () => Promise<string> }>): Response {
+    return {
+      ok: true, status: 200, headers: new Headers(), body: null,
+      async text() { return JSON.stringify({ status: 200, body: '{}' }); },
+      ...over,
+    } as unknown as Response;
+  }
+  const CFG = { url: 'https://my-worker.example.com/proxy' };
+  const TARGET = 'https://api.notion.com/v1/x';
+
+  it('プロキシのエラー本文は 200 文字までに切る', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      ok: false, status: 500,
+      async text() { return 'E'.repeat(500); },
+    }));
+    const err = (await fetchViaProxy(TARGET, {}, CFG).catch((e: unknown) => e)) as Error;
+    const shown = err.message.slice(err.message.indexOf(': ') + 2);
+    expect(shown.length).toBe(200);
+  });
+
+  // ヘッダーに undefined を入れて「値が無い」と読むと、キー自体は生えている。
+  // `cfg.sharedSecret &&` を外した変異体はまさにその形になるので、キーの
+  // 有無で見る。
+  it('共有シークレットが無いとき x-proxy-auth のキー自体が無い', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({}));
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy(TARGET, {}, CFG);
+    const headers = mockFetch.mock.calls[0]![1]!.headers as Record<string, string>;
+    expect(Object.prototype.hasOwnProperty.call(headers, 'x-proxy-auth')).toBe(false);
+  });
+
+  // res.body が無いモック経路 (text() で読む) の上限。ストリーム経路とは
+  // 別の分岐なので別に固定する。
+  it('body を持たない応答でも上限を超えたら失敗する (text() 経路)', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      async text() { return 'x'.repeat(MAX_PROXY_RESPONSE_BYTES + 1); },
+    }));
+    await expect(fetchViaProxy(TARGET, {}, CFG)).rejects.toThrow('proxy response too large');
+  });
+
+  it('不正な URL は保存を断る', async () => {
+    await expect(setProxyConfig({ url: 'not-a-url' })).rejects.toThrow();
+  });
+
+  it('http の URL は保存を断る (https のみ)', async () => {
+    await expect(setProxyConfig({ url: 'http://insecure.example.com/p' })).rejects.toThrow();
+  });
+
+  it('null を保存すると設定が消える', async () => {
+    await setProxyConfig({ url: 'https://w.example.com/p' });
+    expect(await getProxyConfig()).not.toBeNull();
+    await setProxyConfig(null);
+    expect(await getProxyConfig()).toBeNull();
+  });
+
+  it('本文が上限ちょうどなら通す (text() 経路の境界)', async () => {
+    globalThis.fetch = vi.fn<typeof fetch>().mockResolvedValue(envelopeRes({
+      async text() { return JSON.stringify({ status: 200, body: 'x' }).padEnd(MAX_PROXY_RESPONSE_BYTES, ' '); },
+    }));
+    await expect(fetchViaProxy(TARGET, {}, CFG)).resolves.toBeDefined();
+  });
+});
+
 describe('isPrivateOrReservedTarget', () => {
   function pri(s: string): boolean { return isPrivateOrReservedTarget(new URL(s)); }
 
@@ -547,6 +817,160 @@ describe('isPrivateOrReservedTarget', () => {
     // Public IPs in mapped form should pass through.
     expect(pri('http://[::ffff:808:808]/')).toBe(false);  // 8.8.8.8 (Google DNS)
   });
+
+  // ===== Round 5 (2026-08 変異検査で見つけた穴) ==========================
+  //
+  // proxy.ts はファイル全体を `Stryker disable` していたため、この SSRF
+  // 判定は測られていなかった。無効化を外すと生存 43 変異体。内訳は
+  // 「**遮断側は書いてあるが、遮断しすぎていないことを誰も見ていない**」形が
+  // 大半だった。`a === 169 && b === 254` を `||` に変えても全テストが緑になる —
+  // つまり「169.254 だけを弾く」ことを何も証明していなかった。
+  //
+  // 過遮断は穴ではないが、**規則が効いている証拠にはならない**。片側だけの
+  // 検査は、規則を丸ごと `return true` に潰しても気付けない。
+  describe('SSRF — 規則が「その範囲だけ」に効いていること (Round 5)', () => {
+    function pri(s: string): boolean { return isPrivateOrReservedTarget(new URL(s)); }
+
+    it('169.254/16 は第 1・第 2 オクテットの両方を見ている', () => {
+      expect(pri('http://169.254.169.254/')).toBe(true);
+      expect(pri('http://169.1.1.1/')).toBe(false);   // 169.x だけでは弾かない
+      expect(pri('http://1.254.1.1/')).toBe(false);   // x.254 だけでは弾かない
+      expect(pri('http://169.253.1.1/')).toBe(false); // 隣接
+      expect(pri('http://169.255.1.1/')).toBe(false); // 隣接
+    });
+
+    it('192.168/16 は第 1・第 2 オクテットの両方を見ている', () => {
+      expect(pri('http://192.168.0.1/')).toBe(true);
+      expect(pri('http://192.1.1.1/')).toBe(false);
+      expect(pri('http://1.168.1.1/')).toBe(false);
+      expect(pri('http://192.167.1.1/')).toBe(false);
+      expect(pri('http://192.169.1.1/')).toBe(false);
+    });
+
+    it('172.16/12 の下側の境界 (172.15 は公開)', () => {
+      expect(pri('http://172.15.255.255/')).toBe(false);
+      expect(pri('http://172.16.0.0/')).toBe(true);
+      expect(pri('http://171.16.0.1/')).toBe(false); // 第 1 オクテットも見ている
+    });
+
+    it('100.64/10 CGNAT の両端 (RFC 6598)', () => {
+      expect(pri('http://100.63.255.255/')).toBe(false);
+      expect(pri('http://100.64.0.0/')).toBe(true);
+      expect(pri('http://100.127.255.255/')).toBe(true);
+      expect(pri('http://100.128.0.0/')).toBe(false);
+      expect(pri('http://99.64.1.1/')).toBe(false); // 第 1 オクテットも見ている
+    });
+
+    it('198.18/15 ベンチマーク域の両端 (RFC 2544)', () => {
+      expect(pri('http://198.17.255.255/')).toBe(false);
+      expect(pri('http://198.18.0.0/')).toBe(true);
+      expect(pri('http://198.19.255.255/')).toBe(true);
+      expect(pri('http://198.20.0.0/')).toBe(false);
+      expect(pri('http://197.18.1.1/')).toBe(false);
+    });
+
+    it('マルチキャスト以上 (>= 224) の境界', () => {
+      expect(pri('http://223.255.255.255/')).toBe(false);
+      expect(pri('http://224.0.0.0/')).toBe(true);
+      expect(pri('http://255.255.255.255/')).toBe(true);
+    });
+
+    it('10/8 と 127/8 は第 1 オクテットだけで決まる', () => {
+      expect(pri('http://10.0.0.0/')).toBe(true);
+      expect(pri('http://11.0.0.1/')).toBe(false);
+      expect(pri('http://9.255.255.255/')).toBe(false);
+      expect(pri('http://126.255.255.255/')).toBe(false);
+      expect(pri('http://128.0.0.1/')).toBe(false);
+    });
+
+    it('0/8 の境界 (1.x は公開)', () => {
+      expect(pri('http://0.0.0.1/')).toBe(true);
+      expect(pri('http://1.0.0.1/')).toBe(false);
+    });
+
+    it('ループバックの別名 3 つをすべて弾く', () => {
+      expect(pri('http://localhost/')).toBe(true);
+      expect(pri('http://ip6-localhost/')).toBe(true);
+      expect(pri('http://ip6-loopback/')).toBe(true);
+      expect(pri('http://notlocalhost/')).toBe(false); // 部分一致では弾かない
+      expect(pri('http://localhost.example.com/')).toBe(false);
+    });
+
+    it('GCP メタデータの 2 形式を弾く', () => {
+      expect(pri('http://metadata.google.internal/')).toBe(true);
+      expect(pri('http://x.metadata.cloud.google.com/')).toBe(true);
+      // 末尾一致であって先頭一致ではない (`endsWith` → `startsWith` を殺す)
+      expect(pri('http://metadata.cloud.google.com.example.net/')).toBe(false);
+      // `.internal` は内部 TLD 規則の側で弾かれる (メタデータ名の完全一致とは別経路)
+      expect(pri('http://notmetadata.google.internal/')).toBe(true);
+      // 完全一致であることの確認は、内部 TLD に当たらない名前で行う
+      expect(pri('http://notmetadata.google.com/')).toBe(false);
+    });
+
+    it('IPv6 ループバック / 未指定の長い表記も弾く', () => {
+      expect(pri('http://[0:0:0:0:0:0:0:1]/')).toBe(true);
+      expect(pri('http://[0:0:0:0:0:0:0:0]/')).toBe(true);
+    });
+
+    it('内部 TLD は最終ラベルで判定する', () => {
+      expect(pri('http://printer.local/')).toBe(true);
+      expect(pri('http://example.localcom/')).toBe(false); // 区切りが無いので当たらない
+      expect(pri('http://example.com/')).toBe(false);
+    });
+
+    // 単一ラベルのホストは検索ドメインの補完で解決する (`internal` →
+    // `internal.corp.example`)。以前は「裸の TLD は解決しない」として通して
+    // いたが、その前提が成り立っていなかったので遮断側へ寄せた。
+    it('ラベルが 1 つだけの内部名も弾く', () => {
+      expect(pri('http://local/')).toBe(true);
+      expect(pri('http://internal/')).toBe(true);
+      expect(pri('http://corp/')).toBe(true);
+      expect(pri('http://example/')).toBe(false); // 内部 TLD でなければ通す
+    });
+
+    // 末尾ドットの回避策と同じ形が先頭にもあった。`URL` は `http://.local/` を
+    // hostname `.local` のまま通し、`lastIndexOf('.')` が 0 になるため
+    // 最終ラベル判定を素通りしていた (`..internal` は当たるのに `.internal` は
+    // 当たらない、という非対称になっていた)。
+    it('先頭ドットを付けても内部名の判定を回避できない', () => {
+      expect(new URL('http://.local/').hostname).toBe('.local'); // パーサの前提を固定
+      expect(pri('http://.local/')).toBe(true);
+      expect(pri('http://.internal/')).toBe(true);
+      expect(pri('http://..internal/')).toBe(true);
+      expect(pri('http://.printer.local/')).toBe(true);
+      expect(pri('http://.localhost/')).toBe(true);
+    });
+
+    // IPv6 の長い表記は `URL` が短縮形へ正規化する。長形式の比較は
+    // そのぶん到達しないが、末尾ドットの件 (パーサの挙動を読み違えて穴が
+    // 開いた) があるので、前提そのものを検査で固定してから残す。
+    it('IPv6 の長形式はパーサが短縮形へ正規化する (前提の固定)', () => {
+      expect(new URL('http://[0:0:0:0:0:0:0:1]/').hostname).toBe('[::1]');
+      expect(new URL('http://[0:0:0:0:0:0:0:0]/').hostname).toBe('[::]');
+    });
+
+    it('公開ホストは通る (過遮断していないことの対照)', () => {
+      expect(pri('https://api.notion.com/')).toBe(false);
+      expect(pri('https://8.8.8.8/')).toBe(false);
+      expect(pri('https://1.1.1.1/')).toBe(false);
+      expect(pri('http://[2606:4700::1]/')).toBe(false);
+    });
+  });
+
+    // `::ffff:HHHH` (1 グループ) は上位 16 ビットが 0 の 0.0.HH.HH。
+    // この分岐が無いと 2 グループ用の正規表現に当たり `255.255.0.1` と
+    // 誤って解釈されて公開扱いになる (RFC 1122 の "this host" 域を素通り)。
+    it('1 グループの mapped 形式を 0.0.x.x として解釈する', () => {
+      expect(pri('http://[::ffff:1]/')).toBe(true);     // 0.0.0.1
+      expect(pri('http://[::ffff:ffff]/')).toBe(true);  // 0.0.255.255
+      expect(pri('http://[::ffff:0]/')).toBe(true);     // 0.0.0.0
+    });
+
+    it('NAT64 / 6to4 に埋め込んだメタデータアドレスを弾く', () => {
+      expect(pri('http://[64:ff9b::a9fe:a9fe]/')).toBe(true); // NAT64 169.254.169.254
+      expect(pri('http://[2002:a9fe:a9fe::]/')).toBe(true);   // 6to4 169.254.169.254
+      expect(pri('http://[64:ff9b::808:808]/')).toBe(false);  // NAT64 8.8.8.8 は公開
+    });
 
   describe('SSRF edge cases — Round 4 (2026-07 audit)', () => {
     it('rejects trailing-dot (FQDN) forms of every name-based rule', () => {

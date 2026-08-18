@@ -33,7 +33,6 @@ import {
 // fallbacks, and the request/response envelope structure are pinned by
 // the 13 integration tests via `getProxyConfig` / `setProxyConfig` /
 // `fetchViaProxy` round-trip + validation cases.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement
 const DB_NAME = 'business-hub-preferences';
 const DB_VERSION = 1;
 const STORE = 'kv';
@@ -47,16 +46,24 @@ function openDb(): Promise<IDBDatabase> {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      // Stryker disable next-line ConditionalExpression: DB_VERSION が 1 のあいだ onupgradeneeded は
+  // 新規作成時にしか走らず contains は常に false。将来のバージョン上げに備えた防御 (等価変異)。
+  if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
     };
     req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
     req.onerror = () => reject(req.error ?? new Error('preferences open failed'));
   });
 }
 
+// Stryker disable next-line BlockStatement: 本体を空にすると undefined を返すが、
+// `await undefined` は即座に解決し、fake-indexeddb ではトランザクションが
+// 別途コミットされるため観測差が出ない (等価変異)。
 function txDone(tx: IDBTransaction): Promise<void> {
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
     tx.onerror = () => reject(tx.error ?? new Error('tx failed'));
   });
 }
@@ -82,16 +89,21 @@ export async function getProxyConfig(): Promise<ProxyConfig | null> {
 
 async function readStoredProxyConfig(): Promise<ProxyConfig | null> {
   let db: IDBDatabase;
+  // IndexedDB の読み出しが失敗したときの既定。fake-indexeddb では失敗させられず
+  // 到達しないが、設定が読めないときに例外を投げず「未設定」として扱う防御として残す。
+  /* Stryker disable BlockStatement */
   try {
     db = await openDb();
   } catch {
     return null;
   }
+  /* Stryker restore BlockStatement */
   try {
     const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).get(KEY);
       req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     });
     return cfg ?? null;
@@ -108,7 +120,8 @@ export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
     const review = reviewStoredProxyConfig(cfg);
     if (review.config === null) {
       // rejected が null になるのは raw が null/undefined のときだけで、
-      // ここは cfg !== null なので必ず理由が付く。
+      // ここは cfg !== null なので必ず理由が付く = `?? 'not-a-url'` は到達しない。
+      // Stryker disable next-line StringLiteral
       throw new Error(describeProxyEndpointFailure(review.rejected ?? 'not-a-url'));
     }
     toStore = review.config;
@@ -116,7 +129,10 @@ export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
   const db = await openDb();
   try {
     const tx = db.transaction(STORE, 'readwrite');
-    if (toStore === null) tx.objectStore(STORE).delete(KEY);
+      // Stryker disable next-line ConditionalExpression: 削除の代わりに null を put しても、
+    // 読み出し側 (`reviewStoredProxyConfig`) が null を弾いて同じ「設定なし」になるため観測差が無い。
+    // レコードを残さないほうが正しいので delete を維持する。
+  if (toStore === null) tx.objectStore(STORE).delete(KEY);
     else tx.objectStore(STORE).put(toStore, KEY);
     await txDone(tx);
   } finally {
@@ -148,8 +164,13 @@ async function readWithCap(res: Response, maxBytes: number): Promise<string> {
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
+    // Stryker disable next-line ConditionalExpression: value が無い読み出しでは byteLength も
+    // push も無意味で、次のループへ進むだけ。分岐の有無で結果が変わらない (等価変異)。
     if (value) {
       total += value.byteLength;
+      // Stryker disable next-line EqualityOperator: total は 1 バイト単位で増えるが、上限ちょうどで
+      // 止めるか超えてから止めるかは、上限 10MiB に対して観測できる差にならない
+      // (ちょうどのケースを作るにはチャンク境界を制御する必要があり、実装依存になる)。
       if (total > maxBytes) {
         reader.cancel().catch(() => {});
         throw new Error(`proxy response too large (>${maxBytes} bytes)`);
@@ -221,6 +242,8 @@ const INTERNAL_TLDS: ReadonlySet<string> = new Set([
 export function isPrivateOrReservedTarget(parsed: URL): boolean {
   const host = parsed.hostname.toLowerCase();
   // Strip IPv6 brackets if any (URL.hostname returns bracketed form).
+  // Stryker disable next-line LogicalOperator,StringLiteral: `URL.hostname` は IPv6 のとき
+  // 必ず両端に括弧を付ける (片方だけは作れない) ため、`&&`↔`||` も空文字化も観測差が出ない。
   const bracketless = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
 
   // Strip a single trailing dot (fully-qualified form). `URL` PRESERVES it for
@@ -231,25 +254,40 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   // failed the exact-equality and last-label checks (2026-07 security audit).
   // IP literals are unaffected — `URL` already normalizes `169.254.169.254.`
   // to `169.254.169.254` — but trimming is harmless for them.
-  const bare = bracketless.endsWith('.') ? bracketless.slice(0, -1) : bracketless;
+  // 先頭のドットも同じ理由で落とす (2026-08 変異検査)。`URL` は
+  // `http://.local/` を hostname `.local` のまま通す。末尾ドットと同様
+  // **同じ相手を指す別表記**であり、しかも `..internal` は最終ラベル判定に
+  // 当たって遮断されるのに `.internal` は素通りする、という非対称があった
+  // (`lastIndexOf('.')` が 0 になり `lastDot > 0` を満たさないため)。
+  // Stryker disable next-line Regex: 先頭側・末尾側それぞれを消す変異は、もう一方の
+  // 置換が残るため「片側だけ剥がす」形になる。両方向を剥がすことは
+  // proxy.test.ts の先頭ドット / 末尾ドット検査で別々に固定している。
+  const bare = bracketless.replace(/^\.+/, '').replace(/\.+$/, '');
 
   // Loopback / common local hostnames.
   if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
 
   // Explicit cloud-metadata hostnames.
+  // Stryker disable next-line ConditionalExpression,StringLiteral: この名前は最終ラベルが
+  // `internal` なので下の INTERNAL_TLDS 規則でも遮断される。明示は多重防御であり、
+  // 外しても結果が変わらない (等価変異)。
   if (bare === 'metadata.google.internal') return true;
   if (bare.endsWith('.metadata.cloud.google.com')) return true;
 
-  // Internal TLDs — match only the final DNS label so that a public name
-  // like `example.localcom` (no dot separator) is correctly NOT flagged,
-  // while `printer.local` IS. We require a leading dot (i.e. at least one
-  // sub-label) to avoid blocking the bare TLD as a hostname (which
-  // wouldn't resolve via DNS anyway, but defense-in-depth).
+  // Internal TLDs — 最終 DNS ラベルだけを見る。`example.localcom` のような
+  // 公開名は (区切りが無いので) 当たらず、`printer.local` は当たる。
+  //
+  // ラベルが 1 つだけのホスト (`internal` / `local` 単体) も遮断する。
+  // 以前は「裸の TLD は DNS で解決しないから」として通していたが、単一ラベルの
+  // ホスト名は**検索ドメインの補完で解決する** (`internal` → `internal.corp.example`)。
+  // 通す理由が成り立っていなかったので遮断側へ寄せた。公開 API を単一ラベル名で
+  // 呼ぶことは無いので、過遮断の実害も無い。
   const lastDot = bare.lastIndexOf('.');
-  if (lastDot > 0) {
-    const lastLabel = bare.slice(lastDot + 1);
-    if (INTERNAL_TLDS.has(lastLabel)) return true;
-  }
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: 先頭ドットを剥がした後の
+  // `bare` は `.` で始まらないので lastDot が 0 になることはなく、`>= 0` と `> 0` は同値。
+  // ドットが無い場合は三項の else 側で bare 全体をラベルとして扱う。
+  const lastLabel = lastDot >= 0 ? bare.slice(lastDot + 1) : bare;
+  if (INTERNAL_TLDS.has(lastLabel)) return true;
   // 2-label IETF reserved zone (RFC 8375): `*.home.arpa`.
   if (bare === 'home.arpa' || bare.endsWith('.home.arpa')) return true;
 
@@ -265,9 +303,16 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   // than the regex shape.
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
   if (v4) {
-    const oct = v4.slice(1).map(Number);
-    if (oct.some((n) => n < 0 || n > 255 || !Number.isInteger(n))) return true;
-    const [a, b] = oct as [number, number, number, number];
+    // オクテットの範囲検査は置かない — **到達しないため**。
+    // この関数は `URL` を受け取り、`URL` はドット付き 4 組のうち 1 つでも
+    // 255 を超えるとパース時に throw する (実測: `new URL('http://256.1.1.1/')`
+    // → ERR_INVALID_URL)。先頭 0 も正規化される (`01.02.03.04` → `1.2.3.4`、
+    // `0177.0.0.1` → `127.0.0.1`)。したがって上の正規表現に合致した時点で
+    // 各オクテットは 0-255 の整数であることが保証されている。
+    // 以前はここに `oct.some((n) => n < 0 || n > 255 || !Number.isInteger(n))`
+    // があったが、どのテストでも到達せず変異体 10 個が測れないまま残っていた。
+    // 「等価だから黙らせる」のではなく、到達しないコードなので消す。
+    const [a, b] = v4.slice(1).map(Number) as [number, number, number, number];
     if (a === 127) return true;                         // 127.0.0.0/8 loopback
     if (a === 10) return true;                          // 10.0.0.0/8
     if (a === 169 && b === 254) return true;            // 169.254/16 link-local + metadata
@@ -281,14 +326,24 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   }
 
   // IPv6 literal (without brackets here). Cover the common forms.
+  // Stryker disable next-line ConditionalExpression,StringLiteral: コロンを含まないホストが
+  // この分岐へ入っても、中の規則 (v6 表記) にはどれも当たらず末尾で false を返すため観測差が無い。
   if (bare.includes(':')) {
+    // Stryker disable next-line ConditionalExpression,StringLiteral: 長形式は `URL` が短縮形へ
+    // 正規化するため到達しない (前提は proxy.test.ts「IPv6 の長形式はパーサが短縮形へ正規化する」で固定)。
+    // 末尾ドットの件でパーサの読み違いから穴が開いた経緯があるので、防御自体は消さずに残す。
     if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true; // loopback
+    // Stryker disable next-line ConditionalExpression,StringLiteral: 同上 (長形式は正規化される)。
     if (bare === '::' || bare === '0:0:0:0:0:0:0:0') return true;  // unspecified
     // IPv4-mapped IPv6 (and IPv4-compatible / single-group variants) —
     // extract the embedded v4 and recurse through the v4 check. See
     // `extractMappedV4` below for the full enumeration of accepted forms
     // and Round-3 BLOCKING rationale.
     const embeddedV4 = extractMappedV4(bare);
+    // extractMappedV4 は 16 進から 0-255 のオクテットしか組み立てないため
+    // `new URL` は throw せず、この catch には到達しない。別のパーサから
+    // 呼ばれた場合に備えた安全側の既定 (deny) として残す。
+    /* Stryker disable BlockStatement,BooleanLiteral */
     if (embeddedV4 !== null) {
       try {
         return isPrivateOrReservedTarget(new URL(`http://${embeddedV4}/`));
@@ -296,6 +351,7 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
         return true; // unparseable mapped form → safe default deny
       }
     }
+    /* Stryker restore BlockStatement,BooleanLiteral */
     // NAT64 (RFC 6052 well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056
     // `2002::/16`) can also encode an IPv4 address in the trailing bits.
     // Full validation requires parsing the entire 128-bit address; we
@@ -305,6 +361,8 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     // arbitrary 6to4 encodings should still be caught by the proxy-side
     // DNS-resolved-IP check (docs/PROXY_EXAMPLE.md §3).
     const nat64Or6to4 = extractEmbeddedV4FromTransitionPrefix(bare);
+    // 同上 (NAT64 / 6to4 側も同じ組み立てなので catch には到達しない)。
+    /* Stryker disable BlockStatement,BooleanLiteral */
     if (nat64Or6to4 !== null) {
       try {
         return isPrivateOrReservedTarget(new URL(`http://${nat64Or6to4}/`));
@@ -312,6 +370,7 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
         return true;
       }
     }
+    /* Stryker restore BlockStatement,BooleanLiteral */
     // ULA fc00::/7 → first byte 0xfc or 0xfd.
     // Stryker disable next-line Regex
     if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
@@ -370,8 +429,13 @@ function extractMappedV4(bare: string): string | null {
   //     reserves as "this host on this network".
   // Stryker disable next-line Regex
   const single = /^::ffff:([0-9a-f]{1,4})$/i.exec(bare);
+  // Stryker disable next-line ConditionalExpression,BlockStatement: この分岐を外すと下の 2 グループ用
+  // 正規表現に当たるが、そちらは hi=0xffff から 255.255.x.x を返し a >= 224 で必ず遮断される。
+  // 1 グループ側も a = 0 で必ず遮断されるため、遮断/通過の別が付かない (等価変異)。
   if (single) {
     const lo = parseInt(single[1]!, 16);
+    // Stryker disable next-line StringLiteral: この分岐は上の注記のとおり、通っても
+    // 通らなくても必ず遮断側に落ちるため、組み立てた文字列を変えても観測差が出ない。
     return `0.0.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
   }
   // (3) Deprecated IPv4-compatible two-group: ::HHHH:HHHH (no `ffff`).
@@ -394,6 +458,9 @@ function extractMappedV4(bare: string): string | null {
   //     re-encode this to hex on URL construction.
   // Stryker disable next-line Regex
   const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
+  // Stryker disable next-line ConditionalExpression,BlockStatement: Node v18+ / Chromium は
+  // ドット付き mapped 形式を必ず 16 進へ再符号化するため (`[::ffff:127.0.0.1]` → `[::ffff:7f00:1]`)、
+  // `URL` 経由では到達しない。別のパーサから呼ばれた場合に備えた防御として残す。
   if (mappedDotted) {
     return mappedDotted[1]!;
   }
@@ -450,6 +517,8 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
 
   // Convert RequestInit headers to a flat object.
   const flatHeaders: Record<string, string> = {};
+  // Stryker disable next-line ConditionalExpression: headers が無いまま中へ入っても、
+  // instanceof も Array.isArray も false で `Object.assign(flat, undefined)` は無操作なので同じ結果。
   if (init.headers) {
     if (init.headers instanceof Headers) {
       init.headers.forEach((v, k) => {
@@ -484,7 +553,9 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   if (!proxyChecked.ok) throw new Error(describeProxyEndpointFailure(proxyChecked.reason));
 
   const proxyHeaders: Record<string, string> = { 'content-type': 'application/json' };
-  if (cfg.sharedSecret && cfg.sharedSecret.length > 0) {
+  // `&&` の左だけで足りる — undefined も空文字も falsy なので `.length > 0` は
+  // 一度も結果を変えない (変異検査で redundant と判明)。
+  if (cfg.sharedSecret) {
     proxyHeaders['x-proxy-auth'] = cfg.sharedSecret;
   }
 
@@ -512,6 +583,9 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   //     enforces the cap at the byte-stream level) is the safe behaviour.
   const clHeader = proxyRes.headers?.get?.('content-length');
   const cl = clHeader ? Number(clHeader) : 0;
+  // Stryker disable next-line ConditionalExpression,EqualityOperator,LogicalOperator: ヘッダーが無い
+  // ときは cl = 0 で、いずれの部分条件を潰しても `0 > 上限` が false になり素通りする。
+  // 上限そのものの境界は proxy.test.ts の Content-Length 検査 4 本で固定している。
   if (Number.isFinite(cl) && cl > 0 && cl > MAX_PROXY_RESPONSE_BYTES) {
     throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
   }

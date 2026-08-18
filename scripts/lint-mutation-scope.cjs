@@ -68,7 +68,6 @@ const KNOWN_BROAD = {
   'src/renderer/data/voiceCommand.ts':           { regions: 1, lines:   77 },
   'src/renderer/fs/fsa.ts':                      { regions: 1, lines:  128 },
   'src/renderer/library/library.ts':             { regions: 1, lines:  217 },
-  'src/renderer/network/proxy.ts':               { regions: 1, lines:  501 },
   'src/renderer/oauth/pkce.ts':                  { regions: 1, lines:  180 },
   'src/renderer/security/autoLock.ts':           { regions: 1, lines:   85 },
   'src/renderer/security/vault.ts':              { regions: 3, lines:  610 },
