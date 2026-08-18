@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7664** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7943) |
+| ユニットテスト | **7734** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8013) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 272 | 自己検証 |
+| `file:line` 参照数 | 273 | 自己検証 |
 
 ### 統合フロー図
 
@@ -548,6 +548,33 @@ AES-GCM の金庫も 610 行 (全 788 行のうち 3 箇所) を無効化して�
 `lint:mutation-scope` が「広い無効化が新規に増えました (3 箇所 / 120 行)」で
 落とした。610 行の死角を 120 行の死角に付け替えるところだった。範囲を
 26 行以内に収め直して解決した。
+
+#### PKCE は「送る中身」が防御そのもの (`src/renderer/oauth/pkce.ts`)
+
+OAuth の入口も 180 行 (全 211 行) を無効化しており、外して実測すると
+**171 変異体 77.71%**。生存していたのは「**送っている中身を誰も見ていない**」形が
+中心だった — トークン要求の本文 (`grant_type` / `code_verifier` / `redirect_uri`) を
+`{}` に潰しても、認可 URL の `code_challenge_method: 'S256'` を消しても、
+どのテストも落ちなかった。`S256` が `plain` に落ちれば verifier がそのまま流れる。
+
+**実際の取りこぼしも 1 つあった。** URL 判定の `^` アンカーを外す変異体が生存して
+いたが、これは等価ではない — Google のコールバックは
+`scope=https://www.googleapis.com/auth/...` を含むため、先頭一致でないと
+クエリ文字列が「URL」と誤認されて `new URL` が失敗し、正しいコールバックを
+取りこぼす。検査を足して固定した。
+
+冗長なコードは消した。`trimmed.startsWith('?') ? trimmed.slice(1) : trimmed` は
+`URLSearchParams` 自身が先頭の `?` を落とすため、一度も結果を変えていなかった。
+
+**この 1 ファイルだけ 100% にしていない (163 変異体 98.77%)。** 残る 2 つは真の
+等価変異で、範囲指定で囲めば 100% になるが、実測すると **66 個の測定を捨てる**
+ことになる (163 変異体 98.77% → 97 変異体 100%)。分母を縮めて買った 100% は
+正直な 98.77% より価値が低い — `lint:mutation-scope` が禁じているのと同じ形なので、
+囲まずに理由をコードへ書いた。
+
+**罠 (3 回踏んだ)**: `Stryker disable next-line` は**閉じ括弧で始まる行に効かない**。
+`} catch {` / `} finally {` / `} else if (` はいずれも直前のコメントと結び付かず、
+指定したつもりで測定が続く。囲むなら範囲指定を使い、`try` 全体の前に置く。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 
