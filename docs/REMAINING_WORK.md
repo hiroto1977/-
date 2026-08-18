@@ -99,10 +99,10 @@
 
 ---
 
-## 変異検査で測っていない範囲 (2026-08-18 実測・3,898 行)
+## 変異検査で測っていない範囲 (2026-08-18 実測・3,722 行)
 
-`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **33 ファイル
-/ 41 箇所 / 3,898 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
+`npm run lint:mutation-scope` の台帳 `KNOWN_BROAD` に載っている **32 ファイル
+/ 40 箇所 / 3,722 行**（着手前は 36 ファイル / 46 箇所 / 5,189 行）。これは「許した」ではなく「まだ測っていないと
 分かっている」という意味である。ゲートは**双方向**で、増えても減っても落ちる
 (減ったら台帳を実測値へ更新する)。
 
@@ -127,7 +127,6 @@
 | `src/renderer/library/library.ts` | 1 | 217 |
 | `src/main/clients/business.ts` | 3 | 199 |
 | `src/main/clients/cloudflare.ts` | 1 | 189 |
-| `src/shared/ai/credentials.ts` | 1 | 176 |
 | `src/main/clients/stocks.ts` | 1 | 169 |
 
 **security/ と oauth/ に残っているものが痛い。** `pkce.ts` (OAuth の code_verifier
@@ -143,6 +142,7 @@
 | `src/renderer/network/proxy.ts` | 501 行を無効化 | 実測 422 変異体 73.70%。SSRF 判定に生存 43・先頭ドット回避を発見 | **321 変異体 100%** |
 | `src/renderer/security/vault.ts` | 610 行を無効化 (3 箇所) | 実測 357 変異体 78.71%。`extractable: false` を証明する検査が無かった | **307 変異体 100%** |
 | `src/renderer/oauth/pkce.ts` | 180 行を無効化 | 実測 171 変異体 77.71%。送っている中身 (`code_verifier` / `S256`) を誰も見ていなかった | **163 変異体 98.77%** ※ |
+| `src/shared/ai/credentials.ts` | 176 行を無効化 | 実測 159 変異体 90.57%。空文字の API キーが「設定済み」として通っていた | **157 変異体 100%** |
 
 ※ `pkce.ts` だけ 100% にしていない。残る 2 つは真の等価変異で、範囲指定で囲めば
 100% になるが**66 個の測定を捨てる**ことになる (163 変異体 98.77% → 97 変異体 100%)。
