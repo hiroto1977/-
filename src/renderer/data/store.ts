@@ -18,10 +18,11 @@
 
 import { IDENTITY_CIPHER, type RecordCipher } from './recordCipher';
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator,BlockStatement,UpdateOperator
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
+// Stryker disable next-line StringLiteral: 定義と参照が同じ定数を通るため、値を変えても create↔access が往復して観測差が出ない（等価変異）。
 const STORE = 'records';
+// Stryker disable next-line StringLiteral: 同上。索引名は作成時と参照時の両方がこの定数を通る。
 const COLLECTION_INDEX = 'collection';
 
 /** A stored record. `T` is the caller's payload shape. */
@@ -96,20 +97,43 @@ function openDb(): Promise<IDBDatabase> {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
+      // Stryker disable next-line ConditionalExpression: DB_VERSION が 1 のあいだ onupgradeneeded は新規作成時にしか走らず contains は常に false。将来のバージョン上げに備えた防御なので残す（等価変異）。
       if (!db.objectStoreNames.contains(STORE)) {
         const store = db.createObjectStore(STORE, { keyPath: 'id' });
+        // Stryker disable next-line ObjectLiteral: unique の既定値が false なので `{}` との差が無い（等価変異）。明示のため書いている。
         store.createIndex(COLLECTION_INDEX, 'collection', { unique: false });
       }
     };
     req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
     req.onerror = () => reject(req.error ?? new Error('data store open failed'));
   });
+}
+
+/**
+ * 接続を開き、処理が失敗しても**必ず閉じる**。
+ *
+ * 元は各メソッドが `const db = await openDb(); ... await txDone(tx); db.close();`
+ * と書いており、`txDone` が reject すると `db.close()` に到達しなかった。
+ * 書き込みが失敗するたびに IndexedDB の接続が残り、溜まると以後の
+ * バージョン変更や削除が blocked になる。11 箇所すべて同じ形だったので、
+ * 覚えておく規約ではなく構造で閉じる。
+ */
+async function withDb<T>(fn: (db: IDBDatabase) => Promise<T>): Promise<T> {
+  const db = await openDb();
+  try {
+    return await fn(db);
+  } finally {
+    db.close();
+  }
 }
 
 function txDone(tx: IDBTransaction): Promise<void> {
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: onerror と onabort は中断時に両方発火するため、片方だけを潰しても他方が reject して観測差が出ない。用途は異なる（明示 abort では onabort のみ）ので両方要る。
     tx.onerror = () => reject(tx.error ?? new Error('data store tx failed'));
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上（onerror と対）。
     tx.onabort = () => reject(tx.error ?? new Error('data store tx aborted'));
   });
 }
@@ -123,12 +147,13 @@ function monotonicNow(): number {
 
 function uuid(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
-  const b = crypto.getRandomValues(new Uint8Array(16));
-  const b6 = b[6] ?? 0;
-  const b8 = b[8] ?? 0;
-  b[6] = (b6 & 0x0f) | 0x40;
-  b[8] = (b8 & 0x3f) | 0x80;
-  const hex = Array.from(b, (n) => n.toString(16).padStart(2, '0')).join('');
+  // フォールバック (randomUUID の無い古い WebView)。version/variant のビットは
+  // 走査中に立てる — 添字で取り出すと `noUncheckedIndexedAccess` のために
+  // 到達しない `?? 0` が要り、それが測れない分岐として残るため。
+  const hex = Array.from(crypto.getRandomValues(new Uint8Array(16)), (n, i) => {
+    const v = i === 6 ? (n & 0x0f) | 0x40 : i === 8 ? (n & 0x3f) | 0x80 : n;
+    return v.toString(16).padStart(2, '0');
+  }).join('');
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
@@ -148,11 +173,11 @@ class IndexedDBRecordStore implements RecordStore {
     const id = uuid();
     // Store the (possibly encrypted) payload; return the plaintext to the caller.
     const storedData = await this.cipher.encrypt(data);
-    const db = await openDb();
-    const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
-    await txDone(tx);
-    db.close();
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
+      await txDone(tx);
+    });
     return { id, collection, createdAt: ts, updatedAt: ts, data };
   }
 
@@ -180,14 +205,14 @@ class IndexedDBRecordStore implements RecordStore {
       }),
     );
 
-    const db = await openDb();
-    const tx = db.transaction(STORE, 'readwrite');
-    const objStore = tx.objectStore(STORE);
-    for (const b of built) objStore.add(b.stored);
-    // One transaction: if any add fails the tx aborts and txDone rejects —
-    // nothing is committed (all-or-nothing).
-    await txDone(tx);
-    db.close();
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const objStore = tx.objectStore(STORE);
+      for (const b of built) objStore.add(b.stored);
+      // One transaction: if any add fails the tx aborts and txDone rejects —
+      // nothing is committed (all-or-nothing).
+      await txDone(tx);
+    });
     return built.map((b) => b.plain);
   }
 
@@ -195,6 +220,7 @@ class IndexedDBRecordStore implements RecordStore {
     id: string,
     patch: Partial<T>,
   ): Promise<StoredRecord<T> | null> {
+    // Stryker disable next-line ConditionalExpression: この先の get() が同じガードを持つため、外しても戻り値は null のままで観測差が出ない（等価変異）。get() の内部実装に依存しないための防御として残す。
     if (typeof id !== 'string' || id.length === 0) return null;
     if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
 
@@ -204,24 +230,23 @@ class IndexedDBRecordStore implements RecordStore {
     const mergedData = { ...existing.data, ...patch };
     const updatedAt = monotonicNow();
     const storedData = await this.cipher.encrypt(mergedData);
-    const db = await openDb();
-    const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
-    await txDone(tx);
-    db.close();
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
+      await txDone(tx);
+    });
     return { ...existing, updatedAt, data: mergedData };
   }
 
   async get<T extends Record<string, unknown>>(id: string): Promise<StoredRecord<T> | null> {
     if (typeof id !== 'string' || id.length === 0) return null;
-    const db = await openDb();
-    const rec = await new Promise<StoredRecord<T> | undefined>((resolve, reject) => {
+    const rec = await withDb((db) => new Promise<StoredRecord<T> | undefined>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).get(id);
       req.onsuccess = () => resolve(req.result as StoredRecord<T> | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('get failed'));
-    });
-    db.close();
+    }));
     if (!rec) return null;
     const data = (await this.cipher.decrypt(rec.data)) as T;
     return { ...rec, data };
@@ -229,9 +254,8 @@ class IndexedDBRecordStore implements RecordStore {
 
   async list<T extends Record<string, unknown>>(collection: string): Promise<readonly StoredRecord<T>[]> {
     if (!isSafeCollection(collection)) throw new Error('collection が不正です');
-    const db = await openDb();
     const out: StoredRecord<T>[] = [];
-    await new Promise<void>((resolve, reject) => {
+    await withDb((db) => new Promise<void>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const range = IDBKeyRange.only(collection);
       const req = tx.objectStore(STORE).index(COLLECTION_INDEX).openCursor(range);
@@ -244,9 +268,9 @@ class IndexedDBRecordStore implements RecordStore {
           resolve();
         }
       };
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('cursor failed'));
-    });
-    db.close();
+    }));
     // Newest-first. The collection index isn't ordered by time, so sort here.
     out.sort((a, b) => b.createdAt - a.createdAt);
     // Decrypt each payload through the active cipher.
@@ -258,60 +282,57 @@ class IndexedDBRecordStore implements RecordStore {
 
   async remove(id: string): Promise<void> {
     if (typeof id !== 'string' || id.length === 0) return;
-    const db = await openDb();
-    const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).delete(id);
-    await txDone(tx);
-    db.close();
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).delete(id);
+      await txDone(tx);
+    });
   }
 
   async clearCollection(collection: string): Promise<number> {
     const all = await this.list(collection);
-    const db = await openDb();
-    const tx = db.transaction(STORE, 'readwrite');
-    const store = tx.objectStore(STORE);
-    for (const rec of all) store.delete(rec.id);
-    await txDone(tx);
-    db.close();
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const store = tx.objectStore(STORE);
+      for (const rec of all) store.delete(rec.id);
+      await txDone(tx);
+    });
     return all.length;
   }
 
   async count(collection: string): Promise<number> {
     if (!isSafeCollection(collection)) throw new Error('collection が不正です');
-    const db = await openDb();
-    const n = await new Promise<number>((resolve, reject) => {
+    return withDb((db) => new Promise<number>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).index(COLLECTION_INDEX).count(IDBKeyRange.only(collection));
       req.onsuccess = () => resolve(req.result);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('count failed'));
-    });
-    db.close();
-    return n;
+    }));
   }
 
   async exportAll(): Promise<readonly StoredRecord[]> {
-    const db = await openDb();
-    const all = await new Promise<StoredRecord[]>((resolve, reject) => {
+    const all = await withDb((db) => new Promise<StoredRecord[]>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).getAll();
       // Stryker disable next-line ArrayDeclaration: getAll() の result は仕様上必ず配列を返すため `?? []` は到達不能な防御フォールバック。`["..."]` への変異は観測できない（等価変異）。
       req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('exportAll failed'));
-    });
-    db.close();
+    }));
     all.sort((a, b) => b.createdAt - a.createdAt);
     return all;
   }
 
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
     const valid = records.filter(isValidStoredRecord);
-    const db = await openDb();
-    const tx = db.transaction(STORE, 'readwrite');
-    const store = tx.objectStore(STORE);
-    if (opts?.replace) store.clear();
-    for (const rec of valid) store.put(rec); // put = upsert by id
-    await txDone(tx);
-    db.close();
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const store = tx.objectStore(STORE);
+      if (opts?.replace) store.clear();
+      for (const rec of valid) store.put(rec); // put = upsert by id
+      await txDone(tx);
+    });
     return valid.length;
   }
 
@@ -321,25 +342,24 @@ class IndexedDBRecordStore implements RecordStore {
     // lets callers switch keys or turn encryption off (decrypt with the old
     // cipher, store under the new one).
     const reader = from ?? this.cipher;
-    const db = await openDb();
-    const raw = await new Promise<StoredRecord[]>((resolve, reject) => {
+    const raw = await withDb((db) => new Promise<StoredRecord[]>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).getAll();
       // Stryker disable next-line ArrayDeclaration: getAll() の result は仕様上必ず配列を返すため `?? []` は到達不能な防御フォールバック。`["..."]` への変異は観測できない（等価変異）。
       req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('reencryptAll read failed'));
-    });
-    db.close();
+    }));
 
     let migrated = 0;
     for (const rec of raw) {
       const plain = await reader.decrypt(rec.data);
       const sealed = await this.cipher.encrypt(plain);
-      const db2 = await openDb();
-      const tx = db2.transaction(STORE, 'readwrite');
-      tx.objectStore(STORE).put({ ...rec, data: sealed });
-      await txDone(tx);
-      db2.close();
+      await withDb(async (db2) => {
+        const tx = db2.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).put({ ...rec, data: sealed });
+        await txDone(tx);
+      });
       migrated++;
     }
     return migrated;
@@ -371,4 +391,3 @@ export function getRecordStore(): RecordStore {
 export function _resetRecordStoreForTests(): void {
   singleton = null;
 }
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator,BlockStatement,UpdateOperator

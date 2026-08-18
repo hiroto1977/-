@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7510** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7768) |
+| ユニットテスト | **7574** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 7849) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 263 | 自己検証 |
+| `file:line` 参照数 | 270 | 自己検証 |
 
 ### 統合フロー図
 
@@ -461,6 +461,33 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 `await` がある」形を落とす。`await` の無いハンドラと、try の中だけで await する
 ハンドラは通る。実コードでの陰性対照も取っている (`app:openPath` を監査前の形に
 戻すと 1 件鳴る)。
+
+#### 「測っていない」は「緑」ではない (`scripts/lint-mutation-scope.cjs`)
+
+`src/renderer/data/store.ts` は先頭で 13 種の mutator を**ファイル全体**に対して
+`Stryker disable` していた (末尾に restore はあるが実装全体が挟まれていた)。
+変異検査は **3 変異体・100%** と報告し、ゲートは緑を返し続けていた。無効化を
+外して実測すると **256 変異体・71.09%・生存 44 / 未到達 30**。100% という数字は、
+分母が小さければ何も言っていないのと同じになる。
+
+そこには**実バグ**が潜んでいた。全 11 箇所で `db.close()` が `await txDone(tx)` の
+**後ろ**にあり、書き込みが失敗すると接続が閉じられず残る。溜まると以後の
+`deleteDatabase` やバージョン変更が blocked になる。`withDb()` で `finally` に
+畳み、覚えておく規約ではなく構造で閉じるようにした。
+
+仕上げの手順は「テストを足す → 等価変異はまずコードの単純化を疑う → 残りだけ
+1 行 pragma」。uuid の組み立てを添字アクセスから `Array.from` の走査へ変えるだけで
+到達しない `?? 0` が 2 つ消えた。最終的に **242 変異体・100%** (真の 100%)。
+
+23 ゲート目 `lint:mutation-scope` は **範囲**で線を引く — `next-line` は常に可、
+範囲指定は restore まで 30 行以内なら可、それを超える / restore が無いものは
+台帳 `KNOWN_BROAD` にある分だけ可。台帳は**双方向**で、増えても減っても落ちる
+(直したら台帳も直す)。自己検査 9 通りを毎回走らせる。
+
+残債は **36 ファイル / 46 箇所 / 5,189 行** で、`security/`・`network/`・`oauth/` に
+集中している (`src/renderer/security/vault.ts` 610 行 /
+`src/renderer/network/proxy.ts` 501 行 / `src/renderer/oauth/pkce.ts` 180 行 /
+`src/shared/ai/credentials.ts` 176 行)。内訳と進め方は `docs/REMAINING_WORK.md`。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 
