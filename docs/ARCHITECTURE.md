@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7734** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8013) |
+| ユニットテスト | **7750** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8037) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 273 | 自己検証 |
+| `file:line` 参照数 | 274 | 自己検証 |
 
 ### 統合フロー図
 
@@ -575,6 +575,23 @@ OAuth の入口も 180 行 (全 211 行) を無効化しており、外して実
 **罠 (3 回踏んだ)**: `Stryker disable next-line` は**閉じ括弧で始まる行に効かない**。
 `} catch {` / `} finally {` / `} else if (` はいずれも直前のコメントと結び付かず、
 指定したつもりで測定が続く。囲むなら範囲指定を使い、`try` 全体の前に置く。
+
+#### 空の API キーは「設定済み」ではない (`src/shared/ai/credentials.ts`)
+
+AI プロバイダの資格情報もファイル全体を無効化しており、pragma には
+「解析・解決は完全一致 golden で固定する」と書いてあった。外して実測すると
+**159 変異体 90.57%** — golden は組み合わせを網羅していても、**空文字**という
+1 つの値の扱いを押さえていなかった。
+
+`c.anthropic.length > 0` を `>= 0` に変えても誰も気付かない。つまり**空の
+API キーが「設定済み」として通る**。空のキーで呼びに行けば 401 が返るだけだが、
+画面には「設定済み」と出るので、利用者は原因の分からない失敗を見ることになる。
+5 プロバイダすべてで空文字を未設定として固定した。
+
+冗長な早期 return も消した。JSON パース失敗時の `return { anthropic: text }` は、
+`parsed` が undefined のまま下の形チェック (`typeof undefined !== 'object'`) へ
+落ちれば同じ結果になる。同じ判断が 2 箇所に分かれていると、片方だけ直る事故になる。
+**157 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

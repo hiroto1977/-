@@ -11,7 +11,6 @@
  * 保存内容を壊さずにマルチプロバイダへ移行できる。
  */
 
-// Stryker disable all — 解析・解決は credentials.test.ts の完全一致 golden で
 // 固定する。既定優先順・別名キーは仕様転記であり等価変異が支配的なため。
 
 import {
@@ -67,7 +66,9 @@ export function parseAiCredentials(raw: string | null | undefined): AiCredential
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { anthropic: text };
+    // ここで返さなくてよい — `parsed` が undefined のまま下の形チェックへ落ち、
+    // `typeof undefined !== 'object'` で同じ「生キー扱い」になる。
+    // 早期 return を置くと、同じ判断が 2 箇所に分かれて片方だけ直る事故になる。
   }
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
     // JSON として妥当でもオブジェクトでない ("abc" / 123 等) は生キー扱い。
@@ -187,4 +188,3 @@ export function providerStatuses(c: AiCredentials): AiProviderStatus[] {
     };
   });
 }
-// Stryker restore all
