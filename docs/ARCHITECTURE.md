@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **7972** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8321) |
+| ユニットテスト | **7990** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8350) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 290 | 自己検証 |
+| `file:line` 参照数 | 293 | 自己検証 |
 
 ### 統合フロー図
 
@@ -921,6 +921,70 @@ taxableInputTax: Math.round((accountingTotal * 0.6 * 0.1) / 1.1),
 途中で自分の検査が 12 円ずれて落ちた。`specifiedIncomeRatio` は**表に出す
 ときだけ 4 桁に丸めて**おり、税額の計算には丸める前を使う。丸めたほうを
 掛けると合わない。**30 変異体 100%**、pragma はゼロになった。
+
+#### 「測れない」の理由を検査にする — 速算表の連続性 (`src/shared/taxCalc.ts`)
+
+53 行の無効化を外すと **439 変異体 91.72%**。生存 38 のうち **11 が速算表の
+境界**だった。
+
+```ts
+const bracket = INCOME_TAX_BRACKETS.find((b) => floored <= b.upTo);
+if (grossAnnual <= 1_625_000) return 550_000;
+```
+
+境界を `<` に変えても税額は 1 円も変わらない。調べると理由がはっきりした —
+**日本の速算表は境界で前後の式が一致するように作られている**。控除額の列
+(97,500 / 427,500 / …) はそのために存在する。実測すると 6 つの所得税
+ブラケットも 5 段の給与所得控除も、境界で完全に一致した。
+
+つまり境界の不等号は**原理的に観測できない**。そこで境界を 1 点ずつ突く
+のをやめ、**連続性そのものを検査にした**。
+
+```ts
+it.each(BOUNDARIES)('%d 円ちょうどの前後で控除額が跳ばない', (boundary) => {
+  expect(Math.abs(calcSalaryIncomeDeduction(boundary + 1) - at)).toBeLessThanOrEqual(1);
+});
+```
+
+こちらのほうが実際の危険に近い。**控除額の定数を写し間違えると表が
+不連続になり、この検査が落ちる** — 不等号をどちらに倒したかより、定数を
+間違えるほうがずっと起こりやすい。金額では区別できない境界も、`marginalIncomeTaxRate`
+(ふるさと納税の特例分に効く) では区別できるので、そちらで固定した。
+
+`needsAdvisor` (税理士への個別相談が特に必須、という印) は全 14 件を golden で
+固定した。立て忘れ・立て過ぎのどちらも実害がある。**424 変異体 100%**。
+
+#### 危機応答の本文が消えても誰も気付かなかった (`src/renderer/data/counseling.ts`)
+
+120 行の無効化を外すと **129 変異体 94.57%**。生存の中に、
+**自殺念慮・他害衝動・破壊衝動それぞれの応答本文**が入っていた。
+
+トーン (`crisis` / `harm-other` / `destructive`) と窓口の有無は既に検査して
+あったが、**文章が空になっても検査は全部通る**。画面は壊れず、窓口だけが
+並ぶ。「つらい」と打ち明けた人が最初に読む文章なので、何を伝えるかを
+固定した — 打ち明けたことを受け止める / 一人で抱えないよう促す /
+行動に移す前に場を離れる / 本人を責めない。
+
+`profile.lowStreak >= 3` の閾値も無証明だった。ここは「専門家に頼ることを
+勧め始める」側へ寄せる境目なので、2 日では触れず 3 日で触れる、を 1 日
+ずらして固定した。**129 変異体 100%**。
+
+#### 書き込み操作の確認を促す一文 (`src/renderer/data/chatbot.ts`)
+
+83 行の無効化を外すと **170 変異体 67.06%**。大半はコンシェルジュの案内文
+だが、その中に 1 つだけ機能があった。
+
+```ts
+text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します。` +
+  (needs ? '\n⚠ 書き込み操作のため、実行前に確認してください。' : ''),
+```
+
+`needsConfirmation` の旗は検査されていたが、**画面に理由を書く一文は空に
+しても通った**。旗だけ立てても利用者には見えない。実行する操作名
+(`create-issue`) が本文に出ることと併せて固定した。
+
+残った案内文は **8 つの小さい帯**に分けて除外した (最大 9 行)。ファイル
+全体を黙らせると、この確認の一文も一緒に消える。**115 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

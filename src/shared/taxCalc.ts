@@ -20,7 +20,8 @@ import { yen } from './num';
  * 例: 1,999,999 → 1,999,000 / 2,000,000 → 2,000,000。
  */
 export function floorTaxableThousand(taxableIncome: number): number {
-  // Stryker disable next-line EqualityOperator: 0 で <= と < は同値 (floor(0)=0)。
+  // `<= 0` を `< 0` にしても 0 のとき `Math.floor(0/1000)*1000` = 0 で同じ。
+  // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
   if (taxableIncome <= 0) return 0;
   return Math.floor(taxableIncome / 1_000) * 1_000;
 }
@@ -34,7 +35,6 @@ interface TaxBracket {
   readonly deduction: number; // 速算控除額 (円)
 }
 
-// Stryker disable next-line all
 const INCOME_TAX_BRACKETS: readonly TaxBracket[] = [
   { upTo: 1_950_000, rate: 0.05, deduction: 0 },
   { upTo: 3_300_000, rate: 0.1, deduction: 97_500 },
@@ -67,11 +67,17 @@ export function calcIncomeTax(taxableIncome: number): number {
  * (`floorTaxableThousand`)。国税庁の所得税額の計算手順に準拠。
  */
 export function calcBaseIncomeTax(taxableIncome: number): number {
-  // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 で速算表は 0 を返すため早期returnと同値。
+  // 0 のときは下の速算表でも 0 円になるので、この早期 return は結果を
+  // 変えない (読みやすさのために置いている)。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 での結果が同じ (実測)
   if (taxableIncome <= 0) return 0;
   // 課税される所得金額の 1,000 円未満を切り捨ててから速算表を適用する。
   const floored = floorTaxableThousand(taxableIncome);
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  // 境界を `<` にしても税額は変わらない。速算表の控除額の列が
+  // 「境界で前後の式が一致する」ように作られているためで、実装の緩さでは
+  // ない (`__tests__/taxCalc.test.ts` の連続性の検査を参照)。定数を打ち
+  // 間違えると表が不連続になり、そちらの検査が落ちる。
+  // Stryker disable next-line EqualityOperator: 速算表が境界で連続 (実測・連続性を別途検査)
   const bracket = INCOME_TAX_BRACKETS.find((b) => floored <= b.upTo);
   // Infinity 上限ブラケットが必ず最後に存在するため bracket は常に定義される。
   return Math.max(0, floored * bracket!.rate - bracket!.deduction);
@@ -167,7 +173,7 @@ function resolveIncomeRate(override?: MunicipalityOverride): number {
   // `v === undefined` は `!isFinite(undefined)` で等価 (isFinite(undefined)=false)。
   // ConditionalExpression: `v===undefined` → false は `!isFinite(v)` で等価にカバーされる。
   // EqualityOperator: `v < 0` の境界、0 で false → 0 を通過 (0%自治体=所得割なし)。
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  // Stryker disable next-line ConditionalExpression: `v===undefined` は `!isFinite(v)` と等価
   if (v === undefined || !isFinite(v) || v < 0) return RESIDENT_TAX_RATE;
   return v;
 }
@@ -181,7 +187,7 @@ function resolvePerCapita(override?: MunicipalityOverride): number {
   // `v === undefined` は `!isFinite(undefined)` で等価 (isFinite(undefined)=false)。
   // ConditionalExpression: `v===undefined` → false は `!isFinite(v)` で等価にカバーされる。
   // EqualityOperator: `v < 0` の境界、0 で false → 0 を通過 (期待通り、0円均等割も有効)。
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  // Stryker disable next-line ConditionalExpression: `v===undefined` は `!isFinite(v)` と等価
   if (v === undefined || !isFinite(v) || v < 0) return RESIDENT_TAX_PER_CAPITA;
   return v;
 }
@@ -197,7 +203,7 @@ export function calcResidentTax(taxableIncome: number, override?: MunicipalityOv
   const perCapita = resolvePerCapita(override);
   // `<= 0` → `< 0` は等価: 課税所得 0 のとき所得割 `yen(0 × rate)` = 0 なので
   // どちらの分岐でも結果は perCapita。テストで区別不能なため抑制。
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 では所得割 0 で結果が同じ
   if (taxableIncome <= 0) return perCapita;
   return yen(floorTaxableThousand(taxableIncome) * rate) + perCapita;
 }
@@ -219,7 +225,9 @@ export function calcResidentAdjustmentCredit(
   residentTaxableIncome: number,
   humanDeductionDiff: number,
 ): number {
-  // Stryker disable next-line EqualityOperator,ConditionalExpression: <=0 のガードは計算経路でも 0 を返し同値。
+  // 負の入力で「税額を増やす控除」を返さないための入口 (検査あり)。
+  // `<= 0` → `< 0` は 0 のとき下の式でも 0 になるので観測できない。
+  // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
   if (residentTaxableIncome <= 0 || humanDeductionDiff <= 0) return 0;
   if (residentTaxableIncome > 25_000_000) return 0;
   if (residentTaxableIncome <= 2_000_000) {
@@ -266,7 +274,7 @@ export const CONSUMPTION_TAX_REDUCED = 0.08;
 /** 税抜金額と税率 (0.1 / 0.08) から消費税額を計算する。 */
 export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION_TAX_STANDARD): number {
   // `<= 0` → `< 0` は等価: 税抜 0 のとき `yen(0 × rate)` = 0 でどちらも 0。
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  // Stryker disable next-line EqualityOperator: 0 では税額 0 で結果が同じ
   if (netAmount <= 0) return 0;
   return yen(netAmount * rate);
 }
@@ -281,17 +289,20 @@ export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION
  * 給与等の収入金額 (額面年収) から給与所得控除額を正式テーブルで計算する。
  * 令和2年分以降。
  */
+// 各段の境界を `<` にしても控除額は変わらない。国税庁の表が境界で連続に
+// なるよう作られているためで、実装の緩さではない (連続性は検査で固定して
+// いる)。定数を打ち間違えると不連続になり、そちらが落ちる。
+// Stryker disable EqualityOperator
 export function calcSalaryIncomeDeduction(grossAnnual: number): number {
   if (grossAnnual <= 0) return 0;
-  // Stryker disable EqualityOperator: 給与所得控除の各ブラケット境界は連続で <= と < が同値 (等価変異)。
   if (grossAnnual <= 1_625_000) return 550_000;
   if (grossAnnual <= 1_800_000) return yen(grossAnnual * 0.4 - 100_000);
   if (grossAnnual <= 3_600_000) return yen(grossAnnual * 0.3 + 80_000);
   if (grossAnnual <= 6_600_000) return yen(grossAnnual * 0.2 + 440_000);
   if (grossAnnual <= 8_500_000) return yen(grossAnnual * 0.1 + 1_100_000);
-  // Stryker restore EqualityOperator
   return 1_950_000; // 上限
 }
+// Stryker restore EqualityOperator
 
 // --- 基礎控除 (合計所得金額により逓減, 令和2年分以降) --------------------
 //
@@ -350,7 +361,6 @@ export interface NetSalary {
 export function calcNetSalary(grossAnnual: number): NetSalary {
   // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
   // 等価ミュータントを抑制。
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (grossAnnual <= 0) {
     return {
       gross: 0,
@@ -387,7 +397,9 @@ export function calcFurusatoResidentCredit(
   residentIncomeTaxPortion: number, // 住民税所得割額
   marginalIncomeTaxRate: number, // 所得税の限界税率 (0..0.45)
 ): number {
-  // Stryker disable next-line EqualityOperator: 2,000円境界は連続(控除0)で <= と < が同値。
+  // 自己負担 2,000 円。ちょうど 2,000 円のときは下の式でも
+  // `(2,000-2,000) × …` = 0 になるので、不等号は観測できない。
+  // Stryker disable next-line EqualityOperator: 2,000 ちょうどで結果が同じ (実測)
   if (donation <= 2_000) return 0;
   const base = (donation - 2_000) * 0.1;
   const special = (donation - 2_000) * (0.9 - marginalIncomeTaxRate * (1 + RECONSTRUCTION_SURTAX_RATE));
@@ -509,7 +521,11 @@ export interface TaxTip {
  * と所得しきい値 (>= 9,000,000 / >= 3,300,000) の分岐はテストで pin されている。
  * SESSION_HANDOFF 罠 2 の方針に従い、本体を block-level で Stryker 抑制する。
  */
-// Stryker disable all
+// `id` と、どの所得帯で出すかの閾値は測る (画面がそれで分岐する)。
+// `title` / `note` は案内文なので測らない — 言い回しを変えても間違いに
+// ならないものを固定すると、文章を直すたびに検査が落ちる。
+// 帯はこの関数だけ (13 行)。
+// Stryker disable StringLiteral
 export function suggestTaxTips(taxableIncome: number): readonly TaxTip[] {
   const tips: TaxTip[] = [
     { id: 'ideco', title: 'iDeCo (個人型確定拠出年金)', note: '掛金が全額所得控除。老後資金と節税を両立。' },
@@ -524,7 +540,7 @@ export function suggestTaxTips(taxableIncome: number): readonly TaxTip[] {
   }
   return tips;
 }
-// Stryker restore all
+// Stryker restore StringLiteral
 
 // --- 節税制度カタログ (一般情報の案内のみ) -------------------------------
 
@@ -552,7 +568,6 @@ export interface TaxScheme {
  * とくに `needsAdvisor: true` の制度 (親族間取引・マイクロ法人併用など) は
  * 租税回避と判断されると追徴課税のリスクがあるため、自己判断で実行しないこと。
  */
-// Stryker disable all
 export function taxSchemeCatalog(): readonly TaxScheme[] {
   return [
     // --- 法人 ---
@@ -574,7 +589,6 @@ export function taxSchemeCatalog(): readonly TaxScheme[] {
     { id: 'both-micro-corp', name: 'マイクロ法人の併用', entity: 'both', summary: '個人事業と小規模法人を併用し社会保険料を抑える高度スキーム。実体と税務判断が必須。', needsAdvisor: true },
   ];
 }
-// Stryker restore all
 
 /** カタログから指定の事業形態向け制度を抽出する ('both' は常に含む)。 */
 export function schemesForEntity(entity: 'corporation' | 'sole-proprietor'): readonly TaxScheme[] {
@@ -619,7 +633,6 @@ export interface ComplianceChecklist {
  * 個別の事実関係に依存し、税理士の関与なしに安全と断定できるものではありません。
  * 各項目は広く知られた一般論であり、実行は必ず税理士にご相談ください。
  */
-// Stryker disable all
 export function complianceChecklist(topic: ComplianceTopic): ComplianceChecklist {
   switch (topic) {
     case 'micro-corp':
@@ -665,6 +678,7 @@ export function complianceChecklist(topic: ComplianceTopic): ComplianceChecklist
           { id: 'in-blue', requirement: '法人でも青色申告の承認申請を期限内に出す', why: '欠損金繰越等の優遇は青色が前提' },
         ],
       };
+    // Stryker disable next-line ConditionalExpression,BlockStatement: 型で到達不能を保証している網羅性チェック
     default: {
       // 網羅性チェック (到達不能)。
       const _exhaustive: never = topic;
@@ -672,7 +686,6 @@ export function complianceChecklist(topic: ComplianceTopic): ComplianceChecklist
     }
   }
 }
-// Stryker restore all
 
 /** すべてのチェックリストのトピック一覧 (UI のタブ用)。 */
 export const COMPLIANCE_TOPICS: readonly ComplianceTopic[] = [

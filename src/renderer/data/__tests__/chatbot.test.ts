@@ -227,3 +227,81 @@ describe('replyTo', () => {
     expect(r.suggestions.length).toBeGreaterThan(0);
   });
 });
+
+// --- 実行前の確認と、押せる選択肢 --------------------------------------
+//
+// 応答の文面の大半は案内文だが、以下は文面そのものが機能である。
+// 消えても画面は壊れないので、目視でしか気付けない。
+
+describe('replyTo — 文面のうち機能になっている部分', () => {
+  it('書き込み操作には実行前の確認を促す一文を必ず付ける', () => {
+    const r = replyTo('githubでissueを作って', CTX);
+    expect(r.needsConfirmation).toBe(true);
+    // 旗を立てるだけでなく、画面に理由を書く。
+    expect(r.text).toContain('書き込み操作のため、実行前に確認してください');
+  });
+
+  it('実行する操作名を本文に出す（何をするのか分かるように）', () => {
+    const r = replyTo('githubでissueを作って', CTX);
+    expect(r.text).toContain('create-issue');
+    expect(r.text).toContain('GitHub');
+  });
+
+  it('どの応答にも押せる選択肢を返す（行き止まりを作らない）', () => {
+    const cases = [
+      'githubでissueを作って', // action
+      '税務試算を開いて', // navigate
+      '税務試算って何？', // service-info
+      '何ができる？', // help
+      '組織の体制を教えて', // org
+      '新しい機能が欲しい', // request
+      'あああ', // fallback
+    ];
+    for (const q of cases) {
+      const r = replyTo(q, CTX);
+      expect(r.suggestions.length).toBeGreaterThan(0);
+      expect(r.suggestions.every((s) => s.length > 0)).toBe(true);
+    }
+  });
+
+  it('できること一覧では冒頭 5 件だけを例に挙げる', () => {
+    const ids: readonly ChatService['id'][] = [
+      'home', 'github', 'wordpress', 'notion', 'drive',
+      'calendar', 'gmail', 'slack', 'canva',
+    ];
+    const many: ChatContext = {
+      ...CTX,
+      services: ids.map((id, i) => ({ id, label: `サービス${i}`, description: 'd' })),
+    };
+    const r = replyTo('何ができる？', many);
+    expect(r.text).toContain('9 のサービス');
+    expect(r.text).toContain('サービス0 / サービス1 / サービス2 / サービス3 / サービス4');
+    expect(r.text).not.toContain('サービス5');
+  });
+});
+
+describe('replyTo — 選択肢と分岐の取りこぼし', () => {
+  it('相談・手取り計算の応答にも押せる選択肢を返す', () => {
+    for (const q of ['疲れた、何もしたくない', '額面40万の手取りは？']) {
+      const r = replyTo(q, CTX);
+      expect(r.suggestions.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('要望の控えは前後の空白を落として引用する', () => {
+    const r = replyTo('   もっと速いグラフが欲しい   ', CTX);
+    expect(r.kind).toBe('request');
+    expect(r.text).toContain('「もっと速いグラフが欲しい」');
+  });
+
+  it('知らないサービスへの質問はフォールバックする（説明を作らない）', () => {
+    const slim: ChatContext = { ...CTX, services: [] };
+    const r = replyTo('税務試算って何？', slim);
+    expect(r.kind).toBe('fallback');
+  });
+
+  it('質問と移動を取り違えない', () => {
+    expect(replyTo('税務試算って何？', CTX).kind).toBe('service-info');
+    expect(replyTo('税務試算を開いて', CTX).kind).toBe('navigate');
+  });
+});

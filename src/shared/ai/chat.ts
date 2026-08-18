@@ -9,7 +9,6 @@
  * エラー本文は `redactSecrets` で秘匿してから表面化する (jsonFetch と同じ規律)。
  */
 
-// Stryker disable all — I/O 逐次処理。分岐は chat.test.ts が実レスポンスの
 // golden で固定する。
 
 import { redactSecrets } from '../redact';
@@ -66,4 +65,3 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
   }
   return { text, model, provider: spec.id };
 }
-// Stryker restore all

@@ -755,3 +755,104 @@ describe('calcResidentTax — MunicipalityOverride (自治体オーバーライ�
     );
   });
 });
+
+// --- 速算表の連続性 ----------------------------------------------------
+//
+// 境界を `<=` から `<` に変えても税額が変わらない。これは実装の緩さでは
+// なく、**速算表がそう作られている**からである (控除額の列は、境界で
+// 前後の式が一致するように決まっている)。
+//
+// つまり境界の不等号は測れない。代わりに「なぜ測れないのか」＝連続性
+// そのものを検査にした。控除額の定数を打ち間違えると表が不連続になり、
+// ここが落ちる。境界を 1 点ずつ突くより、こちらのほうが実際の危険
+// (定数の写し間違い) に近い。
+
+
+describe('所得税の速算表は境界で連続している', () => {
+  const BOUNDARIES = [1_950_000, 3_300_000, 6_950_000, 9_000_000, 18_000_000, 40_000_000];
+
+  it.each(BOUNDARIES)('%d 円ちょうどの前後で税額が跳ばない', (boundary) => {
+    // 課税所得は 1,000 円未満切捨てなので、境界を跨ぐ最小の一歩は 1,000 円。
+    const at = calcBaseIncomeTax(boundary);
+    const over = calcBaseIncomeTax(boundary + 1_000);
+    const under = calcBaseIncomeTax(boundary - 1_000);
+
+    expect(at).toBeGreaterThan(under);
+    expect(over).toBeGreaterThan(at);
+    // 跳びが無い = 1,000 円ぶんの増分が、上下の税率で挟まれた範囲に収まる
+    const stepUp = over - at;
+    const stepDown = at - under;
+    expect(stepUp).toBeGreaterThanOrEqual(stepDown);
+    expect(stepUp).toBeLessThanOrEqual(1_000 * 0.45);
+  });
+
+  it('境界ちょうどは低いほうの税率で計算する', () => {
+    // 195 万ちょうど → 5% ブラケット。表が連続なので金額では区別できないが、
+    // 限界税率は区別できる (ふるさと納税の特例分の計算に効く)。
+    expect(marginalIncomeTaxRate(1_950_000)).toBe(0.05);
+    expect(marginalIncomeTaxRate(1_951_000)).toBe(0.1);
+    expect(marginalIncomeTaxRate(40_000_000)).toBe(0.4);
+    expect(marginalIncomeTaxRate(40_001_000)).toBe(0.45);
+  });
+});
+
+describe('給与所得控除の表は境界で連続している', () => {
+  const BOUNDARIES = [1_625_000, 1_800_000, 3_600_000, 6_600_000, 8_500_000];
+
+  it.each(BOUNDARIES)('%d 円ちょうどの前後で控除額が跳ばない', (boundary) => {
+    const at = calcSalaryIncomeDeduction(boundary);
+    const over = calcSalaryIncomeDeduction(boundary + 1);
+    const under = calcSalaryIncomeDeduction(boundary - 1);
+    // 1 円動かしたら控除も 1 円以内しか動かない = 段差が無い
+    expect(Math.abs(over - at)).toBeLessThanOrEqual(1);
+    expect(Math.abs(at - under)).toBeLessThanOrEqual(1);
+  });
+
+  it('各区分の代表値を国税庁の表と突き合わせる', () => {
+    // 定数を打ち間違えると連続性の検査は通っても値がずれるので、
+    // 区分ごとの代表値も固定する。
+    expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(1_800_000)).toBe(620_000);
+    expect(calcSalaryIncomeDeduction(3_600_000)).toBe(1_160_000);
+    expect(calcSalaryIncomeDeduction(6_600_000)).toBe(1_760_000);
+    expect(calcSalaryIncomeDeduction(8_500_000)).toBe(1_950_000);
+    expect(calcSalaryIncomeDeduction(20_000_000)).toBe(1_950_000); // 上限で頭打ち
+  });
+});
+
+// --- 入力ガード --------------------------------------------------------
+
+describe('calcResidentAdjustmentCredit — 負の入力', () => {
+  it('課税所得が負なら控除は 0 (マイナスの控除を返さない)', () => {
+    // 入口で弾かないと `min(人的控除差, 課税所得) × 5%` が負になり、
+    // 「控除なのに税額を増やす」値が返る。
+    expect(calcResidentAdjustmentCredit(-100, 50_000)).toBe(0);
+    expect(calcResidentAdjustmentCredit(-1, 1)).toBe(0);
+  });
+});
+
+// --- 節税カタログの「税理士必須」表示 ----------------------------------
+
+describe('taxSchemeCatalog — needsAdvisor', () => {
+  it('個別相談が必須の制度だけに印を付ける', () => {
+    // この旗は「自己判断で実行しないこと」を利用者へ伝えるためのもの。
+    // 立て忘れ・立て過ぎのどちらも実害があるので、全件を固定する。
+    const flags = Object.fromEntries(taxSchemeCatalog().map((s) => [s.id, s.needsAdvisor]));
+    expect(flags).toEqual({
+      'corp-bankruptcy-kyosai': false,
+      'corp-officer-salary': false,
+      'corp-company-housing': true,
+      'corp-investment-tax': false,
+      'corp-bonus': false,
+      'sp-blue': false,
+      'sp-family-salary': true,
+      'sp-small-depreciation': false,
+      'sp-loss-carryover': false,
+      'both-small-biz-kyosai': false,
+      'both-ideco': false,
+      'both-furusato': false,
+      'both-incorporation': true,
+      'both-micro-corp': true,
+    });
+  });
+});

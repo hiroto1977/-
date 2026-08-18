@@ -68,7 +68,6 @@ export interface CounselInput {
 //
 // 高精度の希死念慮・自傷の語。安全側に倒すため網羅的に持つが、日常語との衝突が
 // 少ない明確な表現に限定する。文面 (StringLiteral) は罠#2 に従い block-disable。
-// Stryker disable all
 /**
  * 危機を示す語 (正規化後の表記に対する部分一致)。
  *
@@ -188,7 +187,6 @@ export const SUPPORT_RESOURCES: readonly SupportResource[] = [
   { label: 'こころの健康相談統一ダイヤル', detail: '0570-064-556（公的機関の相談窓口へ接続）' },
   { label: '緊急時', detail: '生命の危険が迫っているときは 119（救急）/ 110（警察）へ' },
 ];
-// Stryker restore all
 
 const CRISIS_DISCLAIMER =
   '※ 私はあなたの気持ちに寄り添うためのものですが、専門的な医療・心理的ケアの代わりにはなれません。' +
@@ -230,7 +228,7 @@ export function classifyTone(
   input: CounselInput,
 ): Exclude<CounselTone, 'crisis' | 'harm-other' | 'destructive'> {
   // `?? ''` の既定値は、後続の比較がいずれも空文字に一致しないため観測不能 (等価)。
-  // Stryker disable next-line StringLiteral
+  // Stryker disable next-line StringLiteral: 後続の比較が空文字に一致しない (等価)
   const dominant = (input.dominant ?? '').toLowerCase();
   if (dominant === 'fear' || dominant === 'anxiety' || input.dominant === '不安') {
     return 'soothe-anxiety';
@@ -241,7 +239,7 @@ export function classifyTone(
   if (input.sentiment === 'negative') return 'comfort';
   // `input.score !== undefined` ガードは TS の undefined 比較回避のためで、実行時は
   // `undefined <= 2` / `undefined >= 4` がいずれも false のため → true への変異は等価。
-  // Stryker disable next-line ConditionalExpression
+  // Stryker disable next-line ConditionalExpression: `undefined <= 2` が false なので undefined ガードは等価
   if (input.score !== undefined && input.score <= 2) return 'comfort';
   // メタデータが無い自由文は、発話の手がかり語からトーンを推定する
   // (研究ループの発見: 無いと gentle に落ちすぎる)。優先: 怒り > 不安 > 悲しみ。
@@ -250,14 +248,13 @@ export function classifyTone(
   if (matchesAny(input.note, NOTE_SADNESS_MARKERS)) return 'comfort';
   if (input.sentiment === 'positive') return 'celebrate';
   if (matchesAny(input.note, NOTE_POSITIVE_MARKERS)) return 'celebrate';
-  // Stryker disable next-line ConditionalExpression
+  // Stryker disable next-line ConditionalExpression: `undefined >= 4` が false なので undefined ガードは等価
   if (input.score !== undefined && input.score >= 4) return 'celebrate';
   return 'gentle';
 }
 
 // 共感メッセージ・提案の文面はトーン別の固定文 (表現)。trigger/streak の差し込み
 // ロジックは下の counsel で行い、テストで分岐を担保する。
-// Stryker disable all
 const TONE_MESSAGE: Record<Exclude<CounselTone, 'crisis' | 'harm-other' | 'destructive'>, string> = {
   comfort:
     'いま、つらい気持ちを抱えているのですね。そう感じるのは自然なことで、あなたが弱いからではありません。ここで少し、肩の力を抜いてみましょう。',
@@ -283,7 +280,6 @@ const TONE_SUGGESTION: Record<Exclude<CounselTone, 'crisis' | 'harm-other' | 'de
   gentle:
     'もしよければ、その気持ちに名前をつけてみましょう。言葉にすると、少し扱いやすくなることがあります。',
 };
-// Stryker restore all
 
 /**
  * 入力に寄り添うカウンセリング応答を組み立てる (純粋・決定論的)。
@@ -291,7 +287,6 @@ const TONE_SUGGESTION: Record<Exclude<CounselTone, 'crisis' | 'harm-other' | 'de
  */
 export function counsel(input: CounselInput): CounselResponse {
   if (detectCrisis(input.note)) {
-    // Stryker disable all — 文面は表現。構造 (tone/isCrisis/resources) はテストで固定。
     return {
       tone: 'crisis',
       isCrisis: true,
@@ -303,11 +298,9 @@ export function counsel(input: CounselInput): CounselResponse {
       resources: SUPPORT_RESOURCES,
       disclaimer: CRISIS_DISCLAIMER,
     };
-    // Stryker restore all
   }
 
   if (detectHarmToOthers(input.note)) {
-    // Stryker disable all — 文面は表現。構造はテストで固定。
     return {
       tone: 'harm-other',
       isCrisis: false,
@@ -319,11 +312,9 @@ export function counsel(input: CounselInput): CounselResponse {
       resources: SUPPORT_RESOURCES,
       disclaimer: CARE_DISCLAIMER,
     };
-    // Stryker restore all
   }
 
   if (detectDestructiveUrge(input.note)) {
-    // Stryker disable all — 文面は表現。構造はテストで固定。
     return {
       tone: 'destructive',
       isCrisis: false,
@@ -334,7 +325,6 @@ export function counsel(input: CounselInput): CounselResponse {
       resources: [],
       disclaimer: CARE_DISCLAIMER,
     };
-    // Stryker restore all
   }
 
   const tone = classifyTone(input); // crisis を返さない (型で保証)
