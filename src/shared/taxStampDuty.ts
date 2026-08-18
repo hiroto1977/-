@@ -65,7 +65,6 @@ export interface StampBracket {
  * 法定の固定値テーブルのため block-level で Stryker を抑制する (根拠: 値は
  * 法令で固定。ルックアップの境界・振る舞いは `stampDutyAmount` とテストで全面検証)。
  */
-// Stryker disable all
 export const DOC1_DOC2_BRACKETS: readonly StampBracket[] = [
   { upTo: 9_999, duty: 0 }, // 1万円未満 = 非課税
   { upTo: 100_000, duty: 200 }, // 10万円以下
@@ -80,7 +79,6 @@ export const DOC1_DOC2_BRACKETS: readonly StampBracket[] = [
   { upTo: 5_000_000_000, duty: 400_000 }, // 50億円以下
   { upTo: Infinity, duty: 600_000 }, // 50億円超
 ];
-// Stryker restore all
 
 /**
  * 第17号文書 (売上代金に係る金銭の受取書 = 領収書) の本則印紙税額階段表。
@@ -90,7 +88,6 @@ export const DOC1_DOC2_BRACKETS: readonly StampBracket[] = [
  *
  * 法定の固定値テーブルのため block-level で Stryker を抑制する。
  */
-// Stryker disable all
 export const RECEIPT_BRACKETS: readonly StampBracket[] = [
   { upTo: 49_999, duty: 0 }, // 5万円未満 = 非課税
   { upTo: 1_000_000, duty: 200 }, // 100万円以下
@@ -108,7 +105,6 @@ export const RECEIPT_BRACKETS: readonly StampBracket[] = [
   { upTo: 1_000_000_000, duty: 150_000 }, // 10億円以下
   { upTo: Infinity, duty: 200_000 }, // 10億円超
 ];
-// Stryker restore all
 
 /**
  * 階段表ルックアップ。`amount` を含む最初の「`amount <= upTo`」区間の税額を返す。

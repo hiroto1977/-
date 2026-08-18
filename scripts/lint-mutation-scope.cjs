@@ -63,21 +63,16 @@ const KNOWN_BROAD = {
   'src/main/oauth.ts':                           { regions: 1, lines:   55 },
   'src/renderer/data/chatbot.ts':                { regions: 1, lines:   83 },
   'src/renderer/data/counseling.ts':             { regions: 1, lines:  120 },
-  'src/renderer/data/counselingResearch.ts':     { regions: 1, lines:   78 },
-  'src/renderer/data/selfCareLibrary.ts':        { regions: 1, lines:   84 },
   'src/renderer/data/voiceCommand.ts':           { regions: 1, lines:   77 },
   'src/renderer/fs/fsa.ts':                      { regions: 1, lines:  128 },
   'src/renderer/library/library.ts':             { regions: 1, lines:  217 },
   'src/renderer/security/autoLock.ts':           { regions: 1, lines:   85 },
   'src/shared/ai/chat.ts':                       { regions: 1, lines:   57 },
-  'src/shared/connectors/connectorCatalog.ts':   { regions: 1, lines:  126 },
   'src/shared/dbSecurityPosture.ts':             { regions: 1, lines:   59 },
   'src/shared/securityRange.ts':                 { regions: 1, lines:   31 },
   'src/shared/taxCalc.ts':                       { regions: 1, lines:   53 },
   'src/shared/taxCorporate.ts':                  { regions: 1, lines:   55 },
-  'src/shared/taxGift.ts':                       { regions: 1, lines:   53 },
   'src/shared/taxSocialInsurance.ts':            { regions: 1, lines:  106 },
-  'src/shared/welfareDocs.ts':                   { regions: 2, lines:   77 },
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;

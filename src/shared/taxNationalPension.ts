@@ -20,7 +20,6 @@
 
 // --- 制度上の固定値 (令和7年度) ----------------------------------------------
 //
-// Stryker disable all : 制度上の固定値 (令和7年度の保険料月額)。これらの定数
 // リテラル自体を書き換える変異は「別年度の制度値を表す別モジュール」であり、本
 // モジュールが表現する令和7年度の制度とは等価でない (テストは月額・付加額を実値
 // で pin しており、定数を経由した算定結果も実値テストで撃墜される)。
@@ -39,7 +38,6 @@ export const NATIONAL_PENSION_MONTHLY = 17_510;
  */
 export const ADDITIONAL_PENSION_MONTHLY = 400;
 
-// Stryker restore all
 
 /**
  * 国民年金保険料の免除区分 (ホワイトリスト)。各区分の **納付割合** は次のとおり:
@@ -61,7 +59,6 @@ export type ExemptionLevel =
   | 'full'
   | 'studentOrDeferral';
 
-// Stryker disable all : 免除区分→納付割合の写像テーブル (制度上の固定値)。各
 // リテラルの書き換えは「別の納付割合を表す別制度」であり等価でない。全区分の
 // 納付割合は paymentRatio の実値テストで個別に pin して撃墜する。
 const PAYMENT_RATIO: Readonly<Record<ExemptionLevel, number>> = {
@@ -72,7 +69,6 @@ const PAYMENT_RATIO: Readonly<Record<ExemptionLevel, number>> = {
   full: 0,
   studentOrDeferral: 0,
 };
-// Stryker restore all
 
 /**
  * 免除区分から **納付割合** を返す純粋写像。

@@ -37,7 +37,6 @@ import { assertNonNegativeFinite, yen } from './num';
 //   基礎控除額 = 3,000 万円 + 600 万円 × 法定相続人の数
 // 法定相続人の数は 1 以上の整数。
 
-// Stryker disable all : 以下は基礎控除の法定の固定値 (相続税法 15 条)。
 // 数値そのものの変異 (3,000 万 → 別額、600 万 → 別額) は税法の改定であって
 // 「正しい値」を pin しても等価/トートロジー変異になりやすい。基礎控除の
 // 算式 (定額 + 比例) と人数の入力検証は下の関数のテストで実値撃墜する。
@@ -47,7 +46,6 @@ export const INHERITANCE_BASIC_DEDUCTION_FIXED = 30_000_000;
 /** 基礎控除の法定相続人 1 人あたりの加算額 (600 万円)。 */
 export const INHERITANCE_BASIC_DEDUCTION_PER_HEIR = 6_000_000;
 
-// Stryker restore all
 
 /**
  * 相続税の基礎控除額を計算する。
@@ -88,7 +86,6 @@ export interface InheritanceTaxBracket {
   readonly deduction: number;
 }
 
-// Stryker disable all : 以下は相続税の速算表 (相続税法 16 条) の法定リテラル定義。
 // 税率・控除額・区分上限はいずれも税法上の固定値であり、リテラル変異は税法の
 // 改定であってテストで「正しい値」を pin しても等価変異になりやすい。どの区分を
 // どの取得金額に当てるか・税額の算式・境界比較は inheritanceTaxOnShare の実値/
@@ -116,7 +113,6 @@ export const INHERITANCE_TAX_BRACKETS: readonly InheritanceTaxBracket[] = [
   { upTo: Infinity, rate: 0.55, deduction: 72_000_000 },
 ];
 
-// Stryker restore all
 
 /**
  * 速算表で「各法定相続人の取得金額」1 人分の相続税額を計算する。

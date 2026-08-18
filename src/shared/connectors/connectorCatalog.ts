@@ -43,7 +43,6 @@ import type { ServiceId } from '../serviceId';
 // テストで全面検証される。よってこのテーブルは block-level で Stryker 変異から
 // 除外する (文字列リテラル等の変異は等価で低シグナル)。
 //
-// Stryker disable all
 /**
  * 既存サービス間の具体コネクタ宣言。各 `sourceService` / `targetService` は
  * 必ず実在 {@link ServiceId} (起動時に {@link CATALOG_REGISTRY} が検証する)。
@@ -169,7 +168,6 @@ export const CONNECTOR_CATALOG: readonly Connector[] = [
     description: 'Outlook の直近メール (件名/差出人) をローカルストレージへ書き出す',
   },
 ];
-// Stryker restore all
 
 // --- レジストリ (起動時不変条件) -----------------------------------------
 
