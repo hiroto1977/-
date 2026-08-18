@@ -1597,3 +1597,302 @@ describe('assertHttpsTokenUrl (RFC 8252 §8.3 — トークン交換を平文で
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });
+
+// ===== OAUTH_CONFIGS の完全一致 golden (2026-08 変異検査) ==================
+//
+// `oauth.ts` の無効化を外して実測すると **394 変異体・70.05%・生存 117**。
+// そのうち **103 件がこの設定表**にあった。既存の検査は主要サービスの
+// 一部フィールドを `toMatchObject` (部分一致) で見ていたため、
+// 触れていないサービス / フィールドは丸ごと素通りしていた。
+//
+// この表は **利用者の認可がどこへ送られるか**を決める。`authorizeUrl` を
+// 空にしても、`scopes` を減らしても、`pkce` を反転させても、誰も気付かない
+// 状態だった。仕様転記のデータなので、**完全一致 golden** が正しい道具である。
+//
+// `clientId` / `clientSecret` は env 由来なので値そのものは比較せず、
+// 「文字列であること」(=`?? ''` が効いていること) を別に確かめる。
+// ===== 残りの穴 (2026-08 変異検査) ======================================
+
+describe('トークン交換の Basic 認証ヘッダー', () => {
+  it('Basic <base64(clientId:clientSecret)> をそのまま組み立てる', () => {
+    const headers = buildTokenRequestHeaders({
+      authorizeUrl: 'https://x.example/a',
+      tokenUrl: 'https://x.example/t',
+      clientId: 'the-id',
+      clientSecret: 'the-secret',
+      clientAuth: 'basic',
+      scopes: [],
+    });
+    const expected = `Basic ${Buffer.from('the-id:the-secret', 'utf8').toString('base64')}`;
+    expect(headers.Authorization).toBe(expected);
+    // 前置きの "Basic " が消えると相手は認証方式を判別できない。
+    expect(headers.Authorization?.startsWith('Basic ')).toBe(true);
+  });
+
+  it('clientSecret 未設定でも id: の形で組み立てる', () => {
+    const headers = buildTokenRequestHeaders({
+      authorizeUrl: 'https://x.example/a',
+      tokenUrl: 'https://x.example/t',
+      clientId: 'the-id',
+      clientAuth: 'basic',
+      scopes: [],
+    });
+    expect(headers.Authorization).toBe(`Basic ${Buffer.from('the-id:', 'utf8').toString('base64')}`);
+  });
+
+  it('basic 以外では Authorization を付けない', () => {
+    const headers = buildTokenRequestHeaders({
+      authorizeUrl: 'https://x.example/a',
+      tokenUrl: 'https://x.example/t',
+      clientId: 'the-id',
+      clientSecret: 's',
+      clientAuth: 'body',
+      scopes: [],
+    });
+    expect('Authorization' in headers).toBe(false);
+  });
+});
+
+describe('ループバックサーバの結び先と応答本文', () => {
+  // これらはモジュール読み込み時に決まる値 / 定数なので、先頭で import した
+  // ものを見ていると変異体が素通りする。読み直してから確かめる。
+  async function freshListen(): Promise<typeof listenForCallback> {
+    vi.resetModules();
+    const mod = (await import('../oauth')) as unknown as { listenForCallback: typeof listenForCallback };
+    return mod.listenForCallback;
+  }
+
+  // `listen(0, '127.0.0.1')` の第 2 引数が消えると全インタフェース (0.0.0.0) で
+  // 待ち受けることになり、同一ネットワークの別ホストから OAuth コールバック口が
+  // 見える。サーバを外へ出していないので、**渡した引数を直接見る**。
+  it('ループバックにだけ結ぶ (listen の host 引数を見る)', async () => {
+    const http = await import('node:http');
+    const proto = http.Server.prototype as unknown as { listen: (...a: unknown[]) => unknown };
+    const original = proto.listen;
+    const hosts: unknown[] = [];
+    proto.listen = function patched(this: unknown, ...args: unknown[]) {
+      hosts.push(args[1]);
+      return original.apply(this, args);
+    };
+    try {
+      const listen = await freshListen();
+      const listener = listen('bind-check-state-0123456789');
+      await listener.port();
+      expect(hosts).toContain('127.0.0.1');
+      listener.cancel();
+      await listener.catch(() => undefined);
+    } finally {
+      proto.listen = original;
+    }
+  });
+
+  it('認証完了ページの中身を返す (定数が空になっていない)', async () => {
+    const listen = await freshListen();
+    const STATE = 'html-check-state-0123456789';
+    const listener = listen(STATE);
+    const port = await listener.port();
+    const body = await new Promise<string>((resolve, reject) => {
+      const http = require('node:http') as typeof import('node:http');
+      const req = http.request(
+        { host: '127.0.0.1', port, path: `/oauth/callback?code=c&state=${STATE}` },
+        (res) => {
+          let buf = '';
+          res.on('data', (d) => { buf += String(d); });
+          res.on('end', () => resolve(buf));
+        },
+      );
+      req.on('error', reject);
+      req.end();
+    });
+    expect(body).toContain('<!doctype html>');
+    expect(body).toContain('認証完了');
+    expect(body).toContain('Service Hub');
+    expect(body.length).toBeGreaterThan(200);
+    await listener;
+  });
+});
+
+describe('OAUTH_CONFIGS — 全サービス完全一致 (golden)', () => {
+  /** env 由来の項目を落とした比較用の形。 */
+  function withoutSecrets(cfg: Record<string, unknown>): Record<string, unknown> {
+    const { clientId: _id, clientSecret: _sec, ...rest } = cfg;
+    return rest;
+  }
+
+  const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';
+  const GOOGLE_TOKEN = 'https://oauth2.googleapis.com/token';
+  const GOOGLE_EXTRA = { access_type: 'offline', prompt: 'consent' };
+
+  const EXPECTED: Record<string, Record<string, unknown>> = {
+    drive: {
+      authorizeUrl: GOOGLE_AUTH,
+      tokenUrl: GOOGLE_TOKEN,
+      scopes: ['https://www.googleapis.com/auth/drive'],
+      extraAuthParams: GOOGLE_EXTRA,
+    },
+    calendar: {
+      authorizeUrl: GOOGLE_AUTH,
+      tokenUrl: GOOGLE_TOKEN,
+      scopes: [
+        'https://www.googleapis.com/auth/calendar',
+        'https://www.googleapis.com/auth/calendar.events',
+      ],
+      extraAuthParams: GOOGLE_EXTRA,
+    },
+    gmail: {
+      authorizeUrl: GOOGLE_AUTH,
+      tokenUrl: GOOGLE_TOKEN,
+      scopes: [
+        'https://www.googleapis.com/auth/gmail.modify',
+        'https://www.googleapis.com/auth/gmail.compose',
+      ],
+      extraAuthParams: GOOGLE_EXTRA,
+    },
+    freee: {
+      authorizeUrl: 'https://accounts.secure.freee.co.jp/public_api/authorize',
+      tokenUrl: 'https://accounts.secure.freee.co.jp/public_api/token',
+      scopes: ['read'],
+    },
+    'microsoft-365': {
+      authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      scopes: [
+        'User.Read',
+        'Mail.Read',
+        'Mail.Send',
+        'Calendars.Read',
+        'Calendars.ReadWrite',
+        'offline_access',
+      ],
+    },
+    slack: {
+      authorizeUrl: 'https://slack.com/oauth/v2/authorize',
+      tokenUrl: 'https://slack.com/api/oauth.v2.access',
+      scopeDelimiter: ',',
+      scopes: ['channels:read', 'groups:read', 'team:read', 'chat:write'],
+      extraAuthParams: { user_scope: '' },
+    },
+    notion: {
+      authorizeUrl: 'https://api.notion.com/v1/oauth/authorize',
+      tokenUrl: 'https://api.notion.com/v1/oauth/token',
+      clientAuth: 'basic',
+      tokenBodyFormat: 'json',
+      pkce: false,
+      scopes: [],
+      extraAuthParams: { owner: 'user' },
+      extraTokenHeaders: { 'Notion-Version': '2022-06-28' },
+    },
+    canva: {
+      authorizeUrl: 'https://www.canva.com/api/oauth/authorize',
+      tokenUrl: 'https://api.canva.com/rest/v1/oauth/token',
+      clientAuth: 'basic',
+      scopes: ['design:meta:read', 'folder:write'],
+    },
+    wordpress: {
+      authorizeUrl: 'https://public-api.wordpress.com/oauth2/authorize',
+      tokenUrl: 'https://public-api.wordpress.com/oauth2/token',
+      clientAuth: 'body',
+      pkce: false,
+      scopes: ['global'],
+    },
+    atlassian: {
+      authorizeUrl: 'https://auth.atlassian.com/authorize',
+      tokenUrl: 'https://auth.atlassian.com/oauth/token',
+      clientAuth: 'body',
+      pkce: false,
+      scopes: ['read:jira-work', 'offline_access'],
+      extraAuthParams: { audience: 'api.atlassian.com', prompt: 'consent' },
+    },
+  };
+
+  // **モジュールを読み直してから比較する。** この表はモジュール読み込み時に
+  // 一度だけ評価されるので、先頭で import した値を見ていると、表を書き換える
+  // 変異体が「評価済みの古い値」と比較されて素通りする (Stryker の static
+  // mutant)。`vi.resetModules()` + 動的 import で毎回評価し直す。
+  async function freshConfigs(): Promise<Record<string, Record<string, unknown>>> {
+    vi.resetModules();
+    const mod = (await import('../oauth')) as unknown as {
+      OAUTH_CONFIGS: Record<string, Record<string, unknown>>;
+    };
+    return mod.OAUTH_CONFIGS;
+  }
+
+  it('登録されているサービスの一覧が一致する (増減を見逃さない)', async () => {
+    expect(Object.keys(await freshConfigs()).sort()).toEqual(Object.keys(EXPECTED).sort());
+  });
+
+  for (const [svc, expected] of Object.entries(EXPECTED)) {
+    it(`${svc}: 設定が完全一致する`, async () => {
+      const cfg = (await freshConfigs())[svc];
+      expect(cfg).toBeDefined();
+      expect(withoutSecrets(cfg ?? {})).toEqual(expected);
+    });
+
+    // env 未設定のとき `?? ''` が効いて**空文字**になること。「文字列である」
+    // だけでは、既定値を別の文字列に変えても素通りする。
+    it(`${svc}: env 未設定の clientId は空文字`, async () => {
+      const cfg = (await freshConfigs())[svc];
+      expect(cfg?.clientId).toBe('');
+    });
+  }
+
+  it('client_secret を持つサービスは env 未設定なら空文字', async () => {
+    const cfgs = await freshConfigs();
+    for (const svc of ['notion', 'canva', 'wordpress', 'atlassian']) {
+      expect(cfgs[svc]?.clientSecret, svc).toBe('');
+    }
+  });
+
+  // env を設定すればその値が通ること。`?? ''` を `&& ''` にする変異体は
+  // ここで落ちる (設定済みでも空文字になってしまうため)。
+  it('env を設定するとその値が clientId に入る', async () => {
+    const KEY = 'GOOGLE_OAUTH_CLIENT_ID';
+    const prev = process.env[KEY];
+    process.env[KEY] = 'test-client-id-123';
+    try {
+      const cfgs = await freshConfigs();
+      expect(cfgs.drive?.clientId).toBe('test-client-id-123');
+      expect(cfgs.calendar?.clientId).toBe('test-client-id-123');
+      expect(cfgs.gmail?.clientId).toBe('test-client-id-123');
+    } finally {
+      if (prev === undefined) delete process.env[KEY]; else process.env[KEY] = prev;
+    }
+  });
+
+  it('env を設定するとその値が clientSecret に入る', async () => {
+    const KEY = 'CANVA_OAUTH_CLIENT_SECRET';
+    const prev = process.env[KEY];
+    process.env[KEY] = 'test-secret-456';
+    try {
+      expect((await freshConfigs()).canva?.clientSecret).toBe('test-secret-456');
+    } finally {
+      if (prev === undefined) delete process.env[KEY]; else process.env[KEY] = prev;
+    }
+  });
+
+  // client_secret を要求するのはどれか、を表そのものから固定する。
+  // ここが狂うと「秘密を送らない public client」に秘密を送る / 逆に
+  // 送るべき相手に送らない、のどちらかになる。
+  it('client_secret を使うのは basic / body のサービスだけ', async () => {
+    const withSecret = Object.entries(await freshConfigs())
+      .filter(([, c]) => c?.clientAuth === 'basic' || c?.clientAuth === 'body')
+      .map(([k]) => k)
+      .sort();
+    expect(withSecret).toEqual(['atlassian', 'canva', 'notion', 'wordpress']);
+  });
+
+  it('PKCE を使わないのは仕様上非対応の 3 つだけ', async () => {
+    const noPkce = Object.entries(await freshConfigs())
+      .filter(([, c]) => c?.pkce === false)
+      .map(([k]) => k)
+      .sort();
+    expect(noPkce).toEqual(['atlassian', 'notion', 'wordpress']);
+  });
+
+  it('すべての authorizeUrl / tokenUrl が https', async () => {
+    for (const [svc, c] of Object.entries(await freshConfigs())) {
+      expect(String(c.authorizeUrl).startsWith('https://'), svc).toBe(true);
+      expect(String(c.tokenUrl).startsWith('https://'), svc).toBe(true);
+    }
+  });
+});

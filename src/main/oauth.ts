@@ -359,6 +359,8 @@ export function buildTokenRequestHeaders(config: OAuthConfig): Record<string, st
   };
   if (config.clientAuth === 'basic') {
     const credentials = `${config.clientId}:${config.clientSecret ?? ''}`;
+    // Stryker disable next-line StringLiteral: `'utf8'` を空にしても Node は utf8 へ
+    // 落とすため同じ base64 になる (実測: Buffer.from('a:b','') === Buffer.from('a:b','utf8'))。
     headers.Authorization = `Basic ${Buffer.from(credentials, 'utf8').toString('base64')}`;
   }
   return { ...headers, ...(config.extraTokenHeaders ?? {}) };
@@ -504,11 +506,15 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
   // beyond that, the counter is a knob, not a contract. Suppress.
   const STRAY_LIMIT = 50;
   let strayCount = 0;
-  // Stryker disable ConditionalExpression,EqualityOperator,UpdateOperator
   const server = http.createServer((req, res) => {
     if (!isLoopbackHost(req.headers.host)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' }).end('bad host');
+      // Stryker disable next-line UpdateOperator,ConditionalExpression,EqualityOperator: この計数は「上限を超えたら閉じる」という保険であって契約ではない。
+      // 上限未満で 400 / 404 を返し続けることは検査で固定してあり、上限そのものを
+      // 動かしても外から見える振る舞いは変わらない (正規のコールバックは常に解決し、
+      // 5 分の外側タイムアウトも必ず効く)。
       strayCount++;
+      // Stryker disable next-line ConditionalExpression,EqualityOperator
       if (strayCount >= STRAY_LIMIT) server.close();
       return;
     }
@@ -520,7 +526,9 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     switch (outcome.kind) {
       case 'wrong-path':
         res.writeHead(404).end();
+        // Stryker disable next-line UpdateOperator
         strayCount++;
+        // Stryker disable next-line ConditionalExpression,EqualityOperator
         if (strayCount >= STRAY_LIMIT) server.close();
         return;
       case 'state-mismatch':
@@ -559,7 +567,6 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     // Stryker disable next-line ArrowFunction
     setTimeout(() => server.close(), 50);
   });
-  // Stryker restore ConditionalExpression,EqualityOperator,UpdateOperator
 
   // Hard-to-kill mutants below: provoking a server.on('error') in a
   // unit test requires a kernel-level binding failure (e.g. exhausting
@@ -568,17 +575,19 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
   // empty-bind mutant) still works on most OSes for loopback connects.
   // Same goes for the error/listen handler bodies — only fired on
   // genuine network failure.
-  // Stryker disable StringLiteral,BlockStatement
+  // カーネル側の bind 失敗 (エフェメラルポート枯渇など) でしか発火しないため、
+  // 単体テストからは到達できない。イベント名も含めて観測できない。
+  /* Stryker disable BlockStatement,StringLiteral */
   server.on('error', (err) => {
     portReject(err);
     reject(err);
   });
+  /* Stryker restore BlockStatement,StringLiteral */
 
   server.listen(0, '127.0.0.1', () => {
     const port = (server.address() as AddressInfo).port;
     portResolve(port);
   });
-  // Stryker restore StringLiteral,BlockStatement
 
   const timeout = setTimeout(() => {
     reject(new Error(`OAuth flow timed out after ${Math.round(timeoutMs / 1000)}s`));

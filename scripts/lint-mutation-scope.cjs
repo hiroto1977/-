@@ -60,7 +60,6 @@ const KNOWN_BROAD = {
   'src/main/clients/teamradar.ts':               { regions: 4, lines:  237 },
   'src/main/clients/templates.ts':               { regions: 3, lines:  290 },
   'src/main/clients/wordpress.ts':               { regions: 1, lines:  110 },
-  'src/main/oauth.ts':                           { regions: 1, lines:   55 },
   'src/renderer/data/chatbot.ts':                { regions: 1, lines:   83 },
   'src/renderer/data/counseling.ts':             { regions: 1, lines:  120 },
   'src/renderer/fs/fsa.ts':                      { regions: 1, lines:  128 },
