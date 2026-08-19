@@ -525,8 +525,10 @@ export function validateBusinessAdvisorJson(
   if (obj.recommendations.length > 5) {
     throw new Error('business-advisor response exceeds 5 recommendations');
   }
-  // 各 guard 句は negative テストで pinned。Stryker の per-test 帰属が
-  // ぶれることがあるので block-form pragma を被せる。
+  // 各 guard 句は negative テストで固定してある。残る `typeof` の前置きは
+  // 後続の判定 (`allowedIds.has` / `Number.isFinite` / `.length === 0`) が
+  // 型違いをそのまま落とすので、単独では観測できない。型を絞るために
+  // 置いているだけなので、そこだけを帯で外す (判定の本体は測る側に残る)。
   // Stryker disable ConditionalExpression
   const out: BusinessAdvisorRecommendation[] = [];
   for (const item of obj.recommendations) {
@@ -545,6 +547,7 @@ export function validateBusinessAdvisorJson(
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) {
       throw new Error('business-advisor recommendation has empty rationale');
     }
+    // Stryker restore ConditionalExpression
     if (rec.rationale.length > 600) {
       throw new Error('business-advisor recommendation rationale exceeds 600 chars');
     }
@@ -574,7 +577,6 @@ export function validateBusinessAdvisorJson(
       }
       riskFactors.push(rf);
     }
-    // Stryker restore ConditionalExpression
     out.push({
       categoryId: rec.categoryId as BusinessCategoryId,
       rank: rec.rank,
@@ -819,11 +821,12 @@ function isAdvisorResult(v: unknown): v is BusinessAdvisorResponse {
 }
 // Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral
 
-// HTML renderer: pure function, no I/O. Inline ternaries / color flips /
-// section gating are cosmetic — block-form pragma covers the body.
-// Security-critical paths (escapeHtml application, isAdvisorResult guard,
-// isSafeBusinessDashboardPath) are pinned by dedicated tests outside.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+// HTML renderer: pure function, no I/O.
+//
+// 「色や記号は飾りだから測らなくてよい」と書いて body 全体を外していたが、
+// **これは誤りだった**。利益が黒字か赤字かは、表の上では色と `+` の有無で
+// しか出ない — 金額は符号付きで正しく出るので、判定が反転すると数字は
+// 合ったまま黒字の顔をする。飾りではなく、読み手が最初に見る情報である。
 export function renderBusinessDashboardHtml(input: BusinessDashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const agg = snapshot.aggregate;
@@ -929,11 +932,10 @@ ${advisorSection}
 </body>
 </html>`;
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
 
-// Markdown renderer: pure function, no I/O. Decorative formatting is
-// pragma'd; security-critical (advisor inclusion) tested explicitly.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+// Markdown renderer: pure function, no I/O.
+// HTML 側と同じ符号の規則 (0 は黒字あつかい) を使う。両方を同じ検査で
+// 突き合わせてあるので、片方だけ変えると落ちる。
 export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const agg = snapshot.aggregate;
@@ -979,7 +981,6 @@ ${snapshot.isMock ? '> ⚠️ **シミュレーション中:** Phase 6 で freee
 ${unitRows}
 ${advisorMd}`;
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
 
 export interface ExportBusinessResult {
   readonly path: string;
