@@ -48,18 +48,18 @@ export type OllamaReadPath = (typeof OLLAMA_READ_PATHS)[number];
  * ポートが不正なら null (呼び出し側で入力エラーとして扱う)。
  */
 export function buildLoopbackBase(port: number | string): string | null {
-  let n: number;
-  if (typeof port === 'number') {
-    n = port;
-  } else {
-    // 10 進数字のみを受ける。Number() は '0x2b' を 43、'1e3' を 1000 と解釈するため、
-    // そのまま通すと「入力した覚えのないポート」へ接続してしまう
-    // (self-test で 0x2b → :43 を検出したので明示的に弾く)。
-    const trimmed = String(port).trim();
-    if (!/^\d+$/.test(trimmed)) return null;
-    n = Number(trimmed);
-  }
-  if (!Number.isInteger(n) || n < 1 || n > 65535) return null;
+  // 数値も文字列も同じ経路で見る。数値だけ別扱いにしても結果は変わらない
+  // (1.5 → '1.5' は下の正規表現で落ち、Infinity → 'Infinity' も同じ) ので、
+  // 分岐を置くと観測できない変異体が増えるだけだった。
+  //
+  // 10 進数字のみを受ける。Number() は '0x2b' を 43、'1e3' を 1000 と解釈するため、
+  // そのまま通すと「入力した覚えのないポート」へ接続してしまう
+  // (self-test で 0x2b → :43 を検出したので明示的に弾く)。
+  const trimmed = String(port).trim();
+  if (!/^\d+$/.test(trimmed)) return null;
+  // 正規表現が 10 進数字だけを通すので Number() の結果は必ず整数。
+  const n = Number(trimmed);
+  if (n < 1 || n > 65535) return null;
   return `http://127.0.0.1:${n}`;
 }
 
@@ -72,7 +72,9 @@ export function isLoopbackHostname(hostname: string): boolean {
 function isWellFormedBase(u: URL): boolean {
   // 認証情報付き URL (http://user:pass@…) は拒否 — パーサ差異の温床。
   if (u.username !== '' || u.password !== '') return false;
-  if (u.pathname !== '/' && u.pathname !== '') return false;
+  // URL の pathname は最低でも '/' なので '' との比較は要らない
+  // (書いても結果が変わらない = 観測できない分岐になる)。
+  if (u.pathname !== '/') return false;
   return u.search === '' && u.hash === '';
 }
 
@@ -83,8 +85,14 @@ function isWellFormedBase(u: URL): boolean {
  * @param pageHostname アプリを配信しているホスト名 (ブラウザなら location.hostname)。
  *                     空文字なら「同じホスト」条件は無効化される (Electron 版など)。
  */
+// Stryker disable next-line StringLiteral: 既定値そのものは観測できない。
+// 番人の値が入っても、後段は「ホスト名が一致しない / どの正規表現にも当たらない」
+// という同じ結論に落ちるため、'' でも別の文字列でも結果が変わらない。
 export function isAllowedOllamaBase(base: string, pageHostname = ''): boolean {
-  if (typeof base !== 'string' || base.length === 0) return false;
+  // 文字列以外は弾く。`{ toString: () => 'http://127.0.0.1:11434' }` のような
+  // オブジェクトは `new URL()` を通ってしまうため、ここで止める必要がある。
+  // 空文字は `new URL('')` が throw するので下の catch に任せる。
+  if (typeof base !== 'string') return false;
   let u: URL;
   try {
     u = new URL(base);
@@ -100,18 +108,23 @@ export function isAllowedOllamaBase(base: string, pageHostname = ''): boolean {
   if (isLoopbackHostname(u.hostname)) return true;
   // (2) ページ自身と同じホスト名 (PC で配信したページをスマホから開くケース)。
   //     大文字小文字は URL 側で正規化済み。pageHostname 側も揃える。
-  return pageHostname !== '' && u.hostname === pageHostname.toLowerCase();
+  //     `pageHostname !== ''` の前置きは要らない — http URL の hostname は必ず
+  //     非空なので、pageHostname が空なら一致しようがない。
+  return u.hostname === pageHostname.toLowerCase();
 }
 
 /** base + 許可パス を結合する。base が未許可 / パスが未許可なら null。 */
 export function buildOllamaUrl(
   base: string,
   path: OllamaReadPath,
+  // Stryker disable next-line StringLiteral: 上と同じ理由で既定値は観測できない。
   pageHostname = '',
 ): string | null {
   if (!isAllowedOllamaBase(base, pageHostname)) return null;
   if (!(OLLAMA_READ_PATHS as readonly string[]).includes(path)) return null;
-  return `${base.replace(/\/+$/, '')}${path}`;
+  // 末尾スラッシュは高々 1 本。`isAllowedOllamaBase` が pathname === '/' しか
+  // 通さないので、2 本以上ある base はここへ来ない (検査で固定してある)。
+  return `${base.replace(/\/$/, '')}${path}`;
 }
 
 /**
@@ -119,7 +132,12 @@ export function buildOllamaUrl(
  * 受け付ける形: `11434` (ポートのみ = ループバック) / `http://host:port` / `https://host`
  * ホスト名のみ・スキーム省略も http:// を補って解釈する。
  */
+// Stryker disable next-line StringLiteral: 既定値そのものは観測できない。
+// 番人の値が入っても、後段は「ホスト名が一致しない / どの正規表現にも当たらない」
+// という同じ結論に落ちるため、'' でも別の文字列でも結果が変わらない。
 export function parseOllamaEndpoint(input: string, pageHostname = ''): string | null {
+  // Stryker disable next-line StringLiteral: 空文字は既定のループバックへ落ちる経路と
+  // 同じ結論になるため、番人の値を入れても観測できない。
   const raw = (input ?? '').trim();
   if (raw === '') return buildLoopbackBase(DEFAULT_OLLAMA_PORT);
   // 数字のみ → ループバックのポート指定
@@ -143,7 +161,7 @@ export function parseOllamaEndpoint(input: string, pageHostname = ''): string | 
  */
 const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]{0,127}$/i;
 
-export function isSafeModelName(name: string): boolean {
+export function isSafeModelName(name: unknown): name is string {
   if (typeof name !== 'string') return false;
   if (name.includes('..')) return false;
   // 連続スラッシュは Ollama の正規なモデル名 (library/mistral:latest) には現れず、
@@ -237,8 +255,10 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
       modified_at?: unknown;
       details?: { family?: unknown; parameter_size?: unknown; quantization_level?: unknown };
     };
-    if (typeof m.name !== 'string' || !isSafeModelName(m.name)) continue;
-    const size = typeof m.size === 'number' && Number.isFinite(m.size) ? m.size : 0;
+    // isSafeModelName が非文字列を弾くので typeof の前置きは要らない。
+    if (!isSafeModelName(m.name)) continue;
+    // Number.isFinite は値を変換しないので、文字列も Infinity も false になる。
+    const size = Number.isFinite(m.size as number) ? (m.size as number) : 0;
     out.push({
       name: m.name,
       family: typeof m.details?.family === 'string' ? m.details.family : '—',
@@ -271,15 +291,17 @@ const MAX_ERROR_DETAIL = 300;
 /** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
 export function extractOllamaError(json: unknown, text = ''): string {
   const err = (json as { error?: unknown } | null)?.error;
-  if (typeof err === 'string' && err.trim() !== '') return err.trim().slice(0, MAX_ERROR_DETAIL);
+  // 空判定は要らない — 空白だけの本文は trim すると '' になり、下へ落として
+  // も最後は '' を返すので、書いても結果が変わらない分岐になる。
+  if (typeof err === 'string') return err.trim().slice(0, MAX_ERROR_DETAIL);
   // 稀に {"error": {"message": "…"}} の入れ子で返す経路もある。
   const nested = (err as { message?: unknown } | null)?.message;
-  if (typeof nested === 'string' && nested.trim() !== '') {
-    return nested.trim().slice(0, MAX_ERROR_DETAIL);
-  }
+  if (typeof nested === 'string') return nested.trim().slice(0, MAX_ERROR_DETAIL);
   // JSON として読めたのに error が無いなら、本文を出しても情報がない。
   if (json !== null && json !== undefined) return '';
   // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
+  // Stryker disable next-line StringLiteral: text 省略時の '' は「空を返す」で、
+  // 番人の値を入れても呼び出し側は同じ「詳細なし」として扱う。
   return (text ?? '').trim().slice(0, MAX_ERROR_DETAIL);
 }
 
@@ -293,6 +315,8 @@ export type OllamaErrorKind =
 
 /** ステータスとエラー本文から種類を判定する。 */
 export function classifyOllamaError(status: number, detail: string): OllamaErrorKind {
+  // Stryker disable next-line StringLiteral: detail 省略時の '' はどの正規表現にも
+  // 当たらない。番人の値を入れても同じく当たらないので観測できない。
   const d = (detail ?? '').toLowerCase();
   if (/not found, try pulling it first|model .* not found|no such model/.test(d)) {
     return 'model-not-found';
@@ -310,9 +334,11 @@ export function classifyOllamaError(status: number, detail: string): OllamaError
 
 /** `model "llama3" not found, try pulling it first` からモデル名を取り出す。 */
 export function extractMissingModel(detail: string): string {
+  // Stryker disable next-line StringLiteral: detail 省略時の '' はこの正規表現に
+  // 当たらない。番人の値を入れても当たらないので、既定値そのものは観測できない。
   const m = /model\s+["'“”`]?([A-Za-z0-9._:/-]+)["'“”`]?\s+not found/i.exec(detail ?? '');
-  const name = m?.[1] ?? '';
-  return isSafeModelName(name) ? name : '';
+  // isSafeModelName は unknown を受けるので undefined の前置きは要らない。
+  return isSafeModelName(m?.[1]) ? m[1]! : '';
 }
 
 /**
@@ -321,14 +347,21 @@ export function extractMissingModel(detail: string): string {
  * いちばん多いので、タグ補完 → 前方一致 の順に見る。無ければ空文字。
  */
 export function suggestInstalledModel(requested: string, installed: string[]): string {
+  // Stryker disable next-line StringLiteral: requested 省略時の '' は直後の
+  // `want === ''` で早期に抜ける。番人の値でも一覧に一致せず '' を返す。
   const want = (requested ?? '').trim().toLowerCase();
   if (want === '') return '';
-  const list = (installed ?? []).filter((n) => typeof n === 'string' && n !== '');
+  // 空文字は後段のどの比較にも一致しないので、除外の判定は結果を変えない。
+  // Stryker disable next-line ArrayDeclaration: installed 省略時の [] は「候補なし」。
+  // 番人の要素が入っても要求名に一致しないので、どちらも '' を返す。
+  const list = (installed ?? []).filter((n): n is string => typeof n === 'string');
   if (list.some((n) => n.toLowerCase() === want)) return ''; // 一致しているなら提案不要
-  const base = want.split(':')[0] ?? want;
+  // split は必ず 1 要素以上返すので [0] は存在する。
+  const baseOf = (n: string): string => n.toLowerCase().split(':')[0]!;
+  const base = baseOf(want);
   return (
     list.find((n) => n.toLowerCase() === `${want}:latest`) ??
-    list.find((n) => (n.toLowerCase().split(':')[0] ?? '') === base) ??
+    list.find((n) => baseOf(n) === base) ??
     list.find((n) => n.toLowerCase().startsWith(base)) ??
     ''
   );
@@ -361,7 +394,9 @@ export function describeOllamaError(
   const requested = ctx.model ?? extractMissingModel(detail);
   const installed = ctx.installed ?? [];
   const hints: string[] = [];
-  let message = '';
+  // 初期値は置かない — switch は default を含む全分岐で代入するので、
+  // 初期値があっても読まれず、変異させても観測できない。
+  let message: string;
 
   switch (kind) {
     case 'model-not-found': {

@@ -374,7 +374,9 @@ export async function chatOllama(
     return { ok: false, kind: 'bad-endpoint', message: '接続先が不正か、許可されていません。' };
   }
   if (!isSafeModelName(model)) {
-    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${model.slice(0, 32)}` };
+    // isSafeModelName は unknown を受ける型ガードなので、否定側では never に
+    // 狭まる。表示は明示的に文字列化する。
+    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${String(model).slice(0, 32)}` };
   }
   if (prompt === '') {
     return { ok: false, kind: 'empty-prompt', message: 'プロンプトを入力してください。' };

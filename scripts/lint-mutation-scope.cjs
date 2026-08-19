@@ -76,6 +76,7 @@ const KNOWN_BROAD = {
 const MUST_MEASURE = {
   'src/main/clients/exportPaths.ts': '書き出し先の唯一の関門 (4 サービスが通る)',
   'src/renderer/network/proxy.ts':   'BYO プロキシの送り先判定 (SSRF の関門)',
+  'src/shared/ollama.ts':            'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる)',
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',
   'src/renderer/oauth/pkce.ts':      'ブラウザ版 PKCE',
