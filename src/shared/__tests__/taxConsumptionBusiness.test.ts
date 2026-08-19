@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   calcStandardTax,
+  calcStandardTaxDetailed,
+  compareInputCreditMethods,
+  taxableSalesRatio,
+  canDeductFully,
+  itemizedInputCredit,
+  proportionalInputCredit,
+  FULL_CREDIT_RATIO_THRESHOLD,
+  FULL_CREDIT_SALES_THRESHOLD,
+  type PurchaseByUse,
   calcSimplifiedTax,
   calcTwentyPercentTax,
   weightedDeemedRate,
@@ -271,5 +280,218 @@ describe('compareBusinessTaxMethods (有利判定)', () => {
     expect(c.simplified).toBe(300_000);
     expect(c.appliedDeemedRate).toBeCloseTo(0.85, 10);
     expect(c.best).toBe('simplified');
+  });
+});
+
+// --- 本則課税の仕入控除税額 (全額控除 / 個別対応 / 一括比例配分) ---------
+//
+// `calcStandardTax` は「全額控除できる」前提の式で、成り立つのは課税売上割合
+// 95% 以上かつ課税売上高 5億円以下のときだけ。非課税売上 (住宅家賃・利子等) が
+// あると按分が要る。按分せずに全額を引くと**納付が過少に出る**。
+
+describe('課税売上割合', () => {
+  it('免税売上 (輸出) は分子にも分母にも入る', () => {
+    // 課税 800万 + 免税 200万 = 1,000万、非課税 0 → 100%
+    expect(taxableSalesRatio(10_000_000, 0)).toBe(1);
+    // 課税等 800万 / (800万 + 非課税 200万) = 80%
+    expect(taxableSalesRatio(8_000_000, 2_000_000)).toBeCloseTo(0.8, 10);
+  });
+
+  it('売上が無ければ按分できないので 0 (weightedDeemedRate と同じ約束)', () => {
+    expect(taxableSalesRatio(0, 0)).toBe(0);
+  });
+
+  it('非有限・負は 0 とみなす', () => {
+    expect(taxableSalesRatio(Number.NaN, 1_000_000)).toBe(0);
+    expect(taxableSalesRatio(-5_000_000, 5_000_000)).toBe(0);
+    expect(taxableSalesRatio(5_000_000, Number.POSITIVE_INFINITY)).toBe(1);
+  });
+});
+
+describe('全額控除の要件', () => {
+  it('割合ちょうど 95% は全額控除できる (境界は「以上」)', () => {
+    // 課税等 9,500万 / 1億 = ちょうど 95%
+    expect(taxableSalesRatio(95_000_000, 5_000_000)).toBe(FULL_CREDIT_RATIO_THRESHOLD);
+    expect(canDeductFully(95_000_000, 5_000_000)).toBe(true);
+    // 1 円でも非課税が増えると 95% を割る
+    expect(canDeductFully(95_000_000, 5_000_001)).toBe(false);
+  });
+
+  it('課税売上高ちょうど 5億円は全額控除できる (境界は「以下」)', () => {
+    expect(canDeductFully(FULL_CREDIT_SALES_THRESHOLD, 0)).toBe(true);
+    expect(canDeductFully(FULL_CREDIT_SALES_THRESHOLD + 1, 0)).toBe(false);
+  });
+
+  it('割合が 100% でも 5億円超なら按分が要る', () => {
+    // 非課税ゼロ = 割合 100% でも、規模の要件で外れる
+    expect(taxableSalesRatio(600_000_000, 0)).toBe(1);
+    expect(canDeductFully(600_000_000, 0)).toBe(false);
+  });
+});
+
+describe('個別対応方式と一括比例配分方式', () => {
+  /** 課税売上対応 500万 / 非課税売上対応 300万 / 共通 200万 (すべて標準税率)。 */
+  const purchases: PurchaseByUse = {
+    taxableOnly: { standard: 5_000_000, reduced: 0 },
+    exemptOnly: { standard: 3_000_000, reduced: 0 },
+    common: { standard: 2_000_000, reduced: 0 },
+  };
+
+  it('個別対応方式: 課税売上対応分 + 共通対応分 × 課税売上割合', () => {
+    // 50万 + 20万 × 0.8 = 66万
+    expect(itemizedInputCredit(purchases, 0.8)).toBe(660_000);
+  });
+
+  it('一括比例配分方式: 仕入税額の合計 × 課税売上割合', () => {
+    // (50万 + 30万 + 20万) × 0.8 = 80万
+    expect(proportionalInputCredit(purchases, 0.8)).toBe(800_000);
+  });
+
+  it('非課税売上対応の仕入れは個別対応方式では 1 円も引けない', () => {
+    const onlyExempt: PurchaseByUse = {
+      taxableOnly: { standard: 0, reduced: 0 },
+      exemptOnly: { standard: 3_000_000, reduced: 0 },
+      common: { standard: 0, reduced: 0 },
+    };
+    expect(itemizedInputCredit(onlyExempt, 0.8)).toBe(0);
+    // 一括比例配分方式では按分されて残る — ここが 2 方式の差
+    expect(proportionalInputCredit(onlyExempt, 0.8)).toBe(240_000);
+  });
+
+  it('割合は 0..1 に収める (実績以外の値を渡されても壊さない)', () => {
+    expect(itemizedInputCredit(purchases, -0.5)).toBe(500_000); // 共通分は 0 倍
+    expect(itemizedInputCredit(purchases, 1.5)).toBe(700_000); // 共通分は 1 倍まで
+    expect(proportionalInputCredit(purchases, 1.5)).toBe(1_000_000);
+    expect(proportionalInputCredit(purchases, Number.NaN)).toBe(0);
+  });
+
+  it('控除が多い方を有利とし、同額なら継続適用の縛りが無い個別対応方式', () => {
+    // 上の例では一括比例配分 80万 > 個別対応 66万
+    const c = compareInputCreditMethods(purchases, 8_000_000, 2_000_000);
+    expect(c.ratio).toBeCloseTo(0.8, 10);
+    expect(c.fullyDeductible).toBe(false);
+    expect(c).toMatchObject({ itemized: 660_000, proportional: 800_000, better: 'proportional' });
+
+    // 共通対応分だけなら 2 方式は必ず同額 → 縛りの無い個別対応方式
+    const commonOnly: PurchaseByUse = {
+      taxableOnly: { standard: 0, reduced: 0 },
+      exemptOnly: { standard: 0, reduced: 0 },
+      common: { standard: 2_000_000, reduced: 0 },
+    };
+    const tie = compareInputCreditMethods(commonOnly, 8_000_000, 2_000_000);
+    expect(tie.itemized).toBe(tie.proportional);
+    expect(tie.better).toBe('itemized');
+  });
+});
+
+describe('calcStandardTaxDetailed', () => {
+  const purchases: PurchaseByUse = {
+    taxableOnly: { standard: 5_000_000, reduced: 0 },
+    exemptOnly: { standard: 3_000_000, reduced: 0 },
+    common: { standard: 2_000_000, reduced: 0 },
+  };
+
+  it('全額控除できるときは method の指定によらず全額引く', () => {
+    // 非課税ゼロ → 割合 100%・5億円以下 → 全額控除
+    const r = calcStandardTaxDetailed({
+      taxableSales: { standard: 10_000_000, reduced: 0 },
+      purchases,
+      method: 'proportional', // 指定しても無視される
+    });
+    expect(r.method).toBe('full');
+    expect(r.fullyDeductible).toBe(true);
+    expect(r.inputCredit).toBe(1_000_000); // 仕入 1,000万 × 10%
+    expect(r.payable).toBe(0); // 売上税額 100万 − 控除 100万
+  });
+
+  it('非課税売上があると按分され、納付が増える', () => {
+    // 課税 800万 (税額 80万)・非課税 200万 → 割合 80%
+    const base = {
+      taxableSales: { standard: 8_000_000, reduced: 0 },
+      exemptSales: 2_000_000,
+      purchases,
+    } as const;
+
+    const itemized = calcStandardTaxDetailed({ ...base, method: 'itemized' });
+    expect(itemized.ratio).toBeCloseTo(0.8, 10);
+    expect(itemized.fullyDeductible).toBe(false);
+    expect(itemized.method).toBe('itemized');
+    expect(itemized.inputCredit).toBe(660_000);
+    expect(itemized.payable).toBe(140_000); // 80万 − 66万
+
+    const proportional = calcStandardTaxDetailed({ ...base, method: 'proportional' });
+    expect(proportional.inputCredit).toBe(800_000);
+    expect(proportional.payable).toBe(0); // 80万 − 80万
+
+    // 按分しないと控除 100万 → 納付 −20万 (還付) と出てしまう。
+    // 実際には 14万 か 0 円の納付。按分の有無で符号まで変わる。
+    expect(calcStandardTax({ standard: 8_000_000, reduced: 0 }, { standard: 10_000_000, reduced: 0 }))
+      .toBe(-200_000);
+  });
+
+  it('方式の既定は個別対応方式', () => {
+    const r = calcStandardTaxDetailed({
+      taxableSales: { standard: 8_000_000, reduced: 0 },
+      exemptSales: 2_000_000,
+      purchases,
+    });
+    expect(r.method).toBe('itemized');
+  });
+
+  it('輸出売上は割合を押し上げ、全額控除に届かせることがある', () => {
+    // 課税 100万・免税 (輸出) 850万・非課税 50万 → (100+850)/1000 = 95%
+    const r = calcStandardTaxDetailed({
+      taxableSales: { standard: 1_000_000, reduced: 0 },
+      exportSales: 8_500_000,
+      exemptSales: 500_000,
+      purchases,
+    });
+    expect(r.ratio).toBe(0.95);
+    expect(r.method).toBe('full');
+    // 輸出そのものには消費税が乗らないので売上税額は課税 100万分だけ
+    expect(r.salesTax).toBe(100_000);
+    expect(r.inputCredit).toBe(1_000_000);
+    expect(r.payable).toBe(-900_000); // 還付見込み
+  });
+
+  it('軽減税率が混ざっても税率別に積む', () => {
+    const r = calcStandardTaxDetailed({
+      taxableSales: { standard: 5_000_000, reduced: 5_000_000 },
+      purchases: {
+        taxableOnly: { standard: 1_000_000, reduced: 1_000_000 },
+        exemptOnly: { standard: 0, reduced: 0 },
+        common: { standard: 0, reduced: 0 },
+      },
+    });
+    expect(r.salesTax).toBe(900_000); // 500万×10% + 500万×8%
+    expect(r.inputTaxTotal).toBe(180_000); // 100万×10% + 100万×8%
+    expect(r.payable).toBe(720_000);
+  });
+
+  it('割合の分母は標準税率と軽減税率の売上を足したもの', () => {
+    // 標準 600万 + 軽減 200万 = 課税 800万、非課税 200万 → 割合 80%。
+    // 2 つを引き算していると 400万/600万 = 66.7% になり、控除額がずれる。
+    const r = calcStandardTaxDetailed({
+      taxableSales: { standard: 6_000_000, reduced: 2_000_000 },
+      exemptSales: 2_000_000,
+      purchases,
+      method: 'proportional',
+    });
+    expect(r.ratio).toBeCloseTo(0.8, 10);
+    expect(r.salesTax).toBe(760_000); // 600万×10% + 200万×8%
+    expect(r.inputCredit).toBe(800_000); // 仕入税額 100万 × 0.8
+    expect(r.payable).toBe(-40_000); // 還付見込み
+  });
+
+  it('売上が無ければ割合 0 — 仕入があっても控除は 0 になる', () => {
+    const r = calcStandardTaxDetailed({
+      taxableSales: { standard: 0, reduced: 0 },
+      purchases,
+      method: 'proportional',
+    });
+    expect(r.ratio).toBe(0);
+    expect(r.fullyDeductible).toBe(false);
+    expect(r.inputCredit).toBe(0);
+    expect(r.payable).toBe(0);
   });
 });

@@ -59,7 +59,14 @@ import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
 import { DEEMED_PURCHASE_RATES, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
-import { compareBusinessTaxMethods, isTaxExempt } from '../../shared/taxConsumptionBusiness';
+import {
+  compareBusinessTaxMethods,
+  isTaxExempt,
+  calcStandardTaxDetailed,
+  compareInputCreditMethods,
+  FULL_CREDIT_RATIO_THRESHOLD,
+  FULL_CREDIT_SALES_THRESHOLD,
+} from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
@@ -340,6 +347,12 @@ export function TaxPage() {
   const [ctReducedSalesStr, setCtReducedSalesStr] = useState('0');
   const [ctPurchaseStr, setCtPurchaseStr] = useState('3000000');
   const [ctBizType, setCtBizType] = useState<SimplifiedBusinessType>('service');
+  // ⑩-3 本則課税の仕入控除税額: 非課税売上・免税売上と、課税仕入れの用途区分。
+  const [ctExemptSalesStr, setCtExemptSalesStr] = useState('2000000');
+  const [ctExportSalesStr, setCtExportSalesStr] = useState('0');
+  const [icTaxableOnlyStr, setIcTaxableOnlyStr] = useState('2000000');
+  const [icExemptOnlyStr, setIcExemptOnlyStr] = useState('600000');
+  const [icCommonStr, setIcCommonStr] = useState('400000');
   const consumptionMethods = useMemo(
     () =>
       compareBusinessTaxMethods(
@@ -442,6 +455,26 @@ export function TaxPage() {
     () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr)),
     [ctSalesStr, ctReducedSalesStr],
   );
+
+  // ⑩-3 本則課税の仕入控除税額。売上は ⑩ の入力を使い、非課税・免税売上と
+  // 用途区分をここで足す。用途区分はすべて標準税率とみなす (概算)。
+  const inputCredit = useMemo(() => {
+    const purchases = {
+      taxableOnly: { standard: num(icTaxableOnlyStr), reduced: 0 },
+      exemptOnly: { standard: num(icExemptOnlyStr), reduced: 0 },
+      common: { standard: num(icCommonStr), reduced: 0 },
+    } as const;
+    const taxableSales = { standard: num(ctSalesStr), reduced: num(ctReducedSalesStr) } as const;
+    const exportSales = num(ctExportSalesStr);
+    const exemptSales = num(ctExemptSalesStr);
+    const taxableAndExport = taxableSales.standard + taxableSales.reduced + exportSales;
+    return {
+      compare: compareInputCreditMethods(purchases, taxableAndExport, exemptSales),
+      itemized: calcStandardTaxDetailed({ taxableSales, exportSales, exemptSales, purchases, method: 'itemized' }),
+      proportional: calcStandardTaxDetailed({ taxableSales, exportSales, exemptSales, purchases, method: 'proportional' }),
+      taxableAndExport,
+    };
+  }, [ctSalesStr, ctReducedSalesStr, ctExportSalesStr, ctExemptSalesStr, icTaxableOnlyStr, icExemptOnlyStr, icCommonStr]);
   const ctMethodLabel: Record<ConsumptionTaxMethod, string> = {
     standard: '本則課税',
     simplified: '簡易課税',
@@ -587,6 +620,11 @@ export function TaxPage() {
       [ctSalesStr, { label: '課税売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [ctReducedSalesStr, { label: '軽減税率の売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [ctPurchaseStr, { label: '課税仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctExemptSalesStr, { label: '非課税売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [ctExportSalesStr, { label: '免税売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [icTaxableOnlyStr, { label: '課税売上対応の仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [icExemptOnlyStr, { label: '非課税売上対応の仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      [icCommonStr, { label: '共通対応の仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [faAssessedStr, { label: '固定資産税評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [faAreaStr, { label: '敷地面積 (㎡)', kind: 'area', allowEmpty: true, allowZero: true }],
       [faDwellingsStr, { label: '住戸数', kind: 'count', allowEmpty: true, allowZero: true, max: 1000 }],
@@ -630,6 +668,11 @@ export function TaxPage() {
     ctSalesStr,
     ctReducedSalesStr,
     ctPurchaseStr,
+    ctExemptSalesStr,
+    ctExportSalesStr,
+    icTaxableOnlyStr,
+    icExemptOnlyStr,
+    icCommonStr,
     faAssessedStr,
     faAreaStr,
     faDwellingsStr,
@@ -1189,6 +1232,90 @@ export function TaxPage() {
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
           <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
           <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}>
+          ※ ここの<strong>本則課税</strong>は課税仕入れの消費税を<strong>全額引ける</strong>前提の額です。
+          住宅家賃・利子・保険料などの<strong>非課税売上</strong>があると全額は引けず、実際の納付はこれより多くなります。
+          按分した額は <strong>⑩-3</strong> で確認してください。
+        </div>
+      </Section>
+
+      <Section title="⑩-3 本則課税の仕入控除税額 (全額控除 / 個別対応 / 一括比例配分)" count={3}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          上の ⑩ の「本則課税」は<strong>課税仕入れの消費税を全額引ける</strong>前提の概算です。全額引けるのは
+          <strong>課税売上割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 以上</strong>かつ
+          <strong>課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
+          <strong>非課税売上</strong>があると按分が必要です。按分せずに全額を引くと<strong>納付が過少に出ます</strong>。
+          ここでは実際の 2 方式（個別対応方式・一括比例配分方式）で計算します。売上 (標準/軽減) は ⑩ の入力を使います。
+          ※ 概算試算です。課税売上割合に準ずる割合の承認・調整対象固定資産の調整等は反映しません。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            非課税売上 (税抜・年)
+            <input type="text" inputMode="decimal" value={ctExemptSalesStr} onChange={(e) => setCtExemptSalesStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            免税売上・輸出等 (税抜・年)
+            <input type="text" inputMode="decimal" value={ctExportSalesStr} onChange={(e) => setCtExportSalesStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            課税売上にのみ要する仕入
+            <input type="text" inputMode="decimal" value={icTaxableOnlyStr} onChange={(e) => setIcTaxableOnlyStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            非課税売上にのみ要する仕入
+            <input type="text" inputMode="decimal" value={icExemptOnlyStr} onChange={(e) => setIcExemptOnlyStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            共通して要する仕入
+            <input type="text" inputMode="decimal" value={icCommonStr} onChange={(e) => setIcCommonStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+        </div>
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderLeft: `3px solid ${inputCredit.compare.fullyDeductible ? 'var(--success, #3ec98a)' : '#e8a33d'}`,
+            borderRadius: 6,
+            padding: '8px 12px',
+            marginBottom: 12,
+            fontSize: 13,
+            color: 'var(--text)',
+          }}
+        >
+          課税売上割合 <strong>{(inputCredit.compare.ratio * 100).toFixed(2)}%</strong>
+          （課税＋免税 {jpy(inputCredit.taxableAndExport)} ÷ 総売上 {jpy(inputCredit.taxableAndExport + num(ctExemptSalesStr))}）
+          {inputCredit.compare.fullyDeductible ? (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
+              ✅ 全額控除の要件を満たします。按分は不要で、⑩ の本則課税の額がそのまま使えます。
+            </div>
+          ) : (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
+              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 未満、または課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 超）。
+              下の 2 方式のいずれかで按分します。控除が多い方が有利です:{' '}
+              <strong>{inputCredit.compare.better === 'itemized' ? '個別対応方式' : '一括比例配分方式'}</strong>
+            </div>
+          )}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <Stat
+            label="個別対応方式 — 控除税額"
+            value={jpy(inputCredit.compare.itemized)}
+            positive={!inputCredit.compare.fullyDeductible && inputCredit.compare.better === 'itemized'}
+          />
+          <Stat
+            label="一括比例配分方式 — 控除税額"
+            value={jpy(inputCredit.compare.proportional)}
+            positive={!inputCredit.compare.fullyDeductible && inputCredit.compare.better === 'proportional'}
+          />
+          <Stat label="個別対応方式 — 納付税額" value={jpy(inputCredit.itemized.payable)} />
+          <Stat label="一括比例配分方式 — 納付税額" value={jpy(inputCredit.proportional.payable)} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}>
+          <strong>個別対応方式</strong>: 控除税額 ＝ 課税売上対応分 ＋ 共通対応分 × 課税売上割合。仕入れを 3 区分に分ける手間がかかります。<br />
+          <strong>一括比例配分方式</strong>: 控除税額 ＝ 課税仕入れ等の税額 × 課税売上割合。区分は不要ですが、
+          <strong>選択したら 2 年間は継続適用</strong>が必要です（消費税法 §30⑤）。翌期の見込みも含めて選んでください。<br />
+          売上に係る消費税額 {jpy(inputCredit.itemized.salesTax)} ／ 課税仕入れ等の税額（按分前）{jpy(inputCredit.itemized.inputTaxTotal)}。
+          納付税額が負のときは還付見込みです。
         </div>
       </Section>
 
