@@ -144,7 +144,9 @@ describe('describeOrigin', () => {
   });
 
   it('未取得はどの取得元でも「スナップショット」', () => {
-    expect(describeOrigin('remote', 'snapshot')).toEqual({ text: 'スナップショット', tone: 'neutral' });
+    // remote は「未連携でサンプルを出している」と言い切る。「スナップショット」
+    // だと実データを写したものと読め、架空の人物が実在と受け取られる。
+    expect(describeOrigin('remote', 'snapshot')).toEqual({ text: 'サンプル（未連携）', tone: 'neutral' });
     expect(describeOrigin('local', 'snapshot')).toEqual({ text: 'スナップショット', tone: 'neutral' });
   });
 

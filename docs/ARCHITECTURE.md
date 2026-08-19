@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8203** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8579) |
+| ユニットテスト | **8244** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8620) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 306 | 自己検証 |
+| `file:line` 参照数 | 316 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1044,6 +1044,65 @@ text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します�
 IndexedDB の失敗イベント (`onerror` / `onabort`) は決定的に起こせないので、
 理由を書いた帯で外してある。**投げること自体**は「DB を開けないときは
 待ち続けない」の検査で固定した。**134 変異体 100%**。
+
+#### 実データにいつでも切り替えられるようにした (`src/renderer/network/liveRead.ts`)
+
+**きっかけは「この 3 人は実在しますか」という問いだった。** 公開ページの
+Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**が氏名・メール・
+利用額つきで並んでいる。同梱サンプル (`src/renderer/data/snapshot.ts`) の値で、
+メールは RFC 2606 で文書用に予約された `example.com` なので実在しようがない。
+
+問題は 2 つあった。
+
+**(1) バッジが「スナップショット」と言っていた。** これは *実データをある時点で
+写したもの* と読める。`describeOrigin` は取得元が `remote` でも未取得なら
+この語を出していたので、作り物が実在の同僚と受け取られる余地があった。
+未取得の `remote` は **「サンプル（未連携）」** と言い切る形に変えた。
+
+**(2) 資格情報を入れても実データにならなかった。** ブラウザ版の
+`fetchSnapshot` は**全サービスで `not_implemented` を返していた**。書き込み
+(`invoke`) は利用者のプロキシ経由で実データに届くのに、読み取りだけは
+永久に同梱サンプルのままだったので、Admin API キーを登録しても画面は
+変わらない。「いつでも実データを反映できる」という当たり前の期待が
+成り立っていなかった。
+
+塞ぎ方は既存の方針に合わせた。**判定と正規化を `src/shared/api/` に 1 つ置き、
+通信手段だけを差し替える。** `src/main/clients/cursor.ts` は Node の fetch を
+渡す薄い層になり、ブラウザ版は利用者のプロキシ経由の fetch を渡して
+**同じモジュール**を呼ぶ。片方だけ直したときにもう片方が古いまま残る、という
+形の食い違いが起きない (`src/shared/ollama.ts` と同じ考え方)。
+
+実データにならない理由は **3 つに分けて返す**。黙って空にすると、連携できて
+いないのか本当に 0 件なのかが画面から判別できない。
+
+| code | 意味 | 画面での扱い |
+|---|---|---|
+| `live_read_unsupported` | ブラウザ版から読めないサービス | サンプルのまま |
+| `not_configured` | 資格情報が未登録 | 認証エラー扱いで入力欄が開く |
+| `proxy_required` | プロキシ未設定 (CORS を通さない相手) | 設定への案内を出す |
+| `live_read_failed` | 取得そのものの失敗 | 相手の応答を添えて出す |
+
+**自分の変更が自分の検査に引っかかった。** deps のプロパティを `getToken` と
+名付けたところ、`src/renderer/security/__tests__/bridgeSurface.security.test.ts` の「ブラウザ版のブリッジは
+生の秘密を渡さない」検査が落ちた。あれは `web-shim.ts` の原文を
+`/^\s*getToken\s*:/m` で grep する素朴な作りで、ブリッジ表面ではない局所の
+プロパティも拾ってしまう。**検査を緩めるのではなく、こちらの名前を
+`readCredential` へ譲った** — 守っている約束は本物で、grep の素朴さは
+その約束を安く保つための対価である。
+
+**呼び手の無い分岐は落とした。** 最初は「CORS を許す相手なら直接 fetch」の
+枝も置いたが、Cursor はプロキシ必須なので**どのサービスもその枝を通らず**、
+実測で丸ごと未到達だった (86.36%)。資格情報を第三者のホストへ送る経路を、
+動かないまま置いておくほうが危ない。**必ずプロキシを通す**形に絞り、CORS を
+許すサービスを足すときにその検査と一緒に戻すことをコメントに書いた。
+
+対応済みは Cursor だけで、`LIVE_READERS` に 1 行足せば増やせる。**一覧に無い
+こと自体が「まだ実データにできない」という表明**になる。
+
+実測: `src/shared/api/cursor.ts` **103 変異体 100%**、
+`src/renderer/network/liveRead.ts` **38 変異体 100%**、
+薄くした `src/main/clients/cursor.ts` **4 変異体 100%**、
+`src/shared/dataOrigin.ts` **45 変異体 100%**。
 
 #### 隣の壁だけが測られていた (`src/shared/ollama.ts`)
 

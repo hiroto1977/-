@@ -36,11 +36,15 @@ describe('StatusBar — badge テキスト', () => {
     expect(html).toContain('ライブ');
   });
 
-  it('source=snapshot (デフォルト) のとき "スナップショット" バッジを表示', () => {
+  it('source=snapshot (デフォルト) のとき "サンプル（未連携）" バッジを表示', () => {
+    // serviceId を渡さない呼び出しは origin='remote' 扱い。未取得の remote は
+    // 「スナップショット」ではなく未連携と言い切る — 前者だと実データを写した
+    // ものと読め、同梱の架空データが実在と受け取られる。
     const html = renderToStaticMarkup(
       createElement(StatusBar, { who: 'TestService' }),
     );
-    expect(html).toContain('スナップショット');
+    expect(html).toContain('サンプル（未連携）');
+    expect(html).not.toContain('スナップショット');
   });
 
   it('status=error, errorKind=auth のとき "認証エラー" バッジを表示', () => {

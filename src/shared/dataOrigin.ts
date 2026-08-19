@@ -138,9 +138,19 @@ export interface OriginLabel {
  * `sample` は取得の有無に関係なく常に「内蔵サンプル」。外部にも手元にも
  * 取得先が無い画面で「スナップショット」と出すと、更新すれば新しくなると
  * 読めてしまうため、言葉を分けている。
+ *
+ * **`remote` の未取得は「サンプル（未連携）」と言い切る。** ここは以前
+ * 「スナップショット」と出していたが、それは *実データをある時点で写した
+ * もの* と読める。実際に出ているのは同梱の作り物 — Cursor の画面なら
+ * 佐藤健・鈴木彩・田中悠という**架空の 3 人**とその利用額である。氏名と
+ * メールの形をしている分、実在の同僚と受け取られる余地があった
+ * (実際にそう問われて気付いた)。連携していないことを言葉に出す。
  */
 export function describeOrigin(origin: DataOrigin, source: 'snapshot' | 'live'): OriginLabel {
   if (origin === 'sample') return { text: '内蔵サンプル', tone: 'neutral' };
+  if (origin === 'remote' && source === 'snapshot') {
+    return { text: 'サンプル（未連携）', tone: 'neutral' };
+  }
   if (source === 'snapshot') return { text: 'スナップショット', tone: 'neutral' };
   if (origin === 'local') return { text: 'ローカル', tone: 'ok' };
   return { text: 'ライブ', tone: 'ok' };
