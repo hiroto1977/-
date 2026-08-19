@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBusinessOverview } from '../overview';
+import { estimateEconomics } from '../../../shared/hydroponics';
 import type { SalesEntry } from '../sales';
 import type { KpiActual } from '../kpiActuals';
 
@@ -327,5 +328,152 @@ describe('buildBusinessOverview', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [], accounting: [] });
     expect(o.accounting).toBeNull();
     expect(o.runwayMonths).toBeNull();
+  });
+});
+
+// --- 水耕栽培の試算 ------------------------------------------------------
+//
+// 試算は**実績ではない**。`kpi` に混ぜると「実績」と「これから作る計画」が
+// 同じ数字として並んでしまうので、独立した節として持つ。
+
+describe('経営サマリーの水耕栽培の節', () => {
+  const CROP = {
+    id: 'leaf-lettuce' as const,
+    label: 'テスト用',
+    nurseryDays: 20,
+    growOutDays: 10,
+    harvestWeightG: 100,
+    ecLow: 1,
+    ecHigh: 2,
+    phLow: 5.5,
+    phHigh: 6.5,
+    plantsPerPanel: 27,
+  };
+  const FACILITY = { floorAreaSqm: 100, tiers: 5, usableRatio: 1, crop: CROP, yieldRate: 0.8 };
+  const COST = {
+    unitPriceYen: 200,
+    electricityYenPerKwh: 20,
+    energyIntensityKwhPerKg: 10,
+    seedYenPerPlant: 3,
+    nutrientYenPerPlant: 2,
+    packagingYenPerPlant: 10,
+    laborYenPerMonth: 3_000_000,
+    depreciationYenPerMonth: 2_000_000,
+    rentYenPerMonth: 500_000,
+    otherFixedYenPerMonth: 300_000,
+  };
+
+  it('未入力なら節は出ない', () => {
+    const o = buildBusinessOverview({ plan: 'free', sales: [], kpiActuals: [], members: [] });
+    expect(o.hydroponics).toBeNull();
+  });
+
+  it('入力すると出荷量・損益・電力が経営サマリーに載る', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [],
+      members: [],
+      hydroponics: estimateEconomics(FACILITY, COST),
+    });
+    const h = o.hydroponics;
+    expect(h).not.toBeNull();
+    expect(h!.shippedPlantsPerDay).toBe(2_000);
+    expect(h!.shippedPlantsPerMonth).toBe(60_833);
+    expect(h!.shippedKgPerYear).toBe(73_000);
+    expect(h!.revenue).toBe(12_166_667); // 60,833.33 株 × 200 円
+    expect(h!.breakEvenPlantsPerMonth).toBe(39_573);
+    expect(h!.meetsBreakEven).toBe(true);
+    expect(h!.energyKwhPerYear).toBe(912_500);
+    expect(h!.electricityYenPerYear).toBe(18_250_000);
+  });
+
+  it('試算は実績 (kpi) に混ざらない', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [],
+      members: [],
+      hydroponics: estimateEconomics(FACILITY, COST),
+    });
+    // 栽培の試算だけを入れても「KPI 実績あり」にはならない。
+    expect(o.kpi.hasData).toBe(false);
+    expect(o.kpi.revenue).toBe(0);
+    expect(o.flags.profitable).toBe(false);
+    // それでも栽培の節には売上が出ている。
+    expect(o.hydroponics!.revenue).toBeGreaterThan(0);
+  });
+
+  it('利益率と損益分岐は他の節と同じ定義で出す', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [],
+      members: [],
+      hydroponics: estimateEconomics(FACILITY, COST),
+    });
+    const h = o.hydroponics!;
+    // 営業利益 = 売上 − (原価 + 広告 + 販管費 + 減価償却)
+    // 12,166,667 − (912,500 + 0 + 5,320,833 + 2,000,000) = 3,933,334
+    expect(h.operatingProfit).toBe(3_933_334);
+    expect(h.operatingMarginPct).toBeCloseTo(32.33, 1);
+    // 限界利益率 = (売上 − 変動費) ÷ 売上 = (12,166,667 − 912,500) ÷ 12,166,667
+    expect(h.contributionRatio).toBeCloseTo(92.5, 1);
+    expect(h.bep).toBeGreaterThan(0);
+  });
+
+  it('電気代が費用に占める割合を出す (人工光型で最も効く費用)', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [],
+      members: [],
+      hydroponics: estimateEconomics(FACILITY, COST),
+    });
+    // 月次電気代 1,520,833 ÷ 月次費用 8,233,333 = 18.5%
+    expect(o.hydroponics!.electricityCostRatioPct).toBeCloseTo(18.47, 1);
+  });
+
+  it('費用が丸ごと 0 でも電気代の割合は 0 (0 ÷ 0 を NaN にしない)', () => {
+    const free = {
+      unitPriceYen: 100,
+      electricityYenPerKwh: 0,
+      energyIntensityKwhPerKg: 0,
+      seedYenPerPlant: 0,
+      nutrientYenPerPlant: 0,
+      packagingYenPerPlant: 0,
+      laborYenPerMonth: 0,
+      depreciationYenPerMonth: 0,
+      rentYenPerMonth: 0,
+      otherFixedYenPerMonth: 0,
+    };
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [],
+      members: [],
+      hydroponics: estimateEconomics(FACILITY, free),
+    });
+    const h = o.hydroponics!;
+    expect(h.electricityYenPerYear).toBe(0);
+    expect(h.electricityCostRatioPct).toBe(0);
+    expect(Number.isNaN(h.electricityCostRatioPct)).toBe(false);
+  });
+
+  it('出荷が 0 でも 0 除算にならない', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [],
+      members: [],
+      hydroponics: estimateEconomics({ ...FACILITY, yieldRate: 0 }, COST),
+    });
+    const h = o.hydroponics!;
+    expect(h.revenue).toBe(0);
+    expect(h.operatingMarginPct).toBe(0);
+    expect(h.costPerShippedPlantYen).toBe(0);
+    expect(Number.isFinite(h.electricityCostRatioPct)).toBe(true);
+    // 棚を動かしている限り電気代は出ていく = 営業損失になる。
+    expect(h.operatingProfit).toBeLessThan(0);
   });
 });
