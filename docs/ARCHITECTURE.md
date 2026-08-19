@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8054** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8414) |
+| ユニットテスト | **8059** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8419) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 295 | 自己検証 |
+| `file:line` 参照数 | 296 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1044,6 +1044,51 @@ text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します�
 IndexedDB の失敗イベント (`onerror` / `onabort`) は決定的に起こせないので、
 理由を書いた帯で外してある。**投げること自体**は「DB を開けないときは
 待ち続けない」の検査で固定した。**134 変異体 100%**。
+
+#### 赤字を緑で出せた (`src/main/clients/business.ts`)
+
+経営ダッシュボードは 10 事業の売上・原価・利益を 1 枚にまとめる。199 行の
+無効化 (3 箇所) を外すと **294 変異体 89.80%**。**生存 30 のうち 24 が
+利益の符号と色**だった。
+
+利益が黒字か赤字かは、表の上では**色**と **`+` の有無**でしか表に出ない。
+金額そのもの (`-400,000`) は符号付きで正しく出るが、`profit >= 0` の判定が
+反転するとセルは緑になり、利益率も `+` が付いて**黒字の顔をする**。
+数字は合っているので、目視では気付きにくい。
+
+**検査はあった。ただし通り続ける形だった。**
+
+```ts
+expect(html(400_000, 40)).toContain(GREEN);   // 緑は他の用途にも出る
+expect(html(0, 0)).toContain('+0');           // '+0' は他の桁にも出る
+```
+
+`#22c55e` はスパークラインや見出しにも使うので、ページ全体を `toContain` で
+見るかぎり**判定を反転させても緑は必ず見つかる**。`'+0'` も同様に、別の列の
+`+0.0%` や `+0` 件に当たる。場所で絞る形に変えた — 事業行の利益セルと
+月次利益タイルだけを取り出し、`toEqual` で**両方**を一度に固定する。
+
+```ts
+function profitColors(page: string): { row: string; tile: string } {
+  const row = /<td class="num" style="color:(#[0-9a-f]{6})">[^<]*<\/td>/.exec(page)?.[1] ?? '';
+  const tile = /月次利益<\/div><div class="value" style="color:(#[0-9a-f]{6})"/.exec(page)?.[1] ?? '';
+  return { row, tile };
+}
+expect(profitColors(html(-400_000, -40))).toEqual({ row: RED, tile: RED });
+```
+
+境界は **0 を黒字あつかい**にする (損していないので赤にしない)。HTML と
+Markdown で同じ規則にしてあることも、合計行を取り出して固定した。
+
+**折れ線が売上を読んでいるかも無証明だった。** `u.history.map((h) => h.revenue)`
+の `h => h.revenue` を `h => undefined` にしても、線は引かれるので SVG は壊れず
+テストも通る。履歴の額を変えたときに `points` が変わることで固定した
+(teamradar の「図は何本描かれるかで測る」と同じ形)。
+
+残したのは助言 JSON の検査にある `typeof` の前置きだけで、**5 行の帯**に
+収めてある。`typeof rec.categoryId !== 'string' || !allowedIds.has(...)` の
+前半は、後半の判定が型違いをそのまま落とすため単独では観測できない。
+判定の本体は測る側に残している。**278 変異体 100%**。
 
 #### 診断は観測から組み立てる (`src/renderer/data/dbPosture.ts`)
 

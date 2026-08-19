@@ -1706,3 +1706,152 @@ describe('exportBusinessDashboardMdImpl', () => {
     expect(md).toContain('mdact');
   });
 });
+
+// --- 赤字を赤で出す ----------------------------------------------------
+//
+// 利益の符号は「色」と「+ の有無」でしか表に出ない。判定がずれると
+// **赤字が緑・プラス表記**で出てしまい、読み手は黒字だと受け取る。
+// 数字自体は正しいので、目視では気付きにくい。
+
+describe('経営ダッシュボードの符号と色', () => {
+  const GREEN = '#22c55e';
+  const RED = '#ef4444';
+
+  function snapWith(profit: number, profitMargin: number): BusinessOpsSnapshot {
+    const m = {
+      revenue: 1_000_000,
+      variableCost: 400_000,
+      fixedCost: 200_000,
+      totalCost: 1_000_000 - profit,
+      profit,
+      profitMargin,
+      traffic: 10_000,
+      conversion: 200,
+      conversionRatePct: 2,
+      aov: 5000,
+      roas: 5,
+      contentOutput: 10,
+    };
+    return {
+      units: [
+        {
+          id: 'ec' as BusinessCategoryId,
+          label: 'EC',
+          description: 'd',
+          trafficKind: 'session',
+          current: m,
+          history: [m, m],
+        },
+      ],
+      aggregate: {
+        revenue: 1_000_000,
+        totalCost: 1_000_000 - profit,
+        profit,
+        profitMargin,
+        contentOutput: 10,
+      },
+      fetchedAt: '2026-05-14T00:00:00.000Z',
+      isMock: true,
+    };
+  }
+
+  const html = (profit: number, margin: number) =>
+    renderBusinessDashboardHtml({ snapshot: snapWith(profit, margin), generatedAt: 'x' });
+  const md = (profit: number, margin: number) =>
+    renderBusinessDashboardMarkdown({ snapshot: snapWith(profit, margin), generatedAt: 'x' });
+
+  /** 利益セル (事業行) と月次利益タイル (合計) の色だけを取り出す。
+   *  スパークラインなど他の用途にも同じ色を使うので、場所で絞る。 */
+  function profitColors(page: string): { row: string; tile: string } {
+    const row = /<td class="num" style="color:(#[0-9a-f]{6})">[^<]*<\/td>/.exec(page)?.[1] ?? '';
+    const tile = /月次利益<\/div><div class="value" style="color:(#[0-9a-f]{6})"/.exec(page)?.[1] ?? '';
+    return { row, tile };
+  }
+
+  it('HTML: 黒字は緑・赤字は赤 (0 は黒字あつかい)', () => {
+    expect(profitColors(html(400_000, 40))).toEqual({ row: GREEN, tile: GREEN });
+    expect(profitColors(html(-400_000, -40))).toEqual({ row: RED, tile: RED });
+    // 境界: ちょうど 0 は損していないので赤にしない
+    expect(profitColors(html(0, 0))).toEqual({ row: GREEN, tile: GREEN });
+  });
+
+  /** 事業行の利益率セルと、月次利益タイルの表記を取り出す。 */
+  function htmlMargins(page: string): { row: string; tile: string } {
+    const cells = [...page.matchAll(/<td class="num" style="color:#[0-9a-f]{6}">([^<]*)<\/td>/g)];
+    const tile = /月次利益<\/div><div class="value"[^>]*>[^(]*\(([^)]*)\)/.exec(page)?.[1] ?? '';
+    return { row: cells[1]?.[1] ?? '', tile };
+  }
+  /** Markdown の事業行 (利益率の列) と合計行の表記。 */
+  function mdMargins(doc: string): { row: string; agg: string } {
+    const row = /^\| EC \(ec\) \|[^|]*\|[^|]*\|[^|]*\| ([^|]*) \|/m.exec(doc)?.[1]?.trim() ?? '';
+    const agg = /利益率[^\d+-]*([+-]?[\d.]+)%/.exec(doc)?.[0] ?? '';
+    return { row, agg };
+  }
+
+  it('HTML: 利益率の + は黒字のときだけ付ける (0 は付ける)', () => {
+    expect(htmlMargins(html(400_000, 40))).toEqual({ row: '+40.0%', tile: '+40.0%' });
+    expect(htmlMargins(html(-400_000, -40))).toEqual({ row: '-40.0%', tile: '-40.0%' });
+    expect(htmlMargins(html(0, 0))).toEqual({ row: '+0.0%', tile: '+0.0%' });
+  });
+
+  it('Markdown: 利益率の + は黒字のときだけ付ける (0 は付ける)', () => {
+    expect(mdMargins(md(400_000, 40)).row).toBe('+40.0%');
+    expect(mdMargins(md(-400_000, -40)).row).toBe('-40.0%');
+    expect(mdMargins(md(0, 0)).row).toBe('+0.0%');
+    // 合計側 (全社合算の「月次利益」行) も同じ規則
+    const aggCell = (doc: string) =>
+      /\| 月次利益 \| [^(]*\(([^)]*)\)/.exec(doc)?.[1] ?? '';
+    expect(aggCell(md(400_000, 40))).toBe('+40.0%');
+    expect(aggCell(md(-400_000, -40))).toBe('-40.0%');
+    expect(aggCell(md(0, 0))).toBe('+0.0%');
+  });
+
+  it('推移のグラフは各月の売上を点にする', () => {
+    // 売上を読まずに描くと、値が違っても同じ線になる。
+    const flat = html(400_000, 40); // 履歴 2 点とも同額
+    const rising = renderBusinessDashboardHtml({
+      snapshot: (() => {
+        const s = snapWith(400_000, 40);
+        const u = s.units[0]!;
+        return {
+          ...s,
+          units: [
+            {
+              ...u,
+              history: [
+                { ...u.history[0]!, revenue: 100_000 },
+                { ...u.history[1]!, revenue: 900_000 },
+              ],
+            },
+          ],
+        };
+      })(),
+      generatedAt: 'x',
+    });
+    const pts = (page: string) => /<polyline[^>]*points="([^"]*)"/.exec(page)?.[1] ?? '';
+    expect(pts(flat)).not.toBe('');
+    expect(pts(rising)).not.toBe(pts(flat));
+  });
+
+  it('Markdown: 助言の推奨アクションとリスク要因を箇条書きにする', () => {
+    const doc = renderBusinessDashboardMarkdown({
+      snapshot: snapWith(400_000, 40),
+      generatedAt: 'x',
+      advisorResult: {
+        notForRealMoney: true,
+        disclaimer: '一般情報です',
+        recommendations: [
+          {
+            rank: 1,
+            categoryId: 'ec' as BusinessCategoryId,
+            rationale: '利益率が高い',
+            actionItems: ['広告費を増やす', '在庫を厚くする'],
+            riskFactors: ['在庫過多', '広告費の高騰'],
+          },
+        ],
+      } as unknown as BusinessAdvisorResponse,
+    });
+    expect(doc).toContain('- 広告費を増やす\n- 在庫を厚くする');
+    expect(doc).toContain('- 在庫過多\n- 広告費の高騰');
+  });
+});
