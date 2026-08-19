@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8059** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8419) |
+| ユニットテスト | **8070** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8430) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 296 | 自己検証 |
+| `file:line` 参照数 | 297 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1044,6 +1044,40 @@ text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します�
 IndexedDB の失敗イベント (`onerror` / `onabort`) は決定的に起こせないので、
 理由を書いた帯で外してある。**投げること自体**は「DB を開けないときは
 待ち続けない」の検査で固定した。**134 変異体 100%**。
+
+#### 時価評価の式を 3 つ持っていた (`src/main/clients/stocks.ts`)
+
+169 行の無効化を外すと **759 変異体 92.49%**。**生存 57 は全部この帯の中**に
+あった。帯には「色や符号は HTML の飾りで、変異させても有効な HTML のままだから
+利用者から見た差は化粧の違いにすぎない」と書いてあった。
+
+そうではなかった。**損をしているかどうかは色と `+` の有無でしか出ない**し、
+「買い」/「売り」の 2 文字は**何をしたかの記録**である。帯は関数の先頭から
+掛かっていたので、**現在資産の時価評価**まで一緒に外れていた。
+
+`toContain('#22c55e')` が落ちない理由は business と同じだが、こちらは緑が
+**買いシグナルの chip** と**戦略比較の最良行**にも出る。実際に確かめた —
+損益タイルの判定を `>= 0` から `> 0` へ 1 文字ずらす (0 円を損あつかいする)
+と、`(kills color-flip mutant)` と名乗っていた既存の検査は**通ったまま**で、
+新しい検査だけが落ちた。
+
+固定したのは 6 つ。損益タイル (色・金額・率を 1 つの塊として)、現在資産の
+時価評価、初期入金 0 のときの 0 除算、変動率、シグナルの色とラベルの対、
+取引履歴の売買の別。加えて**直近 20 件の切り出し**を固定した — `.slice(-20)`
+を `.slice(20)` にすると**古い方から**出るのに見出しは「直近」と言い続け、
+`Math.min(20, n)` を `Math.max` にすると見出しが表の行数より多い件数を名乗る。
+見出しの数と行数が一致することを検査にした。
+
+**同じ式が 3 箇所にあった。** 時価評価は `portfolioEquity()` にありながら、
+HTML 側と Markdown 側がそれぞれ写しを持っていた。Markdown 側の pragma には
+「find の述語が `true` になると先頭の行を返すので、複数保有があると過大計上
+する」と**書いてあり、そのうえでその mutator を止めて**いた。書ける程度に
+分かっているなら検査にできる。3 つを `portfolioEquity` へ寄せ、ウォッチリスト
+から値段表を作る `watchlistPrices()` だけを画面側に置いた。
+
+値段の分からない保有銘柄は**時価に足さない**ことも固定した (取得原価で
+埋めると、持っていないお金を資産に載せることになる)。**747 変異体 100%**、
+pragma はゼロ。
 
 #### 赤字を緑で出せた (`src/main/clients/business.ts`)
 

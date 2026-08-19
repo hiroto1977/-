@@ -29,6 +29,7 @@ import {
   type Candle,
   type Signal,
   type StocksSnapshot,
+  type PaperTrade,
   type AdvisorResponse,
   loadStocksState,
   saveStocksState,
@@ -3218,5 +3219,256 @@ describe('stocks state persistence', () => {
       expect(snap.isMock).toBe(true);
       expect(Array.isArray(snap.watchlist)).toBe(true);
     });
+  });
+});
+
+// --- 損をしていることが色と符号でしか出ない -----------------------------
+//
+// 損益・変動率・売買の別は、表の上では**色**と **`+` の有無**、そして
+// 「買い」/「売り」の 2 文字でしか出ない。金額は符号付きで正しく出るので、
+// 判定が反転しても数字は合ったまま**逆の顔をする**。
+//
+// これまでの検査は `expect(html).toContain('#22c55e')` の形だった。緑は
+// 買いシグナルの chip や戦略比較の最良行にも使うので、**判定を反転させても
+// 緑は必ずページのどこかに見つかる** — 落ちない検査だった。場所で絞る。
+
+describe('Stocks ダッシュボードの符号と色', () => {
+  const GREEN = '#22c55e';
+  const RED = '#ef4444';
+
+  /** 「損益」タイルの色・金額・パーセントを 1 つの塊として取り出す。 */
+  function pnlTile(page: string): { color: string; amount: string; pct: string } {
+    const re =
+      /<div class="label">損益<\/div><div class="value" style="color:(#[0-9a-f]{6})">([^<]*)<\/div><div class="sub">([^<]*)<\/div>/;
+    const m = re.exec(page);
+    return { color: m?.[1] ?? '', amount: m?.[2] ?? '', pct: m?.[3] ?? '' };
+  }
+  /** 「現在資産」タイルの表示額。 */
+  function equityTile(page: string): string {
+    return /<div class="label">現在資産<\/div><div class="value">([^<]*)<\/div>/.exec(page)?.[1] ?? '';
+  }
+
+  /** 現金 + 保有株の時価。`held` を渡すと 1 銘柄だけ建てる。 */
+  function withPosition(cash: number, shares: number, latestClose: number): StocksSnapshot {
+    return {
+      ...emptySnapshot(),
+      watchlist: [
+        {
+          symbol: 'X',
+          label: 'X Corp',
+          latestClose,
+          previousClose: latestClose,
+          changePct: 0,
+          signal: { date: '01', action: 'hold', confidence: 0, reason: 'r', strategy: 's' },
+          candles: [],
+        },
+      ],
+      portfolio: {
+        cash,
+        initialCash: 1_000_000,
+        positions: { X: { shares, avgCost: latestClose } },
+        history: [],
+      },
+    };
+  }
+
+  it('損益タイルは黒字なら緑と +、赤字なら赤と符号なし (0 は黒字あつかい)', () => {
+    // 現金 900,000 + 500 株 × 300 = 1,050,000 → +50,000 (+5.00%)
+    const win = renderDashboardHtml({ snapshot: withPosition(900_000, 500, 300), generatedAt: '01' });
+    expect(pnlTile(win)).toEqual({ color: GREEN, amount: '+￥50,000', pct: '+5.00%' });
+
+    // 現金 900,000 + 500 株 × 100 = 950,000 → -50,000 (-5.00%)
+    const loss = renderDashboardHtml({ snapshot: withPosition(900_000, 500, 100), generatedAt: '01' });
+    expect(pnlTile(loss)).toEqual({ color: RED, amount: '-￥50,000', pct: '-5.00%' });
+
+    // 境界: ちょうど 0 は損していないので赤にしない
+    const flat = renderDashboardHtml({ snapshot: withPosition(900_000, 500, 200), generatedAt: '01' });
+    expect(pnlTile(flat)).toEqual({ color: GREEN, amount: '+￥0', pct: '+0.00%' });
+  });
+
+  it('現在資産は現金に保有株の時価を足す (足し忘れると損に見える)', () => {
+    expect(equityTile(renderDashboardHtml({ snapshot: withPosition(900_000, 500, 300), generatedAt: '01' })))
+      .toBe('￥1,050,000');
+    // 株価が動けば現在資産も動く — 現金だけを出していれば変わらない
+    expect(equityTile(renderDashboardHtml({ snapshot: withPosition(900_000, 500, 100), generatedAt: '01' })))
+      .toBe('￥950,000');
+  });
+
+  it('保有銘柄はそれぞれ自分の値段で評価する (先頭の値段で揃えない)', () => {
+    // 2 銘柄を別々の値段で建てる。銘柄の取り違えが起きると、両方が
+    // 先頭 (A=100) の値段で評価され、現在資産が 100,000 ずれる。
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      watchlist: (['A', 'B'] as const).map((symbol, i) => ({
+        symbol,
+        label: symbol,
+        latestClose: i === 0 ? 100 : 300,
+        previousClose: i === 0 ? 100 : 300,
+        changePct: 0,
+        signal: { date: '01', action: 'hold' as const, confidence: 0, reason: 'r', strategy: 's' },
+        candles: [],
+      })),
+      portfolio: {
+        cash: 100_000,
+        initialCash: 1_000_000,
+        positions: { A: { shares: 500, avgCost: 100 }, B: { shares: 500, avgCost: 300 } },
+        history: [],
+      },
+    };
+    // 100,000 + 500*100 + 500*300 = 300,000
+    expect(equityTile(renderDashboardHtml({ snapshot: snap, generatedAt: '01' }))).toBe('￥300,000');
+    // Markdown 側も同じ額を出す (式を 2 つ持たない)
+    expect(renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' })).toContain('| 現在資産 | ￥300,000 |');
+  });
+
+  it('値段の分からない保有銘柄は時価に足さない', () => {
+    // ウォッチリストから外れた銘柄には最終値が無い。cost basis で
+    // 埋めると「持っていないお金」を資産に載せることになるので足さない。
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      watchlist: [],
+      portfolio: {
+        cash: 100_000,
+        initialCash: 1_000_000,
+        positions: { GONE: { shares: 500, avgCost: 100 } },
+        history: [],
+      },
+    };
+    expect(equityTile(renderDashboardHtml({ snapshot: snap, generatedAt: '01' }))).toBe('￥100,000');
+  });
+
+  it('初期入金が 0 でも利益率は 0% にする (0 除算を出さない)', () => {
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      portfolio: { cash: 500, initialCash: 0, positions: {}, history: [] },
+    };
+    const page = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
+    expect(pnlTile(page).pct).toBe('+0.00%');
+    expect(page).not.toContain('NaN');
+    expect(page).not.toContain('Infinity');
+  });
+
+  /** ウォッチリスト行の変動率セル (色 + 表記)。 */
+  function changeCell(page: string): { color: string; text: string } {
+    const m = /<td class="num" style="color:(#[0-9a-f]{6})">([^<]*%)<\/td>/.exec(page);
+    return { color: m?.[1] ?? '', text: m?.[2] ?? '' };
+  }
+  /** シグナル chip の色とラベル。 */
+  function signalChip(page: string): { color: string; label: string } {
+    const m = /<span class="chip" style="background:(#[0-9a-f]{6})">([^<]*)<\/span>/.exec(page);
+    return { color: m?.[1] ?? '', label: m?.[2] ?? '' };
+  }
+
+  function watched(changePct: number, action: 'buy' | 'sell' | 'hold'): StocksSnapshot {
+    return {
+      ...emptySnapshot(),
+      watchlist: [
+        {
+          symbol: 'X',
+          label: 'X Corp',
+          latestClose: 100,
+          previousClose: 100,
+          changePct,
+          signal: { date: '01', action, confidence: 0.5, reason: 'r', strategy: 's' },
+          candles: [],
+        },
+      ],
+    };
+  }
+
+  it('変動率も同じ規則 — 上げは緑と +、下げは赤 (0 は上げあつかい)', () => {
+    const page = (pct: number) =>
+      renderDashboardHtml({ snapshot: watched(pct, 'hold'), generatedAt: '01' });
+    expect(changeCell(page(1.5))).toEqual({ color: GREEN, text: '+1.50%' });
+    expect(changeCell(page(-1.5))).toEqual({ color: RED, text: '-1.50%' });
+    expect(changeCell(page(0))).toEqual({ color: GREEN, text: '+0.00%' });
+  });
+
+  it('シグナルの色とラベルが対になっている (買いが赤・売りが緑にならない)', () => {
+    const chip = (a: 'buy' | 'sell' | 'hold') =>
+      signalChip(renderDashboardHtml({ snapshot: watched(0, a), generatedAt: '01' }));
+    expect(chip('buy')).toEqual({ color: GREEN, label: '買い' });
+    expect(chip('sell')).toEqual({ color: RED, label: '売り' });
+    expect(chip('hold')).toEqual({ color: '#94a3b8', label: '見送り' });
+  });
+
+  // --- 取引履歴は「何をしたか」の記録 ---------------------------------
+  //
+  // 売買の別を取り違えると、記録が事実と逆になる。ここは飾りではない。
+
+  function trades(n: number): PaperTrade[] {
+    return Array.from({ length: n }, (_, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      ticker: `T${String(i + 1).padStart(2, '0')}`,
+      action: (i % 2 === 0 ? 'buy' : 'sell') as 'buy' | 'sell',
+      shares: 1,
+      price: 100,
+      cashAfter: 1000,
+      reason: 'r',
+    }));
+  }
+  function withHistory(history: readonly PaperTrade[]): StocksSnapshot {
+    return {
+      ...emptySnapshot(),
+      portfolio: { cash: 1_000_000, initialCash: 1_000_000, positions: {}, history },
+    };
+  }
+  /** 取引履歴の各行から「銘柄・売買の色・売買のラベル」を取り出す。 */
+  function tradeRows(page: string): { ticker: string; color: string; label: string }[] {
+    const re =
+      /<td class="mute">[^<]*<\/td>\s*<td><strong>([^<]*)<\/strong><\/td>\s*<td style="color:(#[0-9a-f]{6})"><strong>([^<]*)<\/strong><\/td>/g;
+    return [...page.matchAll(re)].map((m) => ({ ticker: m[1] ?? '', color: m[2] ?? '', label: m[3] ?? '' }));
+  }
+
+  it('買いは緑で「買い」、売りは赤で「売り」', () => {
+    const rows = tradeRows(renderDashboardHtml({ snapshot: withHistory(trades(2)), generatedAt: '01' }));
+    // 新しい順に並ぶので T02 (sell) が先
+    expect(rows).toEqual([
+      { ticker: 'T02', color: RED, label: '売り' },
+      { ticker: 'T01', color: GREEN, label: '買い' },
+    ]);
+  });
+
+  it('直近 20 件を新しい順に出し、見出しの件数が表の行数と一致する', () => {
+    const page = renderDashboardHtml({ snapshot: withHistory(trades(25)), generatedAt: '01' });
+    const rows = tradeRows(page);
+    // 末尾 20 件 = T06..T25。先頭 20 件 (T01..T20) でも、全 25 件でもない。
+    expect(rows).toHaveLength(20);
+    expect(rows[0]!.ticker).toBe('T25'); // 新しい順
+    expect(rows[19]!.ticker).toBe('T06'); // 末尾 20 件の先頭
+    // 見出しが表より多くの件数を名乗らない
+    const heading = /最近の取引 \(直近 (\d+) 件\)/.exec(page)?.[1] ?? '';
+    expect(Number(heading)).toBe(rows.length);
+  });
+
+  it('20 件に満たなければ見出しも実際の件数を言う', () => {
+    const page = renderDashboardHtml({ snapshot: withHistory(trades(3)), generatedAt: '01' });
+    expect(/最近の取引 \(直近 (\d+) 件\)/.exec(page)?.[1]).toBe('3');
+    expect(tradeRows(page)).toHaveLength(3);
+  });
+
+  it('戦略比較のリターン列も同じ規則 (0 は + を付ける)', () => {
+    const page = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '01',
+      strategyComparison: {
+        symbol: 'AAPL',
+        initialCash: 100_000,
+        rows: [
+          { strategy: 'up', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 },
+          { strategy: 'flat', finalEquity: 100_000, totalReturnPct: 0, maxDrawdownPct: 0, winRate: 0, tradeCount: 0 },
+          { strategy: 'down', finalEquity: 95_000, totalReturnPct: -5, maxDrawdownPct: 8, winRate: 0, tradeCount: 1 },
+        ],
+        bestByReturn: 'up',
+      },
+    });
+    const cells = [...page.matchAll(/<td class="num" style="color:(#[0-9a-f]{6})">([^<]*%)<\/td>/g)].map(
+      (m) => ({ color: m[1] ?? '', text: m[2] ?? '' }),
+    );
+    expect(cells).toEqual([
+      { color: GREEN, text: '+15.00%' },
+      { color: GREEN, text: '+0.00%' },
+      { color: RED, text: '-5.00%' },
+    ]);
   });
 });

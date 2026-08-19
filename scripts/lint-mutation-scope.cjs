@@ -63,7 +63,6 @@ const MAX_SPAN = 30;
  * 0 になったらエントリごと消す。
  */
 const KNOWN_BROAD = {
-  'src/main/clients/stocks.ts':                  { regions: 1, lines:  169 },
   'src/main/clients/templates.ts':               { regions: 1, lines:  139 },
 };
 
