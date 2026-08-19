@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8136** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8496) |
+| ユニットテスト | **8203** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8579) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 300 | 自己検証 |
+| `file:line` 参照数 | 306 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1044,6 +1044,45 @@ text: `🛠 ${service.label} で「${routed.action ?? ''}」を実行します�
 IndexedDB の失敗イベント (`onerror` / `onabort`) は決定的に起こせないので、
 理由を書いた帯で外してある。**投げること自体**は「DB を開けないときは
 待ち続けない」の検査で固定した。**134 変異体 100%**。
+
+#### 隣の壁だけが測られていた (`src/shared/ollama.ts`)
+
+`MUST_MEASURE` (必ず変異検査に載せる壁の一覧) は 2026-08-18 に
+`exportPaths.ts` の穴を塞いだとき作ったが、**そのとき見つけた 9 つを並べただけ**で、
+他に壁が無いかは調べていなかった。追跡下の `.ts` を `mutate` と全件突き合わせて
+出てきたのが `src/shared/ollama.ts` である。
+
+このモジュールには `isAllowedOllamaBase` — 接続先を (1) ループバック、
+(2) ページ自身と同じホスト名への http、(3) 任意の https の 3 通りに限る判定 —
+があり、冒頭に自分でこう書いている。
+
+> 任意ホストへの http を許すとページが内部ネットワークの探索に使える踏み台になる
+
+にもかかわらず `mutate` に無く、**変異体が 1 つも作られていなかった**。同じ
+`network/` にある `src/renderer/network/proxy.ts` は「SSRF の関門」として
+`MUST_MEASURE` に載っていた
+ので、**隣の壁だけが測られていた**ことになる。実測すると **442 変異体 80.54%**。
+
+無証明だったもの:
+
+- **認証情報つき URL の拒否** — `http://user:pass@…` は固定されていたが、
+  ユーザ名が空の `http://:pass@…` は誰も見ていなかった。判定は 2 つの条件の
+  論理和なので、片方だけを突く検査では**もう片方を消しても落ちない**。
+- **文字列以外の入力の拒否** — `new URL()` は `toString` を呼ぶので、
+  `{ toString: () => 'http://127.0.0.1:11434' }` は型検査を外すと通ってしまう。
+- **ポート番号の境界** (1 / 65535) と、`0x2b` → 43 のような表記の取り違え。
+
+等価変異はすべて**コードの単純化**で消した。`typeof port === 'number'` の分岐は
+数値も文字列も同じ結論になるので削除、`pathname !== ''` は URL の pathname が
+最低でも `/` なので削除、`pageHostname !== ''` は http URL の hostname が必ず
+非空なので削除。`extractOllamaError` の「空文字なら次へ」も、trim した結果が
+`''` なら返り値も `''` になるので消えた。**376 変異体 100%**、残したのは
+既定値 (`?? ''` / `?? []`) の 8 箇所だけで、いずれも 1 行の帯に理由を書いてある。
+
+**ブラウザ側の呼び出し口 `src/renderer/network/ollamaWeb.ts` はまだ測っていない**
+(実測 454 変異体 59.25%)。59% のまま `mutate` へ載せると全体が break 閾値を割って
+週次の変異 CI が落ちるので、数字を `docs/REMAINING_WORK.md` に明記したうえで
+次の対象として残している。
 
 #### 時価評価の式を 3 つ持っていた (`src/main/clients/stocks.ts`)
 

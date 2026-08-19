@@ -224,7 +224,7 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
   if (!isSafeModelName(model)) {
-    throw new FetchError(`unsafe model name: ${model.slice(0, 32)}`, 0, 'ollama');
+    throw new FetchError(`unsafe model name: ${String(model).slice(0, 32)}`, 0, 'ollama');
   }
   // Reject null bytes in user-controlled strings — classic foothold for
   // upstream parser bugs (including the unpatched engine-file OOB read).

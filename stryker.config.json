@@ -209,6 +209,7 @@
     "src/renderer/data/docLegalStatus.ts",
     "src/renderer/data/eligibility.ts",
     "src/shared/num.ts",
+    "src/shared/ollama.ts",
     "src/shared/escape.ts",
     "src/shared/issueLevel.ts",
     "src/shared/textWrap.ts",
