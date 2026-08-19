@@ -28,6 +28,7 @@ import { forecastCashBalance, type CashForecast } from './cashForecast';
 import { computeRevenueConcentration, type RevenueConcentration } from './revenueConcentration';
 import { computeTrendAlerts, type TrendAlerts } from './trendAlerts';
 import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
+import type { HydroponicsEconomics } from '../../shared/hydroponics';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
@@ -41,6 +42,43 @@ export interface OverviewInput {
   readonly accounting?: readonly AccountingMonthly[];
   /** Team members (only the count + roles matter here). */
   readonly members: readonly { readonly role: Role }[];
+  /**
+   * 水耕栽培の試算。利用者が入力した設備・品目・費用から算出したもので、
+   * 実績 (`kpiActuals`) とは混ぜない。未入力なら経営サマリーに節は出ない。
+   */
+  readonly hydroponics?: HydroponicsEconomics | null;
+}
+
+/** 経営サマリーに載せる水耕栽培の試算。 */
+export interface HydroponicsOverview {
+  /** 月間の出荷株数。 */
+  readonly shippedPlantsPerMonth: number;
+  /** 1 日あたりの出荷株数 (設備規模の言い表し方)。 */
+  readonly shippedPlantsPerDay: number;
+  /** 年間の出荷重量 (kg)。 */
+  readonly shippedKgPerYear: number;
+  /** 月商 (円)。 */
+  readonly revenue: number;
+  /** 月次の営業利益 (円)。 */
+  readonly operatingProfit: number;
+  /** 営業利益率 (%)。売上 0 なら 0。 */
+  readonly operatingMarginPct: number;
+  /** 限界利益率 (%)。他の節と同じ定義で出す。 */
+  readonly contributionRatio: number;
+  /** 損益分岐点売上高 (円)。 */
+  readonly bep: number;
+  /** 損益分岐の月間出荷株数。限界利益が 0 以下なら null。 */
+  readonly breakEvenPlantsPerMonth: number | null;
+  /** 出荷が分岐点に届いているか。 */
+  readonly meetsBreakEven: boolean;
+  /** 出荷 1 株あたりの総原価 (円)。 */
+  readonly costPerShippedPlantYen: number;
+  /** 年間電力量 (kWh)。歩留まりが落ちても減らない。 */
+  readonly energyKwhPerYear: number;
+  /** 年間電気代 (円)。 */
+  readonly electricityYenPerYear: number;
+  /** 電気代が月次費用に占める割合 (%)。費用 0 なら 0。 */
+  readonly electricityCostRatioPct: number;
 }
 
 export interface BusinessOverview {
@@ -118,6 +156,11 @@ export interface BusinessOverview {
   readonly cashForecast: CashForecast | null;
   /** 月次トレンドのアラート (売上・営業利益の連続下落検知)。 */
   readonly trendAlerts: TrendAlerts;
+  /**
+   * 水耕栽培の試算。**実績ではなく計画側の数字**なので `kpi` には混ぜず、
+   * 独立した節として持つ。未入力なら null。
+   */
+  readonly hydroponics: HydroponicsOverview | null;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -211,9 +254,49 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       ? forecastCashBalance(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet, 12)
       : null,
     trendAlerts: computeTrendAlerts(input.kpiActuals),
+    hydroponics: summarizeHydroponics(input.hydroponics ?? null),
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
       seatsFull: remaining === 0,
     },
+  };
+}
+
+/**
+ * 水耕栽培の試算を経営サマリーの節に整える。
+ *
+ * 利益率・限界利益率・損益分岐点は**他の節と同じ関数** (`computeKpiMetrics`)
+ * で出す。栽培だけ別の定義で計算すると、同じ画面に定義の違う「利益率」が
+ * 並ぶことになる。
+ */
+function summarizeHydroponics(e: HydroponicsEconomics | null): HydroponicsOverview | null {
+  if (!e) return null;
+  const m = e.monthly;
+  const metrics = computeKpiMetrics({
+    revenue: m.revenue,
+    cogs: m.cogs,
+    advertising: m.advertising,
+    sga: m.sga,
+    depreciation: m.depreciation,
+  });
+  // 費用の合計は `computeKpiMetrics` の定義から引き算で出す。ここで足し直すと
+  // 「営業利益の裏側の費用」と定義が二重になり、片方だけ変えたときに気付けない。
+  const monthlyCost = m.revenue - metrics.operatingProfit;
+  const monthlyElectricity = e.electricityYenPerYear / 12;
+  return {
+    shippedPlantsPerMonth: e.shippedPlantsPerMonth,
+    shippedPlantsPerDay: e.production.shippedPlantsPerDay,
+    shippedKgPerYear: e.production.shippedKgPerYear,
+    revenue: m.revenue,
+    operatingProfit: metrics.operatingProfit,
+    operatingMarginPct: m.revenue > 0 ? (metrics.operatingProfit / m.revenue) * 100 : 0,
+    contributionRatio: metrics.contributionRatio,
+    bep: metrics.bep,
+    breakEvenPlantsPerMonth: e.breakEvenPlantsPerMonth,
+    meetsBreakEven: e.meetsBreakEven,
+    costPerShippedPlantYen: e.costPerShippedPlantYen,
+    energyKwhPerYear: e.energyKwhPerYear,
+    electricityYenPerYear: e.electricityYenPerYear,
+    electricityCostRatioPct: monthlyCost > 0 ? (monthlyElectricity / monthlyCost) * 100 : 0,
   };
 }

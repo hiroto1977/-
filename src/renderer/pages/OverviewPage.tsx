@@ -20,6 +20,14 @@ import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCo
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
+import {
+  HYDROPONICS_COLLECTION,
+  HYDROPONICS_DEFAULTS,
+  economicsFromSetup,
+  resolveCrop,
+  type HydroponicsSetup,
+} from '../data/hydroponicsSetup';
+import { HYDROPONIC_CROPS, checkNutrientSolution, type HydroponicCropId } from '../../shared/hydroponics';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import {
@@ -133,6 +141,159 @@ function HighlightSettingsPanel({
   );
 }
 
+/**
+ * 水耕栽培の設備・費用を入力するパネル。
+ *
+ * 初期値は参考値だが、**保存するまで経営サマリーには載らない**。参考値が
+ * そのまま経営数値になると、サンプルと実データの区別がつかなくなる。
+ */
+function HydroponicsPanel({
+  current,
+  onSave,
+}: {
+  current: HydroponicsSetup | null;
+  onSave: (s: HydroponicsSetup) => Promise<void> | void;
+}) {
+  const base = current ?? HYDROPONICS_DEFAULTS;
+  const [cropId, setCropId] = useState<HydroponicCropId>(resolveCrop(base.cropId));
+  const [form, setForm] = useState({
+    floorAreaSqm: String(base.floorAreaSqm),
+    tiers: String(base.tiers),
+    usableRatioPct: String(base.usableRatioPct),
+    yieldRatePct: String(base.yieldRatePct),
+    unitPriceYen: String(base.unitPriceYen),
+    electricityYenPerKwh: String(base.electricityYenPerKwh),
+    energyIntensityKwhPerKg: String(base.energyIntensityKwhPerKg),
+    seedYenPerPlant: String(base.seedYenPerPlant),
+    nutrientYenPerPlant: String(base.nutrientYenPerPlant),
+    packagingYenPerPlant: String(base.packagingYenPerPlant),
+    laborYenPerMonth: String(base.laborYenPerMonth),
+    depreciationYenPerMonth: String(base.depreciationYenPerMonth),
+    rentYenPerMonth: String(base.rentYenPerMonth),
+    otherFixedYenPerMonth: String(base.otherFixedYenPerMonth),
+  });
+  const [saved, setSaved] = useState(false);
+  const [ec, setEc] = useState('');
+  const [ph, setPh] = useState('');
+
+  const crop = HYDROPONIC_CROPS[cropId];
+  const n = (v: string): number => {
+    const parsed = Number(v.replace(/,/g, ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const field = (key: keyof typeof form, label: string) => (
+    <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {label}
+      <input
+        type="text"
+        inputMode="decimal"
+        value={form[key]}
+        onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); setSaved(false); }}
+        style={settingsInput}
+      />
+    </label>
+  );
+
+  const nutrient = ec.trim() !== '' && ph.trim() !== ''
+    ? checkNutrientSolution(crop, n(ec), n(ph))
+    : null;
+
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
+        栽培設備と費用を入力すると、出荷株数・月次損益・電力を試算して経営サマリーに載せます。
+        初期値は公開資料の参考値です（<strong>保存するまで経営サマリーには反映されません</strong>）。
+        <strong>※ 概算試算であり、事業計画や投資判断の保証ではありません。</strong>
+      </p>
+
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          品目
+          <select
+            value={cropId}
+            onChange={(e) => { setCropId(resolveCrop(e.target.value)); setSaved(false); }}
+            style={{ ...settingsInput, width: 150 }}
+          >
+            {Object.values(HYDROPONIC_CROPS).map((c) => (
+              <option key={c.id} value={c.id}>{c.label}</option>
+            ))}
+          </select>
+        </label>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+          育苗 {crop.nurseryDays} 日 ＋ 定植後 {crop.growOutDays} 日 ／ 収穫 {crop.harvestWeightG} g/株 ／
+          パネル {crop.plantsPerPanel} 穴 ／ 養液 EC {crop.ecLow}〜{crop.ecHigh} mS/cm・pH {crop.phLow}〜{crop.phHigh}
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        {field('floorAreaSqm', '床面積 (m²)')}
+        {field('tiers', '棚の段数')}
+        {field('usableRatioPct', '栽培に使える割合 (%)')}
+        {field('yieldRatePct', '歩留まり (%)')}
+        {field('unitPriceYen', '販売単価 (円/株)')}
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        {field('electricityYenPerKwh', '電力単価 (円/kWh)')}
+        {field('energyIntensityKwhPerKg', '電力原単位 (kWh/kg)')}
+        {field('seedYenPerPlant', '種苗費 (円/株)')}
+        {field('nutrientYenPerPlant', '肥料・養液 (円/株)')}
+        {field('packagingYenPerPlant', '包装・資材 (円/株)')}
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        {field('laborYenPerMonth', '人件費 (円/月)')}
+        {field('depreciationYenPerMonth', '減価償却費 (円/月)')}
+        {field('rentYenPerMonth', '地代家賃 (円/月)')}
+        {field('otherFixedYenPerMonth', 'その他固定費 (円/月)')}
+        <button
+          type="button"
+          onClick={async () => {
+            await onSave({
+              cropId,
+              floorAreaSqm: n(form.floorAreaSqm),
+              tiers: n(form.tiers),
+              usableRatioPct: n(form.usableRatioPct),
+              yieldRatePct: n(form.yieldRatePct),
+              unitPriceYen: n(form.unitPriceYen),
+              electricityYenPerKwh: n(form.electricityYenPerKwh),
+              energyIntensityKwhPerKg: n(form.energyIntensityKwhPerKg),
+              seedYenPerPlant: n(form.seedYenPerPlant),
+              nutrientYenPerPlant: n(form.nutrientYenPerPlant),
+              packagingYenPerPlant: n(form.packagingYenPerPlant),
+              laborYenPerMonth: n(form.laborYenPerMonth),
+              depreciationYenPerMonth: n(form.depreciationYenPerMonth),
+              rentYenPerMonth: n(form.rentYenPerMonth),
+              otherFixedYenPerMonth: n(form.otherFixedYenPerMonth),
+            });
+            setSaved(true);
+          }}
+        >
+          保存して経営サマリーへ反映
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          養液 EC (mS/cm)
+          <input type="text" inputMode="decimal" value={ec} onChange={(e) => setEc(e.target.value)} style={settingsInput} />
+        </label>
+        <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          養液 pH
+          <input type="text" inputMode="decimal" value={ph} onChange={(e) => setPh(e.target.value)} style={settingsInput} />
+        </label>
+        {nutrient && (
+          <div style={{ fontSize: 12, color: nutrient.ok ? '#22c55e' : '#f59e0b', lineHeight: 1.7 }}>
+            {nutrient.ok
+              ? `適正範囲内です（EC ${crop.ecLow}〜${crop.ecHigh} / pH ${crop.phLow}〜${crop.phHigh}）。`
+              : `範囲外です — ${!nutrient.ecInRange ? `EC は ${crop.ecLow}〜${crop.ecHigh} mS/cm` : ''}${!nutrient.ecInRange && !nutrient.phInRange ? '、' : ''}${!nutrient.phInRange ? `pH は ${crop.phLow}〜${crop.phHigh}` : ''} が目安。EC が高すぎるとレタス類は苦味が出ます。`}
+          </div>
+        )}
+      </div>
+      {saved && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。経営サマリーに反映されています。</div>}
+    </div>
+  );
+}
+
 function Sparkline({ label, values, color }: { label: string; values: number[]; color: string }) {
   const W = 160, H = 40;
   const g = sparklinePoints(values, W, H, 3);
@@ -224,6 +385,13 @@ export function OverviewPage() {
   );
   const overrideRecords = overridesCol.records;
 
+  // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。
+  const hydroCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+  const hydroSetup = hydroCol.records.length > 0
+    ? hydroCol.records[hydroCol.records.length - 1]!.data
+    : null;
+  const hydroponics = useMemo(() => economicsFromSetup(hydroSetup), [hydroSetup]);
+
   const computedOverview = useMemo(
     () =>
       buildBusinessOverview({
@@ -235,8 +403,9 @@ export function OverviewPage() {
         balanceSheet: bsRecords.length > 0 ? bsRecords[bsRecords.length - 1]!.data : null,
         accounting: accountingMonthly,
         members: memberRecords.map((r) => ({ role: r.data.role })),
+        hydroponics,
       }),
-    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords],
+    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords, hydroponics],
   );
 
   // 手入力の上書きを自動計算の上に重ねる。**ここ 1 か所**で、以降の表示・
@@ -746,6 +915,77 @@ export function OverviewPage() {
           </div>
         </Section>
       )}
+
+      <Section title={`水耕栽培の試算${overview.hydroponics ? ` — 日産 ${num.format(overview.hydroponics.shippedPlantsPerDay)} 株` : ''}`}>
+        <HydroponicsPanel current={hydroSetup} onSave={(s) => hydroCol.add(s)} />
+        {overview.hydroponics && (
+          <>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '14px 0 4px' }}>
+              生産量（入力した設備から）
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+              <Tile label="出荷株数 (日)" value={`${num.format(overview.hydroponics.shippedPlantsPerDay)} 株`} />
+              <Tile label="出荷株数 (月)" value={`${num.format(overview.hydroponics.shippedPlantsPerMonth)} 株`} />
+              <Tile label="出荷重量 (年)" value={`${num.format(Math.round(overview.hydroponics.shippedKgPerYear))} kg`} />
+              <Tile
+                label="電力量 (年)"
+                value={`${num.format(overview.hydroponics.energyKwhPerYear)} kWh`}
+                sub="歩留まりが落ちても減らない（照明は動き続ける）"
+              />
+            </div>
+
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>収支（月次）</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+              <Tile label="月商" value={yen.format(overview.hydroponics.revenue)} />
+              <Tile
+                label="営業利益"
+                value={yen.format(overview.hydroponics.operatingProfit)}
+                accent={overview.hydroponics.operatingProfit >= 0 ? '#22c55e' : '#ef4444'}
+                sub={`営業利益率 ${overview.hydroponics.operatingMarginPct.toFixed(1)}%`}
+              />
+              <Tile
+                label="出荷 1 株あたり原価"
+                value={safeYen(Math.round(overview.hydroponics.costPerShippedPlantYen))}
+                sub="変動費と固定費の両方を売れた株が背負う"
+              />
+              <Tile
+                label="電気代が費用に占める割合"
+                value={`${overview.hydroponics.electricityCostRatioPct.toFixed(1)}%`}
+                sub={`年間 ${yen.format(overview.hydroponics.electricityYenPerYear)}`}
+              />
+            </div>
+
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>損益分岐</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+              <Tile
+                label="損益分岐の出荷株数 (月)"
+                value={
+                  overview.hydroponics.breakEvenPlantsPerMonth === null
+                    ? '—'
+                    : `${num.format(overview.hydroponics.breakEvenPlantsPerMonth)} 株`
+                }
+                accent={overview.hydroponics.meetsBreakEven ? '#22c55e' : '#ef4444'}
+                sub={
+                  overview.hydroponics.breakEvenPlantsPerMonth === null
+                    ? '単価が株あたり変動費以下です。何株売っても固定費を回収できません。'
+                    : overview.hydroponics.meetsBreakEven
+                      ? '現在の出荷量で固定費を回収できています。'
+                      : `現在の出荷は ${num.format(overview.hydroponics.shippedPlantsPerMonth)} 株。単価か歩留まりを上げるか、固定費を下げる必要があります。`
+                }
+              />
+              <Tile label="損益分岐点売上高 (月)" value={yen.format(overview.hydroponics.bep)} />
+              <Tile label="限界利益率" value={`${overview.hydroponics.contributionRatio.toFixed(1)}%`} />
+            </div>
+
+            <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.7 }}>
+              この節の数値は<strong>入力した栽培設備からの試算</strong>で、KPI 実績には合算していません
+              （実績と計画が同じ数字として並ばないようにするため）。電気代は販管費に入れています —
+              棚を止めない限り出ていく費用なので、変動費に入れると限界利益が実態より大きく出て
+              損益分岐点を低く見せるからです。
+            </p>
+          </>
+        )}
+      </Section>
 
       {overview.financialPosition && (
         <Section title="財政状態 (貸借対照表ベース)">
