@@ -30,7 +30,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 312 | 自己検証 |
+| `file:line` 参照数 | 316 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1090,8 +1090,19 @@ Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**
 `readCredential` へ譲った** — 守っている約束は本物で、grep の素朴さは
 その約束を安く保つための対価である。
 
+**呼び手の無い分岐は落とした。** 最初は「CORS を許す相手なら直接 fetch」の
+枝も置いたが、Cursor はプロキシ必須なので**どのサービスもその枝を通らず**、
+実測で丸ごと未到達だった (86.36%)。資格情報を第三者のホストへ送る経路を、
+動かないまま置いておくほうが危ない。**必ずプロキシを通す**形に絞り、CORS を
+許すサービスを足すときにその検査と一緒に戻すことをコメントに書いた。
+
 対応済みは Cursor だけで、`LIVE_READERS` に 1 行足せば増やせる。**一覧に無い
 こと自体が「まだ実データにできない」という表明**になる。
+
+実測: `src/shared/api/cursor.ts` **103 変異体 100%**、
+`src/renderer/network/liveRead.ts` **38 変異体 100%**、
+薄くした `src/main/clients/cursor.ts` **4 変異体 100%**、
+`src/shared/dataOrigin.ts` **45 変異体 100%**。
 
 #### 隣の壁だけが測られていた (`src/shared/ollama.ts`)
 

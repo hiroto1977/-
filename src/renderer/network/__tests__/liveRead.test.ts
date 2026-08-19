@@ -6,7 +6,7 @@
  * ことが要件なので、3 つの理由がそれぞれ別の code になることを固定する。
  */
 import { describe, expect, it, vi } from 'vitest';
-import { canLiveRead, liveRead, LIVE_READERS, type LiveReadDeps } from '../liveRead';
+import { canLiveRead, liveRead, type LiveReadDeps } from '../liveRead';
 
 const NOW = Date.UTC(2026, 7, 19);
 
@@ -48,10 +48,15 @@ describe('liveRead — 実データにならない理由を区別する', () => 
   });
 
   it('資格情報が無ければ not_configured (入れれば実データになると言う)', async () => {
-    const nil = await liveRead('cursor', deps({ readCredential: async () => null }));
-    expect(nil).toMatchObject({ ok: false, code: 'not_configured' });
-    const empty = await liveRead('cursor', deps({ readCredential: async () => '' }));
-    expect(empty).toMatchObject({ ok: false, code: 'not_configured' });
+    const expected = {
+      ok: false,
+      code: 'not_configured',
+      // 文言そのものが成果物 — 「入れれば実データになる」と伝わらないと、
+      // 利用者はサンプルが出ていることにすら気付かない。
+      message: '資格情報が未登録です。登録すると実データに切り替わります。',
+    };
+    expect(await liveRead('cursor', deps({ readCredential: async () => null }))).toEqual(expected);
+    expect(await liveRead('cursor', deps({ readCredential: async () => '' }))).toEqual(expected);
   });
 
   it('資格情報の読み出しが失敗しても not_configured で返す (throw させない)', async () => {
@@ -61,6 +66,17 @@ describe('liveRead — 実データにならない理由を区別する', () => 
       },
     }));
     expect(r).toMatchObject({ ok: false, code: 'not_configured' });
+  });
+
+  it('プロキシの用意が Error 以外で失敗しても文言を返す', async () => {
+    const r = await liveRead('cursor', deps({
+      getProxyJsonFetch: () => Promise.reject('boom'),
+    }));
+    expect(r).toEqual({
+      ok: false,
+      code: 'proxy_required',
+      message: 'プロキシの用意に失敗しました。',
+    });
   });
 
   it('プロキシ未設定は proxy_required で、案内文をそのまま渡す', async () => {
@@ -122,11 +138,7 @@ describe('liveRead — 揃っていれば実データを返す', () => {
     expect(usageBody.startDate).toBe(NOW - 29 * 86_400_000);
   });
 
-  it('Cursor はプロキシが要る (ブラウザから直接は叩けない相手)', () => {
-    expect(LIVE_READERS.cursor!.needsProxy).toBe(true);
-  });
-
-  it('プロキシが要るサービスでは直接 fetch を使わない', async () => {
+  it('資格情報は必ずプロキシ経由でしか出ていかない (直接 fetch しない)', async () => {
     const direct = vi.spyOn(globalThis, 'fetch');
     await liveRead('cursor', deps());
     expect(direct).not.toHaveBeenCalled();

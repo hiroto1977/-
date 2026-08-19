@@ -49,8 +49,6 @@ export interface LiveReadDeps {
 
 /** 1 サービス分の読み取り。 */
 interface LiveReader {
-  /** ブラウザから直接叩けない相手か (プロキシが要る)。 */
-  readonly needsProxy: boolean;
   readonly read: (jsonFetch: JsonFetch, token: string, nowMs: number) => Promise<unknown>;
 }
 
@@ -62,9 +60,8 @@ interface LiveReader {
  * `docs/BROWSER_REDESIGN.md` にも書くこと。
  */
 export const LIVE_READERS: Readonly<Record<string, LiveReader>> = {
+  // api.cursor.com はブラウザ発の呼び出しに CORS を許可しないのでプロキシ経由。
   cursor: {
-    // api.cursor.com はブラウザ発の呼び出しに CORS を許可しない。
-    needsProxy: true,
     read: (jsonFetch, token, nowMs) =>
       fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS),
   },
@@ -108,19 +105,19 @@ export async function liveRead(serviceId: string, deps: LiveReadDeps): Promise<L
     };
   }
 
+  // **必ずプロキシを通す。** CORS を許す相手なら直接 fetch でもよいが、その
+  // 分岐は今どのサービスも通らない = 検査で確かめられない。資格情報を第三者の
+  // ホストへ送る経路を、動かないまま置いておくほうが危ない。CORS を許す
+  // サービスを足すときに、そのときの検査と一緒に分岐を戻すこと。
   let jsonFetch: JsonFetch;
-  if (reader.needsProxy) {
-    try {
-      jsonFetch = await deps.getProxyJsonFetch();
-    } catch (e) {
-      return {
-        ok: false,
-        code: 'proxy_required',
-        message: e instanceof Error ? e.message : 'プロキシが必要です。',
-      };
-    }
-  } else {
-    jsonFetch = (url, init) => fetch(url, init).then((r) => r.json() as Promise<unknown>);
+  try {
+    jsonFetch = await deps.getProxyJsonFetch();
+  } catch (e) {
+    return {
+      ok: false,
+      code: 'proxy_required',
+      message: e instanceof Error ? e.message : 'プロキシの用意に失敗しました。',
+    };
   }
 
   try {
