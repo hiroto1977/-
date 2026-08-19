@@ -103,6 +103,7 @@ import {
   type Transport,
 } from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
+import { liveRead, canLiveRead } from './network/liveRead';
 import { AI_PROVIDERS } from '../shared/ai/providers';
 import {
   configForProvider,
@@ -899,6 +900,27 @@ const shim = {
         keyConfigured = false;
       }
       return ok(buildEmotionsSnapshot(keyConfigured)) as ActionResult<T>;
+    }
+    // 資格情報 (と必要ならプロキシ) が揃っていれば、読み取りも実データにする。
+    // ここが `not_implemented` を返し続けていたせいで、キーを入れても画面は
+    // 永久に同梱サンプルのままだった (Cursor に架空の 3 人が出続けていた)。
+    if (serviceId !== undefined && canLiveRead(serviceId)) {
+      const res = await liveRead(serviceId, {
+        readCredential: (id) => vault.getToken(id).then((t) => (t === null ? null : bearerFromVaultToken(t))),
+        getProxyJsonFetch: async () => {
+          const transport = await getProxyTransport();
+          return async (url, init) => {
+            const r = await transport(url, init);
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return (await r.json()) as unknown;
+          };
+        },
+        now: () => Date.now(),
+      });
+      if (res.ok) return ok(res.data) as ActionResult<T>;
+      // 取れない理由をそのまま返す。ページは snapshot へ落ちるが、
+      // 「なぜ実データでないか」は画面に出る。
+      return err<T>(res.code, res.message);
     }
     return err(
       'not_implemented',
