@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8276** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8652) |
+| ユニットテスト | **8392** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 316 | 自己検証 |
+| `file:line` 参照数 | 315 | 自己検証 |
 
 ### 統合フロー図
 
@@ -225,8 +225,12 @@ type OAuthResult =
 ```
 
 `ok:false` の `message` は **必ず** `safeErrorMessage()` (`src/main/main.ts:18-20`) →
-`redactSecrets()` (`src/main/clients/types.ts:37-44`) を経由する。redact 対象は
-`Bearer …`, `sk-ant-…`, `ghp_…`, `xoxb-…`, `ya29.…`, `secret_…` + JSON の
+`redactSecrets()` (`src/shared/redact.ts`、`src/main/clients/types.ts` が再輸出) を
+経由する。redact 対象は **資格情報ヘッダの値**
+(`Authorization` / `proxy-authorization` / `x-api-key` / `x-goog-api-key` / `api-key`。
+`名前: 値` の線上の形と `"名前":"値"` の JSON の形の両方)、ヘッダ名の付かない裸の
+`Bearer …` / `Basic …` (16 字以上)、`sk-ant-…`, `ghp_…`, `xoxb-…`, `ya29.…`,
+`secret_…`, `ATATT…` + JSON の
 `access_token` / `refresh_token` / `token` / `api_key` / `apikey` / `password`。
 
 ---
@@ -1138,10 +1142,24 @@ Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**
 `''` なら返り値も `''` になるので消えた。**376 変異体 100%**、残したのは
 既定値 (`?? ''` / `?? []`) の 8 箇所だけで、いずれも 1 行の帯に理由を書いてある。
 
-**ブラウザ側の呼び出し口 `src/renderer/network/ollamaWeb.ts` はまだ測っていない**
-(実測 454 変異体 59.25%)。59% のまま `mutate` へ載せると全体が break 閾値を割って
-週次の変異 CI が落ちるので、数字を `docs/REMAINING_WORK.md` に明記したうえで
-次の対象として残している。
+**ブラウザ側の呼び出し口 `src/renderer/network/ollamaWeb.ts` も測り切った**
+(2026-08-20)。着手時は 454 変異体 59.25% で、生存の中身は「利用者が貼り付ける
+セットアップ手順の文字列」「chat の成功経路そのもの」「通信の枠 (時間切れ・
+サイズ上限・キャッシュ無効)」だった。手順の文字列は golden で固定し、残りは
+テストを足して **437 変異体 100%**（pragma 0 個）。
+
+pragma を 1 つも足さずに済んだのは、**等価変異が出るたびに黙らせずコードを
+単純化した**から。この 4 つの形が繰り返し出た:
+
+| 出た形 | なぜ確かめられないか | 直し方 |
+|---|---|---|
+| `catch { return false }` / `catch { return [] }` | 中身を空にすると `undefined` が返るが、偽値・空配列と同じ枝に落ちる | `Promise.allSettled` で**成否そのものを値にする** |
+| `typeof x === 'string' ? x : ''` | `''` も番人の値も「一致しない」に潰れる | 型の確認と中身の確認を並べて書き、`''` を置かない |
+| 既定引数の `typeof location !== 'undefined' ? location.hostname : ''` | `location` の無い環境では空側しか通らない | `pageHost()` として**名前を付け、外から叩けるようにする** |
+| `JSON.parse` の失敗を `null` で返す | 呼び出し側は `null` と `undefined` を区別しない | `parseJsonOrNull` / `readTextOrEmpty` を export して**約束だけを直接固定する** |
+
+到達不能な `=== null` ガードを 3 つ削除した (`buildOllamaUrl` は許可済みの base と
+定数のパスからは null を返さない)。分類に効かない引数も 1 つ削った。
 
 #### 時価評価の式を 3 つ持っていた (`src/main/clients/stocks.ts`)
 
@@ -1652,7 +1670,7 @@ graph TB
     L3["safeStorage (OS keychain)<br/>plain-base64 fallback + console.warn<br/>secrets.json mode 0o600 + 1MB cap<br/>OAuth PKCE + 32B state<br/>Loopback callback Host pin"]
   end
   subgraph "L4 — エラー出口"
-    L4["redactSecrets: Bearer / sk-ant- / ghp_ / xoxb- / ya29. / secret_<br/>+ JSON token fields<br/>jsonFetch error body 200B 切り詰め"]
+    L4["redactSecrets: 資格情報ヘッダの値 (線上 / JSON 両方)<br/>裸の Bearer・Basic (16字以上)<br/>sk-ant- / ghp_ / xoxb- / ya29. / secret_ / ATATT<br/>+ JSON token fields<br/>jsonFetch error body 200B 切り詰め"]
   end
   L0 --> L1 --> L2 --> L3 --> L4
 ```
@@ -1666,7 +1684,8 @@ graph TB
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:85-88`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
-| **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`types.ts:37-44`) + 200B 切り詰め (`types.ts:56`) |
+| **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
+| **token 漏洩 (プロキシがヘッダを JSON で返す)** | 利用者の BYO Worker が `{"headers":{"authorization":"Bearer …"}}` を返す | `redactSecrets` を**ヘッダ名起点**にした (線上の `名前: 値` と JSON の `"名前":"値"` の両方)。旧規則はコロン直結のみを見ており、この形が素通りしていた (2026-08-20 実測) |
 | **Renderer XSS** | (理論) | CSP + React auto-escape + `dangerouslySetInnerHTML` 0 件 |
 | **External URL 開封** | `javascript:` / `file:` | `app:openExternal` http(s) 限定 (`main.ts:100-115`) |
 | **secrets.json 改竄/巨大化** | ディスク満杯 / 攻撃者 | 1MB cap + shape 検証 (`secrets.ts:14-39`) |

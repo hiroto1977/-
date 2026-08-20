@@ -57,6 +57,7 @@
     "src/renderer/data/dbPosture.ts",
     "src/renderer/security/mnemonic.ts",
     "src/renderer/network/liveRead.ts",
+    "src/renderer/network/ollamaWeb.ts",
     "src/renderer/network/proxy.ts",
     "src/renderer/oauth/pkce.ts",
     "src/renderer/library/library.ts",
