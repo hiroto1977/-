@@ -8,6 +8,8 @@ import {
   NITRIFICATION_ALKALINITY_MG_CACO3_PER_MG_N,
   GROUNDWATER_NITRATE_N_STANDARD_MG_L,
   EFFLUENT_TN_UNIFORM_MG_L,
+  EFFLUENT_TP_UNIFORM_MG_L,
+  WPCL_NP_APPLICABILITY_M3_PER_DAY,
 } from '../waterCyclePlanner';
 
 /*
@@ -222,5 +224,249 @@ describe('checkEffluent — 排水の法規制判定', () => {
     const r = checkEffluent(concentrated);
     // 400 mg/L × 1303 L = 521,200 mg = 0.52 kg
     expect(r.annualNitrogenKg).toBeCloseTo(0.5, 1);
+  });
+});
+
+/*
+ * 境界と組み合わせ。
+ *
+ * ここは**法規制の答えを出す**場所である (水質汚濁防止法の一律排水基準)。
+ * `>` を `>=` に、`&&` を `||` に取り違えると「基準を超えていません」と
+ * 言ってしまう。2026-08-20 の実測で、`checkEffluent` と `planRoSizing` の
+ * 判定に生存 42 件が残っていた (このモジュールは `mutate` に載っていなかった)。
+ */
+describe('checkEffluent — 基準の境界はどちら側か', () => {
+  const at = (tn: number, tp: number, toPublic = true) =>
+    checkEffluent({
+      concentrateTnMgL: tn,
+      concentrateTpMgL: tp,
+      annualDischargeL: 1_000,
+      dischargeToPublicWater: toPublic,
+    });
+
+  it('一律基準ちょうどは「超過」にしない (超えて初めて超過)', () => {
+    const r = at(EFFLUENT_TN_UNIFORM_MG_L, EFFLUENT_TP_UNIFORM_MG_L);
+    expect(r.exceedsTn).toBe(false);
+    expect(r.exceedsTp).toBe(false);
+    expect(r.recommendReuse).toBe(false);
+  });
+
+  it('基準を 1 だけ超えたら超過', () => {
+    const r = at(EFFLUENT_TN_UNIFORM_MG_L + 1, EFFLUENT_TP_UNIFORM_MG_L + 1);
+    expect(r.exceedsTn).toBe(true);
+    expect(r.exceedsTp).toBe(true);
+  });
+
+  it('窒素とりんは別々に判定する (片方だけ超過が両方に伝染しない)', () => {
+    const tnOnly = at(EFFLUENT_TN_UNIFORM_MG_L + 1, EFFLUENT_TP_UNIFORM_MG_L);
+    expect(tnOnly.exceedsTn).toBe(true);
+    expect(tnOnly.exceedsTp).toBe(false);
+
+    const tpOnly = at(EFFLUENT_TN_UNIFORM_MG_L, EFFLUENT_TP_UNIFORM_MG_L + 1);
+    expect(tpOnly.exceedsTn).toBe(false);
+    expect(tpOnly.exceedsTp).toBe(true);
+  });
+
+  it('放流しないなら濃度がいくら高くても排水基準の超過は立たない', () => {
+    // 土壌施用・再利用は公共用水域への放流ではないので、一律排水基準の
+    // 適用対象ではない。ここを `||` に取り違えると、放流していない事業者に
+    // 「基準超過」と告げることになる。
+    const r = at(10_000, 10_000, false);
+    expect(r.exceedsTn).toBe(false);
+    expect(r.exceedsTp).toBe(false);
+    expect(r.wpclNpApplicable).toBe(false);
+  });
+
+  it('再利用の推奨は放流の有無に関わらず濃度だけで決まる', () => {
+    // 「捨てずに希釈施用へ回す」は放流していなくても成り立つ助言。
+    expect(at(EFFLUENT_TN_UNIFORM_MG_L + 1, 0, false).recommendReuse).toBe(true);
+    expect(at(0, EFFLUENT_TP_UNIFORM_MG_L + 1, false).recommendReuse).toBe(true);
+  });
+
+  it('推奨はどちらか一方の超過で立つ (両方要求しない)', () => {
+    expect(at(EFFLUENT_TN_UNIFORM_MG_L + 1, 0).recommendReuse).toBe(true);
+    expect(at(0, EFFLUENT_TP_UNIFORM_MG_L + 1).recommendReuse).toBe(true);
+    expect(at(EFFLUENT_TN_UNIFORM_MG_L + 1, EFFLUENT_TP_UNIFORM_MG_L + 1).recommendReuse).toBe(true);
+    expect(at(0, 0).recommendReuse).toBe(false);
+  });
+
+  it('窒素りん規制の適用は 1 日 50m³ ちょうどから', () => {
+    // 50 m³/日 = 年間 50 × 1000 × 365 L。境界は「以上」。
+    const litersFor = (m3PerDay: number) => m3PerDay * 1000 * 365;
+    const justUnder = checkEffluent({
+      concentrateTnMgL: 0,
+      concentrateTpMgL: 0,
+      annualDischargeL: litersFor(WPCL_NP_APPLICABILITY_M3_PER_DAY) - 365_000,
+      dischargeToPublicWater: true,
+    });
+    const exactly = checkEffluent({
+      concentrateTnMgL: 0,
+      concentrateTpMgL: 0,
+      annualDischargeL: litersFor(WPCL_NP_APPLICABILITY_M3_PER_DAY),
+      dischargeToPublicWater: true,
+    });
+    expect(justUnder.wpclNpApplicable).toBe(false);
+    expect(exactly.wpclNpApplicable).toBe(true);
+  });
+
+  it('窒素が 0 なら地下水基準との倍率は 0 (0 除算にも NaN にもしない)', () => {
+    expect(at(0, 0).nitrateVsGroundwaterFactor).toBe(0);
+    expect(at(GROUNDWATER_NITRATE_N_STANDARD_MG_L, 0).nitrateVsGroundwaterFactor).toBe(1);
+  });
+
+  it('年間の窒素・りん量は濃度と排出量の積 (取り違えていない)', () => {
+    const r = checkEffluent({
+      concentrateTnMgL: 200,
+      concentrateTpMgL: 20,
+      annualDischargeL: 1_000_000,
+      dischargeToPublicWater: true,
+    });
+    // 200 mg/L × 1,000,000 L = 200,000,000 mg = 200 kg
+    expect(r.annualNitrogenKg).toBe(200);
+    expect(r.annualPhosphorusKg).toBe(20);
+    expect(r.annualNitrogenKg).not.toBe(r.annualPhosphorusKg);
+  });
+});
+
+describe('planRoSizing — 境界と欠測', () => {
+  const base = { batchVolumeL: 200, processingWindowHours: 8, exchangeCycleDays: 14 };
+
+  it('処理時間が 0 なら必要能力は出せない (0 除算にしない)', () => {
+    const r = planRoSizing({ ...base, processingWindowHours: 0 });
+    expect(r.requiredCapacityLPerDay).toBe(0);
+  });
+
+  it('能力未指定なら実処理時間も充足判定も出さない', () => {
+    const r = planRoSizing(base);
+    expect(r.actualProcessingHours).toBeNull();
+    expect(r.capacityAdequate).toBeNull();
+  });
+
+  it('能力 0 は「未指定」と同じ扱い (0 L/日 の機械では処理できない)', () => {
+    const r = planRoSizing({ ...base, machineCapacityLPerDay: 0 });
+    expect(r.actualProcessingHours).toBeNull();
+    expect(r.capacityAdequate).toBeNull();
+  });
+
+  it('目標時間ちょうどで終われば充足 (超えて初めて不足)', () => {
+    // 200L を 8h で処理するには 600L/日。ちょうどなら 8.0h。
+    const exact = planRoSizing({ ...base, machineCapacityLPerDay: 600 });
+    expect(exact.actualProcessingHours).toBe(8);
+    expect(exact.capacityAdequate).toBe(true);
+
+    const slower = planRoSizing({ ...base, machineCapacityLPerDay: 500 });
+    expect(slower.actualProcessingHours!).toBeGreaterThan(8);
+    expect(slower.capacityAdequate).toBe(false);
+  });
+
+  it('能力があっても目標時間が 0 なら充足は判定できない', () => {
+    const r = planRoSizing({ ...base, processingWindowHours: 0, machineCapacityLPerDay: 600 });
+    expect(r.actualProcessingHours).toBe(8);
+    expect(r.capacityAdequate).toBeNull();
+  });
+
+  it('交換周期が 0 なら稼働率も止水日数も出せない', () => {
+    const r = planRoSizing({ ...base, exchangeCycleDays: 0, machineCapacityLPerDay: 600 });
+    expect(r.dutyCyclePct).toBeNull();
+    expect(r.idleDays).toBeNull();
+    expect(r.stagnationRisk).toBe(false);
+  });
+
+  it('止水警告は「稼働率が低い」と「連続 2 日以上止まる」の両方が要る', () => {
+    // 稼働率は低いが止水が 2 日に満たない → 警告しない。
+    // 200L を 600L/日 で 8h、周期 1 日 → 止水 0.67 日。
+    const daily = planRoSizing({
+      batchVolumeL: 200,
+      processingWindowHours: 8,
+      exchangeCycleDays: 1,
+      machineCapacityLPerDay: 600,
+    });
+    expect(daily.idleDays!).toBeLessThan(2);
+    expect(daily.stagnationRisk).toBe(false);
+
+    // 周期 14 日 → 稼働率 2.4%・止水 13.7 日 → 警告する。
+    const batch = planRoSizing({ ...base, machineCapacityLPerDay: 600 });
+    expect(batch.dutyCyclePct!).toBeLessThan(10);
+    expect(batch.idleDays!).toBeGreaterThanOrEqual(2);
+    expect(batch.stagnationRisk).toBe(true);
+  });
+
+  it('稼働率が 10% 以上なら止水日数が長くても警告しない', () => {
+    // 200L を 60L/日 で処理 = 80h 運転。周期 14 日 → 稼働率 23.8%。
+    const r = planRoSizing({ ...base, machineCapacityLPerDay: 60 });
+    expect(r.dutyCyclePct!).toBeGreaterThanOrEqual(10);
+    expect(r.idleDays!).toBeGreaterThanOrEqual(2);
+    expect(r.stagnationRisk).toBe(false);
+  });
+});
+
+describe('waterCyclePlanner — 残りの境界', () => {
+  it('年間量は 1 バッチ量 × 年間バッチ数 (割っていない)', () => {
+    // 周期 73 日 = 年 5 バッチ。掛けると 5 倍、割ると 1/5 で符号ではなく桁が変わる。
+    const r = planWaterBalance({
+      systemVolumeL: 200,
+      exchangeCycleDays: 73,
+      roRecoveryPct: 75,
+      roRejectionPct: 90,
+    });
+    expect(r.concentratePerBatchL).toBe(50);
+    expect(r.annualDischargeL).toBe(250); // 50 × 5
+    expect(r.annualThroughputL).toBe(1_000); // 200 × 5
+    expect(r.annualWaterSavedL).toBe(750); // 150 × 5
+  });
+
+  it('止水日数は「周期 − 運転日数」(足していない)', () => {
+    const r = planRoSizing({
+      batchVolumeL: 200,
+      processingWindowHours: 8,
+      exchangeCycleDays: 14,
+      machineCapacityLPerDay: 600,
+    });
+    expect(r.actualProcessingHours).toBe(8);
+    expect(r.idleDays).toBe(13.7); // 14 − 8/24 = 13.667
+  });
+
+  it('稼働率ちょうど 10% は警告しない (下回って初めて警告)', () => {
+    // 600L を 600L/日 で処理 = 24h。周期 10 日 = 240h → 稼働率ちょうど 10%。
+    const r = planRoSizing({
+      batchVolumeL: 600,
+      processingWindowHours: 24,
+      exchangeCycleDays: 10,
+      machineCapacityLPerDay: 600,
+    });
+    expect(r.dutyCyclePct).toBe(10);
+    expect(r.idleDays).toBe(9);
+    expect(r.stagnationRisk).toBe(false);
+  });
+
+  it('止水ちょうど 2 日は警告する (2 日以上が条件)', () => {
+    // 能力未指定・目標時間 0 → 運転 0h。周期 2 日 → 止水ちょうど 2 日・稼働率 0%。
+    const r = planRoSizing({
+      batchVolumeL: 100,
+      processingWindowHours: 0,
+      exchangeCycleDays: 2,
+    });
+    expect(r.dutyCyclePct).toBe(0);
+    expect(r.idleDays).toBe(2);
+    expect(r.stagnationRisk).toBe(true);
+  });
+
+  it('HRT の要求時間は指定があればそれを使う (既定 24h に固定しない)', () => {
+    const base = { tankVolumeL: 300, inflowLPerDay: 200 };
+    const dflt = planAeration(base);
+    expect(dflt.hrtHours).toBe(36);
+    expect(dflt.adequate).toBe(true);
+    expect(dflt.requiredTankVolumeL).toBe(200); // 200 × 24 / 24
+
+    const strict = planAeration({ ...base, minRequiredHrtHours: 48 });
+    expect(strict.hrtHours).toBe(36);
+    expect(strict.adequate).toBe(false);
+    expect(strict.requiredTankVolumeL).toBe(400); // 200 × 48 / 24
+  });
+
+  it('HRT が要求ちょうどなら充足 (下回って初めて不足)', () => {
+    const r = planAeration({ tankVolumeL: 200, inflowLPerDay: 200, minRequiredHrtHours: 24 });
+    expect(r.hrtHours).toBe(24);
+    expect(r.adequate).toBe(true);
   });
 });

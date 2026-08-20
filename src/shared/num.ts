@@ -31,9 +31,16 @@ export function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
-/** 負値と非有限値を 0 に落とす。入力の下限を揃えたいときに使う。 */
-export function nonNeg(n: number): number {
-  return Number.isFinite(n) ? Math.max(0, n) : 0;
+/**
+ * 負値と非有限値を 0 に落とす。入力の下限を揃えたいときに使う。
+ *
+ * `undefined` も受ける — 省略可の入力を「未指定なら 0」として扱う呼び出し側が、
+ * `x === undefined ? 0 : nonNeg(x)` という**結果の変わらない枝**を書かずに
+ * 済むようにするため (`Number.isFinite(undefined)` は false なので 0 になる)。
+ * 実行時の振る舞いは変えていない。
+ */
+export function nonNeg(n: number | undefined): number {
+  return Number.isFinite(n) ? Math.max(0, n as number) : 0;
 }
 
 /** 100円未満を切り捨てる（国税の端数処理・自動車税の月割など）。 */
