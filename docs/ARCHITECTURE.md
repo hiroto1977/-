@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8445** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **8462** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 317 | 自己検証 |
+| `file:line` 参照数 | 326 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1117,6 +1117,47 @@ Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**
 `src/renderer/network/liveRead.ts` **38 変異体 100%**、
 薄くした `src/main/clients/cursor.ts` **4 変異体 100%**、
 `src/shared/dataOrigin.ts` **45 変異体 100%**。
+
+#### 壁の一覧を「自称」で洗い直した — 10 → 17、うち 1 つは未測定だった (2026-08-20)
+
+`MUST_MEASURE` は 2 度直しているが (2026-08-18 新設 / 08-19 に `src/shared/ollama.ts` を
+追加)、どちらも**そのとき見つけたものを足しただけ**で、一覧そのものが網羅的かを
+確かめていなかった。
+
+そこで基準を決めて機械的に洗った: `mutate` 全 226 件の冒頭 30 行を
+「関門 / fail-closed / SSRF / 送り先 / 踏み台 / 絞る / 1 本の口」で走査し、
+**モジュールが自分の説明文で門だと名乗っているもの**を全部拾う。7 件出た。
+
+| 追加した壁 | 自称 |
+|---|---|
+| `src/shared/proxyEndpoint.ts` | 「アプリが持つ資格情報のほぼ全部が通る 1 本の口」 |
+| `src/shared/aiEndpoint.ts` | `x-api-key` / Bearer を載せる送り先の検証 |
+| `src/shared/atlassianSite.ts` | 「そのまま連結すると社内ホストへ向けさせられる (SSRF)」 |
+| `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (main と renderer で同じ規則) |
+| `src/shared/scanTarget.ts` | 「VirusTotal に投入するのは『調べる』ではなく『公開する』に近い」 |
+| `src/renderer/network/liveRead.ts` | 資格情報を第三者のプロキシへ渡す経路 |
+| `src/renderer/security/webauthn.ts` | 「必ず throw する fail-closed」 |
+
+6 件は既に `mutate` に在籍しており実測 100% だった — つまり**測られてはいたが、
+外されても誰も気付かない**状態だった。宣言はそこを塞ぐ。
+
+**`src/renderer/security/webauthn.ts` だけは `mutate` にも無く、実測 68 変異体 61.76% (生存 26)。**
+このモジュールは誰からも呼ばれていない — 存在理由は「将来これを解錠ゲートへ
+配線する人に条件を残すこと」で、冒頭に不変条件が 4 つ書いてある。ところが
+**`userVerification: 'required'` を空文字に書き換えてもどの検査も落ちなかった**。
+条件を書いた場所が、条件を守らせていなかった。不変条件を 1 つずつ固定して
+**53 変異体 100%**。
+
+等価変異は 2 つ消し、1 つだけ残した:
+
+- `atob` は仕様上 `=` を取り除いてから復号する (HTML の forgiving-base64 decode)
+  ので、`base64urlToBuffer` の**パディング復元は結果を変えていなかった** — 削除
+- 手書きの復号ループは `i <= len` の変異体が TypedArray の範囲外書き込み
+  (黙って捨てられる) になって殺せない — `Uint8Array.from` に寄せて境界ごと削除
+- `isBiometricAvailable` の `typeof window === 'undefined'` の門は、直後の
+  try/catch が同じ `false` へ吸収するため観測できない。非ブラウザから読まれるのは
+  **正常な経路**で、そこで例外を制御フローに使いたくないので門は残し、1 行の
+  pragma に理由を書いた
 
 #### 隣の壁だけが測られていた (`src/shared/ollama.ts`)
 

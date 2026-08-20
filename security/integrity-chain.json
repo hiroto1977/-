@@ -244,6 +244,14 @@
       "leafCount": 17,
       "note": "update SECURITY_CHAIN.md",
       "hash": "a44212309d7e404f72853cee93c444f308ceef5ced2fdbfa46f89d939047bb7d"
+    },
+    {
+      "index": 28,
+      "prevHash": "a44212309d7e404f72853cee93c444f308ceef5ced2fdbfa46f89d939047bb7d",
+      "merkleRoot": "1f14c7774cb560edfa9ca029de175fa3ef1e1dfe0e69035cbb79ab62e7f3000e",
+      "leafCount": 17,
+      "note": "update webauthn.ts",
+      "hash": "6b0fa2be7d99c4dc3cee3e6a4b383a7dc6c3e455d201d3f7457696e192b7a11a"
     }
   ],
   "tipManifest": {
@@ -263,6 +271,6 @@
     "src/renderer/security/dataCrypto.ts": "29e71f4449c9ac62338f8584aa8ca4fd777411fda97d880ec4e777120f52f691",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "033f9ce3bc89e45927bfa04ab086533dad8578aee05519e4b8c84b2a7686c89f",
-    "src/renderer/security/webauthn.ts": "4ccdd906ce2e880a5b8f47bbcb0af0b055b0b76edf301bc8fb28465c6d40e24f"
+    "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76"
   }
 }
