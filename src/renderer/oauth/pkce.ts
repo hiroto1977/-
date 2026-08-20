@@ -71,36 +71,33 @@ export function safeStateEquals(a: string, b: string): boolean {
 export function parseGoogleCallback(input: string): { code: string; state: string } | null {
   if (typeof input !== 'string') return null;
   const trimmed = input.trim();
-  // Stryker disable next-line ConditionalExpression: 早期 return を外しても、空文字は
-  // URL でも `=` 入りでもないので下の else で null に落ちる (等価変異・速い道として残す)。
-  if (trimmed.length === 0) return null;
-  // Three accepted forms:
+  // **空文字の早期 return も置かない。** `new URLSearchParams('')` は空なので
+  // 下の `!code || !state` で null に落ちる。上の分岐と同じ理由 —
+  // 結果が変わらない枝を置くと、黙らせるしかない変異体が 1 つ増える。
+  // Accepted forms:
   //   1. full URL: https://localhost:12345/cb?code=...&state=...
   //   2. query-only: ?code=...&state=...  or  code=...&state=...
-  //   3. bare "code=4/..." with no state (rejected — state-less callback)
+  // それ以外 (bare "code=4/..." のように state が無いもの・そもそも
+  // クエリでないもの) は下の `!code || !state` で null になる。
   let params: URLSearchParams;
   try {
-    // 下の `} else if (trimmed.includes('='))` には**等価変異が 2 つ残る** —
-    // `=` を含まない文字列がその枝へ入っても URLSearchParams が空になり、
-    // 結局 `!code || !state` で null に落ちるため、条件を潰しても差が出ない。
+    // **`=` を含むかの判定は置かない。** 以前は
+    // `} else if (trimmed.includes('='))` と書いていたが、`=` を含まない
+    // 文字列がその枝へ入っても `URLSearchParams` は空になり、結局下の
+    // `!code || !state` で null に落ちる — 条件の有無で結果が変わらない。
     //
-    // 黙らせていないのは、それが**割に合わない**と実測したため:
-    //   pragma 無し … 163 変異体 98.77% (生存 2)
-    //   範囲指定で囲む … 97 変異体 100%   (生存 0)
-    // 2 つを消すために 66 個の測定を捨てることになる。分母を縮めて買った 100% は、
-    // 正直な 98.77% より価値が低い (`lint:mutation-scope` が禁じているのと同じ形)。
+    // 2026-08 の時点では「範囲指定で黙らせると 163 → 97 変異体に縮むので
+    // 割に合わない」として**等価変異 2 つを生存のまま残していた**。だが
+    // 第三の道があった: 分岐そのものを消せば、黙らせずに 2 つとも消える。
+    // 分母を縮めずに 100% になるので、こちらが正しい (この repo の
+    // 「等価変異は黙らせる前にコードを単純化できないか先に疑う」の実例)。
     //
-    // なお `} else if (` の行に `Stryker disable next-line` は効かない —
-    // 閉じ括弧で始まる行は直前のコメントと結び付かない (`} catch {` / `} finally {`
-    // も同じ)。囲むなら範囲指定しかないが、上記のとおり囲まない。
+    // 先頭の `?` は URLSearchParams 自身が落とすので、こちらで剥がさない
+    // (剥がす分岐は一度も結果を変えていなかった — 2026-08 変異検査)。
     if (/^https?:\/\//i.test(trimmed)) {
       params = new URL(trimmed).searchParams;
-    } else if (trimmed.includes('=')) {
-      // 先頭の `?` は URLSearchParams 自身が落とすので、こちらで剥がさない
-      // (剥がす分岐は一度も結果を変えていなかった — 2026-08 変異検査)。
-      params = new URLSearchParams(trimmed);
     } else {
-      return null;
+      params = new URLSearchParams(trimmed);
     }
   } catch {
     return null;

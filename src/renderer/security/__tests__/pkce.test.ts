@@ -257,3 +257,33 @@ describe('exchangeGoogleCode — エラー本文の秘匿', () => {
     await expect(exchangeGoogleCode(args, fetchMock)).rejects.toThrow(/400/);
   });
 });
+
+describe('parseGoogleCallback — クエリでない貼り付け', () => {
+  /*
+   * 以前は「`=` を含むか」で分岐し、含まないものを早期に null にしていた。
+   * その分岐は結果を変えないので消した (等価変異が 2 つ残っていた)。
+   * 消しても答えが変わらないことをここで固定する — 分岐を消した瞬間に
+   * 挙動が変わっていたら、それは等価ではなかったということ。
+   */
+  it('`=` を含まない貼り付けは null', () => {
+    expect(parseGoogleCallback('4/0AB123')).toBeNull();
+    expect(parseGoogleCallback('ここに貼ってください')).toBeNull();
+    expect(parseGoogleCallback('#')).toBeNull();
+  });
+
+  it('空文字・空白だけでも落ちずに null', () => {
+    expect(parseGoogleCallback('')).toBeNull();
+    expect(parseGoogleCallback('\t \n')).toBeNull();
+  });
+
+  it('code か state の片方だけでは受け取らない', () => {
+    expect(parseGoogleCallback('code=ab')).toBeNull();
+    expect(parseGoogleCallback('state=xy')).toBeNull();
+    expect(parseGoogleCallback('code=&state=xy')).toBeNull();
+    expect(parseGoogleCallback('code=ab&state=')).toBeNull();
+  });
+
+  it('両方そろっていれば受け取る', () => {
+    expect(parseGoogleCallback('code=ab&state=xy')).toEqual({ code: 'ab', state: 'xy' });
+  });
+});

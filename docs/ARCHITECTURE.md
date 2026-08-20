@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8441** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **8445** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 316 | 自己検証 |
+| `file:line` 参照数 | 317 | 自己検証 |
 
 ### 統合フロー図
 
@@ -569,12 +569,22 @@ OAuth の入口も 180 行 (全 211 行) を無効化しており、外して実
 
 冗長なコードは消した。`trimmed.startsWith('?') ? trimmed.slice(1) : trimmed` は
 `URLSearchParams` 自身が先頭の `?` を落とすため、一度も結果を変えていなかった。
+同じ形の分岐が 2 つ残っていたのを 2026-08-20 に消した (下記)。
 
-**この 1 ファイルだけ 100% にしていない (163 変異体 98.77%)。** 残る 2 つは真の
-等価変異で、範囲指定で囲めば 100% になるが、実測すると **66 個の測定を捨てる**
-ことになる (163 変異体 98.77% → 97 変異体 100%)。分母を縮めて買った 100% は
-正直な 98.77% より価値が低い — `lint:mutation-scope` が禁じているのと同じ形なので、
-囲まずに理由をコードへ書いた。
+**等価変異は「黙らせる / 放置する」の二択ではなかった (2026-08-20 訂正)。**
+以前はここだけ 100% にしておらず、理由を「残る 2 つは真の等価変異で、範囲指定で
+囲めば 100% になるが 66 個の測定を捨てることになる (163 変異体 98.77% →
+97 変異体 100%)」と書いていた。その二択の比較そのものは正しかったが、**第三の道を
+見落としていた** — 結果を変えない分岐は、黙らせるのではなく**消せる**。
+
+`} else if (trimmed.includes('='))` は、`=` を含まない文字列がその枝へ入っても
+`URLSearchParams` が空になり結局 `!code || !state` で null に落ちるため、条件の
+有無で結果が変わらない。同じ理由で空文字の早期 return も要らない。両方消したら
+**158 変異体 100%** になった。捨てた測定は 5 個だけで、66 個ではない。
+
+これが `stryker.config.json` の言う「等価変異が出たら、黙らせる前にコードを
+単純化できないか先に疑うこと」の実例である。分岐を消しても答えが変わらないことは
+検査で固定してある (`parseGoogleCallback — クエリでない貼り付け`)。
 
 **罠 (3 回踏んだ)**: `Stryker disable next-line` は**閉じ括弧で始まる行に効かない**。
 `} catch {` / `} finally {` / `} else if (` はいずれも直前のコメントと結び付かず、
