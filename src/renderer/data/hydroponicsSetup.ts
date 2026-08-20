@@ -11,6 +11,8 @@
 
 import {
   HYDROPONIC_CROPS,
+  assessLowPotassium,
+  type LowPotassiumAssessment,
   ENERGY_INTENSITY_KWH_PER_KG_LOW,
   ENERGY_INTENSITY_KWH_PER_KG_HIGH,
   estimateEconomics,
@@ -54,6 +56,18 @@ export interface HydroponicsSetup extends Record<string, unknown> {
   readonly rentYenPerMonth: number;
   /** その他固定費 (円/月)。 */
   readonly otherFixedYenPerMonth: number;
+
+  // --- 低カリウム栽培 (腎臓病の方向け) ---
+  // **成分は実測値しか受け取らない。** 推定値で「低カリウム」と名乗ると、
+  // カリウムを排泄できない方の食事に直接影響する。
+  /** 低カリウム栽培として扱うか。 */
+  readonly lowPotassium?: boolean;
+  /** 培養液を K 抜きへ切り替えるのは収穫前の何日か。 */
+  readonly switchDaysBeforeHarvest?: number;
+  /** 出荷ロットの**実測**カリウム (mg/100g)。未測定は 0。 */
+  readonly measuredPotassiumMgPer100g?: number;
+  /** 出荷ロットの実測ナトリウム (mg/100g)。未測定は 0。 */
+  readonly measuredSodiumMgPer100g?: number;
 }
 
 /**
@@ -80,6 +94,13 @@ export const HYDROPONICS_DEFAULTS: HydroponicsSetup = {
   depreciationYenPerMonth: 2_000_000,
   rentYenPerMonth: 600_000,
   otherFixedYenPerMonth: 400_000,
+  lowPotassium: false,
+  // 切替は収穫前 7〜10 日 (ALIC 野菜情報) の中央。
+  switchDaysBeforeHarvest: 8,
+  // **実測値には初期値を置かない。** 埋めやすさのための置き値が、そのまま
+  // 「測った」ことにされると危ない。0 のままなら未測定として扱われる。
+  measuredPotassiumMgPer100g: 0,
+  measuredSodiumMgPer100g: 0,
 };
 
 /**
@@ -126,4 +147,21 @@ export function toCostInput(s: HydroponicsSetup): CostInput {
 export function economicsFromSetup(s: HydroponicsSetup | null): HydroponicsEconomics | null {
   if (!s) return null;
   return estimateEconomics(toFacilityInput(s), toCostInput(s));
+}
+
+/**
+ * 低カリウム栽培の評価を組む。低カリウムとして扱っていなければ null。
+ *
+ * 実測値が 0 (未測定) でも `assessLowPotassium` が `measured: false` を返すので、
+ * 「測っていないのに低カリウムと名乗る」状態は画面側で判別できる。
+ */
+export function lowPotassiumFromSetup(s: HydroponicsSetup | null): LowPotassiumAssessment | null {
+  if (!s || s.lowPotassium !== true) return null;
+  const sodium = s.measuredSodiumMgPer100g ?? 0;
+  return assessLowPotassium({
+    switchDaysBeforeHarvest: s.switchDaysBeforeHarvest ?? 0,
+    measuredPotassiumMgPer100g: s.measuredPotassiumMgPer100g ?? 0,
+    // 0 は「測っていない」と扱う (0 mg の野菜は無い)。
+    ...(sodium > 0 ? { measuredSodiumMgPer100g: sodium } : {}),
+  });
 }

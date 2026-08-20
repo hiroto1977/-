@@ -24,10 +24,18 @@ import {
   HYDROPONICS_COLLECTION,
   HYDROPONICS_DEFAULTS,
   economicsFromSetup,
+  lowPotassiumFromSetup,
   resolveCrop,
   type HydroponicsSetup,
 } from '../data/hydroponicsSetup';
-import { HYDROPONIC_CROPS, checkNutrientSolution, type HydroponicCropId } from '../../shared/hydroponics';
+import {
+  HYDROPONIC_CROPS,
+  checkNutrientSolution,
+  servingGramsWithinLimit,
+  LOW_K_SWITCH_DAYS_MIN,
+  LOW_K_SWITCH_DAYS_MAX,
+  type HydroponicCropId,
+} from '../../shared/hydroponics';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import {
@@ -162,6 +170,9 @@ function HydroponicsPanel({
     usableRatioPct: String(base.usableRatioPct),
     yieldRatePct: String(base.yieldRatePct),
     unitPriceYen: String(base.unitPriceYen),
+    switchDaysBeforeHarvest: String(base.switchDaysBeforeHarvest ?? 8),
+    measuredPotassiumMgPer100g: String(base.measuredPotassiumMgPer100g ?? 0),
+    measuredSodiumMgPer100g: String(base.measuredSodiumMgPer100g ?? 0),
     electricityYenPerKwh: String(base.electricityYenPerKwh),
     energyIntensityKwhPerKg: String(base.energyIntensityKwhPerKg),
     seedYenPerPlant: String(base.seedYenPerPlant),
@@ -173,6 +184,7 @@ function HydroponicsPanel({
     otherFixedYenPerMonth: String(base.otherFixedYenPerMonth),
   });
   const [saved, setSaved] = useState(false);
+  const [lowK, setLowK] = useState(base.lowPotassium === true);
   const [ec, setEc] = useState('');
   const [ph, setPh] = useState('');
 
@@ -264,6 +276,10 @@ function HydroponicsPanel({
               depreciationYenPerMonth: n(form.depreciationYenPerMonth),
               rentYenPerMonth: n(form.rentYenPerMonth),
               otherFixedYenPerMonth: n(form.otherFixedYenPerMonth),
+              lowPotassium: lowK,
+              switchDaysBeforeHarvest: n(form.switchDaysBeforeHarvest),
+              measuredPotassiumMgPer100g: n(form.measuredPotassiumMgPer100g),
+              measuredSodiumMgPer100g: n(form.measuredSodiumMgPer100g),
             });
             setSaved(true);
           }}
@@ -286,6 +302,28 @@ function HydroponicsPanel({
             {nutrient.ok
               ? `適正範囲内です（EC ${crop.ecLow}〜${crop.ecHigh} / pH ${crop.phLow}〜${crop.phHigh}）。`
               : `範囲外です — ${!nutrient.ecInRange ? `EC は ${crop.ecLow}〜${crop.ecHigh} mS/cm` : ''}${!nutrient.ecInRange && !nutrient.phInRange ? '、' : ''}${!nutrient.phInRange ? `pH は ${crop.phLow}〜${crop.phHigh}` : ''} が目安。EC が高すぎるとレタス類は苦味が出ます。`}
+          </div>
+        )}
+      </div>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 14, paddingTop: 12 }}>
+        <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            type="checkbox"
+            checked={lowK}
+            onChange={(e) => { setLowK(e.target.checked); setSaved(false); }}
+          />
+          低カリウム栽培として扱う（腎臓病の方向け）
+        </label>
+        <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6, margin: '6px 0 10px' }}>
+          収穫前 {LOW_K_SWITCH_DAYS_MIN}〜{LOW_K_SWITCH_DAYS_MAX} 日に、培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置き換えます。
+          カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ方法です（培養液にナトリウムが無いと生育不良になります）。
+          <strong>カリウム量は出荷ロットごとに実測してください。</strong>測っていない値を「低カリウム」として出すことはできません。
+        </p>
+        {lowK && (
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            {field('switchDaysBeforeHarvest', '切替 (収穫前・日)')}
+            {field('measuredPotassiumMgPer100g', '実測カリウム (mg/100g)')}
+            {field('measuredSodiumMgPer100g', '実測ナトリウム (mg/100g)')}
           </div>
         )}
       </div>
@@ -391,6 +429,7 @@ export function OverviewPage() {
     ? hydroCol.records[hydroCol.records.length - 1]!.data
     : null;
   const hydroponics = useMemo(() => economicsFromSetup(hydroSetup), [hydroSetup]);
+  const lowPotassium = useMemo(() => lowPotassiumFromSetup(hydroSetup), [hydroSetup]);
 
   const computedOverview = useMemo(
     () =>
@@ -404,8 +443,9 @@ export function OverviewPage() {
         accounting: accountingMonthly,
         members: memberRecords.map((r) => ({ role: r.data.role })),
         hydroponics,
+        lowPotassium,
       }),
-    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords, hydroponics],
+    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords, hydroponics, lowPotassium],
   );
 
   // 手入力の上書きを自動計算の上に重ねる。**ここ 1 か所**で、以降の表示・
@@ -976,6 +1016,79 @@ export function OverviewPage() {
               <Tile label="損益分岐点売上高 (月)" value={yen.format(overview.hydroponics.bep)} />
               <Tile label="限界利益率" value={`${overview.hydroponics.contributionRatio.toFixed(1)}%`} />
             </div>
+
+            {overview.hydroponics.lowPotassium && (
+              <>
+                <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>
+                  低カリウム栽培（腎臓病の方向け）
+                </div>
+                {overview.hydroponics.lowPotassium.measured ? (
+                  <>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                      <Tile
+                        label="実測カリウム"
+                        value={`${overview.hydroponics.lowPotassium.potassiumMgPer100g} mg/100g`}
+                        sub={`通常品 ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g 比 ${overview.hydroponics.lowPotassium.reductionPct >= 0 ? '−' : '+'}${Math.abs(overview.hydroponics.lowPotassium.reductionPct).toFixed(1)}%`}
+                        accent={overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'}
+                      />
+                      <Tile
+                        label="切替 (収穫前)"
+                        value={`${hydroSetup?.switchDaysBeforeHarvest ?? 0} 日`}
+                        accent={overview.hydroponics.lowPotassium.switchWindowOk ? undefined : '#f59e0b'}
+                        sub={
+                          overview.hydroponics.lowPotassium.switchWindowOk
+                            ? `目安 ${LOW_K_SWITCH_DAYS_MIN}〜${LOW_K_SWITCH_DAYS_MAX} 日の範囲内`
+                            : `目安は ${LOW_K_SWITCH_DAYS_MIN}〜${LOW_K_SWITCH_DAYS_MAX} 日です`
+                        }
+                      />
+                      <Tile
+                        label="食塩相当量"
+                        value={
+                          overview.hydroponics.lowPotassium.saltEquivalentGPer100g === null
+                            ? '未測定'
+                            : `${overview.hydroponics.lowPotassium.saltEquivalentGPer100g.toFixed(2)} g/100g`
+                        }
+                        sub="カリウムを抜いた分ナトリウムが増えます"
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                      {(['G3b', 'G4'] as const).map((stage) => {
+                        const grams = servingGramsWithinLimit(overview.hydroponics!.lowPotassium!, stage, 20);
+                        return (
+                          <Tile
+                            key={stage}
+                            label={`${stage} の方が食べられる量`}
+                            value={grams === null ? '—' : `${num.format(grams)} g`}
+                            sub="1 日のカリウム上限の 20% をこの野菜に充てた場合"
+                          />
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      border: '1px solid var(--border)',
+                      borderLeft: '3px solid #ef4444',
+                      borderRadius: 6,
+                      padding: '8px 12px',
+                      marginBottom: 12,
+                      fontSize: 13,
+                      color: 'var(--text)',
+                    }}
+                  >
+                    ⚠️ <strong>カリウムを実測していません。</strong>この状態では低カリウム野菜として出荷できません。
+                    出荷ロットごとに測定し、実測値を入力してください。
+                  </div>
+                )}
+                <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.7, marginBottom: 12 }}>
+                  カリウム制限は慢性腎臓病の <strong>G3b で 2,000 mg/日以下、G4〜G5 で 1,500 mg/日以下</strong>が目安です
+                  （日本腎臓学会）。G3a までは一律の制限を設けません。血清カリウム値が安定していれば制限しないこともあり、
+                  <strong>実際の指示は主治医と管理栄養士が個別に決めます</strong>。ここの数字は栽培側の管理用で、
+                  食事指導に代わるものではありません。
+                </p>
+              </>
+            )}
 
             <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.7 }}>
               この節の数値は<strong>入力した栽培設備からの試算</strong>で、KPI 実績には合算していません
