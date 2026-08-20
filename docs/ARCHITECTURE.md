@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8392** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **8441** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 315 | 自己検証 |
+| `file:line` 参照数 | 316 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1313,6 +1313,53 @@ Markdown で同じ規則にしてあることも、合計行を取り出して�
 E2E の陰性対照で**自分の書き方の誤り**を 1 つ潰した。「(サンプル)」を本文全体で
 探すと、説明文に書いた同じ語に当たって素通りする。棒グラフの行に
 `data-bar-row` を付け、**ラベルそのもの**で判定する形に直した (罠 3-b の再発)。
+
+#### 全業務を 3 軸で重ねる (`src/renderer/data/businessAxonometric.ts`)
+
+財務指標は「いつの」「どの事業の」「何の」値かで決まる。2 軸の折れ線では
+このうち 2 つしか置けないので、事業ごとに図を分けるか期間を捨てて棒にするしか
+なく、**事業間の差と時間の動きを同時に読めなかった**。奥行きを斜めに倒した軸
+(斜投影 / カバリエ図法) を足して 3 つ同時に置く:
+
+- **横軸 (X)** 期間 — 月次実績を古い順に
+- **縦軸 (Y)** 指標の値 — 単位はその指標のもの
+- **斜め軸 (Z)** 業務 — 登録した事業と同梱サンプルを奥へ
+
+判断は 5 つ:
+
+- **平行投影にする (遠近法にしない)。** 奥で縮めると奥の事業の変化が小さく
+  見え、「奥は動きが少ない」という嘘の印象を作る。
+- **縦軸は常に 1 指標・1 単位。** 17 指標は単位が違う (% / 倍 / ヶ月 / 年 /
+  日 / 円)。混ぜると「ROE 34.9」と「CCC 39.5」が同じ高さに並び、比べられない
+  ものが比べられるように見える。指標はセレクタで切り替える。
+- **横軸は右詰め (当月を右端に揃える)。** 履歴の長さが事業ごとに違うので、
+  左詰めにすると同じ縦線が事業ごとに別の月を指す。
+- **各期の値はその期の実績から算出する。** `deriveBusinessFinancials` →
+  `computeFinancialRatios` を月次実績ごとに通す。当期の値で過去を埋めない。
+- **円グラフは足せる量だけ。** 比率を足しても意味を成さないので、構成比の
+  対象は金額 (売上高 / 当期純利益 / EBITDA / 人件費) に限る (`additive`)。
+  **負の値は 0% に丸めず別に返す** — 丸めると赤字の事業が黙って消え、全体が
+  黒字であるかのように見える。
+
+`projectAxonometric(x, y, depth)` の `depth` は**段数ではなく長さ**で受け取る。
+段数をそのまま渡す取り違えを実際にやり、`x` が画素・`depth` が添字になって
+奥行きが 1 画素も動かない図を描いた (実機で確認して直した)。
+
+#### 水耕栽培も 1 事業として並べる (`hydroponicsBusinessUnit`)
+
+栽培を別枠の「参考」に置くと、全社の数字に入っているのかどうかが画面から
+分からない。`HydroponicsEconomics` を `BusinessFinancialUnit` へ変換して、
+棒・3 軸・構成比・連結三表のすべてに他の事業と同じ資格で載せる。
+
+- `MonthlyPnl.sga` は**人件費を内数に含む** (`estimateEconomics` の定義)。
+  固定費を `sga + depreciation + laborCost` と足すと人件費を二重に数えて
+  営業利益がその分小さく出る。`fixedPerMonth = sga + depreciation` に合わせる。
+- 人件費は実額が分かっているので `MonthlyBusinessKpi.laborCost` として渡す。
+  無い事業は従来どおり固定費の約半分で概算するが、**入力した人件費が
+  労働分配率に効かない**状態は作らない。
+- **履歴は空。** この収支は「今の設備と単価ならこうなる」という 1 時点の
+  見積りで、設定の変更履歴は**計画の改訂**であって月次の実績ではない。
+- 未入力なら並べない (経営サマリーに勝手なサンプルを混ぜない)。
 
 #### 連結は出所を混ぜない (`src/renderer/data/consolidation.ts`)
 

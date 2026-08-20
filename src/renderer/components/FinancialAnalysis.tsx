@@ -18,6 +18,7 @@ import {
 } from '../../shared/taxConsumptionBusiness';
 import type { SimplifiedBusinessType, ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
+import { AxonometricCharts } from './AxonometricCharts';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
 import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
 import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
@@ -30,7 +31,14 @@ export interface FinancialUnit {
   readonly id: string;
   readonly label: string;
   readonly current: MonthlyBusinessKpi;
-  readonly history: readonly { readonly revenue: number; readonly profit: number }[];
+  /**
+   * 過去の月次実績 (古い順)。
+   *
+   * `{revenue, profit}` だけに絞っていたが、snapshot は元から月次 KPI を丸ごと
+   * 持っている。絞ると 3 軸グラフが過去の指標を出せず、当期の値で埋めるしか
+   * なくなる (= 無い数字を描くことになる) ので、そのまま通す。
+   */
+  readonly history: readonly MonthlyBusinessKpi[];
   /** 同梱の模擬データなら true。連結の合算対象から外すために要る (出所が違うものを足さない)。 */
   readonly sample?: boolean;
 }
@@ -708,6 +716,9 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
           <PieChart slices={pieSlices} />
         </div>
       </div>
+
+      {/* 全業務を 1 枚で見る 3 軸 + 構成比。事業を選ばずに全部を並べる。 */}
+      <AxonometricCharts units={units} />
 
       <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>

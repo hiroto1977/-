@@ -74,6 +74,7 @@
     "src/renderer/data/financialDiagnosis.ts",
     "src/renderer/data/financialRatios.ts",
     "src/renderer/data/businessFinancials.ts",
+    "src/renderer/data/businessAxonometric.ts",
     "src/renderer/data/financialReport.ts",
     "src/renderer/data/financialStatements.ts",
     "src/shared/taxPublicPension.ts",

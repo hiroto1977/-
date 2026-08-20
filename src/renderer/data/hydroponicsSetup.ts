@@ -21,8 +21,12 @@ import {
   type FacilityInput,
   type CostInput,
 } from '../../shared/hydroponics';
+import type { BusinessFinancialUnit } from './businessUnits';
 
 export const HYDROPONICS_COLLECTION = 'hydroponics-setup';
+
+/** 事業間比較での水耕栽培の id。利用者の事業と衝突しないよう接頭辞を付ける。 */
+export const HYDROPONICS_UNIT_ID = 'hydroponics';
 
 /** 保存する入力。単位は各フィールドのコメントのとおり。 */
 export interface HydroponicsSetup extends Record<string, unknown> {
@@ -164,4 +168,54 @@ export function lowPotassiumFromSetup(s: HydroponicsSetup | null): LowPotassiumA
     // 0 は「測っていない」と扱う (0 mg の野菜は無い)。
     ...(sodium > 0 ? { measuredSodiumMgPer100g: sodium } : {}),
   });
+}
+
+/**
+ * 水耕栽培を**事業として**経営サマリーへ載せる形に変換する。
+ *
+ * これを通すと、栽培が他の事業とまったく同じ扱いになる — 事業間比較の棒、
+ * 3 軸の折れ線、構成比の円、連結の三表、財務指標の一覧。栽培だけ別枠で
+ * 「参考」として置くと、全社の数字に入っているのかどうかが画面から
+ * 分からなくなる。
+ *
+ * ## 費目の対応
+ *
+ * `MonthlyPnl` の `sga` は**人件費を内数に含む** (`estimateEconomics` の
+ * 定義)。固定費を `sga + depreciation + laborCost` と足すと人件費を二重に
+ * 数えて、営業利益がその分だけ小さく出る。`estimateEconomics` 自身が
+ * `fixedPerMonth = sga + depreciation` と置いているので、それに合わせる。
+ *
+ * 人件費は実額が分かっているので `laborCost` としてそのまま渡す。固定費の
+ * 半分という置き値に落とすと、入力した人件費が労働分配率に効かない。
+ *
+ * ## 履歴を作らない
+ *
+ * この収支は「今の設備と単価ならこうなる」という 1 時点の見積りである。
+ * 設定の変更履歴は残っているが、それは**計画の改訂**であって月次の実績では
+ * ない。月の並びとして描くと、実績が無いのに推移があるように見えるので、
+ * 履歴は空にして当月 1 点だけの事業として出す。
+ *
+ * 未入力なら null (経営サマリーに勝手なサンプルを混ぜない)。
+ */
+export function hydroponicsBusinessUnit(
+  economics: HydroponicsEconomics | null,
+): BusinessFinancialUnit | null {
+  if (economics === null) return null;
+  const m = economics.monthly;
+  const variableCost = m.cogs + m.advertising;
+  const fixedCost = m.sga + m.depreciation;
+  const profit = m.revenue - variableCost - fixedCost;
+  return {
+    id: HYDROPONICS_UNIT_ID,
+    label: '水耕栽培',
+    current: {
+      revenue: m.revenue,
+      variableCost,
+      fixedCost,
+      profit,
+      profitMargin: m.revenue === 0 ? 0 : Math.round((profit / m.revenue) * 1000) / 10,
+      laborCost: m.laborCost,
+    },
+    history: [],
+  };
 }
