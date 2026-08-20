@@ -252,6 +252,14 @@
       "leafCount": 17,
       "note": "update webauthn.ts",
       "hash": "6b0fa2be7d99c4dc3cee3e6a4b383a7dc6c3e455d201d3f7457696e192b7a11a"
+    },
+    {
+      "index": 29,
+      "prevHash": "6b0fa2be7d99c4dc3cee3e6a4b383a7dc6c3e455d201d3f7457696e192b7a11a",
+      "merkleRoot": "ed9be8bb49cef58a861034d37e98d94d5927f6f0adde562a33a81f3ff53adcf4",
+      "leafCount": 17,
+      "note": "update secrets.ts",
+      "hash": "03386b67540506aac824e6337a7cf08545a79e4367003248e6dfe0c182df71be"
     }
   ],
   "tipManifest": {
@@ -264,7 +272,7 @@
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "src/main/clients/exportPaths.ts": "b6798f4a0b9d54b8d6ee4a8df17323163dee857edbeed4dd546292399fd98882",
     "src/main/oauth.ts": "5b8ea8f952b826eb2e39e1902b7534e8e58aabe223c4059c737ea3855576df8e",
-    "src/main/secrets.ts": "02097b2893cba373eeb59d43d68029d6cebb0c2b26628b0bf771d63da8be18a0",
+    "src/main/secrets.ts": "91e5297865f1ffa39fa66fe0d8653460a121530ed34d4d6dcd0580709251f482",
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
     "src/renderer/security/LockScreen.tsx": "1fdf41fd002d9a8ee6bf3e505250775f5a80d1671e3915480e62295d855289f7",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",

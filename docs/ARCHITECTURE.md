@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8462** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **8476** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 326 | 自己検証 |
+| `file:line` 参照数 | 329 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1117,6 +1117,60 @@ Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**
 `src/renderer/network/liveRead.ts` **38 変異体 100%**、
 薄くした `src/main/clients/cursor.ts` **4 変異体 100%**、
 `src/shared/dataOrigin.ts` **45 変異体 100%**。
+
+#### 壊れた TokenSet を Bearer に載せていた (`src/shared/vaultToken.ts`)
+
+保存された資格情報は 2 種類ある — 貼り付けた生の文字列 (`ghp_…`) と、OAuth の
+結果である TokenSet の JSON (`{accessToken, refreshToken, …}`)。どちらも同じ
+`getToken` から出てくるので、呼び出し側は区別できない。
+
+ブラウザ版の `bearerFromVaultToken` はこう書いてあった:
+
+```ts
+try {
+  const parsed = JSON.parse(raw);
+  if (… typeof parsed.accessToken === 'string') return parsed.accessToken;
+} catch { /* not JSON */ }
+return raw;          // ← JSON なのに accessToken が無い場合もここへ来る
+```
+
+**JSON として読めたのに `accessToken` が無ければ、その JSON 丸ごとが
+`Authorization: Bearer` に載る。** TokenSet には `refreshToken` が入る:
+
+- アクセストークンより強い refresh token が、渡す必要のない相手へ出る
+  (ブラウザ版は利用者のプロキシ = 第三者のホストも経由する)
+- しかも JSON の塊は Bearer として通らないので、**認証は必ず失敗する** —
+  漏らす代償だけ払って得るものが無い
+
+主プロセス側 (`secrets.ts` の `getOAuthTokens`) は同じ状況で **null** を返して
+いた。**同じ規則を 2 か所に書いて片方だけ緩い**という形だったので、規則を
+`src/shared/vaultToken.ts` に 1 つだけ置いて両方から呼ぶ。壊れた TokenSet は
+送らずに「登録し直してください」と返す。
+
+判定は 4 行で足りる (どれも実測で固定):
+
+| 保存された値 | 返す |
+|---|---|
+| JSON として読めない (`ghp_abc`) | その文字列 |
+| JSON だがオブジェクトでない (`12345`) | その文字列 (数字だけの API キー) |
+| オブジェクトで `accessToken` が非空文字列 | その `accessToken` |
+| オブジェクトだが使える `accessToken` が無い | **null** |
+
+**同じ形がもう 1 か所あった。** notion / slack の invoke は `runProxyBearer` を
+使わず手順を手書きで写しており、**その写しだけ TokenSet の取り出しが抜けて
+いた**。どちらも `OAUTH_CONFIGS` にある OAuth 対応サービスなので、TokenSet が
+保存されれば refreshToken ごと送る形になっていた (今のブラウザ版は貼り付けた
+生のトークンしか保存しないので実害には至っていない)。写しを消して
+`runProxyBearer` 1 本に寄せた。
+
+**Atlassian はここへ寄せてはいけない。** 資格情報が `{email, token, site}` の
+JSON で、Bearer ではなく Basic 認証に組み立てるため、`bearerFromStoredToken` に
+通すと「accessToken の無いオブジェクト」= 壊れた TokenSet と判定されて null に
+なる。理由をコードに書いた。
+
+資格情報の確認は**プロキシを用意する前**に行う。使えないと分かっている資格情報の
+ために外へ出ていく準備を始める理由が無いし、「プロキシを登録してください」という
+無関係な案内で利用者を回り道させることにもなる。
 
 #### 壁の一覧を「自称」で洗い直した — 10 → 17、うち 1 つは未測定だった (2026-08-20)
 

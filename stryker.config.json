@@ -133,6 +133,7 @@
     "src/shared/dbSecurityPosture.ts",
     "src/shared/securityRange.ts",
     "src/shared/redact.ts",
+    "src/shared/vaultToken.ts",
     "src/shared/team.ts",
     "src/shared/plan.ts",
     "src/renderer/plan/internalLicense.ts",

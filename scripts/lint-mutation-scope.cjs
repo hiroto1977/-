@@ -97,6 +97,7 @@ const MUST_MEASURE = {
   'src/shared/scanTarget.ts':        'VirusTotal へ投入する URL の検証 (取り消せない外部公開)',
   'src/renderer/network/liveRead.ts': 'ブラウザ版の読み取り経路 (資格情報を第三者のプロキシへ渡す)',
   'src/renderer/security/webauthn.ts': '生体認証ゲート (fail-closed。誤配線を throw で止める約束の置き場)',
+  'src/shared/vaultToken.ts':        '保存値から Bearer を取り出す唯一の場所 (壊れた TokenSet を送らない)',
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;
