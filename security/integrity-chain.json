@@ -260,6 +260,14 @@
       "leafCount": 17,
       "note": "update secrets.ts",
       "hash": "03386b67540506aac824e6337a7cf08545a79e4367003248e6dfe0c182df71be"
+    },
+    {
+      "index": 30,
+      "prevHash": "03386b67540506aac824e6337a7cf08545a79e4367003248e6dfe0c182df71be",
+      "merkleRoot": "205d9e9bde0c760cd62bccd66d04e184c6869f71a393a531496c24122758f356",
+      "leafCount": 17,
+      "note": "update dataCrypto.ts",
+      "hash": "2966bf3530b54e8b4beb24ee437c4861f3d55bb66abeaf60dddc7c5873d4a744"
     }
   ],
   "tipManifest": {
@@ -276,7 +284,7 @@
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
     "src/renderer/security/LockScreen.tsx": "1fdf41fd002d9a8ee6bf3e505250775f5a80d1671e3915480e62295d855289f7",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",
-    "src/renderer/security/dataCrypto.ts": "29e71f4449c9ac62338f8584aa8ca4fd777411fda97d880ec4e777120f52f691",
+    "src/renderer/security/dataCrypto.ts": "013529669eb9cd63bfa98b80e5e740d2107233d2097ef3399cb2c17b68925f27",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "033f9ce3bc89e45927bfa04ab086533dad8578aee05519e4b8c84b2a7686c89f",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76"

@@ -149,10 +149,11 @@ chat の成功経路と通信の枠 (時間切れ・サイズ上限・キャッ�
 |---|---|---|
 | `src/main/clients/templates.ts` | 1 | 139 (座標の算術のみ) |
 
-**security/ と oauth/ に残っているものが痛い。** `pkce.ts` (OAuth の code_verifier
-生成)、`ai/credentials.ts`、`ai/providers.ts`、`library.ts` はいずれも、壊れても画面には
-出ずに安全性だけが落ちる場所である。高い変異スコアはこれらを**分母から外したうえで**
-出ている。
+**(2026-08-20 訂正)** ここには以前「security/ と oauth/ に残っているものが痛い。
+`pkce.ts` / `ai/credentials.ts` / `ai/providers.ts` / `library.ts` は分母から外した
+うえでの高スコアである」と書いてあったが、**下の表のとおり 4 件とも 100% に到達済み**
+だった。同じ文書の中で表と本文が矛盾していた (`lint:docs` は文書**間**の整合しか
+見ないのでこの型は検出できない)。
 
 ### 消化済み
 
@@ -195,6 +196,47 @@ chat の成功経路と通信の枠 (時間切れ・サイズ上限・キャッ�
 空文字の早期 return も、無くても `!code || !state` で null に落ちる。両方消したら
 **158 変異体 100%**、捨てた測定は 5 個だけだった。宣言した壁 (`MUST_MEASURE`)
 10 ファイルはこれで全部 100% になった。
+
+### 週次の変異検査 CI が main で赤だった — 原因は「落ちないテスト」(2026-08-20)
+
+`mutation.yml` は 2026-08-18 を最後に**失敗し続けていた** (直近 12 連続)。
+CI の triage は `StringLiteral` を既定で除外して表示するため「生存 27」と出るが、
+実測すると 4 ファイルで **生存 69**:
+
+| ファイル | 着手前 | 現在 |
+|---|---|---|
+| `src/renderer/data/financialRatios.ts` | **51.20%** (生存 61) | **125 変異体 100%** |
+| `src/renderer/data/financialDiagnosis.ts` | 96.43% (生存 3) | **84 変異体 100%** |
+| `src/renderer/hooks/useServiceData.ts` | 96.88% (生存 2) | **64 変異体 100%** |
+| `src/renderer/security/dataCrypto.ts` | 97.78% (生存 3) | **127 変異体 100%** |
+
+**`financialRatios.ts` の 61 件はテストを 1 行も足さずに消えた。** 原因は
+テストの構造にあった — `describe` 直下で
+
+```ts
+const axes = radarAxes(computeFinancialRatios(SAMPLE));   // ← 収集時に確定
+```
+
+と計算していたため、**変異体が有効化される前の結果**を検査していた。15 軸の
+key/label/unit/raw/score を JSON で丸ごと固定する golden まであったのに、
+その golden は**どんな変異体でも落ちない**状態だった。呼び出しをサンクにして
+各 `it` の中で評価するよう直しただけで 51.20% → 100%。
+
+`stryker.config.json` の注記は「例外を投げる変異体が収集失敗になる」ことを
+警告していたが、**例外を投げない変異体も同じ理由で素通りする**。より一般に
+**describe 直下で対象を評価してはいけない**。
+
+残り 3 ファイルは本物の検査不足だった:
+
+- `financialDiagnosis` — 強みを点数の高い順に並べる `sort` が無証明 (入力順と
+  点数順が同じ入力しか使っていなかった)
+- `useServiceData` — **`autoFetch: true` で実際に取得が走ることを誰も見ていない**。
+  死ぬと認証不要の画面が同梱スナップショットのまま更新されなくなる
+- `dataCrypto` — `assertKdfIterations` の境界 (99,999 / 100,000 / 4,000,000 /
+  4,000,001) は固定されていたが、**非数値を渡す検査が 1 つも無かった**。値は
+  IndexedDB から来るので実行時には何でも来うる。反復回数を 1 に下げられると
+  総当りが現実的になる門である。なお `typeof iterations !== 'number'` は
+  `Number.isFinite` が型強制しないため結果を 1 つも変えておらず、削除した
 
 ### 壁の一覧を「自称」で洗い直した — 10 → 17 (2026-08-20)
 

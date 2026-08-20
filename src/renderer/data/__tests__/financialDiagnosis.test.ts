@@ -131,3 +131,43 @@ describe('diagnoseFinancials', () => {
     expect(d.weaknesses).toHaveLength(3);
   });
 });
+
+describe('diagnoseFinancials — 強みは点数の高い順に並ぶ', () => {
+  /*
+   * `strengths` は「点数の高い順に上位 3 つ」。並べ替えを外しても入力順で
+   * 3 つ返るので、**入力順と点数順が違う入力**でないと確かめられない。
+   * 2026-08-20 の実測で、この行の変異体 3 つ (並べ替えの削除・比較関数の
+   * 無効化・符号の反転) がどれも生き残っていた。
+   */
+  const scrambled = [
+    axis('equityRatio', '自己資本比率', 75),
+    axis('ccc', 'CCC', 95),
+    axis('operatingMargin', '営業利益率', 85),
+    axis('roe', 'ROE', 100),
+    axis('currentRatio', '流動比率', 72),
+  ];
+
+  it('高い順の上位 3 つを返す (入力順ではない)', () => {
+    const d = diagnoseFinancials(scrambled);
+    expect(d.strengths.map((s) => s.key)).toEqual(['roe', 'ccc', 'operatingMargin']);
+    expect(d.strengths.map((s) => s.score)).toEqual([100, 95, 85]);
+  });
+
+  it('点数は単調に下がる (昇順にも入力順にもならない)', () => {
+    const scores = diagnoseFinancials(scrambled).strengths.map((s) => s.score);
+    for (let i = 1; i < scores.length; i += 1) {
+      expect(scores[i - 1]!).toBeGreaterThan(scores[i]!);
+    }
+  });
+
+  it('弱みは低い順 (強みと逆向きであることを同じ入力で見る)', () => {
+    const mixed = [
+      axis('equityRatio', '自己資本比率', 40),
+      axis('ccc', 'CCC', 10),
+      axis('operatingMargin', '営業利益率', 30),
+      axis('roe', 'ROE', 20),
+    ];
+    const d = diagnoseFinancials(mixed);
+    expect(d.weaknesses.map((w) => w.key)).toEqual(['ccc', 'roe', 'operatingMargin']);
+  });
+});

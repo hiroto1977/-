@@ -36,10 +36,20 @@ const ITERATIONS = SHARED_ITERATIONS;
 export const MIN_KDF_ITERATIONS = 100_000;
 export const MAX_KDF_ITERATIONS = 4_000_000;
 
-/** 保存側から読んだ反復回数を検証する。範囲外なら投げる。 */
+/**
+ * 保存側から読んだ反復回数を検証する。範囲外なら投げる。
+ *
+ * 型は `number` だが、**値は保存領域 (IndexedDB) から来る**ので実行時には
+ * 何でも来うる。`vault.ts` は読み出した `meta.iterations` をそのまま渡す。
+ *
+ * `typeof iterations !== 'number'` は**書かない**。`Number.isFinite` は
+ * 型強制をしないので、文字列 `'600000'` も `null` も `{}` も `new Number(…)`
+ * も等しく false を返す — つまり typeof の判定は結果を 1 つも変えない。
+ * 同じ答えを返す枝を足すと、確かめようのない変異体が増えるだけになる
+ * (非数値がすべて弾かれることは検査で固定してある)。
+ */
 export function assertKdfIterations(iterations: number): void {
   if (
-    typeof iterations !== 'number' ||
     !Number.isFinite(iterations) ||
     iterations < MIN_KDF_ITERATIONS ||
     iterations > MAX_KDF_ITERATIONS

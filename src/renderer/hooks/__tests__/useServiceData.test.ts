@@ -436,3 +436,80 @@ describe('useServiceData — IPC が reject した場合', () => {
     h.unmount();
   });
 });
+
+/*
+ * `autoFetch` は「資格情報が無くてもマウント時に 1 度取りに行く」指定。
+ * ローカルサービス (認証不要) の画面がこれを使う。
+ *
+ * 2026-08-20 の実測で、この判定の変異体 2 つが生き残っていた —
+ * **`autoFetch: true` を渡したときに実際に取得が走ることを誰も見ていなかった**。
+ * 判定が死ぬと、認証不要の画面が同梱スナップショットのまま更新されなくなる。
+ */
+function setupWithOptions<T>(serviceId: ServiceId, snapshot: T, options: { autoFetch?: boolean }) {
+  const ref: { current: ServiceState<T> } = { current: null as unknown as ServiceState<T> };
+  function Harness() {
+    ref.current = useServiceData<T>(serviceId, snapshot, options);
+    return null;
+  }
+  const container = document.createElement('div');
+  let root!: Root;
+  return {
+    ref,
+    async mount() {
+      await act(async () => {
+        root = createRoot(container);
+        root.render(createElement(Harness));
+      });
+      await flush();
+    },
+    unmount() {
+      act(() => root.unmount());
+    },
+  };
+}
+
+describe('useServiceData — autoFetch', () => {
+  /** 呼び出し回数を数える hub。資格情報は常に「未登録」。 */
+  function countingHub(data: unknown) {
+    let calls = 0;
+    const hub: Hub = {
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        calls += 1;
+        return { ok: true, data } as FetchResult<unknown>;
+      },
+    };
+    return { hub, calls: () => calls };
+  }
+
+  it('autoFetch: true なら資格情報が無くてもマウント時に取りに行く', async () => {
+    const { hub, calls } = countingHub({ v: 99 });
+    setHub(hub);
+    const h = setupWithOptions('github', { v: 1 }, { autoFetch: true });
+    await h.mount();
+    expect(calls()).toBe(1);
+    expect(h.ref.current.data).toEqual({ v: 99 });
+    expect(h.ref.current.source).toBe('live');
+    h.unmount();
+  });
+
+  it('autoFetch を渡さなければ、資格情報が無いうちは取りに行かない', async () => {
+    const { hub, calls } = countingHub({ v: 99 });
+    setHub(hub);
+    const h = setupWithOptions('github', { v: 1 }, {});
+    await h.mount();
+    expect(calls()).toBe(0);
+    expect(h.ref.current.data).toEqual({ v: 1 });
+    expect(h.ref.current.source).toBe('snapshot');
+    h.unmount();
+  });
+
+  it('autoFetch: false は「渡さない」と同じ (真だけを特別扱いする)', async () => {
+    const { hub, calls } = countingHub({ v: 99 });
+    setHub(hub);
+    const h = setupWithOptions('github', { v: 1 }, { autoFetch: false });
+    await h.mount();
+    expect(calls()).toBe(0);
+    h.unmount();
+  });
+});
