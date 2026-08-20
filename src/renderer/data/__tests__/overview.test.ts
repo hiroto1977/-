@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBusinessOverview } from '../overview';
-import { estimateEconomics } from '../../../shared/hydroponics';
+import { estimateEconomics, assessLowPotassium } from '../../../shared/hydroponics';
 import type { SalesEntry } from '../sales';
 import type { KpiActual } from '../kpiActuals';
 
@@ -475,5 +475,62 @@ describe('経営サマリーの水耕栽培の節', () => {
     expect(Number.isFinite(h.electricityCostRatioPct)).toBe(true);
     // 棚を動かしている限り電気代は出ていく = 営業損失になる。
     expect(h.operatingProfit).toBeLessThan(0);
+  });
+});
+
+// --- 低カリウム栽培の節 --------------------------------------------------
+//
+// 腎臓病の方の食事に直結するので、**測っていないものを「低カリウム」として
+// 出さない**ことが要件。経営サマリー側でもそれが判別できることを固定する。
+
+describe('経営サマリーの低カリウム栽培', () => {
+  const CROP = {
+    id: 'leaf-lettuce' as const, label: 'テスト用', nurseryDays: 20, growOutDays: 10,
+    harvestWeightG: 100, ecLow: 1, ecHigh: 2, phLow: 5.5, phHigh: 6.5, plantsPerPanel: 27,
+  };
+  const FACILITY = { floorAreaSqm: 100, tiers: 5, usableRatio: 1, crop: CROP, yieldRate: 0.8 };
+  const COST = {
+    unitPriceYen: 200, electricityYenPerKwh: 20, energyIntensityKwhPerKg: 10,
+    seedYenPerPlant: 3, nutrientYenPerPlant: 2, packagingYenPerPlant: 10,
+    laborYenPerMonth: 3_000_000, depreciationYenPerMonth: 2_000_000,
+    rentYenPerMonth: 500_000, otherFixedYenPerMonth: 300_000,
+  };
+  const build = (lowPotassium: ReturnType<typeof assessLowPotassium> | null) =>
+    buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: [], members: [],
+      hydroponics: estimateEconomics(FACILITY, COST),
+      lowPotassium,
+    });
+
+  it('低カリウムとして扱っていなければ null', () => {
+    expect(build(null).hydroponics!.lowPotassium).toBeNull();
+  });
+
+  it('実測していれば削減率まで載る', () => {
+    const a = assessLowPotassium({
+      switchDaysBeforeHarvest: 8,
+      measuredPotassiumMgPer100g: 89,
+      referencePotassiumMgPer100g: 341,
+    });
+    const lp = build(a).hydroponics!.lowPotassium!;
+    expect(lp.measured).toBe(true);
+    expect(lp.potassiumMgPer100g).toBe(89);
+    expect(lp.reductionPct).toBe(73.9);
+    expect(lp.switchWindowOk).toBe(true);
+  });
+
+  it('未測定なら measured が false のまま載る (節を消して隠さない)', () => {
+    const a = assessLowPotassium({ switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 0 });
+    const lp = build(a).hydroponics!.lowPotassium!;
+    // 節は出す。出さないと「低カリウムのつもり」の設定が画面から消えてしまう。
+    expect(lp).not.toBeNull();
+    expect(lp.measured).toBe(false);
+  });
+
+  it('低カリウムは収支の数字に影響しない (成分と採算は別)', () => {
+    const withLp = build(assessLowPotassium({ switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 89 }));
+    const without = build(null);
+    expect(withLp.hydroponics!.revenue).toBe(without.hydroponics!.revenue);
+    expect(withLp.hydroponics!.operatingProfit).toBe(without.hydroponics!.operatingProfit);
   });
 });

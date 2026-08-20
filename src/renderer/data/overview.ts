@@ -28,7 +28,7 @@ import { forecastCashBalance, type CashForecast } from './cashForecast';
 import { computeRevenueConcentration, type RevenueConcentration } from './revenueConcentration';
 import { computeTrendAlerts, type TrendAlerts } from './trendAlerts';
 import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
-import type { HydroponicsEconomics } from '../../shared/hydroponics';
+import type { HydroponicsEconomics, LowPotassiumAssessment } from '../../shared/hydroponics';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
@@ -47,6 +47,8 @@ export interface OverviewInput {
    * 実績 (`kpiActuals`) とは混ぜない。未入力なら経営サマリーに節は出ない。
    */
   readonly hydroponics?: HydroponicsEconomics | null;
+  /** 低カリウム栽培の評価 (実測値から)。扱っていなければ未指定。 */
+  readonly lowPotassium?: LowPotassiumAssessment | null;
 }
 
 /** 経営サマリーに載せる水耕栽培の試算。 */
@@ -79,6 +81,13 @@ export interface HydroponicsOverview {
   readonly electricityYenPerYear: number;
   /** 電気代が月次費用に占める割合 (%)。費用 0 なら 0。 */
   readonly electricityCostRatioPct: number;
+  /**
+   * 低カリウム栽培の評価。低カリウムとして扱っていなければ null。
+   *
+   * **実測していなければ `measured` が false になる。** 画面はそのときに
+   * 「低カリウム」と名乗らせてはならない (腎臓病の方の食事に直結する)。
+   */
+  readonly lowPotassium: LowPotassiumAssessment | null;
 }
 
 export interface BusinessOverview {
@@ -254,7 +263,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       ? forecastCashBalance(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet, 12)
       : null,
     trendAlerts: computeTrendAlerts(input.kpiActuals),
-    hydroponics: summarizeHydroponics(input.hydroponics ?? null),
+    hydroponics: summarizeHydroponics(input.hydroponics ?? null, input.lowPotassium ?? null),
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
       seatsFull: remaining === 0,
@@ -269,7 +278,10 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
  * で出す。栽培だけ別の定義で計算すると、同じ画面に定義の違う「利益率」が
  * 並ぶことになる。
  */
-function summarizeHydroponics(e: HydroponicsEconomics | null): HydroponicsOverview | null {
+function summarizeHydroponics(
+  e: HydroponicsEconomics | null,
+  lowPotassium: LowPotassiumAssessment | null,
+): HydroponicsOverview | null {
   if (!e) return null;
   const m = e.monthly;
   const metrics = computeKpiMetrics({
@@ -298,5 +310,6 @@ function summarizeHydroponics(e: HydroponicsEconomics | null): HydroponicsOvervi
     energyKwhPerYear: e.energyKwhPerYear,
     electricityYenPerYear: e.electricityYenPerYear,
     electricityCostRatioPct: monthlyCost > 0 ? (monthlyElectricity / monthlyCost) * 100 : 0,
+    lowPotassium,
   };
 }

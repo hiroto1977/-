@@ -387,3 +387,152 @@ export function estimateEconomics(
       breakEvenPlantsPerMonth !== null && shippedPlantsPerMonth >= breakEvenPlantsPerMonth,
   };
 }
+
+// --- 4. 低カリウム栽培 ----------------------------------------------------
+//
+// 腎機能が落ちるとカリウムを尿へ捨てられなくなり、血中に溜まると不整脈から
+// 心停止に至る。だから慢性腎臓病 (CKD) の方は野菜を強く制限される — 生野菜が
+// 食べられない、という形で生活の質に直に効く。培養液のカリウムを抜いて育てた
+// 野菜は、その制限の中でも食べられる量を増やせる。
+//
+// **この節の数値は健康に直結する。** ほかの節と違い、モデルの推定値で
+// 「低カリウム」と名乗ってはならない。実測しない限り出荷判断に使えないので、
+// 型と関数をそう作ってある (`assessLowPotassium` は実測値を必須で要求する)。
+//
+// 出典 (いずれも 2026-08 時点で確認):
+// - 農畜産業振興機構 (ALIC) 野菜情報「水耕栽培における低カリウム含有量野菜の
+//   栽培方法の確立の取り組み」(2014年12月) — 前期は通常の培養液で育て、
+//   **収穫前 7〜10 日**に硝酸カリウム (KNO3) を同濃度の硝酸ナトリウム (NaNO3)
+//   へ置き換える。カリウムを抜いた分をナトリウムで補い、浸透圧と EC を保つ。
+//   https://vegetable.alic.go.jp/yasaijoho/senmon/1412_chosa02.html
+// - 同「植物工場における低カリウムメロンの開発」(2013年4月) — 培養液中の
+//   カリウム量と与える時期の制御で低カリウム化できる。**培養液にナトリウムが
+//   無いと生育不良**になる。
+//   https://vegetable.alic.go.jp/yasaijoho/joho/1304_joho01.html
+// - 日本腎臓学会の診療ガイドライン — カリウム制限は G3a までは行わず、
+//   **G3b で 2,000 mg/日以下、G4〜G5 で 1,500 mg/日以下**。血清カリウムを
+//   4.0〜5.4 mEq/L に保つことが目的で、値が安定していれば制限しないこともある。
+//   https://jsn.or.jp/medic/guideline/
+// - 文部科学省「日本食品標準成分表 (八訂) 増補2023年」— レタス (土耕栽培・
+//   結球葉・生) のカリウムは 200 mg/100g。
+//   https://fooddb.mext.go.jp/
+
+/** 慢性腎臓病の病期。 */
+export type CkdStage = 'G1' | 'G2' | 'G3a' | 'G3b' | 'G4' | 'G5';
+
+/**
+ * 病期ごとの 1 日カリウム摂取上限 (mg)。`null` は「一律の制限は設けない」。
+ *
+ * **これは目安であって処方ではない。** 血清カリウム値が安定していれば制限
+ * しないこともあり、実際の指示は主治医と管理栄養士が個別に決める。
+ */
+export const CKD_POTASSIUM_LIMIT_MG: Readonly<Record<CkdStage, number | null>> = {
+  G1: null,
+  G2: null,
+  G3a: null,
+  G3b: 2000,
+  G4: 1500,
+  G5: 1500,
+};
+
+/** 培養液を切り替える期間の下限・上限 (収穫前の日数)。 */
+export const LOW_K_SWITCH_DAYS_MIN = 7;
+export const LOW_K_SWITCH_DAYS_MAX = 10;
+
+/**
+ * 比較の基準に使う通常品のカリウム (mg/100g)。
+ * レタス (土耕栽培・結球葉・生) — 日本食品標準成分表 八訂 増補2023年。
+ */
+export const REFERENCE_LETTUCE_POTASSIUM_MG = 200;
+
+/**
+ * ナトリウム (mg) を食塩相当量 (g) に直す係数。
+ * 食塩相当量 = Na(mg) × 2.54 ÷ 1000 (日本食品標準成分表の定義)。
+ */
+export const SALT_EQUIVALENT_FACTOR = 2.54;
+
+/** 低カリウム栽培の入力。**成分は実測値でしか受け取らない。** */
+export interface LowPotassiumInput {
+  /** 培養液を K 抜きへ切り替えるのは収穫前の何日か。 */
+  readonly switchDaysBeforeHarvest: number;
+  /**
+   * 出荷ロットの**実測**カリウム (mg/100g)。
+   * モデルの推定値を入れてはならない — 腎臓病の方の食事に直結する。
+   */
+  readonly measuredPotassiumMgPer100g: number;
+  /** 出荷ロットの実測ナトリウム (mg/100g)。測っていなければ未指定。 */
+  readonly measuredSodiumMgPer100g?: number;
+  /** 比較する通常品のカリウム (mg/100g)。既定はレタスの成分表値。 */
+  readonly referencePotassiumMgPer100g?: number;
+}
+
+/** 低カリウム栽培の評価。 */
+export interface LowPotassiumAssessment {
+  /** 実測カリウム (mg/100g)。 */
+  readonly potassiumMgPer100g: number;
+  /** 比較した通常品の値 (mg/100g)。 */
+  readonly referenceMgPer100g: number;
+  /** 通常品比の削減率 (%)。増えていれば負になる。 */
+  readonly reductionPct: number;
+  /** 実測ナトリウムから出した食塩相当量 (g/100g)。未測定なら null。 */
+  readonly saltEquivalentGPer100g: number | null;
+  /** 切替期間が 7〜10 日の範囲に収まっているか。 */
+  readonly switchWindowOk: boolean;
+  /**
+   * 出荷判断に使える状態か。**実測カリウムが正の有限値であることが条件**で、
+   * 0 や未測定を「カリウムが無い」と読み替えない。
+   */
+  readonly measured: boolean;
+}
+
+/**
+ * 実測値から低カリウム栽培を評価する。
+ *
+ * 削減率は比較対象があって初めて意味を持つので、基準値が 0 以下なら
+ * 率は 0 として扱う (「無限に減った」とは言わない)。
+ */
+export function assessLowPotassium(input: LowPotassiumInput): LowPotassiumAssessment {
+  const k = input.measuredPotassiumMgPer100g;
+  const measured = Number.isFinite(k) && k > 0;
+  const potassiumMgPer100g = measured ? k : 0;
+  const reference = nonNeg(input.referencePotassiumMgPer100g ?? REFERENCE_LETTUCE_POTASSIUM_MG);
+  const na = input.measuredSodiumMgPer100g;
+  const days = input.switchDaysBeforeHarvest;
+  return {
+    potassiumMgPer100g,
+    referenceMgPer100g: reference,
+    reductionPct:
+      reference > 0 ? round1(((reference - potassiumMgPer100g) / reference) * 100) : 0,
+    // `na !== undefined` の前置きは要らない — Number.isFinite は値を変換せず
+    // 照合するので undefined も NaN も false になる。
+    saltEquivalentGPer100g: Number.isFinite(na)
+      ? round2((nonNeg(na as number) * SALT_EQUIVALENT_FACTOR) / 1000)
+      : null,
+    switchWindowOk: days >= LOW_K_SWITCH_DAYS_MIN && days <= LOW_K_SWITCH_DAYS_MAX,
+    measured,
+  };
+}
+
+/**
+ * その病期の 1 日上限のうち、指定した割合を野菜に充てるとして
+ * **何 g 食べられるか**を返す。
+ *
+ * 制限のない病期 (G3a まで) と、実測できていない / カリウムが 0 の場合は null。
+ * 「上限いっぱいまで食べてよい」と読める数字を出さないため、割合は
+ * 呼び出し側が明示する (既定は置かない)。
+ *
+ * @param sharePct 1 日上限のうち、この野菜に充てる割合 (%)。
+ */
+export function servingGramsWithinLimit(
+  assessment: LowPotassiumAssessment,
+  stage: CkdStage,
+  sharePct: number,
+): number | null {
+  const limit = CKD_POTASSIUM_LIMIT_MG[stage];
+  if (limit === null) return null;
+  if (!assessment.measured) return null;
+  const share = Math.min(100, Math.max(0, Number.isFinite(sharePct) ? sharePct : 0));
+  const allowedMg = (limit * share) / 100;
+  // mg/100g なので 100 を掛けて g に直す。
+  return Math.floor((allowedMg / assessment.potassiumMgPer100g) * 100);
+}

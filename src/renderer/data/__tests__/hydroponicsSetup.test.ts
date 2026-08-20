@@ -12,12 +12,15 @@ import {
   toFacilityInput,
   toCostInput,
   economicsFromSetup,
+  lowPotassiumFromSetup,
   type HydroponicsSetup,
 } from '../hydroponicsSetup';
 import {
   HYDROPONIC_CROPS,
   ENERGY_INTENSITY_KWH_PER_KG_LOW,
   ENERGY_INTENSITY_KWH_PER_KG_HIGH,
+  LOW_K_SWITCH_DAYS_MIN,
+  LOW_K_SWITCH_DAYS_MAX,
 } from '../../../shared/hydroponics';
 
 const SETUP: HydroponicsSetup = {
@@ -41,12 +44,41 @@ describe('コレクション名と初期値', () => {
     expect(HYDROPONICS_DEFAULTS.energyIntensityKwhPerKg).toBe(15);
   });
 
-  it('初期値は全項目が正の数 (空欄のまま保存しても 0 除算にしない)', () => {
-    for (const [key, v] of Object.entries(HYDROPONICS_DEFAULTS)) {
-      if (key === 'cropId') continue;
-      expect(typeof v).toBe('number');
-      expect(v as number).toBeGreaterThan(0);
+  /** 設備・費用の欄。0 だと計算が壊れるので初期値は必ず正。 */
+  const NUMERIC_SETUP_KEYS = [
+    'floorAreaSqm', 'tiers', 'usableRatioPct', 'yieldRatePct', 'unitPriceYen',
+    'electricityYenPerKwh', 'energyIntensityKwhPerKg', 'seedYenPerPlant',
+    'nutrientYenPerPlant', 'packagingYenPerPlant', 'laborYenPerMonth',
+    'depreciationYenPerMonth', 'rentYenPerMonth', 'otherFixedYenPerMonth',
+  ] as const;
+
+  it('設備・費用の初期値は全項目が正の数 (空欄のまま保存しても 0 除算にしない)', () => {
+    for (const key of NUMERIC_SETUP_KEYS) {
+      const v = HYDROPONICS_DEFAULTS[key];
+      expect(typeof v, key).toBe('number');
+      expect(v as number, key).toBeGreaterThan(0);
     }
+  });
+
+  it('実測値の初期値は 0 = 未測定 (埋めやすさのための置き値を入れない)', () => {
+    // ここだけ他と逆にしてある。置き値がそのまま「測った」ことにされると、
+    // カリウムを排泄できない方の食事に直接影響する。
+    expect(HYDROPONICS_DEFAULTS.measuredPotassiumMgPer100g).toBe(0);
+    expect(HYDROPONICS_DEFAULTS.measuredSodiumMgPer100g).toBe(0);
+    // 低カリウム栽培は既定で「扱わない」。名乗るのは利用者が選んだときだけ。
+    expect(HYDROPONICS_DEFAULTS.lowPotassium).toBe(false);
+  });
+
+  it('切替日数の初期値は目安の範囲内', () => {
+    const d = HYDROPONICS_DEFAULTS.switchDaysBeforeHarvest!;
+    expect(d).toBeGreaterThanOrEqual(LOW_K_SWITCH_DAYS_MIN);
+    expect(d).toBeLessThanOrEqual(LOW_K_SWITCH_DAYS_MAX);
+  });
+
+  it('設備・費用の欄を数え漏らしていない (項目が増えたら気付く)', () => {
+    const lowKKeys = ['lowPotassium', 'switchDaysBeforeHarvest', 'measuredPotassiumMgPer100g', 'measuredSodiumMgPer100g'];
+    const counted = new Set<string>([...NUMERIC_SETUP_KEYS, 'cropId', ...lowKKeys]);
+    expect(Object.keys(HYDROPONICS_DEFAULTS).filter((k) => !counted.has(k))).toEqual([]);
   });
 });
 
@@ -119,5 +151,50 @@ describe('economicsFromSetup', () => {
     // バジルは定植後 18 日なので回転が遅い
     expect(basil.production.cyclesPerYear).toBeLessThan(lettuce.production.cyclesPerYear);
     expect(basil.production.shippedPlantsPerYear).toBeLessThan(lettuce.production.shippedPlantsPerYear);
+  });
+});
+
+describe('lowPotassiumFromSetup — 低カリウム栽培の橋渡し', () => {
+  const withLowK: HydroponicsSetup = {
+    ...SETUP,
+    lowPotassium: true,
+    switchDaysBeforeHarvest: 8,
+    measuredPotassiumMgPer100g: 89,
+    measuredSodiumMgPer100g: 100,
+  };
+
+  it('未入力なら null', () => {
+    expect(lowPotassiumFromSetup(null)).toBeNull();
+  });
+
+  it('低カリウムとして扱っていなければ null', () => {
+    expect(lowPotassiumFromSetup({ ...withLowK, lowPotassium: false })).toBeNull();
+    expect(lowPotassiumFromSetup({ ...withLowK, lowPotassium: undefined })).toBeNull();
+    // true 以外は扱わない (真値らしきものを通さない)
+    expect(lowPotassiumFromSetup({ ...withLowK, lowPotassium: 1 as unknown as boolean })).toBeNull();
+  });
+
+  it('実測値をそのまま評価へ渡す', () => {
+    const a = lowPotassiumFromSetup(withLowK)!;
+    expect(a.measured).toBe(true);
+    expect(a.potassiumMgPer100g).toBe(89);
+    expect(a.switchWindowOk).toBe(true);
+    // Na 100mg → 食塩相当量 0.25g
+    expect(a.saltEquivalentGPer100g).toBe(0.25);
+  });
+
+  it('ナトリウム 0 は「未測定」として扱う (0mg の野菜は無い)', () => {
+    expect(lowPotassiumFromSetup({ ...withLowK, measuredSodiumMgPer100g: 0 })!.saltEquivalentGPer100g).toBeNull();
+    expect(lowPotassiumFromSetup({ ...withLowK, measuredSodiumMgPer100g: undefined })!.saltEquivalentGPer100g).toBeNull();
+  });
+
+  it('カリウム未測定なら measured は false のまま (節は出すが名乗らせない)', () => {
+    expect(lowPotassiumFromSetup({ ...withLowK, measuredPotassiumMgPer100g: 0 })!.measured).toBe(false);
+    expect(lowPotassiumFromSetup({ ...withLowK, measuredPotassiumMgPer100g: undefined })!.measured).toBe(false);
+  });
+
+  it('切替日数が未指定なら範囲外として扱う (既定で「合っている」ことにしない)', () => {
+    expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: undefined })!.switchWindowOk).toBe(false);
+    expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: 20 })!.switchWindowOk).toBe(false);
   });
 });

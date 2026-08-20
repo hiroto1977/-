@@ -14,6 +14,13 @@ import {
   checkNutrientSolution,
   estimateProduction,
   estimateEconomics,
+  CKD_POTASSIUM_LIMIT_MG,
+  LOW_K_SWITCH_DAYS_MIN,
+  LOW_K_SWITCH_DAYS_MAX,
+  REFERENCE_LETTUCE_POTASSIUM_MG,
+  SALT_EQUIVALENT_FACTOR,
+  assessLowPotassium,
+  servingGramsWithinLimit,
   type HydroponicCrop,
   type FacilityInput,
   type CostInput,
@@ -314,5 +321,142 @@ describe('収支の見積り', () => {
     // 種苗費が 0 になるので変動費は 2 + 10 = 12 円
     expect(e.contributionPerPlantYen).toBe(88);
     expect(e.monthly.sga).toBe(1_520_833); // 電気代のみ
+  });
+});
+
+// --- 4. 低カリウム栽培 ----------------------------------------------------
+//
+// 腎機能が落ちた方は、カリウムを尿へ捨てられない。血中に溜まると不整脈から
+// 心停止に至るので、ここの数値は健康に直結する。**推定値で「低カリウム」と
+// 名乗らせない**ことが要件で、それを型と関数で守れているかを見る。
+
+describe('CKD の病期別カリウム上限', () => {
+  it('G3a までは一律の制限を設けない', () => {
+    for (const stage of ['G1', 'G2', 'G3a'] as const) {
+      expect(CKD_POTASSIUM_LIMIT_MG[stage]).toBeNull();
+    }
+  });
+
+  it('G3b は 2,000mg/日、G4〜G5 は 1,500mg/日 (日本腎臓学会)', () => {
+    expect(CKD_POTASSIUM_LIMIT_MG.G3b).toBe(2000);
+    expect(CKD_POTASSIUM_LIMIT_MG.G4).toBe(1500);
+    expect(CKD_POTASSIUM_LIMIT_MG.G5).toBe(1500);
+  });
+
+  it('病期が進むほど上限は緩まない', () => {
+    const limits = (['G3b', 'G4', 'G5'] as const).map((s) => CKD_POTASSIUM_LIMIT_MG[s]!);
+    for (let i = 1; i < limits.length; i++) {
+      expect(limits[i]!).toBeLessThanOrEqual(limits[i - 1]!);
+    }
+  });
+});
+
+describe('参考値', () => {
+  it('切替は収穫前 7〜10 日 (ALIC 野菜情報)', () => {
+    expect(LOW_K_SWITCH_DAYS_MIN).toBe(7);
+    expect(LOW_K_SWITCH_DAYS_MAX).toBe(10);
+  });
+
+  it('比較の基準はレタスの成分表値 200mg/100g', () => {
+    expect(REFERENCE_LETTUCE_POTASSIUM_MG).toBe(200);
+  });
+
+  it('食塩相当量の係数は 2.54 (成分表の定義)', () => {
+    expect(SALT_EQUIVALENT_FACTOR).toBe(2.54);
+  });
+});
+
+describe('assessLowPotassium — 実測でしか評価しない', () => {
+  const base = { switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 89 };
+
+  it('実測値が入っていれば measured になり、削減率を出す', () => {
+    // 出典の実績: 341 → 89 mg/100g で 73% 減
+    const a = assessLowPotassium({
+      switchDaysBeforeHarvest: 8,
+      measuredPotassiumMgPer100g: 89,
+      referencePotassiumMgPer100g: 341,
+    });
+    expect(a.measured).toBe(true);
+    expect(a.reductionPct).toBe(73.9);
+    expect(a.potassiumMgPer100g).toBe(89);
+    expect(a.referenceMgPer100g).toBe(341);
+  });
+
+  it('基準を省略するとレタスの成分表値と比べる', () => {
+    expect(assessLowPotassium(base).referenceMgPer100g).toBe(200);
+    // 200 → 89 は 55.5% 減
+    expect(assessLowPotassium(base).reductionPct).toBe(55.5);
+  });
+
+  it('未測定・0・負・非有限は measured にしない (0 を「カリウム無し」と読まない)', () => {
+    for (const k of [0, -1, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const a = assessLowPotassium({ ...base, measuredPotassiumMgPer100g: k });
+      expect(a.measured, `${k}`).toBe(false);
+      expect(a.potassiumMgPer100g, `${k}`).toBe(0);
+    }
+  });
+
+  it('通常品より増えていれば削減率は負になる (減ったことにしない)', () => {
+    const a = assessLowPotassium({ ...base, measuredPotassiumMgPer100g: 250 });
+    expect(a.reductionPct).toBe(-25);
+  });
+
+  it('基準が 0 以下なら率は 0 (無限に減ったとは言わない)', () => {
+    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: 0 }).reductionPct).toBe(0);
+    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: -5 }).reductionPct).toBe(0);
+  });
+
+  it('ナトリウムを測っていれば食塩相当量を出す', () => {
+    // Na 100mg → 100 × 2.54 ÷ 1000 = 0.254 → 0.25g
+    expect(assessLowPotassium({ ...base, measuredSodiumMgPer100g: 100 }).saltEquivalentGPer100g).toBe(0.25);
+    expect(assessLowPotassium({ ...base, measuredSodiumMgPer100g: 0 }).saltEquivalentGPer100g).toBe(0);
+  });
+
+  it('ナトリウムを測っていなければ null (0 と区別する)', () => {
+    expect(assessLowPotassium(base).saltEquivalentGPer100g).toBeNull();
+    expect(assessLowPotassium({ ...base, measuredSodiumMgPer100g: Number.NaN }).saltEquivalentGPer100g).toBeNull();
+  });
+
+  it('切替期間は 7〜10 日の両端を含む', () => {
+    for (const [days, ok] of [[6, false], [7, true], [8, true], [10, true], [11, false]] as const) {
+      expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: days }).switchWindowOk, `${days}`).toBe(ok);
+    }
+  });
+});
+
+describe('servingGramsWithinLimit — 何 g 食べられるか', () => {
+  const measured = assessLowPotassium({ switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 89 });
+
+  it('上限のうち指定した割合を野菜に充てて計算する', () => {
+    // G4 の上限 1500mg の 20% = 300mg。300 ÷ 89 × 100 = 337.0 → 337g
+    expect(servingGramsWithinLimit(measured, 'G4', 20)).toBe(337);
+    // G3b は 2000mg なので同じ割合でより多く食べられる
+    expect(servingGramsWithinLimit(measured, 'G3b', 20)).toBe(449);
+  });
+
+  it('制限のない病期は null (上限が無いことを数字で塗り潰さない)', () => {
+    for (const stage of ['G1', 'G2', 'G3a'] as const) {
+      expect(servingGramsWithinLimit(measured, stage, 20)).toBeNull();
+    }
+  });
+
+  it('実測できていなければ null (推定値で食べる量を出さない)', () => {
+    const unmeasured = assessLowPotassium({ switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 0 });
+    expect(servingGramsWithinLimit(unmeasured, 'G4', 20)).toBeNull();
+  });
+
+  it('割合は 0〜100 に収める', () => {
+    expect(servingGramsWithinLimit(measured, 'G4', 0)).toBe(0);
+    expect(servingGramsWithinLimit(measured, 'G4', -10)).toBe(0);
+    // 100% を超えても 100% 止まり
+    expect(servingGramsWithinLimit(measured, 'G4', 150)).toBe(servingGramsWithinLimit(measured, 'G4', 100));
+    expect(servingGramsWithinLimit(measured, 'G4', Number.NaN)).toBe(0);
+  });
+
+  it('カリウムが低いほど食べられる量は増える', () => {
+    const high = assessLowPotassium({ switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 200 });
+    expect(servingGramsWithinLimit(measured, 'G4', 20)!).toBeGreaterThan(
+      servingGramsWithinLimit(high, 'G4', 20)!,
+    );
   });
 });
