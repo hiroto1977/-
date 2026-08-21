@@ -1,5 +1,6 @@
 import { jpy } from './formatters';
 import { MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN } from './welfareScheme';
+import { employerBenefits, type BenefitMechanism, type BenefitSpec } from './employerBenefits';
 import type { WelfareSchemeInput, WelfareSchemeResult } from './welfareScheme';
 
 /**
@@ -126,15 +127,75 @@ export function welfareRegulationMarkdown(input: WelfareSchemeInput): string {
 2. ポイントは会社が定めるメニュー（自社EC 等）の範囲で利用でき、
    現金との交換はできない（換金性を排除し非課税枠を維持する）。
 
-## 第6条（非課税要件の遵守）
+## 第6条（年金制度による還元）
+1. 会社は、次の制度により従業員の老後資産形成を支援することができる。
+   導入する制度・掛金額・対象者は労使協議のうえ定め、別途規程を設ける。
+${pensionArticle()}
+2. 前項のうち従業員が給与の一部を掛金へ振り替える制度については、
+   標準報酬月額の低下により将来の公的給付が減少することを、
+   加入の意思確認の前に書面で説明する。
+
+## 第7条（非課税要件の遵守）
 本規程の運用は、所得税法・所得税基本通達その他関係法令に定める非課税要件を
 満たす範囲で行う。要件を満たさない給付は課税対象となる場合がある。
 
-## 第7条（改廃）
+## 第8条（改廃）
 本規程の改廃は、労使協議のうえ会社が行う。
+
+---
+
+## 付表：会社負担で還元できる給付と要件
+
+給付は**効き方が 3 種類**あり、社会保険・所得税・受け取る時点が異なる。
+同じ「会社負担」として一括りにしない。
+
+${benefitTable()}
 
 附則：本規程は＿＿＿＿年＿＿月＿＿日から施行する。
 
 _本書はひな形です。施行前に税理士・社労士・弁護士の確認を受けてください（${today()} 作成）。_
 `;
+}
+
+
+/** 効き方の日本語表記。 */
+const MECHANISM_LABEL: Record<BenefitMechanism, string> = {
+  'in-kind': '現物・手当（いま受け取る）',
+  'employer-pension': '会社が上乗せ（将来受け取る・額面は下がらない）',
+  'salary-conversion': '給与から振替（将来受け取る・標準報酬月額が下がる）',
+};
+
+/** 第6条に並べる年金制度の箇条書き。 */
+function pensionArticle(): string {
+  return employerBenefits().filter(
+    (b) => b.mechanism === 'employer-pension' || b.mechanism === 'salary-conversion',
+  )
+    .map((b) => `   - ${b.label}：${b.summary}`)
+    .join('\n');
+}
+
+/** 1 件分の付表。要件と出典、そして副作用を落とさない。 */
+function benefitEntry(b: BenefitSpec): string {
+  const conditions = b.conditions.map((c) => `- ${c}`).join('\n');
+  const caveat =
+    b.caveat === null ? '' : `\n**注意：** ${b.caveat}\n`;
+  const sources = b.sources.map((s) => `- ${s.label}: ${s.url}`).join('\n');
+  return `### ${b.label}
+
+区分：${MECHANISM_LABEL[b.mechanism]}
+
+${b.summary}
+
+**要件**
+
+${conditions}
+${caveat}
+**出典**
+
+${sources}`;
+}
+
+/** 付表の本体。 */
+function benefitTable(): string {
+  return employerBenefits().map(benefitEntry).join('\n\n');
 }

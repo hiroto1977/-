@@ -9,6 +9,10 @@ import {
   MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
   type WelfareSchemeInput,
 } from '../../shared/welfareScheme';
+import {
+  employerBenefits,
+  type BenefitMechanism,
+} from '../../shared/employerBenefits';
 import type { DependentKind } from '../../shared/taxDeductions';
 import {
   employeeExplanationMarkdown,
@@ -309,6 +313,8 @@ export function WelfareSchemeCard() {
         </button>
       </div>
 
+      <BenefitCatalogue />
+
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.6 }}>
         ※ 概算であり税務助言ではありません。標準報酬月額の等級・自治体料率・各非課税要件
         （食事補助は本人が半額以上負担かつ会社負担が月
@@ -319,5 +325,110 @@ export function WelfareSchemeCard() {
         反映できますが、配偶者控除・生命保険料控除等は未反映の簡略モデルです。
       </p>
     </Section>
+  );
+}
+
+
+/** 効き方の見出しと、なぜ分けるのかの一言。 */
+const MECHANISM_VIEW: Record<BenefitMechanism, { title: string; note: string }> = {
+  'employer-pension': {
+    title: '会社が上乗せする（額面は下がらない）',
+    note: '給与を減らさずに積み増す。従業員に課税されず、社会保険料の算定基礎にも含まれない。',
+  },
+  'salary-conversion': {
+    title: '給与から振り替える（標準報酬月額が下がる）',
+    note: '本人・会社とも社保と税が下がるが、将来の公的給付も同じだけ下がる。導入前に必ず説明すること。',
+  },
+  'in-kind': {
+    title: '現物・手当として渡す（いま受け取る）',
+    note: '要件を満たす範囲で非課税。超えた部分は給与として課税される。',
+  },
+};
+
+const MECHANISM_ORDER: readonly BenefitMechanism[] = [
+  'employer-pension',
+  'salary-conversion',
+  'in-kind',
+];
+
+/**
+ * 会社負担で還元できる給付の一覧。
+ *
+ * **効き方ごとに分けて出す。** 同じ「会社負担」でも社会保険・所得税・
+ * 受け取る時点が違い、特に給与振替には将来の給付が下がるという代償がある。
+ * 並べて一括りにすると、その違いが読み手から消える。
+ */
+function BenefitCatalogue(): JSX.Element {
+  const all = employerBenefits();
+  return (
+    <details style={{ marginTop: 14 }}>
+      <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+        会社負担で従業員に還元できる給付（{all.length} 件・要件と出典つき）
+      </summary>
+      <div style={{ marginTop: 10 }}>
+        {MECHANISM_ORDER.map((mechanism) => {
+          const items = all.filter((b) => b.mechanism === mechanism);
+          if (items.length === 0) return null;
+          const view = MECHANISM_VIEW[mechanism];
+          return (
+            <div key={mechanism} style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 12, fontWeight: 600 }}>{view.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
+                {view.note}
+              </div>
+              {items.map((b) => (
+                <div
+                  key={b.id}
+                  style={{
+                    border: '1px solid var(--border, #333)',
+                    borderRadius: 6,
+                    padding: '8px 10px',
+                    marginBottom: 8,
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 600 }}>{b.label}</div>
+                  <div style={{ fontSize: 11, marginTop: 2 }}>{b.summary}</div>
+                  <ul style={{ fontSize: 11, margin: '6px 0 0', paddingLeft: 18 }}>
+                    {b.conditions.map((c) => (
+                      <li key={c}>{c}</li>
+                    ))}
+                  </ul>
+                  {b.caveat !== null && (
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: 'var(--warning, #d97706)',
+                        marginTop: 6,
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      ⚠ {b.caveat}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 6 }}>
+                    出典:{' '}
+                    {b.sources.map((src, i) => (
+                      <span key={src.url}>
+                        {i > 0 && ' / '}
+                        <a
+                          href={src.url}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            void window.serviceHub.openExternal(src.url);
+                          }}
+                          style={{ color: 'inherit' }}
+                        >
+                          {src.label}
+                        </a>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </details>
   );
 }
