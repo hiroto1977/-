@@ -73,7 +73,7 @@
     "typecheck": "tsc -b --noEmit --force",
     "vault:build": "node scripts/build-knowledge-vault.cjs",
     "vault:check": "node scripts/build-knowledge-vault.cjs --check",
-    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:network-targets && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:test-coverage && npm run lint:shell && npm run lint:repo-size && npm run lint:data-origin && npm run lint:credential-use && npm run lint:ipc-handlers && npm run lint:mutation-scope && npm run lint:collection-time && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
+    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:network-targets && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:test-coverage && npm run lint:shell && npm run lint:repo-size && npm run lint:data-origin && npm run lint:credential-use && npm run lint:ipc-handlers && npm run lint:mutation-scope && npm run lint:collection-time && npm run lint:rate-freshness && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
     "verify:arch": "node scripts/verify-architecture.cjs",
     "verify:graph": "node scripts/verify-graph.cjs",
     "verify:knowledge": "node scripts/verify-knowledge-provenance.cjs",
@@ -82,6 +82,7 @@
     "lint:data-origin": "node scripts/lint-data-origin.cjs && node scripts/lint-data-origin.cjs --self-test",
     "lint:credential-use": "node scripts/lint-credential-use.cjs && node scripts/lint-credential-use.cjs --self-test",
     "lint:ipc-handlers": "node scripts/lint-ipc-handlers.cjs && node scripts/lint-ipc-handlers.cjs --self-test",
+    "lint:rate-freshness": "node scripts/lint-rate-freshness.cjs && node scripts/lint-rate-freshness.cjs --self-test",
     "lint:collection-time": "node scripts/lint-collection-time-tests.cjs && node scripts/lint-collection-time-tests.cjs --self-test",
     "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test"
   },

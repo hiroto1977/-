@@ -15,6 +15,14 @@ import { calcBasicDeduction, calcResidentBasicDeduction } from './taxCalc';
 
 /** 円未満を四捨五入。 */
 
+/**
+ * 調整控除で使う「基礎控除の人的控除の差額」(円)。
+ *
+ * 地方税法が定める固定値で、**所得税の基礎控除がいくらになっても 5 万円**。
+ * 実額の差 (所得税 58〜104 万 − 住民税 43 万) とは別物なので混同しない。
+ */
+export const BASIC_HUMAN_DEDUCTION_DIFF = 50_000;
+
 /** 所得税額 / 住民税額の両方を持つ控除額。 */
 export interface DeductionPair {
   /** 所得税の所得控除額 (円)。 */
@@ -623,6 +631,10 @@ export const WORKING_STUDENT_DEDUCTION: DeductionPair = { incomeTax: 270_000, re
 
 /** 所得控除の入力 (すべて任意・該当しなければ未指定/0)。 */
 export interface DeductionInput {
+  /**
+   * 対象の年分 (西暦)。基礎控除の段階が年分で変わるので効く。省略時は現在の年。
+   */
+  readonly taxYear?: number;
   /** 合計所得金額 (給与所得控除後など、控除前の所得)。 */
   readonly totalIncome: number;
   /** 支払った社会保険料の実額 (年)。未指定なら 0。 */
@@ -700,7 +712,9 @@ const ZERO: DeductionPair = { incomeTax: 0, residentTax: 0 };
  */
 export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   const basic: DeductionPair = {
-    incomeTax: calcBasicDeduction(input.totalIncome),
+    // 基礎控除は年分で段階が違う。省略時は現在の年。
+    incomeTax: calcBasicDeduction(input.totalIncome, input.taxYear),
+    // 住民税の基礎控除は据え置きなので年分を渡さない。
     residentTax: calcResidentBasicDeduction(input.totalIncome),
   };
   const social = input.socialInsurancePaid && input.socialInsurancePaid > 0
@@ -756,10 +770,25 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   ];
   const total = parts.reduce(addPair, ZERO);
 
-  // 人的控除のみの (所得税 − 住民税) 差を合計 (調整控除の算定基礎)。
-  // 物的控除 (社保・生命保険・地震保険・医療費・寄附金) は対象外。
-  const humanParts = [basic, spouse, dependents, disability, singleParentOrWidow, workingStudent];
-  const humanDeductionDiff = humanParts.reduce((s, p) => s + (p.incomeTax - p.residentTax), 0);
+  // 人的控除のみの差を合計 (調整控除の算定基礎)。物的控除 (社保・生命保険・
+  // 地震保険・医療費・寄附金) は対象外。
+  //
+  // **基礎控除だけは実額の差を使ってはいけない。** 調整控除に使う「人的控除の
+  // 差額」は地方税法が定める固定値で、基礎控除は **5 万円**である。
+  // 令和6年分以前は所得税 48 万 / 住民税 43 万で実額の差もちょうど 5 万円
+  // だったため、実額から引いても同じ答えになっていた。
+  //
+  // 令和7年分の改正で所得税だけが上がり (58〜95 万円)、住民税は 43 万円で
+  // 据え置かれたので、**実額の差は 15 万円以上に開いた**。ここで実額を使うと
+  // 調整控除が過大になり、住民税を過少に見積もる。改正が意図したのは所得税の
+  // 軽減であって住民税の軽減ではない。
+  //
+  // 配偶者控除 (38/33) と扶養控除 (38/33) は差が 5 万円のままなので、
+  // そちらは実額でよい。
+  const humanParts = [spouse, dependents, disability, singleParentOrWidow, workingStudent];
+  const humanDeductionDiff =
+    BASIC_HUMAN_DEDUCTION_DIFF +
+    humanParts.reduce((s, p) => s + (p.incomeTax - p.residentTax), 0);
 
   return {
     basic,

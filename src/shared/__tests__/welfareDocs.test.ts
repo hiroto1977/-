@@ -11,6 +11,8 @@ import {
 } from '../welfareDocs';
 
 const input: WelfareSchemeInput = {
+  // 年分を固定する (基礎控除の段階が年分で変わるため)。
+  taxYear: 2026,
   targetFreeCash: 265_000,
   rentTotal: 80_000,
   rentCompanyShare: 70_000,
@@ -41,8 +43,8 @@ describe('employeeExplanationMarkdown', () => {
     expect(md()).toContain('なぜ額面（基本給）が下がるのに、手取りが増えるのか');
   });
   it('①②の額面と実質手元残りの数値が文面に現れる', () => {
-    expect(md()).toContain('¥585,123'); // normal.gross
-    expect(md()).toContain('¥360,376'); // scheme.gross
+    expect(md()).toContain('¥580,088'); // normal.gross
+    expect(md()).toContain('¥357,303'); // scheme.gross
     expect(md()).toContain('¥422,500'); // scheme.employeeRealValue
   });
   it('実質手取りの増加額を含む', () => {
@@ -64,7 +66,7 @@ describe('consentFormMarkdown', () => {
   });
   it('天引き額・変更後額面を含む', () => {
     expect(md()).toContain('¥17,500'); // scheme.payrollDeduction
-    expect(md()).toContain('¥360,376'); // scheme.gross
+    expect(md()).toContain('¥357,303'); // scheme.gross
   });
 });
 

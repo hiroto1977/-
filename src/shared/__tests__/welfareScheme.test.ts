@@ -71,7 +71,10 @@ describe('solveGrossForTakeHome', () => {
 });
 
 describe('designWelfareScheme', () => {
+  // **年分を固定する。** 既定は現在の年なので、渡さないと暦が変わった日に
+  // 厳密値の検査が理由もなく落ちる (基礎控除の段階が年分で変わるため)。
   const input = {
+    taxYear: 2026,
     targetFreeCash: 265_000,
     rentTotal: 80_000,
     rentCompanyShare: 70_000,
@@ -124,54 +127,54 @@ describe('designWelfareScheme', () => {
 
   // --- 厳密値テスト (算術変異の撃墜: 各計算式を実値で固定) ---
   it('monthlyCompensation の厳密値 (扶養なし基礎控除のみ)', () => {
-    expect(monthlyCompensation(400_000)).toEqual({
+    expect(monthlyCompensation(400_000, false, undefined, 2026)).toEqual({
       gross: 400_000,
-      employeeSocialInsurance: 60_415,
-      incomeTax: 10_380,
-      residentTax: 19_125,
-      takeHome: 310_080,
-      employerSocialInsurance: 63_015,
+      employeeSocialInsurance: 60_015,
+      incomeTax: 6_972,
+      residentTax: 19_158,
+      takeHome: 313_855,
+      employerSocialInsurance: 62_615,
     });
-    expect(monthlyCompensation(500_000, true)).toEqual({
+    expect(monthlyCompensation(500_000, true, undefined, 2026)).toEqual({
       gross: 500_000,
-      employeeSocialInsurance: 77_750,
-      incomeTax: 16_778,
-      residentTax: 25_391,
-      takeHome: 380_081,
-      employerSocialInsurance: 81_000,
+      employeeSocialInsurance: 77_300,
+      incomeTax: 12_056,
+      residentTax: 25_433,
+      takeHome: 385_211,
+      employerSocialInsurance: 80_550,
     });
   });
 
   it('designWelfareScheme の厳密値 (各内訳を実値で固定)', () => {
     const r = designWelfareScheme(input);
     expect(r.normal).toEqual({
-      gross: 585_123,
-      employeeSocialInsurance: 86_995,
-      tax: 58_128,
+      gross: 580_088,
+      employeeSocialInsurance: 86_385,
+      tax: 53_703,
       payrollDeduction: 0,
       netPaid: 440_000,
       freeCash: 265_000,
       inKindValue: 0,
       employeeRealValue: 265_000,
-      companyTotalCost: 675_921,
+      companyTotalCost: 670_243,
     });
     expect(r.scheme).toEqual({
-      gross: 360_376,
-      employeeSocialInsurance: 53_102,
-      tax: 24_774,
+      gross: 357_303,
+      employeeSocialInsurance: 52_726,
+      tax: 22_077,
       payrollDeduction: 17_500,
       netPaid: 265_000,
       freeCash: 265_000,
       inKindValue: 157_500,
       employeeRealValue: 422_500,
-      companyTotalCost: 573_320,
+      companyTotalCost: 569_851,
     });
     expect(r.diff).toEqual({
-      gross: -224_747,
-      employeeSocialInsurance: -33_893,
-      tax: -33_354,
+      gross: -222_785,
+      employeeSocialInsurance: -33_659,
+      tax: -31_626,
       employeeRealValue: 157_500,
-      companyTotalCost: -102_601,
+      companyTotalCost: -100_392,
     });
   });
 
@@ -392,7 +395,7 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
 
   it('monthlyCompensation に追加控除を渡すと所得税・住民税が下がる (手取りは増える)', () => {
     const base = monthlyCompensation(500_000);
-    const withExtra = monthlyCompensation(500_000, false, extra);
+    const withExtra = monthlyCompensation(500_000, false, extra, 2026);
     expect(withExtra.incomeTax).toBeLessThan(base.incomeTax);
     expect(withExtra.residentTax).toBeLessThan(base.residentTax);
     expect(withExtra.takeHome).toBeGreaterThan(base.takeHome);
@@ -401,17 +404,18 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
   });
 
   it('monthlyCompensation の厳密値 (追加控除あり)', () => {
-    expect(monthlyCompensation(500_000, false, extra)).toEqual({
+    expect(monthlyCompensation(500_000, false, extra, 2026)).toEqual({
       gross: 500_000,
-      employeeSocialInsurance: 73_750,
-      incomeTax: 5_679,
-      residentTax: 13_875,
-      takeHome: 406_696,
-      employerSocialInsurance: 77_000,
+      employeeSocialInsurance: 73_250,
+      incomeTax: 3_322,
+      residentTax: 13_925,
+      takeHome: 409_503,
+      employerSocialInsurance: 76_500,
     });
   });
 
   const withDeductions = {
+    taxYear: 2026,
     targetFreeCash: 265_000,
     rentTotal: 80_000,
     rentCompanyShare: 70_000,
@@ -434,33 +438,33 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
   it('designWelfareScheme の厳密値 (扶養控除 + 青色申告特別控除)', () => {
     const r = designWelfareScheme(withDeductions);
     expect(r.normal).toEqual({
-      gross: 542_220,
-      employeeSocialInsurance: 78_248,
-      tax: 23_972,
+      gross: 538_963,
+      employeeSocialInsurance: 77_689,
+      tax: 21_274,
       payrollDeduction: 0,
       netPaid: 440_000,
       freeCash: 265_000,
       inKindValue: 0,
       employeeRealValue: 265_000,
-      companyTotalCost: 623_992,
+      companyTotalCost: 620_155,
     });
     expect(r.scheme).toEqual({
-      gross: 335_915,
-      employeeSocialInsurance: 50_125,
-      tax: 3_290,
+      gross: 335_386,
+      employeeSocialInsurance: 49_786,
+      tax: 3_100,
       payrollDeduction: 17_500,
       netPaid: 265_000,
       freeCash: 265_000,
       inKindValue: 157_500,
       employeeRealValue: 422_500,
-      companyTotalCost: 545_723,
+      companyTotalCost: 544_852,
     });
     expect(r.diff).toEqual({
-      gross: -206_305,
-      employeeSocialInsurance: -28_123,
-      tax: -20_682,
+      gross: -203_577,
+      employeeSocialInsurance: -27_903,
+      tax: -18_174,
       employeeRealValue: 157_500,
-      companyTotalCost: -78_269,
+      companyTotalCost: -75_303,
     });
   });
 
@@ -519,5 +523,54 @@ describe('食事補助の非課税要件 — 法令の数字', () => {
     expect(mealTotal - companyShare).toBeGreaterThanOrEqual(
       mealTotal * MEAL_SUBSIDY_SELF_PAY_RATIO,
     );
+  });
+});
+
+/*
+ * 年分が試算全体に効いているか。
+ *
+ * `taxYear` は配偶者控除だけでなく**基礎控除・給与所得控除**にも効く。
+ * ここが現在の年に固定されていると、過去の年分を指定しても今年の税額が
+ * 返ってきてしまう (指定が黙って無視される、いちばん気付きにくい壊れ方)。
+ */
+describe('designWelfareScheme — 年分が税額に効く', () => {
+  const at = (taxYear: number) =>
+    designWelfareScheme({
+      taxYear,
+      targetFreeCash: 265_000,
+      rentTotal: 80_000,
+      rentCompanyShare: 70_000,
+      mealTotal: 15_000,
+      mealCompanyShare: 7_500,
+      childcare: 50_000,
+      ecPoints: 30_000,
+    });
+
+  it('令和6年分は基礎控除が小さいぶん必要な額面が大きい', () => {
+    // 令和6年分の基礎控除 48 万円 → 令和8年分 104 万円。控除が増えれば
+    // 同じ手元残りに要る額面は下がる。
+    expect(at(2024).normal.gross).toBeGreaterThan(at(2026).normal.gross);
+    expect(at(2024).scheme.gross).toBeGreaterThan(at(2026).scheme.gross);
+    expect(at(2024).normal.tax).toBeGreaterThan(at(2026).normal.tax);
+  });
+
+  it('令和7年分は令和6年分と令和8年分の間', () => {
+    expect(at(2025).normal.gross).toBeLessThan(at(2024).normal.gross);
+    expect(at(2025).normal.gross).toBeGreaterThan(at(2026).normal.gross);
+  });
+
+  it('令和8年分と令和9年分は同じ (時限加算は 2 年分)', () => {
+    expect(at(2027).normal.gross).toBe(at(2026).normal.gross);
+  });
+
+  it('令和10年分は加算が縮むので額面が上がる', () => {
+    expect(at(2028).normal.gross).toBeGreaterThan(at(2026).normal.gross);
+  });
+
+  it('手元残りはどの年分でも目標どおり', () => {
+    for (const y of [2024, 2025, 2026, 2028]) {
+      expect(at(y).normal.freeCash).toBe(265_000);
+      expect(at(y).scheme.freeCash).toBe(265_000);
+    }
   });
 });

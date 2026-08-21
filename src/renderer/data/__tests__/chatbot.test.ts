@@ -155,7 +155,7 @@ describe('replyTo', () => {
   it('answers a take-home calc inline (額面→手取り)', () => {
     const r = replyTo('額面40万の手取りは？', CTX);
     expect(r.kind).toBe('calc');
-    expect(r.text).toContain('¥310,080');
+    expect(r.text).toContain('¥313,855');
     expect(r.navigateTo).toBeUndefined();
     // 給与の話題は税務部長 (フィクスチャでは 給与 を含む語幹なし) → COO 直轄ではなく
     // routeTopic に委譲した結果をそのまま使う。フィクスチャでは未解決 = COO 直轄。

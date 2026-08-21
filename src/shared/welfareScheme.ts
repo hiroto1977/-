@@ -95,18 +95,20 @@ function calcSpouseDeductionFor(input: WelfareSchemeInput, withCare: boolean): D
   // 未指定は「配偶者なし」。所得 0 の配偶者が居る場合と取り違えない。
   if (input.spouseIncome === undefined) return ZERO_DEDUCTION;
   const livingCost = input.rentTotal + input.childcare + input.mealTotal + input.ecPoints;
+  const taxYear = input.taxYear ?? new Date().getFullYear();
   const provisionalGross = solveGrossForTakeHome(
     input.targetFreeCash + livingCost,
     withCare,
     ZERO_DEDUCTION,
+    taxYear,
   );
   const annualGross = provisionalGross * 12;
-  const selfIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross));
+  const selfIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross, taxYear));
   return calcSpouseDeduction(
     selfIncome,
     Math.max(0, input.spouseIncome),
     input.spouseElderly ?? false,
-    input.taxYear ?? new Date().getFullYear(),
+    taxYear,
   );
 }
 
@@ -140,6 +142,7 @@ export function monthlyCompensation(
   grossMonthly: number,
   withCare = false,
   extraDeductions: DeductionPair = ZERO_DEDUCTION,
+  taxYear = new Date().getFullYear(),
 ): MonthlyCompensation {
   const gross = Math.max(0, grossMonthly);
   if (gross === 0) {
@@ -155,8 +158,8 @@ export function monthlyCompensation(
   const si = calcMonthlySocialInsurance(gross, withCare);
   const annualGross = gross * 12;
   const annualSI = si.total * 12;
-  const employmentIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross));
-  const basic = calcBasicDeduction(employmentIncome);
+  const employmentIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross, taxYear));
+  const basic = calcBasicDeduction(employmentIncome, taxYear);
   const residentBasic = calcResidentBasicDeduction(employmentIncome);
   const taxable = Math.max(0, employmentIncome - annualSI - basic - extraDeductions.incomeTax);
   // 住民税の課税所得は基礎控除が所得税と異なる (43万 / 所得税は48万) ため別計算。
@@ -192,6 +195,7 @@ export function solveGrossForTakeHome(
   targetTakeHome: number,
   withCare = false,
   extraDeductions: DeductionPair = ZERO_DEDUCTION,
+  taxYear = new Date().getFullYear(),
 ): number {
   if (targetTakeHome <= 0) return 0;
   let lo = 0;
@@ -203,7 +207,7 @@ export function solveGrossForTakeHome(
     const mid = (lo + hi) / 2;
     // 厳密一致 (< → <=) は連続値では測度0で到達せず結果不変の等価変異。
     // Stryker disable next-line EqualityOperator
-    if (monthlyCompensation(mid, withCare, extraDeductions).takeHome < targetTakeHome) lo = mid;
+    if (monthlyCompensation(mid, withCare, extraDeductions, taxYear).takeHome < targetTakeHome) lo = mid;
     else hi = mid;
   }
   return Math.round(hi);
@@ -309,6 +313,9 @@ export interface WelfareSchemeResult {
  */
 export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeResult {
   const withCare = input.withCare ?? false;
+  // 年分は 1 つに揃える。配偶者控除だけ年分を見て基礎控除は今年、では
+  // 「どの年分でもない」試算になる。
+  const taxYear = input.taxYear ?? new Date().getFullYear();
   const rentSelf = Math.max(0, input.rentTotal - input.rentCompanyShare);
   const mealSelf = Math.max(0, input.mealTotal - input.mealCompanyShare);
 
@@ -335,8 +342,9 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     input.targetFreeCash + normalLivingCost,
     withCare,
     extraDeductions,
+    taxYear,
   );
-  const normalComp = monthlyCompensation(normalGross, withCare, extraDeductions);
+  const normalComp = monthlyCompensation(normalGross, withCare, extraDeductions, taxYear);
   const normal: WelfareScenario = {
     gross: normalComp.gross,
     employeeSocialInsurance: normalComp.employeeSocialInsurance,
@@ -356,8 +364,9 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     input.targetFreeCash + schemeDeduction,
     withCare,
     extraDeductions,
+    taxYear,
   );
-  const schemeComp = monthlyCompensation(schemeGross, withCare, extraDeductions);
+  const schemeComp = monthlyCompensation(schemeGross, withCare, extraDeductions, taxYear);
   const inKindValue =
     input.rentCompanyShare + input.mealCompanyShare + input.childcare + input.ecPoints;
   const schemeFreeCash = schemeComp.takeHome - schemeDeduction;

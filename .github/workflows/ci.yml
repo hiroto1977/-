@@ -47,6 +47,7 @@ jobs:
       - run: npm run lint:ipc-handlers
       - run: npm run lint:mutation-scope
       - run: npm run lint:collection-time
+      - run: npm run lint:rate-freshness
       - run: npm run verify:orchestration
       - run: npm run vault:check
       - run: npm run verify:graph

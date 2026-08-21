@@ -424,15 +424,40 @@ describe('calcAllDeductions — iDeCo / 小規模企業共済の上限統合', (
 });
 
 describe('calcAllDeductions', () => {
-  it('returns only the basic deduction for an empty input', () => {
-    const d = calcAllDeductions({ totalIncome: 5_000_000 });
+  // 年分を明示する。基礎控除の段階は年分で変わるので、渡さないと
+  // 暦が変わった日に期待値が意味を失う。
+  it('returns only the basic deduction for an empty input (令和6年分)', () => {
+    const d = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2024 });
     expect(d.basic).toEqual({ incomeTax: 480_000, residentTax: 430_000 });
     expect(d.total).toEqual({ incomeTax: 480_000, residentTax: 430_000 });
   });
 
-  it('aggregates every provided deduction into the total', () => {
+  it('基礎控除は年分で変わり、住民税側は据え置き', () => {
+    // 合計所得 500 万円 = 489 万円超 655 万円以下の帯。
+    const at = (taxYear: number) => calcAllDeductions({ totalIncome: 5_000_000, taxYear }).basic;
+    expect(at(2024)).toEqual({ incomeTax: 480_000, residentTax: 430_000 });
+    expect(at(2025)).toEqual({ incomeTax: 630_000, residentTax: 430_000 });
+    expect(at(2026)).toEqual({ incomeTax: 670_000, residentTax: 430_000 });
+    expect(at(2028)).toEqual({ incomeTax: 620_000, residentTax: 430_000 });
+    // 住民税はどの年分でも 43 万円のまま。
+    for (const y of [2024, 2025, 2026, 2028]) expect(at(y).residentTax).toBe(430_000);
+  });
+
+  it('調整控除の人的控除差は基礎控除の実額に引きずられない', () => {
+    // 所得税の基礎控除が 48 → 67 万円に上がっても、調整控除に使う
+    // 基礎控除の差額は法定の 5 万円のまま。ここが実額 (24 万円) に
+    // なると調整控除が過大になり住民税を過少に見積もる。
+    const old = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2024 });
+    const now = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2026 });
+    expect(old.humanDeductionDiff).toBe(50_000);
+    expect(now.humanDeductionDiff).toBe(50_000);
+    expect(now.basic.incomeTax - now.basic.residentTax).toBe(240_000); // 実額はこれだけ開く
+  });
+
+  it('aggregates every provided deduction into the total (令和6年分)', () => {
     const d = calcAllDeductions({
       totalIncome: 5_000_000,
+      taxYear: 2024,
       socialInsurancePaid: 700_000,
       smallBizMutualAid: 120_000,
       spouseIncome: 0,

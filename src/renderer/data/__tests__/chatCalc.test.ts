@@ -93,37 +93,37 @@ describe('parseCalcQuery', () => {
 
 describe('runCalcQuery', () => {
   it('computes take-home with the welfareScheme exact values (額面40万)', () => {
-    const a = runCalcQuery({ kind: 'take-home', amount: 400_000 });
+    const a = runCalcQuery({ kind: 'take-home', amount: 400_000 }, 2026);
     expect(a.comp).toEqual({
       gross: 400_000,
-      employeeSocialInsurance: 60_415,
-      incomeTax: 10_380,
-      residentTax: 19_125,
-      takeHome: 310_080,
-      employerSocialInsurance: 63_015,
+      employeeSocialInsurance: 60_015,
+      incomeTax: 6_972,
+      residentTax: 19_158,
+      takeHome: 313_855,
+      employerSocialInsurance: 62_615,
     });
     expect(a.query.kind).toBe('take-home');
   });
 
-  it('solves required gross for a target take-home (手取り44万 → 額面585,123)', () => {
-    const a = runCalcQuery({ kind: 'required-gross', amount: 440_000 });
-    expect(a.comp.gross).toBe(585_123); // designWelfareScheme normal と同一の逆算値
+  it('solves required gross for a target take-home (手取り44万 → 額面580,088)', () => {
+    const a = runCalcQuery({ kind: 'required-gross', amount: 440_000 }, 2026);
+    expect(a.comp.gross).toBe(580_088); // designWelfareScheme normal と同一の逆算値
     expect(a.comp.takeHome).toBe(440_000);
   });
 });
 
 describe('formatCalcAnswer', () => {
   it('renders the take-home breakdown with exact yen strings', () => {
-    const text = formatCalcAnswer(runCalcQuery({ kind: 'take-home', amount: 400_000 }));
+    const text = formatCalcAnswer(runCalcQuery({ kind: 'take-home', amount: 400_000 }, 2026));
     expect(text).toContain('¥400,000');
-    expect(text).toContain('¥60,415');
-    expect(text).toContain('¥310,080');
+    expect(text).toContain('¥60,015');
+    expect(text).toContain('¥313,855');
     expect(text).toContain('概算');
   });
 
   it('renders the required-gross headline with the solved gross', () => {
-    const text = formatCalcAnswer(runCalcQuery({ kind: 'required-gross', amount: 440_000 }));
+    const text = formatCalcAnswer(runCalcQuery({ kind: 'required-gross', amount: 440_000 }, 2026));
     expect(text).toContain('手取り ¥440,000/月 に必要な額面');
-    expect(text).toContain('¥585,123');
+    expect(text).toContain('¥580,088');
   });
 });

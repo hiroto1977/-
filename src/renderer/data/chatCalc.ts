@@ -81,13 +81,19 @@ export function parseCalcQuery(text: string): CalcQuery | null {
   return { kind: 'take-home', amount };
 }
 
-/** クエリを実行して月次内訳を得る (welfareScheme へ委譲)。 */
-export function runCalcQuery(query: CalcQuery): CalcAnswer {
+/**
+ * クエリを実行して月次内訳を得る (welfareScheme へ委譲)。
+ *
+ * `taxYear` を受けるのは検査のため。基礎控除の段階が年分で変わるので、
+ * 既定 (現在の年) のままだと**暦が変わった日に検査が落ちる** — しかも
+ * 落ちるのは 2028 年の元日で、そのとき理由を思い出せる人はいない。
+ */
+export function runCalcQuery(query: CalcQuery, taxYear = new Date().getFullYear()): CalcAnswer {
   if (query.kind === 'required-gross') {
-    const gross = solveGrossForTakeHome(query.amount);
-    return { query, comp: monthlyCompensation(gross) };
+    const gross = solveGrossForTakeHome(query.amount, false, undefined, taxYear);
+    return { query, comp: monthlyCompensation(gross, false, undefined, taxYear) };
   }
-  return { query, comp: monthlyCompensation(query.amount) };
+  return { query, comp: monthlyCompensation(query.amount, false, undefined, taxYear) };
 }
 
 /** 回答テキストを整形する (内容は表現 — 数値は runCalcQuery のテストで固定)。 */

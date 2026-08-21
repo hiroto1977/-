@@ -104,14 +104,14 @@ describe('calcMonthlySocialInsurance (月次社会保険料, 本人負担)', () 
     expect(si.health).toBe(Math.floor(300_000 * HEALTH_RATE)); // 15,000
     expect(si.employment).toBe(Math.floor(300_000 * EMPLOYMENT_INSURANCE_RATE)); // 1,800
     expect(si.total).toBe(si.pension + si.health + si.employment); // 44,250
-    expect(si.total).toBe(44_250);
+    expect(si.total).toBe(43_950);
   });
 
   it('adds the long-term care rate to health when withCare is true (40-64)', () => {
     const base = calcMonthlySocialInsurance(300_000, false);
     const withCare = calcMonthlySocialInsurance(300_000, true);
     expect(withCare.health).toBe(Math.floor(300_000 * (HEALTH_RATE + CARE_RATE))); // 17,400
-    expect(withCare.health).toBe(17_400);
+    expect(withCare.health).toBe(17_430);
     // pension / employment は介護で変わらない。
     expect(withCare.pension).toBe(base.pension);
     expect(withCare.employment).toBe(base.employment);
@@ -144,12 +144,12 @@ describe('calcMonthlySocialInsurance (月次社会保険料, 本人負担)', () 
 describe('estimateMonthlyWithholding (月次源泉所得税, 年税額の月割概算)', () => {
   it('approximates monthly withholding as annual income tax / 12, floored', () => {
     // 額面30万/月, 社保44,250/月 → 年税額72,950 → 月割 floor(6,079.16)=6,079。
-    expect(estimateMonthlyWithholding(300_000, 44_250)).toBe(6_079);
+    expect(estimateMonthlyWithholding(300_000, 43_950)).toBe(3_709);
   });
 
   it('returns 0 for zero / negative gross', () => {
     expect(estimateMonthlyWithholding(0, 0)).toBe(0);
-    expect(estimateMonthlyWithholding(-300_000, 44_250)).toBe(0);
+    expect(estimateMonthlyWithholding(-300_000, 43_950)).toBe(0);
   });
 
   it('treats negative social insurance as zero (higher taxable income)', () => {
@@ -157,7 +157,7 @@ describe('estimateMonthlyWithholding (月次源泉所得税, 年税額の月割�
     const withZeroSI = estimateMonthlyWithholding(300_000, 0);
     expect(withNegSI).toBe(withZeroSI);
     // 社保控除が大きいほど源泉は小さい (社保 0 < 社保 44,250)。
-    expect(withZeroSI).toBeGreaterThan(estimateMonthlyWithholding(300_000, 44_250));
+    expect(withZeroSI).toBeGreaterThan(estimateMonthlyWithholding(300_000, 43_950));
   });
 
   it('is zero when the taxable income falls to zero (low gross)', () => {
@@ -170,20 +170,20 @@ describe('calcMonthlyNetSalary (月次手取り)', () => {
   it('subtracts social insurance + withholding from gross (no resident tax by default)', () => {
     const net = calcMonthlyNetSalary(300_000);
     expect(net.gross).toBe(300_000);
-    expect(net.socialInsurance).toBe(44_250);
-    expect(net.socialInsuranceBreakdown.total).toBe(44_250);
-    expect(net.incomeTax).toBe(6_079);
+    expect(net.socialInsurance).toBe(43_950);
+    expect(net.socialInsuranceBreakdown.total).toBe(43_950);
+    expect(net.incomeTax).toBe(3_709);
     expect(net.residentTax).toBe(0);
-    expect(net.totalDeductions).toBe(44_250 + 6_079);
-    expect(net.takeHome).toBe(300_000 - 44_250 - 6_079); // 249,671
-    expect(net.takeHome).toBe(249_671);
+    expect(net.totalDeductions).toBe(43_950 + 3_709);
+    expect(net.takeHome).toBe(300_000 - 43_950 - 3_709); // 252,341
+    expect(net.takeHome).toBe(252_341);
   });
 
   it('subtracts a provided monthly resident tax', () => {
     const net = calcMonthlyNetSalary(300_000, { residentTaxMonthly: 15_000 });
     expect(net.residentTax).toBe(15_000);
-    expect(net.totalDeductions).toBe(44_250 + 6_079 + 15_000);
-    expect(net.takeHome).toBe(300_000 - 44_250 - 6_079 - 15_000); // 234,671
+    expect(net.totalDeductions).toBe(43_950 + 3_709 + 15_000);
+    expect(net.takeHome).toBe(300_000 - 43_950 - 3_709 - 15_000); // 237,341
   });
 
   it('ignores non-positive / non-finite resident tax overrides', () => {
@@ -235,12 +235,12 @@ describe('calcBonusNet (賞与の手取り)', () => {
     expect(b.socialInsuranceBreakdown.pension).toBe(Math.floor(500_000 * PENSION_RATE)); // 45,750
     expect(b.socialInsuranceBreakdown.health).toBe(Math.floor(500_000 * HEALTH_RATE)); // 25,000
     expect(b.socialInsuranceBreakdown.employment).toBe(Math.floor(500_000 * EMPLOYMENT_INSURANCE_RATE)); // 3,000
-    expect(b.socialInsurance).toBe(73_750);
+    expect(b.socialInsurance).toBe(73_250);
     expect(b.withholdingRatePct).toBe(8.168);
-    expect(b.incomeTax).toBe(34_816);
-    expect(b.totalDeductions).toBe(73_750 + 34_816);
-    expect(b.takeHome).toBe(500_000 - 73_750 - 34_816); // 391,434
-    expect(b.takeHome).toBe(391_434);
+    expect(b.incomeTax).toBe(34_856);
+    expect(b.totalDeductions).toBe(73_250 + 34_856);
+    expect(b.takeHome).toBe(500_000 - 73_250 - 34_856); // 391,894
+    expect(b.takeHome).toBe(391_894);
   });
 
   it('floors the bonus to the standard bonus (1,000-yen floor) for SI', () => {
@@ -293,16 +293,16 @@ describe('calcEmployerCost (人件費の会社負担総額)', () => {
     // 折半分は本人率と同じ (PENSION_RATE / HEALTH_RATE は折半後)。
     expect(c.pension).toBe(Math.floor(300_000 * PENSION_RATE)); // 27,450
     expect(c.health).toBe(Math.floor(300_000 * HEALTH_RATE)); // 15,000
-    expect(c.employment).toBe(Math.floor(300_000 * EMPLOYMENT_INSURANCE_RATE_EMPLOYER)); // 2,850
+    expect(c.employment).toBe(Math.floor(300_000 * EMPLOYMENT_INSURANCE_RATE_EMPLOYER)); // 2,550
     expect(c.workersAccident).toBe(Math.floor(300_000 * WORKERS_ACCIDENT_RATE)); // 900
     expect(c.childCare).toBe(Math.floor(300_000 * CHILD_CARE_CONTRIBUTION_RATE)); // 1,080
-    expect(c.employerContributions).toBe(27_450 + 15_000 + 2_850 + 900 + 1_080); // 47,280
-    expect(c.totalCost).toBe(300_000 + 47_280); // 347,280
-    expect(c.totalCost).toBe(347_280);
+    expect(c.employerContributions).toBe(27_450 + 15_000 + 2_550 + 900 + 1_080); // 46,980
+    expect(c.totalCost).toBe(300_000 + 46_980); // 346,980
+    expect(c.totalCost).toBe(346_980);
   });
 
   it('uses the higher employer employment-insurance rate (not the employee rate)', () => {
-    // 事業主率 0.95% > 本人率 0.6% を区別 (定数取り違えの変異を撃墜)。
+    // 事業主率 0.85% > 本人率 0.5% を区別 (定数取り違えの変異を撃墜)。
     expect(EMPLOYMENT_INSURANCE_RATE_EMPLOYER).toBeGreaterThan(EMPLOYMENT_INSURANCE_RATE);
     const c = calcEmployerCost(300_000);
     expect(c.employment).toBe(Math.floor(300_000 * EMPLOYMENT_INSURANCE_RATE_EMPLOYER));
