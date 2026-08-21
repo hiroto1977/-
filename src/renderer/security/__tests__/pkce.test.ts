@@ -5,6 +5,7 @@ if (!('subtle' in globalThis.crypto)) {
 }
 
 import {
+  base64UrlEncode,
   buildGoogleAuthUrl,
   exchangeGoogleCode,
   generatePkce,
@@ -285,5 +286,44 @@ describe('parseGoogleCallback — クエリでない貼り付け', () => {
 
   it('両方そろっていれば受け取る', () => {
     expect(parseGoogleCallback('code=ab&state=xy')).toEqual({ code: 'ab', state: 'xy' });
+  });
+});
+
+/*
+ * base64url の変換そのものを固定する。
+ *
+ * `generatePkce` 経由の既存の検査は `/^[A-Za-z0-9_-]+$/` を見ているが、
+ * **`/` を消しても文字クラスは満たされる**ので、`/`→`_` の対応が壊れても
+ * 落ちない。実測で `.replace(/\//g, '_')` を `''` にした変異体が生き残った。
+ * 乱数を差し替えるより、純関数を直に固定するほうが読みやすい。
+ */
+describe('base64UrlEncode — 対応表を固定する', () => {
+  it('+ と / の両方を置き換える', () => {
+    // 標準 base64 で "AA+/" になるバイト列。
+    expect(base64UrlEncode(new Uint8Array([0, 15, 191]))).toBe('AA-_');
+  });
+
+  it('/ を消さずに _ にする (消しても文字クラスは満たされてしまう)', () => {
+    const out = base64UrlEncode(new Uint8Array([0, 15, 191]));
+    expect(out).toContain('_');
+    expect(out).toHaveLength(4);
+  });
+
+  it('+ を消さずに - にする', () => {
+    const out = base64UrlEncode(new Uint8Array([0, 15, 191]));
+    expect(out).toContain('-');
+  });
+
+  it('末尾のパディングだけ落とす', () => {
+    expect(base64UrlEncode(new Uint8Array([0, 15]))).toBe('AA8'); // "AA8=" から = を 1 つ
+    expect(base64UrlEncode(new Uint8Array([255]))).toBe('_w'); // "/w==" から = を 2 つ
+  });
+
+  it('空は空', () => {
+    expect(base64UrlEncode(new Uint8Array([]))).toBe('');
+  });
+
+  it('base64url に現れてはいけない文字が残らない', () => {
+    expect(base64UrlEncode(new Uint8Array([0, 15, 191, 255, 254, 253]))).toMatch(/^[A-Za-z0-9_-]+$/);
   });
 });

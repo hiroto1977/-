@@ -207,6 +207,25 @@ const FORBIDDEN_PATTERNS = [
       'この検出が HTML/XML の形しか見ていなかったので気付けなかった',
   },
   {
+    // 切ってから伏せる書き方。`redactSecrets(body.slice(0, 200))` は
+    // **模様の終わりを切り落として規則ごと外す**ので、見えている秘密が
+    // そのまま残る。2026-08-21 の実測では、閉じ引用符が切り口の外側に
+    // 落ちる位置で 60 文字のトークンが**全部**残った (断片ではない)。
+    // 正しい順序は shared/redact.ts の `redactForMessage` が 1 つだけ持つ。
+    name: 'redactSecrets(x.slice(…)) — 切ってから伏せている',
+    pattern: /redactSecrets\s*\(\s*[^)]*\.slice\s*\(/,
+    allowFile: (rel) => !rel.startsWith('src/') || rel === 'src/shared/redact.ts',
+    codeOnly: true,
+    rationale:
+      '`redactSecrets` は模様で秘密を見つけるので、模様の終わり ' +
+      '(JSON の閉じ引用符 / Bearer の 16 文字 / 接頭辞の 8 文字) が ' +
+      '切り落とされると規則そのものが当たらず、見えている秘密が残る。' +
+      '2026-08-21 の監査時点で呼び出し 17 箇所すべてがこの順序で書かれており、' +
+      '実測で 60 文字のトークンが全部残る位置があった。' +
+      'この文字列は画面に出て不具合報告に貼られる — それが redactSecrets の存在理由。' +
+      '`redactForMessage(body, 200)` を使うこと',
+  },
+  {
     name: 'child_process exec/spawn',
     pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
     // Build/dev scripts are allowed; runtime src is not.

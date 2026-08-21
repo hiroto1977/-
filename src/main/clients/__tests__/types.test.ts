@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { jsonFetch, FetchError, redactSecrets } from '../types';
+import { jsonFetch, FetchError, redactSecrets, redactForMessage } from '../types';
+import { REDACT_SCAN_LIMIT } from '../../../shared/redact';
 
 describe('jsonFetch', () => {
   it('returns parsed body when the response is 2xx', async () => {
@@ -348,5 +349,82 @@ describe('redactSecrets — ヘッダの値', () => {
   it('資格情報を運ばないヘッダは触らない', () => {
     expect(redactSecrets('content-type: application/json')).toBe('content-type: application/json');
     expect(redactSecrets('{"retry-after":"30"}')).toBe('{"retry-after":"30"}');
+  });
+});
+
+/*
+ * 秘匿と切り詰めの順序。
+ *
+ * 2026-08-21 の監査時点で、`redactSecrets` の呼び出し 17 箇所すべてが
+ * `redactSecrets(body.slice(0, 200))` と書いていた。**切ってから伏せている。**
+ *
+ * `redactSecrets` の規則は模様で秘密を見つけるので、模様の終わり
+ * (`"…"` の閉じ引用符 / `Bearer` の 16 文字 / 接頭辞の 8 文字) が
+ * 切り落とされると**規則そのものが当たらなくなる**。見えている部分は
+ * 伏せられないまま残る。
+ */
+describe('redactForMessage — 伏せてから切る', () => {
+  const TOKEN = '1//0eXyZaBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789abcdefGHIJKLMNOP';
+
+  /** out に残っている token の先頭からの一致文字数。 */
+  const leaked = (out: string, token: string): number => {
+    let n = 0;
+    while (n < token.length && out.includes(token.slice(0, n + 1))) n += 1;
+    return n;
+  };
+
+  it('閉じ引用符が切り口の外へ落ちても漏らさない', () => {
+    // 詰め物 116 のとき、閉じ引用符がちょうど 200 文字目の外側に来る。
+    // このとき本文にはトークン全体が見えているのに JSON の規則が当たらない。
+    const body = `{"d":"${'x'.repeat(116)}","access_token":"${TOKEN}"}`;
+    // 直す前の書き方 — 60 文字すべてが残る。
+    expect(leaked(redactSecrets(body.slice(0, 200)), TOKEN)).toBe(TOKEN.length);
+    // 直した書き方 — 1 文字も残らない。
+    expect(leaked(redactForMessage(body, 200), TOKEN)).toBe(0);
+  });
+
+  it('詰め物の長さを 0〜220 まで振っても 1 文字も漏らさない', () => {
+    // 1 点だけ確かめると、たまたま安全な位置を選んでしまう。
+    let worst = 0;
+    for (let pad = 0; pad <= 220; pad += 1) {
+      const body = `{"d":"${'x'.repeat(pad)}","access_token":"${TOKEN}"}`;
+      worst = Math.max(worst, leaked(redactForMessage(body, 200), TOKEN));
+    }
+    expect(worst).toBe(0);
+  });
+
+  it('Bearer の 16 文字要件も切り口に影響されない', () => {
+    const bearer = 'ghp_abcdefghijklmnopqrstuvwxyz0123456789';
+    for (let pad = 0; pad <= 220; pad += 1) {
+      const body = `{"d":"${'x'.repeat(pad)}","h":"Authorization: Bearer ${bearer}"}`;
+      expect(redactForMessage(body, 200)).not.toContain(bearer);
+    }
+  });
+
+  it('結果は maxLength を超えない', () => {
+    expect(redactForMessage('y'.repeat(1000), 200)).toHaveLength(200);
+    expect(redactForMessage('y'.repeat(1000), 80)).toHaveLength(80);
+    // 短い本文はそのまま (詰めない)。
+    expect(redactForMessage('short', 200)).toBe('short');
+    expect(redactForMessage('', 200)).toBe('');
+  });
+
+  it('秘密以外の説明は残る (読めば分かる 401 の理由を消さない)', () => {
+    expect(redactForMessage('{"error":"invalid_grant","hint":"expired"}', 200)).toBe(
+      '{"error":"invalid_grant","hint":"expired"}',
+    );
+  });
+
+  it('走査の上限は出力の上限でもある (未走査の文字は 1 つも出さない)', () => {
+    // 切ってから伏せるのではなく、**上限まで切ってから伏せて、さらに切る**。
+    // したがって上限より後ろの文字は走査されないだけでなく、出力にも
+    // 現れない — 「伏せられていない文字が上限の外から出てくる」経路が無い。
+    const far = 'x'.repeat(REDACT_SCAN_LIMIT) + ' ghp_abcdefghijklmnopqrst';
+    const out = redactForMessage(far, REDACT_SCAN_LIMIT + 100);
+    expect(out).not.toContain('ghp_');
+    expect(out.length).toBeLessThanOrEqual(REDACT_SCAN_LIMIT);
+    // 上限の内側にあれば伏せる。
+    const near = 'x'.repeat(100) + ' ghp_abcdefghijklmnopqrst';
+    expect(redactForMessage(near, 200)).toContain('ghp_[REDACTED]');
   });
 });

@@ -1,7 +1,7 @@
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
-import { redactSecrets } from './types';
+import { redactForMessage } from './types';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -1316,7 +1316,7 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     // bodies are short.
     // Stryker disable next-line ArrowFunction,MethodExpression
     const body = await res.text().catch(() => '');
-    throw new Error(`stocks-advisor ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
   const parsed = (await res.json()) as AnthropicMessagesResponse;

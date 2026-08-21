@@ -96,3 +96,55 @@ export function redactSecrets(input: string): string {
       .replace(/"(access_token|refresh_token|token|api_key|apikey|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi, '"$1":"[REDACTED]"')
   );
 }
+
+/**
+ * エラーメッセージへ本文を載せるときの上限 — **秘匿を先に、切り詰めを後に**。
+ *
+ * ## 順序を間違えると秘密がそのまま残る
+ *
+ * 2026-08-21 の監査時点で、`redactSecrets` の呼び出し 17 箇所すべてが
+ * `redactSecrets(body.slice(0, 200))` と書いていた。**切ってから伏せている。**
+ *
+ * `redactSecrets` の規則は「模様」で秘密を見つける。模様には終わりが要る:
+ *
+ * - `"access_token":"…"` の規則は**閉じ引用符**まで含めて 1 つの模様である
+ * - `Bearer …` の規則は 16 文字以上を要求する
+ * - `ghp_…` などの接頭辞は 8 文字以上を要求する
+ *
+ * 200 文字で切ると、模様の終わりが切り落とされることがある。すると
+ * **規則そのものが当たらなくなり、見えている部分は伏せられない**。
+ *
+ * 実測 (詰め物の長さを 0〜220 で振って最大を測った):
+ *
+ * | 順序 | 60 文字のトークンのうち漏れた文字数 |
+ * |---|---|
+ * | `redactSecrets(body.slice(0, 200))` | **60 (全部)** |
+ * | `redactSecrets(body).slice(0, 200)` | 0 |
+ *
+ * 閉じ引用符がちょうど 200 文字目の外側に落ちる位置 (詰め物 116) では、
+ * トークン全体が本文に見えているのに規則が当たらない。**断片ではなく
+ * 丸ごと**出る。この文字列は画面に出て不具合報告に貼られる — それが
+ * `redactSecrets` の存在理由である。
+ *
+ * ## 走査の上限
+ *
+ * 伏せてから切るには本文全体を走査することになるが、プロキシの応答は
+ * 10 MiB まで許しているので、エラー経路で毎回それを舐めるのは避けたい。
+ * 先に `REDACT_SCAN_LIMIT` まで切ってから伏せる。
+ *
+ * これで同じ問題が 8192 文字目に移るのではないか、という疑いは当たらない:
+ * 困るのは「`maxLength` より前から始まり `REDACT_SCAN_LIMIT` より後で
+ * 終わる秘密」だけで、それは 1 つのトークンが約 8000 文字あるという意味に
+ * なる。実在しない。**上限を置いていること自体は事実なので書いておく。**
+ */
+export const REDACT_SCAN_LIMIT = 8192;
+
+/**
+ * 応答本文をエラーメッセージへ載せられる形にする。
+ *
+ * **`redactSecrets(body.slice(n))` と書かないこと。** 理由は
+ * `REDACT_SCAN_LIMIT` の説明にある。`lint:forbidden` が再発を落とす。
+ */
+export function redactForMessage(input: string, maxLength: number): string {
+  return redactSecrets(input.slice(0, REDACT_SCAN_LIMIT)).slice(0, maxLength);
+}

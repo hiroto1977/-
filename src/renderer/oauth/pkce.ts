@@ -13,7 +13,7 @@
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
-import { redactSecrets } from '../../shared/redact';
+import { redactForMessage } from '../../shared/redact';
 
 export interface PkceSecrets {
   /** code_verifier — token exchange までブラウザに保持 */
@@ -28,7 +28,16 @@ export interface PkceSecrets {
 // (challenge len / state random / URL params / token exchange happy +
 // error). Decorative error messages, default fallbacks, and Date.now()
 // arithmetic are not differentiable.
-function base64UrlEncode(bytes: Uint8Array): string {
+/**
+ * base64url (RFC 4648 §5) — `+`→`-`、`/`→`_`、末尾のパディングは落とす。
+ *
+ * **テストのために公開している。** 2026-08-21 の実測で
+ * `.replace(/\//g, '_')` を `''` にした変異体が生き残っていた — つまり
+ * 「`/` が `_` になる」ことを誰も見ていなかった。`generatePkce` 経由の
+ * 既存の検査は `/^[A-Za-z0-9_-]+$/` を見ているが、**`/` を消しても
+ * その文字クラスは満たされる**ので落ちない。純関数なので直に固定する。
+ */
+export function base64UrlEncode(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]!);
   // Stryker disable next-line Regex: base64 のパディングは末尾にしか現れないので、
@@ -196,7 +205,7 @@ export async function exchangeGoogleCode(
     // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
     // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
     // 不具合報告に貼られる。
-    throw new Error(`token exchange ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`token exchange ${res.status}: ${redactForMessage(body, 200)}`);
   }
   const data = (await res.json()) as {
     access_token?: string;

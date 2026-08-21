@@ -18,7 +18,7 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
-import { redactSecrets } from '../shared/redact';
+import { redactForMessage } from '../shared/redact';
 
 /**
  * Refuse to send an authorization code / refresh token to a non-HTTPS token
@@ -646,7 +646,7 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`Token exchange failed (${res.status}): ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
   }
   const raw = (await res.json()) as TokenResponse;
   return tokenResponseToSet(raw);
@@ -671,7 +671,7 @@ export async function refresh(
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`Token refresh failed (${res.status}): ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
   }
   const raw = (await res.json()) as TokenResponse;
   return tokenResponseToSet(raw, current.refreshToken);
