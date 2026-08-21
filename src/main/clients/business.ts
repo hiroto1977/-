@@ -803,21 +803,50 @@ export interface BusinessDashboardInput {
 }
 
 /** Type guard for advisorResult payload received from the renderer.
- *  Conservative: only accepts structures that pass the same validator
- *  used when the LLM produced them. */
-// Each guard branch has a dedicated negative test (null root, missing
-// recommendations, non-string disclaimer, missing notForRealMoney). The
-// `return true` at the end has no false-path test because every other
-// branch already returned false; BooleanLiteral mutant on the guards is
-// equivalent. Block-form pragma covers everything.
+ *
+ *  ## 2026-08-21 まで、この説明は嘘だった
+ *
+ *  ここには「conservative: only accepts structures that pass the same
+ *  validator used when the LLM produced them」と書いてあったが、実際には
+ *  `recommendations` が**配列かどうかしか見ていなかった** — 要素の中身は
+ *  1 つも検査していない。`validateBusinessAdvisorJson` (同じファイルの
+ *  上にある。「throws on any deviation so a malformed reply can't smuggle
+ *  bad data into the UI」) は全要素・全項目を検査しているので、**同じ
+ *  ファイルの中に同じデータの検査が 2 つあり、IPC 境界を守っている方が
+ *  空だった**ことになる。
+ *
+ *  TypeScript の型は IPC を越えない。`BusinessAdvisorRecommendation` の
+ *  `categoryId` は union 型だが、実行時に届く値は任意である。実測では
+ *  `recommendations: [null]` で `Cannot read properties of null`、
+ *  `actionItems` 欠落で `Cannot read properties of undefined (reading 'map')`
+ *  が書き出しの最中に投げられていた (main.ts の invoke ハンドラが受けるので
+ *  クラッシュはしないが、書き出しは丸ごと失敗する)。
+ *
+ *  説明を実装に合わせるのではなく、**実装を説明に合わせる** — 検査を
+ *  1 つに寄せ、厳密な方を呼ぶ。壊れた payload は従来どおり「助言なし」
+ *  として扱う (throw ではなく false) ので、書き出し自体は成功する。 */
+// 分岐ごとに negative テストがある (null root / recommendations 非配列 /
+// disclaimer 非文字列 / notForRealMoney 欠落 / 要素が壊れている)。
 // Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral
 function isAdvisorResult(v: unknown): v is BusinessAdvisorResponse {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
-  if (!Array.isArray(o['recommendations'])) return false;
   if (typeof o['disclaimer'] !== 'string') return false;
   if (o['notForRealMoney'] !== true) return false;
-  return true;
+  // catch の中で return しない。**空の catch にしても結果が変わらない形**を
+  // 避けるためである — `catch { return false }` は中身を消すと暗黙の
+  // `undefined` を返し、呼び出し側はどちらも偽として扱うので違いが観測でき
+  // ない (実測で生存した)。「投げなければ真」を 1 つの変数で表す。
+  let valid = false;
+  try {
+    // 要素の検査は 1 つだけ持つ。許可する categoryId は全カテゴリ —
+    // どの部分集合を利用者が選んだかは、この境界からは分からない。
+    validateBusinessAdvisorJson(v, new Set(BUSINESS_CATEGORIES.map((d) => d.id)));
+    valid = true;
+  } catch {
+    // 形が合わない = 助言なし。呼び出し側が節ごと省く。
+  }
+  return valid;
 }
 // Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral
 

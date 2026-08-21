@@ -3564,3 +3564,114 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
     expect(md).toContain('一行目\n二行目');
   });
 });
+
+/*
+ * IPC 境界の型ガードが、要素の中身まで見ているか。
+ *
+ * 2026-08-21 まで `isAdvisorResult` は `recommendations` が配列かどうかしか
+ * 見ておらず、同じファイルの `validateAdvisorJson` (全要素・全項目を検査)
+ * と守りが割れていた。TypeScript の型は IPC を越えないので、型の上では
+ * ありえない値が実行時には届く。
+ */
+describe('validateAdvisorJson — 宇宙が分からない場合 (allowedSymbols = null)', () => {
+  const rec = (over: Record<string, unknown> = {}) => ({
+    recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'r', riskFactors: ['x'], ...over }],
+  });
+
+  it('宇宙が null でも形は検査する', () => {
+    expect(() => validateAdvisorJson(rec(), null)).not.toThrow();
+    expect(() => validateAdvisorJson(rec({ rationale: '' }), null)).toThrow(/empty rationale/);
+    expect(() => validateAdvisorJson(rec({ rank: 0 }), null)).toThrow(/invalid rank/);
+    expect(() => validateAdvisorJson(rec({ riskFactors: [] }), null)).toThrow(/no riskFactors/);
+    expect(() => validateAdvisorJson({ recommendations: [null] }, null)).toThrow(/not an object/);
+  });
+
+  it('宇宙が null なら所属ではなく isSafeSymbol で判定する', () => {
+    // 許可リストに無くても、安全な形の銘柄なら通す。
+    expect(() => validateAdvisorJson(rec({ symbol: 'ZZZZ' }), null)).not.toThrow();
+    // 安全でない形は落とす。
+    expect(() => validateAdvisorJson(rec({ symbol: 'A B' }), null)).toThrow(/out-of-universe symbol/);
+    expect(() => validateAdvisorJson(rec({ symbol: '<script>' }), null)).toThrow(/out-of-universe symbol/);
+    expect(() => validateAdvisorJson(rec({ symbol: 'A'.repeat(17) }), null)).toThrow(/out-of-universe symbol/);
+  });
+
+  it('Set を渡したときは従来どおり所属で判定する', () => {
+    expect(() => validateAdvisorJson(rec(), new Set(['AAPL']))).not.toThrow();
+    // 形は安全でも宇宙の外なら落とす — null との違いはここに出る。
+    expect(() => validateAdvisorJson(rec({ symbol: 'ZZZZ' }), new Set(['AAPL']))).toThrow(
+      /out-of-universe symbol/,
+    );
+  });
+});
+
+/*
+ * 書き出しの入口で、壊れた助言が「そのまま描画されて落ちる」のではなく
+ * 「助言なし」として弾かれるか。
+ *
+ * 既存の 'ignores malformed advisor payloads' は `recommendations` が
+ * **配列ですらない**場合しか見ていなかった。配列でありさえすれば中身は
+ * 素通りしていたので、以下はどれも書き出しの最中に TypeError を投げていた
+ * (invoke ハンドラが受けるのでクラッシュはしないが、書き出しは丸ごと失敗し、
+ * ファイルは 1 バイトも書かれない)。
+ */
+describe('exportDashboardImpl — 配列の中身が壊れた助言', () => {
+  const snap = () =>
+    ({
+      watchlist: [],
+      portfolio: { initialCash: 1000, cash: 1000, positions: {}, history: [] },
+      fetchedAt: 'x',
+      isMock: true,
+    }) as unknown as StocksSnapshot;
+
+  const run = async (advisorResult: unknown): Promise<string> => {
+    let captured = '';
+    await exportDashboardImpl(
+      { token: '', payload: { advisorResult } },
+      {
+        fetchSnapshot: async () => snap(),
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+      },
+    );
+    return captured;
+  };
+
+  const cases: readonly (readonly [string, unknown])[] = [
+    ['要素が null', [null]],
+    ['rationale が数値', [{ symbol: 'AAPL', rank: 1, rationale: 42, riskFactors: ['x'] }]],
+    ['riskFactors が無い', [{ symbol: 'AAPL', rank: 1, rationale: 'r' }]],
+    ['rank が 0', [{ symbol: 'AAPL', rank: 0, rationale: 'r', riskFactors: ['x'] }]],
+    ['symbol が安全でない', [{ symbol: 'A B', rank: 1, rationale: 'r', riskFactors: ['x'] }]],
+  ];
+
+  for (const [label, recommendations] of cases) {
+    it(`${label} → 助言なしとして書き出しは成功する`, async () => {
+      const out = await run({ recommendations, disclaimer: 'd', notForRealMoney: true });
+      expect(out).not.toContain('AI アドバイザー結果');
+      // 書き出し自体は成功している (投げていない = ファイルの中身がある)。
+      expect(out.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('正しい助言はこれまでどおり通る (絞りすぎていない)', async () => {
+    const out = await run({
+      recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'r', riskFactors: ['x'] }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI アドバイザー結果');
+  });
+
+  it('ウォッチリストに無い銘柄でも通る (宇宙 ≠ ウォッチリスト)', async () => {
+    // 助言の宇宙は `advise` の `universe` payload か MOCK_TICKERS から来る。
+    // ここをウォッチリストで絞ると、正しい助言を黙って捨てることになる。
+    const out = await run({
+      recommendations: [{ symbol: 'ZZZZ', rank: 1, rationale: 'r', riskFactors: ['x'] }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI アドバイザー結果');
+    expect(out).toContain('ZZZZ');
+  });
+});

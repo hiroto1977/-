@@ -1987,3 +1987,83 @@ describe('renderBusinessDashboardMarkdown — 埋め込みが構造を乗っ取�
     };
   }
 });
+
+/*
+ * 書き出しの入口で、壊れた助言が弾かれるか。
+ *
+ * `isAdvisorResult` は 2026-08-21 まで `recommendations` が配列かどうかしか
+ * 見ておらず、同じファイルの `validateBusinessAdvisorJson`
+ * (「throws on any deviation so a malformed reply can't smuggle bad data
+ * into the UI」) と守りが割れていた。
+ */
+describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', () => {
+  const snap: BusinessOpsSnapshot = {
+    units: [
+      {
+        id: 'ec', label: 'EC', description: 'd', trafficKind: 'session',
+        current: {
+          revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+          profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+          conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+        },
+        history: [],
+      },
+    ],
+    aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+    fetchedAt: 'x',
+    isMock: true,
+  };
+
+  const run = async (advisorResult: unknown): Promise<string> => {
+    let captured = '';
+    await exportBusinessDashboardMdImpl(
+      { token: '', payload: { advisorResult } },
+      {
+        fetchSnapshot: async () => snap,
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    return captured;
+  };
+
+  const good = { categoryId: 'ec', rank: 1, rationale: 'r', actionItems: ['a'], riskFactors: ['x'] };
+
+  const cases: readonly (readonly [string, unknown])[] = [
+    ['要素が null', [null]],
+    ['actionItems が無い', [{ ...good, actionItems: undefined }]],
+    ['rationale が数値', [{ ...good, rationale: 42 }]],
+    ['rank が 0', [{ ...good, rank: 0 }]],
+    ['categoryId が実在しない', [{ ...good, categoryId: '<b>ec</b>' }]],
+    ['riskFactors が空', [{ ...good, riskFactors: [] }]],
+  ];
+
+  for (const [label, recommendations] of cases) {
+    it(`${label} → 助言なしとして書き出しは成功する`, async () => {
+      const out = await run({ recommendations, disclaimer: 'd', notForRealMoney: true });
+      expect(out).not.toContain('AI 経営アドバイザー提案');
+      expect(out.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('正しい助言はこれまでどおり通る (絞りすぎていない)', async () => {
+    const out = await run({ recommendations: [good], disclaimer: 'd', notForRealMoney: true });
+    expect(out).toContain('AI 経営アドバイザー提案');
+  });
+
+  it('全カテゴリが許可される (利用者が選んだ部分集合で絞らない)', async () => {
+    // 助言の宇宙は payload の `categories` か全カテゴリ。どの部分集合で
+    // 作られたかは書き出しの payload からは分からないので、ここでは
+    // 全カテゴリを許可する — 狭めると正しい助言を黙って捨てる。
+    const other = BUSINESS_CATEGORIES.find((c) => c.id !== 'ec');
+    expect(other).toBeDefined();
+    const out = await run({
+      recommendations: [{ ...good, categoryId: other!.id }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI 経営アドバイザー提案');
+  });
+});
