@@ -1,5 +1,5 @@
 import { seededNoise } from '../../shared/seededNoise';
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -936,6 +936,13 @@ ${advisorSection}
 // Markdown renderer: pure function, no I/O.
 // HTML 側と同じ符号の規則 (0 は黒字あつかい) を使う。両方を同じ検査で
 // 突き合わせてあるので、片方だけ変えると落ちる。
+//
+// **2026-08-20 まで、ここはエスケープを 1 つも通していなかった。** HTML 側
+// (`renderBusinessDashboardHtml`) は `escapeXml` を通しているので、同じ
+// データの同じ書き出しで守りが片方にしか無い状態だった。埋まるのは事業の
+// ラベルだけではなく **AI 経営アドバイザーの応答** (`rationale` /
+// `actionItems` / `riskFactors` / `categoryId`) で、`|` 1 つで表が崩れ、
+// 生 HTML はそのまま通る。書き出した `.md` はライブラリに残り人に渡る。
 export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const agg = snapshot.aggregate;
@@ -945,15 +952,17 @@ export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): 
     .map((u) => {
       const c = u.current;
       const marginSign = c.profitMargin >= 0 ? '+' : '';
-      return `| ${u.label} (${u.id}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
+      return `| ${escapeMarkdownInline(u.label)} (${escapeMarkdownInline(u.id)}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
     })
     .join('\n');
 
   const advisorMd = advisorResult
-    ? `\n## AI 経営アドバイザー提案\n\n> ${advisorResult.disclaimer}\n\n${advisorResult.recommendations
+    ? `\n## AI 経営アドバイザー提案\n\n> ${escapeMarkdownInline(advisorResult.disclaimer)}\n\n${advisorResult.recommendations
         .map(
           (r) =>
-            `### #${r.rank} — ${r.categoryId}\n\n${r.rationale}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + a).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + rf).join('\n')}\n`,
+            // rationale だけが段落。見出し・箇条書きの 1 項目・引用は
+            // 改行 1 つでその構造から抜けるので inline 側を使う。
+            `### #${r.rank} — ${escapeMarkdownInline(r.categoryId)}\n\n${escapeMarkdownText(r.rationale)}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + escapeMarkdownInline(a)).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + escapeMarkdownInline(rf)).join('\n')}\n`,
         )
         .join('\n')}`
     : '';

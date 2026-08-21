@@ -1855,3 +1855,135 @@ describe('経営ダッシュボードの符号と色', () => {
     expect(doc).toContain('- 在庫過多\n- 広告費の高騰');
   });
 });
+
+/*
+ * 書き出した Markdown が「差し替えられる」形になっていないか。
+ *
+ * 2026-08-20 の監査時点で、この書き出しは**エスケープを 1 つも通していな
+ * かった** (HTML 側は `escapeXml` を通していた)。埋まるのは事業ラベルだけ
+ * ではなく AI 経営アドバイザーの応答で、検証は「空でない文字列」しか見て
+ * いない。したがって「壊れた入力」ではなく敵対的な入力を置く。
+ */
+describe('renderBusinessDashboardMarkdown — 埋め込みが構造を乗っ取れないか', () => {
+  const evilSnap = (): BusinessOpsSnapshot => ({
+    units: [
+      {
+        id: 'ec',
+        // 改行 + 区切り行で表を作り直そうとする値。
+        label: '偽|EC\n\n| 乗っ取り |\n|---|\n| 0 |',
+        description: '',
+        trafficKind: 'session',
+        current: {
+          revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+          profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+          conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+        },
+        history: [],
+      },
+    ],
+    aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+    fetchedAt: 'x',
+    isMock: true,
+  });
+
+  it('事業ラベルの改行と区切りが表を作り直さない', () => {
+    const md = renderBusinessDashboardMarkdown({ snapshot: evilSnap(), generatedAt: 'x' });
+    const unitRow = md.split('\n').find((l) => l.includes('乗っ取り'));
+    expect(unitRow).toBeDefined();
+    // 1 行に収まっている = 表の外へ出ていない。
+    expect(unitRow).toContain('偽\\|EC');
+    expect(unitRow).toContain('\\| 乗っ取り \\|');
+    // 区切り行がそのままの形で現れない (現れると以降が別の表になる)。
+    expect(md).not.toMatch(/^\|---\|$/m);
+  });
+
+  it('アドバイザーの応答から生 HTML が出ない', () => {
+    // `categoryId` の型は union だが、**実行時には何でも来る**。
+    // 受け口の `isAdvisorResult` は `recommendations` が配列かどうかしか
+    // 見ておらず、要素の中身を 1 つも検査していない (「conservative」と
+    // 書いてあるが実際は素通し)。型は IPC の境界を越えないので、
+    // ここでは実際に届きうる値を置く。
+    const advisor = {
+      recommendations: [
+        {
+          categoryId: '<b>ec</b>',
+          rank: 1,
+          rationale: '<img src=x onerror=alert(1)>',
+          actionItems: ['<script>alert(1)</script>'],
+          riskFactors: ['<iframe src=evil>'],
+        },
+      ],
+      disclaimer: '<style>body{display:none}</style>',
+      notForRealMoney: true,
+    } as unknown as BusinessAdvisorResponse;
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnapForEscaping(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    // `<` が 1 つも生で残らない = タグの開き括弧が無い。
+    expect(md).not.toContain('<');
+    expect(md).toContain('&lt;img src=x onerror=alert(1)>');
+    expect(md).toContain('&lt;script>alert(1)&lt;/script>');
+  });
+
+  it('箇条書きの 1 項目から抜けさせない', () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        {
+          categoryId: 'ec',
+          rank: 1,
+          rationale: 'ok',
+          actionItems: ['やる\n## 偽の見出し'],
+          riskFactors: ['risk'],
+        },
+      ],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    };
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnapForEscaping(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    expect(md).toContain('- やる ## 偽の見出し');
+    expect(md).not.toMatch(/^## 偽の見出し$/m);
+  });
+
+  it('rationale は段落なので改行を残す (体裁を壊さない)', () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        { categoryId: 'ec', rank: 1, rationale: '一行目\n二行目', actionItems: ['a'], riskFactors: ['r'] },
+      ],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    };
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnapForEscaping(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    expect(md).toContain('一行目\n二行目');
+  });
+
+  function fakeSnapForEscaping(): BusinessOpsSnapshot {
+    return {
+      units: [
+        {
+          id: 'ec', label: 'EC', description: '', trafficKind: 'session',
+          current: {
+            revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+            profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+            conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+          },
+          history: [],
+        },
+      ],
+      aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+      fetchedAt: 'x',
+      // 模擬データの断り書きが 1 行入るが `<` を含まないので、
+      // 「`<` が 1 つも残らない」の判定は変わらない。
+      isMock: true,
+    };
+  }
+});

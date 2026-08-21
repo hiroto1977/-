@@ -1,5 +1,5 @@
 import { seededNoise } from '../../shared/seededNoise';
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
 import { redactSecrets } from './types';
 import { promises as fs } from 'node:fs';
@@ -1663,12 +1663,14 @@ export function defaultDashboardMdPath(): string {
 }
 
 /** Render the same dashboard as Markdown — for Slack / Notion / email
- *  bodies / GitHub PR descriptions. Pure function. No HTML escaping
- *  needed but we strip any pipe `|` from cell strings so inline tables
- *  don't break.  */
+ *  bodies / GitHub PR descriptions. Pure function.
+ *
+ *  エスケープは `shared/escape.ts` の 2 つを使い分ける。ここには
+ *  `|` だけを落とす `escMd` が関数内に 1 つあり、(a) 改行を落としていない
+ *  ので 1 行の構造 (見出し・箇条書き・引用) から抜けられ、(b) `<` を
+ *  落としていないので生 HTML が通っていた。書き出した `.md` は人に渡る。 */
 export function renderDashboardMarkdown(input: DashboardInput): string {
   const { snapshot, advisorResult, strategyComparison, generatedAt } = input;
-  const escMd = (s: string): string => s.replace(/\|/g, '\\|');
 
   const equity = portfolioEquity(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
   const pnl = equity - snapshot.portfolio.initialCash;
@@ -1689,7 +1691,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
               // template-string consumers.
               // Stryker disable next-line ConditionalExpression,EqualityOperator
               const sign = w.changePct >= 0 ? '+' : '';
-              return `| ${escMd(w.symbol)} | ${escMd(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
+              return `| ${escapeMarkdownInline(w.symbol)} | ${escapeMarkdownInline(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
             }),
           )
           .join('\n');
@@ -1700,17 +1702,17 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
         '',
         ...advisorResult.recommendations.map(
           (r) =>
-            `### ${r.rank}. ${escMd(r.symbol)}\n\n${escMd(r.rationale)}\n\n` +
-            r.riskFactors.map((rf) => `- リスク: ${escMd(rf)}`).join('\n'),
+            `### ${r.rank}. ${escapeMarkdownInline(r.symbol)}\n\n${escapeMarkdownText(r.rationale)}\n\n` +
+            r.riskFactors.map((rf) => `- リスク: ${escapeMarkdownInline(rf)}`).join('\n'),
         ),
         '',
-        '> ' + escMd(advisorResult.disclaimer),
+        '> ' + escapeMarkdownInline(advisorResult.disclaimer),
       ].join('\n\n')
     : '';
 
   const comparisonBlock = strategyComparison
     ? [
-        `## 戦略比較 — ${escMd(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
+        `## 戦略比較 — ${escapeMarkdownInline(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
         '',
         '| 戦略 | 最終資産 | 総リターン | 最大DD | 勝率 | 取引数 |',
         '|---|---:|---:|---:|---:|---:|',
@@ -1721,7 +1723,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
           // isBest pinned by 「**(最良)**」+ non-best rows tests.
           // Stryker disable next-line ConditionalExpression
           const isBest = r.strategy === strategyComparison.bestByReturn;
-          const label = isBest ? `**${escMd(r.strategy)} (最良)**` : escMd(r.strategy);
+          const label = isBest ? `**${escapeMarkdownInline(r.strategy)} (最良)**` : escapeMarkdownInline(r.strategy);
           return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`;
         }),
       ].join('\n')

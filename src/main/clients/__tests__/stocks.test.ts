@@ -3472,3 +3472,95 @@ describe('Stocks ダッシュボードの符号と色', () => {
     ]);
   });
 });
+
+/*
+ * 書き出した Markdown の構造が埋め込みで乗っ取られないか。
+ *
+ * ここには関数内に `escMd = s => s.replace(/\|/g,'\\|')` が 1 つあり、`|` は
+ * 落としていたが (a) 改行を落としていないので 1 行の構造 (見出し・箇条書き・
+ * 引用) から抜けられ、(b) `<` を落としていないので生 HTML が通っていた。
+ */
+describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れないか', () => {
+  const snap = (over: Record<string, unknown> = {}): Parameters<typeof renderDashboardMarkdown>[0]['snapshot'] =>
+    ({
+      watchlist: [],
+      portfolio: { initialCash: 1000, cash: 1000, positions: {}, history: [] },
+      fetchedAt: 'x',
+      isMock: true,
+      ...over,
+    }) as unknown as Parameters<typeof renderDashboardMarkdown>[0]['snapshot'];
+
+  it('銘柄名の改行と区切りが表を作り直さない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap({
+        watchlist: [
+          {
+            symbol: 'AAPL',
+            label: '偽|株\n\n| 乗っ取り |\n|---|\n| 0 |',
+            latestClose: 100,
+            changePct: 1,
+            candles: [],
+            signal: { action: 'hold', reason: 'r' },
+          },
+        ],
+      }),
+      generatedAt: 'x',
+    });
+    const row = md.split('\n').find((l) => l.includes('乗っ取り'));
+    expect(row).toBeDefined();
+    expect(row).toContain('偽\\|株');
+    expect(md).not.toMatch(/^\|---\|$/m);
+  });
+
+  it('アドバイザーの応答から生 HTML が出ない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [
+          {
+            symbol: '<b>AAPL</b>',
+            rank: 1,
+            rationale: '<img src=x onerror=alert(1)>',
+            riskFactors: ['<script>alert(1)</script>'],
+          },
+        ],
+        disclaimer: '<style>body{display:none}</style>',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).not.toContain('<');
+    expect(md).toContain('&lt;img src=x onerror=alert(1)>');
+  });
+
+  it('見出し・引用・箇条書きから抜けさせない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [
+          { symbol: 'A\n## 偽', rank: 1, rationale: 'ok', riskFactors: ['r\n- 偽'] },
+        ],
+        disclaimer: 'd\n本文',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('### 1. A ## 偽');
+    expect(md).toContain('- リスク: r - 偽');
+    expect(md).toContain('> d 本文');
+    expect(md).not.toMatch(/^## 偽$/m);
+  });
+
+  it('rationale は段落なので改行を残す', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [{ symbol: 'A', rank: 1, rationale: '一行目\n二行目', riskFactors: [] }],
+        disclaimer: 'd',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('一行目\n二行目');
+  });
+});

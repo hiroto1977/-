@@ -160,7 +160,7 @@ const FORBIDDEN_PATTERNS = [
       '同じ書き方の 8 箇所が素通しだった',
   },
   {
-    name: 'markup escaping / color / control-char check reimplemented outside its shared module',
+    name: 'markup / Markdown escaping / color / control-char check reimplemented outside its shared module',
     // マークアップ用エスケープの自前実装（実体参照 '&amp;' を自分で書いている行、
     // または 5 文字クラスをまとめて置換している行）、色の判定の自前実装
     // （`#RRGGBB` の正規表現）、制御文字の判定の自前実装（`=== 0x7f`）を捕まえる。
@@ -173,7 +173,13 @@ const FORBIDDEN_PATTERNS = [
     // C1 (0x80–0x9f) まで落とす。URL を弾く判定とは保つものが違うので、
     // 1 つに畳むと片方の意図が壊れる。範囲比較 (`>= 0x7f && <= 0x9f`) は
     // 通し、等値比較だけを見る。網羅ではなく、既にある書き方の再発を止めるもの。
-    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b/i,
+    // Markdown の区切り `|` を自前で落としている行 (`.replace(/\|/g, …)`) も
+    // 見る。**この検出はもともと HTML/XML の形しか見ていなかった**ので、
+    // `main/clients/stocks.ts` が関数内に持っていた
+    // `escMd = s => s.replace(/\|/g, '\\|')` は網に掛からなかった。
+    // 形が違うだけで守っているものは同じ (書き出したファイルに利用者や
+    // AI の応答が埋まる経路) なので、同じ 1 つへ寄せる。
+    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>|\\\|\/g)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b/i,
     // 出荷コード (src/**) だけを見る。scripts/ の図生成は素の CJS で
     // TS の共有実装を読めないため対象外にしている — ただし落とす文字は
     // 揃えてある (2026-08 に gen-econ-asset-chart.cjs だけ " と ' を
@@ -194,7 +200,11 @@ const FORBIDDEN_PATTERNS = [
       'さらに shared には受け入れ範囲の違う safeColor があって判断が 3 通りに割れていた。' +
       '制御文字の判定 (0x7f) も同じで、shared/atlassianSite.ts が持っていたものを ' +
       'shared/aiEndpoint.ts が書き直しかけたので shared/controlChars.ts へ寄せた — ' +
-      '「0x1f まで」か「0x20 未満」か、0x7f を入れるかは一見して差が出ない',
+      '「0x1f まで」か「0x20 未満」か、0x7f を入れるかは一見して差が出ない。' +
+      'Markdown のエスケープ (`|`) も 2026-08-20 に同じ形で見つかった — ' +
+      '書き出しが 3 箇所あって stocks.ts だけが `|` を落とし、' +
+      'stocksAnalysisWeb.ts と business.ts は素通しだった。' +
+      'この検出が HTML/XML の形しか見ていなかったので気付けなかった',
   },
   {
     name: 'child_process exec/spawn',

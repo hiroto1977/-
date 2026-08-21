@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { escapeXml, safeColor, isHexColor } from '../escape';
+import { escapeXml, safeColor, isHexColor, escapeMarkdownInline, escapeMarkdownText } from '../escape';
 
 describe('escapeXml', () => {
   it('マークアップで意味を持つ 5 文字を落とす', () => {
@@ -119,5 +119,93 @@ describe('isHexColor', () => {
     expect(isHexColor('x#abcdef')).toBe(false);
     expect(isHexColor('#abcdef" onload="alert(1)')).toBe(false);
     expect(isHexColor('#abcdef\n<script>alert(1)</script>')).toBe(false);
+  });
+});
+
+/*
+ * Markdown のエスケープ。
+ *
+ * ここに埋まるのは利用者が打った文字だけではなく **AI アドバイザーの応答**
+ * (`rationale` / `riskFactors` / `actionItems`) で、検証は「空でない文字列」
+ * しか見ていない。したがって「壊れた入力」ではなく「敵対的な入力」を置く。
+ */
+describe('escapeMarkdownInline — 1 行に収まる場所', () => {
+  it('セルの区切りを落とす', () => {
+    expect(escapeMarkdownInline('A|B')).toBe('A\\|B');
+  });
+
+  it('エスケープ文字を先に逃がす (末尾の \\ が次の区切りを打ち消さない)', () => {
+    // 先に `|` を処理すると `A\|` の `\` がそのまま残り、
+    // 直後の区切りを打ち消して隣のセルと融合する。
+    expect(escapeMarkdownInline('A\\')).toBe('A\\\\');
+    expect(escapeMarkdownInline('A\\|B')).toBe('A\\\\\\|B');
+  });
+
+  it('改行を空白へ潰す (行から抜けさせない)', () => {
+    expect(escapeMarkdownInline('A\nB')).toBe('A B');
+    expect(escapeMarkdownInline('A\r\nB')).toBe('A B');
+    expect(escapeMarkdownInline('A\rB')).toBe('A B');
+    // CRLF を 1 つとして数える。2 回置換すると空白が 2 つになる。
+    expect(escapeMarkdownInline('A\r\nB')).not.toBe('A  B');
+  });
+
+  it('生 HTML の入口を塞ぐ', () => {
+    expect(escapeMarkdownInline('<img src=x onerror=alert(1)>')).toBe(
+      '&lt;img src=x onerror=alert(1)>',
+    );
+  });
+
+  it('表を作り直す入力を無力化する (改行 + 区切り行)', () => {
+    // 「壊れる」ではなく「差し替わる」形。行が終われば以降は新しい構造。
+    const evil = 'AAPL\n\n| 偽の見出し |\n|---|\n| 偽の値 |';
+    const got = escapeMarkdownInline(evil);
+    expect(got).not.toContain('\n');
+    expect(got).not.toContain('|---|');
+    expect(got).toBe('AAPL  \\| 偽の見出し \\| \\|---\\| \\| 偽の値 \\|');
+  });
+
+  it('見出し・箇条書き・引用から抜けさせない', () => {
+    expect(`### ${escapeMarkdownInline('銘柄\n## 乗っ取り')}`).toBe('### 銘柄 ## 乗っ取り');
+    expect(`- ${escapeMarkdownInline('risk\n- 偽')}`).toBe('- risk - 偽');
+    expect(`> ${escapeMarkdownInline('免責\n本文')}`).toBe('> 免責 本文');
+  });
+
+  it('普通の文字は変えない', () => {
+    expect(escapeMarkdownInline('AAPL アップル 100円 (+1.5%)')).toBe('AAPL アップル 100円 (+1.5%)');
+    expect(escapeMarkdownInline('')).toBe('');
+  });
+
+  it('置換はすべての出現に及ぶ (最初の 1 つで止まらない)', () => {
+    expect(escapeMarkdownInline('a|b|c')).toBe('a\\|b\\|c');
+    expect(escapeMarkdownInline('<a<b')).toBe('&lt;a&lt;b');
+    expect(escapeMarkdownInline('a\nb\nc')).toBe('a b c');
+  });
+});
+
+describe('escapeMarkdownText — 段落', () => {
+  it('生 HTML の入口を塞ぐ', () => {
+    expect(escapeMarkdownText('<script>alert(1)</script>')).toBe(
+      '&lt;script>alert(1)&lt;/script>',
+    );
+  });
+
+  it('改行は残す (段落や箇条書きは地の文に正当に現れる)', () => {
+    expect(escapeMarkdownText('一行目\n二行目')).toBe('一行目\n二行目');
+  });
+
+  it('`|` は落とさない (段落では区切りではない)', () => {
+    expect(escapeMarkdownText('A|B')).toBe('A|B');
+  });
+
+  it('& は落とさない — 実体参照は CommonMark §2.5 で「文字」であり markup にならない', () => {
+    // `&lt;script&gt;` と書かれても描画結果は文字列 `<script>` であって
+    // タグにはならない。落とすと素の viewer で `&amp;` が見えるだけ損。
+    expect(escapeMarkdownText('&lt;script&gt;')).toBe('&lt;script&gt;');
+    expect(escapeMarkdownText('A & B')).toBe('A & B');
+  });
+
+  it('普通の文字は変えない', () => {
+    expect(escapeMarkdownText('売上が伸びています。')).toBe('売上が伸びています。');
+    expect(escapeMarkdownText('')).toBe('');
   });
 });
