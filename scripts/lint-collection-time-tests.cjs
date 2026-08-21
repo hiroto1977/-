@@ -164,7 +164,6 @@ function selfTest() {
     ],
   ];
   const tmp = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'ctt-'));
-  const mutateSet = new Set(['a.ts']);
   let failed = 0;
   console.log('self-test:');
   for (const [label, src, want] of cases) {
