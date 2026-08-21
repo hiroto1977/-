@@ -163,7 +163,13 @@ export function lineChart(
 /** 目盛りラベル — 桁に応じて丸める（1234567 → 1.2M のような潰しはしない）。 */
 export function formatTick(v: number): string {
   const a = Math.abs(v);
+  // 境界ちょうど (1000 / 10) では、上の丸めと下の丸めが同じ文字列を作る
+  // (1000 は整数でも小数第 1 位でも "1000"、10 は小数第 1 位でも第 2 位でも
+  // "10")。つまり `>=` と `>` の違いは**構造的に観測できない**。境界の
+  // どちら側に倒すかは意図なので `>=` のまま残し、変異体だけ黙らせる。
+  // Stryker disable next-line EqualityOperator
   if (a >= 1000) return String(Math.round(v));
+  // Stryker disable next-line EqualityOperator
   if (a >= 10) return String(Math.round(v * 10) / 10);
   return String(Math.round(v * 100) / 100);
 }
@@ -231,8 +237,11 @@ export function pieChart(
 
   const valid = slices.filter((s) => Number.isFinite(s.value) && s.value > 0);
   const total = valid.reduce((sum, s) => sum + s.value, 0);
-  if (total <= 0) return { slices: [], total: 0, cx, cy, radius };
-
+  // **有効なスライスが無いときの早期 return は置かない。** 下のループが
+  // 1 度も回らないので `out` は空・`total` は 0 になり、最後の return が
+  // そのまま同じ値を返す。`s.value / total` の 0 除算も、ループが回らない
+  // 以上起きない。同じ答えを返す枝を置くと、確かめようのない比較が増える
+  // (`<= 0` / `< 0` / `=== 0` のどれで書いても結果が変わらなかった)。
   const out: PieSliceGeometry[] = [];
   let angle = 0;
   for (const s of valid) {
@@ -269,6 +278,10 @@ function arcPath(
   endAngle: number,
 ): string {
   const sweep = endAngle - startAngle;
+  // Stryker disable next-line EqualityOperator: この閾値は `pieChart` 経由では
+  // 厳密に一致しない — sweep は `(値/合計) × 360` で作られ、360000 分の 359999
+  // でも 359.99899999999997 にしかならない (実測)。`>=` と `>` の違いが出る
+  // 入力が公開 API から作れないので、比較を書き換えても観測できない。
   if (sweep >= 359.999) {
     const outer =
       `M ${r1(cx - radius)} ${r1(cy)} ` +
@@ -369,7 +382,10 @@ export function radarChart(
   }
 
   const all = series.flatMap((s) => s.values).filter((v) => Number.isFinite(v));
-  const min = options.min ?? (all.length > 0 ? Math.min(0, ...all) : 0);
+  // `all` が空でも `Math.min(0)` は 0 なので、件数の判定は要らない
+  // (どちらの枝も 0 を返すので確かめようがなくなる)。max 側は
+  // `Math.max(...[])` が -Infinity になるため判定が要る。
+  const min = options.min ?? Math.min(0, ...all);
   let max = options.max ?? (all.length > 0 ? Math.max(...all) : 1);
   if (min === max) max = min + 1;
 
@@ -400,7 +416,9 @@ export function radarChart(
 
   const geo: RadarSeriesGeometry[] = series.map((s) => {
     const points = axisLabels.map((_, i) => {
-      const v = i < s.values.length ? (s.values[i] ?? min) : min;
+      // 長さの判定は置かない — 範囲外の添字は undefined になり `?? min` が
+      // 拾うので、判定の有無で答えが変わらない。
+      const v = s.values[i] ?? min;
       return polar(cx, cy, radiusOf(Number.isFinite(v) ? v : min), angleOf(i));
     });
     return {

@@ -24,6 +24,7 @@ import {
   HYDROPONICS_COLLECTION,
   HYDROPONICS_DEFAULTS,
   economicsFromSetup,
+  hydroponicsBusinessUnit,
   lowPotassiumFromSetup,
   resolveCrop,
   type HydroponicsSetup,
@@ -402,9 +403,21 @@ export function OverviewPage() {
     () => financialUnitsFromBusinessUnits(sortBusinessUnits(businessUnitRecords)),
     [businessUnitRecords],
   );
+  const overrideRecords = overridesCol.records;
+
+  // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。
+  const hydroCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+  const hydroSetup = hydroCol.records.length > 0
+    ? hydroCol.records[hydroCol.records.length - 1]!.data
+    : null;
+  const hydroponics = useMemo(() => economicsFromSetup(hydroSetup), [hydroSetup]);
+  // 水耕栽培も 1 事業として並べる。別枠の「参考」にすると、全社の数字に
+  // 入っているのかどうかが画面から分からない。未入力なら並ばない。
+  const hydroUnit = useMemo(() => hydroponicsBusinessUnit(hydroponics), [hydroponics]);
   const financialUnits = useMemo(
     () => [
       ...userFinancialUnits,
+      ...(hydroUnit === null ? [] : [hydroUnit]),
       ...SNAPSHOT.business.units.map((u) => ({
         id: u.id,
         label: `${u.label} (サンプル)`,
@@ -416,19 +429,19 @@ export function OverviewPage() {
           profit: u.current.profit,
           profitMargin: u.current.profitMargin,
         },
-        history: u.history.map((h) => ({ revenue: h.revenue, profit: h.profit })),
+        // 月次 KPI をそのまま通す。売上と利益だけに絞ると、3 軸グラフが
+        // 過去の指標を出せなくなる (snapshot は元から全項目を持っている)。
+        history: u.history.map((h) => ({
+          revenue: h.revenue,
+          variableCost: h.variableCost,
+          fixedCost: h.fixedCost,
+          profit: h.profit,
+          profitMargin: h.profitMargin,
+        })),
       })),
     ],
-    [userFinancialUnits],
+    [userFinancialUnits, hydroUnit],
   );
-  const overrideRecords = overridesCol.records;
-
-  // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。
-  const hydroCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
-  const hydroSetup = hydroCol.records.length > 0
-    ? hydroCol.records[hydroCol.records.length - 1]!.data
-    : null;
-  const hydroponics = useMemo(() => economicsFromSetup(hydroSetup), [hydroSetup]);
   const lowPotassium = useMemo(() => lowPotassiumFromSetup(hydroSetup), [hydroSetup]);
 
   const computedOverview = useMemo(

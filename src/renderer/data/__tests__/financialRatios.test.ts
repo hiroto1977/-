@@ -22,68 +22,76 @@ const SAMPLE: FinancialInputs = {
 };
 
 describe('computeFinancialRatios — worked example', () => {
-  const r = computeFinancialRatios(SAMPLE);
+  // **describe 直下で計算しない。** ここで評価すると収集時に値が確定し、
+  // 変異体が有効化される前の結果を見ることになる (= どんな変異体でも落ちない
+  // 検査になる)。実測で financialRatios.ts の 43 個の StringLiteral 変異体が
+  // これで生き残っていた。呼び出しは各 it の中で行う。
+  const r = () => computeFinancialRatios(SAMPLE);
   it('balance-sheet ratios', () => {
-    expect(r.equityRatioPct).toBe(40); // 4000/10000
-    expect(r.currentRatioPct).toBe(200); // 5000/2500
-    expect(r.fixedLongTermFitPct).toBe(71.4); // 5000/7000
+    expect(r().equityRatioPct).toBe(40); // 4000/10000
+    expect(r().currentRatioPct).toBe(200); // 5000/2500
+    expect(r().fixedLongTermFitPct).toBe(71.4); // 5000/7000
   });
   it('debt metrics', () => {
-    expect(r.debtToMonthlySalesRatio).toBe(4); // 4000/(12000/12)
-    expect(r.debtRepaymentYears).toBe(2.67); // 4000/(1200+300)
+    expect(r().debtToMonthlySalesRatio).toBe(4); // 4000/(12000/12)
+    expect(r().debtRepaymentYears).toBe(2.67); // 4000/(1200+300)
   });
   it('profitability margins', () => {
-    expect(r.operatingMarginPct).toBe(10);
-    expect(r.ordinaryMarginPct).toBe(9.2);
-    expect(r.netProfit).toBe(800);
-    expect(r.netMarginPct).toBe(6.7);
-    expect(r.ebitda).toBe(1_500);
-    expect(r.ebitdaMarginPct).toBe(12.5);
+    expect(r().operatingMarginPct).toBe(10);
+    expect(r().ordinaryMarginPct).toBe(9.2);
+    expect(r().netProfit).toBe(800);
+    expect(r().netMarginPct).toBe(6.7);
+    expect(r().ebitda).toBe(1_500);
+    expect(r().ebitdaMarginPct).toBe(12.5);
   });
   it('labor share over value-added', () => {
-    expect(r.laborSharePct).toBe(66.7); // 3000/(1200+3000+300)
+    expect(r().laborSharePct).toBe(66.7); // 3000/(1200+3000+300)
   });
   it('turnover + CCC', () => {
-    expect(r.receivablesTurnover).toBe(6);
-    expect(r.inventoryTurnover).toBe(6);
-    expect(r.cccDays).toBe(30.4); // 60.83 + 60.83 - 91.25
+    expect(r().receivablesTurnover).toBe(6);
+    expect(r().inventoryTurnover).toBe(6);
+    expect(r().cccDays).toBe(30.4); // 60.83 + 60.83 - 91.25
   });
   it('returns on assets / equity', () => {
-    expect(r.roaPct).toBe(8);
-    expect(r.roePct).toBe(20);
+    expect(r().roaPct).toBe(8);
+    expect(r().roePct).toBe(20);
   });
 });
 
 // === round 68: 精緻化指標 (加算的) ==========================================
 
 describe('computeFinancialRatios — round 68 精緻化指標 (worked example)', () => {
-  const r = computeFinancialRatios(SAMPLE);
+  // **describe 直下で計算しない。** ここで評価すると収集時に値が確定し、
+  // 変異体が有効化される前の結果を見ることになる (= どんな変異体でも落ちない
+  // 検査になる)。実測で financialRatios.ts の 43 個の StringLiteral 変異体が
+  // これで生き残っていた。呼び出しは各 it の中で行う。
+  const r = () => computeFinancialRatios(SAMPLE);
 
   it('NOPAT / ROIC (既定実効税率 30%)', () => {
-    expect(r.nopat).toBe(840); // 1200 × (1 − 0.30)
-    expect(r.roicPct).toBe(10.5); // 840 / (4000 + 4000) × 100
+    expect(r().nopat).toBe(840); // 1200 × (1 − 0.30)
+    expect(r().roicPct).toBe(10.5); // 840 / (4000 + 4000) × 100
   });
 
   it('当座比率 / 現金比率', () => {
-    expect(r.quickRatioPct).toBe(160); // (5000 − 1000) / 2500 × 100
-    expect(r.cashRatioPct).toBe(80); // cash = max(0, 5000−2000−1000)=2000 → 2000/2500
+    expect(r().quickRatioPct).toBe(160); // (5000 − 1000) / 2500 × 100
+    expect(r().cashRatioPct).toBe(80); // cash = max(0, 5000−2000−1000)=2000 → 2000/2500
   });
 
   it('フリーキャッシュフロー (営業CF − 設備投資)', () => {
-    expect(r.freeCashflow).toBe(1200); // simpleCf=1200+300=1500, capex≈減価償却=300 → 1500−300
+    expect(r().freeCashflow).toBe(1200); // simpleCf=1200+300=1500, capex≈減価償却=300 → 1500−300
   });
 
   it('デュポン 3 分解 (積が ROE に一致)', () => {
-    expect(r.dupontNetMarginPct).toBe(6.7); // 800/12000
-    expect(r.dupontAssetTurnover).toBe(1.2); // 12000/10000
-    expect(r.dupontEquityMultiplier).toBe(2.5); // 10000/4000
+    expect(r().dupontNetMarginPct).toBe(6.7); // 800/12000
+    expect(r().dupontAssetTurnover).toBe(1.2); // 12000/10000
+    expect(r().dupontEquityMultiplier).toBe(2.5); // 10000/4000
     // 丸め前: (800/12000) × (12000/10000) × (10000/4000) = 0.20 = ROE 20%
     const exact = (SAMPLE.netProfit / SAMPLE.revenue) * (SAMPLE.revenue / SAMPLE.totalAssets) * (SAMPLE.totalAssets / SAMPLE.equity);
     expect(Math.round(exact * 1000) / 1000).toBe(0.2);
   });
 
   it('インタレストカバレッジは支払利息が無ければ null', () => {
-    expect(r.interestCoverage).toBeNull(); // SAMPLE に interestExpense なし
+    expect(r().interestCoverage).toBeNull(); // SAMPLE に interestExpense なし
   });
 
   it('インタレストカバレッジ = 営業利益 / 支払利息', () => {
@@ -111,18 +119,18 @@ describe('computeFinancialRatios — round 68 境界ガード (分母 0 / 負 / 
     currentLiabilities: 0, fixedAssets: 0, fixedLiabilities: 0,
     accountsReceivable: 0, inventory: 0, accountsPayable: 0, interestBearingDebt: 0,
   };
-  const r = computeFinancialRatios(zero);
+  const r = () => computeFinancialRatios(zero);
 
   it('全 0 入力で比率系は null、金額系は 0', () => {
-    expect(r.roicPct).toBeNull(); // 投下資本 0
-    expect(r.quickRatioPct).toBeNull(); // 流動負債 0
-    expect(r.cashRatioPct).toBeNull(); // 流動負債 0
-    expect(r.interestCoverage).toBeNull(); // 支払利息 未指定
-    expect(r.dupontNetMarginPct).toBeNull(); // 売上 0
-    expect(r.dupontAssetTurnover).toBeNull(); // 総資産 0
-    expect(r.dupontEquityMultiplier).toBeNull(); // 自己資本 0
-    expect(r.nopat).toBe(0);
-    expect(r.freeCashflow).toBe(0);
+    expect(r().roicPct).toBeNull(); // 投下資本 0
+    expect(r().quickRatioPct).toBeNull(); // 流動負債 0
+    expect(r().cashRatioPct).toBeNull(); // 流動負債 0
+    expect(r().interestCoverage).toBeNull(); // 支払利息 未指定
+    expect(r().dupontNetMarginPct).toBeNull(); // 売上 0
+    expect(r().dupontAssetTurnover).toBeNull(); // 総資産 0
+    expect(r().dupontEquityMultiplier).toBeNull(); // 自己資本 0
+    expect(r().nopat).toBe(0);
+    expect(r().freeCashflow).toBe(0);
   });
 
   it('ROIC: 投下資本が負 (有利子負債 + 自己資本 < 0) なら null', () => {
@@ -168,18 +176,18 @@ describe('computeFinancialRatios — null guards (zero denominators)', () => {
     currentLiabilities: 0, fixedAssets: 0, fixedLiabilities: 0,
     accountsReceivable: 0, inventory: 0, accountsPayable: 0, interestBearingDebt: 0,
   };
-  const r = computeFinancialRatios(zero);
+  const r = () => computeFinancialRatios(zero);
   it('does not divide by zero', () => {
-    expect(r.equityRatioPct).toBeNull();
-    expect(r.currentRatioPct).toBeNull();
-    expect(r.debtToMonthlySalesRatio).toBeNull();
-    expect(r.debtRepaymentYears).toBeNull();
-    expect(r.receivablesTurnover).toBeNull();
-    expect(r.inventoryTurnover).toBeNull();
-    expect(r.cccDays).toBeNull();
-    expect(r.roaPct).toBeNull();
-    expect(r.roePct).toBeNull();
-    expect(r.laborSharePct).toBeNull();
+    expect(r().equityRatioPct).toBeNull();
+    expect(r().currentRatioPct).toBeNull();
+    expect(r().debtToMonthlySalesRatio).toBeNull();
+    expect(r().debtRepaymentYears).toBeNull();
+    expect(r().receivablesTurnover).toBeNull();
+    expect(r().inventoryTurnover).toBeNull();
+    expect(r().cccDays).toBeNull();
+    expect(r().roaPct).toBeNull();
+    expect(r().roePct).toBeNull();
+    expect(r().laborSharePct).toBeNull();
   });
 
   // CCC のガード `revenue === 0 || cogs === 0` を片側ずつ突いて mutation を殺す。
@@ -201,22 +209,23 @@ describe('computeFinancialRatios — operatingCashflow override', () => {
 });
 
 describe('radarAxes', () => {
-  const axes = radarAxes(computeFinancialRatios(SAMPLE));
-  it('produces 15 axes with 0-100 scores', () => {
-    expect(axes).toHaveLength(15);
-    for (const a of axes) {
+  // 同上 — describe 直下で組むと golden が変異体を見ない。
+  const axes = () => radarAxes(computeFinancialRatios(SAMPLE));
+  it('produces 15 axes() with 0-100 scores', () => {
+    expect(axes()).toHaveLength(15);
+    for (const a of axes()) {
       expect(a.score).toBeGreaterThanOrEqual(0);
       expect(a.score).toBeLessThanOrEqual(100);
       expect(typeof a.label).toBe('string');
     }
   });
   it('scores a healthy equity ratio (40%) at the top of its band', () => {
-    const eq = axes.find((a) => a.key === 'equityRatio')!;
+    const eq = axes().find((a) => a.key === 'equityRatio')!;
     expect(eq.raw).toBe(40);
     expect(eq.score).toBe(80); // linScore(40, bad=0, good=50) = 80
   });
   it('golden: scores every axis against its health benchmark', () => {
-    const byKey = Object.fromEntries(axes.map((a) => [a.key, a.score]));
+    const byKey = Object.fromEntries(axes().map((a) => [a.key, a.score]));
     expect(byKey).toEqual({
       equityRatio: 80, currentRatio: 100, fixedLongTermFit: 100, debtToMonthlySales: 40,
       debtRepaymentYears: 100, operatingMargin: 60, ordinaryMargin: 57, netMargin: 59,
@@ -241,7 +250,7 @@ describe('radarAxes', () => {
   });
 
   it('golden: exact 15-axis structure (key/label/unit/raw/score)', () => {
-    expect(JSON.stringify(axes)).toBe('[{"key":"equityRatio","label":"自己資本比率","unit":"%","raw":40,"score":80},{"key":"currentRatio","label":"流動比率","unit":"%","raw":200,"score":100},{"key":"fixedLongTermFit","label":"固定長期適合率","unit":"%","raw":71.4,"score":100},{"key":"debtToMonthlySales","label":"借入金月商倍率","unit":"ヶ月","raw":4,"score":40},{"key":"debtRepaymentYears","label":"債務償還年数","unit":"年","raw":2.67,"score":100},{"key":"operatingMargin","label":"営業利益率","unit":"%","raw":10,"score":60},{"key":"ordinaryMargin","label":"経常利益率","unit":"%","raw":9.2,"score":57},{"key":"netMargin","label":"当期純利益率","unit":"%","raw":6.7,"score":59},{"key":"laborShare","label":"労働分配率","unit":"%","raw":66.7,"score":33},{"key":"ebitdaMargin","label":"EBITDAマージン","unit":"%","raw":12.5,"score":50},{"key":"receivablesTurnover","label":"売上債権回転率","unit":"倍","raw":6,"score":10},{"key":"inventoryTurnover","label":"棚卸資産回転率","unit":"倍","raw":6,"score":10},{"key":"ccc","label":"CCC","unit":"日","raw":30.4,"score":66},{"key":"roa","label":"ROA","unit":"%","raw":8,"score":80},{"key":"roe","label":"ROE","unit":"%","raw":20,"score":100}]');
+    expect(JSON.stringify(axes())).toBe('[{"key":"equityRatio","label":"自己資本比率","unit":"%","raw":40,"score":80},{"key":"currentRatio","label":"流動比率","unit":"%","raw":200,"score":100},{"key":"fixedLongTermFit","label":"固定長期適合率","unit":"%","raw":71.4,"score":100},{"key":"debtToMonthlySales","label":"借入金月商倍率","unit":"ヶ月","raw":4,"score":40},{"key":"debtRepaymentYears","label":"債務償還年数","unit":"年","raw":2.67,"score":100},{"key":"operatingMargin","label":"営業利益率","unit":"%","raw":10,"score":60},{"key":"ordinaryMargin","label":"経常利益率","unit":"%","raw":9.2,"score":57},{"key":"netMargin","label":"当期純利益率","unit":"%","raw":6.7,"score":59},{"key":"laborShare","label":"労働分配率","unit":"%","raw":66.7,"score":33},{"key":"ebitdaMargin","label":"EBITDAマージン","unit":"%","raw":12.5,"score":50},{"key":"receivablesTurnover","label":"売上債権回転率","unit":"倍","raw":6,"score":10},{"key":"inventoryTurnover","label":"棚卸資産回転率","unit":"倍","raw":6,"score":10},{"key":"ccc","label":"CCC","unit":"日","raw":30.4,"score":66},{"key":"roa","label":"ROA","unit":"%","raw":8,"score":80},{"key":"roe","label":"ROE","unit":"%","raw":20,"score":100}]');
   });
 });
 

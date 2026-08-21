@@ -20,6 +20,15 @@ export interface MonthlyBusinessKpi {
   readonly fixedCost: number;
   readonly profit: number; // 営業利益 (月次)
   readonly profitMargin: number; // 営業利益率 (%)
+  /**
+   * 人件費 (円/月)。**分かっている事業だけが入れる。**
+   *
+   * 無ければ固定費の約半分と置く (下の概算)。水耕栽培のように人件費を
+   * 明細で持っている事業は、置き値ではなく実額から労働分配率が出るように
+   * ここへ渡す。置き値のままだと「人件費を入力したのにサマリーに効かない」
+   * という形で数字が食い違う。
+   */
+  readonly laborCost?: number;
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -32,7 +41,8 @@ export function deriveBusinessFinancials(m: MonthlyBusinessKpi): FinancialInputs
   const cogs = r0(m.variableCost * 12);
   const operatingProfit = r0(m.profit * 12);
   const depreciation = r0(revenue * 0.03); // 売上の約3%を減価償却と仮定
-  const laborCost = r0(m.fixedCost * 12 * 0.5); // 固定費の約半分を人件費と仮定
+  // 実額があればそれを使う。無ければ固定費の約半分を人件費と仮定。
+  const laborCost = m.laborCost === undefined ? r0(m.fixedCost * 12 * 0.5) : r0(m.laborCost * 12);
 
   // --- BS (期末・概算) ---
   // 総資産は年商の約0.8倍（資産回転率≒1.25）。

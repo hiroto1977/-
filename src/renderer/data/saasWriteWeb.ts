@@ -14,7 +14,7 @@ import {
   normalizeAtlassianSiteResult,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
-import { redactSecrets } from '../../shared/redact';
+import { redactForMessage } from '../../shared/redact';
 
 export type FetchFn = typeof fetch;
 
@@ -26,7 +26,7 @@ export type Transport = (url: string, init: RequestInit) => Promise<Response>;
 async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
   const body = await res.text().catch(() => '');
-  throw new Error(`${label} ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+  throw new Error(`${label} ${res.status}: ${redactForMessage(body, 200)}`);
 }
 
 // --- GitHub: create-issue ------------------------------------------------

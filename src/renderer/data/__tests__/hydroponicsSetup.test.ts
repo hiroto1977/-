@@ -12,9 +12,14 @@ import {
   toFacilityInput,
   toCostInput,
   economicsFromSetup,
+  hydroponicsBusinessUnit,
+  HYDROPONICS_UNIT_ID,
   lowPotassiumFromSetup,
   type HydroponicsSetup,
 } from '../hydroponicsSetup';
+import { buildAxonometric, buildComposition } from '../businessAxonometric';
+import { deriveBusinessFinancials } from '../businessFinancials';
+import { computeFinancialRatios } from '../financialRatios';
 import {
   HYDROPONIC_CROPS,
   ENERGY_INTENSITY_KWH_PER_KG_LOW,
@@ -196,5 +201,127 @@ describe('lowPotassiumFromSetup — 低カリウム栽培の橋渡し', () => {
   it('切替日数が未指定なら範囲外として扱う (既定で「合っている」ことにしない)', () => {
     expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: undefined })!.switchWindowOk).toBe(false);
     expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: 20 })!.switchWindowOk).toBe(false);
+  });
+});
+
+/*
+ * 水耕栽培を「事業」として並べる。
+ *
+ * 別枠の参考値として置くと、全社の数字に入っているのかどうかが画面から
+ * 分からない。事業として出す以上、費目の対応がずれていれば営業利益が
+ * 静かに違う値になるので、対応をここで固定する。
+ */
+describe('hydroponicsBusinessUnit', () => {
+  it('未入力なら事業として並べない (勝手なサンプルを混ぜない)', () => {
+    expect(hydroponicsBusinessUnit(null)).toBeNull();
+  });
+
+  it('費目の対応が estimateEconomics の定義と一致する', () => {
+    const e = economicsFromSetup(SETUP)!;
+    const u = hydroponicsBusinessUnit(e)!;
+    const m = e.monthly;
+    expect(u.current.revenue).toBe(m.revenue);
+    expect(u.current.variableCost).toBe(m.cogs + m.advertising);
+    // sga は人件費を内数に含む。足すと二重計上になる。
+    expect(u.current.fixedCost).toBe(m.sga + m.depreciation);
+    expect(u.current.profit).toBe(m.revenue - u.current.variableCost - u.current.fixedCost);
+  });
+
+  it('人件費を二重に数えない', () => {
+    const e = economicsFromSetup(SETUP)!;
+    const u = hydroponicsBusinessUnit(e)!;
+    const doubleCounted = e.monthly.sga + e.monthly.depreciation + e.monthly.laborCost;
+    expect(e.monthly.laborCost).toBeGreaterThan(0);
+    expect(u.current.fixedCost).toBeLessThan(doubleCounted);
+    expect(u.current.fixedCost).toBe(doubleCounted - e.monthly.laborCost);
+  });
+
+  it('人件費は実額をそのまま渡す (固定費の半分という置き値に落とさない)', () => {
+    const e = economicsFromSetup(SETUP)!;
+    const u = hydroponicsBusinessUnit(e)!;
+    expect(u.current.laborCost).toBe(e.monthly.laborCost);
+    // 置き値だったら固定費の半分になるはず。そうなっていないことを見る。
+    expect(u.current.laborCost).not.toBe(u.current.fixedCost / 2);
+  });
+
+  it('実額の人件費が労働分配率に効く', () => {
+    // 労働分配率は付加価値が正のときにしか定義できない。既定の設備・単価は
+    // 赤字なので (下の「既定は赤字」参照)、ここは黒字になる単価で見る。
+    const e = economicsFromSetup({ ...SETUP, unitPriceYen: 600 })!;
+    const u = hydroponicsBusinessUnit(e)!;
+    const withActual = computeFinancialRatios(deriveBusinessFinancials(u.current));
+    const { laborCost: _drop, ...withoutActual } = u.current;
+    const guessed = computeFinancialRatios(deriveBusinessFinancials(withoutActual));
+    expect(withActual.laborSharePct).not.toBeNull();
+    expect(guessed.laborSharePct).not.toBeNull();
+    expect(withActual.laborSharePct).not.toBe(guessed.laborSharePct);
+  });
+
+  it('既定の設備・単価では赤字になる — それを黒字に見せない', () => {
+    // 人工光型は電力と償却が重い。既定値 (単価 150 円/株) では固定費を
+    // 回収できない。事業として並べる以上、この赤字が全社の数字に効く。
+    // ここを黙って落とすと「載せたのに全社の利益が変わらない」ことになる。
+    const u = hydroponicsBusinessUnit(economicsFromSetup(SETUP)!)!;
+    expect(u.current.profit).toBeLessThan(0);
+    expect(economicsFromSetup(SETUP)!.meetsBreakEven).toBe(false);
+  });
+
+  it('営業利益率は売上と利益から出す (売上 0 でも 0 除算しない)', () => {
+    const e = economicsFromSetup(SETUP)!;
+    const u = hydroponicsBusinessUnit(e)!;
+    expect(u.current.profitMargin).toBeCloseTo((u.current.profit / u.current.revenue) * 100, 1);
+
+    const zero = economicsFromSetup({ ...SETUP, unitPriceYen: 0 })!;
+    const zu = hydroponicsBusinessUnit(zero)!;
+    expect(zu.current.revenue).toBe(0);
+    expect(zu.current.profitMargin).toBe(0);
+    expect(Number.isFinite(zu.current.profitMargin)).toBe(true);
+  });
+
+  it('赤字でも事業として並ぶ (黒字だけを見せない)', () => {
+    // 単価を原価割れにすると赤字になる。ここで null にして消してしまうと、
+    // 全社の数字から赤字の事業が抜けて実態より良く見える。
+    const loss = economicsFromSetup({ ...SETUP, unitPriceYen: 1 })!;
+    const u = hydroponicsBusinessUnit(loss)!;
+    expect(u.current.profit).toBeLessThan(0);
+    expect(u.label).toBe('水耕栽培');
+  });
+
+  it('履歴は空 (計画の改訂を月次の実績として描かない)', () => {
+    const u = hydroponicsBusinessUnit(economicsFromSetup(SETUP)!)!;
+    expect(u.history).toEqual([]);
+    expect(u.id).toBe(HYDROPONICS_UNIT_ID);
+  });
+
+  it('3 軸グラフに当月 1 点の事業として載る', () => {
+    const u = hydroponicsBusinessUnit(economicsFromSetup(SETUP)!)!;
+    const chart = buildAxonometric([u], 'operatingMargin')!;
+    expect(chart.series[0]!.label).toBe('水耕栽培');
+    expect(chart.series[0]!.points).toHaveLength(1);
+    expect(chart.series[0]!.points[0]!.label).toBe('当月');
+    // サンプル扱いにしない — 利用者が入力した実データである。
+    expect(chart.series[0]!.sample).toBe(false);
+  });
+
+  it('構成比の円にも入る', () => {
+    const u = hydroponicsBusinessUnit(economicsFromSetup(SETUP)!)!;
+    const c = buildComposition([u], 'revenue');
+    expect(c.slices.map((s) => s.label)).toEqual(['水耕栽培']);
+    expect(c.slices[0]!.pct).toBe(100);
+  });
+});
+
+describe('hydroponicsBusinessUnit — 変動費の内訳', () => {
+  it('広告費も変動費に足す (引かない)', () => {
+    // 今の `estimateEconomics` は広告費を 0 で返すので、足しても引いても
+    // 同じ数になる。型は 0 以外を許すので、対応そのものをここで固定する。
+    const base = economicsFromSetup(SETUP)!;
+    const withAd = {
+      ...base,
+      monthly: { ...base.monthly, advertising: 120_000 },
+    };
+    const u = hydroponicsBusinessUnit(withAd)!;
+    expect(u.current.variableCost).toBe(base.monthly.cogs + 120_000);
+    expect(u.current.variableCost).toBeGreaterThan(hydroponicsBusinessUnit(base)!.current.variableCost);
   });
 });

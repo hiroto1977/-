@@ -111,10 +111,18 @@ export function createCspWatcher(url: string): CspWatcher {
     const e = event as SecurityPolicyViolationEvent;
     // connect-src 違反の blockedURI はオリジンまでに切り詰められることがあるため、
     // 前方一致で照合する。ディレクティブ名だけでも判定材料にする。
-    const blocked = typeof e.blockedURI === 'string' ? e.blockedURI : '';
-    const directive = typeof e.violatedDirective === 'string' ? e.violatedDirective : '';
-    if (blocked !== '' && url.startsWith(blocked)) seen = true;
-    else if (directive.startsWith('connect-src')) seen = true;
+    //
+    // 「文字列でなければ '' に落とす」とは書かない。その '' は
+    // 「一致しない」に潰れるので、何に書き換えても結果が変わらない =
+    // 検査で確かめようのない行になる。型の確認と中身の確認を並べる。
+    if (typeof e.blockedURI === 'string' && e.blockedURI !== '' && url.startsWith(e.blockedURI)) {
+      seen = true;
+    } else if (
+      typeof e.violatedDirective === 'string' &&
+      e.violatedDirective.startsWith('connect-src')
+    ) {
+      seen = true;
+    }
   };
   document.addEventListener('securitypolicyviolation', onViolation);
   return {
@@ -156,10 +164,15 @@ async function fetchWithTimeout(
   }
 }
 
-/** サイズ上限つき JSON 読み取り。上限超過・非 JSON は null。 */
-async function readJsonCapped(res: Response): Promise<unknown> {
-  const text = await res.text();
-  if (text.length > MAX_RESPONSE_BYTES) return null;
+/**
+ * JSON として読めれば値を、読めなければ null を返す。
+ *
+ * **export しているのは検査のため。** 中に埋めたままだと「読めなかったときに
+ * null を返す」という約束が、呼び出し側では null と undefined の区別が付かず
+ * 確かめようがない (どちらも「詳細なし」に潰れる)。ここを直接叩けるように
+ * しておくと、その約束だけを固定できる。
+ */
+export function parseJsonOrNull(text: string): unknown {
   try {
     return JSON.parse(text) as unknown;
   } catch {
@@ -168,16 +181,41 @@ async function readJsonCapped(res: Response): Promise<unknown> {
 }
 
 /**
+ * 本文を読む。読めなければ空文字。
+ *
+ * `parseJsonOrNull` と同じ理由で export してある。`.catch(() => '')` と書くと、
+ * 失敗側が undefined を返すよう書き換わっても下流が同じ「詳細なし」に潰すので、
+ * **空文字にしている意味を確かめられない**。ここだけを直接叩けるようにする。
+ */
+export async function readTextOrEmpty(res: Response): Promise<string> {
+  const [read] = await Promise.allSettled([res.text()]);
+  return read!.status === 'fulfilled' ? read!.value : '';
+}
+
+/** サイズ上限つき JSON 読み取り。上限超過・非 JSON は null。 */
+async function readJsonCapped(res: Response): Promise<unknown> {
+  const text = await res.text();
+  if (text.length > MAX_RESPONSE_BYTES) return null;
+  return parseJsonOrNull(text);
+}
+
+/**
  * 起動しているのに CORS で弾かれているのかを判定する。
  * no-cors が通れば「到達している」ので CORS 未設定と結論できる。
  */
 async function reachableButOpaque(fetchFn: typeof fetch, url: string): Promise<boolean> {
-  try {
-    await fetchWithTimeout(fetchFn, url, { mode: 'no-cors', cache: 'no-store' });
-    return true;
-  } catch {
-    return false;
-  }
+  // try/catch も `.then(() => true, () => false)` も、失敗側が undefined を
+  // 返すよう書き換わっただけでは偽として同じ枝に落ちるため「失敗したら false」
+  // を確かめられない。**成否そのものを値として受ける。**
+  const [settled] = await Promise.allSettled([
+    fetchWithTimeout(fetchFn, url, { mode: 'no-cors', cache: 'no-store' }),
+  ]);
+  return settled!.status === 'fulfilled';
+}
+
+/** 説明と「次の一手」を 1 行にまとめる (画面にはこの文字列がそのまま出る)。 */
+function joinAdvice(advice: OllamaErrorAdvice): string {
+  return [advice.message, ...advice.hints].join(' ');
 }
 
 /**
@@ -208,7 +246,7 @@ function httpError(status: number, advice: OllamaErrorAdvice): OllamaProbeResult
 export async function probeOllama(
   endpoint: number | string = '',
   fetchFn: typeof fetch = fetch,
-  pageHostname: string = typeof location !== 'undefined' ? location.hostname : '',
+  pageHostname: string = pageHost(),
   watchCsp: (url: string) => CspWatcher = createCspWatcher,
 ): Promise<OllamaProbeResult> {
   const base = parseOllamaEndpoint(String(endpoint), pageHostname);
@@ -222,17 +260,12 @@ export async function probeOllama(
       snapshot: emptySnapshot(),
     };
   }
-  const versionUrl = buildOllamaUrl(base, '/api/version', pageHostname);
-  const tagsUrl = buildOllamaUrl(base, '/api/tags', pageHostname);
-  // parseOllamaEndpoint が許可済みの base を返すので null にはならない。
-  // 型の narrowing のためだけのガード。
-  if (versionUrl === null || tagsUrl === null) {
-    return {
-      status: 'error',
-      message: '接続先 URL の組み立てに失敗しました。',
-      snapshot: emptySnapshot(),
-    };
-  }
+  // `parseOllamaEndpoint` は許可済みの base しか返さず、パスは定数なので
+  // `buildOllamaUrl` は null にならない。**その分岐を書くと到達不能なコードが
+  // 残る** (検査で確かめようがなく、変異させても誰も気付けない)。不変条件は
+  // 上の 1 行で担保されているので、ここでは型の narrowing だけ行う。
+  const versionUrl = buildOllamaUrl(base, '/api/version', pageHostname)!;
+  const tagsUrl = buildOllamaUrl(base, '/api/tags', pageHostname)!;
 
   let versionRes: Response;
   const csp = watchCsp(versionUrl);
@@ -363,7 +396,7 @@ export interface OllamaChatInput {
 export async function chatOllama(
   input: OllamaChatInput,
   fetchFn: typeof fetch = fetch,
-  pageHostname: string = typeof location !== 'undefined' ? location.hostname : '',
+  pageHostname: string = pageHost(),
 ): Promise<OllamaChatOutcome> {
   const model = (input.model ?? '').trim();
   const prompt = (input.prompt ?? '').trim();
@@ -386,10 +419,8 @@ export async function chatOllama(
     return { ok: false, kind: 'bad-input', message: '入力に NUL 文字が含まれています。' };
   }
 
-  const url = buildOllamaUrl(base, '/api/chat', pageHostname);
-  if (url === null) {
-    return { ok: false, kind: 'bad-endpoint', message: '接続先 URL の組み立てに失敗しました。' };
-  }
+  // base は許可済み、パスは定数なので null にならない (probeOllama と同じ)。
+  const url = buildOllamaUrl(base, '/api/chat', pageHostname)!;
 
   const messages: { role: string; content: string }[] = [];
   if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_SYSTEM_CHARS) });
@@ -440,13 +471,18 @@ export async function chatOllama(
   }
 
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readTextOrEmpty(res);
+    // model は分類には効かないが、案内の文面には効く (runner-failed の
+    // 「取り直す」手順にモデル名が入る) ので最初から渡す。
+    const advice = adviseFromBody(res.status, body, { model });
+    if (advice.kind !== 'model-not-found') {
+      return { ok: false, kind: advice.kind, message: joinAdvice(advice) };
+    }
     // 未取得モデルのときだけ、実際にあるモデルを添えて案内する。
-    const first = adviseFromBody(res.status, body, { model });
-    const installed =
-      first.kind === 'model-not-found' ? await listInstalledModels(fetchFn, base, pageHostname) : [];
-    const advice = adviseFromBody(res.status, body, { model, installed });
-    return { ok: false, kind: advice.kind, message: [advice.message, ...advice.hints].join(' ') };
+    // ここでしか installed を使わないので、他の経路で空配列を作る必要はない。
+    const installed = await listInstalledModels(fetchFn, base, pageHostname);
+    const withModels = adviseFromBody(res.status, body, { model, installed });
+    return { ok: false, kind: withModels.kind, message: joinAdvice(withModels) };
   }
 
   const text = await res.text();
@@ -463,7 +499,7 @@ export async function chatOllama(
   const inline = extractOllamaError(parsed, '');
   if (inline !== '') {
     const advice = describeOllamaError(200, inline, { model });
-    return { ok: false, kind: advice.kind, message: [advice.message, ...advice.hints].join(' ') };
+    return { ok: false, kind: advice.kind, message: joinAdvice(advice) };
   }
 
   const content = (parsed as { message?: { content?: unknown } } | null)?.message?.content;
@@ -479,21 +515,31 @@ function now(): number {
   return typeof performance !== 'undefined' ? performance.now() : Date.now();
 }
 
+/**
+ * ページを配信しているホスト名。ブラウザ以外 (Node・テスト) では空。
+ *
+ * 既定引数の式として埋め込むと、`location` が無い環境では常に空側しか通らず
+ * 「空を返す」を確かめられない。**名前を付けて外から叩けるようにする**。
+ * この値は「同じホストの http を許すか」の判断材料になる (shared/ollama.ts)。
+ */
+export function pageHost(): string {
+  return typeof location === 'undefined' ? '' : location.hostname;
+}
+
 /** モデル名だけを引く (失敗しても案内を止めないので空配列)。 */
 async function listInstalledModels(
   fetchFn: typeof fetch,
   base: string,
   pageHostname: string,
 ): Promise<string[]> {
-  const url = buildOllamaUrl(base, '/api/tags', pageHostname);
-  if (url === null) return [];
-  try {
-    const res = await fetchWithTimeout(fetchFn, url, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return normalizeModels(await readJsonCapped(res)).map((m) => m.name);
-  } catch {
-    return [];
-  }
+  // base は呼び出し元で許可済み、パスは定数なので null にならない
+  // (probeOllama と同じ理由。書くと到達不能なコードが残る)。
+  const url = buildOllamaUrl(base, '/api/tags', pageHostname)!;
+  // catch で [] を返すと、中身を空にしても undefined が「モデル無し」と同じ
+  // 扱いになって観測できない。失敗を null にしてから 1 か所で判定する。
+  const res = await fetchWithTimeout(fetchFn, url, { cache: 'no-store' }).catch(() => null);
+  if (res === null || !res.ok) return [];
+  return normalizeModels(await readJsonCapped(res)).map((m) => m.name);
 }
 
 /**

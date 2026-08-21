@@ -289,14 +289,32 @@ export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION
  * 給与等の収入金額 (額面年収) から給与所得控除額を正式テーブルで計算する。
  * 令和2年分以降。
  */
+/**
+ * 給与所得控除が「最低保障 65 万円」に変わった最初の年分 (令和7年分)。
+ *
+ * 改正前は 162.5 万円以下が一律 55 万円で、その上に 0.4x−10 万の段があった。
+ * 改正後は **190 万円以下が一律 65 万円**。190 万円は偶然の値ではなく、
+ * すぐ上の段 (0.3x+8 万) がちょうど 65 万円になる点である
+ * (190 万 × 0.3 + 8 万 = 65 万)。したがって表は境界で連続したままで、
+ * 下 2 段が 65 万円に吸収された形になる。
+ */
+export const SALARY_DEDUCTION_MIN_65_FROM_YEAR = 2025;
+
 // 各段の境界を `<` にしても控除額は変わらない。国税庁の表が境界で連続に
 // なるよう作られているためで、実装の緩さではない (連続性は検査で固定して
 // いる)。定数を打ち間違えると不連続になり、そちらが落ちる。
 // Stryker disable EqualityOperator
-export function calcSalaryIncomeDeduction(grossAnnual: number): number {
+export function calcSalaryIncomeDeduction(
+  grossAnnual: number,
+  taxYear = new Date().getFullYear(),
+): number {
   if (grossAnnual <= 0) return 0;
-  if (grossAnnual <= 1_625_000) return 550_000;
-  if (grossAnnual <= 1_800_000) return yen(grossAnnual * 0.4 - 100_000);
+  if (taxYear >= SALARY_DEDUCTION_MIN_65_FROM_YEAR) {
+    if (grossAnnual <= 1_900_000) return 650_000;
+  } else {
+    if (grossAnnual <= 1_625_000) return 550_000;
+    if (grossAnnual <= 1_800_000) return yen(grossAnnual * 0.4 - 100_000);
+  }
   if (grossAnnual <= 3_600_000) return yen(grossAnnual * 0.3 + 80_000);
   if (grossAnnual <= 6_600_000) return yen(grossAnnual * 0.2 + 440_000);
   if (grossAnnual <= 8_500_000) return yen(grossAnnual * 0.1 + 1_100_000);
@@ -304,23 +322,78 @@ export function calcSalaryIncomeDeduction(grossAnnual: number): number {
 }
 // Stryker restore EqualityOperator
 
-// --- 基礎控除 (合計所得金額により逓減, 令和2年分以降) --------------------
+// --- 基礎控除 (合計所得金額により逓減 + 年分による段階) ------------------
 //
-// 国税庁 No.1199「基礎控除」。合計所得金額 2,400 万以下=48万、以降逓減し
-// 2,500 万超で 0。住民税の基礎控除は別 (43 万、所得 2,400 万以下)。
-// https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm
+// 国税庁 No.1199「基礎控除」。**2 年続けて改正され、しかも時限の上乗せが
+// 入っている**ので、年分を見ないと正しい額が出せない。
+//
+// | 年分 | 上乗せの構造 |
+// |---|---|
+// | 令和6年分以前 | 一律 48 万円 (2,400 万円以下) |
+// | 令和7年分 | 95 / 88 / 68 / 63 / 58 万円 の 5 段 |
+// | 令和8・9年分 | 本則 62 万円 + 時限加算 (489 万円以下 104 / 655 万円以下 67) |
+// | 令和10年分以後 | 本則 62 万円 + 132 万円以下に 37 万円加算 (99 万円) |
+//
+// 合計所得 2,350 万円を超える部分の逓減 (48 / 32 / 16 / 0) は改正されて
+// いない。令和6年分以前と同じ表がそのまま続く。
+//
+// 住民税の基礎控除は**据え置き** (43 万円)。「地域社会の会費」という性格
+// から引き上げないと整理されており、所得税だけが動いている。ここを一緒に
+// 動かすと住民税が過少になる。
+//
+// 出典:
+// - 国税庁 No.1199 基礎控除
+//   https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm
+// - 国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について
+//   https://www.nta.go.jp/users/gensen/2025kiso/index.htm
+// - 国税庁 令和8年度税制改正による所得税の基礎控除の引上げ等について
+//   https://www.nta.go.jp/users/gensen/2026kiso/index.htm
 
-/** 所得税の基礎控除上限 (合計所得 2,400 万以下)。 */
-export const BASIC_DEDUCTION = 480_000;
-/** 住民税の基礎控除上限 (合計所得 2,400 万以下)。 */
+/**
+ * 所得税の基礎控除の**本則**額 (合計所得 2,350 万円以下・令和8年分以後)。
+ *
+ * `calcBasicDeduction` は時限の上乗せを含めた実額を返すので、表示や説明に
+ * 使うとき以外はそちらを呼ぶこと。
+ */
+export const BASIC_DEDUCTION = 620_000;
+/** 住民税の基礎控除上限 (合計所得 2,400 万以下)。**改正されていない。** */
 export const RESIDENT_BASIC_DEDUCTION = 430_000;
 
-/** 合計所得金額から所得税の基礎控除額を計算する (逓減あり)。 */
-export function calcBasicDeduction(totalIncome: number): number {
-  if (totalIncome <= 24_000_000) return 480_000;
-  if (totalIncome <= 24_500_000) return 320_000;
-  if (totalIncome <= 25_000_000) return 160_000;
-  return 0;
+/**
+ * 合計所得金額と年分から所得税の基礎控除額を計算する。
+ *
+ * `taxYear` の既定は現在の年。年分をまたぐ試算では明示して渡すこと。
+ */
+export function calcBasicDeduction(
+  totalIncome: number,
+  taxYear = new Date().getFullYear(),
+): number {
+  const income = Math.max(0, totalIncome);
+  // 2,350 万円超の逓減は全年分で共通 (改正されていない)。
+  if (income > 23_500_000) {
+    if (income <= 24_000_000) return 480_000;
+    if (income <= 24_500_000) return 320_000;
+    if (income <= 25_000_000) return 160_000;
+    return 0;
+  }
+  if (taxYear <= 2024) return 480_000; // 令和6年分以前
+  if (taxYear === 2025) {
+    // 令和7年分
+    if (income <= 1_320_000) return 950_000;
+    if (income <= 3_360_000) return 880_000;
+    if (income <= 4_890_000) return 680_000;
+    if (income <= 6_550_000) return 630_000;
+    return 580_000;
+  }
+  if (taxYear <= 2027) {
+    // 令和8・9年分 — 本則 62 万円に時限の加算 (42 万 / 5 万)。
+    if (income <= 4_890_000) return 1_040_000;
+    if (income <= 6_550_000) return 670_000;
+    return 620_000;
+  }
+  // 令和10年分以後 — 加算の対象が合計所得 132 万円以下だけになる (+37 万)。
+  if (income <= 1_320_000) return 990_000;
+  return 620_000;
 }
 
 /** 合計所得金額から住民税の基礎控除額を計算する (逓減あり)。 */
@@ -358,7 +431,10 @@ export interface NetSalary {
  * 生命保険料控除等は含まない簡略モデル) のため、扶養がある場合は実際の税額より
  * 高めに出る点に注意。
  */
-export function calcNetSalary(grossAnnual: number): NetSalary {
+export function calcNetSalary(
+  grossAnnual: number,
+  taxYear = new Date().getFullYear(),
+): NetSalary {
   // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
   // 等価ミュータントを抑制。
   if (grossAnnual <= 0) {
@@ -377,7 +453,7 @@ export function calcNetSalary(grossAnnual: number): NetSalary {
   // 給与所得 (= 合計所得金額の近似)。社会保険料控除は所得控除なので、課税所得は
   // 給与所得から社保・基礎控除を引いて求める。
   const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
-  const basicDeduction = calcBasicDeduction(employmentIncome);
+  const basicDeduction = calcBasicDeduction(employmentIncome, taxYear);
   const residentBasicDeduction = calcResidentBasicDeduction(employmentIncome);
   const taxableIncome = Math.max(0, employmentIncome - socialInsurance - basicDeduction);
   const residentTaxableIncome = Math.max(0, employmentIncome - socialInsurance - residentBasicDeduction);
@@ -452,6 +528,7 @@ export function calcSalaryWithDeductions(
   donation = 0,
   humanDeductionDiff = 0,
   dependentCount = 0,
+  taxYear = new Date().getFullYear(),
 ): FullSalaryResult {
   if (grossAnnual <= 0) {
     return {
@@ -462,7 +539,7 @@ export function calcSalaryWithDeductions(
       adjustmentCredit: 0, furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
     };
   }
-  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
+  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual, taxYear);
   const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
   const taxableIncomeForIncomeTax = Math.max(0, employmentIncome - deductionIncomeTax);
   const taxableIncomeForResidentTax = Math.max(0, employmentIncome - deductionResidentTax);

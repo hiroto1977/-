@@ -162,8 +162,12 @@ export function planRoSizing(input: RoSizingInput): RoSizingResult {
 
   let actualHours: number | null = null;
   let adequate: boolean | null = null;
-  if (cap !== undefined && nonNeg(cap) > 0) {
-    actualHours = round1((batch / cap) * 24);
+  // `cap !== undefined` は書かない — `nonNeg` は有限でない値を 0 にするので
+  // (`num.ts`)、未指定なら 0 に落ちて下の判定が false になる。同じ答えを返す
+  // 枝を足すと、確かめようのない変異体が増えるだけになる。
+  const capacity = nonNeg(cap);
+  if (capacity > 0) {
+    actualHours = round1((batch / capacity) * 24);
     adequate = windowH > 0 ? actualHours <= windowH : null;
   }
 
@@ -175,7 +179,13 @@ export function planRoSizing(input: RoSizingInput): RoSizingResult {
   // バイオフィルムを育てるのは「連続で止水する日数」。日々入れ替える連続循環
   // (周期が短い) は毎日フラッシュされるので安全側。14 日バッチのように 2 日以上
   // 連続で止水し、かつ稼働率が極端に低い場合だけ警告する。
-  const stagnationRisk = dutyCyclePct !== null && dutyCyclePct < 10 && (idleDays ?? 0) >= 2;
+  //
+  // 周期が取れないときは稼働率を 100% とみなす (= 警告しない)。`!== null` の
+  // 判定を別に置くと、`idleDays` も同じ条件で null になるため結果が変わらず、
+  // 確かめようのない枝になる。
+  const duty = dutyCyclePct ?? 100;
+  const idle = idleDays ?? 0;
+  const stagnationRisk = duty < 10 && idle >= 2;
 
   return {
     requiredCapacityLPerDay: round1(requiredCapacity),
@@ -317,8 +327,8 @@ export function checkEffluent(input: EffluentInput): EffluentResult {
     wpclNpApplicable: toPublic && dailyM3 >= WPCL_NP_APPLICABILITY_M3_PER_DAY,
     exceedsTn: toPublic && tn > EFFLUENT_TN_UNIFORM_MG_L,
     exceedsTp: toPublic && tp > EFFLUENT_TP_UNIFORM_MG_L,
-    nitrateVsGroundwaterFactor:
-      tn > 0 ? round1(tn / GROUNDWATER_NITRATE_N_STANDARD_MG_L) : 0,
+    // `tn > 0` の判定は置かない — tn が 0 なら商も 0 で、else と同じ答えになる。
+    nitrateVsGroundwaterFactor: round1(tn / GROUNDWATER_NITRATE_N_STANDARD_MG_L),
     // 放流すると基準超過が濃厚 → 捨てずに希釈施用へ回すのが技術的にも法的にも安全。
     recommendReuse: tn > EFFLUENT_TN_UNIFORM_MG_L || tp > EFFLUENT_TP_UNIFORM_MG_L,
   };

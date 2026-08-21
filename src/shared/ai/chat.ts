@@ -11,7 +11,7 @@
 
 // golden で固定する。
 
-import { redactSecrets } from '../redact';
+import { redactForMessage } from '../redact';
 import {
   AI_PROVIDERS,
   resolveModel,
@@ -49,7 +49,7 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
 
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`${spec.label} API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
   let json: unknown;

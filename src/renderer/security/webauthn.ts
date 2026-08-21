@@ -47,17 +47,26 @@ export function bufferToBase64url(buffer: ArrayBuffer | Uint8Array): string {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
   let binary = '';
   for (const b of bytes) binary += String.fromCharCode(b);
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  // `=` は btoa の出力では末尾にしか現れないので、末尾固定の正規表現は
+  // 「全部落とす」と同じ結果になる。同じなら**確かめられる方**を選ぶ
+  // (`/=+$/` の `$` を外す変異体は観測できないが、`'='` を空文字に変える
+  // 変異体は「= が残る」で落ちる)。
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replaceAll('=', '');
 }
 
 /** base64url 文字列 → Uint8Array。 */
 export function base64urlToBuffer(value: string): Uint8Array<ArrayBuffer> {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
-  const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
-  const binary = atob(padded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
-  return bytes;
+  // **パディングは戻さない。** `atob` は仕様上 `=` を取り除いてから復号し、
+  // 長さ % 4 === 1 のときだけ投げる (HTML の forgiving-base64 decode)。
+  // つまり `=` を足しても結果は変わらない — 実測でも Node / Chromium とも
+  // `atob('QQ') === atob('QQ==')`。足す処理を残すと、結果の変わらない算術が
+  // 3 つ分の変異体として残るだけになる。
+  const binary = atob(normalized);
+  // 手書きの for ループだと `i <= binary.length` の変異体が TypedArray の
+  // 範囲外書き込み (黙って捨てられる) になって殺せない。`from` に寄せると
+  // その境界自体が無くなる。
+  return Uint8Array.from(binary, (c) => c.charCodeAt(0));
 }
 
 export interface BiometricRegistration {
@@ -111,6 +120,10 @@ export function buildRequestOptions(
 
 /** プラットフォーム生体認証が利用可能か。 */
 export async function isBiometricAvailable(): Promise<boolean> {
+  // Stryker disable next-line ConditionalExpression,StringLiteral: 下の try/catch が
+  // 同じ `false` へ吸収するため、この門の有無は観測できない (等価変異)。
+  // 非ブラウザ (Node / main プロセス) から読まれるのは**正常な経路**なので、
+  // そこで例外を制御フローに使わないための門として残す。
   if (typeof window === 'undefined' || typeof window.PublicKeyCredential === 'undefined') return false;
   try {
     return await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();

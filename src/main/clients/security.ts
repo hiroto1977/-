@@ -28,7 +28,7 @@ import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
 import {
   jsonFetch,
   FetchError,
-  redactSecrets,
+  redactForMessage,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -208,7 +208,7 @@ async function checkEmailBreach(
   if (res.status === 404) return { email, breaches: [] };
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new FetchError(`HIBP ${res.status}: ${redactSecrets(body.slice(0, 200))}`, res.status, 'security');
+    throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
   }
   const data = (await res.json()) as HibpBreach[];
   return {

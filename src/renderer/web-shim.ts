@@ -52,7 +52,8 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { getVault } from './security/vault';
-import { redactSecrets } from '../shared/redact';
+import { redactForMessage } from '../shared/redact';
+import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
@@ -119,21 +120,6 @@ import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../share
 // Electron 版も検証して結果を返すだけで永続化しない)。
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
-/** Vault のトークンから Bearer 文字列を取り出す。OAuth サービスは
- *  TokenSet ({accessToken,...}) の JSON で保存されることがあるので、その場合は
- *  accessToken を使う。そうでなければ生のトークン文字列をそのまま使う。 */
-function bearerFromVaultToken(raw: string): string {
-  try {
-    const parsed = JSON.parse(raw) as { accessToken?: unknown };
-    if (parsed && typeof parsed === 'object' && typeof parsed.accessToken === 'string') {
-      return parsed.accessToken;
-    }
-  } catch {
-    /* not JSON — raw token */
-  }
-  return raw;
-}
-
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
  *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
 async function getProxyTransport(): Promise<Transport> {
@@ -161,6 +147,21 @@ async function runProxyBearer<R>(
   if (!token) {
     return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
   }
+  // **壊れた TokenSet は送らない。** JSON として読めるのに accessToken が無い
+  // 値をそのまま Bearer に載せると、中に入っている refreshToken まで相手
+  // (とプロキシの運用者) へ出る。しかも JSON の塊は Bearer として通らないので、
+  // 漏らす代償だけ払って認証は失敗する。
+  //
+  // プロキシを用意する**前**に見る。手元の資格情報が使えないと分かっている
+  // のに外へ出ていく準備を始める理由が無いし、「プロキシを登録してください」
+  // という無関係な案内で利用者を回り道させることにもなる。
+  const bearer = bearerFromStoredToken(token);
+  if (bearer === null) {
+    return err(
+      'not_configured',
+      `${serviceId} の保存された資格情報が壊れています。設定から登録し直してください`,
+    );
+  }
   let transport: Transport;
   try {
     transport = await getProxyTransport();
@@ -168,7 +169,7 @@ async function runProxyBearer<R>(
     return err('not_configured', e instanceof Error ? e.message : String(e));
   }
   try {
-    return ok(await fn(transport, bearerFromVaultToken(token)));
+    return ok(await fn(transport, bearer));
   } catch (e) {
     return err('action_failed', e instanceof Error ? e.message : String(e));
   }
@@ -373,7 +374,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
   let parsed: { content?: { type: string; text?: string }[] };
@@ -463,7 +464,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
@@ -526,7 +527,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   }
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
@@ -539,7 +540,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   try {
     json = JSON.parse(emotionsExtractJson(body));
   } catch {
-    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactSecrets(body.slice(0, 80)));
+    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactForMessage(body, 80));
   }
   const entry = emotionsRecordAnalysis(text, source, emotionsNormalize(json));
   return ok(entry);
@@ -906,7 +907,9 @@ const shim = {
     // 永久に同梱サンプルのままだった (Cursor に架空の 3 人が出続けていた)。
     if (serviceId !== undefined && canLiveRead(serviceId)) {
       const res = await liveRead(serviceId, {
-        readCredential: (id) => vault.getToken(id).then((t) => (t === null ? null : bearerFromVaultToken(t))),
+        // 壊れた TokenSet は null にする。liveRead は null を「未登録」として
+        // 扱うので、送らずに「登録すると実データになる」と案内が出る。
+        readCredential: (id) => vault.getToken(id).then((t) => (t === null ? null : bearerFromStoredToken(t))),
         getProxyJsonFetch: async () => {
           const transport = await getProxyTransport();
           return async (url, init) => {
@@ -1092,33 +1095,25 @@ const shim = {
       (serviceId === 'notion' && action === 'create-page') ||
       (serviceId === 'slack' && action === 'send-message')
     ) {
-      let token: string | null = null;
-      try {
-        token = await vault.getToken(serviceId);
-      } catch {
-        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
-      }
-      if (!token) {
-        return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
-      }
-      let transport: Transport;
-      try {
-        transport = await getProxyTransport();
-      } catch (e) {
-        return err('not_configured', e instanceof Error ? e.message : String(e));
-      }
-      try {
-        const data =
-          serviceId === 'notion'
-            ? await createNotionPage(payload, token, transport)
-            : await sendSlackMessage(payload, token, transport);
-        return ok(data) as ActionResult<T>;
-      } catch (e) {
-        return err('action_failed', e instanceof Error ? e.message : String(e));
-      }
+      // `runProxyBearer` を使う。以前はここに同じ手順が手書きで写してあり、
+      // **その写しだけ TokenSet の取り出しが抜けていた** — notion / slack は
+      // どちらも OAuth 対応サービス (`OAUTH_CONFIGS`) なので、TokenSet の JSON が
+      // 保存された場合に refreshToken ごと `Authorization: Bearer` へ載る形に
+      // なっていた。今のブラウザ版は貼り付けた生のトークンしか保存しないので
+      // 実害には至っていなかったが、**同じ手順を 2 か所に書けば片方だけ古くなる**
+      // という形そのものが原因なので、写しを消して 1 本に寄せる。
+      return (await runProxyBearer<unknown>(serviceId, (transport, bearer) =>
+        serviceId === 'notion'
+          ? createNotionPage(payload, bearer, transport)
+          : sendSlackMessage(payload, bearer, transport),
+      )) as ActionResult<T>;
     }
 
-    // Atlassian create-issue: CORS ブロック → プロキシ経由。トークンは JSON。
+    // Atlassian create-issue: CORS ブロック → プロキシ経由。
+    // **ここは `runProxyBearer` に寄せてはいけない。** Atlassian の資格情報は
+    // `{email, token, site}` の JSON で、Bearer ではなく Basic 認証に組み立てる。
+    // `bearerFromStoredToken` に通すと「accessToken の無いオブジェクト」= 壊れた
+    // TokenSet と判定されて null になり、正しい設定が使えなくなる。
     if (serviceId === 'atlassian' && action === 'create-issue') {
       let token: string | null = null;
       try {

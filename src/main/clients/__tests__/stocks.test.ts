@@ -3472,3 +3472,206 @@ describe('Stocks ダッシュボードの符号と色', () => {
     ]);
   });
 });
+
+/*
+ * 書き出した Markdown の構造が埋め込みで乗っ取られないか。
+ *
+ * ここには関数内に `escMd = s => s.replace(/\|/g,'\\|')` が 1 つあり、`|` は
+ * 落としていたが (a) 改行を落としていないので 1 行の構造 (見出し・箇条書き・
+ * 引用) から抜けられ、(b) `<` を落としていないので生 HTML が通っていた。
+ */
+describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れないか', () => {
+  const snap = (over: Record<string, unknown> = {}): Parameters<typeof renderDashboardMarkdown>[0]['snapshot'] =>
+    ({
+      watchlist: [],
+      portfolio: { initialCash: 1000, cash: 1000, positions: {}, history: [] },
+      fetchedAt: 'x',
+      isMock: true,
+      ...over,
+    }) as unknown as Parameters<typeof renderDashboardMarkdown>[0]['snapshot'];
+
+  it('銘柄名の改行と区切りが表を作り直さない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap({
+        watchlist: [
+          {
+            symbol: 'AAPL',
+            label: '偽|株\n\n| 乗っ取り |\n|---|\n| 0 |',
+            latestClose: 100,
+            changePct: 1,
+            candles: [],
+            signal: { action: 'hold', reason: 'r' },
+          },
+        ],
+      }),
+      generatedAt: 'x',
+    });
+    const row = md.split('\n').find((l) => l.includes('乗っ取り'));
+    expect(row).toBeDefined();
+    expect(row).toContain('偽\\|株');
+    expect(md).not.toMatch(/^\|---\|$/m);
+  });
+
+  it('アドバイザーの応答から生 HTML が出ない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [
+          {
+            symbol: '<b>AAPL</b>',
+            rank: 1,
+            rationale: '<img src=x onerror=alert(1)>',
+            riskFactors: ['<script>alert(1)</script>'],
+          },
+        ],
+        disclaimer: '<style>body{display:none}</style>',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).not.toContain('<');
+    expect(md).toContain('&lt;img src=x onerror=alert(1)>');
+  });
+
+  it('見出し・引用・箇条書きから抜けさせない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [
+          { symbol: 'A\n## 偽', rank: 1, rationale: 'ok', riskFactors: ['r\n- 偽'] },
+        ],
+        disclaimer: 'd\n本文',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('### 1. A ## 偽');
+    expect(md).toContain('- リスク: r - 偽');
+    expect(md).toContain('> d 本文');
+    expect(md).not.toMatch(/^## 偽$/m);
+  });
+
+  it('rationale は段落なので改行を残す', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [{ symbol: 'A', rank: 1, rationale: '一行目\n二行目', riskFactors: [] }],
+        disclaimer: 'd',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('一行目\n二行目');
+  });
+});
+
+/*
+ * IPC 境界の型ガードが、要素の中身まで見ているか。
+ *
+ * 2026-08-21 まで `isAdvisorResult` は `recommendations` が配列かどうかしか
+ * 見ておらず、同じファイルの `validateAdvisorJson` (全要素・全項目を検査)
+ * と守りが割れていた。TypeScript の型は IPC を越えないので、型の上では
+ * ありえない値が実行時には届く。
+ */
+describe('validateAdvisorJson — 宇宙が分からない場合 (allowedSymbols = null)', () => {
+  const rec = (over: Record<string, unknown> = {}) => ({
+    recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'r', riskFactors: ['x'], ...over }],
+  });
+
+  it('宇宙が null でも形は検査する', () => {
+    expect(() => validateAdvisorJson(rec(), null)).not.toThrow();
+    expect(() => validateAdvisorJson(rec({ rationale: '' }), null)).toThrow(/empty rationale/);
+    expect(() => validateAdvisorJson(rec({ rank: 0 }), null)).toThrow(/invalid rank/);
+    expect(() => validateAdvisorJson(rec({ riskFactors: [] }), null)).toThrow(/no riskFactors/);
+    expect(() => validateAdvisorJson({ recommendations: [null] }, null)).toThrow(/not an object/);
+  });
+
+  it('宇宙が null なら所属ではなく isSafeSymbol で判定する', () => {
+    // 許可リストに無くても、安全な形の銘柄なら通す。
+    expect(() => validateAdvisorJson(rec({ symbol: 'ZZZZ' }), null)).not.toThrow();
+    // 安全でない形は落とす。
+    expect(() => validateAdvisorJson(rec({ symbol: 'A B' }), null)).toThrow(/out-of-universe symbol/);
+    expect(() => validateAdvisorJson(rec({ symbol: '<script>' }), null)).toThrow(/out-of-universe symbol/);
+    expect(() => validateAdvisorJson(rec({ symbol: 'A'.repeat(17) }), null)).toThrow(/out-of-universe symbol/);
+  });
+
+  it('Set を渡したときは従来どおり所属で判定する', () => {
+    expect(() => validateAdvisorJson(rec(), new Set(['AAPL']))).not.toThrow();
+    // 形は安全でも宇宙の外なら落とす — null との違いはここに出る。
+    expect(() => validateAdvisorJson(rec({ symbol: 'ZZZZ' }), new Set(['AAPL']))).toThrow(
+      /out-of-universe symbol/,
+    );
+  });
+});
+
+/*
+ * 書き出しの入口で、壊れた助言が「そのまま描画されて落ちる」のではなく
+ * 「助言なし」として弾かれるか。
+ *
+ * 既存の 'ignores malformed advisor payloads' は `recommendations` が
+ * **配列ですらない**場合しか見ていなかった。配列でありさえすれば中身は
+ * 素通りしていたので、以下はどれも書き出しの最中に TypeError を投げていた
+ * (invoke ハンドラが受けるのでクラッシュはしないが、書き出しは丸ごと失敗し、
+ * ファイルは 1 バイトも書かれない)。
+ */
+describe('exportDashboardImpl — 配列の中身が壊れた助言', () => {
+  const snap = () =>
+    ({
+      watchlist: [],
+      portfolio: { initialCash: 1000, cash: 1000, positions: {}, history: [] },
+      fetchedAt: 'x',
+      isMock: true,
+    }) as unknown as StocksSnapshot;
+
+  const run = async (advisorResult: unknown): Promise<string> => {
+    let captured = '';
+    await exportDashboardImpl(
+      { token: '', payload: { advisorResult } },
+      {
+        fetchSnapshot: async () => snap(),
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+      },
+    );
+    return captured;
+  };
+
+  const cases: readonly (readonly [string, unknown])[] = [
+    ['要素が null', [null]],
+    ['rationale が数値', [{ symbol: 'AAPL', rank: 1, rationale: 42, riskFactors: ['x'] }]],
+    ['riskFactors が無い', [{ symbol: 'AAPL', rank: 1, rationale: 'r' }]],
+    ['rank が 0', [{ symbol: 'AAPL', rank: 0, rationale: 'r', riskFactors: ['x'] }]],
+    ['symbol が安全でない', [{ symbol: 'A B', rank: 1, rationale: 'r', riskFactors: ['x'] }]],
+  ];
+
+  for (const [label, recommendations] of cases) {
+    it(`${label} → 助言なしとして書き出しは成功する`, async () => {
+      const out = await run({ recommendations, disclaimer: 'd', notForRealMoney: true });
+      expect(out).not.toContain('AI アドバイザー結果');
+      // 書き出し自体は成功している (投げていない = ファイルの中身がある)。
+      expect(out.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('正しい助言はこれまでどおり通る (絞りすぎていない)', async () => {
+    const out = await run({
+      recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'r', riskFactors: ['x'] }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI アドバイザー結果');
+  });
+
+  it('ウォッチリストに無い銘柄でも通る (宇宙 ≠ ウォッチリスト)', async () => {
+    // 助言の宇宙は `advise` の `universe` payload か MOCK_TICKERS から来る。
+    // ここをウォッチリストで絞ると、正しい助言を黙って捨てることになる。
+    const out = await run({
+      recommendations: [{ symbol: 'ZZZZ', rank: 1, rationale: 'r', riskFactors: ['x'] }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI アドバイザー結果');
+    expect(out).toContain('ZZZZ');
+  });
+});

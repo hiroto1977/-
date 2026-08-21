@@ -15,6 +15,14 @@ import { calcBasicDeduction, calcResidentBasicDeduction } from './taxCalc';
 
 /** 円未満を四捨五入。 */
 
+/**
+ * 調整控除で使う「基礎控除の人的控除の差額」(円)。
+ *
+ * 地方税法が定める固定値で、**所得税の基礎控除がいくらになっても 5 万円**。
+ * 実額の差 (所得税 58〜104 万 − 住民税 43 万) とは別物なので混同しない。
+ */
+export const BASIC_HUMAN_DEDUCTION_DIFF = 50_000;
+
 /** 所得税額 / 住民税額の両方を持つ控除額。 */
 export interface DeductionPair {
   /** 所得税の所得控除額 (円)。 */
@@ -29,6 +37,51 @@ export interface DeductionPair {
 // 控除額は「本人の合計所得金額」と「配偶者の合計所得金額」の両方で決まる。
 // 本人の合計所得が 1,000 万円超 (給与のみなら年収 1,195 万円超) は対象外。
 
+/**
+ * 配偶者控除の対象となる「配偶者の合計所得金額」の上限 (円)。**年分で変わる。**
+ *
+ * 2 年続けて改正された。基礎控除の引き上げに連動して動くもので、
+ * この関数は 2026-08 時点で確定している 3 段階を持つ:
+ *
+ * | 年分 | 上限 | 給与のみの年収 |
+ * |---|---|---|
+ * | 令和6年分以前 | 48 万円 | 103 万円 |
+ * | 令和7年分 | 58 万円 | 123 万円 |
+ * | 令和8年分以後 | 62 万円 | 136 万円 |
+ *
+ * **この値は 2026-08-21 まで 48 万円のままだった** — 令和7年分の改正
+ * (48 → 58) を取り込んでいなかった。食事補助の非課税限度額と同じ形で、
+ * 「年分で変わる数字を 1 つしか持たない」と必ず古くなる。
+ *
+ * 令和8年分の 62 万円は**令和8年12月1日施行**だが、適用は令和8年分以後の
+ * 所得税全体に及ぶ (源泉徴収は令和9年1月1日以後に支払う給与から)。
+ * したがって切り替えは「施行日を過ぎたか」ではなく**年分**で判定する —
+ * 2026年中の所得は、12月1日の前後を問わず 62 万円で判定される。
+ *
+ * 出典:
+ * - 国税庁 No.1191 配偶者控除
+ *   https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm
+ * - 国税庁 令和8年度税制改正による所得税の基礎控除の引上げ等について
+ *   https://www.nta.go.jp/users/gensen/2026kiso/index.htm
+ * - 国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について
+ *   https://www.nta.go.jp/users/gensen/2025kiso/index.htm
+ */
+export function spouseIncomeLimitYen(taxYear: number): number {
+  if (taxYear >= 2026) return 620_000; // 令和8年分以後
+  if (taxYear === 2025) return 580_000; // 令和7年分
+  return 480_000; // 令和6年分以前
+}
+
+/**
+ * 配偶者特別控除の対象となる「配偶者の合計所得金額」の上限 (円)。
+ *
+ * 下限は `spouseIncomeLimitYen` (配偶者控除の上限) の超過分だが、**上限は
+ * 改正されていない**。満額 38 万円が維持されるのも合計所得 95 万円以下の
+ * ままで、そこから 133 万円まで段階的に減る表も変わっていない。
+ * 動いたのは入口だけである。
+ */
+export const SPOUSE_SPECIAL_INCOME_LIMIT_YEN = 1_330_000;
+
 /** 本人の合計所得帯による配偶者控除の調整段階 (一般の控除対象配偶者・70歳未満)。 */
 function spouseTierBySelfIncome(selfIncome: number): 0 | 1 | 2 | 3 {
   if (selfIncome <= 9_000_000) return 1; // 満額
@@ -42,17 +95,19 @@ function spouseTierBySelfIncome(selfIncome: number): 0 | 1 | 2 | 3 {
  * @param selfIncome 本人の合計所得金額
  * @param spouseIncome 配偶者の合計所得金額 (給与なら年収-給与所得控除)
  * @param spouseElderly 配偶者が70歳以上 (老人控除対象配偶者) か
+ * @param taxYear 対象の年分 (西暦)。境界が年分で動くので必須の入力。
  */
 export function calcSpouseDeduction(
   selfIncome: number,
   spouseIncome: number,
   spouseElderly = false,
+  taxYear = new Date().getFullYear(),
 ): DeductionPair {
   const tier = spouseTierBySelfIncome(selfIncome);
   if (tier === 0) return { incomeTax: 0, residentTax: 0 };
 
-  // 配偶者控除 (配偶者の合計所得 48万以下)。
-  if (spouseIncome <= 480_000) {
+  // 配偶者控除 (配偶者の合計所得が上限以下)。上限は年分で動く。
+  if (spouseIncome <= spouseIncomeLimitYen(taxYear)) {
     // 満額: 一般38万 (住民33万) / 老人48万 (住民38万)。
     const baseIncome = spouseElderly ? 480_000 : 380_000;
     const baseResident = spouseElderly ? 380_000 : 330_000;
@@ -60,9 +115,10 @@ export function calcSpouseDeduction(
     return { incomeTax: yen(baseIncome * factor), residentTax: yen(baseResident * factor) };
   }
 
-  // 配偶者特別控除 (配偶者の合計所得 48万超〜133万)。満額相当の段階表 (本人所得900万以下)。
+  // 配偶者特別控除 (配偶者控除の上限超〜133万)。満額相当の段階表 (本人所得900万以下)。
   // No.1195 の表を所得帯で近似 (段階の刻みは簡略化)。
-  if (spouseIncome > 1_330_000) return { incomeTax: 0, residentTax: 0 };
+  // 上限と段階表は改正されていない — 動いたのは入口 (上の分岐) だけ。
+  if (spouseIncome > SPOUSE_SPECIAL_INCOME_LIMIT_YEN) return { incomeTax: 0, residentTax: 0 };
   let fullIncome: number;
   let fullResident: number;
   if (spouseIncome <= 950_000) {
@@ -575,6 +631,10 @@ export const WORKING_STUDENT_DEDUCTION: DeductionPair = { incomeTax: 270_000, re
 
 /** 所得控除の入力 (すべて任意・該当しなければ未指定/0)。 */
 export interface DeductionInput {
+  /**
+   * 対象の年分 (西暦)。基礎控除の段階が年分で変わるので効く。省略時は現在の年。
+   */
+  readonly taxYear?: number;
   /** 合計所得金額 (給与所得控除後など、控除前の所得)。 */
   readonly totalIncome: number;
   /** 支払った社会保険料の実額 (年)。未指定なら 0。 */
@@ -652,7 +712,9 @@ const ZERO: DeductionPair = { incomeTax: 0, residentTax: 0 };
  */
 export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   const basic: DeductionPair = {
-    incomeTax: calcBasicDeduction(input.totalIncome),
+    // 基礎控除は年分で段階が違う。省略時は現在の年。
+    incomeTax: calcBasicDeduction(input.totalIncome, input.taxYear),
+    // 住民税の基礎控除は据え置きなので年分を渡さない。
     residentTax: calcResidentBasicDeduction(input.totalIncome),
   };
   const social = input.socialInsurancePaid && input.socialInsurancePaid > 0
@@ -708,10 +770,25 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   ];
   const total = parts.reduce(addPair, ZERO);
 
-  // 人的控除のみの (所得税 − 住民税) 差を合計 (調整控除の算定基礎)。
-  // 物的控除 (社保・生命保険・地震保険・医療費・寄附金) は対象外。
-  const humanParts = [basic, spouse, dependents, disability, singleParentOrWidow, workingStudent];
-  const humanDeductionDiff = humanParts.reduce((s, p) => s + (p.incomeTax - p.residentTax), 0);
+  // 人的控除のみの差を合計 (調整控除の算定基礎)。物的控除 (社保・生命保険・
+  // 地震保険・医療費・寄附金) は対象外。
+  //
+  // **基礎控除だけは実額の差を使ってはいけない。** 調整控除に使う「人的控除の
+  // 差額」は地方税法が定める固定値で、基礎控除は **5 万円**である。
+  // 令和6年分以前は所得税 48 万 / 住民税 43 万で実額の差もちょうど 5 万円
+  // だったため、実額から引いても同じ答えになっていた。
+  //
+  // 令和7年分の改正で所得税だけが上がり (58〜95 万円)、住民税は 43 万円で
+  // 据え置かれたので、**実額の差は 15 万円以上に開いた**。ここで実額を使うと
+  // 調整控除が過大になり、住民税を過少に見積もる。改正が意図したのは所得税の
+  // 軽減であって住民税の軽減ではない。
+  //
+  // 配偶者控除 (38/33) と扶養控除 (38/33) は差が 5 万円のままなので、
+  // そちらは実額でよい。
+  const humanParts = [spouse, dependents, disability, singleParentOrWidow, workingStudent];
+  const humanDeductionDiff =
+    BASIC_HUMAN_DEDUCTION_DIFF +
+    humanParts.reduce((s, p) => s + (p.incomeTax - p.residentTax), 0);
 
   return {
     basic,

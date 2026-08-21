@@ -4,7 +4,15 @@ import { Stat } from './Stat';
 import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
 import { jpy } from '../../shared/formatters';
-import { designWelfareScheme, type WelfareSchemeInput } from '../../shared/welfareScheme';
+import {
+  designWelfareScheme,
+  MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  type WelfareSchemeInput,
+} from '../../shared/welfareScheme';
+import {
+  employerBenefits,
+  type BenefitMechanism,
+} from '../../shared/employerBenefits';
 import type { DependentKind } from '../../shared/taxDeductions';
 import {
   employeeExplanationMarkdown,
@@ -67,6 +75,11 @@ export function WelfareSchemeCard() {
   const [specificStr, setSpecificStr] = useState('0');
   const [elderlyStr, setElderlyStr] = useState('0');
   const [blueStr, setBlueStr] = useState('0');
+  // 配偶者。**「配偶者なし」と「所得 0 の配偶者あり」を取り違えない**ため、
+  // 有無のチェックと金額を別に持つ (金額 0 を「なし」の意味に使わない)。
+  const [hasSpouse, setHasSpouse] = useState(false);
+  const [spouseIncomeStr, setSpouseIncomeStr] = useState('0');
+  const [spouseElderly, setSpouseElderly] = useState(false);
 
   const dependents = useMemo<DependentKind[]>(() => {
     const g = Math.floor(num(generalStr, 0));
@@ -91,9 +104,26 @@ export function WelfareSchemeCard() {
       withCare,
       dependents,
       blueDeduction: num(blueStr, 0),
+      // 未指定 (undefined) が「配偶者なし」。0 は「所得 0 の配偶者あり」。
+      spouseIncome: hasSpouse ? num(spouseIncomeStr, 0) : undefined,
+      spouseElderly,
     };
     return designWelfareScheme(input);
-  }, [targetStr, rentStr, rentCoStr, mealStr, mealCoStr, childcareStr, ecStr, withCare, dependents, blueStr]);
+  }, [
+    targetStr,
+    rentStr,
+    rentCoStr,
+    mealStr,
+    mealCoStr,
+    childcareStr,
+    ecStr,
+    withCare,
+    dependents,
+    blueStr,
+    hasSpouse,
+    spouseIncomeStr,
+    spouseElderly,
+  ]);
 
   const { normal, scheme, diff, deductions } = result;
   const yen = (n: number) => jpy(Math.round(n));
@@ -207,6 +237,38 @@ export function WelfareSchemeCard() {
             <option value="650000">65万円 (e-Tax)</option>
           </select>
         </label>
+        <label style={fieldRow}>
+          <span>配偶者</span>
+          <input
+            type="checkbox"
+            checked={hasSpouse}
+            onChange={(e) => setHasSpouse(e.target.checked)}
+            aria-label="配偶者の有無"
+          />
+        </label>
+        {hasSpouse && (
+          <>
+            <label style={fieldRow}>
+              <span>┗ 配偶者の合計所得 (年)</span>
+              <input
+                type="number"
+                value={spouseIncomeStr}
+                onChange={(e) => setSpouseIncomeStr(e.target.value)}
+                style={inputStyle}
+                aria-label="配偶者の合計所得金額"
+              />
+            </label>
+            <label style={fieldRow}>
+              <span>┗ 配偶者が70歳以上</span>
+              <input
+                type="checkbox"
+                checked={spouseElderly}
+                onChange={(e) => setSpouseElderly(e.target.checked)}
+                aria-label="配偶者が70歳以上か"
+              />
+            </label>
+          </>
+        )}
       </div>
 
       {hasExtraDeduction && (
@@ -219,7 +281,13 @@ export function WelfareSchemeCard() {
               {' '}＋ 青色申告特別控除 <strong>{yen(deductions.blue)}</strong>
             </>
           )}
-          。額面が下がっても扶養控除・青色申告特別控除の分だけ課税所得が圧縮され、税額がさらに減ります。
+          {deductions.spouse.incomeTax > 0 && (
+            <>
+              {' '}＋ 配偶者控除等 所得税 <strong>{yen(deductions.spouse.incomeTax)}</strong> / 住民税{' '}
+              <strong>{yen(deductions.spouse.residentTax)}</strong>
+            </>
+          )}
+          。額面が下がってもこれらの分だけ課税所得が圧縮され、税額がさらに減ります。
         </p>
       )}
       {deductions.blue > 0 && (
@@ -305,13 +373,125 @@ export function WelfareSchemeCard() {
         </button>
       </div>
 
+      <BenefitCatalogue />
+
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.6 }}>
         ※ 概算であり税務助言ではありません。標準報酬月額の等級・自治体料率・各非課税要件
-        （食事補助は本人が半額以上負担かつ会社負担が月3,500円以下、社宅は賃料相当額の徴収、
+        （食事補助は本人が半額以上負担かつ会社負担が月
+        {MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN.toLocaleString('ja-JP')}円以下〈2026年4月1日施行〉、
+        社宅は賃料相当額の徴収、
         EC ポイントは全社員一律のカフェテリア枠 等）の充足は税理士・社労士にご確認ください。
-        基礎控除・社会保険料控除に加え、扶養控除・青色申告特別控除（事業所得がある場合）を
-        反映できますが、配偶者控除・生命保険料控除等は未反映の簡略モデルです。
+        基礎控除・社会保険料控除に加え、扶養控除・青色申告特別控除（事業所得がある場合）・
+        配偶者控除／配偶者特別控除を反映できますが、生命保険料控除・地震保険料控除・
+        医療費控除等は未反映の簡略モデルです。配偶者控除は本人の合計所得で段階的に減るため、
+        通常シナリオの額面を基準に一度だけ判定し両シナリオへ同額を適用しています
+        （スキーム側は額面が下がるので、実際の控除はこれ以上に不利にはなりません）。
       </p>
     </Section>
+  );
+}
+
+
+/** 効き方の見出しと、なぜ分けるのかの一言。 */
+const MECHANISM_VIEW: Record<BenefitMechanism, { title: string; note: string }> = {
+  'employer-pension': {
+    title: '会社が上乗せする（額面は下がらない）',
+    note: '給与を減らさずに積み増す。従業員に課税されず、社会保険料の算定基礎にも含まれない。',
+  },
+  'salary-conversion': {
+    title: '給与から振り替える（標準報酬月額が下がる）',
+    note: '本人・会社とも社保と税が下がるが、将来の公的給付も同じだけ下がる。導入前に必ず説明すること。',
+  },
+  'in-kind': {
+    title: '現物・手当として渡す（いま受け取る）',
+    note: '要件を満たす範囲で非課税。超えた部分は給与として課税される。',
+  },
+};
+
+const MECHANISM_ORDER: readonly BenefitMechanism[] = [
+  'employer-pension',
+  'salary-conversion',
+  'in-kind',
+];
+
+/**
+ * 会社負担で還元できる給付の一覧。
+ *
+ * **効き方ごとに分けて出す。** 同じ「会社負担」でも社会保険・所得税・
+ * 受け取る時点が違い、特に給与振替には将来の給付が下がるという代償がある。
+ * 並べて一括りにすると、その違いが読み手から消える。
+ */
+function BenefitCatalogue(): JSX.Element {
+  const all = employerBenefits();
+  return (
+    <details style={{ marginTop: 14 }}>
+      <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+        会社負担で従業員に還元できる給付（{all.length} 件・要件と出典つき）
+      </summary>
+      <div style={{ marginTop: 10 }}>
+        {MECHANISM_ORDER.map((mechanism) => {
+          const items = all.filter((b) => b.mechanism === mechanism);
+          if (items.length === 0) return null;
+          const view = MECHANISM_VIEW[mechanism];
+          return (
+            <div key={mechanism} style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 12, fontWeight: 600 }}>{view.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
+                {view.note}
+              </div>
+              {items.map((b) => (
+                <div
+                  key={b.id}
+                  style={{
+                    border: '1px solid var(--border, #333)',
+                    borderRadius: 6,
+                    padding: '8px 10px',
+                    marginBottom: 8,
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 600 }}>{b.label}</div>
+                  <div style={{ fontSize: 11, marginTop: 2 }}>{b.summary}</div>
+                  <ul style={{ fontSize: 11, margin: '6px 0 0', paddingLeft: 18 }}>
+                    {b.conditions.map((c) => (
+                      <li key={c}>{c}</li>
+                    ))}
+                  </ul>
+                  {b.caveat !== null && (
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: 'var(--warning, #d97706)',
+                        marginTop: 6,
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      ⚠ {b.caveat}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 6 }}>
+                    出典:{' '}
+                    {b.sources.map((src, i) => (
+                      <span key={src.url}>
+                        {i > 0 && ' / '}
+                        <a
+                          href={src.url}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            void window.serviceHub.openExternal(src.url);
+                          }}
+                          style={{ color: 'inherit' }}
+                        >
+                          {src.label}
+                        </a>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </details>
   );
 }

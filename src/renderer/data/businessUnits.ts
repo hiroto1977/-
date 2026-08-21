@@ -12,6 +12,7 @@
  * 勝手に消えてよいものではない。
  */
 
+import type { MonthlyBusinessKpi } from './businessFinancials';
 import { hasControlChar } from '../../shared/controlChars';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
@@ -220,14 +221,20 @@ export function sortBusinessUnits(
 export interface BusinessFinancialUnit {
   readonly id: string;
   readonly label: string;
-  readonly current: {
-    readonly revenue: number;
-    readonly variableCost: number;
-    readonly fixedCost: number;
-    readonly profit: number;
-    readonly profitMargin: number;
-  };
-  readonly history: readonly { readonly revenue: number; readonly profit: number }[];
+  /**
+   * 当月の実績。`MonthlyBusinessKpi` をそのまま使う — 同じ形を 2 か所に
+   * 書くと、片方に項目を足したときにもう片方が黙って古いままになる
+   * (人件費の実額を足したときに実際そうなりかけた)。
+   */
+  readonly current: MonthlyBusinessKpi;
+  /**
+   * 過去の月次実績 (古い順)。`current` と同じ形で持つ。
+   *
+   * 3 軸グラフが各期の財務指標を**その期の実績から**算出するため、
+   * 売上と利益だけでは足りない (変動費・固定費が無いと BS/CF の概算が
+   * できない)。登録したばかりの事業はここが空で、当月 1 点だけになる。
+   */
+  readonly history: readonly BusinessFinancialUnit['current'][];
 }
 
 /** 営業利益率 (%) を小数第 1 位で。売上 0 は率が定義できないので 0 とする。 */

@@ -1,8 +1,23 @@
 name: mutation
 
-# Mutation testing takes ~2 minutes and is overkill for every PR. Run
-# it weekly (so regressions surface within 7 days), on demand
-# (workflow_dispatch), and whenever the test infra itself changes.
+# 変異検査は **全件で 75〜104 分** かかる (2026-08-20 に実行履歴で実測。
+# `mutate` の対象が 227 ファイルまで増えた結果)。長らくここには
+# 「takes ~2 minutes」と書いてあり、トリガー方針がその誤った前提の上に
+# 立っていた。実際に起きていたのは:
+#
+#   - `src/main/clients/**` は変更の多いディレクトリなので push で頻繁に発火し、
+#     2026-08-19 だけで 5 回 × 約 100 分 = 約 8 時間を消費した (全部失敗)
+#   - それでいて対象パスは 227 件中 2 件しか無く、残り 225 件の退行は
+#     週次まで最大 7 日気付かない
+#
+# 「高すぎる」と「狭すぎる」が同時に成り立っていたので、分け方を変えた:
+#
+#   - **push (main)**: 変わったファイルだけを測る。対象パスの制限は外す
+#     (どのファイルを触っても、それが `mutate` にあれば当日測られる)
+#   - **週次 / 手動**: 従来どおり全件
+#
+# テストだけを変えた場合もその対象を測る (`scripts/mutate-changed.cjs`) —
+# テストを緩めた変更こそ変異検査が捕まえるべきものなので。
 
 on:
   schedule:
@@ -11,10 +26,9 @@ on:
   push:
     branches: [main]
     paths:
+      - 'src/**'
       - 'stryker.config.json'
       - 'vitest.config.ts'
-      - 'src/main/clients/**'
-      - 'src/main/oauth.ts'
 
 permissions:
   contents: read
@@ -24,6 +38,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 変更ファイルの割り出しに 1 つ前のコミットが要る。
+          fetch-depth: 2
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -34,7 +51,29 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: 対象の割り出しが壊れていないか (対照実験)
+        run: node scripts/mutate-changed.cjs --self-test
+
+      - name: 測る対象を決める
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            TARGETS="$(node scripts/mutate-changed.cjs "${{ github.event.before }}")"
+          else
+            TARGETS="ALL"
+          fi
+          if [ -z "$TARGETS" ]; then
+            echo "変異検査の対象が変わっていません。飛ばします。"
+            echo "mode=skip" >> "$GITHUB_OUTPUT"
+          elif [ "$TARGETS" = "ALL" ]; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=some" >> "$GITHUB_OUTPUT"
+            echo "targets=$TARGETS" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Restore Stryker incremental cache
+        if: steps.scope.outputs.mode == 'all'
         uses: actions/cache@v4
         with:
           path: .stryker-incremental.json
@@ -42,17 +81,28 @@ jobs:
           restore-keys: |
             stryker-main
 
-      - name: Run mutation testing
+      - name: Run mutation testing (全件)
+        if: steps.scope.outputs.mode == 'all'
         run: npm run mutate
+
+      # 差分測定では incremental キャッシュを使わない。古い結果が残ると
+      # survived が誤って残ることが実測されている (stryker.config.json の注記
+      # 参照 — 2026-08 の監査で atlassian.ts が「生存 1」と誤報された)。
+      # 対象が少ないので、毎回まっさらから測っても数分で終わる。
+      - name: Run mutation testing (変わった対象のみ)
+        if: steps.scope.outputs.mode == 'some'
+        run: |
+          rm -f .stryker-incremental.json
+          npx stryker run --mutate "${{ steps.scope.outputs.targets }}"
 
       - name: Save Stryker JSON report
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.scope.outputs.mode != 'skip'
         with:
           name: mutation-report
           path: reports/mutation/mutation.json
           retention-days: 90
 
       - name: Triage top survivors
-        if: always()
-        run: npm run mutate:triage -- --top=30
+        if: always() && steps.scope.outputs.mode != 'skip'
+        run: npm run mutate:triage -- --top=30 --include-string-literals

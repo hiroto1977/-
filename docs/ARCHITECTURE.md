@@ -23,14 +23,14 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **8276** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 8652) |
+| ユニットテスト | **8694** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 316 | 自己検証 |
+| `file:line` 参照数 | 329 | 自己検証 |
 
 ### 統合フロー図
 
@@ -225,8 +225,12 @@ type OAuthResult =
 ```
 
 `ok:false` の `message` は **必ず** `safeErrorMessage()` (`src/main/main.ts:18-20`) →
-`redactSecrets()` (`src/main/clients/types.ts:37-44`) を経由する。redact 対象は
-`Bearer …`, `sk-ant-…`, `ghp_…`, `xoxb-…`, `ya29.…`, `secret_…` + JSON の
+`redactSecrets()` (`src/shared/redact.ts`、`src/main/clients/types.ts` が再輸出) を
+経由する。redact 対象は **資格情報ヘッダの値**
+(`Authorization` / `proxy-authorization` / `x-api-key` / `x-goog-api-key` / `api-key`。
+`名前: 値` の線上の形と `"名前":"値"` の JSON の形の両方)、ヘッダ名の付かない裸の
+`Bearer …` / `Basic …` (16 字以上)、`sk-ant-…`, `ghp_…`, `xoxb-…`, `ya29.…`,
+`secret_…`, `ATATT…` + JSON の
 `access_token` / `refresh_token` / `token` / `api_key` / `apikey` / `password`。
 
 ---
@@ -565,12 +569,22 @@ OAuth の入口も 180 行 (全 211 行) を無効化しており、外して実
 
 冗長なコードは消した。`trimmed.startsWith('?') ? trimmed.slice(1) : trimmed` は
 `URLSearchParams` 自身が先頭の `?` を落とすため、一度も結果を変えていなかった。
+同じ形の分岐が 2 つ残っていたのを 2026-08-20 に消した (下記)。
 
-**この 1 ファイルだけ 100% にしていない (163 変異体 98.77%)。** 残る 2 つは真の
-等価変異で、範囲指定で囲めば 100% になるが、実測すると **66 個の測定を捨てる**
-ことになる (163 変異体 98.77% → 97 変異体 100%)。分母を縮めて買った 100% は
-正直な 98.77% より価値が低い — `lint:mutation-scope` が禁じているのと同じ形なので、
-囲まずに理由をコードへ書いた。
+**等価変異は「黙らせる / 放置する」の二択ではなかった (2026-08-20 訂正)。**
+以前はここだけ 100% にしておらず、理由を「残る 2 つは真の等価変異で、範囲指定で
+囲めば 100% になるが 66 個の測定を捨てることになる (163 変異体 98.77% →
+97 変異体 100%)」と書いていた。その二択の比較そのものは正しかったが、**第三の道を
+見落としていた** — 結果を変えない分岐は、黙らせるのではなく**消せる**。
+
+`} else if (trimmed.includes('='))` は、`=` を含まない文字列がその枝へ入っても
+`URLSearchParams` が空になり結局 `!code || !state` で null に落ちるため、条件の
+有無で結果が変わらない。同じ理由で空文字の早期 return も要らない。両方消したら
+**158 変異体 100%** になった。捨てた測定は 5 個だけで、66 個ではない。
+
+これが `stryker.config.json` の言う「等価変異が出たら、黙らせる前にコードを
+単純化できないか先に疑うこと」の実例である。分岐を消しても答えが変わらないことは
+検査で固定してある (`parseGoogleCallback — クエリでない貼り付け`)。
 
 **罠 (3 回踏んだ)**: `Stryker disable next-line` は**閉じ括弧で始まる行に効かない**。
 `} catch {` / `} finally {` / `} else if (` はいずれも直前のコメントと結び付かず、
@@ -1104,6 +1118,101 @@ Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**
 薄くした `src/main/clients/cursor.ts` **4 変異体 100%**、
 `src/shared/dataOrigin.ts` **45 変異体 100%**。
 
+#### 壊れた TokenSet を Bearer に載せていた (`src/shared/vaultToken.ts`)
+
+保存された資格情報は 2 種類ある — 貼り付けた生の文字列 (`ghp_…`) と、OAuth の
+結果である TokenSet の JSON (`{accessToken, refreshToken, …}`)。どちらも同じ
+`getToken` から出てくるので、呼び出し側は区別できない。
+
+ブラウザ版の `bearerFromVaultToken` はこう書いてあった:
+
+```ts
+try {
+  const parsed = JSON.parse(raw);
+  if (… typeof parsed.accessToken === 'string') return parsed.accessToken;
+} catch { /* not JSON */ }
+return raw;          // ← JSON なのに accessToken が無い場合もここへ来る
+```
+
+**JSON として読めたのに `accessToken` が無ければ、その JSON 丸ごとが
+`Authorization: Bearer` に載る。** TokenSet には `refreshToken` が入る:
+
+- アクセストークンより強い refresh token が、渡す必要のない相手へ出る
+  (ブラウザ版は利用者のプロキシ = 第三者のホストも経由する)
+- しかも JSON の塊は Bearer として通らないので、**認証は必ず失敗する** —
+  漏らす代償だけ払って得るものが無い
+
+主プロセス側 (`secrets.ts` の `getOAuthTokens`) は同じ状況で **null** を返して
+いた。**同じ規則を 2 か所に書いて片方だけ緩い**という形だったので、規則を
+`src/shared/vaultToken.ts` に 1 つだけ置いて両方から呼ぶ。壊れた TokenSet は
+送らずに「登録し直してください」と返す。
+
+判定は 4 行で足りる (どれも実測で固定):
+
+| 保存された値 | 返す |
+|---|---|
+| JSON として読めない (`ghp_abc`) | その文字列 |
+| JSON だがオブジェクトでない (`12345`) | その文字列 (数字だけの API キー) |
+| オブジェクトで `accessToken` が非空文字列 | その `accessToken` |
+| オブジェクトだが使える `accessToken` が無い | **null** |
+
+**同じ形がもう 1 か所あった。** notion / slack の invoke は `runProxyBearer` を
+使わず手順を手書きで写しており、**その写しだけ TokenSet の取り出しが抜けて
+いた**。どちらも `OAUTH_CONFIGS` にある OAuth 対応サービスなので、TokenSet が
+保存されれば refreshToken ごと送る形になっていた (今のブラウザ版は貼り付けた
+生のトークンしか保存しないので実害には至っていない)。写しを消して
+`runProxyBearer` 1 本に寄せた。
+
+**Atlassian はここへ寄せてはいけない。** 資格情報が `{email, token, site}` の
+JSON で、Bearer ではなく Basic 認証に組み立てるため、`bearerFromStoredToken` に
+通すと「accessToken の無いオブジェクト」= 壊れた TokenSet と判定されて null に
+なる。理由をコードに書いた。
+
+資格情報の確認は**プロキシを用意する前**に行う。使えないと分かっている資格情報の
+ために外へ出ていく準備を始める理由が無いし、「プロキシを登録してください」という
+無関係な案内で利用者を回り道させることにもなる。
+
+#### 壁の一覧を「自称」で洗い直した — 10 → 17、うち 1 つは未測定だった (2026-08-20)
+
+`MUST_MEASURE` は 2 度直しているが (2026-08-18 新設 / 08-19 に `src/shared/ollama.ts` を
+追加)、どちらも**そのとき見つけたものを足しただけ**で、一覧そのものが網羅的かを
+確かめていなかった。
+
+そこで基準を決めて機械的に洗った: `mutate` 全 226 件の冒頭 30 行を
+「関門 / fail-closed / SSRF / 送り先 / 踏み台 / 絞る / 1 本の口」で走査し、
+**モジュールが自分の説明文で門だと名乗っているもの**を全部拾う。7 件出た。
+
+| 追加した壁 | 自称 |
+|---|---|
+| `src/shared/proxyEndpoint.ts` | 「アプリが持つ資格情報のほぼ全部が通る 1 本の口」 |
+| `src/shared/aiEndpoint.ts` | `x-api-key` / Bearer を載せる送り先の検証 |
+| `src/shared/atlassianSite.ts` | 「そのまま連結すると社内ホストへ向けさせられる (SSRF)」 |
+| `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (main と renderer で同じ規則) |
+| `src/shared/scanTarget.ts` | 「VirusTotal に投入するのは『調べる』ではなく『公開する』に近い」 |
+| `src/renderer/network/liveRead.ts` | 資格情報を第三者のプロキシへ渡す経路 |
+| `src/renderer/security/webauthn.ts` | 「必ず throw する fail-closed」 |
+
+6 件は既に `mutate` に在籍しており実測 100% だった — つまり**測られてはいたが、
+外されても誰も気付かない**状態だった。宣言はそこを塞ぐ。
+
+**`src/renderer/security/webauthn.ts` だけは `mutate` にも無く、実測 68 変異体 61.76% (生存 26)。**
+このモジュールは誰からも呼ばれていない — 存在理由は「将来これを解錠ゲートへ
+配線する人に条件を残すこと」で、冒頭に不変条件が 4 つ書いてある。ところが
+**`userVerification: 'required'` を空文字に書き換えてもどの検査も落ちなかった**。
+条件を書いた場所が、条件を守らせていなかった。不変条件を 1 つずつ固定して
+**53 変異体 100%**。
+
+等価変異は 2 つ消し、1 つだけ残した:
+
+- `atob` は仕様上 `=` を取り除いてから復号する (HTML の forgiving-base64 decode)
+  ので、`base64urlToBuffer` の**パディング復元は結果を変えていなかった** — 削除
+- 手書きの復号ループは `i <= len` の変異体が TypedArray の範囲外書き込み
+  (黙って捨てられる) になって殺せない — `Uint8Array.from` に寄せて境界ごと削除
+- `isBiometricAvailable` の `typeof window === 'undefined'` の門は、直後の
+  try/catch が同じ `false` へ吸収するため観測できない。非ブラウザから読まれるのは
+  **正常な経路**で、そこで例外を制御フローに使いたくないので門は残し、1 行の
+  pragma に理由を書いた
+
 #### 隣の壁だけが測られていた (`src/shared/ollama.ts`)
 
 `MUST_MEASURE` (必ず変異検査に載せる壁の一覧) は 2026-08-18 に
@@ -1138,10 +1247,24 @@ Cursor 画面には佐藤健・鈴木彩・田中悠という**架空の 3 人**
 `''` なら返り値も `''` になるので消えた。**376 変異体 100%**、残したのは
 既定値 (`?? ''` / `?? []`) の 8 箇所だけで、いずれも 1 行の帯に理由を書いてある。
 
-**ブラウザ側の呼び出し口 `src/renderer/network/ollamaWeb.ts` はまだ測っていない**
-(実測 454 変異体 59.25%)。59% のまま `mutate` へ載せると全体が break 閾値を割って
-週次の変異 CI が落ちるので、数字を `docs/REMAINING_WORK.md` に明記したうえで
-次の対象として残している。
+**ブラウザ側の呼び出し口 `src/renderer/network/ollamaWeb.ts` も測り切った**
+(2026-08-20)。着手時は 454 変異体 59.25% で、生存の中身は「利用者が貼り付ける
+セットアップ手順の文字列」「chat の成功経路そのもの」「通信の枠 (時間切れ・
+サイズ上限・キャッシュ無効)」だった。手順の文字列は golden で固定し、残りは
+テストを足して **437 変異体 100%**（pragma 0 個）。
+
+pragma を 1 つも足さずに済んだのは、**等価変異が出るたびに黙らせずコードを
+単純化した**から。この 4 つの形が繰り返し出た:
+
+| 出た形 | なぜ確かめられないか | 直し方 |
+|---|---|---|
+| `catch { return false }` / `catch { return [] }` | 中身を空にすると `undefined` が返るが、偽値・空配列と同じ枝に落ちる | `Promise.allSettled` で**成否そのものを値にする** |
+| `typeof x === 'string' ? x : ''` | `''` も番人の値も「一致しない」に潰れる | 型の確認と中身の確認を並べて書き、`''` を置かない |
+| 既定引数の `typeof location !== 'undefined' ? location.hostname : ''` | `location` の無い環境では空側しか通らない | `pageHost()` として**名前を付け、外から叩けるようにする** |
+| `JSON.parse` の失敗を `null` で返す | 呼び出し側は `null` と `undefined` を区別しない | `parseJsonOrNull` / `readTextOrEmpty` を export して**約束だけを直接固定する** |
+
+到達不能な `=== null` ガードを 3 つ削除した (`buildOllamaUrl` は許可済みの base と
+定数のパスからは null を返さない)。分類に効かない引数も 1 つ削った。
 
 #### 時価評価の式を 3 つ持っていた (`src/main/clients/stocks.ts`)
 
@@ -1295,6 +1418,53 @@ Markdown で同じ規則にしてあることも、合計行を取り出して�
 E2E の陰性対照で**自分の書き方の誤り**を 1 つ潰した。「(サンプル)」を本文全体で
 探すと、説明文に書いた同じ語に当たって素通りする。棒グラフの行に
 `data-bar-row` を付け、**ラベルそのもの**で判定する形に直した (罠 3-b の再発)。
+
+#### 全業務を 3 軸で重ねる (`src/renderer/data/businessAxonometric.ts`)
+
+財務指標は「いつの」「どの事業の」「何の」値かで決まる。2 軸の折れ線では
+このうち 2 つしか置けないので、事業ごとに図を分けるか期間を捨てて棒にするしか
+なく、**事業間の差と時間の動きを同時に読めなかった**。奥行きを斜めに倒した軸
+(斜投影 / カバリエ図法) を足して 3 つ同時に置く:
+
+- **横軸 (X)** 期間 — 月次実績を古い順に
+- **縦軸 (Y)** 指標の値 — 単位はその指標のもの
+- **斜め軸 (Z)** 業務 — 登録した事業と同梱サンプルを奥へ
+
+判断は 5 つ:
+
+- **平行投影にする (遠近法にしない)。** 奥で縮めると奥の事業の変化が小さく
+  見え、「奥は動きが少ない」という嘘の印象を作る。
+- **縦軸は常に 1 指標・1 単位。** 17 指標は単位が違う (% / 倍 / ヶ月 / 年 /
+  日 / 円)。混ぜると「ROE 34.9」と「CCC 39.5」が同じ高さに並び、比べられない
+  ものが比べられるように見える。指標はセレクタで切り替える。
+- **横軸は右詰め (当月を右端に揃える)。** 履歴の長さが事業ごとに違うので、
+  左詰めにすると同じ縦線が事業ごとに別の月を指す。
+- **各期の値はその期の実績から算出する。** `deriveBusinessFinancials` →
+  `computeFinancialRatios` を月次実績ごとに通す。当期の値で過去を埋めない。
+- **円グラフは足せる量だけ。** 比率を足しても意味を成さないので、構成比の
+  対象は金額 (売上高 / 当期純利益 / EBITDA / 人件費) に限る (`additive`)。
+  **負の値は 0% に丸めず別に返す** — 丸めると赤字の事業が黙って消え、全体が
+  黒字であるかのように見える。
+
+`projectAxonometric(x, y, depth)` の `depth` は**段数ではなく長さ**で受け取る。
+段数をそのまま渡す取り違えを実際にやり、`x` が画素・`depth` が添字になって
+奥行きが 1 画素も動かない図を描いた (実機で確認して直した)。
+
+#### 水耕栽培も 1 事業として並べる (`hydroponicsBusinessUnit`)
+
+栽培を別枠の「参考」に置くと、全社の数字に入っているのかどうかが画面から
+分からない。`HydroponicsEconomics` を `BusinessFinancialUnit` へ変換して、
+棒・3 軸・構成比・連結三表のすべてに他の事業と同じ資格で載せる。
+
+- `MonthlyPnl.sga` は**人件費を内数に含む** (`estimateEconomics` の定義)。
+  固定費を `sga + depreciation + laborCost` と足すと人件費を二重に数えて
+  営業利益がその分小さく出る。`fixedPerMonth = sga + depreciation` に合わせる。
+- 人件費は実額が分かっているので `MonthlyBusinessKpi.laborCost` として渡す。
+  無い事業は従来どおり固定費の約半分で概算するが、**入力した人件費が
+  労働分配率に効かない**状態は作らない。
+- **履歴は空。** この収支は「今の設備と単価ならこうなる」という 1 時点の
+  見積りで、設定の変更履歴は**計画の改訂**であって月次の実績ではない。
+- 未入力なら並べない (経営サマリーに勝手なサンプルを混ぜない)。
 
 #### 連結は出所を混ぜない (`src/renderer/data/consolidation.ts`)
 
@@ -1652,7 +1822,7 @@ graph TB
     L3["safeStorage (OS keychain)<br/>plain-base64 fallback + console.warn<br/>secrets.json mode 0o600 + 1MB cap<br/>OAuth PKCE + 32B state<br/>Loopback callback Host pin"]
   end
   subgraph "L4 — エラー出口"
-    L4["redactSecrets: Bearer / sk-ant- / ghp_ / xoxb- / ya29. / secret_<br/>+ JSON token fields<br/>jsonFetch error body 200B 切り詰め"]
+    L4["redactSecrets: 資格情報ヘッダの値 (線上 / JSON 両方)<br/>裸の Bearer・Basic (16字以上)<br/>sk-ant- / ghp_ / xoxb- / ya29. / secret_ / ATATT<br/>+ JSON token fields<br/>jsonFetch error body 200B 切り詰め"]
   end
   L0 --> L1 --> L2 --> L3 --> L4
 ```
@@ -1666,7 +1836,8 @@ graph TB
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:85-88`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
-| **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`types.ts:37-44`) + 200B 切り詰め (`types.ts:56`) |
+| **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
+| **token 漏洩 (プロキシがヘッダを JSON で返す)** | 利用者の BYO Worker が `{"headers":{"authorization":"Bearer …"}}` を返す | `redactSecrets` を**ヘッダ名起点**にした (線上の `名前: 値` と JSON の `"名前":"値"` の両方)。旧規則はコロン直結のみを見ており、この形が素通りしていた (2026-08-20 実測) |
 | **Renderer XSS** | (理論) | CSP + React auto-escape + `dangerouslySetInnerHTML` 0 件 |
 | **External URL 開封** | `javascript:` / `file:` | `app:openExternal` http(s) 限定 (`main.ts:100-115`) |
 | **secrets.json 改竄/巨大化** | ディスク満杯 / 攻撃者 | 1MB cap + shape 検証 (`secrets.ts:14-39`) |

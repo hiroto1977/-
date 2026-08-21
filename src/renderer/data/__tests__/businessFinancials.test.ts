@@ -74,3 +74,29 @@ describe('deriveBusinessFinancials', () => {
     expect(r.receivablesTurnover).not.toBeNull();
   });
 });
+
+describe('人件費の実額', () => {
+  it('実額があれば年換算してそのまま使う', () => {
+    // 月次の実額を年に直す。÷12 にすると 1/144 の額になり、労働分配率が
+    // ほぼ 0% として出る (「人件費がかかっていない事業」に見える)。
+    const f = deriveBusinessFinancials({ ...KPI, laborCost: 250_000 });
+    expect(f.laborCost).toBe(3_000_000);
+  });
+
+  it('実額が無ければ固定費の約半分と置く', () => {
+    const f = deriveBusinessFinancials(KPI);
+    expect(f.laborCost).toBe(KPI.fixedCost * 12 * 0.5);
+  });
+
+  it('実額は置き値を上書きする (入れたのに効かない状態を作らない)', () => {
+    const guessed = deriveBusinessFinancials(KPI).laborCost;
+    const actual = deriveBusinessFinancials({ ...KPI, laborCost: 250_000 }).laborCost;
+    expect(actual).not.toBe(guessed);
+  });
+
+  it('実額 0 は「人件費なし」として尊重する (未指定と区別する)', () => {
+    // 0 を「未入力」と読み替えて置き値に落とすと、人を雇っていない事業の
+    // 労働分配率が勝手に 50% 相当まで持ち上がる。
+    expect(deriveBusinessFinancials({ ...KPI, laborCost: 0 }).laborCost).toBe(0);
+  });
+});

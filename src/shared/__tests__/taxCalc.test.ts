@@ -133,13 +133,19 @@ describe('calcConsumptionTax', () => {
 });
 
 describe('calcNetSalary', () => {
-  it('golden: exact employment income / taxable income / residentTax for 5,000,000', () => {
-    const r = calcNetSalary(5_000_000);
+  // 年分を明示する。既定は現在の年なので、渡さないと暦が変わった日に落ちる。
+  it('golden: exact employment income / taxable income / residentTax for 5,000,000 (令和8年分)', () => {
+    const r = calcNetSalary(5_000_000, 2026);
     expect(r.employmentIncome).toBe(3_560_000); // 5,000,000 − 給与所得控除 1,440,000
-    expect(r.taxableIncome).toBe(2_330_000); // 3,560,000 − 社保 750,000 − 基礎 480,000
-    expect(r.incomeTax).toBe(138_346);
+    // 基礎控除は令和8年分の時限加算で 104 万円 (合計所得 489 万円以下)。
+    // 改正前の 48 万円なら 2,330,000 だった。
+    expect(r.taxableIncome).toBe(1_770_000); // 3,560,000 − 社保 750,000 − 基礎 1,040,000
+    // 1,770,000 × 5% × 1.021 = 90,358。
+    expect(r.incomeTax).toBe(90_358);
+    // **住民税は変わらない。** 住民税の基礎控除 43 万円は据え置きで、
+    // 所得税だけが動いている。ここが一緒に動いたら直しすぎている。
     expect(r.residentTax).toBe(243_000);
-    expect(r.takeHome).toBe(3_868_654);
+    expect(r.takeHome).toBe(3_916_642);
   });
 
   it('returns a per-capita-only resident tax for zero income', () => {
@@ -162,15 +168,15 @@ describe('calcNetSalary', () => {
     // 額面が給与控除+社保+基礎控除以下なら所得税 0
     const r = calcNetSalary(1_000_000);
     expect(r.incomeTax).toBe(0);
-    expect(BASIC_DEDUCTION).toBe(480_000);
+    expect(BASIC_DEDUCTION).toBe(620_000);
   });
 
-  it('exposes employment income and taxable income consistently', () => {
-    const r = calcNetSalary(5_000_000);
+  it('exposes employment income and taxable income consistently (令和8年分)', () => {
+    const r = calcNetSalary(5_000_000, 2026);
     // 給与所得控除 = 5,000,000×20%+440,000 = 1,440,000
     expect(r.employmentIncome).toBe(5_000_000 - 1_440_000);
-    // 課税所得 = 給与所得 - 社保(750,000) - 基礎控除(480,000)
-    expect(r.taxableIncome).toBe(r.employmentIncome - r.socialInsurance - 480_000);
+    // 課税所得 = 給与所得 − 社保(750,000) − 基礎控除(1,040,000)
+    expect(r.taxableIncome).toBe(r.employmentIncome - r.socialInsurance - 1_040_000);
   });
 });
 
@@ -198,38 +204,45 @@ describe('精度境界: 調整控除 / 限界税率 / ふるさと納税控除',
   });
 });
 
-describe('calcSalaryIncomeDeduction (令和2年分以降の正式テーブル)', () => {
+/*
+ * 給与所得控除。**年分を明示して呼ぶ。**
+ *
+ * 既定の年分は `new Date().getFullYear()` なので、年分を渡さずに固定値を
+ * 期待すると、暦が変わった日に理由もなく落ちるか、より悪いことに
+ * 「新しい年分の値を古い年分の期待値で通してしまう」。
+ */
+describe('calcSalaryIncomeDeduction — 令和6年分以前の表', () => {
   it('returns the 550,000 floor up to 1,625,000', () => {
-    expect(calcSalaryIncomeDeduction(0)).toBe(0);
-    expect(calcSalaryIncomeDeduction(1_000_000)).toBe(550_000);
-    expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(0, 2024)).toBe(0);
+    expect(calcSalaryIncomeDeduction(1_000_000, 2024)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(1_625_000, 2024)).toBe(550_000);
   });
 
   it('applies each official bracket formula', () => {
-    expect(calcSalaryIncomeDeduction(1_800_000)).toBe(Math.round(1_800_000 * 0.4 - 100_000));
-    expect(calcSalaryIncomeDeduction(3_600_000)).toBe(Math.round(3_600_000 * 0.3 + 80_000));
-    expect(calcSalaryIncomeDeduction(6_600_000)).toBe(Math.round(6_600_000 * 0.2 + 440_000));
-    expect(calcSalaryIncomeDeduction(8_500_000)).toBe(Math.round(8_500_000 * 0.1 + 1_100_000));
+    expect(calcSalaryIncomeDeduction(1_800_000, 2024)).toBe(Math.round(1_800_000 * 0.4 - 100_000));
+    expect(calcSalaryIncomeDeduction(3_600_000, 2024)).toBe(Math.round(3_600_000 * 0.3 + 80_000));
+    expect(calcSalaryIncomeDeduction(6_600_000, 2024)).toBe(Math.round(6_600_000 * 0.2 + 440_000));
+    expect(calcSalaryIncomeDeduction(8_500_000, 2024)).toBe(Math.round(8_500_000 * 0.1 + 1_100_000));
   });
 
   it('caps at 1,950,000 above 8,500,000', () => {
-    expect(calcSalaryIncomeDeduction(8_500_001)).toBe(1_950_000);
-    expect(calcSalaryIncomeDeduction(20_000_000)).toBe(1_950_000);
+    expect(calcSalaryIncomeDeduction(8_500_001, 2024)).toBe(1_950_000);
+    expect(calcSalaryIncomeDeduction(20_000_000, 2024)).toBe(1_950_000);
   });
 });
 
-describe('calcBasicDeduction (逓減)', () => {
+describe('calcBasicDeduction — 令和6年分以前と逓減部分', () => {
   it('is 480,000 up to 24,000,000', () => {
-    expect(calcBasicDeduction(0)).toBe(480_000);
-    expect(calcBasicDeduction(24_000_000)).toBe(480_000);
+    expect(calcBasicDeduction(0, 2024)).toBe(480_000);
+    expect(calcBasicDeduction(24_000_000, 2024)).toBe(480_000);
   });
 
   it('steps down 320,000 / 160,000 / 0', () => {
-    expect(calcBasicDeduction(24_000_001)).toBe(320_000);
-    expect(calcBasicDeduction(24_500_000)).toBe(320_000);
-    expect(calcBasicDeduction(24_500_001)).toBe(160_000);
-    expect(calcBasicDeduction(25_000_000)).toBe(160_000);
-    expect(calcBasicDeduction(25_000_001)).toBe(0);
+    expect(calcBasicDeduction(24_000_001, 2024)).toBe(320_000);
+    expect(calcBasicDeduction(24_500_000, 2024)).toBe(320_000);
+    expect(calcBasicDeduction(24_500_001, 2024)).toBe(160_000);
+    expect(calcBasicDeduction(25_000_000, 2024)).toBe(160_000);
+    expect(calcBasicDeduction(25_000_001, 2024)).toBe(0);
   });
 });
 
@@ -495,29 +508,29 @@ describe('課税所得の1,000円未満切り捨て (floorTaxableThousand / calc
 
 describe('boundary coverage — salary income deduction brackets', () => {
   it('switches continuously at each official boundary', () => {
-    expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
-    expect(calcSalaryIncomeDeduction(1_625_001)).toBe(Math.round(1_625_001 * 0.4 - 100_000));
-    expect(calcSalaryIncomeDeduction(1_800_001)).toBe(Math.round(1_800_001 * 0.3 + 80_000));
-    expect(calcSalaryIncomeDeduction(3_600_001)).toBe(Math.round(3_600_001 * 0.2 + 440_000));
-    expect(calcSalaryIncomeDeduction(6_600_001)).toBe(Math.round(6_600_001 * 0.1 + 1_100_000));
-    expect(calcSalaryIncomeDeduction(8_500_000)).toBe(Math.round(8_500_000 * 0.1 + 1_100_000));
-    expect(calcSalaryIncomeDeduction(8_500_001)).toBe(1_950_000);
+    expect(calcSalaryIncomeDeduction(1_625_000, 2024)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(1_625_001, 2024)).toBe(Math.round(1_625_001 * 0.4 - 100_000));
+    expect(calcSalaryIncomeDeduction(1_800_001, 2024)).toBe(Math.round(1_800_001 * 0.3 + 80_000));
+    expect(calcSalaryIncomeDeduction(3_600_001, 2024)).toBe(Math.round(3_600_001 * 0.2 + 440_000));
+    expect(calcSalaryIncomeDeduction(6_600_001, 2024)).toBe(Math.round(6_600_001 * 0.1 + 1_100_000));
+    expect(calcSalaryIncomeDeduction(8_500_000, 2024)).toBe(Math.round(8_500_000 * 0.1 + 1_100_000));
+    expect(calcSalaryIncomeDeduction(8_500_001, 2024)).toBe(1_950_000);
   });
 });
 
 describe('boundary coverage — basic deduction tapering', () => {
   it('holds full amount just below 24M then steps down', () => {
     expect(calcBasicDeduction(23_999_999)).toBe(480_000);
-    expect(calcBasicDeduction(24_000_001)).toBe(320_000);
+    expect(calcBasicDeduction(24_000_001, 2024)).toBe(320_000);
     expect(calcBasicDeduction(24_499_999)).toBe(320_000);
-    expect(calcBasicDeduction(24_500_001)).toBe(160_000);
+    expect(calcBasicDeduction(24_500_001, 2024)).toBe(160_000);
     expect(calcBasicDeduction(24_999_999)).toBe(160_000);
-    expect(calcBasicDeduction(25_000_001)).toBe(0);
+    expect(calcBasicDeduction(25_000_001, 2024)).toBe(0);
     expect(calcResidentBasicDeduction(23_999_999)).toBe(RESIDENT_BASIC_DEDUCTION);
     expect(calcResidentBasicDeduction(24_000_001)).toBe(290_000);
     expect(calcResidentBasicDeduction(24_500_001)).toBe(150_000);
     expect(calcResidentBasicDeduction(25_000_001)).toBe(0);
-    expect(BASIC_DEDUCTION).toBe(480_000);
+    expect(BASIC_DEDUCTION).toBe(620_000);
   });
 });
 
@@ -811,12 +824,38 @@ describe('給与所得控除の表は境界で連続している', () => {
   it('各区分の代表値を国税庁の表と突き合わせる', () => {
     // 定数を打ち間違えると連続性の検査は通っても値がずれるので、
     // 区分ごとの代表値も固定する。
-    expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
-    expect(calcSalaryIncomeDeduction(1_800_000)).toBe(620_000);
-    expect(calcSalaryIncomeDeduction(3_600_000)).toBe(1_160_000);
-    expect(calcSalaryIncomeDeduction(6_600_000)).toBe(1_760_000);
-    expect(calcSalaryIncomeDeduction(8_500_000)).toBe(1_950_000);
-    expect(calcSalaryIncomeDeduction(20_000_000)).toBe(1_950_000); // 上限で頭打ち
+    expect(calcSalaryIncomeDeduction(1_625_000, 2024)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(1_800_000, 2024)).toBe(620_000);
+    expect(calcSalaryIncomeDeduction(3_600_000, 2024)).toBe(1_160_000);
+    expect(calcSalaryIncomeDeduction(6_600_000, 2024)).toBe(1_760_000);
+    expect(calcSalaryIncomeDeduction(8_500_000, 2024)).toBe(1_950_000);
+    expect(calcSalaryIncomeDeduction(20_000_000, 2024)).toBe(1_950_000); // 上限で頭打ち
+  });
+
+  /*
+   * 令和7年分からの表。最低保障が 55 万円 → 65 万円になり、対象が
+   * 162.5 万円以下 → **190 万円以下**へ広がった。
+   */
+  it('令和7年分以降は 190 万円以下が一律 65 万円', () => {
+    for (const gross of [1, 1_000_000, 1_625_000, 1_800_000, 1_900_000]) {
+      expect(calcSalaryIncomeDeduction(gross, 2025)).toBe(650_000);
+      expect(calcSalaryIncomeDeduction(gross, 2026)).toBe(650_000);
+    }
+    // 190 万円を超えると上の段 (0.3x+8万) へ移る。
+    expect(calcSalaryIncomeDeduction(1_900_001, 2026)).toBe(Math.round(1_900_001 * 0.3 + 80_000));
+  });
+
+  it('190 万円は新旧どちらの表でも 65 万円 — 表は連続したまま', () => {
+    // 190 万円 × 0.3 + 8 万 = 65 万。改正はこの交点を選んで下 2 段を
+    // 一律 65 万円に畳んだので、境界に段差が生まれていない。
+    expect(calcSalaryIncomeDeduction(1_900_000, 2024)).toBe(650_000);
+    expect(calcSalaryIncomeDeduction(1_900_000, 2026)).toBe(650_000);
+  });
+
+  it('190 万円超の段は改正されていない', () => {
+    for (const gross of [3_600_000, 6_600_000, 8_500_000, 20_000_000]) {
+      expect(calcSalaryIncomeDeduction(gross, 2026)).toBe(calcSalaryIncomeDeduction(gross, 2024));
+    }
   });
 });
 
@@ -854,5 +893,74 @@ describe('taxSchemeCatalog — needsAdvisor', () => {
       'both-incorporation': true,
       'both-micro-corp': true,
     });
+  });
+});
+
+/*
+ * 基礎控除の年分別の段階。
+ *
+ * 2 年続けて改正され、しかも令和8・9年分だけの時限加算が入っている。
+ * 「今年いくらか」を 1 つ持つ形にすると必ず古くなるので、年分で選ぶ。
+ * 2026-08 の監査時点で、ここは令和6年分の 48 万円のままだった。
+ */
+describe('calcBasicDeduction — 年分ごとの段階', () => {
+  it('令和6年分以前は一律 48 万円', () => {
+    for (const income of [0, 1_320_000, 5_000_000, 23_500_000, 24_000_000]) {
+      expect(calcBasicDeduction(income, 2024)).toBe(480_000);
+    }
+  });
+
+  it('令和7年分は 95 / 88 / 68 / 63 / 58 万円の 5 段', () => {
+    expect(calcBasicDeduction(1_320_000, 2025)).toBe(950_000);
+    expect(calcBasicDeduction(1_320_001, 2025)).toBe(880_000);
+    expect(calcBasicDeduction(3_360_000, 2025)).toBe(880_000);
+    expect(calcBasicDeduction(3_360_001, 2025)).toBe(680_000);
+    expect(calcBasicDeduction(4_890_000, 2025)).toBe(680_000);
+    expect(calcBasicDeduction(4_890_001, 2025)).toBe(630_000);
+    expect(calcBasicDeduction(6_550_000, 2025)).toBe(630_000);
+    expect(calcBasicDeduction(6_550_001, 2025)).toBe(580_000);
+    expect(calcBasicDeduction(23_500_000, 2025)).toBe(580_000);
+  });
+
+  it('令和8・9年分は本則 62 万円 + 時限加算 (104 / 67)', () => {
+    for (const year of [2026, 2027]) {
+      expect(calcBasicDeduction(0, year)).toBe(1_040_000);
+      expect(calcBasicDeduction(4_890_000, year)).toBe(1_040_000);
+      expect(calcBasicDeduction(4_890_001, year)).toBe(670_000);
+      expect(calcBasicDeduction(6_550_000, year)).toBe(670_000);
+      expect(calcBasicDeduction(6_550_001, year)).toBe(620_000);
+      expect(calcBasicDeduction(23_500_000, year)).toBe(620_000);
+    }
+  });
+
+  it('令和10年分以後は加算が 132 万円以下だけになる (99 / 62)', () => {
+    for (const year of [2028, 2030]) {
+      expect(calcBasicDeduction(1_320_000, year)).toBe(990_000);
+      expect(calcBasicDeduction(1_320_001, year)).toBe(620_000);
+      expect(calcBasicDeduction(23_500_000, year)).toBe(620_000);
+    }
+  });
+
+  it('2,350 万円超の逓減はどの年分でも同じ (改正されていない)', () => {
+    for (const year of [2024, 2025, 2026, 2028]) {
+      expect(calcBasicDeduction(23_500_001, year)).toBe(480_000);
+      expect(calcBasicDeduction(24_000_000, year)).toBe(480_000);
+      expect(calcBasicDeduction(24_000_001, year)).toBe(320_000);
+      expect(calcBasicDeduction(24_500_000, year)).toBe(320_000);
+      expect(calcBasicDeduction(24_500_001, year)).toBe(160_000);
+      expect(calcBasicDeduction(25_000_000, year)).toBe(160_000);
+      expect(calcBasicDeduction(25_000_001, year)).toBe(0);
+    }
+  });
+
+  it('負の合計所得は 0 として扱う', () => {
+    expect(calcBasicDeduction(-1, 2026)).toBe(1_040_000);
+  });
+
+  it('住民税の基礎控除は年分で動かない (据え置き)', () => {
+    // 所得税だけが動いている。ここを一緒に動かすと住民税が過少になる。
+    for (const income of [0, 5_000_000, 23_500_000]) {
+      expect(calcResidentBasicDeduction(income)).toBe(430_000);
+    }
   });
 });

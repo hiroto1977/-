@@ -160,7 +160,7 @@ const FORBIDDEN_PATTERNS = [
       '同じ書き方の 8 箇所が素通しだった',
   },
   {
-    name: 'markup escaping / color / control-char check reimplemented outside its shared module',
+    name: 'markup / Markdown escaping / color / control-char check reimplemented outside its shared module',
     // マークアップ用エスケープの自前実装（実体参照 '&amp;' を自分で書いている行、
     // または 5 文字クラスをまとめて置換している行）、色の判定の自前実装
     // （`#RRGGBB` の正規表現）、制御文字の判定の自前実装（`=== 0x7f`）を捕まえる。
@@ -173,7 +173,13 @@ const FORBIDDEN_PATTERNS = [
     // C1 (0x80–0x9f) まで落とす。URL を弾く判定とは保つものが違うので、
     // 1 つに畳むと片方の意図が壊れる。範囲比較 (`>= 0x7f && <= 0x9f`) は
     // 通し、等値比較だけを見る。網羅ではなく、既にある書き方の再発を止めるもの。
-    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b/i,
+    // Markdown の区切り `|` を自前で落としている行 (`.replace(/\|/g, …)`) も
+    // 見る。**この検出はもともと HTML/XML の形しか見ていなかった**ので、
+    // `main/clients/stocks.ts` が関数内に持っていた
+    // `escMd = s => s.replace(/\|/g, '\\|')` は網に掛からなかった。
+    // 形が違うだけで守っているものは同じ (書き出したファイルに利用者や
+    // AI の応答が埋まる経路) なので、同じ 1 つへ寄せる。
+    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>|\\\|\/g)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b/i,
     // 出荷コード (src/**) だけを見る。scripts/ の図生成は素の CJS で
     // TS の共有実装を読めないため対象外にしている — ただし落とす文字は
     // 揃えてある (2026-08 に gen-econ-asset-chart.cjs だけ " と ' を
@@ -194,7 +200,49 @@ const FORBIDDEN_PATTERNS = [
       'さらに shared には受け入れ範囲の違う safeColor があって判断が 3 通りに割れていた。' +
       '制御文字の判定 (0x7f) も同じで、shared/atlassianSite.ts が持っていたものを ' +
       'shared/aiEndpoint.ts が書き直しかけたので shared/controlChars.ts へ寄せた — ' +
-      '「0x1f まで」か「0x20 未満」か、0x7f を入れるかは一見して差が出ない',
+      '「0x1f まで」か「0x20 未満」か、0x7f を入れるかは一見して差が出ない。' +
+      'Markdown のエスケープ (`|`) も 2026-08-20 に同じ形で見つかった — ' +
+      '書き出しが 3 箇所あって stocks.ts だけが `|` を落とし、' +
+      'stocksAnalysisWeb.ts と business.ts は素通しだった。' +
+      'この検出が HTML/XML の形しか見ていなかったので気付けなかった',
+  },
+  {
+    // 切ってから伏せる書き方。`redactSecrets(body.slice(0, 200))` は
+    // **模様の終わりを切り落として規則ごと外す**ので、見えている秘密が
+    // そのまま残る。2026-08-21 の実測では、閉じ引用符が切り口の外側に
+    // 落ちる位置で 60 文字のトークンが**全部**残った (断片ではない)。
+    // 正しい順序は shared/redact.ts の `redactForMessage` が 1 つだけ持つ。
+    name: 'redactSecrets(x.slice(…)) — 切ってから伏せている',
+    pattern: /redactSecrets\s*\(\s*[^)]*\.slice\s*\(/,
+    allowFile: (rel) => !rel.startsWith('src/') || rel === 'src/shared/redact.ts',
+    codeOnly: true,
+    rationale:
+      '`redactSecrets` は模様で秘密を見つけるので、模様の終わり ' +
+      '(JSON の閉じ引用符 / Bearer の 16 文字 / 接頭辞の 8 文字) が ' +
+      '切り落とされると規則そのものが当たらず、見えている秘密が残る。' +
+      '2026-08-21 の監査時点で呼び出し 17 箇所すべてがこの順序で書かれており、' +
+      '実測で 60 文字のトークンが全部残る位置があった。' +
+      'この文字列は画面に出て不具合報告に貼られる — それが redactSecrets の存在理由。' +
+      '`redactForMessage(body, 200)` を使うこと',
+  },
+  {
+    // 食事補助の非課税限度額を地の文で書いた箇所。2026-04-01 施行の改正で
+    // 3,500 円 → 7,500 円になったが、この数字は**出典もゲートも無いまま
+    // 4 箇所に地の文で**書かれていたので、4 か月以上どこも古いままだった。
+    // しかも画面の会社負担の既定値は 7,500 円で、免責文が掲げる 3,500 円の
+    // 上限を自分で超えていた。値は `MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` が
+    // 1 つだけ持ち、出典と施行日をとなりに置いてある。
+    name: '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値)',
+    pattern: /3,500\s*円|月\s*3500\b/,
+    allowFile: (rel) =>
+      !/welfare/i.test(rel) || rel === 'src/shared/welfareScheme.ts',
+    codeOnly: false,
+    rationale:
+      '2026-04-01 施行の改正 (令和8年3月31日付 法令解釈通達・所得税基本通達 36-38の2) で ' +
+      '食事の現物支給の非課税限度額は月 3,500 円から 7,500 円になった。' +
+      '42 年ぶりの引き上げで、深夜勤務者の夜食代の金銭支給も 300 円から 650 円になっている。' +
+      '古い上限を掲げると、規程を読んだ人が非課税枠を実際より小さく見積もる。' +
+      '`MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` を使うこと',
   },
   {
     name: 'child_process exec/spawn',

@@ -26,6 +26,8 @@ import {
   SELF_MEDICATION_THRESHOLD,
   SELF_MEDICATION_CAP,
   calcSpouseDeduction,
+  spouseIncomeLimitYen,
+  SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
   dependentDeduction,
   disabilityDeduction,
   SINGLE_PARENT_DEDUCTION,
@@ -95,11 +97,56 @@ describe('calcSpouseDeduction', () => {
     expect(calcSpouseDeduction(10_000_001, 0)).toEqual({ incomeTax: 0, residentTax: 0 }); // tier0
   });
 
-  it('applies the elderly spouse amounts at the 48万 boundary', () => {
-    expect(calcSpouseDeduction(5_000_000, 480_000, true)).toEqual({ incomeTax: 480_000, residentTax: 380_000 });
-    expect(calcSpouseDeduction(5_000_000, 480_000, false)).toEqual({ incomeTax: 380_000, residentTax: 330_000 });
-    // 48万超は配偶者特別控除に切替 (老人区分は無関係に満額表)。
-    expect(calcSpouseDeduction(5_000_000, 480_001, true).incomeTax).toBe(380_000);
+  /*
+   * 配偶者控除と配偶者特別控除の境目は**年分で動く**。
+   *
+   * この検査は 2026-08-21 まで 48 万円だけを見ており、令和7年分の改正
+   * (48 → 58) にも令和8年分の改正 (58 → 62) にも気付けない形だった。
+   * 年分を明示して 3 段階すべてを固定する。
+   */
+  it.each([
+    [2024, 480_000],
+    [2025, 580_000],
+    [2026, 620_000],
+    [2027, 620_000],
+  ])('%i 年分の境目は %i 円 — ちょうどまでは配偶者控除', (year, limit) => {
+    expect(spouseIncomeLimitYen(year)).toBe(limit);
+    // 上限ちょうどは配偶者控除 (老人区分が効く)。
+    expect(calcSpouseDeduction(5_000_000, limit, true, year)).toEqual({
+      incomeTax: 480_000,
+      residentTax: 380_000,
+    });
+    expect(calcSpouseDeduction(5_000_000, limit, false, year)).toEqual({
+      incomeTax: 380_000,
+      residentTax: 330_000,
+    });
+    // 1 円超えると配偶者特別控除へ切り替わる (老人区分は無関係に満額表)。
+    expect(calcSpouseDeduction(5_000_000, limit + 1, true, year).incomeTax).toBe(380_000);
+  });
+
+  it('改正前の 48 万円で判定していない (今年分は 62 万円)', () => {
+    // 合計所得 60 万円の配偶者は、令和8年分では配偶者控除の対象。
+    // 旧法のままだと配偶者特別控除の表に落ちて老人区分が効かなくなる。
+    expect(calcSpouseDeduction(5_000_000, 600_000, true, 2026)).toEqual({
+      incomeTax: 480_000,
+      residentTax: 380_000,
+    });
+    expect(calcSpouseDeduction(5_000_000, 600_000, true, 2024).incomeTax).toBe(380_000);
+  });
+
+  it('配偶者特別控除の上限と満額の範囲は改正されていない', () => {
+    expect(SPOUSE_SPECIAL_INCOME_LIMIT_YEN).toBe(1_330_000);
+    // どの年分でも 133 万円ちょうどまでは控除があり、超えると 0。
+    for (const year of [2024, 2025, 2026]) {
+      expect(calcSpouseDeduction(5_000_000, 1_330_000, false, year).incomeTax).toBeGreaterThan(0);
+      expect(calcSpouseDeduction(5_000_000, 1_330_001, false, year)).toEqual({
+        incomeTax: 0,
+        residentTax: 0,
+      });
+      // 満額 38 万円が維持されるのは合計所得 95 万円以下。
+      expect(calcSpouseDeduction(5_000_000, 950_000, false, year).incomeTax).toBe(380_000);
+      expect(calcSpouseDeduction(5_000_000, 950_001, false, year).incomeTax).toBe(360_000);
+    }
   });
 });
 
@@ -377,15 +424,40 @@ describe('calcAllDeductions — iDeCo / 小規模企業共済の上限統合', (
 });
 
 describe('calcAllDeductions', () => {
-  it('returns only the basic deduction for an empty input', () => {
-    const d = calcAllDeductions({ totalIncome: 5_000_000 });
+  // 年分を明示する。基礎控除の段階は年分で変わるので、渡さないと
+  // 暦が変わった日に期待値が意味を失う。
+  it('returns only the basic deduction for an empty input (令和6年分)', () => {
+    const d = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2024 });
     expect(d.basic).toEqual({ incomeTax: 480_000, residentTax: 430_000 });
     expect(d.total).toEqual({ incomeTax: 480_000, residentTax: 430_000 });
   });
 
-  it('aggregates every provided deduction into the total', () => {
+  it('基礎控除は年分で変わり、住民税側は据え置き', () => {
+    // 合計所得 500 万円 = 489 万円超 655 万円以下の帯。
+    const at = (taxYear: number) => calcAllDeductions({ totalIncome: 5_000_000, taxYear }).basic;
+    expect(at(2024)).toEqual({ incomeTax: 480_000, residentTax: 430_000 });
+    expect(at(2025)).toEqual({ incomeTax: 630_000, residentTax: 430_000 });
+    expect(at(2026)).toEqual({ incomeTax: 670_000, residentTax: 430_000 });
+    expect(at(2028)).toEqual({ incomeTax: 620_000, residentTax: 430_000 });
+    // 住民税はどの年分でも 43 万円のまま。
+    for (const y of [2024, 2025, 2026, 2028]) expect(at(y).residentTax).toBe(430_000);
+  });
+
+  it('調整控除の人的控除差は基礎控除の実額に引きずられない', () => {
+    // 所得税の基礎控除が 48 → 67 万円に上がっても、調整控除に使う
+    // 基礎控除の差額は法定の 5 万円のまま。ここが実額 (24 万円) に
+    // なると調整控除が過大になり住民税を過少に見積もる。
+    const old = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2024 });
+    const now = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2026 });
+    expect(old.humanDeductionDiff).toBe(50_000);
+    expect(now.humanDeductionDiff).toBe(50_000);
+    expect(now.basic.incomeTax - now.basic.residentTax).toBe(240_000); // 実額はこれだけ開く
+  });
+
+  it('aggregates every provided deduction into the total (令和6年分)', () => {
     const d = calcAllDeductions({
       totalIncome: 5_000_000,
+      taxYear: 2024,
       socialInsurancePaid: 700_000,
       smallBizMutualAid: 120_000,
       spouseIncome: 0,

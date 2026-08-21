@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { encryptString, decryptString, isEncryptedBundle } from '../dataCrypto';
+import {
+  assertKdfIterations,
+  decryptString,
+  encryptString,
+  isEncryptedBundle,
+  MAX_KDF_ITERATIONS,
+  MIN_KDF_ITERATIONS,
+} from '../dataCrypto';
 
 /**
  * 敵対的シナリオによるデータ暗号化のセキュリティ検証。
@@ -100,5 +107,48 @@ describe('dataCrypto — adversarial / tamper resistance', () => {
     const serialized = JSON.stringify(bundle);
     expect(serialized).not.toContain(secret);
     expect(serialized).not.toContain('TOPSECRET');
+  });
+});
+
+/*
+ * 反復回数の門を直接叩く。
+ *
+ * `decryptString` 経由では `isEncryptedBundle` が先に `typeof iterations ===
+ * 'number'` を見るので、**数値でない値はここまで届かない**。だが
+ * `vault.ts` は IndexedDB から読んだ `meta.iterations` を直接この関数へ渡す。
+ * 保存領域を書ける相手が想定攻撃者なので、そこは任意の値が来うる。
+ *
+ * 2026-08-20 の実測で、境界 (99,999 / 100,000 / 4,000,000 / 4,000,001) は
+ * 固定されていたのに **「数値かどうか」と「有限かどうか」を確かめる検査が
+ * 1 つも無かった** (変異体 3 つが生存)。反復回数を 1 に下げられると総当りが
+ * 現実的になるので、ここは緩めてはいけない門である。
+ */
+describe('assertKdfIterations — 保存領域から来た値を信用しない', () => {
+  it('範囲内の数値は通す', () => {
+    expect(() => assertKdfIterations(MIN_KDF_ITERATIONS)).not.toThrow();
+    expect(() => assertKdfIterations(600_000)).not.toThrow();
+    expect(() => assertKdfIterations(MAX_KDF_ITERATIONS)).not.toThrow();
+  });
+
+  it('数値でない値は弾く (型は嘘をつく — 値は保存領域から来る)', () => {
+    for (const bad of ['600000', null, undefined, true, {}, [], () => 600_000]) {
+      expect(
+        () => assertKdfIterations(bad as unknown as number),
+        JSON.stringify(String(bad)),
+      ).toThrow(/範囲外/);
+    }
+  });
+
+  it('数値でも有限でなければ弾く', () => {
+    // NaN は比較がすべて false になるので、範囲の 2 つだけでは通ってしまう。
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(() => assertKdfIterations(bad), String(bad)).toThrow(/範囲外/);
+    }
+  });
+
+  it('弱い反復回数は具体的に弾く (総当りが現実的になる値)', () => {
+    for (const weak of [0, 1, 1_000, MIN_KDF_ITERATIONS - 1]) {
+      expect(() => assertKdfIterations(weak), String(weak)).toThrow(/範囲外/);
+    }
   });
 });

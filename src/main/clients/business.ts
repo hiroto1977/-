@@ -1,10 +1,10 @@
 import { seededNoise } from '../../shared/seededNoise';
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { redactSecrets } from './types';
+import { redactForMessage } from './types';
 import { isSafeExportPath } from './exportPaths';
 
 /**
@@ -694,7 +694,7 @@ export async function askBusinessAdvisorImpl(
     // mirrors stocks-advisor pattern for symmetry.
     // Stryker disable next-line ArrowFunction,MethodExpression
     const body = await res.text().catch(() => '');
-    throw new Error(`business-advisor ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
   const parsed = (await res.json()) as AnthropicMessagesResponse;
@@ -803,21 +803,50 @@ export interface BusinessDashboardInput {
 }
 
 /** Type guard for advisorResult payload received from the renderer.
- *  Conservative: only accepts structures that pass the same validator
- *  used when the LLM produced them. */
-// Each guard branch has a dedicated negative test (null root, missing
-// recommendations, non-string disclaimer, missing notForRealMoney). The
-// `return true` at the end has no false-path test because every other
-// branch already returned false; BooleanLiteral mutant on the guards is
-// equivalent. Block-form pragma covers everything.
+ *
+ *  ## 2026-08-21 まで、この説明は嘘だった
+ *
+ *  ここには「conservative: only accepts structures that pass the same
+ *  validator used when the LLM produced them」と書いてあったが、実際には
+ *  `recommendations` が**配列かどうかしか見ていなかった** — 要素の中身は
+ *  1 つも検査していない。`validateBusinessAdvisorJson` (同じファイルの
+ *  上にある。「throws on any deviation so a malformed reply can't smuggle
+ *  bad data into the UI」) は全要素・全項目を検査しているので、**同じ
+ *  ファイルの中に同じデータの検査が 2 つあり、IPC 境界を守っている方が
+ *  空だった**ことになる。
+ *
+ *  TypeScript の型は IPC を越えない。`BusinessAdvisorRecommendation` の
+ *  `categoryId` は union 型だが、実行時に届く値は任意である。実測では
+ *  `recommendations: [null]` で `Cannot read properties of null`、
+ *  `actionItems` 欠落で `Cannot read properties of undefined (reading 'map')`
+ *  が書き出しの最中に投げられていた (main.ts の invoke ハンドラが受けるので
+ *  クラッシュはしないが、書き出しは丸ごと失敗する)。
+ *
+ *  説明を実装に合わせるのではなく、**実装を説明に合わせる** — 検査を
+ *  1 つに寄せ、厳密な方を呼ぶ。壊れた payload は従来どおり「助言なし」
+ *  として扱う (throw ではなく false) ので、書き出し自体は成功する。 */
+// 分岐ごとに negative テストがある (null root / recommendations 非配列 /
+// disclaimer 非文字列 / notForRealMoney 欠落 / 要素が壊れている)。
 // Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral
 function isAdvisorResult(v: unknown): v is BusinessAdvisorResponse {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
-  if (!Array.isArray(o['recommendations'])) return false;
   if (typeof o['disclaimer'] !== 'string') return false;
   if (o['notForRealMoney'] !== true) return false;
-  return true;
+  // catch の中で return しない。**空の catch にしても結果が変わらない形**を
+  // 避けるためである — `catch { return false }` は中身を消すと暗黙の
+  // `undefined` を返し、呼び出し側はどちらも偽として扱うので違いが観測でき
+  // ない (実測で生存した)。「投げなければ真」を 1 つの変数で表す。
+  let valid = false;
+  try {
+    // 要素の検査は 1 つだけ持つ。許可する categoryId は全カテゴリ —
+    // どの部分集合を利用者が選んだかは、この境界からは分からない。
+    validateBusinessAdvisorJson(v, new Set(BUSINESS_CATEGORIES.map((d) => d.id)));
+    valid = true;
+  } catch {
+    // 形が合わない = 助言なし。呼び出し側が節ごと省く。
+  }
+  return valid;
 }
 // Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral
 
@@ -936,6 +965,13 @@ ${advisorSection}
 // Markdown renderer: pure function, no I/O.
 // HTML 側と同じ符号の規則 (0 は黒字あつかい) を使う。両方を同じ検査で
 // 突き合わせてあるので、片方だけ変えると落ちる。
+//
+// **2026-08-20 まで、ここはエスケープを 1 つも通していなかった。** HTML 側
+// (`renderBusinessDashboardHtml`) は `escapeXml` を通しているので、同じ
+// データの同じ書き出しで守りが片方にしか無い状態だった。埋まるのは事業の
+// ラベルだけではなく **AI 経営アドバイザーの応答** (`rationale` /
+// `actionItems` / `riskFactors` / `categoryId`) で、`|` 1 つで表が崩れ、
+// 生 HTML はそのまま通る。書き出した `.md` はライブラリに残り人に渡る。
 export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const agg = snapshot.aggregate;
@@ -945,15 +981,17 @@ export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): 
     .map((u) => {
       const c = u.current;
       const marginSign = c.profitMargin >= 0 ? '+' : '';
-      return `| ${u.label} (${u.id}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
+      return `| ${escapeMarkdownInline(u.label)} (${escapeMarkdownInline(u.id)}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
     })
     .join('\n');
 
   const advisorMd = advisorResult
-    ? `\n## AI 経営アドバイザー提案\n\n> ${advisorResult.disclaimer}\n\n${advisorResult.recommendations
+    ? `\n## AI 経営アドバイザー提案\n\n> ${escapeMarkdownInline(advisorResult.disclaimer)}\n\n${advisorResult.recommendations
         .map(
           (r) =>
-            `### #${r.rank} — ${r.categoryId}\n\n${r.rationale}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + a).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + rf).join('\n')}\n`,
+            // rationale だけが段落。見出し・箇条書きの 1 項目・引用は
+            // 改行 1 つでその構造から抜けるので inline 側を使う。
+            `### #${r.rank} — ${escapeMarkdownInline(r.categoryId)}\n\n${escapeMarkdownText(r.rationale)}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + escapeMarkdownInline(a)).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + escapeMarkdownInline(rf)).join('\n')}\n`,
         )
         .join('\n')}`
     : '';

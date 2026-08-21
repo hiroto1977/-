@@ -12,7 +12,7 @@
  * `src/main/clients/*` と同じ作法（`vi.fn<typeof fetch>()`）で書ける。
  */
 
-import { redactSecrets } from '../redact';
+import { redactForMessage } from '../redact';
 
 export type FetchFn = typeof fetch;
 
@@ -70,7 +70,7 @@ export async function apiFetch<T>(url: string, init: RequestInit, ctx: RequestCo
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new ApiError(
-      `${ctx.serviceId} ${res.status}: ${redactSecrets(body.slice(0, 200))}`,
+      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
       res.status,
       ctx.serviceId,
     );

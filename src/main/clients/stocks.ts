@@ -1,7 +1,7 @@
 import { seededNoise } from '../../shared/seededNoise';
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
-import { redactSecrets } from './types';
+import { redactForMessage } from './types';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -1117,9 +1117,32 @@ function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
 
 /** Strict shape validator for the LLM JSON response. Throws on any
  *  deviation so a malformed reply can't smuggle bad data into the UI. */
+/**
+ * 助言に出てきた銘柄を受け入れるか。
+ *
+ * 宇宙が分かっていれば所属で、分からなければ形 (`isSafeSymbol`) で判定する。
+ * `validateAdvisorJson` の中に三項で書くと、あちらの
+ * `Stryker disable ConditionalExpression` の帯に飲まれて**この分岐だけ
+ * 測られなくなる**ので、外へ出して独立に測る。
+ */
+function advisorSymbolAllowed(symbol: string, allowedSymbols: ReadonlySet<string> | null): boolean {
+  return allowedSymbols === null ? isSafeSymbol(symbol) : allowedSymbols.has(symbol);
+}
+
 export function validateAdvisorJson(
   raw: unknown,
-  allowedSymbols: ReadonlySet<string>,
+  /**
+   * 銘柄の許可リスト。**null は「この場では宇宙が分からない」** を意味し、
+   * 所属の検査を `isSafeSymbol` (形の検査) に落とす。
+   *
+   * LLM の応答を検証する経路では宇宙が確定している (`advise` が
+   * `universe` payload か `MOCK_TICKERS` から作る) ので Set を渡す。
+   * 一方 IPC 境界の `isAdvisorResult` は、書き出しの payload を見ているだけで
+   * どの宇宙で助言が作られたかを知らない — ウォッチリストで代用しようとして
+   * 既存の検査 2 件が落ちた。**宇宙 = ウォッチリストではない。**
+   * 知らないものを知っているふりで絞ると、正しい結果を捨てる。
+   */
+  allowedSymbols: ReadonlySet<string> | null,
 ): readonly AdvisorRecommendation[] {
   if (raw === null || typeof raw !== 'object') {
     throw new Error('advisor response is not an object');
@@ -1146,7 +1169,7 @@ export function validateAdvisorJson(
       throw new Error('recommendation entry is not an object');
     }
     const rec = item as Record<string, unknown>;
-    if (typeof rec.symbol !== 'string' || !allowedSymbols.has(rec.symbol)) {
+    if (typeof rec.symbol !== 'string' || !advisorSymbolAllowed(rec.symbol, allowedSymbols)) {
       throw new Error(`recommendation has invalid or out-of-universe symbol: ${String(rec.symbol)}`);
     }
     if (typeof rec.rank !== 'number' || !Number.isFinite(rec.rank) || rec.rank < 1) {
@@ -1293,7 +1316,7 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     // bodies are short.
     // Stryker disable next-line ArrowFunction,MethodExpression
     const body = await res.text().catch(() => '');
-    throw new Error(`stocks-advisor ${res.status}: ${redactSecrets(body.slice(0, 200))}`);
+    throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
   const parsed = (await res.json()) as AnthropicMessagesResponse;
@@ -1663,12 +1686,14 @@ export function defaultDashboardMdPath(): string {
 }
 
 /** Render the same dashboard as Markdown — for Slack / Notion / email
- *  bodies / GitHub PR descriptions. Pure function. No HTML escaping
- *  needed but we strip any pipe `|` from cell strings so inline tables
- *  don't break.  */
+ *  bodies / GitHub PR descriptions. Pure function.
+ *
+ *  エスケープは `shared/escape.ts` の 2 つを使い分ける。ここには
+ *  `|` だけを落とす `escMd` が関数内に 1 つあり、(a) 改行を落としていない
+ *  ので 1 行の構造 (見出し・箇条書き・引用) から抜けられ、(b) `<` を
+ *  落としていないので生 HTML が通っていた。書き出した `.md` は人に渡る。 */
 export function renderDashboardMarkdown(input: DashboardInput): string {
   const { snapshot, advisorResult, strategyComparison, generatedAt } = input;
-  const escMd = (s: string): string => s.replace(/\|/g, '\\|');
 
   const equity = portfolioEquity(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
   const pnl = equity - snapshot.portfolio.initialCash;
@@ -1689,7 +1714,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
               // template-string consumers.
               // Stryker disable next-line ConditionalExpression,EqualityOperator
               const sign = w.changePct >= 0 ? '+' : '';
-              return `| ${escMd(w.symbol)} | ${escMd(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
+              return `| ${escapeMarkdownInline(w.symbol)} | ${escapeMarkdownInline(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
             }),
           )
           .join('\n');
@@ -1700,17 +1725,17 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
         '',
         ...advisorResult.recommendations.map(
           (r) =>
-            `### ${r.rank}. ${escMd(r.symbol)}\n\n${escMd(r.rationale)}\n\n` +
-            r.riskFactors.map((rf) => `- リスク: ${escMd(rf)}`).join('\n'),
+            `### ${r.rank}. ${escapeMarkdownInline(r.symbol)}\n\n${escapeMarkdownText(r.rationale)}\n\n` +
+            r.riskFactors.map((rf) => `- リスク: ${escapeMarkdownInline(rf)}`).join('\n'),
         ),
         '',
-        '> ' + escMd(advisorResult.disclaimer),
+        '> ' + escapeMarkdownInline(advisorResult.disclaimer),
       ].join('\n\n')
     : '';
 
   const comparisonBlock = strategyComparison
     ? [
-        `## 戦略比較 — ${escMd(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
+        `## 戦略比較 — ${escapeMarkdownInline(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
         '',
         '| 戦略 | 最終資産 | 総リターン | 最大DD | 勝率 | 取引数 |',
         '|---|---:|---:|---:|---:|---:|',
@@ -1721,7 +1746,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
           // isBest pinned by 「**(最良)**」+ non-best rows tests.
           // Stryker disable next-line ConditionalExpression
           const isBest = r.strategy === strategyComparison.bestByReturn;
-          const label = isBest ? `**${escMd(r.strategy)} (最良)**` : escMd(r.strategy);
+          const label = isBest ? `**${escapeMarkdownInline(r.strategy)} (最良)**` : escapeMarkdownInline(r.strategy);
           return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`;
         }),
       ].join('\n')
@@ -1785,20 +1810,40 @@ export interface ExportDeps {
 }
 
 /** Type guard for the AdvisorResponse payload that the renderer
- *  forwards through `serviceHub.invoke`. */
-// All 4 short-circuit clauses are exercised by 'ignores malformed
-// advisor payloads' test + the 'embeds advisor result when payload
-// is valid' test. Stryker's perTest mis-attributes the kill — pragma
-// here, real-behavior pinned by tests.
+ *  forwards through `serviceHub.invoke`.
+ *
+ *  business.ts の同名の関数と同じ穴があった (2026-08-21): `recommendations`
+ *  が**配列かどうかしか見ておらず**、要素の中身を 1 つも検査していなかった。
+ *  同じファイルの `validateAdvisorJson` は LLM の応答について全要素・全項目を
+ *  検査しているので、同じデータの検査が 2 つあって、IPC 境界を守っている方が
+ *  空だった。TypeScript の型は IPC を越えない。
+ *
+ *  検査は 1 つに寄せる。ただし**銘柄の所属だけはここでは判定できない** —
+ *  助言がどの宇宙で作られたかは payload に書かれていない。最初これを
+ *  スナップショットのウォッチリストで代用したが、宇宙は `advise` の
+ *  `universe` payload か `MOCK_TICKERS` から来るのであってウォッチリスト
+ *  ではなく、既存の検査 2 件がそれを捕まえた。知らないものを知っている
+ *  ふりで絞ると正しい助言を黙って捨てることになるので、ここでは形と
+ *  `isSafeSymbol` までにする。 */
 // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
 function isAdvisorResult(v: unknown): v is AdvisorResponse {
   if (v === null || typeof v !== 'object') return false;
   const r = v as Record<string, unknown>;
-  return (
-    Array.isArray(r['recommendations']) &&
-    typeof r['disclaimer'] === 'string' &&
-    r['notForRealMoney'] === true
-  );
+  if (typeof r['disclaimer'] !== 'string') return false;
+  if (r['notForRealMoney'] !== true) return false;
+  // catch の中で return しない。**空の catch にしても結果が変わらない形**を
+  // 避けるためである — `catch { return false }` は中身を消すと暗黙の
+  // `undefined` を返し、呼び出し側はどちらも偽として扱うので違いが観測でき
+  // ない (実測で生存した)。「投げなければ真」を 1 つの変数で表す。
+  let valid = false;
+  try {
+    // null = 宇宙は分からない。形と `isSafeSymbol` までを見る。
+    validateAdvisorJson(v, null);
+    valid = true;
+  } catch {
+    // 形が合わない = 助言なし。呼び出し側が節ごと省く。
+  }
+  return valid;
 }
 
 function isStrategyComparison(v: unknown): v is StrategyComparisonResult {

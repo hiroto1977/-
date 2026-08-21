@@ -13,7 +13,7 @@
  * 免責 (ADVISOR_DISCLAIMER) を必ず付ける。
  */
 
-import { escapeXml } from '../../shared/escape';
+import { escapeXml, escapeMarkdownInline } from '../../shared/escape';
 import { mockCandles, type WebCandle, type WebSignal } from './stocksWatchlistWeb';
 
 const HISTORY_LENGTH = 120;
@@ -619,27 +619,43 @@ export function renderDashboardHtml(input: DashboardInput): string {
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Stocks ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: ${escapeXml(input.generatedAt)}</p><h2>ウォッチリスト</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr>${rows || '<tr><td colspan="4">(登録銘柄なし)</td></tr>'}</table>${cmp}${adv}<p style="margin-top:24px;color:#8a93a6;font-size:12px">${escapeXml(ADVISOR_DISCLAIMER)}</p></body></html>`;
 }
 
+/**
+ * 同じダッシュボードを Markdown で書き出す。
+ *
+ * **2026-08-20 まで、ここだけエスケープが 1 つも無かった。** HTML 版
+ * (`renderDashboardHtml`, すぐ上) は全ての値を `escapeXml` に通しており、
+ * Electron 版の Markdown (`main/clients/stocks.ts`) は `|` だけ落としていた。
+ * 同じ書き出しの 3 つ目にあたるこれだけが素通しだった。
+ *
+ * ここに埋まる値は利用者の打った銘柄名だけではなく、**AI アドバイザーの
+ * 応答**が含まれる (`validateAdvisorJson` は「空でない文字列」しか見ない)。
+ *
+ * この関数の行はすべて 1 行で完結する構造 (表のセル・見出し・番号付き
+ * 箇条書き・引用) なので、段落用ではなく `escapeMarkdownInline` を使う。
+ */
 export function renderDashboardMarkdown(input: DashboardInput): string {
   const lines: string[] = [];
   lines.push('# Stocks ダッシュボード (ブラウザ版・モックデータ)', '', `生成: ${input.generatedAt}`, '', '## ウォッチリスト', '', '| シンボル | 名称 | 終値 | 前日比 |', '| --- | --- | ---: | ---: |');
   if (input.watchlist.length === 0) lines.push('| (登録銘柄なし) | | | |');
   for (const w of input.watchlist) {
-    lines.push(`| ${w.symbol} | ${w.label} | ${w.latestClose.toFixed(2)} | ${w.changePct >= 0 ? '+' : ''}${w.changePct.toFixed(2)}% |`);
+    lines.push(`| ${escapeMarkdownInline(w.symbol)} | ${escapeMarkdownInline(w.label)} | ${w.latestClose.toFixed(2)} | ${w.changePct >= 0 ? '+' : ''}${w.changePct.toFixed(2)}% |`);
   }
   if (input.strategyComparison) {
     const c = input.strategyComparison;
-    lines.push('', `## 戦略比較 — ${c.symbol}`, '', '| 戦略 | 最終資産 | リターン% | 最大DD% | 勝率 | 取引数 |', '| --- | ---: | ---: | ---: | ---: | ---: |');
+    lines.push('', `## 戦略比較 — ${escapeMarkdownInline(c.symbol)}`, '', '| 戦略 | 最終資産 | リターン% | 最大DD% | 勝率 | 取引数 |', '| --- | ---: | ---: | ---: | ---: | ---: |');
     for (const r of c.rows) {
-      lines.push(`| ${r.strategy} | ${r.finalEquity.toFixed(0)} | ${r.totalReturnPct.toFixed(2)} | ${r.maxDrawdownPct.toFixed(2)} | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`);
+      lines.push(`| ${escapeMarkdownInline(r.strategy)} | ${r.finalEquity.toFixed(0)} | ${r.totalReturnPct.toFixed(2)} | ${r.maxDrawdownPct.toFixed(2)} | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`);
     }
-    lines.push('', `最良 (リターン基準): ${c.bestByReturn ?? '差なし'}`);
+    lines.push('', `最良 (リターン基準): ${c.bestByReturn === null ? '差なし' : escapeMarkdownInline(c.bestByReturn)}`);
   }
   if (input.advisor) {
     lines.push('', '## アドバイザー', '');
     for (const r of input.advisor.recommendations) {
-      lines.push(`${r.rank}. **${r.symbol}** — ${r.rationale} (リスク: ${r.riskFactors.join(' / ')})`);
+      lines.push(
+        `${r.rank}. **${escapeMarkdownInline(r.symbol)}** — ${escapeMarkdownInline(r.rationale)} (リスク: ${r.riskFactors.map(escapeMarkdownInline).join(' / ')})`,
+      );
     }
-    lines.push('', `> ${input.advisor.disclaimer}`);
+    lines.push('', `> ${escapeMarkdownInline(input.advisor.disclaimer)}`);
   }
   lines.push('', `---`, '', ADVISOR_DISCLAIMER);
   return lines.join('\n');

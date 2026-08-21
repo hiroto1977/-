@@ -36,8 +36,8 @@ export class FetchError extends Error {
 // and the renderer's BYO-proxy). Imported for local use in `jsonFetch` and
 // re-exported so existing `import { redactSecrets } from './types'` callers
 // are unaffected.
-import { redactSecrets } from '../../shared/redact';
-export { redactSecrets };
+import { redactSecrets, redactForMessage } from '../../shared/redact';
+export { redactSecrets, redactForMessage };
 
 export async function jsonFetch<T>(
   url: string,
@@ -49,7 +49,7 @@ export async function jsonFetch<T>(
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new FetchError(
-      `${ctx.serviceId} ${res.status}: ${redactSecrets(body.slice(0, 200))}`,
+      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
       res.status,
       ctx.serviceId,
     );

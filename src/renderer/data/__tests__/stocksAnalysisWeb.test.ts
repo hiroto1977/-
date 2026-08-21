@@ -566,8 +566,14 @@ describe('dashboard render (golden exact output, mutation hardening)', () => {
   it('html golden with an empty comparison + null bestByReturn (差なし)', () => {
     expect(renderDashboardHtml(cmpNullBest)).toBe("<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><title>Stocks ダッシュボード</title></head><body style=\"font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec\"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: now</p><h2>ウォッチリスト</h2><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr><tr><td colspan=\"4\">(登録銘柄なし)</td></tr></table><h2>戦略比較 — AAPL</h2><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>戦略</th><th>最終資産</th><th>リターン%</th><th>最大DD%</th><th>勝率</th><th>取引数</th></tr></table><p>最良 (リターン基準): 差なし</p><p style=\"margin-top:24px;color:#8a93a6;font-size:12px\">本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。</p></body></html>");
   });
+  // この golden は 2026-08-20 まで `| X< | Y& |` を期待していた。**穴を
+  // 固定していた**のであって、捕まえてはいなかった — 同じ入れ物 (`X<`) を
+  // 使う HTML の golden はすぐ上で `X&lt;` を期待しており、「エスケープの
+  // 検査」という名前まで付いていたのに、Markdown 側だけ素通しの出力を
+  // 正解として書き留めてあった。`&` は落とさない (実体参照は CommonMark
+  // §2.5 で文字として扱われ markup にならない) ので `Y&` はそのまま。
   it('markdown full golden', () => {
-    expect(renderDashboardMarkdown(full)).toBe("# Stocks ダッシュボード (ブラウザ版・モックデータ)\n\n生成: 2026-01-31T00:00:00.000Z\n\n## ウォッチリスト\n\n| シンボル | 名称 | 終値 | 前日比 |\n| --- | --- | ---: | ---: |\n| AAPL | Apple | 123.45 | +1.20% |\n| X< | Y& | 10.00 | -2.50% |\n| Z | Z | 5.00 | +0.00% |\n\n## 戦略比較 — AAPL\n\n| 戦略 | 最終資産 | リターン% | 最大DD% | 勝率 | 取引数 |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| sma-crossover | 1050 | 5.04 | 2.10 | 50% | 4 |\n| macd-signal | 980 | -2.00 | 3.00 | 0% | 2 |\n\n最良 (リターン基準): sma-crossover\n\n## アドバイザー\n\n1. **AAPL** — strong trend (リスク: volatility / liquidity)\n\n> DISC\n\n---\n\n本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。");
+    expect(renderDashboardMarkdown(full)).toBe("# Stocks ダッシュボード (ブラウザ版・モックデータ)\n\n生成: 2026-01-31T00:00:00.000Z\n\n## ウォッチリスト\n\n| シンボル | 名称 | 終値 | 前日比 |\n| --- | --- | ---: | ---: |\n| AAPL | Apple | 123.45 | +1.20% |\n| X&lt; | Y& | 10.00 | -2.50% |\n| Z | Z | 5.00 | +0.00% |\n\n## 戦略比較 — AAPL\n\n| 戦略 | 最終資産 | リターン% | 最大DD% | 勝率 | 取引数 |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| sma-crossover | 1050 | 5.04 | 2.10 | 50% | 4 |\n| macd-signal | 980 | -2.00 | 3.00 | 0% | 2 |\n\n最良 (リターン基準): sma-crossover\n\n## アドバイザー\n\n1. **AAPL** — strong trend (リスク: volatility / liquidity)\n\n> DISC\n\n---\n\n本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。");
   });
   it('markdown empty golden', () => {
     expect(renderDashboardMarkdown(empty)).toBe("# Stocks ダッシュボード (ブラウザ版・モックデータ)\n\n生成: now\n\n## ウォッチリスト\n\n| シンボル | 名称 | 終値 | 前日比 |\n| --- | --- | ---: | ---: |\n| (登録銘柄なし) | | | |\n\n---\n\n本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。");
@@ -1026,5 +1032,84 @@ describe('buildRiskMetrics', () => {
     const closes = mockCandles(SYM, NOW, 120).map((c) => c.close);
     const pb = percentB(closes, 20, 2);
     expect(m.percentB).toBe(pb[pb.length - 1] ?? null);
+  });
+});
+
+/*
+ * ブラウザ版の Markdown 書き出し。**2026-08-20 まで、3 つある書き出しの
+ * うちここだけエスケープが 1 つも無かった。** すぐ上の HTML 版は同じ値を
+ * `escapeXml` に通しており、Electron 版は `|` だけ落としていた。
+ *
+ * この関数の行はすべて 1 行で完結する構造なので、どの値も改行で抜けられる。
+ */
+describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れないか', () => {
+  it('銘柄名の改行と区切りが表を作り直さない', () => {
+    const md = renderDashboardMarkdown({
+      watchlist: [
+        { symbol: 'AAPL', label: '偽|株\n\n| 乗っ取り |\n|---|\n| 0 |', latestClose: 100, changePct: 1 },
+      ],
+      generatedAt: 'x',
+    });
+    const row = md.split('\n').find((l) => l.includes('乗っ取り'));
+    expect(row).toBeDefined();
+    expect(row).toContain('偽\\|株');
+    expect(md).not.toMatch(/^\|---\|$/m);
+  });
+
+  it('アドバイザーの応答から生 HTML が出ない', () => {
+    const md = renderDashboardMarkdown({
+      watchlist: [],
+      advisor: {
+        recommendations: [
+          {
+            symbol: '<b>AAPL</b>',
+            rank: 1,
+            rationale: '<img src=x onerror=alert(1)>',
+            riskFactors: ['<script>alert(1)</script>'],
+          },
+        ],
+        disclaimer: '<style>body{display:none}</style>',
+        notForRealMoney: true as const,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).not.toContain('<');
+    expect(md).toContain('&lt;img src=x onerror=alert(1)>');
+  });
+
+  it('番号付き箇条書きと引用から抜けさせない (ここは rationale も 1 行)', () => {
+    const md = renderDashboardMarkdown({
+      watchlist: [],
+      advisor: {
+        recommendations: [
+          { symbol: 'A', rank: 1, rationale: '理由\n## 偽の見出し', riskFactors: ['r\n- 偽'] },
+        ],
+        disclaimer: 'd\n本文',
+        notForRealMoney: true as const,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('1. **A** — 理由 ## 偽の見出し (リスク: r - 偽)');
+    expect(md).toContain('> d 本文');
+    expect(md).not.toMatch(/^## 偽の見出し$/m);
+  });
+
+  it('戦略比較の見出しと最良銘柄も 1 行に閉じる', () => {
+    const md = renderDashboardMarkdown({
+      watchlist: [],
+      strategyComparison: {
+        symbol: 'A\n## 偽',
+        initialCash: 1000,
+        rows: [
+          { strategy: 'sma|x\n偽', finalEquity: 1, totalReturnPct: 0, maxDrawdownPct: 0, winRate: 0, tradeCount: 0 },
+        ],
+        bestByReturn: 'best\n## 偽',
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('## 戦略比較 — A ## 偽');
+    expect(md).toContain('| sma\\|x 偽 |');
+    expect(md).toContain('最良 (リターン基準): best ## 偽');
+    expect(md).not.toMatch(/^## 偽$/m);
   });
 });

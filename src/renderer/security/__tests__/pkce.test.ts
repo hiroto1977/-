@@ -5,6 +5,7 @@ if (!('subtle' in globalThis.crypto)) {
 }
 
 import {
+  base64UrlEncode,
   buildGoogleAuthUrl,
   exchangeGoogleCode,
   generatePkce,
@@ -255,5 +256,74 @@ describe('exchangeGoogleCode — エラー本文の秘匿', () => {
       .mockResolvedValue(errorResponse('{"error":"invalid_grant","access_token":"ya29.SECRET"}'));
     await expect(exchangeGoogleCode(args, fetchMock)).rejects.toThrow(/invalid_grant/);
     await expect(exchangeGoogleCode(args, fetchMock)).rejects.toThrow(/400/);
+  });
+});
+
+describe('parseGoogleCallback — クエリでない貼り付け', () => {
+  /*
+   * 以前は「`=` を含むか」で分岐し、含まないものを早期に null にしていた。
+   * その分岐は結果を変えないので消した (等価変異が 2 つ残っていた)。
+   * 消しても答えが変わらないことをここで固定する — 分岐を消した瞬間に
+   * 挙動が変わっていたら、それは等価ではなかったということ。
+   */
+  it('`=` を含まない貼り付けは null', () => {
+    expect(parseGoogleCallback('4/0AB123')).toBeNull();
+    expect(parseGoogleCallback('ここに貼ってください')).toBeNull();
+    expect(parseGoogleCallback('#')).toBeNull();
+  });
+
+  it('空文字・空白だけでも落ちずに null', () => {
+    expect(parseGoogleCallback('')).toBeNull();
+    expect(parseGoogleCallback('\t \n')).toBeNull();
+  });
+
+  it('code か state の片方だけでは受け取らない', () => {
+    expect(parseGoogleCallback('code=ab')).toBeNull();
+    expect(parseGoogleCallback('state=xy')).toBeNull();
+    expect(parseGoogleCallback('code=&state=xy')).toBeNull();
+    expect(parseGoogleCallback('code=ab&state=')).toBeNull();
+  });
+
+  it('両方そろっていれば受け取る', () => {
+    expect(parseGoogleCallback('code=ab&state=xy')).toEqual({ code: 'ab', state: 'xy' });
+  });
+});
+
+/*
+ * base64url の変換そのものを固定する。
+ *
+ * `generatePkce` 経由の既存の検査は `/^[A-Za-z0-9_-]+$/` を見ているが、
+ * **`/` を消しても文字クラスは満たされる**ので、`/`→`_` の対応が壊れても
+ * 落ちない。実測で `.replace(/\//g, '_')` を `''` にした変異体が生き残った。
+ * 乱数を差し替えるより、純関数を直に固定するほうが読みやすい。
+ */
+describe('base64UrlEncode — 対応表を固定する', () => {
+  it('+ と / の両方を置き換える', () => {
+    // 標準 base64 で "AA+/" になるバイト列。
+    expect(base64UrlEncode(new Uint8Array([0, 15, 191]))).toBe('AA-_');
+  });
+
+  it('/ を消さずに _ にする (消しても文字クラスは満たされてしまう)', () => {
+    const out = base64UrlEncode(new Uint8Array([0, 15, 191]));
+    expect(out).toContain('_');
+    expect(out).toHaveLength(4);
+  });
+
+  it('+ を消さずに - にする', () => {
+    const out = base64UrlEncode(new Uint8Array([0, 15, 191]));
+    expect(out).toContain('-');
+  });
+
+  it('末尾のパディングだけ落とす', () => {
+    expect(base64UrlEncode(new Uint8Array([0, 15]))).toBe('AA8'); // "AA8=" から = を 1 つ
+    expect(base64UrlEncode(new Uint8Array([255]))).toBe('_w'); // "/w==" から = を 2 つ
+  });
+
+  it('空は空', () => {
+    expect(base64UrlEncode(new Uint8Array([]))).toBe('');
+  });
+
+  it('base64url に現れてはいけない文字が残らない', () => {
+    expect(base64UrlEncode(new Uint8Array([0, 15, 191, 255, 254, 253]))).toMatch(/^[A-Za-z0-9_-]+$/);
   });
 });

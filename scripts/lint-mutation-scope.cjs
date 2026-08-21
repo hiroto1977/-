@@ -84,6 +84,24 @@ const MUST_MEASURE = {
   'src/shared/redact.ts':            'ログに載せる前の伏字',
   'src/shared/escape.ts':            'マークアップへ差し込む前のエスケープ',
   'src/renderer/fs/fsa.ts':          '「次にどこへ書くか」の記憶',
+  // 2026-08-20 追加。前回 (2026-08-18) は「そのとき見つけた 9 つ」を並べただけで、
+  // **同じ性質のモジュールが他に無いかを調べていなかった**。`mutate` 全 226 件の
+  // 冒頭 30 行を「関門 / fail-closed / SSRF / 送り先 / 踏み台 / 絞る」で走査し、
+  // **自分の説明文で門だと名乗っているもの**を全部拾った。7 件出た。
+  // 6 件は既に `mutate` に在籍していた (= 測られていたが、外されても誰も気付かない
+  // 状態だった)。webauthn.ts だけは `mutate` にも無く、実測 68 変異体 61.76% だった。
+  'src/shared/proxyEndpoint.ts':     'BYO プロキシの送り先 URL の検証 (資格情報のほぼ全部が通る 1 本の口)',
+  'src/shared/aiEndpoint.ts':        'AI プロバイダのベース URL の検証 (x-api-key / Bearer を載せる先)',
+  'src/shared/atlassianSite.ts':     'Atlassian の site URL の検証 (SSRF の関門)',
+  'src/shared/tokenInput.ts':        '資格情報の保存要求の検証 (main と renderer で同じ規則)',
+  'src/shared/scanTarget.ts':        'VirusTotal へ投入する URL の検証 (取り消せない外部公開)',
+  'src/renderer/network/liveRead.ts': 'ブラウザ版の読み取り経路 (資格情報を第三者のプロキシへ渡す)',
+  'src/renderer/security/webauthn.ts': '生体認証ゲート (fail-closed。誤配線を throw で止める約束の置き場)',
+  'src/shared/vaultToken.ts':        '保存値から Bearer を取り出す唯一の場所 (壊れた TokenSet を送らない)',
+  // 2026-08-20 追加。変異検査 CI が赤だった件で見つけた — 整合性チェーンの保護
+  // 対象なのに壁の一覧に無く、`assertKdfIterations` の「数値かどうか」を確かめる
+  // 検査が 1 つも無いまま生存していた。反復回数は IndexedDB から来る。
+  'src/renderer/security/dataCrypto.ts': 'レコード暗号化と KDF 反復回数の門 (保存領域から来た値を信用しない)',
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;

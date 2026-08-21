@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { ServiceId } from '../shared/serviceId';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
+import { hasUsableAccessToken } from '../shared/vaultToken';
 import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
 
 const FILE_NAME = 'service-hub-secrets.json';
@@ -253,12 +254,11 @@ export async function getStorageProtection(): Promise<StorageProtection> {
 
 const REFRESH_WINDOW_MS = 60_000;
 
+// 「TokenSet として使えるか」の規則は `src/shared/vaultToken.ts` に 1 つだけ置く。
+// こことブラウザ版で別々に書いていた結果、**片方だけが緩い**状態になっていた
+// (レンダラ側は壊れた TokenSet を raw のまま Bearer に載せていた — 2026-08-20)。
 function isTokenSet(parsed: unknown): parsed is TokenSet {
-  return (
-    typeof parsed === 'object' &&
-    parsed !== null &&
-    typeof (parsed as TokenSet).accessToken === 'string'
-  );
+  return hasUsableAccessToken(parsed);
 }
 
 export async function setOAuthTokens(serviceId: ServiceId, tokens: TokenSet): Promise<void> {
