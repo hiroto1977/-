@@ -29,6 +29,51 @@ export interface DeductionPair {
 // 控除額は「本人の合計所得金額」と「配偶者の合計所得金額」の両方で決まる。
 // 本人の合計所得が 1,000 万円超 (給与のみなら年収 1,195 万円超) は対象外。
 
+/**
+ * 配偶者控除の対象となる「配偶者の合計所得金額」の上限 (円)。**年分で変わる。**
+ *
+ * 2 年続けて改正された。基礎控除の引き上げに連動して動くもので、
+ * この関数は 2026-08 時点で確定している 3 段階を持つ:
+ *
+ * | 年分 | 上限 | 給与のみの年収 |
+ * |---|---|---|
+ * | 令和6年分以前 | 48 万円 | 103 万円 |
+ * | 令和7年分 | 58 万円 | 123 万円 |
+ * | 令和8年分以後 | 62 万円 | 136 万円 |
+ *
+ * **この値は 2026-08-21 まで 48 万円のままだった** — 令和7年分の改正
+ * (48 → 58) を取り込んでいなかった。食事補助の非課税限度額と同じ形で、
+ * 「年分で変わる数字を 1 つしか持たない」と必ず古くなる。
+ *
+ * 令和8年分の 62 万円は**令和8年12月1日施行**だが、適用は令和8年分以後の
+ * 所得税全体に及ぶ (源泉徴収は令和9年1月1日以後に支払う給与から)。
+ * したがって切り替えは「施行日を過ぎたか」ではなく**年分**で判定する —
+ * 2026年中の所得は、12月1日の前後を問わず 62 万円で判定される。
+ *
+ * 出典:
+ * - 国税庁 No.1191 配偶者控除
+ *   https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm
+ * - 国税庁 令和8年度税制改正による所得税の基礎控除の引上げ等について
+ *   https://www.nta.go.jp/users/gensen/2026kiso/index.htm
+ * - 国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について
+ *   https://www.nta.go.jp/users/gensen/2025kiso/index.htm
+ */
+export function spouseIncomeLimitYen(taxYear: number): number {
+  if (taxYear >= 2026) return 620_000; // 令和8年分以後
+  if (taxYear === 2025) return 580_000; // 令和7年分
+  return 480_000; // 令和6年分以前
+}
+
+/**
+ * 配偶者特別控除の対象となる「配偶者の合計所得金額」の上限 (円)。
+ *
+ * 下限は `spouseIncomeLimitYen` (配偶者控除の上限) の超過分だが、**上限は
+ * 改正されていない**。満額 38 万円が維持されるのも合計所得 95 万円以下の
+ * ままで、そこから 133 万円まで段階的に減る表も変わっていない。
+ * 動いたのは入口だけである。
+ */
+export const SPOUSE_SPECIAL_INCOME_LIMIT_YEN = 1_330_000;
+
 /** 本人の合計所得帯による配偶者控除の調整段階 (一般の控除対象配偶者・70歳未満)。 */
 function spouseTierBySelfIncome(selfIncome: number): 0 | 1 | 2 | 3 {
   if (selfIncome <= 9_000_000) return 1; // 満額
@@ -42,17 +87,19 @@ function spouseTierBySelfIncome(selfIncome: number): 0 | 1 | 2 | 3 {
  * @param selfIncome 本人の合計所得金額
  * @param spouseIncome 配偶者の合計所得金額 (給与なら年収-給与所得控除)
  * @param spouseElderly 配偶者が70歳以上 (老人控除対象配偶者) か
+ * @param taxYear 対象の年分 (西暦)。境界が年分で動くので必須の入力。
  */
 export function calcSpouseDeduction(
   selfIncome: number,
   spouseIncome: number,
   spouseElderly = false,
+  taxYear = new Date().getFullYear(),
 ): DeductionPair {
   const tier = spouseTierBySelfIncome(selfIncome);
   if (tier === 0) return { incomeTax: 0, residentTax: 0 };
 
-  // 配偶者控除 (配偶者の合計所得 48万以下)。
-  if (spouseIncome <= 480_000) {
+  // 配偶者控除 (配偶者の合計所得が上限以下)。上限は年分で動く。
+  if (spouseIncome <= spouseIncomeLimitYen(taxYear)) {
     // 満額: 一般38万 (住民33万) / 老人48万 (住民38万)。
     const baseIncome = spouseElderly ? 480_000 : 380_000;
     const baseResident = spouseElderly ? 380_000 : 330_000;
@@ -60,9 +107,10 @@ export function calcSpouseDeduction(
     return { incomeTax: yen(baseIncome * factor), residentTax: yen(baseResident * factor) };
   }
 
-  // 配偶者特別控除 (配偶者の合計所得 48万超〜133万)。満額相当の段階表 (本人所得900万以下)。
+  // 配偶者特別控除 (配偶者控除の上限超〜133万)。満額相当の段階表 (本人所得900万以下)。
   // No.1195 の表を所得帯で近似 (段階の刻みは簡略化)。
-  if (spouseIncome > 1_330_000) return { incomeTax: 0, residentTax: 0 };
+  // 上限と段階表は改正されていない — 動いたのは入口 (上の分岐) だけ。
+  if (spouseIncome > SPOUSE_SPECIAL_INCOME_LIMIT_YEN) return { incomeTax: 0, residentTax: 0 };
   let fullIncome: number;
   let fullResident: number;
   if (spouseIncome <= 950_000) {

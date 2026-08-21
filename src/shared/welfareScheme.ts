@@ -10,7 +10,12 @@ import {
   EMPLOYMENT_INSURANCE_RATE_EMPLOYER,
   WORKERS_ACCIDENT_RATE,
 } from './payroll';
-import { calcDependentDeduction, type DependentKind, type DeductionPair } from './taxDeductions';
+import {
+  calcDependentDeduction,
+  calcSpouseDeduction,
+  type DependentKind,
+  type DeductionPair,
+} from './taxDeductions';
 
 /**
  * 給与デザイン / 福利厚生スキーム試算 (純ロジック・IO なし・概算)。
@@ -67,6 +72,43 @@ export const NIGHT_MEAL_CASH_TAX_FREE_LIMIT_YEN = 650;
 export const MEAL_SUBSIDY_SELF_PAY_RATIO = 0.5;
 
 const floorYen = (n: number) => Math.floor(n);
+
+/**
+ * 配偶者控除 + 配偶者特別控除を求める。
+ *
+ * ## 循環をどこで切るか
+ *
+ * この控除は**本人の合計所得**で段階的に減る (900 / 950 / 1,000 万円)。
+ * ところが本モジュールは「手元残りが目標額になる額面」を逆算する作りなので、
+ * 額面は控除に依存し、控除は額面に依存する。素直に書くと循環する。
+ *
+ * 一度だけ**控除なしで額面を解いて**、その額面で段階を決める。二巡目は
+ * 回さない — 配偶者控除は最大 38 万円 (年) で、それが額面を動かす幅は
+ * 段階の境目 (900 / 950 / 1,000 万円) をまたぐには小さすぎる。
+ *
+ * 両シナリオへ**同額**を適用する。スキーム側は額面が下がるので、実際の
+ * 控除はこれ以上に有利になることはあっても不利にはならない (所得が下がる
+ * ほど満額へ寄る)。つまりこの近似は**スキームの効果を過小に見せる方向**に
+ * 倒れており、良く見せる方向には倒れない。
+ */
+function calcSpouseDeductionFor(input: WelfareSchemeInput, withCare: boolean): DeductionPair {
+  // 未指定は「配偶者なし」。所得 0 の配偶者が居る場合と取り違えない。
+  if (input.spouseIncome === undefined) return ZERO_DEDUCTION;
+  const livingCost = input.rentTotal + input.childcare + input.mealTotal + input.ecPoints;
+  const provisionalGross = solveGrossForTakeHome(
+    input.targetFreeCash + livingCost,
+    withCare,
+    ZERO_DEDUCTION,
+  );
+  const annualGross = provisionalGross * 12;
+  const selfIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross));
+  return calcSpouseDeduction(
+    selfIncome,
+    Math.max(0, input.spouseIncome),
+    input.spouseElderly ?? false,
+    input.taxYear ?? new Date().getFullYear(),
+  );
+}
 
 /** 追加の所得控除 (扶養控除・青色申告特別控除 等) のゼロ値。 */
 const ZERO_DEDUCTION: DeductionPair = { incomeTax: 0, residentTax: 0 };
@@ -195,6 +237,23 @@ export interface WelfareSchemeInput {
    * 控除する簡略モデルで扱う。給与のみの人には適用されない点に留意 (UI で明示)。
    */
   readonly blueDeduction?: number;
+  /**
+   * 配偶者の合計所得金額 (円/年)。指定すると配偶者控除・配偶者特別控除を
+   * 両シナリオに適用する。
+   *
+   * **配偶者が居ないのと「所得 0 の配偶者が居る」は違う。** 前者は控除なし、
+   * 後者は満額の配偶者控除になる。0 を既定値にすると「未入力」と
+   * 「専業主婦・主夫」を取り違えるので、**未指定は undefined のまま**にして
+   * 配偶者なしとして扱う。
+   */
+  readonly spouseIncome?: number;
+  /** 配偶者が70歳以上 (老人控除対象配偶者) か。 */
+  readonly spouseElderly?: boolean;
+  /**
+   * 対象の年分 (西暦)。配偶者控除の境目が年分で動くので効く。
+   * 省略時は現在の年。
+   */
+  readonly taxYear?: number;
 }
 
 export interface WelfareScenario {
@@ -235,6 +294,8 @@ export interface WelfareSchemeResult {
     readonly dependent: DeductionPair;
     /** 青色申告特別控除 (所得税・住民税とも同額)。 */
     readonly blue: number;
+    /** 配偶者控除 + 配偶者特別控除 (所得税分 / 住民税分)。 */
+    readonly spouse: DeductionPair;
     /** 課税所得から差し引いた合計の追加所得控除 (所得税分 / 住民税分)。 */
     readonly total: DeductionPair;
   };
@@ -255,9 +316,16 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
   // 青色申告特別控除は所得税・住民税とも同額を課税所得から差し引く (簡略モデル)。
   const dependentDeduction = calcDependentDeduction(input.dependents ?? []);
   const blueDeduction = Math.max(0, input.blueDeduction ?? 0);
+  // 配偶者控除・配偶者特別控除。**本人の合計所得で段階的に減る**控除なので、
+  // 本来はシナリオごとの額面から求めるべきだが、それをすると額面の逆算の中に
+  // 額面依存の控除が入って循環する。ここでは通常シナリオの額面 (年額) を
+  // 基準に 1 度だけ求め、両シナリオへ同額を適用する簡略モデルにしている
+  // — スキーム側は額面が下がるので、実際の控除は**これ以上に有利**になる
+  // ことはあっても不利にはならない (段階は所得が下がるほど満額へ寄る)。
+  const spouseDeduction = calcSpouseDeductionFor(input, withCare);
   const extraDeductions: DeductionPair = {
-    incomeTax: dependentDeduction.incomeTax + blueDeduction,
-    residentTax: dependentDeduction.residentTax + blueDeduction,
+    incomeTax: dependentDeduction.incomeTax + blueDeduction + spouseDeduction.incomeTax,
+    residentTax: dependentDeduction.residentTax + blueDeduction + spouseDeduction.residentTax,
   };
 
   // ① 通常: 従業員が家賃・育児・食事・EC を手取りから全額支払う。
@@ -318,6 +386,7 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     deductions: {
       dependent: dependentDeduction,
       blue: blueDeduction,
+      spouse: spouseDeduction,
       total: extraDeductions,
     },
   };

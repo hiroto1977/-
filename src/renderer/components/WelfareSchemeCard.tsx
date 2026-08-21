@@ -75,6 +75,11 @@ export function WelfareSchemeCard() {
   const [specificStr, setSpecificStr] = useState('0');
   const [elderlyStr, setElderlyStr] = useState('0');
   const [blueStr, setBlueStr] = useState('0');
+  // 配偶者。**「配偶者なし」と「所得 0 の配偶者あり」を取り違えない**ため、
+  // 有無のチェックと金額を別に持つ (金額 0 を「なし」の意味に使わない)。
+  const [hasSpouse, setHasSpouse] = useState(false);
+  const [spouseIncomeStr, setSpouseIncomeStr] = useState('0');
+  const [spouseElderly, setSpouseElderly] = useState(false);
 
   const dependents = useMemo<DependentKind[]>(() => {
     const g = Math.floor(num(generalStr, 0));
@@ -99,9 +104,26 @@ export function WelfareSchemeCard() {
       withCare,
       dependents,
       blueDeduction: num(blueStr, 0),
+      // 未指定 (undefined) が「配偶者なし」。0 は「所得 0 の配偶者あり」。
+      spouseIncome: hasSpouse ? num(spouseIncomeStr, 0) : undefined,
+      spouseElderly,
     };
     return designWelfareScheme(input);
-  }, [targetStr, rentStr, rentCoStr, mealStr, mealCoStr, childcareStr, ecStr, withCare, dependents, blueStr]);
+  }, [
+    targetStr,
+    rentStr,
+    rentCoStr,
+    mealStr,
+    mealCoStr,
+    childcareStr,
+    ecStr,
+    withCare,
+    dependents,
+    blueStr,
+    hasSpouse,
+    spouseIncomeStr,
+    spouseElderly,
+  ]);
 
   const { normal, scheme, diff, deductions } = result;
   const yen = (n: number) => jpy(Math.round(n));
@@ -215,6 +237,38 @@ export function WelfareSchemeCard() {
             <option value="650000">65万円 (e-Tax)</option>
           </select>
         </label>
+        <label style={fieldRow}>
+          <span>配偶者</span>
+          <input
+            type="checkbox"
+            checked={hasSpouse}
+            onChange={(e) => setHasSpouse(e.target.checked)}
+            aria-label="配偶者の有無"
+          />
+        </label>
+        {hasSpouse && (
+          <>
+            <label style={fieldRow}>
+              <span>┗ 配偶者の合計所得 (年)</span>
+              <input
+                type="number"
+                value={spouseIncomeStr}
+                onChange={(e) => setSpouseIncomeStr(e.target.value)}
+                style={inputStyle}
+                aria-label="配偶者の合計所得金額"
+              />
+            </label>
+            <label style={fieldRow}>
+              <span>┗ 配偶者が70歳以上</span>
+              <input
+                type="checkbox"
+                checked={spouseElderly}
+                onChange={(e) => setSpouseElderly(e.target.checked)}
+                aria-label="配偶者が70歳以上か"
+              />
+            </label>
+          </>
+        )}
       </div>
 
       {hasExtraDeduction && (
@@ -227,7 +281,13 @@ export function WelfareSchemeCard() {
               {' '}＋ 青色申告特別控除 <strong>{yen(deductions.blue)}</strong>
             </>
           )}
-          。額面が下がっても扶養控除・青色申告特別控除の分だけ課税所得が圧縮され、税額がさらに減ります。
+          {deductions.spouse.incomeTax > 0 && (
+            <>
+              {' '}＋ 配偶者控除等 所得税 <strong>{yen(deductions.spouse.incomeTax)}</strong> / 住民税{' '}
+              <strong>{yen(deductions.spouse.residentTax)}</strong>
+            </>
+          )}
+          。額面が下がってもこれらの分だけ課税所得が圧縮され、税額がさらに減ります。
         </p>
       )}
       {deductions.blue > 0 && (
@@ -321,8 +381,11 @@ export function WelfareSchemeCard() {
         {MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN.toLocaleString('ja-JP')}円以下〈2026年4月1日施行〉、
         社宅は賃料相当額の徴収、
         EC ポイントは全社員一律のカフェテリア枠 等）の充足は税理士・社労士にご確認ください。
-        基礎控除・社会保険料控除に加え、扶養控除・青色申告特別控除（事業所得がある場合）を
-        反映できますが、配偶者控除・生命保険料控除等は未反映の簡略モデルです。
+        基礎控除・社会保険料控除に加え、扶養控除・青色申告特別控除（事業所得がある場合）・
+        配偶者控除／配偶者特別控除を反映できますが、生命保険料控除・地震保険料控除・
+        医療費控除等は未反映の簡略モデルです。配偶者控除は本人の合計所得で段階的に減るため、
+        通常シナリオの額面を基準に一度だけ判定し両シナリオへ同額を適用しています
+        （スキーム側は額面が下がるので、実際の控除はこれ以上に不利にはなりません）。
       </p>
     </Section>
   );
