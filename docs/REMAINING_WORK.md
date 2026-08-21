@@ -328,6 +328,98 @@ key/label/unit/raw/score を JSON で丸ごと固定する golden まであっ�
   総当りが現実的になる門である。なお `typeof iterations !== 'number'` は
   `Number.isFinite` が型強制しないため結果を 1 つも変えておらず、削除した
 
+### 書き出しの Markdown だけエスケープが割れていた (2026-08-21)
+
+ダッシュボードの Markdown 書き出しは 3 箇所あり、守り方が 3 通りだった。
+
+| 書き出し | 直す前 |
+|---|---|
+| `main/clients/stocks.ts` | 関数内に `escMd = s => s.replace(/\|/g,'\\|')` |
+| `renderer/data/stocksAnalysisWeb.ts` | **何もしていない** |
+| `main/clients/business.ts` | **何もしていない** |
+
+同じデータの HTML 版はいずれも `escapeXml` を通していた。**Markdown 側だけ
+守りが片方にしか無い**という形である。
+
+埋まるのは利用者が打った銘柄名や事業ラベルだけではなく、**AI アドバイザーの
+応答** (`rationale` / `riskFactors` / `actionItems` / `categoryId`)。受け口の
+検査は「空でない文字列」または「配列であること」しか見ていない。
+
+- `|` 1 つで表の桁がずれる (日本語の散文に `|` は普通に出る)
+- **改行があると行が終わる。** 続きは新しい Markdown の構造として読まれ、
+  `|---|` を書けば表そのものを作り直せる。壊れるのではなく**差し替わる**
+- `<` が素通しなので生 HTML が通る。Markdown の描画系はたいてい生 HTML を
+  通すので、ここがスクリプト実行の経路になる。書き出した `.md` はライブラリに
+  残り人に渡る (このリポジトリ自身が Obsidian の保管庫を持っている)
+
+`shared/escape.ts` に 2 つ足して文脈で使い分ける形にした:
+
+- `escapeMarkdownInline` — 1 行で終わらなければならない場所すべて
+  (表のセル・見出し・箇条書きの 1 項目・引用の 1 行)。`\` を最初に逃がし、
+  `|`・改行・`<` を落とす
+- `escapeMarkdownText` — 段落。落とすのは `<` だけ。改行は残す
+
+`&` は落とさない。実体参照は CommonMark §2.5 で文字として扱われ markup に
+ならないので安全のために要らず、素の viewer で `&amp;` が見えるだけ損。
+**見出しや引用を後から足されることは防いでいない** — 行頭記号を全部潰すと
+まともな文章が書けないため、承知のうえで通している (`escape.ts` に明記)。
+
+#### なぜ気付かなかったか
+
+`lint:forbidden` の #11 が「エスケープの自前実装」を落としているのに素通り
+していたのは、**検出が HTML/XML の形しか見ていなかった**から (`&amp;` の
+実体参照と `[&<>]` の文字クラス)。`|` を落とすだけの形は網に掛からず、
+しかも 1 箇所にしか無いので写経とも気付かれなかった。#11 に
+`.replace(/\|/g, …)` を足し、対照実験で実際に鳴ることを確かめた。
+
+`stocksAnalysisWeb.test.ts` の golden は `| X< | Y& |` を期待していた。
+**穴を固定していた**のであって捕まえてはいなかった — 同じ入れ物を使う
+HTML の golden はすぐ上で `X&lt;` を期待しており、「escaping」という名前
+まで付いていた。罠 2-c の系統 (「落ちないテスト」) に**「間違った答えを
+正解として書き留めたテスト」**を加える。
+
+### IPC 境界の型ガードが要素の中身を検査していなかった (2026-08-21)
+
+`isAdvisorResult` は stocks.ts / business.ts の両方にあり、どちらも
+`recommendations` が**配列かどうかしか見ていなかった**。business.ts の方には
+「conservative: only accepts structures that pass the same validator used when
+the LLM produced them」と書いてあったが事実ではなく、同じファイルの
+`validateBusinessAdvisorJson` (「throws on any deviation so a malformed reply
+can't smuggle bad data into the UI」) は全要素・全項目を検査している。
+**同じファイルの中に同じデータの検査が 2 つあり、境界を守っている方が空。**
+
+TypeScript の型は IPC を越えない。実測:
+
+    recommendations: [null]  → Cannot read properties of null (reading 'rank')
+    actionItems 欠落         → Cannot read properties of undefined (reading 'map')
+    rationale が数値         → input.replace is not a function
+
+いずれも書き出しの最中に投げる。invoke ハンドラが受けるのでクラッシュは
+しないが、**書き出しは丸ごと失敗しファイルは 1 バイトも書かれない**。
+
+検査を 1 つに寄せ、guard から厳密な方を呼ぶようにした。
+
+#### 途中で 1 つ間違えた — 記録しておく
+
+stocks 側で銘柄の許可リストにスナップショットのウォッチリストを使おうと
+したところ、既存の検査 2 件が落ちた。**助言の宇宙はウォッチリストではない**
+— `advise` の `universe` payload か `MOCK_TICKERS` から来る。知らないものを
+知っているふりで絞ると、正しい助言を黙って捨てることになる。
+`validateAdvisorJson` の許可リストを `ReadonlySet | null` にし、
+null = 「この場では宇宙が分からない」として所属ではなく `isSafeSymbol` (形)
+で判定する形にした。「絞りすぎていない」ことを確かめる検査も両方に置いた。
+
+#### 変異検査で分かった形の問題 (2 件・どちらも pragma を使わずに消した)
+
+- `catch { return false }` は**中身を消しても結果が変わらない** — 暗黙の
+  `undefined` を返し、呼び出し側はどちらも偽として扱う。「投げなければ真」を
+  1 つの変数で表す形に変えた (空の catch には BlockStatement 変異体が
+  作られない)
+- 銘柄判定を三項で書くと既存の `Stryker disable ConditionalExpression` の帯
+  (32 行に伸びた) に飲まれ、新しい分岐がそのまま「測っていない」になる。
+  `lint:mutation-scope` がこれを落としたので、判定を `advisorSymbolAllowed`
+  として帯の外へ出した
+
 ### 壁の一覧を「自称」で洗い直した — 10 → 17 (2026-08-20)
 
 `MUST_MEASURE` は 2 度直しているが、どちらも**そのとき見つけたものを足しただけ**
