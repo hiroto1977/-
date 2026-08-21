@@ -3,6 +3,9 @@ import {
   monthlyCompensation,
   solveGrossForTakeHome,
   designWelfareScheme,
+  MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  MEAL_SUBSIDY_SELF_PAY_RATIO,
+  NIGHT_MEAL_CASH_TAX_FREE_LIMIT_YEN,
 } from '../welfareScheme';
 
 describe('monthlyCompensation', () => {
@@ -301,5 +304,43 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
     const zero = designWelfareScheme({ ...withDeductions, blueDeduction: 0 });
     expect(negative.deductions.blue).toBe(0);
     expect(negative.scheme.gross).toBe(zero.scheme.gross);
+  });
+});
+
+/*
+ * 法令の数字を固定する。
+ *
+ * この 3 つは**法令が動いたときに直さなければならない**値で、直し忘れると
+ * 画面と規程ひな形が古い上限を掲げ続ける。実際 2026-04-01 施行の改正
+ * (3,500 → 7,500) に 4 か月以上気付かず、しかも画面の会社負担の既定値は
+ * 7,500 円で**自分が掲げる 3,500 円の上限を超えていた**。
+ *
+ * 出典を数字のとなりに置いたうえで、値そのものも検査で押さえる。
+ */
+describe('食事補助の非課税要件 — 法令の数字', () => {
+  it('会社負担の上限は月 7,500 円 (2026-04-01 施行の改正後)', () => {
+    // 国税庁「食事の現物支給に係る所得税の非課税限度額の引上げについて」
+    // 令和8年3月31日付 法令解釈通達 / 所得税基本通達 36-38の2
+    expect(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN).toBe(7_500);
+    // 改正前の値に戻っていない。
+    expect(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN).not.toBe(3_500);
+  });
+
+  it('本人負担の割合は半額以上 (この要件は改正されていない)', () => {
+    expect(MEAL_SUBSIDY_SELF_PAY_RATIO).toBe(0.5);
+  });
+
+  it('深夜勤務者の夜食代の金銭支給は月 650 円 (改正前は 300 円)', () => {
+    expect(NIGHT_MEAL_CASH_TAX_FREE_LIMIT_YEN).toBe(650);
+  });
+
+  it('画面の既定値 (総額 15,000 / 会社負担 7,500) は両方の要件を満たす', () => {
+    // WelfareSchemeCard の初期値。境界ちょうどなので、上限が下がると落ちる。
+    const mealTotal = 15_000;
+    const companyShare = 7_500;
+    expect(companyShare).toBeLessThanOrEqual(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN);
+    expect(mealTotal - companyShare).toBeGreaterThanOrEqual(
+      mealTotal * MEAL_SUBSIDY_SELF_PAY_RATIO,
+    );
   });
 });

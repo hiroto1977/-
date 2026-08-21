@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { designWelfareScheme, type WelfareSchemeInput } from '../welfareScheme';
+import {
+  designWelfareScheme,
+  MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  type WelfareSchemeInput,
+} from '../welfareScheme';
 import {
   employeeExplanationMarkdown,
   consentFormMarkdown,
@@ -67,8 +71,19 @@ describe('welfareRegulationMarkdown', () => {
     expect(md).toContain('¥30,000'); // ecPoints
     expect(md).toContain('¥50,000'); // childcare
   });
-  it('非課税要件 (食事3,500円以下・換金性排除) を明記する', () => {
-    expect(md).toContain('3,500');
+  // この検査は 2026-08-21 まで `expect(md).toContain('3,500')` と書いてあった。
+  // **数字を直に書き留めていた**ので、2026-04-01 施行の改正 (3,500 → 7,500) に
+  // 気付かないどころか、直そうとすると検査の方が落ちて「合っている」と
+  // 言い張る側に回る。定数を見るようにして、法令が動いたら 1 か所を直せば
+  // 全部が追随するようにした。
+  it('非課税要件 (食事の会社負担の上限・換金性排除) を明記する', () => {
+    expect(md).toContain(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN.toLocaleString('en-US'));
     expect(md).toContain('現金との交換はできない');
+  });
+
+  it('改正前の 3,500 円が残っていない', () => {
+    // 引き上げ後の値だけが出ること。古い上限が残っていると、規程を読んだ人が
+    // 非課税枠を実際より小さく見積もる。
+    expect(md).not.toContain('3,500');
   });
 });

@@ -4,7 +4,11 @@ import { Stat } from './Stat';
 import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
 import { jpy } from '../../shared/formatters';
-import { designWelfareScheme, type WelfareSchemeInput } from '../../shared/welfareScheme';
+import {
+  designWelfareScheme,
+  MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  type WelfareSchemeInput,
+} from '../../shared/welfareScheme';
 import type { DependentKind } from '../../shared/taxDeductions';
 import {
   employeeExplanationMarkdown,
@@ -307,7 +311,9 @@ export function WelfareSchemeCard() {
 
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.6 }}>
         ※ 概算であり税務助言ではありません。標準報酬月額の等級・自治体料率・各非課税要件
-        （食事補助は本人が半額以上負担かつ会社負担が月3,500円以下、社宅は賃料相当額の徴収、
+        （食事補助は本人が半額以上負担かつ会社負担が月
+        {MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN.toLocaleString('ja-JP')}円以下〈2026年4月1日施行〉、
+        社宅は賃料相当額の徴収、
         EC ポイントは全社員一律のカフェテリア枠 等）の充足は税理士・社労士にご確認ください。
         基礎控除・社会保険料控除に加え、扶養控除・青色申告特別控除（事業所得がある場合）を
         反映できますが、配偶者控除・生命保険料控除等は未反映の簡略モデルです。

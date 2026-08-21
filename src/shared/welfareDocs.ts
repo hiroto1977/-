@@ -1,4 +1,5 @@
 import { jpy } from './formatters';
+import { MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN } from './welfareScheme';
 import type { WelfareSchemeInput, WelfareSchemeResult } from './welfareScheme';
 
 /**
@@ -112,8 +113,8 @@ export function welfareRegulationMarkdown(input: WelfareSchemeInput): string {
 ## 第3条（食事補助）
 1. 会社は、対象従業員に対し食事の現物支給または食事補助を行う。
 2. 非課税の要件（従業員が食事代の半額以上を負担し、かつ会社負担が
-   月 3,500 円（税抜）以下）を満たす範囲で運用する。会社負担の目安は月
-   ${yen(input.mealCompanyShare)}。
+   月 ${yen(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN)}（税抜）以下）を満たす範囲で運用する。
+   会社負担の目安は月 ${yen(input.mealCompanyShare)}。
 
 ## 第4条（育児支援）
 会社は、ベビーシッター利用券の付与等により、対象従業員の育児を支援する

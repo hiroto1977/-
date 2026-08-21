@@ -226,6 +226,25 @@ const FORBIDDEN_PATTERNS = [
       '`redactForMessage(body, 200)` を使うこと',
   },
   {
+    // 食事補助の非課税限度額を地の文で書いた箇所。2026-04-01 施行の改正で
+    // 3,500 円 → 7,500 円になったが、この数字は**出典もゲートも無いまま
+    // 4 箇所に地の文で**書かれていたので、4 か月以上どこも古いままだった。
+    // しかも画面の会社負担の既定値は 7,500 円で、免責文が掲げる 3,500 円の
+    // 上限を自分で超えていた。値は `MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` が
+    // 1 つだけ持ち、出典と施行日をとなりに置いてある。
+    name: '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値)',
+    pattern: /3,500\s*円|月\s*3500\b/,
+    allowFile: (rel) =>
+      !/welfare/i.test(rel) || rel === 'src/shared/welfareScheme.ts',
+    codeOnly: false,
+    rationale:
+      '2026-04-01 施行の改正 (令和8年3月31日付 法令解釈通達・所得税基本通達 36-38の2) で ' +
+      '食事の現物支給の非課税限度額は月 3,500 円から 7,500 円になった。' +
+      '42 年ぶりの引き上げで、深夜勤務者の夜食代の金銭支給も 300 円から 650 円になっている。' +
+      '古い上限を掲げると、規程を読んだ人が非課税枠を実際より小さく見積もる。' +
+      '`MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` を使うこと',
+  },
+  {
     name: 'child_process exec/spawn',
     pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
     // Build/dev scripts are allowed; runtime src is not.
