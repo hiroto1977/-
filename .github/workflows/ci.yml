@@ -46,6 +46,7 @@ jobs:
       - run: npm run lint:credential-use
       - run: npm run lint:ipc-handlers
       - run: npm run lint:mutation-scope
+      - run: npm run lint:collection-time
       - run: npm run verify:orchestration
       - run: npm run vault:check
       - run: npm run verify:graph
