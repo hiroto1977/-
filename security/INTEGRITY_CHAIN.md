@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 41
+- ブロック数: 42
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `9369eedc569a22e62ef9e519f54a819eae3840d0fc990259fed05be47c2116db`
-- 保護対象: 18 ファイル
+- 末尾(tip)ハッシュ: `d2d21bf8d3f18fcbbc5ef7897d619428fab1c5176ab096dfd9245170927d8f3d`
+- 保護対象: 23 ファイル
 
 ## ブロック
 
@@ -54,24 +54,30 @@
 | 38 | `eb41559121ed811e` | `4413dfe237c2450a` | `37c33e6ffdd3d3a9` | update integrity-chain.cjs |
 | 39 | `51081cda6da0d927` | `37c33e6ffdd3d3a9` | `843f298c2066b991` | update integrity-chain.cjs |
 | 40 | `0d18f2dc0579e068` | `843f298c2066b991` | `9369eedc569a22e6` | update integrity-chain.cjs |
+| 41 | `0d9c1bf0c240e70f` | `9369eedc569a22e6` | `d2d21bf8d3f18fcb` | update release.yml,electron-builder.json,integrity-chain.cjs,main.ts,proxy.ts,redact.ts |
 
 ## 保護対象ファイル
 
 - `.github/workflows/ci.yml`
+- `.github/workflows/release.yml`
 - `assets/sw.js`
 - `docs/SECURITY_CHAIN.md`
+- `electron-builder.json`
 - `scripts/integrity-chain.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
 - `src/main/clients/exportPaths.ts`
+- `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
+- `src/renderer/network/proxy.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/dataCrypto.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/shared/redact.ts`

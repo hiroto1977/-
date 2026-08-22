@@ -50,6 +50,19 @@ const PROTECTED = [
   'src/main/secrets.ts',
   'src/main/oauth.ts',
   'src/preload/preload.ts',
+  // 2026-08-22 に足した。**関門だけ守って、関門を呼ぶ側が守られていなかった。**
+  // `shellOpenGate.ts` と `exportPaths.ts` は保護対象なのに、それらを呼び、
+  // かつ `contextIsolation` / `nodeIntegration` / `sandbox` を決め、
+  // `setWindowOpenHandler` で popup を全部拒否し、`will-navigate` の許可判定を
+  // 持ち、13 本の IPC ハンドラを登録している main.ts が入っていなかった。
+  // ここが 1 行変わるだけで、下流の関門は全部迂回できる。
+  'src/main/main.ts',
+  // 秘密を伏せる唯一の合流点 (17 箇所がここへ寄せてある)。ここが素通しに
+  // 変われば、失敗応答に混ざったトークンがそのまま画面と不具合報告に出る。
+  'src/shared/redact.ts',
+  // BYO プロキシの SSRF 関門。ブラウザ版では**全サービスのトークン**が
+  // ここを通って利用者指定の Worker へ出るので、絞りが緩むと宛先を選ばれる。
+  'src/renderer/network/proxy.ts',
   // レンダラーが渡してくる書き出し先を検査する唯一の関門。business /
   // stocks / templates / teamradar の書き出しは全部ここを通る。ここが
   // ゆるむと、乗っ取られたレンダラーがホーム配下へ任意のファイルを
@@ -67,6 +80,14 @@ const PROTECTED = [
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',
   '.github/workflows/ci.yml',
+  // ci.yml (contents: read) は守られていたのに、**唯一 contents: write を持ち、
+  // 利用者がダウンロードするインストーラを公開する** release.yml が入って
+  // いなかった。守る順番が逆になっていた。
+  '.github/workflows/release.yml',
+  // electronFuses (runAsNode / NODE_OPTIONS / inspect / cookie 暗号化) の置き場。
+  // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
+  // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。
+  'electron-builder.json',
   'docs/SECURITY_CHAIN.md',
   // Service Worker は公開版のオリジンで**全てのページ読み込みに介入**する。
   // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
