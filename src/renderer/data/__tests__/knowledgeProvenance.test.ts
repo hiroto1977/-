@@ -69,6 +69,16 @@ describe('assessEvidence — the admission (確証) gate', () => {
 });
 
 describe('VERIFIED_CONCEPTS — every admitted concept satisfies the gate', () => {
+  /*
+   * 非空の床 (2026-08-22)。この describe は `VERIFIED_CONCEPTS.filter(...)` が
+   * 空配列になることを確かめる形なので、**元の配列が空でも成立する**。
+   * 本番データを回して expect するのに非空を確かめていない検査を走査したとき、
+   * ここも該当していた。
+   */
+  it('概念が 1 件以上ある (空なら以下は空虚に通る)', () => {
+    expect(VERIFIED_CONCEPTS.length).toBeGreaterThanOrEqual(1000);
+  });
+
   it('has no concept that would fail assessEvidence (guards future batches)', () => {
     const offenders = VERIFIED_CONCEPTS.filter((c) => !assessEvidence(c.sources).ok).map(
       (c) => c.id,

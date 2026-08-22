@@ -75,6 +75,24 @@ function stripNonCode(text) {
     .replace(/`(?:[^`\\]|\\.)*`/g, '``');
 }
 
+/** `.ts(x)` を集める (テストは除く / 含むを選べる)。 */
+function walkAll(dir, re, includeTests) {
+  const out = [];
+  const rec = (d) => {
+    if (!fs.existsSync(d)) return;
+    for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) {
+        if (includeTests || e.name !== '__tests__') rec(full);
+      } else if (re.test(e.name)) {
+        out.push({ file: full, text: read(full) ?? '' });
+      }
+    }
+  };
+  rec(dir);
+  return out;
+}
+
 function walkTests(dir, out) {
   if (!fs.existsSync(dir)) return out;
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -215,6 +233,30 @@ function selfTest() {
     ],
   ];
 
+  /** VERIFIED_* の非空の床。実関数に合成の src/test を食わせる。 */
+  const SRC = [{ file: 'd.ts', text: 'export const VERIFIED_X = [1];\n' }];
+  const verifiedCases = [
+    ['床があれば通る', [{ file: 't.ts', text: 'expect(VERIFIED_X.length).toBeGreaterThan(0);' }], 0],
+    ['toBeGreaterThanOrEqual も床', [{ file: 't.ts', text: 'expect(VERIFIED_X.length).toBeGreaterThanOrEqual(3);' }], 0],
+    ['toHaveLength(3) も床', [{ file: 't.ts', text: 'expect(VERIFIED_X).toHaveLength(3);' }], 0],
+    ['toHaveLength(0) は床ではない', [{ file: 't.ts', text: 'expect(VERIFIED_X).toHaveLength(0);' }], 1],
+    ['全件検査だけでは床にならない', [{ file: 't.ts', text: 'for (const x of VERIFIED_X) expect(x).toBeTruthy();' }], 1],
+    ['自分自身との長さ比較は床ではない', [{ file: 't.ts', text: 'expect(f(VERIFIED_X)).toHaveLength(VERIFIED_X.length);' }], 1],
+    ['名指しする検査が 1 つも無い', [{ file: 't.ts', text: 'expect(1).toBe(1);' }], 1],
+    // 床が**別のデータセットの行**に在っても、当のデータセットは無防備。
+    [
+      '別の名前の床では代用できない',
+      [{ file: 't.ts', text: 'expect(OTHER.length).toBeGreaterThan(0);\nfor (const x of VERIFIED_X) expect(x).toBeTruthy();' }],
+      1,
+    ],
+  ];
+  for (const [label, tests, want] of verifiedCases) {
+    const got = checkVerifiedFloors(SRC, tests).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} VERIFIED_* の床: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
   /** jsdom 側の規則。ファイル一覧を注入して実関数をそのまま通す。 */
   const jsdomCases = [
     ['jsdom 宣言 + DOM を触る', '// @vitest-environment jsdom\nconst el = document.body;', 0],
@@ -264,6 +306,67 @@ function selfTest() {
   return 0;
 }
 
+/**
+ * `VERIFIED_*` の確証済みデータセットに、**非空の検査**が在ることを求める。
+ *
+ * 2026-08-22 の走査で見つけた形: 本番データを import して
+ * `for (const x of DATA) expect(...)` / `expect(DATA.filter(...)).toEqual([])`
+ * と書く検査は、**DATA が空になると全部そのまま通る**。74 件あった。
+ *
+ * とくに `VERIFIED_SUPPORT_RESOURCES` (相談窓口・人命に関わる) は、空にすると
+ * 専用の検査 15 件が**全部通った**。`expect(filterConfirmed(X)).toHaveLength(X.length)`
+ * は長さを自分自身と比べているので 0 === 0 で成立する。
+ *
+ * 74 件すべてを台帳にすると、本当に効く数件が埋もれる (`lint:network-targets`
+ * が冒頭で警告している希釈)。代わりに **`VERIFIED_` という命名規約**に絞る ——
+ * このリポジトリで「出典つきで確証した知識」に付ける接頭辞なので、
+ * 新しいデータセットが増えれば自動で対象になり、台帳は要らない。
+ */
+const NONEMPTY_ASSERTION = /\.length\s*\)\s*\.toBeGreaterThan(?:OrEqual)?\s*\(|\.size\s*\)\s*\.toBeGreaterThan(?:OrEqual)?\s*\(|\)\s*\.toHaveLength\s*\(\s*[1-9]/;
+
+function verifiedDatasets(files) {
+  const out = [];
+  for (const { file, text } of files) {
+    for (const m of text.matchAll(/^export const (VERIFIED_[A-Z0-9_]+)/gm)) out.push({ name: m[1], file });
+  }
+  return out;
+}
+
+/**
+ * @param sources 本番ソース `{ file, text }`
+ * @param tests   検査ファイル `{ file, text }`
+ */
+function checkVerifiedFloors(sources, tests) {
+  const failures = [];
+  for (const ds of verifiedDatasets(sources)) {
+    const mentions = tests.filter((t) => t.text.includes(ds.name));
+    if (mentions.length === 0) {
+      failures.push({
+        kind: 'verified-dataset-untested',
+        service: ds.name,
+        reason: `${ds.file} の ${ds.name} を名指しで検査するファイルがありません`,
+      });
+      continue;
+    }
+    const hasFloor = mentions.some((t) =>
+      t.text
+        .split('\n')
+        .some((line) => line.includes(ds.name) && NONEMPTY_ASSERTION.test(line)),
+    );
+    if (!hasFloor) {
+      failures.push({
+        kind: 'verified-dataset-no-floor',
+        service: ds.name,
+        reason:
+          `${ds.name} に非空の検査がありません。`
+          + ' 「全件について〜」の検査は配列が空になると全部通るので、'
+          + ` \`expect(${ds.name}.length).toBeGreaterThanOrEqual(N)\` を足してください`,
+      });
+    }
+  }
+  return failures;
+}
+
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const ids = serviceIds();
@@ -271,9 +374,15 @@ function main(argv) {
 
   const jsdomChecked = checkJsdomNeed(failures);
 
+  const srcFiles = walkAll(path.join(REPO_ROOT, 'src'), /\.tsx?$/, false);
+  const testFiles = walkTests(path.join(REPO_ROOT, 'src'), []).map((f) => ({ file: f, text: read(f) }));
+  const verified = verifiedDatasets(srcFiles);
+  failures.push(...checkVerifiedFloors(srcFiles, testFiles));
+
   console.log(
     `Checked ${ids.length} services for test files + action coverage`
-      + `, and ${jsdomChecked} jsdom test file(s) for actual DOM use`,
+      + `, ${jsdomChecked} jsdom test file(s) for actual DOM use`
+      + `, and ${verified.length} VERIFIED_* dataset(s) for a non-empty floor`,
   );
   if (failures.length === 0) {
     console.log('✅ every service has a test file and every action is exercised');
