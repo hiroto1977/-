@@ -136,7 +136,84 @@ function* walkSrc(dir) {
 
 const IMPORT_RE = /^\s*import\s+(?<typeOnly>type\s+)?(?:[^'"]+\s+from\s+)?['"](?<spec>[^'"]+)['"];?/gm;
 
+/**
+ * 陰性対照 — **この関門が本当に鳴るか**を毎回確かめる。
+ *
+ * 2026-08-22 に verify:all の 25 ゲートを 1 つずつ手で壊して回したところ、
+ * 陰性対照を持たない 13 件のうち **2 件が本当に鳴らなかった**
+ * (`lint:forbidden` は nodeIntegration の規則ごと欠落、
+ *  `lint:network-targets` は素の fetch と `https://${host}` の 2 つが素通り)。
+ * 手で確かめただけでは今日しか効かないので、ここへ固定する。
+ *
+ * この関門が守るのは「レンダラーは sandbox の中にいる」という前提そのもの。
+ * electron や node 組み込みが renderer へ入った時点で、その前提は崩れる。
+ */
+function selfTest() {
+  /**
+   * **本物の判定関数を通す。** 最初に書いた版は electron / node の行だけ
+   * `false` を直接返しており、`false === false` を確かめる**落ちようのない
+   * 検査**になっていた (書いている当人が、探していた当のものを作りかけた)。
+   * `classifyTarget` の種別と、main と同じ規則で判断する。
+   */
+  const violates = (fromZone, spec) => {
+    const cls = classifyTarget(spec, `${ZONES[fromZone]}x.ts`);
+    if (fromZone === 'renderer' && (cls.kind === 'electron' || cls.kind === 'node-builtin')) return true;
+    if (fromZone === 'preload' && cls.kind === 'node-builtin') return true;
+    if (cls.kind === 'zone') return !isAllowedZoneTransition(fromZone, cls.zone);
+    return false;
+  };
+
+  const cases = [
+    // [説明, 出どころ zone, import 指定子, 落とすべきか]
+    ['renderer は electron を読めない', 'renderer', 'electron', true],
+    ['renderer は electron/remote も読めない', 'renderer', 'electron/renderer', true],
+    ['renderer は node:fs を読めない', 'renderer', 'node:fs', true],
+    ['renderer は fs (接頭辞なし) も読めない', 'renderer', 'fs', true],
+    ['renderer は child_process を読めない', 'renderer', 'node:child_process', true],
+    ['renderer は npm パッケージを読める', 'renderer', 'react', false],
+    ['preload は node:fs を読めない', 'preload', 'node:fs', true],
+    ['preload は electron を読める (bridge を張る側)', 'preload', 'electron', false],
+    ['main は node:fs を読める', 'main', 'node:fs', false],
+    ['main は electron を読める', 'main', 'electron', false],
+  ];
+  let bad = 0;
+  for (const [label, from, spec, expected] of cases) {
+    const got = violates(from, spec);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got ? '拒否' : '許可'} (期待 ${expected ? '拒否' : '許可'})`);
+  }
+
+  // zone どうしの行き来は表そのものを見る。
+  const zonePairs = [
+    ['renderer', 'shared', true],
+    ['renderer', 'preload', true],
+    ['renderer', 'main', false],
+    ['preload', 'shared', true],
+    ['preload', 'main', false],
+    ['main', 'shared', true],
+    ['main', 'renderer', false],
+    ['shared', 'main', false],
+    ['shared', 'renderer', false],
+    ['shared', 'shared', true],
+  ];
+  for (const [from, to, expected] of zonePairs) {
+    const got = isAllowedZoneTransition(from, to);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${from} → ${to}: ${got ? '許可' : '拒否'} (期待 ${expected ? '許可' : '拒否'})`);
+  }
+
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — 関門が鳴らない / 鳴りすぎている`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
   const violations = [];
   let fileCount = 0;
   let importCount = 0;
