@@ -414,6 +414,14 @@ Web 配信 (GitHub Pages: https://hiroto1977.github.io/-/) と単一 HTML の両
 | `lint:network-targets` | `src/main` 直下 | **OAuth のトークン交換 2 件が台帳漏れ** |
 | `lint:forbidden` | `assets/` `orchestration/` | **不変条件 #9 違反 (new Function) が 1 件** |
 | `lint:charset` | リポジトリ直下 | CLAUDE.md / README.md (当時は無し) |
+| `lint:ipc-handlers` | `main.ts` 以外の `src/main` | (当時は無し。次に別モジュールへ登録した 1 本が対象外) |
+| `chain:verify` | 保護対象 18 → 23 | **main.ts / release.yml / electron-builder.json** ほか |
+
+`chain:verify` だけは走査範囲ではなく**守る対象の一覧**だが、腐り方は同じ
+だった。しかも守る順番が逆になっていた —— 関門 (`shellOpenGate.ts` /
+`exportPaths.ts`) は守られているのに、それらを呼び `contextIsolation` を
+決める `main.ts` が入っておらず、`ci.yml` (contents: read) は守られているのに
+インストーラを公開する `release.yml` (contents: write) が入っていなかった。
 
 **共通の原因は「走査範囲が手で足す一覧」だったこと。** `lint:network-targets`
 には既に「ここに書き忘れるとそのディレクトリは丸ごと見えない。2026-08 に
