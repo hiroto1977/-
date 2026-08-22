@@ -289,6 +289,73 @@ describe('API キーの送り先とヘッダ', () => {
   });
 });
 
+/*
+ * **ブラウザから直接叩いてよい相手かどうか。**
+ *
+ * `AI_PROVIDERS[id].browserDirect` が false の提供元は、ブラウザから直接
+ * fetch してはいけない。とくに `compat` は **送り先を利用者が資格情報で
+ * 指定する**ので (`compatUrl`)、直接叩けば任意のホストへ画面から鍵を載せた
+ * 通信が出る。だから `browserDirect: false` で、プロキシ未設定なら断る。
+ *
+ * 表そのもの (どの提供元が true/false か) は `providers.test.ts` が字面で
+ * 留めている。ここは**それを読む側**が約束を守っているかを見る。
+ */
+describe('ブラウザ直接続の可否を守っているか', () => {
+  let fetchCalls: string[] = [];
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    fetchCalls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input: unknown) => {
+      fetchCalls.push(String(input));
+      return new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }) as typeof globalThis.fetch;
+  });
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const CHAT = { messages: [{ role: 'user', content: 'こんにちは' }] };
+
+  it.each([
+    ['compat (送り先が利用者指定)', { compatUrl: 'https://arbitrary.example/v1', compatKey: 'k', compatModel: 'm', default: 'compat' }],
+    ['openai (CORS 非対応)', { openai: 'sk-openai-key', default: 'openai' }],
+  ])('%s はプロキシ未設定なら断り、1 度も外へ出ない', async (_label, creds) => {
+    stored = JSON.stringify(creds);
+    proxyConfig = null;
+    const hub = await loadShim();
+    const r = await invoke(hub, 'assistant', 'chat', CHAT);
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('not_configured');
+    expect(fetchCalls, `直接叩いてしまった: ${JSON.stringify(fetchCalls)}`).toEqual([]);
+    expect(transportCalls, 'プロキシ未設定なのに中継しようとした').toEqual([]);
+  });
+
+  it('compat はプロキシがあれば中継越しにしか出ない (直接 fetch しない)', async () => {
+    stored = JSON.stringify({ compatUrl: 'https://arbitrary.example/v1', compatKey: 'k', compatModel: 'm', default: 'compat' });
+    proxyConfig = { url: 'https://proxy.example/worker' };
+    const hub = await loadShim();
+    await invoke(hub, 'assistant', 'chat', CHAT);
+    expect(fetchCalls, `中継を通さず直接叩いた: ${JSON.stringify(fetchCalls)}`).toEqual([]);
+    expect(transportCalls.length).toBeGreaterThan(0);
+    expect(transportCalls[0]!.url).toContain('arbitrary.example');
+  });
+
+  it('anthropic (browserDirect: true) は中継を通さず直接叩く', async () => {
+    stored = JSON.stringify({ anthropic: 'sk-ant-key', default: 'anthropic' });
+    proxyConfig = { url: 'https://proxy.example/worker' };
+    const hub = await loadShim();
+    await invoke(hub, 'assistant', 'chat', CHAT);
+    expect(fetchCalls.length).toBeGreaterThan(0);
+    expect(fetchCalls[0]).toContain('api.anthropic.com');
+    expect(transportCalls).toEqual([]);
+  });
+});
+
 describe('資格情報の保存・削除の失敗も伏字を通す', () => {
   const SECRET = `ghp_${'a'.repeat(36)}`;
 
