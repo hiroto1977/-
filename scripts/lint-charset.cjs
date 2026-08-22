@@ -148,7 +148,17 @@ const ALLOWLIST = new Map([
 ]);
 
 /** 走査対象。生成物 (dist / vault / graph) は元データを直せば直るので見ない。 */
-const SCAN_DIRS = ['src', 'docs', 'orchestration', 'scripts'];
+/*
+ * 走査対象 (2026-08-22 に広げた)。
+ *
+ * 以前は src / docs / orchestration / scripts の 4 つだけで、**リポジトリ直下の
+ * `CLAUDE.md` と `README.md` が入っていなかった**。CLAUDE.md は次のセッションへの
+ * 指示そのもので、ここに簡体字が混ざるのはこのゲートが防ぎたい事故の中心にある。
+ * `security/` (改竄検知の台帳) と `.github/` (ワークフロー) も同様に外だった。
+ */
+const SCAN_DIRS = ['src', 'docs', 'orchestration', 'scripts', 'security', 'assets', '.github'];
+/** 直下のファイルは再帰では拾えない (`.` を足すと全部を二重に数えてしまう)。 */
+const SCAN_ROOT_FILES = true;
 const SCAN_EXTS = new Set(['.ts', '.tsx', '.md', '.json', '.cjs']);
 const SKIP_DIRS = new Set([
   'node_modules', '.git', 'dist', 'dist-electron', 'dist-chunks',
@@ -292,6 +302,12 @@ function selfTest() {
 function main() {
   const files = [];
   for (const d of SCAN_DIRS) walk(path.join(REPO_ROOT, d), files);
+  if (SCAN_ROOT_FILES) {
+    for (const e of fs.readdirSync(REPO_ROOT, { withFileTypes: true })) {
+      if (!e.isFile()) continue;
+      if (SCAN_EXTS.has(path.extname(e.name))) files.push(path.join(REPO_ROOT, e.name));
+    }
+  }
 
   const findings = [];
   const seenKeys = new Set();

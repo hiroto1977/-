@@ -37,13 +37,14 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 // 走査対象。**ここに書き忘れると、そのディレクトリは丸ごと見えない。**
 // 2026-08 に実際そうなっていた: `src/shared/ai` が入っておらず、
 // 5 プロバイダ分の「変数ホスト + Authorization」が 1 件も台帳に載っていなかった。
-const ROOTS = [
-  'src/main/clients',
-  'src/shared/api',
-  'src/shared/ai',
-  'src/renderer/data',
-  'src/renderer/network',
-];
+// 2026-08-22: **一覧をやめて src 全体にした。**
+// 上の注記は「書き忘れるとそのディレクトリは丸ごと見えない」と警告していたが、
+// 直し方は「足りない 1 つを足す」だった —— 一覧である限り同じことが起きる。
+// 実際もう一度起きていて、`src/main/oauth.ts` の**トークン交換と更新**
+// (client secret と認可コード / refresh token を載せる送信) が
+// `config.tokenUrl` という丸ごと変数の宛先へ飛んでいながら、
+// `src/main/clients` の外なので台帳に一度も載っていなかった。
+const ROOTS = ['src'];
 
 // 2026-08-22 の点検で足した: **`fetch` そのものが入っていなかった。**
 // 一覧はこの repo のラッパ (jsonFetch / apiFetch / transport …) だけを見て
@@ -170,6 +171,19 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
     file: 'src/shared/ai/chat.ts',
     dest: 'httpReq.url',
     guard: 'buildRequest が組み立てた直後の値。各 provider の base は resolveBase → shared/aiEndpoint.ts を通っている (上の providers.ts の 5 件と同じ絞り)',
+  },
+  {
+    file: 'src/main/oauth.ts',
+    dest: 'config.tokenUrl',
+    guard:
+      'OAUTH_CONFIGS (このファイル内のハードコード表・10 プロバイダ) の値だけ。'
+      + ' 呼び出し口は 2 つで、どちらも表から引いた config を渡す:'
+      + ' main.ts の oauth:authorize は OAUTH_CONFIGS[serviceId] を Object.hasOwn で引き、'
+      + ' renderer から差し替えられるのは clientId だけ (CLIENT_ID_RE で検証)。'
+      + ' secrets.ts の更新経路も同じ表。送信直前に assertHttpsTokenUrl で https を強制する。'
+      + ' ただし assertHttpsTokenUrl が見るのは**スキームだけでホストは見ない**ので、'
+      + ' 封じ込めは「表がハードコードであること」に依存している —— tokenUrl を'
+      + ' 設定可能にする変更は、client secret の送り先を外部が選べるようにする変更と同義。',
   },
   {
     file: 'src/renderer/network/proxy.ts',

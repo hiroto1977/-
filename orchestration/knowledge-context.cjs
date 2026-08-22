@@ -32,14 +32,50 @@ const DATA = path.join(REPO_ROOT, 'src/renderer/data');
 const KNOWLEDGE_MAP = path.join(REPO_ROOT, 'orchestration/knowledge-map.json');
 const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
 
-/** TS データモジュールを型除去して評価し、export を取り出す。 */
+/**
+ * TS データモジュールを型除去して評価し、export を取り出す。
+ *
+ * ## なぜ評価するのか (正規表現で読まない理由)
+ *
+ * 出典配列は `MHLW_MAMOROU` のようなモジュール内の const を参照している。
+ * `type: '…'` を数える読み方では取りこぼすので、型だけ落として素直に実行する。
+ *
+ * ## なぜ `new Function` を許しているのか
+ *
+ * これは不変条件 #9 (eval / new Function 禁止) に対する**明示的な例外**で、
+ * `lint:forbidden` の台帳に理由つきで載せてある。成り立つ根拠は 1 つだけ:
+ *
+ *   **評価するのは常に `src/renderer/data/` 配下の追跡済みソース**であること。
+ *
+ * ビルド時にしか走らず (出荷物には入らない)、そこを書き換えられる人は
+ * `npm test` でも同じことができるので、実質 `require()` と同じ強さしかない。
+ *
+ * 根拠が本当かは**呼び出し口を読んで確かめる**しかない状態だった。それでは
+ * いつか崩れるので、関数側で封じ込める —— データ由来のパスが渡された時点で
+ * 例外にする。ここを緩めることは「任意のファイルを実行できる」に等しい。
+ */
 function loadModuleExports(file) {
-  const src = fs.readFileSync(file, 'utf8');
+  const resolved = path.resolve(file);
+  if (resolved !== path.normalize(file) && !path.isAbsolute(file)) {
+    // 相対指定は呼び出し口の作業ディレクトリに依存する。受け付けない。
+    throw new Error(`loadModuleExports: 絶対パスで渡してください (${file})`);
+  }
+  if (resolved !== DATA && !resolved.startsWith(DATA + path.sep)) {
+    throw new Error(
+      `loadModuleExports: ${DATA} の外は評価しません (${resolved})。`
+      + ' この関数は型を落として実行するので、外を許すと任意コード実行になります。',
+    );
+  }
+  if (!resolved.endsWith('.ts')) {
+    throw new Error(`loadModuleExports: .ts 以外は評価しません (${resolved})`);
+  }
+  const src = fs.readFileSync(resolved, 'utf8');
   const js = ts.transpileModule(src, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const m = { exports: {} };
   // 型のみ import は transpile で消える。万一の require は無害なスタブへ。
+  // Stryker disable next-line all: 不変条件 #9 の明示的な例外 (上の説明を参照)
   new Function('module', 'exports', 'require', js)(m, m.exports, () => ({}));
   return m.exports;
 }

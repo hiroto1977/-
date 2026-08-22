@@ -154,6 +154,18 @@ const FORBIDDEN_PATTERNS = [
     name: 'new Function',
     pattern: /\bnew\s+Function\s*\(/,
     rationale: 'arbitrary code execution — invariant #9',
+    /*
+     * 唯一の例外。`orchestration/knowledge-context.cjs` は確証済みデータの
+     * `.ts` を型除去して評価する (出典配列がモジュール内 const を参照するため、
+     * 正規表現では読めない)。ビルド時にしか走らず出荷物には入らないので、
+     * 実質 `require()` と同じ強さ —— ただしそれは**評価対象が
+     * `src/renderer/data/` 配下に限られている限り**の話。
+     * その前提は同ファイルの `loadModuleExports` が関門として強制している
+     * (外を指したら throw。相対パス・前方一致する兄弟・.ts 以外も拒否)。
+     * ここを 1 行広げることは「任意コード実行を許す」と同義なので、
+     * 例外はファイル名で 1 つだけに縛る。
+     */
+    allowFile: (rel) => rel === 'orchestration/knowledge-context.cjs',
   },
   {
     // setTimeout('code', ms) / setInterval('code', ms) の文字列形は eval と同じ。
@@ -446,6 +458,12 @@ function main() {
   walk(path.join(REPO_ROOT, 'src'), scan);
   walk(path.join(REPO_ROOT, 'scripts'), scan);
   walk(path.join(REPO_ROOT, 'build'), scan);
+  // 2026-08-22 に足した。`src` / `scripts` / `build` だけを見ていたので、
+  // **出荷される Service Worker (assets/sw.js) と orchestration/*.cjs が
+  // 丸ごと見えていなかった**。実際 orchestration に不変条件 #9 違反
+  // (new Function) が 1 件あり、誰にも見られないまま残っていた。
+  walk(path.join(REPO_ROOT, 'orchestration'), scan);
+  walk(path.join(REPO_ROOT, 'assets'), scan);
 
   function scan(full, rel) {
     filesScanned++;
