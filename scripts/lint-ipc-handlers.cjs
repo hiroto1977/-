@@ -35,7 +35,32 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const MAIN_TS = path.join(REPO_ROOT, 'src/main/main.ts');
+const MAIN_DIR = path.join(REPO_ROOT, 'src/main');
+
+/**
+ * `src/main` 配下で `ipcMain.handle` を含むファイルを全部返す。
+ *
+ * 2026-08-22 まで `src/main/main.ts` 決め打ちだった。今日は登録がそこにしか
+ * 無いので結果は同じだが、**別のモジュールへ 1 本登録した日から、その 1 本は
+ * 誰にも見られない**。今セッションで同じ形の死角を 5 つ潰しているので、
+ * ここも一覧をやめる。
+ */
+function handlerFiles() {
+  const out = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        if (e.name !== '__tests__') walk(full);
+      } else if (/\.ts$/.test(e.name)) {
+        const text = fs.readFileSync(full, 'utf8');
+        if (text.includes('ipcMain.handle')) out.push({ file: path.relative(REPO_ROOT, full), text });
+      }
+    }
+  };
+  walk(MAIN_DIR);
+  return out.sort((a, b) => a.file.localeCompare(b.file));
+}
 
 /**
  * `ipcMain.handle('channel', …)` を順に切り出す。
@@ -111,9 +136,20 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const handlers = handlerBodies(fs.readFileSync(MAIN_TS, 'utf8'));
+  const files = handlerFiles();
+  if (files.length === 0) {
+    console.error('❌ ipcMain.handle を含むファイルが 1 件もありません（走査の不具合を疑ってください）。');
+    return 1;
+  }
+  const handlers = [];
+  for (const f of files) {
+    for (const h of handlerBodies(f.text)) handlers.push({ ...h, file: f.file });
+  }
   const problems = evaluateHandlers(handlers);
-  console.log(`IPC ハンドラ ${handlers.length} 件を検査しました`);
+  console.log(
+    `IPC ハンドラ ${handlers.length} 件を検査しました`
+      + ` (${files.length} ファイル: ${files.map((f) => f.file).join(', ')})`,
+  );
 
   if (problems.length > 0) {
     console.error(`❌ ${problems.length} 件:`);
