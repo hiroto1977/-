@@ -1194,6 +1194,49 @@ master 鍵を取り出せる」。預けた前提を書く正しいやり方 (0-
 突き合わせても死んだ例外は 0 件だった。ただし**片方向だと将来死ぬ**ので、
 双方向の台帳 (`KNOWN_SUPPRESSIONS`) にして固定した。
 
+### 正規表現をユーザー入力から組み立てている場所はあるか → 1 件も無い
+
+`new RegExp(` を `src/` 全体で探して **0 件**。ReDoS も正規表現注入も、
+そもそも受け口が存在しない。パターンはすべてリテラルで書かれている。
+
+### `URL.createObjectURL` から blob: 文書を開いている場所はあるか → 無かった
+
+10 箇所すべてが `<a download>` のダウンロード用で、`window.open(blob:)` は
+1 つも無い。ライブラリのプレビューは 2026-08 に `data:` + `<img>`
+（secure static mode）と `<pre>` のテキスト表示へ移してある
+（`library/preview.ts` に経緯あり）。`blob:` 文書は生成元と同一オリジンに
+なるので、これは正しい形。
+
+なお `<img>` に渡す data URL は `blobToDataUrl(item.blob)` が **blob 自身の
+type** から作るので、保存時のメタ (`item.mime`) が食い違っても属性から
+抜けられない（React が属性値をエスケープするうえ、`<img>` は HTML を実行しない）。
+
+### 秘密の比較にタイミング安全でないものはあるか → 認証の判定には無かった
+
+`token|secret|signature|hmac|digest|password|hash` の比較を洗うと、
+出てくるのは空文字判定・型判定・URL の userinfo 判定ばかりだった。
+`cloudBackup.ts` の `expectedTreeHash !== manifest.treeHash` は
+**手元のバックアップの整合検査**で、遠隔の攻撃者が試行を繰り返せる
+認証オラクルではない（比較する側が既にファイルを持っている）。
+
+### 型ガードの所属判定にプロトタイプ鎖を辿るものはあるか → 1 件あった（修正済み）
+
+型ガード 38 個を走査し、`in` / 素の添字だけで判定しているものは 1 件。
+`isBusinessCategoryId` で、`'constructor'` など 8 個が通っていた。
+詳細は該当コミット。`lint:forbidden` の 27 個目として再発を止めた。
+
+境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
+`OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
+
+### 出荷している Service Worker に穴はあるか → 無かった
+
+network-first・**同一オリジンの GET のみ**・`res.ok` のときだけ保存、と
+すでに 2026-07 監査で絞ってある。第三者 API の応答が端末に平文で残る経路は無い。
+
+（説明文は「アプリシェルだけキャッシュすれば十分」と書いているが、実装は
+同一オリジンの成功 GET を全部入れる。公開先は静的な Pages のオリジンで
+利用者データを配っていないので実害は無い。文と実装のずれとしてだけ記す。）
+
 ---
 
 ## 優先順位の推奨
