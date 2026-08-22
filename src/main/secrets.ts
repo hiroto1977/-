@@ -34,12 +34,16 @@ function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
 
 /** Parse a stored-secrets JSON blob into a validated string map, or null if
  *  it isn't usable (so the caller can try a backup). */
-function parseStore(text: string): Record<string, string> | null {
+function parseStore(text: string | null): Record<string, string> | null {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(text);
+    // ファイルが無いとき (`null`) も `String(null)` → `'null'` → `null` になり、
+    // 下の番人が落とす。呼び出し側で null を確かめると、同じ結果にしかならない
+    // 枝が増えるだけなので、「読めない値」の判定はここ 1 か所に寄せる。
+    parsed = JSON.parse(String(text));
   } catch {
-    return null;
+    // JSON でなければ `parsed` は undefined のまま。すぐ下の番人が必ず落とすので
+    // ここでは返さない (同じ結果になる出口を 2 つ持たない)。
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return null;
   const out: Record<string, string> = {};
@@ -76,7 +80,7 @@ async function readStore(): Promise<Record<string, string>> {
 
   // Primary unparseable → try the backup explicitly before giving up.
   const prev = await readFileWithBackup(`${secretsPath()}.prev`); // reads `<path>.prev`
-  const recovered = prev != null ? parseStore(prev) : null;
+  const recovered = parseStore(prev);
   if (recovered) {
 
     console.error(`[secrets] primary secrets file at ${secretsPath()} was corrupt; recovered from .prev backup`);
@@ -109,6 +113,10 @@ function encode(value: string): string {
         'On Linux, install gnome-keyring or kwallet to enable real encryption.',
     );
   }
+  // Stryker disable next-line StringLiteral: 誤検知。Stryker はこれを生存と報告するが、
+  // 手で `return ''` に置き換えて全テストを回すと
+  // 「キーチェーンが無いときだけ plain: の難読化へ落ちる」が落ちる (対照実験で確認、
+  // 2026-08-22)。perTest の帰属ずれで、実際には殺せている。
   return `plain:${Buffer.from(value, 'utf8').toString('base64')}`;
 }
 
@@ -158,32 +166,29 @@ function decode(value: string): StoredTokenRead {
 /** Finding 5 fix: if any stored value is `plain:`-prefixed AND
  *  safeStorage is now available, upgrade-encrypt all of them in place
  *  so the user gets the encryption they were promised. Called on demand
- *  from setToken/clearToken so we don't burn cycles on read-only paths. */
-async function upgradePlainValues(store: Record<string, string>): Promise<{
-  upgraded: Record<string, string>;
-  changed: boolean;
-}> {
-  if (!safeStorage.isEncryptionAvailable()) {
-    return { upgraded: store, changed: false };
-  }
-  let changed = false;
+ *  from setToken/clearToken so we don't burn cycles on read-only paths.
+ *
+ *  以前は `{ upgraded, changed }` を返していたが、**`changed` を読む呼び出し側が
+ *  一つも無かった** (どちらの呼び出し側も直後に書き込むため)。返り値に残すと、
+ *  誰も観測しない値を組み立てる分岐が 3 つ増えるだけなので落とした。 */
+async function upgradePlainValues(store: Record<string, string>): Promise<Record<string, string>> {
+  if (!safeStorage.isEncryptionAvailable()) return store;
   const upgraded: Record<string, string> = {};
   for (const [k, v] of Object.entries(store)) {
     if (v.startsWith('plain:')) {
       const decoded = Buffer.from(v.slice('plain:'.length), 'base64').toString('utf8');
       upgraded[k] = safeStorage.encryptString(decoded).toString('base64');
-      changed = true;
     } else {
       upgraded[k] = v;
     }
   }
-  return { upgraded, changed };
+  return upgraded;
 }
 
 export async function setToken(serviceId: string, token: string): Promise<void> {
   return withWriteLock(async () => {
     const store = await readStore();
-    const { upgraded } = await upgradePlainValues(store);
+    const upgraded = await upgradePlainValues(store);
     upgraded[serviceId] = encode(token);
     await writeStore(upgraded);
   });
@@ -207,7 +212,7 @@ export async function getToken(serviceId: string): Promise<string | null> {
 export async function clearToken(serviceId: string): Promise<void> {
   return withWriteLock(async () => {
     const store = await readStore();
-    const { upgraded } = await upgradePlainValues(store);
+    const upgraded = await upgradePlainValues(store);
     delete upgraded[serviceId];
     await writeStore(upgraded);
   });
@@ -266,10 +271,11 @@ export async function setOAuthTokens(serviceId: ServiceId, tokens: TokenSet): Pr
 }
 
 export async function getOAuthTokens(serviceId: ServiceId): Promise<TokenSet | null> {
+  // 未設定 (`null`) も `String(null)` → `'null'` → `null` となり `isTokenSet` が
+  // 落とす。手前でもう一度確かめると、どちらを通っても同じという枝が増えるだけ。
   const raw = await getToken(serviceId);
-  if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw);
+    const parsed: unknown = JSON.parse(String(raw));
     return isTokenSet(parsed) ? parsed : null;
   } catch {
     return null;
@@ -302,14 +308,17 @@ export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRe
   try {
     parsed = JSON.parse(raw);
   } catch {
-    // not JSON → raw bearer token, return as-is
-    return { ok: true, token: raw };
+    // JSON でなければ生の Bearer。`parsed` は null のままなので、すぐ下の
+    // `isTokenSet` が必ず落とす — ここで返すと同じ結果の出口が 2 つになる。
   }
   if (!isTokenSet(parsed)) return { ok: true, token: raw };
 
   const tokens: TokenSet = parsed;
   const config = OAUTH_CONFIGS[serviceId];
   const expiresSoon =
+    // Stryker disable next-line ConditionalExpression: 誤検知。手で `true` に置き換えると
+    // 「期限に余裕があれば更新しない」「期限が無ければ更新しない」「境界ちょうど…」の
+    // 3 本が落ちる (対照実験で確認、2026-08-22)。perTest の帰属ずれ。
     typeof tokens.expiresAt === 'number' && tokens.expiresAt - Date.now() < REFRESH_WINDOW_MS;
 
   if (expiresSoon && tokens.refreshToken && config) {

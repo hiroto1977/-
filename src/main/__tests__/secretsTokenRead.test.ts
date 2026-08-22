@@ -76,6 +76,9 @@ describe('readStoredToken', () => {
     expect(r.message).toContain('OS キーチェーン');
     // 貼り直すと格下げになることを案内に含める (これが元の事故の入口だった)。
     expect(r.message).toContain('暗号化されない形');
+    // 直し方まで書いてあって初めて使える案内になる。「読めません」だけでは
+    // 利用者は貼り直す以外の手を思いつけず、結局この事故の入口へ戻る。
+    expect(r.message).toContain('gnome-keyring');
   });
 
   it('キーチェーンが無くても plain: の値は読める', async () => {
@@ -93,6 +96,7 @@ describe('readStoredToken', () => {
     expect(r.ok).toBe(false);
     if (r.ok || r.reason !== 'undecryptable') throw new Error(`unreachable: ${JSON.stringify(r)}`);
     expect(r.message).toContain('壊れている');
+    expect(r.message).toContain('削除して');
   });
 
   it('プロトタイプ由来のキーを保存値として読まない', async () => {

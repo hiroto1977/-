@@ -48,6 +48,7 @@
     "src/main/clients/wordpress.ts",
     "src/main/clients/youtube.ts",
     "src/main/oauth.ts",
+    "src/main/secrets.ts",
     "src/renderer/components/serviceActionMachine.ts",
     "src/renderer/components/serviceActionUtils.ts",
     "src/renderer/data/accounting.ts",
