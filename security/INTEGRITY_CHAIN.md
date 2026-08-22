@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 44
+- ブロック数: 46
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `388b30e642f963d0c190b153902ac214a5e7809c20a357a9daa266901843311b`
-- 保護対象: 23 ファイル
+- 末尾(tip)ハッシュ: `a53b396703fa92305f78344be7816cb9df5c8b8ca92ef98f0d26f7074e655d5b`
+- 保護対象: 31 ファイル
 
 ## ブロック
 
@@ -57,6 +57,8 @@
 | 41 | `0d9c1bf0c240e70f` | `9369eedc569a22e6` | `d2d21bf8d3f18fcb` | update release.yml,electron-builder.json,integrity-chain.cjs,main.ts,proxy.ts,redact.ts |
 | 42 | `66b23fe88ac77099` | `d2d21bf8d3f18fcb` | `1c8edeabe6b441a0` | update ci.yml |
 | 43 | `2f0d929bbc594e96` | `1c8edeabe6b441a0` | `388b30e642f963d0` | update main.ts |
+| 44 | `f30d6f340b5851f7` | `388b30e642f963d0` | `39932a8323ed5495` | update integrity-chain.cjs,atomicWrite.ts,bip39-wordlist.ts,aiEndpoint.ts,controlChars.ts,cryptoParams.ts |
+| 45 | `d70cf531745613cc` | `39932a8323ed5495` | `a53b396703fa9230` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
@@ -69,6 +71,7 @@
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
+- `src/main/atomicWrite.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
@@ -78,8 +81,15 @@
 - `src/renderer/network/proxy.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.ts`
+- `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/shared/aiEndpoint.ts`
+- `src/shared/controlChars.ts`
+- `src/shared/cryptoParams.ts`
+- `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
+- `src/shared/tokenInput.ts`
+- `src/shared/vaultToken.ts`

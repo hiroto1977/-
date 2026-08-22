@@ -11,6 +11,7 @@
     "scripts/security-audit.sh",
     "scripts/setup-linux.sh",
     "scripts/setup-obsidian-docker.sh",
+    "src/main/atomicWrite.ts",
     "src/main/clients/exportPaths.ts",
     "src/main/main.ts",
     "src/main/oauth.ts",
@@ -20,11 +21,18 @@
     "src/renderer/network/proxy.ts",
     "src/renderer/security/LockScreen.tsx",
     "src/renderer/security/autoLock.ts",
+    "src/renderer/security/bip39-wordlist.ts",
     "src/renderer/security/dataCrypto.ts",
     "src/renderer/security/mnemonic.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/webauthn.ts",
-    "src/shared/redact.ts"
+    "src/shared/aiEndpoint.ts",
+    "src/shared/controlChars.ts",
+    "src/shared/cryptoParams.ts",
+    "src/shared/proxyEndpoint.ts",
+    "src/shared/redact.ts",
+    "src/shared/tokenInput.ts",
+    "src/shared/vaultToken.ts"
   ],
   "blocks": [
     {
@@ -378,18 +386,35 @@
       "leafCount": 23,
       "note": "update main.ts",
       "hash": "388b30e642f963d0c190b153902ac214a5e7809c20a357a9daa266901843311b"
+    },
+    {
+      "index": 44,
+      "prevHash": "388b30e642f963d0c190b153902ac214a5e7809c20a357a9daa266901843311b",
+      "merkleRoot": "f30d6f340b5851f7893f1c8c968cae0901b88817aaed19340ef06199ec397675",
+      "leafCount": 31,
+      "note": "update integrity-chain.cjs,atomicWrite.ts,bip39-wordlist.ts,aiEndpoint.ts,controlChars.ts,cryptoParams.ts",
+      "hash": "39932a8323ed5495fb0f07acc93292aa804efcfbeb66151bc902ef167dd37d97"
+    },
+    {
+      "index": 45,
+      "prevHash": "39932a8323ed5495fb0f07acc93292aa804efcfbeb66151bc902ef167dd37d97",
+      "merkleRoot": "d70cf531745613cc553f4cdc05eba1221528992a2b6009d1f123cc2f5df279bb",
+      "leafCount": 31,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "a53b396703fa92305f78344be7816cb9df5c8b8ca92ef98f0d26f7074e655d5b"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "77f190c635a5f10d30557f6e814e0752410a01b5ab0e1e43bbaf2b941621203e",
     ".github/workflows/release.yml": "2f75bd96f049f28e8de81cec65c0829403259fcfebc9e53f3810c251e6d2367c",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
-    "docs/SECURITY_CHAIN.md": "02be0b9bb847d6018f8d0f4b0c8c04f31d2ae2c6449c8ac22043632d10d57e50",
+    "docs/SECURITY_CHAIN.md": "160c4de954d6577dd09a623eb770da5cf5191cf13870d321791904b6fcb45fc3",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
-    "scripts/integrity-chain.cjs": "9c9e6d94e286b26c1adbe7067361188ea80171698921a6b4d74228987d15f35c",
+    "scripts/integrity-chain.cjs": "733bc58a923db425a4b6b10628f80c558186b23f9a7096b31cdf1d804ad85718",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
+    "src/main/atomicWrite.ts": "c534f991bd63f8538421179c4ca64fc041ffcc54b7162ac7719938977974eb8b",
     "src/main/clients/exportPaths.ts": "b6798f4a0b9d54b8d6ee4a8df17323163dee857edbeed4dd546292399fd98882",
     "src/main/main.ts": "140667d3ebb366bccbca1240d2af75dc090eeb438d359174c0faad84be90dc92",
     "src/main/oauth.ts": "9d5ce86f1a544a7b628dd1eb2d031863f3a8eacca3851fcc68f32637f78f1ce0",
@@ -399,10 +424,17 @@
     "src/renderer/network/proxy.ts": "59e64d7473120d84f9417d406878958d07231bd7c1a58e800c0a5d3ac7130ec2",
     "src/renderer/security/LockScreen.tsx": "3464f6c2b7cb088df493be46bdd38a35123faa80505ea309d40e9008a2ee2866",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",
+    "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "013529669eb9cd63bfa98b80e5e740d2107233d2097ef3399cb2c17b68925f27",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "033f9ce3bc89e45927bfa04ab086533dad8578aee05519e4b8c84b2a7686c89f",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
-    "src/shared/redact.ts": "5f1cee2072e74eb5d3ff1eb0bdff63143a796302cfb734807d632321f0ceaca4"
+    "src/shared/aiEndpoint.ts": "bf6db7a49eb2731b15f6ffc40b0b973068d6860226e9f2422c96c067a7dedeb0",
+    "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
+    "src/shared/cryptoParams.ts": "fd68954c1be30280b89ba4e99e270515b44a7b27ff199f8efd891d20876e21c7",
+    "src/shared/proxyEndpoint.ts": "1bb5bf73ca41bd73770a16531740ae0738e1cacdb21945c517adefe9aa4091c7",
+    "src/shared/redact.ts": "5f1cee2072e74eb5d3ff1eb0bdff63143a796302cfb734807d632321f0ceaca4",
+    "src/shared/tokenInput.ts": "f6d58a447a515abb4ddddb3b68d96aeed6a543cffd76a200e22c9077452b35be",
+    "src/shared/vaultToken.ts": "11996538381f1fcbae40f85dc385a4d34d864706c6b3f2adf8589dd9998198b7"
   }
 }

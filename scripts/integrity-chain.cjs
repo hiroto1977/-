@@ -93,7 +93,130 @@ const PROTECTED = [
   // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
   // 応答を返せる。保護対象として最も効く部類なのに漏れていた。
   'assets/sw.js',
+  // --- 2026-08-22: 保護対象が import している側 (下の checkProtectedClosure) ---
+  //
+  // 保護しているファイルが**判断の材料をよそから読んでいる**なら、材料の方も
+  // 守らないと意味が無い。main.ts を足したときと同じ形 (関門だけ守って、
+  // 関門を呼ぶ側が守られていなかった) が、今度は逆向きに残っていた。
+  //
+  // 保管庫の強度そのもの。`PBKDF2_ITERATIONS` を 600k から 1000 に落とすだけで
+  // vault.ts / dataCrypto.ts は**そのまま**弱くなる (どちらも保護対象なのに、
+  // 読んでいる数字が保護対象でなかった)。IV 長・ハッシュも同じ。
+  'src/shared/cryptoParams.ts',
+  // 復元フレーズの語彙。mnemonic.ts は保護対象だが、語彙を差し替えられれば
+  // エントロピーの空間ごと縮む (2048 語を 16 語にすれば総当たりで開く)。
+  'src/renderer/security/bip39-wordlist.ts',
+  // BYO プロキシ URL の検証。proxy.ts を「全サービスのトークンが通る口」
+  // として守っているのに、その URL を「https か loopback だけ」に絞る判断が
+  // ここに在って守られていなかった。緩めれば平文 http で任意のホストへ出せる。
+  'src/shared/proxyEndpoint.ts',
+  // 保存済み資格情報から Authorization に載せる値を決める唯一の場所。
+  // 壊れた TokenSet を raw に落とすと **refresh token が相手に出る**
+  // (2026-08-20 に実際に踏んだ形)。secrets.ts が読む先。
+  'src/shared/vaultToken.ts',
+  // 暗号化された資格情報ファイルがディスクに載る経路 (secrets.ts の書き込み)。
+  // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
+  // 平文や旧世代が予期しない場所に残りうる。
+  'src/main/atomicWrite.ts',
+  // IPC 境界で資格情報の文字列を検査する唯一の場所 (main.ts が読む)。
+  // 制御文字・長さ・空を落としているので、緩めば折り返しごと保存される。
+  'src/shared/tokenInput.ts',
+  // ↓ この 2 つは閉包の検査が**最初の実行で見つけた**もの。
+  //   proxyEndpoint.ts を保護対象にした途端、それが読んでいる側が浮いた。
+  //
+  // 「平文 http を許すのは loopback だけ」の判定そのもの (isLoopbackHostname)。
+  // proxyEndpoint.ts / aiEndpoint.ts の両方がこれを唯一の出典にしているので、
+  // ここが全部 true を返すようになれば **資格情報が平文で任意のホストへ出る**。
+  // AI 提供元の endpoint 検証 (API キーの送り先) 本体でもある。
+  'src/shared/aiEndpoint.ts',
+  // 制御文字の判定。URL / ヘッダの分断を止める共通の一段目で、
+  // proxy / AI endpoint / Atlassian site / 資格情報入力が全部ここを通る。
+  'src/shared/controlChars.ts',
 ];
+
+/**
+ * **保護対象が import しているのに保護しない**と決めたものの台帳。
+ *
+ * 空欄にできない形にしてある — 除外するなら理由を書く。理由の書けない
+ * 除外は、単に見落としと区別がつかない。
+ *
+ * 台帳は**双方向**: ここに載っているのに実際は依存されていない (または既に
+ * 保護対象になった) 項目も鳴らす。片方向だと、依存が消えた後も除外だけが
+ * 残り続ける。
+ */
+const DEP_EXCLUSIONS = {
+  'src/shared/serviceId.ts':
+    'サービスを 1 つ足すたびに変わる (現在 74)。かつ、この一覧自体は関門ではない — '
+    + '未知の id を弾いているのは SERVICE_ID_SET を使う isServiceId で、'
+    + 'id を足しただけでは LIVE_FETCHERS の起動時不変条件が throw する。',
+  'src/main/clients/index.ts':
+    'サービス追加のたびに変わる登録簿 (74 エントリ)。中身は各 client への振り分けで、'
+    + '判断は各 client と main.ts 側の検証が持つ。',
+  'src/main/clients/types.ts':
+    '型と ActionContext の形だけ。実行時の判断を持たない。',
+  'src/shared/updateCheck.ts':
+    '版の比較のみ。書き換えの最悪は「更新があるのに気付かせない」で、'
+    + '配布経路そのものは release.yml (保護対象) が持つ。',
+};
+
+/** 相対 import を実ファイルへ解決する (拡張子省略に対応)。解決できなければ null。 */
+function resolveRelativeImport(fromRel, spec) {
+  if (!spec.startsWith('.')) return null;
+  const base = path.join(path.dirname(fromRel), spec);
+  for (const ext of ['.ts', '.tsx', '/index.ts', '.js']) {
+    if (fs.existsSync(path.join(REPO_ROOT, base + ext))) return (base + ext).split(path.sep).join('/');
+  }
+  return null;
+}
+
+/**
+ * 保護対象の **閉包** を確かめる。
+ *
+ * 守っているファイルが判断の材料をよそから読んでいるなら、材料の方も守らないと
+ * 保護は素通しになる。2026-08-22 の走査で 10 件見つかり、うち 6 件は
+ * **保管庫の反復回数 (600k)・BIP-39 の語彙・プロキシ URL の検証**のように
+ * 「そこが変わればこちらの保護が意味を失う」ものだった。
+ *
+ * 一覧が手書きである以上、増えたときに気付ける形が要る。判定は
+ * 「保護対象が直接 import している相対パスは、保護対象か除外台帳のどちらかに
+ * 載っていること」。除外台帳は双方向 (使われていない除外も鳴らす)。
+ *
+ * 直接の import だけを見る (推移閉包は追わない) —— 深追いすると
+ * 「型だけの import」まで巻き込んで台帳が実用にならないため。
+ * 段を 1 つ増やしたければ、増えた先が次の verify で鳴る。
+ *
+ * @returns 問題の説明の配列 (空なら健全)
+ */
+function collectClosureProblems(protectedList, exclusions) {
+  const problems = [];
+  const set = new Set(protectedList);
+  const used = new Set();
+
+  for (const rel of protectedList) {
+    if (!/\.(ts|tsx)$/.test(rel)) continue;
+    const abs = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(abs)) continue;
+    const text = fs.readFileSync(abs, 'utf8');
+    for (const m of text.matchAll(/^\s*(?:import|export)[\s\S]*?from\s+'([^']+)'/gm)) {
+      const target = resolveRelativeImport(rel, m[1]);
+      if (target === null || set.has(target)) continue;
+      if (Object.hasOwn(exclusions, target)) {
+        used.add(target);
+        continue;
+      }
+      problems.push(`保護対象 ${rel} が ${target} を読んでいますが、${target} は保護対象でも除外台帳でもありません`);
+    }
+  }
+
+  for (const rel of Object.keys(exclusions)) {
+    if (set.has(rel)) {
+      problems.push(`除外台帳の ${rel} は既に保護対象です (二重管理)`);
+    } else if (!used.has(rel)) {
+      problems.push(`除外台帳の ${rel} は、もうどの保護対象からも読まれていません (古い除外)`);
+    }
+  }
+  return problems;
+}
 
 const sha256 = (buf) => crypto.createHash(ALGORITHM).update(buf).digest('hex');
 
@@ -253,7 +376,14 @@ function cmdVerify() {
     fail(`${path.relative(REPO_ROOT, NOTE_PATH)} が台帳と同期していません。'npm run chain:append' で再生成してください。`);
   }
 
-  console.log(`✅ integrity-chain OK — ブロック ${chain.blocks.length} 連結・保護対象 ${chain.protected.length} ファイルが tip と一致（tip ${tip.hash.slice(0, 16)}…）。`);
+  // 4. 閉包: 保護対象が読んでいる先も保護対象か、理由付きで除外されているか
+  const closure = collectClosureProblems(PROTECTED, DEP_EXCLUSIONS);
+  if (closure.length > 0) fail(`保護の閉包が破れています:\n  - ${closure.join('\n  - ')}`);
+
+  console.log(
+    `✅ integrity-chain OK — ブロック ${chain.blocks.length} 連結・保護対象 ${chain.protected.length} ファイルが tip と一致`
+    + `（閉包 OK: 除外 ${Object.keys(DEP_EXCLUSIONS).length} 件は台帳どおり / tip ${tip.hash.slice(0, 16)}…）。`,
+  );
 }
 
 function cmdShow() {
@@ -327,6 +457,33 @@ function cmdSelfTest() {
     '保護対象は実在するファイルだけ',
     PROTECTED.every((rel) => fs.existsSync(path.join(REPO_ROOT, rel))),
   );
+
+  // --- 閉包の検査そのものが鳴るか (陰性対照) ---
+  //
+  // 「0 件だから通る」検査は、**壊れていても 0 件を返す**ので区別がつかない。
+  // 実物の一覧から 1 つ外して鳴ることを毎回確かめる。
+  check('実物の一覧では閉包の問題が 0 件', collectClosureProblems(PROTECTED, DEP_EXCLUSIONS).length === 0);
+  {
+    // cryptoParams.ts (保管庫の反復回数) を保護から外すと、それを読む
+    // vault.ts / dataCrypto.ts の 2 件が鳴るはず。
+    const weakened = PROTECTED.filter((rel) => rel !== 'src/shared/cryptoParams.ts');
+    const found = collectClosureProblems(weakened, DEP_EXCLUSIONS);
+    check(
+      '保護を 1 つ外すと、それを読んでいる側から鳴る',
+      found.length > 0 && found.every((m) => m.includes('cryptoParams.ts')),
+    );
+  }
+  check(
+    '除外台帳に実在しない項目があれば鳴る (古い除外)',
+    collectClosureProblems(PROTECTED, { ...DEP_EXCLUSIONS, 'src/nowhere.ts': '理由' })
+      .some((m) => m.includes('src/nowhere.ts')),
+  );
+  check(
+    '除外台帳に保護済みのものが載っていれば鳴る (二重管理)',
+    collectClosureProblems(PROTECTED, { ...DEP_EXCLUSIONS, 'src/main/main.ts': '理由' })
+      .some((m) => m.includes('二重管理')),
+  );
+  check('除外の理由が空でない', Object.values(DEP_EXCLUSIONS).every((r) => r.trim().length > 0));
 
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — 改竄検知が働いていない`);

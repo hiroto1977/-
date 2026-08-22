@@ -38,11 +38,34 @@ npm run chain:show     # 台帳の要約を表示
 
 `chain:verify` は (1) 各ブロックの `hash` 再計算、(2) `prevHash` の連結（genesis から
 途切れない）、(3) ディスク上の保護対象から再計算した Merkle ルートと tip の一致、
-(4) 派生ノート `security/INTEGRITY_CHAIN.md` の同期、を検証する。保護対象を意図的に
-変更したら `chain:append` で新ブロックを採掘してからコミットする（＝監査可能な変更）。
+(4) 派生ノート `security/INTEGRITY_CHAIN.md` の同期、(5) **保護の閉包**、を検証する。
+保護対象を意図的に変更したら `chain:append` で新ブロックを採掘してからコミットする
+（＝監査可能な変更）。
 
 保護対象（安定したセキュリティ／ガバナンス資産。頻繁に変わる知識データは含めない）は
 `PROTECTED` 配列で定義する。
+
+### 閉包 — 守っているファイルが読んでいる先も守る
+
+守っているファイルが**判断の材料をよそから読んでいる**なら、材料の方も守らないと
+保護は素通しになる。`collectClosureProblems` が「保護対象が直接 import している
+相対パスは、保護対象か `DEP_EXCLUSIONS`（理由付きの除外台帳）のどちらかに載っている
+こと」を強制する。台帳は双方向で、依存が消えた古い除外も鳴る。
+
+2026-08-22 に導入したとき、保護対象 23 件の直接依存 10 件のうち **6 件が浮いた**。
+いちばん効いたのは `src/shared/cryptoParams.ts` ——
+`vault.ts` と `dataCrypto.ts` は保護対象なのに、その 2 つが読む
+`PBKDF2_ITERATIONS = 600_000` は保護対象ではなかった。ここを 1000 に落とすだけで、
+保管庫の実装を 1 文字も触らずに強度が消える。同じ形で `bip39-wordlist.ts`
+（復元フレーズの語彙＝エントロピーの空間）、`proxyEndpoint.ts`（全トークンが通る
+プロキシ URL の検証）、`vaultToken.ts`（Authorization に載せる値の決定）、
+`atomicWrite.ts`（暗号化された資格情報がディスクに載る経路）、`tokenInput.ts`
+（IPC 境界の資格情報検査）が入った。
+
+さらに `proxyEndpoint.ts` を足した**その実行で**、それが読む
+`aiEndpoint.ts`（`isLoopbackHostname` ——「平文 http を許すのは loopback だけ」の
+判定そのもの）と `controlChars.ts` が浮いた。閉包は 1 段ずつしか追わないが、
+段を 1 つ足せば次の `verify` で必ず次の段が鳴る。
 
 `assets/sw.js`（Service Worker）は 2026-08 に追加した。公開版のオリジンで
 **全てのページ読み込みに介入**し、一度登録されると以後そのオリジンで任意の応答を
