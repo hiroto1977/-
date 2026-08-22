@@ -92,6 +92,39 @@ const SIMPLIFIED = {
 delete SIMPLIFIED['单独']; // 表の見た目を揃えるためのダミーを落とす
 
 /**
+ * **簡体字であると同時に正しい日本語**の字。SIMPLIFIED に入れてはいけない。
+ *
+ * 上のコメントに「最初の実装で 号・国・学 を入れて正常な文書を 3 件誤検出した」と
+ * 書いてあるが、書いてあるだけでは同じ罠をもう一度踏む。表の不変条件として
+ * 毎回機械で確かめる (checkTable)。字を足したくなったら、まず
+ * 「これは日本語として正しくないか？」を問うこと。
+ */
+const NEVER_FLAG = new Set([...'号国学尽写点医会体来万声麦虫礼台与対']);
+
+/**
+ * SIMPLIFIED 表そのものの健全性。データの検査ではなく**規則の検査**なので、
+ * 走査対象が 0 件でも走る。
+ */
+function checkTable(table = SIMPLIFIED, never = NEVER_FLAG) {
+  const problems = [];
+  const keys = Object.keys(table);
+  const keySet = new Set(keys);
+  for (const [simp, jp] of Object.entries(table)) {
+    if (never.has(simp)) {
+      problems.push(`「${simp}」は日本語として正しい字です — 載せると正常な文書を誤検出します`);
+    }
+    if (simp === jp) {
+      // 自分自身への置換は、下の「置換先がキーにも在る」も自動的に満たす。
+      // 根っこだけを言う (両方出すと数がぶれて、対照実験が読みにくくなる)。
+      problems.push(`「${simp}」は置換先が自分自身です — 直しようがありません`);
+    } else if (keySet.has(jp)) {
+      problems.push(`「${simp}」→「${jp}」の置換先が表のキーにも在ります — 直した途端に次が鳴ります`);
+    }
+  }
+  return problems;
+}
+
+/**
  * 正当な出現の台帳。`ファイル::文字` をキーに理由を書く。
  * 双方向検証されるので、直したらここから消さないと落ちる。
  */
@@ -145,6 +178,117 @@ function lineOf(text, index) {
   return text.slice(0, index).split('\n').length;
 }
 
+/**
+ * 1 ファイル分を走査する。ディスクから切り離してあるのは自己検査のため。
+ *
+ * @returns `{ findings, seenKeys }` — seenKeys は台帳の双方向検証に使う
+ *   (載っているのに一度も現れなければ、その項目はもう古い)。
+ */
+function scanText(rel, text, allow = ALLOWLIST) {
+  const findings = [];
+  const seenKeys = new Set();
+
+  for (const { name, re } of SCRIPT_RANGES) {
+    re.lastIndex = 0;
+    for (const m of text.matchAll(re)) {
+      const key = `${rel}::${m[0]}`;
+      seenKeys.add(key);
+      if (allow.has(key)) continue;
+      findings.push({
+        rel, line: lineOf(text, m.index), char: m[0], kind: name,
+        hint: null, context: context(text, m.index),
+      });
+    }
+  }
+
+  for (const [simp, jp] of Object.entries(SIMPLIFIED)) {
+    let from = 0;
+    for (;;) {
+      const i = text.indexOf(simp, from);
+      if (i === -1) break;
+      from = i + 1;
+      const key = `${rel}::${simp}`;
+      seenKeys.add(key);
+      if (allow.has(key)) continue;
+      findings.push({
+        rel, line: lineOf(text, i), char: simp, kind: '簡体字',
+        hint: jp, context: context(text, i),
+      });
+    }
+  }
+
+  return { findings, seenKeys };
+}
+
+// ---------------------------------------------------------------------------
+// 陰性対照 (--self-test)
+// ---------------------------------------------------------------------------
+
+/*
+ * このゲートは**緑であることが正常**なので、鳴らなくなっても誰も気づけない。
+ * 実測で踏んだ 2 つの罠を、規則そのものへの入力として毎回確かめる:
+ *
+ *   1. 日本語新字体と同形の字 (号 国 学 …) を混入と読まないこと。
+ *      読んだら正常な文書が落ち、次の人は「うるさいから」と規則を緩める。
+ *   2. 台帳が双方向であること。片方向にすると、直した後も台帳が残り、
+ *      その字は永久に見逃される。
+ */
+function selfTest() {
+  const cases = [
+    ['普通の日本語は鳴らない', '税理士に確認してください。', 0],
+    ['ギリシャ文字は対象外 (数式で正当に使う)', 'α β μ σ Δ Ω の分散', 0],
+    ['日本語新字体と同形の字は鳴らない (実測で踏んだ罠)', '号国学尽写点医会体来万声麦虫礼台与対', 0],
+    ['キリル文字は 1 文字 1 件', 'суп', 3],
+    ['ハングル', '엄密には', 1],
+    ['簡体字 1 文字', '债務の話', 1],
+    ['同じ字が 2 回出れば 2 件', '债と债', 2],
+    ['文字体系と簡体字が混ざれば両方', 'суп と 债', 4],
+  ];
+
+  let failed = 0;
+  console.log('self-test:');
+  for (const [label, text, want] of cases) {
+    const got = scanText('t.md', text, new Map()).findings.length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+
+  // 台帳は双方向 — 載っていれば黙り、載っているのに現れなければ古い。
+  const allow = new Map([['t.md::债', '理由']]);
+  const muted = scanText('t.md', '债務の話', allow);
+  const mutedOk = muted.findings.length === 0 && muted.seenKeys.has('t.md::债');
+  if (!mutedOk) failed += 1;
+  console.log(`  ${mutedOk ? '✓' : '✗'} 台帳に載っていれば黙る (かつ「見た」と記録する): ${muted.findings.length} 件 / seen=${muted.seenKeys.has('t.md::债')} (期待 0 件 / seen=true)`);
+
+  const absent = scanText('t.md', '債務の話', allow);
+  const staleOk = [...allow.keys()].filter((k) => !absent.seenKeys.has(k)).length === 1;
+  if (!staleOk) failed += 1;
+  console.log(`  ${staleOk ? '✓' : '✗'} 直したのに台帳が残っていれば stale と分かる: ${staleOk ? '分かる' : '分からない'} (期待 分かる)`);
+
+  // 表そのものの不変条件。壊した表を食わせて 1 件ずつ鳴らす。
+  const tableCases = [
+    ['正しい表は問題なし', { 债: '債' }, 0],
+    ['日本語として正しい字を載せた', { 国: '國' }, 1],
+    ['置換先が自分自身', { 债: '债' }, 1],
+    ['置換先が表のキーにも在る', { 债: '个', 个: '個' }, 1],
+    ['本物の表 (97 項目) に問題なし', SIMPLIFIED, 0],
+  ];
+  for (const [label, table, want] of tableCases) {
+    const got = checkTable(table, NEVER_FLAG).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 表の不変条件: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
+  if (failed > 0) {
+    console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
 function main() {
   const files = [];
   for (const d of SCAN_DIRS) walk(path.join(REPO_ROOT, d), files);
@@ -155,43 +299,18 @@ function main() {
   for (const abs of files) {
     const rel = path.relative(REPO_ROOT, abs);
     if (rel === SELF) continue;
-    const text = fs.readFileSync(abs, 'utf8');
-
-    for (const { name, re } of SCRIPT_RANGES) {
-      re.lastIndex = 0;
-      for (const m of text.matchAll(re)) {
-        const key = `${rel}::${m[0]}`;
-        seenKeys.add(key);
-        if (ALLOWLIST.has(key)) continue;
-        findings.push({
-          rel, line: lineOf(text, m.index), char: m[0], kind: name,
-          hint: null, context: context(text, m.index),
-        });
-      }
-    }
-
-    for (const [simp, jp] of Object.entries(SIMPLIFIED)) {
-      let from = 0;
-      for (;;) {
-        const i = text.indexOf(simp, from);
-        if (i === -1) break;
-        from = i + 1;
-        const key = `${rel}::${simp}`;
-        seenKeys.add(key);
-        if (ALLOWLIST.has(key)) continue;
-        findings.push({
-          rel, line: lineOf(text, i), char: simp, kind: '簡体字',
-          hint: jp, context: context(text, i),
-        });
-      }
-    }
+    const r = scanText(rel, fs.readFileSync(abs, 'utf8'));
+    findings.push(...r.findings);
+    for (const k of r.seenKeys) seenKeys.add(k);
   }
 
   const stale = [...ALLOWLIST.keys()].filter((k) => !seenKeys.has(k));
+  const tableProblems = checkTable();
 
   console.log(
     `Checked ${files.length} file(s) for ${SCRIPT_RANGES.length} 文字体系 + ` +
-      `${Object.keys(SIMPLIFIED).length} 簡体字（既知 ${ALLOWLIST.size} 件は台帳で除外）`,
+      `${Object.keys(SIMPLIFIED).length} 簡体字（既知 ${ALLOWLIST.size} 件は台帳で除外）` +
+      `／表の不変条件 ${Object.keys(SIMPLIFIED).length} 項目`,
   );
 
   let failed = false;
@@ -222,6 +341,12 @@ function main() {
     console.error('\n直ったなら ALLOWLIST から削除してください（台帳は双方向です）。');
   }
 
+  if (tableProblems.length > 0) {
+    failed = true;
+    console.error(`\n❌ SIMPLIFIED 表そのものに ${tableProblems.length} 件の問題があります\n`);
+    for (const p of tableProblems) console.error(`  ${p}`);
+  }
+
   if (failed) process.exit(1);
   console.log(`✅ 他文字種・簡体字の混入はありません（既知 ${ALLOWLIST.size} 件は台帳のまま）`);
 }
@@ -230,6 +355,10 @@ function context(text, index) {
   const a = Math.max(0, index - 25);
   const b = Math.min(text.length, index + 25);
   return text.slice(a, b).replace(/\s+/g, ' ');
+}
+
+if (process.argv.slice(2).includes('--self-test')) {
+  process.exit(selfTest());
 }
 
 main();

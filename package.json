@@ -40,7 +40,7 @@
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",
     "lint:citations": "node scripts/lint-citations.cjs",
     "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
-    "lint:charset": "node scripts/lint-charset.cjs",
+    "lint:charset": "node scripts/lint-charset.cjs && node scripts/lint-charset.cjs --self-test",
     "lint:knowledge-refs": "node scripts/lint-knowledge-refs.cjs",
     "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs && node scripts/lint-forbidden-patterns.cjs --self-test",
     "lint:workflow-security": "node scripts/lint-workflow-security.cjs && node scripts/lint-workflow-security.cjs --self-test",
