@@ -309,6 +309,14 @@
       "leafCount": 18,
       "note": "update integrity-chain.cjs,shellOpenGate.ts",
       "hash": "e97c30f8c6151afd718968a610c7abfb7ba96b950a4ce38f544d0f7716922428"
+    },
+    {
+      "index": 36,
+      "prevHash": "e97c30f8c6151afd718968a610c7abfb7ba96b950a4ce38f544d0f7716922428",
+      "merkleRoot": "035c94da7e80d563f9e092a8b762f143e84fe7a5469700f317992b0880825990",
+      "leafCount": 18,
+      "note": "update LockScreen.tsx",
+      "hash": "4c4364bc649c05ad9b487ace4d6392d715ebdda34c2ffee01ea4f7d70ecff36e"
     }
   ],
   "tipManifest": {
@@ -324,7 +332,7 @@
     "src/main/secrets.ts": "9c4d35e6bd91579510c586c0ab37c603c297ff881c6face286bc5817fcbbe265",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
-    "src/renderer/security/LockScreen.tsx": "1fdf41fd002d9a8ee6bf3e505250775f5a80d1671e3915480e62295d855289f7",
+    "src/renderer/security/LockScreen.tsx": "3464f6c2b7cb088df493be46bdd38a35123faa80505ea309d40e9008a2ee2866",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",
     "src/renderer/security/dataCrypto.ts": "013529669eb9cd63bfa98b80e5e740d2107233d2097ef3399cb2c17b68925f27",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",

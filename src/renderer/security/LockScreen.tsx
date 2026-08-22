@@ -57,16 +57,24 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     };
   }, []);
 
-  // Unmount cleanup: cancel any pending clipboard wipe so it doesn't
-  // overwrite the user's clipboard after the lock screen has gone away.
-  useEffect(() => {
-    return () => {
-      if (clipboardTimerRef.current !== null) {
-        clearTimeout(clipboardTimerRef.current);
-        clipboardTimerRef.current = null;
-      }
-    };
-  }, []);
+  // **ここで予約を取り消さない。**
+  //
+  // 以前はアンマウント時に消去予約を clearTimeout していた。理由は 2 つ書いて
+  // あった — (a) 消えた navigator へ書きに行かないため、(b) 利用者が後から
+  // コピーした内容を巻き添えにしないため。ところが 2026-08-22 の点検で、
+  // その取り消しが**画面の約束を反故にしていた**ことが分かった。
+  //
+  // コピー時に出す案内は「30 秒後にクリップボードを自動消去」である。しかし
+  // 利用者はコピーしたらすぐ「記録完了」を押して先へ進む — つまり **ほぼ必ず**
+  // 30 秒を待たずにこの画面を離れる。離れた瞬間に予約が消えるので、実際には
+  // 24 語のリカバリーキーがクリップボードに残り続けていた。
+  //
+  // 2 つの理由は、どちらも今は別の場所で満たされている:
+  //   (a) 消去の本体は try/catch で囲ってあり、失敗は黙って捨てる
+  //   (b) 「コピーした時のまま**なら**消す」の番人 (`current === copied`) が
+  //       あとから入った。この番人があるので、巻き添えは起きない
+  //
+  // 予約は React の状態に触れないので、アンマウント後に走っても害が無い。
 
   async function submitPassword() {
     setErr(null);
