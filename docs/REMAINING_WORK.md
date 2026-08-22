@@ -1159,6 +1159,35 @@ fc.constantFrom('pull','create','push','copy',…),      // isAllowedEndpoint
 **結論: この疑いは外れ。** 「同じ判断が 2 か所」も探したが、パスワード方針は
 入口ごとに正しく置かれていた。
 
+### BIP-39 リカバリーキーに弱いところはあるか → 無かった
+
+手書きの BIP-39 は乱数源とビット詰めの事故が定番なので読んだ (185 行)。
+
+- 乱数は `crypto.getRandomValues(new Uint8Array(32))` —— CSPRNG で 256 bit 全部
+- 24 語 × 11 bit = 264 bit = 256 bit + チェックサム 8 bit。
+  BIP-39 の規定 (ENT/32 = 8) と一致
+- ワードリストは長さ 2048 をモジュール読込時に表明
+- 復号側はチェックサムを**実際に検証**する (`hash[0] !== checksumByte` で throw)。
+  最後の語を 1 つずらす検査あり
+- 検査は往復だけでなく **Trezor の公式ベクタ**を使っている。テストに
+  「往復だけだとワードリストの選び方が間違っていても通る」と理由が
+  書いてあり、判断が正しい
+
+### 自動ロックに抜け道はあるか → 無かった
+
+`autoLock.ts` は `onLock()` → `dispose()` の順で呼ぶので、`onLock` が
+throw すると後片付けが走らない形に見える。だが実体の `vault.lock()` は
+
+    lock(): void { this.currentKey = null; }
+
+の 1 文で throw しようがない。WebCrypto の鍵は `extractable: false` なので
+JS から中身を消すことはできず、参照を捨てるのが正しい上限。
+
+なお `vault.ts` は**残存リスクを明記している** ——「リカバリーは
+salt/iv/kcv/master-wrap を上書きするが、**それ以前の IndexedDB スナップショットは
+消せない**。復旧前にプロファイルの複製を取られていれば、古いパスワードで
+master 鍵を取り出せる」。預けた前提を書く正しいやり方 (0-a-2 参照)。
+
 ### `lint:forbidden` の allowFile に死んだ例外はあるか → 無かった
 
 例外を全部無効化して数えたら 23 件で、名指しされている 14 ファイルと
