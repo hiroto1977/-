@@ -1,18 +1,46 @@
 import { useState } from 'react';
 import {
-  reduceSyncState,
   shouldSync,
   INITIAL_SYNC_STATE,
   type SyncState,
 } from '../data/cloudSync';
 
 /**
- * クラウド自動バックアップ (round 85) — 最小 UI。
+ * クラウド自動バックアップ — **まだ接続されていない**機能の設定パネル。
  *
- * `data/cloudSync.ts` の純粋核 (状態機械 + スケジューラ判定) を実際に動かす
- * 設定パネル。自動同期トグル + 状態表示 (最終同期 / 進捗 / 整合 OK) を提供する。
- * 実送信は `cloud/cloudProviderAdapter.ts` 経由でプロバイダへ (本パネルは設定と
- * 状態表示のみ; 実暗号は vault に委譲)。
+ * ## 2026-08-22: 成功をでっち上げていた
+ *
+ * このパネルは「今すぐ同期」で状態機械を手で最後まで進め、
+ *
+ *     最終同期: <いまの時刻>
+ *     整合性: OK ✓            (緑)
+ *
+ * を表示していた。**1 バイトも送っていない。** 送信路そのものが無いためで、
+ * 実測すると:
+ *
+ *   - `CloudTransport` は**実装が 1 つも無い** (interface とアダプタの引数だけ)
+ *   - `cloudProviderAdapter.ts` を import する製品コードは**無い**
+ *     (参照はコメントの中だけ)
+ *   - `planSync` / `buildUploadEnvelope` を呼ぶ製品コードは**無い**
+ *   - `cloudSync.ts` / `cloudBackup.ts` / このパネルに通信の基本語は **0 件**
+ *
+ * それでも文言は「業務データを暗号化して定期的にクラウドへ退避します」と
+ * 現在形で書いてあった。**利用者が失うのはデータである** —— 端末が壊れた
+ * ときに「クラウドにあるはず」が無い。checksum の言い過ぎ (backup.ts) より
+ * 重い。あちらは本物の仕組みの性質を盛っていたが、こちらは**起きていない
+ * 操作の成功を報告していた**。
+ *
+ * ## いまの形
+ *
+ * 設定 (間隔・有効化) と、核の状態表示は残す —— 送信路が入ったときに
+ * そのまま使えるので、設計を捨てる必要は無い。ただし
+ *
+ *   - 「今すぐ同期」は**押せない** (送る先が無い)
+ *   - 最終同期・整合性の**偽の成功は出さない**
+ *   - 未接続であることを画面に書く
+ *
+ * 送信路を実装したら、`CloudSyncPanel.test.tsx` の台帳がここの文言と
+ * 噛み合わなくなって落ちる。文言を直さずに機能だけ入れることはできない。
  *
  * 安全側: リモートのみに存在するデータは核が「削除候補」しか出さないため、
  * 本 UI に自動削除のスイッチは無い。
@@ -40,26 +68,19 @@ function fmtTime(ms: number | null): string {
 export function CloudSyncPanel() {
   const [enabled, setEnabled] = useState(false);
   const [intervalMin, setIntervalMin] = useState(60);
-  const [lastSync, setLastSync] = useState<number | null>(null);
-  const [dirty, setDirty] = useState(true);
-  const [state, setState] = useState<SyncState>(INITIAL_SYNC_STATE);
 
-  // スケジューラ判定 (純粋核): 自動同期が必要かを表示用に算出。
-  const due =
-    enabled &&
-    shouldSync(Date.now(), lastSync, intervalMin * 60_000, dirty);
+  /*
+   * 送信路が無いので、同期は**一度も起きない**。`lastSync` は常に null、
+   * 状態は常に初期値のまま —— ここに偽の値を入れないことがこの修正の要点。
+   * 核 (`cloudSync.ts`) の型と表示はそのまま残してあるので、
+   * 送信路が入ったら state をここへ繋ぐだけでよい。
+   */
+  const lastSync: number | null = null;
+  const state: SyncState = INITIAL_SYNC_STATE;
 
-  // 「今すぐ同期」: 状態機械を最小ドライブして UI 反映を確認 (実送信は別途)。
-  function syncNow() {
-    let s = reduceSyncState(INITIAL_SYNC_STATE, { type: 'start', total: 1 });
-    s = reduceSyncState(s, { type: 'scan-complete' });
-    s = reduceSyncState(s, { type: 'encrypt-complete' });
-    s = reduceSyncState(s, { type: 'file-uploaded' });
-    s = reduceSyncState(s, { type: 'verify-complete', ok: true });
-    setState(s);
-    setLastSync(Date.now());
-    setDirty(false);
-  }
+  // スケジューラ判定 (純粋核): 送信路が入ったときに「そろそろ同期」を出す口。
+  // dirty=true 固定なのは、まだ一度も同期していないため。
+  const due = enabled && shouldSync(Date.now(), lastSync, intervalMin * 60_000, true);
 
   const pct = Math.round(state.progress * 100);
 
@@ -70,16 +91,16 @@ export function CloudSyncPanel() {
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>クラウド自動バックアップ</div>
-            {enabled ? (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>有効</span>
-            ) : (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>無効</span>
-            )}
+            <span style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>未接続</span>
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
-            業務データを暗号化して定期的にクラウド (Drive / Dropbox) へ退避します。
-            クラウドには<strong>暗号文のみ</strong>が送られ、鍵は端末のみに保持されます。
-            既存データは上書き / 自動削除されず、世代として積み上げます。
+            <strong>この機能はまだクラウドに接続されていません。</strong>
+            送信先 (Drive / Dropbox) との接続が未実装のため、<strong>データは送信されず、
+            クラウドにバックアップは作成されません</strong>。端末が壊れたときに備えるには、
+            下の「バックアップ / 復元」から手動でファイルを書き出してください。
+            <br />
+            接続後の設計: 暗号文のみを送り、鍵は端末のみに保持。既存データは
+            上書き / 自動削除せず世代として積み上げます。
           </div>
         </div>
       </div>
@@ -112,10 +133,12 @@ export function CloudSyncPanel() {
         {enabled && due && <div style={{ color: 'var(--accent)' }}>次回同期のタイミングです</div>}
       </div>
 
-      <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
-        <button type="button" onClick={syncNow} disabled={!enabled} style={{ padding: '6px 14px', background: enabled ? 'var(--accent)' : 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', cursor: enabled ? 'pointer' : 'not-allowed', fontSize: 12 }}>
+      <div style={{ display: 'flex', gap: 6, marginTop: 10, alignItems: 'center' }}>
+        {/* 送る先が無いので押せない。押せてしまうと、押した人は「同期した」と思う。 */}
+        <button type="button" disabled title="クラウド接続が未実装のため実行できません" style={{ padding: '6px 14px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text-mute)', cursor: 'not-allowed', fontSize: 12 }}>
           今すぐ同期
         </button>
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>クラウド接続が未実装のため実行できません</span>
       </div>
     </div>
   );
