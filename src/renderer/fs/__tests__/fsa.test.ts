@@ -237,6 +237,56 @@ describe('フォルダ handle の永続化', () => {
     expect((await loadFolderHandle())?.handle.name).toBe('second');
   });
 
+  /*
+   * DB 名 / ストア名 / キー名を**外から**確かめる。
+   *
+   * 名前が変わること自体が事故である —— 利用者が選んだ書き出し先の記憶は
+   * アプリ更新をまたいで残る必要があり、DB 名・ストア名・キー名のどれかが
+   * 変われば **前に選んだフォルダを黙って忘れる** (エラーは出ない。次の
+   * エクスポートが「まだ選ばれていない」扱いになるだけ)。
+   *
+   * 往復 (保存 → loadFolderHandle) では捕まらない: 書く側と読む側が同じ定数を
+   * 見るので、3 つとも `""` に変えても一致し続ける。だから **生の indexedDB で
+   * 名前を直書きして**取りに行く。
+   *
+   * さらに `vi.resetModules()` + 動的 import が要る。この 3 つはモジュール
+   * 定数なので、静的 import のままだとファイル読み込み時に評価が済んでしまい、
+   * 変異検査が変異体を有効にする頃には**もう畳み込まれている** (覆われた
+   * static 変異体)。実測でここは 3 件生存していて、読み直しを入れて 0 件に
+   * なった —— stryker.config.json の注記どおり「定数表の類は構造的に殺せない
+   * のではなく、読み直せば殺せる」。
+   */
+  it('保存先の DB 名 / ストア名 / キー名が変わっていない', async () => {
+    vi.resetModules();
+    const fresh = (await import('../fsa')) as typeof import('../fsa');
+
+    (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker = () =>
+      Promise.resolve(plainHandle('named-folder'));
+    await fresh.pickFolder();
+
+    const raw = await new Promise<IDBDatabase>((resolve, reject) => {
+      const req = indexedDB.open('business-hub-preferences');
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    try {
+      // DB 名かストア名が変われば、ここで開いたのは別の DB / 別のストアなので
+      // 'kv' は無い (DB 名が変わった場合は空の DB が新規作成される)。
+      expect([...raw.objectStoreNames]).toContain('kv');
+
+      const value = await new Promise<unknown>((resolve, reject) => {
+        const tx = raw.transaction('kv', 'readonly');
+        const get = tx.objectStore('kv').get('fsa-directory-handle');
+        get.onsuccess = () => resolve(get.result);
+        get.onerror = () => reject(get.error);
+      });
+      // キー名が変われば undefined。
+      expect(value).toMatchObject({ name: 'named-folder' });
+    } finally {
+      raw.close();
+    }
+  });
+
   it('clearFolderHandle で消える (連携解除)', async () => {
     await pickAndSave('my-folder');
     await clearFolderHandle();
