@@ -29,8 +29,9 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
+| 陰性対照つきゲート | 17 / 26 (残る 9 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 6 + `lint:repo-size`) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 330 | 自己検証 |
+| `file:line` 参照数 | 331 | 自己検証 |
 
 ### 統合フロー図
 
@@ -485,10 +486,10 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 1 行 pragma」。uuid の組み立てを添字アクセスから `Array.from` の走査へ変えるだけで
 到達しない `?? 0` が 2 つ消えた。最終的に **242 変異体・100%** (真の 100%)。
 
-23 ゲート目 `lint:mutation-scope` は **範囲**で線を引く — `next-line` は常に可、
+`lint:mutation-scope` は **範囲**で線を引く — `next-line` は常に可、
 範囲指定は restore まで 30 行以内なら可、それを超える / restore が無いものは
 台帳 `KNOWN_BROAD` にある分だけ可。台帳は**双方向**で、増えても減っても落ちる
-(直したら台帳も直す)。自己検査 9 通りを毎回走らせる。
+(直したら台帳も直す)。自己検査 12 通りを毎回走らせる。
 
 残債は **36 ファイル / 46 箇所 / 5,189 行** で、`security/`・`network/`・`oauth/` に
 集中している (`src/renderer/security/vault.ts` 610 行 /

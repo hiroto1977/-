@@ -273,7 +273,52 @@ function verifyReferences(archText) {
 
 /** Each metric extracts a number from ARCHITECTURE.md and compares
  *  it to a freshly-computed value from the source tree. */
+/*
+ * 自己検査を**別名のスクリプトで**走らせているゲートの台帳。
+ * `vault:check` は `build-knowledge-vault.cjs --check && safe-vault-write.cjs` で、
+ * 後者は引数なしで走らせると封じ込めの自己検査そのものになる。
+ * 台帳は双方向 —— 名前から `self-test` が消えたら、ここに載っていない限り数が減る。
+ */
+const SELF_TEST_ALIASES = new Set(['vault:check']);
+
+/** `verify:all` が連ねているゲート名。 */
+function verifyAllGates(scripts) {
+  return (scripts['verify:all'] || '')
+    .split('&&')
+    .map((x) => x.trim().replace(/^npm run /, ''))
+    .filter(Boolean);
+}
+
+/** 陰性対照 (self-test) を持つゲートかどうか。 */
+function hasSelfTest(gate, scripts) {
+  return /self-test/.test(scripts[gate] || '') || SELF_TEST_ALIASES.has(gate);
+}
+
 const METRICS = [
+  {
+    /*
+     * ゲートに陰性対照が付いている数。
+     *
+     * 「CI が遅いから」で `&& … --self-test` を 1 つ外すのは一瞬で、外した
+     * 瞬間から**そのゲートは鳴かなくなっても誰も気づけない**状態に戻る。
+     * 数を doc に書いて突き合わせる。
+     */
+    name: 'gates with a negative control',
+    docPattern: /陰性対照つきゲート \| (\d+) \/ \d+ /,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      const scripts = pkg.scripts ?? {};
+      return verifyAllGates(scripts).filter((g) => hasSelfTest(g, scripts)).length;
+    },
+  },
+  {
+    name: 'verify:all gate count',
+    docPattern: /陰性対照つきゲート \| \d+ \/ (\d+) /,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
   {
     name: 'service count',
     docPattern: /サービス数 \| (\d+) /,
@@ -418,10 +463,177 @@ function verifyMetrics(archText) {
 }
 
 // ---------------------------------------------------------------------------
+// 陰性対照 (--self-test)
+// ---------------------------------------------------------------------------
+
+/*
+ * このゲートは 329 件の参照と 7 件の指標を見ているが、**通っている限り
+ * 沈黙する**。規則が 1 つ死んでも出力は「✅ all references + metrics resolve」の
+ * ままなので、気づく機会が無い。
+ *
+ * `verifyReferences` / `verifyMetrics` はどちらも doc の本文を引数に取るので、
+ * 壊した本文を食わせるだけで規則ごとに鳴らせる。参照先には**実在のファイル**を
+ * 使い、行番号や記号の位置はその場で数える —— 固定値を書くと、ファイルが
+ * 育った日に自己検査のほうが先に腐る。
+ */
+function selfTest() {
+  const REF = 'src/shared/serviceId.ts';
+  const srcText = readFileSafe(path.join(REPO_ROOT, REF));
+  if (srcText === null) {
+    console.error(`❌ self-test: 土台にしている ${REF} が読めません`);
+    return 1;
+  }
+  const srcLines = srcText.split('\n');
+  const total = srcLines.length;
+  const symLine = srcLines.findIndex((l) => l.includes('SERVICE_IDS')) + 1;
+
+  /*
+   * ドリフト検出には**そのファイルに 1 度しか現れない識別子**が要る。
+   * 最初 `SERVICE_IDS` を使ったが、この名前は 9 / 87 / 89 行目の 3 か所に在り、
+   * 末尾を引用すると窓 (±15 行) に 89 行目が入って鳴らなかった。
+   * 名前も位置も固定で書かず、その場で 1 度きりのものを選ぶ。
+   */
+  const once = [...new Set([...srcText.matchAll(/\b([A-Za-z_][A-Za-z0-9_]{4,})\b/g)].map((m) => m[1]))]
+    .map((sym) => ({ sym, at: srcLines.map((l, i) => (l.includes(sym) ? i + 1 : 0)).filter(Boolean) }))
+    .find((x) => x.at.length === 1);
+  if (!once) {
+    console.error(`❌ self-test: ${REF} に 1 度しか現れない識別子が無く、ドリフトを試せません`);
+    return 1;
+  }
+  // その識別子から SYMBOL_WINDOW より確実に離れた行。
+  const far = once.at[0] > total / 2 ? 1 : total;
+  if (Math.abs(far - once.at[0]) <= SYMBOL_WINDOW) {
+    console.error(`❌ self-test: ${REF} が短すぎて窓の外を作れません (${total} 行)`);
+    return 1;
+  }
+
+  /*
+   * 窓の幅そのものを台帳に置く。
+   *
+   * `far` は SYMBOL_WINDOW を基準に決めているので、**窓を広げても自己検査は
+   * 追従して緑のまま**になる。対照実験でそれを踏んだ: 15 → 60 に変えても
+   * 1 件も鳴らなかった。だが 60 にした時点で実物の doc に対するドリフト検出は
+   * 事実上死んでいる (このリポジトリのモジュールは大半が 100 行前後)。
+   *
+   * 窓はこのゲートの**厳しさのつまみ**なので、動かすなら意図的であるべきで、
+   * 黙って広がってよいものではない。値をここに宣言し、変えたら必ずこの行も
+   * 直す (= 緩めたことを自覚する) 形にする。
+   */
+  const DECLARED_WINDOW = 15;
+
+  /*
+   * 4 列目は**理由の照合**。件数だけを見ると、別の規則が肩代わりしても
+   * 気づけない —— 実際、存在確認を外す対照実験で「実在しないファイル」は
+   * git 管理外の判定に拾われ、1 件のまま通ってしまった。どの規則が鳴ったかを
+   * 縛る。
+   */
+  const cases = [
+    ['実在ファイルへの参照 (行指定なし)', `\`${REF}\` を見よ`, 0, 1, null],
+    ['実在しないファイル', '`src/shared/doesNotExistXyz.ts` を見よ', 1, 0, /file not found/],
+    ['行番号が範囲内', `\`${REF}:${symLine}\` を見よ`, 0, 1, null],
+    ['行番号が範囲外', `\`${REF}:${total + 50}\` を見よ`, 1, 1, /out of bounds/],
+    // total-1 と total は範囲内、total+1 以降の 50 行だけが範囲外。
+    ['範囲指定の片方だけ範囲外', `\`${REF}:${total - 1}-${total + 50}\` を見よ`, 50, 1, /out of bounds/],
+    ['記号が引用範囲の近くに在る', `\`SERVICE_IDS\` は \`${REF}:${symLine}\``, 0, 1, null],
+    ['記号はファイルに在るが窓の外 (ドリフト)', `\`${once.sym}\` は \`${REF}:${far}\``, 1, 1, /drifted/],
+    ['記号がファイルに無い', `\`fetchZzzNope\` は \`${REF}:1\``, 1, 1, /not found in/],
+    ['一般語は記号として扱わない', `\`file\` は \`${REF}:1\``, 0, 1, null],
+    ['バッククォートが無ければ参照ではない', `${REF}:1 を見よ`, 0, 0, null],
+    ['行指定が無ければ範囲も記号も見ない', `\`fetchZzzNope\` は \`${REF}\``, 0, 1, null],
+  ];
+
+  let failed = 0;
+  console.log('self-test:');
+  for (const [label, doc, wantFail, wantOk, wantReason] of cases) {
+    const r = verifyReferences(doc);
+    const reasonOk = wantReason === null || r.failures.every((f) => wantReason.test(f.reason));
+    const ok = r.failures.length === wantFail && r.successCount === wantOk && reasonOk;
+    if (!ok) failed += 1;
+    console.log(
+      `  ${ok ? '✓' : '✗'} ${label}: 違反 ${r.failures.length} 件 / 参照 ${r.successCount} 件`
+        + `${reasonOk ? '' : ` / 理由が違う (${r.failures[0].reason.slice(0, 40)}…)`}`
+        + ` (期待 ${wantFail} / ${wantOk}${wantReason ? ` / ${wantReason.source}` : ''})`,
+    );
+  }
+
+  {
+    const ok = SYMBOL_WINDOW === DECLARED_WINDOW;
+    if (!ok) failed += 1;
+    console.log(
+      `  ${ok ? '✓' : '✗'} 窓の幅が台帳どおり: ${SYMBOL_WINDOW} 行 (台帳 ${DECLARED_WINDOW} 行)`
+        + (ok ? '' : ' — 広げると実物の doc のドリフト検出が効かなくなります。意図的なら台帳も直してください'),
+    );
+  }
+
+  /*
+   * 窓の境界。ちょうど SYMBOL_WINDOW 行離れていれば窓の中、1 行でも超えれば外。
+   * 幅の値とは独立に ± の意味を縛る (両端の 1 行ずれは実際に起こしやすい)。
+   */
+  const edge = once.at[0] + SYMBOL_WINDOW;
+  if (edge + 1 <= total) {
+    for (const [label, cite, want] of [
+      ['ちょうど窓の縁は中', edge, 0],
+      ['縁の 1 行外は外 (ドリフト)', edge + 1, 1],
+    ]) {
+      const r = verifyReferences(`\`${once.sym}\` は \`${REF}:${cite}\``);
+      const ok = r.failures.length === want;
+      if (!ok) failed += 1;
+      console.log(
+        `  ${ok ? '✓' : '✗'} 窓の境界 (記号 ${once.at[0]} 行目 / 引用 ${cite} 行目): ${label}: `
+          + `${r.failures.length} 件 (期待 ${want})`,
+      );
+    }
+  } else {
+    failed += 1;
+    console.log(`  ✗ 窓の境界: ${REF} が短すぎて縁を試せません (${total} 行)`);
+  }
+
+  // git 管理外のパス。手元にあっても CI の fresh checkout には無いので、
+  // 「ローカルは green・CI だけ落ちる」を作る (2026-08-11 に実際に踏んだ)。
+  const ghost = path.join(REPO_ROOT, 'src/shared/__selftest_untracked__.ts');
+  try {
+    fs.writeFileSync(ghost, '// self-test 用の一時ファイル\n');
+    const r = verifyReferences('`src/shared/__selftest_untracked__.ts` を見よ');
+    const rings = r.failures.length === 1 && /管理外/.test(r.failures[0].reason);
+    if (!rings) failed += 1;
+    console.log(
+      `  ${rings ? '✓' : '✗'} 手元にあっても git 管理外なら鳴る: `
+        + `${r.failures.length} 件${r.failures[0] ? ` (${r.failures[0].reason.slice(0, 20)}…)` : ''} (期待 1 件)`,
+    );
+  } finally {
+    fs.rmSync(ghost, { force: true });
+  }
+
+  // 指標。実物の doc を土台に 1 か所だけ壊す —— 固定の文面を書くと doc の
+  // 書式が変わった日に自己検査だけが腐る。
+  const arch = readFileSafe(ARCH_FILE);
+  const metricCases = [
+    ['実物の doc は 0 件', arch, 0],
+    ['サービス数を 1 ずらす', arch.replace(/サービス数 \| (\d+) /, (_, n) => `サービス数 | ${Number(n) + 1} `), 1],
+    ['指標の記述を丸ごと消す', '', METRICS.length],
+  ];
+  for (const [label, doc, want] of metricCases) {
+    const got = verifyMetrics(doc).failures.length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 指標: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
+  if (failed > 0) {
+    console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
+// ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
 
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
+
   const arch = readFileSafe(ARCH_FILE);
   if (arch === null) {
     console.error(`ERROR: cannot read ${ARCH_FILE}`);
