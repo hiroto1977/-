@@ -217,6 +217,25 @@ const FORBIDDEN_PATTERNS = [
     allowFile: (rel) => rel === 'orchestration/knowledge-context.cjs',
   },
   {
+    /*
+     * `new` の無い形。`Function('return 1')()` は `new Function(...)` と
+     * まったく同じに動くのに、上の規則は `new` を必須にしていて 2026-08-22 まで
+     * **裸の `Function(` を素通ししていた** (実在は 0 件の潜在的な穴)。
+     *
+     * ただし `\bFunction\s*\(` だけに広げると**散文に当たる** —— 実際
+     * `academicKnowledge.ts` の出典ラベル
+     * "Cobb-Douglas Production Function (overview)" で誤検出した。
+     * `codeOnly` はコメント行しか外さないので効かない (文字列リテラル内の一致)。
+     *
+     * コードを組み立てる `Function` 呼び出しは**第 1 引数が文字列**である、を
+     * 見分けに使う。散文は括弧の次が語なので当たらない。
+     */
+    name: 'Function() without new',
+    pattern: /(?<!\bnew\s)\bFunction\s*\(\s*['"`]/,
+    rationale: 'arbitrary code execution — invariant #9 (new の有無は無関係)',
+    allowFile: (rel) => rel === 'orchestration/knowledge-context.cjs',
+  },
+  {
     // setTimeout('code', ms) / setInterval('code', ms) の文字列形は eval と同じ。
     // 引数が文字列リテラルで始まる呼び出しだけを見る (関数を渡す通常形は素通り)。
     name: "setTimeout('…') / setInterval('…') の文字列形",
@@ -237,13 +256,19 @@ const FORBIDDEN_PATTERNS = [
       '追加するときは event.origin を検証したうえで、この台帳に例外として登録すること',
   },
   {
-    name: '.innerHTML =',
-    pattern: /\.innerHTML\s*=/,
+    /*
+     * `.innerHTML` だけでは足りない。`.outerHTML =` と
+     * `.insertAdjacentHTML(…)` は同じ HTML パーサに文字列を流し込む
+     * 別名で、どちらも 2026-08-22 まで素通りだった (実在は 0 件)。
+     */
+    name: '.innerHTML / .outerHTML / insertAdjacentHTML',
+    pattern: /\.(?:inner|outer)HTML\s*=|\.insertAdjacentHTML\s*\(/,
     rationale: 'DOM XSS sink — banned in renderer; React rendering only',
   },
   {
-    name: 'document.write',
-    pattern: /\bdocument\.write\s*\(/,
+    // `writeln` も同じ sink。`write` だけを見ていると別名で抜けられる。
+    name: 'document.write / writeln',
+    pattern: /\bdocument\.write(?:ln)?\s*\(/,
     rationale: 'DOM XSS sink — invariant #9',
   },
   {
@@ -472,6 +497,16 @@ function selfTest() {
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
+    // 別名による回避 (2026-08-22 の点検で全部塞いだ。当時の実在は 0 件)。
+    ['new なしの Function() を弾く', "const f = Function('return 1');", 1],
+    ['Function( に変数を渡す散文は当てない', 'Cobb-Douglas Production Function (overview)', 0],
+    ['型注釈の Function は当てない', 'function f(cb: Function) { return cb; }', 0],
+    ['AsyncFunction は当てない (単語境界)', "const f = AsyncFunction('x');", 0],
+    ['.outerHTML = も弾く', 'el.outerHTML = html;', 1],
+    ['insertAdjacentHTML も弾く', "el.insertAdjacentHTML('beforeend', html);", 1],
+    ['document.writeln も弾く', "document.writeln('<b>');", 1],
+    ['textContent は弾かない (安全な代替)', 'el.textContent = s;', 0],
+    ['innerText も弾かない', 'el.innerText = s;', 0],
     ['メールヘッダの手組みを弾く (To)', "const m = [`To: ${addr}`].join('\\r\\n');", 1],
     ['メールヘッダの手組みを弾く (Bcc)', "const m = `Bcc: ${addr}`;", 1],
     ['メールヘッダの手組みを弾く (Subject)', "const m = `Subject: ${s}`;", 1],
