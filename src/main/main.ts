@@ -14,6 +14,7 @@ import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { safeErrorMessage } from './clients/types';
+import { externalUrlOrNull } from './externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
@@ -46,16 +47,11 @@ function createWindow(): BrowserWindow {
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    // Same http(s) allowlist as the IPC handler. Anything else (file:,
-    // javascript:, OS schemes) is silently dropped.
-    try {
-      const u = new URL(url);
-      if (u.protocol === 'http:' || u.protocol === 'https:') {
-        shell.openExternal(u.toString());
-      }
-    } catch {
-      // ignore non-URL strings
-    }
+    // IPC の扉と**同じ関門**を通す。以前ここは手書きの http(s) 判定で、
+    // 関門の許可表を締めてもこちらだけ古い規則のまま開いた
+    // (対照実験は externalUrlGate.ts の頭に記録)。
+    const target = externalUrlOrNull(url);
+    if (target !== null) shell.openExternal(target);
     return { action: 'deny' };
   });
 
@@ -159,32 +155,23 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
     return evaluateUpdate(current, null);
   }
 });
-/**
- * `app:openExternal` が OS へ渡すことを許すスキーム。不変条件 #5 の本体。
- *
- * 名前を付けてあるのは、docs/ARCHITECTURE.md §8.1 の参照が**この定数を
- * 目印にして固定される**ため。以前この行は `openExternal` という語で
- * 参照していたが、同じ語がこのファイルに 3 回出るので `verify:arch` の
- * 記号局所性検査 (±15 行) が効かず、参照が別の場所を指したまま緑だった
- * (2026-08-22 の対照実験で判明)。
- */
-const EXTERNAL_URL_SCHEMES: ReadonlySet<string> = new Set(['http:', 'https:']);
-
-ipcMain.handle('app:openExternal', async (_e, url: string) => {
+ipcMain.handle('app:openExternal', async (_e, url: unknown) => {
   // Defense-in-depth: the renderer is sandboxed and contextIsolated,
-  // but the IPC channel accepts any string. Restrict to http(s) to
-  // block javascript:, data:, file:, and custom-scheme URI handlers
-  // that could escalate (e.g. ssh:// on macOS, ms-windows-store://
-  // on Windows).
-  if (typeof url !== 'string') return;
-  let parsed: URL;
+  // but the IPC channel accepts any value. 関門は `externalUrlGate.ts` に
+  // 1 つだけ置く —— 新窓ハンドラも同じものを通る。
+  const target = externalUrlOrNull(url);
+  if (target === null) return;
+  // `shell` は OS 側が開けないと **reject する** (既定ブラウザ未設定、
+  // Linux で xdg-open が無い等)。この口の約束は `Promise<void>` で、
+  // レンダラー側に受け皿が無い —— reject をそのまま返すと呼び出し元で
+  // 未処理の rejection になる。握り潰さず、main の記録には残す
+  // (`secrets.ts` と同じ扱い。GUI 利用者には見えないが、不具合報告の
+  // ログには出る)。
   try {
-    parsed = new URL(url);
-  } catch {
-    return;
+    await shell.openExternal(target);
+  } catch (e) {
+    console.error(`[openExternal] OS が URL を開けませんでした: ${safeErrorMessage(e)}`);
   }
-  if (!EXTERNAL_URL_SCHEMES.has(parsed.protocol)) return;
-  await shell.openExternal(parsed.toString());
 });
 
 // 開く側の関門は `shellOpenGate.ts` に 1 つだけ置く (書き出し側の

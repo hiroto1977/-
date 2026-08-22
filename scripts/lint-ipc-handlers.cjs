@@ -20,10 +20,30 @@
  *
  * ## 判定規則
  *
- * ハンドラ本体で **`try {` より前に `await` がある**ものを落とす。
- * `await` が無いハンドラ、`try` の中だけで await するハンドラは通る。
- * 行単位の粗い判定 (このリポジトリの他のゲートと同じ方針) で、網羅ではなく
- * **既にある書き方の再発を止める**ためのもの。
+ * ハンドラ本体の **`await` が、`catch` を持つ `try` ブロックの中に無い**ものを
+ * 落とす。`await` が無いハンドラは通る。
+ *
+ * ### 2026-08-22: 「前にあるか」から「中にあるか」へ
+ *
+ * それまでの規則は `body.indexOf('try {') < body.indexOf('await ')` ——
+ * **try が await より前に在ればよい**という位置判定だった。これは
+ * `try { … } catch { … }` を**抜けた後**の await を通してしまう:
+ *
+ * ```ts
+ * ipcMain.handle('app:openExternal', async (_e, url: string) => {
+ *   try { parsed = new URL(url); } catch { return; }   // ← ここに try が在るので
+ *   await openExternal(parsed.toString());             // ← ここは見られていなかった
+ * });
+ * ```
+ *
+ * この形は**このゲートを入れた時点から既に存在していた**。ゲートは緑で、
+ * 守っている対象は守られていなかった (`app:openExternal` は `shell` が
+ * reject すると IPC ごと reject する)。関門を切り出す作業で try が消えた
+ * ときに初めて鳴り、そこで気付いた。
+ *
+ * 今は文字列・テンプレート・コメントを飛ばしながら波括弧を数え、
+ * `try` ブロックの範囲を実際に求める。`catch` の無い `try {} finally {}` は
+ * reject を止めないので**中に在っても通さない**。
  *
  * 使い方:  node scripts/lint-ipc-handlers.cjs
  *          node scripts/lint-ipc-handlers.cjs --self-test
@@ -184,15 +204,103 @@ function evaluateServiceIdGuard(handlers) {
   return problems;
 }
 
+/**
+ * 文字列・テンプレート・コメントの中を空白に潰した写しを返す。
+ *
+ * 波括弧を数えるのに、`'{'` や `` `${x}` `` やコメント中の `}` を数えては
+ * ならない。**長さを保ったまま**潰すので、返り値の添字は元の添字と一致する。
+ */
+function blankOutLiterals(src) {
+  const out = src.split('');
+  let i = 0;
+  const n = src.length;
+  while (i < n) {
+    const c = src[i];
+    const d = src[i + 1];
+    if (c === '/' && d === '/') {
+      while (i < n && src[i] !== '\n') out[i++] = ' ';
+      continue;
+    }
+    if (c === '/' && d === '*') {
+      out[i++] = ' ';
+      out[i++] = ' ';
+      while (i < n && !(src[i] === '*' && src[i + 1] === '/')) {
+        if (src[i] !== '\n') out[i] = ' ';
+        i += 1;
+      }
+      if (i < n) {
+        out[i++] = ' ';
+        out[i++] = ' ';
+      }
+      continue;
+    }
+    if (c === "'" || c === '"' || c === '`') {
+      const quote = c;
+      out[i++] = ' ';
+      while (i < n) {
+        if (src[i] === '\\') {
+          out[i] = ' ';
+          if (i + 1 < n && src[i + 1] !== '\n') out[i + 1] = ' ';
+          i += 2;
+          continue;
+        }
+        if (src[i] === quote) {
+          out[i++] = ' ';
+          break;
+        }
+        if (src[i] !== '\n') out[i] = ' ';
+        i += 1;
+      }
+      continue;
+    }
+    i += 1;
+  }
+  return out.join('');
+}
+
+/**
+ * `catch` を持つ `try` ブロックの `{...}` の範囲を `[start, end]` で返す。
+ *
+ * `finally` だけの `try` は含めない —— reject を止めないので、
+ * その中の await は「守られている」と数えてはいけない。
+ */
+function guardedTryRanges(blank) {
+  const ranges = [];
+  const re = /\btry\s*\{/g;
+  let m;
+  while ((m = re.exec(blank)) !== null) {
+    const open = blank.indexOf('{', m.index);
+    let depth = 0;
+    let end = -1;
+    for (let i = open; i < blank.length; i += 1) {
+      if (blank[i] === '{') depth += 1;
+      else if (blank[i] === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          end = i;
+          break;
+        }
+      }
+    }
+    if (end < 0) continue;
+    // 閉じ括弧の直後に catch が続いているか (空白を挟んでよい)。
+    if (!/^\s*catch\b/.test(blank.slice(end + 1))) continue;
+    ranges.push([open, end]);
+  }
+  return ranges;
+}
+
 function evaluateHandlers(handlers) {
   const problems = [];
   for (const { channel, body } of handlers) {
-    const firstAwait = body.indexOf('await ');
-    if (firstAwait < 0) continue;
-    const firstTry = body.indexOf('try {');
-    if (firstTry >= 0 && firstTry < firstAwait) continue;
+    const blank = blankOutLiterals(body);
+    const ranges = guardedTryRanges(blank);
+    const awaits = [...blank.matchAll(/\bawait\s/g)].map((a) => a.index);
+    const bare = awaits.filter((i) => !ranges.some(([s, e]) => i > s && i < e));
+    if (bare.length === 0) continue;
     problems.push(
-      `${channel}: try の外で await しています。throw が IPC を reject させ、` +
+      `${channel}: try の外で await しています (${bare.length} 箇所)。` +
+        `throw が IPC を reject させ、` +
         `呼び出し側の用意していない経路に落ちます (「読込中…」で止まる等)`,
     );
   }
@@ -205,10 +313,58 @@ function selfTest() {
     ['try の中だけで await', [{ channel: 'a', body: 'try {\n await f();\n} catch {}' }], 0],
     ['try の外で await', [{ channel: 'a', body: 'const x = await f();\ntry {} catch {}' }], 1],
     ['try が無く await だけ', [{ channel: 'a', body: 'await f();' }], 1],
+    // ここが 2026-08-22 に**期待値ごと変わった**ケース。以前は「try が前に
+    // 在れば通す」だったので 0 を期待していた —— が、この形こそ
+    // `app:openExternal` が長らく素通りしていた形そのものだった。
     [
-      'try の後にもう一度 await (前が try の中なら通す)',
+      'try を抜けた後の await は通さない (旧規則が見逃していた形)',
       [{ channel: 'a', body: 'try {\n await f();\n} catch {}\nawait g();' }],
+      1,
+    ],
+    [
+      'try の前で await していても、後ろに try が在れば見逃していた形',
+      [{ channel: 'a', body: 'const x = await f();\ntry {\n await g();\n} catch {}' }],
+      1,
+    ],
+    [
+      'catch の無い try/finally は守りにならない (reject は止まらない)',
+      [{ channel: 'a', body: 'try {\n await f();\n} finally {\n cleanup();\n}' }],
+      1,
+    ],
+    [
+      '入れ子の波括弧を跨いでも try の中と数える',
+      [{ channel: 'a', body: 'try {\n if (x) {\n  for (const y of z) {\n   await f(y);\n  }\n }\n} catch {}' }],
       0,
+    ],
+    [
+      '文字列の中の await は数えない',
+      [{ channel: 'a', body: "return { message: 'await f() は文字列' };" }],
+      0,
+    ],
+    [
+      'コメントの中の await は数えない',
+      [{ channel: 'a', body: '// await f() と書きたくなるが\n/* await g() も */\nreturn 1;' }],
+      0,
+    ],
+    [
+      '文字列の中の波括弧で範囲を読み違えない',
+      [{ channel: 'a', body: "try {\n const s = '}';\n await f();\n} catch {}" }],
+      0,
+    ],
+    [
+      'テンプレートの中の波括弧でも読み違えない',
+      [{ channel: 'a', body: 'try {\n const s = `${x}}`;\n await f();\n} catch {}' }],
+      0,
+    ],
+    [
+      'catch の中の await は守られていない (そこが throw すれば reject する)',
+      [{ channel: 'a', body: 'try {\n f();\n} catch {\n await report();\n}' }],
+      1,
+    ],
+    [
+      'await が複数外に出ていれば件数を数える',
+      [{ channel: 'a', body: 'await f();\nawait g();\ntry {} catch {}' }],
+      1,
     ],
     // 不変条件 #3 (serviceId の検証)。
     [

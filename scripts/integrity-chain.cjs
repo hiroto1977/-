@@ -76,6 +76,13 @@ const PROTECTED = [
   // レンダラーがホーム配下の任意のファイルを起動できる。
   // 2026-08-22 まで main.ts の中の非公開関数で、テストも変異検査も無かった。
   'src/main/shellOpenGate.ts',
+  // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
+  // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
+  // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、
+  // `setWindowOpenHandler` と `app:openExternal` の**両方の扉**が通る。
+  // 分離するまで同じ判断が main.ts に 2 つ手書きされており、片方だけしか
+  // 固定されていなかった (許可表を締めても窓側の扉は古い規則のまま開いた)。
+  'src/main/externalUrlGate.ts',
   'scripts/setup-linux.sh',
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',

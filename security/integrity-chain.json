@@ -14,6 +14,7 @@
     "scripts/setup-obsidian-docker.sh",
     "src/main/atomicWrite.ts",
     "src/main/clients/exportPaths.ts",
+    "src/main/externalUrlGate.ts",
     "src/main/main.ts",
     "src/main/oauth.ts",
     "src/main/secrets.ts",
@@ -484,6 +485,14 @@
       "leafCount": 33,
       "note": "update oauth.ts",
       "hash": "8a05d8af1f72a0a5b62caee2a1c1545d951fdfb39d2317b5a142805a22a07446"
+    },
+    {
+      "index": 56,
+      "prevHash": "8a05d8af1f72a0a5b62caee2a1c1545d951fdfb39d2317b5a142805a22a07446",
+      "merkleRoot": "e2c25fcd3b41b6edd97b4bc205feed8e74f2d11562422ad0c1350e369b3d1464",
+      "leafCount": 34,
+      "note": "update integrity-chain.cjs,externalUrlGate.ts,main.ts",
+      "hash": "7006abcdf2cef47c9cc4c978560394176f260cf07f708723184046e251f67c82"
     }
   ],
   "tipManifest": {
@@ -493,13 +502,14 @@
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "ba13416be7ba6f9ddf5c0fba7822e937c54352330c70a9242b1c11b492c0fbe8",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
-    "scripts/integrity-chain.cjs": "c106ccaac5c4d91f68393e93d5c1e0a791841c216ebeab75e4b0a772935afc4a",
+    "scripts/integrity-chain.cjs": "685f8b214b694020bf8ce1fc3d934e1449e347e3113d306b060b445873201e46",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "src/main/atomicWrite.ts": "c534f991bd63f8538421179c4ca64fc041ffcc54b7162ac7719938977974eb8b",
     "src/main/clients/exportPaths.ts": "b6798f4a0b9d54b8d6ee4a8df17323163dee857edbeed4dd546292399fd98882",
-    "src/main/main.ts": "4246eb4ce3c7c98a07704e0851a2ecbc60a887ba3999927915f701a9709aca9d",
+    "src/main/externalUrlGate.ts": "44d4a418e03ec657a823903a346b9819598e6978868932a35f826efd2f87e2ad",
+    "src/main/main.ts": "83906176b6884a306f214f6afec927e70c7e51232c9fe0a4a6e209dd5c0d68e7",
     "src/main/oauth.ts": "e8c537f71d1fa3e99eb7a4d74567df384924a17e594f08e5fef86c9048ac745a",
     "src/main/secrets.ts": "9c4d35e6bd91579510c586c0ab37c603c297ff881c6face286bc5817fcbbe265",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",

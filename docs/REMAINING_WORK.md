@@ -1279,6 +1279,94 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 `Buffer.from(s,'utf8').toString('base64')` と `TextEncoder`+`btoa` で、
 非 ASCII でも同じバイト列になる形だった (読んで確認)。
 
+### 同名関数の突き合わせ 2 件目 —— `checkEmailBreach` が空白付きメールで「漏洩なし」を返していた（修正済み）
+
+`checkEmailBreach` は 2 か所にある。どちらも **同じ問い**「このメールアドレスは
+漏洩に含まれるか」を HIBP に訊く:
+
+| 場所 | 入力の扱い |
+|---|---|
+| `src/renderer/data/saasWriteWeb.ts` | `input.email.trim()` |
+| `src/main/clients/security.ts` | **生のまま** `encodeURIComponent` |
+
+貼り付けで前後に空白が付いた住所を渡すと、デスクトップ版は
+`/breachedaccount/%20a%40b.com` を叩く。HIBP は「見つからない」を **404** で
+返す実装で、このクライアントは 404 を「どの漏洩にも含まれない」として表示する
+—— ずれた側が返すのは **誤った安心** である。
+
+危険側・安全側があるときは厳しい側へ寄せるのが定石だが、ここは「厳しい側」
+ではなく**正しい側**が trim するほうだった。main を web に合わせた。
+
+検査: 空白 4 形がすべて `…/breachedaccount/a%40b.com?truncateResponse=false`
+を叩くこと + 空白だけの email は問い合わせずに断ること。対照で trim を外すと
+5 本落ちる。Stryker: `security.ts` 126 killed / 0 survived / 0 no-cov。
+
+`normalizeAnalysis` (emotions の LLM 応答正規化) も 25 形突き合わせた ——
+**ずれ 0**。`dualBuildParity` は 108 形になった。
+
+### 外部 URL を OS へ渡す扉が 2 つあり、**片方しか固定されていなかった**（修正済み）
+
+`shell` へ URL を渡す口は main.ts に 2 つある:
+
+| 扉 | いつ通るか | 判定 |
+|---|---|---|
+| `ipcMain.handle('app:openExternal')` | レンダラーが `serviceHub.openExternal()` を呼ぶ | `EXTERNAL_URL_SCHEMES`（名前付き定数） |
+| `setWindowOpenHandler` | `window.open` / `target="_blank"` / `<form target>` | **手書きの `u.protocol === 'http:' \|\| …`** |
+
+`docs/ARCHITECTURE.md` の不変条件 #5 は `EXTERNAL_URL_SCHEMES` を目印にして
+固定されている。**対照実験**で許可表を `new Set(['https:'])` に締めたところ:
+
+- `mainIpc.test.ts` → 落ちた（IPC の扉は定数を見ている）
+- `mainWindow.test.ts` → **22 件すべて緑のまま**（窓の扉は手書きなので動かない）
+
+つまり「外部 URL は http(s) 限定」を**締める**変更を入れても、`window.open`
+経由の扉は古い規則のまま開き続け、しかも検査は全部緑だった。ARCHITECTURE の
+不変条件は、実際には**扉の片方だけ**を語っていた。
+
+検査の表も別々だった。IPC 側だけにあって窓側に無かった形:
+`vbscript:` / `chrome://` / `about:` / `ftp:` / 大文字スキーム / `'///'` / `'   '`。
+
+**直し方**: `src/main/externalUrlGate.ts` を新設し、両方の扉がそこを通る
+（`shellOpenGate.ts` を main.ts から出したときと同じ理由 —— 危険度の高い関門が
+main.ts の中の手書きで、単体で測れない）。表も 1 つにまとめた（通す 7 形 /
+弾く 14 形 / 読めない 6 形 / 非文字列 6 形）。
+
+**扉の数も数える**: main.ts の中で「OS へ URL を渡す行」と「関門を呼ぶ行」が
+同数でなければ落ちる。3 つ目の扉を足す対照・関門の写経を復活させる対照とも鳴る。
+
+Stryker: `externalUrlGate.ts` 13 killed / 0 survived / 0 no-cov（100.00%）。
+
+なお `web-shim.ts` の `openExternal` は 3 つ目の実装だが、こちらは
+`/^https?:\/\//i` の**前置き一致**で、URL 解析より狭い（`https:/example.com`
+や前後に空白の付いた形を弾く）。狭い側なので security の穴にはならない。
+統合すると広がる方向にしか働かないので**寄せない**（0-a-14）。
+
+### `lint:ipc-handlers` の第 1 不変条件が、**入れた日から 1 つ見逃していた**（修正済み）
+
+規則は `body.indexOf('try {') < body.indexOf('await ')` ——「try が await より
+**前に在れば**よい」という位置判定で、`try {…} catch {…}` を**抜けた後**の
+await を通していた。`app:openExternal` がまさにその形で、
+
+```
+firstTry=124 < firstAwait=253  → 旧規則の判定: 通す (緑)
+```
+
+`shell` は OS 側が開けないと reject する（既定ブラウザ未設定、xdg-open が
+無い等）。この口の約束は `Promise<void>` でレンダラー側に受け皿が無いので、
+reject はそのまま未処理の rejection になっていた。
+
+**位置ではなく包含で見る**ように直した。文字列・テンプレート・コメントを
+（長さを保ったまま）潰してから波括弧を数え、`try` ブロックの範囲を実際に求める。
+`catch` の無い `try/finally` は reject を止めないので中に在っても通さない。
+
+負の対照を 10 形追加。うち 1 形は**期待値そのものを 0 → 1 に変えた** ——
+旧規則の見逃しを「仕様」として self-test に固定していたケース
+（`'try の後にもう一度 await (前が try の中なら通す)'`）。
+
+実物 13 ハンドラのうち鳴ったのは `app:openExternal` の 1 件だけ。残り 12 は
+本当に守られていた。ハンドラ側は try で囲み、失敗は `console.error` +
+`safeErrorMessage` で main の記録に残す（`secrets.ts` と同じ扱い）。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

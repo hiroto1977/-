@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 56
+- ブロック数: 57
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `8a05d8af1f72a0a5b62caee2a1c1545d951fdfb39d2317b5a142805a22a07446`
-- 保護対象: 33 ファイル
+- 末尾(tip)ハッシュ: `7006abcdf2cef47c9cc4c978560394176f260cf07f708723184046e251f67c82`
+- 保護対象: 34 ファイル
 
 ## ブロック
 
@@ -69,6 +69,7 @@
 | 53 | `612892c46ca5394e` | `53c73eba8603751d` | `c72af1f29ec6f57c` | update pages.yml,integrity-chain.cjs |
 | 54 | `3820b9dd47c25323` | `c72af1f29ec6f57c` | `d0e7741ca50713f0` | update SECURITY_CHAIN.md |
 | 55 | `0d62ec64e07e12b8` | `d0e7741ca50713f0` | `8a05d8af1f72a0a5` | update oauth.ts |
+| 56 | `e2c25fcd3b41b6ed` | `8a05d8af1f72a0a5` | `7006abcdf2cef47c` | update integrity-chain.cjs,externalUrlGate.ts,main.ts |
 
 ## 保護対象ファイル
 
@@ -84,6 +85,7 @@
 - `scripts/setup-obsidian-docker.sh`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/exportPaths.ts`
+- `src/main/externalUrlGate.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
