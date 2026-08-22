@@ -329,6 +329,35 @@ describe('splitIntoUtterances — 分割の境目', () => {
     ]);
   });
 
+  // 分割の判断は**整える前の長さ**で下る。文の前後を先に落としておかないと、
+  // 前の文の後ろに付いた空白が次の文の長さに乗り、割れ方が変わる。
+  it('文の前後の空白は、割る前に落とす (長さの判断に混ぜない)', () => {
+    // 前の文の後ろに空白が 3 つ。落とさずに数えると 9 を超えて余分に割れる。
+    expect(splitIntoUtterances('あ。   いうえお、かきく。', 9)).toEqual([
+      'あ。',
+      'いうえお、かきく。',
+    ]);
+  });
+
+  it('割った片の前後の空白も落とす (途中の片も、最後の片も)', () => {
+    // 読点のうしろに空白がある文。押し出される片 (途中) と、
+    // 最後に残る片の**両方**で落ちることを見る。
+    expect(splitIntoUtterances('あいう、 かきく、 さしす、たちつ。', 8)).toEqual([
+      'あいう、',
+      'かきく、',
+      'さしす、',
+      'たちつ。',
+    ]);
+    expect(splitIntoUtterances('あいう、 かきく。', 5)).toEqual(['あいう、', 'かきく。']);
+  });
+
+  it('空白だけの片は積まない (末尾の空白で空の発話を作らない)', () => {
+    // 文末の空白は区切りのあとに空の断片を作る。そのまま積むと、
+    // 読み上げが一拍止まるだけの空の発話が混ざる。
+    expect(splitIntoUtterances('あ。 ')).toEqual(['あ。']);
+    expect(splitIntoUtterances('あ。\n\n')).toEqual(['あ。']);
+  });
+
   it('既定の maxLen は 120', () => {
     const s = `${'あ'.repeat(119)}、${'い'.repeat(119)}`;
     expect(splitIntoUtterances(s)).toHaveLength(2);
@@ -618,6 +647,43 @@ describe('speak — 既定値と分岐', () => {
     speak('い。', {}, win as never);
     expect(spoken[1]!.voice).toBeNull();
   });
+
+  // 上の検査は**まだ何も選んでいない**状態から始まるので、「消さない」ことを
+  // 示せていない (どちらに転んでも null)。声を選んだ**あと**に空で来る道を作る。
+  it('選んだあとに voiceschanged が空で来ても、その声を消さない', () => {
+    let voices: V[] = [];
+    let handler: (() => void) | null = null;
+    const spoken: { voice: V | null }[] = [];
+    const win = {
+      speechSynthesis: {
+        speak: (u: { voice: V | null }) => spoken.push({ voice: u.voice }),
+        cancel: () => {},
+        getVoices: () => voices,
+        addEventListener: (_e: string, fn: () => void) => {
+          handler = fn;
+        },
+      },
+      SpeechSynthesisUtterance: class {
+        constructor(public text = '') {}
+        lang = '';
+        rate = 1;
+        pitch = 1;
+        voice: V | null = null;
+      },
+    };
+    // 1) 初回は空。購読だけして、声はまだ無い。
+    speak('あ。', {}, win as never);
+    expect(spoken[0]!.voice).toBeNull();
+    // 2) 声が揃ったので再選定される。
+    voices = [{ name: 'Google', lang: 'ja-JP' }];
+    handler!();
+    // 3) そのあと空で来ても、選んだ声はそのまま。ここで上書きすると、
+    //    次の発話が既定の機械音声に戻る。
+    voices = [];
+    handler!();
+    speak('い。', {}, win as never);
+    expect(spoken[1]!.voice).toEqual({ name: 'Google', lang: 'ja-JP' });
+  });
 });
 
 describe('cancelSpeech / isSpeechSynthesisSupported', () => {
@@ -850,6 +916,31 @@ describe('ttsAdapter — 残りの枝', () => {
     // 再選定の直前に getVoices が消えても落ちない。
     delete synth.getVoices;
     expect(() => handler?.()).not.toThrow();
+  });
+
+  it('購読するイベント名は voiceschanged', () => {
+    // 名前が違うと購読は成立するのに永久に発火せず、既定の機械音声のまま
+    // 黙って劣化する (エラーはどこにも出ない)。
+    const seen: string[] = [];
+    const win = {
+      speechSynthesis: {
+        speak: () => {},
+        cancel: () => {},
+        getVoices: () => [] as V[],
+        addEventListener: (e: string) => {
+          seen.push(e);
+        },
+      },
+      SpeechSynthesisUtterance: class {
+        constructor(public text = '') {}
+        lang = '';
+        rate = 1;
+        pitch = 1;
+        voice: V | null = null;
+      },
+    };
+    speak('あ。', {}, win as never);
+    expect(seen).toEqual(['voiceschanged']);
   });
 
   it('voiceschanged の購読は 1 度だけ', () => {

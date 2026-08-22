@@ -7,6 +7,28 @@
  *   2. 読み上げテキストを自然化する（記号・URL・出典脚注を除去、文で区切る）。
  *   3. 文単位に分割して連続発話し、文ごとに自然な抑揚・間を得る。
  *   4. 抑揚を穏やかにする（rate/pitch の微調整）。
+ *
+ * ## なぜこのファイルは `mutate` に載せていないか (2026-08-22)
+ *
+ * 実測 91.96%。残る 18 件は**検査の穴ではなく、整形の設計そのもの**である。
+ *
+ * `normalizeForSpeech` は最後に `[。．]{2,}→。` `[、，]{2,}→、` `\s+→' '`
+ * `.trim()` で必ず畳む。この「最後の均し」が、**手前の置換の細かい差を
+ * 全部吸ってしまう**。実験で確かめた: `/\n+/`→`/\n/`、`/[…]{1,}/`→`/[…]/`、
+ * URL の置換先 `' '`→`''` — いずれも代表入力 11 通りで最終出力が一致する。
+ * 手前の量指定子は「その段だけ見ても正しい」ための重ね着で、結果には出ない。
+ *
+ * 残り 18 件の内訳:
+ *   - Regex 13 — 上のとおり、最後の均しに吸われる
+ *   - StringLiteral 4 — 同じく吸われる置換先と、`${v.name || ''}` の既定値
+ *     (加点・減点のどの語にも当たらないので、何を入れても点が変わらない)
+ *   - MethodExpression 1 — perTest の帰属ずれ。手で当てると
+ *     「割った片の前後の空白を落とす」ほか 2 本が落ちる (対照実験で確認)
+ *
+ * 18 件に pragma を貼れば `mutate` へ載せられるが、それは**測れていることの
+ * 記録ではなく、測らないことの記録**が 18 行増えるだけである。読み上げの
+ * 整形は、壊れても資格情報にも権限にも触れない。ここは載せずに、
+ * 理由をこの 1 か所に書いておく。
  */
 
 interface VoiceLike {
@@ -82,10 +104,10 @@ export function normalizeForSpeech(text: string): string {
 
 /** 自然な抑揚のため文単位に分割する（句点・感嘆/疑問・改行区切り）。 */
 export function splitIntoUtterances(text: string, maxLen = 120): string[] {
-  const parts = text
-    .split(/(?<=[。．！？!?])/)
-    .map((x) => x.trim())
-    .filter((x) => x.length > 0);
+  // 以前はここに `.filter((x) => x.length > 0)` があったが、空の断片が来ても
+  // 下のループは何も積まない (`buf` が空のまま `if (buf.trim())` で落ちる)。
+  // 同じ結果になる番人が 2 つあるだけだったので外した。
+  const parts = text.split(/(?<=[。．！？!?])/).map((x) => x.trim());
   const out: string[] = [];
   for (const p of parts) {
     // 以前はここに `p.length <= maxLen` の速道があったが、**結果を変えて
@@ -117,8 +139,10 @@ export function splitIntoUtterances(text: string, maxLen = 120): string[] {
  * 機械的な音声を減点する。
  */
 export function scoreJaVoice(v: VoiceLike): number {
-  const lang = (v.lang || '').toLowerCase();
-  if (!lang.startsWith('ja')) return -Infinity;
+  // `(v.lang || '').toLowerCase()` と書いていたが、`''` を別の文字列に変えても
+  // 「ja で始まらない」点は同じで、結果が変わらなかった。lang が無いことを
+  // そのまま「日本語ではない」と読む形にして、確かめようのない既定値を消す。
+  if (v.lang?.toLowerCase().startsWith('ja') !== true) return -Infinity;
   const key = `${v.name || ''} ${v.voiceURI || ''}`.toLowerCase();
   let score = 10;
   const bonus: [RegExp, number][] = [
@@ -168,15 +192,22 @@ let cachedVoice: VoiceLike | null = null;
 let voicesRequested = false;
 
 function ensureVoice(synth: SpeechSynthesisLike): VoiceLike | null {
-  if (!synth.getVoices) return null;
-  const voices = synth.getVoices();
+  // 関数を先に捕まえる。`synth.getVoices ? synth.getVoices() : []` と書くと、
+  // **その予備側へ入る道が無い** — 有無はこの直後で確定しているのに、
+  // 閉包の中では型が絞られないので予備を書かされていた。捕まえておけば
+  // 到達しない枝を持たずに済む。
+  const getVoices = synth.getVoices;
+  if (!getVoices) return null;
+  const voices = getVoices.call(synth);
   if (voices && voices.length > 0) {
     cachedVoice = pickBestJaVoice(voices);
   } else if (!voicesRequested) {
     // getVoices は初回空のことが多い。voiceschanged で再選定する。
     voicesRequested = true;
     const refresh = () => {
-      const vs = synth.getVoices ? synth.getVoices() : [];
+      const vs = getVoices.call(synth);
+      // 空で戻ってきたら**選び直さない**。既に選んであるボイスを null で
+      // 上書きすると、次の発話が既定の機械音声に戻ってしまう。
       if (vs && vs.length > 0) cachedVoice = pickBestJaVoice(vs);
     };
     if (synth.addEventListener) synth.addEventListener('voiceschanged', refresh);
