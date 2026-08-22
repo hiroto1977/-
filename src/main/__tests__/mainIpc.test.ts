@@ -269,6 +269,35 @@ describe('secrets:set / secrets:clear — サービス id の検査', () => {
     expect(r.code).toBe('write_failed');
   });
 
+  /*
+   * **保存の失敗も伏字の合流点を通す。**
+   *
+   * 13 本のハンドラのうち、生の `e.message` を返していたのはここだけだった ——
+   * しかも**資格情報が生きている唯一のハンドラ**である (2026-08-22)。
+   * 今日の `setToken` は fs エラーしか投げないので実害は userData のパスが
+   * 画面に出る程度だが、片側だけ関門の外に居る状態を残さない。
+   */
+  it('保存の失敗に混ざった秘密は伏せて返す', async () => {
+    setTokenThrows = new Error(`write failed for ghp_${'a'.repeat(36)} at /home/u/.config`);
+    const r = (await invoke('secrets:set', 'github', 'ghp_valid_token_value')) as {
+      ok: boolean;
+      message: string;
+    };
+    expect(r.message).not.toContain('a'.repeat(36));
+    expect(r.message).toContain('ghp_');
+  });
+
+  it('保存の失敗が長すぎても切って返す', async () => {
+    setTokenThrows = new Error('x'.repeat(5000));
+    const r = (await invoke('secrets:set', 'github', 'ghp_valid_token_value')) as {
+      message: string;
+    };
+    // 上限は `ERROR_MESSAGE_MAX_LENGTH` (2000)。数字を写経せず「入力より短い」
+    // ことと「上限以内」の両方を見る。
+    expect(r.message.length).toBeLessThan(5000);
+    expect(r.message.length).toBeLessThanOrEqual(2000);
+  });
+
   it('secrets:clear も知らない id を断る', async () => {
     expect(await invoke('secrets:clear', '__proto__')).toEqual({
       ok: false,
@@ -565,6 +594,13 @@ describe('secrets:set — 資格情報そのものの検査', () => {
     expect(setTokenCalls).toEqual([['github', 'ghp_padded']]);
   });
 
+  /*
+   * 検査の名前 (「文字列にして返す」) と期待値 (固定の文言) が食い違っていた。
+   * 2026-08-22 にこのハンドラを `safeErrorMessage` へ寄せた時点で、名前の側が
+   * 正しくなった —— 他の 9 本のハンドラは元から `String(err)` を返しており、
+   * ここだけが理由を捨てて固定文言に潰していた。このハンドラ自身の説明も
+   * 「弾いた理由を**返す**」と書いている。
+   */
   it('Error でないものが投げられても文字列にして返す', async () => {
     setTokenThrows = 'plain string failure' as unknown as Error;
     const r = (await invoke('secrets:set', 'github', 'ghp_x_valid')) as {
@@ -572,7 +608,7 @@ describe('secrets:set — 資格情報そのものの検査', () => {
       message: string;
     };
     expect(r.ok).toBe(false);
-    expect(r.message).toBe('資格情報の保存に失敗しました');
+    expect(r.message).toBe('plain string failure');
   });
 });
 

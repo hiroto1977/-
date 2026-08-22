@@ -52,7 +52,7 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { getVault } from './security/vault';
-import { redactForMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
+import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
@@ -851,11 +851,11 @@ const shim = {
     try {
       await vault.setToken(serviceId, checked.value);
     } catch (e) {
-      return {
-        ok: false,
-        code: 'write_failed',
-        message: e instanceof Error ? e.message : '資格情報の保存に失敗しました',
-      };
+      // `err()` の説明は「ブラウザ版の全ての失敗が通る 1 本の口」と書いていたが、
+      // `setToken` / `clearToken` は戻り値の型が違うので **通っていなかった** ——
+      // しかも資格情報が生きている 2 経路である。`safeErrorMessage` は同じ
+      // `redactForMessage` を呼ぶので、伏字と長さ切りの扱いは err() と揃う。
+      return { ok: false, code: 'write_failed', message: safeErrorMessage(e) };
     }
     return { ok: true };
   },
@@ -863,7 +863,7 @@ const shim = {
     try {
       await vault.clearToken(serviceId);
     } catch (e) {
-      return { ok: false, message: e instanceof Error ? e.message : '資格情報の削除に失敗しました' };
+      return { ok: false, message: safeErrorMessage(e) };
     }
     return { ok: true };
   },

@@ -215,6 +215,45 @@ describe('資格情報が使えないときは、外へ出る準備をしない'
   });
 });
 
+/*
+ * 保存・削除の失敗も伏字の合流点を通すこと。
+ *
+ * `err()` の説明は「ブラウザ版の**全ての失敗**が通る 1 本の口」と書いていたが、
+ * `setToken` / `clearToken` は戻り値の型が違う (`TokenSaveResult` / `OsOpResult`)
+ * ので **通っていなかった** —— しかも資格情報が生きている 2 経路である
+ * (2026-08-22)。main 側の `secrets:set` も同じ形で漏れていた。
+ */
+describe('資格情報の保存・削除の失敗も伏字を通す', () => {
+  const SECRET = `ghp_${'a'.repeat(36)}`;
+
+  it('setToken の失敗に混ざった秘密は伏せて返す', async () => {
+    vaultWriteThrows = new Error(`write failed with ${SECRET}`);
+    const hub = await loadShim();
+    const call = hub.setToken as (a: string, b: unknown) => Promise<{ message: string }>;
+    const r = await call('github', 'ghp_valid_token_value');
+    expect(r.message).not.toContain('a'.repeat(36));
+    expect(r.message).toContain('ghp_');
+  });
+
+  it('clearToken の失敗に混ざった秘密は伏せて返す', async () => {
+    vaultClearThrows = new Error(`clear failed with ${SECRET}`);
+    const hub = await loadShim();
+    const call = hub.clearToken as (a: string) => Promise<{ message: string }>;
+    const r = await call('github');
+    expect(r.message).not.toContain('a'.repeat(36));
+    expect(r.message).toContain('ghp_');
+  });
+
+  it('長すぎる失敗は切って返す', async () => {
+    vaultWriteThrows = new Error('x'.repeat(5000));
+    const hub = await loadShim();
+    const call = hub.setToken as (a: string, b: unknown) => Promise<{ message: string }>;
+    const r = await call('github', 'ghp_valid_token_value');
+    expect(r.message.length).toBeLessThan(5000);
+    expect(r.message.length).toBeLessThanOrEqual(2000);
+  });
+});
+
 describe('資格情報の保存 — 弾く規則はデスクトップ版と同じ 1 つ', () => {
   const save = async (tok: unknown) => {
     const hub = await loadShim();

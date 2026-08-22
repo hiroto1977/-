@@ -237,11 +237,12 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   try {
     await setToken(serviceId, checked.value);
   } catch (e) {
-    return {
-      ok: false,
-      code: 'write_failed',
-      message: e instanceof Error ? e.message : '資格情報の保存に失敗しました',
-    };
+    // **ここも伏字の合流点を通す。** 13 本のハンドラのうち、生の `e.message` を
+    // 返していたのはここだけだった —— しかも**資格情報が生きている唯一の
+    // ハンドラ**である。今日の `setToken` は fs エラー (userData のパスが載る)
+    // しか投げないが、片側だけ関門の外に居る状態を残さない。
+    // `safeErrorMessage` は伏字に加えて長さも切る。
+    return { ok: false, code: 'write_failed', message: safeErrorMessage(e) };
   }
   return { ok: true };
 });
