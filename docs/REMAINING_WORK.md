@@ -1833,6 +1833,59 @@ Stryker 100% (36 killed / 0 survived)。完全性チェーンの保護対象に�
   不足を確認。実害のある形は**前コミットで直した `cursor.test.ts` の 1 件だけ**
   で、残りは失敗経路専用のモック (引数で `text` を受ける) 等の誤検出だった
 
+### 共有ガードを「一致」ではなく「正しさ」で測り直した → 3 つともシロ（実測）
+
+パリティ検査は**両方に在る穴**を見つけられない (0-a-16)。一致を確かめた組に
+ついて、実際の攻撃形を食わせて測り直した。**新しい欠陥は出なかった。**
+同じ 30 分を使わないよう、試した入力を残す。
+
+**1. Gmail の `buildRfc2822` (main / ブラウザ両方)**
+
+両方とも `to` にしか `isSafeHeaderValue` を掛けていない。`subject` は?
+→ **安全**。`=?UTF-8?B?...?=` へ base64 されるので出力は `[A-Za-z0-9+/=]`
+だけになり、CR/LF が入らない。`body` は空行の後なので header ではない。
+
+**2. Atlassian の送り先ホスト (`normalizeAtlassianSiteResult`)**
+
+資格情報 (email+token の Basic 認証) がどこへ出るかを決める判定。18 形を実測:
+
+| 入力 | 結果 |
+|---|---|
+| `https://x.atlassian.net@evil.com` | **deny** (host は evil.com) |
+| `https://x.atlassian.net.evil.com` | **deny** |
+| `https://xatlassian.net` | **deny** (ドット境界) |
+| `https://atlassian.net` | **deny** (サブドメイン必須) |
+| `http://x.atlassian.net` | **deny** (平文) |
+| `//x.atlassian.net` | **deny** (not-a-url) |
+| `javascript:alert(1)` | **deny** |
+| `https://x.atlassian.net%2f@evil.com` | **deny** |
+| `https://x.atlassian.net:8443` | allow → ポートを落として正規化 |
+| `https://evil.com@x.atlassian.net` | allow → userinfo を落とす (host は正当) |
+| `https://x.atlassian.net/wiki?a=b#c` | allow → path/query/fragment を落とす |
+| `https://x.ATLASSIAN.NET` | allow → 小文字化 |
+
+`https://evil-x.atlassian.net` が通るのは**正しい** —— 実在しうる
+テナント名で、誰でも取れる。バイパスではない。
+
+**3. 書き出し先の封じ込め (`isSafeExportPath`)**
+
+任意パスへの書き込みを止める唯一の関門。22 形を実測。`..` を含む形・
+兄弟ディレクトリ (`<root>-evil`)・根そのもの・ホーム直下・相対パス・
+NUL / 改行入り・拡張子違い / 二重拡張子 / 拡張子なし・末尾スペース・
+バックスラッシュ経路は**すべて deny**。
+
+通る 2 形は読んで確かめた:
+
+- `<root>/.svg` —— 書き出し先の中の `.svg` という名前のファイル。封じ込めも
+  拡張子も満たしている
+- `<root>/%2e%2e/a.svg` —— **`path.resolve` は percent-encoding を解かない**
+  ので `%2e%2e` は*そういう名前のディレクトリ*であって `..` ではない。
+  下流 (`shellOpenGate` の `realpath` / `extname`) も解かないので、
+  実際に外へは出ない
+
+なお `.SVG` (大文字) は deny になる。厳しすぎる側だが、書き込みの関門なので
+このままでよい。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を
