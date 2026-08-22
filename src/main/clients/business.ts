@@ -602,6 +602,12 @@ interface AnthropicMessagesResponse {
   content?: AnthropicContentBlock[];
 }
 
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない**
+ * (経緯は `skills.ts` の `SKILLS_MAX_TOKENS`)。`model` も payload から外した。
+ */
+export const BUSINESS_ADVISOR_MAX_TOKENS = 1500;
+
 interface BusinessAdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to all 10 mock category IDs. */
@@ -623,7 +629,7 @@ export async function askBusinessAdvisorImpl(
   ctx: ActionContext,
   deps: AdvisorDeps = {},
 ): Promise<BusinessAdvisorResponse> {
-  const { question, categories, model, maxTokens } = ctx.payload as BusinessAdvisorPayload;
+  const { question, categories } = ctx.payload as BusinessAdvisorPayload;
 
   // question is required and bounded; control chars rejected to keep prompt clean.
   // Stryker disable ConditionalExpression
@@ -684,11 +690,8 @@ export async function askBusinessAdvisorImpl(
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : AI_PROVIDERS.anthropic.defaultModel,
-      max_tokens:
-        typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0
-          ? maxTokens
-          : 1500,
+      model: AI_PROVIDERS.anthropic.defaultModel,
+      max_tokens: BUSINESS_ADVISOR_MAX_TOKENS,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
     }),

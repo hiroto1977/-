@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot } from '../skills';
+import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot, SKILLS_MAX_TOKENS } from '../skills';
 import { FetchError } from '../types';
 
 describe('parseFrontmatter', () => {
@@ -426,7 +426,26 @@ describe('ACTIONS["run-skill"]', () => {
     expect((err as FetchError).message).toMatch(/^skills 529:/);
   });
 
-  it('uses maxTokens override when provided (kills `?? 2048` mutation)', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない。**
+   *
+   * 2026-08-22 まで `maxTokens ?? 2048` / `model ?? default` で、型検査も
+   * 有限性検査も無しに payload の値を送っていた。実測すると UI はこの値を
+   * 一度も渡していないので、使われていない受け口がレンダラーに
+   * 外部 API のパラメータを握らせているだけだった。`assistant.ts` と同じ
+   * 「定数」の形へ寄せてある。
+   *
+   * この検査は**通そうとして落ちる**ことを確かめる側である。
+   */
+  it.each([
+    ['数値', 512],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['オブジェクト', { n: 999999 }],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
         status: 200,
@@ -436,10 +455,26 @@ describe('ACTIONS["run-skill"]', () => {
     await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p', maxTokens: 512 },
+      payload: { name: 'echo', prompt: 'p', maxTokens },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.max_tokens).toBe(512);
+    expect(body.max_tokens).toBe(SKILLS_MAX_TOKENS);
+  });
+
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p', model: 'claude-opus-4-7' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
   });
 
   it('returns empty text when the response has no text content (kills `?? \'\'` mutation)', async () => {

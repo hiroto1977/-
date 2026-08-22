@@ -171,9 +171,29 @@ export async function fetchSkillsSnapshot(_ctx: FetchContext): Promise<SkillsSna
 interface RunSkillPayload {
   name: string;
   prompt: string;
-  model?: string;
-  maxTokens?: number;
 }
+
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない。**
+ *
+ * 2026-08-22 まで payload の `maxTokens` をそのまま送っていた
+ * (`maxTokens ?? 2048` —— 型検査も有限性検査も無し)。同じ判断が 4 か所に
+ * あって、厳しさが 3 段階に割れていた:
+ *
+ *     assistant.ts  定数 (レンダラーは触れない)          ← いちばん安全
+ *     business.ts   typeof number && isFinite && > 0
+ *     stocks.ts     typeof number && isFinite && > 0
+ *     skills.ts     `?? 2048` のみ                        ← 何でも通る
+ *
+ * 実測すると、**UI はこの値を一度も渡していない** (`invoke` の payload に
+ * `maxTokens` を入れている画面コードは 0 件)。使われていない受け口が、
+ * 有料 API のパラメータをレンダラーに握らせているだけだった。
+ * `assistant.ts` と同じ形 —— 定数 —— に寄せる。
+ *
+ * `model` も同じ理由で payload から外した。モデルの選択は保存済みの
+ * プロバイダ設定 (`providers.ts` の `cfg.model`) 側の口である。
+ */
+export const SKILLS_MAX_TOKENS = 2048;
 
 interface AnthropicMessagesResponse {
   content: Array<{ type: string; text?: string }>;
@@ -229,7 +249,7 @@ export function isSafeSkillName(name: unknown): name is string {
 }
 
 async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason: string }> {
-  const { name, prompt, model, maxTokens } = ctx.payload as unknown as RunSkillPayload;
+  const { name, prompt } = ctx.payload as unknown as RunSkillPayload;
   if (!name || !prompt) throw new Error('name and prompt are required');
 
   const body = await readSkillBody(name);
@@ -244,8 +264,8 @@ async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason:
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: model ?? AI_PROVIDERS.anthropic.defaultModel,
-        max_tokens: maxTokens ?? 2048,
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: SKILLS_MAX_TOKENS,
         system: body,
         messages: [{ role: 'user', content: prompt }],
       }),

@@ -29,6 +29,7 @@ import {
   type BusinessCategoryId,
   type BusinessAdvisorRecommendation,
   type BusinessAdvisorResponse,
+  BUSINESS_ADVISOR_MAX_TOKENS,
 } from '../business';
 
 // --- Category taxonomy ------------------------------------------------
@@ -707,36 +708,47 @@ describe('askBusinessAdvisorImpl', () => {
     expect(body.max_tokens).toBe(1500);
   });
 
-  it('respects custom model + max_tokens overrides', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない** (経緯は `skills.test.ts`)。
+   * ここは以前「上書きを尊重する」ことを確かめる検査だった —— 使われていない
+   * 受け口を仕様として固定していた形なので、期待ごと反転させてある。
+   */
+  it.each([
+    ['数値', 2000],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
     await askBusinessAdvisorImpl({
       token: 't',
       fetch: fetchMock,
-      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 2000 },
+      payload: { question: 'q', maxTokens },
     });
-    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
-    expect(body.model).toBe('claude-opus-4-7');
-    expect(body.max_tokens).toBe(2000);
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { max_tokens: number };
+    expect(body.max_tokens).toBe(BUSINESS_ADVISOR_MAX_TOKENS);
   });
 
-  it('falls back to default when model is empty string or maxTokens is 0 / NaN', async () => {
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
     await askBusinessAdvisorImpl({
       token: 't',
       fetch: fetchMock,
-      payload: { question: 'q', model: '', maxTokens: 0 },
+      payload: { question: 'q', model: 'claude-opus-4-7' },
     });
-    const body1 = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
-    expect(body1.model).toBe('claude-sonnet-4-6');
-    expect(body1.max_tokens).toBe(1500);
-    fetchMock.mockResolvedValueOnce(mockResponse(llmReply([goodRec])));
-    await askBusinessAdvisorImpl({
-      token: 't',
-      fetch: fetchMock,
-      payload: { question: 'q', maxTokens: Number.NaN },
-    });
-    const body2 = JSON.parse(fetchMock.mock.calls[1]![1]!.body as string) as { max_tokens: number };
-    expect(body2.max_tokens).toBe(1500);
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string };
+    expect(body.model).toBe('claude-sonnet-4-6');
+  });
+
+  it('既定のモデルと max_tokens を送る (定数が動いていない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
+    await askBusinessAdvisorImpl({ token: 't', fetch: fetchMock, payload: { question: 'q' } });
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
+    expect(body.model).toBe('claude-sonnet-4-6');
+    expect(body.max_tokens).toBe(1500);
+    expect(BUSINESS_ADVISOR_MAX_TOKENS).toBe(1500);
   });
 
   it('throws on HTTP non-2xx response', async () => {

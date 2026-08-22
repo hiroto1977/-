@@ -40,6 +40,7 @@ import {
   unregisterTickerImpl,
   fetchStocksSnapshotImpl,
   type StateDeps,
+  STOCKS_ADVISOR_MAX_TOKENS,
 } from '../stocks';
 import os from 'node:os';
 import path from 'node:path';
@@ -1545,16 +1546,37 @@ describe('ACTIONS["advise"]', () => {
     ).rejects.toThrow(/no text content/);
   });
 
-  it('honors a custom model + maxTokens override', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない** (経緯は `skills.test.ts`)。
+   * ここは以前「上書きを尊重する」ことを確かめる検査だった。
+   */
+  it.each([
+    ['数値', 512],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
     await ACTIONS['advise']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 512 },
+      payload: { question: 'q', maxTokens },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.model).toBe('claude-opus-4-7');
-    expect(body.max_tokens).toBe(512);
+    expect(body.max_tokens).toBe(STOCKS_ADVISOR_MAX_TOKENS);
+  });
+
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q', model: 'claude-opus-4-7' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
   });
 
   it('defaults to claude-sonnet-4-6 + 1024 max_tokens', async () => {

@@ -1679,6 +1679,49 @@ checksum 自体は残す —— 転送中の切り詰め・ビット反転・編
 「実送信は呼出側が差し込む」と書いてあったが、差し込む側が**存在しなかった**。
 判定は必ず**コメントを潰してから**、実際の import と呼び出しで見ること。
 
+### IPC payload が有料 API のパラメータを握っていた（狭めた）
+
+`action:invoke` の payload は**レンダラーから来る任意の JSON**である
+（TypeScript の型は実行時に消える —— `maxTokens: number` と書いてあっても、
+実際には文字列でもオブジェクトでも届く）。LLM を呼ぶ 4 か所を並べると、
+同じ判断の厳しさが **3 段階に割れていた**:
+
+| 場所 | 出どころ | 検査 | 上限 |
+|---|---|---|---|
+| `assistant.ts` | 定数 `ASSISTANT_MAX_TOKENS` | — (レンダラーは触れない) | 固定 |
+| `business.ts` | payload | `typeof number && isFinite && > 0` | **無し** |
+| `stocks.ts` | payload | `typeof number && isFinite && > 0` | **無し** |
+| `skills.ts` | payload | **無し** (`maxTokens ?? 2048`) | **無し** |
+
+`skills.ts` は文字列でもオブジェクトでも `Infinity` でも素通しだった。
+`model` も 3 か所とも payload から取っていて、送り先モデルをレンダラーが
+選べた。
+
+**上限を発明せずに済む直し方があった。** 実測すると、**UI はこの 2 つを
+一度も渡していない**（`invoke` の payload に `maxTokens` / `model` を入れて
+いる画面コードは 0 件。`web-shim.ts` の 2 件はブラウザ版が
+`callProvider` を直接呼ぶ側で、IPC payload ではない）。使われていない
+受け口が、有料 API のパラメータをレンダラーに握らせているだけだった。
+
+`assistant.ts` と同じ「定数」の形へ寄せた —— `SKILLS_MAX_TOKENS = 2048` /
+`BUSINESS_ADVISOR_MAX_TOKENS = 1500` / `STOCKS_ADVISOR_MAX_TOKENS = 1024`
+（いずれも従来の既定値そのまま＝**挙動は変わらない**）。モデル選択は保存済み
+プロバイダ設定 (`providers.ts` の `cfg.model`) 側の口が本来の道である。
+
+これは**意図的な間口の狭め方**である。拡張点として残したいなら戻せるが、
+そのときは 3 か所の検査を 1 つに寄せて上限も決めること。
+
+検査は期待ごと反転させた —— 以前は「上書きを尊重する」ことを確かめていて、
+**使われていない受け口を仕様として固定していた**。いまは数値・巨大値・負値・
+`Infinity`・文字列・オブジェクト・`null` のどれを渡しても定数が出ることを見る。
+
+対照 5 種すべて鳴る: 3 か所それぞれで payload から読む形へ戻す / `model` を
+payload から読む形へ戻す / 定数の値を変える。
+Stryker: `skills.ts` 121 killed / 0 survived / 0 no-cov。
+
+`verify:arch` が `skills.ts` の行ずれを 3 件捕まえた（`x-api-key` /
+`isSafeSkillName` ×2）—— 錨があるおかげでコード移動でも気付ける。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

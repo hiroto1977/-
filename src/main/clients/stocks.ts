@@ -1203,6 +1203,12 @@ export function validateAdvisorJson(
   return out;
 }
 
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない**
+ * (経緯は `skills.ts` の `SKILLS_MAX_TOKENS`)。`model` も payload から外した。
+ */
+export const STOCKS_ADVISOR_MAX_TOKENS = 1024;
+
 interface AdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to MOCK_TICKERS symbols. */
@@ -1223,7 +1229,7 @@ interface AnthropicMessagesResponse {
 }
 
 async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
-  const { question, universe, model, maxTokens } = ctx.payload as AdvisorPayload;
+  const { question, universe } = ctx.payload as AdvisorPayload;
   // Each input-validation branch is exhaustively tested (empty, oversize,
   // control-char). ConditionalExpression `false` would skip the throw;
   // downstream code would fail differently. Stryker mis-attributes; pin
@@ -1302,9 +1308,8 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     // `0 > 0` is false (mutant would also reject 0).
     // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
     body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : AI_PROVIDERS.anthropic.defaultModel,
-      // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
-      max_tokens: typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
+      model: AI_PROVIDERS.anthropic.defaultModel,
+      max_tokens: STOCKS_ADVISOR_MAX_TOKENS,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
     }),
