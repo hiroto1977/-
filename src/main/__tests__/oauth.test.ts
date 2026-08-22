@@ -1686,6 +1686,69 @@ describe('ループバックサーバの結び先と応答本文', () => {
     }
   });
 
+  /*
+   * **偽コールバックで主プロセスを落とせないこと。**
+   *
+   * `classifyCallback` の注記は「OAuth の窓の間にループバックへ投げ続ける
+   * ブラウザのタブ」を脅威として名指しし、そういう要求は state 不一致として
+   * 非終端の 400 に落ちる、と書いてある。2026-08-22 の実測で **その保証が
+   * 破れている入力**が見つかった:
+   *
+   *   /oauth/callback?state=<JS 長 43・UTF-8 45 バイト>
+   *
+   * `safeStateEquals` が JS の length しか見ずに `timingSafeEqual` へ渡して
+   * いたため RangeError が出て、request listener の中の同期 throw が
+   * `uncaughtException` になった。応答は返らず (実測 3 秒待っても無応答)、
+   * main.ts に受け手が無いので **アプリごと落ちる**。
+   *
+   * 直したのは 2 段: (1) バイト長も見る、(2) classifyCallback を try で囲む。
+   * ここは**外から見える振る舞い**で両方まとめて固定する。
+   */
+  it.each([
+    ['43 文字のうち 1 つだけ全角', `${'a'.repeat(42)}あ`],
+    ['全部全角の 43 文字', 'あ'.repeat(43)],
+    ['サロゲートペア混じり', `${'a'.repeat(41)}\u{1F600}`],
+  ])('偽コールバック (%s) は 400 を返し、落ちない', async (_label, forged) => {
+    const listen = await freshListen();
+    const STATE = 'a'.repeat(43);
+    const uncaught: Error[] = [];
+    const onUncaught = (e: Error): void => { uncaught.push(e); };
+    process.on('uncaughtException', onUncaught);
+    const listener = listen(STATE, 5000);
+    try {
+      const port = await listener.port();
+      const http = await import('node:http');
+      const status = await new Promise<number | string>((resolve) => {
+        const req = http.request(
+          { host: '127.0.0.1', port, path: `/oauth/callback?code=X&state=${encodeURIComponent(forged)}` },
+          (res) => { res.resume(); resolve(res.statusCode ?? 0); },
+        );
+        req.on('error', (e) => resolve(`socket error: ${e.message}`));
+        setTimeout(() => resolve('無応答'), 2000);
+        req.end();
+      });
+      expect(status).toBe(400);
+      expect(uncaught.map((e) => e.message)).toEqual([]);
+
+      // 非終端であること —— 本物が後から来れば解決する。
+      const ok = await new Promise<number | string>((resolve) => {
+        const req = http.request(
+          { host: '127.0.0.1', port, path: `/oauth/callback?code=real&state=${STATE}` },
+          (res) => { res.resume(); resolve(res.statusCode ?? 0); },
+        );
+        req.on('error', (e) => resolve(`socket error: ${e.message}`));
+        setTimeout(() => resolve('無応答'), 2000);
+        req.end();
+      });
+      expect(ok).toBe(200);
+      await expect(listener).resolves.toEqual({ code: 'real', state: STATE });
+    } finally {
+      process.off('uncaughtException', onUncaught);
+      listener.cancel();
+      await listener.catch(() => undefined);
+    }
+  }, 15000);
+
   it('認証完了ページの中身を返す (定数が空になっていない)', async () => {
     const listen = await freshListen();
     const STATE = 'html-check-state-0123456789';

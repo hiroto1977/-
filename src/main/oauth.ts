@@ -402,7 +402,22 @@ export function safeStateEquals(a: string, b: string): boolean {
   // utf8 when the encoding string is unknown — so 'utf8' → '' produces
   // identical bytes for the strings we encounter here.
   // Stryker disable next-line StringLiteral
-  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
+  const ab = Buffer.from(a, 'utf8');
+  // Stryker disable next-line StringLiteral
+  const bb = Buffer.from(b, 'utf8');
+  // **バイト長も見る。** JS の length が同じでも UTF-8 のバイト長は違いうる
+  // ('あ' は 1 文字 3 バイト)。`timingSafeEqual` はバイト長が違うと
+  // **RangeError を投げる**ので、この一行が無いと 43 文字の state に全角を
+  // 1 つ混ぜた偽コールバックで例外が出る。実測 (2026-08-22):
+  // ループバックの待受へ投げると応答が返らず `uncaughtException` になり、
+  // main.ts に受け手が無いので **Electron の主プロセスごと落ちる**。
+  // これは classifyCallback の注記が想定している攻撃者そのもの
+  // (「OAuth の窓の間にループバックへ投げ続けるブラウザのタブ」) である。
+  //
+  // 長さで早期に返すこと自体は既存の JS 長の判定と同じ扱い —— state は
+  // 32 バイト乱数の base64url で固定長なので、長さは秘密ではない。
+  if (ab.length !== bb.length) return false;
+  return timingSafeEqual(ab, bb);
 }
 
 /** Strip the port suffix (`:1234`) from a Host header and check whether
@@ -522,7 +537,21 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     // (even '/' for the empty path), so the `?? '/'` fallback is
     // unreachable; the StringLiteral '/' → '' mutant is equivalent.
     // Stryker disable next-line StringLiteral
-    const outcome = classifyCallback(req.url ?? '/', expectedState);
+    //
+    // 多層防御: `classifyCallback` が投げたら **400 (非終端) に倒す**。
+    // ここは攻撃者が任意の URL を送れる唯一の入口で、request listener の中の
+    // 同期 throw は `uncaughtException` になり、main.ts に受け手が無いので
+    // アプリごと落ちる。実際 `safeStateEquals` のバイト長 RangeError で
+    // 落ちていた (2026-08-22 に実測して両方直した)。
+    // 判定できない要求は「正規のコールバックではない」なので、state 不一致と
+    // 同じ扱い —— 400 を返しつつ待受は続け、本物が後から来れば解決する。
+    let outcome: CallbackOutcome;
+    try {
+      outcome = classifyCallback(req.url ?? '/', expectedState);
+    } catch {
+      res.writeHead(400).end('bad request');
+      return;
+    }
     switch (outcome.kind) {
       case 'wrong-path':
         res.writeHead(404).end();
