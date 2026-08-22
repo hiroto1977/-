@@ -88,6 +88,28 @@ function fromBase64(b64: string): Uint8Array {
   return out;
 }
 
+/**
+ * base64 として読めない値を **領域のエラー**に変える。
+ *
+ * `atob` は不正な文字で `DOMException('Invalid character')` を投げる。
+ * `decryptString` は salt と iv を **try の外**で復号していたので、利用者が
+ * 選んだバックアップファイルの `salt` が壊れていると、
+ * 「復号に失敗しました（パスワード不一致またはデータ破損）」ではなく
+ * **プラットフォームの生の例外**が画面へ出ていた (2026-08-22 に実測。
+ * `ct` だけは try の中なので正しい文言が出る、という同じ関数内での食い違い)。
+ *
+ * `parseBackup` は他のすべての失敗に日本語の理由を付けているので、ここだけ
+ * 素通しにしない。「パスワードが違う」のか「ファイルが壊れている」のかは
+ * 利用者の次の行動が変わるので、文言も分ける。
+ */
+function decodeBase64Field(b64: string, field: string): Uint8Array {
+  try {
+    return fromBase64(b64);
+  } catch {
+    throw new Error(`暗号化データが壊れています（${field} が base64 として読めません）`);
+  }
+}
+
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, [
     'deriveKey',
@@ -136,8 +158,8 @@ export async function encryptString(plaintext: string, password: string): Promis
 
 export async function decryptString(bundle: EncryptedBundle, password: string): Promise<string> {
   if (!isEncryptedBundle(bundle)) throw new Error('暗号化データの形式が不正です');
-  const salt = fromBase64(bundle.salt);
-  const iv = fromBase64(bundle.iv);
+  const salt = decodeBase64Field(bundle.salt, 'salt');
+  const iv = decodeBase64Field(bundle.iv, 'iv');
   assertKdfIterations(bundle.iterations);
   const key = await deriveKey(password, salt, bundle.iterations);
   let plain: ArrayBuffer;
@@ -178,7 +200,7 @@ export function randomSaltB64(): string {
 /** Derive a reusable AES-GCM key from a passphrase + (persisted) salt. */
 export async function deriveAesKey(password: string, saltB64: string, iterations = ITERATIONS): Promise<CryptoKey> {
   if (password.length === 0) throw new Error('パスワードを入力してください');
-  return deriveKey(password, fromBase64(saltB64), iterations);
+  return deriveKey(password, decodeBase64Field(saltB64, 'salt'), iterations);
 }
 
 export async function sealWithKey(key: CryptoKey, plaintext: string): Promise<Sealed> {

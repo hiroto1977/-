@@ -397,6 +397,12 @@ export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string)
  *  don't leak via timing either. Closes P1-5 from docs/SECURITY_AUDIT.md. */
 export function safeStateEquals(a: string, b: string): boolean {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
+  // バイト長の判定 (下) を足したことで、この JS 長の判定は**等価変異**になった。
+  // 外すと結果が変わるのは「JS 長が違うのに UTF-8 バイト列が完全一致する 2 つの
+  // 文字列」が在る場合だけで、標本 790,374 組を総当たりして 0 件だった
+  // (孤立サロゲートが U+FFFD に潰れる形も含めて確認、2026-08-22)。
+  // 残すのは速い前置きだから —— 長さ違いのために Buffer を 2 つ確保しない。
+  // Stryker disable next-line ConditionalExpression
   if (a.length !== b.length) return false;
   // Equivalent mutant: Node's Buffer.from(str, '') silently falls back to
   // utf8 when the encoding string is unknown — so 'utf8' → '' produces

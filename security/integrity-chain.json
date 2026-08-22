@@ -410,6 +410,14 @@
       "leafCount": 31,
       "note": "update oauth.ts",
       "hash": "008b4bc1e5d502c500d861a439a14fc70dfee24dc17773cc3a071d86da00243a"
+    },
+    {
+      "index": 47,
+      "prevHash": "008b4bc1e5d502c500d861a439a14fc70dfee24dc17773cc3a071d86da00243a",
+      "merkleRoot": "20258601ec2a1f91349f099dfec9c9518c825646e75c559516514269dafc37d0",
+      "leafCount": 31,
+      "note": "update oauth.ts,dataCrypto.ts",
+      "hash": "dc1c1367e23c51391542d5666f8b492700c77cc9c377db3f4cad72dfae0fcac5"
     }
   ],
   "tipManifest": {
@@ -425,7 +433,7 @@
     "src/main/atomicWrite.ts": "c534f991bd63f8538421179c4ca64fc041ffcc54b7162ac7719938977974eb8b",
     "src/main/clients/exportPaths.ts": "b6798f4a0b9d54b8d6ee4a8df17323163dee857edbeed4dd546292399fd98882",
     "src/main/main.ts": "140667d3ebb366bccbca1240d2af75dc090eeb438d359174c0faad84be90dc92",
-    "src/main/oauth.ts": "25927d015ea4dfffaaaf08e11aab3f85ad95166aeac76dc6f50cce798391d0ea",
+    "src/main/oauth.ts": "42f18f37e9a926b74cc55e3d10e371ccb1ad33e716641d74fe5a717e5ceb1987",
     "src/main/secrets.ts": "9c4d35e6bd91579510c586c0ab37c603c297ff881c6face286bc5817fcbbe265",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
@@ -433,7 +441,7 @@
     "src/renderer/security/LockScreen.tsx": "3464f6c2b7cb088df493be46bdd38a35123faa80505ea309d40e9008a2ee2866",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
-    "src/renderer/security/dataCrypto.ts": "013529669eb9cd63bfa98b80e5e740d2107233d2097ef3399cb2c17b68925f27",
+    "src/renderer/security/dataCrypto.ts": "405273424dee2cbdabfea92ac9b213acdafe5efd051f5fc864063183308e0370",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "033f9ce3bc89e45927bfa04ab086533dad8578aee05519e4b8c84b2a7686c89f",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
