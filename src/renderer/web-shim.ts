@@ -293,7 +293,24 @@ function advisorSystemPrompt(allowed: readonly string[]): string {
   ].join('\n');
 }
 
-function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>): BusinessAdvisorRecommendation[] {
+/**
+ * AI の応答 (外部 LLM が返した JSON) を、画面と書き出しに載せてよい形へ絞る。
+ *
+ * **同じ判断が main 側の `validateBusinessAdvisorJson` にもある。** あちらは
+ * 公開されていて検査も変異検査も 100% だが、こちらは非公開のまま **1 件も
+ * 検査が無く、変異体 126 件がどのテストにも触られていなかった** (2026-08-22 実測)。
+ * ここは**外部 LLM の応答**という信用できない入力の関門なので、片方だけ
+ * 測られていない状態を残さない。
+ *
+ * export しているのは検査から直に叩くため —— `window.serviceHub` の表面は
+ * 変わらない (`bridgeSurface.security.test.ts` が見ているのはそちら)。
+ *
+ * 本来は `src/shared/` へ 1 つに寄せるのが正しい (両方 pure で、共有できない
+ * 理由が無い)。今そうしていないのは、main 側の例外文言を検査が字面で固定して
+ * いて、統合すると両側の文言を同時に動かすことになるため。**ずれを検知する
+ * パリティ検査を先に置いて**、統合は独立した作業として残す。
+ */
+export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>): BusinessAdvisorRecommendation[] {
   if (raw === null || typeof raw !== 'object') throw new Error('response is not an object');
   const o = raw as { recommendations?: unknown };
   if (!Array.isArray(o.recommendations)) throw new Error('missing recommendations');

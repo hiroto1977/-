@@ -1239,11 +1239,16 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 一覧に入れずに実測した (2026-08-22):
 
 ```
-web-shim.ts   総合 8.34% / 覆われた分だけなら 49.79%
-              1415 変異体 = killed 118 / survived 119 / **no coverage 1178**
+最初        総合  8.34% / 覆われた分 49.79% / killed 118 / survived 119 / no coverage 1178
+検査を 1 つ  総合 15.62% / 覆われた分 60.88% / killed 221 / survived 142 / no coverage 1052
 ```
 
-**1178 件 (83%) はどのテストにも触られていない。** これが動かない事実の方。
+**1178 件 (83%) がどのテストにも触られていなかった。** これが動かない事実の方。
+
+2 行目は `validateAdvisorJson` (外部 LLM の応答の関門) を export して
+パリティ検査を 1 本足した結果 —— **検査ファイル 1 つで未到達が 126 件減った**。
+`survived` が増えているのは、覆われた側に移った分がまだ全部は留まっていない
+ため (未到達が生存に変わるのは前進である)。
 
 `survived 119` は**そのまま鵜呑みにしない**。security 上いちばん効く 1 件
 (`openExternal` のスキーム検査 `ConditionalExpression → true`) を**手で当てて
@@ -1256,10 +1261,25 @@ web-shim.ts   総合 8.34% / 覆われた分だけなら 49.79%
 デスクトップ版では同じ仕事を `clients/*.ts` がしていて、そちらは全部 100%。
 
 **一覧には足していない。** 足せば `npm run mutate` が恒常的に赤になり、
-「赤いのが当たり前」の状態は測っていないのと変わらない。やるなら
-30 個ほどの action に検査を書く独立した作業になる。config の注記自身が
+「赤いのが当たり前」の状態は測っていないのと変わらない。config の注記自身が
 「この注記は 2 度直している」「**『構造的に測れない』と書く前に、読み直す形を
 試すこと**」と書いているので、**測れないのではなく、まだ測っていない**と記す。
+
+### 続きの進め方 (未到達 1052 件の内訳)
+
+| 関数 | 未到達 | 性質 |
+|---|---|---|
+| `shim` (invoke のディスパッチ) | 474 | 30 個ほどの action ルーティング。デスクトップ版では `clients/*.ts` が同じ仕事をしていて全部 100% |
+| `callAnthropicAdvisor` / `callStocksAdvisor` | 202 | **API キーの送り先と送る中身**。security に効く |
+| `callAssistantChat` / `ChatAll` | 159 | 同上 |
+| `callEmotionsAnalyze` | 74 | 同上 |
+| `sanitizeAssistantTurns` | 38 | 会話履歴の絞り込み (名前のとおり関門) |
+| `buildBusinessAnalysesForAdvisor` / `advisorSystemPrompt` | 49 | 送るプロンプトの組み立て |
+| `saveToLibrary` / `tryGrabSvgFromPage` / `downloadBlob` ほか | 56 | 書き出し |
+
+効き目の順は **`sanitizeAssistantTurns` → 各 `call*` の送り先・ヘッダ → ディスパッチ**。
+`validateAdvisorJson` と同じ形 (非公開の純関数を export してパリティ/直検査) が
+`sanitizeAssistantTurns` にもそのまま使える。
 
 ### 伏字の合流点を通っていない失敗はあるか → 3 件あり、全部**資格情報の経路**だった
 
