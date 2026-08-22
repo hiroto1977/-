@@ -176,6 +176,30 @@ const FORBIDDEN_PATTERNS = [
     allowFile: (rel) => rel === 'src/shared/ai/providers.ts',
   },
   {
+    /*
+     * RFC 2822 のヘッダ行を補間で手組みしない。
+     *
+     * 2026-08-22 に `clients/shopify.ts` で見つけた形: gmail の下書き作成を
+     * **同じ手順で写しておきながら `To:` の CR/LF 検査だけを落として**いた。
+     * `assertOrder` は `id` と `name` しか見ないので `order.email` は型も改行も
+     * 無検査で、payload は `action:invoke` 経由で renderer から届く。つまり
+     * `"a@b.example\r\nBcc: attacker@evil.example"` で下書きに Bcc が載った。
+     *
+     * 正典は 2 つだけ (プロセス境界で renderer が main を import できないため):
+     *   src/main/clients/gmail.ts        buildRfc2822
+     *   src/renderer/data/saasWriteWeb.ts buildRfc2822
+     * どちらも `isSafeHeaderValue` を先に通す。3 つ目を作らせない。
+     */
+    name: 'hand-rolled RFC 2822 header line',
+    pattern: /`(?:To|Cc|Bcc|From|Reply-To|Return-Path|Subject):\s*\$\{/,
+    rationale:
+      'メールヘッダの手組み — buildRfc2822 (main: clients/gmail.ts / renderer:'
+      + ' data/saasWriteWeb.ts) を使ってください。写すと CR/LF 検査が落ちます'
+      + ' (不変条件 #11)',
+    allowFile: (rel) =>
+      rel === 'src/main/clients/gmail.ts' || rel === 'src/renderer/data/saasWriteWeb.ts',
+  },
+  {
     name: 'new Function',
     pattern: /\bnew\s+Function\s*\(/,
     rationale: 'arbitrary code execution — invariant #9',
@@ -448,6 +472,11 @@ function selfTest() {
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
+    ['メールヘッダの手組みを弾く (To)', "const m = [`To: ${addr}`].join('\\r\\n');", 1],
+    ['メールヘッダの手組みを弾く (Bcc)', "const m = `Bcc: ${addr}`;", 1],
+    ['メールヘッダの手組みを弾く (Subject)', "const m = `Subject: ${s}`;", 1],
+    ['定数のヘッダ行は弾かない', "const m = 'Content-Type: text/plain';", 0],
+    ['本文中の To: は弾かない (補間が無い)', "const m = `To: taro@example.com`;", 0],
     ['モデル ID の写経を弾く (sonnet)', "model: 'claude-sonnet-4-6',", 1],
     ['モデル ID の写経を弾く (haiku)', "model: 'claude-haiku-4-5-20251001',", 1],
     ['モデル ID の写経を弾く (opus)', "const m = 'claude-opus-5';", 1],

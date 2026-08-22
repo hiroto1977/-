@@ -7,6 +7,7 @@ import {
   type ServiceAction,
   type FetchContext,
 } from './types';
+import { buildRfc2822 } from './gmail';
 
 /**
  * Shopify — 連携先 + サービス間連携アクション。
@@ -95,14 +96,6 @@ export function orderLines(o: ShopifyOrderSummary): string {
 function orderMessage(o: ShopifyOrderSummary): string {
   const tail = o.url ? `\n${o.url}` : '';
   return `${orderHeadline(o)}\n${orderLines(o)}${tail}`;
-}
-
-/** RFC 2047 "encoded-word" for a UTF-8 mail header (Subject) so Japanese
- *  text survives Gmail's MIME parsing. */
-function encodeMimeHeader(value: string): string {
-  // Buffer.from(string) already defaults to utf8 — no explicit encoding arg, so
-  // there's no equivalent `'utf8' → ''` mutant to chase.
-  return `=?UTF-8?B?${Buffer.from(value).toString('base64')}?=`;
 }
 
 /** base64url (no padding) — the encoding Gmail's `drafts.create` expects
@@ -231,13 +224,22 @@ async function syncToGmail(ctx: ActionContext): Promise<{ service: 'gmail'; draf
   if (!token) throw new Error('token (Gmail) is required');
   if (!order.email) throw new Error('order.email is required to draft a customer email');
 
-  const mime = [
-    `To: ${order.email}`,
-    `Subject: ${encodeMimeHeader(`ご注文ありがとうございます ${order.name}`)}`,
-    'Content-Type: text/plain; charset=UTF-8',
-    '',
+  /*
+   * RFC 2822 の組み立ては `gmail.ts` の `buildRfc2822` に 1 つだけ置く。
+   *
+   * ここは 2026-08-22 まで**同じものを手で組み直していて、`To:` の
+   * CR/LF 検査だけが抜けていた**。`assertOrder` は `id` と `name` しか見ないので
+   * `order.email` は型も改行も無検査で、payload は `action:invoke` 経由で
+   * renderer から来る —— つまり乗っ取られた renderer が
+   * `"a@b.com\r\nBcc: attacker@evil.com"` を渡せば、下書きに Bcc が載った。
+   * gmail.ts の同じ処理には最初から `isSafeHeaderValue` の関門があり、
+   * その理由もコメントに書いてある (不変条件 #11)。写した側だけが落としていた。
+   */
+  const mime = buildRfc2822(
+    order.email,
+    `ご注文ありがとうございます ${order.name}`,
     `${order.customer || 'お客'}様\n\nご注文を承りました。\n\n${orderLines(order)}\n\n合計: ${order.total}`,
-  ].join('\r\n');
+  );
 
   const res = await jsonFetch<GmailDraftResponse>(
     'https://gmail.googleapis.com/gmail/v1/users/me/drafts',
