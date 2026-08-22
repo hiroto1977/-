@@ -753,6 +753,31 @@ function buildFiles() {
     throw new Error(`ノート basename が重複しています（${baseDups.length} 件）。wikilink が曖昧になります: ${baseDups.slice(0, 20).join(', ')}`);
   }
 
+  /*
+   * 網羅 — 本体データの全項目にノートが在ること (2026-08-22 に足した)。
+   *
+   * `--check` は「再生成した内容 == committed」を見る。ドリフト (committed が
+   * 古い) は捕まえるが、**生成そのものが壊れた場合は捕まえられない** ——
+   * 誰かが `vault:build` を回せば committed も一緒に縮み、差分が消えて通る。
+   * 出力の「7543 ファイル」は本体の 4140 項目と突き合わせていなかった。
+   *
+   * 同じ形を `verify:graph` でも見つけて直した (あちらは対照実験で、
+   * 成果物を再生成すると byte 一致が通ってしまうことを確認済み)。
+   *
+   * ノートのパスは `notes/<collection>/<category>/<id>.md` で決まるので、
+   * 部分一致ではなくパスそのもので確かめる。
+   */
+  const missingNotes = entries.filter(
+    (e) => !(path.join('notes', e.collection, e.category, `${e.id}.md`) in files),
+  );
+  if (missingNotes.length) {
+    throw new Error(
+      `ノートが生成されなかった項目が ${missingNotes.length} 件あります`
+        + ` (例: ${missingNotes.slice(0, 5).map((e) => e.id).join(', ')})。`
+        + ' 本体データの全項目に notes/<collection>/<category>/<id>.md が要ります。',
+    );
+  }
+
   return files;
 }
 
