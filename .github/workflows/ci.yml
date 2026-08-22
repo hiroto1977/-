@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+# GITHUB_TOKEN は読み取りだけでよい (このワークフローは何も書かない)。
+# 明示しないと、組織/リポジトリの既定 — 環境によっては contents: write —
+# を継ぐ。他の 4 ワークフローは宣言済みで、ここと e2e だけが抜けていた
+# (2026-08-22 の点検)。**一番よく走るものが一番広い権限**という状態だった。
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -32,6 +39,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run verify:arch
       - run: npm run lint:forbidden
+      - run: npm run lint:workflow-security
       - run: npm run lint:network-targets
       - run: npm run lint:imports
       - run: npm run lint:docs

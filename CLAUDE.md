@@ -69,7 +69,10 @@ Vitest config is in `vitest.config.ts` (node environment).
 ```bash
 npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
-npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
+npm run lint:forbidden     # forbidden patterns (nodeIntegration: true / contextIsolation: false /
+                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 21 種)
+npm run lint:workflow-security # .github/workflows/: permissions の明示・第三者 action の SHA 固定・
+                           #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
 npm run lint:docs          # cross-document consistency
 npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
@@ -79,7 +82,7 @@ npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照�
 npm run lint:test-coverage # every service must have a test + an action registered
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
-npm run verify:all         # typecheck + all of the above + eslint (23 ゲート)
+npm run verify:all         # typecheck + all of the above + eslint (26 ゲート)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
@@ -88,7 +91,7 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 23 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 26 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in

@@ -25,6 +25,10 @@ on:
   pull_request:
     types: [labeled, synchronize]
 
+# 実機ブラウザで検査するだけで、書き込みは一切しない。
+permissions:
+  contents: read
+
 jobs:
   e2e:
     # ラベル起動のときは `run-e2e` が付いている PR だけ。手動起動は常に走る。
