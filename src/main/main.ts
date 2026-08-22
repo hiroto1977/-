@@ -46,6 +46,45 @@ function createWindow(): BrowserWindow {
     },
   });
 
+  /**
+   * レンダラーへ許すブラウザ権限。**Electron の既定は「全部承認」である。**
+   *
+   * Electron の security checklist #5 —— ハンドラを置かない限り、
+   * `session` は権限要求を自動で承認する。この窓が読むのは同梱した
+   * `dist/index.html` だけで、遷移も `will-navigate` で止めてあるが、
+   * **万一レンダラーへ任意コードが入った場合に、マイク・カメラ・位置情報が
+   * 確認なしで開くかどうか**はここで決まる。既定のままだと開く。
+   *
+   * 許すのはクリップボードの 2 つだけ:
+   *
+   * - `clipboard-read` —— `LockScreen.tsx` が**復元フレーズを 30 秒後に
+   *   消す**ために使う。「まだ自分がコピーした値のままか」を読んでから
+   *   空にするので、読めないと**消せずに残る**。security のための読み取り。
+   * - `clipboard-sanitized-write` —— 上の消去と、各画面のコピーボタン。
+   *
+   * それ以外 (media / geolocation / notifications / midi / display-capture /
+   * hid / serial / usb / idle-detection / window-management …) は**全部拒否**。
+   * このアプリはどれも使っていない (実測: `getUserMedia` 0 件・
+   * `geolocation` 0 件・`new Notification` 0 件)。`SpeechRecognition` は
+   * ブラウザ版だけで動くもので、Electron には実装が無い。
+   */
+  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
+    'clipboard-read',
+    'clipboard-sanitized-write',
+  ]);
+  /**
+   * 判定は**ここ 1 つ**。要求側 (`setPermissionRequestHandler`) と
+   * 問い合わせ側 (`setPermissionCheckHandler`) の 2 つの口があり、
+   * 両方が同じ答えを返さないと `navigator.permissions.query()` が
+   * 「granted」と言った権限を実際の要求が拒否する (逆もある)。
+   * 同じ判断を 2 度書かない —— `externalUrlGate.ts` の扉と同じ理由。
+   */
+  const permissionAllowed = (permission: string): boolean => ALLOWED_PERMISSIONS.has(permission);
+  win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
+    callback(permissionAllowed(permission));
+  });
+  win.webContents.session.setPermissionCheckHandler((_wc, permission) => permissionAllowed(permission));
+
   win.webContents.setWindowOpenHandler(({ url }) => {
     // IPC の扉と**同じ関門**を通す。以前ここは手書きの http(s) 判定で、
     // 関門の許可表を締めてもこちらだけ古い規則のまま開いた

@@ -1437,6 +1437,43 @@ action の定義場所をクライアントの中だけに閉じ込めれば、�
 
 対照 3 種（直書き / 関数で組み立て / 登録漏れ）とも鳴る。self-test に 8 形追加。
 
+### Electron の security checklist #5 (権限要求) だけ実装していなかった（修正済み）
+
+`setPermissionRequestHandler` / `setPermissionCheckHandler` が **0 件**だった。
+**Electron の既定は「権限要求を全部承認」**である —— ハンドラを置かない限り、
+マイク・カメラ・位置情報・通知・画面共有は確認なしで開く。
+
+この窓が読むのは同梱した `dist/index.html` だけで、遷移も `will-navigate` で
+止めてあるので、今日そこへ辿り着く経路は無い。だがこの層 (L0) の他の項目
+—— `contextIsolation` / `sandbox` / `nodeIntegration:false` / CSP /
+`setWindowOpenHandler` —— はすべて「万一レンダラーへ任意コードが入ったら」を
+前提に置いてある。**同じ前提で、ここだけ既定のままだった。**
+
+許すのはクリップボードの 2 つだけ:
+
+| 権限 | 理由 |
+|---|---|
+| `clipboard-read` | `LockScreen.tsx` が**復元フレーズを 30 秒後に消す**ため。「まだ自分がコピーした値のままか」を読んでから空にするので、読めないと**消せずに残る** |
+| `clipboard-sanitized-write` | 上の消去と、各画面のコピーボタン |
+
+それ以外は全部拒否。実測で `getUserMedia` 0 件・`geolocation` 0 件・
+`new Notification` 0 件・`navigator.usb/hid/serial/bluetooth` 0 件。
+`SpeechRecognition` は 36 参照あるが**ブラウザ版だけで動くもの**で、
+Electron には実装が無い (`isSpeechRecognitionSupported()` が false を返す)。
+
+**2 つの口は同じ判定を通す。** ずれると `navigator.permissions.query()` が
+「granted」と答えた権限を実際の要求が拒否する。`externalUrlGate` の扉が
+2 つあった話と同じ形なので、判定を 1 つに寄せたうえで
+「2 つの口の答えが一致する」を検査で留めた。
+
+対照 5 種すべて鳴る: ハンドラを丸ごと外す (24 本落ちる) / `media` を許可表へ
+足す (2 本) / 問い合わせ側だけ true を返す (21 本) / 要求側の callback を
+呼ばない (23 本) / `clipboard-read` を落とす (2 本)。
+
+**残る checklist 項目**: `enableEmbeddedAsarIntegrityValidation` /
+`onlyLoadAppFromAsar` の fuse は 3-OS の release build が要るのでこの環境では
+確かめられない (別項)。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

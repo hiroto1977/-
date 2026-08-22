@@ -18,6 +18,10 @@ import path from 'node:path';
 interface Captured {
   opts: Record<string, unknown>;
   windowOpenHandler: ((d: { url: string }) => unknown) | null;
+  permissionRequest:
+    | ((wc: unknown, permission: string, cb: (ok: boolean) => void) => void)
+    | null;
+  permissionCheck: ((wc: unknown, permission: string) => boolean) | null;
   listeners: Map<string, (ev: { preventDefault: () => void }, url: string) => void>;
   loadedFile: string | null;
   loadedUrl: string | null;
@@ -37,6 +41,8 @@ function freshCapture(): Captured {
   return {
     opts: {},
     windowOpenHandler: null,
+    permissionRequest: null,
+    permissionCheck: null,
     listeners: new Map(),
     loadedFile: null,
     loadedUrl: null,
@@ -65,6 +71,16 @@ vi.mock('electron', () => ({
       return allWindows;
     }
     webContents = {
+      session: {
+        setPermissionRequestHandler: (
+          fn: (wc: unknown, permission: string, cb: (ok: boolean) => void) => void,
+        ) => {
+          captured.permissionRequest = fn;
+        },
+        setPermissionCheckHandler: (fn: (wc: unknown, permission: string) => boolean) => {
+          captured.permissionCheck = fn;
+        },
+      },
       setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
         captured.windowOpenHandler = fn;
       },
@@ -205,6 +221,103 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
       c.windowOpenHandler!({ url });
     }
     expect(openedExternal).toEqual([]);
+  });
+});
+
+/*
+ * **Electron の既定は「権限要求を全部承認」である** (security checklist #5)。
+ * ハンドラを置かないと、乗っ取られたレンダラーがマイク・カメラ・位置情報を
+ * 確認なしで開ける。ここでは実際に登録された判定を呼んで確かめる。
+ */
+describe('権限要求 — 既定は拒否、クリップボードだけ許す', () => {
+  const ask = (c: Captured, permission: string): boolean => {
+    let got: boolean | null = null;
+    c.permissionRequest!({}, permission, (ok) => {
+      got = ok;
+    });
+    expect(got, 'callback が呼ばれていない (要求が宙に浮く)').not.toBeNull();
+    return got!;
+  };
+
+  it('2 つの口の両方にハンドラを付けている', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.permissionRequest, 'setPermissionRequestHandler が無い').not.toBeNull();
+    expect(c.permissionCheck, 'setPermissionCheckHandler が無い').not.toBeNull();
+  });
+
+  it.each([
+    ['マイク・カメラ', 'media'],
+    ['画面共有', 'display-capture'],
+    ['位置情報', 'geolocation'],
+    ['通知', 'notifications'],
+    ['MIDI', 'midi'],
+    ['MIDI (SysEx)', 'midiSysex'],
+    ['全画面', 'fullscreen'],
+    ['ポインタロック', 'pointerLock'],
+    ['キーボードロック', 'keyboardLock'],
+    ['在席検知', 'idle-detection'],
+    ['ウィンドウ配置', 'window-management'],
+    ['HID', 'hid'],
+    ['シリアル', 'serial'],
+    ['USB', 'usb'],
+    ['ファイルシステム', 'fileSystem'],
+    ['スピーカ選択', 'speaker-selection'],
+    ['storage-access', 'storage-access'],
+    ['外部を開く', 'openExternal'],
+    ['未知の権限', 'unknown'],
+    ['見たことのない名前', 'some-future-permission'],
+  ])('%s (%s) は拒否する', async (_label, permission) => {
+    const c = await loadMain({ packaged: true });
+    expect(ask(c, permission), '要求側が通した').toBe(false);
+    expect(c.permissionCheck!({}, permission), '問い合わせ側が granted と答えた').toBe(false);
+  });
+
+  /*
+   * クリップボードだけ許す。`LockScreen.tsx` は復元フレーズを 30 秒後に
+   * 消すため、「まだ自分がコピーした値のままか」を **読んでから** 空にする。
+   * 読めないと消せずに残るので、これは security のための読み取りである。
+   */
+  it.each([['読み取り', 'clipboard-read'], ['書き込み', 'clipboard-sanitized-write']])(
+    'クリップボードの%s (%s) は許す',
+    async (_label, permission) => {
+      const c = await loadMain({ packaged: true });
+      expect(ask(c, permission)).toBe(true);
+      expect(c.permissionCheck!({}, permission)).toBe(true);
+    },
+  );
+
+  /*
+   * **2 つの口が同じ答えを返すこと。** ずれると
+   * `navigator.permissions.query()` が「granted」と言った権限を実際の要求が
+   * 拒否する (逆もある)。`externalUrlGate` の扉が 2 つあった話と同じ形なので、
+   * 判定そのものを 1 つに寄せてあることをここで留める。
+   */
+  it('要求側と問い合わせ側で答えが一致する', async () => {
+    const c = await loadMain({ packaged: true });
+    const ALL = [
+      'media',
+      'geolocation',
+      'notifications',
+      'midi',
+      'midiSysex',
+      'display-capture',
+      'fullscreen',
+      'pointerLock',
+      'idle-detection',
+      'window-management',
+      'hid',
+      'serial',
+      'usb',
+      'openExternal',
+      'unknown',
+      'clipboard-read',
+      'clipboard-sanitized-write',
+    ];
+    for (const p of ALL) {
+      expect(c.permissionCheck!({}, p), `${p} で 2 つの口の答えが違う`).toBe(ask(c, p));
+    }
+    // 「全部同じ値」で一致していないこと。
+    expect(ALL.filter((p) => ask(c, p)).length).toBe(2);
   });
 });
 
