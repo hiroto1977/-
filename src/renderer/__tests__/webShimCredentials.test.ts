@@ -21,6 +21,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 let stored: string | null = null;
 let vaultThrows: Error | null = null;
+let vaultWriteThrows: Error | null = null;
+let vaultClearThrows: Error | null = null;
+const vaultWrites: [string, string][] = [];
+const vaultClears: string[] = [];
 let proxyConfig: { url: string } | null = { url: 'https://proxy.example/worker' };
 const transportCalls: { url: string; init: RequestInit }[] = [];
 const bearersSeen: string[] = [];
@@ -31,6 +35,15 @@ vi.mock('../security/vault', () => ({
       if (vaultThrows) throw vaultThrows;
       return stored;
     },
+    setToken: async (id: string, tok: string) => {
+      if (vaultWriteThrows) throw vaultWriteThrows;
+      vaultWrites.push([id, tok]);
+    },
+    clearToken: async (id: string) => {
+      if (vaultClearThrows) throw vaultClearThrows;
+      vaultClears.push(id);
+    },
+    listServices: async () => ['github'],
     status: async () => 'unlocked',
   }),
 }));
@@ -86,6 +99,10 @@ beforeEach(() => {
   proxyConfig = { url: 'https://proxy.example/worker' };
   transportCalls.length = 0;
   bearersSeen.length = 0;
+  vaultWriteThrows = null;
+  vaultClearThrows = null;
+  vaultWrites.length = 0;
+  vaultClears.length = 0;
 });
 
 describe('壊れた TokenSet を外へ出さない', () => {
@@ -195,5 +212,78 @@ describe('資格情報が使えないときは、外へ出る準備をしない'
     expect(r.ok).toBe(false);
     expect(r.message).toContain('プロキシ');
     expect(bearersSeen).toEqual([]);
+  });
+});
+
+describe('資格情報の保存 — 弾く規則はデスクトップ版と同じ 1 つ', () => {
+  const save = async (tok: unknown) => {
+    const hub = await loadShim();
+    return (await (hub.setToken as (a: string, b: unknown) => Promise<{ ok: boolean; code?: string }>)(
+      'github',
+      tok,
+    ));
+  };
+
+  it('空・空白だけは保存しない', async () => {
+    // 保存したように見えて中身が無いと、あとで「設定したのに繋がらない」に
+    // なる。規則は `shared/tokenInput.ts` に 1 つだけ置いてある。
+    for (const tok of ['', '   ', '\n\t ']) {
+      const r = await save(tok);
+      expect(r.ok, JSON.stringify(tok)).toBe(false);
+      expect(r.code).toBe('invalid_token');
+    }
+    expect(vaultWrites).toEqual([]);
+  });
+
+  it('文字列でないものは保存しない', async () => {
+    for (const tok of [undefined, null, 42, {}, []]) {
+      const r = await save(tok);
+      expect(r.ok).toBe(false);
+      expect(r.code).toBe('invalid_token');
+    }
+    expect(vaultWrites).toEqual([]);
+  });
+
+  it('上限を超える長さは保存しない', async () => {
+    const r = await save('a'.repeat(65_537));
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('invalid_token');
+    expect(vaultWrites).toEqual([]);
+  });
+
+  it('上限ちょうどは保存する', async () => {
+    const tok = 'a'.repeat(65_536);
+    expect((await save(tok)).ok).toBe(true);
+    expect(vaultWrites).toEqual([['github', tok]]);
+  });
+
+  it('前後の空白を落として保存する', async () => {
+    expect((await save('  ghp_padded  ')).ok).toBe(true);
+    expect(vaultWrites).toEqual([['github', 'ghp_padded']]);
+  });
+
+  it('Vault への書き込みが失敗したら、成功に見せない', async () => {
+    vaultWriteThrows = new Error('IndexedDB quota exceeded');
+    const r = await save('ghp_valid_token');
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('write_failed');
+  });
+
+  it('削除の失敗も黙らない (消したつもりを作らない)', async () => {
+    vaultClearThrows = new Error('vault locked');
+    const hub = await loadShim();
+    const r = (await (hub.clearToken as (a: string) => Promise<{ ok: boolean }>)('github')) as {
+      ok: boolean;
+    };
+    expect(r.ok).toBe(false);
+  });
+
+  it('正しい削除は Vault へ届く', async () => {
+    const hub = await loadShim();
+    const r = (await (hub.clearToken as (a: string) => Promise<{ ok: boolean }>)('github')) as {
+      ok: boolean;
+    };
+    expect(r.ok).toBe(true);
+    expect(vaultClears).toEqual(['github']);
   });
 });
