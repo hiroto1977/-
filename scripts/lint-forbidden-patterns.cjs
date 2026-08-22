@@ -151,6 +151,31 @@ const FORBIDDEN_PATTERNS = [
     rationale: 'arbitrary code execution — invariant #9',
   },
   {
+    /*
+     * モデル ID を写経しない。
+     *
+     * 2026-08-22 の点検で、既定モデル `claude-sonnet-4-6` が **5 か所**に
+     * 写経されていた —— `AI_PROVIDERS.anthropic.defaultModel` という正典が在り、
+     * `clients/assistant.ts` だけが正しく参照していた。`web-shim.ts` に至っては
+     * **同じファイルの 108 行目で AI_PROVIDERS を import しながら**
+     * 375/466 行でリテラルを書いていた。高速モデルのほうも 2 か所に散っていた。
+     *
+     * モデルが引退したとき、直し忘れた側は**実行時の API エラーでしか
+     * 分からない** (型検査もテストも通る)。正典を 1 つにして機械で留める。
+     *
+     * 対象は `claude-<系統>-` の形だけ。第三者サービスが自分の呼び方で報告して
+     * くる文字列 (Cursor の使用統計に出る `claude-4.5-sonnet` など) は
+     * こちらが送るモデル ID ではないので当たらない。
+     */
+    name: 'hardcoded Claude model id',
+    pattern: /['"`]claude-(sonnet|opus|haiku|fable)-/,
+    rationale:
+      'モデル ID の写経 — src/shared/ai/providers.ts の AI_PROVIDERS.<provider>.defaultModel'
+      + ' か ANTHROPIC_FAST_MODEL を参照してください。写すと、引退時に直し忘れた側が'
+      + ' 実行時の API エラーになるまで分かりません',
+    allowFile: (rel) => rel === 'src/shared/ai/providers.ts',
+  },
+  {
     name: 'new Function',
     pattern: /\bnew\s+Function\s*\(/,
     rationale: 'arbitrary code execution — invariant #9',
@@ -423,6 +448,16 @@ function selfTest() {
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
+    ['モデル ID の写経を弾く (sonnet)', "model: 'claude-sonnet-4-6',", 1],
+    ['モデル ID の写経を弾く (haiku)', "model: 'claude-haiku-4-5-20251001',", 1],
+    ['モデル ID の写経を弾く (opus)', "const m = 'claude-opus-5';", 1],
+    ['三項の既定値でも弾く', "model: x ? x : 'claude-sonnet-4-6',", 1],
+    ['正典を参照していれば鳴らない', 'model: AI_PROVIDERS.anthropic.defaultModel,', 0],
+    ['高速モデルの定数参照も鳴らない', 'model: ANTHROPIC_FAST_MODEL,', 0],
+    // 第三者サービスが自分の呼び方で報告してくる文字列 (Cursor の使用統計)。
+    // こちらが送るモデル ID ではないので当ててはいけない。
+    ['第三者の呼び方 (claude-4.5-sonnet) は当てない', "model: 'claude-4.5-sonnet',", 0],
+    ['文中の言及 (引用符なし) は当てない', '// 既定は claude-sonnet-4-6 です', 0],
     ['本物に見える GitHub トークンを弾く', "const t = 'ghp_" + 'a'.repeat(36) + "';", 1],
     ['本物に見える Anthropic キーを弾く', "const t = 'sk-ant-" + 'b'.repeat(32) + "';", 1],
     ['入力欄のプレースホルダは鳴らない', "placeholder: 'ghp_...',", 0],

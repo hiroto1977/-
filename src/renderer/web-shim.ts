@@ -105,7 +105,7 @@ import {
 } from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
 import { liveRead, canLiveRead } from './network/liveRead';
-import { AI_PROVIDERS } from '../shared/ai/providers';
+import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
   configForProvider,
   configuredProviders,
@@ -372,7 +372,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: AI_PROVIDERS.anthropic.defaultModel,
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
@@ -463,7 +463,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: AI_PROVIDERS.anthropic.defaultModel,
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
@@ -526,7 +526,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: ANTHROPIC_FAST_MODEL,
         max_tokens: 512,
         system: EMOTIONS_ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],

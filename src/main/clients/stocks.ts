@@ -6,6 +6,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { isSafeExportPath } from './exportPaths';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
  * Stocks analytics + paper trading.
@@ -1206,7 +1207,7 @@ interface AdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to MOCK_TICKERS symbols. */
   universe?: unknown;
-  /** Model id; defaults to claude-sonnet-4-6. */
+  /** Model id; defaults to AI_PROVIDERS.anthropic.defaultModel. */
   model?: unknown;
   /** Max output tokens; defaults to 1024. */
   maxTokens?: unknown;
@@ -1301,7 +1302,7 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     // `0 > 0` is false (mutant would also reject 0).
     // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
     body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
+      model: typeof model === 'string' && model.length > 0 ? model : AI_PROVIDERS.anthropic.defaultModel,
       // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
       max_tokens: typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
       system: systemPrompt,

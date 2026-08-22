@@ -6,6 +6,7 @@ import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { redactForMessage } from './types';
 import { isSafeExportPath } from './exportPaths';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
  * Business operations dashboard — 17 番目のサービス。
@@ -600,7 +601,7 @@ interface BusinessAdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to all 10 mock category IDs. */
   categories?: unknown;
-  /** Model id; defaults to claude-sonnet-4-6. */
+  /** Model id; defaults to AI_PROVIDERS.anthropic.defaultModel. */
   model?: unknown;
   /** Max output tokens; defaults to 1500. */
   maxTokens?: unknown;
@@ -678,7 +679,7 @@ export async function askBusinessAdvisorImpl(
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
+      model: typeof model === 'string' && model.length > 0 ? model : AI_PROVIDERS.anthropic.defaultModel,
       max_tokens:
         typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0
           ? maxTokens

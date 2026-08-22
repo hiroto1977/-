@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 import {
   jsonFetch,
   type ActionContext,
@@ -243,7 +244,7 @@ async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason:
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: model ?? 'claude-sonnet-4-6',
+        model: model ?? AI_PROVIDERS.anthropic.defaultModel,
         max_tokens: maxTokens ?? 2048,
         system: body,
         messages: [{ role: 'user', content: prompt }],

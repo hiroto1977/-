@@ -22,6 +22,19 @@ import { normalizeAiBaseUrl, describeAiEndpointFailure } from '../aiEndpoint';
 
 export type AiProviderId = 'anthropic' | 'openai' | 'gemini' | 'ollama' | 'compat';
 
+/**
+ * 短文向けの高速・低コストモデル。**既定モデルとは役割が違う**ので別に持つ
+ * (感情分析のように「短いテキストに即答が要る」用途で意図的に選んでいる)。
+ *
+ * ここに 1 か所だけ置くのは、既定モデルと同じ理由 —— 2026-08-22 の点検で
+ * このモデル ID が `web-shim.ts` と `clients/emotions.ts` に写経されており、
+ * 既定モデルのほうは **5 か所**に散っていた (`AI_PROVIDERS.anthropic.defaultModel`
+ * という正典が在り、`assistant.ts` だけが正しく参照していた)。
+ * モデルが引退したとき、直し忘れた側は**実行時の API エラーでしか分からない**。
+ * `lint:forbidden` にモデル ID リテラルの規則を足して再発を止めている。
+ */
+export const ANTHROPIC_FAST_MODEL = 'claude-haiku-4-5-20251001';
+
 export interface AiChatMessage {
   role: 'user' | 'assistant';
   content: string;

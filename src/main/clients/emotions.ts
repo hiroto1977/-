@@ -30,6 +30,7 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -227,7 +228,7 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', // fast + cheap; sufficient for short text
+        model: ANTHROPIC_FAST_MODEL, // fast + cheap; sufficient for short text
         max_tokens: 512,
         system: ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],
