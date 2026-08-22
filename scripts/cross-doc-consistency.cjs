@@ -253,10 +253,18 @@ const FACTS = [
  * ci.yml に無ければ落ちる。逆方向 (ci.yml にしか無い) は許す — CI には
  * verify:all に属さない手順 (build 検証など) が正当に存在するため。
  */
-function checkCiGateCoverage(failures) {
-  const pkg = JSON.parse(read(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+/**
+ * `allOverride` / `ciOverride` は self-test 用の差し込み口。既定では実ファイル
+ * を読む。この 2 つが無いと、**このゲート自身が鳴るかを試せない** — 実ファイル
+ * を壊して確かめるしかなくなり、確かめた事実は今日しか残らない。
+ */
+function checkCiGateCoverage(failures, allOverride, ciOverride) {
+  const pkg =
+    allOverride === undefined
+      ? JSON.parse(read(path.join(REPO_ROOT, 'package.json')) ?? '{}')
+      : { scripts: { 'verify:all': allOverride } };
   const all = pkg.scripts?.['verify:all'];
-  const ci = read(path.join(REPO_ROOT, '.github/workflows/ci.yml'));
+  const ci = ciOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/ci.yml')) : ciOverride;
   if (!all || ci == null) {
     failures.push({
       fact: 'CI gate coverage',
@@ -286,7 +294,69 @@ function checkCiGateCoverage(failures) {
 // Run
 // ---------------------------------------------------------------------------
 
+/**
+ * 陰性対照 — **このゲートが本当に鳴るか**。
+ *
+ * ここは「他の 25 ゲートが CI で実際に走っているか」を見る、いわば
+ * ゲートのゲートである。ここが黙ると、新しいゲートを足しても CI で
+ * 走らないまま「緑」に見える — リポジトリの記録によれば、実際に
+ * lint:citations / lint:knowledge-refs / verify:knowledge の 3 つが
+ * その状態だった。
+ */
+function selfTest() {
+  const step = (g) => `      - run: npm run ${g}\n`;
+  const cases = [
+    [
+      'verify:all のゲートが ci.yml に無ければ鳴る',
+      'npm run lint:a && npm run lint:b',
+      step('lint:a'),
+      1,
+    ],
+    [
+      '全部あれば鳴らない',
+      'npm run lint:a && npm run lint:b',
+      step('lint:a') + step('lint:b'),
+      0,
+    ],
+    [
+      '前方一致では通さない (lint:test では lint:test-coverage を満たさない)',
+      'npm run lint:test-coverage',
+      step('lint:test'),
+      1,
+    ],
+    [
+      '行末に余計なものが付いていたら通さない',
+      'npm run lint:a',
+      '      - run: npm run lint:a --silent\n',
+      1,
+    ],
+    [
+      'ci.yml にだけある手順は許す (build 検証など)',
+      'npm run lint:a',
+      step('lint:a') + step('build:web'),
+      0,
+    ],
+    ['verify:all が読めなければ鳴る', '', step('lint:a'), 1],
+    ['ci.yml が読めなければ鳴る', 'npm run lint:a', null, 1],
+  ];
+  let bad = 0;
+  for (const [label, all, ci, expected] of cases) {
+    const f = [];
+    checkCiGateCoverage(f, all, ci);
+    const ok = f.length === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+  }
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — ゲートのゲートが鳴っていない`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
   const failures = [];
   let factCount = 0;
 

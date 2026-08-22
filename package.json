@@ -37,7 +37,7 @@
     "knowledge:auto": "node scripts/knowledge-autopilot.cjs",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint .",
-    "lint:docs": "node scripts/cross-doc-consistency.cjs",
+    "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",
     "lint:citations": "node scripts/lint-citations.cjs",
     "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
     "lint:charset": "node scripts/lint-charset.cjs",
