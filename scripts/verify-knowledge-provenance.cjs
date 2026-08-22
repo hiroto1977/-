@@ -7,6 +7,15 @@
  *   - 各項目は独立 2 出典以上（ADMISSION_RULE.minSources）
  *   - うち 1 件以上が権威ある出典（分類は下の TAXONOMIES を参照）
  *
+ * ## 読み込み経路（2026-08-22 に姉妹ゲートへ揃えた）
+ *
+ * 当初このゲートだけが自前の正規表現でファイルを読んでいた。`lint:citations` /
+ * `lint:doi-prefix` / `lint:knowledge-refs` / `verify:graph` は 4 つとも
+ * `orchestration/knowledge-context.cjs` の `loadEntries()` を通しており、
+ * こちらは TS を型除去して**評価する**ので 5 コレクション 4140 件すべてを読める。
+ * 自前で読んでいたせいで 1 つしか見ておらず、しかも共有 const 参照を含む
+ * counselorKnowledge は原理的に読めなかった。姉妹ゲートに合わせて解決した。
+ *
  * ## 走査範囲（2026-08-22 に広げた）
  *
  * 以前は `academicKnowledge.ts` の 3518 件**だけ**を見ていた。ところが出力は
@@ -19,6 +28,19 @@
  *   counselorKnowledge     3 件 … sourceVerification.test.ts   ✅
  *   subsidyKnowledge     140 件 … **どこにも無し**             ❌
  *   economicHistory       86 件 … **どこにも無し**             ❌
+ *
+ * 今は 5 つすべて (4140 件) をこのゲートが見る。
+ *
+ * ## 「権威ある出典」の定義が 3 つある
+ *
+ * `knowledge-context.cjs` は vault と AI オーケストレーションへ流す際に
+ * `authoritative` フラグを付けるが、その判定は **academic ∪ official の
+ * 合併集合** (academic/reference/government/municipality) で、上の 2 つとは
+ * 別物である。今日は一致する —— 各コレクションの型の語彙が
+ * discriminating な型で分かれている (academic 系に municipality は無く、
+ * official 系に academic/reference は無い) からで、偶然ではないが
+ * **どこにも書かれていない前提**だった。`AcademicSourceType` に
+ * municipality を足した日に黙ってずれる。全 4140 件で突き合わせる。
  *
  * 補助金 140 件は `assistantContext.ts` を通じて **AI アシスタントの文脈に入る**。
  * 年表 86 件は分析画面に出る。どちらも実測すると今日は全件が規則を満たしていた
@@ -43,7 +65,6 @@
  */
 'use strict';
 
-const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -64,95 +85,19 @@ const TAXONOMIES = {
   },
 };
 
+const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+
 /**
- * 走査対象。`from`/`to` はファイル内の切り出し位置（同じファイルに別の配列が
- * 続く場合に、そこまでで止める）。`expect` は現在の件数で、**パーサが黙って
- * 0 件になる**のを防ぐ下限として使う。
+ * コレクション → 適用する分類。`loadEntries()` が返す `collection` キーで引く。
+ * 新しいコレクションが増えたらここに書かないと落ちる (黙って素通りしない)。
  */
-const DATASETS = [
-  {
-    name: 'academicKnowledge (VERIFIED_CONCEPTS)',
-    file: 'src/renderer/data/academicKnowledge.ts',
-    from: null,
-    to: null,
-    idKey: /id: '([^']+)'/,
-    taxonomy: 'academic',
-    minEntries: 3000,
-  },
-  {
-    name: 'complianceKnowledge (VERIFIED_COMPLIANCE)',
-    file: 'src/renderer/data/complianceKnowledge.ts',
-    from: 'export const VERIFIED_COMPLIANCE',
-    to: null,
-    idKey: /id: '([^']+)'/,
-    taxonomy: 'official',
-    minEntries: 300,
-  },
-  {
-    name: 'subsidyKnowledge (VERIFIED_SUBSIDIES)',
-    file: 'src/renderer/data/subsidyKnowledge.ts',
-    from: 'export const VERIFIED_SUBSIDIES',
-    // SUBSIDY_PORTALS は「窓口の一覧」で、個々が確証対象の主張ではない。
-    to: 'export const SUBSIDY_PORTALS',
-    idKey: /id: '([^']+)'/,
-    taxonomy: 'official',
-    minEntries: 100,
-  },
-  {
-    name: 'economicHistoryKnowledge (ECONOMIC_HISTORY)',
-    file: 'src/renderer/data/economicHistoryKnowledge.ts',
-    from: 'export const ECONOMIC_HISTORY: YearlyEconomy[]',
-    // ASSET_SERIES 以降は年表ではなく系列データ（出典は別立て）。
-    to: 'export interface AssetPoint',
-    idKey: /year: (\d+)/,
-    taxonomy: 'academic',
-    minEntries: 80,
-  },
-];
-
-/*
- * 正規表現で読まないデータセットの台帳。
- *
- * counselorKnowledge.ts は出典に `MHLW_MAMOROU` のような**共有 const 参照**を
- * 混ぜている。`type: '...'` を数える読み方では取りこぼし、実際には規則を
- * 満たしている項目を違反と報告してしまう。既に
- * `sourceVerification.test.ts` が `VERIFIED_SUPPORT_RESOURCES` 全件を
- * `isConfirmed` で固定しているので、そちらに任せる。
- */
-const PARSED_ELSEWHERE = [
-  {
-    name: 'counselorKnowledge (VERIFIED_SUPPORT_RESOURCES)',
-    why: '出典に共有 const 参照を含むため正規表現では数えられない',
-    enforcedBy: 'src/renderer/data/__tests__/sourceVerification.test.ts',
-  },
-];
-
-/** データセット 1 つを項目配列へ正規表現でパースする。 */
-function parseEntries(text, { from, to, idKey }) {
-  // 変数名を `body` にしない —— `lint:forbidden` の「伏せていない応答本文」規則が
-  // `body.slice(` を見ており、HTTP 応答でなくても鳴る。規則を緩めるより名前を譲る。
-  let section = text;
-  if (from) {
-    const i = section.indexOf(from);
-    if (i === -1) return null; // 切り出しの目印が消えた = 構造が変わった
-    section = section.slice(i);
-  }
-  if (to) {
-    const j = section.indexOf(to);
-    if (j === -1) return null;
-    section = section.slice(0, j);
-  }
-  // 各エントリは "\n  {\n" で始まる。先頭の型定義チャンクは slice(1) で捨てる。
-  const blocks = section.split(/\n {2}\{\n/).slice(1);
-  const entries = [];
-  for (const b of blocks) {
-    const idMatch = b.match(idKey);
-    if (!idMatch) continue;
-    const types = [...b.matchAll(/type: '([a-z-]+)'/g)].map((m) => m[1]);
-    entries.push({ id: idMatch[1], types });
-  }
-  return entries;
-}
+const TAXONOMY_BY_COLLECTION = {
+  academic: 'academic',
+  'econ-history': 'academic',
+  compliance: 'official',
+  subsidy: 'official',
+  support: 'official',
+};
 
 function assess(types, taxonomy) {
   const reasons = [];
@@ -203,34 +148,51 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
   }
 
-  // パーサ。切り出しの目印が消えたら null（=「構造が変わった」）を返すこと。
-  const sample =
-    "export const X = [\n  {\n    id: 'a',\n    sources: [{ type: 'government' }, { type: 'media' }],\n  },\n"
-    + "  {\n    id: 'b',\n    sources: [{ type: 'media' }],\n  },\n];\nexport const AFTER = [\n  {\n    id: 'c',\n    sources: [{ type: 'media' }],\n  },\n];\n";
-  const parserCases = [
-    ['切り出し無しなら全部読む', { from: null, to: null }, 3],
-    ['to で止めれば後ろは読まない', { from: null, to: 'export const AFTER' }, 2],
-    ['from の目印が無ければ null', { from: 'export const MISSING', to: null }, null],
-    ['to の目印が無ければ null', { from: null, to: 'export const MISSING' }, null],
-  ];
-  for (const [label, opts, want] of parserCases) {
-    const r = parseEntries(sample, { ...opts, idKey: /id: '([^']+)'/ });
-    const got = r === null ? null : r.length;
-    const ok = got === want;
-    if (!ok) failed += 1;
-    console.log(`  ${ok ? '✓' : '✗'} パーサ: ${label}: ${got} (期待 ${want})`);
-  }
-
-  // 共有 const 参照は数えられない —— counselorKnowledge を台帳へ退避した理由。
-  const shared =
-    "export const X = [\n  {\n    id: 'a',\n    sources: [SHARED_GOV, { type: 'operator' }],\n  },\n];\n";
-  const sharedEntries = parseEntries(shared, { from: null, to: null, idKey: /id: '([^']+)'/ });
-  const undercounts = sharedEntries[0].types.length === 1;
-  if (!undercounts) failed += 1;
+  /*
+   * 分類の割り当てが全コレクションに在ること。ここが抜けたコレクションは
+   * `main` で弾かれるが、**抜けたこと自体は実データを読むまで分からない**ので、
+   * 実際のコレクション一覧と突き合わせておく。
+   */
+  const actual = new Set(kc.loadEntries().map((e) => e.collection));
+  const missing = [...actual].filter((c) => !TAXONOMY_BY_COLLECTION[c]);
+  const stale = Object.keys(TAXONOMY_BY_COLLECTION).filter((c) => !actual.has(c));
+  const mapOk = missing.length === 0 && stale.length === 0;
+  if (!mapOk) failed += 1;
   console.log(
-    `  ${undercounts ? '✓' : '✗'} 共有 const 参照は数えられない (台帳へ退避する理由): `
-      + `${sharedEntries[0].types.length} 件しか読めない (期待 1)`,
+    `  ${mapOk ? '✓' : '✗'} 分類の割り当てが実コレクションと一致: `
+      + `${actual.size} コレクション`
+      + (missing.length ? ` / 割り当て漏れ ${missing.join(',')}` : '')
+      + (stale.length ? ` / 実在しない割り当て ${stale.join(',')}` : ''),
   );
+
+  /*
+   * 3 つの「権威」定義が食い違わないこと。
+   *
+   * knowledge-context.cjs は academic ∪ official の合併集合で判定する。
+   * 今日それがコレクション別の判定と一致するのは、型の語彙が
+   * discriminating な型で分かれているから —— academic 系に `municipality` は
+   * 無く、official 系に `academic`/`reference` は無い。この前提が崩れると
+   * vault だけが緩くなる。前提そのものを検査にしておく。
+   */
+  const vocab = {};
+  for (const e of kc.loadEntries()) {
+    (vocab[e.collection] ??= new Set());
+    for (const src of e.sources ?? []) vocab[e.collection].add(src.type);
+  }
+  // 合併集合は **knowledge-context.cjs から読む**。ここに写すと、向こうが
+  // 変わっても自己検査は写した古い値を見続ける (対照実験で実際にすり抜けた)。
+  const UNION = kc.AUTHORITATIVE_TYPES;
+  for (const [col, taxonomy] of Object.entries(TAXONOMY_BY_COLLECTION)) {
+    const types = vocab[col] ?? new Set();
+    const viaUnion = [...types].filter((t) => UNION.has(t)).sort();
+    const viaStrict = [...types].filter((t) => TAXONOMIES[taxonomy].authoritative.has(t)).sort();
+    const same = viaUnion.join(',') === viaStrict.join(',');
+    if (!same) failed += 1;
+    console.log(
+      `  ${same ? '✓' : '✗'} ${col}: 合併定義を語彙で絞ると ${taxonomy} 定義と一致: `
+        + `[${viaUnion.join(',')}] vs [${viaStrict.join(',')}]`,
+    );
+  }
 
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
@@ -243,60 +205,93 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
+  // 姉妹ゲートと同じ読み込み経路 (5 コレクションを型除去して評価する)。
+  const entries = kc.loadEntries();
+  if (entries.length === 0) {
+    console.error('❌ 項目を 1 件も読めませんでした（loadEntries の不具合を疑ってください）。');
+    return 1;
+  }
+
   const violations = [];
-  const summary = [];
-  let total = 0;
+  const disagreements = [];
+  const unknownCollections = new Set();
+  const counts = {};
 
-  for (const ds of DATASETS) {
-    const abs = path.join(REPO_ROOT, ds.file);
-    const text = fs.readFileSync(abs, 'utf8');
-    const entries = parseEntries(text, ds);
-
-    if (entries === null) {
-      console.error(
-        `❌ ${ds.name}: 切り出しの目印が見つかりません（構造が変わった可能性）。`
-          + ` from=${ds.from} / to=${ds.to}`,
-      );
-      return 1;
+  for (const e of entries) {
+    const taxonomy = TAXONOMY_BY_COLLECTION[e.collection];
+    if (!taxonomy) {
+      unknownCollections.add(e.collection);
+      continue;
     }
-    // パーサが黙って 0 件になると「違反なし」に見える。下限で止める。
-    if (entries.length < ds.minEntries) {
-      console.error(
-        `❌ ${ds.name}: ${entries.length} 件しかパースできませんでした`
-          + `（${ds.minEntries} 件以上を期待）。パーサの不具合を疑ってください。`,
-      );
-      return 1;
-    }
+    counts[e.collection] = (counts[e.collection] ?? 0) + 1;
 
-    total += entries.length;
-    summary.push(`${ds.name} ${entries.length} 件 [${ds.taxonomy}]`);
-    for (const e of entries) {
-      const reasons = assess(e.types, ds.taxonomy);
-      if (reasons.length > 0) violations.push({ ds: ds.name, id: e.id, reasons });
+    const types = (e.sources ?? []).map((s) => s.type);
+    const reasons = assess(types, taxonomy);
+    if (reasons.length > 0) violations.push({ collection: e.collection, id: e.id, reasons });
+
+    /*
+     * 3 つ目の定義との突合。vault と AI オーケストレーションへ流れるのは
+     * knowledge-context.cjs が付ける `authoritative` フラグで、判定は
+     * academic ∪ official の合併集合。コレクションごとの厳密な判定と
+     * 食い違ったら、どちらかが緩んでいる。
+     */
+    const strict = types.filter((t) => TAXONOMIES[taxonomy].authoritative.has(t)).length
+      >= MIN_AUTHORITATIVE;
+    if (Boolean(e.authoritative) !== strict) {
+      disagreements.push({ collection: e.collection, id: e.id, types, vault: Boolean(e.authoritative), strict });
     }
   }
 
+  if (unknownCollections.size > 0) {
+    console.error(
+      `❌ 分類の割り当てが無いコレクション: ${[...unknownCollections].join(', ')}\n`
+        + '  scripts/verify-knowledge-provenance.cjs の TAXONOMY_BY_COLLECTION に'
+        + ' どちらの分類を使うか書いてください（書かないと無検査で通ります）。',
+    );
+    return 1;
+  }
+
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  console.log(`確証ゲート検証: ${total} 項目（出典 ${MIN_SOURCES}+・権威 ${MIN_AUTHORITATIVE}+）`);
+  for (const [col, n] of Object.entries(counts)) {
+    console.log(`  ・${col} ${n} 件 [${TAXONOMY_BY_COLLECTION[col]}]`);
+  }
+
+  let failed = false;
+
+  if (violations.length > 0) {
+    failed = true;
+    console.error(`❌ ${violations.length} 件が確証ゲート違反:`);
+    for (const v of violations.slice(0, 50)) {
+      console.error(`  [${v.collection}] ${v.id} — ${v.reasons.join(' / ')}`);
+    }
+    if (violations.length > 50) console.error(`  …ほか ${violations.length - 50} 件`);
+  }
+
+  if (disagreements.length > 0) {
+    failed = true;
+    console.error(
+      `❌ ${disagreements.length} 件で vault の authoritative 判定とコレクション別の判定が食い違います:`,
+    );
+    for (const d of disagreements.slice(0, 20)) {
+      console.error(
+        `  [${d.collection}] ${d.id} — vault=${d.vault} / 厳密=${d.strict} (出典: ${d.types.join(', ')})`,
+      );
+    }
+    console.error(
+      '  knowledge-context.cjs の AUTHORITATIVE_TYPES は academic ∪ official の合併集合です。'
+      + ' 型の語彙が広がると、コレクション別の判定とずれます。どちらを直すか決めてください。',
+    );
+  }
+
+  if (failed) return 1;
   console.log(
-    `確証ゲート検証: ${total} 項目（出典 ${MIN_SOURCES}+・権威 ${MIN_AUTHORITATIVE}+）`,
+    '✅ すべての項目が確証ゲートを満たし、vault の authoritative 判定とも一致しています。',
   );
-  for (const s of summary) console.log(`  ・${s}`);
-  for (const p of PARSED_ELSEWHERE) {
-    console.log(`  ・${p.name} — このゲートの対象外（${p.why}）→ ${p.enforcedBy}`);
-  }
-
-  if (violations.length === 0) {
-    console.log('✅ すべての項目が確証ゲートを満たしています。');
-    return 0;
-  }
-  console.error(`❌ ${violations.length} 件が確証ゲート違反:`);
-  for (const v of violations.slice(0, 50)) {
-    console.error(`  [${v.ds}] ${v.id} — ${v.reasons.join(' / ')}`);
-  }
-  if (violations.length > 50) console.error(`  …ほか ${violations.length - 50} 件`);
-  return 1;
+  return 0;
 }
 
-module.exports = { assess, parseEntries, TAXONOMIES, DATASETS };
+module.exports = { assess, TAXONOMIES, TAXONOMY_BY_COLLECTION };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
