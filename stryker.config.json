@@ -128,6 +128,7 @@
     "src/renderer/data/teamEmotionRadar.ts",
     "src/renderer/data/trendAlerts.ts",
     "src/renderer/data/useCollection.ts",
+    "src/renderer/data/villageLayout.ts",
     "src/renderer/data/voiceCommand.ts",
     "src/renderer/data/voiceSession.ts",
     "src/renderer/data/workingCapital.ts",
