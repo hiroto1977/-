@@ -1228,6 +1228,30 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
+### 記録の暗号化は「ロックアウトしない」と書いてあったが、2 通りでロックアウトした
+
+`recordEncryption.ts` の設計節はこう書いている ——「誤りなら **false を返すだけ**
+(沈黙のデータ破壊をしない)。ユーザーは正しいパスフレーズを再入力すれば復帰できる」。
+
+ところが鍵の導出 `deriveAesKey` が **try の外**に在り、2 通りで throw していた:
+
+```
+unlock  salt が base64 でない → THROW 暗号化データが壊れています（salt が base64…）
+disable salt が base64 でない → THROW 同上
+unlock  空パスフレーズ        → THROW パスワードを入力してください
+```
+
+`loadMeta` は `typeof m.salt === 'string'` しか見ていないので、localStorage の
+salt が壊れているとここに落ちる。しかも **`disableEncryption` が同じ形**なので、
+**解錠も解除もできない** —— 避けると宣言しているロックアウトそのもの。
+
+`try` の中へ入れて契約どおり false を返すようにした。壊れた salt は誤パスフレーズと
+同じ false になり理由は区別できないが、**利用者がやり直せる状態に留まる**方を採る
+(throw だと打つ手が無くなる)。対照実験で 3 本落ちることを確認済み。
+
+同じ形は `lint:ipc-handlers` の不変条件 #1 (「try の外で await しない」) が
+IPC ハンドラに対しては止めている。**規則は在ったが、適用範囲の外だった。**
+
 ### レンダラーが渡す書き出し先は全部関門を通っていたか → 6 経路とも通っていた。閉包を機械で留めた
 
 `ctx.payload` から書き出し先 `path` を受けているのは 4 クライアント (business /

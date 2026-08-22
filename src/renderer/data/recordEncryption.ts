@@ -93,12 +93,23 @@ export async function unlockEncryption(password: string): Promise<boolean> {
   const meta = loadMeta();
   if (!meta) return true; // not enabled → nothing to unlock
 
-  const key = await deriveAesKey(password, meta.salt);
+  // **鍵の導出も try の中に入れる。** 外に出していた頃は 2 通りで throw していた
+  // (2026-08-22 実測):
+  //   - 空パスフレーズ → 'パスワードを入力してください'
+  //   - `meta.salt` が base64 として読めない → '暗号化データが壊れています…'
+  //     (`loadMeta` は `typeof salt === 'string'` しか見ていない)
+  // どちらも `Promise<boolean>` の契約 (「誤りなら false」) を破って外へ出ていた。
+  // しかも `disableEncryption` が同じ形だったので、**解錠も解除もできない**
+  // —— このモジュールの設計節が避けると宣言している「ロックアウト」そのもの。
+  //
+  // 壊れた salt は誤パスフレーズと同じ false になるので理由は区別できないが、
+  // 利用者が**やり直せる状態に留まる**方を採る (throw だと打つ手が無くなる)。
   try {
+    const key = await deriveAesKey(password, meta.salt);
     const opened = await openWithKey(key, meta.kcv);
     if (opened !== KCV_PLAINTEXT) return false;
   } catch {
-    return false; // wrong passphrase (GCM auth failure)
+    return false; // wrong passphrase (GCM auth failure) / 空 / 壊れた salt
   }
 
   const cipher = await createPassphraseRecordCipher(password, meta.salt);
@@ -114,8 +125,10 @@ export async function disableEncryption(password: string): Promise<boolean> {
   const meta = loadMeta();
   if (!meta) return true; // already plaintext
 
-  const key = await deriveAesKey(password, meta.salt);
+  // `unlockEncryption` と同じ理由で鍵の導出も try の中へ (上のコメント参照)。
+  // **解除の側が throw すると逃げ道が無くなる**ので、こちらの方が重い。
   try {
+    const key = await deriveAesKey(password, meta.salt);
     if ((await openWithKey(key, meta.kcv)) !== KCV_PLAINTEXT) return false;
   } catch {
     return false;

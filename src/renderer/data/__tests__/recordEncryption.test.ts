@@ -145,4 +145,41 @@ describe('recordEncryption lifecycle', () => {
     expect(await unlockEncryption('pw')).toBe(false);
     expect(await disableEncryption('pw')).toBe(false);
   });
+
+  /*
+   * **ロックアウトしないこと。**
+   *
+   * このモジュールの設計節は「誤りなら false を返すだけ (沈黙のデータ破壊を
+   * しない)。ユーザーは正しいパスフレーズを再入力すれば復帰できる」と書いている。
+   * ところが鍵の導出 (`deriveAesKey`) が try の**外**に在り、2 通りで throw して
+   * いた (2026-08-22 実測):
+   *
+   *   - 空パスフレーズ            → 'パスワードを入力してください'
+   *   - `meta.salt` が base64 で読めない → '暗号化データが壊れています…'
+   *     (`loadMeta` は `typeof salt === 'string'` しか見ていない)
+   *
+   * しかも `disableEncryption` が同じ形なので、**解錠も解除もできない** ——
+   * 避けると宣言しているロックアウトそのものに落ちていた。
+   *
+   * 壊れた salt は誤パスフレーズと同じ false になるので理由は区別できないが、
+   * 利用者がやり直せる状態に留まる方を採っている。
+   */
+  it.each([
+    ['salt が base64 として読めない', '###'],
+    ['salt が記号だけ', '@@@@'],
+  ])('%s でも throw せず false (解錠も解除も呼べる)', async (_label, badSalt) => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!);
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, salt: badSalt }));
+    _resetRecordStoreForTests();
+    await expect(unlockEncryption('pw')).resolves.toBe(false);
+    await expect(disableEncryption('pw')).resolves.toBe(false);
+  });
+
+  it('空パスフレーズでも throw せず false', async () => {
+    await enableEncryption('pw');
+    _resetRecordStoreForTests();
+    await expect(unlockEncryption('')).resolves.toBe(false);
+    await expect(disableEncryption('')).resolves.toBe(false);
+  });
 });
