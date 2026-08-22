@@ -79,7 +79,9 @@ export function BackupPanel() {
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.6 }}>
         売上・KPI 実績・チームメンバーなど、この端末に保存された業務データ全体を JSON
         ファイルとして書き出し / 取り込みます。端末移行や災害復旧にご利用ください。
-        SHA-256 で改ざん検知、パスワード指定で AES-GCM 暗号化します。
+        SHA-256 で破損検知します（改ざん検知ではありません — 鍵の無いハッシュは
+        書き換えた側が計算し直せば通ります）。改ざんに備えるにはパスワードを指定して
+        AES-GCM で暗号化してください。
         （API キーは Vault 管理のため含まれません）
       </div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>

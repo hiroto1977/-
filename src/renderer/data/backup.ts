@@ -2,11 +2,30 @@
  * Backup / restore — serialize the entire local record store to a single
  * JSON file the user can download (端末移行・災害復旧), and parse it back.
  *
- * 独自セキュリティ機能: バックアップに **SHA-256 完全性チェックサム**を埋め込み、
- * 復元時に再計算して照合する。ファイルが破損・改ざんされていれば検知して復元を
- * 拒否する (データ"損壊"対策)。チェックサムは records を正規化した JSON
- * (`JSON.stringify(records)`) に対して計算するため、再フォーマット (整形/空白) には
- * 強く、内容変更には反応する。
+ * バックアップに **SHA-256 チェックサム**を埋め込み、復元時に再計算して照合する。
+ * チェックサムは records を正規化した JSON (`JSON.stringify(records)`) に対して
+ * 計算するため、再フォーマット (整形/空白) には強く、内容の変化には反応する。
+ *
+ * ## これが検知するのは「破損」であって「改ざん」ではない
+ *
+ * 2026-08-22 まで、ここにも画面にも `docs/DATA_PROTECTION.md` にも
+ * 「**改ざん検知**」と書いてあった。**鍵の無いハッシュを同じファイルの中に
+ * 置いても、改ざんは検知できない** —— 中身を書き換える人は、続けて
+ * checksum を計算し直すだけでよい。実測した (`backup.test.ts` の
+ * 「平文バックアップの SHA-256 が守るもの・守らないもの」):
+ *
+ *     records を書き換え → checksum を計算し直す → **復元は通る**
+ *     records を書き換え → checksum はそのまま     → 落ちる (破損検知は効く)
+ *
+ * 守れるのは、転送中の切り詰め・ディスクのビット反転・編集ミスといった
+ * **意図しない壊れ方**である。これは価値のある保証なので checksum は残すし、
+ * 省略も許さない (下記) —— が、「改ざんされていないことを確かめた」と
+ * 利用者に思わせてはいけない。
+ *
+ * **改ざんに耐えるのは暗号化バックアップのほう。** AES-GCM の認証タグは
+ * パスフレーズを知らない改変を復号の時点で落とす。改ざんを心配する用途では
+ * パスワードを設定して書き出すのが正しい答えで、平文側に鍵の無い MAC を
+ * 足しても意味は増えない (鍵の置き場が無い)。
  *
  * IndexedDB の読み書きは `store.exportAll()` / `store.importAll()`。
  */
@@ -23,8 +42,11 @@ export interface BackupFile {
    * SHA-256 hex of `JSON.stringify(records)`。**必須**。
    *
    * かつては省略可にしてあり、無ければ照合を飛ばしていた。それは
-   * 「改ざんする人が checksum の行を消すだけで検知を無効化できる」
-   * という意味で、`alg: none` と同じ形をしていた。
+   * 「checksum の行を消すだけで照合を無効化できる」という意味で、
+   * `alg: none` と同じ形をしていた。
+   *
+   * ただし**必須にしても得られるのは破損検知だけ**である (モジュール冒頭)。
+   * 鍵が無いので、書き換えた側が計算し直せば通る。
    * 省略を許した理由は「旧バックアップ互換」だったが、git を辿ると
    * このファイルの最初のコミットから常に checksum を書いており、
    * **checksum の無いバックアップをこのアプリが作ったことは一度も無い**。
@@ -125,15 +147,15 @@ export async function parseBackup(text: string, password?: string): Promise<read
   }
   if (!Array.isArray(file.records)) throw new Error('records 配列がありません');
 
-  // 完全性チェック: records と照合し、破損/改ざんを検知する。
-  // **checksum が無いファイルは受け付けない。** 省略を許すと、改ざんする側は
-  // checksum の行を消すだけで検知を無効化できる。
+  // 破損検知: records と照合する。**改ざん検知ではない** (モジュール冒頭)。
+  // **checksum が無いファイルは受け付けない。** 省略を許すと、
+  // checksum の行を消すだけで照合ごと飛ばせる。
   if (typeof file.checksum !== 'string') {
-    throw new Error('完全性チェックサムがありません (このアプリが作ったバックアップではないか、改変されています)');
+    throw new Error('完全性チェックサムがありません (このアプリが作ったバックアップではありません)');
   }
   const actual = await sha256Hex(JSON.stringify(file.records));
   if (actual !== file.checksum) {
-    throw new Error('バックアップが破損または改ざんされています (チェックサム不一致)');
+    throw new Error('バックアップファイルが破損しています (チェックサム不一致)');
   }
 
   return file.records as StoredRecord[];

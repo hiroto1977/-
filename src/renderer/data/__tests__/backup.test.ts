@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   serializeBackup,
   parseBackup,
@@ -265,5 +266,111 @@ describe('手入力データのバックアップ往復', () => {
     for (const c of ['business-units', 'manual-metrics', 'manual-overrides']) {
       expect(restored.some((r) => r.collection === c), c).toBe(true);
     }
+  });
+});
+
+/*
+ * **平文バックアップの SHA-256 が守るもの・守らないもの。**
+ *
+ * 2026-08-22 まで、モジュールの説明にも画面の文言にも
+ * `docs/DATA_PROTECTION.md` にも「SHA-256 で**改ざん検知**」と書いてあった。
+ * **鍵の無いハッシュを同じファイルの中に置いても、改ざんは検知できない** ——
+ * 中身を書き換える人は、続けて checksum を計算し直すだけでよい。
+ *
+ * ここはその限界を**実行できる事実**として置いてある。文言だけ直すと、
+ * 次に読んだ人が「せっかく checksum があるのだから改ざん検知と書こう」と
+ * 戻しうる。この検査は**攻撃が成功することを期待している**ので、
+ * 消さずに読むこと —— 直すべきは「守れる」という記述のほうではなく、
+ * 改ざんが心配なら暗号化バックアップを使う、という運用のほうである。
+ */
+describe('平文バックアップの SHA-256 が守るもの・守らないもの', () => {
+  it('【守らない】書き換えて checksum を計算し直すと、復元は通る', async () => {
+    const original = await serializeBackup(RECORDS);
+    const parsed = JSON.parse(original) as { checksum: string; records: StoredRecord[] };
+
+    // 攻撃者の操作は 2 手だけ —— 中身を書き換え、checksum を計算し直す。
+    parsed.records = [
+      { id: 'a', collection: 'sales', createdAt: 2, updatedAt: 2, data: { amount: 999_999 } },
+    ];
+    parsed.checksum = await sha256Hex(JSON.stringify(parsed.records));
+
+    const restored = await parseBackup(JSON.stringify(parsed));
+    expect(restored).toHaveLength(1);
+    expect(restored[0]!.data).toEqual({ amount: 999_999 });
+  });
+
+  it('【守る】checksum を直さずに書き換えれば落ちる (破損検知)', async () => {
+    const original = await serializeBackup(RECORDS);
+    await expect(parseBackup(original.replace('100', '999999'))).rejects.toThrow(
+      /チェックサム不一致/,
+    );
+  });
+
+  it('【守る】失敗の文言が「改ざん」を主張していない', async () => {
+    const original = await serializeBackup(RECORDS);
+    await expect(parseBackup(original.replace('100', '999999'))).rejects.toThrow(
+      /破損/,
+    );
+    await expect(parseBackup(original.replace('100', '999999'))).rejects.not.toThrow(
+      /改ざん/,
+    );
+  });
+
+  /*
+   * **改ざんに耐えるのは暗号化バックアップのほう。** AES-GCM の認証タグは、
+   * パスフレーズを知らない改変を復号の時点で落とす —— 上と違い、
+   * 「計算し直す」手が無い。
+   */
+  it('暗号化バックアップは 1 バイト変えるだけで復号に失敗する', async () => {
+    const enc = await serializeEncryptedBackup(RECORDS, 'correct horse battery staple');
+    const env = JSON.parse(enc) as { payload: { ct: string } };
+    const ct = env.payload.ct;
+    // base64 の 1 文字を別の文字へ倒す (元と同じにならない選び方)。
+    env.payload.ct = (ct[0] === 'A' ? 'B' : 'A') + ct.slice(1);
+
+    await expect(
+      parseBackup(JSON.stringify(env), 'correct horse battery staple'),
+    ).rejects.toThrow();
+  });
+
+  it('暗号化バックアップは正しいパスフレーズなら往復する (誤検知しない)', async () => {
+    const enc = await serializeEncryptedBackup(RECORDS, 'correct horse battery staple');
+    const out = await parseBackup(enc, 'correct horse battery staple');
+    expect(out).toEqual(RECORDS);
+  });
+});
+
+/*
+ * **画面の文言も留める。**
+ *
+ * 誤った主張が最後に残るのは利用者の目に触れる文字列である。ここが
+ * 「SHA-256 で改ざん検知」に戻っても、`backup.ts` の検査は緑のままになる ——
+ * 実装は正しいのに説明だけが嘘、という一番たちの悪い形になる。
+ *
+ * 語そのものは禁じられない (正しい文面でも「改ざんに備えるには」と出てくる)。
+ * 代わりに**打ち消しの一文が在ること**を要求する。主張を戻す人は、
+ * この一文を消さないと書けない。
+ */
+describe('バックアップ画面の文言 (誤った保証を書き戻せないように)', () => {
+  const PANEL = readFileSync(
+    new URL('../../components/BackupPanel.tsx', import.meta.url),
+    'utf8',
+  );
+
+  it('SHA-256 は破損検知だと書いてある', () => {
+    expect(PANEL).toContain('SHA-256 で破損検知');
+  });
+
+  it('改ざん検知ではないと明示的に打ち消している', () => {
+    expect(PANEL).toContain('改ざん検知ではありません');
+  });
+
+  it('改ざんに備える道 (暗号化) を案内している', () => {
+    expect(PANEL).toMatch(/AES-GCM/);
+    expect(PANEL).toMatch(/パスワードを指定/);
+  });
+
+  it('「SHA-256 で改ざん検知」と書いていない', () => {
+    expect(PANEL).not.toMatch(/SHA-?256\s*(で|による)?\s*改ざん検知(?!ではありません)/);
   });
 });
