@@ -85,11 +85,17 @@ function walkTests(dir, out) {
   return out;
 }
 
-function checkJsdomNeed(failures) {
-  const files = walkTests(path.join(REPO_ROOT, 'src'), []);
+/**
+ * @param filesOverride 自己検査用。`{ file, text }` の配列を渡すと
+ *   ディスクを読まずにその内容だけを見る (本番は undefined)。
+ */
+function checkJsdomNeed(failures, filesOverride) {
+  const files =
+    filesOverride === undefined
+      ? walkTests(path.join(REPO_ROOT, 'src'), []).map((file) => ({ file, text: read(file) }))
+      : filesOverride;
   let checked = 0;
-  for (const file of files) {
-    const text = read(file);
+  for (const { file, text } of files) {
     if (!/@vitest-environment\s+jsdom/.test(text)) continue;
     checked++;
     if (DOM_GLOBALS.test(stripNonCode(text))) continue;
@@ -105,17 +111,16 @@ function checkJsdomNeed(failures) {
   return checked;
 }
 
-function main() {
+/**
+ * サービス 1 件を見る。`lookup(id)` は `{ testText, actions }` を返す
+ * (`testText === null` = テストファイルが無い)。ディスクから切り離してあるのは
+ * 自己検査のためで、本番の呼び出し側 `fsLookup` が実ファイルを読む。
+ */
+function collectCoverageFailures(ids, lookup) {
   const failures = [];
-  const ids = serviceIds();
-
   for (const id of ids) {
-    const testFile = path.join(
-      REPO_ROOT,
-      'src/main/clients/__tests__',
-      `${id}.test.ts`,
-    );
-    if (!fs.existsSync(testFile)) {
+    const { testText, actions } = lookup(id);
+    if (testText === null) {
       failures.push({
         kind: 'missing-test-file',
         service: id,
@@ -124,8 +129,6 @@ function main() {
       continue;
     }
 
-    const testText = read(testFile);
-    const actions = actionsOf(id);
     for (const action of actions) {
       // Each action must appear at least once in the test file as a
       // string literal. Looking for quoted form because tests invoke
@@ -142,6 +145,129 @@ function main() {
       }
     }
   }
+  return failures;
+}
+
+function fsLookup(id) {
+  const testFile = path.join(REPO_ROOT, 'src/main/clients/__tests__', `${id}.test.ts`);
+  if (!fs.existsSync(testFile)) return { testText: null, actions: [] };
+  return { testText: read(testFile), actions: actionsOf(id) };
+}
+
+// ---------------------------------------------------------------------------
+// 陰性対照 (--self-test)
+// ---------------------------------------------------------------------------
+
+/*
+ * このゲートは「テストが在ること」を見張る側なので、**自分が鳴かなくなった
+ * ことに誰も気づけない**。規則を 1 つずつ壊した入力を食わせて、期待した件数
+ * だけ鳴ることを毎回確かめる。
+ *
+ * 特に減りやすいのは 2 つ:
+ *   - action 名の正規表現エスケープ (`-` を含む名前が部分一致で通ってしまう)
+ *   - DOM_GLOBALS の単語境界と stripNonCode (コメント/文字列の中の `document`
+ *     を「DOM を触っている」と誤読すると、jsdom 検査は永久に 0 件になる)
+ */
+function selfTest() {
+  /** サービス側の規則。`lookup` を差し替えるだけで実関数をそのまま通す。 */
+  const coverageCases = [
+    ['テストファイルが無い', ['a'], () => ({ testText: null, actions: [] }), 1],
+    ['テストはあるが action 0 件', ['a'], () => ({ testText: 'ok', actions: [] }), 0],
+    [
+      'action がクォート付きで登場',
+      ['a'],
+      () => ({ testText: "ACTIONS['create-page']", actions: ['create-page'] }),
+      0,
+    ],
+    ['action がどこにも無い', ['a'], () => ({ testText: 'ok', actions: ['create-page'] }), 1],
+    [
+      'クォート無しの参照は数えない',
+      ['a'],
+      () => ({ testText: 'ACTIONS.createPage; // create-page', actions: ['create-page'] }),
+      1,
+    ],
+    [
+      '名前の一部が合うだけでは通さない',
+      ['a'],
+      () => ({ testText: "'createXpage'", actions: ['create-page'] }),
+      1,
+    ],
+    [
+      // actionsOf の抽出パターンは今は `[a-z][a-z0-9-]*` しか通さないので
+      // メタ文字は実データからは来ない。だがエスケープは実コードなので、
+      // 外されたら鳴るようにここで直接食わせる (将来 `.` を許したときの保険)。
+      '正規表現メタをエスケープする (a.c が abc に一致しない)',
+      ['a'],
+      () => ({ testText: "'abc'", actions: ['a.c'] }),
+      1,
+    ],
+    [
+      'バッククォートも受け付ける',
+      ['a'],
+      () => ({ testText: '`create-page`', actions: ['create-page'] }),
+      0,
+    ],
+    [
+      '2 サービスのうち片方だけ違反',
+      ['a', 'b'],
+      (id) => (id === 'a' ? { testText: "'x'", actions: ['x'] } : { testText: 'ok', actions: ['y'] }),
+      1,
+    ],
+  ];
+
+  /** jsdom 側の規則。ファイル一覧を注入して実関数をそのまま通す。 */
+  const jsdomCases = [
+    ['jsdom 宣言 + DOM を触る', '// @vitest-environment jsdom\nconst el = document.body;', 0],
+    ['jsdom 宣言 + DOM を触らない', '// @vitest-environment jsdom\nconst v = 1;', 1],
+    ['jsdom 宣言が無ければ見ない', 'const v = 1;', 0],
+    [
+      'コメントの中の document は数えない',
+      '// @vitest-environment jsdom\n// かつては document を使っていた\nconst v = 1;',
+      1,
+    ],
+    [
+      '文字列の中の document は数えない',
+      "// @vitest-environment jsdom\nconst v = 'document';",
+      1,
+    ],
+    [
+      '単語境界: windowTitle は window ではない',
+      '// @vitest-environment jsdom\nconst windowTitle = 1;',
+      1,
+    ],
+  ];
+
+  let failed = 0;
+  console.log('self-test:');
+  for (const [label, ids, lookup, want] of coverageCases) {
+    const got = collectCoverageFailures(ids, lookup).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+  for (const [label, text, want] of jsdomCases) {
+    const failures = [];
+    const checked = checkJsdomNeed(failures, [{ file: path.join(REPO_ROOT, 'src/x.test.ts'), text }]);
+    const got = failures.length;
+    // 宣言が無いものは「検査した」に数えない — 数え方が壊れても気づけるように見る。
+    const wantChecked = /@vitest-environment\s+jsdom/.test(text) ? 1 : 0;
+    const ok = got === want && checked === wantChecked;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 / 検査 ${checked} 件 (期待 ${want} 件 / 検査 ${wantChecked} 件)`);
+  }
+
+  if (failed > 0) {
+    console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
+function main(argv) {
+  if (argv.includes('--self-test')) return selfTest();
+  const ids = serviceIds();
+  const failures = collectCoverageFailures(ids, fsLookup);
 
   const jsdomChecked = checkJsdomNeed(failures);
 
@@ -160,4 +286,4 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+process.exit(main(process.argv.slice(2)));
