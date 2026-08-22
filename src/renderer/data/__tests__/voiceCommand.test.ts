@@ -585,10 +585,13 @@ describe('requiresConfirmation', () => {
   /*
    * **発話から生まれうる action は 1 つ残らず確認必須であること。**
    *
-   * `VoiceCommandBar` は `phase === 'parsed'` (確認不要) を **useEffect で
-   * 自動承認**する。つまり `requiresConfirmation` が false を返した action は
-   * **発話 1 回でそのまま実行される**。上の 1 件ずつの検査は「この 6 つは
-   * true」を言っているだけで、**7 つ目が足されたことには気付けない**。
+   * この判定を見ている入口は 2 つあり、どちらも false のとき**そのまま実行**する:
+   *   - `VoiceCommandBar` —— `phase === 'parsed'` を useEffect で自動承認
+   *   - `ChatbotWidget`   —— `else await runIntent(reply.intent)`
+   * チャット側は**マイクを要さない**。入力欄に打つだけで同じ経路を通る。
+   *
+   * 上の 1 件ずつの検査は「この 6 つは true」を言っているだけで、
+   * **7 つ目が足されたことには気付けない**。
    *
    * 動詞ルール (`ACTION_RULES`) と確認名簿 (`CONFIRM_ACTIONS`) は同じファイルの
    * 別々の表で、どちらも手で保たれている。載せ忘れは「確認なしで実行」側へ

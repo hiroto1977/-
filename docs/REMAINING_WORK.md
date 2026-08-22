@@ -1228,11 +1228,19 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
-### 音声コマンドは確認なしで実行されうるか → 今日は全部確認必須。閉包を機械で留めた
+### 音声・チャットのコマンドは確認なしで実行されうるか → 今日は全部確認必須。閉包を機械で留めた
 
-`VoiceCommandBar` は `phase === 'parsed'`（確認不要）を **useEffect で自動承認**
-する。つまり `requiresConfirmation` が false を返した action は
-**発話 1 回でそのまま実行される**（マイクは利用者がボタンを押した後だけ聞く）。
+`requiresConfirmation` を見ている入口は **2 つ**あり、どちらも false のとき
+**そのまま実行する**:
+
+| 入口 | 実行のしかた |
+|---|---|
+| `VoiceCommandBar` | `phase === 'parsed'`（確認不要）を useEffect で**自動承認** |
+| `ChatbotWidget` | `if (reply.needsConfirmation) 確認ボタン; else await runIntent(...)` |
+
+チャット側は**マイクを要さない** —— 入力欄に打つだけで同じ経路を通る。
+どちらも `routeCommand(parseVoiceCommand(text))` の結果をそのまま
+`serviceHub.invoke(serviceId, action, params)` へ渡す。
 
 発話から生まれうる action は `ACTION_RULES` の 6 つ（create-issue / send-message /
 create-event / backup / record-entry / delete）で、6 つとも `CONFIRM_ACTIONS` に

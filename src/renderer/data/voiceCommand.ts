@@ -230,9 +230,10 @@ const ACTION_RULES: readonly ActionRule[] = [
  * 動詞ルールを足せばここも自動で増える (写経ではない)。
  *
  * これを公開しているのは `requiresConfirmation` との**閉包**を検査するため。
- * 音声の実行経路は `VoiceCommandBar` が `phase === 'parsed'` を**自動承認**
- * するので、確認を要さないと判定された action は **発話 1 回でそのまま実行される**。
- * つまり「発話から生まれうる action」は 1 つ残らず確認必須でなければならない。
+ * 実行経路は 2 つあり、どちらも「確認不要」と判定された action を**そのまま実行**する
+ * (`VoiceCommandBar` は `phase === 'parsed'` を自動承認、`ChatbotWidget` は
+ * `else await runIntent(...)`)。後者は**マイクを要さない**。
+ * つまり「発話・入力から生まれうる action」は 1 つ残らず確認必須でなければならない。
  *
  * 今日は 6 つとも `CONFIRM_ACTIONS` に載っているが、この 2 つは別々に手で
  * 保たれている表なので、7 つ目の動詞ルールを足した人が名簿に載せ忘れると
