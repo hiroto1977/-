@@ -281,3 +281,18 @@ describe('連続して落ち込んでいるときの声かけ', () => {
     expect(three.message).toContain('よく持ちこたえています');
   });
 });
+
+/*
+ * 非空の床 (2026-08-22)。危機検知の語彙はどれも「全語について〜」の形で
+ * 検査しているので、配列が空になると全部そのまま通る。人命に関わる経路なので、
+ * 語彙が消えたことを検査で気づけるようにする。
+ */
+describe('危機検知の語彙が空でないこと', () => {
+  it.each([
+    ['CRISIS_MARKERS', CRISIS_MARKERS],
+    ['HARM_OTHER_MARKERS', HARM_OTHER_MARKERS],
+    ['DESTRUCTIVE_MARKERS', DESTRUCTIVE_MARKERS],
+  ])('%s は 1 語以上ある', (_name, list) => {
+    expect(list.length).toBeGreaterThan(0);
+  });
+});

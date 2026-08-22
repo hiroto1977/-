@@ -193,3 +193,14 @@ describe('shellTargetOrNull — 入力の形', () => {
     }
   });
 });
+
+/*
+ * 非空の床 (2026-08-22)。許可拡張子の検査は「全拡張子について〜」の形なので、
+ * 集合が空になると通ってしまう —— そのとき `shellTargetOrNull` は
+ * **何も開けなくなる**ので機能は壊れるが、検査は緑のままになる。
+ */
+describe('許可拡張子の集合が空でないこと', () => {
+  it('SHELL_OPEN_EXTS は 1 つ以上ある', () => {
+    expect(SHELL_OPEN_EXTS.size).toBeGreaterThan(0);
+  });
+});

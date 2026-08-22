@@ -21,6 +21,15 @@ const officialPair = (id: string, domain: ComplianceFact['domain']): SourcedClai
 });
 
 describe('VERIFIED_COMPLIANCE (knowledge base invariants)', () => {
+  /*
+   * 非空の床。以下は「全件が confirmed」の形なので、配列が空になると通る。
+   * 税務・労務・法務の確証済みデータはこのファイルが唯一の強制なので、
+   * 空虚な合格は「検証済み」の看板だけが残る状態になる。
+   */
+  it('確証済みデータが 1 件以上ある (空なら以下は空虚に通る)', () => {
+    expect(VERIFIED_COMPLIANCE.length).toBeGreaterThanOrEqual(100);
+  });
+
   it('every entry is confirmed (>= 2 independent sources, >= 1 official)', () => {
     for (const claim of VERIFIED_COMPLIANCE) {
       expect(isConfirmed(claim)).toBe(true);
