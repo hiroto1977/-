@@ -1228,6 +1228,32 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
+### 2 つのビルドで「同じ判断」を 2 度書いている関数を全部洗った → 36 件・security は 7 件
+
+`main/` と `renderer/` の**両方で定義されている関数名**を機械で洗うと 36 件。
+大半は株価指標 (sma / ema / rsi / macd / backtest …) のような純計算で、
+ずれても security にはならない。security に関わるのは 7 件で、**検査が既に
+あったのは 3 つだけ**だった:
+
+| 関数 | 何を決めるか | 状態 |
+|---|---|---|
+| `buildRfc2822` / `isSafeHeaderValue` | メールヘッダの組み立て | 既にあり (`rfc2822Parity`) |
+| `parseAtlassianToken` | Atlassian の送り先ホスト | 既にあり (`atlassianSiteParity`) |
+| `safeStateEquals` | OAuth の state 比較 | 今セッションで追加 (`stateEqualsParity`) |
+| `validateAdvisorJson` (business) | LLM 応答の絞り込み | 今セッションで追加 (`advisorValidationParity`) |
+| `isSafeSymbol` | 銘柄記号の形 (URL とマークアップに載る) | **今回追加** |
+| `parseSecurityKeys` | HIBP / VirusTotal の資格情報の解析 | **今回追加** |
+| `extractJson` | LLM 応答から JSON を取り出す | **今回追加** |
+| `validateAdvisorJson` (stocks) | LLM 応答の絞り込み (**3 つ目の写し**) | **今回追加** |
+
+`dualBuildParity.test.ts` に 82 ケース。見るのは「同じ答えを返すか」だけで、
+例外の文言は側ごとに違ってよい。**今日は 82 件とも一致した** —— ずれは無い。
+対照実験で片側だけずらす (記号の上限 16→32 / 囲みの ```json 必須化) と落ちる。
+
+`vtBase64` は両側とも非公開なので直接は突き合わせられない。実装は
+`Buffer.from(s,'utf8').toString('base64')` と `TextEncoder`+`btoa` で、
+非 ASCII でも同じバイト列になる形だった (読んで確認)。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を
