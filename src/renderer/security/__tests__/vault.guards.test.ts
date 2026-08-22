@@ -481,7 +481,6 @@ describe('生の鍵バイト列を 0 で潰す', () => {
   function countZeroFills(): { count: () => number; restore: () => void } {
     const orig = Uint8Array.prototype.fill;
     let n = 0;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (Uint8Array.prototype as any).fill = function patched(this: Uint8Array, value: number, ...rest: number[]) {
       if (value === 0) n++;
       return (orig as (this: Uint8Array, v: number, ...r: number[]) => Uint8Array).call(this, value, ...rest);

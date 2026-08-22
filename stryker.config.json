@@ -149,6 +149,7 @@
     "src/renderer/security/vault.ts",
     "src/renderer/security/webauthn.ts",
     "src/renderer/sidebarFilter.ts",
+    "src/renderer/voice/speechAdapter.ts",
     "src/renderer/web-templates.ts",
     "src/shared/ai/chat.ts",
     "src/shared/ai/credentials.ts",
