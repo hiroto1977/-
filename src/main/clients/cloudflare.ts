@@ -112,7 +112,7 @@ async function fetchAllZones(
   const all: CfZone[] = [];
   for (let page = 1; page <= MAX_PAGES; page++) {
     const wrap = await jsonFetch<CfWrap<CfZone[]>>(
-      `${API_BASE}/zones?per_page=${PER_PAGE}&page=${page}`,
+      `${API_BASE}/zones?per_page=${PER_PAGE}&page=${encodeURIComponent(page)}`,
       init,
       fetchCtx,
     );

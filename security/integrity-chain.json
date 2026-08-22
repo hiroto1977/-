@@ -362,10 +362,18 @@
       "leafCount": 23,
       "note": "update release.yml,electron-builder.json,integrity-chain.cjs,main.ts,proxy.ts,redact.ts",
       "hash": "d2d21bf8d3f18fcbbc5ef7897d619428fab1c5176ab096dfd9245170927d8f3d"
+    },
+    {
+      "index": 42,
+      "prevHash": "d2d21bf8d3f18fcbbc5ef7897d619428fab1c5176ab096dfd9245170927d8f3d",
+      "merkleRoot": "66b23fe88ac7709925e23d175ea602f52ba856d15be051673c24a2f363ef55eb",
+      "leafCount": 23,
+      "note": "update ci.yml",
+      "hash": "1c8edeabe6b441a0fb358c834a856024cdabd93750d6b81312e17cbe23203b30"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "d4c05c9839f90760c78c55b751d46c179aca4bbb3f48afd136bd4e7c99b1a3f8",
+    ".github/workflows/ci.yml": "77f190c635a5f10d30557f6e814e0752410a01b5ab0e1e43bbaf2b941621203e",
     ".github/workflows/release.yml": "2f75bd96f049f28e8de81cec65c0829403259fcfebc9e53f3810c251e6d2367c",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "02be0b9bb847d6018f8d0f4b0c8c04f31d2ae2c6449c8ac22043632d10d57e50",

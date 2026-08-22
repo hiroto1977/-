@@ -104,7 +104,7 @@ export async function fetchFreeeSnapshot(ctx: FetchContext): Promise<FreeeSnapsh
   }
 
   const deals = await jsonFetch<FreeeDealsResponse>(
-    `${FREEE_BASE}/deals?company_id=${company.id}&limit=100`,
+    `${FREEE_BASE}/deals?company_id=${encodeURIComponent(company.id)}&limit=100`,
     { headers },
     fetchCtx,
   );

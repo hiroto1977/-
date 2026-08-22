@@ -35,7 +35,7 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
   const messages = await Promise.all(
     ids.map((id) =>
       jsonFetch<GmailMessage>(
-        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(id)}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
         { headers },
         fetchCtx,
       ),

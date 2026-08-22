@@ -297,7 +297,7 @@ async function scanUrl(
   // is just base64url(url) which they accept on the GET endpoint.
   const id = vtBase64(url);
   const report = await jsonFetch<VtUrlReportResponse>(
-    `https://www.virustotal.com/api/v3/urls/${id}`,
+    `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`,
     { headers: { 'x-apikey': keys.vt } },
     { fetch: ctx.fetch, serviceId: 'security' },
   );

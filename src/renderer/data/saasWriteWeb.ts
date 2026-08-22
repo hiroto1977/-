@@ -613,7 +613,7 @@ export async function scanUrlVirusTotal(
   await ensureOk(submit, 'VirusTotal API');
 
   const id = vtBase64(url);
-  const report = await transport(`https://www.virustotal.com/api/v3/urls/${id}`, {
+  const report = await transport(`https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`, {
     method: 'GET',
     headers: { 'x-apikey': vtKey },
   });
