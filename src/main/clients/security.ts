@@ -185,7 +185,13 @@ interface HibpBreach {
 async function checkEmailBreach(
   ctx: ActionContext,
 ): Promise<{ email: string; breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[] }> {
-  const { email } = ctx.payload as unknown as CheckEmailBreachPayload;
+  // **前後の空白を落とす。** ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は
+  // 元から `.trim()` していて、こちらだけ生のまま送っていた (2026-08-22)。
+  // 貼り付けで空白が付いた住所をそのまま問い合わせると HIBP は 404 を返し、
+  // それを「どの漏洩にも含まれない」として表示してしまう ——
+  // **誤った安心**を返す側のずれなので、厳しい側ではなく正しい側へ揃える。
+  const raw = (ctx.payload as unknown as CheckEmailBreachPayload).email;
+  const email = typeof raw === 'string' ? raw.trim() : '';
   if (!email) throw new Error('email is required');
   const keys = parseSecurityKeys(ctx.token);
   if (!keys.hibp) throw new Error('HIBP API key not configured');

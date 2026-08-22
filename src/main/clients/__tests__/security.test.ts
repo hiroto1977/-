@@ -384,6 +384,41 @@ describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLi
     expect(headers.Accept).toBe('application/json');
   });
 
+  /*
+   * **前後の空白は落としてから問い合わせる。**
+   *
+   * ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は元から `.trim()` していて、
+   * こちらだけ生のまま送っていた (2026-08-22)。貼り付けで空白が付いた住所を
+   * そのまま問い合わせると HIBP は 404 を返し、この実装はそれを
+   * 「どの漏洩にも含まれない」と表示する —— **誤った安心**を返す側のずれ。
+   */
+  it.each([' a@b.com', 'a@b.com ', '  a@b.com  ', '\ta@b.com\n'])(
+    '前後の空白を落としてから問い合わせる (%j)',
+    async (padded) => {
+      const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse([]));
+      await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: padded },
+      });
+      expect(fetchMock.mock.calls[0]![0]).toBe(
+        'https://haveibeenpwned.com/api/v3/breachedaccount/a%40b.com?truncateResponse=false',
+      );
+    },
+  );
+
+  it('空白だけの email は問い合わせずに断る', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: '   ' },
+      }),
+    ).rejects.toThrow('email is required');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('throws `HIBP <status>: <body>` on non-2xx (kills the "HIBP " literal)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

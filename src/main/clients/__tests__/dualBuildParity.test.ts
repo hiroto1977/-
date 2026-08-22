@@ -15,8 +15,8 @@ import { isSafeSymbol as symWeb } from '../../../renderer/data/stocksWatchlistWe
 import { validateAdvisorJson as advWeb } from '../../../renderer/data/stocksAnalysisWeb';
 import { parseSecurityKeys as keysMain } from '../security';
 import { parseSecurityKeys as keysWeb } from '../../../renderer/data/saasWriteWeb';
-import { extractJson as jsonMain } from '../emotions';
-import { extractJson as jsonWeb } from '../../../renderer/data/emotionsWeb';
+import { extractJson as jsonMain, normalizeAnalysis as normMain } from '../emotions';
+import { extractJson as jsonWeb, normalizeAnalysis as normWeb } from '../../../renderer/data/emotionsWeb';
 
 /*
  * **デスクトップ版とブラウザ版で「同じ判断」を 2 度書いている関数**の突き合わせ。
@@ -32,6 +32,7 @@ import { extractJson as jsonWeb } from '../../../renderer/data/emotionsWeb';
  *   parseSecurityKeys   HIBP / VirusTotal の**資格情報の解析**
  *   extractJson         **LLM の応答**から JSON を取り出す (信用できない入力)
  *   validateAdvisorJson LLM の応答を画面に載せてよい形へ絞る (株価側の写し)
+ *   normalizeAnalysis   **LLM の応答**を画面の型へ丸める (範囲外の値を [0,1] に留める)
  *
  * `validateAdvisorJson` は **3 つ目の写し**である —— business 版とブラウザ版は
  * 別に `advisorValidationParity.test.ts` で突き合わせてある。
@@ -189,5 +190,46 @@ describe('validateAdvisorJson (株価) — main とブラウザ版で同じ判�
     const accepted = CASES.filter(([, raw]) => accepts(advMain as never, raw));
     expect(accepted.length).toBeGreaterThanOrEqual(2);
     expect(CASES.length - accepted.length).toBeGreaterThanOrEqual(15);
+  });
+});
+
+describe('normalizeAnalysis — main とブラウザ版で一致する (LLM 応答の丸め)', () => {
+  const CASES: [string, unknown][] = [
+    ['null', null],
+    ['undefined', undefined],
+    ['空オブジェクト', {}],
+    ['文字列', 'nope'],
+    ['数値', 7],
+    ['配列', []],
+    ['scores が無い', { sentiment: 'positive' }],
+    ['scores が配列', { scores: [] }],
+    ['scores が文字列', { scores: 'x' }],
+    ['ふつうの応答', { scores: { joy: 0.8, anger: 0.1 }, sentiment: 'positive', dominant: 'joy' }],
+    ['スコアが範囲外 (上)', { scores: { joy: 5 } }],
+    ['スコアが範囲外 (下)', { scores: { joy: -3 } }],
+    ['スコアが数値でない', { scores: { joy: 'たくさん' } }],
+    ['スコアが NaN', { scores: { joy: Number.NaN } }],
+    ['スコアが Infinity', { scores: { joy: Number.POSITIVE_INFINITY } }],
+    ['スコアが数値文字列', { scores: { joy: '0.5' } }],
+    ['全部 0', { scores: { joy: 0, anger: 0, sadness: 0 } }],
+    ['sentiment が未知', { sentiment: 'ecstatic' }],
+    ['sentiment が数値', { sentiment: 1 }],
+    ['sentiment が negative', { sentiment: 'negative' }],
+    ['dominant が未知', { scores: { joy: 0.5 }, dominant: 'nope' }],
+    ['dominant が数値', { scores: { joy: 0.5 }, dominant: 3 }],
+    ['dominant が mixed', { scores: { joy: 0.5 }, dominant: 'mixed' }],
+    ['dominant がプロトタイプ側の名前', { scores: { joy: 0.5 }, dominant: 'constructor' }],
+    ['同点', { scores: { joy: 0.5, anger: 0.5 } }],
+  ];
+
+  it.each(CASES)('%s', (_label, raw) => {
+    expect(normWeb(raw)).toEqual(normMain(raw));
+  });
+
+  it('丸めが効いている (素通し同士で揃っていない)', () => {
+    const out = normMain({ scores: { joy: 5 } }) as { scores: Record<string, number> };
+    expect(out.scores.joy).toBe(1);
+    const low = normMain({ scores: { joy: -3 } }) as { scores: Record<string, number> };
+    expect(low.scores.joy).toBe(0);
   });
 });
