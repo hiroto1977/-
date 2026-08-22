@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 50
+- ブロック数: 52
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `60782af95933e736e44df3b1b886465a3d3f8d03b2fe37cd52f5811e49fa517b`
-- 保護対象: 31 ファイル
+- 末尾(tip)ハッシュ: `bcce6ca2fa84f57e154f136609591af06498bfb0a1410abecb5b3c10ca6e6678`
+- 保護対象: 32 ファイル
 
 ## ブロック
 
@@ -63,6 +63,8 @@
 | 47 | `20258601ec2a1f91` | `008b4bc1e5d502c5` | `dc1c1367e23c5139` | update oauth.ts,dataCrypto.ts |
 | 48 | `b29befda45b0a687` | `dc1c1367e23c5139` | `d8a3e40df752f5b0` | update oauth.ts |
 | 49 | `8da42131c8c4976c` | `d8a3e40df752f5b0` | `60782af95933e736` | update oauth.ts |
+| 50 | `c92679acc5f65b4e` | `60782af95933e736` | `3e29ce7919dadd4e` | update integrity-chain.cjs,recordCipher.ts |
+| 51 | `676ee12ca34cc3b5` | `3e29ce7919dadd4e` | `bcce6ca2fa84f57e` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
@@ -82,6 +84,7 @@
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
+- `src/renderer/data/recordCipher.ts`
 - `src/renderer/network/proxy.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.ts`

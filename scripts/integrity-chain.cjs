@@ -132,6 +132,12 @@ const PROTECTED = [
   // 制御文字の判定。URL / ヘッダの分断を止める共通の一段目で、
   // proxy / AI endpoint / Atlassian site / 資格情報入力が全部ここを通る。
   'src/shared/controlChars.ts',
+  // レコードを封緘するか素通しするかを決める唯一の場所。`dataCrypto.ts` を
+  // 守っても、**呼ぶ側が黙って `IDENTITY_CIPHER` を返せば平文で保存される** ——
+  // 画面は「暗号化は有効」と言い続けるので、外からは見分けが付かない。
+  // 逆向きの閉包 (保護対象を import している側) を測って見つけた。
+  // 54 行・半年で 1 回しか変わっておらず、これ自身の依存も全部保護済み。
+  'src/renderer/data/recordCipher.ts',
 ];
 
 /**
