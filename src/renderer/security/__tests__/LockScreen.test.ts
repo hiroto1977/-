@@ -31,11 +31,13 @@ let initializeImpl: (pw: string) => Promise<{ mnemonic: string }> = async () => 
   mnemonic: MNEMONIC_24,
 });
 let recoverImpl: (m: string, pw: string) => Promise<void> = async () => {};
+let wipeImpl: () => Promise<void> = async () => {};
+let statusImpl: () => Promise<'uninitialized' | 'locked' | 'unlocked'> = async () => vaultStatus;
 const calls: { name: string; args: unknown[] }[] = [];
 
 vi.mock('../vault', () => ({
   getVault: () => ({
-    status: async () => vaultStatus,
+    status: async () => statusImpl(),
     unlock: async (pw: string) => {
       calls.push({ name: 'unlock', args: [pw] });
       return unlockImpl(pw);
@@ -50,6 +52,7 @@ vi.mock('../vault', () => ({
     },
     wipeAndReset: async () => {
       calls.push({ name: 'wipeAndReset', args: [] });
+      return wipeImpl();
     },
   }),
 }));
@@ -95,6 +98,8 @@ beforeEach(() => {
   unlockImpl = async () => {};
   initializeImpl = async () => ({ mnemonic: MNEMONIC_24 });
   recoverImpl = async () => {};
+  wipeImpl = async () => {};
+  statusImpl = async () => vaultStatus;
   vi.resetModules();
 });
 
@@ -443,5 +448,234 @@ describe('リカバリーキーのクリップボード — 置きっぱなし�
     await toMnemonicView();
     await click(buttonSaying('コピー'));
     expect(container.textContent).toContain('手動で選択');
+  });
+});
+
+describe('リカバリーの実行', () => {
+  async function openRecovery(): Promise<HTMLTextAreaElement> {
+    await mount();
+    await click(buttonSaying('リカバリーキーで復元'));
+    return [...container.querySelectorAll('textarea')][0]! as HTMLTextAreaElement;
+  }
+  function typeArea(area: HTMLTextAreaElement, v: string): void {
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+    setter?.call(area, v);
+    area.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  async function fillValid(): Promise<HTMLTextAreaElement> {
+    const area = await openRecovery();
+    typeArea(area, MNEMONIC_24);
+    for (const i of pwInputs()) typeInto(i, 'brand-new-password-9');
+    await act(async () => {});
+    return area;
+  }
+
+  it('正しく揃っていれば復元して先へ通す', async () => {
+    await fillValid();
+    await click(buttonSaying('復元'));
+    expect(calls).toEqual([
+      { name: 'recoverWithMnemonic', args: [MNEMONIC_24, 'brand-new-password-9'] },
+    ]);
+    expect(unlocked).toBe(1);
+  });
+
+  it('復元したらリカバリーキーと新パスワードを画面から消す', async () => {
+    // 24 語はこれ 1 つで Vault を復元できる。入れっぱなしにすると、
+    // 解錠後の画面に残ったまま肩越しに見える。
+    const area = await fillValid();
+    await click(buttonSaying('復元'));
+    expect(area.value).toBe('');
+    expect(container.textContent).not.toContain('abandon');
+  });
+
+  it('復元に失敗したら理由を出し、先へ通さない', async () => {
+    recoverImpl = async () => {
+      throw new Error('リカバリーキーが違います');
+    };
+    await fillValid();
+    await click(buttonSaying('復元'));
+    expect(unlocked).toBe(0);
+    expect(container.textContent).toContain('リカバリーキーが違います');
+  });
+
+  it('復元の失敗の知らせに新しいパスワードを混ぜない', async () => {
+    recoverImpl = async () => {
+      throw new Error('リカバリーキーが違います');
+    };
+    const area = await openRecovery();
+    typeArea(area, MNEMONIC_24);
+    for (const i of pwInputs()) typeInto(i, 'Le4ked-New-Password');
+    await click(buttonSaying('復元'));
+    expect(container.textContent).not.toContain('Le4ked-New-Password');
+  });
+
+  it('確認欄で Enter を押しても復元できる', async () => {
+    await fillValid();
+    const confirm = pwInputs()[1]!;
+    await act(async () => {
+      confirm.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    });
+    expect(calls.map((c) => c.name)).toEqual(['recoverWithMnemonic']);
+  });
+
+  it('Enter 以外のキーでは復元しない', async () => {
+    await fillValid();
+    const confirm = pwInputs()[1]!;
+    for (const key of ['a', 'Escape', 'Tab', ' ']) {
+      await act(async () => {
+        confirm.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+      });
+    }
+    expect(calls).toEqual([]);
+  });
+});
+
+describe('完全初期化の実行', () => {
+  async function openResetAndAgree(): Promise<void> {
+    await mount();
+    await click(buttonSaying('初期化して最初からやり直す'));
+    await click(boxes()[0]);
+  }
+
+  it('同意して押したら本当に消す', async () => {
+    const reload = vi.fn();
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { ...window.location, reload },
+    });
+    await openResetAndAgree();
+    await click(buttonSaying('全て消去して初回設定に戻る'));
+    expect(calls).toEqual([{ name: 'wipeAndReset', args: [] }]);
+    // 状態を作り直すため読み込み直す (消した直後の画面を使わせない)。
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('消去に失敗したら理由を出し、押し直せる状態に戻す', async () => {
+    wipeImpl = async () => {
+      throw new Error('IndexedDB が開けません');
+    };
+    await openResetAndAgree();
+    await click(buttonSaying('全て消去して初回設定に戻る'));
+    expect(container.textContent).toContain('IndexedDB が開けません');
+    // busy のまま固まると、二度と押せない画面になる。
+    expect(buttonSaying('全て消去して初回設定に戻る')!.disabled).toBe(false);
+  });
+});
+
+describe('リカバリーキーのダウンロード', () => {
+  async function toMnemonicView(): Promise<void> {
+    vaultStatus = 'uninitialized';
+    await mount();
+    typeInto(pwInputs()[0]!, 'matching-password-01');
+    typeInto(pwInputs()[1]!, 'matching-password-01');
+    await click(buttonSaying('パスワードを設定して開始'));
+  }
+
+  it('平文ファイルとして保存し、平文であることを警告する', async () => {
+    const created: Blob[] = [];
+    const revoked: string[] = [];
+    Object.defineProperty(URL, 'createObjectURL', {
+      configurable: true,
+      value: (b: Blob) => {
+        created.push(b);
+        return 'blob:fake';
+      },
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      configurable: true,
+      value: (u: string) => revoked.push(u),
+    });
+    let downloadName = '';
+    const origClick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function patched(this: HTMLAnchorElement) {
+      downloadName = this.download;
+    };
+    try {
+      await toMnemonicView();
+      await click(buttonSaying('ダウンロード'));
+
+      expect(created).toHaveLength(1);
+      expect(created[0]!.type).toContain('text/plain');
+      // 名前に「recovery key」と書かない — Downloads の一覧で目立たせない。
+      expect(downloadName).toMatch(/^service-hub-\d{8}-\d{4}\.txt$/);
+      expect(downloadName).not.toMatch(/recovery|mnemonic|key/i);
+      // このファイル 1 つで Vault を復元できるので、何が危ないかまで伝える。
+      const shown = container.textContent ?? '';
+      expect(shown).toContain('平文');
+      expect(shown).toContain('削除');
+    } finally {
+      HTMLAnchorElement.prototype.click = origClick;
+    }
+  });
+});
+
+describe('ボールトの状態が読めないとき', () => {
+  it('状態の取得に失敗しても画面は出す (真っ白にしない)', async () => {
+    statusImpl = async () => {
+      throw new Error('IndexedDB unavailable');
+    };
+    await mount();
+    // 何かしら操作できる画面が出ていること。
+    expect(pwInputs().length).toBeGreaterThan(0);
+  });
+});
+
+describe('入力欄の初期状態と行き来', () => {
+  it('解錠画面のパスワード欄は空で始まる', async () => {
+    await mount();
+    for (const i of pwInputs()) expect(i.value).toBe('');
+  });
+
+  it('初回設定の 2 つの欄も空で始まる', async () => {
+    vaultStatus = 'uninitialized';
+    await mount();
+    const inputs = pwInputs();
+    expect(inputs).toHaveLength(2);
+    for (const i of inputs) expect(i.value).toBe('');
+  });
+
+  it('リカバリー画面も空で始まる', async () => {
+    await mount();
+    await click(buttonSaying('リカバリーキーで復元'));
+    for (const i of pwInputs()) expect(i.value).toBe('');
+    for (const a of container.querySelectorAll('textarea')) {
+      expect((a as HTMLTextAreaElement).value).toBe('');
+    }
+  });
+
+  it('初回設定は確認欄で Enter を押しても進む', async () => {
+    vaultStatus = 'uninitialized';
+    await mount();
+    typeInto(pwInputs()[0]!, 'matching-password-01');
+    typeInto(pwInputs()[1]!, 'matching-password-01');
+    const confirm = pwInputs()[1]!;
+    await act(async () => {
+      confirm.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    });
+    expect(calls.map((c) => c.name)).toEqual(['initialize']);
+  });
+
+  it('初回設定の確認欄で Enter 以外を押しても進まない', async () => {
+    vaultStatus = 'uninitialized';
+    await mount();
+    typeInto(pwInputs()[0]!, 'matching-password-01');
+    typeInto(pwInputs()[1]!, 'matching-password-01');
+    const confirm = pwInputs()[1]!;
+    for (const key of ['a', 'Escape', 'Tab']) {
+      await act(async () => {
+        confirm.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+      });
+    }
+    expect(calls).toEqual([]);
+  });
+
+  it('リカバリー画面から戻れて、入力は持ち越さない', async () => {
+    await mount();
+    await click(buttonSaying('リカバリーキーで復元'));
+    for (const i of pwInputs()) typeInto(i, 'typed-then-abandoned');
+    await click(buttonSaying('戻る'));
+    // 解錠画面へ戻っている。
+    expect(buttonSaying('ロック解除')).toBeDefined();
+    expect(pwInputs()[0]!.value).toBe('');
   });
 });
