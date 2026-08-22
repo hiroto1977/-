@@ -75,10 +75,22 @@ function createWindow(): BrowserWindow {
   // (2026-07 audit). `will-redirect` gets the same treatment — otherwise a 3xx
   // during an allowed navigation would land somewhere unvetted.
   const allowNavigation = (navigationUrl: string): boolean => {
-    if (!isDev || !process.env.VITE_DEV_SERVER_URL) return false;
+    const devServer = process.env.VITE_DEV_SERVER_URL;
+    if (!isDev || !devServer) return false;
     try {
-      const u = new URL(navigationUrl);
-      return u.host === 'localhost:5173' || u.host === '127.0.0.1:5173';
+      // 実際に読み込んだ開発サーバの **origin** (scheme + host + port) とだけ
+      // 突き合わせる。
+      //
+      // 2026-08-22 の点検まで `u.host === 'localhost:5173'` で見ていたが、
+      // `host` に**スキームは入らない**。`https://localhost:5173/` も
+      // `ftp://localhost:5173/` も同じ host なので素通りしていた —
+      // 「そのポートを握った別のプロセスへ窓を向けられないようにする」という
+      // この例外の目的が、平文 http の相手にしか効いていなかった。
+      //
+      // ポートの決め打ちも外した。5173 が埋まっていると Vite は次の空き番へ
+      // ずれるので、**通すべき本物を止めて、通すべきでない相手を通す**状態に
+      // なりうる。読み込んだ URL 自身と比べれば、その取り違えは起きない。
+      return new URL(navigationUrl).origin === new URL(devServer).origin;
     } catch {
       return false;
     }

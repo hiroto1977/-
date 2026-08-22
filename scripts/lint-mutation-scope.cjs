@@ -102,6 +102,12 @@ const MUST_MEASURE = {
   // 対象なのに壁の一覧に無く、`assertKdfIterations` の「数値かどうか」を確かめる
   // 検査が 1 つも無いまま生存していた。反復回数は IndexedDB から来る。
   'src/renderer/security/dataCrypto.ts': 'レコード暗号化と KDF 反復回数の門 (保存領域から来た値を信用しない)',
+  // 2026-08-22 追加。どちらも「同じ危険度の双子の片方だけが測られていない」形
+  // だった。exportPaths.ts (書き出し側) は載っていたのに、開く側は main.ts の
+  // 非公開関数でテストすら無し。secrets.ts は保護対象なのに `mutate` から漏れ、
+  // 実測 42.27% (未到達 78) — 保存時に本当に暗号化されるかを誰も見ていなかった。
+  'src/main/shellOpenGate.ts':       '「OS で開く」の唯一の関門 (Windows では拡張子の関連付け次第でそのまま実行される)',
+  'src/main/secrets.ts':             '資格情報の暗号化と保存 (キーチェーンが使えるかの判定がここ 1 か所)',
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;
