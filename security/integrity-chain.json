@@ -3,6 +3,7 @@
   "genesisHash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9",
   "protected": [
     ".github/workflows/ci.yml",
+    ".github/workflows/pages.yml",
     ".github/workflows/release.yml",
     "assets/sw.js",
     "docs/SECURITY_CHAIN.md",
@@ -459,15 +460,32 @@
       "leafCount": 32,
       "note": "update main.ts",
       "hash": "53c73eba8603751d00ddc889a53778f6194b3c7a4ce0ed602485c6c14dcfe360"
+    },
+    {
+      "index": 53,
+      "prevHash": "53c73eba8603751d00ddc889a53778f6194b3c7a4ce0ed602485c6c14dcfe360",
+      "merkleRoot": "612892c46ca5394e10700bde894ded6eac07e6bd875457f2a3c570ce1c899014",
+      "leafCount": 33,
+      "note": "update pages.yml,integrity-chain.cjs",
+      "hash": "c72af1f29ec6f57c90a1500d160d46340655518a88b685c4578daa8f447199c9"
+    },
+    {
+      "index": 54,
+      "prevHash": "c72af1f29ec6f57c90a1500d160d46340655518a88b685c4578daa8f447199c9",
+      "merkleRoot": "3820b9dd47c25323caf937f72d7d53d966733575807b486e3113a5b643d33127",
+      "leafCount": 33,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "d0e7741ca50713f0b946589e5afb7ce4cfda29a60f68a43ca29b54cab5592e94"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "77f190c635a5f10d30557f6e814e0752410a01b5ab0e1e43bbaf2b941621203e",
+    ".github/workflows/pages.yml": "dcfbdb811f6d094c98c05b0cd1bb4393ac760b72ba06dff5f8881b0eabfada65",
     ".github/workflows/release.yml": "2f75bd96f049f28e8de81cec65c0829403259fcfebc9e53f3810c251e6d2367c",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
-    "docs/SECURITY_CHAIN.md": "25e98c423e0254801b2633bdcbcc468fb228b0f7265978482750dff0fa57c665",
+    "docs/SECURITY_CHAIN.md": "ba13416be7ba6f9ddf5c0fba7822e937c54352330c70a9242b1c11b492c0fbe8",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
-    "scripts/integrity-chain.cjs": "2cfe269ae34271177ab6b78b598e504b500b1660ce837a9515b6d3eb49c3afbb",
+    "scripts/integrity-chain.cjs": "c106ccaac5c4d91f68393e93d5c1e0a791841c216ebeab75e4b0a772935afc4a",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",

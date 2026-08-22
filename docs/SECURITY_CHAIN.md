@@ -67,6 +67,25 @@ npm run chain:show     # 台帳の要約を表示
 判定そのもの）と `controlChars.ts` が浮いた。閉包は 1 段ずつしか追わないが、
 段を 1 つ足せば次の `verify` で必ず次の段が鳴る。
 
+### 公開の入口 —— どの workflow を守るか
+
+`ci.yml`（27 ゲートを回す）と `release.yml`（`contents: write`、インストーラを
+配る）は守られていたが、2026-08-22 に**同じ順番の逆転がもう 1 つ**見つかった。
+
+| workflow | 権限 | 守るか |
+|---|---|---|
+| `ci.yml` | contents: read | ✅ 品質ゲートを回す唯一の場所 |
+| `release.yml` | **contents: write** | ✅ インストーラを配る |
+| `pages.yml` | **pages: write / id-token: write** | ✅ 2026-08-22 追加 |
+| `e2e.yml` | contents: read | ✕ 何も配らない |
+| `mutation.yml` | contents: read | ✕ 同上 |
+| `knowledge-auto.yml` | contents: read / issues: write | ✕ 書けるのは課題票だけ |
+
+`pages.yml` は **利用者がブラウザで開いて資格情報を入力する公開版そのものを
+配る**。ここが 1 行変われば訪問者全員へ書き換えたアプリを配れる。
+`assets/sw.js` を「公開版のオリジンで全てのページ読み込みに介入する」として
+守っているのに、**その sw.js を置きに行く側**が守られていなかった。
+
 ### 逆向き（保護対象を **import している側**）は機械では追わない
 
 同じ日に逆向きも測った ——「保護対象を import しているのに保護されていない

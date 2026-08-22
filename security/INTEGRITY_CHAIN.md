@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 53
+- ブロック数: 55
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `53c73eba8603751d00ddc889a53778f6194b3c7a4ce0ed602485c6c14dcfe360`
-- 保護対象: 32 ファイル
+- 末尾(tip)ハッシュ: `d0e7741ca50713f0b946589e5afb7ce4cfda29a60f68a43ca29b54cab5592e94`
+- 保護対象: 33 ファイル
 
 ## ブロック
 
@@ -66,10 +66,13 @@
 | 50 | `c92679acc5f65b4e` | `60782af95933e736` | `3e29ce7919dadd4e` | update integrity-chain.cjs,recordCipher.ts |
 | 51 | `676ee12ca34cc3b5` | `3e29ce7919dadd4e` | `bcce6ca2fa84f57e` | update SECURITY_CHAIN.md |
 | 52 | `084101963c5bf414` | `bcce6ca2fa84f57e` | `53c73eba8603751d` | update main.ts |
+| 53 | `612892c46ca5394e` | `53c73eba8603751d` | `c72af1f29ec6f57c` | update pages.yml,integrity-chain.cjs |
+| 54 | `3820b9dd47c25323` | `c72af1f29ec6f57c` | `d0e7741ca50713f0` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
 - `.github/workflows/ci.yml`
+- `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`
 - `assets/sw.js`
 - `docs/SECURITY_CHAIN.md`

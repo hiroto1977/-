@@ -84,6 +84,17 @@ const PROTECTED = [
   // 利用者がダウンロードするインストーラを公開する** release.yml が入って
   // いなかった。守る順番が逆になっていた。
   '.github/workflows/release.yml',
+  // 2026-08-22 に足した。**同じ順番の逆転がもう 1 つ残っていた。**
+  // `pages: write` + `id-token: write` を持ち、**利用者がブラウザで開いて
+  // 資格情報を入力する公開版そのものを配る** workflow。ここが 1 行変われば、
+  // 訪問者全員へ書き換えたアプリを配れる。`assets/sw.js` を「公開版のオリジンで
+  // 全てのページ読み込みに介入する」として守っているのに、**その sw.js を
+  // 置きに行く側**が守られていなかった。
+  //
+  // 残る 3 つは足していない: `e2e.yml` / `mutation.yml` は contents: read だけで
+  // 何も配らない。`knowledge-auto.yml` は issues: write を持つが、書けるのは
+  // 課題票で、配布物にも実行環境にも触れない。
+  '.github/workflows/pages.yml',
   // electronFuses (runAsNode / NODE_OPTIONS / inspect / cookie 暗号化) の置き場。
   // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
   // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。
