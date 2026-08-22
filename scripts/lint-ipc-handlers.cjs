@@ -83,6 +83,55 @@ function handlerBodies(source) {
 }
 
 /** `try` より前に `await` があるハンドラを挙げる純関数。 */
+/**
+ * 不変条件 #3 —— **IPC で受けた serviceId は indexing 前に `isServiceId()` で検証**。
+ *
+ * ARCHITECTURE.md §8.1 はこれを「PR で違反したら fail」の不変条件として
+ * 挙げているが、2026-08-22 の点検時点で回帰テスト欄は
+ * `src/shared/__tests__/serviceId.test.ts` 4 件 —— **`isServiceId` 自体の
+ * 検査**であって、「各ハンドラがそれを呼んでいるか」は誰も見ていなかった。
+ * 今日の 6 ハンドラは全部呼んでいる。次に足す 1 本が抜けても気づけない状態だった。
+ *
+ * serviceId は `LIVE_FETCHERS[serviceId]` のように**そのまま添字に使う**ので、
+ * 検証を飛ばすと任意のキーで引ける (`constructor` / `__proto__` を含む)。
+ *
+ * 判定は位置で見る: 引数に `serviceId` を取るハンドラは、本体で
+ * **他の用途より先に** `isServiceId(serviceId)` が現れること。
+ */
+function evaluateServiceIdGuard(handlers) {
+  const problems = [];
+  // `body` のまま slice すると `lint:forbidden` の「伏せていない応答本文」規則が
+  // `body.slice(` を見て鳴る。HTTP 応答ではないが、規則を緩めるより名前を譲る
+  // (今セッション 2 度目。verify-knowledge-provenance.cjs でも同じ判断をした)。
+  for (const { channel, body: src } of handlers) {
+    const arrow = src.indexOf('=>');
+    if (arrow < 0) continue;
+    const params = src.slice(0, arrow);
+    if (!/\bserviceId\b/.test(params)) continue;
+
+    const rest = src.slice(arrow);
+    const guard = rest.indexOf('isServiceId(serviceId');
+    if (guard < 0) {
+      problems.push(
+        `${channel}: serviceId を受け取るのに isServiceId() で検証していません。` +
+          `そのまま添字に使うと任意のキー (__proto__ / constructor を含む) で引けます`,
+      );
+      continue;
+    }
+    // 検証より前に serviceId を触っていないか (isServiceId 自身の出現は除く)。
+    const firstUse = [...rest.matchAll(/\bserviceId\b/g)]
+      .map((m) => m.index)
+      .find((i) => rest.slice(Math.max(0, i - 13), i) !== 'isServiceId(');
+    if (firstUse !== undefined && firstUse < guard) {
+      problems.push(
+        `${channel}: isServiceId() より前に serviceId を使っています ` +
+          `(位置 ${firstUse} < 検証 ${guard})。検証は最初に行ってください`,
+      );
+    }
+  }
+  return problems;
+}
+
 function evaluateHandlers(handlers) {
   const problems = [];
   for (const { channel, body } of handlers) {
@@ -95,7 +144,7 @@ function evaluateHandlers(handlers) {
         `呼び出し側の用意していない経路に落ちます (「読込中…」で止まる等)`,
     );
   }
-  return problems;
+  return [...problems, ...evaluateServiceIdGuard(handlers)];
 }
 
 function selfTest() {
@@ -108,6 +157,32 @@ function selfTest() {
       'try の後にもう一度 await (前が try の中なら通す)',
       [{ channel: 'a', body: 'try {\n await f();\n} catch {}\nawait g();' }],
       0,
+    ],
+    // 不変条件 #3 (serviceId の検証)。
+    [
+      'serviceId を受け取るのに検証していない',
+      [{ channel: 'a', body: "(_e, serviceId: unknown) => LIVE[serviceId]" }],
+      1,
+    ],
+    [
+      '検証してから使えば通る',
+      [{ channel: 'a', body: "(_e, serviceId: unknown) => isServiceId(serviceId) ? LIVE[serviceId] : null" }],
+      0,
+    ],
+    [
+      '検証より前に使っていたら鳴る',
+      [{ channel: 'a', body: "(_e, serviceId: unknown) => {\n const x = LIVE[serviceId];\n if (!isServiceId(serviceId)) return null;\n}" }],
+      1,
+    ],
+    [
+      'serviceId を受け取らないハンドラは対象外',
+      [{ channel: 'a', body: "(_e, url: unknown) => open(url)" }],
+      0,
+    ],
+    [
+      '複数行の引数でも見る',
+      [{ channel: 'a', body: "(\n  _e,\n  serviceId: unknown,\n  action: unknown,\n) => {\n  return LIVE[serviceId][action];\n}" }],
+      1,
     ],
     [
       '複数ハンドラのうち 1 つだけ違反',
@@ -156,7 +231,10 @@ function main(argv) {
     for (const p of problems) console.error(`  ${p}`);
     return 1;
   }
-  console.log('✅ すべてのハンドラは失敗を戻り値で表しています (try の外で await しない)');
+  console.log(
+    '✅ すべてのハンドラは失敗を戻り値で表し (try の外で await しない)、'
+      + 'serviceId を添字に使う前に isServiceId() で検証しています',
+  );
   return 0;
 }
 

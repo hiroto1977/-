@@ -2240,7 +2240,7 @@ classDiagram
 |---|---|---|
 | 1 | Renderer は Node API を直接呼ばない (必ず `window.serviceHub` 経由) | BrowserWindow 設定 (`src/main/main.ts:42-48`) |
 | 2 | Renderer に raw token は届かない (`secrets:list` は ID のみ) | `src/preload/preload.ts:26` |
-| 3 | IPC で受けた serviceId は indexing 前に `isServiceId()` 検証 | `src/shared/__tests__/serviceId.test.ts` 4 件 |
+| 3 | IPC で受けた serviceId は indexing 前に `isServiceId()` 検証 | **`lint:ipc-handlers`** (2026-08-22 追加。それまでの回帰テスト欄は `isServiceId` **自体**の検査 4 件で、各ハンドラが呼んでいるかは誰も見ていなかった) + `src/shared/__tests__/serviceId.test.ts` 4 件 |
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
 | 5 | 外部 URL は `app:openExternal` 経由のみ — http(s) 限定 | `src/main/main.ts:100-115` |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | **`lint:url-encoding`** (2026-08-22 新設。それまで機械検証は無く、各クライアントの個別テストだけだった) + `github.test.ts`, `wordpress.test.ts`, ... |
