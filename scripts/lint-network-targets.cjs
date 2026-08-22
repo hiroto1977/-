@@ -45,7 +45,13 @@ const ROOTS = [
   'src/renderer/network',
 ];
 
-const NETWORK_CALL = /\b(jsonFetch|apiFetch|apiFetchOkFlag|transport|postExpectOk|fetchViaProxy)\b/;
+// 2026-08-22 の点検で足した: **`fetch` そのものが入っていなかった。**
+// 一覧はこの repo のラッパ (jsonFetch / apiFetch / transport …) だけを見て
+// おり、素の `fetch(\`https://${host}/…\`)` — つまり危ない書き方の中で
+// 一番素直なもの — が丸ごと視界の外だった。`Authorization: Bearer` を
+// 載せた実物を差し込んでも鳴らないことを実測して気付いた。
+const NETWORK_CALL =
+  /\b(fetch|fetchFn|doFetch|jsonFetch|apiFetch|apiFetchOkFlag|transport|postExpectOk|fetchViaProxy)\b/;
 
 /**
  * 送信そのものではなく「送り先の組み立て」を捕まえるための印。
@@ -183,12 +189,70 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
  */
 function hasConstantHost(template) {
   const body = template.slice(1, -1); // 前後のバッククォートを外す
-  // 生のスキームで始まる = ホストはリテラル。
-  if (/^https?:\/\//.test(body)) return true;
   // `${EXPR}/...` で始まる = ホストは EXPR 次第。ALL_CAPS の定数だけ許す。
   const lead = /^\$\{([^}]*)\}/.exec(body);
   if (lead) return /^[A-Z_][A-Z0-9_]*$/.test(lead[1].trim());
-  return false;
+  // スキームで始まるものは、**権限部 (host[:port]) だけ**を見る。
+  //
+  // 2026-08-22 の点検までは「生のスキームで始まる = ホストはリテラル」と
+  // 決めつけていた。ところが `https://${host}/v1/data` はスキームで始まり、
+  // **かつホストが変数**である。つまりこの検査が探している当のものが、
+  // 唯一の素通り口になっていた (`Authorization: Bearer` を載せた実物を
+  // 差し込んでも鳴らないことを実測)。
+  //
+  // 権限部はスキームの後ろから最初の `/` `?` `#` まで。そこに `${` が
+  // あれば送り先は実行時に決まる。
+  const authority = /^https?:\/\/([^/?#]*)/.exec(body);
+  if (!authority) return false;
+  return !authority[1].includes('${');
+}
+
+/**
+ * 陰性対照 — **このゲートが本当に鳴るか**を毎回確かめる。
+ *
+ * 2026-08-22 に、鳴らない穴が 2 つ同時に見つかった:
+ *   (1) `hasConstantHost` が「スキームで始まる = ホストはリテラル」と決めつけ、
+ *       `https://${host}/…` を定数扱いしていた
+ *   (2) `NETWORK_CALL` に **`fetch` そのものが無く**、素の fetch が視界の外だった
+ * どちらか片方でも残っていると、`Authorization` 付きの変数送り先が素通りする。
+ */
+function selfTest() {
+  const hostCases = [
+    ['スキームの後ろが変数なら「変数の送り先」', '`https://${host}/v1/data`', false],
+    ['サブドメインの補間も変数扱い', '`https://${tenant}.example.com/v1`', false],
+    ['ホストが定数ならパスの補間は無視する', '`https://api.github.com/users/${id}`', true],
+    ['ALL_CAPS の定数で始まるのは許す', '`${API_BASE}/v1/x`', true],
+    ['小文字の変数で始まるのは許さない', '`${base}/v1/x`', false],
+    // ホストが定数でもポートが変数なら「変数の送り先」に倒す。冒頭には
+    // 「見るのはホスト部だけ」と書いてあり、相手が変わらない以上リスクは
+    // 小さいが、権限部 (host:port) の補間は**台帳 1 行で済む**ので閉じる側に
+    // 寄せる。実コードには 1 件も無い (この判定で全件が緑のまま)。
+    ['ホストが定数でもポートが変数なら変数扱い (閉じる側に倒す)', '`https://example.com:${port}/x`', false],
+  ];
+  let bad = 0;
+  for (const [label, tpl, expected] of hostCases) {
+    const got = hasConstantHost(tpl);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got ? '定数' : '変数'} (期待 ${expected ? '定数' : '変数'})`);
+  }
+  const callCases = [
+    ['素の fetch を通信とみなす', 'await fetch(`https://${h}/x`);', true],
+    ['ラッパも通信とみなす', 'await jsonFetch(`https://${h}/x`);', true],
+    ['通信でない行は拾わない', 'const label = `https://${h}/x`;', false],
+  ];
+  for (const [label, line, expected] of callCases) {
+    const got = NETWORK_CALL.test(line);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
+  }
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
 }
 
 function collect() {
@@ -251,6 +315,7 @@ function* walk(dir) {
 }
 
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
   const found = collect();
   const problems = [];
 
