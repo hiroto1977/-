@@ -25,6 +25,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const safeWrite = require('./safe-vault-write.cjs');
 const kc = require('../orchestration/knowledge-context.cjs');
 const kg = require('../orchestration/knowledge-graph.cjs');
 const edu = require('../orchestration/education.cjs');
@@ -756,12 +757,15 @@ function buildFiles() {
 }
 
 function writeVault(outDir, files) {
+  // ノート名はデータ由来 (id / collection / category)。`..` が 1 つ混ざると
+  // 書き出し先の外へ出る。関門は `scripts/safe-vault-write.cjs` に 1 つだけ。
+  //
+  // **消す前に確かめる。** 先に rmSync すると、名前がおかしいときに
+  // 「既存の vault を消してから書くのを拒む」ことになり、7500 件が失われた
+  // 状態で止まる (この順序の誤りは、関門を入れた直後の実地試験で踏んだ)。
+  safeWrite.assertAllInside(outDir, files);
   fs.rmSync(outDir, { recursive: true, force: true });
-  for (const [rel, content] of Object.entries(files)) {
-    const full = path.join(outDir, rel);
-    fs.mkdirSync(path.dirname(full), { recursive: true });
-    fs.writeFileSync(full, content);
-  }
+  safeWrite.writeFilesInto(outDir, files);
 }
 
 function walk(dir, base = dir, acc = []) {
