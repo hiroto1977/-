@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { runAiChat } from '../chat';
+import { runAiChat, AI_CHAT_TIMEOUT_MS } from '../chat';
 import type { AiChatRequest } from '../providers';
 
 function jsonResponse(body: unknown, ok = true, status = 200): Response {
@@ -193,5 +193,93 @@ describe('runAiChat — 失敗応答', () => {
     // 500 文字の 'x' が丸ごと入っていない = 200 文字で切れている
     expect(msg).not.toContain('x'.repeat(300));
     expect(msg.length).toBeLessThan(300);
+  });
+});
+
+/*
+ * **応答しない相手で止まらないこと。**
+ *
+ * `compat` プロバイダの `baseUrl` は利用者が自由に決められる
+ * (LM Studio / LiteLLM / 自前サーバ / BYO プロキシ)。接続だけ受け付けて
+ * 応答を返さない相手だと、timeout が無ければ `await` は永久に返らず、
+ * `action:invoke` の Promise が解決しない —— 画面は「読込中…」のまま止まる。
+ *
+ * 同じ「利用者が宛先を決める」経路でも `clients/ollama.ts` には 30 秒の
+ * hard timeout が入っていた。**兄弟の片方だけ守られていなかった。**
+ */
+describe('runAiChat の timeout', () => {
+  it('既定の待ち時間が定数で公開されている', () => {
+    expect(AI_CHAT_TIMEOUT_MS).toBe(120_000);
+  });
+
+  it('注入した fetch にも signal が渡る (プロキシ経由でも効く)', async () => {
+    let seen: AbortSignal | null | undefined;
+    const fetchFn = vi.fn<typeof fetch>(async (_u, init) => {
+      seen = (init as RequestInit).signal;
+      return new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    });
+    await runAiChat({
+      provider: 'anthropic',
+      cfg: { apiKey: 'k' },
+      request: { messages: [{ role: 'user', content: 'hi' }], maxTokens: 16 },
+      fetchFn,
+    });
+    expect(seen, 'signal が渡っていない (timeout が効かない)').toBeInstanceOf(AbortSignal);
+    expect(seen!.aborted).toBe(false);
+  });
+
+  it('応答しない相手は待ち時間で打ち切られる', async () => {
+    // 相手は signal を尊重するが、自分からは決して解決しない。
+    const fetchFn = vi.fn<typeof fetch>(
+      (_u, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          const sig = (init as RequestInit).signal;
+          sig?.addEventListener('abort', () => reject(new Error('aborted')));
+        }),
+    );
+    await expect(
+      runAiChat({
+        provider: 'anthropic',
+        cfg: { apiKey: 'k' },
+        request: { messages: [{ role: 'user', content: 'hi' }], maxTokens: 16 },
+        fetchFn,
+        timeoutMs: 10,
+      }),
+    ).rejects.toThrow(/時間内に応答しませんでした/);
+  });
+
+  it('打ち切りでない失敗は、元の理由のまま出る (握り潰さない)', async () => {
+    const fetchFn = vi.fn<typeof fetch>(async () => {
+      throw new Error('ECONNREFUSED');
+    });
+    await expect(
+      runAiChat({
+        provider: 'anthropic',
+        cfg: { apiKey: 'k' },
+        request: { messages: [{ role: 'user', content: 'hi' }], maxTokens: 16 },
+        fetchFn,
+      }),
+    ).rejects.toThrow('ECONNREFUSED');
+  });
+
+  it('間に合った呼び出しは打ち切られない (誤検知しない)', async () => {
+    const fetchFn = vi.fn<typeof fetch>(
+      async () =>
+        new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+    );
+    const out = await runAiChat({
+      provider: 'anthropic',
+      cfg: { apiKey: 'k' },
+      request: { messages: [{ role: 'user', content: 'hi' }], maxTokens: 16 },
+      fetchFn,
+      timeoutMs: 5_000,
+    });
+    expect(out.text).toBe('ok');
   });
 });

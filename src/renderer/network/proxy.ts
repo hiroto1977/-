@@ -559,10 +559,16 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
     proxyHeaders['x-proxy-auth'] = cfg.sharedSecret;
   }
 
+  // **呼び出し側の signal を捨てない。** 2026-08-22 まで `init` から
+  // url / method / headers / body だけを取り出しており、`signal` は
+  // envelope にも下の fetch にも渡っていなかった。呼び出し側 (`runAiChat`)
+  // が timeout を付けても、プロキシ経由の道だけ効かない —— 「守っている
+  // つもりの守り」になる。中継先が固まったら、こちらの待ちも切る。
   const proxyRes = await fetch(proxyChecked.url, {
     method: 'POST',
     headers: proxyHeaders,
     body: JSON.stringify(envelope),
+    signal: init.signal ?? undefined,
   });
 
   if (!proxyRes.ok) {

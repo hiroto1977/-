@@ -509,6 +509,14 @@
       "leafCount": 34,
       "note": "update oauth.ts",
       "hash": "ae8d54d40a2be34009e19e2a9b826b000cd3ae8e2353f15d8960de41b303bdb8"
+    },
+    {
+      "index": 59,
+      "prevHash": "ae8d54d40a2be34009e19e2a9b826b000cd3ae8e2353f15d8960de41b303bdb8",
+      "merkleRoot": "75ffb28c877bdca71fef998d63acb925cb1cf2e2c86f5eb98d89e9364854b625",
+      "leafCount": 34,
+      "note": "update proxy.ts",
+      "hash": "dcad7f795f03c5e2e6722dc590af743f1d43133da3bb538fe7e8f90dac7f72f7"
     }
   ],
   "tipManifest": {
@@ -531,7 +539,7 @@
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
-    "src/renderer/network/proxy.ts": "59e64d7473120d84f9417d406878958d07231bd7c1a58e800c0a5d3ac7130ec2",
+    "src/renderer/network/proxy.ts": "6211770071cf02881c1fa2c758053393d8d6e37123ba83b5ed041e036c9f1999",
     "src/renderer/security/LockScreen.tsx": "3464f6c2b7cb088df493be46bdd38a35123faa80505ea309d40e9008a2ee2866",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",

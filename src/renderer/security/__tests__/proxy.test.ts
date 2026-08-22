@@ -185,6 +185,46 @@ describe('fetchViaProxy', () => {
     } as unknown as Response;
   }
 
+  /*
+   * **呼び出し側の signal を捨てない。**
+   *
+   * 2026-08-22 まで `fetchViaProxy` は `init` から url / method / headers /
+   * body だけを取り出しており、`signal` は envelope にも下の fetch にも
+   * 渡っていなかった。呼び出し側 (`runAiChat`) が timeout を付けても、
+   * **プロキシ経由の道だけ効かない** —— 「守っているつもりの守り」になる。
+   */
+  it('呼び出し側の signal を実際の fetch へ中継する', async () => {
+    let seen: AbortSignal | null | undefined;
+    const mockFetch = vi.fn<typeof fetch>(async (_u, init) => {
+      seen = (init as RequestInit).signal;
+      return envelope({ status: 200, body: '{}' });
+    });
+    globalThis.fetch = mockFetch;
+
+    const controller = new AbortController();
+    await fetchViaProxy(
+      'https://api.notion.com/v1/x',
+      { method: 'POST', signal: controller.signal },
+      { url: 'https://my-worker.example.com/proxy' },
+    );
+    expect(seen, 'signal が捨てられている (timeout が効かない)').toBe(controller.signal);
+  });
+
+  it('signal を渡さない呼び出しでも壊れない', async () => {
+    const mockFetch = vi.fn<typeof fetch>(async (_u, init) => {
+      expect((init as RequestInit).signal).toBeUndefined();
+      return envelope({ status: 200, body: '{}' });
+    });
+    globalThis.fetch = mockFetch;
+    await expect(
+      fetchViaProxy(
+        'https://api.notion.com/v1/x',
+        { method: 'GET' },
+        { url: 'https://my-worker.example.com/proxy' },
+      ),
+    ).resolves.toBeDefined();
+  });
+
   it('wraps target URL + method + headers + body in JSON envelope', async () => {
     const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
       envelope({ status: 200, headers: { 'content-type': 'application/json' }, body: '{"ok":true}' }),

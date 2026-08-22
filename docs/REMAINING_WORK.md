@@ -1722,6 +1722,57 @@ Stryker: `skills.ts` 121 killed / 0 survived / 0 no-cov。
 `verify:arch` が `skills.ts` の行ずれを 3 件捕まえた（`x-api-key` /
 `isSafeSkillName` ×2）—— 錨があるおかげでコード移動でも気付ける。
 
+### 応答しない相手で画面が永久に止まる経路があった（修正済み）+ 「効かない timeout」を寸前で回避
+
+`compat` プロバイダの `baseUrl` は**利用者が自由に決められる**
+(LM Studio / LiteLLM / 自前サーバ / BYO プロキシ)。接続だけ受け付けて応答を
+返さない相手だと、`runAiChat` の `await f(...)` は永久に返らない ——
+`action:invoke` の Promise が解決せず、画面は**「読込中…」のまま止まる**。
+これは `lint:ipc-handlers` を作った動機そのものの症状である。
+
+**兄弟の片方だけ守られていた。** 同じ「利用者が宛先を決める」経路でも
+`clients/ollama.ts` には 30 秒の hard timeout が入っていて理由も書いてある。
+
+| 経路 | timeout | 応答サイズ上限 |
+|---|---|---|
+| `clients/ollama.ts` | ✓ 30s (理由つき) | — |
+| `main.ts` の更新確認 | ✓ 10s | — |
+| `network/proxy.ts` (`fetchViaProxy`) | **✗ signal を捨てていた** | ✓ `MAX_PROXY_RESPONSE_BYTES` (10MB・Content-Length と byte 単位の二段) |
+| `shared/ai/chat.ts` (`runAiChat`) | **✗ 無し** | ✗ |
+| `clients/types.ts` (`jsonFetch`・全 SaaS) | ✗ 無し | ✗ |
+
+このリポジトリは**両方の守り方を知っている** (プロキシの上限判定は
+`Content-Length: -1` まで considered している)。ただ一貫して当たっていなかった。
+
+#### 危うく「効かない timeout」を入れるところだった
+
+`runAiChat` に `signal` を足すだけでは**ブラウザ版で効かない**。
+`fetchViaProxy` は `init` から url / method / headers / body だけを取り出して
+自前の envelope を組み立てており、**`signal` は下の `fetch` に渡っていなかった**。
+実装前に読んで気付いたので、あわせて中継するようにした。
+
+これは 0-a-15 の別の顔である —— **守りを足すときは、その守りが通る道の全部で
+効くかを確かめる。** 片方の道で黙って無効になる守りは、無いより悪い
+(在ると思って別の対策をやめる)。
+
+#### 値は判断であって、典拠のある数字ではない
+
+`AI_CHAT_TIMEOUT_MS = 120_000`。30 秒は Ollama のローカル推論向けで、
+クラウドの補完 (このアプリの `max_tokens` は 1024〜2048) には短すぎる。
+長すぎれば固まったまま気づけない。2 分は「正当な補完は余裕で終わり、
+固まった相手は必ず切れる」側へ倒した。呼び出し側は `timeoutMs` で上書きできる。
+
+対照 4 種すべて鳴る: timeout を丸ごと外す / `signal` を fetch へ渡さない
+(timer だけ回す) / 打ち切りの理由を握り潰す / **プロキシが signal を捨てる形へ戻す**。
+
+#### 残した gap (意図的)
+
+`jsonFetch` (全 SaaS クライアント) には timeout も応答サイズ上限も入れていない。
+宛先が `api.github.com` のような**固定の既知ホスト**で、利用者が差し替えられる
+`baseUrl` とは脅威の性質が違うため。ただし「TLS の相手なら固まらない」という
+保証は無いので、**残作業として明示しておく** —— やるなら `jsonFetch` 1 か所に
+入れれば 74 クライアント全部に効く。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を
