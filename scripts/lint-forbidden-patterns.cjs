@@ -114,6 +114,32 @@ const FORBIDDEN_PATTERNS = [
     codeOnly: true,
     rationale: '混在コンテンツを許すと、経路上で差し替えられたスクリプトが走る',
   },
+  // --- 本物に見える資格情報の直書き -----------------------------------------
+  // 2026-08-22 追加。出荷物 (dist/standalone.html) と src を実際に走査して
+  // **1 件も無い**ことを確かめたうえで、その状態を固定する。
+  //
+  // ブラウザ版は 1 枚の HTML に全部を焼き込むので、`snapshot.ts` などの
+  // 見本データに本物らしいトークンが 1 つ混ざると、**利用者全員へ配られる**。
+  // GitHub の secret scanning は push 後に気付く仕組みで、しかも対応する
+  // 発行元に限られる。ここで push 前に落とす。
+  //
+  // 接頭辞のあとに 20 文字以上を要求する — `ghp_...` のような入力欄の
+  // プレースホルダや、`redact.ts` の伏字パターン自体を巻き込まないため。
+  // `__tests__` は EXCLUDE_PATTERNS で除外済み (伏字の検査は本物らしい
+  // 文字列を**わざと**書く必要がある)。
+  {
+    name: '本物に見える資格情報の直書き (接頭辞 + 20 文字以上)',
+    pattern:
+      /\b(ghp_|ghs_|ghu_|gho_|ghr_|xoxb-|xoxp-|xoxa-|sk-ant-|AIza|ya29\.|ATATT|secret_)[A-Za-z0-9_.-]{20,}/,
+    rationale:
+      '見本データに 1 つ混ざるとブラウザ版の HTML に焼き込まれて全利用者へ配られる。' +
+      '本物なら失効させ、説明用なら接頭辞だけ (`ghp_...`) にすること',
+  },
+  {
+    name: '秘密鍵の直書き',
+    pattern: /-----BEGIN\s+[A-Z ]*PRIVATE KEY-----/,
+    rationale: '鍵はリポジトリに置かない。署名鍵は CI の secrets 経由で渡す',
+  },
   {
     name: 'dangerouslySetInnerHTML',
     pattern: /\bdangerouslySetInnerHTML\b/,
@@ -385,6 +411,11 @@ function selfTest() {
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
+    ['本物に見える GitHub トークンを弾く', "const t = 'ghp_" + 'a'.repeat(36) + "';", 1],
+    ['本物に見える Anthropic キーを弾く', "const t = 'sk-ant-" + 'b'.repeat(32) + "';", 1],
+    ['入力欄のプレースホルダは鳴らない', "placeholder: 'ghp_...',", 0],
+    ['伏字パターンそのものは鳴らない', "/\\b(sk-ant-|ghp_)[A-Za-z0-9_-]{8,}/g", 0],
+    ['秘密鍵の直書きを弾く', '-----BEGIN RSA PRIVATE KEY-----', 1],
     ['正しい設定は鳴らない', 'contextIsolation: true, nodeIntegration: false, sandbox: true,', 0],
     ['コメント内の言及は鳴らない', '// nodeIntegration: true は使わないこと', 0],
   ];
