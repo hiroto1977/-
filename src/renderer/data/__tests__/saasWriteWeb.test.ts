@@ -847,3 +847,51 @@ describe('ensureOk error formatting', () => {
     expect(msg).toBe('GitHub API 503: ');
   });
 });
+
+/*
+ * site を弾いたときの文言を字面で留める。
+ *
+ * この 4 文だけが、利用者に **なぜ Atlassian に繋がらないのか** を伝える。
+ * `ATLASSIAN_SITE_MESSAGES` は非公開の表なので、外から見えるのは
+ * `parseAtlassianToken` が投げる例外の message だけ —— そこを確かめる。
+ *
+ * 実測でこの表 (オブジェクトそのもの + 4 文) が変異検査を生き延びていた:
+ * 空文字に変えても「throw する」ことしか確かめていなかったので通ってしまう。
+ * 文言が消えると、site を貼り間違えた利用者に空のエラーが出る。
+ *
+ * `vi.resetModules()` + 動的 import なのは表がモジュール定数だから
+ * (静的 import のままだと読み込み時に評価が済んで変異体が畳み込まれる)。
+ */
+describe('Atlassian の site を弾いたときの文言', () => {
+  async function freshParse(): Promise<typeof parseAtlassianToken> {
+    vi.resetModules();
+    const mod = (await import('../saasWriteWeb')) as typeof import('../saasWriteWeb');
+    return mod.parseAtlassianToken;
+  }
+
+  const CASES: [string, string, RegExp][] = [
+    ['control-char', 'https://x.atlassian.net\tfoo', /制御文字/],
+    ['not-a-url', 'not-a-url', /https URL/],
+    ['not-https', 'http://x.atlassian.net', /https のみ/],
+    ['not-atlassian', 'https://evil.example', /\*\.atlassian\.net/],
+  ];
+
+  it.each(CASES)('%s は理由の分かる文言で断る', async (_reason, site, want) => {
+    const parse = await freshParse();
+    expect(() => parse(JSON.stringify({ email: 'a@b.c', token: 't', site }))).toThrow(want);
+  });
+
+  it('4 通りとも別の文言 (同じ文言に潰れていない)', async () => {
+    const parse = await freshParse();
+    const seen = CASES.map(([, site]) => {
+      try {
+        parse(JSON.stringify({ email: 'a@b.c', token: 't', site }));
+        return '';
+      } catch (e) {
+        return (e as Error).message;
+      }
+    });
+    expect(seen.filter((m) => m.length > 0)).toHaveLength(4);
+    expect(new Set(seen).size).toBe(4);
+  });
+});

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   AI_PROVIDERS,
   AI_PROVIDER_IDS,
@@ -36,6 +36,113 @@ describe('registry invariant', () => {
     expect(isAiProviderId('')).toBe(false);
     expect(isAiProviderId(42)).toBe(false);
     expect(isAiProviderId(null)).toBe(false);
+  });
+});
+
+/*
+ * 提供元の表を **字面で** 留める。
+ *
+ * 上の registry invariant は「id が揃っているか」しか見ていない。中身
+ * (`defaultBaseUrl` / `browserDirect` / `needsApiKey` / `defaultModel`) は
+ * どれも表を読んで確かめる形だったので、**表そのものが変わると一緒に変わる**。
+ * 実測で 25 個の変異体 (5 提供元 × 5 欄) がここを生き延びていた。
+ *
+ * この 5 欄はどれも資格情報の扱いに直結する:
+ *   - `defaultBaseUrl` —— **API キーの送り先**。書き換われば鍵が別のホストへ行く
+ *   - `browserDirect`  —— ブラウザから直接叩いてよいか。`false` の提供元を
+ *     `true` にすると、任意ホストへ鍵を載せた fetch が画面から出る
+ *     (compat は「任意ホストなので CORS 前提にしない」が理由)
+ *   - `needsApiKey`    —— 鍵無しで送ってよいかの判断
+ *   - `defaultModel`   —— 引退したモデルを既定にすると実行時 API エラーでしか出ない
+ *
+ * `vi.resetModules()` + 動的 import なのは、表がモジュール定数だから
+ * (静的 import のままだと読み込み時に評価が済み、変異体が畳み込まれる)。
+ * `fsa.ts` の DB 名・`shellOpenGate.ts` の許可拡張子と同じ形。
+ */
+describe('提供元の表を字面で留める (鍵の送り先と直接続の可否)', () => {
+  interface Pinned {
+    label: string;
+    defaultModel: string;
+    defaultBaseUrl: string;
+    needsApiKey: boolean;
+    browserDirect: boolean;
+  }
+  const EXPECTED: [string, Pinned][] = [
+    ['anthropic', {
+      label: 'Claude (Anthropic)',
+      defaultModel: 'claude-sonnet-4-6',
+      defaultBaseUrl: 'https://api.anthropic.com',
+      needsApiKey: true,
+      browserDirect: true,
+    }],
+    ['openai', {
+      label: 'ChatGPT (OpenAI)',
+      defaultModel: 'gpt-4o-mini',
+      defaultBaseUrl: 'https://api.openai.com',
+      needsApiKey: true,
+      browserDirect: false,
+    }],
+    ['gemini', {
+      label: 'Gemini (Google)',
+      defaultModel: 'gemini-2.0-flash',
+      defaultBaseUrl: 'https://generativelanguage.googleapis.com',
+      needsApiKey: true,
+      browserDirect: true,
+    }],
+    ['ollama', {
+      label: 'Ollama (ローカル)',
+      defaultModel: 'llama3.2',
+      defaultBaseUrl: 'http://127.0.0.1:11434',
+      needsApiKey: false,
+      browserDirect: true,
+    }],
+    // 既定を空にしてあるのは意図 —— 送り先もモデルも資格情報で必ず指定させる。
+    ['compat', {
+      label: 'OpenAI 互換 API',
+      defaultModel: '',
+      defaultBaseUrl: '',
+      needsApiKey: false,
+      browserDirect: false,
+    }],
+  ];
+
+  async function freshProviders(): Promise<typeof import('../providers')> {
+    vi.resetModules();
+    return (await import('../providers')) as typeof import('../providers');
+  }
+
+  it.each(EXPECTED)('%s の 5 欄が変わっていない', async (id, want) => {
+    const { AI_PROVIDERS } = await freshProviders();
+    const spec = AI_PROVIDERS[id as keyof typeof AI_PROVIDERS];
+    expect(spec.label).toBe(want.label);
+    expect(spec.defaultModel).toBe(want.defaultModel);
+    expect(spec.defaultBaseUrl).toBe(want.defaultBaseUrl);
+    expect(spec.needsApiKey).toBe(want.needsApiKey);
+    expect(spec.browserDirect).toBe(want.browserDirect);
+  });
+
+  it('留めた提供元がちょうど 5 つ (増減に気付く)', async () => {
+    const { AI_PROVIDER_IDS } = await freshProviders();
+    expect([...AI_PROVIDER_IDS].sort()).toEqual(EXPECTED.map(([id]) => id).sort());
+  });
+
+  /*
+   * 鍵の送り先は https か loopback だけ。任意ホストを既定にしてはいけない
+   * (compat は既定を空にして、資格情報側の検証に委ねている)。
+   */
+  it('既定の送り先は https か loopback のみ', async () => {
+    const { AI_PROVIDERS, AI_PROVIDER_IDS } = await freshProviders();
+    const bad = [...AI_PROVIDER_IDS].filter((id) => {
+      const u = AI_PROVIDERS[id].defaultBaseUrl;
+      if (u === '') return false;
+      return !/^https:\/\//.test(u) && !/^http:\/\/(127\.0\.0\.1|\[::1\]|localhost)(:|\/|$)/.test(u);
+    });
+    expect(bad).toEqual([]);
+  });
+
+  it('高速モデルの id が変わっていない', async () => {
+    const { ANTHROPIC_FAST_MODEL } = await freshProviders();
+    expect(ANTHROPIC_FAST_MODEL).toBe('claude-haiku-4-5-20251001');
   });
 });
 

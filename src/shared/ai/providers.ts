@@ -322,21 +322,24 @@ export const AI_PROVIDERS: Record<AiProviderId, AiProviderSpec> = {
 
 // 起動時不変条件: ID リストとレジストリの完全一致 + id フィールドの整合。
 // 追加漏れ・タイポは初回 import で必ず throw する (LIVE_FETCHERS と同じ流儀)。
+//
+// この 3 本の番人は**正しいレジストリの上では等価変異**にしかならない
+// —— 条件を `false` に潰しても throw しない側は元から通っているし、
+// 壊れたレジストリはテストから作れない (作れたとしても import 時に throw して
+// 全テストが落ちるので、検査になっていない)。条件・ブロック・文言をまとめて
+// 外す。**表の中身のほうは字面で留めてある** (providers.test.ts の
+// 「提供元の表を字面で留める」) ので、ここを外しても測っていない訳ではない。
+/* Stryker disable ConditionalExpression,BlockStatement,StringLiteral */
 for (const id of AI_PROVIDER_IDS) {
   const spec: AiProviderSpec | undefined = AI_PROVIDERS[id];
-  // 起動時の不変条件。壊れたレジストリを作る手段がテストに無いため到達しない
-  // (作れたとしても import 時に throw して全テストが落ちる = 検査にならない)。
-  // Stryker disable next-line StringLiteral
   if (!spec) throw new Error(`AI_PROVIDERS missing spec for provider id: ${id}`);
-  // Stryker disable next-line StringLiteral
   if (spec.id !== id) throw new Error(`AI_PROVIDERS[${id}].id mismatch: ${spec.id}`);
 }
 // 同上 (レジストリ側に余分な項目が無いこと)。
-/* Stryker disable BlockStatement,StringLiteral */
 if (Object.keys(AI_PROVIDERS).length !== AI_PROVIDER_IDS.length) {
   throw new Error('AI_PROVIDERS has entries not listed in AI_PROVIDER_IDS');
 }
-/* Stryker restore BlockStatement,StringLiteral */
+/* Stryker restore ConditionalExpression,BlockStatement,StringLiteral */
 
 export function isAiProviderId(v: unknown): v is AiProviderId {
   // Stryker disable next-line ConditionalExpression: 型検査を落としても `includes` が
