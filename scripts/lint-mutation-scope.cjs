@@ -113,6 +113,10 @@ const MUST_MEASURE = {
   // main.ts と違って測れるのは、チャンネル名が**アロー関数の中**にあるため
   // (main.ts は `ipcMain.handle('名前', fn)` と**モジュール直下で呼ぶ**ので static)。
   'src/preload/preload.ts':          'レンダラーが main へ触れる唯一の面 (13 個の口だけを通す)',
+  // 2026-08-22 追加。IPC ハンドラ 13 個・窓の隔離設定・遷移の番人がここに集まる。
+  // 「モジュール直下の副作用ばかりで測れない」と一度は書いたが誤りで、
+  // 毎テスト読み直せば普通に 100% まで測れた (pragma 0 個)。
+  'src/main/main.ts':                'IPC の口と窓の隔離設定 (contextIsolation / 遷移の番人)',
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;

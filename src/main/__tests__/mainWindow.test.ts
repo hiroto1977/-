@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import path from 'node:path';
 
 /*
  * BrowserWindow の作られ方と、窓に張った 3 つの番人。
@@ -21,11 +22,16 @@ interface Captured {
   loadedFile: string | null;
   loadedUrl: string | null;
   devToolsOpened: boolean;
+  devToolsMode: string | null;
 }
 
 let captured: Captured;
 let openedExternal: string[] = [];
 let isPackaged = true;
+let windowsMade = 0;
+let allWindows: unknown[] = [];
+let quitCalls = 0;
+const appListeners = new Map<string, () => void>();
 
 function freshCapture(): Captured {
   return {
@@ -35,6 +41,7 @@ function freshCapture(): Captured {
     loadedFile: null,
     loadedUrl: null,
     devToolsOpened: false,
+    devToolsMode: null,
   };
 }
 
@@ -46,12 +53,16 @@ vi.mock('electron', () => ({
       return isPackaged;
     },
     whenReady: async () => undefined,
-    on: () => {},
-    quit: () => {},
+    on: (name: string, fn: () => void) => {
+      appListeners.set(name, fn);
+    },
+    quit: () => {
+      quitCalls += 1;
+    },
   },
   BrowserWindow: class {
     static getAllWindows() {
-      return [];
+      return allWindows;
     }
     webContents = {
       setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
@@ -60,12 +71,14 @@ vi.mock('electron', () => ({
       on: (name: string, fn: (ev: { preventDefault: () => void }, url: string) => void) => {
         captured.listeners.set(name, fn);
       },
-      openDevTools: () => {
+      openDevTools: (opts?: { mode?: string }) => {
         captured.devToolsOpened = true;
+        captured.devToolsMode = opts?.mode ?? null;
       },
     };
     constructor(opts: Record<string, unknown>) {
       captured.opts = opts;
+      windowsMade += 1;
     }
     loadFile(p: string) {
       captured.loadedFile = p;
@@ -119,6 +132,10 @@ async function loadMain(opts: { packaged: boolean; devServerUrl?: string }): Pro
 
 beforeEach(() => {
   openedExternal = [];
+  windowsMade = 0;
+  allWindows = [];
+  quitCalls = 0;
+  appListeners.clear();
 });
 
 describe('BrowserWindow の設定 — 隔離の三点セット', () => {
@@ -273,9 +290,18 @@ describe('will-navigate / will-redirect — アプリ内の遷移を止める', 
 
   it('開発サーバの URL 自体が壊れていれば何も通さない', async () => {
     const c = await loadMain({ packaged: false, devServerUrl: 'not a url' });
-    const e = ev();
-    c.listeners.get('will-navigate')!(e.ev, 'http://localhost:5173/');
-    expect(e.was()).toBe(true);
+    for (const url of [
+      'http://localhost:5173/',
+      // **遷移先も読めない**場合。読めなかったことを「空文字」で表さずに
+      // 制御の流れだけで表していると、壊れたもの同士が「同じ origin」に
+      // 見えて通ってしまう。
+      'also not a url',
+      '',
+    ]) {
+      const e = ev();
+      c.listeners.get('will-navigate')!(e.ev, url);
+      expect(e.was(), url).toBe(true);
+    }
   });
 
   it('開発でも環境変数が無ければ全部止める', async () => {
@@ -293,5 +319,65 @@ describe('will-navigate / will-redirect — アプリ内の遷移を止める', 
     const bad = ev();
     c.listeners.get('will-redirect')!(bad.ev, 'https://evil.example/');
     expect(bad.was()).toBe(true);
+  });
+});
+
+describe('窓の見た目とアイコン', () => {
+  it('題名と背景色を決めて出す', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.opts.title).toBe('Service Hub');
+    expect(c.opts.backgroundColor).toBe('#0f1117');
+  });
+
+  it('同梱のアイコンを、束ねた場所からの相対で指す', async () => {
+    // `dist-electron/main.js` から見て `../build/icon.png`。段数がずれると
+    // 存在しないパスになり、既定の Electron アイコンで出荷される。
+    const c = await loadMain({ packaged: true });
+    // main.js のあるディレクトリから見た相対で確かめる。段数・フォルダ名・
+    // ファイル名のどれが変わっても落ちる。
+    expect(path.relative(path.resolve('src/main'), String(c.opts.icon))).toBe(
+      path.join('..', 'build', 'icon.png'),
+    );
+  });
+
+  it('開発時の DevTools は別窓で開く (画面を狭めない)', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    expect(c.devToolsOpened).toBe(true);
+    expect(c.devToolsMode).toBe('detach');
+  });
+});
+
+describe('アプリの寿命', () => {
+  it('起動時に窓を 1 つだけ作る', async () => {
+    await loadMain({ packaged: true });
+    expect(windowsMade).toBe(1);
+  });
+
+  it('activate は窓が無いときだけ作り直す (Dock から戻る道)', async () => {
+    await loadMain({ packaged: true });
+    expect(windowsMade).toBe(1);
+    // 既に窓があるなら増やさない。
+    allWindows = [{}];
+    appListeners.get('activate')!();
+    expect(windowsMade).toBe(1);
+    // 全部閉じたあとなら作り直す。
+    allWindows = [];
+    appListeners.get('activate')!();
+    expect(windowsMade).toBe(2);
+  });
+
+  it('macOS 以外では全部の窓を閉じたら終了する', async () => {
+    await loadMain({ packaged: true });
+    const orig = process.platform;
+    try {
+      Object.defineProperty(process, 'platform', { value: 'linux', configurable: true });
+      appListeners.get('window-all-closed')!();
+      expect(quitCalls).toBe(1);
+      Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
+      appListeners.get('window-all-closed')!();
+      expect(quitCalls).toBe(1);
+    } finally {
+      Object.defineProperty(process, 'platform', { value: orig, configurable: true });
+    }
   });
 });

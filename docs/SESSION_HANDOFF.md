@@ -860,6 +860,61 @@ Electron 版はこの meta をそのまま同梱するので**製品版でも有
 移せば掛からない。完全な検査ではなく「新しい送り先が増えたら台帳を書かせる入口」である。
 限界を書かずに置くと「見張っているつもり」だけが残る。
 
+### 罠 2-f: 「モジュール直下の副作用だから測れない」と書く前に、読み直す形を試す
+
+`main.ts` のように **中身がほぼ全部モジュール直下の副作用**（`ipcMain.handle('名前', fn)`
+を 13 回呼ぶ、`app.on(...)` を張る）のファイルは、`beforeAll` で 1 回だけ
+`await import()` すると **変異体が有効になる前に評価が終わっている**。テストが
+実際に殺していても Stryker は「生存」と報告する。
+
+2026-08-22 にこれを「構造的に測れない」と誤って結論し、`stryker.config.json` の
+注記にまで書いた。**正しくは、覆われた static 変異体は読み直せば殺せる**
+（この訂正は当時すでにこのファイルの上のほうに書いてあったのを見落としていた）。
+
+```ts
+// ✗ 1 回だけ読む → モジュール直下の変異体が全部「生存」
+beforeAll(async () => { await import('../main'); });
+
+// ✓ 毎テスト読み直す → 変異体の有効化後に評価される
+beforeEach(async () => {
+  handlers.clear();               // 登録の受け皿も毎回作り直すこと
+  vi.resetModules();
+  await import('../main');
+});
+```
+
+実測: `main.ts` は `beforeAll` → `beforeEach` に移しただけで **78.96% → 85.55%**。
+そこから「断り方を code だけでなく**文言まで**固定」して 99.71%
+（`isServiceId` の番人を外しても `Object.hasOwn` が拾って同じ code を返すので、
+code だけ見ていると番人が消えたことに気付けない）、最後の 1 件は下の 罠 2-g で
+100%・pragma 0 個。
+
+### 罠 2-g: 「読めなかった」を制御の流れで表すと、守りを外しても誰も気付けない
+
+```ts
+try { return new URL(u).origin === new URL(dev).origin; }
+catch { return false; }        // ✗ 中身を空にしても暗黙の undefined が返り、
+                               //   呼び出し側からは false と区別が付かない
+```
+
+catch の `return false` は **等価変異** になる。呼び出し側が真偽で受ける限り、
+`undefined` と `false` は同じ判断に落ちるからである（対照実験で確認）。
+pragma で黙らせる前に、**読めなかったことを値で表す**形にできないか試す。
+
+```ts
+const originOrEmpty = (url: string): string => {
+  try { return new URL(url).origin; } catch { return ''; }   // ✓ origin は絶対に空文字にならない
+};
+const target = originOrEmpty(navigationUrl);
+return target !== '' && target === originOrEmpty(devServer);
+```
+
+こうすると catch を空にした変異体は `undefined !== ''` を通り、
+**開発サーバの URL も遷移先も壊れているとき**に `undefined === undefined` で
+一致してしまう = 通してはいけないものを通す。その入力を検査に足せば殺せる。
+（この形の副産物として、`&&` を `||` にする変異、`target !== ''` を真偽に
+潰す変異も全部殺せるようになった。）
+
 ### 罠 2-c-3: `describe` 直下で対象を評価すると、そのテストは**どんな変異体でも落ちない**
 
 ```ts

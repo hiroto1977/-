@@ -67,26 +67,40 @@ function createWindow(): BrowserWindow {
   // main window at whatever local process happened to hold that port
   // (2026-07 audit). `will-redirect` gets the same treatment — otherwise a 3xx
   // during an allowed navigation would land somewhere unvetted.
+  /**
+   * 解析できなかった URL を**空文字**にする。`origin` は絶対に空文字にならない
+   * ので、「読めた」と「読めなかった」が値の上で混ざらない。
+   *
+   * 制御の流れ (try/catch から抜けたか) で表していた頃は、catch の中身を空に
+   * しても暗黙の `undefined` が返り、呼び出し側からは `false` と見分けが
+   * 付かなかった — **守りを外しても誰も気付けない形**だった。読めなかったことを
+   * 値で表すと、下の `target !== ''` がそれを見て落とせる。
+   */
+  const originOrEmpty = (url: string): string => {
+    try {
+      return new URL(url).origin;
+    } catch {
+      return '';
+    }
+  };
+  /**
+   * 実際に読み込んだ開発サーバの **origin** (scheme + host + port) とだけ
+   * 突き合わせる。
+   *
+   * 2026-08-22 の点検まで `u.host === 'localhost:5173'` で見ていたが、`host` に
+   * **スキームは入らない**。`https://localhost:5173/` も `ftp://localhost:5173/`
+   * も同じ host なので素通りしていた — 「そのポートを握った別のプロセスへ窓を
+   * 向けられないようにする」というこの例外の目的が、平文 http の相手にしか
+   * 効いていなかった。ポートの決め打ちも外した (5173 が埋まると Vite は次の
+   * 空き番へずれるので、通すべき本物を止めて通すべきでない相手を通しうる)。
+   */
   const allowNavigation = (navigationUrl: string): boolean => {
     const devServer = process.env.VITE_DEV_SERVER_URL;
     if (!isDev || !devServer) return false;
-    try {
-      // 実際に読み込んだ開発サーバの **origin** (scheme + host + port) とだけ
-      // 突き合わせる。
-      //
-      // 2026-08-22 の点検まで `u.host === 'localhost:5173'` で見ていたが、
-      // `host` に**スキームは入らない**。`https://localhost:5173/` も
-      // `ftp://localhost:5173/` も同じ host なので素通りしていた —
-      // 「そのポートを握った別のプロセスへ窓を向けられないようにする」という
-      // この例外の目的が、平文 http の相手にしか効いていなかった。
-      //
-      // ポートの決め打ちも外した。5173 が埋まっていると Vite は次の空き番へ
-      // ずれるので、**通すべき本物を止めて、通すべきでない相手を通す**状態に
-      // なりうる。読み込んだ URL 自身と比べれば、その取り違えは起きない。
-      return new URL(navigationUrl).origin === new URL(devServer).origin;
-    } catch {
-      return false;
-    }
+    const target = originOrEmpty(navigationUrl);
+    // 空文字どうしを「一致」と読まない。開発サーバの URL 自体が壊れていると、
+    // 同じく壊れた遷移先が「同じ origin」に見えて通ってしまう。
+    return target !== '' && target === originOrEmpty(devServer);
   };
   const guardNavigation = (event: { preventDefault: () => void }, navigationUrl: string): void => {
     if (allowNavigation(navigationUrl)) return;

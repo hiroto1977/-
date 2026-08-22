@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /*
  * main.ts の IPC 境界。
@@ -71,6 +71,7 @@ vi.mock('electron', () => ({
 // --- 協力者 ---------------------------------------------------------------
 let validToken: unknown = { ok: true, token: 'tok' };
 let setTokenThrows: Error | null = null;
+let clearTokenThrows: Error | null = null;
 const setTokenCalls: [string, string][] = [];
 const clearTokenCalls: string[] = [];
 
@@ -93,6 +94,7 @@ vi.mock('../secrets', () => ({
     setTokenCalls.push([id, tok]);
   },
   clearToken: async (id: string) => {
+    if (clearTokenThrows) throw clearTokenThrows;
     clearTokenCalls.push(id);
   },
   listConfiguredServices: async () => ['github'],
@@ -134,17 +136,20 @@ function invoke(name: string, ...args: unknown[]): unknown {
   return fn({}, ...args);
 }
 
-beforeAll(async () => {
-  await import('../main');
-});
-
-beforeEach(() => {
+// **毎テストで読み直す。** `beforeAll` で 1 回だけ読むと、モジュール直下で
+// 走る `ipcMain.handle(...)` は変異体が有効になる**前**に評価済みになり、
+// 検査が実際に殺していても Stryker は「生存」と報告する (static 変異体)。
+// `vi.resetModules()` を挟んで読み直せば、変異体の有効化後に評価される。
+beforeEach(async () => {
+  handlers.clear();
+  appListeners.clear();
   openedExternal = [];
   shownInFolder = [];
   openPathCalls = [];
   openPathResult = '';
   validToken = { ok: true, token: 'tok' };
   setTokenThrows = null;
+  clearTokenThrows = null;
   setTokenCalls.length = 0;
   clearTokenCalls.length = 0;
   fetcherCalls.length = 0;
@@ -154,6 +159,8 @@ beforeEach(() => {
   gateResult = '/root/ok.md';
   quitCalls = 0;
   allWindows = [];
+  vi.resetModules();
+  await import('../main');
 });
 
 // ---------------------------------------------------------------------------
@@ -270,6 +277,12 @@ describe('secrets:set / secrets:clear — サービス id の検査', () => {
     expect(clearTokenCalls).toEqual([]);
   });
 
+  it('削除に失敗したら理由を返す (消したつもりを作らない)', async () => {
+    clearTokenThrows = new Error('keychain locked');
+    const r = (await invoke('secrets:clear', 'github')) as { ok: boolean; message: string };
+    expect(r).toEqual({ ok: false, message: 'keychain locked' });
+  });
+
   it('secrets:clear は正しい id なら消す', async () => {
     expect(await invoke('secrets:clear', 'github')).toEqual({ ok: true });
     expect(clearTokenCalls).toEqual(['github']);
@@ -278,12 +291,33 @@ describe('secrets:set / secrets:clear — サービス id の検査', () => {
 
 describe('fetch:snapshot — 取得の入口', () => {
   it('知らないサービス id は断る', async () => {
+    // 文言まで見る。id の番人を外しても `Object.hasOwn` が拾って同じ code を
+    // 返すので、code だけでは番人が消えたことに気付けない。
     for (const id of ['nope', '__proto__', 'constructor', undefined, 42]) {
-      const r = (await invoke('fetch:snapshot', id)) as { ok: boolean; code: string };
-      expect(r.ok).toBe(false);
-      expect(r.code).toBe('not_implemented');
+      expect(await invoke('fetch:snapshot', id)).toEqual({
+        ok: false,
+        code: 'not_implemented',
+        message: 'unknown service id',
+      });
     }
     expect(fetcherCalls).toEqual([]);
+  });
+
+  it('fetcher が投げても reject しない', async () => {
+    const { LIVE_FETCHERS } = (await import('../clients')) as unknown as {
+      LIVE_FETCHERS: Record<string, unknown>;
+    };
+    const original = LIVE_FETCHERS.github;
+    LIVE_FETCHERS.github = async () => {
+      throw new Error('upstream exploded');
+    };
+    try {
+      const r = (await invoke('fetch:snapshot', 'github')) as { ok: boolean; code: string };
+      expect(r.ok).toBe(false);
+      expect(r.code).toBe('fetch_failed');
+    } finally {
+      LIVE_FETCHERS.github = original;
+    }
   });
 
   it('取得できたら data を返す', async () => {
@@ -314,8 +348,11 @@ describe('fetch:snapshot — 取得の入口', () => {
 
 describe('action:invoke — 書き込み側の入口', () => {
   it('知らないサービス id を断る', async () => {
-    const r = (await invoke('action:invoke', '__proto__', 'create-issue', {})) as { code: string };
-    expect(r.code).toBe('action_not_found');
+    expect(await invoke('action:invoke', '__proto__', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'action_not_found',
+      message: 'unknown service id',
+    });
     expect(actionCalls).toEqual([]);
   });
 
@@ -323,19 +360,24 @@ describe('action:invoke — 書き込み側の入口', () => {
     // `actions['toString']` は Object.prototype 経由で関数が取れてしまう。
     // `Object.hasOwn` を通していないと、ここで任意の組み込み関数を呼べる。
     for (const name of ['__proto__', 'constructor', 'toString', 'valueOf', 'hasOwnProperty']) {
-      const r = (await invoke('action:invoke', 'github', name, {})) as { code: string };
-      expect(r.code).toBe('action_not_found');
+      expect(await invoke('action:invoke', 'github', name, {})).toEqual({
+        ok: false,
+        code: 'action_not_found',
+        message: `github に action "${name}" は登録されていません`,
+      });
     }
     expect(actionCalls).toEqual([]);
   });
 
   it('action 名の形を検査する (空・長すぎ・文字列でない)', async () => {
+    // 形の断りは「登録されていません」とは別の文言。ここを混ぜると、
+    // 形の検査を外しても未登録側が拾って同じ code になり、気付けない。
     for (const name of ['', 'a'.repeat(65), undefined, null, 42, {}]) {
-      const r = (await invoke('action:invoke', 'github', name, {})) as {
-        code: string;
-        message: string;
-      };
-      expect(r.code).toBe('action_not_found');
+      expect(await invoke('action:invoke', 'github', name, {})).toEqual({
+        ok: false,
+        code: 'action_not_found',
+        message: 'invalid action name',
+      });
     }
     expect(actionCalls).toEqual([]);
   });
@@ -362,16 +404,42 @@ describe('action:invoke — 書き込み側の入口', () => {
     }
   });
 
-  it('action が投げても reject しない', async () => {
+  it('資格情報の読み出しが投げても reject しない', async () => {
     validToken = new Error('boom');
-    const r = (await invoke('action:invoke', 'github', 'create-issue', {})) as { code: string };
-    expect(r.code).toBe('action_failed');
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'action_failed',
+      message: 'boom',
+    });
+  });
+
+  it('action 本体が投げても reject しない', async () => {
+    const { LIVE_ACTIONS } = (await import('../clients')) as unknown as {
+      LIVE_ACTIONS: Record<string, Record<string, unknown>>;
+    };
+    const original = LIVE_ACTIONS.github!['create-issue'];
+    LIVE_ACTIONS.github!['create-issue'] = async () => {
+      throw new Error('write exploded');
+    };
+    try {
+      const r = (await invoke('action:invoke', 'github', 'create-issue', {})) as {
+        ok: boolean;
+        code: string;
+      };
+      expect(r.ok).toBe(false);
+      expect(r.code).toBe('action_failed');
+    } finally {
+      LIVE_ACTIONS.github!['create-issue'] = original;
+    }
   });
 
   it('資格情報が無ければ action を呼ばない', async () => {
     validToken = { ok: false, reason: 'absent' };
-    const r = (await invoke('action:invoke', 'github', 'create-issue', {})) as { code: string };
-    expect(r.code).toBe('not_configured');
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: 'トークン未設定',
+    });
     expect(actionCalls).toEqual([]);
   });
 });
@@ -384,8 +452,12 @@ describe('oauth:isSupported / oauth:authorize', () => {
   });
 
   it('知らない id では認可を始めない', async () => {
-    const r = (await invoke('oauth:authorize', '__proto__')) as { code: string };
-    expect(r.code).toBe('not_supported');
+    expect(await invoke('oauth:authorize', '__proto__')).toEqual({
+      ok: false,
+      code: 'not_supported',
+      message: 'unknown service id',
+    });
+    expect(authorizeConfigs).toEqual([]);
   });
 
   it('クライアント ID の形が不正なら組み込みの値を使う (上書きしない)', async () => {
@@ -506,9 +578,11 @@ describe('secrets:set — 資格情報そのものの検査', () => {
 
 describe('fetch:snapshot — ローカルのサービス', () => {
   it('fetcher が登録されていないサービスは not_implemented', async () => {
-    const r = (await invoke('fetch:snapshot', 'slack')) as { ok: boolean; message: string };
-    expect(r.ok).toBe(false);
-    expect(r.message).toContain('ライブフェッチ未対応');
+    expect(await invoke('fetch:snapshot', 'slack')).toEqual({
+      ok: false,
+      code: 'not_implemented',
+      message: 'slack はライブフェッチ未対応',
+    });
   });
 
   it('ローカルのサービスは資格情報が無くても動く (空文字を渡す)', async () => {
@@ -598,6 +672,17 @@ describe('app:checkUpdate — 取得もインストールもしない', () => {
     }
   };
 
+  it('公開されているリリース情報だけを、定数の送り先から読む', async () => {
+    // 送り先が変数になると、応答を差し替えられて任意の URL を案内先にできる。
+    let seen: [string, RequestInit] | null = null;
+    await withFetch(async (...a: unknown[]) => {
+      seen = a as unknown as [string, RequestInit];
+      return { ok: true, json: async () => ({}) };
+    });
+    expect(seen![0]).toBe('https://api.github.com/repos/hiroto1977/-/releases/latest');
+    expect((seen![1].headers as Record<string, string>).accept).toBe('application/vnd.github+json');
+  });
+
   it('新しい版があれば伝える', async () => {
     const r = (await withFetch(async () => ({
       ok: true,
@@ -613,10 +698,16 @@ describe('app:checkUpdate — 取得もインストールもしない', () => {
     expect(r.status).toBe('unknown');
   });
 
-  it('応答が 2xx でなければ判定不能', async () => {
-    const r = (await withFetch(async () => ({ ok: false, json: async () => ({}) }))) as {
-      status: string;
-    };
+  it('応答が 2xx でなければ、本文が読めても信用しない', async () => {
+    // 本文だけ見て判断すると、502 のエラーページに紛れ込ませた JSON や
+    // 差し替えられた応答を「新しい版が出ています」として案内してしまう。
+    const r = (await withFetch(async () => ({
+      ok: false,
+      json: async () => ({
+        tag_name: 'v99.99.99',
+        html_url: 'https://github.com/hiroto1977/-/releases/tag/v99.99.99',
+      }),
+    }))) as { status: string };
     expect(r.status).toBe('unknown');
   });
 
