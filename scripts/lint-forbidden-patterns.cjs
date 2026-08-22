@@ -461,6 +461,47 @@ function isCommentLine(line) {
   return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
 }
 
+/**
+ * **例外が実際に効いている場所の台帳** (`規則名 :: パス`)。
+ *
+ * `allowFile` は規則に開けた穴である。他の台帳 (`lint:charset` の ALLOWLIST /
+ * `lint:network-targets` の REVIEWED / `lint:mutation-scope` の KNOWN_BROAD) は
+ * どれも双方向なのに、ここだけ片方向だった —— **規則が当たらなくなった後も
+ * 例外は残り続け、そのファイルだけ永久に規則の外に居られる**。
+ *
+ * 双方向にする:
+ *   - 台帳に無い場所で例外が効いた → 新しい穴。理由を書いて登録すること
+ *   - 台帳にあるのに効かなかった   → もう要らない穴。削除すること
+ *
+ * (2026-08-22 の実測で、当時の 23 件はすべて生きていた = 死んだ例外は無かった。
+ *  それを固定するための台帳であって、既知の負債の一覧ではない。)
+ */
+const KNOWN_SUPPRESSIONS = [
+  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs',
+  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts',
+  'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx',
+  'Ollama write-side endpoints in network code :: src/shared/ollama.ts',
+  'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts',
+  'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts',
+  'hardcoded Claude model id :: src/shared/ai/providers.ts',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts',
+  'new Function :: orchestration/knowledge-context.cjs',
+  'redactSecrets(x.slice(…)) — 切ってから伏せている :: src/shared/redact.ts',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/overflow-check.cjs',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/runtime-security-exp.cjs',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot-dashboard.cjs',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot.cjs',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/soak-test.cjs',
+  'shell.openExternal direct call outside main process :: src/main/main.ts',
+  'shell.openExternal direct call outside main process :: src/main/oauth.ts',
+  'window.open :: src/renderer/web-shim.ts',
+  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts',
+];
+
 function walk(dir, hit) {
   let entries;
   try {
@@ -552,6 +593,8 @@ function selfTest() {
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
   const violations = [];
+  /** 例外が実際に「鳴るはずの一致を握り潰した」場所。台帳と突き合わせる。 */
+  const suppressions = new Set();
   let filesScanned = 0;
 
   walk(path.join(REPO_ROOT, 'src'), scan);
@@ -574,7 +617,15 @@ function main() {
     }
     const lines = text.split('\n');
     for (const fp of FORBIDDEN_PATTERNS) {
-      if (fp.allowFile && fp.allowFile(rel)) continue;
+      if (fp.allowFile && fp.allowFile(rel)) {
+        // **握り潰した事実を記録する。** 例外は穴なので、要らなくなったら
+        // 閉じなければならない。記録しないと「もう鳴らない規則に対する
+        // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
+        if (lines.some((l) => (fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l)))) {
+          suppressions.add(`${fp.name} :: ${rel}`);
+        }
+        continue;
+      }
       for (let i = 0; i < lines.length; i++) {
         if (fp.codeOnly && isCommentLine(lines[i])) continue;
         if (fp.pattern.test(lines[i])) {
@@ -593,10 +644,24 @@ function main() {
   console.log(
     `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns`,
   );
-  if (violations.length === 0) {
-    console.log('✅ no forbidden patterns found');
+  const known = new Set(KNOWN_SUPPRESSIONS);
+  const added = [...suppressions].filter((x) => !known.has(x)).sort();
+  const gone = [...known].filter((x) => !suppressions.has(x)).sort();
+  if (added.length > 0) {
+    console.error(`\n❌ 台帳に無い例外が ${added.length} 件効いています (新しい穴):\n`);
+    for (const x of added) console.error(`  ${x}`);
+    console.error('\n  なぜ安全かを添えて KNOWN_SUPPRESSIONS に登録してください。');
+  }
+  if (gone.length > 0) {
+    console.error(`\n❌ 台帳にあるのに効いていない例外が ${gone.length} 件あります (要らない穴):\n`);
+    for (const x of gone) console.error(`  ${x}`);
+    console.error('\n  規則が当たらなくなっています。KNOWN_SUPPRESSIONS から削除してください。');
+  }
+  if (violations.length === 0 && added.length === 0 && gone.length === 0) {
+    console.log(`✅ no forbidden patterns found (例外 ${suppressions.size} 件はすべて台帳どおり)`);
     return 0;
   }
+  if (violations.length === 0) return 1;
   console.error(`❌ ${violations.length} violation(s):`);
   for (const v of violations) {
     console.error(`  ${v.file}:${v.line}  [${v.name}]`);
