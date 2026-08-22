@@ -199,6 +199,7 @@
     "src/shared/proxyEndpoint.ts",
     "src/shared/realEstateMetrics.ts",
     "src/shared/redact.ts",
+    "src/shared/safeFilename.ts",
     "src/shared/savingsPlanning.ts",
     "src/shared/scanTarget.ts",
     "src/shared/securityRange.ts",

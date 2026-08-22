@@ -11,6 +11,8 @@
 // remove / clear + 6 validation cases + 1 auto-eviction case + monotonic
 // ordering. Decorative error messages, default fallbacks, IDB error
 // strings are not differentiable.
+import { isSafeFilename } from '../../shared/safeFilename';
+
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
 const STORE = 'items';
@@ -114,9 +116,6 @@ function uuid(): string {
 // 正規表現は文字列以外を必ず落とすので、この前置きだけを変異させても
 // 結果は変わらない (長さ・記号の判定そのものは検査で固定してある)。
 // Stryker disable ConditionalExpression: typeof の前置きは後続の判定と重なる
-function isSafeFilename(s: unknown): s is string {
-  return typeof s === 'string' && s.length > 0 && s.length <= 256 && !/[\0\r\n/]/.test(s);
-}
 function isSafeMime(s: unknown): s is string {
   return typeof s === 'string' && s.length > 0 && s.length <= 128 && !/[\0\r\n]/.test(s);
 }

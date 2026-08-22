@@ -19,6 +19,8 @@ const DB_VERSION = 1;
 const STORE = 'kv';
 const HANDLE_KEY = 'fsa-directory-handle';
 
+import { isSafeFilename } from '../../shared/safeFilename';
+
 interface FsaWindow extends Window {
   showDirectoryPicker?: (options?: { mode?: 'read' | 'readwrite' }) => Promise<FileSystemDirectoryHandle>;
 }
@@ -141,30 +143,19 @@ export async function clearFolderHandle(): Promise<void> {
   db.close();
 }
 
-/**
- * 選んだフォルダの**外へ書かせない**ための門。
+/*
+ * ファイル名の検査は `shared/safeFilename.ts` に 1 つだけ置いた。
  *
- * `.` と `..` を明示的に落とすのは 2026-08-22 に足した。それまでは
- * セパレータ (`/` `\\`) しか見ておらず、`..` はこの関数を素通りして
- * `getFileHandle('..')` に届いていた (検査で確認)。
- *
- * 実害は無い —— File System Access の仕様は `getFileHandle` に `.` / `..` を
- * 渡すと TypeError にすると定めており、実ブラウザはそこで止める。だが
- * **この関数の名前と説明が主張しているのは封じ込め**であって、封じ込めの
- * 中心にある脱出記号を platform の善意に預けているのは筋が悪い。
- * 現にこのリポジトリの mock ハンドルは `..` をそのまま受け取っていたので、
- * 前提が崩れても検査は 1 件も落ちなかった。
+ * 2026-08-22 まで、ここと `library/library.ts` に**別々の規則で**書かれて
+ * いた —— library 側は `.` / `..` と `\` を通していた。危ないのは
+ * `web-shim.ts` の `saveToLibrary` が **1 つの filename を両方へ渡している**
+ * ことで、入口 (library) が出口 (ここ) より緩い状態は「新しい書き出し経路が
+ * 再検査を忘れた瞬間」に穴になる。厳しい側へ寄せて統合した。
  *
  * (渡ってくる名前はアプリが組み立てたもの (`service-hub-YYYYMMDD-HHMM.txt`
  *  など) で利用者入力ではないため、これは多層防御。)
- *
- * `..foo` / `foo..` / `...` は正当なファイル名なので**通す**。落とすのは
- * ちょうど `.` と `..` の 2 つだけ。
  */
-function isSafeFilename(s: string): boolean {
-  if (s === '.' || s === '..') return false;
-  return s.length > 0 && s.length <= 256 && !/[\0\r\n/\\]/.test(s);
-}
+
 
 /** handle 配下に blob を書き出す。permission チェック + atomic close は内部で実行。 */
 export async function writeBlobToFolder(

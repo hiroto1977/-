@@ -176,6 +176,32 @@ describe('Library.put — 受け付ける値の境界', () => {
     ).rejects.toThrow('filename が不正です');
   });
 
+  /*
+   * **2026-08-22 まで通していたもの。**
+   *
+   * ここの `isSafeFilename` は `fsa.ts` の同名関数と**別の規則**で書かれていて、
+   * `.` / `..` と `\` を通していた。`web-shim.ts` の `saveToLibrary` は
+   * 1 つの filename を `library.put()` と `writeBlobToFolder()` の両方へ渡すので、
+   * 同じ入力を並んで受け取る 2 つの番人が別の答えを出していたことになる。
+   * 実ファイルに触る側 (fsa) が厳しかったので外へは出なかったが、**入口が
+   * 出口より緩い**状態そのものを残さないよう、`shared/safeFilename.ts` へ
+   * 統合して厳しい側へ寄せた。
+   */
+  it.each(['.', '..', 'a\\b.txt', '..\\windows', '../etc/passwd'])(
+    'ディレクトリを指す名前・Windows の区切りも弾く (%j)',
+    async (bad) => {
+      await expect(lib().put('svc', bad, 'text/plain', blob())).rejects.toThrow(
+        'filename が不正です',
+      );
+    },
+  );
+
+  it('紛らわしいが正当な名前は通す (..foo / foo.. / ... / 隠しファイル)', async () => {
+    for (const ok of ['..foo', 'foo..', '...', '.gitignore']) {
+      await expect(lib().put('svc', ok, 'text/plain', blob())).resolves.toBeTruthy();
+    }
+  });
+
   it('MIME はちょうど 128 文字まで通し、129 と改行入りを弾く', async () => {
     const pad = (n: number) => 'a'.repeat(n);
     await expect(lib().put('svc', 'f.txt', pad(128), blob())).resolves.toBeTruthy();
