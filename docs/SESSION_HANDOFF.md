@@ -669,6 +669,34 @@ length** であって UTF-8 のバイト長ではない（`'あ'` は 1 文字 3
 （`ipcMain.handle` は Promise なので reject として renderer へ返る）。
 そこは try で囲んで既定の拒否へ倒す（多層防御）。
 
+### 0-a-13. `Stryker disable next-line` は間に何か入ると無言で外れる（2026-08-22）
+
+同じ 1 箇所で **2 回**間違えた。
+
+```ts
+// Stryker disable next-line StringLiteral
+//
+// 多層防御: …(説明が 7 行)…          ← 1 度目: 説明文を挟んだ
+let outcome: CallbackOutcome;
+try {
+  outcome = classifyCallback(req.url ?? '/', expectedState);
+```
+
+```ts
+// Stryker disable next-line StringLiteral
+try {                                  ← 2 度目: try の上に置いた
+  outcome = classifyCallback(req.url ?? '/', expectedState);
+```
+
+どちらも**変異体が再浮上して初めて気付いた**。外れても「無効化が減った」だけ
+なので `lint:mutation-scope`（広すぎる無効化の台帳）にも掛からない ——
+**緩む方向にしか壊れないのに、緩んだことを誰も報せない。**
+
+**規則**: `next-line` は対象**行**の直上に置く。説明はその上に書く。
+コードを囲む構文（`try {` など）を足したら、pragma も一緒に中へ入れる。
+そして変異検査は「score が閾値を超えたか」だけでなく **NoCoverage の件数**も見る
+——「抑制したつもり」と「本当に到達しない」は同じ表示になる。
+
 ### 0-b. 文字種の検査は範囲走査では完結しない
 
 キリル・ハングル・アラビア・タイは Unicode ブロックが分かれているので範囲で拾える。

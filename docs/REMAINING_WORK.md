@@ -1228,6 +1228,26 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
+### 音声コマンドは確認なしで実行されうるか → 今日は全部確認必須。閉包を機械で留めた
+
+`VoiceCommandBar` は `phase === 'parsed'`（確認不要）を **useEffect で自動承認**
+する。つまり `requiresConfirmation` が false を返した action は
+**発話 1 回でそのまま実行される**（マイクは利用者がボタンを押した後だけ聞く）。
+
+発話から生まれうる action は `ACTION_RULES` の 6 つ（create-issue / send-message /
+create-event / backup / record-entry / delete）で、6 つとも `CONFIRM_ACTIONS` に
+載っていた。**今日は穴が無い。**
+
+穴だったのは、その 2 つが**同じファイルの別々の手書きの表**で、何も結んで
+いなかったこと。7 つ目の動詞ルールを `action: 'archive'` のような穏やかな名前で
+足すと、`CONFIRM_ACTIONS` にも `DANGEROUS_STEMS`（delete/remove/send/pay/buy/
+purchase/publish/destroy/create）にも当たらず、**その瞬間に無確認実行へ倒れる**。
+
+`ACTION_RULES` から導出した `PARSEABLE_ACTIONS` を公開し、「発話から生まれうる
+action は 1 つ残らず確認必須」を検査にした（対照実験: `archive` を足すと落ちる）。
+`advise` のように確認不要な action が在ってよい設計は変えていない —— 縛るのは
+**発話から到達できるもの**だけ。
+
 ### Electron の危ない webPreferences を全部止められていたか → 3 つ抜けていた
 
 `lint:forbidden` は `nodeIntegration`(`InWorker` / `InSubFrames` 含む) /

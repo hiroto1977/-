@@ -547,12 +547,16 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     //   - `GET http://[` —— パーサは受けるが `new URL` が拒む request-target
     // 判定できない要求は「正規のコールバックではない」ので state 不一致と
     // 同じ扱い —— 400 を返しつつ待受は続け、本物が後から来れば解決する。
-    let outcome: CallbackOutcome;
     // Node's http.IncomingMessage.url is always populated by the parser
     // (even '/' for the empty path), so the `?? '/'` fallback is
     // unreachable; the StringLiteral '/' → '' mutant is equivalent.
-    // Stryker disable next-line StringLiteral
+    //
+    // pragma は**対象行の直上**に置くこと。この 1 箇所で 2 回間違えた ——
+    // 1 度目は説明文を挟んで、2 度目は `try {` の上に置いて。`next-line` は
+    // 「次の行」しか見ないので、間に何が入っても無言で外れる。
+    let outcome: CallbackOutcome;
     try {
+      // Stryker disable next-line StringLiteral
       outcome = classifyCallback(req.url ?? '/', expectedState);
     } catch {
       res.writeHead(400).end('bad request');

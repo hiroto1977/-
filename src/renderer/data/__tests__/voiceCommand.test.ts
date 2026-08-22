@@ -5,6 +5,7 @@ import {
   parseVoiceCommand,
   routeCommand,
   requiresConfirmation,
+  PARSEABLE_ACTIONS,
   disambiguate,
   isQuestion,
   type AvailableCapabilities,
@@ -579,6 +580,34 @@ describe('requiresConfirmation', () => {
 
   it('record-entry requires confirmation (writes data)', () => {
     expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'record-entry', confidence: 0.9 })).toBe(true);
+  });
+
+  /*
+   * **発話から生まれうる action は 1 つ残らず確認必須であること。**
+   *
+   * `VoiceCommandBar` は `phase === 'parsed'` (確認不要) を **useEffect で
+   * 自動承認**する。つまり `requiresConfirmation` が false を返した action は
+   * **発話 1 回でそのまま実行される**。上の 1 件ずつの検査は「この 6 つは
+   * true」を言っているだけで、**7 つ目が足されたことには気付けない**。
+   *
+   * 動詞ルール (`ACTION_RULES`) と確認名簿 (`CONFIRM_ACTIONS`) は同じファイルの
+   * 別々の表で、どちらも手で保たれている。載せ忘れは「確認なしで実行」側へ
+   * 倒れるので、閉包を機械で留める。
+   *
+   * `advise` のように確認不要な action が在ってよい設計は変えていない ——
+   * 縛るのは「**発話から到達できる**もの」だけ。
+   */
+  it('発話から生まれうる action は 1 つ残らず確認必須', () => {
+    const notConfirmed = PARSEABLE_ACTIONS.filter(
+      (action) => !requiresConfirmation({ kind: 'action', action, confidence: 1 }),
+    );
+    expect(notConfirmed, `確認なしで実行される action: ${JSON.stringify(notConfirmed)}`).toEqual([]);
+  });
+
+  it('その一覧が空でない (空なら上の検査は空虚に通る)', () => {
+    expect(PARSEABLE_ACTIONS.length).toBeGreaterThanOrEqual(6);
+    // 動詞ルールから導出しているので重複しない。
+    expect(new Set(PARSEABLE_ACTIONS).size).toBe(PARSEABLE_ACTIONS.length);
   });
 });
 

@@ -226,6 +226,21 @@ const ACTION_RULES: readonly ActionRule[] = [
 ];
 
 /**
+ * **発話から生まれうる action の全部。** `ACTION_RULES` から導出するので、
+ * 動詞ルールを足せばここも自動で増える (写経ではない)。
+ *
+ * これを公開しているのは `requiresConfirmation` との**閉包**を検査するため。
+ * 音声の実行経路は `VoiceCommandBar` が `phase === 'parsed'` を**自動承認**
+ * するので、確認を要さないと判定された action は **発話 1 回でそのまま実行される**。
+ * つまり「発話から生まれうる action」は 1 つ残らず確認必須でなければならない。
+ *
+ * 今日は 6 つとも `CONFIRM_ACTIONS` に載っているが、この 2 つは別々に手で
+ * 保たれている表なので、7 つ目の動詞ルールを足した人が名簿に載せ忘れると
+ * **その瞬間に無確認で実行される側へ倒れる**。機械で留める。
+ */
+export const PARSEABLE_ACTIONS: readonly string[] = ACTION_RULES.map((r) => r.action);
+
+/**
  * navigate を示す典型動詞 (正規化後)。これらが含まれれば「表示・移動」の意図。
  * query を示す疑問語 (正規化後)。
  */
