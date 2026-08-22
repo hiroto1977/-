@@ -159,6 +159,17 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
     return evaluateUpdate(current, null);
   }
 });
+/**
+ * `app:openExternal` が OS へ渡すことを許すスキーム。不変条件 #5 の本体。
+ *
+ * 名前を付けてあるのは、docs/ARCHITECTURE.md §8.1 の参照が**この定数を
+ * 目印にして固定される**ため。以前この行は `openExternal` という語で
+ * 参照していたが、同じ語がこのファイルに 3 回出るので `verify:arch` の
+ * 記号局所性検査 (±15 行) が効かず、参照が別の場所を指したまま緑だった
+ * (2026-08-22 の対照実験で判明)。
+ */
+const EXTERNAL_URL_SCHEMES: ReadonlySet<string> = new Set(['http:', 'https:']);
+
 ipcMain.handle('app:openExternal', async (_e, url: string) => {
   // Defense-in-depth: the renderer is sandboxed and contextIsolated,
   // but the IPC channel accepts any string. Restrict to http(s) to
@@ -172,7 +183,7 @@ ipcMain.handle('app:openExternal', async (_e, url: string) => {
   } catch {
     return;
   }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return;
+  if (!EXTERNAL_URL_SCHEMES.has(parsed.protocol)) return;
   await shell.openExternal(parsed.toString());
 });
 

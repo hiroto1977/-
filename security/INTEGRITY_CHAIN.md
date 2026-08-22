@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 43
+- ブロック数: 44
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `1c8edeabe6b441a0fb358c834a856024cdabd93750d6b81312e17cbe23203b30`
+- 末尾(tip)ハッシュ: `388b30e642f963d0c190b153902ac214a5e7809c20a357a9daa266901843311b`
 - 保護対象: 23 ファイル
 
 ## ブロック
@@ -56,6 +56,7 @@
 | 40 | `0d18f2dc0579e068` | `843f298c2066b991` | `9369eedc569a22e6` | update integrity-chain.cjs |
 | 41 | `0d9c1bf0c240e70f` | `9369eedc569a22e6` | `d2d21bf8d3f18fcb` | update release.yml,electron-builder.json,integrity-chain.cjs,main.ts,proxy.ts,redact.ts |
 | 42 | `66b23fe88ac77099` | `d2d21bf8d3f18fcb` | `1c8edeabe6b441a0` | update ci.yml |
+| 43 | `2f0d929bbc594e96` | `1c8edeabe6b441a0` | `388b30e642f963d0` | update main.ts |
 
 ## 保護対象ファイル
 

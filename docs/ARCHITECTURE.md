@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 陰性対照つきゲート | 19 / 27 (残る 8 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 5 + `lint:repo-size`) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 332 | 自己検証 |
+| `file:line` 参照数 | 333 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2239,19 +2239,19 @@ classDiagram
 | # | 不変条件 | 回帰テスト / 検証箇所 |
 |---|---|---|
 | 1 | Renderer は Node API を直接呼ばない (必ず `window.serviceHub` 経由) | BrowserWindow 設定 (`src/main/main.ts:42-48`) |
-| 2 | Renderer に raw token は届かない (`secrets:list` は ID のみ) | `src/preload/preload.ts:26` |
+| 2 | Renderer に raw token は届かない (`secrets:list` は ID のみ) | `listConfigured` `src/preload/preload.ts:59` |
 | 3 | IPC で受けた serviceId は indexing 前に `isServiceId()` 検証 | **`lint:ipc-handlers`** (2026-08-22 追加。それまでの回帰テスト欄は `isServiceId` **自体**の検査 4 件で、各ハンドラが呼んでいるかは誰も見ていなかった) + `src/shared/__tests__/serviceId.test.ts` 4 件 |
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
-| 5 | 外部 URL は `app:openExternal` 経由のみ — http(s) 限定 | `src/main/main.ts:100-115` |
+| 5 | 外部 URL は `app:openExternal` 経由のみ — http(s) 限定 | `EXTERNAL_URL_SCHEMES` `src/main/main.ts:162` |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | **`lint:url-encoding`** (2026-08-22 新設。それまで機械検証は無く、各クライアントの個別テストだけだった) + `github.test.ts`, `wordpress.test.ts`, ... |
 | 7 | Ollama は `127.0.0.1:11434` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | `lint:forbidden` (24 パターン・自己検査つき)。§8.2 には最初から書いてあったのに、この欄だけ手作業の grep audit のままだった |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
-| 12 | OAuth callback の Host ヘッダは loopback のみ | `src/main/oauth.ts:196-201` |
-| 13 | secrets.json は ≤ 1 MB かつ plain object | `src/main/secrets.ts:14-39` |
-| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:100`) 両方に登録 | scaffold script |
+| 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:510-518` |
+| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
+| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
 | 15 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)
