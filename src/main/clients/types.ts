@@ -36,8 +36,8 @@ export class FetchError extends Error {
 // and the renderer's BYO-proxy). Imported for local use in `jsonFetch` and
 // re-exported so existing `import { redactSecrets } from './types'` callers
 // are unaffected.
-import { redactSecrets, redactForMessage } from '../../shared/redact';
-export { redactSecrets, redactForMessage };
+import { redactSecrets, redactForMessage, safeErrorMessage } from '../../shared/redact';
+export { redactSecrets, redactForMessage, safeErrorMessage };
 
 export async function jsonFetch<T>(
   url: string,

@@ -13,16 +13,9 @@ import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
-import { redactSecrets } from './clients/types';
+import { safeErrorMessage } from './clients/types';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
-
-/** All IPC handlers feed user-supplied strings as map keys. Use this
- *  before indexing to defeat prototype-pollution lookups like
- *  __proto__ / constructor. */
-function safeErrorMessage(err: unknown): string {
-  return redactSecrets(err instanceof Error ? err.message : String(err));
-}
 
 const isDev = !app.isPackaged;
 

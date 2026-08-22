@@ -52,7 +52,7 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { getVault } from './security/vault';
-import { redactForMessage } from '../shared/redact';
+import { redactForMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
@@ -233,8 +233,18 @@ function ok<T>(data: T): ActionResult<T> {
   return { ok: true, data };
 }
 
+/**
+ * 失敗の結果。**ここで最後にもう一度伏字を通す。**
+ *
+ * 応答本文を添える側 (`ensureOk` / `fetchViaProxy`) は既に
+ * `redactForMessage` を通しているので、今のところ二度手間である。それでも
+ * 置くのは、main 側の `safeErrorMessage` と同じ理由 — この関数は
+ * ブラウザ版の**全ての失敗**が通る 1 本の口で、新しく足された経路が伏字を
+ * 忘れても、ここで止まる。片側にしか関門が無い状態を残さない。
+ * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
+ */
 function err<T = never>(code: string, message: string): ActionResult<T> {
-  return { ok: false, code, message };
+  return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_LENGTH) };
 }
 
 interface ExportTemplatePayload {

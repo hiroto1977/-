@@ -148,3 +148,22 @@ export const REDACT_SCAN_LIMIT = 8192;
 export function redactForMessage(input: string, maxLength: number): string {
   return redactSecrets(input.slice(0, REDACT_SCAN_LIMIT)).slice(0, maxLength);
 }
+
+/** 利用者へ見せるエラー 1 行の上限。ここを超える説明は画面でも読めない。 */
+export const ERROR_MESSAGE_MAX_LENGTH = 2000;
+
+/**
+ * 例外を「利用者へ見せてよい 1 行」にする。**伏字を通した後**を返す。
+ *
+ * main 側 (`src/main/main.ts`) にだけ置いてあったが、ブラウザ版の
+ * `web-shim.ts` は main の役目をそのまま引き受けているのに、同じ関門が
+ * 無かった (2026-08-22)。個々の呼び出し元は本文を添えるとき
+ * `redactForMessage` を通しているので実際に漏れてはいなかったが、
+ * **最後にもう一度通す口が片側にしか無い**のは、新しい経路が足された
+ * ときに効いてくる非対称である。規則は 1 つだけ持つ。
+ *
+ * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
+ */
+export function safeErrorMessage(err: unknown): string {
+  return redactForMessage(err instanceof Error ? err.message : String(err), ERROR_MESSAGE_MAX_LENGTH);
+}
