@@ -56,10 +56,13 @@ async function loadPreload(): Promise<Surface> {
 }
 
 let opened: string[] = [];
+let openArgs: unknown[][] = [];
 beforeEach(() => {
   opened = [];
-  (window as unknown as { open: (u?: string) => void }).open = (u?: string) => {
-    if (typeof u === 'string') opened.push(u);
+  openArgs = [];
+  (window as unknown as { open: (...a: unknown[]) => void }).open = (...a: unknown[]) => {
+    openArgs.push(a);
+    if (typeof a[0] === 'string') opened.push(a[0]);
   };
 });
 
@@ -129,5 +132,79 @@ describe('openExternal — ブラウザ版でもスキームを絞る', () => {
       await openExternal(url);
     }
     expect(opened).toEqual([]);
+  });
+});
+
+describe('据え付けは preload を上書きしない', () => {
+  it('Electron 版 (preload が先に据え付け済み) では触らない', async () => {
+    // デスクトップ版では preload が **main プロセスと話す本物の橋** を先に
+    // 置いている。ここで上書きすると、資格情報が OS キーチェーンではなく
+    // ブラウザ版の Vault へ移り、`openPath` / `revealInFolder` / ループバックの
+    // OAuth も全部ブラウザ版の代用品へ静かに退化する。エラーは出ない。
+    const preloadBridge = { iAmThePreloadBridge: true };
+    (window as unknown as { serviceHub: unknown }).serviceHub = preloadBridge;
+    vi.resetModules();
+    await import('../web-shim');
+    expect((window as unknown as { serviceHub: unknown }).serviceHub).toBe(preloadBridge);
+  });
+
+  it('ブラウザ版 (誰も据え付けていない) では据え付ける', async () => {
+    delete (window as unknown as { serviceHub?: unknown }).serviceHub;
+    vi.resetModules();
+    await import('../web-shim');
+    const hub = (window as unknown as { serviceHub?: Surface }).serviceHub;
+    expect(hub).toBeDefined();
+    expect(typeof hub!.setToken).toBe('function');
+  });
+});
+
+describe('外部リンクの開き方', () => {
+  it('opener を渡さず、参照元も送らない', async () => {
+    // `noopener` が無いと、開いた先から `window.opener.location` でこちらを
+    // 別ページへ飛ばせる (reverse tabnabbing)。`noreferrer` が無いと、
+    // どの画面から来たかが相手に渡る。
+    const shim = await loadShim();
+    await (shim.openExternal as (u: string) => Promise<void>)('https://example.com/a');
+    expect(openArgs).toHaveLength(1);
+    const features = String(openArgs[0]![2]);
+    expect(features).toContain('noopener');
+    expect(features).toContain('noreferrer');
+  });
+
+  it('新しいタブで開く', async () => {
+    const shim = await loadShim();
+    await (shim.openExternal as (u: string) => Promise<void>)('https://example.com/a');
+    expect(openArgs[0]![1]).toBe('_blank');
+  });
+});
+
+describe('ブラウザ版で「できないこと」の答え方', () => {
+  it('版番号はブラウザ版であることが分かる形で返す', async () => {
+    const shim = await loadShim();
+    const v = await (shim.getVersion as () => Promise<string>)();
+    expect(v).toContain('web');
+  });
+
+  it('OAuth は非対応と答える (黙って false を返さない)', async () => {
+    // ブラウザ版にはループバックの受け口が無いので実行できない。
+    const shim = await loadShim();
+    expect(await (shim.oauthSupported as () => Promise<boolean>)()).toBe(false);
+    const r = (await (shim.authorize as () => Promise<{ ok: boolean; code: string }>)()) as {
+      ok: boolean;
+      code: string;
+    };
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('not_supported');
+  });
+
+  it('保管の状態は「暗号化されている」と、秘密を含まない形で答える', async () => {
+    const shim = await loadShim();
+    const p = (await (shim.storageProtection as () => Promise<Record<string, unknown>>)()) as {
+      encrypted: boolean;
+      plainCount: number;
+    };
+    // ブラウザ版は必ず WebCrypto の Vault を通すので、平文保管は存在しない。
+    expect(p.encrypted).toBe(true);
+    expect(p.plainCount).toBe(0);
   });
 });
