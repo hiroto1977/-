@@ -36,7 +36,21 @@ export const DEFAULT_OLLAMA_PORT = 11434;
  */
 export const DEFAULT_SETUP_MODEL = 'llama3.2:1b';
 
-/** 許可するループバックホスト。これ以外は base URL として受け付けない。 */
+/**
+ * 許可するループバックホスト。これ以外は base URL として受け付けない。
+ *
+ * **`shared/aiEndpoint.ts` の同名関数へ寄せないこと (意図的に厳しい)。**
+ * あちらは 127.0.0.0/8 全体・末尾ドット・`ip6-localhost`・展開形の `0:0:…:1`
+ * まで通す —— 「平文 http を許してよいローカル相手か」という広い問いに答える
+ * ためで、正しい。こちらは **Ollama の接続先として受け付ける先の許可リスト**
+ * で、Ollama の既定 bind は 127.0.0.1 なのでこの 4 つで足りる。
+ *
+ * `proxyEndpoint.ts` が「判定そのものを borrow して書き写さない」と書いている
+ * ので、素直に読むと 3 つとも統合すべきに見える。**が、統合は許可リストを
+ * 緩める方向にしか働かない。** 一貫性のために security の許可を広げるのは
+ * 逆で、違いが意図的であることを機械で留めてある
+ * (`shared/__tests__/loopbackChecks.test.ts`)。
+ */
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
 
 /** 呼んでよいパス。書き込み系は意図的に含めない。 */

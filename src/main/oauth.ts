@@ -431,6 +431,18 @@ export function safeStateEquals(a: string, b: string): boolean {
  *  ever listens on 127.0.0.1, but a DNS rebinding attack or a request
  *  reaching us via a different name could fool a naive callback handler.
  *  Accept only literal loopback hostnames. */
+/**
+ * **`shared/aiEndpoint.ts` の `isLoopbackHostname` へ寄せないこと (意図的に厳しい)。**
+ *
+ * あちらは 127.0.0.0/8 全体・末尾ドット・`ip6-localhost` まで通す ——
+ * 「平文 http を許してよいローカル相手か」という問いに答えるためで、正しい。
+ * こちらは **DNS リバインディングの番人**で、コールバック待受が実際に bind して
+ * いるのは `127.0.0.1` の 1 本だけ。正規のコールバックが名乗る Host は
+ * `127.0.0.1:<port>` か `localhost:<port>` しかないので、それ以外を通す理由が無い。
+ *
+ * 統合は許可を**広げる方向にしか働かない**。違いが意図的であることは
+ * `shared/__tests__/loopbackChecks.test.ts` が機械で留めている。
+ */
 export function isLoopbackHost(hostHeader: string | undefined): boolean {
   if (typeof hostHeader !== 'string') return false;
   const lowered = hostHeader.toLowerCase();
