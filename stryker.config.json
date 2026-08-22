@@ -51,6 +51,7 @@
     "src/main/oauth.ts",
     "src/main/secrets.ts",
     "src/main/externalUrlGate.ts",
+    "src/shared/httpLimits.ts",
     "src/main/shellOpenGate.ts",
     "src/preload/preload.ts",
     "src/renderer/components/serviceActionMachine.ts",

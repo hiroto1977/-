@@ -83,6 +83,12 @@ const PROTECTED = [
   // 分離するまで同じ判断が main.ts に 2 つ手書きされており、片方だけしか
   // 固定されていなかった (許可表を締めても窓側の扉は古い規則のまま開いた)。
   'src/main/externalUrlGate.ts',
+  // 2026-08-22 に足した。外部からの応答に置く**打ち切りと上限**の判定本体。
+  // 保護対象の `network/proxy.ts` がここへ委譲しており (それまで proxy 側に
+  // しか無かった)、`clients/types.ts` の `jsonFetch` —— SaaS 74 本が通る口 ——
+  // もここを通る。上限を 10MiB から 10GiB へ書き換えるだけで、実装を 1 行も
+  // 触らずに応答サイズの守りが消える。
+  'src/shared/httpLimits.ts',
   'scripts/setup-linux.sh',
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',

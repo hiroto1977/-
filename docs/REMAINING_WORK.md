@@ -1765,13 +1765,28 @@ Stryker: `skills.ts` 121 killed / 0 survived / 0 no-cov。
 対照 4 種すべて鳴る: timeout を丸ごと外す / `signal` を fetch へ渡さない
 (timer だけ回す) / 打ち切りの理由を握り潰す / **プロキシが signal を捨てる形へ戻す**。
 
-#### 残した gap (意図的)
+#### 残していた gap → 塞いだ (同日)
 
-`jsonFetch` (全 SaaS クライアント) には timeout も応答サイズ上限も入れていない。
-宛先が `api.github.com` のような**固定の既知ホスト**で、利用者が差し替えられる
-`baseUrl` とは脅威の性質が違うため。ただし「TLS の相手なら固まらない」という
-保証は無いので、**残作業として明示しておく** —— やるなら `jsonFetch` 1 か所に
-入れれば 74 クライアント全部に効く。
+`jsonFetch` (SaaS 74 本すべてが通る口) に timeout も応答サイズ上限も無かった。
+判定を `src/shared/httpLimits.ts` に 1 つ置き、`proxy.ts` の写しもそこへ寄せた。
+
+- `DEFAULT_HTTP_TIMEOUT_MS = 30_000` (`clients/ollama.ts` に揃えた)
+- `MAX_HTTP_RESPONSE_BYTES = 10MiB` (`proxy.ts` が先に置いていた値)
+- 上限は **Content-Length の先手** + **byte 単位の本番の門**の二段。
+  ヘッダーは省略も詐称もできるので、先手だけでは守りにならない
+- `withTimeout` は**呼び出し側の signal を合成する** —— 自前の打ち切りを
+  足したせいで上位の打ち切りが効かなくなる形にはしない
+
+Stryker 100% (36 killed / 0 survived)。完全性チェーンの保護対象にも追加
+(上限を 10MiB → 10GiB に書き換えるだけで、実装を 1 行も触らずに守りが消えるため)。
+
+**副産物: 検査がコードではなくモックを見ていた例が 1 件出た。**
+`cursor.test.ts` の「本文が undefined でも落ちない」は、モックの `json()` が
+`undefined` を返すから通っていただけで、**本物の `Response` は本文が空だと
+`.json()` が `SyntaxError` で reject する** (実測)。production に一度も無い
+挙動を仕様として固定していた。期待を実態へ直した (いまはサービス名つきの
+読める失敗になる)。`shopify.ts` が「204 が返る口に `jsonFetch` は使えない」と
+既に書いていたので、bodyless 応答が通る経路が無いことも確認済み。
 
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 

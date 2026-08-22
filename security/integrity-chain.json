@@ -32,6 +32,7 @@
     "src/shared/aiEndpoint.ts",
     "src/shared/controlChars.ts",
     "src/shared/cryptoParams.ts",
+    "src/shared/httpLimits.ts",
     "src/shared/proxyEndpoint.ts",
     "src/shared/redact.ts",
     "src/shared/tokenInput.ts",
@@ -517,6 +518,14 @@
       "leafCount": 34,
       "note": "update proxy.ts",
       "hash": "dcad7f795f03c5e2e6722dc590af743f1d43133da3bb538fe7e8f90dac7f72f7"
+    },
+    {
+      "index": 60,
+      "prevHash": "dcad7f795f03c5e2e6722dc590af743f1d43133da3bb538fe7e8f90dac7f72f7",
+      "merkleRoot": "e4126e4eac6d8fdcc4b0daba74b6d7e2ab4e64a263690f8feec0b73d13a005f3",
+      "leafCount": 35,
+      "note": "update integrity-chain.cjs,proxy.ts,httpLimits.ts",
+      "hash": "eeac0f5276dd3c49230ff660a7d22ba529b54c18828a387cda64b3024679a112"
     }
   ],
   "tipManifest": {
@@ -526,7 +535,7 @@
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "ba13416be7ba6f9ddf5c0fba7822e937c54352330c70a9242b1c11b492c0fbe8",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
-    "scripts/integrity-chain.cjs": "685f8b214b694020bf8ce1fc3d934e1449e347e3113d306b060b445873201e46",
+    "scripts/integrity-chain.cjs": "14e304bc4a3ce4bd37f77fe7c3d7539ca0a1c1ed48cc0dcda7db3c33afc2350c",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
@@ -539,7 +548,7 @@
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
-    "src/renderer/network/proxy.ts": "6211770071cf02881c1fa2c758053393d8d6e37123ba83b5ed041e036c9f1999",
+    "src/renderer/network/proxy.ts": "dbca615b19e24ecc7ad6e8c96b10eb4c96d634473174fa1dbebf5bc711c386e3",
     "src/renderer/security/LockScreen.tsx": "3464f6c2b7cb088df493be46bdd38a35123faa80505ea309d40e9008a2ee2866",
     "src/renderer/security/autoLock.ts": "1236f02230da6266cf54da7e662cae9c3f338eab16c92f90f94f33283d8b8eb8",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
@@ -550,6 +559,7 @@
     "src/shared/aiEndpoint.ts": "bf6db7a49eb2731b15f6ffc40b0b973068d6860226e9f2422c96c067a7dedeb0",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "fd68954c1be30280b89ba4e99e270515b44a7b27ff199f8efd891d20876e21c7",
+    "src/shared/httpLimits.ts": "733f7e2fc152661d6bc777e662b8ac1ece6f731156f31a868bf12cf00620d262",
     "src/shared/proxyEndpoint.ts": "1bb5bf73ca41bd73770a16531740ae0738e1cacdb21945c517adefe9aa4091c7",
     "src/shared/redact.ts": "5f1cee2072e74eb5d3ff1eb0bdff63143a796302cfb734807d632321f0ceaca4",
     "src/shared/tokenInput.ts": "f6d58a447a515abb4ddddb3b68d96aeed6a543cffd76a200e22c9077452b35be",

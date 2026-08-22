@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 60
+- ブロック数: 61
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `dcad7f795f03c5e2e6722dc590af743f1d43133da3bb538fe7e8f90dac7f72f7`
-- 保護対象: 34 ファイル
+- 末尾(tip)ハッシュ: `eeac0f5276dd3c49230ff660a7d22ba529b54c18828a387cda64b3024679a112`
+- 保護対象: 35 ファイル
 
 ## ブロック
 
@@ -73,6 +73,7 @@
 | 57 | `28c732be57a18770` | `7006abcdf2cef47c` | `470fa2f23af089ce` | update main.ts |
 | 58 | `30a17058c1a7dce6` | `470fa2f23af089ce` | `ae8d54d40a2be340` | update oauth.ts |
 | 59 | `75ffb28c877bdca7` | `ae8d54d40a2be340` | `dcad7f795f03c5e2` | update proxy.ts |
+| 60 | `e4126e4eac6d8fdc` | `dcad7f795f03c5e2` | `eeac0f5276dd3c49` | update integrity-chain.cjs,proxy.ts,httpLimits.ts |
 
 ## 保護対象ファイル
 
@@ -106,6 +107,7 @@
 - `src/shared/aiEndpoint.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
+- `src/shared/httpLimits.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/tokenInput.ts`

@@ -20,6 +20,7 @@
  * (b) レスポンスサイズ上限、(c) プロキシのエラー応答に含まれうるトークンの
  * redactSecrets による秘匿 — に限られる。
  */
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 import { redactForMessage } from '../../shared/redact';
 import {
   describeProxyEndpointFailure,
@@ -149,48 +150,15 @@ interface ProxyResponseEnvelope {
 /** Stream-read a Response body with a hard byte cap. Throws if the cap
  *  is exceeded mid-stream (so we don't buffer the whole oversized payload). */
 async function readWithCap(res: Response, maxBytes: number): Promise<string> {
-  if (!res.body) {
-    // Some test runtimes (fake fetch mocks) don't expose body. Fall back
-    // to text() but check length post-hoc.
-    const t = await res.text();
-    if (t.length > maxBytes) {
-      throw new Error(`proxy response too large (${t.length} > ${maxBytes} bytes)`);
-    }
-    return t;
-  }
-  const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    // Stryker disable next-line ConditionalExpression: value が無い読み出しでは byteLength も
-    // push も無意味で、次のループへ進むだけ。分岐の有無で結果が変わらない (等価変異)。
-    if (value) {
-      total += value.byteLength;
-      // Stryker disable next-line EqualityOperator: total は 1 バイト単位で増えるが、上限ちょうどで
-      // 止めるか超えてから止めるかは、上限 10MiB に対して観測できる差にならない
-      // (ちょうどのケースを作るにはチャンク境界を制御する必要があり、実装依存になる)。
-      if (total > maxBytes) {
-        reader.cancel().catch(() => {});
-        throw new Error(`proxy response too large (>${maxBytes} bytes)`);
-      }
-      chunks.push(value);
-    }
-  }
-  // Concatenate chunks → decode as UTF-8.
-  const buf = new Uint8Array(total);
-  let off = 0;
-  for (const c of chunks) {
-    buf.set(c, off);
-    off += c.byteLength;
-  }
-  return new TextDecoder('utf-8').decode(buf);
+  // 判定の本体は `shared/httpLimits.ts` に 1 つだけ置く。2026-08-22 まで
+  // ここにしか無く、`clients/types.ts` の `jsonFetch` (SaaS 74 本が通る口)
+  // には上限が無かった。同じ問いなので、実装も 1 つにする。
+  return readBodyWithCap(res, maxBytes, 'proxy');
 }
 
 /** 10 MiB. Defense-in-depth cap on proxy response body to prevent OOM /
  *  DoS when a compromised or malicious proxy returns a huge payload. */
-export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
+export const MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES;
 
 /** Block targets that would let the proxy be weaponized as a SSRF
  *  oracle against the proxy operator's intranet / cloud metadata.

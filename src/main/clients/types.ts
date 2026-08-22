@@ -36,23 +36,74 @@ export class FetchError extends Error {
 // and the renderer's BYO-proxy). Imported for local use in `jsonFetch` and
 // re-exported so existing `import { redactSecrets } from './types'` callers
 // are unaffected.
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  declaredLengthExceeds,
+  readBodyWithCap,
+  withTimeout,
+} from '../../shared/httpLimits';
 import { redactSecrets, redactForMessage, safeErrorMessage } from '../../shared/redact';
 export { redactSecrets, redactForMessage, safeErrorMessage };
 
+/**
+ * 全 SaaS クライアントが通る 1 本の口。**打ち切りと応答サイズの上限もここ。**
+ *
+ * 2026-08-22 まではどちらも無く、応答しない相手では `await` が返らず
+ * (画面は「読込中…」のまま)、巨大な応答はそのままメモリに載っていた。
+ * 74 クライアントが同じ関数を通るので、ここ 1 か所で全部に効く ——
+ * 裏を返せば、1 か所抜けていたので全部抜けていた。
+ *
+ * 相手は TLS 検証済みの既知ホストが大半だが、守るのは攻撃より**事故**である。
+ * 障害中のサービスが接続だけ受けて応答しない、プロキシが巨大なエラーページを
+ * 返す —— どちらも利用者から見た症状は同じになる。
+ */
 export async function jsonFetch<T>(
   url: string,
   init: RequestInit,
-  ctx: { fetch?: FetchFn; serviceId: string },
+  ctx: { fetch?: FetchFn; serviceId: string; timeoutMs?: number; maxBytes?: number },
 ): Promise<T> {
   const f = ctx.fetch ?? fetch;
-  const res = await f(url, init);
+  const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
+  const res = await withTimeout(
+    ctx.timeoutMs ?? DEFAULT_HTTP_TIMEOUT_MS,
+    init.signal,
+    async (signal) => {
+      try {
+        return await f(url, { ...init, signal });
+      } catch (e) {
+        if (signal.aborted) {
+          throw new FetchError(`${ctx.serviceId} が時間内に応答しませんでした`, 0, ctx.serviceId);
+        }
+        throw e;
+      }
+    },
+  );
+
+  // 宣言された長さが上限を超えていれば、本文を読む前に落とす (先手の門)。
+  const declared = declaredLengthExceeds(res, maxBytes);
+  if (declared !== null) {
+    throw new FetchError(
+      `${ctx.serviceId} response too large (${declared} > ${maxBytes} bytes)`,
+      res.status,
+      ctx.serviceId,
+    );
+  }
+
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
+    const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
     throw new FetchError(
       `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
       res.status,
       ctx.serviceId,
     );
   }
-  return (await res.json()) as T;
+
+  const text = await readBodyWithCap(res, maxBytes, ctx.serviceId);
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    throw new FetchError(`${ctx.serviceId} の応答が JSON ではありません`, res.status, ctx.serviceId);
+  }
 }
