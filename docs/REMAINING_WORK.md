@@ -1228,6 +1228,19 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
+### 同期 throw が主プロセスを落とす場所は他にあるか → 1 箇所だけで、直した
+
+`uncaughtException` になりうるのは **`http.createServer` の listener の中の
+同期 throw** で、`src/main/` 全体でその形は OAuth コールバック待受の 1 箇所だけ
+だった（`ipcMain.handle` は戻り値が Promise なので、throw は reject として
+renderer へ返る）。そこは try で囲んで 400（非終端）へ倒した。
+
+**`process.on('uncaughtException')` は敢えて置いていない。** 置けばこの種の
+事故は「落ちない」ようになるが、同時に **本来落ちるべき壊れ方を黙らせる**。
+この repo は `LIVE_FETCHERS` の起動時不変条件のように「壊れていたら起動時に
+大声で落とす」方針で通しているので、握り潰す受け皿を全体に敷くのは方針と
+逆向きになる。入口を 1 つずつ塞ぐ方を採った。
+
 ### 表の添字を「所属判定」に使っている場所を洗った → 5 件直した
 
 `in` は `lint:forbidden` #27 で止めたが、**`const x = TABLE[k]; if (!x) …`** は

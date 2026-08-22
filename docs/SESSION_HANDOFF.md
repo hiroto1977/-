@@ -647,6 +647,28 @@ it('許した拡張子はすべて通る', () => {
 走るか**を確認する。走らないなら、判定だけを CI で走る側（vitest ゲート）へ
 移す。ファイルを読んで突き合わせるだけの検査は、たいてい移せる。
 
+### 0-a-12. 「等しくない」を**例外**で答える API がある（2026-08-22）
+
+`crypto.timingSafeEqual` は長さが違うと `false` ではなく **RangeError を投げる**。
+呼ぶ側は `a.length !== b.length` で早期 return していたが、それは **JS の
+length** であって UTF-8 のバイト長ではない（`'あ'` は 1 文字 3 バイト）。
+
+    safeStateEquals('a'.repeat(42) + 'あ', 'a'.repeat(43))
+      → RangeError: Input buffers must have the same byte length
+
+これが `http.createServer` の listener の中で起きると **`uncaughtException`**
+になり、受け手が無ければ主プロセスごと落ちる（実測：応答も返らない）。
+
+**規則**: 比較・検証の API を使うときは「不一致のとき何を返すか」ではなく
+**「どういう入力で投げるか」**を先に読む。そして早期 return が守っている
+前提（長さ・型・範囲）が、投げる条件と**同じ単位**で書かれているかを見る。
+ここは「文字数」で守って「バイト数」で投げられていた。
+
+あわせて、**同期 throw が `uncaughtException` になる場所**を数え上げること。
+この repo では `http.createServer` の listener 1 箇所だけだった
+（`ipcMain.handle` は Promise なので reject として renderer へ返る）。
+そこは try で囲んで既定の拒否へ倒す（多層防御）。
+
 ### 0-b. 文字種の検査は範囲走査では完結しない
 
 キリル・ハングル・アラビア・タイは Unicode ブロックが分かれているので範囲で拾える。
