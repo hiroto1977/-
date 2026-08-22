@@ -63,6 +63,58 @@ function handlerFiles() {
 }
 
 /**
+ * `src/main/clients` 配下の全 `.ts` を返す (action ハンドラの置き場)。
+ */
+function clientFiles() {
+  const dir = path.join(MAIN_DIR, 'clients');
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!e.isFile() || !/\.ts$/.test(e.name)) continue;
+    const full = path.join(dir, e.name);
+    out.push({ file: path.relative(REPO_ROOT, full), text: fs.readFileSync(full, 'utf8') });
+  }
+  return out.sort((a, b) => a.file.localeCompare(b.file));
+}
+
+/** `ctx.payload` から書き出し先パスを取り出している形。 */
+const TAKES_PAYLOAD_PATH = [
+  // const { path: customPath, … } = ctx.payload as ExportPayload;
+  /\{[^}]*\bpath\b[^}]*\}\s*=\s*ctx\.payload/,
+  // (ctx.payload as X).path / ctx.payload.path
+  /ctx\.payload[^;\n]*\)?\.path\b/,
+];
+
+/**
+ * **不変条件 #4: レンダラーが渡してきた書き出し先は、必ず関門を通す。**
+ *
+ * `isSafeExportPath` (`clients/exportPaths.ts`) は「$HOME 配下」「拡張子一致」
+ * 「制御文字なし」「長さ上限」をまとめて見る唯一の関門で、書き出し系 4 サービス
+ * (business / stocks / templates / teamradar) の 6 経路が全部ここを通っている
+ * ——「今日は」。この 2 つを結んでいるものは何も無く、**新しい書き出し action を
+ * 別のクライアントに足した人が呼び忘れれば、その瞬間に $HOME 配下の任意の場所へ
+ * 書けるようになる** (`shell.openPath` の関門と対になる、書き込み側の入口)。
+ *
+ * 判定はファイル単位 —— `ctx.payload` から `path` を取り出しているファイルは
+ * `isSafeExportPath` を参照していること。「import はしたが 1 箇所で呼び忘れた」
+ * までは見ない (行単位の粗い判定という他ゲートと同じ方針)。狙いは
+ * **関門の存在を知らずに新しい経路を生やすこと**を止めることにある。
+ *
+ * @param files `[{ file, text }]` — 自己検査から合成入力を渡せるようにしてある
+ * @returns 問題の説明の配列 (空なら健全)
+ */
+function exportPathProblems(files) {
+  const problems = [];
+  for (const f of files) {
+    if (!TAKES_PAYLOAD_PATH.some((re) => re.test(f.text))) continue;
+    if (f.text.includes('isSafeExportPath')) continue;
+    problems.push(
+      `${f.file}: ctx.payload から書き出し先 path を受けているのに isSafeExportPath を通していません`,
+    );
+  }
+  return problems;
+}
+
+/**
  * `ipcMain.handle('channel', …)` を順に切り出す。
  * 本体の終わりは次の登録か末尾。入れ子の括弧を数えないのは、判定に使うのが
  * 「`try` より前に `await` があるか」だけで、範囲が多少広くても
@@ -193,7 +245,50 @@ function selfTest() {
       1,
     ],
   ];
+
+  // 不変条件 #4 (payload の書き出し先)。ファイル単位なので別の入力で回す。
+  const exportCases = [
+    [
+      '分割代入で path を受けるのに関門が無い',
+      [{ file: 'a.ts', text: 'const { path: p, x } = ctx.payload as E;\nawait write(p);' }],
+      1,
+    ],
+    [
+      '関門を通していれば通る',
+      [{ file: 'a.ts', text: 'const { path: p } = ctx.payload as E;\nif (!isSafeExportPath(p, home, ".svg")) throw 0;' }],
+      0,
+    ],
+    [
+      '直接プロパティで受ける形も見る',
+      [{ file: 'a.ts', text: 'const p = (ctx.payload as E).path;\nawait write(p);' }],
+      1,
+    ],
+    [
+      'path を受けないファイルは対象外',
+      [{ file: 'a.ts', text: 'const { title } = ctx.payload as E;\nawait write(title);' }],
+      0,
+    ],
+    [
+      '「path」を含む別名は拾わない (customPath だけでは鳴らない)',
+      [{ file: 'a.ts', text: 'const { customPath } = ctx.payload as E;\nawait write(customPath);' }],
+      0,
+    ],
+    [
+      '複数ファイルのうち 1 つだけ違反',
+      [
+        { file: 'ok.ts', text: 'const { path: p } = ctx.payload as E;\nisSafeExportPath(p, h, ".md");' },
+        { file: 'bad.ts', text: 'const { path: p } = ctx.payload as E;\nawait write(p);' },
+      ],
+      1,
+    ],
+  ];
   let failed = 0;
+  for (const [label, input, want] of exportCases) {
+    const got = exportPathProblems(input).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
   for (const [label, input, want] of cases) {
     const got = evaluateHandlers(input).length;
     const ok = got === want;
@@ -220,10 +315,16 @@ function main(argv) {
   for (const f of files) {
     for (const h of handlerBodies(f.text)) handlers.push({ ...h, file: f.file });
   }
-  const problems = evaluateHandlers(handlers);
+  const clients = clientFiles();
+  const guarded = clients.filter((f) => TAKES_PAYLOAD_PATH.some((re) => re.test(f.text)));
+  const problems = [...evaluateHandlers(handlers), ...exportPathProblems(clients)];
   console.log(
     `IPC ハンドラ ${handlers.length} 件を検査しました`
       + ` (${files.length} ファイル: ${files.map((f) => f.file).join(', ')})`,
+  );
+  console.log(
+    `書き出し先を payload で受けるクライアント ${guarded.length} 件`
+      + ` (${clients.length} 件中): ${guarded.map((f) => path.basename(f.file)).join(', ')}`,
   );
 
   if (problems.length > 0) {
@@ -233,12 +334,13 @@ function main(argv) {
   }
   console.log(
     '✅ すべてのハンドラは失敗を戻り値で表し (try の外で await しない)、'
-      + 'serviceId を添字に使う前に isServiceId() で検証しています',
+      + 'serviceId を添字に使う前に isServiceId() で検証し、'
+      + 'payload の書き出し先は isSafeExportPath を通しています',
   );
   return 0;
 }
 
-module.exports = { evaluateHandlers, handlerBodies };
+module.exports = { evaluateHandlers, handlerBodies, exportPathProblems };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
