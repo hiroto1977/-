@@ -57,6 +57,12 @@ const PROTECTED = [
   // 保護対象に漏れていたのに気付いたのは 2026-08-18 — 同じファイルが
   // 変異検査の対象一覧からも漏れていた。
   'src/main/clients/exportPaths.ts',
+  // 書き出し側 (exportPaths.ts) の対になる、**開く側**の唯一の関門。
+  // `shell.openPath` は OS の「開く」動詞をそのまま使うので、Windows では
+  // 拡張子の関連付け次第でそのまま実行される。ここがゆるむと、乗っ取られた
+  // レンダラーがホーム配下の任意のファイルを起動できる。
+  // 2026-08-22 まで main.ts の中の非公開関数で、テストも変異検査も無かった。
+  'src/main/shellOpenGate.ts',
   'scripts/setup-linux.sh',
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 35
+- ブロック数: 36
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `1eb9072d4f475921159113c4e1de9f84328cad23a991d204802274b057a08496`
-- 保護対象: 17 ファイル
+- 末尾(tip)ハッシュ: `e97c30f8c6151afd718968a610c7abfb7ba96b950a4ce38f544d0f7716922428`
+- 保護対象: 18 ファイル
 
 ## ブロック
 
@@ -48,6 +48,7 @@
 | 32 | `ceb0799db6e8f70e` | `7a725e72993ad0cf` | `7eaa2e78100f46cd` | update ci.yml |
 | 33 | `2a2cf1d61abda165` | `7eaa2e78100f46cd` | `d46240e2bd50fb94` | update ci.yml |
 | 34 | `ee23eb5407d80b3b` | `d46240e2bd50fb94` | `1eb9072d4f475921` | update secrets.ts |
+| 35 | `b4420d6031d3bd33` | `1eb9072d4f475921` | `e97c30f8c6151afd` | update integrity-chain.cjs,shellOpenGate.ts |
 
 ## 保護対象ファイル
 
@@ -61,6 +62,7 @@
 - `src/main/clients/exportPaths.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
+- `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.ts`

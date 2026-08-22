@@ -14,7 +14,7 @@ import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { redactSecrets } from './clients/types';
-import { exportRoot } from './clients/exportPaths';
+import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
 /** All IPC handlers feed user-supplied strings as map keys. Use this
@@ -157,37 +157,8 @@ ipcMain.handle('app:openExternal', async (_e, url: string) => {
   await shell.openExternal(parsed.toString());
 });
 
-/**
- * Gate for the two shell handlers below. The renderer may only ever point them
- * at a file it just produced via an export action, so we require exactly that:
- * inside `~/.local/business-hub/`, with a non-executable extension.
- *
- * Before the 2026-07 audit both handlers accepted **any** path under `$HOME`.
- * `shell.openPath` uses the OS "open" verb, so on Windows that was a code-
- * execution primitive: a compromised renderer could call
- * `openPath('C:\\Users\\me\\Downloads\\installer.exe')` and the shell would run
- * it with no prompt. Confining to the export root plus an extension allowlist
- * removes the primitive; no UI ever passed anything else, so nothing is lost.
- *
- * `realpath` runs first because `path.resolve` is purely lexical — a symlink
- * planted inside the export dir would otherwise redirect the open outside it.
- */
-const SHELL_OPEN_EXTS = new Set(['.html', '.md', '.svg', '.png', '.pdf', '.json', '.csv', '.txt']);
-
-async function shellTargetOrNull(filePath: unknown): Promise<string | null> {
-  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return null;
-  if (/[\0\r\n]/.test(filePath)) return null;
-  const nodePath = require('node:path') as typeof import('node:path');
-  const nodeFs = require('node:fs/promises') as typeof import('node:fs/promises');
-  const resolved = nodePath.resolve(filePath);
-  // Follow symlinks before the containment check; a missing file keeps the
-  // lexical path so a not-yet-created export still fails closed on the checks.
-  const real = await nodeFs.realpath(resolved).catch(() => resolved);
-  if (!real.startsWith(exportRoot() + nodePath.sep)) return null;
-  if (!SHELL_OPEN_EXTS.has(nodePath.extname(real).toLowerCase())) return null;
-  return real;
-}
-
+// 開く側の関門は `shellOpenGate.ts` に 1 つだけ置く (書き出し側の
+// `exportPaths.ts` と対になる)。ここに直接書いていた頃はテストが一本も無かった。
 const REJECTED_PATH_MESSAGE =
   '指定されたパスは開けません。書き出し先の外にあるか、対応していない拡張子です。';
 
