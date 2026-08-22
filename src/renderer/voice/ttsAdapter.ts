@@ -88,21 +88,20 @@ export function splitIntoUtterances(text: string, maxLen = 120): string[] {
     .filter((x) => x.length > 0);
   const out: string[] = [];
   for (const p of parts) {
-    if (p.length <= maxLen) {
-      out.push(p);
-    } else {
-      // 長すぎる文は読点で分割し、それでも長ければ強制分割。
-      let buf = '';
-      for (const seg of p.split(/(?<=[、，])/)) {
-        if ((buf + seg).length > maxLen && buf) {
-          out.push(buf.trim());
-          buf = seg;
-        } else {
-          buf += seg;
-        }
+    // 以前はここに `p.length <= maxLen` の速道があったが、**結果を変えて
+    // いなかった** — maxLen 以下なら下のループは一度も押し出さず、最後に
+    // 同じ文字列を 1 つ積むだけになる (`parts` は既に trim 済み)。
+    // 分岐を残すと、どちらを通っても同じという枝が 1 つ増える。
+    let buf = '';
+    for (const seg of p.split(/(?<=[、，])/)) {
+      if ((buf + seg).length > maxLen && buf) {
+        out.push(buf.trim());
+        buf = seg;
+      } else {
+        buf += seg;
       }
-      if (buf.trim()) out.push(buf.trim());
     }
+    if (buf.trim()) out.push(buf.trim());
   }
   return out;
 }
@@ -154,7 +153,11 @@ export function pickBestJaVoice(voices: readonly VoiceLike[]): VoiceLike | null 
       best = v;
     }
   }
-  return bestScore === -Infinity ? null : best;
+  // `bestScore === -Infinity ? null : best` と書いていたが、`best` は
+  // `s > bestScore` を満たしたときにしか代入されない。日本語が 1 つも
+  // 無ければ最初の -Infinity を超えられず null のままなので、判定は
+  // 結果を変えていなかった (確かめようのない枝が 1 つ増えるだけ)。
+  return best;
 }
 
 // ---------------------------------------------------------------------------
@@ -207,8 +210,13 @@ export function speak(text: string, opts: SpeakOptions = {}, win?: TtsWindow): b
     const lang = opts.lang ?? 'ja-JP';
     const rate = opts.rate ?? 0.98;
     const pitch = opts.pitch ?? 1.0;
+    // `prepared` は上の番人で非空が保証されているので、`splitIntoUtterances`
+    // は必ず 1 件以上返す (空白だけの断片は捨てるが、全部が空白なら
+    // `prepared` 自体が空になって上で弾かれている)。以前ここには
+    // `chunks.length > 0 ? chunks : [prepared]` という予備があったが、
+    // **予備側へ入る入力が存在しない**ので落とした。
     const chunks = splitIntoUtterances(prepared);
-    for (const chunk of chunks.length > 0 ? chunks : [prepared]) {
+    for (const chunk of chunks) {
       const u = new Utter(chunk);
       u.lang = lang;
       u.rate = rate;
@@ -225,6 +233,11 @@ export function speak(text: string, opts: SpeakOptions = {}, win?: TtsWindow): b
 /** 進行中の読み上げを止める。 */
 export function cancelSpeech(win?: TtsWindow): void {
   const w = resolveWindow(win);
+  // Stryker disable next-line ConditionalExpression: 等価変異。この番人を外しても
+  // 観測できる差が無い — `speechSynthesis` が無い窓で `.cancel()` を呼ぶと
+  // TypeError になるが、**すぐ下の try/catch が飲み込む**ので呼び出し側からは
+  // 同じに見える。番人を残すのは、例外を投げてから握り潰すより、そもそも
+  // 呼ばないほうが意図が読めるため。
   if (w && w.speechSynthesis) {
     try {
       w.speechSynthesis.cancel();
