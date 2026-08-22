@@ -53,6 +53,67 @@ const EXCLUDE_PATTERNS = [
 ];
 
 const FORBIDDEN_PATTERNS = [
+  // --- Electron の隔離を解く設定 -------------------------------------------
+  // 2026-08-22 の点検で見つけた抜け: **CLAUDE.md は「lint:forbidden が
+  // nodeIntegration: true / contextIsolation: false を弾く」と 2 か所で
+  // 宣言しているのに、その規則がここに無かった。** 実装より説明が先を
+  // 行っていた形で、CLAUDE.md は Claude Code セッションへの指示書でもあるため、
+  // 「ゲートが守ってくれる」と信じたまま書き換えられる余地があった。
+  //
+  // どれも 1 語で隔離を解く。解けば、レンダラーの任意コードが Node API に
+  // 届く = XSS が即座に RCE になる。`main.ts` の webPreferences は
+  // `mainWindow.test.ts` が実物を見て固定しているが、**別の場所で新しい
+  // BrowserWindow を作られたら**そちらは見ていない。ここで字面ごと止める。
+  {
+    name: 'nodeIntegration: true (レンダラーへ Node API を通す)',
+    pattern: /\bnodeIntegration(?:InWorker|InSubFrames)?\s*:\s*true\b/,
+    codeOnly: true,
+    rationale:
+      'レンダラーは sandbox 前提。Node が要るものは preload の bridge を広げること ' +
+      '(src/preload/preload.ts)。CLAUDE.md の「Conventions」も同じことを言っている',
+  },
+  {
+    name: 'contextIsolation: false (preload とページの世界を混ぜる)',
+    pattern: /\bcontextIsolation\s*:\s*false\b/,
+    codeOnly: true,
+    rationale:
+      'これを外すと、ページ側の JS が preload のオブジェクトを直に書き換えられる ' +
+      '(bridge の関数を差し替えて資格情報を横取りできる)',
+  },
+  {
+    name: 'sandbox: false (レンダラープロセスの OS サンドボックスを外す)',
+    pattern: /\bsandbox\s*:\s*false\b/,
+    codeOnly: true,
+    // 実機を起こす開発ツールの台帳。どれも `xvfb-run … --no-sandbox` で
+    // 起動する = OS サンドボックスは**起動フラグの時点で既に切れて**おり、
+    // webPreferences 側の `sandbox: false` はそれに揃えているだけ。
+    // いずれも出荷物には含まれない (package.json の exp:* / smoke)。
+    //
+    // **一覧で持つことに意味がある** — 新しく増やすときは、ここへ 1 行足す
+    // という明示的な操作が要る。正規表現を緩めて「scripts/ は全部許す」に
+    // すると、出荷する窓を作るスクリプトが混ざっても気付けない。
+    allowFile: (rel) =>
+      [
+        'scripts/overflow-check.cjs',
+        'scripts/runtime-security-exp.cjs',
+        'scripts/screenshot-dashboard.cjs',
+        'scripts/screenshot.cjs',
+        'scripts/soak-test.cjs',
+      ].includes(rel),
+    rationale: '出荷する窓では常に true。開発ツールだけが例外で、上の台帳へ明記すること',
+  },
+  {
+    name: 'webSecurity: false (同一オリジンポリシーを切る)',
+    pattern: /\bwebSecurity\s*:\s*false\b/,
+    codeOnly: true,
+    rationale: '切ると CSP も同一オリジンも効かず、ローカルファイル読み出しまで通る',
+  },
+  {
+    name: 'allowRunningInsecureContent: true (https のページに http を混ぜる)',
+    pattern: /\ballowRunningInsecureContent\s*:\s*true\b/,
+    codeOnly: true,
+    rationale: '混在コンテンツを許すと、経路上で差し替えられたスクリプトが走る',
+  },
   {
     name: 'dangerouslySetInnerHTML',
     pattern: /\bdangerouslySetInnerHTML\b/,
@@ -309,7 +370,45 @@ function walk(dir, hit) {
   }
 }
 
+/**
+ * 陰性対照 — **このゲートが本当に鳴るか**を毎回確かめる。
+ *
+ * 2026-08-22 時点で verify:all の 25 ゲートのうち self-test を持つのは 6 つ
+ * だけだった。鳴らないゲートは「常に緑を返す関門」と同じで、無いより悪い
+ * (守られていると信じさせるぶん)。まずは隔離を解く設定の 5 つから。
+ */
+function selfTest() {
+  const cases = [
+    ['nodeIntegration: true を弾く', 'webPreferences: { nodeIntegration: true },', 1],
+    ['nodeIntegrationInWorker も弾く', 'nodeIntegrationInWorker: true,', 1],
+    ['contextIsolation: false を弾く', 'contextIsolation: false,', 1],
+    ['sandbox: false を弾く', 'sandbox: false,', 1],
+    ['webSecurity: false を弾く', 'webSecurity: false,', 1],
+    ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
+    ['正しい設定は鳴らない', 'contextIsolation: true, nodeIntegration: false, sandbox: true,', 0],
+    ['コメント内の言及は鳴らない', '// nodeIntegration: true は使わないこと', 0],
+  ];
+  let bad = 0;
+  for (const [label, line, expected] of cases) {
+    let n = 0;
+    for (const fp of FORBIDDEN_PATTERNS) {
+      if (fp.codeOnly && isCommentLine(line)) continue;
+      if (fp.pattern.test(line)) n++;
+    }
+    const ok = n === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+  }
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
   const violations = [];
   let filesScanned = 0;
 

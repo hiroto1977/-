@@ -42,7 +42,7 @@
     "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
     "lint:charset": "node scripts/lint-charset.cjs",
     "lint:knowledge-refs": "node scripts/lint-knowledge-refs.cjs",
-    "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs",
+    "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs && node scripts/lint-forbidden-patterns.cjs --self-test",
     "lint:network-targets": "node scripts/lint-network-targets.cjs",
     "lint:imports": "node scripts/check-import-boundaries.cjs",
     "lint:shell": "node scripts/lint-shell.cjs",
