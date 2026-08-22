@@ -270,8 +270,30 @@ export function readDevEnv(cwd: string = process.cwd()): DevEnvSnapshot {
     pythonVersion: readFileOrNull(at('.python-version')),
     toolVersions: readFileOrNull(at('.tool-versions')),
     gitHead: readFileOrNull(at('.git/HEAD')),
+    /*
+     * `ref` は **`.git/HEAD` の中身**から来る (`parseGitHead` が
+     * `ref: refs/heads/main` の後半を切り出して渡す)。つまりディスク上の
+     * ファイルの内容がそのままパスの一部になる。封じ込めが無いと
+     *
+     *     ref: ../../../../../../etc/passwd
+     *
+     * と書かれた `.git/HEAD` を置くだけで cwd の外を読み、その 1 行目が
+     * コミット SHA として画面に出る (2026-08-22 の点検で発見)。
+     *
+     * 現状 `readDevEnv()` は引数なしでしか呼ばれず cwd はアプリ自身の作業
+     * ディレクトリなので、悪用には「アプリを起動した場所に細工した `.git` を
+     * 置く」ことが要る —— 遠隔から踏める経路ではない。それでも塞ぐのは、
+     * これが不変条件 #10 (パス走査を含む名前を使わない) そのものの形であり、
+     * 関門 1 つで済むため。
+     *
+     * 判定は `exportPaths.ts` と同じ形 —— 解決してから根の下かを見る
+     * (悪い入力を数え上げるのではなく、行き先で判定する)。
+     */
     resolveRef: (ref) => {
-      const raw = readFileOrNull(at(path.join('.git', ref)));
+      const gitDir = path.resolve(at('.git'));
+      const target = path.resolve(gitDir, ref);
+      if (!target.startsWith(gitDir + path.sep)) return null;
+      const raw = readFileOrNull(target);
       return raw === null ? null : raw.trim();
     },
     hasNodeModules: existsSafe(at('node_modules')),

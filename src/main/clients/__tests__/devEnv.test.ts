@@ -344,6 +344,65 @@ describe('readDevEnv — 実際のファイルから読む', () => {
     expect(snap.git).toEqual({ branch: 'missing', sha: '' });
   });
 
+  /*
+   * `ref` は **`.git/HEAD` の中身**から来る (`parseGitHead` が `ref: ` の後を
+   * そのまま渡す)。つまりディスク上のファイルの内容がパスの一部になる。
+   * 2026-08-22 まで封じ込めが無く、`ref: ../../../etc/passwd` と書いた HEAD を
+   * 置くだけで cwd の外を読み、その 1 行目が **コミット SHA として画面に出た**。
+   *
+   * `readDevEnv()` は引数なしでしか呼ばれず cwd はアプリ自身の作業ディレクトリ
+   * なので遠隔から踏める経路ではないが、不変条件 #10 (パス走査を含む名前を
+   * 使わない) そのものの形なので塞いだ。
+   */
+  it('ref が .git の外を指していたら読まない (パス走査)', async () => {
+    const secret = nodePath.join(dir, 'secret.txt');
+    await fsp.writeFile(secret, 'TOP-SECRET-VALUE\n');
+    // .git から見て 1 つ上 = 一時ディレクトリ直下の secret.txt
+    await write('.git/HEAD', 'ref: ../secret.txt\n');
+
+    const snap = readDevEnv(dir);
+    // 枝名はそのまま出る (表示のみ) が、**中身は読まない**。
+    expect(snap.git?.sha).toBe('');
+    expect(JSON.stringify(snap)).not.toContain('TOP-SECRET-VALUE');
+  });
+
+  /*
+   * 逃げ先は**必ず実在させる**。存在しないパス (`/etc/hostname` が無い環境など) を
+   * 使うと、封じ込めを外しても sha は空のままで、検査が「正しい理由で通っていない」
+   * 状態になる —— 最初に書いたときこれを踏み、対照実験で 1 件だけ落ちなかった。
+   */
+  it.each([
+    ['1 つ上へ抜ける', (d: string) => nodePath.join(d, 'escape.txt'), '../escape.txt'],
+    ['絶対パスで指す', (d: string) => nodePath.join(d, 'escape.txt'), '@ABS@'],
+    ['refs 配下から抜ける', (d: string) => nodePath.join(d, 'escape.txt'), 'refs/heads/../../../escape.txt'],
+  ])('%s も読まない', async (_label, target, ref) => {
+    const full = target(dir);
+    await fsp.writeFile(full, 'd'.repeat(40) + '\n');
+    await write('.git/HEAD', `ref: ${ref === '@ABS@' ? full : ref}\n`);
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.sha).toBe('');
+  });
+
+  it('前方一致する兄弟ディレクトリも .git の中とは見なさない', async () => {
+    // `<dir>/.git-evil/x` は `<dir>/.git` で始まるが別のディレクトリ。
+    await fsp.mkdir(nodePath.join(dir, '.git-evil'), { recursive: true });
+    await fsp.writeFile(nodePath.join(dir, '.git-evil', 'x'), 'b'.repeat(40) + '\n');
+    await write('.git/HEAD', 'ref: ../.git-evil/x\n');
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.sha).toBe('');
+  });
+
+  it('正当な入れ子の ref は今までどおり読める (絞りすぎていない)', async () => {
+    const sha = 'c'.repeat(40);
+    await write('.git/HEAD', 'ref: refs/heads/feature/deep/x\n');
+    await write('.git/refs/heads/feature/deep/x', `${sha}\n`);
+
+    const snap = readDevEnv(dir);
+    expect(snap.git).toEqual({ branch: 'feature/deep/x', sha });
+  });
+
   it('lockfile は npm / yarn / pnpm のどれでも認める', async () => {
     // 並び順も固定しておく (0=node_modules / 1=lockfile / 2=git)。
     const lockCheck = (snap: ReturnType<typeof readDevEnv>) => snap.readiness[1]!;
