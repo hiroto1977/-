@@ -1112,6 +1112,61 @@ Sentry / Datadog の Electron SDK を main / renderer 両方に組み込み、�
 
 ---
 
+## 疑って、外れた調査 (2026-08-22)
+
+同じ疑いを次の人が繰り返さないように、**探して無かったこと**も残す。
+
+### property fuzz の生成器は本当に敵対的な入力を作っているか → 作っていた
+
+不変条件 #4 / #8 / #10 / #11 は property fuzz (400〜700 試行) を回帰テストに
+挙げている。fast-check の `fc.string()` は既定で印字可能 ASCII しか作らない
+—— CR (0x0d) も LF (0x0a) も NUL も出ない。だから「CR/LF/NUL を拒否する」
+性質を `fc.string()` だけで確かめていたら、**拒否の経路は一度も通らない**。
+
+実際に読んだところ、4 つとも `fc.constantFrom(...)` で危険な文字/操作を
+**必ず混ぜてから**周りを乱数にしていた:
+
+```ts
+fc.constantFrom('\r', '\n', '\r\n', '\0'),           // isSafeHeaderValue
+fc.constantFrom('/', '\\', '\0', ' ', '\n', …),        // isSafeSkillName
+fc.constantFrom('pull','create','push','copy',…),      // isAllowedEndpoint
+```
+
+対照実験でも歯があることを確認した:
+- `isSafeHeaderValue` から `\r` を落とす → property.test.ts が落ちる
+- `isSafeSkillName` から `..` の判定を落とす → 同上
+
+**結論: この疑いは外れ。** 生成器の作りは正しい。
+
+### ブラウザ版の Vault 暗号に穴はあるか → 無かった
+
+`security/vault.ts` (813 行) はブラウザ版のマスターパスワード暗号で、
+このリポジトリで最も高い賭け金の場所。読んで確かめた点:
+
+- PBKDF2-SHA-256 600k / AES-GCM-256 / 鍵は `extractable: false`
+- **IV は暗号化のたびに `crypto.getRandomValues`** で作る (nonce 再利用なし)
+- リカバリー鍵の導出に版つきのドメイン分離 (`RECOVERY_DERIVATION_PREFIX_V1`)
+- **保存された反復回数を鵜呑みにしない** —— `assertKdfIterations` が
+  10 万〜400 万の範囲を強制する。IndexedDB を書ける相手が `iterations: 1` に
+  下げて総当りを容易にする「ダウングレード」は塞がっている
+- パスワードを設定する経路は 3 つ (`initialize` / `recoverWithMnemonic` /
+  レガシー移行) で、**最小 12 文字と上限 256 文字が両方の入口にある**。
+  `unlock` は最小長を再検査しない (既存の vault を締め出さないため) —— 正しい
+- 暗号パラメータは `shared/cryptoParams.ts` に集約済み。以前
+  `cloudBackup.ts` が反復回数を文字列 `'PBKDF2-SHA-256-600k'` に焼き込んで
+  いた問題も `kdfLabel()` を呼ぶ形に直っている
+
+**結論: この疑いは外れ。** 「同じ判断が 2 か所」も探したが、パスワード方針は
+入口ごとに正しく置かれていた。
+
+### `lint:forbidden` の allowFile に死んだ例外はあるか → 無かった
+
+例外を全部無効化して数えたら 23 件で、名指しされている 14 ファイルと
+突き合わせても死んだ例外は 0 件だった。ただし**片方向だと将来死ぬ**ので、
+双方向の台帳 (`KNOWN_SUPPRESSIONS`) にして固定した。
+
+---
+
 ## 優先順位の推奨
 
 「自分で使いたい」が目的なら:
