@@ -447,6 +447,33 @@ const FORBIDDEN_PATTERNS = [
       rel.startsWith('src/renderer/'),
     rationale: 'invariants #7-#8 — these endpoints are CVE prone',
   },
+  {
+    /*
+     * 表への所属判定に `in` を使う形。**`in` はプロトタイプ鎖まで辿る**ので、
+     * 表に無い 'constructor' / 'toString' / '__proto__' / 'valueOf' /
+     * 'hasOwnProperty' / 'isPrototypeOf' / 'propertyIsEnumerable' /
+     * 'toLocaleString' の 8 個が**すべて通る**。
+     *
+     * 2026-08-22 の走査で 2 件見つかった:
+     *   - `business.ts` の `isBusinessCategoryId` —— IPC 境界で
+     *     `askBusinessAdvisor` の `categories` を絞る唯一の番人。8 個とも
+     *     通っていて、外部 API へ送るプロンプトに載っていた
+     *   - `screenshot.cjs` の smoke スタブ突き合わせ —— **不足を数える**検査
+     *     なので、見落とす側に倒れる
+     * 判断自体は `templates.ts` の `isTemplateId` に先に書いてあった
+     * (「`in` ではなく `Object.hasOwn` を使う」)。**1 か所に書いても隣は直らない**。
+     *
+     * 散文の "in" を避けるため、右辺が大文字定数 (この repo の表の命名) で、
+     * その直後が式の切れ目 `) ; , ?` か行末のときだけ当てる。
+     * `for (const k in TABLE)` は左辺の直前が `const`/`let`/`var` なので外す
+     * (`for...in` は列挙可能な自前の性質しか回さないため、この穴は無い)。
+     */
+    name: '表への所属判定に in を使っている',
+    pattern:
+      /(?:^|[^\w.$])(?<!\b(?:const|let|var)\s)(?:[A-Za-z_$][\w$.]*|'[^']*'|"[^"]*")\s+in\s+[A-Z][A-Z0-9_]{2,}\s*(?=[)\];,?]|$)/,
+    codeOnly: true,
+    rationale: 'プロトタイプ鎖まで拾う — Object.hasOwn か Set(...).has を使うこと',
+  },
 ];
 
 /**
@@ -570,6 +597,14 @@ function selfTest() {
     ['秘密鍵の直書きを弾く', '-----BEGIN RSA PRIVATE KEY-----', 1],
     ['正しい設定は鳴らない', 'contextIsolation: true, nodeIntegration: false, sandbox: true,', 0],
     ['コメント内の言及は鳴らない', '// nodeIntegration: true は使わないこと', 0],
+    ['表への in を弾く (型ガード)', "return typeof v === 'string' && v in CATEGORY_BY_ID;", 1],
+    ['表への in を弾く (否定)', 'const missing = list.filter((c) => !(c in STUBS));', 1],
+    ['表への in を弾く (三項)', 'const n = k in FIELD_LIMITS ? 1 : 2;', 1],
+    ['Object.hasOwn なら鳴らない', "return typeof v === 'string' && Object.hasOwn(CATEGORY_BY_ID, v);", 0],
+    ['for...in は鳴らない (自前の性質しか回らない)', 'for (const k in CATEGORY_BY_ID) out.push(k);', 0],
+    ['散文の in は鳴らない (文字列の末尾)', "throw new Error('not listed in AI_PROVIDER_IDS');", 0],
+    ['散文の in は鳴らない (後ろに語が続く)', "it('one entry per kind in FUNDING_KINDS order', () => {", 0],
+    ['散文の in は鳴らない (後ろが括弧)', "it('shipped in SUPPORT_RESOURCES (label)', () => {", 0],
   ];
   let bad = 0;
   for (const [label, line, expected] of cases) {

@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /*
@@ -147,6 +149,56 @@ describe('main のハンドラと噛み合っているか', () => {
   it('チャンネルは 1 対 1 (2 つの橋が同じ口を共有していない)', () => {
     const used = [...channelsUsedByBridge().values()];
     expect(new Set(used).size).toBe(used.length);
+  });
+});
+
+/*
+ * チャンネル名が書かれている **3 か所目** —— smoke (`npm run smoke`) の
+ * IPC スタブ表。
+ *
+ * screenshot.cjs は自分で「main.ts の一覧と突き合わせて、ズレたら落とす。
+ * 新しい IPC を足したらここも足すことが強制される」と書いていた。**強制されて
+ * いなかった**: この検査が動くのは xvfb + Electron が要る `npm run smoke` の中
+ * だけで、smoke は CI に無い。実際 `app:checkUpdate` は #749 で main.ts に
+ * 足されたきりスタブが無く、突き合わせは **その時点からずっと赤** だった
+ * (2026-08-22 に手で走らせて判明)。
+ *
+ * 「検査は書いてあるが、それが走る場所が CI に無い」という形なので、
+ * 判定を CI で走る側 (ここ) に持ってくる。両方読むだけなので Electron は要らない。
+ */
+describe('smoke の IPC スタブが main と噛み合っているか', () => {
+  /** screenshot.cjs の `const STUBS = { … };` からキーを抜く。 */
+  function smokeStubChannels(): Set<string> {
+    const src = readFileSync(
+      join(__dirname, '..', '..', '..', 'scripts', 'screenshot.cjs'),
+      'utf8',
+    );
+    const start = src.indexOf('const STUBS = {');
+    expect(start, 'screenshot.cjs に STUBS 表が見つからない').toBeGreaterThanOrEqual(0);
+    const end = src.indexOf('\n};', start);
+    expect(end, 'STUBS 表の終端が見つからない').toBeGreaterThan(start);
+    const block = src.slice(start, end);
+    return new Set(
+      [...block.matchAll(/^\s*'([^']+)':/gm)]
+        .map((m) => m[1])
+        .filter((k): k is string => k !== undefined),
+    );
+  }
+
+  // 空で通らないように床を置く (0 件なら以下の 2 本は空虚に通る)。
+  it('スタブを 1 つ以上抜き出せている', () => {
+    expect(smokeStubChannels().size).toBeGreaterThanOrEqual(10);
+  });
+
+  it('main が登録したチャンネルはすべて smoke にスタブがある', () => {
+    const stubs = smokeStubChannels();
+    const missing = [...registered].filter((ch) => !stubs.has(ch));
+    expect(missing, `smoke のスタブ不足: ${JSON.stringify(missing)}`).toEqual([]);
+  });
+
+  it('smoke のスタブに main が持たないチャンネルが無い (死んだスタブ)', () => {
+    const extra = [...smokeStubChannels()].filter((ch) => !registered.has(ch));
+    expect(extra, `main.ts に無いスタブ: ${JSON.stringify(extra)}`).toEqual([]);
   });
 });
 

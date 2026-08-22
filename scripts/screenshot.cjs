@@ -65,6 +65,9 @@ const STUBS = {
     code: 'action_not_found',
     message: `smoke test does not invoke ${id}/${action}`,
   }),
+  // smoke 中に GitHub の releases API を叩かせない (ネットワーク待ちで
+  // 撮影が遅れるうえ、応答内容で結果が揺れる)。判定不能に倒す。
+  'app:checkUpdate': () => ({ status: 'unknown', current: '0.1.0-smoke', latest: null, url: null }),
   'oauth:isSupported': () => false,
   'oauth:authorize': () => ({ ok: false, code: 'not_supported', message: 'smoke test' }),
 };
@@ -79,7 +82,9 @@ function mainProcessChannels() {
   return [...src.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)].map((m) => m[1]);
 }
 
-const missing = mainProcessChannels().filter((c) => !(c in STUBS));
+// `in` はプロトタイプ鎖まで辿るので、`toString` という名のチャンネルが
+// 「スタブ済み」に見える。ここは**不足を数える**検査なので、見落とす側に倒れる。
+const missing = mainProcessChannels().filter((c) => !Object.hasOwn(STUBS, c));
 const extra = Object.keys(STUBS).filter((c) => !mainProcessChannels().includes(c));
 if (missing.length > 0 || extra.length > 0) {
   console.error('smoke: IPC スタブが main.ts とズレています');

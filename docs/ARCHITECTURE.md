@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **9135** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **9139** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -2318,16 +2318,23 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース 57 ファイルを **13 個の禁止パターン** で scan:
-`dangerouslySetInnerHTML` / `eval(` / `new Function` /
-`setTimeout('…')`・`setInterval('…')` の文字列形 /
-`addEventListener('message', …)` / `.innerHTML =` / `document.write` /
+ランタイムソース **≥ 400 ファイル**を **27 個の禁止パターン** で scan し、
+1 件でも検出すれば fail。
+
+規則の一覧はここに写さず `FORBIDDEN_PATTERNS` (scripts/lint-forbidden-patterns.cjs)
+を唯一の出典とする —— **以前はここに 13 個を書き写していて、実体が 26 個に
+なっても誰も気づかなかった** (ファイル数も 57 のまま、実体は 466)。数だけは
+`verify:arch` が突き合わせるので、規則を足し引きすればここも直さざるを得ない。
+
+代表的なもの: `dangerouslySetInnerHTML` / `eval(` / `Function(` (`new` の有無を問わず) /
+`setTimeout('…')`・`setInterval('…')` の文字列形 / `.innerHTML`・`.outerHTML`・
+`insertAdjacentHTML` / `document.write` / `addEventListener('message', …)` /
 `shell.openExternal` (main / oauth 以外) / `window.open(` (web-shim.ts 以外) /
-`redactSecrets` を通さない `body.slice(` /
+`redactSecrets` を通さない `body.slice(` / RFC 2822 ヘッダ行の自前組み立て /
+Claude のモデル ID の直書き / 表への所属判定に `in` を使う形 /
 マークアップ用エスケープ・色・制御文字の判定の自前実装 (それぞれの共有モジュール以外) /
 `child_process exec|spawn` (scripts 以外) /
 `/api/(pull|create|push|copy|delete|blobs|upload)` (ollama.ts / renderer 以外)。
-1 件でも検出すれば fail。
 
 エスケープの再実装を禁じるのは、`src/shared/escape.ts` の冒頭が
 「アプリ全体で 1 つだけ持つ」と書いているのに、**2026-08 時点で写経が 3 つ

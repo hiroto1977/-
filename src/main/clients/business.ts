@@ -384,14 +384,19 @@ export function getCategoryDef(id: BusinessCategoryId): BusinessCategoryDef {
   return CATEGORY_BY_ID[id];
 }
 
-// `typeof value === 'string'` short-circuit is required for the `in`
-// operator below (`in` throws TypeError on non-objects but accepts strings
-// vacuously). 6 tests cover string/number/null/undefined/object/known —
-// Stryker mis-attributes per-test coverage. Block-form pragma covers the
-// return statement itself.
+// `in` ではなく `Object.hasOwn` を使う。`in` はプロトタイプ鎖まで辿るので、
+// 表に無い 'constructor' / 'toString' / '__proto__' 等が **8 個とも通っていた**
+// (2026-08-22 実測)。ここは `askBusinessAdvisor` の `categories` を IPC 境界で
+// 絞る唯一の番人で、抜けた名前は外部 API へ送るプロンプトに載り、しかも
+// `allowedSet` にどの事業も一致しないので KPI 0 件のまま助言させてしまう。
+// 同じ判断は `templates.ts` の `isTemplateId` に先に書いてあった。
+//
+// `typeof value === 'string'` は型述語のための絞り込みで、安全性には要らない
+// (`Object.hasOwn` は非文字列でも throw せず false を返す)。この等価変異と、
+// 6 本の負のケースに対する perTest の帰属ずれを併せて黙らせる。
 // Stryker disable ConditionalExpression
 export function isBusinessCategoryId(value: unknown): value is BusinessCategoryId {
-  return typeof value === 'string' && value in CATEGORY_BY_ID;
+  return typeof value === 'string' && Object.hasOwn(CATEGORY_BY_ID, value);
 }
 // Stryker restore ConditionalExpression
 

@@ -92,6 +92,30 @@ describe('getCategoryDef + isBusinessCategoryId', () => {
     expect(isBusinessCategoryId(undefined)).toBe(false);
     expect(isBusinessCategoryId({})).toBe(false);
   });
+
+  /*
+   * プロトタイプ側の名前を通さない。
+   *
+   * `value in CATEGORY_BY_ID` はプロトタイプ鎖まで辿るので、表に無い
+   * `'constructor'` / `'toString'` / `'__proto__'` が **8 個とも true** になる
+   * (2026-08-22 実測)。この関数は `askBusinessAdvisor` の `categories` を
+   * IPC 境界で絞る唯一の番人で、抜けたものは
+   *   - `businessAdvisorSystemPrompt` を通って外部 API へ送るプロンプトに載り、
+   *   - `allowedSet` にどの事業も一致しないので **KPI 0 件のまま助言させる**
+   * (「そのカテゴリはある」と言いながら中身が空、という食い違いが起きる)。
+   *
+   * 同じ形は `templates.ts` の `isTemplateId` で先に直してあり、そこには
+   * 「`in` ではなく `Object.hasOwn` を使う」と書いてあった。**判断を 1 か所に
+   * 書いても、隣は直らない** —— 走査したら型ガード 38 個のうちここだけが
+   * 残っていた。
+   */
+  it.each(['constructor', 'toString', '__proto__', 'valueOf', 'hasOwnProperty',
+    'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString'])(
+    'プロトタイプ側の名前 %s を id として通さない',
+    (name) => {
+      expect(isBusinessCategoryId(name)).toBe(false);
+    },
+  );
 });
 
 // --- computeCategoryKpi ----------------------------------------------

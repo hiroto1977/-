@@ -320,6 +320,45 @@ const METRICS = [
     },
   },
   {
+    /*
+     * 禁止パターンの数。
+     *
+     * ARCHITECTURE.md はここに **13 個を書き写していた** —— 実体が 26 個に
+     * なっても、走査対象が 57 → 466 ファイルに増えても、どちらも誰も直さな
+     * かった (2026-08-22 に判明)。写した一覧は消して出典へのポインタにし、
+     * 数だけをここで留める。**規則を足したら doc も直さざるを得ない**形。
+     */
+    name: 'forbidden pattern count',
+    docPattern: /\*\*(\d+) 個の禁止パターン\*\*/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-forbidden-patterns.cjs'));
+      if (src === null) return null;
+      const m = src.match(/const FORBIDDEN_PATTERNS = \[([\s\S]*?)\n\];/);
+      if (!m) return null;
+      // 各規則は `name:` をちょうど 1 つ持つ。self-test の表は配列の外なので入らない。
+      return countOccurrences(m[1], /^\s{4}name:/gm);
+    },
+  },
+  {
+    /*
+     * 走査対象のファイル数。正確な値は増え続けるので下限で留める
+     * (`tracked line count (floor)` と同じ扱い)。狙いは「走査範囲が
+     * 黙って縮んでいないこと」で、上限を当てることではない。
+     */
+    name: 'forbidden-pattern scan scope (floor)',
+    docPattern: /ランタイムソース \*\*≥ (\d+) ファイル\*\*/,
+    mode: 'gte',
+    compute: () => {
+      const { execSync } = require('node:child_process');
+      const out = execSync('node scripts/lint-forbidden-patterns.cjs', {
+        cwd: REPO_ROOT,
+        encoding: 'utf8',
+      });
+      const m = out.match(/Scanned (\d+) runtime source files/);
+      return m ? Number(m[1]) : null;
+    },
+  },
+  {
     name: 'service count',
     docPattern: /サービス数 \| (\d+) /,
     compute: () => {
