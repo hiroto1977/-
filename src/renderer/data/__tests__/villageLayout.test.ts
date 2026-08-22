@@ -495,3 +495,242 @@ describe('villageLayout — 座標の golden', () => {
     });
   });
 });
+
+
+/*
+ * 変異検査で残った箇所から起こした検査。
+ *
+ * 前の golden は「別の呼び出しと一致するか」で並び順を見ていた箇所があり、
+ * **両方が同じ変異体を通る**ので差が出なかった。ここでは期待する並びを
+ * 直に書く。グリッドの段数・セルの高さ・並び順の規則も、実際に段が 2 つ
+ * 以上できる形を作って固定する。
+ */
+describe('villageLayout — 並び順とグリッドの段', () => {
+  const V = (
+    id: string,
+    kind: string,
+    regionId = 'e1',
+    managerId?: string,
+  ): Villager => ({ id, name: id, kind, emoji: '🙂', regionId, managerId }) as Villager;
+
+  const rect: Rect = { x: 0, y: 0, w: 100, h: 100 };
+
+  /** x が小さい順に id を並べる (同じ x なら y の小さい順)。 */
+  const orderByPos = (m: Map<string, Point>): string[] =>
+    [...m.entries()]
+      .sort((a, b) => (a[1].x - b[1].x) || (a[1].y - b[1].y))
+      .map(([id]) => id);
+
+  it('秘書は id の昇順で左から並ぶ (期待する並びを直に書く)', () => {
+    const d = layoutDistrict(
+      [V('s3', 'secretary'), V('s1', 'secretary'), V('s2', 'secretary')],
+      rect,
+    );
+    expect(orderByPos(d)).toEqual(['s1', 's2', 's3']);
+    // 位置も等間隔 (n+1 で割る)。
+    expect(d.get('s1')!.x).toBeCloseTo(25, 6);
+    expect(d.get('s2')!.x).toBeCloseTo(50, 6);
+    expect(d.get('s3')!.x).toBeCloseTo(75, 6);
+  });
+
+  it('管理職も id の昇順でグリッドへ入る (左上から行優先)', () => {
+    // 3 人 → mCols = round(sqrt(3×94/80)) = round(1.88) = 2、mRows = 2。
+    // m1 = 左上 / m2 = 右上 / m3 = 左下 なので、**行優先**で読む。
+    const d = layoutDistrict([V('m3', 'manager'), V('m1', 'manager'), V('m2', 'manager')], rect);
+    const rowMajor = [...d.entries()]
+      .sort((a, b) => (a[1].y - b[1].y) || (a[1].x - b[1].x))
+      .map(([id]) => id);
+    expect(rowMajor).toEqual(['m1', 'm2', 'm3']);
+    // 左上と左下は同じ列、右上は別の列。
+    expect(d.get('m1')!.x).toBeCloseTo(d.get('m3')!.x, 6);
+    expect(d.get('m2')!.x).toBeGreaterThan(d.get('m1')!.x);
+    expect(d.get('m3')!.y).toBeGreaterThan(d.get('m1')!.y);
+  });
+
+  it('同じ id なら順序は変わらない (比較が 0 を返す)', () => {
+    const d = layoutDistrict([V('s1', 'secretary'), V('s1', 'secretary')], rect);
+    // 同じ id は同じ鍵なので 1 つに畳まれ、最後の位置が残る。
+    expect(d.size).toBe(1);
+  });
+
+  it('チームは id の昇順で管理職の下に並ぶ', () => {
+    const d = layoutDistrict(
+      [
+        V('m1', 'manager'),
+        V('t3', 'team', 'e1', 'm1'),
+        V('t1', 'team', 'e1', 'm1'),
+        V('t2', 'team', 'e1', 'm1'),
+      ],
+      rect,
+    );
+    const teams = [...d.entries()]
+      .filter(([id]) => id.startsWith('t'))
+      .sort((a, b) => (a[1].y - b[1].y) || (a[1].x - b[1].x))
+      .map(([id]) => id);
+    expect(teams).toEqual(['t1', 't2', 't3']);
+  });
+
+  it('管理職グリッドは 2 段以上になると段の高さで割る', () => {
+    // 管理職 5 人 → mCols = round(sqrt(5×94/80)) = round(2.42) = 2、mRows = 3。
+    // cellH = 80/3、m1 の y = 18 + (80/3)×0.14、m3 (2 段目) は 1 段ぶん下。
+    const mgrs = ['m1', 'm2', 'm3', 'm4', 'm5'].map((id) => V(id, 'manager'));
+    const d = layoutDistrict(mgrs, rect);
+    const cellH = 80 / 3;
+    expect(d.get('m1')!.y).toBeCloseTo(18 + cellH * 0.14, 6);
+    expect(d.get('m3')!.y).toBeCloseTo(18 + cellH * 1 + cellH * 0.14, 6);
+    expect(d.get('m5')!.y).toBeCloseTo(18 + cellH * 2 + cellH * 0.14, 6);
+    // 列は 2 本。m1/m3/m5 が左、m2/m4 が右。
+    expect(d.get('m1')!.x).toBeCloseTo(d.get('m3')!.x, 6);
+    expect(d.get('m2')!.x).toBeCloseTo(d.get('m4')!.x, 6);
+    expect(d.get('m1')!.x).toBeLessThan(d.get('m2')!.x);
+  });
+
+  it('チームのグリッドも 2 列以上になると列の幅で割る', () => {
+    // 横長のチーム矩形にすると cols > 1 になる。管理職 1 人・チーム 4 人。
+    const wide: Rect = { x: 0, y: 0, w: 1000, h: 100 };
+    const d = layoutDistrict(
+      [V('m1', 'manager'), ...['t1', 't2', 't3', 't4'].map((id) => V(id, 'team', 'e1', 'm1'))],
+      wide,
+    );
+    const xs = ['t1', 't2', 't3', 't4'].map((id) => d.get(id)!.x);
+    // 少なくとも 2 つの異なる列がある (1 列に潰れていない)。
+    expect(new Set(xs.map((x) => Math.round(x))).size).toBeGreaterThan(1);
+    // 横長なので 1 段に収まる。**段数の式が効くので y を実値で固定する** —
+    // 段の数を取り違えるとセルの高さが変わり、同じ「1 段」でも y がずれる。
+    //   content = {x: 30, y: 18, w: 940, h: 80}、管理職 1 人なので cellH = 80
+    //   チーム矩形 = {y: 18 + 80×0.3 = 42, h: 80×0.66 = 52.8}
+    //   4 人・1 段 → cellH = 52.8 → y = 42 + 26.4 = 68.4
+    for (const id of ['t1', 't2', 't3', 't4']) {
+      expect(d.get(id)!.y).toBeCloseTo(68.4, 6);
+    }
+  });
+
+  it('チームの居ない管理職があってもグリッドは崩れない', () => {
+    const d = layoutDistrict(
+      [V('m1', 'manager'), V('m2', 'manager'), V('t1', 'team', 'e1', 'm2')],
+      rect,
+    );
+    expect(d.get('m1')).toBeDefined();
+    expect(d.get('t1')!.x).toBeCloseTo(d.get('m2')!.x, 6);
+  });
+
+  it('チーム以外は managerId を持っていてもチームとして束ねない', () => {
+    // 秘書に管理職の id を付けても、秘書の帯 (高さの 12%) に居ること。
+    // 種別の判定が外れると、この秘書が管理職の下のクラスタへ流れ込む。
+    const d = layoutDistrict(
+      [V('m1', 'manager'), V('s1', 'secretary', 'e1', 'm1')],
+      rect,
+    );
+    expect(d.get('s1')!.y).toBeCloseTo(12, 6);
+    expect(d.get('s1')!.x).toBeCloseTo(50, 6);
+  });
+
+  it('managerId が空文字のチームは実在の管理職の下に入らない', () => {
+    // 実装は managerId 未設定を '' に寄せる。'' という id の管理職は居ない。
+    const d = layoutDistrict(
+      [V('m1', 'manager'), V('t0', 'team', 'e1', ''), V('t1', 'team', 'e1', 'm1')],
+      rect,
+    );
+    expect(d.has('t0')).toBe(false);
+    expect(d.has('t1')).toBe(true);
+  });
+});
+
+describe('computeHomePositions — 並び順の規則', () => {
+  const V = (
+    id: string,
+    kind: string,
+    regionId: string,
+  ): Villager => ({ id, name: id, kind, emoji: '🙂', regionId }) as Villager;
+
+  const CEO_ONLY = [{ id: 'ceo', kind: 'ceo' }] as unknown as VillageRegion[];
+
+  it('kind の順位が違えば kind で決まる (executive → manager → secretary → team)', () => {
+    const home = computeHomePositions(
+      [
+        V('z-team', 'team', 'ceo'),
+        V('a-secretary', 'secretary', 'ceo'),
+        V('z-manager', 'manager', 'ceo'),
+        V('z-executive', 'executive', 'ceo'),
+      ],
+      CEO_ONLY,
+    );
+    const order = [...home.entries()].sort((a, b) => a[1].x - b[1].x).map(([id]) => id);
+    // id の昇順なら a-secretary が先頭になるが、kind の順位が優先される。
+    expect(order).toEqual(['z-executive', 'z-manager', 'a-secretary', 'z-team']);
+  });
+
+  it('kind が同じなら id の昇順', () => {
+    const home = computeHomePositions(
+      [V('c', 'team', 'ceo'), V('a', 'team', 'ceo'), V('b', 'team', 'ceo')],
+      CEO_ONLY,
+    );
+    expect([...home.entries()].sort((x, y) => x[1].x - y[1].x).map(([id]) => id)).toEqual([
+      'a',
+      'b',
+      'c',
+    ]);
+  });
+
+  it('未知の kind は既知の kind より後ろ (順位 9 のフォールバック)', () => {
+    const home = computeHomePositions(
+      [V('a-unknown', 'no-such-kind', 'ceo'), V('z-team', 'team', 'ceo')],
+      CEO_ONLY,
+    );
+    // id では a-unknown が先だが、順位 9 なので後ろへ回る。
+    expect([...home.entries()].sort((x, y) => x[1].x - y[1].x).map(([id]) => id)).toEqual([
+      'z-team',
+      'a-unknown',
+    ]);
+  });
+
+  it('未知の kind どうしは id の昇順', () => {
+    const home = computeHomePositions(
+      [V('b', 'no-such-kind', 'ceo'), V('a', 'other-unknown', 'ceo')],
+      CEO_ONLY,
+    );
+    expect([...home.entries()].sort((x, y) => x[1].x - y[1].x).map(([id]) => id)).toEqual(['a', 'b']);
+  });
+});
+
+
+/*
+ * cos は偶関数なので、`tick*0.6 + index*1.3` の符号は**どちらか一方が 0 の
+ * 間は観測できない** — cos(0+1.3) と cos(0−1.3) は同じ値になる。
+ * 両方を 0 でない値にして初めて差が出る。
+ */
+describe('wanderOffset — 位相の合成', () => {
+  it('index と tick の両方が効いているとき、符号を取り違えると値が変わる', () => {
+    // y = cos(0.6 + 1.3) × 0.5 × 0.8 = cos(1.9) × 0.4
+    const got = wanderOffset(1, 1);
+    expect(got.y).toBeCloseTo(Math.cos(1.9) * 0.4, 12);
+    // 引き算に化けた場合の値 (cos(-0.7) = cos(0.7)) とは違う。
+    expect(got.y).not.toBeCloseTo(Math.cos(0.7) * 0.4, 6);
+  });
+
+  it('x 側も同様に両方を 0 でなくして固定する', () => {
+    // x = sin(0.8 + 1.7) × 0.5 = sin(2.5) × 0.5
+    const got = wanderOffset(1, 1);
+    expect(got.x).toBeCloseTo(Math.sin(2.5) * 0.5, 12);
+    expect(got.x).not.toBeCloseTo(Math.sin(-0.9) * 0.5, 6);
+  });
+});
+
+describe('computeHomePositions — 村人の居ない region', () => {
+  const CEO_EMPTY = [{ id: 'ceo', kind: 'ceo' }] as unknown as VillageRegion[];
+
+  it('村人が 1 人も居ない CEO region は何も置かない', () => {
+    // 空の一覧のフォールバックが「空でない配列」に化けると、
+    // 中身の無い要素を置こうとして undefined の鍵が生える。
+    const home = computeHomePositions([], CEO_EMPTY);
+    expect(home.size).toBe(0);
+    expect([...home.keys()]).toEqual([]);
+  });
+
+  it('村人の居ない役員街区も何も置かない', () => {
+    const home = computeHomePositions([], [
+      { id: 'e1', kind: 'exec' },
+    ] as unknown as VillageRegion[]);
+    expect(home.size).toBe(0);
+  });
+});

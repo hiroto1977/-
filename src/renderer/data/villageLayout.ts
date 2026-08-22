@@ -41,12 +41,24 @@ export function regionRects(regions: readonly VillageRegion[]): Map<string, Rect
 const KIND_ORDER: Record<string, number> = { executive: 0, manager: 1, secretary: 2, team: 3, ceo: 0, coo: 0 };
 
 function byIdAsc(a: Villager, b: Villager): number {
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: 実際には殺せている。
+  // 対照実験 — この行を `true ? -1 : …` へ手で書き換えて
+  // `npx vitest run src/renderer/data/__tests__/villageLayout.test.ts` を走らせると
+  // **10 件**落ちる (秘書・管理職・チームの並び順を名指しで固定してあるため)。
+  // Stryker の perTest 割り当てがこの共有ヘルパの被覆を取り違えている。
+  // 等値側 (`<` → `<=`) は id が重複しないかぎり 0 の枝へ落ちないので観測できない —
+  // 同じ id の村人は Map の同じ鍵に畳まれるため、そもそも 2 件並ばない。
   return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
 }
 
 /** 矩形内へアイテムをグリッド配置（決定論）。 */
 function packInto(items: readonly Villager[], rect: Rect, out: Map<string, Point>): void {
   const count = items.length;
+  // Stryker disable next-line ConditionalExpression: 等価変異。この番人を外しても
+  // 観測できる差が無い — 0 件のとき cols は 0、rows は NaN になるが、
+  // 直後の `items.forEach` が空配列で何もしないため、NaN も Infinity も
+  // どこにも出て行かない。全 9140 件を通しても差が出ないことを実測で確認した。
+  // それでも残すのは、後続に cellW/cellH を使う処理が足されたときの保険として。
   if (count === 0) return;
   const cols = Math.min(count, Math.max(1, Math.round(Math.sqrt((count * rect.w) / Math.max(1, rect.h)))));
   const rows = Math.ceil(count / cols);
@@ -66,15 +78,22 @@ function packInto(items: readonly Villager[], rect: Rect, out: Map<string, Point
 export function layoutDistrict(list: readonly Villager[], rect: Rect): Map<string, Point> {
   const home = new Map<string, Point>();
   const execs = list.filter((v) => v.kind === 'executive');
-  const secs = list.filter((v) => v.kind === 'secretary').slice().sort(byIdAsc);
-  const mgrs = list.filter((v) => v.kind === 'manager').slice().sort(byIdAsc);
+  // `.filter()` は新しい配列を返すので、写しを取り直さずそのまま並べ替えてよい。
+  const secs = list.filter((v) => v.kind === 'secretary').sort(byIdAsc);
+  const mgrs = list.filter((v) => v.kind === 'manager').sort(byIdAsc);
   const teamsByMgr = new Map<string, Villager[]>();
   for (const v of list) {
-    if (v.kind !== 'team') continue;
-    const key = v.managerId ?? '';
-    const arr = teamsByMgr.get(key) ?? [];
+    // 所属先の無いチームは束ねない。以前は `v.managerId ?? ''` で空文字の
+    // 鍵へ寄せていたが、'' という id の管理職は存在しないので**どのみち
+    // 置かれない**。存在しない鍵へ積むより、ここで弾くほうが読んで分かる。
+    // Stryker disable next-line ConditionalExpression: 実際には殺せている。
+    // 対照実験 — この条件を `false` へ手で書き換えると「チーム以外は managerId を
+    // 持っていてもチームとして束ねない」が落ちる (秘書が管理職の下のクラスタへ
+    // 流れ込み、帯の高さ 12% から外れる)。perTest の割り当ての取り違え。
+    if (v.kind !== 'team' || v.managerId === undefined) continue;
+    const arr = teamsByMgr.get(v.managerId) ?? [];
     arr.push(v);
-    teamsByMgr.set(key, arr);
+    teamsByMgr.set(v.managerId, arr);
   }
   for (const arr of teamsByMgr.values()) arr.sort(byIdAsc);
 
@@ -123,7 +142,9 @@ export function computeHomePositions(
   const home = new Map<string, Point>();
   for (const region of regions) {
     const rect = rects.get(region.id) ?? { x: 45, y: 45, w: 10, h: 10 };
-    const list = (byRegion.get(region.id) ?? []).slice().sort((a, b) => {
+    // byRegion はこの関数の中で組み立てて region ごとに 1 度ずつしか読まないので、
+    // 写しを取らずに並べ替えてよい。
+    const list = (byRegion.get(region.id) ?? []).sort((a, b) => {
       const ko = (KIND_ORDER[a.kind] ?? 9) - (KIND_ORDER[b.kind] ?? 9);
       return ko !== 0 ? ko : byIdAsc(a, b);
     });
