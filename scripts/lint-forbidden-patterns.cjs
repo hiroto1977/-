@@ -114,6 +114,42 @@ const FORBIDDEN_PATTERNS = [
     codeOnly: true,
     rationale: '混在コンテンツを許すと、経路上で差し替えられたスクリプトが走る',
   },
+  /*
+   * 2026-08-22 追加。上の 5 つで Electron の危ない webPreferences を止めて
+   * いるつもりだったが、**5 つでは足りていなかった**。実際の設定を読むと
+   * `webviewTag` は既定 false に依存しているだけで、明示的に禁じてはいない。
+   *
+   * とくに `webviewTag` が効く: `<webview>` は**レンダラー側から作れる**ので、
+   * main.ts が `win.webContents` に張った番人 (setWindowOpenHandler /
+   * will-navigate / will-redirect) の外側に、新しい webContents が生える。
+   * 窓に対して守りを固めても、窓の中から別の窓を生やされたら意味が無い。
+   *
+   * `nodeIntegrationInWorker` / `nodeIntegrationInSubFrames` は**既に上の
+   * `nodeIntegration` 規則が拾っている** (正規表現に含まれている) ——
+   * 別建てにしようとして自己検査が「2 件鳴る」と教えてくれた。二重に持つと
+   * 1 件の違反が 2 件に見えるので足さない。
+   *
+   * 現行の木では 3 つとも 0 件。0 件のうちに固定しておく (後から足す側は
+   * 「なぜ既定を変えるのか」をここで説明させられる)。
+   */
+  {
+    name: 'webviewTag: true (<webview> をレンダラーから作れるようにする)',
+    pattern: /\bwebviewTag\s*:\s*true\b/,
+    codeOnly: true,
+    rationale: 'main.ts の番人は win.webContents にしか張っていない — 別の webContents はその外',
+  },
+  {
+    name: 'experimentalFeatures: true (未成熟な Web 機能を有効化)',
+    pattern: /\bexperimentalFeatures\s*:\s*true\b/,
+    codeOnly: true,
+    rationale: '検証の浅い機能を増やす — 攻撃面を広げるだけで、この用途に要る機能は無い',
+  },
+  {
+    name: 'enableRemoteModule: true (remote モジュール)',
+    pattern: /\benableRemoteModule\s*:\s*true\b/,
+    codeOnly: true,
+    rationale: 'Electron 14 で削除済み。残っていれば古い危険な前提が持ち込まれた印',
+  },
   // --- 本物に見える資格情報の直書き -----------------------------------------
   // 2026-08-22 追加。出荷物 (dist/standalone.html) と src を実際に走査して
   // **1 件も無い**ことを確かめたうえで、その状態を固定する。
@@ -597,6 +633,10 @@ function selfTest() {
     ['秘密鍵の直書きを弾く', '-----BEGIN RSA PRIVATE KEY-----', 1],
     ['正しい設定は鳴らない', 'contextIsolation: true, nodeIntegration: false, sandbox: true,', 0],
     ['コメント内の言及は鳴らない', '// nodeIntegration: true は使わないこと', 0],
+    ['webviewTag: true を弾く', 'webPreferences: { webviewTag: true },', 1],
+    ['experimentalFeatures: true を弾く', 'experimentalFeatures: true,', 1],
+    ['enableRemoteModule: true を弾く', 'enableRemoteModule: true,', 1],
+    ['webviewTag: false は鳴らない', 'webPreferences: { webviewTag: false },', 0],
     ['表への in を弾く (型ガード)', "return typeof v === 'string' && v in CATEGORY_BY_ID;", 1],
     ['表への in を弾く (否定)', 'const missing = list.filter((c) => !(c in STUBS));', 1],
     ['表への in を弾く (三項)', 'const n = k in FIELD_LIMITS ? 1 : 2;', 1],

@@ -2318,7 +2318,7 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース **≥ 400 ファイル**を **27 個の禁止パターン** で scan し、
+ランタイムソース **≥ 400 ファイル**を **30 個の禁止パターン** で scan し、
 1 件でも検出すれば fail。
 
 規則の一覧はここに写さず `FORBIDDEN_PATTERNS` (scripts/lint-forbidden-patterns.cjs)
@@ -2326,7 +2326,10 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 なっても誰も気づかなかった** (ファイル数も 57 のまま、実体は 466)。数だけは
 `verify:arch` が突き合わせるので、規則を足し引きすればここも直さざるを得ない。
 
-代表的なもの: `dangerouslySetInnerHTML` / `eval(` / `Function(` (`new` の有無を問わず) /
+代表的なもの: `nodeIntegration`(`InWorker` / `InSubFrames` 含む) / `contextIsolation: false` /
+`sandbox: false` / `webSecurity: false` / `allowRunningInsecureContent: true` /
+`webviewTag: true` / `experimentalFeatures: true` / `enableRemoteModule: true` /
+`dangerouslySetInnerHTML` / `eval(` / `Function(` (`new` の有無を問わず) /
 `setTimeout('…')`・`setInterval('…')` の文字列形 / `.innerHTML`・`.outerHTML`・
 `insertAdjacentHTML` / `document.write` / `addEventListener('message', …)` /
 `shell.openExternal` (main / oauth 以外) / `window.open(` (web-shim.ts 以外) /

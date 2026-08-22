@@ -1228,6 +1228,30 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
+### Electron の危ない webPreferences を全部止められていたか → 3 つ抜けていた
+
+`lint:forbidden` は `nodeIntegration`(`InWorker` / `InSubFrames` 含む) /
+`contextIsolation: false` / `sandbox: false` / `webSecurity: false` /
+`allowRunningInsecureContent: true` を止めていたが、**5 つでは足りていなかった**。
+実際の `main.ts` を読むと `webviewTag` は Electron の既定 (false) に依存して
+いるだけで、明示的に禁じてはいなかった。
+
+とくに `webviewTag` が効く: `<webview>` は**レンダラー側から作れる**ので、
+main.ts が `win.webContents` に張った番人 (`setWindowOpenHandler` /
+`will-navigate` / `will-redirect`) の**外側**に新しい webContents が生える。
+窓を固めても、窓の中から別の窓を生やされたら意味が無い。
+
+`webviewTag: true` / `experimentalFeatures: true` / `enableRemoteModule: true`
+の 3 つを規則にした (現行の木では 3 つとも 0 件)。禁止パターンは 27 → 30。
+
+`nodeIntegrationInWorker` / `nodeIntegrationInSubFrames` も別建てにしようとして、
+**自己検査が「2 件鳴る」と教えてくれた** —— 既存の `nodeIntegration` 規則の
+正規表現に既に含まれていた。二重に持つと 1 件の違反が 2 件に見えるので外した。
+
+`app.on('web-contents-created')` で番人を全 webContents へ広げる案は**採らなかった**:
+今日は `webviewTag` が false で窓も 1 つなので死んだコードになる。守りを増やす
+より、**その設定を変えられなくする**方が確実で、規則ならそれができる。
+
 ### 同期 throw が主プロセスを落とす場所は他にあるか → 1 箇所だけで、直した
 
 `uncaughtException` になりうるのは **`http.createServer` の listener の中の
@@ -1261,6 +1285,20 @@ renderer へ返る）。そこは try で囲んで 400（非終端）へ倒し�
 のが最悪の結末なので、**直した 5 件それぞれに陰性対照を置く**方を採った
 （`lint:workflow-security` と `verify:knowledge` は自己検査に、`liveRead` は
 5 ケースのユニットテストに。3 つとも素の添字へ戻して落ちることを確認済み）。
+
+### 2xx なのに JSON でない応答で、`res.json()` の例外に秘密が載るか → 載らない
+
+`apiFetch` / `jsonFetch` は `!res.ok` の本文を `redactForMessage` で伏せているが、
+**2xx で本文が JSON でない**場合の `res.json()` は素通しになる。実測すると
+`SyntaxError` の文面に入るのは本文の**先頭 10 文字ほど**だけだった:
+
+```
+本文 "token=ghp_aaaa…"  → SyntaxError: Unexpected token 'o', "token=ghp_a"... is not valid JSON
+本文 "<html>…ghp_…"     → SyntaxError: Unexpected token '<', "<html><bod"... is not valid JSON
+```
+
+40 字のトークンが使える形で出ることはない。`shared/api/http.ts` と
+`main/clients/types.ts` の 2 実装も同じ振る舞いで、片方だけ緩いということも無かった。
 
 ### 正規表現に破滅的バックトラックはあるか → 無かった（実測）
 
