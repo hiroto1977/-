@@ -246,11 +246,80 @@ function cmdShow() {
   for (const b of chain.blocks) console.log(`  #${b.index}  ${b.hash.slice(0, 12)}…  prev ${b.prevHash.slice(0, 12)}…  ${b.note}`);
 }
 
+/**
+ * 陰性対照 — **この台帳が本当に改竄を見つけるか**を毎回確かめる。
+ *
+ * 2026-08-22 に verify:all の全ゲートを手で壊して回したところ、陰性対照を
+ * 持たない 13 件のうち 2 件は本当に鳴らなかった。ここは鳴ることを手で
+ * 確かめた (保護対象の書き換え / ブロックのハッシュ偽造の両方で落ちた) が、
+ * **手で確かめただけでは今日しか効かない**ので固定する。
+ *
+ * 実ファイルには触らず、純粋関数 (merkleRoot / blockHash) の性質だけを見る。
+ */
+function cmdSelfTest() {
+  const base = { 'a.ts': sha256('A'), 'b.ts': sha256('B'), 'c.ts': sha256('C') };
+  let bad = 0;
+  const check = (label, cond) => {
+    if (!cond) bad++;
+    console.log(`  ${cond ? '✓' : '✗'} ${label}`);
+  };
+
+  // --- merkleRoot: 中身が 1 ビットでも変われば根が変わる ---
+  const root = merkleRoot(base);
+  check('同じ manifest なら同じ根 (決定論)', merkleRoot({ ...base }) === root);
+  check(
+    '並び順を変えても同じ根 (キーで整列している)',
+    merkleRoot({ 'c.ts': base['c.ts'], 'a.ts': base['a.ts'], 'b.ts': base['b.ts'] }) === root,
+  );
+  check(
+    '1 ファイルの中身が変われば根が変わる',
+    merkleRoot({ ...base, 'b.ts': sha256('B-tampered') }) !== root,
+  );
+  check('ファイルが増えれば根が変わる', merkleRoot({ ...base, 'd.ts': sha256('D') }) !== root);
+  const without = { 'a.ts': base['a.ts'], 'b.ts': base['b.ts'] };
+  check('ファイルが減れば根が変わる', merkleRoot(without) !== root);
+  // **並び順が変わらない改名**でなければ、パスを綴じ込んでいるかを試せない。
+  // 最初は a.ts と b.ts の中身を入れ替える案を書いたが、それだと葉の**順序**が
+  // 変わるので、パスを綴じ込んでいなくても根が変わってしまい、何も試せて
+  // いなかった (対照実験で発覚)。`a.ts` → `a2.ts` は整列位置が動かないので、
+  // パスを外すと根が完全に一致する = 改名を見逃す。
+  const renamed = { 'a2.ts': base['a.ts'], 'b.ts': base['b.ts'], 'c.ts': base['c.ts'] };
+  check('整列位置の変わらない改名でも根が変わる (パスも綴じ込んでいる)', merkleRoot(renamed) !== root);
+
+  // --- blockHash: 連結のどの要素を変えても hash が変わる ---
+  const b = { index: 3, prevHash: sha256('prev'), merkleRoot: root, leafCount: 3, note: 'x' };
+  const h = blockHash(b);
+  check('同じブロックなら同じハッシュ', blockHash({ ...b }) === h);
+  for (const [field, value] of [
+    ['index', 4],
+    ['prevHash', sha256('other')],
+    ['merkleRoot', sha256('other-root')],
+    ['leafCount', 4],
+    ['note', 'y'],
+  ]) {
+    check(`${field} を変えるとハッシュが変わる`, blockHash({ ...b, [field]: value }) !== h);
+  }
+
+  // --- 保護対象の一覧そのもの ---
+  check('保護対象が空になっていない', PROTECTED.length > 0);
+  check(
+    '保護対象は実在するファイルだけ',
+    PROTECTED.every((rel) => fs.existsSync(path.join(REPO_ROOT, rel))),
+  );
+
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — 改竄検知が働いていない`);
+    process.exit(1);
+  }
+  console.log('✅ self-test 全件一致');
+}
+
 const cmd = process.argv[2] || 'verify';
 if (cmd === 'verify') cmdVerify();
 else if (cmd === 'append') cmdAppend();
 else if (cmd === 'show') cmdShow();
+else if (cmd === 'self-test') cmdSelfTest();
 else {
-  console.error(`不明なコマンド: ${cmd}（verify | append | show）`);
+  console.error(`不明なコマンド: ${cmd}（verify | append | show | self-test）`);
   process.exit(2);
 }

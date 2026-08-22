@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 38
+- ブロック数: 41
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `4413dfe237c2450a825e6a57c24c6d09c96de59597bfdf50466e9d3479bd93f4`
+- 末尾(tip)ハッシュ: `9369eedc569a22e62ef9e519f54a819eae3840d0fc990259fed05be47c2116db`
 - 保護対象: 18 ファイル
 
 ## ブロック
@@ -51,6 +51,9 @@
 | 35 | `b4420d6031d3bd33` | `1eb9072d4f475921` | `e97c30f8c6151afd` | update integrity-chain.cjs,shellOpenGate.ts |
 | 36 | `035c94da7e80d563` | `e97c30f8c6151afd` | `4c4364bc649c05ad` | update LockScreen.tsx |
 | 37 | `7a567cd02f12ed6f` | `4c4364bc649c05ad` | `4413dfe237c2450a` | update ci.yml |
+| 38 | `eb41559121ed811e` | `4413dfe237c2450a` | `37c33e6ffdd3d3a9` | update integrity-chain.cjs |
+| 39 | `51081cda6da0d927` | `37c33e6ffdd3d3a9` | `843f298c2066b991` | update integrity-chain.cjs |
+| 40 | `0d18f2dc0579e068` | `843f298c2066b991` | `9369eedc569a22e6` | update integrity-chain.cjs |
 
 ## 保護対象ファイル
 

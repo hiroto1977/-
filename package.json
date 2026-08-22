@@ -23,7 +23,7 @@
     "build:web:lite": "SERVICE_HUB_LITE=1 npm run build:web && mv dist/standalone.html dist/standalone-lite.html",
     "chain:append": "node scripts/integrity-chain.cjs append",
     "chain:show": "node scripts/integrity-chain.cjs show",
-    "chain:verify": "node scripts/integrity-chain.cjs verify",
+    "chain:verify": "node scripts/integrity-chain.cjs verify && node scripts/integrity-chain.cjs self-test",
     "dev": "vite",
     "e2e": "node scripts/e2e/core.cjs",
     "e2e:lite": "SERVICE_HUB_E2E_FILE=dist/standalone-lite.html node scripts/e2e/core.cjs",

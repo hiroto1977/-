@@ -325,13 +325,37 @@
       "leafCount": 18,
       "note": "update ci.yml",
       "hash": "4413dfe237c2450a825e6a57c24c6d09c96de59597bfdf50466e9d3479bd93f4"
+    },
+    {
+      "index": 38,
+      "prevHash": "4413dfe237c2450a825e6a57c24c6d09c96de59597bfdf50466e9d3479bd93f4",
+      "merkleRoot": "eb41559121ed811e7959e34a87f4163a17e1892fc95347831177122dc2c183fd",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs",
+      "hash": "37c33e6ffdd3d3a9d19f8ce489cb0fa9aeeea5403589d331902cdd09b069f9fe"
+    },
+    {
+      "index": 39,
+      "prevHash": "37c33e6ffdd3d3a9d19f8ce489cb0fa9aeeea5403589d331902cdd09b069f9fe",
+      "merkleRoot": "51081cda6da0d927c9db15aaa37aab1c375a87e053222d3b837f3b941e8b2da7",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs",
+      "hash": "843f298c2066b991a0c04d2caf56037d41e02157053e9709fcf9bb30f84dbe27"
+    },
+    {
+      "index": 40,
+      "prevHash": "843f298c2066b991a0c04d2caf56037d41e02157053e9709fcf9bb30f84dbe27",
+      "merkleRoot": "0d18f2dc0579e0688f2d33a308a8596417d27b0ae4615cae37551d5750e7969e",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs",
+      "hash": "9369eedc569a22e62ef9e519f54a819eae3840d0fc990259fed05be47c2116db"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "d4c05c9839f90760c78c55b751d46c179aca4bbb3f48afd136bd4e7c99b1a3f8",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "02be0b9bb847d6018f8d0f4b0c8c04f31d2ae2c6449c8ac22043632d10d57e50",
-    "scripts/integrity-chain.cjs": "24e57bc6b9fa08f51c11c5f26f25af23d794d8f771e7de246999b18bc106f88e",
+    "scripts/integrity-chain.cjs": "4f73610048db1d3f5aa6efa676b1cce797c2587838976b4c955d240a9dabd935",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
