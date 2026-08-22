@@ -1474,6 +1474,41 @@ Electron には実装が無い (`isSpeechRecognitionSupported()` が false を�
 `onlyLoadAppFromAsar` の fuse は 3-OS の release build が要るのでこの環境では
 確かめられない (別項)。
 
+### 同梱される CSP は**緩めても誰も気付かなかった**（修正済み）
+
+対照実験:
+
+| 緩め方 | テスト | ゲート |
+|---|---|---|
+| `script-src` に `'unsafe-inline'` を足す | 9983 件すべて緑 | 27 本すべて緑 |
+| `object-src 'none'` を消す | 同じく全部緑 | 同じく全部緑 |
+| `connect-src` を `https:` 全体へ広げる | 同じく全部緑 | 同じく全部緑 |
+
+既にあった `devCsp.test.ts` は「開発サーバの origin が**入っていない**こと」と
+「`connect-src` が**在る**こと」しか見ていない。ブラウザ版のほうは
+`inlineHtml.test.ts` が sha256 ピン留めを検査していて、そのコメントには
+「2026-07 監査: `script-src 'unsafe-inline'` は自分のバンドルだけでなく
+**注入されたスクリプトも通す**」と書いてある ——
+**同じ危険を、デスクトップ版だけ留めていなかった。**
+
+`src/shared/__tests__/shippedCsp.test.ts` (33 件) を足した:
+
+- 9 ディレクティブを**理由つきで**1 件ずつ等値で留める
+- ディレクティブの**数**も留める (知らない口が生えていないか)
+- 危ない値を名指しでも落とす (`'unsafe-inline'` / `'unsafe-eval'` /
+  `'wasm-unsafe-eval'` / `*` / `https:` / `data:` を、それが危険になる
+  ディレクティブごとに) —— 表を書き換えるだけでは緩められない
+- ブラウザ版との**違い**も留める (0-a-14)。`script-src` はハッシュ列・
+  `connect-src` は https: 全体・`worker-src` はブラウザ版だけ。
+  揃える方向は**デスクトップ版を緩める側**にしか働かないので、
+  違っていること自体を検査にする
+- 両ビルドで**同じであるべき**締め (`object-src` / `frame-src` /
+  `base-uri` / `form-action` / `default-src`) は同値で留める
+
+対照 8 種すべて鳴る。うち 1 種は最初「鳴らなかった」が、
+**プローブが `index.html` の説明コメント側に当たっていた**だけだった
+（メタタグを狙い直すと鳴った）—— ゲート掃引で 6 回踏んだのと同じ罠。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を
