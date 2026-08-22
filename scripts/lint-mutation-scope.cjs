@@ -108,6 +108,11 @@ const MUST_MEASURE = {
   // 実測 42.27% (未到達 78) — 保存時に本当に暗号化されるかを誰も見ていなかった。
   'src/main/shellOpenGate.ts':       '「OS で開く」の唯一の関門 (Windows では拡張子の関連付け次第でそのまま実行される)',
   'src/main/secrets.ts':             '資格情報の暗号化と保存 (キーチェーンが使えるかの判定がここ 1 か所)',
+  // preload は「レンダラーが main へ触れる面」そのもの。チャンネル名を呼び出し側に
+  // 選ばせる形に一度でも変わると、contextIsolation を掛けている意味が消える。
+  // main.ts と違って測れるのは、チャンネル名が**アロー関数の中**にあるため
+  // (main.ts は `ipcMain.handle('名前', fn)` と**モジュール直下で呼ぶ**ので static)。
+  'src/preload/preload.ts':          'レンダラーが main へ触れる唯一の面 (13 個の口だけを通す)',
 };
 
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;

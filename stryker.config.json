@@ -50,6 +50,7 @@
     "src/main/oauth.ts",
     "src/main/secrets.ts",
     "src/main/shellOpenGate.ts",
+    "src/preload/preload.ts",
     "src/renderer/components/serviceActionMachine.ts",
     "src/renderer/components/serviceActionUtils.ts",
     "src/renderer/data/accounting.ts",
