@@ -233,6 +233,43 @@ function graphDedupeSuspects(entries, distinct) {
 // ---------------------------------------------------------------------------
 // 1b. 出典 URL の死活（オプション・週替わりシャード）
 // ---------------------------------------------------------------------------
+/**
+ * 死活を「取りに行ってよい」URL か。
+ *
+ * ## なぜ要るか（実測）
+ *
+ * `fetch` はスキームを選ばないので、コーパスに `data:text/plain,x` が混ざると
+ * **status 200 が返り、その出典は永久に「生きている」と報告される**。
+ * リンク切れ検査の目的そのものが無効になる。実測で確認した:
+ *
+ *     file:///etc/hostname  → throw (読めはしない)
+ *     data:text/plain,hi    → **status 200**
+ *     ftp://example.test/   → throw
+ *
+ * 副次的に、`redirect: 'follow'` で外部へ出る経路を http(s) に限る意味もある
+ * （応答本文は読まず状態コードしか残さないので帯域の狭い oracle ではあるが、
+ * 取りに行く先をデータが決める以上、スキームだけは絞っておく）。
+ *
+ * **ホストの絞り込みはここでは書かない。** loopback / private の判定は
+ * `src/shared/aiEndpoint.ts` の `isLoopbackHostname` が持っており、
+ * 同じ判断を 2 か所に書くと必ずどちらかが先に古くなる
+ * (`src/shared/proxyEndpoint.ts` の冒頭に明記されている方針)。
+ * ここは .cjs で TS を import できないため、写経せず**スキームだけ**にする。
+ *
+ * 2026-08-22 時点のコーパス 12,229 URL は全て http(s) (https 12,207 / http 22)
+ * なので、この関門は今日は 1 件も落とさない。
+ */
+function isCheckableUrl(url) {
+  if (typeof url !== 'string') return false;
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+  return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+}
+
 async function checkLinks(entries, today, shardSize) {
   const byUrl = new Map();
   for (const e of entries) {
@@ -253,6 +290,11 @@ async function checkLinks(entries, today, shardSize) {
   async function worker() {
     while (idx < shard.length) {
       const url = shard[idx++];
+      if (!isCheckableUrl(url)) {
+        // 取りに行かない。`data:` は 200 を返すので「生きている」と誤報する。
+        suspect.push({ url, id: byUrl.get(url), status: 'unsupported-scheme' });
+        continue;
+      }
       try {
         const ctl = new AbortController();
         const timer = setTimeout(() => ctl.abort(), 8000);
@@ -468,4 +510,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset };
+module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset, isCheckableUrl, checkLinks };
