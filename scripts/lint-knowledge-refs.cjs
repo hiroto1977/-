@@ -102,6 +102,19 @@ function main() {
     }
   }
 
+  /*
+   * 突き合わせ先 (corpus id) の床。台帳側の件数 (pairCount / keepCount) は
+   * 課題が片付けば 0 になりうるので床を置かない —— **参照先が 0 件**なら
+   * 「すべて実在する id を指す」は空虚に成立してしまうので、そちらだけ見る。
+   */
+  const MIN_CORPUS_IDS = 1000; // 実測 4140 (2026-08-22)
+  if (ids.size < MIN_CORPUS_IDS) {
+    console.error(
+      `❌ corpus id を ${ids.size} 件しか読めませんでした (${MIN_CORPUS_IDS} 件以上を期待)。`
+        + ' 読み込みが壊れている可能性があります —— 0 件なら参照検査が空虚に通ります。',
+    );
+    process.exit(1);
+  }
   console.log(
     `Checked ${pairCount} adjudicated pair(s) + ${keepCount} merge target(s) against ${ids.size} corpus ids`,
   );

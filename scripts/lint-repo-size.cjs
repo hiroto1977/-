@@ -117,6 +117,26 @@ function main() {
   const files = trackedFiles();
   const { problems, warnings, totalMb, fileCount } = evaluateSizes(files, BUDGET);
 
+/*
+ * 検査した件数の**床**。0 件でも「✅」を返す状態を塞ぐ (2026-08-22)。
+ *
+ * 対照実験で確かめた: 抽出の絞りを 1 行壊して 0 件にすると、
+ * どのゲートも件数を表示したうえで exit 0 を返した ——
+ * 「Checked 0 DOI citation(s) … ✅」「追跡 0 ファイル / 合計 0.0 MB … ✅」。
+ * 数字は**出力していただけで、何とも突き合わせていなかった**。
+ *
+ * 厳密な値ではなく床にするのは `verify:arch` の「追跡行数 (下限)」と同じ
+ * 考え方 —— 通常の増減では当たらず、抽出が壊れたときだけ落ちる位置に置く。
+ */
+  const MIN_TRACKED_FILES = 1000; // 実測 8457 (2026-08-22)
+  if (fileCount < MIN_TRACKED_FILES) {
+    console.error(
+      `❌ 追跡ファイルを ${fileCount} 件しか数えられませんでした`
+        + ` (${MIN_TRACKED_FILES} 件以上を期待)。走査が壊れている可能性があります`
+        + ' —— 0 件なら合計 0 MB で必ず予算内になってしまうため落とします。',
+    );
+    return 1;
+  }
   console.log(
     `追跡 ${fileCount} ファイル / 合計 ${totalMb.toFixed(1)} MB ` +
       `(上限 ${BUDGET.totalMb} MB・1 ファイル ${BUDGET.perFileMb} MB)`,
