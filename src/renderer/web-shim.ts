@@ -584,8 +584,17 @@ interface AssistantTurnWeb {
   content: string;
 }
 
-/** payload.messages を user/assistant の非空文字列発話だけに整形する。 */
-function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
+/**
+ * payload.messages を user/assistant の非空文字列発話だけに整形する。
+ *
+ * ここは**外部 API へ送る会話履歴を決める関門**である。1 発話 8000 字・
+ * 直近 40 発話という上限が、壊れた/悪意ある呼び出しから送信量 (と課金) を
+ * 止めている唯一の場所で、main 側に対になる実装は無い (ブラウザ版だけの経路)。
+ *
+ * export しているのは検査から直に叩くため —— `window.serviceHub` の表面は
+ * 変わらない。2026-08-22 まで変異体 38 件がどのテストにも触られていなかった。
+ */
+export function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
   if (!Array.isArray(raw)) return [];
   const out: AssistantTurnWeb[] = [];
   for (const item of raw) {

@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /*
  * ブラウザ版の**資格情報の出口**。`runProxyBearer` は、プロキシ経由で書き込む
@@ -223,6 +223,72 @@ describe('資格情報が使えないときは、外へ出る準備をしない'
  * ので **通っていなかった** —— しかも資格情報が生きている 2 経路である
  * (2026-08-22)。main 側の `secrets:set` も同じ形で漏れていた。
  */
+/*
+ * **API キーがどこへ、何と一緒に出ていくか。**
+ *
+ * ブラウザ版は Anthropic を**直接**叩く (公式に CORS 対応なのでプロキシを
+ * 経由しない)。送り先 URL とヘッダはリテラルなので `lint:network-targets`
+ * (送り先が変数で決まる通信の台帳) の対象外で、**何も見ていなかった**。
+ * URL が変われば鍵がそのまま別のホストへ行く。字面で留める。
+ */
+describe('API キーの送り先とヘッダ', () => {
+  const KEY = 'sk-ant-test-key-value';
+  let fetchCalls: { url: string; init: RequestInit }[] = [];
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    fetchCalls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input: unknown, init?: RequestInit) => {
+      fetchCalls.push({ url: String(input), init: init ?? {} });
+      return new Response(
+        JSON.stringify({ content: [{ type: 'text', text: '{"recommendations":[]}' }] }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as typeof globalThis.fetch;
+  });
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it('事業アドバイザーは api.anthropic.com へ送り、鍵は x-api-key だけに載る', async () => {
+    stored = KEY;
+    const hub = await loadShim();
+    await invoke(hub, 'business', 'advise', { question: '次に注力すべき事業は？' });
+
+    expect(fetchCalls.map((c) => c.url)).toEqual(['https://api.anthropic.com/v1/messages']);
+    const h = fetchCalls[0]!.init.headers as Record<string, string>;
+    expect(h['x-api-key']).toBe(KEY);
+    expect(h['anthropic-version']).toBe('2023-06-01');
+    expect(h['anthropic-dangerous-direct-browser-access']).toBe('true');
+    expect(h['content-type']).toBe('application/json');
+    // 鍵が他のヘッダに混ざっていない (Authorization へ二重に載せる等)。
+    const elsewhere = Object.entries(h).filter(([k, v]) => k !== 'x-api-key' && String(v).includes(KEY));
+    expect(elsewhere, `鍵が別のヘッダにも載っている: ${JSON.stringify(elsewhere)}`).toEqual([]);
+    // 本文にも鍵は載らない。
+    expect(String(fetchCalls[0]!.init.body)).not.toContain(KEY);
+  });
+
+  it('鍵が未設定なら 1 度も外へ出ない', async () => {
+    stored = null;
+    const hub = await loadShim();
+    const r = await invoke(hub, 'business', 'advise', { question: 'x' });
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('not_configured');
+    expect(fetchCalls).toEqual([]);
+  });
+
+  it('質問が規則違反なら、鍵を読む前に断って外へ出ない', async () => {
+    stored = KEY;
+    const hub = await loadShim();
+    for (const question of ['', 'a'.repeat(1001), 'ok\nbad']) {
+      const r = await invoke(hub, 'business', 'advise', { question });
+      expect(r.ok).toBe(false);
+    }
+    expect(fetchCalls).toEqual([]);
+  });
+});
+
 describe('資格情報の保存・削除の失敗も伏字を通す', () => {
   const SECRET = `ghp_${'a'.repeat(36)}`;
 

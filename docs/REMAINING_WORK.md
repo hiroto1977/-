@@ -1240,15 +1240,21 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 
 ```
 最初        総合  8.34% / 覆われた分 49.79% / killed 118 / survived 119 / no coverage 1178
-検査を 1 つ  総合 15.62% / 覆われた分 60.88% / killed 221 / survived 142 / no coverage 1052
++ 応答検査   総合 15.62% / 覆われた分 60.88% / killed 221 / survived 142 / no coverage 1052
++ 履歴と送り先 総合 22.26% / 覆われた分 53.75% / killed 315 / survived 271 / no coverage  829
 ```
 
-**1178 件 (83%) がどのテストにも触られていなかった。** これが動かない事実の方。
+**最初は 1178 件 (83%) がどのテストにも触られていなかった。** これが動かない事実の方。
 
-2 行目は `validateAdvisorJson` (外部 LLM の応答の関門) を export して
-パリティ検査を 1 本足した結果 —— **検査ファイル 1 つで未到達が 126 件減った**。
-`survived` が増えているのは、覆われた側に移った分がまだ全部は留まっていない
-ため (未到達が生存に変わるのは前進である)。
+足したのは security に効く 3 つだけ:
+1. `validateAdvisorJson` (外部 LLM の応答の関門) を export してパリティ検査
+2. `sanitizeAssistantTurns` (送信量と課金を止める唯一の上限) を export して直検査
+3. 各 `call*` の**送り先 URL とヘッダ** —— 鍵が `x-api-key` だけに載ることまで
+
+**未到達は 1178 → 829 (-349)、killed は 118 → 315。** `survived` が増え、
+「覆われた分」の率が一度下がっているのは、未到達だった塊が覆われた側へ移り、
+そこがまだ全部は留まっていないため —— **未到達が生存に変わるのは前進**である
+(生存は「テストが通っている経路にある」= 次に留める対象が見えている状態)。
 
 `survived 119` は**そのまま鵜呑みにしない**。security 上いちばん効く 1 件
 (`openExternal` のスキーム検査 `ConditionalExpression → true`) を**手で当てて
@@ -1270,16 +1276,17 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 | 関数 | 未到達 | 性質 |
 |---|---|---|
 | `shim` (invoke のディスパッチ) | 474 | 30 個ほどの action ルーティング。デスクトップ版では `clients/*.ts` が同じ仕事をしていて全部 100% |
-| `callAnthropicAdvisor` / `callStocksAdvisor` | 202 | **API キーの送り先と送る中身**。security に効く |
-| `callAssistantChat` / `ChatAll` | 159 | 同上 |
-| `callEmotionsAnalyze` | 74 | 同上 |
-| `sanitizeAssistantTurns` | 38 | 会話履歴の絞り込み (名前のとおり関門) |
+| `callAnthropicAdvisor` / `callStocksAdvisor` | 202 | **API キーの送り先と送る中身**。送り先とヘッダは留めた |
+| `callAssistantChat` / `ChatAll` | 159 | 同上 (送り先はまだ) |
+| `callEmotionsAnalyze` | 74 | 同上 (送り先はまだ) |
+| ~~`sanitizeAssistantTurns`~~ | ~~38~~ → 0 | 済 |
 | `buildBusinessAnalysesForAdvisor` / `advisorSystemPrompt` | 49 | 送るプロンプトの組み立て |
 | `saveToLibrary` / `tryGrabSvgFromPage` / `downloadBlob` ほか | 56 | 書き出し |
 
-効き目の順は **`sanitizeAssistantTurns` → 各 `call*` の送り先・ヘッダ → ディスパッチ**。
-`validateAdvisorJson` と同じ形 (非公開の純関数を export してパリティ/直検査) が
-`sanitizeAssistantTurns` にもそのまま使える。
+残りの効き目の順は **`callAssistantChat` / `callEmotionsAnalyze` の送り先 →
+応答の取り出し → invoke のディスパッチ**。`business/advise` に置いた
+「送り先 URL とヘッダを字面で留める」形がそのまま使える (テストは
+`webShimCredentials.test.ts` の「API キーの送り先とヘッダ」節)。
 
 ### 伏字の合流点を通っていない失敗はあるか → 3 件あり、全部**資格情報の経路**だった
 
