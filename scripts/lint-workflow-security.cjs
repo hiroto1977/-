@@ -44,9 +44,14 @@ const UNPINNED_ALLOW = {
   'softprops/action-gh-release@v2': {
     workflow: 'release.yml',
     why:
-      'このセッションからは SHA を解決できない (エージェントのプロキシは ' +
-      'セッション範囲外のリポジトリへの GitHub API を通さない)。**当てずっぽうの ' +
-      'SHA を書くとリリースが壊れる**ので、タグのまま残して台帳に載せた。',
+      'このセッションからは SHA を解決できない。**当てずっぽうの SHA を書くと ' +
+      'リリースが壊れる**ので、タグのまま残して台帳に載せた。' +
+      ' 2026-08-22 に 3 通り試して全部塞がっていることを確認済み: ' +
+      '(1) GitHub MCP —— セッションのリポジトリ範囲が hiroto1977/- に限られる、' +
+      '(2) curl で api.github.com —— プロキシが 403 で「Use add_repo to request ' +
+      'access」と返す、(3) WebFetch —— 同じく 403。' +
+      ' **同じ 3 つを試し直さないこと。** 解決には人手 (または範囲を広げた ' +
+      'セッション) が要る。',
     howToFix:
       'gh api repos/softprops/action-gh-release/git/ref/tags/v2 --jq .object.sha ' +
       'で取得し、`softprops/action-gh-release@<sha> # v2` に置き換えてこの項目を消す',
