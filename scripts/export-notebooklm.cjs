@@ -102,6 +102,35 @@ const VOLUMES = [
   { nn: '10', slug: 'catalog', label: '全知識目録（MOC）', files: N('MOC'), unit: '目録' },
 ];
 
+/*
+ * 網羅の関門 (2026-08-22 に足した)。
+ *
+ * `VOLUMES` は学術 5 分野を**名指しで**並べている。分野が 1 つ増えても
+ * ここに書き足さない限り、その分野は NotebookLM 用の書き出しから
+ * **黙って丸ごと落ちる**。書き出しは週次のオートパイロットが回して
+ * commit するので、落ちたことに気づく機会が無い。
+ *
+ * (今セッションで同じ形 —— 走査範囲が手で足す一覧 —— をゲート 7 つで
+ *  直している。ここは生成側だが同じ穴。)
+ *
+ * 一覧の側を直すのではなく、**取りこぼしを検出して落とす**。こうすると
+ * 分野が増えたとき「VOLUMES に足してください」と名指しで言える。
+ */
+{
+  const allNotes = new Set(N('notes'));
+  const covered = new Set(VOLUMES.flatMap((v) => v.files));
+  const missed = [...allNotes].filter((f) => !covered.has(f));
+  if (missed.length > 0) {
+    console.error(
+      `❌ どの巻にも入らないノートが ${missed.length} 件あります。`
+        + ' VOLUMES に足してください:',
+    );
+    for (const m of missed.slice(0, 10)) console.error(`  - ${path.relative(VAULT, m)}`);
+    if (missed.length > 10) console.error(`  …ほか ${missed.length - 10} 件`);
+    process.exit(1);
+  }
+}
+
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
