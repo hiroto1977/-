@@ -14,6 +14,25 @@
  *     string in the matching test file**. Catches "I added a new
  *     action but didn't add a test for it".
  *
+ *   - **`LIVE_ACTIONS` の各項は、クライアントの `ACTIONS` を指す識別子
+ *     ただ 1 つでなければならない。** 上の規則は「クライアントの `ACTIONS`
+ *     から読んだ action」しか見ていないので、`index.ts` に直接書いた action は
+ *     **この検査を素通りする**。2026-08-22 の対照実験:
+ *
+ *     ```ts
+ *     github: { ...GITHUB_ACTIONS, 'wipe-everything': async () => ({ ok: true }) },
+ *     ```
+ *
+ *     `action:invoke` の振り分けは `Object.hasOwn(actions, action)` だけなので
+ *     これはレンダラーから呼べる。それでも `lint:test-coverage` も
+ *     `typecheck` も緑だった —— **書き込み側の口が、検査の外に生えた。**
+ *     行が `<id>: <IDENT>,` の形であることを要求して、action の定義場所を
+ *     クライアントの中だけに閉じ込める。
+ *
+ *   - **`ACTIONS` を export するクライアントは全部 `LIVE_ACTIONS` に載る**
+ *     (逆向き)。載っていない ACTIONS は誰からも呼べない死んだ口で、
+ *     今日たまたま鳴っているのは eslint の未使用 import だけだった。
+ *
  * Run via:  node scripts/lint-test-coverage.cjs
  *           npm run lint:test-coverage
  *
@@ -166,6 +185,61 @@ function collectCoverageFailures(ids, lookup) {
   return failures;
 }
 
+/**
+ * `LIVE_ACTIONS` の登録と、クライアントの `ACTIONS` export を突き合わせる。
+ *
+ * `indexText` / `clientHasActions` を引数にしてあるのは自己検査のため
+ * (`collectCoverageFailures` の `lookup` と同じ考え方)。
+ */
+function collectRegistrationFailures(indexText, clientHasActions) {
+  const failures = [];
+  const m = indexText.match(/export const LIVE_ACTIONS[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!m) {
+    return [{ kind: 'no-live-actions', reason: 'LIVE_ACTIONS の宣言を読み取れませんでした' }];
+  }
+  const registered = [];
+  for (const raw of m[1].split('\n')) {
+    const line = raw.replace(/\/\/.*$/, '').trim();
+    if (line === '') continue;
+    // 許す形は `<id>: <IDENT>,` だけ。`'kebab-case'` のキーも許す。
+    const ok = line.match(/^(?:([a-z][a-z0-9-]*)|'([a-z][a-z0-9-]*)'):\s*([A-Za-z_$][\w$]*),$/);
+    if (!ok) {
+      failures.push({
+        kind: 'inline-action-map',
+        reason:
+          `LIVE_ACTIONS の項が識別子ひとつではありません: ${line}  ` +
+          'action の定義はクライアントの ACTIONS の中だけに置いてください ' +
+          '(ここに直接書いた action はレンダラーから呼べるのに、' +
+          'テスト必須の規則を素通りします)',
+      });
+      continue;
+    }
+    registered.push(ok[1] ?? ok[2]);
+  }
+  for (const id of clientHasActions) {
+    if (!registered.includes(id)) {
+      failures.push({
+        kind: 'unregistered-actions',
+        service: id,
+        reason:
+          `src/main/clients/${id}.ts は ACTIONS を export していますが ` +
+          'LIVE_ACTIONS に載っていません (誰からも呼べない死んだ口です)',
+      });
+    }
+  }
+  return failures;
+}
+
+/** `ACTIONS` を export しているクライアントの id 一覧 (ディスクから)。 */
+function clientsExportingActions() {
+  const dir = path.join(REPO_ROOT, 'src/main/clients');
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.ts') && f !== 'index.ts' && f !== 'types.ts')
+    .filter((f) => /^export const ACTIONS\b/m.test(read(path.join(dir, f)) ?? ''))
+    .map((f) => f.replace(/\.ts$/, ''));
+}
+
 function fsLookup(id) {
   const testFile = path.join(REPO_ROOT, 'src/main/clients/__tests__', `${id}.test.ts`);
   if (!fs.existsSync(testFile)) return { testText: null, actions: [] };
@@ -281,6 +355,39 @@ function selfTest() {
 
   let failed = 0;
   console.log('self-test:');
+  /*
+   * `LIVE_ACTIONS` の登録規則。**この規則は 2026-08-22 に、実物を壊す対照で
+   * 見つけた穴を塞ぐために足した** —— `index.ts` に直接書いた action は
+   * レンダラーから呼べるのに、上の action 検査 (クライアントの ACTIONS だけを
+   * 読む) も typecheck も緑だった。
+   */
+  const LIVE = (body) => `export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {\n${body}\n};`;
+  const registrationCases = [
+    ['ふつうの登録', LIVE('  github: GITHUB_ACTIONS,'), ['github'], 0],
+    ['kebab-case のキーも許す', LIVE("  'microsoft-365': MICROSOFT365_ACTIONS,"), ['microsoft-365'], 0],
+    ['コメント行は無視する', LIVE('  // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE\n  github: GITHUB_ACTIONS,'), ['github'], 0],
+    [
+      '直書きの action を混ぜる (登録が識別子ひとつでない + 登録漏れ)',
+      LIVE("  github: { ...GITHUB_ACTIONS, 'wipe-everything': async () => ({}) },"),
+      ['github'],
+      2,
+    ],
+    [
+      '関数で組み立てる (中身が読めない)',
+      LIVE('  github: withExtras(GITHUB_ACTIONS),'),
+      ['github'],
+      2,
+    ],
+    ['ACTIONS を export するのに登録が無い', LIVE('  notion: NOTION_ACTIONS,'), ['github', 'notion'], 1],
+    ['登録が空でも ACTIONS が無ければ鳴らない', LIVE(''), [], 0],
+    ['LIVE_ACTIONS の宣言が読めない', 'const OTHER = {};', ['github'], 1],
+  ];
+  for (const [label, text, clients, want] of registrationCases) {
+    const got = collectRegistrationFailures(text, clients).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
   for (const [label, ids, lookup, want] of coverageCases) {
     const got = collectCoverageFailures(ids, lookup).length;
     const ok = got === want;
@@ -379,10 +486,16 @@ function main(argv) {
   const verified = verifiedDatasets(srcFiles);
   failures.push(...checkVerifiedFloors(srcFiles, testFiles));
 
+  const withActions = clientsExportingActions();
+  failures.push(
+    ...collectRegistrationFailures(read(path.join(REPO_ROOT, 'src/main/clients/index.ts')) ?? '', withActions),
+  );
+
   console.log(
     `Checked ${ids.length} services for test files + action coverage`
       + `, ${jsdomChecked} jsdom test file(s) for actual DOM use`
-      + `, and ${verified.length} VERIFIED_* dataset(s) for a non-empty floor`,
+      + `, ${verified.length} VERIFIED_* dataset(s) for a non-empty floor`
+      + `, and ${withActions.length} client ACTIONS map(s) for registration in LIVE_ACTIONS`,
   );
   if (failures.length === 0) {
     console.log('✅ every service has a test file and every action is exercised');
@@ -390,7 +503,7 @@ function main(argv) {
   }
   console.error(`❌ ${failures.length} coverage gap(s):`);
   for (const f of failures) {
-    console.error(`  [${f.kind}] ${f.service}${f.action ? ' / ' + f.action : ''} — ${f.reason}`);
+    console.error(`  [${f.kind}] ${f.service ?? '-'}${f.action ? ' / ' + f.action : ''} — ${f.reason}`);
   }
   return 1;
 }

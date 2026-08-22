@@ -1367,6 +1367,47 @@ reject はそのまま未処理の rejection になっていた。
 本当に守られていた。ハンドラ側は try で囲み、失敗は `console.error` +
 `safeErrorMessage` で main の記録に残す（`secrets.ts` と同じ扱い）。
 
+### 27 のゲートに「実物を壊して鳴るか」を訊いた → 1 つ穴が出た（修正済み）
+
+0-a-15 を全ゲートへ当てた。`--self-test` の陰性対照は**作った本人の想像**なので、
+実物のソースを現実的に壊して鳴るかを別に確かめる。
+
+| ゲート | 壊し方 | 結果 |
+|---|---|---|
+| `lint:url-encoding` | URL path から `encodeURIComponent` を外す | ✓ 鳴った |
+| `lint:forbidden` | `nodeIntegration: true` を足す | ✓ 鳴った |
+| `lint:imports` | レンダラーで `node:fs` を import | ✓ 鳴った |
+| `lint:shell` | `set -euo pipefail` を外す | ✓ 鳴った |
+| `lint:network-targets` | 送り先を変数から組み立てる | ✓ 鳴った |
+| `lint:ipc-handlers` | try を抜けた後で await | **✗ 鳴らなかった**（別項・修正済み） |
+| `lint:test-coverage` | `index.ts` に直書きの action | **✗ 鳴らなかった**（下記・修正済み） |
+
+### `lint:test-coverage` の「action は必ずテストされる」が、**定義場所を仮定していた**（修正済み）
+
+規則は各クライアントの `export const ACTIONS` を読み、その鍵がテストに
+クォート付きで出るかを見る。だから **`index.ts` に直接書いた action は
+規則の視界に入らない**:
+
+```ts
+github: { ...GITHUB_ACTIONS, 'wipe-everything': async () => ({ ok: true }) },
+```
+
+`action:invoke` の振り分けは `Object.hasOwn(actions, action)` だけなので、
+これはレンダラーから `serviceHub.invoke('github', 'wipe-everything', …)` で
+呼べる。**書き込み側の口が、テスト必須の規則の外に生えた**状態で、
+`lint:test-coverage` も `typecheck` も緑だった（実測）。
+
+**直し方**: `LIVE_ACTIONS` の各行が `<id>: <IDENT>,` の形であることを要求する。
+action の定義場所をクライアントの中だけに閉じ込めれば、既存の
+「ACTIONS の鍵はテストに出る」規則が全 action を覆う。
+
+逆向きも足した: **`ACTIONS` を export するクライアントは全部 `LIVE_ACTIONS` に
+載る**。今日は 27/27 で一致（両方向とも 0 件）。登録を外しても
+今まで鳴っていたのは eslint の未使用 import だけで、import ごと消せば
+無音だった。
+
+対照 3 種（直書き / 関数で組み立て / 登録漏れ）とも鳴る。self-test に 8 形追加。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を
