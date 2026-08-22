@@ -1367,20 +1367,49 @@ reject はそのまま未処理の rejection になっていた。
 本当に守られていた。ハンドラ側は try で囲み、失敗は `console.error` +
 `safeErrorMessage` で main の記録に残す（`secrets.ts` と同じ扱い）。
 
-### 27 のゲートに「実物を壊して鳴るか」を訊いた → 1 つ穴が出た（修正済み）
+### 25 の自作ゲート全部に「実物を壊して鳴るか」を訊いた → 2 つ穴が出た（両方修正済み）
 
 0-a-15 を全ゲートへ当てた。`--self-test` の陰性対照は**作った本人の想像**なので、
-実物のソースを現実的に壊して鳴るかを別に確かめる。
+実物のソースを現実的に壊して鳴るかを別に確かめる。`typecheck` と `lint`
+(eslint) は自作ゲートではないので対象外。
 
 | ゲート | 壊し方 | 結果 |
 |---|---|---|
-| `lint:url-encoding` | URL path から `encodeURIComponent` を外す | ✓ 鳴った |
-| `lint:forbidden` | `nodeIntegration: true` を足す | ✓ 鳴った |
-| `lint:imports` | レンダラーで `node:fs` を import | ✓ 鳴った |
-| `lint:shell` | `set -euo pipefail` を外す | ✓ 鳴った |
-| `lint:network-targets` | 送り先を変数から組み立てる | ✓ 鳴った |
-| `lint:ipc-handlers` | try を抜けた後で await | **✗ 鳴らなかった**（別項・修正済み） |
+| `verify:arch` | （このセッション中に実際の doc ドリフトで 2 回鳴った） | ✓ |
+| `lint:forbidden` | `nodeIntegration: true` を足す | ✓ |
+| `lint:workflow-security` | 第三者 action を SHA 無しで使う | ✓ |
+| 〃 | `permissions:` を消す | ✓ |
+| 〃 | `pull_request_target` を使う | ✓ |
+| 〃 | `run:` に `github.event.pull_request.title` を埋める | ✓ |
+| `lint:network-targets` | 送り先を変数から組み立てる | ✓ |
+| `lint:url-encoding` | URL path から `encodeURIComponent` を外す | ✓ |
+| `lint:imports` | レンダラーで `node:fs` を import | ✓ |
+| `lint:docs` | （ゲートを CI に載せ忘れた形で過去に実際に鳴った） | ✓ |
+| `lint:citations` | 同じ DOI を 1970 と 1899 の 2 通りで引く | ✓ |
+| `lint:doi-prefix` | CUP のラベルに OUP のプレフィックスを付ける | ✓ |
+| `lint:charset` | 簡体字を混ぜる | ✓ |
+| `lint:knowledge-refs` | 裁定台帳が実在しない id を指す | ✓ |
 | `lint:test-coverage` | `index.ts` に直書きの action | **✗ 鳴らなかった**（下記・修正済み） |
+| `lint:shell` | `set -euo pipefail` を外す | ✓ |
+| `lint:repo-size` | 13MB のファイルを追跡させる（上限 12MB） | ✓ |
+| `lint:data-origin` | 宣言を remote↔local で入れ替える | ✓ |
+| `lint:credential-use` | 読み手のいないサービスに `fetch` と宣言する | ✓ |
+| `lint:ipc-handlers` | try を抜けた後で await | **✗ 鳴らなかった**（別項・修正済み） |
+| `lint:mutation-scope` | 変異検査の対象を 1 つ外す | ✓ |
+| `lint:collection-time` | 対象を収集時にしか呼ばないテストにする | ✓ |
+| `lint:rate-freshness` | 料率年度を 3 年ぶん古くする | ✓ |
+| `verify:orchestration` | round が実在しない team を指す | ✓ |
+| `vault:check` | 知識の `label` を書き換えて vault と乖離させる | ✓ |
+| `verify:graph` | 成果物を 1 行削る（再計算と byte 不一致） | ✓ |
+| `verify:knowledge` | 出典を 1 件分すべて消す | ✓ |
+| `chain:verify` | （このセッション中に保護対象の実変更で鳴った） | ✓ |
+
+**プローブ自体が的を外していた回が 6 回あった** —— `lint:credential-use` に
+ヘッダ名の変更を当てる（そこは見ていない）、`lint:knowledge-refs` に
+`knowledge-map.json` を当てる（読むのは裁定台帳）、`verify:graph` に
+`serviceId.ts` を当てる、`lint:repo-size` に 400KB を当てる（上限は 12MB）等。
+**「鳴らなかった」は、まずプローブの不具合を疑うこと。** ゲートの remit を
+読んでから当て直すと 4 件は正しく鳴った。残った 2 件が本物の穴だった。
 
 ### `lint:test-coverage` の「action は必ずテストされる」が、**定義場所を仮定していた**（修正済み）
 
