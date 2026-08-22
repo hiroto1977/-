@@ -223,7 +223,9 @@ function readTaxLines(values: Values, max = 6): TaxLine[] {
   const out: TaxLine[] = [];
   for (let n = 1; n <= max; n += 1) {
     const kindLabel = values[`i${n}kind`] ?? '';
-    const kind = KIND_BY_LABEL[kindLabel];
+    // 素の添字だと `'constructor'` 等がプロトタイプ側の値を返す。`values` は
+    // 保存された書類レコード (JSON) なので、画面の選択肢以外も入りうる。
+    const kind = Object.hasOwn(KIND_BY_LABEL, kindLabel) ? KIND_BY_LABEL[kindLabel] : undefined;
     if (!kind) continue; // 未選択 / （使わない）
     const name = values[`i${n}name`] ?? '';
     const qtyRaw = values[`i${n}qty`] ?? '';

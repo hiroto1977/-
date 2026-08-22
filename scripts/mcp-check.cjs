@@ -61,7 +61,9 @@ function main() {
   for (const name of serverNames) {
     if (NO_KEY_SERVERS.includes(name)) {
       ready.push(name);
-    } else if (REQUIRED_ENVS[name]) {
+    } else if (Object.hasOwn(REQUIRED_ENVS, name)) {
+      // 素の添字はプロトタイプ鎖まで辿る (`'toString'` という名の server で
+      // 関数が返り、下の `.filter` が TypeError になる)。
       const envs = REQUIRED_ENVS[name];
       const missingEnvs = envs.filter(e => !process.env[e]);
       if (missingEnvs.length === 0) {

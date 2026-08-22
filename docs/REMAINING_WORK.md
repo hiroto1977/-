@@ -1228,6 +1228,27 @@ type** から作るので、保存時のメタ (`item.mime`) が食い違って�
 境界そのもの（`isServiceId` は Set、`isTemplateId` と main.ts の
 `OAUTH_CONFIGS` は `Object.hasOwn`）は元から正しかった。
 
+### 表の添字を「所属判定」に使っている場所を洗った → 5 件直した
+
+`in` は `lint:forbidden` #27 で止めたが、**`const x = TABLE[k]; if (!x) …`** は
+別の形で残る。走査して 9 件、うち:
+
+| 場所 | 判定 |
+|---|---|
+| `lint-workflow-security.cjs:128` `if (UNPINNED_ALLOW[ref])` | **直した** — `uses: constructor` で**未固定 action の検査ごと飛ばせた**（対照実験で確認） |
+| `verify-knowledge-provenance.cjs:221` | **直した** — 未知の collection が「分類あり」で素通りしていた |
+| `liveRead.ts:90` | **直した** — 2 行上の `canLiveRead` は正しかったのに本体だけ素。理由が `live_read_unsupported` でなく `not_configured`（＝「鍵を入れれば実データになる」）になっていた |
+| `DocstudioPage.tsx:226` `KIND_BY_LABEL[kindLabel]` | **直した** — `values` は保存済みの書類 JSON なので画面の選択肢以外も入りうる |
+| `mcp-check.cjs:64` | **直した** — 関数が返って `.filter` で TypeError |
+| `oauth.ts:271` / `providers.ts:334` | 安全 — 上流の `isServiceId` / `AI_PROVIDER_IDS` (どちらも Set / includes) が済ませている |
+| `web-shim.ts:629,691` | **走査の誤検出** — `if (!spec.browserDirect)` を `!spec` の判定と読んでいた。`resolveProvider` が `isAiProviderId` で検証済み |
+
+**ゲートにはしなかった。** 走査の精度が 9 件中 2 件誤検出で、`in` の形（#27 は
+現行木で誤検出 0）ほど絞り込めない。精度の低いゲートは鳴らし続けて無視される
+のが最悪の結末なので、**直した 5 件それぞれに陰性対照を置く**方を採った
+（`lint:workflow-security` と `verify:knowledge` は自己検査に、`liveRead` は
+5 ケースのユニットテストに。3 つとも素の添字へ戻して落ちることを確認済み）。
+
 ### 正規表現に破滅的バックトラックはあるか → 無かった（実測）
 
 `src/` + `scripts/` + `assets/` + `orchestration/` の正規表現リテラル **1247 件**

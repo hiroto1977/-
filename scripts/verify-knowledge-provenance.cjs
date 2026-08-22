@@ -99,6 +99,20 @@ const TAXONOMY_BY_COLLECTION = {
   support: 'official',
 };
 
+/**
+ * コレクションの分類。**素の添字にしない。**
+ *
+ * `TAXONOMY_BY_COLLECTION[c]` と書くと `'constructor'` / `'toString'` /
+ * `'__proto__'` がプロトタイプ側の値 (関数やオブジェクト) を返して truthy に
+ * なり、未知のコレクションが `unknownCollections` に載らないまま `assess` へ
+ * 渡っていた (2026-08-22 に修正)。関数にしてあるのは自己検査から叩くため。
+ */
+function taxonomyOf(collection) {
+  return Object.hasOwn(TAXONOMY_BY_COLLECTION, collection)
+    ? TAXONOMY_BY_COLLECTION[collection]
+    : undefined;
+}
+
 function assess(types, taxonomy) {
   const reasons = [];
   if (types.length < MIN_SOURCES) {
@@ -153,8 +167,25 @@ function selfTest() {
    * `main` で弾かれるが、**抜けたこと自体は実データを読むまで分からない**ので、
    * 実際のコレクション一覧と突き合わせておく。
    */
+  /*
+   * 未知の collection が**プロトタイプ側の値で「分類あり」になっていない**こと。
+   * `TAXONOMY_BY_COLLECTION[e.collection]` と素で引いていた頃は、
+   * `'constructor'` が `Object` を返して truthy になり、未知のコレクションが
+   * `unknownCollections` に載らないまま `assess` へ渡っていた (2026-08-22)。
+   */
+  const protoNames = ['constructor', 'toString', '__proto__', 'valueOf', 'hasOwnProperty'];
+  const leaked = protoNames.filter((n) => taxonomyOf(n) !== undefined);
+  const knownOk = taxonomyOf('academic') === 'academic' && taxonomyOf('subsidy') === 'official';
+  const protoOk = leaked.length === 0 && knownOk;
+  if (!protoOk) failed += 1;
+  console.log(
+    `  ${protoOk ? '✓' : '✗'} 未知のコレクションに分類を返さない`
+      + (leaked.length ? ` / プロトタイプ経由で漏れ ${leaked.join(',')}` : '')
+      + (knownOk ? ` (プロトタイプ名 ${protoNames.length} 個 + 実在 2 件で確認)` : ' / 実在するものまで落ちている'),
+  );
+
   const actual = new Set(kc.loadEntries().map((e) => e.collection));
-  const missing = [...actual].filter((c) => !TAXONOMY_BY_COLLECTION[c]);
+  const missing = [...actual].filter((c) => !Object.hasOwn(TAXONOMY_BY_COLLECTION, c));
   const stale = Object.keys(TAXONOMY_BY_COLLECTION).filter((c) => !actual.has(c));
   const mapOk = missing.length === 0 && stale.length === 0;
   if (!mapOk) failed += 1;
@@ -218,7 +249,7 @@ function main(argv) {
   const counts = {};
 
   for (const e of entries) {
-    const taxonomy = TAXONOMY_BY_COLLECTION[e.collection];
+    const taxonomy = taxonomyOf(e.collection);
     if (!taxonomy) {
       unknownCollections.add(e.collection);
       continue;

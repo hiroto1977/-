@@ -125,7 +125,9 @@ function check(list) {
       if (ref.startsWith('actions/')) continue; // GitHub 自身
       if (/@[0-9a-f]{40}$/.test(ref)) continue; // SHA 固定済み
       seenUnpinned.add(ref);
-      if (UNPINNED_ALLOW[ref]) continue;
+      // `in` / 素の添字はプロトタイプ鎖まで辿るので、`uses: constructor` の
+      // ような名前が台帳に載っていることになり、**未固定の検査ごと飛ばされる**。
+      if (Object.hasOwn(UNPINNED_ALLOW, ref)) continue;
       problems.push({
         file: `${name}:${i + 1}`,
         why: `第三者 action がタグ固定 (${ref}) — SHA で固定するか台帳へ`,
@@ -192,6 +194,19 @@ function selfTest() {
       'run: の外の展開は見ない (action の with: など)',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@v1\n        with:\n          t: ${{ github.event.pull_request.title }}\n' }],
       0,
+    ],
+    // 許可台帳をプロトタイプ鎖経由ですり抜けられないこと。`UNPINNED_ALLOW[ref]`
+    // と素で引いていた頃は `uses: constructor` が `Object` を返して truthy に
+    // なり、**未固定の検査ごと飛ばされていた** (2026-08-22)。
+    [
+      'プロトタイプ側の名前で台帳をすり抜けない (constructor)',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: constructor\n' }],
+      1,
+    ],
+    [
+      'プロトタイプ側の名前で台帳をすり抜けない (toString)',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: toString\n' }],
+      1,
     ],
   ];
   let bad = 0;

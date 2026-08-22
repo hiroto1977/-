@@ -47,6 +47,27 @@ describe('liveRead — 実データにならない理由を区別する', () => 
     });
   });
 
+  /*
+   * `canLiveRead` には 2026-08 の時点で同じ検査があったのに、**`liveRead` 本体は
+   * 素の添字のまま**だった (`LIVE_READERS[serviceId]`)。`'constructor'` は
+   * `Object` を返すので `reader === undefined` を抜け、理由が
+   * `live_read_unsupported` ではなく `not_configured`（＝「鍵を入れれば
+   * 実データになる」）になっていた —— 入れても永久に実データにならないのに。
+   *
+   * 判定を 1 か所に書いても、隣は直らない (0-a-4)。
+   */
+  it.each(['toString', 'constructor', '__proto__', 'valueOf', 'hasOwnProperty'])(
+    'プロトタイプ由来の名前 %s も live_read_unsupported',
+    async (name) => {
+      const r = await liveRead(name, deps());
+      expect(r).toEqual({
+        ok: false,
+        code: 'live_read_unsupported',
+        message: 'このサービスはブラウザ版からの読み取りに未対応です。同梱のサンプルを表示します。',
+      });
+    },
+  );
+
   it('資格情報が無ければ not_configured (入れれば実データになると言う)', async () => {
     const expected = {
       ok: false,
