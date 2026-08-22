@@ -1783,6 +1783,10 @@ describe('ループバックサーバの結び先と応答本文', () => {
         setTimeout(() => { sock.destroy(); resolve(buf || '無応答'); }, 2000);
       });
       expect(raw.startsWith('HTTP/1.1 400'), `応答: ${raw.slice(0, 60)}`).toBe(true);
+      // 本文まで見る。空にしても 400 は 400 なので、状態行だけでは
+      // 「理由を返している」ことが留まらない。
+      // (chunked で返るので `endsWith` ではなく含有で見る。)
+      expect(raw.includes('bad request'), `本文: ${JSON.stringify(raw.slice(-40))}`).toBe(true);
       expect(uncaught.map((e) => e.message)).toEqual([]);
 
       // 非終端であること — 本物が後から来れば解決する。

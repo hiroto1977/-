@@ -85,6 +85,25 @@ describe('low-level key reuse (deriveAesKey / sealWithKey / openWithKey)', () =>
     await expect(deriveAesKey('', randomSaltB64())).rejects.toThrow(/パスワード/);
   });
 
+  /*
+   * 保存されている salt が base64 として読めないとき、`atob` の
+   * `DOMException('Invalid character')` をそのまま外へ出さない。
+   * どの欄が壊れているかまで言う (欄名が空になると
+   * 「暗号化データが壊れています（ が base64 …）」になってしまう)。
+   */
+  // `'a b c'` は**通る**ので入れない —— forgiving-base64 は ASCII 空白を
+  // 取り除いてから復号するので `'abc'` として読めてしまう (実測)。
+  // 「通らないはず」と思った入力が通るのは、そのまま検査の穴になる。
+  it.each(['###', '@@@', '****'])(
+    '壊れた salt (%s) は領域のエラーで断り、生の DOMException を出さない',
+    async (badSalt) => {
+      await expect(deriveAesKey('pw', badSalt)).rejects.toThrow(
+        /暗号化データが壊れています（salt が base64/,
+      );
+      await expect(deriveAesKey('pw', badSalt)).rejects.not.toThrow(/Invalid character/);
+    },
+  );
+
   it('fails openWithKey on a wrong key or non-sealed input', async () => {
     const sealed = await sealWithKey(await deriveAesKey('pw', randomSaltB64()), 'x');
     // 別の鍵では GCM 認証失敗 → 復号に失敗。

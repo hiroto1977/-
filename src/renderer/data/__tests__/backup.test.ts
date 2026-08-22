@@ -143,10 +143,15 @@ describe('encrypted backup', () => {
   it.each([
     ['salt', { salt: '###', iv: 'AAAAAAAAAAAAAAAA', ct: 'AAAAAAAAAAAAAAAAAAAAAAAA' }],
     ['iv', { salt: 'AAAA', iv: '@@@', ct: 'AAAAAAAAAAAAAAAAAAAAAAAA' }],
-  ])('%s が base64 として読めなければ、理由の分かる日本語で断る', async (_field, over) => {
+  ])('%s が base64 として読めなければ、どの欄かまで言って断る', async (field, over) => {
     const bundle = { v: 1, kdf: 'PBKDF2-SHA256', iterations: 600_000, ...over };
     const text = JSON.stringify({ encrypted: true, payload: bundle });
-    await expect(parseBackup(text, 'pw-123')).rejects.toThrow(/暗号化データが壊れています/);
+    // **どの欄が壊れているか**まで見る。欄名が空になっても「暗号化データが
+    // 壊れています（ が base64 として…）」で通ってしまうので、文言の型だけでは
+    // 留まらない (実測で欄名の変異体が生き残った)。
+    await expect(parseBackup(text, 'pw-123')).rejects.toThrow(
+      new RegExp(`暗号化データが壊れています（${field} が base64`),
+    );
     // プラットフォームの生の例外を出さない。
     await expect(parseBackup(text, 'pw-123')).rejects.not.toThrow(/Invalid character/);
   });

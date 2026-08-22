@@ -539,19 +539,19 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
       if (strayCount >= STRAY_LIMIT) server.close();
       return;
     }
+    // 多層防御: `classifyCallback` が投げたら **400 (非終端) に倒す**。
+    // ここは攻撃者が任意の URL を送れる唯一の入口で、request listener の中の
+    // 同期 throw は `uncaughtException` になり、main.ts に受け手が無いので
+    // アプリごと落ちる。実際 2 通りで落ちていた (2026-08-22 に実測して両方直した):
+    //   - `safeStateEquals` のバイト長 RangeError
+    //   - `GET http://[` —— パーサは受けるが `new URL` が拒む request-target
+    // 判定できない要求は「正規のコールバックではない」ので state 不一致と
+    // 同じ扱い —— 400 を返しつつ待受は続け、本物が後から来れば解決する。
+    let outcome: CallbackOutcome;
     // Node's http.IncomingMessage.url is always populated by the parser
     // (even '/' for the empty path), so the `?? '/'` fallback is
     // unreachable; the StringLiteral '/' → '' mutant is equivalent.
     // Stryker disable next-line StringLiteral
-    //
-    // 多層防御: `classifyCallback` が投げたら **400 (非終端) に倒す**。
-    // ここは攻撃者が任意の URL を送れる唯一の入口で、request listener の中の
-    // 同期 throw は `uncaughtException` になり、main.ts に受け手が無いので
-    // アプリごと落ちる。実際 `safeStateEquals` のバイト長 RangeError で
-    // 落ちていた (2026-08-22 に実測して両方直した)。
-    // 判定できない要求は「正規のコールバックではない」なので、state 不一致と
-    // 同じ扱い —— 400 を返しつつ待受は続け、本物が後から来れば解決する。
-    let outcome: CallbackOutcome;
     try {
       outcome = classifyCallback(req.url ?? '/', expectedState);
     } catch {
