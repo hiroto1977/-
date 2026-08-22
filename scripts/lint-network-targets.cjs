@@ -180,8 +180,8 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
       + ' 呼び出し口は 2 つで、どちらも表から引いた config を渡す:'
       + ' main.ts の oauth:authorize は OAUTH_CONFIGS[serviceId] を Object.hasOwn で引き、'
       + ' renderer から差し替えられるのは clientId だけ (CLIENT_ID_RE で検証)。'
-      + ' secrets.ts の更新経路も同じ表。送信直前に assertHttpsTokenUrl で https を強制する。'
-      + ' ただし assertHttpsTokenUrl が見るのは**スキームだけでホストは見ない**ので、'
+      + ' secrets.ts の更新経路も同じ表。送信直前に assertHttpsEndpoint で https を強制する (認可 URL 側も同じ関門)。'
+      + ' ただし assertHttpsEndpoint が見るのは**スキームだけでホストは見ない**ので、'
       + ' 封じ込めは「表がハードコードであること」に依存している —— tokenUrl を'
       + ' 設定可能にする変更は、client secret の送り先を外部が選べるようにする変更と同義。',
   },

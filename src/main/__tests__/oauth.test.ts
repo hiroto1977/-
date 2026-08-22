@@ -801,7 +801,7 @@ describe('OAUTH_CONFIGS shape', () => {
     expect(cfg?.clientSecret).toBe('');
   });
 
-  it('pins every token endpoint to https (assertHttpsTokenUrl can never fire in prod)', () => {
+  it('pins every endpoint to https (assertHttpsEndpoint can never fire in prod)', () => {
     for (const [id, cfg] of Object.entries(OAUTH_CONFIGS)) {
       expect(cfg, id).toBeDefined();
       expect(cfg!.tokenUrl.startsWith('https://'), id).toBe(true);
@@ -1561,7 +1561,7 @@ describe('refresh', () => {
   });
 });
 
-describe('assertHttpsTokenUrl (RFC 8252 §8.3 — トークン交換を平文で行わせない)', () => {
+describe('assertHttpsEndpoint (RFC 8252 §8.3 — 平文の宛先へ資格情報を出さない)', () => {
   // authorize() / refresh() の冒頭ガード。現行の OAUTH_CONFIGS は全て https を
   // ハードコードしており IPC 層も clientId しか上書きさせないため到達しないが、
   // 将来の設定追加やテスト用 fixture の混入で平文交換が起きないための常設ガード。
@@ -1595,6 +1595,49 @@ describe('assertHttpsTokenUrl (RFC 8252 §8.3 — トークン交換を平文で
     const set = await refresh(CFG, { accessToken: 'old', refreshToken: 'rt' }, fetchSpy);
     expect(set.accessToken).toBe('at');
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  /*
+   * **認可 URL 側 (2026-08-22 に足した)。**
+   *
+   * 以前は「全 config がハードコード https」という検査だけで守られていて、
+   * 常設ガードはトークン端点にしか無かった。認可 URL のほうが軽いわけではない:
+   * `state` (CSRF トークン) を載せて出ていくうえ、`shell` へ**そのまま渡す**
+   * —— `externalUrlGate.ts` の関門を通る 2 つの扉と違い、ここは
+   * `lint:forbidden` の allowFile で例外にしてある唯一の呼び出し口である。
+   */
+  it.each([
+    ['平文 http', 'http://accounts.example.com/authorize'],
+    ['スキーム無し', 'accounts.example.com/authorize'],
+    ['file', 'file:///etc/passwd'],
+    ['大文字 (URL 解析ではなく前置き一致なので弾く側)', 'HTTPS://accounts.example.com/authorize'],
+    ['空', ''],
+  ])('authorize は %s の認可エンドポイントを拒否する (%s)', async (_label, authorizeUrl) => {
+    const before = openExternalMock.mock.calls.length;
+    await expect(authorize({ ...CFG, authorizeUrl })).rejects.toThrow(
+      'OAuth authorization endpoint must use https',
+    );
+    // **ブラウザを開く副作用より前**に落ちること。平文の宛先へ state を
+    // 投げてから気付いても遅い。
+    expect(openExternalMock.mock.calls.length, 'ブラウザを開いてしまっている').toBe(before);
+  });
+
+  it('トークン端点が平文なら、認可 URL を見るより前に落ちる (順序)', async () => {
+    // 両方が平文のとき、先に鳴るのはトークン側 —— 文言で確かめる。
+    await expect(
+      authorize({ ...CFG, tokenUrl: 'http://t.example/token', authorizeUrl: 'http://a.example/auth' }),
+    ).rejects.toThrow('OAuth token endpoint must use https');
+  });
+
+  it('2 つの宛先は同じ判定を通る (片方だけ緩んでいない)', async () => {
+    const before = openExternalMock.mock.calls.length;
+    for (const cfg of [
+      { ...CFG, tokenUrl: 'http://x.example/token' },
+      { ...CFG, authorizeUrl: 'http://x.example/auth' },
+    ]) {
+      await expect(authorize(cfg)).rejects.toThrow(/must use https/);
+    }
+    expect(openExternalMock.mock.calls.length).toBe(before);
   });
 });
 

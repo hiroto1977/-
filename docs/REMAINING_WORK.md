@@ -1509,6 +1509,35 @@ Electron には実装が無い (`isSpeechRecognitionSupported()` が false を�
 **プローブが `index.html` の説明コメント側に当たっていた**だけだった
 （メタタグを狙い直すと鳴った）—— ゲート掃引で 6 回踏んだのと同じ罠。
 
+### OAuth の常設ガードが、2 つの宛先のうち片方にしか掛かっていなかった（対称にした）
+
+**これは実バグではない** —— 全 `OAUTH_CONFIGS` の `authorizeUrl` / `tokenUrl` は
+ハードコードの https リテラルで、env から来るのは `clientId` / `clientSecret`
+だけ。両方の URL を `startsWith('https://')` で留める検査も既に 2 本ある
+（`oauth.test.ts:804` と `:2015`）。到達する経路は今日は無い。
+
+**非対称だったのは「常設ガード」のほう。** `assertHttpsTokenUrl` の理由書きは
+こう言っている ——「今日は到達しないが、**将来の設定追加やテスト用 fixture の
+混入**で平文交換が起きないための常設ガード」。この理由は認可 URL にも
+そのまま当てはまるのに、掛かっていたのはトークン端点だけだった。
+
+認可 URL のほうが軽いわけではない:
+
+- `state`（CSRF トークン）と `client_id` を載せて出ていく
+- `shell` へ**そのまま渡す** —— `externalUrlGate.ts` の関門を通る 2 つの扉と
+  違い、ここは `lint:forbidden` の `allowFile` で例外にしてある**唯一の
+  呼び出し口**である。その例外の理由は「URL は我々が組み立てたもの」だが、
+  組み立ての材料が https である保証は**検査の中にしか無かった**
+
+**直し方**: `assertHttpsTokenUrl` → `assertHttpsEndpoint(url, role)` に一般化し、
+`authorize()` で両方を通す（`role` は文言のためだけで判定は同一 —— 0-a-14 の
+「同じ問いなら実装も 1 つ」）。**ブラウザを開く副作用より前**に落とす順序も
+検査で留めた。
+
+対照 4 種すべて鳴る: 認可 URL のガードを外す (6 本) / ガードを `openExternal`
+の後ろへ動かす (6 本) / 判定を `http` も許す形にする (5 本) / トークン側の
+ガードを外す (3 本)。Stryker: `oauth.ts` 385 killed / 0 survived / 0 no-cov。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

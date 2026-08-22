@@ -21,15 +21,32 @@ import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage } from '../shared/redact';
 
 /**
- * Refuse to send an authorization code / refresh token to a non-HTTPS token
- * endpoint. Today every OAUTH_CONFIGS entry hardcodes https and the IPC layer
- * only lets the renderer override `clientId`, so this is unreachable — it is a
- * standing guard so a future config (or a test fixture copied into prod) can
- * never exchange credentials in cleartext. RFC 8252 §8.3.
+ * Refuse to talk to a non-HTTPS OAuth endpoint. Today every OAUTH_CONFIGS entry
+ * hardcodes https and the IPC layer only lets the renderer override `clientId`,
+ * so this is unreachable — it is a standing guard so a future config (or a test
+ * fixture copied into prod) can never send credentials in cleartext.
+ * RFC 8252 §8.3.
+ *
+ * ## 2 つの宛先に同じ関門を通す (2026-08-22)
+ *
+ * 以前このガードは**トークン端点にしか掛かっていなかった**。認可 URL は
+ * 「全 config がハードコード https」という検査だけで守られていて、
+ * **常設ガードは無かった** —— 同じ理由書きが片方にしか適用されていない。
+ *
+ * 認可 URL のほうが軽いわけではない:
+ *
+ * - `state` (CSRF トークン) と `client_id` を載せて出ていく
+ * - `shell` へ**そのまま渡す** —— `externalUrlGate.ts` の関門を通る
+ *   2 つの扉と違い、ここは `lint:forbidden` の allowFile で例外にしてある
+ *   唯一の呼び出し口である。その例外の理由は「URL は我々が組み立てたもの」だが、
+ *   **組み立ての材料が https である保証**は今まで検査の中にしか無かった
+ *
+ * 同じ問い (この宛先へ資格情報を載せて出てよいか) なので、実装も 1 つにする。
+ * 引数の `role` は文言のためだけにあり、判定は両方で同一である。
  */
-function assertHttpsTokenUrl(tokenUrl: string): void {
-  if (!tokenUrl.startsWith('https://')) {
-    throw new Error('OAuth token endpoint must use https');
+function assertHttpsEndpoint(url: string, role: 'token' | 'authorization'): void {
+  if (!url.startsWith('https://')) {
+    throw new Error(`OAuth ${role} endpoint must use https`);
   }
 }
 
@@ -677,7 +694,10 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   if (requiresClientSecret(config) && !config.clientSecret) {
     throw new Error('OAuth client secret is not configured for this service');
   }
-  assertHttpsTokenUrl(config.tokenUrl);
+  assertHttpsEndpoint(config.tokenUrl, 'token');
+  // 認可 URL も同じ関門を通す。**ブラウザを開く副作用より前**に落とすこと ——
+  // 平文の宛先へ `state` を投げてから気付いても遅い。
+  assertHttpsEndpoint(config.authorizeUrl, 'authorization');
   const { verifier, challenge } = generatePkce();
   const state = base64url(randomBytes(16));
 
@@ -714,7 +734,7 @@ export async function refresh(
   if (!current.refreshToken) {
     throw new Error('no refresh token available');
   }
-  assertHttpsTokenUrl(config.tokenUrl);
+  assertHttpsEndpoint(config.tokenUrl, 'token');
   const res = await fetchFn(config.tokenUrl, {
     method: 'POST',
     headers: buildTokenRequestHeaders(config),
