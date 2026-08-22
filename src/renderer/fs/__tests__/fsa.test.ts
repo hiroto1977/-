@@ -347,6 +347,38 @@ describe('ファイル名の境界', () => {
       writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, 'a', new Blob(['x'])),
     ).resolves.toBeUndefined();
   });
+
+  /*
+   * `..` は封じ込めの中心にある脱出記号。2026-08-22 まで `isSafeFilename` は
+   * セパレータしか見ておらず、`..` はここを素通りして `getFileHandle('..')` へ
+   * 届いていた。実ブラウザは仕様どおり TypeError にするが、**この mock は
+   * 受け取っていた** —— つまり前提が崩れても検査は 1 件も落ちなかった。
+   */
+  it.each([['.'], ['..']])('%s は断る (フォルダの外を指す)', async (name) => {
+    const h = handleFor();
+    await expect(
+      writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, name, new Blob(['x'])),
+    ).rejects.toThrow('filename が不正です');
+  });
+
+  it.each([['..foo'], ['foo..'], ['...'], ['.hidden'], ['a.b']])(
+    '%s は通す (正当なファイル名を巻き込まない)',
+    async (name) => {
+      const h = handleFor();
+      await expect(
+        writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, name, new Blob(['x'])),
+      ).resolves.toBeUndefined();
+    },
+  );
+
+  it('断ったときは権限確認も getFileHandle も一度も呼ばない (最初に止める)', async () => {
+    const h = handleFor();
+    await expect(
+      writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, '..', new Blob(['x'])),
+    ).rejects.toThrow('filename が不正です');
+    expect(h.getFileHandle).not.toHaveBeenCalled();
+    expect(h.queryPermission).not.toHaveBeenCalled();
+  });
 });
 
 // ===== 権限は readwrite で問い合わせる ===================================

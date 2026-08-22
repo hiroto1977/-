@@ -141,7 +141,28 @@ export async function clearFolderHandle(): Promise<void> {
   db.close();
 }
 
+/**
+ * 選んだフォルダの**外へ書かせない**ための門。
+ *
+ * `.` と `..` を明示的に落とすのは 2026-08-22 に足した。それまでは
+ * セパレータ (`/` `\\`) しか見ておらず、`..` はこの関数を素通りして
+ * `getFileHandle('..')` に届いていた (検査で確認)。
+ *
+ * 実害は無い —— File System Access の仕様は `getFileHandle` に `.` / `..` を
+ * 渡すと TypeError にすると定めており、実ブラウザはそこで止める。だが
+ * **この関数の名前と説明が主張しているのは封じ込め**であって、封じ込めの
+ * 中心にある脱出記号を platform の善意に預けているのは筋が悪い。
+ * 現にこのリポジトリの mock ハンドルは `..` をそのまま受け取っていたので、
+ * 前提が崩れても検査は 1 件も落ちなかった。
+ *
+ * (渡ってくる名前はアプリが組み立てたもの (`service-hub-YYYYMMDD-HHMM.txt`
+ *  など) で利用者入力ではないため、これは多層防御。)
+ *
+ * `..foo` / `foo..` / `...` は正当なファイル名なので**通す**。落とすのは
+ * ちょうど `.` と `..` の 2 つだけ。
+ */
 function isSafeFilename(s: string): boolean {
+  if (s === '.' || s === '..') return false;
   return s.length > 0 && s.length <= 256 && !/[\0\r\n/\\]/.test(s);
 }
 
