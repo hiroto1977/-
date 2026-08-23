@@ -884,7 +884,15 @@ function StorageProtectionNotice() {
   if (state.encrypted && state.plainCount === 0) {
     return (
       <div style={{ fontSize: 13, lineHeight: 1.7 }}>
-        <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ 暗号化されています</strong>
+        {/*
+          **見出しも範囲を名乗る。** 本文は元から「トークンは」と書いており、
+          警告側も「トークンを暗号化できません」と書いているのに、成功側の
+          見出しだけが範囲を落としていた。節の題が「保存時の保護状態」なので、
+          範囲の無い ✅ は「保存する物は全部暗号化されている」と読める。
+          実際には proxy の共有秘密 (`business-hub-preferences`)・ライブラリの
+          書類・localStorage の各ストアは平文のまま (2026-08-23 実測)。
+        */}
+        <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ トークンは暗号化されています</strong>
         <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
           {/*
             **何が鍵を握っているかを取り違えない。** 2026-08-23 まで、ここは

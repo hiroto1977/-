@@ -34,6 +34,21 @@ import {
 // fallbacks, and the request/response envelope structure are pinned by
 // the 13 integration tests via `getProxyConfig` / `setProxyConfig` /
 // `fetchViaProxy` round-trip + validation cases.
+/**
+ * **この DB は平文である。** `sharedSecret` (Worker への簡易認証) もここに入る。
+ *
+ * 保管庫 (`business-hub-vault`) とは別で、暗号化されない。実測 (2026-08-23) で
+ * ブラウザ版に平文で残る資格情報はこれだけだった。設定画面の「保存時の保護状態」は
+ * **トークン**について述べており、ここは含まない (見出しにも範囲を書いた)。
+ *
+ * 漏れたときに何が起きるかは測ってある: `docs/PROXY_EXAMPLE.md` の Worker は
+ * 秘密の照合 (定数時間) とは**別に** `denyReason(target)` で宛先を検査し、
+ * DoH で名前解決してから private/reserved を弾く (DNS rebinding 対策込み)。
+ * つまり秘密だけを得ても **SSRF にはならない** —— 公開宛先への中継に使える
+ * だけで、これは Worker の持ち主の帯域の話に留まる。
+ * 保管庫へ移すには「解錠前に proxy を使う経路」の可否を決める必要があるため、
+ * ここでは**現状を書くに留める** (勝手に設計を変えない)。
+ */
 const DB_NAME = 'business-hub-preferences';
 const DB_VERSION = 1;
 const STORE = 'kv';
