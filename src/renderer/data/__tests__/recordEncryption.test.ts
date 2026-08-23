@@ -285,3 +285,80 @@ describe('壊れたメタを上書きしない', () => {
     expect(isEncryptionEnabled()).toBe(true);
   });
 });
+
+/*
+ * **復元は書き込みである。**
+ *
+ * `insert` / `insertMany` / `update` は全部 `cipher.encrypt` を通るのに、
+ * `importAll` だけが受け取った物をそのまま置いていた。実測 (2026-08-23) ——
+ * 暗号化を有効にしたまま平文時代のバックアップを復元すると、IndexedDB の
+ * 生の中身に平文がそのまま残った:
+ *
+ *   通常書き込み : 封緘=true   {"__enc":{…}}
+ *   復元レコード : 封緘=false  {"amount":999,"memo":"RESTORED-SECRET"}
+ *
+ * 読み出しは平文素通しで成功するので画面上は何も起きない。利用者は
+ * 「暗号化されています」の表示を見ながら、災害復旧のつもりで保護を外している。
+ */
+describe('復元しても保護を外さない', () => {
+  /** IndexedDB の生の中身 (cipher を通さない) を読む。 */
+  function rawRecords(): Promise<{ id: string; data: unknown }[]> {
+    return new Promise((res, rej) => {
+      const q = indexedDB.open('business-hub-data');
+      q.onsuccess = () => {
+        const db = q.result;
+        const g = db.transaction('records', 'readonly').objectStore('records').getAll();
+        g.onsuccess = () => {
+          res(g.result as { id: string; data: unknown }[]);
+          db.close();
+        };
+        g.onerror = () => rej(g.error);
+      };
+      q.onerror = () => rej(q.error);
+    });
+  }
+
+  it('暗号化 ON で平文バックアップを復元すると、封緘してから保存する', async () => {
+    await enableEncryption('passphrase-abc');
+    const store = getRecordStore();
+
+    await store.importAll([
+      { id: 'old-1', collection: 'sales', createdAt: 1, updatedAt: 1, data: { memo: 'RESTORED-SECRET' } },
+    ]);
+
+    const raw = await rawRecords();
+    const restored = raw.find((r) => r.id === 'old-1')!;
+    // ★ ここが本体 —— ディスク上に平文が残らないこと。
+    expect(isSealedData(restored.data)).toBe(true);
+    expect(JSON.stringify(restored.data)).not.toContain('RESTORED-SECRET');
+
+    // 読み出しは今までどおり中身が返る。
+    const list = await store.list<{ memo: string }>('sales');
+    expect(list.map((r) => r.data.memo)).toContain('RESTORED-SECRET');
+  });
+
+  it('封緘済みのレコードは二重封緘しない (そのまま入れる)', async () => {
+    await enableEncryption('passphrase-abc');
+    const store = getRecordStore();
+
+    await store.insert('sales', { memo: 'ORIGINAL' });
+    const exported = await store.exportAll();
+    expect(isSealedData(exported[0]!.data)).toBe(true);
+
+    // 書き出した物をそのまま戻す (同じパスフレーズ)。
+    await store.importAll(exported, { replace: true });
+
+    const list = await store.list<{ memo: string }>('sales');
+    // 二重封緘されていたらここで復号に失敗する。
+    expect(list.map((r) => r.data.memo)).toEqual(['ORIGINAL']);
+  });
+
+  it('暗号化 OFF なら今までどおり平文で入る (封緘しない)', async () => {
+    const store = getRecordStore();
+    await store.importAll([
+      { id: 'p-1', collection: 'sales', createdAt: 1, updatedAt: 1, data: { memo: 'PLAIN-OK' } },
+    ]);
+    const raw = await rawRecords();
+    expect(isSealedData(raw.find((r) => r.id === 'p-1')!.data)).toBe(false);
+  });
+});

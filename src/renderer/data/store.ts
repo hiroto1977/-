@@ -16,7 +16,7 @@
  * the two persistence modules stay consistent.
  */
 
-import { IDENTITY_CIPHER, type RecordCipher } from './recordCipher';
+import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -407,16 +407,45 @@ class IndexedDBRecordStore implements RecordStore {
     return all;
   }
 
+  /**
+   * 復元。**平文で入ってきたレコードは現在の cipher で封緘してから入れる。**
+   *
+   * 以前は受け取った物をそのまま `put` していた。他の書き込み口
+   * (`insert` / `insertMany` / `update`) は全部 `cipher.encrypt` を通るのに、
+   * **ここだけ素通しだった**。実測 (2026-08-23) —— 暗号化を有効にした状態で
+   * 平文時代のバックアップを復元し、IndexedDB の生の中身を見ると:
+   *
+   * ```
+   *   通常書き込み : 封緘=true   {"__enc":{"iv":"…","ct":"…"}}
+   *   復元レコード : 封緘=false  {"amount":999,"memo":"RESTORED-SECRET"}
+   * ```
+   *
+   * 読み出しは cipher の平文素通しで成功するので**画面上は何も起きない**が、
+   * ディスクには平文が残る。利用者は診断画面が「暗号化されています」と
+   * 言うのを見ており、災害復旧のつもりで**保護を外していた**ことになる。
+   *
+   * **封緘済みはそのまま入れる。** 二重封緘は開けなくなるし、別のパスフレーズで
+   * 封緘された物 (鍵が違うので開けない) も、そのまま置いておけば正しい
+   * パスフレーズでやり直せる。
+   *
+   * 封緘は**トランザクションを開ける前に**全部済ませる —— IndexedDB の
+   * トランザクションは待っている間に自動で閉じるため。
+   */
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
     const valid = records.filter(isValidStoredRecord);
+    const prepared = await Promise.all(
+      valid.map(async (rec) =>
+        isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
+      ),
+    );
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       const store = tx.objectStore(STORE);
       if (opts?.replace) store.clear();
-      for (const rec of valid) store.put(rec); // put = upsert by id
+      for (const rec of prepared) store.put(rec); // put = upsert by id
       await txDone(tx);
     });
-    return valid.length;
+    return prepared.length;
   }
 
   async reencryptAll(from?: RecordCipher): Promise<number> {
