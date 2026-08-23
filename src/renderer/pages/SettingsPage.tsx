@@ -165,11 +165,6 @@ function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () 
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
-      // **成否によらず一時秘密を捨てる。** 以前は try の中の成功経路にしか
-      // 掃除が無く、`state` 不一致 (= CSRF の疑い) や通信断で落ちたときに
-      // **いちばん消したい verifier が残った**。verifier は単回使用なので、
-      // ここで消しても正常系は失われない (やり直しは認可からになる)。
-      clearPkceSession();
       setBusy(false);
     }
   }
@@ -1292,6 +1287,11 @@ function GoogleOAuthSection() {
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
+      // **成否によらず一時秘密を捨てる。** 以前は try の中の成功経路にしか
+      // 掃除が無く、`state` 不一致 (= CSRF の疑い) や通信断で落ちたときに
+      // **いちばん消したい verifier が残った**。verifier は単回使用なので、
+      // ここで消しても正常系は失われない (やり直しは認可からになる)。
+      clearPkceSession();
       setBusy(false);
     }
   }

@@ -173,6 +173,77 @@ describe('交換が失敗しても一時秘密が残らない (実測)', () => {
 });
 
 /*
+ * **本物の `complete()` が掃除しているか。**
+ *
+ * 上の `runLikeComplete` は制御の流れの*再現*であって、**実物ではない**。
+ * だから「実物が直っていない」ことは検出できない ——
+ * 2026-08-23 に実際にそうなった:
+ *
+ *   置換が `finally { setBusy(false); }` の**最初の一致**に当たり、
+ *   掃除が `complete()` ではなく**資格情報の保存関数**へ入った。
+ *   `complete()` からは元の掃除も消えていたので、**成功時も含めて
+ *   一切消えない**状態になっていた。検査は全部緑だった。
+ *
+ * > **対象の*再現*を検査しても、対象が変わっていないことは分からない。**
+ *
+ * 本物を叩けるのが一番だが、`complete()` は React コンポーネントの中の
+ * クロージャで、このリポジトリにはページを描画する検査の土台が無い。
+ * そこで**主張の単位で実物の字面を見る** —— 「`complete()` の `finally` に
+ * `clearPkceSession()` が在る」という主張そのものを確かめる。
+ */
+describe('本物の SettingsPage.complete() が finally で掃除している', () => {
+  const source = (): string => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    return readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
+  };
+
+  /** 名前で関数の本文を切り出す (次の同インデントの `}` まで)。 */
+  const bodyOf = (text: string, name: string): string => {
+    const start = text.indexOf(`  async function ${name}() {`);
+    expect(start, `${name}() が見つからない`).toBeGreaterThan(-1);
+    const end = text.indexOf('\n  }\n', start);
+    expect(end, `${name}() の終わりが見つからない`).toBeGreaterThan(start);
+    return text.slice(start, end);
+  };
+
+  it('complete() は PKCE の交換をしている (別の関数を見ていない)', () => {
+    expect(bodyOf(source(), 'complete')).toContain('exchangeGoogleCode');
+  });
+
+  it('complete() の finally に clearPkceSession() が在る', () => {
+    const body = bodyOf(source(), 'complete');
+    const fin = body.slice(body.lastIndexOf('} finally {'));
+    expect(fin, 'finally 節が見つからない').toContain('finally');
+    expect(fin, '掃除が finally に無い —— 失敗時に一時秘密が残る').toContain('clearPkceSession()');
+  });
+
+  it('掃除は try の中だけに置かれていない (成功時しか走らない形に戻っていない)', () => {
+    const body = bodyOf(source(), 'complete');
+    const finallyAt = body.lastIndexOf('} finally {');
+    const firstClear = body.indexOf('clearPkceSession()');
+    expect(firstClear, '掃除が 1 つも無い').toBeGreaterThan(-1);
+    expect(firstClear, '掃除が finally より前 = try の中にしか無い').toBeGreaterThan(finallyAt);
+  });
+
+  /*
+   * **置換が別の関数へ流れ込んでいないか。** 実際にそうなった ——
+   * 資格情報の保存関数の `finally` へ入り、資格情報を 1 つ保存するたびに
+   * 進行中の PKCE を壊す形になっていた。
+   */
+  it('PKCE と無関係な関数が clearPkceSession() を呼んでいない', () => {
+    const text = source();
+    const completeStart = text.indexOf('  async function complete() {');
+    for (const m of text.matchAll(/clearPkceSession\(\)/g)) {
+      expect(
+        m.index,
+        `clearPkceSession() が complete() の外 (位置 ${m.index}) に在る`,
+      ).toBeGreaterThan(completeStart);
+    }
+  });
+});
+
+/*
  * **鍵を知っているのはこのファイルだけ。**
  *
  * 「`finally` で消す」を守っても、別の場所が `sessionStorage` を直に触れば
