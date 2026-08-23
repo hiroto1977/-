@@ -49,6 +49,7 @@ jobs:
       - run: npm run lint:doi-prefix
       - run: npm run lint:charset
       - run: npm run lint:knowledge-refs
+      - run: npm run lint:sample-data
       - run: npm run lint:test-coverage
       - run: npm run lint:shell
       - run: npm run lint:repo-size
