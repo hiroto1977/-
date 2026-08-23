@@ -186,17 +186,40 @@ async function runProxyBearer<R>(
 const vault = getVault();
 const library = getLibrary();
 
-function downloadBlob(filename: string, content: string, mime: string): void {
-  const blob = new Blob([content], { type: mime + ';charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  // Defer revocation so the download has time to start.
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+/**
+ * 生成物をダウンロードさせる。**投げない** —— 開始できたかを返す。
+ *
+ * `URL.createObjectURL` は環境によって失敗する (blob: を塞ぐ拡張・厳しい
+ * プライバシー設定・大きな blob でのメモリ不足)。ここが投げると `invoke`
+ * ごと reject し、**ブラウザ版だけが「失敗は戻り値で表す」という約束を
+ * 破る**。実測: `createObjectURL` を投げさせると 37 組のうち 4 組が reject
+ * した (`stocks` / `business` の export-dashboard(-md))。
+ *
+ * reject の行き先は呼び出し側の `busy` フラグで、`finally` で戻していない
+ * 画面ではボタンが押せないまま残る —— `useServiceData` が読み取り側で
+ * 同じ事故を防いでいるのと同じ形。`lint:ipc-handlers` は `src/main` しか
+ * 見ないので、この経路は台帳の外にいた。
+ *
+ * ライブラリへの保存は別に済んでいるので、始まらなくても生成物は
+ * 失われない。**始まらなかったことは戻り値で伝える** —— 黙って成功と
+ * 言わない。
+ */
+function downloadBlob(filename: string, content: string, mime: string): boolean {
+  try {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // Defer revocation so the download has time to start.
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Save an artifact to the in-app Library and optionally to the user's
@@ -1021,8 +1044,8 @@ const shim = {
       }
       const filename = `${def.id}-${Date.now()}.svg`;
       await saveToLibrary('templates', filename, 'image/svg+xml', svg);
-      downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
     // TeamRadar export: grab the inline svg already rendered on the page.
@@ -1035,8 +1058,8 @@ const shim = {
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
       const filename = title.replace(/[^\w.-]+/g, '-').slice(0, 64) + '-' + Date.now() + '.svg';
       await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
-      downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
     // TeamRadar save-state: persist into localStorage so reloads keep edits.
@@ -1127,8 +1150,8 @@ const shim = {
       const ext = isMd ? '.md' : '.html';
       const filename = 'stocks-dashboard-' + Date.now() + ext;
       await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
-      downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded }) as ActionResult<T>;
     }
 
     // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
@@ -1327,8 +1350,8 @@ const shim = {
         : '<!doctype html><html><head><meta charset="utf-8"><title>事業ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>事業ダッシュボード (ブラウザ版)</h1><p>ブラウザ版では完全な事業データのエクスポートに対応していません。</p><p>Electron 版または <code>npm run dev</code> で完全な機能をお試しください。</p></body></html>';
       const filename = 'business-dashboard-' + Date.now() + ext;
       await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
-      downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
     return err(
