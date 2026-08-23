@@ -233,3 +233,35 @@ describe('normalizeAnalysis — main とブラウザ版で一致する (LLM 応�
     expect(low.scores.joy).toBe(0);
   });
 });
+
+/*
+ * **同じ規則の 3 本目は、パリティ検査の網の外に居た。**
+ *
+ * `web-shim.ts` の `compare-strategies` には `/^[A-Za-z0-9.\-^]{1,16}$/` が
+ * 直に書いてあり、上の 2 本と合わせて同じ決まりが 3 か所にあった。
+ * 実測 (2026-08-23) で 15 通りを当てると **5 通りで割れた** —— どれも
+ * 3 本目が `trim()` してから見るため (`" AAPL "` / `"AAPL\n"` など)。
+ *
+ * 危険ではない (使うのは trim 済みの値) が、**同じティッカーが比較では通り
+ * 登録では弾かれる**。判定を `isSafeSymbol` へ寄せて 3 本目を無くしたので、
+ * ここでは「寄せた後も寛容さが残っていること」= trim が意図的であることを留める。
+ */
+describe('symbol の規則は 1 本 (trim は呼び出し側の選択)', () => {
+  it('trim 済みなら 3 経路とも同じ答えになる', () => {
+    for (const v of [' AAPL ', 'AAPL\n', '\tAAPL', '   AAPL']) {
+      const trimmed = v.trim();
+      // 生のままは弾かれ、trim 済みは通る —— これが「寛容さの正体」。
+      expect(symWeb(v)).toBe(false);
+      expect(symWeb(trimmed)).toBe(true);
+      expect(symMain(trimmed)).toBe(true);
+    }
+  });
+
+  it('trim しても規則そのものは緩まない', () => {
+    // 空白を落としても中身が不正なら通らない (trim が抜け道にならないこと)。
+    for (const v of ['  AA PL  ', '  AAPL;rm  ', '  ' + 'A'.repeat(17) + '  ']) {
+      expect(symWeb(v.trim())).toBe(false);
+      expect(symMain(v.trim())).toBe(false);
+    }
+  });
+});

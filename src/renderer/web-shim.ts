@@ -77,6 +77,7 @@ import {
   registerSymbol,
   unregisterSymbol,
   buildStocksSnapshot,
+  isSafeSymbol,
   loadWatchlistSymbols,
 } from './data/stocksWatchlistWeb';
 import {
@@ -1226,8 +1227,32 @@ const shim = {
     if (serviceId === 'stocks' && action === 'compare-strategies') {
       try {
         const p = payload as { symbol?: unknown; initialCash?: unknown };
+        /*
+         * **判定は `isSafeSymbol` に任せる。同じ規則の 3 本目だった。**
+         *
+         * ここには `/^[A-Za-z0-9.\-^]{1,16}$/` が直に書いてあり、
+         * `main/clients/stocks.ts` と `data/stocksWatchlistWeb.ts` の
+         * `isSafeSymbol` と合わせて**同じ決まりが 3 か所**にあった。
+         * 前 2 つは `dualBuildParity.test.ts` が突き合わせているが、
+         * **この 3 本目だけが網の外**だった (関門は在るが経路が通っていない形)。
+         *
+         * 実測 (2026-08-23) で 15 通りを当てると **5 通りで答えが割れた** ——
+         * どれもこちらが `trim()` してから見るため:
+         *
+         * ```
+         *   " AAPL "   main=false web=false inline=true
+         *   "AAPL\n"   main=false web=false inline=true
+         * ```
+         *
+         * 危険ではない (使うのは trim 済みの値) が、**同じティッカーが
+         * 比較では通り登録では弾かれる**。表から改行つきで貼ると起きる。
+         *
+         * 寛容な側の振る舞いは変えない —— `trim()` はここに残し、
+         * **規則の判定だけを共有の 1 本に寄せる**。これで 3 本目も
+         * パリティ検査の中に入る。
+         */
         const symbol = typeof p.symbol === 'string' ? p.symbol.trim() : '';
-        if (!/^[A-Za-z0-9.\-^]{1,16}$/.test(symbol)) {
+        if (!isSafeSymbol(symbol)) {
           return err('action_failed', 'symbol must be 1-16 chars from [A-Za-z0-9.-^]');
         }
         const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;

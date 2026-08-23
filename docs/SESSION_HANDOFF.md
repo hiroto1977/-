@@ -92,6 +92,15 @@
 
 ### 📜 直近の完了履歴 (新しい順・ダッシュボードから移設)
 
+- 🟥✅ **パリティ検査の網が、同じ規則の 3 本目を覆っていなかった (2026-08-23)** — 「ブラウザ版とデスクトップ版が同じ action に同じ検査を掛けているか」の続き。ティッカーの規則 `[A-Za-z0-9.-^]` 1〜16 文字は **3 か所**にあった: `main/clients/stocks.ts` の `isSafeSymbol` / `data/stocksWatchlistWeb.ts` の `isSafeSymbol` / **`web-shim.ts` の `compare-strategies` に直書きの正規表現**。**★ 前 2 つは `dualBuildParity.test.ts` が総当たりで突き合わせている** (しかも「全部 false で一致」を防ぐ空撃ち対策つき)。**3 本目だけが網の外だった** —— 関門は在るが経路が通っていない、このセッションで何度も出た形。**★ 実測すると 15 通り中 5 通りで答えが割れた**:
+
+```
+  " AAPL "   main=false web=false inline=true
+  "AAPL\n"   main=false web=false inline=true   ← 表から改行つきで貼ると起きる
+```
+
+原因は 3 本目だけが `trim()` してから見ること。**危険ではない** (使うのは trim 済みの値) が、**同じティッカーが「戦略比較」では通り「登録」では弾かれる**。**★ 直し方は寛容さを残したまま規則だけ寄せる** —— `trim()` は呼び出し側に残し、判定を `isSafeSymbol` に任せた。web-shim は既に同じモジュールから import していたので**新しい共有モジュールは要らなかった**。これで 3 本目も自動的にパリティ検査の中に入る。**★ 対照**: 共有側の規則に空白を許すと、パリティ検査が **5 件**名指しで落ちる。加えて「trim 済みなら 3 経路とも同じ」「trim しても規則は緩まない (`AA PL` / `AAPL;rm` / 17 文字は通らない)」を追加した —— **trim が抜け道にならないこと**を留めるため。
+
 - 🟨✅ **「リロードしても消えない」と書いてある保存が、誰にも読まれていなかった (2026-08-23)** — `web-shim.ts` を**検証の対称性**という仮説で見た (ブラウザ版とデスクトップ版が同じ action に同じ検査を掛けているか)。`teamradar save-state` で非対称を見つけた —— main は `validateMembers` (最大 50 人・scores は長さ 5・id 重複なし) と department/evaluatedAt の長さを見るが、**ブラウザ版は payload を素通しで `localStorage` へ入れる**。**★ だが追うともっと妙だった: 書いた鍵を読む所が無い。** `teamradar.state` は `src/` 全体で**この 1 行にしか現れない** (検査にも無い)。リロードで編集が残るのは `TeamRadarPage` が**別の鍵** (`servicehub.teamradar.draft.v1`) へ下書きを保存しているためで、この action のおかげではない。**注記は「persist into localStorage so reloads keep edits」と書いていたが、事実ではなかった。** **★ 消さなかった** —— デスクトップ版では `save-state` が `team-radar.json` を書き `fetchSnapshot` が読むので、**action 自体は意味のある口**で、ブラウザ版の実装だけが行き止まり。消すのは口の意味を変える話。**★ 検証も揃えなかった** —— `validateMembers` は `src/main` にあり renderer からは import できない (`lint:imports` の境界)。揃えるには `src/shared` へ出す必要があり、**誰も読まない書き込みのために main を触るのは釣り合わない**。ブラウザ版には main/renderer の境界が無いので「乗っ取られたレンダラーが巨大な payload を送る」も脅威にならない (payload は画面自身が作る)。**★ 直したのは注記** —— これを信じた人が「save-state があるから」と `DRAFT_KEY` の扱いを消すと、**編集が黙って残らなくなる**。実測と、揃えるなら何が要るかを書いた。
 
 - 🟩 **音声コマンドは既に閉じていた —— しかも私が確かめたかった所を先に確かめてあった (2026-08-23)** — **変更なしの回。** `components/` の未着手分から、入力経路として性質が違う `VoiceCommandBar` を見た。**音声から write action を実行できる** (`invoke(serviceId, action, params)`) —— 許可表は 4 種で、うち `slack: send-message` と `github: create-issue` は**外向き** (他人に見える)。音声は誤認識するので、確認なしで外へ出るなら実害になる。**★ 確認の門は在り、閉包が機械で留めてあった。** 破壊的な intent は `awaiting-confirmation` を経由し、非破壊のみ自動承認。判定は `CONFIRM_ACTIONS` (明示) + `DANGEROUS_STEMS` (語幹の保険) の 2 段。**★ 注記が、私が確かめたかったことを先に書いていた** —— 実行経路は 2 つあり (`VoiceCommandBar` の自動承認と `ChatbotWidget` の `else await runIntent`)、**後者はマイクを要さない**。だから「発話・入力から生まれうる action は 1 つ残らず確認必須」でなければならず、2 つの表が手で保たれている以上**動詞ルールを足した人が名簿に載せ忘れた瞬間に無確認側へ倒れる** —— と書いた上で `PARSEABLE_ACTIONS` を検査用に export してある。**★ 対照で確かめた**: どちらの表にも無い 7 つ目の動詞ルール (`share-report`) を足すと、`確認なしで実行される action: ["share-report"]` と**名指しで**落ちる。検査自体も `length >= 6` と重複なしで空撃ちを塞いである。**★ 5 回連続で収穫が小さい** (税計算 3・orchestration・components)。守りが厚い領域が続いているという事実として記録する。
