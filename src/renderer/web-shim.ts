@@ -72,6 +72,7 @@ import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import {
   registerSymbol,
@@ -1155,7 +1156,7 @@ const shim = {
       }
       const p = payload as ExportSvgPayload;
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
-      const filename = title.replace(/[^\w.-]+/g, '-').slice(0, 64) + '-' + Date.now() + '.svg';
+      const filename = filenameFromTitle(title, Date.now(), '.svg');
       await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
       const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
       return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;

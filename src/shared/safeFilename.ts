@@ -32,6 +32,19 @@
  *
  * 先頭ドット (`.hidden`) は**通す**。隠しファイルは書き出し先の中に作れて
  * 構わないし、弾くと `.gitignore` のような正当な名前まで落ちる。
+ *
+ * ## 「利用者入力ではない」は誤りだった (2026-08-23)
+ *
+ * ここには長らく「渡ってくる名前はアプリが組み立てたもの (`service-hub-…`)
+ * で利用者入力ではないため、これは多層防御」と書いてあった。**teamradar の
+ * SVG 書き出しだけは違う** —— `web-shim.ts` の `export-svg` は payload の
+ * `title` (画面で利用者が打つ) から名前を組み立てる。
+ *
+ * 実測では危険な名前は出ない (下の `filenameFromTitle` が区切りも制御文字も
+ * 落とし、時刻の接尾辞が付くので `.` / `..` そのものにもならない)。だが
+ * **「入力は安全だからここは飾り」という説明のまま**にしておくと、次に
+ * この関門を緩める判断の根拠が嘘になる。組み立ての規則をここへ引き上げ、
+ * 敵性の題名で固定した。
  */
 export const MAX_FILENAME_LENGTH = 256;
 
@@ -40,4 +53,19 @@ export function isSafeFilename(s: unknown): s is string {
   if (s === '.' || s === '..') return false;
   if (s.length === 0 || s.length > MAX_FILENAME_LENGTH) return false;
   return !/[\0\r\n/\\]/.test(s);
+}
+
+/**
+ * 題名から書き出し用のファイル名を組み立てる (ブラウザ版の SVG 書き出し)。
+ *
+ * `\w` (= `[A-Za-z0-9_]`) と `.` `-` だけを残し、それ以外の連なりを `-` へ畳む。
+ * ここで落ちるもの: パス区切り (`/` `\`)、NUL / 改行、空白、シェルの記号、
+ * 日本語などの多バイト文字 (名前としては読めなくなるが、**書き出し先の
+ * 安全のほうを取る**)。
+ *
+ * 時刻の接尾辞は飾りではなく**不変条件**である: これが付くので、
+ * 題名が空・`.`・`..` でも結果がそれらになることはない。
+ */
+export function filenameFromTitle(title: string, nowMs: number, ext: string): string {
+  return `${title.replace(/[^\w.-]+/g, '-').slice(0, 64)}-${nowMs}${ext}`;
 }
