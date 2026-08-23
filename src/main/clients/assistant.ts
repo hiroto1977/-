@@ -23,6 +23,11 @@
  */
 
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import {
+  MAX_ASSISTANT_CONTENT_CHARS,
+  MAX_ASSISTANT_MESSAGES,
+  MAX_ASSISTANT_SYSTEM_CHARS,
+} from '../../shared/assistantLimits';
 import { redactForMessage } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import {
@@ -41,12 +46,13 @@ export const ASSISTANT_MODEL = AI_PROVIDERS.anthropic.defaultModel;
 /** 応答の最大トークン (表・箇条書きなどの成果物に十分な余裕)。 */
 export const ASSISTANT_MAX_TOKENS = 2048;
 
-/** 1 メッセージあたりの最大文字数。 */
-const MAX_CONTENT = 8000;
-/** 会話履歴の最大件数 (古いものは renderer 側で間引く想定。安全弁)。 */
-const MAX_MESSAGES = 40;
-/** system プロンプト (RAG 文脈を含む) の最大文字数。 */
-const MAX_SYSTEM = 60000;
+// 上限は `shared/assistantLimits.ts` に 1 つだけ置く。ブラウザ版の
+// `sanitizeAssistantTurns` が同じ数字を**字面で**持っていたため
+// (名前が違うので同名関数の台帳からは見えていなかった)、両方から読む。
+// renderer が古い履歴を間引く想定だが、ここは想定に頼らない安全弁。
+const MAX_CONTENT = MAX_ASSISTANT_CONTENT_CHARS;
+const MAX_MESSAGES = MAX_ASSISTANT_MESSAGES;
+const MAX_SYSTEM = MAX_ASSISTANT_SYSTEM_CHARS;
 
 export interface AssistantSnapshot {
   /** 利用ガイダンス (UI のプレースホルダ等に流用)。 */

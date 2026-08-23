@@ -177,4 +177,51 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
     expect(duplicates().length).toBeGreaterThan(10);
     expect(duplicates()).toContain('safeStateEquals');
   });
+
+  /*
+   * **この台帳が原理的に見ない範囲 —— 名前が違う 2 実装。**
+   *
+   * 上の走査は `^export function (\w+)` を両ビルドから集めて**同じ名前**の
+   * 重複を数える。だから片方を改名するだけで台帳から消える。実在した例:
+   *
+   *   main     `clients/assistant.ts`  `sanitizeMessages`
+   *   browser  `web-shim.ts`           `sanitizeAssistantTurns`
+   *
+   * 同じ判断 (外部 API へ送る会話履歴の関門) を 2 度書いていて、上限は
+   * **字面で 2 度**書いてあった (8000 / 40 / 60000×2)。2026-08-23 に
+   * `shared/assistantLimits.ts` へ寄せ、`assistantTurnsParity.test.ts` で
+   * 突き合わせた。
+   *
+   * **自動では見つけられない。** 本文の類似度で拾う案は誤検知が多く、
+   * 受理すべき対象が並ぶゲートは無視されるので採らない。ここは
+   * **見つけたものを書き留める場所**であって、検出器ではない。
+   * 限界を書かずに置くと「見張っているつもり」になるので明記する。
+   */
+  const CROSS_NAME_PAIRS: { main: string; web: string; parity: string }[] = [
+    {
+      main: 'sanitizeMessages',
+      web: 'sanitizeAssistantTurns',
+      parity: 'src/renderer/__tests__/assistantTurnsParity.test.ts',
+    },
+  ];
+
+  it.each(CROSS_NAME_PAIRS)('別名の 2 実装 $main / $web が両方在り、突き合わせがある', (pair) => {
+    const mainFns = exportedFunctions('src/main');
+    const webFns = exportedFunctions('src/renderer');
+    expect(mainFns.has(pair.main), `main 側に ${pair.main} が無い`).toBe(true);
+    expect(webFns.has(pair.web), `ブラウザ側に ${pair.web} が無い`).toBe(true);
+    // 同名でないことがこの組の要点。同名になったなら上の台帳が数えるので、
+    // ここから外して LEDGER へ移すこと。
+    expect(pair.main).not.toBe(pair.web);
+    // **コメントを落としてから見る。** 最初はそのまま `toContain` していて、
+    // 突き合わせを外す対照実験が鳴らなかった —— 検査ファイルの説明文に
+    // 名前が書いてあるので、本文が読まなくなっても字面は残る (0-a-17)。
+    const parity = readFileSync(pair.parity, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .split('\n')
+      .filter((l) => !l.trim().startsWith('//'))
+      .join('\n');
+    expect(parity, `${pair.parity} が ${pair.web} を読んでいない`).toContain(pair.web);
+    expect(parity, `${pair.parity} が ${pair.main} を読んでいない`).toContain(pair.main);
+  });
 });

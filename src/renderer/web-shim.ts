@@ -53,6 +53,11 @@
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
+import {
+  MAX_ASSISTANT_CONTENT_CHARS,
+  MAX_ASSISTANT_MESSAGES,
+  MAX_ASSISTANT_SYSTEM_CHARS,
+} from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
@@ -606,10 +611,10 @@ export function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
     const r = (item as { role?: unknown }).role;
     const c = (item as { content?: unknown }).content;
     if ((r !== 'user' && r !== 'assistant') || typeof c !== 'string') continue;
-    const content = c.trim().slice(0, 8000);
+    const content = c.trim().slice(0, MAX_ASSISTANT_CONTENT_CHARS);
     if (content.length > 0) out.push({ role: r, content });
   }
-  return out.slice(-40);
+  return out.slice(-MAX_ASSISTANT_MESSAGES);
 }
 
 /** Vault の assistant (fallback: anthropic) スロットから資格情報文字列を読む。 */
@@ -635,7 +640,7 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
+  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -700,7 +705,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
+  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
