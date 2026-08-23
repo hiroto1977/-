@@ -3200,3 +3200,44 @@ export function probeToCsv(rows) { return rows.map((r) => r.join(',')).join('\r\
 1. 手組みの行連結を足す → 鳴る
 2. 関門を import しない `*Csv` ファイルを作る → 鳴る
 3. 打ち消しの対象から `\t` / `\r` を外す → 2 件鳴る
+
+### 書き出し先の関門も、新しい経路を通す強制が無かった (2026-08-23)
+
+CSV と同じ問いを `isSafeExportPath` へ当てた。
+
+#### 今在る 8 つの書き出しは全部正しかった (実測した清算)
+
+| 書き出し | 状態 |
+|---|---|
+| `templates.export-template` | ✓ `isSafeSvgExportPath` 越しに関門 |
+| `teamradar.export-svg` | ✓ 同上 |
+| `stocks.export-dashboard` / `-md` | ✓ `isSafeDashboardPath` / `isSafeDashboardMdPath` |
+| `business.export-dashboard` / `-md` | ✓ `isSafeBusinessDashboardPath` |
+| `saveStocksState` / `saveTeamRadarState` | ✓ payload ではなく**固定パス** (`deps.statePath` は検査の継ぎ目) |
+
+**最初の走査は 8 件すべてを「関門なし」と誤って挙げた** ——
+`isSafeExportPath` の字面を探したが、実際には `isSafeSvgExportPath` のような
+**薄い包み**越しに呼ばれていた。読んで確かめるまで報告しなかった。
+
+#### だが新しい経路を強制する仕組みが無かった
+
+関門を通さない書き出し action を足すと `lint:test-coverage` が鳴った ——
+**が、鳴った理由が違う** (「その action の検査が無い」)。
+形だけの検査を 1 つ添えると、**27 のゲートすべてが緑のまま**通った。
+
+> **「鳴った」ことと「正しい理由で鳴った」ことは別物である。**
+> 対照実験では**何が鳴ったか**まで読む。
+
+乗っ取られたレンダラーから `outPath: '~/.ssh/authorized_keys'` のような値で
+**$HOME 外・任意拡張子へ書ける**形で、このリポジトリ自身が脅威モデルに
+挙げている条件の中にある。
+
+#### 足した検査 (精度を先に測ってから)
+
+規則: **`payload` を読み、かつファイルを書く関数は `isSafe*Path` を呼ぶこと。**
+今の木へ当てて**誤検知 0 件**を確認してから入れた (薄い包みも `isSafe\w*Path`
+で受かる)。陰性対照 6 件 —— 関門なし / 関門あり / 薄い包み / 固定パス /
+payload を読むが書かない / **コメントの中の関門は数えない**。
+
+対照実験: 実物へ関門なしの書き出しを足すと
+`src/main/clients/teamradar.ts: probeExport (L550)` と**場所を名指しして**鳴る。
