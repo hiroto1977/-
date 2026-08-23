@@ -1160,7 +1160,28 @@ const shim = {
       return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
-    // TeamRadar save-state: persist into localStorage so reloads keep edits.
+    /*
+     * TeamRadar save-state (ブラウザ版)。
+     *
+     * **注意: ここが書く `teamradar.state` を読む所は無い。** 実測
+     * (2026-08-23): この鍵は `src/` 全体で**この 1 行にしか現れない** (検査にも無い)。
+     * リロードで編集が残るのは、`TeamRadarPage` 自身が別の鍵
+     * (`servicehub.teamradar.draft.v1`) へ下書きを保存しているためで、
+     * **この action のおかげではない**。元は「persist into localStorage so
+     * reloads keep edits」と書いてあったが、それは事実ではなかった。
+     *
+     * **なぜ消さないか**: デスクトップ版では `save-state` が
+     * `team-radar.json` を書き、`loadTeamRadarState` → `fetchSnapshot` が
+     * それを読む。つまり action 自体は意味を持つ口で、ブラウザ版の実装だけが
+     * 行き止まりになっている。消すのは口の意味を変える話なので触らない。
+     *
+     * **検証の非対称**: main 側は `validateMembers` (最大 50 人・scores は
+     * 長さ 5・id 重複なし) と department/evaluatedAt の長さを見るが、
+     * こちらは素通し。`validateMembers` は `src/main` にあり renderer からは
+     * import できない (`lint:imports` の境界)。揃えるなら `src/shared` へ
+     * 出す必要がある。**今は書いた物を誰も読まないので実害は無いが、
+     * ここを読む人が現れたら先に揃えること。**
+     */
     if (serviceId === 'teamradar' && action === 'save-state') {
       try {
         localStorage.setItem('teamradar.state', JSON.stringify(payload));
