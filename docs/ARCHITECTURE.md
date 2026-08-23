@@ -29,7 +29,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
-| 陰性対照つきゲート | 20 / 27 (残る 7 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 4 + `lint:repo-size`) | `package.json` |
+| 陰性対照つきゲート | 21 / 28 (残る 7 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 4 + `lint:repo-size`) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
 | `file:line` 参照数 | 337 | 自己検証 |
 

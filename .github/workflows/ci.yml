@@ -42,6 +42,7 @@ jobs:
       - run: npm run lint:workflow-security
       - run: npm run lint:network-targets
       - run: npm run lint:url-encoding
+      - run: npm run lint:regex
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:citations
