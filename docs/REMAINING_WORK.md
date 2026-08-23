@@ -1997,6 +1997,35 @@ loopback なので線路に出ないが、「全 fetcher が https」は字義�
 - 「`npm audit --omit=dev` で production 0 件」→ **実行して 0 件** ✓
 - 外部 SaaS の fetcher 19 ホストはすべて https ✓
 
+### `SECURITY.md` の残りの行を突き合わせた → PKCE 行が不完全・不変条件が未固定だった
+
+**PKCE 行**: 「OAuth リダイレクト改ざん → PKCE で `code` を verifier 必須化」と
+だけ書いてあったが、**PKCE を使わない構成が 3 つある** (Notion / WordPress.com /
+Atlassian 3LO —— いずれも提供側の仕様書に `code_challenge` の記載が無い)。
+
+安全性は保たれている。仕組みが違うだけである:
+
+| 構成 | 傍受した `code` を交換できない理由 |
+|---|---|
+| PKCE あり (7) | `code_verifier` を知らないと交換できない (public client でも可) |
+| PKCE なし (3) | **client secret** を知らないと交換できない (confidential client) |
+
+**危ないのは「どちらも無い」構成** —— secret を持たない public client で
+PKCE も切ると、`code` を傍受しただけでトークンを取られる。今日そんな構成は
+無いが、**それを保証していたのは「3 つだけ」という名前の一覧だけ**で、
+「なぜ安全なのか」は誰も留めていなかった。
+
+`pkce === false` なら `requiresClientSecret` が真であること、を検査にした。
+対照 3 種すべて鳴る: **PKCE も secret も無い構成を足す (本命・4 本)** /
+既存 3 つから secret 要求を外す (9 本) / PKCE を全部切る (12 本)。
+
+#### あわせて確かめた、正しかった主張
+
+| 主張 | 実測 |
+|---|---|
+| 「ループバックサーバが Host を 127.0.0.1 / localhost / [::1] のみ許可」 | **真**。`loopbackChecks.test.ts` が既に固定済み (ポート付き Host も含む) |
+| 「エラーメッセージで API キーを echo していない (`slice(0,200)` のみ)」 | **真、かつ順序も正しい**。`redactForMessage` は `redactSecrets(input.slice(0, 8192)).slice(0, maxLength)` —— **伏せてから切る**。先に 200 字へ切ると、境界をまたぐ秘密が半端に残って伏字の型に当たらなくなる。`REDACT_SCAN_LIMIT` の説明にその考察まで書いてある |
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

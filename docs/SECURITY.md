@@ -61,7 +61,7 @@ GitHub Issues / PR ベースで運用。
 |---|---|
 | API トラフィック傍受 | 外部 SaaS の fetcher は**すべて https**。平文 http は**ローカル推論サーバ向けの 2 経路だけ** — `clients/ollama.ts` の `http://127.0.0.1:11434` (固定) と、AI プロバイダの鍵を送らない構成 (上記) |
 | Atlassian の Basic auth が http で送られる | `parseAtlassianToken` が **`https://` 必須**、`http://` を hard reject |
-| OAuth リダイレクト改ざん | PKCE (RFC 7636) で `code` を verifier 必須化 — code を傍受しても token 交換不可 |
+| OAuth リダイレクト改ざん | **PKCE (RFC 7636)** で `code` を verifier 必須化 — code を傍受しても token 交換不可。**PKCE 非対応の 3 つ (Notion / WordPress.com / Atlassian 3LO — いずれも提供側の仕様書に `code_challenge` の記載が無い)** は confidential client として **client secret** が交換に必須で、同じ性質を別の仕組みで満たす。「PKCE も secret も無い public client」は存在しないことを `oauth.test.ts` が検査する |
 | OAuth state CSRF | `randomBytes(16)` 由来の state を検証 |
 | OAuth callback ホスト偽装 | ループバックサーバが `Host` ヘッダを 127.0.0.1/localhost/[::1] のみ許可 |
 

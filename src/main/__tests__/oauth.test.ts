@@ -2055,6 +2055,39 @@ describe('OAUTH_CONFIGS — 全サービス完全一致 (golden)', () => {
     expect(noPkce).toEqual(['atlassian', 'notion', 'wordpress']);
   });
 
+  /*
+   * **PKCE を切るなら、代わりに client secret で守られていること。**
+   *
+   * 「傍受した `code` を交換できない」を成り立たせている仕組みは 2 つある:
+   *
+   *   PKCE あり      verifier を知らないと交換できない (public client でも可)
+   *   PKCE なし      client secret を知らないと交換できない (confidential client)
+   *
+   * どちらも無い構成 = **secret を持たない public client で PKCE も切る** は、
+   * `code` を傍受しただけでトークンを取られる。今日はそんな構成は無いが、
+   * それを保証していたのは「3 つだけ」という名前の一覧だけで、
+   * **なぜ安全なのか**は誰も留めていなかった (2026-08-23)。
+   *
+   * `SECURITY.md` の「OAuth リダイレクト改ざん → PKCE で verifier 必須化」も
+   * この 3 つに触れていなかったので、あわせて直した。
+   */
+  it('PKCE を切っている構成は、必ず client secret を要求する', async () => {
+    const offenders: string[] = [];
+    for (const [id, cfg] of Object.entries(await freshConfigs())) {
+      if (!cfg) continue;
+      if (cfg.pkce === false && !requiresClientSecret(cfg as unknown as OAuthConfig)) offenders.push(id);
+    }
+    expect(
+      offenders,
+      `PKCE も client secret も無い構成がある (code 傍受でトークンを取られる): ${offenders.join(', ')}`,
+    ).toEqual([]);
+  });
+
+  it('逆向き: PKCE ありの構成が 1 つ以上ある (検査が空虚に通っていない)', async () => {
+    const withPkce = Object.entries(await freshConfigs()).filter(([, c]) => c?.pkce !== false);
+    expect(withPkce.length).toBeGreaterThanOrEqual(6);
+  });
+
   it('すべての authorizeUrl / tokenUrl が https', async () => {
     for (const [svc, c] of Object.entries(await freshConfigs())) {
       expect(String(c.authorizeUrl).startsWith('https://'), svc).toBe(true);
