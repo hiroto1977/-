@@ -127,6 +127,39 @@ const MUST_MEASURE = {
   'src/main/main.ts':                'IPC の口と窓の隔離設定 (contextIsolation / 遷移の番人)',
 };
 
+/**
+ * **壁を含むのに `mutate` に載っていないファイルの台帳。**
+ *
+ * `MUST_MEASURE` の裏返し。あちらは「必ず測る」で、こちらは
+ * **「測っていないと分かっている」**。何も書かないと、載っていないことが
+ * ただ見えないだけになる —— それがこのファイルの冒頭に書いてある事故
+ * (`exportPaths.ts` が `mutate` に無く、pragma が飾りだった) の本体である。
+ *
+ * 双方向: ここに在るのに `mutate` へ載ったら落ちる (台帳を消し忘れると、
+ * 次に読む人が「まだ測っていない」と誤解する)。
+ */
+const KNOWN_UNMEASURED = {
+  'src/renderer/web-shim.ts':
+    'ブラウザ版の main 代替。**壁の判断そのものは測られている共有実装に在る** '
+    + '(externalUrlGate / redact / httpLimits / tokenInput / ai.chat)。'
+    + 'ここに在るのは「どの呼び出し口がどの壁を通るか」の配線で、'
+    + '配線は変異検査ではなく振る舞いの検査で留めてある: '
+    + 'webShimInvokeNeverRejects / webShimPayloadRedaction / webShimTimeouts / '
+    + 'dualBuildActionSurface / webShimBridge / webShimCredentials。'
+    + '**判断そのものをこのファイルへ書き足すなら、共有側へ出すか mutate に載せること。**',
+};
+
+/** `KNOWN_UNMEASURED` に載っているのに `mutate` へ入ったものを返す (台帳の消し忘れ)。 */
+function staleUnmeasured(mutateList, ledger) {
+  const set = new Set(mutateList);
+  return Object.keys(ledger).filter((f) => set.has(f));
+}
+
+/** `KNOWN_UNMEASURED` に載っているが実在しないものを返す (古い項目)。 */
+function missingUnmeasured(ledger, exists) {
+  return Object.keys(ledger).filter((f) => !exists(f));
+}
+
 const DISABLE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(?!next-line)(\S+)/;
 const RESTORE_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+restore\s+(\S+)/;
 
@@ -224,6 +257,30 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
   }
 
+  // KNOWN_UNMEASURED 側 — 台帳の消し忘れ / 古い項目のどちらでも鳴るか
+  const ledger = { 'x/web.ts': '理由' };
+  const unmeasuredCases = [
+    ['mutate に無ければ 0 件 (台帳どおり)', [], 0],
+    ['mutate に載ったら 1 件 (消し忘れ)', ['x/web.ts'], 1],
+    ['無関係なファイルは数えない', ['y/other.ts'], 0],
+  ];
+  for (const [label, files, want] of unmeasuredCases) {
+    const got = staleUnmeasured(files, ledger).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+  const missCases = [
+    ['実在すれば 0 件', () => true, 0],
+    ['消えていれば 1 件 (古い項目)', () => false, 1],
+  ];
+  for (const [label, exists, want] of missCases) {
+    const got = missingUnmeasured(ledger, exists).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 検出器が壊れています`);
     return 1;
@@ -295,8 +352,22 @@ function main(argv) {
   // 測ると決めた壁が黙って一覧から外れていないか (載せなければ無反応、を塞ぐ)
   failures.push(...missingWalls(files));
 
+  // 「測っていないと分かっている」台帳の双方向。載ったのに消し忘れる /
+  // ファイルが消えたのに残る、のどちらでも落とす。
+  for (const rel of staleUnmeasured(files, KNOWN_UNMEASURED)) {
+    failures.push(
+      `${rel}: KNOWN_UNMEASURED に在りますが mutate へ載りました。台帳から消してください`,
+    );
+  }
+  for (const rel of missingUnmeasured(KNOWN_UNMEASURED, (f) => fs.existsSync(path.join(REPO_ROOT, f)))) {
+    failures.push(`${rel}: KNOWN_UNMEASURED に在りますがファイルがありません (古い項目)`);
+  }
+
   console.log(`Scanned ${scanned} mutate-listed file(s); span limit ${MAX_SPAN} lines`);
   console.log(`必ず測る壁: ${Object.keys(MUST_MEASURE).length} ファイル (全て mutate に在籍)`);
+  console.log(
+    `測っていないと分かっている壁: ${Object.keys(KNOWN_UNMEASURED).length} ファイル (mutate 外・理由つき)`,
+  );
   console.log(`広い無効化: ${seen.size} ファイル / ${broadRegions} 箇所 / ${broadLines} 行 (台帳: ${Object.keys(KNOWN_BROAD).length} ファイル)`);
 
   if (failures.length === 0) {
@@ -308,7 +379,16 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { scanSource, broadRegionsOf, missingWalls, MAX_SPAN, MUST_MEASURE };
+module.exports = {
+  scanSource,
+  broadRegionsOf,
+  missingWalls,
+  staleUnmeasured,
+  missingUnmeasured,
+  MAX_SPAN,
+  MUST_MEASURE,
+  KNOWN_UNMEASURED,
+};
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
