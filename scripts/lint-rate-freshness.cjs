@@ -33,6 +33,51 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const SOURCE = 'src/shared/taxSocialInsurance.ts';
 const CONST_NAME = 'SOCIAL_INSURANCE_RATE_FISCAL_YEAR';
 
+/**
+ * **期限つきの経過措置の台帳。**
+ *
+ * 年度で変わる料率 (上) とは劣化の仕方が違う —— こちらは**ある日を境に
+ * 使えなくなる**。放っておくと、期限を過ぎた特例をアプリが勧め続ける。
+ *
+ * 実測 (2026-08-23): 2割特例の適用期限は注記と画面の文言にはあったが、
+ * **判定に使っている場所が無かった**。`taxConsumptionBusiness.ts` は期間を
+ * 見ずに `best = 'twenty-percent'` を選びうるので、期限後も勧め続ける。
+ *
+ * 料率の側は 2 年度分放置されてから見つかった。**こちらは期限が来る前に
+ * 鳴らす** —— 過ぎてから直すのでは、その間に出した数字が既に誤っている。
+ *
+ * 日付は**コード側の定数から読む**。ここに書き写すと 2 か所になる。
+ */
+const DATED_MEASURES = [
+  {
+    label: 'インボイス 2割特例 (小規模事業者の税額控除に関する経過措置)',
+    source: 'src/shared/taxConsumption.ts',
+    constName: 'TWENTY_PERCENT_MEASURE_END',
+    // 期限の前にこれだけ猶予があれば警告に留める。過ぎたら失敗。
+    warnWithinDays: 180,
+    how:
+      '適用期限を過ぎた特例を勧め続けていないか確認してください ' +
+      '(`taxConsumptionBusiness.ts` は期間を見ずに best を選びます)。' +
+      '国税庁 https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm',
+  },
+];
+
+/** `export const NAME = 'YYYY-MM-DD';` を読む。読めなければ null。 */
+function declaredDate(src, constName) {
+  const m = new RegExp(`export const ${constName}\\s*=\\s*'(\\d{4}-\\d{2}-\\d{2})'`).exec(src);
+  return m === null ? null : m[1];
+}
+
+/** 期限つき措置の判定。`days` は期限までの残日数 (過ぎていれば負)。 */
+function evaluateDated(dateStr, now, warnWithinDays) {
+  if (dateStr === null) return { level: 'error', days: null };
+  const end = new Date(`${dateStr}T23:59:59Z`);
+  const days = Math.floor((end.getTime() - now.getTime()) / 86400000);
+  if (days < 0) return { level: 'error', days };
+  if (days <= warnWithinDays) return { level: 'warn', days };
+  return { level: 'ok', days };
+}
+
 /** 日本の年度 (4 月始まり)。 */
 function fiscalYear(date) {
   const y = date.getFullYear();
@@ -65,6 +110,17 @@ function selfTest() {
     ['宣言が読めなければ失敗', null, new Date('2026-08-21T00:00:00Z'), 'error'],
   ];
   let failed = 0;
+  // --- 期限つき措置の対照 ---
+  // 「期限の前」「近い」「過ぎた」「読めない」の 4 通り。**過ぎた側だけ**では
+  // 早すぎる警告 (常に鳴る門) を止められないので、余裕がある側も見る。
+  const datedCases = [
+    ['期限まで十分あれば ok', '2026-09-30', new Date('2025-01-01T00:00:00Z'), 180, 'ok'],
+    ['期限が近ければ警告', '2026-09-30', new Date('2026-08-23T00:00:00Z'), 180, 'warn'],
+    ['期限当日はまだ使える (境界)', '2026-09-30', new Date('2026-09-30T12:00:00Z'), 180, 'warn'],
+    ['翌日は失敗 (境界)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'error'],
+    ['日付が読めなければ失敗', null, new Date('2026-08-23T00:00:00Z'), 180, 'error'],
+  ];
+
   console.log('self-test:');
   for (const [label, declared, now, want] of cases) {
     const got = evaluate(declared, now).level;
@@ -72,6 +128,22 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${want})`);
   }
+  for (const [name, dateStr, now, within, want] of datedCases) {
+    const got = evaluateDated(dateStr, now, within).level;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${name}: ${got} (期待 ${want})`);
+  }
+
+  // 台帳の日付が**実際にコードから読める**ことも見る (書き写しの検出)。
+  for (const m of DATED_MEASURES) {
+    const src = fs.readFileSync(path.join(REPO_ROOT, m.source), 'utf8');
+    const got = declaredDate(src, m.constName);
+    const ok = got !== null;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${m.constName} をコードから読める: ${got ?? '読めない'}`);
+  }
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
     return 1;
@@ -88,6 +160,11 @@ function main(argv) {
   const { level, behind } = evaluate(declared, now);
   const current = fiscalYear(now);
 
+  // **料率の結果に関わらず期限も見る。** 片方で早期 return すると、
+  // もう片方が黙って測られなくなる。
+  console.log(`期限つき措置 ${DATED_MEASURES.length} 件:`);
+  const datedFailures = checkDatedMeasures(now);
+
   if (declared === null) {
     console.error(`❌ ${SOURCE} に ${CONST_NAME} がありません`);
     return 1;
@@ -95,7 +172,7 @@ function main(argv) {
   console.log(`社会保険料率の宣言年度: 令和${declared - 2018}年度 (${declared}) / 現在: ${current} 年度`);
   if (level === 'ok') {
     console.log('✅ 料率は現年度のものです');
-    return 0;
+    return datedFailures > 0 ? 1 : 0;
   }
   if (level === 'warn') {
     console.warn(
@@ -103,7 +180,7 @@ function main(argv) {
         '協会けんぽ (健康・介護) と厚生労働省 (雇用保険) の当年度の料率を確認して更新してください。' +
         'もう 1 年度放置すると CI が落ちます',
     );
-    return 0;
+    return datedFailures > 0 ? 1 : 0;
   }
   console.error(
     `❌ 社会保険料率が ${behind} 年度ぶん古くなっています (宣言 ${declared} / 現在 ${current})。\n` +
@@ -115,7 +192,40 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { evaluate, fiscalYear, declaredFiscalYear };
+/** 期限つき措置を全部見る。戻り値は失敗した件数。 */
+function checkDatedMeasures(now) {
+  let failed = 0;
+  for (const m of DATED_MEASURES) {
+    const src = fs.readFileSync(path.join(REPO_ROOT, m.source), 'utf8');
+    const dateStr = declaredDate(src, m.constName);
+    const { level, days } = evaluateDated(dateStr, now, m.warnWithinDays);
+    if (dateStr === null) {
+      console.error(`❌ ${m.source} に ${m.constName} がありません`);
+      failed += 1;
+      continue;
+    }
+    if (level === 'ok') {
+      console.log(`  ✅ ${m.label}: 期限 ${dateStr} まで残り ${days} 日`);
+      continue;
+    }
+    if (level === 'warn') {
+      console.warn(
+        `::warning::${m.label} の適用期限が近づいています (${dateStr} / 残り ${days} 日)。` +
+          `${m.how} 期限を過ぎると CI が落ちます`,
+      );
+      continue;
+    }
+    console.error(
+      `❌ ${m.label} の適用期限を過ぎています (${dateStr} / ${-days} 日経過)。\n` +
+        '   期限つきの措置は、期限を境に「正しかったもの」が誤りになります。\n' +
+        `   ${m.how}`,
+    );
+    failed += 1;
+  }
+  return failed;
+}
+
+module.exports = { evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
