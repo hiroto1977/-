@@ -51,8 +51,30 @@ const ROOTS = ['src'];
 // おり、素の `fetch(\`https://${host}/…\`)` — つまり危ない書き方の中で
 // 一番素直なもの — が丸ごと視界の外だった。`Authorization: Bearer` を
 // 載せた実物を差し込んでも鳴らないことを実測して気付いた。
-const NETWORK_CALL =
-  /\b(fetch|fetchFn|doFetch|jsonFetch|apiFetch|apiFetchOkFlag|transport|postExpectOk|fetchViaProxy)\b/;
+//
+// 2026-08-23: **名前の一覧を 1 つにした。** 下の `BARE_SEND` はこれとは別に
+// 4 つ (`fetch|fetchFn|doFetch|f`) しか見ておらず、**この repo で一番使われる
+// ラッパ `jsonFetch` が入っていなかった**。同じ宛先・同じ資格情報でも
+//
+//     fetch(cfg.instanceUrl, …)      → 鳴る
+//     jsonFetch(cfg.instanceUrl, …)  → 鳴らない   ← 実測
+//
+// という差が出る。片方の検出器だけが知っている名前がある状態は、
+// 同じファイルの中で「何が通信か」の定義が 2 つあるということ。一覧から
+// 両方を組み立てて、ずれようがなくする。
+const NETWORK_CALL_NAMES = [
+  'fetch',
+  'fetchFn',
+  'doFetch',
+  'jsonFetch',
+  'apiFetch',
+  'apiFetchOkFlag',
+  'transport',
+  'postExpectOk',
+  'fetchViaProxy',
+];
+
+const NETWORK_CALL = new RegExp(`\\b(${NETWORK_CALL_NAMES.join('|')})\\b`);
 
 /**
  * 送信そのものではなく「送り先の組み立て」を捕まえるための印。
@@ -164,9 +186,26 @@ const REVIEWED = [
  * 台帳を書かせるための入口**である。限界を書かずに置くと「見張っているつもり」
  * になるので明記する。
  */
-const BARE_SEND = /\b(?:fetch|fetchFn|doFetch|f)\s*\(\s*([A-Za-z_$][\w$]*\.[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*,/;
+// 名前は `NETWORK_CALL_NAMES` と共有する (上の注記を参照)。`f` だけは
+// こちら専用 —— 転送ヘルパを 1 文字で受ける書き方が実在するため。
+const BARE_SEND = new RegExp(
+  `\\b(?:${[...NETWORK_CALL_NAMES, 'f'].join('|')})\\s*\\(\\s*` +
+    '([A-Za-z_$][\\w$]*\\.[A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*)\\s*,',
+);
 
 const REVIEWED_VARIABLE_DESTINATIONS = [
+  {
+    file: 'src/main/clients/github.ts',
+    dest: 'item.pull_request.url',
+    guard:
+      '**応答本文から来る送り先。** /search/issues の各項目が返す PR の API URL を'
+      + ' そのまま叩き直す形で、値を決めているのは相手のサーバである。'
+      + ' 送信の直前に `new URL()` で解析し、`protocol === https:` かつ'
+      + ' `hostname === api.github.com` でなければ叩かずに fallback を返す。'
+      + ' PAT (Authorization) が乗るので、乗っ取られた検索応答が別ホストを指しても'
+      + ' 出て行かない。2026-08-23 に検出器を広げるまで、この行は台帳の外にいた'
+      + ' (`jsonFetch<T>(` の型引数 + 引数が次の行、の 2 点で素通りしていた)。',
+  },
   {
     file: 'src/shared/ai/chat.ts',
     dest: 'httpReq.url',
@@ -261,6 +300,29 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
   }
+  // `BARE_SEND` にはこれまで self-test が 1 件も無かった。名前の一覧が
+  // `NETWORK_CALL` とずれていたのも、行をまたぐ書き方と型引数を見ていなかった
+  // のも、**確かめる場所が無かったから**気付けなかった。
+  //
+  // 実測した素通りの形をそのまま並べる。`joined` は collectBareSends と同じ
+  // 前処理 (次の行を繋ぎ、型引数を落とす)。
+  const prep = (a, b = '') => `${a} ${b}`.replace(/<[^<>]*>/g, '');
+  const bareCases = [
+    ['素の fetch + プロパティ参照', prep('await fetch(cfg.url, init);'), true],
+    ['ラッパ jsonFetch でも同じ', prep('await jsonFetch(cfg.url, init);'), true],
+    ['型引数が挟まっても見る', prep('await jsonFetch<Detail>(cfg.url, init);'), true],
+    ['引数が次の行でも見る', prep('const r = await jsonFetch<Detail>(', '  cfg.instanceUrl,'), true],
+    ['postExpectOk も通信', prep('await postExpectOk(payload.webhookUrl, init);'), true],
+    // 素の識別子は**わざと**見ない (転送ヘルパの引数まで拾うと台帳が埋もれる)。
+    ['素の識別子は拾わない (意図)', prep('await jsonFetch(url, init);'), false],
+    ['通信でない呼び出しは拾わない', prep('await render(cfg.url, init);'), false],
+  ];
+  for (const [label, line, expected] of bareCases) {
+    const got = BARE_SEND.test(line);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
+  }
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
     return 1;
@@ -309,8 +371,20 @@ function collectBareSends() {
         // 本文に `f(A,M,O)` のような記法が実在する）。
         const trimmed = line.trim();
         if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
-        const m = BARE_SEND.exec(line);
+        // **1 行だけ見ると、この repo の書き方の大半を取りこぼす。**
+        //
+        //   1. 長い呼び出しは prettier が引数を次の行へ送る:
+        //        const res = await jsonFetch<T>(
+        //          cfg.instanceUrl,
+        //   2. 型引数が名前と `(` の間に入る: `jsonFetch<StripeCustomer>(`
+        //
+        // どちらも実測で素通りした (2026-08-23)。次の行までを 1 つに繋ぎ、
+        // 型引数を落としてから当てる。名前が今の行に在るときだけ数える
+        // ので、次の行を見た分の二重計上は起きない。
+        const joined = `${line} ${lines[i + 1] ?? ''}`.replace(/<[^<>]*>/g, '');
+        const m = BARE_SEND.exec(joined);
         if (!m) continue;
+        if (m.index >= line.replace(/<[^<>]*>/g, '').length) continue;
         if (/^\s*['"`]/.test(line) || /['"]\s*$/.test(trimmed)) continue;
         found.push({ file: rel, line: i + 1, dest: m[1] });
       }

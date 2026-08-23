@@ -309,13 +309,17 @@ async function syncToSalesforce(ctx: ActionContext): Promise<{ service: 'salesfo
     throw new Error('instanceUrl is not a valid URL');
   }
   if (base.protocol !== 'https:') throw new Error('instanceUrl must be https');
-  // ホスト名まで絞る。**ここは唯一、送り先を renderer 由来の値で決めている
-  // 同期先**で、しかも `Authorization: Bearer <Salesforce のアクセストークン>`
-  // を付けて送る。以前は https かどうかしか見ておらず、
+  // ホスト名まで絞る。送り先を renderer 由来の値で決めている同期先は
+  // **この 2 つ (Salesforce / Discord)** で、こちらは
+  // `Authorization: Bearer <Salesforce のアクセストークン>` を付けて送る。
+  // 以前は https かどうかしか見ておらず、
   // `instanceUrl: 'https://attacker.example'` を渡せばトークンと顧客の
-  // 氏名・メールがそのまま相手に届いた。同じファイルの Discord 同期は
-  // `hostname !== 'discord.com'` で弾いており、他の 4 つは送り先が定数。
-  // ここだけ抜けていた。
+  // 氏名・メールがそのまま相手に届いた。Discord 同期は最初から
+  // `hostname !== 'discord.com'` で弾いており、残る 5 つ
+  // (slack / line / gmail / notion / stripe) は送り先が定数。ここだけ抜けていた。
+  //
+  // (2026-08-23 訂正: 元は「ここは唯一」「他の 4 つ」と書いていたが、
+  //  Discord も payload 由来で、定数の送り先は 5 つ。数え直した。)
   //
   // OAuth が返す instance_url は `*.salesforce.com`
   // (`MyDomain.my.salesforce.com` / `MyDomain--Sandbox.sandbox.my.salesforce.com`
