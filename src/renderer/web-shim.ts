@@ -778,8 +778,19 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
         });
         return { provider: id, model: result.model, text: result.text, ok: true };
       } catch (e) {
+        // **`err()` を通らない誤りの文言。** ここは `ok({ answers })` の中身
+        // として返るので、`err()` が持っている伏字の関門を通らない。
+        // 実測 (2026-08-23): 送信が
+        // `Authorization: Bearer sk-ant-…` を含む例外で落ちると、その鍵が
+        // **そのまま `answers[].error` に載って画面へ届いた**。
+        //
+        // main 側の `assistant.chatAll` で同じ穴を塞いだのに、ブラウザ版は
+        // そのままだった —— 2 実装あるものは、片方だけ直しても終わらない。
+        //
+        // `slice` だけでは伏せられない。`redactForMessage` は
+        // **伏せてから切る** (先に切ると模様の終わりが落ちて規則が外れる)。
         const msg = e instanceof Error ? e.message : String(e);
-        return { provider: id, model: '', text: '', ok: false, error: msg.slice(0, 300) };
+        return { provider: id, model: '', text: '', ok: false, error: redactForMessage(msg, 300) };
       }
     }),
   );
