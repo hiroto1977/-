@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { extractJson, normalizeAnalysis } from '../emotions';
 
 describe('extractJson', () => {
@@ -793,5 +794,71 @@ describe('normalizeAnalysis — dominant の決め方', () => {
     // joy / sadness / anger / fear / surprise / disgust の順。
     const n = normalizeAnalysis({ scores: { sadness: 0.5, anger: 0.5 } });
     expect(n.dominant).toBe('sadness');
+  });
+});
+
+/*
+ * **入力の上限は、IPC の信頼境界にも在ること。**
+ *
+ * 2026-08-23 まで、上限を持っていたのは**ブラウザ版だけ**だった:
+ *
+ *              analyze-text の text     log-mood の note
+ *   ブラウザ   5000 字で断る             2000 字で断る
+ *   main       空でなければ通す          検査なし
+ *
+ * **向きが逆である。** `main` はレンダラーから来た payload を最初に受ける
+ * 側なのに、そこだけ上限が無かった。`text` は Anthropic の要求本文へ
+ * そのまま載り、`note` は保存される。
+ */
+describe('emotions の入力上限 (両ビルドで同じ値)', () => {
+  it('analyze-text: 上限ちょうどは通す (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: '{"scores":{"joy":1}}' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await expect(
+      ACTIONS['analyze-text']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { text: 'a'.repeat(MAX_ANALYZE_TEXT_CHARS) },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('analyze-text: 上限 +1 は断る (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['analyze-text']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { text: 'a'.repeat(MAX_ANALYZE_TEXT_CHARS + 1) },
+      }),
+    ).rejects.toThrow(/exceeds/);
+    expect(fetchMock, '断る前に API を呼んでいる').not.toHaveBeenCalled();
+  });
+
+  it('log-mood: 上限ちょうどは通す (境界)', async () => {
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        payload: { score: 3, note: 'n'.repeat(MAX_MOOD_NOTE_CHARS) },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('log-mood: 上限 +1 は断る (境界)', async () => {
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        payload: { score: 3, note: 'n'.repeat(MAX_MOOD_NOTE_CHARS + 1) },
+      }),
+    ).rejects.toThrow(/exceeds/);
+  });
+
+  it('上限は共有の定数から来ている (2 か所に数字を持たない)', () => {
+    expect(MAX_ANALYZE_TEXT_CHARS).toBe(5000);
+    expect(MAX_MOOD_NOTE_CHARS).toBe(2000);
   });
 });

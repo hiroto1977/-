@@ -21,6 +21,7 @@
  */
 
 import { app } from 'electron';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import {
@@ -128,7 +129,12 @@ async function logMood(ctx: ActionContext): Promise<{ date: string; score: numbe
   const store = await readStore();
   // Replace today's entry if it exists, else append.
   const idx = store.moods.findIndex((m) => m.date === finalDate);
-  const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: String(note ?? '') };
+  // note も上限はブラウザ版だけが持っていた。保存先が際限なく育つのを止める。
+  const noteStr = String(note ?? '');
+  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+    throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
+  }
+  const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };
   if (idx >= 0) store.moods[idx] = entry;
   else store.moods.push(entry);
   store.moods.sort((a, b) => a.date.localeCompare(b.date));
@@ -215,6 +221,11 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
   const { text, source } = ctx.payload as unknown as AnalyzeTextPayload;
   if (!text || typeof text !== 'string' || text.trim().length === 0) {
     throw new Error('text is required');
+  }
+  // 上限はブラウザ版だけが持っていた (2026-08-23)。**境界の側が緩かった**ので
+  // 揃える —— この本文は Anthropic の要求本文へそのまま載る。
+  if (text.length > MAX_ANALYZE_TEXT_CHARS) {
+    throw new Error(`text exceeds ${MAX_ANALYZE_TEXT_CHARS} chars`);
   }
   if (!ctx.token) throw new Error('Anthropic API key required for analyze-text');
 

@@ -2182,6 +2182,54 @@ export して**画面がそこから描画する**形にした。台帳として
 税率・「過去 30 日のトレンド」・出典の説明など、**コードが強制している値では
 ない**地の文だった。強制値と対応するものだけが問題になる。
 
+### 入力の上限が**ブラウザ版にだけ**あり、IPC の信頼境界には無かった（修正済み）
+
+レンダラーの長さ検証 336 箇所を洗い、main 側の同じ項目と突き合わせた。
+**食い違っていたのは emotions の 2 つ**で、しかも**向きが逆**だった:
+
+| 項目 | ブラウザ (`web-shim.ts`) | main (`clients/emotions.ts`) |
+|---|---|---|
+| `analyze-text` の `text` | 5000 字で断る | **空でなければ通す (上限なし)** |
+| `log-mood` の `note` | 2000 字で断る | **`String(note ?? '')` —— 検査なし** |
+
+`main` はレンダラーから来た payload を最初に受ける**信頼境界**なのに、
+そこだけ上限が無かった。`text` は Anthropic の要求本文へそのまま載り
+(有料 API へ任意長を送れる)、`note` は気分ログとして**保存される**
+(保存先が際限なく育つ)。
+
+テンプレートの `validateParams` は逆に main だけが厳しく、**あちらは正しい**
+—— main がファイル書き出しの手前に立っているため。ここは境界の側が緩い
+という逆向きの欠けだった。
+
+**直し方**: 値は `src/shared/emotionsLimits.ts` に 1 つだけ置き、両ビルドが
+そこから読む。ブラウザ版が既に運用していた値をそのまま採る (厳しい側へ
+寄せるのではなく、**利用者から見た挙動を変えない**側へ揃える)。
+
+対照 3 種が鳴る: text の上限を外す / note の上限を外す / 上限を 10 倍に緩める。
+4 つ目に用意した「断る前に API を呼ぶ順序へ変える」は**綺麗に切り出せなかった**
+(移動先で構造が壊れ、無関係な検査が落ちる)。順序の主張は
+`expect(fetchMock).not.toHaveBeenCalled()` として 1 つ目の対照に同居している。
+
+#### ARCHITECTURE の emotions 行が 2 つとも誤っていた
+
+`verify:arch` の行ずれをきっかけに読んだら、内容も違っていた:
+
+| 行 | 書いてあったこと | 実際 |
+|---|---|---|
+| `log-mood` | payload は `{ text, mood, source? }`・**text 32KB clamp** | payload は `{ date?, score, note? }`・32KB clamp は**存在しない** |
+| `analyze-text` | **text 32KB clamp** + extractJson | clamp は**存在しなかった** (今回 5000 を新設) |
+
+「32KB clamp」は Ollama 行 (`ollama.ts` の `prompt.slice(0, 32768)`) からの
+**写し間違い**と見られる。**存在しない守りを 2 行にわたって書いていた。**
+
+#### あわせて測った、シロだったもの
+
+| 対象 | 結果 |
+|---|---|
+| advisor の `question` 上限 | **一致** (main / stocks / web-shim すべて 1000) |
+| Ollama の `system` / `prompt` クランプ | **一致** (8192 / 32768)。`OLLAMA_SECURITY.md` の「Electron 版と同じ検証を通す」は真。ブラウザ側は `8_192` / `32_768` と下線付きで書かれており、素朴な grep では見落とす |
+| `validateAdvisorJson` の各上限 | 既に `advisorValidationParity.test.ts` で固定済み |
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

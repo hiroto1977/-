@@ -51,6 +51,7 @@
  */
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../shared/emotionsLimits';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import { bearerFromStoredToken } from '../shared/vaultToken';
@@ -522,7 +523,8 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   const text = payload['text'];
   const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
-  if (text.length > 5000) return err('action_failed', 'text が長すぎます (5000 字以内)');
+  if (text.length > MAX_ANALYZE_TEXT_CHARS)
+    return err('action_failed', `text が長すぎます (${MAX_ANALYZE_TEXT_CHARS} 字以内)`);
 
   let apiKey: string | null = null;
   try {
@@ -1249,7 +1251,7 @@ const shim = {
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
     if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
       const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
-      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
+      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_MOOD_NOTE_CHARS) {
         return err('action_failed', `${serviceId}.record-entry: note は 1-2000 文字で指定してください`);
       }
       if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
