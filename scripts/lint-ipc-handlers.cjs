@@ -451,12 +451,114 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
   }
+  // --- preload 規則の対照 (境界のもう半分) ---
+  // 実ファイルではなく**判定そのもの**を突く。`preloadProblems` は木を読むので、
+  // ここでは一時ファイルを置いて振る舞いで確かめる。
+  const preDir = path.join(REPO_ROOT, 'src/preload');
+  const probe = path.join(preDir, '__lint_probe__.ts');
+  const preCases = [
+    {
+      name: 'チャンネル名が変数なら鳴る',
+      src: "import { ipcRenderer } from 'electron';\nexport const f = (c: string) => ipcRenderer.invoke(c);\n",
+      want: 1,
+    },
+    {
+      name: 'チャンネル名がリテラルなら鳴らない',
+      src: "import { ipcRenderer } from 'electron';\nexport const f = () => ipcRenderer.invoke('app:getVersion');\n",
+      want: 0,
+    },
+    {
+      name: 'exposeInMainWorld に ipcRenderer を渡すと鳴る',
+      src: "import { contextBridge, ipcRenderer } from 'electron';\ncontextBridge.exposeInMainWorld('raw', ipcRenderer);\nconst _k = ipcRenderer.invoke('app:getVersion');\nvoid _k;\n",
+      want: 1,
+    },
+    {
+      name: 'コメント内の変数チャンネルは数えない',
+      src: "import { ipcRenderer } from 'electron';\n// 悪い例: ipcRenderer.invoke(channel)\nexport const f = () => ipcRenderer.invoke('app:getVersion');\n",
+      want: 0,
+    },
+  ];
+  for (const c of preCases) {
+    fs.writeFileSync(probe, c.src);
+    let got;
+    try {
+      // 実ファイル由来の指摘は差し引き、probe が出した分だけを数える。
+      got = preloadProblems().filter((x) => x.includes('__lint_probe__')).length;
+    } finally {
+      fs.unlinkSync(probe);
+    }
+    const ok = got === c.want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} preload: ${c.name}: ${got} 件 (期待 ${c.want})`);
+  }
+
   if (failed > 0) {
     console.error(`❌ 対照実験 ${failed} 件が期待と違います — ゲート自体が壊れています`);
     return 1;
   }
   console.log('✅ 対照実験: 規則どおりに鳴ります');
   return 0;
+}
+
+/**
+ * preload 側の口を検査する —— **境界のもう半分**。
+ *
+ * `ipcMain.handle` をいくら固めても、preload が
+ * `invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args)` を
+ * 1 行足せば、renderer は**全チャンネルへ到達できる**。CLAUDE.md は
+ * 「`window.serviceHub` が main を呼ぶ唯一の道」と書いているが、それを
+ * 守らせている物が無かった —— 実測 (2026-08-23) で汎用の通し口を足しても
+ * `lint:forbidden` / `lint:imports` / `lint:ipc-handlers` / `typecheck` の
+ * **4 つとも緑のまま**だった。
+ *
+ * 規則は 2 つ:
+ *
+ * 1. `ipcRenderer.<method>(...)` の**第 1 引数は文字列リテラル**であること。
+ *    変数で受けると、その 1 本が全チャンネルの合鍵になる。
+ * 2. `exposeInMainWorld` に `ipcRenderer` を**そのまま**渡さないこと。
+ *    渡すと renderer が生の IPC を握る (contextIsolation の意味が消える)。
+ *
+ * 走査時点の preload は `invoke` 13 件すべてがリテラルで、誤検知 0。
+ */
+function preloadProblems() {
+  const dir = path.join(REPO_ROOT, 'src/preload');
+  if (!fs.existsSync(dir)) return ['src/preload が見つかりません（走査の不具合を疑ってください）'];
+  const problems = [];
+  let calls = 0;
+  for (const name of fs.readdirSync(dir)) {
+    if (!/\.tsx?$/.test(name) || name.endsWith('.d.ts')) continue;
+    const file = path.join('src/preload', name);
+    const raw = fs.readFileSync(path.join(dir, name), 'utf8');
+    // コメント・文字列を潰した像で位置を採り、引数の中身は生から読む。
+    // 説明文に書かれた例を指摘すると直しようが無くなる (0-a-17)。
+    const blank = blankOutLiterals(raw);
+    const callRe = /\bipcRenderer\s*\.\s*([A-Za-z]+)\s*\(/g;
+    let m;
+    while ((m = callRe.exec(blank))) {
+      calls += 1;
+      const argStart = m.index + m[0].length;
+      // 引数の先頭だけを示す。行末まで載せると、後続の行まで指摘文に混ざる。
+      const firstArg = raw.slice(argStart).replace(/^\s+/, '').split(/[,)\n]/)[0];
+      if (!/^['"`]/.test(firstArg)) {
+        const line = raw.slice(0, argStart).split('\n').length;
+        problems.push(
+          `${file}:${line} ipcRenderer.${m[1]}() のチャンネル名が文字列リテラルでない`
+            + `（変数で受けると全チャンネルの合鍵になります）: ${firstArg.slice(0, 60)}`,
+        );
+      }
+    }
+    const exposeRe = /exposeInMainWorld\s*\(([^)]*)\)/g;
+    while ((m = exposeRe.exec(blank))) {
+      const args = raw.slice(m.index, m.index + m[0].length);
+      if (/\bipcRenderer\b/.test(args)) {
+        const line = raw.slice(0, m.index).split('\n').length;
+        problems.push(`${file}:${line} exposeInMainWorld に ipcRenderer をそのまま渡しています`);
+      }
+    }
+  }
+  // 数え方が壊れて黙って 0 件になる形を塞ぐ。
+  if (calls === 0) problems.push('preload に ipcRenderer 呼び出しが 1 件もありません（走査の不具合を疑ってください）');
+  return problems;
 }
 
 function main(argv) {
@@ -473,7 +575,7 @@ function main(argv) {
   }
   const clients = clientFiles();
   const guarded = clients.filter((f) => TAKES_PAYLOAD_PATH.some((re) => re.test(f.text)));
-  const problems = [...evaluateHandlers(handlers), ...exportPathProblems(clients)];
+  const problems = [...evaluateHandlers(handlers), ...exportPathProblems(clients), ...preloadProblems()];
   console.log(
     `IPC ハンドラ ${handlers.length} 件を検査しました`
       + ` (${files.length} ファイル: ${files.map((f) => f.file).join(', ')})`,
@@ -491,12 +593,13 @@ function main(argv) {
   console.log(
     '✅ すべてのハンドラは失敗を戻り値で表し (try の外で await しない)、'
       + 'serviceId を添字に使う前に isServiceId() で検証し、'
-      + 'payload の書き出し先は isSafeExportPath を通しています',
+      + 'payload の書き出し先は isSafeExportPath を通し、'
+      + 'preload はチャンネル名をリテラルで固定しています',
   );
   return 0;
 }
 
-module.exports = { evaluateHandlers, handlerBodies, exportPathProblems };
+module.exports = { evaluateHandlers, handlerBodies, exportPathProblems, preloadProblems };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
