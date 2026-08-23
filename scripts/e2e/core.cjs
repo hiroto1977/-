@@ -629,7 +629,17 @@ async function dataOriginSuite(browser) {
     'KPI: 「外部連携なし」は出さない',
   );
 
-  // remote: GitHub。更新ボタンが出て、未取得なら「スナップショット」。
+  // remote: GitHub。更新ボタンが出て、未取得なら「サンプル（未連携）」。
+  //
+  // **「スナップショット」ではない。** 2026-08-19 (#783) に言葉を変えた ——
+  // 「スナップショット」は *実データをある時点で写したもの* と読めるが、
+  // 実際に出ているのは同梱の作り物 (架空の氏名とメール) で、実在の同僚と
+  // 受け取られる余地があった。判定は `shared/dataOrigin.ts` の
+  // `describeOrigin` に 1 つだけ在る。
+  //
+  // ここは **e2e が CI に無いあいだに 4 日ぶん古いまま**になっていた
+  // (2026-08-23 に走らせて発覚)。正しいアプリに対して赤を出す検査は、
+  // 検査が無いより悪い —— 赤を無視する習慣がつく。
   await gotoService(page, '#github', '.status-bar');
   ok(
     (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 1,
@@ -637,8 +647,8 @@ async function dataOriginSuite(browser) {
   );
   const ghBadge = (await page.textContent('.status-bar .badge')) ?? '';
   ok(
-    ghBadge.trim() === 'スナップショット',
-    `GitHub: 未取得は「スナップショット」(実際 "${ghBadge.trim()}")`,
+    ghBadge.trim() === 'サンプル（未連携）',
+    `GitHub: 未取得は「サンプル（未連携）」(実際 "${ghBadge.trim()}")`,
   );
 
   ok(errs.length === 0, `取得元の表示: ページエラー 0 (実際 ${errs.length})`);
