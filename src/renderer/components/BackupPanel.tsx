@@ -125,6 +125,13 @@ export function BackupPanel() {
           critical として勧める。両方に従うと**復元できないバックアップ**が
           できるので、順序を先に知らせる。逃げ道は在る (先に暗号化を解除すると
           全レコードが平文に戻り、そのバックアップは他の端末でも開ける)。
+
+          **今この警告は描画されない。** レコード暗号化を有効にする口が
+          UI に無く (`enableEncryption` の呼び出し元は 0)、
+          `isEncryptionEnabled()` は常に false のため。配線された日に効く
+          備えとして先に置いてある —— 配線してから気付くと、
+          気付く場所が「復元できなかった」になる。
+          詳細は `docs/REMAINING_WORK.md`。
         */}
         {isEncryptionEnabled() && (
           <p
