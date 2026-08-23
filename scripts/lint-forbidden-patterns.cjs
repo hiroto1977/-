@@ -402,8 +402,11 @@ const FORBIDDEN_PATTERNS = [
     pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>|\\\|\/g)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b|\.replace\([^)]*,\s*'&(?:lt|gt|quot|amp|#39|#x27);'/i,
     // 出荷コード (src/**) だけを見る。scripts/ の図生成は素の CJS で
     // TS の共有実装を読めないため対象外にしている — ただし落とす文字は
-    // 揃えてある (2026-08 に gen-econ-asset-chart.cjs だけ " と ' を
-    // 残していたのを合わせた)。
+    // **揃っていなかった** —— 2026-08 に `gen-econ-asset-chart.cjs` を直したとき、
+    // `build-landing.cjs` と `gen-econ-history-chart.cjs` は `'` を落として
+    // おらず、この注記だけが「揃えてある」と言っていた (2026-08-23 実測で
+    // 判明・両方に足した)。今は 3 つとも 5 文字で、
+    // `src/shared/__tests__/buildScriptEscapes.test.ts` が字面で留める。
     allowFile: (rel) =>
       !rel.startsWith('src/') ||
       rel === 'src/shared/escape.ts' ||
@@ -578,9 +581,9 @@ const KNOWN_SUPPRESSIONS = [
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 5',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 10',
   // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は

@@ -75,7 +75,16 @@ const width = marginL + marginR + entries.length * colW;
 const height = 620;
 
 const esc = (s) =>
-  String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    // `'` も落とす。**2 つのスクリプトだけ抜けていた** (2026-08-23 実測)。
+    // 今の出力は属性を全部 `"` で括っているので実害は無いが、`escape.ts` は
+    // 「落とす文字は揃えてある」と書いており、その主張が事実でなかった。
+    // 揃っていない状態を残すと、次に `'` で括る人が踏む。
+    .replace(/'/g, '&#39;');
 
 const truncate = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
 
