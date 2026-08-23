@@ -151,3 +151,49 @@ describe('Ollama 画面が、接続先について矛盾したことを言って
     expect(PAGE).toMatch(/平文 http で別ホストへは接続しない/);
   });
 });
+
+/*
+ * **数字はビルドで違う。画面が片方の値だけを書いていないか。**
+ *
+ * 2026-08-23 まで Ollama 画面の「セキュリティポリシー」欄は
+ * 「リクエストは 30 秒タイムアウト、レスポンスは 10 MB で切り詰め」と
+ * 1 行で書いていた。これは**デスクトップ版の値**で、ブラウザ版は
+ * 疎通確認 5 秒 / チャット 120 秒・上限 2 MB —— **4 倍長い待ち時間**を
+ * 「30 秒」と説明していた。
+ *
+ * 数字を 2 か所に書くとまたずれるので、画面は実物の定数から出す。
+ * ここではその**台帳**を確かめる —— 定数を変えたら画面の表示も動くこと。
+ */
+describe('Ollama 画面の数字が、実物の定数から出ている', () => {
+  const PAGE = readFileSync(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'), 'utf8');
+
+  /*
+   * **ファイル単位で「どこかに書いてあるか」を見ない。**
+   *
+   * 最初これを「`30 秒` が在るなら `ブラウザ版は` も在ること」と書いた。
+   * だが `ブラウザ版は` は別の項 (接続先の説明) にも出るので、
+   * **数字の行を古い直書きへ戻しても通ってしまった** (対照実験で判明)。
+   * 前に keychain の検査で直したのと同じ誤りを、同じセッションで繰り返した。
+   *
+   * 「定数を**使っている**」ことと「古い一文が**無い**」ことを直接見る。
+   */
+  it('ブラウザ版の値を定数から描画している (import だけでなく JSX で使っている)', () => {
+    expect(PAGE).toMatch(/\{WEB_CHAT_TIMEOUT_MS \/ 1000\}/);
+    expect(PAGE).toMatch(/\{WEB_REQUEST_TIMEOUT_MS \/ 1000\}/);
+    expect(PAGE).toMatch(/\{WEB_MAX_RESPONSE_BYTES \/ \(1024 \* 1024\)\}/);
+  });
+
+  it('デスクトップ版の値だけを書いた古い一文が残っていない', () => {
+    expect(PAGE).not.toContain('リクエストは 30 秒タイムアウト、レスポンスは 10 MB で切り詰め');
+  });
+
+  it('表示する正規表現が実物と一致している (長さ上限と大小無視を落としていない)', () => {
+    const shared = readFileSync(path.join(REPO_ROOT, 'src/shared/ollama.ts'), 'utf8');
+    const real = /const MODEL_NAME_RE = \/\^\[a-z0-9\]\[a-z0-9\._:\/-\]\{0,127\}\$\/i;/.test(
+      shared,
+    );
+    expect(real, '実物の正規表現が変わった — 画面の表示も直すこと').toBe(true);
+    expect(PAGE).toMatch(/0,127/);
+    expect(PAGE).toMatch(/大文字小文字は/);
+  });
+});

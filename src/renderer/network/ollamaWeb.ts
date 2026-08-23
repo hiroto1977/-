@@ -57,8 +57,10 @@ export function loadEndpointSetting(): string {
   }
 }
 
-const REQUEST_TIMEOUT_MS = 5_000;
-const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+/** 疎通確認 (probe) の待ち時間。チャットは `CHAT_TIMEOUT_MS`。 */
+export const REQUEST_TIMEOUT_MS = 5_000;
+/** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
+export const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
 
 /** 接続診断の結果種別。UI はこれを見て出す文言を変える。 */
 export type OllamaProbeStatus =
@@ -369,7 +371,8 @@ export async function probeOllama(
 /* ─────────────────────────────  チャット  ───────────────────────────── */
 
 /** 生成は診断より時間がかかる。5 秒で切ると実用にならないので別枠にする。 */
-const CHAT_TIMEOUT_MS = 120_000;
+/** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
+export const CHAT_TIMEOUT_MS = 120_000;
 /** 送信サイズの上限 (main プロセス側の chat と同じ)。 */
 const MAX_SYSTEM_CHARS = 8_192;
 const MAX_PROMPT_CHARS = 32_768;

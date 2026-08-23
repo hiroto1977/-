@@ -4,7 +4,10 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
+  CHAT_TIMEOUT_MS as WEB_CHAT_TIMEOUT_MS,
+  MAX_RESPONSE_BYTES as WEB_MAX_RESPONSE_BYTES,
   OLLAMA_ENDPOINT_KEY,
+  REQUEST_TIMEOUT_MS as WEB_REQUEST_TIMEOUT_MS,
   desktopSetupCommands,
   loadEndpointSetting,
   originsSetupSteps,
@@ -245,9 +248,20 @@ export function OllamaPage() {
             <code>/api/push</code>) は呼び出さない (CVE-2024-37032 等回避)
           </div>
           <div>
-            🔒 モデル名は正規表現 <code>^[a-z0-9][a-z0-9._:/-]*$</code> でサニタイズ
+            🔒 モデル名は正規表現 <code>^[a-z0-9][a-z0-9._:/-]{'{0,127}'}$</code> (大文字小文字は
+            区別しない) でサニタイズ
           </div>
-          <div>🔒 リクエストは 30 秒タイムアウト、レスポンスは 10 MB で切り詰め</div>
+          {/*
+            * 数字はビルドで違う。1 行で「30 秒 / 10 MB」とだけ書いていた頃は
+            * デスクトップ版の値で、ブラウザ版 (chat 120 秒 / 上限 2 MB) と
+            * ずれていた (2026-08-23)。値は実物の定数から出す。
+            */}
+          <div>
+            🔒 デスクトップ版はリクエスト 30 秒・レスポンス 10 MB、
+            ブラウザ版は疎通確認 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒 / チャット{' '}
+            {WEB_CHAT_TIMEOUT_MS / 1000} 秒・レスポンス {WEB_MAX_RESPONSE_BYTES / (1024 * 1024)} MB
+            で切り詰め
+          </div>
           <div>🔒 Streaming レスポンス未対応 (有限長応答のみ受理)</div>
           <div>
             詳細は <code>docs/OLLAMA_SECURITY.md</code>
