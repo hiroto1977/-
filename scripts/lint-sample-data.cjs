@@ -23,7 +23,7 @@
  * ## 規則 (実測で誤検知 0)
  *
  *  1. `package.json` の author メールとその local-part が `src/` に無いこと
- *  2. `src/renderer/data/` のメールは `example.*` ドメインだけ (台帳あり)
+ *  2. `src/renderer/` のメールは `example.*` ドメインだけ (台帳あり)
  *  3. 業者ごとの URL の形で取り出した ID は `example` を含むこと
  *     —— 形だけで実物と見本を見分けるのは無理なので、**見本には
  *     example と名乗らせる**。Google ドキュメント / ドライブ / Canva /
@@ -42,7 +42,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const DATA_DIR = path.join(REPO_ROOT, 'src/renderer/data');
+// 見本・プレースホルダは `data/` だけでなく画面側にも書かれる
+// (実測: `AtlassianPage.tsx` の入力欄が `you@x.com` を出していた —— `x.com` は
+// 実在ドメインで、RFC 2606 が見本用に取ってあるのは `example.*` のほう)。
+// レンダラー全体を見る。`src/main` / `src/shared` は入れない —— あちらの
+// 非 example は `attacker@evil.com` のような**攻撃側の見本**で、
+// example に直すと何を試しているのか読めなくなる。
+const DATA_DIR = path.join(REPO_ROOT, 'src/renderer');
 const SRC_DIR = path.join(REPO_ROOT, 'src');
 
 const EMAIL = /[A-Za-z0-9._%+#-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
@@ -59,6 +65,13 @@ const EMAIL_ALLOW = {
 };
 
 /**
+ * Slack 自身のホスト。ワークスペースの部分ドメインではないので対象外。
+ * (走査範囲をレンダラー全体へ広げたとき `api.slack.com/apps` —— 資格情報の
+ * 発行先として画面に出しているリンク —— を掴んで誤検知した。)
+ */
+const SLACK_OWN_HOSTS = new Set(['api', 'app', 'files', 'hooks', 'status', 'my', 'edgeapi', 'www']);
+
+/**
  * ID が到達手段になりうる業者の URL 形。取り出した ID は `example` を含むこと。
  * (形だけで実物と見本は見分けられないので、見本の側に名乗らせる。)
  */
@@ -67,8 +80,9 @@ const VENDOR_ID_SHAPES = [
   { name: 'Google ドライブ', re: /drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{20,})/g },
   { name: 'Canva デザイン', re: /canva\.com\/design\/([A-Za-z0-9_-]{8,})/g },
   { name: 'Canva サムネイル', re: /design\.canva\.ai\/([A-Za-z0-9_-]{8,})/g },
-  { name: 'Slack ワークスペース', re: /https:\/\/([a-z0-9][a-z0-9-]{2,})\.slack\.com/g },
+  { name: 'Slack ワークスペース', re: /https:\/\/([a-z0-9][a-z0-9-]{2,})\.slack\.com/g, skip: SLACK_OWN_HOSTS },
 ];
+
 
 function listFiles(dir) {
   const out = [];
@@ -122,11 +136,12 @@ function check({ srcFiles, dataFiles, owner }) {
 
   // 3. 到達手段になりうる ID は example を名乗ること。
   for (const { rel, text } of dataFiles) {
-    for (const { name, re } of VENDOR_ID_SHAPES) {
+    for (const { name, re, skip } of VENDOR_ID_SHAPES) {
       re.lastIndex = 0;
       let m;
       while ((m = re.exec(text)) !== null) {
         if (/example/i.test(m[1])) continue;
+        if (skip !== undefined && skip.has(m[1].toLowerCase())) continue;
         problems.push({
           where: `${rel}:${text.slice(0, m.index).split('\n').length}`,
           why: `${name} の ID (${m[1]}) が見本と名乗っていません —— 実 ID なら共有リンクで開かれます`,
@@ -147,6 +162,8 @@ function selfTest() {
     ['サブドメイン付きの example も通す', { srcFiles: [], dataFiles: f("email: 'a@law.example.com'"), owner: [] }, 0],
     ['example.co.jp も通す', { srcFiles: [], dataFiles: f("email: 'a@example.co.jp'"), owner: [] }, 0],
     ['実在ドメインのメールは鳴る', { srcFiles: [], dataFiles: f("sender: 'support@coincheck.com'"), owner: [] }, 1],
+    // 入力欄のプレースホルダも見本データ。`x.com` は実在ドメイン。
+    ['画面のプレースホルダが実在ドメインでも鳴る', { srcFiles: [], dataFiles: f("placeholder: 'you@x.com'"), owner: [] }, 1],
     ['台帳にあるものは通す', { srcFiles: [], dataFiles: f("id: 'ja.japanese#holiday@group.v.calendar.google.com'"), owner: [] }, 0],
     [
       'Google ドキュメントの実 ID は鳴る',
@@ -161,6 +178,9 @@ function selfTest() {
     ['Canva の実デザイン ID は鳴る', { srcFiles: [], dataFiles: f("u: 'https://www.canva.com/design/DAG2yKvS8Os'"), owner: [] }, 1],
     ['Slack の実ワークスペースは鳴る', { srcFiles: [], dataFiles: f("p: 'https://w1773561847-p42622301.slack.com/archives/C1'"), owner: [] }, 1],
     ['example のワークスペースは通す', { srcFiles: [], dataFiles: f("p: 'https://example-team.slack.com/archives/C1'"), owner: [] }, 0],
+    // Slack 自身のホストはワークスペースではない (資格情報の発行先として画面に出す)。
+    ['api.slack.com は通す', { srcFiles: [], dataFiles: f("helpUrl: 'https://api.slack.com/apps'"), owner: [] }, 0],
+    ['app.slack.com も通す', { srcFiles: [], dataFiles: f("u: 'https://app.slack.com/client'"), owner: [] }, 0],
     ['短い ID (業者の形に当たらない) は見ない', { srcFiles: [], dataFiles: f("id: 'C0AL7N42GBH'"), owner: [] }, 0],
   ];
   let bad = 0;

@@ -81,7 +81,7 @@ export function AtlassianPage() {
         }
         tokenSetup={{
           label: '認証情報 (JSON)',
-          placeholder: '{"email":"you@x.com","token":"...","site":"https://x.atlassian.net"}',
+          placeholder: '{"email":"you@example.com","token":"...","site":"https://your-team.atlassian.net"}',
         }}
       />
 
