@@ -1090,10 +1090,22 @@ function ProxySection() {
             type="password"
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
-            placeholder="共有秘密 (任意・空欄可)"
+            placeholder="共有秘密 (空欄にすると誰でも中継できます)"
             maxLength={MAX_PROXY_SECRET_LENGTH}
             style={pwInput}
           />
+          {/*
+            「任意・空欄可」とだけ書いてあると、省いても何も起きないように読める。
+            省くと Worker は URL を知っている誰からでも要求を受ける (docs/
+            PROXY_EXAMPLE.md は「公開サーバとして第三者に開放しないでください」と
+            書いているが、画面には出ていなかった)。宛先は Worker の allowlist に
+            限られるので他人の資格情報は盗れないが、帯域と割り当ては使われる。
+          */}
+          <div style={{ fontSize: 10, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+            共有秘密を空欄にすると、URL を知っている人なら誰でもあなたの Worker を
+            経由できます (中継先は Worker 側の allowlist に限られ、あなたの
+            資格情報は渡りませんが、帯域と割り当ては消費されます)。
+          </div>
           <div style={{ display: 'flex', gap: 6 }}>
             <button type="button" onClick={save} style={btn('accent')}>保存</button>
             <button type="button" onClick={() => { setEditing(false); refresh(); }} style={btn()}>キャンセル</button>
@@ -1104,7 +1116,11 @@ function ProxySection() {
           {cfg && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', wordBreak: 'break-all', marginBottom: 6, width: '100%' }}>
               URL: <code>{cfg.url}</code>
-              {cfg.sharedSecret ? ' · 共有秘密あり' : ''}
+              {cfg.sharedSecret ? (
+                ' · 共有秘密あり'
+              ) : (
+                <span style={{ color: '#f59e0b' }}> · 共有秘密なし (誰でも中継できます)</span>
+              )}
             </div>
           )}
           <button type="button" onClick={() => setEditing(true)} style={btn(cfg ? undefined : 'accent')}>

@@ -357,3 +357,50 @@ describe('保存状態カードの文言は mechanism で分かれる', () => {
     expect(shim).toMatch(/mechanism:\s*'webcrypto-vault'/);
   });
 });
+
+/*
+ * **BYO プロキシの共有秘密を省いたとき、画面がそれを言うこと。**
+ *
+ * 2026-08-23 まで入力欄の説明は「共有秘密 (任意・空欄可)」だけで、
+ * 省いても何も起きないように読めた。実際は `docs/PROXY_EXAMPLE.md` の
+ * Worker が `SHARED_SECRET = ''` を既定にしており、空欄のまま配ると
+ * **URL を知っている人なら誰でも中継できる**。同じ文書は「公開サーバとして
+ * 第三者に開放しないでください」と書いているのに、その情報は画面に無かった。
+ *
+ * 資格情報が盗まれる形ではない (中継する側は自分の資格情報を送る。宛先も
+ * Worker の allowlist に限られる) ので、直し方は文面である。ここでは
+ * 「省いたときに何が起きるかが書いてあること」だけを留める。
+ */
+describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
+  const SETTINGS = readFileSync(
+    path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'),
+    'utf8',
+  );
+
+  it('入力欄がある (前提)', () => {
+    expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_LENGTH/);
+  });
+
+  it('「任意・空欄可」とだけ言って終わっていない', () => {
+    expect(SETTINGS).not.toMatch(/共有秘密 \(任意・空欄可\)/);
+  });
+
+  it('空欄にすると誰でも中継できる、と書いてある', () => {
+    expect(SETTINGS).toMatch(/空欄[^。]*誰でも/);
+  });
+
+  it('設定済みの表示でも、秘密が無ければそう出す', () => {
+    // `cfg.sharedSecret ? … : ''` に戻ると、無いことが画面から消える。
+    expect(SETTINGS).toMatch(/共有秘密なし/);
+  });
+
+  // 過剰に脅していないことの対照 — 資格情報が盗まれると書いてはいけない
+  // (中継する側は自分の資格情報を送るので、それは起きない)。
+  it('資格情報が盗まれるとは書いていない (実際に起きないこと)', () => {
+    const around = SETTINGS.slice(
+      Math.max(0, SETTINGS.indexOf('誰でも中継') - 600),
+      SETTINGS.indexOf('誰でも中継') + 600,
+    );
+    expect(around).toMatch(/資格情報は渡りません|盗れ(ない|ません)/);
+  });
+});
