@@ -207,20 +207,36 @@ async function readSkillBody(name: string): Promise<string> {
   }
   const base = path.join(os.homedir(), '.claude', 'skills');
   const candidates = [path.join(base, name, 'SKILL.md'), path.join(base, `${name}.md`)];
-  const baseResolved = path.resolve(base) + path.sep;
+  /*
+   * **閉じ込めを見る前に symlink を実体まで辿る。**
+   *
+   * `isSafeSkillName` は `/` も `\` も `..` も弾くので、**字面では**外へ出られない。
+   * だが `path.resolve` は symlink を辿らないので、`~/.claude/skills/evil.md` を
+   * 外へ向けた symlink にすると素通りする。実測 (2026-08-23):
+   *
+   * ```
+   *   isSafeSkillName : true
+   *   封じ込めの判定  : true      ← 通る
+   *   読めた中身      : "TOP-SECRET-FILE-CONTENTS"   ← 根の外
+   * ```
+   *
+   * **ここで読んだ中身は Anthropic API へ system として送られる。** つまり
+   * 任意ファイルの中身が第三者のサービスへ出ていく。スキルは利用者が
+   * **配布物として入れる**もので、細工した symlink を同梱するのは現実的な経路。
+   *
+   * 根の側も実体に直す —— ホームや `.claude` が symlink 越しにあると
+   * (実体だけ直したのでは) **正当なスキルまで弾く**ため。
+   * 同じ手当ては `shellOpenGate.ts` が先に入れている (あちらの注記参照)。
+   */
+  const baseReal = await fs.realpath(base).catch(() => path.resolve(base));
+  const baseResolved = baseReal + path.sep;
   for (const c of candidates) {
-    // Belt-and-braces: even with isSafeSkillName, confirm the joined
-    // path stays inside ~/.claude/skills. Protects against future
-    // platform-specific path quirks (e.g. Windows alternate separators
-    // or 8.3 short names). Provoking this from a unit test would
-    // require a path that passes isSafeSkillName but escapes ~/.claude
-    // after path.join — currently impossible because isSafeSkillName
-    // rejects '/', '\', '..', etc. We keep the check anyway for forward
-    // safety, and pragma the resulting "always-true" condition mutant.
-    // Stryker disable next-line ConditionalExpression
-    if (!path.resolve(c).startsWith(baseResolved)) continue;
+    // 実体に直せない = その候補は存在しない。次の候補へ。
+    const real = await fs.realpath(c).catch(() => null);
+    if (real === null) continue;
+    if (!real.startsWith(baseResolved)) continue;
     try {
-      return await fs.readFile(c, 'utf8');
+      return await fs.readFile(real, 'utf8');
     } catch {
       // try next
     }

@@ -553,6 +553,96 @@ describe('ACTIONS["run-skill"]', () => {
   });
 });
 
+/*
+ * **symlink は `path.resolve` を素通りする。**
+ *
+ * `isSafeSkillName` は `/` も `\\` も `..` も弾くので**字面では**外へ出られないが、
+ * `~/.claude/skills/evil.md` を外へ向けた symlink にすると封じ込めの判定は
+ * `true` を返す。実測 (2026-08-23) で任意ファイルの中身が読めた。
+ *
+ * **ここで読んだ中身は Anthropic API へ system として送られる。** スキルは
+ * 利用者が配布物として入れる物なので、細工した symlink の同梱は現実的な経路。
+ *
+ * 下の 2 本は**向きが逆**で、両方要る —— 実体だけ realpath する直し方は
+ * 1 本目を通して 2 本目で落ちる。
+ */
+describe('readSkillBody と symlink', () => {
+  let tmpDir = '';
+  const originalHome = os.homedir();
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-sym-'));
+    process.env.HOME = tmpDir;
+    vi.spyOn(os, 'homedir').mockReturnValue(tmpDir);
+    await fs.mkdir(path.join(tmpDir, '.claude', 'skills'), { recursive: true });
+  });
+
+  afterEach(async () => {
+    process.env.HOME = originalHome;
+    vi.restoreAllMocks();
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('skills の外を指す symlink は読まない (中身が API へ出ていかない)', async () => {
+    const secret = path.join(tmpDir, 'secret.txt');
+    await fs.writeFile(secret, 'TOP-SECRET-FILE-CONTENTS');
+    await fs.symlink(secret, path.join(tmpDir, '.claude', 'skills', 'evil.md'));
+
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        payload: { name: 'evil', prompt: 'hi' },
+        fetch: fetchMock,
+      } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]),
+    ).rejects.toThrow(/not found/);
+
+    // 送信そのものが起きないこと (中身が出ていく前に止まる)。
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('ホーム自体が symlink 越しでも、正当なスキルは読める (締めすぎない)', async () => {
+    /*
+     * **根を実体に直さないと、ここが落ちる。**
+     *
+     * `~` そのものが symlink のことがある (運用でホームを別ボリュームへ逃がす等)。
+     * 候補だけ realpath して根を字面のまま比べると、実体は根の「外」に見えるので
+     * **正当なスキルまで弾く**。両側を同じ土俵に乗せる必要がある。
+     *
+     * この検査は根が**本当に symlink 越し**でないと意味を持たない —— 最初に
+     * 書いたときは実体のディレクトリを HOME にしていたので、根を字面のまま
+     * にする変異を入れても通ってしまった (空撃ちの対照だった)。
+     */
+    const realHome = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-realhome-'));
+    const linkedHome = path.join(await fs.mkdtemp(path.join(os.tmpdir(), 'skills-link-')), 'home');
+    await fs.symlink(realHome, linkedHome);
+    process.env.HOME = linkedHome;
+    vi.spyOn(os, 'homedir').mockReturnValue(linkedHome);
+    await fs.mkdir(path.join(realHome, '.claude', 'skills'), { recursive: true });
+
+    const real = path.join(linkedHome, '.claude', 'skills', 'real.md');
+    await fs.writeFile(real, 'BODY-FROM-REAL-SKILL');
+    await fs.symlink(real, path.join(linkedHome, '.claude', 'skills', 'alias.md'));
+
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }], stop_reason: 'end_turn' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      payload: { name: 'alias', prompt: 'hi' },
+      fetch: fetchMock,
+    } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]);
+
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string) as {
+      system: string;
+    };
+    expect(body.system).toBe('BODY-FROM-REAL-SKILL');
+  });
+});
+
 describe('parseFrontmatter — stripBalancedQuotes coverage', () => {
   it('keeps fm.name as undefined when only description is present', () => {
     // Forces the `if (s === undefined) return undefined` short-circuit
