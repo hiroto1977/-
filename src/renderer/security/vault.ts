@@ -519,8 +519,31 @@ class BrowserVault implements Vault {
     this.currentKey = null;
   }
 
-  async setToken(serviceId: string, token: string): Promise<void> {
+  /**
+   * 施錠されていれば投げ、そうでなければ鍵を返す。
+   *
+   * **`this.currentKey` を await の向こう側で読まないため**の入口。
+   * `setToken` / `getToken` は入口で施錠を確かめた後、`openDb()` や
+   * `idbGet()` を待ってから改めて `this.currentKey` を使っていた。
+   * 待っている間に `lock()` が走ると (自動施錠はタブ非表示・放置で走る)
+   * `null` が WebCrypto へ渡り、
+   *
+   *   setToken → `Failed to execute 'encrypt' on 'SubtleCrypto': 2nd
+   *              argument is not of type CryptoKey` という**内部の文言**が
+   *              利用者に出る (実測)
+   *   getToken → 例外が下の `catch { return null }` に飲まれ、
+   *              **「トークン未設定」と区別が付かなくなる** (実測)
+   *
+   * 後者が厄介で、呼び出し側は `not_configured` として扱うので、
+   * 設定済みの資格情報について「設定されていません」と言ってしまう。
+   */
+  private requireKey(): CryptoKey {
     if (!this.currentKey) throw new Error('Vault がロックされています');
+    return this.currentKey;
+  }
+
+  async setToken(serviceId: string, token: string): Promise<void> {
+    const key = this.requireKey();
     if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
       throw new Error('serviceId が不正です');
     }
@@ -529,7 +552,11 @@ class BrowserVault implements Vault {
     }
     const db = await openDb();
     try {
-      const blob = await encryptString(this.currentKey, token);
+      // 待っている間に施錠されていたら、**書かずに**施錠の文言で落とす。
+      // 掴んだ鍵で書き切る手も有るが、それは「施錠した」と言いながら
+      // 書き込みを続けることになる。
+      this.requireKey();
+      const blob = await encryptString(key, token);
       await idbPut(db, TOKEN_STORE, serviceId, blob);
     } finally {
       db.close();
@@ -537,7 +564,7 @@ class BrowserVault implements Vault {
   }
 
   async getToken(serviceId: string): Promise<string | null> {
-    if (!this.currentKey) throw new Error('Vault がロックされています');
+    const key = this.requireKey();
     const db = await openDb();
     let blob: EncryptedToken | undefined;
     try {
@@ -548,8 +575,11 @@ class BrowserVault implements Vault {
     // Stryker disable next-line ConditionalExpression: 早期 return を外しても
     // `decryptString(key, undefined)` が throw し、下の catch が null を返すため同じ結果 (等価変異)。
     if (!blob) return null;
+    // 待っている間に施錠されたなら、それは「未設定」ではない。
+    // 下の catch は**復号の失敗** (鍵違い・壊れた blob) だけを飲む。
+    this.requireKey();
     try {
-      return await decryptString(this.currentKey, blob);
+      return await decryptString(key, blob);
     } catch {
       return null;
     }
