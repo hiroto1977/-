@@ -538,31 +538,46 @@ function isCommentLine(line) {
  *
  * (2026-08-22 の実測で、当時の 23 件はすべて生きていた = 死んだ例外は無かった。
  *  それを固定するための台帳であって、既知の負債の一覧ではない。)
+ *
+ * ## 件数まで留める (2026-08-23)
+ *
+ * 双方向にしても**粒度がファイル単位**だったので、例外の効いているファイルは
+ * **その規則から丸ごと外れて**いた。実測: `web-shim.ts` へ `noopener` 無しの
+ * `window.open(u, '_blank')` を足しても**緑のまま**通った
+ * (`window.open :: src/renderer/web-shim.ts` の例外が新しい違反まで覆う)。
+ *
+ * 鍵を `規則名 :: パス :: 件数` にした。例外のあるファイルに違反が増えれば
+ * 件数が変わって鳴る。
+ *
+ * **残る隙間 (正直に書く)**: 正当な 1 件を消して同時に危ない 1 件を足すと
+ * 件数が変わらない。一致行の中身まで台帳に載せれば閉じるが、
+ * 変数名を変えただけで鳴る台帳になり、読む人が中身を追えなくなる。
+ * 「新しい違反が増える」ほうが実際に起きる形なので、そちらを取った。
  */
 const KNOWN_SUPPRESSIONS = [
-  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs',
-  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts',
-  'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx',
-  'Ollama write-side endpoints in network code :: src/shared/ollama.ts',
-  'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts',
-  'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts',
-  'hardcoded Claude model id :: src/shared/ai/providers.ts',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts',
-  'new Function :: orchestration/knowledge-context.cjs',
-  'redactSecrets(x.slice(…)) — 切ってから伏せている :: src/shared/redact.ts',
-  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/overflow-check.cjs',
-  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/runtime-security-exp.cjs',
-  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot-dashboard.cjs',
-  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot.cjs',
-  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/soak-test.cjs',
-  'shell.openExternal direct call outside main process :: src/main/main.ts',
-  'shell.openExternal direct call outside main process :: src/main/oauth.ts',
-  'window.open :: src/renderer/web-shim.ts',
-  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts',
+  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
+  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
+  'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
+  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 3',
+  'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
+  'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
+  'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 4',
+  'new Function :: orchestration/knowledge-context.cjs :: 1',
+  'redactSecrets(x.slice(…)) — 切ってから伏せている :: src/shared/redact.ts :: 1',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/overflow-check.cjs :: 1',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/runtime-security-exp.cjs :: 1',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot-dashboard.cjs :: 1',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot.cjs :: 1',
+  'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/soak-test.cjs :: 1',
+  'shell.openExternal direct call outside main process :: src/main/main.ts :: 2',
+  'shell.openExternal direct call outside main process :: src/main/oauth.ts :: 1',
+  'window.open :: src/renderer/web-shim.ts :: 1',
+  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2',
 ];
 
 function walk(dir, hit) {
@@ -593,6 +608,22 @@ function walk(dir, hit) {
  * だけだった。鳴らないゲートは「常に緑を返す関門」と同じで、無いより悪い
  * (守られていると信じさせるぶん)。まずは隔離を解く設定の 5 つから。
  */
+/**
+ * 実際に効いた例外と台帳を突き合わせる。**双方向** ——
+ * 台帳に無い穴 (`added`) と、台帳にあるのに効かない穴 (`gone`) の両方を返す。
+ *
+ * 鍵は `規則名 :: パス :: 件数`。件数を含めるので、**例外のあるファイルへ
+ * 新しい違反が増えると `added` と `gone` が同時に立つ** (件数違いの別項目に
+ * 見えるため)。出力に旧件数と新件数が並ぶので、何が増えたか読み取れる。
+ */
+function diffSuppressions(actual, known) {
+  const knownSet = new Set(known);
+  return {
+    added: [...actual].filter((x) => !knownSet.has(x)).sort(),
+    gone: [...knownSet].filter((x) => !actual.has(x)).sort(),
+  };
+}
+
 function selfTest() {
   const cases = [
     ['nodeIntegration: true を弾く', 'webPreferences: { nodeIntegration: true },', 1],
@@ -646,7 +677,34 @@ function selfTest() {
     ['散文の in は鳴らない (後ろに語が続く)', "it('one entry per kind in FUNDING_KINDS order', () => {", 0],
     ['散文の in は鳴らない (後ろが括弧)', "it('shipped in SUPPORT_RESOURCES (label)', () => {", 0],
   ];
+
+  /*
+   * **台帳の突き合わせ自体の検査。** 上の表は「1 行がパターンに当たるか」しか
+   * 見ておらず、例外の台帳が効いているかは別の話である。
+   * ここが無かったので、**例外のあるファイルへ新しい違反を足しても鳴らない**
+   * ことに気付けなかった (2026-08-23 に実測で発覚)。
+   */
+  const K = 'window.open :: src/renderer/web-shim.ts';
+  const ledgerCases = [
+    ['台帳どおりなら何も出ない', [`${K} :: 1`], [`${K} :: 1`], 0, 0],
+    ['例外が増えた (新しい穴)', [`${K} :: 1`, 'x :: y :: 1'], [`${K} :: 1`], 1, 0],
+    ['例外が消えた (要らない穴)', [], [`${K} :: 1`], 0, 1],
+    // **これが本題** —— 同じファイル・同じ規則で違反が 1 → 2 に増えた形。
+    ['同じファイルに違反が増えると鳴る', [`${K} :: 2`], [`${K} :: 1`], 1, 1],
+    ['減っても鳴る (直したなら台帳も直す)', [`${K} :: 1`], [`${K} :: 2`], 1, 1],
+    ['件数を無視する鍵なら見逃していた (対照)', [`${K}`], [`${K}`], 0, 0],
+  ];
   let bad = 0;
+  for (const [label, actual, known, wantAdded, wantGone] of ledgerCases) {
+    const r = diffSuppressions(new Set(actual), known);
+    const ok = r.added.length === wantAdded && r.gone.length === wantGone;
+    if (!ok) bad += 1;
+    console.log(
+      `  ${ok ? '✓' : '✗'} 台帳: ${label}: 新 ${r.added.length} / 旧 ${r.gone.length} ` +
+        `(期待 ${wantAdded} / ${wantGone})`,
+    );
+  }
+
   for (const [label, line, expected] of cases) {
     let n = 0;
     for (const fp of FORBIDDEN_PATTERNS) {
@@ -696,8 +754,15 @@ function main() {
         // **握り潰した事実を記録する。** 例外は穴なので、要らなくなったら
         // 閉じなければならない。記録しないと「もう鳴らない規則に対する
         // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
-        if (lines.some((l) => (fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l)))) {
-          suppressions.add(`${fp.name} :: ${rel}`);
+        const hits = lines.filter((l) =>
+          fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l),
+        ).length;
+        if (hits > 0) {
+          // **件数まで記録する。** ファイル名だけで台帳を突き合わせると、
+          // 例外の効いているファイルに**新しい違反を足しても鳴らない** ——
+          // 規則がそのファイルで丸ごと無効になる (実測で確認: web-shim.ts へ
+          // `noopener` 無しの `window.open` を足しても緑のままだった)。
+          suppressions.add(`${fp.name} :: ${rel} :: ${hits}`);
         }
         continue;
       }
@@ -719,9 +784,7 @@ function main() {
   console.log(
     `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns`,
   );
-  const known = new Set(KNOWN_SUPPRESSIONS);
-  const added = [...suppressions].filter((x) => !known.has(x)).sort();
-  const gone = [...known].filter((x) => !suppressions.has(x)).sort();
+  const { added, gone } = diffSuppressions(suppressions, KNOWN_SUPPRESSIONS);
   if (added.length > 0) {
     console.error(`\n❌ 台帳に無い例外が ${added.length} 件効いています (新しい穴):\n`);
     for (const x of added) console.error(`  ${x}`);
