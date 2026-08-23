@@ -607,6 +607,14 @@
       "leafCount": 36,
       "note": "update redact.ts",
       "hash": "4b5501fa2e49d813f179965bd9b13b81f57526088403664059f399d499fe0f07"
+    },
+    {
+      "index": 71,
+      "prevHash": "4b5501fa2e49d813f179965bd9b13b81f57526088403664059f399d499fe0f07",
+      "merkleRoot": "9322d2fff937e707b793c09324f0349fead0698a04bc9352f0289287b0176251",
+      "leafCount": 36,
+      "note": "update secrets.ts",
+      "hash": "579596b82b618d4d981620be42e7fa9ddba8b0bb2474e1899a104e5ec59bb27f"
     }
   ],
   "tipManifest": {
@@ -625,7 +633,7 @@
     "src/main/clients/types.ts": "124a6ca165286f17b4542c0fddab5a3aacccc7d3bf8d8f3a82b53c3ee38c66a2",
     "src/main/main.ts": "5efbefe8b38135808fa6966a2a6b0bcaac294522ce47b7d5f16880b1d2e6145c",
     "src/main/oauth.ts": "360a8f67ac64e3c4c70feda33c513dcf0d90a6d616537a3bacaa39d65483da99",
-    "src/main/secrets.ts": "7a41a48e5225f375c6995e273d7e7de62c183ded580848fe4fd654d9aacd6b93",
+    "src/main/secrets.ts": "689a132e45f10fda77961de4086ef33765e7d9bc753e7527867064efc2d8d84a",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "60a7f19a864836fc3294efbac6595a245dfdfa91687e3ba697392c6c7ee4f772",
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",

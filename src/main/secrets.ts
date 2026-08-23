@@ -53,7 +53,40 @@ function parseStore(text: string | null): Record<string, string> | null {
   return out;
 }
 
+/**
+ * 「読めなかった」ことを表す印。
+ *
+ * `readStore` は**読めなかったときも `{}` を返す** —— 読み出しとしては
+ * それで正しい (ロック画面や一覧が落ちるより空の方がまし)。だが
+ * **その `{}` を土台にして書くと、読めなかっただけの中身が消える。**
+ *
+ * 実測 (2026-08-23): 保管ファイルが 1 MB を超えた状態で普通に 1 件保存すると
+ *
+ *   保存前 listConfiguredServices() → ["github","slack"]
+ *   1 MB 超へ成長 (原因は問わない)
+ *   setToken('notion', …)            → 成功を返す
+ *   保存後のファイル                  → { notion } **だけ**
+ *
+ * github と slack が**復旧不能に消える** (膨らませていた中身ごと消えるので、
+ * 元に戻す手掛かりも残らない)。しかも呼び出し側には成功として返る。
+ *
+ * 読み出しの安全側 (`{}`) と、書き込みの安全側 (**触らない**) は逆向きである。
+ */
+class SecretsUnreadableError extends Error {
+  constructor(reason: string) {
+    super(
+      `保管ファイルを読めませんでした (${reason})。` +
+        '上書きすると既存の資格情報が失われるため、保存を中止しました。',
+    );
+    this.name = 'SecretsUnreadableError';
+  }
+}
+
+/** `readStore` が「読めなかった」ときに立てる。書き込み側だけが見る。 */
+let lastReadDegraded: string | null = null;
+
 async function readStore(): Promise<Record<string, string>> {
+  lastReadDegraded = null;
   // Bound the size we'll read/JSON.parse — protects against a corrupted /
   // attacker-grown secrets file OOMing main.
   try {
@@ -63,6 +96,7 @@ async function readStore(): Promise<Record<string, string>> {
       console.error(
         `[secrets] secrets file ${secretsPath()} is ${stat.size} bytes (limit ${MAX_STORE_SIZE}); refusing to load`,
       );
+      lastReadDegraded = `${stat.size} バイト / 上限 ${MAX_STORE_SIZE} バイト`;
       return {};
     }
   } catch (err) {
@@ -88,6 +122,7 @@ async function readStore(): Promise<Record<string, string>> {
   }
 
   console.error(`[secrets] secrets file at ${secretsPath()} is not valid JSON and no usable backup exists; treating as empty`);
+  lastReadDegraded = 'JSON として読めず、使える控えも無い';
   return {};
 }
 
@@ -187,11 +222,23 @@ async function upgradePlainValues(store: Record<string, string>): Promise<Record
 
 export async function setToken(serviceId: string, token: string): Promise<void> {
   return withWriteLock(async () => {
-    const store = await readStore();
+    const store = await readStoreForWrite();
     const upgraded = await upgradePlainValues(store);
     upgraded[serviceId] = encode(token);
     await writeStore(upgraded);
   });
+}
+
+/**
+ * 書き込みの土台として読む。**読めなかったなら投げる。**
+ *
+ * 空のファイル (まだ 1 つも保存していない) は degraded ではないので通る ——
+ * 消える物が無いため。
+ */
+async function readStoreForWrite(): Promise<Record<string, string>> {
+  const store = await readStore();
+  if (lastReadDegraded !== null) throw new SecretsUnreadableError(lastReadDegraded);
+  return store;
 }
 
 /** 保存値をそのまま読む (OAuth の TokenSet か生トークン文字列)。 */
@@ -211,7 +258,7 @@ export async function getToken(serviceId: string): Promise<string | null> {
 
 export async function clearToken(serviceId: string): Promise<void> {
   return withWriteLock(async () => {
-    const store = await readStore();
+    const store = await readStoreForWrite();
     const upgraded = await upgradePlainValues(store);
     delete upgraded[serviceId];
     await writeStore(upgraded);
