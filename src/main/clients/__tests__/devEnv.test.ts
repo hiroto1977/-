@@ -443,4 +443,48 @@ describe('readDevEnv — 実際のファイルから読む', () => {
     const snap = readDevEnv(dir);
     expect(snap.project).toBeNull();
   });
+
+  /*
+   * **symlink は `path.resolve` を素通りする。**
+   *
+   * `../` の封じ込め (2026-08-22) は字面の正規化で判定していたので、
+   * `.git/refs/heads/x` を外へ向けた symlink にすると素通りした。
+   * 実測 (2026-08-23): 判定は `true` を返しながら、読み出しだけが
+   * 根の外の中身 ("SECRET-OUTSIDE-ROOT") を返した。
+   *
+   * 下の 2 本は**向きが逆**で、両方要る ——
+   * 締めすぎて正当な ref まで弾く直し方 (実体だけ realpath する) は
+   * 1 本目を通して 2 本目で落ちる。
+   */
+  it('ref が symlink で .git の外を指していたら読まない', async () => {
+    const outside = nodePath.join(dir, 'outside-secret.txt');
+    await fsp.writeFile(outside, 'SECRET-OUTSIDE-ROOT\n');
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await fsp.symlink(outside, nodePath.join(dir, '.git', 'refs', 'heads', 'evil'));
+    await write('.git/HEAD', 'ref: refs/heads/evil\n');
+
+    const snap = readDevEnv(dir);
+    // ブランチ名は HEAD から取れる (中身は読んでいない) が、sha は読めない。
+    expect(snap.git?.branch).toBe('evil');
+    expect(snap.git?.sha).toBe('');
+    // 根の外の中身がどこにも出ていないこと。
+    expect(JSON.stringify(snap)).not.toContain('SECRET-OUTSIDE-ROOT');
+  });
+
+  it('作業ディレクトリ自体が symlink 越しでも、正当な ref は読める', async () => {
+    // `/tmp/link` → `/tmp/actual` の形。根の側も realpath しないとここで落ちる。
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await write('.git/HEAD', 'ref: refs/heads/main\n');
+    await fsp.writeFile(nodePath.join(dir, '.git', 'refs', 'heads', 'main'), 'abc1234\n');
+
+    const linked = nodePath.join(await fsp.mkdtemp(nodePath.join(os.tmpdir(), 'devenv-link-')), 'proj');
+    await fsp.symlink(dir, linked);
+    try {
+      const snap = readDevEnv(linked);
+      expect(snap.git?.branch).toBe('main');
+      expect(snap.git?.sha).toBe('abc1234');
+    } finally {
+      await fsp.rm(nodePath.dirname(linked), { recursive: true, force: true });
+    }
+  });
 });
