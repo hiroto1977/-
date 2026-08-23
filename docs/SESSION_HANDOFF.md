@@ -92,6 +92,8 @@
 
 ### 📜 直近の完了履歴 (新しい順・ダッシュボードから移設)
 
+- 🟩 **音声コマンドは既に閉じていた —— しかも私が確かめたかった所を先に確かめてあった (2026-08-23)** — **変更なしの回。** `components/` の未着手分から、入力経路として性質が違う `VoiceCommandBar` を見た。**音声から write action を実行できる** (`invoke(serviceId, action, params)`) —— 許可表は 4 種で、うち `slack: send-message` と `github: create-issue` は**外向き** (他人に見える)。音声は誤認識するので、確認なしで外へ出るなら実害になる。**★ 確認の門は在り、閉包が機械で留めてあった。** 破壊的な intent は `awaiting-confirmation` を経由し、非破壊のみ自動承認。判定は `CONFIRM_ACTIONS` (明示) + `DANGEROUS_STEMS` (語幹の保険) の 2 段。**★ 注記が、私が確かめたかったことを先に書いていた** —— 実行経路は 2 つあり (`VoiceCommandBar` の自動承認と `ChatbotWidget` の `else await runIntent`)、**後者はマイクを要さない**。だから「発話・入力から生まれうる action は 1 つ残らず確認必須」でなければならず、2 つの表が手で保たれている以上**動詞ルールを足した人が名簿に載せ忘れた瞬間に無確認側へ倒れる** —— と書いた上で `PARSEABLE_ACTIONS` を検査用に export してある。**★ 対照で確かめた**: どちらの表にも無い 7 つ目の動詞ルール (`share-report`) を足すと、`確認なしで実行される action: ["share-report"]` と**名指しで**落ちる。検査自体も `length >= 6` と重複なしで空撃ちを塞いである。**★ 5 回連続で収穫が小さい** (税計算 3・orchestration・components)。守りが厚い領域が続いているという事実として記録する。
+
 - 🟩 **orchestration の取込み経路も白 (2026-08-23)** — **変更なしの回。** 未着手の領域として `orchestration/` を見た。`scripts/orchestrate.cjs` は**通信もサブプロセスも無く**、書き込みは固定パスの `registry.json` のみ。`loadRegistry` は読めなければ `die()` するので、**「読めなかった空を土台に書く」形になっていない** (このセッションで 3 回直した形)。**★ 見たのは `import-requests` の書式契約** —— チャットボットが受けた利用者の要望 (`- [ ] <要望> _(受付: YYYY-MM-DD)_`) を registry へ取込む経路で、**要望の文面は利用者が打った生の文字列**が行指向の書式に素で埋まる (`ChatbotWidget.tsx:89`。`escapeMarkdownInline` は使っていない)。**★ だが壊せなかった。** 改行は `<input type="text">` の値正規化が落とし、`trim()` も掛かる。文面の細工 6 種を実測すると全部正しく解析された:
 
 ```
