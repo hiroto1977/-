@@ -88,6 +88,21 @@ describe('getStorageProtection', () => {
     const serialized = JSON.stringify(r);
     expect(serialized).not.toContain('ghp_SUPERSECRET');
     expect(serialized).not.toContain('SUPERSECRET');
-    expect(Object.keys(r).sort()).toEqual(['encrypted', 'file', 'plainCount']);
+    /*
+     * **鍵の一覧を固定するのは、秘密を載せる欄が黙って増えないため。**
+     * 増やすときは「その欄に秘密が載りうるか」を人が見ることになる。
+     * `mechanism` は 3 値の列挙で、店の中身から作らない (2026-08-23 追加)。
+     */
+    expect(Object.keys(r).sort()).toEqual(['encrypted', 'file', 'mechanism', 'plainCount']);
+  });
+
+  it('mechanism は 3 値の列挙しか返さない (自由文字列を載せない)', async () => {
+    const { getStorageProtection } = await import('../secrets');
+
+    encryptionAvailable = true;
+    expect((await getStorageProtection()).mechanism).toBe('os-keychain');
+
+    encryptionAvailable = false;
+    expect((await getStorageProtection()).mechanism).toBe('obfuscated');
   });
 });

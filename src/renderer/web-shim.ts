@@ -926,10 +926,19 @@ const shim = {
   },
   // ブラウザ版は常に WebCrypto Vault (AES-GCM-256 + PBKDF2 600k) を通るため、
   // Electron 版のような「OS キーチェーン不在で平文」状態は原理的に起きない。
-  storageProtection: async (): Promise<{ encrypted: boolean; plainCount: number; file: string }> => ({
+  storageProtection: async (): Promise<{
+    encrypted: boolean;
+    plainCount: number;
+    file: string;
+    mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+  }> => ({
     encrypted: true,
     plainCount: 0,
     file: 'IndexedDB (business-hub-vault)',
+    // **ブラウザ版に OS キーチェーンは無い。** 鍵はマスターパスワードから
+    // PBKDF2 で導出している。画面が「OS が守っている」と書かないよう、
+    // 何が守っているかをここで名乗る (2026-08-23)。
+    mechanism: 'webcrypto-vault',
   }),
 
   fetchSnapshot: async <T>(serviceId?: string): Promise<ActionResult<T>> => {

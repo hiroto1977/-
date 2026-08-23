@@ -583,6 +583,14 @@
       "leafCount": 36,
       "note": "update integrity-chain.cjs,main.ts,externalUrlGate.ts,-externalUrlGate.ts",
       "hash": "06da6bae65e13f54c84a6161a6061e60402a7ba9a4bc4debd6436128968718dd"
+    },
+    {
+      "index": 68,
+      "prevHash": "06da6bae65e13f54c84a6161a6061e60402a7ba9a4bc4debd6436128968718dd",
+      "merkleRoot": "7c8b38e31228fa97cd3df32caa0f78252de799099c419d824c33a5d39077bfd7",
+      "leafCount": 36,
+      "note": "update secrets.ts,preload.ts",
+      "hash": "a11023d976807870d13945d179aeccfec9f315df9eab139ec049885bc38c7499"
     }
   ],
   "tipManifest": {
@@ -601,9 +609,9 @@
     "src/main/clients/types.ts": "124a6ca165286f17b4542c0fddab5a3aacccc7d3bf8d8f3a82b53c3ee38c66a2",
     "src/main/main.ts": "5efbefe8b38135808fa6966a2a6b0bcaac294522ce47b7d5f16880b1d2e6145c",
     "src/main/oauth.ts": "360a8f67ac64e3c4c70feda33c513dcf0d90a6d616537a3bacaa39d65483da99",
-    "src/main/secrets.ts": "9c4d35e6bd91579510c586c0ab37c603c297ff881c6face286bc5817fcbbe265",
+    "src/main/secrets.ts": "7a41a48e5225f375c6995e273d7e7de62c183ded580848fe4fd654d9aacd6b93",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
-    "src/preload/preload.ts": "821ff57285c9fe2bf9db9964a38a8459b93f96ef76bec8d52e532bef12202810",
+    "src/preload/preload.ts": "60a7f19a864836fc3294efbac6595a245dfdfa91687e3ba697392c6c7ee4f772",
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
     "src/renderer/network/proxy.ts": "dbca615b19e24ecc7ad6e8c96b10eb4c96d634473174fa1dbebf5bc711c386e3",
     "src/renderer/security/LockScreen.tsx": "a123592ed121d0d0c559e57906dd1d7acae784cb07b3dfb1d5fbc48b00f860dc",

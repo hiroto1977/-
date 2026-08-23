@@ -231,6 +231,23 @@ export interface StorageProtection {
   readonly plainCount: number;
   /** Absolute path of the secrets file, so the user can inspect/remove it. */
   readonly file: string;
+  /**
+   * **何が鍵を握っているか。** 画面はこれで文言を選ぶ。
+   *
+   * 2026-08-23 まで画面は `encrypted` が true なら無条件で
+   * 「OS のキーチェーン由来の鍵で暗号化して保存されています」と書いていた。
+   * **ブラウザ版には OS キーチェーンが無い** —— あちらの `storageProtection`
+   * は `encrypted: true` を固定で返すので、この一文が常に出ていた。
+   *
+   * 実際に守っている物が違う:
+   *   'os-keychain'     OS が鍵を持つ (利用者のパスフレーズに依存しない)
+   *   'webcrypto-vault' **マスターパスワード**から PBKDF2 で導出した鍵
+   *   'obfuscated'      base64 の難読化のみ (暗号化ではない)
+   *
+   * 「OS が守る」と「あなたのパスフレーズが守る」は利用者にとって
+   * 別の話なので、**取り違えたまま安心させない**。
+   */
+  readonly mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
 }
 
 /**
@@ -244,10 +261,12 @@ export interface StorageProtection {
  */
 export async function getStorageProtection(): Promise<StorageProtection> {
   const store = await readStore();
+  const available = safeStorage.isEncryptionAvailable();
   return {
-    encrypted: safeStorage.isEncryptionAvailable(),
+    encrypted: available,
     plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,
     file: secretsPath(),
+    mechanism: available ? 'os-keychain' : 'obfuscated',
   };
 }
 

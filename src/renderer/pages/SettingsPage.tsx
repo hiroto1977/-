@@ -849,7 +849,12 @@ export function SettingsPage() {
  * フォローアップ)。ここで可視化して、暗号化を有効にする手順まで案内する。
  */
 function StorageProtectionNotice() {
-  const [state, setState] = useState<{ encrypted: boolean; plainCount: number; file: string } | null>(
+  const [state, setState] = useState<{
+    encrypted: boolean;
+    plainCount: number;
+    file: string;
+    mechanism?: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+  } | null>(
     null,
   );
   const [failed, setFailed] = useState(false);
@@ -881,7 +886,25 @@ function StorageProtectionNotice() {
       <div style={{ fontSize: 13, lineHeight: 1.7 }}>
         <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ 暗号化されています</strong>
         <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
-          トークンは OS のキーチェーン由来の鍵で暗号化して保存されています。
+          {/*
+            **何が鍵を握っているかを取り違えない。** 2026-08-23 まで、ここは
+            `encrypted` が true なら無条件に「OS のキーチェーン由来の鍵で」と
+            書いていた。ブラウザ版には OS キーチェーンが無く、鍵は
+            **マスターパスワード**から導出している。「OS が守る」と
+            「あなたのパスフレーズが守る」は利用者にとって別の話で、
+            後者はパスフレーズの強さがそのまま強度になる。
+          */}
+          {state.mechanism === 'webcrypto-vault' ? (
+            <>
+              トークンは<strong>マスターパスワードから導出した鍵</strong>で暗号化
+              (AES-GCM-256 / PBKDF2-SHA-256 60 万回) して保存されています。
+              <br />
+              <strong>強度はパスフレーズの強さで決まります</strong> ——
+              OS のキーチェーンは使っていません (ブラウザには存在しません)。
+            </>
+          ) : (
+            <>トークンは OS のキーチェーン由来の鍵で暗号化して保存されています。</>
+          )}
           <br />
           保存先: <code>{state.file}</code>
         </p>

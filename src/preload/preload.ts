@@ -39,6 +39,8 @@ export interface StorageProtection {
   readonly encrypted: boolean;
   readonly plainCount: number;
   readonly file: string;
+  /** 何が鍵を握っているか。画面はこれで文言を選ぶ (main/secrets.ts 参照)。 */
+  readonly mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
 }
 
 const api = {

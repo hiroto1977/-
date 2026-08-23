@@ -80,6 +80,22 @@ describe('同じ断言が他の画面に無い', () => {
    * 免除**され、同じファイルへ断言を足しても鳴らなかった (対照実験で判明)。
    * 「守っているつもりの守り」なので、出現ごとに見る形へ直した。
    */
+  /*
+   * **文言を 1 つ留めても、別の言い回しは素通りする。** (2026-08-23)
+   *
+   * この正規表現は「トークンは OS キーチェーンに暗号化保存されます」を
+   * 見ていた。`SettingsPage` の保存状態カードは
+   *
+   *   「トークンは OS の**キーチェーン由来の鍵で**暗号化して保存されています」
+   *
+   * と書いており、**同じ主張なのに当たらなかった**。ブラウザ版の
+   * `storageProtection` は `encrypted: true` を固定で返すので、この一文が
+   * **常に**出ていた —— ブラウザに OS キーチェーンは無いのに。
+   *
+   * 0-a-17 と同じ形である: 特定の字面で判定すると、言い換えで抜ける。
+   * **主張の単位** —— 「キーチェーンが鍵を握っていると読める文」——
+   * で見るように広げた。
+   */
   const UNCONDITIONAL = /トークンは\s*OS\s*キーチェーンに\s*暗号化保存されます/g;
 
   it('断言そのものが、どの画面にも 1 つも無い', () => {
@@ -247,5 +263,46 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
     expect(LOCK).toMatch(/const CLIPBOARD_WIPE_MS = /);
     expect(LOCK).toMatch(/\$\{CLIPBOARD_WIPE_MS \/ 1000\} 秒後/);
     expect(LOCK, '30_000 が直書きで残っている').not.toMatch(/\}, 30_000\)/);
+  });
+});
+
+/*
+ * **保存状態カードは、何が鍵を握っているかを取り違えない。**
+ *
+ * ブラウザ版には OS キーチェーンが無く、鍵はマスターパスワードから
+ * PBKDF2 で導出している。「OS が守る」と「あなたのパスフレーズが守る」は
+ * 利用者にとって別の話 —— 後者はパスフレーズの強さがそのまま強度になる。
+ */
+/**
+ * 「キーチェーンが鍵を握っていると読める文」を**主張の単位**で捕まえる。
+ *
+ * 字面 1 つ (`トークンは OS キーチェーンに暗号化保存されます`) だけを見ていた
+ * ため、`SettingsPage` の「OS の**キーチェーン由来の鍵で**暗号化して保存されて
+ * います」が素通りしていた (2026-08-23)。0-a-17 と同じ形。
+ */
+const KEYCHAIN_CLAIM = /キーチェーン(に|由来の鍵で|の鍵で)[^。\n]*(暗号化|保存)/;
+
+describe('保存状態カードの文言は mechanism で分かれる', () => {
+  const PAGE = readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
+
+  it('キーチェーンの一文は mechanism を見た分岐の中にある', () => {
+    const claim = KEYCHAIN_CLAIM;
+    const idx = PAGE.search(claim);
+    expect(idx, 'キーチェーンの一文が見つからない — 検査が的を外している').toBeGreaterThan(-1);
+    // その一文より前に mechanism の分岐が在ること。
+    expect(
+      PAGE.slice(0, idx).includes("state.mechanism === 'webcrypto-vault'"),
+      'キーチェーンの一文が mechanism を見ずに出ている',
+    ).toBe(true);
+  });
+
+  it('ブラウザ版の枝はパスフレーズが鍵だと書いている', () => {
+    expect(PAGE).toMatch(/マスターパスワードから導出した鍵/);
+    expect(PAGE).toMatch(/強度はパスフレーズの強さで決まります/);
+  });
+
+  it('web-shim は webcrypto-vault と名乗る', () => {
+    const shim = readFileSync('src/renderer/web-shim.ts', 'utf8');
+    expect(shim).toMatch(/mechanism:\s*'webcrypto-vault'/);
   });
 });
