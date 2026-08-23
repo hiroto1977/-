@@ -58,11 +58,42 @@ export { redactSecrets, redactForMessage, safeErrorMessage };
  * 障害中のサービスが接続だけ受けて応答しない、プロキシが巨大なエラーページを
  * 返す —— どちらも利用者から見た症状は同じになる。
  */
-export async function jsonFetch<T>(
+export interface LimitedFetchCtx {
+  fetch?: FetchFn;
+  serviceId: string;
+  timeoutMs?: number;
+  maxBytes?: number;
+}
+
+/**
+ * **打ち切りだけを掛けて `Response` をそのまま返す口。**
+ *
+ * ## なぜ `jsonFetch` と別に要るか
+ *
+ * `jsonFetch` は必ず本文を読んで `JSON.parse` する。だが相手が JSON を
+ * 返さない経路が実際に在る:
+ *
+ * ```
+ *   microsoft-365 sendMail   202 Accepted・本文なし
+ *   shopify postExpectOk     Discord webhook の 204
+ *   security  HIBP           404 が「侵害なし」という正常応答
+ *   business / stocks advise 応答は JSON だが失敗本文も自前で扱う
+ * ```
+ *
+ * これらは 2026-08-23 まで **`ctx.fetch ?? fetch` を直に呼んでいた** ——
+ * つまり `jsonFetch` に入れた打ち切りも応答サイズの上限も**掛かっていなかった**。
+ * `httpLimits.ts` に「74 クライアント全部がここを通る」と書いたのは
+ * *snapshot の経路*の話で、**action の一部は通っていなかった**。
+ * 実測 (`__tests__/fetchTimeouts.test.ts`) で `signal: null` を確認している。
+ *
+ * 「JSON を返さないから素の fetch」で正しいのは**本文の扱い**だけで、
+ * **打ち切りは形に関係なく要る**。そこをこの関数で分ける。
+ */
+export async function limitedFetch(
   url: string,
   init: RequestInit,
-  ctx: { fetch?: FetchFn; serviceId: string; timeoutMs?: number; maxBytes?: number },
-): Promise<T> {
+  ctx: LimitedFetchCtx,
+): Promise<Response> {
   const f = ctx.fetch ?? fetch;
   const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
   const res = await withTimeout(
@@ -89,6 +120,21 @@ export async function jsonFetch<T>(
       ctx.serviceId,
     );
   }
+  return res;
+}
+
+/** `limitedFetch` と同じ上限で本文を読む (呼び出し側が本文を自分で扱う場合)。 */
+export function readCapped(res: Response, ctx: LimitedFetchCtx): Promise<string> {
+  return readBodyWithCap(res, ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES, ctx.serviceId);
+}
+
+export async function jsonFetch<T>(
+  url: string,
+  init: RequestInit,
+  ctx: LimitedFetchCtx,
+): Promise<T> {
+  const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
+  const res = await limitedFetch(url, init, ctx);
 
   if (!res.ok) {
     // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。

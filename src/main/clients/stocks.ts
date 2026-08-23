@@ -1,7 +1,8 @@
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
-import { redactForMessage } from './types';
+import { limitedFetch, readCapped, redactForMessage } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -1293,39 +1294,45 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     JSON.stringify(analyses),
   ].join('\n');
 
-  const f = ctx.fetch ?? fetch;
-  const res = await f('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ctx.token,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+  // business-advisor と同じ理由で `limitedFetch` を通す —— 2026-08-23 まで
+  // 素の fetch で打ち切りも上限も無かった。補完は長いので 2 分。
+  const hctx = { fetch: ctx.fetch, serviceId: 'stocks', timeoutMs: AI_CHAT_TIMEOUT_MS };
+  const res = await limitedFetch(
+    'https://api.anthropic.com/v1/messages',
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': ctx.token,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      // The model / max_tokens fallback ladder is pinned by 4 tests
+      // (custom model, empty-string model → default, NaN maxTokens →
+      // default, zero maxTokens → default). The boundary `maxTokens > 0`
+      // vs `>= 0` is equivalent because `Number.isFinite(0)` is true and
+      // `0 > 0` is false (mutant would also reject 0).
+      // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
+      body: JSON.stringify({
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: STOCKS_ADVISOR_MAX_TOKENS,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     },
-    // The model / max_tokens fallback ladder is pinned by 4 tests
-    // (custom model, empty-string model → default, NaN maxTokens →
-    // default, zero maxTokens → default). The boundary `maxTokens > 0`
-    // vs `>= 0` is equivalent because `Number.isFinite(0)` is true and
-    // `0 > 0` is false (mutant would also reject 0).
-    // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
-    body: JSON.stringify({
-      model: AI_PROVIDERS.anthropic.defaultModel,
-      max_tokens: STOCKS_ADVISOR_MAX_TOKENS,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
+    hctx,
+  );
 
   if (!res.ok) {
-    // Defensive catch on res.text() — the HTTP-429 test gives a normal
+    // Defensive catch on the capped read — the HTTP-429 test gives a normal
     // response body, so the catch path is unreachable from tests. The
     // `body.slice(0, 200)` length cap is also unreachable since test
     // bodies are short.
     // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await res.text().catch(() => '');
+    const body = await readCapped(res, hctx).catch(() => '');
     throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
-  const parsed = (await res.json()) as AnthropicMessagesResponse;
+  const parsed = JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
   // The Anthropic response contract: `content` is a (possibly empty)
   // array. The empty-content test exercises the next throw; the
   // `?.find((b) => true)` mutant would still find a (different) block

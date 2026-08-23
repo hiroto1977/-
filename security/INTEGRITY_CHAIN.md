@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 63
+- ブロック数: 66
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `cd8f66d63230cc1b9904bdf5004366788e0ff1b4b93523b71030ec03baa489f2`
-- 保護対象: 35 ファイル
+- 末尾(tip)ハッシュ: `dfda63e2c72a718afaa43fbcd3e347fe2e68d83e6242cc672d9f7b84b4a9a846`
+- 保護対象: 36 ファイル
 
 ## ブロック
 
@@ -76,6 +76,9 @@
 | 60 | `e4126e4eac6d8fdc` | `dcad7f795f03c5e2` | `eeac0f5276dd3c49` | update integrity-chain.cjs,proxy.ts,httpLimits.ts |
 | 61 | `2372625cdbcd27fd` | `eeac0f5276dd3c49` | `f51ba095062ecda5` | update aiEndpoint.ts |
 | 62 | `927cf69ec924f7a3` | `f51ba095062ecda5` | `cd8f66d63230cc1b` | update LockScreen.tsx |
+| 63 | `dd5ef6ac3d3652bc` | `cd8f66d63230cc1b` | `1972d6f2f55469fd` | update oauth.ts,httpLimits.ts |
+| 64 | `b15b3fdcd5f333e8` | `1972d6f2f55469fd` | `8bc5c0003c47e292` | update integrity-chain.cjs,types.ts |
+| 65 | `46767fc14a000f1d` | `8bc5c0003c47e292` | `dfda63e2c72a718a` | update integrity-chain.cjs |
 
 ## 保護対象ファイル
 
@@ -91,6 +94,7 @@
 - `scripts/setup-obsidian-docker.sh`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/exportPaths.ts`
+- `src/main/clients/types.ts`
 - `src/main/externalUrlGate.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`

@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { jsonFetch, FetchError, redactSecrets, redactForMessage } from '../types';
+import {
+  jsonFetch,
+  limitedFetch,
+  readCapped,
+  FetchError,
+  redactSecrets,
+  redactForMessage,
+} from '../types';
 import { REDACT_SCAN_LIMIT } from '../../../shared/redact';
 
 describe('jsonFetch', () => {
@@ -426,5 +433,118 @@ describe('redactForMessage — 伏せてから切る', () => {
     // 上限の内側にあれば伏せる。
     const near = 'x'.repeat(100) + ' ghp_abcdefghijklmnopqrst';
     expect(redactForMessage(near, 200)).toContain('ghp_[REDACTED]');
+  });
+});
+
+/*
+ * **`limitedFetch` —— 本文を読まずに `Response` を返す口。**
+ *
+ * 2026-08-23 に `jsonFetch` から切り出した。JSON を返さない相手
+ * (202 Accepted・webhook の 204・404 が正常応答の HIBP) が素の `fetch` を
+ * 直に呼んでいて、**打ち切りも上限も掛かっていなかった**ため。
+ *
+ * ここで留めるのは「既定でない値を渡したとき、その値が使われるか」——
+ * `??` を `&&` に変えた変異体は既定へ落ちるので、既定と違う値を渡した
+ * 検査でしか死なない。
+ */
+describe('limitedFetch', () => {
+  it('2xx をそのまま返す (本文は読まない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('', { status: 202 }));
+    const res = await limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo' });
+    expect(res.status).toBe(202);
+    expect(res.bodyUsed).toBe(false);
+  });
+
+  it('4xx/5xx も投げずに返す (呼び出し側が判断する)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const res = await limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo' });
+    expect(res.status).toBe(404);
+  });
+
+  it('fetch へ AbortSignal を渡す', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('{}', { status: 200 }));
+    await limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo' });
+    expect(fetchMock.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  /*
+   * **`ctx.timeoutMs` が本当に使われるか。** `??` を `&&` に変えると
+   * 既定の 30 秒へ落ちるので、5 ミリ秒を渡した検査だけが差を見られる。
+   */
+  it('ctx.timeoutMs を過ぎたら打ち切って専用の文言で投げる', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(
+      (_url: unknown, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+        }),
+    );
+    await expect(
+      limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', timeoutMs: 5 }),
+    ).rejects.toThrow(/demo が時間内に応答しませんでした/);
+  });
+
+  it('打ち切りでない失敗は、その失敗のまま投げる (握り潰さない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
+    await expect(
+      limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo' }),
+    ).rejects.toThrow('ECONNREFUSED');
+  });
+
+  /*
+   * **宣言された長さの先手の門。** 本文を読む前に落ちるので、
+   * `bodyUsed` は false のままである。
+   */
+  it('Content-Length が ctx.maxBytes を超えていれば、本文を読む前に落とす', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('x', { status: 200, headers: { 'content-length': '999' } }),
+    );
+    await expect(
+      limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
+    ).rejects.toThrow(/demo response too large \(999 > 10 bytes\)/);
+  });
+
+  it('Content-Length が ctx.maxBytes 以下なら通す (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('x', { status: 200, headers: { 'content-length': '10' } }),
+    );
+    const res = await limitedFetch(
+      'https://example.com',
+      {},
+      { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 },
+    );
+    expect(res.status).toBe(200);
+  });
+});
+
+describe('readCapped', () => {
+  it('ctx.maxBytes 以内の本文は返す', async () => {
+    expect(await readCapped(new Response('abc'), { serviceId: 'demo', maxBytes: 10 })).toBe('abc');
+  });
+
+  it('ctx.maxBytes を超える本文は落とす (既定へ落ちない)', async () => {
+    await expect(
+      readCapped(new Response('a'.repeat(11)), { serviceId: 'demo', maxBytes: 10 }),
+    ).rejects.toThrow(/demo response too large/);
+  });
+});
+
+describe('jsonFetch は limitedFetch の上限をそのまま受け継ぐ', () => {
+  it('ctx.maxBytes を超える本文は JSON になる前に落ちる', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ pad: 'a'.repeat(50) }), { status: 200 }));
+    await expect(
+      jsonFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
+    ).rejects.toThrow(/demo response too large/);
+  });
+
+  it('失敗応答の本文も ctx.maxBytes で切る', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('e'.repeat(50), { status: 500 }));
+    // 本文が読めなければ `.catch(() => '')` で空になり、状態番号だけが残る。
+    await expect(
+      jsonFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
+    ).rejects.toThrow(/demo 500: $/);
   });
 });

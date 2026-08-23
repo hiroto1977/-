@@ -27,6 +27,8 @@ import path from 'node:path';
 import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
 import {
   jsonFetch,
+  limitedFetch,
+  readCapped,
   FetchError,
   redactForMessage,
   type ActionContext,
@@ -202,21 +204,33 @@ async function checkEmailBreach(
     '?truncateResponse=false';
 
   // HIBP returns 404 when the email is not in any breach — treat that
-  // as a normal "no breaches" response, not an error.
-  const fetchFn = ctx.fetch ?? fetch;
-  const res = await fetchFn(url, {
-    headers: {
-      'hibp-api-key': keys.hibp,
-      'User-Agent': 'service-hub-desktop',
-      Accept: 'application/json',
+  // as a normal "no breaches" response, not an error. `jsonFetch` は !ok を
+  // 必ず投げるのでここでは使えないが、**打ち切りと応答サイズの上限は要る**
+  // ので `limitedFetch` + `readCapped` を通す (2026-08-23)。
+  const hctx = { fetch: ctx.fetch, serviceId: 'security' };
+  const res = await limitedFetch(
+    url,
+    {
+      headers: {
+        'hibp-api-key': keys.hibp,
+        'User-Agent': 'service-hub-desktop',
+        Accept: 'application/json',
+      },
     },
-  });
+    hctx,
+  );
   if (res.status === 404) return { email, breaches: [] };
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCapped(res, hctx).catch(() => '');
     throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
   }
-  const data = (await res.json()) as HibpBreach[];
+  const bodyText = await readCapped(res, hctx);
+  let data: HibpBreach[];
+  try {
+    data = JSON.parse(bodyText) as HibpBreach[];
+  } catch {
+    throw new FetchError('HIBP の応答が JSON ではありません', res.status, 'security');
+  }
   return {
     email,
     breaches: data.map((b) => ({

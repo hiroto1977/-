@@ -2589,3 +2589,74 @@ network-first・**同一オリジンの GET のみ**・`res.ok` のときだけ�
 
 ここまでで「個人ツールとして毎日使う」レベル。さらに「家族や友人にも配る」「公開する」
 段階で Phase 4 / Phase 7 が必要になります。
+
+### 中心の口に守りを入れても、その口を使っていない経路は守られない (2026-08-23)
+
+前日 (2026-08-22) に `clients/types.ts` の `jsonFetch` へ**打ち切りと応答
+サイズの上限**を入れ、`shared/httpLimits.ts` の冒頭にこう書いた:
+
+> 残っていたのが `jsonFetch` で、**SaaS クライアント 74 本すべてがここを通る**。
+> 1 か所直せば全部に効く
+
+**通っていなかった。** ARCHITECTURE の payload 表を追っていて
+`microsoft-365` の `send-mail` が**同じファイルの `create-event` と違って**
+素の `fetch` を呼んでいるのに気づき、全経路を数え直したところ **6 つ**あった。
+
+| 経路 | `jsonFetch` を避けた理由 | 実測 |
+|---|---|---|
+| `security` `check-email-breach` | HIBP は 404 が「侵害なし」という正常応答 | `signal: null` |
+| `microsoft-365` `send-mail` | 202 Accepted・本文なし | `signal: null` |
+| `shopify` `sync-to-discord` | webhook の 204 | `signal: null` |
+| `business` `advise` | 有料 LLM API。失敗本文を自前で扱う | `signal: null` |
+| `stocks` `advise` | 同上 | `signal: null` |
+| `oauth` exchange / refresh | トークン交換 | `signal: null` |
+
+#### 誤りは「本文を自分で扱う」を「打ち切りも自分で持つ」と取り違えたこと
+
+`jsonFetch` を避ける理由はどれも**本文の扱い**にあり、そこは正しい ——
+`jsonFetch` は必ず本文を読んで `JSON.parse` するので、204 や「404 が正常」に
+は使えない。**だが打ち切りは本文の形に関係なく要る。** そこを
+`limitedFetch` (打ち切り + `Content-Length` の先手の門 → `Response` を返す) と
+`readCapped` (上限つきで本文を読む) に分け、`jsonFetch` はその上に載せ直した。
+
+`business` / `stocks` は LLM 補完なので既定 30 秒ではなく
+`AI_CHAT_TIMEOUT_MS` (2 分) を使う —— `shared/ai/chat.ts` と同じ値。
+
+#### 実測で測る。実装からは見えない
+
+「30 秒で落ちるか」を測ると 30 秒待つ検査になる。代わりに
+**`init.signal` が渡っているか**を見る —— fetch を打ち切る手段は
+`AbortSignal` しか無いので、この 2 つは同値で、しかも即座に決まる。
+`main/clients/__tests__/fetchTimeouts.test.ts` が全経路 + `jsonFetch` の対照を
+叩いて測る。対照実験: `send-mail` の守りを外すと**測定と字面の 2 つが同時に**
+鳴り、戻すと 9 件すべて通る。
+
+同ファイルに**字面の門**も置いた —— `?? fetch` を書いてよいのは
+`clients/types.ts` と `ollama.ts` の 2 つだけ。実測は「今在る経路」しか
+見ないので、新しい action が素の fetch を書いたら字面のほうが鳴る。
+
+#### 鎖の除外台帳にも同じ嘘があった
+
+`integrity-chain.cjs` は `src/main/clients/types.ts` を
+**「型と ActionContext の形だけ。実行時の判断を持たない」**として
+保護対象から除外していた。**前日の時点で嘘になっていた。**
+`httpLimits.ts` (定数) は保護しているのに**それを適用する側**を保護しない
+のは、金庫の鍵だけ固定して扉を固定しないのと同じ ——
+`limitedFetch` から `declaredLengthExceeds` の 1 行を消すだけで上限が消える。
+保護対象へ昇格 (35 → 36 ファイル) し、閉包で新たに要求された
+`shared/advisorTypes.ts` は**本当に型だけ**なので除外へ入れた。
+
+> **除外の理由は「型だけに見えるか」ではなく「実行時に残るか」で決める。**
+
+#### モックが実物と違う形をしていると、検査はモックの挙動を留める
+
+`business.test.ts` のモックは `json()` が payload を返すのに
+`text()` が空文字を返していた —— **本物の `Response` ではありえない形**。
+`readCapped` を通すようにした途端に 20 件落ちた。`stocks.test.ts` は最初から
+本物の `Response` を使っていて、同じ変更で 1 件も落ちなかった。
+`cursor.test.ts` で同じことがあったのと同型 (0-a-11)。
+
+変異検査: `types.ts` は切り出し直後 62.50% (生存 5 / 未到達 7) まで落ちた ——
+**既定と違う `maxBytes` / `timeoutMs` を渡す検査が 1 つも無かった**ため
+(`??` を `&&` に変えた変異体は既定へ落ちるので、既定を渡している限り死なない)。
+10 件足して `types.ts` / `httpLimits.ts` とも 100%。

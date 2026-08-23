@@ -1,5 +1,7 @@
 import {
   jsonFetch,
+  limitedFetch,
+  readCapped,
   FetchError,
   redactForMessage,
   type ActionContext,
@@ -119,10 +121,12 @@ async function postExpectOk(
   init: RequestInit,
   ctx: { fetch?: typeof fetch; serviceId: string },
 ): Promise<void> {
-  const f = ctx.fetch ?? fetch;
-  const res = await f(url, init);
+  // 本文は読まないが**打ち切りと Content-Length の門は要る** ——
+  // `jsonFetch` を使えない理由は「JSON を返さない」ことだけなので、
+  // 打ち切りまで一緒に落とすのは筋が違う (2026-08-23)。
+  const res = await limitedFetch(url, init, ctx);
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCapped(res, ctx).catch(() => '');
     // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
     throw new FetchError(
       `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,

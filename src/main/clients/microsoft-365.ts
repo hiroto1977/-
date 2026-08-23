@@ -1,4 +1,4 @@
-import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 /**
  * Microsoft 365 (Microsoft Graph API) 連携クライアント (実 API)。
@@ -148,19 +148,24 @@ async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; sub
   if (!to || !subject) {
     throw new Error('to, subject are required');
   }
-  const f = ctx.fetch ?? fetch;
-  const res = await f(`${GRAPH_BASE}/me/sendMail`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: {
-        subject,
-        body: { contentType: 'Text', content: body ?? '' },
-        toRecipients: [{ emailAddress: { address: to } }],
-      },
-      saveToSentItems: true,
-    }),
-  });
+  // 202 Accepted・本文なしなので `jsonFetch` は使えない (必ず JSON を読む)。
+  // だが**打ち切りは本文の形に関係なく要る** —— `limitedFetch` で掛ける。
+  const res = await limitedFetch(
+    `${GRAPH_BASE}/me/sendMail`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: {
+          subject,
+          body: { contentType: 'Text', content: body ?? '' },
+          toRecipients: [{ emailAddress: { address: to } }],
+        },
+        saveToSentItems: true,
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'microsoft-365' },
+  );
   if (!res.ok) {
     throw new FetchError(`microsoft-365 sendMail failed (${res.status})`, res.status, 'microsoft-365');
   }

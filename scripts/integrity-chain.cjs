@@ -89,6 +89,14 @@ const PROTECTED = [
   // もここを通る。上限を 10MiB から 10GiB へ書き換えるだけで、実装を 1 行も
   // 触らずに応答サイズの守りが消える。
   'src/shared/httpLimits.ts',
+  // 2026-08-23 に**除外から昇格**した。それまで「型と ActionContext の形だけ。
+  // 実行時の判断を持たない」として除外していたが、**その説明は前日から嘘に
+  // なっていた** —— 打ち切り・`Content-Length` の先手の門・上限つき本文読みは
+  // すべてこのファイルの `limitedFetch` / `jsonFetch` が持つ。
+  // `httpLimits.ts` (定数) だけを守って**それを適用する側**を守らないのは、
+  // 金庫の鍵だけ固定して扉を固定しないのと同じ。`limitedFetch` から
+  // `declaredLengthExceeds` の 1 行を消すだけで上限が消える。
+  'src/main/clients/types.ts',
   'scripts/setup-linux.sh',
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',
@@ -182,8 +190,15 @@ const DEP_EXCLUSIONS = {
   'src/main/clients/index.ts':
     'サービス追加のたびに変わる登録簿 (74 エントリ)。中身は各 client への振り分けで、'
     + '判断は各 client と main.ts 側の検証が持つ。',
-  'src/main/clients/types.ts':
-    '型と ActionContext の形だけ。実行時の判断を持たない。',
+  // **本当に型だけ**のファイル。`export` は `interface` が 1 つで、
+  // 実行時には何も残らない (TypeScript が消す)。ここを書き換えても
+  // 生成される JS は 1 バイトも変わらないので、鎖で守る意味が無い。
+  //
+  // `clients/types.ts` の除外を 2026-08-23 に外したのと同じ基準で判断した ——
+  // あちらは「型だけ」と書いてあったが**実行時の判断を持っていた**。
+  // 除外の理由は「型だけに見えるか」ではなく「実行時に残るか」で決める。
+  'src/shared/advisorTypes.ts':
+    '実行時に残らない型定義のみ (interface 1 つ)。書き換えても生成 JS が変わらない。',
   'src/shared/updateCheck.ts':
     '版の比較のみ。書き換えの最悪は「更新があるのに気付かせない」で、'
     + '配布経路そのものは release.yml (保護対象) が持つ。',

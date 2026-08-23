@@ -19,6 +19,12 @@ import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage } from '../shared/redact';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  withTimeout,
+} from '../shared/httpLimits';
 
 /**
  * Refuse to talk to a non-HTTPS OAuth endpoint. Today every OAUTH_CONFIGS entry
@@ -710,16 +716,21 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
 
   const { code } = await listener;
 
-  const res = await fetchFn(config.tokenUrl, {
-    method: 'POST',
-    headers: buildTokenRequestHeaders(config),
-    body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
-  });
+  const res = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, (signal) =>
+    fetchFn(config.tokenUrl, {
+      method: 'POST',
+      headers: buildTokenRequestHeaders(config),
+      body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
+      signal,
+    }),
+  );
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
     throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
   }
-  const raw = (await res.json()) as TokenResponse;
+  const raw = JSON.parse(
+    await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
+  ) as TokenResponse;
   return tokenResponseToSet(raw);
 }
 
@@ -735,15 +746,23 @@ export async function refresh(
     throw new Error('no refresh token available');
   }
   assertHttpsEndpoint(config.tokenUrl, 'token');
-  const res = await fetchFn(config.tokenUrl, {
-    method: 'POST',
-    headers: buildTokenRequestHeaders(config),
-    body: serializeTokenBody(config, buildRefreshBody(config, current.refreshToken)),
-  });
+  // クロージャの中では `current.refreshToken` の絞り込みが効かないので、
+  // 上の guard を通った値をここで確定させる。
+  const refreshToken = current.refreshToken;
+  const res = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, (signal) =>
+    fetchFn(config.tokenUrl, {
+      method: 'POST',
+      headers: buildTokenRequestHeaders(config),
+      body: serializeTokenBody(config, buildRefreshBody(config, refreshToken)),
+      signal,
+    }),
+  );
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
     throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
   }
-  const raw = (await res.json()) as TokenResponse;
+  const raw = JSON.parse(
+    await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
+  ) as TokenResponse;
   return tokenResponseToSet(raw, current.refreshToken);
 }

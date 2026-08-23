@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 74 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **9279** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **9294** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1745,8 +1745,8 @@ union を参照する。
 | slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81-117` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79-115` |
 | skills | `run-skill` | `{ name, prompt }` | **`isSafeSkillName(name)`** + path containment。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:171-268` |
-| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:185-317` |
-| security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:270-314` |
+| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:187-338` |
+| security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:290-338` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | zoneId encodeURIComponent。type は型では 5 種の union だが**実行時には検査していない** (API 側で 4xx) | `cloudflare.ts:127-207` |
 | cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:172-208` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:121-290` |
@@ -1771,7 +1771,7 @@ union を参照する。
 | slack | `slack.com` | `GET /api/conversations.list`, `team.info`, `POST /chat.postMessage` | Bearer | `slack.ts:53-98` |
 | canva | `api.canva.com` | `GET /rest/v1/designs`, `brand-kits`, `POST /folders` | Bearer | `canva.ts:43-96` |
 | security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:201` |
-| security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:267-280` |
+| security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:290-321` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:262`, `emotions.ts:209` |
 | assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
@@ -1900,6 +1900,8 @@ flowchart TB
 | `ollama.ts:withTimeout` | URL not in `ALLOWED_ENDPOINTS` | `throw FetchError` | フェッチャ全体が fail |
 | `ollama.ts:chat` | unsafe model name | `throw FetchError('unsafe model name: ...')` (32-char truncated) | form 上のエラー |
 | `ollama.ts:chat` | response > 10 MB | `throw FetchError('response exceeded ...')` | 同上 |
+| `clients/types.ts:limitedFetch` | 時間内に応答しない (既定 30 秒 / LLM は 120 秒) | `throw FetchError('<serviceId> が時間内に応答しませんでした', 0)` | 画面が「読込中…」で固まらない |
+| `clients/types.ts:limitedFetch` | `Content-Length` が上限超 (10MiB) | `throw FetchError('... response too large')` —— **本文を読む前** | 同上 |
 | `clients/types.ts:jsonFetch` | HTTP non-2xx | `throw FetchError(serviceId N: <body 200B>)` | redacted error message |
 | `clients/types.ts:jsonFetch` | body read fail (network reset 等) | `.catch(() => '')` → 空文字で FetchError | 同上 |
 | `useServiceData` hook | fetchSnapshot returns `ok:false` | `setStatus('error')` + `classifyError(message)` → 4 種類 | error UI + `errorKind` 別 CTA |
@@ -2188,6 +2190,8 @@ classDiagram
   }
 
   class FetchUtils~clients/types.ts~ {
+    +limitedFetch(url, init, ctx) : Response
+    +readCapped(res, ctx) : string
     +jsonFetch~T~(url, init, ctx) : types.ts:46
     +FetchError : types.ts:19
     +redactSecrets(text) : types.ts:37

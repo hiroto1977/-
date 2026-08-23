@@ -15,8 +15,32 @@
  * ```
  *
  * (*) は同日に直した。残っていたのが `jsonFetch` で、**SaaS クライアント
- * 74 本すべてがここを通る**。1 か所直せば全部に効く反面、
+ * 74 本すべての snapshot がここを通る**。1 か所直せば全部に効く反面、
  * 1 か所抜けていれば全部抜けていた。
+ *
+ * ## 「全部がここを通る」は正しくなかった (2026-08-23 追記)
+ *
+ * 上の行はもともと「74 本すべてがここを通る」と書いていた。**通っていない
+ * 経路が 6 つ在った** —— 素の `fetch` を直に呼ぶ action で、`signal` も
+ * 上限も無かった (実測: `main/clients/__tests__/fetchTimeouts.test.ts`)。
+ *
+ * ```
+ *   security  check-email-breach   HIBP は 404 が正常応答 → jsonFetch は使えない
+ *   microsoft-365 send-mail        202 Accepted・本文なし
+ *   shopify   sync-to-discord      webhook の 204
+ *   business  advise               有料 LLM API。失敗本文を自前で扱う
+ *   stocks    advise               同上
+ *   oauth     exchange / refresh   トークン交換
+ * ```
+ *
+ * どれも `jsonFetch` を避ける理由が**本文の扱い**にあり、そこは正しい。
+ * 誤りは「本文を自分で扱う」を「打ち切りも自分で持つ」と取り違えたこと ——
+ * **打ち切りは本文の形に関係なく要る**。`clients/types.ts` の
+ * `limitedFetch` / `readCapped` がこの 2 つを分ける。
+ *
+ * **教訓**: 中心の口に守りを入れても、「その口を使っていない経路」は
+ * 守られない。しかも既存の検査は全部通ったままになる ——
+ * 実装側からは見えないので、**呼び出し側から測る**しかない。
  *
  * ## 何から守るのか
  *

@@ -594,17 +594,16 @@ describe('validateBusinessAdvisorJson', () => {
 // --- askBusinessAdvisorImpl --------------------------------------------
 
 describe('askBusinessAdvisorImpl', () => {
+  /*
+   * **本物の `Response` を作る。** 以前は `json()` が payload を返すのに
+   * `text()` が空文字を返す手作りの物だった —— 本物の `Response` では
+   * ありえない形で、`readBodyWithCap` を通すようにした途端に落ちた
+   * (2026-08-23)。モックが実物と違う形をしていると、**検査は実装ではなく
+   * モックの挙動を留めてしまう**。stocks 側は最初から本物を使っていて、
+   * 同じ変更で落ちなかった。
+   */
   function mockResponse(payload: unknown, ok = true, status = 200): Response {
-    return {
-      ok,
-      status,
-      async text() {
-        return ok ? '' : JSON.stringify(payload);
-      },
-      async json() {
-        return payload;
-      },
-    } as Response;
+    return new Response(JSON.stringify(payload), { status: ok ? status : status });
   }
 
   function llmReply(recs: BusinessAdvisorRecommendation[]): unknown {
@@ -919,7 +918,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -960,7 +959,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1002,7 +1001,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1042,7 +1041,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1139,7 +1138,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {

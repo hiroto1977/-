@@ -4,7 +4,8 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { redactForMessage } from './types';
+import { limitedFetch, readCapped, redactForMessage } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { isSafeExportPath } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 
@@ -675,38 +676,46 @@ export async function askBusinessAdvisorImpl(
     JSON.stringify(analyses),
   ].join('\n');
 
-  const f = ctx.fetch ?? fetch;
+  // 有料 API への呼び出しにも**打ち切りと応答サイズの上限**を掛ける。
+  // 2026-08-23 まで素の fetch で、`signal` も上限も無かった (実測)。
+  // 補完は普通の REST より長くかかるので、既定 30 秒ではなく
+  // `AI_CHAT_TIMEOUT_MS` (2 分) を使う —— `shared/ai/chat.ts` と同じ値。
+  const hctx = { fetch: ctx.fetch, serviceId: 'business', timeoutMs: AI_CHAT_TIMEOUT_MS };
   // The model / max_tokens fallback ladder + boundary `> 0` are pinned by
   // dedicated tests (custom model, empty model → default, NaN/0 maxTokens →
   // default, custom maxTokens). Boundary `>= 0` is observationally
   // equivalent because Number.isFinite(0)=true and the `> 0` test rejects 0.
   // Block-form pragma covers the whole body builder.
   // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
-  const res = await f('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ctx.token,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+  const res = await limitedFetch(
+    'https://api.anthropic.com/v1/messages',
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': ctx.token,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: BUSINESS_ADVISOR_MAX_TOKENS,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     },
-    body: JSON.stringify({
-      model: AI_PROVIDERS.anthropic.defaultModel,
-      max_tokens: BUSINESS_ADVISOR_MAX_TOKENS,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
+    hctx,
+  );
   // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
 
   if (!res.ok) {
-    // Defensive catch on text() — unreachable from current tests but
+    // Defensive catch on the capped read — unreachable from current tests but
     // mirrors stocks-advisor pattern for symmetry.
     // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await res.text().catch(() => '');
+    const body = await readCapped(res, hctx).catch(() => '');
     throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
-  const parsed = (await res.json()) as AnthropicMessagesResponse;
+  const parsed = JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
   // Optional chain + find: see stocks-advisor for the same justification.
   // Stryker disable next-line OptionalChaining,ConditionalExpression
   const textBlock = parsed.content?.find((b) => b.type === 'text');
