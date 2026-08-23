@@ -24,6 +24,7 @@ import { app } from 'electron';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { atomicWriteFile } from '../atomicWrite';
 import {
   jsonFetch,
   redactForMessage,
@@ -88,9 +89,32 @@ async function readStore(): Promise<EmotionsStore> {
   }
 }
 
+/**
+ * 気分の記録を保存する。**`atomicWriteFile` を通す** (`secrets.ts` と同じ)。
+ *
+ * 素の `fs.writeFile` には 2 つの穴があった (2026-08-23 実測):
+ *
+ * 1. **`mode` は新規作成のときしか効かない。** `{ mode: 0o600 }` は
+ *    2026-08-13 の修正で足されたが、**それ以前に作られたファイルは 644 のまま**で、
+ *    以後どれだけ書き込んでも直らない。実測:
+ *
+ *      既存 644 のファイルへ writeFile(..., {mode: 0o600}) → **644 のまま**
+ *
+ *    `atomicWriteFile` は 0600 で作った一時ファイルを `rename` で被せるので、
+ *    **次の書き込みで既存の緩い権限も直る** (実測で確認)。
+ *    ここに入るのは気分のメモ (自由記述) で、同じ機械の他の利用者に
+ *    読まれてよいものではない。
+ *
+ * 2. **途中で落ちると切れたファイルが残る。** `readStore` は ENOENT だけを
+ *    飲んで壊れた JSON は投げ直す (それ自体は正しい —— 黙って消すより良い) ので、
+ *    切れたファイルが残ると機能が使えなくなる。`atomicWriteFile` は
+ *    書き切って fsync してから rename するので、この窓が無い。
+ *
+ * 控え (`keepBackup`) は取らない —— 読み出し側が使わない控えは、
+ * 同じ個人情報の写しがもう 1 つディスクに残るだけになる。
+ */
 async function writeStore(store: EmotionsStore): Promise<void> {
-  await fs.mkdir(path.dirname(storePath()), { recursive: true });
-  await fs.writeFile(storePath(), JSON.stringify(store), { mode: 0o600 });
+  await atomicWriteFile(storePath(), JSON.stringify(store), { mode: 0o600 });
 }
 
 export async function fetchEmotionsSnapshot(ctx: FetchContext): Promise<EmotionsSnapshot> {

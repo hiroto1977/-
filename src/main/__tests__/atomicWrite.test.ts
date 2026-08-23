@@ -103,3 +103,51 @@ describe('readFileWithBackup', () => {
     expect(await readFileWithBackup(path.join(dir, 'nope.json'))).toBeNull();
   });
 });
+
+/*
+ * **権限は「作るとき」だけの話ではない。**
+ *
+ * `fs.writeFile(..., { mode })` は**新規作成のときしか効かない** ——
+ * 既にあるファイルの権限は変わらない。実際 `main/clients/emotions.ts` は
+ * 2026-08-13 に `{ mode: 0o600 }` を足したが、それ以前に作られたファイルは
+ * 644 のまま残り、以後どれだけ書いても直らなかった (実測)。
+ *
+ * `atomicWriteFile` は 0600 で作った一時ファイルを `rename` で被せるので、
+ * **次の書き込みで既存の緩い権限も直る**。控えを取るときは控えも揃える ——
+ * 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に窓を開けておくのと同じ。
+ */
+describe('atomicWriteFile と権限', () => {
+  const modeOf = async (p: string) => ((await fs.stat(p)).mode & 0o777).toString(8);
+
+  it('新しいファイルは指定した権限で作られる', async () => {
+    const target = path.join(dir, 'new.json');
+    await atomicWriteFile(target, '{}', { mode: 0o600 });
+    expect(await modeOf(target)).toBe('600');
+  });
+
+  it('既にある緩いファイルも、次の書き込みで締まる', async () => {
+    const target = path.join(dir, 'legacy.json');
+    // mode を付ける前のバージョンが作った状態
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await atomicWriteFile(target, '{"new":1}', { mode: 0o600 });
+
+    // ★ ここが本体。writeFile では直らない。
+    expect(await modeOf(target)).toBe('600');
+    expect(await fs.readFile(target, 'utf8')).toBe('{"new":1}');
+  });
+
+  it('控えを本体より緩いまま残さない', async () => {
+    const target = path.join(dir, 'withprev.json');
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+
+    await atomicWriteFile(target, '{"new":1}', { mode: 0o600, keepBackup: true });
+
+    // 控えは複製元 (緩い本体) の権限を引き継ぐので、明示的に揃える必要がある。
+    expect(await modeOf(`${target}.prev`)).toBe('600');
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"old":1}');
+  });
+});

@@ -46,6 +46,15 @@ export async function atomicWriteFile(
     if (opts.keepBackup) {
       try {
         await fs.copyFile(target, `${target}.prev`);
+        // **控えは本体より緩くしない。** `copyFile` は**複製元の**mode を
+        // 引き継ぐので、本体が過去に緩い権限で作られていると、控えもその
+        // 緩さのまま同じ中身を持つことになる。実測 (2026-08-23):
+        //
+        //   本体 644 → rename で本体は 600 に直るが、控えは 644 のまま
+        //
+        // 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に
+        // 窓を開けておくのと同じ。mode の指定があるときは明示的に揃える。
+        if (opts.mode !== undefined) await fs.chmod(`${target}.prev`, opts.mode);
       } catch {
         // no existing target yet — nothing to back up
       }
