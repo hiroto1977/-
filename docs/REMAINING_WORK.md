@@ -3002,3 +3002,45 @@ export function probeOpen(u: string): void { window.open(u, "_blank"); }
 本物を叩けないときは、**主張の単位で実物の字面を見る** (0-a-17 と同じ形) ——
 「`complete()` の `finally` に掃除が在る」という主張そのものを確かめる。
 再現を検査するより弱く見えるが、**再現では絶対に捕まらない誤りを捕まえる**。
+
+### このセッションの修正が「実際に効いているか」を全部数え直した (2026-08-23)
+
+前項で**報告した修正が実物に入っていなかった**ので、
+このセッションで触った経路を 1 つずつ「入ったか」ではなく
+**「叩いて確かめられているか」**で数え直した。
+
+| 経路 | 入っていたか | 駆動する検査 |
+|---|---|---|
+| `microsoft-365` `send-mail` | ✓ | ✓ `fetchTimeouts` |
+| `shopify` `sync-to-discord` | ✓ | ✓ `fetchTimeouts` |
+| `security` `check-email-breach` | ✓ | ✓ `fetchTimeouts` |
+| `business` / `stocks` `advise` | ✓ | ✓ `fetchTimeouts` |
+| `oauth` `refresh` | ✓ | ✓ `fetchTimeouts` |
+| `assistant` `chatAll` の伏字 | ✓ | ✓ `rendererBoundMessages` |
+| ollama `warnings` (到達不可) | ✓ | ✓ `rendererBoundMessages` |
+| **`oauth` `authorize` の交換** | ✓ | ❌ **無し** → 追加 |
+| **ollama `warnings` (モデル一覧)** | ✓ | ❌ **無し** → 追加 |
+| **`pkce` `exchangeGoogleCode`** | ✓ | ❌ **無し** → 追加 |
+
+字面はどれも正しく入っていた。だが 3 経路は**何も留めていなかった** ——
+消しても誰も気づかない状態だった。
+
+#### 追加した 3 件と、その対照実験
+
+- `authorize()` の交換に `signal` が在ること
+  (既存の統合検査に 1 行追加。対照: `signal` を外すと落ちる)
+- ollama の **2 本目の** warnings 経路 —— `/api/version` に成功してから
+  `/api/tags` で落ちる形でしか通らないので別に組んだ。
+  `call > 1` を確かめて**的を外していないこと**も同時に見る
+  (対照: 伏字を外すと 3 件落ちる)
+- `exchangeGoogleCode` の `signal` / 上限 / JSON でない応答
+  (対照: `signal` を外すと落ちる)
+
+#### 錨の重複を数えてから置換する
+
+前項の誤りは `replace(..., 1)` が**別の一致**に当たったことだった。
+今回はすべての置換で **`s.count(anchor) == 1` を assert してから**置換し、
+外した対照実験でも**パッチが当たったこと (件数の変化) を出力してから**
+結果を読んだ。1 度、正規表現で壊してしまい `Tests no tests` になったのを
+「対照が鳴らない」と読み違えかけた —— **落ちた理由が「壊れて読めない」か
+「検査が鳴った」かは別物**なので、そこも確かめる。

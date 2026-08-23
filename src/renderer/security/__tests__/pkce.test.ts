@@ -139,6 +139,33 @@ describe('exchangeGoogleCode', () => {
     await expect(exchangeGoogleCode({ ...baseArgs, verifier: '' })).rejects.toThrow(/verifier が不正/);
   });
 
+  /*
+   * **打ち切りと応答サイズの上限。** 2026-08-23 に `withTimeout` +
+   * `readBodyWithCap` を通したが、**駆動する検査が無かった**。
+   * 兄弟の `network/proxy.ts` は掛けていて、ここだけ素の fetch だった。
+   *
+   * fetch を打ち切る手段は `AbortSignal` しか無いので、`signal` が渡って
+   * いるかで「打ち切りが在るか」を測れる (値そのものは httpLimits の検査が持つ)。
+   */
+  it('トークン交換に打ち切りが掛かっている (signal を渡す)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      mockResponse({ access_token: 'at', expires_in: 3600 }),
+    );
+    await exchangeGoogleCode(baseArgs, fetchMock);
+    expect(fetchMock.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('応答が上限を超えていれば読み切らずに落とす', async () => {
+    const huge = new Response('a'.repeat(11 * 1024 * 1024), { status: 200 });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(huge);
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/too large/);
+  });
+
+  it('JSON でない応答は専用の文言で落とす (生の SyntaxError を出さない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response('<html>', { status: 200 }));
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/JSON ではありません/);
+  });
+
   it('throws when response missing access_token', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse({ expires_in: 3600 }));
     await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/missing access_token/);

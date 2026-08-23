@@ -1245,6 +1245,18 @@ describe('authorize (end-to-end flow with real loopback + mocked electron + mock
     expect(body.get('client_id')).toBe(CFG.clientId);
     expect(body.get('redirect_uri')).toBe(`http://127.0.0.1:${port}/oauth/callback`);
     expect(body.get('code_verifier')).toMatch(/^[A-Za-z0-9_-]{43}$/);
+
+    /*
+     * **打ち切りが掛かっていること。** トークン端点が応答しないと、
+     * `authorize()` は永久に返らない —— 利用者から見ると「認可したのに
+     * 何も起きない」状態になる。fetch を打ち切る手段は `AbortSignal` しか
+     * 無いので、`signal` が渡っているかで測れる (値は httpLimits の検査が持つ)。
+     *
+     * この経路は 2026-08-23 に `withTimeout` を通したが、**駆動する検査が
+     * 無かった**。同じ日に「直したはずの修正が別の関数に入っていた」のを
+     * 見つけたので、入れた先を字面で確かめるだけでなく**実際に叩いて**留める。
+     */
+    expect((init as RequestInit).signal, 'トークン交換に打ち切りが無い').toBeInstanceOf(AbortSignal);
   });
 
   it('throws when the token endpoint returns non-2xx, including the truncated body', async () => {

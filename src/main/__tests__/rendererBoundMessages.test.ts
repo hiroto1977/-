@@ -77,6 +77,42 @@ describe('renderer へ渡る値に生の資格情報が載らない', () => {
    * 逐語で出てくる —— つまり上の 2 つは「何も出ない経路」を見ているのではなく、
    * 実際に文言が渡る経路を見ている。
    */
+  /*
+   * **`warnings[]` の 2 本目の経路。** ollama スナップショットは
+   * 「到達できない」と「モデル一覧が読めない」で別々に warnings を積む。
+   * 上の検査は 1 本目しか通らない (fetch が即 throw するので
+   * `running` が false のままモデル一覧まで進まない)。
+   *
+   * 2 本目は `/api/version` に成功してから `/api/tags` で落ちる形でしか
+   * 通らないので、そこだけ別に組む。2026-08-23 に伏字を入れた経路だが、
+   * **駆動する検査が無かった**。
+   */
+  it.each(SECRETS)('ollama のモデル一覧が読めないときの warnings — %s', async (_label, secret) => {
+    let call = 0;
+    const f = ((url: string) => {
+      call += 1;
+      if (String(url).includes('/api/version')) {
+        return Promise.resolve(new Response(JSON.stringify({ version: '9.9.9' }), { status: 200 }));
+      }
+      throw new Error(`tags failed: ${secret}`);
+    }) as unknown as typeof fetch;
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: f } as never);
+    expect(call, '/api/tags まで進んでいない —— 検査が的を外している').toBeGreaterThan(1);
+    expect(JSON.stringify(snap)).not.toContain(secret);
+  });
+
+  it('対照: モデル一覧の経路も生きている (伏字対象でない印は出る)', async () => {
+    const marker = 'PLAIN-MARKER-NOT-A-SECRET';
+    const f = ((url: string) => {
+      if (String(url).includes('/api/version')) {
+        return Promise.resolve(new Response(JSON.stringify({ version: '9.9.9' }), { status: 200 }));
+      }
+      throw new Error(marker);
+    }) as unknown as typeof fetch;
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: f } as never);
+    expect(JSON.stringify(snap)).toContain(marker);
+  });
+
   it('対照: 伏字の対象でない文言はそのまま出てくる (経路が生きている)', async () => {
     const marker = 'PLAIN-MARKER-NOT-A-SECRET';
     const snap = await fetchOllamaSnapshot({
