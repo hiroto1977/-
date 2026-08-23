@@ -106,3 +106,48 @@ describe('同じ断言が他の画面に無い', () => {
     expect(tsxFiles(path.join(REPO_ROOT, 'src/renderer')).length).toBeGreaterThan(20);
   });
 });
+
+/*
+ * **同じ画面が矛盾したことを言っていないか。**
+ *
+ * `OllamaPage` は「接続設定」で接続先の入力欄を出しながら (プレースホルダは
+ * `192.168.1.10:11434` / `https://xxx.trycloudflare.com` を勧める)、
+ * 同じページの「セキュリティポリシー」で
+ *
+ *     🔒 接続先は http://127.0.0.1:11434 に **ハードコード** (他ホストへの送信不可)
+ *
+ * と書いていた (2026-08-23 まで)。前者はブラウザ版で実際に効く ——
+ * **入力欄が在る画面が「変更できない」と言っていた**。
+ *
+ * 断言そのものは正しい文にも出る (デスクトップ版の話としては真) ので、
+ * 「ブラウザ版は変更できる」という打ち消しが同居していることを要求する。
+ */
+describe('Ollama 画面が、接続先について矛盾したことを言っていない', () => {
+  const PAGE = readFileSync(
+    path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'),
+    'utf8',
+  );
+
+  it('接続先の入力欄がある (前提)', () => {
+    expect(PAGE).toMatch(/aria-label="Ollama の接続先"/);
+  });
+
+  it('入力欄がある以上、「変更できない」で終わっていない', () => {
+    // 「ハードコード」と書くなら、ブラウザ版で変更できることも同じ画面に在ること。
+    if (PAGE.includes('ハードコード')) {
+      expect(PAGE, 'ハードコードとだけ書いて、変更できる旨が無い').toMatch(
+        /ブラウザ版は[^。]*変更できる/,
+      );
+    }
+  });
+
+  it('許可される 3 経路を、ポリシー欄でも説明している', () => {
+    expect(PAGE).toMatch(/①同じ端末/);
+    expect(PAGE).toMatch(/②このページと同じホスト/);
+    expect(PAGE).toMatch(/③https/);
+  });
+
+  it('平文 http で別ホストへ繋がないと書いてある', () => {
+    expect(PAGE).toMatch(/平文 http で別ホストへは接続しない/);
+  });
+});
