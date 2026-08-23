@@ -244,3 +244,44 @@ describe('recordEncryption lifecycle', () => {
     await expect(disableEncryption('')).resolves.toBe(false);
   });
 });
+
+/*
+ * **「無効」と「読めない」は別物。**
+ *
+ * `enableEncryption` の門は `isEncryptionEnabled()`、すなわち
+ * `loadMeta() !== null` である。メタが壊れていると `loadMeta` は `null` を
+ * 返すので門は開き、`saveMeta` が壊れたメタを新しい salt で上書きする。
+ * レコードが旧 salt で封緘済みなら、**正しいパスフレーズを知っていても
+ * 二度と開けない** —— 関数の注記が別の入口について警告している
+ * 「salt … 二度と作れない」と同じ結末に、別経路で辿り着く。
+ *
+ * 壊れた JSON の中にも salt は読める形で残っていることが多い。
+ * 消さなければ人手で拾える。消したら拾えない。
+ */
+describe('壊れたメタを上書きしない', () => {
+  it('メタが壊れているときは有効化を断る (salt を守る)', async () => {
+    // 旧 salt が読み取れる形で残っている壊れ方 (末尾が切れた JSON)。
+    const broken = '{"enabled":true,"salt":"OLD-SALT-KEEP-ME","kcv":{"iv":"aa"';
+    localStorage.setItem(LS_KEY, broken);
+
+    await expect(enableEncryption('new-passphrase')).rejects.toThrow(/読めませんでした/);
+
+    // ★ ここが本体 —— 壊れた値がそのまま残っていること。
+    expect(localStorage.getItem(LS_KEY)).toBe(broken);
+    expect(localStorage.getItem(LS_KEY)).toContain('OLD-SALT-KEEP-ME');
+  });
+
+  it('形が違うメタ (版数違い) でも断る', async () => {
+    const other = '{"version":2,"salt":"OLD-SALT-KEEP-ME"}';
+    localStorage.setItem(LS_KEY, other);
+
+    await expect(enableEncryption('new-passphrase')).rejects.toThrow(/読めませんでした/);
+    expect(localStorage.getItem(LS_KEY)).toBe(other);
+  });
+
+  it('メタが無いときは今までどおり有効化できる (無いと読めないを混ぜない)', async () => {
+    localStorage.removeItem(LS_KEY);
+    await enableEncryption('good-passphrase');
+    expect(isEncryptionEnabled()).toBe(true);
+  });
+});
