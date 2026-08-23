@@ -22,9 +22,10 @@
  *
  * ## 規則 (実測で誤検知 0)
  *
- *  1. `package.json` の author メールとその local-part が `src/` に無いこと
+ *  1. `package.json` の author メールとその local-part が
+ *     `src/` `scripts/` `orchestration/` に無いこと
  *  2. `src/renderer/` のメールは `example.*` ドメインだけ (台帳あり)
- *  3. 業者ごとの URL の形で取り出した ID は `example` を含むこと
+ *  3. 業者ごとの URL の形で取り出した ID は `example` を含むこと (走査は上と同じ範囲)
  *     —— 形だけで実物と見本を見分けるのは無理なので、**見本には
  *     example と名乗らせる**。Google ドキュメント / ドライブ / Canva /
  *     Slack のように、ID そのものが到達手段になりうるものだけを見る。
@@ -49,7 +50,10 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 // 非 example は `attacker@evil.com` のような**攻撃側の見本**で、
 // example に直すと何を試しているのか読めなくなる。
 const DATA_DIR = path.join(REPO_ROOT, 'src/renderer');
-const SRC_DIR = path.join(REPO_ROOT, 'src');
+// 規則 1 と 3 はビルド用スクリプトも見る。**実際にここへ書いてしまった**:
+// `build-integration-demo.cjs` のコメントが Canva の実 ID を持っていて、
+// `src/` だけを見ていた最初の版は素通りさせた (2026-08-23)。
+const SCANNED_DIRS = ['src', 'scripts', 'orchestration'].map((d) => path.join(REPO_ROOT, d));
 
 const EMAIL = /[A-Za-z0-9._%+#-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 const SAMPLE_DOMAIN = /@([a-z0-9-]+\.)*example\.(com|jp|org|net|co\.jp)$/i;
@@ -84,13 +88,16 @@ const VENDOR_ID_SHAPES = [
 ];
 
 
-function listFiles(dir) {
+function listFiles(dir, exts = /\.tsx?$/) {
+  if (!fs.existsSync(dir)) return [];
   const out = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.name === 'node_modules' || e.name === '__tests__') continue;
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) out.push(...listFiles(p));
-    else if (/\.tsx?$/.test(e.name)) out.push(p);
+    if (e.isDirectory()) out.push(...listFiles(p, exts));
+    // この門自身は除く。自己検査は「鳴るべき形」を標本として抱えているので、
+    // 自分を走査すると必ず自分を指す (このリポジトリで 4 度出た 0-a-17 と同型)。
+    else if (exts.test(e.name) && path.resolve(p) !== __filename) out.push(p);
   }
   return out;
 }
@@ -134,8 +141,11 @@ function check({ srcFiles, dataFiles, owner }) {
     }
   }
 
-  // 3. 到達手段になりうる ID は example を名乗ること。
-  for (const { rel, text } of dataFiles) {
+  // 3. 到達手段になりうる ID は example を名乗ること。ビルド用スクリプトも見る
+  //    (コメントに書いた ID も、公開リポジトリでは同じこと)。
+  const seen = new Set(dataFiles.map((d) => d.rel));
+  const idScanned = [...dataFiles, ...srcFiles.filter((f) => !seen.has(f.rel))];
+  for (const { rel, text } of idScanned) {
     for (const { name, re, skip } of VENDOR_ID_SHAPES) {
       re.lastIndex = 0;
       let m;
@@ -161,13 +171,13 @@ function selfTest() {
     ['見本の example メールは通す', { srcFiles: [], dataFiles: f("email: 'taro@example.com'"), owner: [] }, 0],
     ['サブドメイン付きの example も通す', { srcFiles: [], dataFiles: f("email: 'a@law.example.com'"), owner: [] }, 0],
     ['example.co.jp も通す', { srcFiles: [], dataFiles: f("email: 'a@example.co.jp'"), owner: [] }, 0],
-    ['実在ドメインのメールは鳴る', { srcFiles: [], dataFiles: f("sender: 'support@coincheck.com'"), owner: [] }, 1],
+    ['実在ドメインのメールは鳴る', { srcFiles: [], dataFiles: f("sender: 'support@vendor.invalid-demo'"), owner: [] }, 1],
     // 入力欄のプレースホルダも見本データ。`x.com` は実在ドメイン。
     ['画面のプレースホルダが実在ドメインでも鳴る', { srcFiles: [], dataFiles: f("placeholder: 'you@x.com'"), owner: [] }, 1],
     ['台帳にあるものは通す', { srcFiles: [], dataFiles: f("id: 'ja.japanese#holiday@group.v.calendar.google.com'"), owner: [] }, 0],
     [
       'Google ドキュメントの実 ID は鳴る',
-      { srcFiles: [], dataFiles: f("url: 'https://docs.google.com/document/d/1Wv5ioEERsYR_LozadFLm9uSD6emuQA1Irz/edit'"), owner: [] },
+      { srcFiles: [], dataFiles: f("url: 'https://docs.google.com/document/d/1AaBbCcDdEeFfGgHhIiJjKkLlMmNn/edit'"), owner: [] },
       1,
     ],
     [
@@ -175,8 +185,8 @@ function selfTest() {
       { srcFiles: [], dataFiles: f("url: 'https://docs.google.com/document/d/1ExampleDocumentIdAAAAAAAAAAAAA/edit'"), owner: [] },
       0,
     ],
-    ['Canva の実デザイン ID は鳴る', { srcFiles: [], dataFiles: f("u: 'https://www.canva.com/design/DAG2yKvS8Os'"), owner: [] }, 1],
-    ['Slack の実ワークスペースは鳴る', { srcFiles: [], dataFiles: f("p: 'https://w1773561847-p42622301.slack.com/archives/C1'"), owner: [] }, 1],
+    ['Canva の実デザイン ID は鳴る', { srcFiles: [], dataFiles: f("u: 'https://www.canva.com/design/DAGzz11yy22'"), owner: [] }, 1],
+    ['Slack の実ワークスペースは鳴る', { srcFiles: [], dataFiles: f("p: 'https://acme-corp-9x1.slack.com/archives/C1'"), owner: [] }, 1],
     ['example のワークスペースは通す', { srcFiles: [], dataFiles: f("p: 'https://example-team.slack.com/archives/C1'"), owner: [] }, 0],
     // Slack 自身のホストはワークスペースではない (資格情報の発行先として画面に出す)。
     ['api.slack.com は通す', { srcFiles: [], dataFiles: f("helpUrl: 'https://api.slack.com/apps'"), owner: [] }, 0],
@@ -221,10 +231,10 @@ function main(argv) {
     return 1;
   }
   const dataFiles = listFiles(DATA_DIR).map(read);
-  const srcFiles = listFiles(SRC_DIR).map(read);
+  const srcFiles = SCANNED_DIRS.flatMap((d) => listFiles(d, /\.(tsx?|cjs|mjs|js)$/)).map(read);
   const problems = check({ srcFiles, dataFiles, owner });
   console.log(
-    `見本データ ${dataFiles.length} ファイル / ソース ${srcFiles.length} ファイルを検査 ` +
+    `見本データ ${dataFiles.length} ファイル / ソース・スクリプト ${srcFiles.length} ファイルを検査 ` +
       `(持ち主の識別子 / example 以外のメール / 到達しうる ID・台帳 ${Object.keys(EMAIL_ALLOW).length} 件)`,
   );
   if (problems.length === 0) {
