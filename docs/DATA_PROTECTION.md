@@ -22,7 +22,7 @@
 | トークン暗号化 (Vault) | WebCrypto AES-GCM-256 + PBKDF2 60万回, 鍵 `extractable:false`, メモリ zero-out | 業界水準以上 |
 | OAuth トークン (Electron) | OS キーチェーン時は暗号化 / 無い時 `plain:base64` | 環境依存・要警告 |
 | 業務レコード (IndexedDB) | **平文 JSON** | 最優先の改善余地 |
-| 通信 | 全 fetcher HTTPS / `redactSecrets` でエラー時トークン秘匿 | 良好（網羅拡張余地） |
+| 通信 | 外部 SaaS の fetcher はすべて HTTPS（平文 http はローカル推論サーバ向けの経路のみ — `docs/SECURITY.md`） / `redactSecrets` でエラー時トークン秘匿 | 良好（網羅拡張余地） |
 | Electron 堅牢化 | `contextIsolation`+`nodeIntegration:false`+`sandbox`+CSP+IPC 入力検証 | 優良 |
 | RBAC / プラン | 権限昇格防止・最後のオーナー保護・シート/機能ゲート | 正しい |
 | バックアップ完全性 | （従来）破損検知なし → **SHA-256 を追加**。改ざん検知は暗号化バックアップ (AES-GCM) の側 | 改善実施 |

@@ -2026,6 +2026,61 @@ PKCE も切ると、`code` を傍受しただけでトークンを取られる�
 | 「ループバックサーバが Host を 127.0.0.1 / localhost / [::1] のみ許可」 | **真**。`loopbackChecks.test.ts` が既に固定済み (ポート付き Host も含む) |
 | 「エラーメッセージで API キーを echo していない (`slice(0,200)` のみ)」 | **真、かつ順序も正しい**。`redactForMessage` は `redactSecrets(input.slice(0, 8192)).slice(0, maxLength)` —— **伏せてから切る**。先に 200 字へ切ると、境界をまたぐ秘密が半端に残って伏字の型に当たらなくなる。`REDACT_SCAN_LIMIT` の説明にその考察まで書いてある |
 
+### 文書が名指しした Ollama の守りを、AI プロバイダ経路が**通っていなかった**（修正済み）
+
+`docs/OLLAMA_SECURITY.md` はこう書いている:
+
+> ブラウザ版のみ接続先を設定できるが、許可されるのは **3 経路だけ**で、
+> **平文 http による別ホスト接続は拒否する** (`isAllowedOllamaBase`)
+
+さらに設計意図まで明記していた:
+
+> 制約は `src/shared/ollama.ts` に 1 つだけ置き、Electron / ブラウザ / CLI の
+> 3 経路で共有する（**片方だけ緩い状態を作らないため**）
+
+**実際には片方だけ緩かった。** `isAllowedOllamaBase` は
+`shared/ollama.ts` の中からしか呼ばれておらず (grep で確認)、
+AI プロバイダ経路 (`shared/ai/providers.ts` の ollama spec) は
+`normalizeAiBaseUrl(credentialed: false)` —— **宛先を絞らない側** —— を
+通っていた。実測すると `http://example.com:11434` も
+`http://169.254.169.254` も通った。
+
+つまり **assistant / business / stocks の助言がプロンプトを平文で任意ホストへ
+送れる状態**で、文書はそれを「拒否する」と書いていた。
+
+#### 直し方: 判定を 1 つに寄せる (文書の設計意図どおり)
+
+`isAllowedOllamaBase` をそのまま流用はできない —— あちらは
+`isWellFormedBase` でパス付き URL も弾くが、プロバイダ経路は
+`https://tunnel.example/ollama` のようなリバースプロキシ構成を正当に受ける。
+
+**ホストの絞りだけ**を `isAllowedOllamaPlaintextHost` として切り出し、
+`isAllowedOllamaBase` とプロバイダ経路の両方がそれを通る形にした。
+経路 3 通り (ループバック / ページ自身と同じホスト / 任意の https) は
+文書のまま。
+
+`pageHostname` は Electron main では空になる (`location` が無い) ので、
+デスクトップでは経路 (2) が自動的に無効化され loopback + https だけが残る。
+main プロセスに「アプリを配信したホスト」の概念は無いので、これが正しい。
+
+#### 検査が「文書の逆」を固定していた
+
+`providers.test.ts` に **`Ollama は鍵を送らないので LAN の平文 http を通す`**
+という検査があった。文書が「拒否する」と書いている挙動を、検査は「通す」と
+して固定していた —— 期待ごと反転させた。
+
+**これは意図的な間口の狭め方である。** LAN の Ollama を平文 http で使って
+いた人は、ページ自身と同じホストで配信するか https にする必要がある
+(どちらも文書が最初から挙げている経路)。
+
+対照 4 種すべて鳴る: 絞りの呼び出しを外す / https も絞る (トンネルを塞ぐ) /
+ループバックも弾く / ページ同一ホストの条件を落とす。
+
+#### あわせて直した
+
+`DATA_PROTECTION.md` の「全 fetcher HTTPS」も `SECURITY.md` と同じ理由で
+不正確だったので、ローカル推論サーバ向けの例外に触れる形へ直した。
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

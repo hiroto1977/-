@@ -118,13 +118,39 @@ export function isAllowedOllamaBase(base: string, pageHostname = ''): boolean {
   //     ホスト名を絞らなくても内部探索には使えない。
   if (u.protocol === 'https:') return true;
   if (u.protocol !== 'http:') return false;
+  return isAllowedOllamaPlaintextHost(u.hostname, pageHostname);
+}
+
+/**
+ * **平文 http の宛先として許してよいホストか** —— 経路 (1) と (2) だけ。
+ *
+ * `isAllowedOllamaBase` から切り出してある。理由は、この「ホストの絞り」だけを
+ * 使いたい呼び出し側があるため:
+ *
+ *   `isAllowedOllamaBase`  サービスページ用。ホストの絞り **+ 形の絞り**
+ *                          (パス・クエリ・認証情報つきを拒否)
+ *   ここ                   AI プロバイダ経路用。**ホストの絞りだけ**が要る ——
+ *                          あちらは `https://tunnel.example/ollama` のような
+ *                          パス付き base を正当に受ける (リバースプロキシ)
+ *
+ * 2026-08-23 まで AI プロバイダ経路はこの絞りを**一切通っていなかった**。
+ * `docs/OLLAMA_SECURITY.md` は「ブラウザ版のみ接続先を設定できるが、許可される
+ * のは 3 経路だけで、平文 http による別ホスト接続は拒否する」と書いており、
+ * 制約を `shared/ollama.ts` に 1 つ置く理由も「**片方だけ緩い状態を作らない
+ * ため**」と明記していた。実際には片方だけ緩かった (実測: プロバイダ経路は
+ * `http://example.com:11434` も `http://169.254.169.254` も通した)。
+ *
+ * 絞る理由は文書のとおり —— 内部ネットワーク探索の踏み台化と、
+ * **プロンプトの平文送信**を防ぐため。
+ */
+export function isAllowedOllamaPlaintextHost(hostname: string, pageHostname = ''): boolean {
   // (1) ループバック
-  if (isLoopbackHostname(u.hostname)) return true;
+  if (isLoopbackHostname(hostname)) return true;
   // (2) ページ自身と同じホスト名 (PC で配信したページをスマホから開くケース)。
   //     大文字小文字は URL 側で正規化済み。pageHostname 側も揃える。
   //     `pageHostname !== ''` の前置きは要らない — http URL の hostname は必ず
   //     非空なので、pageHostname が空なら一致しようがない。
-  return u.hostname === pageHostname.toLowerCase();
+  return hostname === pageHostname.toLowerCase();
 }
 
 /** base + 許可パス を結合する。base が未許可 / パスが未許可なら null。 */

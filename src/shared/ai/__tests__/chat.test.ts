@@ -139,7 +139,7 @@ describe('runAiChat', () => {
       .mockResolvedValue(jsonResponse({ message: { content: 'x' } }));
     const res = await runAiChat({
       provider: 'ollama',
-      cfg: { baseUrl: 'http://h:11434', model: 'qwen3' },
+      cfg: { baseUrl: 'http://127.0.0.1:11434', model: 'qwen3' },
       request: { messages: [{ role: 'user', content: 'hi' }], maxTokens: 8 },
       fetchFn: fetchMock,
     });

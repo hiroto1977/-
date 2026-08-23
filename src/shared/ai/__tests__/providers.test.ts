@@ -298,13 +298,21 @@ describe('ollama (local)', () => {
     });
   });
 
-  it('honors a custom base URL and model', () => {
+  it('honors a custom base URL and model (loopback)', () => {
     const r = AI_PROVIDERS.ollama.buildRequest(REQ, {
-      baseUrl: 'http://192.168.1.5:11434/',
+      baseUrl: 'http://127.0.0.1:11500/',
       model: 'qwen3',
     });
-    expect(r.url).toBe('http://192.168.1.5:11434/api/chat');
+    expect(r.url).toBe('http://127.0.0.1:11500/api/chat');
     expect((JSON.parse(r.body) as { model: string }).model).toBe('qwen3');
+  });
+
+  it('https なら任意ホストの base URL も受ける (経路 3: トンネル)', () => {
+    const r = AI_PROVIDERS.ollama.buildRequest(REQ, {
+      baseUrl: 'https://tunnel.example/ollama',
+      model: 'qwen3',
+    });
+    expect(r.url).toBe('https://tunnel.example/ollama/api/chat');
   });
 
   it('parseText reads message.content', () => {
@@ -369,9 +377,39 @@ describe('ベース URL の検証が buildRequest まで効く', () => {
     }
   });
 
-  it('Ollama は鍵を送らないので LAN の平文 http を通す', () => {
-    const out = AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://192.168.1.5:11434', model: 'm' });
-    expect(out.url).toBe('http://192.168.1.5:11434/api/chat');
+  /*
+   * **2026-08-23 に期待ごと変わった。**
+   *
+   * 以前は「鍵を送らないので LAN の平文 http を通す」ことを確かめていた。
+   * だが `docs/OLLAMA_SECURITY.md` は「**平文 http による別ホスト接続は拒否
+   * する**」と書いており、制約を `shared/ollama.ts` に 1 つ置く理由も
+   * 「片方だけ緩い状態を作らないため」と明記していた。
+   * **実際にはこの経路だけがその絞りを通っていなかった** ——
+   * 文書が語る守りを、検査のほうが「通す」と固定していた形である。
+   *
+   * 平文で別ホストへ出るのは、内部ネットワーク探索の踏み台化と
+   * **プロンプトの平文送信**につながる。文書どおりへ寄せた。
+   */
+  it('Ollama でも平文 http の別ホストは拒否する', () => {
+    expect(() =>
+      AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://192.168.1.5:11434', model: 'm' }),
+    ).toThrow(/平文 http で別ホストへは接続しません/);
+  });
+
+  it('Ollama の平文 http はループバックなら通る', () => {
+    const out = AI_PROVIDERS.ollama.buildRequest(req, {
+      baseUrl: 'http://127.0.0.1:11434',
+      model: 'm',
+    });
+    expect(out.url).toBe('http://127.0.0.1:11434/api/chat');
+  });
+
+  it('Ollama は https なら任意ホストを通す (トンネル経路は塞がない)', () => {
+    const out = AI_PROVIDERS.ollama.buildRequest(req, {
+      baseUrl: 'https://ollama.example',
+      model: 'm',
+    });
+    expect(out.url).toBe('https://ollama.example/api/chat');
   });
 
   it('互換 API は鍵を入れた途端に平文が弾かれる', () => {

@@ -15,6 +15,7 @@
  * 「登録漏れプロバイダ」を起動時に大声で検出する。
  */
 
+import { isAllowedOllamaPlaintextHost } from '../ollama';
 import { normalizeAiBaseUrl, describeAiEndpointFailure } from '../aiEndpoint';
 
 // 対向 API 仕様の転記であり、golden テスト (providers.test.ts) が完全一致で
@@ -98,6 +99,26 @@ function resolveBase(label: string, raw: string, credentialed: boolean): string 
   const r = normalizeAiBaseUrl(raw, { credentialed });
   if (!r.ok) throw new Error(`${label} のベース URL が不正です: ${describeAiEndpointFailure(r.reason)}`);
   return r.base;
+}
+
+/**
+ * Ollama の宛先を `shared/ollama.ts` の絞りに掛ける。
+ *
+ * `pageHostname` はブラウザなら配信元。Electron main には `location` が無いので
+ * 空文字になり、経路 (2)「ページ自身と同じホスト」は自動的に無効化される
+ * —— デスクトップでは loopback と https だけが残る。これは意図どおりで、
+ * main プロセスには「アプリを配信したホスト」という概念が無い。
+ */
+function assertOllamaHostAllowed(label: string, base: string): void {
+  const loc = (globalThis as { location?: { hostname?: string } }).location;
+  const pageHostname = loc?.hostname ?? '';
+  const u = new URL(base);
+  if (u.protocol !== 'http:') return; // https は経路 (3) で任意ホスト可
+  if (isAllowedOllamaPlaintextHost(u.hostname, pageHostname)) return;
+  throw new Error(
+    `${label} の接続先が許可されていません: 平文 http で別ホストへは接続しません ` +
+      `(ループバック / このページと同じホスト / https のいずれかにしてください)`,
+  );
 }
 
 /** モデル解決: 明示指定 → 資格情報の既定 → プロバイダ既定。 */
@@ -250,7 +271,12 @@ const ollama: AiProviderSpec = {
   needsApiKey: false,
   browserDirect: true, // ローカル呼び出し (要 OLLAMA_ORIGINS 設定。UI にヒント表示)
   buildRequest(req, cfg) {
-    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, false); // Ollama は鍵を送らないので LAN の平文 http も許す
+    // 鍵を送らないので `credentialed: false` (平文 http 自体は許す) だが、
+    // **宛先は `shared/ollama.ts` の絞りを通す** —— 平文で別ホストへは出さない。
+    // 2026-08-23 まで通っておらず、`docs/OLLAMA_SECURITY.md` の
+    // 「平文 http による別ホスト接続は拒否する」がこの経路だけ効いていなかった。
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, false);
+    assertOllamaHostAllowed(this.label, base);
     const messages: Array<{ role: string; content: string }> = [];
     if (req.system) messages.push({ role: 'system', content: req.system });
     for (const m of req.messages) messages.push({ role: m.role, content: m.content });
