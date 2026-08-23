@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { getVault, type VaultStatus } from './vault';
+import { getVault, type VaultStatus, MIN_PASSWORD_LENGTH } from './vault';
 import { looksLikeValidMnemonic } from './mnemonic';
+
+/**
+ * 復元フレーズをクリップボードから消すまでの時間。
+ *
+ * **画面の文言もここから出す。** 以前は本文に「30 秒後に自動消去」と書き、
+ * `setTimeout` にも `30_000` を直書きしていた —— 片方だけ変えれば嘘になる。
+ * 消去そのものは「まだ自分がコピーした値のままか」を確かめてから行う
+ * (利用者が別のものをコピーしていたら触らない)。
+ */
+const CLIPBOARD_WIPE_MS = 30_000;
 
 /**
  * Modal-style lock screen. Shown when the Vault is locked or uninitialized.
@@ -153,7 +163,10 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   async function copyMnemonic() {
     try {
       await navigator.clipboard.writeText(mnemonic);
-      setFeedback({ msg: '📋 コピーしました (30 秒後にクリップボードを自動消去 — 貼り付けはお早めに)', kind: 'info' });
+      setFeedback({
+        msg: `📋 コピーしました (${CLIPBOARD_WIPE_MS / 1000} 秒後にクリップボードを自動消去 — 貼り付けはお早めに)`,
+        kind: 'info',
+      });
       // Reset any in-flight wipe so a re-press restarts the 30s countdown
       // instead of stacking up duplicate timers that fight over the clipboard.
       if (clipboardTimerRef.current !== null) {
@@ -177,7 +190,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             /* silent: permission denied / unsupported */
           }
         })();
-      }, 30_000);
+      }, CLIPBOARD_WIPE_MS);
     } catch {
       setFeedback({ msg: '⚠ コピーに失敗 — 24 単語を手動で選択・コピーしてください', kind: 'error' });
     }
@@ -321,7 +334,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setRecoveryNewPw(e.target.value)}
               style={inputStyle}
-              placeholder="12 文字以上"
+              placeholder={`${MIN_PASSWORD_LENGTH} 文字以上`}
             />
           </label>
 
@@ -503,7 +516,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               if (e.key === 'Enter' && !busy) submitPassword();
             }}
             style={inputStyle}
-            placeholder="12 文字以上"
+            placeholder={`${MIN_PASSWORD_LENGTH} 文字以上`}
           />
         </label>
 

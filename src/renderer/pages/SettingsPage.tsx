@@ -8,7 +8,7 @@ import { CloudSyncPanel } from '../components/CloudSyncPanel';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
-import { getVault } from '../security/vault';
+import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
@@ -305,8 +305,13 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
       setErr('新しいパスワードが一致しません');
       return;
     }
-    if (newPw.length < 8) {
-      setErr('新しいパスワードは 8 文字以上にしてください');
+    // **強制しているのは `vault.ts` の `MIN_PASSWORD_LENGTH` (12)。**
+    // ここは長らく `< 8` で「8 文字以上にしてください」と出しており、
+    // 10 文字を入れると「8 文字以上」と言われた後に vault が「12 文字以上」で
+    // 弾く、という二段の食い違いになっていた (2026-08-23)。
+    // 数字を 2 か所に持たない —— 実物の定数から出す。
+    if (newPw.length < MIN_PASSWORD_LENGTH) {
+      setErr(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上にしてください`);
       return;
     }
     setBusy(true);
@@ -381,7 +386,7 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
             type="password"
             value={newPw}
             onChange={(e) => setNewPw(e.target.value)}
-            placeholder="新しいパスワード (8 文字以上)"
+            placeholder={`新しいパスワード (${MIN_PASSWORD_LENGTH} 文字以上)`}
             style={pwInput}
           />
           <input

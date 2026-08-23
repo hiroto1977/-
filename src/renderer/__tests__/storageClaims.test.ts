@@ -197,3 +197,55 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
     expect(PAGE).toMatch(/大文字小文字は/);
   });
 });
+
+/*
+ * **画面が言う最小長と、実際に強制される最小長が一致していること。**
+ *
+ * 2026-08-23 まで食い違っていた:
+ *
+ *   vault.ts        MIN_PASSWORD_LENGTH = 12  ← 実際に強制する側
+ *   LockScreen      「12 文字以上」           ← 合っていた (直書き)
+ *   SettingsPage    「8 文字以上」で事前検査   ← **違う数字**
+ *
+ * 10 文字を入れると、まず「8 文字以上にしてください」と言われ (通ると読める)、
+ * その後 vault が「12 文字以上」で弾く。守り自体は vault にあるので破れては
+ * いないが、**画面が嘘の規則を教えていた**。
+ *
+ * 数字を 2 か所に持たないのが直し方。ここではそれを台帳として留める。
+ */
+describe('パスワードの最小長が、画面と実装で 1 つになっている', () => {
+  const SETTINGS = readFileSync(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'), 'utf8');
+  const LOCK = readFileSync(path.join(REPO_ROOT, 'src/renderer/security/LockScreen.tsx'), 'utf8');
+  const VAULT = readFileSync(path.join(REPO_ROOT, 'src/renderer/security/vault.ts'), 'utf8');
+
+  it('強制する側の定数が 1 つだけ在る', () => {
+    expect(VAULT).toMatch(/export const MIN_PASSWORD_LENGTH = \d+;/);
+  });
+
+  it('画面は数字を直書きしていない (定数から描く)', () => {
+    expect(SETTINGS, 'SettingsPage が最小長を直書きしている').not.toMatch(
+      /パスワードは \d+ 文字以上/,
+    );
+    expect(LOCK, 'LockScreen が最小長を直書きしている').not.toMatch(/placeholder="\d+ 文字以上"/);
+  });
+
+  it('両画面とも定数を使っている', () => {
+    expect(SETTINGS).toMatch(/MIN_PASSWORD_LENGTH/);
+    expect(LOCK).toMatch(/MIN_PASSWORD_LENGTH/);
+  });
+
+  it('事前検査も同じ定数で比べている (別の閾値を持たない)', () => {
+    expect(SETTINGS).toMatch(/newPw\.length < MIN_PASSWORD_LENGTH/);
+    expect(SETTINGS, '古い 8 文字の閾値が残っている').not.toMatch(/newPw\.length < 8\b/);
+  });
+
+  /*
+   * クリップボード消去も同じ形 —— 本文の「30 秒」と `setTimeout` の
+   * `30_000` が別々に書かれていた。
+   */
+  it('クリップボード消去の秒数も定数から描いている', () => {
+    expect(LOCK).toMatch(/const CLIPBOARD_WIPE_MS = /);
+    expect(LOCK).toMatch(/\$\{CLIPBOARD_WIPE_MS \/ 1000\} 秒後/);
+    expect(LOCK, '30_000 が直書きで残っている').not.toMatch(/\}, 30_000\)/);
+  });
+});

@@ -35,7 +35,12 @@ let wipeImpl: () => Promise<void> = async () => {};
 let statusImpl: () => Promise<'uninitialized' | 'locked' | 'unlocked'> = async () => vaultStatus;
 const calls: { name: string; args: unknown[] }[] = [];
 
-vi.mock('../vault', () => ({
+vi.mock('../vault', async (importOriginal) => ({
+  // 画面が最小長を**実物の定数から**描くようになったので、モックにも要る
+  // (2026-08-23)。**値を写経しない** —— 本物を読み直して再輸出する。
+  // ここに `12` と直書きすると、定数を変えたときにモックだけ古くなり、
+  // 「画面と定数がずれていないか」を見ている当の検査が嘘をつく。
+  MIN_PASSWORD_LENGTH: (await importOriginal<typeof import('../vault')>()).MIN_PASSWORD_LENGTH,
   getVault: () => ({
     status: async () => statusImpl(),
     unlock: async (pw: string) => {
