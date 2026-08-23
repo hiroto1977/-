@@ -48,7 +48,7 @@ GitHub Issues / PR ベースで運用。
 |---|---|
 | Ollama 既知 CVE (Probllama / CVE-2024-37032 系統) | `MIN_SAFE_VERSION = 0.1.46` をクライアントにハードコード、起動時に `/api/version` で照合 → 古ければ警告バッジ |
 | 未パッチ OOB read 脆弱性 (モデル/エンジンファイル形状由来) | `/api/pull` / `/api/create` / `/api/push` をクライアントから呼ばない設計。悪意あるモデルロードの経路を遮断 |
-| 接続先改ざん (`OLLAMA_HOST` 設定や IPC 経由で別ホスト誘導) | URL を `http://127.0.0.1:11434` に **ハードコード**。renderer / IPC ペイロードでは変更不可 |
+| 接続先改ざん (`OLLAMA_HOST` 設定や IPC 経由で別ホスト誘導) | **Ollama サービスページの経路** (`main/clients/ollama.ts`) は URL を `http://127.0.0.1:11434` に **ハードコード**し、renderer / IPC ペイロードでは変更不可。**AI プロバイダ経路** (`shared/ai/providers.ts`) は別で、利用者が設定でベース URL を変えられる (鍵を送らないため平文 http の宛先を絞っていない — `shared/aiEndpoint.ts` に理由)。送られるのはプロンプトで API キーは載らないが、**公開ホストを平文で指定すれば内容は経路上で読める** |
 | モデル名へのパストラバーサル / コマンドインジェクション | `^[a-z0-9][a-z0-9._:/-]+$` 正規表現で sanitize、`..` 含有を別途 reject |
 | 巨大レスポンスによる OOM / DoS | 30s timeout (AbortController)、10 MB レスポンス上限、stream:false 固定 |
 | Ollama 自体のネットワーク露出 | 運用文書 (`docs/OLLAMA_SECURITY.md`) で `OLLAMA_HOST=127.0.0.1:11434` 固定 + firewall を推奨 |
@@ -59,7 +59,7 @@ GitHub Issues / PR ベースで運用。
 
 | 攻撃 | 緩和 |
 |---|---|
-| API トラフィック傍受 | 全 fetcher が https のみ使用 |
+| API トラフィック傍受 | 外部 SaaS の fetcher は**すべて https**。平文 http は**ローカル推論サーバ向けの 2 経路だけ** — `clients/ollama.ts` の `http://127.0.0.1:11434` (固定) と、AI プロバイダの鍵を送らない構成 (上記) |
 | Atlassian の Basic auth が http で送られる | `parseAtlassianToken` が **`https://` 必須**、`http://` を hard reject |
 | OAuth リダイレクト改ざん | PKCE (RFC 7636) で `code` を verifier 必須化 — code を傍受しても token 交換不可 |
 | OAuth state CSRF | `randomBytes(16)` 由来の state を検証 |

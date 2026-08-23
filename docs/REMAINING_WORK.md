@@ -1934,6 +1934,69 @@ live な状態を 3 ページぶん再実装すると、このリポジトリで
 | プロキシの SSRF 判定 (`isPrivateOrReservedTarget`) | **35 形を実測してシロ。** 10 進 (`2130706433`) / 16 進 (`0x7f000001`) / 8 進 (`0177.0.0.1`) / 短縮 (`127.1`) / `localhost` 各種 / IPv4-mapped IPv6 (点表記・16 進とも) / IPv4-compatible / NAT64 (`64:ff9b::7f00:1`) / 6to4 (`2002:7f00:0001::`) / メタデータ / ULA / link-local / `0.0.0.0` / `[::]` / RFC1918 全域 / CGNAT (`100.64/10`) / ベンチマーク (`198.18/15`) をすべて BLOCK。`172.31.255.255` は BLOCK・`172.32.0.1` は allow で**境界も正しい**。`127.0.0.1.evil.example` が通るのは設計どおり（DNS 名の解決先はプロキシ側で見る: `docs/PROXY_EXAMPLE.md` §3） |
 | ブラウザ版 `storageProtection()` が `encrypted: true` 固定 | シロ。`vault.setToken` は未解錠なら throw するので、保存されたトークンは必ず Vault を通っている |
 
+### `SECURITY.md` の主張を実装と突き合わせた → 2 行が不正確だった（修正済み・実装は変えていない）
+
+claim-vs-reality の軸を**セキュリティ文書そのもの**へ当てた。
+
+**1. 「接続先改ざん … URL をハードコード。renderer / IPC ペイロードでは変更不可」**
+
+Ollama の経路は **2 つある**:
+
+| 経路 | 宛先 |
+|---|---|
+| `main/clients/ollama.ts` (サービスページ) | `http://127.0.0.1:11434` 固定・endpoint allowlist・30s timeout・10MB 上限 |
+| `shared/ai/providers.ts` (AI プロバイダ層) | **利用者が設定でベース URL を変えられる** |
+
+文書は前者だけを説明していた。後者を読んだ人が「Ollama は必ず 127.0.0.1」と
+理解する形になっていた。
+
+**2. 「API トラフィック傍受 … 全 fetcher が https のみ使用」**
+
+実測すると平文 http は 1 つある —— `http://127.0.0.1:11434`。
+loopback なので線路に出ないが、「全 fetcher が https」は字義どおりには偽。
+
+#### 実装のコメントも実態とずれていた
+
+`aiEndpoint.ts` は「鍵を送らない構成は **LAN の** http を許す」と書いていたが、
+`credentialed: false` の実測は:
+
+| 宛先 | credentialed=true | credentialed=false |
+|---|---|---|
+| `http://127.0.0.1:11434` | 通す | 通す |
+| `http://192.168.1.50:11434` | **弾く** | 通す |
+| `http://ollama.lan:11434` | **弾く** | 通す |
+| `http://example.com:11434` | **弾く** | **通す** |
+| `http://169.254.169.254/` | **弾く** | **通す** |
+| `https://example.com` | 通す | 通す |
+| `ftp:` / `javascript:` / `file:` | 弾く | 弾く |
+
+つまり LAN に限っていない。**鍵を載せる側の絞りは正しく厳しい** ——
+平文は loopback だけ、メタデータも弾く。
+
+#### 絞らなかった理由（意図的な非対応）
+
+`credentialed: false` を loopback + RFC1918 へ絞る案は検討したが**採っていない**:
+
+- LAN かどうかを**静的に判定できない**。`http://ollama.lan` は正当な LAN 構成
+  だが `http://evil.com` と字面で区別が付かない (プロキシ側は DNS 解決後の
+  IP を見られるが、ここにはその委譲先が無い)
+- IP リテラルだけ許すと、名前で運用している実在の LAN 構成を壊す
+- この経路は **API キーを載せない**。送られるのはプロンプトで、
+  宛先を決めるのは利用者自身
+
+**ただし「公開ホストを平文で指定すればプロンプトの内容は経路上で読める」**の
+は事実なので、`SECURITY.md` と実装コメントの両方に明記した。
+絞る判断をするなら利用者の選択で —— そのとき `aiEndpoint.test.ts` の
+「credentialed=false は通る」7 件が落ちるので、変更は必ず意図的になる。
+
+対照 3 種すべて鳴る: `credentialed` の分岐を落とす / 鍵なし側も loopback へ
+絞る / https も弾く。
+
+#### あわせて確かめた、正しかった主張
+
+- 「`npm audit --omit=dev` で production 0 件」→ **実行して 0 件** ✓
+- 外部 SaaS の fetcher 19 ホストはすべて https ✓
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

@@ -526,6 +526,14 @@
       "leafCount": 35,
       "note": "update integrity-chain.cjs,proxy.ts,httpLimits.ts",
       "hash": "eeac0f5276dd3c49230ff660a7d22ba529b54c18828a387cda64b3024679a112"
+    },
+    {
+      "index": 61,
+      "prevHash": "eeac0f5276dd3c49230ff660a7d22ba529b54c18828a387cda64b3024679a112",
+      "merkleRoot": "2372625cdbcd27fd59d1b8547b6b8388d713fc2aeb60d834be003ec87d0f3562",
+      "leafCount": 35,
+      "note": "update aiEndpoint.ts",
+      "hash": "f51ba095062ecda5379d0a153a5f7a74fbd29a9a2d536e3d8870174115532f98"
     }
   ],
   "tipManifest": {
@@ -556,7 +564,7 @@
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "033f9ce3bc89e45927bfa04ab086533dad8578aee05519e4b8c84b2a7686c89f",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
-    "src/shared/aiEndpoint.ts": "bf6db7a49eb2731b15f6ffc40b0b973068d6860226e9f2422c96c067a7dedeb0",
+    "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "fd68954c1be30280b89ba4e99e270515b44a7b27ff199f8efd891d20876e21c7",
     "src/shared/httpLimits.ts": "733f7e2fc152661d6bc777e662b8ac1ece6f731156f31a868bf12cf00620d262",

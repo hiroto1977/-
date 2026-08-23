@@ -202,3 +202,64 @@ describe('describeAiEndpointFailure', () => {
     expect(describeAiEndpointFailure('insecure-remote')).toContain('平文');
   });
 });
+
+/*
+ * **`credentialed` の 2 つのモードが、実際に何を通すか。**
+ *
+ * 2026-08-23 の実測。`aiEndpoint.ts` のコメントは長らく「鍵を送らない構成は
+ * **LAN の** http を許す」と書いていたが、実装は LAN に限っていない ——
+ * 公開ホストもメタデータアドレスも通る。**コードではなく説明のほうが
+ * 誤っていた**ので説明を直し、実態をここで留める。
+ *
+ * この差は意図的である (理由は `aiEndpoint.ts`: LAN かどうかは静的に
+ * 判定できず、`http://ollama.lan` のような正当な構成と `http://evil.com` を
+ * 字面で区別できない)。**絞る判断をするなら、この検査が落ちる。**
+ */
+describe('credentialed が宛先の絞りを切り替える', () => {
+  const bases = [
+    ['loopback (IP)', 'http://127.0.0.1:11434'],
+    ['loopback (名前)', 'http://localhost:11434'],
+    ['LAN (IP)', 'http://192.168.1.50:11434'],
+    ['プライベート (IP)', 'http://10.0.0.5:11434'],
+    ['LAN (名前)', 'http://ollama.lan:11434'],
+    ['公開ホスト', 'http://example.com:11434'],
+    ['メタデータ', 'http://169.254.169.254/'],
+  ] as const;
+
+  /** 鍵を載せる構成: 平文は loopback だけ。 */
+  it.each(bases)('credentialed=true — %s', (label, url) => {
+    const want = label.startsWith('loopback');
+    expect(normalizeAiBaseUrl(url, { credentialed: true }).ok, `${label} の可否が変わった`).toBe(
+      want,
+    );
+  });
+
+  /** 鍵を載せない構成: 平文の宛先を絞らない (絞ったらここが落ちる)。 */
+  it.each(bases)('credentialed=false — %s は通る', (_label, url) => {
+    expect(normalizeAiBaseUrl(url, { credentialed: false }).ok).toBe(true);
+  });
+
+  it('https はどちらのモードでも通る (絞りは平文だけの話)', () => {
+    for (const c of [true, false]) {
+      expect(normalizeAiBaseUrl('https://example.com', { credentialed: c }).ok).toBe(true);
+    }
+  });
+
+  it('http/https 以外はどちらのモードでも弾く', () => {
+    for (const c of [true, false]) {
+      for (const u of ['ftp://x/', 'javascript:alert(1)', 'file:///etc/passwd']) {
+        expect(normalizeAiBaseUrl(u, { credentialed: c }).ok, `${u} が通った`).toBe(false);
+      }
+    }
+  });
+
+  /*
+   * 「全部通す」「全部弾く」で揃っていないこと —— 2 つのモードに
+   * 実際に差があることを直接見る。
+   */
+  it('2 つのモードの答えが、少なくとも 1 つの入力で違う', () => {
+    const lan = 'http://192.168.1.50:11434';
+    expect(normalizeAiBaseUrl(lan, { credentialed: true }).ok).toBe(false);
+    expect(normalizeAiBaseUrl(lan, { credentialed: false }).ok).toBe(true);
+  });
+});
