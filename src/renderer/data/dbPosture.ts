@@ -24,6 +24,21 @@ import { isAutoLockActive } from '../security/autoLock';
  *
  * どちらも「無い」と「確認できない」を診断が区別できていない点は残課題として
  * `docs/REMAINING_WORK.md` に手順ごと書いた。
+ *
+ * ## 診断が **見ていない** 保存先 (2026-08-23 実測)
+ *
+ * `encryptionEnabled` が真でも、暗号化されるのは業務レコード
+ * (`data/store.ts`) **だけ**である。次は常に平文で残る:
+ *
+ * ```
+ *   library/library.ts   書き出した書類・SVG などの実体 (cipher の配線が無い)
+ *   localStorage         会話履歴 (Assistant / Chatbot)・気分のメモ・
+ *                        DocStudio の下書き・TeamRadar の状態・ウォッチリスト
+ * ```
+ *
+ * 診断の札はこの範囲を名乗るようにした (`dbSecurityPosture.ts` の
+ * `encryption`)。**範囲を広げたのではなく、範囲を書いた**だけなので、
+ * これらを実際に封緘する話は別途必要。
  */
 export function currentDbSecurityInputs(): DbSecurityInputs {
   const encrypted = isEncryptionEnabled();

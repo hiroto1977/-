@@ -122,4 +122,21 @@ describe('buildDbSecurityReport', () => {
   it('is deterministic', () => {
     expect(buildDbSecurityReport(allOn)).toEqual(buildDbSecurityReport(allOn));
   });
+
+  /**
+   * 札が**範囲を名乗る**ことを留める。
+   *
+   * この検査が見ているのは業務レコード (`data/store.ts`) だけで、書き出した
+   * 書類 (`library/library.ts`) と localStorage の各ストア (会話履歴・
+   * 気分のメモ・下書き) は常に平文。範囲を書かない「保存時暗号化 ✓」は
+   * 「全部暗号化されている」と読ませるため、**診断が実態より安全に見える**。
+   *
+   * 中身ではなく主張を留める検査なので字面を見るしかない。見るのは
+   * 「範囲が書いてあるか」の 1 点だけにして、文言の言い回しには縛りを掛けない。
+   */
+  it('保存時暗号化の札は、対象が業務レコードであることを名乗る', () => {
+    const check = buildDbSecurityReport(allOn).checks.find((c) => c.id === 'encryption');
+    expect(check).toBeDefined();
+    expect(check!.label).toContain('レコード');
+  });
 });

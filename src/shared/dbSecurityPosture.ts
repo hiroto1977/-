@@ -75,7 +75,15 @@ interface CheckSpec {
 const CHECK_SPECS: Readonly<Record<string, CheckSpec>> = {
   encryption: {
     id: 'encryption',
-    label: '保存時暗号化 (AES-GCM)',
+    // **範囲を名乗る。** この検査が見ているのは業務レコード
+    // (`data/store.ts`) だけで、書き出した書類 (`library/library.ts`) と
+    // localStorage の各ストア (会話履歴・気分のメモ・下書き) は**常に平文**。
+    // 範囲を書かない「保存時暗号化 ✓」は、利用者に「全部暗号化されている」と
+    // 読ませる —— 診断が実態より安全に見えるのは、診断が無いより悪い。
+    // (`recommendation` は元から「レコード暗号化」と正しく書いており、
+    //  `docs/DATA_PROTECTION.md` も一貫して「業務レコード」と範囲を書いている。
+    //  **札だけが範囲を落としていた**。)
+    label: '業務レコードの保存時暗号化 (AES-GCM)',
     severity: 'critical',
     weight: 30,
     recommendation: '設定でレコード暗号化を有効化し、マスターパスワードで封緘してください。',
