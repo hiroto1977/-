@@ -61,6 +61,8 @@ import {
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
+import { withTimeout, DEFAULT_HTTP_TIMEOUT_MS } from '../shared/httpLimits';
+import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
@@ -137,7 +139,13 @@ async function getProxyTransport(): Promise<Transport> {
       'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
     );
   }
-  return (url, init) => fetchViaProxy(url, init, cfg);
+  // プロキシ経由の 14 経路にまとめて打ち切りを掛ける。`fetchViaProxy` は
+  // 2026-08-22 から `init.signal` を**捨てずに転送する**が、渡す側が誰も
+  // 付けていなかった —— 関門は在るのに、通す物が無い形。
+  return (url, init) =>
+    withTimeout(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
+      fetchViaProxy(url, { ...init, signal }, cfg),
+    );
 }
 
 /** Bearer トークン + プロキシが必要な create 系アクションの共通処理。
@@ -274,6 +282,31 @@ function ok<T>(data: T): ActionResult<T> {
  * 忘れても、ここで止まる。片側にしか関門が無い状態を残さない。
  * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
  */
+/**
+ * ブラウザ版の外向き通信に**打ち切りを付ける**。
+ *
+ * main 側は `limitedFetch` が全経路に打ち切りを掛けているが、ブラウザ版には
+ * それが無かった。実測 (2026-08-23): 応答しない相手に対して
+ * `invoke('business','advise')` は**いつまでも解決しない** —— 呼び出し側の
+ * `busy` が戻らないので、ボタンが押せないまま残る。`invoke` が reject しない
+ * ようにしたのとは別の話で、**そもそも決着しない**。
+ *
+ * 値は main と同じものを使う (`shared/httpLimits.ts` / `shared/ai/chat.ts`)。
+ * 2 つの版で別々の数字を持たない。
+ */
+function timedFetch(url: string, init: RequestInit): Promise<Response> {
+  return withTimeout(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
+    fetch(url, { ...init, signal }),
+  );
+}
+
+/** 有料 LLM への直呼び出し。main と同じく 2 分 (通常の 30 秒では足りない)。 */
+function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
+  return withTimeout(AI_CHAT_TIMEOUT_MS, init.signal, (signal) =>
+    fetch(url, { ...init, signal }),
+  );
+}
+
 function err<T = never>(code: string, message: string): ActionResult<T> {
   return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_LENGTH) };
 }
@@ -411,7 +444,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -502,7 +535,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -566,7 +599,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -891,7 +924,7 @@ const shim = {
   checkUpdate: async (): Promise<UpdateVerdict> => {
     const current = '0.1.0';
     try {
-      const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
+      const res = await timedFetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
         headers: { accept: 'application/vnd.github+json' },
       });
       if (!res.ok) return evaluateUpdate(current, null);
