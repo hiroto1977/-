@@ -1735,20 +1735,20 @@ union を参照する。
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
-| github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:143-176` |
-| wordpress | `create-post` | `{ siteId, title, content }` | siteId は `encodeURIComponent` | `wordpress.ts:67-109` |
+| github | `create-issue` | `{ owner, repo, title, body?, labels? }` | URL part は `encodeURIComponent`。labels は配列でそのまま body へ | `github.ts:143-176` |
+| wordpress | `create-post` | `{ siteId, title, content?, status? }` | siteId は `encodeURIComponent`。**`status` で publish も指定できる** (既定は draft) | `wordpress.ts:67-109` |
 | atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only + *.atlassian.net allowlist | `atlassian.ts:131-193` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72-121` |
 | drive | `create-folder` | `{ name, parentId? }` | (none, Google API 側で検証) | `drive.ts:50-92` |
-| calendar | `create-event` | `{ summary, start, end, description? }` | (none, RFC3339 は API 側) | `calendar.ts:66-124` |
+| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | (none, RFC3339 は API 側。timeZone 既定は Asia/Tokyo) | `calendar.ts:66-124` |
 | gmail | `create-draft` | `{ to, subject, body? }` | **`isSafeHeaderValue(to)`** で CR/LF/NUL reject | `gmail.ts:60-129` |
 | slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81-117` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79-115` |
-| skills | `run-skill` | `{ name, prompt, model?, maxTokens? }` | **`isSafeSkillName(name)`** + path containment | `skills.ts:112-191` |
+| skills | `run-skill` | `{ name, prompt }` | **`isSafeSkillName(name)`** + path containment。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:171-268` |
 | security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:185-317` |
 | security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:270-314` |
-| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl? }` | zoneId encodeURIComponent | `cloudflare.ts:127-207` |
-| cloudflare | `purge-cache` | `{ zoneId, files?: string[] }` | zoneId encodeURIComponent | `cloudflare.ts:172-208` |
+| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | zoneId encodeURIComponent。type は型では 5 種の union だが**実行時には検査していない** (API 側で 4xx) | `cloudflare.ts:127-207` |
+| cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:172-208` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:121-290` |
 | emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:220-290` |
 | ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + 32KB/8KB clamp | `ollama.ts:211-294` |

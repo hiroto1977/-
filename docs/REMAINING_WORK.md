@@ -2230,6 +2230,50 @@ export して**画面がそこから描画する**形にした。台帳として
 | Ollama の `system` / `prompt` クランプ | **一致** (8192 / 32768)。`OLLAMA_SECURITY.md` の「Electron 版と同じ検証を通す」は真。ブラウザ側は `8_192` / `32_768` と下線付きで書かれており、素朴な grep では見落とす |
 | `validateAdvisorJson` の各上限 | 既に `advisorValidationParity.test.ts` で固定済み |
 
+### IPC action 表の payload 欄が実装と 6 行ずれていた（修正済み・ゲート化した）
+
+この表は「**レンダラーから main へ何が渡るか**」を示す唯一の一覧である。
+行番号のずれは `verify:arch` が捕まえていたが、**中身のずれ**は誰も見ていなかった。
+19 行を機械で突き合わせたら 6 行が違った:
+
+| 行 | ずれ |
+|---|---|
+| `skills.run-skill` | 文書に `model` / `maxTokens` が残っていた —— **私が payload から外した**のに表が古いまま |
+| `cloudflare.purge-cache` | **`purgeEverything` が載っていなかった** —— ゾーン全体のキャッシュを落とす破壊的なフラグ |
+| `wordpress.create-post` | `status` (publish 指定) が載っていなかった |
+| `github.create-issue` | `labels` が欠けていた |
+| `calendar.create-event` | `location` / `timeZone` が欠けていた |
+| `cloudflare.create-dns-record` | `proxied` が欠けていた |
+
+**欠けている側も問題である** —— 表の目的は攻撃面を示すことなので、
+`purgeEverything` のような破壊的フラグが載っていないと読んだ人が誤解する。
+
+#### ゲートにした
+
+`verify:arch` に `verifyActionPayloads` を足した。表の `` `{ a, b?, c }` `` を
+実装の `interface XxxPayload` と集合で比べる (action 名から interface 名を導く)。
+19 行中 18 行に対応する interface があり、**精度は 100%** (偽陽性 0)。
+
+作る過程で 2 度、**自分の走査が偽陽性を出した**:
+
+- 型注釈中のコメント (`// 2026-01-01T10:00:00`) をフィールド名と読み、
+  `00` / `01T10` という存在しない欄を報告した → コメント行を落としてから取る
+- `head -4` で grep を切ったせいで、`main` が `validateScanUrl` を呼んで
+  いないように見えた → **実際は呼んでいる** (`security.ts:282`)。
+  出力を切り詰めたまま結論を出さないこと
+
+自己検査に 7 形 (実物 / 文書だけ / 実装だけ / 一致 / `?` 付き /
+interface 無し / 未知サービス)。実物での対照も 2 種鳴る ——
+表を古い状態へ戻す / 実装からフィールドを消す。
+
+#### あわせて確かめた、正しかった主張
+
+| 主張 | 実測 |
+|---|---|
+| `security.scan-url` は `validateScanUrl` を通る | **真** (`security.ts:282`)。ブラウザ側も同じ共有関数 |
+| `gmail.create-draft` は `isSafeHeaderValue(to)` | 真 (前回確認済み) |
+| `ollama.chat` は `isSafeModelName` + NUL 拒否 + 32KB/8KB clamp | 真 (前回確認済み) |
+
 ### 変異検査の対象一覧に、ブラウザ版の橋 (`web-shim.ts`) が入っていなかった (実測 8.34%)
 
 `stryker.config.json` の `_commentScope` は対象を

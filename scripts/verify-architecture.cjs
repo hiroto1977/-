@@ -658,6 +658,50 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} 指標: ${label}: ${got} 件 (期待 ${want})`);
   }
 
+  /*
+   * payload 欄の照合。**実在する `emotions.log-mood` を土台にする** ——
+   * 架空の interface を作ると、規則ではなく作り物を検査してしまう。
+   */
+  const payloadCases = [
+    ['実物の表は一致している', readFileSafe(ARCH_FILE) ?? '', 0],
+    [
+      '文書にだけ在るフィールド',
+      '| emotions | `log-mood` | `{ date, score, note, nonexistent }` | x | `emotions.ts:1` |',
+      1,
+    ],
+    [
+      '実装にだけ在るフィールド (文書が欠けている)',
+      '| emotions | `log-mood` | `{ score }` | x | `emotions.ts:1` |',
+      1,
+    ],
+    [
+      '一致していれば鳴らない',
+      '| emotions | `log-mood` | `{ date, score, note }` | x | `emotions.ts:1` |',
+      0,
+    ],
+    [
+      '`?` 付きでも同じフィールドとして扱う',
+      '| emotions | `log-mood` | `{ date?, score, note? }` | x | `emotions.ts:1` |',
+      0,
+    ],
+    [
+      '対応する interface が無い action は対象外',
+      '| emotions | `clear-history` | `{ whatever }` | x | `emotions.ts:1` |',
+      0,
+    ],
+    [
+      '知らないサービスは対象外',
+      '| nosuchsvc | `do-thing` | `{ a, b }` | x | `x.ts:1` |',
+      0,
+    ],
+  ];
+  for (const [label, doc, want] of payloadCases) {
+    const got = verifyActionPayloads(doc).failures.length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} payload: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
     return 1;
@@ -670,6 +714,73 @@ function selfTest() {
 // Run
 // ---------------------------------------------------------------------------
 
+/**
+ * IPC action 表の payload 欄が、実装の `*Payload` interface と一致するか。
+ *
+ * ## なぜ要るか (2026-08-23)
+ *
+ * この表は「**レンダラーから main へ何が渡るか**」を示す唯一の一覧である。
+ * 実装と食い違うと、読んだ人は攻撃面を誤解する。実際に 6 行ずれていた:
+ *
+ *   - `skills.run-skill` に `model` / `maxTokens` が残っていた
+ *     (payload から外したのに表が古いまま)
+ *   - `cloudflare.purge-cache` に **`purgeEverything`** が載っていなかった
+ *     —— ゾーン全体のキャッシュを落とす破壊的なフラグ
+ *   - `wordpress.create-post` に `status` (publish 指定) が載っていなかった
+ *   - `github` の `labels` / `calendar` の `location`,`timeZone` /
+ *     `cloudflare` の `proxied` も欠けていた
+ *
+ * 行番号のずれ (`verify:arch` の既存機能) は捕まえられても、**中身のずれ**は
+ * 誰も見ていなかった。
+ *
+ * ## 判定
+ *
+ * 表の `` `{ a, b?, c }` `` を実装の `interface XxxPayload` と集合で比べる。
+ * action 名から interface 名を導く (`create-issue` → `CreateIssuePayload`)。
+ * 対応する interface が無い action は対象外 (静的スタブなど)。
+ * コメント行は落としてからフィールド名を取る —— 型注釈の中の `//` に
+ * 引っかかると存在しない欄を報告する。
+ */
+function verifyActionPayloads(archText) {
+  const failures = [];
+  let checked = 0;
+  const rowRe = /^\| ([\w-]+) \| `([\w-]+)` \| `\{([^}]*)\}` \|/gm;
+  let m;
+  while ((m = rowRe.exec(archText)) !== null) {
+    const [, svc, action, fields] = m;
+    const src = readFileSafe(path.join(REPO_ROOT, 'src/main/clients', `${svc}.ts`));
+    if (src === null) continue;
+    const camel = action.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('') + 'Payload';
+    const im = new RegExp(`interface ${camel}\\s*\\{([^}]*)\\}`).exec(src);
+    if (im === null) continue;
+    checked += 1;
+    const body = im[1]
+      .split('\n')
+      .filter((l) => !l.trim().startsWith('//'))
+      .join('\n');
+    const real = new Set([...body.matchAll(/^\s*(\w+)\??:/gm)].map((x) => x[1]));
+    const documented = new Set(
+      fields
+        .split(',')
+        .map((f) => f.trim().replace(/\?.*$/, '').trim())
+        .filter((f) => f !== ''),
+    );
+    const extra = [...documented].filter((f) => !real.has(f)).sort();
+    const missing = [...real].filter((f) => !documented.has(f)).sort();
+    if (extra.length > 0 || missing.length > 0) {
+      const parts = [];
+      if (extra.length > 0) parts.push(`文書にだけ在る: ${extra.join(', ')}`);
+      if (missing.length > 0) parts.push(`実装にだけ在る: ${missing.join(', ')}`);
+      failures.push({
+        archLine: archText.slice(0, m.index).split('\n').length,
+        ref: `${svc}.${action}`,
+        reason: `payload 欄が実装の ${camel} と違います (${parts.join(' / ')})`,
+      });
+    }
+  }
+  return { checked, failures };
+}
+
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
 
@@ -681,11 +792,13 @@ function main() {
 
   const refs = verifyReferences(arch);
   const metrics = verifyMetrics(arch);
+  const payloads = verifyActionPayloads(arch);
 
   console.log(`Verified ${refs.successCount} file:line references in docs/ARCHITECTURE.md`);
   console.log(`Verified ${metrics.ok.length} live metric(s): ${metrics.ok.join(', ') || '(none)'}`);
+  console.log(`Verified ${payloads.checked} IPC action payload row(s) against their interfaces`);
 
-  const allFailures = [...refs.failures, ...metrics.failures];
+  const allFailures = [...refs.failures, ...metrics.failures, ...payloads.failures];
   if (allFailures.length === 0) {
     console.log('✅ all references + metrics resolve');
     return 0;
