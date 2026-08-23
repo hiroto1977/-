@@ -161,6 +161,50 @@ class IndexedDBRecordStore implements RecordStore {
   /** Save-time encryption layer. Default = plaintext (identity). */
   private cipher: RecordCipher = IDENTITY_CIPHER;
 
+  /**
+   * **同じ id への書き換えを直列化する鎖。**
+   *
+   * `update` は「読む → 復号 → 混ぜる → 暗号化 → 書く」で、読みと書きが
+   * **別のトランザクション**になる (暗号化が非同期なので 1 つの IndexedDB
+   * トランザクションの中に収まらない —— await を挟むとトランザクションが
+   * 勝手に閉じる)。その隙に別の書き換えが挟まると、後から書いた側が
+   * **古い写しの上に**混ぜた結果を書く。
+   *
+   * 実測 (2026-08-23):
+   *
+   * ```
+   *   await Promise.all([update(id, {a:2}), update(id, {b:3})]);
+   *   → {base:1, b:3}        ← a:2 が消える。両方 resolve する
+   *
+   *   await Promise.all([update(id, {a:2}), remove(id)]);
+   *   → 消したはずの record が {base:1, a:2} で復活する
+   * ```
+   *
+   * どちらも**呼んだ側には成功として返る**ので、失われたことに気付けない。
+   *
+   * id ごとに鎖を持ち、前の処理が終わってから次を始める。別の id は
+   * 待たせない。`remove` も同じ鎖に載せる —— 載せないと「消す」と
+   * 「書き換える」の間で復活が起きる。
+   */
+  private readonly perId = new Map<string, Promise<unknown>>();
+
+  /** `id` の鎖の最後尾に `run` を繋いで、その結果を返す。 */
+  private serialize<R>(id: string, run: () => Promise<R>): Promise<R> {
+    const prev = this.perId.get(id) ?? Promise.resolve();
+    // 前が失敗しても後続は動かす (失敗は呼んだ側が受け取っている)。
+    const started = prev.then(run, run);
+    const settled = started.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.perId.set(id, settled);
+    void settled.then(() => {
+      // 自分が最後尾のままなら地図から外す (無制限に育てない)。
+      if (this.perId.get(id) === settled) this.perId.delete(id);
+    });
+    return started;
+  }
+
   configureCipher(cipher: RecordCipher): void {
     this.cipher = cipher;
   }
@@ -217,6 +261,16 @@ class IndexedDBRecordStore implements RecordStore {
   }
 
   async update<T extends Record<string, unknown>>(
+    id: string,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null> {
+    // 検証は鎖に載せる前に。不正な引数は待たずに落とす (従来どおり)。
+    if (typeof id !== 'string' || id.length === 0) return null;
+    if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
+    return this.serialize(id, () => this.updateUnserialized<T>(id, patch));
+  }
+
+  private async updateUnserialized<T extends Record<string, unknown>>(
     id: string,
     patch: Partial<T>,
   ): Promise<StoredRecord<T> | null> {
@@ -282,10 +336,14 @@ class IndexedDBRecordStore implements RecordStore {
 
   async remove(id: string): Promise<void> {
     if (typeof id !== 'string' || id.length === 0) return;
-    await withDb(async (db) => {
-      const tx = db.transaction(STORE, 'readwrite');
-      tx.objectStore(STORE).delete(id);
-      await txDone(tx);
+    // `update` と同じ鎖に載せる。載せないと「読む → 書く」の隙に削除が
+    // 入り、消したはずの record が書き戻される (実測)。
+    await this.serialize(id, async () => {
+      await withDb(async (db) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(id);
+        await txDone(tx);
+      });
     });
   }
 
