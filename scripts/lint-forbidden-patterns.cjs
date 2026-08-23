@@ -474,9 +474,34 @@ const FORBIDDEN_PATTERNS = [
   },
   {
     name: 'child_process exec/spawn',
-    pattern: /(child_process|node:child_process).*?\b(exec|execSync|spawn|spawnSync)\b/,
+    /*
+     * **呼び方を数え上げず、モジュールへの到達を塞ぐ。**
+     *
+     * 元の式は `child_process` と呼び名が**同じ行に、その順で**並ぶことを
+     * 求めていた。ところが自然な書き方は逆順になる。実測 (2026-08-23) ——
+     * 8 通りのうち **7 通りが素通り**した:
+     *
+     * ```
+     *   ★素通り  import { execSync } from 'node:child_process';
+     *   ★素通り  const { execSync } = require('child_process');
+     *   ★素通り  import cp from 'node:child_process';   +  cp.execSync(cmd)
+     *   捕まる    require('child_process').execSync(cmd);
+     * ```
+     *
+     * 実際に `src/main` へ `import { execSync }` と呼び出しを足すと、
+     * `lint:forbidden` / `lint:imports` / `typecheck` の **3 つとも緑**だった。
+     * 不変条件 #9 (実行時コードからサブプロセスを起動しない) は
+     * **書いてあるだけで、守らせている物が無かった**。
+     *
+     * 呼び方は無数にあるが、**モジュールを読み込まずには呼べない**。
+     * だから読み込みの側を見る —— 悪い形を数え上げるのではなく、
+     * 入口で判定する (`exportPaths.ts` と同じ考え方)。
+     */
+    pattern: /(^|[^\w.])(node:)?child_process\b/,
     // Build/dev scripts are allowed; runtime src is not.
-    allowFile: (rel) => rel.startsWith('scripts/') && rel !== 'scripts/lint-forbidden-patterns.cjs',
+    // この門自身も除く —— 上の注記が**標本として**禁止の字面を抱えるため
+    // (ReDoS の門が自分の標本を指摘したのと同じ形)。
+    allowFile: (rel) => rel.startsWith('scripts/'),
     rationale: 'invariant: no subprocess execution from runtime code paths',
   },
   {
@@ -574,6 +599,19 @@ function isCommentLine(line) {
  * 「新しい違反が増える」ほうが実際に起きる形なので、そちらを取った。
  */
 const KNOWN_SUPPRESSIONS = [
+  // child_process: ビルド/開発の道具だけが使う。**実行時コード (src/) は 0 件**で、
+  // そこが規則の目的 (不変条件 #9)。規則を「モジュールへの到達」で見るよう
+  // 直した結果、これまで素通りしていた import 形が全部当たるようになり、
+  // scripts/ 側で例外が効く場所が可視化された (2026-08-23)。
+  'child_process exec/spawn :: scripts/check-import-boundaries.cjs :: 2',
+  'child_process exec/spawn :: scripts/knowledge-autopilot.cjs :: 1',
+  'child_process exec/spawn :: scripts/lint-repo-size.cjs :: 1',
+  'child_process exec/spawn :: scripts/lint-shell.cjs :: 1',
+  'child_process exec/spawn :: scripts/mcp-check.cjs :: 1',
+  'child_process exec/spawn :: scripts/mutate-changed.cjs :: 1',
+  'child_process exec/spawn :: scripts/progress.cjs :: 1',
+  'child_process exec/spawn :: scripts/quality-report.cjs :: 1',
+  'child_process exec/spawn :: scripts/session-context.cjs :: 1',
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
   'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
