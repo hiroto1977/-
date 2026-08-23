@@ -421,9 +421,30 @@ export async function saveTeamRadarState(
   const p = (deps.statePath ?? defaultStatePath)();
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  // `fs.writeFile` の既定は utf8。明示すると「空文字でも同じ」という
-  // 観測できない引数が増えるだけなので書かない (実測済み)。
-  const writeFn = deps.writeFile ?? ((q: string, c: string) => fs.writeFile(q, c));
+  /*
+   * **0600 で書く。ここに入るのは他人の評価である。**
+   *
+   * `team-radar.json` の中身は部署名・**メンバーの氏名**・軸ごとの 1〜5 評価・
+   * 付箋コメント —— 人事評価そのもので、しかも**利用者本人ではなく第三者**の
+   * 情報である。にもかかわらず実測 (2026-08-23) では **644** で書かれていた:
+   *
+   * ```
+   *   secrets.json               600  (明示)
+   *   service-hub-emotions.json  600  (明示)
+   *   team-radar.json            644  ← ここだけ既定のまま
+   * ```
+   *
+   * 同じ機械の他の利用者が同僚の評価を読める状態だった。
+   *
+   * **既にある 644 のファイルも次の保存で直る。** `mode` は新規作成のときしか
+   * 効かないが、この関数は `tmp` を新しく作って `rename` で被せるので、
+   * 置き換わる実体は毎回 0600 で作られたものになる (実測で確認)。
+   * `atomicWriteFile` に寄せなかったのは、`writeFile` / `rename` の
+   * 差し替え口を検査が使っているため —— 得られる性質は同じ。
+   *
+   * (`fs.writeFile` の既定の符号化は utf8 で、options を渡しても変わらない。)
+   */
+  const writeFn = deps.writeFile ?? ((q: string, c: string) => fs.writeFile(q, c, { mode: 0o600 }));
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
