@@ -33,6 +33,7 @@ import {
   GOOGLE_SCOPES,
   parseGoogleCallback,
 } from '../oauth/pkce';
+import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
 
 /**
  * Settings — 22 番目のサービス。
@@ -164,6 +165,11 @@ function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () 
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
+      // **成否によらず一時秘密を捨てる。** 以前は try の中の成功経路にしか
+      // 掃除が無く、`state` 不一致 (= CSRF の疑い) や通信断で落ちたときに
+      // **いちばん消したい verifier が残った**。verifier は単回使用なので、
+      // ここで消しても正常系は失われない (やり直しは認可からになる)。
+      clearPkceSession();
       setBusy(false);
     }
   }
@@ -1224,11 +1230,14 @@ function GoogleOAuthSection() {
       return;
     }
     const secrets = await generatePkce();
-    // 必須: token exchange まで verifier を保持
-    sessionStorage.setItem('pkce.verifier', secrets.verifier);
-    sessionStorage.setItem('pkce.state', secrets.state);
-    sessionStorage.setItem('pkce.clientId', clientId);
-    sessionStorage.setItem('pkce.redirectUri', redirectUri);
+    // 必須: token exchange まで verifier を保持。置き場所と消し方は
+    // `oauth/pkceSession.ts` に 1 つだけ持つ (2026-08-23)。
+    savePkceSession({
+      verifier: secrets.verifier,
+      state: secrets.state,
+      clientId,
+      redirectUri,
+    });
     const url = buildGoogleAuthUrl(
       { clientId, scopes: [...GOOGLE_SCOPES.drive, ...GOOGLE_SCOPES.calendar, ...GOOGLE_SCOPES.gmail], redirectUri },
       secrets,
@@ -1244,14 +1253,12 @@ function GoogleOAuthSection() {
       setErr('Google から受け取った code (またはコールバック URL 全体) を貼り付けてください');
       return;
     }
-    const verifier = sessionStorage.getItem('pkce.verifier');
-    const cid = sessionStorage.getItem('pkce.clientId');
-    const ruri = sessionStorage.getItem('pkce.redirectUri');
-    const expectedState = sessionStorage.getItem('pkce.state');
-    if (!verifier || !cid || !ruri || !expectedState) {
+    const session = readPkceSession();
+    if (!session) {
       setErr('セッションが切れました。「認可ページを開く」からやり直してください');
       return;
     }
+    const { verifier, clientId: cid, redirectUri: ruri, state: expectedState } = session;
     // Accept either the raw code (legacy, requires manual state below) or
     // a full callback URL like `https://localhost:.../?code=...&state=...`.
     // Parsing the full URL is preferred since it carries both fields and
@@ -1279,10 +1286,6 @@ function GoogleOAuthSection() {
       await v.setToken('calendar', tok.accessToken);
       await v.setToken('gmail', tok.accessToken);
       await v.setToken('google-access', tok.accessToken); // 後方互換 / 単独参照用
-      sessionStorage.removeItem('pkce.verifier');
-      sessionStorage.removeItem('pkce.state');
-      sessionStorage.removeItem('pkce.clientId');
-      sessionStorage.removeItem('pkce.redirectUri');
       setCode('');
       setAuthUrl(null);
       setMsg('Google 連携を有効化しました (Drive / Calendar / Gmail)');
@@ -1353,7 +1356,8 @@ function GoogleOAuthSection() {
               onClick={() => {
                 setAuthUrl(null);
                 setCode('');
-                sessionStorage.removeItem('pkce.verifier');
+                // 4 つまとめて消す。以前は verifier だけ消して 3 つ残していた。
+                clearPkceSession();
               }}
               style={btn()}
             >

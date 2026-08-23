@@ -69,13 +69,16 @@ describe('buildGoogleAuthUrl', () => {
 });
 
 describe('exchangeGoogleCode', () => {
+  /*
+   * **本物の `Response` を作る。** 以前は `json()` が payload を返すのに
+   * `text()` が空文字を返す手作りの物だった —— 本物ではありえない形で、
+   * 交換の本文を `readBodyWithCap` で読むようにした途端に落ちた
+   * (2026-08-23)。**モックが実物と違う形をしていると、検査は実装ではなく
+   * モックの挙動を留めてしまう。** 同じ誤りをこのリポジトリで 3 度踏んでいる
+   * (`cursor.test.ts` / `business.test.ts` / ここ)。
+   */
   function mockResponse(payload: unknown, ok = true, status = 200): Response {
-    return {
-      ok,
-      status,
-      async text() { return ok ? '' : JSON.stringify(payload); },
-      async json() { return payload; },
-    } as Response;
+    return new Response(JSON.stringify(payload), { status: ok ? status : status });
   }
 
   const baseArgs = {

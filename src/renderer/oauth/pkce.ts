@@ -14,6 +14,12 @@
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
 import { redactForMessage } from '../../shared/redact';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  withTimeout,
+} from '../../shared/httpLimits';
 
 export interface PkceSecrets {
   /** code_verifier — token exchange までブラウザに保持 */
@@ -195,24 +201,39 @@ export async function exchangeGoogleCode(
     code_verifier: verifier,
     redirect_uri: redirectUri,
   });
-  const res = await fetchImpl('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
-  });
+  // 打ち切りと応答サイズの上限を掛ける —— 兄弟の `network/proxy.ts` は
+  // 掛けていて、ここだけ素の fetch だった (2026-08-23)。相手は既知ホストだが、
+  // 守るのは攻撃より**事故**である: 応答しない端点で「交換中…」のまま
+  // 固まるか、巨大な応答をそのまま読む。
+  const res = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, (signal) =>
+    fetchImpl('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+      signal,
+    }),
+  );
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange').catch(
+      () => '',
+    );
     // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
     // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
     // 不具合報告に貼られる。
     throw new Error(`token exchange ${res.status}: ${redactForMessage(body, 200)}`);
   }
-  const data = (await res.json()) as {
+  const raw = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
+  let data: {
     access_token?: string;
     refresh_token?: string;
     expires_in?: number;
     scope?: string;
   };
+  try {
+    data = JSON.parse(raw) as typeof data;
+  } catch {
+    throw new Error('トークン端点の応答が JSON ではありません');
+  }
   if (typeof data.access_token !== 'string' || data.access_token.length === 0) {
     throw new Error('token exchange response missing access_token');
   }
