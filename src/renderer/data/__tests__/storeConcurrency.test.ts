@@ -161,4 +161,57 @@ describe('同じ record への同時書き換えで、書いたものが消え�
       expect(await store.reencryptAll(), '消えた分を数えている').toBe(5);
     });
   });
+
+  /*
+   * **全件を入れ替える操作は id ごとの鎖に載らない。**
+   *
+   * `importAll({ replace: true })` (バックアップの復元) は 1 つの
+   * トランザクションで全消し + 書き直しをする。それ自体は原子的だが、
+   * 進行中の `update` が「読んだ後・書く前」で挟まると、復元で消えた
+   * はずの record を書き戻す。直す前の実測: 復元後の一覧に、復元
+   * ファイルに無い古い record が残った。
+   */
+  describe('復元 (importAll replace) を、進行中の書き換えが巻き戻さない', () => {
+    const slowCipher = (): RecordCipher => ({
+      encrypt: async (d) => {
+        await new Promise((r) => setTimeout(r, 8));
+        return { ...d };
+      },
+      decrypt: async (d) => {
+        await new Promise((r) => setTimeout(r, 8));
+        return { ...d };
+      },
+    });
+
+    it('復元中に走っていた update が、消えた record を書き戻さない', async () => {
+      const store = getRecordStore();
+      const old = await store.insert('t', { n: 1 });
+      store.configureCipher(slowCipher());
+      const updating = store.update(old.id, { edited: true } as never);
+      await new Promise((r) => setTimeout(r, 2));
+      await store.importAll(
+        [{ id: 'fresh', collection: 't', createdAt: 1, updatedAt: 1, data: { restored: true } }],
+        { replace: true },
+      );
+      expect(await updating, '消えた id への update は null を返す').toBeNull();
+      const ids = (await store.exportAll()).map((r) => r.id);
+      expect(ids, '復元ファイルに無い record が残っている').toEqual(['fresh']);
+    });
+
+    it('復元と無関係な update は普通に通る (締めすぎていない)', async () => {
+      const store = getRecordStore();
+      const rec = await store.insert('t', { n: 1 });
+      expect((await store.update(rec.id, { edited: true } as never))?.data).toEqual({
+        n: 1,
+        edited: true,
+      });
+    });
+
+    it('clearCollection は消した件数を正しく返す', async () => {
+      const store = getRecordStore();
+      for (let i = 0; i < 3; i++) await store.insert('c', { i });
+      expect(await store.clearCollection('c')).toBe(3);
+      expect(await store.list('c')).toHaveLength(0);
+    });
+  });
 });

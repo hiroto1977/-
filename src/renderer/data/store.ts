@@ -295,6 +295,20 @@ class IndexedDBRecordStore implements RecordStore {
     const mergedData = { ...existing.data, ...patch };
     const updatedAt = monotonicNow();
     const storedData = await this.cipher.encrypt(mergedData);
+    // **書く直前にもう一度だけ在ることを確かめる。**
+    //
+    // id ごとの鎖は `update` と `remove` を並べるが、**全件を入れ替える
+    // 操作は鎖に載らない**。`importAll({ replace: true })` (バックアップの
+    // 復元) は 1 つのトランザクションで全消し + 書き直しをするので、
+    // 「読んだ後・書く前」に挟まると、復元で消えたはずの record を
+    // こちらが書き戻してしまう。実測 (2026-08-23):
+    //
+    //   update を投げっぱなしにして importAll({replace:true}) を挟む
+    //   → 復元後の一覧に、復元ファイルに無い古い record が残る
+    //
+    // 消えていたら書かない。戻り値は `null` —— 「その id はもう無い」で
+    // 既にある契約なので、呼んだ側の扱いは変わらない。
+    if (!(await this.readRawRow(id))) return null;
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
