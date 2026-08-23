@@ -238,11 +238,37 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
     expect(VAULT).toMatch(/export const MIN_PASSWORD_LENGTH = \d+;/);
   });
 
-  it('画面は数字を直書きしていない (定数から描く)', () => {
-    expect(SETTINGS, 'SettingsPage が最小長を直書きしている').not.toMatch(
-      /パスワードは \d+ 文字以上/,
-    );
-    expect(LOCK, 'LockScreen が最小長を直書きしている').not.toMatch(/placeholder="\d+ 文字以上"/);
+  /*
+   * **禁止の型からは「周りの文」を落とす。** (2026-08-23)
+   *
+   * ここは元々 `パスワードは \d+ 文字以上` と `placeholder="\d+ 文字以上"` を
+   * 禁じていた。**周りの言い回しごと固定していた**ので、別の言い方なら
+   * 素通りした —— 実測: `LockScreen` へ
+   *
+   *   title="8文字以上で入力してください"
+   *
+   * を足しても (定数参照は残したまま) **22 件すべて通った**。
+   * 保管庫が強制するのは 12 なので、画面だけが 8 と言う状態に戻る。
+   *
+   * 誤りの本体は「**長さを字面の数字で言っていること**」であって、
+   * その数字を囲む文ではない。だから禁止の型は `\d+ 文字以上` だけに絞る。
+   * (定数から描くと原文は `${MIN_PASSWORD_LENGTH} 文字以上` になり、
+   *  字面の数字は現れない。)
+   *
+   * コメントは落としてから見る —— 直した経緯を書いた注記に当ててしまうため。
+   */
+  const stripComments = (t: string): string =>
+    t
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
+
+  it.each([
+    ['SettingsPage', () => SETTINGS],
+    ['LockScreen', () => LOCK],
+  ])('%s は長さを字面の数字で言っていない (言い回しを問わない)', (_label, get) => {
+    const hits = [...stripComments(get()).matchAll(/\d+\s*文字以上/g)].map((m) => m[0]);
+    expect(hits, '最小長を直書きしている (定数から描くこと)').toEqual([]);
   });
 
   it('両画面とも定数を使っている', () => {
