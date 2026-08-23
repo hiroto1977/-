@@ -98,8 +98,15 @@ export function redactSecrets(input: string): string {
       // トークンの尻尾が残る。引用符付きの形は上の規則が先に処理して
       // `"…":"[REDACTED]"` にしてあり、そこでは名前の直後がコロンではない
       // ので、この規則が二度当たって閉じ引用符まで飲み込むことはない。
+      // **こちらには接頭辞のまとめ書きを置かない。** 引用符つきの規則 (上) は
+      // 名前が引用符と引用符に挟まれるので `hibp-` のような仕入れ先接頭辞まで
+      // 一致させる必要があるが、線上の形は `\b` があるので `hibp-api-key:` の
+      // `api-key` から一致でき、**手前の `hibp-` はそのまま残る**ので
+      // 仕上がりの文字列は同じになる。実測 (2026-08-23・10 例): 接頭辞あり/なしで
+      // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
+      // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
       .replace(
-        /\b((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
+        /\b(authorization|api-?key|proxy-auth)(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
         (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
       )
       // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。

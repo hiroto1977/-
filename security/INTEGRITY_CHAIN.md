@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 80
+- ブロック数: 81
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `5252080b2bcfac7f93f03132c96741e8e1401449d71047b98267fe951b9396ba`
+- 末尾(tip)ハッシュ: `3f9ae19a3e1039066bbaaf45c5531f82247aae6e95ed2228c3278f0565725f0c`
 - 保護対象: 36 ファイル
 
 ## ブロック
@@ -93,6 +93,7 @@
 | 77 | `fb92b028496dec7a` | `fbf4cef13d97cacd` | `d7313537088d8825` | update ci.yml |
 | 78 | `52ea2bdc47a0cadc` | `d7313537088d8825` | `04847bd2791be297` | update ci.yml |
 | 79 | `41f17ed817811e3c` | `04847bd2791be297` | `5252080b2bcfac7f` | update ci.yml |
+| 80 | `7db33c5fdd348177` | `5252080b2bcfac7f` | `3f9ae19a3e103906` | update redact.ts |
 
 ## 保護対象ファイル
 
