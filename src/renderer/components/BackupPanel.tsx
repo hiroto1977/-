@@ -7,6 +7,7 @@ import {
   parseBackup,
   isEncryptedBackup,
 } from '../data/backup';
+import { isEncryptionEnabled } from '../data/recordEncryption';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
@@ -113,6 +114,42 @@ export function BackupPanel() {
         </span>
       </div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        {/*
+          **レコード暗号化が有効なら、そのバックアップは他の端末で開けない。**
+          実測 (2026-08-23): 同じパスフレーズで新しい端末の暗号化を有効にしても
+          `復号に失敗しました（鍵不一致またはデータ破損）` になる —— 鍵の導出に要る
+          salt は localStorage (`servicehub.recordEncryption`) にあり、
+          バックアップに入らないため、**新しい端末では別の salt が作られる**。
+
+          この画面の用途は「端末移行や災害復旧」で、診断画面は暗号化を
+          critical として勧める。両方に従うと**復元できないバックアップ**が
+          できるので、順序を先に知らせる。逃げ道は在る (先に暗号化を解除すると
+          全レコードが平文に戻り、そのバックアップは他の端末でも開ける)。
+        */}
+        {isEncryptionEnabled() && (
+          <p
+            style={{
+              margin: '0 0 8px',
+              padding: '8px 10px',
+              fontSize: 12,
+              lineHeight: 1.7,
+              border: '1px solid var(--warn, #fbbf24)',
+              borderRadius: 6,
+              color: 'var(--text)',
+            }}
+          >
+            <strong>⚠️ レコード暗号化が有効です</strong>
+            <br />
+            このまま書き出すと、レコードは封緘されたまま入ります。
+            <strong>他の端末では復元できません</strong> —— 鍵の導出に必要な salt は
+            この端末のブラウザ内にあり、バックアップに含まれないためです
+            （同じパスフレーズを入力しても復号に失敗します）。
+            <br />
+            端末移行のためにバックアップを取るなら、
+            <strong>先に「レコード暗号化」を解除</strong>してから書き出してください。
+            この端末での災害復旧のためだけなら、このままで問題ありません。
+          </p>
+        )}
         <button type="button" onClick={onBackup}>バックアップを書き出す</button>
         <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
           バックアップから復元

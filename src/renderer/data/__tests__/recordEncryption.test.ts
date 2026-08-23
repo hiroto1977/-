@@ -362,3 +362,61 @@ describe('復元しても保護を外さない', () => {
     expect(isSealedData(raw.find((r) => r.id === 'p-1')!.data)).toBe(false);
   });
 });
+
+/*
+ * **封緘したままのバックアップは、他の端末では開けない。**
+ *
+ * 鍵の導出に要る salt は localStorage (`servicehub.recordEncryption`) にあり、
+ * バックアップ (`exportAll` = 記録ストアのみ) には入らない。新しい端末で
+ * 同じパスフレーズを入れても `enableEncryption` は**別の salt** を作るので、
+ * 導出される鍵が違う。
+ *
+ * この検査は仕様を固定するためではなく、**画面の警告文が事実と一致していること**
+ * を留めるために在る。ここが通らなくなったら (= 移行できるようになったら)、
+ * `BackupPanel` の警告を消すこと。
+ */
+describe('封緘したままのバックアップは他の端末で開けない (警告文の裏付け)', () => {
+  it('同じパスフレーズでも salt が違うため復号できない', async () => {
+    // --- 旧端末 ---
+    await enableEncryption('SAME-PASSPHRASE');
+    const store = getRecordStore();
+    await store.insert('sales', { memo: 'MIGRATE-ME' });
+    const backup = await store.exportAll();
+    const saltOld = JSON.parse(localStorage.getItem(LS_KEY)!).salt as string;
+
+    // --- 新端末 (localStorage も IndexedDB も空) ---
+    _resetRecordStoreForTests();
+    await clearIdb();
+    localStorage.clear();
+
+    await enableEncryption('SAME-PASSPHRASE');
+    const saltNew = JSON.parse(localStorage.getItem(LS_KEY)!).salt as string;
+    expect(saltNew).not.toBe(saltOld); // ここが移行できない理由
+
+    const store2 = getRecordStore();
+    await store2.importAll(backup, { replace: true });
+
+    // 同じパスフレーズを知っていても読めない。
+    await expect(store2.list('sales')).rejects.toThrow(/復号に失敗/);
+  });
+
+  it('先に暗号化を解除してから書き出せば、他の端末でも開ける (逃げ道)', async () => {
+    await enableEncryption('SAME-PASSPHRASE');
+    const store = getRecordStore();
+    await store.insert('sales', { memo: 'MIGRATE-ME' });
+
+    // 画面が案内する順序 —— 先に解除する。
+    expect(await disableEncryption('SAME-PASSPHRASE')).toBe(true);
+    const backup = await store.exportAll();
+
+    // --- 新端末 ---
+    _resetRecordStoreForTests();
+    await clearIdb();
+    localStorage.clear();
+
+    const store2 = getRecordStore();
+    await store2.importAll(backup, { replace: true });
+    const list = await store2.list<{ memo: string }>('sales');
+    expect(list.map((r) => r.data.memo)).toEqual(['MIGRATE-ME']);
+  });
+});
