@@ -684,14 +684,53 @@ function selfTest() {
       '| emotions | `log-mood` | `{ date?, score, note? }` | x | `emotions.ts:1` |',
       0,
     ],
+    /*
+     * **interface が見つからない行は「対象外」ではなく「失敗」。**
+     * 黙って飛ばすと、文書がいちばん間違っているとき (action 名が違う) に
+     * こそ検査が効かなくなる。別名なら台帳へ理由つきで足す。
+     */
     [
-      '対応する interface が無い action は対象外',
+      '実在する action でも interface が無ければ鳴る',
       '| emotions | `clear-history` | `{ whatever }` | x | `emotions.ts:1` |',
-      0,
+      1,
     ],
     [
       '知らないサービスは対象外',
       '| nosuchsvc | `do-thing` | `{ a, b }` | x | `x.ts:1` |',
+      0,
+    ],
+    /*
+     * **action 名そのものの実在検査** (2026-08-23 追加)。
+     * `wordpress.create-post` は実物が `create-post-draft` なのに、
+     * interface が古い名前に揃っていたので payload の比較は成功し、
+     * **名前が違うまま通っていた**。
+     */
+    [
+      '実在しない action 名は鳴る',
+      '| wordpress | `create-post` | `{ siteId, title, content, status }` | x | `wordpress.ts:1` |',
+      1,
+    ],
+    [
+      '実在する action 名なら鳴らない',
+      '| wordpress | `create-post-draft` | `{ siteId, title, content, status }` | x | `wordpress.ts:1` |',
+      0,
+    ],
+    /*
+     * **短縮記法 (`chat,`) の action も「実在する」と読む。**
+     * ここを落とすと `ollama.chat` が実在しない扱いになる (一度誤読した)。
+     */
+    [
+      '短縮記法で登録された action も実在と判定する',
+      '| ollama | `chat` | `{ model, prompt, system }` | x | `ollama.ts:1` |',
+      0,
+    ],
+    /*
+     * **台帳で別名を指定した行は通る。** 台帳を空にすると鳴るので、
+     * 「理由つきでしか許さない」が効いていることも同時に見ている。
+     */
+    [
+      '台帳に別名がある行 (atlassian) は通る',
+      '| atlassian | `create-issue` | `{ projectKey, summary, description, issueType }` | x | `atlassian.ts:1` |',
       0,
     ],
   ];
@@ -741,6 +780,35 @@ function selfTest() {
  * コメント行は落としてからフィールド名を取る —— 型注釈の中の `//` に
  * 引っかかると存在しない欄を報告する。
  */
+/**
+ * 実在する action 名を `export const ACTIONS = { ... }` から読む。
+ * `'k': fn` / `k: fn` / 短縮記法 `fn,` の 3 通りを拾う ——
+ * **短縮記法を落とすと `ollama.chat` が「実在しない」に見える**
+ * (実際に一度そう誤読した)。静的に読めない形 (`Object.fromEntries` で
+ * 組み立てる shopify) は `null` を返し、名前の検査を見送る。
+ */
+function readActionNames(src) {
+  const m = /export const ACTIONS[^=]*=\s*\{([\s\S]*?)\n\};/.exec(src);
+  if (m === null) return null;
+  const body = m[1];
+  const names = new Set();
+  for (const x of body.matchAll(/^\s*'([^']+)'\s*:/gm)) names.add(x[1]);
+  for (const x of body.matchAll(/^\s*([A-Za-z_]\w*)\s*:/gm)) names.add(x[1]);
+  for (const x of body.matchAll(/^\s*([A-Za-z_]\w*)\s*,\s*$/gm)) names.add(x[1]);
+  return names;
+}
+
+/**
+ * action 名から payload の interface 名を導けない所の台帳。
+ * **理由つきでしか許さない** —— 空にすると「interface が見つからない」行が
+ * 黙って検査対象から外れる。
+ */
+const PAYLOAD_INTERFACE_OVERRIDES = {
+  // Jira の課題であることを型名で示している。action 名は Atlassian 製品
+  // 横断の総称なので、両方をそのまま残すのが正しい。
+  'atlassian.create-issue': 'CreateJiraIssuePayload',
+};
+
 function verifyActionPayloads(archText) {
   const failures = [];
   let checked = 0;
@@ -748,11 +816,41 @@ function verifyActionPayloads(archText) {
   let m;
   while ((m = rowRe.exec(archText)) !== null) {
     const [, svc, action, fields] = m;
+    const archLine = archText.slice(0, m.index).split('\n').length;
     const src = readFileSafe(path.join(REPO_ROOT, 'src/main/clients', `${svc}.ts`));
     if (src === null) continue;
-    const camel = action.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('') + 'Payload';
+
+    /*
+     * **まず action 名が実在するか。** これが無いと、名前が古いまま
+     * payload だけ一致していれば通ってしまう。実際に `wordpress.create-post`
+     * が (実物は `create-post-draft`) そのまま通っていた ——
+     * interface 名が古いほうに揃っていたので、payload の比較は成功していた。
+     */
+    const realActions = readActionNames(src);
+    if (realActions !== null && !realActions.has(action)) {
+      failures.push({
+        archLine,
+        ref: `${svc}.${action}`,
+        reason: `そんな action は登録されていません (実在: ${[...realActions].sort().join(', ')})`,
+      });
+      continue;
+    }
+
+    const override = PAYLOAD_INTERFACE_OVERRIDES[`${svc}.${action}`];
+    const camel =
+      override ??
+      action.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('') + 'Payload';
     const im = new RegExp(`interface ${camel}\\s*\\{([^}]*)\\}`).exec(src);
-    if (im === null) continue;
+    if (im === null) {
+      // **黙って飛ばさない。** 飛ばすと、文書がいちばん間違っているとき
+      // (名前が違う) にこそ検査が効かなくなる。
+      failures.push({
+        archLine,
+        ref: `${svc}.${action}`,
+        reason: `payload の interface ${camel} が見つかりません (別名なら PAYLOAD_INTERFACE_OVERRIDES に理由つきで足す)`,
+      });
+      continue;
+    }
     checked += 1;
     const body = im[1]
       .split('\n')
@@ -772,7 +870,7 @@ function verifyActionPayloads(archText) {
       if (extra.length > 0) parts.push(`文書にだけ在る: ${extra.join(', ')}`);
       if (missing.length > 0) parts.push(`実装にだけ在る: ${missing.join(', ')}`);
       failures.push({
-        archLine: archText.slice(0, m.index).split('\n').length,
+        archLine,
         ref: `${svc}.${action}`,
         reason: `payload 欄が実装の ${camel} と違います (${parts.join(' / ')})`,
       });

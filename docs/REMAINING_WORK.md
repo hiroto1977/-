@@ -2790,3 +2790,55 @@ OpenAI 互換の**利用者指定エンドポイント**) を並列に叩き、*
 それは「ファイルのどこかに在るか」で免除する形 (0-a-17) で、**この検査ファイルに
 本物の悪いモックを書いても鳴らなくなる**。キャストの字面を実行時に組み立てて
 割り、走査の対象のままにした (今朝 push protection を避けたのと同じ手)。
+
+### 文書の action 名が実在しなかった —— 自分で作ったゲートの死角 (2026-08-23)
+
+呼び出し側から数える軸を続け、**「画面が invoke する action 名」**を
+両ビルドの登録簿と突き合わせた。結果としてコードは 3 者
+(`WordPressPage` / main / web-shim) すべて `create-post-draft` で一致しており、
+**食い違っていたのは文書だけ**だった:
+
+```
+  docs/ARCHITECTURE.md  wordpress `create-post`        ← 2 か所
+  実物                  wordpress `create-post-draft`
+```
+
+#### なぜ前日のゲートが捕まえなかったか
+
+昨日足した `verifyActionPayloads` は、**文書に書かれた action 名から
+interface 名を導く** (`create-post` → `CreatePostPayload`)。
+実装側の interface が**古い名前のまま** `CreatePostPayload` だったので、
+**payload の比較は成功し、名前が違うまま通った。**
+
+> **導出の材料が間違っているとき、導出の結果が一致しても意味が無い。**
+
+さらに悪いことに、interface が見つからない行は `continue` で**黙って
+飛ばして**いた —— 文書がいちばん間違っているとき (名前が違う) にこそ
+検査対象から外れる形である。実測すると 1 行 (`atlassian.create-issue`) が
+黙って飛ばされていた。
+
+#### 直したこと
+
+1. 文書の 2 か所を `create-post-draft` へ。interface も
+   `CreatePostDraftPayload` へ改名して導出が効くようにした
+2. **action 名そのものの実在検査**を追加 —— 実物の `ACTIONS` を読んで
+   突き合わせる。`'k': fn` / `k: fn` / **短縮記法 `fn,`** の 3 通りを拾う
+   (短縮記法を落とすと `ollama.chat` が「実在しない」に見える。
+   実際に一度そう誤読した)
+3. **黙って飛ばすのをやめた。** 別名は `PAYLOAD_INTERFACE_OVERRIDES` に
+   **理由つきで**登録する (今は `atlassian.create-issue` の 1 件だけ)。
+   検査対象が 18 → **19 行**へ増えた
+4. 自己検査を 7 → **11 件**。対照実験も実物の木で確認 ——
+   名前を戻すと `L1739: wordpress.create-post — そんな action は登録されていません`
+
+#### 併せて測った、鳴らなかったもの (清算)
+
+同じ軸で当たって**穴が無かった**もの。次の人が同じ場所を掘らないために残す。
+
+| 調べたこと | 結果 |
+|---|---|
+| `main` の log 出力 6 か所に資格情報が載るか | **載らない。** 定数 + パス + バイト数のみ。`main.ts:212` は `safeErrorMessage` 経由 |
+| ブラウザ版 Gmail の `To:` ヘッダ注入 | **守られている。** `saasWriteWeb.buildRfc2822` が CR/LF/NUL を弾く (main とは別実装・パリティ検査あり) |
+| ブラウザ版 `scan-url` の SSRF | **守られている。** 共有の `validateScanUrl` を通す |
+| Ollama エンドポイント設定の読み手 | **2 経路とも `parseOllamaEndpoint` を通る** (`probeOllama` / `chatOllama`) |
+| main の action と web-shim の実装差 15 件 | **意図どおり** (ファイル書き出し・skills・microsoft-365 等のデスクトップ専用) |

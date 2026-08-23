@@ -1655,7 +1655,7 @@ union を参照する。
 |---|---|---|:---:|:---:|---|
 | `home` | ホーム (1-click ランチャー) | none | ✅ | | (read-only — templates / teamradar / business の export action を裏で呼び出す UI) |
 | `github` | GitHub | Bearer (PAT) | | | `create-issue` |
-| `wordpress` | WordPress.com | Bearer | | | `create-post` |
+| `wordpress` | WordPress.com | Bearer | | | `create-post-draft` |
 | `atlassian` | Atlassian | Basic + site URL (JSON blob) | | | `create-issue` |
 | `notion` | Notion | Bearer | | | `create-page` |
 | `drive` | Google Drive | OAuth PKCE / Bearer | | ✅ | `create-folder` |
@@ -1736,7 +1736,7 @@ union を参照する。
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
 | github | `create-issue` | `{ owner, repo, title, body?, labels? }` | URL part は `encodeURIComponent`。labels は配列でそのまま body へ | `github.ts:143-176` |
-| wordpress | `create-post` | `{ siteId, title, content?, status? }` | siteId は `encodeURIComponent`。**`status` で publish も指定できる** (既定は draft) | `wordpress.ts:67-109` |
+| wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | siteId は `encodeURIComponent`。**`status` で publish も指定できる** (既定は draft) | `wordpress.ts:67-109` |
 | atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only + *.atlassian.net allowlist | `atlassian.ts:131-193` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72-121` |
 | drive | `create-folder` | `{ name, parentId? }` | (none, Google API 側で検証) | `drive.ts:50-92` |
