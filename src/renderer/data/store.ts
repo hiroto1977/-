@@ -188,6 +188,17 @@ class IndexedDBRecordStore implements RecordStore {
    */
   private readonly perId = new Map<string, Promise<unknown>>();
 
+  /** 保存されている行をそのまま読む (復号しない)。`reencryptAll` 用。 */
+  private async readRawRow(id: string): Promise<StoredRecord | undefined> {
+    return withDb((db) => new Promise<StoredRecord | undefined>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(id);
+      req.onsuccess = () => resolve(req.result as StoredRecord | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず到達しない防御。
+      req.onerror = () => reject(req.error ?? new Error('readRawRow failed'));
+    }));
+  }
+
   /** `id` の鎖の最後尾に `run` を繋いで、その結果を返す。 */
   private serialize<R>(id: string, run: () => Promise<R>): Promise<R> {
     const prev = this.perId.get(id) ?? Promise.resolve();
@@ -409,16 +420,34 @@ class IndexedDBRecordStore implements RecordStore {
       req.onerror = () => reject(req.error ?? new Error('reencryptAll read failed'));
     }));
 
+    // **一覧は写しでよいが、中身は書く直前に読み直す。**
+    //
+    // 上の `getAll()` は移行開始時点の写しである。この写しをそのまま書き
+    // 戻すと、移行中に入った書き換えを**古い中身で上書きする**。実測
+    // (2026-08-23、20 件を遅い cipher で移行しながら 19 番目を触る):
+    //
+    //   移行中の update → `edited: true` が消える (update は成功を返す)
+    //   移行中の remove → 消したはずの record が写しから復活する
+    //
+    // どちらも `store.update` で直したのと同じ形 —— 読みと書きの間に
+    // 隙がある。ここは隙が「移行の全体」なので、もっと広い。
+    //
+    // 直し方も同じ: id ごとの鎖に載せ、**その中で現在の行を読み直す**。
+    // 読み直して無ければ、その間に消されたということなので書き戻さない。
     let migrated = 0;
     for (const rec of raw) {
-      const plain = await reader.decrypt(rec.data);
-      const sealed = await this.cipher.encrypt(plain);
-      await withDb(async (db2) => {
-        const tx = db2.transaction(STORE, 'readwrite');
-        tx.objectStore(STORE).put({ ...rec, data: sealed });
-        await txDone(tx);
+      await this.serialize(rec.id, async () => {
+        const current = await this.readRawRow(rec.id);
+        if (!current) return; // 移行中に消された → 復活させない
+        const plain = await reader.decrypt(current.data);
+        const sealed = await this.cipher.encrypt(plain);
+        await withDb(async (db2) => {
+          const tx = db2.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put({ ...current, data: sealed });
+          await txDone(tx);
+        });
+        migrated++;
       });
-      migrated++;
     }
     return migrated;
   }

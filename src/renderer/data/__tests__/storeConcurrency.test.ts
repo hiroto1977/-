@@ -2,6 +2,7 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
+import type { RecordCipher } from '../recordCipher';
 
 /*
  * **同じ record への書き換えが重なると、片方が黙って消えていた。**
@@ -92,5 +93,72 @@ describe('同じ record への同時書き換えで、書いたものが消え�
     const store = getRecordStore();
     expect(await store.update('no-such-id', { a: 1 } as never)).toBeNull();
     expect(await store.update('', { a: 1 } as never)).toBeNull();
+  });
+
+  /*
+   * **移行 (`reencryptAll`) は写しを書き戻す。** 一覧を 1 回読んでから
+   * 1 件ずつ書き直すので、隙が「移行の全体」になる。直す前の実測
+   * (20 件を遅い cipher で移行しながら 19 番目を触る):
+   *
+   *   移行中の update → `edited: true` が消える (update は成功を返す)
+   *   移行中の remove → 消したはずの record が写しから復活する
+   */
+  describe('移行の途中に入った書き換えを、写しで踏み潰さない', () => {
+    /** 各操作に間を入れて、移行の途中に他の書き込みが差し込めるようにする。 */
+    const slowCipher = (): RecordCipher => ({
+      encrypt: async (d) => {
+        await new Promise((r) => setTimeout(r, 5));
+        return { ...d };
+      },
+      decrypt: async (d) => {
+        await new Promise((r) => setTimeout(r, 5));
+        return { ...d };
+      },
+    });
+
+    /** 移行がまだ届いていない後ろの方の id を触る。 */
+    async function seed(n: number): Promise<{ store: ReturnType<typeof getRecordStore>; ids: string[] }> {
+      const store = getRecordStore();
+      const ids: string[] = [];
+      for (let i = 0; i < n; i++) ids.push((await store.insert('t', { n: i })).id);
+      store.configureCipher(slowCipher());
+      return { store, ids };
+    }
+
+    it('移行中の update が写しに踏み潰されない', async () => {
+      const { store, ids } = await seed(20);
+      const migrating = store.reencryptAll();
+      await new Promise((r) => setTimeout(r, 1));
+      await store.update(ids[19]!, { edited: true } as never);
+      await migrating;
+      expect((await store.get(ids[19]!))?.data, '移行が古い写しで上書きした').toEqual({
+        n: 19,
+        edited: true,
+      });
+    });
+
+    it('移行中に消した record が復活しない', async () => {
+      const { store, ids } = await seed(20);
+      const migrating = store.reencryptAll();
+      await new Promise((r) => setTimeout(r, 1));
+      await store.remove(ids[18]!);
+      await migrating;
+      expect(await store.get(ids[18]!), '移行が写しから書き戻した').toBeNull();
+    });
+
+    it('触られなかった record は普通に移行される (数え落としが無い)', async () => {
+      const { store, ids } = await seed(8);
+      const migrated = await store.reencryptAll();
+      expect(migrated, '移行件数が合わない').toBe(8);
+      for (let i = 0; i < ids.length; i++) {
+        expect((await store.get(ids[i]!))?.data).toEqual({ n: i });
+      }
+    });
+
+    it('消された分は移行件数から外れる', async () => {
+      const { store, ids } = await seed(6);
+      await store.remove(ids[0]!);
+      expect(await store.reencryptAll(), '消えた分を数えている').toBe(5);
+    });
   });
 });
