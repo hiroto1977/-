@@ -388,13 +388,29 @@ const FORBIDDEN_PATTERNS = [
     // `escMd = s => s.replace(/\|/g, '\\|')` は網に掛からなかった。
     // 形が違うだけで守っているものは同じ (書き出したファイルに利用者や
     // AI の応答が埋まる経路) なので、同じ 1 つへ寄せる。
-    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>|\\\|\/g)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b/i,
+    // 2026-08-23: **危ない方が素通りしていた。** 上の 3 つは「`&` を `&amp;` に
+    // する」「`[&<>…]` の文字クラス」を見るので、*正しく書けている*写経しか
+    // 掛からない。実測すると
+    //
+    //     s.replace(/&/g, '&amp;').replace(/</g, '&lt;')   → 鳴る
+    //     s.replace(/</g, '&lt;').replace(/>/g, '&gt;')    → 鳴らない  ← 危ない方
+    //
+    // で、後者は `"` と `'` を落としていない —— 属性に埋めると値から抜け出せる。
+    // `gen-econ-asset-chart.cjs` で実際に起きた形そのもの (下の rationale)。
+    // 実体参照を**作り出している** `.replace(…, '&lt;')` を最後の枝で見る。
+    // 復号側 (`.replace(/&lt;/g, '<')`) は置換先が実体参照でないので掛からない。
+    pattern: /\.replace\(\s*\/(?:&\/g\s*,\s*'&amp;'|\[&<>|\\\|\/g)|\[0-9a-fA-F\]\{6\}|===\s*0x7f\b|\.replace\([^)]*,\s*'&(?:lt|gt|quot|amp|#39|#x27);'/i,
     // 出荷コード (src/**) だけを見る。scripts/ の図生成は素の CJS で
     // TS の共有実装を読めないため対象外にしている — ただし落とす文字は
     // 揃えてある (2026-08 に gen-econ-asset-chart.cjs だけ " と ' を
     // 残していたのを合わせた)。
     allowFile: (rel) =>
-      !rel.startsWith('src/') || rel === 'src/shared/escape.ts' || rel === 'src/shared/controlChars.ts',
+      !rel.startsWith('src/') ||
+      rel === 'src/shared/escape.ts' ||
+      rel === 'src/shared/controlChars.ts' ||
+      // 出口のエスケープではない (台帳の注記を参照)。件数つきで留めてあるので、
+      // このファイルに 2 つめが増えれば鳴る。
+      rel === 'src/shared/securityRange.ts',
     codeOnly: true,
     rationale:
       'escape.ts の冒頭に「アプリ全体で 1 つだけ持つ」と書いてあるのに、' +
@@ -563,10 +579,16 @@ const KNOWN_SUPPRESSIONS = [
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 1',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 1',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 4',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 10',
+  // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は
+  // レッドチーム用に「実体参照で符号化した攻撃文字列」を*作る*側で、
+  // 検出器がそれを見破れるかを試すためのもの。同じファイルの
+  // `normalizeForDetection` は逆に実体参照を*復号*する (置換先が
+  // 実体参照でないので、この規則には最初から掛からない)。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/securityRange.ts :: 1',
   'new Function :: orchestration/knowledge-context.cjs :: 1',
   'redactSecrets(x.slice(…)) — 切ってから伏せている :: src/shared/redact.ts :: 1',
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/overflow-check.cjs :: 1',
