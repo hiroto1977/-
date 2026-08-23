@@ -80,6 +80,14 @@ const MUST_MEASURE = {
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',
   'src/renderer/oauth/pkce.ts':      'ブラウザ版 PKCE',
+  // 2026-08-23 追加。PKCE の一時秘密 (`code_verifier`) を置く・読む・**消す**
+  // 唯一の場所。掃除が効かなくなると、`state` 不一致 (CSRF の疑い) で
+  // 失敗したときに秘密が sessionStorage へ残る。
+  'src/renderer/oauth/pkceSession.ts': 'PKCE の一時秘密の置き場と消し方',
+  // 同日追加。どちらも既に `mutate` には在ったが「必ず測る壁」の名簿には
+  // 無く、**一覧から外しても誰も鳴らない**状態だった。
+  'src/main/externalUrlGate.ts':     'OS に URL を開かせてよいかの唯一の関門',
+  'src/shared/httpLimits.ts':        '打ち切りと応答サイズの上限 (全通信が通る)',
   'src/main/oauth.ts':               '認可の送り先と PKCE',
   'src/shared/redact.ts':            'ログに載せる前の伏字',
   'src/shared/escape.ts':            'マークアップへ差し込む前のエスケープ',

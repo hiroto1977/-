@@ -131,19 +131,19 @@ function checkTable(table = SIMPLIFIED, never = NEVER_FLAG) {
 const ALLOWLIST = new Map([
   [
     'orchestration/knowledge-merge-plan.json::엄',
-    '混入を修正した記録そのもの（『엄밀にはPLTではない』→『厳密に』と書いてある）',
+    { n: 1, why: '混入を修正した記録そのもの（『엄밀にはPLTではない』→『厳密に』と書いてある）' },
   ],
   [
     'orchestration/knowledge-merge-plan.json::밀',
-    '同上（修正記録の引用）',
+    { n: 1, why: '同上（修正記録の引用）' },
   ],
   [
     'orchestration/knowledge-merge-plan.json::섭',
-    '同上（『섭식障害』→『摂食障害』の修正記録）',
+    { n: 1, why: '同上（『섭식障害』→『摂食障害』の修正記録）' },
   ],
   [
     'orchestration/knowledge-merge-plan.json::식',
-    '同上（修正記録の引用）',
+    { n: 1, why: '同上（修正記録の引用）' },
   ],
 ]);
 
@@ -194,16 +194,36 @@ function lineOf(text, index) {
  * @returns `{ findings, seenKeys }` — seenKeys は台帳の双方向検証に使う
  *   (載っているのに一度も現れなければ、その項目はもう古い)。
  */
+/**
+ * **台帳は「何件まで許すか」まで持つ。**
+ *
+ * 2026-08-23 まで鍵は `パス::字` だけで、件数を見ていなかった。つまり
+ * **免除済みの字は、そのファイルの中なら何度でも増やせた** ——
+ * 実測で確認済み (別の場所へ `엄` をもう 1 件足しても緑のまま通った)。
+ * `lint:forbidden` の例外台帳と同じ穴で、直し方も同じ。
+ *
+ * 免除は「この記録に 1 回出てくる」ことへの免除であって、
+ * 「この字はこのファイルで自由」ではない。
+ */
 function scanText(rel, text, allow = ALLOWLIST) {
   const findings = [];
   const seenKeys = new Set();
+  /** 鍵ごとに何件目かを数える。許された件数を超えた分だけ findings に載る。 */
+  const seenCount = new Map();
+
+  const allowed = (key) => {
+    const entry = allow.get(key);
+    const nth = (seenCount.get(key) ?? 0) + 1;
+    seenCount.set(key, nth);
+    return entry !== undefined && nth <= entry.n;
+  };
 
   for (const { name, re } of SCRIPT_RANGES) {
     re.lastIndex = 0;
     for (const m of text.matchAll(re)) {
       const key = `${rel}::${m[0]}`;
       seenKeys.add(key);
-      if (allow.has(key)) continue;
+      if (allowed(key)) continue;
       findings.push({
         rel, line: lineOf(text, m.index), char: m[0], kind: name,
         hint: null, context: context(text, m.index),
@@ -219,7 +239,7 @@ function scanText(rel, text, allow = ALLOWLIST) {
       from = i + 1;
       const key = `${rel}::${simp}`;
       seenKeys.add(key);
-      if (allow.has(key)) continue;
+      if (allowed(key)) continue;
       findings.push({
         rel, line: lineOf(text, i), char: simp, kind: '簡体字',
         hint: jp, context: context(text, i),
@@ -265,11 +285,31 @@ function selfTest() {
   }
 
   // 台帳は双方向 — 載っていれば黙り、載っているのに現れなければ古い。
-  const allow = new Map([['t.md::债', '理由']]);
+  const allow = new Map([['t.md::债', { n: 1, why: '理由' }]]);
   const muted = scanText('t.md', '债務の話', allow);
   const mutedOk = muted.findings.length === 0 && muted.seenKeys.has('t.md::债');
   if (!mutedOk) failed += 1;
   console.log(`  ${mutedOk ? '✓' : '✗'} 台帳に載っていれば黙る (かつ「見た」と記録する): ${muted.findings.length} 件 / seen=${muted.seenKeys.has('t.md::债')} (期待 0 件 / seen=true)`);
+
+  /*
+   * **免除は件数まで。** 2026-08-23 まで鍵は `パス::字` だけで、
+   * 免除済みの字はそのファイルの中なら何度でも増やせた。
+   * 1 件だけ許した台帳で 2 件出れば、超えた 1 件が鳴る。
+   */
+  const twice = scanText('t.md', '债務と债権の話', allow);
+  const twiceOk = twice.findings.length === 1;
+  if (!twiceOk) failed += 1;
+  console.log(`  ${twiceOk ? '✓' : '✗'} 免除 1 件の字が 2 回出れば超えた分が鳴る: ${twice.findings.length} 件 (期待 1)`);
+
+  const allowTwo = new Map([['t.md::债', { n: 2, why: '理由' }]]);
+  const twoOk = scanText('t.md', '债務と债権の話', allowTwo).findings.length === 0;
+  if (!twoOk) failed += 1;
+  console.log(`  ${twoOk ? '✓' : '✗'} 2 件まで許していれば 2 件は黙る (境界): ${twoOk ? 0 : 'x'} 件 (期待 0)`);
+
+  const three = scanText('t.md', '债務と债権と债券', allowTwo).findings.length;
+  const threeOk = three === 1;
+  if (!threeOk) failed += 1;
+  console.log(`  ${threeOk ? '✓' : '✗'} 2 件まで許して 3 件出れば 1 件鳴る (境界+1): ${three} 件 (期待 1)`);
 
   const absent = scanText('t.md', '債務の話', allow);
   const staleOk = [...allow.keys()].filter((k) => !absent.seenKeys.has(k)).length === 1;
