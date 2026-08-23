@@ -663,10 +663,18 @@
       "leafCount": 36,
       "note": "update ci.yml",
       "hash": "d7313537088d8825610404745676a304ad8b02ac6069c4fd65c7348c0d6f2abe"
+    },
+    {
+      "index": 78,
+      "prevHash": "d7313537088d8825610404745676a304ad8b02ac6069c4fd65c7348c0d6f2abe",
+      "merkleRoot": "52ea2bdc47a0cadc7fed1db953e049df84581110244aa8c0a6def74bc9361ec1",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "04847bd2791be2972d65f7a58624d4f81cb55fd0f12630ed090f8d92358753a1"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "f88c8f448dd62200777b998a099b7dfdc7118fa35af45d772ff5ba9abc7088c6",
+    ".github/workflows/ci.yml": "c5f57770a81e0220b73e7f02cf4657d9c2f90c2899afa7de78e2fa40f3635b01",
     ".github/workflows/pages.yml": "dcfbdb811f6d094c98c05b0cd1bb4393ac760b72ba06dff5f8881b0eabfada65",
     ".github/workflows/release.yml": "2f75bd96f049f28e8de81cec65c0829403259fcfebc9e53f3810c251e6d2367c",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
