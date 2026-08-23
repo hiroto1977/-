@@ -268,6 +268,15 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
     // ハンドラ**である。今日の `setToken` は fs エラー (userData のパスが載る)
     // しか投げないが、片側だけ関門の外に居る状態を残さない。
     // `safeErrorMessage` は伏字に加えて長さも切る。
+    //
+    // **この「13 本のうち」という数え方は足りなかった (2026-08-23)。**
+    // ハンドラの `message` 欄は数えたが、**ハンドラが返す*データの中*に載る
+    // 文言**を数えていない。実測すると 2 経路が関門の外に居た:
+    //   action:invoke  → assistant.chatAll の `answers[].error`
+    //   fetch:snapshot → ollama スナップショットの `warnings[]`
+    // どちらも `sk-ant-...` を含む例外を**逐語で** renderer へ渡していた。
+    // 数える単位は「ハンドラ」ではなく **「外へ出る値に載る文言」**である。
+    // `main/__tests__/rendererBoundMessages.test.ts` が実測で留めている。
     return { ok: false, code: 'write_failed', message: safeErrorMessage(e) };
   }
   return { ok: true };

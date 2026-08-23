@@ -23,6 +23,7 @@
  */
 
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { redactForMessage } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import {
   configForProvider,
@@ -215,7 +216,17 @@ async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] 
         return { provider: id, model: result.model, text: result.text, ok: true };
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        return { provider: id, model: '', text: '', ok: false, error: msg.slice(0, 300) };
+        // **伏字の合流点を通す。** `runAiChat` が投げる文言は既に
+        // `redactForMessage` 済みだが、ここは*どんな例外でも*受ける ——
+        // 実測すると `sk-ant-...` を含む例外がそのまま renderer へ届いていた
+        // (2026-08-23)。`redactForMessage` は長さ上限も掛けるので `slice` は不要。
+        return {
+          provider: id,
+          model: '',
+          text: '',
+          ok: false,
+          error: redactForMessage(msg, 300),
+        };
       }
     }),
   );

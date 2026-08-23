@@ -18,6 +18,7 @@
 
 import {
   FetchError,
+  redactForMessage,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -148,7 +149,10 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    warnings.push(`Ollama unreachable at ${OLLAMA_BASE}: ${msg.slice(0, 100)}`);
+    // `warnings[]` も renderer へ届く文言なので**伏字の合流点を通す**。
+    // 相手が loopback でも、例外の文言は fetch の実装や下位ライブラリ由来で
+    // 何が入るか決められない (2026-08-23 に実測で漏れを確認)。
+    warnings.push(`Ollama unreachable at ${OLLAMA_BASE}: ${redactForMessage(msg, 100)}`);
   }
 
   const versionSafe = isVersionSafe(version);
@@ -186,7 +190,8 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
         });
       }
     } catch (err) {
-      warnings.push(`Listing models failed: ${(err as Error).message.slice(0, 100)}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      warnings.push(`Listing models failed: ${redactForMessage(msg, 100)}`);
     }
   }
 
