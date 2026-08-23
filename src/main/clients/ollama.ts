@@ -26,6 +26,8 @@ import {
 // 判定ロジックは main / renderer 共通 (src/shared/ollama.ts) に 1 つだけ置く。
 // ブラウザ版 (renderer/network/ollamaWeb.ts) が同じ制約で動くための単一の真実。
 import {
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
   MIN_SAFE_VERSION,
   UNPATCHED_OOB_NOTICE,
   adviseFromBody,
@@ -41,6 +43,11 @@ export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
 const REQUEST_TIMEOUT_MS = 30_000;
+// **ブラウザ版 (`renderer/network/ollamaWeb.ts`) は 2 MB で、ここだけ 10 MB。**
+// 2026-08-23 に気付いて明記した —— どこにも理由が書かれておらず、意図した
+// 差なのか流されたのか判別できなかった。値は動かしていない (ブラウザ版の
+// 2 MB は画面の「セキュリティポリシー」欄に出ており、変えると表示も変わる)。
+// **揃えるか、違う理由を書くか**は、どちらが正しいか分かる人が決めること。
 const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
 
 /** Hard allowlist of Ollama endpoints this client is permitted to touch.
@@ -249,8 +256,8 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   }
 
   const messages: OllamaChatMessage[] = [];
-  if (system) messages.push({ role: 'system', content: systemStr.slice(0, 8192) });
-  messages.push({ role: 'user', content: promptStr.slice(0, 32768) });
+  if (system) messages.push({ role: 'system', content: systemStr.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
+  messages.push({ role: 'user', content: promptStr.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
 
   const f = ctx.fetch ?? fetch;
   const res = await withTimeout(

@@ -54,6 +54,18 @@ export const DEFAULT_SETUP_MODEL = 'llama3.2:1b';
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
 
 /** 呼んでよいパス。書き込み系は意図的に含めない。 */
+/**
+ * チャットに載せる入力の上限 —— **両ビルドで 1 つだけ持つ。**
+ *
+ * 2026-08-23 まで、ブラウザ版は `MAX_SYSTEM_CHARS` / `MAX_PROMPT_CHARS` と
+ * いう名前で持ち、main は `slice(0, 8192)` / `slice(0, 32768)` と**字面で
+ * 書いていた**。値は一致していたので壊れてはいないが、片方を動かしても
+ * もう片方は動かない —— `emotionsLimits` / `recordEntryLimits` /
+ * `assistantLimits` と同じ形なので、同じ扱いにする。
+ */
+export const MAX_OLLAMA_SYSTEM_CHARS = 8_192;
+export const MAX_OLLAMA_PROMPT_CHARS = 32_768;
+
 export const OLLAMA_READ_PATHS = ['/api/version', '/api/tags', '/api/chat'] as const;
 export type OllamaReadPath = (typeof OLLAMA_READ_PATHS)[number];
 

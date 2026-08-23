@@ -34,6 +34,8 @@ import {
   extractOllamaError,
   isSafeModelName,
   isVersionSafe,
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
   normalizeModels,
   parseOllamaEndpoint,
   type OllamaErrorAdvice,
@@ -60,6 +62,9 @@ export function loadEndpointSetting(): string {
 /** 疎通確認 (probe) の待ち時間。チャットは `CHAT_TIMEOUT_MS`。 */
 export const REQUEST_TIMEOUT_MS = 5_000;
 /** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
+// **main (`main/clients/ollama.ts`) は 10 MB で、こちらだけ 2 MB。**
+// 理由がどこにも書かれていないので明記した (2026-08-23)。値は動かして
+// いない —— この値は画面の「セキュリティポリシー」欄に出ている。
 export const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
 
 /** 接続診断の結果種別。UI はこれを見て出す文言を変える。 */
@@ -374,8 +379,7 @@ export async function probeOllama(
 /** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
 export const CHAT_TIMEOUT_MS = 120_000;
 /** 送信サイズの上限 (main プロセス側の chat と同じ)。 */
-const MAX_SYSTEM_CHARS = 8_192;
-const MAX_PROMPT_CHARS = 32_768;
+// 上限は `shared/ollama.ts` に 1 つだけ置く (main も同じものを読む)。
 
 export type OllamaChatOutcome =
   | { ok: true; reply: string; durationMs: number }
@@ -426,8 +430,8 @@ export async function chatOllama(
   const url = buildOllamaUrl(base, '/api/chat', pageHostname)!;
 
   const messages: { role: string; content: string }[] = [];
-  if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_SYSTEM_CHARS) });
-  messages.push({ role: 'user', content: prompt.slice(0, MAX_PROMPT_CHARS) });
+  if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
+  messages.push({ role: 'user', content: prompt.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
 
   const started = now();
   let res: Response;
