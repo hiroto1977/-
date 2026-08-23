@@ -5,7 +5,7 @@ import {
   MAX_TEXT_PREVIEW_CHARS,
   previewBlocker,
   previewKind,
-  truncateForPreview,
+  readTextForPreview,
 } from '../library/preview';
 
 const SERVICE_ICONS: Record<string, string> = {
@@ -95,12 +95,14 @@ export function LibraryPage() {
       setShown({ filename: item.filename, mime: item.mime, kind: 'image', body: dataUrl, truncated: false });
       return;
     }
-    const raw = await item.blob.text().catch(() => null);
-    if (raw === null) {
+    // 読む所と切る所は `readTextForPreview` の中で 1 つになっている
+    // (ここで切ると、消えたことを留められない)。
+    const read = await readTextForPreview(item.blob).catch(() => null);
+    if (read === null) {
       setMsg('プレビューを生成できませんでした');
       return;
     }
-    const { text, truncated } = truncateForPreview(raw);
+    const { text, truncated } = read;
     setShown({ filename: item.filename, mime: item.mime, kind: 'text', body: text, truncated });
   }
 
