@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
-import { IDENTITY_CIPHER, isSealedData } from '../recordCipher';
+import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from '../recordCipher';
 import { deriveAesKey, sealWithKey } from '../../security/dataCrypto';
 import {
   isEncryptionEnabled,
@@ -21,6 +21,67 @@ function clearIdb(): Promise<void> {
     req.onblocked = () => resolve();
   });
 }
+
+
+/*
+ * **移行が途中で落ちても salt を失わない。**
+ *
+ * `enableEncryption` は 2026-08-23 まで `reencryptAll()` の**後**に
+ * meta (salt + KCV) を保存していた。`reencryptAll` はレコード 1 件ずつ
+ * 別のトランザクションで書くので途中で落ちうる (容量超過・タブを閉じた・
+ * IndexedDB のエラー)。落ちると **封緘済みレコードは出来ているのに
+ * salt が無い** —— `IDENTITY_CIPHER.decrypt` が明示的に投げるので黙って
+ * 壊れはしないが、**正しいパスフレーズを知っていても鍵を作れない**。
+ *
+ * 解除側 (`disableEncryption`) は最初から正しい順序 (復号を全部終えてから
+ * `clearMeta()`) だった。有効化側だけが逆だった。
+ *
+ * ここで留めるのは**順序**そのもの —— 移行が始まる時点で meta が既に
+ * 保存されていること。
+ */
+describe('有効化の順序 — meta は移行より先に保存される', () => {
+  it('reencryptAll が呼ばれる時点で meta が既に在る', async () => {
+    const store = getRecordStore();
+    await store.insert('sales', { amount: 1 });
+
+    let metaAtMigration: string | null = 'not-called';
+    const real = store.reencryptAll.bind(store);
+    const spy = vi
+      .spyOn(store, 'reencryptAll')
+      .mockImplementation(async (from?: RecordCipher) => {
+        metaAtMigration = localStorage.getItem(LS_KEY);
+        return real(from);
+      });
+    try {
+      await enableEncryption('correct-horse');
+    } finally {
+      spy.mockRestore();
+    }
+
+    expect(metaAtMigration, 'reencryptAll が呼ばれていない — 検査が的を外している')
+      .not.toBe('not-called');
+    expect(metaAtMigration, '移行の時点で meta が保存されていない (salt を失う順序)')
+      .not.toBeNull();
+    expect(JSON.parse(metaAtMigration as string)).toMatchObject({ enabled: true });
+  });
+
+  it('移行が落ちても salt は残り、パスフレーズで読み直せる', async () => {
+    const store = getRecordStore();
+    await store.insert('sales', { amount: 1 });
+
+    const spy = vi.spyOn(store, 'reencryptAll').mockRejectedValue(new Error('quota exceeded'));
+    try {
+      await expect(enableEncryption('correct-horse')).rejects.toThrow('quota exceeded');
+    } finally {
+      spy.mockRestore();
+    }
+
+    // salt が残っているので、アンロックして読み直せる。
+    expect(isEncryptionEnabled(), 'meta が消えている — salt を失っている').toBe(true);
+    expect(await unlockEncryption('correct-horse')).toBe(true);
+    expect((await getRecordStore().list('sales')).length).toBe(1);
+  });
+});
 
 beforeEach(async () => {
   _resetRecordStoreForTests();

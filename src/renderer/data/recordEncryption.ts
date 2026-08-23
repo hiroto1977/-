@@ -78,10 +78,34 @@ export async function enableEncryption(password: string): Promise<void> {
 
   const cipher = await createPassphraseRecordCipher(password, salt);
   const store = getRecordStore();
+
+  /*
+   * **meta を移行より先に保存する。** (2026-08-23)
+   *
+   * 以前は `reencryptAll()` の**後**に保存していた。`reencryptAll` は
+   * レコード 1 件ずつ別のトランザクションで書くので、途中で落ちうる
+   * (容量超過・タブを閉じた・IndexedDB のエラー)。落ちると:
+   *
+   *   封緘済みのレコード … 何件か出来ている
+   *   salt              … 保存されていない  ← **二度と作れない**
+   *
+   * `IDENTITY_CIPHER.decrypt` は封緘を見つけると明示的に投げるので
+   * 黙って壊れはしないが、**正しいパスフレーズを知っていても
+   * 鍵を導出できない** (salt が無い)。実測で確認した。
+   *
+   * 先に保存すれば、途中で落ちても失うものが無い ——
+   * パスフレーズ側の `decrypt` は**平文を素通しする**ので、
+   * 封緘済みと平文が混ざった状態をそのまま読めるし、
+   * `reencryptAll` を再実行すれば完了できる。この素通しは
+   * まさにこの状態のために在る。
+   *
+   * (解除側 `disableEncryption` は最初から正しい順序だった ——
+   *  復号を全部終えてから `clearMeta()` する。同じ理屈を
+   *  有効化側にも当てる。)
+   */
+  saveMeta({ enabled: true, salt, kcv });
   store.configureCipher(cipher);
   await store.reencryptAll(); // 既存平文 → 封緘 (decrypt は素通し)
-
-  saveMeta({ enabled: true, salt, kcv });
 }
 
 /**
