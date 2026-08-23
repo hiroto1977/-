@@ -15,6 +15,9 @@
 
 const crypto = require('node:crypto');
 const fs = require('node:fs');
+// 仕上がり文書の検算は **inline-html.cjs の実物**を借りる。同じ判定を書き写すと、
+// 比べているのが写しになる (このリポジトリで何度も出た形)。
+const { assertPinnedScripts } = require('./inline-html.cjs');
 
 /** SW 登録スニペット本体。CSP ハッシュはこの定数から導出するので両者はズレない。 */
 const SW_REGISTER_JS =
@@ -112,7 +115,80 @@ function injectPwaTags(html) {
   if (moduleScriptRegion(out) !== moduleScriptRegion(html)) {
     throw new Error('inject-pwa: 注入がモジュールスクリプトを破壊しました (注入位置バグ)');
   }
+  assertHashesPreserved(html, out);
   return out;
+}
+
+/**
+ * CSP メタの content 属性値。無ければ null (自動生成ランディングには CSP が無い)。
+ *
+ * `withSwScriptHash` と**同じ切り出し方** — 最初の `<script` より前だけを見る。
+ * バンドルは CSP メタの字面を文字列として持ちうるので (`injectPwa.test.ts` の
+ * 「バンドルが文字列として CSP メタを含んでいても」参照)、全文から探すと
+ * そちらを掴む余地が残る。読む側と書く側で切り出しを揃えておく。
+ */
+function policyOf(html) {
+  const limit = html.indexOf('<script');
+  const head = limit === -1 ? html : html.slice(0, limit);
+  const m = CSP_META_RE.exec(head);
+  return m === null ? null : m[1];
+}
+
+/** ポリシーに載っている script ハッシュ。 */
+function scriptHashesIn(policy) {
+  return [...policy.matchAll(/'sha(?:256|384|512)-[A-Za-z0-9+/=]+'/g)].map((m) => m[0]);
+}
+
+/**
+ * **注入で既存のハッシュを 1 つも落としていないこと。**
+ *
+ * 上の 2 つのガードでは足りない。`moduleScriptRegion` はスクリプトの**本文**を
+ * 比べるだけで CSP を見ないし、CLI 側の検査は SW スニペットのハッシュが在るか
+ * しか見ない。つまり `withSwScriptHash` が CSP を組み損ねて**バンドル本体の
+ * ハッシュを落とした**場合、どちらも通ってしまう。そのとき公開されるのは
+ * 「自分の 11MB のバンドルを CSP が拒否する頁」= 白画面で、console にしか
+ * 痕跡が出ない。
+ *
+ * ここは「入力が正しくピン留めされていたか」は問わない (それは inline-html.cjs の
+ * 仕事)。問うのは**注入が壊していないか**だけなので、CSP を持たない頁も、
+ * ハッシュを使わない頁も自然に通る。
+ */
+function assertHashesPreserved(before, after) {
+  const src = policyOf(before);
+  if (src === null) return;
+  const had = scriptHashesIn(src);
+  if (had.length === 0) return;
+  const now = new Set(scriptHashesIn(policyOf(after) ?? ''));
+  const lost = had.filter((h) => !now.has(h));
+  if (lost.length > 0) {
+    throw new Error(
+      `inject-pwa: 注入で script ハッシュが ${lost.length} 個消えました ` +
+        `(その分のスクリプトは CSP に拒否されます): ${lost.join(' , ')}`,
+    );
+  }
+}
+
+/**
+ * 公開してよい形か — **元からハッシュでピン留めしている頁に限り**、仕上がり文書を
+ * ブラウザと同じ手順で読み直して inline script が全部 CSP に載っているか見る。
+ *
+ * `injectPwaTags` 側ではなくここに置くのは、この検算が「入力そのものが正しく
+ * ピン留めされていること」まで要求するため。それは `inline-html.cjs` の仕事で、
+ * 注入の事後条件ではない。**実物を公開する経路 (CLI) にだけ**当てる。
+ *
+ * 対象かどうかは **`before` で決める**。`after` で決めると、注入が必ず足す
+ * SW のハッシュのせいで「元はハッシュを使っていなかった頁」まで対象に入り、
+ * 注入とは無関係な既存の不備を注入のせいにして落としてしまう
+ * (`script-src 'self'` に inline script、という形が実際にそうなった)。
+ */
+function assertPublishable(before, after, label) {
+  const src = policyOf(before);
+  if (src === null || scriptHashesIn(src).length === 0) return;
+  try {
+    assertPinnedScripts(after);
+  } catch (e) {
+    throw new Error(`inject-pwa: ${label} は公開できません — ${e.message}`, { cause: e });
+  }
 }
 
 function main() {
@@ -124,7 +200,9 @@ function main() {
   for (const file of files) {
     const before = fs.readFileSync(file, 'utf8');
     const after = injectPwaTags(before);
-    fs.writeFileSync(file, after);
+    // **検査してから書く。** 以前は書いてから検べており、落ちた時点で壊れた
+    // ファイルが既に disk に在った。今は次の段 (upload) が走らないので公開は
+    // されないが、「取り返しのつく順序」にしておく。
     if (!after.includes('rel="manifest"')) {
       console.error(`inject-pwa: 注入に失敗 (${file})`);
       process.exit(1);
@@ -134,6 +212,9 @@ function main() {
       console.error(`inject-pwa: SW スニペットが CSP に未ピン留め (${file})`);
       process.exit(1);
     }
+    // ハッシュでピン留めしている頁は、仕上がりを読み直して全部載っているか見る。
+    assertPublishable(before, after, file);
+    fs.writeFileSync(file, after);
     console.log(`inject-pwa: ${file} に PWA タグを注入${before === after ? ' (既存・無変更)' : ''}`);
   }
 }
@@ -142,6 +223,10 @@ if (require.main === module) main();
 
 module.exports = {
   injectPwaTags,
+  assertHashesPreserved,
+  assertPublishable,
+  policyOf,
+  scriptHashesIn,
   findRealHeadClose,
   moduleScriptRegion,
   withSwScriptHash,

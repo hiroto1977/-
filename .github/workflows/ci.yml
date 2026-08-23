@@ -94,6 +94,23 @@ jobs:
             exit 1
           fi
 
+      # 公開経路と同じ後段 (inject-pwa) を、**実物**に当てる。
+      #
+      # 2026-07-24 の Pages 障害 (PWA タグがバンドルの真ん中へ splice されて
+      # 公開版が開けなくなった) は、e2e もアーティファクト検査も**注入前の**
+      # ファイルを見ていたため公開して初めて分かった。inject-pwa 自身は
+      # 3 つのガード (注入位置 / SW ハッシュ / 既存ハッシュの保全) を持つが、
+      # pages.yml は main でしか走らないので、それが実物に当たるのは
+      # merge 後になる。ここで当てておけば PR の段階で落ちる。
+      # dist/ は build:web:lite が空にするので、その前に控えを取る。
+      - name: Verify PWA injection on the real artifacts
+        run: |
+          mkdir -p /tmp/inject-check
+          cp dist/standalone.html /tmp/inject-check/app.html
+          node scripts/inject-pwa.cjs /tmp/inject-check/app.html
+          # 冪等であること (pages.yml は同じファイルに 2 度当たりうる)。
+          node scripts/inject-pwa.cjs /tmp/inject-check/app.html
+
       # Pages 専用ビルド (pages.yml は main でしか走らない) を PR 段階で検証する。
       # 2026-07 の landing 自己検証落ち (士業カテゴリ追従漏れ) の再発防止。
       # 各スクリプトは自己検証付きなので、走らせること自体がテストになる。
@@ -126,3 +143,12 @@ jobs:
             PCT=$((SIZE * 100 / 4000000))
             echo "::warning::standalone-lite.html が上限 4MB の ${PCT}% ($SIZE B) に達しています。LITE はスマホ回線向けなので、次の増加で天井に当たる前に何を積んでいるか確認してください。"
           fi
+
+      # 残りの公開対象 (LITE とランディング) にも同じ後段を当てる。
+      # ランディングは CSP を持たないので、注入は通るが CSP 追記は起きない
+      # —— その「起きないこと」も含めて経路が壊れていないことを見る。
+      - name: Verify PWA injection on lite + landing
+        run: |
+          cp dist/standalone-lite.html /tmp/inject-check/lite.html
+          cp dist/landing.html /tmp/inject-check/index.html
+          node scripts/inject-pwa.cjs /tmp/inject-check/lite.html /tmp/inject-check/index.html
