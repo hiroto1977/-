@@ -52,6 +52,7 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../shared/emotionsLimits';
+import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import { bearerFromStoredToken } from '../shared/vaultToken';
@@ -861,8 +862,29 @@ const shim = {
   },
 
   openExternal: (url: string): Promise<void> => {
-    if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+    /*
+     * **デスクトップ版と同じ関門を通す** (2026-08-23)。
+     *
+     * 以前はここだけ `/^https?:\/\//i` の字面検査だった。同じ判断の 2 実装で、
+     * 攻撃入力 29 種で突き合わせると **6 種で答えが割れた**:
+     *
+     * ```
+     *   "https://\njavascript:alert(1)"  main=false browser=true
+     *   "http://\u0000evil"              main=false browser=true
+     *   "https:/\\evil.com"              main=true  browser=false
+     *   "https:example.com"              main=true  browser=false
+     * ```
+     *
+     * 前 2 つが効く: 字面は `https://` で始まるので通るが、**実際に開かれる
+     * のは解析後の URL** で、検査したものとは別物である。
+     * 後ろ 4 つは逆に、正当なリンクを黙って開かない。
+     *
+     * `externalUrlOrNull` は**解析してから判定し、正規化した形を返す** ので、
+     * 「調べたもの」と「開くもの」が一致する。実装を 1 つにして差を消した。
+     */
+    const safe = externalUrlOrNull(url);
+    if (safe !== null) {
+      window.open(safe, '_blank', 'noopener,noreferrer');
     }
     return Promise.resolve();
   },

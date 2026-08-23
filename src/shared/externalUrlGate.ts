@@ -1,6 +1,31 @@
 /**
- * externalUrlGate — レンダラー由来の URL を electron の `shell` へ渡してよいか
- * 判定する**唯一の関門**。
+ * externalUrlGate — 外へ開く URL を判定する**唯一の関門**。
+ * デスクトップ版は electron の `shell` へ、ブラウザ版は `window.open` へ渡す。
+ *
+ * ## なぜ shared に居るか (2026-08-23 に main から移した)
+ *
+ * ブラウザ版 (`web-shim.ts` の `openExternal`) が**別の実装**を持っていた ——
+ * `/^https?:\/\//i` という字面検査である。攻撃入力 29 種で突き合わせると
+ * **6 種で答えが割れた**:
+ *
+ * ```
+ *   "https://\njavascript:alert(1)"   main=false  browser=true
+ *   "http://\u0000evil"               main=false  browser=true
+ *   "https:/\\evil.com"               main=true   browser=false
+ *   "https:example.com"               main=true   browser=false
+ *   "https:/example.com"              main=true   browser=false
+ *   "https\t://example.com"           main=true   browser=false
+ * ```
+ *
+ * **前 2 つが効く構図である。** 字面は `https://` で始まるので通るが、
+ * `window.open` が実際に開くのは**解析後の URL** で、検査した文字列とは
+ * 別物になりうる。ブラウザは URL 中の改行や NUL を落として解釈するので、
+ * 「調べたもの」と「開くもの」がずれる。今日のブラウザではどちらも
+ * 無害化されるが、**検査が別物を見ている**という形そのものが穴である。
+ * 後ろ 4 つは逆向きの害で、正当なリンクを黙って開かない。
+ *
+ * この関数は**解析してから判定し、正規化した形を返す**ので、
+ * 「調べたもの」と「開くもの」が一致する。実装を 1 つにして差を消した。
  *
  * `shellOpenGate.ts` が「OS にファイルを開かせてよいか」の関門なら、こちらは
  * 「OS に URL を開かせてよいか」の関門である。`javascript:` / `data:` は

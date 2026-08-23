@@ -50,7 +50,7 @@
     "src/main/main.ts",
     "src/main/oauth.ts",
     "src/main/secrets.ts",
-    "src/main/externalUrlGate.ts",
+    "src/shared/externalUrlGate.ts",
     "src/shared/httpLimits.ts",
     "src/main/shellOpenGate.ts",
     "src/preload/preload.ts",

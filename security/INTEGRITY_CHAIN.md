@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 67
+- ブロック数: 68
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `b51a09ec99d231b894d09bf873fb88464eefc0f714e20342918649f5ceda5472`
+- 末尾(tip)ハッシュ: `06da6bae65e13f54c84a6161a6061e60402a7ba9a4bc4debd6436128968718dd`
 - 保護対象: 36 ファイル
 
 ## ブロック
@@ -80,6 +80,7 @@
 | 64 | `b15b3fdcd5f333e8` | `1972d6f2f55469fd` | `8bc5c0003c47e292` | update integrity-chain.cjs,types.ts |
 | 65 | `46767fc14a000f1d` | `8bc5c0003c47e292` | `dfda63e2c72a718a` | update integrity-chain.cjs |
 | 66 | `09d4b6567698d5ad` | `dfda63e2c72a718a` | `b51a09ec99d231b8` | update main.ts |
+| 67 | `e40912bd16556ec0` | `b51a09ec99d231b8` | `06da6bae65e13f54` | update integrity-chain.cjs,main.ts,externalUrlGate.ts,-externalUrlGate.ts |
 
 ## 保護対象ファイル
 
@@ -96,7 +97,6 @@
 - `src/main/atomicWrite.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
-- `src/main/externalUrlGate.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
@@ -114,6 +114,7 @@
 - `src/shared/aiEndpoint.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
+- `src/shared/externalUrlGate.ts`
 - `src/shared/httpLimits.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`

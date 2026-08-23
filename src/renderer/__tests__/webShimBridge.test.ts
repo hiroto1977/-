@@ -123,7 +123,6 @@ describe('openExternal — ブラウザ版でもスキームを絞る', () => {
       'ssh://evil.example',
       'about:blank',
       '//example.com/protocol-relative',
-      ' https://example.com',
       '',
       undefined,
       null,
@@ -132,6 +131,28 @@ describe('openExternal — ブラウザ版でもスキームを絞る', () => {
       await openExternal(url);
     }
     expect(opened).toEqual([]);
+  });
+
+  /*
+   * **前後の空白は「開かない」ではなく「落として開く」。**
+   *
+   * 2026-08-23 に共有の関門 (`shared/externalUrlGate.ts`) へ寄せるまで、
+   * ブラウザ版だけ `/^https?:\/\//i` の字面検査で、先頭に空白があると
+   * **黙って開かなかった**。デスクトップ版は最初から `new URL` で解析して
+   * おり、`'  https://example.com/  '` を正規化して開いていた
+   * (`shared/__tests__/externalUrlGate.test.ts` が前から固定している)。
+   *
+   * 字面検査が空白を弾いていたのは**アンカーの副作用**であって、
+   * 意図した守りではない。WHATWG は URL の前後の空白を落とすので、
+   * 解析してから判定すれば「調べたもの」と「開くもの」は一致する。
+   * 2 つのビルドで答えを揃えた側が正しい。
+   */
+  it('前後の空白は落として、正規化した形で開く (デスクトップ版と同じ)', async () => {
+    const shim = await loadShim();
+    const openExternal = shim.openExternal as (u: string) => Promise<void>;
+    await openExternal(' https://example.com');
+    await openExternal('  http://example.com/x  ');
+    expect(opened).toEqual(['https://example.com/', 'http://example.com/x']);
   });
 });
 

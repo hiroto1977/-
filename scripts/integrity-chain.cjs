@@ -82,7 +82,7 @@ const PROTECTED = [
   // `setWindowOpenHandler` と `app:openExternal` の**両方の扉**が通る。
   // 分離するまで同じ判断が main.ts に 2 つ手書きされており、片方だけしか
   // 固定されていなかった (許可表を締めても窓側の扉は古い規則のまま開いた)。
-  'src/main/externalUrlGate.ts',
+  'src/shared/externalUrlGate.ts',
   // 2026-08-22 に足した。外部からの応答に置く**打ち切りと上限**の判定本体。
   // 保護対象の `network/proxy.ts` がここへ委譲しており (それまで proxy 側に
   // しか無かった)、`clients/types.ts` の `jsonFetch` —— SaaS 74 本が通る口 ——

@@ -94,7 +94,7 @@ describe('externalUrlOrNull — OS へ渡してよい URL だけ', () => {
  * `buildAuthorizeUrl()` が組み立てた URL で、レンダラー由来ではない。
  */
 describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を通る', () => {
-  const MAIN = readFileSync(new URL('../main.ts', import.meta.url), 'utf8');
+  const MAIN = readFileSync(new URL('../../main/main.ts', import.meta.url), 'utf8');
   const count = (re: RegExp): number => (MAIN.match(re) ?? []).length;
 
   it('shell.openExternal の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
@@ -107,5 +107,42 @@ describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を�
   it('main.ts が自前でスキームを判定していない (関門の写経が復活していない)', () => {
     expect(MAIN).not.toMatch(/protocol\s*===\s*'https?:'/);
     expect(MAIN).not.toMatch(/EXTERNAL_URL_SCHEMES/);
+  });
+});
+
+/*
+ * **ブラウザ版の扉も同じ関門を通る。**
+ *
+ * 2026-08-23 まで `web-shim.ts` の `openExternal` は
+ * `/^https?:\/\//i` という**別の実装**だった。攻撃入力 29 種のうち
+ * **6 種で答えが割れた** (詳細は `externalUrlGate.ts` の頭)。
+ *
+ * いちばん効くのは `"https://\njavascript:alert(1)"` の形 ——
+ * **字面は `https://` で始まるので通るが、`window.open` が開くのは
+ * 解析後の URL** で、検査した文字列とは別物になる。
+ * この関門は解析してから判定し、正規化した形を返すので、
+ * 「調べたもの」と「開くもの」が一致する。
+ */
+describe('web-shim.ts の中で外へ開く扉も、全部この関門を通る', () => {
+  const SHIM = readFileSync(new URL('../../renderer/web-shim.ts', import.meta.url), 'utf8');
+  const code = SHIM.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const count = (re: RegExp): number => (code.match(re) ?? []).length;
+
+  it('window.open の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
+    const opens = count(/\bwindow\.open\s*\(/g);
+    const gated = count(/\bexternalUrlOrNull\s*\(/g);
+    expect(opens, 'ブラウザ版から外へ開く行が消えている').toBeGreaterThanOrEqual(1);
+    expect(gated, '関門を通さずに外へ開く行がある (扉が増えた)').toBe(opens);
+  });
+
+  it('自前のスキーム判定が復活していない', () => {
+    expect(code, '字面での https 判定が戻っている').not.toMatch(/\^https\?/);
+    expect(code).not.toMatch(/EXTERNAL_URL_SCHEMES/);
+  });
+
+  it('開くのは関門が返した正規化済みの値 (生の入力ではない)', () => {
+    // `window.open(safe, ...)` の形。生の `url` を渡していれば落ちる。
+    expect(code).toMatch(/window\.open\(\s*safe\s*,/);
+    expect(code, '生の入力をそのまま開いている').not.toMatch(/window\.open\(\s*url\s*,/);
   });
 });

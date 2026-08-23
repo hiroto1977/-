@@ -86,7 +86,7 @@ const MUST_MEASURE = {
   'src/renderer/oauth/pkceSession.ts': 'PKCE の一時秘密の置き場と消し方',
   // 同日追加。どちらも既に `mutate` には在ったが「必ず測る壁」の名簿には
   // 無く、**一覧から外しても誰も鳴らない**状態だった。
-  'src/main/externalUrlGate.ts':     'OS に URL を開かせてよいかの唯一の関門',
+  'src/shared/externalUrlGate.ts':     'OS に URL を開かせてよいかの唯一の関門',
   'src/shared/httpLimits.ts':        '打ち切りと応答サイズの上限 (全通信が通る)',
   'src/main/oauth.ts':               '認可の送り先と PKCE',
   'src/shared/redact.ts':            'ログに載せる前の伏字',
