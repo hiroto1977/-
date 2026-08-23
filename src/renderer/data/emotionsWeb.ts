@@ -6,6 +6,8 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
+import { MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
 export type EmotionScores = Record<EmotionKey, number>;
@@ -81,11 +83,27 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
   if (!Number.isFinite(finalScore) || finalScore < 1 || finalScore > 5) {
     throw new Error('score must be a number between 1 and 5');
   }
+  // note の上限。**この経路にだけ無かった** (2026-08-23 実測)。
+  //
+  // `shared/emotionsLimits.ts` と `main/clients/emotions.ts` はどちらも
+  // 「上限はブラウザ版だけが持っていた」と書いているが、実際に持っていたのは
+  // `analyze-text` の方だけで (`web-shim.ts` が MAX_ANALYZE_TEXT_CHARS で断る)、
+  // **log-mood の note は素通しだった** —— 5 万字を渡すと 5 万字そのまま
+  // localStorage に載る (実測)。main 側はその誤った前提のまま修正を受けた。
+  //
+  // ブラウザ版の保存先は localStorage で、**容量はオリジン全体で共有**する。
+  // `MAX_MOODS` は件数を 365 に抑えるが 1 件の大きさは抑えないので、ここが
+  // 青天井だと保管庫のメタや proxy 設定など**別機能の書き込みが先に落ちる**。
+  // `saveStore` は setItem を包んでいないので、溢れた時点で例外がそのまま出る。
+  const noteStr = String(note ?? '');
+  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+    throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
+  }
   const finalDate =
     (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal(now);
   const store = loadStore();
   const idx = store.moods.findIndex((m) => m.date === finalDate);
-  const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: String(note ?? '') };
+  const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };
   if (idx >= 0) store.moods[idx] = entry;
   else store.moods.push(entry);
   store.moods.sort((a, b) => a.date.localeCompare(b.date));

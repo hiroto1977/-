@@ -129,7 +129,9 @@ async function logMood(ctx: ActionContext): Promise<{ date: string; score: numbe
   const store = await readStore();
   // Replace today's entry if it exists, else append.
   const idx = store.moods.findIndex((m) => m.date === finalDate);
-  // note も上限はブラウザ版だけが持っていた。保存先が際限なく育つのを止める。
+  // note の上限。当初「ブラウザ版だけが持っていた」と書いたが**それは誤り**で、
+  // ブラウザ版の `log-mood` も素通しだった (同日実測・`emotionsLimits.ts` の訂正を参照)。
+  // 今は両方がこの定数を見る。保存先が際限なく育つのを止める。
   const noteStr = String(note ?? '');
   if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
     throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);

@@ -51,7 +51,8 @@
  */
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
-import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../shared/emotionsLimits';
+import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
+import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
@@ -1282,8 +1283,11 @@ const shim = {
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
     if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
       const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
-      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_MOOD_NOTE_CHARS) {
-        return err('action_failed', `${serviceId}.record-entry: note は 1-2000 文字で指定してください`);
+      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+        return err(
+          'action_failed',
+          `${serviceId}.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`,
+        );
       }
       if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
         return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
