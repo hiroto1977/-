@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { promises as fsp } from 'node:fs';
 import {
   sma,
   ema,
@@ -3695,5 +3696,48 @@ describe('exportDashboardImpl — 配列の中身が壊れた助言', () => {
     });
     expect(out).toContain('AI アドバイザー結果');
     expect(out).toContain('ZZZZ');
+  });
+});
+
+/*
+ * **内部状態は 600 で書く。**
+ *
+ * `state.json` に入るのはウォッチリスト —— 利用者が何に関心を持っているかという
+ * 個人の情報。実測 (2026-08-23) では 644 で、`secrets.json` /
+ * `service-hub-emotions.json` / `team-radar.json` がどれも 600 なのに、
+ * 内部状態のうちここだけが緩かった。
+ *
+ * `mode` は新規作成にしか効かないが、tmp を新しく作って rename で被せるので
+ * 既にある 644 のファイルも次の保存で直る (2 本目)。
+ */
+describe('saveStocksState の権限', () => {
+  let dir = '';
+
+  beforeEach(async () => {
+    dir = await fsp.mkdtemp(path.join(os.tmpdir(), 'stocks-mode-'));
+  });
+  afterEach(async () => {
+    await fsp.rm(dir, { recursive: true, force: true });
+  });
+
+  const modeOf = async (p: string) => ((await fsp.stat(p)).mode & 0o777).toString(8);
+
+  it('新しく作るファイルは 0600', async () => {
+    const target = path.join(dir, 'state.json');
+    await saveStocksState({ watchlist: ['AAPL'] }, { statePath: () => target });
+    expect(await modeOf(target)).toBe('600');
+    // 中身も書けていること (権限だけ見ると、書けていなくても通る)。
+    expect(JSON.parse(await fsp.readFile(target, 'utf8')).watchlist).toEqual(['AAPL']);
+  });
+
+  it('既にある 644 のファイルも、次の保存で締まる', async () => {
+    const target = path.join(dir, 'state.json');
+    await fsp.writeFile(target, '{"watchlist":[]}');
+    await fsp.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await saveStocksState({ watchlist: ['MSFT'] }, { statePath: () => target });
+
+    expect(await modeOf(target)).toBe('600');
   });
 });

@@ -1637,6 +1637,24 @@ function shape(raw: unknown): StocksState {
 
 /** Load state from disk. Returns DEFAULT_STATE on missing file / parse error /
  *  shape mismatch. Never throws. */
+/*
+ * `saveStocksState` が **0600** で書く理由 —— `team-radar.json` と同じ扱いに
+ * 揃える (2026-08-23)。
+ *
+ * ここに入るのはウォッチリスト = 利用者が何に関心を持っているかという個人の
+ * 情報で、同じ機械の他の利用者に見せる理由が無い。実測では 644 で、
+ * `secrets.json` / `service-hub-emotions.json` / (同日直した) `team-radar.json`
+ * がどれも 600 なのに、**内部状態のうちここだけが緩かった**。
+ *
+ * `mode` は新規作成にしか効かないが、`tmp` を新しく作って `rename` で被せるので
+ * **既にある 644 のファイルも次の保存で直る** (実測で確認)。
+ *
+ * (書き出し物 = `dashboard.html` / `.md` はここでは触らない。あちらは利用者が
+ *  見る・渡すために作る成果物で、内部状態とは性質が違う。)
+ *
+ * **この注記は `Stryker disable` の外に置くこと。** 中に入れると黙らせる範囲が
+ * その分だけ広がり、`lint:mutation-scope` が鳴る (実際に鳴らして気付いた)。
+ */
 // The default-fallback arrow functions below are exercised only when
 // callers omit the corresponding dep (production path). The tests always
 // inject deps to keep file I/O hermetic. `recursive: true` on mkdir is
@@ -1659,7 +1677,8 @@ export async function saveStocksState(state: StocksState, deps: StateDeps = {}):
   const p = (deps.statePath ?? defaultStatePath)();
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((path: string, c: string) => fs.writeFile(path, c, 'utf8'));
+  // 0600 で書く理由は上の `Stryker disable` の手前の注記を参照。
+  const writeFn = deps.writeFile ?? ((path: string, c: string) => fs.writeFile(path, c, { mode: 0o600 }));
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
