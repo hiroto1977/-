@@ -157,6 +157,41 @@ describe('inline-html — script-src の sha256 ピン留め', () => {
   });
 });
 
+// バンドルは <script> の中へ **エスケープなしで** 流し込まれる (ハッシュは流し込む
+// バイト列そのものに対して取るので、ハッシュ後にエスケープすると両者がずれて CSP が
+// バンドル全体を止める)。つまり素の閉じタグを持たないことは *バンドラ (esbuild/Vite)
+// の保証* に依存している — inline-html.cjs 側はその保証を検証する側にまわる。
+// 実測 (2026-08-23 dist/standalone.html): 素の閉じタグ 1 件 (= 本物のタグ) に対し
+// エスケープ済み 2 件。securityRange.ts の XSS ペイロードは `<\/script>` で出ている。
+// ここはその「検証する側」が本当に火を噴くかを固定する。
+describe('inline-html — バンドルが素の </script> を持ったとき', () => {
+  const withClose = (js: string): (() => string) => inlineStandalone.bind(null, INDEX_HTML, () => js);
+
+  it('ビルドを落とす (要素が途中で閉じ、ピン留めしたハッシュと実テキストがずれる)', () => {
+    expect(withClose('const p = "<script>alert(1)' + '</' + 'script>' + '";')).toThrow(/未ピン留め/);
+    expect(withClose('const p = "' + '</' + 'script>' + '";')).toThrow(/未ピン留め/);
+  });
+
+  it('落とす理由は「早期終了で別テキストになる」こと — ずれの中身まで確かめる', () => {
+    const js = 'const p = "' + '</' + 'script>' + '";const after = 1;';
+    // 検知を外した世界の仕上がり文書 (= inlineStandalone の 5 段目までと同じ組み立て)。
+    const doc = buildCsp([cspHash(scriptSourceFor(js))]) + '<script type="module">' + scriptSourceFor(js) + '</' + 'script>';
+    const parsed = inlineScriptSources(doc);
+    // ブラウザが読むのは最初の閉じタグまで — 末尾の `const after = 1;` は本文へ漏れる。
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0]).not.toContain('after');
+    expect(doc).toContain('after = 1;');
+    // だからハッシュが一致しない = CSP がバンドルを実行しない (白画面) という故障。
+    expect(policyOf(doc)).not.toContain(cspHash(parsed[0] as string));
+  });
+
+  it('対照: エスケープ済み (バンドラの現状出力) と "<script" 単体は通る', () => {
+    expect(withClose('const p = "<script>alert(1)<\\/script>";')).not.toThrow();
+    expect(withClose('const p = "<script";')).not.toThrow();
+    expect(inlineScriptSources(OUT)).toHaveLength(1); // 本物のバンドルも 1 件のまま
+  });
+});
+
 describe('inlineScriptSources — HTML パーサ等価の走査', () => {
   it('src 付き <script> とデータブロックは対象外、インライン JS だけを返す', () => {
     const html =

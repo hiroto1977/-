@@ -24,7 +24,7 @@
  *     走るトリガ。PR の中身を checkout すると、fork のコードが secrets を
  *     読める。今は 1 本も無い。「無い」ことを固定する。
  *
- *  4. **`run:` への信用できない値の埋め込み** — PR の題名や本文、
+ *  4. **`run:` への `${{ }}` の埋め込み** — PR の題名や本文、
  *     ブランチ名はいくらでも書ける。`${{ github.event.pull_request.title }}`
  *     をシェルへ展開すると、そのままコマンド注入になる。
  *
@@ -64,6 +64,24 @@ const UNTRUSTED_CONTEXT =
 
 /** GitHub 側が値を決めるもの (SHA / イベント名 / ref 名) は注入に使えない。 */
 const SAFE_CONTEXT = /\$\{\{\s*github\.(event_name|event\.before|event\.after|ref_name|sha|repository|workflow|run_id)\s*\}\}/g;
+
+/**
+ * `run:` の中の `${{ }}` そのもの。
+ *
+ * 上の `UNTRUSTED_CONTEXT` は「危ない文脈の列挙」で、列挙は必ず遅れる:
+ * `github.event.workflow_run.head_branch` / `github.event.release.*` /
+ * `inputs.*` (workflow_dispatch は利用者が値を書く) / `needs.*.outputs.*` /
+ * `steps.*.outputs.*` — どれも載っていなかった。実際に **`mutation.yml` の
+ * `steps.scope.outputs.targets`** (実行時に Node スクリプトが決める値) が
+ * この網の外を通っていた (2026-08-23 実測: run: 内の展開は全 6 ワークフローで
+ * 3 件、うち 2 件が SAFE_CONTEXT、残る 1 件がこれ)。
+ *
+ * 列挙をやめて仕組みを禁じる: `${{ }}` は **run: のシェル本文へ文字列として
+ * 展開されてからシェルが読む**ので、値の中身がそのままシェル構文になる。
+ * `env:` へ束ねれば値は環境変数として渡り、シェル構文としては一度も読まれない。
+ * 「安全な文脈かどうか」を判断する必要が消え、規則は行の形だけで決まる。
+ */
+const TEMPLATE_EXPR = /\$\{\{/;
 
 function workflows() {
   if (!fs.existsSync(WF_DIR)) return [];
@@ -139,6 +157,13 @@ function check(list) {
           file: `${name}:${ln}`,
           why: `run: へ信用できない値を展開している — ${line.trim().slice(0, 80)}`,
         });
+        continue; // 同じ行を 2 度報告しない (下の構造規則より、こちらの説明が具体的)
+      }
+      if (TEMPLATE_EXPR.test(line)) {
+        problems.push({
+          file: `${name}:${ln}`,
+          why: `run: の中で ${'$'}{{ }} を展開している — env: へ束ねて $VAR で読むこと — ${line.trim().slice(0, 80)}`,
+        });
       }
     }
   }
@@ -185,14 +210,41 @@ function selfTest() {
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: git checkout "${{ github.head_ref }}"\n' }],
       1,
     ],
+    // GitHub が決める値 (SHA / event_name) は「注入できない値」ではあるが、
+    // run: へ展開する形そのものを禁じる — 安全な文脈の列挙を維持しなくて済む。
     [
-      'GitHub が決める値 (SHA / event_name) は通す',
+      'GitHub が決める値でも run: への展開なら落とす',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: echo "${{ github.event_name }} ${{ github.event.before }}"\n' }],
+      1,
+    ],
+    // ここが実際に網の外を通っていた形 (mutation.yml, 2026-08-23)。
+    [
+      'steps.*.outputs.* を run: へ展開したら落とす',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: npx stryker run --mutate "${{ steps.scope.outputs.targets }}"\n' }],
+      1,
+    ],
+    [
+      'inputs.* (workflow_dispatch は利用者が値を書く) も落とす',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: echo "${{ inputs.tag }}"\n' }],
+      1,
+    ],
+    // 直し方 = env: へ束ねて $VAR で読む。これは通らないといけない (直せない規則は
+    // 規則ではない)。
+    [
+      'env: へ束ねて $VAR で読む形は通す',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - env:\n          T: ${{ steps.scope.outputs.targets }}\n        run: npx stryker run --mutate "$T"\n' }],
       0,
     ],
+    // run: の外はシェルではない (with: は action の入力、if:/key: は式エンジンが
+    // 評価する) ので、シェル構文になる余地が無い。
     [
       'run: の外の展開は見ない (action の with: など)',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@v1\n        with:\n          t: ${{ github.event.pull_request.title }}\n' }],
+      0,
+    ],
+    [
+      'if: / key: の式は見ない',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == \'some\'\n        uses: actions/cache@v4\n        with:\n          key: stryker-${{ github.ref_name }}\n' }],
       0,
     ],
     // 許可台帳をプロトタイプ鎖経由ですり抜けられないこと。`UNPINNED_ALLOW[ref]`
@@ -232,7 +284,7 @@ function main() {
   const ledger = Object.keys(UNPINNED_ALLOW).length;
   console.log(
     `Checked ${list.length} workflow(s): permissions / 第三者 action の SHA 固定 / ` +
-      `pull_request_target / run: への信用できない値 (台帳: ${ledger} 件)`,
+      `pull_request_target / run: への ${'$'}{{ }} 展開 (台帳: ${ledger} 件)`,
   );
   if (problems.length === 0) {
     console.log('✅ ワークフローの守りは台帳どおりです');
