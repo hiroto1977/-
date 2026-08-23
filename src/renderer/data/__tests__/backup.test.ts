@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {
+  BACKUP_EXCLUSIONS,
   serializeBackup,
   parseBackup,
   sha256Hex,
@@ -372,5 +373,35 @@ describe('バックアップ画面の文言 (誤った保証を書き戻せな�
 
   it('「SHA-256 で改ざん検知」と書いていない', () => {
     expect(PANEL).not.toMatch(/SHA-?256\s*(で|による)?\s*改ざん検知(?!ではありません)/);
+  });
+});
+
+/*
+ * **範囲の主張を留める。**
+ *
+ * 画面は「この端末に保存された業務データ**全体**」と書いていたが、
+ * `exportAll()` が読むのは記録ストア (`business-hub-data`) だけで、
+ * ライブラリ (`business-hub-library`) と localStorage は触れていない。
+ * 説明文の想定用途が **端末移行**なので、この食い違いは「移行して旧端末を
+ * 消したら下書きと書類が消えていた」という取り返しの付かない形で出る。
+ *
+ * 中身ではなく主張を留める検査なので字面を見るしかない。見るのは
+ * 「書き出されない保存先が挙がっているか」だけにして、言い回しは縛らない。
+ */
+describe('BACKUP_EXCLUSIONS (書き出されない保存先)', () => {
+  it('別 DB のライブラリを挙げている', () => {
+    expect(BACKUP_EXCLUSIONS.some((x) => x.includes('ライブラリ'))).toBe(true);
+  });
+
+  it('ブラウザ内に残る設定 (localStorage 側) を挙げている', () => {
+    expect(BACKUP_EXCLUSIONS.some((x) => x.includes('会話履歴') || x.includes('下書き'))).toBe(true);
+  });
+
+  it('Vault 管理の API キーを挙げている', () => {
+    expect(BACKUP_EXCLUSIONS.some((x) => x.includes('API'))).toBe(true);
+  });
+
+  it('空にできない (範囲を語らない状態へ戻さない)', () => {
+    expect(BACKUP_EXCLUSIONS.length).toBeGreaterThanOrEqual(3);
   });
 });

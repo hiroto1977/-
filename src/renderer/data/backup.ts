@@ -34,6 +34,35 @@ import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle }
 
 export const BACKUP_VERSION = 1;
 
+/**
+ * このバックアップが **含まないもの**。画面の説明文はここを描く。
+ *
+ * ## なぜ定数にするか (2026-08-23 実測)
+ *
+ * 画面には「この端末に保存された業務データ**全体**」と書いてあったが、
+ * `exportAll()` が読むのは記録ストア (`business-hub-data`) **だけ**である。
+ * 実測した保存先は 3 つに分かれており、2 つは書き出されない:
+ *
+ * ```
+ *   business-hub-data      記録ストア         ← 書き出される
+ *   business-hub-library   書き出した書類の実体 ← **別 DB。一括の口が無い**
+ *   localStorage           会話履歴・下書き 等  ← **触れていない**
+ * ```
+ *
+ * 説明文が想定している用途が **端末移行**なので、ここの食い違いは
+ * 「移行して旧端末を消したら下書きと書類が消えていた」という
+ * **取り返しの付かない形**で出る。範囲を書かない「全体」は、
+ * 安全側に読ませておいて実際は守っていない。
+ *
+ * 文言を画面の中に置くと、保存先が増えたときに置き去りになる。
+ * 定数にして検査から見えるようにする。
+ */
+export const BACKUP_EXCLUSIONS: readonly string[] = [
+  'API キー (Vault 管理のため)',
+  'ライブラリの書き出し済みファイル (別データベース)',
+  '会話履歴・DocStudio の下書き・気分の記録・ウォッチリストなどブラウザ内の設定',
+];
+
 export interface BackupFile {
   readonly app: 'service-hub';
   readonly version: number;

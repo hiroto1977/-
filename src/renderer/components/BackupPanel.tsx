@@ -1,6 +1,12 @@
 import { useRef, useState } from 'react';
 import { getRecordStore } from '../data/store';
-import { serializeBackup, serializeEncryptedBackup, parseBackup, isEncryptedBackup } from '../data/backup';
+import {
+  BACKUP_EXCLUSIONS,
+  serializeBackup,
+  serializeEncryptedBackup,
+  parseBackup,
+  isEncryptedBackup,
+} from '../data/backup';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
@@ -77,12 +83,14 @@ export function BackupPanel() {
     <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
       <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>バックアップ / 復元</div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.6 }}>
-        売上・KPI 実績・チームメンバーなど、この端末に保存された業務データ全体を JSON
+        売上・KPI 実績・チームメンバー・不動産・士業 CRM などの<strong>業務レコード</strong>を JSON
         ファイルとして書き出し / 取り込みます。端末移行や災害復旧にご利用ください。
         SHA-256 で破損検知します（改ざん検知ではありません — 鍵の無いハッシュは
         書き換えた側が計算し直せば通ります）。改ざんに備えるにはパスワードを指定して
         AES-GCM で暗号化してください。
-        （API キーは Vault 管理のため含まれません）
+        <br />
+        <strong>含まれないもの</strong>: {BACKUP_EXCLUSIONS.join(' ／ ')}。
+        端末を移行するときは、これらを個別に保存してください。
       </div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
         <input
