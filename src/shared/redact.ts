@@ -16,9 +16,35 @@
  *     {"headers":{"authorization":"Bearer key_…"}}
  *
  * この形は `Authorization` の直後が `"` なので、コロン直結を要求する旧規則に
- * 一致せず、鍵がそのまま画面とログに出ていた (2026-08-20 実測)。送っている
- * 資格情報ヘッダは `Authorization` / `x-api-key` / `x-goog-api-key` の 3 種類
- * なので、**名前を起点に、線上の書き方と JSON の書き方の両方**を伏せる。
+ * 一致せず、鍵がそのまま画面とログに出ていた (2026-08-20 実測)。だから
+ * **名前を起点に、線上の書き方と JSON の書き方の両方**を伏せる。
+ *
+ * ## なぜ名前を「列挙」しないのか
+ *
+ * 2026-08-23 まで、その名前は `authorization` / `x-api-key` / `x-goog-api-key` /
+ * `api-key` / `proxy-authorization` の**列挙**だった。列挙は守りの中心にあるが、
+ * **新しいヘッダを足す側には何の強制も無い**。実測で送っている 6 種のうち
+ * 3 種が抜けていた:
+ *
+ *   - `x-apikey`     (VirusTotal)          — どの形でも漏れる
+ *   - `x-proxy-auth` (BYO プロキシの共有秘密) — どの形でも漏れる
+ *   - `hibp-api-key` (HIBP)                — 線上の形は `\bapi-key` に偶然
+ *     当たっていたが、JSON の形は引用符が名前の直前を要求するので漏れる
+ *
+ * `x-proxy-auth` がとくに悪い。本文を返してくるのは上に書いたとおり**利用者が
+ * 用意したプロキシ**で、その共有秘密がそのプロキシ自身の応答経由で画面と
+ * 不具合報告に出ていた。
+ *
+ * そこで名前を「接頭辞つきの形」で書くようにした (`(?:[a-z0-9]+-)*` +
+ * `authorization` / `api-?key` / `proxy-auth`)。`x-`, `hibp-`, `x-goog-`,
+ * `proxy-` のような**仕入れ先ごとの接頭辞は、もう列挙に足さなくてよい**。
+ * 引用符と引用符のあいだ全部に一致することを求めるので、`"author"` /
+ * `"authorization_endpoint"` / `"idempotency-key"` は巻き添えにしない。
+ *
+ * そのうえで、**送っている側から数え直す**検査を置いた
+ * (`scripts/scan-credential-headers.cjs` + `__tests__/redactionCoverage.test.ts`)。
+ * 正規表現の字面ではなく、実物の `redactSecrets` に本文を通して秘密が消えるかを
+ * 見るので、ここを書き換えても検査を欺けない。
  *
  * ここは全経路の最後の関門である (`src/shared/api/http.ts`,
  * `src/renderer/network/proxy.ts`, `src/renderer/web-shim.ts`,
@@ -26,10 +52,12 @@
  *
  * 覆う範囲:
  *   - 資格情報ヘッダの値 — `Authorization: Bearer …` も `"authorization":"Bearer …"` も
+ *     (`x-apikey` / `hibp-api-key` / `x-proxy-auth` のような接頭辞つきも同じ形で)
  *   - 単独の `Bearer …` / `Basic …` (16 字以上。英単語を巻き添えにしない長さ)
  *   - sk-ant-…, ghp_…, ghs_…, ghu_…, ya29.…, xoxb-…, xoxp-…, secret_…, AIza…
  *   - Atlassian ATATT… tokens
- *   - JSON token fields (access_token / refresh_token / token / api_key / …)
+ *   - JSON token fields (access_token / refresh_token / token / api_key /
+ *     client_secret / sharedSecret / password / …)
  */
 
 /**
@@ -61,7 +89,7 @@ export function redactSecrets(input: string): string {
       // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
       // ない指定になる。
       .replace(
-        /(["'])(proxy-authorization|authorization|x-goog-api-key|x-api-key|api-key)\1(\s*:\s*)\1(?:(Bearer|Basic)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
+        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*:\s*)\1(?:(Bearer|Basic)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
         (_m, q: string, name: string, sep: string, scheme?: string) =>
           hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
       )
@@ -71,7 +99,7 @@ export function redactSecrets(input: string): string {
       // `"…":"[REDACTED]"` にしてあり、そこでは名前の直後がコロンではない
       // ので、この規則が二度当たって閉じ引用符まで飲み込むことはない。
       .replace(
-        /\b(proxy-authorization|authorization|x-goog-api-key|x-api-key|api-key)(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
+        /\b((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
         (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
       )
       // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
@@ -93,7 +121,10 @@ export function redactSecrets(input: string): string {
       // closing-quote past the redactor. Without it, an upstream reply
       // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
       // would only redact `Token \` and leave the secret in the rest.
-      .replace(/"(access_token|refresh_token|token|api_key|apikey|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi, '"$1":"[REDACTED]"')
+      .replace(
+        /"(access_token|refresh_token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
+        '"$1":"[REDACTED]"',
+      )
   );
 }
 
