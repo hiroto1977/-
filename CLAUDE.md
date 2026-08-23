@@ -56,7 +56,7 @@ npm run build            # full desktop build: tsc -b, vite build, electron-buil
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
 npm test                 # vitest run (~1460 tests under src/**/__tests__/)
 npm run test:watch       # vitest watch mode
-npm run lint             # eslint . (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
+npm run lint             # eslint . --max-warnings 0 (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
 npm run smoke            # xvfb + Electron screenshot smoke test of every page
 npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]   # generate a new service end-to-end
 ```
