@@ -49,6 +49,15 @@
  * という最も強い証拠になる (`probe: 'timeout'`)。親は次の式から worker を
  * 作り直して続きを測るので、1 本あたりの上限が決まり走査時間が有界になる。
  *
+ * ## 誤って鳴らないための確認パス
+ *
+ * 判定が壁時計時間である以上、GC・CPU の奪い合い・実行機の当たり外れで
+ * 無実の式が 1 度だけ遅くなることはありうる。**誤って鳴る門は、鳴らない門より
+ * 悪い** —— 人は鳴り続ける門を見なくなる。そこで挙がった式は新しい worker で
+ * もう一度測り、**再現したものだけ**を報告する。本物は決定的に何度でも遅いので
+ * 必ず再現し、通常 (挙がる式が 0 件) はこの段が 1 度も走らないので費用も無い。
+ * worker の起動時間も測定時間に数えない (`BOOT_TIMEOUT_MS` は別枠)。
+ *
  * ## 指数だけを見る —— 多項式を外した理由 (実測)
  *
  * 最初は多項式 (O(n²)) の探りも入れた。**2 万文字で 250ms 超**を破綻とすると
@@ -103,6 +112,26 @@ const MS_EXP = 50;
 
 /** 番犬: 1 本にこれだけ音沙汰が無ければ、その式は破滅的とみなして殺す。 */
 const WATCHDOG_MS = 3000;
+
+/**
+ * worker が起動して最初の報せを寄越すまでの猶予。**測定の番犬とは別枠**。
+ *
+ * 起動時間を測定時間に含めると、混んだ実行機で無実の式が「応答なし」に
+ * なる —— 時間で判定する門は、遅い機械の上で誤爆しやすい。
+ */
+const BOOT_TIMEOUT_MS = 30000;
+
+/**
+ * 挙がった式は、**新しい worker でもう一度だけ測って再現したものだけ**を採る。
+ *
+ * この門の判定は壁時計時間なので、GC・CPU の奪い合い・実行機の当たり外れで
+ * 無実の式が 1 度だけ遅くなることがありうる。**誤って鳴る門は、鳴らない門より
+ * 悪い** —— 人は鳴り続ける門を見なくなる。
+ *
+ * 本物の破滅的な式は決定的に何度でも遅いので、再測で必ず再現する。
+ * 通常 (挙がる式が 0 件) はこの段が 1 度も走らないので、費用も掛からない。
+ */
+const CONFIRM_PASSES = 1;
 
 const ROOTS = ['src', 'scripts', 'orchestration'];
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'dist-electron', 'coverage']);
@@ -243,9 +272,18 @@ function runProbes(items) {
       let timer = null;
       let settled = false;
 
+      // 起動そのものが来ない場合の保険。測定の番犬とは別枠にする。
+      const bootTimer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        void worker.terminate();
+        spawn(from + 1);
+      }, BOOT_TIMEOUT_MS);
+
       const disarm = () => {
         if (timer) clearTimeout(timer);
         timer = null;
+        clearTimeout(bootTimer);
       };
 
       const arm = () => {
@@ -287,11 +325,42 @@ function runProbes(items) {
         spawn(current + 1);
       });
 
-      arm();
+      // **ここで arm しない。** worker の起動 (数十 ms〜、混んだ CI では更に) を
+      // 測定時間に数えると、遅い実行機で無実の式が「応答なし」になる。
+      // 番犬は最初の `start` が届いてから回す。
     };
 
     spawn(0);
   });
+}
+
+/**
+ * `runProbes` の結果から、**再現したものだけ**を残す。
+ *
+ * 再現しなかった式は「あの 1 回が遅かっただけ」なので落とす。何が落ちたかは
+ * 黙って捨てず呼び出し側へ返す —— 消えた指摘は、消えたことも見えないと困る。
+ */
+async function runProbesConfirmed(items, measure = runProbes) {
+  const first = await measure(items);
+  const suspects = [];
+  first.forEach((v, i) => {
+    if (v) suspects.push(i);
+  });
+  if (suspects.length === 0) return { verdicts: first, retracted: [] };
+
+  const verdicts = first.slice();
+  const retracted = [];
+  for (let pass = 0; pass < CONFIRM_PASSES; pass += 1) {
+    for (const i of suspects) {
+      if (!verdicts[i]) continue;
+      const again = await measure([items[i]]);
+      if (!again[0]) {
+        retracted.push({ item: items[i], was: verdicts[i] });
+        verdicts[i] = null;
+      }
+    }
+  }
+  return { verdicts, retracted };
 }
 
 // ---------------------------------------------------------------------------
@@ -331,12 +400,12 @@ function collect(roots) {
 
 async function scan(roots) {
   const { files, items } = collect(roots);
-  const verdicts = await runProbes(items);
+  const { verdicts, retracted } = await runProbesConfirmed(items);
   const hits = [];
   items.forEach((item, i) => {
     if (verdicts[i]) hits.push({ ...item, ...verdicts[i] });
   });
-  return { files, distinct: items.length, hits };
+  return { files, distinct: items.length, hits, retracted };
 }
 
 // ---------------------------------------------------------------------------
@@ -360,7 +429,9 @@ async function selfTest() {
     { body: '^\\s*(\\/\\/|\\*|\\/\\*)', flags: '', bad: false },
   ];
 
-  const verdicts = await runProbes(cases);
+  // **出荷する経路そのもの**で測る (確認パス込み)。self-test だけが素の
+  // `runProbes` を通っていると、確認パスの欠陥は対照に映らない。
+  const { verdicts, retracted } = await runProbesConfirmed(cases);
 
   console.log('self-test:');
   let failed = 0;
@@ -386,6 +457,32 @@ async function selfTest() {
     `  ${extractionOk ? '✓' : '✗'} コメント行の式を拾わない (拾った ${bodies.length} 件: ${bodies.join(' , ')})`,
   );
 
+  // 確認パスの対照 —— **本物の破滅的な式は再測でも再現する**ので、
+  // 1 件も取り下げられてはいけない。取り下げが起きるなら、確認パスが
+  // 厳しすぎて本物まで消していることになる。
+  const retractionOk = retracted.length === 0;
+  if (!retractionOk) failed += 1;
+  console.log(
+    `  ${retractionOk ? '✓' : '✗'} 確認パスが本物を取り下げない (取り下げ ${retracted.length} 件・期待 0)`,
+  );
+
+  // **上の照合は、確認パスが何も取り下げなくても通ってしまう。**
+  // 「取り下げが 0 件」を意味あるものにするため、1 度目だけ遅い式を
+  // 差し込んで、**取り下げが実際に起きること**を別に確かめる。
+  let calls = 0;
+  const flaky = async (list) => {
+    calls += 1;
+    // 1 回目 (一括測定) だけ破滅的と答え、再測では白と答える。
+    return list.map(() => (calls === 1 ? { probe: 'exponential', ms: 999, n: N_EXP } : null));
+  };
+  const flakyRun = await runProbesConfirmed([{ body: 'x+', flags: '' }], flaky);
+  const retractsFlaky = flakyRun.retracted.length === 1 && flakyRun.verdicts[0] === null;
+  if (!retractsFlaky) failed += 1;
+  console.log(
+    `  ${retractsFlaky ? '✓' : '✗'} 1 度きり遅かった式は取り下げる`
+    + ` (取り下げ ${flakyRun.retracted.length} 件・残り ${flakyRun.verdicts[0] ? '有' : '無'})`,
+  );
+
   if (failed > 0) {
     console.error(`\n❌ self-test ${failed} 件失敗 — 検出器が壊れています`);
     return 1;
@@ -399,7 +496,7 @@ async function selfTest() {
 async function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const { files, distinct, hits } = await scan(ROOTS);
+  const { files, distinct, hits, retracted } = await scan(ROOTS);
 
   const seen = new Set();
   const problems = [];
@@ -414,6 +511,10 @@ async function main(argv) {
   const stale = REVIEWED.filter((r) => !seen.has(`${r.file}::${r.body}`));
 
   console.log(`Scanned ${files} file(s): 正規表現 ${distinct} 種を実測 (台帳 ${REVIEWED.length} 件)`);
+  // 取り下げた指摘は黙って捨てない —— 実行機が遅いことに気づける唯一の手掛かり。
+  for (const r of retracted) {
+    console.log(`  (再測で再現せず取り下げ: /${r.item.body}/ — 1 度目は ${r.was.probe})`);
+  }
 
   let failed = false;
   if (problems.length > 0) {
@@ -445,7 +546,17 @@ async function main(argv) {
   return 0;
 }
 
-module.exports = { extractLiterals, probe, collect, scan, runProbes, REVIEWED, N_EXP };
+module.exports = {
+  extractLiterals,
+  probe,
+  collect,
+  scan,
+  runProbes,
+  runProbesConfirmed,
+  REVIEWED,
+  N_EXP,
+  BOOT_TIMEOUT_MS,
+};
 
 if (require.main === module && isMainThread) {
   main(process.argv.slice(2)).then((code) => process.exit(code));
