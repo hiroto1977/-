@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   clearPkceSession,
   pkceSessionKeys,
@@ -192,11 +193,8 @@ describe('交換が失敗しても一時秘密が残らない (実測)', () => {
  * `clearPkceSession()` が在る」という主張そのものを確かめる。
  */
 describe('本物の SettingsPage.complete() が finally で掃除している', () => {
-  const source = (): string => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { readFileSync } = require('node:fs') as typeof import('node:fs');
-    return readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
-  };
+  const source = (): string =>
+    readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
 
   /** 名前で関数の本文を切り出す (次の同インデントの `}` まで)。 */
   const bodyOf = (text: string, name: string): string => {

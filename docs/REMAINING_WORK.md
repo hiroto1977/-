@@ -3393,3 +3393,54 @@ BAILII (英国判例) 等。
 抽出の正規表現は `url` / `sourceUrl` / `href` を**大文字小文字を区別して**
 見るので、`probeUrl` は対象外だった。ゲートの穴ではなく**プローブの不具合**。
 `url:` に直したら鳴った。
+
+### 知識ベース書き出しの封じ込め —— 守りは在るが、強制はできなかった (2026-08-23)
+
+データ由来の id がファイル名になる経路 (`notes/<collection>/<category>/<id>.md`)
+を見た。**過去に `..` で外へ出られた穴**が在り、`safe-vault-write.cjs` を
+足して塞いだ経緯がある。
+
+#### 守りの現状 (実測)
+
+| 見たこと | 結果 |
+|---|---|
+| `safe-vault-write.cjs` の自己検査 | ✅ 封じ込め・前方一致する兄弟・NUL・絶対パス・**1 件でも外なら何も書かない** |
+| `vault:check` | ✅ **双方向** —— `欠落` / `余分` / `内容差分` を全部見る |
+| `export-notebooklm.cjs` の書き出し名 | ✅ `VOLUMES` 表の**定数** (`nn` / `slug`)。データ由来ではない |
+| `knowledge-autopilot.cjs` | ✅ `QUEUE_PATH` は定数 |
+
+`vault:check` が `余分` を見るので、**vault の中へ**紛れ込んだ書き出しは捕まる。
+
+#### 残る隙間と、ゲートを作らなかった理由
+
+塞げていないのは「**vault の外**へ、データ由来の名前で書く新しい経路」。
+実測: `build-knowledge-graph.cjs` の `safeWrite.writeFilesInto(...)` を
+素の `writeFileSync` へ置き換えると、**`verify:all` が鳴った** ——
+だが鳴らしたのは eslint の `'safeWrite' is assigned a value but never used`
+だけだった。**import ごと消せば何も鳴らない。**
+
+規則を作ろうとして精度を測った:
+
+```
+  「knowledge-vault に触れ、かつ書き込む script は safe-vault-write を使う」
+     → 3 件中 2 件が誤検知 (export-notebooklm / knowledge-autopilot は
+        どちらも定数パスへ書いており、封じ込めは要らない)
+```
+
+`writeFileSync` の宛先が変数である箇所も数えたが **24 ファイル 28 件**で、
+ほぼ全部が定数のモジュールパスかディレクトリ走査の結果だった。
+どちらの形でも**受理すべき対象が並ぶ**ので、`escapeXml` のときと同じ判断で
+**ゲートは作らない**。
+
+現実的な守りは「`safe-vault-write.cjs` が唯一の扉であること」を
+文書と自己検査で保ち、`vault:check` の双方向性で vault 内の異物を捕まえること。
+**次に触る人へ**: 新しい書き出しを足すときは `safeWrite.writeFilesInto` を
+通すこと。通さない形は機械では捕まらない。
+
+#### 自分が残した死んだ `eslint-disable` を消した
+
+`pkceSession.test.ts` に `// eslint-disable-next-line @typescript-eslint/no-require-imports`
+を書いていたが、この設定では `require()` が元々報告されないので**指示が死んで
+いた** (eslint が "Unused eslint-disable directive" と警告)。
+`verify:all` は警告では落ちないので、**緑のまま埋もれていた**。
+`readFileSync` を通常の import へ直して指示ごと消した。
