@@ -79,6 +79,11 @@ const MUST_MEASURE = {
   'src/shared/ollama.ts':            'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる)',
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',
+  // 2026-08-23 追加。**足した当人が名簿へ入れ忘れていた。** 枠 (iframe) の中では
+  // 描画しない関門で、CSP では代替できない (`frame-ancestors` は meta では
+  // 無視される)。判定できないときは「枠の中」に倒す fail-closed なので、
+  // その倒し方が壊れても画面上は何も変わらない = 測っていないと気付けない。
+  'src/renderer/security/frameGuard.ts': '枠 (iframe) の中では描画しない関門 (クリックジャッキング)',
   'src/renderer/oauth/pkce.ts':      'ブラウザ版 PKCE',
   // 2026-08-23 追加。PKCE の一時秘密 (`code_verifier`) を置く・読む・**消す**
   // 唯一の場所。掃除が効かなくなると、`state` 不一致 (CSRF の疑い) で

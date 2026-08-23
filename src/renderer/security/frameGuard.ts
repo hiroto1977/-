@@ -65,14 +65,18 @@ export function renderFrameRefusal(doc: Document, href: string): HTMLElement {
 
   const box = doc.createElement('div');
   box.setAttribute('role', 'alert');
+  // Stryker disable next-line StringLiteral: 見た目だけ。消えても断りは読めるまま描かれる
+  // (振る舞いは role / 文面 / リンクで固定済み)。厳密な CSS を検査で縛ると壊れやすくなる。
   box.style.cssText = 'padding:24px;font-family:system-ui,sans-serif;line-height:1.7;max-width:36em';
 
   const title = doc.createElement('h1');
   title.textContent = '枠の中では開けません';
+  // Stryker disable next-line StringLiteral: 見た目だけ (上と同じ理由)。
   title.style.cssText = 'font-size:1.2rem;margin:0 0 12px';
 
   const body = doc.createElement('p');
   body.textContent = FRAMED_MESSAGE;
+  // Stryker disable next-line StringLiteral: 見た目だけ (上と同じ理由)。
   body.style.cssText = 'margin:0 0 16px';
 
   const link = doc.createElement('a');

@@ -150,6 +150,7 @@
     "src/renderer/oauth/pkceSession.ts",
     "src/renderer/plan/internalLicense.ts",
     "src/renderer/recents.ts",
+    "src/renderer/security/frameGuard.ts",
     "src/renderer/security/autoLock.ts",
     "src/renderer/security/dataCrypto.ts",
     "src/renderer/security/mnemonic.ts",

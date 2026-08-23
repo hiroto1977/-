@@ -76,6 +76,29 @@ describe('renderFrameRefusal — 断りの描画', () => {
     expect(a?.getAttribute('href')).toBe('https://example.com/"><img src=x onerror=alert(1)>');
   });
 
+  // 変異検査で残った 3 つ。どれも「断りが伝わるか」に効く。
+  it('支援技術へ知らせる (role="alert")', () => {
+    const doc = fresh();
+    const el = renderFrameRefusal(doc, 'https://example.com/');
+    // これが消えると、読み上げ環境では**何も起きなかったのと同じ**になる。
+    expect(el.getAttribute('role')).toBe('alert');
+  });
+
+  it('見出しが空でない (なぜ白いのかが分かる)', () => {
+    const doc = fresh();
+    renderFrameRefusal(doc, 'https://example.com/');
+    const h = doc.querySelector('h1');
+    expect(h?.textContent?.trim().length ?? 0).toBeGreaterThan(0);
+  });
+
+  // 文字の無いリンクは押せない = 唯一の逃げ道が消える。
+  it('単独で開くリンクに文字がある (押せる)', () => {
+    const doc = fresh();
+    renderFrameRefusal(doc, 'https://example.com/');
+    const a = doc.querySelector('a');
+    expect(a?.textContent?.trim().length ?? 0).toBeGreaterThan(0);
+  });
+
   it('#root が無い頁でも body に描く (取りこぼさない)', () => {
     document.body.replaceChildren();
     const el = renderFrameRefusal(document, 'https://example.com/');
