@@ -18,9 +18,27 @@
  *   - extension must match exactly (`.html` / `.md` / `.svg` — never executable)
  *   - no NUL / CR / LF (header- and shell-injection hygiene)
  *   - length cap 1024 (pathological inputs)
- *   - symlinks are NOT followed here: `path.resolve` is lexical, so callers that
- *     want realpath semantics must add it. Writing through a symlink planted
- *     inside the export dir would require prior write access to that dir.
+ *   - symlinks are NOT followed here: `path.resolve` is lexical. **これは
+ *     意図した判断で、読み出し側 (`skills.ts` / `devEnv.ts` / `shellOpenGate.ts`)
+ *     とは扱いが違う。** 実際どの呼び出し元も realpath を足していない
+ *     (2026-08-23 に 4 つ全部を確認: templates / stocks / business / teamradar)。
+ *     以前ここには「realpath が要る呼び出し元は自分で足すこと」と書いてあったが、
+ *     **足している呼び出し元は 1 つも無く**、読んだ人に「誰かが見ている」と
+ *     思わせるだけだった。足す必要が無い理由を書く方が正しい:
+ *
+ *     1. **書き出し先はまだ存在しない。** 実測 (2026-08-23) —— 未作成のパスに
+ *        `realpath` すると `ENOENT` で失敗する。読み側と同じ直し方は
+ *        **原理的に当たらない**。当てるなら「実在する最深の親を解決する」形になり、
+ *        判定の意味が変わる。
+ *     2. **symlink を置ける相手は、既に書きたい所へ書ける。** 書き出し根
+ *        (`~/.local/business-hub/`) に symlink を作るには、そのディレクトリへの
+ *        書き込み権が要る。それを持つのは利用者として動くローカルのプロセスで、
+ *        `~/.bashrc` などへ直接書ける —— symlink を経由しても**権限は増えない**。
+ *        レンダラーが乗っ取られても、レンダラー自身は symlink を作れない
+ *        (fs に触れない) ので、この経路は成立しない。
+ *
+ *     **開く側は事情が違うので realpath している** (`shellOpenGate.ts`) ——
+ *     あちらは既に在るファイルを OS に渡すため、実体が根の外なら意味が変わる。
  */
 
 import os from 'node:os';
