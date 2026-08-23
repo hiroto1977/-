@@ -61,7 +61,13 @@ import {
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
-import { withTimeout, DEFAULT_HTTP_TIMEOUT_MS } from '../shared/httpLimits';
+import {
+  withTimeout,
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  declaredLengthExceeds,
+} from '../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
@@ -294,6 +300,27 @@ function ok<T>(data: T): ActionResult<T> {
  * 値は main と同じものを使う (`shared/httpLimits.ts` / `shared/ai/chat.ts`)。
  * 2 つの版で別々の数字を持たない。
  */
+/**
+ * 応答本文を**上限つきで**読む。main の `readCapped` と同じ値を使う。
+ *
+ * プロキシ経由の道は `fetchViaProxy` が既に `readWithCap` で切っていて、
+ * 注記にも「Defense-in-depth: cap response body before json() to prevent
+ * OOM」と書いてある。**直接叩く道にだけ同じ切りが無かった** —— 応答を
+ * `res.json()` でそのまま読むので、相手が巨大な本文を返せばタブの記憶を
+ * 使い切る。https の一次 API 相手なので踏むには相手側が壊れている必要が
+ * あるが、**同じ判断が経路によって違う**状態を残さない。
+ *
+ * 宣言長 (Content-Length) を先に見てから、実際の読み出しでも切る ——
+ * 宣言は嘘をつけるので、両方要る。
+ */
+async function readCappedText(res: Response, label: string): Promise<string> {
+  const declared = declaredLengthExceeds(res, MAX_HTTP_RESPONSE_BYTES);
+  if (declared !== null) {
+    throw new Error(`${label} response too large (${declared} > ${MAX_HTTP_RESPONSE_BYTES} bytes)`);
+  }
+  return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);
+}
+
 function timedFetch(url: string, init: RequestInit): Promise<Response> {
   return withTimeout(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
     fetch(url, { ...init, signal }),
@@ -464,13 +491,22 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
   }
 
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCappedText(res, 'Anthropic').catch(() => '');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
+  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
+  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
+  // 本当の理由 (大きすぎる) が消える。
+  let raw: string;
+  try {
+    raw = await readCappedText(res, 'Anthropic');
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
   } catch {
     return err('action_failed', 'API 応答が JSON ではありません');
   }
@@ -554,12 +590,21 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCappedText(res, 'Anthropic').catch(() => '');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+  }
+  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
+  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
+  // 本当の理由 (大きすぎる) が消える。
+  let raw: string;
+  try {
+    raw = await readCappedText(res, 'Anthropic');
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
   } catch {
     return err('action_failed', 'API 応答が JSON ではありません');
   }
@@ -618,12 +663,21 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCappedText(res, 'Anthropic').catch(() => '');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+  }
+  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
+  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
+  // 本当の理由 (大きすぎる) が消える。
+  let raw: string;
+  try {
+    raw = await readCappedText(res, 'Anthropic');
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
   } catch {
     return err('action_failed', 'API 応答が JSON ではありません');
   }
@@ -928,7 +982,7 @@ const shim = {
         headers: { accept: 'application/vnd.github+json' },
       });
       if (!res.ok) return evaluateUpdate(current, null);
-      return evaluateUpdate(current, parseLatestRelease(await res.json()));
+      return evaluateUpdate(current, parseLatestRelease(JSON.parse(await readCappedText(res, 'update'))));
     } catch {
       return evaluateUpdate(current, null);
     }

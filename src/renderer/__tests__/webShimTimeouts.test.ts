@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DEFAULT_HTTP_TIMEOUT_MS } from '../../shared/httpLimits';
+import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES } from '../../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 
 vi.mock('../security/vault', () => ({
@@ -124,5 +124,64 @@ describe('ブラウザ版の外向き通信には打ち切りが付く', () => {
     ])) as unknown;
     // 打ち切り前なので保留のままで正しい。決着の形が在ることは上の 3 本が示す。
     expect(res).toBe('PENDING');
+  });
+});
+
+/*
+ * **応答の大きさの上限も、経路によって違っていた。**
+ *
+ * プロキシ経由は `fetchViaProxy` が `readWithCap` で切っており、注記にも
+ * 「Defense-in-depth: cap response body before json() to prevent OOM」と
+ * 書いてある。だが**直接叩く道 (Anthropic / 更新確認) にだけ同じ切りが
+ * 無く**、`res.json()` でそのまま読んでいた。
+ *
+ * https の一次 API 相手なので踏むには相手側が壊れている必要があるが、
+ * 同じ判断が経路によって違う状態は残さない (main は両方切っている)。
+ */
+describe('応答の大きさにも上限が付く', () => {
+  const HUGE = 'x'.repeat(1024);
+
+  it('宣言長が上限を超える応答は読まずに落とす', async () => {
+    vi.stubGlobal('fetch', () =>
+      Promise.resolve(
+        new Response('{}', {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+            'content-length': String(MAX_HTTP_RESPONSE_BYTES + 1),
+          },
+        }),
+      ),
+    );
+    const hub = await loadHub();
+    const res = (await hub.invoke('business', 'advise', { question: 'hi' })) as {
+      ok: boolean;
+      message?: string;
+    };
+    expect(res.ok, '巨大だと宣言した応答を受理している').toBe(false);
+    // **理由まで見る。** `ok === false` は応答の形が違うだけでも成り立つので、
+    // それだけだと上限を外しても通ってしまう (実際、最初はそれで空撃ちだった)。
+    expect(res.message ?? '', '大きさで断ったと言っていない').toMatch(/too large/);
+  });
+
+  it('普通の大きさの応答はそのまま通る (締めすぎていない)', async () => {
+    vi.stubGlobal('fetch', () =>
+      Promise.resolve(
+        new Response(JSON.stringify({ content: [{ type: 'text', text: HUGE }] }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+      ),
+    );
+    const hub = await loadHub();
+    const res = (await hub.invoke('business', 'advise', { question: 'hi' })) as { ok: boolean };
+    // 応答の形が助言 JSON でないので ok にはならないが、**大きさでは弾かれない**
+    // ことを見る (弾かれていれば「大きすぎます」で落ちる)。
+    const msg = (res as { message?: string }).message ?? '';
+    expect(msg, '普通の大きさなのに大きさで弾いている').not.toMatch(/too large/);
+  });
+
+  it('上限の値は main と同じものを使う', () => {
+    expect(MAX_HTTP_RESPONSE_BYTES).toBe(10 * 1024 * 1024);
   });
 });
