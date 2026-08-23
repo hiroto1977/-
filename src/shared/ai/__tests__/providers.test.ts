@@ -5,6 +5,7 @@ import {
   isAiProviderId,
   resolveModel,
   type AiChatRequest,
+  type AiProviderId,
 } from '../providers';
 
 const REQ: AiChatRequest = {
@@ -363,10 +364,77 @@ describe('compat (OpenAI-compatible)', () => {
 describe('ベース URL の検証が buildRequest まで効く', () => {
   const req = { messages: [{ role: 'user' as const, content: 'x' }], maxTokens: 16 };
 
-  it('鍵を送るプロバイダは loopback 以外の平文 http を投げて弾く', () => {
-    for (const id of ['anthropic', 'openai', 'gemini'] as const) {
-      const call = () => AI_PROVIDERS[id].buildRequest(req, { apiKey: 'k', baseUrl: 'http://evil.example.com' });
-      expect(call, id).toThrow(/平文/);
+  /*
+   * **「鍵を送る経路」を名前で数えない。**
+   *
+   * `aiEndpoint.ts` は「この経路は API キーを載せない。載る構成
+   * (`credentialed: true`) は loopback 以外の平文を必ず弾く」と書いている。
+   * これは**関数 1 つでは守れない主張**で、呼ぶ側が `credentialed` を
+   * 正しく渡してはじめて成り立つ。
+   *
+   * 2026-08-23 まで、ここは `['anthropic', 'openai', 'gemini']` という
+   * **手書きの 3 つ**を回していた。守りたい境界は「鍵を載せるプロバイダ
+   * 全部」であって名前の一覧ではない (0-a-18)。
+   *
+   * **どこまでが本当に抜けたかを測った。** 6 つめのプロバイダを実際に
+   * 足して実験すると:
+   *
+   *   - 検証を**丸ごと省く**形 (生の baseUrl を使う) は、すぐ下の
+   *     `userinfo` の検査が `AI_PROVIDER_IDS` を回しているので**捕まる**。
+   *   - `resolveBase` は通すが **`credentialed: false` を渡す**形 ——
+   *     鍵を載せない ollama の spec を写して鍵を足す、いちばん有りそうな
+   *     間違い —— は `http://evil.example.com` へ `Authorization: Bearer`
+   *     を載せたまま **122 件すべて通った**。
+   *
+   * 抜けるのは後者。`credentialed` は呼ぶ側の**申告**なので、申告と実際に
+   * 載せる物がずれても関数側からは見えない。
+   *
+   * **`lint:network-targets` は代わりにならない。** あの台帳は確かに
+   * 6 つめを見つけて「台帳にありません」と鳴らす。だが台帳に載せるのは
+   * *人が書く一文*で、`credentialed: false` の 6 つめでも
+   * 「resolveBase を通している」は**本当のこと**なので、登録すれば
+   * ✅ になる (実測)。**台帳は主張を残す。効いているかを見るのはここ。**
+   *
+   * **鍵を載せるかどうかは、実際に組み立てて中を見れば分かる。**
+   * ヘッダ名 (`authorization` / `x-api-key` / `x-goog-api-key`) も
+   * 載せ方 (ヘッダ / クエリ / 本文) も プロバイダごとに違うので、
+   * **印の文字列そのもの**を組み立て結果の全体から探す。
+   */
+  const KEY_SENTINEL = 'sk-SENTINEL-9c1f4a7b';
+
+  /** 鍵を載せるプロバイダを、名前ではなく**組み立て結果**から数える。 */
+  function keyCarryingProviders(): AiProviderId[] {
+    return AI_PROVIDER_IDS.filter((id) => {
+      try {
+        const built = AI_PROVIDERS[id].buildRequest(req, {
+          apiKey: KEY_SENTINEL,
+          baseUrl: 'https://ok.example',
+          model: 'm',
+        });
+        return JSON.stringify(built).includes(KEY_SENTINEL);
+      } catch {
+        return false;
+      }
+    });
+  }
+
+  it('鍵を載せるプロバイダを数えられている (空撃ちでない)', () => {
+    const carriers = keyCarryingProviders();
+    // 数え方が壊れると黙って [] になり、下の規則が空回りする。
+    expect(carriers.length, '鍵を載せるプロバイダが 1 つも数えられていない').toBeGreaterThanOrEqual(4);
+    // 鍵を載せない構成も実在すること (全部 true を返す壊れ方も弾く)。
+    expect(carriers.length).toBeLessThan(AI_PROVIDER_IDS.length + 1);
+  });
+
+  it('鍵を載せるプロバイダは、loopback 以外の平文 http を必ず弾く', () => {
+    for (const id of keyCarryingProviders()) {
+      const call = () =>
+        AI_PROVIDERS[id].buildRequest(req, {
+          apiKey: KEY_SENTINEL,
+          baseUrl: 'http://evil.example.com',
+          model: 'm',
+        });
+      expect(call, `${id} が平文 http の別ホストへ鍵を送ろうとしている`).toThrow(/平文/);
     }
   });
 
