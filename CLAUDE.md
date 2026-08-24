@@ -71,7 +71,7 @@ Vitest config is in `vitest.config.ts` (node environment).
 npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
 npm run lint:forbidden     # forbidden patterns (nodeIntegration: true / contextIsolation: false /
-                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 31 種)
+                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 32 種)
 npm run lint:workflow-security # .github/workflows/: permissions の明示・第三者 action の SHA 固定・
                            #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)

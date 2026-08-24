@@ -102,6 +102,40 @@ const FORBIDDEN_PATTERNS = [
       ].includes(rel),
     rationale: '出荷する窓では常に true。開発ツールだけが例外で、上の台帳へ明記すること',
   },
+  // --- 保管領域の内部を直接触る --------------------------------------------
+  // 2026-08-24 に見つけた 3 件の発生源が全部この形だった:
+  //
+  //   - 画面が `indexedDB.deleteDatabase` で保管庫を消してから作り直していた
+  //     → 失窓で資格情報が消え、控えたリカバリーフレーズも通らなくなっていた
+  //   - 第三者画像 URL の関門がコンポーネントの中に居た → 変異検査から外れていた
+  //   - CSS の `url()` へ生の値を差し込んでいた → スキーム検証を素通り
+  //
+  // 共通するのは「**その層の仕事でないものが、その層に書かれていた**」こと。
+  // 保管領域を開けてよいファイルを台帳で固定する。増やすときは 1 行足すという
+  // 明示的な操作が要る (画面から足そうとすれば、そこで気付ける)。
+  {
+    name: '保管領域 (IndexedDB) の内部を直接触っている',
+    pattern: /indexedDB\.|\.transaction\(|objectStore\(/,
+    codeOnly: true,
+    allowFile: (rel) =>
+      [
+        // 保管層のモジュール。
+        'src/renderer/security/vault.ts',
+        'src/renderer/data/store.ts',
+        'src/renderer/network/proxy.ts',
+        'src/renderer/library/library.ts',
+        'src/renderer/fs/fsa.ts',
+        // **外から**保管領域を覗いて検証する道具 (アプリの層とは逆向き)。
+        // 「保存されている物が本当に暗号化されているか」を実物で確かめる側で、
+        // ここを禁じると検証手段のほうが消える。
+        'scripts/runtime-security-exp.cjs',
+        'scripts/soak-test.cjs',
+        'scripts/screenshot.cjs',
+      ].includes(rel),
+    rationale:
+      '保管層のモジュール越しに使うこと。画面が保管庫の内部を組み立てると、' +
+      '原子性も不変条件も画面側の書き方次第になる (2026-08-24 に実際に失われた)',
+  },
   // --- CSS の url() へ値を差し込む ------------------------------------------
   // R3-6 (2026-07 監査) は第三者由来の画像 URL を `safeImageSrc` に寄せ、
   // その冒頭に「同じ値が **CSS `url()`** へ流れた瞬間に危険」と**予告して
@@ -641,6 +675,16 @@ const KNOWN_SUPPRESSIONS = [
   // (2026-08-24: 関門を `components/DataList.tsx` から `src/shared/` へ出した。
   //  変異検査の対象に `.tsx` が 1 件も無く、壁がコンポーネントに隠れていたため。
   //  **この台帳が双方向なので、移動した瞬間に「効いていない例外」として鳴った。**)
+  // 保管領域を開けてよい 5 ファイル。**ここに足すのは「新しい保管層を作る」
+  // という判断**であって、画面の都合で足すものではない。
+  // 外から保管領域を覗いて検証する道具 (アプリの層とは逆向き)。
+  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/runtime-security-exp.cjs :: 1',
+  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/soak-test.cjs :: 2',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 27',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 7',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 11',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 13',
   'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
@@ -720,6 +764,13 @@ function selfTest() {
     ['contextIsolation: false を弾く', 'contextIsolation: false,', 1],
     // CSS url() への補間 (2026-08-24 に実在した形)
     ['url() への生補間を弾く', 'backgroundImage: `url(${theme.image})`,', 1],
+    // 保管領域の直接操作 (2026-08-24 に実在した形)
+    ['画面が保管庫を消すのを弾く', "await indexedDB.deleteDatabase('business-hub-vault');", 1],
+    ['トランザクションの直接開始を弾く', "const tx = db.transaction(STORE, 'readwrite');", 1],
+    ['objectStore の直接取得を弾く', 'tx.objectStore(STORE).put(v, k);', 1],
+    ['散文の transaction は当てない', 'const label = \'transaction (取引)\';', 0],
+    ['ストア API 越しなら鳴らない', 'await getRecordStore().importAll(records);', 0],
+    ['保管庫 API 越しなら鳴らない', 'await getVault().changePassword(oldPw, newPw);', 0],
     ['引用してあっても弾く (スキーム検証が要る)', 'backgroundImage: `url("${raw}")`,', 1],
     ["単引用でも弾く", "const s = `url('${raw}')`;", 1],
     ['定数の url() は弾かない', "const s = 'url(./icon.svg)';", 0],
