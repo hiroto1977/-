@@ -621,7 +621,20 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
       case 'oauth-error':
         // State already validated before this branch — this IS the
         // legitimate provider responding with an error. Terminal.
-        res.writeHead(400, { 'Content-Type': 'text/plain' }).end(`OAuth error: ${outcome.error}`);
+        //
+        // **この応答だけが要求の値を映して返す** (`error` はクエリ由来)。
+        // 到達には state 一致が要るので任意の相手からは叩けないが、
+        // 「映して返す唯一の口」が「何も映さない成功応答」より弱い頭書きな
+        // のは筋が通らない (成功側は `charset` を明示していて、その理由も
+        // 『ブラウザに中身を推測させない』と書いてある)。揃える:
+        //   - charset を明示 —— 無いと符号化の推測が残る
+        //   - nosniff —— 宣言した text/plain を HTML と読み替えさせない
+        res
+          .writeHead(400, {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'X-Content-Type-Options': 'nosniff',
+          })
+          .end(`OAuth error: ${outcome.error}`);
         reject(new Error(`OAuth provider returned error: ${outcome.error}`));
         break;
       case 'missing-params':

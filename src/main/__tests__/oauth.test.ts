@@ -937,7 +937,12 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     port: number,
     path: string,
     hostHeader?: string,
-  ): Promise<{ status: number; body: string; contentType: string | undefined }> {
+  ): Promise<{
+    status: number;
+    body: string;
+    contentType: string | undefined;
+    nosniff: string | undefined;
+  }> {
     return new Promise((resolve, reject) => {
       const headers: Record<string, string> = {};
       if (hostHeader !== undefined) headers.Host = hostHeader;
@@ -957,6 +962,8 @@ describe('listenForCallback (integration — real HTTP server)', () => {
               status: res.statusCode ?? 0,
               body,
               contentType: res.headers['content-type'],
+              // Node は同名ヘッダを配列で返しうるので、比較しやすい形に潰す。
+              nosniff: ([] as string[]).concat(res.headers['x-content-type-options'] ?? [])[0],
             }),
           );
         },
@@ -991,6 +998,31 @@ describe('listenForCallback (integration — real HTTP server)', () => {
   function trap(p: ReturnType<typeof listenForCallback>): Promise<Error | { code: string; state: string }> {
     return p.then((r) => r as { code: string; state: string }).catch((e) => e as Error);
   }
+
+  /*
+   * **要求の値を映して返す唯一の応答**。`error` はクエリ由来で、そのまま
+   * 本文に入る。到達には state 一致が要る (state を先に照合する) ので
+   * 任意の相手からは叩けないが、映す以上は頭書きを固める:
+   *
+   *   - `charset` 明示 —— 成功応答は元から明示していて、理由も
+   *     「ブラウザに中身を推測させない」と書いてある。映す側が弱いのは逆。
+   *   - `nosniff` —— 宣言した `text/plain` を HTML と読み替えさせない。
+   *
+   * (2026-08-24 の点検で、映さない成功応答のほうが頭書きが強いという
+   *  非対称に気付いた。)
+   */
+  it('プロバイダのエラーを映して返す応答は、推測されない頭書きで返す', async () => {
+    const STATE = 'integ-test-state-err-000000001';
+    const listener = listenForCallback(STATE);
+    const port = await listener.port();
+    const trapped = trap(listener);
+    const res = await fireGet(port, `/oauth/callback?state=${STATE}&error=access_denied`);
+    expect(res.status).toBe(400);
+    expect(res.contentType).toBe('text/plain; charset=utf-8');
+    expect(res.nosniff).toBe('nosniff');
+    expect(res.body).toContain('access_denied');
+    expect(await trapped).toBeInstanceOf(Error);
+  });
 
   it('responds 400 on state mismatch but does NOT terminate the flow (CSRF DoS defense)', async () => {
     // After the hardening: a forged callback with wrong/missing state
