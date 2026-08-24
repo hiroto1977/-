@@ -20,6 +20,8 @@ let quitCalls = 0;
 let allWindows: unknown[] = [];
 
 let openedExternal: string[] = [];
+/** OS が URL を開けない状況を作るための差し込み口 (既定は成功)。 */
+let openExternalRejection: Error | null = null;
 let shownInFolder: string[] = [];
 let openPathCalls: string[] = [];
 let openPathResult = '';
@@ -51,6 +53,7 @@ vi.mock('electron', () => ({
   },
   shell: {
     openExternal: async (url: string) => {
+      if (openExternalRejection !== null) throw openExternalRejection;
       openedExternal.push(url);
     },
     showItemInFolder: (p: string) => {
@@ -144,6 +147,7 @@ beforeEach(async () => {
   handlers.clear();
   appListeners.clear();
   openedExternal = [];
+  openExternalRejection = null;
   shownInFolder = [];
   openPathCalls = [];
   openPathResult = '';
@@ -192,6 +196,39 @@ describe('app:openExternal — 開いてよい URL だけ', () => {
     await invoke('app:openExternal', 'https://example.com/a?b=1');
     await invoke('app:openExternal', 'http://example.com/');
     expect(openedExternal).toEqual(['https://example.com/a?b=1', 'http://example.com/']);
+  });
+
+  /*
+   * **OS 側が開けなかったときに reject しない。**
+   *
+   * `shell.openExternal` は既定ブラウザ未設定や `xdg-open` 不在で reject する。
+   * この口の約束は `Promise<void>` でレンダラーに受け皿が無いため、reject を
+   * そのまま返すと呼び出し元で未処理の rejection になる。握り潰さず main の
+   * 記録には残す、というのが本体の設計 (`main.ts` の注記)。
+   *
+   * その catch は **どのテストも通っていなかった** (2026-08-24 の変異検査が
+   * NoCoverage として指した)。差し込み口を足して両方向を固定する。
+   */
+  it('OS が開けなくても reject しない (記録は残す)', async () => {
+    openExternalRejection = new Error('xdg-open not found');
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    try {
+      await expect(invoke('app:openExternal', 'https://example.com/')).resolves.toBeUndefined();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(String(spy.mock.calls[0]?.[0])).toContain('openExternal');
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('開けたときは記録を残さない (対照)', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    try {
+      await invoke('app:openExternal', 'https://example.com/');
+      expect(spy).not.toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('http(s) 以外のスキームは一つも通さない', async () => {
