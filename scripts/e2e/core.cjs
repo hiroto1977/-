@@ -730,6 +730,73 @@ async function credentialSuite(browser) {
  * 金額を持てないため出られなかった。売上を入れた事業が自分の名前で並び、
  * 同梱分が「(サンプル)」と明示されることを実ブラウザで見る。
  */
+/**
+ * 計算書類の消費税科目 — **区分を間違えると貸借が合わなくなる**ので実機で見る。
+ *
+ * 単体テストは `ACCOUNTS` の区分と区分合計を固定しているが、そこから
+ * 「入力欄として画面に出るか」「入れた額が貸借対照表の行に出るか」までは
+ * 見ていない。フォームは `ACCOUNTS.map` で組み立てているので、その配線が
+ * 切れたら単体は通ったまま画面だけ空になる。
+ *
+ * 決算書は書類スタジオの**別コレクション** (`data-collection="kessan"`) で、
+ * 雛形書類の `data-doc-id` とは別系統。ここを取り違えると「タブが無い」と
+ * 誤診する (2026-08-24 に実際に踏んだ)。
+ */
+async function kessanTaxSuite(browser) {
+  console.log('--- 計算書類: 消費税の科目 ---');
+  // 各 suite は自前の context で保管庫を作る (SERVICE_HUB_E2E_ONLY で
+  // 単独実行できるようにするため)。他の suite に相乗りしない。
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  collectErrors(page, errors);
+  await page.goto(FILE + '#docstudio', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-collection]', { timeout: 30000 });
+  await page.locator('[data-collection="kessan"]').click();
+  await page.waitForSelector('[data-kessan-sheets]', { timeout: 15000 });
+
+  // 税抜経理: 支払った税は資産、預かった税は負債。精算は片側だけに立つ。
+  const ACCOUNTS = [
+    ['仮払消費税等', '資産'],
+    ['未収還付消費税等', '資産'],
+    ['仮受消費税等', '負債'],
+    ['未払消費税等', '負債'],
+  ];
+  for (const [name] of ACCOUNTS) {
+    ok((await page.getByLabel(name, { exact: false }).count()) > 0, `kessan: 「${name}」の入力欄が在る`);
+  }
+
+  await page.getByLabel('仮払消費税等', { exact: false }).first().fill('80');
+  await page.getByLabel('仮受消費税等', { exact: false }).first().fill('80');
+  await page.waitForFunction(
+    () => (document.querySelector('[data-kessan-sheets]')?.textContent ?? '').includes('仮払消費税等'),
+    undefined,
+    { timeout: 15000 },
+  );
+  const sheets = (await page.locator('[data-kessan-sheets]').innerText()).replace(/,/g, '');
+  ok(/仮払消費税等[\s\S]{0,40}80/.test(sheets), 'kessan: 仮払が貸借対照表の行に出る');
+  ok(/仮受消費税等[\s\S]{0,40}80/.test(sheets), 'kessan: 仮受が貸借対照表の行に出る');
+
+  // 資産・負債を同額入れたので貸借は崩れない = 不一致の指摘が出ない。
+  const check = await page.locator('[data-kessan-check]').innerText().catch(() => '');
+  ok(!check.includes('貸借が一致していません'), 'kessan: 両建てしても貸借は崩れない');
+
+  // 納付と還付は同時に立たない — 入力者が気づけない誤りなので検算で拾う。
+  await page.getByLabel('未払消費税等', { exact: false }).first().fill('30');
+  await page.getByLabel('未収還付消費税等', { exact: false }).first().fill('30');
+  await page.waitForFunction(
+    () => (document.querySelector('[data-kessan-check]')?.textContent ?? '').includes('どちらか一方'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'kessan: 納付と還付の両建てを検算が指摘する');
+
+  ok(errors.length === 0, `kessan: ページエラー 0 (実際 ${errors.length})`);
+  if (errors.length > 0) errors.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -847,6 +914,7 @@ async function businessComparisonSuite(browser) {
   if (run('dataOrigin')) await dataOriginSuite(browser);
   if (run('credential')) await credentialSuite(browser);
   if (run('businessComparison')) await businessComparisonSuite(browser);
+  if (run('kessanTax')) await kessanTaxSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
