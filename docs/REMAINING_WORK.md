@@ -3975,3 +3975,43 @@ CRM レコードの field-level 暗号化 (`data` だけを封緘) も、レコ�
 「暗号化を本当に有効化するときに、id 束縛と平文素通しを同時に決める」
 のが正しい順序と判断した。
 
+
+---
+
+### 保存値を読む 19 経路を「読み出し時に検証しているか」で洗った — 白 (2026-08-24)
+
+0-a-21 (暗号文と置き場所の束縛) を入れた流れで、**保存された値を後から信じている
+経路**を全部数えた。`localStorage.getItem` / `sessionStorage.getItem` は 19 件。
+
+問いは 1 つ: **「保存時にしか検証していない値はあるか」**。
+保存時だけだと、検証が緩かった頃の値や別経路 (devtools・拡張・プロファイルに
+触れる者) で書かれた値がそのまま使われる。
+
+| 経路 | 何を保存しているか | 判定 |
+|---|---|---|
+| `network/proxy.ts` | 中継先 URL (**送り先**) | ✅ `inspectStoredProxyConfig` が**読み出しのたびに**再検証。「保存はされているが今の規則では使えない」と画面に言える形まで在る |
+| `network/ollamaWeb.ts` | Ollama の接続先 (**送り先**) | ✅ `loadEndpointSetting` は生値を返すが、**消費側 3 経路すべて**が `parseOllamaEndpoint` を通す (`probeOllama` / `chatOllama` / `OllamaPage`)。保存側は無検証だが、設計として正しい向き |
+| `ChatbotWidget` のモデル名 | Ollama のモデル名 | ✅ `invoke('ollama','chat')` → `chatOllama` → `isSafeModelName`。main 側 (`clients/ollama.ts:238`) も同じ検証 |
+| `data/recordEncryption.ts` | 暗号化メタ (salt / kcv) | ✅ 読み出し時に形を検証 (`enabled===true` / `typeof salt` / `isSealed(kcv)`)。**反復回数は保存していない** ので vault が踏んだ「メタ由来の反復回数」の穴が原理的に無い |
+| `oauth/pkceSession.ts` | PKCE verifier | ✅ 2026-08-23 に点検済み (失敗時の掃除漏れを修正) |
+| `GoogleConnectCard` / `Microsoft365Page` | OAuth の client_id | ✅ 認可 URL の**ホストは定数** (`https://accounts.google.com/...`)。client_id を利用者が持ち込むのはこの機能の設計そのもの |
+| `stocksWatchlistWeb` | ティッカー | ✅ 2026-08-23 に 3 実装を `isSafeSymbol` へ寄せ済み |
+| 残り (chat 履歴 / テーマ / 下書き / plan / license / emotions / docstudio) | 表示・下書き | 送り先にも実行にもならない |
+
+**白だった。** 送り先を決める 2 経路がどちらも読み出し時検証で、しかも
+`proxy.ts` には**なぜ保存時だけでは足りないか**が注記されている。
+
+#### 併せて見た 2 つ (どちらも変更なし)
+
+- **`cloud/cloudProviderAdapter.ts` の暗号文** — `sealWithKey(key, plaintext)` は
+  保存先パスで束ねていないので 0-a-21 と同じ形。ただし **`CloudTransport` の
+  実装が 1 つも無く**、`cloudProviderAdapter` を import する製品コードも無い
+  (2026-08-22 に「成功をでっち上げていた」として点検・是正済みの領域)。
+  マニフェスト側には `path → sha256` の対応と `verifyManifest` が既に在る。
+  **ただし `actualShas` は省略可**で、省略すると構造だけ見て `ok:true` を返す ——
+  送信路を実装する人が `verifyManifest(manifest)` だけ呼ぶと**中身を 1 件も
+  照合しないまま緑になる**。実装時にここを決めること (今は呼び出し 0 件なので触らない)。
+- **`library/` のプレビュー** — `blob:` を同一オリジンで開く経路は既に塞がれて
+  いる (`window.open(blob:)` → data: URL の `<img>`)。SVG は `<img>` 経由なら
+  secure static mode でスクリプトが動かず、text は JSX で本文として出るだけ。
+
