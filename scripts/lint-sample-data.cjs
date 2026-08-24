@@ -41,6 +41,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 // 見本・プレースホルダは `data/` だけでなく画面側にも書かれる
@@ -195,6 +196,34 @@ function selfTest() {
   ];
   let bad = 0;
   console.log('self-test:');
+  // ── 成果物モード (--artifact) ──
+  // 実ファイルを読む経路なので、規則の写しではなく **本物の入口** を叩く。
+  // 「0 件でした」は検査が空撃ちでも出るので、鳴る側を必ず持つ。
+  {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sample-data-'));
+    const write = (name, text) => {
+      const f = path.join(tmp, name);
+      fs.writeFileSync(f, text);
+      return f;
+    };
+    const clean = write('clean.html', '<p>taro@example.com / https://example-team.slack.com/x</p>');
+    const dirty = write('dirty.html', '<p>https://docs.google.com/document/d/1AaBbCcDdEeFfGgHhIiJjKkLlMmNn/edit</p>');
+    const cal = write('cal.html', '<p>z9y8x7w6v5u4t3s2r1q0p9o8@group.calendar.google.com</p>');
+    const artifactCases = [
+      ['成果物: 見本だけなら通る', [clean], 0],
+      ['成果物: 実 ID が混ざれば鳴る', [dirty], 1],
+      ['成果物: 台帳に無いカレンダー ID も鳴る', [cal], 1],
+      ['成果物: 複数渡すと合算する', [clean, dirty, cal], 2],
+      ['成果物: 存在しないファイルは鳴る (ビルド忘れを黙らせない)', [path.join(tmp, 'nope.html')], 1],
+    ];
+    for (const [label, files, expected] of artifactCases) {
+      const n = checkArtifacts(files, ['me@corp.jp', 'me']).length;
+      const ok = n === expected;
+      if (!ok) bad = 1;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+    }
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
   for (const [label, input, expected] of cases) {
     const n = check(input).length;
     const ok = n === expected;
@@ -222,8 +251,57 @@ function selfTest() {
   return 0;
 }
 
+/**
+ * **出荷する実物**を検査する (`--artifact <file>…`)。
+ *
+ * 走査範囲は `src` / `scripts` / `orchestration` で、**出荷される HTML は
+ * 見ていなかった**。実際にはバンドルはこの 3 つから作られるので取りこぼしは
+ * 無い —— が、それは「今のビルド構成では」であって、規則が保証している
+ * ことではない。このリポジトリには **公開経路と同じ後段を実物に当てる**
+ * 前例がある (`ci.yml` の inline/inject 検証。写しを見ていたせいで公開して
+ * 初めて分かった事故が元)。同じ理由で、**出た物そのもの**にも当てる。
+ *
+ * 規則は `check()` を借りる —— 判定を書き写すと、比べているのが写しになる。
+ * 実測 (2026-08-24): 11MB の `standalone.html` に対して 169ms。
+ */
+function checkArtifacts(files, owner) {
+  const problems = [];
+  for (const file of files) {
+    if (!fs.existsSync(file)) {
+      problems.push({ where: file, why: '成果物が見つかりません (ビルドしてから実行してください)' });
+      continue;
+    }
+    const text = fs.readFileSync(file, 'utf8');
+    for (const p of check({ srcFiles: [], dataFiles: [{ rel: file, text }], owner })) problems.push(p);
+  }
+  return problems;
+}
+
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
+  const artifactAt = argv.indexOf('--artifact');
+  if (artifactAt !== -1) {
+    const files = argv.slice(artifactAt + 1).filter((a) => !a.startsWith('--'));
+    if (files.length === 0) {
+      console.error('❌ --artifact にファイルを 1 つ以上渡してください');
+      return 1;
+    }
+    const pkgA = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
+    const ownerA = ownerIdentifiers(pkgA);
+    if (ownerA.length === 0) {
+      console.error('❌ package.json の author.email を読めません — 規則 1 が空振りします');
+      return 1;
+    }
+    const found = checkArtifacts(files, ownerA);
+    console.log(`出荷成果物 ${files.length} 件を検査 (ソースと同じ規則を実物へ当てる)`);
+    if (found.length === 0) {
+      console.log('✅ 出荷物に実在の個人データは混ざっていません');
+      return 0;
+    }
+    console.error(`❌ ${found.length} 件:`);
+    for (const p of found) console.error(`  ${p.where}: ${p.why}`);
+    return 1;
+  }
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
   const owner = ownerIdentifiers(pkg);
   if (owner.length === 0) {
@@ -246,6 +324,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { check, ownerIdentifiers, EMAIL_ALLOW, VENDOR_ID_SHAPES };
+module.exports = { check, checkArtifacts, ownerIdentifiers, EMAIL_ALLOW, VENDOR_ID_SHAPES };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

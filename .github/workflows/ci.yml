@@ -146,6 +146,12 @@ jobs:
       - run: npm run build:demo
       - run: npm run build:deliberation-demo
       - run: npm run build:research-demo
+      # デモ 3 本も **次の build:web:lite が dist/ ごと消す**ので、ここで控える。
+      # (landing で同じ順序を読み違えて 1 度 CI を落としている。同じ罠。)
+      - name: Stash demo artifacts before dist/ is emptied
+        run: |
+          mkdir -p /tmp/inject-check
+          cp dist/counseling-demo.html dist/deliberation-demo.html dist/research-demo.html /tmp/inject-check/
       - run: npm run build:web:lite
       - name: Verify standalone-lite.html size
         run: |
@@ -176,3 +182,25 @@ jobs:
         run: |
           cp dist/standalone-lite.html /tmp/inject-check/lite.html
           node scripts/inject-pwa.cjs /tmp/inject-check/lite.html
+
+      # 出荷する実物に個人データが混ざっていないかを見る。
+      #
+      # `lint:sample-data` (上流) が見ているのは src / scripts / orchestration で、
+      # **出た物そのものは見ていなかった**。今のビルド構成ではバンドルはその
+      # 3 つから作られるので取りこぼしは無い —— が、それは構成が保証している
+      # だけで、規則が保証していることではない。inject-pwa を実物に当てている
+      # のと同じ理由で、ここでも実物に当てる。
+      #
+      # 規則は同じ `check()` を借りる (判定を書き写すと、比べているのが写しに
+      # なる)。11MB の standalone.html に対して実測 169ms。
+      # 渡したファイルが無ければ落ちるので、ビルド忘れも黙らない。
+      - name: Scan shipped artifacts for real personal data
+        run: |
+          ls -la /tmp/inject-check/
+          node scripts/lint-sample-data.cjs --artifact \
+            /tmp/inject-check/app.html \
+            /tmp/inject-check/index.html \
+            /tmp/inject-check/lite.html \
+            /tmp/inject-check/counseling-demo.html \
+            /tmp/inject-check/deliberation-demo.html \
+            /tmp/inject-check/research-demo.html
