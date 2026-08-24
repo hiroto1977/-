@@ -65,6 +65,25 @@ export interface Vault {
   getToken(serviceId: string): Promise<string | null>;
   clearToken(serviceId: string): Promise<void>;
   listConfigured(): Promise<string[]>;
+  /** 旧パスワードで認証して、新パスワードへ**包み直す**。
+   *
+   *  トークンはマスター鍵で暗号化されており、パスワードはそのマスター鍵を
+   *  包んでいるだけなので、**トークンにも リカバリー枝にも触らない**。
+   *  したがって利用者が控えた 24 語は変更後もそのまま使える。
+   *
+   *  以前は画面側が「保管庫ごと消す → `initialize()` → 書き戻す」を組み立てて
+   *  いた (2026-08-24 に発見)。それには 2 つの結果があった:
+   *
+   *   1. **消してから書き戻すまでの失窓** —— 中断すれば資格情報が永久に消える
+   *   2. **`initialize()` は新しい 24 語を生成して返す**が、画面はその戻り値を
+   *      捨てていた → 控えたフレーズは通らなくなり、通るフレーズは誰も知らない
+   *
+   *  `recoverWithMnemonic` と同じ書き込み (meta の password 枝 + master-wrap を
+   *  1 トランザクションで差し替え) を行う。認証手段が違うだけである。
+   *
+   *  offline backup attack の性質も `recoverWithMnemonic` と同じ —— 変更前の
+   *  プロファイル複製を持つ者はそちらを旧パスワードで開ける。前方向の境界。 */
+  changePassword(oldPassword: string, newPassword: string): Promise<void>;
   /** Validate mnemonic, unwrap master key, re-initialize under newPassword.
    *  Preserves all stored tokens.
    *
@@ -140,6 +159,31 @@ function idbPut(db: IDBDatabase, store: string, key: string, value: unknown): Pr
     tx.oncomplete = () => resolve();
     // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => reject(tx.error ?? new Error('idb put failed'));
+  });
+}
+
+/**
+ * 複数の書き込みを **1 トランザクション**で行う。IndexedDB のトランザクションは
+ * 同一 DB 内の複数ストアに対して原子的なので、途中で落ちれば全部巻き戻る。
+ *
+ * `idbPut` を 2 回呼ぶと**トランザクションが 2 つ**になる。パスワード周りでは
+ * これが効く —— meta (`salt`/`kcv`) を書いた後に `master-wrap` の書き込みが
+ * 失敗すると、**新旧どちらのパスワードでも開けない保管庫**が残る。
+ * (`kcv` は新パスワードを指し、`master-wrap` は旧パスワードで包まれたまま。)
+ */
+function idbPutAll(
+  db: IDBDatabase,
+  entries: readonly { store: string; key: string; value: unknown }[],
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const stores = [...new Set(entries.map((e) => e.store))];
+    const tx = db.transaction(stores, 'readwrite');
+    for (const e of entries) tx.objectStore(e.store).put(e.value, e.key);
+    tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられない。
+    tx.onerror = () => reject(tx.error ?? new Error('idb put-all failed'));
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上 (abort 経路)。
+    tx.onabort = () => reject(tx.error ?? new Error('idb put-all aborted'));
   });
 }
 
@@ -717,6 +761,91 @@ class BrowserVault implements Vault {
 
   // --- Phase E: recovery API ----------------------------------------
 
+  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    if (typeof oldPassword !== 'string' || oldPassword.length === 0) {
+      throw new Error('現在のパスワードを入力してください');
+    }
+    if (typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
+      throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
+    }
+    if (newPassword.length > 256) {
+      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    }
+    const db = await openDb();
+    try {
+      const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+      if (!meta) throw new Error('Vault が未初期化です');
+      const masterWrap = await idbGet<EncryptedToken>(db, META_STORE, 'master-wrap');
+
+      // 旧パスワードの検証は unlock と同じ手順 (反復回数の範囲確認 → KCV)。
+      assertKdfIterations(meta.iterations);
+      const oldPasswordKey = await deriveKey(oldPassword, meta.salt, meta.iterations);
+      try {
+        const plain = await decryptString(oldPasswordKey, { iv: meta.iv, ciphertext: meta.kcv });
+        // AES-GCM は認証付きなので鍵違いは復号側が先に throw する (多重防御)。
+        // Stryker disable next-line ConditionalExpression,StringLiteral
+        if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
+      } catch {
+        throw new Error('現在のパスワードが違います');
+      }
+
+      const newSalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+      const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS);
+      const newKcv = await encryptString(newPasswordKey, KCV_PLAINTEXT);
+      const newMeta: VaultMeta = {
+        ...meta,                       // ← リカバリー枝はそのまま (控えた 24 語が生き続ける)
+        salt: newSalt,
+        iv: newKcv.iv,
+        kcv: newKcv.ciphertext,
+        iterations: PBKDF2_ITERATIONS,
+      };
+
+      if (masterWrap) {
+        // Phase E: マスター鍵を包み直すだけ。**トークンには一切触らない。**
+        const masterRaw = await decryptBytes(oldPasswordKey, masterWrap);
+        try {
+          const newMasterWrap = await encryptBytes(newPasswordKey, masterRaw);
+          await idbPutAll(db, [
+            { store: META_STORE, key: 'vault', value: newMeta },
+            {
+              store: META_STORE,
+              key: 'master-wrap',
+              value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
+            },
+          ]);
+          this.currentKey = await importNonExtractable(masterRaw);
+        } finally {
+          masterRaw.fill(0);
+        }
+        return;
+      }
+
+      // Phase E 以前: マスター鍵が無く、トークンは**パスワード鍵そのもの**で
+      // 暗号化されている。したがって包み直しでは済まず、全部を読み替える。
+      // 書き込みは meta と全トークンを **1 トランザクション**にまとめるので、
+      // 途中で落ちても旧パスワードの保管庫がそのまま残る。
+      const ids = await idbKeys(db, TOKEN_STORE);
+      const rewritten: { store: string; key: string; value: unknown }[] = [
+        { store: META_STORE, key: 'vault', value: newMeta },
+      ];
+      for (const id of ids) {
+        const blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        if (!blob) continue;
+        const plain = await decryptString(oldPasswordKey, blob, tokenAad(id));
+        const next = await encryptString(newPasswordKey, plain, tokenAad(id));
+        rewritten.push({
+          store: TOKEN_STORE,
+          key: id,
+          value: { ...next, v: TOKEN_RECORD_V1 },
+        });
+      }
+      await idbPutAll(db, rewritten);
+      this.currentKey = newPasswordKey;
+    } finally {
+      db.close();
+    }
+  }
+
   async recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void> {
     if (typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
@@ -838,11 +967,16 @@ class BrowserVault implements Vault {
           /* Stryker restore BlockStatement,StringLiteral */
         }
 
-        await idbPut(db, META_STORE, 'vault', newMeta);
-        await idbPut(db, META_STORE, 'master-wrap', {
-          iv: newMasterWrap.iv,
-          ciphertext: newMasterWrap.ciphertext,
-        });
+        // meta と master-wrap は **同時に**入れ替える (片方だけ書けた状態は
+        // 新旧どちらのパスワードでも開けない保管庫になる)。
+        await idbPutAll(db, [
+          { store: META_STORE, key: 'vault', value: newMeta },
+          {
+            store: META_STORE,
+            key: 'master-wrap',
+            value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
+          },
+        ]);
         this.currentKey = await importNonExtractable(masterRaw);
       } finally {
         masterRaw.fill(0);

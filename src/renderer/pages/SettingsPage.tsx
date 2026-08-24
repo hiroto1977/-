@@ -317,31 +317,26 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
     }
     setBusy(true);
     try {
-      const vault = getVault();
-      // Verify old password by attempting unlock
-      await vault.unlock(oldPw);
-      // Read all tokens, lock, re-init with new password, re-set tokens
-      const ids = await vault.listConfigured();
-      const tokens: Record<string, string> = {};
-      for (const id of ids) {
-        const t = await vault.getToken(id);
-        if (t) tokens[id] = t;
-      }
-      // Delete the vault DB and re-initialize. We need an explicit IndexedDB drop.
-      vault.lock();
-      await new Promise<void>((resolve) => {
-        const req = indexedDB.deleteDatabase('business-hub-vault');
-        req.onsuccess = () => resolve();
-        req.onerror = () => resolve();
-        req.onblocked = () => resolve();
-      });
-      // The singleton still references the now-deleted vault. Use `unlock`
-      // pattern via re-imported module — for simplicity here, we just call
-      // initialize() on the same instance (it re-creates meta in IndexedDB).
-      await vault.initialize(newPw);
-      for (const [id, tok] of Object.entries(tokens)) {
-        await vault.setToken(id, tok);
-      }
+      /*
+       * 保管庫へ委ねる。**画面が保管庫の内部を組み立てない。**
+       *
+       * 以前ここには「全トークンを平文で読む → `indexedDB.deleteDatabase` で
+       * 保管庫ごと消す → `initialize()` → ループで書き戻す」が書かれていた。
+       * 2026-08-24 に実測して 2 つの結果が確認できた:
+       *
+       *  1. **消してから書き戻すまでが失窓** —— その間、資格情報の唯一の複製は
+       *     メモリ上の平文だけ。中断 (書き込み失敗・自動施錠・タブを閉じる・
+       *     再読込) で、まだ書き戻していない分は永久に失われる
+       *  2. **`initialize()` は新しい 24 語を生成して返す**のに、その戻り値を
+       *     捨てていた → 利用者が控えたフレーズは通らなくなり、通るフレーズは
+       *     どこにも存在しない = リカバリー枝が永久に使えなくなる
+       *
+       * トークンはマスター鍵で暗号化されており、パスワードはそのマスター鍵を
+       * 包んでいるだけなので、**包み直すだけでよい**。`vault.changePassword` が
+       * meta と master-wrap を 1 トランザクションで差し替える。
+       * トークンもリカバリー枝も触らないので、控えた 24 語は生き続ける。
+       */
+      await getVault().changePassword(oldPw, newPw);
       setOldPw('');
       setNewPw('');
       setConfirm('');
