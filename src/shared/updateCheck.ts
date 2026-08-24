@@ -25,7 +25,7 @@
  */
 
 /** 版の表記。`v` 接頭辞は許す (GitHub のタグは `v0.1.0` の形)。 */
-const VERSION_RE = /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/;
+
 
 export interface ParsedVersion {
   readonly major: number;
@@ -38,7 +38,14 @@ export interface ParsedVersion {
 /** 版を数値に分解する。読めない表記は null（推測しない）。 */
 export function parseVersion(raw: unknown): ParsedVersion | null {
   if (typeof raw !== 'string') return null;
-  const m = VERSION_RE.exec(raw.trim());
+  // **正規表現をモジュール定数へ括り出さない。** 括り出すと本体がモジュール
+  // 読み込み時に評価され、変異検査では「静的変異体」になる —— テストが
+  // 読み込みより後に走るぶん、**書き換えても誰も気付けない**。実測
+  // (2026-08-23): 定数のままだと `^` / `$` / `\d+`→`\d` など 7 通りの変異が
+  // すべて「生存」と報告され、それらを殺す検査を書き足しても数字は
+  // 94.81% のまま動かなかった (検査は手で当てれば落ちる = 検査は正しく、
+  // **測り方が盲だった**)。`redact.ts` が同じ理由で本体へ置いている。
+  const m = /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/.exec(raw.trim());
   if (m === null) return null;
   return {
     major: Number(m[1]),

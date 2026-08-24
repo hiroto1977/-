@@ -230,9 +230,12 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
 
   it('表示する正規表現が実物と一致している (長さ上限と大小無視を落としていない)', () => {
     const shared = readFileSync(path.join(REPO_ROOT, 'src/shared/ollama.ts'), 'utf8');
-    const real = /const MODEL_NAME_RE = \/\^\[a-z0-9\]\[a-z0-9\._:\/-\]\{0,127\}\$\/i;/.test(
-      shared,
-    );
+    // **束ね方ではなく模様そのものを見る。** 以前は
+    // `const MODEL_NAME_RE = …;` という**行の形**に一致させていたが、
+    // モジュール定数を関数の中へ移した (静的変異体になって変異検査から
+    // 見えなくなるため) 途端に落ちた —— 守りたいのは「画面が実物と同じ
+    // 制約を出していること」で、実物をどう束ねているかではない。
+    const real = /\/\^\[a-z0-9\]\[a-z0-9\._:\/-\]\{0,127\}\$\/i/.test(shared);
     expect(real, '実物の正規表現が変わった — 画面の表示も直すこと').toBe(true);
     expect(PAGE).toMatch(/0,127/);
     expect(PAGE).toMatch(/大文字小文字は/);

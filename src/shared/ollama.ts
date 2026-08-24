@@ -211,15 +211,18 @@ export function parseOllamaEndpoint(input: string, pageHostname = ''): string | 
  * モデル識別子の検証。"llama3.2" / "qwen2.5-coder:7b" / "library/mistral:latest"
  * は許可し、空白・`..`・バックスラッシュ・スキーム記号などは拒否する。
  */
-const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]{0,127}$/i;
-
 export function isSafeModelName(name: unknown): name is string {
   if (typeof name !== 'string') return false;
   if (name.includes('..')) return false;
   // 連続スラッシュは Ollama の正規なモデル名 (library/mistral:latest) には現れず、
   // URL 風の文字列 ('http://x/y') を弾くための防御。self-test で通過を検出した。
   if (name.includes('//')) return false;
-  return MODEL_NAME_RE.test(name);
+  // **モジュール定数へ括り出さない。** 括り出すと本体がモジュール読み込み時に
+  // 評価され、変異検査では「静的変異体」になる —— テストが読み込みより後に
+  // 走るぶん、書き換えても誰も気付けない。実測 (2026-08-23): 定数のままだと
+  // `^` を落とす変異などが「生存」と報告され、どんな検査を足しても殺せない。
+  // `redact.ts` / `updateCheck.ts` が同じ理由で本体へ置いている。
+  return /^[a-z0-9][a-z0-9._:/-]{0,127}$/i.test(name);
 }
 
 /** semver 風の比較。-1 / 0 / +1 を返す (Array.sort と同じ規約)。 */

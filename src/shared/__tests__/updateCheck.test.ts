@@ -32,6 +32,32 @@ describe('parseVersion', () => {
 
   it('プレリリース識別子を保持する', () => {
     expect(parseVersion('0.2.0-beta.1')?.prerelease).toBe('beta.1');
+  });
+
+  /*
+   * 版の表記は **前後を固定して**読む。ここが緩むと、タグに紛れ込んだ
+   * 余計な文字ごと「読めた」ことになり、更新の有無の判断が別物になる。
+   * (2026-08-23 の変異検査で、この 7 通りがどれも検査を通り抜けていた。)
+   */
+  it('前後に余計な文字があるものは読まない (^ と $ を落とさない)', () => {
+    expect(parseVersion('x1.2.3')).toBeNull();
+    expect(parseVersion('1.2.3junk')).toBeNull();
+    expect(parseVersion('1.2.3.4')).toBeNull();
+  });
+
+  // `\d+` を `\d` に縮めると 2 桁以上の版が読めなくなる。**10 系に上がった
+  // 瞬間、更新が一切案内されなくなる**ので、桁を跨いだ例で固定する。
+  it('2 桁以上の版も読む', () => {
+    expect(parseVersion('10.20.30')).toEqual({ major: 10, minor: 20, patch: 30, prerelease: null });
+    expect(parseVersion('1.0.12')?.patch).toBe(12);
+  });
+
+  // プレリリース識別子は 1 文字ではない。`+` を落とすと `beta.1` が読めない。
+  it('プレリリース識別子は複数文字を読む', () => {
+    expect(parseVersion('1.0.0-rc')?.prerelease).toBe('rc');
+    expect(parseVersion('1.0.0-a')?.prerelease).toBe('a');
+    // 識別子に使えない文字が入っていれば読まない (文字クラスの反転を捕まえる)。
+    expect(parseVersion('1.0.0-β')).toBeNull();
     expect(parseVersion('1.0.0-rc-2')?.prerelease).toBe('rc-2');
   });
 
