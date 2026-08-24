@@ -89,6 +89,19 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      # electron-builder は「失敗せずに何も出さない」ことがある (target 設定の
+      # 取り違え、arch の取りこぼしなど)。下の softprops は
+      # fail_on_unmatched_files: false なので、そのまま **配布物ゼロでも緑**に
+      # なり、fail-fast: false と噛み合うと **1 プラットフォーム欠けたリリースが
+      # 全ジョブ緑で公開される**。
+      #
+      # electron-builder.json の宣言 (target と arch) から必要本数を出して
+      # 突き合わせる。glob 一致では足りない —— dmg を x64/arm64 で宣言していても
+      # `release/*.dmg` は arm64 だけで一致してしまうため。
+      # RUNNER_OS は runner の組み込み変数なので ${{ }} の展開は要らない。
+      - name: Verify release artifacts
+        run: node scripts/verify-release-artifacts.cjs
+
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -96,5 +109,9 @@ jobs:
           # 無ければこのランの SHA に新規作成される。
           tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
           files: ${{ matrix.artifact_glob }}
+          # blockmap は electron-builder が必ず出すとは限らないので、
+          # 不一致で落とさない。「主要インストーラが宣言どおり出たか」は
+          # 上の Verify ステップが先に確かめている (ここを true にすると
+          # blockmap の有無で **正しいリリースが赤になる**)。
           fail_on_unmatched_files: false
           generate_release_notes: true

@@ -66,6 +66,7 @@ jobs:
       - run: npm run lint:knowledge-refs
       - run: npm run lint:sample-data
       - run: npm run lint:test-coverage
+      - run: npm run verify:release-artifacts
       - run: npm run lint:shell
       - run: npm run lint:repo-size
       - run: npm run lint:data-origin

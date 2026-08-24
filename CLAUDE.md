@@ -84,7 +84,7 @@ npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -eu
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
                            #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
-npm run verify:all         # typecheck + all of the above + eslint (29 ゲート)
+npm run verify:all         # typecheck + all of the above + eslint (30 ゲート)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
