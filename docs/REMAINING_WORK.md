@@ -4085,3 +4085,89 @@ GitHub Pages のプロジェクトサイトは `https://<account>.github.io/<rep
 「現在このアカウントの Pages に何が公開されているか」を持ち主が
 見る必要がある。
 
+
+---
+
+### 予告されていた穴が、予告どおりに開いていた — CSS `url()` (2026-08-24)
+
+`docs/SECURITY_AUDIT.md` の完了項目に、同じ軸 (0-a-20 —「✅ が答えたのは
+そのとき立てた問いだけ」) を当てた。R3-6 を見て手が止まった。
+
+> R3-6 `DataList.tsx`, `StatusBar.tsx` — 第三者由来 `thumbnailUrl`/`avatarUrl` の
+> スキーム未検証 (現状 `<img>` なので実害なし。**`href`/CSS `url()`/SVG `use` へ
+> 移した瞬間に危険**) → https?/data:image のみ許可 … **修正**
+
+`safeImageSrc` の冒頭にも同じ予告が書いてある:
+
+> ただし同じ値が将来 `<a href>` / **CSS `url()`** / SVG `<use href>` /
+> `openExternal` に流れた瞬間に `javascript:` や `data:text/html` が
+> 実行プリミティブになる。検証は描画箇所ごとではなく**値の入口**に置き、
+> リファクタで守りが消えないようにする。
+
+**その CSS `url()` が在り、関門を通っていなかった。**
+
+```ts
+// src/renderer/pages/AssistantPage.tsx:481 (直す前)
+backgroundImage: theme.image ? `url(${theme.image})` : undefined,
+```
+
+#### 値の出どころ
+
+`theme.image` は `localStorage['assistant-theme']` から来る。読み出しの検証は
+`typeof p.image === 'string'` **だけ** —— スキームを見ていない。
+
+localStorage は同一オリジンの誰でも書ける。同日に記録したとおり、Pages の
+プロジェクトサイトは**同アカウントの全リポジトリで 1 オリジンを共有する**ので、
+この値は「利用者が入力するもの」であると同時に「別ページや拡張が仕込めるもの」でもある。
+
+#### 何が起きるか / 起きないか
+
+- **起きない**: `javascript:` の実行。CSS の `url()` から javascript: は走らない
+- **起きない**: CSS 注入。React は `style` を CSSOM 経由で代入するので、
+  `;` を含む値は宣言ごと落ちる
+- **起きる**: **任意の https URL を取りに行く**。出荷 CSP は
+  `img-src 'self' data: blob: https:` でホストを絞っていないので、
+  仕込まれた URL がビーコンになる (開いた時刻・IP・UA が相手に渡る)
+- **起きる (機能の壊れ)**: `)` や空白を含む URL で宣言が壊れ、背景が黙って出ない。
+  `https://example.com/a(b).png` は実在しうる形
+
+R3-6 が「`<img>` なので実害なし」と書いたのは正しかった。だが**同じ値が
+別の沈み先へ流れた**ときの話を予告しておきながら、その沈み先が生まれたことに
+気付く仕組みは無かった。
+
+#### 直し方 — 関門に**引用の作法まで**寄せる
+
+`safeCssUrl()` を `DataList.tsx` に置いた (`safeImageSrc` の隣 = 値の入口)。
+スキーム検証を通した値だけを**引用して**包む。引用が要る理由はスキームとは
+別で、上の「機能の壊れ」を同時に塞ぐため。
+
+```
+  "https://example.com/a(b).png" → url("https://example.com/a(b).png")
+  "https://example.com/a\".png"  → url("https://example.com/a\\\".png")
+  "javascript:alert(1)"          → undefined
+  "java<TAB>script:alert(1)"     → undefined
+  "data:text/html,<script>x"     → undefined
+```
+
+#### 予告では止まらなかったので、字面で止める
+
+`lint:forbidden` に 31 個目の規則を足した ——
+**CSS の `url()` へ補間したら落ちる** (`url(${` / `url("${` / `url('${`)。
+例外は関門自身の 1 行だけで、それも `KNOWN_SUPPRESSIONS` 台帳に理由つきで登録
+(このゲートは台帳に無い例外が効いていると、それ自体を「新しい穴」として鳴らす)。
+
+対照: 直す前の 1 行を戻すと `src/renderer/pages/AssistantPage.tsx:484` と
+**名指しで**落ちる。自己テスト 5 件 (生補間 / 引用あり / 単引用は鳴る、
+定数 `url(./icon.svg)` と補間なし `url(#gradient)` は鳴らない)。
+
+#### 併せて確かめた同じ沈み先 (どちらも白)
+
+- **`<a href>` 2 件** (`EligibilityChecker` の `j.sourceUrl` /
+  `WelfareSchemeCard` の `src.url`) —— `onClick` が `preventDefault` して
+  `openExternal` (http(s) allowlist) を通る。2026-08-23 の点検が
+  「データ由来の URL が `openExternal` へ届く経路は 5 つ、どれも共有の
+  `externalUrlGate` を通る」と数え、危険スキームの実在も 0 件と実測している。
+  **ただしその点検が数えたのは `openExternal` への経路だった** ——
+  CSS の沈み先は数の外に居た
+- **`<img src={...}>` 2 件** —— どちらも `safeImageSrc` を通っている。取りこぼし無し
+

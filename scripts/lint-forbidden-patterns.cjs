@@ -102,6 +102,25 @@ const FORBIDDEN_PATTERNS = [
       ].includes(rel),
     rationale: '出荷する窓では常に true。開発ツールだけが例外で、上の台帳へ明記すること',
   },
+  // --- CSS の url() へ値を差し込む ------------------------------------------
+  // R3-6 (2026-07 監査) は第三者由来の画像 URL を `safeImageSrc` に寄せ、
+  // その冒頭に「同じ値が **CSS `url()`** へ流れた瞬間に危険」と**予告して
+  // いた**。2026-08-24 に見たら、`pages/AssistantPage.tsx` の背景画像が
+  // まさにその形で、しかも関門を通っていなかった (値は localStorage の
+  // `assistant-theme` = 同一オリジンの別ページや拡張から書き換えられる)。
+  //
+  // **予告だけでは止まらなかった**ので字面で止める。CSS へ差し込むなら
+  // `safeCssUrl` を通すこと (スキーム検証と引用がそこに 1 つだけ在る)。
+  {
+    name: 'CSS の url() へ生の値を差し込んでいる',
+    pattern: /url\(["']?\$\{/,
+    codeOnly: true,
+    // 関門そのもの。ここだけが url(...) を組み立ててよい。
+    allowFile: (rel) => rel === 'src/renderer/components/DataList.tsx',
+    rationale:
+      'safeCssUrl (src/renderer/components/DataList.tsx) を通すこと。' +
+      'スキーム検証を描画箇所ごとに書くと、次の描画箇所でまた抜ける',
+  },
   {
     name: 'webSecurity: false (同一オリジンポリシーを切る)',
     pattern: /\bwebSecurity\s*:\s*false\b/,
@@ -616,6 +635,10 @@ const KNOWN_SUPPRESSIONS = [
   'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
   'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 3',
+  // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
+  // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
+  // ここを例外にしないと関門自身が自分の規則に引っかかる。
+  'CSS の url() へ生の値を差し込んでいる :: src/renderer/components/DataList.tsx :: 1',
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
@@ -692,6 +715,12 @@ function selfTest() {
     ['nodeIntegration: true を弾く', 'webPreferences: { nodeIntegration: true },', 1],
     ['nodeIntegrationInWorker も弾く', 'nodeIntegrationInWorker: true,', 1],
     ['contextIsolation: false を弾く', 'contextIsolation: false,', 1],
+    // CSS url() への補間 (2026-08-24 に実在した形)
+    ['url() への生補間を弾く', 'backgroundImage: `url(${theme.image})`,', 1],
+    ['引用してあっても弾く (スキーム検証が要る)', 'backgroundImage: `url("${raw}")`,', 1],
+    ["単引用でも弾く", "const s = `url('${raw}')`;", 1],
+    ['定数の url() は弾かない', "const s = 'url(./icon.svg)';", 0],
+    ['補間の無い url() は弾かない', 'const s = `url(#gradient)`;', 0],
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
