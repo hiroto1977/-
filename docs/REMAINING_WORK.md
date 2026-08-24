@@ -4237,3 +4237,32 @@ R2-13 (「`JSON.stringify` を inline `<script>` に埋め、`<` 未エスケー
 `escapeXml` のときと同じ判断で規則は作らず、写しを 1 つに寄せることで
 「次の生成器が写し忘れる」形自体を無くした。
 
+
+---
+
+### `SECURITY_AUDIT.md` の残りの ✅ に同じ問いを当てた — 全部白 (2026-08-24)
+
+CSS `url()` (同日) で当たった軸 ——「その ✅ が**数えなかった隣**はどこか」——
+を残りの完了項目へ当てた。**変更なしの回。** 問うた内容を残す (0-a-20)。
+
+| 項目 | その ✅ が答えた問い | 私が当てた問い | 結果 |
+|---|---|---|---|
+| R2-1 `app:openPath` / `revealInFolder` | この 2 つの口は封じ込められているか | **OS へ渡す口は他に無いか** | ✅ 6 か所すべて関門つき (`openExternal` ×3・`showItemInFolder`・`openPath`・権限ハンドラ)。`child_process` は `src/` に 0 件 (`lint:forbidden`) |
+| R2-10 `tokenUrl` の https 未検証 | **tokenUrl** は https か | **authorizeUrl はどうか** (ブラウザを開く副作用がある分こちらが重い) | ✅ 既に `assertHttpsEndpoint(config.authorizeUrl, 'authorization')` が在り、しかも**ブラウザを開く前**に置いてある。10 件の authorizeUrl はすべて定数 (テナント毎に変わるホストは 1 件も無い) |
+| R2-11 自己記述 `iterations` の上限 | `dataCrypto` の bundle は clamp されるか | **保存物から iterations を読む所は他に無いか** | ✅ 2/2。`dataCrypto:163` と `vault:532`、どちらも `deriveKey` の直前に `assertKdfIterations`。リカバリー枝は定数を使うので対象外 |
+| R3-5 `plain:` フォールバックの可視化 | 利用者に見えているか | **そのファイルの権限はどうか** | ✅ `secrets.ts` は `mode: 0o600`。`atomicWrite` の既定も 0600 で、tmp 名は毎回一意 (`pid-時刻-乱数`) なので「既存ファイルには mode が効かない」罠 (`emotions.ts` に実測記録あり) に当たらない。控え `.prev` は `copyFile` 後に明示 `chmod` |
+| R2-2 `customPath` | 4 つの書き出しは封じ込められているか | **同じ判断の 2 実装目 (`devEnv`) と食い違わないか** | ✅ 食い違うが**正しく食い違っている**。`devEnv` は読み側なので両側 realpath、`exportPaths` は書き側 (宛先が未作成なので realpath が原理的に当たらない) —— **両方に理由が書いてある** (0-a-14 の「揃えてはいけない 2 実装」) |
+
+#### 併せて確かめた注記の主張
+
+`devEnv.ts:297` は「現状 `readDevEnv()` は**引数なしでしか呼ばれず**」と
+封じ込めの前提を書いている。この種の主張は腐るので数えた ——
+製品コードの呼び出しは `linux.ts:176` の 1 件のみ・引数なし。**主張は今も正しい。**
+
+#### この軸の見通し
+
+`SECURITY_AUDIT.md` の完了項目で「隣の沈み先」を問える形のものは、
+これで一巡した (R2-7 SW / R3-6 CSS url() / R2-13 script 埋め込みは
+それぞれ別項に記録)。次は別の軸を立てること —— この軸をもう一度なぞっても
+同じ白が出るだけになる。
+
