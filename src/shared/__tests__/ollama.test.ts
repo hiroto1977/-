@@ -14,6 +14,7 @@ import {
   extractOllamaError,
   suggestInstalledModel,
   isAllowedOllamaBase,
+  isAllowedOllamaPlaintextHost,
   adviseFromBody,
   parseOllamaEndpoint,
   isSafeModelName,
@@ -1028,5 +1029,79 @@ describe('壊れた入力で落とさない — 一覧・エラー本文の防�
     expect(parseOllamaEndpoint(undefined as unknown as string)).toBe(
       `http://127.0.0.1:${DEFAULT_OLLAMA_PORT}`,
     );
+  });
+});
+
+/*
+ * **平文 http を許してよいホストか** —— この判定を誤ると、プロンプトと
+ * API キーが暗号化されないまま任意のホストへ出ていく (モジュール冒頭に
+ * 「内部ネットワーク探索の踏み台化と、プロンプトの平文送信を防ぐため」と
+ * 書いてある)。
+ *
+ * それでいて**直接の検査が 1 本も無かった** —— 使っているのは
+ * `ai/providers.ts` だけで、そちらは常に pageHostname を渡すため、
+ * **既定値の経路 (第 2 引数を省いた呼び出し) はどのテストも通っていなかった**
+ * (2026-08-24 の変異検査が NoCoverage として指した)。呼び出し側越しにしか
+ * 測られていない壁は、呼び出し側が変われば黙って測られなくなる。
+ */
+describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
+  it('ループバックは許す (手元の Ollama / LM Studio)', () => {
+    for (const h of ['127.0.0.1', 'localhost', '::1', '[::1]']) {
+      expect(isAllowedOllamaPlaintextHost(h, 'example.com'), h).toBe(true);
+    }
+  });
+
+  it('ページ自身と同じホストは許す (PC で配信した頁をスマホから開く)', () => {
+    expect(isAllowedOllamaPlaintextHost('192.168.1.10', '192.168.1.10')).toBe(true);
+    expect(isAllowedOllamaPlaintextHost('mypc.local', 'mypc.local')).toBe(true);
+  });
+
+  it('ページ側の大文字小文字は揃えて比べる', () => {
+    expect(isAllowedOllamaPlaintextHost('mypc.local', 'MyPC.local')).toBe(true);
+  });
+
+  it('別ホストは許さない (踏み台化と平文送信を防ぐ)', () => {
+    for (const [host, page] of [
+      ['example.com', 'mypc.local'],
+      ['169.254.169.254', 'mypc.local'],
+      ['10.0.0.5', 'mypc.local'],
+      ['evil.example', 'mypc.local'],
+    ] as const) {
+      expect(isAllowedOllamaPlaintextHost(host, page), host).toBe(false);
+    }
+  });
+
+  // **第 2 引数を省いた経路。** 既定は空文字なので、ループバック以外は
+  // どれも一致しない = 許さない。ここが既定で真になる形へ壊れると、
+  // 「ページのホストが分からないとき」に全部通ることになる。
+  it('ページのホストが分からないときはループバックだけ許す', () => {
+    expect(isAllowedOllamaPlaintextHost('127.0.0.1')).toBe(true);
+    expect(isAllowedOllamaPlaintextHost('localhost')).toBe(true);
+    expect(isAllowedOllamaPlaintextHost('example.com')).toBe(false);
+    expect(isAllowedOllamaPlaintextHost('192.168.1.10')).toBe(false);
+  });
+
+  /*
+   * 空のホスト名は `'' === ''` で **true になる**。本体はそれを承知で
+   * 「http URL の hostname は必ず非空なので、pageHostname が空なら一致
+   * しようがない」と書いている。**その前提を実際に確かめた** (2026-08-24):
+   *
+   *   'http:///x'   → hostname 'x'      (空にならず次の区間がホストになる)
+   *   'http:/x'     → hostname 'x'
+   *   'http://'     → throw             'http://:80/' → throw
+   *   'http://@/x'  → throw             'http://%00/x' → throw
+   *
+   * WHATWG の URL は http スキームで空ホストを作れない。呼び出し側
+   * (`ai/providers.ts`) も `protocol !== 'http:'` を先に返しているので、
+   * この関数へ空文字が届く経路は無い。**だから false を期待する検査は
+   * 書かない** —— 到達しない入力に期待値を置くと、次の人が本体を
+   * 「直し」に来てしまう。前提が崩れたとき (別の呼び出し側が増える等) に
+   * 効くよう、確かめた事実のほうを残す。
+   */
+  it('空のホスト名は到達しない前提 (本体は既定と一致して true を返す)', () => {
+    expect(isAllowedOllamaPlaintextHost('')).toBe(true);
+    // 前提そのもの: http スキームで空ホストの URL は作れない。
+    expect(new URL('http:///x').hostname).toBe('x');
+    expect(() => new URL('http://')).toThrow();
   });
 });
