@@ -294,6 +294,30 @@ function hasSelfTest(gate, scripts) {
   return /self-test/.test(scripts[gate] || '') || SELF_TEST_ALIASES.has(gate);
 }
 
+/**
+ * 静的な `it(` の数。**2 か所から参照される** (ARCHITECTURE.md の表と
+ * CLAUDE.md の `~N tests`)。数え方を写すと、片方だけ直したときに
+ * 「どちらが正しいのか分からない 2 つの数」になる。
+ *
+ * コメントアウトされた検査 (`// it(`) は行頭の空白＋`it(` に一致しないので入らない。
+ */
+function countStaticIts() {
+  let total = 0;
+  const walk = (dir) => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (/\.test\.ts$/.test(e.name)) {
+        const text = readFileSafe(full);
+        total += [...text.matchAll(/^\s+it\(/gm)].length;
+      }
+    }
+  };
+  walk(path.join(REPO_ROOT, 'src'));
+  return total;
+}
+
 const METRICS = [
   {
     /*
@@ -415,24 +439,7 @@ const METRICS = [
   {
     name: 'unit test count',
     docPattern: /ユニットテスト \| \*\*(\d+)\*\* /,
-    compute: () => {
-      // Count `it(` occurrences across all test files. Excludes
-      // commented-out tests (lines starting with //).
-      let total = 0;
-      const walk = (dir) => {
-        if (!fs.existsSync(dir)) return;
-        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-          const full = path.join(dir, e.name);
-          if (e.isDirectory()) walk(full);
-          else if (/\.test\.ts$/.test(e.name)) {
-            const text = readFileSafe(full);
-            total += [...text.matchAll(/^\s+it\(/gm)].length;
-          }
-        }
-      };
-      walk(path.join(REPO_ROOT, 'src'));
-      return total;
-    },
+    compute: () => countStaticIts(),
   },
   {
     name: 'tracked line count (floor)',
@@ -458,23 +465,91 @@ const METRICS = [
       return total;
     },
   },
+  // ── CLAUDE.md (Claude Code セッションへの指示書) の数値 ──
+  // ここが腐ると、読んだ側は「テストは 1460 件くらいの小さな束」「禁止は 27 種」
+  // と思って作業する。ARCHITECTURE.md と同じ厳しさで突き合わせる。
+  {
+    /*
+     * vault の規模。**下限**で見る (知識が増える方向にしか動かない)。
+     * 厳密照合にすると知識を 1 件足すたびに doc を直すことになり、
+     * その churn は「直さずに数だけ古くなる」を招く。
+     */
+    name: 'CLAUDE.md: knowledge vault size (floor)',
+    docFile: 'CLAUDE.md',
+    docPattern: /`knowledge-vault\/`, ([\d,]+)\+ notes/,
+    compute: () => {
+      let n = 0;
+      const walk = (dir) => {
+        if (!fs.existsSync(dir)) return;
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+          if (e.isDirectory()) walk(path.join(dir, e.name));
+          else if (e.name.endsWith('.md')) n += 1;
+        }
+      };
+      walk(path.join(REPO_ROOT, 'knowledge-vault'));
+      return n;
+    },
+    mode: 'gte',
+  },
+  {
+    name: 'CLAUDE.md: forbidden pattern count',
+    docFile: 'CLAUDE.md',
+    docPattern: /innerHTML ほか (\d+) 種/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-forbidden-patterns.cjs')) ?? '';
+      const m = src.match(/const FORBIDDEN_PATTERNS = \[([\s\S]*?)\n\];/);
+      return m ? (m[1].match(/^  \{$/gm) ?? []).length : null;
+    },
+  },
+  {
+    name: 'CLAUDE.md: verify:all gate count',
+    docFile: 'CLAUDE.md',
+    docPattern: /eslint \((\d+) ゲート\)/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
+    name: 'CLAUDE.md: gate count named in the CI sentence',
+    docFile: 'CLAUDE.md',
+    docPattern: /all (\d+) `verify:all` gates/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
 ];
 
+/*
+ * 数値の主張は ARCHITECTURE.md だけに在るわけではない。**CLAUDE.md は
+ * Claude Code セッションへの指示書**で、そこにも「~1460 tests」「ほか 21 種」
+ * のような数が書いてある。実測すると (2026-08-24) テスト数は 7 倍ずれており、
+ * 同じファイルの中で「30 ゲート」と「all 28 gates」が食い違ってもいた。
+ *
+ * ARCHITECTURE.md の数だけを機械で見ていたので、**同じ種類の主張が
+ * 別のファイルに在るというだけで腐り放題**になっていた。metric に
+ * `docFile` を持たせ、突き合わせ先を選べるようにする。
+ */
 function verifyMetrics(archText) {
   const failures = [];
   const ok = [];
+  const textOf = (metric) =>
+    metric.docFile === undefined
+      ? archText
+      : (readFileSafe(path.join(REPO_ROOT, metric.docFile)) ?? '');
 
   for (const metric of METRICS) {
-    const m = archText.match(metric.docPattern);
+    const m = textOf(metric).match(metric.docPattern);
     if (!m) {
       failures.push({
         archLine: null,
         ref: `metric: ${metric.name}`,
-        reason: `pattern not found in doc`,
+        reason: `pattern not found in ${metric.docFile ?? 'docs/ARCHITECTURE.md'}`,
       });
       continue;
     }
-    const claimed = Number(m[1]);
+    const claimed = Number(String(m[1]).replace(/,/g, ''));
     const actual = metric.compute();
     if (actual == null) {
       failures.push({
@@ -649,11 +724,23 @@ function selfTest() {
   const metricCases = [
     ['実物の doc は 0 件', arch, 0],
     ['サービス数を 1 ずらす', arch.replace(/サービス数 \| (\d+) /, (_, n) => `サービス数 | ${Number(n) + 1} `), 1],
-    ['指標の記述を丸ごと消す', '', METRICS.length],
+    // ARCHITECTURE.md を空にしても、**別ファイルを見る指標は落ちない** ——
+    // 落ちる数は「arch を出所とする指標の数」であって METRICS.length ではない。
+    // (2026-08-24 に CLAUDE.md 由来の指標を足したとき、この自己検査が
+    //  ずれを捕まえた。期待値を METRICS.length のままにすると、
+    //  arch の指標を 1 つ消しても CLAUDE.md 側が埋め合わせて気づけなくなる。)
+    [
+      '指標の記述を丸ごと消す (arch 由来の指標だけが落ちる)',
+      '',
+      METRICS.filter((m) => m.docFile === undefined).length,
+    ],
+    // 逆方向 —— CLAUDE.md 由来の指標が 1 つも無くなっていないか。
+    // 0 になったら「別ファイルの数値は誰も見ていない」状態に戻っている。
+    ['CLAUDE.md 由来の指標が在る', arch, 0, METRICS.some((m) => m.docFile === 'CLAUDE.md')],
   ];
-  for (const [label, doc, want] of metricCases) {
+  for (const [label, doc, want, precondition] of metricCases) {
     const got = verifyMetrics(doc).failures.length;
-    const ok = got === want;
+    const ok = got === want && (precondition === undefined || precondition === true);
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} 指標: ${label}: ${got} 件 (期待 ${want})`);
   }

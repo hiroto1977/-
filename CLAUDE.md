@@ -23,7 +23,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 10.7 MiB full / 2.6 MiB `build:web:lite` mobile variant — 2026-08-11 計測) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 10.8 MiB full / 2.7 MiB `build:web:lite` mobile variant — 2026-08-24 計測) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -32,7 +32,7 @@ live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, 
 All verified (sourced) knowledge datasets — academic concepts (`academicKnowledge.ts`), tax/labor/legal
 compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), support hotlines
 (`counselorKnowledge.ts`), and economic history (`economicHistoryKnowledge.ts`) — are the single source
-of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, ~1130 notes, `npm run vault:build`)
+of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
 and are injected as context into the AI-orchestration runtime per executive role
 (`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
 / dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync and forbids duplicate ids
@@ -54,7 +54,8 @@ npm run ollama:setup     # 導入→モデル取得→起動→1往復して確�
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
-npm test                 # vitest run (~1460 tests under src/**/__tests__/)
+npm test                 # vitest run (src/**/__tests__/ 。件数は docs/ARCHITECTURE.md の表が持つ
+                         #   — 数を 2 か所に書くと必ず食い違うので、ここには書かない)
 npm run test:watch       # vitest watch mode
 npm run lint             # eslint . --max-warnings 0 (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
 npm run smoke            # xvfb + Electron screenshot smoke test of every page
@@ -70,7 +71,7 @@ Vitest config is in `vitest.config.ts` (node environment).
 npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
 npm run lint:forbidden     # forbidden patterns (nodeIntegration: true / contextIsolation: false /
-                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 21 種)
+                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 31 種)
 npm run lint:workflow-security # .github/workflows/: permissions の明示・第三者 action の SHA 固定・
                            #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
@@ -93,7 +94,7 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 28 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 30 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in
