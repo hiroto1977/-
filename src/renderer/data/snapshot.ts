@@ -4,6 +4,30 @@
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
 
+/**
+ * 見本の画像は **インライン (`data:`) にする**。
+ *
+ * 以前は `design.canva.ai` と `avatars.githubusercontent.com` の実 URL を
+ * 見本に入れていた。ID は見本化してあったが**ホストは本物**なので、
+ * 実測すると (2026-08-24):
+ *
+ *   起動〜保管庫作成        : 外部通信 0 件
+ *   Canva のページを開く    : design.canva.ai へ 12 件
+ *   GitHub のページを開く   : avatars.githubusercontent.com へ 2 件
+ *
+ * **資格情報を 1 つも設定していない状態で**、ページを開いただけで
+ * 第三者に「この IP がこの時刻にこのアプリを開いた」が伝わっていた。
+ * 見本の画像を取りに行く機能上の理由は無く、オフラインでは壊れるだけである。
+ *
+ * `data:` なら通信そのものが起きない。`components/DataList.tsx` の
+ * `safeImageSrc` は `data:image/*` を許可しており、`<img>` 経由の SVG は
+ * secure static mode でスクリプトが動かない。
+ */
+const SAMPLE_THUMBNAIL =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect width='320' height='180' fill='%23e5e7eb'/%3E%3Crect x='120' y='66' width='80' height='48' rx='4' fill='%23cbd5e1'/%3E%3Ccircle cx='142' cy='84' r='7' fill='%23e5e7eb'/%3E%3Cpath d='M126 110l22-20 16 14 12-10 20 16z' fill='%23e5e7eb'/%3E%3C/svg%3E";
+const SAMPLE_AVATAR =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23d1d5db'/%3E%3Ccircle cx='32' cy='26' r='11' fill='%239ca3af'/%3E%3Cpath d='M12 60a20 20 0 0140 0z' fill='%239ca3af'/%3E%3C/svg%3E";
+
 export const SNAPSHOT = {
   home: {
     greeting: 'こんにちは。今日は何を作りましょう?',
@@ -38,7 +62,7 @@ export const SNAPSHOT = {
       login: 'hiroto1977',
       name: 'AMITARIS',
       company: 'アミタリス',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/267496817?v=4',
+      avatarUrl: SAMPLE_AVATAR,
       profileUrl: 'https://github.com/hiroto1977',
       publicRepos: 0,
       followers: 0,
@@ -1491,7 +1515,7 @@ export const SNAPSHOT = {
         title: '「サンプル業務連携メモ」のコピー',
         updatedAt: 1774314452,
         pageCount: 1,
-        thumbnailUrl: 'https://design.canva.ai/example-thumb-01',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
         viewUrl: 'https://www.canva.com/design/DAGEXAMPLE1',
       },
       {
@@ -1499,7 +1523,7 @@ export const SNAPSHOT = {
         title: '紫 緑 黄色 シンプル レーダーチャート ホワイトボード',
         updatedAt: 1773289908,
         pageCount: 1,
-        thumbnailUrl: 'https://design.canva.ai/example-thumb-02',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
         viewUrl: 'https://www.canva.com/design/DAGEXAMPLE2',
       },
       {
@@ -1507,7 +1531,7 @@ export const SNAPSHOT = {
         title: '「サンプル Web ページ構成」のコピー',
         updatedAt: 1769305850,
         pageCount: 2,
-        thumbnailUrl: 'https://design.canva.ai/example-thumb-03',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
         viewUrl: 'https://www.canva.com/design/DAGEXAMPLE3',
       },
       {
@@ -1515,7 +1539,7 @@ export const SNAPSHOT = {
         title: '家計簿 白黒 記録 シンプル A4文書',
         updatedAt: 1769305945,
         pageCount: 4,
-        thumbnailUrl: 'https://design.canva.ai/example-thumb-04',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
         viewUrl: 'https://www.canva.com/design/DAGEXAMPLE4',
       },
       {
@@ -1523,7 +1547,7 @@ export const SNAPSHOT = {
         title: 'グリーン ホワイト シンプル お知らせ Instagram投稿画像',
         updatedAt: 1731729931,
         pageCount: 1,
-        thumbnailUrl: 'https://design.canva.ai/example-thumb-05',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
         viewUrl: 'https://www.canva.com/design/DAGEXAMPLE5',
       },
       {
@@ -1531,7 +1555,7 @@ export const SNAPSHOT = {
         title: 'ネイビーと白と黒 落書き風 ビジネス計画 プレゼンテーション',
         updatedAt: 1709893109,
         pageCount: 20,
-        thumbnailUrl: 'https://design.canva.ai/example-thumb-06',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
         viewUrl: 'https://www.canva.com/design/DAGEXAMPLE6',
       },
     ],

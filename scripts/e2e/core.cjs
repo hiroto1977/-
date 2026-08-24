@@ -861,6 +861,60 @@ async function frameGuardSuite(browser) {
   }
 }
 
+/**
+ * **開いただけで外へ出ていかない** — 同梱の見本データが第三者に信号を送らないこと。
+ *
+ * 2026-08-24 に実測して見つけた: 見本の画像 URL がホストだけ本物のままで、
+ * 資格情報を 1 つも設定していないのにページを開くだけで
+ *
+ *   Canva のページ  → design.canva.ai へ 12 件
+ *   GitHub のページ → avatars.githubusercontent.com へ 2 件
+ *
+ * が飛んでいた。「この IP がこの時刻にこのアプリを開いた」が相手に渡る。
+ * 見本を取りに行く機能上の理由は無く、オフラインでは壊れるだけである。
+ *
+ * **文字列で禁じるのではなく挙動で見る** —— `<img>` だけでなく CSS の
+ * `url()`・`fetch`・`<link>` など経路は複数あり、字面の規則は次の経路で抜ける。
+ * ここでは「実際に何本出て行ったか」だけを数える。
+ *
+ * 連携を設定していない状態が前提なので、期待値は **0 件**。
+ */
+async function noBeaconSuite(browser) {
+  console.log('--- 開いただけで外へ出ていかない ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const outbound = new Map();
+  page.on('request', (r) => {
+    const u = r.url();
+    if (!/^https?:/.test(u)) return;
+    const host = new URL(u).host;
+    outbound.set(host, (outbound.get(host) ?? 0) + 1);
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  ok(outbound.size === 0, `beacon: 起動〜保管庫作成で外部通信 0 (実際 ${describeOutbound(outbound)})`);
+
+  // 見本に画像を持つ SaaS 面を回る。ここが漏れていた 2 つを必ず含める。
+  for (const id of ['canva', 'github', 'wordpress', 'gdrive', 'slack']) {
+    outbound.clear();
+    await page.goto(FILE + '#' + id, { waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    await page.locator('input[type="password"]').first().fill(PASS);
+    await page.getByRole('button', { name: 'ロック解除' }).click();
+    await page.waitForTimeout(2500);
+    ok(outbound.size === 0, `beacon: ${id} を開いて外部通信 0 (実際 ${describeOutbound(outbound)})`);
+  }
+  await ctx.close();
+}
+
+/** 失敗時に「どこへ何本」まで出す。件数だけだと直す手がかりにならない。 */
+function describeOutbound(map) {
+  if (map.size === 0) return '0 件';
+  return [...map].map(([h, n]) => `${h}:${n}`).join(' ');
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -980,6 +1034,7 @@ async function businessComparisonSuite(browser) {
   if (run('businessComparison')) await businessComparisonSuite(browser);
   if (run('kessanTax')) await kessanTaxSuite(browser);
   if (run('frameGuard')) await frameGuardSuite(browser);
+  if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
