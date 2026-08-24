@@ -116,7 +116,7 @@ const FORBIDDEN_PATTERNS = [
     pattern: /url\(["']?\$\{/,
     codeOnly: true,
     // 関門そのもの。ここだけが url(...) を組み立ててよい。
-    allowFile: (rel) => rel === 'src/renderer/components/DataList.tsx',
+    allowFile: (rel) => rel === 'src/shared/imageUrlGate.ts',
     rationale:
       'safeCssUrl (src/renderer/components/DataList.tsx) を通すこと。' +
       'スキーム検証を描画箇所ごとに書くと、次の描画箇所でまた抜ける',
@@ -638,7 +638,10 @@ const KNOWN_SUPPRESSIONS = [
   // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
   // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
   // ここを例外にしないと関門自身が自分の規則に引っかかる。
-  'CSS の url() へ生の値を差し込んでいる :: src/renderer/components/DataList.tsx :: 1',
+  // (2026-08-24: 関門を `components/DataList.tsx` から `src/shared/` へ出した。
+  //  変異検査の対象に `.tsx` が 1 件も無く、壁がコンポーネントに隠れていたため。
+  //  **この台帳が双方向なので、移動した瞬間に「効いていない例外」として鳴った。**)
+  'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',

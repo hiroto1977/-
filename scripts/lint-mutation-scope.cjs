@@ -106,6 +106,12 @@ const MUST_MEASURE = {
   'src/renderer/oauth/pkceSession.ts': 'PKCE の一時秘密の置き場と消し方',
   // 同日追加。どちらも既に `mutate` には在ったが「必ず測る壁」の名簿には
   // 無く、**一覧から外しても誰も鳴らない**状態だった。
+  // 2026-08-24 追加。**同種の壁で唯一 `mutate` から外れていた。** R3-6 (2026-07 監査) が
+  // 第三者由来の画像 URL を絞るために作った関門で、同日その予告どおり
+  // CSS `url()` の抜けが実在した。`components/DataList.tsx` の中に置かれていたため
+  // `mutate` に `.tsx` が 1 件も無い = 変異体が 1 つも作られない状態で、
+  // この名簿にも載りようがなかった。**壁をコンポーネントから出して**載せる。
+  'src/shared/imageUrlGate.ts':      '第三者由来の画像 URL のスキーム関門 (<img> と CSS url() の両方が通る)',
   'src/shared/externalUrlGate.ts':     'OS に URL を開かせてよいかの唯一の関門',
   'src/shared/httpLimits.ts':        '打ち切りと応答サイズの上限 (全通信が通る)',
   'src/main/oauth.ts':               '認可の送り先と PKCE',

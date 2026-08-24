@@ -28,7 +28,7 @@ import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
-import { safeCssUrl } from '../components/DataList';
+import { safeCssUrl } from '../../shared/imageUrlGate';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';

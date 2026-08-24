@@ -7,7 +7,8 @@
 import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DataList, safeImageSrc, safeCssUrl } from '../DataList';
+import { DataList } from '../DataList';
+import { safeImageSrc, safeCssUrl } from '../../../shared/imageUrlGate';
 import type { DataListItem } from '../DataList';
 
 describe('DataList — empty state', () => {
@@ -227,5 +228,49 @@ describe('safeCssUrl — CSS url() へ入れる形', () => {
     ]) {
       expect(safeCssUrl(v) === undefined).toBe(safeImageSrc(v) === undefined);
     }
+  });
+});
+
+describe('imageUrlGate — 変異検査で見つかった穴 (2026-08-24)', () => {
+  /*
+   * この関門は `mutate` から外れていた (`components/` の中に居たので
+   * `.tsx` が 1 件も対象になっていない構成に隠れていた)。`src/shared/` へ
+   * 出して測ったら **80.00%・生存 5** で、うち 3 件は実際の抜けだった。
+   */
+
+  it('★ 先頭の ^ が効いている — 中に https:// を含む javascript: を通さない', () => {
+    // 実測: アンカーを外すと通る。`<img src>` では実害が出ないが、
+    // `safeCssUrl` 経由で CSS へ流れる値でもあり、関門の意味が消える。
+    expect(safeImageSrc('javascript:alert("https://example.com")')).toBeUndefined();
+    expect(safeCssUrl('javascript:alert("https://example.com")')).toBeUndefined();
+  });
+
+  it('★ data: 側のアンカーも効いている — 中に data:image を含む別スキームを通さない', () => {
+    expect(safeImageSrc('javascript:void("data:image/png;")')).toBeUndefined();
+    expect(safeImageSrc('data:text/html,<img src="https://example.com">')).toBeUndefined();
+  });
+
+  it('★ data:image の直後に ; か , を必須にしている', () => {
+    // `data:image/png` だけでは中身が無い (`;base64,` も `,` も無い)。
+    expect(safeImageSrc('data:image/png')).toBeUndefined();
+    // 逆に `pngX` は綴りとしては正当なサブタイプ形なので通る。
+    // (最初この行を「弾くはず」と書いて落ちた —— 規則が正しく、期待が誤りだった。)
+    expect(safeImageSrc('data:image/pngX,AAAA')).toBe('data:image/pngX,AAAA');
+    expect(safeImageSrc('data:image/png;base64,AAAA')).toBe('data:image/png;base64,AAAA');
+    expect(safeImageSrc('data:image/svg+xml,<svg/>')).toBe('data:image/svg+xml,<svg/>');
+  });
+
+  it('★ tab/CR/LF は「取り除いた値」が返る (判定と返り値がずれない)', () => {
+    // HTML の URL 属性はパース前に tab/LF/CR を落とすので、検証側も同じ
+    // 正規化をしたうえで **その値を返す**必要がある。別の文字に置き換える
+    // 実装だと、判定は通るのに出力が壊れる。
+    expect(safeImageSrc('https://example.com/a\tb.png')).toBe('https://example.com/ab.png');
+    expect(safeImageSrc('https://example.com/a\nb.png')).toBe('https://example.com/ab.png');
+    expect(safeCssUrl('https://example.com/a\tb.png')).toBe('url("https://example.com/ab.png")');
+  });
+
+  it('★ 前後の空白は落として返る', () => {
+    expect(safeImageSrc('  https://example.com/a.png  ')).toBe('https://example.com/a.png');
+    expect(safeCssUrl('  https://example.com/a.png  ')).toBe('url("https://example.com/a.png")');
   });
 });
