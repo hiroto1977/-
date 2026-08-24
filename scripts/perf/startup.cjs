@@ -132,6 +132,13 @@ async function measure(browser, port, file) {
     process.exit(2);
   }
 
+  // 存在だけでは足りない —— ビルドが失敗すると **前回の成果物が残る**ので、
+  // 古いバンドルの起動性能を測って「問題なし」と報告してしまう。
+  require('../lib/artifact-freshness.cjs').assertFreshArtifacts(
+    TARGETS.map((t) => path.join(dist, t.file)),
+    { srcDir: path.join(ROOT, 'src'), repoRoot: ROOT, tool: 'perf', allowEnv: 'SERVICE_HUB_PERF_ALLOW_STALE' },
+  );
+
   const server = await serve(dist);
   const { port } = server.address();
   // executablePath はこのサンドボックス固有 (PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers)。

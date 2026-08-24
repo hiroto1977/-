@@ -138,6 +138,17 @@ async function run() {
     },
   });
 
+  // 存在も鮮度もここまで誰も見ていなかった。古い dist/ を撮って
+  // 「全ページ描画できた」と報告するのが一番まずい。
+  require('./lib/artifact-freshness.cjs').assertFreshArtifacts(
+    [path.join(__dirname, '..', 'dist', 'index.html')],
+    {
+      srcDir: path.join(__dirname, '..', 'src'),
+      repoRoot: path.join(__dirname, '..'),
+      tool: 'smoke',
+      allowEnv: 'SERVICE_HUB_SMOKE_ALLOW_STALE',
+    },
+  );
   await win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   await new Promise((r) => setTimeout(r, 1500));
 

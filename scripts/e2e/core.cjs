@@ -45,49 +45,15 @@ if (!fs.existsSync(targetAbs)) {
   console.error(`E2E: 対象ファイルがありません: ${targetAbs} — 先に npm run build:web (または build:web:lite) を実行してください`);
   process.exit(2);
 }
-/**
- * **古い成果物で検証していないか**を確かめる。
- *
- * `npm run build:web` は `tsc -b && vite build && …` なので、型検査で落ちると
- * **成果物は作られないまま**その場で止まる。それに気づかず `npm run e2e` を
- * 回すと、**前回の (壊す前の) HTML** を相手に全項目が通る。
- *
- * 2026-08-24 に対照実験でこれを 2 回踏んだ —— 防御を外したつもりで
- * 「まだ効いています」という緑を 2 度受け取った。**検証したつもりが
- * いちばん危ない**ので、ここで止める。
- *
- * 比べるのは `src/` の最終更新時刻。`__tests__` は束に入らないので除く
- * (検査だけ直したときに誤って止めない)。
- */
-function newestSourceMtime(dir) {
-  let newest = 0;
-  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.name === '__tests__' || e.name === 'node_modules') continue;
-    const full = path.join(dir, e.name);
-    if (e.isDirectory()) newest = Math.max(newest, newestSourceMtime(full));
-    else if (/\.(tsx?|css|html)$/.test(e.name)) newest = Math.max(newest, fs.statSync(full).mtimeMs);
-  }
-  return newest;
-}
-{
-  const srcDir = path.join(repoRoot, 'src');
-  if (fs.existsSync(srcDir)) {
-    const built = fs.statSync(targetAbs).mtimeMs;
-    const newest = newestSourceMtime(srcDir);
-    if (newest > built) {
-      const lag = Math.round((newest - built) / 1000);
-      console.error(
-        `E2E: 成果物が src/ より ${lag} 秒古い (${path.relative(repoRoot, targetAbs)})。\n` +
-          '     ビルドが失敗したまま古い HTML を検証しようとしています — ' +
-          'そのまま流すと「壊したのに緑」を受け取ります。\n' +
-          '     先に npm run build:web (または build:web:lite) を通してください。\n' +
-          '     意図して古い成果物を見るなら SERVICE_HUB_E2E_ALLOW_STALE=1 を付けてください。',
-      );
-      if (process.env.SERVICE_HUB_E2E_ALLOW_STALE !== '1') process.exit(2);
-      console.error('     (SERVICE_HUB_E2E_ALLOW_STALE=1 のため続行します)');
-    }
-  }
-}
+// 古い成果物で検証していないか (判定は scripts/lib/artifact-freshness.cjs に 1 つだけ)。
+// build:web は tsc -b で落ちると成果物を作らないまま止まるので、気づかず回すと
+// 「壊す前の HTML」を相手に全項目が通る。2026-08-24 に 2 回踏んだ。
+require('../lib/artifact-freshness.cjs').assertFreshArtifacts([targetAbs], {
+  srcDir: path.join(repoRoot, 'src'),
+  repoRoot,
+  tool: 'E2E',
+  allowEnv: 'SERVICE_HUB_E2E_ALLOW_STALE',
+});
 
 const FILE = 'file://' + targetAbs;
 const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
