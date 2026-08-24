@@ -175,6 +175,10 @@ function idbPutAll(
   db: IDBDatabase,
   entries: readonly { store: string; key: string; value: unknown }[],
 ): Promise<void> {
+  // **空なら何もしない。** `db.transaction([], …)` は仕様上 InvalidAccessError を
+  // 投げる (実測で確認)。呼び出し側は今どこも空を渡さないが、「書くものが無い」を
+  // 例外で返すヘルパは、後から使う人が踏む。無害な no-op に倒す。
+  if (entries.length === 0) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const stores = [...new Set(entries.map((e) => e.store))];
     const tx = db.transaction(stores, 'readwrite');
@@ -831,7 +835,16 @@ class BrowserVault implements Vault {
       for (const id of ids) {
         const blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
         if (!blob) continue;
-        const plain = await decryptString(oldPasswordKey, blob, tokenAad(id));
+        // **読む側は 2 つの形を扱う。** `getToken` と同じ判定 —— 版が付いて
+        // いるものは AAD つきで封緘されており、版の無いものは AAD 導入前
+        // (2026-08-24) の記録である。Phase E 以前の保管庫は AAD 以前より
+        // 更に古いので、**ここは必ず後者を通る**。無条件に AAD を要求すると
+        // レガシー利用者はパスワードを変更できなくなる (最初そう書いていた)。
+        const plain =
+          blob.v === TOKEN_RECORD_V1
+            ? await decryptString(oldPasswordKey, blob, tokenAad(id))
+            : await decryptString(oldPasswordKey, blob);
+        // 書く側は常に新しい形にする —— 変更を機に AAD へ束ね直す。
         const next = await encryptString(newPasswordKey, plain, tokenAad(id));
         rewritten.push({
           store: TOKEN_STORE,

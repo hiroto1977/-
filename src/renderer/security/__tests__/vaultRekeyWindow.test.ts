@@ -135,3 +135,148 @@ describe('vault.changePassword', () => {
     await expect(v3.recoverWithMnemonic(mnemonic, 'recovered-pw-9999')).rejects.toThrow();
   });
 });
+
+describe('idbPutAll の境界 (changePassword / recoverWithMnemonic が共有する)', () => {
+  it('★ 書くものが無くても例外にならない', async () => {
+    // `db.transaction([], …)` は仕様上 InvalidAccessError を投げる (実測済み)。
+    // 「書くものが無い」を例外で返すヘルパは後から使う人が踏むので no-op に倒した。
+    // 公開 API 越しに確かめる —— レガシー保管庫でトークンが 0 件のとき、
+    // 書き込みは meta 1 件だけになり、空配列には落ちないが、
+    // ここでは「トークン 0 件でもパスワード変更が通る」ことを固定する。
+    const v = getVault();
+    await v.initialize(OLD_PW);           // トークンを 1 件も入れない
+    await v.changePassword(OLD_PW, NEW_PW);
+    v.lock();
+    await v.unlock(NEW_PW);
+    expect(await v.listConfigured()).toEqual([]);
+  });
+});
+
+describe('Phase E 以前の保管庫 (master-wrap が無い)', () => {
+  /*
+   * マスター鍵が無く、トークンは**パスワード鍵そのもの**で暗号化されている。
+   * 包み直しでは済まないので全部を読み替える必要があり、書き込みは meta と
+   * 全トークンを 1 トランザクションにまとめてある。
+   *
+   * ここを最初「無条件に AAD つきで復号する」と書いて、**レガシー利用者が
+   * パスワードを一切変更できない**状態にしていた (2026-08-24 に自分で発見)。
+   * `getToken` は版の有無で分けているので、同じ判定に揃えた。
+   */
+  const metaDelete = (key: string): Promise<void> =>
+    new Promise((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault');
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('meta', 'readwrite');
+        tx.objectStore('meta').delete(key);
+        tx.oncomplete = () => {
+          db.close();
+          resolve();
+        };
+        tx.onerror = () => {
+          db.close();
+          reject(tx.error);
+        };
+      };
+      req.onerror = () => reject(req.error);
+    });
+
+  it('★ レガシー保管庫でもパスワードを変更でき、トークンが残る', async () => {
+    const v = getVault();
+    await v.initialize(OLD_PW);
+    await metaDelete('master-wrap');       // ← Phase E 以前の形にする
+    v.lock();
+    await v.unlock(OLD_PW);                // currentKey = パスワード鍵
+    await v.setToken('github', 'tok-github');
+    await v.setToken('slack', 'tok-slack');
+
+    await v.changePassword(OLD_PW, NEW_PW);
+
+    v.lock();
+    await expect(v.unlock(OLD_PW)).rejects.toThrow(/パスワードが違います/);
+    await v.unlock(NEW_PW);
+    expect((await v.listConfigured()).sort()).toEqual(['github', 'slack']);
+    expect(await v.getToken('github')).toBe('tok-github');
+    expect(await v.getToken('slack')).toBe('tok-slack');
+  });
+
+  /** Phase E 以前 かつ AAD 導入前の記録を作る: パスワード鍵で直接・AAD なし・版なし。 */
+  async function writePreAadLegacyToken(password: string, serviceId: string, token: string) {
+    const meta = await new Promise<{ salt: Uint8Array; iterations: number }>((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault');
+      req.onsuccess = () => {
+        const db = req.result;
+        const r = db.transaction('meta', 'readonly').objectStore('meta').get('vault');
+        r.onsuccess = () => {
+          db.close();
+          resolve(r.result as { salt: Uint8Array; iterations: number });
+        };
+        r.onerror = () => {
+          db.close();
+          reject(r.error);
+        };
+      };
+      req.onerror = () => reject(req.error);
+    });
+    const base = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(password) as BufferSource, { name: 'PBKDF2' }, false, ['deriveKey'],
+    );
+    const passwordKey = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.salt as BufferSource, iterations: meta.iterations, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'],
+    );
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    // ★ additionalData を渡さない = AAD 導入前の形
+    const ciphertext = new Uint8Array(
+      await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv as BufferSource },
+        passwordKey,
+        new TextEncoder().encode(token) as BufferSource,
+      ),
+    );
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault');
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('tokens', 'readwrite');
+        tx.objectStore('tokens').put({ iv, ciphertext }, serviceId); // v を付けない
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => { db.close(); reject(tx.error); };
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  it('★ AAD 導入前の記録でも変更でき、その場で AAD へ束ね直される', async () => {
+    // **この検査が当の修正を試す。** 最初は無条件に AAD つきで復号すると
+    // 書いており、その形だとここが落ちる (レガシー利用者はパスワードを
+    // 一切変更できない)。
+    const v = getVault();
+    await v.initialize(OLD_PW);
+    await metaDelete('master-wrap');
+    v.lock();
+    await v.unlock(OLD_PW);
+    await writePreAadLegacyToken(OLD_PW, 'github', 'tok-github');
+    // **ここで getToken を呼んではいけない。** `getToken` は版の無い記録を
+    // その場で AAD へ束ね直すので、旧形式が消えて検査が意味を失う
+    // (最初そう書いて、対照が鳴らないことで気付いた)。
+
+    await v.changePassword(OLD_PW, NEW_PW);
+
+    v.lock();
+    await v.unlock(NEW_PW);
+    expect(await v.getToken('github')).toBe('tok-github');
+  });
+
+  it('レガシーでトークンが 0 件でも通る', async () => {
+    const v = getVault();
+    await v.initialize(OLD_PW);
+    await metaDelete('master-wrap');
+    v.lock();
+    await v.unlock(OLD_PW);
+    await v.changePassword(OLD_PW, NEW_PW);
+    v.lock();
+    await v.unlock(NEW_PW);
+    expect(await v.listConfigured()).toEqual([]);
+  });
+});

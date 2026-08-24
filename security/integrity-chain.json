@@ -735,6 +735,14 @@
       "leafCount": 36,
       "note": "update vault.ts",
       "hash": "4321f481d6b2f89e49a5cbca34a40f887690182a9ae1ae7fc5f7c805de953d76"
+    },
+    {
+      "index": 87,
+      "prevHash": "4321f481d6b2f89e49a5cbca34a40f887690182a9ae1ae7fc5f7c805de953d76",
+      "merkleRoot": "9ec3ea8e3f255317b192362056b6c453e1af56c43db3e2ae17a2aa76c56fe8f5",
+      "leafCount": 36,
+      "note": "update vault.ts",
+      "hash": "ca03bf32fd5e2880d72f9e542cc3489ad0b9e284c446b6a94cd6fee0d29bd982"
     }
   ],
   "tipManifest": {
@@ -763,7 +771,7 @@
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "405273424dee2cbdabfea92ac9b213acdafe5efd051f5fc864063183308e0370",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "5100c01c315a6413a73c25a80dee136d14b9a348b828ecd661c6133837a9ca3e",
+    "src/renderer/security/vault.ts": "240c4c9edb6dfa647b087605af35042ed6744882b92dd7c7ec9876eff53580db",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
