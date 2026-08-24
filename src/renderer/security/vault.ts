@@ -209,6 +209,37 @@ const RECOVERY_DERIVATION_PREFIX_V1 = 'service-hub-bip39-recovery-v1:';
 interface EncryptedToken {
   iv: Uint8Array;
   ciphertext: Uint8Array;
+  /**
+   * トークンレコードの版。`1` は「serviceId を AAD で束ねてある」印。
+   * meta 側の blob (kcv / master-wrap / recovery) はこの欄を持たない。
+   */
+  v?: number;
+}
+
+/** 現在のトークンレコードの版。 */
+const TOKEN_RECORD_V1 = 1;
+
+/**
+ * トークンを**保管場所に束ねる**ための付随データ (AES-GCM の additionalData)。
+ *
+ * ## なぜ要るのか (2026-08-24 に実証した)
+ *
+ * AES-GCM は「暗号文が改竄されていないこと」は保証するが、
+ * **それがどこに置かれていたか**は何も言わない。IndexedDB へ書ける相手
+ * (プロファイルに触れる者・ページに script を通せる者) は、復号できなくても
+ * **レコードを別のサービスの位置へ移し替えられる**。
+ *
+ * 実証: `github` の暗号文を `slack` の鍵位置へ put すると、利用者が解錠した
+ * あと `getToken('slack')` が **GitHub のトークンをそのまま返した**。
+ * 攻撃者はマスターパスワードを一切知らないまま、**どの資格情報を
+ * どのサービスへ送らせるかを選べる**。ブラウザ版は CORS 迂回の中継先を
+ * 利用者が設定できる (`network/proxy.ts`) ので、送り先まで攻撃者が
+ * 選べる状況では、そのまま持ち出しの経路になる。
+ *
+ * `serviceId` を AAD に入れると、位置が違う暗号文は**復号自体が失敗する**。
+ */
+function tokenAad(serviceId: string): Uint8Array {
+  return new TextEncoder().encode(`service-hub-token-v1:${serviceId}`);
 }
 
 // AES-GCM / PBKDF2 wrappers — security-critical correctness is pinned by
@@ -234,11 +265,17 @@ async function deriveKey(password: string, salt: Uint8Array, iterations: number)
   );
 }
 
-async function encryptString(key: CryptoKey, plaintext: string): Promise<EncryptedToken> {
+async function encryptString(
+  key: CryptoKey,
+  plaintext: string,
+  aad?: Uint8Array,
+): Promise<EncryptedToken> {
   const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
   const ciphertext = new Uint8Array(
     await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: iv as BufferSource },
+      aad === undefined
+        ? { name: 'AES-GCM', iv: iv as BufferSource }
+        : { name: 'AES-GCM', iv: iv as BufferSource, additionalData: aad as BufferSource },
       key,
       new TextEncoder().encode(plaintext) as BufferSource,
     ),
@@ -246,9 +283,15 @@ async function encryptString(key: CryptoKey, plaintext: string): Promise<Encrypt
   return { iv, ciphertext };
 }
 
-async function decryptString(key: CryptoKey, blob: EncryptedToken): Promise<string> {
+async function decryptString(
+  key: CryptoKey,
+  blob: EncryptedToken,
+  aad?: Uint8Array,
+): Promise<string> {
   const plain = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: blob.iv as BufferSource },
+    aad === undefined
+      ? { name: 'AES-GCM', iv: blob.iv as BufferSource }
+      : { name: 'AES-GCM', iv: blob.iv as BufferSource, additionalData: aad as BufferSource },
     key,
     blob.ciphertext as BufferSource,
   );
@@ -513,6 +556,8 @@ class BrowserVault implements Vault {
     } else {
       this.currentKey = passwordKey;
     }
+    // 解錠できて初めて旧形式を読めるので、ここで束ね直す。
+    await this.rebindLegacyTokens().catch(() => {});
   }
 
   lock(): void {
@@ -556,8 +601,8 @@ class BrowserVault implements Vault {
       // 掴んだ鍵で書き切る手も有るが、それは「施錠した」と言いながら
       // 書き込みを続けることになる。
       this.requireKey();
-      const blob = await encryptString(key, token);
-      await idbPut(db, TOKEN_STORE, serviceId, blob);
+      const blob = await encryptString(key, token, tokenAad(serviceId));
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1 });
     } finally {
       db.close();
     }
@@ -578,10 +623,70 @@ class BrowserVault implements Vault {
     // 待っている間に施錠されたなら、それは「未設定」ではない。
     // 下の catch は**復号の失敗** (鍵違い・壊れた blob) だけを飲む。
     this.requireKey();
+    if (blob.v === TOKEN_RECORD_V1) {
+      try {
+        return await decryptString(key, blob, tokenAad(serviceId));
+      } catch {
+        // AAD が合わない = **置き場所が違う**。鍵違いと同じ扱いで黙って断る。
+        return null;
+      }
+    }
+    // 版の無いレコードは AAD を導入する前のもの。読めたらその場で束ね直す
+    // (この 1 回だけ付け替え攻撃が通る窓が残るので、解錠時にも一括で直す)。
+    let plain: string;
     try {
-      return await decryptString(key, blob);
+      plain = await decryptString(key, blob);
     } catch {
       return null;
+    }
+    await this.rebindToken(serviceId, plain).catch(() => {});
+    return plain;
+  }
+
+  /** 旧形式のトークンを AAD つきで保存し直す。失敗しても読み出しは成功させる。 */
+  private async rebindToken(serviceId: string, token: string): Promise<void> {
+    const key = this.requireKey();
+    const blob = await encryptString(key, token, tokenAad(serviceId));
+    const db = await openDb();
+    try {
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1 });
+    } finally {
+      db.close();
+    }
+  }
+
+  /**
+   * 解錠のたびに、版の無いレコードを全部束ね直す。
+   *
+   * `getToken` 側だけの移行だと、**一度も読まれないトークンは旧形式のまま残る**
+   * —— 付け替え攻撃はまさにそういうレコードを狙える。best-effort (失敗しても
+   * 解錠は成功させる) だが、通常の利用で 1 回解錠すれば窓は閉じる。
+   */
+  private async rebindLegacyTokens(): Promise<void> {
+    const db = await openDb();
+    let ids: string[];
+    try {
+      ids = await idbKeys(db, TOKEN_STORE);
+    } finally {
+      db.close();
+    }
+    for (const id of ids) {
+      const db2 = await openDb();
+      let blob: EncryptedToken | undefined;
+      try {
+        blob = await idbGet<EncryptedToken>(db2, TOKEN_STORE, id);
+      } finally {
+        db2.close();
+      }
+      if (!blob || blob.v === TOKEN_RECORD_V1) continue;
+      const key = this.currentKey;
+      if (!key) return; // 途中で施錠されたら止める
+      try {
+        const plain = await decryptString(key, blob);
+        await this.rebindToken(id, plain);
+      } catch {
+        // 読めないレコードは触らない (壊れている / 別の鍵で書かれている)
+      }
     }
   }
 
