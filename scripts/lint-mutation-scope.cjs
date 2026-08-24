@@ -94,6 +94,11 @@ const MUST_MEASURE = {
   'src/shared/controlChars.ts':      'URL を解析する前に制御文字を落とす (atlassianSite / proxyEndpoint / aiEndpoint の 3 つが依存)',
   'src/shared/safeFilename.ts':      'ファイル名の唯一の関門 (ライブラリと実フォルダ書き出しが並んで受け取る)',
   'src/shared/updateCheck.ts':       '更新の案内先 URL の検証 (openExternal に渡る)',
+  // 2026-08-24 追加。権限や資格情報の壁ではないが、**モデルの応答を構文解析して
+  // 画面へ出す唯一の場所**で、しかも等価変異の pragma を 6 つ抱えている。
+  // この表の言う「中の pragma も含めて何も測られていない状態が緑に見える」が
+  // まさに当てはまる (載せる前は 67.30%・生存 66 で、誰も気付いていなかった)。
+  'src/renderer/data/assistantMarkdown.ts': 'モデル応答を解析して画面へ出す唯一の場所 (等価変異の pragma を抱える)',
   'src/renderer/oauth/pkce.ts':      'ブラウザ版 PKCE',
   // 2026-08-23 追加。PKCE の一時秘密 (`code_verifier`) を置く・読む・**消す**
   // 唯一の場所。掃除が効かなくなると、`state` 不一致 (CSRF の疑い) で

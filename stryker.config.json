@@ -58,6 +58,7 @@
     "src/renderer/components/serviceActionUtils.ts",
     "src/renderer/data/accounting.ts",
     "src/renderer/data/actionOutcome.ts",
+    "src/renderer/data/assistantMarkdown.ts",
     "src/renderer/data/backup.ts",
     "src/renderer/data/backupPosture.ts",
     "src/renderer/data/balanceSheet.ts",
