@@ -45,6 +45,50 @@ if (!fs.existsSync(targetAbs)) {
   console.error(`E2E: 対象ファイルがありません: ${targetAbs} — 先に npm run build:web (または build:web:lite) を実行してください`);
   process.exit(2);
 }
+/**
+ * **古い成果物で検証していないか**を確かめる。
+ *
+ * `npm run build:web` は `tsc -b && vite build && …` なので、型検査で落ちると
+ * **成果物は作られないまま**その場で止まる。それに気づかず `npm run e2e` を
+ * 回すと、**前回の (壊す前の) HTML** を相手に全項目が通る。
+ *
+ * 2026-08-24 に対照実験でこれを 2 回踏んだ —— 防御を外したつもりで
+ * 「まだ効いています」という緑を 2 度受け取った。**検証したつもりが
+ * いちばん危ない**ので、ここで止める。
+ *
+ * 比べるのは `src/` の最終更新時刻。`__tests__` は束に入らないので除く
+ * (検査だけ直したときに誤って止めない)。
+ */
+function newestSourceMtime(dir) {
+  let newest = 0;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name === '__tests__' || e.name === 'node_modules') continue;
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) newest = Math.max(newest, newestSourceMtime(full));
+    else if (/\.(tsx?|css|html)$/.test(e.name)) newest = Math.max(newest, fs.statSync(full).mtimeMs);
+  }
+  return newest;
+}
+{
+  const srcDir = path.join(repoRoot, 'src');
+  if (fs.existsSync(srcDir)) {
+    const built = fs.statSync(targetAbs).mtimeMs;
+    const newest = newestSourceMtime(srcDir);
+    if (newest > built) {
+      const lag = Math.round((newest - built) / 1000);
+      console.error(
+        `E2E: 成果物が src/ より ${lag} 秒古い (${path.relative(repoRoot, targetAbs)})。\n` +
+          '     ビルドが失敗したまま古い HTML を検証しようとしています — ' +
+          'そのまま流すと「壊したのに緑」を受け取ります。\n' +
+          '     先に npm run build:web (または build:web:lite) を通してください。\n' +
+          '     意図して古い成果物を見るなら SERVICE_HUB_E2E_ALLOW_STALE=1 を付けてください。',
+      );
+      if (process.env.SERVICE_HUB_E2E_ALLOW_STALE !== '1') process.exit(2);
+      console.error('     (SERVICE_HUB_E2E_ALLOW_STALE=1 のため続行します)');
+    }
+  }
+}
+
 const FILE = 'file://' + targetAbs;
 const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
 const PASS = 'e2e-pass-12345';
@@ -797,6 +841,60 @@ async function kessanTaxSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * クリックジャッキング拒否 — **枠に入れられたら動かない**ことを実機で見る。
+ *
+ * `security/frameGuard.ts` の単体検査は `isFramed()` の判定と
+ * `renderFrameRefusal()` の DOM を別々に固定しているが、
+ * **「枠の中でアプリが本当に立ち上がらないか」は別の問い**である
+ * (判定が正しくても `main.tsx` の分岐が壊れれば React は mount する)。
+ *
+ * `frame-ancestors` は `<meta>` の CSP では効かない (実測済み) ので、
+ * GitHub Pages / `file://` ではこの JS 側の拒否だけが防御線になる。
+ * だからこそ実物で確かめる価値がある。
+ *
+ * **空撃ち対策**: 「アプリが描画されない」は *iframe が読み込まれなかった*
+ * ときにも成立してしまう。枠の中に拒否の文言が出ていることを併せて見る。
+ */
+async function frameGuardSuite(browser) {
+  console.log('--- 枠 (iframe) に入れられたら動かない ---');
+  const attackPath = path.join(path.dirname(targetAbs), '__e2e-frame-attack.html');
+  fs.writeFileSync(
+    attackPath,
+    '<!doctype html><meta charset="utf-8"><title>attack</title>' +
+      `<h1>攻撃者のページ</h1><iframe src="./${path.basename(targetAbs)}" width="1000" height="700"></iframe>`,
+  );
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  try {
+    await page.goto('file://' + attackPath, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(3000);
+    const frame = page.frames().find((f) => f.url().includes(path.basename(targetAbs)));
+    ok(!!frame, 'frame: iframe が読み込まれた (これが偽なら以降は空撃ち)');
+    if (frame) {
+      const text = await frame.locator('body').innerText().catch(() => '');
+      ok(text.length > 0, 'frame: 枠の中は真っ白ではない');
+      ok(text.includes('枠の中では開けません'), 'frame: 拒否の見出しが出る');
+      ok((await frame.locator('.sidebar').count().catch(() => 0)) === 0, 'frame: アプリ本体 (サイドバー) が無い');
+      ok(
+        !/はじめてのご利用|ロック解除/.test(text),
+        'frame: 保管庫の画面も出さない (操作させる面を一切与えない)',
+      );
+    }
+    // 対照 — 枠でなければ普通に立ち上がる。これが無いと「常に拒否」でも通る。
+    const solo = await ctx.newPage();
+    await solo.goto('file://' + targetAbs, { waitUntil: 'domcontentloaded' });
+    await solo.waitForTimeout(3000);
+    const soloText = await solo.locator('body').innerText();
+    ok(/はじめてのご利用|ロック解除/.test(soloText), 'frame: 対照 — 枠なしなら普通に動く');
+    ok(!soloText.includes('枠の中では開けません'), 'frame: 対照 — 枠なしでは拒否を出さない');
+    await solo.close();
+  } finally {
+    await ctx.close();
+    fs.rmSync(attackPath, { force: true });
+  }
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -915,6 +1013,7 @@ async function businessComparisonSuite(browser) {
   if (run('credential')) await credentialSuite(browser);
   if (run('businessComparison')) await businessComparisonSuite(browser);
   if (run('kessanTax')) await kessanTaxSuite(browser);
+  if (run('frameGuard')) await frameGuardSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
