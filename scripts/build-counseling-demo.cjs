@@ -16,6 +16,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const esbuild = require('esbuild');
+const { scriptSafeJs } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist/counseling-demo.html');
@@ -256,7 +257,7 @@ async function main() {
   });
   let js = result.outputFiles[0].text;
   // <script> 内に閉じタグ列が現れると HTML が壊れるためエスケープ (防御)。
-  js = js.replace(/<\/script/gi, '<\\/script');
+  js = scriptSafeJs(js); // 退避は scripts/lib/json-for-script.cjs に 1 つだけ
 
   const html = htmlShell(js);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
