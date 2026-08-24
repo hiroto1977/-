@@ -290,6 +290,65 @@ function checkCiGateCoverage(failures, allOverride, ciOverride) {
   return gates.length;
 }
 
+/**
+ * 逆向きの照合 — **「CI に無い」と書いてあるものが、本当に無いか。**
+ *
+ * `checkCiGateCoverage` は「ゲートを足したのに CI へ繋ぎ忘れた」を見る。
+ * その裏返しが 2026-08-24 に実在した: `e2e` / `e2e:lite` / `perf` は
+ * `.github/workflows/e2e.yml` から (ラベル `run-e2e` か手動起動で) 走るのに、
+ * **CLAUDE.md は「not in CI」と書いたままだった**。
+ *
+ * CLAUDE.md は Claude Code セッションへの**指示書**なので、この種のずれは
+ * 「無い」と信じさせて**動く仕組みを隠す**。実際、この e2e 経路は誰にも
+ * 使われないまま残っていた。
+ *
+ * 実装が説明より先を行く形は、逆向き (説明が先) と同じくらい起きる。
+ *
+ * @param claimOverride / @param workflowsOverride self-test の差し込み口。
+ */
+function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
+  const claudeMd =
+    claimOverride === undefined ? read(path.join(REPO_ROOT, 'CLAUDE.md')) : claimOverride;
+  if (claudeMd == null) {
+    failures.push({ fact: 'not-in-CI claims', reason: 'CLAUDE.md を読めない' });
+    return 0;
+  }
+  // 「… are **not** in CI」の直前に並ぶバッククォート付きの名前を拾う。
+  // 文をまたぐので、直前 200 文字を窓にする。
+  const claimed = new Set();
+  for (const m of claudeMd.matchAll(/\*\*not\*\* in CI/g)) {
+    const window = claudeMd.slice(Math.max(0, m.index - 200), m.index);
+    for (const t of window.matchAll(/`([a-z][a-z0-9:_-]*)`/g)) claimed.add(t[1]);
+  }
+  if (claimed.size === 0) return 0;
+
+  let workflows;
+  if (workflowsOverride !== undefined) workflows = workflowsOverride;
+  else {
+    const dir = path.join(REPO_ROOT, '.github', 'workflows');
+    workflows = fs.existsSync(dir)
+      ? fs.readdirSync(dir)
+          .filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'))
+          .map((f) => ({ name: f, text: read(path.join(dir, f)) ?? '' }))
+      : [];
+  }
+  for (const name of claimed) {
+    const re = new RegExp(`npm run ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z0-9:_-])`);
+    for (const wf of workflows) {
+      if (re.test(wf.text)) {
+        failures.push({
+          fact: 'not-in-CI claims',
+          reason:
+            `CLAUDE.md は "${name}" を「not in CI」と書いているが ` +
+            `.github/workflows/${wf.name} が実行している — ` +
+            '「無い」と信じさせて動く仕組みを隠している',
+        });
+      }
+    }
+  }
+  return claimed.size;
+}
+
 // ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
@@ -303,8 +362,52 @@ function checkCiGateCoverage(failures, allOverride, ciOverride) {
  * lint:citations / lint:knowledge-refs / verify:knowledge の 3 つが
  * その状態だった。
  */
+let selfTestFailed = false;
 function selfTest() {
   const step = (g) => `      - run: npm run ${g}\n`;
+  // 逆向き —— 「CI に無い」と書いたものが本当に無いか。
+  // 2026-08-24 に実在した形 (e2e.yml が e2e/e2e:lite/perf を走らせるのに
+  // CLAUDE.md は not in CI と書いていた) を最初のケースに置く。
+  {
+    const claimCases = [
+      [
+        '「not in CI」と書いたものを workflow が実行していたら鳴る',
+        '`e2e` / `smoke` are **not** in CI at all.',
+        [{ name: 'e2e.yml', text: '      - run: npm run e2e\n' }],
+        1,
+      ],
+      [
+        '本当に無ければ鳴らない',
+        '`e2e:ollama` / `smoke` are **not** in CI at all.',
+        [{ name: 'ci.yml', text: '      - run: npm run test\n' }],
+        0,
+      ],
+      [
+        '★ 前方一致で誤爆しない (e2e の主張は e2e:lite の実行に当たらない)',
+        '`e2e` are **not** in CI at all.',
+        [{ name: 'e2e.yml', text: '      - run: npm run e2e:lite\n' }],
+        0,
+      ],
+      [
+        '複数の workflow それぞれで鳴る',
+        '`smoke` are **not** in CI at all.',
+        [
+          { name: 'a.yml', text: 'npm run smoke' },
+          { name: 'b.yml', text: 'npm run smoke' },
+        ],
+        2,
+      ],
+      ['主張が無ければ何も見ない', 'ここには主張が無い', [{ name: 'x.yml', text: 'npm run e2e' }], 0],
+    ];
+    for (const [label, claim, wfs, expected] of claimCases) {
+      const f = [];
+      checkNotInCiClaims(f, claim, wfs);
+      const ok = f.length === expected;
+      if (!ok) selfTestFailed = true;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
   const cases = [
     [
       'verify:all のゲートが ci.yml に無ければ鳴る',
@@ -398,6 +501,7 @@ function main() {
   }
 
   const gateCount = checkCiGateCoverage(failures);
+  checkNotInCiClaims(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml`,

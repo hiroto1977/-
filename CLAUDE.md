@@ -102,9 +102,10 @@ existing but guarding nothing, which is exactly what happened to `lint:citations
 `lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
 `mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
-`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` /
-`e2e:ollama` / `perf` / `smoke` need a real browser or Electron and are **not** in CI — run them
-locally before shipping renderer or startup-performance changes.
+`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
+default** (Actions 分の節約): trigger it from the Actions tab (`workflow_dispatch`) or by putting the
+**`run-e2e` label** on a PR. `e2e:ollama` / `smoke` are **not** in CI at all. All of them need a real
+browser or Electron — run them locally before shipping renderer or startup-performance changes.
 
 ## Architecture
 
