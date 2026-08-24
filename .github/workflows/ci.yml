@@ -35,6 +35,21 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+
+      # 依存の既知脆弱性。**出荷される依存 (prod) の high / critical だけ**を落とす。
+      #
+      # `ARCHITECTURE.md` は「npm audit (prod) 0 件」を表に載せていたが、
+      # **それを確かめる物がどこにも無かった** (verify:arch の live metric にも
+      # 入っていない)。2026-08-24 に実測したら実際 0 件だったが、明日新しい勧告が
+      # 出れば静かに嘘になる。
+      #
+      # dev 依存と moderate 未満を落とさないのは意図的:
+      #   - dev 依存 (ビルド道具) は出荷物に入らない
+      #   - moderate 以下は推移依存で頻繁に出る。無関係な PR が赤くなると
+      #     「赤を無視する習慣」がつき、門が門でなくなる
+      # 落とす範囲を狭くする代わり、落ちたら本物として扱う。
+      - run: npm audit --omit=dev --audit-level=high
+
       # quality: typecheck + arch/verify + lint
       - run: npm run typecheck
       - run: npm run verify:arch
