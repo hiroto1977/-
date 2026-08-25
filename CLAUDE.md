@@ -81,11 +81,14 @@ npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) 
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
+npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
+                           #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
+                           #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
                            #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
-npm run verify:all         # typecheck + all of the above + eslint (30 ゲート)
+npm run verify:all         # typecheck + all of the above + eslint (31 ゲート)
                            #   **`npm test` は含まない。** CI は両方走らせるので、
                            #   push 前は `npm test && npm run verify:all` の両方を回すこと
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
@@ -97,7 +100,7 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 30 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 31 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in

@@ -69,6 +69,7 @@ jobs:
       - run: npm run verify:release-artifacts
       - run: npm run lint:shell
       - run: npm run lint:repo-size
+      - run: npm run lint:deps
       - run: npm run lint:data-origin
       - run: npm run lint:credential-use
       - run: npm run lint:ipc-handlers
