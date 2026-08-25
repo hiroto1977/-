@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  MAX_SCAN_URL_LENGTH,
-  SECRET_PARAM_NAMES,
-  describeScanUrlRisk,
-  validateScanUrl,
-} from '../scanTarget';
+import { MAX_SCAN_URL_LENGTH, SECRET_PARAM_NAMES, describeScanUrlRisk, validateScanUrl, looksInternalHostname } from '../scanTarget';
 
 describe('validateScanUrl', () => {
   it('http / https を通す', () => {
@@ -126,5 +121,85 @@ describe('資格情報らしき名前の一覧', () => {
     expect(describeScanUrlRisk('https://example.com/?tokens=x')).toBeNull();
     expect(describeScanUrlRisk('https://example.com/?keyword=x')).toBeNull();
     expect(describeScanUrlRisk('https://example.com/?author=x')).toBeNull();
+  });
+});
+
+/*
+ * **冒頭が挙げる 4 つ目の危険 —— 社内ホスト名。**
+ *
+ * このファイルの注記は、VT へ送ると第三者の目に触れるものとして
+ * 「署名付きリンク・招待リンク・セッション識別子・社内ホスト名」を挙げている。
+ * ところが実装が見ていたのは前 3 つだけで、**4 つ目だけが無かった**
+ * (2026-08-25 の実測で判明。9 形すべてが無警告だった)。
+ *
+ * 境界を必ず両側から留める —— 172.16/12 と 100.64/10 は「範囲の外は
+ * 公開アドレス」なので、片側だけ書くと網が広がりすぎたことに気付けない。
+ */
+describe('社内・手元のホストは、送る前に伝える', () => {
+  it.each([
+    ['予約 TLD (.corp)', 'https://intranet.acme.corp/finance'],
+    ['予約 TLD (.internal)', 'https://jenkins.internal/job/deploy-prod'],
+    ['予約 TLD (.local)', 'https://wiki.corp.local/hr'],
+    ['単一ラベル', 'https://buildserver/artifacts'],
+    ['localhost', 'https://localhost/x'],
+    ['10/8', 'https://10.0.0.7/wiki/salaries'],
+    ['192.168/16', 'https://192.168.10.5/admin'],
+    ['172.16/12 の下端', 'https://172.16.0.1/'],
+    ['172.16/12 の上端', 'https://172.31.255.254/'],
+    ['127/8', 'https://127.0.0.1:8080/debug'],
+    ['CGNAT の下端', 'https://100.64.0.1/'],
+    ['CGNAT の上端', 'https://100.127.255.254/'],
+    ['IPv6 ループバック', 'https://[::1]/x'],
+    ['IPv6 リンクローカル', 'https://[fe80::1]/x'],
+    ['IPv6 ULA', 'https://[fd00::5]/x'],
+    // **クラウドのメタデータ。** 送ると「資格情報の口を触っている」こと自体が残る。
+    ['リンクローカル (クラウドのメタデータ)', 'https://169.254.169.254/latest/meta-data/iam/security-credentials/'],
+  ])('%s は警告が出る (%j)', (_label, url) => {
+    expect(describeScanUrlRisk(url)).toMatch(/社内・手元のホスト/);
+  });
+
+  /** 網が広がりすぎていないこと。**範囲のすぐ外**を必ず置く。 */
+  it.each([
+    ['普通の公開サイト', 'https://example.com/normal'],
+    ['公開サイト (日本語ドメイン)', 'https://xn--eckwd4c7c.jp/'],
+    ['172.16/12 の 1 つ下', 'https://172.15.255.254/'],
+    ['172.16/12 の 1 つ上', 'https://172.32.0.1/'],
+    ['10/8 の 1 つ上', 'https://11.0.0.1/'],
+    ['CGNAT の 1 つ下', 'https://100.63.255.254/'],
+    ['CGNAT の 1 つ上', 'https://100.128.0.1/'],
+    ['文書用アドレス (TEST-NET-3)', 'https://198.51.100.7/'],
+    // 169.254/16 だけがリンクローカル。169/8 全体を社内扱いすると、ここが鳴る。
+    ['169/8 のリンクローカル外', 'https://169.1.2.3/'],
+    ['169.254 の 1 つ下', 'https://169.253.255.254/'],
+    ['169.254 の 1 つ上', 'https://169.255.0.1/'],
+    // 192.168/16 だけが私用。192/8 全体を社内扱いすると、ここが鳴る。
+    ['192.168 の 1 つ外', 'https://192.169.0.1/'],
+    ['192.167 側', 'https://192.167.255.254/'],
+  ])('%s は警告を出さない (%j)', (_label, url) => {
+    expect(describeScanUrlRisk(url)).toBeNull();
+  });
+
+  /*
+   * 資格情報の警告のほうが差し迫っているので、両方当たる URL では
+   * そちらを出す。**順序そのものを留める** —— 入れ替えると、
+   * 社内ホストの文言に隠れて資格情報の警告が消える。
+   */
+  it('資格情報と社内ホストが両方当たるなら、資格情報のほうを出す', () => {
+    const both = 'https://jenkins.internal/job?token=abc';
+    expect(describeScanUrlRisk(both)).toMatch(/資格情報らしき値/);
+  });
+
+  it('末尾ドットでも社内と分かる (FQDN 形)', () => {
+    expect(looksInternalHostname('buildserver.')).toBe(true);
+    expect(looksInternalHostname('wiki.corp.local.')).toBe(true);
+  });
+
+  it('大文字でも判定できる', () => {
+    expect(looksInternalHostname('JENKINS.INTERNAL')).toBe(true);
+    expect(looksInternalHostname('EXAMPLE.COM')).toBe(false);
+  });
+
+  it('空のホスト名は社内扱いしない (判定の空撃ちを避ける)', () => {
+    expect(looksInternalHostname('')).toBe(false);
   });
 });
