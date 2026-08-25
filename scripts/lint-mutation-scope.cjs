@@ -165,6 +165,21 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
+  // 2026-08-25 追加。**保護対象なのに mutate に無い 2 件**を明示する
+  // (逆向きの突き合わせで出てきた)。どちらも意図的だが、書いていなければ
+  // 「たまたま漏れている」と区別が付かない。
+  'src/renderer/security/LockScreen.tsx':
+    '解錠・初回設定・復旧の画面。**`mutate` に `.tsx` は 1 件も無い** '
+    + '(JSX の変異体が大量に出て信号が埋もれるため)。ここに在るのは保管庫呼び出しの'
+    + '段取りで、判断そのものは `vault.ts` / `mnemonic.ts` (どちらも測っている) に在る。'
+    + '唯一この画面が持つ決定はクリップボード消去の番人 (コピーした時のままなら消す) で、'
+    + 'それは `LockScreen.test.ts` が振る舞いで留めてある。'
+    + '**判断をこの画面へ書き足すなら、共有側へ出すこと。**',
+  'src/renderer/security/bip39-wordlist.ts':
+    'BIP-39 の 2048 語。**データであって判断ではない** — 語を 1 つ変える変異体は'
+    + '「別の語表になる」だけで、検査すべき性質が無い。語表の正しさは'
+    + '`mnemonic.ts` (測っている) の検査が符号・復号の往復で留めている。',
+
   'src/renderer/web-shim.ts':
     'ブラウザ版の main 代替。**壁の判断そのものは測られている共有実装に在る** '
     + '(externalUrlGate / redact / httpLimits / tokenInput / ai.chat)。'
@@ -279,6 +294,25 @@ function selfTest() {
       const ok = n === expected;
       if (!ok) failed += 1;
       console.log(`  ${ok ? '✓' : '✗'} 名簿: ${label}: ${n} 件 (期待 ${expected})`);
+    }
+  }
+
+  // ── 逆向き: 守る壁が測られているか ──
+  {
+    const cases = [
+      ['mutate に在れば通る', ['src/a.ts'], ['src/a.ts'], {}, 0],
+      ['台帳に在れば通る', ['src/a.ts'], [], { 'src/a.ts': '理由' }, 0],
+      ['★ どちらにも無ければ鳴る', ['src/a.ts'], [], {}, 1],
+      ['src 以外は見ない (scripts/*.cjs 等)', ['scripts/x.cjs'], [], {}, 0],
+      ['.md や .json も見ない', ['security/x.md'], [], {}, 0],
+      ['複数の壁それぞれで鳴る', ['src/a.ts', 'src/b.tsx'], [], {}, 2],
+      ['PROTECTED が配列でなければ鳴る', 'not-an-array', [], {}, 1],
+    ];
+    for (const [label, prot, mut, led, expected] of cases) {
+      const n = checkProtectedAreMeasured(prot, mut, led).length;
+      const ok = n === expected;
+      if (!ok) failed += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 逆向き: ${label}: ${n} 件 (期待 ${expected})`);
     }
   }
   console.log('self-test:');
@@ -400,6 +434,7 @@ function main(argv) {
   // 名簿どうしの突き合わせ。**「測る壁」は「改竄検知で守る壁」でもあるはず。**
   // 片方だけ見ている限り、ずれても誰も気付かない (実際 14 件ずれていた)。
   failures.push(...checkWallsAreProtected());
+  failures.push(...checkProtectedAreMeasured());
 
   // 「測っていないと分かっている」台帳の双方向。載ったのに消し忘れる /
   // ファイルが消えたのに残る、のどちらでも落とす。
@@ -426,6 +461,43 @@ function main(argv) {
   console.error(`❌ ${failures.length} 件:`);
   for (const f of failures) console.error(`  ${f}`);
   return 1;
+}
+
+/**
+ * **逆向き — 「守る壁」は測られているか。**
+ *
+ * `checkWallsAreProtected` は「測る壁が守られているか」を見る。その裏返しが
+ * 要るのは、**保護対象でも `mutate` に無ければ変異体が 1 つも作られない**から
+ * である (`exportPaths.ts` がまさにそれだった —— 中の pragma まで含めて
+ * 何も測られていない状態が「緑」に見えていた)。
+ *
+ * 採掘は「変わったこと」を検知するが、**変わった中身が正しいか**は測らない。
+ * 保護と計測は別の保証で、両方要る。
+ *
+ * 測らない判断は `KNOWN_UNMEASURED` に理由つきで載せること (双方向)。
+ */
+function checkProtectedAreMeasured(protectedOverride, mutateOverride, ledgerOverride) {
+  let list = protectedOverride;
+  if (list === undefined) {
+    try {
+      list = require('./integrity-chain.cjs').PROTECTED;
+    } catch {
+      return ['integrity-chain.cjs から PROTECTED を読めない'];
+    }
+  }
+  if (!Array.isArray(list)) return ['PROTECTED が配列ではない'];
+  const mutate = new Set(mutateOverride ?? mutateList());
+  const ledger = new Set(Object.keys(ledgerOverride ?? KNOWN_UNMEASURED));
+  const problems = [];
+  for (const file of list) {
+    if (!/^src\/.*\.tsx?$/.test(file)) continue; // 走査対象は src の TypeScript のみ
+    if (mutate.has(file) || ledger.has(file)) continue;
+    problems.push(
+      `${file} は改竄検知の保護対象なのに変異検査に載っていない ` +
+        '(stryker.config.json の mutate へ足すか、KNOWN_UNMEASURED に理由つきで載せること)',
+    );
+  }
+  return problems;
 }
 
 /**
@@ -477,6 +549,7 @@ function checkWallsAreProtected(mustOverride, chainOverride) {
 module.exports = {
   scanSource,
   checkWallsAreProtected,
+  checkProtectedAreMeasured,
   broadRegionsOf,
   missingWalls,
   staleUnmeasured,
