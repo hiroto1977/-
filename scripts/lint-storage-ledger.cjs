@@ -34,6 +34,8 @@
  *   7. **バックアップが覆う保存先はちょうど 1 つ**で、それは業務レコードの
  *      データベースである (`EVICTION_RECOVERY` が画面で言っていること)
  *   8. どの行にも「何が入るか」が書いてある
+ *   9. **秘密や利用者の書いた物を持つ保存先は、監査報告に名前で載っている**
+ *      (`docs/DATA_PROTECTION.md` —— 「漏洩・損壊・消失は防げるか」に答える文書)
  *
  * ## 評価は純関数
  *
@@ -60,6 +62,17 @@ const BACKED_UP_STORE = 'business-hub-data';
  * `backedUp` は「`BackupPanel` の書き出しに入るか」。**入らない物が
  * 大半である**ことがこの台帳の要点で、立ち退き (生成元ごと消える) では
  * 入らない物が全部失われる。
+ *
+ * `sensitive` は「**漏れたら困る物が入るか**」——
+ * (a) 資格情報・鍵材料、または (b) **利用者が書いた内容**や業務の記録。
+ * ここが真の行は `docs/DATA_PROTECTION.md` に**名前で**載っていなければ
+ * ならない。あの文書は「漏洩・損壊・消失は防げるか」に答えるための
+ * **在庫表**であり、載っていない保存先は**問われもしない**。
+ *
+ * 2026-08-25 に突き合わせたら、4 つの IndexedDB のうち**2 つが載っていな
+ * かった** —— 書類の blob を平文で持つライブラリと、プロキシの共有秘密を
+ * 平文で持つ preferences。sessionStorage は媒体ごと無かった。
+ * 配色や銘柄一覧まで載せろという話ではないので、基準を書いて線を引く。
  */
 const STORES = {
   // -- IndexedDB --
@@ -67,16 +80,19 @@ const STORES = {
     medium: 'indexeddb',
     holds: '業務レコード (売上・KPI・CRM・不動産 …)',
     backedUp: true,
+    sensitive: true,
   },
   'business-hub-vault': {
     medium: 'indexeddb',
     holds: 'API キー・トークン (AES-GCM-256 で封緘)',
     backedUp: false,
+    sensitive: true,
   },
   'business-hub-library': {
     medium: 'indexeddb',
-    holds: 'ライブラリの書類 (blob)',
+    holds: 'ライブラリの書類 (blob・**平文**)',
     backedUp: false,
+    sensitive: true,
   },
   'business-hub-preferences': {
     medium: 'indexeddb',
@@ -85,6 +101,7 @@ const STORES = {
     // 「ブラウザ内の設定」という括りに埋めてはいけない行。
     holds: 'プロキシ設定 (共有秘密を含む・平文) / 保存先フォルダの許可',
     backedUp: false,
+    sensitive: true,
   },
 
   // -- localStorage --
@@ -100,18 +117,18 @@ const STORES = {
     holds: 'レコード暗号化の設定と鍵導出の salt',
     backedUp: false,
   },
-  'servicehub.docstudio.v1': { medium: 'localstorage', holds: 'DocStudio の下書き', backedUp: false },
-  'servicehub.teamradar.draft.v1': { medium: 'localstorage', holds: 'Team Radar の下書き', backedUp: false },
+  'servicehub.docstudio.v1': { medium: 'localstorage', holds: 'DocStudio の下書き', backedUp: false, sensitive: true },
+  'servicehub.teamradar.draft.v1': { medium: 'localstorage', holds: 'Team Radar の下書き', backedUp: false, sensitive: true },
   'servicehub.ollama.endpoint': { medium: 'localstorage', holds: 'Ollama の接続先', backedUp: false },
   'servicehub.ollama.port': { medium: 'localstorage', holds: 'Ollama の待ち受けポート', backedUp: false },
   'teamradar.state': { medium: 'localstorage', holds: 'Team Radar の状態 (web-shim 経由)', backedUp: false },
-  'assistant-history': { medium: 'localstorage', holds: 'アシスタントの会話履歴', backedUp: false },
+  'assistant-history': { medium: 'localstorage', holds: 'アシスタントの会話履歴', backedUp: false, sensitive: true },
   'assistant-theme': { medium: 'localstorage', holds: 'アシスタントの配色', backedUp: false },
   'assistant-provider': { medium: 'localstorage', holds: 'アシスタントの提供元の選択', backedUp: false },
-  'chatbot-history': { medium: 'localstorage', holds: 'チャットの会話履歴', backedUp: false },
-  'chatbot-requests': { medium: 'localstorage', holds: 'チャットの要求履歴', backedUp: false },
+  'chatbot-history': { medium: 'localstorage', holds: 'チャットの会話履歴', backedUp: false, sensitive: true },
+  'chatbot-requests': { medium: 'localstorage', holds: 'チャットの要求履歴', backedUp: false, sensitive: true },
   'chatbot-ollama-model': { medium: 'localstorage', holds: 'チャットで使うモデル名', backedUp: false },
-  'emotions.store': { medium: 'localstorage', holds: '気分の記録', backedUp: false },
+  'emotions.store': { medium: 'localstorage', holds: '気分の記録', backedUp: false, sensitive: true },
   'stocks.watchlist': { medium: 'localstorage', holds: '銘柄のウォッチリスト', backedUp: false },
   'google-client-id': { medium: 'localstorage', holds: 'Google OAuth のクライアント ID (秘密ではない)', backedUp: false },
   'ms365-client-id': { medium: 'localstorage', holds: 'Microsoft 365 のクライアント ID (秘密ではない)', backedUp: false },
@@ -122,7 +139,7 @@ const STORES = {
   // タブを閉じれば消えるので立ち退きやバックアップの話には乗らないが、
   // **秘密を置く面である**以上、保存先の台帳に載っていないほうがおかしい。
   // 4 つを 1 行にまとめないのは、秘密なのは 1 つだけだからである。
-  'pkce.verifier': { medium: 'sessionstorage', holds: 'PKCE の code_verifier (**秘密**)', backedUp: false },
+  'pkce.verifier': { medium: 'sessionstorage', holds: 'PKCE の code_verifier (**秘密**)', backedUp: false, sensitive: true },
   'pkce.state': { medium: 'sessionstorage', holds: 'OAuth の state (CSRF 照合用)', backedUp: false },
   'pkce.clientId': { medium: 'sessionstorage', holds: '交換に使うクライアント ID (秘密ではない)', backedUp: false },
   'pkce.redirectUri': { medium: 'sessionstorage', holds: '交換に使う redirect_uri', backedUp: false },
@@ -248,6 +265,9 @@ function evaluate(input) {
   const stores = input.stores ?? STORES;
   const indirect = input.indirect ?? INDIRECT_SITES;
   const minSites = input.minSites ?? MIN_SITES;
+  // 監査報告の本文。渡されなければ照合しない (self-test が合成を流せるように
+  // 純関数のまま置く —— IO は main が持つ)。
+  const auditDoc = input.auditDoc;
   const problems = [];
   const scanned = scan(files);
   const found = scanned.found;
@@ -320,6 +340,26 @@ function evaluate(input) {
   for (const [name, row] of Object.entries(stores)) {
     if (typeof row.holds !== 'string' || row.holds.trim() === '') {
       problems.push('台帳の「何が入るか」が空: ' + name);
+    }
+  }
+
+  /*
+   * 9. **秘密や利用者の書いた物を持つ保存先は、監査報告に名前で載っている。**
+   *
+   * `docs/DATA_PROTECTION.md` は「漏洩・損壊・消失は防げるか」に答えるための
+   * 在庫表である。**載っていない保存先は、問われもしない。**
+   * 2026-08-25 の実測で、4 つの IndexedDB のうち 2 つ (ライブラリ /
+   * preferences) と sessionStorage が丸ごと抜けていた。
+   */
+  if (typeof auditDoc === 'string') {
+    for (const [name, row] of Object.entries(stores)) {
+      if (row.sensitive !== true) continue;
+      if (!auditDoc.includes(name)) {
+        problems.push(
+          '監査報告に載っていない保存先: ' + name + ' (' + row.holds + ') — ' +
+            'docs/DATA_PROTECTION.md の在庫表に名前で足すこと (載っていない物は問われない)',
+        );
+      }
     }
   }
 
@@ -481,6 +521,44 @@ function selfTest() {
       },
       0,
     ],
+    /*
+     * 監査報告との突き合わせ。**`auditDoc` を渡さなければ照合しない**ので、
+     * 「渡したのに素通り」と「そもそも見ていない」を別々に固定する。
+     */
+    [
+      '監査報告に名前が無ければ鳴る',
+      {
+        files: BASE_FILES,
+        ...opts,
+        stores: { ...BASE_STORES, 'k.one': { medium: 'localstorage', holds: '何か', backedUp: false, sensitive: true } },
+        auditDoc: '在庫: business-hub-data のみ',
+      },
+      1,
+    ],
+    [
+      '監査報告に名前があれば通る',
+      {
+        files: BASE_FILES,
+        ...opts,
+        stores: { ...BASE_STORES, 'k.one': { medium: 'localstorage', holds: '何か', backedUp: false, sensitive: true } },
+        auditDoc: '在庫: business-hub-data と k.one',
+      },
+      0,
+    ],
+    [
+      'sensitive でない行は監査報告に無くてよい',
+      { files: BASE_FILES, ...opts, auditDoc: '何も書いていない' },
+      0,
+    ],
+    [
+      'auditDoc を渡さなければ照合しない (見ていないことを明示)',
+      {
+        files: BASE_FILES,
+        ...opts,
+        stores: { ...BASE_STORES, 'k.one': { medium: 'localstorage', holds: '何か', backedUp: false, sensitive: true } },
+      },
+      0,
+    ],
     [
       '別ファイルから import した定数も辿る',
       {
@@ -503,15 +581,29 @@ function selfTest() {
    * 鳴ることを確かめる (規則を 1 つ潰して、何かが鳴るか)。
    */
   const realFiles = readSources();
-  const realProblems = evaluate({ files: realFiles });
+  const realAudit = fs.readFileSync(path.join(REPO_ROOT, 'docs/DATA_PROTECTION.md'), 'utf8');
+  const realProblems = evaluate({ files: realFiles, auditDoc: realAudit });
   const withoutVault = { ...STORES };
   delete withoutVault['business-hub-vault'];
-  const ablated = evaluate({ files: realFiles, stores: withoutVault });
+  const ablated = evaluate({ files: realFiles, stores: withoutVault, auditDoc: realAudit });
   const ablationWorks = realProblems.length === 0 && ablated.length > 0;
   if (!ablationWorks) bad += 1;
   console.log(
     '  ' + (ablationWorks ? '✓' : '✗') + ' 実ファイル: 台帳から business-hub-vault を外すと鳴る ' +
       '(実物 ' + realProblems.length + ' 件 / 外したとき ' + ablated.length + ' 件)',
+  );
+
+  /*
+   * **監査報告のほうを削っても鳴るか。** 台帳を削る対照だけだと、
+   * 「文書を読んでいる」ことは示せない (規則 9 を消しても 1 本目は通る)。
+   */
+  const docWithoutLibrary = realAudit.split('business-hub-library').join('（消した）');
+  const docAblated = evaluate({ files: realFiles, stores: STORES, auditDoc: docWithoutLibrary });
+  const docAblationWorks = docAblated.length > 0;
+  if (!docAblationWorks) bad += 1;
+  console.log(
+    '  ' + (docAblationWorks ? '✓' : '✗') + ' 実ファイル: 監査報告から business-hub-library を消すと鳴る ' +
+      '(' + docAblated.length + ' 件)',
   );
 
   for (const [label, input, want] of cases) {
@@ -531,7 +623,8 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const files = readSources();
-  const problems = evaluate({ files });
+  const auditDoc = fs.readFileSync(path.join(REPO_ROOT, 'docs/DATA_PROTECTION.md'), 'utf8');
+  const problems = evaluate({ files, auditDoc });
   const siteCount = scan(files).siteCount;
   const byMedium = Object.values(STORES).reduce((acc, r) => {
     acc[r.medium] = (acc[r.medium] ?? 0) + 1;
