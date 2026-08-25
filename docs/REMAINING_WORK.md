@@ -5433,3 +5433,53 @@ self-test の両方が鳴る。
 
 対照 2 本 —— 禁止 8 通りを 1 つずつ許して **8/8 が鳴る** /
 期待値を 1 組消すと `shared → preload` と名指しで落ちる。
+
+#### CI に落とされた — 私が「全 green」と言ったとき、テストを回していなかった
+
+上の 4 コミットを push したあと、CI が **3 連続で赤**になった。
+落ちたのは `verify:all` の 30 ゲートではなく、**`npm test` の 1 本**である。
+
+```
+AssertionError: ' を落としていないスクリプトがあります:
+  expected [ 'lint-forbidden-patterns.cjs' ] to deeply equal []
+AssertionError: 規則の定義ファイルを実装として数えている:
+  expected [...] to not include 'lint-forbidden-patterns.cjs'
+        ❯ src/shared/__tests__/buildScriptEscapes.test.ts
+```
+
+**原因は私の標本である。** 規則 #26 (エスケープの再実装禁止) の
+「鳴る標本」として、こう書いた:
+
+```js
+['エスケープの再実装を弾く', "const s = t.replace(/&/g, '&amp;');", 1],
+```
+
+`buildScriptEscapes.test.ts` は `scripts/*.cjs` を走査して
+「markup エスケープを自前で持っているファイル」を集め、5 文字すべてを
+落としているかを見る。収集器は**注記を落としてから**見る ——
+`lint-forbidden-patterns.cjs` が規則の説明としてこの字面を持つことを
+既に想定していたのだ。だが**私の標本は注記ではなく実行される行**なので
+残り、門が「エスケープの実装ファイル」に化けた。
+
+**門が禁じている物を門自身が抱える形の 5 度目**で、今回は
+**別の検査が先に捕まえた**。標本を `<` 版 (`replace(/</g, '&lt;')`) に
+替えて解消 —— 収集器が見るのは `&` 版だけなので化けない。
+規則が当たることの証明にはどの選択肢でも足りる。
+
+#### 本当の欠陥は、私の確認手順のほうだった
+
+`verify:all` は **30 ゲート**であって、**`npm test` を含まない**。
+CI (`ci.yml`) は両方走らせる。私は `verify:all` だけを回して
+「全 30 ゲート green」と書き、**テストを 1 度も回さずに 4 回 push した**。
+
+これは今日ずっと追っていた形そのものである ——
+**確かめたつもりで、確かめていたのは代替物だった。**
+CLAUDE.md には最初から `npm run typecheck && npm test && npm run verify:all`
+と書いてあり、情報は在った。読み落としたのは私である。
+
+`verify:all` の行に注記を足した (「`npm test` は含まない。push 前は両方」)。
+機械で強制はできない —— `verify:all` にテストを足せば CI が二重に走り、
+無料枠を余計に食う。**次に読む人が同じ読み落としをしないこと**が、
+ここで打てる手である。
+
+全 10,632 テスト passed / `verify:all` 30 ゲート green を確認して push。
