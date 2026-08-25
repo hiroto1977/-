@@ -84,7 +84,7 @@
     "verify:graph": "node scripts/verify-graph.cjs && node scripts/verify-graph.cjs --self-test",
     "verify:knowledge": "node scripts/verify-knowledge-provenance.cjs && node scripts/verify-knowledge-provenance.cjs --self-test",
     "verify:orchestration": "node scripts/verify-orchestration.cjs",
-    "lint:repo-size": "node scripts/lint-repo-size.cjs",
+    "lint:repo-size": "node scripts/lint-repo-size.cjs && node scripts/lint-repo-size.cjs --self-test",
     "lint:deps": "node scripts/lint-dependencies.cjs && node scripts/lint-dependencies.cjs --self-test",
     "lint:csp": "node scripts/lint-artifact-csp.cjs --self-test",
     "lint:data-origin": "node scripts/lint-data-origin.cjs && node scripts/lint-data-origin.cjs --self-test",
