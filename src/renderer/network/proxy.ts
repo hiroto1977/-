@@ -304,6 +304,28 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     if (a === 0) return true;                           // 0.0.0.0/8
     if (a === 100 && b >= 64 && b <= 127) return true;  // 100.64/10 CGNAT (RFC 6598)
     if (a === 198 && (b === 18 || b === 19)) return true; // 198.18/15 benchmark (RFC 2544)
+    /*
+     * **予約されているが「私的」ではない範囲** —— この関数の名は
+     * `isPrivateOrReservedTarget` であり、既に CGNAT (100.64/10) や
+     * ベンチマーク用 (198.18/15) のような**公開されていない予約**を
+     * 遮断している。同じ意図が掛かっていなかった範囲を揃える
+     * (2026-08-25 実測: 下の 5 つはどれも素通りしていた)。
+     *
+     * 公開経路には出ないので、ここへ向ける要求が届くのは
+     * **その番号を内部で流用している網の中だけ**である。だからこそ、
+     * 利用者の Worker を経由して外から触らせる先ではない。
+     */
+    const [, , c] = v4.slice(1).map(Number) as [number, number, number, number];
+    // 192.0.0.0/24 IETF プロトコル割当 (RFC 6890)。DS-Lite の 192.0.0.0/29 を
+    // 含み、CPE 上で**実際に応答する**ことがある。NAT64 の 192.0.0.170/171 も同じ枠。
+    if (a === 192 && b === 0 && c === 0) return true;
+    // 文書用 TEST-NET-1/2/3 (RFC 5737)。公開経路には出ない。
+    if (a === 192 && b === 0 && c === 2) return true;
+    if (a === 198 && b === 51 && c === 100) return true;
+    if (a === 203 && b === 0 && c === 113) return true;
+    // 6to4 リレー anycast (RFC 3068)。RFC 7526 で廃止された番号で、
+    // 生きているとすれば内部の流用である。
+    if (a === 192 && b === 88 && c === 99) return true;
     if (a >= 224) return true;                          // multicast + reserved
     return false;
   }
@@ -360,6 +382,15 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     // Link-local fe80::/10.
     // Stryker disable next-line Regex
     if (/^fe[89ab][0-9a-f]?:/i.test(bare)) return true;
+    /*
+     * 文書用 2001:db8::/32 (RFC 3849)。IPv4 側の TEST-NET と同じ理由で塞ぐ。
+     * `2001:db8:...` と、第 2 群が 0 埋めされた `2001:0db8:...` の両方を見る
+     * (`URL` は前者へ正規化するが、別のパーサから渡る場合に備える)。
+     * **`2001:` で始まるだけでは当てない** —— 2001::/16 は正当な公開空間で、
+     * `2001:4860::` (Google) などが居る。第 2 群まで見るのが要点である。
+     */
+    // Stryker disable next-line Regex
+    if (/^2001:0*db8:/i.test(bare)) return true;
     return false;
   }
 

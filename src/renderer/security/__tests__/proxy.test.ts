@@ -805,7 +805,62 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://[fd12::1]/')).toBe(true);
     expect(pri('http://[fe80::1]/')).toBe(true);
     expect(pri('http://[::ffff:127.0.0.1]/')).toBe(true);
-    expect(pri('http://[2001:db8::1]/')).toBe(false); // public documentation range
+    /*
+     * **2026-08-25 に判断を変えた。**
+     *
+     * ここは以前 `false` を期待し、注記に「public documentation range」と
+     * 書いていた。**この呼び方が正しくない** —— `2001:db8::/32` は RFC 3849 の
+     * **文書用**で、公開経路へ出さないことになっている番号である。
+     *
+     * この関数の名は `isPrivateOrReservedTarget` で、既に
+     * CGNAT (100.64/10) とベンチマーク用 (198.18/15) を遮断している ——
+     * どちらも「私的」ではなく**予約**で、しかも「公開に出ないから何も居ない」
+     * という点は文書用と同じである。**同じ理由の範囲を片方だけ通していた。**
+     *
+     * 遮断して失う正当な行き先は無い (公開経路に出ないので)。
+     */
+    expect(pri('http://[2001:db8::1]/')).toBe(true); // RFC 3849 文書用 = 予約
+    // 過剰に塞いでいないこと —— 2001::/16 は正当な公開空間である。
+    expect(pri('http://[2001:4860:4860::8888]/')).toBe(false); // Google Public DNS
+    expect(pri('http://[2001:db9::1]/')).toBe(false); // 隣の /32 は公開
+  });
+
+  /*
+   * **予約されているが「私的」ではない範囲。**
+   *
+   * 2026-08-25 に実測したところ、この関数は 10 進/16 進/8 進表記も
+   * IPv4-mapped も NAT64 も cloud metadata も全部遮断していたのに、
+   * **下の 5 つだけ素通りしていた**。どれも公開経路には出ない番号なので、
+   * 要求が届くとすれば**その番号を内部で流用している網の中**である。
+   */
+  it('★ 予約範囲 (文書用 / プロトコル割当 / 6to4 リレー) も遮断する', () => {
+    // 192.0.0.0/24 IETF プロトコル割当 (RFC 6890)。DS-Lite の 192.0.0.0/29 を
+    // 含み、CPE 上で実際に応答することがある。
+    expect(pri('http://192.0.0.1/')).toBe(true);
+    expect(pri('http://192.0.0.8/')).toBe(true);   // IPv4 dummy address
+    expect(pri('http://192.0.0.170/')).toBe(true); // NAT64 well-known
+    // 文書用 TEST-NET-1/2/3 (RFC 5737)
+    expect(pri('http://192.0.2.1/')).toBe(true);
+    expect(pri('http://198.51.100.1/')).toBe(true);
+    expect(pri('http://203.0.113.1/')).toBe(true);
+    // 6to4 リレー anycast (RFC 3068 / 廃止 RFC 7526)
+    expect(pri('http://192.88.99.1/')).toBe(true);
+  });
+
+  /*
+   * **境界 —— 隣の /24 は公開である。**
+   * この 5 本が無いと、上の規則が広すぎても誰も見ていないことになる
+   * (`a === 192 && b === 0` だけで書けば 192.0.x.x を全部塞げてしまう)。
+   */
+  it('★ 隣接する公開範囲は通す (新しい規則が広すぎない)', () => {
+    expect(pri('http://192.0.1.1/')).toBe(false);    // 192.0.0/24 と 192.0.2/24 の間
+    expect(pri('http://192.0.3.1/')).toBe(false);
+    expect(pri('http://198.51.99.1/')).toBe(false);  // TEST-NET-2 の直前
+    expect(pri('http://198.51.101.1/')).toBe(false); // 直後
+    expect(pri('http://203.0.112.1/')).toBe(false);  // TEST-NET-3 の直前
+    expect(pri('http://203.0.114.1/')).toBe(false);  // 直後
+    expect(pri('http://192.88.98.1/')).toBe(false);  // 6to4 リレーの直前
+    expect(pri('http://192.88.100.1/')).toBe(false); // 直後
   });
 
   // 10 進 / 16 進 / 8 進の IPv4 表記。`isPrivateOrReservedTarget` の v4 判定は
