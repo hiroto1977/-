@@ -406,6 +406,18 @@ export async function loadTeamRadarState(
   }
 }
 
+/**
+ * 0600 で書いて、**書いた後に締める**。
+ *
+ * `mode` は新規作成のときしか効かないので、固定名の `.tmp` が既に 644 で
+ * 残っていると 644 のまま本体へ被さる (2026-08-25 実測)。
+ * 留めているのは `main/__tests__/staleTmpMode.test.ts`。
+ */
+async function writeTight(target: string, contents: string): Promise<void> {
+  await fs.writeFile(target, contents, { mode: 0o600 });
+  await fs.chmod(target, 0o600);
+}
+
 export async function saveTeamRadarState(
   state: TeamRadarState,
   deps: StateDeps = {},
@@ -437,14 +449,21 @@ export async function saveTeamRadarState(
    * 同じ機械の他の利用者が同僚の評価を読める状態だった。
    *
    * **既にある 644 のファイルも次の保存で直る。** `mode` は新規作成のときしか
-   * 効かないが、この関数は `tmp` を新しく作って `rename` で被せるので、
-   * 置き換わる実体は毎回 0600 で作られたものになる (実測で確認)。
+   * 効かないが、この関数は `tmp` を作って `rename` で被せるので、本体の
+   * 古い権限は残らない。
+   *
+   * **ただし「毎回 0600 で作られたものになる」は誤りだった (2026-08-25 訂正)。**
+   * `tmp` は固定名 (`p + '.tmp'`) なので、**それ自体が既に 644 で存在する**と
+   * `writeFile(..., { mode: 0o600 })` はその権限を変えずに上書きし、
+   * 644 のまま本体へ被さる。下の `writeFn` で書いた後に `chmod` して閉じた。
+   *
    * `atomicWriteFile` に寄せなかったのは、`writeFile` / `rename` の
-   * 差し替え口を検査が使っているため —— 得られる性質は同じ。
+   * 差し替え口を検査が使っているため —— 得られる性質は同じ
+   * (あちらは一意な tmp 名なのでこの形にはならない)。
    *
    * (`fs.writeFile` の既定の符号化は utf8 で、options を渡しても変わらない。)
    */
-  const writeFn = deps.writeFile ?? ((q: string, c: string) => fs.writeFile(q, c, { mode: 0o600 }));
+  const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));

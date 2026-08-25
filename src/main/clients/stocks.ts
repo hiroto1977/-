@@ -1655,10 +1655,42 @@ function shape(raw: unknown): StocksState {
  * **この注記は `Stryker disable` の外に置くこと。** 中に入れると黙らせる範囲が
  * その分だけ広がり、`lint:mutation-scope` が鳴る (実際に鳴らして気付いた)。
  */
+/*
+ * **`mode` は新規作成のときしか効かない。** 保存は固定名の `.tmp` へ書いて
+ * `rename` で被せる形なので、古い版が権限を付ける前に残した `.tmp` が 644 で
+ * 居ると、`writeFile(..., { mode: 0o600 })` はその 644 を**変えないまま**
+ * 上書きし、`rename` がそれを本体へ被せる —— 保存した本体が 644 になる。
+ *
+ * 実測 (2026-08-25):
+ *
+ * ```
+ *   事前の .tmp = 644 → 保存後の本体 = 644
+ *   .tmp 無し          → 保存後の本体 = 600
+ * ```
+ *
+ * 同じ形は `emotions.ts` と `exportPaths.ts` の注記が既に書いており、
+ * `exportPaths.ts` は `writeFile` の後に `chmod` を置いて閉じている。
+ * ここだけ閉じていなかった。**締めるのは書いた後である。**
+ * `saveStocksState` の `writeFn` が既定の実装の中で `chmod` する ——
+ * 検査が差し替える `deps.writeFile` は実ファイルを作らないことがあるので、
+ * 外へ出すと注入側が壊れる。留めているのは
+ * `main/__tests__/staleTmpMode.test.ts`。
+ */
 // The default-fallback arrow functions below are exercised only when
 // callers omit the corresponding dep (production path). The tests always
 // inject deps to keep file I/O hermetic. `recursive: true` on mkdir is
 // part of that production-only path.
+/**
+ * 0600 で書いて、**書いた後に締める**。理由は直上の注記。
+ *
+ * `Stryker disable` の**外**に置く —— 中に入れると chmod ごと黙らされ、
+ * 「測っていない」が 100% として報告される。ここは実際に測られる。
+ */
+async function writeTight(target: string, contents: string): Promise<void> {
+  await fs.writeFile(target, contents, { mode: 0o600 });
+  await fs.chmod(target, 0o600);
+}
+
 // Stryker disable ArrowFunction,BooleanLiteral
 export async function loadStocksState(deps: StateDeps = {}): Promise<StocksState> {
   const p = (deps.statePath ?? defaultStatePath)();
@@ -1678,7 +1710,7 @@ export async function saveStocksState(state: StocksState, deps: StateDeps = {}):
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
   // 0600 で書く理由は上の `Stryker disable` の手前の注記を参照。
-  const writeFn = deps.writeFile ?? ((path: string, c: string) => fs.writeFile(path, c, { mode: 0o600 }));
+  const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
