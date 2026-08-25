@@ -8,7 +8,6 @@ import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { DataList } from '../DataList';
-import { safeImageSrc, safeCssUrl } from '../../../shared/imageUrlGate';
 import type { DataListItem } from '../DataList';
 
 describe('DataList — empty state', () => {
@@ -85,50 +84,6 @@ describe('DataList — with items', () => {
   });
 });
 
-/**
- * 2026-07 セキュリティ監査（多層防御）: 第三者由来の画像 URL のスキーム検証。
- * `<img src>` 自体はスクリプトを実行しないが、同じ値が `<a href>` / CSS `url()` /
- * SVG `<use>` に移った瞬間に危険になるため、入口で許可スキームに限定する。
- */
-describe('safeImageSrc — 許可スキーム', () => {
-  it('https / http はそのまま通す', () => {
-    expect(safeImageSrc('https://example.com/a.png')).toBe('https://example.com/a.png');
-    expect(safeImageSrc('http://example.com/a.png')).toBe('http://example.com/a.png');
-    expect(safeImageSrc('HTTPS://EXAMPLE.COM/A.PNG')).toBe('HTTPS://EXAMPLE.COM/A.PNG');
-  });
-
-  it('data:image/* は通す（base64 / 非 base64 とも）', () => {
-    expect(safeImageSrc('data:image/png;base64,iVBORw0KGgo=')).toBe('data:image/png;base64,iVBORw0KGgo=');
-    expect(safeImageSrc('data:image/svg+xml,%3Csvg%2F%3E')).toBe('data:image/svg+xml,%3Csvg%2F%3E');
-  });
-
-  it('javascript: を拒否する', () => {
-    expect(safeImageSrc('javascript:alert(1)')).toBeUndefined();
-    expect(safeImageSrc('JaVaScRiPt:alert(1)')).toBeUndefined();
-  });
-
-  it('tab/改行で難読化した javascript: も拒否する', () => {
-    // HTML は URL 属性のパース前に tab/LF/CR を除去するため、検証側も同じ正規化が必要。
-    expect(safeImageSrc('java\tscript:alert(1)')).toBeUndefined();
-    expect(safeImageSrc('  java\nscript:alert(1)  ')).toBeUndefined();
-  });
-
-  it('data:image/* 以外の data: URI を拒否する', () => {
-    expect(safeImageSrc('data:text/html,<script>alert(1)</script>')).toBeUndefined();
-    expect(safeImageSrc('data:image')).toBeUndefined();
-    expect(safeImageSrc('data:imagex/png;base64,AA')).toBeUndefined();
-  });
-
-  it('その他のスキーム / 相対パス / 空値を拒否する', () => {
-    expect(safeImageSrc('vbscript:msgbox(1)')).toBeUndefined();
-    expect(safeImageSrc('file:///etc/passwd')).toBeUndefined();
-    expect(safeImageSrc('//example.com/a.png')).toBeUndefined();
-    expect(safeImageSrc('./a.png')).toBeUndefined();
-    expect(safeImageSrc('')).toBeUndefined();
-    expect(safeImageSrc(undefined)).toBeUndefined();
-  });
-});
-
 describe('DataList — thumbnailUrl のスキーム検証', () => {
   const thumb = (thumbnailUrl: string): string =>
     renderToStaticMarkup(
@@ -177,100 +132,5 @@ describe('DataList — does not crash with edge-case inputs', () => {
       thumbnailUrl: `https://example.com/${i}.png`,
     }));
     expect(() => renderToStaticMarkup(createElement(DataList, { items }))).not.toThrow();
-  });
-});
-
-describe('safeCssUrl — CSS url() へ入れる形', () => {
-  /*
-   * `safeImageSrc` の冒頭は「同じ値が CSS `url()` へ流れた瞬間に危険」と
-   * 書いていたのに、その CSS `url()` (`pages/AssistantPage.tsx` の背景画像)
-   * だけが関門を通っていなかった (2026-08-24)。値は localStorage の
-   * `assistant-theme` から来るので、同一オリジンの別ページや拡張から
-   * 書き換えられる。
-   */
-  it('許可スキームは引用して返す', () => {
-    expect(safeCssUrl('https://example.com/a.png')).toBe('url("https://example.com/a.png")');
-    expect(safeCssUrl('data:image/png;base64,AAAA')).toBe('url("data:image/png;base64,AAAA")');
-  });
-
-  it.each([
-    ['javascript:alert(1)'],
-    ['java\tscript:alert(1)'], // tab を挟んでスキーム判定を外す形
-    ['data:text/html,<script>x</script>'],
-    ['vbscript:x'],
-    ['file:///etc/passwd'],
-    [''],
-  ])('許可外は undefined を返す: %s', (v) => {
-    expect(safeCssUrl(v)).toBeUndefined();
-  });
-
-  it('undefined / null はそのまま undefined', () => {
-    expect(safeCssUrl(undefined)).toBeUndefined();
-    expect(safeCssUrl(null)).toBeUndefined();
-  });
-
-  it('★ 宣言を壊す文字が入っても引用の中に収まる', () => {
-    // `)` や空白は実在しうる URL の一部。素の url() へ差し込むと
-    // 宣言が壊れて背景が黙って出なくなる。
-    expect(safeCssUrl('https://example.com/a(b).png')).toBe('url("https://example.com/a(b).png")');
-    expect(safeCssUrl('https://example.com/a b.png')).toBe('url("https://example.com/a b.png")');
-  });
-
-  it('★ 引用符とバックスラッシュは退避する (引用から抜け出させない)', () => {
-    expect(safeCssUrl('https://example.com/a".png')).toBe('url("https://example.com/a\\".png")');
-    expect(safeCssUrl('https://example.com/a\\.png')).toBe('url("https://example.com/a\\\\.png")');
-  });
-
-  it('safeImageSrc と同じ判断をする (関門は 1 つ)', () => {
-    for (const v of [
-      'https://x/a.png', 'http://x/a.png', 'data:image/svg+xml,<svg/>',
-      'javascript:x', 'data:text/html,x', 'ftp://x/a.png', '',
-    ]) {
-      expect(safeCssUrl(v) === undefined).toBe(safeImageSrc(v) === undefined);
-    }
-  });
-});
-
-describe('imageUrlGate — 変異検査で見つかった穴 (2026-08-24)', () => {
-  /*
-   * この関門は `mutate` から外れていた (`components/` の中に居たので
-   * `.tsx` が 1 件も対象になっていない構成に隠れていた)。`src/shared/` へ
-   * 出して測ったら **80.00%・生存 5** で、うち 3 件は実際の抜けだった。
-   */
-
-  it('★ 先頭の ^ が効いている — 中に https:// を含む javascript: を通さない', () => {
-    // 実測: アンカーを外すと通る。`<img src>` では実害が出ないが、
-    // `safeCssUrl` 経由で CSS へ流れる値でもあり、関門の意味が消える。
-    expect(safeImageSrc('javascript:alert("https://example.com")')).toBeUndefined();
-    expect(safeCssUrl('javascript:alert("https://example.com")')).toBeUndefined();
-  });
-
-  it('★ data: 側のアンカーも効いている — 中に data:image を含む別スキームを通さない', () => {
-    expect(safeImageSrc('javascript:void("data:image/png;")')).toBeUndefined();
-    expect(safeImageSrc('data:text/html,<img src="https://example.com">')).toBeUndefined();
-  });
-
-  it('★ data:image の直後に ; か , を必須にしている', () => {
-    // `data:image/png` だけでは中身が無い (`;base64,` も `,` も無い)。
-    expect(safeImageSrc('data:image/png')).toBeUndefined();
-    // 逆に `pngX` は綴りとしては正当なサブタイプ形なので通る。
-    // (最初この行を「弾くはず」と書いて落ちた —— 規則が正しく、期待が誤りだった。)
-    expect(safeImageSrc('data:image/pngX,AAAA')).toBe('data:image/pngX,AAAA');
-    expect(safeImageSrc('data:image/png;base64,AAAA')).toBe('data:image/png;base64,AAAA');
-    expect(safeImageSrc('data:image/svg+xml,<svg/>')).toBe('data:image/svg+xml,<svg/>');
-  });
-
-  it('★ tab/CR/LF は「取り除いた値」が返る (判定と返り値がずれない)', () => {
-    // HTML の URL 属性はパース前に tab/LF/CR を落とすので、検証側も同じ
-    // 正規化をしたうえで **その値を返す**必要がある。別の文字に置き換える
-    // 実装だと、判定は通るのに出力が壊れる。
-    expect(safeImageSrc('https://example.com/a\tb.png')).toBe('https://example.com/ab.png');
-    expect(safeImageSrc('https://example.com/a\nb.png')).toBe('https://example.com/ab.png');
-    expect(safeCssUrl('https://example.com/a\tb.png')).toBe('url("https://example.com/ab.png")');
-  });
-
-  it('★ 前後の空白は落として返る', () => {
-    expect(safeImageSrc('  https://example.com/a.png  ')).toBe('https://example.com/a.png');
-    expect(safeCssUrl('  https://example.com/a.png  ')).toBe('url("https://example.com/a.png")');
   });
 });

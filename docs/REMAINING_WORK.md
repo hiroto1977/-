@@ -6042,3 +6042,47 @@ C の API で切り詰められ、「調べた URL」と「開く URL」が変�
 
 門そのものは残す —— 上の 3 点は実際に足されている価値である。
 訂正するのは**主張の強さ**であって、門の要否ではない。
+
+#### 実装だけ移して、検査を置き去りにしていた (2026-08-25)
+
+2026-08-24 に `safeImageSrc` / `safeCssUrl` を `components/DataList.tsx` から
+`src/shared/imageUrlGate.ts` へ出した。理由は「**関門がコンポーネントの中に
+隠れていたから変異検査に載らなかった**」である。
+
+**ところが検査は `DataList.render.test.ts` に残したままだった。**
+`MUST_MEASURE` 33 件の棚卸しで、名前の対応する検査ファイルが無い唯一の
+「壁」として浮いた。実装だけを移すと:
+
+- 探す人は `shared/__tests__/imageUrlGate.test.ts` を見て「無い」と判断する
+- コンポーネントの描画テストを整理する変更に、関門の検査が巻き込まれうる
+
+関門を分けた理由が「置き場所」だったのに、**検査の置き場所は直していなかった。**
+
+3 節 22 件 (`safeImageSrc — 許可スキーム` / `safeCssUrl — CSS url() へ入れる形` /
+`imageUrlGate — 変異検査で見つかった穴`) を `src/shared/__tests__/imageUrlGate.test.ts`
+へ移した。描画を通す検査 (`DataList — thumbnailUrl のスキーム検証` ほか) は
+コンポーネントの話なので `DataList.render.test.ts` に残す。
+
+**移動が中立であることを数えて確かめた** —— 移動前のファイルを別名で
+復元して走らせると **37 件**、移動後は 15 + 22 = **37 件**。
+(このとき合計が「10,650 のはず」と書きかけたが、私の基準値の記憶違いで、
+10,647 + updateCheck 2 + externalUrlGate 7 = **10,656** が正しい。
+数を主張する前に、その数の出所を辿る。)
+
+#### 「壁には同名の検査ファイルを」という門は作らなかった
+
+同じ事故を機械で止められないかを測った。`MUST_MEASURE` 33 件のうち
+**7 件**が「同じ `__tests__` に同名の検査ファイルを持たない」と出たが、
+中身を見ると**ほとんどが私の走査の厳しすぎ**だった:
+
+| 壁 | 実際 |
+|---|---|
+| `network/proxy.ts` | `proxy.test.ts` は在る (別ディレクトリ) |
+| `oauth/pkce.ts` | `pkce.test.ts` + `pkce.contract.test.ts` が在る |
+| `shared/atlassianSite.ts` | `atlassianSiteParity.test.ts` |
+| `shared/redact.ts` | 3 つの検査が別角度から覆う |
+| `main/secrets.ts` / `main/main.ts` / `preload/preload.ts` | 変異検査の対象 (244 件) に入っており、`mainIpc.test.ts` ほかが覆う |
+
+**本物の欠落は 0 件。** ここで門を作れば、**私の走査の欠陥のほうを
+規則に固めることになる**ので作らない。台帳を 7 件書く手間より、
+「事実として穴が無い」ほうが重い。
