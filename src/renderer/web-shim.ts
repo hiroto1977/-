@@ -51,6 +51,7 @@
  */
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../shared/advisorQuestionLimits';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
 import {
@@ -452,15 +453,12 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
 
 async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
   const question = payload['question'];
-  if (typeof question !== 'string' || question.length === 0) {
-    return err('action_failed', '質問を入力してください');
-  }
-  if (question.length > 1000) {
-    return err('action_failed', '質問が長すぎます (1000 字以内)');
-  }
-  if (/[\r\n\0]/.test(question)) {
+  const qProblem = checkAdvisorQuestion(question);
+  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
+  if (qProblem === 'too-long')
+    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
+  if (qProblem === 'control-chars')
     return err('action_failed', '質問に改行・制御文字を含めることはできません');
-  }
 
   // Read the Anthropic key from Vault.
   let apiKey: string | null = null;
@@ -563,9 +561,12 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 // system prompt で制約し、固定の免責を必ず付ける。
 async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
   const question = payload['question'];
-  if (typeof question !== 'string' || question.length === 0) return err('action_failed', '質問を入力してください');
-  if (question.length > 1000) return err('action_failed', '質問が長すぎます (1000 字以内)');
-  if (/[\r\n\0]/.test(question)) return err('action_failed', '質問に改行・制御文字を含めることはできません');
+  const qProblem = checkAdvisorQuestion(question);
+  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
+  if (qProblem === 'too-long')
+    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
+  if (qProblem === 'control-chars')
+    return err('action_failed', '質問に改行・制御文字を含めることはできません');
 
   let apiKey: string | null = null;
   try {

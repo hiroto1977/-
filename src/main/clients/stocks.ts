@@ -1,3 +1,4 @@
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
@@ -1236,13 +1237,14 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   // downstream code would fail differently. Stryker mis-attributes; pin
   // via pragma.
   // Stryker disable ConditionalExpression
-  if (typeof question !== 'string' || question.length === 0) {
+  const problem = checkAdvisorQuestion(question);
+  if (problem === 'empty') {
     throw new Error('question is required');
   }
-  if (question.length > 1000) {
-    throw new Error('question exceeds 1000 chars');
+  if (problem === 'too-long') {
+    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
   }
-  if (/[\r\n\0]/.test(question)) {
+  if (problem === 'control-chars') {
     throw new Error('question contains control characters');
   }
   // Stryker restore ConditionalExpression
