@@ -70,6 +70,7 @@ jobs:
       - run: npm run lint:shell
       - run: npm run lint:repo-size
       - run: npm run lint:deps
+      - run: npm run lint:mcp-servers
       - run: npm run lint:storage
       - run: npm run lint:csp
       - run: npm run lint:data-origin

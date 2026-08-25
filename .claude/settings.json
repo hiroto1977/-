@@ -15,8 +15,8 @@
   "mcpServers": {
 
     "filesystem": {
-      "command": "uvx",
-      "args": ["mcp-server-filesystem", "."],
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
       "env": {}
     },
 
