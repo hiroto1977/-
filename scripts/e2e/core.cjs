@@ -929,6 +929,121 @@ function describeOutbound(map) {
   return [...map].map(([h, n]) => `${h}:${n}`).join(' ');
 }
 
+/**
+ * パスワード変更と、控えた 24 語での復旧 — **実 IndexedDB で通ること**。
+ *
+ * 2026-08-24 に 2 つ直した経路である。
+ *
+ *  - `changePassword` を新設 (以前は画面が保管庫を消して作り直しており、
+ *    失窓で資格情報が消え、**控えた 24 語も通らなくなっていた**)
+ *  - meta と `master-wrap` の書き込みを 1 トランザクションに寄せた
+ *    (以前は `idbPut` 2 回。片方だけ書けると新旧どちらでも開けない)
+ *
+ * 単体検査は fake-indexeddb で通っているが、**トランザクションの意味論は
+ * 実物で確かめる価値がある**。
+ */
+async function vaultPasswordSuite(browser) {
+  console.log('--- パスワード変更と 24 語での復旧 ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const PW2 = 'changed-pass-67890';
+  const PW3 = 'recovered-pass-2468';
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+  const pw = page.locator('input[type="password"]');
+  await pw.nth(0).fill(PASS);
+  await pw.nth(1).fill(PASS);
+  await page.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+  await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+
+  // 24 語を控える。画面は「1. word」の形で並べているので、そこから拾う。
+  const shown = await page.locator('body').innerText();
+  const WORD_RE = new RegExp('(\\d{1,2})\\.\\s*([a-z]+)', 'g');
+  const words = [...shown.matchAll(WORD_RE)]
+    .filter((m) => Number(m[1]) >= 1 && Number(m[1]) <= 24)
+    .map((m) => m[2]);
+  ok(words.length === 24, 'vault: リカバリーキー 24 語を画面から拾えた (実際 ' + words.length + ')');
+  const mnemonic = words.join(' ');
+
+  await page.locator('input[type="checkbox"]').check();
+  await page.getByRole('button', { name: /記録完了/ }).click();
+  await page.waitForSelector('.sidebar', { timeout: 30000 });
+
+  // ── パスワードを変更する ──
+  await page.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('input[placeholder="現在のパスワード"]', { timeout: 30000 });
+  await page.locator('input[placeholder="現在のパスワード"]').fill(PASS);
+  await page.locator('input[placeholder^="新しいパスワード ("]').first().fill(PW2);
+  await page.locator('input[placeholder="新しいパスワード (確認)"]').fill(PW2);
+  await page.getByRole('button', { name: 'パスワードを変更' }).click();
+  await page.waitForFunction(
+    () => (document.body.textContent ?? '').includes('パスワードを変更しました'),
+    undefined,
+    { timeout: 30000 },
+  );
+  ok(true, 'vault: パスワードを変更できた');
+
+  // ── 新パスワードで開く / 旧パスワードでは開かない ──
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForFunction(
+    () => (document.body.textContent ?? '').includes('パスワードが違います'),
+    undefined,
+    { timeout: 30000 },
+  );
+  ok(true, 'vault: 旧パスワードでは開かない');
+  await page.locator('input[type="password"]').first().fill(PW2);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('.sidebar', { timeout: 30000 });
+  ok(true, 'vault: 新パスワードで開く');
+
+  // ── ★ 控えた 24 語で復旧できる (変更前に控えたもの) ──
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.getByRole('button', { name: /パスワードを忘れた場合/ }).click();
+  await page.waitForSelector('textarea', { timeout: 15000 });
+  await page.locator('textarea').fill(mnemonic);
+  const recPw = page.locator('input[type="password"]');
+  await recPw.nth(0).fill(PW3);
+  await recPw.nth(1).fill(PW3);
+  await page.getByRole('button', { name: '復元してロック解除' }).click();
+  // **成否のどちらかが出るまで待つ。** `.sidebar` だけを待つと、復旧が壊れた
+  // ときに 30 秒のタイムアウトになり「何が起きたか」が読めない失敗になる
+  // (対照実験で実際にそうなった)。画面が出す拒否の文言も見て、
+  // どちらが起きたかを名指しする。
+  const recovered = await page
+    .waitForFunction(
+      () => {
+        if (document.querySelector('.sidebar')) return 'ok';
+        const t = document.body.textContent ?? '';
+        if (t.includes('リカバリーキーが違います')) return 'rejected';
+        return false;
+      },
+      undefined,
+      { timeout: 30000 },
+    )
+    .then((h) => h.jsonValue())
+    .catch(() => 'timeout');
+  ok(
+    recovered === 'ok',
+    `★ vault: パスワード変更後も、控えた 24 語で復旧できる (実際 ${recovered})`,
+  );
+
+  ok(errs.length === 0, 'vault: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -1049,6 +1164,7 @@ async function businessComparisonSuite(browser) {
   if (run('kessanTax')) await kessanTaxSuite(browser);
   if (run('frameGuard')) await frameGuardSuite(browser);
   if (run('noBeacon')) await noBeaconSuite(browser);
+  if (run('vaultPassword')) await vaultPasswordSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
