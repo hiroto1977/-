@@ -247,7 +247,7 @@ function selfTest() {
     for (const [label, files, expected] of artifactCases) {
       const n = checkArtifacts(files, ['me@corp.jp', 'me']).length;
       const ok = n === expected;
-      if (!ok) bad = 1;
+      if (!ok) bad++;
       console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
     }
     fs.rmSync(tmp, { recursive: true, force: true });

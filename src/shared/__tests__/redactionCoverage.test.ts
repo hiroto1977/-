@@ -1,16 +1,17 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createRequire } from 'node:module';
 import { redactSecrets } from '../redact';
 
 // scripts/scan-credential-headers.cjs は CJS (Node 走査スクリプト) 設計のため、
 // テストだけが createRequire で読み込む (inline-html.cjs と同じ扱い)。
 const req = createRequire(import.meta.url);
-const { credentialHeaderNames, scanSources, sourceFiles } = req(
+const { credentialHeaderNames, scanSources, sourceFiles, selfTest } = req(
   '../../../scripts/scan-credential-headers.cjs',
 ) as {
   credentialHeaderNames: (files?: { rel: string; text: string }[]) => string[];
   scanSources: (files: { rel: string; text: string }[]) => { name: string; rel: string; line: number }[];
   sourceFiles: () => { rel: string; text: string }[];
+  selfTest: () => number;
 };
 
 /**
@@ -122,5 +123,45 @@ describe('伏字の網 — 本文の項目名', () => {
   it('名前の手がかりが無い自由文の中までは伏せない (設計上の限界を明示)', () => {
     const body = `{"error_description":"Token ${SECRET} rejected"}`;
     expect(redactSecrets(body)).toBe(body);
+  });
+});
+
+/*
+ * **走査そのものの対照を、CI の中で回す。**
+ *
+ * `scan-credential-headers.cjs` は自前の `--self-test` を持っており、
+ * 書き方の 12 形 (引用符つき / 素の識別子 / ブラケット代入 / 入れ子 /
+ * 閉じられていないブロック / 大文字小文字 / btoa 組み立て / 既知の限界 ほか)
+ * と、実物の `src/` から 6 種を拾えることを見ている。
+ *
+ * ところが 2026-08-25 に数えると、**この self-test はどこからも呼ばれていなかった**
+ * —— `package.json` にも `.github/workflows/` にも無く、走らせる者がいない。
+ * このテストが読んでいるのは走査の**出力**だけなので、走査の**解析**が
+ * 壊れても (たとえばブラケット代入を取り逃がしても)、種数の下限さえ満たせば
+ * 気付けない。
+ *
+ * **誰も回さない対照は、対照が無いのと同じである。** ここから呼ぶ。
+ * 走査は既にこのファイルが読み込んでいるので、費用はほぼ 0。
+ */
+describe('走査そのものの対照 (scan-credential-headers.cjs の self-test)', () => {
+  it('★ 走査の self-test が全件一致する', () => {
+    // self-test は経過を console.log へ書く。落ちたときだけ読みたいので溜める。
+    const lines: string[] = [];
+    const log = vi.spyOn(console, 'log').mockImplementation((...a: unknown[]) => {
+      lines.push(a.join(' '));
+    });
+    const err = vi.spyOn(console, 'error').mockImplementation((...a: unknown[]) => {
+      lines.push(a.join(' '));
+    });
+    let code: number;
+    try {
+      code = selfTest();
+    } finally {
+      log.mockRestore();
+      err.mockRestore();
+    }
+    expect(code, `走査の self-test が落ちた:\n${lines.join('\n')}`).toBe(0);
+    // 走査が死んで 0 件になったのを「違反なし」と読まない —— 実際に回ったこと。
+    expect(lines.filter((l) => l.includes('✓')).length).toBeGreaterThanOrEqual(10);
   });
 });
