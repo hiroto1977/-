@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import os from 'node:os';
 import { promises as fs } from 'node:fs';
-import { exportRoot, isSafeExportPath, writeExportFile } from '../exportPaths';
+import { exportRoot, isSafeExportPath, writeExportFile, repairExportPermissions } from '../exportPaths';
 
 // 2026-07 security audit: every renderer-supplied export path must land inside
 // ~/.local/business-hub. Before this module the four per-service copies of the
@@ -139,5 +139,80 @@ describe('writeExportFile — 書き出しの権限', () => {
     const f = path.join(dir, 'dash.md');
     await writeExportFile(f, '# 売上\n1,234,567 円\n');
     expect(await fs.readFile(f, 'utf8')).toBe('# 売上\n1,234,567 円\n');
+  });
+});
+
+/*
+ * **「次の書き込みで直る」では、書き出しには足りない。**
+ *
+ * 状態ファイルは保存のたびに書き換わるので次の書き込みで権限も直るが、
+ * 書き出しは**一度作ってそれきり**になりうる。1 月に作った経営ダッシュボードを
+ * 二度と作り直さなければ、0644 のまま残る。起動時に一度均す。
+ */
+describe('repairExportPermissions — 既存の書き出しを均す', () => {
+  const mkDir = async (): Promise<string> => fs.mkdtemp(path.join(os.tmpdir(), 'export-repair-'));
+  const modeOf = async (p: string): Promise<string> => ((await fs.lstat(p)).mode & 0o777).toString(8);
+
+  it('★ 0644 の書き出しを 0600 へ直す', async () => {
+    const root = await mkDir();
+    const f = path.join(root, 'business-dashboard.html');
+    await fs.writeFile(f, '<html>売上</html>', 'utf8');
+    await fs.chmod(f, 0o644);
+
+    expect(await repairExportPermissions(root)).toBe(1);
+    expect(await modeOf(f)).toBe('600');
+  });
+
+  it('既に 0600 のものは触らない (直した数に数えない)', async () => {
+    const root = await mkDir();
+    const f = path.join(root, 'ok.html');
+    await fs.writeFile(f, 'x', { mode: 0o600 });
+    await fs.chmod(f, 0o600);
+
+    expect(await repairExportPermissions(root)).toBe(0);
+    expect(await modeOf(f)).toBe('600');
+  });
+
+  it('入れ子のディレクトリも辿る', async () => {
+    const root = await mkDir();
+    const sub = path.join(root, 'data');
+    await fs.mkdir(sub);
+    const f = path.join(sub, 'dash.md');
+    await fs.writeFile(f, '# x', 'utf8');
+    await fs.chmod(f, 0o644);
+
+    expect(await repairExportPermissions(root)).toBe(1);
+    expect(await modeOf(f)).toBe('600');
+  });
+
+  /*
+   * **この修正が持ち込みうる危険そのもの。**
+   *
+   * `chmod` は symlink を辿るので、書き出し根に `dash.html -> /etc/crontab` を
+   * 置かれると、**こちらが根の外の実体の権限を書き換えてしまう**。
+   * 同日 `scanSkills` で「辿ってしまった」側を直したばかりなので、
+   * 直す側で同じ穴を開けない。
+   *
+   * **対照の当て方に注意。** 実装には番人が 2 つあり (`isSymbolicLink()` と
+   * `!isFile()`)、実際に落としているのは後者である —— `Dirent` は symlink に
+   * 対して `isFile() === false` を返す (実測)。`isSymbolicLink()` だけを外しても
+   * **この検査は鳴らない**ので、それを見て「空の検査だ」と読まないこと。
+   * 穴を再現するには**両方**外す (そうすると実際に鳴る = この検査は生きている)。
+   */
+  it('★ symlink は辿らない (根の外の実体の権限を変えない)', async () => {
+    const root = await mkDir();
+    const outsideDir = await mkDir();
+    const outside = path.join(outsideDir, 'OUTSIDE.conf');
+    await fs.writeFile(outside, 'secret', 'utf8');
+    await fs.chmod(outside, 0o644);
+    await fs.symlink(outside, path.join(root, 'dash.html'));
+
+    expect(await repairExportPermissions(root)).toBe(0);
+    expect(await modeOf(outside), '根の外の実体の権限を変えてしまった').toBe('644');
+  });
+
+  it('根がまだ無くても投げない', async () => {
+    const root = path.join(os.tmpdir(), 'export-repair-does-not-exist-' + String(process.pid));
+    await expect(repairExportPermissions(root)).resolves.toBe(0);
   });
 });

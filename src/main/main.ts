@@ -10,6 +10,7 @@ import {
 } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
+import { repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
@@ -189,6 +190,18 @@ function createWindow(): BrowserWindow {
 
 app.whenReady().then(() => {
   createWindow();
+
+  /*
+   * 既に書き出されているファイルの緩い権限を一度だけ均す。
+   *
+   * `writeExportFile` は書くたびに 0600 へ直すが、**書き出しは「一度作って
+   * それきり」になりうる**ので、それだけでは既存の 0644 が永遠に残る
+   * (状態ファイルは保存のたびに書き換わるので、あちらは次の書き込みで足りる)。
+   *
+   * 窓を出してから走らせる —— 起動を待たせる価値のある処理ではない。
+   * 失敗しても起動は続ける (権限を直せないことは、アプリが使えない理由にならない)。
+   */
+  void repairExportPermissions().catch(() => undefined);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
