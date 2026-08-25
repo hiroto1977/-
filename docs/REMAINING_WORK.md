@@ -8734,3 +8734,43 @@ http=403 / https=接続不可)。**方針は迂回しない。** 通信できる
   「ずれれば数字が違うだけで、境界の守りではない」と**明示的に**判断済み。
   蒸し返さない。
 - `stocks.ts ↔ StoragePage.tsx` などの `10` / `30` / `60` は別用途の一致。
+
+### CI の workflow と、サブプロセスの口 —— 2 面とも白 (2026-08-25 実測)
+
+#### workflow のデータの流れ
+
+| 見たもの | 結果 |
+|---|---|
+| `download-artifact` | **1 件も無い** —— 成果物が後段の実行へ流れ込む経路が存在しない |
+| `upload-artifact` (2 件) | `knowledge-queue.json` と `mutation.json`。どちらも**既に公開されているリポジトリの内容から導かれる** ので新たな露出は無い |
+| `actions/cache` (1 件) | Stryker の incremental のみ。`key: stryker-${{ github.ref_name }}` は `with:` なのでシェルへ渡らず、`lint:workflow-security` の self-test にも同じ形が標本として入っている |
+
+`mutation.yml` は差分測定の前に **`rm -f .stryker-incremental.json`** を実行して
+いる —— 2 節前に手で導いた手順と同じで、CI のほうが先に正しくやっていた。
+
+#### サブプロセスの口 (不変条件 #9)
+
+規則は「呼び方を数えず、**モジュールへの到達**を塞ぐ」形になっている。
+`scripts/` は build/dev の道具として許し、**`src/` は許さない**。
+
+対照を両方向で回した:
+
+```
+  src/main/clients/emotions.ts   に import 形   → 捕まる
+  src/renderer/data/emotionsWeb.ts に require 形 → 捕まる
+```
+
+`scripts/` 側の 9 ファイルは**全部が台帳に載っている**
+(`check-import-boundaries` / `knowledge-autopilot` / `lint-repo-size` /
+`lint-shell` / `mcp-check` / `mutate-changed` / `progress` /
+`quality-report` / `session-context`)。
+
+#### 自分の危うかった読み
+
+最初 `grep … | head -5` の出力だけを見て
+**「`progress.cjs` が台帳に無い」と報告しかけた**。実際は台帳に載っており、
+`head` が切っていただけである。このリポジトリの記録には
+**同じ事故 (`head -4` で切った出力を見て誤読した) が既に 1 件ある**。
+
+**切った出力で「無い」と言わない。** 「有る」は切った出力でも言えるが、
+**「無い」は全体を見ないと言えない。**
