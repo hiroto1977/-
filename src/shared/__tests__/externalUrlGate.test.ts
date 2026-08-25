@@ -54,6 +54,49 @@ describe('externalUrlOrNull — OS へ渡してよい URL だけ', () => {
   });
 
   /*
+   * **認証情報つきの URL —— 字面の信用と、実際の送り先を割らせない。**
+   *
+   * `https://accounts.google.com@evil.example/` は頭から読むと
+   * `accounts.google.com` だが、開くのは `evil.example` である。
+   * この関門を通った文字列は画面のカードに出て、押されたら OS の
+   * ブラウザへ渡る —— **読んだ人が思う送り先と、実際に開く先が食い違う。**
+   *
+   * 2026-08-25 に数えたところ、URL を検証する 17 関数のうち
+   * userinfo を落としていたのは 3 つ (`proxyEndpoint` / `aiEndpoint` /
+   * `ollama`) だけで、**外へ開く唯一の関門は見ていなかった**。
+   * どれも「本当の送り先を見せかけで隠す形」と同じ理由を書いている。
+   *
+   * ここへ来る URL には**遠隔の応答から来たもの**がある ——
+   * `DataList` は `item.href` を押されたら開き、その値はライブ取得した
+   * 相手先の応答である。
+   */
+  it.each([
+    ['利用者名とパスワード', 'https://accounts.google.com@evil.example/'],
+    ['利用者名だけ', 'https://github.com@evil.example/x'],
+    ['パスワードだけ', 'https://:pw@evil.example/x'],
+    ['両方', 'https://user:pw@evil.example/'],
+    ['正しいホストでも落とす (二重の見せかけを残さない)', 'https://user:pw@example.com/'],
+    ['百分率符号化しても解析後に残る', 'https://us%65r:pw@evil.example/'],
+    ['http でも同じ', 'http://user:pw@evil.example/'],
+  ])('認証情報つきは落とす: %s (%j)', (_label, input) => {
+    expect(externalUrlOrNull(input)).toBeNull();
+  });
+
+  /*
+   * **巻き添えにしない側。** `@` はパスにもクエリにも普通に出る。
+   * 落とすのは**ホストの手前**にある形だけである。
+   * (この 4 本が無いと、上の規則が過剰かどうかを誰も見ていないことになる。)
+   */
+  it.each([
+    ['パスの @', 'https://github.com/@handle', 'https://github.com/@handle'],
+    ['クエリの @', 'https://example.com/?to=a@b.com', 'https://example.com/?to=a@b.com'],
+    ['素片の @', 'https://example.com/#a@b', 'https://example.com/#a@b'],
+    ['ホスト直後の @ 無し', 'https://example.com/a/b', 'https://example.com/a/b'],
+  ])('@ を含んでも認証情報でなければ通す: %s (%j)', (_label, input, expected) => {
+    expect(externalUrlOrNull(input)).toBe(expected);
+  });
+
+  /*
    * **通した場合、返す値に生の制御文字は絶対に残らない。**
    *
    * 個別の標本ではなく性質として置く。OS へ渡す文字列に NUL が残ると、

@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 101
+- ブロック数: 102
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `48b810e266ab12e4964997740b828c445b0463817ba93216ccb999f6bafd26c7`
+- 末尾(tip)ハッシュ: `d8249fc2178adce8cf7ea4f95e36f1029210479b1c54092be9bd990caeeeaf9e`
 - 保護対象: 49 ファイル
 
 ## ブロック
@@ -114,6 +114,7 @@
 | 98 | `0bc6dee62fd2f9d4` | `c0bad63f953a758b` | `27840c689469a04b` | update exportPaths.ts |
 | 99 | `56e9e52cb3f2b26d` | `27840c689469a04b` | `aade7370faad4223` | update exportPaths.ts,main.ts |
 | 100 | `c460739fd7400dfe` | `aade7370faad4223` | `48b810e266ab12e4` | update vault.ts |
+| 101 | `9bc6c9a2ae44fe6f` | `48b810e266ab12e4` | `d8249fc2178adce8` | update externalUrlGate.ts |
 
 ## 保護対象ファイル
 

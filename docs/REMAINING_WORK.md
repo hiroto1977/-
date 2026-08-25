@@ -7925,3 +7925,76 @@ AES-GCM で (鍵, IV) が重なると、2 つの平文の XOR が復元でき、
 **今日この経路に脆弱性は無い。** 見つけたのは「いちばん壊れると困る性質に、
 対照が付いていなかった」ことである。定数 IV は 1 行の書き換えで入りうるし、
 入っても**復号は通り、テストも全部緑のまま**だった。
+
+### 本当の送り先を見せかけで隠す形が、外へ開く唯一の関門を通っていた (2026-08-25)
+
+更新確認 (`app:checkUpdate`) を読んでいて、案内先の URL を検証する
+`isGithubReleaseUrl` に敵対的な入力を 16 通り当てた。**15 通りは正しく落ちた** ——
+`github.com.evil` / punycode / 部分ドメイン / 平文 http / `javascript:` は全部断る。
+全角のピリオド `github。com` も URL 解析が本物へ畳むので**通してよい形**だった。
+
+**通ってしまったのは 1 つ**: `https://user:pw@github.com/x`。
+
+#### 数えたら、規則が 17 分の 3 にしか当たっていなかった
+
+URL を `new URL()` で検証する関数を全部数えると **17 件**。
+そのうち **userinfo (`user:pass@`) を落としているのは 3 件だけ**だった。
+
+落としている 3 件 (`proxyEndpoint.ts` / `aiEndpoint.ts` / `ollama.ts`) は
+どれも同じ理由を書いている ——
+「`https://user:pass@evil.example` のように**本当の送り先を見せかけで隠す形**」。
+
+**判断は既にリポジトリの中で下されていた。当てる先が足りていなかった。**
+
+#### いちばん効くのは、外へ開く唯一の関門だった
+
+`externalUrlGate.ts` の `externalUrlOrNull` は
+
+- `setWindowOpenHandler` (窓が開こうとした URL)
+- `ipcMain 'app:openExternal'` (画面が開いてくれと言った URL)
+
+の**両方が通る 1 か所**で、**スキームしか見ていなかった。**
+
+ここを通った文字列は画面のカードに出て、押されたら OS のブラウザへ渡る。
+そして**ここへ来る URL には遠隔の応答から来たものがある** ——
+`DataList.tsx:40` は `item.href` を押されたら開くが、その値は
+ライブ取得した相手先の応答である。**名前を出せる立場の相手なら誰でも仕込める。**
+
+`https://accounts.google.com@evil.example/` は頭から読むと信用できる名前で
+始まるが、開くのは `evil.example` である。
+
+#### 直した 2 か所
+
+| 場所 | 変更 |
+|---|---|
+| `shared/externalUrlGate.ts` | `username`/`password` が空でなければ `null` |
+| `shared/updateCheck.ts` | 同じ判定を `isGithubReleaseUrl` にも (案内先として画面に出す値なので) |
+
+既存のテストは `github.com@evil.example` を既に持っていたが、それは
+**hostname が evil.example なのでホスト固定で落ちていた**形である。
+今回入れたのは**逆向き** —— hostname が**本物の github.com** で
+認証情報だけが付いている形で、こちらは通っていた。
+
+#### 過剰に落としていないことも留めた
+
+`@` はパスにもクエリにも素片にも普通に出る。落とすのは**ホストの手前**だけ:
+
+- `https://github.com/@handle` → 通す
+- `https://example.com/?to=a@b.com` → 通す
+- `https://example.com/#a@b` → 通す
+
+**この 4 本が無いと、規則が過剰かどうかを誰も見ていないことになる。**
+
+#### 対照
+
+判定を外すと `externalUrlGate.test.ts` が **7 件**、
+`updateCheck.test.ts` が **1 件**落ちる。戻すと 99 件 green。
+実データ・雛形に userinfo 付き URL は **1 件も無い**ので、壊れる正当な経路は無い。
+
+#### 自分の注記が、別のゲートに引っかかった
+
+理由を書くとき本文へ `shell.openExternal` と綴ったら、`lint:forbidden` の
+「主プロセス外での直接呼び出し」規則に当たった (**注記も走査対象である**)。
+`app:openExternal` と書き換えた。前に踏んだ「注記が本文を引き写すと
+`indexOf` の囮になる」の**裏返し** —— 注記に API 名を綴ると、
+字面で探すゲートにとっては**呼び出しと区別がつかない**。

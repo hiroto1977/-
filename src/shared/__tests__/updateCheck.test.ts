@@ -199,6 +199,30 @@ describe('isGithubReleaseUrl', () => {
   });
 
   /*
+   * **ホストが本物でも、認証情報が付いていたら断る。**
+   *
+   * 上の `github.com@evil.example` は **hostname が evil.example なので
+   * ホスト固定で既に落ちていた**。ここで見るのは逆の形 ——
+   * `https://user:pw@github.com/` は hostname が**本物の github.com** で、
+   * 2026-08-25 まで**通っていた**。
+   *
+   * 案内先として画面に出す値なので、頭から読んだ印象と実際の送り先を
+   * 割らせない (同じ判断を `externalUrlGate.ts` も下している)。
+   */
+  it('★ ホストが本物でも認証情報つきは断る', () => {
+    for (const u of [
+      'https://user:pw@github.com/hiroto1977/-/releases',
+      'https://github.com:secret@github.com/a',
+      'https://user@github.com/a',
+      'https://:pw@www.github.com/a',
+    ]) {
+      expect(isGithubReleaseUrl(u), u).toBe(false);
+    }
+    // 巻き添えの対照 —— パスの `@` は落とさない。
+    expect(isGithubReleaseUrl('https://github.com/@hiroto1977')).toBe(true);
+  });
+
+  /*
    * **これは通してよい。** 全角の ｇ (U+FF47) は URL の解析時に NFKC で
    * ASCII の g へ畳まれるので、`hostname` は**本物の github.com** になる。
    * 実際に開かれるのも本物なので、断る理由が無い。

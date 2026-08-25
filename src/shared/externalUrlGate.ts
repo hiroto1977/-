@@ -94,5 +94,31 @@ export function externalUrlOrNull(url: unknown): string | null {
   }
   // `URL.protocol` は小文字へ正規化済みなので `JavaScript:` もここで落ちる。
   if (!EXTERNAL_URL_SCHEMES.has(parsed.protocol)) return null;
+  /*
+   * **本当の送り先を、見せかけで隠す形を落とす。**
+   *
+   * `https://accounts.google.com@evil.example/` の送り先は `evil.example`
+   * だが、頭から読むと信用できる名前で始まる。この関門を通った文字列は
+   *
+   *   1. 画面のカードにそのまま出ることがあり
+   *   2. `app:openExternal` を通って OS のブラウザへ渡る
+   *
+   * ので、**読んだ人が思う送り先と、実際に開く先が食い違う**。
+   *
+   * この判断はリポジトリの中で既に 3 か所が下していた ——
+   * `proxyEndpoint.ts` / `aiEndpoint.ts` / `ollama.ts` はどれも
+   * 「認証情報付き URL は拒否」と書いて `username` / `password` を見る。
+   * **外へ開く唯一の関門だけが、それを見ていなかった** (2026-08-25 に実測。
+   * URL を検証する 17 関数のうち、落としていたのは 3 つだけだった)。
+   *
+   * ここへ来る URL には**遠隔の応答から来たもの**がある ——
+   * `DataList` は `item.href` を押されたら開くが、その値は
+   * ライブ取得した相手先の応答である。名前を出せる立場の相手なら誰でも
+   * 仕込める形なので、字面の信用と送り先を割らせない。
+   *
+   * パスやクエリの `@` は巻き添えにしない (`https://github.com/@handle` は
+   * `username` が空)。落とすのは**ホストの手前**に認証情報がある形だけ。
+   */
+  if (parsed.username !== '' || parsed.password !== '') return null;
   return parsed.toString();
 }

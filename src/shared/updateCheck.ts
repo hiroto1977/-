@@ -137,6 +137,10 @@ export function isGithubReleaseUrl(raw: unknown): boolean {
     return false;
   }
   if (parsed.protocol !== 'https:') return false;
+  // 認証情報付き (`https://github.com@evil.example/`) は落とす。ホスト固定と
+  // 二重になるが、ここは**案内先として画面に出す**値なので、字面の信用と
+  // 実際の送り先を割らせない (同じ判断を `externalUrlGate.ts` も下している)。
+  if (parsed.username !== '' || parsed.password !== '') return false;
   const host = parsed.hostname.toLowerCase();
   return host === 'github.com' || host === 'www.github.com';
 }
