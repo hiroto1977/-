@@ -227,3 +227,60 @@ describe('キャッシュの世代交代', () => {
     expect(all).toContain('./manifest.webmanifest');
   });
 });
+
+/*
+ * **同梱の manifest が名乗る数を、実物へ縛る。**
+ *
+ * `assets/manifest.webmanifest` の `description` は PWA の導入ダイアログや
+ * アプリ一覧に**そのまま出る**。ところが 2026-08-25 の実測で「**64 サービス**」と
+ * 書いてあった —— 実際は 74 で、10 件ぶん古い。
+ *
+ * `verify:arch` は同じ数 (`service count`) を **docs に対しては**照合しているが、
+ * 対象が `docs/ARCHITECTURE.md` なので**出荷物は見ていなかった**。
+ * 今日ここまでで何度も書いた「文書が実物より小さい」が、
+ * 文書ではなく**出荷する成果物**で起きていた形である。
+ *
+ * 中身は害の無い数字だが、**利用者に見える面が実物と違う**ことに変わりはない。
+ * 数を書く以上、実物から縛る。
+ */
+describe('PWA manifest — 名乗る数が実物と合っている', () => {
+  const MANIFEST = JSON.parse(
+    readFileSync(path.join(__dirname, '../../../assets/manifest.webmanifest'), 'utf8'),
+  ) as { description: string; start_url: string; scope: string; icons: unknown[] };
+
+  const SERVICE_COUNT = (() => {
+    const src = readFileSync(path.join(__dirname, '../../shared/serviceId.ts'), 'utf8');
+    const m = /SERVICE_IDS[^=]*=\s*\[([\s\S]*?)\]\s*as const/.exec(src);
+    expect(m, 'SERVICE_IDS を読めない — 走査が壊れている').not.toBeNull();
+    return (m![1]!.match(/'[a-z][a-z0-9-]*'/g) ?? []).length;
+  })();
+
+  it('走査が生きている (サービスが 1 つ以上見つかる)', () => {
+    expect(SERVICE_COUNT).toBeGreaterThan(50);
+  });
+
+  it('★ description のサービス数が SERVICE_IDS と一致する', () => {
+    const m = /(\d+)\s*サービス/.exec(MANIFEST.description);
+    expect(m, 'description がサービス数を名乗っていない').not.toBeNull();
+    expect(
+      Number(m![1]),
+      'manifest の数が古い — 導入ダイアログに出るので実物へ合わせること',
+    ).toBe(SERVICE_COUNT);
+  });
+
+  /*
+   * **入力面を増やしていないこと。** `share_target` / `file_handlers` /
+   * `protocol_handlers` は OS から任意の入力を受け取る口で、増えれば
+   * 検証すべき経路が増える。今は 1 つも無い (2026-08-25 実測)。
+   */
+  it('OS からの入力口を宣言していない', () => {
+    for (const k of ['share_target', 'file_handlers', 'protocol_handlers']) {
+      expect(Object.hasOwn(MANIFEST, k), `${k} が増えている — 入力の検証が要る`).toBe(false);
+    }
+  });
+
+  it('scope と start_url が相対のまま (公開先を固定しない)', () => {
+    expect(MANIFEST.scope.startsWith('./')).toBe(true);
+    expect(MANIFEST.start_url.startsWith('./')).toBe(true);
+  });
+});
