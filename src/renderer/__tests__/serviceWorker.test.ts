@@ -248,18 +248,31 @@ describe('PWA manifest — 名乗る数が実物と合っている', () => {
     readFileSync(path.join(__dirname, '../../../assets/manifest.webmanifest'), 'utf8'),
   ) as { description: string; start_url: string; scope: string; icons: unknown[] };
 
+  /*
+   * **どの数で縛るかを、文面が決める。**
+   *
+   * `description` は「…を **1 つのサイドバー UI に統合した**」と書いている。
+   * つまり名乗っているのは**サイドバーに並ぶ数**であって、`SERVICE_IDS` の
+   * 総数ではない。両者は 2 件ずれる —— `uber-eats` / `demae-can` は
+   * `BusinessPage` が snapshot を内部で使うだけで**独立した画面を持たない**
+   * (`sidebarCoverage.test.ts` の `SIDEBAR_LESS` に理由つきで載っている)。
+   *
+   * 最初 `SERVICE_IDS` (74) で縛ったが、**文面が言っているのはサイドバーの
+   * ほう**なので 72 が正しい。`dist/landing.html` も同じ数を出す
+   * (あちらは自分が並べた数なので、そもそも一致する)。
+   *
+   * **数を書くときは、その文が何を数えているかまで読む。**
+   */
   const SERVICE_COUNT = (() => {
-    const src = readFileSync(path.join(__dirname, '../../shared/serviceId.ts'), 'utf8');
-    const m = /SERVICE_IDS[^=]*=\s*\[([\s\S]*?)\]\s*as const/.exec(src);
-    expect(m, 'SERVICE_IDS を読めない — 走査が壊れている').not.toBeNull();
-    return (m![1]!.match(/'[a-z][a-z0-9-]*'/g) ?? []).length;
+    const src = readFileSync(path.join(__dirname, '../services.ts'), 'utf8');
+    return (src.match(/^\s*category:\s*'/gm) ?? []).length;
   })();
 
-  it('走査が生きている (サービスが 1 つ以上見つかる)', () => {
+  it('走査が生きている (サイドバーのサービスが 1 つ以上見つかる)', () => {
     expect(SERVICE_COUNT).toBeGreaterThan(50);
   });
 
-  it('★ description のサービス数が SERVICE_IDS と一致する', () => {
+  it('★ description のサービス数がサイドバーの実数と一致する', () => {
     const m = /(\d+)\s*サービス/.exec(MANIFEST.description);
     expect(m, 'description がサービス数を名乗っていない').not.toBeNull();
     expect(
