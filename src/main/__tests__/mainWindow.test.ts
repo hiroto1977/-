@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
 
 /*
  * BrowserWindow の作られ方と、窓に張った 3 つの番人。
@@ -248,6 +249,57 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
       c.windowOpenHandler!({ url });
     }
     expect(openedExternal).toEqual([]);
+  });
+
+  /*
+   * **窓の扉と関門が、同じ答えを返すことを性質として留める。**
+   *
+   * このファイルの上 3 本は「http(s) は通す / それ以外は通さない」を
+   * **両方の実装が同じ答えを出す入力**でしか試していない。だから
+   * `setWindowOpenHandler` を手書きの `/^https?:\/\//i` に戻しても
+   * **3 本とも緑のまま**である —— 2026-08 に実際に起きた形がこれで、
+   * `externalUrlGate.ts` の冒頭がその対照実験を記録している
+   * (許可表を締めても窓の扉だけ古い規則で開き続け、検査は全部緑だった)。
+   *
+   * ここでは**関門そのものを期待値にする**。標本ごとの正解を手で書かず、
+   * 「窓が OS へ回した物 == 関門が通した物」を突き合わせるので、
+   * 関門の規則が変わればこの検査の期待値も自動で追随し、
+   * **窓の扉だけが取り残されたときにだけ鳴る**。
+   */
+  it('★ 窓の扉は関門と同じ答えを返す (実装が割れたら鳴る)', async () => {
+    const c = await loadMain({ packaged: true });
+    const probes = [
+      // 字面は https:// で始まるが、解析すると別物 (旧実装は通していた)
+      'https://\njavascript:alert(1)',
+      'http://\u0000evil',
+      // 逆に、旧実装が黙って落としていた正当な形
+      'https:/\\evil.com',
+      'https:example.com',
+      'https\t://example.com',
+      // 送り先を見せかけで隠す形 (2026-08-25 に関門へ足した)
+      'https://accounts.google.com@evil.example/',
+      'https://user:pw@example.com/',
+      // パスの @ は巻き添えにしない
+      'https://github.com/@handle',
+      // 正規化の差 (既定ポート・大文字スキーム・前後の空白)
+      'HTTPS://example.com/',
+      'https://example.com:443/',
+      '  https://example.com/  ',
+      // 通らない側
+      'javascript:alert(1)',
+      'file:///etc/passwd',
+      'mailto:a@b.example',
+      '',
+    ];
+    for (const url of probes) c.windowOpenHandler!({ url });
+
+    const expected = probes.map((u) => externalUrlOrNull(u)).filter((v): v is string => v !== null);
+    expect(openedExternal).toEqual(expected);
+
+    // 空撃ちでないこと —— 1 つも通らなければ、この検査は何も言っていない。
+    expect(expected.length, '標本が 1 つも通っていない (検査が空撃ち)').toBeGreaterThan(0);
+    // 落とす側も測っていること。
+    expect(probes.length - expected.length, '落ちる標本が 1 つも無い').toBeGreaterThan(0);
   });
 });
 

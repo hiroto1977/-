@@ -7998,3 +7998,72 @@ URL を `new URL()` で検証する関数を全部数えると **17 件**。
 `app:openExternal` と書き換えた。前に踏んだ「注記が本文を引き写すと
 `indexOf` の囮になる」の**裏返し** —— 注記に API 名を綴ると、
 字面で探すゲートにとっては**呼び出しと区別がつかない**。
+
+### 残り 14 の URL 関門を実際に呼んで確かめた + 窓の扉を関門へ縛った (2026-08-25)
+
+前節で `externalUrlOrNull` / `isGithubReleaseUrl` に userinfo 判定を足したので、
+**残りの関門はどうなのか**を数えた。前の走査は「関数本体を `export` で切って
+`username` を grep する」形で、**取りこぼしがあった** (`atlassianSite` は
+落としていると記録があるのに `✗` と出た)。**字面で数えるのをやめて、実際に呼んだ。**
+
+#### `https://u:p@…` を各関門に通した結果
+
+| 関門 | 結果 | 判定 |
+|---|---|---|
+| `proxyEndpoint.normalizeProxyEndpoint` | 弾く (`has-userinfo`) | 白 |
+| `aiEndpoint.normalizeAiBaseUrl` | 弾く (`has-userinfo`) | 白 |
+| `ollama.isAllowedOllamaBase` | 弾く | 白 |
+| `externalUrlGate.externalUrlOrNull` | 弾く | **前節で直した** |
+| `updateCheck.isGithubReleaseUrl` | 弾く | **前節で直した** |
+| `ollama.parseOllamaEndpoint` | 通す → `http://127.0.0.1:11434` | **資格情報を落として返す。白** |
+| `atlassianSite.normalizeAtlassianSiteResult` | 通す → `https://x.atlassian.net` | **同上。白** |
+| `scanTarget.validateScanUrl` | 通す (そのまま) | **警告つきの設計。下記** |
+
+**通した 3 つのうち 2 つは、資格情報を落として正規化していた** ——
+「弾く」と同じ安全性で、しかも正当な入力を壊さない。字面の走査では
+この違いが見えなかった。
+
+#### `scanTarget` は「通して警告する」設計だった
+
+`describeScanUrlRisk` が
+「この URL には利用者名/パスワードが埋め込まれています。VirusTotal に送ると
+そのまま第三者に見える形で残ります。」を返す。**利用者が自分で打った URL**を
+外部スキャンにかける画面なので、断るのではなく知らせる判断である。
+
+**警告が本当に画面へ出ているかを確かめた** ——
+`SecurityPage.tsx:141` で計算し **339〜350 行で描画**している。
+(このセッションで何度も踏んだ「計算しているが誰も出していない」ではなかった。)
+
+#### ついでに見つけた —— 窓の扉が関門に縛られていなかった
+
+`externalUrlGate.ts` の冒頭には、2026-08 に起きた事故が記録されている:
+**許可表を締めても `setWindowOpenHandler` だけ古い手書き規則で開き続け、
+検査は全部緑だった。** 実装は 1 つに統一されたが、
+**「統一されている」ことを留める検査は無かった。**
+
+`mainWindow.test.ts` の既存 3 本は「http(s) は通す / それ以外は通さない」を
+**両方の実装が同じ答えを出す入力**でしか試していない。
+
+対照で確かめた。窓の扉を `/^https?:\/\//i` の字面検査に戻すと:
+
+```
+Failed Tests 1     ← 今日足した突き合わせだけ
+```
+
+**既存 3 本は緑のまま。** 事故が再発しても誰も鳴らない状態だった。
+
+#### 直し方 —— 標本の正解を手で書かない
+
+「窓が OS へ回した物 == 関門が通した物」を突き合わせる。
+
+```ts
+const expected = probes.map((u) => externalUrlOrNull(u)).filter((v) => v !== null);
+expect(openedExternal).toEqual(expected);
+```
+
+期待値を手で書かないので、**関門の規則が変わればこの検査も自動で追随し、
+窓の扉だけが取り残されたときにだけ鳴る**。標本 15 種には、割れの原因だった
+制御文字・逆スラッシュ・タブと、前節で足した userinfo、
+巻き添えにしてはいけない `https://github.com/@handle` を入れた。
+**空撃ちでないこと** (通る標本が 1 つ以上) と
+**落とす側も測っていること** (落ちる標本が 1 つ以上) も同じ検査に置いた。
