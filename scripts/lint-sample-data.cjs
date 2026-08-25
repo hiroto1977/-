@@ -30,6 +30,37 @@
  *     example と名乗らせる**。Google ドキュメント / ドライブ / Canva /
  *     Slack のように、ID そのものが到達手段になりうるものだけを見る。
  *
+ * ## 走査するのは `.ts` だけではない (2026-08-25 実測)
+ *
+ * 上の 3 規則は `.tsx?` `.cjs` `.mjs` `.js` しか読んでいなかった。だが
+ * `orchestration/registry.json` (286KB) は `ChatbotWidget.tsx` /
+ * `VillagePage.tsx` / `AssistantPage.tsx` が import しており、**そのまま
+ * バンドルへ畳み込まれて公開される**。対照を回すと、この門は黙っていた:
+ *
+ * ```
+ *   registry.json へ  "contact": "tanaka.hiroshi@gmail.com"  と
+ *   実 ID 形の Google ドキュメント URL を植える
+ *     → node scripts/lint-sample-data.cjs        exit 0
+ * ```
+ *
+ * 「出荷物に実在の個人データを載せない」ために作った門が、**出荷物に載る
+ * 286KB のファイルを一度も読んでいなかった**。原因は範囲を拡張子で
+ * 決めていたことなので、`.json` も読む。
+ *
+ * どこまで裸だったかは正確に言う —— CI の `--artifact` 段は**出た HTML**を
+ * 読むので、`registry.json` の中身のうち**バンドルへ残った文字列**なら
+ * そちらが鳴った (実測で確認済み)。裸だったのは 2 つ:
+ *   - 手元で回す上流の門 (push 前に見るのはこちら) が黙る
+ *   - `knowledge-map.json` `knowledge-merge-plan.json` `knowledge-queue.json`
+ *     `registry.schema.json` は**バンドルに載らない**ので `--artifact` も
+ *     届かない —— 公開リポジトリに置いてある以上、規則 1・3 の言う
+ *     「コメントに書いた ID も同じこと」がそのまま当てはまる
+ *
+ * 出荷物に載る JSON (= `src/` から import されている JSON) は
+ * `src/renderer/data/*.ts` と同じ**見本データ**として扱う (規則 2 も当てる)。
+ * 一覧は台帳 `BUNDLED_JSON` に持ち、**実際の import と突き合わせる** ——
+ * 新しい JSON を画面から読み込んだのに台帳へ足し忘れたら、そこで鳴る。
+ *
  * GitHub の login (`hiroto1977`) は対象外。このアプリ自身の公開リポジトリで、
  * 更新確認の宛先 (`api.github.com/repos/…`) にも Pages のオリジンにも出る。
  * 伏せても意味が無く、伏せた振りをするほうが害がある。
@@ -55,6 +86,31 @@ const DATA_DIR = path.join(REPO_ROOT, 'src/renderer');
 // `build-integration-demo.cjs` のコメントが Canva の実 ID を持っていて、
 // `src/` だけを見ていた最初の版は素通りさせた (2026-08-23)。
 const SCANNED_DIRS = ['src', 'scripts', 'orchestration'].map((d) => path.join(REPO_ROOT, d));
+
+/**
+ * 走査する拡張子。**`.json` を落としていた** —— 公開リポジトリでは
+ * データファイルもソースと同じだけ読める上に、`src/` から import された
+ * JSON は出荷物そのものへ載る (上の節を参照)。
+ */
+const SRC_EXTS = /\.(tsx?|cjs|mjs|js|json)$/;
+
+/** 見本データとして扱う拡張子 (`src/renderer/` 側)。 */
+const DATA_EXTS = /\.(tsx?|json)$/;
+
+/**
+ * **出荷物へ載る JSON。** `src/` から import されている JSON はバンドルに
+ * 畳み込まれて公開されるので、`src/renderer/data/*.ts` と同じ見本データ
+ * として扱う (規則 2 —— メールは `example.*` だけ —— も当てる)。
+ *
+ * 鍵はリポジトリ相対パス。値は**なぜ出荷物に載ってよいのか**。
+ * この台帳は `bundledJsonImports()` が実物の import と突き合わせるので、
+ * 足し忘れ・消し忘れのどちらでも鳴る。
+ */
+const BUNDLED_JSON = {
+  'orchestration/registry.json':
+    'AI の村 / チャットの組織図。ChatbotWidget.tsx・VillagePage.tsx・AssistantPage.tsx が ' +
+    'import しており、そのままバンドルへ載る。実測 (2026-08-25): メール 0 / 到達しうる ID 0。',
+};
 
 const EMAIL = /[A-Za-z0-9._%+#-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 const SAMPLE_DOMAIN = /@([a-z0-9-]+\.)*example\.(com|jp|org|net|co\.jp)$/i;
@@ -110,6 +166,29 @@ function ownerIdentifiers(pkgJson) {
   const email = pkgJson?.author?.email;
   if (typeof email !== 'string' || !email.includes('@')) return [];
   return [email, email.slice(0, email.indexOf('@'))];
+}
+
+/**
+ * `src/` の実物が import している JSON を、リポジトリ相対パスで返す。
+ *
+ * **台帳を実物に当てるためだけの関数。** 「載る物の一覧」を手で書くと、
+ * 増えたときに黙る —— このリポジトリで何度も踏んだ形なので、
+ * 一覧は必ず実物から数え直して突き合わせる。
+ */
+function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src')) {
+  const found = new Set();
+  const FROM = /(?:from|require\()\s*['"]([^'"]+\.json)['"]/g;
+  for (const file of listFiles(srcDir, /\.tsx?$/)) {
+    const text = fs.readFileSync(file, 'utf8');
+    FROM.lastIndex = 0;
+    let m;
+    while ((m = FROM.exec(text)) !== null) {
+      const spec = m[1];
+      if (!spec.startsWith('.')) continue; // パッケージ内の JSON は対象外
+      found.add(path.relative(REPO_ROOT, path.resolve(path.dirname(file), spec)));
+    }
+  }
+  return [...found].sort();
 }
 
 function check({ srcFiles, dataFiles, owner }) {
@@ -295,8 +374,60 @@ function selfTest() {
   } else {
     console.log(`  ✓ 全 ${VENDOR_ID_SHAPES.length} 種の ID の形に鳴る標本がある`);
   }
+  // ── 出荷 JSON の台帳 (2026-08-25) ──
+  // 「`.json` を読んでいなかった」ことは、規則の写しでは分からない。
+  // **実物の import を数える入口**を叩き、鳴る側・鳴らない側の両方を持つ。
+  {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bundled-json-'));
+    fs.mkdirSync(path.join(tmp, 'renderer'), { recursive: true });
+    fs.mkdirSync(path.join(tmp, 'renderer', '__tests__'), { recursive: true });
+    fs.writeFileSync(path.join(tmp, 'x.json'), '{}');
+    fs.writeFileSync(
+      path.join(tmp, 'renderer', 'A.tsx'),
+      "import { org } from '../x.json';\nimport React from 'react';\nimport pkg from 'some-lib/data.json';\n",
+    );
+    fs.writeFileSync(path.join(tmp, 'renderer', 'B.ts'), "const d = require('../x.json');\n");
+    fs.writeFileSync(path.join(tmp, 'renderer', '__tests__', 'C.test.ts'), "import z from '../../x.json';\n");
+    const got = bundledJsonImports(tmp).map((r) => path.basename(r));
+    const jsonCases = [
+      ['import された相対 JSON を 1 つ拾う', got.length === 1 && got[0] === 'x.json'],
+      ['パッケージ内の JSON は数えない', !got.includes('data.json')],
+    ];
+    for (const [label, ok] of jsonCases) {
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}${ok ? '' : ` (実際: ${JSON.stringify(got)})`}`);
+    }
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+  // 台帳そのもの — 実物と食い違えば main() が鳴るが、**理由の空欄**は誰も見ていない。
+  {
+    const real = bundledJsonImports();
+    const ledger = Object.keys(BUNDLED_JSON).sort();
+    const same = real.length === ledger.length && real.every((r, i) => r === ledger[i]);
+    if (!same) {
+      bad++;
+      console.log(`  ✗ BUNDLED_JSON が実物とずれています: 実物 ${JSON.stringify(real)} / 台帳 ${JSON.stringify(ledger)}`);
+    } else {
+      console.log(`  ✓ BUNDLED_JSON ${ledger.length} 件は実物の import と一致`);
+    }
+    const noWhy = Object.entries(BUNDLED_JSON).filter(([, why]) => String(why).trim().length < 20);
+    if (noWhy.length > 0) {
+      bad++;
+      console.log(`  ✗ 出荷 JSON の台帳に理由の無い項目が ${noWhy.length} 件`);
+    } else {
+      console.log('  ✓ 出荷 JSON の台帳はすべて理由がある');
+    }
+    // **走査の的が空でないこと。** `.json` を落とせば実物が 0 件になり、
+    // 「一致」だけを見ていると台帳ごと空で通ってしまう。
+    if (!SRC_EXTS.test('a.json') || !DATA_EXTS.test('a.json')) {
+      bad++;
+      console.log('  ✗ 走査の拡張子から .json が落ちています (この門を作った理由そのもの)');
+    } else {
+      console.log('  ✓ 走査の拡張子に .json が入っている');
+    }
+  }
   // 台帳の掃除 — 実物に無い許可が残っていたら消す。
-  const dataText = listFiles(DATA_DIR).map((p) => fs.readFileSync(p, 'utf8')).join('\n');
+  const dataText = listFiles(DATA_DIR, DATA_EXTS).map((p) => fs.readFileSync(p, 'utf8')).join('\n');
   for (const addr of Object.keys(EMAIL_ALLOW)) {
     if (!dataText.includes(addr)) {
       bad++;
@@ -373,11 +504,33 @@ function main(argv) {
     console.error('❌ package.json の author.email を読めません — 規則 1 が空振りします');
     return 1;
   }
-  const dataFiles = listFiles(DATA_DIR).map(read);
-  const srcFiles = SCANNED_DIRS.flatMap((d) => listFiles(d, /\.(tsx?|cjs|mjs|js)$/)).map(read);
-  const problems = check({ srcFiles, dataFiles, owner });
+  // 出荷物へ載る JSON の台帳を、実物の import と突き合わせる。
+  const ledgered = Object.keys(BUNDLED_JSON).sort();
+  const actual = bundledJsonImports();
+  const problems = [];
+  for (const rel of actual) {
+    if (!ledgered.includes(rel)) {
+      problems.push({
+        where: rel,
+        why: 'src/ から import されている JSON が BUNDLED_JSON に在りません — 出荷物に載るのに見本データとして検査されません',
+      });
+    }
+  }
+  for (const rel of ledgered) {
+    if (!actual.includes(rel)) {
+      problems.push({ where: rel, why: 'BUNDLED_JSON に在りますが src/ から import されていません — 台帳を掃除してください' });
+    }
+  }
+
+  const dataFiles = [
+    ...listFiles(DATA_DIR, DATA_EXTS),
+    ...ledgered.map((rel) => path.join(REPO_ROOT, rel)).filter((p) => fs.existsSync(p)),
+  ].map(read);
+  const srcFiles = SCANNED_DIRS.flatMap((d) => listFiles(d, SRC_EXTS)).map(read);
+  problems.push(...check({ srcFiles, dataFiles, owner }));
   console.log(
-    `見本データ ${dataFiles.length} ファイル / ソース・スクリプト ${srcFiles.length} ファイルを検査 ` +
+    `見本データ ${dataFiles.length} ファイル (うち出荷 JSON ${ledgered.length}) / ` +
+      `ソース・スクリプト ${srcFiles.length} ファイルを検査 ` +
       `(持ち主の識別子 / example 以外のメール / 到達しうる ID・台帳 ${Object.keys(EMAIL_ALLOW).length} 件)`,
   );
   if (problems.length === 0) {
@@ -389,6 +542,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { check, checkArtifacts, ownerIdentifiers, EMAIL_ALLOW, VENDOR_ID_SHAPES };
+module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
