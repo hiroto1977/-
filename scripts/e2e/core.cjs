@@ -1411,6 +1411,39 @@ async function thirdPartyDisclosureSuite(browser) {
     `★ 両方: プロキシの運用者からも見えると書いている (実際 ${t.split('プロキシ (Cloudflare Worker) を経由').length - 1} 箇所)`,
   );
 
+  /*
+   * **経路の持ち主が誰かを言う。**
+   *
+   * BYO プロキシの欄は自由入力の URL で、他人の Worker を入れても止まらない
+   * (どの URL が「あなたの物」かは判定できないので、止めようも無い)。
+   * `fetchViaProxy` は呼び出し側のヘッダをそのまま封筒へ載せるため、
+   * **`Authorization: Bearer <トークン>` が Worker の運用者に見える**。
+   *
+   * 画面には「共有秘密を空欄にすると誰でも中継できます」= **他人があなたの
+   * Worker を使う**側だけが書いてあった。**あなたが他人の Worker を使う**側は
+   * 帯域ではなく資格情報を失うので明らかに重い。判定できない以上、
+   * **言うことが唯一の対策**になる。
+   */
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'settings' })),
+  );
+  await page.waitForSelector('text=BYO プロキシ', { timeout: 30000 });
+  const st = await page.locator('body').innerText();
+  ok(
+    st.includes('あなたが管理している Worker だけ'),
+    '★ プロキシ: 自分の Worker だけを入れるよう言っている',
+  );
+  ok(
+    st.includes('Authorization ヘッダ) がそのまま乗ります'),
+    '★ プロキシ: 何が渡るのか (トークン) を名指ししている',
+  );
+  /*
+   * 逆向き (他人が自分の Worker を使う) の説明は**入力欄を開かないと出ない**
+   * ので、ここでは見ない —— 字面は `storageClaims.test.ts` が既に留めている。
+   * (最初はここでも見ようとして落ちた。折りたたんだ本文に無いのが理由で、
+   *  検査のほうが誤っていた。同じ画面に「設定する」が 4 つあるのも罠。)
+   */
+
   ok(errs.length === 0, `第三者送信: ページエラー 0 (実際 ${errs.length})`);
   if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
   await ctx.close();
