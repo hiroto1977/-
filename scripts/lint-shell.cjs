@@ -56,6 +56,66 @@ function shellFiles() {
     .sort();
 }
 
+
+/*
+ * **遠隔のコードを、その場でシェルへ流し込む形。**
+ *
+ * `curl … | sh` は取得した物を**読む機会なく実行する**。取得元が入れ替われば
+ * そのまま任意コードが利用者の権限で走る。
+ *
+ * このリポジトリは同じ理由で **GitHub Actions の第三者 action を SHA で
+ * 固定させている** (`lint:workflow-security`) —— タグは動かせるから、である。
+ * ところが導入スクリプトの側には同じ規準が当たっていなかった (2026-08-25 実測)。
+ *
+ * **消してはいない。** どちらも配布元が公式に案内している導入方法で、
+ * 代わりに入れる手段をこちらで実装するのは筋が悪い。**見えるようにして、
+ * 黙って 3 本目が増えないようにする**のがここの役目である。
+ *
+ * 台帳には**固定の強さ**まで書く —— 「在る」ことではなく
+ * 「**どれくらい留まっているか**」が判断の材料になる。
+ */
+const REMOTE_EXEC_ALLOWLIST = {
+  'scripts/setup-linux.sh': {
+    what: 'nvm v0.40.1 の install.sh',
+    pinning: 'タグ固定 (v0.40.1)。**タグは動かせる**ので、commit SHA 固定より弱い。',
+    why: 'Node.js >= 20 が無い環境でのみ走る枝。nvm 公式の導入方法。',
+  },
+  'scripts/ollama-setup.sh': {
+    what: 'https://ollama.com/install.sh',
+    pinning: '**固定なし** —— その時点で配信されている物をそのまま実行する。',
+    why: 'Ollama 公式の導入方法。利用者が「導入する」と答えた枝でのみ走る。',
+  },
+};
+
+/**
+ * `curl … | sh` / `wget … | bash` の形を含む行。
+ *
+ * **注記と画面向けの文言は数えない。** 導入手順を利用者へ**知らせる**行は
+ * 実行しないので、違反ではない。実測 (2026-08-25) —— これを分けずに書いたら
+ * `ollama-setup.sh` の
+ *
+ * ```sh
+ *   warn "見つかりません。公式スクリプトで導入します (curl -fsSL … | sh)"
+ * ```
+ *
+ * が**実行として数えられ**、台帳の「今も含むか」の対照が
+ * **本物を消しても鳴らなくなった**。文言と実行を分けないと、
+ * 台帳の掃除が効かない。
+ *
+ * ただし `bash -c 'curl … | bash'` は**引用符の中でも実行する**ので、
+ * 「引用符の中を全部除く」ではなく**表示する命令の行だけ**を除く。
+ */
+const MESSAGE_COMMANDS = /^\s*(warn|info|ok|err|note|echo|printf)\b/;
+
+function remoteExecLines(src) {
+  return src
+    .split('\n')
+    .map((line, i) => [i + 1, line])
+    .filter(([, line]) => !/^\s*#/.test(line))
+    .filter(([, line]) => !MESSAGE_COMMANDS.test(line))
+    .filter(([, line]) => /\b(curl|wget)\b[^|]*\|\s*(ba)?sh\b/.test(line));
+}
+
 /**
  * 1 本を検査して違反の説明を返す (空配列 = 合格)。
  *
@@ -77,6 +137,18 @@ function checkScript(name, full) {
   const res = spawnSync('bash', ['-n', full], { encoding: 'utf8' });
   if (res.status !== 0) {
     failures.push(`${name}: bash -n failed\n${(res.stderr || '').trim()}`);
+  }
+  // 遠隔コードの実行は、台帳に載っているものだけ。
+  const remote = remoteExecLines(src);
+  if (remote.length > 0 && !Object.hasOwn(REMOTE_EXEC_ALLOWLIST, name)) {
+    for (const [lineNo, line] of remote) {
+      failures.push(
+        `${name}:${lineNo}: 遠隔のコードをシェルへ流し込んでいます — ${line.trim()}\n` +
+          '      取得元が入れ替われば任意コードが利用者の権限で走ります。' +
+          'どうしても要るなら scripts/lint-shell.cjs の REMOTE_EXEC_ALLOWLIST へ' +
+          '「何を・どれくらい固定して・なぜ」を書いてください。',
+      );
+    }
   }
   return failures;
 }
@@ -110,6 +182,13 @@ function selfTest() {
     ],
     ['構文エラー', '#!/usr/bin/env bash\nset -euo pipefail\nif [ 1 ]; then\n', 1],
     ['3 つ同時に違反', '#!/bin/sh\nif [ 1 ]; then\n', 3],
+    // --- 遠隔コードの実行 (台帳に無い名前 x.sh で試すので、鳴る側) ---
+    ['★ curl | sh は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x.example/i.sh | sh\n', 1],
+    ['★ wget | bash も鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nwget -qO- https://x.example/i.sh | bash\n', 1],
+    ['★ bash -c の中に隠しても鳴る', "#!/usr/bin/env bash\nset -euo pipefail\nbash -c 'curl -fsSL https://x.example/i.sh | bash'\n", 1],
+    ['コメントの中は数えない (説明文を違反にしない)', '#!/usr/bin/env bash\nset -euo pipefail\n#  curl -fsSL https://x.example/i.sh | sh\necho ok\n', 0],
+    ['curl だけ / パイプだけなら鳴らない', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x.example/a.json -o a.json\ncat a.json | jq .\n', 0],
+    ['★ 画面へ知らせる文言は数えない (warn/info/echo)', '#!/usr/bin/env bash\nset -euo pipefail\nwarn "導入は curl -fsSL https://x.example/i.sh | sh です"\n', 0],
   ];
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-shell-'));
@@ -124,6 +203,20 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
   }
   fs.rmSync(tmp, { recursive: true, force: true });
+
+  // 台帳に古い項目が残らないこと + 3 欄が埋まっていること。
+  for (const [rel, info] of Object.entries(REMOTE_EXEC_ALLOWLIST)) {
+    const full = path.join(REPO_ROOT, rel);
+    const stillHas =
+      fs.existsSync(full) && remoteExecLines(fs.readFileSync(full, 'utf8')).length > 0;
+    if (!stillHas) failed += 1;
+    console.log(`  ${stillHas ? '✓' : '✗'} 台帳: ${rel} は今も遠隔実行を含む`);
+    const filled = [info.what, info.pinning, info.why].every(
+      (v) => typeof v === 'string' && v.trim().length > 10,
+    );
+    if (!filled) failed += 1;
+    console.log(`  ${filled ? '✓' : '✗'} 台帳: ${rel} の 3 欄 (何を/固定の強さ/なぜ) が埋まっている`);
+  }
 
   // 走査範囲の陰性対照。`scripts/` 直下だけを見ていた頃の退行に気づけるように、
   // 入れ子のパスが一覧に載ることを実データで確かめる。

@@ -8894,3 +8894,77 @@ Node として起動してアプリとして `safeStorage.decryptString` を呼�
 ここで留めたのは**設定が何と書いてあるか**までである。
 `electron-builder` が設定どおり焼くかは、配布物を作って
 `npx @electron/fuses read` で読むまで分からない —— 持ち主の環境の仕事。
+
+### 第三者の action は SHA で固定させるのに、導入スクリプトは遠隔コードを流し込んでいた (2026-08-25)
+
+前節 (fuse) の一般化として、**鎖の保護対象 49 件のうちコードでない 10 件**を
+「鎖以外に中身を見る物が在るか」で仕分けた。
+
+| 保護対象 | 中身を見る物 |
+|---|---|
+| `integrity-chain.cjs` | 自前の `--self-test` |
+| `ci.yml` | `lint:docs` (verify:all の全ゲートが ci.yml に在ること) |
+| `release.yml` / `pages.yml` | `lint:workflow-security` |
+| `assets/sw.js` | **実物を読む検査が在る** —— 対照で確認 (同一オリジン判定を外すと **3 件**、GET 限定を外すと **2 件**落ちる) |
+| `electron-builder.json` | 前節で追加 |
+| `setup-linux.sh` / `setup-obsidian-docker.sh` / `security-audit.sh` | `lint:shell` (構文 + strict mode のみ) |
+| `docs/SECURITY_CHAIN.md` | 文書 |
+
+**シェルだけが「構文は見るが中身は見ない」状態**だった。中身を読むと:
+
+```sh
+  setup-linux.sh:230   bash -c 'curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
+  ollama-setup.sh:96   curl -fsSL https://ollama.com/install.sh | sh
+```
+
+#### 内部の食い違い
+
+このリポジトリは **GitHub Actions の第三者 action を SHA で固定させている**
+(`lint:workflow-security`)。理由は**タグが動かせるから**である。
+ところが導入スクリプトは、片方が**タグ固定**、もう片方は**固定なし**で
+遠隔のコードをシェルへ流し込んでいた。**同じ理由が片側にしか当たっていない。**
+
+#### 消さずに、見えるようにした
+
+どちらも配布元が公式に案内している導入方法で、代わりの手段をこちらで
+実装するのは筋が悪い。**SHA を調べて固定することもしない** ——
+この実行環境は外部ホストへの接続を方針で拒むので、**推測で書くことになる**。
+
+代わりに `lint:shell` へ規則を足した:
+
+- `curl … | sh` / `wget … | bash` は**台帳に在るものだけ**
+- 台帳には **「何を・どれくらい固定して・なぜ」の 3 欄**を書く
+  (「在る」ことではなく **どれくらい留まっているか**が判断の材料になる)
+- 台帳から実体が消えたら鳴る (古い台帳を残さない)
+
+#### 対照が私の規則の粗さを教えた
+
+台帳の掃除の対照 (本物の `curl | sh` を消す) が **鳴らなかった**。
+原因は自分の規則で、`ollama-setup.sh` の
+
+```sh
+  warn "見つかりません。公式スクリプトで導入します (curl -fsSL … | sh)"
+```
+
+という**画面へ知らせる文言**を「実行」として数えていた。文言と実行を
+分けないと、**台帳の掃除が永久に効かない**し、手順を説明しただけの
+スクリプトが違反になる。
+
+ただし `bash -c 'curl … | bash'` は**引用符の中でも実行する**ので、
+「引用符の中を除く」ではなく **表示する命令 (`warn`/`info`/`echo`/`printf` ほか) の
+行だけ**を除いた。両方を self-test の標本に入れてある。
+
+#### 対照 (どちらも鳴る)
+
+| 壊し方 | 結果 |
+|---|---|
+| 台帳に無いスクリプトへ 3 本目を足す | `security-audit.sh:73: 遠隔のコードをシェルへ流し込んでいます — …` |
+| 台帳の項目から実体を消す | `✗ 台帳: scripts/ollama-setup.sh は今も遠隔実行を含む` |
+
+#### 持ち主へ (この環境では決められないこと)
+
+nvm を **commit SHA で固定**するかは、実際の SHA を確かめてからでないと
+書けない。通信できる環境で `nvm-sh/nvm` の `v0.40.1` が指す SHA を読み、
+`https://raw.githubusercontent.com/nvm-sh/nvm/<SHA>/install.sh` へ替えれば
+タグの可動性は消える。Ollama 側は配布元が SHA 付きの URL を出していないので、
+**固定するなら取得後にチェックサムを検証する形**になる。
