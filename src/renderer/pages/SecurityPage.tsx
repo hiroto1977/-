@@ -401,6 +401,21 @@ export function SecurityPage() {
           <div style={statCardStyle}>
             <div style={statLabelStyle}>スコア</div>
             <div style={statValueStyle}>{dbReport.score} / 100</div>
+            {/*
+              **グレード D の意味を読めるようにする。**
+
+              この版で到達しうる最大点は `maxAchievableScore` である
+              (残りはアプリ側の未実装で、利用者には動かせない)。
+              それを書かずに「25 / 100・D」とだけ出すと、**すべて正しく
+              設定した利用者が「自分の設定が悪い」と読む**。
+            */}
+            {dbReport.maxAchievableScore < 100 && (
+              <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2, lineHeight: 1.5 }}>
+                この版で到達しうる最大は <strong>{dbReport.maxAchievableScore}</strong> 点
+                <br />
+                （残り {100 - dbReport.maxAchievableScore} 点は未実装の保護）
+              </div>
+            )}
           </div>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>達成 / 全項目</div>
@@ -431,14 +446,41 @@ export function SecurityPage() {
           </tbody>
         </table>
 
-        {dbReport.findings.length > 0 && (
+        {/*
+          **直せるものと、直せないものを分けて出す。**
+
+          2026-08-25 まで、ここは未達 7 件を重み降順で 1 つの一覧に並べて
+          いた。ところが 7 件のうち **5 件はこの版に仕組みが無い**もので
+          (重み 75)、しかも重みが大きいので**上を占める**。利用者が今できる
+          2 件は下に埋まっていた。**直せないものを混ぜて並べると、一覧ごと
+          信じなくなる。**
+        */}
+        {dbReport.actionable.length > 0 && (
           <div style={{ marginTop: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-              改善候補 (重み降順) — {dbReport.findings.length} 件
+              いま設定でできること — {dbReport.actionable.length} 件
             </div>
             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
-              {dbReport.findings.map((f) => (
+              {dbReport.actionable.map((f) => (
                 <li key={f.id} style={{ color: SEVERITY_COLOR[f.severity] }}>
+                  <strong>{f.label}</strong>: {f.recommendation}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {dbReport.unavailable.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+              この版に無い保護 — {dbReport.unavailable.length} 件
+              <span style={{ fontWeight: 400, color: 'var(--text-mute)' }}>
+                （アプリ側の未実装です。<strong>設定を変えても直せません</strong>）
+              </span>
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)' }}>
+              {dbReport.unavailable.map((f) => (
+                <li key={f.id}>
                   <strong>{f.label}</strong>: {f.recommendation}
                 </li>
               ))}
@@ -458,8 +500,17 @@ export function SecurityPage() {
           */}
           🗄 <strong>実測して評価している項目</strong>: レコード暗号化・自動ロック・マスターパスワード。
           <br />
-          <strong>まだ観測していない項目</strong>: 改ざん検知・クラウドバックアップ
-          (サブシステムが未配線のため、保守的に改善候補として表示しています)。
+          {/*
+            **ここも 2 度直している。** 直前まで「まだ観測していない項目:
+            改ざん検知・クラウドバックアップ」と書いていたが、これらは
+            「観測できていない」のではなく**この版に存在しない**。
+            上の一覧が `availability` で分けるようになったので、注記も
+            同じ言い方に揃える —— **「確認できないので悪く出している」と
+            「確認したうえで無い」を混ぜない。**
+          */}
+          <strong>この版に存在しない保護</strong>: レコード暗号化の有効化画面 /
+          レコード単位の改ざん検知 / クラウド同期 (送信路が未実装)。
+          いずれも<strong>設定では直せません</strong>ので、上の一覧では分けて示しています。
           <br />
           この診断が見ているのは<strong>業務レコード</strong> (IndexedDB) です ——
           ライブラリの書類とブラウザ内の設定は範囲外で、常に平文です。

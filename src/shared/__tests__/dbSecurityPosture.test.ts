@@ -140,3 +140,74 @@ describe('buildDbSecurityReport', () => {
     expect(check!.label).toContain('レコード');
   });
 });
+
+/*
+ * 2026-08-25 —— **直せるものと、直せないものを分ける。**
+ *
+ * 7 観点のうち 5 つは、この版に仕組みが無いものだった (重み 75/100):
+ * レコード暗号化 (エンジンはあるが有効化画面が無い)、レコードの改ざん検知
+ * (未実装)、クラウドバックアップ 3 種 (送信路が 1 つも無い)。
+ *
+ * つまり**到達しうる最大点は 25** で、すべて正しく設定した利用者にも
+ * 「25 / 100 · D」が出る。しかも改善候補は重み降順なので、**直せない 5 件が
+ * 上を占め、今できる 2 件が下に埋まっていた**。
+ */
+describe('直せるものと、直せないものを分ける', () => {
+  const allOff = {
+    encryptionEnabled: false,
+    masterPasswordSet: false,
+    integrityVerified: false,
+    autoLockEnabled: false,
+    cloudBackup: { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false },
+  };
+
+  it('未達は actionable と unavailable に漏れなく分かれる', () => {
+    const r = buildDbSecurityReport(allOff);
+    expect(r.actionable.length + r.unavailable.length).toBe(r.findings.length);
+    for (const c of r.actionable) expect(c.availability).toBe('available');
+    for (const c of r.unavailable) expect(c.availability).toBe('not-built');
+  });
+
+  it('この版で直せるのは自動ロックとマスターパスワードだけ', () => {
+    const r = buildDbSecurityReport(allOff);
+    expect(r.actionable.map((c) => c.id).sort()).toEqual(['auto-lock', 'master-password']);
+  });
+
+  /*
+   * **到達しうる最大点を報告する。** これを出さずに「25 / 100 · D」とだけ
+   * 見せると、すべて設定した利用者が「自分の設定が悪い」と読む。
+   */
+  it('到達しうる最大点は available な観点の重み合計', () => {
+    const r = buildDbSecurityReport(allOff);
+    expect(r.maxAchievableScore).toBe(25);
+    const avail = r.checks.filter((c) => c.availability === 'available');
+    expect(avail.reduce((a, c) => a + c.weight, 0)).toBe(r.maxAchievableScore);
+  });
+
+  it('できることを全部やると、到達しうる最大点になる', () => {
+    const r = buildDbSecurityReport({ ...allOff, autoLockEnabled: true, masterPasswordSet: true });
+    expect(r.score).toBe(r.maxAchievableScore);
+    expect(r.actionable).toEqual([]);
+    expect(r.unavailable.length).toBe(5);
+  });
+
+  /*
+   * **従えない助言を出さない。** 「設定で〜を有効化してください」は、
+   * その設定が存在するときだけ言ってよい。
+   */
+  it('この版に無い保護の助言が、存在しない設定へ誘導していない', () => {
+    const r = buildDbSecurityReport(allOff);
+    for (const c of r.unavailable) {
+      expect(c.recommendation, `${c.id} が存在しない設定へ誘導している`).not.toMatch(
+        /設定で.*を有効化してください|構成してください/,
+      );
+      expect(c.recommendation.length).toBeGreaterThan(20);
+    }
+  });
+
+  it('重み降順の並びは分けたあとも保たれる', () => {
+    const r = buildDbSecurityReport(allOff);
+    const weights = r.unavailable.map((c) => c.weight);
+    expect([...weights].sort((a, b) => b - a)).toEqual(weights);
+  });
+});
