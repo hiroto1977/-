@@ -123,6 +123,15 @@ function buildHtml(services, tests) {
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<!-- **公開版は inject-pwa 適用後の姿**なので、そちらに合わせて書く。
+     inject-pwa は manifest / apple-touch-icon / SW 登録スクリプトを足すため
+     manifest-src・img-src 'self'・worker-src が要る (注入前の姿だけを見て
+     決めたら、注入後に 2 件の CSP 違反が出た — 実測 2026-08-25)。
+     script-src は SW スニペットの sha256 を追記する口でもある。ハッシュが
+     1 つでも入ると仕様上 'unsafe-inline' は無視されるので、公開版では
+     「SW スニペットだけが動く」状態になる。ここに script-src が無いと
+     inject-pwa は「許可できない」と言って落ちる (これも実測済み)。 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; worker-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Service Hub — 業務支援ダッシュボード</title>
 <meta name="description" content="${esc(description)}">

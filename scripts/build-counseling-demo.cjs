@@ -212,6 +212,7 @@ function htmlShell(js) {
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>寄り添いカウンセリング — 会話デモ (実エンジン)</title>
 <style>${CSS}</style>

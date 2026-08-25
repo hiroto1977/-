@@ -131,6 +131,7 @@ function htmlShell(js) {
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>カウンセリング研究デモ — AI同士の役割演技</title>
 <style>${CSS}</style>

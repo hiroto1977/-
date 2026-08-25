@@ -5683,3 +5683,100 @@ self-test 12 件は合成 lockfile を流し込み、入れ子 `node_modules` �
 (`lint:docs` がゲートと CI の対応を強制する)。指標 4 つ (陰性対照つき 23→24 /
 ゲート数 3 か所) を更新し、`ci.yml` を触ったので integrity chain へ
 ブロック #91 を採掘。
+
+---
+
+### 出荷 HTML の CSP は誰も見ていなかった — `lint:csp` (32 個目) (2026-08-25)
+
+供給網の次に、もう一つ「一度も見ていない軸」を測った ——
+**公開される HTML の CSP**。
+
+#### ソースを見ても、公開されている CSP を見たことにはならない
+
+`src/renderer/index.html` は `script-src 'self'`。
+だが**出荷される標準版はそれではない** —— `inline-html.cjs` がバンドルを
+1 本の inline script へ畳み込み、`script-src` を**その sha256 へピン留め**する。
+さらに `inject-pwa.cjs` が SW スニペットのハッシュを追記する。
+
+```
+src/renderer/index.html   script-src 'self'
+dist/standalone.html      script-src 'sha256-KqAzq…'
+注入後                     script-src 'sha256-KqAzq…' 'sha256-g2Fpw…'
+```
+
+**3 つとも違う。** ソースを検査しても公開物の話にはならない。
+
+#### なぜ黙って壊れうるか
+
+ハッシュが落ちて `script-src 'self'` に戻っただけなら inline script は
+**1 つも動かず** e2e が即座に落ちる (fail-closed)。
+ところが **`script-src 'self' 'unsafe-inline'` になった場合は
+アプリは完全に動いたまま、注入された `<script>` も動く**。
+サイズ検査も e2e も鳴らない。**この規模の回帰だけが、既存のどの検査にも
+引っかからない。**
+
+ブラウザ版の `connect-src` は `https:` を許している (74 サービスの API を
+直に叩くので絞れない) ので、注入が成立した時点で持ち出しは自由になる。
+script の入口を塞ぐことが防御線で、ハッシュがその要である。
+
+#### 測ったら、公開物の 4 つに CSP が無かった
+
+| 成果物 | CSP |
+|---|---|
+| `standalone.html` / `standalone-lite.html` | ハッシュ固定・厳格 |
+| `docs-studio` / `integration-demo` / `shugyokisoku` / `teikan` | `default-src 'none'` |
+| **`landing.html`** | **無し** |
+| **`counseling-demo` / `deliberation-demo` / `research-demo`** | **無し** |
+
+同じリポジトリの姉妹 4 本は `default-src 'none'` を出しているのに、
+この 4 本だけ出していない。しかも**全部 GitHub Pages で公開され、
+保管庫と同じオリジンに載る**。
+
+4 本とも実測で完全に自己完結だった (外部 URL 0・`url()` 0・`@font-face` 0・
+`fetch`/XHR 0・`<iframe>` 0・`<form>` 0) ので、姉妹と同じ
+`default-src 'none'` を付けた。
+
+#### 「注入前の姿」で決めて、注入後に 2 件出した
+
+ここで**このセッションの教訓を自分で踏んだ**。
+注入前の landing を測って `img-src data:` で足りると判断し、
+実ブラウザでも違反 0 だった。ところが **`inject-pwa` 適用後**に測ると:
+
+```
+Refused to load the image '…/icon.svg' … "img-src data:"
+Refused to create a worker from '…/sw.js' … "script-src 'unsafe-inline' …"
+```
+
+注入は manifest / apple-touch-icon / SW 登録スクリプトを足す。
+**公開されるのは注入後の姿**なので、注入前を測ったのは代替物を測ったのと
+同じだった。`worker-src 'self'` / `img-src 'self' data:` / `manifest-src 'self'`
+を足し、注入後で違反 0 を確認。
+
+もう一つ、**`inject-pwa` 自身の守りが先に鳴った** —— landing に
+`script-src` の無い CSP を付けた瞬間「CSP に script-src が無く SW
+スニペットを許可できません」で落ちた。**既存の門が私の回帰を止めた。**
+
+#### 門は「注入後の実物」に当てる
+
+`lint:csp` は `--app` / `--document` / `--none` のプロファイルで実物を見る。
+`verify:all` には `--self-test` だけを入れ (成果物はビルド無しには無い)、
+`ci.yml` が **inject-pwa 適用後**の 6 ファイルへ当てる ——
+`verify:release-artifacts` と同じ形。
+
+`app` は「script-src にハッシュが 1 つ以上」「`'unsafe-eval'` 不可」
+「object-src / base-uri / form-action の固定」、
+`document` は「`default-src 'none'`」「connect-src で通信を開けない」。
+CSP の meta が 2 枚以上あれば落とす —— **1 枚目しか読めないまま緑を返さない**。
+
+#### 自己検査を 2 度壊した (両方 eslint と self-test が捕まえた)
+
+1. 最初の抽出は `content=["']([^"']*)["']` で、**CSP の値は単引用符だらけ**
+   (`'self'` / `'none'` / `'sha256-…'`) なので**最初の `'` で切れて**いた。
+   正しい CSP に 4 件の誤検知を出し、self-test が即座に落ちた。
+   開き引用符を後方参照で綴じ、**抽出そのものを直に確かめる検査**も足した。
+2. その抽出検査を **`let bad = 0` の前**に置いた。`bad += 1` は TDZ を踏むので、
+   抽出が壊れたときに報告ではなく ReferenceError になる ——
+   **失敗方向で壊れていた**。eslint の `no-useless-assignment` が捕まえた。
+
+**同じ誤り (自己検査を宣言の前に置く) をこのセッションで 2 度やっている。**
+対照や自己検査こそ、本体と同じ厳しさで見る。

@@ -70,6 +70,7 @@ jobs:
       - run: npm run lint:shell
       - run: npm run lint:repo-size
       - run: npm run lint:deps
+      - run: npm run lint:csp
       - run: npm run lint:data-origin
       - run: npm run lint:credential-use
       - run: npm run lint:ipc-handlers
@@ -205,3 +206,23 @@ jobs:
             /tmp/inject-check/counseling-demo.html \
             /tmp/inject-check/deliberation-demo.html \
             /tmp/inject-check/research-demo.html
+
+      # 出荷する実物の CSP を見る。
+      #
+      # **注入後の姿**に当てる。`inject-pwa` は manifest / apple-touch-icon /
+      # SW 登録スクリプトを足すので、注入前の CSP で足りていても注入後に
+      # 足りないことがある (2026-08-25 に landing で実測: 注入前は違反 0、
+      # 注入後に img-src と worker-src で 2 件出た)。
+      #
+      # `script-src` がハッシュ固定を失って `'unsafe-inline'` に戻る回帰は、
+      # **アプリが完全に動いたまま**注入された <script> も動く形なので、
+      # e2e もサイズ検査も鳴らない。ここでしか捕まらない。
+      - name: Verify CSP on the shipped artifacts
+        run: |
+          node scripts/lint-artifact-csp.cjs \
+            --app /tmp/inject-check/app.html \
+            --app /tmp/inject-check/lite.html \
+            --document /tmp/inject-check/index.html \
+            --document /tmp/inject-check/counseling-demo.html \
+            --document /tmp/inject-check/deliberation-demo.html \
+            --document /tmp/inject-check/research-demo.html
