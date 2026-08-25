@@ -391,6 +391,20 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
      */
     // Stryker disable next-line Regex
     if (/^2001:0*db8:/i.test(bare)) return true;
+    /*
+     * **site-local fec0::/10 と multicast ff00::/8。**
+     *
+     * この 2 つは利用者が配る Worker (docs/PROXY_EXAMPLE.md) 側には
+     * 最初から在り、こちらだけ無かった —— 同じ判断を 2 か所に書いて
+     * いたので、**両方向にずれていた** (2026-08-25 実測)。
+     * fec0::/10 は RFC 3879 で廃止されたが実装が残っており、
+     * ff00::/8 へ向ける要求に正当な用途は無い。
+     * 綴りは上の fe80 と同じ流儀 (先頭群の上位ビットで見る)。
+     */
+    // Stryker disable next-line Regex
+    if (/^fe[c-f][0-9a-f]?:/i.test(bare)) return true;
+    // Stryker disable next-line Regex
+    if (/^ff[0-9a-f]{0,2}:/i.test(bare)) return true;
     return false;
   }
 
