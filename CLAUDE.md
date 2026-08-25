@@ -218,6 +218,13 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   system then flags every dependent switch/lookup, and prefer `npm run scaffold` over manual edits.
 - When you change architecture, update `docs/ARCHITECTURE.md` too — `verify:arch` checks its
   `file:line` references and metrics against the real tree.
+- **不在を主張する検査には、標本を添える。** `not.toMatch(/…/)` や
+  `!body.includes('…')` は、綴りが 1 つ違えば黙る — どの入力でも通る空の検査になる。
+  規則が**実際にその文面へ当たる**ことを、同じテストの中で標本に対して確かめること
+  (2026-08-25 に 2 件やらかした。どちらも「記憶の言い換え」に対して正規表現を書いていた)。
+  肯定形で書けるならそのほうが安全 — **有ることの検査は、無ければ必ず鳴る**。
+- **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
+  落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
 ## Branching
 
