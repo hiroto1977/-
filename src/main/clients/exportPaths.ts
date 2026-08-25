@@ -41,8 +41,47 @@
  *     あちらは既に在るファイルを OS に渡すため、実体が根の外なら意味が変わる。
  */
 
+import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+
+/**
+ * 書き出しの既定の書き込み。**0600 で書き、既存ファイルの緩い権限も直す。**
+ *
+ * ## なぜ要るのか (2026-08-25)
+ *
+ * 状態ファイルは 4 つとも 0600 で保存している (`secrets` / `emotions` /
+ * `stocks` / `teamradar`)。`teamradar` の注記は理由まで書いている ——
+ * 「**同じ機械の他の利用者が同僚の評価を読める状態だった**」。
+ *
+ * **ところが書き出しには mode が 1 つも付いていなかった。** 実測:
+ *
+ * ```
+ *   状態ファイル              : 0600
+ *   書き出し (html/md/svg)    : 0644   ← 同じ機械の他の利用者が読める
+ *   書き出し先ディレクトリ    : 0755
+ * ```
+ *
+ * しかも `teamradar` は **0600 で守っている当の評価データ**を SVG にして
+ * 0644 で書き出していた。中身は同じで、守りだけが片側に付いていた。
+ * 経営ダッシュボード (10 事業の売上・KPI・AI 提案) も同じである。
+ *
+ * ## `mode` だけでは足りない
+ *
+ * `fs.writeFile(既存ファイル, …, { mode: 0o600 })` は**既存の権限を変えない**
+ * (実測: 644 のまま)。`emotions.ts` が 2026-08-23 に記録している罠と同じで、
+ * 一度 644 で作られた書き出しは以後どれだけ上書きしても 644 のままになる。
+ * だから **`chmod` で明示的に直す** (実測: 644 → 600 / 新規も 600)。
+ *
+ * ディレクトリ (0755) はそのままにしてある —— 0600 のファイルは中身を
+ * 読まれないので、残るのは**ファイル名が見えること**だけで、
+ * 利用者の既存ディレクトリの権限を勝手に締めるほうが影響が大きい。
+ */
+export async function writeExportFile(filePath: string, content: string): Promise<void> {
+  await fs.writeFile(filePath, content, { mode: 0o600 });
+  // 新規作成でしか効かない `mode` を、既存ファイルにも当てる。
+  await fs.chmod(filePath, 0o600);
+}
 
 /** Root of every on-disk export. Nothing outside this tree is writable. */
 export function exportRoot(home: string = os.homedir()): string {

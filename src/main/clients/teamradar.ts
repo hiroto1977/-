@@ -2,7 +2,7 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { isSafeExportPath } from './exportPaths';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -531,7 +531,7 @@ export async function exportTeamRadarSvgImpl(
     : 'チームレーダーチャート';
   const svg = renderTeamRadarSvg(snap, { title: titleStr });
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((p: string, c: string) => fs.writeFile(p, c));
+  const writeFn = deps.writeFile ?? writeExportFile;
   await mkdirFn(path.dirname(filePath));
   await writeFn(filePath, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();

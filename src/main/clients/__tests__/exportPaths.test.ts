@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
-import { exportRoot, isSafeExportPath } from '../exportPaths';
+import os from 'node:os';
+import { promises as fs } from 'node:fs';
+import { exportRoot, isSafeExportPath, writeExportFile } from '../exportPaths';
 
 // 2026-07 security audit: every renderer-supplied export path must land inside
 // ~/.local/business-hub. Before this module the four per-service copies of the
@@ -89,5 +91,53 @@ describe('isSafeExportPath', () => {
     // `…/.local/business-hub-evil/x.html` starts with the root string
     // but is a different directory — the separator check must catch it.
     expect(isSafeExportPath(`${ROOT}-evil${path.sep}x.html`, HOME, '.html')).toBe(false);
+  });
+});
+
+/*
+ * **書き出しも 0600。** 状態ファイルは 4 つとも 0600 で保存しており、
+ * `teamradar` はその理由まで書いている ——「同じ機械の他の利用者が
+ * 同僚の評価を読める状態だった」。
+ *
+ * ところが**書き出しには mode が 1 つも付いていなかった** (2026-08-25 実測:
+ * 状態 0600 / 書き出し 0644)。しかも `teamradar` は 0600 で守っている当の
+ * 評価データを SVG にして 0644 で書き出していた。**中身は同じで、守りだけが
+ * 片側に付いていた。**
+ */
+describe('writeExportFile — 書き出しの権限', () => {
+  const mkDir = async (): Promise<string> =>
+    fs.mkdtemp(path.join(os.tmpdir(), 'export-mode-'));
+  const modeOf = async (p: string): Promise<string> =>
+    ((await fs.stat(p)).mode & 0o777).toString(8);
+
+  it('★ 新しく書き出したファイルは 0600', async () => {
+    const dir = await mkDir();
+    const f = path.join(dir, 'dash.html');
+    await writeExportFile(f, '<html>売上 1,234,567 円</html>');
+    expect(await modeOf(f)).toBe('600');
+  });
+
+  /*
+   * **`mode` は新規作成でしか効かない。** 一度 644 で作られた書き出しは、
+   * `{ mode: 0o600 }` を付けて上書きしても 644 のまま (実測)。
+   * `emotions.ts` が 2026-08-23 に記録している罠と同じなので、
+   * `chmod` で明示的に直していることをここで留める。
+   */
+  it('★ 既に 0644 で在るファイルも、書き直すと 0600 になる', async () => {
+    const dir = await mkDir();
+    const f = path.join(dir, 'dash.html');
+    await fs.writeFile(f, 'old', 'utf8');
+    await fs.chmod(f, 0o644);
+    expect(await modeOf(f)).toBe('644');
+
+    await writeExportFile(f, 'new');
+    expect(await modeOf(f)).toBe('600');
+  });
+
+  it('中身は書けている (権限だけ直して書き損ねない)', async () => {
+    const dir = await mkDir();
+    const f = path.join(dir, 'dash.md');
+    await writeExportFile(f, '# 売上\n1,234,567 円\n');
+    expect(await fs.readFile(f, 'utf8')).toBe('# 売上\n1,234,567 円\n');
   });
 });

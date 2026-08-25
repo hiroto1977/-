@@ -6,7 +6,7 @@ import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { isSafeExportPath } from './exportPaths';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
@@ -1941,7 +1941,7 @@ export async function exportDashboardImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  await (deps.writeFile ?? writeExportFile)(filePath, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
@@ -1989,7 +1989,7 @@ export async function exportDashboardMdImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  await (deps.writeFile ?? writeExportFile)(filePath, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
