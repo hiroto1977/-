@@ -39,14 +39,24 @@ function read(p) {
 // Canonical facts (computed from source)
 // ---------------------------------------------------------------------------
 
+/*
+ * 読めなかったときは null を返す。
+ *
+ * **`main()` には「canonical を source から計算できない」を報告する枝がある
+ * のに、ここが null を素通しさせるので到達できなかった** —— ファイル名が変わると
+ * 意図した失敗ではなく生の TypeError で落ち、どの事実が測れなかったのかが
+ * 出力に出ない。到達しない枝は、その先の報告を全部無効にする。
+ */
 function canonicalServiceCount() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+  if (src == null) return null;
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
   return m ? [...m[1].matchAll(/^\s*'[a-z][a-z0-9-]*'\s*,/gm)].length : null;
 }
 
 function canonicalServiceList() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+  if (src == null) return null;
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
   if (!m) return null;
   const ids = [...m[1].matchAll(/'([a-z][a-z0-9-]*)'/g)].map((x) => x[1]);
@@ -55,11 +65,13 @@ function canonicalServiceList() {
 
 function canonicalIpcHandlerCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/main.ts'));
+  if (src == null) return null;
   return [...src.matchAll(/^ipcMain\.handle\(/gm)].length;
 }
 
 function canonicalOAuthCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/oauth.ts'));
+  if (src == null) return null;
   const m = src.match(/OAUTH_CONFIGS[^{]*\{([\s\S]*?)\n\};/);
   if (!m) return null;
   return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
@@ -219,7 +231,7 @@ const FACTS = [
   },
   {
     name: 'service list (set equality)',
-    canonical: canonicalServiceList().sort().join(','),
+    canonical: canonicalServiceList()?.sort().join(',') ?? null,
     claims: [
       {
         file: 'docs/ARCHITECTURE.md',
@@ -353,6 +365,148 @@ function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
 // Run
 // ---------------------------------------------------------------------------
 
+/*
+ * README のカテゴリ内訳を、サイドバーの実体 (`services.ts`) に結び付ける。
+ *
+ * 見出しの合計 (`## サービス一覧 (74)`) は上の `service count` が既に留めている。
+ * だが**内訳の行**はどの検査も読んでいなかった —— 2026-08-25 に実測すると
+ * 12+8+18+32 = 70 で、同じ README の本文が言う「全 74」と 4 件ずれていた。
+ * サイドバーに出ているのに README にだけ無かったのは `Cursor` (外部サービス連携)
+ * と `可視化` (分析・ツール) の 2 件である。
+ *
+ * **合計だけを見る検査は、内訳が同じだけ間違っていても黙る。** 足し引きが
+ * 打ち消し合えば合計は動かないし、そもそもここでは合計 (74) が
+ * サイドバー非表示の 2 件を含むため、内訳の和 (72) と一致しない —— 
+ * つまり合計の検査は内訳について何も言っていなかった。
+ *
+ * 数ではなく**名前の集合**を突き合わせる。数を数えるだけだと
+ * 「1 件足して 1 件消した」が通ってしまうし、綴りが変わったことも見えない。
+ */
+const README_CATEGORY_ROWS = [
+  { label: 'おすすめ', category: 'featured' },
+  { label: '士業連携', category: 'professionals' },
+  { label: '分析・ツール', category: 'tools' },
+  { label: '外部サービス連携', category: 'integrations' },
+];
+
+/*
+ * README が短縮して書いているサイドバーの名前。
+ *
+ * 表のセルは ` / ` 区切りだが、**サイドバーの名前そのものに ` / ` を含む**
+ * ものが 2 つある (`KPI / BEP` と `コネクター / 自動化`)。そのまま書くと
+ * 読む側にも数える側にも 2 件に見えるので、README では前半だけを書いている。
+ *
+ * ここに書くことで、**短縮は 2 件だけ**という事実自体が検査対象になる。
+ * 3 件目を黙って増やすことはできないし、左辺の名前がサイドバーから消えれば
+ * 下の「古くなった短縮」で鳴る。
+ */
+const README_LABEL_ALIASES = {
+  'KPI / BEP': 'KPI',
+  'コネクター / 自動化': 'コネクター',
+};
+
+/** `services.ts` から category → label[] を作る。 */
+function sidebarLabelsByCategory(src) {
+  const out = {};
+  // `label: '…',` … `category: '…',` の順で並ぶ 1 エントリを 1 件とみなす。
+  for (const m of src.matchAll(/label: '([^']+)',[\s\S]{0,400}?category: '([a-z]+)',/g)) {
+    (out[m[2]] ??= []).push(m[1]);
+  }
+  return out;
+}
+
+/**
+ * README の 1 行から、宣言された件数と列挙された名前を取り出す。
+ * 見つからなければ null。
+ */
+function readmeCategoryRow(readme, label) {
+  const re = new RegExp(
+    '^\\|\\s*\\*\\*' + label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\*\\*\\s*\\(([^)]*)\\)\\s*\\|([^|]*)\\|',
+    'm',
+  );
+  const m = readme.match(re);
+  if (!m) return null;
+  const countM = m[1].match(/(\d+)\s*$/);
+  // 名前の後ろに「— 各ページに…」のような注記が付く行がある (士業連携)。
+  const items = m[2]
+    .split(' — ')[0]
+    .split('/')
+    .map((s) => s.trim())
+    .filter((s) => s !== '');
+  return { count: countM ? Number(countM[1]) : null, items };
+}
+
+/**
+ * `servicesOverride` / `readmeOverride` は self-test 用の差し込み口
+ * (`checkCiGateCoverage` と同じ理由 — 実ファイルを壊さずに鳴らせるように)。
+ * 戻り値は照合したカテゴリ数。
+ */
+function checkReadmeCategories(failures, servicesOverride, readmeOverride) {
+  const FACT = 'README category breakdown';
+  const servicesSrc =
+    servicesOverride === undefined ? read(path.join(REPO_ROOT, 'src/renderer/services.ts')) : servicesOverride;
+  const readme = readmeOverride === undefined ? read(path.join(REPO_ROOT, 'README.md')) : readmeOverride;
+  if (servicesSrc == null || readme == null) {
+    failures.push({ fact: FACT, reason: 'src/renderer/services.ts か README.md を読めない' });
+    return 0;
+  }
+  const byCategory = sidebarLabelsByCategory(servicesSrc);
+  let checked = 0;
+  for (const { label, category } of README_CATEGORY_ROWS) {
+    const actual = byCategory[category];
+    if (!actual || actual.length === 0) {
+      // 走査が死んで 0 件になったのを「違反なし」と読まない。
+      failures.push({
+        fact: FACT,
+        reason: `services.ts から category '${category}' を 1 件も拾えない — 走査が壊れている`,
+      });
+      continue;
+    }
+    const row = readmeCategoryRow(readme, label);
+    if (row === null) {
+      failures.push({ fact: FACT, reason: `README.md にカテゴリ行 "${label}" が無い` });
+      continue;
+    }
+    checked++;
+    if (row.count !== row.items.length) {
+      failures.push({
+        fact: FACT,
+        reason: `README "${label}" は (${row.count}) と書いているが ${row.items.length} 件しか並べていない`,
+      });
+    }
+    const shown = actual.map((l) => README_LABEL_ALIASES[l] ?? l);
+    const missing = shown.filter((l) => !row.items.includes(l));
+    const extra = row.items.filter((l) => !shown.includes(l));
+    if (missing.length > 0) {
+      failures.push({
+        fact: FACT,
+        reason: `README "${label}" にサイドバーの ${missing.join(' / ')} が載っていない`,
+      });
+    }
+    if (extra.length > 0) {
+      failures.push({
+        fact: FACT,
+        reason: `README "${label}" の ${extra.join(' / ')} はサイドバーに無い (綴り違いか、消えたサービス)`,
+      });
+    }
+  }
+  /*
+   * **古くなった短縮を残さない。** 左辺がサイドバーから消えていれば、
+   * その短縮はもう何も指していない —— 放っておくと「README にだけある名前」を
+   * 黙って許す抜け穴になる。
+   */
+  const allLabels = Object.values(byCategory).flat();
+  for (const full of Object.keys(README_LABEL_ALIASES)) {
+    if (!allLabels.includes(full)) {
+      failures.push({
+        fact: FACT,
+        reason: `短縮の台帳にある "${full}" がサイドバーに無い — 名前が変わったか消えた。台帳から外すこと`,
+      });
+    }
+  }
+  return checked;
+}
+
 /**
  * 陰性対照 — **このゲートが本当に鳴るか**。
  *
@@ -442,6 +596,102 @@ function selfTest() {
     ['verify:all が読めなければ鳴る', '', step('lint:a'), 1],
     ['ci.yml が読めなければ鳴る', 'npm run lint:a', null, 1],
   ];
+
+  /*
+   * README の内訳。**実際に起きた形を最初のケースに置く** ——
+   * サイドバーに `可視化` が居るのに README の行が 18 件のまま
+   * (数も列挙も揃っているので、その行だけを見ていると気付けない)。
+   *
+   * 各ケースは 4 カテゴリすべてを備えた雛形の上で、**分析・ツールの行だけ**を
+   * 差し替える。他の 3 行を欠いたまま試すと、どのケースも「走査が壊れている」で
+   * 鳴ってしまい、**何を確かめたのか分からない対照**になる (最初にそう書いた)。
+   */
+  {
+    const svc = (label, category) =>
+      `  {\n    id: 'x',\n    label: '${label}',\n    category: '${category}',\n  },\n`;
+    const row = (label, n, items) => `| **${label}** (${n}) | ${items.join(' / ')} |\n`;
+    /*
+     * 分析・ツール以外の 3 カテゴリは常に揃っている雛形。
+     * 短縮の台帳 (`README_LABEL_ALIASES`) の 2 件もここに入れる —— 実物と同じく
+     * **README 側は前半だけ**を書いており、これが鳴らないことで
+     * 「短縮が効いている」を肯定形で確かめている。
+     */
+    const OTHERS_SRC =
+      svc('ホーム', 'featured') +
+      svc('KPI / BEP', 'featured') +
+      svc('コネクター / 自動化', 'featured') +
+      svc('税理士', 'professionals') +
+      svc('GitHub', 'integrations');
+    const OTHERS_MD =
+      '| **おすすめ** (常時表示, 3) | ホーム / KPI / コネクター |\n' +
+      '| **士業連携** (1) | 税理士 — 各ページに「担当領域 (事業仕分け)」ナビ |\n' +
+      row('外部サービス連携', 1, ['GitHub']);
+    /** [ラベル, tools のサービス, tools の README 行, 期待件数] */
+    const catCases = [
+      [
+        '★ サイドバーに在って README に無い (2026-08-25 の 可視化 / Cursor)',
+        svc('KPI', 'tools') + svc('可視化', 'tools'),
+        row('分析・ツール', 1, ['KPI']),
+        1,
+      ],
+      ['揃っていれば鳴らない', svc('KPI', 'tools'), row('分析・ツール', 1, ['KPI']), 0],
+      [
+        '★ 数だけ直して列挙を直さなかったら鳴る',
+        svc('KPI', 'tools') + svc('可視化', 'tools'),
+        row('分析・ツール', 2, ['KPI']),
+        2, // 宣言 2 件 vs 列挙 1 件 + 可視化 が無い
+      ],
+      [
+        '★ 1 件足して 1 件消しても鳴る (数を数えるだけの検査は通してしまう)',
+        svc('KPI', 'tools') + svc('可視化', 'tools'),
+        row('分析・ツール', 2, ['KPI', 'Docker']),
+        2, // 可視化 が無い + Docker がサイドバーに無い
+      ],
+      ['前後の空白は同一とみなす (表の整形では鳴らない)', svc('可視化', 'tools'), row('分析・ツール', 1, ['可視化 ']), 0],
+      [
+        '★ 別綴りは鳴る',
+        svc('可視化', 'tools'),
+        row('分析・ツール', 1, ['視覚化']),
+        2, // 可視化 が無い + 視覚化 がサイドバーに無い
+      ],
+      ['★ README に行が無ければ鳴る', svc('KPI', 'tools'), '(分析・ツールの行が無い)\n', 1],
+      [
+        '★ 走査が死んで 0 件になったのを「違反なし」と読まない',
+        '', // tools が 1 件も無い
+        row('分析・ツール', 1, ['KPI']),
+        1,
+      ],
+    ];
+    for (const [label, toolsSrc, toolsMd, expected] of catCases) {
+      const f = [];
+      checkReadmeCategories(f, OTHERS_SRC + toolsSrc, OTHERS_MD + toolsMd);
+      const ok = f.length === expected;
+      if (!ok) selfTestFailed = true;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+      if (!ok) for (const x of f) console.log(`      → ${x.reason}`);
+    }
+    // 短縮の台帳が古くなった側 + 読めない側 (雛形を使わない)
+    for (const [label, s, r, expected] of [
+      [
+        '★ 短縮の左辺がサイドバーから消えたら鳴る',
+        svc('ホーム', 'featured') + svc('税理士', 'professionals') + svc('GitHub', 'integrations') + svc('KPI', 'tools'),
+        '| **おすすめ** (常時表示, 1) | ホーム |\n' +
+          '| **士業連携** (1) | 税理士 |\n' +
+          row('外部サービス連携', 1, ['GitHub']) +
+          row('分析・ツール', 1, ['KPI']),
+        2, // KPI / BEP と コネクター / 自動化 の 2 件が宙に浮く
+      ],
+      ['services.ts が読めなければ鳴る', null, OTHERS_MD, 1],
+      ['README が読めなければ鳴る', OTHERS_SRC, null, 1],
+    ]) {
+      const f = [];
+      checkReadmeCategories(f, s, r);
+      const ok = f.length === expected;
+      if (!ok) selfTestFailed = true;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
   let bad = 0;
   for (const [label, all, ci, expected] of cases) {
     const f = [];
@@ -450,8 +700,15 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
   }
-  if (bad > 0) {
-    console.error(`❌ self-test 不一致 ${bad} 件 — ゲートのゲートが鳴っていない`);
+  /*
+   * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
+   * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
+   * つまり claimCases が全滅しても `✅ self-test 全件一致` と出て 0 を返した。
+   * 「✗」は画面に出るが、CI が見るのは終了コードだけである。
+   * 対照を書いておきながら、その対照の結果を捨てていた。
+   */
+  if (bad > 0 || selfTestFailed) {
+    console.error(`❌ self-test 不一致 ${bad} 件 (+ 旗 ${selfTestFailed}) — ゲートのゲートが鳴っていない`);
     return 1;
   }
   console.log('✅ self-test 全件一致');
@@ -502,9 +759,11 @@ function main() {
 
   const gateCount = checkCiGateCoverage(failures);
   checkNotInCiClaims(failures);
+  const catCount = checkReadmeCategories(failures);
 
   console.log(
-    `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml`,
+    `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
+      ` + README ${catCount} カテゴリの内訳を services.ts と照合`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');
