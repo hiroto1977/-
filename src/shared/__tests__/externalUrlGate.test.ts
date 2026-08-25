@@ -29,6 +29,59 @@ describe('externalUrlOrNull — OS へ渡してよい URL だけ', () => {
   });
 
   /*
+   * **この関門が在る理由そのものを固定する。**
+   *
+   * このファイルの上にある注記は、main とブラウザ版の判定が割れた入力を
+   * 6 つ挙げている。**そのうち 1 つも標本になっていなかった** (2026-08-25)。
+   * 表にあったのはスキームの大小・既定ポート・前後の空白といった
+   * 見た目の正規化だけで、**割れの原因だった制御文字が 1 件も無い**。
+   *
+   * 前 2 つが効く構図である —— 字面が `https://` で始まるので旧実装
+   * (`/^https?:\/\//i`) は通すが、解析すると別物になる。
+   * 後ろ 4 つは逆向きで、正当なリンクを旧実装が黙って落としていた形。
+   */
+  it.each([
+    // 字面は https:// で始まるが、解析すると通らない (旧実装は通していた)。
+    ['改行で javascript: を隠す', 'https://\njavascript:alert(1)', null],
+    ['ホストの手前に NUL', 'http://\u0000evil', null],
+    // 逆向き —— 旧実装が落としていた正当な形。
+    ['逆スラッシュはスラッシュとして解析される', 'https:/\\evil.com', 'https://evil.com/'],
+    ['スラッシュ無しでも解析は通る', 'https:example.com', 'https://example.com/'],
+    ['スキームの中のタブは落ちる', 'https\t://example.com', 'https://example.com/'],
+    ['ホストの中のタブも落ちる', 'https://exam\tple.com/', 'https://example.com/'],
+  ])('割れの原因: %s (%j)', (_label, input, expected) => {
+    expect(externalUrlOrNull(input)).toBe(expected);
+  });
+
+  /*
+   * **通した場合、返す値に生の制御文字は絶対に残らない。**
+   *
+   * 個別の標本ではなく性質として置く。OS へ渡す文字列に NUL が残ると、
+   * C の API で切り詰められて「調べた URL」と「開く URL」が変わりうる。
+   * この関門の約束は「解析に使った文字列そのものを返す」ことなので、
+   * その約束を性質のまま検査する。
+   */
+  it('通した URL に生の制御文字は残らない', () => {
+    const probes = [
+      'https://example.com/a\u0000b',
+      'https://example.com/a\rb',
+      'https://example.com/a\nb',
+      'https://example.com/a\tb',
+      'https://example.com/a\u001fb',
+      'https://example.com/ x',
+    ];
+    const passed = probes.map((p) => externalUrlOrNull(p)).filter((v): v is string => v !== null);
+    // 空撃ちでないこと —— 1 つも通らなければ、この検査は何も言っていない。
+    expect(passed.length, '標本が 1 つも通っていない (検査が空撃ち)').toBeGreaterThan(0);
+    for (const v of passed) {
+      // 正規表現で制御文字の範囲を書くと eslint の no-control-regex に当たる。
+      // 抑制指示を足すより、符号位置で見るほうが意図がそのまま読める。
+      const hasControl = [...v].some((ch) => (ch.codePointAt(0) ?? 0) < 0x20);
+      expect(hasControl, `生の制御文字が残っている: ${JSON.stringify(v)}`).toBe(false);
+    }
+  });
+
+  /*
    * `javascript:` / `data:` はコード実行、`file:` はローカル読み出し、
    * OS 独自スキームはハンドラ起動に繋がる。
    */
