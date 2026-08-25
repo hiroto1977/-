@@ -53,6 +53,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const MAIN_DIR = path.join(REPO_ROOT, 'src/main');
@@ -492,6 +493,31 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} preload: ${c.name}: ${got} 件 (期待 ${c.want})`);
   }
 
+  /*
+   * **空撃ち検査そのものを突く。** 走査が壊れて 0 件になったのか、
+   * 本当に問題が無いのかを区別しているのがこの枝である。
+   * 一時ディレクトリを渡して、両方向を確かめる。
+   */
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ipc-preload-'));
+  const emptyCases = [
+    ['呼び出しが 1 件も無ければ鳴る (走査が死んだ形)', 'export const x = 1;\n', 1],
+    ['呼び出しが 1 件でもあれば鳴らない', "import { ipcRenderer } from 'electron';\nexport const f = () => ipcRenderer.invoke('app:getVersion');\n", 0],
+  ];
+  for (const [label, src, want] of emptyCases) {
+    fs.writeFileSync(path.join(tmp, 'p.ts'), src);
+    const got = preloadProblems(tmp).filter((x) => x.includes('1 件もありません')).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} preload 空撃ち: ${label}: ${got} 件 (期待 ${want})`);
+  }
+  fs.rmSync(tmp, { recursive: true, force: true });
+  {
+    const missing = preloadProblems(path.join(tmp, 'nope')).length;
+    const ok = missing === 1;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} preload 空撃ち: ディレクトリごと消えていれば鳴る: ${missing} 件 (期待 1)`);
+  }
+
   if (failed > 0) {
     console.error(`❌ 対照実験 ${failed} 件が期待と違います — ゲート自体が壊れています`);
     return 1;
@@ -520,14 +546,21 @@ function selfTest() {
  *
  * 走査時点の preload は `invoke` 13 件すべてがリテラルで、誤検知 0。
  */
-function preloadProblems() {
-  const dir = path.join(REPO_ROOT, 'src/preload');
+/*
+ * `dir` は既定で実物。**差し替えられるのは self-test のため**である ——
+ * 下の「呼び出しが 1 件も無い」という**空撃ち検査そのもの**は、実物の
+ * preload に常に呼び出しが在るので production では一度も通らず、
+ * probe を実ディレクトリへ置く既存の検査でも (findings を
+ * `__lint_probe__` で絞るので) 触れられない。**「0 件」に意味を持たせて
+ * いる当の枝が、無検査で置かれていた** (2026-08-25 の実測で判明)。
+ */
+function preloadProblems(dir = path.join(REPO_ROOT, 'src/preload')) {
   if (!fs.existsSync(dir)) return ['src/preload が見つかりません（走査の不具合を疑ってください）'];
   const problems = [];
   let calls = 0;
   for (const name of fs.readdirSync(dir)) {
     if (!/\.tsx?$/.test(name) || name.endsWith('.d.ts')) continue;
-    const file = path.join('src/preload', name);
+    const file = path.join(path.relative(REPO_ROOT, dir) || '.', name);
     const raw = fs.readFileSync(path.join(dir, name), 'utf8');
     // コメント・文字列を潰した像で位置を採り、引数の中身は生から読む。
     // 説明文に書かれた例を指摘すると直しようが無くなる (0-a-17)。

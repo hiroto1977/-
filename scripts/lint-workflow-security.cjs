@@ -118,7 +118,13 @@ function runBlockLines(text) {
   return out;
 }
 
-function check(list) {
+/*
+ * `allow` は既定で実物の台帳。**差し替えられるのは self-test のため**である ——
+ * 台帳の掃除を見る枝は「台帳に載っているものが使われなくなった」状態でしか
+ * 動かず、実物では今その項目が使用中なので、**production では一度も通らない道**
+ * だった (2026-08-25 の実測: この枝を潰しても本番スキャンも self-test も鳴らない)。
+ */
+function check(list, allow = UNPINNED_ALLOW) {
   const problems = [];
   const seenUnpinned = new Set();
   for (const { name, text } of list) {
@@ -145,7 +151,7 @@ function check(list) {
       seenUnpinned.add(ref);
       // `in` / 素の添字はプロトタイプ鎖まで辿るので、`uses: constructor` の
       // ような名前が台帳に載っていることになり、**未固定の検査ごと飛ばされる**。
-      if (Object.hasOwn(UNPINNED_ALLOW, ref)) continue;
+      if (Object.hasOwn(allow, ref)) continue;
       problems.push({
         file: `${name}:${i + 1}`,
         why: `第三者 action がタグ固定 (${ref}) — SHA で固定するか台帳へ`,
@@ -168,7 +174,7 @@ function check(list) {
     }
   }
   // 台帳の掃除: 直したのに項目が残っていたら落とす。
-  for (const ref of Object.keys(UNPINNED_ALLOW)) {
+  for (const ref of Object.keys(allow)) {
     if (!seenUnpinned.has(ref)) {
       problems.push({ file: '(台帳)', why: `${ref} はもう使われていない — 台帳から消すこと` });
     }
@@ -269,6 +275,36 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
   }
+  /*
+   * **台帳の掃除の枝には検査が 1 件も無かった。**
+   *
+   * 上のループは `(台帳)` の findings を意図的に除いている (合成ケースには
+   * 無関係だから) ので、この枝は self-test の外に居た。本番スキャンでも
+   * 実物の台帳の項目は**今まさに使用中**なので何も出ない。
+   * つまり「誰かが SHA 固定に直したのに台帳から消し忘れた」という
+   * **未来の状態でしか動かない枝**が、無検査で置かれていた。
+   *
+   * 消し忘れた台帳の項目は**永久に開いたままの穴**である ——
+   * その action が後で戻ってきたとき、あらかじめ免除されている。
+   */
+  const clean = { name: 'x.yml', text: 'permissions:\n  contents: read\n' };
+  const used = {
+    name: 'x.yml',
+    text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: vendor/act@v1\n',
+  };
+  const ledgerCases = [
+    ['台帳の項目が使われていなければ鳴る', [clean], { 'vendor/act@v1': {} }, 1],
+    ['台帳の項目が使われていれば鳴らない', [used], { 'vendor/act@v1': {} }, 0],
+    ['台帳が空なら何も出ない', [clean], {}, 0],
+    ['台帳に無い未固定は台帳の掃除では鳴らない (別の枝の仕事)', [used], {}, 0],
+  ];
+  for (const [label, list, allow, expected] of ledgerCases) {
+    const n = check(list, allow).filter((p) => p.file === '(台帳)').length;
+    const ok = n === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} 台帳の掃除: ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件`);
     return 1;
