@@ -1044,6 +1044,137 @@ async function vaultPasswordSuite(browser) {
   await ctx.close();
 }
 
+/*
+ * 保管領域が「消えうる」ことを、実機の画面が正しく名乗るか。
+ *
+ * ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の領域になる
+ * (実測 2026-08-25: `persisted()` も `persist()` も false)。この状態では
+ * 空き容量の都合や長期の無操作でブラウザが立ち退かせうるが、**控えた 24 語
+ * では戻せない** —— フレーズは保管庫を*開ける*ための物で、立ち退きでは
+ * 暗号化されたトークンごと消えるため、開ける対象が残らない。
+ *
+ * ## 対照を節の中に入れてある
+ *
+ * 「best-effort のとき警告が出る」だけを見ると、**常に警告を出す実装**でも
+ * 通り、**常に best-effort を返す実装**でも通ってしまう。そこで 2 つの
+ * 文脈を走らせ、**値と表示が連動する**ことを見る:
+ *
+ *   A. 既定 (実際の環境)        → durability=best-effort / 警告が**出る**
+ *   B. persisted() を true に偽装 → durability=persistent  / 警告が**出ない**
+ *
+ * A だけなら「常に警告」で通り、B だけなら「常に沈黙」で通る。両方あって
+ * はじめて「問い合わせた値で出し分けている」と言える。
+ */
+async function storageDurabilitySuite(browser) {
+  console.log('--- 保管領域が消えうることを名乗る ---');
+
+  // 保護状態の欄が非同期に埋まるまで待つ (「確認中…」の間に読むと空振りする)。
+  const waitProtection = (page) =>
+    page.waitForFunction(
+      () => {
+        const t = document.body.textContent ?? '';
+        return (
+          t.includes('トークンは暗号化されています') ||
+          t.includes('トークンを暗号化できません') ||
+          t.includes('保護状態を取得できませんでした')
+        );
+      },
+      undefined,
+      { timeout: 30000 },
+    );
+
+  // ── A. 既定の環境 ──
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  const sp = await page.evaluate(() => window.serviceHub.storageProtection());
+  ok(
+    ['file', 'persistent', 'best-effort'].includes(sp.durability),
+    `durability: 3 値のどれかを名乗る (実際 ${JSON.stringify(sp.durability)})`,
+  );
+  // ブラウザ版に `file` は無い —— あれは Electron の userData のファイル。
+  ok(sp.durability !== 'file', `durability: ブラウザ版で file を名乗らない (実際 ${sp.durability})`);
+  ok(sp.encrypted === true, `durability: 暗号化の欄とは別に立っている (encrypted=${sp.encrypted})`);
+
+  // 実際に**問い合わせて**いるか —— ブラウザ自身の答えと突き合わせる。
+  const persisted = await page.evaluate(async () => {
+    try {
+      return await navigator.storage.persisted();
+    } catch {
+      return 'unavailable';
+    }
+  });
+  ok(
+    persisted === 'unavailable'
+      ? sp.durability === 'best-effort'
+      : sp.durability === (persisted ? 'persistent' : 'best-effort'),
+    `durability: ブラウザの persisted() と一致する (persisted=${persisted} / durability=${sp.durability})`,
+  );
+
+  await gotoService(page, '#settings', 'text=保存時の保護状態');
+  await waitProtection(page);
+  const body = await page.locator('body').innerText();
+  const warned = body.includes('消えうる');
+  ok(
+    warned === (sp.durability === 'best-effort'),
+    `★ 表示: durability の値と警告の有無が一致する (durability=${sp.durability} / 警告=${warned})`,
+  );
+  if (sp.durability === 'best-effort') {
+    ok(body.includes('24 語では戻せません'), '表示: 24 語では戻せないことを書いている');
+    ok(body.includes('バックアップを書き出してください'), '表示: バックアップを勧めている');
+  }
+  ok(errs.length === 0, `durability: ページエラー 0 (実際 ${errs.length})`);
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+
+  // ── B. 対照: persisted() が true を返す環境を作る ──
+  // `addInitScript` は毎回の遷移の前に走るので、リロードを挟む gotoService でも効く。
+  const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await ctx2.addInitScript(() => {
+    try {
+      Object.defineProperty(navigator.storage, 'persisted', {
+        value: async () => true,
+        configurable: true,
+      });
+    } catch {
+      /* 偽装できない環境ではそのまま (下の検査が実際の値で落ちて気づける) */
+    }
+  });
+  const page2 = await ctx2.newPage();
+  const errs2 = [];
+  collectErrors(page2, errs2);
+
+  await page2.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page2);
+  const sp2 = await page2.evaluate(() => window.serviceHub.storageProtection());
+  ok(
+    sp2.durability === 'persistent',
+    `★ 対照: persisted() が true なら persistent を名乗る (実際 ${sp2.durability})`,
+  );
+
+  await gotoService(page2, '#settings', 'text=保存時の保護状態');
+  await waitProtection(page2);
+  const body2 = await page2.locator('body').innerText();
+  ok(
+    !body2.includes('消えうる'),
+    '★ 対照: 消えない領域では立ち退きの警告を出さない (常に警告する実装をここで落とす)',
+  );
+  // 警告が消えても、保護状態の欄そのものは出ている (節ごと落ちたのを
+  // 「警告が無い」と読み違えないため)。
+  ok(
+    body2.includes('保存先:'),
+    '対照: 保護状態の欄自体は出ている (節ごと消えたのを「警告なし」と読まない)',
+  );
+  ok(errs2.length === 0, `対照: ページエラー 0 (実際 ${errs2.length})`);
+  if (errs2.length > 0) errs2.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx2.close();
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -1165,6 +1296,7 @@ async function businessComparisonSuite(browser) {
   if (run('frameGuard')) await frameGuardSuite(browser);
   if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
+  if (run('storageDurability')) await storageDurabilitySuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
