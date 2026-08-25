@@ -84,6 +84,7 @@ describe('checkLinks が関門を実際に通していること', () => {
       entries: { id: string; sources: { url: string }[] }[],
       today: Date,
       shardSize: number,
+      deps?: { fetchImpl?: unknown; lookup?: unknown },
     ) => Promise<{ checked: number; dead: unknown[]; suspect: { url: string; status: unknown }[] }>;
   };
 
@@ -97,7 +98,15 @@ describe('checkLinks が関門を実際に通していること', () => {
     }) as typeof fetch;
     try {
       const entries = urls.map((url, i) => ({ id: `e${i}`, sources: [{ url }] }));
-      const res = await checkLinks(entries, new Date('2026-08-22T00:00:00Z'), urls.length);
+      /*
+       * 2026-08-25 から、取りに行く前に**名前の解決先が公開空間か**も見る
+       * (第三者の `302 Location:` で内部アドレスへ向けられる経路を塞ぐため)。
+       * 検査では実 DNS を引かない —— 引くと `.test` / `.example` が
+       * 解決できず、この検査が「網の有無」を測ってしまう。
+       */
+      const res = await checkLinks(entries, new Date('2026-08-22T00:00:00Z'), urls.length, {
+        lookup: async () => [{ address: '93.184.216.34', family: 4 }],
+      });
       return { attempted, res };
     } finally {
       globalThis.fetch = original;

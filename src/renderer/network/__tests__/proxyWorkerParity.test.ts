@@ -1,9 +1,15 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isPrivateOrReservedTarget } from '../proxy';
+
+const req = createRequire(import.meta.url);
+const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.cjs') as {
+  isPrivateOrReservedHost: (host: string) => boolean;
+};
 
 /*
  * **同じ判断が 2 か所にある。片方は利用者が配る側にある。**
@@ -29,6 +35,17 @@ import { isPrivateOrReservedTarget } from '../proxy';
  * 文で「同じ」と書いても、書いた瞬間から離れていく。**実物どうしを
  * 同じ標本へ当てて比べる。** md から関数を取り出して読み込むのは、
  * 規則を写さないためである —— 写した時点で、比べているのは写しになる。
+ *
+ * ## 3 つ目 (2026-08-25)
+ *
+ * 週次 CI の出典リンク検査も、同じ判断を要る側になった
+ * (`scripts/public-host-guard.cjs`)。第三者の `302 Location:` で
+ * 内部アドレスへ向けられる経路を塞ぐためで、**表を書き写せば同じずれが
+ * 3 か所目として起きる**。だからここへ並べて、同じ標本に当てる。
+ *
+ * ただし 1 点だけ意図的に違う —— CI 側は**名前**も受け取る
+ * (`example.com` のような host)。名前は解決してから判定するので、
+ * ここでの比較は**リテラル (IP) の標本に限る**。
  */
 
 const MD = join(__dirname, '../../../../docs/PROXY_EXAMPLE.md');
@@ -137,14 +154,16 @@ describe('proxy の宛先判定は client と Worker で同じ', () => {
     expect(ALLOWED.length).toBeGreaterThan(10);
   });
 
-  it.each(BLOCKED)('★ %s は両方が塞ぐ', (host) => {
+  it.each(BLOCKED)('★ %s は 3 実装すべてが塞ぐ', (host) => {
     expect(clientBlocks(host), `client が ${host} を通しています`).toBe(true);
     expect(workerBlocks(host), `Worker (docs/PROXY_EXAMPLE.md) が ${host} を通しています`).toBe(true);
+    expect(isPrivateOrReservedHost(host), `CI の関門が ${host} を通しています`).toBe(true);
   });
 
-  it.each(ALLOWED)('%s は両方が通す', (host) => {
+  it.each(ALLOWED)('%s は 3 実装すべてが通す', (host) => {
     expect(clientBlocks(host), `client が ${host} を塞いでいます`).toBe(false);
     expect(workerBlocks(host), `Worker が ${host} を塞いでいます`).toBe(false);
+    expect(isPrivateOrReservedHost(host), `CI の関門が ${host} を塞いでいます`).toBe(false);
   });
 
   /*
@@ -152,9 +171,12 @@ describe('proxy の宛先判定は client と Worker で同じ', () => {
    * どちらか片方だけが新しい範囲を足したときは、標本に足すまで気付けない。
    * 同じ入力に対する**答えの一致**を別に見ておくと、ずれが標本より先に出る。
    */
-  it('★ 同じ入力に対して両者の答えが一致する', () => {
-    const disagree = [...BLOCKED, ...ALLOWED].filter((h) => clientBlocks(h) !== workerBlocks(h));
-    expect(disagree, '同じ宛先を client と Worker が違う扱いにしています').toEqual([]);
+  it('★ 同じ入力に対して 3 実装の答えが一致する', () => {
+    const disagree = [...BLOCKED, ...ALLOWED].filter((h) => {
+      const verdicts = [clientBlocks(h), workerBlocks(h), isPrivateOrReservedHost(h)];
+      return verdicts.some((v) => v !== verdicts[0]);
+    });
+    expect(disagree, '同じ宛先を client / Worker / CI の関門が違う扱いにしています').toEqual([]);
   });
 
   /*
