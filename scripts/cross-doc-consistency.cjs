@@ -302,6 +302,86 @@ function checkCiGateCoverage(failures, allOverride, ciOverride) {
   return gates.length;
 }
 
+// ---------------------------------------------------------------------------
+// 構造チェック: 出荷物に当てる検査は、**公開するワークフロー**でも走ること
+// ---------------------------------------------------------------------------
+
+/*
+ * `ci.yml` は出た HTML に 2 つの検査を当てている ——
+ * 個人データの走査 (`lint-sample-data.cjs --artifact`) と
+ * CSP (`lint-artifact-csp.cjs`)。どちらも「出荷物に混ざったら公開される」
+ * 事故を承けて足したものである。
+ *
+ * だが**公開しているのは `pages.yml`** で、そちらは 2026-08-25 の時点で
+ * ゲートを 1 つも走らせず、`needs:` も持っていなかった。2 つは別々の
+ * ワークフローとして push: main で**並行に**起動するので、
+ * ci.yml が赤くなっても pages.yml は公開を終える。
+ *
+ * つまり検査は「公開の門」ではなく「公開後の報せ」だった。この repo で
+ * 繰り返し出ている「検査と危ない操作が別の場所に在る」形そのものなので、
+ * 文で約束せずここで突き合わせる。
+ *
+ * 逆方向 (pages.yml にしか無い) は許す —— 公開側だけが見るべき物は在りうる。
+ */
+const ARTIFACT_SCANNERS = [
+  {
+    script: 'scripts/lint-sample-data.cjs',
+    why: '出荷物に実在の個人データが混ざっていないか (過去に dist/standalone.html で実際に起きた)',
+  },
+  {
+    script: 'scripts/lint-artifact-csp.cjs',
+    why: 'script-src がハッシュ固定を失って unsafe-inline に戻る回帰は、アプリが動いたまま注入も通るのでここでしか捕まらない',
+  },
+];
+
+/**
+ * `ciOverride` / `pagesOverride` は self-test 用の差し込み口。
+ * 無いと**このゲート自身が鳴るかを試せない**。
+ */
+function checkPublishScanCoverage(failures, ciOverride, pagesOverride) {
+  const ci =
+    ciOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/ci.yml')) : ciOverride;
+  const pages =
+    pagesOverride === undefined
+      ? read(path.join(REPO_ROOT, '.github/workflows/pages.yml'))
+      : pagesOverride;
+  if (ci == null || pages == null) {
+    failures.push({
+      fact: 'publish scan coverage',
+      reason: '.github/workflows/ci.yml か pages.yml を読めない',
+    });
+    return 0;
+  }
+  let checked = 0;
+  for (const { script, why } of ARTIFACT_SCANNERS) {
+    if (!ci.includes(script)) continue; // ci.yml が当てていないなら要求しない
+    checked += 1;
+    if (!pages.includes(script)) {
+      failures.push({
+        fact: 'publish scan coverage',
+        reason:
+          `${script} は ci.yml で出荷物に当てているのに pages.yml に無い —— ` +
+          `公開しているのは pages.yml のほうで、そちらは needs: を持たず並行に走るため、` +
+          `ci.yml が赤でも公開は終わる (${why})`,
+      });
+    }
+  }
+  // 公開の直前であること。upload-pages-artifact より後ろに置いても意味が無い。
+  const upload = pages.indexOf('upload-pages-artifact');
+  if (upload !== -1) {
+    for (const { script } of ARTIFACT_SCANNERS) {
+      const at = pages.indexOf(script);
+      if (at !== -1 && at > upload) {
+        failures.push({
+          fact: 'publish scan coverage',
+          reason: `${script} が pages.yml の upload-pages-artifact より後ろに在る —— 公開してから調べても遅い`,
+        });
+      }
+    }
+  }
+  return checked;
+}
+
 /**
  * 逆向きの照合 — **「CI に無い」と書いてあるものが、本当に無いか。**
  *
@@ -700,6 +780,46 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
   }
+
+  /*
+   * 出荷物検査が**公開するワークフロー**でも走るか (2026-08-25 に足した)。
+   * 実物を壊さずに鳴らせるよう、両方の yml を差し込みで渡す。
+   */
+  {
+    const CI_BOTH =
+      '      - run: node scripts/lint-sample-data.cjs --artifact x.html\n' +
+      '      - run: node scripts/lint-artifact-csp.cjs --app x.html\n';
+    const PAGES_OK =
+      '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
+      '      - run: node scripts/lint-artifact-csp.cjs --app _site/app.html\n' +
+      '      - uses: actions/upload-pages-artifact@v3\n';
+    const PAGES_NONE = '      - uses: actions/upload-pages-artifact@v3\n';
+    const PAGES_HALF =
+      '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
+      '      - uses: actions/upload-pages-artifact@v3\n';
+    const PAGES_AFTER =
+      '      - uses: actions/upload-pages-artifact@v3\n' +
+      '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
+      '      - run: node scripts/lint-artifact-csp.cjs --app _site/app.html\n';
+    for (const [label, ci, pages, expected] of [
+      ['公開側にも両方あれば通る', CI_BOTH, PAGES_OK, 0],
+      ['★ 公開側に 1 つも無ければ 2 件鳴る', CI_BOTH, PAGES_NONE, 2],
+      ['★ 片方だけ足りなければ 1 件鳴る', CI_BOTH, PAGES_HALF, 1],
+      ['★ 公開の後ろに置いたら鳴る (2 件とも順序違反)', CI_BOTH, PAGES_AFTER, 2],
+      ['ci.yml が当てていないものは要求しない', '', PAGES_NONE, 0],
+      ['どちらか読めなければ鳴る', null, PAGES_OK, 1],
+    ]) {
+      const f = [];
+      checkPublishScanCoverage(f, ci, pages);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+    // 台帳に理由が書かれていること。
+    const noWhy = ARTIFACT_SCANNERS.filter((a) => String(a.why).trim().length < 20);
+    if (noWhy.length > 0) bad++;
+    console.log(`  ${noWhy.length === 0 ? '✓' : '✗'} 出荷物検査の台帳 ${ARTIFACT_SCANNERS.length} 件に理由がある`);
+  }
   /*
    * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
    * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
@@ -760,10 +880,12 @@ function main() {
   const gateCount = checkCiGateCoverage(failures);
   checkNotInCiClaims(failures);
   const catCount = checkReadmeCategories(failures);
+  const pubCount = checkPublishScanCoverage(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
-      ` + README ${catCount} カテゴリの内訳を services.ts と照合`,
+      ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
+      ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');
