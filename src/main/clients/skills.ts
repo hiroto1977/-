@@ -103,6 +103,33 @@ export async function scanSkills(
     throw err;
   }
 
+  /*
+   * **読む前に、根の中かどうかを実体で見る。**
+   *
+   * `readSkillContent` は 2026-08-23 に同じ手当てを入れている
+   * (symlink を辿ると根の外が読め、その中身が Anthropic API へ送られた)。
+   * **ところが列挙側には入っていなかった。** 同じ根を扱う 2 つの関数で、
+   * 片方だけが守られている —— 今日何度も見た形である。
+   *
+   * 列挙側の穴は `entry.isDirectory()` が **symlink では false** になること。
+   * そこで下の `.md` 判定 (**名前しか見ない**) に落ち、`fs.readFile` が
+   * symlink を辿って外を読む。実測 (2026-08-25、`scanSkills` 直接呼び出し):
+   *
+   * ```
+   *   skills/evil.md -> /tmp/…/OUTSIDE-SECRET.md
+   *   → {"name":"LEAKED-NAME","description":"TOP-SECRET-DESCRIPTION", …}
+   * ```
+   *
+   * 送られるのは frontmatter の 2 欄だけなので `readSkillContent` ほど重くない。
+   * だが**前提条件は同じ** (細工した symlink を含む配布物) で、
+   * あちらを塞いだ理由がそのままこちらにも当てはまる。
+   *
+   * 根の側も実体に直す —— ホームや `.claude` が symlink 越しにあると
+   * (実体だけ直したのでは) **正当なスキルまで弾く**ため。
+   */
+  const baseReal = await fs.realpath(dir).catch(() => path.resolve(dir));
+  const baseResolved = baseReal + path.sep;
+
   const results: SkillEntry[] = [];
   for (const entry of entries) {
     const entryPath = path.join(dir, entry.name);
@@ -137,9 +164,13 @@ export async function scanSkills(
     // readFile or skipped by `continue` in the catch — the initial '' is
     // never observable.
     // Stryker disable next-line StringLiteral
+    // 実体に直せない = 壊れた symlink 等。読まない。
+    const realFile = await fs.realpath(skillFile).catch(() => null);
+    if (realFile === null || !realFile.startsWith(baseResolved)) continue;
+
     let content = '';
     try {
-      content = await fs.readFile(skillFile, 'utf8');
+      content = await fs.readFile(realFile, 'utf8');
     } catch {
       continue;
     }

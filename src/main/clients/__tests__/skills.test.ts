@@ -766,3 +766,96 @@ describe('ACTIONS["run-skill"] — name validation', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+/*
+ * **列挙も、根の中かどうかを実体で見る。**
+ *
+ * `readSkillContent` は 2026-08-23 に symlink 越しの読み出しを塞いだが、
+ * **列挙側 (`scanSkills`) には同じ手当てが入っていなかった**。
+ * `entry.isDirectory()` は symlink では false になるので、名前しか見ない
+ * `.md` 判定へ落ち、`fs.readFile` が symlink を辿って根の外を読む。
+ *
+ * 実測 (2026-08-25、修正前):
+ *
+ * ```
+ *   skills/evil.md -> <root 外>/OUTSIDE-SECRET.md
+ *   → {"name":"LEAKED-NAME","description":"TOP-SECRET-DESCRIPTION", …}
+ * ```
+ *
+ * 出るのは frontmatter の 2 欄だけで `readSkillContent` ほど重くないが、
+ * **前提条件は同じ** (細工した symlink を含む配布物) なので同じ扱いにする。
+ */
+describe('scanSkills — 根の外は列挙しない', () => {
+  const mkRoot = async (): Promise<string> => {
+    const base = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-containment-'));
+    await fs.mkdir(path.join(base, 'skills'));
+    return base;
+  };
+
+  it('★ 根の外へ向いた symlink は列挙しない (frontmatter も出さない)', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    const outside = path.join(root, 'OUTSIDE-SECRET.md');
+    await fs.writeFile(outside, '---\nname: LEAKED-NAME\ndescription: TOP-SECRET\n---\nbody\n');
+    await fs.symlink(outside, path.join(skills, 'evil.md'));
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name)).not.toContain('LEAKED-NAME');
+    expect(JSON.stringify(out)).not.toContain('TOP-SECRET');
+    expect(out).toEqual([]);
+  });
+
+  /*
+   * **全部弾く実装でも上は通る。** 正当なスキルが残ることまで見ないと、
+   * 「読めなくなっただけ」を修正と呼んでしまう。
+   */
+  it('★ 根の中の実ファイルはこれまでどおり列挙する', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name)).toEqual(['good']);
+  });
+
+  /*
+   * **「symlink だから弾く」ではなく「根の外だから弾く」。**
+   * 根の中を指す symlink は正当な使い方 (整理のための別名) なので通す。
+   * 素朴に `isSymbolicLink()` で弾く実装は、ここで落ちる。
+   */
+  it('根の中を指す symlink は列挙する (弾くのは行き先であって種類ではない)', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.writeFile(path.join(skills, 'real.md'), '---\nname: real\ndescription: d\n---\n');
+    await fs.symlink(path.join(skills, 'real.md'), path.join(skills, 'alias.md'));
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name).sort()).toEqual(['real', 'real']);
+  });
+
+  /*
+   * **根そのものが symlink 越しでも、正当なスキルを弾かない。**
+   * 実体だけを根にすると、`~` や `.claude` が symlink の環境で全滅する
+   * (`readSkillContent` の注記が挙げているのと同じ罠)。
+   */
+  it('根が symlink 越しでも、中のスキルは列挙する', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
+    const linkToSkills = path.join(root, 'skills-link');
+    await fs.symlink(skills, linkToSkills);
+
+    const out = await scanSkills(linkToSkills, 'user');
+    expect(out.map((s) => s.name)).toEqual(['good']);
+  });
+
+  it('壊れた symlink は静かに飛ばす (走査は止めない)', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.symlink(path.join(root, 'does-not-exist.md'), path.join(skills, 'broken.md'));
+    await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name)).toEqual(['good']);
+  });
+});
