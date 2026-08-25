@@ -1144,6 +1144,22 @@ async function storageDurabilitySuite(browser) {
       '★ 表示: 「バックアップを書き出してください」と言い切らない (トークンは戻らない)',
     );
   }
+  /*
+   * **同じ話を、利用者が居る場所でしているか。**
+   *
+   * 「暗号化されているのはトークンだけ」「立ち退きで全部消える」は
+   * 監査文書には書いたが、書類を置く人が見るのは**ライブラリの画面**である。
+   * 設定画面まで読みに行く前提の開示は、開示していないのとあまり変わらない。
+   */
+  await gotoService(page, '#library', 'text=50 MB / 100 件');
+  const lib = await page.locator('body').innerText();
+  ok(lib.includes('暗号化されません'), 'ライブラリ: 書類が暗号化されないと画面で言っている');
+  ok(lib.includes('ここのファイルは入りません'), 'ライブラリ: バックアップに入らないと画面で言っている');
+  // アプリ自身の自動削除 (50 MB / 100 件) と、ブラウザの立ち退きは**別の消え方**。
+  // 片方だけ書くと、もう片方に備えられない。
+  ok(lib.includes('50 MB / 100 件'), 'ライブラリ: アプリ側の自動削除の上限を言っている');
+  ok(lib.includes('まとめて'), 'ライブラリ: ブラウザ側の立ち退き (全部消える) を別に言っている');
+
   ok(errs.length === 0, `durability: ページエラー 0 (実際 ${errs.length})`);
   if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
   await ctx.close();
