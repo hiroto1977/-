@@ -196,12 +196,50 @@ function selfTest() {
     ['shared', 'main', false],
     ['shared', 'renderer', false],
     ['shared', 'shared', true],
+    /*
+     * ここから 6 組は 2026-08-25 に足した。16 通りのうち **10 通りしか
+     * 書かれておらず**、抜けていた 3 つの禁止遷移 (`preload → renderer` /
+     * `main → preload` / `shared → preload`) は **`ALLOW` に足しても
+     * self-test が通った** —— 境界を黙って開けられる状態だった
+     * (実測: 禁止 8 通りを 1 つずつ許して回した)。
+     *
+     * `→ preload` だけが抜けていたのは偶然ではない。preload は
+     * 「renderer から読める唯一の特権側」なので**表の中で例外的**であり、
+     * 手で並べると意識から落ちる。だから下で**総当たりを強制**する。
+     */
+    ['renderer', 'renderer', true],
+    ['preload', 'preload', true],
+    ['main', 'main', true],
+    ['preload', 'renderer', false],
+    ['main', 'preload', false],
+    ['shared', 'preload', false],
   ];
   for (const [from, to, expected] of zonePairs) {
     const got = isAllowedZoneTransition(from, to);
     const ok = got === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${from} → ${to}: ${got ? '許可' : '拒否'} (期待 ${expected ? '許可' : '拒否'})`);
+  }
+
+  /*
+   * **16 通りを 1 つも落とさない。**
+   *
+   * 期待値は `ALLOW` とは独立に手で書く (`ALLOW` から導くと
+   * `ALLOW.includes(x) === ALLOW.includes(x)` という**落ちようのない検査**に
+   * なる —— このファイルの冒頭が戒めているのと同じ罠)。
+   * 独立に書く以上、**書き落とし**が起こる。そこを機械で塞ぐ。
+   */
+  const zoneNames = Object.keys(ALLOW);
+  const covered = new Set(zonePairs.map(([f, t]) => `${f}>${t}`));
+  const missingPairs = [];
+  for (const f of zoneNames) {
+    for (const t of zoneNames) if (!covered.has(`${f}>${t}`)) missingPairs.push(`${f} → ${t}`);
+  }
+  if (missingPairs.length > 0) {
+    bad += missingPairs.length;
+    console.log(`  ✗ 期待値の書かれていない遷移が ${missingPairs.length} 件: ${missingPairs.join(', ')}`);
+  } else {
+    console.log(`  ✓ ${zoneNames.length}×${zoneNames.length} = ${zoneNames.length ** 2} 通りすべてに期待値がある`);
   }
 
   if (bad > 0) {
