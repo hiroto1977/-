@@ -344,6 +344,26 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
   }
+  /*
+   * **走査の的そのもの。** 規則がどれだけ正しくても、その拡張子を読んで
+   * いなければ 1 件も鳴らない。2026-08-25 に `.tsx` が丸ごと外れていて、
+   * 「変数ホスト + Bearer」を植えても exit 0 だった (walk の注記を参照)。
+   * 検出の中身と違って、これは**外すと静かに効く**ので here で留める。
+   */
+  const extCases = [
+    ['.ts を読む', 'clients/github.ts', true],
+    ['.tsx を読む (2026-08-25 に外れていた)', 'pages/LibraryPage.tsx', true],
+    ['.js は読まない (src はすべて TypeScript)', 'legacy.js', false],
+    ['.json は読まない', 'registry.json', false],
+    ['.tsx を含む名前でも拡張子でなければ読まない', 'notes.tsx.md', false],
+  ];
+  for (const [label, name, expected] of extCases) {
+    const got = SCAN_EXT.test(name);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} 走査の的: ${label}: ${got} (期待 ${expected})`);
+  }
+
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
     return 1;
@@ -414,12 +434,32 @@ function collectBareSends() {
   return found;
 }
 
+/**
+ * 走査する拡張子。**2026-08-25 まで `.ts` だけで、`.tsx` (94 ファイル) が
+ * 丸ごと視界の外だった。** 上の注記は「一覧をやめて src 全体にした」と
+ * 書いているが、それはディレクトリの話で、範囲はもう一段**拡張子**でも
+ * 絞られていた。対照を回すと差がそのまま出る:
+ *
+ * ```
+ *   LibraryPage.tsx へ
+ *     fetch(`${site}/rest/api/3/issue`, { headers: { Authorization: `Bearer ${token}` } })
+ *   を植える
+ *     .ts$  のとき  → exit 0        (黙る)
+ *     .tsx? のとき  → exit 1 / 1 件 (台帳に無い変数送り先として鳴る)
+ * ```
+ *
+ * ブラウザ版では画面側 (`pages/*.tsx`) が直接 fetch できる —— 実測では
+ * 今 1 件も無いが (`.tsx` を足しても検出は 13 件のまま)、**無いことと
+ * 見えないことは違う**。
+ */
+const SCAN_EXT = /\.tsx?$/;
+
 function* walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.name === '__tests__' || e.name === 'node_modules') continue;
     const full = path.join(dir, e.name);
     if (e.isDirectory()) yield* walk(full);
-    else if (/\.ts$/.test(e.name)) yield full;
+    else if (SCAN_EXT.test(e.name)) yield full;
   }
 }
 
