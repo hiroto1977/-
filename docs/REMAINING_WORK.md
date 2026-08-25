@@ -5882,3 +5882,66 @@ scaffold は id を camelCase にして鍵にする (`microsoft-365` → `micros
 (効かなくなれば照合が破綻するので、それを固定する)。
 
 対照: `super-delivery` のスナップショットを削ると名指しで落ちる。
+
+---
+
+### 第三者の応答をどう扱っているか — 更新確認は白 (2026-08-25)
+
+軸を「**アプリが第三者から受け取った値をどう扱うか**」へ移した。
+最初の的は更新確認 (`shared/updateCheck.ts`) —— GitHub の応答から
+`tag_name` と `html_url` を取り、後者を「更新はこちら」として画面に出す。
+**応答を差し替えられたら任意の URL を押させられる**位置である。
+
+#### 判定は正しかった
+
+`isGithubReleaseUrl` は `new URL()` で解析し、`protocol === 'https:'` かつ
+**`hostname` を完全一致**で `github.com` / `www.github.com` と比べる。
+古典的な回避を実測で当てた:
+
+| 入力 | 正規化後の hostname | 結果 |
+|---|---|---|
+| `https://github.com.evil.test/x` | `github.com.evil.test` | 弾く ✅ |
+| `https://evil.test/github.com` | `evil.test` | 弾く ✅ |
+| `https://github.com@evil.test/x` | `evil.test` | 弾く ✅ |
+| `https://gіthub.com/x` (キリル і) | `xn--gthub-n2e.com` | 弾く ✅ |
+| `https://github.cοm/x` (ギリシャ ο) | `github.xn--cm-jbc` | 弾く ✅ |
+| `https://sub.github.com/x` | `sub.github.com` | 弾く ✅ |
+
+#### 自分の期待のほうが間違っていた (今日 3 度目)
+
+1 件だけ「通った」—— `https://ｇithub.com/x` (**全角の ｇ** U+FF47)。
+同型異字の見逃しかと思ったが、実測すると:
+
+```
+new URL('https://ｇithub.com/x').hostname === 'github.com'
+```
+
+URL の解析が NFKC で ASCII の `g` へ畳むので、これは**本物の github.com**
+である。開かれるのも本物なので、**通すのが正しい**。
+規則が正しく、私の期待が誤っていた。
+
+(同じ形は今日 3 度目 —— `data:image/pngX` の綴り、landing の「72」、そしてこれ。
+**「鳴らなかった」と同じくらい「鳴った」も疑う。**)
+
+#### 足したのは検査だけ
+
+既存の検査は別ホスト・平文・非 URL を覆っていたが、
+**同型異字と userinfo が無かった**ので 5 件足した。
+
+さらに **通す側の標本を 1 件**足した —— 全角 ｇ の行である。
+一見すると余計だが、これは**弾く側の設計を守っている**:
+
+> 判定を「生の文字列に `github.com` が含まれるか」へ書き換えると、
+> **弾く側の標本のうち 2 件は落ちるが**、この行は「通す」のままなので
+> 気付きにくい。逆に**この行を残しておくと、書き換えは 3 件を落とす**。
+
+対照で確かめた —— `raw.includes('github.com')` に書き換えると:
+
+```
+× 別ホスト・平文・非 URL は断る        (github.com.evil.example が通る)
+× 見た目が github.com でも、別ホストなら断る (userinfo が通る)
+× 正規化すると本物になる綴りは通す      (本物が弾かれる)
+```
+
+**両方向が同時に鳴る。** 安全側の主張と、正当な利用の主張を対にして置くと、
+片方だけを満たす改変が通らなくなる。

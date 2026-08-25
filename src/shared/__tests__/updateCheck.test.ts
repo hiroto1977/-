@@ -173,6 +173,44 @@ describe('isGithubReleaseUrl', () => {
       expect(isGithubReleaseUrl(u), u).toBe(false);
     }
   });
+
+  /*
+   * **同型異字 (homograph) と userinfo。**
+   *
+   * 判定が `new URL()` で解析した `hostname` を見ていることが、ここで効く。
+   * 生の文字列に `github.com` が含まれるかで見ていたら、下の 4 つは全部通る。
+   */
+  it('見た目が github.com でも、別ホストなら断る', () => {
+    for (const u of [
+      // キリル文字の і (U+0456)。punycode で xn--gthub-n2e.com になる。
+      'https://g\u0456thub.com/a',
+      // ギリシャ文字の ο (U+03BF)。github.xn--cm-jbc になる。
+      'https://github.c\u03BFm/a',
+      // 上を punycode で直接書いた形。
+      'https://xn--gthub-n2e.com/a',
+      // userinfo で本物に見せる古典。hostname は evil.example。
+      'https://github.com@evil.example/a',
+      // 部分ドメイン。リリースページは github.com 直下にしか無い。
+      'https://sub.github.com/a',
+    ]) {
+      expect(isGithubReleaseUrl(u), u).toBe(false);
+    }
+  });
+
+  /*
+   * **これは通してよい。** 全角の ｇ (U+FF47) は URL の解析時に NFKC で
+   * ASCII の g へ畳まれるので、`hostname` は**本物の github.com** になる。
+   * 実際に開かれるのも本物なので、断る理由が無い。
+   *
+   * この 1 件を固定しておくのは、判定を「生の文字列に github.com が
+   * 含まれるか」へ書き換える改変を止めるため —— そうすると**この行は
+   * 落ちないまま**、上の userinfo の行が通るようになる。
+   * **通す側の標本が、弾く側の設計を守っている。**
+   */
+  it('正規化すると本物になる綴りは通す (判定が解析後のホストを見ている証拠)', () => {
+    expect(new URL('https://\uFF47ithub.com/a').hostname).toBe('github.com');
+    expect(isGithubReleaseUrl('https://\uFF47ithub.com/a')).toBe(true);
+  });
 });
 
 describe('parseLatestRelease', () => {
