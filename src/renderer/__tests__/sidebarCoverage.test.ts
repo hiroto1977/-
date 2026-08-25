@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { SERVICES } from '../services';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
+import { SNAPSHOT } from '../data/snapshot';
 
 /*
  * **サイドバーは、利用者がサービスへ辿り着く唯一の道である。**
@@ -79,5 +80,74 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
   it('すべてのサイドバー項目が page を持つ', () => {
     const noPage = SERVICES.filter((s) => typeof s.page !== 'function').map((s) => s.id);
     expect(noPage as ServiceId[]).toEqual([]);
+  });
+});
+
+/*
+ * **静的スナップショットも `SERVICE_IDS` へ束ねる。**
+ *
+ * `SNAPSHOT` は型注釈の無いオブジェクトリテラルで、`Record<ServiceId, …>` では
+ * ない。つまり項目を落としても型は通り、`SNAPSHOT[id]` が `undefined` になる。
+ * 多くのサービスの fetcher は「`SNAPSHOT[id]` をそのまま返す」だけの静的
+ * スタブなので、落ちた項目のページは**常に空**になる。
+ *
+ * `lint:test-coverage` は test と action を `SERVICE_IDS` へ束ねているが、
+ * スナップショットは見ていなかった (2026-08-25 実測)。
+ *
+ * 鍵は id の camelCase (`microsoft-365` → `microsoft365`)。scaffold が
+ * そう作るので、**照合もその規則で行う** —— 素の id で比べると 12 件が
+ * 「無い」と出る (一度そう誤読した)。
+ */
+const camelKey = (id: string): string => id.replace(/-([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+
+/** スナップショットを持たないサービス。理由つき・双方向。 */
+const SNAPSHOT_LESS: Readonly<Record<string, string>> = {
+  village: '専用の fetcher (fetchVillageSnapshot) を持ち、VillagePage は SNAPSHOT を読まない',
+};
+
+/** サービス id に対応しないトップレベル鍵。 */
+const NON_SERVICE_KEYS: Readonly<Record<string, string>> = {
+  fetchedAt: 'スナップショット全体の取得時刻 (サービスではない)',
+};
+
+describe('静的スナップショットは SERVICE_IDS を覆う', () => {
+  const keys = new Set(Object.keys(SNAPSHOT));
+
+  it('走査が実物に届いている (空撃ちでない)', () => {
+    expect(keys.size).toBeGreaterThan(50);
+  });
+
+  it('台帳に無いサービスは、すべてスナップショットを持つ', () => {
+    const missing = SERVICE_IDS.filter(
+      (id) => !keys.has(id) && !keys.has(camelKey(id)) && !Object.hasOwn(SNAPSHOT_LESS, id),
+    );
+    expect(
+      missing,
+      'スナップショットの無いサービスがあります — 静的スタブの fetcher なら画面は常に空になります',
+    ).toEqual([]);
+  });
+
+  it('台帳の項目は本当にスナップショットを持たない (古い例外を残さない)', () => {
+    const stale = Object.keys(SNAPSHOT_LESS).filter((id) => keys.has(id) || keys.has(camelKey(id)));
+    expect(stale, '台帳にあるのにスナップショットがあります — 例外を消してください').toEqual([]);
+  });
+
+  it('どの ServiceId にも対応しない鍵は、台帳にあるものだけ', () => {
+    const known = new Set(SERVICE_IDS.flatMap((id) => [id as string, camelKey(id)]));
+    const extra = [...keys].filter((k) => !known.has(k) && !Object.hasOwn(NON_SERVICE_KEYS, k));
+    expect(extra, 'サービスに対応しない鍵があります — 綴り違いか、台帳への追記漏れです').toEqual([]);
+  });
+
+  it('台帳の項目に理由がある', () => {
+    const noWhy = [...Object.entries(SNAPSHOT_LESS), ...Object.entries(NON_SERVICE_KEYS)].filter(
+      ([, why]) => why.trim() === '',
+    );
+    expect(noWhy).toEqual([]);
+  });
+
+  it('camelCase 変換が実物に効いている (素の id では合わない鍵がある)', () => {
+    // この変換が無いと照合は破綻する。効いていることを固定する。
+    const needsCamel = SERVICE_IDS.filter((id) => !keys.has(id) && keys.has(camelKey(id)));
+    expect(needsCamel.length).toBeGreaterThan(0);
   });
 });
