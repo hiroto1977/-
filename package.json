@@ -38,7 +38,7 @@
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint . --max-warnings 0",
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",
-    "lint:citations": "node scripts/lint-citations.cjs",
+    "lint:citations": "node scripts/lint-citations.cjs && node scripts/lint-citations.cjs --self-test",
     "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
     "lint:charset": "node scripts/lint-charset.cjs && node scripts/lint-charset.cjs --self-test",
     "lint:knowledge-refs": "node scripts/lint-knowledge-refs.cjs",

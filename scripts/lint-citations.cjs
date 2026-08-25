@@ -81,6 +81,84 @@ function extractDoi(url) {
   return m ? m[1] : '';
 }
 
+/*
+ * **出典の「スキーム」は、どのゲートも見ていなかった** (2026-08-25 実測)。
+ *
+ * このゲートは出典の**内部矛盾** (同じ DOI が別の出版年で引かれていないか) を、
+ * `lint:doi-prefix` は**出版社のずれ**を見る。どちらも URL の中身は読むが、
+ * **どう運ばれてくるか**は見ていない。
+ *
+ * 実測: https 12,215 件 / **http 22 件** / それ以外 0 件。
+ *
+ * 平文で配られる出典は経路上で**書き換えられる**。このアプリは出典を
+ * 「確証済み」として提示するので、**その主張のうち「運搬の完全性」だけが
+ * 誰にも見られていない**状態だった。読むだけの公開ページなので影響は
+ * 限定的で、これは**コードの脆弱性ではなくデータの完全性**の話である。
+ *
+ * ## 22 件を今この場で https へ書き換えない理由
+ *
+ * このリポジトリの決まりは **「推測で出典を直さない」**。
+ * `http://` を `https://` に替えて 200 が返っても、**同じ文書が出ている
+ * 保証にはならない** (別物・リダイレクト先・404 ページの可能性)。
+ * 一次資料に当たって確かめるまでは、**素性の分かっている 22 件**として
+ * 台帳に置く。台帳は双方向なので、直したら**外すことが強制される**。
+ *
+ * ## この検査が止めるもの
+ *
+ *  1. `http:` / `https:` **以外**のスキーム (`javascript:` `data:` `file:` ほか) —— 例外なし
+ *  2. 台帳に無い**新しい平文 http** —— 黙って増えない
+ *  3. 台帳に残った**もう存在しない URL** —— 直したのに台帳が古いまま、を防ぐ
+ */
+const PLAINTEXT_ALLOWLIST = new Set([
+  'http://andyneely.blogspot.com/2013/11/what-is-servitization.html',
+  'http://bastiat.org/en/twisatwins.html',
+  'http://coin.wne.uw.edu.pl/wincenciak/docs/makro_zaawansowana/lecture_3.pdf',
+  'http://exploresel.gse.harvard.edu/frameworks/4/',
+  'http://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf',
+  'http://henryjenkins.org/blog/2009/02/if_it_doesnt_spread_its_dead_p_1.html',
+  'http://piketty.pse.ens.fr/files/Barro91.pdf',
+  'http://piketty.pse.ens.fr/files/BarroSalaIMartin2004Chap1-2.pdf',
+  'http://piketty.pse.ens.fr/files/Baumol1967.pdf',
+  'http://stats.org.uk/statistical-inference/TverskyKahneman1971.pdf',
+  'http://www.bailii.org/ew/cases/EWCA/Civ/1991/11.html',
+  'http://www.econ.yale.edu/growth_pdf/cdp764.pdf',
+  'http://www.econ2.jhu.edu/people/ccarroll/public/lecturenotes/assetpricing/bubbles/',
+  'http://www.iot.ntnu.no/innovation/norsi-pims-courses/harrison/Meyer%20&%20Rowan%20(1977).PDF',
+  'http://www.jstor.org/stable/285080',
+  'http://www.pilaj.jp/',
+  'http://www.scholarpedia.org/article/Donald_Olding_Hebb',
+  'http://www.scholarpedia.org/article/Inattentional_blindness',
+  'http://www.scholarpedia.org/article/Kamin_blocking',
+  'http://www.scholarpedia.org/article/Scale-free_networks',
+  'http://www.uniset.ca/other/css/22ER931.html',
+  'http://www1.tcue.ac.jp/home1/takamatsu/107016/6.html',
+]);
+
+/** 出典 URL のスキームを見る。戻り値は違反の配列 (空なら白)。 */
+function checkSchemes(entries, allowlist = PLAINTEXT_ALLOWLIST) {
+  const bad = [];
+  let seen = 0;
+  for (const entry of entries) {
+    const sources = Array.isArray(entry.sources) ? entry.sources : [];
+    for (const source of sources) {
+      if (source === null || typeof source !== 'object') continue;
+      if (typeof source.url !== 'string') continue;
+      const url = source.url.trim();
+      seen++;
+      const lower = url.toLowerCase();
+      if (lower.startsWith('https://')) continue;
+      if (lower.startsWith('http://')) {
+        if (!allowlist.has(url)) {
+          bad.push({ kind: 'new-plaintext', id: entry.id, url });
+        }
+        continue;
+      }
+      bad.push({ kind: 'bad-scheme', id: entry.id, url });
+    }
+  }
+  return { bad, seen };
+}
+
 function main() {
   const entries = kc.loadEntries();
   /** doi -> year -> [{id, label}] */
@@ -133,9 +211,37 @@ function main() {
     );
     process.exit(1);
   }
+  /* --- 出典 URL のスキーム --- */
+  const scheme = checkSchemes(entries);
+  // 走査が死んで 0 件になったのを「違反なし」と読まない。
+  const MIN_SOURCE_URLS = 5000; // 実測 12,237 (2026-08-25)
+  if (scheme.seen < MIN_SOURCE_URLS) {
+    console.error(
+      `❌ 出典 URL を ${scheme.seen} 件しか拾えませんでした (${MIN_SOURCE_URLS} 件以上を期待)。走査が壊れています。`,
+    );
+    process.exit(1);
+  }
+  const staleAllowed = [...PLAINTEXT_ALLOWLIST].filter(
+    (u) => !entries.some((e) => (Array.isArray(e.sources) ? e.sources : []).some((s2) => s2 !== null && typeof s2 === 'object' && typeof s2.url === 'string' && s2.url.trim() === u)),
+  );
+  if (scheme.bad.length > 0 || staleAllowed.length > 0) {
+    console.error(`❌ 出典 URL のスキーム: ${scheme.bad.length + staleAllowed.length} 件`);
+    for (const b of scheme.bad) {
+      console.error(
+        b.kind === 'bad-scheme'
+          ? `  ${b.id}: http(s) 以外のスキーム — ${b.url}`
+          : `  ${b.id}: 台帳に無い平文 http — ${b.url}\n      (一次資料で https を確かめてから直すこと。推測で書き換えない)`,
+      );
+    }
+    for (const u of staleAllowed) {
+      console.error(`  台帳にあるが出典に無い — ${u} (直したなら台帳から外すこと)`);
+    }
+    process.exit(1);
+  }
   console.log(
     `Checked ${byDoi.size} DOI citation(s) across ${entries.length} entries ` +
-      `(既知 ${baseline.size} 件は台帳で除外)`,
+      `(既知 ${baseline.size} 件は台帳で除外) / ` +
+      `出典 URL ${scheme.seen} 件のスキーム OK (平文 http は台帳の ${PLAINTEXT_ALLOWLIST.size} 件のみ)`,
   );
 
   if (fresh.length === 0 && stale.length === 0) {
@@ -173,4 +279,52 @@ function main() {
   process.exit(1);
 }
 
-main();
+/*
+ * **陰性対照。** このゲートは 2026-08-25 まで `--self-test` を持っていなかった
+ * (`lint:doi-prefix` も同様)。スキームの規則を足すにあたって、
+ * **規則が実際に鳴ることを機械で留める**。
+ */
+function selfTest() {
+  const E = (url) => [{ id: 'x', sources: [{ url }] }];
+  const allow = new Set(['http://known.example/a']);
+  /** [説明, url, 期待件数] */
+  const cases = [
+    ['https は通す', 'https://ok.example/a', 0],
+    ['台帳にある平文 http は通す', 'http://known.example/a', 0],
+    ['★ 台帳に無い平文 http は鳴る', 'http://new.example/a', 1],
+    ['★ javascript: は鳴る', 'javascript:alert(1)', 1],
+    ['★ data: は鳴る', 'data:text/html,x', 1],
+    ['★ file: は鳴る', 'file:///etc/passwd', 1],
+    ['★ ftp: は鳴る', 'ftp://x.example/a', 1],
+    ['大文字 HTTPS は通す (スキームは畳んで見る)', 'HTTPS://ok.example/a', 0],
+    ['★ 台帳の照合は原文で行う (HTTP:// は別物)', 'HTTP://known.example/a', 1],
+    ['前後の空白は落として判定', '  https://ok.example/a  ', 0],
+    ['url が文字列でなければ見ない', null, 0],
+  ];
+  let bad = 0;
+  for (const [label, url, want] of cases) {
+    const entries = url === null ? [{ id: 'x', sources: [{ url: 42 }] }] : E(url);
+    const got = checkSchemes(entries, allow).bad.length;
+    const ok = got === want;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+  // 走査が生きていること —— 数えた URL が 0 なら、上は何も言っていない。
+  const seen = checkSchemes(E('https://ok.example/a'), allow).seen;
+  const seenOk = seen === 1;
+  if (!seenOk) bad++;
+  console.log(`  ${seenOk ? '✓' : '✗'} 走査が URL を数えている: ${seen} 件 (期待 1)`);
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
+if (require.main === module) {
+  if (process.argv.includes('--self-test')) process.exit(selfTest());
+  main();
+}
+
+module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST };
