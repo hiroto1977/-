@@ -57,6 +57,21 @@ export class NoRecoveryBranchError extends Error {
 export interface Vault {
   status(): Promise<VaultStatus>;
   isUnlocked(): boolean;
+  /**
+   * 解錠に使われたパスワードが、**現在の**下限 (`MIN_PASSWORD_LENGTH`) を
+   * 満たしていたか。`null` = 判定できていない (未解錠など)。
+   *
+   * `initialize` / `changePassword` / `recoverWithMnemonic` は下限を強制するが、
+   * **`unlock` は強制しない** —— 既にあるヴォールトを開けなくしてしまうため
+   * (「Existing vaults are unaffected」と `initialize` に明記されている)。
+   * その結果、2026-07 に下限を 8 → 12 へ上げる前に作られたヴォールトは
+   * **短いパスワードのまま、誰にも知らされずに**開き続ける。
+   *
+   * ここで測るのはその 1 点だけ。**値は保存しない** (メモリのみ・`lock()` で
+   * 捨てる) —— 「このヴォールトのパスワードは短い」を IndexedDB に書けば、
+   * 総当たりの手掛かりを 1 つ置くことになる。
+   */
+  passwordMeetsPolicy(): boolean | null;
   /** Initialize a new vault. Returns the one-time recovery mnemonic. */
   initialize(password: string): Promise<InitResult>;
   unlock(password: string): Promise<void>;
@@ -455,6 +470,8 @@ async function unwrapMasterFromRecovery(
 // by the 20 integration tests (init / unlock / token CRUD / lock paths).
 class BrowserVault implements Vault {
   private currentKey: CryptoKey | null = null;
+  /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
+  private policyOk: boolean | null = null;
 
   async status(): Promise<VaultStatus> {
     let db: IDBDatabase;
@@ -550,6 +567,8 @@ class BrowserVault implements Vault {
         // 4. Re-import the key non-extractable for runtime use.
         const nonExtractable = await importNonExtractable(masterRaw);
         this.currentKey = nonExtractable;
+        // ここに来る時点で下限を強制済み。
+        this.policyOk = true;
         return { mnemonic };
       } finally {
         masterRaw.fill(0);
@@ -563,6 +582,12 @@ class BrowserVault implements Vault {
     if (typeof password !== 'string' || password.length === 0) {
       throw new Error('パスワードを入力してください');
     }
+    /*
+     * **下限は強制しない (既存のヴォールトを閉め出さないため) が、測りはする。**
+     * 2026-07 に 8 → 12 へ上げる前に作られたヴォールトは短いままで、
+     * 利用者はそれを知る術が無かった。診断がこの値を見て伝える。
+     */
+    const meetsPolicy = password.length >= MIN_PASSWORD_LENGTH;
     const db = await openDb();
     let meta: VaultMeta | undefined;
     let masterWrap: EncryptedToken | undefined;
@@ -604,12 +629,20 @@ class BrowserVault implements Vault {
     } else {
       this.currentKey = passwordKey;
     }
+    // 解錠できたパスワードについてだけ記録する (失敗すればここへ来ない)。
+    this.policyOk = meetsPolicy;
     // 解錠できて初めて旧形式を読めるので、ここで束ね直す。
     await this.rebindLegacyTokens().catch(() => {});
   }
 
   lock(): void {
     this.currentKey = null;
+    // 施錠したら「分からない」に戻す。前回の判定を持ち越さない。
+    this.policyOk = null;
+  }
+
+  passwordMeetsPolicy(): boolean | null {
+    return this.policyOk;
   }
 
   /**
@@ -854,6 +887,8 @@ class BrowserVault implements Vault {
       }
       await idbPutAll(db, rewritten);
       this.currentKey = newPasswordKey;
+      // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
+      this.policyOk = true;
     } finally {
       db.close();
     }
@@ -991,6 +1026,8 @@ class BrowserVault implements Vault {
           },
         ]);
         this.currentKey = await importNonExtractable(masterRaw);
+        // newPassword は下限を強制済み。
+        this.policyOk = true;
       } finally {
         masterRaw.fill(0);
       }

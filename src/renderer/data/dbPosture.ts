@@ -65,7 +65,20 @@ export function currentDbSecurityInputs(): DbSecurityInputs {
      * マスターパスワードの概念は無く保管庫も初期化されないので、
      * そちらでは false のままで正しい。
      */
-    masterPasswordSet: encrypted || getVault().isUnlocked(),
+    /*
+     * **「設定してある」と「今の下限を満たす」は別の話だった。**
+     *
+     * この観点の助言は「**十分に長い**マスターパスワードを設定してください」と
+     * 書いてあるのに、測っていたのは**存在するか**だけだった (2026-08-25)。
+     * `MIN_PASSWORD_LENGTH` は 2026-07 に 8 → 12 へ上がったが、`unlock` は
+     * 下限を強制しない (既存のヴォールトを閉め出さないため)。つまり
+     * **短いパスワードのヴォールトは、✅ と表示されたまま開き続けていた**。
+     *
+     * 解錠時に実際のパスワードで測った結果を見る。**`null` (分からない) では
+     * 警告しない** —— 確かめずに脅さない (`isEvictableStorage` と同じ判断)。
+     * 直す口は在る (設定の「Vault 管理」でパスワード変更)。
+     */
+    masterPasswordSet: encrypted || (getVault().isUnlocked() && getVault().passwordMeetsPolicy() !== false),
     integrityVerified: false,
     autoLockEnabled: isAutoLockActive(),
     cloudBackup: { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false },

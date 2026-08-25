@@ -852,6 +852,14 @@
       "leafCount": 49,
       "note": "update exportPaths.ts,main.ts",
       "hash": "aade7370faad4223e65deba759f33bf9667285e5fd45d1fd1afc9e219421417f"
+    },
+    {
+      "index": 100,
+      "prevHash": "aade7370faad4223e65deba759f33bf9667285e5fd45d1fd1afc9e219421417f",
+      "merkleRoot": "c460739fd7400dfeb42de531578a3d86365a6df34c608e70efe48740bee10614",
+      "leafCount": 49,
+      "note": "update vault.ts",
+      "hash": "48b810e266ab12e4964997740b828c445b0463817ba93216ccb999f6bafd26c7"
     }
   ],
   "tipManifest": {
@@ -887,7 +895,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "a6ebfe22324acc0a4cfd02a12262001d49c23963c02f03460bb9aefcd0e701c2",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "240c4c9edb6dfa647b087605af35042ed6744882b92dd7c7ec9876eff53580db",
+    "src/renderer/security/vault.ts": "a9c12fc2cf5b2826bb6be10372031e6d50f8aca4b32191020f1c0a9f46e7122d",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
     "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
