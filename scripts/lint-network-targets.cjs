@@ -300,6 +300,27 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
   }
+
+  /*
+   * **名前の一覧が、そのまま `NETWORK_CALL` に載っていること。**
+   *
+   * `NETWORK_CALL` は `NETWORK_CALL_NAMES` を `|` で繋いだ 1 本の正規表現
+   * なので、綴りの取り違え・エスケープ・組み立ての書き換えで**一部の名前
+   * だけが黙って落ちる**ことがありうる。上の表が確かめているのは
+   * `fetch` と `jsonFetch` の 2 つだけだった。
+   *
+   * 実測 (2026-08-25): 9 名を 1 つずつ一覧から外しても、5 つは本番スキャン
+   * ・self-test のどちらも鳴らなかった (検出は名前の**和**なので、同じ行を
+   * 別の名前が拾えば違いが出ない)。**一覧に載っている名前は全部生きている**
+   * ことだけは、ここで押さえる。
+   */
+  const deadNames = NETWORK_CALL_NAMES.filter((n) => !NETWORK_CALL.test(`await ${n}(url, init);`));
+  if (deadNames.length > 0) {
+    bad += deadNames.length;
+    console.log(`  ✗ 一覧にあるのに NETWORK_CALL が拾わない名前が ${deadNames.length} 件: ${deadNames.join(', ')}`);
+  } else {
+    console.log(`  ✓ 一覧の ${NETWORK_CALL_NAMES.length} 名すべてを NETWORK_CALL が拾う`);
+  }
   // `BARE_SEND` にはこれまで self-test が 1 件も無かった。名前の一覧が
   // `NETWORK_CALL` とずれていたのも、行をまたぐ書き方と型引数を見ていなかった
   // のも、**確かめる場所が無かったから**気付けなかった。

@@ -273,6 +273,19 @@ function selfTest() {
     ['簡体字 1 文字', '债務の話', 1],
     ['同じ字が 2 回出れば 2 件', '债と债', 2],
     ['文字体系と簡体字が混ざれば両方', 'суп と 债', 4],
+    /*
+     * ここから 4 件は 2026-08-25 に足した。**キリル文字と簡体字以外は
+     * 「鳴る標本」を持っていなかった** —— 正規表現を潰しても self-test が
+     * 通る (実測: 6 種を 1 つずつ潰したところ 4 種が完全に無音)。
+     *
+     * 標本は**コードポイントから組む**。字を直接書くとこのファイル自身が
+     * 混入検査に引っかかり、**自分の標本を自分の台帳に載せる**ことになる
+     * (門が禁じている物を門自身が抱える形。このリポジトリで 4 度出ている)。
+     */
+    ['アラビア文字 (U+0645)', String.fromCodePoint(0x0645), 1],
+    ['タイ文字 (U+0E01)', String.fromCodePoint(0x0e01), 1],
+    ['デーヴァナーガリー (U+0915)', String.fromCodePoint(0x0915), 1],
+    ['ヘブライ文字 (U+05D0)', String.fromCodePoint(0x05d0), 1],
   ];
 
   let failed = 0;
@@ -282,6 +295,27 @@ function selfTest() {
     const ok = got === want;
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+
+  /*
+   * **どの文字体系にも「鳴る標本」があること。**
+   *
+   * 上の表は「この文字列が何件出すか」しか見ておらず、範囲を 1 つ潰しても
+   * その範囲に当たる標本が無ければ**件数は変わらず self-test は通る**。
+   * 混入は「たまたま今どこかに在る」ものなので、台帳が肩代わりする保証も
+   * 無い —— 実際 2026-08-25 の実測では、**6 種のうち 4 種が完全に無音**
+   * だった (台帳が拾ったのはハングルだけ)。
+   */
+  const positiveTexts = cases.filter(([, , want]) => want > 0).map(([, text]) => text);
+  const uncoveredRanges = SCRIPT_RANGES.filter(
+    (r) => !positiveTexts.some((t) => t.match(r.re) !== null),
+  );
+  if (uncoveredRanges.length > 0) {
+    failed += uncoveredRanges.length;
+    console.log(`  ✗ 鳴る標本を持たない文字体系が ${uncoveredRanges.length} 件:`);
+    for (const r of uncoveredRanges) console.log(`      - ${r.name}`);
+  } else {
+    console.log(`  ✓ 全 ${SCRIPT_RANGES.length} 種の文字体系に鳴る標本がある`);
   }
 
   // 台帳は双方向 — 載っていれば黙り、載っているのに現れなければ古い。
