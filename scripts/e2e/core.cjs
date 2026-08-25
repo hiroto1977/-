@@ -1207,6 +1207,99 @@ async function storageDurabilitySuite(browser) {
   await ctx2.close();
 }
 
+/*
+ * セキュリティ診断が、**たどり着き方で変わらない**こと。
+ *
+ * 2026-08-25 の実測 —— 同じ端末・同じ設定なのに:
+ *
+ * ```
+ *   アプリ内で移動して開く  → 自動ロック ✅  スコア 10
+ *   直接ロードして解錠      → 自動ロック ⚠   スコア  0
+ * ```
+ *
+ * 原因は**読む時刻**だった。自動ロックは `App` の効果 (解錠後) で始まるが、
+ * `SecurityPage` は `useMemo(..., [])` で**初回描画中**に読む ——
+ * あらゆる効果より前で、React は子の効果を親より先に走らせるので、
+ * どの経路でも「まだ始まっていない」しか見えない…はずが、アプリ内移動では
+ * **親の効果が既に走り終えている**ので見える。悪いほうを出すのは
+ * **ブックマークや再読み込みの経路**だった。
+ *
+ * 「読む関数がある」ことと「正しい時刻に読む」ことは別である。
+ * ここで留めるのは**経路によらず同じ答えを出す**という性質そのもの
+ * ——「✅ が出る」だけを見ると、両方 ⚠ の実装でも通ってしまう。
+ */
+async function securityPostureSuite(browser) {
+  console.log('--- 診断が、たどり着き方で変わらない ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const readReport = async () => {
+    await page.waitForFunction(
+      () => (document.body.textContent ?? '').includes('セキュリティ・グレード'),
+      undefined,
+      { timeout: 30000 },
+    );
+    const t = await page.locator('body').innerText();
+    const i = t.indexOf('データベース・セキュリティ診断');
+    const block = t.slice(i, i + 900);
+    const score = /スコア\s*(\d+)\s*\/\s*100/.exec(block);
+    const autolock = /自動ロック[^\n]*/.exec(block);
+    const master = /マスターパスワード設定[^\n]*/.exec(block);
+    return {
+      score: score === null ? null : Number(score[1]),
+      autolock: autolock === null ? '' : autolock[0],
+      master: master === null ? '' : master[0],
+      block,
+    };
+  };
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  // ── 経路 A: アプリ内で移動 (親の効果は既に走り終えている) ──
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'security' })),
+  );
+  const a = await readReport();
+
+  // ── 経路 B: 直接ロードして解錠 (画面が親の効果より先に描かれる) ──
+  await gotoService(page, '#security', 'text=セキュリティ・グレード');
+  const b = await readReport();
+
+  ok(
+    a.score !== null && b.score !== null,
+    `診断: 両経路でスコアが読めた (A=${a.score} / B=${b.score})`,
+  );
+  ok(
+    a.score === b.score,
+    `★ 診断: たどり着き方でスコアが変わらない (アプリ内移動 ${a.score} / 直接ロード ${b.score})`,
+  );
+  ok(
+    a.autolock === b.autolock,
+    `★ 診断: たどり着き方で自動ロックの札が変わらない (A「${a.autolock}」/ B「${b.autolock}」)`,
+  );
+
+  // **「同じ」だけでは足りない。** 両方 ⚠ の実装でも「同じ」は成り立つ。
+  // 実際に動いている物が ✅ で出ていることまで見る。
+  ok(b.autolock.includes('✅'), `診断: 自動ロックは実際に動いているので ✅ (実際「${b.autolock}」)`);
+  ok(
+    b.master.includes('✅'),
+    `★ 診断: マスターパスワードは設定済みなので ✅ (保管庫を作らないとここへ来られない) — 実際「${b.master}」`,
+  );
+
+  // 従えない助言を出していないか (レコード暗号化を有効にする画面は無い)。
+  ok(
+    !b.block.includes('設定でレコード暗号化を有効化し'),
+    '★ 診断: 存在しない設定へ誘導していない (レコード暗号化の有効化画面は未配線)',
+  );
+
+  ok(errs.length === 0, `診断: ページエラー 0 (実際 ${errs.length})`);
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -1329,6 +1422,7 @@ async function businessComparisonSuite(browser) {
   if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
+  if (run('securityPosture')) await securityPostureSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();

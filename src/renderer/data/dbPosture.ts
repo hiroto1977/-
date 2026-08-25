@@ -1,6 +1,7 @@
 import type { DbSecurityInputs } from '../../shared/dbSecurityPosture';
 import { isEncryptionEnabled } from './recordEncryption';
 import { isAutoLockActive } from '../security/autoLock';
+import { getVault } from '../security/vault';
 
 /**
  * セキュリティ診断 (`buildDbSecurityReport`) への入力を **実測から**組み立てる。
@@ -44,8 +45,27 @@ export function currentDbSecurityInputs(): DbSecurityInputs {
   const encrypted = isEncryptionEnabled();
   return {
     encryptionEnabled: encrypted,
-    // 暗号化の有効化にはマスターパスワードが必要なので、有効なら設定済み。
-    masterPasswordSet: encrypted,
+    /*
+     * **マスターパスワードは、観測できるものを観測する。**
+     *
+     * ここは 2026-08-25 まで `masterPasswordSet: encrypted` だった。
+     * 「暗号化の有効化にはマスターパスワードが必要なので、有効なら設定済み」
+     * ——**片側の含意としては正しい**が、等号として使うと逆が言えない。
+     * レコード暗号化は配線されておらず `encrypted` は常に false なので、
+     * この欄は**常に false** になっていた。
+     *
+     * ところがブラウザ版は、**マスターパスワードを設定しないと保管庫が
+     * 作れず、この画面にも到達できない**。つまり診断は、必ず設定して
+     * いる利用者に向かって「マスターパスワード: 未設定 (high)」と
+     * 告げていた —— このファイルの冒頭が `autoLockEnabled` について
+     * 書いているのと**まったく同じ形**である。
+     *
+     * 保管庫が解錠されていること (`isUnlocked()`) は、マスターパスワードで
+     * 開いたことの直接の証拠なので、それを見る。デスクトップ版に
+     * マスターパスワードの概念は無く保管庫も初期化されないので、
+     * そちらでは false のままで正しい。
+     */
+    masterPasswordSet: encrypted || getVault().isUnlocked(),
     integrityVerified: false,
     autoLockEnabled: isAutoLockActive(),
     cloudBackup: { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false },

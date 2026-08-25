@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 import { describeScanUrlRisk } from '../../shared/scanTarget';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -17,6 +17,7 @@ import {
 } from '../../shared/securityRange';
 import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
 import { currentDbSecurityInputs } from '../data/dbPosture';
+import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock';
 
 const GRADE_COLOR: Record<string, string> = {
   A: '#22c55e',
@@ -76,10 +77,31 @@ export function SecurityPage() {
   const range = useMemo(() => runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS), []);
 
   // ローカルDB (IndexedDB レコードストア) のセキュリティ姿勢診断。
-  // 検出可能な設定 (レコード暗号化) で評価し、確認できない保護は保守的に改善候補とする。
-  // 入力の組み立ては `data/dbPosture.ts` にある。画面の中で作ると、実測を
-  // 定数へ戻しても誰も気付かない (監査前が実際にそうなっていた)。
-  const dbReport = useMemo(() => buildDbSecurityReport(currentDbSecurityInputs()), []);
+  // 実測できる項目 (レコード暗号化・自動ロック・マスターパスワード) は実測し、
+  // まだ観測していない保護は保守的に改善候補とする。入力の組み立ては
+  // `data/dbPosture.ts` にある。画面の中で作ると、実測を定数へ戻しても
+  // 誰も気付かない (監査前が実際にそうなっていた)。
+  /*
+   * **組み立ては `dbPosture.ts` のまま。ここが持つのは「いつ読み直すか」だけ。**
+   *
+   * `useMemo(..., [])` は**初回描画中**に走る —— あらゆる `useEffect` より
+   * 前である。自動ロックは `App` の効果 (解錠後) で始まり、React は
+   * **子の効果を親より先に**走らせるので、この画面がどこで読んでも
+   * 「まだ始まっていない」しか見えなかった。
+   *
+   * 実測 (2026-08-25、実ブラウザ・同じ設定): アプリ内で移動すると
+   * 自動ロック ✅ / スコア 10、直接ロードして解錠すると ⚠ / 0。
+   * **たどり着き方で診断が変わり、悪いほうを出すのが再読み込みの経路**だった。
+   *
+   * 購読して、変わったら読み直す。`currentDbSecurityInputs()` が実測を
+   * 束ねる役目は動かさない (画面の中で入力を作ると、実測を定数へ戻しても
+   * 誰も気付かない —— 監査前が実際にそうだった)。
+   */
+  const autoLockActive = useSyncExternalStore(subscribeAutoLockActive, isAutoLockActive, () => false);
+  const dbReport = useMemo(
+    () => buildDbSecurityReport(currentDbSecurityInputs()),
+    [autoLockActive],
+  );
 
   // --- breach check form
   const [showBreach, setShowBreach] = useState(false);
@@ -425,8 +447,22 @@ export function SecurityPage() {
         )}
 
         <div style={{ marginTop: 12, padding: 10, background: 'rgba(91, 141, 239, 0.08)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-          🗄 検出可能な設定 (レコード暗号化) に基づく評価です。自動ロック・整合性・クラウドバックアップは
-          現状サブシステムの状態を未配線のため保守的に改善候補として表示します (今後の連携で精緻化)。
+          {/*
+            **注記のほうが古くなっていた。** ここは「自動ロック・整合性・
+            クラウドバックアップは未配線のため保守的に改善候補として表示」と
+            書いたままだったが、自動ロックは実測に変わっており (`dbPosture.ts`)、
+            マスターパスワードも 2026-08-25 に実測へ変えた。
+            **「確認できないので悪く出している」と「確認したうえで悪い」は
+            別の話**で、混ぜると利用者はどちらも本気にしなくなる。
+            実測している物と、していない物を分けて書く。
+          */}
+          🗄 <strong>実測して評価している項目</strong>: レコード暗号化・自動ロック・マスターパスワード。
+          <br />
+          <strong>まだ観測していない項目</strong>: 改ざん検知・クラウドバックアップ
+          (サブシステムが未配線のため、保守的に改善候補として表示しています)。
+          <br />
+          この診断が見ているのは<strong>業務レコード</strong> (IndexedDB) です ——
+          ライブラリの書類とブラウザ内の設定は範囲外で、常に平文です。
           本診断はアプリ層の姿勢評価で、OS/物理層を含む完全な安全を保証するものではありません
           (docs/DATA_PROTECTION.md)。
         </div>

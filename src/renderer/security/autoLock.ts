@@ -64,14 +64,54 @@ export interface AutoLockHandle {
  */
 let activeCount = 0;
 
+/**
+ * 計数が変わったことを知りたい人たち。
+ *
+ * ## なぜ購読が要るのか (2026-08-25)
+ *
+ * 計数を**読むだけ**にしていたら、診断画面が**動き出す前に読んで**いた。
+ *
+ * 自動ロックは `App` の `useEffect` (解錠後) で始まるが、React は
+ * **子の効果を親より先に**走らせる。`SecurityPage` は
+ * `useMemo(..., [])` で初回描画中に読んでおり、これは**あらゆる効果より
+ * 前**である。つまり `startAutoLock` はまだ呼ばれていない。
+ *
+ * 実測 (2026-08-25、実ブラウザ・同じ設定):
+ *
+ * ```
+ *   アプリ内で移動して開く  → 自動ロック ✅  スコア 10
+ *   直接ロードして解錠      → 自動ロック ⚠   スコア  0
+ * ```
+ *
+ * **同じ端末・同じ設定なのに、たどり着き方で診断が変わっていた。**
+ * しかも悪いほうを出すのは「ブックマークや再読み込みで開く」経路である。
+ *
+ * 「読む関数」を用意しただけでは、**読む時刻**は誰も保証しない。
+ * 変化を伝える口を置き、画面は `useSyncExternalStore` で購読する。
+ */
+const listeners = new Set<() => void>();
+
+function notifyAutoLockActive(): void {
+  for (const cb of listeners) cb();
+}
+
 /** 自動ロックが 1 つ以上動いているか。 */
 export function isAutoLockActive(): boolean {
   return activeCount > 0;
 }
 
+/** 計数の変化を購読する。戻り値を呼ぶと解除。 */
+export function subscribeAutoLockActive(cb: () => void): () => void {
+  listeners.add(cb);
+  return () => {
+    listeners.delete(cb);
+  };
+}
+
 /** テスト用: 計数を 0 に戻す。 */
 export function _resetAutoLockActiveForTests(): void {
   activeCount = 0;
+  notifyAutoLockActive();
 }
 
 // 7 integration tests pin the public contract: listeners are installed,
@@ -89,6 +129,7 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   const idleMs = opts.idleTimeoutMs ?? DEFAULT_IDLE_MS;
 
   activeCount += 1;
+  notifyAutoLockActive();
 
   let lastActivity = now();
   let hiddenSince: number | null = null;
@@ -151,6 +192,7 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
     if (disposed) return;
     disposed = true;
     activeCount -= 1;
+    notifyAutoLockActive();
     // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
     if (hiddenTimer !== null) clearTimeoutFn(hiddenTimer);
     // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。
