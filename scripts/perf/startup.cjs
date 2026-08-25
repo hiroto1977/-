@@ -108,6 +108,31 @@ async function measure(browser, port, file) {
         parses: window.__bigParses,
       };
     });
+    /*
+     * **フックが生きていることを毎回確かめる。**
+     *
+     * `JSON.parse` の計装が (addInitScript の失敗・上書き・API 変更で) 効いて
+     * いなくても、`window.__bigParses` が空配列のままなら **「巨大 parse ゼロ」
+     * という同じ報告が出る**。健全なのか計器が死んでいるのかを区別できない。
+     *
+     * 測り終えた**後**に既知の巨大 parse を 1 回走らせ、拾えたことを確認する
+     * (測定への影響は無い)。同じ形を `smoke` にも入れてある (2026-08-24)。
+     */
+    const hookAlive = await page.evaluate(() => {
+      const before = window.__bigParses.length;
+      JSON.parse(JSON.stringify({ pad: 'x'.repeat(1_100_000) }));
+      return window.__bigParses.length > before;
+    });
+    if (!hookAlive) {
+      console.error(
+        `❌ ${file}: JSON.parse の計装が働いていません — ` +
+          '「巨大 parse ゼロ」が意味を持たないので止めます',
+      );
+      process.exit(2);
+    }
+    // 自己検査の分は数えない (本番の測定はこの行より前で終わっている)。
+    m.parses = m.parses.filter((_, idx) => idx < m.parses.length - 1);
+
     samples.push(m);
     if (i === 0) bigParses = m.parses;
     await ctx.close();
