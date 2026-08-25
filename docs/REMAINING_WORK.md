@@ -8684,3 +8684,53 @@ http=403 / https=接続不可)。**方針は迂回しない。** 通信できる
 **「誤検知の中に当たりが混ざる。混ざり方は、同じファイルの組で見ると分かる」**。
 `1000` / `600` / `240` はどれも**`business.ts` と `web-shim.ts` の組**で出ていた。
 数字ではなく**組**を見ていれば、3 つとも一度に拾えた。
+
+### 検出器の使い方が決まった —— 数字ではなく「ファイルの組」で見る (2026-08-25)
+
+2 度の訂正を経て、集計の軸を変えた。**数字ごと**ではなく
+**(main 側ファイル, renderer 側ファイル) の組ごと**に共有定数を数えると、
+当たりが上位に固まった:
+
+```
+  ★ 7個  main/clients/stocks.ts   ↔ renderer/data/stocksAnalysisWeb.ts
+  ★ 5個  main/clients/emotions.ts ↔ renderer/data/emotionsWeb.ts
+  ★ 3個  main/clients/stocks.ts   ↔ renderer/data/stocksWatchlistWeb.ts
+   …
+```
+
+`1000` / `600` / `240` はどれも `business.ts` ↔ `web-shim.ts` の組だった。
+**組で見ていれば 3 つとも一度に拾えた。**
+
+#### 当たりは 3 つの類に分かれる
+
+| 類 | 例 | 既存の網 |
+|---|---|---|
+| **1. 同名の export** | `isSafeSymbol` (`16` を共有) | **既に覆われている** —— 台帳に `decision` として載り、`dualBuildParity.test.ts` が**両実装を突き合わせている** |
+| **2. モジュール直下の `const` / 埋め込みの `if`** | `MAX_MOODS` / `MAX_ANALYSES`、アドバイザーの上限 | **覆われていない** —— 検出器は **export された関数名**の積集合を見るので、`const` も `if` の中の数字も見えない |
+| 3. 偶然 | `10` / `30` / `60` が別用途で一致 | — |
+
+**検出器の値打ちは類 2 にある。** 既存の機械は類 1 を確実に捕まえるので、
+重ねる意味は無い。**見えない所だけを見ればよい。**
+
+#### 類 2 として今日直したもの
+
+| 対象 | 直し方 |
+|---|---|
+| アドバイザーの質問 (`1000` × 4 か所) | `shared/advisorQuestionLimits.ts` |
+| アドバイザーの応答 (`600` / `240` ほか 6 つ × 2 か所) | `shared/advisorResponseLimits.ts` |
+| **気分ログの保持件数** (`MAX_MOODS = 365` / `MAX_ANALYSES = 50` × 2 か所) | `shared/emotionsLimits.ts` へ追加 |
+
+最後のものは、**note/text の上限を同じファイルへ寄せたときに取り残されていた**
+—— 同じ組の中でも、`export function` は寄せて `const` は残す、という
+中途半端さが起きる。
+
+対照: web 側で `const MAX_MOODS = 365;` を自前宣言に戻すと **1 件**、
+共有の値を動かすと **4 件**落ちる。
+
+#### 残した類 1・3
+
+- `stocks.ts ↔ stocksAnalysisWeb.ts` の 7 個は `sma`/`ema`/`rsi`/`macd` の
+  指標定数。これらの関数は台帳に **`pure`** として載っており、
+  「ずれれば数字が違うだけで、境界の守りではない」と**明示的に**判断済み。
+  蒸し返さない。
+- `stocks.ts ↔ StoragePage.tsx` などの `10` / `30` / `60` は別用途の一致。

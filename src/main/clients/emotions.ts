@@ -21,7 +21,12 @@
  */
 
 import { app } from 'electron';
-import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import {
+  MAX_ANALYSES,
+  MAX_ANALYZE_TEXT_CHARS,
+  MAX_MOODS,
+  MAX_MOOD_NOTE_CHARS,
+} from '../../shared/emotionsLimits';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { atomicWriteFile } from '../atomicWrite';
@@ -65,8 +70,6 @@ export interface EmotionsSnapshot extends EmotionsStore {
   keyConfigured: boolean;
 }
 
-const MAX_ANALYSES = 50;
-const MAX_MOODS = 365;
 
 function storePath(): string {
   return path.join(app.getPath('userData'), 'service-hub-emotions.json');

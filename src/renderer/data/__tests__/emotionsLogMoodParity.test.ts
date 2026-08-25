@@ -1,6 +1,8 @@
 /** @vitest-environment jsdom */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { MAX_ANALYSES, MAX_MOODS } from '../../../shared/emotionsLimits';
 import { tmpdir } from 'node:os';
 
 const EMOTIONS_UD = mkdtempSync(`${tmpdir()}/emotions-parity-`);
@@ -107,5 +109,44 @@ describe('log-mood の note は、どちらの版でも同じ長さで断られ�
     // 全部通す / 全部断るで「一致」しても意味が無い。両方の側が出ていること。
     expect(results.filter((r) => r).length, '通した例が無い — 検査が空虚').toBeGreaterThanOrEqual(2);
     expect(results.filter((r) => !r).length, '断った例が無い — 検査が空虚').toBeGreaterThanOrEqual(2);
+  });
+});
+
+/*
+ * **保持件数の上限も、両ビルドで 1 つだけ持つ (2026-08-25)。**
+ *
+ * `MAX_MOODS` / `MAX_ANALYSES` は**両方のファイルで `const` として宣言されて
+ * いた**。`dualBuildDecisions.test.ts` の検出器は **export された関数名**の
+ * 積集合を見るので、**モジュール直下の `const` は見えない** —— note/text の
+ * 上限をここへ寄せたときも、この 2 つは残っていた。
+ *
+ * ずれると「どちらのビルドで記録したかで残る件数が変わる」。字面が戻って
+ * いないことを、両方のファイルについて留める。
+ */
+describe('保持件数の上限は共有の 1 つ', () => {
+  const SRC = [
+    ['main/clients/emotions.ts', join(__dirname, '../../../main/clients/emotions.ts')],
+    ['renderer/data/emotionsWeb.ts', join(__dirname, '../emotionsWeb.ts')],
+  ] as const;
+
+  it('値が共有されている', () => {
+    expect(MAX_MOODS).toBe(365);
+    expect(MAX_ANALYSES).toBe(50);
+  });
+
+  it.each(SRC)('%s が自前で宣言していない', (_label, path) => {
+    const code = readFileSync(path, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
+    expect(code, 'MAX_MOODS を自前で宣言しています').not.toMatch(/const\s+MAX_MOODS\s*=/);
+    expect(code, 'MAX_ANALYSES を自前で宣言しています').not.toMatch(/const\s+MAX_ANALYSES\s*=/);
+    // 空撃ちでないこと —— そのファイルが実際に共有の値を使っている。
+    expect(code).toContain('emotionsLimits');
+  });
+
+  /* 「無いことの検査」に標本を添える。 */
+  it('★ 上の規則は、元の書き方に本当に当たる', () => {
+    expect('const MAX_MOODS = 365;').toMatch(/const\s+MAX_MOODS\s*=/);
+    expect('const MAX_ANALYSES = 50;').toMatch(/const\s+MAX_ANALYSES\s*=/);
   });
 });

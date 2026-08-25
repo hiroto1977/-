@@ -57,3 +57,24 @@ export const MAX_ANALYZE_TEXT_CHARS = 5000;
 
 /** `log-mood` のメモの上限。 */
 export const MAX_MOOD_NOTE_CHARS = 2000;
+
+/*
+ * ## 保存件数の上限 (2026-08-25 に寄せた)
+ *
+ * この 2 つは **`main/clients/emotions.ts` と `renderer/data/emotionsWeb.ts` の
+ * 両方で `const` として宣言されていた** —— 同じ名前・同じ値が 2 か所にある形。
+ *
+ * `dualBuildDecisions.test.ts` の検出器は **export された関数名**の積集合を
+ * 見るので、**モジュール直下の `const` は見えない**。上の note/text の上限を
+ * ここへ寄せたときも、この 2 つは残っていた。
+ *
+ * ずれると「どちらのビルドで記録したかで、残る件数が変わる」。
+ * ブラウザ版の保存先は localStorage で**容量はオリジン全体で共有**するので、
+ * 件数の上限は他機能の書き込みが落ちるかどうかにも効く。
+ */
+
+/** 気分ログの保持件数 (古いものから捨てる)。 */
+export const MAX_MOODS = 365;
+
+/** 分析結果の保持件数 (新しいものを先頭に積む)。 */
+export const MAX_ANALYSES = 50;

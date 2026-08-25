@@ -6,7 +6,7 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
-import { MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
@@ -38,8 +38,6 @@ export interface EmotionsSnapshot extends EmotionsStore {
 }
 
 export const EMOTIONS_STORE_KEY = 'emotions.store';
-const MAX_ANALYSES = 50;
-const MAX_MOODS = 365;
 
 /**
  * 「在るが読めなかった」ことを表す印。
