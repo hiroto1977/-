@@ -1327,6 +1327,95 @@ async function securityPostureSuite(browser) {
   await ctx.close();
 }
 
+/*
+ * 第三者へ送る機能が、**送ると言ってから送る**こと。
+ *
+ * ## なぜ節を立てるか (2026-08-25)
+ *
+ * セキュリティ画面には 3 つ並んでいる:
+ *
+ *   パスワード強度チェッカー … 「この端末内だけで評価し、外部に送信しません」
+ *   メール漏洩チェック (HIBP) … 入力したアドレスを第三者へ送る
+ *   URL スキャン (VirusTotal) … 入力した URL を第三者へ送る
+ *
+ * VirusTotal の節は説明を**入力欄より前**に置いてある (送信は取り消せない
+ * から、という理由がコードに書いてある)。**HIBP には何も無かった。**
+ * すぐ上が「送信しません」と約束しているので、黙っていると
+ * **その約束がページ全体に及ぶと読まれる**。
+ *
+ * ## もう 1 つ、門が開かなかった
+ *
+ * ブラウザ版の `fetchSnapshot('security')` は `not_implemented` を返して
+ * いたので、`keysConfigured` は同梱スナップショットの false から**永久に
+ * 動かなかった**。利用者は画面の言うとおり鍵を保存し (**保存は成功する**)、
+ * それでもボタンは押せない。送信側は shim に実装済みだったので、
+ * **動く機能が、開かない門の向こうに在った**。
+ */
+async function thirdPartyDisclosureSuite(browser) {
+  console.log('--- 第三者へ送る前に、送ると言う ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  // 鍵を入れる前は閉じている (門が最初から開いていたら、開くことを測れない)。
+  const before = await page.evaluate(() => window.serviceHub.fetchSnapshot('security'));
+  ok(
+    before.ok === true && before.data.keysConfigured.hibp === false,
+    `第三者送信: 鍵を入れる前は未設定と返る (実際 ${JSON.stringify(before).slice(0, 90)})`,
+  );
+
+  const saved = await page.evaluate(() =>
+    window.serviceHub.setToken('security', '{"hibp":"stub-key","vt":"stub-key"}'),
+  );
+  ok(saved.ok === true, '第三者送信: 鍵を保存できた');
+
+  const after = await page.evaluate(() => window.serviceHub.fetchSnapshot('security'));
+  ok(
+    after.ok === true && after.data.keysConfigured.hibp === true && after.data.keysConfigured.vt === true,
+    `★ 第三者送信: 鍵を保存すると門が開く (実際 ${JSON.stringify(after.data?.keysConfigured)})`,
+  );
+
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'security' })),
+  );
+  await page.waitForSelector('text=メール漏洩チェック', { timeout: 30000 });
+  // 画面はスナップショット由来で描かれるので、実データを取り直させる。
+  const refresh = page.getByRole('button', { name: '更新' });
+  if ((await refresh.count()) > 0) {
+    await refresh.first().click();
+    await page.waitForTimeout(1500);
+  }
+
+  const check = page.getByRole('button', { name: 'チェック' });
+  const enabled = (await check.count()) > 0 && (await check.first().isEnabled());
+  ok(enabled, '★ 第三者送信: 鍵を保存すると HIBP の欄が実際に開ける (以前は永久に disabled だった)');
+  if (enabled) await check.first().click();
+  const scan = page.getByRole('button', { name: 'スキャン' });
+  if ((await scan.count()) > 0 && (await scan.first().isEnabled())) await scan.first().click();
+  await page.waitForTimeout(800);
+
+  const t = await page.locator('body').innerText();
+  ok(t.includes('第三者のサービス) へ送信されます'), '★ HIBP: 第三者へ送ると書いている');
+  ok(t.includes('端末内で完結しません'), '★ HIBP: 上の「送信しません」と違うと明言している');
+  ok(
+    t.includes('他の VirusTotal 利用者が検索できる状態'),
+    'VirusTotal: 送信先で残ることを書いている',
+  );
+  // 経路に居るのは相手だけではない —— ブラウザ版はプロキシを通る。
+  ok(
+    t.split('プロキシ (Cloudflare Worker) を経由').length - 1 >= 2,
+    `★ 両方: プロキシの運用者からも見えると書いている (実際 ${t.split('プロキシ (Cloudflare Worker) を経由').length - 1} 箇所)`,
+  );
+
+  ok(errs.length === 0, `第三者送信: ページエラー 0 (実際 ${errs.length})`);
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
 async function businessComparisonSuite(browser) {
   console.log('--- 事業間比較に自分の事業を足す ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -1450,6 +1539,7 @@ async function businessComparisonSuite(browser) {
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
   if (run('securityPosture')) await securityPostureSuite(browser);
+  if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();

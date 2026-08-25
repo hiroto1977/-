@@ -1133,6 +1133,42 @@ const shim = {
       }
       return ok(buildEmotionsSnapshot(keyConfigured)) as ActionResult<T>;
     }
+    /*
+     * security は「鍵が入っているか」だけがブラウザでも観測できる。
+     *
+     * ## ここが `not_implemented` を返し続けていた影響 (2026-08-25 実測)
+     *
+     * ページは `keysConfigured` で HIBP / VirusTotal のボタンを
+     * `disabled` にする。ブラウザ版では live fetch が無いので、この値は
+     * **同梱スナップショットの `{hibp:false, vt:false}` から永久に動かない**。
+     *
+     * つまり利用者は、画面の言うとおり「API キー設定」から鍵を保存し
+     * (**保存は成功する**)、それでも**ボタンは永久に押せない**。
+     * 画面はそのあいだずっと「API キーが未設定。…保存してください」と
+     * 出し続ける —— **指示どおりにやったのに、何も変わらない。**
+     *
+     * 送信側 (`scan-url` / `check-email-breach`) は**この shim に実装済み**で
+     * プロキシ経由で動く。**動く機能が、開かない門の向こうに在った。**
+     *
+     * Norton の検出だけは端末固有でブラウザからは見られないので、
+     * 同梱スナップショット (`installed: false`) のまま返す —— これは嘘ではない。
+     * すぐ上の `emotions` と同じ形である。
+     */
+    if (serviceId === 'security') {
+      let keys: ReturnType<typeof parseSecurityKeys> = {};
+      try {
+        keys = parseSecurityKeys((await vault.getToken('security')) ?? '');
+      } catch {
+        keys = {};
+      }
+      const mod = (await import('./data/snapshot')) as unknown as {
+        SNAPSHOT: { security: Record<string, unknown> };
+      };
+      return ok({
+        ...mod.SNAPSHOT.security,
+        keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
+      }) as ActionResult<T>;
+    }
     // 資格情報 (と必要ならプロキシ) が揃っていれば、読み取りも実データにする。
     // ここが `not_implemented` を返し続けていたせいで、キーを入れても画面は
     // 永久に同梱サンプルのままだった (Cursor に架空の 3 人が出続けていた)。

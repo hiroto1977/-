@@ -216,6 +216,38 @@ export function SecurityPage() {
         ) : null}
         {showBreach && keysConfigured.hibp ? (
           <div className="card" style={{ gap: 10 }}>
+            {/*
+              **隣が「送信しません」と約束している。**
+
+              すぐ上の「パスワード強度チェッカー」は「この端末内だけで評価し、
+              外部に送信しません」と明記している。その直後にあるこの欄は、
+              **入力したメールアドレスを第三者へ送る**。何も書かなければ、
+              利用者は上の約束が同じページ全体に及ぶと読む。
+
+              下の VirusTotal の節は同じ理由で説明を入力欄より前に置いてあり、
+              **その配慮がここだけ抜けていた** (2026-08-25)。
+
+              書けることだけを書く —— HIBP 側が検索語をどう扱うかは
+              このリポジトリからは確かめられないので**主張しない**。
+              確かなのは「送られる」ことと「経路に誰が居るか」である。
+            */}
+            <div
+              style={{
+                fontSize: 12,
+                lineHeight: 1.7,
+                padding: '8px 10px',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text-mute)',
+              }}
+            >
+              入力したメールアドレスは{' '}
+              <strong style={{ color: 'var(--text)' }}>Have I Been Pwned (第三者のサービス) へ送信されます</strong>。
+              上の「パスワード強度チェッカー」とは違い、<strong>この照会は端末内で完結しません</strong>。
+              <br />
+              ブラウザ版では、設定した<strong>プロキシ (Cloudflare Worker) を経由</strong>するため、
+              その運用者からも照会したアドレスが見えます。
+            </div>
             <input
               placeholder="your@example.com"
               type="email"
@@ -289,6 +321,14 @@ export function SecurityPage() {
               入力した URL は <strong style={{ color: 'var(--text)' }}>VirusTotal に送信され、
               他の VirusTotal 利用者が検索できる状態で残ります</strong>。取り消せません。
               署名付きリンク・招待リンク・社内のホスト名など、人に見られて困る URL は入れないでください。
+              {/*
+                経路に居るのは VirusTotal だけではない。ブラウザ版の送信は
+                利用者が設定したプロキシ (Cloudflare Worker) を通る。
+                HIBP 側に同じ説明を足したとき、こちらに**経路の話が無い**ことに気付いた。
+              */}
+              <br />
+              ブラウザ版では、設定した<strong>プロキシ (Cloudflare Worker) を経由</strong>するため、
+              その運用者からも送信した URL が見えます。
             </div>
             <input
               placeholder="https://example.com/suspicious"
