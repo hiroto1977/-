@@ -610,6 +610,38 @@ const FORBIDDEN_PATTERNS = [
     codeOnly: true,
     rationale: 'プロトタイプ鎖まで拾う — Object.hasOwn か Set(...).has を使うこと',
   },
+  /*
+   * OAuth の認可 / トークン端点は **ハードコードされた表からしか来ない**。
+   *
+   * `lint:network-targets` の台帳は `src/main/oauth.ts` の
+   * `fetchFn(config.tokenUrl, …)` を「変数の送り先」として認めているが、
+   * その理由は **「OAUTH_CONFIGS がハードコードだから」**の一点である
+   * (台帳の `guard` にそう書いてある)。送信直前の `assertHttpsEndpoint` が
+   * 見るのは**スキームだけでホストは見ない**ので、表が変数由来になった瞬間、
+   * client secret と認可コードの送り先を外部が選べるようになる。
+   *
+   * その前提は 2026-08-25 まで**散文でしか書かれていなかった**。実際に
+   * `oauth:authorize` が第 3 引数で tokenUrl を受け取るように変えても、
+   * 鳴るのは integrity chain (「保護ファイルが変わった」) だけで、
+   * **意味を見ているゲートは 1 つも無い**。ここで機械の主張にする。
+   *
+   * 許すのは 2 形だけ: `'https://…'` の文字列リテラルと、型宣言の
+   * `: string;`。短縮記法 (`{ ...base, tokenUrl }`) も塞ぐ ——
+   * これを開けると値の出どころが行から読めなくなる。
+   * 実測の誤検知 0 (src/ 410 ファイル・既存 22 行すべて通過)。
+   */
+  {
+    name: 'OAuth の端点が定数の https リテラルでない',
+    pattern:
+      /\b(?:authorizeUrl|tokenUrl)\s*:(?!\s*(?:'https:\/\/|"https:\/\/|string;))|(?<![.\w])(?:authorizeUrl|tokenUrl)\s*[,}]/,
+    codeOnly: true,
+    rationale:
+      'OAuth の端点は src/main/oauth.ts の OAUTH_CONFIGS (ハードコード表) からしか'
+      + ' 来てはいけない。送信直前の assertHttpsEndpoint はスキームしか見ないので、'
+      + ' 端点が変数由来になると client secret と認可コードの送り先を外部が選べる。'
+      + ' 値を変えたいなら表を直すこと (差し替え可能にする変更は、資格情報の宛先を'
+      + ' 外部に委ねる変更と同義)',
+  },
 ];
 
 /**
@@ -869,6 +901,14 @@ function selfTest() {
     ['child_process を弾く', "const { execSync } = require('node:child_process');", 1],
     ['Ollama の書き込み側 API を弾く', 'await fetch(`${base}/api/pull`);', 1],
     ['読み出し側 API は鳴らない', 'await fetch(`${base}/api/tags`);', 0],
+    // OAuth の端点 (規則 33)。**この 3 形が塞ぎたいもの**である。
+    ['端点を別の値から取るのを弾く', '    tokenUrl: cfg.tokenUrl,', 1],
+    ['短縮記法での差し替えも弾く', '    return { ...base, clientId, tokenUrl };', 1],
+    ['https でないリテラルも弾く', "    tokenUrl: 'http://evil.test/token',", 1],
+    ['ハードコードの https リテラルは通す', "    tokenUrl: 'https://oauth2.googleapis.com/token',", 0],
+    ['型宣言は通す', '  tokenUrl: string;', 0],
+    ['表から読んで渡すのは通す (これが正しい形)', '    fetchFn(config.tokenUrl, {', 0],
+    ['認可 URL の組み立ても通す', '  return `${config.authorizeUrl}?${params.toString()}`;', 0],
   ];
 
   /*
