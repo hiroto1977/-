@@ -8329,3 +8329,40 @@ expect(pri('http://[2001:db8::1]/')).toBe(false); // public documentation range
   例外台帳が効く
 - 走査が死んでいないこと (`clients/exportPaths.ts` を読めている) を別に確認
 - 例外台帳は**実在チェックと理由の長さ**つき —— 消えたファイルの例外が残らない
+
+### CI が既定で回さない 5 つを、この HEAD で全部回した (2026-08-25 / `694b8956`)
+
+**理由**: 今日の変更のうち 2 つは**レンダラー**に入っている ——
+`externalUrlGate.ts` (認証情報つき URL の遮断) と `proxy.ts` (SSRF の予約範囲)。
+前者は**ブラウザ版の `openExternal` が同じ関数を呼ぶ**ので、単体検査だけでは
+実ブラウザでの挙動を確かめたことにならない。`CLAUDE.md` も
+「レンダラーや起動性能を触ったら出荷前にローカルで回すこと」と書いている。
+
+| | 結果 |
+|---|---|
+| `e2e` (実 chromium・desktop/phone/tablet・14 節) | ✅ ALL PASSED |
+| `e2e:lite` | ✅ ALL PASSED |
+| `perf` | ✅ LITE 2.75MB **DCL 165ms** / FULL 10.86MB **DCL 482ms** (上限 1200 / 2500)・起動時の巨大 `JSON.parse` 0 |
+| `smoke` (Electron・**72 面**) | ✅ console エラー **0 件** |
+| `e2e:ollama` (7 状態) | ✅ ALL PASSED |
+
+`e2e` の第三者送信の節は、今日直した所を**実機で**通っている ——
+「プロキシの運用者からも見えると書いている (実際 2 箇所)」
+「プロキシ: 自分の Worker だけを入れるよう言っている」
+「プロキシ: 何が渡るのか (トークン) を名指ししている」。
+
+#### 手順の罠 (次に回す人へ)
+
+`build:web:lite` は**内部で `build:web` を呼び、`dist/` を空にする**。
+素直に `build:web` → `build:web:lite` と続けると**フル版が消えて `perf` が
+落ちる** (実際に踏んだ)。順序は:
+
+```bash
+npm run build:web        # dist/standalone.html
+cp dist/standalone.html /tmp/full.html
+npm run build:web:lite   # dist/ を空にして standalone-lite.html を作る
+cp /tmp/full.html dist/  # フル版を戻す
+npm run perf
+```
+
+`perf` のエラー文はこの順序を正しく案内している。
