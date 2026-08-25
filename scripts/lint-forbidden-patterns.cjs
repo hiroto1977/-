@@ -829,6 +829,38 @@ function selfTest() {
     ['散文の in は鳴らない (文字列の末尾)', "throw new Error('not listed in AI_PROVIDER_IDS');", 0],
     ['散文の in は鳴らない (後ろに語が続く)', "it('one entry per kind in FUNDING_KINDS order', () => {", 0],
     ['散文の in は鳴らない (後ろが括弧)', "it('shipped in SUPPORT_RESOURCES (label)', () => {", 0],
+    /*
+     * ここから下は 2026-08-25 に足した。**それまで「鳴る標本」を 1 つも
+     * 持たない規則が 13 件あった** —— 規則を潰しても self-test が通る状態で、
+     * うち 5 件は台帳にも実例が無く、**潰しても何一つ鳴らなかった**。
+     * (実測: 各規則の正規表現を当たらないものに差し替えて 32 回走らせた)
+     */
+    ['dangerouslySetInnerHTML を弾く', 'return <div dangerouslySetInnerHTML={{ __html: s }} />;', 1],
+    ['安全な描画は鳴らない', 'return <div>{text}</div>;', 0],
+    ['new Function を弾く', "const f = new Function('return 1');", 1],
+    ['FunctionRegistry は鳴らない (単語境界)', 'const f = new FunctionRegistry();', 0],
+    ["setTimeout の文字列形を弾く", "setTimeout('tick()', 100);", 1],
+    ['setInterval の文字列形も弾く', 'setInterval(`tick()`, 100);', 1],
+    ['関数を渡す形は鳴らない', 'setTimeout(() => tick(), 100);', 0],
+    ["message 受信口を弾く", "window.addEventListener('message', onMsg);", 1],
+    ['他の event は鳴らない', "el.addEventListener('click', onClick);", 0],
+    ['main の外の shell.openExternal を弾く', 'shell.openExternal(url);', 1],
+    ['bridge 越しなら鳴らない', 'await window.serviceHub.openExternal(url);', 0],
+    // 「呼んだが結果を見ていない」形。失敗が画面に出ないまま消える。
+    ['invoke の戻り値を捨てているのを弾く', "  await window.serviceHub.invoke('github', 'star', {});", 1],
+    ['戻り値を受けていれば鳴らない', "const r = await window.serviceHub.invoke('github', 'star', {});", 0],
+    ['window.open を弾く', "window.open(url, '_blank');", 1],
+    // 伏せる前に切ると、切った側に資格情報が残る。
+    ['伏せずに応答本文を出すのを弾く', 'throw new Error(body.slice(0, 200));', 1],
+    ['切ってから伏せるのを弾く', 'return redactSecrets(body.slice(0, 200));', 1],
+    ['★ 伏せてから切るのは正しい (鳴らない)', 'throw new Error(redactSecrets(body).slice(0, 200));', 0],
+    ['エスケープの再実装を弾く', "const s = t.replace(/&/g, '&amp;');", 1],
+    ['共有モジュール越しなら鳴らない', 'const s = escapeHtml(t);', 0],
+    ['改正前の食事補助の額を弾く', 'の非課税限度額は月 3,500 円です', 1],
+    ['改正後の額は鳴らない', 'の非課税限度額は月 7,500 円です (2026-04-01 改正)', 0],
+    ['child_process を弾く', "const { execSync } = require('node:child_process');", 1],
+    ['Ollama の書き込み側 API を弾く', 'await fetch(`${base}/api/pull`);', 1],
+    ['読み出し側 API は鳴らない', 'await fetch(`${base}/api/tags`);', 0],
   ];
 
   /*
@@ -867,6 +899,40 @@ function selfTest() {
     const ok = n === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
+  /*
+   * **どの規則にも「鳴る標本」があること。**
+   *
+   * 上の表は「この 1 行が何件の規則に当たるか」しか見ていない。規則を
+   * 1 つ潰しても、その規則に当たる標本が表に無ければ**件数は変わらず
+   * self-test は通る** —— つまりその規則は、字面を書き換えられても
+   * 誰にも気付かれずに消える。
+   *
+   * 実測 (2026-08-25): 32 規則の正規表現を 1 つずつ当たらないものに
+   * 差し替えて本番スキャンと self-test を走らせたところ、**13 規則が
+   * self-test に標本を持たず**、うち 8 件は台帳の実例 (`allowFile` が
+   * 効いている実在ファイル) が拾い、**残る 5 件は何一つ鳴らなかった**
+   * (`dangerouslySetInnerHTML` / `setTimeout('…')` / `addEventListener('message')`
+   * / `invoke` の戻り値破棄 / 伏せていない応答本文)。
+   *
+   * **台帳を標本の代わりにはできない。** 例外は「今たまたま在る実例」で
+   * あり、そのファイルを直せば消える —— 直した瞬間に規則が無防備になる。
+   * だから標本は self-test 側に持つ。
+   */
+  const positiveLines = cases.filter(([, , want]) => want > 0).map(([, line]) => line);
+  const uncovered = FORBIDDEN_PATTERNS.filter(
+    (fp) =>
+      !positiveLines.some((line) =>
+        fp.codeOnly && isCommentLine(line) ? false : fp.pattern.test(line),
+      ),
+  );
+  if (uncovered.length > 0) {
+    bad += uncovered.length;
+    console.log(`  ✗ 鳴る標本を持たない規則が ${uncovered.length} 件:`);
+    for (const fp of uncovered) console.log(`      - ${fp.name}`);
+  } else {
+    console.log(`  ✓ 全 ${FORBIDDEN_PATTERNS.length} 規則に鳴る標本がある`);
   }
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
