@@ -335,46 +335,82 @@ const ARTIFACT_SCANNERS = [
 ];
 
 /**
- * `ciOverride` / `pagesOverride` は self-test 用の差し込み口。
- * 無いと**このゲート自身が鳴るかを試せない**。
+ * **物を外へ出すワークフロー**と、その「出す一手」の目印。
+ *
+ * ここに載っているワークフローは、少なくとも 1 つは出荷物検査を持ち、かつ
+ * それが「出す一手」より**前**に在ること。`ci.yml` は何も公開しないので
+ * 載せない —— あちらは検査の置き場であって、出口ではない。
  */
-function checkPublishScanCoverage(failures, ciOverride, pagesOverride) {
+const PUBLISHING_WORKFLOWS = [
+  {
+    file: '.github/workflows/pages.yml',
+    // **`uses:` の行に限る。** 素の文字列一致では権限欄のコメント
+    // (`# required for softprops/action-gh-release`) を「出す一手」と
+    // 読んでしまい、検査が前に在っても順序違反として鳴った (実測)。
+    publishMarker: /^\s*-?\s*uses:\s*actions\/upload-pages-artifact/m,
+    // ブラウザ版は HTML そのものを配るので、両方を要求する。
+    require: ['scripts/lint-sample-data.cjs', 'scripts/lint-artifact-csp.cjs'],
+    why: 'GitHub Pages へ公開する。push: main で ci.yml と並行に走り needs: を持たない',
+  },
+  {
+    file: '.github/workflows/release.yml',
+    publishMarker: /^\s*-?\s*uses:\s*softprops\/action-gh-release/m,
+    // インストーラの中身は dist/**/* (レンダラー束)。CSP は index.html 側の
+    // 話で、デスクトップ版は Electron の webPreferences が別に守っている。
+    require: ['scripts/lint-sample-data.cjs'],
+    why: 'タグ push で署名済みインストーラを公開する。タグはどのコミットも指せる',
+  },
+];
+
+/**
+ * `ciOverride` / `overrides` は self-test 用の差し込み口。
+ * 無いと**このゲート自身が鳴るかを試せない**。
+ * `overrides` はワークフロー file → 中身の対応表。
+ */
+function checkPublishScanCoverage(failures, ciOverride, overrides) {
   const ci =
     ciOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/ci.yml')) : ciOverride;
-  const pages =
-    pagesOverride === undefined
-      ? read(path.join(REPO_ROOT, '.github/workflows/pages.yml'))
-      : pagesOverride;
-  if (ci == null || pages == null) {
-    failures.push({
-      fact: 'publish scan coverage',
-      reason: '.github/workflows/ci.yml か pages.yml を読めない',
-    });
+  if (ci == null) {
+    failures.push({ fact: 'publish scan coverage', reason: '.github/workflows/ci.yml を読めない' });
     return 0;
   }
   let checked = 0;
-  for (const { script, why } of ARTIFACT_SCANNERS) {
-    if (!ci.includes(script)) continue; // ci.yml が当てていないなら要求しない
-    checked += 1;
-    if (!pages.includes(script)) {
-      failures.push({
-        fact: 'publish scan coverage',
-        reason:
-          `${script} は ci.yml で出荷物に当てているのに pages.yml に無い —— ` +
-          `公開しているのは pages.yml のほうで、そちらは needs: を持たず並行に走るため、` +
-          `ci.yml が赤でも公開は終わる (${why})`,
-      });
+  for (const wf of PUBLISHING_WORKFLOWS) {
+    const text =
+      overrides !== undefined && Object.hasOwn(overrides, wf.file)
+        ? overrides[wf.file]
+        : read(path.join(REPO_ROOT, wf.file));
+    if (text == null) {
+      failures.push({ fact: 'publish scan coverage', reason: `${wf.file} を読めない` });
+      continue;
     }
-  }
-  // 公開の直前であること。upload-pages-artifact より後ろに置いても意味が無い。
-  const upload = pages.indexOf('upload-pages-artifact');
-  if (upload !== -1) {
-    for (const { script } of ARTIFACT_SCANNERS) {
-      const at = pages.indexOf(script);
-      if (at !== -1 && at > upload) {
+    for (const script of wf.require) {
+      const meta = ARTIFACT_SCANNERS.find((a) => a.script === script);
+      if (meta === undefined) {
         failures.push({
           fact: 'publish scan coverage',
-          reason: `${script} が pages.yml の upload-pages-artifact より後ろに在る —— 公開してから調べても遅い`,
+          reason: `${wf.file} が要求する ${script} が ARTIFACT_SCANNERS に無い (台帳の綴り違い)`,
+        });
+        continue;
+      }
+      if (!ci.includes(script)) continue; // ci.yml が当てていないなら要求しない
+      checked += 1;
+      if (!text.includes(script)) {
+        failures.push({
+          fact: 'publish scan coverage',
+          reason:
+            `${script} は ci.yml で出荷物に当てているのに ${wf.file} に無い —— ` +
+            `外へ出しているのは ${wf.file} のほうである (${wf.why}) (${meta.why})`,
+        });
+        continue;
+      }
+      // 出す一手より前であること。後ろに置いても意味が無い。
+      const publishAt = text.search(wf.publishMarker);
+      const scanAt = text.indexOf(script);
+      if (publishAt !== -1 && scanAt > publishAt) {
+        failures.push({
+          fact: 'publish scan coverage',
+          reason: `${script} が ${wf.file} の公開ステップより後ろに在る —— 出してから調べても遅い`,
         });
       }
     }
@@ -801,19 +837,46 @@ function selfTest() {
       '      - uses: actions/upload-pages-artifact@v3\n' +
       '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
       '      - run: node scripts/lint-artifact-csp.cjs --app _site/app.html\n';
-    for (const [label, ci, pages, expected] of [
-      ['公開側にも両方あれば通る', CI_BOTH, PAGES_OK, 0],
-      ['★ 公開側に 1 つも無ければ 2 件鳴る', CI_BOTH, PAGES_NONE, 2],
-      ['★ 片方だけ足りなければ 1 件鳴る', CI_BOTH, PAGES_HALF, 1],
-      ['★ 公開の後ろに置いたら鳴る (2 件とも順序違反)', CI_BOTH, PAGES_AFTER, 2],
-      ['ci.yml が当てていないものは要求しない', '', PAGES_NONE, 0],
-      ['どちらか読めなければ鳴る', null, PAGES_OK, 1],
+    const REL_OK =
+      '      - run: node scripts/lint-sample-data.cjs --artifact dist/assets/x.js\n' +
+      '      - uses: softprops/action-gh-release@v2\n';
+    const REL_NONE = '      - uses: softprops/action-gh-release@v2\n';
+    /*
+     * **公開ステップの目印は `uses:` の行に限る。** 素の文字列一致だと
+     * 権限欄のコメント (`# required for softprops/action-gh-release`) を
+     * 「出す一手」と読み、検査が前に在っても順序違反として鳴った (実測)。
+     * その形をここに標本として置く。
+     */
+    const REL_COMMENT_FIRST =
+      '  contents: write  # required for softprops/action-gh-release\n' +
+      '      - run: node scripts/lint-sample-data.cjs --artifact dist/assets/x.js\n' +
+      '      - uses: softprops/action-gh-release@v2\n';
+    const P = '.github/workflows/pages.yml';
+    const R = '.github/workflows/release.yml';
+    for (const [label, ci, ov, expected] of [
+      ['公開側にも全部あれば通る', CI_BOTH, { [P]: PAGES_OK, [R]: REL_OK }, 0],
+      ['★ Pages 側に 1 つも無ければ 2 件鳴る', CI_BOTH, { [P]: PAGES_NONE, [R]: REL_OK }, 2],
+      ['★ Pages 側が片方だけなら 1 件鳴る', CI_BOTH, { [P]: PAGES_HALF, [R]: REL_OK }, 1],
+      ['★ Pages 側が公開の後ろなら 2 件鳴る', CI_BOTH, { [P]: PAGES_AFTER, [R]: REL_OK }, 2],
+      ['★ Release 側に無ければ鳴る (インストーラの中身)', CI_BOTH, { [P]: PAGES_OK, [R]: REL_NONE }, 1],
+      ['★ 権限欄のコメントを公開ステップと読み違えない', CI_BOTH, { [P]: PAGES_OK, [R]: REL_COMMENT_FIRST }, 0],
+      ['ci.yml が当てていないものは要求しない', '', { [P]: PAGES_NONE, [R]: REL_NONE }, 0],
+      ['ワークフローが読めなければ鳴る', CI_BOTH, { [P]: null, [R]: REL_OK }, 1],
+      ['ci.yml が読めなければ鳴る', null, { [P]: PAGES_OK, [R]: REL_OK }, 1],
     ]) {
       const f = [];
-      checkPublishScanCoverage(f, ci, pages);
+      checkPublishScanCoverage(f, ci, ov);
       const ok = f.length === expected;
       if (!ok) bad++;
       console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+    // 台帳どうしの綴りが合っていること (require の script が台帳に在る)。
+    for (const wf of PUBLISHING_WORKFLOWS) {
+      const unknown = wf.require.filter((r) => !ARTIFACT_SCANNERS.some((a) => a.script === r));
+      if (unknown.length > 0) bad++;
+      console.log(
+        `  ${unknown.length === 0 ? '✓' : '✗'} ${wf.file} が要求する検査は台帳に在る (${wf.require.length} 件)`,
+      );
     }
     // 台帳に理由が書かれていること。
     const noWhy = ARTIFACT_SCANNERS.filter((a) => String(a.why).trim().length < 20);

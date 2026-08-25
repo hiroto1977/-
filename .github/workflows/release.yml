@@ -50,10 +50,16 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Typecheck + test
+      # **タグはどのコミットも指せる。** trigger は `tags: v*` なので、
+      # CI が一度も通っていないコミットにタグを打っても、ここは動いて
+      # 署名済みインストーラを公開まで運ぶ。ci.yml は push: main / PR にしか
+      # 起動しないので、リリース経路には効かない (2026-08-25 に構成を確認)。
+      # だから 33 ゲートもここで回す —— 出すのはこのワークフローである。
+      - name: Typecheck + test + gates
         run: |
           npm run typecheck
           npm test
+          npm run verify:all
 
       # electron-builder は CI を検知すると **暗黙に** GitHub Releases へ publish
       # しようとする (v0.1.0 の失敗ランで実際に発火し、softprops ステップと二重
@@ -101,6 +107,21 @@ jobs:
       # RUNNER_OS は runner の組み込み変数なので ${{ }} の展開は要らない。
       - name: Verify release artifacts
         run: node scripts/verify-release-artifacts.cjs
+
+      # 出す物そのものに個人データが混ざっていないか。
+      #
+      # `ci.yml` / `pages.yml` はブラウザ版の HTML に当てているが、
+      # **デスクトップ版のバンドルには誰も当てていなかった** (2026-08-25)。
+      # `electron-builder.json` の `files` は `dist/**/*` を含むので、
+      # `dist/assets/index-*.js` (実測 11.4MB) は**全インストーラの中に入る**。
+      # 中身はブラウザ版と同じレンダラー束なので「今の構成なら同じ物」だが、
+      # それは構成が保証しているだけで、規則が保証していることではない ——
+      # 同じ理屈で `.json` の取りこぼしを見逃したのが今日の朝である。
+      # 実測 11.4MB に対して 0.7 秒。
+      - name: Scan the desktop bundle for real personal data
+        run: |
+          ls -la dist/ dist/assets/
+          node scripts/lint-sample-data.cjs --artifact dist/index.html dist/assets/*.js
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2

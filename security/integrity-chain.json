@@ -900,12 +900,20 @@
       "leafCount": 49,
       "note": "update pages.yml",
       "hash": "b8506ca1e4e8eea7ba11d7c1a421a72fd7dd958c6783aa3dd964a7445115684a"
+    },
+    {
+      "index": 106,
+      "prevHash": "b8506ca1e4e8eea7ba11d7c1a421a72fd7dd958c6783aa3dd964a7445115684a",
+      "merkleRoot": "7c2d93a93f04cada3f6d2de4fe5dacd552e5a3cd67e528599487aef5d4779edc",
+      "leafCount": 49,
+      "note": "update release.yml",
+      "hash": "2a2548b94c15b3ced5e7882da3c58e55065aaa39c03b10b5b16dbca0baba4dcf"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "f0cf94cf64692d8471e620e99fbfba7f9ed97125d8c36edaefa4b37088f842eb",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
-    ".github/workflows/release.yml": "33f2d9f3324426e8185253db10a463fc7340881c63d39598fc7caf47f3d79004",
+    ".github/workflows/release.yml": "3b517cfa7475c148f280660247196ac40b3bbb60b1f75405cd14d40246280b73",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "ba13416be7ba6f9ddf5c0fba7822e937c54352330c70a9242b1c11b492c0fbe8",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
