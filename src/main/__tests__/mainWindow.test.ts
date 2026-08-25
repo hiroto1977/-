@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
 
 /*
  * BrowserWindow の作られ方と、窓に張った 3 つの番人。
@@ -299,6 +300,53 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     const c = await loadMain({ packaged: true });
     expect(ask(c, permission), '要求側が通した').toBe(false);
     expect(c.permissionCheck!({}, permission), '問い合わせ側が granted と答えた').toBe(false);
+  });
+
+  /*
+   * **名指しの一覧は、名指しした綴りしか守れない。**
+   *
+   * 上の `it.each` は 20 個の権限を「拒否する」と留めているが、
+   * **許可側 (`ALLOWED_PERMISSIONS`) の一覧そのものは留めていない**。
+   * つまり上の一覧に**無い**名前を許可側へ足しても、どのテストも鳴らない。
+   *
+   * 実測 (2026-08-25): 入れている Electron の型が挙げる 20 個のうち、
+   * 上の一覧は **`mediaKeySystem` と `top-level-storage-access` を欠いて
+   * いた** (どちらも今は許可されていないので実害は無い。ただし
+   * `top-level-storage-access` はサイトを跨ぐ保存領域への許可である)。
+   *
+   * **一覧は Electron の型定義から採る。** 自分の記憶から書き写すと、
+   * 今日 2 度やったように「実物と違う綴り」で空の検査になる。
+   * この形なら Electron を上げて権限が増えたときも自動で対象に入り、
+   * **既定拒否のままであることが毎回確かめられる**。
+   */
+  const ALLOWED = ['clipboard-read', 'clipboard-sanitized-write'];
+
+  function electronPermissionNames(): string[] {
+    const dts = readFileSync(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'), 'utf8');
+    const m = /setPermissionRequestHandler\(handler: \(\(webContents: WebContents, permission: ([^,]+),/.exec(dts);
+    expect(m, 'electron.d.ts から権限の一覧を読めない — 走査が壊れている').not.toBeNull();
+    return [...m![1]!.matchAll(/'([a-zA-Z-]+)'/g)].map((x) => x[1]!);
+  }
+
+  it('★ Electron が挙げる権限のうち、許すのはクリップボードの 2 つだけ', async () => {
+    const names = electronPermissionNames();
+    // 走査が死んで 0 件になったのを「違反なし」と読まない。
+    expect(names.length, '権限の一覧が短すぎる — 型定義の書式が変わった可能性').toBeGreaterThanOrEqual(15);
+    expect(names).toContain('geolocation');
+
+    const c = await loadMain({ packaged: true });
+    const granted = names.filter((n) => ask(c, n));
+    expect(
+      granted.sort(),
+      '許す権限が増減した — その権限がレンダラーへ何を許すのかを確かめてから、この一覧を更新すること',
+    ).toEqual(ALLOWED);
+
+    // 問い合わせ側も同じ答えであること (片方だけ緩いと query() が嘘をつく)。
+    for (const n of names) {
+      expect(c.permissionCheck!({}, n), `${n}: 問い合わせ側の答えが要求側と違う`).toBe(
+        ALLOWED.includes(n),
+      );
+    }
   });
 
   /*
