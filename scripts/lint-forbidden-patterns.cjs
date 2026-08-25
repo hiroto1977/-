@@ -198,6 +198,21 @@ const FORBIDDEN_PATTERNS = [
     rationale: '検証の浅い機能を増やす — 攻撃面を広げるだけで、この用途に要る機能は無い',
   },
   {
+    /*
+     * `experimentalFeatures` の兄弟。あちらは規則が在り、こちらは
+     * **1 件も無かった** (2026-08-25 実測)。どちらも「既定で切ってある
+     * 未成熟な Blink 機能を開ける」口で、危険の質は同じである。
+     *
+     * 値は真偽ではなく**機能名の文字列**なので `: true` では捕まらない ——
+     * 名指しの規則を並べていると、**書き方が違う兄弟だけが漏れる**。
+     */
+    name: 'enableBlinkFeatures (既定で切ってある Blink 機能を開ける)',
+    pattern: /\benableBlinkFeatures\s*:/,
+    codeOnly: true,
+    rationale:
+      '既定で無効な機能は検証が浅い。開けるなら「どの機能を・なぜ」を人が見ること (disableBlinkFeatures は逆向きなので対象外)',
+  },
+  {
     name: 'enableRemoteModule: true (remote モジュール)',
     pattern: /\benableRemoteModule\s*:\s*true\b/,
     codeOnly: true,
@@ -847,6 +862,9 @@ function selfTest() {
     ['入力欄のプレースホルダは鳴らない', "placeholder: 'ghp_...',", 0],
     ['伏字パターンそのものは鳴らない', "/\\b(sk-ant-|ghp_)[A-Za-z0-9_-]{8,}/g", 0],
     ['秘密鍵の直書きを弾く', '-----BEGIN RSA PRIVATE KEY-----', 1],
+    // 値が文字列なので `: true` の形では捕まらない。実物の書き方で標本を採る。
+    ['enableBlinkFeatures を弾く', "      enableBlinkFeatures: 'CSSVariables',", 1],
+    ['逆向きの disableBlinkFeatures は鳴らない', "      disableBlinkFeatures: 'Auxclick',", 0],
     ['正しい設定は鳴らない', 'contextIsolation: true, nodeIntegration: false, sandbox: true,', 0],
     ['コメント内の言及は鳴らない', '// nodeIntegration: true は使わないこと', 0],
     ['webviewTag: true を弾く', 'webPreferences: { webviewTag: true },', 1],

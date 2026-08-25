@@ -169,6 +169,25 @@ describe('BrowserWindow の設定 — 隔離の三点セット', () => {
     expect(wp.sandbox).toBe(true);
     // Electron の既定は true。辞書を外から取りに行く経路を残さない。
     expect(wp.spellcheck, '綴り検査は既定 true — 明示的に切る').toBe(false);
+
+    /*
+     * **欄の一覧を字面で固定する。**
+     *
+     * 上の 4 件は「危ない既定を切ってあるか」を見るが、**新しい欄が黙って
+     * 増えたこと**は見ていない。`lint:forbidden` は危険な既定を 6 種
+     * 名指しで禁じており強いが、**名指しした物しか止められない**
+     * (2026-08-25 実測で `enableBlinkFeatures` は 1 件も規則が無かった)。
+     *
+     * 欄の一覧そのものを留めれば、**未知の欄でも人の目を通る** ——
+     * `secrets.ts` の `storageProtection` が同じ形で守られており、
+     * 今日その仕掛けが私の変更 (`durability` 追加) を実際に止めた。
+     *
+     * 増やすときは「その欄はレンダラーに何を許すのか」を人が見ることになる。
+     */
+    expect(
+      Object.keys(wp).sort(),
+      'webPreferences に欄が増減した — その欄がレンダラーへ何を許すのかを確かめてから、この一覧を更新すること',
+    ).toEqual(['contextIsolation', 'nodeIntegration', 'preload', 'sandbox', 'spellcheck']);
   });
 
   it('preload を必ず読ませる (bridge が無ければ何も呼べない)', async () => {

@@ -7023,3 +7023,59 @@ CLAUDE.md を編集した直後の `npm test` が **exit 1** を返した。
 
 **再現しないが、無かったことにはしない。** 併せて手順の教訓 ——
 **終了コードを見るつもりの実行で、出力を捨てない。**
+
+---
+
+### 名指しの規則は、書き方が違う兄弟を取り逃がす (2026-08-25)
+
+検査を当て直したので、**探す側**へ戻った。今日の教訓
+「不在の主張は綴り 1 つで黙る」を、他人が書いた規則へも当てる。
+
+#### まず、空振りが続いた (それも結果である)
+
+**caller が決める文字列で表を引く箇所**を全部当たった
+(`X[serviceId]` / `X[action]` / `X[id]` …) —— プロトタイプ由来の値が
+返って「対応済み」に見える形が無いか。**全部塞がっていた**:
+
+```
+AI_PROVIDERS[id]          ← configuredProviders が AI_PROVIDER_IDS で絞る
+SERVICE_ALIASES[id]       ← SERVICE_IDS を回すだけ
+available.actions[svc]    ← 上の照合で確定した ServiceId
+LIVE_READERS[serviceId]   ← canLiveRead 越し (過去に直した記録がコードに在る)
+PROFESSIONAL_MAP[id]      ← isProfessionalId / ProfessionalId 型で確定
+```
+
+Electron の遷移まわりも同様に堅い ——
+`setWindowOpenHandler` / `will-navigate` / `will-redirect` (3xx も) /
+`sandbox` / `contextIsolation` / `nodeIntegration: false`。
+**探して無かったことも記録する。**
+
+#### 見つけたのは 2 つ
+
+**(1) `enableBlinkFeatures` に規則が 1 件も無かった。**
+
+`lint:forbidden` は危険な `webPreferences` を名指しで 6 種禁じている
+(`webSecurity: false` / `webviewTag: true` / `experimentalFeatures: true` …)。
+実測すると **`enableBlinkFeatures` だけ 0 件**だった。
+
+`experimentalFeatures` の**兄弟**である —— どちらも「既定で切ってある
+未成熟な Blink 機能を開ける」口で、危険の質は同じ。漏れた理由は書き方で、
+**値が真偽ではなく機能名の文字列**なので `: true` を並べた規則群からこぼれた。
+
+**名指しの規則は、名指しした綴りしか止められない。**
+規則 34 として追加 (標本は肯定・否定の両方 —— 逆向きの
+`disableBlinkFeatures` は鳴らないことも留めた)。
+対照 —— `main.ts` に 1 行入れると実物の走査が名指しで鳴る。
+
+**(2) `webPreferences` の欄の一覧が留められていなかった。**
+
+`mainWindow.test.ts` は `contextIsolation` / `nodeIntegration` / `sandbox` /
+`spellcheck` を個別に確かめるが、**新しい欄が黙って増えたこと**は見ていない。
+つまり `lint:forbidden` が名指ししていない欄なら、**両方の網をすり抜ける**。
+
+欄の一覧そのものを字面で固定した。**未知の欄でも人の目を通る**ようになる。
+同じ仕掛けが `secrets.ts` の `storageProtection` に在り、**今日それが私の変更
+(`durability` 追加) を実際に止めた** —— 効くことが分かっている形である。
+
+対照 —— `enableBlinkFeatures` を足すと、**規則 34 を消しても**この一覧検査が
+鳴る。名指しと一覧は**別々に効く**ので、両方置く。

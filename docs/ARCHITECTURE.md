@@ -2327,7 +2327,7 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース **≥ 400 ファイル**を **33 個の禁止パターン** で scan し、
+ランタイムソース **≥ 400 ファイル**を **34 個の禁止パターン** で scan し、
 1 件でも検出すれば fail。
 
 規則の一覧はここに写さず `FORBIDDEN_PATTERNS` (scripts/lint-forbidden-patterns.cjs)
