@@ -43,6 +43,25 @@ function createWindow(): BrowserWindow {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      /*
+       * **Electron の既定は `true`。** 綴り検査が要る場面がこのアプリに無い
+       * のに、hunspell の辞書は Google がホストする CDN から取りに行く
+       * 設計なので、既定のままだと「打ち始めたら外へ出る」経路を 1 本
+       * 抱えることになる。ブラウザ版には e2e の `noBeacon` 節で
+       * 「開いただけで外へ出ていかない」を留めてあるが、**デスクトップ版に
+       * 同じ主張は無かった**。
+       *
+       * **正直に書く**: 2026-08-25 に実測した範囲では、`<textarea
+       * spellcheck="true">` へ実キーイベントで綴り誤りを 56 文字打ち込み
+       * 6 秒待っても、`session.webRequest` から見える取得は **0 件**だった。
+       * ただし Chromium の部品更新系の取得は `webRequest` を通らないことが
+       * あるので、**「起きない」ことを測り切れてはいない**。
+       *
+       * 日本語の入力は hunspell の対象外で、英字で打つのは URL と資格情報
+       * ばかり —— 綴り検査が付いても波線が出るだけで役に立たない。
+       * **得るものが無く、閉じ切れない経路が 1 本残る**ので切る。
+       */
+      spellcheck: false,
     },
   });
 
@@ -80,6 +99,20 @@ function createWindow(): BrowserWindow {
    * 同じ判断を 2 度書かない —— `externalUrlGate.ts` の扉と同じ理由。
    */
   const permissionAllowed = (permission: string): boolean => ALLOWED_PERMISSIONS.has(permission);
+  /*
+   * **綴り検査は session 側でも切る。**
+   *
+   * `webPreferences.spellcheck: false` は **webContents ごと**の設定で、
+   * `session.isSpellCheckerEnabled()` には現れない (実測: 未設定でも
+   * `spellcheck: false` でも `true` を返す)。**片方だけでは「切れている」
+   * ことを外から確かめられない。** session 側も切ると観測可能になり、
+   * 窓を増やしたときの取りこぼしも無くなる。
+   *
+   * 最初は webPreferences だけ入れて「効いていない」と読み違えかけた ——
+   * **見ていた物が、設定した物と違っていた。**
+   */
+  win.webContents.session.setSpellCheckerEnabled(false);
+
   win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permissionAllowed(permission));
   });

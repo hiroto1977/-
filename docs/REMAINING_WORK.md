@@ -6291,3 +6291,70 @@ Google の API キーは `AIza` 接頭辞を持つので、実測で URL の中�
 **今日これで 6 度目**である —— `data:image/pngX` / landing の「72」/
 全角 `ｇ` の `github.com` / NUL の正規化 / `MUST_MEASURE` の「7 件欠落」/
 そしてこれ。**「鳴らなかった」と同じ重さで「鳴った」を疑う。**
+
+---
+
+### Electron の「設定していない既定」を数えた — 綴り検査 (2026-08-25)
+
+`MUST_MEASURE` の壁 33 枚を当て終えたので、**壁の外**へ出た。
+IPC の入口は `mainIpc.test.ts` が 813 行 64 件で全 13 ハンドラを敵性入力込みで
+覆っており (知らない id / 非文字列 / プロトタイプ由来の action 名 /
+payload が素のオブジェクトでない / 失敗が reject しない / 伏字 / 長さ切り)、
+`payload` を展開して合成する箇所も無い (プロトタイプ汚染の面はゼロ)。
+**重ねる価値が無い**ので軸を変えた。
+
+**禁じている物ではなく、設定していない物を見る。**
+`webPreferences` は `contextIsolation` / `nodeIntegration` / `sandbox` の
+3 つを固定しているが、**Electron が既定で有効にする物**は別にある。
+
+#### `spellcheck` は既定で `true` だった
+
+実測: `isSpellCheckerEnabled(): true` / 言語 `["en-US"]` / 利用可能 57 言語。
+
+Electron の綴り検査は hunspell の辞書を **Google がホストする CDN** から
+取りに行く設計である。このアプリはブラウザ版に
+「**開いただけで外へ出ていかない**」を e2e (`noBeacon` 節) で留めているが、
+**デスクトップ版に同じ主張は無かった。**
+
+#### 「起きる」ことは実測できなかった —— 正直に書く
+
+`<textarea spellcheck="true">` を差し込み、**実キーイベント**で綴り誤りを
+56 文字打ち込んで 6 秒待った。`session.webRequest.onBeforeRequest` から
+見える取得は **0 件**。`file:` 以外の要求そのものが 0 だった。
+
+ただし Chromium の部品更新系の取得は `webRequest` を通らないことがあるので、
+**「起きない」ことを測り切れてはいない。**
+
+#### それでも切った理由
+
+日本語の入力は hunspell の対象外で、英字で打つのは URL と資格情報ばかり ——
+**綴り検査が付いても波線が出るだけで役に立たない**。
+得るものが無く、閉じ切れない経路が 1 本残る。だから切る。
+**これは「直した欠陥」ではなく「畳んだ面」である。**
+
+#### 途中で「効いていない」と読み違えかけた
+
+`webPreferences.spellcheck: false` を入れて実測すると、
+`isSpellCheckerEnabled()` は **`true` のまま**だった。
+
+```
+既定 (未設定)      → isSpellCheckerEnabled: true
+spellcheck: false → isSpellCheckerEnabled: true   ← 効いていない?
+```
+
+**違った。** `isSpellCheckerEnabled()` は **session** の性質で、
+`webPreferences.spellcheck` は **webContents ごと**の設定である。
+**見ていた物が、設定した物と違っていた** —— 今日何度も書いた
+「検査が実物ではなく代替物を見ている」を、自分の測り方でやった。
+
+`session.setSpellCheckerEnabled(false)` を足すと `true → false` と
+**観測できる**ようになる。両方切ってあるのは、
+
+- `webPreferences` は窓ごとに効く (新しい窓を足したときの既定)
+- `session` 側は**外から確かめられる** (検査に書ける)
+
+の 2 つが揃わないと「切れている」と言えないからである。
+
+対照 2 本 —— どちらを外しても `mainWindow.test.ts` が落ちる。
+`verify:arch` も、行がずれた `ALLOWED_PERMISSIONS` の参照 (71 → 90) を
+その場で指摘した。

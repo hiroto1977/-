@@ -27,6 +27,7 @@ interface Captured {
   loadedUrl: string | null;
   devToolsOpened: boolean;
   devToolsMode: string | null;
+  spellChecker: boolean | null;
 }
 
 let captured: Captured;
@@ -48,6 +49,7 @@ function freshCapture(): Captured {
     loadedUrl: null,
     devToolsOpened: false,
     devToolsMode: null,
+    spellChecker: null,
   };
 }
 
@@ -79,6 +81,9 @@ vi.mock('electron', () => ({
         },
         setPermissionCheckHandler: (fn: (wc: unknown, permission: string) => boolean) => {
           captured.permissionCheck = fn;
+        },
+        setSpellCheckerEnabled: (v: boolean) => {
+          captured.spellChecker = v;
         },
       },
       setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
@@ -162,6 +167,8 @@ describe('BrowserWindow の設定 — 隔離の三点セット', () => {
     expect(wp.contextIsolation).toBe(true);
     expect(wp.nodeIntegration).toBe(false);
     expect(wp.sandbox).toBe(true);
+    // Electron の既定は true。辞書を外から取りに行く経路を残さない。
+    expect(wp.spellcheck, '綴り検査は既定 true — 明示的に切る').toBe(false);
   });
 
   it('preload を必ず読ませる (bridge が無ければ何も呼べない)', async () => {
@@ -243,6 +250,9 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     const c = await loadMain({ packaged: true });
     expect(c.permissionRequest, 'setPermissionRequestHandler が無い').not.toBeNull();
     expect(c.permissionCheck, 'setPermissionCheckHandler が無い').not.toBeNull();
+    // 綴り検査は webPreferences だけでは外から確かめられない —— session 側は
+    // 別勘定で `isSpellCheckerEnabled()` に現れない (実測)。両方切る。
+    expect(c.spellChecker, 'session 側の綴り検査を切っていない').toBe(false);
   });
 
   it.each([
