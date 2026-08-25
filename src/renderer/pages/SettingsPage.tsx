@@ -10,7 +10,7 @@ import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
-import { isEvictableStorage } from '../../shared/storageDurability';
+import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
@@ -844,6 +844,47 @@ export function SettingsPage() {
  * ため「本人が判断すべきリスクが本人に届かない」状態だった (2026-07 監査の
  * フォローアップ)。ここで可視化して、暗号化を有効にする手順まで案内する。
  */
+/**
+ * 立ち退きの注意。**暗号化できる場合とできない場合の両方から呼ばれる**ので、
+ * 文言はここ 1 か所にしかない (2 か所に書くと黙って食い違う)。
+ *
+ * **「バックアップを書き出してください」とだけ言ってはいけない。**
+ * 最初の実装はそう書いており、それは「暗号化されたトークンごと失われます」の
+ * 直後に置かれていたので、**書き出せばトークンも戻ると読める**。実際には
+ * このアプリのバックアップは業務レコードだけで、API キーは構造的に入らない
+ * (`BACKUP_EXCLUSIONS` の 1 番目)。**守られたつもりで失う**のがいちばん悪い。
+ * 何が戻って何が戻らないかは `EVICTION_RECOVERY` が持つ。
+ */
+function EvictionNotice() {
+  return (
+    <>
+      <br />
+      <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+        ⚠️ この保管庫は「消えうる」領域にあります
+      </strong>
+      <br />
+      ブラウザが空き容量の都合や長期の無操作でこの領域を消すことがあります
+      (Safari は無操作 7 日で消します)。消えるときは
+      <strong>この生成元の保存領域ごと</strong>消えるため、保管庫だけでなく
+      ライブラリの書類やブラウザ内の設定も一緒に失われます。
+      <br />
+      <strong>控えた 24 語では戻せません</strong> ——
+      フレーズは保管庫を開けるためのもので、消えたときは暗号化された
+      トークンごと失われるため、開ける対象が残りません。
+      {EVICTION_RECOVERY.map((r) => (
+        <span key={r.what}>
+          <br />
+          ・<strong>{r.what}</strong>:{' '}
+          {r.recoverable ? '戻せます' : <strong>戻せません</strong>} — {r.note}
+        </span>
+      ))}
+      <br />
+      アプリとして<strong>インストール</strong>すると、ブラウザが
+      この領域を保護対象に格上げすることがあります。
+    </>
+  );
+}
+
 function StorageProtectionNotice() {
   const [state, setState] = useState<{
     encrypted: boolean;
@@ -922,28 +963,17 @@ function StorageProtectionNotice() {
 
             **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を
             *開ける*ための物で、立ち退きでは暗号化されたトークンごと消える
-            ため、開ける物が残らない。戻せるのは書き出したバックアップだけ。
+            ため、開ける物が残らない。
+
+            **バックアップでも戻らない** —— このアプリのバックアップは
+            業務レコードだけで、API キーは `BACKUP_EXCLUSIONS` の 1 番目が
+            言うとおり構造的に入らない。文言は `EVICTION_RECOVERY` が持つ
+            (`shared/storageDurability.ts` の注記に経緯)。
 
             暗号化の状態 (`encrypted`) とは独立に出す —— 暗号化されていても
             消えるときは消える。
           */}
-          {isEvictableStorage(state.durability) && (
-            <>
-              <br />
-              <strong style={{ color: 'var(--warn, #fbbf24)' }}>
-                ⚠️ この保管庫は「消えうる」領域にあります
-              </strong>
-              <br />
-              ブラウザが空き容量の都合や長期の無操作でこの領域を消すことがあります
-              (Safari は無操作 7 日で消します)。
-              <strong>控えた 24 語では戻せません</strong> ——
-              フレーズは保管庫を開けるためのもので、消えたときは暗号化された
-              トークンごと失われます。<strong>バックアップを書き出してください。</strong>
-              <br />
-              アプリとして<strong>インストール</strong>すると、ブラウザが
-              この領域を保護対象に格上げすることがあります。
-            </>
-          )}
+          {isEvictableStorage(state.durability) && <EvictionNotice />}
         </p>
       </div>
     );
@@ -976,28 +1006,17 @@ function StorageProtectionNotice() {
 
           **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を
           *開ける*ための物で、立ち退きでは暗号化されたトークンごと消える
-          ため、開ける物が残らない。戻せるのは書き出したバックアップだけ。
+          ため、開ける物が残らない。
+
+          **バックアップでも戻らない** —— このアプリのバックアップは
+          業務レコードだけで、API キーは `BACKUP_EXCLUSIONS` の 1 番目が
+          言うとおり構造的に入らない。文言は `EVICTION_RECOVERY` が持つ
+          (`shared/storageDurability.ts` の注記に経緯)。
 
           暗号化の状態 (`encrypted`) とは独立に出す —— 暗号化されていても
           消えるときは消える。
         */}
-        {isEvictableStorage(state.durability) && (
-          <>
-            <br />
-            <strong style={{ color: 'var(--warn, #fbbf24)' }}>
-              ⚠️ この保管庫は「消えうる」領域にあります
-            </strong>
-            <br />
-            ブラウザが空き容量の都合や長期の無操作でこの領域を消すことがあります
-            (Safari は無操作 7 日で消します)。
-            <strong>控えた 24 語では戻せません</strong> ——
-            フレーズは保管庫を開けるためのもので、消えたときは暗号化された
-            トークンごと失われます。<strong>バックアップを書き出してください。</strong>
-            <br />
-            アプリとして<strong>インストール</strong>すると、ブラウザが
-            この領域を保護対象に格上げすることがあります。
-          </>
-        )}
+        {isEvictableStorage(state.durability) && <EvictionNotice />}
       </p>
       <p style={{ margin: '8px 0 0' }}>
         <strong>対処:</strong> Linux では <code>gnome-keyring</code> または{' '}
