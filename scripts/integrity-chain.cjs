@@ -170,6 +170,25 @@ const PROTECTED = [
   // 逆向きの閉包 (保護対象を import している側) を測って見つけた。
   // 54 行・半年で 1 回しか変わっておらず、これ自身の依存も全部保護済み。
   'src/renderer/data/recordCipher.ts',
+  // 2026-08-25 追加。**2 つの台帳が食い違っていた。**
+  // `lint:mutation-scope` の `MUST_MEASURE` (必ず変異検査に載せる壁) と
+  // この `PROTECTED` は、どちらも「これは壁だ」と言う名簿なのに 15 件ずれていた。
+  // 変更頻度を測ると (60 日): web-shim だけが 23 回・1518 行で、残りは
+  // 1〜6 回・51〜528 行の安定資産だった。**採掘の手間は「頻繁に変わるもの」を
+  // 避けるためのもので、安定した壁を外す理由にはならない。**
+  'src/renderer/security/frameGuard.ts',    // 枠の中では描画しない (CSP で代替できない)
+  'src/renderer/security/lockWorkspace.ts', // 施錠で鍵をメモリから落とす本体
+  'src/shared/imageUrlGate.ts',             // 第三者画像 URL のスキーム関門
+  'src/shared/safeFilename.ts',             // ファイル名の唯一の関門
+  'src/shared/atlassianSite.ts',            // テナント名の検証 (送り先が変わる)
+  'src/shared/scanTarget.ts',               // 走査先の検証
+  'src/shared/escape.ts',                   // 出口のエスケープ
+  'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
+  'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
+  'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
+  'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
+  'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
+  'src/shared/ollama.ts',                   // Ollama の接続先判定
 ];
 
 /**
@@ -199,9 +218,23 @@ const DEP_EXCLUSIONS = {
   // 除外の理由は「型だけに見えるか」ではなく「実行時に残るか」で決める。
   'src/shared/advisorTypes.ts':
     '実行時に残らない型定義のみ (interface 1 つ)。書き換えても生成 JS が変わらない。',
+  // 2026-08-25: 保護対象へ入れようとして、**ここに既に在ることに気付いた**
+  // (閉包検査が「二重管理」で鳴った)。過去の判断を尊重して除外のままにするが、
+  // 理由の書きぶりは実態に寄せる —— このファイルは版の比較だけでなく、
+  // **案内先 URL のホスト検証**も持つ (`parseLatestRelease`)。
+  // それでも除外でよいのは、OS に URL を開かせる可否を決めるのは
+  // `externalUrlGate.ts` (保護対象) であって、ここはその手前の一段だから。
   'src/shared/updateCheck.ts':
-    '版の比較のみ。書き換えの最悪は「更新があるのに気付かせない」で、'
-    + '配布経路そのものは release.yml (保護対象) が持つ。',
+    '版の比較と案内先 URL のホスト検証。書き換えの最悪は「更新があるのに気付かせない」で、'
+    + '実際に開いてよいかは externalUrlGate (保護対象) が決め、配布経路は release.yml (保護対象) が持つ。',
+  // 2026-08-25: `liveRead.ts` を保護対象へ入れたら閉包で出てきた。
+  // サービス API のアダプタ (エンドポイントと応答の正規化) で、`clients/index.ts`
+  // を除外したのと同じ class である。送り先が変数で決まる通信は
+  // `lint:network-targets` の台帳が見ており、上限と打ち切りは `httpLimits`
+  // (保護対象) が持つ。
+  'src/shared/api/cursor.ts':
+    'サービス API のアダプタ。送り先は定数で lint:network-targets の台帳が見ており、'
+    + '上限・打ち切りは httpLimits (保護対象) が持つ。',
 };
 
 /** 相対 import を実ファイルへ解決する (拡張子省略に対応)。解決できなければ null。 */
@@ -537,12 +570,27 @@ function cmdSelfTest() {
   console.log('✅ self-test 全件一致');
 }
 
-const cmd = process.argv[2] || 'verify';
-if (cmd === 'verify') cmdVerify();
-else if (cmd === 'append') cmdAppend();
-else if (cmd === 'show') cmdShow();
-else if (cmd === 'self-test') cmdSelfTest();
-else {
-  console.error(`不明なコマンド: ${cmd}（verify | append | show | self-test）`);
-  process.exit(2);
+/*
+ * **台帳を機械で突き合わせられるようにする** (2026-08-25)。
+ *
+ * `lint:mutation-scope` の `MUST_MEASURE` (必ず変異検査に載せる壁) と
+ * この `PROTECTED` は、どちらも「これは壁だ」と言う名簿なのに **15 件
+ * ずれていた**。片方だけ見ていても気付けないので、突き合わせられるよう
+ * 名簿を export する。
+ *
+ * 併せて CLI の起動を `require.main` で守る —— export しても、require した
+ * 瞬間にコマンドが走っては読めない。
+ */
+module.exports = { PROTECTED, DEP_EXCLUSIONS };
+
+if (require.main === module) {
+  const cmd = process.argv[2] || 'verify';
+  if (cmd === 'verify') cmdVerify();
+  else if (cmd === 'append') cmdAppend();
+  else if (cmd === 'show') cmdShow();
+  else if (cmd === 'self-test') cmdSelfTest();
+  else {
+    console.error(`不明なコマンド: ${cmd}（verify | append | show | self-test）`);
+    process.exit(2);
+  }
 }

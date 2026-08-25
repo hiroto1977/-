@@ -249,6 +249,7 @@ function missingWalls(files, walls = MUST_MEASURE, checkExists = true) {
  * 検出器そのものが壊れていないかを、毎回の実行で確かめる。
  */
 function selfTest() {
+
   const body = (n) => Array.from({ length: n }, (_, i) => `const x${i} = ${i};`).join('\n');
   const cases = [
     ['pragma 無し', body(50), 0],
@@ -262,6 +263,24 @@ function selfTest() {
     ['広い範囲が 2 つなら 2 件', '// Stryker disable all\n' + body(40) + '\n// Stryker restore all\n// Stryker disable all\n' + body(40) + '\n// Stryker restore all', 2],
   ];
   let failed = 0;
+  // ── 名簿どうしの突き合わせ ──
+  {
+    const chain = (prot, exc) => ({ PROTECTED: prot, DEP_EXCLUSIONS: exc });
+    const cases = [
+      ['壁が保護対象なら通る', { 'a/w.ts': 'wall' }, chain(['a/w.ts'], {}), 0],
+      ['壁が除外台帳なら通る', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 0],
+      ['★ どちらにも無ければ鳴る', { 'a/w.ts': 'wall' }, chain([], {}), 1],
+      ['複数の壁それぞれで鳴る', { 'a/w.ts': 'w', 'b/x.ts': 'w' }, chain([], {}), 2],
+      ['名簿が読めなければ鳴る', { 'a/w.ts': 'w' }, null, 1],
+      ['PROTECTED が配列でなければ鳴る', { 'a/w.ts': 'w' }, { PROTECTED: 'x' }, 1],
+    ];
+    for (const [label, must, chainData, expected] of cases) {
+      const n = checkWallsAreProtected(must, chainData).length;
+      const ok = n === expected;
+      if (!ok) failed += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 名簿: ${label}: ${n} 件 (期待 ${expected})`);
+    }
+  }
   console.log('self-test:');
   for (const [label, text, want] of cases) {
     const got = broadRegionsOf(text).length;
@@ -378,6 +397,10 @@ function main(argv) {
   // 測ると決めた壁が黙って一覧から外れていないか (載せなければ無反応、を塞ぐ)
   failures.push(...missingWalls(files));
 
+  // 名簿どうしの突き合わせ。**「測る壁」は「改竄検知で守る壁」でもあるはず。**
+  // 片方だけ見ている限り、ずれても誰も気付かない (実際 14 件ずれていた)。
+  failures.push(...checkWallsAreProtected());
+
   // 「測っていないと分かっている」台帳の双方向。載ったのに消し忘れる /
   // ファイルが消えたのに残る、のどちらでも落とす。
   for (const rel of staleUnmeasured(files, KNOWN_UNMEASURED)) {
@@ -405,8 +428,55 @@ function main(argv) {
   return 1;
 }
 
+/**
+ * **2 つの台帳が同じことを言っているか。**
+ *
+ * `MUST_MEASURE` (必ず変異検査に載せる壁) と `integrity-chain.cjs` の
+ * `PROTECTED` (改竄検知の保護対象) は、どちらも「これは壁だ」と言う名簿である。
+ * にもかかわらず 2026-08-25 に突き合わせたら **14 件ずれていた** ——
+ * 13 件は保護されておらず、1 件は両方に載って二重管理になっていた。
+ *
+ * 片方だけ見ている限り気付けない。`frameGuard.ts` は
+ * 「足した当人が名簿へ入れ忘れていた」と `MUST_MEASURE` に書いてあるのに、
+ * **同じ file が鎖の名簿からも漏れていた**。名簿は増やすほど、
+ * 名簿どうしの食い違いが見えなくなる。
+ *
+ * 除外は `DEP_EXCLUSIONS` (理由必須・双方向) に載っていればよい ——
+ * 「測る壁だが鎖では守らない」という判断自体は在りうる
+ * (`updateCheck.ts` がそれで、理由が書いてある)。
+ *
+ * @param mustOverride / @param chainOverride self-test の差し込み口。
+ */
+function checkWallsAreProtected(mustOverride, chainOverride) {
+  const must = mustOverride ?? MUST_MEASURE;
+  const chain =
+    chainOverride ??
+    (() => {
+      try {
+        return require('./integrity-chain.cjs');
+      } catch {
+        return null;
+      }
+    })();
+  if (chain === null || !Array.isArray(chain.PROTECTED)) {
+    return ['integrity-chain.cjs から PROTECTED を読めない (名簿の突き合わせができない)'];
+  }
+  const protectedSet = new Set(chain.PROTECTED);
+  const excluded = new Set(Object.keys(chain.DEP_EXCLUSIONS ?? {}));
+  const problems = [];
+  for (const file of Object.keys(must)) {
+    if (protectedSet.has(file) || excluded.has(file)) continue;
+    problems.push(
+      `${file} は「必ず測る壁」なのに改竄検知の保護対象でも除外台帳でもない ` +
+        '(integrity-chain.cjs の PROTECTED へ足すか、DEP_EXCLUSIONS に理由つきで載せること)',
+    );
+  }
+  return problems;
+}
+
 module.exports = {
   scanSource,
+  checkWallsAreProtected,
   broadRegionsOf,
   missingWalls,
   staleUnmeasured,

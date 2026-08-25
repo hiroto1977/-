@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 88
+- ブロック数: 91
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `ca03bf32fd5e2880d72f9e542cc3489ad0b9e284c446b6a94cd6fee0d29bd982`
-- 保護対象: 36 ファイル
+- 末尾(tip)ハッシュ: `fe3e27013cc3bde7d54a3db418bafca560386f1cc4ad392ec9bc21b22c45f4cd`
+- 保護対象: 49 ファイル
 
 ## ブロック
 
@@ -101,6 +101,9 @@
 | 85 | `ef73f4bf2cb5f1c1` | `bee8216b40c71916` | `7c85292a20963e2d` | update ci.yml |
 | 86 | `32f5de0c68fcd8b3` | `7c85292a20963e2d` | `4321f481d6b2f89e` | update vault.ts |
 | 87 | `9ec3ea8e3f255317` | `4321f481d6b2f89e` | `ca03bf32fd5e2880` | update vault.ts |
+| 88 | `1cc3c7c819033fa4` | `ca03bf32fd5e2880` | `204b8b0708d79483` | update integrity-chain.cjs,assistantMarkdown.ts,fsa.ts,liveRead.ts,pkce.ts,pkceSession.ts |
+| 89 | `49377d27b19a6e56` | `204b8b0708d79483` | `5b544e6e0ef11c95` | update integrity-chain.cjs,-updateCheck.ts |
+| 90 | `b8417be6fe754814` | `5b544e6e0ef11c95` | `fe3e27013cc3bde7` | update integrity-chain.cjs |
 
 ## 保護対象ファイル
 
@@ -122,21 +125,34 @@
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
+- `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/recordCipher.ts`
+- `src/renderer/fs/fsa.ts`
+- `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
+- `src/renderer/oauth/pkce.ts`
+- `src/renderer/oauth/pkceSession.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/frameGuard.ts`
+- `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webauthn.ts`
 - `src/shared/aiEndpoint.ts`
+- `src/shared/atlassianSite.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
+- `src/shared/escape.ts`
 - `src/shared/externalUrlGate.ts`
 - `src/shared/httpLimits.ts`
+- `src/shared/imageUrlGate.ts`
+- `src/shared/ollama.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
+- `src/shared/safeFilename.ts`
+- `src/shared/scanTarget.ts`
 - `src/shared/tokenInput.ts`
 - `src/shared/vaultToken.ts`
