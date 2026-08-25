@@ -193,6 +193,34 @@ function selfTest() {
     ['api.slack.com は通す', { srcFiles: [], dataFiles: f("helpUrl: 'https://api.slack.com/apps'"), owner: [] }, 0],
     ['app.slack.com も通す', { srcFiles: [], dataFiles: f("u: 'https://app.slack.com/client'"), owner: [] }, 0],
     ['短い ID (業者の形に当たらない) は見ない', { srcFiles: [], dataFiles: f("id: 'C0AL7N42GBH'"), owner: [] }, 0],
+    /*
+     * ここから 4 件は 2026-08-25 に足した。**Google ドライブと Canva
+     * サムネイルの形には、鳴る標本が 1 つも無かった** —— この 2 つは
+     * 正規表現を潰しても self-test が通り、実物にも例が無い (見本化済み
+     * なので当然) ので、**何一つ鳴らずに規則が消せる**状態だった。
+     * この門は「実 Google ドライブ ID 6 件が公開されていた」ことを承けて
+     * 作ったのに、その形の標本を持っていなかった。
+     */
+    [
+      'Google ドライブの実 ID は鳴る',
+      { srcFiles: [], dataFiles: f("url: 'https://drive.google.com/file/d/1ZzYyXxWwVvUuTtSsRrQqPpOoNn/view'"), owner: [] },
+      1,
+    ],
+    [
+      'example と名乗るドライブ ID は通す',
+      { srcFiles: [], dataFiles: f("url: 'https://drive.google.com/file/d/1ExampleDriveFileIdAAAAAAAAAA/view'"), owner: [] },
+      0,
+    ],
+    [
+      'Canva サムネイルの実トークンは鳴る',
+      { srcFiles: [], dataFiles: f("thumb: 'https://design.canva.ai/tKn9Qm2Lp7Rw4Vb/thumbnail.png'"), owner: [] },
+      1,
+    ],
+    [
+      'example と名乗るサムネイルは通す',
+      { srcFiles: [], dataFiles: f("thumb: 'https://design.canva.ai/example-thumb-0001/thumbnail.png'"), owner: [] },
+      0,
+    ],
   ];
   let bad = 0;
   console.log('self-test:');
@@ -229,6 +257,43 @@ function selfTest() {
     const ok = n === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
+  /*
+   * **どの業者 ID の形にも「鳴る標本」があること。**
+   *
+   * 上の表は「この入力が何件の問題を出すか」しか見ていない。形を 1 つ
+   * 潰しても、その形に当たる標本が無ければ**件数は変わらず self-test は
+   * 通る**。しかもこの門が守る ID は**すべて見本化済み**なので、
+   * 実物の側にも例が無い —— `lint:forbidden` と違い、台帳が肩代わりして
+   * くれることもない。標本を持たない形は、**完全に無防備**である。
+   *
+   * 実測 (2026-08-25): 5 種の正規表現を 1 つずつ当たらないものに
+   * 差し替えたところ、**Google ドライブと Canva サムネイルの 2 種が
+   * 何一つ鳴らなかった**。
+   */
+  const positiveTexts = cases
+    .filter(([, , want]) => want > 0)
+    .flatMap(([, input]) => [...input.dataFiles, ...input.srcFiles].map((x) => x.text));
+  const uncoveredShapes = VENDOR_ID_SHAPES.filter(
+    ({ re, skip }) =>
+      !positiveTexts.some((text) => {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(text)) !== null) {
+          if (/example/i.test(m[1])) continue;
+          if (skip !== undefined && skip.has(m[1].toLowerCase())) continue;
+          return true;
+        }
+        return false;
+      }),
+  );
+  if (uncoveredShapes.length > 0) {
+    bad += uncoveredShapes.length;
+    console.log(`  ✗ 鳴る標本を持たない ID の形が ${uncoveredShapes.length} 件:`);
+    for (const s of uncoveredShapes) console.log(`      - ${s.name}`);
+  } else {
+    console.log(`  ✓ 全 ${VENDOR_ID_SHAPES.length} 種の ID の形に鳴る標本がある`);
   }
   // 台帳の掃除 — 実物に無い許可が残っていたら消す。
   const dataText = listFiles(DATA_DIR).map((p) => fs.readFileSync(p, 'utf8')).join('\n');
