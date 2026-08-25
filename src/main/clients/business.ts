@@ -1,4 +1,5 @@
 import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import * as fs from 'node:fs/promises';
@@ -530,7 +531,7 @@ export function validateBusinessAdvisorJson(
   if (obj.recommendations.length === 0) {
     throw new Error('business-advisor response has zero recommendations');
   }
-  if (obj.recommendations.length > 5) {
+  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) {
     throw new Error('business-advisor response exceeds 5 recommendations');
   }
   // 各 guard 句は negative テストで固定してある。残る `typeof` の前置きは
@@ -556,18 +557,18 @@ export function validateBusinessAdvisorJson(
       throw new Error('business-advisor recommendation has empty rationale');
     }
     // Stryker restore ConditionalExpression
-    if (rec.rationale.length > 600) {
+    if (rec.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) {
       throw new Error('business-advisor recommendation rationale exceeds 600 chars');
     }
     if (!Array.isArray(rec.actionItems) || rec.actionItems.length === 0) {
       throw new Error('business-advisor recommendation has no actionItems');
     }
-    if (rec.actionItems.length > 5) {
+    if (rec.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) {
       throw new Error('business-advisor recommendation actionItems exceeds 5');
     }
     const actionItems: string[] = [];
     for (const ai of rec.actionItems) {
-      if (typeof ai !== 'string' || ai.length === 0 || ai.length > 240) {
+      if (typeof ai !== 'string' || ai.length === 0 || ai.length > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor actionItem entry is not a 1-240 char string');
       }
       actionItems.push(ai);
@@ -575,12 +576,12 @@ export function validateBusinessAdvisorJson(
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
       throw new Error('business-advisor recommendation has no riskFactors');
     }
-    if (rec.riskFactors.length > 3) {
+    if (rec.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) {
       throw new Error('business-advisor recommendation riskFactors exceeds 3');
     }
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 240) {
+      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor riskFactor entry is not a 1-240 char string');
       }
       riskFactors.push(rf);

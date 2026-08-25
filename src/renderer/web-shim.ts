@@ -52,6 +52,7 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../shared/advisorQuestionLimits';
+import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
 import {
@@ -426,24 +427,24 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   if (raw === null || typeof raw !== 'object') throw new Error('response is not an object');
   const o = raw as { recommendations?: unknown };
   if (!Array.isArray(o.recommendations)) throw new Error('missing recommendations');
-  if (o.recommendations.length === 0 || o.recommendations.length > 5) throw new Error('recommendations must be 1-5');
+  if (o.recommendations.length === 0 || o.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) throw new Error('recommendations must be 1-5');
   const out: BusinessAdvisorRecommendation[] = [];
   for (const item of o.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('entry is not an object');
     const r = item as Record<string, unknown>;
     if (typeof r.categoryId !== 'string' || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + String(r.categoryId));
     if (typeof r.rank !== 'number' || !Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
-    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > 600) throw new Error('invalid rationale');
-    if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > 5) throw new Error('invalid actionItems');
+    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
+    if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) throw new Error('invalid actionItems');
     const actionItems: string[] = [];
     for (const a of r.actionItems) {
-      if (typeof a !== 'string' || a.length === 0 || a.length > 240) throw new Error('invalid actionItem entry');
+      if (typeof a !== 'string' || a.length === 0 || a.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid actionItem entry');
       actionItems.push(a);
     }
-    if (!Array.isArray(r.riskFactors) || r.riskFactors.length === 0 || r.riskFactors.length > 3) throw new Error('invalid riskFactors');
+    if (!Array.isArray(r.riskFactors) || r.riskFactors.length === 0 || r.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) throw new Error('invalid riskFactors');
     const riskFactors: string[] = [];
     for (const f of r.riskFactors) {
-      if (typeof f !== 'string' || f.length === 0 || f.length > 240) throw new Error('invalid riskFactor entry');
+      if (typeof f !== 'string' || f.length === 0 || f.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid riskFactor entry');
       riskFactors.push(f);
     }
     out.push({ categoryId: r.categoryId, rank: r.rank, rationale: r.rationale, actionItems, riskFactors });
