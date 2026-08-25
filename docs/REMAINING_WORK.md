@@ -5903,7 +5903,7 @@ scaffold は id を camelCase にして鍵にする (`microsoft-365` → `micros
 | `https://github.com.evil.test/x` | `github.com.evil.test` | 弾く ✅ |
 | `https://evil.test/github.com` | `evil.test` | 弾く ✅ |
 | `https://github.com@evil.test/x` | `evil.test` | 弾く ✅ |
-| `https://gіthub.com/x` (キリル і) | `xn--gthub-n2e.com` | 弾く ✅ |
+| `https://g<U+0456>thub.com/x` (キリル文字の i) | `xn--gthub-n2e.com` | 弾く ✅ |
 | `https://github.cοm/x` (ギリシャ ο) | `github.xn--cm-jbc` | 弾く ✅ |
 | `https://sub.github.com/x` | `sub.github.com` | 弾く ✅ |
 

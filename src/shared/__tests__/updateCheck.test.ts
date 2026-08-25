@@ -182,7 +182,8 @@ describe('isGithubReleaseUrl', () => {
    */
   it('見た目が github.com でも、別ホストなら断る', () => {
     for (const u of [
-      // キリル文字の і (U+0456)。punycode で xn--gthub-n2e.com になる。
+      // キリル文字の小文字 i (U+0456)。punycode で xn--gthub-n2e.com になる。
+      // **文字そのものは書かない** — lint:charset が混入として拾うため (実際に拾われた)。
       'https://g\u0456thub.com/a',
       // ギリシャ文字の ο (U+03BF)。github.xn--cm-jbc になる。
       'https://github.c\u03BFm/a',
