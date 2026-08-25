@@ -136,6 +136,24 @@ import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../share
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
 // Electron 版も検証して結果を返すだけで永続化しない)。
+/**
+ * 保管庫の領域が立ち退きから守られているかを、**実際に問い合わせて**返す。
+ *
+ * 先に `persist()` を試すのは best effort。断られても投げず、
+ * 最後に `persisted()` の**実際の値**で名乗る (要求の成否ではなく状態を返す)。
+ * API そのものが無い環境では、嘘をつかず `best-effort` に倒す。
+ */
+async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'> {
+  const st = typeof navigator !== 'undefined' ? navigator.storage : undefined;
+  if (st === undefined || typeof st.persisted !== 'function') return 'best-effort';
+  try {
+    if (typeof st.persist === 'function' && !(await st.persisted())) await st.persist();
+    return (await st.persisted()) ? 'persistent' : 'best-effort';
+  } catch {
+    return 'best-effort';
+  }
+}
+
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
@@ -1060,10 +1078,25 @@ const shim = {
     plainCount: number;
     file: string;
     mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+    durability: 'file' | 'persistent' | 'best-effort';
   }> => ({
     encrypted: true,
     plainCount: 0,
     file: 'IndexedDB (business-hub-vault)',
+    /*
+     * **消えないかは、名乗るのではなく毎回問い合わせる。**
+     *
+     * ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の領域
+     * である。実測 (2026-08-25) では `persisted()` も `persist()` も
+     * `false` —— **空き容量の都合や無操作でブラウザが立ち退かせうる**
+     * (Safari の ITP は無操作 7 日)。
+     *
+     * `persist()` は**当てにしない**。Chromium は「導入済み / 関与が高い」
+     * ときだけ認めるので、呼んでも断られることがある (実測がまさにそれ)。
+     * それでも呼ぶのは、**認められる利用者には効く**からで、費用は 0 である。
+     * 断られたことを `best-effort` として**画面へ伝える**ほうが本体。
+     */
+    durability: await requestAndReadDurability(),
     // **ブラウザ版に OS キーチェーンは無い。** 鍵はマスターパスワードから
     // PBKDF2 で導出している。画面が「OS が守っている」と書かないよう、
     // 何が守っているかをここで名乗る (2026-08-23)。

@@ -10,6 +10,7 @@ import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
+import { isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
@@ -849,6 +850,7 @@ function StorageProtectionNotice() {
     plainCount: number;
     file: string;
     mechanism?: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+    durability?: 'file' | 'persistent' | 'best-effort';
   } | null>(
     null,
   );
@@ -910,6 +912,38 @@ function StorageProtectionNotice() {
           )}
           <br />
           保存先: <code>{state.file}</code>
+          {/*
+            **暗号化と、消えないことは別の話である。**
+
+            ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の
+            領域になる (実測 2026-08-25: `persisted()` も `persist()` も false)。
+            この状態では**空き容量の都合や無操作でブラウザが立ち退かせうる**
+            —— Safari の ITP は無操作 7 日で消す。
+
+            **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を
+            *開ける*ための物で、立ち退きでは暗号化されたトークンごと消える
+            ため、開ける物が残らない。戻せるのは書き出したバックアップだけ。
+
+            暗号化の状態 (`encrypted`) とは独立に出す —— 暗号化されていても
+            消えるときは消える。
+          */}
+          {isEvictableStorage(state.durability) && (
+            <>
+              <br />
+              <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+                ⚠️ この保管庫は「消えうる」領域にあります
+              </strong>
+              <br />
+              ブラウザが空き容量の都合や長期の無操作でこの領域を消すことがあります
+              (Safari は無操作 7 日で消します)。
+              <strong>控えた 24 語では戻せません</strong> ——
+              フレーズは保管庫を開けるためのもので、消えたときは暗号化された
+              トークンごと失われます。<strong>バックアップを書き出してください。</strong>
+              <br />
+              アプリとして<strong>インストール</strong>すると、ブラウザが
+              この領域を保護対象に格上げすることがあります。
+            </>
+          )}
         </p>
       </div>
     );
@@ -932,6 +966,38 @@ function StorageProtectionNotice() {
         )}
         <br />
         保存先: <code>{state.file}</code>
+        {/*
+          **暗号化と、消えないことは別の話である。**
+
+          ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の
+          領域になる (実測 2026-08-25: `persisted()` も `persist()` も false)。
+          この状態では**空き容量の都合や無操作でブラウザが立ち退かせうる**
+          —— Safari の ITP は無操作 7 日で消す。
+
+          **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を
+          *開ける*ための物で、立ち退きでは暗号化されたトークンごと消える
+          ため、開ける物が残らない。戻せるのは書き出したバックアップだけ。
+
+          暗号化の状態 (`encrypted`) とは独立に出す —— 暗号化されていても
+          消えるときは消える。
+        */}
+        {isEvictableStorage(state.durability) && (
+          <>
+            <br />
+            <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+              ⚠️ この保管庫は「消えうる」領域にあります
+            </strong>
+            <br />
+            ブラウザが空き容量の都合や長期の無操作でこの領域を消すことがあります
+            (Safari は無操作 7 日で消します)。
+            <strong>控えた 24 語では戻せません</strong> ——
+            フレーズは保管庫を開けるためのもので、消えたときは暗号化された
+            トークンごと失われます。<strong>バックアップを書き出してください。</strong>
+            <br />
+            アプリとして<strong>インストール</strong>すると、ブラウザが
+            この領域を保護対象に格上げすることがあります。
+          </>
+        )}
       </p>
       <p style={{ margin: '8px 0 0' }}>
         <strong>対処:</strong> Linux では <code>gnome-keyring</code> または{' '}

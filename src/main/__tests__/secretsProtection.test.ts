@@ -93,7 +93,16 @@ describe('getStorageProtection', () => {
      * 増やすときは「その欄に秘密が載りうるか」を人が見ることになる。
      * `mechanism` は 3 値の列挙で、店の中身から作らない (2026-08-23 追加)。
      */
-    expect(Object.keys(r).sort()).toEqual(['encrypted', 'file', 'mechanism', 'plainCount']);
+    // `durability` は 3 値の列挙 ('file' | 'persistent' | 'best-effort')。
+    // デスクトップ版は定数 'file'、ブラウザ版は `navigator.storage.persisted()` の
+    // 戻り値から作るので、**店の中身は一切通らない** (2026-08-25 追加)。
+    expect(Object.keys(r).sort()).toEqual([
+      'durability',
+      'encrypted',
+      'file',
+      'mechanism',
+      'plainCount',
+    ]);
   });
 
   it('mechanism は 3 値の列挙しか返さない (自由文字列を載せない)', async () => {

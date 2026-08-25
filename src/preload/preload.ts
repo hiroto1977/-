@@ -41,6 +41,8 @@ export interface StorageProtection {
   readonly file: string;
   /** 何が鍵を握っているか。画面はこれで文言を選ぶ (main/secrets.ts 参照)。 */
   readonly mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+  /** 消えないか。ブラウザ版の best-effort は立ち退きうる (main/secrets.ts 参照)。 */
+  readonly durability: 'file' | 'persistent' | 'best-effort';
 }
 
 const api = {

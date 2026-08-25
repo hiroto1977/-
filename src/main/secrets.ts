@@ -295,6 +295,22 @@ export interface StorageProtection {
    * 別の話なので、**取り違えたまま安心させない**。
    */
   readonly mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+  /**
+   * **消えないか。** `mechanism` が「何が守るか」なら、こちらは「残るか」。
+   *
+   * ブラウザ版の保管庫は IndexedDB に在り、既定では **best-effort** の
+   * 領域である —— 実測 (2026-08-25) で `navigator.storage.persisted()` は
+   * `false`、`persist()` も `false` を返した。
+   * この状態では**ブラウザが空き容量の都合や無操作で立ち退かせる**ことが
+   * ある (Safari の ITP は無操作 7 日で消す)。
+   *
+   * **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を*開ける*
+   * ための物で、立ち退きでは暗号化されたトークンごと消えるため、
+   * 開ける物が無くなる。戻せるのは書き出したバックアップだけである。
+   *
+   * デスクトップ版は userData のファイルなので立ち退きは無い ('file')。
+   */
+  readonly durability: 'file' | 'persistent' | 'best-effort';
 }
 
 /**
@@ -312,6 +328,7 @@ export async function getStorageProtection(): Promise<StorageProtection> {
   return {
     encrypted: available,
     plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,
+    durability: 'file',
     file: secretsPath(),
     mechanism: available ? 'os-keychain' : 'obfuscated',
   };
