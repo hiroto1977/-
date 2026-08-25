@@ -1,5 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 /*
  * ブラウザ版の**資格情報の出口**。`runProxyBearer` は、プロキシ経由で書き込む
@@ -267,6 +269,58 @@ describe('API キーの送り先とヘッダ', () => {
     expect(elsewhere, `鍵が別のヘッダにも載っている: ${JSON.stringify(elsewhere)}`).toEqual([]);
     // 本文にも鍵は載らない。
     expect(String(fetchCalls[0]!.init.body)).not.toContain(KEY);
+  });
+
+  /*
+   * **同じ守りを、鍵を持つ残り 2 経路にも当てる (2026-08-25)。**
+   *
+   * 上の 1 本は「事業アドバイザー」だけを留めていた。ところが
+   * `x-api-key` を載せて Anthropic を直接叩く経路は**3 つ**ある ——
+   * `business/advise` / `stocks/advise` / `emotions/analyze`。
+   *
+   * 実測した: `web-shim.ts` の `stocks` 側と `emotions` 側の URL を
+   * `https://exfil.example/v1/messages` へ書き換えても、
+   * **10,778 件のテストが全部緑のまま通った**。
+   * 利用者の API キーが、そのまま別のホストへ出る変更である。
+   *
+   * 「掃討はファイル単位、危険は関数単位」—— 同じファイルの中で、
+   * 兄弟の関数だけが留められていなかった。
+   */
+  it.each([
+    ['stocks', 'advise', { question: '次に買い増すべき銘柄は？' }],
+    ['emotions', 'analyze-text', { text: '今日は落ち着いている' }],
+  ])('★ %s/%s も api.anthropic.com へしか送らない', async (service, action, payload) => {
+    stored = KEY;
+    const hub = await loadShim();
+    await invoke(hub, service, action, payload);
+
+    expect(
+      fetchCalls.map((c) => c.url),
+      `${service}/${action} の送り先が変わっています (鍵が別ホストへ出ます)`,
+    ).toEqual(['https://api.anthropic.com/v1/messages']);
+    const h = fetchCalls[0]!.init.headers as Record<string, string>;
+    expect(h['x-api-key']).toBe(KEY);
+    // 鍵が他のヘッダにも本文にも混ざらない。
+    const elsewhere = Object.entries(h).filter(([k, v]) => k !== 'x-api-key' && String(v).includes(KEY));
+    expect(elsewhere, `鍵が別のヘッダにも載っている: ${JSON.stringify(elsewhere)}`).toEqual([]);
+    expect(String(fetchCalls[0]!.init.body)).not.toContain(KEY);
+  });
+
+  /*
+   * **名指しの規則は、名指しした綴りしか止められない。**
+   * 上の 3 本は今ある 3 経路を留めるが、**4 本目**には何も言わない。
+   * 鍵を載せて直接叩く口の**集合**も留める。
+   */
+  it('★ 鍵を載せて直接叩く送り先は、字面で 1 つだけ', async () => {
+    const src = readFileSync(join(__dirname, '..', 'web-shim.ts'), 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
+    const targets = [...src.matchAll(/timedFetchAi\(\s*'([^']+)'/g)].map((m) => m[1]!);
+    expect(targets.length, '走査が timedFetchAi を 1 つも拾えていない').toBeGreaterThanOrEqual(3);
+    expect(
+      [...new Set(targets)],
+      'timedFetchAi の送り先が増えました。鍵が出る先なので、上の it.each にも足してください',
+    ).toEqual(['https://api.anthropic.com/v1/messages']);
   });
 
   it('鍵が未設定なら 1 度も外へ出ない', async () => {
