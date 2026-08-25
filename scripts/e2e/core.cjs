@@ -905,6 +905,20 @@ async function noBeaconSuite(browser) {
     await page.getByRole('button', { name: 'ロック解除' }).click();
     await page.waitForTimeout(2500);
     ok(outbound.size === 0, `beacon: ${id} を開いて外部通信 0 (実際 ${describeOutbound(outbound)})`);
+
+    // **「通信が起きない」だけでは足りない。** 見本画像を `data:` に差し替えた
+    // ので、SVG の符号化を壊しても通信は起きず、この節は通ってしまう ——
+    // 画面には壊れた画像が出る。**絵として描けているか**まで見る。
+    const imgs = await page.$$eval('img', (els) =>
+      els
+        .filter((e) => (e.getAttribute('src') ?? '').startsWith('data:image'))
+        .map((e) => ({ w: e.naturalWidth, h: e.naturalHeight, done: e.complete })),
+    );
+    const broken = imgs.filter((i) => !(i.done && i.w > 0 && i.h > 0));
+    ok(
+      broken.length === 0,
+      `beacon: ${id} の data: 画像が描けている (${imgs.length} 件中 壊れ ${broken.length})`,
+    );
   }
   await ctx.close();
 }

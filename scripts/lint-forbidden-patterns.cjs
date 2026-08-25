@@ -236,7 +236,10 @@ const FORBIDDEN_PATTERNS = [
   },
   {
     name: 'eval(',
-    pattern: /\beval\s*\(/,
+    // `$` は非単語文字なので `\b` が成立してしまい、**Playwright の
+    // `$$eval(` / `$eval(` に誤爆する** (2026-08-24 に実際に踏んだ)。
+    // 直前の `$` を除外する。`eval(` / `;eval(` / `window.eval(` は今も当たる。
+    pattern: /(?<!\$)\beval\s*\(/,
     rationale: 'arbitrary code execution — invariant #9',
   },
   {
@@ -780,6 +783,10 @@ function selfTest() {
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],
     // 別名による回避 (2026-08-22 の点検で全部塞いだ。当時の実在は 0 件)。
     ['new なしの Function() を弾く', "const f = Function('return 1');", 1],
+    ['eval( を弾く', "const r = eval(src);", 1],
+    ['window.eval( も弾く', 'window.eval(src);', 1],
+    ['★ Playwright の $$eval は弾かない', "await page.$$eval('img', (e) => e);", 0],
+    ['★ Playwright の $eval も弾かない', "await page.$eval('img', (e) => e);", 0],
     ['Function( に変数を渡す散文は当てない', 'Cobb-Douglas Production Function (overview)', 0],
     ['型注釈の Function は当てない', 'function f(cb: Function) { return cb; }', 0],
     ['AsyncFunction は当てない (単語境界)', "const f = AsyncFunction('x');", 0],
