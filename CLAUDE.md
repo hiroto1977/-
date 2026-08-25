@@ -82,8 +82,10 @@ npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブ
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
 npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self-test のみ verify:all。
-                           #   成果物への適用は ci.yml が inject-pwa 適用後に行う ——
-                           #   注入で manifest / icon / SW が増えるため、注入前の姿では足りない)
+                           #   成果物への適用は ci.yml が inject-pwa 適用後に行う)。
+                           #   雛形側 (index.html / inline-html.cjs の buildCsp) は
+                           #   `shared/__tests__/shippedCsp.test.ts` が既に留めている ——
+                           #   こちらが見るのは **注入後の公開ファイル** と landing / デモ 3 本
 npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
                            #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
                            #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
