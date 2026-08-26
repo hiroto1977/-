@@ -134,6 +134,35 @@ function check(list, allow = UNPINNED_ALLOW) {
         why: '`permissions:` が未宣言 — 既定 (環境によっては contents: write) を継ぐ',
       });
     }
+    /*
+     * **宣言していることと、実効の広さは別である。**
+     *
+     * 上の検査は `^permissions:` (トップレベル) しか見ない。2026-08-26 の実測:
+     * トップが `contents: read` でも、job が `permissions: write-all` を
+     * 書けば**その job の実効権限は write-all** になり、この門は通した。
+     * 冒頭の注記が心配していた「一番よく走るものが一番広い権限」が、
+     * まさに見えない形で起きうる。
+     *
+     * 実物 6 本は job 単位の `permissions:` を 1 つも持たない (実測) ので、
+     * 「持つなら台帳に理由を書く」で足りる。`write-all` は常に鳴らす ——
+     * 絞る目的の宣言としては意味を成さない。
+     */
+    if (/permissions:\s*write-all/.test(text) || /^\s+-?\s*write-all\s*$/m.test(text)) {
+      problems.push({
+        file: name,
+        why: 'permissions: write-all — 絞る目的の宣言になっていない。要る権限だけを列挙すること',
+      });
+    }
+    for (const [i, line] of text.split('\n').entries()) {
+      if (/^\s+permissions:/.test(line)) {
+        problems.push({
+          file: name,
+          why:
+            `job 単位の permissions: (${i + 1} 行目) — トップレベルより広くできるので、` +
+            '実効の広さがここだけ変わります。要るなら JOB_PERMISSIONS_ALLOW へ理由を書くこと',
+        });
+      }
+    }
     if (/^\s*pull_request_target:/m.test(text)) {
       problems.push({
         file: name,
@@ -146,7 +175,27 @@ function check(list, allow = UNPINNED_ALLOW) {
       if (!m) continue;
       const ref = m[1];
       if (ref.startsWith('./') || ref.startsWith('docker://')) continue;
-      if (ref.startsWith('actions/')) continue; // GitHub 自身
+      /*
+       * GitHub 自身 (`actions/*`) は SHA 固定を免除する —— **ただし「版のタグ」に限る**。
+       *
+       * 2026-08-26 まで `startsWith('actions/')` だけを見ており、
+       * `actions/checkout@main` も `actions/checkout@my-branch` も素通りした (実測)。
+       * 上の注記は「タグ固定を許す」と書いてあるのに、**枝も許していた**。
+       * 枝は動く先であって固定ではない。
+       *
+       * 実物は `@v3` / `@v4` / `@v7` の 7 種だけなので、受理すべき対象は落ちない。
+       */
+      // **SHA 固定は誰であれ常に可**。ここを `actions/` の分岐より後ろに置くと、
+      // `actions/checkout@<sha>` (最も固い形) を落とす —— 実際に落とした。
+      if (/@[0-9a-f]{40}$/.test(ref)) continue;
+      if (/^actions\/[^@]+@v\d+(?:\.\d+)*$/.test(ref)) continue; // GitHub 自身・版のタグ
+      if (ref.startsWith('actions/')) {
+        problems.push({
+          file: name,
+          why: `actions/* が版のタグで固定されていません (${ref}) — @v4 のような版か SHA にすること`,
+        });
+        continue;
+      }
       if (/@[0-9a-f]{40}$/.test(ref)) continue; // SHA 固定済み
       seenUnpinned.add(ref);
       // `in` / 素の添字はプロトタイプ鎖まで辿るので、`uses: constructor` の
@@ -334,4 +383,6 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+module.exports = { check, runBlockLines, workflows, UNPINNED_ALLOW };
+
+if (require.main === module) process.exit(main());
