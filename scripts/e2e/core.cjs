@@ -341,6 +341,79 @@ async function desktopSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 秒単位の帯が**実機で本当に動く**か。
+ *
+ * 単体検査は純粋関数と刻みをそれぞれ留めているが、「1 秒ごとに再描画される」
+ * ことは **React が実際に描き直しているか**に依るので、組み上げないと分からない。
+ * 「毎秒更新」と言いながら止まっていても、単体検査は全部緑で通る。
+ *
+ * 併せて、止まるべき時に止まることも見る —— タブを隠している間も 1 秒
+ * タイマーを回し続けるのは電池を削るだけで、このアプリは非表示で自動施錠する
+ * 設計なので筋も通らない。
+ */
+async function realtimeSuite(browser) {
+  console.log('--- realtime (#tax の秒単位更新) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#tax', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=いま この瞬間', { timeout: 30000 });
+  ok(true, 'realtime: 帯が出る');
+
+  /** 帯の文字列 (折れ線を持つ「リアルタイム」で始まる箱)。 */
+  const band = () =>
+    page.evaluate(() => {
+      const all = Array.from(document.querySelectorAll('div'));
+      const b = all.find((d) => d.textContent?.startsWith('リアルタイム') === true && d.querySelector('svg') !== null);
+      return b?.textContent ?? null;
+    });
+  const points = () =>
+    page.evaluate(() => {
+      const p = document.querySelector('polyline');
+      return p === null ? 0 : (p.getAttribute('points') ?? '').trim().split(/\s+/).length;
+    });
+
+  const t0 = await band();
+  await page.waitForTimeout(3200);
+  const t1 = await band();
+  ok(t0 !== null && t1 !== null && t0 !== t1, '★ realtime: 3 秒で表示が変わる (止まっていたら鳴る)');
+
+  const p1 = await points();
+  await page.waitForTimeout(3200);
+  const p2 = await points();
+  ok(p2 > p1, `★ realtime: 折れ線が伸びる (${p1} → ${p2})`);
+
+  // 隠したら止まる。
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  const h0 = await band();
+  await page.waitForTimeout(3200);
+  const h1 = await band();
+  ok(h0 === h1, '★ realtime: タブを隠している間は止まる (電池を削らない)');
+
+  // 戻したら、待たずに追いつく。
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.waitForTimeout(300);
+  const h2 = await band();
+  ok(h2 !== h1, '★ realtime: 戻すと 1 周期を待たずに追いつく');
+
+  // 帯は取りに行かないと明示していること (毎秒 API を叩かないのが仕様)。
+  const text = (await band()) ?? '';
+  ok(text.includes('取り直し') || text.includes('刻み'), 'realtime: 刻みと取得の違いを画面で説明している');
+
+  ok(errs.length === 0, `realtime: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 async function phoneSuite(browser) {
   console.log('--- phone 412x915 (touch) ---');
   const ctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
@@ -1573,6 +1646,7 @@ async function businessComparisonSuite(browser) {
   if (run('storageDurability')) await storageDurabilitySuite(browser);
   if (run('securityPosture')) await securityPostureSuite(browser);
   if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);
+  if (run('realtime')) await realtimeSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
